@@ -29,7 +29,6 @@ export function useSaveVisualizer() {
   const graphNodes = controller.getGraph().getNodes() as GraphNode[];
   const state = controller.getState<ControllerState>();
   const deletedNodeIds: string[] = [];
-  const deletedEdges = [];
   const associateSuccessNodes: { sourceId: string; targetId: string }[] = [];
   const associateFailureNodes: { sourceId: string; targetId: string }[] = [];
   const associateAlwaysNodes: { sourceId: string; targetId: string }[] = [];
@@ -172,16 +171,16 @@ export function useSaveVisualizer() {
 
   function handleEdgeModification(node: GraphNode) {
     const nodeData = node.getData() as GraphNodeData;
-
+    const sourceEdges = node.getSourceEdges();
     const {
       resource: { always_nodes = [], failure_nodes = [], success_nodes = [] },
     } = nodeData;
 
     success_nodes.forEach((successNodeId) => {
-      node.getSourceEdges().forEach((edge) => {
+      sourceEdges.forEach((edge) => {
         const { tagStatus } = edge.getData() as { tagStatus: EdgeStatus };
         if (successNodeId.toString() === edge.getTarget().getId()) {
-          if (tagStatus !== EdgeStatus.success) {
+          if (tagStatus !== EdgeStatus.success || !edge.isVisible()) {
             disassociateSuccessNodes.push({
               sourceId: node.getId(),
               targetId: successNodeId.toString(),
@@ -191,10 +190,10 @@ export function useSaveVisualizer() {
       });
     });
     failure_nodes.forEach((failureNodeId) => {
-      node.getSourceEdges().forEach((edge) => {
+      sourceEdges.forEach((edge) => {
         const { tagStatus } = edge.getData() as { tagStatus: EdgeStatus };
         if (failureNodeId.toString() === edge.getTarget().getId()) {
-          if (tagStatus !== EdgeStatus.danger) {
+          if (tagStatus !== EdgeStatus.danger || !edge.isVisible()) {
             disassociateFailureNodes.push({
               sourceId: node.getId(),
               targetId: failureNodeId.toString(),
@@ -204,10 +203,10 @@ export function useSaveVisualizer() {
       });
     });
     always_nodes.forEach((alwaysNodeId) => {
-      node.getSourceEdges().forEach((edge) => {
+      sourceEdges.forEach((edge) => {
         const { tagStatus } = edge.getData() as { tagStatus: EdgeStatus };
         if (alwaysNodeId.toString() === edge.getTarget().getId()) {
-          if (tagStatus !== EdgeStatus.info) {
+          if (tagStatus !== EdgeStatus.info || !edge.isVisible()) {
             disassociateAlwaysNodes.push({
               sourceId: node.getId(),
               targetId: alwaysNodeId.toString(),
@@ -217,32 +216,30 @@ export function useSaveVisualizer() {
       });
     });
 
-    node.getSourceEdges().forEach((edge) => {
-      if (!edge.isVisible()) {
-        deletedEdges.push(edge);
-      } else {
-        const targetId = edge.getTarget().getId();
-        const { tagStatus } = edge.getData() as { tagStatus: EdgeStatus };
+    sourceEdges.forEach((edge) => {
+      if (!edge.isVisible()) return;
 
-        switch (tagStatus) {
-          case EdgeStatus.success:
-            if (!success_nodes?.includes(parseInt(targetId, 10))) {
-              associateSuccessNodes.push({ sourceId: node.getId(), targetId });
-            }
-            break;
-          case EdgeStatus.danger:
-            if (!failure_nodes?.includes(parseInt(targetId, 10))) {
-              associateFailureNodes.push({ sourceId: node.getId(), targetId });
-            }
-            break;
-          case EdgeStatus.info:
-            if (!always_nodes?.includes(parseInt(targetId, 10))) {
-              associateAlwaysNodes.push({ sourceId: node.getId(), targetId });
-            }
-            break;
-          default:
-            break;
-        }
+      const targetId = edge.getTarget().getId();
+      const { tagStatus } = edge.getData() as { tagStatus: EdgeStatus };
+
+      switch (tagStatus) {
+        case EdgeStatus.success:
+          if (!success_nodes?.includes(parseInt(targetId, 10))) {
+            associateSuccessNodes.push({ sourceId: node.getId(), targetId });
+          }
+          break;
+        case EdgeStatus.danger:
+          if (!failure_nodes?.includes(parseInt(targetId, 10))) {
+            associateFailureNodes.push({ sourceId: node.getId(), targetId });
+          }
+          break;
+        case EdgeStatus.info:
+          if (!always_nodes?.includes(parseInt(targetId, 10))) {
+            associateAlwaysNodes.push({ sourceId: node.getId(), targetId });
+          }
+          break;
+        default:
+          break;
       }
     });
   }
