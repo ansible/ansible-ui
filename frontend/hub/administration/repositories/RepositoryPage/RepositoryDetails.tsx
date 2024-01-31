@@ -30,9 +30,7 @@ export function RepositoryDetails() {
     params.id ? pulpAPI`/distributions/ansible/ansible/?name=${params.id}` : ''
   );
   const { data: remoteData, error: remoteError } = useGet<Task>(
-    params.id
-      ? pulpAPI`/remotes/ansible/collection/${parsePulpIDFromURL(repository.remote || '') || ''}`
-      : ''
+    params.id ? pulpAPI`/remotes/ansible/collection/${parsePulpIDFromURL(repository.remote)}/` : ''
   );
 
   if (distroError || remoteError)
@@ -45,9 +43,9 @@ export function RepositoryDetails() {
       <PageDetail label={t('Repository name')}>{params.id}</PageDetail>
       <PageDetail label={t('Description')}>{repository.description || t('None')}</PageDetail>
       <PageDetail label={t('Retained version count')}>{repository.retain_repo_versions}</PageDetail>
-      <PageDetail label={t('Distribution')}>{distribution.name}</PageDetail>
+      <PageDetail label={t('Distribution')}>{distribution?.name || t('None')}</PageDetail>
       <PageDetail label={t('Repository URL')}>
-        <CopyCell text={distribution.client_url} />
+        {distribution?.client_url ? <CopyCell text={distribution.client_url} /> : t('None')}
       </PageDetail>
       <PageDetail label={t('Labels')}>
         <RepositoryLabels repository={repository} />

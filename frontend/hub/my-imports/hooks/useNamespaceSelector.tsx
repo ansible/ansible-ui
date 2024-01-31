@@ -2,25 +2,25 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ITableColumn, IToolbarFilter, TextCell, ToolbarFilterType } from '../../../../framework';
 import {
-  AsyncSelectFilterBuilderProps,
-  useAsyncMultiSelectFilterBuilder,
   useAsyncSingleSelectFilterBuilder,
+  AsyncSelectFilterBuilderProps,
 } from '../../../../framework/PageToolbar/PageToolbarFilters/ToolbarAsyncSelectFilterBuilder';
-import { hubAPI } from '../../common/api/formatPath';
+import { hubAPI } from './../../common/api/formatPath';
 import { useHubView } from '../../common/useHubView';
+import { HubNamespace } from '../../namespaces/HubNamespace';
 
-function useParameters(): AsyncSelectFilterBuilderProps<Registry> {
-  const tableColumns = useRegistryColumns();
-  const toolbarFilters = useRegistryFilters();
+function useParameters(): AsyncSelectFilterBuilderProps<HubNamespace> {
+  const tableColumns = useNamespaceColumns();
+  const toolbarFilters = useNamespaceFilters();
   const { t } = useTranslation();
 
   return {
-    title: t`Select Registry`,
+    title: t`Select Namespace`,
     tableColumns,
     toolbarFilters,
     useView: useHubView,
     viewParams: {
-      url: hubAPI`/_ui/v1/execution-environments/registries/`,
+      url: hubAPI`/_ui/v1/my-namespaces/`,
       toolbarFilters,
       tableColumns,
       disableQueryString: true,
@@ -29,33 +29,26 @@ function useParameters(): AsyncSelectFilterBuilderProps<Registry> {
   };
 }
 
-export function useSelectRegistryMulti() {
-  const params = useParameters();
-
-  return useAsyncMultiSelectFilterBuilder<Registry>(params);
+export function useSelectNamespaceSingle() {
+  const params2 = useParameters();
+  return useAsyncSingleSelectFilterBuilder<HubNamespace>(params2);
 }
 
-export function useSelectRegistrySingle() {
-  const params = useParameters();
-
-  return useAsyncSingleSelectFilterBuilder<Registry>(params);
-}
-
-export function useRegistryColumns(_options?: { disableSort?: boolean; disableLinks?: boolean }) {
+export function useNamespaceColumns(_options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const { t } = useTranslation();
-  return useMemo<ITableColumn<Registry>[]>(
+  return useMemo<ITableColumn<HubNamespace>[]>(
     () => [
       {
         header: t('Name'),
-        value: (registry) => registry.name,
-        cell: (registry) => <TextCell text={registry.name} />,
+        value: (namespace) => namespace.name,
+        cell: (namespace) => <TextCell text={namespace.name} />,
       },
     ],
     [t]
   );
 }
 
-export function useRegistryFilters() {
+export function useNamespaceFilters() {
   const { t } = useTranslation();
 
   return useMemo<IToolbarFilter[]>(
@@ -71,8 +64,3 @@ export function useRegistryFilters() {
     [t]
   );
 }
-
-type Registry = {
-  id: string;
-  name: string;
-};
