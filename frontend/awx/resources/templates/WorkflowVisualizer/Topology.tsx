@@ -50,6 +50,7 @@ import { GraphNode, EdgeStatus } from './types';
 import { ViewOptionsContext, ViewOptionsProvider } from './ViewOptionsProvider';
 import { useCreateEdge } from './hooks';
 import { GRAPH_ID, CONNECTOR_SOURCE_DROP, CONNECTOR_TARGET_DROP, NODE_DIAMETER } from './constants';
+import { getNodeLabel } from './wizard/helpers';
 
 const graphModel: Model = {
   nodes: [],
@@ -189,6 +190,7 @@ export const Visualizer = ({ data: { workflowNodes = [], template } }: TopologyP
       const nodeId = n.id.toString();
       const nodeType = 'node';
       const nodeName = n.summary_fields?.unified_job_template?.name;
+      const nodeLabel = getNodeLabel(nodeName, n.identifier);
 
       n.success_nodes.forEach((id) => {
         edges.push(createEdge(nodeId, id.toString(), EdgeStatus.success));
@@ -203,7 +205,7 @@ export const Visualizer = ({ data: { workflowNodes = [], template } }: TopologyP
       const node = {
         id: nodeId,
         type: nodeType,
-        label: nodeName ?? t('Deleted'),
+        label: nodeLabel ?? t('Deleted'),
         width: NODE_DIAMETER,
         height: NODE_DIAMETER,
         shape: NodeShape.circle,
