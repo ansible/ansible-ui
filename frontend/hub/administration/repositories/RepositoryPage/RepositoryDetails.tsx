@@ -30,7 +30,7 @@ export function RepositoryDetails() {
     params.id ? pulpAPI`/distributions/ansible/ansible/?name=${params.id}` : ''
   );
   const { data: remoteData, error: remoteError } = useGet<Task>(
-    params.id ? pulpAPI`/remotes/ansible/collection/${parsePulpIDFromURL(repository.remote)}/` : ''
+    params.id ? pulpAPI`/remotes/ansible/collection${parsePulpIDFromURL(repository.remote)}/` : ''
   );
 
   if (distroError || remoteError)
