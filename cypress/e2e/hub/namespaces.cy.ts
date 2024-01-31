@@ -117,8 +117,7 @@ describe('Namespaces', () => {
     cy.clickButton(/^Clear all filters$/);
   });
 
-  // unskip after https://github.com/ansible/ansible-ui/pull/1473 (AAH-2509) is merged.
-  it.skip('user can view import logs', () => {
+  it('user can view import logs', () => {
     const namespaceName = `test_pagination_namespace_${randomString(5, undefined, {
       isLowercase: true,
     })}`;

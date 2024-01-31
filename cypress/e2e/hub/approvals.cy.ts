@@ -160,8 +160,7 @@ describe('Approvals', () => {
     repository = 'published';
   });
 
-  // unskip after https://github.com/ansible/ansible-ui/pull/1473 (AAH-2509) is merged.
-  it.skip('user can view import logs', () => {
+  it('user can view import logs', () => {
     cy.navigateTo('hub', Approvals.url);
     cy.filterTableByTypeAndText('Collection', thisCollectionName);
     cy.filterTableByTypeAndText('Namespace', namespace);
