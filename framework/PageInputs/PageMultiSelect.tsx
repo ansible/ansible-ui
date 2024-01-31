@@ -9,10 +9,10 @@ import {
   MenuToggleElement,
   SearchInput,
   Select,
+  SelectGroup,
   SelectList,
   SelectOption,
 } from '@patternfly/react-core';
-
 import { TimesIcon } from '@patternfly/react-icons';
 import { ReactNode, Ref, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -241,6 +241,19 @@ export function PageMultiSelect<
     [options, searchValue]
   );
 
+  const groups = useMemo(() => {
+    const hasGroups = options.some((option) => !!option.group);
+    if (hasGroups) {
+      const groups: Record<string, PageSelectOption<ValueT>[]> = {};
+      for (const option of visibleOptions) {
+        const group = option.group ?? '';
+        if (!groups[group]) groups[group] = [];
+        groups[group].push(option);
+      }
+      return groups;
+    }
+  }, [options, visibleOptions]);
+
   return (
     <Select
       id={`${id}-select`}
@@ -287,42 +300,72 @@ export function PageMultiSelect<
           {t('No results found')}
         </SelectOption>
       ) : (
-        <SelectList
-          style={{ maxHeight: '40vh', overflowY: 'auto' }}
-          onKeyDown={(event) => {
-            switch (event.key) {
-              case 'Tab':
-                event.preventDefault();
-                event.stopPropagation();
-                searchRef.current?.focus();
-                break;
-            }
-          }}
-        >
-          {visibleOptions.map((option) => {
-            const optionId = getID(option);
-            return (
-              <SelectOption
-                id={optionId}
-                icon={option.icon}
-                key={option.key !== undefined ? option.key : option.label}
-                value={option.key !== undefined ? option.key : option.label}
-                description={
-                  option.description ? (
-                    <div style={{ maxWidth: 300 }}>{option.description}</div>
-                  ) : undefined
-                }
-                hasCheckbox
-                isSelected={selectedOptions.includes(option)}
-                data-cy={optionId}
-              >
-                {option.label}
-              </SelectOption>
-            );
-          })}
-        </SelectList>
+        <>
+          {groups ? (
+            <>
+              {Object.keys(groups).map((groupName) => (
+                <SelectGroup label={groupName} key={groupName}>
+                  <PageMultiSelectList
+                    searchRef={searchRef}
+                    options={visibleOptions}
+                    selectedOptions={selectedOptions}
+                  />{' '}
+                </SelectGroup>
+              ))}
+            </>
+          ) : (
+            <PageMultiSelectList
+              searchRef={searchRef}
+              options={visibleOptions}
+              selectedOptions={selectedOptions}
+            />
+          )}
+        </>
       )}
       {props.footer && <MenuFooter>{props.footer}</MenuFooter>}
     </Select>
+  );
+}
+
+function PageMultiSelectList(props: {
+  searchRef: React.RefObject<HTMLInputElement>;
+  options: PageSelectOption<unknown>[];
+  selectedOptions: PageSelectOption<unknown>[];
+}) {
+  return (
+    <SelectList
+      style={{ maxHeight: '40vh', overflowY: 'auto' }}
+      onKeyDown={(event) => {
+        switch (event.key) {
+          case 'Tab':
+            event.preventDefault();
+            event.stopPropagation();
+            props.searchRef.current?.focus();
+            break;
+        }
+      }}
+    >
+      {props.options.map((option) => {
+        const optionId = getID(option);
+        return (
+          <SelectOption
+            id={optionId}
+            icon={option.icon}
+            key={option.key !== undefined ? option.key : option.label}
+            value={option.key !== undefined ? option.key : option.label}
+            description={
+              option.description ? (
+                <div style={{ maxWidth: 300 }}>{option.description}</div>
+              ) : undefined
+            }
+            hasCheckbox
+            isSelected={props.selectedOptions.includes(option)}
+            data-cy={optionId}
+          >
+            {option.label}
+          </SelectOption>
+        );
+      })}
+    </SelectList>
   );
 }
