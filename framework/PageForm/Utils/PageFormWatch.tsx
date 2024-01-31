@@ -27,14 +27,12 @@ import {
 export function PageFormWatch<
   TFieldValues extends FieldValues = FieldValues,
   TFieldName extends Path<TFieldValues> = Path<TFieldValues>,
+  TValue = PathValue<TFieldValues, TFieldName>,
 >(props: {
   watch: TFieldName;
-  children: (
-    value: PathValue<TFieldValues, TFieldName>,
-    setError: UseFormSetError<TFieldValues>
-  ) => ReactNode;
+  children: (value: TValue, setError: UseFormSetError<TFieldValues>) => ReactNode;
 }) {
-  const value = useWatch<TFieldValues, TFieldName>({ name: props.watch });
+  const value = useWatch<TFieldValues, TFieldName>({ name: props.watch }) as TValue;
   const { setError } = useFormContext();
   return <>{props.children(value, setError)}</>;
 }

@@ -3,7 +3,7 @@ import { awxErrorAdapter } from './awxErrorAdapter';
 
 describe('awxErrorAdapter', () => {
   it('should return empty arrays when passed an empty object', () => {
-    const error = new RequestError('Some Error', undefined, 400, {}, {});
+    const error = new RequestError({ message: 'Some Error', statusCode: 400, body: {}, json: {} });
     const result = awxErrorAdapter(error);
     expect(result.genericErrors.length).equal(0);
     expect(result.fieldErrors.length).equal(0);

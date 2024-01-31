@@ -1,6 +1,5 @@
 import { Label } from '@patternfly/react-core';
-import { ReactNode, useCallback } from 'react';
-import { FieldValues, UseFormSetValue, useFormContext } from 'react-hook-form';
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
 import { useNavigate } from 'react-router-dom';
@@ -16,6 +15,7 @@ import {
 } from '../../../../framework';
 import { PageFormAsyncSelect } from '../../../../framework/PageForm/Inputs/PageFormAsyncSelect';
 import { PageFormGroup } from '../../../../framework/PageForm/Inputs/PageFormGroup';
+import { PageFormSetValue } from '../../../../framework/PageForm/Utils/PageFormSetValue';
 import { PageFormWatch } from '../../../../framework/PageForm/Utils/PageFormWatch';
 import { useGet } from '../../../common/crud/useGet';
 import { HubError } from '../../common/HubError';
@@ -173,12 +173,6 @@ export function RepositoryForm() {
     pulp_labels: repo?.pulp_labels || {},
     createDistribution: !isDistributionDisabled,
   };
-  function HookWrapper<TFieldValues extends FieldValues>(props: {
-    children: (value: UseFormSetValue<TFieldValues>) => ReactNode;
-  }) {
-    const { setValue } = useFormContext<TFieldValues>();
-    return <>{props.children(setValue)}</>;
-  }
   return (
     <PageLayout>
       <PageHeader
@@ -219,8 +213,8 @@ export function RepositoryForm() {
             'Content in repositories without a distribution will not be visible to clients for sync, download or search.'
           )}
         >
-          <PageFormWatch<string> watch={'name'}>
-            {(name: string) => {
+          <PageFormWatch<RepositoryFormProps, 'name'> watch="name">
+            {(name: string | null) => {
               return (
                 <PageFormCheckbox<RepositoryFormProps>
                   name="createDistribution"
@@ -265,10 +259,10 @@ export function RepositoryForm() {
           ))}
           {Object.keys(repositoryFormValues?.pulp_labels).length === 0 && t('None')}
           <br />
-          <PageFormWatch<string> watch={'pipeline'}>
-            {(pipeline: string) => {
+          <PageFormWatch<RepositoryFormProps, 'pipeline'> watch="pipeline">
+            {(pipeline: string | undefined) => {
               return (
-                <HookWrapper>
+                <PageFormSetValue>
                   {(setValue) => {
                     if (pipeline === 'staging') {
                       // eslint-disable-next-line i18next/no-literal-string
@@ -285,7 +279,7 @@ export function RepositoryForm() {
                       />
                     );
                   }}
-                </HookWrapper>
+                </PageFormSetValue>
               );
             }}
           </PageFormWatch>
