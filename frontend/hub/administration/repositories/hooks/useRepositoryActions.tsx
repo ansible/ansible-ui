@@ -11,7 +11,7 @@ import {
 } from '../../../../../framework';
 import { CollectionVersionSearch } from '../../../collections/Collection';
 import { PROTECTED_REPOSITORIES } from '../../../common/constants';
-import { Repository, RepositoryVersion } from '../Repository';
+import { Repository } from '../Repository';
 import { useDeleteRepositories } from './useDeleteRepositories';
 import { getRepositoryBasePath } from '../../../common/api/hub-api-utils';
 import { getRepoURL } from '../../../common/api/hub-api-utils';
@@ -119,23 +119,6 @@ export function useCollectionVersionsActions() {
         selection: PageActionSelection.Multiple,
         type: PageActionType.Button,
         isDanger: true,
-      },
-    ],
-    [t]
-  );
-
-  return actions;
-}
-
-export function useVersionsActions() {
-  const { t } = useTranslation();
-  const actions = useMemo<IPageAction<RepositoryVersion>[]>(
-    () => [
-      {
-        label: t('Revert to this version'),
-        onClick: () => {},
-        selection: PageActionSelection.Multiple,
-        type: PageActionType.Button,
       },
     ],
     [t]
