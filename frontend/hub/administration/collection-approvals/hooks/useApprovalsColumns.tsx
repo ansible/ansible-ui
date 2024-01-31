@@ -5,37 +5,70 @@ import {
 } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { DateTimeCell, ITableColumn, PFColorE, TextCell } from '../../../../../framework';
-import { useHubContext } from '../../../common/useHubContext';
+import { DateTimeCell, ITableColumn, PFColorE, TextCell, useGetPageUrl } from '../../../../../framework';
+import { HubContext, useHubContext } from '../../../common/useHubContext';
 import { CollectionVersionSearch } from '../Approval';
+import { HubRoute } from '../../../main/HubRoutes';
 
 export function useApprovalsColumns(_options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const { t } = useTranslation();
   const { featureFlags } = useHubContext();
   const { can_upload_signatures, require_upload_signatures, display_signatures } = featureFlags;
+  const getPageUrl = useGetPageUrl();
+
   const tableColumns = useMemo<ITableColumn<CollectionVersionSearch>[]>(
     () => [
       {
         header: t('Namespace'),
-        cell: (approval) => <TextCell text={approval.collection_version?.namespace} />,
+        cell: (approval) => <TextCell text={approval.collection_version?.namespace}   to={getPageUrl(HubRoute.NamespaceDetails, {
+          params: {
+            id: approval.collection_version?.namespace,
+          },
+        })} />,
         sort: 'namespace',
       },
       {
         header: t('Collection'),
-        cell: (approval) => <TextCell text={approval.collection_version?.name} />,
+        cell: (approval) => <TextCell text={approval.collection_version?.name} to={getPageUrl(HubRoute.CollectionDetails, 
+          {
+            params : {
+              repository : approval.repository?.name || '',
+              namespace : approval.collection_version?.namespace || '',
+              name : approval.collection_version?.name || '',
+            },
+            query : {
+              version : approval.collection_version?.version,
+            }
+          }
+          )}/>,
         card: 'name',
         list: 'name',
         sort: 'name',
       },
       {
         header: t('Version'),
-        cell: (approval) => <TextCell text={approval.collection_version?.version} />,
+        cell: (approval) => <TextCell text={approval.collection_version?.version} to={getPageUrl(HubRoute.CollectionDetails, 
+          {
+            params : {
+              repository : approval.repository?.name || '',
+              namespace : approval.collection_version?.namespace || '',
+              name : approval.collection_version?.name || '',
+            },
+            query : {
+              version : approval.collection_version?.version,
+            }
+          }
+          )}/>,
         list: 'secondary',
         sort: 'version',
       },
       {
         header: t('Repository'),
-        cell: (approval) => <TextCell text={approval.repository?.name} />,
+        cell: (approval) => <TextCell text={approval.repository?.name} to={getPageUrl(HubRoute.RepositoryDetails, {
+          params: {
+            id: approval.repository?.name,
+          },
+        })} />,
       },
       {
         header: t('Status'),
