@@ -1,0 +1,498 @@
+{
+  "count": 54,
+  "next": "/api/v2/activity_stream/?page=2",
+  "previous": null,
+  "results": [
+    {
+      "id": 1,
+      "type": "activity_stream",
+      "url": "/api/v2/activity_stream/1/",
+      "related": {
+        "user": ["/api/v2/users/1/"]
+      },
+      "summary_fields": {
+        "user": [
+          {
+            "id": 1,
+            "username": "admin",
+            "first_name": "",
+            "last_name": ""
+          }
+        ]
+      },
+      "timestamp": "2024-01-02T20:57:49.354607Z",
+      "operation": "create",
+      "changes": {
+        "username": "admin",
+        "first_name": "",
+        "last_name": "",
+        "email": "admin@localhost",
+        "is_superuser": true,
+        "password": "hidden",
+        "id": 1
+      },
+      "object1": "user",
+      "object2": "",
+      "object_association": "",
+      "action_node": "awx_1",
+      "object_type": ""
+    },
+    {
+      "id": 2,
+      "type": "activity_stream",
+      "url": "/api/v2/activity_stream/2/",
+      "related": {
+        "actor": "/api/v2/users/1/",
+        "organization": ["/api/v2/organizations/1/"]
+      },
+      "summary_fields": {
+        "organization": [
+          {
+            "id": 1,
+            "name": "Default",
+            "description": ""
+          }
+        ],
+        "actor": {
+          "id": 1,
+          "username": "admin",
+          "first_name": "",
+          "last_name": ""
+        }
+      },
+      "timestamp": "2024-01-02T20:57:53.169534Z",
+      "operation": "create",
+      "changes": {
+        "name": "Default",
+        "description": "",
+        "max_hosts": 0,
+        "default_environment": null,
+        "id": 1
+      },
+      "object1": "organization",
+      "object2": "",
+      "object_association": "",
+      "action_node": "awx_1",
+      "object_type": ""
+    },
+    {
+      "id": 3,
+      "type": "activity_stream",
+      "url": "/api/v2/activity_stream/3/",
+      "related": {
+        "actor": "/api/v2/users/1/",
+        "project": ["/api/v2/projects/6/"]
+      },
+      "summary_fields": {
+        "project": [
+          {
+            "id": 6,
+            "name": "Demo Project",
+            "description": "",
+            "status": "successful",
+            "scm_type": "git",
+            "allow_override": false
+          }
+        ],
+        "actor": {
+          "id": 1,
+          "username": "admin",
+          "first_name": "",
+          "last_name": ""
+        }
+      },
+      "timestamp": "2024-01-02T20:57:53.305144Z",
+      "operation": "create",
+      "changes": {
+        "name": "Demo Project",
+        "description": "",
+        "local_path": "",
+        "scm_type": "git",
+        "scm_url": "https://github.com/ansible/ansible-tower-samples",
+        "scm_branch": "",
+        "scm_refspec": "",
+        "scm_clean": false,
+        "scm_track_submodules": false,
+        "scm_delete_on_update": false,
+        "credential": null,
+        "timeout": 0,
+        "organization": "Default-1",
+        "scm_update_on_launch": false,
+        "scm_update_cache_timeout": 0,
+        "allow_override": false,
+        "default_environment": null,
+        "signature_validation_credential": null,
+        "id": 6
+      },
+      "object1": "project",
+      "object2": "",
+      "object_association": "",
+      "action_node": "awx_1",
+      "object_type": ""
+    },
+    {
+      "id": 4,
+      "type": "activity_stream",
+      "url": "/api/v2/activity_stream/4/",
+      "related": {
+        "actor": "/api/v2/users/1/",
+        "credential": ["/api/v2/credentials/1/"]
+      },
+      "summary_fields": {
+        "credential": [
+          {
+            "id": 1,
+            "name": "Demo Credential",
+            "description": "",
+            "kind": "ssh",
+            "cloud": false,
+            "kubernetes": false,
+            "credential_type_id": 1
+          }
+        ],
+        "actor": {
+          "id": 1,
+          "username": "admin",
+          "first_name": "",
+          "last_name": ""
+        }
+      },
+      "timestamp": "2024-01-02T20:57:53.417775Z",
+      "operation": "create",
+      "changes": {
+        "name": "Demo Credential",
+        "description": "",
+        "organization": null,
+        "credential_type": "Machine-1",
+        "inputs": "hidden",
+        "id": 1
+      },
+      "object1": "credential",
+      "object2": "",
+      "object_association": "",
+      "action_node": "awx_1",
+      "object_type": ""
+    },
+    {
+      "id": 5,
+      "type": "activity_stream",
+      "url": "/api/v2/activity_stream/5/",
+      "related": {
+        "actor": "/api/v2/users/1/",
+        "user": ["/api/v2/users/1/"],
+        "credential": ["/api/v2/credentials/1/"],
+        "role": ["/api/v2/roles/20/"]
+      },
+      "summary_fields": {
+        "user": [
+          {
+            "id": 1,
+            "username": "admin",
+            "first_name": "",
+            "last_name": ""
+          }
+        ],
+        "credential": [
+          {
+            "id": 1,
+            "name": "Demo Credential",
+            "description": "",
+            "kind": "ssh",
+            "cloud": false,
+            "kubernetes": false,
+            "credential_type_id": 1
+          }
+        ],
+        "role": [
+          {
+            "id": 20,
+            "role_field": "admin_role"
+          }
+        ],
+        "actor": {
+          "id": 1,
+          "username": "admin",
+          "first_name": "",
+          "last_name": ""
+        }
+      },
+      "timestamp": "2024-01-02T20:57:53.460784Z",
+      "operation": "associate",
+      "changes": {
+        "object1": "credential",
+        "object1_pk": 1,
+        "object2": "user",
+        "object2_pk": 1,
+        "action": "associate",
+        "relationship": "awx.main.models.rbac.Role_members"
+      },
+      "object1": "credential",
+      "object2": "user",
+      "object_association": "role",
+      "action_node": "awx_1",
+      "object_type": "credential"
+    },
+    {
+      "id": 6,
+      "type": "activity_stream",
+      "url": "/api/v2/activity_stream/6/",
+      "related": {
+        "actor": "/api/v2/users/1/",
+        "credential": ["/api/v2/credentials/2/"]
+      },
+      "summary_fields": {
+        "credential": [
+          {
+            "id": 2,
+            "name": "Ansible Galaxy",
+            "description": "",
+            "kind": "galaxy_api_token",
+            "cloud": false,
+            "kubernetes": false,
+            "credential_type_id": 18
+          }
+        ],
+        "actor": {
+          "id": 1,
+          "username": "admin",
+          "first_name": "",
+          "last_name": ""
+        }
+      },
+      "timestamp": "2024-01-02T20:57:53.551058Z",
+      "operation": "create",
+      "changes": {
+        "name": "Ansible Galaxy",
+        "description": "",
+        "organization": null,
+        "credential_type": "Ansible Galaxy/Automation Hub API Token-18",
+        "inputs": "hidden",
+        "id": 2
+      },
+      "object1": "credential",
+      "object2": "",
+      "object_association": "",
+      "action_node": "awx_1",
+      "object_type": ""
+    },
+    {
+      "id": 7,
+      "type": "activity_stream",
+      "url": "/api/v2/activity_stream/7/",
+      "related": {
+        "actor": "/api/v2/users/1/",
+        "organization": ["/api/v2/organizations/1/"],
+        "credential": ["/api/v2/credentials/2/"]
+      },
+      "summary_fields": {
+        "organization": [
+          {
+            "id": 1,
+            "name": "Default",
+            "description": ""
+          }
+        ],
+        "credential": [
+          {
+            "id": 2,
+            "name": "Ansible Galaxy",
+            "description": "",
+            "kind": "galaxy_api_token",
+            "cloud": false,
+            "kubernetes": false,
+            "credential_type_id": 18
+          }
+        ],
+        "actor": {
+          "id": 1,
+          "username": "admin",
+          "first_name": "",
+          "last_name": ""
+        }
+      },
+      "timestamp": "2024-01-02T20:57:53.585770Z",
+      "operation": "associate",
+      "changes": {
+        "object1": "organization",
+        "object1_pk": 1,
+        "object2": "credential",
+        "object2_pk": 2,
+        "action": "associate",
+        "relationship": "awx.main.models.organization.OrganizationGalaxyCredentialMembership"
+      },
+      "object1": "organization",
+      "object2": "credential",
+      "object_association": "",
+      "action_node": "awx_1",
+      "object_type": ""
+    },
+    {
+      "id": 8,
+      "type": "activity_stream",
+      "url": "/api/v2/activity_stream/8/",
+      "related": {
+        "actor": "/api/v2/users/1/",
+        "inventory": ["/api/v2/inventories/1/"]
+      },
+      "summary_fields": {
+        "inventory": [
+          {
+            "id": 1,
+            "name": "Demo Inventory",
+            "description": "desc",
+            "has_active_failures": false,
+            "total_hosts": 0,
+            "hosts_with_active_failures": 0,
+            "total_groups": 0,
+            "has_inventory_sources": false,
+            "total_inventory_sources": 0,
+            "inventory_sources_with_failures": 0,
+            "organization_id": 1,
+            "kind": ""
+          }
+        ],
+        "actor": {
+          "id": 1,
+          "username": "admin",
+          "first_name": "",
+          "last_name": ""
+        }
+      },
+      "timestamp": "2024-01-02T20:57:53.705118Z",
+      "operation": "create",
+      "changes": {
+        "name": "Demo Inventory",
+        "description": "",
+        "organization": "Default-1",
+        "kind": "",
+        "host_filter": null,
+        "variables": "",
+        "prevent_instance_group_fallback": false,
+        "id": 1
+      },
+      "object1": "inventory",
+      "object2": "",
+      "object_association": "",
+      "action_node": "awx_1",
+      "object_type": ""
+    },
+    {
+      "id": 9,
+      "type": "activity_stream",
+      "url": "/api/v2/activity_stream/9/",
+      "related": {
+        "actor": "/api/v2/users/1/",
+        "host": ["/api/v2/hosts/1/"]
+      },
+      "summary_fields": {
+        "host": [
+          {
+            "id": 1,
+            "name": "localhost",
+            "description": ""
+          }
+        ],
+        "actor": {
+          "id": 1,
+          "username": "admin",
+          "first_name": "",
+          "last_name": ""
+        }
+      },
+      "timestamp": "2024-01-02T20:57:53.721132Z",
+      "operation": "create",
+      "changes": {
+        "name": "localhost",
+        "description": "",
+        "inventory": "Demo Inventory-1",
+        "enabled": true,
+        "instance_id": "",
+        "variables": "ansible_connection: local\nansible_python_interpreter: '{{ ansible_playbook_python }}'",
+        "id": 1
+      },
+      "object1": "host",
+      "object2": "",
+      "object_association": "",
+      "action_node": "awx_1",
+      "object_type": ""
+    },
+    {
+      "id": 10,
+      "type": "activity_stream",
+      "url": "/api/v2/activity_stream/10/",
+      "related": {
+        "actor": "/api/v2/users/1/",
+        "job_template": ["/api/v2/job_templates/7/"]
+      },
+      "summary_fields": {
+        "job_template": [
+          {
+            "id": 7,
+            "name": "Demo Job Template",
+            "description": ""
+          }
+        ],
+        "actor": {
+          "id": 1,
+          "username": "admin",
+          "first_name": "",
+          "last_name": ""
+        }
+      },
+      "timestamp": "2024-01-02T20:57:53.847367Z",
+      "operation": "create",
+      "changes": {
+        "name": "Demo Job Template",
+        "description": "",
+        "job_type": "run",
+        "inventory": "Demo Inventory-1",
+        "project": "Demo Project-6",
+        "playbook": "hello_world.yml",
+        "scm_branch": "",
+        "forks": 0,
+        "limit": "",
+        "verbosity": 0,
+        "extra_vars": "",
+        "job_tags": "",
+        "force_handlers": false,
+        "skip_tags": "",
+        "start_at_task": "",
+        "timeout": 0,
+        "use_fact_cache": false,
+        "execution_environment": null,
+        "host_config_key": "",
+        "ask_scm_branch_on_launch": false,
+        "ask_diff_mode_on_launch": false,
+        "ask_variables_on_launch": false,
+        "ask_limit_on_launch": false,
+        "ask_tags_on_launch": false,
+        "ask_skip_tags_on_launch": false,
+        "ask_job_type_on_launch": false,
+        "ask_verbosity_on_launch": false,
+        "ask_inventory_on_launch": false,
+        "ask_credential_on_launch": false,
+        "ask_execution_environment_on_launch": false,
+        "ask_labels_on_launch": false,
+        "ask_forks_on_launch": false,
+        "ask_job_slice_count_on_launch": false,
+        "ask_timeout_on_launch": false,
+        "ask_instance_groups_on_launch": false,
+        "survey_enabled": false,
+        "become_enabled": false,
+        "diff_mode": false,
+        "allow_simultaneous": false,
+        "job_slice_count": 1,
+        "webhook_service": "",
+        "webhook_credential": null,
+        "prevent_instance_group_fallback": false,
+        "survey_spec": "{}",
+        "id": 7
+      },
+      "object1": "job_template",
+      "object2": "",
+      "object_association": "",
+      "action_node": "awx_1",
+      "object_type": ""
+    }
+  ]
+}
