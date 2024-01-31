@@ -23,6 +23,7 @@ export function useSaveVisualizer() {
   const postWorkflowNode = usePostRequest<Partial<WorkflowNode>, WorkflowNode>();
   const patchWorkflowNode = usePatchRequest<Partial<WorkflowNode>, WorkflowNode>();
   const postWorkflowNodeApproval = usePostRequest<WorkflowApprovalNode, WorkflowApprovalNode>();
+  const patchWorkflowNodeApproval = usePatchRequest<WorkflowApprovalNode, WorkflowApprovalNode>();
   const postAssociateNode = usePostRequest<{ id: number }>();
   const postDisassociateNode = usePostRequest<{ id: number; disassociate: boolean }>();
 
@@ -36,8 +37,9 @@ export function useSaveVisualizer() {
   const disassociateFailureNodes: { sourceId: string; targetId: string }[] = [];
   const disassociateAlwaysNodes: { sourceId: string; targetId: string }[] = [];
   const newApprovalNodes: GraphNode[] = [];
+  const editedApprovalNodes: GraphNode[] = [];
   const newNodes: GraphNode[] = [];
-  const editNodes: GraphNode[] = [];
+  const editedNodes: GraphNode[] = [];
 
   function setCreatedNodeId(node: GraphNode, newId: string) {
     const nodeData = node.getData() as GraphNodeData;
@@ -56,27 +58,15 @@ export function useSaveVisualizer() {
   async function createApprovalNodes(approvalNodes: GraphNode[]) {
     const promises = approvalNodes.map(async (node) => {
       const nodeData = node.getData() as GraphNodeData;
-      const isNewNode = node.getId().includes('unsavedNode');
       const nodeIdentifier = toKeyedObject('identifier', nodeData.resource.identifier);
 
-      let workflowNode;
-      if (isNewNode) {
-        workflowNode = await postWorkflowNode(
-          awxAPI`/workflow_job_templates/${state.workflowTemplate.id.toString()}/workflow_nodes/`,
-          {
-            all_parents_must_converge: nodeData.resource.all_parents_must_converge,
-            ...nodeIdentifier,
-          }
-        );
-      } else {
-        workflowNode = await patchWorkflowNode(
-          awxAPI`/workflow_job_template_nodes/${node.getId()}/`,
-          {
-            all_parents_must_converge: nodeData.resource.all_parents_must_converge,
-            ...nodeIdentifier,
-          }
-        );
-      }
+      const workflowNode = await postWorkflowNode(
+        awxAPI`/workflow_job_templates/${state.workflowTemplate.id.toString()}/workflow_nodes/`,
+        {
+          all_parents_must_converge: nodeData.resource.all_parents_must_converge,
+          ...nodeIdentifier,
+        }
+      );
       if (workflowNode && workflowNode.id) {
         await postWorkflowNodeApproval(
           awxAPI`/workflow_job_template_nodes/${workflowNode.id.toString()}/create_approval_template/`,
@@ -87,6 +77,33 @@ export function useSaveVisualizer() {
           }
         );
         setCreatedNodeId(node, workflowNode.id.toString());
+      }
+    });
+    await Promise.all(promises);
+  }
+
+  async function updateApprovalNodes(approvalNodes: GraphNode[]) {
+    const promises = approvalNodes.map(async (node) => {
+      const nodeData = node.getData() as GraphNodeData;
+      const nodeIdentifier = toKeyedObject('identifier', nodeData.resource.identifier);
+      const approvalNodeId = nodeData.resource.summary_fields.unified_job_template.id;
+
+      const workflowNode = await patchWorkflowNode(
+        awxAPI`/workflow_job_template_nodes/${node.getId()}/`,
+        {
+          all_parents_must_converge: nodeData.resource.all_parents_must_converge,
+          ...nodeIdentifier,
+        }
+      );
+      if (workflowNode && workflowNode.id) {
+        await patchWorkflowNodeApproval(
+          awxAPI`/workflow_approval_templates/${approvalNodeId.toString()}/`,
+          {
+            name: nodeData.resource.summary_fields.unified_job_template.name,
+            description: nodeData.resource.summary_fields.unified_job_template.description || '',
+            timeout: nodeData.resource.summary_fields.unified_job_template.timeout || 0,
+          }
+        );
       }
     });
     await Promise.all(promises);
@@ -120,8 +137,8 @@ export function useSaveVisualizer() {
     await Promise.all(promises);
   }
 
-  async function editExistingNodes(editNodes: GraphNode[]) {
-    const promises = editNodes.map(async (node) => {
+  async function updateExistingNodes(editedNodes: GraphNode[]) {
+    const promises = editedNodes.map(async (node) => {
       const nodeData = node.getData() as GraphNodeData;
       const nodeIdentifier = toKeyedObject('identifier', nodeData.resource.identifier);
       const extra_data =
@@ -163,9 +180,9 @@ export function useSaveVisualizer() {
       nodeData.resource.summary_fields.unified_job_template.unified_job_type ===
       UnifiedJobType.workflow_approval
     ) {
-      newApprovalNodes.push(node);
+      editedApprovalNodes.push(node);
     } else {
-      editNodes.push(node);
+      editedNodes.push(node);
     }
   }
 
@@ -265,7 +282,8 @@ export function useSaveVisualizer() {
     try {
       await createApprovalNodes(newApprovalNodes);
       await createNewNodes(newNodes);
-      await editExistingNodes(editNodes);
+      await updateApprovalNodes(editedApprovalNodes);
+      await updateExistingNodes(editedNodes);
     } catch {
       //TODO: handle error here
     }
