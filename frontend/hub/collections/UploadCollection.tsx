@@ -97,12 +97,12 @@ export function UploadCollectionByFile() {
         pulpAPI`/distributions/ansible/ansible/?repository=${data.repository || ''}`
       ).catch(() => {
         const message = t('Error loading distribution for selected repository');
-        throw new RequestError({ message, json: { file: message } });
+        throw new RequestError({ message, json: { repository: message } });
       });
 
       if (list?.results.length === 0) {
         const message = t('Cannot find distribution for selected repository');
-        throw new RequestError({ message, json: { file: message } });
+        throw new RequestError({ message, json: { repository: message } });
       }
 
       const base_path = list?.results[0]?.base_path;
