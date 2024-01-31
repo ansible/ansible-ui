@@ -46,6 +46,11 @@ import {
   EditExecutionEnvironment,
 } from '../execution-environments/ExecutionEnvironmentForm';
 import { ExecutionEnvironments } from '../execution-environments/ExecutionEnvironments';
+import { ExecutionEnvironmentDetails } from '../execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentDetails';
+import { ExecutionEnvironmentActivity } from '../execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentActivity';
+import { ExecutionEnvironmentImages } from '../execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentImages';
+import { ExecutionEnvironmentAccess } from '../execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentAccess';
+import { ExecutionEnvironmentPage } from '../execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentPage';
 import { CreateHubNamespace, EditHubNamespace } from '../namespaces/HubNamespaceForm';
 import { HubNamespaceCLI } from '../namespaces/HubNamespacePage/HubNamespaceCLI';
 import { HubNamespaceCollections } from '../namespaces/HubNamespacePage/HubNamespaceCollections';
@@ -54,6 +59,7 @@ import { HubNamespacePage } from '../namespaces/HubNamespacePage/HubNamespacePag
 import { Namespaces } from '../namespaces/HubNamespaces';
 import { HubOverview } from '../overview/HubOverview';
 import { HubRoute } from './HubRoutes';
+import { MyImports } from '../my-imports/MyImports';
 
 export function useHubNavigation() {
   const { t } = useTranslation();
@@ -192,6 +198,37 @@ export function useHubNavigation() {
           id: HubRoute.EditExecutionEnvironment,
           path: ':id/edit',
           element: <EditExecutionEnvironment />,
+        },
+        {
+          path: ':id/',
+          id: HubRoute.ExecutionEnvironmentPage,
+          element: <ExecutionEnvironmentPage />,
+          children: [
+            {
+              id: HubRoute.ExecutionEnvironmentDetails,
+              path: 'details',
+              element: <ExecutionEnvironmentDetails />,
+            },
+            {
+              id: HubRoute.ExecutionEnvironmentActivity,
+              path: 'activity',
+              element: <ExecutionEnvironmentActivity />,
+            },
+            {
+              id: HubRoute.ExecutionEnvironmentImages,
+              path: 'images',
+              element: <ExecutionEnvironmentImages />,
+            },
+            {
+              id: HubRoute.ExecutionEnvironmentAccess,
+              path: 'access',
+              element: <ExecutionEnvironmentAccess />,
+            },
+            {
+              path: '',
+              element: <Navigate to="details" />,
+            },
+          ],
         },
         {
           path: '',
@@ -435,6 +472,13 @@ export function useHubNavigation() {
           element: <Token />,
         },
       ],
+    },
+    {
+      id: HubRoute.MyImports,
+      label: t('My imports'),
+      path: 'my-imports',
+      element: <MyImports />,
+      hidden: true,
     },
     {
       path: '',
