@@ -50,7 +50,7 @@ function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
   const [tagsSet, setTagsSet] = useState<boolean>(false);
 
   const registry = useGet<HubItemsResponse<Registry>>(
-    hubAPI`/_ui/v1/execution-environments/registries/?page_size=${page_size}`
+    hubAPI`/_ui/v1/execution-environments/registries/?limit=${page_size}`
   );
 
   const eeUrl =
@@ -69,7 +69,13 @@ function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
 
   const singleRegistry = useGet<Registry>(singleRegistryUrl);
 
-  const isLoading = (!executionEnvironment.data || !singleRegistry.data) && mode === 'edit';
+  const isNew = !executionEnvironment.data?.pulp?.repository;
+  const isRemote = executionEnvironment.data?.pulp?.repository
+    ? !!executionEnvironment.data?.pulp?.repository?.remote
+    : true;
+
+  const isLoading =
+    (!executionEnvironment.data || (isRemote && !singleRegistry.data)) && mode === 'edit';
 
   if (mode === 'edit' && !tagsSet && isLoading === false) {
     setTagsSet(true);
@@ -79,11 +85,6 @@ function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
 
   const selectRegistrySingle = useSelectRegistrySingle();
   const registrySelector = selectRegistrySingle.openBrowse;
-
-  const isNew = !executionEnvironment.data?.pulp?.repository;
-  const isRemote = executionEnvironment.data?.pulp?.repository
-    ? !!executionEnvironment.data?.pulp?.repository?.remote
-    : true;
 
   const query = useCallback(() => {
     return Promise.resolve({
@@ -129,7 +130,7 @@ function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
             pulpAPI`/distributions/container/container/${
               executionEnvironment.data?.pulp?.distribution?.id || ''
             }/`,
-            { description: formData.description }
+            { description: formData.description || null }
           )
         );
       }
