@@ -47,6 +47,15 @@ export function useCollectionColumns(_options?: { disableSort?: boolean; disable
         sort: 'name',
       },
       {
+        header: t('Provided by'),
+        type: 'text',
+        value: (collection) =>
+          t(`Provided by {{namespace}}`, { namespace: collection.collection_version?.namespace }),
+        card: 'subtitle',
+        list: 'subtitle',
+        table: 'hidden',
+      },
+      {
         header: t('Repository'),
         value: (collection) => collection.repository?.name,
         cell: (collection) => (
