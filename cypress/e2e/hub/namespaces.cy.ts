@@ -17,7 +17,7 @@ describe('Namespaces', () => {
     cy.navigateTo('hub', Namespaces.url);
     const namespaceName = `test_namespace_${randomString(5, undefined, { isLowercase: true })}`;
     cy.get('h1').should('contain', Namespaces.title);
-    cy.get('[data-cy="create-namespace"]').should('be.visible').click();
+    cy.get('[data-cy="add-namespace"]').should('be.visible').click();
     cy.url().should('include', Namespaces.urlCreate);
     cy.get('[data-cy="name"]').type(namespaceName);
     cy.get('[data-cy="company"]').type('test company');
@@ -31,7 +31,7 @@ describe('Namespaces', () => {
   it('should show the correct URL when clicking on the CLI configuration tab', () => {
     cy.navigateTo('hub', Namespaces.url);
     const namespaceName = `test_namespace_${randomString(5, undefined, { isLowercase: true })}`;
-    cy.get('[data-cy="create-namespace"]').should('be.visible').click();
+    cy.get('[data-cy="add-namespace"]').should('be.visible').click();
     cy.url().should('include', Namespaces.urlCreate);
     cy.get('[data-cy="name"]').type(namespaceName);
     cy.get('[data-cy="company"]').type('test company');
@@ -50,7 +50,7 @@ describe('Namespaces', () => {
   it('should show namespace details tab', () => {
     cy.navigateTo('hub', Namespaces.url);
     const namespaceName = `test_namespace_${randomString(5, undefined, { isLowercase: true })}`;
-    cy.get('[data-cy="create-namespace"]').should('be.visible').click();
+    cy.get('[data-cy="add-namespace"]').should('be.visible').click();
     cy.url().should('include', Namespaces.urlCreate);
     cy.get('[data-cy="name"]').type(namespaceName);
     cy.get('[data-cy="description"]').type('test description');
@@ -70,7 +70,7 @@ describe('Namespaces', () => {
     cy.clickButton(/^Delete namespaces$/);
   });
 
-  it('should show namespace details tab', () => {
+  it('should show collections tab', () => {
     cy.navigateTo('hub', Namespaces.url);
     const namespaceName = `test_namespace_${randomString(5, undefined, { isLowercase: true })}`;
     cy.get('[data-cy="create-namespace"]').should('be.visible').click();
