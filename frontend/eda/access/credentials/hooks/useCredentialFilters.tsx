@@ -9,7 +9,7 @@ export function useCredentialFilters() {
       {
         key: 'name',
         label: t('Name'),
-        type: ToolbarFilterType.Text,
+        type: ToolbarFilterType.MultiText,
         query: 'name',
         comparison: 'startsWith',
       },

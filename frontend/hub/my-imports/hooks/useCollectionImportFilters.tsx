@@ -9,7 +9,7 @@ export function useCollectionImportFilters() {
       {
         key: 'name',
         label: t('Name'),
-        type: ToolbarFilterType.Text,
+        type: ToolbarFilterType.SingleText,
         query: 'name',
         comparison: 'contains',
         placeholder: t('Filter by name'),
@@ -30,7 +30,7 @@ export function useCollectionImportFilters() {
       {
         key: 'version',
         label: t('Version'),
-        type: ToolbarFilterType.Text,
+        type: ToolbarFilterType.SingleText,
         query: 'version',
         comparison: 'equals',
         placeholder: t('Filter by version'),
