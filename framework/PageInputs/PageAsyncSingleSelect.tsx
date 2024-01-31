@@ -174,6 +174,7 @@ export function PageAsyncSingleSelect<
         value={props.value}
         onSelect={props.onSelect}
         footer={footer}
+        displaySelectedLabel={props.displaySelectedLabel}
       />
     );
   }

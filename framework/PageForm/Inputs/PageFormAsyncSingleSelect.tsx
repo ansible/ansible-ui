@@ -14,6 +14,7 @@ import { useID } from '../../hooks/useID';
 import { useFrameworkTranslations } from '../../useFrameworkTranslations';
 import { capitalizeFirstLetter } from '../../utils/strings';
 import { PageFormGroup, PageFormGroupProps } from './PageFormGroup';
+import { PathValue } from 'react-hook-form';
 
 export type PageFormAsyncSingleSelectProps<
   TFieldValues extends FieldValues = FieldValues,
@@ -44,7 +45,15 @@ export type PageFormAsyncSingleSelectProps<
 export function PageFormAsyncSingleSelect<
   TFieldValues extends FieldValues = FieldValues,
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
->(props: PageFormAsyncSingleSelectProps<TFieldValues, TFieldName>) {
+>(
+  props: PageFormAsyncSingleSelectProps<TFieldValues, TFieldName> & {
+    getLabel?: (value: PathValue<TFieldValues, TFieldName>) => string;
+    renderFooter?: (
+      value: PathValue<TFieldValues, TFieldName>,
+      onChange: (value: PathValue<TFieldValues, TFieldName>) => void
+    ) => React.ReactNode;
+  }
+) {
   const id = useID(props);
 
   const { control, formState } = useFormContext<TFieldValues>();
@@ -85,7 +94,8 @@ export function PageFormAsyncSingleSelect<
               value={value}
               onSelect={onChange}
               isDisabled={props.isDisabled || props.isReadOnly || isSubmitting}
-              footer={props.footer}
+              footer={props.renderFooter ? props.renderFooter(value, onChange) : props.footer}
+              displaySelectedLabel={props.getLabel ? props.getLabel(value) : undefined}
             />
           </PageFormGroup>
         );

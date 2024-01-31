@@ -13,6 +13,7 @@ import {
 } from '@patternfly/react-core';
 import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Scrollable } from '../components/Scrollable';
 import { getID } from '../hooks/useID';
 import { PageSelectOption } from './PageSelectOption';
 
@@ -28,6 +29,9 @@ export interface PageSingleSelectProps<ValueT> {
 
   /** The selected value. */
   value: ValueT;
+
+  /** The selected label - if value is not found in options, it will display this label*/
+  displaySelectedLabel?: string;
 
   /** The function to set the selected value. */
   onSelect: (value: ValueT) => void;
@@ -98,6 +102,8 @@ export function PageSingleSelect<
     [options, value]
   );
 
+  const label = selectedOption ? selectedOption.label : props.displaySelectedLabel;
+
   const Toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
     <MenuToggle
       id={id}
@@ -127,7 +133,7 @@ export function PageSingleSelect<
       isDisabled={props.isDisabled}
       isFullWidth
     >
-      {selectedOption ? selectedOption.label : <span style={{ opacity: 0.7 }}>{placeholder}</span>}
+      {label ? label : <span style={{ opacity: 0.7 }}>{placeholder}</span>}
     </MenuToggle>
   );
 
@@ -228,7 +234,7 @@ export function PageSingleSelect<
           {t('No results found')}
         </SelectOption>
       ) : (
-        <>
+        <Scrollable style={{ maxHeight: '40vh' }}>
           {groups ? (
             <>
               {Object.keys(groups).map((groupName) => (
@@ -240,7 +246,7 @@ export function PageSingleSelect<
           ) : (
             <PageSingleSelectList searchRef={searchRef} options={visibleOptions} />
           )}
-        </>
+        </Scrollable>
       )}
       {props.footer && <MenuFooter>{props.footer}</MenuFooter>}
     </Select>
@@ -253,7 +259,6 @@ export function PageSingleSelectList(props: {
 }) {
   return (
     <SelectList
-      style={{ maxHeight: '40vh', overflowY: 'auto' }}
       onKeyDown={(event) => {
         switch (event.key) {
           case 'Tab':

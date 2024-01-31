@@ -1,11 +1,12 @@
 import useResizeObserver from '@react-hook/resize-observer';
-import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
+import { CSSProperties, ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import './Scrollable.css';
 
 export function Scrollable(props: {
   children?: ReactNode;
   borderTop?: boolean;
   borderBottom?: boolean;
+  style?: CSSProperties;
 }) {
   const divEl = useRef<HTMLDivElement>(null);
   const [topShadow, setTopShadow] = useState(false);
@@ -26,7 +27,7 @@ export function Scrollable(props: {
   const innerClassName = innerClassNames.join(' ');
 
   return (
-    <div className="scrollable-outer">
+    <div className="scrollable-outer" style={props.style}>
       <div className={innerClassName} ref={divEl} onScroll={update}>
         {props.children}
       </div>

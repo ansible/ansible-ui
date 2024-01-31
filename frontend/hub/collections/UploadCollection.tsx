@@ -17,23 +17,15 @@ import { hubPostRequestFile } from '../common/api/request';
 import { HubItemsResponse, PulpItemsResponse } from '../common/useHubView';
 import { HubRoute } from '../main/HubRoutes';
 import { HubNamespace } from '../namespaces/HubNamespace';
+import { useSelectRepositorySingle } from '../administration/repositories/hooks/useRepositorySelector';
+import { Button, PageSection } from '@patternfly/react-core';
+import { Repository } from '../administration/repositories/Repository';
+import { AnsibleAnsibleRepositoryResponse } from '../interfaces/generated/AnsibleAnsibleRepositoryResponse';
+import { useGet } from '../../common/crud/useGet';
 
 interface UploadData {
   file: File;
   repository: string;
-}
-
-export interface Repository {
-  name: string;
-  description?: string;
-  pulp_id: string;
-  pulp_href: string;
-  pulp_last_updated: string;
-  content_count: number;
-  gpgkey: string | null;
-  pulp_labels: {
-    pipeline: string;
-  };
 }
 
 export interface Distribution {
@@ -66,6 +58,11 @@ export function UploadCollectionByFile() {
   const pageNavigate = usePageNavigate();
   const onCancel = () => navigate(-1);
   const distroGetRequest = useGetRequest<PulpItemsResponse<Distribution>>();
+  const selectRepositorySingle = useSelectRepositorySingle();
+
+  const stagingRepo = useGet<PulpItemsResponse<Repository>>(
+    pulpAPI`/repositories/ansible/ansible/?name=staging`
+  );
 
   const onSubmit = useCallback(
     async (data: UploadData) => {
@@ -75,14 +72,14 @@ export function UploadCollectionByFile() {
           `Namespace "{{namespaceName}}" does not match namespace "{{namespaceParams}}"`,
           { namespaceName, namespaceParams }
         );
-        throw new RequestError({ message, statusCode: 404, json: { file: message } });
+        throw new RequestError({ message, json: { file: message } });
       }
 
       const namespace = await requestGet<HubItemsResponse<HubNamespace>>(
         hubAPI`/_ui/v1/namespaces/?limit=1&name=${namespaceName}`
       ).catch(() => {
         const message = t('Error loading namespace {{namespaceName}}', { namespaceName });
-        throw new RequestError({ message, statusCode: 404, json: { file: message } });
+        throw new RequestError({ message, json: { file: message } });
       });
 
       if (namespace.data.length === 0) {
@@ -90,19 +87,33 @@ export function UploadCollectionByFile() {
           'Cannot find namespace {{namespaceName}}. Create namespace before uploading.',
           { namespaceName }
         );
-        throw new RequestError({ message, statusCode: 404, json: { file: message } });
+        throw new RequestError({ message, json: { file: message } });
+      }
+
+      const repositoryGet = await requestGet<PulpItemsResponse<Repository>>(
+        pulpAPI`/repositories/ansible/ansible/?name=${data.repository}`
+      ).catch(() => {
+        const message = t('Error loading repository');
+        throw new RequestError({ message, json: { repository: message } });
+      });
+
+      if (repositoryGet?.results?.length === 0) {
+        const message = t('Cannot find repository');
+        throw new RequestError({ message, json: { repository: message } });
       }
 
       const list = await distroGetRequest(
-        pulpAPI`/distributions/ansible/ansible/?repository=${data.repository || ''}`
+        pulpAPI`/distributions/ansible/ansible/?repository=${
+          repositoryGet.results[0].pulp_href || ''
+        }`
       ).catch(() => {
         const message = t('Error loading distribution for selected repository');
-        throw new RequestError({ message, statusCode: 404, json: { file: message } });
+        throw new RequestError({ message, json: { repository: message } });
       });
 
       if (list?.results.length === 0) {
         const message = t('Cannot find distribution for selected repository');
-        throw new RequestError({ message, statusCode: 404, json: { file: message } });
+        throw new RequestError({ message, json: { repository: message } });
       }
 
       const base_path = list?.results[0]?.base_path;
@@ -132,7 +143,7 @@ export function UploadCollectionByFile() {
         options:
           response.results?.map((repository) => ({
             label: repository.name,
-            value: repository.pulp_href,
+            value: repository.name,
             description: repository.description,
             group:
               repository.pulp_labels.pipeline === 'staging'
@@ -144,8 +155,25 @@ export function UploadCollectionByFile() {
     [t]
   );
 
+  if (!stagingRepo.data && !repositories.error) {
+    return <LoadingPage />;
+  }
+
+  if (stagingRepo.data && stagingRepo.data.results?.length !== 1) {
+    return (
+      <HubError
+        error={{ name: '', message: t(`Can not find repository staging`) }}
+        handleRefresh={repositories.refresh}
+      />
+    );
+  }
+
   if (!repositories.data && !repositories.error) {
     return <LoadingPage />;
+  }
+
+  if (stagingRepo.error) {
+    return <HubError error={stagingRepo.error} handleRefresh={stagingRepo.refresh} />;
   }
 
   if (repositories.error) {
@@ -153,22 +181,48 @@ export function UploadCollectionByFile() {
   }
 
   return (
-    <HubPageForm<UploadData>
-      submitText={t('Upload')}
-      onCancel={onCancel}
-      onSubmit={onSubmit}
-      singleColumn={true}
-    >
-      <PageFormFileUpload label={t('Collection file')} name="file" isRequired />
-      <PageFormAsyncSingleSelect<UploadData>
-        label={t('Repository')}
-        name="repository"
-        placeholder={t('Select repository')}
-        queryOptions={queryRepositories}
-        queryPlaceholder={t('Loading repositories...')}
-        queryErrorText={t('Error loading repositories')}
-        isRequired
-      />
-    </HubPageForm>
+    <>
+      <PageSection>
+        {t(
+          `Please note that these repositories are not filtered by permissions. Upload may fail without the right permissions.`
+        )}
+      </PageSection>
+      <HubPageForm<UploadData>
+        submitText={t('Upload')}
+        onCancel={onCancel}
+        onSubmit={onSubmit}
+        singleColumn={true}
+        defaultValue={{ repository: 'staging' }}
+      >
+        <PageFormFileUpload label={t('Collection file')} name="file" isRequired />
+        <PageFormAsyncSingleSelect<UploadData>
+          label={t('Repository')}
+          name="repository"
+          placeholder={t('Select repository (staging is default)')}
+          queryOptions={queryRepositories}
+          queryPlaceholder={t('Loading repositories...')}
+          queryErrorText={t('Error loading repositories')}
+          isRequired
+          getLabel={(value) => value as string}
+          renderFooter={(value, onChange) => {
+            return (
+              <Button
+                variant="link"
+                onClick={() => {
+                  selectRepositorySingle.openBrowse(
+                    (selection) => {
+                      onChange(selection.name);
+                    },
+                    { name: value } as AnsibleAnsibleRepositoryResponse
+                  );
+                }}
+              >
+                {t`Browse`}
+              </Button>
+            );
+          }}
+        />
+      </HubPageForm>
+    </>
   );
 }

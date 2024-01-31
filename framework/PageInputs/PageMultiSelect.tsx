@@ -16,6 +16,7 @@ import {
 import { TimesIcon } from '@patternfly/react-icons';
 import { ReactNode, Ref, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Scrollable } from '../components/Scrollable';
 import { getID } from '../hooks/useID';
 import { PageSelectOption } from './PageSelectOption';
 
@@ -300,7 +301,7 @@ export function PageMultiSelect<
           {t('No results found')}
         </SelectOption>
       ) : (
-        <>
+        <Scrollable style={{ maxHeight: '40vh' }}>
           {groups ? (
             <>
               {Object.keys(groups).map((groupName) => (
@@ -309,7 +310,7 @@ export function PageMultiSelect<
                     searchRef={searchRef}
                     options={visibleOptions}
                     selectedOptions={selectedOptions}
-                  />{' '}
+                  />
                 </SelectGroup>
               ))}
             </>
@@ -320,7 +321,7 @@ export function PageMultiSelect<
               selectedOptions={selectedOptions}
             />
           )}
-        </>
+        </Scrollable>
       )}
       {props.footer && <MenuFooter>{props.footer}</MenuFooter>}
     </Select>
@@ -334,7 +335,6 @@ function PageMultiSelectList(props: {
 }) {
   return (
     <SelectList
-      style={{ maxHeight: '40vh', overflowY: 'auto' }}
       onKeyDown={(event) => {
         switch (event.key) {
           case 'Tab':
