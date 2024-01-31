@@ -13,6 +13,7 @@ import {
 } from '@patternfly/react-core';
 import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Scrollable } from '../components/Scrollable';
 import { getID } from '../hooks/useID';
 import { PageSelectOption } from './PageSelectOption';
 
@@ -228,7 +229,7 @@ export function PageSingleSelect<
           {t('No results found')}
         </SelectOption>
       ) : (
-        <>
+        <Scrollable style={{ maxHeight: '40vh' }}>
           {groups ? (
             <>
               {Object.keys(groups).map((groupName) => (
@@ -240,7 +241,7 @@ export function PageSingleSelect<
           ) : (
             <PageSingleSelectList searchRef={searchRef} options={visibleOptions} />
           )}
-        </>
+        </Scrollable>
       )}
       {props.footer && <MenuFooter>{props.footer}</MenuFooter>}
     </Select>
@@ -253,7 +254,6 @@ export function PageSingleSelectList(props: {
 }) {
   return (
     <SelectList
-      style={{ maxHeight: '40vh', overflowY: 'auto' }}
       onKeyDown={(event) => {
         switch (event.key) {
           case 'Tab':
