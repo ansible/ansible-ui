@@ -96,3 +96,8 @@ export const Tasks = {
   url: 'tasks',
   noResults: 'No results found',
 };
+
+export const MyImports = {
+  title: 'My imports',
+  url: 'my-imports',
+};
