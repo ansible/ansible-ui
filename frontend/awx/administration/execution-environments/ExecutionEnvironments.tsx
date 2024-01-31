@@ -180,7 +180,7 @@ export function useExecutionEnvironmentsColumns(options?: {
   const organizationColumn = useOrganizationNameColumn(
     AwxRoute.OrganizationDetails,
     options,
-    'Globally available'
+    t('Globally available')
   );
   const createdColumn = useCreatedColumn(options);
   const modifiedColumn = useModifiedColumn(options);
