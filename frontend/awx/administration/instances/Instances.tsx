@@ -9,6 +9,7 @@ import { useInstanceToolbarActions } from './hooks/useInstanceToolbarActions';
 import { useInstancesColumns } from './hooks/useInstancesColumns';
 import { useInstancesFilters } from './hooks/useInstancesFilter';
 import { useHostnameToolbarFilter } from '../../common/awx-toolbar-filters';
+import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
 
 export function Instances() {
   const { t } = useTranslation();
@@ -36,6 +37,7 @@ export function Instances() {
         description={t(
           'Ansible node instances dedicated for a particular purpose indicated by node type.'
         )}
+        headerActions={<ActivityStreamIcon type={'instance'} />}
       />
       <PageTable<Instance>
         id="awx-instances-table"
