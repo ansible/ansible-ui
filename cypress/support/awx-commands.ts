@@ -357,11 +357,18 @@ Cypress.Commands.add('clickTableRow', (name: string | RegExp, filter?: boolean) 
   });
 });
 
-Cypress.Commands.add('getTableRowByText', (name: string | RegExp, filter?: boolean) => {
-  if (filter !== false && typeof name === 'string') {
-    cy.filterTableByText(name);
+Cypress.Commands.add(
+  'getTableRowByText',
+  (name: string | RegExp, filter?: boolean, variant?: 'MultiText' | 'SingleText') => {
+    if (filter !== false && typeof name === 'string') {
+      cy.filterTableByText(name, variant ?? 'MultiText');
+    }
+    cy.contains('tr', name);
   }
-  cy.contains('tr', name);
+);
+
+Cypress.Commands.add('getTableRowBySingleText', (name: string | RegExp, filter?: boolean) => {
+  cy.getTableRowByText(name, filter, 'SingleText');
 });
 
 Cypress.Commands.add('getListCardByText', (name: string | RegExp, filter?: boolean) => {
