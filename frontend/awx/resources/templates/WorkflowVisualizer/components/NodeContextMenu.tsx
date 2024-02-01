@@ -28,7 +28,9 @@ export function useNodeMenuItems(element: Node<NodeModel, GraphNodeData>): MenuI
   const { setSidebarMode } = useViewOptions();
   const [_, setSelectedIds] = useVisualizationState('selectedIds', selectedIds);
   const { removeNodes } = useViewOptions();
+  const [__, setSourceNode] = useVisualizationState('sourceNode');
   const id = element.getId();
+
   return [
     {
       key: 'edit-node',
@@ -45,7 +47,10 @@ export function useNodeMenuItems(element: Node<NodeModel, GraphNodeData>): MenuI
       key: 'add-node-and-link',
       icon: <PlusCircleIcon />,
       label: t('Add node and link'),
-      onClick: () => alert(`Selected: Add Node and Link`),
+      onClick: () => {
+        setSidebarMode('add');
+        setSourceNode(element);
+      },
     },
     {
       key: 'separator',
