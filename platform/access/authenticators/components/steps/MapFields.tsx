@@ -75,20 +75,20 @@ export function MapFields(props: {
       </HeadingRow>
       <input
         type="hidden"
-        {...register(`mappings[${index}].map_type`, { value: map.map_type })}
+        {...register(`mappings.${index}..map_type`, { value: map.map_type })}
         defaultValue={map.map_type}
       />
       <FieldContainer>
         <PageFormGrid>
           <PageFormTextInput
             id={`mappings-${index}-name`}
-            name={`mappings[${index}].name`}
+            name={`mappings.${index}.name`}
             label={t('Name')}
             isRequired
           />
           <PageFormSelect
             id={`mappings-${index}-trigger`}
-            name={`mappings[${index}].trigger`}
+            name={`mappings.${index}.trigger`}
             label={t('Trigger')}
             options={[
               {
@@ -111,14 +111,14 @@ export function MapFields(props: {
             placeholderText={t('Select trigger')}
             isRequired
           />
-          <Checkbox name={`mappings[${index}.revoke]`} label={t('Revoke')} />
+          <Checkbox name={`mappings.${index}.revoke`} label={t('Revoke')} />
           <PageFormHidden
-            watch={`mappings[${index}].trigger`}
+            watch={`mappings.${index}.trigger`}
             hidden={(value) => value !== 'groups'}
           >
             <PageFormSelect
               id={`mappings-${index}-groups-conditional`}
-              name={`mappings[${index}].conditional`}
+              name={`mappings.${index}.conditional`}
               label={t('Conditional')}
               options={[
                 { value: 'or', label: t('or') },
@@ -128,17 +128,17 @@ export function MapFields(props: {
             />
             <PageFormTextInput
               id={`mappings-${index}-groups-value`}
-              name={`mappings[${index}].groups_value`}
+              name={`mappings.${index}.groups_value`}
               label={t('Groups')}
             />
           </PageFormHidden>
           <PageFormHidden
-            watch={`mappings[${index}].trigger`}
+            watch={`mappings.${index}.trigger`}
             hidden={(value) => value !== 'attributes'}
           >
             <PageFormSelect
               id={`mappings-${index}-attributes-conditional`}
-              name={`mappings[${index}].conditional`}
+              name={`mappings.${index}.conditional`}
               label={t('Conditional')}
               options={[
                 { value: 'or', label: t('or') },
@@ -147,12 +147,12 @@ export function MapFields(props: {
             />
             <PageFormTextInput
               id={`mappings-${index}-attributes-criteria`}
-              name={`mappings[${index}].criteria`}
+              name={`mappings.${index}.criteria`}
               label={t('Criteria')}
             />
             <PageFormSelect
               id={`mappings-${index}-attributes-criteria-conditional`}
-              name={`mappings[${index}].criteria_conditional`}
+              name={`mappings.${index}.criteria_conditional`}
               label=""
               options={[
                 { value: 'contains', label: t('contains') },
@@ -165,22 +165,19 @@ export function MapFields(props: {
             />
             <PageFormTextInput
               id={`mappings-${index}-attributes-value`}
-              name={`mappings[${index}].criteria_value`}
+              name={`mappings.${index}.criteria_value`}
               label=""
             />
           </PageFormHidden>
-          <PageFormHidden
-            watch={`mappings[${index}].map_type`}
-            hidden={(value) => value !== 'team'}
-          >
-            <PageFormPlatformTeamSelect name={`mappings[${index}].team`} isRequired />
+          <PageFormHidden watch={`mappings.${index}.map_type`} hidden={(value) => value !== 'team'}>
+            <PageFormPlatformTeamSelect name={`mappings.${index}.team`} isRequired />
           </PageFormHidden>
           <PageFormHidden
-            watch={`mappings[${index}].map_type`}
+            watch={`mappings.${index}..map_type`}
             hidden={(value: string) => !['team', 'organization'].includes(value)}
           >
             <PageFormPlatformOrganizationSelect
-              name={`mappings[${index}].organization`}
+              name={`mappings.${index}.organization`}
               isRequired
             />
           </PageFormHidden>
