@@ -172,7 +172,7 @@ export function UploadCollectionByFile() {
 
   async function submitData(data: UploadData) {
     const list = await distroGetRequest(
-      pulpAPI`/distributions/ansible/ansible/?repository=${selectedRepo?.pulp_href || ''}`
+      pulpAPI`/distributions/ansible/ansible/?repository=${selectedRepo?.pulp_href}`
     );
     const base_path = list?.results[0]?.base_path;
 
@@ -276,7 +276,7 @@ export function useRepoFilters() {
       {
         key: 'name',
         label: t('Name'),
-        type: ToolbarFilterType.Text,
+        type: ToolbarFilterType.MultiText,
         query: 'name__icontains',
         comparison: 'startsWith',
       },

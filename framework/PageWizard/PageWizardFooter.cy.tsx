@@ -9,13 +9,15 @@ describe('PageWizardFooter', () => {
 
   const wizardContext = {
     activeStep: step1,
-    steps: [step1, step2, step3],
+    allSteps: [step1, step2, step3],
+    visibleSteps: [step1, step2, step3],
     isToggleExpanded: false,
     setActiveStep: () => {},
     setStepData: () => {},
     setStepError: () => {},
     setToggleExpanded: () => {},
     setWizardData: () => {},
+    setVisibleSteps: () => {},
     stepData: {},
     stepError: {},
     wizardData: {},

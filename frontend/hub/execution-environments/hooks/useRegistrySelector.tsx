@@ -20,7 +20,7 @@ function useParameters(): AsyncSelectFilterBuilderProps<Registry> {
     toolbarFilters,
     useView: useHubView,
     viewParams: {
-      url: hubAPI`/_ui/v1/execution-environments/registries`,
+      url: hubAPI`/_ui/v1/execution-environments/registries/`,
       toolbarFilters,
       tableColumns,
       disableQueryString: true,
@@ -63,7 +63,7 @@ export function useRegistryFilters() {
       {
         key: 'keywords',
         label: t('Name'),
-        type: ToolbarFilterType.Text,
+        type: ToolbarFilterType.MultiText,
         query: 'name',
         comparison: 'equals',
       },

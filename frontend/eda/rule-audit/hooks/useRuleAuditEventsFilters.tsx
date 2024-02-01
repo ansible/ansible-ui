@@ -9,7 +9,7 @@ export function useRuleAuditEventsFilters() {
       {
         key: 'name',
         label: t('Name'),
-        type: ToolbarFilterType.Text,
+        type: ToolbarFilterType.MultiText,
         query: 'source_name',
         comparison: 'startsWith',
       },

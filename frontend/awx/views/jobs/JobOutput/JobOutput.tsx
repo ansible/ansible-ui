@@ -71,7 +71,7 @@ function useOutputFilters() {
       {
         key: 'stdout',
         label: t('Search output'),
-        type: ToolbarFilterType.Text,
+        type: ToolbarFilterType.MultiText,
         query: 'stdout__icontains',
         placeholder: t('Filter by keyword'),
         comparison: 'contains',

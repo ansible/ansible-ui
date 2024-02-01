@@ -29,7 +29,7 @@ function useParameters(
     toolbarFilters,
     useView: useHubView,
     viewParams: {
-      url: hubAPI`/v3/plugin/ansible/search/collection-versions`,
+      url: hubAPI`/v3/plugin/ansible/search/collection-versions/`,
       toolbarFilters,
       tableColumns,
       disableQueryString: true,
@@ -88,7 +88,7 @@ export function useCollectionVersionFilters() {
       {
         key: 'keywords',
         label: t('version'),
-        type: ToolbarFilterType.Text,
+        type: ToolbarFilterType.MultiText,
         query: 'version',
         comparison: 'equals',
       },

@@ -20,7 +20,7 @@ export function useUsersFilters() {
       {
         key: 'email',
         label: t('Email'),
-        type: ToolbarFilterType.Text,
+        type: ToolbarFilterType.MultiText,
         query: 'email__icontains',
         comparison: 'contains',
       },
