@@ -184,10 +184,18 @@ declare global {
       ): Chainable<void>;
 
       /** Filter the table using it's current filter by entering text. */
-      filterTableByText(text: string): Chainable<void>;
+      filterTableByText(text: string, variant?: 'SingleText' | 'MultiText'): Chainable<void>;
+
+      filterTableBySingleText(text: string): Chainable<void>;
 
       /** Filter the table using specified filter and text. */
       filterTableByTypeAndText(filterLabel: string | RegExp, text: string): Chainable<void>;
+
+      filterTableByTypeAndSingleText(
+        filterLabel: string | RegExp,
+        text: string,
+        variant?: 'MultiText' | 'SingleText'
+      ): Chainable<void>;
 
       clearAllFilters(): Chainable<void>;
 
@@ -197,7 +205,15 @@ declare global {
       clickToolbarKebabAction(dataCyLabel: string | RegExp): Chainable<void>;
 
       /** Get the table row containing the specified text. */
-      getTableRowByText(name: string | RegExp, filter?: boolean): Chainable<void>;
+      getTableRowByText(
+        name: string | RegExp,
+        filter?: boolean,
+        variant?: 'MultiText' | 'SingleText'
+      ): Chainable<void>;
+
+      getTableRowBySingleText(name: string | RegExp, filter?: boolean): Chainable<void>;
+
+      getTableRowBySingleText(name: string | RegExp, filter?: boolean): Chainable<void>;
 
       /** Get the list row containing the specified text. */
       getListRowByText(name: string | RegExp, filter?: boolean): Chainable<void>;
