@@ -13,7 +13,7 @@ import { useHostsGroupsActions } from './hooks/useHostsGroupsActions';
 import { useHostsGroupsColumns } from './hooks/useHostsGroupsColumns';
 import { InventoryGroup } from '../../../interfaces/InventoryGroup';
 import { useInventoryHostGroupsAddModal } from './InventoryHostGroupsModal';
-import { useAddInventoryGroups } from './hooks/useAddInventoryGroups';
+import { useAssociateGroupsToHost } from './hooks/useAssociateGroupsToHost';
 
 export function InventoryHostGroups() {
   const { t } = useTranslation();
@@ -29,7 +29,7 @@ export function InventoryHostGroups() {
   const rowActions = useHostsGroupsActions();
 
   const openInventoryHostsGroupsAddModal = useInventoryHostGroupsAddModal();
-  const addGroups = useAddInventoryGroups(view.unselectItemsAndRefresh);
+  const associateGroups = useAssociateGroupsToHost(view.unselectItemsAndRefresh);
 
   const groupOptions = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/groups`).data;
   const canCreateGroup = Boolean(
@@ -62,7 +62,9 @@ export function InventoryHostGroups() {
         emptyStateIcon={canCreateGroup ? undefined : CubesIcon}
         emptyStateButtonText={canCreateGroup ? t('Add group') : undefined}
         emptyStateButtonClick={
-          canCreateGroup ? () => openInventoryHostsGroupsAddModal({ onAdd: addGroups }) : undefined
+          canCreateGroup
+            ? () => openInventoryHostsGroupsAddModal({ onAdd: associateGroups })
+            : undefined
         }
         {...view}
       />
