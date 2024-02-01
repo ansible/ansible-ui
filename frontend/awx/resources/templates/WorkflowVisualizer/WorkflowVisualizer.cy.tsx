@@ -206,6 +206,26 @@ describe('WorkflowVisualizer', () => {
     cy.clickModalButton('Close');
     cy.get('[data-id="1510"] .pf-topology__node__action-icon').should('not.exist');
   });
+  it('Adds a new node linked to an existing node with success status', () => {
+    cy.intercept(
+      { method: 'GET', url: '/api/v2/job_templates/*' },
+      { fixture: 'jobTemplates.json' }
+    );
+    cy.mount(<WorkflowVisualizer />);
+    cy.get('[data-id="1510"] .pf-topology__node__action-icon').click();
+    cy.get('li[data-cy="add-node-and-link"]').within(() => {
+      cy.get('button').click({ force: true });
+    });
+
+    cy.selectDropdownOptionByResourceName('node-type', 'Job Template');
+    cy.selectDropdownOptionByResourceName('node-status-type', 'success');
+    cy.selectDropdownOptionByResourceName('node-convergence', 'All');
+    cy.get('[data-cy="node-alias"]').type('Test Node');
+    cy.clickButton('Next');
+    cy.clickButton('Finish');
+    cy.get('[data-id="7-unsavedNode"] .pf-topology__node__action-icon').should('be.visible');
+    cy.get('[data-id="1510-7-unsavedNode"]').should('be.visible');
+  });
 });
 
 describe('Empty state', () => {

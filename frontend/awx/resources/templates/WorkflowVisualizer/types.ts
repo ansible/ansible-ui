@@ -99,4 +99,5 @@ export interface WizardFormValues {
   node_days_to_keep: number;
   node_resource: NodeResource | null;
   node_type: UnifiedJobType;
+  node_status_type: EdgeStatus;
 }
