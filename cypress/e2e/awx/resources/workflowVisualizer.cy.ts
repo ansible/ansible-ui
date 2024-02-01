@@ -1,5 +1,6 @@
 import { randomString } from '../../../../framework/utils/random-string';
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
+import { JobTemplate } from '../../../../frontend/awx/interfaces/JobTemplate';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
 import { WorkflowJobTemplate } from '../../../../frontend/awx/interfaces/WorkflowJobTemplate';
@@ -111,6 +112,56 @@ describe('Workflow Job templates visualizer', () => {
         cy.get('button[data-cy="workflow-visualizer-toolbar-close"]').click();
         cy.get('div[data-cy="visualizer-unsaved-changes-modal"]').should('be.visible');
         cy.get('button[data-cy="exit-without-saving"]').click();
+        cy.verifyPageTitle(`${workflowJobTemplate.name}`);
+      });
+    // Clean up
+    cleanup();
+  });
+  it('Adds a new node linked to an existing node with always status, and saves the visualizer.', function () {
+    let projectNode: WorkflowNode;
+    let approvalNode: WorkflowNode;
+    let workflowJobTemplate: WorkflowJobTemplate;
+    let jobTemplate: JobTemplate;
+    cy.createAwxJobTemplate({
+      organization: (this.globalOrganization as Organization).id,
+      project: (this.globalProject as Project).id,
+      inventory: inventory.id,
+    }).then((jt) => (jobTemplate = jt));
+    cy.createAwxWorkflowJobTemplate({
+      organization: (this.globalOrganization as Organization).id,
+      inventory: inventory.id,
+    })
+      .then((wfjt) => {
+        workflowJobTemplate = wfjt;
+        cy.createAwxWorkflowVisualizerProjectNode(
+          workflowJobTemplate,
+          this.globalProject as Project
+        ).then((projNode) => {
+          projectNode = projNode;
+          cy.createAwxWorkflowVisualizerApprovalNode(workflowJobTemplate).then((appNode) => {
+            approvalNode = appNode;
+            cy.createWorkflowJTSuccessNodeLink(projectNode, appNode);
+          });
+        });
+      })
+      .then(() => {
+        cy.visit(`/templates/workflow_job_template/${workflowJobTemplate?.id}/visualizer`);
+        cy.contains('Workflow Visualizer').should('be.visible');
+        cy.get(`g[data-id=${approvalNode.id}] .pf-topology__node__action-icon`).click({
+          force: true,
+        });
+        cy.get('li[data-cy="add-node-and-link"]').click();
+
+        cy.selectDropdownOptionByResourceName('node-type', 'Job Template');
+        cy.selectDropdownOptionByResourceName('job-template-select', `${jobTemplate.name}`);
+        cy.selectDropdownOptionByResourceName('node-status-type', 'Always');
+        cy.selectDropdownOptionByResourceName('node-convergence', 'All');
+        cy.get('[data-cy="node-alias"]').type('Test Node');
+        cy.clickButton('Next');
+        cy.clickButton('Finish');
+        cy.get('g[data-id="3-unsavedNode"]').should('have.text', 'Test Node');
+        cy.get(`g[data-id=${approvalNode.id}-3-unsavedNode]`).should('have.text', 'Run always');
+        cy.clickButton('Save');
         cy.verifyPageTitle(`${workflowJobTemplate.name}`);
       });
     // Clean up

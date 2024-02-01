@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { useVisualizationController, NodeShape, NodeModel } from '@patternfly/react-topology';
+import { useVisualizationController, NodeShape, NodeModel, Node } from '@patternfly/react-topology';
 import { PageWizard, PageWizardStep } from '../../../../../../framework';
 import { awxErrorAdapter } from '../../../../common/adapters/awxErrorAdapter';
 import { UnifiedJobType } from '../../../../interfaces/WorkflowNode';
@@ -7,8 +7,9 @@ import { NodeTypeStep } from './NodeTypeStep';
 import { NodeReviewStep } from './NodeReviewStep';
 import { getInitialValues, getValueBasedOnJobType, hasDaysToKeep } from './helpers';
 import { NODE_DIAMETER } from '../constants';
-import type { WizardFormValues } from '../types';
-import { useCloseSidebar } from '../hooks';
+import { EdgeStatus, type GraphNodeData, type WizardFormValues } from '../types';
+import { useCloseSidebar, useCreateEdge } from '../hooks';
+import { WorkflowJobTemplate } from '../../../../interfaces/WorkflowJobTemplate';
 
 interface NewGraphNode extends NodeModel {
   data: {
@@ -38,11 +39,17 @@ export function NodeAddWizard() {
   const { t } = useTranslation();
   const closeSidebar = useCloseSidebar();
   const controller = useVisualizationController();
+  const state = controller.getState<{
+    WorkflowJobTemplate: WorkflowJobTemplate;
+    unsavedNodeId: number;
+    sourceNode: Node<NodeModel, GraphNodeData> | undefined;
+  }>();
+  const createEdge = useCreateEdge();
   const steps: PageWizardStep[] = [
     {
       id: 'nodeTypeStep',
       label: t('Node details'),
-      inputs: <NodeTypeStep />,
+      inputs: <NodeTypeStep hasSourceNode={Boolean(state.sourceNode)} />,
     },
     { id: 'review', label: t('Review'), element: <NodeReviewStep /> },
   ];
@@ -60,7 +67,9 @@ export function NodeAddWizard() {
       node_alias,
       node_convergence,
       node_days_to_keep,
+      node_status_type,
     } = formValues;
+    const model = controller.toModel();
 
     const nodeName = getValueBasedOnJobType(node_type, node_resource?.name || '', approval_name);
     const nodeLabel = node_alias === '' ? nodeName : node_alias;
@@ -98,6 +107,19 @@ export function NodeAddWizard() {
       },
     };
 
+    if (state.sourceNode) {
+      const status =
+        node_status_type === EdgeStatus.info
+          ? EdgeStatus.info
+          : node_status_type === EdgeStatus.success
+            ? EdgeStatus.success
+            : EdgeStatus.danger;
+
+      const newEdge = createEdge(state.sourceNode.getId(), nodeToCreate.id, status);
+      state.sourceNode.setState({ modified: true });
+      model.edges?.push(newEdge);
+    }
+
     if (node_type !== UnifiedJobType.workflow_approval) {
       delete nodeToCreate.data.resource.summary_fields.unified_job_template.timeout;
     }
@@ -107,7 +129,6 @@ export function NodeAddWizard() {
     if (node_alias === '') {
       delete nodeToCreate.data.resource.identifier;
     }
-    const model = controller.toModel();
     model.nodes?.push(nodeToCreate);
     controller.fromModel(model, true);
     closeSidebar();
