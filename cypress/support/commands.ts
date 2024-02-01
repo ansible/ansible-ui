@@ -186,11 +186,13 @@ declare global {
       /** Filter the table using it's current filter by entering text. */
       filterTableByText(text: string, variant?: 'SingleText' | 'MultiText'): Chainable<void>;
 
+      /** Filter the table using it's current filter by entering text in 'ToolbarFilterType.SingleText' filter. */
       filterTableBySingleText(text: string): Chainable<void>;
 
       /** Filter the table using specified filter and text. */
       filterTableByTypeAndText(filterLabel: string | RegExp, text: string): Chainable<void>;
 
+      /** Filter the table using specified filter and text with 'ToolbarFilterType.SingleText' filter. */
       filterTableByTypeAndSingleText(
         filterLabel: string | RegExp,
         text: string,
@@ -211,8 +213,7 @@ declare global {
         variant?: 'MultiText' | 'SingleText'
       ): Chainable<void>;
 
-      getTableRowBySingleText(name: string | RegExp, filter?: boolean): Chainable<void>;
-
+      /** Get the table row containing the specified text with 'ToolbarFilterType.SingleText' filter. */
       getTableRowBySingleText(name: string | RegExp, filter?: boolean): Chainable<void>;
 
       /** Get the list row containing the specified text. */
