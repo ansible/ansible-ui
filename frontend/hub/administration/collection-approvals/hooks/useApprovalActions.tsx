@@ -1,5 +1,5 @@
 import { ButtonVariant } from '@patternfly/react-core';
-import { ThumbsDownIcon, ThumbsUpIcon, UploadIcon } from '@patternfly/react-icons';
+import { ThumbsDownIcon, ThumbsUpIcon, UploadIcon, ImportIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
@@ -66,6 +66,21 @@ export function useApprovalActions(callback?: (collections: CollectionVersionSea
             : can_upload_signatures && require_upload_signatures && !collection.is_signed
               ? t`Signature must be uploaded first`
               : undefined,
+      },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        isPinned: true,
+        icon: ImportIcon,
+        label: t('View Import Logs'),
+        onClick: (collection) =>
+          pageNavigate(HubRoute.MyImports, {
+            query: {
+              namespace: collection?.collection_version?.namespace,
+              name: collection?.collection_version?.name,
+              version: collection?.collection_version?.version,
+            },
+          }),
       },
       { type: PageActionType.Seperator },
       {
