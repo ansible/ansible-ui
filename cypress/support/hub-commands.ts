@@ -12,7 +12,7 @@ import { escapeForShellCommand } from './utils';
 
 const apiPrefix = Cypress.env('HUB_API_PREFIX') as string;
 
-// GalaxyKit Integration: To invoke `galaxykit` commands for generating resources
+// GalaxyKit Integration: To invoke `galaxykit` commands for generating resource
 Cypress.Commands.add('galaxykit', (operation: string, ...args: string[]) => {
   const adminUsername = Cypress.env('HUB_USERNAME') as string;
   const adminPassword = Cypress.env('HUB_PASSWORD') as string;
@@ -37,9 +37,15 @@ Cypress.Commands.add('galaxykit', (operation: string, ...args: string[]) => {
       }
     });
 
-    cy.log(`stdout: ${stdout}`).then(() => {
-      return stdout.split('\n').filter((s) => !!s);
-    });
+    cy.log(`stdout: ${stdout}`);
+
+    let parsedStdout: unknown;
+    try {
+      parsedStdout = JSON.parse(stdout);
+    } catch (e) {
+      parsedStdout = stdout.split('\n').filter((s) => !!s);
+    }
+    return cy.wrap(parsedStdout);
   });
 });
 
@@ -87,20 +93,12 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add('uploadHubCollectionFile', (hubFilePath: string, hubFileName: string) => {
-  cy.fixture(hubFilePath, 'binary')
-    .then(Cypress.Blob.binaryStringToBlob)
-    .then((fileContent) => {
-      cy.get('input[id="file-upload-file-filename"]').attachFile(
-        {
-          fileContent,
-          fileName: hubFileName,
-          filePath: hubFilePath,
-          mimeType: 'application/gzip',
-        },
-        { subjectType: 'drag-n-drop' }
-      );
-    });
+Cypress.Commands.add('uploadHubCollectionFile', (hubFilePath: string) => {
+  cy.get('[data-cy="upload-collection"]').click();
+  cy.get('#file-upload-file-browse-button').click();
+  cy.get('input[id="file-upload-file-filename"]').selectFile(hubFilePath, {
+    action: 'drag-drop',
+  });
 });
 
 Cypress.Commands.add('addAndApproveMultiCollections', (numberOfCollections = 1) => {
