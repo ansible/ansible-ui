@@ -95,7 +95,7 @@ describe('Inventory Host Groups List', () => {
         path: '/inventories/:inventory_type/:id/hosts/:host_id/*',
         initialEntries: ['/inventories/inventory/1/hosts/1/groups'],
       });
-      cy.contains('button', /^Add$/).should('have.attr', 'aria-disabled', 'false');
+      cy.contains('button', /^Associate$/).should('have.attr', 'aria-disabled', 'false');
     });
 
     it('Edit inventory group row action is enabled if the user has permission to edit inventory group', () => {
@@ -120,7 +120,7 @@ describe('Inventory Host Groups List', () => {
         path: '/inventories/:inventory_type/:id/hosts/:host_id/*',
         initialEntries: ['/inventories/inventory/1/hosts/1/groups'],
       });
-      cy.contains('button', /^Add$/).should('have.attr', 'aria-disabled', 'true');
+      cy.contains('button', /^Associate$/).should('have.attr', 'aria-disabled', 'true');
     });
 
     it('Edit inventory group row action is disabled if the user does not have permission to edit inventory group', () => {
