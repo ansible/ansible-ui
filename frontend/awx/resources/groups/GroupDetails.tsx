@@ -1,16 +1,18 @@
 import { useTranslation } from 'react-i18next';
 import { DateTimeCell, PageDetail, PageDetails, usePageNavigate } from '../../../../framework';
 import { useParams } from 'react-router-dom';
-import { useGetGroup } from './hooks/useGetGroup';
 import { AwxRoute } from '../../main/AwxRoutes';
 import { LastModifiedPageDetail } from '../../../common/LastModifiedPageDetail';
 import { PageDetailCodeEditor } from '../../../../framework/PageDetails/PageDetailCodeEditor';
+import { useGetItem } from '../../../common/crud/useGet';
+import { InventoryGroup } from '../../interfaces/InventoryGroup';
+import { awxAPI } from '../../common/api/awx-utils';
 
 export function GroupDetails() {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const params = useParams<{ group_id: string }>();
-  const { group } = useGetGroup(params.group_id as string);
+  const { data: group } = useGetItem<InventoryGroup>(awxAPI`/groups`, params.group_id);
 
   return (
     <PageDetails>
