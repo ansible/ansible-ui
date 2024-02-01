@@ -17,7 +17,7 @@ import { InventoryGroup } from '../../../../interfaces/InventoryGroup';
 import { IAwxView } from '../../../../common/useAwxView';
 import { useDisassociateGroups } from './useDisassociateGroups';
 import { useInventoryHostGroupsAddModal } from '../InventoryHostGroupsModal';
-import { useAddInventoryGroups } from './useAddInventoryGroups';
+import { useAssociateGroupsToHost } from './useAssociateGroupsToHost';
 
 export function useHostsGroupsToolbarActions(view: IAwxView<InventoryGroup>) {
   const { t } = useTranslation();
@@ -39,7 +39,7 @@ export function useHostsGroupsToolbarActions(view: IAwxView<InventoryGroup>) {
   );
 
   const openInventoryHostsGroupsAddModal = useInventoryHostGroupsAddModal();
-  const addGroups = useAddInventoryGroups(view.unselectItemsAndRefresh);
+  const associateGroups = useAssociateGroupsToHost(view.unselectItemsAndRefresh);
 
   return useMemo<IPageAction<InventoryGroup>[]>(
     () => [
@@ -49,8 +49,8 @@ export function useHostsGroupsToolbarActions(view: IAwxView<InventoryGroup>) {
         variant: ButtonVariant.primary,
         isPinned: true,
         icon: PlusIcon,
-        label: t('Add'),
-        onClick: () => openInventoryHostsGroupsAddModal({ onAdd: addGroups }),
+        label: t('Associate'),
+        onClick: () => openInventoryHostsGroupsAddModal({ onAdd: associateGroups }),
         isDisabled: () =>
           canCreateGroup
             ? undefined
@@ -88,7 +88,7 @@ export function useHostsGroupsToolbarActions(view: IAwxView<InventoryGroup>) {
       view.selectedItems.length,
       disassociateGroups,
       openInventoryHostsGroupsAddModal,
-      addGroups,
+      associateGroups,
       canCreateGroup,
       pageNavigate,
       canRunAdHocCommand,

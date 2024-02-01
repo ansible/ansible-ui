@@ -8,7 +8,7 @@ export function useNameToolbarFilter() {
     () => ({
       key: 'name',
       label: t('Name'),
-      type: ToolbarFilterType.Text,
+      type: ToolbarFilterType.MultiText,
       query: 'name__icontains',
       comparison: 'contains',
     }),
@@ -22,7 +22,7 @@ export function useDescriptionToolbarFilter() {
     () => ({
       key: 'description',
       label: t('Description'),
-      type: ToolbarFilterType.Text,
+      type: ToolbarFilterType.MultiText,
       query: 'description__icontains',
       comparison: 'contains',
     }),
@@ -36,7 +36,7 @@ export function useOrganizationToolbarFilter() {
     () => ({
       key: 'organization',
       label: t('Organization'),
-      type: ToolbarFilterType.Text,
+      type: ToolbarFilterType.MultiText,
       query: 'organization__name__icontains',
       comparison: 'contains',
     }),
@@ -50,7 +50,7 @@ export function useCreatedByToolbarFilter() {
     () => ({
       key: 'created-by',
       label: t('Created by'),
-      type: ToolbarFilterType.Text,
+      type: ToolbarFilterType.MultiText,
       query: 'created_by__username__icontains',
       comparison: 'contains',
     }),
@@ -64,7 +64,7 @@ export function useModifiedByToolbarFilter() {
     () => ({
       key: 'modified-by',
       label: t('Modified by'),
-      type: ToolbarFilterType.Text,
+      type: ToolbarFilterType.MultiText,
       query: 'modified_by__username__icontains',
       comparison: 'contains',
     }),
@@ -78,7 +78,7 @@ export function useUsernameToolbarFilter() {
     () => ({
       key: 'username',
       label: t('Username'),
-      type: ToolbarFilterType.Text,
+      type: ToolbarFilterType.MultiText,
       query: 'username__icontains',
       comparison: 'contains',
     }),
@@ -92,7 +92,7 @@ export function useFirstNameToolbarFilter() {
     () => ({
       key: 'firstname',
       label: t('First name'),
-      type: ToolbarFilterType.Text,
+      type: ToolbarFilterType.MultiText,
       query: 'first_name__icontains',
       comparison: 'contains',
     }),
@@ -106,7 +106,7 @@ export function useLastNameToolbarFilter() {
     () => ({
       key: 'lastname',
       label: t('Last name'),
-      type: ToolbarFilterType.Text,
+      type: ToolbarFilterType.MultiText,
       query: 'last_name__icontains',
       comparison: 'contains',
     }),
@@ -120,7 +120,7 @@ export function useEmailToolbarFilter() {
     () => ({
       key: 'email',
       label: t('Email'),
-      type: ToolbarFilterType.Text,
+      type: ToolbarFilterType.MultiText,
       query: 'email__icontains',
       comparison: 'contains',
     }),
@@ -157,6 +157,20 @@ export function useGroupTypeToolbarFilter() {
       query: 'parents__isnull',
       options: [{ label: t('Show only root groups'), value: 'true' }],
       placeholder: t('Filter by group type'),
+    }),
+    [t]
+  );
+}
+
+export function useImageToolbarFilter() {
+  const { t } = useTranslation();
+  return useMemo<IToolbarFilter>(
+    () => ({
+      key: 'image',
+      label: t('Image'),
+      type: ToolbarFilterType.SingleText,
+      query: 'image__icontains',
+      comparison: 'contains',
     }),
     [t]
   );
