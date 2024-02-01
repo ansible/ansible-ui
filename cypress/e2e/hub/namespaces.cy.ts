@@ -1,5 +1,5 @@
 import { randomString } from '../../../framework/utils/random-string';
-import { Namespaces } from './constants';
+import { Namespaces, MyImports } from './constants';
 
 const apiPrefix = Cypress.env('HUB_API_PREFIX') as string;
 
@@ -115,5 +115,21 @@ describe('Namespaces', () => {
     cy.contains(/^Success$/);
     cy.clickButton(/^Close$/);
     cy.clickButton(/^Clear all filters$/);
+  });
+
+  it('user can view import logs', () => {
+    const namespaceName = `test_pagination_namespace_${randomString(5, undefined, {
+      isLowercase: true,
+    })}`;
+    cy.createNamespace(namespaceName);
+    cy.visit(`${Namespaces.url}/${namespaceName}`);
+
+    cy.clickPageAction('imports');
+    cy.url().should('include', MyImports.url);
+    cy.url().should('include', namespaceName);
+    cy.verifyPageTitle(MyImports.title);
+    cy.get('#namespace-selector').contains(namespaceName);
+
+    cy.deleteNamespace(namespaceName);
   });
 });

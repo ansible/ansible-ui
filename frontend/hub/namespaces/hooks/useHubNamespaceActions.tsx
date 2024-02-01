@@ -1,5 +1,5 @@
 import { ButtonVariant } from '@patternfly/react-core';
-import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
+import { PencilAltIcon, TrashIcon, ImportIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -42,6 +42,15 @@ export function useHubNamespaceActions(options?: {
         label: t('Delete namespace'),
         onClick: (namespace) => deleteHubNamespaces([namespace]),
         isDanger: true,
+      },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        variant: ButtonVariant.primary,
+        icon: ImportIcon,
+        label: t('Imports'),
+        onClick: (namespace) =>
+          pageNavigate(HubRoute.MyImports, { query: { namespace: namespace.name } }),
       },
     ];
     return actions;
