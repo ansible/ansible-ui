@@ -122,13 +122,13 @@ describe('Namespaces', () => {
       isLowercase: true,
     })}`;
     cy.createNamespace(namespaceName);
-    cy.navigateTo('hub', Namespaces.url);
-    cy.contains(namespaceName).click();
-    cy.selectDetailsPageKebabAction('imports');
+    cy.visit(`${Namespaces.url}/${namespaceName}`);
+
+    cy.clickPageAction('imports');
     cy.url().should('include', MyImports.url);
     cy.url().should('include', namespaceName);
     cy.verifyPageTitle(MyImports.title);
-    cy.contains(namespaceName);
+    cy.get('#namespace-selector').contains(namespaceName);
 
     cy.deleteNamespace(namespaceName);
   });

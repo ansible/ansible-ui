@@ -161,12 +161,11 @@ describe('Approvals', () => {
   });
 
   it('user can view import logs', () => {
-    cy.navigateTo('hub', Approvals.url);
+    // 'Needs review' is selected by default, so unselect it
+    cy.filterByMultiSelection('Status', 'Needs review');
     cy.filterTableByTypeAndText('Collection', thisCollectionName);
     cy.filterTableByTypeAndText('Namespace', namespace);
 
-    // 'Needs review' is selected by default, so unselect it
-    cy.filterByMultiSelection('Status', 'Needs review');
     cy.clickTableRowPinnedAction(namespace, 'view-import-logs', false);
 
     cy.url().should('include', MyImports.url);
@@ -177,5 +176,7 @@ describe('Approvals', () => {
     cy.verifyPageTitle(MyImports.title);
     cy.contains(namespace);
     cy.contains(thisCollectionName);
+
+    repository = 'staging';
   });
 });
