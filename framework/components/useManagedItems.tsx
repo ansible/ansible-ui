@@ -42,10 +42,12 @@ export interface ManageItemsProps<ItemT extends object> {
   variant?: ModalVariant;
 
   /** Callback to save the manages state to localstorage format. */
-  saveFn?: (items: ItemT) => unknown;
+  saveFn?: (items: ItemT, index: number | undefined) => unknown;
 
   /** Callback to load the manages state from localstorage format. */
   loadFn?: (items: ItemT, data: unknown) => void;
+
+  onComplete?: (items: ItemT[]) => void;
 
   /** Setting to include a column of checkboxes to enable selection of rows */
   hideSelection?: boolean;
@@ -121,15 +123,19 @@ export function useManageItems<ItemT extends object>(options: ManageItemsProps<I
 
   const onApplyChanges = useCallback(
     (orderedItems: ItemT[], selectedItems: ItemT[]) => {
-      const managedItemsState: IManagedItemState[] = orderedItems.map((item) => ({
-        key: keyFn(item),
-        enabled: selectedItems.includes(item),
-        state: saveFn ? saveFn(item) : undefined,
-      }));
-      setItemsState(managedItemsState);
-      localStorage.setItem(options.id, JSON.stringify(managedItemsState));
+      void Promise.all(
+        orderedItems.map((item, index) => ({
+          key: keyFn(item),
+          enabled: selectedItems.includes(item),
+          state: saveFn ? saveFn(item, index) : undefined,
+        }))
+      ).then((managedItemsState) => {
+        setItemsState(managedItemsState);
+        localStorage.setItem(options.id, JSON.stringify(managedItemsState));
+        options?.onComplete?.(selectedItems);
+      });
     },
-    [keyFn, options.id, saveFn]
+    [keyFn, options, saveFn]
   );
 
   const openManageItems = () =>
