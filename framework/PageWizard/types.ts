@@ -1,4 +1,5 @@
 import { SetStateAction } from 'react';
+import { ErrorAdapter } from '../PageForm/typesErrorAdapter';
 
 export interface PageWizardStep {
   id: string;
@@ -18,6 +19,17 @@ export interface PageWizardState {
   setWizardData: (data: object) => void;
   stepData: Record<string, object>;
   stepError: Record<string, object>;
-  steps: PageWizardStep[];
+  allSteps: PageWizardStep[];
+  visibleSteps: PageWizardStep[];
+  setVisibleSteps: (steps: PageWizardStep[]) => void;
   wizardData: object;
+}
+
+export interface PageWizardBody<T> {
+  onCancel?: () => void;
+  onSubmit: (wizardData: T) => Promise<void>;
+  errorAdapter?: ErrorAdapter;
+  disableGrid?: boolean;
+  isVertical?: boolean;
+  singleColumn?: boolean;
 }

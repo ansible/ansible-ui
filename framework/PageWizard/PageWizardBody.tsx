@@ -3,20 +3,30 @@ import { useCallback, useEffect } from 'react';
 import { useFormState } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { PageForm } from '../PageForm/PageForm';
-import { ErrorAdapter } from '../PageForm/typesErrorAdapter';
 import { PageWizardFooter } from './PageWizardFooter';
-import { usePageWizard } from './PageWizardProvider';
+import { usePageWizard, isStepVisible } from './PageWizardProvider';
+import type { PageWizardBody } from './types';
 
-export function PageWizardBody<T>(props: {
-  onCancel?: () => void;
-  onSubmit: (wizardData: T) => Promise<void>;
-  errorAdapter?: ErrorAdapter;
-  disableGrid?: boolean;
-}) {
+export function PageWizardBody<T>({
+  onCancel,
+  onSubmit,
+  disableGrid,
+  errorAdapter,
+  isVertical,
+  singleColumn,
+}: PageWizardBody<T>) {
   const navigate = useNavigate();
-  const { onSubmit, onCancel, errorAdapter } = props;
-  const { activeStep, steps, stepData, wizardData, setWizardData, setStepData, setActiveStep } =
-    usePageWizard();
+  const {
+    activeStep,
+    allSteps,
+    setActiveStep,
+    setStepData,
+    setVisibleSteps,
+    setWizardData,
+    stepData,
+    visibleSteps,
+    wizardData,
+  } = usePageWizard();
 
   const onClose = useCallback((): void => {
     if (onCancel) {
@@ -28,31 +38,43 @@ export function PageWizardBody<T>(props: {
 
   const onNext = useCallback(
     (formData: object) => {
+      const filteredSteps = allSteps.filter((step) =>
+        isStepVisible(step, { ...wizardData, ...formData })
+      );
+
       if (activeStep !== null) {
-        const isLastStep = activeStep?.id === steps[steps.length - 1].id;
+        const isLastStep = activeStep?.id === filteredSteps[filteredSteps.length - 1]?.id;
         if (isLastStep) {
           return onSubmit(wizardData as T);
         }
 
-        const activeStepIndex = steps.findIndex((step) => step.id === activeStep?.id);
-        const nextStep = steps[activeStepIndex + 1];
+        const activeStepIndex = filteredSteps.findIndex((step) => step.id === activeStep?.id);
+        const nextStep = filteredSteps[activeStepIndex + 1];
 
         setWizardData((prev: object) => ({ ...prev, ...formData }));
         setStepData((prev) => ({ ...prev, [activeStep?.id]: formData }));
-
+        setVisibleSteps(filteredSteps);
         setActiveStep(nextStep);
       }
       return Promise.resolve();
     },
-    [activeStep, wizardData, onSubmit, steps, setWizardData, setStepData, setActiveStep]
+    [
+      activeStep,
+      allSteps,
+      onSubmit,
+      setActiveStep,
+      setStepData,
+      setVisibleSteps,
+      setWizardData,
+      wizardData,
+    ]
   );
 
   const onBack = useCallback(() => {
-    const activeStepIndex = steps.findIndex((step) => step.id === activeStep?.id);
-    const previousStep = steps[activeStepIndex - 1];
-
+    const activeStepIndex = visibleSteps.findIndex((step) => step.id === activeStep?.id);
+    const previousStep = visibleSteps[activeStepIndex - 1];
     setActiveStep(previousStep);
-  }, [activeStep, steps, setActiveStep]);
+  }, [activeStep, visibleSteps, setActiveStep]);
 
   return (
     <>
@@ -64,7 +86,9 @@ export function PageWizardBody<T>(props: {
             footer={<PageWizardFooter onBack={onBack} onCancel={onClose} />}
             defaultValue={stepData[activeStep.id]}
             errorAdapter={errorAdapter}
-            disableGrid={props.disableGrid}
+            disableGrid={disableGrid}
+            isVertical={isVertical}
+            singleColumn={singleColumn}
           >
             <StepErrors />
             {activeStep.inputs}
