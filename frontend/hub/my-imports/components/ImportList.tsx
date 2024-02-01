@@ -94,7 +94,7 @@ export function ImportList({
   const singleSelector = useSelectNamespaceSingle();
   const singleSelectorBrowser = singleSelectBrowseAdapter<HubNamespace>(
     singleSelector.openBrowse,
-    (item: HubNamespace) => item.name,
+    (item: HubNamespace) => item?.name || '',
     (name) => ({ name })
   );
 
