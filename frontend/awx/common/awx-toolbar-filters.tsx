@@ -161,3 +161,17 @@ export function useGroupTypeToolbarFilter() {
     [t]
   );
 }
+
+export function useImageToolbarFilter() {
+  const { t } = useTranslation();
+  return useMemo<IToolbarFilter>(
+    () => ({
+      key: 'image',
+      label: t('Image'),
+      type: ToolbarFilterType.SingleText,
+      query: 'image__icontains',
+      comparison: 'contains',
+    }),
+    [t]
+  );
+}

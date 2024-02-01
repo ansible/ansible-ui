@@ -284,7 +284,8 @@ export function useOrganizationNameColumn(
   options?: {
     disableLinks?: boolean;
     disableSort?: boolean;
-  }
+  },
+  defaultValue?: string
 ) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
@@ -300,18 +301,20 @@ export function useOrganizationNameColumn(
       header: t('Organization'),
       cell: (item) => (
         <TextCell
-          text={item.summary_fields?.organization?.name}
+          text={item.summary_fields?.organization?.name ?? defaultValue ?? ''}
           to={getPageUrl(orgDetailsRoute, {
             params: { id: item.summary_fields?.organization?.id },
           })}
-          disableLinks={options?.disableLinks}
+          disableLinks={
+            defaultValue && !item.summary_fields?.organization?.name ? true : options?.disableLinks
+          }
         />
       ),
       value: (item) => item.summary_fields?.organization?.name,
       sort: options?.disableSort ? undefined : 'organization',
       dashboard: 'hidden',
     }),
-    [getPageUrl, options?.disableLinks, options?.disableSort, orgDetailsRoute, t]
+    [defaultValue, getPageUrl, options?.disableLinks, options?.disableSort, orgDetailsRoute, t]
   );
   return column;
 }
