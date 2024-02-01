@@ -1,4 +1,4 @@
-import { Approvals } from './constants';
+import { Approvals, MyImports } from './constants';
 import { randomString } from '../../../framework/utils/random-string';
 
 describe('Approvals', () => {
@@ -159,5 +159,25 @@ describe('Approvals', () => {
     cy.clickModalButton('Close');
 
     repository = 'published';
+  });
+
+  it('user can view import logs', () => {
+    // 'Needs review' is selected by default, so unselect it
+    cy.filterByMultiSelection('Status', 'Needs review');
+    cy.filterTableByTypeAndText('Collection', thisCollectionName);
+    cy.filterTableByTypeAndText('Namespace', namespace);
+
+    cy.clickTableRowPinnedAction(namespace, 'view-import-logs', false);
+
+    cy.url().should('include', MyImports.url);
+    cy.url().should('include', namespace);
+    cy.url().should('include', thisCollectionName);
+    cy.url().should('include', '1.0.0');
+
+    cy.verifyPageTitle(MyImports.title);
+    cy.contains(namespace);
+    cy.contains(thisCollectionName);
+
+    repository = 'staging';
   });
 });
