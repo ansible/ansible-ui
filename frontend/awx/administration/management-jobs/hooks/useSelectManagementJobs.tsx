@@ -14,7 +14,7 @@ function SelectManagementJob(props: {
   onSelect: (template: SystemJobTemplate) => void;
 }) {
   const toolbarFilters = useManagementJobFilters();
-  const tableColumns = useManagementJobColumns({ disableLinks: true });
+  const tableColumns = useManagementJobColumns();
   const view = useAwxView<SystemJobTemplate>({
     url: awxAPI`/job_templates/`,
     toolbarFilters,
