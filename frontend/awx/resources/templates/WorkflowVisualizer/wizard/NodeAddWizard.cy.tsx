@@ -1,5 +1,6 @@
 import { NodeAddWizard } from './NodeAddWizard';
 import { awxAPI } from '../../../../common/api/awx-utils';
+import { VisualizationProvider } from '@patternfly/react-topology';
 
 describe('NodeAddWizard', () => {
   const mockResults = {
@@ -20,7 +21,11 @@ describe('NodeAddWizard', () => {
   });
 
   it('Should render the correct defaults', () => {
-    cy.mount(<NodeAddWizard />);
+    cy.mount(
+      <VisualizationProvider>
+        <NodeAddWizard />
+      </VisualizationProvider>
+    );
     cy.get('[data-cy="node-type-form-group"]').within(() => {
       cy.get('span.pf-v5-c-select__toggle-text').should('have.text', 'Job Template');
     });
@@ -36,7 +41,11 @@ describe('NodeAddWizard', () => {
   });
 
   it('Should render the correct fields for a job template node', () => {
-    cy.mount(<NodeAddWizard />);
+    cy.mount(
+      <VisualizationProvider>
+        <NodeAddWizard />
+      </VisualizationProvider>
+    );
     cy.get('[data-cy="node-type-form-group"]').within(() => {
       cy.get('span.pf-v5-c-select__toggle-text').should('have.text', 'Job Template');
     });
@@ -56,7 +65,11 @@ describe('NodeAddWizard', () => {
       { method: 'GET', url: '/api/v2/workflow_job_templates/*' },
       { fixture: 'workflowJobTemplates.json' }
     );
-    cy.mount(<NodeAddWizard />);
+    cy.mount(
+      <VisualizationProvider>
+        <NodeAddWizard />
+      </VisualizationProvider>
+    );
     cy.selectDropdownOptionByResourceName('node-type', 'Workflow Job Template');
     cy.get('[data-cy="node-type-form-group"]').within(() => {
       cy.get('span.pf-v5-c-select__toggle-text').should('have.text', 'Workflow Job Template');
@@ -70,7 +83,11 @@ describe('NodeAddWizard', () => {
   });
 
   it('Should render the correct fields for a workflow approval node', () => {
-    cy.mount(<NodeAddWizard />);
+    cy.mount(
+      <VisualizationProvider>
+        <NodeAddWizard />
+      </VisualizationProvider>
+    );
     cy.selectDropdownOptionByResourceName('node-type', 'Approval');
     cy.get('[data-cy="approval_name"]').should('have.value', '');
     cy.get('[data-cy="approval_description"]').should('have.value', '');
@@ -80,7 +97,11 @@ describe('NodeAddWizard', () => {
 
   it('Should render the correct fields for a project sync node', () => {
     cy.intercept({ method: 'GET', url: '/api/v2/projects/*' }, { fixture: 'projects.json' });
-    cy.mount(<NodeAddWizard />);
+    cy.mount(
+      <VisualizationProvider>
+        <NodeAddWizard />
+      </VisualizationProvider>
+    );
     cy.selectDropdownOptionByResourceName('node-type', 'Project Sync');
     cy.get('[data-cy="node-type-form-group"]').within(() => {
       cy.get('span.pf-v5-c-select__toggle-text').should('have.text', 'Project Sync');
@@ -92,7 +113,11 @@ describe('NodeAddWizard', () => {
 
   it('Should render the correct fields for an inventory source node', () => {
     cy.intercept({ method: 'GET', url: '/api/v2/inventory_sources/*' }, mockResults);
-    cy.mount(<NodeAddWizard />);
+    cy.mount(
+      <VisualizationProvider>
+        <NodeAddWizard />
+      </VisualizationProvider>
+    );
     cy.selectDropdownOptionByResourceName('node-type', 'Inventory Source Sync');
     cy.get('[data-cy="node-type-form-group"]').within(() => {
       cy.get('span.pf-v5-c-select__toggle-text').should('have.text', 'Inventory Source Sync');
@@ -104,7 +129,11 @@ describe('NodeAddWizard', () => {
 
   it('Should render the correct fields for a management job node', () => {
     cy.intercept({ method: 'GET', url: '/api/v2/system_job_templates/' }, mockResults);
-    cy.mount(<NodeAddWizard />);
+    cy.mount(
+      <VisualizationProvider>
+        <NodeAddWizard />
+      </VisualizationProvider>
+    );
     cy.selectDropdownOptionByResourceName('node-type', 'Management Job');
     cy.get('[data-cy="node-type-form-group"]').within(() => {
       cy.get('span.pf-v5-c-select__toggle-text').should('have.text', 'Management Job');
