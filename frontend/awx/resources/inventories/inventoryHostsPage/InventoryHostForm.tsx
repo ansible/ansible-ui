@@ -47,7 +47,7 @@ export function CreateHost() {
   const inventoryResponse = useGetInventory(params.id, params.inventory_type);
 
   return (
-    <>
+    <PageLayout>
       <PageHeader
         breadcrumbs={[
           { label: t('Inventories'), to: getPageUrl(AwxRoute.Inventories) },
@@ -79,7 +79,7 @@ export function CreateHost() {
       >
         <HostInputs />
       </AwxPageForm>
-    </>
+    </PageLayout>
   );
 }
 
