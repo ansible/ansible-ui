@@ -15,7 +15,7 @@ export function ManagementJobs() {
   const tableColumns = useManagementJobColumns();
 
   const view = useAwxView<SystemJobTemplate>({
-    url: awxAPI`/system_job_templates`,
+    url: awxAPI`/system_job_templates/`,
     toolbarFilters,
     tableColumns,
   });

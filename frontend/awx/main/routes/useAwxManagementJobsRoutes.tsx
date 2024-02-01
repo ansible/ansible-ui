@@ -5,10 +5,8 @@ import { PageNavigationItem } from '../../../../framework';
 import { PageNotImplemented } from '../../../../framework/PageEmptyStates/PageNotImplemented';
 import { ManagementJobPage } from '../../administration/management-jobs/ManagementJobPage/ManagementJobPage';
 import { ManagementJobs } from '../../administration/management-jobs/ManagementJobs';
-import { awxAPI } from '../../common/api/awx-utils';
-import { SchedulePage } from '../../views/schedules/SchedulePage/SchedulePage';
-import { Schedules } from '../../views/schedules/Schedules';
 import { AwxRoute } from '../AwxRoutes';
+import { ManagementJobSchedules } from '../../administration/management-jobs/ManagementJobPage/ManagementJobSchedules';
 
 export function useAwxManagementJobsRoutes() {
   const { t } = useTranslation();
@@ -18,29 +16,6 @@ export function useAwxManagementJobsRoutes() {
       label: t('Management Jobs'),
       path: 'management-jobs',
       children: [
-        {
-          id: AwxRoute.ManagementJobSchedulePage,
-          path: ':id/schedules/:schedule_id',
-          element: (
-            <SchedulePage
-              backTab={{
-                label: t('Back to Schedules'),
-                page: AwxRoute.ManagementJobSchedules,
-                persistentFilterKey: 'management-jobs-schedules',
-              }}
-              tabs={[
-                {
-                  label: t('Details'),
-                  page: AwxRoute.ManagementJobScheduleDetails,
-                },
-                {
-                  label: t('Rules'),
-                  page: AwxRoute.ManagementJobScheduleRules,
-                },
-              ]}
-            />
-          ),
-        },
         {
           id: AwxRoute.ManagementJobEditSchedule,
           path: ':id/schedules/:schedule_id/edit',
@@ -55,7 +30,7 @@ export function useAwxManagementJobsRoutes() {
             {
               id: AwxRoute.ManagementJobSchedules,
               path: 'schedules',
-              element: <Schedules sublistEndpoint={awxAPI`/system_job_templates`} />,
+              element: <ManagementJobSchedules />,
             },
             {
               id: AwxRoute.ManagementJobNotifications,
