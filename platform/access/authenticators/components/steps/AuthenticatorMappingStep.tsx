@@ -1,16 +1,23 @@
 import { useState, MouseEvent } from 'react';
+import { useFormContext, useFieldArray } from 'react-hook-form';
 import { Dropdown, DropdownList, DropdownItem, MenuToggle } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
 import { AuthenticatorMapType } from '../../../../interfaces/AuthenticatorMap';
-import type { AuthenticatorFormValues, AuthenticatorMapValues } from '../AuthenticatorForm';
+import type { AuthenticatorMapValues } from '../AuthenticatorForm';
 import { MapFields } from './MapFields';
 
 export function AuthenticatorMappingStep() {
-  const { wizardData } = usePageWizard();
-  const [mappings, setMappings] = useState((wizardData as AuthenticatorFormValues).mappings || []);
+  const { control } = useFormContext();
+  const {
+    fields: mappings,
+    append: addMap,
+    remove: removeMap,
+  } = useFieldArray({
+    control,
+    name: 'mappings',
+  });
 
   const addMapping = (value: AuthenticatorMapType) => {
     const map: AuthenticatorMapValues = {
@@ -19,17 +26,18 @@ export function AuthenticatorMappingStep() {
       revoke: false,
       trigger: 'always',
     };
-    setMappings([...mappings, map]);
-  };
-
-  const deleteMapping = (index: number) => {
-    setMappings([...mappings.slice(0, index), ...mappings.slice(index + 1)]);
+    addMap(map);
   };
 
   return (
     <>
       {mappings.map((map, i) => (
-        <MapFields key={i} index={i} map={map} onDelete={deleteMapping} />
+        <MapFields
+          key={map.id}
+          index={i}
+          map={map as unknown as AuthenticatorMapValues}
+          onDelete={removeMap}
+        />
       ))}
       <AddMappingDropdown onSelect={addMapping} />
     </>
