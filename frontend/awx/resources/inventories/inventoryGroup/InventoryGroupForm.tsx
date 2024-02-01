@@ -72,7 +72,7 @@ export function EditGroup() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Create new group')}
+        title={t('Edit group')}
         breadcrumbs={[
           { label: t('Inventories'), to: getPageUrl(AwxRoute.Inventories) },
           {
