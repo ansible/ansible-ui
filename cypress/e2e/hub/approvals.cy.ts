@@ -8,7 +8,7 @@ describe('Approvals', () => {
 
   beforeEach(() => {
     thisCollectionName = 'hub_e2e_' + randomString(5).toLowerCase();
-    namespace = 'hub_e2e_namespace' + randomString(5).toLowerCase();
+    namespace = 'hub_e2e_appr_namespace' + randomString(5).toLowerCase();
     cy.hubLogin();
     cy.getNamespace(namespace);
     cy.uploadCollection(thisCollectionName, namespace);
@@ -19,6 +19,7 @@ describe('Approvals', () => {
 
   afterEach(() => {
     cy.deleteCollection(thisCollectionName, namespace, repository);
+    cy.galaxykit('task wait all');
     cy.deleteNamespace(namespace);
   });
 
