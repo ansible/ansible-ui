@@ -4,7 +4,6 @@ import { PageTable, usePageNavigate } from '../../../../framework';
 import { CubeIcon } from '@patternfly/react-icons';
 import { AwxRoute } from '../../main/AwxRoutes';
 import { useGroupsFilters } from './hooks/useGroupsFilters';
-import { useInventoriesGroupsColumns } from '../inventories/hooks/useInventoriesGroupsColumns';
 import { useParams } from 'react-router-dom';
 import { useInventoriesRelatedGroupsToolbarActions } from '../inventories/hooks/useInventoriesRelatedGroupsToolbarActions';
 import { useInventoriesGroupsActions } from '../inventories/hooks/useInventoriesGroupsActions';
@@ -12,12 +11,13 @@ import { useOptions } from '../../../common/crud/useOptions';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxView } from '../../common/useAwxView';
+import { useInventoriesGroupsRelatedGroupsColumns } from '../inventories/hooks/useInventoriesGroupsRelatedGroupsColumns';
 
 export function GroupRelatedGroups() {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const toolbarFilters = useGroupsFilters();
-  const tableColumns = useInventoriesGroupsColumns();
+  const tableColumns = useInventoriesGroupsRelatedGroupsColumns();
   const params = useParams<{ id: string; inventory_type: string; group_id: string }>();
   const view = useAwxView<InventoryGroup>({
     url: awxAPI`/groups/${params.group_id ?? ''}/children`,

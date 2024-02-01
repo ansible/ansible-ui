@@ -22,7 +22,7 @@ export function useInventoriesRelatedGroupsToolbarActions(view: IAwxView<Invento
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const disassociateGroups = useDisassociateGroups(view.unselectItemsAndRefresh);
-  const params = useParams<{ id: string; inventory_type: string }>();
+  const params = useParams<{ id: string; inventory_type: string; group_id: string }>();
 
   const adhocOptions = useOptions<OptionsResponse<ActionsResponse>>(
     awxAPI`/inventories/${params.id ?? ''}/ad_hoc_commands`
@@ -53,8 +53,12 @@ export function useInventoriesRelatedGroupsToolbarActions(view: IAwxView<Invento
             selection: PageActionSelection.None,
             label: t('New group'),
             onClick: () =>
-              pageNavigate(String(AwxRoute.InventoryGroupCreate), {
-                params: { inventory_type: params.inventory_type, id: params.id },
+              pageNavigate(String(AwxRoute.InventoryGroupRelatedGroupsCreate), {
+                params: {
+                  inventory_type: params.inventory_type,
+                  id: params.id,
+                  group_id: params.group_id,
+                },
               }),
             isDisabled: () =>
               canCreateGroup

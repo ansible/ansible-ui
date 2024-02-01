@@ -24,6 +24,7 @@ import { InventoryHostDetails } from '../../resources/inventories/inventoryHosts
 import {
   CreateGroup,
   EditGroup,
+  CreateRelatedGroup,
 } from '../../resources/inventories/inventoryGroup/InventoryGroupForm';
 import { InventoryHostGroups } from '../../resources/inventories/inventoryHostsPage/InventoryHostGroups';
 import {
@@ -119,6 +120,11 @@ export function useAwxInventoryRoutes() {
           id: AwxRoute.InventoryHostEdit,
           path: ':inventory_type/:id/host/:host_id/edit',
           element: <EditHost />,
+        },
+        {
+          id: AwxRoute.InventoryGroupRelatedGroupsCreate,
+          path: ':inventory_type/:id/groups/:group_id/related_groups/add',
+          element: <CreateRelatedGroup />,
         },
         {
           id: AwxRoute.InventoryGroupPage,
