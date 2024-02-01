@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { PageHeader, PageLayout, PageTable, usePageNavigate } from '../../../../../framework';
+import { PageTable, usePageNavigate } from '../../../../../framework';
 import { useGroupsFilters } from '../../groups/hooks/useGroupsFilters';
 import { useParams } from 'react-router-dom';
 import { useAwxView } from '../../../common/useAwxView';
@@ -33,43 +33,36 @@ export function InventoryGroups() {
   );
 
   return (
-    <PageLayout>
-      <PageHeader
-        title={t('Inventory Groups')}
-        titleHelpTitle={t('Inventory Groups')}
-        description={t('The list of groups in the current inventory')}
-      />
-      <PageTable<InventoryGroup>
-        id="awx-inventory-group-table"
-        toolbarFilters={toolbarFilters}
-        toolbarActions={toolbarActions}
-        tableColumns={tableColumns}
-        rowActions={rowActions}
-        errorStateTitle={t('Error loading inventory groups')}
-        emptyStateTitle={
-          canCreateGroup
-            ? t('There are currently no groups added to this inventory.')
-            : t('You do not have permission to create a group')
-        }
-        emptyStateDescription={
-          canCreateGroup
-            ? t('Please create a group by using the button below.')
-            : t(
-                'Please contact your organization administrator if there is an issue with your access.'
-              )
-        }
-        emptyStateIcon={canCreateGroup ? undefined : CubeIcon}
-        emptyStateButtonText={canCreateGroup ? t('Create group') : undefined}
-        emptyStateButtonClick={
-          canCreateGroup
-            ? () =>
-                pageNavigate(AwxRoute.InventoryGroupCreate, {
-                  params: { id: params.id, inventory_type: params.inventory_type },
-                })
-            : undefined
-        }
-        {...view}
-      />
-    </PageLayout>
+    <PageTable<InventoryGroup>
+      id="awx-inventory-group-table"
+      toolbarFilters={toolbarFilters}
+      toolbarActions={toolbarActions}
+      tableColumns={tableColumns}
+      rowActions={rowActions}
+      errorStateTitle={t('Error loading inventory groups')}
+      emptyStateTitle={
+        canCreateGroup
+          ? t('There are currently no groups added to this inventory.')
+          : t('You do not have permission to create a group')
+      }
+      emptyStateDescription={
+        canCreateGroup
+          ? t('Please create a group by using the button below.')
+          : t(
+              'Please contact your organization administrator if there is an issue with your access.'
+            )
+      }
+      emptyStateIcon={canCreateGroup ? undefined : CubeIcon}
+      emptyStateButtonText={canCreateGroup ? t('Create group') : undefined}
+      emptyStateButtonClick={
+        canCreateGroup
+          ? () =>
+              pageNavigate(AwxRoute.InventoryGroupCreate, {
+                params: { id: params.id, inventory_type: params.inventory_type },
+              })
+          : undefined
+      }
+      {...view}
+    />
   );
 }

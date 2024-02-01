@@ -127,12 +127,12 @@ export function useAwxInventoryRoutes() {
               path: 'hosts',
               element: <PageNotImplemented />,
             },
-            {
-              id: AwxRoute.InventoryGroupEdit,
-              path: 'edit',
-              element: <EditGroup />,
-            },
           ],
+        },
+        {
+          id: AwxRoute.InventoryGroupEdit,
+          path: ':inventory_type/:id/group/:group_id/edit',
+          element: <EditGroup />,
         },
         {
           id: AwxRoute.InventoryGroupCreate,
