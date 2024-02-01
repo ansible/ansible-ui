@@ -114,6 +114,7 @@ export function useInventoriesRelatedGroupsToolbarActions(view: IAwxView<Invento
       canCreateGroup,
       canRunAdHocCommand,
       view.selectedItems.length,
+      params.group_id,
     ]
   );
 }
