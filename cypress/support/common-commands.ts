@@ -31,17 +31,33 @@ Cypress.Commands.add('selectToolbarFilterType', (text: string | RegExp) => {
   });
 });
 
-Cypress.Commands.add('filterTableByText', (text: string) => {
-  cy.get('[data-cy="text-input"]').within(() => {
-    cy.get('input').clear().type(text, { delay: 0 });
-  });
-  cy.get('[data-cy="apply-filter"]:not(:disabled):not(:hidden)').click();
+Cypress.Commands.add(
+  'filterTableByText',
+  (text: string, variant: 'SingleText' | 'MultiText' = 'MultiText') => {
+    cy.get('[data-cy="text-input"]').within(() => {
+      cy.get('input').clear().type(text, { delay: 0 });
+    });
+    if (variant === 'MultiText')
+      cy.get('[data-cy="apply-filter"]:not(:disabled):not(:hidden)').click();
+  }
+);
+
+Cypress.Commands.add('filterTableBySingleText', (text: string) => {
+  cy.filterTableByText(text, 'SingleText');
 });
 
 Cypress.Commands.add('filterTableByTypeAndText', (filterLabel: string | RegExp, text: string) => {
   cy.selectToolbarFilterType(filterLabel);
   cy.filterTableByText(text);
 });
+
+Cypress.Commands.add(
+  'filterTableByTypeAndSingleText',
+  (filterLabel: string | RegExp, text: string) => {
+    cy.selectToolbarFilterType(filterLabel);
+    cy.filterTableByText(text, 'SingleText');
+  }
+);
 
 Cypress.Commands.add('clearAllFilters', () => {
   cy.get('button').then((buttons) => {
