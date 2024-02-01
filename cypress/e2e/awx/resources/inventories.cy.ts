@@ -134,7 +134,7 @@ describe('inventories', () => {
       cy.clickTableRow(inventory.name);
       cy.verifyPageTitle(inventory.name);
       cy.clickLink(/^Groups$/);
-      cy.clickTableRowKebabAction(group.name, 'edit-group');
+      cy.clickTableRowKebabAction(group.name as string, 'edit-group', true);
       cy.verifyPageTitle('Edit group');
       cy.get('[data-cy="name-form-group"]').type('-changed');
       cy.get('[data-cy="Submit"]').click();
