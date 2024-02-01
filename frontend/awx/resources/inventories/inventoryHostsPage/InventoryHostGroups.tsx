@@ -13,7 +13,6 @@ import { useHostsGroupsActions } from './hooks/useHostsGroupsActions';
 import { useHostsGroupsColumns } from './hooks/useHostsGroupsColumns';
 import { InventoryGroup } from '../../../interfaces/InventoryGroup';
 import { useInventoryHostGroupsAddModal } from './InventoryHostGroupsModal';
-import { useAddInventoryGroups } from './hooks/useAddInventoryGroups';
 import { useAssociateGroupsToHost } from './hooks/useAssociateGroupsToHost';
 
 export function InventoryHostGroups() {
