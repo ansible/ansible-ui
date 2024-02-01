@@ -8,12 +8,12 @@ export function PageWizardFooter(props: {
   onCancel: () => void;
 }) {
   const { t } = useTranslation();
-  const { activeStep, steps } = usePageWizard();
+  const { activeStep, visibleSteps } = usePageWizard();
 
-  const isLastStep = activeStep?.id === steps[steps.length - 1].id;
+  const isLastStep = activeStep?.id === visibleSteps[visibleSteps.length - 1].id;
   const nextButtonLabel = isLastStep ? t('Finish') : t('Next');
 
-  const isFirstStep = activeStep?.id === steps[0].id;
+  const isFirstStep = activeStep?.id === visibleSteps[0].id;
   const backClassName = isFirstStep
     ? 'pf-v5-c-button pf-m-disabled'
     : 'pf-v5-c-button pf-m-secondary';
