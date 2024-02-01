@@ -13,6 +13,7 @@ import { PencilAltIcon, MinusCircleIcon, PlusCircleIcon } from '@patternfly/reac
 import { useTranslation } from 'react-i18next';
 import { useViewOptions } from '../ViewOptionsProvider';
 import { GraphNodeData } from '../types';
+import { START_NODE_ID } from '../constants';
 
 interface MenuItem {
   key: string;
@@ -31,41 +32,52 @@ export function useNodeMenuItems(element: Node<NodeModel, GraphNodeData>): MenuI
   const [__, setSourceNode] = useVisualizationState('sourceNode');
   const id = element.getId();
 
-  return [
-    {
-      key: 'edit-node',
-      icon: <PencilAltIcon />,
-      label: t('Edit node'),
-      onClick: () => {
-        action(() => {
-          setSidebarMode('edit');
-          setSelectedIds([id]);
-        })();
-      },
-    },
-    {
-      key: 'add-node-and-link',
-      icon: <PlusCircleIcon />,
-      label: t('Add node and link'),
-      onClick: () => {
-        setSidebarMode('add');
-        setSourceNode(element);
-      },
-    },
-    {
-      key: 'separator',
-      label: '-',
-    },
-    {
-      key: 'remove-node',
-      icon: <MinusCircleIcon />,
-      isDanger: true,
-      label: t('Remove node'),
-      onClick: () => {
-        removeNodes([element]);
-      },
-    },
-  ];
+  return id === START_NODE_ID
+    ? [
+        {
+          key: 'add-node',
+          icon: <PlusCircleIcon />,
+          label: t('Add node'),
+          onClick: () => {
+            setSidebarMode('add');
+          },
+        },
+      ]
+    : [
+        {
+          key: 'edit-node',
+          icon: <PencilAltIcon />,
+          label: t('Edit node'),
+          onClick: () => {
+            action(() => {
+              setSidebarMode('edit');
+              setSelectedIds([id]);
+            })();
+          },
+        },
+        {
+          key: 'add-node-and-link',
+          icon: <PlusCircleIcon />,
+          label: t('Add node and link'),
+          onClick: () => {
+            setSidebarMode('add');
+            setSourceNode(element);
+          },
+        },
+        {
+          key: 'separator',
+          label: '-',
+        },
+        {
+          key: 'remove-node',
+          icon: <MinusCircleIcon />,
+          isDanger: true,
+          label: t('Remove node'),
+          onClick: () => {
+            removeNodes([element]);
+          },
+        },
+      ];
 }
 
 export function NodeContextMenu(props: { element: Node<NodeModel, GraphNodeData> }) {
