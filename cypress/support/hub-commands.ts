@@ -248,8 +248,12 @@ Cypress.Commands.add('getNamespace', (namespaceName: string) => {
   });
 });
 
+// Cypress.Commands.add('deleteNamespace', (namespaceName: string) => {
+//   cy.galaxykit('namespace delete', namespaceName);
+// });
+
 Cypress.Commands.add('deleteNamespace', (namespaceName: string) => {
-  cy.galaxykit('namespace delete', namespaceName);
+  cy.requestDelete(hubAPI`/_ui/v1/namespaces/${namespaceName}/`);
 });
 
 Cypress.Commands.add('deleteCollectionsInNamespace', (namespaceName: string) => {

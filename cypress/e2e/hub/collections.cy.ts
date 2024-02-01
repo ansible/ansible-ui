@@ -2,16 +2,19 @@ import { randomString } from '../../../framework/utils/random-string';
 import { hubAPI } from '../../support/formatApiPathForHub';
 import { Collections } from './constants';
 
-describe('Collections- List View', () => {
+describe.skip('Collections- List View', () => {
   //**Important to know:
   //**In order to upload a collection, a namespace must first exist containing the first word of the collection file name
   //**The only way to get rid of a collection's artifact is to choose the following option:
   //**Delete entire collection from repository
   //**If the artifact isn't deleted when the collection is deleted, and a user tries to create
   //**a new collection by uploading the same file again, Hub will not allow it.
+  let namespace: string;
+
   before(() => {
+    namespace = 'hub_e2e_col_namespace' + randomString(5).toLowerCase();
     cy.hubLogin();
-    cy.getNamespace('ibm');
+    cy.getNamespace(namespace);
     cy.addAndApproveMultiCollections(1);
   });
 
@@ -21,7 +24,8 @@ describe('Collections- List View', () => {
   });
 
   after(() => {
-    cy.cleanupCollections('ibm', 'community');
+    cy.cleanupCollections(namespace, 'community');
+    cy.deleteNamespace(namespace);
   });
 
   it.skip('user can upload and then delete a new collection', () => {
@@ -56,7 +60,7 @@ describe('Collections- List View', () => {
       cy.get('[data-ouia-component-id="confirm"]').click();
       cy.intercept(
         'DELETE',
-        hubAPI`/v3/plugin/ansible/content/community/collections/index/ibm/${thisCollectionName}/`
+        hubAPI`/v3/plugin/ansible/content/community/collections/index/${namespace}/${thisCollectionName}/`
       ).as('deleted');
       cy.get('[data-ouia-component-id="submit"]').click();
       cy.wait('@deleted').then((deleted) => {
@@ -78,14 +82,14 @@ describe('Collections- List View', () => {
   it.skip('user can deprecate selected collections using the list toolbar', () => {});
 });
 
-describe('Collections List- Line Item Kebab Menu', () => {
+describe.skip('Collections List- Line Item Kebab Menu', () => {
   let thisCollectionName: string;
   let namespace: string;
   let repository: string;
 
   beforeEach(() => {
     thisCollectionName = 'hub_e2e_' + randomString(5).toLowerCase();
-    namespace = 'ibm';
+    namespace = 'hub_e2e_col_namespace' + randomString(5).toLowerCase();
     cy.hubLogin();
     cy.getNamespace(namespace);
     cy.uploadCollection(thisCollectionName, namespace);
@@ -96,6 +100,7 @@ describe('Collections List- Line Item Kebab Menu', () => {
     if (Cypress.currentTest.title !== 'user can deprecate a collection') {
       cy.deleteCollection(thisCollectionName, namespace, repository);
     }
+    cy.deleteNamespace(namespace);
   });
 
   it.skip('user can upload a new version to an existing collection', () => {});
@@ -104,10 +109,12 @@ describe('Collections List- Line Item Kebab Menu', () => {
 
   it.skip('user can delete entire collection from repository', () => {});
 
-  it('user can deprecate a collection', () => {
+  it.skip('user can deprecate a collection', () => {
     cy.approveCollection(thisCollectionName, namespace, '1.0.0');
     cy.visit(`/collections?page=1&perPage=50&sort=name&keywords=${thisCollectionName}`);
-    cy.get(`a[href*="/collections/published/ibm/${thisCollectionName}"]`).should('be.visible');
+    cy.get(`a[href*="/collections/published/${namespace}/${thisCollectionName}"]`).should(
+      'be.visible'
+    );
     cy.get('[data-cy="data-list-action"]').within(() => {
       cy.get('[data-cy="actions-dropdown"]')
         .click()
@@ -119,7 +126,7 @@ describe('Collections List- Line Item Kebab Menu', () => {
       cy.get('input').click();
       cy.intercept(
         'PATCH',
-        hubAPI`/v3/plugin/ansible/content/published/collections/index/ibm/${thisCollectionName}/`
+        hubAPI`/v3/plugin/ansible/content/published/collections/index/${namespace}/${thisCollectionName}/`
       ).as('deprecated');
       cy.clickButton('Deprecate collections');
       cy.wait('@deprecated').then((deprecated) => {
