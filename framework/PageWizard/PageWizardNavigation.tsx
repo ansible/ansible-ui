@@ -2,13 +2,13 @@ import { ExclamationCircleIcon } from '@patternfly/react-icons';
 import { usePageWizard } from './PageWizardProvider';
 
 export function PageWizardNavigation() {
-  const { activeStep, steps, isToggleExpanded, setActiveStep, stepError } = usePageWizard();
+  const { activeStep, isToggleExpanded, setActiveStep, stepError, visibleSteps } = usePageWizard();
   const navClassName = isToggleExpanded
     ? 'pf-v5-c-wizard__nav pf-m-expanded'
     : 'pf-v5-c-wizard__nav bg-lighten';
 
   const goToStepByIndex = (index: number) => {
-    const step = steps[index];
+    const step = visibleSteps[index];
     if (step) {
       setActiveStep(step);
     }
@@ -19,8 +19,8 @@ export function PageWizardNavigation() {
   return (
     <nav className={navClassName} aria-label="Steps" data-cy="wizard-nav">
       <ol className="pf-v5-c-wizard__nav-list">
-        {steps.map((step, index) => {
-          const activeStepIndex = steps.findIndex((step) => step.id === activeStep.id);
+        {visibleSteps.map((step, index) => {
+          const activeStepIndex = visibleSteps.findIndex((step) => step.id === activeStep.id);
           const isDisabled = index > activeStepIndex;
 
           const className =
