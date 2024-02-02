@@ -6,10 +6,9 @@ import { UnifiedJobType } from '../../../../interfaces/WorkflowNode';
 import { NodeTypeStep } from './NodeTypeStep';
 import { NodeReviewStep } from './NodeReviewStep';
 import { getInitialValues, getValueBasedOnJobType, hasDaysToKeep } from './helpers';
-import { NODE_DIAMETER } from '../constants';
-import { EdgeStatus, type GraphNodeData, type WizardFormValues } from '../types';
+import { NODE_DIAMETER, START_NODE_ID } from '../constants';
+import { EdgeStatus, GraphNodeData, type WizardFormValues } from '../types';
 import { useCloseSidebar, useCreateEdge } from '../hooks';
-import { WorkflowJobTemplate } from '../../../../interfaces/WorkflowJobTemplate';
 
 interface NewGraphNode extends NodeModel {
   data: {
@@ -38,13 +37,9 @@ interface NewGraphNode extends NodeModel {
 export function NodeAddWizard() {
   const { t } = useTranslation();
   const closeSidebar = useCloseSidebar();
-  const controller = useVisualizationController();
-  const state = controller.getState<{
-    WorkflowJobTemplate: WorkflowJobTemplate;
-    unsavedNodeId: number;
-    sourceNode: Node<NodeModel, GraphNodeData> | undefined;
-  }>();
   const createEdge = useCreateEdge();
+  const controller = useVisualizationController();
+  const state = controller.getState<{ sourceNode: Node<NodeModel, GraphNodeData> | undefined }>();
   const steps: PageWizardStep[] = [
     {
       id: 'nodeTypeStep',
@@ -57,7 +52,12 @@ export function NodeAddWizard() {
   const initialValues = getInitialValues();
 
   const handleSubmit = async (formValues: WizardFormValues) => {
-    const nodes = controller.getGraph().getNodes();
+    const model = controller.toModel();
+
+    const nodes = controller
+      .getGraph()
+      .getNodes()
+      .filter((n) => n.getId() !== START_NODE_ID);
     const {
       approval_name,
       approval_description,
@@ -69,7 +69,6 @@ export function NodeAddWizard() {
       node_days_to_keep,
       node_status_type,
     } = formValues;
-    const model = controller.toModel();
 
     const nodeName = getValueBasedOnJobType(node_type, node_resource?.name || '', approval_name);
     const nodeLabel = node_alias === '' ? nodeName : node_alias;
@@ -106,6 +105,10 @@ export function NodeAddWizard() {
         },
       },
     };
+    if (!state.sourceNode) {
+      const rootEdge = createEdge(START_NODE_ID, nodeToCreate.id, EdgeStatus.info);
+      model.edges?.push(rootEdge);
+    }
 
     if (state.sourceNode) {
       const status =
