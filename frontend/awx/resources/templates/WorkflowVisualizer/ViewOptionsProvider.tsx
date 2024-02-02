@@ -11,7 +11,7 @@ import {
 } from '@patternfly/react-topology';
 import { useRemoveGraphElements } from './hooks';
 import { ControllerState, GraphEdgeData, GraphNodeData } from './types';
-import { GRAPH_ID } from './constants';
+import { GRAPH_ID, START_NODE_ID } from './constants';
 
 const FullPage = styled.div`
   position: fixed;
@@ -70,7 +70,7 @@ export const ViewOptionsProvider = observer((props: { children: ReactElement }) 
   const nodes = controller
     .getGraph()
     .getNodes()
-    .find((n) => n.isVisible());
+    .find((n) => n.isVisible() && n.getId() !== START_NODE_ID);
   const isGraphReady = controller.toModel().graph?.visible;
   const isGraphSelected = !!selectedIds?.length && selectedIds[0] === GRAPH_ID;
   const { removeNodes, removeLink } = useRemoveGraphElements();

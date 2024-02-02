@@ -8,6 +8,7 @@ import { usePostRequest } from '../../../../../common/crud/usePostRequest';
 import { usePatchRequest } from '../../../../../common/crud/usePatchRequest';
 import { ControllerState, GraphNode, EdgeStatus, GraphNodeData } from '../types';
 import { UnifiedJobType, WorkflowNode } from '../../../../interfaces/WorkflowNode';
+import { START_NODE_ID } from '../constants';
 
 interface WorkflowApprovalNode {
   name: string;
@@ -27,7 +28,10 @@ export function useSaveVisualizer() {
   const postAssociateNode = usePostRequest<{ id: number }>();
   const postDisassociateNode = usePostRequest<{ id: number; disassociate: boolean }>();
 
-  const graphNodes = controller.getGraph().getNodes() as GraphNode[];
+  const graphNodes = controller
+    .getGraph()
+    .getNodes()
+    .filter((node) => node.getId() !== START_NODE_ID) as GraphNode[];
   const state = controller.getState<ControllerState>();
   const deletedNodeIds: string[] = [];
   const associateSuccessNodes: { sourceId: string; targetId: string }[] = [];
@@ -263,9 +267,10 @@ export function useSaveVisualizer() {
 
   async function handleSave() {
     graphNodes.forEach((node) => {
+      const nodeId = node.getId();
       const nodeState = node.getState<{ modified: boolean }>();
       const isDeleted = !node.isVisible();
-      const isNewNode = node.getId().includes('unsavedNode');
+      const isNewNode = nodeId.includes('unsavedNode');
       const isEdited = Boolean(nodeState?.modified) && !isDeleted && !isNewNode;
 
       if (isDeleted && !isNewNode) {
