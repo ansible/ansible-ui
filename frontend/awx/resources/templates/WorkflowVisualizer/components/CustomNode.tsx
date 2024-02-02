@@ -3,6 +3,7 @@ import {
   ClipboardCheckIcon,
   ClockIcon,
   CogIcon,
+  HomeIcon,
   ProcessAutomationIcon,
   ShareAltIcon,
   SyncAltIcon,
@@ -21,6 +22,7 @@ import { useViewOptions } from '../ViewOptionsProvider';
 import type { CustomNodeProps } from '../types';
 import type { SVGIconProps } from '@patternfly/react-icons/dist/js/createIcon';
 import type { UnifiedJobType } from '../../../../interfaces/WorkflowNode';
+import { START_NODE_ID } from '../constants';
 
 const NodeIcon: Record<UnifiedJobType, ElementType<SVGIconProps>> = {
   inventory_update: ProcessAutomationIcon,
@@ -45,10 +47,10 @@ export const CustomNode: FC<
   const id = element.getId();
   const jobType = data && data.resource.summary_fields?.unified_job_template?.unified_job_type;
 
-  if (!data) return null;
+  if (!data && id !== START_NODE_ID) return null;
 
   const Icon = jobType ? NodeIcon[jobType] : TrashIcon;
-  return (
+  return id !== START_NODE_ID ? (
     <DefaultNode
       element={element}
       labelClassName={`${id}-node-label`}
@@ -67,6 +69,21 @@ export const CustomNode: FC<
     >
       <g transform={`translate(13, 13)`}>
         <Icon style={{ color: '#393F44' }} width={25} height={25} />
+      </g>
+    </DefaultNode>
+  ) : (
+    <DefaultNode
+      element={element}
+      labelClassName={`${id}-node-label`}
+      contextMenuOpen={contextMenuOpen}
+      labelPosition={LabelPosition.right}
+      onContextMenu={onContextMenu}
+      dragging={false}
+      selected={false}
+      truncateLength={20}
+    >
+      <g transform={`translate(13, 13)`}>
+        <HomeIcon style={{ color: '#393F44' }} width={25} height={25} />
       </g>
     </DefaultNode>
   );

@@ -7,7 +7,7 @@ export function useCloseSidebar() {
   const { setSidebarMode } = useViewOptions();
 
   return useCallback(() => {
-    controller.setState({ ...controller.getState(), selectedIds: [] });
+    controller.setState({ ...controller.getState(), selectedIds: [], sourceNode: undefined });
     setSidebarMode(undefined);
   }, [controller, setSidebarMode]);
 }
