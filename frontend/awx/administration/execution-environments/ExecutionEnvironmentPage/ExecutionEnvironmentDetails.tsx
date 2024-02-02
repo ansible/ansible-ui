@@ -40,22 +40,26 @@ export function ExecutionEnvironmentDetailInner(props: { execution_env: Executio
       <PageDetail label={t('Description')}>{execution_env.description}</PageDetail>
       <PageDetail label={t('Managed')}>{`${execution_env.managed}`}</PageDetail>
       <PageDetail label={t('Organization')}>
-        <TextCell
-          text={execution_env.summary_fields?.organization?.name}
-          to={getPageUrl(AwxRoute.OrganizationPage, {
-            params: { id: execution_env.summary_fields?.organization?.id },
-          })}
-        />
+        {execution_env.summary_fields?.organization ? (
+          <TextCell
+            text={execution_env.summary_fields?.organization?.name}
+            to={getPageUrl(AwxRoute.OrganizationPage, {
+              params: { id: execution_env.summary_fields?.organization?.id },
+            })}
+          />
+        ) : undefined}
       </PageDetail>
       <PageDetail label={t('Pull')}>{execution_env.pull}</PageDetail>
       <PageDetail label={t('Registry Credential')}>
-        <Label variant="outline" color="blue">
-          {execution_env?.summary_fields?.credential?.name}
-        </Label>
+        {execution_env?.summary_fields?.credential?.name ? (
+          <Label variant="outline" color="blue">
+            {execution_env?.summary_fields?.credential?.name}
+          </Label>
+        ) : undefined}
       </PageDetail>
       <PageDetail label={t('Created')}>
         <DateTimeCell
-          format="since"
+          format="date-time"
           value={execution_env.created}
           author={execution_env?.summary_fields?.created_by?.username}
           onClick={() =>
