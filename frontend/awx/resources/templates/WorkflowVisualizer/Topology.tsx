@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  CREATE_CONNECTOR_DROP_TYPE,
   ComponentFactory,
   DagreLayout,
   DefaultGroup,
@@ -19,17 +18,11 @@ import {
   action,
   createTopologyControlButtons,
   defaultControlButtonsOptions,
-  nodeDragSourceSpec,
-  nodeDropTargetSpec,
   withContextMenu,
-  withDndDrop,
-  withDragNode,
   withPanZoom,
   withSelection,
   TopologyView,
   ElementModel,
-  withCreateConnector,
-  isNode,
   Edge,
 } from '@patternfly/react-topology';
 import { EmptyStateNoData } from '../../../../../framework/components/EmptyStateNoData';
@@ -38,19 +31,18 @@ import type { WorkflowNode } from '../../../interfaces/WorkflowNode';
 import {
   AddNodeButton,
   CustomEdge,
-  CustomNode,
   EdgeContextMenu,
   Legend,
-  NodeContextMenu,
   WorkflowVisualizerToolbar,
   ToolbarHeader,
   Sidebar,
 } from './components';
-import { GraphNode, EdgeStatus } from './types';
+import { EdgeStatus } from './types';
 import { ViewOptionsContext, ViewOptionsProvider } from './ViewOptionsProvider';
 import { useCreateEdge } from './hooks';
-import { GRAPH_ID, CONNECTOR_SOURCE_DROP, CONNECTOR_TARGET_DROP, NODE_DIAMETER } from './constants';
 import { getNodeLabel } from './wizard/helpers';
+import { GRAPH_ID, NODE_DIAMETER, START_NODE_ID } from './constants';
+import { useCreateNodeComponent } from './hooks/useCreateNodeComponent';
 
 const graphModel: Model = {
   nodes: [],
@@ -73,7 +65,7 @@ interface TopologyProps {
 export const Visualizer = ({ data: { workflowNodes = [], template } }: TopologyProps) => {
   const { t } = useTranslation();
   const createEdge = useCreateEdge();
-
+  const createNodeComponent = useCreateNodeComponent();
   const handleSelectedNode = useCallback(
     (clickedNodeIdentifier: string[]) => {
       const clickedNodeData = workflowNodes.find(
@@ -82,10 +74,6 @@ export const Visualizer = ({ data: { workflowNodes = [], template } }: TopologyP
       return clickedNodeData;
     },
     [workflowNodes]
-  );
-  const nodeContextMenu = useCallback(
-    (element: GraphNode) => [<NodeContextMenu key="nodeContext" element={element} />],
-    []
   );
   const edgeContextMenu = useCallback(
     (
@@ -112,45 +100,7 @@ export const Visualizer = ({ data: { workflowNodes = [], template } }: TopologyP
             case ModelKind.graph:
               return withPanZoom()(withSelection()(GraphComponent));
             case ModelKind.node:
-              return withCreateConnector((source, target): void => {
-                const model = source.getController().toModel();
-                const controller = source.getController();
-                if (!isNode(target)) {
-                  return;
-                }
-                if (!model.edges) {
-                  model.edges = [];
-                }
-                model.edges.push({
-                  id: `${source.getId()}-${target.getId()}`,
-                  type: 'edge',
-                  source: source.getId(),
-                  target: target.getId(),
-                  data: {
-                    tag: t('Run always'),
-                    tagStatus: 'info',
-                    endTerminalStatus: 'info',
-                    originalStatus: 'info',
-                  },
-                });
-                source.setState({ modified: true });
-                controller.setState({ ...controller.getState(), modified: true });
-                controller.fromModel(model);
-              })(
-                withContextMenu(nodeContextMenu)(
-                  withDndDrop(
-                    nodeDropTargetSpec([
-                      CONNECTOR_SOURCE_DROP,
-                      CONNECTOR_TARGET_DROP,
-                      CREATE_CONNECTOR_DROP_TYPE,
-                    ])
-                  )(
-                    withDragNode(nodeDragSourceSpec('node', true, true))(
-                      withSelection()(CustomNode)
-                    )
-                  )
-                )
-              );
+              return createNodeComponent();
             case ModelKind.edge:
               return withContextMenu(edgeContextMenu)(withSelection()(CustomEdge));
             default:
@@ -158,7 +108,7 @@ export const Visualizer = ({ data: { workflowNodes = [], template } }: TopologyP
           }
       }
     },
-    [nodeContextMenu, edgeContextMenu, t]
+    [createNodeComponent, edgeContextMenu]
   );
 
   const createVisualization = useCallback(() => {
@@ -172,7 +122,7 @@ export const Visualizer = ({ data: { workflowNodes = [], template } }: TopologyP
           marginx: 20,
           marginy: 20,
           rankdir: 'LR',
-          ranker: 'longest-path',
+          ranker: 'network-simplex',
           ranksep: 200,
         })
     );
@@ -186,6 +136,16 @@ export const Visualizer = ({ data: { workflowNodes = [], template } }: TopologyP
 
   useEffect(() => {
     const edges: EdgeModel[] = [];
+    const startNode = {
+      id: START_NODE_ID,
+      type: START_NODE_ID,
+      label: t('Start'),
+      width: NODE_DIAMETER,
+      height: NODE_DIAMETER,
+      data: {
+        resource: { always_nodes: [] },
+      },
+    };
     const nodes = workflowNodes.map((n) => {
       const nodeId = n.id.toString();
       const nodeType = 'node';
@@ -216,10 +176,17 @@ export const Visualizer = ({ data: { workflowNodes = [], template } }: TopologyP
 
       return node;
     });
+    const nonRootNodes = edges.map((edge) => edge.target);
+    const rootNodes = nodes?.filter(
+      (node) => !nonRootNodes.includes(node.id) && node.id !== START_NODE_ID
+    );
+    rootNodes.forEach((node) => {
+      edges.push(createEdge(START_NODE_ID, node.id, EdgeStatus.info));
+    });
 
     const model = {
       edges,
-      nodes,
+      nodes: [startNode, ...nodes],
       graph: {
         id: GRAPH_ID,
         type: 'graph',
