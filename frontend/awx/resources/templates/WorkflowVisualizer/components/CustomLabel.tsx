@@ -27,14 +27,9 @@ const calculateDimensions = (
   return { width, height };
 };
 
-export const CustomLabel: FC<CustomLabelProps & WithContextMenuProps & WithSelectionProps> = ({
-  children,
-  xPoint,
-  yPoint,
-  status,
-  onContextMenu,
-  hoverRef,
-}) => {
+export const CustomLabel: FC<
+  CustomLabelProps & WithContextMenuProps & WithSelectionProps & { isSourceRootNode: boolean }
+> = ({ children, xPoint, yPoint, status, onContextMenu, hoverRef, isSourceRootNode }) => {
   const paddingX = 10;
   const paddingY = 4;
 
@@ -53,7 +48,7 @@ export const CustomLabel: FC<CustomLabelProps & WithContextMenuProps & WithSelec
           style={getEdgeStyles(status)}
           x={0}
           y={0}
-          width={textSize.width + 50}
+          width={isSourceRootNode ? textSize.width + 20 : textSize.width + 50}
           height={height}
           rx={15}
           ry={15}
@@ -62,34 +57,36 @@ export const CustomLabel: FC<CustomLabelProps & WithContextMenuProps & WithSelec
       <text
         ref={textRef as LegacyRef<SVGTextElement>}
         style={{ fill: 'white' }}
-        x={paddingX}
+        x={isSourceRootNode ? 10 : paddingX}
         y={height / 2}
         dy="0.35em"
       >
         {children}
       </text>
-      <g ref={iconRef} className="pf-topology__node__action-icon">
-        <line
-          className="pf-topology__node__separator"
-          x1={width}
-          x2={width}
-          y1={0}
-          y2={`${height}`}
-        />
-        {iconSize && (
-          <path
-            data-cy="edge-context-menu_kebab"
-            onClick={onContextMenu}
-            d={`M${
-              width + 2
-            },1 h12q${contextIconRadius},0 ${contextIconRadius},${contextIconRadius} v2 q0,${contextIconRadius} -${contextIconRadius},${contextIconRadius} h-${contextIconRadius} z`}
-            style={getEdgeStyles(status)}
+      {!isSourceRootNode && (
+        <g ref={iconRef} className="pf-topology__node__action-icon">
+          <line
+            className="pf-topology__node__separator"
+            x1={width}
+            x2={width}
+            y1={0}
+            y2={`${height}`}
           />
-        )}
-        <g data-cy="node-context-menu_kebab" transform={`translate(${width + 5}, ${height / 4})`}>
-          <EllipsisVIcon style={{ fill: 'white' }} />
+          {iconSize && (
+            <path
+              data-cy="edge-context-menu_kebab"
+              onClick={onContextMenu}
+              d={`M${
+                width + 2
+              },1 h12q${contextIconRadius},0 ${contextIconRadius},${contextIconRadius} v2 q0,${contextIconRadius} -${contextIconRadius},${contextIconRadius} h-${contextIconRadius} z`}
+              style={getEdgeStyles(status)}
+            />
+          )}
+          <g data-cy="node-context-menu_kebab" transform={`translate(${width + 5}, ${height / 4})`}>
+            <EllipsisVIcon style={{ fill: 'white' }} />
+          </g>
         </g>
-      </g>
+      )}
     </g>
   );
 };
