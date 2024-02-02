@@ -27,13 +27,18 @@ export function TemplatesList(props: {
   url?: string;
   projectId?: string | undefined;
   inventoryId?: string | undefined;
+  credentialsId?: string | undefined;
 }) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const getPageUrl = useGetPageUrl();
   const toolbarFilters = useTemplateFilters();
   const tableColumns = useTemplateColumns();
-  const getQueryParams = (projectId?: string | undefined, inventoryId?: string | undefined) => {
+  const getQueryParams = (
+    projectId?: string | undefined,
+    inventoryId?: string | undefined,
+    credentialsId?: string | undefined
+  ) => {
     const templateQueryParams: { [key: string]: string } = {
       type: 'job_template,workflow_job_template',
     };
@@ -43,11 +48,14 @@ export function TemplatesList(props: {
     if (inventoryId) {
       templateQueryParams.inventory__id = inventoryId;
     }
+    if (credentialsId) {
+      templateQueryParams.credentials__id = credentialsId;
+    }
     return templateQueryParams;
   };
   const view = useAwxView<JobTemplate | WorkflowJobTemplate>({
     url: props.url ? props.url : awxAPI`/unified_job_templates/`,
-    queryParams: getQueryParams(props.projectId, props.inventoryId),
+    queryParams: getQueryParams(props.projectId, props.inventoryId, props.credentialsId),
     toolbarFilters,
     tableColumns,
   });
