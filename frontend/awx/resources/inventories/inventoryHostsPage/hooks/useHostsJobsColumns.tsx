@@ -2,7 +2,6 @@ import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { usePageNavigate, ITableColumn, DateTimeCell } from '../../../../../../framework';
 import {
-  useExecutionEnvColumn,
   useInventoryNameColumn,
   useNameColumn,
   useProjectNameColumn,
@@ -13,6 +12,7 @@ import {
   useJobSliceColumn,
   useJobTemplateColumn,
   useSourceWorkflowColumn,
+  useJobExecutionEnvColumn,
 } from '../../../../common/JobColumns';
 import { UnifiedJob } from '../../../../interfaces/UnifiedJob';
 import { AwxRoute } from '../../../../main/AwxRoutes';
@@ -87,7 +87,7 @@ export function useHostsJobsColumns(options?: { disableSort?: boolean; disableLi
   const jobTemplateColumn = useJobTemplateColumn();
   const sourceWorkflowColumn = useSourceWorkflowColumn();
   const projectNameColumn = useProjectNameColumn(AwxRoute.ProjectDetails);
-  const executionEnvColumn = useExecutionEnvColumn(AwxRoute.ExecutionEnvironmentDetails);
+  const executionEnvColumn = useJobExecutionEnvColumn();
 
   const tableColumns = useMemo<ITableColumn<UnifiedJob>[]>(() => {
     const displayColumns = [
