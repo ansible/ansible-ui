@@ -27,7 +27,7 @@ export function useHostsGroupsToolbarActions(view: IAwxView<InventoryGroup>) {
   const disassociateGroups = useDisassociateGroups(view.unselectItemsAndRefresh);
 
   const adhocOptions = useOptions<OptionsResponse<ActionsResponse>>(
-    awxAPI`/inventories/${params.id ?? ''}/ad_hoc_commands`
+    awxAPI`/inventories/${params.id ?? ''}/ad_hoc_commands/`
   ).data;
   const canRunAdHocCommand = Boolean(
     adhocOptions && adhocOptions.actions && adhocOptions.actions['POST']

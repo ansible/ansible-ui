@@ -11,13 +11,13 @@ import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSe
 import { useNavigate } from 'react-router-dom';
 import { awxAPI } from '../../common/api/awx-utils';
 import { AwxRoute } from '../../main/AwxRoutes';
-import { usePutRequest } from '../../../common/crud/usePutRequest';
+import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 
 export function GroupEdit(props: { group: InventoryGroup }) {
   const { t } = useTranslation();
   const group = props.group;
   const navigate = useNavigate();
-  const putRequest = usePutRequest<InventoryGroupCreate, InventoryGroup>();
+  const patchRequest = usePatchRequest<InventoryGroupCreate, InventoryGroup>();
   const pageNavigate = usePageNavigate();
 
   const onSubmit: PageFormSubmitHandler<InventoryGroupCreate> = async (groupInput) => {
@@ -28,7 +28,7 @@ export function GroupEdit(props: { group: InventoryGroup }) {
       variables,
       inventory: group.inventory,
     };
-    const editedGroup = await putRequest(awxAPI`/groups/${group.id.toString()}`, editGroup);
+    const editedGroup = await patchRequest(awxAPI`/groups/${group.id.toString()}/`, editGroup);
     pageNavigate(AwxRoute.InventoryGroupDetails, {
       params: { inventory_type: 'inventroy', id: editedGroup.inventory, group_id: editedGroup.id },
     });
