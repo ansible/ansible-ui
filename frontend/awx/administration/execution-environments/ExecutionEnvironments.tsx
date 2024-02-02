@@ -11,6 +11,8 @@ import { useExecutionEnvRowActions } from './hooks/useExecutionEnvRowActions';
 import { useExecutionEnvToolbarActions } from './hooks/useExecutionEnvToolbarActions';
 import { useExecutionEnvironmentsColumns } from './hooks/useExecutionEnvironmentsColumns';
 import { useExecutionEnvironmentsFilters } from './hooks/useExecutionEnvironmentsFilters';
+import { useOptions } from '../../../common/crud/useOptions';
+import { OptionsResponse, ActionsResponse } from '../../interfaces/OptionsResponse';
 
 export function ExecutionEnvironments() {
   const { t } = useTranslation();
@@ -26,6 +28,9 @@ export function ExecutionEnvironments() {
 
   const rowActions = useExecutionEnvRowActions(view);
   const toolbarActions = useExecutionEnvToolbarActions(view);
+
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/execution_environments/`);
+  const canCreateExecutionEnvironment = Boolean(data && data.actions && data.actions['POST']);
 
   return (
     <PageLayout>
@@ -47,10 +52,26 @@ export function ExecutionEnvironments() {
         tableColumns={tableColumns}
         rowActions={rowActions}
         errorStateTitle={t('Error loading execution environments')}
-        emptyStateTitle={t('No execution environments yet')}
-        emptyStateDescription={t('To get started, create an execution environment.')}
-        emptyStateButtonText={t('Create execution environment')}
-        emptyStateButtonClick={() => pageNavigate(AwxRoute.CreateExecutionEnvironment)}
+        emptyStateTitle={
+          canCreateExecutionEnvironment
+            ? t('No execution environments yet')
+            : t('You do not have permission to create an execution environment.')
+        }
+        emptyStateDescription={
+          canCreateExecutionEnvironment
+            ? t('To get started, create an execution environment.')
+            : t(
+                'Please contact your organization administrator if there is an issue with your access.'
+              )
+        }
+        emptyStateButtonText={
+          canCreateExecutionEnvironment ? t('Create execution environment') : undefined
+        }
+        emptyStateButtonClick={
+          canCreateExecutionEnvironment
+            ? () => pageNavigate(AwxRoute.CreateExecutionEnvironment)
+            : undefined
+        }
         {...view}
         defaultSubtitle={t('Execution environment')}
       />
