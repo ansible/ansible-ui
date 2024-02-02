@@ -34,7 +34,7 @@ export function ExecutionEnvironmentDetailInner(props: { execution_env: Executio
   const execution_env = props.execution_env;
 
   return (
-    <PageDetails>
+    <PageDetails data-cy="execution-environment-page-detail">
       <PageDetail label={t('Name')}>{execution_env.name}</PageDetail>
       <PageDetail label={t('Image')}>{execution_env.image}</PageDetail>
       <PageDetail label={t('Description')}>{execution_env.description}</PageDetail>
