@@ -85,7 +85,10 @@ export const ActivityDescription: React.FC<ActivityStreamDescriptionProps> = ({
           return (
             <span>
               {`${operationText} ${object1} `}
-              <Link to={getPageUrl(sourceResourceRoute, { params: { id: sourceResourceObj.id } })}>
+              <Link
+                to={getPageUrl(sourceResourceRoute, { params: { id: sourceResourceObj.id } })}
+                data-cy="source-resource-detail"
+              >
                 {sourceResourceName}
               </Link>
             </span>
@@ -107,6 +110,7 @@ export const ActivityDescription: React.FC<ActivityStreamDescriptionProps> = ({
                   to={getPageUrl(sourceResourceRoute, {
                     params: { id: sourceResourceObj.id },
                   })}
+                  data-cy="source-resource-detail"
                 >
                   {sourceResourceName}
                 </Link>
@@ -121,6 +125,7 @@ export const ActivityDescription: React.FC<ActivityStreamDescriptionProps> = ({
                       id: targetResourceObj.id,
                     },
                   })}
+                  data-cy="target-resource-detail"
                 >
                   {targetResourceName}
                 </Link>
@@ -146,6 +151,7 @@ export const ActivityDescription: React.FC<ActivityStreamDescriptionProps> = ({
                   to={getPageUrl(sourceResourceRoute, {
                     params: { id: sourceResourceObj.id },
                   })}
+                  data-cy="source-resource-detail"
                 >
                   {sourceResourceName}
                 </Link>
@@ -160,6 +166,7 @@ export const ActivityDescription: React.FC<ActivityStreamDescriptionProps> = ({
                       id: targetResourceObj.id,
                     },
                   })}
+                  data-cy="target-resource-detail"
                 >
                   {targetResourceName}
                 </Link>

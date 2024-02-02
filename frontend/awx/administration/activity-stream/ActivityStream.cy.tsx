@@ -34,6 +34,20 @@ describe('Activity Stream Tests', () => {
       cy.verifyPageTitle('Activity Stream');
       cy.contains(/^There are currently no activity streams$/);
     });
+    it('Activity Stream error list page', () => {
+      cy.intercept(
+        {
+          method: 'GET',
+          url: '/api/v2/activity_stream/*',
+        },
+        {
+          statusCode: 500,
+        }
+      );
+      cy.mount(<ActivityStreams />);
+      cy.verifyPageTitle('Activity Stream');
+      cy.contains(/^Error loading activity stream$/);
+    });
     it('Visit Activity Stream list page', () => {
       cy.mount(<ActivityStreams />);
       cy.verifyPageTitle('Activity Stream');
@@ -57,8 +71,11 @@ describe('Activity Stream Tests', () => {
       cy.intercept('api/v2/activity_stream/?or__object1__in=job&or__object2__in=job*').as(
         'jobFilterRequest'
       );
-      cy.get('button[data-cy="theme"] > .pf-v5-c-menu-toggle__controls').click();
-      cy.get('#jobs > .pf-v5-c-menu__item-main > .pf-v5-c-menu__item-text').click();
+      cy.get('[data-cy="filter-input"]')
+        .click()
+        .then(() => {
+          cy.get('#jobs').click();
+        });
       cy.wait('@jobFilterRequest');
     });
     it('visit the Activity Stream list page filtered by schedules', () => {
@@ -66,8 +83,11 @@ describe('Activity Stream Tests', () => {
       cy.intercept('api/v2/activity_stream/?or__object1__in=schedule&or__object2__in=schedule*').as(
         'scheduleFilterRequest'
       );
-      cy.get('button[data-cy="theme"] > .pf-v5-c-menu-toggle__controls').click();
-      cy.get('#schedules > .pf-v5-c-menu__item-main > .pf-v5-c-menu__item-text').click();
+      cy.get('[data-cy="filter-input"]')
+        .click()
+        .then(() => {
+          cy.get('#schedules').click();
+        });
       cy.wait('@scheduleFilterRequest');
     });
     it('visit the Activity Stream list page filtered by workflow approvals', () => {
@@ -75,17 +95,23 @@ describe('Activity Stream Tests', () => {
       cy.intercept(
         'api/v2/activity_stream/?or__object1__in=workflow_approval&or__object2__in=workflow_approval*'
       ).as('workflowApprovalFilterRequest');
-      cy.get('button[data-cy="theme"] > .pf-v5-c-menu-toggle__controls').click();
-      cy.get('#workflow-approvals > .pf-v5-c-menu__item-main > .pf-v5-c-menu__item-text').click();
+      cy.get('[data-cy="filter-input"]')
+        .click()
+        .then(() => {
+          cy.get('#workflow-approvals').click();
+        });
       cy.wait('@workflowApprovalFilterRequest');
     });
     it('visit the Activity Stream list page filtered by templates', () => {
       cy.mount(<ActivityStreams />);
       cy.intercept(
-        'api/v2/activity_stream/?or__object1__in=job_template%2Cworkflow_job_template%2Cworkflow_job_template_node&or__object2__in=job_template%2Cworkflow_job_template%2Cworkflow_job_template_node*'
+        'api/v2/activity_stream/?or__object1__in=job_template,workflow_job_template,workflow_job_template_node&or__object2__in=job_template,workflow_job_template,workflow_job_template_node*'
       ).as('templateFilterRequest');
-      cy.get('button[data-cy="theme"] > .pf-v5-c-menu-toggle__controls').click();
-      cy.get('#templates > .pf-v5-c-menu__item-main > .pf-v5-c-menu__item-text').click();
+      cy.get('[data-cy="filter-input"]')
+        .click()
+        .then(() => {
+          cy.get('#templates').click();
+        });
       cy.wait('@templateFilterRequest');
     });
     it('visit the Activity Stream list page filtered by credentials', () => {
@@ -93,8 +119,11 @@ describe('Activity Stream Tests', () => {
       cy.intercept(
         'api/v2/activity_stream/?or__object1__in=credential&or__object2__in=credential*'
       ).as('credentialFilterRequest');
-      cy.get('button[data-cy="theme"] > .pf-v5-c-menu-toggle__controls').click();
-      cy.get('#credentials > .pf-v5-c-menu__item-main > .pf-v5-c-menu__item-text').click();
+      cy.get('[data-cy="filter-input"]')
+        .click()
+        .then(() => {
+          cy.get('#credentials').click();
+        });
       cy.wait('@credentialFilterRequest');
     });
     it('visit the Activity Stream list page filtered by projects', () => {
@@ -102,8 +131,11 @@ describe('Activity Stream Tests', () => {
       cy.intercept('api/v2/activity_stream/?or__object1__in=project&or__object2__in=project*').as(
         'projectFilterRequest'
       );
-      cy.get('button[data-cy="theme"] > .pf-v5-c-menu-toggle__controls').click();
-      cy.get('#projects > .pf-v5-c-menu__item-main > .pf-v5-c-menu__item-text').click();
+      cy.get('[data-cy="filter-input"]')
+        .click()
+        .then(() => {
+          cy.get('#projects').click();
+        });
       cy.wait('@projectFilterRequest');
     });
     it('visit the Activity Stream list page filtered by inventories', () => {
@@ -111,8 +143,11 @@ describe('Activity Stream Tests', () => {
       cy.intercept(
         'api/v2/activity_stream/?or__object1__in=inventory&or__object2__in=inventory*'
       ).as('inventoryFilterRequest');
-      cy.get('button[data-cy="theme"] > .pf-v5-c-menu-toggle__controls').click();
-      cy.get('#inventories > .pf-v5-c-menu__item-main > .pf-v5-c-menu__item-text').click();
+      cy.get('[data-cy="filter-input"]')
+        .click()
+        .then(() => {
+          cy.get('#inventories').click();
+        });
       cy.wait('@inventoryFilterRequest');
     });
     it('visit the Activity Stream list page filtered by hosts', () => {
@@ -120,8 +155,11 @@ describe('Activity Stream Tests', () => {
       cy.intercept('api/v2/activity_stream/?or__object1__in=host&or__object2__in=host*').as(
         'hostFilterRequest'
       );
-      cy.get('button[data-cy="theme"] > .pf-v5-c-menu-toggle__controls').click();
-      cy.get('#hosts > .pf-v5-c-menu__item-main > .pf-v5-c-menu__item-text').click();
+      cy.get('[data-cy="filter-input"]')
+        .click()
+        .then(() => {
+          cy.get('#hosts').click();
+        });
       cy.wait('@hostFilterRequest');
     });
     it('visit the Activity Stream list page filtered by organizations', () => {
@@ -129,8 +167,11 @@ describe('Activity Stream Tests', () => {
       cy.intercept(
         'api/v2/activity_stream/?or__object1__in=organization&or__object2__in=organization*'
       ).as('organizationFilterRequest');
-      cy.get('button[data-cy="theme"] > .pf-v5-c-menu-toggle__controls').click();
-      cy.get('#organizations > .pf-v5-c-menu__item-main > .pf-v5-c-menu__item-text').click();
+      cy.get('[data-cy="filter-input"]')
+        .click()
+        .then(() => {
+          cy.get('#organizations').click();
+        });
       cy.wait('@organizationFilterRequest');
     });
     it('visit the Activity Stream list page filtered by users', () => {
@@ -138,8 +179,11 @@ describe('Activity Stream Tests', () => {
       cy.intercept('api/v2/activity_stream/?or__object1__in=user&or__object2__in=user*').as(
         'userFilterRequest'
       );
-      cy.get('button[data-cy="theme"] > .pf-v5-c-menu-toggle__controls').click();
-      cy.get('#users > .pf-v5-c-menu__item-main > .pf-v5-c-menu__item-text').click();
+      cy.get('[data-cy="filter-input"]')
+        .click()
+        .then(() => {
+          cy.get('#users').click();
+        });
       cy.wait('@userFilterRequest');
     });
     it('visit the Activity Stream list page filtered by teams', () => {
@@ -147,8 +191,11 @@ describe('Activity Stream Tests', () => {
       cy.intercept('api/v2/activity_stream/?or__object1__in=team&or__object2__in=team*').as(
         'teamFilterRequest'
       );
-      cy.get('button[data-cy="theme"] > .pf-v5-c-menu-toggle__controls').click();
-      cy.get('#teams > .pf-v5-c-menu__item-main > .pf-v5-c-menu__item-text').click();
+      cy.get('[data-cy="filter-input"]')
+        .click()
+        .then(() => {
+          cy.get('#teams').click();
+        });
       cy.wait('@teamFilterRequest');
     });
     it('visit the Activity Stream list page filtered by credential types', () => {
@@ -156,8 +203,11 @@ describe('Activity Stream Tests', () => {
       cy.intercept(
         'api/v2/activity_stream/?or__object1__in=credential_type&or__object2__in=credential_type*'
       ).as('credentialTypeFilterRequest');
-      cy.get('button[data-cy="theme"] > .pf-v5-c-menu-toggle__controls').click();
-      cy.get('#credential-types > .pf-v5-c-menu__item-main > .pf-v5-c-menu__item-text').click();
+      cy.get('[data-cy="filter-input"]')
+        .click()
+        .then(() => {
+          cy.get('#credential-types').click();
+        });
       cy.wait('@credentialTypeFilterRequest');
     });
     it('visit the Activity Stream list page filtered by notification templates', () => {
@@ -165,10 +215,11 @@ describe('Activity Stream Tests', () => {
       cy.intercept(
         'api/v2/activity_stream/?or__object1__in=notification_template&or__object2__in=notification_template*'
       ).as('notificationTemplateTypeFilterRequest');
-      cy.get('button[data-cy="theme"] > .pf-v5-c-menu-toggle__controls').click();
-      cy.get(
-        '#notification-templates > .pf-v5-c-menu__item-main > .pf-v5-c-menu__item-text'
-      ).click();
+      cy.get('[data-cy="filter-input"]')
+        .click()
+        .then(() => {
+          cy.get('#notification-templates').click();
+        });
       cy.wait('@notificationTemplateTypeFilterRequest');
     });
     it('visit the Activity Stream list page filtered by instances', () => {
@@ -176,8 +227,11 @@ describe('Activity Stream Tests', () => {
       cy.intercept('api/v2/activity_stream/?or__object1__in=instance&or__object2__in=instance*').as(
         'instanceTypeFilterRequest'
       );
-      cy.get('button[data-cy="theme"] > .pf-v5-c-menu-toggle__controls').click();
-      cy.get('#instances > .pf-v5-c-menu__item-main > .pf-v5-c-menu__item-text').click();
+      cy.get('[data-cy="filter-input"]')
+        .click()
+        .then(() => {
+          cy.get('#instances').click();
+        });
       cy.wait('@instanceTypeFilterRequest');
     });
     it('visit the Activity Stream list page filtered by instance groups', () => {
@@ -185,8 +239,11 @@ describe('Activity Stream Tests', () => {
       cy.intercept(
         'api/v2/activity_stream/?or__object1__in=instance_group&or__object2__in=instance_group*'
       ).as('instanceGroupTypeFilterRequest');
-      cy.get('button[data-cy="theme"] > .pf-v5-c-menu-toggle__controls').click();
-      cy.get('#instance-groups > .pf-v5-c-menu__item-main > .pf-v5-c-menu__item-text').click();
+      cy.get('[data-cy="filter-input"]')
+        .click()
+        .then(() => {
+          cy.get('#instance-groups').click();
+        });
       cy.wait('@instanceGroupTypeFilterRequest');
     });
     it('visit the Activity Stream list page filtered by applications and tokens', () => {
@@ -194,11 +251,11 @@ describe('Activity Stream Tests', () => {
       cy.intercept(
         'api/v2/activity_stream/?or__object1__in=o_auth2_application&or__object2__in=o_auth2_application*'
       ).as('applicationTypeFilterRequest');
-      cy.get('button[data-cy="theme"] > .pf-v5-c-menu-toggle__controls').click();
-      cy.get(
-        '#applications-and-tokens > .pf-v5-c-menu__item-main > .pf-v5-c-menu__item-text'
-      ).click();
-
+      cy.get('[data-cy="filter-input"]')
+        .click()
+        .then(() => {
+          cy.get('#applications-and-tokens').click();
+        });
       cy.wait('@applicationTypeFilterRequest');
     });
     it('visit the Activity Stream list page filtered by execution environments', () => {
@@ -206,10 +263,11 @@ describe('Activity Stream Tests', () => {
       cy.intercept(
         'api/v2/activity_stream/?or__object1__in=execution_environment&or__object2__in=execution_environment*'
       ).as('executionEnvironmentTypeFilterRequest');
-      cy.get('button[data-cy="theme"] > .pf-v5-c-menu-toggle__controls').click();
-      cy.get(
-        '#execution-environments > .pf-v5-c-menu__item-main > .pf-v5-c-menu__item-text'
-      ).click();
+      cy.get('[data-cy="filter-input"]')
+        .click()
+        .then(() => {
+          cy.get('#execution-environments').click();
+        });
       cy.wait('@executionEnvironmentTypeFilterRequest');
     });
     it('visit the Activity Stream list page filtered by settings', () => {
@@ -217,9 +275,17 @@ describe('Activity Stream Tests', () => {
       cy.intercept('api/v2/activity_stream/?or__object1__in=setting&or__object2__in=setting*').as(
         'settingTypeFilterRequest'
       );
-      cy.get('button[data-cy="theme"] > .pf-v5-c-menu-toggle__controls').click();
-      cy.get('#settings > .pf-v5-c-menu__item-main > .pf-v5-c-menu__item-text').click();
+      cy.get('[data-cy="filter-input"]')
+        .click()
+        .then(() => {
+          cy.get('#settings').click();
+        });
       cy.wait('@settingTypeFilterRequest');
+      cy.get('[data-cy="filter-input"]')
+        .click()
+        .then(() => {
+          cy.get('#all-activity').click();
+        });
     });
   });
   describe('List Page', () => {
@@ -241,26 +307,53 @@ describe('Activity Stream Tests', () => {
       cy.get('thead').find('th').contains('Event').should('exist');
     });
     it('Clicking time table header sorts activity stream by timestamp', () => {
-      cy.intercept('api/v2/activity_stream/?&order_by=-timestamp*').as('timeDescSortRequest');
+      cy.intercept('api/v2/activity_stream/?order_by=-timestamp*').as('timeDescSortRequest');
       cy.mount(<ActivityStreams />);
       cy.wait('@timeDescSortRequest');
-      cy.intercept('api/v2/activity_stream/?&order_by=timestamp*').as('timeAscSortRequest');
+      cy.intercept('api/v2/activity_stream/?order_by=timestamp*').as('timeAscSortRequest');
       cy.clickTableHeader(/^Time$/);
       cy.wait('@timeAscSortRequest');
+      cy.clearAllFilters();
     });
     it('Clicking initiated by table header sorts activity stream by initiator', () => {
       cy.mount(<ActivityStreams />);
-      cy.intercept('api/v2/activity_stream/?&order_by=actor__username*').as(
+      cy.intercept('api/v2/activity_stream/?order_by=actor__username*').as(
         'initiatorAscSortRequest'
       );
       cy.clickTableHeader(/^Initiated by$/);
       cy.wait('@initiatorAscSortRequest');
+      cy.clearAllFilters();
     });
     it('Click on the inspect/magnify icon to see stream event details modal', () => {
       cy.mount(<ActivityStreams />);
       cy.get('button[data-cy="view-event-details"]').first().click();
       cy.get('[aria-label="Event details"]').should('contain', 'Event details');
       cy.get('[aria-label="Close"]').click();
+    });
+    it('Event details modal should not contain setting name and setting category fields by default', () => {
+      cy.mount(<ActivityStreams />);
+      cy.get('button[data-cy="view-event-details"]').first().click();
+      cy.get('#setting-name').should('not.exist');
+      cy.get('#setting-category').should('not.exist');
+      cy.get('[aria-label="Close"]').click();
+    });
+    it('Event details modal should contain setting name and setting category fields if event resource is Setting', () => {
+      cy.intercept(
+        {
+          method: 'GET',
+          url: '/api/v2/activity_stream/*',
+        },
+        {
+          fixture: 'activity_stream_setting.json',
+        }
+      ).as('activityStreamSettingRequest');
+      cy.mount(<ActivityStreams />);
+      cy.wait('@activityStreamSettingRequest').then(() => {
+        cy.get('button[data-cy="view-event-details"]').first().click();
+        cy.get('#setting-name').should('exist');
+        cy.get('#setting-category').should('exist');
+        cy.get('[aria-label="Close"]').click();
+      });
     });
   });
   describe('Search', () => {
@@ -277,19 +370,19 @@ describe('Activity Stream Tests', () => {
     });
     it('See a list of events filtered by keyword', () => {
       cy.mount(<ActivityStreams />);
-      cy.intercept('api/v2/activity_stream/?&search=associate*').as('keywordFilterRequest');
-      cy.filterTableByTypeAndText(/^Keyword$/, 'associate');
+      cy.intercept('api/v2/activity_stream/?search=associate*').as('keywordFilterRequest');
+      cy.filterTableByTypeAndSingleText(/^Keyword$/, 'associate');
       cy.wait('@keywordFilterRequest');
-      cy.clickButton(/^Clear all filters$/);
+      cy.clearAllFilters();
     });
     it('See a list of events filtered by initiator', () => {
       cy.mount(<ActivityStreams />);
-      cy.intercept('api/v2/activity_stream/?&actor__username__icontains=admin*').as(
+      cy.intercept('api/v2/activity_stream/?actor__username__icontains=admin*').as(
         'initiatorFilterRequest'
       );
-      cy.filterTableByTypeAndText('Initiated by (username)', 'admin');
+      cy.filterTableByTypeAndSingleText('Initiated by (username)', 'admin');
       cy.wait('@initiatorFilterRequest');
-      cy.clickButton(/^Clear all filters$/);
+      cy.clearAllFilters();
     });
   });
 });

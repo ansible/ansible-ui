@@ -22,7 +22,7 @@ export function useKeywordToolbarFilter() {
     () => ({
       key: 'keyword',
       label: t('Keyword'),
-      type: ToolbarFilterType.Text,
+      type: ToolbarFilterType.SingleText,
       query: 'search',
       comparison: 'contains',
     }),
@@ -36,7 +36,7 @@ export function useInitiatedByToolbarFilter() {
     () => ({
       key: 'initiated-by',
       label: t('Initiated by (username)'),
-      type: ToolbarFilterType.Text,
+      type: ToolbarFilterType.SingleText,
       query: 'actor__username__icontains',
       comparison: 'contains',
     }),

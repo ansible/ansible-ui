@@ -18,7 +18,7 @@ export function useActivityStreamFilter() {
         query: 'object1__in',
         label: 'Type',
         options: [
-          { label: 'Dashboard (all activity)', value: '' },
+          { label: 'All Activity', value: '' },
           { label: 'Jobs', value: 'job' },
           { label: 'Schedules', value: 'schedule' },
           { label: 'Workflow Approvals', value: 'workflow_approval' },
