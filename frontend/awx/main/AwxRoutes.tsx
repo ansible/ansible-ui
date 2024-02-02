@@ -210,6 +210,7 @@ export enum AwxRoute {
   ExecutionEnvironments = 'awx-execution-environments',
   ExecutionEnvironmentPage = 'awx-execution-environments-page',
   ExecutionEnvironmentDetails = 'awx-execution-environments-details',
+  ExecutionEnvironmentTemplates = 'awx-execution-environments-templates',
   CreateExecutionEnvironment = 'awx-create-execution-environment',
   EditExecutionEnvironment = 'awx-edit-execution-environment',
 
