@@ -105,7 +105,7 @@ export function EditGroup() {
           },
         ]}
       />
-      <GroupEdit group={group} />
+      <GroupEdit />
     </PageLayout>
   );
 }

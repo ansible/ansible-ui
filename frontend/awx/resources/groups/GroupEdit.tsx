@@ -8,17 +8,19 @@ import {
   usePageNavigate,
 } from '../../../../framework';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { awxAPI } from '../../common/api/awx-utils';
 import { AwxRoute } from '../../main/AwxRoutes';
 import { usePatchRequest } from '../../../common/crud/usePatchRequest';
+import { useGetItem } from '../../../common/crud/useGet';
 
-export function GroupEdit(props: { group: InventoryGroup }) {
+export function GroupEdit() {
   const { t } = useTranslation();
-  const group = props.group;
   const navigate = useNavigate();
   const patchRequest = usePatchRequest<InventoryGroupCreate, InventoryGroup>();
   const pageNavigate = usePageNavigate();
+  const params = useParams<{ group_id: string }>();
+  const { data: group } = useGetItem<InventoryGroup>(awxAPI`/groups`, params.group_id);
 
   const onSubmit: PageFormSubmitHandler<InventoryGroupCreate> = async (groupInput) => {
     const { name, description, variables } = groupInput;
@@ -26,9 +28,12 @@ export function GroupEdit(props: { group: InventoryGroup }) {
       name,
       description,
       variables,
-      inventory: group.inventory,
+      inventory: group?.inventory ?? 0,
     };
-    const editedGroup = await patchRequest(awxAPI`/groups/${group.id.toString()}/`, editGroup);
+    const editedGroup = await patchRequest(
+      awxAPI`/groups/${group?.id.toString() ?? ''}/`,
+      editGroup
+    );
     pageNavigate(AwxRoute.InventoryGroupDetails, {
       params: { inventory_type: 'inventroy', id: editedGroup.inventory, group_id: editedGroup.id },
     });
@@ -42,7 +47,7 @@ export function GroupEdit(props: { group: InventoryGroup }) {
       cancelText={t('Cancel')}
       onCancel={onCancel}
       defaultValue={{
-        name: group.name,
+        name: group?.name,
         description: group?.description ?? '',
         variables: group?.variables ?? '---\n',
       }}
