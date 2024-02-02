@@ -35,11 +35,20 @@ export function ExecutionEnvironmentDetailInner(props: { execution_env: Executio
 
   return (
     <PageDetails data-cy="execution-environment-page-detail">
-      <PageDetail label={t('Name')}>{execution_env.name}</PageDetail>
-      <PageDetail label={t('Image')}>{execution_env.image}</PageDetail>
-      <PageDetail label={t('Description')}>{execution_env.description}</PageDetail>
-      <PageDetail label={t('Managed')}>{`${execution_env.managed}`}</PageDetail>
-      <PageDetail label={t('Organization')}>
+      <PageDetail data-cy="execution-environment-page-detail" label={t('Name')}>
+        {execution_env.name}
+      </PageDetail>
+      <PageDetail data-cy="execution-environment-page-detail" label={t('Image')}>
+        {execution_env.image}
+      </PageDetail>
+      <PageDetail data-cy="execution-environment-page-detail" label={t('Description')}>
+        {execution_env.description}
+      </PageDetail>
+      <PageDetail
+        data-cy="execution-environment-page-detail"
+        label={t('Managed')}
+      >{`${execution_env.managed}`}</PageDetail>
+      <PageDetail data-cy="execution-environment-page-detail" label={t('Organization')}>
         {execution_env.summary_fields?.organization ? (
           <TextCell
             text={execution_env.summary_fields?.organization?.name}
@@ -49,15 +58,17 @@ export function ExecutionEnvironmentDetailInner(props: { execution_env: Executio
           />
         ) : undefined}
       </PageDetail>
-      <PageDetail label={t('Pull')}>{execution_env.pull}</PageDetail>
-      <PageDetail label={t('Registry Credential')}>
+      <PageDetail data-cy="execution-environment-page-detail" label={t('Pull')}>
+        {execution_env.pull}
+      </PageDetail>
+      <PageDetail data-cy="execution-environment-page-detail" label={t('Registry Credential')}>
         {execution_env?.summary_fields?.credential?.name ? (
           <Label variant="outline" color="blue">
             {execution_env?.summary_fields?.credential?.name}
           </Label>
         ) : undefined}
       </PageDetail>
-      <PageDetail label={t('Created')}>
+      <PageDetail data-cy="execution-environment-page-detail" label={t('Created')}>
         <DateTimeCell
           format="date-time"
           value={execution_env.created}
@@ -70,6 +81,7 @@ export function ExecutionEnvironmentDetailInner(props: { execution_env: Executio
         />
       </PageDetail>
       <LastModifiedPageDetail
+        data-cy="execution-environment-page-detail"
         value={execution_env.modified}
         author={execution_env?.summary_fields?.modified_by?.username}
         onClick={() =>
