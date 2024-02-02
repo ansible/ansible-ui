@@ -42,4 +42,19 @@ describe('Inventory source page', () => {
     cy.get('#confirm').click();
     cy.clickButton(/^Delete inventory source/);
   });
+
+  it('creates an inventory source from the details page', () => {
+    cy.navigateTo('awx', 'inventories');
+    cy.clickTableRow(inventory.name);
+    cy.verifyPageTitle(inventory.name);
+    cy.clickLink(/^Sources$/);
+    cy.get('#add-source').click();
+    cy.verifyPageTitle('Add new source');
+    cy.get('[data-cy="name"]').type('source 1');
+    cy.selectDropdownOptionByResourceName('source_control_type', 'Sourced from a Project');
+    cy.selectDropdownOptionByResourceName('project', project.name);
+    cy.selectDropdownOptionByResourceName('inventory', 'Dockerfile');
+    cy.get('[data-cy="Submit"]').click();
+    cy.verifyPageTitle('source 1');
+  });
 });

@@ -23,6 +23,7 @@ import { InventoryHostPage } from '../../resources/inventories/inventoryHostsPag
 import { InventoryHostDetails } from '../../resources/inventories/inventoryHostsPage/InventoryHostDetails';
 import { CreateGroup } from '../../resources/inventories/inventoryGroup/InventoryGroupForm';
 import { InventoryHostGroups } from '../../resources/inventories/inventoryHostsPage/InventoryHostGroups';
+import { CreateInventorySource } from '../../resources/sources/InventorySourceForm';
 
 export function useAwxInventoryRoutes() {
   const { t } = useTranslation();
@@ -217,7 +218,7 @@ export function useAwxInventoryRoutes() {
         {
           id: AwxRoute.InventorySourcesAdd,
           path: ':inventory_type/:id/sources/add',
-          element: <PageNotImplemented />,
+          element: <CreateInventorySource />,
         },
       ],
     }),
