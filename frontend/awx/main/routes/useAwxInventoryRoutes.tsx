@@ -28,6 +28,8 @@ import {
   EditHost,
 } from '../../resources/inventories/inventoryHostsPage/InventoryHostForm';
 import { GroupDetails } from '../../resources/groups/GroupDetails';
+import { InventoryHostJobs } from '../../resources/inventories/inventoryHostsPage/InventoryHostJobs';
+import { InventoryHostFacts } from '../../resources/inventories/inventoryHostsPage/InventoryHostFacts';
 
 export function useAwxInventoryRoutes() {
   const { t } = useTranslation();
@@ -202,6 +204,16 @@ export function useAwxInventoryRoutes() {
               id: AwxRoute.InventoryHostGroups,
               path: 'groups',
               element: <InventoryHostGroups />,
+            },
+            {
+              id: AwxRoute.InventoryHostJobs,
+              path: 'jobs',
+              element: <InventoryHostJobs />,
+            },
+            {
+              id: AwxRoute.InventoryHostFacts,
+              path: 'facts',
+              element: <InventoryHostFacts />,
             },
           ],
         },
