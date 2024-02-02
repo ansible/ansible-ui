@@ -27,6 +27,7 @@ import {
   CreateHost,
   EditHost,
 } from '../../resources/inventories/inventoryHostsPage/InventoryHostForm';
+import { GroupDetails } from '../../resources/groups/GroupDetails';
 
 export function useAwxInventoryRoutes() {
   const { t } = useTranslation();
@@ -121,7 +122,7 @@ export function useAwxInventoryRoutes() {
             {
               id: AwxRoute.InventoryGroupDetails,
               path: 'details',
-              element: <PageNotImplemented />,
+              element: <GroupDetails />,
             },
             {
               id: AwxRoute.InventoryGroupRelatedGroups,
