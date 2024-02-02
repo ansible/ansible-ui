@@ -35,6 +35,7 @@ import { useAwxConfig } from '../../../../common/useAwxConfig';
 import { useViewOptions } from '../ViewOptionsProvider';
 import { useRemoveGraphElements, useSaveVisualizer } from '../hooks';
 import type { ControllerState, GraphNode } from '../types';
+import { START_NODE_ID } from '../constants';
 
 export function ToolbarHeader() {
   const { t } = useTranslation();
@@ -133,7 +134,7 @@ export function WorkflowVisualizerToolbar() {
   const nodes = controller
     .getGraph()
     .getNodes()
-    .filter((n) => n.isVisible()) as GraphNode[];
+    .filter((n) => n.isVisible() && n.getId() !== START_NODE_ID) as GraphNode[];
   const { workflowTemplate, RBAC } = controller.getState<ControllerState>();
 
   const handleLaunchWorkflow = useCallback(async () => {

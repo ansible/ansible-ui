@@ -89,7 +89,7 @@ function NodeTypeInput() {
       isRequired
       label={t('Node type')}
       name="node_type"
-      data-cy="node_type"
+      data-cy="node-type"
       options={[
         { label: t('Job Template'), value: UnifiedJobType.job },
         { label: t('Workflow Job Template'), value: UnifiedJobType.workflow_job },

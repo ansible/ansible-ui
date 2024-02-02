@@ -15,6 +15,7 @@ import {
 import { css } from '@patternfly/react-styles';
 import { CustomLabel } from './CustomLabel';
 import type { CustomEdgeProps, CustomEdgeInnerProps } from '../types';
+import { START_NODE_ID } from '../constants';
 
 function useCenterPoint(edgePath: string) {
   const [centerPoint, setCenterPoint] = useState<DOMPoint | undefined>();
@@ -55,7 +56,7 @@ const CustomEdgeInner: FC<
 
   const edgePath = integralShapePath(startPoint, endPoint, 0, 20);
   const { centerPoint, pathRef } = useCenterPoint(edgePath);
-
+  const isSourceRootNode = edgeElement.getSource().getId() === START_NODE_ID;
   const data = edgeElement.getData();
   if (!data) return null;
   const { tag, tagStatus } = data;
@@ -91,6 +92,7 @@ const CustomEdgeInner: FC<
           xPoint={centerPoint.x}
           yPoint={centerPoint.y}
           status={tagStatus}
+          isSourceRootNode={isSourceRootNode}
           {...props}
         >
           {tag}
