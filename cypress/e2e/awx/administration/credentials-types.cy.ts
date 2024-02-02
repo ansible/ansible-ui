@@ -35,7 +35,7 @@ describe('Credential Types', () => {
     cy.navigateTo('awx', 'credential-types');
     cy.verifyPageTitle('Credential Types');
     cy.setTablePageSize('50');
-    cy.get('span.pf-v5-c-label__content').should('have.length', 28);
+    cy.get('span.pf-v5-c-label__text').should('contain', 'Read-only').and('have.length', 28);
   });
 
   it('navigate to the details page for a credential type', () => {
