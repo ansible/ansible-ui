@@ -81,7 +81,7 @@ export function useJobTypeColumn<T extends UnifiedJob>(
       list: listOption ?? ColumnListOption.subtitle,
       dashboard: dashboardOption ?? ColumnDashboardOption.hidden,
     }),
-    [t]
+    [cardOption, dashboardOption, listOption, t]
   );
 
   return column;
