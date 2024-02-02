@@ -127,6 +127,38 @@ describe('inventories', () => {
     });
   });
 
+  it('test inventory group can be edited from groups table row', () => {
+    cy.createInventoryHostGroup(organization).then((result) => {
+      const { inventory, group } = result;
+      cy.navigateTo('awx', 'inventories');
+      cy.clickTableRow(inventory.name);
+      cy.verifyPageTitle(inventory.name);
+      cy.clickLink(/^Groups$/);
+      cy.clickTableRowKebabAction(group.name as string, 'edit-group', true);
+      cy.verifyPageTitle('Edit group');
+      cy.get('[data-cy="name-form-group"]').type('-changed');
+      cy.get('[data-cy="Submit"]').click();
+      cy.verifyPageTitle(group.name + '-changed');
+    });
+  });
+
+  it('test inventory group can be edited from groups details', () => {
+    cy.createInventoryHostGroup(organization).then((result) => {
+      const { inventory, group } = result;
+      cy.navigateTo('awx', 'inventories');
+      cy.clickTableRow(inventory.name);
+      cy.verifyPageTitle(inventory.name);
+      cy.clickLink(/^Groups$/);
+      cy.clickTableRow(group.name as string);
+      cy.verifyPageTitle(group.name as string);
+      cy.get('[data-cy="edit-group"]').click();
+      cy.verifyPageTitle('Edit group');
+      cy.get('[data-cy="name-form-group"]').type('-changed');
+      cy.get('[data-cy="Submit"]').click();
+      cy.verifyPageTitle(group.name + '-changed');
+    });
+  });
+
   it('can copy an inventory from the inventory list row item', () => {
     cy.navigateTo('awx', 'inventories');
     cy.clickTableRowKebabAction(inventory.name, 'copy-inventory', true);

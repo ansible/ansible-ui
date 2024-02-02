@@ -7,6 +7,8 @@ import { awxAPI } from '../../../common/api/awx-utils';
 import { AwxError } from '../../../common/AwxError';
 import { Inventory } from '../../../interfaces/Inventory';
 import { GroupCreate } from '../../groups/GroupCreate';
+import { InventoryGroup } from '../../../interfaces/InventoryGroup';
+import { GroupEdit } from '../../groups/GroupEdit';
 
 export function CreateGroup() {
   const { t } = useTranslation();
@@ -49,6 +51,61 @@ export function CreateGroup() {
         ]}
       />
       <GroupCreate inventory={inventory} />
+    </PageLayout>
+  );
+}
+
+export function EditGroup() {
+  const { t } = useTranslation();
+  const params = useParams<{ group_id: string }>();
+  const {
+    error,
+    data: group,
+    refresh,
+  } = useGet<InventoryGroup>(awxAPI`/groups/${params.group_id?.toString() ?? ''}`);
+
+  const getPageUrl = useGetPageUrl();
+
+  if (error) return <AwxError error={error} handleRefresh={refresh} />;
+  if (!group) return <LoadingPage breadcrumbs tabs />;
+
+  return (
+    <PageLayout>
+      <PageHeader
+        title={t('Edit group')}
+        breadcrumbs={[
+          { label: t('Inventories'), to: getPageUrl(AwxRoute.Inventories) },
+          {
+            label: `${group?.summary_fields.inventory.name}`,
+            to: getPageUrl(AwxRoute.InventoryDetails, {
+              params: {
+                id: group?.summary_fields.inventory.id,
+                inventory_type: 'inventory',
+              },
+            }),
+          },
+          {
+            label: t('Groups'),
+            to: getPageUrl(AwxRoute.InventoryGroups, {
+              params: {
+                id: group?.summary_fields.inventory.id,
+                inventory_type: 'inventory',
+              },
+            }),
+          },
+          {
+            label: `${group?.name}`,
+            to: getPageUrl(AwxRoute.InventoryGroupDetails, {
+              params: {
+                id: group?.summary_fields.inventory.id,
+                inventory_type: 'inventory',
+                group_id: group.id,
+              },
+            }),
+          },
+        ]}
+      />
+      <GroupEdit />
     </PageLayout>
   );
 }
