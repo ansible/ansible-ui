@@ -33,7 +33,7 @@ export function useHostsGroupsToolbarActions(view: IAwxView<InventoryGroup>) {
     adhocOptions && adhocOptions.actions && adhocOptions.actions['POST']
   );
 
-  const groupOptions = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/groups`).data;
+  const groupOptions = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/groups/`).data;
   const canCreateGroup = Boolean(
     groupOptions && groupOptions.actions && groupOptions.actions['POST']
   );

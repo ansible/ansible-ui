@@ -53,7 +53,7 @@ describe('EditGroup', () => {
   });
 
   it('renders and functions correctly', () => {
-    cy.mount(<EditGroup />);
+    cy.mount(<EditGroup />, { path: '/:group_id/', initialEntries: ['/433'] });
     cy.fixture('groupDetails.json').then((group: InventoryGroup) => {
       cy.get('[data-cy="name"]').should('have.value', group.name);
       cy.get('[data-cy="description"]').should('have.value', group.description);

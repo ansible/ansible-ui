@@ -13,6 +13,7 @@ import { awxAPI } from '../../common/api/awx-utils';
 import { AwxRoute } from '../../main/AwxRoutes';
 import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 import { useGetItem } from '../../../common/crud/useGet';
+import { useMemo } from 'react';
 
 export function GroupEdit() {
   const { t } = useTranslation();
@@ -21,6 +22,15 @@ export function GroupEdit() {
   const pageNavigate = usePageNavigate();
   const params = useParams<{ group_id: string }>();
   const { data: group } = useGetItem<InventoryGroup>(awxAPI`/groups`, params.group_id);
+
+  const defaultValue = useMemo(
+    () => ({
+      name: group?.name,
+      description: group?.description ?? '',
+      variables: group?.variables ?? '---\n',
+    }),
+    [group]
+  );
 
   const onSubmit: PageFormSubmitHandler<InventoryGroupCreate> = async (groupInput) => {
     const { name, description, variables } = groupInput;
@@ -40,17 +50,17 @@ export function GroupEdit() {
   };
 
   const onCancel = () => navigate(-1);
+  if (!group) {
+    return null;
+  }
+
   return (
     <AwxPageForm<InventoryGroupCreate>
       submitText={t('Save')}
       onSubmit={onSubmit}
       cancelText={t('Cancel')}
       onCancel={onCancel}
-      defaultValue={{
-        name: group?.name,
-        description: group?.description ?? '',
-        variables: group?.variables ?? '---\n',
-      }}
+      defaultValue={defaultValue}
     >
       <PageFormTextInput name="name" label={t('Name')} isRequired />
       <PageFormTextInput name="description" label={t('Description')} />
