@@ -95,7 +95,7 @@ export function EditGroup() {
           },
           {
             label: `${group?.name}`,
-            to: getPageUrl(AwxRoute.InstanceGroupDetails, {
+            to: getPageUrl(AwxRoute.InventoryGroupDetails, {
               params: {
                 id: group?.summary_fields.inventory.id,
                 inventory_type: 'inventory',
