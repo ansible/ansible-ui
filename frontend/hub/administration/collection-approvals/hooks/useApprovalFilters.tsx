@@ -24,14 +24,14 @@ export function useApprovalFilters() {
       {
         key: 'collection',
         label: t('Collection'),
-        type: ToolbarFilterType.Text,
+        type: ToolbarFilterType.MultiText,
         query: 'name',
         comparison: 'equals',
       },
       {
         key: 'namespace',
         label: t('Namespace'),
-        type: ToolbarFilterType.Text,
+        type: ToolbarFilterType.MultiText,
         query: 'namespace',
         comparison: 'equals',
       },

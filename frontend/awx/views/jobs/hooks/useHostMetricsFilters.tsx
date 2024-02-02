@@ -9,7 +9,7 @@ export function useHostMetricsFilters() {
       {
         key: 'hostname__icontains',
         label: t('Hostname'),
-        type: ToolbarFilterType.Text,
+        type: ToolbarFilterType.MultiText,
         query: 'hostname__icontains',
         comparison: 'contains',
       },

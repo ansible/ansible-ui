@@ -32,7 +32,7 @@ export function InventorySources() {
   });
 
   const sourceOptions = useOptions<OptionsResponse<ActionsResponse>>(
-    awxAPI`/inventory_sources`
+    awxAPI`/inventory_sources/`
   ).data;
   const canCreateSource = Boolean(
     sourceOptions && sourceOptions.actions && sourceOptions.actions['POST']

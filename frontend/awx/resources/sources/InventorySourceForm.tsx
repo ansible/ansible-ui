@@ -57,6 +57,7 @@ export function CreateInventorySource() {
   const onSubmit: PageFormSubmitHandler<InventorySourceForm> = async (values) => {
     const formValues: InventorySourceCreate = {
       ...values,
+      credential: values.credential.id,
       source_path: values.source_path.name,
       inventory: parseInt(params.id ?? ''),
       source_project: values?.source_project?.id,
@@ -112,7 +113,7 @@ export function CreateInventorySource() {
 
 function InventorySourceInputs() {
   const { t } = useTranslation();
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/inventory_sources`);
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/inventory_sources/`);
   // remove the filter when mockups/functionality for file and constructed source types are ready
   const scmTypeOptions = data?.actions?.GET?.source?.choices?.filter(([value, label]) => {
     const ignoredSourceTypes = ['file', 'constructed'];

@@ -46,7 +46,7 @@ export function CollectionDependencies() {
         const name = strings[1];
 
         const result = await requestGet<HubItemsResponse<CollectionVersionSearch>>(
-          hubAPI`/v3/plugin/ansible/search/collection-versions?namespace=${namespace}&name=${name}`
+          hubAPI`/v3/plugin/ansible/search/collection-versions/?namespace=${namespace}&name=${name}`
         );
 
         // select the first repo
@@ -164,7 +164,7 @@ export function useCollectionFilters() {
       {
         key: 'name__icontains',
         label: t('Name'),
-        type: ToolbarFilterType.Text,
+        type: ToolbarFilterType.MultiText,
         query: 'keywords',
         comparison: 'contains',
       },

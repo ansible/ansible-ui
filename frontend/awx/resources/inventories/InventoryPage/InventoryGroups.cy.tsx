@@ -36,7 +36,7 @@ describe('InventoryGroups', () => {
     );
   });
 
-  it('renders invetory groups list', () => {
+  it('renders inventory groups list', () => {
     cy.mount(<InventoryGroups />);
     cy.fixture('groups.json')
       .its('results')

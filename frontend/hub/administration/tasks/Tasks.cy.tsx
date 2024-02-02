@@ -7,7 +7,7 @@ describe('Tasks List', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: pulpAPI`/tasks/*`,
+        url: pulpAPI`/tasks/` + '*',
       },
       {
         fixture: 'tasks.json',
@@ -32,7 +32,7 @@ describe('Tasks List', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: pulpAPI`/tasks/*`,
+        url: pulpAPI`/tasks/` + '*',
       },
       {
         statusCode: 500,

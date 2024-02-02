@@ -54,6 +54,21 @@ describe('Inventory source page', () => {
     cy.selectDropdownOptionByResourceName('source_control_type', 'Sourced from a Project');
     cy.selectDropdownOptionByResourceName('project', project.name);
     cy.selectDropdownOptionByResourceName('inventory', 'Dockerfile');
+    cy.get('.pf-v5-c-input-group > .pf-v5-c-button').click();
+    cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+      cy.searchAndDisplayResource('Demo Credential');
+      cy.get('[data-cy="checkbox-column-cell"] > label').click();
+      cy.get('#confirm').click();
+    });
+    cy.get('[data-cy="host-filter"]').type('/^test$/');
+    cy.get('[data-cy="verbosity"]').type('1');
+    cy.get('[data-cy="enabled-var"]').type('foo.bar');
+    cy.get('[data-cy="enabled-value"]').type('test');
+    cy.get('[data-cy="overwrite"]').check();
+    cy.get('[data-cy="overwrite_vars"]').check();
+    cy.get('[data-cy="update_on_launch"]').check();
+    cy.get('[data-cy="update-cache-timeout"]').type('1');
+    cy.get('.view-lines').type('test: "output"');
     cy.get('[data-cy="Submit"]').click();
     cy.verifyPageTitle('source 1');
   });

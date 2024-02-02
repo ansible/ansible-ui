@@ -8,7 +8,7 @@ describe('Roles List', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: pulpAPI`/roles/*`,
+        url: pulpAPI`/roles/` + '*',
       },
       {
         fixture: 'hub_roles.json',
@@ -31,7 +31,7 @@ describe('Roles List', () => {
       user: mockUser,
     }));
     cy.mount(<Roles />);
-    cy.intercept(pulpAPI`/roles/*name__icontains=foo*`).as('nameFilterRequest');
+    cy.intercept(pulpAPI`/roles/?*name__icontains=foo*`).as('nameFilterRequest');
     cy.filterTableByText('foo');
     cy.wait('@nameFilterRequest');
     cy.clickButton(/^Clear all filters$/);
@@ -41,7 +41,7 @@ describe('Roles List', () => {
       user: mockUser,
     }));
     cy.mount(<Roles />);
-    cy.intercept(pulpAPI`/roles/*locked=false*`).as('editableFilterRequest');
+    cy.intercept(pulpAPI`/roles/?*locked=false*`).as('editableFilterRequest');
     cy.filterBySingleSelection('Editable', 'Editable');
     cy.wait('@editableFilterRequest');
     cy.clickButton(/^Clear all filters$/);
@@ -51,7 +51,7 @@ describe('Roles List', () => {
       user: mockUser,
     }));
     cy.mount(<Roles />);
-    cy.intercept(pulpAPI`/roles/*name__startswith=&*`).as('allRolesFilterRequest');
+    cy.intercept(pulpAPI`/roles/?*name__startswith=&*`).as('allRolesFilterRequest');
     cy.filterBySingleSelection('Role type', 'All roles');
     cy.wait('@allRolesFilterRequest');
     cy.clickButton(/^Clear all filters$/);
@@ -140,7 +140,7 @@ describe('Roles List', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: pulpAPI`/roles/*`,
+        url: pulpAPI`/roles/` + '*',
       },
       {
         statusCode: 500,

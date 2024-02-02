@@ -71,7 +71,7 @@ export interface InventorySource
 }
 
 export interface InventorySourceCreate {
-  credential: SummaryFieldCredential;
+  credential: number;
   inventory: number;
   source_path: string;
   source_script: string;

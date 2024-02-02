@@ -37,13 +37,12 @@ export function ProjectSubForm() {
         <PageFormSection title={t('Source Details')}>
           <PageFormCredentialSelect<InventorySourceForm>
             name="credential"
-            label={t('Credentials')}
-            placeholder={t('Add credentials')}
-            labelHelpTitle={t('Credentials')}
+            label={t('Credential')}
+            placeholder={t('Add credential')}
+            labelHelpTitle={t('Credential')}
             labelHelp={t(
               'Select credentials for accessing the nodes this job will be ran against. You can only select one credential of each type. For machine credentials (SSH), checking "Prompt on launch" without selecting credentials will require you to select a machine credential at run time. If you select credentials and check "Prompt on launch", the selected credential(s) become the defaults that can be updated at run time.'
             )}
-            isMultiple
           />
           <PageFormHidden watch="source" hidden={(type: string) => type !== 'scm'}>
             <PageFormProjectSelect<InventorySourceForm> name="source_project" isRequired />
@@ -131,9 +130,9 @@ export function ProjectSubForm() {
               <PageFormSection title={t('Cache timeout (seconds)')}>
                 <PageFormTextInput<InventorySourceForm>
                   name="update_cache_timeout"
-                  placeholder={t('Add a host config key')}
+                  placeholder={t('0')}
                   isRequired
-                  label={t('Host config key')}
+                  type="number"
                 />
               </PageFormSection>
             ) : null}

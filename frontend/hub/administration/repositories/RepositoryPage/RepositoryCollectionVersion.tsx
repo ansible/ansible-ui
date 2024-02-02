@@ -18,7 +18,7 @@ export function RepositoryCollectionVersion() {
   const { repo_id } = useOutletContext<{ id: string; repo_id: string }>();
   const tableColumns = useCollectionColumns();
   const view = useHubView<CollectionVersionSearch>({
-    url: hubAPI`/v3/plugin/ansible/search/collection-versions`,
+    url: hubAPI`/v3/plugin/ansible/search/collection-versions/`,
     keyFn: collectionKeyFn,
     defaultSort: 'name',
     queryParams: {
