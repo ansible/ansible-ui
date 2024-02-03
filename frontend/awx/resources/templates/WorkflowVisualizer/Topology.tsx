@@ -172,6 +172,7 @@ export const Visualizer = ({ data: { workflowNodes = [], template } }: TopologyP
         data: {
           resource: n,
         },
+        state: { isInvalidLinkTarget: false },
       };
 
       return node;
