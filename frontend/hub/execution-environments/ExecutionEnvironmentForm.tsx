@@ -28,6 +28,10 @@ import { useSelectRegistrySingle } from './hooks/useRegistrySelector';
 
 import { LoadingPage } from '../../../framework/components/LoadingPage';
 import { HubError } from '../common/HubError';
+import { TaskResponse } from '../administration/tasks/Task';
+import { waitForTask } from '../common/api/hub-api-utils';
+import { parsePulpIDFromURL } from '../common/api/hub-api-utils';
+import { hubErrorAdapter } from '../../../frontend/hub/common/adapters/hubErrorAdapter';
 
 export function CreateExecutionEnvironment() {
   return <ExecutionEnvironmentForm mode="add" />;
@@ -125,16 +129,16 @@ function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
       }
 
       if (formData.description !== executionEnvironment.data?.description) {
-        promises.push(
-          patchHubRequest(
-            pulpAPI`/distributions/container/container/${
-              executionEnvironment.data?.pulp?.distribution?.id || ''
-            }/`,
-            { description: formData.description || null }
-          )
+        const { response } = await patchHubRequest(
+          pulpAPI`/distributions/container/container/${
+            executionEnvironment.data?.pulp?.distribution?.id || ''
+          }/`,
+          { description: formData.description || null }
         );
+        promises.push(waitForTask(parsePulpIDFromURL((response as TaskResponse)?.task)));
       }
-      await Promise.all([promises]);
+
+      await Promise.all(promises);
     }
 
     navigate(HubRoute.ExecutionEnvironments);
@@ -179,6 +183,7 @@ function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
           defaultValue={defaultFormValue}
           singleColumn={true}
           disableSubmitOnEnter={true}
+          errorAdapter={(error) => hubErrorAdapter(error, { base_path: 'name' })}
         >
           <PageFormTextInput<ExecutionEnvironmentFormProps>
             name="name"
