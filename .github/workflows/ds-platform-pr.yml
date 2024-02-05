@@ -1,4 +1,4 @@
-name: Platform E2E PR
+name: Platform PR
 
 on:
   pull_request:
@@ -46,3 +46,11 @@ jobs:
       PLATFORM_PASSWORD: ${{ secrets.PLATFORM_PASSWORD }}
       PLATFORM_PROJECT_ID: ${{ secrets.PLATFORM_PROJECT_ID }}
       PLATFORM_RECORD_KEY: ${{ secrets.PLATFORM_RECORD_KEY }}
+
+  platform-checks:
+    runs-on: ubuntu-latest
+    name: Platform Checks
+    steps:
+      - run: git diff --quiet HEAD^ HEAD -- frontend framework
+      - run: git diff --quiet HEAD^ HEAD -- cypress/e2e/awx cypress/e2e/eda cypress/e2e/hub
+      - run: git diff --quiet HEAD^ HEAD -- cypress/e2e/support
