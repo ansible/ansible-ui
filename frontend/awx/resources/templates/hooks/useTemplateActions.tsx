@@ -1,4 +1,10 @@
-import { PencilAltIcon, ProjectDiagramIcon, RocketIcon, TrashIcon } from '@patternfly/react-icons';
+import {
+  CopyIcon,
+  PencilAltIcon,
+  ProjectDiagramIcon,
+  RocketIcon,
+  TrashIcon,
+} from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -12,15 +18,22 @@ import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useDeleteTemplates } from '../hooks/useDeleteTemplates';
 import { useLaunchTemplate } from './useLaunchTemplate';
+import { useCopyTemplate } from './useCopyTemplate';
 
 type Template = JobTemplate | WorkflowJobTemplate;
-export function useTemplateActions(options: {
+type TemplateActionOptions = {
   onTemplatesDeleted: (templates: Template[]) => void;
-}) {
-  const { onTemplatesDeleted } = options;
+  onTemplateCopied?: () => unknown;
+};
+
+export function useTemplateActions({
+  onTemplatesDeleted,
+  onTemplateCopied = () => null,
+}: TemplateActionOptions) {
   const { t } = useTranslation();
   const deleteTemplates = useDeleteTemplates(onTemplatesDeleted);
   const launchTemplate = useLaunchTemplate();
+  const copyTemplate = useCopyTemplate(onTemplateCopied);
   const getPageUrl = useGetPageUrl();
 
   return useMemo<IPageAction<Template>[]>(() => {
@@ -86,7 +99,21 @@ export function useTemplateActions(options: {
         ouiaId: 'job-template-detail-delete-button',
         isDanger: true,
       },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        icon: CopyIcon,
+        label: t('Copy template'),
+        onClick: (template: Template) => copyTemplate(template),
+        isDisabled: (template: Template) =>
+          !template?.summary_fields.user_capabilities.copy
+            ? t('You do not have permission to copy this template')
+            : undefined,
+        ouiaId: 'job-template-detail-copy-button',
+        isDanger: false,
+        isPinned: true,
+      },
     ];
     return itemActions;
-  }, [deleteTemplates, getPageUrl, launchTemplate, t]);
+  }, [copyTemplate, deleteTemplates, getPageUrl, launchTemplate, t]);
 }
