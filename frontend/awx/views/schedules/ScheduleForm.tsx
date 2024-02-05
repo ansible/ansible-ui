@@ -159,7 +159,7 @@ export function CreateSchedule() {
       });
     } else {
       switch (unified_job_template_object.type) {
-        case 'inventory':
+        case 'inventory_source':
           pageNavigate(AwxRoute.InventorySourceScheduleDetails, {
             params: {
               id: inventory?.id,

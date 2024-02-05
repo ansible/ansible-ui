@@ -9,6 +9,8 @@ import { usePatchRequest } from '../../../../../common/crud/usePatchRequest';
 import { ControllerState, GraphNode, EdgeStatus, GraphNodeData } from '../types';
 import { UnifiedJobType, WorkflowNode } from '../../../../interfaces/WorkflowNode';
 import { START_NODE_ID } from '../constants';
+import { parseVariableField } from '../../../../../../framework/utils/codeEditorUtils';
+import { InstanceGroup } from '../../../../interfaces/InstanceGroup';
 
 interface WorkflowApprovalNode {
   name: string;
@@ -16,17 +18,39 @@ interface WorkflowApprovalNode {
   timeout: number;
 }
 
+interface CreateWorkflowNodePayload {
+  extra_data?: object;
+  inventory?: number;
+  scm_branch?: string;
+  job_type?: string;
+  job_tags?: string;
+  skip_tags?: string;
+  limit?: string;
+  diff_mode?: boolean;
+  verbosity?: number;
+  execution_environment?: number | null;
+  forks?: number;
+  job_slice_count?: number;
+  timeout?: number;
+  unified_job_template: number;
+  all_parents_must_converge: boolean;
+  identifier?: string;
+}
+type CreatePayloadProperty = keyof CreateWorkflowNodePayload;
+
 export function useSaveVisualizer() {
   const controller = useVisualizationController();
   const abortController = useAbortController();
   const pageNavigate = usePageNavigate();
   const deleteRequest = useDeleteRequest();
-  const postWorkflowNode = usePostRequest<Partial<WorkflowNode>, WorkflowNode>();
-  const patchWorkflowNode = usePatchRequest<Partial<WorkflowNode>, WorkflowNode>();
+  const postWorkflowNode = usePostRequest<Partial<CreateWorkflowNodePayload>, WorkflowNode>();
+  const patchWorkflowNode = usePatchRequest<Partial<CreateWorkflowNodePayload>, WorkflowNode>();
   const postWorkflowNodeApproval = usePostRequest<WorkflowApprovalNode, WorkflowApprovalNode>();
   const patchWorkflowNodeApproval = usePatchRequest<WorkflowApprovalNode, WorkflowApprovalNode>();
   const postAssociateNode = usePostRequest<{ id: number }>();
   const postDisassociateNode = usePostRequest<{ id: number; disassociate: boolean }>();
+  const postAssociateLabel = usePostRequest<{ name: string; organization: number }>();
+  const postAssociateInstanceGroup = usePostRequest<{ id: number }, InstanceGroup>();
 
   const graphNodes = controller
     .getGraph()
@@ -115,24 +139,80 @@ export function useSaveVisualizer() {
 
   async function createNewNodes(newNodes: GraphNode[]) {
     const promises = newNodes.map(async (node) => {
+      const createNodePayload: Partial<CreateWorkflowNodePayload> = {};
+      const setValue = <K extends CreatePayloadProperty>(
+        key: K,
+        value: CreateWorkflowNodePayload[K]
+      ) => {
+        if (typeof value !== 'undefined' && value !== null && value !== '') {
+          createNodePayload[key] = value;
+        }
+      };
+
       const nodeData = node.getData() as GraphNodeData;
-      const nodeIdentifier = toKeyedObject('identifier', nodeData.resource.identifier);
-      const extra_data =
-        nodeData.resource.summary_fields.unified_job_template.unified_job_type ===
-          UnifiedJobType.system_job && nodeData.resource.extra_data?.days
-          ? { extra_data: { days: nodeData.resource.extra_data.days } }
-          : {};
+      const { launch_data, resource } = nodeData;
+      const { unified_job_template } = resource.summary_fields;
+      const { unified_job_type } = unified_job_template;
+      const isJobOrWorkflowJob =
+        unified_job_type === UnifiedJobType.job || unified_job_type === UnifiedJobType.workflow_job;
+
+      setValue('all_parents_must_converge', resource.all_parents_must_converge);
+      setValue('identifier', resource?.identifier);
+      setValue('unified_job_template', unified_job_template.id);
+
+      // Prompt values
+      setValue('diff_mode', launch_data?.diff_mode);
+      setValue('execution_environment', launch_data?.execution_environment?.id);
+      setValue('forks', launch_data?.forks);
+      setValue('inventory', launch_data?.inventory?.id);
+      setValue('job_slice_count', launch_data?.job_slice_count);
+      setValue('job_tags', launch_data?.job_tags?.map((tag) => tag.name).join(','));
+      setValue('job_type', launch_data?.job_type);
+      setValue('limit', launch_data?.limit);
+      setValue('scm_branch', launch_data?.scm_branch);
+      setValue('skip_tags', launch_data?.job_tags?.map((tag) => tag.name).join(','));
+      setValue('timeout', launch_data?.timeout);
+      setValue('verbosity', launch_data?.verbosity);
+
+      if (unified_job_type === UnifiedJobType.system_job && resource.extra_data?.days) {
+        setValue('extra_data', { days: resource.extra_data.days });
+      } else if (isJobOrWorkflowJob && launch_data?.extra_vars) {
+        setValue('extra_data', parseVariableField(launch_data?.extra_vars)); // FIX
+      }
 
       const newNode = await postWorkflowNode(
         awxAPI`/workflow_job_templates/${state.workflowTemplate.id.toString()}/workflow_nodes/`,
-        {
-          ...nodeData,
-          ...extra_data,
-          ...nodeIdentifier,
-          all_parents_must_converge: nodeData.resource.all_parents_must_converge,
-          unified_job_template: nodeData.resource.summary_fields.unified_job_template.id,
-        }
+        createNodePayload
       );
+
+      if (!newNode.id) return;
+
+      if (launch_data?.labels && isJobOrWorkflowJob) {
+        await Promise.all(
+          launch_data?.labels.map(async (label) => {
+            await postAssociateLabel(
+              awxAPI`/workflow_job_template_nodes/${newNode.id.toString()}/labels/`,
+              {
+                name: label.name,
+                organization: launch_data.organization,
+              }
+            );
+          })
+        );
+      }
+
+      if (launch_data?.instance_groups && isJobOrWorkflowJob) {
+        await Promise.all(
+          launch_data?.instance_groups.map(async (group) => {
+            await postAssociateInstanceGroup(
+              awxAPI`/workflow_job_template_nodes/${newNode.id.toString()}/instance_groups/`,
+              {
+                id: group.id,
+              }
+            );
+          })
+        );
+      }
 
       if (newNode.id) {
         setCreatedNodeId(node, newNode.id.toString());
@@ -284,15 +364,10 @@ export function useSaveVisualizer() {
       }
     });
 
-    try {
-      await createApprovalNodes(newApprovalNodes);
-      await createNewNodes(newNodes);
-      await updateApprovalNodes(editedApprovalNodes);
-      await updateExistingNodes(editedNodes);
-    } catch {
-      //TODO: handle error here
-    }
-
+    await createApprovalNodes(newApprovalNodes);
+    await createNewNodes(newNodes);
+    await updateApprovalNodes(editedApprovalNodes);
+    await updateExistingNodes(editedNodes);
     graphNodes.forEach((node) => {
       const nodeState = node.getState<{ modified: boolean }>();
       const isDeleted = !node.isVisible();
@@ -303,90 +378,87 @@ export function useSaveVisualizer() {
       }
     });
 
-    try {
-      await Promise.all(
-        deletedNodeIds.map((id) =>
-          deleteRequest(awxAPI`/workflow_job_template_nodes/${id}/`, abortController.signal)
-        )
-      );
+    await Promise.all(
+      deletedNodeIds.map((id) =>
+        deleteRequest(awxAPI`/workflow_job_template_nodes/${id}/`, abortController.signal)
+      )
+    );
 
-      await Promise.all(
-        disassociateSuccessNodes.map((node) =>
-          postDisassociateNode(
-            awxAPI`/workflow_job_template_nodes/${node.sourceId}/success_nodes/`,
-            {
-              id: Number(node.targetId),
-              disassociate: true,
-            },
-            abortController.signal
-          )
+    await Promise.all(
+      disassociateSuccessNodes.map((node) =>
+        postDisassociateNode(
+          awxAPI`/workflow_job_template_nodes/${node.sourceId}/success_nodes/`,
+          {
+            id: Number(node.targetId),
+            disassociate: true,
+          },
+          abortController.signal
         )
-      );
-      await Promise.all(
-        disassociateFailureNodes.map((node) =>
-          postDisassociateNode(
-            awxAPI`/workflow_job_template_nodes/${node.sourceId}/failure_nodes/`,
-            {
-              id: Number(node.targetId),
-              disassociate: true,
-            },
-            abortController.signal
-          )
+      )
+    );
+    await Promise.all(
+      disassociateFailureNodes.map((node) =>
+        postDisassociateNode(
+          awxAPI`/workflow_job_template_nodes/${node.sourceId}/failure_nodes/`,
+          {
+            id: Number(node.targetId),
+            disassociate: true,
+          },
+          abortController.signal
         )
-      );
-      await Promise.all(
-        disassociateAlwaysNodes.map((node) =>
-          postDisassociateNode(
-            awxAPI`/workflow_job_template_nodes/${node.sourceId}/always_nodes/`,
-            {
-              id: Number(node.targetId),
-              disassociate: true,
-            },
-            abortController.signal
-          )
+      )
+    );
+    await Promise.all(
+      disassociateAlwaysNodes.map((node) =>
+        postDisassociateNode(
+          awxAPI`/workflow_job_template_nodes/${node.sourceId}/always_nodes/`,
+          {
+            id: Number(node.targetId),
+            disassociate: true,
+          },
+          abortController.signal
         )
-      );
-      await Promise.all(
-        associateSuccessNodes.map((node) =>
-          postAssociateNode(
-            awxAPI`/workflow_job_template_nodes/${node.sourceId}/success_nodes/`,
-            {
-              id: Number(node.targetId),
-            },
-            abortController.signal
-          )
+      )
+    );
+    await Promise.all(
+      associateSuccessNodes.map((node) =>
+        postAssociateNode(
+          awxAPI`/workflow_job_template_nodes/${node.sourceId}/success_nodes/`,
+          {
+            id: Number(node.targetId),
+          },
+          abortController.signal
         )
-      );
-      await Promise.all(
-        associateFailureNodes.map((node) =>
-          postAssociateNode(
-            awxAPI`/workflow_job_template_nodes/${node.sourceId}/failure_nodes/`,
-            {
-              id: Number(node.targetId),
-            },
-            abortController.signal
-          )
+      )
+    );
+    await Promise.all(
+      associateFailureNodes.map((node) =>
+        postAssociateNode(
+          awxAPI`/workflow_job_template_nodes/${node.sourceId}/failure_nodes/`,
+          {
+            id: Number(node.targetId),
+          },
+          abortController.signal
         )
-      );
-      await Promise.all(
-        associateAlwaysNodes.map((node) =>
-          postAssociateNode(
-            awxAPI`/workflow_job_template_nodes/${node.sourceId}/always_nodes/`,
-            {
-              id: Number(node.targetId),
-            },
-            abortController.signal
-          )
+      )
+    );
+    await Promise.all(
+      associateAlwaysNodes.map((node) =>
+        postAssociateNode(
+          awxAPI`/workflow_job_template_nodes/${node.sourceId}/always_nodes/`,
+          {
+            id: Number(node.targetId),
+          },
+          abortController.signal
         )
-      );
+      )
+    );
 
-      pageNavigate(AwxRoute.WorkflowJobTemplateDetails, {
-        params: { id: state.workflowTemplate.id.toString() },
-      });
-    } catch {
-      // handle error here
-    }
+    pageNavigate(AwxRoute.WorkflowJobTemplateDetails, {
+      params: { id: state.workflowTemplate.id.toString() },
+    });
   }
+
   return handleSave;
 }
 

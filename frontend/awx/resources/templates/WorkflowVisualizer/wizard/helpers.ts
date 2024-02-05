@@ -1,6 +1,6 @@
 import { stringIsUUID } from '../../../../common/util/strings';
 import { UnifiedJobType } from '../../../../interfaces/WorkflowNode';
-import type { GraphNode, NodeResource } from '../types';
+import type { AllResources, GraphNode, NodeResource } from '../types';
 
 export function getInitialValues(node?: GraphNode) {
   const nodeData = node?.getData();
@@ -39,9 +39,9 @@ export function replaceIdentifier(identifier: string, alias: string): string {
   return identifier;
 }
 
-export function hasDaysToKeep(systemJob: NodeResource | null) {
-  if (!systemJob) return false;
-  return ['cleanup_jobs', 'cleanup_activitystream'].includes(systemJob?.job_type || '');
+export function hasDaysToKeep(node: NodeResource | AllResources | null) {
+  if (!node || !('job_type' in node) || !node.job_type) return false;
+  return ['cleanup_jobs', 'cleanup_activitystream'].includes(node.job_type);
 }
 
 export function getValueBasedOnJobType(
