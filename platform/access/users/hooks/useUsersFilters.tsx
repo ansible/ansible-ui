@@ -1,6 +1,6 @@
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IToolbarFilter, ToolbarFilterType } from '../../../../framework';
-import { useMemo } from 'react';
 
 export function useUsernameToolbarFilter() {
   const { t } = useTranslation();
@@ -8,7 +8,7 @@ export function useUsernameToolbarFilter() {
     () => ({
       key: 'username',
       label: t('Username'),
-      type: ToolbarFilterType.Text,
+      type: ToolbarFilterType.SingleText,
       query: 'username__contains',
       comparison: 'contains',
     }),
@@ -22,7 +22,7 @@ export function useFirstNameToolbarFilter() {
     () => ({
       key: 'firstname',
       label: t('First name'),
-      type: ToolbarFilterType.Text,
+      type: ToolbarFilterType.SingleText,
       query: 'first_name__contains',
       comparison: 'contains',
     }),
@@ -36,7 +36,7 @@ export function useLastNameToolbarFilter() {
     () => ({
       key: 'lastname',
       label: t('Last name'),
-      type: ToolbarFilterType.Text,
+      type: ToolbarFilterType.SingleText,
       query: 'last_name__contains',
       comparison: 'contains',
     }),
@@ -50,7 +50,7 @@ export function useEmailToolbarFilter() {
     () => ({
       key: 'email',
       label: t('Email'),
-      type: ToolbarFilterType.Text,
+      type: ToolbarFilterType.SingleText,
       query: 'email__contains',
       comparison: 'contains',
     }),
