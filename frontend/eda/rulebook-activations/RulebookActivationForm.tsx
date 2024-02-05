@@ -15,7 +15,6 @@ import {
   usePageNavigate,
 } from '../../../framework';
 import { PageFormAsyncSelect } from '../../../framework/PageForm/Inputs/PageFormAsyncSelect';
-import { PageFormAsyncSingleSelect } from '../../../framework/PageForm/Inputs/PageFormAsyncSingleSelect';
 import { PageFormSection } from '../../../framework/PageForm/Utils/PageFormSection';
 import { requestGet } from '../../common/crud/Data';
 import { useGet } from '../../common/crud/useGet';
@@ -116,6 +115,9 @@ export function RulebookActivationInputs() {
     edaAPI`/decision-environments/?page=1&page_size=200`
   );
 
+  const { data: tokens } = useGet<EdaResult<AwxToken>>(
+    edaAPI`/users/me/awx-tokens/?page=1&page_size=200`
+  );
   const { data: eventStreams } = useGet<EdaResult<EdaEventStream>>(
     edaAPI`/event-streams/?page=1&page_size=200`
   );
@@ -141,22 +143,6 @@ export function RulebookActivationInputs() {
       values: response.results?.sort((l, r) => compareStrings(l.name, r.name)) ?? [],
     });
   }, [projectId]);
-
-  const queryAwxTokens = useCallback(async (page: number, signal: AbortSignal) => {
-    await new Promise((resolve) => setTimeout(resolve, 10000));
-    const response = await requestGet<EdaResult<AwxToken>>(
-      edaAPI`/users/me/awx-tokens/?${page.toString()}}`,
-      signal
-    );
-    return Promise.resolve({
-      total: response.count,
-      options:
-        response.results?.map((item) => ({
-          label: item.name,
-          value: item.id,
-        })) ?? [],
-    });
-  }, []);
 
   return (
     <>
@@ -244,13 +230,21 @@ export function RulebookActivationInputs() {
         labelHelp={t('Decision environments are a container image to run Ansible rulebooks.')}
         labelHelpTitle={t('Decision environment')}
       />
-      <PageFormAsyncSingleSelect<IEdaRulebookActivationInputs>
+      <PageFormSelect<IEdaRulebookActivationInputs>
         name="awx_token_id"
         label={t('Controller token')}
-        placeholder={t('Select controller token')}
-        queryPlaceholder={t('Loading controller tokens...')}
-        queryErrorText={t('Error loading controller tokens')}
-        queryOptions={queryAwxTokens}
+        placeholderText={t('Select controller token')}
+        options={
+          tokens?.results
+            ? tokens.results.map((item: { name: string; id: number }) => ({
+                label: item.name,
+                value: item.id,
+              }))
+            : []
+        }
+        footer={
+          <Link to={getPageUrl(EdaRoute.CreateControllerToken)}>Create controller token</Link>
+        }
         labelHelpTitle={t('Controller tokens')}
         labelHelp={[
           t('Controller tokens are used to authenticate with controller API.'),

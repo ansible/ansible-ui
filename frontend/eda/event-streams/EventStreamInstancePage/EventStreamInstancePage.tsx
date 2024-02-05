@@ -12,7 +12,7 @@ export function EventStreamInstancePage() {
   const { t } = useTranslation();
   const params = useParams<{ instanceId: string }>();
   const { data: eventStreamInstance } = useGet<EdaEventStreamInstance>(
-    edaAPI`/event-stream-instances/${params.instanceId ?? ''}/`
+    edaAPI`/activation-instances/${params.instanceId ?? ''}/`
   );
   const { data: eventStream } = useGet<EdaEventStream>(
     edaAPI`/event-streams/${eventStreamInstance?.parent_id.toString() ?? ''}/`
