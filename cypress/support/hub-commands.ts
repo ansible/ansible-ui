@@ -329,14 +329,20 @@ Cypress.Commands.add(
     collectionName: string,
     namespaceName: string,
     repository: string,
+    version?: string,
     options?: {
       /** Whether to fail on response codes other than 2xx and 3xx */
       failOnStatusCode?: boolean;
     }
   ) => {
-    cy.requestDelete(
-      hubAPI`/v3/plugin/ansible/content/${repository}/collections/index/${namespaceName}/${collectionName}/`,
-      options
+    const fail = options?.failOnStatusCode ? '' : '-i';
+    const versionToDelete = version ? version : '1.0.0';
+    cy.galaxykit(
+      fail + ' collection delete',
+      namespaceName,
+      collectionName,
+      versionToDelete,
+      repository
     );
   }
 );
