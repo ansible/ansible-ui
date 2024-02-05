@@ -137,6 +137,7 @@ export function useLabelsColumn() {
         );
       },
       table: ColumnTableOption.expanded,
+      value: (item) => item.summary_fields?.labels && item.summary_fields.labels.results.length > 0,
       card: 'hidden',
       list: 'hidden',
       modal: ColumnModalOption.hidden,
