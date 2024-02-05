@@ -342,10 +342,6 @@ Cypress.Commands.add(
 );
 
 Cypress.Commands.add('uploadCollection', (collection: string, namespace: string) => {
-  cy.galaxykit(`-i collection upload ${namespace} ${collection}`);
-});
-
-Cypress.Commands.add('uploadCollection', (collection: string, namespace: string) => {
   cy.galaxykit(`collection upload ${namespace} ${collection}`);
 });
 
