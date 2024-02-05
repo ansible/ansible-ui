@@ -35,11 +35,13 @@ export enum EdaRoute {
   CredentialPage = 'eda-credential-page',
   CredentialDetails = 'eda-credential-details',
 
-  EventSources = 'eda-event-sources',
-  CreateEventSource = 'eda-create-event-source',
-  EditEventSource = 'eda-edit-event-source',
-  EventSourcePage = 'eda-event-source-page',
-  EventSourceDetails = 'eda-event-source-details',
+  EventStreams = 'eda-event-streams',
+  CreateEventStream = 'eda-create-event-stream',
+  EventStreamPage = 'eda-event-stream-page',
+  EventStreamDetails = 'eda-event-stream-details',
+  EventStreamHistory = 'eda-event-stream-history',
+  EventStreamInstancePage = 'eda-event-stream-instance-page',
+  EventStreamInstanceDetails = 'eda-event-stream-instance-details',
 
   Access = 'eda-access',
   Users = 'eda-users',

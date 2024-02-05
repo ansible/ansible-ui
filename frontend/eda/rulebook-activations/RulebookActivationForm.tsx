@@ -34,7 +34,7 @@ import {
 import { AwxToken, RestartPolicyEnum } from '../interfaces/generated/eda-api';
 import { EdaRoute } from '../main/EdaRoutes';
 import { EdaProjectCell } from '../projects/components/EdaProjectCell';
-import { EdaEventSource } from '../interfaces/EdaEventSource';
+import { EdaEventStream } from '../interfaces/EdaEventStream';
 import { PageFormMultiSelect } from '../../../framework/PageForm/Inputs/PageFormMultiSelect';
 import { PageFormCredentialSelect } from '../access/credentials/components/PageFormCredentialsSelect';
 import { EdaCredential } from '../interfaces/EdaCredential';
@@ -116,8 +116,8 @@ export function RulebookActivationInputs() {
     edaAPI`/decision-environments/?page=1&page_size=200`
   );
 
-  const { data: sources } = useGet<EdaResult<EdaEventSource>>(
-    edaAPI`/sources/?page=1&page_size=200`
+  const { data: eventStreams } = useGet<EdaResult<EdaEventStream>>(
+    edaAPI`/event-streams/?page=1&page_size=200`
   );
 
   const RESTART_OPTIONS = [
@@ -206,18 +206,18 @@ export function RulebookActivationInputs() {
         labelHelpTitle={t('Rulebook')}
       />
       <PageFormMultiSelect<IEdaRulebookActivationInputs>
-        name="sources"
-        label={t('Source(s)')}
+        name="event_streams"
+        label={t('Event stream(s)')}
         options={
-          sources?.results
-            ? sources.results.map((item) => ({
+          eventStreams?.results
+            ? eventStreams.results.map((item) => ({
                 label: item.name,
                 value: item.id,
               }))
             : []
         }
         placeholder={t('Select source(s)')}
-        footer={<Link to={getPageUrl(EdaRoute.CreateEventSource)}>Create source</Link>}
+        footer={<Link to={getPageUrl(EdaRoute.CreateEventStream)}>Create event stream</Link>}
       />
       <PageFormCredentialSelect<{ credential_refs: string; id: string }>
         name="credential_refs"
@@ -291,7 +291,7 @@ export function RulebookActivationInputs() {
 
 type IEdaRulebookActivationInputs = Omit<EdaRulebookActivationCreate, 'sources'> & {
   rulebook: EdaRulebook;
-  sources?: string[];
+  event_streams?: string[];
   project_id: string;
   variables: string;
   awx_token_id: number;

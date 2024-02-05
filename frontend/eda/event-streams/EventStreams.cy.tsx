@@ -1,0 +1,194 @@
+import { edaAPI } from '../common/eda-utils';
+import { EventStreams } from './EventStreams';
+
+describe('EventStreams.cy.ts', () => {
+  beforeEach(() => {
+    cy.intercept(
+      { method: 'GET', url: edaAPI`/event-streams/?page=1&page_size=10` },
+      {
+        fixture: 'edaEventStreams.json',
+      }
+    );
+    cy.intercept(
+      { method: 'GET', url: edaAPI`/event-streams/?page=2&page_size=10` },
+      {
+        count: 5,
+        next: null,
+        previous: null,
+        page_size: 10,
+        page: 1,
+        results: [
+          {
+            id: 11,
+            name: 'Event stream 11',
+            description: '',
+            is_enabled: true,
+            status: 'completed',
+            decision_environment_id: 1,
+            project_id: 1,
+            rulebook_id: 2,
+            extra_var_id: null,
+            restart_policy: 'on-failure',
+            restart_count: 0,
+            rulebook_name: 'test.yml',
+            current_job_id: null,
+            rules_count: 1,
+            rules_fired_count: 1,
+            created_at: '2023-10-02T13:34:18.445029Z',
+            modified_at: '2023-10-02T13:34:28.742952Z',
+            status_message: 'Event stream has completed',
+          },
+          {
+            id: 11,
+            name: 'Event stream 11',
+            description: '',
+            is_enabled: true,
+            status: 'completed',
+            decision_environment_id: 1,
+            project_id: 1,
+            rulebook_id: 2,
+            extra_var_id: null,
+            restart_policy: 'on-failure',
+            restart_count: 0,
+            rulebook_name: 'test.yml',
+            current_job_id: null,
+            rules_count: 1,
+            rules_fired_count: 1,
+            created_at: '2023-10-02T13:34:18.445029Z',
+            modified_at: '2023-10-02T13:34:28.742952Z',
+            status_message: 'Event stream has completed',
+          },
+          {
+            id: 12,
+            name: 'Event stream 12',
+            description: '',
+            is_enabled: true,
+            status: 'completed',
+            decision_environment_id: 1,
+            project_id: 1,
+            rulebook_id: 2,
+            extra_var_id: null,
+            restart_policy: 'on-failure',
+            restart_count: 0,
+            rulebook_name: 'test.yml',
+            current_job_id: null,
+            rules_count: 1,
+            rules_fired_count: 1,
+            created_at: '2023-10-02T13:34:18.445029Z',
+            modified_at: '2023-10-02T13:34:28.742952Z',
+            status_message: 'Event stream has completed',
+          },
+          {
+            id: 12,
+            name: 'Event stream 12',
+            description: '',
+            is_enabled: true,
+            status: 'completed',
+            decision_environment_id: 1,
+            project_id: 1,
+            rulebook_id: 2,
+            extra_var_id: null,
+            restart_policy: 'on-failure',
+            restart_count: 0,
+            rulebook_name: 'test.yml',
+            current_job_id: null,
+            rules_count: 1,
+            rules_fired_count: 1,
+            created_at: '2023-10-02T13:34:18.445029Z',
+            modified_at: '2023-10-02T13:34:28.742952Z',
+          },
+        ],
+      }
+    );
+  });
+
+  it('Renders the correct event streams columns', () => {
+    cy.mount(<EventStreams />);
+    cy.get('h1').should('contain', 'Event Streams');
+    cy.get('tbody').find('tr').should('have.length', 10);
+    cy.contains(/^Event streams.$/).should('be.visible');
+    cy.get('[data-cy="id-column-header"]').should('be.visible');
+    cy.get('[data-cy="name-column-header"]').should('be.visible');
+    cy.get('[data-cy="status-column-header"]').should('be.visible');
+    cy.get('[data-cy="number-of-rules-column-header"]').should('be.visible');
+    cy.get('[data-cy="fire-count-column-header"]').should('be.visible');
+    cy.get('[data-cy="restart-count-column-header"]').should('be.visible');
+    cy.get('#expand-toggle0 > .pf-v5-c-table__toggle-icon').click();
+    cy.get('[data-cy="status-message"]').should('be.visible');
+    cy.get('[data-cy="created"]').should('be.visible');
+    cy.get('[data-cy="last-modified"]').should('be.visible');
+  });
+
+  it('can restart an event stream from the line item in list view', () => {
+    cy.mount(<EventStreams />);
+    cy.get('[data-cy="row-id-1"] > [data-cy="checkbox-column-cell"]').click();
+    cy.get('[data-cy="actions-dropdown"]').first().click();
+    cy.get('[data-cy="restart-selected-event-streams"]').click();
+    cy.get('div[role="dialog"]').within(() => {
+      cy.get('.pf-v5-c-check__label').should(
+        'contain',
+        `Yes, I confirm that I want to restart these`
+      );
+      cy.contains('Event stream 1');
+      cy.get('input[id="confirm"]').click();
+      cy.get('button').contains('Restart event streams').click();
+    });
+    cy.clickButton(/^Close$/);
+  });
+
+  it('can disable an event stream from the line item in list view', () => {
+    cy.mount(<EventStreams />);
+    cy.intercept({ method: 'POST', url: edaAPI`/event-streams/2/disable/` });
+    cy.get('[data-cy="row-id-1"] > [data-cy="checkbox-column-cell"]').click();
+    cy.get('[data-cy="actions-dropdown"]').first().click();
+    cy.get('[data-cy="disable-selected-event-streams"]').click();
+    cy.get('div[role="dialog"]').within(() => {
+      cy.get('.pf-v5-c-check__label').should(
+        'contain',
+        `Yes, I confirm that I want to disable these`
+      );
+      cy.contains('Event stream 1');
+      cy.get('input[id="confirm"]').click();
+      cy.get('button').contains('Disable event streams').click();
+    });
+    cy.clickButton(/^Close$/);
+  });
+
+  it('can delete an event stream from the line item in list view', () => {
+    cy.mount(<EventStreams />);
+    cy.intercept({ method: 'POST', url: edaAPI`/event-streams/2/delete/` });
+    cy.get('[data-cy="row-id-1"] > [data-cy="checkbox-column-cell"]').click();
+    cy.get('[data-cy="actions-dropdown"]').first().click();
+    cy.get('[data-cy="delete-selected-event-streams"]').click();
+    cy.get('div[role="dialog"]').within(() => {
+      cy.get('.pf-v5-c-check__label').should(
+        'contain',
+        `Yes, I confirm that I want to delete these`
+      );
+      cy.contains('Event stream 1');
+      cy.get('input[id="confirm"]').click();
+      cy.get('button').contains('Delete event streams').click();
+    });
+    cy.clickButton(/^Close$/);
+  });
+});
+
+describe('Empty list', () => {
+  beforeEach(() => {
+    cy.intercept(
+      {
+        method: 'GET',
+        url: edaAPI`/event-streams/*`,
+      },
+      {
+        fixture: 'emptyList.json',
+      }
+    ).as('emptyList');
+  });
+  it('Empty state is displayed correctly', () => {
+    cy.mount(<EventStreams />);
+    cy.contains(/^There are currently no event streams created for your organization.$/);
+    cy.contains(/^Please create a event stream by using the button below.$/);
+    cy.contains('button', /^Create event stream$/).should('be.visible');
+  });
+});
