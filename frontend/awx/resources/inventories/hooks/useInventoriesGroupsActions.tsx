@@ -22,7 +22,7 @@ export function useInventoriesGroupsActions() {
   const params = useParams<{ id: string; inventory_type: string }>();
 
   const adHocOptions = useOptions<OptionsResponse<ActionsResponse>>(
-    awxAPI`/inventories/${params.id ?? ''}/ad_hoc_commands`
+    awxAPI`/inventories/${params.id ?? ''}/ad_hoc_commands/`
   ).data;
   const canRunAdHocCommand = Boolean(
     adHocOptions && adHocOptions.actions && adHocOptions.actions['POST']

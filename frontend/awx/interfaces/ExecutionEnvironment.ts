@@ -30,6 +30,11 @@ export interface ExecutionEnvironment {
       first_name: string;
       last_name: string;
     };
+    credential?: {
+      id: number;
+      name: string;
+      kind: string;
+    };
   };
   created: string;
   modified: string;
