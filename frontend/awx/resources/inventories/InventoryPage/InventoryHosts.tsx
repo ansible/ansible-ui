@@ -64,7 +64,7 @@ export function InventoryHosts() {
         emptyStateButtonClick={
           canCreateHost
             ? () =>
-                pageNavigate(AwxRoute.InventoryHostsAdd, {
+                pageNavigate(AwxRoute.InventoryHostAdd, {
                   params: { id: params.id, inventory_type: params.inventory_type },
                 })
             : undefined
