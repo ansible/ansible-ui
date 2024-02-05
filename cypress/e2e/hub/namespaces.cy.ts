@@ -1,9 +1,14 @@
 import { randomString } from '../../../framework/utils/random-string';
-import { Namespaces } from './constants';
+import { Namespaces, MyImports } from './constants';
 
 const apiPrefix = Cypress.env('HUB_API_PREFIX') as string;
 
 describe('Namespaces', () => {
+  const testSignature: string = randomString(5, undefined, { isLowercase: true });
+  function generateNamespaceName(): string {
+    return `test_${testSignature}_namespace_${randomString(5, undefined, { isLowercase: true })}`;
+  }
+
   before(() => {
     cy.hubLogin();
   });
@@ -109,6 +114,42 @@ describe('Namespaces', () => {
     cy.get('[data-cy="table-view"]').click();
     cy.contains(nameSpaceName).should('be.visible');
     cy.get('#select-all').click();
+    cy.clickToolbarKebabAction('delete-selected-namespaces');
+    cy.get('#confirm').click();
+    cy.clickButton(/^Delete namespaces$/);
+    cy.contains(/^Success$/);
+    cy.clickButton(/^Close$/);
+    cy.clickButton(/^Clear all filters$/);
+  });
+
+  it('user can view import logs', () => {
+    const namespaceName = `test_pagination_namespace_${randomString(5, undefined, {
+      isLowercase: true,
+    })}`;
+    cy.createNamespace(namespaceName);
+    cy.visit(`${Namespaces.url}/${namespaceName}`);
+
+    cy.clickPageAction('imports');
+    cy.url().should('include', MyImports.url);
+    cy.url().should('include', namespaceName);
+    cy.verifyPageTitle(MyImports.title);
+    cy.get('#namespace-selector').contains(namespaceName);
+
+    cy.deleteNamespace(namespaceName);
+  });
+
+  it('user can bulk dekete namespaces', () => {
+    const numberOfNamespaces = 5;
+    for (let i = 0; i < numberOfNamespaces; i++) {
+      const namespaceName = generateNamespaceName();
+      cy.createNamespace(namespaceName);
+    }
+
+    cy.navigateTo('hub', 'namespaces');
+    cy.get('[data-cy="table-view"]').click({ force: true });
+    cy.searchAndDisplayResource(testSignature);
+    cy.get('tbody').find('tr').should('have.length', 5);
+    cy.get('[data-cy="select-all"]', { timeout: 30000 }).click();
     cy.clickToolbarKebabAction('delete-selected-namespaces');
     cy.get('#confirm').click();
     cy.clickButton(/^Delete namespaces$/);

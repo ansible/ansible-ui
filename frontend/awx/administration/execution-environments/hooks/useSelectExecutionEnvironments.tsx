@@ -3,10 +3,8 @@ import { useSelectDialog } from '../../../../../framework';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxView } from '../../../common/useAwxView';
 import { ExecutionEnvironment } from '../../../interfaces/ExecutionEnvironment';
-import {
-  useExecutionEnvironmentsColumns,
-  useExecutionEnvironmentsFilters,
-} from '../ExecutionEnvironments';
+import { useExecutionEnvironmentsColumns } from './useExecutionEnvironmentsColumns';
+import { useExecutionEnvironmentsFilters } from './useExecutionEnvironmentsFilters';
 
 export function useSelectExecutionEnvironments(organizationId?: string) {
   const { t } = useTranslation();

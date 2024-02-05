@@ -248,8 +248,12 @@ Cypress.Commands.add('getNamespace', (namespaceName: string) => {
   });
 });
 
+// Cypress.Commands.add('deleteNamespace', (namespaceName: string) => {
+//   cy.galaxykit('namespace delete', namespaceName);
+// });
+
 Cypress.Commands.add('deleteNamespace', (namespaceName: string) => {
-  cy.galaxykit('namespace delete', namespaceName);
+  cy.requestDelete(hubAPI`/_ui/v1/namespaces/${namespaceName}/`);
 });
 
 Cypress.Commands.add('deleteCollectionsInNamespace', (namespaceName: string) => {
@@ -325,21 +329,23 @@ Cypress.Commands.add(
     collectionName: string,
     namespaceName: string,
     repository: string,
+    version?: string,
     options?: {
       /** Whether to fail on response codes other than 2xx and 3xx */
       failOnStatusCode?: boolean;
     }
   ) => {
-    cy.requestDelete(
-      hubAPI`/v3/plugin/ansible/content/${repository}/collections/index/${namespaceName}/${collectionName}/`,
-      options
+    const fail = options?.failOnStatusCode ? '' : '-i';
+    const versionToDelete = version ? version : '1.0.0';
+    cy.galaxykit(
+      fail + ' collection delete',
+      namespaceName,
+      collectionName,
+      versionToDelete,
+      repository
     );
   }
 );
-
-Cypress.Commands.add('uploadCollection', (collection: string, namespace: string) => {
-  cy.galaxykit(`-i collection upload ${namespace} ${collection}`);
-});
 
 Cypress.Commands.add('uploadCollection', (collection: string, namespace: string) => {
   cy.galaxykit(`collection upload ${namespace} ${collection}`);

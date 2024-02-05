@@ -1,10 +1,14 @@
-import { createContext, ReactNode, useState, useMemo, useEffect, useContext } from 'react';
+import { createContext, ReactNode, useState, useEffect, useContext } from 'react';
 
 import type { PageWizardStep, PageWizardState } from './types';
 
 export const PageWizardContext = createContext<PageWizardState>({} as PageWizardState);
 export function usePageWizard() {
   return useContext(PageWizardContext);
+}
+
+export function isStepVisible(step: PageWizardStep, values: object) {
+  return !step.hidden || !step.hidden(values) ? step : null;
 }
 
 export function PageWizardProvider<T extends object>(props: {
@@ -17,22 +21,9 @@ export function PageWizardProvider<T extends object>(props: {
   const [wizardData, setWizardData] = useState<Partial<T>>({});
   const [stepData, setStepData] = useState<Record<string, object>>(props.defaultValue ?? {});
   const [stepError, setStepError] = useState<Record<string, object>>({});
-
-  const visibleSteps = useMemo(() => {
-    function isVisible(step: PageWizardStep, values: Partial<T>) {
-      if (!step.hidden) {
-        return step;
-      }
-
-      if (!step.hidden(values)) {
-        return step;
-      } else {
-        return null;
-      }
-    }
-
-    return props.steps.filter((step) => isVisible(step, wizardData));
-  }, [props.steps, wizardData]);
+  const [visibleSteps, setVisibleSteps] = useState<PageWizardStep[]>(() => {
+    return props.steps.filter((step) => isStepVisible(step, wizardData));
+  });
 
   useEffect(() => {
     if (!activeStep && visibleSteps.length > 0) {
@@ -47,7 +38,9 @@ export function PageWizardProvider<T extends object>(props: {
         setWizardData: setWizardData,
         stepData,
         setStepData: setStepData,
-        steps: visibleSteps,
+        allSteps: props.steps,
+        visibleSteps,
+        setVisibleSteps: setVisibleSteps,
         activeStep,
         setActiveStep: setActiveStep,
         stepError,

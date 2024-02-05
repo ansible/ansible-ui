@@ -2,6 +2,7 @@ import { Label, LabelGroup } from '@patternfly/react-core';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
+  ColumnDashboardOption,
   ColumnModalOption,
   ColumnTableOption,
   DateTimeCell,
@@ -285,7 +286,8 @@ export function useOrganizationNameColumn(
   options?: {
     disableLinks?: boolean;
     disableSort?: boolean;
-  }
+  },
+  defaultValue?: string
 ) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
@@ -301,18 +303,20 @@ export function useOrganizationNameColumn(
       header: t('Organization'),
       cell: (item) => (
         <TextCell
-          text={item.summary_fields?.organization?.name}
+          text={item.summary_fields?.organization?.name ?? defaultValue ?? ''}
           to={getPageUrl(orgDetailsRoute, {
             params: { id: item.summary_fields?.organization?.id },
           })}
-          disableLinks={options?.disableLinks}
+          disableLinks={
+            defaultValue && !item.summary_fields?.organization?.name ? true : options?.disableLinks
+          }
         />
       ),
       value: (item) => item.summary_fields?.organization?.name,
       sort: options?.disableSort ? undefined : 'organization',
       dashboard: 'hidden',
     }),
-    [getPageUrl, options?.disableLinks, options?.disableSort, orgDetailsRoute, t]
+    [defaultValue, getPageUrl, options?.disableLinks, options?.disableSort, orgDetailsRoute, t]
   );
   return column;
 }
@@ -386,6 +390,7 @@ export function useInventoryNameColumn(
       inventory?: {
         id: number;
         name: string;
+        kind: string;
       };
     };
   }> = useMemo(
@@ -395,7 +400,10 @@ export function useInventoryNameColumn(
         <TextCell
           text={item.summary_fields?.inventory?.name}
           to={getPageUrl(inventoryDetailsRoute, {
-            params: { id: item.summary_fields?.inventory?.id },
+            params: {
+              id: item.summary_fields?.inventory?.id,
+              inventory_type: inventoryUrlPaths[item.summary_fields?.inventory?.kind ?? ''],
+            },
           })}
           disableLinks={options?.disableLinks}
         />
@@ -417,6 +425,7 @@ export function useProjectNameColumn(
   options?: {
     disableLinks?: boolean;
     disableSort?: boolean;
+    dashboardOption?: ColumnDashboardOption;
   }
 ) {
   const { t } = useTranslation();
@@ -446,8 +455,16 @@ export function useProjectNameColumn(
       card: 'hidden',
       list: 'hidden',
       modal: ColumnModalOption.hidden,
+      dashboard: options?.dashboardOption ?? undefined,
     }),
-    [getPageUrl, options?.disableLinks, options?.disableSort, projectDetailsRoute, t]
+    [
+      getPageUrl,
+      options?.dashboardOption,
+      options?.disableLinks,
+      options?.disableSort,
+      projectDetailsRoute,
+      t,
+    ]
   );
   return column;
 }
@@ -509,3 +526,9 @@ export function useExpiresColumn<T extends { expires?: string }>(options?: {
   );
   return column;
 }
+
+const inventoryUrlPaths: { [key: string]: string } = {
+  '': 'inventory',
+  smart: 'smart_inventory',
+  constructed: 'constructed_inventory',
+};
