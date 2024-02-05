@@ -7,8 +7,8 @@ baseConfig.e2e!.specPattern = 'cypress/e2e/platform/**/*.cy.ts';
 baseConfig.e2e!.baseUrl = 'https://localhost:4100';
 baseConfig.component!.specPattern = 'platform/**/*.cy.{js,jsx,ts,tsx}';
 
-baseConfig.env = {
-  ...baseConfig.env,
+baseConfig.e2e!.env = {
+  ...baseConfig.e2e!.env,
   PLATFORM_SERVER: process.env.PLATFORM_SERVER,
   PLATFORM_USERNAME: process.env.PLATFORM_USERNAME,
   PLATFORM_PASSWORD: process.env.PLATFORM_PASSWORD,
