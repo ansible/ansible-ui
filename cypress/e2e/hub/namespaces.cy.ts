@@ -1,5 +1,6 @@
-import { randomString } from '../../../framework/utils/random-string';
 import { Namespaces, MyImports } from './constants';
+import {randomHubName} from "./utils/random-name";
+import { randomString } from "../../../framework/utils/random-string";
 
 const apiPrefix = Cypress.env('HUB_API_PREFIX') as string;
 
@@ -20,7 +21,7 @@ describe('Namespaces', () => {
 
   it('create, search and delete a namespace', () => {
     cy.navigateTo('hub', Namespaces.url);
-    const namespaceName = `test_namespace_${randomString(5, undefined, { isLowercase: true })}`;
+    const namespaceName = randomHubName('namespaces_namespace');
     cy.get('h1').should('contain', Namespaces.title);
     cy.get('[data-cy="create-namespace"]').should('be.visible').click();
     cy.url().should('include', Namespaces.urlCreate);
@@ -35,7 +36,7 @@ describe('Namespaces', () => {
 
   it('should show the correct URL when clicking on the CLI configuration tab', () => {
     cy.navigateTo('hub', Namespaces.url);
-    const namespaceName = `test_namespace_${randomString(5, undefined, { isLowercase: true })}`;
+    const namespaceName = randomHubName('namespaces_namespace');
     cy.get('[data-cy="create-namespace"]').should('be.visible').click();
     cy.url().should('include', Namespaces.urlCreate);
     cy.get('[data-cy="name"]').type(namespaceName);
@@ -54,7 +55,7 @@ describe('Namespaces', () => {
 
   it('should show namespace details tab', () => {
     cy.navigateTo('hub', Namespaces.url);
-    const namespaceName = `test_namespace_${randomString(5, undefined, { isLowercase: true })}`;
+    const namespaceName = randomHubName('namespaces_namespace');
     cy.get('[data-cy="create-namespace"]').should('be.visible').click();
     cy.url().should('include', Namespaces.urlCreate);
     cy.get('[data-cy="name"]').type(namespaceName);
@@ -99,7 +100,7 @@ describe('Namespaces', () => {
 
   it('edit a namespace', () => {
     cy.navigateTo('hub', Namespaces.url);
-    const namespaceName = `test_namespace_${randomString(5, undefined, { isLowercase: true })}`;
+    const namespaceName = randomHubName('namespaces_namespace');
     cy.get('[data-cy="create-namespace"]').should('be.visible').click();
     cy.url().should('include', Namespaces.urlCreate);
     cy.get('[data-cy="name"]').type(namespaceName);
@@ -122,19 +123,18 @@ describe('Namespaces', () => {
   });
 
   it('explore different views and pagination', () => {
-    const nameSpaceName = `test_pagination_namespace_${randomString(5, undefined, {
-      isLowercase: true,
-    })}`;
-    cy.createNamespace(nameSpaceName);
+    const namespaceName = randomHubName('namespaces_namespace');
+    cy.createNamespace(namespaceName);
     cy.navigateTo('hub', Namespaces.url);
     cy.setTablePageSize('50');
-    cy.filterTableBySingleText(nameSpaceName);
+    cy.filterTableBySingleText(namespaceName);
+    cy.searchAndDisplayResource(namespaceName);
     cy.get('[data-cy="card-view"]').click();
-    cy.contains(nameSpaceName).should('be.visible');
+    cy.contains(namespaceName).should('be.visible');
     cy.get('[data-cy="list-view"]').click();
-    cy.contains(nameSpaceName).should('be.visible');
+    cy.contains(namespaceName).should('be.visible');
     cy.get('[data-cy="table-view"]').click();
-    cy.contains(nameSpaceName).should('be.visible');
+    cy.contains(namespaceName).should('be.visible');
     cy.get('[href*="/namespaces/test_pagination_namespace_"]').click();
 
     // Delete the edited namespace
@@ -145,9 +145,7 @@ describe('Namespaces', () => {
   });
 
   it('user can view import logs', () => {
-    const namespaceName = `test_pagination_namespace_${randomString(5, undefined, {
-      isLowercase: true,
-    })}`;
+    const namespaceName = randomHubName('namespaces_namespace');
     cy.createNamespace(namespaceName);
     cy.visit(`${Namespaces.url}/${namespaceName}`);
 
