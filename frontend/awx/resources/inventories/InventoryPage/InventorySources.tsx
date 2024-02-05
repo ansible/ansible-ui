@@ -32,7 +32,7 @@ export function InventorySources() {
   });
 
   const sourceOptions = useOptions<OptionsResponse<ActionsResponse>>(
-    awxAPI`/inventory_sources`
+    awxAPI`/inventory_sources/`
   ).data;
   const canCreateSource = Boolean(
     sourceOptions && sourceOptions.actions && sourceOptions.actions['POST']
@@ -62,7 +62,7 @@ export function InventorySources() {
               )
         }
         emptyStateIcon={canCreateSource ? undefined : CubesIcon}
-        emptyStateButtonText={canCreateSource ? t('Create source') : undefined}
+        emptyStateButtonText={canCreateSource ? t('Add source') : undefined}
         emptyStateButtonClick={
           canCreateSource
             ? () =>
