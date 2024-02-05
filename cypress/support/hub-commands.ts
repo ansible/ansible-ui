@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access */
-import { randomString } from '../../framework/utils/random-string';
 import { Role } from '../../frontend/hub/access/roles/Role';
 import { CollectionVersionSearch } from '../../frontend/hub/collections/Collection';
 import { parsePulpIDFromURL } from '../../frontend/hub/common/api/hub-api-utils';
@@ -9,6 +8,7 @@ import { galaxykitPassword, galaxykitUsername } from './e2e';
 import { hubAPI, pulpAPI } from './formatApiPathForHub';
 import './rest-commands';
 import { escapeForShellCommand } from './utils';
+import { randomHubName } from '../e2e/hub/utils/random-name';
 
 const apiPrefix = Cypress.env('HUB_API_PREFIX') as string;
 
@@ -252,7 +252,7 @@ Cypress.Commands.add('deleteCollectionsInNamespace', (namespaceName: string) => 
 
 Cypress.Commands.add('createHubRole', () => {
   cy.requestPost<Pick<Role, 'name' | 'description' | 'permissions'>, Role>(pulpAPI`/roles/`, {
-    name: `galaxy.e2erole${randomString(4)}`,
+    name: randomHubName('create_hub_role'),
     description: 'E2E custom role description',
     permissions: ['galaxy.add_namespace', 'container.namespace_change_containerdistribution'],
   });
