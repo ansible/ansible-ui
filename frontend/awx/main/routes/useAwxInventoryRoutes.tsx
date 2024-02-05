@@ -26,6 +26,7 @@ import {
   EditGroup,
 } from '../../resources/inventories/inventoryGroup/InventoryGroupForm';
 import { InventoryHostGroups } from '../../resources/inventories/inventoryHostsPage/InventoryHostGroups';
+import { CreateInventorySource } from '../../resources/sources/InventorySourceForm';
 import {
   CreateHost,
   EditHost,
@@ -242,7 +243,7 @@ export function useAwxInventoryRoutes() {
         {
           id: AwxRoute.InventorySourcesAdd,
           path: ':inventory_type/:id/sources/add',
-          element: <PageNotImplemented />,
+          element: <CreateInventorySource />,
         },
       ],
     }),
