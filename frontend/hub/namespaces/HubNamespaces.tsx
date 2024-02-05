@@ -77,7 +77,7 @@ export function CommonNamespaces({ url }: { url: string }) {
       errorStateTitle={t('Error loading namespaces')}
       emptyStateTitle={t('No namespaces yet')}
       emptyStateDescription={t('To get started, create an namespace.')}
-      emptyStateButtonText={t('Add namespace')}
+      emptyStateButtonText={t('Create namespace')}
       emptyStateButtonClick={() => pageNavigate(HubRoute.CreateNamespace)}
       {...view}
       defaultSubtitle={t('Namespace')}
