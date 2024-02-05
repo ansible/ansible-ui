@@ -218,7 +218,10 @@ describe('Execution Environments List', () => {
         }
       );
       cy.mount(<ExecutionEnvironments />);
-      cy.contains('Error loading execution environments');
+      cy.get('.pf-v5-c-empty-state__title-text').should(
+        'have.text',
+        'Error loading execution environments'
+      );
     });
   });
 

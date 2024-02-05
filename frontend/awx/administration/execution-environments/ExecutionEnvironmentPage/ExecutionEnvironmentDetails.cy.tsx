@@ -4,7 +4,7 @@ import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { formatDateString } from '../../../../../framework/utils/dateTimeHelpers';
 
 describe('ExecutionEnvironmentDetails', () => {
-  it('Component renders and displays Execution Environment', () => {
+  it('Component renders and displays Execution Environment Details', () => {
     cy.fixture('execution_environments.json')
       .then((eeResponse: AwxItemsResponse<ExecutionEnvironment>) => {
         const execution_env: ExecutionEnvironment = eeResponse?.results[0];
@@ -12,6 +12,9 @@ describe('ExecutionEnvironmentDetails', () => {
       })
       .then((eeObject) => {
         cy.mount(<ExecutionEnvironmentDetails execution_env={eeObject} />);
+        cy.get('.pf-v5-c-description-list')
+          .find('.pf-v5-c-description-list__text')
+          .should('have.length', 10);
       });
   });
   it('Render only required EE detail fields', () => {
