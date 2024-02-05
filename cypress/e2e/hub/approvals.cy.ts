@@ -1,6 +1,6 @@
 import { Approvals, Collections, MyImports } from './constants';
 import { randomString } from '../../../framework/utils/random-string';
-import {randomHubName} from "./utils/random-name";
+import { randomHubName } from './utils/random-name';
 
 describe('Approvals', () => {
   let thisCollectionName: string;

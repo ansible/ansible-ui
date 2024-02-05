@@ -33,7 +33,7 @@ describe('Hub roles', () => {
   });
 
   it('create a custom role', () => {
-    const roleName = randomHubName('hub_roles_role');
+    const roleName = randomHubName('galaxy.hub_roles_role');
     const roleDescription = 'E2E test role';
     cy.navigateTo('hub', 'roles');
     cy.clickLink(/^Create role$/);

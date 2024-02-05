@@ -1,6 +1,5 @@
 import { Namespaces, MyImports } from './constants';
-import {randomHubName} from "./utils/random-name";
-import { randomString } from "../../../framework/utils/random-string";
+import { randomString } from '../../../framework/utils/random-string';
 import { randomHubName } from './utils/random-name';
 
 const apiPrefix = Cypress.env('HUB_API_PREFIX') as string;
