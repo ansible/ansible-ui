@@ -106,7 +106,7 @@ export function useTemplateActions({
         label: t('Copy template'),
         onClick: (template: Template) => copyTemplate(template),
         isDisabled: (template: Template) =>
-          !template?.summary_fields.user_capabilities.start
+          !template?.summary_fields.user_capabilities.copy
             ? t('You do not have permission to copy this template')
             : undefined,
         ouiaId: 'job-template-detail-copy-button',
