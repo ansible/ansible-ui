@@ -14,8 +14,8 @@ const apiPrefix = Cypress.env('HUB_API_PREFIX') as string;
 
 // GalaxyKit Integration: To invoke `galaxykit` commands for generating resources
 Cypress.Commands.add('galaxykit', (operation: string, ...args: string[]) => {
-  const adminUsername = Cypress.env('HUB_GALAXYKIT_USERNAME') as string;
-  const adminPassword = Cypress.env('HUB_GALAXYKIT_PASSWORD') as string;
+  const adminUsername = Cypress.env('HUB_USERNAME') as string;
+  const adminPassword = Cypress.env('HUB_PASSWORD') as string;
   const galaxykitCommand = (Cypress.env('HUB_GALAXYKIT_COMMAND') as string) ?? 'galaxykit';
   const server = (Cypress.env('HUB_SERVER') as string) + apiPrefix + '/';
   const options = { failOnNonZeroExit: false };
