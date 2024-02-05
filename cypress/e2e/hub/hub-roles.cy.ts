@@ -1,7 +1,7 @@
-import { randomString } from '../../../framework/utils/random-string';
 import { Role } from '../../../frontend/hub/access/roles/Role';
 import { pulpAPI } from '../../support/formatApiPathForHub';
 import { Roles } from './constants';
+import {randomHubName} from "./utils/random-name";
 
 let role: Role;
 
@@ -33,7 +33,7 @@ describe('Hub roles', () => {
   });
 
   it('create a custom role', () => {
-    const roleName = 'galaxy.e2e' + randomString(4);
+    const roleName = randomHubName('hub_roles_role');
     const roleDescription = 'E2E test role';
     cy.navigateTo('hub', 'roles');
     cy.clickLink(/^Create role$/);
