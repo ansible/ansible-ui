@@ -2,7 +2,7 @@ import { randomString } from '../../../framework/utils/random-string';
 import { hubAPI } from '../../support/formatApiPathForHub';
 import { Collections } from './constants';
 
-describe.skip('Collections- List View', () => {
+describe('Collections- List View', () => {
   //**Important to know:
   //**In order to upload a collection, a namespace must first exist containing the first word of the collection file name
   //**The only way to get rid of a collection's artifact is to choose the following option:
@@ -25,6 +25,7 @@ describe.skip('Collections- List View', () => {
 
   after(() => {
     cy.cleanupCollections(namespace, 'community');
+    cy.galaxykit('task wait all');
     cy.deleteNamespace(namespace);
   });
 
