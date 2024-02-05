@@ -7,6 +7,6 @@
     "component": "cd .. && cypress open --browser chrome --component --config-file=cypress.platform.config.ts",
     "component:run": "cd .. && cypress run --component --config-file=cypress.platform.config.ts",
     "docker:build": "cd .. && docker build --file platform/Dockerfile --target platform-ui --tag platform-ui .",
-    "docker:run": "echo https://localhost:4100 && docker run --name platform-ui --rm -e LOG_LEVEL=debug -p 4100:443 -e PLATFORM_SERVER=$PLATFORM_SERVER platform-ui"
+    "docker:run": "echo https://localhost:4100 && docker run --name platform-ui --rm -p 4100:443 -e PLATFORM_SERVER=$PLATFORM_SERVER platform-ui"
   }
 }
