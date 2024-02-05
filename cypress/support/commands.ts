@@ -956,7 +956,12 @@ declare global {
       deleteCollection(
         collectionName: string,
         namespaceName: string,
-        repository: string
+        repository: string,
+        version?: string,
+        options?: {
+          /** Whether to fail on response codes other than 2xx and 3xx */
+          failOnStatusCode?: boolean;
+        }
       ): Cypress.Chainable<void>;
       uploadCollection(collection: string, namespace: string): Cypress.Chainable<void>;
       approveCollection(

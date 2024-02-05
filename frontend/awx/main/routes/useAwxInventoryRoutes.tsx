@@ -21,7 +21,10 @@ import { InventoryGroups } from '../../resources/inventories/InventoryPage/Inven
 import { GroupPage } from '../../resources/groups/GroupPage';
 import { InventoryHostPage } from '../../resources/inventories/inventoryHostsPage/InventoryHostPage';
 import { InventoryHostDetails } from '../../resources/inventories/inventoryHostsPage/InventoryHostDetails';
-import { CreateGroup } from '../../resources/inventories/inventoryGroup/InventoryGroupForm';
+import {
+  CreateGroup,
+  EditGroup,
+} from '../../resources/inventories/inventoryGroup/InventoryGroupForm';
 import { InventoryHostGroups } from '../../resources/inventories/inventoryHostsPage/InventoryHostGroups';
 import { CreateInventorySource } from '../../resources/sources/InventorySourceForm';
 import {
@@ -137,12 +140,12 @@ export function useAwxInventoryRoutes() {
               path: 'hosts',
               element: <PageNotImplemented />,
             },
-            {
-              id: AwxRoute.InventoryGroupEdit,
-              path: 'edit',
-              element: <PageNotImplemented />,
-            },
           ],
+        },
+        {
+          id: AwxRoute.InventoryGroupEdit,
+          path: ':inventory_type/:id/group/:group_id/edit',
+          element: <EditGroup />,
         },
         {
           id: AwxRoute.InventoryGroupCreate,
