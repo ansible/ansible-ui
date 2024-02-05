@@ -132,10 +132,12 @@ jobs:
           parallel: true
           config-file: cypress.hub.config.ts
         env:
+          HUB_API_PREFIX: '/api/galaxy'
+          HUB_GALAXYKIT_PASSWORD: ${{ env.HUB_GALAXYKIT_PASSWORD }}
+          HUB_GALAXYKIT_USERNAME: ${{ env.HUB_GALAXYKIT_USERNAME }}
+          HUB_PASSWORD: ${{ secrets.HUB_PASSWORD }}
           HUB_SERVER: ${{ inputs.HUB_SERVER }}
           HUB_USERNAME: e2e
-          HUB_PASSWORD: ${{ secrets.HUB_PASSWORD }}
-          HUB_API_PREFIX: '/api/galaxy'
           CYPRESS_PROJECT_ID: ${{ secrets.HUB_PROJECT_ID }}
           CYPRESS_RECORD_KEY: ${{ secrets.HUB_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
