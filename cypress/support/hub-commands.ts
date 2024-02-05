@@ -126,61 +126,6 @@ Cypress.Commands.add('addAndApproveMultiCollections', (numberOfCollections = 1) 
   cy.galaxykit('task wait all');
 });
 
-Cypress.Commands.add('getOrCreateCollection', () => {
-  let newCollectionVersion;
-  cy.requestGet<HubItemsResponse<CollectionVersionSearch>>(
-    hubAPI`/v3/plugin/ansible/search/collection-versions/?is_deprecated=false&repository_label=!hide_from_search&is_highest=true&keywords=spm_toolbox&offset=0&limit=10`
-  ).then((result) => {
-    const collectionA = result.data.length;
-    cy.requestGet<HubItemsResponse<CollectionVersionSearch>>(
-      hubAPI`/v3/plugin/ansible/search/collection-versions/?is_deprecated=false&repository_label=!hide_from_search&is_highest=true&keywords=ds8000&offset=0&limit=10`
-    ).then((result) => {
-      const collectionB = result.data.length;
-      cy.requestGet<HubItemsResponse<CollectionVersionSearch>>(
-        hubAPI`/v3/plugin/ansible/search/collection-versions/?is_deprecated=false&repository_label=!hide_from_search&is_highest=true&keywords=operator_collection_sdk&offset=0&limit=10`
-      ).then((result) => {
-        const collectionC = result.data.length;
-        cy.requestGet<HubItemsResponse<CollectionVersionSearch>>(
-          hubAPI`/v3/plugin/ansible/search/collection-versions/?is_deprecated=false&repository_label=!hide_from_search&is_highest=true&keywords=ibm_zosmf&offset=0&limit=10`
-        ).then((result) => {
-          const collectionD = result.data.length;
-          cy.requestGet<HubItemsResponse<CollectionVersionSearch>>(
-            hubAPI`/v3/plugin/ansible/search/collection-versions/?is_deprecated=false&repository_label=!hide_from_search&is_highest=true&keywords=mas_airgap&offset=0&limit=10`
-          ).then((result) => {
-            const collectionE = result.data.length;
-            cy.requestGet<HubItemsResponse<CollectionVersionSearch>>(
-              hubAPI`/v3/plugin/ansible/search/collection-versions/?is_deprecated=false&repository_label=!hide_from_search&is_highest=true&keywords=qradar&offset=0&limit=10`
-            ).then((result) => {
-              const collectionF = result.data.length;
-              if (collectionA === 0) {
-                newCollectionVersion = 'ibm-spm_toolbox-1.0.2.tar.gz';
-                return newCollectionVersion;
-              } else if (collectionB === 0) {
-                newCollectionVersion = 'ibm-ds8000-1.1.0.tar.gz';
-                return newCollectionVersion;
-              } else if (collectionC === 0) {
-                newCollectionVersion = 'ibm-operator_collection_sdk-1.1.0.tar.gz';
-                return newCollectionVersion;
-              } else if (collectionD === 0) {
-                newCollectionVersion = 'ibm-ibm_zosmf-1.4.1.tar.gz';
-                return newCollectionVersion;
-              } else if (collectionE === 0) {
-                newCollectionVersion = 'ibm-mas_airgap-2.6.2.tar.gz';
-                return newCollectionVersion;
-              } else if (collectionF === 0) {
-                newCollectionVersion = 'ibm-qradar-3.0.0.tar.gz';
-                return newCollectionVersion;
-              } else {
-                return 'All test collections currently exist. Please delete one or more and re-run the test.';
-              }
-            });
-          });
-        });
-      });
-    });
-  });
-});
-
 Cypress.Commands.add(
   'deleteCommunityCollectionFromSystem',
   (

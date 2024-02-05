@@ -29,13 +29,24 @@ describe('Collections- List View', () => {
     cy.deleteNamespace(namespace);
   });
 
-  it.skip('user can upload and then delete a new collection', () => {
-    cy.getOrCreateCollection().then((thisCollection) => {
-      const thisCollectionName = thisCollection?.split('-').slice(-2, -1).toString();
+  it('user can upload and then delete a new collection', () => {
+    const uploadNamespace = 'hub_e2e_col_namespace' + randomString(5).toLowerCase();
+    cy.log(uploadNamespace);
+    cy.createNamespace(uploadNamespace);
+    cy.galaxykit('task wait all');
+    const collection = 'hub_e2e_col_col' + randomString(5);
+    const uploadFileName = uploadNamespace + '-' + collection + '-1.0.0.tar.gz';
+    cy.galaxykit(`collection upload ${uploadNamespace} ${collection} --skip-upload`).then( (result) =>
+    {
+      const data = JSON.parse(result[0]);
+      const { filename } = data;
+      const moveCommand = 'mv ' + filename + ' ' + './cypress/fixtures/' + uploadFileName;
+      cy.exec(moveCommand);
+      
       cy.navigateTo('hub', Collections.url);
       cy.verifyPageTitle(Collections.title);
       cy.get('[data-cy="upload-collection"]').click();
-      cy.uploadHubCollectionFile(`collection-files/` + thisCollection, thisCollection);
+      cy.uploadHubCollectionFile('./' + uploadFileName, uploadFileName);
       cy.get('input[id="radio-non-pipeline"]').click();
       cy.get('[data-cy="row-0"]').within(() => {
         cy.get('input').click();
@@ -49,6 +60,7 @@ describe('Collections- List View', () => {
         expect(resp?.response?.statusMessage).to.eql('Accepted');
         expect(resp?.responseWaited).to.eql(true);
       });
+      cy.galaxykit('task wait all');
       cy.reload();
       cy.get('[data-cy="hub-collections"]').click();
       cy.verifyPageTitle(Collections.title);
@@ -57,11 +69,11 @@ describe('Collections- List View', () => {
         'Collections are a packaged unit of Ansible content that includes roles, modules, plugins, and other components, making it easier to share and reuse automation functionality.'
       );
       cy.get('[data-cy="table-view"]').click();
-      cy.clickTableRowKebabAction(thisCollectionName, 'delete-entire-collection-from-system');
+      cy.clickTableRowKebabAction(collection, 'delete-entire-collection-from-system');
       cy.get('[data-ouia-component-id="confirm"]').click();
       cy.intercept(
         'DELETE',
-        hubAPI`/v3/plugin/ansible/content/community/collections/index/${namespace}/${thisCollectionName}/`
+        hubAPI`/v3/plugin/ansible/content/community/collections/index/${namespace}/${collection}/`
       ).as('deleted');
       cy.get('[data-ouia-component-id="submit"]').click();
       cy.wait('@deleted').then((deleted) => {
