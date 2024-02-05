@@ -39,12 +39,30 @@ jobs:
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
-      - run: git diff --quiet HEAD^ HEAD -- frontend/awx frontend/common cypress/e2e/awx framework cypress/support package.json
-        id: changed-awx
-      - run: git diff --quiet HEAD^ HEAD -- frontend/hub frontend/common cypress/e2e/hub framework cypress/support package.json
-        id: changed-hub
-      - run: git diff --quiet HEAD^ HEAD -- frontend/eda frontend/common cypress/e2e/eda framework cypress/support package.json
-        id: changed-eda
+      - id: changed-awx
+        run: |
+          git diff --quiet HEAD^ HEAD -- frontend/awx frontend/common cypress/e2e/awx framework cypress/support package.json
+          if [ $? -eq 0 ]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT" 
+          else
+            echo "changed=false" >> "$GITHUB_OUTPUT" 
+          fi
+      - id: changed-hub
+        run: |
+          git diff --quiet HEAD^ HEAD -- frontend/hub frontend/common cypress/e2e/hub framework cypress/support package.json
+          if [ $? -eq 0 ]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT" 
+          else
+            echo "changed=false" >> "$GITHUB_OUTPUT" 
+          fi
+      - id: changed-eda
+        run: |
+          git diff --quiet HEAD^ HEAD -- frontend/eda frontend/common cypress/e2e/eda framework cypress/support package.json
+          if [ $? -eq 0 ]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT" 
+          else
+            echo "changed=false" >> "$GITHUB_OUTPUT" 
+          fi        
 
   checks:
     name: ESLint - Prettier - TSC
