@@ -119,7 +119,10 @@ export function TemplatesList(props: {
     [canCreateJobTemplate, canCreateWFJobTemplate, deleteTemplates, getPageUrl, t]
   );
 
-  const rowActions = useTemplateActions({ onTemplatesDeleted: view.unselectItemsAndRefresh });
+  const rowActions = useTemplateActions({
+    onTemplatesDeleted: view.unselectItemsAndRefresh,
+    onTemplateCopied: view.refresh,
+  });
 
   return (
     <PageTable<JobTemplate | WorkflowJobTemplate>
