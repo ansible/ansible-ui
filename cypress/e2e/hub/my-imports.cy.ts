@@ -103,7 +103,7 @@ describe('My imports', () => {
     });
   });
 
-  it.skip('should be able to filter imported collections', () => {
+  it('should be able to filter imported collections', () => {
     cy.visit(MyImports.url);
     cy.get('#namespace-selector').contains('Select namespace').click();
 
@@ -111,12 +111,16 @@ describe('My imports', () => {
 
     // search and select namespace in button
     cy.get('.pf-v5-c-modal-box__header').click();
-    cy.selectTableRowInDialog(validCollection.namespace);
+    cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+      cy.getTableRowBySingleText(validCollection.namespace).within(() => {
+        cy.get('td[data-cy=checkbox-column-cell]').click();
+      });
+    });
     cy.clickModalButton('Confirm');
 
-    cy.filterTableByText(validCollection.name);
+    cy.filterTableBySingleText(validCollection.name);
+    cy.filterTableByTypeAndSingleText('Version', validCollection.version);
     cy.filterBySingleSelection('Status', 'Completed');
-    cy.filterTableByTypeAndText('Version', validCollection.version);
 
     cy.get('.pf-v5-c-chip-group').contains(validCollection.name);
     cy.get('.pf-v5-c-chip-group').contains(validCollection.version);
@@ -133,7 +137,11 @@ describe('My imports', () => {
     cy.get('#namespace-selector').contains(`${validCollection.namespace}`).click();
     cy.get('.pf-v5-c-menu__footer').contains('Browse').click();
     cy.get('.pf-v5-c-modal-box__header').click();
-    cy.selectTableRowInDialog(invalidCollection.namespace);
+    cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+      cy.getTableRowBySingleText(invalidCollection.namespace).within(() => {
+        cy.get('td[data-cy=checkbox-column-cell]').click();
+      });
+    });
     cy.clickModalButton('Confirm');
 
     cy.clickButton('Clear all filters');
@@ -143,8 +151,8 @@ describe('My imports', () => {
     cy.get('.pf-v5-c-chip-group').should('not.exist');
 
     cy.filterBySingleSelection('Status', 'Failed');
-    cy.filterTableByTypeAndText('Name', invalidCollection.name);
-    cy.filterTableByTypeAndText('Version', invalidCollection.version);
+    cy.filterTableByTypeAndSingleText('Name', invalidCollection.name);
+    cy.filterTableByTypeAndSingleText('Version', invalidCollection.version);
 
     cy.get('.pf-v5-c-chip-group').contains(invalidCollection.name);
     cy.get('.pf-v5-c-chip-group').contains(invalidCollection.version);

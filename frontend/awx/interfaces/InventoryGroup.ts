@@ -27,6 +27,14 @@ export interface InventoryGroup extends Omit<Group, 'id' | 'name' | 'summary_fie
       total_hosts: number;
       total_inventory_sources: number;
     };
+    created_by: {
+      id: number;
+      username: string;
+    };
+    modified_by: {
+      id: number;
+      username: string;
+    };
   };
   related: {
     children: {
