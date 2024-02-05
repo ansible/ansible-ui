@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IAwxView } from '../../../common/useAwxView';
 import { AwxRoute } from '../../../main/AwxRoutes';
@@ -6,6 +6,8 @@ import {
   IPageAction,
   PageActionSelection,
   PageActionType,
+  usePageAlertToaster,
+  usePageDialog,
   usePageNavigate,
 } from '../../../../../framework';
 import { PlusIcon, TrashIcon } from '@patternfly/react-icons';
@@ -16,13 +18,18 @@ import { awxAPI } from '../../../common/api/awx-utils';
 import { InventoryGroup } from '../../../interfaces/InventoryGroup';
 import { ButtonVariant } from '@patternfly/react-core';
 import { cannotDeleteResources } from '../../../../common/utils/RBAChelpers';
-import { useDisassociateGroups } from '../../groups/hooks/useDisassociateGroups';
+import { useDisassociateGroups } from './useDisassociateGroups';
+import { GroupSelectDialog } from './useGroupSelectDialog';
+import { usePostRequest } from '../../../../common/crud/usePostRequest';
 
-export function useInventoriesRelatedGroupsToolbarActions(view: IAwxView<InventoryGroup>) {
+export function useRelatedGroupsToolbarActions(view: IAwxView<InventoryGroup>) {
+  const [_, setDialog] = usePageDialog();
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const disassociateGroups = useDisassociateGroups(view.unselectItemsAndRefresh);
   const params = useParams<{ id: string; inventory_type: string; group_id: string }>();
+  const postRequest = usePostRequest();
+  const alertToaster = usePageAlertToaster();
 
   const adhocOptions = useOptions<OptionsResponse<ActionsResponse>>(
     awxAPI`/inventories/${params.id ?? ''}/ad_hoc_commands`
@@ -38,6 +45,26 @@ export function useInventoriesRelatedGroupsToolbarActions(view: IAwxView<Invento
     groupOptions && groupOptions.actions && groupOptions.actions['POST']
   );
 
+  const onSelectedGroups = useCallback(
+    async (selectedGroups: InventoryGroup[]) => {
+      for (const group of selectedGroups) {
+        try {
+          await postRequest(awxAPI`/groups/${params.group_id as string}/children/`, {
+            id: group.id,
+          });
+        } catch (err) {
+          alertToaster.addAlert({
+            variant: 'danger',
+            title: t(`Failed to add ${group.name} to related groups`),
+            children: err instanceof Error && err.message,
+          });
+        }
+      }
+      setDialog(undefined);
+    },
+    [params.group_id, postRequest, t, alertToaster, setDialog]
+  );
+
   return useMemo<IPageAction<InventoryGroup>[]>(
     () => [
       {
@@ -48,6 +75,19 @@ export function useInventoriesRelatedGroupsToolbarActions(view: IAwxView<Invento
         icon: PlusIcon,
         label: t('Add group'),
         actions: [
+          {
+            type: PageActionType.Button,
+            selection: PageActionSelection.None,
+            label: t('Existing group'),
+            onClick: () =>
+              setDialog(
+                <GroupSelectDialog
+                  inventoryId={params.id as string}
+                  groupId={params.group_id as string}
+                  onSelectedGroups={onSelectedGroups}
+                />
+              ),
+          },
           {
             type: PageActionType.Button,
             selection: PageActionSelection.None,
@@ -66,12 +106,6 @@ export function useInventoriesRelatedGroupsToolbarActions(view: IAwxView<Invento
                 : t(
                     'You do not have permission to create a group. Please contact your organization administrator if there is an issue with your access.'
                   ),
-          },
-          {
-            type: PageActionType.Button,
-            selection: PageActionSelection.None,
-            label: t('Existing group'),
-            onClick: () => {},
           },
         ],
       },
@@ -115,6 +149,8 @@ export function useInventoriesRelatedGroupsToolbarActions(view: IAwxView<Invento
       canRunAdHocCommand,
       view.selectedItems.length,
       params.group_id,
+      onSelectedGroups,
+      setDialog,
     ]
   );
 }

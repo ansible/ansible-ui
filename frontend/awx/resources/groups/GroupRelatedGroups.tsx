@@ -5,26 +5,26 @@ import { CubeIcon } from '@patternfly/react-icons';
 import { AwxRoute } from '../../main/AwxRoutes';
 import { useGroupsFilters } from './hooks/useGroupsFilters';
 import { useParams } from 'react-router-dom';
-import { useInventoriesRelatedGroupsToolbarActions } from '../inventories/hooks/useInventoriesRelatedGroupsToolbarActions';
+import { useRelatedGroupsToolbarActions } from './hooks/useRelatedGroupsToolbarActions';
 import { useInventoriesGroupsActions } from '../inventories/hooks/useInventoriesGroupsActions';
 import { useOptions } from '../../../common/crud/useOptions';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxView } from '../../common/useAwxView';
-import { useInventoriesGroupsRelatedGroupsColumns } from '../inventories/hooks/useInventoriesGroupsRelatedGroupsColumns';
+import { useRelatedGroupsColumns } from './hooks/useRelatedGroupsColumns';
 
 export function GroupRelatedGroups() {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const toolbarFilters = useGroupsFilters();
-  const tableColumns = useInventoriesGroupsRelatedGroupsColumns();
+  const tableColumns = useRelatedGroupsColumns();
   const params = useParams<{ id: string; inventory_type: string; group_id: string }>();
   const view = useAwxView<InventoryGroup>({
     url: awxAPI`/groups/${params.group_id ?? ''}/children`,
     toolbarFilters,
     tableColumns,
   });
-  const toolbarActions = useInventoriesRelatedGroupsToolbarActions(view);
+  const toolbarActions = useRelatedGroupsToolbarActions(view);
   const rowActions = useInventoriesGroupsActions();
 
   const groupsOptions = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/groups`).data;

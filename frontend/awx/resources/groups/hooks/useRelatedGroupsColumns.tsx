@@ -4,7 +4,7 @@ import { InventoryGroup } from '../../../interfaces/InventoryGroup';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useCreatedColumn, useModifiedColumn, useNameColumn } from '../../../../common/columns';
 
-export function useInventoriesGroupsRelatedGroupsColumns(options?: {
+export function useRelatedGroupsColumns(options?: {
   disableSort?: boolean;
   disableLinks?: boolean;
 }) {
