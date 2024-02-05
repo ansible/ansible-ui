@@ -109,6 +109,18 @@ jobs:
           # pip3 install galaxykit
           # pending https://github.com/ansible/galaxykit/pull/99
           pip3 install git+https://github.com/himdel/galaxykit.git@skip-upload
+      - name: Create per-run admin
+        env:
+          HUB_SERVER: ${{ inputs.HUB_SERVER }}
+          HUB_USERNAME: e2e
+          HUB_PASSWORD: ${{ secrets.HUB_PASSWORD }}
+          HUB_API_PREFIX: '/api/galaxy'
+        run: |
+          NAME=`echo "e2e$(tr -dc 'a-zA-Z0-9' </dev/urandom | head -c 8)"`
+          PASS=`echo "$(tr -dc 'a-zA-Z0-9' </dev/urandom | head -c 16)"`
+          galaxykit -c -s "$HUB_SERVER""$HUB_API_PREFIX"/ -u "$HUB_USERNAME" -p "$HUB_PASSWORD" user create --is_superuser "$NAME" "$PASS"
+          echo "HUB_GALAXYKIT_USERNAME=${NAME}" >> $GITHUB_ENV
+          echo "HUB_GALAXYKIT_PASSWORD=${PASS}" >> $GITHUB_ENV
       - name: Cypress
         if: ${{ !inputs.SKIP_JOB }}
         uses: cypress-io/github-action@v6
@@ -128,4 +140,3 @@ jobs:
           CYPRESS_RECORD_KEY: ${{ secrets.HUB_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_TLS_REJECT_UNAUTHORIZED: 0
-
