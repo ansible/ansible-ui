@@ -17,8 +17,6 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 100
       - uses: actions/setup-node@v4
         with:
           node-version: 18
@@ -51,6 +49,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Platform Checks
     steps:
+      - uses: actions/checkout@v4
       - run: git diff --quiet HEAD^ HEAD -- frontend framework
       - run: git diff --quiet HEAD^ HEAD -- cypress/e2e/awx cypress/e2e/eda cypress/e2e/hub
       - run: git diff --quiet HEAD^ HEAD -- cypress/e2e/support
