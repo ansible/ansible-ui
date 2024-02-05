@@ -322,7 +322,7 @@ Cypress.Commands.add('deleteRemoteRegistry', (remoteRegistryId: string) => {
 // Cypress.Commands.add('deleteCollection', (collection: string, namespace: string, repository: string) => {
 //   cy.galaxykit(`collection delete ${namespace} ${collection}`);
 // });
-
+// TEST
 Cypress.Commands.add(
   'deleteCollection',
   (
