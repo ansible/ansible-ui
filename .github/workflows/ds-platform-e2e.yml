@@ -111,7 +111,7 @@ jobs:
         uses: cypress-io/github-action@v6
         with:
           install: false
-          start: bash -c "docker run --rm -p 4100:443 -e PLATFORM_SERVER=$PLATFORM_SERVER platform-ui"
+          start: docker run --rm -p 4100:443 -e PLATFORM_SERVER=${{ inputs.PLATFORM_SERVER }} platform-ui
           wait-on: 'https://localhost:4100'
           record: true
           parallel: true
