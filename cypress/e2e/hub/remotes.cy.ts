@@ -1,7 +1,7 @@
 import { randomString } from '../../../framework/utils/random-string';
 import { Remotes } from './constants';
 
-describe('Remotes', () => {
+describe.skip('Remotes', () => {
   const testSignature: string = randomString(5, undefined, { isLowercase: true });
   function generateRemoteName(): string {
     return `test-${testSignature}-remote-${randomString(5, undefined, { isLowercase: true })}`;

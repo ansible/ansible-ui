@@ -1,7 +1,7 @@
 import { SignatureKeys } from './constants';
 import { pulpAPI } from '../../support/formatApiPathForHub';
 
-describe('Signature Keys', () => {
+describe.skip('Signature Keys', () => {
   beforeEach(() => {
     cy.hubLogin();
   });

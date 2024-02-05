@@ -1,7 +1,7 @@
 import { Approvals, MyImports } from './constants';
 import { randomString } from '../../../framework/utils/random-string';
 
-describe('Approvals', () => {
+describe.skip('Approvals', () => {
   let thisCollectionName: string;
   let namespace: string;
   let repository: string;

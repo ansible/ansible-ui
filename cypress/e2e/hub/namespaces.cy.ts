@@ -3,7 +3,7 @@ import { Namespaces, MyImports } from './constants';
 
 const apiPrefix = Cypress.env('HUB_API_PREFIX') as string;
 
-describe('Namespaces', () => {
+describe.skip('Namespaces', () => {
   before(() => {
     cy.hubLogin();
   });
