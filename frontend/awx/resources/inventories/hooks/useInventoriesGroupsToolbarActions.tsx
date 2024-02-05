@@ -25,7 +25,7 @@ export function useInventoriesGroupsToolbarActions(view: IAwxView<InventoryGroup
   const params = useParams<{ id: string; inventory_type: string }>();
 
   const adhocOptions = useOptions<OptionsResponse<ActionsResponse>>(
-    awxAPI`/inventories/${params.id ?? ''}/ad_hoc_commands`
+    awxAPI`/inventories/${params.id ?? ''}/ad_hoc_commands/`
   ).data;
   const canRunAdHocCommand = Boolean(
     adhocOptions && adhocOptions.actions && adhocOptions.actions['POST']

@@ -189,10 +189,20 @@ declare global {
       ): Chainable<void>;
 
       /** Filter the table using it's current filter by entering text. */
-      filterTableByText(text: string): Chainable<void>;
+      filterTableByText(text: string, variant?: 'SingleText' | 'MultiText'): Chainable<void>;
+
+      /** Filter the table using it's current filter by entering text in 'ToolbarFilterType.SingleText' filter. */
+      filterTableBySingleText(text: string): Chainable<void>;
 
       /** Filter the table using specified filter and text. */
       filterTableByTypeAndText(filterLabel: string | RegExp, text: string): Chainable<void>;
+
+      /** Filter the table using specified filter and text with 'ToolbarFilterType.SingleText' filter. */
+      filterTableByTypeAndSingleText(
+        filterLabel: string | RegExp,
+        text: string,
+        variant?: 'MultiText' | 'SingleText'
+      ): Chainable<void>;
 
       clearAllFilters(): Chainable<void>;
 
@@ -202,7 +212,14 @@ declare global {
       clickToolbarKebabAction(dataCyLabel: string | RegExp): Chainable<void>;
 
       /** Get the table row containing the specified text. */
-      getTableRowByText(name: string | RegExp, filter?: boolean): Chainable<void>;
+      getTableRowByText(
+        name: string | RegExp,
+        filter?: boolean,
+        variant?: 'MultiText' | 'SingleText'
+      ): Chainable<void>;
+
+      /** Get the table row containing the specified text with 'ToolbarFilterType.SingleText' filter. */
+      getTableRowBySingleText(name: string | RegExp, filter?: boolean): Chainable<void>;
 
       /** Get the list row containing the specified text. */
       getListRowByText(name: string | RegExp, filter?: boolean): Chainable<void>;
@@ -944,7 +961,12 @@ declare global {
       deleteCollection(
         collectionName: string,
         namespaceName: string,
-        repository: string
+        repository: string,
+        version?: string,
+        options?: {
+          /** Whether to fail on response codes other than 2xx and 3xx */
+          failOnStatusCode?: boolean;
+        }
       ): Cypress.Chainable<void>;
       uploadCollection(collection: string, namespace: string): Cypress.Chainable<void>;
       approveCollection(
