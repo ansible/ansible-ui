@@ -1,6 +1,6 @@
 import { randomString } from '../../../framework/utils/random-string';
 import { Remotes } from './constants';
-import {randomHubName} from "./utils/random-name";
+import { randomHubName } from './utils/random-name';
 
 describe('Remotes', () => {
   const testSignature: string = randomString(5, undefined, { isLowercase: true });

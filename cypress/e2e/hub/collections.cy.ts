@@ -3,7 +3,7 @@
 import { randomString } from '../../../framework/utils/random-string';
 import { hubAPI } from '../../support/formatApiPathForHub';
 import { Collections } from './constants';
-import {randomHubName} from "./utils/random-name";
+import { randomHubName } from './utils/random-name';
 
 describe('Collections- List View', () => {
   //**Important to know:

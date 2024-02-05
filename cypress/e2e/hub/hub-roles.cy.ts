@@ -1,7 +1,7 @@
 import { Role } from '../../../frontend/hub/access/roles/Role';
 import { pulpAPI } from '../../support/formatApiPathForHub';
 import { Roles } from './constants';
-import {randomHubName} from "./utils/random-name";
+import { randomHubName } from './utils/random-name';
 
 let role: Role;
 

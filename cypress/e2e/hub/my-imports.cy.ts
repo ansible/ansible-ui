@@ -1,5 +1,5 @@
 import { MyImports } from './constants';
-import {randomHubName} from "./utils/random-name";
+import { randomHubName } from './utils/random-name';
 
 describe('My imports', () => {
   const validCollection = {
@@ -10,7 +10,7 @@ describe('My imports', () => {
 
   const invalidCollection = {
     namespace: randomHubName('my_imports_namespace'),
-    name:  randomHubName('my_imports_collection_INVALID'),
+    name: randomHubName('my_imports_collection_INVALID'),
     version: '1.0.0',
   };
 

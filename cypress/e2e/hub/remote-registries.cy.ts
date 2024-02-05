@@ -3,7 +3,7 @@ import { RemoteRegistry as IRemoteRegistry } from '../../../frontend/hub/adminis
 import { HubItemsResponse } from '../../../frontend/hub/common/useHubView';
 import { hubAPI } from '../../support/formatApiPathForHub';
 import { RemoteRegistry } from './constants';
-import {randomHubName} from "./utils/random-name";
+import { randomHubName } from './utils/random-name';
 
 describe('Remote Registry', () => {
   const testSignature: string = randomString(5, undefined, { isLowercase: true });
