@@ -1,16 +1,16 @@
-import { randomString } from '../../../framework/utils/random-string';
 import { MyImports } from './constants';
+import {randomHubName} from "./utils/random-name";
 
 describe('My imports', () => {
   const validCollection = {
-    namespace: `testnamespace${randomString(4, undefined, { isLowercase: true })}`,
-    name: `testcollection_${randomString(4, undefined, { isLowercase: true })}`,
+    namespace: randomHubName('my_imports_namespace'),
+    name: randomHubName('my_imports_collection'),
     version: '1.0.0',
   };
 
   const invalidCollection = {
-    namespace: `testnamespace${randomString(4, undefined, { isLowercase: true })}`,
-    name: `testcollection_INVALID${randomString(4)}`,
+    namespace: randomHubName('my_imports_namespace'),
+    name:  randomHubName('my_imports_collection_INVALID'),
     version: '1.0.0',
   };
 
