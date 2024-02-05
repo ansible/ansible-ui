@@ -1,5 +1,6 @@
 import { Approvals, Collections, MyImports } from './constants';
 import { randomString } from '../../../framework/utils/random-string';
+import {randomHubName} from "./utils/random-name";
 
 describe('Approvals', () => {
   let thisCollectionName: string;
@@ -22,8 +23,8 @@ describe('Approvals', () => {
   });
 
   beforeEach(() => {
-    thisCollectionName = 'hub_e2e_' + randomString(5).toLowerCase();
-    namespace = 'hub_e2e_appr_namespace' + randomString(5).toLowerCase();
+    thisCollectionName = randomHubName('approvals_collection');
+    namespace = randomHubName('approvals_namespace');
     cy.hubLogin();
     cy.createNamespace(namespace);
     cy.galaxykit('task wait all');
