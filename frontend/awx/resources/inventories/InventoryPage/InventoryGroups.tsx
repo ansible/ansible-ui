@@ -27,7 +27,7 @@ export function InventoryGroups() {
   const toolbarActions = useInventoriesGroupsToolbarActions(view);
   const rowActions = useInventoriesGroupsActions();
 
-  const groupOptions = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/groups`).data;
+  const groupOptions = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/groups/`).data;
   const canCreateGroup = Boolean(
     groupOptions && groupOptions.actions && groupOptions.actions['POST']
   );
