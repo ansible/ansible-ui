@@ -16,6 +16,7 @@ import {
 import { TimesIcon } from '@patternfly/react-icons';
 import { ReactNode, Ref, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 import { Scrollable } from '../components/Scrollable';
 import { getID } from '../hooks/useID';
 import { PageSelectOption } from './PageSelectOption';
@@ -301,7 +302,7 @@ export function PageMultiSelect<
           {t('No results found')}
         </SelectOption>
       ) : (
-        <Scrollable style={{ maxHeight: '40vh' }}>
+        <ScrollableStyled>
           {groups ? (
             <>
               {Object.keys(groups).map((groupName) => (
@@ -321,7 +322,7 @@ export function PageMultiSelect<
               selectedOptions={selectedOptions}
             />
           )}
-        </Scrollable>
+        </ScrollableStyled>
       )}
       {props.footer && <MenuFooter>{props.footer}</MenuFooter>}
     </Select>
@@ -369,3 +370,7 @@ function PageMultiSelectList(props: {
     </SelectList>
   );
 }
+
+const ScrollableStyled = styled(Scrollable)`
+  max-height: 40vh;
+`;
