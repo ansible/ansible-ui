@@ -1,6 +1,6 @@
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IToolbarFilter, ToolbarFilterType } from '../../../../framework';
-import { useMemo } from 'react';
 import { AuthenticatorTypeEnum } from '../../../interfaces/Authenticator';
 
 export function useNameToolbarFilter() {
@@ -9,7 +9,7 @@ export function useNameToolbarFilter() {
     () => ({
       key: 'name',
       label: t('Name'),
-      type: ToolbarFilterType.Text,
+      type: ToolbarFilterType.SingleText,
       query: 'name__contains',
       comparison: 'contains',
     }),
