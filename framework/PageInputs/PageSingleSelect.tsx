@@ -7,11 +7,13 @@ import {
   MenuToggleElement,
   SearchInput,
   Select,
+  SelectGroup,
   SelectList,
   SelectOption,
 } from '@patternfly/react-core';
 import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Scrollable } from '../components/Scrollable';
 import { getID } from '../hooks/useID';
 import { PageSelectOption } from './PageSelectOption';
 
@@ -167,6 +169,19 @@ export function PageSingleSelect<
     [options, searchValue]
   );
 
+  const groups = useMemo(() => {
+    const hasGroups = options.some((option) => !!option.group);
+    if (hasGroups) {
+      const groups: Record<string, PageSelectOption<ValueT>[]> = {};
+      for (const option of visibleOptions) {
+        const group = option.group ?? '';
+        if (!groups[group]) groups[group] = [];
+        groups[group].push(option);
+      }
+      return groups;
+    }
+  }, [options, visibleOptions]);
+
   return (
     <Select
       id={`${id}-select`}
@@ -214,36 +229,56 @@ export function PageSingleSelect<
           {t('No results found')}
         </SelectOption>
       ) : (
-        <SelectList
-          style={{ maxHeight: '40vh', overflowY: 'auto' }}
-          onKeyDown={(event) => {
-            switch (event.key) {
-              case 'Tab':
-                event.preventDefault();
-                event.stopPropagation();
-                searchRef.current?.focus();
-                break;
-            }
-          }}
-        >
-          {visibleOptions.map((option) => {
-            const optionId = getID(option);
-            return (
-              <SelectOption
-                id={optionId}
-                icon={option.icon}
-                key={option.key !== undefined ? option.key : option.label}
-                value={option.key !== undefined ? option.key : option.label}
-                description={option.description}
-                data-cy={optionId}
-              >
-                {option.label}
-              </SelectOption>
-            );
-          })}
-        </SelectList>
+        <Scrollable style={{ maxHeight: '40vh' }}>
+          {groups ? (
+            <>
+              {Object.keys(groups).map((groupName) => (
+                <SelectGroup label={groupName} key={groupName}>
+                  <PageSingleSelectList searchRef={searchRef} options={groups[groupName]} />
+                </SelectGroup>
+              ))}
+            </>
+          ) : (
+            <PageSingleSelectList searchRef={searchRef} options={visibleOptions} />
+          )}
+        </Scrollable>
       )}
       {props.footer && <MenuFooter>{props.footer}</MenuFooter>}
     </Select>
+  );
+}
+
+export function PageSingleSelectList(props: {
+  searchRef: React.RefObject<HTMLInputElement>;
+  options: PageSelectOption<unknown>[];
+}) {
+  return (
+    <SelectList
+      onKeyDown={(event) => {
+        switch (event.key) {
+          case 'Tab':
+            event.preventDefault();
+            event.stopPropagation();
+            props.searchRef.current?.focus();
+            break;
+        }
+      }}
+    >
+      {props.options.map((option) => {
+        const optionId = getID(option);
+        return (
+          <SelectOption
+            id={optionId}
+            icon={option.icon}
+            key={option.key !== undefined ? option.key : option.label}
+            value={option.key !== undefined ? option.key : option.label}
+            description={option.description}
+            data-cy={optionId}
+          >
+            {option.label}
+          </SelectOption>
+        );
+      })}
+    </SelectList>
   );
 }
