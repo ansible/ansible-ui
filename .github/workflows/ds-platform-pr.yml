@@ -52,6 +52,6 @@ jobs:
     name: Platform Checks
     steps:
       - uses: actions/checkout@v4
-      - run: git diff --quiet HEAD^ HEAD -- frontend framework
-      - run: git diff --quiet HEAD^ HEAD -- cypress/e2e/awx cypress/e2e/eda cypress/e2e/hub
-      - run: git diff --quiet HEAD^ HEAD -- cypress/e2e/support
+      - run: git diff --quiet HEAD~1 -- cypress/e2e/support
+      - run: git diff --quiet HEAD~1 -- cypress/e2e/awx cypress/e2e/eda cypress/e2e/hub
+      - run: git diff --quiet HEAD~1 -- frontend framework
