@@ -3,6 +3,7 @@
 import { randomString } from '../../../framework/utils/random-string';
 import { hubAPI } from '../../support/formatApiPathForHub';
 import { Collections } from './constants';
+import {randomHubName} from "./utils/random-name";
 
 describe('Collections- List View', () => {
   //**Important to know:
@@ -70,8 +71,8 @@ describe('Collections List- Line Item Kebab Menu', () => {
   let repository: string;
 
   beforeEach(() => {
-    thisCollectionName = 'hub_e2e_' + randomString(5).toLowerCase();
-    namespace = 'hub_e2e_col_namespace' + randomString(5).toLowerCase();
+    thisCollectionName = randomHubName('collections_collection');
+    namespace = randomHubName('collections_namespace');
     cy.hubLogin();
     cy.createNamespace(namespace);
     cy.uploadCollection(thisCollectionName, namespace);
