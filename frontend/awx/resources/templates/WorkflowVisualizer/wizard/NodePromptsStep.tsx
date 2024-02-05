@@ -43,19 +43,23 @@ export function NodePromptsStep() {
     }));
     const { prompt } = wizardData;
     const defaultPromptValues = {
-      job_type: prompt?.job_type ?? defaults.job_type,
+      credentials: prompt?.credentials ?? defaults.credentials,
       diff_mode: prompt?.diff_mode ?? defaults.diff_mode,
-      scm_branch: prompt?.scm_branch ?? defaults.scm_branch,
+      execution_environment: prompt?.execution_environment ?? defaults.execution_environment,
       extra_vars: prompt?.extra_vars ?? defaults.extra_vars,
       forks: prompt?.forks ?? defaults.forks,
+      instance_groups: prompt?.instance_groups ?? defaults.instance_groups,
+      inventory: prompt?.inventory ?? defaults.inventory,
       job_slice_count: prompt?.job_slice_count ?? defaults.job_slice_count,
       job_tags: prompt?.job_tags ?? parseStringToTagArray(defaults.job_tags),
+      job_type: prompt?.job_type ?? defaults.job_type,
       labels: prompt?.labels ?? readOnlyLabels,
       limit: prompt?.limit ?? defaults.limit,
+      organization: prompt?.organization ?? organizationId,
+      scm_branch: prompt?.scm_branch ?? defaults.scm_branch,
       skip_tags: prompt?.skip_tags ?? parseStringToTagArray(defaults.skip_tags),
       timeout: prompt?.timeout ?? defaults.timeout,
       verbosity: prompt?.verbosity ?? defaults.verbosity,
-      organization: prompt?.organization ?? organizationId,
       defaults,
     };
 
@@ -78,7 +82,16 @@ export function NodePromptsStep() {
         <PageFormInventorySelect<WizardFormValues> name="prompt.inventory" isRequired />
       </ConditionalField>
       <ConditionalField isHidden={!config.ask_credential_on_launch}>
-        <PageFormCredentialSelect<WizardFormValues> name="prompt.credentials" isRequired />
+        <PageFormCredentialSelect<WizardFormValues>
+          name="prompt.credentials"
+          label={t('Credentials')}
+          placeholder={t('Add credentials')}
+          labelHelpTitle={t('Credentials')}
+          labelHelp={t(
+            'Select credentials for accessing the nodes this job will be ran against. You can only select one credential of each type. For machine credentials (SSH), checking "Prompt on launch" without selecting credentials will require you to select a machine credential at run time. If you select credentials and check "Prompt on launch", the selected credential(s) become the defaults that can be updated at run time.'
+          )}
+          isMultiple
+        />
       </ConditionalField>
       <ConditionalField isHidden={!config.ask_execution_environment_on_launch}>
         <PageFormExecutionEnvironmentSelect<WizardFormValues>

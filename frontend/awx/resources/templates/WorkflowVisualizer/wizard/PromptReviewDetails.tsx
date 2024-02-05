@@ -102,9 +102,11 @@ export function PromptReviewDetails() {
       )}
       <PageDetail label={t('Credentials')} isEmpty={isEmpty(credentials)}>
         <LabelGroup>
-          {credentials?.map((credential) => (
-            <CredentialDetail credentialID={credential.id} key={credential.id} />
-          ))}
+          {Array.isArray(credentials)
+            ? credentials?.map((credential) => (
+                <CredentialDetail credentialID={credential.id} key={credential.id} />
+              ))
+            : null}
         </LabelGroup>
       </PageDetail>
       <PageDetail

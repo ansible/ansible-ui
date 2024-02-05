@@ -51,6 +51,7 @@ export function useSaveVisualizer() {
   const postDisassociateNode = usePostRequest<{ id: number; disassociate: boolean }>();
   const postAssociateLabel = usePostRequest<{ name: string; organization: number }>();
   const postAssociateInstanceGroup = usePostRequest<{ id: number }, InstanceGroup>();
+  const postAssociateCredential = usePostRequest<{ id: number }, Credential>();
 
   const graphNodes = controller
     .getGraph()
@@ -153,8 +154,6 @@ export function useSaveVisualizer() {
       const { launch_data, resource } = nodeData;
       const { unified_job_template } = resource.summary_fields;
       const { unified_job_type } = unified_job_template;
-      const isJobOrWorkflowJob =
-        unified_job_type === UnifiedJobType.job || unified_job_type === UnifiedJobType.workflow_job;
 
       setValue('all_parents_must_converge', resource.all_parents_must_converge);
       setValue('identifier', resource?.identifier);
@@ -176,8 +175,8 @@ export function useSaveVisualizer() {
 
       if (unified_job_type === UnifiedJobType.system_job && resource.extra_data?.days) {
         setValue('extra_data', { days: resource.extra_data.days });
-      } else if (isJobOrWorkflowJob && launch_data?.extra_vars) {
-        setValue('extra_data', parseVariableField(launch_data?.extra_vars)); // FIX
+      } else if (launch_data?.extra_vars) {
+        setValue('extra_data', parseVariableField(launch_data?.extra_vars));
       }
 
       const newNode = await postWorkflowNode(
@@ -187,7 +186,7 @@ export function useSaveVisualizer() {
 
       if (!newNode.id) return;
 
-      if (launch_data?.labels && isJobOrWorkflowJob) {
+      if (launch_data?.labels) {
         await Promise.all(
           launch_data?.labels.map(async (label) => {
             await postAssociateLabel(
@@ -200,14 +199,25 @@ export function useSaveVisualizer() {
           })
         );
       }
-
-      if (launch_data?.instance_groups && isJobOrWorkflowJob) {
+      if (launch_data?.instance_groups) {
         await Promise.all(
           launch_data?.instance_groups.map(async (group) => {
             await postAssociateInstanceGroup(
               awxAPI`/workflow_job_template_nodes/${newNode.id.toString()}/instance_groups/`,
               {
                 id: group.id,
+              }
+            );
+          })
+        );
+      }
+      if (launch_data?.credentials) {
+        await Promise.all(
+          launch_data?.credentials.map(async (credential) => {
+            await postAssociateCredential(
+              awxAPI`/workflow_job_template_nodes/${newNode.id.toString()}/credentials/`,
+              {
+                id: credential.id,
               }
             );
           })
