@@ -138,7 +138,9 @@ export function CollectionPage() {
   return (
     <PageLayout>
       <PageHeader
-        title={collection?.collection_version?.name}
+        title={
+          collection?.collection_version?.namespace + '.' + collection?.collection_version?.name
+        }
         breadcrumbs={[
           { label: t('Collections'), to: getPageUrl(HubRoute.Collections) },
           { label: collection?.collection_version?.name },

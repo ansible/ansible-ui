@@ -47,15 +47,42 @@ export function useCollectionColumns(_options?: { disableSort?: boolean; disable
         sort: 'name',
       },
       {
-        header: t('Repository'),
+        header: t('Provided by'),
         type: 'text',
+        value: (collection) =>
+          t(`Provided by {{namespace}}`, { namespace: collection.collection_version?.namespace }),
+        card: 'subtitle',
+        list: 'subtitle',
+        table: 'hidden',
+      },
+      {
+        header: t('Repository'),
         value: (collection) => collection.repository?.name,
+        cell: (collection) => (
+          <TextCell
+            text={collection.repository?.name}
+            to={getPageUrl(HubRoute.RepositoryDetails, {
+              params: {
+                id: collection.repository?.name,
+              },
+            })}
+          />
+        ),
       },
       {
         header: t('Namespace'),
-        type: 'text',
         value: (collection) => collection.collection_version?.namespace,
         sort: 'namespace',
+        cell: (collection) => (
+          <TextCell
+            text={collection.collection_version?.namespace}
+            to={getPageUrl(HubRoute.NamespaceDetails, {
+              params: {
+                id: collection.collection_version?.namespace,
+              },
+            })}
+          />
+        ),
       },
       {
         header: t('Description'),
@@ -70,6 +97,26 @@ export function useCollectionColumns(_options?: { disableSort?: boolean; disable
         value: (collection) =>
           collection.collection_version?.contents?.filter((c) => c.content_type === 'module')
             .length,
+      },
+      {
+        header: t('Roles'),
+        type: 'count',
+        value: (collection) =>
+          collection.collection_version?.contents?.filter((c) => c.content_type === 'role').length,
+      },
+      {
+        header: t('Plugins'),
+        type: 'count',
+        value: (collection) =>
+          collection.collection_version?.contents?.filter(
+            (c) => c.content_type !== 'module' && c.content_type !== 'role'
+          ).length,
+      },
+      {
+        header: t('Dependencies'),
+        type: 'count',
+        value: (collection) =>
+          Object.keys(collection.collection_version?.dependencies || {}).length,
       },
       {
         header: t('Updated'),

@@ -1,33 +1,5 @@
-import { ButtonVariant } from '@patternfly/react-core';
-import { PencilAltIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons';
-import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  IPageAction,
-  ITableColumn,
-  IToolbarFilter,
-  PageActionSelection,
-  PageActionType,
-  PageHeader,
-  PageLayout,
-  PageTable,
-  usePageNavigate,
-} from '../../../../framework';
-import {
-  useCreatedColumn,
-  useDescriptionColumn,
-  useIdColumn,
-  useModifiedColumn,
-  useNameColumn,
-  useOrganizationNameColumn,
-} from '../../../common/columns';
-import {
-  useCreatedByToolbarFilter,
-  useDescriptionToolbarFilter,
-  useModifiedByToolbarFilter,
-  useNameToolbarFilter,
-  useOrganizationToolbarFilter,
-} from '../../common/awx-toolbar-filters';
+import { PageHeader, PageLayout, PageTable, usePageNavigate } from '../../../../framework';
 import { useAwxView } from '../../common/useAwxView';
 import { ExecutionEnvironment } from '../../interfaces/ExecutionEnvironment';
 
@@ -35,7 +7,12 @@ import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxConfig } from '../../common/useAwxConfig';
 import { getDocsBaseUrl } from '../../common/util/getDocsBaseUrl';
 import { AwxRoute } from '../../main/AwxRoutes';
-import { useDeleteExecutionEnvironments } from './hooks/useDeleteExecutionEnvironments';
+import { useExecutionEnvRowActions } from './hooks/useExecutionEnvRowActions';
+import { useExecutionEnvToolbarActions } from './hooks/useExecutionEnvToolbarActions';
+import { useExecutionEnvironmentsColumns } from './hooks/useExecutionEnvironmentsColumns';
+import { useExecutionEnvironmentsFilters } from './hooks/useExecutionEnvironmentsFilters';
+import { useOptions } from '../../../common/crud/useOptions';
+import { OptionsResponse, ActionsResponse } from '../../interfaces/OptionsResponse';
 
 export function ExecutionEnvironments() {
   const { t } = useTranslation();
@@ -48,57 +25,12 @@ export function ExecutionEnvironments() {
     toolbarFilters,
     tableColumns,
   });
-  const deleteExecutionEnvironments = useDeleteExecutionEnvironments(view.unselectItemsAndRefresh);
 
-  const toolbarActions = useMemo<IPageAction<ExecutionEnvironment>[]>(
-    () => [
-      {
-        type: PageActionType.Button,
-        selection: PageActionSelection.None,
-        variant: ButtonVariant.primary,
-        isPinned: true,
-        icon: PlusIcon,
-        label: t('Create execution environment'),
-        onClick: () => pageNavigate(AwxRoute.CreateExecutionEnvironment),
-      },
-      { type: PageActionType.Seperator },
-      {
-        type: PageActionType.Button,
-        selection: PageActionSelection.Multiple,
-        icon: TrashIcon,
-        label: t('Delete selected execution environments'),
-        onClick: deleteExecutionEnvironments,
-        isDanger: true,
-      },
-    ],
-    [pageNavigate, deleteExecutionEnvironments, t]
-  );
+  const rowActions = useExecutionEnvRowActions(view);
+  const toolbarActions = useExecutionEnvToolbarActions(view);
 
-  const rowActions = useMemo<IPageAction<ExecutionEnvironment>[]>(
-    () => [
-      {
-        type: PageActionType.Button,
-        selection: PageActionSelection.Single,
-        icon: PencilAltIcon,
-        isPinned: true,
-        label: t('Edit execution environment'),
-        onClick: (executionEnvironment) =>
-          pageNavigate(AwxRoute.EditExecutionEnvironment, {
-            params: { id: executionEnvironment.id },
-          }),
-      },
-      { type: PageActionType.Seperator },
-      {
-        type: PageActionType.Button,
-        selection: PageActionSelection.Single,
-        icon: TrashIcon,
-        label: t('Delete execution environment'),
-        onClick: (executionEnvironment) => deleteExecutionEnvironments([executionEnvironment]),
-        isDanger: true,
-      },
-    ],
-    [pageNavigate, deleteExecutionEnvironments, t]
-  );
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/execution_environments/`);
+  const canCreateExecutionEnvironment = Boolean(data && data.actions && data.actions['POST']);
 
   return (
     <PageLayout>
@@ -120,78 +52,29 @@ export function ExecutionEnvironments() {
         tableColumns={tableColumns}
         rowActions={rowActions}
         errorStateTitle={t('Error loading execution environments')}
-        emptyStateTitle={t('No execution environments yet')}
-        emptyStateDescription={t('To get started, create an execution environment.')}
-        emptyStateButtonText={t('Create execution environment')}
-        emptyStateButtonClick={() => pageNavigate(AwxRoute.CreateExecutionEnvironment)}
+        emptyStateTitle={
+          canCreateExecutionEnvironment
+            ? t('No execution environments yet')
+            : t('You do not have permission to create an execution environment.')
+        }
+        emptyStateDescription={
+          canCreateExecutionEnvironment
+            ? t('To get started, create an execution environment.')
+            : t(
+                'Please contact your organization administrator if there is an issue with your access.'
+              )
+        }
+        emptyStateButtonText={
+          canCreateExecutionEnvironment ? t('Create execution environment') : undefined
+        }
+        emptyStateButtonClick={
+          canCreateExecutionEnvironment
+            ? () => pageNavigate(AwxRoute.CreateExecutionEnvironment)
+            : undefined
+        }
         {...view}
         defaultSubtitle={t('Execution environment')}
       />
     </PageLayout>
   );
-}
-
-export function useExecutionEnvironmentsFilters() {
-  const nameToolbarFilter = useNameToolbarFilter();
-  const descriptionToolbarFilter = useDescriptionToolbarFilter();
-  const organizationToolbarFilter = useOrganizationToolbarFilter();
-  const createdByToolbarFilter = useCreatedByToolbarFilter();
-  const modifiedByToolbarFilter = useModifiedByToolbarFilter();
-  const toolbarFilters = useMemo<IToolbarFilter[]>(
-    () => [
-      nameToolbarFilter,
-      descriptionToolbarFilter,
-      organizationToolbarFilter,
-      createdByToolbarFilter,
-      modifiedByToolbarFilter,
-    ],
-    [
-      nameToolbarFilter,
-      descriptionToolbarFilter,
-      organizationToolbarFilter,
-      createdByToolbarFilter,
-      modifiedByToolbarFilter,
-    ]
-  );
-  return toolbarFilters;
-}
-
-export function useExecutionEnvironmentsColumns(options?: {
-  disableSort?: boolean;
-  disableLinks?: boolean;
-}) {
-  const { t } = useTranslation();
-  const pageNavigate = usePageNavigate();
-  const nameClick = useCallback(
-    (executionEnvironment: ExecutionEnvironment) =>
-      pageNavigate(AwxRoute.ExecutionEnvironmentDetails, {
-        params: { id: executionEnvironment.id },
-      }),
-    [pageNavigate]
-  );
-  const nameColumn = useNameColumn({
-    ...options,
-    onClick: nameClick,
-  });
-  const idColumn = useIdColumn<ExecutionEnvironment>();
-  const descriptionColumn = useDescriptionColumn();
-  const organizationColumn = useOrganizationNameColumn(AwxRoute.OrganizationDetails, options);
-  const createdColumn = useCreatedColumn(options);
-  const modifiedColumn = useModifiedColumn(options);
-  const tableColumns = useMemo<ITableColumn<ExecutionEnvironment>[]>(
-    () => [
-      idColumn,
-      nameColumn,
-      descriptionColumn,
-      {
-        header: t('Image'),
-        cell: (executionEnvironment) => executionEnvironment.image,
-      },
-      organizationColumn,
-      createdColumn,
-      modifiedColumn,
-    ],
-    [idColumn, nameColumn, descriptionColumn, t, organizationColumn, createdColumn, modifiedColumn]
-  );
-  return tableColumns;
 }

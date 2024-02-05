@@ -63,7 +63,7 @@ export function useRegistryFilters() {
       {
         key: 'keywords',
         label: t('Name'),
-        type: ToolbarFilterType.Text,
+        type: ToolbarFilterType.MultiText,
         query: 'name',
         comparison: 'equals',
       },

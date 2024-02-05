@@ -27,6 +27,11 @@ export enum HubRoute {
   ExecutionEnvironments = 'hub-execution-environments',
   EditExecutionEnvironment = 'hub-edit-execution-environment',
   CreateExecutionEnvironment = 'hub-create-execution-environment',
+  ExecutionEnvironmentPage = 'hub-execution-environment-page',
+  ExecutionEnvironmentDetails = 'hub-create-execution-environment-details',
+  ExecutionEnvironmentActivity = 'hub-create-execution-environment-activity',
+  ExecutionEnvironmentImages = 'hub-create-execution-environment-images',
+  ExecutionEnvironmentAccess = 'hub-create-execution-environment-access',
 
   SignatureKeys = 'hub-signature-keys',
 
@@ -64,6 +69,7 @@ export enum HubRoute {
   Teams = 'hub-teams',
   Users = 'hub-users',
   APIToken = 'hub-api-token',
+  MyImports = 'hub-my-imports',
   Roles = 'hub-roles',
   CreateRole = 'hub-create-role',
   RolePage = 'hub-role-page',
