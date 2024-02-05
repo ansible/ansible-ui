@@ -1,10 +1,11 @@
 import { randomString } from '../../../framework/utils/random-string';
 import { Remotes } from './constants';
+import {randomHubName} from "./utils/random-name";
 
 describe('Remotes', () => {
   const testSignature: string = randomString(5, undefined, { isLowercase: true });
   function generateRemoteName(): string {
-    return `test-${testSignature}-remote-${randomString(5, undefined, { isLowercase: true })}`;
+    return randomHubName(`remotes_${testSignature}_remote`);
   }
   before(() => {
     cy.hubLogin();
