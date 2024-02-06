@@ -93,17 +93,6 @@ export function useRepositoryFilters() {
           { label: t('Rejected'), value: `pipeline=rejected` },
         ],
       },
-      {
-        key: 'remote',
-        label: t('Remote'),
-        type: ToolbarFilterType.SingleSelect,
-        placeholder: t('Remote'),
-        query: 'remote',
-        options: [
-          { label: t('None'), value: 'null' },
-          // TODO get all remotes
-        ],
-      },
     ],
     [t]
   );
