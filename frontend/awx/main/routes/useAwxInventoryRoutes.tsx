@@ -15,6 +15,7 @@ import { SchedulePage } from '../../views/schedules/SchedulePage/SchedulePage';
 import { ScheduleRules } from '../../views/schedules/SchedulePage/ScheduleRules';
 import { Schedules } from '../../views/schedules/Schedules';
 import { AwxRoute } from '../AwxRoutes';
+import { InventoryJobTemplates } from '../../resources/inventories/InventoryPage/InventoryJobTemplates';
 import { InventoryHosts } from '../../resources/inventories/InventoryPage/InventoryHosts';
 import { InventorySources } from '../../resources/inventories/InventoryPage/InventorySources';
 import { InventoryGroups } from '../../resources/inventories/InventoryPage/InventoryGroups';
@@ -27,6 +28,7 @@ import {
   CreateRelatedGroup,
 } from '../../resources/inventories/inventoryGroup/InventoryGroupForm';
 import { InventoryHostGroups } from '../../resources/inventories/inventoryHostsPage/InventoryHostGroups';
+import { CreateInventorySource } from '../../resources/sources/InventorySourceForm';
 import {
   CreateHost,
   EditHost,
@@ -196,7 +198,7 @@ export function useAwxInventoryRoutes() {
             {
               id: AwxRoute.InventoryJobTemplates,
               path: 'templates',
-              element: <PageNotImplemented />,
+              element: <InventoryJobTemplates />,
             },
           ],
         },
@@ -249,7 +251,7 @@ export function useAwxInventoryRoutes() {
         {
           id: AwxRoute.InventorySourcesAdd,
           path: ':inventory_type/:id/sources/add',
-          element: <PageNotImplemented />,
+          element: <CreateInventorySource />,
         },
       ],
     }),
