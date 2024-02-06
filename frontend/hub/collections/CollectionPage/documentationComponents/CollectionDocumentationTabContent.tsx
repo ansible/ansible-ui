@@ -352,6 +352,12 @@ export function CollectionDocumentationTabContent(props: {
                                   </button>
                                 )}
                               </div>
+                              {paramsFilter && 
+                               <span style={{ fontWeight: 'bold' }}>
+                               {optionRecord.parent_path}
+                               <br />
+                             </span>
+                              }
                               {!optionRecord.children && (
                                 <span style={{ fontWeight: 'bold' }}>
                                   {optionRecord.option.name}
