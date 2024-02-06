@@ -14,11 +14,12 @@ import {
   Truncate,
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon, OutlinedQuestionCircleIcon } from '@patternfly/react-icons';
-import { CSSProperties, Fragment, ReactNode } from 'react';
+import { CSSProperties, Fragment, ReactNode, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './PageFramework.css';
 import { useBreakpoint } from './components/useBreakPoint';
 import { useFrameworkTranslations } from './useFrameworkTranslations';
+import { usePageBreadcrumbs } from './PageTabs/PageBreadcrumbs';
 
 export interface ICatalogBreadcrumb {
   id?: string;
@@ -26,9 +27,10 @@ export interface ICatalogBreadcrumb {
   to?: string;
   target?: string;
   component?: React.ElementType;
+  isLoading?: boolean;
 }
 
-function Breadcrumbs(props: { breadcrumbs: ICatalogBreadcrumb[]; style?: CSSProperties }) {
+function Breadcrumbs(props: { breadcrumbs?: ICatalogBreadcrumb[]; style?: CSSProperties }) {
   const navigate = useNavigate();
   if (!props.breadcrumbs) return <Fragment />;
   return (
@@ -102,25 +104,38 @@ export interface PageHeaderProps {
  * </PageLayout>
  */
 export function PageHeader(props: PageHeaderProps) {
-  const { breadcrumbs, title, description, controls, headerActions, footer } = props;
+  const { title, description, controls, headerActions, footer } = props;
   const isLg = useBreakpoint('lg');
   const isXl = useBreakpoint('xl');
   const isMdOrLarger = useBreakpoint('md');
   const [translations] = useFrameworkTranslations();
+
+  const { tabBreadcrumb } = usePageBreadcrumbs();
+
+  const pageBreadcrumbs = useMemo(() => {
+    const pageBreadcrumbs = [];
+    if (props.breadcrumbs) pageBreadcrumbs.push(...props.breadcrumbs);
+    if (tabBreadcrumb) pageBreadcrumbs.push(tabBreadcrumb);
+    return pageBreadcrumbs;
+  }, [props.breadcrumbs, tabBreadcrumb]);
+
   return (
     <PageSection
       variant={PageSectionVariants.light}
       className="bg-lighten border-bottom"
       style={{
-        paddingTop: breadcrumbs ? (isXl ? 16 : 12) : isXl ? 16 : 12,
+        paddingTop: pageBreadcrumbs?.length ? (isXl ? 16 : 12) : isXl ? 16 : 12,
         paddingBottom: isXl ? 16 : 12,
       }}
     >
       <Stack hasGutter>
         <Flex flexWrap={{ default: 'nowrap' }} alignItems={{ default: 'alignItemsStretch' }}>
           <FlexItem grow={{ default: 'grow' }}>
-            {breadcrumbs && (
-              <Breadcrumbs breadcrumbs={breadcrumbs} style={{ paddingBottom: isLg ? 6 : 4 }} />
+            {pageBreadcrumbs && (
+              <Breadcrumbs
+                breadcrumbs={pageBreadcrumbs?.length ? pageBreadcrumbs : undefined}
+                style={{ paddingBottom: isLg ? 6 : 4 }}
+              />
             )}
             {title ? (
               props.titleHelp ? (
