@@ -19,8 +19,7 @@ import { CreateRemote, EditRemote } from '../administration/remotes/RemoteForm';
 import { Remotes } from '../administration/remotes/Remotes';
 import { Repositories } from '../administration/repositories/Repositories';
 import { RepositoryAccess } from '../administration/repositories/RepositoryPage/RepositoryAccess';
-import { RepositoryRemoveCollectionVersion } from '../administration/repositories/RepositoryPage/RepositoryRemoveCollectionVersion';
-import { RepositoryAddCollectionVersion } from '../administration/repositories/RepositoryPage/RepositoryAddCollectionVersion';
+import { RepositoryCollectionVersion } from '../administration/repositories/RepositoryPage/RepositoryCollectionVersion';
 import { RepositoryDetails } from '../administration/repositories/RepositoryPage/RepositoryDetails';
 import { RepositoryForm } from '../administration/repositories/RepositoryForm';
 import { RepositoryPage } from '../administration/repositories/RepositoryPage/RepositoryPage';
@@ -288,13 +287,8 @@ export function useHubNavigation() {
                 },
                 {
                   path: 'collection-version-remove',
-                  id: HubRoute.RepositoryRemoveCollectionVersion,
-                  element: <RepositoryRemoveCollectionVersion />,
-                },
-                {
-                  path: 'collection-version-add',
-                  id: HubRoute.RepositoryAddCollectionVersion,
-                  element: <RepositoryAddCollectionVersion />,
+                  id: HubRoute.RepositoryCollectionVersion,
+                  element: <RepositoryCollectionVersion />,
                 },
                 {
                   path: 'versions',
