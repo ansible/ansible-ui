@@ -174,6 +174,6 @@ export function useBulkCollectionColumns(operation: 'add' | 'remove') {
               }),
       },
     ],
-    [t]
+    [t, operation]
   );
 }
