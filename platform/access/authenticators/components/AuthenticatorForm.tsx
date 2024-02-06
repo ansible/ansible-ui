@@ -50,7 +50,7 @@ interface MapNever extends MapBase {
 interface MapGroups extends MapBase {
   trigger: 'groups';
   conditional: 'or' | 'and';
-  groups_value: string;
+  groups_value: { name: string }[];
 }
 interface MapAttributes extends MapBase {
   trigger: 'attributes';
@@ -255,7 +255,7 @@ function buildTriggers(map: AuthenticatorMapValues) {
     case 'groups':
       key = `has_${map.conditional}`; // has_or or has_and
       triggers.groups = {
-        [key]: map.groups_value.split(','),
+        [key]: map.groups_value.map(({ name }) => name),
       };
       break;
     case 'attributes':
