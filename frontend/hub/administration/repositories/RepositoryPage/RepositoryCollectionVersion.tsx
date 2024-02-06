@@ -116,7 +116,7 @@ export function useModifyCollections(
   operation: 'add' | 'remove'
 ) {
   const { t } = useTranslation();
-  const confirmationColumns = useBulkCollectionColumns();
+  const confirmationColumns = useBulkCollectionColumns(operation);
   const actionColumns = useMemo(() => [confirmationColumns[0]], [confirmationColumns]);
   const bulkAction = useHubBulkConfirmation<BulkCollection>();
 
@@ -127,7 +127,7 @@ export function useModifyCollections(
           ? t('Yes, I confirm that I want to add these {{count}} collections versions.', {
               count: bulkCollections[0].length,
             })
-          : t('Yes, I confirm that I want to add these {{count}} collections versions.', {
+          : t('Yes, I confirm that I want to remove these {{count}} collections versions.', {
               count: bulkCollections[0].length,
             });
 
@@ -156,7 +156,7 @@ export function useModifyCollections(
   );
 }
 
-export function useBulkCollectionColumns() {
+export function useBulkCollectionColumns(operation: 'add' | 'remove') {
   const { t } = useTranslation();
 
   return useMemo<ITableColumn<BulkCollection>[]>(
@@ -165,9 +165,13 @@ export function useBulkCollectionColumns() {
         header: t('Description'),
         type: 'description',
         value: (bulkCollection) =>
-          t('All {{count}} collections will be added in one post request to server.', {
-            count: bulkCollection.length,
-          }),
+          operation === 'add'
+            ? t('All {{count}} collections will be added in single operation to server.', {
+                count: bulkCollection.length,
+              })
+            : t('All {{count}} collections will be removed in single operation to server.', {
+                count: bulkCollection.length,
+              }),
       },
     ],
     [t]
