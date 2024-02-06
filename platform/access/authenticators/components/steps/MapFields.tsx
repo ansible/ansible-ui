@@ -76,7 +76,7 @@ export function MapFields(props: {
       </HeadingRow>
       <input
         type="hidden"
-        {...register(`mappings.${index}..map_type`, { value: map.map_type })}
+        {...register(`mappings.${index}.map_type`, { value: map.map_type })}
         defaultValue={map.map_type}
       />
       <FieldContainer>
@@ -119,13 +119,14 @@ export function MapFields(props: {
           >
             <PageFormSelect
               id={`mappings-${index}-groups-conditional`}
-              name={`mappings.${index}.conditional`}
               label={t('Conditional')}
               options={[
                 { value: 'or', label: t('or') },
                 { value: 'and', label: t('and') },
               ]}
               placeholderText={t('Select conditional')}
+              // eslint-disable-next-line i18next/no-literal-string
+              {...register(`mappings.${index}.conditional`, { value: 'or' })}
             />
             <PageFormCreatableSelect
               id={`mappings-${index}-groups-value`}
@@ -149,11 +150,13 @@ export function MapFields(props: {
                 { value: 'or', label: t('or') },
                 { value: 'and', label: t('and') },
               ]}
+              isRequired
             />
             <PageFormTextInput
               id={`mappings-${index}-attributes-criteria`}
               name={`mappings.${index}.criteria`}
               label={t('Criteria')}
+              isRequired
             />
             <PageFormSelect
               id={`mappings-${index}-attributes-criteria-conditional`}
@@ -167,11 +170,13 @@ export function MapFields(props: {
                 { value: 'in', label: t('in') },
               ]}
               placeholderText={t('Select conditional')}
+              isRequired
             />
             <PageFormTextInput
               id={`mappings-${index}-attributes-value`}
               name={`mappings.${index}.criteria_value`}
               label="&nbsp;"
+              isRequired
             />
           </PageFormHidden>
         </PageFormGrid>
