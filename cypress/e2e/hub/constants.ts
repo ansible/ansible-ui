@@ -52,6 +52,7 @@ export const RemoteRegistry = {
 export const Collections = {
   title: 'Collections',
   url: 'collections',
+  signedStatus: 'Signed',
 };
 
 export const Namespaces = {
