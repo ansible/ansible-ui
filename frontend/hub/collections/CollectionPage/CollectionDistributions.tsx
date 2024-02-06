@@ -6,6 +6,8 @@ import { pulpAPI } from '../../common/api/formatPath';
 import { getRepoURL } from '../../common/api/hub-api-utils';
 import { useHubView } from '../../common/useHubView';
 import { CollectionVersionSearch } from '../Collection';
+import { PageSection } from '@patternfly/react-core';
+import { Scrollable } from '../../../../framework';
 
 export function CollectionDistributions() {
   const { t } = useTranslation();
@@ -21,17 +23,19 @@ export function CollectionDistributions() {
   });
 
   return (
-    <>
-      <PageTable<Distribution>
-        id="hub-collection-version-search-table"
-        tableColumns={tableColumns}
-        errorStateTitle={t('Error loading distributions')}
-        emptyStateTitle={t('No distributions yet')}
-        {...view}
-        defaultTableView="list"
-        defaultSubtitle={t('Distributions')}
-      />
-    </>
+    <Scrollable>
+      <PageSection variant="light">
+        <PageTable<Distribution>
+          id="hub-collection-version-search-table"
+          tableColumns={tableColumns}
+          errorStateTitle={t('Error loading distributions')}
+          emptyStateTitle={t('No distributions yet')}
+          {...view}
+          defaultTableView="list"
+          defaultSubtitle={t('Distributions')}
+        />
+      </PageSection>
+    </Scrollable>
   );
 }
 
