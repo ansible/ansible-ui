@@ -32,42 +32,53 @@ export interface Collection {
     };
   };
 }
+
+export interface IContentsOption {
+  name: string;
+  type?: string;
+  description: string | string[];
+  choices?: string[];
+  default?: (boolean | number | string) | string[];
+  required?: boolean;
+  aliases?: string[];
+  elements?: string;
+  suboptions?: IContentsOption[];
+  env?: {
+    name: string;
+  }[];
+  ini?: {
+    key: string;
+    section: string;
+    default: string;
+  }[];
+  vars?: {
+    name: string;
+  }[];
+  version_added?: string;
+  version_added_collection?: string;
+  cli?: {
+    name: string;
+  }[];
+}
+
+export type ISample =
+  | (number | string)
+  | ISample[]
+  | {
+      avg?: number;
+      max?: number;
+      min?: number;
+      after?: string;
+      before?: string;
+    };
+
 export interface IContents {
   doc_strings: null | {
-    doc: {
+    doc?: {
       notes?: string[];
       author: string | string[];
       module?: string;
-      options?: {
-        name: string;
-        type?: string;
-        description: string | string[];
-        choices?: string[];
-        default?: (boolean | number | string) | string[];
-        required?: boolean;
-        aliases?: string[];
-        elements?: string;
-        suboptions?: {
-          name: string;
-          type: string;
-          description: string[];
-        }[];
-        env?: {
-          name: string;
-        }[];
-        ini?: {
-          key: string;
-          section: string;
-        }[];
-        vars?: {
-          name: string;
-        }[];
-        version_added?: string;
-        version_added_collection?: string;
-        cli?: {
-          name: string;
-        }[];
-      }[];
+      options?: IContentsOption[];
       filename: string;
       collection: string;
       has_action?: boolean;
@@ -77,22 +88,14 @@ export interface IContents {
       version_added_collection: string;
       requirements?: string[];
       name?: string;
+      deprecated?: { why: string; alternative: string };
     };
     return:
       | null
       | {
           name: string;
           type: string;
-          sample?:
-            | (number | string)
-            | string[]
-            | {
-                avg?: number;
-                max?: number;
-                min?: number;
-                after?: string;
-                before?: string;
-              };
+          sample?: ISample;
           returned: string;
           description: string;
           contains?: {
