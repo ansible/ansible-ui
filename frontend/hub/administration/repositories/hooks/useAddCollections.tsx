@@ -117,15 +117,16 @@ function useRepositoryCollectionVersionFiltersAdd(multiDialogs : MultiDialogs) {
   const repoQueryOptions = useRepoQueryOptions();
   const selectRepositorySingle = useSelectRepositorySingle(multiDialogs);
 
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [ ,setSearchParams] = useSearchParams();
   const params = new URLSearchParams();
 
   const repoSelector = singleSelectBrowseAdapter<AnsibleRepository>(
     selectRepositorySingle.openBrowse,
-    (item) => { params.set('repository', item.name);  setSearchParams(params); return item.name},
+    (item) => item.name,
     (name) => {
       return { name };
-    }
+    },
+    (item) => {params.set('repository', item.name);  setSearchParams(params);},
   );
 
   return useMemo<IToolbarFilter[]>(
