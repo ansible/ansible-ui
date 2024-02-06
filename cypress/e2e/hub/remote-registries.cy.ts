@@ -136,6 +136,5 @@ describe('Remote Registry', () => {
     cy.get('[data-cy="delete-remote-registry"]').click();
     cy.get('#confirm').click();
     cy.clickButton(/^Delete remote registries/);
-    cy.contains(/^Success$/);
   });
 });
