@@ -8,12 +8,22 @@ import {
   WithSelectionProps,
   Node,
 } from '@patternfly/react-topology';
-import type { WorkflowNode, UnifiedJobType } from '../../../interfaces/WorkflowNode';
+import type { Credential } from '../../../interfaces/Credential';
+import type { ExecutionEnvironment } from '../../../interfaces/ExecutionEnvironment';
+import type { Inventory } from '../../../interfaces/Inventory';
+import type { InventorySource } from '../../../interfaces/InventorySource';
+import type { JobTemplate } from '../../../interfaces/JobTemplate';
+import type { LaunchConfiguration } from '../../../interfaces/LaunchConfiguration';
+import type { Project } from '../../../interfaces/Project';
+import type { SystemJobTemplate } from '../../../interfaces/SystemJobTemplate';
+import type { WorkflowApproval } from '../../../interfaces/WorkflowApproval';
 import type { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
+import type { WorkflowNode, UnifiedJobType } from '../../../interfaces/WorkflowNode';
 
 export type GraphNode = Node<NodeModel, GraphNodeData>;
 export type GraphNodeData = {
   resource: WorkflowNode;
+  launch_data?: PromptFormValues;
 };
 export interface CustomNodeProps extends WithSelectionProps {
   element: GraphElement<
@@ -85,10 +95,38 @@ export interface NodeResource {
   id: number;
   name: string;
   description: string;
-  unified_job_type: UnifiedJobType;
+  unified_job_type?: UnifiedJobType;
   timeout?: number;
-  job_type?: 'cleanup_jobs' | 'cleanup_activitystream' | 'cleanup_sessions' | 'cleanup_tokens';
 }
+
+export interface PromptFormValues {
+  inventory: Inventory;
+  credentials: Credential[];
+  credential_passwords: { [key: string]: string };
+  instance_groups: { id: number; name: string }[];
+  execution_environment: ExecutionEnvironment;
+  diff_mode: boolean;
+  extra_vars: string;
+  forks: number;
+  job_slice_count: number;
+  job_tags: { name: string }[];
+  job_type: string;
+  labels: { name: string; id?: number }[];
+  limit: string;
+  scm_branch: string;
+  skip_tags: { name: string }[];
+  timeout: number;
+  verbosity: number;
+  organization: number;
+}
+
+export type AllResources =
+  | InventorySource
+  | JobTemplate
+  | Project
+  | SystemJobTemplate
+  | WorkflowApproval
+  | WorkflowJobTemplate;
 
 export interface WizardFormValues {
   approval_description: string;
@@ -97,7 +135,9 @@ export interface WizardFormValues {
   node_alias: string;
   node_convergence: 'any' | 'all';
   node_days_to_keep: number;
-  node_resource: NodeResource | null;
+  node_resource: AllResources | NodeResource | null;
   node_type: UnifiedJobType;
   node_status_type: EdgeStatus;
+  launch_config: LaunchConfiguration;
+  prompt: PromptFormValues;
 }
