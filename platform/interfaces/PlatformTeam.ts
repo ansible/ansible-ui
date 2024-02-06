@@ -1,5 +1,6 @@
 export interface PlatformTeam {
   name: string;
+  description: string;
   id: number;
   url: string;
   created_on: string;
