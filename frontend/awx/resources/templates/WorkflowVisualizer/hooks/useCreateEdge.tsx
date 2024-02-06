@@ -22,6 +22,7 @@ export function useCreateEdge() {
         type: 'edge',
         source,
         target,
+        visible: true,
         data: {
           originalStatus,
           source,
