@@ -53,7 +53,6 @@ const CustomEdgeInner: FC<
   const [tagHover, tagHoverRef] = useHover(0);
   const startPoint = edgeElement.getStartPoint();
   const endPoint = edgeElement.getEndPoint();
-
   const edgePath = integralShapePath(startPoint, endPoint, 0, 20);
   const { centerPoint, pathRef } = useCenterPoint(edgePath);
   const isSourceRootNode = edgeElement.getSource().getId() === START_NODE_ID;
