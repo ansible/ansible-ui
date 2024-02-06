@@ -1,9 +1,21 @@
 import { stringIsUUID } from '../../../../common/util/strings';
 import { UnifiedJobType } from '../../../../interfaces/WorkflowNode';
 import type { AllResources, GraphNode, NodeResource } from '../types';
+import { useVisualizationController } from '@patternfly/react-topology';
+import { EdgeStatus } from '../types';
 
-export function getInitialValues(node?: GraphNode) {
+export function useGetInitialValues(node?: GraphNode) {
+  const controller = useVisualizationController();
+  let showStatusField = false;
+
+  if (!node) {
+    const sourceNode = controller.getState<{
+      sourceNode: GraphNode | undefined;
+    }>().sourceNode;
+    showStatusField = sourceNode ? true : false;
+  }
   const nodeData = node?.getData();
+
   const { resource } = nodeData || {};
 
   const nodeUJT = resource?.summary_fields?.unified_job_template;
@@ -11,6 +23,7 @@ export function getInitialValues(node?: GraphNode) {
   const nodeIdentifier = stringIsUUID(resource?.identifier || '') ? '' : resource?.identifier;
   const nodeConvergence = getConvergenceType(resource?.all_parents_must_converge);
   const nodeDaysToKeep = resource?.extra_data?.days;
+  const nodeRunOnStatus = showStatusField ? EdgeStatus.info : undefined;
   const approvalTimeout = nodeUJT?.timeout;
   const approvalName = getValueBasedOnJobType(nodeType, '', nodeUJT?.name ?? '');
   const approvalDescription = getValueBasedOnJobType(nodeType, '', nodeUJT?.description ?? '');
@@ -25,6 +38,7 @@ export function getInitialValues(node?: GraphNode) {
       node_days_to_keep: nodeDaysToKeep ?? 30,
       node_resource: nodeUJT || null,
       node_type: nodeType || UnifiedJobType.job,
+      node_status_type: nodeRunOnStatus || '',
     },
   };
 }

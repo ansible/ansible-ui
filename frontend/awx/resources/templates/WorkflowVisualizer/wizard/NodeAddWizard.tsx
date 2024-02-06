@@ -5,7 +5,7 @@ import { awxErrorAdapter } from '../../../../common/adapters/awxErrorAdapter';
 import { UnifiedJobType } from '../../../../interfaces/WorkflowNode';
 import { NodeTypeStep } from './NodeTypeStep';
 import { NodeReviewStep } from './NodeReviewStep';
-import { getInitialValues, getValueBasedOnJobType, hasDaysToKeep } from './helpers';
+import { useGetInitialValues, getValueBasedOnJobType, hasDaysToKeep } from './helpers';
 import { NODE_DIAMETER, START_NODE_ID } from '../constants';
 import { EdgeStatus, GraphNodeData, PromptFormValues, type WizardFormValues } from '../types';
 import { useCloseSidebar, useCreateEdge } from '../hooks';
@@ -70,7 +70,7 @@ export function NodeAddWizard() {
     { id: 'review', label: t('Review'), element: <NodeReviewStep /> },
   ];
 
-  const initialValues = getInitialValues();
+  const initialValues = useGetInitialValues();
 
   const handleSubmit = async (formValues: WizardFormValues) => {
     const model = controller.toModel();

@@ -1,5 +1,7 @@
 import { useTranslation } from 'react-i18next';
-import { PageDetail, PageDetails } from '../../../../../../framework';
+import { Link } from 'react-router-dom';
+import { AwxRoute } from '../../../../main/AwxRoutes';
+import { PageDetail, PageDetails, useGetPageUrl } from '../../../../../../framework';
 import { PageDetailCodeEditor } from '../../../../../../framework/PageDetails/PageDetailCodeEditor';
 import { usePageWizard } from '../../../../../../framework/PageWizard/PageWizardProvider';
 import { jsonToYaml } from '../../../../../../framework/utils/codeEditorUtils';
@@ -8,8 +10,19 @@ import { WizardFormValues } from '../types';
 import { hasDaysToKeep, getValueBasedOnJobType } from './helpers';
 import { PromptReviewDetails } from './PromptReviewDetails';
 
+const ResourceLink: Record<UnifiedJobType, AwxRoute> = {
+  inventory_update: AwxRoute.InventorySourceDetail,
+  job: AwxRoute.JobTemplateDetails,
+  project_update: AwxRoute.ProjectDetails,
+  system_job: AwxRoute.ManagementJobDetails,
+  workflow_approval: AwxRoute.WorkflowApprovalDetails,
+  workflow_job: AwxRoute.WorkflowJobTemplateDetails,
+};
+
 export function NodeReviewStep() {
   const { t } = useTranslation();
+  const getPageUrl = useGetPageUrl();
+
   const { wizardData, stepData } = usePageWizard() as {
     wizardData: WizardFormValues;
     stepData: Record<string, object>;
@@ -40,12 +53,17 @@ export function NodeReviewStep() {
   const extraVarsDetail = showDaysToKeep
     ? jsonToYaml(JSON.stringify({ days: node_days_to_keep }))
     : '';
+  const resourceDetailsLink = getPageUrl(ResourceLink[node_type], {
+    params: { id: node_resource?.id },
+  });
 
   return (
     <>
       <PageDetails numberOfColumns="single">
         <PageDetail label={t('Type')}>{nodeTypeDetail}</PageDetail>
-        <PageDetail label={t('Name')}>{nameDetail}</PageDetail>
+        <PageDetail label={t('Name')}>
+          <Link to={resourceDetailsLink}>{nameDetail}</Link>
+        </PageDetail>
         <PageDetail label={t('Description')}>{descriptionDetail}</PageDetail>
         <PageDetail label={t('Timeout')}>{timeoutDetail}</PageDetail>
         <PageDetail label={t('Convergence')}>{convergenceDetail}</PageDetail>
