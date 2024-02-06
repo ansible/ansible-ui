@@ -10,6 +10,7 @@ import {
   PageFormTextInput,
   PageFormCheckbox,
 } from '../../../../../framework';
+import { PageFormCreatableSelect } from '../../../../../framework/PageForm/Inputs/PageFormCreatableSelect';
 import { PageFormPlatformOrganizationSelect } from '../../../organizations/components/PageFormPlatformOrganizationSelect';
 import { PageFormPlatformTeamSelect } from '../../../teams/components/PageFormPlatformTeamSelect';
 import { PageFormHidden } from '../../../../../framework/PageForm/Utils/PageFormHidden';
@@ -126,10 +127,14 @@ export function MapFields(props: {
               ]}
               placeholderText={t('Select conditional')}
             />
-            <PageFormTextInput
+            <PageFormCreatableSelect
               id={`mappings-${index}-groups-value`}
               name={`mappings.${index}.groups_value`}
               label={t('Groups')}
+              options={[
+                { value: 'one', label: 'one' },
+                { value: 'two', label: 'two' },
+              ]}
             />
           </PageFormHidden>
           <PageFormHidden
@@ -153,7 +158,7 @@ export function MapFields(props: {
             <PageFormSelect
               id={`mappings-${index}-attributes-criteria-conditional`}
               name={`mappings.${index}.criteria_conditional`}
-              label=""
+              label="&nbsp;"
               options={[
                 { value: 'contains', label: t('contains') },
                 { value: 'matches', label: t('matches') },
@@ -166,9 +171,13 @@ export function MapFields(props: {
             <PageFormTextInput
               id={`mappings-${index}-attributes-value`}
               name={`mappings.${index}.criteria_value`}
-              label=""
+              label="&nbsp;"
             />
           </PageFormHidden>
+        </PageFormGrid>
+      </FieldContainer>
+      <FieldContainer>
+        <PageFormGrid>
           <PageFormHidden watch={`mappings.${index}.map_type`} hidden={(value) => value !== 'team'}>
             <PageFormPlatformTeamSelect name={`mappings.${index}.team`} isRequired />
           </PageFormHidden>
