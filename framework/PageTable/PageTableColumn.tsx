@@ -64,6 +64,12 @@ export enum ColumnDashboardOption {
   hidden = 'hidden',
 }
 
+/** Column options for controlling the format of 'datetime' columns. */
+export enum ColumnDateTimeOption {
+  since = 'since',
+  datetime = 'date-time',
+}
+
 /** Table column common properties to all columns. */
 interface ITableColumnCommon<T extends object> {
   /** Id of the column. Used to track the column in sorting and user options. */
@@ -109,6 +115,9 @@ interface ITableColumnCommon<T extends object> {
 
   /** Table column options for controlling how the column displays in a dashboard. */
   dashboard?: keyof typeof ColumnDashboardOption;
+
+  /** Table column options for controlling the format of 'datetime' columns. */
+  dateTimeFormat?: ColumnDateTimeOption;
 }
 
 /** Column that renders using a render function that returns a ReactNode. */
@@ -180,8 +189,7 @@ export function TableColumnCell<T extends object>(props: {
     case 'description':
       return <div style={{ minWidth: 200, whiteSpace: 'normal' }}>{column.value(item)}</div>;
     case 'datetime':
-      // TODO - handle format from column options
-      return <DateTimeCell format="since" value={column.value(item)} />;
+      return <DateTimeCell format={column.dateTimeFormat ?? 'since'} value={column.value(item)} />;
     case 'count':
       // TODO - handle format from column options
       return <>{column.value(item) ?? '-'}</>;

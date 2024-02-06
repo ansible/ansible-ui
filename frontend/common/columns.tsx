@@ -2,6 +2,7 @@ import { Label, LabelGroup } from '@patternfly/react-core';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
+  ColumnDateTimeOption,
   ColumnDashboardOption,
   ColumnModalOption,
   ColumnTableOption,
@@ -177,6 +178,7 @@ export function useCreatedColumn(options?: {
   disableSort?: boolean;
   disableLinks?: boolean;
   sort?: string;
+  format?: ColumnDateTimeOption;
 }) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
@@ -202,7 +204,7 @@ export function useCreatedColumn(options?: {
           return <></>;
         return (
           <DateTimeCell
-            format="since"
+            format={options?.format ?? 'since'}
             value={item.created ?? item.created_on ?? item.date_joined ?? item.pulp_created}
             author={
               'summary_fields' in item ? item.summary_fields?.created_by?.username : undefined
@@ -226,7 +228,7 @@ export function useCreatedColumn(options?: {
       modal: 'hidden',
       dashboard: 'hidden',
     }),
-    [t, options?.disableSort, options?.sort, options?.disableLinks, pageNavigate]
+    [t, options?.disableSort, options?.sort, options?.format, options?.disableLinks, pageNavigate]
   );
   return column;
 }
@@ -235,6 +237,7 @@ export function useModifiedColumn(options?: {
   disableSort?: boolean;
   disableLinks?: boolean;
   sort?: string;
+  format?: ColumnDateTimeOption;
 }) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
@@ -252,7 +255,7 @@ export function useModifiedColumn(options?: {
         if (!item.modified && !item.modified_on) return <></>;
         return (
           <DateTimeCell
-            format="since"
+            format={options?.format ?? 'since'}
             value={item.modified ? item.modified : item.modified_on}
             author={
               'summary_fields' in item ? item.summary_fields?.modified_by?.username : undefined
@@ -276,7 +279,7 @@ export function useModifiedColumn(options?: {
       modal: 'hidden',
       dashboard: 'hidden',
     }),
-    [t, options?.disableSort, options?.sort, options?.disableLinks, pageNavigate]
+    [t, options?.disableSort, options?.sort, options?.format, options?.disableLinks, pageNavigate]
   );
   return column;
 }
