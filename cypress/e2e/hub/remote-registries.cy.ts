@@ -1,5 +1,6 @@
 import { randomString } from '../../../framework/utils/random-string';
 import { RemoteRegistry as IRemoteRegistry } from '../../../frontend/hub/administration/remote-registries/RemoteRegistry';
+import { HubItemsResponse } from '../../../frontend/hub/common/useHubView';
 import { hubAPI } from '../../support/formatApiPathForHub';
 import { RemoteRegistry } from './constants';
 
@@ -16,23 +17,20 @@ describe('Remote Registry', () => {
   });
 
   after(() => {
+    cy.navigateTo('hub', RemoteRegistry.url);
     cy.log('Cleaning up remote registries');
-    cy.intercept('GET', hubAPI`/_ui/v1/execution-environments/registries/?name__icontains=*`).as(
-      'searchRemoteRegistry'
-    );
-    cy.searchAndDisplayResource(testSignature);
-    cy.wait('@searchRemoteRegistry')
-      .its('response.body.data')
-      .then((search: IRemoteRegistry[]) => {
-        if (search.length > 0) {
-          for (const remoteRegistry of search) {
-            if (remoteRegistry.name.includes(testSignature)) {
-              cy.log(`Deleting remote registry ${remoteRegistry.name}`);
-              cy.deleteRemoteRegistry(remoteRegistry.id);
-            }
+    cy.requestGet<HubItemsResponse<IRemoteRegistry>>(
+      hubAPI`/_ui/v1/execution-environments/registries/?name__icontains=${testSignature}`
+    ).then((response: HubItemsResponse<IRemoteRegistry>) => {
+      if (response.data && response.data.length > 0) {
+        for (const remoteRegistry of response.data) {
+          if (remoteRegistry.name.includes(testSignature)) {
+            cy.log(`Deleting remote registry ${remoteRegistry.name}`);
+            cy.deleteRemoteRegistry(remoteRegistry.id);
           }
         }
-      });
+      }
+    });
   });
 
   it('explore different views and pagination', () => {
@@ -138,5 +136,6 @@ describe('Remote Registry', () => {
     cy.get('[data-cy="delete-remote-registry"]').click();
     cy.get('#confirm').click();
     cy.clickButton(/^Delete remote registries/);
+    cy.contains(/^Success$/);
   });
 });
