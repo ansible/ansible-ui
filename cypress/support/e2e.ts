@@ -18,6 +18,7 @@ before(function () {
       cy.createGlobalProject();
       break;
     case '4102': // HUB
+      cy.hubLogin();
       cy.requestPost<{ id: number }, HubUser>(hubAPI`/_ui/v1/users/`, {
         username: galaxykitUsername,
         first_name: '',
