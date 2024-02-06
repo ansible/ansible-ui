@@ -16,6 +16,7 @@ import { useMemo } from 'react';
 import { useHubBulkConfirmation } from '../../../common/useHubBulkConfirmation';
 import { useCallback } from 'react';
 import { ITableColumn } from '../../../../../framework';
+import { useAddCollections } from '../hooks/useAddCollections';
 
 export function RepositoryCollectionVersion() {
   const { t } = useTranslation();
@@ -46,22 +47,28 @@ export function RepositoryCollectionVersion() {
     setSelectedCollections([]);
   }, 'remove');
 
+  const runAddModal = useAddCollections(repository);
+
   return (
     <PageTable<CollectionVersionSearch>
       id="hub-collection-versions-search-table"
       tableColumns={tableColumns}
       toolbarFilters={toolbarFilters}
       toolbarContent={
-        <Button
-          onClick={() =>
-            dialog([selectedCollections], () =>
-              deleteCollectionFromRepository(repository, selectedCollections, true)
-            )
-          }
-          isDisabled={selectedCollections.length === 0}
-        >
-          {t('Remove collections')}
-        </Button>
+        <>
+          <Button
+            onClick={() =>
+              dialog([selectedCollections], () =>
+                deleteCollectionFromRepository(repository, selectedCollections, true)
+              )
+            }
+            isDisabled={selectedCollections.length === 0}
+          >
+            {t('Remove collections')}
+          </Button>
+          &nbsp;&nbsp;
+          <Button onClick={() => runAddModal()}>{t('Add collections')}</Button>
+        </>
       }
       rowActions={rowActions}
       errorStateTitle={t('Error loading collection versions')}
