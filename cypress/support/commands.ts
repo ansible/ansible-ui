@@ -6,8 +6,8 @@ import '@cypress/code-coverage/support';
 import 'cypress-file-upload';
 import { SetOptional, SetRequired } from 'type-fest';
 import { AwxItemsResponse } from '../../frontend/awx/common/AwxItemsResponse';
-import { AwxToken } from '../../frontend/awx/interfaces/AwxToken';
 import { Application } from '../../frontend/awx/interfaces/Application';
+import { AwxToken } from '../../frontend/awx/interfaces/AwxToken';
 import { Credential } from '../../frontend/awx/interfaces/Credential';
 import { CredentialType } from '../../frontend/awx/interfaces/CredentialType';
 import { ExecutionEnvironment } from '../../frontend/awx/interfaces/ExecutionEnvironment';
@@ -41,6 +41,8 @@ import {
 import { EdaUser, EdaUserCreateUpdate } from '../../frontend/eda/interfaces/EdaUser';
 import { Role as HubRole } from '../../frontend/hub/access/roles/Role';
 import { RemoteRegistry } from '../../frontend/hub/administration/remote-registries/RemoteRegistry';
+import { CollectionVersionSearch } from '../../frontend/hub/collections/Collection';
+import { PlatformOrganization } from '../../platform/interfaces/PlatformOrganization';
 import './auth';
 import './awx-commands';
 import { IAwxResources } from './awx-commands';
@@ -49,10 +51,8 @@ import './common-commands';
 import './e2e';
 import './eda-commands';
 import './hub-commands';
-import './rest-commands';
 import './platform-commands';
-import { CollectionVersionSearch } from '../../frontend/hub/collections/Collection';
-import { PlatformOrganization } from '../../platform/interfaces/PlatformOrganization';
+import './rest-commands';
 
 declare global {
   namespace Cypress {
@@ -310,6 +310,16 @@ declare global {
 
       /** Sends a request to the API to create a particular resource. */
       requestPost<ResponseT, RequestT = ResponseT>(
+        url: string,
+        data: Partial<RequestT>
+      ): Chainable<ResponseT>;
+
+      requestPut<ResponseT, RequestT = ResponseT>(
+        url: string,
+        data: Partial<RequestT>
+      ): Chainable<ResponseT>;
+
+      requestPatch<ResponseT, RequestT = ResponseT>(
         url: string,
         data: Partial<RequestT>
       ): Chainable<ResponseT>;
