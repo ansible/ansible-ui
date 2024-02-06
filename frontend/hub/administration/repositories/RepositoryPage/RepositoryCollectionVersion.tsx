@@ -9,12 +9,14 @@ import { useHubView } from '../../../common/useHubView';
 import { useCollectionVersionsActionsRemove } from '../hooks/useRepositoryActions';
 import { useRepositoryCollectionVersionFiltersRemove } from '../hooks/useRepositorySelector';
 import { useState } from 'react';
-import { collectionId, useModifyCollections } from './RepositoryAddCollectionVersion';
 import { Button } from '@patternfly/react-core';
 import { deleteCollectionFromRepository } from '../../../collections/hooks/useDeleteCollectionsFromRepository';
 import { Repository } from '../Repository';
+import { useMemo } from 'react';
+import { useHubBulkConfirmation } from '../../../common/useHubBulkConfirmation';
+import { useCallback } from 'react';
+import { ITableColumn } from '../../../../../framework';
 
-import { usePageDialogs } from '../../../../../framework';
 
 export function RepositoryCollectionVersion() {
   const { t } = useTranslation();
@@ -25,7 +27,6 @@ export function RepositoryCollectionVersion() {
     repository: Repository;
   }>();
   const tableColumns = useCollectionColumns();
-  const { pushDialog, popDialog } = usePageDialogs();
 
   const view = useHubView<CollectionVersionSearch>({
     url: hubAPI`/v3/plugin/ansible/search/collection-versions/`,
@@ -52,7 +53,6 @@ export function RepositoryCollectionVersion() {
       tableColumns={tableColumns}
       toolbarFilters={toolbarFilters}
       toolbarContent={
-        <>
         <Button
           onClick={() =>
             dialog([selectedCollections], () =>
@@ -63,11 +63,6 @@ export function RepositoryCollectionVersion() {
         >
           {t('Remove collections')}
         </Button>
-        &nbsp;&nbsp;
-        <Button>
-        {t('Add collections')}
-        </Button>
-        </>
       }
       rowActions={rowActions}
       errorStateTitle={t('Error loading collection versions')}
@@ -102,3 +97,82 @@ export function RepositoryCollectionVersion() {
     />
   );
 }
+
+
+export function collectionId(collection: CollectionVersionSearch) {
+  return (
+    collection.collection_version?.namespace +
+    '_' +
+    collection?.collection_version?.name +
+    '_' +
+    collection?.collection_version?.version +
+    '_' +
+    collection.repository?.name
+  );
+}
+
+type BulkCollection = CollectionVersionSearch[];
+
+export function useModifyCollections(
+  onComplete: (collections: BulkCollection[]) => void,
+  operation: 'add' | 'remove'
+) {
+  const { t } = useTranslation();
+  const confirmationColumns = useBulkCollectionColumns();
+  const actionColumns = useMemo(() => [confirmationColumns[0]], [confirmationColumns]);
+  const bulkAction = useHubBulkConfirmation<BulkCollection>();
+
+  return useCallback(
+    (bulkCollections: BulkCollection[], onClick: () => Promise<unknown>) => {
+      const confirmText =
+        operation === 'add'
+          ? t('Yes, I confirm that I want to add these {{count}} collections versions.', {
+              count: bulkCollections[0].length,
+            })
+          : t('Yes, I confirm that I want to add these {{count}} collections versions.', {
+              count: bulkCollections[0].length,
+            });
+
+      const title =
+        operation === 'add' ? t('Add collections versions') : t('Remove collections versions');
+
+      const actionButtonText =
+        operation === 'add' ? t('Add collections versions') : t('Remove collections versions');
+
+      bulkAction({
+        title,
+        confirmText,
+        actionButtonText,
+        items: bulkCollections,
+        keyFn: collectionKeyFn,
+        isDanger: true,
+        confirmationColumns,
+        actionColumns,
+        onComplete,
+        actionFn: () => {
+          return onClick();
+        },
+      });
+    },
+    [actionColumns, bulkAction, confirmationColumns, onComplete, t, operation]
+  );
+}
+
+export function useBulkCollectionColumns() {
+  const { t } = useTranslation();
+
+  return useMemo<ITableColumn<BulkCollection>[]>(
+    () => [
+      {
+        header: t('Description'),
+        type: 'description',
+        value: (bulkCollection) =>
+          t('All {{count}} collections will be added in one post request to server.', {
+            count: bulkCollection.length,
+          }),
+      },
+    ],
+    [t]
+  );
+}
+
