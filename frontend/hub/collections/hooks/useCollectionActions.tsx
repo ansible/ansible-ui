@@ -28,12 +28,14 @@ export function useCollectionActions(
   const deprecateCollections = useDeprecateCollections(callback);
   const deleteCollections = useDeleteCollections(callback, false, detail);
   const deleteCollectionsFromRepository = useDeleteCollectionsFromRepository(
+    undefined,
     callback,
     false,
     detail
   );
 
   const deleteCollectionsVersionsFromRepository = useDeleteCollectionsFromRepository(
+    undefined,
     callback,
     true,
     detail
@@ -163,7 +165,6 @@ export function useCollectionActions(
       context,
       pageNavigate,
       deleteCollections,
-      deleteCollectionsFromRepository,
       deprecateCollections,
       deleteCollectionsVersions,
       detail,
@@ -173,6 +174,7 @@ export function useCollectionActions(
       signCollection,
       signCollectionVersion,
       uploadSignature,
+      deleteCollectionsFromRepository,
     ]
   );
 }
