@@ -17,7 +17,6 @@ describe('Remote Registry', () => {
   });
 
   after(() => {
-    cy.navigateTo('hub', RemoteRegistry.url);
     cy.log('Cleaning up remote registries');
     cy.requestGet<HubItemsResponse<IRemoteRegistry>>(
       hubAPI`/_ui/v1/execution-environments/registries/?name__icontains=${testSignature}`
