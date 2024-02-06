@@ -1,5 +1,5 @@
+import { DateTime } from 'luxon';
 import { gatewayV1API } from '../../../../cypress/support/formatApiPathForPlatform';
-import { formatDateString } from '../../../../framework/utils/dateTimeHelpers';
 import { PlatformUserDetails } from './PlatformUserDetails';
 
 const mockUser = {
@@ -29,8 +29,17 @@ describe('User details', () => {
     cy.get('[data-cy="last-name"]').should('have.text', 'User');
     cy.get('[data-cy="email"]').should('have.text', 'new-user@sample.com');
     cy.get('[data-cy="username"]').should('have.text', 'new-user');
-    cy.get('[data-cy="last-login"]').should('have.text', formatDateString(mockUser.last_login));
-    cy.get('[data-cy="created"]').should('have.text', formatDateString(mockUser.created_on));
-    cy.get('[data-cy="modified"]').should('have.text', formatDateString(mockUser.modified_on));
+    cy.get('[data-cy="last-login"]').should(
+      'have.text',
+      DateTime.fromISO(mockUser.last_login).toRelative()
+    );
+    cy.get('[data-cy="created"]').should(
+      'have.text',
+      DateTime.fromISO(mockUser.created_on).toRelative()
+    );
+    cy.get('[data-cy="modified"]').should(
+      'have.text',
+      DateTime.fromISO(mockUser.modified_on).toRelative()
+    );
   });
 });
