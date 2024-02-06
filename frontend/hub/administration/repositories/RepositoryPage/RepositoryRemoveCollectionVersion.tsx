@@ -49,6 +49,7 @@ export function RepositoryRemoveCollectionVersion() {
       tableColumns={tableColumns}
       toolbarFilters={toolbarFilters}
       toolbarContent={
+        <>
         <Button
           onClick={() =>
             dialog([selectedCollections], () =>
@@ -59,6 +60,11 @@ export function RepositoryRemoveCollectionVersion() {
         >
           {t('Remove collections')}
         </Button>
+        &nbsp;&nbsp;
+        <Button>
+        {t('Add collections')}
+        </Button>
+        </>
       }
       rowActions={rowActions}
       errorStateTitle={t('Error loading collection versions')}
