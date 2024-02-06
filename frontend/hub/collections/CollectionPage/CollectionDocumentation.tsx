@@ -125,6 +125,7 @@ export function CollectionDocumentation() {
               setDrawerOpen={setDrawerOpen}
               groups={groups}
               setSearchText={setSearchText}
+              searchText={searchText}
             />
           ) : undefined
         }

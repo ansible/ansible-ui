@@ -20,6 +20,7 @@ import { usePageNavigate } from '../../../../../framework';
 export function CollectionDocumentationTabPanel(props: {
   setDrawerOpen: Dispatch<SetStateAction<boolean>>;
   setSearchText: Dispatch<SetStateAction<string>>;
+  searchText: string;
   groups: {
     name: string;
     contents: IContents[];
@@ -49,22 +50,24 @@ export function CollectionDocumentationTabPanel(props: {
         <Nav theme="light">
           <NavList>
             <NavExpandable key="documentation" title={t('Documentation')} isExpanded>
-              <NavItem
-                key="readme"
-                onClick={() => {
-                  navigate(HubRoute.CollectionDocumentation, {
-                    query,
-                    params: { repository, namespace, name },
-                  });
-                }}
-              >
-                {t('Readme')}
-              </NavItem>
+              {t('Readme').startsWith(props.searchText) && (
+                <NavItem
+                  key="readme"
+                  onClick={() => {
+                    navigate(HubRoute.CollectionDocumentation, {
+                      query,
+                      params: { repository, namespace, name },
+                    });
+                  }}
+                >
+                  {t('Readme')}
+                </NavItem>
+              )}
             </NavExpandable>
             {groups.map((group) => (
               <NavExpandable
                 key={group.name}
-                title={group.name}
+                title={group.name + '(' + group.contents.length + ')'}
                 isExpanded
                 isActive={
                   group.contents.find(
@@ -92,6 +95,7 @@ export function CollectionDocumentationTabPanel(props: {
                     {c.content_name}
                   </NavItem>
                 ))}
+                <br />
               </NavExpandable>
             ))}
           </NavList>
