@@ -1,27 +1,29 @@
 import { useTranslation } from 'react-i18next';
-import { MultiSelectDialog } from '../../../../../framework';
+import { ITableColumn, MultiSelectDialog } from '../../../../../framework';
 import { InventoryGroup } from '../../../interfaces/InventoryGroup';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxView } from '../../../common/useAwxView';
-import { useRelatedGroupsColumns } from './useRelatedGroupsColumns';
 import { useGroupsFilters } from './useGroupsFilters';
+import { useCreatedColumn, useModifiedColumn, useNameColumn } from '../../../../common/columns';
+import { useMemo } from 'react';
 
 export interface GroupSelectModalProps {
-  inventoryId: string;
   groupId: string;
   onSelectedGroups: (groups: InventoryGroup[]) => Promise<void>;
 }
 
-export function GroupSelectDialog({
-  inventoryId,
-  onSelectedGroups,
-  groupId,
-}: GroupSelectModalProps) {
+export function GroupSelectDialog({ onSelectedGroups, groupId }: GroupSelectModalProps) {
   const { t } = useTranslation();
   const toolbarFilters = useGroupsFilters();
-  const tableColumns = useRelatedGroupsColumns();
+  const nameColumn = useNameColumn();
+  const createdColumn = useCreatedColumn();
+  const modifiedColumn = useModifiedColumn();
+  const tableColumns = useMemo<ITableColumn<InventoryGroup>[]>(
+    () => [nameColumn, createdColumn, modifiedColumn],
+    [nameColumn, createdColumn, modifiedColumn]
+  );
   const view = useAwxView<InventoryGroup>({
-    url: awxAPI`/inventories/${inventoryId}/groups/?not__id=${groupId}&not__parents=${groupId}&order_by=name&page=1&page_size=5`,
+    url: awxAPI`/groups/${groupId}/potential_children/?not__id=${groupId}&not__parents=${groupId}&order_by=name&page=1&page_size=5`,
     toolbarFilters,
     tableColumns,
   });

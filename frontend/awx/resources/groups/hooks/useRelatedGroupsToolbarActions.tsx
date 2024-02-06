@@ -51,7 +51,7 @@ export function useRelatedGroupsToolbarActions(view: IAwxView<InventoryGroup>) {
         try {
           await postRequest(awxAPI`/groups/${params.group_id as string}/children/`, {
             id: group.id,
-          });
+          }).then(() => void view.refresh());
         } catch (err) {
           alertToaster.addAlert({
             variant: 'danger',
@@ -62,7 +62,7 @@ export function useRelatedGroupsToolbarActions(view: IAwxView<InventoryGroup>) {
       }
       setDialog(undefined);
     },
-    [params.group_id, postRequest, t, alertToaster, setDialog]
+    [setDialog, postRequest, params.group_id, view, alertToaster, t]
   );
 
   return useMemo<IPageAction<InventoryGroup>[]>(
@@ -82,7 +82,6 @@ export function useRelatedGroupsToolbarActions(view: IAwxView<InventoryGroup>) {
             onClick: () =>
               setDialog(
                 <GroupSelectDialog
-                  inventoryId={params.id as string}
                   groupId={params.group_id as string}
                   onSelectedGroups={onSelectedGroups}
                 />

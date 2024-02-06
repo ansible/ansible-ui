@@ -1,8 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { InventoryGroup } from '../../interfaces/InventoryGroup';
-import { PageTable, usePageNavigate } from '../../../../framework';
+import { PageTable } from '../../../../framework';
 import { CubeIcon } from '@patternfly/react-icons';
-import { AwxRoute } from '../../main/AwxRoutes';
 import { useGroupsFilters } from './hooks/useGroupsFilters';
 import { useParams } from 'react-router-dom';
 import { useRelatedGroupsToolbarActions } from './hooks/useRelatedGroupsToolbarActions';
@@ -12,10 +11,10 @@ import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsRespon
 import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxView } from '../../common/useAwxView';
 import { useRelatedGroupsColumns } from './hooks/useRelatedGroupsColumns';
+import { useRelatedGroupsEmptyStateActions } from './hooks/useRelatedGroupsEmptyStateActions';
 
 export function GroupRelatedGroups() {
   const { t } = useTranslation();
-  const pageNavigate = usePageNavigate();
   const toolbarFilters = useGroupsFilters();
   const tableColumns = useRelatedGroupsColumns();
   const params = useParams<{ id: string; inventory_type: string; group_id: string }>();
@@ -26,6 +25,7 @@ export function GroupRelatedGroups() {
   });
   const toolbarActions = useRelatedGroupsToolbarActions(view);
   const rowActions = useInventoriesGroupsActions();
+  const emptyStateActions = useRelatedGroupsEmptyStateActions(view);
 
   const groupsOptions = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/groups`).data;
   const canCreateGroup = Boolean(
@@ -47,25 +47,14 @@ export function GroupRelatedGroups() {
       }
       emptyStateDescription={
         canCreateGroup
-          ? t('Please add related groups by using the button below.')
+          ? t('Please add related groups by using the buttons below.')
           : t(
               'Please contact your organization administrator if there is an issue with your access.'
             )
       }
       emptyStateIcon={canCreateGroup ? undefined : CubeIcon}
       emptyStateButtonText={canCreateGroup ? t('Add related groups') : undefined}
-      emptyStateButtonClick={
-        canCreateGroup
-          ? () =>
-              pageNavigate(AwxRoute.InventoryGroupRelatedGroupsCreate, {
-                params: {
-                  id: params.id,
-                  inventory_type: params.inventory_type,
-                  group_id: params.group_id,
-                },
-              })
-          : undefined
-      }
+      emptyStateActions={emptyStateActions}
       {...view}
     />
   );
