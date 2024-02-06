@@ -7,6 +7,7 @@ export interface WorkflowJobTemplate
     SwaggerWorkflowJobTemplate,
     | 'id'
     | 'name'
+    | 'description'
     | 'summary_fields'
     | 'job_type'
     | 'type'
@@ -21,8 +22,9 @@ export interface WorkflowJobTemplate
   id: number;
   organization: number | null;
   name: string;
+  description: string;
   inventory: number | null;
-  type: string;
+  type: 'workflow_job_template';
   created: string;
   allow_simultaneous: boolean;
   modified: string;

@@ -7,6 +7,7 @@ import { PageFormGrid, PageFormSelect, PageFormTextInput } from '../../../../../
 import { PageFormWatch } from '../../../../../../framework/PageForm/Utils/PageFormWatch';
 import { awxAPI } from '../../../../common/api/awx-utils';
 import { useGet } from '../../../../../common/crud/useGet';
+import { requestGet } from '../../../../../common/crud/Data';
 import { AwxItemsResponse } from '../../../../common/AwxItemsResponse';
 import { getDocsBaseUrl } from '../../../../common/util/getDocsBaseUrl';
 import { useAwxConfig } from '../../../../common/useAwxConfig';
@@ -16,7 +17,9 @@ import { PageFormManagementJobsSelect } from '../../../../administration/managem
 import { PageFormInventorySourceSelect } from '../../../inventories/components/PageFormInventorySourceSelect';
 import { UnifiedJobType } from '../../../../interfaces/WorkflowNode';
 import { SystemJobTemplate } from '../../../../interfaces/SystemJobTemplate';
-import type { WizardFormValues } from '../types';
+import { LaunchConfiguration } from '../../../../interfaces/LaunchConfiguration';
+import { usePageWizard } from '../../../../../../framework/PageWizard/PageWizardProvider';
+import type { WizardFormValues, AllResources } from '../types';
 
 export function NodeTypeStep(props: { hasSourceNode?: boolean }) {
   const {
@@ -24,10 +27,14 @@ export function NodeTypeStep(props: { hasSourceNode?: boolean }) {
     getValues,
     formState: { defaultValues },
   } = useFormContext<WizardFormValues>();
-  const nodeType = useWatch({ name: 'node_type' }) as UnifiedJobType;
+  const { setWizardData, setStepData } = usePageWizard();
+  const nodeType = useWatch<WizardFormValues>({ name: 'node_type' }) as UnifiedJobType;
+  const nodeResource = useWatch<WizardFormValues>({
+    name: 'node_resource',
+  }) as AllResources;
 
   useEffect(() => {
-    if (defaultValues?.node_type !== nodeType) {
+    if (defaultValues?.node_type && defaultValues.node_type !== nodeType) {
       reset(
         {
           node_type: nodeType,
@@ -41,7 +48,32 @@ export function NodeTypeStep(props: { hasSourceNode?: boolean }) {
         { keepDefaultValues: true }
       );
     }
-  }, [nodeType, reset, defaultValues, getValues]);
+  }, [nodeType, reset, defaultValues, getValues, setStepData]);
+
+  useEffect(() => {
+    const setLaunchToWizardData = async () => {
+      let launchConfig = {};
+      if (nodeResource?.type === 'job_template') {
+        const launch = await requestGet<LaunchConfiguration>(
+          awxAPI`/job_templates/${nodeResource.id.toString()}/launch/`
+        );
+        launchConfig = launch;
+      } else if (nodeResource?.type === 'workflow_job_template') {
+        const launch = await requestGet<LaunchConfiguration>(
+          awxAPI`/workflow_job_templates/${nodeResource.id.toString()}/launch/`
+        );
+        launchConfig = launch;
+      }
+      setWizardData((prev: object) => ({ ...prev, launch_config: launchConfig }));
+      setStepData((prev) => ({
+        nodeTypeStep: {
+          ...prev.nodeTypeStep,
+          launch_config: launchConfig,
+        },
+      }));
+    };
+    void setLaunchToWizardData();
+  }, [nodeResource, nodeType, setWizardData, setStepData, getValues]);
 
   return (
     <>
