@@ -26,13 +26,14 @@ import {
   ToolbarItem,
 } from '@patternfly/react-core';
 import { useVisualizationController } from '@patternfly/react-topology';
-import { usePageNavigate } from '../../../../../../framework';
+import { usePageNavigate, usePageAlertToaster } from '../../../../../../framework';
 import { AwxRoute } from '../../../../main/AwxRoutes';
 import { postRequest } from '../../../../../common/crud/Data';
-import { AddNodeButton } from './AddNodeButton';
+import { awxErrorAdapter } from '../../../../common/adapters/awxErrorAdapter';
 import { getDocsBaseUrl } from '../../../../common/util/getDocsBaseUrl';
 import { useAwxConfig } from '../../../../common/useAwxConfig';
 import { useViewOptions } from '../ViewOptionsProvider';
+import { AddNodeButton } from './AddNodeButton';
 import { useRemoveGraphElements, useSaveVisualizer } from '../hooks';
 import type { ControllerState, GraphNode } from '../types';
 import { START_NODE_ID } from '../constants';
@@ -41,6 +42,7 @@ export function ToolbarHeader() {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const handleSave = useSaveVisualizer();
+  const alertToaster = usePageAlertToaster();
   const { isFullScreen } = useViewOptions();
   const controller = useVisualizationController();
   const { workflowTemplate } = controller.getState<ControllerState>();
@@ -98,7 +100,26 @@ export function ToolbarHeader() {
             key="save-and-exit"
             data-cy="save-and-exit"
             variant="primary"
-            onClick={() => void handleSave()}
+            onClick={() => {
+              async function saveWorkflowVisualizer() {
+                try {
+                  await handleSave();
+                } catch (error) {
+                  const { genericErrors, fieldErrors } = awxErrorAdapter(error);
+                  alertToaster.addAlert({
+                    variant: 'danger',
+                    title: t('Failed to save workflow job template'),
+                    children: (
+                      <>
+                        {genericErrors?.map((err) => err.message)}
+                        {fieldErrors?.map((err) => err.message)}
+                      </>
+                    ),
+                  });
+                }
+              }
+              void saveWorkflowVisualizer();
+            }}
           >
             {t('Save and exit')}
           </Button>,
@@ -125,6 +146,7 @@ export function ToolbarHeader() {
 export function WorkflowVisualizerToolbar() {
   const { t } = useTranslation();
   const config = useAwxConfig();
+  const alertToaster = usePageAlertToaster();
   const [isKebabOpen, setIsKebabOpen] = useState<boolean>(false);
   const { isFullScreen, toggleFullScreen } = useViewOptions();
   const { removeNodes } = useRemoveGraphElements();
@@ -155,7 +177,26 @@ export function WorkflowVisualizerToolbar() {
               data-cy="workflow-visualizer-toolbar-save"
               icon={<CheckCircleIcon />}
               label={t('Save')}
-              onClick={() => void handleSave()}
+              onClick={() => {
+                async function saveWorkflowVisualizer() {
+                  try {
+                    await handleSave();
+                  } catch (error) {
+                    const { genericErrors, fieldErrors } = awxErrorAdapter(error);
+                    alertToaster.addAlert({
+                      variant: 'danger',
+                      title: t('Failed to save workflow job template'),
+                      children: (
+                        <>
+                          {genericErrors?.map((err) => err.message)}
+                          {fieldErrors?.map((err) => err.message)}
+                        </>
+                      ),
+                    });
+                  }
+                }
+                void saveWorkflowVisualizer();
+              }}
             >
               {t('Save')}
             </Button>

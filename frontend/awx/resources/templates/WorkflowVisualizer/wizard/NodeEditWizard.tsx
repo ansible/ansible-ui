@@ -8,7 +8,7 @@ import { NodeTypeStep } from './NodeTypeStep';
 import { NodeReviewStep } from './NodeReviewStep';
 import { useCloseSidebar } from '../hooks';
 import {
-  getInitialValues,
+  useGetInitialValues,
   getNodeLabel,
   getValueBasedOnJobType,
   hasDaysToKeep,
@@ -18,7 +18,7 @@ import {
 export function NodeEditWizard({ node }: { node: GraphNode }) {
   const { t } = useTranslation();
   const closeSidebar = useCloseSidebar();
-  const initialValues = getInitialValues(node);
+  const initialValues = useGetInitialValues(node);
 
   const steps: PageWizardStep[] = [
     {
