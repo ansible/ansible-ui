@@ -1,5 +1,6 @@
 import { Repositories } from './constants';
 import { randomString } from '../../../framework/utils/random-string';
+import { pulpAPI } from '../../support/formatApiPathForHub';
 
 describe('Repositories', () => {
   before(() => {
@@ -41,6 +42,10 @@ describe('Repositories', () => {
     const repositoryName =
       'repositories_repository_' + randomString(6, undefined, { isLowercase: true });
     const repositoryDescription = 'Here goes description';
+    cy.intercept({
+      method: 'GET',
+      url: pulpAPI`/repositories/ansible/ansible/?name=${repositoryName}`,
+    }).as('editRepository');
     cy.navigateTo('hub', Repositories.url);
     cy.verifyPageTitle(Repositories.title);
     cy.get('[data-cy="create-repository"]').should('be.visible').click();
@@ -51,8 +56,29 @@ describe('Repositories', () => {
     cy.get('[data-cy="edit-repository"]').click();
     cy.get('[data-cy="description"]').type(repositoryDescription);
     cy.get('[data-cy="Submit"]').click();
+    // wait for page to reload new data
+    cy.wait('@editRepository').then(() => {
+      cy.get('[data-cy="description"]').should('contain', repositoryDescription);
+    });
+  });
+  it('should be able to delete a repository', () => {
+    const repositoryName =
+      'repositories_repository_' + randomString(6, undefined, { isLowercase: true });
+    cy.navigateTo('hub', Repositories.url);
+    cy.verifyPageTitle(Repositories.title);
+    cy.get('[data-cy="create-repository"]').should('be.visible').click();
+    cy.url().should('include', Repositories.urlCreate);
+    cy.get('[data-cy="name"]').type(repositoryName);
+    cy.get('[data-cy="Submit"]').click();
     cy.verifyPageTitle(repositoryName);
-    cy.get('[data-cy="description"]').should('contain', repositoryDescription);
+    cy.get('[data-cy="actions-dropdown"]').click();
+    cy.get('[data-cy="delete-repository"]').click();
+    cy.get('#confirm').click();
+    cy.get('button').contains('Delete repositories').click();
+    cy.verifyPageTitle(Repositories.title);
+    cy.get('[data-cy="text-input"]').type(repositoryName);
+    cy.get('.pf-v5-c-empty-state').should('be.visible');
+    cy.get('.pf-v5-c-empty-state').contains('No results found');
   });
 });
 
