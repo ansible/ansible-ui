@@ -86,7 +86,7 @@ export function ExecutionEnvironmentDetailInner(props: { execution_env: Executio
         )}
       </PageDetail>
       <PageDetail data-cy="execution-environment-pull" label={t('Pull')}>
-        {execution_env.pull == '' ? 'Missing' : execution_env.pull}
+        {execution_env.pull === '' ? t('Missing') : execution_env.pull}
       </PageDetail>
       <PageDetail data-cy="execution-environment-reg-cred" label={t('Registry Credential')}>
         {execution_env?.summary_fields?.credential?.name ? (
