@@ -34,8 +34,7 @@ export function useAddCollections(repository: Repository) {
     pushDialog(
       <AddCollectionToRepositoryModal
         repository={repository}
-        pushDialog={pushDialog}
-        popDialog={popDialog}
+        multiDialogs={ {pushDialog, popDialog} }
       />
     );
   };
@@ -43,8 +42,8 @@ export function useAddCollections(repository: Repository) {
 
 function AddCollectionToRepositoryModal(props: {
   repository: Repository;
-  pushDialog: (_dialog: ReactNode) => void;
-  popDialog: () => void;
+  multiDialogs : MultiDialogs;
+  
 }): ReactNode {
   const { t } = useTranslation();
   const toolbarFilters = useRepositoryCollectionVersionFiltersAdd();
@@ -63,7 +62,7 @@ function AddCollectionToRepositoryModal(props: {
 
   return (
     <Modal
-      onClose={props.popDialog}
+      onClose={props.multiDialogs.popDialog}
       isOpen
       variant={'large'}
       title={t('Add collections version to repository')}
@@ -243,4 +242,10 @@ export function useCollectionColumns(_options?: { disableSort?: boolean; disable
     ],
     [getPageUrl, t]
   );
+}
+
+export type MultiDialogs =
+{
+    pushDialog: (_dialog: ReactNode) => void;
+    popDialog: () => void;
 }

@@ -14,8 +14,9 @@ import {
 import { pulpAPI } from '../../../common/api/formatPath';
 import { useHubView } from '../../../common/useHubView';
 import { AnsibleAnsibleRepositoryResponse as Repository } from '../../../interfaces/generated/AnsibleAnsibleRepositoryResponse';
+import { MultiDialogs } from './useAddCollections';
 
-function useParameters(): AsyncSelectFilterBuilderProps<Repository> {
+function useParameters(multiDialogs? : MultiDialogs): AsyncSelectFilterBuilderProps<Repository> {
   const tableColumns = useRepositoryColumns();
   const toolbarFilters = useRepositoryFilters();
   const { t } = useTranslation();
@@ -32,17 +33,18 @@ function useParameters(): AsyncSelectFilterBuilderProps<Repository> {
       disableQueryString: true,
       keyFn: (item) => item?.name,
     },
+    multiDialogs, 
   };
 }
 
-export function useSelectRepositoryMulti() {
-  const params = useParameters();
+export function useSelectRepositoryMulti(multiDialogs? : MultiDialogs) {
+  const params = useParameters(multiDialogs);
 
   return useAsyncMultiSelectFilterBuilder<Repository>(params);
 }
 
-export function useSelectRepositorySingle() {
-  const params = useParameters();
+export function useSelectRepositorySingle(multiDialogs? : MultiDialogs) {
+  const params = useParameters(multiDialogs);
 
   return useAsyncSingleSelectFilterBuilder<Repository>(params);
 }

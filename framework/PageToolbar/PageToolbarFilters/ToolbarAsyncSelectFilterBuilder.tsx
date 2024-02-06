@@ -3,6 +3,7 @@ import { ITableColumn, IToolbarFilter, usePageDialog, ISelected } from '../../..
 import { MultiSelectDialog } from '../../../framework/PageDialogs/MultiSelectDialog';
 import { SelectSingleDialog } from '../../../framework/PageDialogs/SelectSingleDialog';
 import { IView, ViewExtendedOptions } from '../../useView';
+import { MultiDialogs } from '../../../frontend/hub/administration/repositories/hooks/useAddCollections';
 
 type BaseView<T extends object> = IView &
   ISelected<T> & {
@@ -17,6 +18,7 @@ export type AsyncSelectFilterBuilderProps<T extends object> = {
   toolbarFilters?: IToolbarFilter[];
   viewParams: ViewExtendedOptions<T>;
   useView: (viewParams: ViewExtendedOptions<T>) => BaseView<T>;
+  multiDialogs? : MultiDialogs;
 };
 
 export function useAsyncSingleSelectFilterBuilder<T extends object>(
