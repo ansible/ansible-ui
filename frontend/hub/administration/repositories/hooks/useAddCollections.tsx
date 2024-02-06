@@ -46,7 +46,7 @@ function AddCollectionToRepositoryModal(props: {
   
 }): ReactNode {
   const { t } = useTranslation();
-  const toolbarFilters = useRepositoryCollectionVersionFiltersAdd();
+  const toolbarFilters = useRepositoryCollectionVersionFiltersAdd(props.multiDialogs);
   const view = useHubView<CollectionVersionSearch>({
     url: hubAPI`/v3/plugin/ansible/search/collection-versions/`,
     keyFn: collectionKeyFn,
@@ -109,11 +109,11 @@ function AddCollectionToRepositoryModal(props: {
   );
 }
 
-function useRepositoryCollectionVersionFiltersAdd() {
+function useRepositoryCollectionVersionFiltersAdd(multiDialogs : MultiDialogs) {
   const { t } = useTranslation();
 
   const repoQueryOptions = useRepoQueryOptions();
-  const selectRepositorySingle = useSelectRepositorySingle();
+  const selectRepositorySingle = useSelectRepositorySingle(multiDialogs);
 
   const repoSelector = singleSelectBrowseAdapter<AnsibleRepository>(
     selectRepositorySingle.openBrowse,

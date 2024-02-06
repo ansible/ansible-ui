@@ -24,7 +24,11 @@ export type AsyncSelectFilterBuilderProps<T extends object> = {
 export function useAsyncSingleSelectFilterBuilder<T extends object>(
   props: AsyncSelectFilterBuilderProps<T>
 ) {
-  const [_, setDialog] = usePageDialog();
+  let [_, setDialog] = usePageDialog();
+  if (props.multiDialogs?.pushDialog)
+  {
+    setDialog = props.multiDialogs.pushDialog;
+  }
 
   return {
     openBrowse: useCallback(
@@ -46,7 +50,11 @@ export function useAsyncSingleSelectFilterBuilder<T extends object>(
 export function useAsyncMultiSelectFilterBuilder<T extends object>(
   props: AsyncSelectFilterBuilderProps<T>
 ) {
-  const [_, setDialog] = usePageDialog();
+  let [_, setDialog] = usePageDialog();
+  if (props.multiDialogs?.pushDialog)
+  {
+    setDialog = props.multiDialogs.pushDialog;
+  }
 
   return {
     openBrowse: useCallback(
@@ -88,6 +96,7 @@ function SelectFilter<T extends object>(
         toolbarFilters={toolbarFilters ? toolbarFilters : []}
         tableColumns={tableColumns}
         view={view}
+        onClose={props.multiDialogs ? () => props.multiDialogs?.popDialog() : undefined}
       />
     );
   } else {
@@ -98,6 +107,7 @@ function SelectFilter<T extends object>(
         toolbarFilters={toolbarFilters ? toolbarFilters : []}
         tableColumns={tableColumns}
         view={view}
+        onClose={props.multiDialogs ? () => props.multiDialogs?.popDialog() : undefined}
       />
     );
   }
