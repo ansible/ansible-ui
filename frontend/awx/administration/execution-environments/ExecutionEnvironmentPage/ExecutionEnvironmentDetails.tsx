@@ -38,7 +38,32 @@ export function ExecutionEnvironmentDetailInner(props: { execution_env: Executio
       <PageDetail data-cy="execution-environment-name" label={t('Name')}>
         {execution_env.name}
       </PageDetail>
-      <PageDetail data-cy="execution-environment-image" label={t('Image')}>
+      <PageDetail
+        data-cy="execution-environment-image"
+        label={t('Image')}
+        helpText={
+          <span>
+            {t(
+              'The full image location, including the container registry, image name, and version tag.'
+            )}
+            <br />
+            <br />
+            {t(`Examples`)}
+            <ul>
+              <li>
+                <code>
+                  <b>quay.io/ansible/awx-ee:latest</b>
+                </code>
+              </li>
+              <li>
+                <code>
+                  <b>repo/project/image-name:tag</b>
+                </code>
+              </li>
+            </ul>
+          </span>
+        }
+      >
         {execution_env.image}
       </PageDetail>
       <PageDetail data-cy="execution-environment-description" label={t('Description')}>
@@ -56,10 +81,12 @@ export function ExecutionEnvironmentDetailInner(props: { execution_env: Executio
               params: { id: execution_env.summary_fields?.organization?.id },
             })}
           />
-        ) : undefined}
+        ) : (
+          t('Globally Available')
+        )}
       </PageDetail>
       <PageDetail data-cy="execution-environment-pull" label={t('Pull')}>
-        {execution_env.pull}
+        {execution_env.pull === '' ? t('Missing') : execution_env.pull}
       </PageDetail>
       <PageDetail data-cy="execution-environment-reg-cred" label={t('Registry Credential')}>
         {execution_env?.summary_fields?.credential?.name ? (
