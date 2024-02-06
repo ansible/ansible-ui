@@ -1,13 +1,50 @@
 /// <reference types="cypress" />
 // import 'cypress-axe';
 import '@cypress/code-coverage/support';
+import { randomString } from '../../framework/utils/random-string';
+import { HubUser } from '../../frontend/hub/interfaces/expanded/HubUser';
 import './commands';
+import { hubAPI } from './formatApiPathForHub';
+
+export const galaxykitUsername: string = `e2e-${randomString(4)}`;
+export const galaxykitPassword: string = randomString(9);
+export let galaxyE2EUserID: number;
 
 before(function () {
   const devBaseUrlPort = Cypress.config().baseUrl?.split(':').slice(-1).toString();
-  if (devBaseUrlPort === '4101') {
-    cy.createGlobalOrganization();
-    cy.createGlobalProject();
+  switch (devBaseUrlPort) {
+    case '4101': // AWX
+      cy.createGlobalOrganization();
+      cy.createGlobalProject();
+      break;
+    case '4102': // HUB
+      cy.requestPost<{ id: number }, HubUser>(hubAPI`/_ui/v1/users/`, {
+        username: galaxykitUsername,
+        first_name: '',
+        last_name: '',
+        email: '',
+        password: galaxykitPassword,
+        groups: [],
+        is_superuser: true,
+      }).then((response) => {
+        galaxyE2EUserID = response.id;
+      });
+  }
+});
+
+after(function () {
+  const devBaseUrlPort = Cypress.config().baseUrl?.split(':').slice(-1).toString();
+  switch (devBaseUrlPort) {
+    case '4102': // HUB
+      cy.requestGet<HubUser>(hubAPI`/_ui/v1/users/${galaxyE2EUserID.toString()}/`).then((user) => {
+        user.is_superuser = false;
+        cy.requestPut(hubAPI`/_ui/v1/users/${galaxyE2EUserID.toString()}/`, user).then(() => {
+          cy.requestDelete(hubAPI`/_ui/v1/users/${galaxyE2EUserID.toString()}/`, {
+            failOnStatusCode: false,
+          });
+        });
+      });
+      break;
   }
 });
 
