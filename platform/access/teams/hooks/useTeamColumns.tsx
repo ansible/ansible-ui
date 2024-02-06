@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { ITableColumn, useGetPageUrl } from '../../../../framework';
 import {
   useCreatedColumn,
-  useIdColumn,
+  useDescriptionColumn,
   useModifiedColumn,
   useNameColumn,
   useOrganizationNameColumn,
@@ -16,7 +16,6 @@ export function useTeamColumns(options?: { disableLinks?: boolean; disableSort?:
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const navigate = useNavigate();
-  const idColumn = useIdColumn();
   const nameColumnClick = useCallback(
     (team: PlatformTeam) =>
       navigate(getPageUrl(PlatformRoute.TeamDetails, { params: { id: team.id } })),
@@ -27,6 +26,7 @@ export function useTeamColumns(options?: { disableLinks?: boolean; disableSort?:
     PlatformRoute.OrganizationDetails,
     options
   );
+  const descriptionColumn = useDescriptionColumn();
   const createdColumn = useCreatedColumn({
     sort: 'created_on',
     // hideByDefaultInTableView: true,
@@ -40,8 +40,8 @@ export function useTeamColumns(options?: { disableLinks?: boolean; disableSort?:
 
   const tableColumns = useMemo<ITableColumn<PlatformTeam>[]>(
     () => [
-      idColumn,
       nameColumn,
+      descriptionColumn,
       {
         header: t('Members'),
         type: 'count',
@@ -51,7 +51,7 @@ export function useTeamColumns(options?: { disableLinks?: boolean; disableSort?:
       createdColumn,
       modifiedColumn,
     ],
-    [createdColumn, idColumn, modifiedColumn, nameColumn, organizationNameColumn, t]
+    [createdColumn, descriptionColumn, modifiedColumn, nameColumn, organizationNameColumn, t]
   );
   return tableColumns;
 }
