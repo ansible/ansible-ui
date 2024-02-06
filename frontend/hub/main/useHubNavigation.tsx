@@ -286,7 +286,7 @@ export function useHubNavigation() {
                   element: <RepositoryAccess />,
                 },
                 {
-                  path: 'collection-version-remove',
+                  path: 'collection-version',
                   id: HubRoute.RepositoryCollectionVersion,
                   element: <RepositoryCollectionVersion />,
                 },
