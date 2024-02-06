@@ -946,7 +946,7 @@ declare global {
           failOnStatusCode?: boolean;
         }
       ): Cypress.Chainable<void>;
-      uploadHubCollectionFile(hubFilePath: string, hubFileName: string): Cypress.Chainable<void>;
+      uploadHubCollectionFile(hubFilePath: string): Cypress.Chainable<void>;
       createNamespace(namespaceName: string): Cypress.Chainable<void>;
       getNamespace(namespaceName: string): Cypress.Chainable<void>;
       deleteNamespace(namespaceName: string): Cypress.Chainable<void>;
