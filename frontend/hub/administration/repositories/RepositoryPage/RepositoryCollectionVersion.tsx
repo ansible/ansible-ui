@@ -17,7 +17,6 @@ import { useHubBulkConfirmation } from '../../../common/useHubBulkConfirmation';
 import { useCallback } from 'react';
 import { ITableColumn } from '../../../../../framework';
 
-
 export function RepositoryCollectionVersion() {
   const { t } = useTranslation();
   const toolbarFilters = useRepositoryCollectionVersionFiltersRemove();
@@ -98,7 +97,6 @@ export function RepositoryCollectionVersion() {
   );
 }
 
-
 export function collectionId(collection: CollectionVersionSearch) {
   return (
     collection.collection_version?.namespace +
@@ -175,4 +173,3 @@ export function useBulkCollectionColumns() {
     [t]
   );
 }
-
