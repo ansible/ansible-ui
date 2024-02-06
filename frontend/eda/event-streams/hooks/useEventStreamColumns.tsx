@@ -1,9 +1,12 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ColumnTableOption, ITableColumn, TextCell, useGetPageUrl } from '../../../../framework';
+import { StatusCell } from '../../../common/Status';
 import { EdaEventStream } from '../../interfaces/EdaEventStream';
 import { Status906Enum } from '../../interfaces/generated/eda-api';
 import { EdaRoute } from '../../main/EdaRoutes';
+import { Label } from '@patternfly/react-core';
+import { InfoCircleIcon } from '@patternfly/react-icons';
 
 export function useEventStreamColumns() {
   const { t } = useTranslation();
@@ -50,15 +53,27 @@ export function useEventStreamColumns() {
         modal: 'hidden',
         dashboard: 'hidden',
       },
-
       {
-        header: t('Channel'),
+        header: t('Status'),
+        cell: (eventStream) =>
+          eventStream?.status === Status906Enum.Deleting ? (
+            <Label color="red" icon={<InfoCircleIcon />}>
+              {t('Pending delete')}
+            </Label>
+          ) : (
+            <StatusCell status={eventStream?.status} />
+          ),
+      },
+      {
+        header: t('Channel name'),
         type: 'description',
         value: (eventStream) => eventStream?.channel_name,
+        table: ColumnTableOption.expanded,
+        card: 'hidden',
+        list: 'secondary',
         modal: 'hidden',
         dashboard: 'hidden',
       },
-
       {
         header: t('Created'),
         type: 'datetime',

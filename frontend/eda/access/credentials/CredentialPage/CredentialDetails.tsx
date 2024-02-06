@@ -37,9 +37,6 @@ export function CredentialDetails() {
         {credentialOption ? credentialOption?.label : credential?.credential_type}
       </PageDetail>
       <PageDetail label={t('Username')}>{credential?.username || ''}</PageDetail>
-      {credential.credential_type === CredentialTypeEnum.ExtraVar && (
-        <PageDetail label={t('Extra var name')}>{credential?.key || ''}</PageDetail>
-      )}
       {credential.credential_type === CredentialTypeEnum.AnsibleVaultPassword && (
         <PageDetail label={t('Vault identifier')}>{credential?.key || ''}</PageDetail>
       )}

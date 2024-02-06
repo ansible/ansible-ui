@@ -202,7 +202,7 @@ export function RulebookActivationInputs() {
               }))
             : []
         }
-        placeholder={t('Select source(s)')}
+        placeholder={t('Select event stream(s)')}
         footer={<Link to={getPageUrl(EdaRoute.CreateEventStream)}>Create event stream</Link>}
       />
       <PageFormCredentialSelect<{ credential_refs: string; id: string }>
@@ -283,7 +283,7 @@ export function RulebookActivationInputs() {
   );
 }
 
-type IEdaRulebookActivationInputs = Omit<EdaRulebookActivationCreate, 'sources'> & {
+type IEdaRulebookActivationInputs = Omit<EdaRulebookActivationCreate, 'event_streams'> & {
   rulebook: EdaRulebook;
   event_streams?: string[];
   project_id: string;

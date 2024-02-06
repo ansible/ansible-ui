@@ -80,6 +80,18 @@ export function EventStreamInputs() {
     </>
   );
 
+  const channelHelpBlock = (
+    <>
+      <p>
+        {t(
+          'A unique channel name is used to broadcast data to activations that use this Event Stream.'
+        )}
+      </p>
+      <p>{t('If none specified, a default one is created, called eda_{unique_identifier}.')}</p>
+      <p>{t('The channel name can only include alphanumeric characters and underscore.')}</p>
+    </>
+  );
+
   const { data: environments } = useGet<EdaResult<EdaDecisionEnvironment>>(
     edaAPI`/decision-environments/?page=1&page_size=200`
   );
@@ -116,6 +128,8 @@ export function EventStreamInputs() {
         label={t('Channel name')}
         id={'channel-name'}
         placeholder={t('Enter channel name')}
+        labelHelp={channelHelpBlock}
+        labelHelpTitle={t('Channel name')}
       />
       <PageFormCredentialSelect<{ credential_refs: string; id: string }>
         name="credential_refs"
