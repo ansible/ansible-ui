@@ -6,6 +6,7 @@ import { parsePulpIDFromURL } from '../../frontend/hub/common/api/hub-api-utils'
 import { HubItemsResponse } from '../../frontend/hub/common/useHubView';
 import { HubNamespace } from '../../frontend/hub/namespaces/HubNamespace';
 import './commands';
+import { galaxykitPassword, galaxykitUsername } from './e2e';
 import { hubAPI, pulpAPI } from './formatApiPathForHub';
 import './rest-commands';
 import { escapeForShellCommand } from './utils';
@@ -14,15 +15,13 @@ const apiPrefix = Cypress.env('HUB_API_PREFIX') as string;
 
 // GalaxyKit Integration: To invoke `galaxykit` commands for generating resource
 Cypress.Commands.add('galaxykit', (operation: string, ...args: string[]) => {
-  const adminUsername = Cypress.env('HUB_USERNAME') as string;
-  const adminPassword = Cypress.env('HUB_PASSWORD') as string;
   const galaxykitCommand = (Cypress.env('HUB_GALAXYKIT_COMMAND') as string) ?? 'galaxykit';
   const server = (Cypress.env('HUB_SERVER') as string) + apiPrefix + '/';
   const options = { failOnNonZeroExit: false };
 
   cy.log(`${galaxykitCommand} ${operation} ${args.join(' ')}`);
 
-  const cmd = `${galaxykitCommand} -c -s '${server}' -u '${adminUsername}' -p '${adminPassword}' ${operation} ${escapeForShellCommand(
+  const cmd = `${galaxykitCommand} -c -s '${server}' -u '${galaxykitUsername}' -p '${galaxykitPassword}' ${operation} ${escapeForShellCommand(
     args
   )}`;
 
