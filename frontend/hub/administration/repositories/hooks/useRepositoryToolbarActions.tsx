@@ -8,7 +8,6 @@ import {
   PageActionType,
   usePageNavigate,
 } from '../../../../../framework';
-import { CollectionVersionSearch } from '../../../collections/Collection';
 import { HubRoute } from '../../../main/HubRoutes';
 import { Repository } from '../Repository';
 import { useDeleteRepositories } from './useDeleteRepositories';
@@ -40,25 +39,6 @@ export function useRepositoryToolbarActions(view: IHubView<Repository>) {
       },
     ],
     [t, pageNavigate, deleteRepositories]
-  );
-  return actions;
-}
-
-export function useRepositoryCollectionVersionToolbarActions() {
-  const { t } = useTranslation();
-  const pageNavigate = usePageNavigate();
-  const actions = useMemo<IPageAction<CollectionVersionSearch>[]>(
-    () => [
-      {
-        isPinned: true,
-        label: t('Add collection'),
-        onClick: () => pageNavigate(HubRoute.CreateRepository),
-        selection: PageActionSelection.None,
-        type: PageActionType.Button,
-        variant: ButtonVariant.primary,
-      },
-    ],
-    [t, pageNavigate]
   );
   return actions;
 }

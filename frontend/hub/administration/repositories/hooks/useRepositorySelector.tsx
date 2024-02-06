@@ -107,7 +107,7 @@ export function useRepositoryFilters() {
   );
 }
 
-export function useRepositoryCollectionVersionFilters() {
+export function useRepositoryCollectionVersionFiltersRemove() {
   const { t } = useTranslation();
 
   return useMemo<IToolbarFilter[]>(
