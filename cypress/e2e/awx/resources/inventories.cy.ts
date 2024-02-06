@@ -226,10 +226,10 @@ describe('inventories', () => {
         cy.verifyPageTitle(group.name as string);
         cy.clickLink(/^Related Groups/);
         cy.clickButton(/^Existing group/);
-        cy.selectTableRow(firstGroup?.name);
+        cy.selectTableRow(firstGroup.name as string);
         cy.clickButton(/^Add groups/);
-        cy.contains(firstGroup?.name);
-        cy.selectTableRow(firstGroup?.name, true);
+        cy.contains(firstGroup.name as string);
+        cy.selectTableRow(firstGroup.name as string, true);
         cy.clickToolbarKebabAction('disassociate-selected-groups');
         cy.get('#confirm').click();
         cy.clickButton(/^Disassociate groups/);
