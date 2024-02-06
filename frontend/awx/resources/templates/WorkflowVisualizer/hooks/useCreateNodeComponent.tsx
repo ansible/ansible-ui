@@ -1,13 +1,16 @@
 import {
   CREATE_CONNECTOR_DROP_TYPE,
+  DropTargetSpec,
+  EDGE_DRAG_TYPE,
   Graph,
+  GraphElement,
   GraphElementProps,
   GraphModel,
   Node,
   NodeModel,
+  TargetType,
   WithCreateConnectorProps,
   nodeDragSourceSpec,
-  nodeDropTargetSpec,
   withContextMenu,
   withCreateConnector,
   withDndDrop,
@@ -19,6 +22,7 @@ import { GraphNode, GraphNodeData } from '../types';
 import { useCreateConnector } from './useCreateConnector';
 import { CONNECTOR_SOURCE_DROP, CONNECTOR_TARGET_DROP } from '../constants';
 import { CustomNode, NodeContextMenu } from '../components';
+import { useHandleCollectNodeProps } from './useHandleCollectNodeProps';
 
 export function useCreateNodeComponent(): () => FunctionComponent<
   Omit<WithCreateConnectorProps & GraphElementProps, keyof WithCreateConnectorProps>
@@ -29,6 +33,22 @@ export function useCreateNodeComponent(): () => FunctionComponent<
     []
   );
 
+  const handleCollectNodeProps = useHandleCollectNodeProps();
+
+  const nodeDropTargetSpec = useCallback(
+    (
+      accept?: TargetType
+    ): DropTargetSpec<
+      GraphElement,
+      GraphNodeData,
+      { edgeDragging?: boolean },
+      GraphElementProps
+    > => ({
+      accept: accept || [EDGE_DRAG_TYPE, CREATE_CONNECTOR_DROP_TYPE],
+      collect: handleCollectNodeProps,
+    }),
+    [handleCollectNodeProps]
+  );
   return useCallback(
     () =>
       withCreateConnector(
@@ -36,6 +56,10 @@ export function useCreateNodeComponent(): () => FunctionComponent<
           source: Node<NodeModel, GraphNodeData>,
           target: Node<NodeModel, GraphNodeData> | Graph<GraphModel, GraphModel>
         ) => {
+          const targetState = target.getState<{ isInvalidLinkTarget: boolean }>();
+          if (targetState.isInvalidLinkTarget) {
+            return;
+          }
           createConnector(source, target);
         }
       )(
@@ -49,6 +73,6 @@ export function useCreateNodeComponent(): () => FunctionComponent<
           )(withDragNode(nodeDragSourceSpec('node', true, true))(withSelection()(CustomNode)))
         )
       ),
-    [createConnector, nodeContextMenu]
+    [createConnector, nodeContextMenu, nodeDropTargetSpec]
   );
 }
