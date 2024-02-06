@@ -2,7 +2,6 @@ import { Label, LabelGroup, PageSection } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
 import {
-  CopyCell,
   LoadingPage,
   PageDetail,
   PageDetails,
@@ -16,7 +15,7 @@ import { StatusCell } from '../../../common/Status';
 import { useGetItem } from '../../../common/crud/useGet';
 import { edaAPI } from '../../common/eda-utils';
 import { EdaEventStream } from '../../interfaces/EdaEventStream';
-import { RestartPolicyEnum, Status906Enum } from '../../interfaces/generated/eda-api';
+import { RestartPolicyEnum } from '../../interfaces/generated/eda-api';
 import { EdaRoute } from '../../main/EdaRoutes';
 import { PageDetailCodeEditor } from '../../../../framework/PageDetails/PageDetailCodeEditor';
 
