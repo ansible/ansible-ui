@@ -262,6 +262,9 @@ export function CollectionDocumentationTabContent(props: {
                 value={paramsFilter}
                 isExpanded={false}
                 placeholder={t('Search for parameter name')}
+                onClick={ (event) => {
+                  event.stopPropagation();
+                }}
               />
               <Table variant="compact">
                 <Thead>
