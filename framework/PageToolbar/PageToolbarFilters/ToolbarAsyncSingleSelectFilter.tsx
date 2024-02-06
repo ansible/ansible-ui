@@ -56,11 +56,13 @@ export function singleSelectBrowseAdapter<T>(
   keyFn: (item: T) => string,
   /** The function to create an object from the key. Used for default selection in the dialog. */
   objectFn: (name: string) => object,
-  customOnSelect?: (item : T) => void,
+  customOnSelect?: (item: T) => void
 ): ToolbarOpenSingleSelectBrowse {
   return (onSelect: (value: string) => void, defaultSelection?: string) => {
     selectFn(
-      (item: T) => {customOnSelect ? customOnSelect(item) : onSelect(keyFn(item))},
+      (item: T) => {
+        customOnSelect ? customOnSelect(item) : onSelect(keyFn(item));
+      },
       defaultSelection ? (objectFn(defaultSelection) as T) : undefined
     );
   };

@@ -28,7 +28,6 @@ import { TextCell } from '../../../../../framework';
 import { HubRoute } from '../../../main/HubRoutes';
 import { useSearchParams } from '../../../../../framework/components/useSearchParams';
 
-
 export function useAddCollections(repository: Repository) {
   const { pushDialog, popDialog } = usePageDialogs();
 
@@ -36,7 +35,7 @@ export function useAddCollections(repository: Repository) {
     pushDialog(
       <AddCollectionToRepositoryModal
         repository={repository}
-        multiDialogs={ {pushDialog, popDialog} }
+        multiDialogs={{ pushDialog, popDialog }}
       />
     );
   };
@@ -44,8 +43,7 @@ export function useAddCollections(repository: Repository) {
 
 function AddCollectionToRepositoryModal(props: {
   repository: Repository;
-  multiDialogs : MultiDialogs;
-  
+  multiDialogs: MultiDialogs;
 }): ReactNode {
   const { t } = useTranslation();
   const toolbarFilters = useRepositoryCollectionVersionFiltersAdd(props.multiDialogs);
@@ -111,13 +109,13 @@ function AddCollectionToRepositoryModal(props: {
   );
 }
 
-function useRepositoryCollectionVersionFiltersAdd(multiDialogs : MultiDialogs) {
+function useRepositoryCollectionVersionFiltersAdd(multiDialogs: MultiDialogs) {
   const { t } = useTranslation();
 
   const repoQueryOptions = useRepoQueryOptions();
   const selectRepositorySingle = useSelectRepositorySingle(multiDialogs);
 
-  const [ ,setSearchParams] = useSearchParams();
+  const [, setSearchParams] = useSearchParams();
   const params = new URLSearchParams();
 
   const repoSelector = singleSelectBrowseAdapter<AnsibleRepository>(
@@ -126,7 +124,10 @@ function useRepositoryCollectionVersionFiltersAdd(multiDialogs : MultiDialogs) {
     (name) => {
       return { name };
     },
-    (item) => {params.set('repository', item.name);  setSearchParams(params);},
+    (item) => {
+      params.set('repository', item.name);
+      setSearchParams(params);
+    }
   );
 
   return useMemo<IToolbarFilter[]>(
@@ -250,8 +251,7 @@ export function useCollectionColumns(_options?: { disableSort?: boolean; disable
   );
 }
 
-export type MultiDialogs =
-{
-    pushDialog: (_dialog: ReactNode) => void;
-    popDialog: () => void;
-}
+export type MultiDialogs = {
+  pushDialog: (_dialog: ReactNode) => void;
+  popDialog: () => void;
+};

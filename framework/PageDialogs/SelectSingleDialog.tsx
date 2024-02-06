@@ -18,18 +18,17 @@ export type SelectSingleDialogProps<T extends object> = {
   cancelText?: string;
   emptyStateTitle?: string;
   errorStateTitle?: string;
-  onClose? : () => void;
+  onClose?: () => void;
 };
 
 export function SelectSingleDialog<T extends object>(props: SelectSingleDialogProps<T>) {
   const { title, view, tableColumns, toolbarFilters, confirmText, cancelText, onSelect } = props;
   const [_, setDialog] = usePageDialog();
   let onClose = useCallback(() => setDialog(undefined), [setDialog]);
-  if (props.onClose)
-  {
+  if (props.onClose) {
     onClose = props.onClose;
   }
-  
+
   const [translations] = useFrameworkTranslations();
   return (
     <Modal

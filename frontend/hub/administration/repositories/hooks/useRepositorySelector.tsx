@@ -16,7 +16,7 @@ import { useHubView } from '../../../common/useHubView';
 import { AnsibleAnsibleRepositoryResponse as Repository } from '../../../interfaces/generated/AnsibleAnsibleRepositoryResponse';
 import { MultiDialogs } from './useAddCollections';
 
-function useParameters(multiDialogs? : MultiDialogs): AsyncSelectFilterBuilderProps<Repository> {
+function useParameters(multiDialogs?: MultiDialogs): AsyncSelectFilterBuilderProps<Repository> {
   const tableColumns = useRepositoryColumns();
   const toolbarFilters = useRepositoryFilters();
   const { t } = useTranslation();
@@ -33,17 +33,17 @@ function useParameters(multiDialogs? : MultiDialogs): AsyncSelectFilterBuilderPr
       disableQueryString: true,
       keyFn: (item) => item?.name,
     },
-    multiDialogs, 
+    multiDialogs,
   };
 }
 
-export function useSelectRepositoryMulti(multiDialogs? : MultiDialogs) {
+export function useSelectRepositoryMulti(multiDialogs?: MultiDialogs) {
   const params = useParameters(multiDialogs);
 
   return useAsyncMultiSelectFilterBuilder<Repository>(params);
 }
 
-export function useSelectRepositorySingle(multiDialogs? : MultiDialogs) {
+export function useSelectRepositorySingle(multiDialogs?: MultiDialogs) {
   const params = useParameters(multiDialogs);
 
   return useAsyncSingleSelectFilterBuilder<Repository>(params);

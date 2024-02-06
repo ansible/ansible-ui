@@ -55,11 +55,13 @@ export function multiSelectBrowseAdapter<T>(
   keyFn: (item: T) => string,
   /** The function to create an object from the key. Used for default selection in the dialog. */
   objectFn: (name: string) => object,
-  customOnSelect?: (items : T[]) => void,
+  customOnSelect?: (items: T[]) => void
 ): ToolbarOpenMultiSelectBrowse {
   return (onSelect: (value: string[]) => void, defaultSelections?: string[]) => {
     selectFn(
-      (items: T[]) => {customOnSelect ? customOnSelect(items) : onSelect(items.map((item) => keyFn(item)))},
+      (items: T[]) => {
+        customOnSelect ? customOnSelect(items) : onSelect(items.map((item) => keyFn(item)));
+      },
       defaultSelections
         ? defaultSelections.map((defaultSelection) => objectFn(defaultSelection) as T)
         : []

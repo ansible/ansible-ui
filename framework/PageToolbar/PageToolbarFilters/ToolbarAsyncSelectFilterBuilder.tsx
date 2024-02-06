@@ -18,15 +18,14 @@ export type AsyncSelectFilterBuilderProps<T extends object> = {
   toolbarFilters?: IToolbarFilter[];
   viewParams: ViewExtendedOptions<T>;
   useView: (viewParams: ViewExtendedOptions<T>) => BaseView<T>;
-  multiDialogs? : MultiDialogs;
+  multiDialogs?: MultiDialogs;
 };
 
 export function useAsyncSingleSelectFilterBuilder<T extends object>(
   props: AsyncSelectFilterBuilderProps<T>
 ) {
   let [_, setDialog] = usePageDialog();
-  if (props.multiDialogs?.pushDialog)
-  {
+  if (props.multiDialogs?.pushDialog) {
     setDialog = props.multiDialogs.pushDialog;
   }
 
@@ -51,8 +50,7 @@ export function useAsyncMultiSelectFilterBuilder<T extends object>(
   props: AsyncSelectFilterBuilderProps<T>
 ) {
   let [_, setDialog] = usePageDialog();
-  if (props.multiDialogs?.pushDialog)
-  {
+  if (props.multiDialogs?.pushDialog) {
     setDialog = props.multiDialogs.pushDialog;
   }
 
