@@ -26,6 +26,8 @@ import { AnsibleTowerIcon } from '@patternfly/react-icons';
 import { TextCell } from '../../../../../framework';
 
 import { HubRoute } from '../../../main/HubRoutes';
+import { useSearchParams } from '../../../../../framework/components/useSearchParams';
+
 
 export function useAddCollections(repository: Repository) {
   const { pushDialog, popDialog } = usePageDialogs();
@@ -115,9 +117,12 @@ function useRepositoryCollectionVersionFiltersAdd(multiDialogs : MultiDialogs) {
   const repoQueryOptions = useRepoQueryOptions();
   const selectRepositorySingle = useSelectRepositorySingle(multiDialogs);
 
+  const [searchParams, setSearchParams] = useSearchParams();
+  const params = new URLSearchParams();
+
   const repoSelector = singleSelectBrowseAdapter<AnsibleRepository>(
     selectRepositorySingle.openBrowse,
-    (item) => item.name,
+    (item) => { params.set('repository', item.name);  setSearchParams(params); return item.name},
     (name) => {
       return { name };
     }
