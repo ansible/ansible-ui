@@ -5,10 +5,12 @@ import { awxErrorAdapter } from '../../../../common/adapters/awxErrorAdapter';
 import { UnifiedJobType } from '../../../../interfaces/WorkflowNode';
 import { NodeTypeStep } from './NodeTypeStep';
 import { NodeReviewStep } from './NodeReviewStep';
-import { getInitialValues, getValueBasedOnJobType, hasDaysToKeep } from './helpers';
+import { useGetInitialValues, getValueBasedOnJobType, hasDaysToKeep } from './helpers';
 import { NODE_DIAMETER, START_NODE_ID } from '../constants';
-import { EdgeStatus, GraphNodeData, type WizardFormValues } from '../types';
+import { EdgeStatus, GraphNodeData, PromptFormValues, type WizardFormValues } from '../types';
 import { useCloseSidebar, useCreateEdge } from '../hooks';
+import { LaunchConfiguration } from '../../../../interfaces/LaunchConfiguration';
+import { NodePromptsStep } from './NodePromptsStep';
 
 interface NewGraphNode extends NodeModel {
   data: {
@@ -31,25 +33,44 @@ interface NewGraphNode extends NodeModel {
         };
       };
     };
+    launch_data: PromptFormValues;
   };
 }
-
 export function NodeAddWizard() {
   const { t } = useTranslation();
   const closeSidebar = useCloseSidebar();
   const createEdge = useCreateEdge();
   const controller = useVisualizationController();
-  const state = controller.getState<{ sourceNode: Node<NodeModel, GraphNodeData> | undefined }>();
+  const state = controller.getState<{
+    sourceNode: Node<NodeModel, GraphNodeData> | undefined;
+  }>();
+
   const steps: PageWizardStep[] = [
     {
       id: 'nodeTypeStep',
       label: t('Node details'),
       inputs: <NodeTypeStep hasSourceNode={Boolean(state.sourceNode)} />,
     },
+    {
+      id: 'nodePromptsStep',
+      label: t('Prompts'),
+      inputs: <NodePromptsStep />,
+      hidden: (wizardData: Partial<WizardFormValues>) => {
+        const { launch_config, node_resource, node_type } = wizardData;
+        if (
+          (node_type === UnifiedJobType.workflow_job || node_type === UnifiedJobType.job) &&
+          node_resource &&
+          launch_config
+        ) {
+          return shouldHideOtherStep(launch_config);
+        }
+        return true;
+      },
+    },
     { id: 'review', label: t('Review'), element: <NodeReviewStep /> },
   ];
 
-  const initialValues = getInitialValues();
+  const initialValues = useGetInitialValues();
 
   const handleSubmit = async (formValues: WizardFormValues) => {
     const model = controller.toModel();
@@ -68,7 +89,13 @@ export function NodeAddWizard() {
       node_convergence,
       node_days_to_keep,
       node_status_type,
+      prompt,
     } = formValues;
+
+    const promptValues = {
+      ...prompt,
+      organization: prompt?.organization,
+    };
 
     const nodeName = getValueBasedOnJobType(node_type, node_resource?.name || '', approval_name);
     const nodeLabel = node_alias === '' ? nodeName : node_alias;
@@ -103,6 +130,7 @@ export function NodeAddWizard() {
             },
           },
         },
+        launch_data: promptValues,
       },
     };
     if (!state.sourceNode) {
@@ -150,5 +178,23 @@ export function NodeAddWizard() {
       errorAdapter={awxErrorAdapter}
       title={t('Add node')}
     />
+  );
+}
+
+function shouldHideOtherStep(launchData: LaunchConfiguration) {
+  if (!launchData) return true;
+  return !(
+    launchData.ask_job_type_on_launch ||
+    launchData.ask_limit_on_launch ||
+    launchData.ask_verbosity_on_launch ||
+    launchData.ask_tags_on_launch ||
+    launchData.ask_skip_tags_on_launch ||
+    launchData.ask_variables_on_launch ||
+    launchData.ask_scm_branch_on_launch ||
+    launchData.ask_diff_mode_on_launch ||
+    launchData.ask_labels_on_launch ||
+    launchData.ask_forks_on_launch ||
+    launchData.ask_job_slice_count_on_launch ||
+    launchData.ask_timeout_on_launch
   );
 }
