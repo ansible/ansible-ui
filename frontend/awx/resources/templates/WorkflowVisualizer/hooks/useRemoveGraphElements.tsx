@@ -123,7 +123,12 @@ export function useRemoveGraphElements() {
 
   const handleRemoveLink = action((element: Edge) => {
     element.setVisible(false);
-    element.getSource().setState({ modified: true });
+    element.getSource().setState({ modified: true, isInvalidLinkTarget: false });
+
+    const model = element.getController().toModel();
+    const edges = model?.edges?.filter((edge) => edge.id !== element.getId());
+    model.edges = edges;
+    element.getController().fromModel(model);
   });
   const removeLink = useCallback(
     (element: Edge) => {
