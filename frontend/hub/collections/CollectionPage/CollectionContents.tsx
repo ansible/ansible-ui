@@ -17,12 +17,14 @@ import { EmptyStateNoData } from '../../../../framework/components/EmptyStateNoD
 import { Link } from 'react-router-dom';
 import { useMemo } from 'react';
 import { ITableColumn } from '../../../../framework';
+import { Scrollable } from '../../../../framework';
+import { useGetPageUrl } from '../../../../framework';
+import { HubRoute } from '../../main/HubRoutes';
 
 export function CollectionContents() {
   const { t } = useTranslation();
   const { collection } = useOutletContext<{ collection: CollectionVersionSearch }>();
   const [searchParams, setSearchParams] = useSearchParams();
-  const tableColumns = useTableColumns();
   const searchRef = useRef<HTMLInputElement>(null);
 
   const keywords = searchParams.get('keywords') || '';
@@ -35,6 +37,8 @@ export function CollectionContents() {
       collection.collection_version?.version || ''
     }`
   );
+
+  const tableColumns = useTableColumns(collection);
 
   useEffect(() => {
     // focus on keywords filter change - it will anyway loose focus
@@ -75,7 +79,7 @@ export function CollectionContents() {
   }
 
   return (
-    <>
+    <Scrollable>
       <PageSection variant="light">
         <SearchInput
           key="content-search-input-key"
@@ -129,18 +133,36 @@ export function CollectionContents() {
           <RenderCommunityWarningMessage />
         )}
       </PageSection>
-    </>
+    </Scrollable>
   );
 }
 
-function useTableColumns() {
+function useTableColumns(collection: CollectionVersionSearch) {
   const { t } = useTranslation();
+  const getPageUrl = useGetPageUrl();
 
   return useMemo<ITableColumn<CollectionContent>[]>(
     () => [
       {
         header: t('Name'),
-        cell: (item) => <Link to={returnPath()}>{item.name}</Link>,
+        cell: (item) => (
+          <Link
+            to={getPageUrl(HubRoute.CollectionDocumentationContent, {
+              params: {
+                content_type: item.content_type,
+                content_name: item.name,
+                repository: collection.repository?.name || '',
+                namespace: collection.collection_version?.namespace,
+                name: collection.collection_version?.name,
+              },
+              query: {
+                version: collection.collection_version?.version,
+              },
+            })}
+          >
+            {item.name}
+          </Link>
+        ),
       },
       {
         header: t('Type'),
@@ -153,7 +175,14 @@ function useTableColumns() {
         value: (item) => item.description,
       },
     ],
-    [t]
+    [
+      t,
+      collection.repository?.name,
+      collection.collection_version?.namespace,
+      collection.collection_version?.name,
+      collection.collection_version?.version,
+      getPageUrl,
+    ]
   );
 }
 
@@ -165,17 +194,6 @@ function RenderCommunityWarningMessage() {
       description={t`Community collections do not have docs nor content counts, but all content gets synchronized`}
     />
   );
-}
-
-function returnPath() {
-  // TODO - this is maybe not correct, without documentation tab working, we cant be sure those paths are leading to right places
-  // TODO - this is not handling insights well right now probably, but insights is still not discussed
-  let path = window.location.origin + window.location.pathname;
-  path = path.replace('/contents', '/documentation');
-
-  // TODO - this will work when documentation will be finished
-  //path += `/${content.content_type}/${content.name}/`;
-  return path;
 }
 
 interface CollectionContentResult {
