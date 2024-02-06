@@ -123,7 +123,7 @@ export function useAwxInventoryRoutes() {
         },
         {
           id: AwxRoute.InventoryGroupRelatedGroupsCreate,
-          path: ':inventory_type/:id/groups/:group_id/related_groups/add',
+          path: ':inventory_type/:id/groups/:group_id/nested_groups/add',
           element: <CreateRelatedGroup />,
         },
         {
