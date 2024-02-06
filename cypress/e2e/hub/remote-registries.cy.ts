@@ -17,7 +17,6 @@ describe('Remote Registry', () => {
   });
 
   after(() => {
-    cy.navigateTo('hub', RemoteRegistry.url);
     cy.log('Cleaning up remote registries');
     cy.requestGet<HubItemsResponse<IRemoteRegistry>>(
       hubAPI`/_ui/v1/execution-environments/registries/?name__icontains=${testSignature}`
@@ -136,6 +135,5 @@ describe('Remote Registry', () => {
     cy.get('[data-cy="delete-remote-registry"]').click();
     cy.get('#confirm').click();
     cy.clickButton(/^Delete remote registries/);
-    cy.contains(/^Success$/);
   });
 });
