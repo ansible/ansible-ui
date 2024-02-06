@@ -137,5 +137,8 @@ describe('Namespaces', () => {
     cy.get('[data-cy="delete-namespace"]').click();
     cy.get('#confirm').click();
     cy.clickButton(/^Delete namespaces$/);
+    cy.contains(/^Success$/);
+    cy.clickButton(/^Close$/);
+    cy.clickButton(/^Clear all filters$/);
   });
 });
