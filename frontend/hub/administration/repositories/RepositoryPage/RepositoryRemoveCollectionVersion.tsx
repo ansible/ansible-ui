@@ -25,7 +25,7 @@ export function RepositoryRemoveCollectionVersion() {
   const tableColumns = useCollectionColumns();
 
   const view = useHubView<CollectionVersionSearch>({
-    url: hubAPI`/v3/plugin/ansible/search/collection-versions`,
+    url: hubAPI`/v3/plugin/ansible/search/collection-versions/`,
     keyFn: collectionKeyFn,
     defaultSort: 'name',
     queryParams: {
