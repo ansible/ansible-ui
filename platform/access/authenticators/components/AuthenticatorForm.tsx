@@ -259,11 +259,14 @@ function buildTriggers(map: AuthenticatorMapValues) {
       };
       break;
     case 'attributes':
-      triggers.join_condition = map.conditional;
       key = map.criteria_conditional;
       triggers.attributes = {
-        [key]: key === 'in' ? [map.criteria_value?.split(',')] : map.criteria_value,
+        join_condition: map.conditional || 'or',
+        [map.criteria]: {
+          [key]: key === 'in' ? [map.criteria_value?.split(',')] : map.criteria_value,
+        },
       };
+      break;
   }
 
   return triggers;
