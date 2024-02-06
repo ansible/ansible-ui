@@ -4,10 +4,12 @@ describe('API Tokens', () => {
   before(() => {
     cy.hubLogin();
   });
+
   it('should render the api tokens page', () => {
     cy.navigateTo('hub', APITokens.url);
     cy.verifyPageTitle(APITokens.title);
   });
+
   it('should render API token and warning when Generate token clicked', () => {
     cy.navigateTo('hub', APITokens.url);
     cy.verifyPageTitle(APITokens.title);
