@@ -37,6 +37,23 @@ describe('Repositories', () => {
     cy.verifyPageTitle(repositoryName);
     cy.get('[data-cy="description"]').should('contain', repositoryDescription);
   });
+  it('should be able to edit a repository', () => {
+    const repositoryName =
+      'repositories_repository_' + randomString(6, undefined, { isLowercase: true });
+    const repositoryDescription = 'Here goes description';
+    cy.navigateTo('hub', Repositories.url);
+    cy.verifyPageTitle(Repositories.title);
+    cy.get('[data-cy="create-repository"]').should('be.visible').click();
+    cy.url().should('include', Repositories.urlCreate);
+    cy.get('[data-cy="name"]').type(repositoryName);
+    cy.get('[data-cy="Submit"]').click();
+    cy.verifyPageTitle(repositoryName);
+    cy.get('[data-cy="edit-repository"]').click();
+    cy.get('[data-cy="description"]').type(repositoryDescription);
+    cy.get('[data-cy="Submit"]').click();
+    cy.verifyPageTitle(repositoryName);
+    cy.get('[data-cy="description"]').should('contain', repositoryDescription);
+  });
 });
 
 describe('Repositories Remove collection', () => {
