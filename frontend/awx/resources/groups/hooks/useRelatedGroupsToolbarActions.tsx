@@ -17,7 +17,6 @@ import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsRes
 import { awxAPI } from '../../../common/api/awx-utils';
 import { InventoryGroup } from '../../../interfaces/InventoryGroup';
 import { ButtonVariant } from '@patternfly/react-core';
-import { cannotDeleteResources } from '../../../../common/utils/RBAChelpers';
 import { useDisassociateGroups } from './useDisassociateGroups';
 import { GroupSelectDialog } from './useGroupSelectDialog';
 import { usePostRequest } from '../../../../common/crud/usePostRequest';
@@ -133,9 +132,7 @@ export function useRelatedGroupsToolbarActions(view: IAwxView<InventoryGroup>) {
         onClick: disassociateGroups,
         isDanger: true,
         isDisabled:
-          view.selectedItems.length === 0
-            ? t('Select at least one item from the list')
-            : (groups: InventoryGroup[]) => cannotDeleteResources(groups, t),
+          view.selectedItems.length === 0 ? t('Select at least one item from the list') : undefined,
       },
     ],
     [
