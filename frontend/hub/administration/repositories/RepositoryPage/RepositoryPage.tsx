@@ -85,7 +85,7 @@ export function RepositoryPage() {
               page: HubRoute.RepositoryAccess,
             },
             {
-              label: t('Collection version'),
+              label: t('Collection versions'),
               page: HubRoute.RepositoryCollectionVersion,
             },
             {
