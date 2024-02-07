@@ -310,7 +310,7 @@ Cypress.Commands.add('clickTab', (label: string | RegExp, isLink) => {
 });
 
 Cypress.Commands.add('clickButton', (label: string | RegExp) => {
-  cy.contains('a:not(:disabled):not(:hidden)', label)
+  cy.contains('button:not(:disabled):not(:hidden)', label)
     .should('not.have.attr', 'aria-disabled', 'true')
     .should('be.visible');
   cy.contains('button:not(:disabled):not(:hidden)', label).click();
