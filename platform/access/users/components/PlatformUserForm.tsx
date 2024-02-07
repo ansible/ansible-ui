@@ -200,7 +200,7 @@ function PlatformUserInputs(props: { isCreate?: boolean }) {
       />
       <PageFormTextInput<PlatformUser>
         name="email"
-        label={t('EMail')}
+        label={t('Email')}
         placeholder={t('Enter email')}
       />
 
