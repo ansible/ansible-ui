@@ -6,7 +6,7 @@ import {
   gridItemSpanValueShape,
   PageSection,
 } from '@patternfly/react-core';
-import { BaseSyntheticEvent, ReactNode, useContext, useState } from 'react';
+import { BaseSyntheticEvent, ReactNode, useState } from 'react';
 import {
   DefaultValues,
   ErrorOption,
@@ -20,7 +20,7 @@ import {
 import styled from 'styled-components';
 import { Scrollable } from '../components/Scrollable';
 import { useBreakpoint } from '../components/useBreakPoint';
-import { SettingsContext } from '../Settings';
+import { useSettings } from '../Settings';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
 import { ErrorAlert } from './ErrorAlert';
 import { genericErrorAdapter } from './genericErrorAdapter';
@@ -94,7 +94,7 @@ export function PageForm<T extends object>(props: PageFormProps<T>) {
 
   const { form, handleSubmit, error, setError, handleSubmitError, setFieldError } =
     useFormErrors<T>(props.defaultValue, errorAdapter);
-  const [settings] = useContext(SettingsContext);
+  const settings = useSettings();
   const [frameworkTranslations] = useFrameworkTranslations();
   const isMd = useBreakpoint('md');
   const isHorizontal = props.isVertical ? false : settings.formLayout === 'horizontal';
@@ -201,7 +201,7 @@ export function PageFormGrid(props: {
   isVertical?: boolean;
   singleColumn?: boolean;
 }) {
-  const [settings] = useContext(SettingsContext);
+  const settings = useSettings();
   const isHorizontal = props.isVertical ? false : settings.formLayout === 'horizontal';
   const multipleColumns = props.singleColumn ? false : settings.formColumns === 'multiple';
 
