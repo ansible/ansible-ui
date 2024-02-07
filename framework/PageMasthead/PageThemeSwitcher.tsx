@@ -4,7 +4,7 @@ import { useContext } from 'react';
 import { SettingsContext } from '../Settings';
 
 export function PageThemeSwitcher() {
-  const [settings, setSettings] = useContext(SettingsContext);
+  const { settings, setSettings } = useContext(SettingsContext);
   if (settings.activeTheme === 'dark') {
     return (
       <Button

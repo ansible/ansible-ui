@@ -1,6 +1,16 @@
 /* eslint-disable i18next/no-literal-string */
 import { Button, Form, Modal, ModalVariant } from '@patternfly/react-core';
-import { ReactNode, createContext, useCallback, useContext, useEffect, useState } from 'react';
+import {
+  Dispatch,
+  ReactNode,
+  SetStateAction,
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import styled from 'styled-components';
 import { RefreshIntervalSelect } from '../frontend/common/components/RefreshInterval';
 import { usePageDialog } from './PageDialogs/PageDialog';
@@ -10,106 +20,70 @@ import { Scrollable } from './components/Scrollable';
 import { useFrameworkTranslations } from './useFrameworkTranslations';
 
 export interface Settings {
-  refreshInterval?: 60;
-  theme?: 'system' | 'light' | 'dark';
-  activeTheme?: 'light' | 'dark';
-  tableLayout?: 'compact' | 'comfortable';
-  formColumns?: 'single' | 'multiple';
-  formLayout?: 'vertical' | 'horizontal';
+  refreshInterval: number;
+  theme: 'system' | 'light' | 'dark';
+  activeTheme: 'light' | 'dark';
+  tableLayout: 'compact' | 'comfortable';
+  formColumns: 'single' | 'multiple';
+  formLayout: 'vertical' | 'horizontal';
 }
 
-export const SettingsContext = createContext<[Settings, (settings: Settings) => void]>([
-  {},
-  () => null,
-]);
+export const SettingsContext = createContext<{
+  settings: Partial<Settings>;
+  setSettings: Dispatch<SetStateAction<Partial<Settings>>>;
+}>({
+  settings: {},
+  setSettings: () => {
+    throw new Error('SettingsContext not initialized');
+  },
+});
 
 export function useSettings() {
-  const [settings] = useContext(SettingsContext);
+  const { settings } = useContext(SettingsContext);
   return settings;
 }
 
 export function SettingsProvider(props: { children?: ReactNode }) {
-  const [settings, setSettingsState] = useState<Settings>(() => {
-    const theme = localStorage.getItem('theme') as 'system' | 'light' | 'dark';
-    const activeTheme =
-      theme !== 'dark' && theme !== 'light'
-        ? window.matchMedia('(prefers-color-scheme: dark)').matches
-          ? 'dark'
-          : 'light'
-        : theme;
-
-    let tableLayout: 'comfortable' | 'compact' = 'comfortable';
-    switch (localStorage.getItem('tableLayout')) {
-      case 'compact':
-        tableLayout = 'compact';
-        break;
-      case 'comfortable':
-        tableLayout = 'comfortable';
-        break;
-    }
-
-    let formColumns: 'single' | 'multiple' = 'multiple';
-    switch (localStorage.getItem('formColumns')) {
-      case 'single':
-        formColumns = 'single';
-        break;
-      case 'multiple':
-        formColumns = 'multiple';
-        break;
-    }
-
-    let formLayout: 'vertical' | 'horizontal' = 'vertical';
-    switch (localStorage.getItem('formLayout')) {
-      case 'vertical':
-        formLayout = 'vertical';
-        break;
-      case 'horizontal':
-        formLayout = 'horizontal';
-        break;
-    }
-
-    const settings: Settings = {
-      theme,
-      activeTheme,
-      tableLayout,
-      formColumns,
-      formLayout,
-    };
-
-    if (activeTheme === 'dark') {
-      document.documentElement.classList.add('pf-v5-theme-dark');
-    } else {
-      document.documentElement.classList.remove('pf-v5-theme-dark');
+  const [settings, setSettings] = useState<Partial<Settings>>(() => {
+    let settings: Partial<Settings> = {};
+    const value = localStorage.getItem('settings');
+    try {
+      if (value) {
+        settings = JSON.parse(value) as Partial<Settings>;
+      }
+    } catch {
+      // do nothing
     }
     return settings;
   });
 
-  const setSettings = useCallback((settings: Settings) => {
-    localStorage.setItem('theme', settings.theme ?? 'system');
-    localStorage.setItem('tableLayout', settings.tableLayout ?? 'comfortable');
-    localStorage.setItem('formColumns', settings.formColumns ?? 'multiple');
-    localStorage.setItem('formLayout', settings.formLayout ?? 'vertical');
+  useEffect(() => {
+    localStorage.setItem('settings', JSON.stringify(settings));
+  }, [settings]);
+
+  useEffect(() => {
     const activeTheme =
       settings.theme !== 'light' && settings.theme !== 'dark'
         ? window.matchMedia('(prefers-color-scheme: dark)').matches
           ? 'dark'
           : 'light'
         : settings.theme;
-    settings.activeTheme = activeTheme;
-    setSettingsState(settings);
+    if (activeTheme !== settings.activeTheme) {
+      setSettings({ ...settings, activeTheme });
+    }
+  }, [settings]);
 
-    if (activeTheme === 'dark') {
+  useEffect(() => {
+    if (settings.activeTheme === 'dark') {
       document.documentElement.classList.add('pf-v5-theme-dark');
     } else {
       document.documentElement.classList.remove('pf-v5-theme-dark');
     }
-  }, []);
+  }, [settings]);
 
-  return (
-    <SettingsContext.Provider value={[settings, setSettings]}>
-      {props.children}
-    </SettingsContext.Provider>
-  );
+  const value = useMemo(() => ({ settings, setSettings }), [settings, setSettings]);
+
+  return <SettingsContext.Provider value={value}>{props.children}</SettingsContext.Provider>;
 }
 
 export function useSettingsDialog(t: (t: string) => string) {
@@ -128,7 +102,7 @@ export function useSettingsDialog(t: (t: string) => string) {
 
 export function SettingsDialog(props: { open: boolean; setOpen: (open: boolean) => void }) {
   const onClose = () => props.setOpen(false);
-  const [settings, setSettings] = useContext(SettingsContext);
+  const { settings, setSettings } = useContext(SettingsContext);
   const [translations] = useFrameworkTranslations();
   return (
     <Modal

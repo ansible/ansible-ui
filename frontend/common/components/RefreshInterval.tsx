@@ -1,18 +1,24 @@
 import { Tooltip } from '@patternfly/react-core';
-import { ReactNode, createContext, useCallback, useContext, useMemo, useState } from 'react';
+import { ReactNode, useCallback, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SWRConfig } from 'swr';
+import { SettingsContext } from '../../../framework';
 import { PageSingleSelect } from '../../../framework/PageInputs/PageSingleSelect';
 
 export function RefreshIntervalSelect() {
   const { t } = useTranslation();
-  const [interval, setInterval] = useRefreshInterval();
+  const { settings, setSettings } = useContext(SettingsContext);
+  const interval = settings.refreshInterval || 60;
+  const setInterval = useCallback(
+    (value: number) => setSettings((settings) => ({ ...settings, refreshInterval: value })),
+    [setSettings]
+  );
   return (
     <Tooltip content={t('Refresh interval')}>
       <PageSingleSelect
         placeholder={t('Select interval')}
         value={interval}
-        onSelect={(value) => setInterval(value)}
+        onSelect={setInterval}
         options={[
           { label: t('1 second'), value: 1 },
           { label: t('5 seconds'), value: 5 },
@@ -30,41 +36,11 @@ export function RefreshIntervalSelect() {
   );
 }
 
-const RefreshIntervalContext = createContext<[number, (interval: number) => void]>([
-  60,
-  () => {
-    throw new Error('RefreshIntervalContext not implemented');
-  },
-]);
-
-export function useRefreshInterval() {
-  return useContext(RefreshIntervalContext);
-}
-
-export function RefreshIntervalProvider(props: { children: ReactNode; default?: number }) {
-  const [refreshInterval, setRefreshIntervalState] = useState<number>(() => {
-    const lsv = localStorage.getItem('refreshInterval');
-    try {
-      if (lsv) return Number(lsv);
-    } catch (_e) {
-      // DO NOTHING
-    }
-    return props.default || 60;
-  });
-  const setRefreshInterval = useCallback((interval: number) => {
-    localStorage.setItem('refreshInterval', interval.toString());
-    setRefreshIntervalState(interval);
-  }, []);
-  const state = useMemo<[number, (interval: number) => void]>(
-    () => [refreshInterval, setRefreshInterval],
-    [refreshInterval, setRefreshInterval]
-  );
-
+export function RefreshIntervalProvider(props: { children: ReactNode }) {
+  const { settings } = useContext(SettingsContext);
   return (
-    <SWRConfig value={{ refreshInterval: state[0] * 1000 }}>
-      <RefreshIntervalContext.Provider value={state}>
-        {props.children}
-      </RefreshIntervalContext.Provider>
+    <SWRConfig value={{ refreshInterval: (settings.refreshInterval || 60) * 1000 }}>
+      {props.children}
     </SWRConfig>
   );
 }
