@@ -1,8 +1,5 @@
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { useGet } from '../../../../common/crud/useGet';
-import { Role } from '../Role';
-import { pulpAPI } from '../../../common/api/formatPath';
 import {
   DateTimeCell,
   LoadingPage,
@@ -13,11 +10,14 @@ import {
   Scrollable,
   useGetPageUrl,
 } from '../../../../../framework';
-import { HubRoute } from '../../../main/HubRoutes';
-import { useLockedRolesWithDescription } from '../hooks/useLockedRolesWithDescription';
-import { RolePermissions } from '../components/RolePermissions';
+import { useGet } from '../../../../common/crud/useGet';
 import { HubError } from '../../../common/HubError';
+import { pulpAPI } from '../../../common/api/formatPath';
 import { PulpItemsResponse } from '../../../common/useHubView';
+import { HubRoute } from '../../../main/HubRoutes';
+import { Role } from '../Role';
+import { RolePermissions } from '../components/RolePermissions';
+import { useLockedRolesWithDescription } from '../hooks/useLockedRolesWithDescription';
 
 export function RoleDetails() {
   const { t } = useTranslation();
@@ -45,7 +45,7 @@ export function RoleDetails() {
             {lockedRolesWithDescription[role.name] ?? role.description}
           </PageDetail>
           <PageDetail label={t('Created')}>
-            <DateTimeCell format="date-time" value={role.pulp_created} />
+            <DateTimeCell value={role.pulp_created} />
           </PageDetail>
         </PageDetails>
         <PageDetails numberOfColumns={'single'}>

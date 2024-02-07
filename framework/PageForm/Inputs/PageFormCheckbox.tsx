@@ -1,5 +1,5 @@
 import { Checkbox, CheckboxProps } from '@patternfly/react-core';
-import { Controller, FieldPath, FieldValues, useFormContext, Validate } from 'react-hook-form';
+import { Controller, FieldPath, FieldValues, Validate, useFormContext } from 'react-hook-form';
 
 export type PageFormCheckboxProps<
   TFieldValues extends FieldValues = FieldValues,

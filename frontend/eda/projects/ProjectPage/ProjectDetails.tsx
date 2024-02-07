@@ -69,7 +69,6 @@ export function ProjectDetails() {
           {project?.created_at ? formatDateString(project.created_at) : ''}
         </PageDetail>
         <LastModifiedPageDetail
-          format="date-time"
           value={project?.modified_at ? formatDateString(project.modified_at) : ''}
         />
         {!!project?.verify_ssl && (

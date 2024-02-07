@@ -164,7 +164,6 @@ export function InventoryDetailsInner(props: { inventory: Inventory }) {
       </PageDetail>
       <PageDetail label={t('Created')}>
         <DateTimeCell
-          format="since"
           value={inventory.created}
           author={inventory.summary_fields?.created_by?.username}
           onClick={() =>
@@ -175,7 +174,6 @@ export function InventoryDetailsInner(props: { inventory: Inventory }) {
         />
       </PageDetail>
       <LastModifiedPageDetail
-        format="since"
         value={inventory.modified}
         author={inventory.summary_fields?.modified_by?.username}
         onClick={() =>

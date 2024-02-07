@@ -16,6 +16,7 @@ export interface Settings {
   tableLayout?: 'compact' | 'comfortable';
   formColumns?: 'single' | 'multiple';
   formLayout?: 'vertical' | 'horizontal';
+  dateFormat?: 'since' | 'date-time';
 }
 
 export const SettingsContext = createContext<[Settings, (settings: Settings) => void]>([
@@ -68,12 +69,23 @@ export function SettingsProvider(props: { children?: ReactNode }) {
         break;
     }
 
+    let dateFormat: 'since' | 'date-time' = 'since';
+    switch (localStorage.getItem('dateFormat')) {
+      case 'since':
+        dateFormat = 'since';
+        break;
+      case 'date-time':
+        dateFormat = 'date-time';
+        break;
+    }
+
     const settings: Settings = {
       theme,
       activeTheme,
       tableLayout,
       formColumns,
       formLayout,
+      dateFormat,
     };
 
     if (activeTheme === 'dark') {
@@ -89,6 +101,7 @@ export function SettingsProvider(props: { children?: ReactNode }) {
     localStorage.setItem('tableLayout', settings.tableLayout ?? 'comfortable');
     localStorage.setItem('formColumns', settings.formColumns ?? 'multiple');
     localStorage.setItem('formLayout', settings.formLayout ?? 'vertical');
+    localStorage.setItem('dateFormat', settings.dateFormat ?? 'since');
     const activeTheme =
       settings.theme !== 'light' && settings.theme !== 'dark'
         ? window.matchMedia('(prefers-color-scheme: dark)').matches
@@ -246,6 +259,32 @@ export function SettingsDialog(props: { open: boolean; setOpen: (open: boolean) 
                     label: 'Horizontal',
                     value: 'horizontal',
                     description: 'Labels for form fields are displayed to the left of the fields.',
+                  },
+                ]}
+              />
+            </PageFormGroup>
+
+            <PageFormGroup label="Date Format" fieldId="date-format">
+              <PageSingleSelect
+                id="date-format"
+                value={settings.dateFormat ?? 'since'}
+                onSelect={(dateFormat) =>
+                  setSettings({
+                    ...settings,
+                    dateFormat: dateFormat as 'since' | 'date-time',
+                  })
+                }
+                placeholder="Select date format"
+                options={[
+                  {
+                    label: 'Since',
+                    value: 'since',
+                    description: 'Display date in relative format.',
+                  },
+                  {
+                    label: 'Date Time',
+                    value: 'date-time',
+                    description: 'Display date and time.',
                   },
                 ]}
               />
