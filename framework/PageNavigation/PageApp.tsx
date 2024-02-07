@@ -61,7 +61,7 @@ export function PageApp(props: {
         ],
       },
     ],
-    [masthead, navigation, props.login, props.root]
+    [masthead, navigation, props.defaultRefreshInterval, props.login, props.root]
   );
   const router = useMemo(() => createBrowserRouter(routes, { basename }), [basename, routes]);
   return (
