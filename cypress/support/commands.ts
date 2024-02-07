@@ -293,6 +293,10 @@ declare global {
 
       clickLink(label: string | RegExp): Chainable<void>;
       clickButton(label: string | RegExp): Chainable<void>;
+
+      /** Clicks an element with a data-cy attribute. Waits for the element to be enabled and visible. */
+      clickByDataCy(dataCy: string): Chainable<void>;
+
       clickPageAction(dataCyLabel: string | RegExp): Chainable<void>;
 
       /**Finds an alert by its label. Does not make an assertion.  */
