@@ -5,8 +5,7 @@ import { PageDetail, PageDetails } from '../../../../../framework';
 import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageDetailCodeEditor';
 import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
 import type { AuthenticatorPlugins } from '../../../../interfaces/AuthenticatorPlugin';
-import { Authenticator } from '../../../../interfaces/Authenticator';
-import { AuthenticatorMap } from '../../../../interfaces/AuthenticatorMap';
+import { AuthenticatorFormValues } from '../AuthenticatorForm';
 import { textInputTypes, dataInputTypes } from './AuthenticatorDetailsStep';
 
 type Field = {
@@ -27,8 +26,7 @@ export function AuthenticatorReviewStep(props: { plugins: AuthenticatorPlugins }
   const { t } = useTranslation();
   const { wizardData } = usePageWizard();
 
-  const { name, type, configuration } = wizardData as Authenticator;
-  const maps: AuthenticatorMap[] = [];
+  const { name, type, configuration, mappings } = wizardData as AuthenticatorFormValues;
 
   const schema =
     plugins.authenticators.find((plugin) => plugin.type === type)?.configuration_schema || [];
@@ -54,11 +52,20 @@ export function AuthenticatorReviewStep(props: { plugins: AuthenticatorPlugins }
     }
   });
 
+  const typeLabels: { [k: string]: string } = {
+    local: t('Local'),
+    ldap: t('LDAP'),
+    saml: t('SAML'),
+    keycloak: t('Keycloak'),
+  };
+  const typeKey = type.split('.').pop();
+  const readableType = typeKey ? typeLabels[typeKey] ?? typeKey : type;
+
   return (
     <>
       <PageDetails numberOfColumns="multiple">
         <PageDetail label={t('Name')}>{name}</PageDetail>
-        <PageDetail label={t('Type')}>{type}</PageDetail>
+        <PageDetail label={t('Type')}>{readableType}</PageDetail>
         {fields.map((field) => (
           <PageDetail label={field.label} key={field.label}>
             {field.value}
@@ -67,21 +74,23 @@ export function AuthenticatorReviewStep(props: { plugins: AuthenticatorPlugins }
       </PageDetails>
       {objFields.length ? (
         <PageDetails numberOfColumns="single">
-          {objFields.map((field) => (
-            <PageDetailCodeEditor label={field.label} key={field.label} value={field.value} />
-          ))}
+          {objFields.map((field) =>
+            field.value ? (
+              <PageDetailCodeEditor label={field.label} key={field.label} value={field.value} />
+            ) : null
+          )}
         </PageDetails>
       ) : null}
-      {maps && maps.length ? (
+      {mappings && mappings.length ? (
         <>
           <Section>
             <Divider />
             <SubHeading component={TextVariants.h3}>{t('Mapping')}</SubHeading>
           </Section>
           <PageDetails numberOfColumns="single">
-            {maps.map((map) => (
+            {mappings.map((map) => (
               <PageDetail label={map.name} key={map.name}>
-                {map.ui_summary || t('{{mapType}} map', { mapType: map.map_type })}
+                {t('{{mapType}} map', { mapType: map.map_type })}
               </PageDetail>
             ))}
           </PageDetails>

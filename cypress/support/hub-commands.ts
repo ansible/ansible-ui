@@ -293,15 +293,15 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add('createRemote', (remoteName: string) => {
+Cypress.Commands.add('createRemote', (remoteName: string, url?: string) => {
   cy.requestPost(pulpAPI`/remotes/ansible/collection/`, {
     name: remoteName,
-    url: 'https://console.redhat.com/api/automation-hub/',
+    url: url ? url : 'https://console.redhat.com/api/automation-hub/',
   });
 });
 
 Cypress.Commands.add('deleteRemote', (remoteName: string) => {
-  cy.requestDelete(pulpAPI`/remotes/ansible/collection/${remoteName}/`);
+  cy.galaxykit(`remote delete ${remoteName}`);
 });
 
 Cypress.Commands.add('createRemoteRegistry', (remoteRegistryName: string) => {
@@ -382,4 +382,14 @@ Cypress.Commands.add('collectionCopyVersionToRepositories', (collection: string)
   cy.clickButton(/^Clear all filters$/);
   cy.filterBySingleSelection(/^Repository$/, 'community');
   cy.get('[data-cy="repository-column-cell"]').should('contain', 'community');
+});
+
+Cypress.Commands.add('createRepository', (repositoryName: string, remoteName?: string) => {
+  remoteName
+    ? cy.galaxykit(`repository create --remote ${remoteName} ${repositoryName}`)
+    : cy.galaxykit(`repository create ${repositoryName}`);
+});
+
+Cypress.Commands.add('deleteRepository', (repositoryName: string) => {
+  cy.galaxykit(`repository delete ${repositoryName}`);
 });

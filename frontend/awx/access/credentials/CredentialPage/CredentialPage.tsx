@@ -50,6 +50,7 @@ export function CredentialPage() {
         tabs={[
           { label: t('Details'), page: AwxRoute.CredentialDetails },
           { label: t('Access'), page: AwxRoute.CredentialAccess },
+          { label: t('Job Templates'), page: AwxRoute.CredentialJobTemplates },
         ]}
         params={{ id: params.id || 0 }}
       />

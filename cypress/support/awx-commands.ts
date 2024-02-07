@@ -310,7 +310,19 @@ Cypress.Commands.add('clickTab', (label: string | RegExp, isLink) => {
 });
 
 Cypress.Commands.add('clickButton', (label: string | RegExp) => {
-  cy.contains('button', label).click();
+  cy.contains('button:not(:disabled):not(:hidden)', label)
+    .should('not.have.attr', 'aria-disabled', 'true')
+    .should('be.visible');
+  cy.contains('button:not(:disabled):not(:hidden)', label).click();
+});
+
+Cypress.Commands.add('clickByDataCy', (dataCy: string) => {
+  // Having the check before the click is needed for a timing issue which causes:
+  // We initially found matching element(s), but while waiting for them to become actionable, they disappeared from the page.
+  cy.get(`[data-cy="${dataCy}"]:not(:disabled):not(:hidden)`)
+    .should('not.have.attr', 'aria-disabled', 'true')
+    .should('be.visible');
+  cy.get(`[data-cy="${dataCy}"]:not(:disabled):not(:hidden)`).click();
 });
 
 Cypress.Commands.add('navigateTo', (component: string, label: string) => {

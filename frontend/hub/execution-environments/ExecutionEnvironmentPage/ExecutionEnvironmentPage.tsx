@@ -15,6 +15,7 @@ import { hubAPI } from '../../common/api/formatPath';
 import { HubRoute } from '../../main/HubRoutes';
 import { ExecutionEnvironment } from '../ExecutionEnvironment';
 import { useExecutionEnvironmentPageActions } from './hooks/useExecutionEnvironmentPageActions';
+import { SignStatus } from './components/SignStatus';
 
 export function ExecutionEnvironmentPage() {
   const { t } = useTranslation();
@@ -47,7 +48,12 @@ export function ExecutionEnvironmentPage() {
           { label: t('Execution Environments'), to: getPageUrl(HubRoute.ExecutionEnvironments) },
           { label: ee?.name },
         ]}
-        description={ee?.pulp?.repository?.sign_state === 'signed' ? t('signed') : t('unsigned')}
+        description={ee?.description}
+        footer={
+          <div>
+            <SignStatus state={ee?.pulp?.repository?.sign_state} />
+          </div>
+        }
         headerActions={
           <PageActions<ExecutionEnvironment>
             actions={pageActions}

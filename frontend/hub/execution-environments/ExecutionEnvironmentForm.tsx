@@ -28,6 +28,10 @@ import { useSelectRegistrySingle } from './hooks/useRegistrySelector';
 
 import { LoadingPage } from '../../../framework/components/LoadingPage';
 import { HubError } from '../common/HubError';
+import { TaskResponse } from '../administration/tasks/Task';
+import { waitForTask } from '../common/api/hub-api-utils';
+import { parsePulpIDFromURL } from '../common/api/hub-api-utils';
+import { hubErrorAdapter } from '../../../frontend/hub/common/adapters/hubErrorAdapter';
 
 export function CreateExecutionEnvironment() {
   return <ExecutionEnvironmentForm mode="add" />;
@@ -50,7 +54,7 @@ function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
   const [tagsSet, setTagsSet] = useState<boolean>(false);
 
   const registry = useGet<HubItemsResponse<Registry>>(
-    hubAPI`/_ui/v1/execution-environments/registries/?page_size=${page_size}`
+    hubAPI`/_ui/v1/execution-environments/registries/?limit=${page_size}`
   );
 
   const eeUrl =
@@ -69,7 +73,13 @@ function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
 
   const singleRegistry = useGet<Registry>(singleRegistryUrl);
 
-  const isLoading = (!executionEnvironment.data || !singleRegistry.data) && mode === 'edit';
+  const isNew = !executionEnvironment.data?.pulp?.repository;
+  const isRemote = executionEnvironment.data?.pulp?.repository
+    ? !!executionEnvironment.data?.pulp?.repository?.remote
+    : true;
+
+  const isLoading =
+    (!executionEnvironment.data || (isRemote && !singleRegistry.data)) && mode === 'edit';
 
   if (mode === 'edit' && !tagsSet && isLoading === false) {
     setTagsSet(true);
@@ -79,11 +89,6 @@ function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
 
   const selectRegistrySingle = useSelectRegistrySingle();
   const registrySelector = selectRegistrySingle.openBrowse;
-
-  const isNew = !executionEnvironment.data?.pulp?.repository;
-  const isRemote = executionEnvironment.data?.pulp?.repository
-    ? !!executionEnvironment.data?.pulp?.repository?.remote
-    : true;
 
   const query = useCallback(() => {
     return Promise.resolve({
@@ -124,16 +129,16 @@ function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
       }
 
       if (formData.description !== executionEnvironment.data?.description) {
-        promises.push(
-          patchHubRequest(
-            pulpAPI`/distributions/container/container/${
-              executionEnvironment.data?.pulp?.distribution?.id || ''
-            }/`,
-            { description: formData.description }
-          )
+        const { response } = await patchHubRequest(
+          pulpAPI`/distributions/container/container/${
+            executionEnvironment.data?.pulp?.distribution?.id || ''
+          }/`,
+          { description: formData.description || null }
         );
+        promises.push(waitForTask(parsePulpIDFromURL((response as TaskResponse)?.task)));
       }
-      await Promise.all([promises]);
+
+      await Promise.all(promises);
     }
 
     navigate(HubRoute.ExecutionEnvironments);
@@ -178,6 +183,7 @@ function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
           defaultValue={defaultFormValue}
           singleColumn={true}
           disableSubmitOnEnter={true}
+          errorAdapter={(error) => hubErrorAdapter(error, { base_path: 'name' })}
         >
           <PageFormTextInput<ExecutionEnvironmentFormProps>
             name="name"

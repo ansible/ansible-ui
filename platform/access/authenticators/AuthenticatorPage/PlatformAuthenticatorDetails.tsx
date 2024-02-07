@@ -70,11 +70,20 @@ export function PlatformAuthenticatorDetails() {
     }
   });
 
+  const typeLabels: { [k: string]: string } = {
+    local: t('Local'),
+    ldap: t('LDAP'),
+    saml: t('SAML'),
+    keycloak: t('Keycloak'),
+  };
+  const typeKey = authenticator.type.split('.').pop();
+  const type = typeKey ? typeLabels[typeKey] ?? typeKey : authenticator.type;
+
   return (
     <Scrollable>
       <PageDetails>
         <PageDetail label={t('Name')}>{authenticator.name}</PageDetail>
-        <PageDetail label={t('Type')}>{authenticator.type}</PageDetail>
+        <PageDetail label={t('Type')}>{type}</PageDetail>
         {fields.map((field) => (
           <PageDetail label={field.label} key={field.label}>
             {field.value}
