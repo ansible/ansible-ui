@@ -3,23 +3,15 @@
 import { Fragment } from 'react';
 import { ITableColumn, TableColumnCell } from '../PageTable/PageTableColumn';
 import { PageDetail } from './PageDetail';
-import { PageDetails } from './PageDetails';
 
 export function PageDetailsFromColumns<T extends object>(props: {
   item: T | undefined;
   columns: ITableColumn<T>[];
-  disablePadding?: boolean;
-  numberOfColumns?: 'multiple' | 'single';
-  labelOrientation?: 'horizontal' | 'vertical';
 }) {
-  const { item, columns, disablePadding, numberOfColumns } = props;
+  const { item, columns } = props;
   if (!item) return <></>;
   return (
-    <PageDetails
-      disablePadding={disablePadding}
-      numberOfColumns={numberOfColumns}
-      labelOrientation={props.labelOrientation}
-    >
+    <>
       {columns.map((column) => {
         if ('value' in column && column.value) {
           const itemValue = column.value(item);
@@ -33,6 +25,6 @@ export function PageDetailsFromColumns<T extends object>(props: {
           </PageDetail>
         );
       })}
-    </PageDetails>
+    </>
   );
 }
