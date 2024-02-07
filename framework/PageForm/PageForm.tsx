@@ -200,6 +200,7 @@ export function PageFormGrid(props: {
   children?: ReactNode;
   isVertical?: boolean;
   singleColumn?: boolean;
+  className?: string;
 }) {
   const settings = useSettings();
   const isHorizontal = props.isVertical ? false : settings.formLayout === 'horizontal';
@@ -212,7 +213,7 @@ export function PageFormGrid(props: {
   const xl2: gridItemSpanValueShape | undefined = multipleColumns ? (isHorizontal ? 4 : 4) : 12;
 
   const Component = (
-    <Grid hasGutter span={12} sm={sm} md={md} lg={lg} xl={xl} xl2={xl2}>
+    <Grid hasGutter span={12} sm={sm} md={md} lg={lg} xl={xl} xl2={xl2} className={props.className}>
       {props.children}
     </Grid>
   );
