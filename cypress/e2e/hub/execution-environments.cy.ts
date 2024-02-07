@@ -31,7 +31,7 @@ describe('Execution Environments', () => {
     cy.get('a').contains(`remotepine${num}`).click();
     cy.verifyPageTitle(`remotepine${num}`);
 
-    cy.contains('unsigned');
+    cy.contains('Unsigned');
 
     const tabs = ['Details', 'Activity', 'Images', 'Access'];
 
