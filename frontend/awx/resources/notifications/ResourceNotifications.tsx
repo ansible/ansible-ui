@@ -5,7 +5,7 @@ import { PageLayout, PageTable } from '../../../../framework';
 import { usePersistentFilters } from '../../../common/PersistentFilters';
 import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxView } from '../../common/useAwxView';
-import { useInventorySourceFilters } from '../inventories/hooks/useInventorySourceFilters';
+import { useNotificationFilters } from './hooks/useNotificationFilters';
 import { useNotificationActions } from './hooks/useNotificationActions';
 import { useNotificationsColumns } from './hooks/useNotificationColumns';
 import { NotificationTemplate } from '../../interfaces/NotificationTemplate';
@@ -41,7 +41,7 @@ export function ResourceNotifications({ resourceType }: { resourceType: string }
     AwxItemsResponse<NotificationTemplate>
   >(awxAPI`/${resourceType}/${resourceId ?? ''}/notification_templates_error/`);
 
-  const toolbarFilters = useInventorySourceFilters();
+  const toolbarFilters = useNotificationFilters();
   const tableColumns = useNotificationsColumns();
   const rowActions = useNotificationActions({
     notificationStarted: notificationStarted?.results,
