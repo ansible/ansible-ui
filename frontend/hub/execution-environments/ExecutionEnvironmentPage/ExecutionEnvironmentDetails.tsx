@@ -13,7 +13,8 @@ import {
 } from '../../../../framework';
 import { EmptyStateNoData } from '../../../../framework/components/EmptyStateNoData';
 import { useClipboard } from '../../../../framework/hooks/useClipboard';
-import { getContainersURL, hubAPIPut } from '../../common/api/hub-api-utils';
+import { hubAPIPut } from '../../common/api/hub-api-utils';
+import { getContainersURL } from '../../common/utils/getContainersURL';
 import { MarkdownEditor } from '../../common/MarkdownEditor';
 import { hubAPI } from '../../common/api/formatPath';
 import { useGet } from '../../../common/crud/useGet';
