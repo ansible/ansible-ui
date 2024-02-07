@@ -6,7 +6,6 @@ import { PageNotImplemented } from '../../../../framework/PageEmptyStates/PageNo
 import { ManagementJobPage } from '../../administration/management-jobs/ManagementJobPage/ManagementJobPage';
 import { ManagementJobs } from '../../administration/management-jobs/ManagementJobs';
 import { AwxRoute } from '../AwxRoutes';
-// import { ManagementJobSchedules } from '../../administration/management-jobs/ManagementJobPage/ManagementJobSchedules';
 
 export function useAwxManagementJobsRoutes() {
   const { t } = useTranslation();
