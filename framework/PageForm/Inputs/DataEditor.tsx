@@ -5,6 +5,40 @@ import { useEffect, useRef } from 'react';
 import { FieldPath, FieldValues, UseFormClearErrors, UseFormSetError } from 'react-hook-form';
 import { useSettings } from '../../Settings';
 
+let editorWorkerService: Worker;
+let jsonWorker: Worker;
+let yamlWorker: Worker;
+
+function getWorker(moduleId: string, label: string) {
+  switch (label) {
+    case 'editorWorkerService':
+      if (!editorWorkerService) {
+        editorWorkerService = new Worker(
+          new URL('monaco-editor/esm/vs/editor/editor.worker', import.meta.url),
+          { type: 'module' }
+        );
+      }
+      return editorWorkerService;
+    case 'json':
+      if (!jsonWorker) {
+        jsonWorker = new Worker(
+          new URL('monaco-editor/esm/vs/language/json/json.worker', import.meta.url),
+          { type: 'module' }
+        );
+      }
+      return jsonWorker;
+    case 'yaml':
+      if (!yamlWorker) {
+        yamlWorker = new Worker(new URL('monaco-yaml/yaml.worker', import.meta.url), {
+          type: 'module',
+        });
+      }
+      return yamlWorker;
+    default:
+      throw new Error(`Unknown label ${label}`);
+  }
+}
+
 export function DataEditor<
   TFieldValues extends FieldValues = FieldValues,
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
@@ -18,6 +52,7 @@ export function DataEditor<
   id: string;
   isReadOnly?: boolean;
   onChange: (value: string) => void;
+  disableLineNumbers?: boolean;
 }) {
   const { onChange, language, setError, name, clearErrors } = props;
   const idDataEditorElement = `data-editor-${name}`;
@@ -74,7 +109,7 @@ export function DataEditor<
 
     if (divEl.current) {
       editor = monaco?.editor?.create(divEl.current, {
-        lineNumbers: 'on',
+        lineNumbers: props.disableLineNumbers ? 'off' : 'on',
         theme: 'my-dark',
         lineDecorationsWidth: 8,
         padding: { top: 6, bottom: 8 },
@@ -87,28 +122,7 @@ export function DataEditor<
 
       editorRef.current.editor = editor;
     }
-    window.MonacoEnvironment = {
-      getWorker(moduleId, label) {
-        switch (label) {
-          case 'editorWorkerService':
-            return new Worker(
-              new URL('monaco-editor/esm/vs/editor/editor.worker', import.meta.url),
-              { type: 'module' }
-            );
-          case 'json':
-            return new Worker(
-              new URL('monaco-editor/esm/vs/language/json/json.worker', import.meta.url),
-              { type: 'module' }
-            );
-          case 'yaml':
-            return new Worker(new URL('monaco-yaml/yaml.worker', import.meta.url), {
-              type: 'module',
-            });
-          default:
-            throw new Error(`Unknown label ${label}`);
-        }
-      },
-    };
+    window.MonacoEnvironment = { getWorker };
 
     return () => {
       editor.dispose();

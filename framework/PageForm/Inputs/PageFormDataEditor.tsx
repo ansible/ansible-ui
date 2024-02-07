@@ -163,6 +163,8 @@ export type PageFormDataEditorInputProps<
   additionalControls?: ReactNode;
   labelHelp?: string | string[] | ReactNode;
   labelHelpTitle?: string;
+
+  disableLineNumbers?: boolean;
 };
 
 export function PageFormDataEditor<
@@ -185,6 +187,7 @@ export function PageFormDataEditor<
     name,
     toggleLanguages,
     validate,
+    disableLineNumbers,
     ...formGroupInputProps
   } = props;
   const {
@@ -392,6 +395,7 @@ export function PageFormDataEditor<
                     onChange={onChange}
                     isReadOnly={isReadOnly || isSubmitting}
                     invalid={!(validate && isValidating) && error?.message !== undefined}
+                    disableLineNumbers={disableLineNumbers}
                   />
                 )}
               </>
