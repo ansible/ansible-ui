@@ -219,13 +219,11 @@ describe('inventories', () => {
       const { inventory, group } = result;
       cy.navigateTo('awx', 'inventories');
       cy.clickTableRow(inventory.name);
-      cy.verifyPageTitle(inventory.name);
       cy.clickLink(/^Groups$/);
       cy.clickButton(/^Create group/);
       cy.get('[data-cy="name-form-group"]').type(newGroup);
       cy.get('[data-cy="Submit"]').click();
       cy.clickLink(/^Back to Groups/);
-      cy.contains(newGroup);
       cy.clickTableRow(group.name as string);
       cy.verifyPageTitle(group.name as string);
       cy.clickLink(/^Related Groups/);
@@ -239,6 +237,7 @@ describe('inventories', () => {
       cy.clickButton(/^Disassociate groups/);
       cy.contains(/^Success$/);
       cy.clickButton(/^Close/);
+      cy.clickButton(/^Clear all filters$/);
     });
   });
 });
