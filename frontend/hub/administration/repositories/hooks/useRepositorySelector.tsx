@@ -75,7 +75,7 @@ export function useRepositoryFilters() {
       {
         key: 'keywords',
         label: t('Name'),
-        type: ToolbarFilterType.MultiText,
+        type: ToolbarFilterType.SingleText,
         query: 'name',
         comparison: 'equals',
       },
@@ -115,14 +115,14 @@ export function useRepositoryCollectionVersionFiltersRemove() {
       {
         key: 'keywords',
         label: t('Keywords'),
-        type: ToolbarFilterType.MultiText,
+        type: ToolbarFilterType.SingleText,
         query: 'keywords',
         comparison: 'equals',
       },
       {
         key: 'namespace',
         label: t('Namespace'),
-        type: ToolbarFilterType.MultiText,
+        type: ToolbarFilterType.SingleText,
         query: 'namespace',
         comparison: 'equals',
       },
