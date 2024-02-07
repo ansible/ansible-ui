@@ -1,8 +1,5 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
-import useSWR from 'swr';
+import { useNavigate } from 'react-router-dom';
 import {
   PageFormSelect,
   PageFormSubmitHandler,
@@ -12,20 +9,15 @@ import {
   usePageNavigate,
 } from '../../../../framework';
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
-import { requestGet, requestPatch, swrOptions } from '../../../common/crud/Data';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { PageFormOrganizationSelect } from '../../access/organizations/components/PageFormOrganizationSelect';
 import { getOrganizationByName } from '../../access/organizations/utils/getOrganizationByName';
 import { AwxPageForm } from '../../common/AwxPageForm';
 import { awxAPI } from '../../common/api/awx-utils';
-import { Application } from '../../interfaces/Application';
 import { Organization } from '../../interfaces/Organization';
 import { AwxRoute } from '../../main/AwxRoutes';
 import { ExecutionEnvironment } from '../../interfaces/ExecutionEnvironment';
 import { Credential } from '../../interfaces/Credential';
-import { useOptions } from '../../../common/crud/useOptions';
-import { OptionsResponse, ActionsResponse } from '../../interfaces/OptionsResponse';
-import { PageFormRegistryCredentialSelect } from './components/PageFormRegistryCredentialSelect';
 import { PageFormCredentialSelect } from '../../access/credentials/components/PageFormCredentialSelect';
 import { getCredentialByName } from '../../access/credentials/utils/getCredentialByName';
 
@@ -63,7 +55,11 @@ export function CreateExecutionEnvironment() {
   ) => {
     let organization: Organization | undefined;
     let credential: Credential | undefined;
-    let modifiedInput: IExecutionEnvBody;
+    let modifiedInput: IExecutionEnvBody = {
+      pull: '',
+      name: '',
+      image: '',
+    };
 
     if (executionEnvInput.organization)
       organization = await getOrganizationByName(executionEnvInput.organization);
@@ -98,18 +94,14 @@ export function CreateExecutionEnvironment() {
         cancelText={t('Cancel')}
         onCancel={onCancel}
       >
-        <ApplicationInputs mode="create" />
+        <ApplicationInputs />
       </AwxPageForm>
     </PageLayout>
   );
 }
 
-function ApplicationInputs(props: { mode: 'create' | 'edit' }) {
-  const { mode } = props;
+function ApplicationInputs() {
   const { t } = useTranslation();
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/execution_environments/`);
-
-  const formData = data?.actions?.POST;
 
   return (
     <>
@@ -128,7 +120,6 @@ function ApplicationInputs(props: { mode: 'create' | 'edit' }) {
         maxLength={150}
       />
       <PageFormSelect<IExecutionEnvInput>
-        isReadOnly={mode === 'edit'}
         name="pull"
         label={t('Pull')}
         placeholderText={t('---------')}
