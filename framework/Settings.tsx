@@ -69,7 +69,7 @@ export function SettingsProvider(props: { children?: ReactNode }) {
         break;
     }
 
-    let dateFormat: 'since' | 'date-time' = 'since';
+    let dateFormat: 'since' | 'date-time' = 'date-time';
     switch (localStorage.getItem('dateFormat')) {
       case 'since':
         dateFormat = 'since';

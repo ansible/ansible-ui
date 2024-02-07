@@ -24,7 +24,6 @@ const DateCellSpan = styled.span`
 export function DateTimeCell(props: {
   value: string | number | undefined | null;
   author?: string;
-  format?: 'since' | 'date-time';
   onClick?: () => void;
 }) {
   const { t } = useTranslation();
@@ -32,8 +31,7 @@ export function DateTimeCell(props: {
   const { author, onClick } = props;
   const [dateTime, setDateTime] = useState<string | null>(null);
   const settings = useSettings();
-  let { format } = props;
-  if (!format) format = settings?.dateFormat;
+  const format = settings.dateFormat ? settings.dateFormat : 'date-time';
 
   const updateTime = useCallback(
     (value: string | number | undefined | null, format?: 'since' | 'date-time') => {
