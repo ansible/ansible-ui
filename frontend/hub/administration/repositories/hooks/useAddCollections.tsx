@@ -1,7 +1,7 @@
 import { AnsibleAnsibleRepositoryResponse as AnsibleRepository } from '../../../interfaces/generated/AnsibleAnsibleRepositoryResponse';
 import { Repository } from '../Repository';
 import { Modal } from '@patternfly/react-core';
-import { usePageDialogs } from '../../../../../framework';
+import { usePageDialogs, usePageNavigate } from '../../../../../framework';
 import { useHubView } from '../../../common/useHubView';
 import { CollectionVersionSearch } from '../../../collections/Collection';
 import { hubAPI } from '../../../common/api/formatPath';
@@ -27,8 +27,17 @@ import { TextCell } from '../../../../../framework';
 
 import { HubRoute } from '../../../main/HubRoutes';
 import { useSearchParams } from '../../../../../framework/components/useSearchParams';
+import { Button } from '@patternfly/react-core';
 
-export function useAddCollections(repository: Repository) {
+import { requestGet } from '../../../../common/crud/Data';
+import { PulpItemsResponse } from '../../../common/useHubView';
+import { pulpAPI } from '../../../common/api/formatPath';
+import { postRequest } from '../../../../common/crud/Data';
+import { parsePulpIDFromURL } from '../../../common/api/hub-api-utils';
+import { waitForTask } from '../../../common/api/hub-api-utils';
+import { HubError } from '../../../common/HubError';
+
+export function useAddCollections(repository: Repository, refresh: () => void) {
   const { pushDialog, popDialog } = usePageDialogs();
 
   return () => {
@@ -36,6 +45,7 @@ export function useAddCollections(repository: Repository) {
       <AddCollectionToRepositoryModal
         repository={repository}
         multiDialogs={{ pushDialog, popDialog }}
+        refresh={refresh}
       />
     );
   };
@@ -44,6 +54,7 @@ export function useAddCollections(repository: Repository) {
 function AddCollectionToRepositoryModal(props: {
   repository: Repository;
   multiDialogs: MultiDialogs;
+  refresh: () => void;
 }): ReactNode {
   const { t } = useTranslation();
   const toolbarFilters = useRepositoryCollectionVersionFiltersAdd(props.multiDialogs);
@@ -59,6 +70,57 @@ function AddCollectionToRepositoryModal(props: {
 
   const [selectedCollections, setSelectedCollections] = useState<CollectionVersionSearch[]>([]);
   const tableColumns = useCollectionColumns();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string>('');
+  const navigate = usePageNavigate();
+
+  async function addCollectionsToRepository(collections: CollectionVersionSearch[]) {
+    try {
+      setIsLoading(true);
+      setError('');
+      const repository = props.repository;
+      // load the repository again, because we need the latest version as much actual as possible
+      // the one received from the page can be very obsolete, because when someones modify repo in meantime user clicks this action, it will fail
+      const actualRepositoryResults = await requestGet<PulpItemsResponse<Repository>>(
+        pulpAPI`/repositories/ansible/ansible/?name=${repository.name}`
+      ).catch(() => {
+        setError(t('Can not load actual version of repository'));
+        throw new Error();
+      });
+
+      const actualRepository = actualRepositoryResults.results[0];
+
+      let itemsToDAdd: string[] = collections
+        .filter((col) => col.collection_version?.pulp_href)
+        .map((coll) => coll.collection_version?.pulp_href || '');
+
+      // get unique items
+      itemsToDAdd = [...new Set(itemsToDAdd)];
+
+      const res: { task: string } = (await postRequest(
+        pulpAPI`/repositories/ansible/ansible/${
+          parsePulpIDFromURL(actualRepository.pulp_href) || ''
+        }/modify/`,
+        {
+          add_content_units: itemsToDAdd,
+          base_version: actualRepository.latest_version_href,
+        }
+      ).catch(() => {
+        setError(t('Can not add collections  to repository'));
+        throw new Error();
+      })) as { task: string };
+
+      if (res?.task) {
+        await waitForTask(parsePulpIDFromURL(res.task)).catch(() => {
+          setError(t('Add collection to repository task failed.'));
+          throw new Error();
+        });
+      }
+      setIsLoading(false);
+    } catch (err) {
+      setIsLoading(false);
+    }
+  }
 
   return (
     <Modal
@@ -66,6 +128,35 @@ function AddCollectionToRepositoryModal(props: {
       isOpen
       variant={'large'}
       title={t('Add collections version to repository')}
+      actions={[
+        <Button
+          key="select"
+          variant="primary"
+          id="select"
+          onClick={() => {
+            addCollectionsToRepository(selectedCollections).then(() => {
+              props.multiDialogs.popDialog();
+              props.refresh();
+              /*navigate(HubRoute.RepositoryVersionCollections, {
+                params : { repository : props.repository.name}
+              })*/
+            });
+          }}
+          isDisabled={selectedCollections.length === 0}
+          isLoading={isLoading}
+        >
+          {t('Select')}
+        </Button>,
+        <Button
+          key="cancel"
+          variant="link"
+          onClick={() => {
+            props.multiDialogs.popDialog();
+          }}
+        >
+          {t('Cancel')}
+        </Button>,
+      ]}
     >
       <PageTable<CollectionVersionSearch>
         disableListView={true}
@@ -105,6 +196,7 @@ function AddCollectionToRepositoryModal(props: {
           setSelectedCollections([]);
         }}
       />
+      {error ? <HubError error={{ name: '', message: error }} /> : <></>}
     </Modal>
   );
 }

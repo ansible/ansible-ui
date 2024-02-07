@@ -47,7 +47,10 @@ export function RepositoryCollectionVersion() {
     setSelectedCollections([]);
   }, 'remove');
 
-  const runAddModal = useAddCollections(repository);
+  const runAddModal = useAddCollections(repository, () => {
+    view.unselectItemsAndRefresh([]);
+    setSelectedCollections([]);
+  });
 
   return (
     <PageTable<CollectionVersionSearch>
