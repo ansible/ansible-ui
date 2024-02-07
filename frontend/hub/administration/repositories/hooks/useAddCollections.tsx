@@ -74,7 +74,6 @@ function AddCollectionToRepositoryModal(props: {
   const [error, setError] = useState<string>('');
 
   async function addCollectionsToRepository(collections: CollectionVersionSearch[]) {
-
     let operationOk = true;
 
     try {
@@ -96,7 +95,7 @@ function AddCollectionToRepositoryModal(props: {
       // get unique items
       itemsToDAdd = [...new Set(itemsToDAdd)];
 
-      const res: { task: string } = (await postRequest(
+      const res: { task: string } = await postRequest(
         pulpAPI`/repositories/ansible/ansible/${
           parsePulpIDFromURL(actualRepository.pulp_href) || ''
         }/modify/`,
@@ -104,7 +103,7 @@ function AddCollectionToRepositoryModal(props: {
           add_content_units: itemsToDAdd,
           base_version: actualRepository.latest_version_href,
         }
-      ));
+      );
 
       if (res?.task) {
         await waitForTask(parsePulpIDFromURL(res.task));
@@ -112,8 +111,8 @@ function AddCollectionToRepositoryModal(props: {
       setIsLoading(false);
     } catch (err) {
       setIsLoading(false);
-      if (err)
-      {
+      if (err) {
+        // eslint-disable-next-line @typescript-eslint/no-base-to-string
         setError(err.toString());
       }
       operationOk = false;
@@ -136,8 +135,7 @@ function AddCollectionToRepositoryModal(props: {
           onClick={() => {
             void (async () => {
               const ok = await addCollectionsToRepository(selectedCollections);
-              if (ok)
-              {
+              if (ok) {
                 props.multiDialogs.popDialog();
                 props.refresh();
               }
@@ -197,7 +195,13 @@ function AddCollectionToRepositoryModal(props: {
           setSelectedCollections([]);
         }}
       />
-      {error ? <HubError error={{  name: '', message: t('Can not add collections to repository. ') + error }} /> : <></>}
+      {error ? (
+        <HubError
+          error={{ name: '', message: t('Can not add collections to repository. ') + error }}
+        />
+      ) : (
+        <></>
+      )}
     </Modal>
   );
 }
