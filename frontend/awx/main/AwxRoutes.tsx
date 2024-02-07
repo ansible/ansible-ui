@@ -65,6 +65,7 @@ export enum AwxRoute {
   CredentialPage = 'awx-credential-page',
   CredentialDetails = 'awx-credential-details',
   CredentialAccess = 'awx-credentials-access',
+  CredentialJobTemplates = 'awx-credentials-job-templates',
 
   Projects = 'awx-projects',
   CreateProject = 'awx-create-project',

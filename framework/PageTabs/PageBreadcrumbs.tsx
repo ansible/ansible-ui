@@ -14,7 +14,7 @@ export const PageBreadcrumbsContext = createContext<PageBreadcrumbsContext>({
 });
 
 export function PageBreadcrumbsProvider(props: { children: ReactNode }) {
-  const [tabBreadcrumb, setTabBreadcrumb] = useState<ICatalogBreadcrumb | undefined>({});
+  const [tabBreadcrumb, setTabBreadcrumb] = useState<ICatalogBreadcrumb | undefined>();
   return (
     <PageBreadcrumbsContext.Provider value={{ tabBreadcrumb, setTabBreadcrumb }}>
       {props.children}

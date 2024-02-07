@@ -6,4 +6,5 @@ export interface PageSelectOption<ValueT> {
   icon?: ReactNode;
   label: string;
   description?: string;
+  group?: string;
 }
