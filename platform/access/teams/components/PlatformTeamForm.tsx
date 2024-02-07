@@ -132,6 +132,11 @@ function PlatformTeamInputs() {
         placeholder={t('Enter name')}
         isRequired
       />
+      <PageFormTextInput
+        label={t('Description')}
+        name="description"
+        placeholder={t('Enter description')}
+      />
       <PageFormAsyncSingleSelect<PlatformTeam>
         name="organization"
         label={t('Organization')}
