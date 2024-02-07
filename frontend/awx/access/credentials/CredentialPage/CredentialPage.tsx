@@ -15,7 +15,6 @@ import { awxAPI } from '../../../common/api/awx-utils';
 import { Credential } from '../../../interfaces/Credential';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useCredentialActions } from '../hooks/useCredentialActions';
-//import { CredentialJobTemplates } from './CredentialJobTemplates';
 
 export function CredentialPage() {
   const { t } = useTranslation();

@@ -25,20 +25,16 @@ import { awxAPI } from '../../common/api/awx-utils';
 
 export function TemplatesList(props: {
   url?: string;
-  projectId?: string | undefined;
-  inventoryId?: string | undefined;
-  credentialsId?: string | undefined;
+  projectId?: string;
+  inventoryId?: string;
+  credentialsId?: string;
 }) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const getPageUrl = useGetPageUrl();
   const toolbarFilters = useTemplateFilters();
   const tableColumns = useTemplateColumns();
-  const getQueryParams = (
-    projectId?: string | undefined,
-    inventoryId?: string | undefined,
-    credentialsId?: string | undefined
-  ) => {
+  const getQueryParams = (projectId?: string, inventoryId?: string, credentialsId?: string) => {
     const templateQueryParams: { [key: string]: string } = {
       type: 'job_template,workflow_job_template',
     };
