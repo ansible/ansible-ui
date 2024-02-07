@@ -17,9 +17,9 @@ import { ExternalLinkAltIcon, OutlinedQuestionCircleIcon } from '@patternfly/rea
 import { CSSProperties, Fragment, ReactNode, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './PageFramework.css';
+import { usePageBreadcrumbs } from './PageTabs/PageBreadcrumbs';
 import { useBreakpoint } from './components/useBreakPoint';
 import { useFrameworkTranslations } from './useFrameworkTranslations';
-import { usePageBreadcrumbs } from './PageTabs/PageBreadcrumbs';
 
 export interface ICatalogBreadcrumb {
   id?: string;
@@ -131,7 +131,7 @@ export function PageHeader(props: PageHeaderProps) {
       <Stack hasGutter>
         <Flex flexWrap={{ default: 'nowrap' }} alignItems={{ default: 'alignItemsStretch' }}>
           <FlexItem grow={{ default: 'grow' }}>
-            {pageBreadcrumbs && (
+            {pageBreadcrumbs.length > 0 && (
               <Breadcrumbs
                 breadcrumbs={pageBreadcrumbs?.length ? pageBreadcrumbs : undefined}
                 style={{ paddingBottom: isLg ? 6 : 4 }}

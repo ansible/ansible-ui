@@ -8,6 +8,7 @@ import {
   PageWizardStep,
   useGetPageUrl,
   usePageAlertToaster,
+  usePageNavigate,
 } from '../../../../framework';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
 import { useGet } from '../../../../frontend/common/crud/useGet';
@@ -15,20 +16,53 @@ import { postRequest } from '../../../../frontend/common/crud/Data';
 import { genericErrorAdapter } from '../../../../framework/PageForm/genericErrorAdapter';
 import { AuthenticatorTypeStep } from './steps/AuthenticatorTypeStep';
 import { AuthenticatorDetailsStep } from './steps/AuthenticatorDetailsStep';
-// import { AuthenticatorMappingStep } from './steps/AuthenticatorMappingStep';
+import { AuthenticatorMappingStep } from './steps/AuthenticatorMappingStep';
+import { AuthenticatorMappingOrderStep } from './steps/AuthenticatorMappingOrderStep';
 import { AuthenticatorReviewStep } from './steps/AuthenticatorReviewStep';
-import { AuthenticatorTypeEnum } from '../../../interfaces/Authenticator';
+import { Authenticator, AuthenticatorTypeEnum } from '../../../interfaces/Authenticator';
+import { AuthenticatorMapType } from '../../../interfaces/AuthenticatorMap';
 import type {
   AuthenticatorPlugins,
   AuthenticatorPlugin,
 } from '../../../interfaces/AuthenticatorPlugin';
+import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
+import { PlatformTeam } from '../../../interfaces/PlatformTeam';
 import { gatewayAPI } from '../../../api/gateway-api-utils';
 
 interface Configuration {
   [key: string]: string | string[] | { [k: string]: string };
 }
 
-export interface AuthenticatorForm {
+interface MapBase {
+  map_type: AuthenticatorMapType;
+  name: string;
+  revoke: boolean;
+  order?: number;
+  organization?: PlatformOrganization;
+  team?: PlatformTeam;
+}
+interface MapAlways extends MapBase {
+  trigger: 'always';
+}
+interface MapNever extends MapBase {
+  trigger: 'never';
+}
+interface MapGroups extends MapBase {
+  trigger: 'groups';
+  conditional: 'or' | 'and';
+  groups_value: { name: string }[];
+}
+interface MapAttributes extends MapBase {
+  trigger: 'attributes';
+  conditional: 'or' | 'and';
+  criteria: string;
+  criteria_conditional: 'contains' | 'matches' | 'ends_with' | 'equals' | 'in';
+  criteria_value: string;
+}
+
+export type AuthenticatorMapValues = MapAlways | MapNever | MapGroups | MapAttributes;
+
+export interface AuthenticatorFormValues {
   name: string;
   enabled: boolean;
   create_objects: boolean;
@@ -37,6 +71,7 @@ export interface AuthenticatorForm {
   configuration: Configuration;
   type: AuthenticatorTypeEnum;
   order: number;
+  mappings: AuthenticatorMapValues[];
 }
 
 type Errors =
@@ -49,11 +84,12 @@ export function CreateAuthenticator() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const alertToaster = usePageAlertToaster();
+  const pageNavigate = usePageNavigate();
 
   const { data: plugins } = useGet<AuthenticatorPlugins>(gatewayAPI`/authenticator_plugins`);
 
-  const handleSubmit = async (values: AuthenticatorForm) => {
-    const { name, type, configuration } = values;
+  const handleSubmit = async (values: AuthenticatorFormValues) => {
+    const { name, type, configuration, mappings } = values;
     const plugin = plugins?.authenticators.find((a) => a.type === type);
     if (!plugins || !plugin) {
       return;
@@ -65,7 +101,27 @@ export function CreateAuthenticator() {
     });
 
     try {
-      await Promise.all([request]);
+      const authenticator = await request;
+
+      const mapRequests = mappings.map((map, index) => {
+        const data = {
+          name: map.name,
+          map_type: map.map_type,
+          revoke: map.revoke,
+          order: index + 1,
+          authenticator: (authenticator as Authenticator).id,
+          triggers: buildTriggers(map),
+          organization: ['organization', 'team'].includes(map.map_type)
+            ? map.organization?.name
+            : null,
+          team: ['team'].includes(map.map_type) ? map.team?.name : null,
+        };
+        return postRequest(gatewayAPI`/authenticator_maps/`, data);
+      });
+      await Promise.all(mapRequests);
+      pageNavigate(PlatformRoute.AuthenticatorDetails, {
+        params: { id: (authenticator as Authenticator).id },
+      });
     } catch (err) {
       let children: ReactNode | string | string[];
       if (err && typeof err === 'object' && 'body' in err) {
@@ -102,17 +158,16 @@ export function CreateAuthenticator() {
       label: t('Authentication details'),
       inputs: <AuthenticatorDetailsStep plugins={plugins} />,
     },
-    // TODO
-    // {
-    //   id: 'mapping',
-    //   label: t('Mapping'),
-    //   inputs: <AuthenticatorMappingStep plugins={plugins} />,
-    // },
-    // {
-    //   id: 'order',
-    //   label: t('Mapping order'),
-    //   inputs: <div />,
-    // },
+    {
+      id: 'mapping',
+      label: t('Mapping'),
+      inputs: <AuthenticatorMappingStep />,
+    },
+    {
+      id: 'order',
+      label: t('Mapping order'),
+      inputs: <AuthenticatorMappingOrderStep />,
+    },
     {
       id: 'review',
       label: t('Review'),
@@ -141,7 +196,7 @@ export function CreateAuthenticator() {
           { label: t('Create Authentication') },
         ]}
       />
-      <PageWizard<AuthenticatorForm>
+      <PageWizard<AuthenticatorFormValues>
         steps={steps}
         defaultValue={initialValues}
         onSubmit={handleSubmit}
@@ -185,4 +240,34 @@ function formatConfiguration(values: Configuration, plugin: AuthenticatorPlugin)
   });
 
   return formatted;
+}
+
+function buildTriggers(map: AuthenticatorMapValues) {
+  const triggers: { [k: string]: string | object } = {};
+  let key;
+  switch (map.trigger) {
+    case 'always':
+      triggers.always = {};
+      break;
+    case 'never':
+      triggers.never = {};
+      break;
+    case 'groups':
+      key = `has_${map.conditional}`; // has_or or has_and
+      triggers.groups = {
+        [key]: map.groups_value.map(({ name }) => name),
+      };
+      break;
+    case 'attributes':
+      key = map.criteria_conditional;
+      triggers.attributes = {
+        join_condition: map.conditional || 'or',
+        [map.criteria]: {
+          [key]: key === 'in' ? [map.criteria_value?.split(',')] : map.criteria_value,
+        },
+      };
+      break;
+  }
+
+  return triggers;
 }

@@ -298,6 +298,10 @@ declare global {
 
       clickLink(label: string | RegExp): Chainable<void>;
       clickButton(label: string | RegExp): Chainable<void>;
+
+      /** Clicks an element with a data-cy attribute. Waits for the element to be enabled and visible. */
+      clickByDataCy(dataCy: string): Chainable<void>;
+
       clickPageAction(dataCyLabel: string | RegExp): Chainable<void>;
 
       /**Finds an alert by its label. Does not make an assertion.  */
@@ -964,7 +968,7 @@ declare global {
       cleanupCollections(namespace: string, repo: string): Cypress.Chainable<void>;
       createHubRole(): Cypress.Chainable<HubRole>;
       deleteHubRole(role: HubRole): Cypress.Chainable<void>;
-      createRemote(remoteName: string): Cypress.Chainable<void>;
+      createRemote(remoteName: string, url?: string): Cypress.Chainable<void>;
       deleteRemote(remoteName: string): Cypress.Chainable<void>;
       createRemoteRegistry(remoteRegistryName: string): Cypress.Chainable<RemoteRegistry>;
       deleteRemoteRegistry(remoteRegistryId: string): Cypress.Chainable<void>;
@@ -986,6 +990,9 @@ declare global {
       ): Cypress.Chainable<void>;
       collectionCopyVersionToRepositories(collection: string): Cypress.Chainable<void>;
       addAndApproveMultiCollections(thisRange: number): Cypress.Chainable<void>;
+
+      createRepository(repositoryName: string, remoteName?: string): Cypress.Chainable<void>;
+      deleteRepository(repositoryName: string): Cypress.Chainable<void>;
 
       //Platform Commands
       createPlatformOrganization(): Cypress.Chainable<PlatformOrganization>;

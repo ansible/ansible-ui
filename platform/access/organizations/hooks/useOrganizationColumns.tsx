@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { ITableColumn, useGetPageUrl } from '../../../../framework';
 import {
   useCreatedColumn,
-  useIdColumn,
+  useDescriptionColumn,
   useModifiedColumn,
   useNameColumn,
 } from '../../../../frontend/common/columns';
@@ -23,7 +23,6 @@ export function useOrganizationColumns(options?: {
       navigate(getPageUrl(PlatformRoute.OrganizationDetails, { params: { id: organization.id } })),
     [getPageUrl, navigate]
   );
-  const idColumn = useIdColumn();
   const nameColumn = useNameColumn({
     header: t('Name'),
     ...options,
@@ -39,25 +38,26 @@ export function useOrganizationColumns(options?: {
     // hideByDefaultInTableView: true,
     ...options,
   });
+  const descriptionColumn = useDescriptionColumn();
 
   const tableColumns = useMemo<ITableColumn<PlatformOrganization>[]>(
     () => [
-      idColumn,
       nameColumn,
-      // {
-      //   header: t('Members'),
-      //   type: 'count',
-      //   value: (organization) => organization.summary_fields?.related_field_counts?.users,
-      // },
-      // {
-      //   header: t('Teams'),
-      //   type: 'count',
-      //   value: (organization) => organization.summary_fields?.related_field_counts?.teams,
-      // },
+      descriptionColumn,
+      {
+        header: t('Users'),
+        type: 'count',
+        value: (organization) => organization.summary_fields?.related_field_counts?.users,
+      },
+      {
+        header: t('Teams'),
+        type: 'count',
+        value: (organization) => organization.summary_fields?.related_field_counts?.teams,
+      },
       createdColumn,
       modifiedColumn,
     ],
-    [createdColumn, idColumn, modifiedColumn, nameColumn]
+    [createdColumn, descriptionColumn, modifiedColumn, nameColumn, t]
   );
   return tableColumns;
 }

@@ -100,6 +100,11 @@ function PlatformOrganizationInputs() {
         placeholder={t('Enter name')}
         isRequired
       />
+      <PageFormTextInput<PlatformOrganization>
+        label={t('Description')}
+        name="description"
+        placeholder={t('Enter description')}
+      />
     </>
   );
 }
