@@ -4,9 +4,9 @@ import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxView } from '../../../common/useAwxView';
 import { Instance } from '../../../interfaces/Instance';
 import { usePeersFilters } from '../Instances';
-import { usePeersColumns } from './usePeersColumns';
 import { MultiSelectDialog } from '../../../../../framework';
 import { useTranslation } from 'react-i18next';
+import { useInstancesColumns } from './useInstancesColumns';
 
 function SelectPeers(props: {
   isLookup: boolean;
@@ -14,11 +14,11 @@ function SelectPeers(props: {
   onSelect: (instances: Instance[]) => void;
 }) {
   const toolbarFilters = usePeersFilters();
-  const tableColumns = usePeersColumns();
+  const tableColumns = useInstancesColumns({ disableLinks: true });
   const columns = useMemo(
     () =>
       props.isLookup
-        ? tableColumns.filter((item) => ['Host name', 'Node type'].includes(item.header))
+        ? tableColumns.filter((item) => ['Name', 'Node type'].includes(item.header))
         : tableColumns,
     [tableColumns, props.isLookup]
   );
@@ -37,7 +37,7 @@ function SelectPeers(props: {
     <MultiSelectDialog
       {...props}
       toolbarFilters={toolbarFilters}
-      tableColumns={tableColumns}
+      tableColumns={columns}
       view={view}
     />
   );

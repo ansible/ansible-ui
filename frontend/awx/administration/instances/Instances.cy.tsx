@@ -43,6 +43,7 @@ describe('Instances list', () => {
       'contain',
       'Ansible node instances dedicated for a particular purpose indicated by node type.'
     );
+    cy.get('[data-cy="add-instance"]').should('not.exist');
     cy.get('tbody').find('tr').should('have.length', 10);
   });
 
