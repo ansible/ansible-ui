@@ -1,33 +1,40 @@
 import { useMemo } from 'react';
-import { ITableColumn, usePageNavigate } from '../../../../../framework';
-import {
-  useCreatedColumn,
-  useDescriptionColumn,
-  useModifiedColumn,
-  useNameColumn,
-} from '../../../../common/columns';
+import { ITableColumn, useGetPageUrl } from '../../../../../framework';
 import { SystemJobTemplate } from '../../../interfaces/SystemJobTemplate';
 import { AwxRoute } from '../../../main/AwxRoutes';
+import { TextCell } from '../../../../../framework';
+import { useTranslation } from 'react-i18next';
 
-export function useManagementJobColumns(options?: {
-  disableSort?: boolean;
-  disableLinks?: boolean;
-}) {
-  const pageNavigate = usePageNavigate();
-
-  const nameColumn = useNameColumn({
-    ...options,
-    onClick: (job: SystemJobTemplate) =>
-      pageNavigate(AwxRoute.ManagementJobDetails, { params: { id: job.id } }),
-  });
-
-  const createdColumn = useCreatedColumn(options);
-  const descriptionColumn = useDescriptionColumn();
-  const modifiedColumn = useModifiedColumn(options);
+export function useManagementJobColumns(): ITableColumn<SystemJobTemplate>[] {
+  const { t } = useTranslation();
+  const getPageUrl = useGetPageUrl();
 
   const tableColumns = useMemo<ITableColumn<SystemJobTemplate>[]>(
-    () => [nameColumn, descriptionColumn, createdColumn, modifiedColumn],
-    [nameColumn, descriptionColumn, createdColumn, modifiedColumn]
+    () => [
+      {
+        id: 'name',
+        header: t('Name'),
+        cell: (systemJobTemplate: SystemJobTemplate) => (
+          <TextCell
+            text={systemJobTemplate.name}
+            to={getPageUrl(AwxRoute.ManagementJobSchedules, {
+              params: {
+                id: systemJobTemplate.id,
+              },
+            })}
+          />
+        ),
+        sort: 'name',
+        card: 'name',
+        list: 'name',
+      },
+      {
+        header: t('Description'),
+        cell: (systemJobTemplate) => <TextCell text={systemJobTemplate.description} />,
+      },
+    ],
+    [t, getPageUrl]
   );
+
   return tableColumns;
 }
