@@ -4,7 +4,6 @@ import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxView } from '../../../common/useAwxView';
 import { useManagementJobColumns } from './useManagementJobColumns';
 import { useManagementJobFilters } from './useManagementJobFilters';
-
 import { useCallback } from 'react';
 import { usePageDialog } from '../../../../../framework';
 import { SystemJobTemplate } from '../../../interfaces/SystemJobTemplate';
