@@ -1,4 +1,4 @@
-name: Platform E2E PR
+name: Platform PR
 
 on:
   pull_request:
@@ -17,8 +17,6 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 100
       - uses: actions/setup-node@v4
         with:
           node-version: 18
@@ -46,3 +44,14 @@ jobs:
       PLATFORM_PASSWORD: ${{ secrets.PLATFORM_PASSWORD }}
       PLATFORM_PROJECT_ID: ${{ secrets.PLATFORM_PROJECT_ID }}
       PLATFORM_RECORD_KEY: ${{ secrets.PLATFORM_RECORD_KEY }}
+
+  platform-checks:
+    runs-on: ubuntu-latest
+    name: Platform Checks
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 100
+      - run: git diff --quiet HEAD~1 HEAD -- cypress/e2e/awx cypress/e2e/eda cypress/e2e/hub
+      - run: git diff --quiet HEAD~1 HEAD -- cypress/e2e/support
+      - run: git diff --quiet HEAD~1 HEAD -- frontend framework

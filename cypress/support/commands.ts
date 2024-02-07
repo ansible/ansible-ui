@@ -6,8 +6,8 @@ import '@cypress/code-coverage/support';
 import 'cypress-file-upload';
 import { SetOptional, SetRequired } from 'type-fest';
 import { AwxItemsResponse } from '../../frontend/awx/common/AwxItemsResponse';
-import { AwxToken } from '../../frontend/awx/interfaces/AwxToken';
 import { Application } from '../../frontend/awx/interfaces/Application';
+import { AwxToken } from '../../frontend/awx/interfaces/AwxToken';
 import { Credential } from '../../frontend/awx/interfaces/Credential';
 import { CredentialType } from '../../frontend/awx/interfaces/CredentialType';
 import { ExecutionEnvironment } from '../../frontend/awx/interfaces/ExecutionEnvironment';
@@ -41,6 +41,8 @@ import {
 import { EdaUser, EdaUserCreateUpdate } from '../../frontend/eda/interfaces/EdaUser';
 import { Role as HubRole } from '../../frontend/hub/access/roles/Role';
 import { RemoteRegistry } from '../../frontend/hub/administration/remote-registries/RemoteRegistry';
+import { CollectionVersionSearch } from '../../frontend/hub/collections/Collection';
+import { PlatformOrganization } from '../../platform/interfaces/PlatformOrganization';
 import './auth';
 import './awx-commands';
 import { IAwxResources } from './awx-commands';
@@ -49,10 +51,8 @@ import './common-commands';
 import './e2e';
 import './eda-commands';
 import './hub-commands';
-import './rest-commands';
 import './platform-commands';
-import { CollectionVersionSearch } from '../../frontend/hub/collections/Collection';
-import { PlatformOrganization } from '../../platform/interfaces/PlatformOrganization';
+import './rest-commands';
 
 declare global {
   namespace Cypress {
@@ -189,10 +189,20 @@ declare global {
       ): Chainable<void>;
 
       /** Filter the table using it's current filter by entering text. */
-      filterTableByText(text: string): Chainable<void>;
+      filterTableByText(text: string, variant?: 'SingleText' | 'MultiText'): Chainable<void>;
+
+      /** Filter the table using it's current filter by entering text in 'ToolbarFilterType.SingleText' filter. */
+      filterTableBySingleText(text: string): Chainable<void>;
 
       /** Filter the table using specified filter and text. */
       filterTableByTypeAndText(filterLabel: string | RegExp, text: string): Chainable<void>;
+
+      /** Filter the table using specified filter and text with 'ToolbarFilterType.SingleText' filter. */
+      filterTableByTypeAndSingleText(
+        filterLabel: string | RegExp,
+        text: string,
+        variant?: 'MultiText' | 'SingleText'
+      ): Chainable<void>;
 
       clearAllFilters(): Chainable<void>;
 
@@ -202,7 +212,14 @@ declare global {
       clickToolbarKebabAction(dataCyLabel: string | RegExp): Chainable<void>;
 
       /** Get the table row containing the specified text. */
-      getTableRowByText(name: string | RegExp, filter?: boolean): Chainable<void>;
+      getTableRowByText(
+        name: string | RegExp,
+        filter?: boolean,
+        variant?: 'MultiText' | 'SingleText'
+      ): Chainable<void>;
+
+      /** Get the table row containing the specified text with 'ToolbarFilterType.SingleText' filter. */
+      getTableRowBySingleText(name: string | RegExp, filter?: boolean): Chainable<void>;
 
       /** Get the list row containing the specified text. */
       getListRowByText(name: string | RegExp, filter?: boolean): Chainable<void>;
@@ -293,6 +310,16 @@ declare global {
 
       /** Sends a request to the API to create a particular resource. */
       requestPost<ResponseT, RequestT = ResponseT>(
+        url: string,
+        data: Partial<RequestT>
+      ): Chainable<ResponseT>;
+
+      requestPut<ResponseT, RequestT = ResponseT>(
+        url: string,
+        data: Partial<RequestT>
+      ): Chainable<ResponseT>;
+
+      requestPatch<ResponseT, RequestT = ResponseT>(
         url: string,
         data: Partial<RequestT>
       ): Chainable<ResponseT>;
@@ -929,7 +956,7 @@ declare global {
           failOnStatusCode?: boolean;
         }
       ): Cypress.Chainable<void>;
-      uploadHubCollectionFile(hubFilePath: string, hubFileName: string): Cypress.Chainable<void>;
+      uploadHubCollectionFile(hubFilePath: string): Cypress.Chainable<void>;
       createNamespace(namespaceName: string): Cypress.Chainable<void>;
       getNamespace(namespaceName: string): Cypress.Chainable<void>;
       deleteNamespace(namespaceName: string): Cypress.Chainable<void>;
@@ -944,7 +971,12 @@ declare global {
       deleteCollection(
         collectionName: string,
         namespaceName: string,
-        repository: string
+        repository: string,
+        version?: string,
+        options?: {
+          /** Whether to fail on response codes other than 2xx and 3xx */
+          failOnStatusCode?: boolean;
+        }
       ): Cypress.Chainable<void>;
       uploadCollection(collection: string, namespace: string): Cypress.Chainable<void>;
       approveCollection(

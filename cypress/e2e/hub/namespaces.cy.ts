@@ -4,6 +4,11 @@ import { Namespaces, MyImports } from './constants';
 const apiPrefix = Cypress.env('HUB_API_PREFIX') as string;
 
 describe('Namespaces', () => {
+  const testSignature: string = randomString(5, undefined, { isLowercase: true });
+  function generateNamespaceName(): string {
+    return `test_${testSignature}_namespace_${randomString(5, undefined, { isLowercase: true })}`;
+  }
+
   before(() => {
     cy.hubLogin();
   });
@@ -70,6 +75,28 @@ describe('Namespaces', () => {
     cy.clickButton(/^Delete namespaces$/);
   });
 
+  it('should show collections tab', () => {
+    cy.navigateTo('hub', Namespaces.url);
+    const namespaceName = `test_namespace_${randomString(5, undefined, { isLowercase: true })}`;
+    cy.get('[data-cy="create-namespace"]').should('be.visible').click();
+    cy.url().should('include', Namespaces.urlCreate);
+    cy.get('[data-cy="name"]').type(namespaceName);
+    cy.get('[data-cy="description"]').type('test description');
+    cy.get('[data-cy="company"]').type('test company');
+    cy.get('[data-cy="Submit"]').click();
+    cy.url().should('include', `/namespaces/${namespaceName}/details`);
+    cy.get('[data-cy="collections-tab"]').should('contain', 'Collections');
+    cy.get('[data-cy="collections-tab"]').click();
+    cy.get('[data-cy="empty-state-title"]').should('contain', 'No collections yet');
+    cy.get('[data-cy="upload-collection"]').should('contain', 'Upload collection');
+
+    // Delete the edited namespace
+    cy.get('[data-cy="actions-dropdown"]').click();
+    cy.get('[data-cy="delete-namespace"]').click();
+    cy.get('#confirm').click();
+    cy.clickButton(/^Delete namespaces$/);
+  });
+
   it('edit a namespace', () => {
     cy.navigateTo('hub', Namespaces.url);
     const namespaceName = `test_namespace_${randomString(5, undefined, { isLowercase: true })}`;
@@ -108,13 +135,13 @@ describe('Namespaces', () => {
     cy.contains(nameSpaceName).should('be.visible');
     cy.get('[data-cy="table-view"]').click();
     cy.contains(nameSpaceName).should('be.visible');
-    cy.get('#select-all').click();
-    cy.clickToolbarKebabAction('delete-selected-namespaces');
+    cy.get('[href*="/namespaces/test_pagination_namespace_"]').click();
+
+    // Delete the edited namespace
+    cy.get('[data-cy="actions-dropdown"]').click();
+    cy.get('[data-cy="delete-namespace"]').click();
     cy.get('#confirm').click();
     cy.clickButton(/^Delete namespaces$/);
-    cy.contains(/^Success$/);
-    cy.clickButton(/^Close$/);
-    cy.clickButton(/^Clear all filters$/);
   });
 
   it('user can view import logs', () => {
@@ -131,5 +158,25 @@ describe('Namespaces', () => {
     cy.get('#namespace-selector').contains(namespaceName);
 
     cy.deleteNamespace(namespaceName);
+  });
+
+  it('user can bulk dekete namespaces', () => {
+    const numberOfNamespaces = 5;
+    for (let i = 0; i < numberOfNamespaces; i++) {
+      const namespaceName = generateNamespaceName();
+      cy.createNamespace(namespaceName);
+    }
+
+    cy.navigateTo('hub', 'namespaces');
+    cy.get('[data-cy="table-view"]').click({ force: true });
+    cy.searchAndDisplayResource(testSignature);
+    cy.get('tbody').find('tr').should('have.length', 5);
+    cy.get('[data-cy="select-all"]', { timeout: 30000 }).click();
+    cy.clickToolbarKebabAction('delete-selected-namespaces');
+    cy.get('#confirm').click();
+    cy.clickButton(/^Delete namespaces$/);
+    cy.contains(/^Success$/);
+    cy.clickButton(/^Close$/);
+    cy.clickButton(/^Clear all filters$/);
   });
 });
