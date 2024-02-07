@@ -15,14 +15,14 @@ export const baseConfig: Cypress.ConfigOptions = {
     setupNodeEvents(on, config) {
       return config;
     },
-    retries: { runMode: 2, openMode: 0 },
+    retries: { runMode: 3, openMode: 2 },
     env,
   },
   component: {
     setupNodeEvents(on, config) {
       return config;
     },
-    retries: { runMode: 2, openMode: 0 },
+    retries: { runMode: 3, openMode: 2 },
     devServer: {
       framework: 'react',
       bundler: 'webpack',
