@@ -24,7 +24,7 @@ export type AsyncSelectFilterBuilderProps<T extends object> = {
 export function useAsyncSingleSelectFilterBuilder<T extends object>(
   props: AsyncSelectFilterBuilderProps<T>
 ) {
-  let [_, setDialog] = usePageDialog();
+  let [, setDialog] = usePageDialog();
   if (props.multiDialogs?.pushDialog) {
     setDialog = props.multiDialogs.pushDialog;
   }
@@ -49,7 +49,7 @@ export function useAsyncSingleSelectFilterBuilder<T extends object>(
 export function useAsyncMultiSelectFilterBuilder<T extends object>(
   props: AsyncSelectFilterBuilderProps<T>
 ) {
-  let [_, setDialog] = usePageDialog();
+  let [, setDialog] = usePageDialog();
   if (props.multiDialogs?.pushDialog) {
     setDialog = props.multiDialogs.pushDialog;
   }

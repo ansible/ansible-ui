@@ -1,7 +1,7 @@
 import { AnsibleAnsibleRepositoryResponse as AnsibleRepository } from '../../../interfaces/generated/AnsibleAnsibleRepositoryResponse';
 import { Repository } from '../Repository';
 import { Modal } from '@patternfly/react-core';
-import { usePageDialogs, usePageNavigate } from '../../../../../framework';
+import { usePageDialogs } from '../../../../../framework';
 import { useHubView } from '../../../common/useHubView';
 import { CollectionVersionSearch } from '../../../collections/Collection';
 import { hubAPI } from '../../../common/api/formatPath';
@@ -72,9 +72,11 @@ function AddCollectionToRepositoryModal(props: {
   const tableColumns = useCollectionColumns();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string>('');
-  const navigate = usePageNavigate();
 
   async function addCollectionsToRepository(collections: CollectionVersionSearch[]) {
+
+    let operationOk = true;
+
     try {
       setIsLoading(true);
       setError('');
@@ -83,10 +85,7 @@ function AddCollectionToRepositoryModal(props: {
       // the one received from the page can be very obsolete, because when someones modify repo in meantime user clicks this action, it will fail
       const actualRepositoryResults = await requestGet<PulpItemsResponse<Repository>>(
         pulpAPI`/repositories/ansible/ansible/?name=${repository.name}`
-      ).catch(() => {
-        setError(t('Can not load actual version of repository'));
-        throw new Error();
-      });
+      );
 
       const actualRepository = actualRepositoryResults.results[0];
 
@@ -105,21 +104,22 @@ function AddCollectionToRepositoryModal(props: {
           add_content_units: itemsToDAdd,
           base_version: actualRepository.latest_version_href,
         }
-      ).catch(() => {
-        setError(t('Can not add collections  to repository'));
-        throw new Error();
-      })) as { task: string };
+      ));
 
       if (res?.task) {
-        await waitForTask(parsePulpIDFromURL(res.task)).catch(() => {
-          setError(t('Add collection to repository task failed.'));
-          throw new Error();
-        });
+        await waitForTask(parsePulpIDFromURL(res.task));
       }
       setIsLoading(false);
     } catch (err) {
       setIsLoading(false);
+      if (err)
+      {
+        setError(err.toString());
+      }
+      operationOk = false;
     }
+
+    return operationOk;
   }
 
   return (
@@ -134,13 +134,14 @@ function AddCollectionToRepositoryModal(props: {
           variant="primary"
           id="select"
           onClick={() => {
-            addCollectionsToRepository(selectedCollections).then(() => {
-              props.multiDialogs.popDialog();
-              props.refresh();
-              /*navigate(HubRoute.RepositoryVersionCollections, {
-                params : { repository : props.repository.name}
-              })*/
-            });
+            void (async () => {
+              const ok = await addCollectionsToRepository(selectedCollections);
+              if (ok)
+              {
+                props.multiDialogs.popDialog();
+                props.refresh();
+              }
+            })();
           }}
           isDisabled={selectedCollections.length === 0}
           isLoading={isLoading}
@@ -196,7 +197,7 @@ function AddCollectionToRepositoryModal(props: {
           setSelectedCollections([]);
         }}
       />
-      {error ? <HubError error={{ name: '', message: error }} /> : <></>}
+      {error ? <HubError error={{  name: '', message: t('Can not add collections to repository. ') + error }} /> : <></>}
     </Modal>
   );
 }
