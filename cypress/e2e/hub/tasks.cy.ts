@@ -8,6 +8,7 @@ describe('Tasks', () => {
   beforeEach(() => {
     cy.hubLogin();
     cy.navigateTo('hub', Tasks.url);
+    cy.setTablePageSize('100');
   });
 
   it('should render the tasks page', () => {
@@ -25,7 +26,7 @@ describe('Tasks', () => {
 
   it('should disable stop task button if task is not running/waiting', () => {
     cy.get('tr')
-      .contains('td[data-cy="started-column-cell"]', /\S/)
+      .contains('td[data-cy="status-column-cell"]', /Completed|Failed|Canceled/)
       .parent('tr')
       .then(($row) => {
         cy.wrap($row).find('td').eq(6).click();
@@ -39,6 +40,7 @@ describe('Tasks', () => {
     cy.createRemote(newRemote, 'http://192.0.2.1/');
     cy.createRepository(newRepository, newRemote);
     cy.navigateTo('hub', Repositories.url);
+    cy.setTablePageSize('100');
     cy.contains('tr', newRepository).within(() => {
       cy.get('button.toggle-kebab').click();
       cy.get('[data-cy="sync-repository"]').click();
@@ -46,7 +48,7 @@ describe('Tasks', () => {
     cy.clickButton('Sync');
     cy.navigateTo('hub', Tasks.url);
     cy.get('tr')
-      .contains('td[data-cy="finished-column-cell"]', /^\s*$/)
+      .contains('td[data-cy="status-column-cell"]', /Running|Waiting/)
       .parent('tr')
       .then(($row) => {
         cy.wrap($row).find('td').eq(6).click();
