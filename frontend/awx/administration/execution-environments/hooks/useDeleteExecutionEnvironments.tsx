@@ -6,7 +6,7 @@ import { getItemKey, requestDelete } from '../../../../common/crud/Data';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxBulkConfirmation } from '../../../common/useAwxBulkConfirmation';
 import { ExecutionEnvironment } from '../../../interfaces/ExecutionEnvironment';
-import { useExecutionEnvironmentsColumns } from '../ExecutionEnvironments';
+import { useExecutionEnvironmentsColumns } from './useExecutionEnvironmentsColumns';
 
 export function useDeleteExecutionEnvironments(
   onComplete: (executionEnvironments: ExecutionEnvironment[]) => void

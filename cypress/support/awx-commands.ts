@@ -340,7 +340,9 @@ Cypress.Commands.add('hasTooltip', (label: string | RegExp) => {
 
 Cypress.Commands.add('clickToolbarKebabAction', (dataCyLabel: string | RegExp) => {
   cy.get('[data-ouia-component-id="page-toolbar"]').within(() => {
-    cy.get('[data-cy*="actions-dropdown"]')
+    cy.get('[data-cy*="actions-dropdown"]:not(:disabled):not(:hidden)')
+      .should('not.have.attr', 'aria-disabled', 'true')
+      .should('be.visible')
       .click()
       .then(() => {
         cy.get(`[data-cy=${dataCyLabel}]`).click();
