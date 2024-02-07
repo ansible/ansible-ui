@@ -200,6 +200,7 @@ export enum AwxRoute {
   InstanceGroups = 'awx-instance-groups',
 
   Instances = 'awx-instances',
+  AddInstance = 'awx-add-instance',
   EditInstance = 'awx-edit-instance',
   InstancePage = 'awx-instance-page',
 

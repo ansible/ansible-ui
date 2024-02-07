@@ -8,6 +8,7 @@ import { AwxToken } from '../../frontend/awx/interfaces/AwxToken';
 import { Credential } from '../../frontend/awx/interfaces/Credential';
 import { CredentialType } from '../../frontend/awx/interfaces/CredentialType';
 import { ExecutionEnvironment } from '../../frontend/awx/interfaces/ExecutionEnvironment';
+import { Instance } from '../../frontend/awx/interfaces/Instance';
 import { InstanceGroup } from '../../frontend/awx/interfaces/InstanceGroup';
 import { Inventory } from '../../frontend/awx/interfaces/Inventory';
 import { InventorySource } from '../../frontend/awx/interfaces/InventorySource';
@@ -1475,6 +1476,38 @@ Cypress.Commands.add('editAwxApplication', (application: Application, name: stri
   if (application?.id) {
     cy.awxRequestPatch(awxAPI`/applications/${application.id.toString()}/`, {
       name: name,
+    });
+  }
+});
+
+Cypress.Commands.add('createAwxInstance', () => {
+  cy.awxRequestPost<
+    Pick<
+      Instance,
+      | 'hostname'
+      | 'description'
+      | 'enabled'
+      | 'managed_by_policy'
+      | 'peers_from_control_nodes'
+      | 'node_state'
+      | 'node_type'
+    >,
+    Instance
+  >(awxAPI`/instances/`, {
+    hostname: 'E2EInstanceTest' + randomString(5),
+    description: 'E2E Test Instance Description',
+    enabled: true,
+    managed_by_policy: false,
+    peers_from_control_nodes: false,
+    node_state: 'installed',
+    node_type: 'execution',
+  });
+});
+
+Cypress.Commands.add('removeAwxInstance', (id: string) => {
+  if (id) {
+    cy.awxRequestPatch(awxAPI`/instances/${id}/`, {
+      node_state: 'deprovisioning',
     });
   }
 });

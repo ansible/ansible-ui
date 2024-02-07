@@ -1,0 +1,50 @@
+{
+  "count": 1,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 1,
+      "hostname": "e2eInstance0daD",
+      "type": "instance",
+      "url": "/api/v2/instances/1/",
+      "related": {
+        "jobs": "/api/v2/instances/1/jobs/",
+        "instance_groups": "/api/v2/instances/1/instance_groups/",
+        "peers": "/api/v2/instances/1/peers/"
+      },
+      "summary_fields": {
+        "user_capabilities": {
+          "edit": false
+        }
+      },
+      "uuid": "d4a0f229-a206-46b3-9cd7-2cc30357f485",
+      "created": "2023-10-25T19:12:12.228224Z",
+      "modified": "2024-01-24T19:46:10.149125Z",
+      "last_seen": "2024-02-06T15:01:22.066651Z",
+      "health_check_started": null,
+      "health_check_pending": false,
+      "last_health_check": "2024-02-06T15:01:22.066651Z",
+      "errors": "",
+      "capacity_adjustment": "0.80",
+      "version": "23.3.1",
+      "capacity": 162,
+      "consumed_capacity": 0,
+      "percent_capacity_remaining": 100,
+      "jobs_running": 0,
+      "jobs_total": 208,
+      "cpu": "6.0",
+      "memory": 20688175104,
+      "cpu_capacity": 24,
+      "mem_capacity": 197,
+      "enabled": true,
+      "managed_by_policy": true,
+      "node_type": "control",
+      "node_state": "ready",
+      "ip_address": "10.42.0.106",
+      "listener_port": 1024,
+      "peers": ["e2eInstance0HfY"],
+      "peers_from_control_nodes": false
+    }
+  ]
+}

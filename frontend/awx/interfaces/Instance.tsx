@@ -4,10 +4,17 @@
  * DO NOT MODIFY IT BY HAND. Instead, modify the source JSONSchema file,
  * and run json-schema-to-typescript to regenerate this file.
  */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 export interface Instance {
+  peers: any;
+  peers_from_control_nodes: boolean;
+  instance_type: string;
+  instance_state: string;
+  description: string;
   id: number;
   hostname: string;
+  name: string;
   type: string;
   url: string;
   related: {
