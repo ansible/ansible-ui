@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom';
-import { PageDetailsFromColumns } from '../../../../../framework';
+import { PageDetails, PageDetailsFromColumns } from '../../../../../framework';
 import { useGetItem } from '../../../../common/crud/useGet';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { WorkflowApproval } from '../../../interfaces/WorkflowApproval';
@@ -13,6 +13,8 @@ export function WorkflowApprovalDetails() {
   );
   const columns = useWorkflowApprovalsColumns();
   return workflowApproval ? (
-    <PageDetailsFromColumns item={workflowApproval} columns={columns} />
+    <PageDetails>
+      <PageDetailsFromColumns item={workflowApproval} columns={columns} />
+    </PageDetails>
   ) : null;
 }

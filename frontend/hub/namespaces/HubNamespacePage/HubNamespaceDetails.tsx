@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom';
-import { LoadingPage } from '../../../../framework';
+import { LoadingPage, PageDetails } from '../../../../framework';
 import { PageDetailsFromColumns } from '../../../../framework/PageDetails/PageDetailsFromColumns';
 import { useGet } from '../../../common/crud/useGet';
 import { HubError } from '../../common/HubError';
@@ -25,5 +25,9 @@ export function HubNamespaceDetails() {
     return <HubError error={error} handleRefresh={refresh} />;
   }
 
-  return <PageDetailsFromColumns item={response.data[0]} columns={tableColumns} />;
+  return (
+    <PageDetails>
+      <PageDetailsFromColumns item={response.data[0]} columns={tableColumns} />
+    </PageDetails>
+  );
 }
