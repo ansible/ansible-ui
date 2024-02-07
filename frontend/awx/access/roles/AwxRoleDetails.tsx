@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom';
-import { PageDetailsFromColumns } from '../../../../framework';
+import { PageDetails, PageDetailsFromColumns } from '../../../../framework';
 import { AwxRole } from './AwxRoles';
 import { useAwxRoleColumns } from './useAwxRoleColumns';
 import { useAwxRoles } from './useAwxRoles';
@@ -16,5 +16,9 @@ export function AwxRoleDetails() {
     resource: awxRoles[params.resourceType!]?.name,
   };
 
-  return <PageDetailsFromColumns<AwxRole> item={role} columns={columns} />;
+  return (
+    <PageDetails>
+      <PageDetailsFromColumns<AwxRole> item={role} columns={columns} />
+    </PageDetails>
+  );
 }
