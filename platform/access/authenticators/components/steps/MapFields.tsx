@@ -46,6 +46,12 @@ const FieldContainer = styled.div`
   margin-inline-start: 30px;
 `;
 
+const FormGrid = styled(PageFormGrid)`
+  & + & {
+    margin-block-start: var(--pf-v5-l-grid--m-gutter--GridGap);
+  }
+`;
+
 export function MapFields(props: {
   index: number;
   map: AuthenticatorMapValues;
@@ -80,7 +86,7 @@ export function MapFields(props: {
         defaultValue={map.map_type}
       />
       <FieldContainer>
-        <PageFormGrid>
+        <FormGrid>
           <PageFormTextInput
             id={`mappings-${index}-name`}
             name={`mappings.${index}.name`}
@@ -179,10 +185,8 @@ export function MapFields(props: {
               isRequired
             />
           </PageFormHidden>
-        </PageFormGrid>
-      </FieldContainer>
-      <FieldContainer>
-        <PageFormGrid>
+        </FormGrid>
+        <FormGrid>
           <PageFormHidden watch={`mappings.${index}.map_type`} hidden={(value) => value !== 'team'}>
             <PageFormPlatformTeamSelect name={`mappings.${index}.team`} isRequired />
           </PageFormHidden>
@@ -195,7 +199,7 @@ export function MapFields(props: {
               isRequired
             />
           </PageFormHidden>
-        </PageFormGrid>
+        </FormGrid>
       </FieldContainer>
     </div>
   );

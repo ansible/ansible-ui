@@ -52,11 +52,20 @@ export function AuthenticatorReviewStep(props: { plugins: AuthenticatorPlugins }
     }
   });
 
+  const typeLabels: { [k: string]: string } = {
+    local: t('Local'),
+    ldap: t('LDAP'),
+    saml: t('SAML'),
+    keycloak: t('Keycloak'),
+  };
+  const typeKey = type.split('.').pop();
+  const readableType = typeKey ? typeLabels[typeKey] ?? typeKey : type;
+
   return (
     <>
       <PageDetails numberOfColumns="multiple">
         <PageDetail label={t('Name')}>{name}</PageDetail>
-        <PageDetail label={t('Type')}>{type}</PageDetail>
+        <PageDetail label={t('Type')}>{readableType}</PageDetail>
         {fields.map((field) => (
           <PageDetail label={field.label} key={field.label}>
             {field.value}
@@ -65,9 +74,11 @@ export function AuthenticatorReviewStep(props: { plugins: AuthenticatorPlugins }
       </PageDetails>
       {objFields.length ? (
         <PageDetails numberOfColumns="single">
-          {objFields.map((field) => (
-            <PageDetailCodeEditor label={field.label} key={field.label} value={field.value} />
-          ))}
+          {objFields.map((field) =>
+            field.value ? (
+              <PageDetailCodeEditor label={field.label} key={field.label} value={field.value} />
+            ) : null
+          )}
         </PageDetails>
       ) : null}
       {mappings && mappings.length ? (
