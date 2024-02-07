@@ -41,13 +41,7 @@ export function AwxSettingsCategory() {
     <PageLayout>
       <PageHeader
         title={category.name}
-        breadcrumbs={[
-          {
-            label: t('Settings'),
-            // to: getPageUrl(AwxRoute.Settings)
-          },
-          { label: category.name },
-        ]}
+        breadcrumbs={[{ label: t('Settings') }, { label: category.name }]}
       />
       <OptionActionsForm options={categoryOptions} data={all.data} />
     </PageLayout>

@@ -1,4 +1,5 @@
 import { t } from 'i18next';
+import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   PageForm,
@@ -6,6 +7,8 @@ import {
   PageFormDataEditor,
   PageFormTextInput,
 } from '../../../../framework';
+import { usePatchRequest } from '../../../common/crud/usePatchRequest';
+import { awxAPI } from '../../common/api/awx-utils';
 
 export interface OptionsResponse {
   actions: {
@@ -25,20 +28,31 @@ export interface OptionsAction {
 
 export function OptionActionsForm(props: { options: Record<string, OptionsAction>; data: object }) {
   const navigate = useNavigate();
+  const patch = usePatchRequest();
+  const onSubmit = useCallback(
+    async (data: object) => {
+      // Only send the data that is in the options
+      const patchData: Record<string, unknown> = {};
+      for (const [key, value] of Object.entries(data)) {
+        if (Object.keys(props.options).includes(key)) {
+          patchData[key] = value;
+        }
+      }
+      await patch(awxAPI`/settings/all/`, patchData);
+      navigate(-1);
+    },
+    [navigate, patch, props.options]
+  );
   return (
-    <PageForm defaultValue={props.data} submitText={t('Save')} onCancel={() => navigate(-1)}>
+    <PageForm
+      defaultValue={props.data}
+      submitText={t('Save')}
+      onCancel={() => navigate(-1)}
+      onSubmit={onSubmit}
+    >
       {Object.entries(props.options).map(([key, option]) => {
         return <OptionActionsFormInput key={key} name={key} option={option} />;
       })}
-      {/* {Object.entries(categoryToOptions).map(([category, options]) => {
-        return (
-          <PageFormSection key={category} title={category}>
-            {options.map((option, key) => {
-              return <OptionActionsFormInput key={key} option={option} />;
-            })}
-          </PageFormSection>
-        );
-      })} */}
     </PageForm>
   );
 }

@@ -18,12 +18,10 @@ import { useAwxSettingsGroups } from './useAwxSettingsGroups';
 
 export function AwxSettings() {
   const { t } = useTranslation();
-  const { isLoading, error, groups } = useAwxSettingsGroups();
   const getPageUrl = useGetPageUrl();
-
+  const { isLoading, error, groups } = useAwxSettingsGroups();
   if (error) return <AwxError error={error} />;
   if (isLoading || !groups) return <LoadingPage />;
-
   return (
     <PageLayout>
       <PageHeader title={t('Settings')} />
@@ -59,54 +57,3 @@ export function AwxSettings() {
     </PageLayout>
   );
 }
-
-// export function useSettingsGroups() {
-//   const options = useOptions<OptionsResponse>(awxAPI`/settings/all/`);
-//   const all = useGet<{ results: { url: string; slug: string; name: string }[] }>(
-//     awxAPI`/settings/all`
-//   );
-//   const isLoading = options.isLoading || all.isLoading;
-//   const error = options.error || all.error;
-//   const groups = useMemo(() => {
-//     const groups: {
-//       name: string;
-//       categories: {
-//         name: string;
-//         slugs: {
-//           slug: string;
-//           options: OptionsAction<unknown>[];
-//         }[];
-//       }[];
-//     }[] = [];
-//     if (!options.data) return groups;
-//     for (const optionKey in options.data.actions.PUT) {
-//       const option = options.data.actions.PUT[optionKey];
-//       const groupInfo = groupInfos.find((group) => group.categories.includes(option.category));
-//       // const groupName = groupInfo ? groupInfo.name : option.category;
-//       const groupName = groupInfo ? groupInfo.name : 'System';
-//       let group = groups.find((group) => group.name === groupName);
-//       if (!group) {
-//         group = { name: groupName, categories: [] };
-//         groups.push(group);
-//       }
-//       let category = group.categories.find((category) => category.name === option.category);
-//       if (!category) {
-//         category = { name: option.category, slugs: [] };
-//         group.categories.push(category);
-//       }
-//       let slug = category.slugs.find((slug) => slug.slug === option.category_slug);
-//       if (!slug) {
-//         slug = { slug: option.category_slug, options: [] };
-//         category.slugs.push(slug);
-//       }
-//       slug.options.push(option);
-//     }
-
-//     groups.forEach((group) => {
-//       group.categories.sort((a, b) => a.name.localeCompare(b.name));
-//     });
-
-//     return groups;
-//   }, [options.data]);
-//   return { isLoading, error, groups };
-// }
