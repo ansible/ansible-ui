@@ -6,8 +6,8 @@ import '@cypress/code-coverage/support';
 import 'cypress-file-upload';
 import { SetOptional, SetRequired } from 'type-fest';
 import { AwxItemsResponse } from '../../frontend/awx/common/AwxItemsResponse';
-import { AwxToken } from '../../frontend/awx/interfaces/AwxToken';
 import { Application } from '../../frontend/awx/interfaces/Application';
+import { AwxToken } from '../../frontend/awx/interfaces/AwxToken';
 import { Credential } from '../../frontend/awx/interfaces/Credential';
 import { CredentialType } from '../../frontend/awx/interfaces/CredentialType';
 import { ExecutionEnvironment } from '../../frontend/awx/interfaces/ExecutionEnvironment';
@@ -41,6 +41,7 @@ import {
 import { EdaUser, EdaUserCreateUpdate } from '../../frontend/eda/interfaces/EdaUser';
 import { Role as HubRole } from '../../frontend/hub/access/roles/Role';
 import { RemoteRegistry } from '../../frontend/hub/administration/remote-registries/RemoteRegistry';
+import { CollectionVersionSearch } from '../../frontend/hub/collections/Collection';
 import './auth';
 import './awx-commands';
 import { IAwxResources } from './awx-commands';
@@ -50,7 +51,6 @@ import './e2e';
 import './eda-commands';
 import './hub-commands';
 import './rest-commands';
-import { CollectionVersionSearch } from '../../frontend/hub/collections/Collection';
 
 declare global {
   namespace Cypress {
@@ -305,6 +305,16 @@ declare global {
 
       /** Sends a request to the API to create a particular resource. */
       requestPost<ResponseT, RequestT = ResponseT>(
+        url: string,
+        data: Partial<RequestT>
+      ): Chainable<ResponseT>;
+
+      requestPut<ResponseT, RequestT = ResponseT>(
+        url: string,
+        data: Partial<RequestT>
+      ): Chainable<ResponseT>;
+
+      requestPatch<ResponseT, RequestT = ResponseT>(
         url: string,
         data: Partial<RequestT>
       ): Chainable<ResponseT>;
@@ -941,7 +951,7 @@ declare global {
           failOnStatusCode?: boolean;
         }
       ): Cypress.Chainable<void>;
-      uploadHubCollectionFile(hubFilePath: string, hubFileName: string): Cypress.Chainable<void>;
+      uploadHubCollectionFile(hubFilePath: string): Cypress.Chainable<void>;
       createNamespace(namespaceName: string): Cypress.Chainable<void>;
       getNamespace(namespaceName: string): Cypress.Chainable<void>;
       deleteNamespace(namespaceName: string): Cypress.Chainable<void>;
@@ -949,7 +959,7 @@ declare global {
       cleanupCollections(namespace: string, repo: string): Cypress.Chainable<void>;
       createHubRole(): Cypress.Chainable<HubRole>;
       deleteHubRole(role: HubRole): Cypress.Chainable<void>;
-      createRemote(remoteName: string): Cypress.Chainable<void>;
+      createRemote(remoteName: string, url?: string): Cypress.Chainable<void>;
       deleteRemote(remoteName: string): Cypress.Chainable<void>;
       createRemoteRegistry(remoteRegistryName: string): Cypress.Chainable<RemoteRegistry>;
       deleteRemoteRegistry(remoteRegistryId: string): Cypress.Chainable<void>;
@@ -971,6 +981,8 @@ declare global {
       ): Cypress.Chainable<void>;
       collectionCopyVersionToRepositories(collection: string): Cypress.Chainable<void>;
       addAndApproveMultiCollections(thisRange: number): Cypress.Chainable<void>;
+      createRepository(repositoryName: string, remoteName?: string): Cypress.Chainable<void>;
+      deleteRepository(repositoryName: string): Cypress.Chainable<void>;
     }
   }
 }

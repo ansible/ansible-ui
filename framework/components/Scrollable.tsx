@@ -4,6 +4,7 @@ import './Scrollable.css';
 
 export function Scrollable(props: {
   children?: ReactNode;
+  className?: string;
   borderTop?: boolean;
   borderBottom?: boolean;
   style?: CSSProperties;
@@ -27,7 +28,7 @@ export function Scrollable(props: {
   const innerClassName = innerClassNames.join(' ');
 
   return (
-    <div className="scrollable-outer" style={props.style}>
+    <div className={`scrollable-outer ${props.className}`} style={props.style}>
       <div className={innerClassName} ref={divEl} onScroll={update}>
         {props.children}
       </div>
