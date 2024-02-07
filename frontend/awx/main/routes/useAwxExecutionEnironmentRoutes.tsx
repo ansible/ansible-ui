@@ -5,6 +5,7 @@ import { ExecutionEnvironmentPage } from '../../administration/execution-environ
 import { ExecutionEnvironments } from '../../administration/execution-environments/ExecutionEnvironments';
 import { ExecutionEnvironmentDetails } from '../../administration/execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentDetails';
 import { AwxRoute } from '../AwxRoutes';
+import { CreateExecutionEnvironment } from '../../administration/execution-environments/ExecutionEnvironmentForm';
 
 export function useAwxExecutionEnvironmentRoutes() {
   const { t } = useTranslation();
@@ -34,6 +35,11 @@ export function useAwxExecutionEnvironmentRoutes() {
         {
           path: '',
           element: <ExecutionEnvironments />,
+        },
+        {
+          id: AwxRoute.CreateExecutionEnvironment,
+          path: 'add',
+          element: <CreateExecutionEnvironment />,
         },
       ],
     }),
