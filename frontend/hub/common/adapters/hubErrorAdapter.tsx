@@ -14,7 +14,10 @@ export interface GalaxyError {
   title: string;
 }
 
-export const hubErrorAdapter: ErrorAdapter = (error): ErrorOutput => {
+export const hubErrorAdapter: ErrorAdapter = (
+  error,
+  mappedKeys?: Record<string, string>
+): ErrorOutput => {
   // errors can come in several flavors depending on if the API is from
   // pulp or ansible.
   const genericErrors: GenericErrorDetail[] = [];
@@ -46,7 +49,10 @@ export const hubErrorAdapter: ErrorAdapter = (error): ErrorOutput => {
       // Handling Galaxy errors
       for (const e of data.errors as GalaxyError[]) {
         if (e.source && e.source.parameter) {
-          fieldErrors.push({ name: e.source.parameter, message: e.detail || e.title });
+          if (mappedKeys) {
+            const name = mappedKeys[e.source.parameter] ?? e.source.parameter;
+            fieldErrors.push({ name, message: e.detail || e.title });
+          } else fieldErrors.push({ name: e.source.parameter, message: e.detail || e.title });
         } else {
           genericErrors.push({ message: e.detail || e.title });
         }

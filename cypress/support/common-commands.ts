@@ -43,8 +43,9 @@ Cypress.Commands.add(
       .within(() => {
         cy.get('input').clear().type(text, { delay: 0 });
       });
-    if (variant === 'MultiText')
-      cy.get('[data-cy="apply-filter"]:not(:disabled):not(:hidden)').click();
+    if (variant === 'MultiText') {
+      cy.clickByDataCy('apply-filter');
+    }
   }
 );
 
