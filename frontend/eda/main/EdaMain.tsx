@@ -26,6 +26,7 @@ export default function EdaMain() {
       masthead={<EdaMasthead />}
       navigation={navigation}
       basename={process.env.EDA_ROUTE_PREFIX}
+      defaultRefreshInterval={10}
     />
   );
 }

@@ -26,6 +26,7 @@ export default function HubMain() {
       masthead={<HubMasthead />}
       navigation={navigation}
       basename={process.env.HUB_ROUTE_PREFIX}
+      defaultRefreshInterval={10}
     />
   );
 }

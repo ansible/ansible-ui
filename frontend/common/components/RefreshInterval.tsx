@@ -36,10 +36,12 @@ export function RefreshIntervalSelect() {
   );
 }
 
-export function RefreshIntervalProvider(props: { children: ReactNode }) {
+export function RefreshIntervalProvider(props: { children: ReactNode; default?: number }) {
   const { settings } = useContext(SettingsContext);
   return (
-    <SWRConfig value={{ refreshInterval: (settings.refreshInterval || 60) * 1000 }}>
+    <SWRConfig
+      value={{ refreshInterval: (settings.refreshInterval || props.default || 60) * 1000 }}
+    >
       {props.children}
     </SWRConfig>
   );
