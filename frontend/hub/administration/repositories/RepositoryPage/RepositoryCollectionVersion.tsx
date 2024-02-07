@@ -76,6 +76,8 @@ export function RepositoryCollectionVersion() {
       rowActions={rowActions}
       errorStateTitle={t('Error loading collection versions')}
       emptyStateTitle={t('No collection versions yet')}
+      emptyStateButtonText={t('Add collections')}
+      emptyStateButtonClick={() => runAddModal()}
       emptyStateDescription={t('Collection versions will appear once the repository is modified.')}
       {...view}
       defaultTableView="list"
