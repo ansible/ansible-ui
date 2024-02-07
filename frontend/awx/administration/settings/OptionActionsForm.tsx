@@ -1,5 +1,4 @@
 import { t } from 'i18next';
-import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   PageForm,
@@ -7,42 +6,31 @@ import {
   PageFormDataEditor,
   PageFormTextInput,
 } from '../../../../framework';
-import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
 
 export interface OptionsResponse {
   actions: {
-    PUT: Record<
-      string,
-      OptionsAction<string | number | boolean | string[] | number[] | boolean[] | null>
-    >;
+    PUT: Record<string, OptionsAction>;
   };
 }
 
-export interface OptionsAction<T> {
-  type: T;
+export interface OptionsAction {
+  type: 'string' | 'integer' | 'boolean' | 'list' | 'nested object' | 'certificate';
   required: boolean;
   label: string;
   help_text: string;
   category: string;
   category_slug: string;
-  default: T;
+  default: unknown;
 }
 
-export function OptionActionsForm(props: { options: OptionsAction<any>[]; data: unknown }) {
-  const categoryToOptions = useMemo(() => {
-    const categoryToOptions: Record<string, OptionsAction<any>[]> = {};
-    for (const option of props.options) {
-      if (!categoryToOptions[option.category]) categoryToOptions[option.category] = [];
-      categoryToOptions[option.category].push(option);
-    }
-    return categoryToOptions;
-  }, [props.options]);
-
+export function OptionActionsForm(props: { options: Record<string, OptionsAction>; data: object }) {
   const navigate = useNavigate();
-
   return (
     <PageForm defaultValue={props.data} submitText={t('Save')} onCancel={() => navigate(-1)}>
-      {Object.entries(categoryToOptions).map(([category, options]) => {
+      {Object.entries(props.options).map(([key, option]) => {
+        return <OptionActionsFormInput key={key} name={key} option={option} />;
+      })}
+      {/* {Object.entries(categoryToOptions).map(([category, options]) => {
         return (
           <PageFormSection key={category} title={category}>
             {options.map((option, key) => {
@@ -50,66 +38,74 @@ export function OptionActionsForm(props: { options: OptionsAction<any>[]; data: 
             })}
           </PageFormSection>
         );
-      })}
+      })} */}
     </PageForm>
   );
 }
-export function OptionActionsFormInput(props: { option: OptionsAction<unknown> }) {
+export function OptionActionsFormInput(props: { name: string; option: OptionsAction }) {
   const option = props.option;
   switch (option.type) {
     case 'string':
       return (
         <PageFormTextInput
           label={option.label}
-          name={option.category}
+          name={props.name}
           labelHelp={option.help_text}
+          helperText={props.name}
         />
       );
     case 'integer':
       return (
         <PageFormTextInput
           label={option.label}
-          name={option.category}
+          name={props.name}
           labelHelp={option.help_text}
           type="number"
+          helperText={props.name}
         />
       );
     case 'boolean':
-      return <PageFormCheckbox label={option.label} name={option.category} />;
+      return <PageFormCheckbox label={option.label} name={props.name} />;
     case 'list':
       return (
         <PageFormDataEditor
           label={option.label}
-          name={option.category}
+          name={props.name}
           labelHelp={option.help_text}
           allowUpload={false}
           allowCopy={false}
           allowDownload={false}
-          disableLineNumbers
+          // disableLineNumbers
+          toggleLanguages={['json', 'yaml']}
+          language="json"
         />
       );
     case 'nested object':
       return (
         <PageFormDataEditor
           label={option.label}
-          name={option.category}
+          name={props.name}
           labelHelp={option.help_text}
           allowUpload={false}
           allowCopy={false}
           allowDownload={false}
-          disableLineNumbers
+          // disableLineNumbers
+          toggleLanguages={['json', 'yaml']}
+          language="json"
         />
       );
     case 'certificate':
       return (
         <PageFormDataEditor
           label={option.label}
-          name={option.category}
+          name={props.name}
           labelHelp={option.help_text}
           allowUpload={false}
           allowCopy={false}
           allowDownload={false}
-          disableLineNumbers
+          // disableLineNumbers
+          toggleLanguages={['json', 'yaml']}
+          language="json"
         />
       );
     default:

@@ -148,6 +148,7 @@ export type PageFormDataEditorInputProps<
 > = {
   name: TFieldName;
   validate?: Validate<string, TFieldValues> | Record<string, Validate<string, TFieldValues>>;
+  language?: string;
   toggleLanguages?: string[];
   isExpandable?: boolean;
   allowUpload?: boolean;
@@ -185,6 +186,7 @@ export function PageFormDataEditor<
     isRequired,
     label,
     name,
+    language,
     toggleLanguages,
     validate,
     disableLineNumbers,
@@ -199,7 +201,7 @@ export function PageFormDataEditor<
     setValue,
   } = useFormContext<TFieldValues>();
 
-  const [selectedLanguage, setSelectedLanguage] = useState('yaml');
+  const [selectedLanguage, setSelectedLanguage] = useState(props.language ?? 'yaml');
   const [isCollapsed, setCollapsed] = useState(!defaultExpanded);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const alertToaster = usePageAlertToaster();

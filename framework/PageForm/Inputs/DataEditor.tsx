@@ -1,4 +1,5 @@
 import useResizeObserver from '@react-hook/resize-observer';
+import jsyaml from 'js-yaml';
 import * as monaco from 'monaco-editor';
 import { configureMonacoYaml } from 'monaco-yaml';
 import { useEffect, useRef } from 'react';
@@ -127,7 +128,7 @@ export function DataEditor<
     return () => {
       editor.dispose();
     };
-  }, []);
+  }, [props.disableLineNumbers]);
 
   useEffect(() => {
     const editor = editorRef?.current?.editor;
@@ -143,10 +144,14 @@ export function DataEditor<
       onChange(editor.getValue() ?? '');
     });
     const currentValue = editor.getValue();
-    if (currentValue !== props.value) {
-      editor.setValue(props.value || '');
+    let value = props.value;
+    if (typeof value === 'object') {
+      language === 'json' ? (value = JSON.stringify(value, null, 2)) : (value = jsyaml.dump(value));
     }
-    const valueArray = props.value?.split('\n') || [''];
+    if (currentValue !== value) {
+      editor.setValue(value || '');
+    }
+    const valueArray = value?.split('\n') || [''];
     const element = document.getElementById(idDataEditorElement);
     if (valueArray.length > 0 && element) {
       element.style.minHeight = '75px';
