@@ -8,12 +8,9 @@ import {
   LoadingPage,
   PageDetail,
   PageDetails,
-  PageHeader,
   PageLayout,
   Scrollable,
-  useGetPageUrl,
 } from '../../../../../framework';
-import { HubRoute } from '../../../main/HubRoutes';
 import { useLockedRolesWithDescription } from '../hooks/useLockedRolesWithDescription';
 import { RolePermissions } from '../components/RolePermissions';
 import { HubError } from '../../../common/HubError';
@@ -26,7 +23,6 @@ export function RoleDetails() {
     pulpAPI`/roles/?name=${params.id}`
   );
   const role = data?.results?.[0];
-  const getPageUrl = useGetPageUrl();
   const lockedRolesWithDescription = useLockedRolesWithDescription();
 
   if (error) return <HubError error={error} handleRefresh={refresh} />;
@@ -34,10 +30,6 @@ export function RoleDetails() {
 
   return (
     <PageLayout>
-      <PageHeader
-        title={role?.name}
-        breadcrumbs={[{ label: t('Roles'), to: getPageUrl(HubRoute.Roles) }, { label: role?.name }]}
-      />
       <Scrollable>
         <PageDetails>
           <PageDetail label={t('Name')}>{role.name || ''}</PageDetail>

@@ -1,6 +1,6 @@
 import { Skeleton } from '@patternfly/react-core';
 import { useParams } from 'react-router-dom';
-import { PageDetailsFromColumns } from '../../../../framework';
+import { PageDetails, PageDetailsFromColumns } from '../../../../framework';
 import { useJobsColumns } from './hooks/useJobsColumns';
 import { useGetJob } from './JobPage';
 
@@ -11,5 +11,9 @@ export function JobDetails() {
 
   if (!job) return <Skeleton />;
 
-  return <PageDetailsFromColumns columns={columns} item={job} />;
+  return (
+    <PageDetails>
+      <PageDetailsFromColumns columns={columns} item={job} />
+    </PageDetails>
+  );
 }

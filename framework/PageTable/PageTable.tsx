@@ -64,6 +64,7 @@ import {
   useVisibleTableColumns,
 } from './PageTableColumn';
 import { PageTableList } from './PageTableList';
+import { PageDetails } from '../PageDetails/PageDetails';
 
 const ScrollDiv = styled.div`
   height: 100%;
@@ -442,14 +443,9 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
 
     if (expandedRowColumns.length) {
       expandedRowFunctions.push((item) => (
-        <PageDetailsFromColumns
-          key={keyFn(item)}
-          item={item}
-          columns={expandedRowColumns}
-          disablePadding
-          numberOfColumns="multiple"
-          labelOrientation="vertical"
-        />
+        <PageDetails disablePadding numberOfColumns="multiple" labelOrientation="vertical">
+          <PageDetailsFromColumns key={keyFn(item)} item={item} columns={expandedRowColumns} />
+        </PageDetails>
       ));
     }
 
