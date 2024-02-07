@@ -43,7 +43,7 @@ export function useTeamColumns(options?: { disableLinks?: boolean; disableSort?:
       nameColumn,
       descriptionColumn,
       {
-        header: t('Members'),
+        header: t('Users'),
         type: 'count',
         value: (team) => team.users.length,
       },

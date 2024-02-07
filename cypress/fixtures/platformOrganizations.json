@@ -4,96 +4,118 @@
   "previous": null,
   "results": [
     {
-      "name": "Org with Env",
+      "name": "Demo",
       "id": 3,
       "url": "/api/gateway/v1/organizations/3/",
-      "created_on": "2023-10-26T15:52:51.014453Z",
+      "created_on": "2024-02-07T16:52:03.944644Z",
       "created_by": 2,
-      "modified_on": "2023-10-26T15:52:51.014500Z",
+      "modified_on": "2024-02-07T16:52:19.683735Z",
       "modified_by": 2,
       "related": {
         "created_by": "/api/gateway/v1/users/2/",
         "modified_by": "/api/gateway/v1/users/2/",
-        "environment": "/api/gateway/v1/environments/1/",
+        "users": "/api/gateway/v1/organizations/3/users/",
+        "admins": "/api/gateway/v1/organizations/3/users/",
         "teams": "/api/gateway/v1/organizations/3/teams/"
       },
       "summary_fields": {
         "created_by": {
           "id": 2,
-          "username": "vn-admin",
+          "username": "admin",
           "first_name": "",
           "last_name": ""
         },
         "modified_by": {
           "id": 2,
-          "username": "vn-admin",
+          "username": "admin",
           "first_name": "",
           "last_name": ""
         },
-        "environment": {
-          "id": 1,
-          "name": "New ENVIRONMENT"
+        "related_field_counts": {
+          "teams": 0,
+          "users": 0
         }
       },
-      "environment": 1
+      "environment": null,
+      "description": "demo123",
+      "users": [],
+      "admins": []
     },
     {
       "name": "New Org",
       "id": 1,
       "url": "/api/gateway/v1/organizations/1/",
-      "created_on": "2023-10-25T14:27:04.838031Z",
+      "created_on": "2024-02-07T15:48:57.870733Z",
       "created_by": 2,
-      "modified_on": "2023-10-25T14:27:04.838078Z",
+      "modified_on": "2024-02-07T16:52:27.975012Z",
       "modified_by": 2,
       "related": {
         "created_by": "/api/gateway/v1/users/2/",
         "modified_by": "/api/gateway/v1/users/2/",
+        "users": "/api/gateway/v1/organizations/1/users/",
+        "admins": "/api/gateway/v1/organizations/1/users/",
         "teams": "/api/gateway/v1/organizations/1/teams/"
       },
       "summary_fields": {
         "created_by": {
           "id": 2,
-          "username": "vn-admin",
+          "username": "admin",
           "first_name": "",
           "last_name": ""
         },
         "modified_by": {
           "id": 2,
-          "username": "vn-admin",
+          "username": "admin",
           "first_name": "",
           "last_name": ""
+        },
+        "related_field_counts": {
+          "teams": 3,
+          "users": 1
         }
       },
-      "environment": null
+      "environment": null,
+      "description": "1234",
+      "users": [6],
+      "admins": []
     },
     {
-      "name": "TestOrg",
+      "name": "Test Org",
       "id": 2,
       "url": "/api/gateway/v1/organizations/2/",
-      "created_on": "2023-10-25T19:49:38.958694Z",
+      "created_on": "2024-02-07T16:00:50.747835Z",
       "created_by": 2,
-      "modified_on": "2023-10-25T19:49:38.958745Z",
+      "modified_on": "2024-02-07T16:00:50.747835Z",
       "modified_by": 2,
       "related": {
         "created_by": "/api/gateway/v1/users/2/",
         "modified_by": "/api/gateway/v1/users/2/",
+        "users": "/api/gateway/v1/organizations/2/users/",
+        "admins": "/api/gateway/v1/organizations/2/users/",
         "teams": "/api/gateway/v1/organizations/2/teams/"
       },
       "summary_fields": {
         "created_by": {
           "id": 2,
-          "username": "vn-admin",
+          "username": "admin",
           "first_name": "",
           "last_name": ""
         },
         "modified_by": {
           "id": 2,
-          "username": "vn-admin",
+          "username": "admin",
           "first_name": "",
           "last_name": ""
+        },
+        "related_field_counts": {
+          "teams": 1,
+          "users": 0
         }
       },
-      "environment": null
+      "environment": null,
+      "description": "",
+      "users": [],
+      "admins": []
     }
   ]
 }

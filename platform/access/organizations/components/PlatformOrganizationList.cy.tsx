@@ -25,9 +25,10 @@ describe('Organizations list', () => {
         }
       ).as('organizationsList');
     });
-    it.skip('Organizations list renders', () => {
+    it('Organizations list renders', () => {
       cy.mount(<PlatformOrganizationList />);
       cy.verifyPageTitle('Organizations');
+      cy.setTableView('table-view');
       cy.get('tbody').find('tr').should('have.length', 3);
       // Toolbar actions are visible
       cy.get(`[data-cy="create-organization"]`).should('be.visible');
