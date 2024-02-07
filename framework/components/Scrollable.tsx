@@ -4,6 +4,7 @@ import './Scrollable.css';
 
 export function Scrollable(props: {
   children?: ReactNode;
+  className?: string;
   borderTop?: boolean;
   borderBottom?: boolean;
   style?: CSSProperties;
