@@ -38,7 +38,7 @@ export function ManagementJobs() {
         toolbarFilters={toolbarFilters}
         tableColumns={tableColumns}
         errorStateTitle={t('Error loading management jobs')}
-        emptyStateTitle="No data available"
+        emptyStateTitle="No management jobs yet"
         {...view}
       />
     </PageLayout>
