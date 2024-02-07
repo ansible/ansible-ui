@@ -1,28 +1,57 @@
 import { useState, MouseEvent } from 'react';
+import { useFormContext, useFieldArray } from 'react-hook-form';
 import { Dropdown, DropdownList, DropdownItem, MenuToggle } from '@patternfly/react-core';
+import { PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-// import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
-// import type { AuthenticatorPlugins } from '../../../../interfaces/AuthenticatorPlugin';
+import styled from 'styled-components';
 import { AuthenticatorMapType } from '../../../../interfaces/AuthenticatorMap';
+import type { AuthenticatorMapValues } from '../AuthenticatorForm';
+import { MapFields } from './MapFields';
 
-export function AuthenticatorMappingStep(/*props: { plugins: AuthenticatorPlugins }*/) {
-  // const { wizardData, setWizardData } = usePageWizard();
-  // const { mappings = [] } = wizardData;
+export function AuthenticatorMappingStep() {
+  const { control } = useFormContext();
+  const {
+    fields: mappings,
+    append: addMap,
+    remove: removeMap,
+  } = useFieldArray({
+    control,
+    name: 'mappings',
+  });
 
-  const addMapping = () => {};
-  // const addMapping = (value: AuthenticatorMapType) => {
-  //   setWizardData({
-  //     ...wizardData,
-  //     mappings: [...mappings, { type: value }],
-  //   });
-  // };
+  const addMapping = (value: AuthenticatorMapType) => {
+    const map: AuthenticatorMapValues = {
+      name: '',
+      map_type: value,
+      revoke: false,
+      trigger: 'always',
+    };
+    addMap(map);
+  };
 
   return (
     <>
+      {mappings.map((map, i) => (
+        <MapFields
+          key={map.id}
+          index={i}
+          map={map as unknown as AuthenticatorMapValues}
+          onDelete={removeMap}
+        />
+      ))}
       <AddMappingDropdown onSelect={addMapping} />
     </>
   );
 }
+
+const Toggle = styled(MenuToggle)`
+  color: var(--pf-v5-global--link--Color);
+
+  &::before,
+  &::after {
+    border: 0;
+  }
+`;
 
 function AddMappingDropdown(props: { onSelect: (value: AuthenticatorMapType) => void }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -44,9 +73,9 @@ function AddMappingDropdown(props: { onSelect: (value: AuthenticatorMapType) => 
       onSelect={onSelect}
       onOpenChange={(isOpen: boolean) => setIsOpen(isOpen)}
       toggle={(ref) => (
-        <MenuToggle ref={ref} onClick={() => setIsOpen(!isOpen)}>
-          {t('Add authentication mapping')}
-        </MenuToggle>
+        <Toggle ref={ref} onClick={() => setIsOpen(!isOpen)}>
+          <PlusCircleIcon style={{ marginRight: 5 }} /> {t('Add authentication mapping')}
+        </Toggle>
       )}
     >
       <DropdownList>
