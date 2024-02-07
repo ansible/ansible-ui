@@ -25,7 +25,7 @@ export function useInventoriesHostsToolbarActions(view: IAwxView<AwxHost>) {
   const params = useParams<{ id: string; inventory_type: string }>();
 
   const adhocOptions = useOptions<OptionsResponse<ActionsResponse>>(
-    awxAPI`/inventories/${params.id ?? ''}/ad_hoc_commands`
+    awxAPI`/inventories/${params.id ?? ''}/ad_hoc_commands/`
   ).data;
   const canRunAdHocCommand = Boolean(
     adhocOptions && adhocOptions.actions && adhocOptions.actions['POST']
@@ -44,7 +44,7 @@ export function useInventoriesHostsToolbarActions(view: IAwxView<AwxHost>) {
         icon: PlusIcon,
         label: t('Create host'),
         onClick: () =>
-          pageNavigate(String(AwxRoute.InventoryHostsAdd), {
+          pageNavigate(String(AwxRoute.InventoryHostAdd), {
             params: { inventory_type: params.inventory_type, id: params.id },
           }),
         isDisabled: () =>

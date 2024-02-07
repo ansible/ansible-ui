@@ -31,7 +31,7 @@ export function InventoryHostGroups() {
   const openInventoryHostsGroupsAddModal = useInventoryHostGroupsAddModal();
   const associateGroups = useAssociateGroupsToHost(view.unselectItemsAndRefresh);
 
-  const groupOptions = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/groups`).data;
+  const groupOptions = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/groups/`).data;
   const canCreateGroup = Boolean(
     groupOptions && groupOptions.actions && groupOptions.actions['POST']
   );

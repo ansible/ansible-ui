@@ -1,7 +1,7 @@
 {
   "name": "@ansible/ansible-ui",
   "description": "Ansible UI",
-  "version": "2.4.980",
+  "version": "2.4.996",
   "author": "Red Hat",
   "license": "Apache-2.0",
   "repository": {
@@ -91,6 +91,7 @@
     "@types/webpack": "5.28.5",
     "@types/webpack-dev-server": "4.7.1",
     "anser": "2.1.1",
+    "antsibull-docs": "^1.0.0",
     "babel-loader": "9.1.3",
     "babel-plugin-istanbul": "6.1.1",
     "babel-plugin-styled-components": "2.1.4",

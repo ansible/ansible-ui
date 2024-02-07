@@ -7,6 +7,7 @@ import { PageNavSideBarProvider } from './PageNavigation/PageNavSidebar';
 import { PageNotificationsProvider } from './PageNotifications/PageNotificationsProvider';
 import { SettingsProvider } from './Settings';
 import { FrameworkTranslationsProvider } from './useFrameworkTranslations';
+import { PageBreadcrumbsProvider } from './PageTabs/PageBreadcrumbs';
 
 /**
  * The `PageFramework` component bundles up all the context providers in the Ansible UI framework in a convienent component for framework consumers. Examples of internal context providers are translations, navigation, settings, alerts, and dialogs.
@@ -21,7 +22,9 @@ export function PageFramework(props: { children: ReactNode }) {
         <PageDialogProvider>
           <PageAlertToasterProvider>
             <PageNavSideBarProvider>
-              <PageNotificationsProvider>{props.children}</PageNotificationsProvider>
+              <PageNotificationsProvider>
+                <PageBreadcrumbsProvider>{props.children}</PageBreadcrumbsProvider>
+              </PageNotificationsProvider>
             </PageNavSideBarProvider>
           </PageAlertToasterProvider>
         </PageDialogProvider>

@@ -340,7 +340,9 @@ Cypress.Commands.add('hasTooltip', (label: string | RegExp) => {
 
 Cypress.Commands.add('clickToolbarKebabAction', (dataCyLabel: string | RegExp) => {
   cy.get('[data-ouia-component-id="page-toolbar"]').within(() => {
-    cy.get('[data-cy*="actions-dropdown"]')
+    cy.get('[data-cy*="actions-dropdown"]:not(:disabled):not(:hidden)')
+      .should('not.have.attr', 'aria-disabled', 'true')
+      .should('be.visible')
       .click()
       .then(() => {
         cy.get(`[data-cy=${dataCyLabel}]`).click();
@@ -357,11 +359,18 @@ Cypress.Commands.add('clickTableRow', (name: string | RegExp, filter?: boolean) 
   });
 });
 
-Cypress.Commands.add('getTableRowByText', (name: string | RegExp, filter?: boolean) => {
-  if (filter !== false && typeof name === 'string') {
-    cy.filterTableByText(name);
+Cypress.Commands.add(
+  'getTableRowByText',
+  (name: string | RegExp, filter?: boolean, variant?: 'MultiText' | 'SingleText') => {
+    if (filter !== false && typeof name === 'string') {
+      cy.filterTableByText(name, variant ?? 'MultiText');
+    }
+    cy.contains('tr', name);
   }
-  cy.contains('tr', name);
+);
+
+Cypress.Commands.add('getTableRowBySingleText', (name: string | RegExp, filter?: boolean) => {
+  cy.getTableRowByText(name, filter, 'SingleText');
 });
 
 Cypress.Commands.add('getListCardByText', (name: string | RegExp, filter?: boolean) => {
