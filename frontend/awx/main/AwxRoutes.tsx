@@ -65,6 +65,7 @@ export enum AwxRoute {
   CredentialPage = 'awx-credential-page',
   CredentialDetails = 'awx-credential-details',
   CredentialAccess = 'awx-credentials-access',
+  CredentialJobTemplates = 'awx-credentials-job-templates',
 
   Projects = 'awx-projects',
   CreateProject = 'awx-create-project',
@@ -212,6 +213,7 @@ export enum AwxRoute {
   ExecutionEnvironments = 'awx-execution-environments',
   ExecutionEnvironmentPage = 'awx-execution-environments-page',
   ExecutionEnvironmentDetails = 'awx-execution-environments-details',
+  ExecutionEnvironmentTemplates = 'awx-execution-environments-templates',
   CreateExecutionEnvironment = 'awx-create-execution-environment',
   EditExecutionEnvironment = 'awx-edit-execution-environment',
 

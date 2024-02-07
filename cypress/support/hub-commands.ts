@@ -6,23 +6,22 @@ import { parsePulpIDFromURL } from '../../frontend/hub/common/api/hub-api-utils'
 import { HubItemsResponse } from '../../frontend/hub/common/useHubView';
 import { HubNamespace } from '../../frontend/hub/namespaces/HubNamespace';
 import './commands';
+import { galaxykitPassword, galaxykitUsername } from './e2e';
 import { hubAPI, pulpAPI } from './formatApiPathForHub';
 import './rest-commands';
 import { escapeForShellCommand } from './utils';
 
 const apiPrefix = Cypress.env('HUB_API_PREFIX') as string;
 
-// GalaxyKit Integration: To invoke `galaxykit` commands for generating resources
+// GalaxyKit Integration: To invoke `galaxykit` commands for generating resource
 Cypress.Commands.add('galaxykit', (operation: string, ...args: string[]) => {
-  const adminUsername = Cypress.env('HUB_USERNAME') as string;
-  const adminPassword = Cypress.env('HUB_PASSWORD') as string;
   const galaxykitCommand = (Cypress.env('HUB_GALAXYKIT_COMMAND') as string) ?? 'galaxykit';
   const server = (Cypress.env('HUB_SERVER') as string) + apiPrefix + '/';
   const options = { failOnNonZeroExit: false };
 
   cy.log(`${galaxykitCommand} ${operation} ${args.join(' ')}`);
 
-  const cmd = `${galaxykitCommand} -c -s '${server}' -u '${adminUsername}' -p '${adminPassword}' ${operation} ${escapeForShellCommand(
+  const cmd = `${galaxykitCommand} -c -s '${server}' -u '${galaxykitUsername}' -p '${galaxykitPassword}' ${operation} ${escapeForShellCommand(
     args
   )}`;
 
@@ -37,9 +36,15 @@ Cypress.Commands.add('galaxykit', (operation: string, ...args: string[]) => {
       }
     });
 
-    cy.log(`stdout: ${stdout}`).then(() => {
-      return stdout.split('\n').filter((s) => !!s);
-    });
+    cy.log(`stdout: ${stdout}`);
+
+    let parsedStdout: unknown;
+    try {
+      parsedStdout = JSON.parse(stdout);
+    } catch (e) {
+      parsedStdout = stdout.split('\n').filter((s) => !!s);
+    }
+    return cy.wrap(parsedStdout);
   });
 });
 
@@ -87,20 +92,12 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add('uploadHubCollectionFile', (hubFilePath: string, hubFileName: string) => {
-  cy.fixture(hubFilePath, 'binary')
-    .then(Cypress.Blob.binaryStringToBlob)
-    .then((fileContent) => {
-      cy.get('input[id="file-upload-file-filename"]').attachFile(
-        {
-          fileContent,
-          fileName: hubFileName,
-          filePath: hubFilePath,
-          mimeType: 'application/gzip',
-        },
-        { subjectType: 'drag-n-drop' }
-      );
-    });
+Cypress.Commands.add('uploadHubCollectionFile', (hubFilePath: string) => {
+  cy.get('[data-cy="upload-collection"]').click();
+  cy.get('#file-upload-file-browse-button').click();
+  cy.get('input[id="file-upload-file-filename"]').selectFile(hubFilePath, {
+    action: 'drag-drop',
+  });
 });
 
 Cypress.Commands.add('addAndApproveMultiCollections', (numberOfCollections = 1) => {
@@ -296,15 +293,15 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add('createRemote', (remoteName: string) => {
+Cypress.Commands.add('createRemote', (remoteName: string, url?: string) => {
   cy.requestPost(pulpAPI`/remotes/ansible/collection/`, {
     name: remoteName,
-    url: 'https://console.redhat.com/api/automation-hub/',
+    url: url ? url : 'https://console.redhat.com/api/automation-hub/',
   });
 });
 
 Cypress.Commands.add('deleteRemote', (remoteName: string) => {
-  cy.requestDelete(pulpAPI`/remotes/ansible/collection/${remoteName}/`);
+  cy.galaxykit(`remote delete ${remoteName}`);
 });
 
 Cypress.Commands.add('createRemoteRegistry', (remoteRegistryName: string) => {
@@ -385,4 +382,14 @@ Cypress.Commands.add('collectionCopyVersionToRepositories', (collection: string)
   cy.clickButton(/^Clear all filters$/);
   cy.filterBySingleSelection(/^Repository$/, 'community');
   cy.get('[data-cy="repository-column-cell"]').should('contain', 'community');
+});
+
+Cypress.Commands.add('createRepository', (repositoryName: string, remoteName?: string) => {
+  remoteName
+    ? cy.galaxykit(`repository create --remote ${remoteName} ${repositoryName}`)
+    : cy.galaxykit(`repository create ${repositoryName}`);
+});
+
+Cypress.Commands.add('deleteRepository', (repositoryName: string) => {
+  cy.galaxykit(`repository delete ${repositoryName}`);
 });
