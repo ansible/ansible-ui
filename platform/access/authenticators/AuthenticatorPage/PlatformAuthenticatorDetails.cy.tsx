@@ -24,7 +24,7 @@ describe('PlatformTeamDetails', () => {
     );
     cy.mount(<PlatformAuthenticatorDetails />);
     cy.get('[data-cy="name"]').should('have.text', mockAuthenticator.name);
-    cy.get('[data-cy="type"]').should('have.text', mockAuthenticator.type);
+    cy.get('[data-cy="type"]').should('have.text', 'LDAP');
     cy.get('[data-cy="ldap-group-type"]').should(
       'have.text',
       mockAuthenticator.configuration.GROUP_TYPE
