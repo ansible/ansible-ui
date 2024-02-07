@@ -1,18 +1,13 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ITableColumn, TextCell, useGetPageUrl } from '../../../../framework';
-import {
-  useCreatedColumn,
-  useIdColumn,
-  useModifiedColumn,
-} from '../../../../frontend/common/columns';
+import { useCreatedColumn, useModifiedColumn } from '../../../../frontend/common/columns';
 import { PlatformUser } from '../../../interfaces/PlatformUser';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
 
 export function useUsersColumns() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
-  const idColumn = useIdColumn();
   const createdColumn = useCreatedColumn({
     sort: 'created_on',
     // hideByDefaultInTableView: true,
@@ -24,7 +19,6 @@ export function useUsersColumns() {
 
   const tableColumns = useMemo<ITableColumn<PlatformUser>[]>(
     () => [
-      idColumn,
       {
         header: t('Username'),
         cell: (user) => (
@@ -75,12 +69,10 @@ export function useUsersColumns() {
         list: 'secondary',
         sort: 'last_login',
       },
-
-      //TODO: Column to display teams. Currently not returned in the API.
       createdColumn,
       modifiedColumn,
     ],
-    [idColumn, createdColumn, getPageUrl, modifiedColumn, t]
+    [createdColumn, getPageUrl, modifiedColumn, t]
   );
   return tableColumns;
 }
