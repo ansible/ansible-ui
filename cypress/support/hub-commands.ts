@@ -393,3 +393,13 @@ Cypress.Commands.add('createRepository', (repositoryName: string, remoteName?: s
 Cypress.Commands.add('deleteRepository', (repositoryName: string) => {
   cy.galaxykit(`repository delete ${repositoryName}`);
 });
+
+Cypress.Commands.add(
+  'undeprecateCollection',
+  (collection: string, namespace: string, repository: string) => {
+    cy.requestPatch(
+      hubAPI`/v3/plugin/ansible/content/${repository}/collections/index/${namespace}/${collection}/`,
+      { deprecated: false }
+    );
+  }
+);

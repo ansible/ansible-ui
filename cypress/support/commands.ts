@@ -335,6 +335,12 @@ declare global {
         }
       ): Chainable;
 
+      /** Sends a request to the API to patch a particular resource. */
+      requestPatch<RequestBodyT extends Cypress.RequestBody, ResponseBodyT = RequestBodyT>(
+        url: string,
+        body: RequestBodyT
+      ): Chainable<ResponseBodyT>;
+
       // --- AWX COMMANDS ---
 
       /**
@@ -987,6 +993,11 @@ declare global {
       addAndApproveMultiCollections(thisRange: number): Cypress.Chainable<void>;
       createRepository(repositoryName: string, remoteName?: string): Cypress.Chainable<void>;
       deleteRepository(repositoryName: string): Cypress.Chainable<void>;
+      undeprecateCollection(
+        collectionName: string,
+        namespaceName: string,
+        repository: string
+      ): Cypress.Chainable<void>;
     }
   }
 }
