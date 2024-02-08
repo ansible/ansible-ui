@@ -80,7 +80,7 @@ export function useAwxView<T extends { id: number }>(options: {
 
           // Support for Activity Stream needing two values
           if (toolbarFilter.query === 'object1__in') {
-            if (values.length === 1) {
+            if (values.length === 1 && values.some((value) => value !== '')) {
               queryString += `or__object1__in=${values[0]
                 .split('+')
                 .join(',')}&or__object2__in=${values[0].split('+').join(',')}`;
