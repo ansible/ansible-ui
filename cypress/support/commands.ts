@@ -11,6 +11,7 @@ import { AwxToken } from '../../frontend/awx/interfaces/AwxToken';
 import { Credential } from '../../frontend/awx/interfaces/Credential';
 import { CredentialType } from '../../frontend/awx/interfaces/CredentialType';
 import { ExecutionEnvironment } from '../../frontend/awx/interfaces/ExecutionEnvironment';
+import { Instance } from '../../frontend/awx/interfaces/Instance';
 import { InstanceGroup } from '../../frontend/awx/interfaces/InstanceGroup';
 import { Inventory } from '../../frontend/awx/interfaces/Inventory';
 import { InventorySource } from '../../frontend/awx/interfaces/InventorySource';
@@ -335,6 +336,12 @@ declare global {
         }
       ): Chainable;
 
+      /** Sends a request to the API to patch a particular resource. */
+      requestPatch<RequestBodyT extends Cypress.RequestBody, ResponseBodyT = RequestBodyT>(
+        url: string,
+        body: RequestBodyT
+      ): Chainable<ResponseBodyT>;
+
       // --- AWX COMMANDS ---
 
       /**
@@ -569,9 +576,8 @@ declare global {
       createAwxInstanceGroup(
         instanceGroup?: Partial<Omit<InstanceGroup, 'id'>>
       ): Chainable<InstanceGroup>;
-
+      createAwxInstance(instance?: Partial<Omit<Instance, 'id'>>): Chainable<Instance>;
       createAwxLabel(label: Partial<Omit<Label, 'id'>>): Chainable<Label>;
-
       createGlobalOrganization(): Chainable<void>;
       createGlobalProject(): Chainable<void>;
 
@@ -654,6 +660,13 @@ declare global {
       ): Chainable<void>;
       deleteAwxInstanceGroup(
         instanceGroup: InstanceGroup,
+        options?: {
+          /** Whether to fail on response codes other than 2xx and 3xx */
+          failOnStatusCode?: boolean;
+        }
+      ): Chainable<void>;
+      removeAwxInstance(
+        id: string,
         options?: {
           /** Whether to fail on response codes other than 2xx and 3xx */
           failOnStatusCode?: boolean;
@@ -957,7 +970,6 @@ declare global {
       ): Cypress.Chainable<void>;
       uploadHubCollectionFile(hubFilePath: string): Cypress.Chainable<void>;
       createNamespace(namespaceName: string): Cypress.Chainable<void>;
-      getNamespace(namespaceName: string): Cypress.Chainable<void>;
       deleteNamespace(namespaceName: string): Cypress.Chainable<void>;
       deleteCollectionsInNamespace(namespaceName: string): Cypress.Chainable<void>;
       cleanupCollections(namespace: string, repo: string): Cypress.Chainable<void>;
@@ -987,6 +999,11 @@ declare global {
       addAndApproveMultiCollections(thisRange: number): Cypress.Chainable<void>;
       createRepository(repositoryName: string, remoteName?: string): Cypress.Chainable<void>;
       deleteRepository(repositoryName: string): Cypress.Chainable<void>;
+      undeprecateCollection(
+        collectionName: string,
+        namespaceName: string,
+        repository: string
+      ): Cypress.Chainable<void>;
     }
   }
 }

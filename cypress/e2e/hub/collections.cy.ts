@@ -64,7 +64,7 @@ describe('Collections- List View', () => {
   it.skip('user can deprecate selected collections using the list toolbar', () => {});
 });
 
-describe.skip('Collections List- Line Item Kebab Menu', () => {
+describe('Collections List- Line Item Kebab Menu', () => {
   let thisCollectionName: string;
   let namespace: string;
   let repository: string;
@@ -73,15 +73,18 @@ describe.skip('Collections List- Line Item Kebab Menu', () => {
     thisCollectionName = 'hub_e2e_' + randomString(5).toLowerCase();
     namespace = 'hub_e2e_col_namespace' + randomString(5).toLowerCase();
     cy.hubLogin();
-    cy.getNamespace(namespace);
+    cy.createNamespace(namespace);
     cy.uploadCollection(thisCollectionName, namespace);
     cy.navigateTo('hub', Collections.url);
   });
 
   afterEach(() => {
-    if (Cypress.currentTest.title !== 'user can deprecate a collection') {
-      cy.deleteCollection(thisCollectionName, namespace, repository);
+    if (Cypress.currentTest.title === 'user can deprecate a collection') {
+      cy.undeprecateCollection(thisCollectionName, namespace, repository);
+      cy.galaxykit('task wait all');
     }
+    cy.deleteCollection(thisCollectionName, namespace, repository);
+    cy.galaxykit('task wait all');
     cy.deleteNamespace(namespace);
   });
 
@@ -91,7 +94,7 @@ describe.skip('Collections List- Line Item Kebab Menu', () => {
 
   it.skip('user can delete entire collection from repository', () => {});
 
-  it.skip('user can deprecate a collection', () => {
+  it('user can deprecate a collection', () => {
     cy.approveCollection(thisCollectionName, namespace, '1.0.0');
     cy.visit(`/collections?page=1&perPage=50&sort=name&keywords=${thisCollectionName}`);
     cy.get(`a[href*="/collections/published/${namespace}/${thisCollectionName}"]`).should(
@@ -120,6 +123,7 @@ describe.skip('Collections List- Line Item Kebab Menu', () => {
     cy.visit(`/collections?page=1&perPage=50&sort=name&keywords=${thisCollectionName}`);
     cy.get('[data-cy="table-view"]').click();
     cy.contains('h2', 'No results found').should('be.visible');
+    repository = 'published';
   });
 
   it.skip('user can copy a version to repository', () => {
