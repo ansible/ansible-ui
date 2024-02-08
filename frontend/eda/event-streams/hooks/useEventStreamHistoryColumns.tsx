@@ -16,7 +16,7 @@ export function useEventStreamHistoryColumns() {
           <TextCell
             text={`${instance?.id || ''} - ${instance?.name || ''}`}
             to={getPageUrl(EdaRoute.EventStreamInstancePage, {
-              params: { id: instance.parent_id, instanceId: instance.id },
+              params: { id: instance.event_stream_id, instanceId: instance.id },
             })}
           />
         ),

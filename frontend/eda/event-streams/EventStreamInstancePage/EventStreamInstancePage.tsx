@@ -15,7 +15,7 @@ export function EventStreamInstancePage() {
     edaAPI`/activation-instances/${params.instanceId ?? ''}/`
   );
   const { data: eventStream } = useGet<EdaEventStream>(
-    edaAPI`/event-streams/${eventStreamInstance?.parent_id.toString() ?? ''}/`
+    edaAPI`/event-streams/${eventStreamInstance?.event_stream_id.toString() ?? ''}/`
   );
 
   const getPageUrl = useGetPageUrl();
@@ -41,7 +41,7 @@ export function EventStreamInstancePage() {
       />
       <PageRoutedTabs
         tabs={[{ label: t('Details'), page: EdaRoute.EventStreamInstanceDetails }]}
-        params={{ id: eventStreamInstance?.parent_id, instanceId: params.instanceId }}
+        params={{ id: eventStreamInstance?.event_stream_id, instanceId: params.instanceId }}
       />
     </PageLayout>
   );
