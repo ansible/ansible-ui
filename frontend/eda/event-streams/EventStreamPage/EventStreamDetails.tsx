@@ -44,14 +44,6 @@ export function EventStreamDetails() {
         <PageDetail label={t('Name')}>{eventStream?.name || ''}</PageDetail>
         <PageDetail label={t('Description')}>{eventStream?.description || ''}</PageDetail>
         <PageDetail label={t('Source type')}>{eventStream?.source_type || ''}</PageDetail>
-        <PageDetail
-          label={t('Channel name')}
-          helpText={t(
-            'A unique channel name is used to broadcast data to activations that use this Event Stream.'
-          )}
-        >
-          {eventStream?.channel_name || ''}
-        </PageDetail>
         {eventStream.credentials && eventStream.credentials.length > 0 && (
           <PageDetail label={t('Credential(s)')}>
             <LabelGroup>

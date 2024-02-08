@@ -65,16 +65,6 @@ export function useEventStreamColumns() {
           ),
       },
       {
-        header: t('Channel name'),
-        type: 'description',
-        value: (eventStream) => eventStream?.channel_name,
-        table: ColumnTableOption.expanded,
-        card: 'hidden',
-        list: 'secondary',
-        modal: 'hidden',
-        dashboard: 'hidden',
-      },
-      {
         header: t('Created'),
         type: 'datetime',
         value: (eventStream) => eventStream.created_at,

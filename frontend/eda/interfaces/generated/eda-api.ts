@@ -2893,7 +2893,6 @@ export interface EventStreamRead {
   args?: string;
   source_type?: string;
   description?: string;
-  channel_name?: string;
   is_enabled?: boolean;
   decision_environment?: DecisionEnvironmentRef | null;
   credentials?: CredentialRef[];
