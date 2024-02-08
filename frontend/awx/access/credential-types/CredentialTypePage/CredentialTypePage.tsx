@@ -2,18 +2,21 @@
 import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { PageActions, PageHeader, PageLayout, useGetPageUrl } from '../../../../../framework';
+import {
+  PageActions,
+  PageHeader,
+  PageLayout,
+  useGetPageUrl,
+  usePageNavigate,
+} from '../../../../../framework';
 import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { useGetItem } from '../../../../common/crud/useGet';
 import { AwxError } from '../../../common/AwxError';
 import { awxAPI } from '../../../common/api/awx-utils';
-import { useAwxView } from '../../../common/useAwxView';
 import { CredentialType } from '../../../interfaces/CredentialType';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useCredentialTypeRowActions } from '../hooks/useCredentialTypeActions';
-import { useCredentialTypesColumns } from '../hooks/useCredentialTypesColumns';
-import { useCredentialTypesFilters } from '../hooks/useCredentialTypesFilters';
 
 export function CredentialTypePage() {
   const { t } = useTranslation();
@@ -23,14 +26,12 @@ export function CredentialTypePage() {
     data: credentialType,
     refresh,
   } = useGetItem<CredentialType>(awxAPI`/credential_types`, params.id);
-  const toolbarFilters = useCredentialTypesFilters();
-  const tableColumns = useCredentialTypesColumns();
-  const view = useAwxView<CredentialType>({
-    url: awxAPI`/credential_types/`,
-    toolbarFilters,
-    tableColumns,
+  const pageNavigate = usePageNavigate();
+  const actions = useCredentialTypeRowActions({
+    onCredentialTypesDeleted: () => pageNavigate(AwxRoute.CredentialTypes),
+    isDetailsPageAction: true,
   });
-  const actions = useCredentialTypeRowActions(view);
+  const pageActions = actions;
 
   const getPageUrl = useGetPageUrl();
 
@@ -47,7 +48,7 @@ export function CredentialTypePage() {
         ]}
         headerActions={
           <PageActions<CredentialType>
-            actions={actions}
+            actions={pageActions}
             position={DropdownPosition.right}
             selectedItem={credentialType}
           />
