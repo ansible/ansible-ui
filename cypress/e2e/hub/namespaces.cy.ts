@@ -20,7 +20,7 @@ describe('Namespaces', () => {
 
   it('create, search and delete a namespace', () => {
     cy.navigateTo('hub', Namespaces.url);
-    const namespaceName = `test_namespace_${randomString(5, undefined, { isLowercase: true })}`;
+    const namespaceName = generateNamespaceName();
     cy.get('h1').should('contain', Namespaces.title);
     cy.get('[data-cy="create-namespace"]').should('be.visible').click();
     cy.url().should('include', Namespaces.urlCreate);
@@ -35,7 +35,7 @@ describe('Namespaces', () => {
 
   it('should show the correct URL when clicking on the CLI configuration tab', () => {
     cy.navigateTo('hub', Namespaces.url);
-    const namespaceName = `test_namespace_${randomString(5, undefined, { isLowercase: true })}`;
+    const namespaceName = generateNamespaceName();
     cy.get('[data-cy="create-namespace"]').should('be.visible').click();
     cy.url().should('include', Namespaces.urlCreate);
     cy.get('[data-cy="name"]').type(namespaceName);
@@ -54,7 +54,7 @@ describe('Namespaces', () => {
 
   it('should show namespace details tab', () => {
     cy.navigateTo('hub', Namespaces.url);
-    const namespaceName = `test_namespace_${randomString(5, undefined, { isLowercase: true })}`;
+    const namespaceName = generateNamespaceName();
     cy.get('[data-cy="create-namespace"]').should('be.visible').click();
     cy.url().should('include', Namespaces.urlCreate);
     cy.get('[data-cy="name"]').type(namespaceName);
@@ -77,7 +77,7 @@ describe('Namespaces', () => {
 
   it('should show collections tab', () => {
     cy.navigateTo('hub', Namespaces.url);
-    const namespaceName = `test_namespace_${randomString(5, undefined, { isLowercase: true })}`;
+    const namespaceName = generateNamespaceName();
     cy.get('[data-cy="create-namespace"]').should('be.visible').click();
     cy.url().should('include', Namespaces.urlCreate);
     cy.get('[data-cy="name"]').type(namespaceName);
@@ -99,7 +99,7 @@ describe('Namespaces', () => {
 
   it('edit a namespace', () => {
     cy.navigateTo('hub', Namespaces.url);
-    const namespaceName = `test_namespace_${randomString(5, undefined, { isLowercase: true })}`;
+    const namespaceName = generateNamespaceName();
     cy.get('[data-cy="create-namespace"]').should('be.visible').click();
     cy.url().should('include', Namespaces.urlCreate);
     cy.get('[data-cy="name"]').type(namespaceName);
@@ -122,9 +122,7 @@ describe('Namespaces', () => {
   });
 
   it('explore different views and pagination', () => {
-    const nameSpaceName = `test_pagination_namespace_${randomString(5, undefined, {
-      isLowercase: true,
-    })}`;
+    const nameSpaceName = generateNamespaceName();
     cy.createNamespace(nameSpaceName);
     cy.navigateTo('hub', Namespaces.url);
     cy.setTablePageSize('50');
@@ -145,9 +143,7 @@ describe('Namespaces', () => {
   });
 
   it('user can view import logs', () => {
-    const namespaceName = `test_pagination_namespace_${randomString(5, undefined, {
-      isLowercase: true,
-    })}`;
+    const namespaceName = generateNamespaceName();
     cy.createNamespace(namespaceName);
     cy.visit(`${Namespaces.url}/${namespaceName}`);
 
@@ -160,7 +156,7 @@ describe('Namespaces', () => {
     cy.deleteNamespace(namespaceName);
   });
 
-  it('user can bulk dekete namespaces', () => {
+  it('user can bulk delete namespaces', () => {
     const numberOfNamespaces = 5;
     for (let i = 0; i < numberOfNamespaces; i++) {
       const namespaceName = generateNamespaceName();
