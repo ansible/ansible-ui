@@ -8,8 +8,6 @@ import {
   useModifiedColumn,
   useNameColumn,
 } from '../../../../common/columns';
-import { useGet } from '../../../../common/crud/useGet';
-import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { Credential } from '../../../interfaces/Credential';
 import { CredentialType } from '../../../interfaces/CredentialType';
