@@ -22,6 +22,8 @@ import { PageFormCredentialSelect } from '../../access/credentials/components/Pa
 import { getCredentialByName } from '../../access/credentials/utils/getCredentialByName';
 import useSWR from 'swr';
 import { requestGet, requestPatch, swrOptions } from '../../../common/crud/Data';
+import { executionAsyncId } from 'async_hooks';
+import { Tooltip } from '@patternfly/react-core';
 
 const PullOption = {
   Always: 'Always pull container before running.',
@@ -39,7 +41,7 @@ export interface IExecutionEnvInput {
 }
 
 export interface IExecutionEnvBody {
-  organization?: number;
+  organization?: number | null;
   credential?: number | null;
   pull: string;
   name: string;
@@ -117,26 +119,24 @@ export function EditExecutionEnvironment() {
     executionEnvInput: IExecutionEnvInput
   ) => {
     let credential: Credential | undefined;
+    let organization: Organization | undefined;
     let modifiedInput: IExecutionEnvBody = {
       pull: '',
       name: '',
       image: '',
     };
 
-    if (executionEnvInput.credential) {
+    if (executionEnvInput.credential)
       credential = await getCredentialByName(executionEnvInput.credential);
-      modifiedInput = {
-        ...executionEnvInput,
-        organization: execution_env?.summary_fields.organization?.id,
-        credential: credential?.id,
-      };
-    } else {
-      modifiedInput = {
-        ...executionEnvInput,
-        organization: execution_env?.summary_fields.organization?.id,
-        credential: null,
-      };
-    }
+
+    if (executionEnvInput.organization)
+      organization = await getOrganizationByName(executionEnvInput.organization);
+
+    modifiedInput = {
+      ...executionEnvInput,
+      organization: organization?.id ?? null,
+      credential: credential?.id ?? null,
+    };
 
     const editedExecutionEnv = await requestPatch<ExecutionEnvironment>(
       awxAPI`/execution_environments/${id.toString()}/`,
@@ -186,14 +186,18 @@ export function EditExecutionEnvironment() {
         onCancel={onCancel}
         defaultValue={defaultValue}
       >
-        <ExecutionEnvironmentInputs mode="edit" />
+        <ExecutionEnvironmentInputs mode="edit" executionEnv={execution_env} />
       </AwxPageForm>
     </PageLayout>
   );
 }
 
-function ExecutionEnvironmentInputs(props: { mode: 'edit' | 'create' }) {
+function ExecutionEnvironmentInputs(props: {
+  mode: 'edit' | 'create';
+  executionEnv?: ExecutionEnvironment;
+}) {
   const { t } = useTranslation();
+  const isOrgGloballyAvailable = !props.executionEnv?.organization;
 
   return (
     <>
@@ -202,11 +206,35 @@ function ExecutionEnvironmentInputs(props: { mode: 'edit' | 'create' }) {
         label={t('Name')}
         placeholder={t('Enter a name')}
         isRequired
+        isDisabled={props?.executionEnv?.managed || false}
         maxLength={150}
       />
       <PageFormTextInput<IExecutionEnvInput>
         name="image"
         label={t('Image')}
+        labelHelp={
+          <span>
+            {t(
+              'The full image location, including the container registry, image name, and version tag.'
+            )}
+            <br />
+            <br />
+            {t(`Examples`)}
+            <ul>
+              <li>
+                <code>
+                  <b>quay.io/ansible/awx-ee:latest</b>
+                </code>
+              </li>
+              <li>
+                <code>
+                  <b>repo/project/image-name:tag</b>
+                </code>
+              </li>
+            </ul>
+          </span>
+        }
+        isDisabled={props?.executionEnv?.managed || false}
         placeholder={t('Enter an image')}
         isRequired
         maxLength={150}
@@ -234,17 +262,36 @@ function ExecutionEnvironmentInputs(props: { mode: 'edit' | 'create' }) {
         name="description"
         label={t('Description')}
         placeholder={t('Enter a description')}
+        isDisabled={props?.executionEnv?.managed || false}
       />
-      <PageFormOrganizationSelect<IExecutionEnvInput>
-        name="organization"
-        isDisabled={props.mode === 'edit' ? true : false}
-      />
+      {props.mode === 'edit' && isOrgGloballyAvailable ? (
+        <PageFormOrganizationSelect<IExecutionEnvInput> name="organization" isDisabled={true} />
+      ) : undefined}
+      {props.mode === 'edit' && !isOrgGloballyAvailable ? (
+        <PageFormOrganizationSelect<IExecutionEnvInput>
+          name="organization"
+          helpText={t(
+            'Leave this field blank to make the execution environment globally available.'
+          )}
+        />
+      ) : undefined}
+      {props.mode === 'create' ? (
+        <PageFormOrganizationSelect<IExecutionEnvInput>
+          name="organization"
+          helpText={t(
+            'Leave this field blank to make the execution environment globally available.'
+          )}
+        />
+      ) : undefined}
+
       <PageFormCredentialSelect<IExecutionEnvInput>
         name="credential"
+        labelHelp={t('Credential to authenticate with a protected container registry.')}
         credentialType={17}
         placeholder={t('Add registry credential')}
         selectTitle={t('Select a registry credential')}
         label={t('Registry Credential')}
+        isDisabled={props?.executionEnv?.managed || false}
       />
     </>
   );
