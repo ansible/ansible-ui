@@ -14,6 +14,7 @@ import { awxAPI } from '../../../common/api/awx-utils';
 import { Credential } from '../../../interfaces/Credential';
 import { CredentialType } from '../../../interfaces/CredentialType';
 import { AwxRoute } from '../../../main/AwxRoutes';
+import { useAwxGetAllPages } from '../../../common/useAwxGetAllPages';
 
 export function useCredentialsColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const { t } = useTranslation();
@@ -28,19 +29,19 @@ export function useCredentialsColumns(options?: { disableSort?: boolean; disable
   const descriptionColumn = useDescriptionColumn();
   const createdColumn = useCreatedColumn(options);
   const modifiedColumn = useModifiedColumn(options);
-  const itemsResponse = useGet<AwxItemsResponse<CredentialType>>(
-    awxAPI`/credential_types/`.concat(`?page=1&page_size=200`)
-  );
+
+  const { items: allCredTypes } = useAwxGetAllPages<CredentialType>(awxAPI`/credential_types/`);
+
   const credentialTypesMap: { [id: number]: string } = useMemo(() => {
-    if (itemsResponse?.data?.results) {
-      return itemsResponse.data.results.reduce((acc, credentialType) => {
+    if (allCredTypes) {
+      return allCredTypes.reduce((acc, credentialType) => {
         const { id, name } = credentialType;
         return { ...acc, [id]: name };
       });
     } else {
       return {};
     }
-  }, [itemsResponse?.data?.results]);
+  }, [allCredTypes]);
   const tableColumns = useMemo<ITableColumn<Credential>[]>(
     () => [
       idColumn,
