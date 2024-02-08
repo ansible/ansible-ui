@@ -74,12 +74,6 @@ interface IOptionChoiceAction extends IOptionActionBase {
   choices: [value: string, display_name: string];
 }
 
-interface IOptionChoiceAction extends IOptionActionBase {
-  type: 'choice';
-  default: string;
-  choices: [value: string, display_name: string];
-}
-
 interface IOptionDateTimeAction extends IOptionActionBase {
   type: 'datetime';
 }
