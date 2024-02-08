@@ -35,6 +35,7 @@ import { useSelectTeamsRemoveUsers } from '../teams/hooks/useSelectTeamsRemoveUs
 import { useDeleteUsers } from './hooks/useDeleteUsers';
 import { useUsersColumns } from './hooks/useUsersColumns';
 import { useUsersFilters } from './hooks/useUsersFilters';
+import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
 
 export function Users() {
   const { t } = useTranslation();
@@ -215,6 +216,7 @@ export function Users() {
           `A user is someone who has access to {{product}} with associated permissions and credentials.`,
           { product }
         )}
+        headerActions={<ActivityStreamIcon type={'user'} />}
       />
       <PageTable<User>
         id="awx-users-table"

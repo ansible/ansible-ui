@@ -27,6 +27,7 @@ import { AwxRoute } from '../../main/AwxRoutes';
 import { useApplicationsColumns } from './hooks/useApplicationsColumns';
 import { useApplicationsFilters } from './hooks/useApplicationsFilters';
 import { useDeleteApplications } from './hooks/useDeleteApplications';
+import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
 
 export function Applications() {
   const { t } = useTranslation();
@@ -110,6 +111,7 @@ export function Applications() {
         titleHelpTitle={t('Applications')}
         titleHelp={t('Create and configure token-based authentication for external applications.')}
         titleDocLink={`${getDocsBaseUrl(config)}/html/userguide/applications_auth.html`}
+        headerActions={<ActivityStreamIcon type={'o_auth2_application'} />}
       />
       <PageTable<Application>
         id="awx-applications-table"

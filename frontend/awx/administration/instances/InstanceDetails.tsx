@@ -142,7 +142,7 @@ export function InstanceDetailsTab(props: {
           variant="link"
           isInline
           onClick={() =>
-            pageNavigate(AwxRoute.InstancePage, {
+            pageNavigate(AwxRoute.InstanceDetails, {
               params: { id: instance.id },
             })
           }

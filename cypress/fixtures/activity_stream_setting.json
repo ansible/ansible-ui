@@ -1,0 +1,360 @@
+{
+  "count": 598,
+  "next": "/api/v2/activity_stream/?page=3",
+  "previous": "/api/v2/activity_stream/?page=1",
+  "results": [
+    {
+      "id": 26,
+      "type": "activity_stream",
+      "url": "/api/v2/activity_stream/26/",
+      "related": {
+        "setting": "/api/v2/settings/system/"
+      },
+      "summary_fields": {
+        "setting": [
+          {
+            "name": "CLEANUP_HOST_METRICS_LAST_TS",
+            "category": "system"
+          }
+        ]
+      },
+      "timestamp": "2024-01-03T00:29:03.245305Z",
+      "operation": "create",
+      "changes": {
+        "value": "2024-01-03T00:29:03.229153Z",
+        "id": 2
+      },
+      "object1": "setting",
+      "object2": "",
+      "object_association": "",
+      "action_node": "awx_1",
+      "object_type": ""
+    },
+    {
+      "id": 27,
+      "type": "activity_stream",
+      "url": "/api/v2/activity_stream/27/",
+      "related": {
+        "setting": "/api/v2/settings/system/"
+      },
+      "summary_fields": {
+        "setting": [
+          {
+            "name": "HOST_METRIC_SUMMARY_TASK_LAST_TS",
+            "category": "system"
+          }
+        ]
+      },
+      "timestamp": "2024-01-03T00:59:05.268202Z",
+      "operation": "create",
+      "changes": {
+        "value": "2024-01-03T00:59:05.254585Z",
+        "id": 3
+      },
+      "object1": "setting",
+      "object2": "",
+      "object_association": "",
+      "action_node": "awx_1",
+      "object_type": ""
+    },
+    {
+      "id": 28,
+      "type": "activity_stream",
+      "url": "/api/v2/activity_stream/28/",
+      "related": {
+        "actor": "/api/v2/users/2/",
+        "o_auth2_application": ["/api/v2/applications/1/"]
+      },
+      "summary_fields": {
+        "o_auth2_application": [
+          {
+            "id": 1,
+            "name": "test application",
+            "description": ""
+          }
+        ],
+        "actor": {
+          "id": 2,
+          "username": "awx",
+          "first_name": "",
+          "last_name": ""
+        }
+      },
+      "timestamp": "2024-01-04T19:53:46.309109Z",
+      "operation": "create",
+      "changes": {
+        "name": "test application",
+        "description": "",
+        "client_type": "confidential",
+        "redirect_uris": "",
+        "authorization_grant_type": "password",
+        "skip_authorization": false,
+        "organization": "Default-1",
+        "id": 1
+      },
+      "object1": "o_auth2_application",
+      "object2": "",
+      "object_association": "",
+      "action_node": "awx_1",
+      "object_type": ""
+    },
+    {
+      "id": 29,
+      "type": "activity_stream",
+      "url": "/api/v2/activity_stream/29/",
+      "related": {
+        "actor": "/api/v2/users/2/",
+        "job_template": ["/api/v2/job_templates/8/"]
+      },
+      "summary_fields": {
+        "job_template": [
+          {
+            "id": 8,
+            "name": "test jt",
+            "description": ""
+          }
+        ],
+        "actor": {
+          "id": 2,
+          "username": "awx",
+          "first_name": "",
+          "last_name": ""
+        }
+      },
+      "timestamp": "2024-01-04T19:59:10.609307Z",
+      "operation": "create",
+      "changes": {
+        "name": "test jt",
+        "description": "",
+        "job_type": "run",
+        "inventory": "Demo Inventory-1",
+        "project": "Demo Project-6",
+        "playbook": "hello_world.yml",
+        "scm_branch": "",
+        "forks": 0,
+        "limit": "",
+        "verbosity": 0,
+        "extra_vars": "---",
+        "job_tags": "",
+        "force_handlers": false,
+        "skip_tags": "",
+        "start_at_task": "",
+        "timeout": 0,
+        "use_fact_cache": false,
+        "execution_environment": null,
+        "host_config_key": "",
+        "ask_scm_branch_on_launch": false,
+        "ask_diff_mode_on_launch": false,
+        "ask_variables_on_launch": false,
+        "ask_limit_on_launch": false,
+        "ask_tags_on_launch": false,
+        "ask_skip_tags_on_launch": false,
+        "ask_job_type_on_launch": false,
+        "ask_verbosity_on_launch": false,
+        "ask_inventory_on_launch": false,
+        "ask_credential_on_launch": false,
+        "ask_execution_environment_on_launch": false,
+        "ask_labels_on_launch": false,
+        "ask_forks_on_launch": false,
+        "ask_job_slice_count_on_launch": false,
+        "ask_timeout_on_launch": false,
+        "ask_instance_groups_on_launch": false,
+        "survey_enabled": false,
+        "become_enabled": false,
+        "diff_mode": false,
+        "allow_simultaneous": false,
+        "job_slice_count": 1,
+        "webhook_service": "",
+        "webhook_credential": null,
+        "prevent_instance_group_fallback": false,
+        "survey_spec": "{}",
+        "id": 8
+      },
+      "object1": "job_template",
+      "object2": "",
+      "object_association": "",
+      "action_node": "awx_1",
+      "object_type": ""
+    },
+    {
+      "id": 30,
+      "type": "activity_stream",
+      "url": "/api/v2/activity_stream/30/",
+      "related": {
+        "actor": "/api/v2/users/2/",
+        "user": ["/api/v2/users/2/"],
+        "job_template": ["/api/v2/job_templates/8/"],
+        "role": ["/api/v2/roles/40/"]
+      },
+      "summary_fields": {
+        "user": [
+          {
+            "id": 2,
+            "username": "awx",
+            "first_name": "",
+            "last_name": ""
+          }
+        ],
+        "job_template": [
+          {
+            "id": 8,
+            "name": "test jt",
+            "description": ""
+          }
+        ],
+        "role": [
+          {
+            "id": 40,
+            "role_field": "admin_role"
+          }
+        ],
+        "actor": {
+          "id": 2,
+          "username": "awx",
+          "first_name": "",
+          "last_name": ""
+        }
+      },
+      "timestamp": "2024-01-04T19:59:10.656188Z",
+      "operation": "associate",
+      "changes": {
+        "object1": "job_template",
+        "object1_pk": 8,
+        "object2": "user",
+        "object2_pk": 2,
+        "action": "associate",
+        "relationship": "awx.main.models.rbac.Role_members"
+      },
+      "object1": "job_template",
+      "object2": "user",
+      "object_association": "role",
+      "action_node": "awx_1",
+      "object_type": "job_template"
+    },
+    {
+      "id": 31,
+      "type": "activity_stream",
+      "url": "/api/v2/activity_stream/31/",
+      "related": {
+        "actor": "/api/v2/users/2/",
+        "workflow_job_template": ["/api/v2/workflow_job_templates/9/"]
+      },
+      "summary_fields": {
+        "workflow_job_template": [
+          {
+            "id": 9,
+            "name": "test wf",
+            "description": ""
+          }
+        ],
+        "actor": {
+          "id": 2,
+          "username": "awx",
+          "first_name": "",
+          "last_name": ""
+        }
+      },
+      "timestamp": "2024-01-04T19:59:26.338877Z",
+      "operation": "create",
+      "changes": {
+        "name": "test wf",
+        "description": "",
+        "extra_vars": "---",
+        "organization": "Default-1",
+        "survey_enabled": false,
+        "allow_simultaneous": false,
+        "ask_variables_on_launch": false,
+        "inventory": "Demo Inventory-1",
+        "limit": null,
+        "scm_branch": null,
+        "ask_inventory_on_launch": false,
+        "ask_scm_branch_on_launch": false,
+        "ask_limit_on_launch": false,
+        "webhook_service": "",
+        "webhook_credential": null,
+        "ask_labels_on_launch": false,
+        "ask_skip_tags_on_launch": false,
+        "ask_tags_on_launch": false,
+        "skip_tags": "",
+        "job_tags": "",
+        "survey_spec": "{}",
+        "id": 9
+      },
+      "object1": "workflow_job_template",
+      "object2": "",
+      "object_association": "",
+      "action_node": "awx_1",
+      "object_type": ""
+    },
+    {
+      "id": 32,
+      "type": "activity_stream",
+      "url": "/api/v2/activity_stream/32/",
+      "related": {
+        "actor": "/api/v2/users/2/",
+        "job_template": ["/api/v2/job_templates/7/"]
+      },
+      "summary_fields": {
+        "job_template": [
+          {
+            "id": 7,
+            "name": "Demo Job Template",
+            "description": ""
+          }
+        ],
+        "actor": {
+          "id": 2,
+          "username": "awx",
+          "first_name": "",
+          "last_name": ""
+        }
+      },
+      "timestamp": "2024-01-04T19:59:54.382488Z",
+      "operation": "update",
+      "changes": {
+        "extra_vars": ["", "---"]
+      },
+      "object1": "job_template",
+      "object2": "",
+      "object_association": "",
+      "action_node": "awx_1",
+      "object_type": ""
+    },
+    {
+      "id": 33,
+      "type": "activity_stream",
+      "url": "/api/v2/activity_stream/33/",
+      "related": {
+        "actor": "/api/v2/users/2/",
+        "label": ["/api/v2/labels/1/"]
+      },
+      "summary_fields": {
+        "label": [
+          {
+            "id": 1,
+            "name": "label 1",
+            "organization_id": 1
+          }
+        ],
+        "actor": {
+          "id": 2,
+          "username": "awx",
+          "first_name": "",
+          "last_name": ""
+        }
+      },
+      "timestamp": "2024-01-04T19:59:54.621023Z",
+      "operation": "create",
+      "changes": {
+        "name": "label 1",
+        "organization": "Default-1",
+        "id": 1
+      },
+      "object1": "label",
+      "object2": "",
+      "object_association": "",
+      "action_node": "awx_1",
+      "object_type": ""
+    }
+  ]
+}

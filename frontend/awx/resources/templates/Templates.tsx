@@ -5,6 +5,7 @@ import { useAwxConfig } from '../../common/useAwxConfig';
 import { getDocsBaseUrl } from '../../common/util/getDocsBaseUrl';
 import { awxAPI } from '../../common/api/awx-utils';
 import { TemplatesList } from './TemplatesList';
+import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
 
 export function Templates() {
   const { t } = useTranslation();
@@ -24,6 +25,11 @@ export function Templates() {
         description={t(
           'A job template is a definition and set of parameters for running an Ansible job.'
         )}
+        headerActions={
+          <ActivityStreamIcon
+            type={'job_template+workflow_job_template+workflow_job_template_node'}
+          />
+        }
       />
       <TemplatesList url={awxAPI`/unified_job_templates/`} />
     </PageLayout>

@@ -13,6 +13,7 @@ import { useExecutionEnvironmentsColumns } from './hooks/useExecutionEnvironment
 import { useExecutionEnvironmentsFilters } from './hooks/useExecutionEnvironmentsFilters';
 import { useOptions } from '../../../common/crud/useOptions';
 import { OptionsResponse, ActionsResponse } from '../../interfaces/OptionsResponse';
+import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
 
 export function ExecutionEnvironments() {
   const { t } = useTranslation();
@@ -44,6 +45,7 @@ export function ExecutionEnvironments() {
           'Execution environments are container images that make it possible to incorporate system-level dependencies and collection-based content. Each execution environment allows you to have a customized image to run jobs, and each of them contain only what you need when running the job, nothing more.'
         )}
         titleDocLink={`${getDocsBaseUrl(config)}/html/userguide/execution_environments.html`}
+        headerActions={<ActivityStreamIcon type={'execution_environment'} />}
       />
       <PageTable<ExecutionEnvironment>
         id="awx-execution-environments-table"

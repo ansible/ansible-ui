@@ -10,6 +10,7 @@ import { AwxHost } from '../../interfaces/AwxHost';
 import { useHostsToolbarActions } from './hooks/useHostsToolbarActions';
 import { useHostsActions } from './hooks/useHostsActions';
 import { useHostsColumns } from './hooks/useHostsColumns';
+import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
 
 export function Hosts() {
   const { t } = useTranslation();
@@ -43,6 +44,7 @@ export function Hosts() {
           ),
         ]}
         titleDocLink={`${getDocsBaseUrl(config)}/html/userguide/hosts.html`}
+        headerActions={<ActivityStreamIcon type={'host'} />}
       />
       <PageTable<AwxHost>
         id="awx-hosts-table"
