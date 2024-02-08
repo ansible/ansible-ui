@@ -31,14 +31,14 @@ export function useRelatedGroupsToolbarActions(view: IAwxView<InventoryGroup>) {
   const alertToaster = usePageAlertToaster();
 
   const adhocOptions = useOptions<OptionsResponse<ActionsResponse>>(
-    awxAPI`/inventories/${params.id ?? ''}/ad_hoc_commands`
+    awxAPI`/inventories/${params.id ?? ''}/ad_hoc_commands/`
   ).data;
   const canRunAdHocCommand = Boolean(
     adhocOptions && adhocOptions.actions && adhocOptions.actions['POST']
   );
 
   const groupOptions = useOptions<OptionsResponse<ActionsResponse>>(
-    awxAPI`/inventories/${params.id ?? ''}/groups`
+    awxAPI`/inventories/${params.id ?? ''}/groups/`
   ).data;
   const canCreateGroup = Boolean(
     groupOptions && groupOptions.actions && groupOptions.actions['POST']

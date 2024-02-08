@@ -23,7 +23,7 @@ export function GroupPage() {
     error,
     data: inventoryGroup,
     refresh,
-  } = useGetItem<InventoryGroup>(awxAPI`/groups`, params.group_id);
+  } = useGetItem<InventoryGroup>(awxAPI`/groups/`, params.group_id);
 
   const getPageUrl = useGetPageUrl();
 

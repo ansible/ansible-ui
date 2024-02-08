@@ -27,7 +27,7 @@ export function GroupRelatedGroups() {
   const rowActions = useInventoriesGroupsActions();
   const emptyStateActions = useRelatedGroupsEmptyStateActions(view);
 
-  const groupsOptions = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/groups`).data;
+  const groupsOptions = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/groups/`).data;
   const canCreateGroup = Boolean(
     groupsOptions && groupsOptions.actions && groupsOptions.actions['POST']
   );

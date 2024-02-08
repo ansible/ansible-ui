@@ -140,7 +140,7 @@ export function useAwxInventoryRoutes() {
             },
             {
               id: AwxRoute.InventoryGroupRelatedGroups,
-              path: 'related_groups',
+              path: 'nested_groups',
               element: <GroupRelatedGroups />,
             },
             {

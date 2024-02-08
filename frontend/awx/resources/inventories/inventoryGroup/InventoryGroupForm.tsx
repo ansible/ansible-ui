@@ -10,100 +10,151 @@ import { GroupCreate } from '../../groups/GroupCreate';
 import { InventoryGroup } from '../../../interfaces/InventoryGroup';
 import { GroupEdit } from '../../groups/GroupEdit';
 
+interface GroupFormPageHeaderProps {
+  title: string;
+  breadcrumbs: Array<keyof GroupFormBreadCrumbObj>;
+  inventoryName?: string;
+  groupName?: string;
+  urlParams: Readonly<
+    Partial<{
+      inventory_type: string;
+      group_id: string;
+      id: string;
+    }>
+  >;
+}
+
+interface GroupFormBreadCrumbObj {
+  inventories: {
+    label: string;
+    to: string;
+  };
+  inventory: {
+    label: string;
+    to: string;
+  };
+  groups: {
+    label: string;
+    to: string;
+  };
+  group: {
+    label: string;
+    to: string;
+  };
+  relatedGroups: {
+    label: string;
+    to: string;
+  };
+}
+
+function GroupFormPageHeader(props: GroupFormPageHeaderProps) {
+  const { t } = useTranslation();
+  const getPageUrl = useGetPageUrl();
+
+  const breadcrumbsParams = {
+    id: { id: props.urlParams.id },
+    inventory_type: { inventory_type: props.urlParams.inventory_type },
+    group_id: { group_id: props.urlParams.group_id },
+  };
+
+  const breadcrumbsObj: GroupFormBreadCrumbObj = {
+    inventories: { label: t('Inventories'), to: getPageUrl(AwxRoute.Inventories) },
+    inventory: {
+      label: `${props.inventoryName}`,
+      to: getPageUrl(AwxRoute.InventoryDetails, {
+        params: { ...breadcrumbsParams.id, ...breadcrumbsParams.inventory_type },
+      }),
+    },
+    groups: {
+      label: t('Groups'),
+      to: getPageUrl(AwxRoute.InventoryGroups, {
+        params: { ...breadcrumbsParams.id, ...breadcrumbsParams.inventory_type },
+      }),
+    },
+    group: {
+      label: `${props.groupName}`,
+      to: getPageUrl(AwxRoute.InventoryGroupDetails, {
+        params: {
+          ...breadcrumbsParams.id,
+          ...breadcrumbsParams.inventory_type,
+          ...breadcrumbsParams.group_id,
+        },
+      }),
+    },
+    relatedGroups: {
+      label: t('Related groups'),
+      to: getPageUrl(AwxRoute.InventoryGroupRelatedGroups, {
+        params: {
+          ...breadcrumbsParams.id,
+          ...breadcrumbsParams.inventory_type,
+          ...breadcrumbsParams.group_id,
+        },
+      }),
+    },
+  };
+
+  return (
+    <PageHeader
+      title={props.title}
+      breadcrumbs={props.breadcrumbs.map((breadcrumb) => breadcrumbsObj[breadcrumb])}
+    />
+  );
+}
+
 export function CreateGroup() {
   const { t } = useTranslation();
-  const params = useParams<{ id: string }>();
+  const params = useParams<{ inventory_type: string; id: string }>();
   const {
     error,
     data: inventory,
     refresh,
-  } = useGet<Inventory>(awxAPI`/inventories/${params.id?.toString() ?? ''}`);
-
-  const getPageUrl = useGetPageUrl();
+  } = useGet<Inventory>(awxAPI`/inventories/${params.id?.toString() ?? ''}/`);
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!inventory) return <LoadingPage breadcrumbs tabs />;
 
+  const breadcrumbs: Array<keyof GroupFormBreadCrumbObj> = ['inventories', 'inventory', 'groups'];
+
   return (
     <PageLayout>
-      <PageHeader
+      <GroupFormPageHeader
         title={t('Create new group')}
-        breadcrumbs={[
-          { label: t('Inventories'), to: getPageUrl(AwxRoute.Inventories) },
-          {
-            label: `${inventory?.name}`,
-            to: getPageUrl(AwxRoute.InventoryDetails, {
-              params: {
-                id: inventory?.id,
-                inventory_type: 'inventory',
-              },
-            }),
-          },
-          {
-            label: t('Groups'),
-            to: getPageUrl(AwxRoute.InventoryGroups, {
-              params: {
-                id: inventory?.id,
-                inventory_type: 'inventory',
-              },
-            }),
-          },
-        ]}
+        breadcrumbs={breadcrumbs}
+        urlParams={params}
+        inventoryName={inventory?.name}
       />
-      <GroupCreate inventory={inventory} />
+      <GroupCreate />
     </PageLayout>
   );
 }
 
 export function EditGroup() {
   const { t } = useTranslation();
-  const params = useParams<{ group_id: string }>();
+  const params = useParams<{ inventory_type: string; group_id: string }>();
   const {
     error,
     data: group,
     refresh,
-  } = useGet<InventoryGroup>(awxAPI`/groups/${params.group_id?.toString() ?? ''}`);
-
-  const getPageUrl = useGetPageUrl();
+  } = useGet<InventoryGroup>(awxAPI`/groups/${params.group_id?.toString() ?? ''}/`);
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!group) return <LoadingPage breadcrumbs tabs />;
 
+  const breadcrumbs: Array<keyof GroupFormBreadCrumbObj> = [
+    'inventories',
+    'inventory',
+    'groups',
+    'group',
+  ];
+
   return (
     <PageLayout>
-      <PageHeader
+      <GroupFormPageHeader
         title={t('Edit group')}
-        breadcrumbs={[
-          { label: t('Inventories'), to: getPageUrl(AwxRoute.Inventories) },
-          {
-            label: `${group?.summary_fields.inventory.name}`,
-            to: getPageUrl(AwxRoute.InventoryDetails, {
-              params: {
-                id: group?.summary_fields.inventory.id,
-                inventory_type: 'inventory',
-              },
-            }),
-          },
-          {
-            label: t('Groups'),
-            to: getPageUrl(AwxRoute.InventoryGroups, {
-              params: {
-                id: group?.summary_fields.inventory.id,
-                inventory_type: 'inventory',
-              },
-            }),
-          },
-          {
-            label: `${group?.name}`,
-            to: getPageUrl(AwxRoute.InventoryGroupDetails, {
-              params: {
-                id: group?.summary_fields.inventory.id,
-                inventory_type: 'inventory',
-                group_id: group.id,
-              },
-            }),
-          },
-        ]}
+        breadcrumbs={breadcrumbs}
+        urlParams={params}
+        inventoryName={group?.summary_fields.inventory.name}
+        groupName={group?.name}
       />
       <GroupEdit />
     </PageLayout>
@@ -112,67 +163,34 @@ export function EditGroup() {
 
 export function CreateRelatedGroup() {
   const { t } = useTranslation();
-  const params = useParams<{ group_id: string; id: string }>();
+  const params = useParams<{ inventory_type: string; group_id: string; id: string }>();
   const {
     error,
     data: inventoryGroup,
     refresh,
-  } = useGetItem<InventoryGroup>(awxAPI`/groups`, params.group_id);
-
-  const { data: inventory } = useGet<Inventory>(awxAPI`/inventories/${params.id ?? ''}`);
-
-  const getPageUrl = useGetPageUrl();
+  } = useGetItem<InventoryGroup>(awxAPI`/groups/`, params.group_id);
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!inventoryGroup) return <LoadingPage breadcrumbs tabs />;
 
+  const breadcrumbs: Array<keyof GroupFormBreadCrumbObj> = [
+    'inventories',
+    'inventory',
+    'groups',
+    'group',
+    'relatedGroups',
+  ];
+
   return (
     <PageLayout>
-      <PageHeader
+      <GroupFormPageHeader
         title={t('Create new group')}
-        breadcrumbs={[
-          { label: t('Inventories'), to: getPageUrl(AwxRoute.Inventories) },
-          {
-            label: `${inventoryGroup?.summary_fields.inventory.name}`,
-            to: getPageUrl(AwxRoute.InventoryDetails, {
-              params: {
-                id: inventoryGroup?.summary_fields.inventory.id,
-                inventory_type: 'inventory',
-              },
-            }),
-          },
-          {
-            label: t('Groups'),
-            to: getPageUrl(AwxRoute.InventoryGroups, {
-              params: {
-                id: inventoryGroup?.summary_fields.inventory.id,
-                inventory_type: 'inventory',
-              },
-            }),
-          },
-          {
-            label: `${inventoryGroup?.name}`,
-            to: getPageUrl(AwxRoute.InventoryGroupDetails, {
-              params: {
-                id: inventoryGroup?.summary_fields.inventory.id,
-                inventory_type: 'inventory',
-                group_id: inventoryGroup?.id,
-              },
-            }),
-          },
-          {
-            label: t('Related groups'),
-            to: getPageUrl(AwxRoute.InventoryGroupRelatedGroups, {
-              params: {
-                id: inventoryGroup?.summary_fields.inventory.id,
-                inventory_type: 'inventory',
-                group_id: inventoryGroup?.id,
-              },
-            }),
-          },
-        ]}
+        breadcrumbs={breadcrumbs}
+        urlParams={params}
+        inventoryName={inventoryGroup?.summary_fields.inventory.name}
+        groupName={inventoryGroup?.name}
       />
-      <GroupCreate inventory={inventory as Inventory} />
+      <GroupCreate />
     </PageLayout>
   );
 }

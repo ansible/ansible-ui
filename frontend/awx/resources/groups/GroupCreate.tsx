@@ -13,22 +13,21 @@ import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSe
 import { AwxRoute } from '../../main/AwxRoutes';
 import { awxAPI } from '../../common/api/awx-utils';
 import { InventoryGroup } from '../../interfaces/InventoryGroup';
-import { Inventory } from '../../interfaces/Inventory';
 
-export function GroupCreate(props: { inventory: Inventory }) {
+export function GroupCreate() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
   const postRequest = usePostRequest<InventoryGroupCreate, InventoryGroup>();
   const postParentGroup = usePostRequest<InventoryGroupRelatedGroup>();
-  const params = useParams<{ group_id: string }>();
+  const params = useParams<{ id: string; group_id: string }>();
 
   const onSubmit: PageFormSubmitHandler<InventoryGroupCreate> = async (groupInput) => {
     const { name, description, variables } = groupInput;
     const createGroup: InventoryGroupCreate = {
       name,
       description: description ?? '',
-      inventory: props.inventory?.id ?? 0,
+      inventory: parseInt(params.id as string),
       variables: variables ?? '',
     };
     const newGroup = await postRequest(awxAPI`/groups/`, createGroup);

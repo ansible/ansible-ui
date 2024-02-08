@@ -27,7 +27,7 @@ export function useRelatedGroupsEmptyStateActions(view: IAwxView<InventoryGroup>
   const alertToaster = usePageAlertToaster();
 
   const groupOptions = useOptions<OptionsResponse<ActionsResponse>>(
-    awxAPI`/inventories/${params.id ?? ''}/groups`
+    awxAPI`/inventories/${params.id ?? ''}/groups/`
   ).data;
   const canCreateGroup = Boolean(
     groupOptions && groupOptions.actions && groupOptions.actions['POST']
