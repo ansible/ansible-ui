@@ -50,7 +50,11 @@ interface FieldValuesWithArray<T> extends FieldValues {
 }
 
 export function PageFormMultiInput<
-  T extends { id: number | string; name: string },
+  T extends {
+    hostname?: string;
+    id: number | string;
+    name: string;
+  },
   TFieldValues extends FieldValuesWithArray<T> = FieldValuesWithArray<T>,
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >(props: PageFormMultiInputProps<T, TFieldValues, TFieldName>) {
@@ -97,7 +101,7 @@ export function PageFormMultiInput<
                   >
                     {value?.map((item) => (
                       <Chip key={item.id} onClick={() => removeItem(item)}>
-                        {item.name}
+                        {item.hostname ?? item.name}
                       </Chip>
                     ))}
                   </ChipGroup>

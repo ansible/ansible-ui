@@ -175,3 +175,17 @@ export function useImageToolbarFilter() {
     [t]
   );
 }
+
+export function useHostnameToolbarFilter() {
+  const { t } = useTranslation();
+  return useMemo<IToolbarFilter>(
+    () => ({
+      key: 'hostname',
+      label: t('Host name'),
+      type: ToolbarFilterType.SingleText,
+      query: 'hostname__icontains',
+      comparison: 'contains',
+    }),
+    [t]
+  );
+}

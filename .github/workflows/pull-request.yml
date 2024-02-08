@@ -19,8 +19,6 @@ jobs:
       awx: ${{ steps.changed-awx.outputs.changed == 'true' }}
       hub: ${{ steps.changed-hub.outputs.changed == 'true' }}
       eda: ${{ steps.changed-eda.outputs.changed == 'true' }}
-      afw: ${{ steps.changed-afw.outputs.changed == 'true' }}
-      common: ${{ steps.changed-common.outputs.changed == 'true' }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -41,26 +39,27 @@ jobs:
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
-      - uses: marceloprado/has-changed-path@v1.0.1
-        id: changed-awx
-        with:
-          paths: frontend/awx frontend/common cypress/e2e/awx framework cypress/support package.json
-      - uses: marceloprado/has-changed-path@v1.0.1
-        id: changed-hub
-        with:
-          paths: frontend/hub frontend/common cypress/e2e/hub framework cypress/support package.json
-      - uses: marceloprado/has-changed-path@v1.0.1
-        id: changed-eda
-        with:
-          paths: frontend/eda frontend/common cypress/e2e/eda framework cypress/support package.json
-      - uses: marceloprado/has-changed-path@v1.0.1
-        id: changed-afw
-        with:
-          paths: framework
-      - uses: marceloprado/has-changed-path@v1.0.1
-        id: changed-common
-        with:
-          paths: frontend/common framework cypress/support package.json
+      - id: changed-awx
+        run: |
+          if $(git diff --quiet HEAD^ HEAD -- frontend/awx frontend/common cypress/e2e/awx framework cypress/support package.json); then
+            echo "changed=false" >> "$GITHUB_OUTPUT" 
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT" 
+          fi
+      - id: changed-hub
+        run: |
+          if $(git diff --quiet HEAD^ HEAD -- frontend/hub frontend/common cypress/e2e/hub framework cypress/support package.json); then
+            echo "changed=false" >> "$GITHUB_OUTPUT" 
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT" 
+          fi
+      - id: changed-eda
+        run: |
+          if $(git diff --quiet HEAD^ HEAD -- frontend/eda frontend/common cypress/e2e/eda framework cypress/support package.json); then
+            echo "changed=false" >> "$GITHUB_OUTPUT" 
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT" 
+          fi        
 
   checks:
     name: ESLint - Prettier - TSC

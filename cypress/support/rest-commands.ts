@@ -81,3 +81,22 @@ Cypress.Commands.add(
     );
   }
 );
+
+Cypress.Commands.add('requestPatch', function requestPatch<
+  RequestBodyT extends Cypress.RequestBody,
+  ResponseBodyT = RequestBodyT,
+>(url: string, body: RequestBodyT) {
+  cy.getCookie('csrftoken').then((cookie) =>
+    cy
+      .request<ResponseBodyT>({
+        method: 'PATCH',
+        url,
+        body,
+        headers: {
+          'X-CSRFToken': cookie?.value,
+          Referer: Cypress.config().baseUrl,
+        },
+      })
+      .then((response) => response.body)
+  );
+});
