@@ -26,6 +26,7 @@ import { PlatformItemsResponse } from '../../../interfaces/PlatformItemsResponse
 import { PlatformTeam } from '../../../interfaces/PlatformTeam';
 import { PlatformUser } from '../../../interfaces/PlatformUser';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
+import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 
 export function CreatePlatformUser() {
   const { t } = useTranslation();
@@ -157,6 +158,18 @@ function PlatformUserInputs(props: { isCreate?: boolean }) {
       })),
     };
   }, []);
+  const queryOrganizations = useCallback(async (page: number) => {
+    const organizations = await requestGet<PlatformItemsResponse<PlatformOrganization>>(
+      gatewayV1API`/organizations/?page=${page.toString()}`
+    );
+    return {
+      total: organizations.count,
+      options: organizations.results.map((organization) => ({
+        label: organization.name,
+        value: organization.id,
+      })),
+    };
+  }, []);
   return (
     <>
       <PageFormSection>
@@ -187,7 +200,7 @@ function PlatformUserInputs(props: { isCreate?: boolean }) {
       />
       <PageFormTextInput<PlatformUser>
         name="email"
-        label={t('EMail')}
+        label={t('Email')}
         placeholder={t('Enter email')}
       />
 
@@ -205,6 +218,16 @@ function PlatformUserInputs(props: { isCreate?: boolean }) {
           description={t(
             'System auditors have read-only access to the system and can view all resources.'
           )}
+        />
+      </PageFormSection>
+
+      <PageFormSection singleColumn title={t('Organizations')}>
+        <PageFormAsyncMultiSelect<PlatformUser>
+          name="organizations"
+          placeholder={t('Select organizations')}
+          queryOptions={queryOrganizations}
+          queryPlaceholder={t('Loading organizations...')}
+          queryErrorText={(error) => t('Error loading organizations: {{error}}', { error })}
         />
       </PageFormSection>
 
