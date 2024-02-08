@@ -4,7 +4,6 @@ import { Role } from '../../frontend/hub/access/roles/Role';
 import { CollectionVersionSearch } from '../../frontend/hub/collections/Collection';
 import { parsePulpIDFromURL } from '../../frontend/hub/common/api/hub-api-utils';
 import { HubItemsResponse } from '../../frontend/hub/common/useHubView';
-import { HubNamespace } from '../../frontend/hub/namespaces/HubNamespace';
 import './commands';
 import { galaxykitPassword, galaxykitUsername } from './e2e';
 import { hubAPI, pulpAPI } from './formatApiPathForHub';
@@ -227,30 +226,11 @@ Cypress.Commands.add('cleanupCollections', (namespace: string, repo: string) => 
 });
 
 Cypress.Commands.add('createNamespace', (namespaceName: string) => {
-  cy.requestPost(hubAPI`/_ui/v1/namespaces/`, {
-    name: namespaceName,
-    groups: [],
-  });
+  cy.galaxykit('namespace create', namespaceName);
 });
-
-Cypress.Commands.add('getNamespace', (namespaceName: string) => {
-  cy.requestGet<HubItemsResponse<HubNamespace>>(
-    hubAPI`/_ui/v1/namespaces/?name=${namespaceName}`
-  ).then((itemsResponse) => {
-    if (itemsResponse.data.length === 0) {
-      cy.createNamespace(namespaceName);
-    } else {
-      cy.log('Namespace Exists');
-    }
-  });
-});
-
-// Cypress.Commands.add('deleteNamespace', (namespaceName: string) => {
-//   cy.galaxykit('namespace delete', namespaceName);
-// });
 
 Cypress.Commands.add('deleteNamespace', (namespaceName: string) => {
-  cy.requestDelete(hubAPI`/_ui/v1/namespaces/${namespaceName}/`);
+  cy.galaxykit('-i namespace delete', namespaceName);
 });
 
 Cypress.Commands.add('deleteCollectionsInNamespace', (namespaceName: string) => {
