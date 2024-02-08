@@ -28,7 +28,7 @@ export function useAwxInstancesRoutes() {
         },
         {
           id: AwxRoute.InstanceDetails,
-          path: ':id/',
+          path: ':id/details',
           element: <InstanceDetails />,
         },
         {
