@@ -63,6 +63,10 @@ export interface SummaryFieldInventory {
   total_hosts: number;
   total_inventory_sources: number;
 }
+export interface SummaryFieldInstance {
+  id: number;
+  hostname: string;
+}
 
 export interface SummaryFieldWorkflowJob {
   id: number;

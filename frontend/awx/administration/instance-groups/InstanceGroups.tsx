@@ -12,6 +12,7 @@ import {
   useInstanceGroupToolbarActions,
 } from './hooks/useInstanceGroupActions';
 import { useInstanceGroupsColumns } from './hooks/useInstanceGroupColumns';
+import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
 
 export function InstanceGroups() {
   const { t } = useTranslation();
@@ -35,6 +36,7 @@ export function InstanceGroups() {
         description={t(
           'An instance group provides the ability to group instances in a clustered environment.'
         )}
+        headerActions={<ActivityStreamIcon type={'instance_group'} />}
       />
       <PageTable<InstanceGroup>
         id="awx-instance-groups-table"

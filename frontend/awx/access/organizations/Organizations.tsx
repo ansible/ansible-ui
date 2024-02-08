@@ -43,6 +43,7 @@ import { AwxRoute } from '../../main/AwxRoutes';
 import { useSelectUsersAddOrganizations } from '../users/hooks/useSelectUsersAddOrganizations';
 import { useSelectUsersRemoveOrganizations } from '../users/hooks/useSelectUsersRemoveOrganizations';
 import { useDeleteOrganizations } from './hooks/useDeleteOrganizations';
+import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
 
 export function Organizations() {
   const { t } = useTranslation();
@@ -173,6 +174,7 @@ export function Organizations() {
           `An Organization is a logical collection of Users, Teams, Projects, and Inventories, and is the highest level in the {{product}} object hierarchy.`,
           { product }
         )}
+        headerActions={<ActivityStreamIcon type={'organization'} />}
       />
       <PageTable<Organization>
         id="awx-organizations-table"

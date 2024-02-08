@@ -57,7 +57,7 @@ export function AddInstance() {
     }
 
     const newInstance = await postRequest(awxAPI`/instances/`, instanceInput);
-    pageNavigate(AwxRoute.InstancePage, { params: { id: newInstance.id } });
+    pageNavigate(AwxRoute.InstanceDetails, { params: { id: newInstance.id } });
   };
 
   const onCancel = () => navigate(-1);

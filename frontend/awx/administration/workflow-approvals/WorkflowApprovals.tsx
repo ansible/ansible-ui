@@ -12,6 +12,7 @@ import { useWorkflowApprovalToolbarActions } from './hooks/useWorkflowApprovalTo
 import { useWorkflowApprovalsColumns } from './hooks/useWorkflowApprovalsColumns';
 import { useWorkflowApprovalsFilters } from './hooks/useWorkflowApprovalsFilters';
 import { useWorkflowApprovalsRowActions } from './hooks/useWorkflowApprovalsRowActions';
+import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
 
 export function WorkflowApprovals() {
   const { t } = useTranslation();
@@ -63,6 +64,7 @@ export function WorkflowApprovals() {
           `A workflow approval represents a pause in a workflow where approval is needed before the workflow continues executing.`,
           { product }
         )}
+        headerActions={<ActivityStreamIcon type={'workflow_approval'} />}
       />
       <PageTable
         toolbarFilters={toolbarFilters}

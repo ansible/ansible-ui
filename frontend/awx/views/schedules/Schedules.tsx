@@ -13,6 +13,7 @@ import { useSchedulesActions } from './hooks/useSchedulesActions';
 import { useSchedulesColumns } from './hooks/useSchedulesColumns';
 import { useSchedulesFilter } from './hooks/useSchedulesFilter';
 import { useScheduleToolbarActions } from './hooks/useSchedulesToolbarActions';
+import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
 
 export function Schedules(props: { sublistEndpoint?: string }) {
   const { t } = useTranslation();
@@ -57,6 +58,7 @@ export function Schedules(props: { sublistEndpoint?: string }) {
         description={t(
           'Schedules are used to launch jobs on a regular basis. They can be used to launch jobs against machines, synchronize with inventory sources, and import project content from a version control system.'
         )}
+        headerActions={<ActivityStreamIcon type={'schedule'} />}
       />
       <PageTable<Schedule>
         id="awx-schedules-table"

@@ -27,7 +27,7 @@ export function useAwxInstancesRoutes() {
           element: <EditInstance />,
         },
         {
-          id: AwxRoute.InstancePage,
+          id: AwxRoute.InstanceDetails,
           path: ':id/details',
           element: <InstanceDetails />,
         },

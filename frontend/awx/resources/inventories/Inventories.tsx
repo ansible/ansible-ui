@@ -15,6 +15,7 @@ import { useInventoriesColumns } from './hooks/useInventoriesColumns';
 import { useInventoriesFilters } from './hooks/useInventoriesFilters';
 import { useInventoriesToolbarActions } from './hooks/useInventoriesToolbarActions';
 import { useInventoryActions } from './hooks/useInventoryActions';
+import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
 
 export type WebSocketInventory = {
   status: string;
@@ -102,6 +103,7 @@ export function Inventories() {
         description={t(
           'An inventory defines the hosts and groups of hosts upon which commands, modules, and tasks in a playbook operate.'
         )}
+        headerActions={<ActivityStreamIcon type={'inventory'} />}
       />
       <PageTable<Inventory>
         id="awx-inventories-table"
