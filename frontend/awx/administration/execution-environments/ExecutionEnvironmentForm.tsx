@@ -22,8 +22,6 @@ import { PageFormCredentialSelect } from '../../access/credentials/components/Pa
 import { getCredentialByName } from '../../access/credentials/utils/getCredentialByName';
 import useSWR from 'swr';
 import { requestGet, requestPatch, swrOptions } from '../../../common/crud/Data';
-import { executionAsyncId } from 'async_hooks';
-import { Tooltip } from '@patternfly/react-core';
 
 const PullOption = {
   Always: 'Always pull container before running.',
