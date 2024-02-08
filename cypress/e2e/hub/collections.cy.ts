@@ -73,7 +73,7 @@ describe('Collections List- Line Item Kebab Menu', () => {
     thisCollectionName = 'hub_e2e_' + randomString(5).toLowerCase();
     namespace = 'hub_e2e_col_namespace' + randomString(5).toLowerCase();
     cy.hubLogin();
-    cy.getNamespace(namespace);
+    cy.createNamespace(namespace);
     cy.uploadCollection(thisCollectionName, namespace);
     cy.navigateTo('hub', Collections.url);
   });

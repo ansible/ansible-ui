@@ -10,7 +10,7 @@ describe('Approvals', () => {
     thisCollectionName = 'hub_e2e_' + randomString(5).toLowerCase();
     namespace = 'hub_e2e_appr_namespace' + randomString(5).toLowerCase();
     cy.hubLogin();
-    cy.getNamespace(namespace);
+    cy.createNamespace(namespace);
     cy.uploadCollection(thisCollectionName, namespace);
     cy.galaxykit('task wait all');
 
