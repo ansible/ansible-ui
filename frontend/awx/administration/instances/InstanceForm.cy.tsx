@@ -1,4 +1,4 @@
-import { AddInstance } from './InstanceForm';
+import { AddInstance, EditInstance } from './InstanceForm';
 import type { IInstanceInput } from './InstanceForm';
 
 describe('Add instance Form', () => {
@@ -104,5 +104,32 @@ describe('Add instance Form', () => {
           peers_from_control_nodes: true,
         });
       });
+  });
+});
+
+describe('Edit instance Form', () => {
+  it('Edit instance form should render', () => {
+    cy.mount(<EditInstance />);
+    cy.verifyPageTitle('Edit instance');
+    cy.get('[data-cy="hostname"]').should('be.visible').should('be.disabled');
+    cy.get('[data-cy="description"]').should('be.visible').should('not.be.disabled');
+    cy.get('[data-cy="node-state"]').should('be.visible').should('be.disabled');
+    cy.get('[data-cy="listener-port"]').should('be.visible').should('not.be.disabled');
+    cy.get('[data-cy="node-type-form-group"]')
+      .should('be.visible')
+      .within(() => {
+        cy.get('button').should('be.visible').should('be.disabled');
+      });
+    cy.get('[data-cy="peer-select-form-group"]')
+      .should('be.visible')
+      .within(() => {
+        cy.get('button').should('be.visible').should('not.be.disabled');
+      });
+    cy.get('[data-cy="enabled"]').should('be.visible').should('not.be.disabled');
+    cy.get('[data-cy="managed_by_policy"]').should('be.visible').should('not.be.disabled');
+    cy.get('[data-cy="peers_from_control_nodes"]').should('be.visible').should('not.be.disabled');
+
+    cy.get('[data-cy="Submit"]').should('be.visible').should('not.be.disabled');
+    cy.get('[data-cy="Cancel"]').should('be.visible').should('not.be.disabled');
   });
 });

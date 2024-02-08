@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
   PageFormSelect,
   PageFormSubmitHandler,
@@ -19,6 +19,8 @@ import { PageFormPeersSelect } from './components/PageFormPeersSelect';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { awxAPI } from '../../common/api/awx-utils';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
+import { requestGet, requestPatch, swrOptions } from '../../../common/crud/Data';
+import useSWR, { useSWRConfig } from 'swr';
 
 const InstanceType = {
   Execution: 'execution',
@@ -80,6 +82,58 @@ export function AddInstance() {
         defaultValue={{ node_type: InstanceType.Execution, node_state: 'installed' }}
       >
         <InstanceInputs mode="create" />
+      </AwxPageForm>
+    </>
+  );
+}
+
+export function EditInstance() {
+  const params = useParams();
+  const id = Number(params.id);
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const { data: instance } = useSWR<Instance>(
+    awxAPI`/instances/${id?.toString()}/`,
+    requestGet,
+    swrOptions
+  );
+
+  const { cache } = useSWRConfig();
+
+  const onSubmit: PageFormSubmitHandler<Instance> = async (instanceInput: Instance) => {
+    instanceInput.listener_port = Number(instanceInput.listener_port);
+    const modifiedInput: string[] = [];
+    if (instanceInput.peers) {
+      instanceInput.peers?.map((element: { hostname: string }) => {
+        modifiedInput.push(element.hostname);
+      });
+      instanceInput.peers = modifiedInput;
+    }
+    await requestPatch<Instance>(awxAPI`/instances/${id.toString()}/`, instanceInput);
+    (cache as unknown as { clear: () => void }).clear?.();
+    navigate(-1);
+  };
+
+  const onCancel = () => navigate(-1);
+  const getPageUrl = useGetPageUrl();
+
+  return (
+    <>
+      <PageHeader
+        title={t('Edit instance')}
+        breadcrumbs={[
+          { label: t('Instances'), to: getPageUrl(AwxRoute.Instances) },
+          { label: t('Edit instance') },
+        ]}
+      />
+      <AwxPageForm
+        submitText={t('Save')}
+        onSubmit={onSubmit}
+        cancelText={t('Cancel')}
+        onCancel={onCancel}
+        defaultValue={getInitialFormValues(instance)}
+      >
+        <InstanceInputs mode="edit" />
       </AwxPageForm>
     </>
   );
@@ -172,4 +226,27 @@ function InstanceInputs(props: { mode: 'create' | 'edit' }) {
       </PageFormSection>
     </>
   );
+}
+
+function getInitialFormValues(instance: Instance | undefined) {
+  interface Hostname {
+    hostname: string;
+  }
+  const peers: Hostname[] = [];
+
+  instance?.peers.map((element: string) => {
+    peers.push({ hostname: element });
+  });
+
+  return {
+    hostname: instance?.hostname,
+    listener_port: instance?.listener_port,
+    node_state: instance?.node_state,
+    node_type: instance?.node_type,
+    description: instance?.description,
+    peers: peers,
+    peers_from_control_nodes: instance?.peers_from_control_nodes,
+    managed_by_policy: instance?.managed_by_policy,
+    enabled: instance?.enabled,
+  };
 }

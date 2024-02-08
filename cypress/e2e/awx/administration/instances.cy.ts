@@ -27,6 +27,8 @@ describe('Instances', () => {
     cy.get('[data-cy="add-instance"]').click();
     cy.get('[data-cy="page-title"]').should('contain', 'Add instance');
 
+    cy.intercept('POST', '/api/v2/instances*').as('postPatch');
+
     cy.get('[data-cy="hostname"]').type(instanceHostname);
     cy.get('[data-cy="description"]').type('E2E Instance Description');
     cy.get('[data-cy="listener-port"]').type('9999');
@@ -49,5 +51,29 @@ describe('Instances', () => {
       });
   });
 
-  it.skip('user can edit an instance and navigate to details page', () => {});
+  it('user can edit an instance and navigate to details page', () => {
+    cy.intercept('PATCH', '/api/v2/instances/*').as('editPatch');
+
+    cy.clickTableRow(instance.hostname);
+    cy.url().then((currentUrl) => {
+      expect(currentUrl.includes('details')).to.be.true;
+    });
+    cy.get('[data-cy="edit-instance"]').click();
+    cy.get('[data-cy="listener-port"]').type('9999');
+    cy.get('[data-cy="enabled"]').check();
+    cy.get('[data-cy="managed_by_policy"]').check();
+    cy.get('[data-cy="peers_from_control_nodes"]').check();
+
+    cy.clickButton(/^Save$/);
+
+    cy.wait('@editPatch').then((editPatch) => {
+      expect(editPatch.response?.statusCode).to.eql(200);
+      expect(editPatch.response?.body.hostname).to.eql(instance.hostname);
+      expect(editPatch.response?.body.listener_port).to.eql(9999);
+      expect(editPatch.response?.body.enabled).to.eql(true);
+      expect(editPatch.response?.body.managed_by_policy).to.eql(true);
+      expect(editPatch.response?.body.peers_from_control_nodes).to.eql(true);
+    });
+    cy.navigateTo('awx', 'instances');
+  });
 });
