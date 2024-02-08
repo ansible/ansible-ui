@@ -76,11 +76,11 @@ export function RulebookActivationDetails() {
         >
           {rulebookActivation?.rulebook?.name || rulebookActivation?.rulebook_name || ''}
         </PageDetail>
-        {rulebookActivation.sources && rulebookActivation.sources.length > 0 && (
-          <PageDetail label={t('Sources(s)')}>
+        {rulebookActivation.event_streams && rulebookActivation.event_streams.length > 0 && (
+          <PageDetail label={t('Event stream(s)')}>
             <LabelGroup>
-              {rulebookActivation.sources.map((source) => (
-                <Label key={source?.id}>{source?.name}</Label>
+              {rulebookActivation.event_streams.map((stream) => (
+                <Label key={stream?.id}>{stream?.name}</Label>
               ))}
             </LabelGroup>
           </PageDetail>

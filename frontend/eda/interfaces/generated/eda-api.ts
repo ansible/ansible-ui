@@ -142,7 +142,7 @@ export interface ActivationRead {
   description?: string;
   is_enabled?: boolean;
   decision_environment?: DecisionEnvironmentRef | null;
-  sources?: SourceRef[];
+  event_streams?: EventStreamRef[];
   credentials?: CredentialRef[];
 
   /**
@@ -2816,7 +2816,7 @@ export interface EventStreamInstance {
   status?: Status906Enum;
   git_hash?: string;
   status_message?: string | null;
-  parent_id: number;
+  event_stream_id?: string;
   /** @format date-time */
   started_at: string;
   /** @format date-time */
@@ -2881,7 +2881,7 @@ export interface EventStreamList {
   status_message?: string | null;
 }
 
-export interface SourceRef {
+export interface EventStreamRef {
   id: string;
   name: string;
 }

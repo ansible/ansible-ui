@@ -15,7 +15,7 @@ export function EventStreamInstancePage() {
     edaAPI`/activation-instances/${params.instanceId ?? ''}/`
   );
   const { data: eventStream } = useGet<EdaEventStream>(
-    edaAPI`/event-streams/${eventStreamInstance?.event_stream_id.toString() ?? ''}/`
+    edaAPI`/event-streams/${eventStreamInstance?.event_stream_id ?? ''}/`
   );
 
   const getPageUrl = useGetPageUrl();
