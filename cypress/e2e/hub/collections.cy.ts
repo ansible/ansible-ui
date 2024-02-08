@@ -149,12 +149,6 @@ describe('Collections List- Line Item Kebab Menu', () => {
       cy.undeprecateCollection(collection, namespace, repository);
       cy.galaxykit('task wait all');
     }
-    if (
-      Cypress.currentTest.title !== 'user can delete entire collection from repository' &&
-      Cypress.currentTest.title !== 'user can delete entire collection from system'
-    ) {
-      cy.deleteCollection(collection, namespace, repository);
-    }
     cy.galaxykit('task wait all');
     cy.deleteNamespace(namespace);
   });
@@ -211,6 +205,8 @@ describe('Collections List- Line Item Kebab Menu', () => {
     cy.get('[data-cy="table-view"]').click();
     cy.contains('h2', 'No results found').should('be.visible');
     repository = 'published';
+
+    cy.deleteCollection(collection, namespace, repository);
   });
 
   it.skip('user can copy a version to repository', () => {
@@ -218,6 +214,8 @@ describe('Collections List- Line Item Kebab Menu', () => {
     cy.approveCollection(collection, namespace, '1.0.0');
     cy.collectionCopyVersionToRepositories(collection);
     repository = 'community';
+
+    cy.deleteCollection(collection, namespace, repository);
   });
 });
 
