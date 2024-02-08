@@ -5,6 +5,7 @@ import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxConfig } from '../../common/useAwxConfig';
 import { getDocsBaseUrl } from '../../common/util/getDocsBaseUrl';
 import { CredentialsList } from './CredentialsList';
+import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
 
 export function Credentials() {
   const { t } = useTranslation();
@@ -26,6 +27,7 @@ export function Credentials() {
           `Credentials are utilized by {{product}} for authentication when launching jobs against machines, synchronizing with inventory sources, and importing project content from a version control system.`,
           { product }
         )}
+        headerActions={<ActivityStreamIcon type={'credential'} />}
       />
       <CredentialsList url={awxAPI`/credentials/`} />
     </PageLayout>
