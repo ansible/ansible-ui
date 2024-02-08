@@ -19,6 +19,84 @@ describe('Collections', () => {
     });
   });
 
+  it('should approve and sign collection version', () => {
+    const namespace = `sign_namespace_${randomString(3, undefined, { isLowercase: true })}`;
+    cy.createNamespace(namespace);
+    const collection = randomString(5, undefined, { isLowercase: true }).replace(/\d/g, '');
+    cy.galaxykit('namespace create', namespace);
+    cy.galaxykit('collection upload', namespace, collection, '2.0.0');
+    cy.navigateTo('hub', Approvals.url);
+    cy.visit(
+      `/administration/approvals?page=1&perPage=100&sort=namespace&status=pipeline%3Dstaging&collection=${collection}`
+    );
+    cy.get('[data-cy="sign-and-approve"]').click();
+    cy.get('[id="confirm"]').click();
+    cy.clickButton('Approve and sign collections');
+    cy.contains(/^Success$/);
+    cy.clickButton(/^Close$/);
+    cy.clickButton(/^Clear all filters$/);
+    cy.navigateTo('hub', Collections.url);
+    cy.get('[data-cy="table-view"]').click();
+    cy.filterTableBySingleText(collection);
+    cy.get('[data-cy="name-column-cell"]').find('div > div > a').click();
+    cy.get('[data-cy="actions-dropdown"]').click({ force: true });
+    cy.get('[data-cy="sign-collection"]').click();
+    cy.get('[id="confirm"]').click();
+    cy.clickButton('Sign collections');
+    cy.contains(/^Success$/);
+    cy.clickButton(/^Close$/);
+    cy.navigateTo('hub', Collections.url);
+    cy.get('[data-cy="table-view"]').click();
+    cy.filterTableBySingleText(collection);
+    cy.get('[data-cy="actions-column-cell"]').click();
+    cy.get('[data-cy="delete-entire-collection-from-system"]').click({ force: true });
+    cy.get('#confirm').click();
+    cy.clickButton(/^Delete collections/);
+    cy.contains(/^Success$/);
+    cy.clickButton(/^Close$/);
+    cy.clickButton(/^Clear all filters$/);
+    cy.deleteNamespace(namespace);
+  });
+
+  it('it should render the collections page', () => {
+    cy.navigateTo('hub', Collections.url);
+    cy.verifyPageTitle(Collections.title);
+  });
+
+  it('should call galaxykit without error', () => {
+    cy.galaxykit('collection -h');
+  });
+
+  it.skip('can deprecate selected collections using the list toolbar', () => {});
+});
+
+describe('Collections List- Line Item Kebab Menu', () => {
+  let thisCollectionName: string;
+  let namespace: string;
+  let repository: string;
+  let version: string;
+
+  beforeEach(() => {
+    thisCollectionName = 'hub_e2e_' + randomString(5).toLowerCase();
+    namespace = `upload_namespace_${randomString(4, undefined, { isLowercase: true })}`;
+    version = '1.2.3';
+    repository = 'hub_e2e_appr_repository' + randomString(5);
+
+    cy.hubLogin();
+
+    cy.galaxykit(`repository create ${repository}`);
+    cy.galaxykit('task wait all');
+
+    cy.galaxykit(`distribution create ${repository}`);
+    cy.galaxykit('task wait all');
+
+    cy.createNamespace(namespace);
+    cy.uploadCollection(thisCollectionName, namespace);
+    cy.galaxykit('task wait all');
+
+    cy.galaxykit(`collection move ${namespace} ${thisCollectionName} 1.0.0 staging ${repository}`);
+  });
+
   after(() => {
     // TODO - this is another PR - cy.deletehubDistribution(repository.name);
     cy.deleteHubRepository(repository);
