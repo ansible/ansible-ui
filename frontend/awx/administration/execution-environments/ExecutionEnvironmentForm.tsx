@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
   PageFormSelect,
   PageFormSubmitHandler,
@@ -20,6 +20,8 @@ import { ExecutionEnvironment } from '../../interfaces/ExecutionEnvironment';
 import { Credential } from '../../interfaces/Credential';
 import { PageFormCredentialSelect } from '../../access/credentials/components/PageFormCredentialSelect';
 import { getCredentialByName } from '../../access/credentials/utils/getCredentialByName';
+import useSWR from 'swr';
+import { requestGet, requestPatch, swrOptions } from '../../../common/crud/Data';
 
 const PullOption = {
   Always: 'Always pull container before running.',
@@ -38,7 +40,7 @@ export interface IExecutionEnvInput {
 
 export interface IExecutionEnvBody {
   organization?: number;
-  credential?: number;
+  credential?: number | null;
   pull: string;
   name: string;
   image: string;
@@ -94,13 +96,103 @@ export function CreateExecutionEnvironment() {
         cancelText={t('Cancel')}
         onCancel={onCancel}
       >
-        <ApplicationInputs />
+        <ExecutionEnvironmentInputs mode="create" />
       </AwxPageForm>
     </PageLayout>
   );
 }
 
-function ApplicationInputs() {
+export function EditExecutionEnvironment() {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
+  const params = useParams<{ id?: string }>();
+  const id = Number(params.id);
+  const { data: execution_env } = useSWR<ExecutionEnvironment>(
+    awxAPI`/execution_environments/${id.toString()}/`,
+    requestGet,
+    swrOptions
+  );
+  const onSubmit: PageFormSubmitHandler<IExecutionEnvInput> = async (
+    executionEnvInput: IExecutionEnvInput
+  ) => {
+    let credential: Credential | undefined;
+    let modifiedInput: IExecutionEnvBody = {
+      pull: '',
+      name: '',
+      image: '',
+    };
+
+    if (executionEnvInput.credential) {
+      credential = await getCredentialByName(executionEnvInput.credential);
+      modifiedInput = {
+        ...executionEnvInput,
+        organization: execution_env?.summary_fields.organization?.id,
+        credential: credential?.id,
+      };
+    } else {
+      modifiedInput = {
+        ...executionEnvInput,
+        organization: execution_env?.summary_fields.organization?.id,
+        credential: null,
+      };
+    }
+
+    const editedExecutionEnv = await requestPatch<ExecutionEnvironment>(
+      awxAPI`/execution_environments/${id.toString()}/`,
+      modifiedInput
+    );
+    pageNavigate(AwxRoute.ExecutionEnvironmentDetails, { params: { id: editedExecutionEnv.id } });
+  };
+
+  const onCancel = () => navigate(-1);
+  const getPageUrl = useGetPageUrl();
+
+  if (!execution_env) {
+    return (
+      <PageLayout>
+        <PageHeader
+          breadcrumbs={[
+            { label: t('Execution Environments'), to: getPageUrl(AwxRoute.ExecutionEnvironments) },
+            { label: t('Edit Execution Environment') },
+          ]}
+        />
+      </PageLayout>
+    );
+  }
+
+  const defaultValue: Partial<IExecutionEnvInput> = {
+    name: execution_env.name,
+    image: execution_env.image,
+    pull: execution_env.pull,
+    description: execution_env.description,
+    credential: execution_env.summary_fields.credential?.name,
+    organization: execution_env.summary_fields.organization?.name,
+  };
+
+  return (
+    <PageLayout>
+      <PageHeader
+        title={t('Edit Execution Environment')}
+        breadcrumbs={[
+          { label: t('Execution Environments'), to: getPageUrl(AwxRoute.ExecutionEnvironments) },
+          { label: t('Edit Execution Environment') },
+        ]}
+      />
+      <AwxPageForm<IExecutionEnvInput>
+        submitText={t('Save')}
+        onSubmit={onSubmit}
+        cancelText={t('Cancel')}
+        onCancel={onCancel}
+        defaultValue={defaultValue}
+      >
+        <ExecutionEnvironmentInputs mode="edit" />
+      </AwxPageForm>
+    </PageLayout>
+  );
+}
+
+function ExecutionEnvironmentInputs(props: { mode: 'edit' | 'create' }) {
   const { t } = useTranslation();
 
   return (
@@ -143,7 +235,10 @@ function ApplicationInputs() {
         label={t('Description')}
         placeholder={t('Enter a description')}
       />
-      <PageFormOrganizationSelect<IExecutionEnvInput> name="organization" />
+      <PageFormOrganizationSelect<IExecutionEnvInput>
+        name="organization"
+        isDisabled={props.mode === 'edit' ? true : false}
+      />
       <PageFormCredentialSelect<IExecutionEnvInput>
         name="credential"
         credentialType={17}
