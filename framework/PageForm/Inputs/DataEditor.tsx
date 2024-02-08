@@ -146,7 +146,13 @@ export function DataEditor<
     const currentValue = editor.getValue();
     let value = props.value;
     if (typeof value === 'object') {
-      language === 'json' ? (value = JSON.stringify(value, null, 2)) : (value = jsyaml.dump(value));
+      if (value === null) {
+        value = '';
+      } else {
+        language === 'json'
+          ? (value = JSON.stringify(value, null, 2))
+          : (value = jsyaml.dump(value));
+      }
     }
     if (currentValue !== value) {
       editor.setValue(value || '');

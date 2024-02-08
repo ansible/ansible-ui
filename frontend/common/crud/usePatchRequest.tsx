@@ -1,8 +1,8 @@
 import { useNavigate } from 'react-router-dom';
+import { useClearCache } from '../useInvalidateCache';
 import { createRequestError } from './RequestError';
 import { requestCommon } from './requestCommon';
 import { useAbortController } from './useAbortController';
-import { useClearCache } from '../useInvalidateCache';
 
 /**
  * Hook for making PATCH API requests

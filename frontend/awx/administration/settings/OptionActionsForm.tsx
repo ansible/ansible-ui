@@ -5,6 +5,7 @@ import {
   PageForm,
   PageFormCheckbox,
   PageFormDataEditor,
+  PageFormSelect,
   PageFormTextInput,
 } from '../../../../framework';
 import { usePatchRequest } from '../../../common/crud/usePatchRequest';
@@ -16,14 +17,71 @@ export interface OptionsResponse {
   };
 }
 
-export interface OptionsAction {
-  type: 'string' | 'integer' | 'boolean' | 'list' | 'nested object' | 'certificate';
-  required: boolean;
+export type OptionsAction =
+  | IOptionStringAction
+  | IOptionChoiceAction
+  | IOptionIntegerAction
+  | IOptionBooleanAction
+  | IOptionListAction
+  | IOptionObjectAction
+  | IOptionCertificateAction
+  | IOptionDateTimeAction
+  | IOptionFieldAction;
+
+interface IOptionActionBase {
   label: string;
-  help_text: string;
   category: string;
   category_slug: string;
-  default: unknown;
+  required?: boolean;
+  help_text?: string;
+}
+
+interface IOptionStringAction extends IOptionActionBase {
+  type: 'string';
+  default?: string;
+}
+
+interface IOptionFieldAction extends IOptionActionBase {
+  type: 'field';
+  default?: string;
+}
+
+interface IOptionIntegerAction extends IOptionActionBase {
+  type: 'integer';
+  default?: number;
+}
+
+interface IOptionBooleanAction extends IOptionActionBase {
+  type: 'boolean';
+  default?: boolean;
+}
+
+interface IOptionListAction extends IOptionActionBase {
+  type: 'list';
+}
+
+interface IOptionObjectAction extends IOptionActionBase {
+  type: 'nested object';
+}
+
+interface IOptionCertificateAction extends IOptionActionBase {
+  type: 'certificate';
+}
+
+interface IOptionChoiceAction extends IOptionActionBase {
+  type: 'choice';
+  default: string;
+  choices: [value: string, display_name: string];
+}
+
+interface IOptionChoiceAction extends IOptionActionBase {
+  type: 'choice';
+  default: string;
+  choices: [value: string, display_name: string];
+}
+
+interface IOptionDateTimeAction extends IOptionActionBase {
+  type: 'datetime';
 }
 
 export function OptionActionsForm(props: { options: Record<string, OptionsAction>; data: object }) {
@@ -60,12 +118,14 @@ export function OptionActionsFormInput(props: { name: string; option: OptionsAct
   const option = props.option;
   switch (option.type) {
     case 'string':
+    case 'field':
       return (
         <PageFormTextInput
           label={option.label}
           name={props.name}
+          labelHelpTitle={option.label}
           labelHelp={option.help_text}
-          helperText={props.name}
+          isRequired={option.required}
         />
       );
     case 'integer':
@@ -73,9 +133,10 @@ export function OptionActionsFormInput(props: { name: string; option: OptionsAct
         <PageFormTextInput
           label={option.label}
           name={props.name}
+          labelHelpTitle={option.label}
           labelHelp={option.help_text}
           type="number"
-          helperText={props.name}
+          isRequired={option.required}
         />
       );
     case 'boolean':
@@ -85,6 +146,7 @@ export function OptionActionsFormInput(props: { name: string; option: OptionsAct
         <PageFormDataEditor
           label={option.label}
           name={props.name}
+          labelHelpTitle={option.label}
           labelHelp={option.help_text}
           allowUpload={false}
           allowCopy={false}
@@ -92,6 +154,7 @@ export function OptionActionsFormInput(props: { name: string; option: OptionsAct
           // disableLineNumbers
           toggleLanguages={['json', 'yaml']}
           language="json"
+          isRequired={option.required}
         />
       );
     case 'nested object':
@@ -99,6 +162,7 @@ export function OptionActionsFormInput(props: { name: string; option: OptionsAct
         <PageFormDataEditor
           label={option.label}
           name={props.name}
+          labelHelpTitle={option.label}
           labelHelp={option.help_text}
           allowUpload={false}
           allowCopy={false}
@@ -106,6 +170,7 @@ export function OptionActionsFormInput(props: { name: string; option: OptionsAct
           // disableLineNumbers
           toggleLanguages={['json', 'yaml']}
           language="json"
+          isRequired={option.required}
         />
       );
     case 'certificate':
@@ -113,6 +178,7 @@ export function OptionActionsFormInput(props: { name: string; option: OptionsAct
         <PageFormDataEditor
           label={option.label}
           name={props.name}
+          labelHelpTitle={option.label}
           labelHelp={option.help_text}
           allowUpload={false}
           allowCopy={false}
@@ -120,13 +186,33 @@ export function OptionActionsFormInput(props: { name: string; option: OptionsAct
           // disableLineNumbers
           toggleLanguages={['json', 'yaml']}
           language="json"
+          isRequired={option.required}
         />
       );
-    default:
+    case 'choice':
       return (
-        <div style={{ color: 'red' }}>
-          {option.label} - {option.type}
-        </div>
+        <PageFormSelect
+          label={option.label}
+          name={props.name}
+          labelHelpTitle={option.label}
+          labelHelp={option.help_text}
+          options={option.choices.map((choice) => ({ value: choice[0], label: choice[1] }))}
+          isRequired={option.required}
+        />
       );
+    case 'datetime':
+      return (
+        <PageFormTextInput
+          label={option.label}
+          name={props.name}
+          labelHelpTitle={option.label}
+          labelHelp={option.help_text}
+          type="datetime-local"
+          isRequired={option.required}
+        />
+      );
+
+    default:
+      return <pre style={{ color: 'red' }}>{JSON.stringify(option, null, 2)}</pre>;
   }
 }

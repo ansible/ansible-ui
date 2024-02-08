@@ -30,6 +30,7 @@ export function useClearCache() {
           typeof cacheKey === 'string' &&
           removeQueryString(cacheKey) === removeQueryString(key)
         ) {
+          console.log('clearing cache', cacheKey); // eslint-disable-line no-console
           cache.delete(cacheKey);
         }
       }
