@@ -18,11 +18,11 @@ export function useDisassociateHosts(onComplete: (hosts: AwxHost[]) => void) {
   const bulkAction = useAwxBulkConfirmation<AwxHost>();
   const disassociateHost = (hosts: AwxHost[]) => {
     bulkAction({
-      title: t('Permanently disassociate groups', { count: hosts.length }),
-      confirmText: t('Yes, I confirm that I want to disassociate these {{count}} groups.', {
+      title: t('Permanently disassociate hosts', { count: hosts.length }),
+      confirmText: t('Yes, I confirm that I want to disassociate these {{count}} hosts.', {
         count: hosts.length,
       }),
-      actionButtonText: t('Disassociate groups', { count: hosts.length }),
+      actionButtonText: t('Disassociate hosts', { count: hosts.length }),
       items: hosts.sort((l, r) => compareStrings(l.name, r.name)),
       keyFn: getItemKey,
       isDanger: true,
@@ -31,8 +31,8 @@ export function useDisassociateHosts(onComplete: (hosts: AwxHost[]) => void) {
       onComplete,
       actionFn: (group: AwxHost, signal) =>
         postRequest(
-          awxAPI`/groups/${params.group_id as string}/children/`,
-          { disassociate: parseInt(params.group_id ?? ''), id: group.id },
+          awxAPI`/groups/${params.group_id as string}/hosts/`,
+          { disassociate: true, id: group.id },
           signal
         ),
     });

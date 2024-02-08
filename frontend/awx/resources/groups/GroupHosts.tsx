@@ -9,10 +9,10 @@ import { AwxHost } from '../../interfaces/AwxHost';
 import { OptionsResponse, ActionsResponse } from '../../interfaces/OptionsResponse';
 import { useAwxView } from '../../common/useAwxView';
 import { useHostsFilters } from '../hosts/hooks/useHostsFilters';
-import { useInventoriesHostsActions } from '../inventories/hooks/useInventoriesHostsActions';
 import { useInventoriesHostsColumns } from '../inventories/hooks/useInventoriesHostsColumns';
 import { useHostsEmptyStateActions } from '../hosts/hooks/useHostsEmptyStateActions';
 import { useInventoriesGroupsHostsToolbarActions } from '../inventories/hooks/useInventoriesGroupsHostsToolbarActions';
+import { useInventoriesGroupsHostsActions } from '../inventories/hooks/useInventoriesGroupsHostsActions';
 
 export function GroupHosts() {
   const { t } = useTranslation();
@@ -25,10 +25,10 @@ export function GroupHosts() {
     tableColumns,
   });
   const toolbarActions = useInventoriesGroupsHostsToolbarActions(view);
-  const rowActions = useInventoriesHostsActions(view.unselectItemsAndRefresh, view.refresh);
+  const rowActions = useInventoriesGroupsHostsActions(view.unselectItemsAndRefresh, view.refresh);
   const emptyStateActions = useHostsEmptyStateActions();
 
-  const hostOptions = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/hosts`).data;
+  const hostOptions = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/hosts/`).data;
   const canCreateHost = Boolean(hostOptions && hostOptions.actions && hostOptions.actions['POST']);
 
   usePersistentFilters('inventories');
@@ -48,7 +48,7 @@ export function GroupHosts() {
       }
       emptyStateDescription={
         canCreateHost
-          ? t('Please create a host by using the button below.')
+          ? t('Please add hosts by using the button below.')
           : t(
               'Please contact your organization administrator if there is an issue with your access.'
             )

@@ -15,7 +15,7 @@ export function useHostsEmptyStateActions() {
   const hostOptions = useOptions<OptionsResponse<ActionsResponse>>(
     awxAPI`/inventories/${params.id ?? ''}/hosts/`
   ).data;
-  const canCreateGroup = Boolean(hostOptions && hostOptions.actions && hostOptions.actions['POST']);
+  const canCreateHost = Boolean(hostOptions && hostOptions.actions && hostOptions.actions['POST']);
 
   return useMemo<IPageAction<AwxHost>[]>(
     () => [
@@ -23,7 +23,7 @@ export function useHostsEmptyStateActions() {
         type: PageActionType.Button,
         selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
-        label: t('Existing group'),
+        label: t('Existing host'),
         isPinned: true,
         onClick: () => {},
       },
@@ -31,17 +31,17 @@ export function useHostsEmptyStateActions() {
         type: PageActionType.Button,
         selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
-        label: t('New group'),
+        label: t('New host'),
         isPinned: true,
         onClick: () => {},
         isDisabled: () =>
-          canCreateGroup
+          canCreateHost
             ? undefined
             : t(
                 'You do not have permission to create a group. Please contact your organization administrator if there is an issue with your access.'
               ),
       },
     ],
-    [canCreateGroup, t]
+    [canCreateHost, t]
   );
 }
