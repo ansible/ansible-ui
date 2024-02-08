@@ -1,19 +1,33 @@
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useBulkConfirmation, ITableColumn, TextCell } from '../../../../../../framework';
-import { EdgeModel, GraphElement, NodeModel, action, Edge, Node } from '@patternfly/react-topology';
-import { GraphNode, type GraphEdgeData, type GraphNodeData } from '../types';
+import {
+  EdgeModel,
+  GraphElement,
+  NodeModel,
+  action,
+  Edge,
+  Node,
+  useVisualizationController,
+} from '@patternfly/react-topology';
+import { GraphNode, type GraphEdgeData, type GraphNodeData, EdgeStatus } from '../types';
 import { Label } from '@patternfly/react-core';
 import { useRemoveNode } from './useRemoveNode';
+import { useCreateEdge } from './useCreateEdge';
+import { START_NODE_ID } from '../constants';
 
 export function useRemoveGraphElements() {
   const { t } = useTranslation();
   const removeNode = useRemoveNode();
-
+  const controller = useVisualizationController();
+  const createEdge = useCreateEdge();
   const handleRemoveNodes = action((nodes: GraphNode[]) => {
     nodes.forEach((element) => {
       removeNode(element);
     });
+
+    controller.setState({ ...controller.getState(), modified: true });
+    controller.getGraph().layout();
   });
 
   const nodeNameColumn = useMemo<ITableColumn<Node>>(
@@ -125,10 +139,20 @@ export function useRemoveGraphElements() {
     element.setVisible(false);
     element.getSource().setState({ modified: true, isInvalidLinkTarget: false });
 
-    const model = element.getController().toModel();
-    const edges = model?.edges?.filter((edge) => edge.id !== element.getId());
-    model.edges = edges;
-    element.getController().fromModel(model);
+    element.getTarget().setState({ modified: true, isInvalidLinkTarget: false });
+    const controller = element.getController();
+    const model = controller.toModel();
+
+    controller.setState({ ...controller.getState(), modified: true });
+    const childNode = element.getTarget();
+    const childNodeTargets = childNode.getTargetEdges();
+    const visibleChildNodeTargets = childNodeTargets.filter((edge) => edge.isVisible());
+
+    !visibleChildNodeTargets.length &&
+      model.edges?.push(createEdge(START_NODE_ID, element.getTarget().getId(), EdgeStatus.info));
+
+    controller.fromModel(model, true);
+    controller.getGraph().layout();
   });
   const removeLink = useCallback(
     (element: Edge) => {
