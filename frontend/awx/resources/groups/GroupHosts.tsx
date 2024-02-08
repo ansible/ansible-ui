@@ -26,7 +26,7 @@ export function GroupHosts() {
   });
   const toolbarActions = useInventoriesGroupsHostsToolbarActions(view);
   const rowActions = useInventoriesGroupsHostsActions(view.unselectItemsAndRefresh, view.refresh);
-  const emptyStateActions = useHostsEmptyStateActions();
+  const emptyStateActions = useHostsEmptyStateActions(view);
 
   const hostOptions = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/hosts/`).data;
   const canCreateHost = Boolean(hostOptions && hostOptions.actions && hostOptions.actions['POST']);

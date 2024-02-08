@@ -1,6 +1,6 @@
 import { ButtonVariant } from '@patternfly/react-core';
 import { PlusIcon, TrashIcon } from '@patternfly/react-icons';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import {
@@ -8,6 +8,8 @@ import {
   PageActionType,
   PageActionSelection,
   usePageNavigate,
+  usePageAlertToaster,
+  usePageDialog,
 } from '../../../../../framework';
 import { useOptions } from '../../../../common/crud/useOptions';
 import { awxAPI } from '../../../common/api/awx-utils';
@@ -16,12 +18,16 @@ import { AwxHost } from '../../../interfaces/AwxHost';
 import { OptionsResponse, ActionsResponse } from '../../../interfaces/OptionsResponse';
 import { IAwxView } from '../../../common/useAwxView';
 import { useDisassociateHosts } from '../../hosts/hooks/useDisassociateHosts';
+import { postRequest } from '../../../../common/crud/Data';
+import { HostSelectDialog } from '../../hosts/hooks/useHostSelectDialog';
 
 export function useInventoriesGroupsHostsToolbarActions(view: IAwxView<AwxHost>) {
+  const [_, setDialog] = usePageDialog();
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const disassociateHosts = useDisassociateHosts(view.unselectItemsAndRefresh);
-  const params = useParams<{ id: string; inventory_type: string }>();
+  const params = useParams<{ id: string; group_id: string; inventory_type: string }>();
+  const alertToaster = usePageAlertToaster();
 
   const adhocOptions = useOptions<OptionsResponse<ActionsResponse>>(
     awxAPI`/inventories/${params.id ?? ''}/ad_hoc_commands/`
@@ -30,8 +36,28 @@ export function useInventoriesGroupsHostsToolbarActions(view: IAwxView<AwxHost>)
     adhocOptions && adhocOptions.actions && adhocOptions.actions['POST']
   );
 
-  const hostOptions = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/hosts`).data;
+  const hostOptions = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/hosts/`).data;
   const canCreateHost = Boolean(hostOptions && hostOptions.actions && hostOptions.actions['POST']);
+
+  const onSelectedHosts = useCallback(
+    async (selectedHosts: AwxHost[]) => {
+      for (const host of selectedHosts) {
+        try {
+          await postRequest(awxAPI`/groups/${params.group_id as string}/hosts/`, {
+            id: host.id,
+          }).then(() => void view.refresh());
+        } catch (err) {
+          alertToaster.addAlert({
+            variant: 'danger',
+            title: t(`Failed to add ${host.name} to related groups`),
+            children: err instanceof Error && err.message,
+          });
+        }
+      }
+      setDialog(undefined);
+    },
+    [setDialog, params.group_id, view, alertToaster, t]
+  );
 
   return useMemo<IPageAction<AwxHost>[]>(
     () => [
@@ -47,7 +73,14 @@ export function useInventoriesGroupsHostsToolbarActions(view: IAwxView<AwxHost>)
             type: PageActionType.Button,
             selection: PageActionSelection.None,
             label: t('Existing host'),
-            onClick: () => {},
+            onClick: () =>
+              setDialog(
+                <HostSelectDialog
+                  inventoryId={params.id as string}
+                  groupId={params.group_id as string}
+                  onSelectedHosts={onSelectedHosts}
+                />
+              ),
           },
           {
             type: PageActionType.Button,
