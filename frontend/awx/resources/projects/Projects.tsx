@@ -16,6 +16,7 @@ import { useProjectActions } from './hooks/useProjectActions';
 import { useProjectToolbarActions } from './hooks/useProjectToolbarActions';
 import { useProjectsColumns } from './hooks/useProjectsColumns';
 import { useProjectsFilters } from './hooks/useProjectsFilters';
+import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
 
 export function Projects() {
   const { t } = useTranslation();
@@ -76,6 +77,7 @@ export function Projects() {
           `A Project is a logical collection of Ansible playbooks, represented in {{product}}.`,
           { product }
         )}
+        headerActions={<ActivityStreamIcon type={'project'} />}
       />
       <PageTable<Project>
         id="awx-projects-table"

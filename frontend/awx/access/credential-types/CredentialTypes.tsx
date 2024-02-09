@@ -15,6 +15,7 @@ import {
 } from './hooks/useCredentialTypeActions';
 import { useCredentialTypesColumns } from './hooks/useCredentialTypesColumns';
 import { useCredentialTypesFilters } from './hooks/useCredentialTypesFilters';
+import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
 
 export function CredentialTypes() {
   const { t } = useTranslation();
@@ -49,6 +50,7 @@ export function CredentialTypes() {
           'Define custom credential types to support authentication with other systems during automation.'
         )}
         titleDocLink={`${getDocsBaseUrl(config)}/html/userguide/credential_types.html`}
+        headerActions={<ActivityStreamIcon type={'credential_type'} />}
       />
       <PageTable<CredentialType>
         id="awx-credential-types"
