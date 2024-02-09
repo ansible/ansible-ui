@@ -19,7 +19,7 @@ import { awxAPI } from '../../common/api/awx-utils';
 import { Organization } from '../../interfaces/Organization';
 import { User } from '../../interfaces/User';
 import { AwxRoute } from '../../main/AwxRoutes';
-import { PageFormOrganizationSelect } from '../organizations/components/PageFormOrganizationSelect';
+import { PageFormSelectOrganization } from '../organizations/components/PageFormOrganizationSelect';
 import { getOrganizationByName } from '../organizations/utils/getOrganizationByName';
 
 const UserType = {
@@ -214,7 +214,7 @@ function UserInputs(props: { mode: 'create' | 'edit' }) {
         isRequired
       />
       {mode === 'create' && (
-        <PageFormOrganizationSelect<IUserInput> name="user.summary_fields.organization.name" />
+        <PageFormSelectOrganization<IUserInput> name="user.summary_fields.organization.name" />
       )}
       <PageFormSection>
         <PageFormTextInput<IUserInput>

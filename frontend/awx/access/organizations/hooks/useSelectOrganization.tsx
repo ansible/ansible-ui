@@ -1,31 +1,11 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { usePageDialog, useSelectDialog } from '../../../../../framework';
+import { usePageDialog } from '../../../../../framework';
 import { SelectSingleDialog } from '../../../../../framework/PageDialogs/SelectSingleDialog';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxView } from '../../../common/useAwxView';
 import { Organization } from '../../../interfaces/Organization';
 import { useOrganizationsColumns, useOrganizationsFilters } from '../Organizations';
-
-export function useSelectOrganization() {
-  const { t } = useTranslation();
-  const toolbarFilters = useOrganizationsFilters();
-  const tableColumns = useOrganizationsColumns({ disableLinks: true });
-  const view = useAwxView<Organization>({
-    url: awxAPI`/organizations/`,
-    toolbarFilters,
-    tableColumns,
-    disableQueryString: true,
-  });
-  return useSelectDialog<Organization>({
-    toolbarFilters,
-    tableColumns,
-    view,
-    confirm: t('Confirm'),
-    cancel: t('Cancel'),
-    selected: t('Selected'),
-  });
-}
 
 function SelectOrganization(props: {
   title: string;
@@ -51,7 +31,7 @@ function SelectOrganization(props: {
   );
 }
 
-export function useSelectOrganization2() {
+export function useSelectOrganization() {
   const [_, setDialog] = usePageDialog();
   const { t } = useTranslation();
   const openSelectOrganization = useCallback(

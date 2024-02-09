@@ -14,7 +14,7 @@ import {
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { requestGet, requestPatch, swrOptions } from '../../../common/crud/Data';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
-import { PageFormOrganizationSelect } from '../../access/organizations/components/PageFormOrganizationSelect';
+import { PageFormSelectOrganization } from '../../access/organizations/components/PageFormOrganizationSelect';
 import { getOrganizationByName } from '../../access/organizations/utils/getOrganizationByName';
 import { AwxPageForm } from '../../common/AwxPageForm';
 import { awxAPI } from '../../common/api/awx-utils';
@@ -196,7 +196,7 @@ function ApplicationInputs(props: { mode: 'create' | 'edit' }) {
         label={t('Description')}
         placeholder={t('Enter a description')}
       />
-      <PageFormOrganizationSelect<IApplicationInput> name="organization" isRequired />
+      <PageFormSelectOrganization<IApplicationInput> name="organization" isRequired />
       <PageFormSelect<IApplicationInput>
         isReadOnly={mode === 'edit'}
         name="authorization_grant_type"

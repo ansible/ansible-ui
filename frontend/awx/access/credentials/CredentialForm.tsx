@@ -22,7 +22,7 @@ import { useAwxActiveUser } from '../../common/useAwxActiveUser';
 import { Credential } from '../../interfaces/Credential';
 import { CredentialType } from '../../interfaces/CredentialType';
 import { AwxRoute } from '../../main/AwxRoutes';
-import { PageFormOrganizationSelect } from '../organizations/components/PageFormOrganizationSelect';
+import { PageFormSelectOrganization } from '../organizations/components/PageFormOrganizationSelect';
 import { getOrganizationByName } from '../organizations/utils/getOrganizationByName';
 
 interface CredentialForm extends Credential {
@@ -159,7 +159,7 @@ function CredentialInputs() {
         }
         isRequired
       />
-      <PageFormOrganizationSelect<Credential> name="summary_fields.organization.name" />
+      <PageFormSelectOrganization<Credential> name="summary_fields.organization.name" />
       <PageFormSection singleColumn>
         <PageFormTextArea<Credential>
           name="description"
