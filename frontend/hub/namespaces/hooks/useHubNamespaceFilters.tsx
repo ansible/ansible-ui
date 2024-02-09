@@ -9,7 +9,7 @@ export function useHubNamespaceFilters() {
       {
         key: 'keywords',
         label: t('Name'),
-        type: ToolbarFilterType.MultiText,
+        type: ToolbarFilterType.SingleText,
         query: 'keywords',
         comparison: 'contains',
       },

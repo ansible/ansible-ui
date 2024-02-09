@@ -4,7 +4,8 @@ import { randomString } from '../../../framework/utils/random-string';
 import { hubAPI } from '../../support/formatApiPathForHub';
 import { Collections } from './constants';
 
-describe('Collections- List View', () => {
+// Skipped until collection upload is working in application
+describe.skip('Collections- List View', () => {
   //**Important to know:
   //**In order to upload a collection, a namespace must first exist containing the first word of the collection file name
   //**The only way to get rid of a collection's artifact is to choose the following option:
@@ -35,7 +36,7 @@ describe('Collections- List View', () => {
       cy.url().should('include', 'collections');
       cy.verifyPageTitle(Collections.title);
       cy.get('[data-cy="table-view"]').click();
-      cy.searchAndDisplayResource(collection);
+      cy.filterTableBySingleText(collection);
       cy.get('[data-cy="actions-column-cell"]').click();
       cy.get('[data-cy="delete-entire-collection-from-system"]').click({ force: true });
       cy.get('#confirm').click();

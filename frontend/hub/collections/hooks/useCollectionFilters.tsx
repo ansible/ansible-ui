@@ -26,28 +26,28 @@ export function useCollectionFilters() {
       {
         key: 'keywords',
         label: t('Name'),
-        type: ToolbarFilterType.MultiText,
+        type: ToolbarFilterType.SingleText,
         query: 'keywords',
         comparison: 'equals',
       },
       {
         key: 'namespace',
         label: t('Namespace'),
-        type: ToolbarFilterType.MultiText,
+        type: ToolbarFilterType.SingleText,
         query: 'namespace',
         comparison: 'equals',
       },
       {
         key: 'tags',
         label: t('Tags'),
-        type: ToolbarFilterType.MultiText,
+        type: ToolbarFilterType.SingleText,
         query: 'tags',
         comparison: 'equals',
       },
       {
         key: 'signature',
         label: t('Signature'),
-        type: ToolbarFilterType.MultiSelect,
+        type: ToolbarFilterType.SingleSelect,
         query: 'is_signed',
         options: [
           { label: t('Signed'), value: 'true' },

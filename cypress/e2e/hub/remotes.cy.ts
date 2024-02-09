@@ -18,7 +18,7 @@ describe('Remotes', () => {
     }
     cy.navigateTo('hub', 'remotes');
     cy.setTablePageSize('50');
-    cy.searchAndDisplayResource(testSignature);
+    cy.filterTableBySingleText(testSignature);
     cy.get('tbody').find('tr').should('have.length', numberOfRemotes);
     cy.get('[data-cy="select-all"]').click({ force: true });
     cy.clickToolbarKebabAction('delete-selected-remotes');
@@ -34,7 +34,7 @@ describe('Remotes', () => {
     cy.createRemote(remoteName);
     cy.navigateTo('hub', 'remotes');
     cy.setTablePageSize('50');
-    cy.searchAndDisplayResource(remoteName);
+    cy.filterTableBySingleText(remoteName);
     cy.get('[data-cy="card-view"]').click();
     cy.contains(remoteName).should('be.visible');
     cy.get('[data-cy="list-view"]').click();
@@ -62,7 +62,7 @@ describe('Remotes', () => {
     cy.url().should('include', `remotes/details/${remoteName}`);
     cy.contains('Remotes').click();
     cy.url().should('include', Remotes.url);
-    cy.searchAndDisplayResource(remoteName);
+    cy.filterTableBySingleText(remoteName);
     cy.get('[data-cy="actions-column-cell"]').click();
     cy.get('[data-cy="delete-remote"]').click({ force: true });
     cy.get('#confirm').click();
@@ -87,7 +87,7 @@ describe('Remotes', () => {
     cy.get('[data-cy="requirements-file-warning"]').should('not.exist');
     cy.get('[data-cy="Submit"]').click();
     cy.contains('Remotes').click();
-    cy.searchAndDisplayResource(remoteName);
+    cy.filterTableBySingleText(remoteName);
     cy.get('[data-cy="actions-column-cell"]').click();
     cy.get('[data-cy="delete-remote"]').click({ force: true });
     cy.get('#confirm').click();
@@ -113,7 +113,7 @@ collections:
     cy.get('[data-cy="sync_dependencies"]').check();
     cy.get('[data-cy="Submit"]').click();
     cy.contains('Remotes').click();
-    cy.searchAndDisplayResource(remoteName);
+    cy.filterTableBySingleText(remoteName);
     cy.get('[data-cy="actions-column-cell"]').click();
     cy.get('[data-cy="edit-remote"]').click({ force: true });
     cy.url().should('include', `remotes/${remoteName}/edit`);
