@@ -86,3 +86,7 @@ tr.selected:hover {
 }
 
 */
+
+.pf-v5-c-modal-box__header {
+  padding-bottom: 24px;
+}
