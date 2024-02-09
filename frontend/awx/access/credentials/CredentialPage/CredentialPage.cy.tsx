@@ -9,7 +9,7 @@ describe('CredentialPage', () => {
       cy.intercept('GET', '/api/v2/credential/1/*', credential);
     });
     cy.fixture('credentialType').then((credentialType: CredentialType) => {
-      cy.intercept('GET', '/api/v2/credential_types/*', credentialType);
+      cy.intercept('GET', '/api/v2/credential_types*', credentialType);
     });
 
     cy.fixture('credentialType').then((credentialType: CredentialType) => {
