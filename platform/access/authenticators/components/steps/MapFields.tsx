@@ -139,6 +139,7 @@ export function MapFields(props: {
               name={`mappings.${index}.groups_value`}
               label={t('Groups')}
               options={[
+                // TODO: in edit mode, derive from existing groups
                 { value: 'one', label: 'one' },
                 { value: 'two', label: 'two' },
               ]}

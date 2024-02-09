@@ -4,17 +4,22 @@ import type { AuthenticatorPlugins } from '../../../../interfaces/AuthenticatorP
 
 export function AuthenticatorTypeStep(props: { plugins: AuthenticatorPlugins }) {
   const { t } = useTranslation();
-  const authTypeNames = {
-    'ansible_base.authentication.authenticator_plugins.local': t('Local'),
-    'ansible_base.authentication.authenticator_plugins.ldap': t('LDAP'),
-    'ansible_base.authentication.authenticator_plugins.saml': t('SAML'),
-    'ansible_base.authentication.authenticator_plugins.keycloak': t('Keycloak'),
+  const authTypeNames: { [k: string]: string } = {
+    local: t('Local'),
+    ldap: t('LDAP'),
+    saml: t('SAML'),
+    keycloak: t('Keycloak'),
+    github: t('GitHub'),
   };
 
-  const options = props.plugins.authenticators.map((plugin) => ({
-    value: plugin.type,
-    label: authTypeNames[plugin.type] || plugin.type,
-  }));
+  const options = props.plugins.authenticators.map((plugin) => {
+    const shortType = plugin.type?.split('.').pop() || plugin.type;
+
+    return {
+      value: plugin.type,
+      label: authTypeNames[shortType] || shortType,
+    };
+  });
 
   return (
     <PageFormGrid isVertical>
