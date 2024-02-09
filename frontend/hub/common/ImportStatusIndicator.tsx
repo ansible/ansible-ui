@@ -12,13 +12,17 @@ const typeToVariantMap: Record<string, LabelProps['variant']> = {
   secondary: 'filled',
 };
 
-interface IProps {
+export interface ImportStatusIndicatorProps {
   status?: string;
   type?: 'primary' | 'secondary';
   className?: string;
 }
 
-export function ImportStatusIndicator({ status, type = 'primary', className }: IProps) {
+export function ImportStatusIndicator({
+  status,
+  type = 'primary',
+  className,
+}: ImportStatusIndicatorProps) {
   const { t } = useTranslation();
 
   const statusToProps = (

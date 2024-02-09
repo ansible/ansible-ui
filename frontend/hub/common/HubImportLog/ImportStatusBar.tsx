@@ -1,14 +1,14 @@
 import { useTranslation } from 'react-i18next';
 import { PageDetail, PageDetails } from '../../../../framework';
 import { CollectionImport, CollectionVersionSearch } from '../../collections/Collection';
-import { ImportStatusIndicator } from './ImportStatusIndicator';
+import { ImportStatusIndicator } from '../ImportStatusIndicator';
 
-interface IProps {
+export interface ImportStatusBarProps {
   collection?: CollectionVersionSearch;
   collectionImport?: CollectionImport;
 }
 
-export function ImportStatusBar({ collection, collectionImport }: IProps) {
+export function ImportStatusBar({ collection, collectionImport }: ImportStatusBarProps) {
   const { t } = useTranslation();
   const collectionPipeline = collection?.repository?.pulp_labels?.pipeline ?? 'unknown';
 

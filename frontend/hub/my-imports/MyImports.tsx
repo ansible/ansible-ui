@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useGet } from '../../common/crud/useGet';
 import { HubItemsResponse } from '../common/useHubView';
@@ -31,6 +31,7 @@ import { ImportList } from './components/ImportList';
 export function MyImports() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
+  const ref = useRef<HTMLDivElement>(null);
   const [searchParams, setSearchParams] = useSearchParams();
 
   const namespaceQP = searchParams.get('namespace') ?? '';
@@ -137,6 +138,13 @@ export function MyImports() {
     });
   }
 
+  function scrollTo(direction: 'up' | 'down') {
+    ref.current?.scrollIntoView({
+      block: direction === 'up' ? 'start' : 'end',
+      behavior: 'smooth',
+    });
+  }
+
   const importLogLoading = colletionIsLoading || collectionImportLoading;
   const importLogError = collectionImportError || collectionError;
 
@@ -181,6 +189,7 @@ export function MyImports() {
               error={importLogError}
               collectionImport={collectionImportResp}
               collection={collection}
+              scrollTo={scrollTo}
             />
           </FlexItem>
         </Flex>
@@ -192,43 +201,45 @@ export function MyImports() {
     <PageLayout>
       <PageHeader title={t('My imports')} description={t('Imported collections')} />
       <Scrollable>
-        <PageSection variant="light">
-          <Drawer isExpanded={isDrawerExpanded} isStatic>
-            <DrawerContent panelContent={panelContent}>
-              <DrawerContentBody>
-                <ImportList
-                  isLoading={collectionImportsLoading}
-                  error={collectionImportsError}
-                  collectionImports={collectionImports}
-                  selectedImport={selectedImport}
-                  setSelectedImport={(collectionImport) => {
-                    setSelectedImport(collectionImport);
-                  }}
-                  setSelectedNamespace={(namespace) => {
-                    setNamespaceQP(namespace);
-                  }}
-                  queryParams={{
-                    status: statusQP,
-                    name: nameQP,
-                    namespace: namespaceQP,
-                    perPage: perPageQP,
-                    page: pageQP,
-                  }}
-                  setPage={setPage}
-                  setPerPage={setPerPage}
-                  itemCount={collectionImportsCount}
-                  setDrawerExpanded={() => {
-                    setIsDrawerExpanded(true);
-                  }}
-                  collectionFilter={collectionFilter}
-                  setCollectionFilter={(options) => {
-                    setCollectionFilter(options);
-                  }}
-                />
-              </DrawerContentBody>
-            </DrawerContent>
-          </Drawer>
-        </PageSection>
+        <div ref={ref}>
+          <PageSection variant="light">
+            <Drawer isExpanded={isDrawerExpanded} isStatic>
+              <DrawerContent panelContent={panelContent}>
+                <DrawerContentBody>
+                  <ImportList
+                    isLoading={collectionImportsLoading}
+                    error={collectionImportsError}
+                    collectionImports={collectionImports}
+                    selectedImport={selectedImport}
+                    setSelectedImport={(collectionImport) => {
+                      setSelectedImport(collectionImport);
+                    }}
+                    setSelectedNamespace={(namespace) => {
+                      setNamespaceQP(namespace);
+                    }}
+                    queryParams={{
+                      status: statusQP,
+                      name: nameQP,
+                      namespace: namespaceQP,
+                      perPage: perPageQP,
+                      page: pageQP,
+                    }}
+                    setPage={setPage}
+                    setPerPage={setPerPage}
+                    itemCount={collectionImportsCount}
+                    setDrawerExpanded={() => {
+                      setIsDrawerExpanded(true);
+                    }}
+                    collectionFilter={collectionFilter}
+                    setCollectionFilter={(options) => {
+                      setCollectionFilter(options);
+                    }}
+                  />
+                </DrawerContentBody>
+              </DrawerContent>
+            </Drawer>
+          </PageSection>
+        </div>
       </Scrollable>
     </PageLayout>
   );
