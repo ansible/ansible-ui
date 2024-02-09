@@ -6,6 +6,7 @@ on:
       AWX_SERVER:
         type: string
         required: true
+        default: https://awx.ci-ui-${{ format('{0}-{1}-{2}', github.event.time.year, github.event.time.month, github.event.time.day) }}.gcp.testing.ansible.com
       SKIP_JOB:
         type: boolean
         required: false
