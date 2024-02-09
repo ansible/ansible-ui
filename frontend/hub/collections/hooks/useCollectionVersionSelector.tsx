@@ -88,7 +88,7 @@ export function useCollectionVersionFilters() {
       {
         key: 'keywords',
         label: t('version'),
-        type: ToolbarFilterType.MultiText,
+        type: ToolbarFilterType.SingleText,
         query: 'version',
         comparison: 'equals',
       },

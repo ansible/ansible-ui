@@ -37,7 +37,7 @@ describe('Remote Registry', () => {
     cy.createRemoteRegistry(remoteRegistryName);
     cy.navigateTo('hub', RemoteRegistry.url);
     cy.setTablePageSize('50');
-    cy.searchAndDisplayResource(remoteRegistryName);
+    cy.filterTableBySingleText(remoteRegistryName);
     cy.get('[data-cy="card-view"]').click();
     cy.contains(remoteRegistryName).should('be.visible');
     cy.get('[data-cy="list-view"]').click();
@@ -57,7 +57,7 @@ describe('Remote Registry', () => {
     const remoteRegistryName = generateRemoteRegistryName();
     cy.createRemoteRegistry(remoteRegistryName).then((remoteRegistry: IRemoteRegistry) => {
       cy.navigateTo('hub', RemoteRegistry.url);
-      cy.searchAndDisplayResource(remoteRegistryName);
+      cy.filterTableBySingleText(remoteRegistryName);
       cy.get('[data-cy="sync-status-column-cell"]').should(
         'contain',
         RemoteRegistry.initialSyncStatus
@@ -77,7 +77,7 @@ describe('Remote Registry', () => {
     cy.get('[data-cy="url"]').type(RemoteRegistry.validIndexableURL);
     cy.get('[data-cy="Submit"]').click();
     cy.contains('Remote registries').click();
-    cy.searchAndDisplayResource(remoteRegistryName);
+    cy.filterTableBySingleText(remoteRegistryName);
     cy.get('[data-cy="actions-column-cell"]').click();
     cy.get('[data-cy="index-execution-environments"]').should('be.visible').click({ force: true });
     cy.hasAlert(`Indexing remote registry ${remoteRegistryName}`);
@@ -101,7 +101,7 @@ describe('Remote Registry', () => {
     cy.url().should('include', `remote-registries/details/${remoteRegistryName}`);
     cy.contains('Remote registries').click();
     cy.url().should('include', RemoteRegistry.url);
-    cy.searchAndDisplayResource(remoteRegistryName);
+    cy.filterTableBySingleText(remoteRegistryName);
     cy.get('[data-cy="actions-column-cell"]').click();
     cy.get('[data-cy="delete-remote-registry"]').click({ force: true });
     cy.get('#confirm').click();
@@ -118,7 +118,7 @@ describe('Remote Registry', () => {
     cy.get('[data-cy="url"]').type(RemoteRegistry.validIndexableURL);
     cy.get('[data-cy="Submit"]').click();
     cy.contains('Remote registries').click();
-    cy.searchAndDisplayResource(remoteRegistryName);
+    cy.filterTableBySingleText(remoteRegistryName);
     cy.get('[data-cy="actions-column-cell"]').click();
     cy.get('[data-cy="edit-remote-registry"]').click({ force: true });
     cy.url().should('include', `remote-registries/${remoteRegistryName}/edit`);

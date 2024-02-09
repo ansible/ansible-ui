@@ -27,7 +27,7 @@ describe('Execution Environments', () => {
   it('should render the execution environment details page', () => {
     // test navigating by sidebar menu
     cy.navigateTo('hub', ExecutionEnvironments.url);
-    cy.filterTableByText(`remotepine${num}`);
+    cy.filterTableBySingleText(`remotepine${num}`);
     cy.get('a').contains(`remotepine${num}`).click();
     cy.verifyPageTitle(`remotepine${num}`);
 

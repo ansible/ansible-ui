@@ -24,14 +24,14 @@ export function useApprovalFilters() {
       {
         key: 'collection',
         label: t('Collection'),
-        type: ToolbarFilterType.MultiText,
+        type: ToolbarFilterType.SingleText,
         query: 'name',
         comparison: 'equals',
       },
       {
         key: 'namespace',
         label: t('Namespace'),
-        type: ToolbarFilterType.MultiText,
+        type: ToolbarFilterType.SingleText,
         query: 'namespace',
         comparison: 'equals',
       },
@@ -46,7 +46,7 @@ export function useApprovalFilters() {
       {
         key: 'status',
         label: t('Status'),
-        type: ToolbarFilterType.MultiSelect,
+        type: ToolbarFilterType.SingleSelect,
         query: 'repository_label',
         options: [
           { label: t('Needs review'), value: `pipeline=staging` },
