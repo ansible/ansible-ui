@@ -1,5 +1,6 @@
 import { Repositories } from './constants';
 import { randomString } from '../../../framework/utils/random-string';
+import { CcAmazonPayIcon } from '@patternfly/react-icons';
 
 describe.skip('Repositories', () => {
   before(() => {
@@ -31,13 +32,14 @@ describe('Repositories Remove collection', () => {
   let numCollections: number;
 
   afterEach(() => {
-    /*collections?.forEach( (collection) => {
-      cy.galaxykit('-i collection delete ', namespace, collection);
+    collections?.forEach((collection) => {
+      cy.galaxykit('-i collection delete ', namespace, collection, '1.0.0', repository);
+      cy.galaxykit('task wait all');
     });
-
     cy.galaxykit('task wait all');
-    cy.galaxykit('-i repository remove', repository);
-    cy.galaxykit('-i namespace remove', namespace);*/
+    cy.galaxykit('-i repository delete', repository);
+    cy.galaxykit('task wait all');
+    cy.galaxykit('-i namespace delete', namespace);
   });
 
   it('it should add and then remove the collections', () => {
@@ -55,18 +57,17 @@ describe('Repositories Remove collection', () => {
 
     cy.galaxykit(`repository create ${repository}`);
     cy.galaxykit('task wait all');
-    cy.wait(2000);
+
     cy.galaxykit(`distribution create ${repository}`);
+    cy.galaxykit('task wait all');
+
     cy.galaxykit(`namespace create ${namespace}`);
     cy.galaxykit('task wait all');
-    cy.wait(2000);
 
     collections.forEach((collection) => {
       cy.galaxykit(`collection upload ${namespace} ${collection}`);
+      cy.galaxykit('task wait all');
     });
-
-    cy.galaxykit('task wait all');
-    cy.wait(2000);
 
     // add collections
     cy.navigateTo('hub', Repositories.url);
@@ -95,5 +96,30 @@ describe('Repositories Remove collection', () => {
     });
 
     // verify you can open and close modal using different button
+    cy.contains('button', 'Add collections').click();
+    cy.get(modal).within(() => {
+      cy.contains('button', 'Cancel').click();
+    });
+    cy.get(modal).should('not.exist');
+
+    // Remove first collection
+    cy.filterTableBySingleText(collections[0] + '{enter}');
+    cy.get(`[aria-label="table view"]`).click();
+    cy.get(`[data-cy="remove"]`).click();
+    cy.clickModalConfirmCheckbox();
+    cy.clickModalButton('Delete collections versions');
+    cy.assertModalSuccess();
+    cy.clickModalButton('Close');
+    cy.contains('button', 'Clear all filters').click();
+    cy.contains(collections[0]).should('not.exist');
+
+    // bulk remove rest
+    cy.get(`[data-cy="select-all"]`).click();
+    cy.contains('button', 'Remove collections').click();
+    cy.clickModalConfirmCheckbox();
+    cy.clickModalButton('Remove collections versions');
+    cy.assertModalSuccess();
+    cy.clickModalButton('Close');
+    cy.contains('No collection versions yet');
   });
 });
