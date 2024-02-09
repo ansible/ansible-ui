@@ -25,7 +25,6 @@ jobs:
       - id: step1
         run: |
           CURRENTDATE=$(date +'%Y%m%d')
-          echo $CURRENTDATE
           if([ "${{ github.event_name }}" == "workflow_dispatch" ]); then
           echo "EDA_SERVER=${{ github.event.inputs.EDA_SERVER || 'https://eda.ci-ui-${CURRENTDATE}.gcp.testing.ansible.com' }}" >> "$GITHUB_OUTPUT"
           echo "UPDATE_SERVER=${{ github.event.inputs.UPDATE_SERVER }}" >> "$GITHUB_OUTPUT"
