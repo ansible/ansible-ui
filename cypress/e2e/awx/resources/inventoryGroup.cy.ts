@@ -38,7 +38,7 @@ describe('inventory group', () => {
 
   afterEach(() => {
     cy.visit(
-      `/infrastructure/inventories/inventory/${inventory.id}/groups?page=1&perPage=10&sort=name`
+      `/infrastructure/inventories/inventory/${inventory.id}/groups/?page=1&perPage=10&sort=name`
     );
     cy.clickPageAction('delete-inventory');
     cy.get('#confirm').click();
