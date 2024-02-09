@@ -35,7 +35,7 @@ describe('Collections- List View', () => {
       cy.url().should('include', 'collections');
       cy.verifyPageTitle(Collections.title);
       cy.get('[data-cy="table-view"]').click();
-      cy.searchAndDisplayResource(collection);
+      cy.filterTableBySingleText(collection);
       cy.get('[data-cy="actions-column-cell"]').click();
       cy.get('[data-cy="delete-entire-collection-from-system"]').click({ force: true });
       cy.get('#confirm').click();
