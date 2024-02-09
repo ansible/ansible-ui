@@ -1,5 +1,6 @@
-import { Instance } from '../../../../frontend/awx/interfaces/Instance';
 import { randomString } from '../../../../framework/utils/random-string';
+import { Instance } from '../../../../frontend/awx/interfaces/Instance';
+import { awxAPI } from '../../../support/formatApiPathForAwx';
 
 describe('Instances', () => {
   let instance: Instance;
@@ -32,21 +33,20 @@ describe('Instances', () => {
     cy.get('[data-cy="enabled"]').click();
     cy.get('[data-cy="managed_by_policy"]').click();
     cy.get('[data-cy="peers_from_control_nodes"]').click();
+
+    cy.intercept('POST', awxAPI`/instances/`).as('newInstance');
     cy.get('[data-cy="Submit"]').click();
-
-    cy.navigateTo('awx', 'instances');
-    cy.clickTableRow(instanceHostname);
-    cy.url().then((currentUrl) => {
-      expect(currentUrl.includes('details')).to.be.true;
-    });
-    cy.get('[data-cy="name"]').should('contain', instanceHostname);
-    cy.get('[data-cy="node-type"]').should('contain', 'Execution');
-    cy.get('[data-cy="status"]').should('contain', 'Installed');
-    cy.get('[data-cy="listener-port"]').should('contain', '9999');
-
-    cy.url().then((currentUrl) => {
-      cy.removeAwxInstance(currentUrl.split('/')[5], { failOnStatusCode: false });
-    });
+    cy.wait('@newInstance')
+      .its('response.body')
+      .then((instance: Instance) => {
+        cy.navigateTo('awx', 'instances');
+        cy.clickTableRow(instanceHostname);
+        cy.get('[data-cy="name"]').should('contain', instanceHostname);
+        cy.get('[data-cy="node-type"]').should('contain', 'Execution');
+        cy.get('[data-cy="status"]').should('contain', 'Installed');
+        cy.get('[data-cy="listener-port"]').should('contain', '9999');
+        cy.removeAwxInstance(instance.id.toString(), { failOnStatusCode: false });
+      });
   });
 
   it.skip('user can edit an instance and navigate to details page', () => {});
