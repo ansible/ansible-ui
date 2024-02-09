@@ -57,14 +57,16 @@ export function InstanceDetails() {
   const postRequest = usePostRequest();
   const activeUser = useAwxActiveUser();
   const { data } = useGet<Settings>(awxAPI`/settings/system/`);
+  const instancesType = instance?.node_type === 'execution' || instance?.node_type === 'hop';
+  const userAccess = activeUser?.is_superuser || activeUser?.is_system_auditor;
+  const isK8s = data?.IS_K8S;
+  const canAddAndEditInstances = instancesType && isK8s && userAccess;
 
-  const canAddAndEditInstances =
-    (activeUser?.is_superuser || activeUser?.is_system_auditor) && data?.IS_K8S;
   const itemActions: IPageAction<Instance>[] = useMemo(() => {
     const itemActions: IPageAction<Instance>[] = [
       {
         type: PageActionType.Button,
-        isHidden: () => data?.IS_K8S === false,
+        isHidden: () => isK8s === false || !instancesType,
         selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
         isPinned: true,
@@ -90,7 +92,16 @@ export function InstanceDetails() {
       },
     ];
     return itemActions;
-  }, [t, pageNavigate, postRequest, instance?.id, canAddAndEditInstances, data?.IS_K8S, params.id]);
+  }, [
+    t,
+    pageNavigate,
+    postRequest,
+    instance?.id,
+    canAddAndEditInstances,
+    isK8s,
+    params.id,
+    instancesType,
+  ]);
 
   const getPageUrl = useGetPageUrl();
 
