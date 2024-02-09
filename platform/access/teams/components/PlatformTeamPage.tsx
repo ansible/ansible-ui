@@ -79,6 +79,7 @@ export function PlatformTeamPage() {
           { label: t('Details'), page: PlatformRoute.TeamDetails },
           { label: t('Roles'), page: PlatformRoute.TeamRoles },
           { label: t('Users'), page: PlatformRoute.TeamUsers },
+          { label: t('Administrators'), page: PlatformRoute.TeamAdmins },
           { label: t('Resource Access'), page: PlatformRoute.TeamResourceAccess },
         ]}
         params={{ id: team.id }}
