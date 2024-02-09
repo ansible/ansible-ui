@@ -32,6 +32,6 @@ export function useHostsGroupsActions() {
         isDisabled: (group) => cannotEditResource(group, t),
       },
     ],
-    [t, pageNavigate]
+    [t, pageNavigate, params.id, params.inventory_type]
   );
 }
