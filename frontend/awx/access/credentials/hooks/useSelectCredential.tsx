@@ -1,6 +1,6 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { usePageDialog, useSelectDialog } from '../../../../../framework';
+import { MultiSelectDialog, usePageDialog } from '../../../../../framework';
 import { SelectSingleDialog } from '../../../../../framework/PageDialogs/SelectSingleDialog';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxView } from '../../../common/useAwxView';
@@ -8,37 +8,52 @@ import { Credential } from '../../../interfaces/Credential';
 import { useCredentialsColumns } from './useCredentialsColumns';
 import { useCredentialsFilters } from './useCredentialsFilters';
 
-export function useMultiSelectCredential(isLookup: boolean, credentialType?: number) {
+export function useMultiSelectCredential(credentialType?: number, title?: string) {
+  const [_, setDialog] = usePageDialog();
   const { t } = useTranslation();
+  const openSelectCredential = useCallback(
+    (onSelect: (credentials: Credential[]) => void) => {
+      setDialog(
+        <MultiSelectCredential
+          title={t(title ? title : 'Select credentials')}
+          onSelect={onSelect}
+          credentialType={credentialType}
+        />
+      );
+    },
+    [credentialType, setDialog, t, title]
+  );
+  return openSelectCredential;
+}
+
+function MultiSelectCredential(props: {
+  title: string;
+  onSelect: (credentials: Credential[]) => void;
+  defaultCredential?: Credential;
+  credentialType?: number;
+}) {
   const toolbarFilters = useCredentialsFilters();
   const tableColumns = useCredentialsColumns({ disableLinks: true });
-  const columns = useMemo(
-    () =>
-      isLookup
-        ? tableColumns.filter((item) => ['Name', 'Credential type'].includes(item.header))
-        : tableColumns,
-    [isLookup, tableColumns]
-  );
   const view = useAwxView<Credential>({
     url: awxAPI`/credentials/`,
     toolbarFilters,
-    tableColumns: columns,
+    tableColumns: tableColumns,
     disableQueryString: true,
-    ...(credentialType && {
+    defaultSelection: props.defaultCredential ? [props.defaultCredential] : undefined,
+    ...(props.credentialType && {
       queryParams: {
-        credential_type: credentialType.toString(),
+        credential_type: props.credentialType.toString(),
       },
     }),
   });
-  return useSelectDialog<Credential, true>({
-    toolbarFilters,
-    tableColumns: columns,
-    view,
-    confirm: t('Confirm'),
-    cancel: t('Cancel'),
-    selected: t('Selected'),
-    isMultiple: true,
-  });
+  return (
+    <MultiSelectDialog<Credential>
+      {...props}
+      toolbarFilters={toolbarFilters}
+      tableColumns={tableColumns}
+      view={view}
+    />
+  );
 }
 
 export function useSingleSelectCredential(credentialType?: number, title?: string) {
