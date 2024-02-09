@@ -17,7 +17,7 @@ export function CreateGroup() {
     error,
     data: inventory,
     refresh,
-  } = useGet<Inventory>(awxAPI`/inventories/${params.id?.toString() ?? ''}`);
+  } = useGet<Inventory>(awxAPI`/inventories/${params.id?.toString() ?? ''}/`);
 
   const getPageUrl = useGetPageUrl();
 
@@ -62,7 +62,7 @@ export function EditGroup() {
     error,
     data: group,
     refresh,
-  } = useGet<InventoryGroup>(awxAPI`/groups/${params.group_id?.toString() ?? ''}`);
+  } = useGet<InventoryGroup>(awxAPI`/groups/${params.group_id?.toString() ?? ''}/`);
 
   const getPageUrl = useGetPageUrl();
 

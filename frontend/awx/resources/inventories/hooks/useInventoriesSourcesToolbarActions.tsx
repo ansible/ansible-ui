@@ -25,7 +25,7 @@ export function useInventoriesSourcesToolbarActions(view: IAwxView<InventorySour
   const params = useParams<{ id: string; inventory_type: string }>();
 
   const sourceOptions = useOptions<OptionsResponse<ActionsResponse>>(
-    awxAPI`/inventory_sources`
+    awxAPI`/inventory_sources/`
   ).data;
   const canCreateSource = Boolean(
     sourceOptions && sourceOptions.actions && sourceOptions.actions['POST']

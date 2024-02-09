@@ -20,7 +20,7 @@ export function InventoryGroups() {
   const tableColumns = useInventoriesGroupsColumns();
   const params = useParams<{ id: string; inventory_type: string }>();
   const view = useAwxView<InventoryGroup>({
-    url: awxAPI`/inventories/${params.id ?? ''}/groups`,
+    url: awxAPI`/inventories/${params.id ?? ''}/groups/`,
     toolbarFilters,
     tableColumns,
   });
