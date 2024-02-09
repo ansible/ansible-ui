@@ -33,6 +33,7 @@ export type MultiSelectDialogProps<T extends object> = {
   defaultSort?: string;
   maxSelections?: number;
   allowZeroSelections?: boolean;
+  onClose?: () => void;
 };
 
 export function MultiSelectDialog<T extends object>(props: MultiSelectDialogProps<T>) {
@@ -50,7 +51,10 @@ export function MultiSelectDialog<T extends object>(props: MultiSelectDialogProp
     allowZeroSelections,
   } = props;
   const [_, setDialog] = usePageDialog();
-  const onClose = useCallback(() => setDialog(undefined), [setDialog]);
+  let onClose = useCallback(() => setDialog(undefined), [setDialog]);
+  if (props.onClose) {
+    onClose = props.onClose;
+  }
   const [translations] = useFrameworkTranslations();
   return (
     <Modal
