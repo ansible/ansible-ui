@@ -78,7 +78,9 @@ export function SelectSingleDialog<T extends object>(props: SelectSingleDialogPr
           disableListView
           compact
           disableBodyPadding
-          onSelect={props.onSelect}
+          onSelect={() => {
+            // do nothing
+          }}
           autoHidePagination
         />
       </div>
