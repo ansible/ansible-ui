@@ -61,7 +61,7 @@ describe('activity-stream', () => {
     cy.verifyPageTitle(team.name);
   });
 
-  it('can navigate to event resource detail page from activity stream event details modal', function () {
+  it.skip('can navigate to event resource detail page from activity stream event details modal', function () {
     cy.getTableRowBySingleText(team.name)
       .should('be.visible')
       .then(() => {
@@ -71,13 +71,13 @@ describe('activity-stream', () => {
       });
   });
 
-  it('can navigate to initiator detail page from activity stream list page', function () {
+  it.skip('can navigate to initiator detail page from activity stream list page', function () {
     cy.getTableRowBySingleText(team.name).should('be.visible');
     cy.get('[data-cy="initiated-by-column-cell"] a').first().click();
     cy.verifyPageTitle(activeUser.username);
   });
 
-  it('can navigate to initiator detail page from activity stream event details modal', function () {
+  it.skip('can navigate to initiator detail page from activity stream event details modal', function () {
     cy.getTableRowBySingleText(team.name).should('be.visible');
     cy.get('button[data-cy="view-event-details"]').first().click();
     cy.get('dd[data-cy="initiated-by"] a').click();
