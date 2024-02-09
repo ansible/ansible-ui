@@ -28,7 +28,7 @@ jobs:
           CURRENTDATE=$(date +'%Y%m%d')
           echo $CURRENTDATE
           if([ "${{ github.event_name }}" == "workflow_dispatch" ]); then
-            echo "HUB_SERVER=${{ github.event.inputs.HUB_SERVER }}" >> "$GITHUB_OUTPUT"
+            echo "HUB_SERVER=${{ github.event.inputs.HUB_SERVER || 'https://galaxy.ci-ui-${CURRENTDATE}.gcp.testing.ansible.com' }}" >> "$GITHUB_OUTPUT"
             echo "UPDATE_SERVER=${{ github.event.inputs.UPDATE_SERVER }}" >> "$GITHUB_OUTPUT"
           else 
             echo "HUB_SERVER=https://galaxy.ci-ui-${CURRENTDATE}.gcp.testing.ansible.com" >> "$GITHUB_OUTPUT"
