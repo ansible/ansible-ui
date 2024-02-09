@@ -42,9 +42,9 @@ export function EventSourceDetails() {
           )}
         </PageDetail>
         <PageDetail label={t('Created')}>
-          <DateTimeCell format="date-time" value={eventSource?.created_at} />
+          <DateTimeCell value={eventSource?.created_at} />
         </PageDetail>
-        <LastModifiedPageDetail format="date-time" value={eventSource?.modified_at} />
+        <LastModifiedPageDetail value={eventSource?.modified_at} />
       </PageDetails>
       {eventSource?.args && (
         <PageSection variant="light">

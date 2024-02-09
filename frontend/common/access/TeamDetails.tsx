@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
-import { DateTimeCell, LabelsCell, PageDetail, PageDetails } from '../../../framework';
 import { useNavigate } from 'react-router-dom';
+import { DateTimeCell, LabelsCell, PageDetail, PageDetails } from '../../../framework';
 import { LastModifiedPageDetail } from '../LastModifiedPageDetail';
 
 export type TeamDetailsType = {
@@ -70,7 +70,6 @@ export function TeamDetails<T extends TeamDetailsType>(props: {
         {(team.created || team.created_on || team.created_at) && (
           <PageDetail label={t('Created')}>
             <DateTimeCell
-              format="date-time"
               author={team.summary_fields?.created_by?.username}
               value={team.created ?? team.created_on ?? team.created_at}
               onClick={
@@ -85,7 +84,6 @@ export function TeamDetails<T extends TeamDetailsType>(props: {
         )}
         {(team.modified || team.modified_on || team.modified_at) && (
           <LastModifiedPageDetail
-            format="date-time"
             author={team.summary_fields?.modified_by?.username}
             value={team.modified ?? team.modified_on ?? team.modified_at}
             onClick={

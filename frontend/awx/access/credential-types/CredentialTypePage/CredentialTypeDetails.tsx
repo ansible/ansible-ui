@@ -61,7 +61,6 @@ export function CredentialTypeDetailInner(props: { credentialType: CredentialTyp
         />
         <PageDetail label={t('Created')}>
           <DateTimeCell
-            format="since"
             value={props.credentialType.created}
             author={props.credentialType.summary_fields?.created_by?.username}
             onClick={() =>
@@ -76,7 +75,6 @@ export function CredentialTypeDetailInner(props: { credentialType: CredentialTyp
           />
         </PageDetail>
         <LastModifiedPageDetail
-          format="since"
           value={props.credentialType.modified}
           author={props.credentialType.summary_fields?.modified_by?.username}
           onClick={() =>

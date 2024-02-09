@@ -45,7 +45,7 @@ export function useRoleColumns(options?: { disableSort?: boolean; disableLinks?:
       },
       {
         header: t('Created'),
-        cell: (item) => <DateTimeCell format="since" value={item.pulp_created} />,
+        cell: (item) => <DateTimeCell value={item.pulp_created} />,
         sort: 'pulp_created',
         defaultSortDirection: 'desc',
         modal: ColumnModalOption.hidden,

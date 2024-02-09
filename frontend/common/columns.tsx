@@ -109,7 +109,7 @@ export function useLastRanColumn(options?: {
       header: t('Last Ran'),
       cell: (item) => {
         if (!item.last_job_run) return <></>;
-        return <DateTimeCell format="since" value={item.last_job_run} />;
+        return <DateTimeCell value={item.last_job_run} />;
       },
       sort: options?.disableSort ? undefined : options?.sortKey ?? 'last_job_run',
       defaultSortDirection: 'desc',
@@ -202,7 +202,6 @@ export function useCreatedColumn(options?: {
           return <></>;
         return (
           <DateTimeCell
-            format="since"
             value={item.created ?? item.created_on ?? item.date_joined ?? item.pulp_created}
             author={
               'summary_fields' in item ? item.summary_fields?.created_by?.username : undefined
@@ -252,7 +251,6 @@ export function useModifiedColumn(options?: {
         if (!item.modified && !item.modified_on) return <></>;
         return (
           <DateTimeCell
-            format="since"
             value={item.modified ? item.modified : item.modified_on}
             author={
               'summary_fields' in item ? item.summary_fields?.modified_by?.username : undefined
@@ -519,7 +517,7 @@ export function useExpiresColumn<T extends { expires?: string }>(options?: {
   const column: ITableColumn<T> = useMemo(
     () => ({
       header: t('Expires'),
-      cell: (item: T) => <DateTimeCell value={item.expires} format="date-time" />,
+      cell: (item: T) => <DateTimeCell value={item.expires} />,
       sort: options?.disableSort ? undefined : options?.sort ?? 'expires',
     }),
     [t, options?.disableSort, options?.sort]

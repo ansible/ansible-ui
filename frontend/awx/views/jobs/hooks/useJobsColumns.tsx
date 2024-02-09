@@ -98,8 +98,7 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
       },
       {
         header: t('Started'),
-        cell: (job: UnifiedJob) =>
-          job.started && <DateTimeCell format="date-time" value={job.started} />,
+        cell: (job: UnifiedJob) => job.started && <DateTimeCell value={job.started} />,
         sort: 'started',
         list: 'secondary',
         defaultSortDirection: 'desc',
@@ -108,8 +107,7 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
       },
       {
         header: t('Finished'),
-        cell: (job: UnifiedJob) =>
-          job.finished && <DateTimeCell format="date-time" value={job.started} />,
+        cell: (job: UnifiedJob) => job.finished && <DateTimeCell value={job.started} />,
         sort: 'finished',
         card: 'hidden',
         list: 'secondary',

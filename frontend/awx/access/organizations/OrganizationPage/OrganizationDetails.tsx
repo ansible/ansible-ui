@@ -66,7 +66,6 @@ export function OrganizationDetails() {
       />
       <PageDetail label={t('Created')}>
         <DateTimeCell
-          format="since"
           value={organization.created}
           author={organization.summary_fields?.created_by?.username}
           onClick={() =>
@@ -77,7 +76,6 @@ export function OrganizationDetails() {
         />
       </PageDetail>
       <LastModifiedPageDetail
-        format="since"
         value={organization.modified}
         author={organization.summary_fields?.modified_by?.username}
         onClick={() =>

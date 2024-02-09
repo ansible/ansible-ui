@@ -1,34 +1,34 @@
-import { useTranslation, Trans } from 'react-i18next';
-import { HubItemsResponse } from '../../common/useHubView';
-import { hubAPI } from '../../common/api/formatPath';
-import { DateTimeCell, PageToolbar, IFilterState } from '../../../../framework';
 import {
   Button,
+  DataList,
+  DataListCell,
+  DataListItem,
+  DataListItemCells,
+  DataListItemRow,
   Flex,
   FlexItem,
-  DataList,
-  DataListItem,
-  DataListItemRow,
-  DataListCell,
-  DataListItemCells,
   Title,
 } from '@patternfly/react-core';
-import React, { useCallback, Dispatch, SetStateAction, useEffect } from 'react';
-import { HubNamespace } from '../../namespaces/HubNamespace';
-import { CollectionImport } from '../../collections/Collection';
-import { ImportStatusIndicator } from '../components/ImportStatusIndicator';
-import { PageAsyncSingleSelect } from '../../../../framework/PageInputs/PageAsyncSingleSelect';
-import { requestGet, getItemKey } from '../../../common/crud/Data';
-import { useSelectNamespaceSingle } from '../hooks/useNamespaceSelector';
-import { singleSelectBrowseAdapter } from '../../../../framework/PageToolbar/PageToolbarFilters/ToolbarAsyncSingleSelectFilter';
+import React, { Dispatch, SetStateAction, useCallback, useEffect } from 'react';
+import { Trans, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { EmptyStateNoData } from '../../../../framework/components/EmptyStateNoData';
-import { EmptyStateFilter } from '../../../../framework/components/EmptyStateFilter';
-import { EmptyStateError } from '../../../../framework/components/EmptyStateError';
-import { useCollectionImportFilters } from '../hooks/useCollectionImportFilters';
-import './hub-import-collections-filters.css';
+import { DateTimeCell, IFilterState, PageToolbar } from '../../../../framework';
+import { PageAsyncSingleSelect } from '../../../../framework/PageInputs/PageAsyncSingleSelect';
 import { PagePagination } from '../../../../framework/PageTable/PagePagination';
+import { singleSelectBrowseAdapter } from '../../../../framework/PageToolbar/PageToolbarFilters/ToolbarAsyncSingleSelectFilter';
+import { EmptyStateError } from '../../../../framework/components/EmptyStateError';
+import { EmptyStateFilter } from '../../../../framework/components/EmptyStateFilter';
+import { EmptyStateNoData } from '../../../../framework/components/EmptyStateNoData';
 import { LoadingState } from '../../../../framework/components/LoadingState';
+import { getItemKey, requestGet } from '../../../common/crud/Data';
+import { CollectionImport } from '../../collections/Collection';
+import { hubAPI } from '../../common/api/formatPath';
+import { HubItemsResponse } from '../../common/useHubView';
+import { HubNamespace } from '../../namespaces/HubNamespace';
+import { ImportStatusIndicator } from '../components/ImportStatusIndicator';
+import { useCollectionImportFilters } from '../hooks/useCollectionImportFilters';
+import { useSelectNamespaceSingle } from '../hooks/useNamespaceSelector';
+import './hub-import-collections-filters.css';
 
 const NamespaceSelectorWrapper = styled.div`
   display: flex;
@@ -262,10 +262,7 @@ export function ImportList({
                                       </FlexItem>
                                       <FlexItem>
                                         {collectionImport.state}{' '}
-                                        <DateTimeCell
-                                          format="since"
-                                          value={collectionImport.finished_at}
-                                        />
+                                        <DateTimeCell value={collectionImport.finished_at} />
                                       </FlexItem>
                                     </Flex>
                                   </DataListCell>,

@@ -322,7 +322,6 @@ export function InventorySourceDetails(props: { inventorySourceId?: string }) {
       />
       <PageDetail label={t`Created`}>
         <DateTimeCell
-          format="since"
           value={inventorySource.created}
           author={summary_fields?.created_by?.username}
           onClick={() =>
@@ -331,7 +330,6 @@ export function InventorySourceDetails(props: { inventorySourceId?: string }) {
         />
       </PageDetail>
       <LastModifiedPageDetail
-        format="since"
         value={inventorySource.modified}
         author={summary_fields?.modified_by?.username}
         onClick={() =>

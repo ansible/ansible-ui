@@ -77,7 +77,7 @@ export function RemoteRegistryDetails() {
           </PageDetail>
           {remoteRegistry?.last_sync_task?.finished_at ? (
             <PageDetail label={t('Last sync')}>
-              {<DateTimeCell format="since" value={remoteRegistry?.last_sync_task?.finished_at} />}
+              {<DateTimeCell value={remoteRegistry?.last_sync_task?.finished_at} />}
             </PageDetail>
           ) : null}
           {remoteRegistry?.proxy_url ? (

@@ -64,7 +64,7 @@ export function useRepositoriesColumns(_options?: {
       },
       {
         header: t('Created at'),
-        cell: (repository) => <DateTimeCell format="since" value={repository.pulp_created} />,
+        cell: (repository) => <DateTimeCell value={repository.pulp_created} />,
         sort: 'pulp_created',
       },
     ],

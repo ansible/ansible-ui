@@ -13,8 +13,8 @@ import {
   useGetPageUrl,
 } from '../../../../../framework';
 import { useHubContext } from '../../../common/useHubContext';
-import { CollectionVersionSearch } from '../Approval';
 import { HubRoute } from '../../../main/HubRoutes';
+import { CollectionVersionSearch } from '../Approval';
 
 export function useApprovalsColumns(_options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const { t } = useTranslation();
@@ -142,9 +142,7 @@ export function useApprovalsColumns(_options?: { disableSort?: boolean; disableL
       },
       {
         header: t('Created'),
-        cell: (approval) => (
-          <DateTimeCell format="since" value={approval.collection_version?.pulp_created} />
-        ),
+        cell: (approval) => <DateTimeCell value={approval.collection_version?.pulp_created} />,
         card: 'hidden',
         list: 'secondary',
         sort: 'pulp_created',
