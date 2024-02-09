@@ -13,6 +13,7 @@ import { useJobRowActions } from './hooks/useJobRowActions';
 import { useJobToolbarActions } from './hooks/useJobToolbarActions';
 import { useJobsColumns } from './hooks/useJobsColumns';
 import { useJobsFilters } from './hooks/useJobsFilters';
+import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
 
 export function Jobs() {
   const { t } = useTranslation();
@@ -74,6 +75,7 @@ export function Jobs() {
           `A job is an instance of {{product}} launching an Ansible playbook against an inventory of hosts.`,
           { product }
         )}
+        headerActions={<ActivityStreamIcon type={'job'} />}
         // headerActions={
         //   <ToggleGroup aria-label={t('show graph toggle')}>
         //     <ToggleGroupItem

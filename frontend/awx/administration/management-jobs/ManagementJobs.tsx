@@ -1,12 +1,24 @@
 import { useTranslation } from 'react-i18next';
-import { PageHeader, PageLayout } from '../../../../framework';
-import { PageNotImplemented } from '../../../../framework/PageEmptyStates/PageNotImplemented';
+import { PageHeader, PageLayout, PageTable } from '../../../../framework';
+import { SystemJobTemplate } from '../../interfaces/SystemJobTemplate';
 import { useAwxConfig } from '../../common/useAwxConfig';
 import { getDocsBaseUrl } from '../../common/util/getDocsBaseUrl';
+import { useManagementJobFilters } from './hooks/useManagementJobFilters';
+import { useManagementJobColumns } from './hooks/useManagementJobColumns';
+import { useAwxView } from '../../common/useAwxView';
+import { awxAPI } from '../../common/api/awx-utils';
 
 export function ManagementJobs() {
   const { t } = useTranslation();
   const config = useAwxConfig();
+  const toolbarFilters = useManagementJobFilters();
+  const tableColumns = useManagementJobColumns();
+
+  const view = useAwxView<SystemJobTemplate>({
+    url: awxAPI`/system_job_templates/`,
+    toolbarFilters,
+    tableColumns,
+  });
 
   return (
     <PageLayout>
@@ -21,7 +33,14 @@ export function ManagementJobs() {
         )}
         titleDocLink={`${getDocsBaseUrl(config)}/html/userguide/management_jobs.html`}
       />
-      <PageNotImplemented />
+      <PageTable<SystemJobTemplate>
+        id="awx-management-jobs"
+        toolbarFilters={toolbarFilters}
+        tableColumns={tableColumns}
+        errorStateTitle={t('Error loading management jobs')}
+        emptyStateTitle="No management jobs yet"
+        {...view}
+      />
     </PageLayout>
   );
 }

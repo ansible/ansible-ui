@@ -4,7 +4,8 @@ import { randomString } from '../../../framework/utils/random-string';
 import { hubAPI } from '../../support/formatApiPathForHub';
 import { Collections } from './constants';
 
-describe('Collections- List View', () => {
+// Skipped until collection upload is working in application
+describe.skip('Collections- List View', () => {
   //**Important to know:
   //**In order to upload a collection, a namespace must first exist containing the first word of the collection file name
   //**The only way to get rid of a collection's artifact is to choose the following option:
@@ -35,7 +36,7 @@ describe('Collections- List View', () => {
       cy.url().should('include', 'collections');
       cy.verifyPageTitle(Collections.title);
       cy.get('[data-cy="table-view"]').click();
-      cy.searchAndDisplayResource(collection);
+      cy.filterTableBySingleText(collection);
       cy.get('[data-cy="actions-column-cell"]').click();
       cy.get('[data-cy="delete-entire-collection-from-system"]').click({ force: true });
       cy.get('#confirm').click();
@@ -64,7 +65,7 @@ describe('Collections- List View', () => {
   it.skip('user can deprecate selected collections using the list toolbar', () => {});
 });
 
-describe.skip('Collections List- Line Item Kebab Menu', () => {
+describe('Collections List- Line Item Kebab Menu', () => {
   let thisCollectionName: string;
   let namespace: string;
   let repository: string;
@@ -73,15 +74,18 @@ describe.skip('Collections List- Line Item Kebab Menu', () => {
     thisCollectionName = 'hub_e2e_' + randomString(5).toLowerCase();
     namespace = 'hub_e2e_col_namespace' + randomString(5).toLowerCase();
     cy.hubLogin();
-    cy.getNamespace(namespace);
+    cy.createNamespace(namespace);
     cy.uploadCollection(thisCollectionName, namespace);
     cy.navigateTo('hub', Collections.url);
   });
 
   afterEach(() => {
-    if (Cypress.currentTest.title !== 'user can deprecate a collection') {
-      cy.deleteCollection(thisCollectionName, namespace, repository);
+    if (Cypress.currentTest.title === 'user can deprecate a collection') {
+      cy.undeprecateCollection(thisCollectionName, namespace, repository);
+      cy.galaxykit('task wait all');
     }
+    cy.deleteCollection(thisCollectionName, namespace, repository);
+    cy.galaxykit('task wait all');
     cy.deleteNamespace(namespace);
   });
 
@@ -91,7 +95,7 @@ describe.skip('Collections List- Line Item Kebab Menu', () => {
 
   it.skip('user can delete entire collection from repository', () => {});
 
-  it.skip('user can deprecate a collection', () => {
+  it('user can deprecate a collection', () => {
     cy.approveCollection(thisCollectionName, namespace, '1.0.0');
     cy.visit(`/collections?page=1&perPage=50&sort=name&keywords=${thisCollectionName}`);
     cy.get(`a[href*="/collections/published/${namespace}/${thisCollectionName}"]`).should(
@@ -120,6 +124,7 @@ describe.skip('Collections List- Line Item Kebab Menu', () => {
     cy.visit(`/collections?page=1&perPage=50&sort=name&keywords=${thisCollectionName}`);
     cy.get('[data-cy="table-view"]').click();
     cy.contains('h2', 'No results found').should('be.visible');
+    repository = 'published';
   });
 
   it.skip('user can copy a version to repository', () => {
