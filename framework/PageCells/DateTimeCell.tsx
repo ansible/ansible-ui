@@ -1,9 +1,11 @@
 import { Button, Split, SplitItem } from '@patternfly/react-core';
 import { DateTime } from 'luxon';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
+import { useSettings } from '../Settings';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
 import { formatDateString } from '../utils/formatDateString';
-import styled from 'styled-components';
 
 export function DateCell(props: { value: number | string }) {
   const date = new Date(props.value);
@@ -22,33 +24,50 @@ const DateCellSpan = styled.span`
 export function DateTimeCell(props: {
   value: string | number | undefined | null;
   author?: string;
-  format?: 'since' | 'date-time';
   onClick?: () => void;
 }) {
+  const { t } = useTranslation();
   const [translations] = useFrameworkTranslations();
   const { author, onClick } = props;
   const [dateTime, setDateTime] = useState<string | null>(null);
-  useEffect(() => {
-    if (props.format === 'date-time' && typeof props.value === 'string') {
-      setDateTime(formatDateString(props.value));
-      return;
-    } else {
-      if (typeof props.value === 'number') {
-        setDateTime(DateTime.fromMillis(props.value).toRelative());
-      } else if (props.value) {
-        setDateTime(DateTime.fromISO(props.value).toRelative());
+  const settings = useSettings();
+  const format = settings.dateFormat ? settings.dateFormat : 'date-time';
+
+  const updateTime = useCallback(
+    (value: string | number | undefined | null, format?: 'since' | 'date-time') => {
+      let date: DateTime;
+      if (typeof value === 'number') {
+        date = DateTime.fromMillis(value);
+      } else {
+        date = DateTime.fromISO(value as string);
       }
-      const timeout = setInterval(() => {
-        if (typeof props.value === 'number') {
-          setDateTime(DateTime.fromMillis(props.value).toRelative());
-        } else if (props.value) {
-          setDateTime(DateTime.fromISO(props.value).toRelative());
+      switch (format) {
+        case 'since': {
+          if (DateTime.now().toMillis() - date.toMillis() < 60 * 1000) {
+            setDateTime(t('Less than a minute ago'));
+          } else {
+            setDateTime(date.toRelative());
+          }
+          break;
         }
-      }, 1000);
+        default:
+          setDateTime(formatDateString(date.toJSDate()));
+          break;
+      }
+    },
+    [t]
+  );
+
+  useEffect(() => {
+    updateTime(props.value, format);
+    if (format === 'since') {
+      const timeout = setInterval(() => updateTime(props.value, format), 1000);
       return () => clearTimeout(timeout);
     }
-  }, [props.format, props.value]);
-  if (props.value === undefined) return <></>;
+  }, [format, props.value, updateTime]);
+
+  if (!props.value) return <></>;
+
   return (
     <DateCellSpan className="date-time">
       {dateTime}

@@ -1,23 +1,20 @@
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { useGet } from '../../../../common/crud/useGet';
-import { Role } from '../Role';
-import { pulpAPI } from '../../../common/api/formatPath';
 import {
   DateTimeCell,
   LoadingPage,
   PageDetail,
   PageDetails,
-  PageHeader,
   PageLayout,
   Scrollable,
-  useGetPageUrl,
 } from '../../../../../framework';
-import { HubRoute } from '../../../main/HubRoutes';
-import { useLockedRolesWithDescription } from '../hooks/useLockedRolesWithDescription';
-import { RolePermissions } from '../components/RolePermissions';
+import { useGet } from '../../../../common/crud/useGet';
 import { HubError } from '../../../common/HubError';
+import { pulpAPI } from '../../../common/api/formatPath';
 import { PulpItemsResponse } from '../../../common/useHubView';
+import { Role } from '../Role';
+import { RolePermissions } from '../components/RolePermissions';
+import { useLockedRolesWithDescription } from '../hooks/useLockedRolesWithDescription';
 
 export function RoleDetails() {
   const { t } = useTranslation();
@@ -26,7 +23,6 @@ export function RoleDetails() {
     pulpAPI`/roles/?name=${params.id}`
   );
   const role = data?.results?.[0];
-  const getPageUrl = useGetPageUrl();
   const lockedRolesWithDescription = useLockedRolesWithDescription();
 
   if (error) return <HubError error={error} handleRefresh={refresh} />;
@@ -34,10 +30,6 @@ export function RoleDetails() {
 
   return (
     <PageLayout>
-      <PageHeader
-        title={role?.name}
-        breadcrumbs={[{ label: t('Roles'), to: getPageUrl(HubRoute.Roles) }, { label: role?.name }]}
-      />
       <Scrollable>
         <PageDetails>
           <PageDetail label={t('Name')}>{role.name || ''}</PageDetail>
@@ -45,7 +37,7 @@ export function RoleDetails() {
             {lockedRolesWithDescription[role.name] ?? role.description}
           </PageDetail>
           <PageDetail label={t('Created')}>
-            <DateTimeCell format="date-time" value={role.pulp_created} />
+            <DateTimeCell value={role.pulp_created} />
           </PageDetail>
         </PageDetails>
         <PageDetails numberOfColumns={'single'}>

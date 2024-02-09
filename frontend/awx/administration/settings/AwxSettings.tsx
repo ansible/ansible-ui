@@ -12,6 +12,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { LoadingPage, PageHeader, PageLayout, useGetPageUrl } from '../../../../framework';
 import { Masonry } from '../../../../framework/PageMasonry';
+import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
 import { AwxError } from '../../common/AwxError';
 import { AwxRoute } from '../../main/AwxRoutes';
 import { useAwxSettingsGroups } from './useAwxSettingsGroups';
@@ -24,7 +25,7 @@ export function AwxSettings() {
   if (isLoading || !groups) return <LoadingPage />;
   return (
     <PageLayout>
-      <PageHeader title={t('Settings')} />
+      <PageHeader title={t('Settings')} headerActions={<ActivityStreamIcon type={'setting'} />} />
       <PageSection>
         <Masonry minSize={500}>
           {groups.map((group) => (

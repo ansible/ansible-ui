@@ -114,7 +114,7 @@ export function CreateInventorySource() {
 function InventorySourceInputs() {
   const { t } = useTranslation();
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/inventory_sources/`);
-  // remove the filter when mockups/functionality for file and constructed source types are ready
+  // remove the .filter when mockups/functionality for file and constructed source types are ready
   const scmTypeOptions = data?.actions?.GET?.source?.choices?.filter(([value, label]) => {
     const ignoredSourceTypes = ['file', 'constructed'];
     if (!ignoredSourceTypes.includes(value)) {

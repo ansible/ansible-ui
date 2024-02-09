@@ -1,16 +1,32 @@
-import { Approvals, MyImports } from './constants';
+import { Approvals, Collections, MyImports } from './constants';
 import { randomString } from '../../../framework/utils/random-string';
 
 describe('Approvals', () => {
   let thisCollectionName: string;
   let namespace: string;
   let repository: string;
+  let anotherRepoName: string;
+
+  before(() => {
+    // this is important, we need at least two approved repos (this one and published) to test approve modal
+    // there is no way we can test approval to single repo, we have no control over the number of approved repos in system
+    // (except mocking the API, which can be done in future).
+    anotherRepoName = 'hub_e2e_new_repo_' + randomString(5).toLowerCase();
+    cy.galaxykit(`repository create ${anotherRepoName} --pipeline approved`);
+    cy.galaxykit('task wait all');
+    repository = 'staging';
+  });
+
+  after(() => {
+    cy.galaxykit(`-i repository delete ${anotherRepoName}`);
+  });
 
   beforeEach(() => {
     thisCollectionName = 'hub_e2e_' + randomString(5).toLowerCase();
     namespace = 'hub_e2e_appr_namespace' + randomString(5).toLowerCase();
     cy.hubLogin();
-    cy.getNamespace(namespace);
+    cy.createNamespace(namespace);
+    cy.galaxykit('task wait all');
     cy.uploadCollection(thisCollectionName, namespace);
     cy.galaxykit('task wait all');
 
@@ -24,9 +40,13 @@ describe('Approvals', () => {
   });
 
   it('user can upload a new collection and approve it', () => {
+    approve('Needs review');
+  });
+
+  function approve(status: string) {
     cy.navigateTo('hub', Approvals.url);
     cy.verifyPageTitle(Approvals.title);
-    cy.clickTableRowPinnedAction(thisCollectionName, 'approve');
+    clickTableRowPinnedAction(thisCollectionName, 'approve');
 
     //Verify Approve and sign collections modal
     cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
@@ -35,67 +55,49 @@ describe('Approvals', () => {
       cy.get('[data-cy="namespace-column-cell"]').should('have.text', namespace);
       cy.get('[data-cy="collection-column-cell"]').should('have.text', thisCollectionName);
       cy.get('[data-cy="version-column-cell"]').should('have.text', '1.0.0');
-      cy.get('[data-cy="status-column-cell"]').should('have.text', 'Needs review');
+      cy.get('[data-cy="status-column-cell"]').should('have.text', status);
       cy.get('input[id="confirm"]').click();
       cy.get('button').contains('Approve collections').click();
     });
 
+    // handle modal
+    const modal = `[aria-label="Select repositories"] `;
+    cy.get(modal).within(() => {
+      cy.contains('Select repositories');
+      cy.filterTableBySingleText('published{enter}');
+      cy.contains('published');
+      cy.get(`[name="data-list-check-published"]`).click();
+      cy.contains('button', 'Select').click();
+    });
+
     cy.galaxykit('task wait all');
-    cy.assertModalSuccess();
-    cy.clickModalButton('Close');
+    cy.get(modal).should('not.exist');
+
+    // verify its really approved
+    cy.navigateTo('hub', Approvals.url);
+    cy.filterTableBySingleText(thisCollectionName + '{enter}');
+    cy.contains(thisCollectionName);
+    cy.contains(namespace);
+    cy.contains('published');
+
+    cy.navigateTo('hub', Collections.url);
+    cy.get(`[aria-label="Type to filter"]`).type(thisCollectionName + '{enter}');
+    cy.contains('Clear all filters');
+    cy.contains(thisCollectionName);
+    cy.contains(namespace);
+    cy.contains('published');
 
     repository = 'published';
-  });
+  }
 
   it('user can upload a new collection and reject it', () => {
-    cy.navigateTo('hub', Approvals.url);
-    cy.verifyPageTitle(Approvals.title);
-    cy.clickTableRowPinnedAction(thisCollectionName, 'reject');
-
-    //Verify Reject modal
-    cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
-      cy.get('header').contains('Reject collections');
-      cy.get('button').contains('Reject collections').should('have.attr', 'aria-disabled', 'true');
-      cy.get('[data-cy="namespace-column-cell"]').should('have.text', namespace);
-      cy.get('[data-cy="collection-column-cell"]').should('have.text', thisCollectionName);
-      cy.get('[data-cy="version-column-cell"]').should('have.text', '1.0.0');
-      cy.get('[data-cy="status-column-cell"]').should('have.text', 'Needs review');
-      cy.get('input[id="confirm"]').click();
-      cy.get('button').contains('Reject collections').click();
-    });
-
-    cy.galaxykit('task wait all');
-    cy.assertModalSuccess();
-    cy.clickModalButton('Close');
-
-    repository = 'rejected';
+    reject('Needs review');
   });
 
-  it('user can approve a collection and then reject it', () => {
+  function reject(status: string) {
     cy.navigateTo('hub', Approvals.url);
     cy.verifyPageTitle(Approvals.title);
-    cy.clickTableRowPinnedAction(thisCollectionName, 'approve');
-
-    //Verify Approve modal
-    cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
-      cy.get('header').contains('Approve collections');
-      cy.get('button').contains('Approve collections').should('have.attr', 'aria-disabled', 'true');
-      cy.get('[data-cy="namespace-column-cell"]').should('have.text', namespace);
-      cy.get('[data-cy="collection-column-cell"]').should('have.text', thisCollectionName);
-      cy.get('[data-cy="version-column-cell"]').should('have.text', '1.0.0');
-      cy.get('[data-cy="status-column-cell"]').should('have.text', 'Needs review');
-      cy.get('input[id="confirm"]').click();
-      cy.get('button').contains('Approve collections').click();
-    });
-
-    cy.galaxykit('task wait all');
-    cy.assertModalSuccess();
-    cy.clickModalButton('Close');
-
-    repository = 'published';
-
-    cy.clickButton(/^Clear all filters$/);
-    cy.clickTableRowPinnedAction(thisCollectionName, 'reject');
+    clickTableRowPinnedAction(thisCollectionName, 'reject');
 
     //Verify Reject modal
     cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
@@ -104,7 +106,7 @@ describe('Approvals', () => {
       cy.get('[data-cy="namespace-column-cell"]').should('have.text', namespace);
       cy.get('[data-cy="collection-column-cell"]').should('have.text', thisCollectionName);
       cy.get('[data-cy="version-column-cell"]').should('have.text', '1.0.0');
-      cy.get('[data-cy="status-column-cell"]').should('have.text', 'Approved');
+      cy.get('[data-cy="status-column-cell"]').should('have.text', status);
       cy.get('input[id="confirm"]').click();
       cy.get('button').contains('Reject collections').click();
     });
@@ -113,61 +115,29 @@ describe('Approvals', () => {
     cy.assertModalSuccess();
     cy.clickModalButton('Close');
 
+    // verify its really rejected
+    cy.navigateTo('hub', Approvals.url);
+    cy.filterTableBySingleText(thisCollectionName + '{enter}');
+    cy.contains(thisCollectionName);
+    cy.contains(namespace);
+    cy.contains('rejected');
+
     repository = 'rejected';
+  }
+
+  it('user can approve a collection and then reject it', () => {
+    approve('Needs review');
+    reject('Approved');
   });
 
   it('user can reject a collection and then approve it', () => {
-    cy.navigateTo('hub', Approvals.url);
-    cy.verifyPageTitle(Approvals.title);
-    cy.clickTableRowPinnedAction(thisCollectionName, 'reject');
-
-    //Verify Reject modal
-    cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
-      cy.get('header').contains('Reject collections');
-      cy.get('button').contains('Reject collections').should('have.attr', 'aria-disabled', 'true');
-      cy.get('[data-cy="namespace-column-cell"]').should('have.text', namespace);
-      cy.get('[data-cy="collection-column-cell"]').should('have.text', thisCollectionName);
-      cy.get('[data-cy="version-column-cell"]').should('have.text', '1.0.0');
-      cy.get('[data-cy="status-column-cell"]').should('have.text', 'Needs review');
-      cy.get('input[id="confirm"]').click();
-      cy.get('button').contains('Reject collections').click();
-    });
-
-    cy.galaxykit('task wait all');
-    cy.assertModalSuccess();
-    cy.clickModalButton('Close');
-
-    repository = 'rejected';
-
-    cy.clickButton(/^Clear all filters$/);
-    cy.clickTableRowPinnedAction(thisCollectionName, 'approve');
-
-    //Verify Approval modal
-    cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
-      cy.get('header').contains('Approve collections');
-      cy.get('button').contains('Approve collections').should('have.attr', 'aria-disabled', 'true');
-      cy.get('[data-cy="namespace-column-cell"]').should('have.text', namespace);
-      cy.get('[data-cy="collection-column-cell"]').should('have.text', thisCollectionName);
-      cy.get('[data-cy="version-column-cell"]').should('have.text', '1.0.0');
-      cy.get('[data-cy="status-column-cell"]').should('have.text', 'Rejected');
-      cy.get('input[id="confirm"]').click();
-      cy.get('button').contains('Approve collections').click();
-    });
-
-    cy.galaxykit('task wait all');
-    cy.assertModalSuccess();
-    cy.clickModalButton('Close');
-
-    repository = 'published';
+    reject('Needs review');
+    approve('Rejected');
   });
 
   it('user can view import logs', () => {
-    // 'Needs review' is selected by default, so unselect it
-    cy.filterByMultiSelection('Status', 'Needs review');
-    cy.filterTableByTypeAndText('Collection', thisCollectionName);
-    cy.filterTableByTypeAndText('Namespace', namespace);
-
-    cy.clickTableRowPinnedAction(namespace, 'view-import-logs', false);
+    cy.filterTableBySingleText(thisCollectionName);
+    clickTableRowPinnedAction(thisCollectionName, 'view-import-logs');
 
     cy.url().should('include', MyImports.url);
     cy.url().should('include', namespace);
@@ -181,3 +151,8 @@ describe('Approvals', () => {
     repository = 'staging';
   });
 });
+
+function clickTableRowPinnedAction(text: string, action: string) {
+  cy.filterTableBySingleText(text + '{enter}');
+  cy.get(`[data-cy="actions-column-cell"] [data-cy="${action}"]`).click();
+}
