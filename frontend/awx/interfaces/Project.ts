@@ -9,16 +9,12 @@ import {
 
 export type SCMType = '' | 'manual' | 'git' | 'svn' | 'insights' | 'archive' | null;
 export interface Project
-  extends Omit<
-    SwaggerProject,
-    'summary_fields' | 'related' | 'id' | 'name' | 'scm_type' | 'organization'
-  > {
+  extends Omit<SwaggerProject, 'summary_fields' | 'related' | 'id' | 'name' | 'scm_type'> {
   id: number;
   name: string;
   base_dir: string;
   scm_type: SCMType;
   type: 'project';
-  organization: number;
   summary_fields: {
     created_by: SummaryFieldsByUser;
     modified_by: SummaryFieldsByUser;
