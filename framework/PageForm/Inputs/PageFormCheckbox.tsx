@@ -1,6 +1,6 @@
 import { Checkbox, CheckboxProps, Flex } from '@patternfly/react-core';
 import { ReactNode } from 'react';
-import { Controller, FieldPath, FieldValues, useFormContext, Validate } from 'react-hook-form';
+import { Controller, FieldPath, FieldValues, Validate, useFormContext } from 'react-hook-form';
 import { Help } from '../../components/Help';
 
 export type PageFormCheckboxProps<

@@ -30,10 +30,10 @@ export function ApplicationDetailInner(props: { application: Application }) {
       <PageDetail label={t('Redirect URIs')}>{props.application.redirect_uris}</PageDetail>
       <PageDetail label={t('Client Type')}>{props.application.client_type}</PageDetail>
       <PageDetail label={t('Created')}>
-        <DateTimeCell format="since" value={props.application.created} />
+        <DateTimeCell value={props.application.created} />
       </PageDetail>
       <PageDetail label={t('Last modified')}>
-        <DateTimeCell format="since" value={props.application.modified} />
+        <DateTimeCell value={props.application.modified} />
       </PageDetail>
     </PageDetails>
   );

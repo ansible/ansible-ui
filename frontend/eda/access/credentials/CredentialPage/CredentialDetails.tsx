@@ -40,7 +40,6 @@ export function CredentialDetails() {
         {credential?.created_at ? formatDateString(credential.created_at) : ''}
       </PageDetail>
       <LastModifiedPageDetail
-        format="date-time"
         value={credential?.modified_at ? formatDateString(credential.modified_at) : ''}
       />
     </PageDetails>
