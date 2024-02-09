@@ -29,10 +29,6 @@ describe('Collections- List View', () => {
       cy.getTableRowBySingleText('community').within(() => {
         cy.get('td[data-cy=checkbox-column-cell]').click();
       });
-      cy.intercept(
-        'POST',
-        `/api/galaxy/v3/plugin/ansible/content/community/collections/artifacts/`
-      ).as('postedCollection');
       cy.get('[data-cy="Submit"]').click();
       cy.url().should('include', 'approvals');
       cy.reload();
