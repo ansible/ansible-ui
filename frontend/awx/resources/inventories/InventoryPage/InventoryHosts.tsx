@@ -21,25 +21,20 @@ export function InventoryHosts() {
   const tableColumns = useInventoriesHostsColumns();
   const params = useParams<{ id: string; inventory_type: string }>();
   const view = useAwxView<AwxHost>({
-    url: awxAPI`/inventories/${params.id ?? ''}/hosts`,
+    url: awxAPI`/inventories/${params.id ?? ''}/hosts/`,
     toolbarFilters,
     tableColumns,
   });
   const toolbarActions = useInventoriesHostsToolbarActions(view);
   const rowActions = useInventoriesHostsActions(view.unselectItemsAndRefresh, view.refresh);
 
-  const hostOptions = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/hosts`).data;
+  const hostOptions = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/hosts/`).data;
   const canCreateHost = Boolean(hostOptions && hostOptions.actions && hostOptions.actions['POST']);
 
   usePersistentFilters('inventories');
 
   return (
     <PageLayout>
-      <PageHeader
-        title={t('Inventory Hosts')}
-        titleHelpTitle={t('Inventory Hosts')}
-        description={t('The list of hosts in the current inventory')}
-      />
       <PageTable<AwxHost>
         id="awx-inventory-hosts-table"
         toolbarFilters={toolbarFilters}
