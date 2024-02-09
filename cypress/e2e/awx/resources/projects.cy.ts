@@ -28,7 +28,7 @@ describe('projects', () => {
       `${(this.globalOrganization as Organization).name}`
     );
     cy.selectDropdownOptionByResourceName('source_control_type', 'Git');
-    cy.get('[data-cy="project-scm-url"]').type('https://github.com/ansible/ansible-ui');
+    cy.get('[data-cy="scm-url"]').type('https://github.com/ansible/ansible-ui');
     cy.get('[data-cy="option-allow-override"]').click();
     cy.clickButton(/^Create project$/);
     cy.verifyPageTitle(projectName);
@@ -247,7 +247,7 @@ describe('project edit and delete tests', () => {
   //     cy.contains('td', testProject.name)
   //       .parent()
   //       .within(() => {
-  //         cy.get('#cancel-project-sync').click();
+  //         cy.get('#cancel-sync').click();
   //       });
   //     cy.get('#confirm').click();
   //     cy.clickButton(/^Cancel project sync/);
