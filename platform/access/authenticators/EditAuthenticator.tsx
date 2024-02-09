@@ -1,28 +1,43 @@
 import { ReactNode } from 'react';
+import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import useSWR from 'swr';
 import { LoadingPage, usePageAlertToaster, usePageNavigate } from '../../../framework';
-import { PlatformRoute } from '../../main/PlatformRoutes';
-import { postRequest } from '../../../frontend/common/crud/Data';
+import {
+  postRequest,
+  requestGet,
+  requestPatch,
+  swrOptions,
+} from '../../../frontend/common/crud/Data';
 import { useGet } from '../../../frontend/common/crud/useGet';
+import { PlatformRoute } from '../../main/PlatformRoutes';
+import { gatewayAPI } from '../../api/gateway-api-utils';
 import {
   AuthenticatorForm,
   formatConfiguration,
   buildTriggers,
   AuthenticatorFormValues,
 } from './components/AuthenticatorForm';
-import { gatewayAPI } from '../../api/gateway-api-utils';
-import type { Authenticator } from '../../interfaces/Authenticator';
 import type { AuthenticatorPlugins } from '../../interfaces/AuthenticatorPlugin';
+import type { Authenticator } from '../../interfaces/Authenticator';
 
 type Errors = { [key: string]: string } | undefined;
 
-export function CreateAuthenticator() {
+export function EditAuthenticator() {
   const { t } = useTranslation();
   const alertToaster = usePageAlertToaster();
   const pageNavigate = usePageNavigate();
+  const params = useParams<{ id?: string }>();
+
+  const id = Number(params.id);
+  const { data: authenticator } = useSWR<Authenticator>(
+    gatewayAPI`/authenticators/${id.toString()}/`,
+    requestGet,
+    swrOptions
+  );
 
   const { data: plugins } = useGet<AuthenticatorPlugins>(gatewayAPI`/authenticator_plugins`);
-  if (!plugins) {
+  if (!plugins || !authenticator) {
     return <LoadingPage />;
   }
 
@@ -32,7 +47,7 @@ export function CreateAuthenticator() {
     if (!plugins || !plugin) {
       return;
     }
-    const request = postRequest(gatewayAPI`/authenticators/`, {
+    const request = requestPatch(gatewayAPI`/authenticators/${id.toString()}`, {
       name,
       type,
       configuration: formatConfiguration(configuration, plugin),
@@ -80,5 +95,11 @@ export function CreateAuthenticator() {
     }
   };
 
-  return <AuthenticatorForm handleSubmit={handleSubmit} plugins={plugins} />;
+  return (
+    <AuthenticatorForm
+      handleSubmit={handleSubmit}
+      plugins={plugins}
+      authenticator={authenticator}
+    />
+  );
 }

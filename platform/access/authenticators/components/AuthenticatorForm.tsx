@@ -13,7 +13,7 @@ import { AuthenticatorDetailsStep } from './steps/AuthenticatorDetailsStep';
 import { AuthenticatorMappingStep } from './steps/AuthenticatorMappingStep';
 import { AuthenticatorMappingOrderStep } from './steps/AuthenticatorMappingOrderStep';
 import { AuthenticatorReviewStep } from './steps/AuthenticatorReviewStep';
-import { AuthenticatorTypeEnum } from '../../../interfaces/Authenticator';
+import { Authenticator, AuthenticatorTypeEnum } from '../../../interfaces/Authenticator';
 import { AuthenticatorMapType } from '../../../interfaces/AuthenticatorMap';
 import type {
   AuthenticatorPlugin,
@@ -70,9 +70,11 @@ export interface AuthenticatorFormValues {
 interface AuthenticatorFormProps {
   handleSubmit: (values: AuthenticatorFormValues) => Promise<void>;
   plugins: AuthenticatorPlugins;
+  authenticator?: Authenticator;
 }
 
 export function AuthenticatorForm(props: AuthenticatorFormProps) {
+  const { plugins, authenticator } = props;
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
 
@@ -80,13 +82,13 @@ export function AuthenticatorForm(props: AuthenticatorFormProps) {
     {
       id: 'type',
       label: t('Authentication type'),
-      inputs: <AuthenticatorTypeStep plugins={props.plugins} />,
-      hidden: () => false, // TODO hide step when in edit mode
+      inputs: <AuthenticatorTypeStep plugins={plugins} />,
+      hidden: () => !!authenticator,
     },
     {
       id: 'details',
       label: t('Authentication details'),
-      inputs: <AuthenticatorDetailsStep plugins={props.plugins} />,
+      inputs: <AuthenticatorDetailsStep plugins={plugins} authenticator={authenticator} />,
     },
     {
       id: 'mapping',
@@ -101,7 +103,7 @@ export function AuthenticatorForm(props: AuthenticatorFormProps) {
     {
       id: 'review',
       label: t('Review'),
-      element: <AuthenticatorReviewStep plugins={props.plugins} />,
+      element: <AuthenticatorReviewStep plugins={plugins} authenticator={authenticator} />,
     },
   ];
 
@@ -116,11 +118,25 @@ export function AuthenticatorForm(props: AuthenticatorFormProps) {
     mapping: {},
     order: {},
   };
+  if (authenticator) {
+    const plugin = plugins.authenticators.find((plugin) => plugin.type === authenticator.type);
+    initialValues.type = {
+      type: authenticator.type,
+    };
+    initialValues.details = {
+      name: authenticator.name,
+      configuration: {},
+    };
+
+    plugin?.configuration_schema.forEach((field) => {
+      initialValues.details.configuration[field.name] = authenticator.configuration[field.name];
+    });
+  }
 
   return (
     <PageLayout>
       <PageHeader
-        title={t('Create Authentication')}
+        title={authenticator ? t('Edit Authentication') : t('Create Authentication')}
         breadcrumbs={[
           { label: t('Authentication'), to: getPageUrl(PlatformRoute.Authenticators) },
           { label: t('Create Authentication') },
