@@ -5,7 +5,7 @@ import { useCreatedColumn, useModifiedColumn } from '../../../../frontend/common
 import { PlatformUser } from '../../../interfaces/PlatformUser';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
 
-export function useUsersColumns() {
+export function useUsersColumns(options?: { disableLinks?: boolean }) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const createdColumn = useCreatedColumn({
@@ -24,7 +24,11 @@ export function useUsersColumns() {
         cell: (user) => (
           <TextCell
             text={user.username}
-            to={getPageUrl(PlatformRoute.UserDetails, { params: { id: user.id } })}
+            to={
+              options?.disableLinks
+                ? undefined
+                : getPageUrl(PlatformRoute.UserDetails, { params: { id: user.id } })
+            }
           />
         ),
         card: 'name',
