@@ -32,7 +32,7 @@ export function useInventoriesGroupsToolbarActions(view: IAwxView<InventoryGroup
   );
 
   const groupOptions = useOptions<OptionsResponse<ActionsResponse>>(
-    awxAPI`/inventories/${params.id ?? ''}/groups`
+    awxAPI`/inventories/${params.id ?? ''}/groups/`
   ).data;
   const canCreateGroup = Boolean(
     groupOptions && groupOptions.actions && groupOptions.actions['POST']
