@@ -23,7 +23,7 @@ export interface ImportConsoleProps {
 export function ImportConsole({
   collectionImport,
   scrollTo,
-  minMessagesToShowNavigationArrows = 1,
+  minMessagesToShowNavigationArrows = 25,
 }: ImportConsoleProps) {
   const { t } = useTranslation();
 
@@ -86,7 +86,6 @@ const arrowStyle = `
     cursor: pointer;
   }
   position: absolute;
-  margin-bottom: 10px;
   margin-right: 10px;
   font-size: 120%;
 `;
@@ -95,12 +94,14 @@ const StyledArrowDown = styled.div`
   ${arrowStyle}
   right: 0; /* Aligns the icon to the right */
   top: 0; /* Aligns the icon to the top */
+  margin-bottom: 10px;
 `;
 
 const StyledArrowUp = styled.div`
   ${arrowStyle}
   right: 0;
   bottom: 0;
+  margin-top: 10px;
 `;
 
 function NavigationArrow(props: { direction: 'up' | 'down'; onClick: () => void }) {

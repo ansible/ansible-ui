@@ -14,7 +14,7 @@ export interface HubImportLogProps extends ImportConsoleProps {
 export function HubImportLog({
   collectionImport,
   collection,
-  minMessagesToShowNavigationArrows = 1,
+  minMessagesToShowNavigationArrows = 25,
   scrollTo,
 }: HubImportLogProps) {
   return (
