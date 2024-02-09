@@ -10,6 +10,7 @@ describe('Approvals', () => {
   before(() => {
     // this is important, we need at least two approved repos (this one and published) to test approve modal
     // there is no way we can test approval to single repo, we have no control over the number of approved repos in system
+    // (except mocking the API, which can be done in future).
     anotherRepoName = 'hub_e2e_new_repo_' + randomString(5).toLowerCase();
     cy.galaxykit(`repository create ${anotherRepoName} --pipeline approved`);
     cy.galaxykit('task wait all');
