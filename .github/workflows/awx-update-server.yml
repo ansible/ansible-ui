@@ -7,7 +7,7 @@ on:
         type: string
         required: true
         description: 'AWX Server'
-        default: "https://awx.ci-ui-${{ format('{0}-{1}-{2}', github.event.time.year, github.event.time.month, github.event.time.day) }}.gcp.testing.ansible.com"
+        default: https://awx.ci-ui-${{ format('{0}-{1}-{2}', github.event.time.year, github.event.time.month, github.event.time.day) }}.gcp.testing.ansible.com
       UPDATE_SERVER:
         type: boolean
         required: true
