@@ -21,7 +21,7 @@ import { cannotDeleteResources } from '../../../../common/utils/RBAChelpers';
 export function useInventoriesGroupsToolbarActions(view: IAwxView<InventoryGroup>) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
-  const deleteGroups = useDeleteGroups(view.unselectItemsAndRefresh);
+  const deleteGroups = useDeleteGroups();
   const params = useParams<{ id: string; inventory_type: string }>();
 
   const adhocOptions = useOptions<OptionsResponse<ActionsResponse>>(
