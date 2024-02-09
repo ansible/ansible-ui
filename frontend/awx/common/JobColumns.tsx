@@ -2,23 +2,23 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import {
+  ColumnCardOption,
+  ColumnDashboardOption,
+  ColumnListOption,
   ColumnModalOption,
   ColumnTableOption,
-  ITableColumn,
-  useGetPageUrl,
-  ColumnCardOption,
-  ColumnListOption,
-  ColumnDashboardOption,
-  TextCell,
-  ElapsedTimeCell,
   DateTimeCell,
+  ElapsedTimeCell,
+  ITableColumn,
+  TextCell,
+  useGetPageUrl,
 } from '../../../framework';
+import { StatusCell } from '../../common/Status';
+import { useOptions } from '../../common/crud/useOptions';
+import { ActionsResponse, OptionsResponse } from '../interfaces/OptionsResponse';
 import { UnifiedJob } from '../interfaces/UnifiedJob';
 import { AwxRoute } from '../main/AwxRoutes';
 import { getLaunchedByDetails, getScheduleUrl, isJobRunning } from '../views/jobs/jobUtils';
-import { StatusCell } from '../../common/Status';
-import { useOptions } from '../../common/crud/useOptions';
-import { OptionsResponse, ActionsResponse } from '../interfaces/OptionsResponse';
 import { awxAPI } from './api/awx-utils';
 
 export function useJobIdColumn<T extends UnifiedJob>() {
@@ -118,8 +118,7 @@ export function useJobStartedColumn<T extends UnifiedJob>(
   const column = useMemo<ITableColumn<T>>(
     () => ({
       header: t('Started'),
-      cell: (job: UnifiedJob) =>
-        job.started && <DateTimeCell format="date-time" value={job.started} />,
+      cell: (job: UnifiedJob) => job.started && <DateTimeCell value={job.started} />,
       sort: 'started',
       list: listOption ?? ColumnListOption.secondary,
       defaultSortDirection: defaultSort ?? 'desc',
@@ -185,8 +184,7 @@ export function useJobFinishedColumn<T extends UnifiedJob>(
   const column = useMemo<ITableColumn<T>>(
     () => ({
       header: t('Finished'),
-      cell: (job: UnifiedJob) =>
-        job.finished && <DateTimeCell format="date-time" value={job.started} />,
+      cell: (job: UnifiedJob) => job.finished && <DateTimeCell value={job.started} />,
       sort: 'finished',
       card: cardOption ?? ColumnCardOption.hidden,
       list: listOption ?? ColumnListOption.secondary,
