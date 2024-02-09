@@ -26,6 +26,7 @@ export interface Settings {
   tableLayout: 'compact' | 'comfortable';
   formColumns: 'single' | 'multiple';
   formLayout: 'vertical' | 'horizontal';
+  dateFormat: 'since' | 'date-time';
 }
 
 export const SettingsContext = createContext<{
@@ -220,6 +221,32 @@ export function SettingsDialog(props: { open: boolean; setOpen: (open: boolean) 
                     label: 'Horizontal',
                     value: 'horizontal',
                     description: 'Labels for form fields are displayed to the left of the fields.',
+                  },
+                ]}
+              />
+            </PageFormGroup>
+
+            <PageFormGroup label="Date Format" fieldId="date-format">
+              <PageSingleSelect
+                id="date-format"
+                value={settings.dateFormat ?? 'since'}
+                onSelect={(dateFormat) =>
+                  setSettings({
+                    ...settings,
+                    dateFormat: dateFormat as 'since' | 'date-time',
+                  })
+                }
+                placeholder="Select date format"
+                options={[
+                  {
+                    label: 'Since',
+                    value: 'since',
+                    description: 'Display date in relative format.',
+                  },
+                  {
+                    label: 'Date Time',
+                    value: 'date-time',
+                    description: 'Display date and time.',
                   },
                 ]}
               />

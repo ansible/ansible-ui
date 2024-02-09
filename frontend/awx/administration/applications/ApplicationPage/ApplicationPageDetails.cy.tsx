@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable i18next/no-literal-string */
+import mockApplication from '../../../../../cypress/fixtures/application.json';
+import { formatDateString } from '../../../../../framework/utils/formatDateString';
 import { Application } from '../../../interfaces/Application';
 import { ApplicationDetailInner as ApplicationDetails } from './ApplicationPageDetails';
-import mockApplication from '../../../../../cypress/fixtures/application.json';
-import { DateTime } from 'luxon';
 
 describe('ApplicationDetails', () => {
   it('Component renders and displays Application', () => {
@@ -17,13 +17,10 @@ describe('ApplicationDetails', () => {
     cy.get('[data-cy="organization"]').should('have.text', 'Default');
     cy.get('[data-cy="authorization-grant-type"]').should('have.text', 'authorization-code');
     cy.get('[data-cy="client-type"]').should('have.text', 'confidential');
-    cy.get('[data-cy="created"]').should(
-      'have.text',
-      DateTime.fromISO((mockApplication as Application).created).toRelative()
-    );
+    cy.get('[data-cy="created"]').should('have.text', formatDateString(mockApplication.created));
     cy.get('[data-cy="last-modified"]').should(
       'have.text',
-      DateTime.fromISO((mockApplication as Application).modified).toRelative()
+      formatDateString(mockApplication.modified)
     );
   });
 });

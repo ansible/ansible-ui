@@ -35,7 +35,6 @@ export function ScheduleDetails() {
       />
       <LastModifiedPageDetail
         value={schedule.modified}
-        format="date-time"
         author={schedule.summary_fields.modified_by?.username}
         onClick={() =>
           history(

@@ -90,7 +90,7 @@ export function useSignatureKeysColumns(_options?: {
       },
       {
         header: t('Created'),
-        cell: (signatureKey) => <DateTimeCell format="since" value={signatureKey.pulp_created} />,
+        cell: (signatureKey) => <DateTimeCell value={signatureKey.pulp_created} />,
         card: 'hidden',
         list: 'secondary',
       },
@@ -107,7 +107,7 @@ export function useSignatureKeyFilters() {
       {
         key: 'name',
         label: t('Name'),
-        type: ToolbarFilterType.MultiText,
+        type: ToolbarFilterType.SingleText,
         query: 'name',
         comparison: 'equals',
       },

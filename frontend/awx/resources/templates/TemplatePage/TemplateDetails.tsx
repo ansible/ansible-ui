@@ -161,7 +161,6 @@ export function TemplateDetails(props: { templateId?: string }) {
       />
       <LastModifiedPageDetail
         value={template.modified}
-        format="date-time"
         author={template.summary_fields.modified_by?.username}
         onClick={() =>
           history(
