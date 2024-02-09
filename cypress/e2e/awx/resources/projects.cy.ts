@@ -22,7 +22,7 @@ describe('projects', () => {
     const projectName = 'E2E Project ' + randomString(4);
     cy.navigateTo('awx', 'projects');
     cy.clickLink(/^Create project$/);
-    cy.get('[data-cy="project-name"]').type(projectName);
+    cy.get('[data-cy="name"]').type(projectName);
     cy.selectDropdownOptionByResourceName(
       'organization',
       `${(this.globalOrganization as Organization).name}`
@@ -121,11 +121,11 @@ describe('project edit and delete tests', () => {
     cy.verifyPageTitle(project.name);
     cy.clickButton(/^Edit project$/);
     cy.verifyPageTitle('Edit Project');
-    cy.get('[data-cy="project-name"]').clear().type(`${project.name} - edited`);
+    cy.get('[data-cy="name"]').clear().type(`${project.name} - edited`);
     cy.clickButton(/^Save project$/);
     cy.verifyPageTitle(`${project.name} - edited`);
     cy.clickButton(/^Edit project$/);
-    cy.get('[data-cy="project-name"]').clear().type(`${project.name}`);
+    cy.get('[data-cy="name"]').clear().type(`${project.name}`);
     cy.clickButton(/^Save project$/);
     cy.verifyPageTitle(project.name);
   });
@@ -150,11 +150,11 @@ describe('project edit and delete tests', () => {
       cy.get('[data-cy="edit-project"]').click();
     });
     cy.verifyPageTitle('Edit Project');
-    cy.get('[data-cy="project-name"]').clear().type(`${project.name} - edited`);
+    cy.get('[data-cy="name"]').clear().type(`${project.name} - edited`);
     cy.clickButton(/^Save project$/);
     cy.verifyPageTitle(`${project.name} - edited`);
     cy.clickButton(/^Edit project$/);
-    cy.get('[data-cy="project-name"]').clear().type(`${project.name}`);
+    cy.get('[data-cy="name"]').clear().type(`${project.name}`);
     cy.clickButton(/^Save project$/);
     cy.verifyPageTitle(project.name);
   });

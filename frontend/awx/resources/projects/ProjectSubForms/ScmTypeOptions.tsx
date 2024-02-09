@@ -1,14 +1,14 @@
 import { useTranslation } from 'react-i18next';
 import { Help, PageFormCheckbox, PageFormTextInput } from '../../../../../framework';
-import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
-import { ProjectFields } from '../ProjectPage/ProjectForm';
 import { PageFormHidden } from '../../../../../framework/PageForm/Utils/PageFormHidden';
+import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
+import { Project } from '../ProjectPage/ProjectForm';
 
 export function ScmTypeOptions(props: { hideAllowOverride?: boolean }) {
   const { t } = useTranslation();
   return (
     <PageFormSection title={t('Options')}>
-      <PageFormCheckbox<ProjectFields>
+      <PageFormCheckbox<Project>
         id="option-scm-clean"
         label={
           <span>
@@ -19,7 +19,7 @@ export function ScmTypeOptions(props: { hideAllowOverride?: boolean }) {
         }
         name="project.scm_clean"
       />
-      <PageFormCheckbox<ProjectFields>
+      <PageFormCheckbox<Project>
         id="option-scm-delete-on-update"
         label={
           <span>
@@ -35,7 +35,7 @@ export function ScmTypeOptions(props: { hideAllowOverride?: boolean }) {
         name="project.scm_delete_on_update"
       />
       <PageFormHidden watch="project.scm_type" hidden={(type: string) => type !== 'git'}>
-        <PageFormCheckbox<ProjectFields>
+        <PageFormCheckbox<Project>
           id="option-scm-track-submodules"
           label={
             <span>
@@ -51,7 +51,7 @@ export function ScmTypeOptions(props: { hideAllowOverride?: boolean }) {
           name="project.scm_track_submodules"
         />
       </PageFormHidden>
-      <PageFormCheckbox<ProjectFields>
+      <PageFormCheckbox<Project>
         id="option-scm-update-on-launch"
         label={
           <span>
@@ -67,7 +67,7 @@ export function ScmTypeOptions(props: { hideAllowOverride?: boolean }) {
         name="project.scm_update_on_launch"
       />
       {!props.hideAllowOverride && (
-        <PageFormCheckbox<ProjectFields>
+        <PageFormCheckbox<Project>
           id="option-allow-override"
           label={
             <span>
@@ -88,7 +88,7 @@ export function ScmTypeOptions(props: { hideAllowOverride?: boolean }) {
         hidden={(scmUpdateOnLaunch?: boolean) => !scmUpdateOnLaunch}
       >
         <PageFormSection title={t('Option Details')}>
-          <PageFormTextInput<ProjectFields>
+          <PageFormTextInput<Project>
             name="project.scm_update_cache_timeout"
             type="number"
             labelHelp={t(

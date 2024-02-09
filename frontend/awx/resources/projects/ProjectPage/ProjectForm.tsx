@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { FieldValues, useFormContext, useWatch } from 'react-hook-form';
+import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
@@ -17,12 +17,10 @@ import { useOptions } from '../../../../common/crud/useOptions';
 import { usePostRequest } from '../../../../common/crud/usePostRequest';
 import { PageFormCredentialSelect } from '../../../access/credentials/components/PageFormCredentialSelect';
 import { PageFormSelectOrganization } from '../../../access/organizations/components/PageFormOrganizationSelect';
-import { getOrganizationByName } from '../../../access/organizations/utils/getOrganizationByName';
 import { PageFormExecutionEnvironmentSelect } from '../../../administration/execution-environments/components/PageFormExecutionEnvironmentSelect';
 import { AwxPageForm } from '../../../common/AwxPageForm';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
-import { Organization } from '../../../interfaces/Organization';
 import { Project, SCMType } from '../../../interfaces/Project';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { ArchiveSubForm } from '../ProjectSubForms/ArchiveSubForm';
@@ -31,13 +29,6 @@ import { InsightsSubForm } from '../ProjectSubForms/InsightsSubForm';
 import { ManualSubForm } from '../ProjectSubForms/ManualSubForm';
 import { SvnSubForm } from '../ProjectSubForms/SvnSubForm';
 import { useGetCredentialTypeIDs } from '../hooks/useGetCredentialTypeIDs';
-
-export interface ProjectFields extends FieldValues {
-  project: Omit<Project, 'scm_type'> & {
-    scm_type?: '' | 'git' | 'svn' | 'insights' | 'archive' | 'manual' | null;
-  };
-  id: number;
-}
 
 const defaultValues: Partial<Project> = {
   base_dir: '',
@@ -61,18 +52,7 @@ export function CreateProject() {
   const pageNavigate = usePageNavigate();
   const navigate = useNavigate();
   const postRequest = usePostRequest<Project>();
-  const onSubmit: PageFormSubmitHandler<ProjectFields> = async (values) => {
-    const { project } = values;
-
-    if (project.summary_fields.organization.name) {
-      try {
-        const organization = await getOrganizationByName(project.summary_fields.organization.name);
-        if (!organization) throw new Error(t('Organization not found.'));
-        project.organization = organization.id;
-      } catch {
-        throw new Error(t('Organization not found.'));
-      }
-    }
+  const onSubmit: PageFormSubmitHandler<Project> = async (project: Project) => {
     if (project.scm_type === 'manual') {
       project.scm_type = '';
     }
@@ -95,7 +75,7 @@ export function CreateProject() {
     }
 
     // Create new project
-    const newProject = await postRequest(awxAPI`/projects/`, project as Project);
+    const newProject = await postRequest(awxAPI`/projects/`, project);
 
     pageNavigate(AwxRoute.ProjectDetails, { params: { id: newProject.id } });
   };
@@ -115,9 +95,7 @@ export function CreateProject() {
         submitText={t('Create project')}
         onSubmit={onSubmit}
         onCancel={() => navigate(-1)}
-        defaultValue={{
-          project: { ...defaultValues },
-        }}
+        defaultValue={defaultValues as Project}
       >
         <ProjectInputs />
       </AwxPageForm>
@@ -137,45 +115,32 @@ export function EditProject() {
     project.scm_type = 'manual';
   }
 
-  const onSubmit: PageFormSubmitHandler<ProjectFields> = async (values) => {
-    const { project: editedProject } = values;
-
-    if (editedProject.summary_fields.organization.name) {
-      try {
-        const organization = await getOrganizationByName(
-          editedProject.summary_fields.organization.name
-        );
-        if (!organization) throw new Error(t('Organization not found.'));
-        editedProject.organization = organization.id;
-      } catch {
-        throw new Error(t('Organization not found.'));
-      }
-    }
-    if (editedProject.scm_type === 'manual') {
-      editedProject.scm_type = '';
+  const onSubmit: PageFormSubmitHandler<Project> = async (project: Project) => {
+    if (project.scm_type === 'manual') {
+      project.scm_type = '';
     }
 
     // Depending on the permissions of the user submitting the form,
     // the API might throw an unexpected error if our creation request
     // has a zero-length string as its credential field. As a work-around,
     // normalize falsey credential fields by deleting them.
-    if (!editedProject.credential || !editedProject.summary_fields.credential.name) {
-      editedProject.credential = null;
+    if (!project.credential || !project.summary_fields.credential.name) {
+      project.credential = null;
     }
     if (
-      !editedProject.signature_validation_credential ||
-      !editedProject.summary_fields.signature_validation_credential.name
+      !project.signature_validation_credential ||
+      !project.summary_fields.signature_validation_credential.name
     ) {
-      editedProject.signature_validation_credential = null;
+      project.signature_validation_credential = null;
     }
-    if (!editedProject.summary_fields.default_environment.name) {
-      editedProject.default_environment = null;
+    if (!project.summary_fields.default_environment.name) {
+      project.default_environment = null;
     }
 
     // Update project
     const updatedProject = await requestPatch<Project>(
       awxAPI`/projects/${id.toString()}/`,
-      editedProject
+      project
     );
 
     pageNavigate(AwxRoute.ProjectDetails, { params: { id: updatedProject.id } });
@@ -205,13 +170,11 @@ export function EditProject() {
           { label: t('Edit Project') },
         ]}
       />
-      <AwxPageForm<ProjectFields>
+      <AwxPageForm<Project>
         submitText={t('Save project')}
         onSubmit={onSubmit}
         onCancel={() => navigate(-1)}
-        defaultValue={{
-          project,
-        }}
+        defaultValue={project}
       >
         <ProjectInputs project={project} />
       </AwxPageForm>
@@ -236,7 +199,7 @@ const scmFormFieldDefaults: { [key: string]: any } = {
 
 function ProjectInputs(props: { project?: Project }) {
   const { t } = useTranslation();
-  const org = useWatch({ name: 'project.summary_fields.organization' }) as Organization;
+  const organizationId = useWatch<Project, 'organization'>({ name: 'organization' });
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/projects/`);
   const scmTypeOptions = data?.actions?.GET?.scm_type?.choices;
   const credentialTypeIDs = useGetCredentialTypeIDs();
@@ -249,59 +212,53 @@ function ProjectInputs(props: { project?: Project }) {
     const resetSCMTypeFields = () => {
       if (project !== undefined && scmType && scmType === project.scm_type) {
         Object.keys(scmFormFieldDefaults).forEach((field) => {
-          setValue(`project.${field}`, project[field as keyof Project]);
+          setValue(`${field}`, project[field as keyof Project]);
         });
         // Reset contents of credential fields
+        setValue('summary_fields.credential.name', project.summary_fields.credential?.name ?? '');
         setValue(
-          'project.summary_fields.credential.name',
-          project.summary_fields.credential?.name ?? ''
-        );
-        setValue(
-          'project.summary_fields.signature_validation_credential.name',
+          'summary_fields.signature_validation_credential.name',
           project.summary_fields.signature_validation_credential?.name ?? ''
         );
       } else {
         Object.keys(scmFormFieldDefaults).forEach((field) => {
-          setValue(`project.${field}`, scmFormFieldDefaults[field]);
+          setValue(`${field}`, scmFormFieldDefaults[field]);
         });
         // Reset contents of credential fields
-        setValue('project.summary_fields.credential.name', '');
-        setValue('project.summary_fields.signature_validation_credential.name', '');
+        setValue('summary_fields.credential.name', '');
+        setValue('summary_fields.signature_validation_credential.name', '');
       }
     };
     resetSCMTypeFields();
-  }, [project, props.project, scmType, setValue]);
+  }, [project, scmType, setValue]);
 
   return (
     <>
-      <PageFormTextInput
-        name="project.name"
+      <PageFormTextInput<Project>
+        name="name"
         label={t('Name')}
         placeholder={t('Enter name')}
         isRequired
       />
-      <PageFormTextInput
+      <PageFormTextInput<Project>
         label={t('Description')}
-        name="project.description"
+        name="description"
         placeholder={t('Enter description')}
       />
-      <PageFormSelectOrganization<ProjectFields>
-        name="project.summary_fields.organization"
-        isRequired
-      />
-      <PageFormExecutionEnvironmentSelect<ProjectFields>
-        organizationId={org?.id ? org.id.toString() : undefined}
-        name="project.summary_fields.default_environment.name"
+      <PageFormSelectOrganization<Project> name="organization" isRequired />
+      <PageFormExecutionEnvironmentSelect<Project>
+        organizationId={organizationId ? organizationId.toString() : undefined}
+        name="summary_fields.default_environment.name"
         label={t('Execution environment')}
         executionEnvironmentIdPath="project.default_environment"
-        isDisabled={!org}
+        isDisabled={organizationId === undefined}
         // tooltip={
         //   org ? '' : t(`Select an organization before editing the default execution environment.`)
         // }
       />
-      <PageFormSelect<ProjectFields>
+      <PageFormSelect<Project>
         isRequired
-        name="project.scm_type"
+        name="scm_type"
         id="source_control_type"
         label={t('Source Control Type')}
         options={
@@ -314,8 +271,8 @@ function ProjectInputs(props: { project?: Project }) {
         }
         placeholderText={t('Choose a Source Control Type')}
       />
-      <PageFormCredentialSelect<ProjectFields>
-        name="project.summary_fields.signature_validation_credential.name"
+      <PageFormCredentialSelect<Project>
+        name="summary_fields.signature_validation_credential.name"
         credentialIdPath="project.signature_validation_credential"
         label={t('Content Signature Validation Credential')}
         labelHelpTitle={t('Content Signature Validation Credential')}

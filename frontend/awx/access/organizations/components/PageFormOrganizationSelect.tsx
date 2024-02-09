@@ -1,10 +1,18 @@
 import { FieldPath, FieldValues } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { PageFormSingleSelectAwxResource } from '../../../common/PageFormSelectAwxResource';
+import { PageFormSingleSelectAwxResource } from '../../../common/PageFormSingleSelectAwxResource';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { Organization } from '../../../interfaces/Organization';
 import { useOrganizationsColumns, useOrganizationsFilters } from '../Organizations';
 
+/**
+ * A form input for selecting an organization.
+ *
+ * @example
+ * ```tsx
+ * <PageFormSelectOrganization<Credential> name="organization" />
+ * ```
+ */
 export function PageFormSelectOrganization<
   TFieldValues extends FieldValues = FieldValues,
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
