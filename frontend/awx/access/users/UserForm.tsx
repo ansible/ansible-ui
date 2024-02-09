@@ -213,9 +213,7 @@ function UserInputs(props: { mode: 'create' | 'edit' }) {
         ]}
         isRequired
       />
-      {mode === 'create' && (
-        <PageFormSelectOrganization<IUserInput> name="user.summary_fields.organization.name" />
-      )}
+      {mode === 'create' && <PageFormSelectOrganization<IUserInput> name="organization" />}
       <PageFormSection>
         <PageFormTextInput<IUserInput>
           name="user.password"

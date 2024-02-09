@@ -23,8 +23,8 @@ describe('projects', () => {
     cy.navigateTo('awx', 'projects');
     cy.clickLink(/^Create project$/);
     cy.get('[data-cy="name"]').type(projectName);
-    cy.selectDropdownOptionByResourceName(
-      'organization',
+    cy.selectSingleSelectOption(
+      '[data-cy="organization"]',
       `${(this.globalOrganization as Organization).name}`
     );
     cy.selectDropdownOptionByResourceName('source_control_type', 'Git');
