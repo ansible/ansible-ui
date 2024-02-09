@@ -5,7 +5,6 @@ on:
     inputs:
       AWX_SERVER:
         type: string
-        required: true
         description: 'AWX Server'
       UPDATE_SERVER:
         type: boolean
