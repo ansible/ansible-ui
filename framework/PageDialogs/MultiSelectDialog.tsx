@@ -46,7 +46,6 @@ export function MultiSelectDialog<T extends object>(props: MultiSelectDialogProp
     confirmText,
     cancelText,
     onSelect,
-    defaultSort,
     maxSelections,
     allowZeroSelections,
   } = props;
@@ -138,7 +137,6 @@ export function MultiSelectDialog<T extends object>(props: MultiSelectDialogProp
             disableListView
             compact
             disableBodyPadding
-            sort={defaultSort}
             maxSelections={maxSelections}
           />
         </div>
