@@ -16,11 +16,9 @@ import { requestGet, requestPatch, swrOptions } from '../../../common/crud/Data'
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { AwxPageForm } from '../../common/AwxPageForm';
 import { awxAPI } from '../../common/api/awx-utils';
-import { Organization } from '../../interfaces/Organization';
 import { User } from '../../interfaces/User';
 import { AwxRoute } from '../../main/AwxRoutes';
 import { PageFormSelectOrganization } from '../organizations/components/PageFormOrganizationSelect';
-import { getOrganizationByName } from '../organizations/utils/getOrganizationByName';
 
 const UserType = {
   SystemAdministrator: 'System administrator',
@@ -38,15 +36,7 @@ export function CreateUser() {
     setError,
     setFieldError
   ) => {
-    const { user, userType, confirmPassword } = userInput;
-    let organization: Organization | undefined;
-    try {
-      organization = await getOrganizationByName(user.summary_fields.organization.name);
-      if (!organization) throw new Error(t('Organization not found.'));
-      user.organization = organization.id;
-    } catch {
-      throw new Error(t('Organization not found.'));
-    }
+    const { userType, confirmPassword, ...user } = userInput;
     user.is_superuser = userType === UserType.SystemAdministrator;
     user.is_system_auditor = userType === UserType.SystemAuditor;
     if (confirmPassword !== user.password) {
@@ -54,7 +44,7 @@ export function CreateUser() {
       return false;
     }
     const newUser = await postRequest(
-      awxAPI`/organizations/${user.organization.toString()}/users/`,
+      awxAPI`/organizations/${user.organization!.toString()}/users/`,
       user
     );
     pageNavigate(AwxRoute.UserDetails, { params: { id: newUser.id } });
@@ -98,7 +88,7 @@ export function EditUser() {
     setError,
     setFieldError
   ) => {
-    const { user, userType, confirmPassword } = userInput;
+    const { userType, confirmPassword, ...user } = userInput;
     user.is_superuser = userType === UserType.SystemAdministrator;
     user.is_system_auditor = userType === UserType.SystemAuditor;
     if (user.password) {
@@ -130,7 +120,7 @@ export function EditUser() {
 
   const { password, ...defaultUserValue } = user;
   const defaultValue: Partial<IUserInput> = {
-    user: defaultUserValue,
+    ...defaultUserValue,
     userType: user.is_superuser
       ? UserType.SystemAdministrator
       : user.is_system_auditor
@@ -159,11 +149,7 @@ export function EditUser() {
   );
 }
 
-interface IUserInput {
-  user: User;
-  userType: string;
-  confirmPassword: string;
-}
+type IUserInput = User & { userType: string; confirmPassword: string };
 
 function UserInputs(props: { mode: 'create' | 'edit' }) {
   const { mode } = props;
@@ -171,7 +157,7 @@ function UserInputs(props: { mode: 'create' | 'edit' }) {
   return (
     <>
       <PageFormTextInput<IUserInput>
-        name="user.username"
+        name="username"
         label={t('Username')}
         placeholder={t('Enter username')}
         isRequired
@@ -216,7 +202,7 @@ function UserInputs(props: { mode: 'create' | 'edit' }) {
       {mode === 'create' && <PageFormSelectOrganization<IUserInput> name="organization" />}
       <PageFormSection>
         <PageFormTextInput<IUserInput>
-          name="user.password"
+          name="password"
           label={t('Password')}
           placeholder={t('Enter password')}
           type="password"
@@ -231,19 +217,19 @@ function UserInputs(props: { mode: 'create' | 'edit' }) {
         />
       </PageFormSection>
       <PageFormTextInput<IUserInput>
-        name="user.first_name"
+        name="first_name"
         label={t('First name')}
         placeholder={t('Enter first name')}
         maxLength={150}
       />
       <PageFormTextInput<IUserInput>
-        name="user.last_name"
+        name="last_name"
         label={t('Last name')}
         placeholder={t('Enter last name')}
         maxLength={150}
       />
       <PageFormTextInput<IUserInput>
-        name="user.email"
+        name="email"
         label={t('Email')}
         placeholder={t('Enter email')}
       />
