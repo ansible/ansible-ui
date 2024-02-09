@@ -32,7 +32,7 @@ describe('activity-stream', () => {
   it('event column displays correct info', function () {
     cy.getTableRowBySingleText(team.name).should('be.visible');
     cy.get('[data-cy="event-column-cell"]').should('have.text', `created team ${team.name}`);
-    cy.clearAllFilters();
+    cy.clickButton('Close');
   });
   it('event details modal displays correct info', function () {
     cy.getTableRowBySingleText(team.name)
