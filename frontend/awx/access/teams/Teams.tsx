@@ -14,6 +14,7 @@ import { useTeamActions } from './hooks/useTeamActions';
 import { useTeamToolbarActions } from './hooks/useTeamToolbarActions';
 import { useTeamsColumns } from './hooks/useTeamsColumns';
 import { useTeamsFilters } from './hooks/useTeamsFilters';
+import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
 
 export function Teams() {
   const { t } = useTranslation();
@@ -48,6 +49,7 @@ export function Teams() {
         description={t(
           'A Team is a subdivision of an organization with associated users, projects, credentials, and permissions.'
         )}
+        headerActions={<ActivityStreamIcon type={'team'} />}
       />
       <PageTable<Team>
         id="awx-teams-table"

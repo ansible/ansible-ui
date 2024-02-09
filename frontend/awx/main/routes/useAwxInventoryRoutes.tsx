@@ -15,6 +15,7 @@ import { SchedulePage } from '../../views/schedules/SchedulePage/SchedulePage';
 import { ScheduleRules } from '../../views/schedules/SchedulePage/ScheduleRules';
 import { Schedules } from '../../views/schedules/Schedules';
 import { AwxRoute } from '../AwxRoutes';
+import { InventoryJobTemplates } from '../../resources/inventories/InventoryPage/InventoryJobTemplates';
 import { InventoryHosts } from '../../resources/inventories/InventoryPage/InventoryHosts';
 import { InventorySources } from '../../resources/inventories/InventoryPage/InventorySources';
 import { InventoryGroups } from '../../resources/inventories/InventoryPage/InventoryGroups';
@@ -191,7 +192,7 @@ export function useAwxInventoryRoutes() {
             {
               id: AwxRoute.InventoryJobTemplates,
               path: 'templates',
-              element: <PageNotImplemented />,
+              element: <InventoryJobTemplates />,
             },
           ],
         },

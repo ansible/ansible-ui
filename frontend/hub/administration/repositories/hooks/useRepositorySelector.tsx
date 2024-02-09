@@ -14,8 +14,9 @@ import {
 import { pulpAPI } from '../../../common/api/formatPath';
 import { useHubView } from '../../../common/useHubView';
 import { AnsibleAnsibleRepositoryResponse as Repository } from '../../../interfaces/generated/AnsibleAnsibleRepositoryResponse';
+import { MultiDialogs } from './useAddCollections';
 
-function useParameters(): AsyncSelectFilterBuilderProps<Repository> {
+function useParameters(multiDialogs?: MultiDialogs): AsyncSelectFilterBuilderProps<Repository> {
   const tableColumns = useRepositoryColumns();
   const toolbarFilters = useRepositoryFilters();
   const { t } = useTranslation();
@@ -32,17 +33,18 @@ function useParameters(): AsyncSelectFilterBuilderProps<Repository> {
       disableQueryString: true,
       keyFn: (item) => item?.name,
     },
+    multiDialogs,
   };
 }
 
-export function useSelectRepositoryMulti() {
-  const params = useParameters();
+export function useSelectRepositoryMulti(multiDialogs?: MultiDialogs) {
+  const params = useParameters(multiDialogs);
 
   return useAsyncMultiSelectFilterBuilder<Repository>(params);
 }
 
-export function useSelectRepositorySingle() {
-  const params = useParameters();
+export function useSelectRepositorySingle(multiDialogs?: MultiDialogs) {
+  const params = useParameters(multiDialogs);
 
   return useAsyncSingleSelectFilterBuilder<Repository>(params);
 }
@@ -75,7 +77,7 @@ export function useRepositoryFilters() {
       {
         key: 'keywords',
         label: t('Name'),
-        type: ToolbarFilterType.MultiText,
+        type: ToolbarFilterType.SingleText,
         query: 'name',
         comparison: 'equals',
       },
@@ -91,23 +93,12 @@ export function useRepositoryFilters() {
           { label: t('Rejected'), value: `pipeline=rejected` },
         ],
       },
-      {
-        key: 'remote',
-        label: t('Remote'),
-        type: ToolbarFilterType.SingleSelect,
-        placeholder: t('Remote'),
-        query: 'remote',
-        options: [
-          { label: t('None'), value: 'null' },
-          // TODO get all remotes
-        ],
-      },
     ],
     [t]
   );
 }
 
-export function useRepositoryCollectionVersionFilters() {
+export function useRepositoryCollectionVersionFiltersRemove() {
   const { t } = useTranslation();
 
   return useMemo<IToolbarFilter[]>(
@@ -115,14 +106,14 @@ export function useRepositoryCollectionVersionFilters() {
       {
         key: 'keywords',
         label: t('Keywords'),
-        type: ToolbarFilterType.MultiText,
+        type: ToolbarFilterType.SingleText,
         query: 'keywords',
         comparison: 'equals',
       },
       {
         key: 'namespace',
         label: t('Namespace'),
-        type: ToolbarFilterType.MultiText,
+        type: ToolbarFilterType.SingleText,
         query: 'namespace',
         comparison: 'equals',
       },

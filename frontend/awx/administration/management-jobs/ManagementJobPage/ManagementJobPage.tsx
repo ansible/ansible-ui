@@ -37,7 +37,7 @@ export function ManagementJobPage() {
       <PageRoutedTabs
         backTab={{
           label: t('Back to Management Jobs'),
-          page: AwxRoute.ManagementJobPage,
+          page: AwxRoute.ManagementJobs,
           persistentFilterKey: 'management-jobs',
         }}
         tabs={[
