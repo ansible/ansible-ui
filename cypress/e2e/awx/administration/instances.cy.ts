@@ -45,7 +45,7 @@ describe('Instances', () => {
         cy.get('[data-cy="node-type"]').should('contain', 'Execution');
         cy.get('[data-cy="status"]').should('contain', 'Installed');
         cy.get('[data-cy="listener-port"]').should('contain', '9999');
-        cy.removeAwxInstance(instance.instance_type.toString(), { failOnStatusCode: false });
+        cy.removeAwxInstance(instance.id.toString(), { failOnStatusCode: false });
       });
   });
 
