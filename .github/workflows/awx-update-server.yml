@@ -5,7 +5,6 @@ on:
     inputs:
       AWX_SERVER:
         type: string
-        required: true
         description: 'AWX Server'
       UPDATE_SERVER:
         type: boolean
@@ -26,9 +25,8 @@ jobs:
       - id: step1
         run: |
           CURRENTDATE=$(date +'%Y%m%d')
-          echo $CURRENTDATE
           if([ "${{ github.event_name }}" == "workflow_dispatch" ]); then
-            echo "AWX_SERVER=${{ github.event.inputs.AWX_SERVER }}" >> "$GITHUB_OUTPUT"
+            echo "AWX_SERVER=${{ github.event.inputs.AWX_SERVER || 'https://awx.ci-ui-${CURRENTDATE}.gcp.testing.ansible.com' }}" >> "$GITHUB_OUTPUT"
             echo "UPDATE_SERVER=${{ github.event.inputs.UPDATE_SERVER }}" >> "$GITHUB_OUTPUT"
           else 
             echo "AWX_SERVER=https://awx.ci-ui-${CURRENTDATE}.gcp.testing.ansible.com" >> "$GITHUB_OUTPUT"

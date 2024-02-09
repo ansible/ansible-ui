@@ -35,6 +35,7 @@ import {
 import { GroupDetails } from '../../resources/groups/GroupDetails';
 import { InventoryHostJobs } from '../../resources/inventories/inventoryHostsPage/InventoryHostJobs';
 import { InventoryHostFacts } from '../../resources/inventories/inventoryHostsPage/InventoryHostFacts';
+import { ResourceNotifications } from '../../resources/notifications/ResourceNotifications';
 
 export function useAwxInventoryRoutes() {
   const { t } = useTranslation();
@@ -102,7 +103,7 @@ export function useAwxInventoryRoutes() {
             {
               id: AwxRoute.InventorySourceNotifications,
               path: 'notifications',
-              element: <PageNotImplemented />,
+              element: <ResourceNotifications resourceType="inventory_sources" />,
             },
             {
               id: AwxRoute.InventorySourceSchedules,

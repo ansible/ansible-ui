@@ -21,7 +21,7 @@ export function InventorySources() {
   const tableColumns = useInventorySourceColumns();
   const params = useParams<{ id: string; inventory_type: string }>();
   const view = useAwxView<InventorySource>({
-    url: awxAPI`/inventories/${params.id ?? ''}/inventory_sources`,
+    url: awxAPI`/inventories/${params.id ?? ''}/inventory_sources/`,
     toolbarFilters,
     tableColumns,
   });
