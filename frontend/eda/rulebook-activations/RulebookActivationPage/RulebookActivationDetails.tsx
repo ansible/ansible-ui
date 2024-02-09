@@ -133,7 +133,6 @@ export function RulebookActivationDetails() {
           {rulebookActivation?.created_at ? formatDateString(rulebookActivation?.created_at) : ''}
         </PageDetail>
         <LastModifiedPageDetail
-          format="date-time"
           value={
             rulebookActivation?.modified_at ? formatDateString(rulebookActivation?.modified_at) : ''
           }

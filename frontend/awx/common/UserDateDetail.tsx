@@ -1,8 +1,5 @@
-import { Trans, useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
-import { useGetPageUrl } from '../../../framework';
+import { DateTimeCell, usePageNavigate } from '../../../framework';
 import { PageDetail } from '../../../framework/PageDetails/PageDetail';
-import { formatDateString } from '../../../framework/utils/formatDateString';
 import { AwxRoute } from '../main/AwxRoutes';
 
 interface User {
@@ -13,25 +10,14 @@ interface User {
 }
 
 export function UserDateDetail(props: { label: string; date: string; user: User }) {
-  const { label, date, user } = props;
-
-  const { t } = useTranslation();
-  const dateStr = formatDateString(date);
-  const username = user?.username || '';
-  const getPageUrl = useGetPageUrl();
-
+  const pageNavigate = usePageNavigate();
   return (
-    <PageDetail label={label}>
-      {user ? (
-        <Trans t={t}>
-          {dateStr} by{' '}
-          <Link to={getPageUrl(AwxRoute.UserDetails, { params: { id: user.id.toString() } })}>
-            {username}
-          </Link>
-        </Trans>
-      ) : (
-        dateStr
-      )}
+    <PageDetail label={props.label}>
+      <DateTimeCell
+        value={props.date}
+        author={props?.user.username}
+        onClick={() => pageNavigate(AwxRoute.UserDetails, { params: { id: props.user.id } })}
+      />
     </PageDetail>
   );
 }

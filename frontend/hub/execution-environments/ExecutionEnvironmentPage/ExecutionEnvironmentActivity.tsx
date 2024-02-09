@@ -1,21 +1,21 @@
-import { useTranslation, Trans } from 'react-i18next';
 import { Button } from '@patternfly/react-core';
+import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { useEffect, useState } from 'react';
+import { Trans, useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import {
+  DateTimeCell,
   LoadingPage,
   PageDetail,
   PageDetails,
   Scrollable,
-  DateTimeCell,
 } from '../../../../framework';
 import { EmptyStateNoData } from '../../../../framework/components/EmptyStateNoData';
-import { hubAPI } from '../../common/api/formatPath';
 import { useGet } from '../../../common/crud/useGet';
 import { HubError } from '../../common/HubError';
+import { hubAPI } from '../../common/api/formatPath';
 import { HubItemsResponse } from '../../common/useHubView';
-import { Table, Thead, Tr, Th, Tbody, Td } from '@patternfly/react-table';
-import { TagLink, ShaLink, ShaLabel, TagLabel } from './components/ImageLabels';
+import { ShaLabel, ShaLink, TagLabel, TagLink } from './components/ImageLabels';
 
 interface ContentInfo {
   pulp_id: string;
@@ -196,7 +196,7 @@ export function ExecutionEnvironmentActivity() {
                 <Tr key={i}>
                   <Td>{activity.action}</Td>
                   <Td>
-                    <DateTimeCell format="since" value={activity.created} />
+                    <DateTimeCell value={activity.created} />
                   </Td>
                 </Tr>
               ))}

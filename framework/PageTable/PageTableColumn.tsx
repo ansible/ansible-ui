@@ -180,8 +180,7 @@ export function TableColumnCell<T extends object>(props: {
     case 'description':
       return <div style={{ minWidth: 200, whiteSpace: 'normal' }}>{column.value(item)}</div>;
     case 'datetime':
-      // TODO - handle format from column options
-      return <DateTimeCell format="since" value={column.value(item)} />;
+      return <DateTimeCell value={column.value(item)} />;
     case 'count':
       // TODO - handle format from column options
       return <>{column.value(item) ?? '-'}</>;

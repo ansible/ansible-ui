@@ -21,7 +21,6 @@ export function useLastUsedColumn() {
         if (!item.last_job_run) return <></>;
         return (
           <DateTimeCell
-            format="since"
             value={item.last_job_run}
             author={
               'summary_fields' in item ? item.summary_fields?.modified_by?.username : undefined

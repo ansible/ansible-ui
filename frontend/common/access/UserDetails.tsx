@@ -1,9 +1,9 @@
+import { Label, LabelGroup } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { DateTimeCell, LabelsCell, PageDetail, PageDetails } from '../../../framework';
-import { UserType } from '../../awx/access/users/components/UserType';
 import { AuthenticationType } from '../../awx/access/users/components/AuthenticationType';
+import { UserType } from '../../awx/access/users/components/UserType';
 import { RoleRef } from '../../eda/interfaces/generated/eda-api';
-import { Label, LabelGroup } from '@patternfly/react-core';
 import { LastModifiedPageDetail } from '../LastModifiedPageDetail';
 
 export type UserDetailsType = {
@@ -59,7 +59,7 @@ export function UserDetails<T extends UserDetailsType>(props: {
         )}
         {user.last_login && (
           <PageDetail label={t('Last login')}>
-            <DateTimeCell format="date-time" value={user.last_login} />
+            <DateTimeCell value={user.last_login} />
           </PageDetail>
         )}
         {options?.showAuthType && (
@@ -74,14 +74,12 @@ export function UserDetails<T extends UserDetailsType>(props: {
         )}
         <PageDetail label={t('Created')}>
           <DateTimeCell
-            format="date-time"
             value={user.created ?? user.created_at ?? user.date_joined ?? user.created_on}
           />
         </PageDetail>
         {(user.modified || user.modified_at || user.modified_on) && (
           <LastModifiedPageDetail
             data-cy="modified"
-            format="date-time"
             value={user.modified ?? user.modified_at ?? user.modified_on}
           />
         )}

@@ -60,9 +60,9 @@ export function DecisionEnvironmentDetails() {
         )}
       </PageDetail>
       <PageDetail label={t('Created')}>
-        <DateTimeCell format="date-time" value={decisionEnvironment?.created_at} />
+        <DateTimeCell value={decisionEnvironment?.created_at} />
       </PageDetail>
-      <LastModifiedPageDetail format="date-time" value={decisionEnvironment?.modified_at} />
+      <LastModifiedPageDetail value={decisionEnvironment?.modified_at} />
     </PageDetails>
   );
 }

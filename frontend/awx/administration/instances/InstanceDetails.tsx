@@ -212,7 +212,7 @@ export function InstanceDetailsTab(props: {
       <PageDetail label={t('Created')} data-cy="created">
         {formatDateString(instance.created)}
       </PageDetail>
-      <LastModifiedPageDetail format="date-time" value={instance.modified} data-cy="modified" />
+      <LastModifiedPageDetail value={instance.modified} data-cy="modified" />
       <PageDetail label={t('Forks')} data-cy="forks">
         <div>
           {t('Total forks: ')}
