@@ -15,7 +15,6 @@ import {
   NodeStatus,
   WithContextMenuProps,
   WithCreateConnectorProps,
-  WithDragNodeProps,
   WithSelectionProps,
   observer,
 } from '@patternfly/react-topology';
@@ -35,11 +34,7 @@ const NodeIcon: Record<UnifiedJobType, ElementType<SVGIconProps>> = {
 };
 
 export const CustomNode: FC<
-  CustomNodeProps &
-    WithContextMenuProps &
-    WithSelectionProps &
-    WithDragNodeProps &
-    WithCreateConnectorProps
+  CustomNodeProps & WithContextMenuProps & WithSelectionProps & WithCreateConnectorProps
 > = observer((props) => {
   const { setSidebarMode } = useViewOptions();
 
@@ -50,11 +45,11 @@ export const CustomNode: FC<
 
   const id = element.getId();
   const jobType = data && data.resource.summary_fields?.unified_job_template?.unified_job_type;
-
   if (!data && id !== START_NODE_ID) return null;
   const Icon = jobType ? NodeIcon[jobType] : TrashIcon;
   return id !== START_NODE_ID ? (
     <DefaultNode
+      dragging={false}
       nodeStatus={isInvalidLinkTarget ? NodeStatus.danger : NodeStatus.default}
       showStatusDecorator
       canDrop={!isInvalidLinkTarget}
