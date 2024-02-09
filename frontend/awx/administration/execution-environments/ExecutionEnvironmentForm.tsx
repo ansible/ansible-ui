@@ -22,6 +22,7 @@ import { PageFormCredentialSelect } from '../../access/credentials/components/Pa
 import { getCredentialByName } from '../../access/credentials/utils/getCredentialByName';
 import useSWR from 'swr';
 import { requestGet, requestPatch, swrOptions } from '../../../common/crud/Data';
+import { useSearchParams } from '../../../../framework/components/useSearchParams';
 
 const PullOption = {
   Always: 'Always pull container before running.',
@@ -51,6 +52,7 @@ export function CreateExecutionEnvironment() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
+  const [searchParams] = useSearchParams();
   const postRequest = usePostRequest<IExecutionEnvBody, ExecutionEnvironment>();
   const onSubmit: PageFormSubmitHandler<IExecutionEnvInput> = async (
     executionEnvInput: IExecutionEnvInput
@@ -81,6 +83,10 @@ export function CreateExecutionEnvironment() {
   const onCancel = () => navigate(-1);
   const getPageUrl = useGetPageUrl();
 
+  const defaultValue: Partial<IExecutionEnvInput> = {
+    image: searchParams.get('image') ?? '',
+  };
+
   return (
     <PageLayout>
       <PageHeader
@@ -90,11 +96,12 @@ export function CreateExecutionEnvironment() {
           { label: t('Create Execution Environment') },
         ]}
       />
-      <AwxPageForm
+      <AwxPageForm<IExecutionEnvInput>
         submitText={t('Create execution environment')}
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
         onCancel={onCancel}
+        defaultValue={defaultValue}
       >
         <ExecutionEnvironmentInputs mode="create" />
       </AwxPageForm>
@@ -107,9 +114,8 @@ export function EditExecutionEnvironment() {
   const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
   const params = useParams<{ id?: string }>();
-  const id = Number(params.id);
   const { data: execution_env } = useSWR<ExecutionEnvironment>(
-    awxAPI`/execution_environments/${id.toString()}/`,
+    awxAPI`/execution_environments/${params.id ?? ''}/`,
     requestGet,
     swrOptions
   );
@@ -137,7 +143,7 @@ export function EditExecutionEnvironment() {
     };
 
     const editedExecutionEnv = await requestPatch<ExecutionEnvironment>(
-      awxAPI`/execution_environments/${id.toString()}/`,
+      awxAPI`/execution_environments/${params.id ?? ''}/`,
       modifiedInput
     );
     pageNavigate(AwxRoute.ExecutionEnvironmentDetails, { params: { id: editedExecutionEnv.id } });
