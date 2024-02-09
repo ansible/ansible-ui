@@ -124,7 +124,7 @@ describe('Create Edit Execution Environment Form', () => {
       cy.get('[data-cy="name"]').should('have.value', 'Test name');
     });
 
-    it('Check correct request body is passed after editing ee', () => {
+    it('should pass correct request body after editing ee', () => {
       cy.mount(<EditExecutionEnvironment />, {
         path: '/execution-environments/:id/edit',
         initialEntries: [`/execution-environments/2/edit`],
@@ -150,7 +150,7 @@ describe('Create Edit Execution Environment Form', () => {
         });
     });
 
-    it('Validate required fields on save', () => {
+    it('should validate required fields on save', () => {
       cy.mount(<EditExecutionEnvironment />, {
         path: '/execution-environments/:id/edit',
         initialEntries: [`/execution-environments/2/edit`],
