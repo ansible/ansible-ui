@@ -1,0 +1,63 @@
+{
+  "count": 1,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 1,
+      "type": "notification_template",
+      "url": "/api/v2/notification_templates/1/",
+      "related": {
+        "created_by": "/api/v2/users/3/",
+        "modified_by": "/api/v2/users/3/",
+        "test": "/api/v2/notification_templates/1/test/",
+        "notifications": "/api/v2/notification_templates/1/notifications/",
+        "copy": "/api/v2/notification_templates/1/copy/",
+        "organization": "/api/v2/organizations/1810/"
+      },
+      "summary_fields": {
+        "organization": {
+          "id": 1810,
+          "name": "csantiago_org",
+          "description": ""
+        },
+        "created_by": {
+          "id": 3,
+          "username": "dev",
+          "first_name": "",
+          "last_name": ""
+        },
+        "modified_by": {
+          "id": 3,
+          "username": "dev",
+          "first_name": "",
+          "last_name": ""
+        },
+        "user_capabilities": {
+          "edit": true,
+          "delete": true,
+          "copy": true
+        },
+        "recent_notifications": []
+      },
+      "created": "2024-02-07T21:50:04.601855Z",
+      "modified": "2024-02-07T21:50:04.601878Z",
+      "name": "csantiago_notification",
+      "description": "",
+      "organization": 1810,
+      "notification_type": "email",
+      "notification_configuration": {
+        "host": "127.0.0.1",
+        "port": 10,
+        "sender": "sjdkfljdslf@jkdljfldjjfkjd.com",
+        "timeout": 30,
+        "use_ssl": false,
+        "use_tls": false,
+        "password": "",
+        "username": "",
+        "recipients": ["sdfdsfsdfsdfs"]
+      },
+      "messages": null
+    }
+  ]
+}
