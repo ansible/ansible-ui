@@ -1,3 +1,5 @@
+import { CodeBlock, DescriptionList, Divider, capitalize } from '@patternfly/react-core';
+import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
 import {
@@ -10,18 +12,16 @@ import {
   useGetPageUrl,
 } from '../../../../framework';
 import { PageDetail } from '../../../../framework/PageDetails/PageDetail';
+import { EmptyStateNoData } from '../../../../framework/components/EmptyStateNoData';
 import { LoadingPage } from '../../../../framework/components/LoadingPage';
 import { StatusCell } from '../../../common/Status';
+import { requestGet } from '../../../common/crud/Data';
 import { HubError } from '../../common/HubError';
 import { pulpAPI } from '../../common/api/formatPath';
-import { HubRoute } from '../../main/HubRoutes';
-import { Task } from './Task';
-import { CodeBlock, DescriptionList, Divider, capitalize } from '@patternfly/react-core';
-import { EmptyStateNoData } from '../../../../framework/components/EmptyStateNoData';
 import { parsePulpIDFromURL } from '../../common/api/hub-api-utils';
 import { useGetFn } from '../../common/api/useGetFn';
-import { requestGet } from '../../../common/crud/Data';
-import { TFunction } from 'i18next';
+import { HubRoute } from '../../main/HubRoutes';
+import { Task } from './Task';
 
 type TaskResource = { name?: string; type?: string; pluginName?: string; url?: string };
 
@@ -187,13 +187,13 @@ export function TaskDetails() {
               <StatusCell status={task?.state} />
             </PageDetail>
             <PageDetail label={t('Started')}>
-              <DateTimeCell format="since" value={task?.finished_at} />
+              <DateTimeCell value={task?.finished_at} />
             </PageDetail>
             <PageDetail label={t('Finished')}>
-              <DateTimeCell format="since" value={task?.finished_at} />
+              <DateTimeCell value={task?.finished_at} />
             </PageDetail>
             <PageDetail label={t('Created')}>
-              <DateTimeCell format="since" value={task?.pulp_created} />
+              <DateTimeCell value={task?.pulp_created} />
             </PageDetail>
           </PageDetails>
         </PageDashboardCard>
