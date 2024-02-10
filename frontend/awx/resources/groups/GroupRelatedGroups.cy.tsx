@@ -27,7 +27,7 @@ describe('GroupRelatedGroups', () => {
     cy.intercept(
       {
         method: 'OPTIONS',
-        url: '/api/v2//inventories/1/groups',
+        url: '/api/v2//inventories/1/groups**',
         hostname: 'localhost',
       },
       (req) => {
@@ -68,7 +68,7 @@ describe('GroupRelatedGroups', () => {
         cy.intercept(
           {
             method: 'GET',
-            url: '/api/v2/groups//children?name__icontains=Related%20to%20group%201&**',
+            url: '/api/v2/groups//children/?name__icontains=Related%20to%20group%201&**',
           },
           {
             fixture: 'group.json',
@@ -88,7 +88,7 @@ describe('GroupRelatedGroups', () => {
         cy.intercept(
           {
             method: 'GET',
-            url: '/api/v2/groups//children?created_by__username__icontains=test&**',
+            url: '/api/v2/groups//children/?created_by__username__icontains=test&**',
           },
           {
             fixture: 'group.json',
@@ -108,7 +108,7 @@ describe('GroupRelatedGroups', () => {
         cy.intercept(
           {
             method: 'GET',
-            url: '/api/v2/groups//children?modified_by__username__icontains=test&**',
+            url: '/api/v2/groups//children/?modified_by__username__icontains=test&**',
           },
           {
             fixture: 'group.json',
