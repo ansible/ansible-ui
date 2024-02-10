@@ -1366,7 +1366,7 @@ Cypress.Commands.add(
 
     //Verify changes
     cy.get('[data-cy="name"]').should('contain', customAppName);
-    cy.get('[data-cy="organization"]').should('contain', Default);
+    cy.get('[data-cy="organization"]').should('contain', 'Default');
     cy.get('[data-cy="authorization-grant-type"]').should('contain', customGrantType.toLowerCase());
     cy.get('[data-cy="client-type"]').should('contain', newCustomClientType.toLowerCase());
   }
