@@ -21,7 +21,7 @@ import { PageFormExecutionEnvironmentSelect } from '../../../administration/exec
 import { AwxPageForm } from '../../../common/AwxPageForm';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
-import { Project, SCMType } from '../../../interfaces/Project';
+import { Project } from '../../../interfaces/Project';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { ArchiveSubForm } from '../ProjectSubForms/ArchiveSubForm';
 import { GitSubForm } from '../ProjectSubForms/GitSubForm';
@@ -203,7 +203,7 @@ function ProjectInputs(props: { project?: Project }) {
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/projects/`);
   const scmTypeOptions = data?.actions?.GET?.scm_type?.choices;
   const credentialTypeIDs = useGetCredentialTypeIDs();
-  const scmType = useWatch({ name: 'project.scm_type' }) as SCMType;
+  const scmType = useWatch<Project, 'scm_type'>({ name: 'scm_type' });
   const { project } = props;
   const { setValue } = useFormContext();
 
