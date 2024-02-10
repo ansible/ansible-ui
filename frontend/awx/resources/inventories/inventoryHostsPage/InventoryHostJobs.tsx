@@ -18,7 +18,7 @@ export function InventoryHostJobs() {
   const toolbarFilters = useJobsFilters();
 
   const view = useAwxView<UnifiedJob>({
-    url: awxAPI`/unified_jobs`,
+    url: awxAPI`/unified_jobs/`,
     toolbarFilters,
     tableColumns,
     queryParams: {

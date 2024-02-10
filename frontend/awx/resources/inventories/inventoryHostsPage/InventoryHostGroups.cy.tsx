@@ -9,18 +9,18 @@ describe('Inventory Host Groups List', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: '/api/v2/hosts/*/all_groups*',
+          url: '/api/v2/hosts/*/all_groups/*',
         },
         {
           fixture: 'groups.json',
         }
       );
       cy.intercept(
-        { method: 'OPTIONS', url: '/api/v2/inventories/*/ad_hoc_commands' },
+        { method: 'OPTIONS', url: '/api/v2/inventories/*/ad_hoc_commands/' },
         { fixture: 'ad_hoc_commands.json' }
       );
       cy.intercept(
-        { method: 'OPTIONS', url: '/api/v2/groups' },
+        { method: 'OPTIONS', url: '/api/v2/groups/' },
         { fixture: 'groups_options.json' }
       );
     });
@@ -41,7 +41,7 @@ describe('Inventory Host Groups List', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: '/api/v2/hosts/*/all_groups?name__icontains=Related%20to%20group%201*',
+          url: '/api/v2/hosts/*/all_groups/?name__icontains=Related%20to%20group%201*',
         },
         {
           fixture: 'group.json',
@@ -60,7 +60,7 @@ describe('Inventory Host Groups List', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: '/api/v2/hosts/*/all_groups?created_by__username__icontains=test*',
+          url: '/api/v2/hosts/*/all_groups/?created_by__username__icontains=test*',
         },
         {
           fixture: 'group.json',
@@ -79,7 +79,7 @@ describe('Inventory Host Groups List', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: '/api/v2/hosts/*/all_groups?modified_by__username__icontains=test*',
+          url: '/api/v2/hosts/*/all_groups/?modified_by__username__icontains=test*',
         },
         {
           fixture: 'group.json',
@@ -135,7 +135,7 @@ describe('Inventory Host Groups List', () => {
           cy.intercept(
             {
               method: 'GET',
-              url: '/api/v2/hosts/*/all_groups*',
+              url: '/api/v2/hosts/*/all_groups/*',
             },
             { body: inventoryGroups }
           );
@@ -166,7 +166,7 @@ describe('Inventory Host Groups List', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: '/api/v2/hosts/*/all_groups*',
+          url: '/api/v2/hosts/*/all_groups/*',
         },
         {
           statusCode: 500,
@@ -185,7 +185,7 @@ describe('Inventory Host Groups List', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: '/api/v2/hosts/*/all_groups*',
+          url: '/api/v2/hosts/*/all_groups/*',
         },
         {
           fixture: 'emptyList.json',
