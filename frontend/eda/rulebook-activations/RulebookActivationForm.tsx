@@ -16,6 +16,7 @@ import {
 } from '../../../framework';
 import { PageFormAsyncSelect } from '../../../framework/PageForm/Inputs/PageFormAsyncSelect';
 import { PageFormAsyncSingleSelect } from '../../../framework/PageForm/Inputs/PageFormAsyncSingleSelect';
+import { PageFormMultiSelect } from '../../../framework/PageForm/Inputs/PageFormMultiSelect';
 import { PageFormSection } from '../../../framework/PageForm/Utils/PageFormSection';
 import { requestGet } from '../../common/crud/Data';
 import { useGet } from '../../common/crud/useGet';
@@ -23,6 +24,7 @@ import { usePostRequest } from '../../common/crud/usePostRequest';
 import { EdaPageForm } from '../common/EdaPageForm';
 import { edaAPI } from '../common/eda-utils';
 import { EdaDecisionEnvironment } from '../interfaces/EdaDecisionEnvironment';
+import { EdaEventSource } from '../interfaces/EdaEventSource';
 import { EdaExtraVars } from '../interfaces/EdaExtraVars';
 import { EdaProject } from '../interfaces/EdaProject';
 import { EdaResult } from '../interfaces/EdaResult';
@@ -34,8 +36,6 @@ import {
 import { AwxToken, RestartPolicyEnum } from '../interfaces/generated/eda-api';
 import { EdaRoute } from '../main/EdaRoutes';
 import { EdaProjectCell } from '../projects/components/EdaProjectCell';
-import { EdaEventSource } from '../interfaces/EdaEventSource';
-import { PageFormMultiSelect } from '../../../framework/PageForm/Inputs/PageFormMultiSelect';
 
 export function CreateRulebookActivation() {
   const { t } = useTranslation();
@@ -138,7 +138,6 @@ export function RulebookActivationInputs() {
   }, [projectId]);
 
   const queryAwxTokens = useCallback(async (page: number, signal: AbortSignal) => {
-    await new Promise((resolve) => setTimeout(resolve, 10000));
     const response = await requestGet<EdaResult<AwxToken>>(
       edaAPI`/users/me/awx-tokens/?${page.toString()}}`,
       signal
