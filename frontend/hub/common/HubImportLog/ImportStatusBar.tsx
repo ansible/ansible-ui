@@ -1,7 +1,7 @@
-import { useTranslation } from 'react-i18next';
-import { PageDetail, PageDetails } from '../../../../framework';
 import { CollectionImport, CollectionVersionSearch } from '../../collections/Collection';
-import { ImportStatusIndicator } from '../ImportStatusIndicator';
+import { PageDetail, PageDetails } from '../../../../framework';
+import { StatusCell, StatusLabel } from '../../../common/Status';
+import { useTranslation } from 'react-i18next';
 
 export interface ImportStatusBarProps {
   collection?: CollectionVersionSearch;
@@ -12,30 +12,30 @@ export function ImportStatusBar({ collection, collectionImport }: ImportStatusBa
   const { t } = useTranslation();
   const collectionPipeline = collection?.repository?.pulp_labels?.pipeline ?? 'unknown';
 
-  const pipelineStates: Record<string, string> = {
-    rejected: t`rejected`,
+  const customPipelineStates: Record<string, string> = {
     staging: t`waiting for approval`,
-    approved: t`approved`,
     unknown: t`could not be determined yet`,
   };
 
   return (
     <PageDetails disablePadding>
       <PageDetail label={t('Status')}>
-        <ImportStatusIndicator type="secondary" status={collectionImport?.state} />
+        <StatusLabel status={collectionImport?.state} />
       </PageDetail>
-      <PageDetail label={t('Version')}>{collectionImport?.version}</PageDetail>
       <PageDetail label={t('Approval status')}>
         {collection ? (
           <>
-            {collectionImport?.state === 'running'
-              ? t('waiting for import to finish')
-              : pipelineStates[collectionPipeline]}
+            {collectionImport?.state === 'running' ? (
+              t('waiting for import to finish')
+            ) : (
+              <StatusCell status={customPipelineStates[collectionPipeline] ?? collectionPipeline} />
+            )}
           </>
         ) : (
           '---'
         )}
       </PageDetail>
+      <PageDetail label={t('Version')}>{collectionImport?.version}</PageDetail>
     </PageDetails>
   );
 }

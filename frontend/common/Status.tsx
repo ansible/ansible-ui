@@ -67,6 +67,7 @@ function useLabel(status: string | undefined, t: (str: string) => string) {
     disabled: t('Disabled'),
     error: t('Error'),
     failed: t('Failed'),
+    rejected: t('Rejected'),
     healthy: t('Healthy'),
     installed: t('Installed'),
     new: t('New'),
@@ -109,6 +110,7 @@ function getColor(status: string | undefined) {
     case 'deprovision-fail':
     case 'error':
     case 'failed':
+    case 'rejected':
     case 'provision-fail':
     case 'timedOut':
     case 'unavailable':

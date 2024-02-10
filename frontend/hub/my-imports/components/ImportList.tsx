@@ -15,6 +15,7 @@ import styled from 'styled-components';
 import { DateTimeCell, IFilterState, PageToolbar } from '../../../../framework';
 import { PageAsyncSingleSelect } from '../../../../framework/PageInputs/PageAsyncSingleSelect';
 import { PagePagination } from '../../../../framework/PageTable/PagePagination';
+import { StatusLabel } from '../../../common/Status';
 import { singleSelectBrowseAdapter } from '../../../../framework/PageToolbar/PageToolbarFilters/ToolbarAsyncSingleSelectFilter';
 import { EmptyStateError } from '../../../../framework/components/EmptyStateError';
 import { EmptyStateFilter } from '../../../../framework/components/EmptyStateFilter';
@@ -25,7 +26,6 @@ import { CollectionImport } from '../../collections/Collection';
 import { hubAPI } from '../../common/api/formatPath';
 import { HubItemsResponse } from '../../common/useHubView';
 import { HubNamespace } from '../../namespaces/HubNamespace';
-import { ImportStatusIndicator } from '../components/ImportStatusIndicator';
 import { useCollectionImportFilters } from '../hooks/useCollectionImportFilters';
 import { useSelectNamespaceSingle } from '../hooks/useNamespaceSelector';
 import './hub-import-collections-filters.css';
@@ -255,10 +255,7 @@ export function ImportList({
                                         </Title>
                                       </FlexItem>
                                       <FlexItem>
-                                        <ImportStatusIndicator
-                                          type="secondary"
-                                          status={collectionImport.state}
-                                        />
+                                        <StatusLabel status={collectionImport.state} />
                                       </FlexItem>
                                       <FlexItem>
                                         {collectionImport.state}{' '}
