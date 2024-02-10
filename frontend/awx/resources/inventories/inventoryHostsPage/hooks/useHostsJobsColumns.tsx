@@ -1,18 +1,18 @@
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { usePageNavigate, ITableColumn, DateTimeCell } from '../../../../../../framework';
+import { DateTimeCell, ITableColumn, usePageNavigate } from '../../../../../../framework';
+import { StatusCell } from '../../../../../common/Status';
 import {
   useInventoryNameColumn,
   useNameColumn,
   useProjectNameColumn,
 } from '../../../../../common/columns';
-import { StatusCell } from '../../../../../common/Status';
 import {
+  useJobExecutionEnvColumn,
   useJobLaunchedByColumn,
   useJobSliceColumn,
   useJobTemplateColumn,
   useSourceWorkflowColumn,
-  useJobExecutionEnvColumn,
 } from '../../../../common/JobColumns';
 import { UnifiedJob } from '../../../../interfaces/UnifiedJob';
 import { AwxRoute } from '../../../../main/AwxRoutes';
@@ -63,7 +63,7 @@ export function useHostsJobsColumns(options?: { disableSort?: boolean; disableLi
     () => ({
       header: t('Start Time'),
       cell: (job: UnifiedJob) => {
-        return <DateTimeCell value={job.started} format="date-time" />;
+        return <DateTimeCell value={job.started} />;
       },
       sort: 'started',
     }),
@@ -74,7 +74,7 @@ export function useHostsJobsColumns(options?: { disableSort?: boolean; disableLi
     () => ({
       header: t('Finish Time'),
       cell: (job: UnifiedJob) => {
-        return <DateTimeCell value={job.finished} format="date-time" />;
+        return <DateTimeCell value={job.finished} />;
       },
       sort: 'finished',
     }),
