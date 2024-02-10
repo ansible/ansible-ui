@@ -19,7 +19,7 @@ export function GroupRelatedGroups() {
   const tableColumns = useRelatedGroupsColumns();
   const params = useParams<{ id: string; inventory_type: string; group_id: string }>();
   const view = useAwxView<InventoryGroup>({
-    url: awxAPI`/groups/${params.group_id ?? ''}/children`,
+    url: awxAPI`/groups/${params.group_id ?? ''}/children/`,
     toolbarFilters,
     tableColumns,
   });
