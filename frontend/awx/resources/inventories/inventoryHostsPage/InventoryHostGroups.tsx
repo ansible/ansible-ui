@@ -21,7 +21,7 @@ export function InventoryHostGroups() {
   const tableColumns = useHostsGroupsColumns();
   const params = useParams<{ id: string; inventory_type: string; host_id: string }>();
   const view = useAwxView<InventoryGroup>({
-    url: awxAPI`/hosts/${params.host_id ?? ''}/all_groups`,
+    url: awxAPI`/hosts/${params.host_id ?? ''}/all_groups/`,
     toolbarFilters,
     tableColumns,
   });
