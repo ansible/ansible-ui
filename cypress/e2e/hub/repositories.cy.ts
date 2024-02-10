@@ -1,6 +1,5 @@
 import { Repositories } from './constants';
 import { randomString } from '../../../framework/utils/random-string';
-import { CcAmazonPayIcon } from '@patternfly/react-icons';
 
 describe.skip('Repositories', () => {
   before(() => {
