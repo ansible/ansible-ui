@@ -1378,7 +1378,7 @@ Cypress.Commands.add(
     //Verify application details page
     cy.verifyPageTitle(customAppName);
     cy.get('[data-cy="name"]').should('contain', customAppName);
-    cy.selectSingleSelectOption('[data-cy="organization"]', 'Default');
+    cy.get('[data-cy="organization"]').should('contain', 'Default');
     cy.get('[data-cy="authorization-grant-type"]').should(
       'contain',
       customGrantType === 'Authorization code'
