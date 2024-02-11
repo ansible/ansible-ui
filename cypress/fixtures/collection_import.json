@@ -1,0 +1,336 @@
+{
+  "running": {
+    "id": "018d65ba-b455-7e05-b815-7065754fc224",
+    "state": "running",
+    "namespace": "testnamespace7uwb",
+    "name": "testcollection",
+    "version": "1.0.0",
+    "created_at": "2024-02-01T17:32:31.190406Z",
+    "updated_at": "2024-02-01T17:32:31.190440Z",
+    "started_at": "2024-02-01T17:32:31.261741Z",
+    "finished_at": "2024-02-01T17:32:31.588935Z",
+    "error": null,
+    "messages": [
+      {
+        "time": 1707481386.0508332,
+        "level": "INFO",
+        "message": "Importing with galaxy-importer 0.4.19"
+      },
+      {
+        "time": 1707481386.0684493,
+        "level": "INFO",
+        "message": "Getting doc strings via ansible-doc"
+      },
+      {
+        "time": 1707481386.5450268,
+        "level": "INFO",
+        "message": "Finding content inside collection"
+      }
+    ]
+  },
+  "completed": {
+    "id": "018d8dd2-4b24-7051-905d-173a2e64e0a8",
+    "state": "completed",
+    "namespace": "newswangerd",
+    "name": "main_collection",
+    "version": "1.0.0",
+    "created_at": "2024-02-09T12:23:05.765692Z",
+    "updated_at": "2024-02-09T12:23:05.765707Z",
+    "started_at": "2024-02-09T12:23:05.816737Z",
+    "finished_at": "2024-02-09T12:23:08.383645Z",
+    "error": null,
+    "messages": [
+      {
+        "time": 1707481386.0508332,
+        "level": "INFO",
+        "message": "Importing with galaxy-importer 0.4.19"
+      },
+      {
+        "time": 1707481386.0684493,
+        "level": "INFO",
+        "message": "Getting doc strings via ansible-doc"
+      },
+      {
+        "time": 1707481386.5450268,
+        "level": "INFO",
+        "message": "Finding content inside collection"
+      },
+      {
+        "time": 1707481386.5507853,
+        "level": "INFO",
+        "message": "Loading role deltoid"
+      },
+      {
+        "time": 1707481386.608944,
+        "level": "INFO",
+        "message": "Loading role factoid"
+      },
+      {
+        "time": 1707481386.618957,
+        "level": "INFO",
+        "message": "Loading module real_facts"
+      },
+      {
+        "time": 1707481386.63183,
+        "level": "WARNING",
+        "message": "No changelog found. Add a CHANGELOG.rst, CHANGELOG.md, or changelogs/changelog.yaml file."
+      },
+      {
+        "time": 1707481386.6354835,
+        "level": "INFO",
+        "message": "Linting collection via ansible-lint..."
+      },
+      {
+        "time": 1707481388.2123518,
+        "level": "WARNING",
+        "message": "meta/runtime.yml:1: meta-runtime[unsupported-version]: requires_ansible key must be set to a supported version."
+      },
+      {
+        "time": 1707481388.2192163,
+        "level": "WARNING",
+        "message": "roles/deltoid/meta/main.yaml:1: schema[meta]: 2.8 is not of type 'string'"
+      },
+      {
+        "time": 1707481388.222944,
+        "level": "WARNING",
+        "message": "roles/deltoid/tasks/main.yml:5: fqcn[action-core]: Use FQCN for builtin module actions (debug)."
+      },
+      {
+        "time": 1707481388.2263758,
+        "level": "WARNING",
+        "message": "roles/deltoid/tasks/main.yml:5: name[missing]: All tasks should be named."
+      },
+      {
+        "time": 1707481388.2305944,
+        "level": "WARNING",
+        "message": "roles/factoid/meta/main.yaml:1: schema[meta]: 1.2 is not of type 'string'"
+      },
+      {
+        "time": 1707481388.2366662,
+        "level": "WARNING",
+        "message": "roles/factoid/tasks/main.yml:5: fqcn[action-core]: Use FQCN for builtin module actions (debug)."
+      },
+      {
+        "time": 1707481388.2405672,
+        "level": "WARNING",
+        "message": "roles/factoid/tasks/main.yml:5: name[missing]: All tasks should be named."
+      },
+      {
+        "time": 1707481388.244305,
+        "level": "INFO",
+        "message": "...ansible-lint run complete"
+      },
+      {
+        "time": 1707481388.2483997,
+        "level": "INFO",
+        "message": "Collection loading complete"
+      }
+    ]
+  },
+  "failed": {
+    "id": "018d65ba-b455-7e05-b815-7065754fc224",
+    "state": "failed",
+    "namespace": "testnamespace7uwb",
+    "name": "testcollection_INVALID123",
+    "version": "1.0.0",
+    "created_at": "2024-02-01T17:32:31.190406Z",
+    "updated_at": "2024-02-01T17:32:31.190440Z",
+    "started_at": "2024-02-01T17:32:31.261741Z",
+    "finished_at": "2024-02-01T17:32:31.588935Z",
+    "error": {
+      "traceback": "  File \"/usr/local/lib/python3.11/site-packages/pulpcore/tasking/tasks.py\", line 66, in _execute_task\n    result = func(*args, **kwargs)\n             ^^^^^^^^^^^^^^^^^^^^^\n  File \"/src/galaxy_ng/galaxy_ng/app/tasks/publishing.py\", line 78, in import_to_staging\n    repo = _upload_collection(**kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/src/galaxy_ng/galaxy_ng/app/tasks/publishing.py\", line 65, in _upload_collection\n    general_create(*general_args, **kwargs)\n  File \"/usr/local/lib/python3.11/site-packages/pulpcore/app/tasks/base.py\", line 37, in general_create\n    serializer.is_valid(raise_exception=True)\n  File \"/usr/local/lib/python3.11/site-packages/rest_framework/serializers.py\", line 227, in is_valid\n    self._validated_data = self.run_validation(self.initial_data)\n                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.11/site-packages/rest_framework/serializers.py\", line 429, in run_validation\n    value = self.validate(value)\n            ^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.11/site-packages/pulp_ansible/app/serializers.py\", line 484, in validate\n    return super().validate(data)\n           ^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.11/site-packages/pulpcore/plugin/serializers/content.py\", line 123, in validate\n    data = self.deferred_validate(data)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.11/site-packages/pulp_ansible/app/serializers.py\", line 494, in deferred_validate\n    collection_info = process_collection_artifact(\n                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.11/site-packages/pulp_ansible/app/tasks/upload.py\", line 37, in process_collection_artifact\n    importer_result = import_collection(\n                      ^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.11/site-packages/galaxy_importer/collection.py\", line 78, in import_collection\n    return _import_collection(file, filename, file_url, logger, cfg)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.11/site-packages/galaxy_importer/collection.py\", line 135, in _import_collection\n    data = CollectionLoader(extract_dir, filename, cfg=cfg, logger=logger).load()\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.11/site-packages/galaxy_importer/loaders/collection.py\", line 71, in load\n    self.manifest = self._load_manifest()\n                    ^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.11/site-packages/galaxy_importer/loaders/collection.py\", line 247, in _load_manifest\n    raise exc.ManifestValidationError(str(e)) from e\n",
+      "description": "Invalid collection metadata. 'name' has invalid format: testcollection_INVALID123"
+    },
+    "messages": [
+      {
+        "time": 1706808751.567195,
+        "level": "INFO",
+        "message": "Importing with galaxy-importer 0.4.19"
+      }
+    ]
+  },
+  "veryLongImport": {
+    "id": "166d65ba-b455-7e05-b815-7065754fc224",
+    "state": "completed",
+    "namespace": "newswangerd",
+    "name": "main_collection",
+    "version": "1.0.0",
+    "created_at": "2024-02-09T12:23:05.765692Z",
+    "updated_at": "2024-02-09T12:23:05.765707Z",
+    "started_at": "2024-02-09T12:23:05.816737Z",
+    "finished_at": "2024-02-09T12:23:08.383645Z",
+    "error": null,
+    "messages": [
+      {
+        "time": 1707481386.0508332,
+        "level": "INFO",
+        "message": "Importing with galaxy-importer 0.4.19"
+      },
+      {
+        "time": 1707481386.0684493,
+        "level": "INFO",
+        "message": "Getting doc strings via ansible-doc"
+      },
+      {
+        "time": 1707481386.5450268,
+        "level": "INFO",
+        "message": "Finding content inside collection"
+      },
+      {
+        "time": 1707481386.5507853,
+        "level": "INFO",
+        "message": "Loading role deltoid"
+      },
+      {
+        "time": 1707481386.608944,
+        "level": "INFO",
+        "message": "Loading role factoid"
+      },
+      {
+        "time": 1707481386.618957,
+        "level": "INFO",
+        "message": "Loading module real_facts"
+      },
+      {
+        "time": 1707481386.63183,
+        "level": "WARNING",
+        "message": "No changelog found. Add a CHANGELOG.rst, CHANGELOG.md, or changelogs/changelog.yaml file."
+      },
+      {
+        "time": 1707481386.6354835,
+        "level": "INFO",
+        "message": "Linting collection via ansible-lint..."
+      },
+      {
+        "time": 1707481388.2123518,
+        "level": "WARNING",
+        "message": "meta/runtime.yml:1: meta-runtime[unsupported-version]: requires_ansible key must be set to a supported version."
+      },
+      {
+        "time": 1707481388.2192163,
+        "level": "WARNING",
+        "message": "roles/deltoid/meta/main.yaml:1: schema[meta]: 2.8 is not of type 'string'"
+      },
+      {
+        "time": 1707481388.222944,
+        "level": "WARNING",
+        "message": "roles/deltoid/tasks/main.yml:5: fqcn[action-core]: Use FQCN for builtin module actions (debug)."
+      },
+      {
+        "time": 1707481388.2263758,
+        "level": "WARNING",
+        "message": "roles/deltoid/tasks/main.yml:5: name[missing]: All tasks should be named."
+      },
+      {
+        "time": 1707481388.2305944,
+        "level": "WARNING",
+        "message": "roles/factoid/meta/main.yaml:1: schema[meta]: 1.2 is not of type 'string'"
+      },
+      {
+        "time": 1707481388.2366662,
+        "level": "WARNING",
+        "message": "roles/factoid/tasks/main.yml:5: fqcn[action-core]: Use FQCN for builtin module actions (debug)."
+      },
+      {
+        "time": 1707481388.2405672,
+        "level": "WARNING",
+        "message": "roles/factoid/tasks/main.yml:5: name[missing]: All tasks should be named."
+      },
+      {
+        "time": 1707481388.244305,
+        "level": "INFO",
+        "message": "...ansible-lint run complete"
+      },
+      {
+        "time": 1707481388.2483997,
+        "level": "INFO",
+        "message": "Collection loading complete"
+      },
+      {
+        "time": 1707481386.0508332,
+        "level": "INFO",
+        "message": "Importing with galaxy-importer 0.4.19"
+      },
+      {
+        "time": 1707481386.0684493,
+        "level": "INFO",
+        "message": "Getting doc strings via ansible-doc"
+      },
+      {
+        "time": 1707481386.5450268,
+        "level": "INFO",
+        "message": "Finding content inside collection"
+      },
+      {
+        "time": 1707481386.5507853,
+        "level": "INFO",
+        "message": "Loading role deltoid"
+      },
+      {
+        "time": 1707481386.608944,
+        "level": "INFO",
+        "message": "Loading role factoid"
+      },
+      {
+        "time": 1707481386.618957,
+        "level": "INFO",
+        "message": "Loading module real_facts"
+      },
+      {
+        "time": 1707481386.63183,
+        "level": "WARNING",
+        "message": "No changelog found. Add a CHANGELOG.rst, CHANGELOG.md, or changelogs/changelog.yaml file."
+      },
+      {
+        "time": 1707481386.6354835,
+        "level": "INFO",
+        "message": "Linting collection via ansible-lint..."
+      },
+      {
+        "time": 1707481388.2123518,
+        "level": "WARNING",
+        "message": "meta/runtime.yml:1: meta-runtime[unsupported-version]: requires_ansible key must be set to a supported version."
+      },
+      {
+        "time": 1707481388.2192163,
+        "level": "WARNING",
+        "message": "roles/deltoid/meta/main.yaml:1: schema[meta]: 2.8 is not of type 'string'"
+      },
+      {
+        "time": 1707481388.222944,
+        "level": "WARNING",
+        "message": "roles/deltoid/tasks/main.yml:5: fqcn[action-core]: Use FQCN for builtin module actions (debug)."
+      },
+      {
+        "time": 1707481388.2263758,
+        "level": "WARNING",
+        "message": "roles/deltoid/tasks/main.yml:5: name[missing]: All tasks should be named."
+      },
+      {
+        "time": 1707481388.2305944,
+        "level": "WARNING",
+        "message": "roles/factoid/meta/main.yaml:1: schema[meta]: 1.2 is not of type 'string'"
+      },
+      {
+        "time": 1707481388.2366662,
+        "level": "WARNING",
+        "message": "roles/factoid/tasks/main.yml:5: fqcn[action-core]: Use FQCN for builtin module actions (debug)."
+      },
+      {
+        "time": 1707481388.2405672,
+        "level": "WARNING",
+        "message": "roles/factoid/tasks/main.yml:5: name[missing]: All tasks should be named."
+      },
+      {
+        "time": 1707481388.244305,
+        "level": "INFO",
+        "message": "...ansible-lint run complete"
+      },
+      {
+        "time": 1707481388.2483997,
+        "level": "INFO",
+        "message": "Collection loading complete"
+      }
+    ]
+  }
+}

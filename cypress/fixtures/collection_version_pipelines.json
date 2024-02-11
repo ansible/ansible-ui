@@ -1,0 +1,253 @@
+{
+  "staging": {
+    "repository": {
+      "pulp_href": "/api/galaxy/pulp/api/v3/repositories/ansible/ansible/018d5f22-8984-72bf-af34-d68a835b287d/",
+      "pulp_created": "2024-01-31T10:48:35.460301Z",
+      "versions_href": "/api/galaxy/pulp/api/v3/repositories/ansible/ansible/018d5f22-8984-72bf-af34-d68a835b287d/versions/",
+      "pulp_labels": {
+        "pipeline": "staging",
+        "hide_from_search": ""
+      },
+      "latest_version_href": "/api/galaxy/pulp/api/v3/repositories/ansible/ansible/018d5f22-8984-72bf-af34-d68a835b287d/versions/78/",
+      "name": "staging",
+      "description": null,
+      "retain_repo_versions": 1,
+      "remote": null
+    },
+    "collection_version": {
+      "pulp_href": "/api/galaxy/pulp/api/v3/content/ansible/collection_versions/018d6a3e-a116-7fbc-b55f-c43c54cd30fc/",
+      "namespace": "newswangerd",
+      "name": "dep1",
+      "version": "1.0.1",
+      "requires_ansible": ">=2.10,<2.11",
+      "pulp_created": "2024-02-02T14:35:05.880042Z",
+      "contents": [
+        {
+          "name": "deltoid",
+          "description": "A dummy role for demoing RST readme in collections.",
+          "content_type": "role"
+        },
+        {
+          "name": "factoid",
+          "description": "A simple role for demoing Ansible Content distribution with collections.",
+          "content_type": "role"
+        },
+        {
+          "name": "real_facts",
+          "description": "A module that dishes out the true facts.",
+          "content_type": "module"
+        }
+      ],
+      "dependencies": {
+        "newswangerd.main_collection": ">=1.0.0"
+      },
+      "description": "Demo showing how to distribute modules and plugins using collections in Ansible 2.8",
+      "tags": [
+        {
+          "name": "demo"
+        },
+        {
+          "name": "collection"
+        }
+      ]
+    },
+    "repository_version": "latest",
+    "namespace_metadata": {
+      "pulp_href": "/api/galaxy/pulp/api/v3/content/ansible/namespaces/018d6109-b550-78fd-aac5-745b686eda41/",
+      "name": "newswangerd",
+      "company": "",
+      "description": "",
+      "avatar_url": null
+    },
+    "is_highest": true,
+    "is_deprecated": false,
+    "is_signed": false
+  },
+  "approved": {
+    "repository": {
+      "pulp_href": "/api/galaxy/pulp/api/v3/repositories/ansible/ansible/018d5f22-8c14-7f70-9804-5f106f10a603/",
+      "pulp_created": "2024-01-31T10:48:36.116357Z",
+      "versions_href": "/api/galaxy/pulp/api/v3/repositories/ansible/ansible/018d5f22-8c14-7f70-9804-5f106f10a603/versions/",
+      "pulp_labels": {
+        "pipeline": "approved"
+      },
+      "latest_version_href": "/api/galaxy/pulp/api/v3/repositories/ansible/ansible/018d5f22-8c14-7f70-9804-5f106f10a603/versions/22/",
+      "name": "published",
+      "description": "Certified content repository",
+      "retain_repo_versions": 1,
+      "remote": null
+    },
+    "collection_version": {
+      "pulp_href": "/api/galaxy/pulp/api/v3/content/ansible/collection_versions/018d6a3e-a116-7fbc-b55f-c43c54cd30fc/",
+      "namespace": "newswangerd",
+      "name": "dep1",
+      "version": "1.0.1",
+      "requires_ansible": ">=2.10,<2.11",
+      "pulp_created": "2024-02-02T14:35:05.880042Z",
+      "contents": [
+        {
+          "name": "deltoid",
+          "description": "A dummy role for demoing RST readme in collections.",
+          "content_type": "role"
+        },
+        {
+          "name": "factoid",
+          "description": "A simple role for demoing Ansible Content distribution with collections.",
+          "content_type": "role"
+        },
+        {
+          "name": "real_facts",
+          "description": "A module that dishes out the true facts.",
+          "content_type": "module"
+        }
+      ],
+      "dependencies": {
+        "newswangerd.main_collection": ">=1.0.0"
+      },
+      "description": "Demo showing how to distribute modules and plugins using collections in Ansible 2.8",
+      "tags": [
+        {
+          "name": "demo"
+        },
+        {
+          "name": "collection"
+        }
+      ]
+    },
+    "repository_version": "latest",
+    "namespace_metadata": {
+      "pulp_href": "/api/galaxy/pulp/api/v3/content/ansible/namespaces/018d6109-b550-78fd-aac5-745b686eda41/",
+      "name": "newswangerd",
+      "company": "",
+      "description": "",
+      "avatar_url": null
+    },
+    "is_highest": true,
+    "is_deprecated": false,
+    "is_signed": true
+  },
+  "rejected": {
+    "repository": {
+      "pulp_href": "/api/galaxy/pulp/api/v3/repositories/ansible/ansible/018d5f22-8c14-7f70-9804-5f106f10a603/",
+      "pulp_created": "2024-01-31T10:48:36.116357Z",
+      "versions_href": "/api/galaxy/pulp/api/v3/repositories/ansible/ansible/018d5f22-8c14-7f70-9804-5f106f10a603/versions/",
+      "pulp_labels": {
+        "pipeline": "rejected"
+      },
+      "latest_version_href": "/api/galaxy/pulp/api/v3/repositories/ansible/ansible/018d5f22-8c14-7f70-9804-5f106f10a603/versions/22/",
+      "name": "published",
+      "description": "Certified content repository",
+      "retain_repo_versions": 1,
+      "remote": null
+    },
+    "collection_version": {
+      "pulp_href": "/api/galaxy/pulp/api/v3/content/ansible/collection_versions/018d6a3e-a116-7fbc-b55f-c43c54cd30fc/",
+      "namespace": "newswangerd",
+      "name": "dep1",
+      "version": "1.0.1",
+      "requires_ansible": ">=2.10,<2.11",
+      "pulp_created": "2024-02-02T14:35:05.880042Z",
+      "contents": [
+        {
+          "name": "deltoid",
+          "description": "A dummy role for demoing RST readme in collections.",
+          "content_type": "role"
+        },
+        {
+          "name": "factoid",
+          "description": "A simple role for demoing Ansible Content distribution with collections.",
+          "content_type": "role"
+        },
+        {
+          "name": "real_facts",
+          "description": "A module that dishes out the true facts.",
+          "content_type": "module"
+        }
+      ],
+      "dependencies": {
+        "newswangerd.main_collection": ">=1.0.0"
+      },
+      "description": "Demo showing how to distribute modules and plugins using collections in Ansible 2.8",
+      "tags": [
+        {
+          "name": "demo"
+        },
+        {
+          "name": "collection"
+        }
+      ]
+    },
+    "repository_version": "latest",
+    "namespace_metadata": {
+      "pulp_href": "/api/galaxy/pulp/api/v3/content/ansible/namespaces/018d6109-b550-78fd-aac5-745b686eda41/",
+      "name": "newswangerd",
+      "company": "",
+      "description": "",
+      "avatar_url": null
+    },
+    "is_highest": true,
+    "is_deprecated": false,
+    "is_signed": true
+  },
+  "unknown": {
+    "repository": {
+      "pulp_href": "/api/galaxy/pulp/api/v3/repositories/ansible/ansible/018d5f22-8c14-7f70-9804-5f106f10a603/",
+      "pulp_created": "2024-01-31T10:48:36.116357Z",
+      "versions_href": "/api/galaxy/pulp/api/v3/repositories/ansible/ansible/018d5f22-8c14-7f70-9804-5f106f10a603/versions/",
+      "pulp_labels": {},
+      "latest_version_href": "/api/galaxy/pulp/api/v3/repositories/ansible/ansible/018d5f22-8c14-7f70-9804-5f106f10a603/versions/22/",
+      "name": "published",
+      "description": "Certified content repository",
+      "retain_repo_versions": 1,
+      "remote": null
+    },
+    "collection_version": {
+      "pulp_href": "/api/galaxy/pulp/api/v3/content/ansible/collection_versions/018d6a3e-a116-7fbc-b55f-c43c54cd30fc/",
+      "namespace": "newswangerd",
+      "name": "dep1",
+      "version": "1.0.1",
+      "requires_ansible": ">=2.10,<2.11",
+      "pulp_created": "2024-02-02T14:35:05.880042Z",
+      "contents": [
+        {
+          "name": "deltoid",
+          "description": "A dummy role for demoing RST readme in collections.",
+          "content_type": "role"
+        },
+        {
+          "name": "factoid",
+          "description": "A simple role for demoing Ansible Content distribution with collections.",
+          "content_type": "role"
+        },
+        {
+          "name": "real_facts",
+          "description": "A module that dishes out the true facts.",
+          "content_type": "module"
+        }
+      ],
+      "dependencies": {
+        "newswangerd.main_collection": ">=1.0.0"
+      },
+      "description": "Demo showing how to distribute modules and plugins using collections in Ansible 2.8",
+      "tags": [
+        {
+          "name": "demo"
+        },
+        {
+          "name": "collection"
+        }
+      ]
+    },
+    "repository_version": "latest",
+    "namespace_metadata": {
+      "pulp_href": "/api/galaxy/pulp/api/v3/content/ansible/namespaces/018d6109-b550-78fd-aac5-745b686eda41/",
+      "name": "newswangerd",
+      "company": "",
+      "description": "",
+      "avatar_url": null
+    },
+    "is_highest": true,
+    "is_deprecated": false,
+    "is_signed": true
+  }
+}

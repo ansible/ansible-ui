@@ -112,6 +112,7 @@ function NavigationArrow(props: { direction: 'up' | 'down'; onClick: () => void 
   return (
     <Component>
       <span
+        data-cy={`navigation-arrow-${props.direction}`}
         role="button"
         onClick={() => {
           props.onClick();
