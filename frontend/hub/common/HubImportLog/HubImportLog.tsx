@@ -8,7 +8,6 @@ export interface HubImportLogProps extends ImportConsoleProps {
   collectionImport?: CollectionImport;
   collection?: CollectionVersionSearch;
   minMessagesToShowNavigationArrows?: number;
-  elementsGap?: string;
 }
 
 export function HubImportLog({
