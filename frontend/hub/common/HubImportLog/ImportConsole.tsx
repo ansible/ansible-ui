@@ -138,7 +138,7 @@ const ImportConsoleResultStatus = ({ state }: { state: string }) => {
 
   return (
     <div
-      key={isCompleted ? 'done' : 'failed'}
+      data-cy={`import-console-status-${isCompleted ? 'done' : 'failed'}`}
       style={{
         color: getPatternflyColor(isCompleted ? PFColorE.Green : PFColorE.Danger),
       }}

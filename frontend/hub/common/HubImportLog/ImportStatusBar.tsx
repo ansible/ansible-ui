@@ -10,12 +10,8 @@ export interface ImportStatusBarProps {
 
 export function ImportStatusBar({ collection, collectionImport }: ImportStatusBarProps) {
   const { t } = useTranslation();
-  const collectionPipeline = collection?.repository?.pulp_labels?.pipeline ?? 'unknown';
-
-  const customPipelineStates: Record<string, string> = {
-    staging: t`waiting for approval`,
-    unknown: t`could not be determined yet`,
-  };
+  const collectionPipeline =
+    collection?.repository?.pulp_labels?.pipeline ?? t`could not be determined yet`;
 
   return (
     <PageDetails disablePadding>
@@ -28,7 +24,7 @@ export function ImportStatusBar({ collection, collectionImport }: ImportStatusBa
             {collectionImport?.state === 'running' ? (
               t('waiting for import to finish')
             ) : (
-              <StatusCell status={customPipelineStates[collectionPipeline] ?? collectionPipeline} />
+              <StatusCell status={collectionPipeline} />
             )}
           </>
         ) : (

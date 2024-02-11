@@ -77,6 +77,7 @@ function useLabel(status: string | undefined, t: (str: string) => string) {
     pending: t('Pending'),
     provisioning: t('Provisioning'),
     ready: t('Ready'),
+    staging: t('Waiting for approval'),
     running: t('Running'),
     skipped: t('Skipped'),
     starting: t('Starting'),
@@ -126,6 +127,7 @@ function getColor(status: string | undefined) {
     case 'canceled':
     case 'changed':
     case 'unknown':
+    case 'staging':
       return 'orange';
     case 'stopped':
       return undefined;
