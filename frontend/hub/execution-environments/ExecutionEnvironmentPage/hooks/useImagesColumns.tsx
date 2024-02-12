@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ITableColumn, CopyCell, DateTimeCell } from '../../../../../framework';
 import { LabelGroup } from '@patternfly/react-core';
-import { TagLink, ShaLink } from '../components/ImageLabels';
+import { TagLink, ShaLink, TagLabel, ShaLabel } from '../components/ImageLabels';
 import styled from 'styled-components';
 import { getContainersURL } from '../../../common/utils/getContainersURL';
 import { getHumanSize } from '../../../common/utils/getHumanSize';
@@ -13,7 +13,10 @@ const DigestAndCopyCell = styled.div`
   gap: 8px;
 `;
 
-export function useImagesColumns(id?: string) {
+export function useImagesColumns(
+  id: string | undefined,
+  isManifestList: (image: Image) => boolean
+) {
   const { t } = useTranslation();
 
   const instructions =
@@ -24,44 +27,51 @@ export function useImagesColumns(id?: string) {
 
   const sumLayers = (layers: ImageLayer[]) => layers.reduce((acc, curr) => acc + curr.size, 0);
 
-  // const isManifestList = (item: Image) => {
-  //   return !!item.media_type.match('manifest.list');
-  // };
-
   return useMemo<ITableColumn<Image>[]>(
     () => [
       {
         header: t('Tag'),
-        cell: (item) => (
+        cell: (image) => (
           <LabelGroup style={{ maxWidth: '300px' }}>
-            {item.tags.map((tag) => (id ? <TagLink key={tag} id={id} tag={tag} /> : null))}
+            {image.tags.map((tag) =>
+              isManifestList(image) ? (
+                <TagLabel key={tag} tag={tag} />
+              ) : (
+                <>{id ? <TagLink key={tag} id={id} tag={tag} /> : null}</>
+              )
+            )}
           </LabelGroup>
         ),
       },
       {
         header: t('Published'),
-        cell: (item) => <DateTimeCell value={item.created_at} />,
+        cell: (image) => <DateTimeCell value={image.created_at} />,
       },
       {
         header: t('Layers'),
-        type: 'count',
-        value: (item) => item.layers?.length ?? 0,
+        type: 'text',
+        value: (image) => (isManifestList(image) ? '---' : image.layers?.length.toString() ?? '0'),
       },
       {
         header: t('Size'),
         type: 'text',
-        value: (item) => getHumanSize(sumLayers(item.layers), t),
+        value: (image) =>
+          isManifestList(image) ? '---' : getHumanSize(sumLayers(image.layers), t),
       },
       {
         header: t('Digest'),
-        cell: (item) => (
+        cell: (image) => (
           <DigestAndCopyCell>
-            {id && <ShaLink id={id} digest={item.digest} />}
+            {isManifestList(image) ? (
+              <ShaLabel digest={image.digest} />
+            ) : (
+              <>{id && <ShaLink id={id} digest={image.digest} />}</>
+            )}
             <CopyCell minWidth={50} text={instructions} />
           </DigestAndCopyCell>
         ),
       },
     ],
-    [id, instructions, t]
+    [id, instructions, isManifestList, t]
   );
 }

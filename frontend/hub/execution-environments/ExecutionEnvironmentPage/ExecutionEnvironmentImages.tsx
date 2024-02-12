@@ -8,6 +8,9 @@ import { idKeyFn } from '../../../common/utils/nameKeyFn';
 import { useImagesFilters } from './hooks/useImagesFilters';
 import { useImagesToolbarActions } from './hooks/useImagesToolbarActions';
 import { useImagesColumns } from './hooks/useImagesColumns';
+import { Table, Thead, Tbody, Th, Tr, Td } from '@patternfly/react-table';
+import { Title } from '@patternfly/react-core';
+import { ShaLink } from './components/ImageLabels';
 
 export interface ImageLayer {
   digest: string;
@@ -36,12 +39,13 @@ export interface Image {
   }[];
 }
 
+const isManifestList = (image: Image): boolean => !!image.media_type.match('manifest.list');
+
 export function ExecutionEnvironmentImages() {
   const { t } = useTranslation();
-
   const { id } = useParams<{ id: string }>();
 
-  const tableColumns = useImagesColumns(id);
+  const tableColumns = useImagesColumns(id, isManifestList);
   const rowActions = useImagesToolbarActions();
   const toolbarFilters = useImagesFilters();
 
@@ -69,8 +73,40 @@ export function ExecutionEnvironmentImages() {
           {...view}
           defaultTableView="table"
           defaultSubtitle={t('Images')}
+          expandedRow={(image: Image) =>
+            isManifestList(image) ? <ExpandedContentTable id={id} image={image} /> : null
+          }
         />
       </PageSection>
     </Scrollable>
+  );
+}
+
+function ExpandedContentTable({ image, id }: { image: Image; id?: string }) {
+  const { t } = useTranslation();
+
+  return (
+    <Table variant="compact">
+      <Thead>
+        <Tr>
+          <Th>
+            <Title headingLevel="h3">{t('Digest')}</Title>
+          </Th>
+          <Th>
+            <Title headingLevel="h3">{t('OS / Arch')}</Title>
+          </Th>
+        </Tr>
+      </Thead>
+      <Tbody>
+        {image.image_manifests.map((manifest) => (
+          <Tr key={manifest.digest}>
+            <Td>{id && <ShaLink id={id} digest={manifest.digest} />}</Td>
+            <Td>
+              {manifest.os} / {manifest.architecture} {manifest.variant}
+            </Td>
+          </Tr>
+        ))}
+      </Tbody>
+    </Table>
   );
 }
