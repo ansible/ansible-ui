@@ -6,7 +6,7 @@ import { TagLink, ShaLink, TagLabel, ShaLabel } from '../components/ImageLabels'
 import styled from 'styled-components';
 import { getContainersURL } from '../../../common/utils/getContainersURL';
 import { getHumanSize } from '../../../common/utils/getHumanSize';
-import { Image, ImageLayer } from '../ExecutionEnvironmentImages';
+import { ImageLayer, ExecutionEnvironmentImage as Image } from '../ExecutionEnvironmentImage';
 
 const DigestAndCopyCell = styled.div`
   display: flex;

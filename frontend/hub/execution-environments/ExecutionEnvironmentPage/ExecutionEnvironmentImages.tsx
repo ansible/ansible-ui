@@ -11,33 +11,7 @@ import { useImagesColumns } from './hooks/useImagesColumns';
 import { Table, Thead, Tbody, Th, Tr, Td } from '@patternfly/react-table';
 import { Title } from '@patternfly/react-core';
 import { ShaLink } from './components/ImageLabels';
-
-export interface ImageLayer {
-  digest: string;
-  size: number;
-}
-
-export interface Image {
-  id: string;
-  pulp_href: string;
-  digest: string;
-  schema_version: number;
-  media_type: string;
-  config_blob: { digest?: string };
-  tags: string[];
-  created_at: string;
-  updated_at: string;
-  layers: ImageLayer[];
-  image_manifests: {
-    os: string;
-    architecture: string;
-    os_version: string;
-    os_features: string;
-    features: string;
-    variant: string;
-    digest: string;
-  }[];
-}
+import { ExecutionEnvironmentImage as Image } from './ExecutionEnvironmentImage';
 
 const isManifestList = (image: Image): boolean => !!image.media_type.match('manifest.list');
 

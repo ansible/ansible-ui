@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TrashIcon } from '@patternfly/react-icons';
 import { IPageAction, PageActionType, PageActionSelection } from '../../../../../framework';
-import { Image } from '../ExecutionEnvironmentImages';
+import { ExecutionEnvironmentImage as Image } from '../ExecutionEnvironmentImage';
 
 export function useImagesToolbarActions() {
   const { t } = useTranslation();
