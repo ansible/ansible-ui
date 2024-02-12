@@ -12,8 +12,8 @@ import { PageFormTextArea } from '../../../../framework/PageForm/Inputs/PageForm
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { PageFormSubmitHandler } from '../../../../framework/PageForm/PageForm';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
-import { requestPatch } from '../../../common/crud/Data';
 import { useGet } from '../../../common/crud/useGet';
+import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 import { AwxPageForm } from '../../common/AwxPageForm';
@@ -22,8 +22,7 @@ import { useAwxActiveUser } from '../../common/useAwxActiveUser';
 import { Credential } from '../../interfaces/Credential';
 import { CredentialType } from '../../interfaces/CredentialType';
 import { AwxRoute } from '../../main/AwxRoutes';
-import { PageFormOrganizationSelect } from '../organizations/components/PageFormOrganizationSelect';
-import { getOrganizationByName } from '../organizations/utils/getOrganizationByName';
+import { PageFormSelectOrganization } from '../organizations/components/PageFormOrganizationSelect';
 
 interface CredentialForm extends Credential {
   user?: number;
@@ -37,19 +36,7 @@ export function CreateCredential() {
   const postRequest = usePostRequest<Credential>();
   const getPageUrl = useGetPageUrl();
   const onSubmit: PageFormSubmitHandler<CredentialForm> = async (credential) => {
-    if (credential.summary_fields.organization?.name) {
-      try {
-        const organization = await getOrganizationByName(
-          credential.summary_fields.organization.name
-        );
-        if (!organization) throw new Error(t('Organization not found.'));
-        credential.organization = organization.id;
-      } catch {
-        throw new Error(t('Organization not found.'));
-      }
-    } else {
-      credential.user = activeUser?.id;
-    }
+    credential.user = activeUser?.id;
     const newCredential = await postRequest(awxAPI`/credentials/`, credential);
     pageNavigate(AwxRoute.CredentialDetails, { params: { id: newCredential.id } });
   };
@@ -81,22 +68,11 @@ export function EditCredential() {
   const { data: credential } = useGet<Credential>(awxAPI`/credentials/${id.toString()}/`);
   const activeUser = useAwxActiveUser();
   const getPageUrl = useGetPageUrl();
+  const patch = usePatchRequest();
 
   const onSubmit: PageFormSubmitHandler<CredentialForm> = async (editedCredential) => {
-    if (editedCredential.summary_fields.organization?.name) {
-      try {
-        const organization = await getOrganizationByName(
-          editedCredential.summary_fields.organization.name
-        );
-        if (!organization) throw new Error(t('Organization not found.'));
-        editedCredential.organization = organization.id;
-      } catch {
-        throw new Error(t('Organization not found.'));
-      }
-    } else {
-      editedCredential.user = activeUser?.id;
-    }
-    await requestPatch<Credential>(awxAPI`/credentials/${id.toString()}/`, editedCredential);
+    editedCredential.user = activeUser?.id;
+    await patch(awxAPI`/credentials/${id.toString()}/`, editedCredential);
     navigate(-1);
   };
   if (!credential) {
@@ -159,7 +135,7 @@ function CredentialInputs() {
         }
         isRequired
       />
-      <PageFormOrganizationSelect<Credential> name="summary_fields.organization.name" />
+      <PageFormSelectOrganization<Credential> name="organization" />
       <PageFormSection singleColumn>
         <PageFormTextArea<Credential>
           name="description"

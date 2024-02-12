@@ -9,6 +9,7 @@ describe('TeamForm.cy.ts', () => {
     cy.mount(<CreateTeam />);
     cy.contains('Error loading organizations').should('be.visible');
   });
+
   it('Create Team - Submit error message on internal server error', () => {
     cy.intercept(
       { method: 'GET', url: '/api/v2/organizations/*' },
@@ -16,7 +17,7 @@ describe('TeamForm.cy.ts', () => {
     );
     cy.mount(<CreateTeam />);
     cy.get('[data-cy="name"]').type('Test');
-    cy.selectDropdownOptionByResourceName('organization', 'Default');
+    cy.selectSingleSelectOption('[data-cy="organization"]', 'Default');
     cy.intercept(
       { method: 'POST', url: '/api/v2/teams' },
       { statusCode: 500, message: 'Internal Server Error' }
@@ -24,6 +25,7 @@ describe('TeamForm.cy.ts', () => {
     cy.clickButton(/^Create team$/);
     cy.contains('Internal Server Error').should('be.visible');
   });
+
   it('Create Team - Validation on name and organization', () => {
     cy.intercept(
       { method: 'GET', url: '/api/v2/organizations/*' },

@@ -3,7 +3,7 @@ import { PageFormTextInput } from '../../../../../framework';
 import { PageFormHidden } from '../../../../../framework/PageForm/Utils/PageFormHidden';
 import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
 import { PageFormCredentialSelect } from '../../../access/credentials/components/PageFormCredentialSelect';
-import { ProjectFields } from '../ProjectPage/ProjectForm';
+import { Project } from '../../../interfaces/Project';
 import { useGetCredentialTypeIDs } from '../hooks/useGetCredentialTypeIDs';
 import { ScmTypeOptions } from './ScmTypeOptions';
 
@@ -30,25 +30,25 @@ export function SvnSubForm() {
   );
 
   return (
-    <PageFormHidden watch="project.scm_type" hidden={(type: string) => type !== 'svn'}>
+    <PageFormHidden watch="scm_type" hidden={(type: string) => type !== 'svn'}>
       <PageFormSection title={t('Type Details')}>
-        <PageFormTextInput<ProjectFields>
-          name="project.scm_url"
+        <PageFormTextInput<Project>
+          name="scm_url"
           label={t('Source Control URL')}
           labelHelpTitle={t('Source Control URL')}
           labelHelp={svnSourceControlUrlHelp}
           isRequired
         />
         <PageFormTextInput
-          name="project.scm_branch"
+          name="scm_branch"
           label={t('Revision number')}
           labelHelp={t(
             'Branch to checkout. In addition to branches, you can input tags, commit hashes, and arbitrary refs. Some commit hashes and refs may not be available unless you also provide a custom refspec.'
           )}
         />
-        <PageFormCredentialSelect<ProjectFields>
-          name="project.summary_fields.credential.name"
-          credentialIdPath="project.credential"
+        <PageFormCredentialSelect<Project>
+          name="summary_fields.credential.name"
+          credentialIdPath="credential"
           label={t('Source Control Credential')}
           selectTitle={t('Select Source Control Credential')}
           credentialType={credentialTypeIDs.scm}

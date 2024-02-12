@@ -5,7 +5,7 @@ import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFor
 import { PageFormCredentialSelect } from '../../../access/credentials/components/PageFormCredentialSelect';
 import { useAwxConfig } from '../../../common/useAwxConfig';
 import { getDocsBaseUrl } from '../../../common/util/getDocsBaseUrl';
-import { ProjectFields } from '../ProjectPage/ProjectForm';
+import { Project } from '../../../interfaces/Project';
 import { useGetCredentialTypeIDs } from '../hooks/useGetCredentialTypeIDs';
 import { ScmTypeOptions } from './ScmTypeOptions';
 
@@ -74,31 +74,31 @@ export function GitSubForm() {
   );
 
   return (
-    <PageFormHidden watch="project.scm_type" hidden={(type: string) => type !== 'git'}>
+    <PageFormHidden watch="scm_type" hidden={(type: string) => type !== 'git'}>
       <PageFormSection title={t('Type Details')}>
-        <PageFormTextInput<ProjectFields>
-          name="project.scm_url"
+        <PageFormTextInput<Project>
+          name="scm_url"
           label={t('Source Control URL')}
           labelHelpTitle={t('Source Control URL')}
           labelHelp={gitSourceControlUrlHelp}
           isRequired
         />
-        <PageFormTextInput
-          name="project.scm_branch"
+        <PageFormTextInput<Project>
+          name="scm_branch"
           label={t('Source Control Branch/Tag/Commit')}
           labelHelpTitle={t('Source Control Branch/Tag/Commit')}
           labelHelp={t(
             'Branch to checkout. In addition to branches, you can input tags, commit hashes, and arbitrary refs. Some commit hashes and refs may not be available unless you also provide a custom refspec.'
           )}
         />
-        <PageFormTextInput
-          name="project.scm_refspec"
+        <PageFormTextInput<Project>
+          name="scm_refspec"
           label={t('Source Control Refspec')}
           labelHelpTitle={t('Source Control Refspec')}
           labelHelp={sourceControlRefspecHelp}
         />
-        <PageFormCredentialSelect<ProjectFields>
-          name="project.summary_fields.credential.name"
+        <PageFormCredentialSelect<Project>
+          name="summary_fields.credential.name"
           credentialIdPath="project.credential"
           label={t('Source Control Credential')}
           selectTitle={t('Select Source Control Credential')}

@@ -1,14 +1,14 @@
 import { useTranslation } from 'react-i18next';
 import { Help, PageFormCheckbox, PageFormTextInput } from '../../../../../framework';
-import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
-import { ProjectFields } from '../ProjectPage/ProjectForm';
 import { PageFormHidden } from '../../../../../framework/PageForm/Utils/PageFormHidden';
+import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
+import { Project } from '../../../interfaces/Project';
 
 export function ScmTypeOptions(props: { hideAllowOverride?: boolean }) {
   const { t } = useTranslation();
   return (
     <PageFormSection title={t('Options')}>
-      <PageFormCheckbox<ProjectFields>
+      <PageFormCheckbox<Project>
         id="option-scm-clean"
         label={
           <span>
@@ -17,9 +17,9 @@ export function ScmTypeOptions(props: { hideAllowOverride?: boolean }) {
             <Help help={t('Remove any local modifications prior to performing an update.')} />
           </span>
         }
-        name="project.scm_clean"
+        name="scm_clean"
       />
-      <PageFormCheckbox<ProjectFields>
+      <PageFormCheckbox<Project>
         id="option-scm-delete-on-update"
         label={
           <span>
@@ -32,10 +32,10 @@ export function ScmTypeOptions(props: { hideAllowOverride?: boolean }) {
             />
           </span>
         }
-        name="project.scm_delete_on_update"
+        name="scm_delete_on_update"
       />
-      <PageFormHidden watch="project.scm_type" hidden={(type: string) => type !== 'git'}>
-        <PageFormCheckbox<ProjectFields>
+      <PageFormHidden watch="scm_type" hidden={(type: string) => type !== 'git'}>
+        <PageFormCheckbox<Project>
           id="option-scm-track-submodules"
           label={
             <span>
@@ -48,10 +48,10 @@ export function ScmTypeOptions(props: { hideAllowOverride?: boolean }) {
               />
             </span>
           }
-          name="project.scm_track_submodules"
+          name="scm_track_submodules"
         />
       </PageFormHidden>
-      <PageFormCheckbox<ProjectFields>
+      <PageFormCheckbox<Project>
         id="option-scm-update-on-launch"
         label={
           <span>
@@ -64,10 +64,10 @@ export function ScmTypeOptions(props: { hideAllowOverride?: boolean }) {
             />
           </span>
         }
-        name="project.scm_update_on_launch"
+        name="scm_update_on_launch"
       />
       {!props.hideAllowOverride && (
-        <PageFormCheckbox<ProjectFields>
+        <PageFormCheckbox<Project>
           id="option-allow-override"
           label={
             <span>
@@ -80,16 +80,16 @@ export function ScmTypeOptions(props: { hideAllowOverride?: boolean }) {
               />
             </span>
           }
-          name="project.allow_override"
+          name="allow_override"
         />
       )}
       <PageFormHidden
-        watch="project.scm_update_on_launch"
+        watch="scm_update_on_launch"
         hidden={(scmUpdateOnLaunch?: boolean) => !scmUpdateOnLaunch}
       >
         <PageFormSection title={t('Option Details')}>
-          <PageFormTextInput<ProjectFields>
-            name="project.scm_update_cache_timeout"
+          <PageFormTextInput<Project>
+            name="scm_update_cache_timeout"
             type="number"
             labelHelp={t(
               'Time in seconds to consider a project to be current. During job runs and callbacks the task system will evaluate the timestamp of the latest project update. If it is older than Cache Timeout, it is not considered current, and a new project update will be performed.'
