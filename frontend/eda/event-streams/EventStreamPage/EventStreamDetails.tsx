@@ -82,13 +82,13 @@ export function EventStreamDetails() {
           value={eventStream?.modified_at ? formatDateString(eventStream?.modified_at) : ''}
         />
       </PageDetails>
-      {eventStream?.args && (
+      {eventStream?.source_args && (
         <PageSection variant="light">
           <PageDetailCodeEditor
-            value={eventStream.args}
+            value={eventStream.source_args}
             showCopyToClipboard={true}
-            label={t('Args')}
-            helpText={t('Args')}
+            label={t('Arguments')}
+            helpText={t('Arguments')}
           />
         </PageSection>
       )}

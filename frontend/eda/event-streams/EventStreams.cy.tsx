@@ -20,7 +20,7 @@ describe('EventStreams.cy.ts', () => {
         results: [
           {
             name: 'Ev11',
-            args: 'payload:\n- i: 1\n- i: 2\n- name: Fred\nstartup_delay: 60\n',
+            source_args: 'payload:\n- i: 1\n- i: 2\n- name: Fred\nstartup_delay: 60\n',
             source_type: 'ansible.eda.generic',
             channel_name: 'eda_155678ed_fdc0_4c9d_b69d_4e974de90c6a',
             is_enabled: true,
@@ -36,7 +36,7 @@ describe('EventStreams.cy.ts', () => {
           },
           {
             name: 'Ev12',
-            args: 'payload:\n- i: 1\n- i: 2\n- name: Fred\nstartup_delay: 60\n',
+            source_args: 'payload:\n- i: 1\n- i: 2\n- name: Fred\nstartup_delay: 60\n',
             source_type: 'ansible.eda.generic',
             channel_name: 'eda_155678ed_fdc0_4c9d_b69d_4e974de90c6a',
             is_enabled: true,

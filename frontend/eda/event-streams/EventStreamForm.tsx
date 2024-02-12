@@ -56,7 +56,7 @@ export function CreateEventStream() {
         defaultValue={{
           restart_policy: RestartPolicyEnum.OnFailure,
           is_enabled: true,
-          args: '',
+          source_args: '',
         }}
       >
         <EventStreamInputs />
@@ -146,7 +146,7 @@ export function EventStreamInputs() {
       />
       <PageFormSection singleColumn>
         <PageFormDataEditor<IEdaEventStreamInputs>
-          name="args"
+          name="source_args"
           label={t('Arguments')}
           isExpandable
           isRequired
@@ -166,7 +166,7 @@ type IEdaEventStreamInputs = Omit<EdaEventStreamCreate, 'event-streams'> & {
   is_enabled?: boolean;
   source_type?: string;
   project_id: string;
-  args: string;
+  source_args: string;
   credentials?: string[];
   credential_refs?: EdaCredential[];
 };

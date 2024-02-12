@@ -2784,7 +2784,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
 export interface EventStreamCreate {
   name: string;
   description: string;
-  args?: string;
+  source_args?: string;
   source_type?: string;
   decision_environment_id: number;
   user?: string;
@@ -2890,7 +2890,7 @@ export interface EventStreamRef {
 export interface EventStreamRead {
   id: number;
   name: string;
-  args?: string;
+  source_args?: string;
   source_type?: string;
   description?: string;
   is_enabled?: boolean;
