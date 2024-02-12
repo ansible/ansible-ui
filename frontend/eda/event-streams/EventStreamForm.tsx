@@ -108,6 +108,7 @@ export function EventStreamInputs() {
         name="source_type"
         label={t('Source type')}
         id={'source_type'}
+        isRequired
         placeholder={t('Enter source type')}
       />
       <PageFormCredentialSelect<{ credential_refs: string; id: string }>
@@ -146,14 +147,15 @@ export function EventStreamInputs() {
       <PageFormSection singleColumn>
         <PageFormDataEditor<IEdaEventStreamInputs>
           name="args"
-          label={t('Args')}
+          label={t('Arguments')}
           isExpandable
+          isRequired
           toggleLanguages={['yaml', 'json']}
           labelHelp={t(
-            `The args for the rulebook are in a JSON or YAML format. 
+            `The arguments for the rulebook are in a JSON or YAML format. 
             The content would be equivalent to the file passed through the '--vars' flag of ansible-rulebook command.`
           )}
-          labelHelpTitle={t('Args')}
+          labelHelpTitle={t('Arguments')}
         />
       </PageFormSection>
     </>
