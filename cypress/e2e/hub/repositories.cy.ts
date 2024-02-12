@@ -131,9 +131,8 @@ describe('Repositories - revert to repository version', () => {
   let repository: string;
   let numCollections: number;
 
-  before(() => {
+  beforeEach(() => {
     cy.hubLogin();
-
     namespace = 'hub_e2e_appr_namespace' + randomString(5).toLowerCase();
     repository = 'hub_e2e_appr_repository' + randomString(5);
 
@@ -147,7 +146,7 @@ describe('Repositories - revert to repository version', () => {
     cy.galaxykit('task wait all');
   });
 
-  after(() => {
+  afterEach(() => {
     collections?.forEach((collection) => {
       cy.galaxykit('-i collection delete ', namespace, collection, '1.0.0', repository);
       cy.galaxykit('task wait all');
