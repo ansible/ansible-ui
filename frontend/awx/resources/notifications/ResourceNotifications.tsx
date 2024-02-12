@@ -26,6 +26,11 @@ export function ResourceNotifications({ resourceType }: { resourceType: string }
     projects: 'id',
   };
 
+  const resourceToErrorMsg: ResourceTypeMapper = {
+    inventory_sources: 'inventory source',
+    projects: 'project',
+  };
+
   const params = useParams();
   const resourceId = params[resourceToParamMap[resourceType as keyof ResourceTypeMapper] ?? ''];
 
@@ -68,8 +73,16 @@ export function ResourceNotifications({ resourceType }: { resourceType: string }
         toolbarFilters={toolbarFilters}
         tableColumns={tableColumns}
         rowActions={rowActions}
-        errorStateTitle={t('Error loading inventory source notifications')}
-        emptyStateTitle={t('There are currently no sources added to this inventory.')}
+        errorStateTitle={t(
+          `Error loading ${
+            resourceToErrorMsg[resourceType as keyof ResourceTypeMapper]
+          } notifications`
+        )}
+        emptyStateTitle={t(
+          `There are currently no notifications added to this ${
+            resourceToErrorMsg[resourceType as keyof ResourceTypeMapper]
+          }.`
+        )}
         emptyStateDescription={t(
           'Please contact your organization administrator if there is an issue with your access.'
         )}

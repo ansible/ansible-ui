@@ -32,7 +32,7 @@ export function useNotificationFilters() {
       descriptionToolbarFilter,
       {
         key: 'type',
-        label: t('Notification Type'),
+        label: t('Notification type'),
         type: ToolbarFilterType.MultiSelect,
         query: 'notification_type',
 
