@@ -149,7 +149,7 @@ export function EventStreamPage() {
       />
       <PageRoutedTabs
         backTab={{
-          label: t('Back to Event streams'),
+          label: t('Back to Event Streams'),
           page: EdaRoute.EventStreams,
           persistentFilterKey: 'event-streams',
         }}

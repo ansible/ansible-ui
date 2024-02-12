@@ -56,7 +56,7 @@ describe('EventStreamPage', () => {
     cy.get('div[role="dialog"]').within(() => {
       cy.get('.pf-v5-c-check__label').should(
         'contain',
-        `Yes, I confirm that I want to disable these 1 event stream`
+        `Yes, I confirm that I want to disable these 1 event streams.`
       );
       cy.get('td').should('contain', 'Event stream 2');
       cy.get('input[id="confirm"]').click();

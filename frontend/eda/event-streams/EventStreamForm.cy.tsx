@@ -4,33 +4,15 @@ import { CreateEventStream } from './EventStreamForm';
 describe('Create event stream ', () => {
   beforeEach(() => {
     cy.intercept(
-      { method: 'GET', url: edaAPI`/projects/*` },
-      {
-        fixture: 'edaProjects.json',
-      }
-    );
-    cy.intercept(
-      { method: 'GET', url: edaAPI`/projects/1/*` },
-      {
-        fixture: 'edaProject.json',
-      }
-    );
-    cy.intercept(
       { method: 'GET', url: edaAPI`/decision-environments/*` },
       {
         fixture: 'edaDecisionEnvironments.json',
       }
     );
     cy.intercept(
-      { method: 'GET', url: edaAPI`/rulebooks/*` },
+      { method: 'GET', url: edaAPI`/credentials/*` },
       {
-        fixture: 'edaRulebooks.json',
-      }
-    );
-    cy.intercept(
-      { method: 'GET', url: edaAPI`/event-streams/*` },
-      {
-        fixture: 'edaEventStreams.json',
+        fixture: 'edaCredentials.json',
       }
     );
   });
@@ -42,13 +24,13 @@ describe('Create event stream ', () => {
 
   it('Component renders', () => {
     cy.mount(<CreateEventStream />);
-    cy.verifyPageTitle('Create Event stream');
+    cy.verifyPageTitle('Create Event Stream');
   });
 
   it('Validates properly', () => {
     cy.mount(<CreateEventStream />);
     cy.clickButton(/^Create event stream$/);
-    ['Name', 'Decision environment', 'Rulebook'].map((field) =>
+    ['Name', 'Decision environment'].map((field) =>
       cy.contains(`${field} is required.`).should('be.visible')
     );
   });
@@ -57,8 +39,6 @@ describe('Create event stream ', () => {
     cy.mount(<CreateEventStream />);
     cy.get('[data-cy="name"]').type('Test');
     cy.selectDropdownOptionByResourceName('decision-environment-id', 'EDA Decision Environment 3');
-    cy.selectDropdownOptionByResourceName('project-id', 'Project 4');
-    cy.selectDropdownOptionByResourceName('rulebook', 'hello_echo.yml');
     cy.clickButton('Create event stream');
 
     cy.intercept('POST', edaAPI`/event-streams/`, (req) => {
@@ -67,7 +47,7 @@ describe('Create event stream ', () => {
         restart_policy: 'on-failure',
         decision_environment_id: 3,
         name: 'Test',
-        rulebook_id: 'hello_echo.yml',
+        source_type: 'ansible.eda.generic',
         is_enabled: true,
       });
     });
