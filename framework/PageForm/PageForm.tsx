@@ -98,6 +98,7 @@ export function PageForm<T extends object>(props: PageFormProps<T>) {
   const [frameworkTranslations] = useFrameworkTranslations();
   const isMd = useBreakpoint('md');
   const isHorizontal = props.isVertical ? false : settings.formLayout === 'horizontal';
+  const multipleColumns = props.singleColumn ? false : settings.formColumns === 'multiple';
 
   let children = props.children;
   if (props.disableGrid !== true) {
@@ -161,6 +162,7 @@ export function PageForm<T extends object>(props: PageFormProps<T>) {
             isFilled
             isWidthLimited
             padding={{ default: props.disablePadding ? 'noPadding' : 'padding' }}
+            style={{ maxWidth: multipleColumns ? undefined : 880 }} // This is the PF limitMaxWidth for forms
           >
             {children}
           </FormContainer>
