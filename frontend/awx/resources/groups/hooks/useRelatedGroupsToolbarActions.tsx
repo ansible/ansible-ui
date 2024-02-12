@@ -89,7 +89,7 @@ export function useRelatedGroupsToolbarActions(view: IAwxView<InventoryGroup>) {
           {
             type: PageActionType.Button,
             selection: PageActionSelection.None,
-            label: t('New group'),
+            label: t('Create new group'),
             onClick: () =>
               pageNavigate(String(AwxRoute.InventoryGroupRelatedGroupsCreate), {
                 params: {
