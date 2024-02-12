@@ -12,7 +12,7 @@ import { GroupEdit } from '../../groups/GroupEdit';
 
 interface GroupFormPageHeaderProps {
   title: string;
-  breadcrumbs: Array<keyof GroupFormBreadCrumbObj>;
+  breadcrumbs: Array<keyof BreadCrumbs>;
   inventoryName?: string;
   groupName?: string;
   urlParams: Readonly<
@@ -24,28 +24,12 @@ interface GroupFormPageHeaderProps {
   >;
 }
 
-interface GroupFormBreadCrumbObj {
-  inventories: {
-    label: string;
-    to: string;
-  };
-  inventory: {
-    label: string;
-    to: string;
-  };
-  groups: {
-    label: string;
-    to: string;
-  };
-  group: {
-    label: string;
-    to: string;
-  };
-  relatedGroups: {
-    label: string;
-    to: string;
-  };
+interface BreadCrumbLink {
+  label: string;
+  to: string;
 }
+
+type BreadCrumbs = Record<string, BreadCrumbLink>;
 
 function GroupFormPageHeader(props: GroupFormPageHeaderProps) {
   const { t } = useTranslation();
@@ -57,7 +41,7 @@ function GroupFormPageHeader(props: GroupFormPageHeaderProps) {
     group_id: { group_id: props.urlParams.group_id },
   };
 
-  const breadcrumbsObj: GroupFormBreadCrumbObj = {
+  const breadcrumbsObj: BreadCrumbs = {
     inventories: { label: t('Inventories'), to: getPageUrl(AwxRoute.Inventories) },
     inventory: {
       label: `${props.inventoryName}`,
@@ -113,7 +97,7 @@ export function CreateGroup() {
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!inventory) return <LoadingPage breadcrumbs tabs />;
 
-  const breadcrumbs: Array<keyof GroupFormBreadCrumbObj> = ['inventories', 'inventory', 'groups'];
+  const breadcrumbs: Array<keyof BreadCrumbs> = ['inventories', 'inventory', 'groups'];
 
   return (
     <PageLayout>
@@ -140,12 +124,7 @@ export function EditGroup() {
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!group) return <LoadingPage breadcrumbs tabs />;
 
-  const breadcrumbs: Array<keyof GroupFormBreadCrumbObj> = [
-    'inventories',
-    'inventory',
-    'groups',
-    'group',
-  ];
+  const breadcrumbs: Array<keyof BreadCrumbs> = ['inventories', 'inventory', 'groups', 'group'];
 
   return (
     <PageLayout>
@@ -173,7 +152,7 @@ export function CreateRelatedGroup() {
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!inventoryGroup) return <LoadingPage breadcrumbs tabs />;
 
-  const breadcrumbs: Array<keyof GroupFormBreadCrumbObj> = [
+  const breadcrumbs: Array<keyof BreadCrumbs> = [
     'inventories',
     'inventory',
     'groups',
