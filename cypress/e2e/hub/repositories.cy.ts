@@ -148,14 +148,14 @@ describe('Repositories - revert to repository version', () => {
   });
 
   after(() => {
-    /*collections?.forEach((collection) => {
+    collections?.forEach((collection) => {
       cy.galaxykit('-i collection delete ', namespace, collection, '1.0.0', repository);
       cy.galaxykit('task wait all');
     });
     cy.galaxykit('task wait all');
     cy.galaxykit('-i repository delete', repository);
     cy.galaxykit('task wait all');
-    cy.galaxykit('-i namespace delete', namespace);*/
+    cy.galaxykit('-i namespace delete', namespace);
   });
 
   it('it should revert to repository version', () => {
