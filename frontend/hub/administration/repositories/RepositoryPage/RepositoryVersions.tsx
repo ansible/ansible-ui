@@ -23,10 +23,6 @@ export function RepositoryVersions() {
   const view = useHubView<RepositoryVersion>({
     url: pulpAPI`/repositories/ansible/ansible/${repo_id}/versions/`,
     keyFn: (repo) => repo.number,
-    queryParams: {
-      offset: '0',
-      limit: '10',
-    },
     defaultSort: '-number',
   });
 
@@ -48,7 +44,7 @@ export function RepositoryVersions() {
       emptyStateButtonText={t('Add collection')}
       emptyStateButtonClick={() => {}}
       {...view}
-      defaultTableView="list"
+      defaultTableView="table"
       defaultSubtitle={t('Collection')}
     />
   );
@@ -97,7 +93,7 @@ export function useRevertToVersion(onComplete?: (items: RepositoryVersion[]) => 
     (items: RepositoryVersion[]) => {
       const confirmText = t('Yes, I confirm that I want to revert to this repository version.');
 
-      const title = t('Rever to repository version.');
+      const title = t('Revert to repository version.');
 
       const actionButtonText = t('Revert to repository version');
       bulkAction({

@@ -30,12 +30,13 @@ describe('Collections- List View', () => {
         cy.get('td[data-cy=checkbox-column-cell]').click();
       });
       cy.get('[data-cy="Submit"]').click();
-      cy.clickButton(/^Clear all filters$/);
+      cy.url().should('include', 'approvals');
+      cy.reload();
       cy.navigateTo('hub', Collections.url);
       cy.url().should('include', 'collections');
       cy.verifyPageTitle(Collections.title);
       cy.get('[data-cy="table-view"]').click();
-      cy.searchAndDisplayResource(collection);
+      cy.filterTableBySingleText(collection);
       cy.get('[data-cy="actions-column-cell"]').click();
       cy.get('[data-cy="delete-entire-collection-from-system"]').click({ force: true });
       cy.get('#confirm').click();
@@ -43,7 +44,6 @@ describe('Collections- List View', () => {
       cy.contains(/^Success$/);
       cy.clickButton(/^Close$/);
       cy.clickButton(/^Clear all filters$/);
-
       cy.deleteNamespace(namespace);
     });
   });

@@ -1,7 +1,7 @@
+import mockAwxHost from '../../../../../cypress/fixtures/awxHost.json';
+import { formatDateString } from '../../../../../framework/utils/formatDateString';
 import { AwxHost } from '../../../interfaces/AwxHost';
 import { InventoryHostDetailsInner as InventoryHostDetails } from './InventoryHostDetails';
-import mockAwxHost from '../../../../../cypress/fixtures/awxHost.json';
-import { DateTime } from 'luxon';
 
 describe('InventoryHostDetails', () => {
   it('Component renders and displays Application', () => {
@@ -18,13 +18,10 @@ describe('InventoryHostDetails', () => {
       'a[href="/jobs/playbook/2/output"]'
     );
     cy.get('[data-cy="code-block-value"]');
-    cy.get('[data-cy="created"]').should(
-      'contain.text',
-      DateTime.fromISO((mockAwxHost as unknown as AwxHost).created).toRelative()
-    );
+    cy.get('[data-cy="created"]').should('contain.text', formatDateString(mockAwxHost.created));
     cy.get('[data-cy="last-modified"]').should(
       'contain.text',
-      DateTime.fromISO((mockAwxHost as unknown as AwxHost).modified).toRelative()
+      formatDateString(mockAwxHost.modified)
     );
   });
 });

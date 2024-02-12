@@ -18,12 +18,17 @@ export type SelectSingleDialogProps<T extends object> = {
   cancelText?: string;
   emptyStateTitle?: string;
   errorStateTitle?: string;
+  onClose?: () => void;
 };
 
 export function SelectSingleDialog<T extends object>(props: SelectSingleDialogProps<T>) {
   const { title, view, tableColumns, toolbarFilters, confirmText, cancelText, onSelect } = props;
   const [_, setDialog] = usePageDialog();
-  const onClose = useCallback(() => setDialog(undefined), [setDialog]);
+  let onClose = useCallback(() => setDialog(undefined), [setDialog]);
+  if (props.onClose) {
+    onClose = props.onClose;
+  }
+
   const [translations] = useFrameworkTranslations();
   return (
     <Modal
@@ -73,10 +78,10 @@ export function SelectSingleDialog<T extends object>(props: SelectSingleDialogPr
           disableListView
           compact
           disableBodyPadding
-          onSelect={(item) => {
-            view.unselectAll();
-            view.selectItem(item);
+          onSelect={() => {
+            // do nothing
           }}
+          autoHidePagination
         />
       </div>
     </Modal>
