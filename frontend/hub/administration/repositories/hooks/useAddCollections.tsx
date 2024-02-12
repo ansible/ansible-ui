@@ -123,10 +123,11 @@ function AddCollectionToRepositoryModal(props: {
 
   return (
     <Modal
+      aria-label={t(`Add collections versions to repository`)}
       onClose={props.multiDialogs.popDialog}
       isOpen
       variant={'large'}
-      title={t('Add collections version to repository')}
+      title={t('Add collections versions to repository')}
       actions={[
         <Button
           key="select"
