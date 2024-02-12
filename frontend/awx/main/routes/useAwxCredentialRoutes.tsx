@@ -7,6 +7,7 @@ import { CredentialDetails } from '../../access/credentials/CredentialPage/Crede
 import { CredentialPage } from '../../access/credentials/CredentialPage/CredentialPage';
 import { Credentials } from '../../access/credentials/Credentials';
 import { AwxRoute } from '../AwxRoutes';
+import { CredentialJobTemplates } from '../../access/credentials/CredentialPage/CredentialJobTemplates';
 
 export function useAwxCredentialRoutes() {
   const { t } = useTranslation();
@@ -40,6 +41,11 @@ export function useAwxCredentialRoutes() {
               id: AwxRoute.CredentialAccess,
               path: 'access',
               element: <PageNotImplemented />,
+            },
+            {
+              id: AwxRoute.CredentialJobTemplates,
+              path: 'templates',
+              element: <CredentialJobTemplates />,
             },
           ],
         },

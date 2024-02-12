@@ -65,6 +65,7 @@ export enum AwxRoute {
   CredentialPage = 'awx-credential-page',
   CredentialDetails = 'awx-credential-details',
   CredentialAccess = 'awx-credentials-access',
+  CredentialJobTemplates = 'awx-credentials-job-templates',
 
   Projects = 'awx-projects',
   CreateProject = 'awx-create-project',
@@ -199,8 +200,9 @@ export enum AwxRoute {
   InstanceGroups = 'awx-instance-groups',
 
   Instances = 'awx-instances',
+  AddInstance = 'awx-add-instance',
   EditInstance = 'awx-edit-instance',
-  InstancePage = 'awx-instance-page',
+  InstanceDetails = 'awx-instance-page',
 
   Applications = 'awx-applications',
   ApplicationPage = 'awx-application-page',

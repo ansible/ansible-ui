@@ -33,7 +33,7 @@ export function EdaRoleDetails() {
           <PageDetail label={t('Name')}>{role?.name || ''}</PageDetail>
           <PageDetail label={t('Description')}>{role?.description || ''}</PageDetail>
           <PageDetail label={t('Created')}>
-            <DateTimeCell format="date-time" value={role?.created_at} />
+            <DateTimeCell value={role?.created_at} />
           </PageDetail>
         </PageDetails>
         <PageDetails numberOfColumns={'single'}>

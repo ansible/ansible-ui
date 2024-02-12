@@ -2,12 +2,12 @@
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { DateTimeCell, PageDetail, PageDetails, usePageNavigate } from '../../../../../framework';
-import { AwxHost } from '../../../interfaces/AwxHost';
-import { Sparkline } from '../../templates/components/Sparkline';
-import { LastModifiedPageDetail } from '../../../../common/LastModifiedPageDetail';
-import { AwxRoute } from '../../../main/AwxRoutes';
 import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageDetailCodeEditor';
+import { LastModifiedPageDetail } from '../../../../common/LastModifiedPageDetail';
+import { AwxHost } from '../../../interfaces/AwxHost';
+import { AwxRoute } from '../../../main/AwxRoutes';
 import { useGetHost } from '../../hosts/hooks/useGetHost';
+import { Sparkline } from '../../templates/components/Sparkline';
 
 export function InventoryHostDetails() {
   const params = useParams<{ id: string; inventory_type: string; host_id: string }>();
@@ -39,7 +39,6 @@ export function InventoryHostDetailsInner(props: { host: AwxHost }) {
       </PageDetail>
       <PageDetail label={t('Created')}>
         <DateTimeCell
-          format="since"
           value={host.created}
           author={host.summary_fields?.created_by?.username}
           onClick={() =>
@@ -50,7 +49,6 @@ export function InventoryHostDetailsInner(props: { host: AwxHost }) {
         />
       </PageDetail>
       <LastModifiedPageDetail
-        format="since"
         value={host.modified}
         author={host.summary_fields?.modified_by?.username}
         onClick={() =>

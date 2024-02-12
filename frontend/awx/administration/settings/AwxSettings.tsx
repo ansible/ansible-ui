@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { PageHeader } from '../../../../framework';
 import { useGetPageUrl } from '../../../../framework/PageNavigation/useGetPageUrl';
 import { AwxRoute } from '../../main/AwxRoutes';
+import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
 
 export function AwxSettings() {
   const { t } = useTranslation();
@@ -13,7 +14,11 @@ export function AwxSettings() {
   );
   return (
     <Fragment>
-      <PageHeader title={t('Settings')} breadcrumbs={breadcrumbs} />
+      <PageHeader
+        title={t('Settings')}
+        breadcrumbs={breadcrumbs}
+        headerActions={<ActivityStreamIcon type={'setting'} />}
+      />
     </Fragment>
   );
 }

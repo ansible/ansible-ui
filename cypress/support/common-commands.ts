@@ -37,13 +37,16 @@ Cypress.Commands.add(
     cy.get('[data-cy="text-input"]').within(() => {
       cy.get('input').clear().type(text, { delay: 0 });
     });
-    if (variant === 'MultiText')
-      cy.get('[data-cy="apply-filter"]:not(:disabled):not(:hidden)').click();
+    if (variant === 'MultiText') {
+      cy.clickByDataCy('apply-filter');
+    }
   }
 );
 
 Cypress.Commands.add('filterTableBySingleText', (text: string) => {
   cy.filterTableByText(text, 'SingleText');
+  // TODO - this should be in future better sync, but for now, we need to have tests more stable
+  cy.wait(2000);
 });
 
 Cypress.Commands.add('filterTableByTypeAndText', (filterLabel: string | RegExp, text: string) => {
