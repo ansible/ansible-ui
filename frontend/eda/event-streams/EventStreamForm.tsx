@@ -30,7 +30,6 @@ export function CreateEventStream() {
   const postEdaEventStream = usePostRequest<object, EdaEventStream>();
 
   const onSubmit: PageFormSubmitHandler<IEdaEventStreamInputs> = async (eventStream) => {
-    console.log('Debug - eventStream: ', eventStream);
     eventStream.credentials = eventStream.credential_refs
       ? eventStream.credential_refs.map((credential) => `${credential.id || ''}`)
       : undefined;

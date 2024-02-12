@@ -79,7 +79,6 @@ export function EventStreamDetails() {
           {eventStream?.created_at ? formatDateString(eventStream?.created_at) : ''}
         </PageDetail>
         <LastModifiedPageDetail
-          format="date-time"
           value={eventStream?.modified_at ? formatDateString(eventStream?.modified_at) : ''}
         />
       </PageDetails>

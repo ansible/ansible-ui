@@ -5,7 +5,6 @@ import { useCredentialFilters } from './useCredentialFilters';
 import { useCredentialColumns } from './useCredentialColumns';
 import { EdaCredential } from '../../../interfaces/EdaCredential';
 import { useEdaView } from '../../../common/useEventDrivenView';
-import { SelectSingleDialog } from '../../../../../framework/PageDialogs/SelectSingleDialog';
 import { MultiSelectDialog, usePageDialog } from '../../../../../framework';
 
 export function useSelectCredentials(credentialType?: number, title?: string) {

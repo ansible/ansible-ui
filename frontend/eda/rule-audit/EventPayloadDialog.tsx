@@ -5,7 +5,6 @@ import { PageDetail, PageDetails, Scrollable, usePageDialog } from '../../../fra
 import { PageDetailCodeEditor } from '../../../framework/PageDetails/PageDetailCodeEditor';
 import { formatDateString } from '../../../framework/utils/formatDateString';
 import { EdaRuleAuditEvent } from '../interfaces/EdaRuleAuditEvent';
-import YAML from 'json-to-pretty-yaml';
 
 export interface EventPayloadModalProps {
   event?: EdaRuleAuditEvent;
@@ -16,6 +15,7 @@ export function EventPayloadDialog(props: EventPayloadModalProps) {
   const { t } = useTranslation();
   const [_, setDialog] = usePageDialog();
   const onClose = () => setDialog(undefined);
+
   return (
     <Modal
       title={t('Event details')}
@@ -42,7 +42,7 @@ export function EventPayloadDialog(props: EventPayloadModalProps) {
           <PageDetails numberOfColumns="single">
             <PageDetailCodeEditor
               label={t('Event log')}
-              value={YAML.stringify(props?.event?.payload)}
+              value={JSON.stringify(props?.event?.payload)}
               showCopyToClipboard={true}
             />
           </PageDetails>

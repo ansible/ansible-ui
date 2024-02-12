@@ -29,7 +29,7 @@ export function useEventStreamHistoryColumns() {
       },
       {
         header: t('Start date'),
-        cell: (instance) => <DateTimeCell format={'date-time'} value={instance.started_at} />,
+        cell: (instance) => <DateTimeCell value={instance.started_at} />,
       },
     ],
     [getPageUrl, t]
