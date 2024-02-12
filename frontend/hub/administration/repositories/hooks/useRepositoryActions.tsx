@@ -61,10 +61,6 @@ export function useRepositoryActions(options: {
       {
         label: t('Copy CLI configuration'),
         onClick: (repo) => {
-          const alertSuccess: AlertProps = {
-            variant: 'success',
-            title: t('Copied to clipboard'),
-          };
           const alertNoDistro: AlertProps = {
             variant: 'danger',
             title: t('There are no distributions associated with this repository.'),
@@ -80,8 +76,8 @@ export function useRepositoryActions(options: {
                 `url=${getRepoURL(distroBasePath)}`,
                 'token=<put your token here>',
               ].join('\n');
+              // This will show alert Copied to clipboard
               writeToClipboard(cliConfig);
-              alertToaster.addAlert(alertSuccess);
             },
             () => alertToaster.addAlert(alertNoDistro)
           );
