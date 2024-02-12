@@ -77,7 +77,7 @@ export function useRelatedGroupsToolbarActions(view: IAwxView<InventoryGroup>) {
           {
             type: PageActionType.Button,
             selection: PageActionSelection.None,
-            label: t('Existing group'),
+            label: t('Add existing group'),
             onClick: () =>
               setDialog(
                 <GroupSelectDialog
