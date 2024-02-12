@@ -4,6 +4,9 @@ import { Repository } from '../../../frontend/hub/administration/repositories/Re
 import { HubNamespace } from '../../../frontend/hub/namespaces/HubNamespace';
 import { randomE2Ename } from '../../support/utils';
 import { Collections } from './constants';
+import { randomString } from '../../../framework/utils/random-string';
+import { hubAPI } from '../../support/formatApiPathForHub';
+import { Approvals, Collections } from './constants';
 describe('Collections', () => {
   let namespace: HubNamespace;
   let repository: Repository;
