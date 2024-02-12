@@ -5,7 +5,7 @@ import { PageFormSelect, PageFormTextInput } from '../../../../../framework';
 import { PageFormHidden } from '../../../../../framework/PageForm/Utils/PageFormHidden';
 import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
 import { awxAPI } from '../../../common/api/awx-utils';
-import { ProjectFields } from '../ProjectPage/ProjectForm';
+import { Project } from '../../../interfaces/Project';
 
 interface IConfigData {
   project_base_dir: string | null;
@@ -61,7 +61,7 @@ export function ManualSubForm(props: { localPath?: string }) {
   const options = [...projectLocalPaths, ...localPath];
 
   return (
-    <PageFormHidden watch="project.scm_type" hidden={(type: string) => type !== 'manual'}>
+    <PageFormHidden watch="scm_type" hidden={(type: string) => type !== 'manual'}>
       <PageFormSection title={t('Type Details')}>
         {options.length === 0 && (
           <PageFormSection singleColumn>
@@ -75,17 +75,17 @@ export function ManualSubForm(props: { localPath?: string }) {
             </Alert>
           </PageFormSection>
         )}
-        <PageFormTextInput
-          name="project.base_dir"
+        <PageFormTextInput<Project>
+          name="base_dir"
           label={t('Project Base Path')}
           placeholder={config?.project_base_dir ?? ''}
           labelHelpTitle={t('Project Base Path')}
           labelHelp={basePathHelpBlock}
           isReadOnly
         />
-        <PageFormSelect<ProjectFields>
+        <PageFormSelect<Project>
           isRequired
-          name="project.local_path"
+          name="local_path"
           id="project_local_path"
           label={t('Playbook Directory')}
           options={options}

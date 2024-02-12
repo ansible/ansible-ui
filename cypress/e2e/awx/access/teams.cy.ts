@@ -45,8 +45,8 @@ describe('teams', function () {
     cy.navigateTo('awx', 'teams');
     cy.clickLink(/^Create team$/);
     cy.get('[data-cy="name"]').type(teamName);
-    cy.selectDropdownOptionByResourceName(
-      'organization',
+    cy.selectSingleSelectOption(
+      '[data-cy="organization"]',
       `${(this.globalOrganization as Organization).name}`
     );
     cy.clickButton(/^Create team$/);

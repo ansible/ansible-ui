@@ -1,6 +1,5 @@
-import { CreateApplication, EditApplication } from './ApplicationForm';
-import type { IApplicationInput } from './ApplicationForm';
 import { Application } from '../../interfaces/Application';
+import { CreateApplication, EditApplication } from './ApplicationForm';
 
 describe('Create Edit Application Form', () => {
   describe('Create Application', () => {
@@ -25,13 +24,13 @@ describe('Create Edit Application Form', () => {
       cy.mount(<CreateApplication onSuccessfulCreate={(app: Application) => app} />);
       cy.get('[data-cy="name"]').type('Create Application');
       cy.get('[data-cy="description"]').type('mock application description');
-      cy.get('[data-cy="organization"]').type('Default');
+      cy.selectSingleSelectOption('[data-cy="organization"]', 'Default');
       cy.selectDropdownOptionByResourceName('authorization-grant-type', 'Password');
       cy.selectDropdownOptionByResourceName('client-type', 'Confidential');
       cy.clickButton(/^Create application$/);
       cy.wait('@createApplication')
         .its('request.body')
-        .then((createdApplication: IApplicationInput) => {
+        .then((createdApplication: Application) => {
           expect(createdApplication).to.deep.equal({
             name: 'Create Application',
             description: 'mock application description',
@@ -54,14 +53,14 @@ describe('Create Edit Application Form', () => {
       cy.mount(<CreateApplication onSuccessfulCreate={(app: Application) => app} />);
       cy.get('[data-cy="name"]').type('Create Application');
       cy.get('[data-cy="description"]').type('mock application description');
-      cy.get('[data-cy="organization"]').type('Default');
+      cy.selectSingleSelectOption('[data-cy="organization"]', 'Default');
       cy.selectDropdownOptionByResourceName('authorization-grant-type', 'Authorization code');
       cy.selectDropdownOptionByResourceName('client-type', 'Confidential');
       cy.get('[data-cy="redirect-uris"]').type('https://www.google.com');
       cy.clickButton(/^Create application$/);
       cy.wait('@createApplication')
         .its('request.body')
-        .then((createdApplication: IApplicationInput) => {
+        .then((createdApplication: Application) => {
           expect(createdApplication).to.deep.equal({
             name: 'Create Application',
             description: 'mock application description',
@@ -85,7 +84,7 @@ describe('Create Edit Application Form', () => {
       cy.mount(<CreateApplication onSuccessfulCreate={(app: Application) => app} />);
       cy.get('[data-cy="name"]').type('Create Application');
       cy.get('[data-cy="description"]').type('mock application description');
-      cy.get('[data-cy="organization"]').type('Default');
+      cy.selectSingleSelectOption('[data-cy="organization"]', 'Default');
       cy.selectDropdownOptionByResourceName('authorization-grant-type', 'Authorization code');
       cy.selectDropdownOptionByResourceName('client-type', 'Confidential');
       cy.get('[data-cy="redirect-uris"]').clear();
@@ -98,9 +97,7 @@ describe('Create Edit Application Form', () => {
     beforeEach(() => {
       cy.intercept(
         { method: 'GET', url: '/api/v2/applications/*/' },
-        {
-          fixture: 'application.json',
-        }
+        { fixture: 'application.json' }
       );
       cy.intercept(
         { method: 'GET', url: '/api/v2/organizations/*' },
@@ -113,7 +110,7 @@ describe('Create Edit Application Form', () => {
       cy.verifyPageTitle('Edit Application');
       cy.get('[data-cy="name"]').should('have.value', 'test');
       cy.get('[data-cy="description"]').should('have.value', 'hello');
-      cy.get('[data-cy="organization"]').should('have.value', 'Default');
+      cy.get('[data-cy="organization"]').should('contain', 'Default');
       cy.get('[data-cy="authorization-grant-type-form-group"]').contains('Authorization code');
       cy.get('button[disabled]').should('exist');
       cy.get('[data-cy="client-type-form-group"]').contains('Confidential');
@@ -131,9 +128,8 @@ describe('Create Edit Application Form', () => {
       cy.get('[data-cy="description"]').should('have.value', 'hello');
       cy.get('[data-cy="description"]').clear();
       cy.get('[data-cy="description"]').type('Edited Description');
-      cy.get('[data-cy="organization"]').should('have.value', 'Default');
-      cy.get('[data-cy="organization"]').clear();
-      cy.get('[data-cy="organization"]').type('Default');
+      cy.get('[data-cy="organization"]').should('contain', 'Default');
+      cy.selectSingleSelectOption('[data-cy="organization"]', 'Default');
       cy.get('[data-cy="client-type-form-group"]').contains('Confidential');
       cy.selectDropdownOptionByResourceName('client-type', 'Public');
       cy.get('[data-cy="redirect-uris"]').should('have.value', 'https://www.google.com');
@@ -142,7 +138,7 @@ describe('Create Edit Application Form', () => {
       cy.clickButton(/^Save application$/);
       cy.wait('@editApplication')
         .its('request.body')
-        .then((editedApplication: IApplicationInput) => {
+        .then((editedApplication: Application) => {
           expect(editedApplication.name).to.equal('Edited Application');
           expect(editedApplication.description).to.equal('Edited Description');
           expect(editedApplication.authorization_grant_type).to.equal('authorization-code');
@@ -179,9 +175,8 @@ describe('Create Edit Application Form', () => {
           cy.get('[data-cy="description"]').should('have.value', 'hello');
           cy.get('[data-cy="description"]').clear();
           cy.get('[data-cy="description"]').type('Edited Description');
-          cy.get('[data-cy="organization"]').should('have.value', 'Default');
-          cy.get('[data-cy="organization"]').clear();
-          cy.get('[data-cy="organization"]').type('Default');
+          cy.get('[data-cy="organization"]').should('contain', 'Default');
+          cy.selectSingleSelectOption('[data-cy="organization"]', 'Default');
           cy.get('[data-cy="client-type-form-group"]').contains('Confidential');
           cy.selectDropdownOptionByResourceName('client-type', 'Public');
           cy.get('[data-cy="redirect-uris"]').should('have.value', 'https://www.google.com');
@@ -189,7 +184,7 @@ describe('Create Edit Application Form', () => {
           cy.clickButton(/^Save application$/);
           cy.wait('@editApplication')
             .its('request.body')
-            .then((editedApplication: IApplicationInput) => {
+            .then((editedApplication: Application) => {
               expect(editedApplication.name).to.equal('Edited Application');
               expect(editedApplication.description).to.equal('Edited Description');
               expect(editedApplication.authorization_grant_type).to.equal('password');
@@ -210,9 +205,8 @@ describe('Create Edit Application Form', () => {
       cy.get('[data-cy="description"]').should('have.value', 'hello');
       cy.get('[data-cy="description"]').clear();
       cy.get('[data-cy="description"]').type('Edited Description');
-      cy.get('[data-cy="organization"]').should('have.value', 'Default');
-      cy.get('[data-cy="organization"]').clear();
-      cy.get('[data-cy="organization"]').type('Default');
+      cy.get('[data-cy="organization"]').should('contain', 'Default');
+      cy.selectSingleSelectOption('[data-cy="organization"]', 'Default');
       cy.get('[data-cy="client-type-form-group"]').contains('Confidential');
       cy.selectDropdownOptionByResourceName('client-type', 'Public');
       cy.get('[data-cy="redirect-uris"]').should('have.value', 'https://www.google.com');

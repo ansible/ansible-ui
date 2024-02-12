@@ -3,7 +3,7 @@ import { PageFormTextInput } from '../../../../../framework';
 import { PageFormHidden } from '../../../../../framework/PageForm/Utils/PageFormHidden';
 import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
 import { PageFormCredentialSelect } from '../../../access/credentials/components/PageFormCredentialSelect';
-import { ProjectFields } from '../ProjectPage/ProjectForm';
+import { Project } from '../../../interfaces/Project';
 import { useGetCredentialTypeIDs } from '../hooks/useGetCredentialTypeIDs';
 import { ScmTypeOptions } from './ScmTypeOptions';
 
@@ -27,18 +27,18 @@ export function ArchiveSubForm() {
   );
 
   return (
-    <PageFormHidden watch="project.scm_type" hidden={(type: string) => type !== 'archive'}>
+    <PageFormHidden watch="scm_type" hidden={(type: string) => type !== 'archive'}>
       <PageFormSection title={t('Type Details')}>
-        <PageFormTextInput<ProjectFields>
-          name="project.scm_url"
+        <PageFormTextInput<Project>
+          name="scm_url"
           label={t('Source Control URL')}
           labelHelpTitle={t('Source Control URL')}
           labelHelp={archiveSourceControlUrlHelp}
           isRequired
         />
-        <PageFormCredentialSelect<ProjectFields>
-          name="project.summary_fields.credential.name"
-          credentialIdPath="project.credential"
+        <PageFormCredentialSelect<Project>
+          name="summary_fields.credential.name"
+          credentialIdPath="credential"
           label={t('Source Control Credential')}
           selectTitle={t('Select Source Control Credential')}
           credentialType={credentialTypeIDs.scm}

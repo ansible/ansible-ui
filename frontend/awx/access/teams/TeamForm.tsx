@@ -20,7 +20,6 @@ export function CreateTeam() {
   const navigate = useNavigate();
   const postRequest = usePostRequest<Team>();
   const onSubmit: PageFormSubmitHandler<Team> = async (team) => {
-    team.organization = team.summary_fields?.organization?.id;
     const createdTeam = await postRequest(awxAPI`/teams/`, team);
     pageNavigate(AwxRoute.TeamDetails, { params: { id: createdTeam.id } });
   };
@@ -49,7 +48,6 @@ export function EditTeam() {
   const { data: team } = useGet<Team>(awxAPI`/teams/${id.toString()}/`);
   const patchRequest = usePatchRequest<Team, Team>();
   const onSubmit: PageFormSubmitHandler<Team> = async (team) => {
-    team.organization = team.summary_fields?.organization?.id;
     await patchRequest(awxAPI`/teams/${id.toString()}/`, team);
     navigate(-1);
   };
@@ -97,7 +95,7 @@ function TeamInputs() {
         placeholder={t('Enter name')}
         isRequired
       />
-      <PageFormSelectOrganization<Team> name="summary_fields.organization" isRequired />
+      <PageFormSelectOrganization<Team> name="organization" isRequired />
       <PageFormSection singleColumn>
         <PageFormTextArea<Team>
           name="description"
