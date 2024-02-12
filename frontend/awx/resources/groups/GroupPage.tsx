@@ -43,7 +43,7 @@ export function GroupPage() {
             to: getPageUrl(AwxRoute.InventoryDetails, {
               params: {
                 id: inventoryGroup?.inventory,
-                inventory_type: 'inventory',
+                inventory_type: params.inventory_type,
               },
             }),
           },
@@ -52,7 +52,7 @@ export function GroupPage() {
             to: getPageUrl(AwxRoute.InventoryGroups, {
               params: {
                 id: inventoryGroup?.inventory,
-                inventory_type: 'inventory',
+                inventory_type: params.inventory_type,
               },
             }),
           },
@@ -79,7 +79,7 @@ export function GroupPage() {
         ]}
         params={{
           id: inventoryGroup.inventory,
-          inventory_type: 'inventory',
+          inventory_type: params.inventory_type,
           group_id: inventoryGroup.id,
         }}
       />

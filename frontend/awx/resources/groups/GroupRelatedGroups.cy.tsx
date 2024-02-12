@@ -127,7 +127,7 @@ describe('GroupRelatedGroups', () => {
       .should('be.an', 'array')
       .then(() => {
         cy.get('[data-cy="add-group"]').click();
-        cy.get('[data-cy="new-group"]').should('have.attr', 'aria-disabled', 'true');
+        cy.get('[data-cy="create-new-group"]').should('have.attr', 'aria-disabled', 'true');
       });
   });
 });
