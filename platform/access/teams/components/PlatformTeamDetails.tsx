@@ -1,5 +1,10 @@
 import { useParams } from 'react-router-dom';
-import { LoadingPage, PageDetailsFromColumns, PageNotFound } from '../../../../framework';
+import {
+  LoadingPage,
+  PageDetails,
+  PageDetailsFromColumns,
+  PageNotFound,
+} from '../../../../framework';
 import { AwxError } from '../../../../frontend/awx/common/AwxError';
 import { useGetItem } from '../../../../frontend/common/crud/useGet';
 import { gatewayV1API } from '../../../api/gateway-api-utils';
@@ -17,5 +22,9 @@ export function PlatformTeamDetails() {
   if (isLoading) return <LoadingPage />;
   if (error) return <AwxError error={error} />;
   if (!team) return <PageNotFound />;
-  return <PageDetailsFromColumns columns={columns} item={team} />;
+  return (
+    <PageDetails>
+      <PageDetailsFromColumns columns={columns} item={team} />
+    </PageDetails>
+  );
 }

@@ -23,7 +23,7 @@ export function PlatformUserDetails() {
   const columns = useUsersColumns();
   const { data: user, isLoading } = useGetItem<PlatformUser>(gatewayV1API`/users`, params.id);
   const { data: organizationsData } = useGet<PlatformItemsResponse<PlatformOrganization>>(
-    gatewayV1API`/users/${params.id ?? ''}/organizations`
+    gatewayV1API`/users/${params.id ?? ''}/organizations/`
   );
   if (isLoading) return <LoadingPage />;
 

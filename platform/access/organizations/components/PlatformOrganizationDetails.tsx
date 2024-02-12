@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom';
-import { PageDetailsFromColumns } from '../../../../framework';
+import { PageDetails, PageDetailsFromColumns } from '../../../../framework';
 import { useGet } from '../../../../frontend/common/crud/useGet';
 import { gatewayV1API } from '../../../api/gateway-api-utils';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
@@ -12,5 +12,9 @@ export function PlatformOrganizationDetails() {
   const { data: organization } = useGet<PlatformOrganization>(
     gatewayV1API`/organizations/${id.toString()}/`
   );
-  return <PageDetailsFromColumns item={organization} columns={columns} />;
+  return (
+    <PageDetails>
+      <PageDetailsFromColumns item={organization} columns={columns} />;
+    </PageDetails>
+  );
 }
