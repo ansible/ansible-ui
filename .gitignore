@@ -10,3 +10,4 @@
 .vscode
 /cypress/.nyc_output
 /cypress/coverage
+.zshrc
