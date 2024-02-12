@@ -56,7 +56,16 @@ export function InventorySourcePage() {
               params: { id: params.id, inventory_type: params.inventory_type },
             }),
           },
-          { label: inventorySource?.name },
+          {
+            label: inventorySource?.name,
+            to: getPageUrl(AwxRoute.InventorySourceDetail, {
+              params: {
+                id: params.id,
+                inventory_type: params.inventory_type,
+                source_id: params.source_id,
+              },
+            }),
+          },
         ]}
         headerActions={
           <PageActions<InventorySource>

@@ -4,6 +4,7 @@ import { ITableColumn, usePageNavigate } from '../../../../../framework';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useNameColumn } from '../../../../common/columns';
 import { NotificationTemplate } from '../../../interfaces/NotificationTemplate';
+import { capitalizeFirstLetter } from '../../../../../framework/utils/strings';
 
 export function useNotificationsColumns(options?: {
   disableSort?: boolean;
@@ -27,7 +28,7 @@ export function useNotificationsColumns(options?: {
       header: t('Type'),
       type: 'text',
       value: (notificationTemplate: NotificationTemplate) => {
-        return notificationTemplate.notification_type;
+        return capitalizeFirstLetter(notificationTemplate.notification_type as string);
       },
       card: 'subtitle',
       list: 'subtitle',
