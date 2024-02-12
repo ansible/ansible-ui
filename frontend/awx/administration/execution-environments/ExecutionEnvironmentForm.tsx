@@ -23,6 +23,7 @@ import { getCredentialByName } from '../../access/credentials/utils/getCredentia
 import useSWR from 'swr';
 import { requestGet, requestPatch, swrOptions } from '../../../common/crud/Data';
 import { useSearchParams } from '../../../../framework/components/useSearchParams';
+import { useGetCredentialTypeIDs } from '../../resources/projects/hooks/useGetCredentialTypeIDs';
 
 const PullOption = {
   Always: 'Always pull container before running.',
@@ -202,6 +203,7 @@ function ExecutionEnvironmentInputs(props: {
 }) {
   const { t } = useTranslation();
   const isOrgGloballyAvailable = !props.executionEnv?.organization;
+  const credentialTypeIDs = useGetCredentialTypeIDs();
 
   return (
     <>
@@ -291,7 +293,7 @@ function ExecutionEnvironmentInputs(props: {
       <PageFormCredentialSelect<IExecutionEnvInput>
         name="credential"
         labelHelp={t('Credential to authenticate with a protected container registry.')}
-        credentialType={17}
+        credentialType={credentialTypeIDs.registry}
         placeholder={t('Add registry credential')}
         selectTitle={t('Select a registry credential')}
         label={t('Registry Credential')}
