@@ -1,7 +1,7 @@
 import { Repositories } from './constants';
 import { randomString } from '../../../framework/utils/random-string';
 
-describe.skip('Repositories', () => {
+describe('Repositories', () => {
   before(() => {
     cy.hubLogin();
   });
@@ -41,6 +41,11 @@ describe('Repositories Remove collection', () => {
     cy.galaxykit('-i namespace delete', namespace);
   });
 
+  beforeEach(() => {
+    cy.hubLogin();
+  });
+
+
   it('it should add and then remove the collections', () => {
     // fill data
     numCollections = 3;
@@ -51,8 +56,6 @@ describe('Repositories Remove collection', () => {
 
     namespace = 'hub_e2e_appr_namespace' + randomString(5).toLowerCase();
     repository = 'hub_e2e_appr_repository' + randomString(5);
-
-    cy.hubLogin();
 
     cy.galaxykit(`repository create ${repository}`);
     cy.galaxykit('task wait all');
