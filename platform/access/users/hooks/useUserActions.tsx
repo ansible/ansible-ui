@@ -24,7 +24,7 @@ export function useUserToolbarActions(view: IPlatformView<PlatformUser>) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
 
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>(gatewayV1API`/users`);
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(gatewayV1API`/users/`);
   const canCreateUser = Boolean(data && data.actions && data.actions['POST']);
   const deleteUsers = useDeleteUsers(view.unselectItemsAndRefresh);
 
