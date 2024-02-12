@@ -10,9 +10,11 @@ import {
   NodeModel,
   TargetType,
   WithCreateConnectorProps,
+  nodeDragSourceSpec,
   withContextMenu,
   withCreateConnector,
   withDndDrop,
+  withDragNode,
   withSelection,
 } from '@patternfly/react-topology';
 import { FunctionComponent, useCallback } from 'react';
@@ -68,7 +70,7 @@ export function useCreateNodeComponent(): () => FunctionComponent<
               CONNECTOR_TARGET_DROP,
               CREATE_CONNECTOR_DROP_TYPE,
             ])
-          )(withSelection()(CustomNode))
+          )(withDragNode(nodeDragSourceSpec('node', true, true))(withSelection()(CustomNode)))
         )
       ),
     [createConnector, nodeContextMenu, nodeDropTargetSpec]

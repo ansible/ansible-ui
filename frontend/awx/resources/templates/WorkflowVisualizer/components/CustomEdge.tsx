@@ -11,11 +11,18 @@ import {
   observer,
   WithSourceDragProps,
   WithTargetDragProps,
+  EdgeTerminalType,
+  ConnectorArrow,
+  EdgeConnectorArrow,
+  DefaultConnectorTerminal,
   Point,
+  AnchorEnd,
+  straightPath,
+  usePolygonAnchor,
 } from '@patternfly/react-topology';
 import { css } from '@patternfly/react-styles';
 import { CustomLabel } from './CustomLabel';
-import { type CustomEdgeProps, type CustomEdgeInnerProps } from '../types';
+import { type CustomEdgeProps, type CustomEdgeInnerProps, EdgeStatus } from '../types';
 import { START_NODE_ID } from '../constants';
 
 function useCenterPoint(edgePath: string) {
@@ -57,6 +64,7 @@ const CustomEdgeInner: FC<
   const startPoint = edgeElement.getStartPoint();
 
   const endPoint = edgeElement.getTarget().getPosition();
+  const edgeEndPoint = edgeElement.getEndPoint();
   const halfTargetNodeHeight = edgeElement.getTarget().getDimensions().height / 2;
   const edgePath = integralShapePath(
     startPoint,
@@ -69,10 +77,15 @@ const CustomEdgeInner: FC<
   const data = edgeElement.getData();
   if (!data) return null;
   const { tag, tagStatus } = data;
+
   const edgeStyles = css(
     `pf-topology__edge ${StatusModifier[tagStatus]}`,
     (hover || tagHover) && 'pf-m-hover'
   );
+
+  const getConnectorRotationAngle = (startPoint: Point, endPoint: Point): number =>
+    180 - (Math.atan2(endPoint.y - startPoint.y, startPoint.x - endPoint.x) * 180) / Math.PI;
+
   return (
     <Layer id={dragging ? TOP_LAYER : undefined} {...rest}>
       <g
@@ -84,21 +97,12 @@ const CustomEdgeInner: FC<
       >
         <path
           className="pf-topology__edge__background"
-          d={integralShapePath(
-            startPoint,
-            { ...endPoint, y: endPoint.y + halfTargetNodeHeight } as Point,
-            0,
-            20
-          )}
+          d={integralShapePath(startPoint, edgeEndPoint, 0, 20)}
         />
-
         <path
-          d={integralShapePath(
-            startPoint,
-            { ...endPoint, x: endPoint.x, y: endPoint.y + halfTargetNodeHeight } as Point,
-            0,
-            20
-          )}
+          strokeMiterlimit={25}
+          strokeLinecap="round"
+          d={integralShapePath(startPoint, edgeEndPoint, 0, 20)}
           transform="translate(0.5,0.5)"
           shapeRendering="geometricPrecision"
           className="pf-topology__edge__link"
@@ -106,27 +110,33 @@ const CustomEdgeInner: FC<
         />
       </g>
       {centerPoint ? (
-        <>
-          <CustomLabel
-            hoverRef={tagHoverRef}
-            xPoint={centerPoint.x}
-            yPoint={centerPoint.y}
-            status={tagStatus}
-            isSourceRootNode={isSourceRootNode}
-            {...props}
-          >
-            {tag}
-          </CustomLabel>
-        </>
+        <CustomLabel
+          hoverRef={tagHoverRef}
+          xPoint={centerPoint.x}
+          yPoint={centerPoint.y}
+          status={tagStatus}
+          isSourceRootNode={isSourceRootNode}
+          {...props}
+        >
+          {tag}
+        </CustomLabel>
       ) : null}
-      <g transform={`translate(${endPoint.x - 14}, ${endPoint?.y + halfTargetNodeHeight})`}>
-        <polygon
-          transform="translate(0.5,0.5)"
-          points=" 0,7 0,-7 14,0"
-          className={`pf-topology-connector-arrow pf-topology__edge pf-topology__edge ${edgeStyles}`}
-        />
-        <polygon fillOpacity="0" strokeWidth="0" />
-      </g>
+      {centerPoint && (
+        <g
+          transform={`translate(${
+            edgeEndPoint.x - 14
+          }, ${edgeEndPoint?.y}) rotate(${getConnectorRotationAngle(
+            centerPoint as Point,
+            edgeEndPoint
+          )})`}
+        >
+          <polygon
+            transform={`translate(0.5,0.5) `}
+            points=" 0,7 0,-7 14,0"
+            className={`pf-topology-connector-arrow pf-topology__edge pf-topology__edge ${edgeStyles}`}
+          />
+        </g>
+      )}
     </Layer>
   );
 });
