@@ -40,7 +40,7 @@ export function useImagesColumns(id?: string) {
       },
       {
         header: t('Published'),
-        cell: (item) => <DateTimeCell format="since" value={item.created_at} />,
+        cell: (item) => <DateTimeCell value={item.created_at} />,
       },
       {
         header: t('Layers'),
