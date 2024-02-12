@@ -15,6 +15,7 @@ import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 interface ResourceTypeMapper {
   inventory_sources?: string;
   projects?: string;
+  job_templates?: string;
 }
 
 export function ResourceNotifications({ resourceType }: { resourceType: string }) {
@@ -24,11 +25,13 @@ export function ResourceNotifications({ resourceType }: { resourceType: string }
   const resourceToParamMap: ResourceTypeMapper = {
     inventory_sources: 'source_id',
     projects: 'id',
+    job_templates: 'id',
   };
 
   const resourceToErrorMsg: ResourceTypeMapper = {
     inventory_sources: 'inventory source',
     projects: 'project',
+    job_templates: 'job template',
   };
 
   const params = useParams();
