@@ -45,7 +45,6 @@ describe('Repositories Remove collection', () => {
     cy.hubLogin();
   });
 
-
   it('it should add and then remove the collections', () => {
     // fill data
     numCollections = 3;
