@@ -30,7 +30,7 @@ export function PlatformUserDetails() {
   return (
     <PageDetails>
       <PageDetailsFromColumns columns={columns} item={user} />
-      {organizationsData?.results?.length && (
+      {organizationsData?.results?.length ? (
         <PageDetail label={t('Organization', { count: organizationsData.count })}>
           <LabelsCell
             numLabels={3}
@@ -42,7 +42,7 @@ export function PlatformUserDetails() {
             }))}
           />
         </PageDetail>
-      )}
+      ) : null}
     </PageDetails>
   );
 }
