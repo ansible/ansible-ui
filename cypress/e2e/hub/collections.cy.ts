@@ -92,8 +92,11 @@ describe('Collections- List View', () => {
     const collection =
       'hub_e2e_collection_' + randomString(5, undefined, { isLowercase: true }).replace(/\d/g, '');
     cy.createNamespace(namespace);
+    cy.galaxykit('task wait all');
     cy.uploadCollection(collection, namespace);
+    cy.galaxykit('task wait all');
     cy.approveCollection(collection, namespace, '1.0.0');
+    cy.galaxykit('task wait all');
     cy.navigateTo('hub', Collections.url);
     cy.get('[data-cy="table-view"]').click();
     cy.selectTableRow(collection);
@@ -102,6 +105,7 @@ describe('Collections- List View', () => {
     cy.clickButton(/^Delete collections/);
     cy.contains(/^Success$/);
     cy.clickButton(/^Close$/);
+    cy.galaxykit('task wait all');
     cy.clickButton(/^Clear all filters$/);
 
     cy.deleteNamespace(namespace);
@@ -112,8 +116,11 @@ describe('Collections- List View', () => {
     const collection =
       'hub_e2e_collection_' + randomString(5, undefined, { isLowercase: true }).replace(/\d/g, '');
     cy.createNamespace(namespace);
+    cy.galaxykit('task wait all');
     cy.uploadCollection(collection, namespace);
+    cy.galaxykit('task wait all');
     cy.approveCollection(collection, namespace, '1.0.0');
+    cy.galaxykit('task wait all');
     cy.navigateTo('hub', Collections.url);
     cy.get('[data-cy="table-view"]').click();
     cy.selectTableRow(collection);
@@ -122,6 +129,7 @@ describe('Collections- List View', () => {
     cy.clickButton(/^Delete collections/);
     cy.contains(/^Success$/);
     cy.clickButton(/^Close$/);
+    cy.galaxykit('task wait all');
     cy.clickButton(/^Clear all filters$/);
 
     cy.deleteNamespace(namespace);
@@ -140,7 +148,9 @@ describe('Collections List- Line Item Kebab Menu', () => {
     namespace = 'hub_e2e_namespace_' + randomString(5).toLowerCase();
     cy.hubLogin();
     cy.createNamespace(namespace);
+    cy.galaxykit('task wait all');
     cy.uploadCollection(collection, namespace);
+    cy.galaxykit('task wait all');
     cy.navigateTo('hub', Collections.url);
   });
 
@@ -157,23 +167,27 @@ describe('Collections List- Line Item Kebab Menu', () => {
 
   it('user can delete entire collection from system', () => {
     cy.approveCollection(collection, namespace, '1.0.0');
+    cy.galaxykit('task wait all');
     cy.get('[data-cy="table-view"]').click();
     cy.clickTableRowKebabAction(collection, 'delete-entire-collection-from-system');
     cy.get('#confirm').click();
     cy.clickButton(/^Delete collections/);
     cy.contains(/^Success$/);
     cy.clickButton(/^Close$/);
+    cy.galaxykit('task wait all');
     cy.clickButton(/^Clear all filters$/);
   });
 
   it('user can delete entire collection from repository', () => {
     cy.approveCollection(collection, namespace, '1.0.0');
+    cy.galaxykit('task wait all');
     cy.get('[data-cy="table-view"]').click();
     cy.clickTableRowKebabAction(collection, 'delete-entire-collection-from-repository');
     cy.get('#confirm').click();
     cy.clickButton(/^Delete collections/);
     cy.contains(/^Success$/);
     cy.clickButton(/^Close$/);
+    cy.galaxykit('task wait all');
     cy.clickButton(/^Clear all filters$/);
   });
 
@@ -241,6 +255,7 @@ describe('Collections Details View', () => {
 
   it('user can delete entire collection from system', () => {
     cy.approveCollection(collection, namespace, '1.0.0');
+    cy.galaxykit('task wait all');
     cy.get('[data-cy="table-view"]').click();
     cy.clickTableRow(collection);
     cy.wait(400);
@@ -249,6 +264,7 @@ describe('Collections Details View', () => {
 
   it('user can delete entire collection from repository', () => {
     cy.approveCollection(collection, namespace, '1.0.0');
+    cy.galaxykit('task wait all');
     cy.get('[data-cy="table-view"]').click();
     cy.clickTableRow(collection);
     cy.wait(400);
