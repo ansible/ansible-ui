@@ -20,7 +20,7 @@ export function GroupCreate() {
   const pageNavigate = usePageNavigate();
   const postRequest = usePostRequest<InventoryGroupCreate, InventoryGroup>();
   const postParentGroup = usePostRequest<InventoryGroupRelatedGroup>();
-  const params = useParams<{ id: string; group_id: string }>();
+  const params = useParams<{ inventory_type: string; id: string; group_id: string }>();
 
   const onSubmit: PageFormSubmitHandler<InventoryGroupCreate> = async (groupInput) => {
     const { name, description, variables } = groupInput;
@@ -38,11 +38,19 @@ export function GroupCreate() {
       };
       await postParentGroup(awxAPI`/groups/${params.group_id}/children/`, parentGroup);
       pageNavigate(AwxRoute.InventoryGroupRelatedGroups, {
-        params: { inventory_type: 'inventory', id: newGroup.inventory, group_id: params.group_id },
+        params: {
+          inventory_type: params.inventory_type,
+          id: newGroup.inventory,
+          group_id: params.group_id,
+        },
       });
     } else {
       pageNavigate(AwxRoute.InventoryGroupDetails, {
-        params: { inventory_type: 'inventory', id: newGroup.inventory, group_id: newGroup.id },
+        params: {
+          inventory_type: params.inventory_type,
+          id: newGroup.inventory,
+          group_id: newGroup.id,
+        },
       });
     }
   };
