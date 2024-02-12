@@ -41,6 +41,7 @@ import {
 import styled from 'styled-components';
 import { IPageAction, PageActionSelection } from '../PageActions/PageAction';
 import { PageActions } from '../PageActions/PageActions';
+import { PageDetails } from '../PageDetails/PageDetails';
 import { PageDetailsFromColumns } from '../PageDetails/PageDetailsFromColumns';
 import { PageTableViewType, PageTableViewTypeE } from '../PageToolbar/PageTableViewType';
 import { PageToolbar } from '../PageToolbar/PageToolbar';
@@ -64,7 +65,6 @@ import {
   useVisibleTableColumns,
 } from './PageTableColumn';
 import { PageTableList } from './PageTableList';
-import { PageDetails } from '../PageDetails/PageDetails';
 
 const ScrollDiv = styled.div`
   height: 100%;
@@ -396,7 +396,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
       )}
       {!props.disablePagination &&
         (!props.autoHidePagination || (props.itemCount ?? 0) > props.perPage) && (
-          <PagePagination {...props} topBorder />
+          <PagePagination {...props} topBorder={!props.autoHidePagination} />
         )}
     </>
   );
