@@ -18,7 +18,7 @@ describe('Teams list', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: gatewayV1API`/teams*`,
+          url: gatewayV1API`/teams/*`,
         },
         {
           fixture: 'platformTeams.json',
@@ -69,7 +69,7 @@ describe('Teams list', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: gatewayV1API`/teams*`,
+          url: gatewayV1API`/teams/*`,
         },
         {
           fixture: 'emptyList.json',
