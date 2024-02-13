@@ -49,6 +49,7 @@ export function EventStreamInstanceDetails() {
         {eventStreamInstanceLog?.results?.length ? (
           <PageDetailCodeEditor
             label={t('Output')}
+            data-cy="output-field"
             value={eventStreamInstanceLog?.results?.map((item) => item.log).join('\r\n')}
             showCopyToClipboard={true}
           />

@@ -62,6 +62,7 @@ function CredentialInputs() {
     <>
       <PageFormTextInput<EdaCredentialCreate>
         name="name"
+        data-cy="name-form-field"
         label={t('Name')}
         placeholder={t('Enter name')}
         isRequired
@@ -69,12 +70,14 @@ function CredentialInputs() {
       />
       <PageFormTextInput<EdaCredentialCreate>
         name="description"
+        data-cy="description-form-field"
         label={t('Description')}
         placeholder={t('Enter description ')}
         maxLength={150}
       />
       <PageFormSelect<EdaCredentialCreate>
         name="credential_type"
+        data-cy="credential-type-form-field"
         label={t('Credential type')}
         isRequired
         placeholderText={t('Select credential type')}
@@ -97,6 +100,7 @@ function CredentialInputs() {
         />
         <PageFormTextInput<EdaCredentialCreate>
           name="secret"
+          data-cy="token-form-field"
           label={t('Token/Password')}
           type="password"
           placeholder={t('Enter credential token or password')}
@@ -111,11 +115,13 @@ function CredentialInputs() {
       >
         <PageFormTextInput<EdaCredentialCreate>
           name="key"
+          data-cy="vault-identifier-form-field"
           label={t('Vault identifier')}
           placeholder={t('Vault identifier')}
         />
         <PageFormTextInput<EdaCredentialCreate>
           name="secret"
+          data-cy="vault-password-form-field"
           label={t('Vault password')}
           type="password"
           placeholder={t('Enter vault password')}

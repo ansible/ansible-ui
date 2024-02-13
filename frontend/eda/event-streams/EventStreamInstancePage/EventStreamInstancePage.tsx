@@ -40,7 +40,13 @@ export function EventStreamInstancePage() {
         ]}
       />
       <PageRoutedTabs
-        tabs={[{ label: t('Details'), page: EdaRoute.EventStreamInstanceDetails }]}
+        tabs={[
+          {
+            label: t('Details'),
+            page: EdaRoute.EventStreamInstanceDetails,
+            dataCy: 'event-stream-page-details',
+          },
+        ]}
         params={{ id: eventStreamInstance?.event_stream_id, instanceId: params.instanceId }}
       />
     </PageLayout>

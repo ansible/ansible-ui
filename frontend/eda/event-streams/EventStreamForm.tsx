@@ -95,6 +95,7 @@ export function EventStreamInputs() {
         name="name"
         label={t('Name')}
         id={'name'}
+        data-cy="name-form-field"
         isRequired={true}
         placeholder={t('Enter name')}
       />
@@ -102,10 +103,12 @@ export function EventStreamInputs() {
         name="description"
         label={t('Description')}
         id={'description'}
+        data-cy="description-form-field"
         placeholder={t('Enter description')}
       />
       <PageFormTextInput<IEdaEventStreamInputs>
         name="source_type"
+        data-cy="sorce-type-form-field"
         label={t('Source type')}
         id={'source_type'}
         isRequired
@@ -117,6 +120,7 @@ export function EventStreamInputs() {
       />
       <PageFormSelect<IEdaEventStreamInputs>
         name="decision_environment_id"
+        data-cy="decision-environment-form-field"
         label={t('Decision environment')}
         placeholderText={t('Select decision environment')}
         options={
@@ -138,6 +142,7 @@ export function EventStreamInputs() {
       />
       <PageFormSelect<IEdaEventStreamInputs>
         name="restart_policy"
+        data-cy="restart-policy-form-field"
         label={t('Restart policy')}
         placeholderText={t('Select restart policy')}
         options={RESTART_OPTIONS}
@@ -147,6 +152,7 @@ export function EventStreamInputs() {
       <PageFormSection singleColumn>
         <PageFormDataEditor<IEdaEventStreamInputs>
           name="source_args"
+          data-cy="source-args-form-field"
           label={t('Arguments')}
           isExpandable
           isRequired
