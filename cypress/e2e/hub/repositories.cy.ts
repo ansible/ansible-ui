@@ -37,6 +37,7 @@ describe('Repositories', () => {
     // new repository should be create and an user redirected to its detail page
     cy.verifyPageTitle(repositoryName);
     cy.get('[data-cy="description"]').should('contain', repositoryDescription);
+    cy.galaxykit('-i repository delete ' + repositoryName);
   });
   it('should be able to edit a repository', () => {
     const repositoryName =
@@ -60,6 +61,7 @@ describe('Repositories', () => {
     cy.wait('@editRepository').then(() => {
       cy.get('[data-cy="description"]').should('contain', repositoryDescription);
     });
+    cy.galaxykit('-i repository delete ' + repositoryName);
   });
   it('should be able to delete a repository', () => {
     const repositoryName =
