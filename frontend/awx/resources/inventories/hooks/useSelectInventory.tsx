@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { usePageDialog } from '../../../../../framework';
-import { SelectSingleDialog } from '../../../../../framework/PageDialogs/SelectSingleDialog';
+import { SingleSelectDialog } from '../../../../../framework/PageDialogs/SingleSelectDialog';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxView } from '../../../common/useAwxView';
 import { Inventory } from '../../../interfaces/Inventory';
@@ -18,7 +18,7 @@ function SelectInventory(props: { title: string; onSelect: (inventory: Inventory
     disableQueryString: true,
   });
   return (
-    <SelectSingleDialog<Inventory>
+    <SingleSelectDialog<Inventory>
       {...props}
       toolbarFilters={toolbarFilters}
       tableColumns={tableColumns}

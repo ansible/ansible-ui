@@ -8,7 +8,7 @@ import { useFrameworkTranslations } from '../useFrameworkTranslations';
 import { IView } from '../useView';
 import { usePageDialog } from './PageDialog';
 
-export type SelectSingleDialogProps<T extends object> = {
+export type SingleSelectDialogProps<T extends object> = {
   title: string;
   view: IView & ISelected<T> & { itemCount?: number; pageItems: T[] | undefined };
   tableColumns: ITableColumn<T>[];
@@ -21,7 +21,7 @@ export type SelectSingleDialogProps<T extends object> = {
   onClose?: () => void;
 };
 
-export function SelectSingleDialog<T extends object>(props: SelectSingleDialogProps<T>) {
+export function SingleSelectDialog<T extends object>(props: SingleSelectDialogProps<T>) {
   const { title, view, tableColumns, toolbarFilters, confirmText, cancelText, onSelect } = props;
   const [_, setDialog] = usePageDialog();
   let onClose = useCallback(() => setDialog(undefined), [setDialog]);
