@@ -1,9 +1,7 @@
-import { useVisualizationController } from '@patternfly/react-topology';
-import { usePageNavigate } from '../../../../../../framework';
+import { action, useVisualizationController } from '@patternfly/react-topology';
 import { useDeleteRequest } from '../../../../../common/crud/useDeleteRequest';
 import { useAbortController } from '../../../../../common/crud/useAbortController';
 import { awxAPI } from '../../../../common/api/awx-utils';
-import { AwxRoute } from '../../../../main/AwxRoutes';
 import { usePostRequest } from '../../../../../common/crud/usePostRequest';
 import { usePatchRequest } from '../../../../../common/crud/usePatchRequest';
 import { ControllerState, GraphNode, EdgeStatus, GraphNodeData } from '../types';
@@ -41,7 +39,6 @@ type CreatePayloadProperty = keyof CreateWorkflowNodePayload;
 export function useSaveVisualizer() {
   const controller = useVisualizationController();
   const abortController = useAbortController();
-  const pageNavigate = usePageNavigate();
   const deleteRequest = useDeleteRequest();
   const postWorkflowNode = usePostRequest<Partial<CreateWorkflowNodePayload>, WorkflowNode>();
   const patchWorkflowNode = usePatchRequest<Partial<CreateWorkflowNodePayload>, WorkflowNode>();
@@ -463,12 +460,13 @@ export function useSaveVisualizer() {
         )
       )
     );
-
-    pageNavigate(AwxRoute.WorkflowJobTemplateDetails, {
-      params: { id: state.workflowTemplate.id.toString() },
-    });
+    action(() => {
+      controller.setState({ ...state, modified: false });
+      controller
+        .getElements()
+        .forEach((element) => element.setState({ ...element.getState(), modified: false }));
+    })();
   }
-
   return handleSave;
 }
 

@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { useVisualizationController, NodeShape, NodeModel, Node } from '@patternfly/react-topology';
+import { useVisualizationController, NodeShape, NodeModel } from '@patternfly/react-topology';
 import { PageWizard, PageWizardStep } from '../../../../../../framework';
 import { awxErrorAdapter } from '../../../../common/adapters/awxErrorAdapter';
 import { UnifiedJobType } from '../../../../interfaces/WorkflowNode';
@@ -7,7 +7,7 @@ import { NodeTypeStep } from './NodeTypeStep';
 import { NodeReviewStep } from './NodeReviewStep';
 import { useGetInitialValues, getValueBasedOnJobType, hasDaysToKeep } from './helpers';
 import { NODE_DIAMETER, START_NODE_ID } from '../constants';
-import { EdgeStatus, GraphNodeData, PromptFormValues, type WizardFormValues } from '../types';
+import { ControllerState, EdgeStatus, PromptFormValues, type WizardFormValues } from '../types';
 import { useCloseSidebar, useCreateEdge } from '../hooks';
 import { LaunchConfiguration } from '../../../../interfaces/LaunchConfiguration';
 import { NodePromptsStep } from './NodePromptsStep';
@@ -41,9 +41,7 @@ export function NodeAddWizard() {
   const closeSidebar = useCloseSidebar();
   const createEdge = useCreateEdge();
   const controller = useVisualizationController();
-  const state = controller.getState<{
-    sourceNode: Node<NodeModel, GraphNodeData> | undefined;
-  }>();
+  const state = controller.getState<ControllerState>();
 
   const steps: PageWizardStep[] = [
     {
@@ -162,7 +160,10 @@ export function NodeAddWizard() {
     }
     model.nodes?.push(nodeToCreate);
     controller.fromModel(model, true);
+    controller.getNodeById(nodeToCreate.id)?.setState({ modified: true });
+    controller.setState({ ...state, modified: true });
     closeSidebar();
+    controller.getGraph().layout();
 
     await Promise.resolve();
   };
