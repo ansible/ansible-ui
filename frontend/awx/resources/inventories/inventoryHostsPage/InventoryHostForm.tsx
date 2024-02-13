@@ -19,6 +19,8 @@ import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFor
 import { useEffect, useState } from 'react';
 import { useGetHost } from '../../hosts/hooks/useGetHost';
 import { useGetInventory } from '../InventoryPage/InventoryPage';
+import { InventoryGroup } from '../../../interfaces/InventoryGroup';
+import { useGetRequest } from '../../../../common/crud/useGet';
 
 export interface IHostInput {
   name: string;
@@ -27,16 +29,40 @@ export interface IHostInput {
 }
 
 export function CreateHost() {
+  const [groupName, setGroupName] = useState('');
   const { t } = useTranslation();
   const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
   const getPageUrl = useGetPageUrl();
-  const params = useParams<{ id: string; inventory_type: string; host_id: string }>();
+  const params = useParams<{
+    id: string;
+    inventory_type: string;
+    host_id: string;
+    group_id: string;
+  }>();
   const postRequest = usePostRequest<AwxHost>();
+  const getRequest = useGetRequest<InventoryGroup>();
+
+  useEffect(() => {
+    async function getGroup() {
+      if (params?.group_id) {
+        const group = await getRequest(awxAPI`/groups/${params?.group_id}/`);
+        if (group?.name) {
+          setGroupName(group.name);
+        }
+      }
+    }
+
+    void (async () => {
+      await getGroup();
+    })();
+  }, [getRequest, params?.group_id]);
 
   const onSubmit: PageFormSubmitHandler<IHostInput> = async (hostInput: IHostInput) => {
     const modifiedHostInput = { ...hostInput, inventory: Number(params.id) };
-    const newHost = await postRequest(awxAPI`/hosts/`, modifiedHostInput as AwxHost);
+    const newHost = params?.group_id
+      ? await postRequest(awxAPI`/groups/${params.group_id}/hosts/`, modifiedHostInput as AwxHost)
+      : await postRequest(awxAPI`/hosts/`, modifiedHostInput as AwxHost);
     pageNavigate(AwxRoute.InventoryHostDetails, {
       params: { inventory_type: params.inventory_type, id: params.id, host_id: newHost.id },
     });
@@ -57,16 +83,39 @@ export function CreateHost() {
               params: { id: params.id, inventory_type: params.inventory_type },
             }),
           },
-          {
-            label: t('Hosts'),
-            to: getPageUrl(AwxRoute.InventoryHosts, {
-              params: {
-                id: params.id,
-                inventory_type: params.inventory_type,
-                host_id: params.host_id,
+          params?.group_id
+            ? {
+                label: t('Groups'),
+                to: getPageUrl(AwxRoute.InventoryGroups, {
+                  params: {
+                    id: params.group_id,
+                    inventory_type: params.inventory_type,
+                  },
+                }),
+              }
+            : {
+                label: t('Hosts'),
+                id: 'hosts',
+                to: getPageUrl(AwxRoute.InventoryHosts, {
+                  params: {
+                    id: params.id,
+                    inventory_type: params.inventory_type,
+                    host_id: params.host_id,
+                  },
+                }),
               },
-            }),
-          },
+          params?.group_id
+            ? {
+                label: t(`${groupName}`),
+                to: getPageUrl(AwxRoute.InventoryGroupDetails, {
+                  params: {
+                    id: params.group_id,
+                    inventory_type: params.inventory_type,
+                    group_id: params.group_id,
+                  },
+                }),
+              }
+            : {},
           { label: t('Add') },
         ]}
         title={t('Create Host')}

@@ -146,6 +146,11 @@ export function useAwxInventoryRoutes() {
           ],
         },
         {
+          id: AwxRoute.InventoryGroupHostAdd,
+          path: ':inventory_type/:id/group/:group_id/nested_hosts/add',
+          element: <CreateHost />,
+        },
+        {
           id: AwxRoute.InventoryGroupEdit,
           path: ':inventory_type/:id/group/:group_id/edit',
           element: <EditGroup />,

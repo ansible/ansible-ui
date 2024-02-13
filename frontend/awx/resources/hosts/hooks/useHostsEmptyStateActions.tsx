@@ -7,6 +7,7 @@ import {
   PageActionType,
   usePageAlertToaster,
   usePageDialog,
+  usePageNavigate,
 } from '../../../../../framework';
 import { ButtonVariant } from '@patternfly/react-core';
 import { useOptions } from '../../../../common/crud/useOptions';
@@ -16,6 +17,7 @@ import { useParams } from 'react-router-dom';
 import { HostSelectDialog } from './useHostSelectDialog';
 import { IAwxView } from '../../../common/useAwxView';
 import { postRequest } from '../../../../common/crud/Data';
+import { AwxRoute } from '../../../main/AwxRoutes';
 
 export function useHostsEmptyStateActions(view: IAwxView<AwxHost>) {
   const [_, setDialog] = usePageDialog();
@@ -27,6 +29,7 @@ export function useHostsEmptyStateActions(view: IAwxView<AwxHost>) {
     host_id: string;
   }>();
   const alertToaster = usePageAlertToaster();
+  const pageNavigate = usePageNavigate();
 
   const hostOptions = useOptions<OptionsResponse<ActionsResponse>>(
     awxAPI`/inventories/${params.id ?? ''}/hosts/`
@@ -76,7 +79,16 @@ export function useHostsEmptyStateActions(view: IAwxView<AwxHost>) {
         variant: ButtonVariant.primary,
         label: t('New host'),
         isPinned: true,
-        onClick: () => {},
+        onClick: () =>
+          params?.group_id
+            ? pageNavigate(AwxRoute.InventoryGroupHostAdd, {
+                params: {
+                  id: params.id,
+                  inventory_type: params.inventory_type,
+                  group_id: params.group_id,
+                },
+              })
+            : pageNavigate(AwxRoute.CreateHost),
         isDisabled: () =>
           canCreateHost
             ? undefined
@@ -85,6 +97,6 @@ export function useHostsEmptyStateActions(view: IAwxView<AwxHost>) {
               ),
       },
     ],
-    [canCreateHost, onSelectedHosts, params.group_id, params.id, setDialog, t]
+    [canCreateHost, onSelectedHosts, pageNavigate, params.group_id, params.id, setDialog, t]
   );
 }
