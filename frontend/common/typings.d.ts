@@ -33,6 +33,7 @@ declare namespace NodeJS {
     HUB_ROUTE_PREFIX: string;
     EDA_ROUTE_PREFIX: string;
     AWX_API_PREFIX: string;
+    AWX_WEBSOCKET_PREFIX: string;
     HUB_API_PREFIX: string;
     EDA_API_PREFIX: string;
   }
