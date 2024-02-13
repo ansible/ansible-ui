@@ -18,7 +18,7 @@ describe('Organizations list', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: gatewayV1API`/organizations*`,
+          url: gatewayV1API`/organizations/*`,
         },
         {
           fixture: 'platformOrganizations.json',
@@ -70,7 +70,7 @@ describe('Organizations list', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: gatewayV1API`/organizations*`,
+          url: gatewayV1API`/organizations/*`,
         },
         {
           fixture: 'emptyList.json',

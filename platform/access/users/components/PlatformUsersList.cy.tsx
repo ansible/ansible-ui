@@ -18,7 +18,7 @@ describe('Users list', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: gatewayV1API`/users*`,
+          url: gatewayV1API`/users/*`,
         },
         {
           fixture: 'platformUsers.json',
@@ -69,7 +69,7 @@ describe('Users list', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: gatewayV1API`/users*`,
+          url: gatewayV1API`/users/*`,
         },
         {
           fixture: 'emptyList.json',

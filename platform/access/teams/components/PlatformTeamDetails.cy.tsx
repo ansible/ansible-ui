@@ -2,6 +2,7 @@ import { DateTime } from 'luxon';
 import mockPlatformTeams from '../../../../cypress/fixtures/platformTeams.json';
 import { gatewayV1API } from '../../../api/gateway-api-utils';
 import { PlatformTeamDetails } from './PlatformTeamDetails';
+import { formatDateString } from '../../../../framework/utils/formatDateString';
 
 const mockPlatformTeam = mockPlatformTeams.results[0];
 
@@ -15,17 +16,14 @@ describe('PlatformTeamDetails', () => {
       'contain',
       mockPlatformTeam.summary_fields.organization.name
     );
-    cy.get('[data-cy="created"]').should(
-      'contain',
-      DateTime.fromISO(mockPlatformTeam.created_on).toRelative()
-    );
+    cy.get('[data-cy="created"]').should('contain', formatDateString(mockPlatformTeam.created_on));
     cy.get('[data-cy="created"]').should(
       'contain',
       mockPlatformTeam.summary_fields.created_by.username
     );
     cy.get('[data-cy="modified"]').should(
       'contain',
-      DateTime.fromISO(mockPlatformTeam.modified_on).toRelative()
+      formatDateString(mockPlatformTeam.modified_on)
     );
     cy.get('[data-cy="modified"]').should(
       'contain',
