@@ -5,6 +5,7 @@ import {
   Edge,
   ElementModel,
   action,
+  useVisualizationController,
 } from '@patternfly/react-topology';
 import {
   CheckCircleIcon,
@@ -14,7 +15,7 @@ import {
 } from '@patternfly/react-icons';
 import { Icon } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { EdgeStatus } from '../types';
+import { ControllerState, EdgeStatus } from '../types';
 import { useViewOptions } from '../ViewOptionsProvider';
 interface MenuItem {
   key: string;
@@ -43,6 +44,18 @@ export function useEdgeMenuItems(
 ): MenuItem[] {
   const { t } = useTranslation();
   const { removeLink } = useViewOptions();
+
+  const controller = useVisualizationController();
+  const handleModified = action((modified: boolean) => {
+    if (modified) {
+      element.setState({ modified: true });
+      element.getSource().setState({ modified: true });
+      controller.setState({ ...controller.getState<ControllerState>(), modified: true });
+    } else {
+      element.setState({ modified: false });
+      element.getSource().setState({ modified: false });
+    }
+  });
   return [
     {
       key: 'success',
@@ -61,13 +74,7 @@ export function useEdgeMenuItems(
             tagStatus: EdgeStatus.success,
             endTerminalStatus: 'success',
           });
-          if ('success' === data.originalStatus) {
-            element.setState({ modified: false });
-            element.getSource().setState({ modified: false });
-          } else {
-            element.setState({ modified: true });
-            element.getSource().setState({ modified: true });
-          }
+          handleModified('success' !== data.originalStatus);
         })();
       },
     },
@@ -88,13 +95,7 @@ export function useEdgeMenuItems(
             tagStatus: EdgeStatus.info,
             endTerminalStatus: 'info',
           });
-          if ('info' === data.originalStatus) {
-            element.setState({ modified: false });
-            element.getSource().setState({ modified: false });
-          } else {
-            element.setState({ modified: true });
-            element.getSource().setState({ modified: true });
-          }
+          handleModified('info' !== data.originalStatus);
         })();
       },
     },
@@ -115,13 +116,7 @@ export function useEdgeMenuItems(
             tagStatus: EdgeStatus.danger,
             endTerminalStatus: 'fail',
           });
-          if ('danger' === data.originalStatus) {
-            element.setState({ modified: false });
-            element.getSource().setState({ modified: false });
-          } else {
-            element.getSource().setState({ modified: true });
-            element.setState({ modified: true });
-          }
+          handleModified('danger' !== data.originalStatus);
         })();
       },
     },

@@ -14,7 +14,7 @@ export function useCreateEdge() {
       const originalStatus = {
         [EdgeStatus.success]: 'success',
         [EdgeStatus.danger]: 'failure',
-        [EdgeStatus.info]: 'always',
+        [EdgeStatus.info]: 'info',
       }[tagStatus];
 
       return {

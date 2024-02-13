@@ -88,6 +88,7 @@ export interface ControllerState {
     start: boolean;
   };
   selectedIds: string[];
+  sourceNode: Node<NodeModel, GraphNodeData> | undefined;
   workflowTemplate: WorkflowJobTemplate;
 }
 
