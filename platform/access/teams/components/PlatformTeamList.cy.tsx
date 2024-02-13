@@ -18,16 +18,17 @@ describe('Teams list', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: gatewayV1API`/teams*`,
+          url: gatewayV1API`/teams/*`,
         },
         {
           fixture: 'platformTeams.json',
         }
       ).as('teamsList');
     });
-    it.skip('Teams list renders', () => {
+    it('Teams list renders', () => {
       cy.mount(<PlatformTeamList />);
       cy.verifyPageTitle('Teams');
+      cy.setTableView('table-view');
       cy.get('tbody').find('tr').should('have.length', 3);
       // Toolbar actions are visible
       cy.get(`[data-cy="create-team"]`).should('be.visible');
@@ -69,7 +70,7 @@ describe('Teams list', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: gatewayV1API`/teams*`,
+          url: gatewayV1API`/teams/*`,
         },
         {
           fixture: 'emptyList.json',

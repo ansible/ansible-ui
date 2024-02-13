@@ -24,7 +24,7 @@ export function useTeamToolbarActions(view: IPlatformView<PlatformTeam>) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
 
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>(gatewayV1API`/teams`);
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(gatewayV1API`/teams/`);
   const canCreateTeam = Boolean(data && data.actions && data.actions['POST']);
   const deleteTeams = useDeleteTeams(view.unselectItemsAndRefresh);
 

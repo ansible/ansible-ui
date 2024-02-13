@@ -23,14 +23,14 @@ export function PlatformUserDetails() {
   const columns = useUsersColumns();
   const { data: user, isLoading } = useGetItem<PlatformUser>(gatewayV1API`/users`, params.id);
   const { data: organizationsData } = useGet<PlatformItemsResponse<PlatformOrganization>>(
-    gatewayV1API`/users/${params.id ?? ''}/organizations`
+    gatewayV1API`/users/${params.id ?? ''}/organizations/`
   );
   if (isLoading) return <LoadingPage />;
 
   return (
     <PageDetails>
       <PageDetailsFromColumns columns={columns} item={user} />
-      {organizationsData?.results?.length && (
+      {organizationsData?.results?.length ? (
         <PageDetail label={t('Organization', { count: organizationsData.count })}>
           <LabelsCell
             numLabels={3}
@@ -42,7 +42,7 @@ export function PlatformUserDetails() {
             }))}
           />
         </PageDetail>
-      )}
+      ) : null}
     </PageDetails>
   );
 }
