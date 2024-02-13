@@ -1,11 +1,10 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ITableColumn, CopyCell, DateTimeCell } from '../../../../../framework';
+import { ITableColumn, CopyCell, DateTimeCell, BytesCell } from '../../../../../framework';
 import { LabelGroup } from '@patternfly/react-core';
 import { TagLink, ShaLink, TagLabel, ShaLabel } from '../components/ImageLabels';
 import styled from 'styled-components';
 import { getContainersURL } from '../../../common/utils/getContainersURL';
-import { getHumanSize } from '../../../common/utils/getHumanSize';
 import { ImageLayer, ExecutionEnvironmentImage as Image } from '../ExecutionEnvironmentImage';
 
 const DigestAndCopyCell = styled.div`
@@ -54,9 +53,8 @@ export function useImagesColumns(
       },
       {
         header: t('Size'),
-        type: 'text',
-        value: (image) =>
-          isManifestList(image) ? '---' : getHumanSize(sumLayers(image.layers), t),
+        cell: (image) =>
+          isManifestList(image) ? <>---</> : <BytesCell bytes={sumLayers(image.layers)} />,
       },
       {
         header: t('Digest'),
