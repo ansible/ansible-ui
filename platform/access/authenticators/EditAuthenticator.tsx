@@ -18,8 +18,9 @@ import {
   buildTriggers,
   AuthenticatorFormValues,
 } from './components/AuthenticatorForm';
-import type { AuthenticatorPlugins } from '../../interfaces/AuthenticatorPlugin';
-import type { Authenticator } from '../../interfaces/Authenticator';
+import { AuthenticatorPlugins } from '../../interfaces/AuthenticatorPlugin';
+import { Authenticator } from '../../interfaces/Authenticator';
+import { AuthenticatorMap } from '../../interfaces/AuthenticatorMap';
 
 type Errors = { [key: string]: string } | undefined;
 
@@ -35,9 +36,15 @@ export function EditAuthenticator() {
     requestGet,
     swrOptions
   );
+  const { data: mappingsResponse } = useSWR<{ results: AuthenticatorMap[] }>(
+    gatewayAPI`/authenticators/${id.toString()}/authenticator_maps`,
+    requestGet,
+    swrOptions
+  );
+  const mappings = mappingsResponse?.results;
 
   const { data: plugins } = useGet<AuthenticatorPlugins>(gatewayAPI`/authenticator_plugins`);
-  if (!plugins || !authenticator) {
+  if (!plugins || !authenticator || !mappings) {
     return <LoadingPage />;
   }
 
@@ -100,6 +107,7 @@ export function EditAuthenticator() {
       handleSubmit={handleSubmit}
       plugins={plugins}
       authenticator={authenticator}
+      mappings={mappings}
     />
   );
 }

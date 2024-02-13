@@ -143,6 +143,7 @@ export function MapFields(props: {
                 { value: 'one', label: 'one' },
                 { value: 'two', label: 'two' },
               ]}
+              isRequired
             />
           </PageFormHidden>
           <PageFormHidden
@@ -192,7 +193,7 @@ export function MapFields(props: {
             <PageFormPlatformTeamSelect name={`mappings.${index}.team`} isRequired />
           </PageFormHidden>
           <PageFormHidden
-            watch={`mappings.${index}..map_type`}
+            watch={`mappings.${index}.map_type`}
             hidden={(value: string) => !['team', 'organization'].includes(value)}
           >
             <PageFormPlatformOrganizationSelect

@@ -14,7 +14,7 @@ import { AuthenticatorMappingStep } from './steps/AuthenticatorMappingStep';
 import { AuthenticatorMappingOrderStep } from './steps/AuthenticatorMappingOrderStep';
 import { AuthenticatorReviewStep } from './steps/AuthenticatorReviewStep';
 import { Authenticator, AuthenticatorTypeEnum } from '../../../interfaces/Authenticator';
-import { AuthenticatorMapType } from '../../../interfaces/AuthenticatorMap';
+import { AuthenticatorMap, AuthenticatorMapType } from '../../../interfaces/AuthenticatorMap';
 import type {
   AuthenticatorPlugin,
   AuthenticatorPlugins,
@@ -71,10 +71,11 @@ interface AuthenticatorFormProps {
   handleSubmit: (values: AuthenticatorFormValues) => Promise<void>;
   plugins: AuthenticatorPlugins;
   authenticator?: Authenticator;
+  mappings?: AuthenticatorMap[];
 }
 
 export function AuthenticatorForm(props: AuthenticatorFormProps) {
-  const { plugins, authenticator } = props;
+  const { plugins, authenticator, mappings = [] } = props;
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
 
@@ -128,9 +129,24 @@ export function AuthenticatorForm(props: AuthenticatorFormProps) {
       configuration: {},
     };
 
+    const configuration: Configuration = {};
     plugin?.configuration_schema.forEach((field) => {
-      initialValues.details.configuration[field.name] = authenticator.configuration[field.name];
+      configuration[field.name] = authenticator.configuration[field.name];
     });
+    initialValues.details.configuration = configuration;
+
+    initialValues.mapping = {
+      mappings: mappings
+        .sort((a, b) => a.order - b.order)
+        .map((mapping) => {
+          return {
+            map_type: mapping.map_type,
+            name: mapping.name,
+            revoke: mapping.revoke,
+            ...parseTrigger(mapping),
+          };
+        }),
+    };
   }
 
   return (
@@ -188,6 +204,7 @@ export function formatConfiguration(values: Configuration, plugin: Authenticator
   return formatted;
 }
 
+/* converts form field values to AuthenticatorMap triggers format */
 export function buildTriggers(map: AuthenticatorMapValues) {
   const triggers: { [k: string]: string | object } = {};
   let key;
@@ -216,4 +233,46 @@ export function buildTriggers(map: AuthenticatorMapValues) {
   }
 
   return triggers;
+}
+
+/* converts triggers from AuthenticatorMap to form field format */
+function parseTrigger(mapping: AuthenticatorMap) {
+  const { triggers } = mapping;
+
+  if ('groups' in triggers) {
+    const groups = Object.values(triggers.groups).pop() || [];
+    return {
+      trigger: 'groups',
+      conditional: 'has_and' in triggers.groups ? 'and' : 'or',
+      groups_value: groups.map((group: string) => ({
+        name: group,
+      })),
+    };
+  }
+  if ('attributes' in triggers) {
+    const { attributes } = triggers;
+    const criteria = Object.keys(attributes).find((k) => k !== 'join_condition');
+    let criteriaConditional = '';
+    let criteriaValue = '';
+    if (criteria) {
+      const criteriaObj = attributes[criteria];
+      criteriaConditional = Object.keys(criteriaObj).pop() || 'contains';
+      if (criteriaConditional === 'in') {
+        criteriaValue = (criteriaObj as { in: string[] }).in.join(',');
+      } else {
+        criteriaValue = (criteriaObj as { [k: string]: string })[criteriaConditional];
+      }
+    }
+    return {
+      trigger: 'attributes',
+      conditional: attributes.join_condition,
+      criteria,
+      criteria_conditional: criteriaConditional,
+      criteria_value: criteriaValue,
+    };
+  }
+  if ('never' in triggers) {
+    return { trigger: 'never' };
+  }
+  return { trigger: 'always' };
 }
