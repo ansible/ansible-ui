@@ -2,7 +2,7 @@ import { Button } from '@patternfly/react-core';
 import { useCallback } from 'react';
 import { FieldPath, FieldValues, PathValue, useFormContext, useWatch } from 'react-hook-form';
 import { ITableColumn, IToolbarFilter, usePageDialog } from '../../../framework';
-import { SelectSingleDialog } from '../../../framework/PageDialogs/SelectSingleDialog';
+import { SingleSelectDialog } from '../../../framework/PageDialogs/SingleSelectDialog';
 import { PageFormAsyncSingleSelect } from '../../../framework/PageForm/Inputs/PageFormAsyncSingleSelect';
 import { PageAsyncSingleSelectOptionsFn } from '../../../framework/PageInputs/PageAsyncSingleSelect';
 import { PageSingleSelectContext } from '../../../framework/PageInputs/PageSingleSelect';
@@ -121,7 +121,7 @@ function SelectResource<
     defaultSelection: props.defaultSelection as Resource[],
   });
   return (
-    <SelectSingleDialog<Resource>
+    <SingleSelectDialog<Resource>
       title={props.title}
       onSelect={props.onSelect}
       toolbarFilters={props.toolbarFilters ?? []}
