@@ -186,4 +186,58 @@ describe('inventories', () => {
     cy.clickButton(/^Close$/);
     cy.clickButton(/^Clear all filters$/);
   });
+
+  it('can add and remove new related groups', () => {
+    cy.createInventoryHostGroup(organization).then((result) => {
+      const { inventory, group } = result;
+      const newRelatedGroup = 'New test group' + randomString(4);
+      cy.navigateTo('awx', 'inventories');
+      cy.clickTableRow(inventory.name);
+      cy.verifyPageTitle(inventory.name);
+      cy.clickLink(/^Groups$/);
+      cy.clickTableRow(group.name as string);
+      cy.verifyPageTitle(group.name as string);
+      cy.clickLink(/^Related Groups/);
+      cy.clickButton(/^New group/);
+      cy.verifyPageTitle('Create new group');
+      cy.get('[data-cy="name-form-group"]').type(newRelatedGroup);
+      cy.get('[data-cy="Submit"]').click();
+      cy.contains(newRelatedGroup);
+      cy.selectTableRow(newRelatedGroup, true);
+      cy.clickToolbarKebabAction('disassociate-selected-groups');
+      cy.get('#confirm').click();
+      cy.clickButton(/^Disassociate groups/);
+      cy.contains(/^Success$/);
+      cy.clickButton(/^Close/);
+      cy.clickButton(/^Clear all filters$/);
+    });
+  });
+
+  it('can add and remove existing related groups', () => {
+    const newGroup = 'New test group' + randomString(4);
+    cy.createInventoryHostGroup(organization).then((result) => {
+      const { inventory, group } = result;
+      cy.navigateTo('awx', 'inventories');
+      cy.clickTableRow(inventory.name);
+      cy.clickLink(/^Groups$/);
+      cy.clickButton(/^Create group/);
+      cy.get('[data-cy="name-form-group"]').type(newGroup);
+      cy.get('[data-cy="Submit"]').click();
+      cy.clickLink(/^Back to Groups/);
+      cy.clickTableRow(group.name as string);
+      cy.verifyPageTitle(group.name as string);
+      cy.clickLink(/^Related Groups/);
+      cy.clickButton(/^Existing group/);
+      cy.selectTableRow(newGroup);
+      cy.clickButton(/^Add groups/);
+      cy.contains(newGroup);
+      cy.selectTableRow(newGroup, true);
+      cy.clickToolbarKebabAction('disassociate-selected-groups');
+      cy.get('#confirm').click();
+      cy.clickButton(/^Disassociate groups/);
+      cy.contains(/^Success$/);
+      cy.clickButton(/^Close/);
+      cy.clickButton(/^Clear all filters$/);
+    });
+  });
 });

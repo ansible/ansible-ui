@@ -5,18 +5,20 @@ import { AwxRoute } from '../../../main/AwxRoutes';
 import { useCreatedColumn, useModifiedColumn, useNameColumn } from '../../../../common/columns';
 import { useTranslation } from 'react-i18next';
 import { Chip, ChipGroup } from '@patternfly/react-core';
+import { useParams } from 'react-router-dom';
 
 export function useInventoriesGroupsColumns(options?: {
   disableSort?: boolean;
   disableLinks?: boolean;
 }) {
   const pageNavigate = usePageNavigate();
+  const params = useParams();
   const nameClick = useCallback(
     (group: InventoryGroup) =>
       pageNavigate(AwxRoute.InventoryGroupDetails, {
-        params: { inventory_type: 'inventory', id: group.inventory, group_id: group.id },
+        params: { inventory_type: params.inventory_type, id: group.inventory, group_id: group.id },
       }),
-    [pageNavigate]
+    [pageNavigate, params.inventory_type]
   );
   const nameColumn = useNameColumn({
     ...options,
