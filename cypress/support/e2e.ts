@@ -62,3 +62,5 @@ Cypress.on('uncaught:exception', (_err, _runnable) => {
   // fixes problems with monaco loading workers
   return false;
 });
+
+Cypress.Keyboard.defaults({ keystrokeDelay: 0 });
