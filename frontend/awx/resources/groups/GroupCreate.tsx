@@ -5,34 +5,54 @@ import {
   PageFormTextInput,
   usePageNavigate,
 } from '../../../../framework';
-import { useNavigate } from 'react-router-dom';
-import { InventoryGroupCreate } from '../../interfaces/InventoryGroup';
+import { useNavigate, useParams } from 'react-router-dom';
+import { InventoryGroupCreate, InventoryGroupRelatedGroup } from '../../interfaces/InventoryGroup';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { AwxPageForm } from '../../common/AwxPageForm';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
 import { AwxRoute } from '../../main/AwxRoutes';
 import { awxAPI } from '../../common/api/awx-utils';
 import { InventoryGroup } from '../../interfaces/InventoryGroup';
-import { Inventory } from '../../interfaces/Inventory';
 
-export function GroupCreate(props: { inventory: Inventory }) {
+export function GroupCreate() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
   const postRequest = usePostRequest<InventoryGroupCreate, InventoryGroup>();
+  const postParentGroup = usePostRequest<InventoryGroupRelatedGroup>();
+  const params = useParams<{ inventory_type: string; id: string; group_id: string }>();
 
   const onSubmit: PageFormSubmitHandler<InventoryGroupCreate> = async (groupInput) => {
     const { name, description, variables } = groupInput;
     const createGroup: InventoryGroupCreate = {
       name,
       description: description ?? '',
-      inventory: props.inventory?.id ?? 0,
+      inventory: parseInt(params.id as string),
       variables: variables ?? '',
     };
     const newGroup = await postRequest(awxAPI`/groups/`, createGroup);
-    pageNavigate(AwxRoute.InventoryGroupDetails, {
-      params: { inventory_type: 'inventory', id: newGroup.inventory, group_id: newGroup.id },
-    });
+
+    if (params.group_id) {
+      const parentGroup: InventoryGroupRelatedGroup = {
+        id: newGroup.id,
+      };
+      await postParentGroup(awxAPI`/groups/${params.group_id}/children/`, parentGroup);
+      pageNavigate(AwxRoute.InventoryGroupRelatedGroups, {
+        params: {
+          inventory_type: params.inventory_type,
+          id: newGroup.inventory,
+          group_id: params.group_id,
+        },
+      });
+    } else {
+      pageNavigate(AwxRoute.InventoryGroupDetails, {
+        params: {
+          inventory_type: params.inventory_type,
+          id: newGroup.inventory,
+          group_id: newGroup.id,
+        },
+      });
+    }
   };
 
   const onCancel = () => navigate(-1);
