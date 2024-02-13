@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { ITableColumn, IToolbarFilter, usePageDialog, ISelected } from '../../../framework';
 import { MultiSelectDialog } from '../../../framework/PageDialogs/MultiSelectDialog';
-import { SelectSingleDialog } from '../../../framework/PageDialogs/SelectSingleDialog';
+import { SingleSelectDialog } from '../../PageDialogs/SingleSelectDialog';
 import { IView, ViewExtendedOptions } from '../../useView';
 import { MultiDialogs } from '../../../frontend/hub/administration/repositories/hooks/useAddCollections';
 
@@ -99,7 +99,7 @@ function SelectFilter<T extends object>(
     );
   } else {
     return (
-      <SelectSingleDialog<T>
+      <SingleSelectDialog<T>
         {...props}
         onSelect={props.onSelect ? props.onSelect : () => {}}
         toolbarFilters={toolbarFilters ? toolbarFilters : []}
