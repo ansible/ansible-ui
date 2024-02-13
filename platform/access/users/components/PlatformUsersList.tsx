@@ -21,12 +21,12 @@ export function PlatformUsersList() {
   const pageNavigate = usePageNavigate();
 
   const view = usePlatformView<PlatformUser>({
-    url: gatewayV1API`/users`,
+    url: gatewayV1API`/users/`,
     toolbarFilters,
     tableColumns,
   });
 
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>(gatewayV1API`/users`);
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(gatewayV1API`/users/`);
   const canCreateUser = Boolean(data && data.actions && data.actions['POST']);
   const toolbarActions = useUserToolbarActions(view);
   const rowActions = useUserRowActions(view);

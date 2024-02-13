@@ -18,7 +18,7 @@ describe('Users list', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: gatewayV1API`/users*`,
+          url: gatewayV1API`/users/*`,
         },
         {
           fixture: 'platformUsers.json',
@@ -28,6 +28,7 @@ describe('Users list', () => {
     it('Users list renders', () => {
       cy.mount(<PlatformUsersList />);
       cy.verifyPageTitle('Users');
+      cy.setTableView('table-view');
       cy.get('tbody').find('tr').should('have.length', 4);
       // Toolbar actions are visible
       cy.get(`[data-cy="create-user"]`).should('be.visible');
@@ -69,7 +70,7 @@ describe('Users list', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: gatewayV1API`/users*`,
+          url: gatewayV1API`/users/*`,
         },
         {
           fixture: 'emptyList.json',
