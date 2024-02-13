@@ -118,7 +118,7 @@ declare global {
 
       configFormatToggle(configType: string): Chainable<void>;
 
-      typeMonacoTextField(textString: string): Chainable<void>;
+      typeBy(selector: string, text: string): Chainable<void>;
 
       assertMonacoTextField(textString: string): Chainable<void>;
 
