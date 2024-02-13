@@ -108,7 +108,7 @@ export function useAwxInventoryRoutes() {
             {
               id: AwxRoute.InventorySourceSchedules,
               path: 'schedules',
-              element: <Schedules sublistEndpoint={awxAPI`/inventory_sources`} />,
+              element: <Schedules sublistEndpoint={awxAPI`/inventory_sources`} noHeader />,
             },
           ],
         },

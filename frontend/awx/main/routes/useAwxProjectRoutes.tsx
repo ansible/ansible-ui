@@ -105,7 +105,7 @@ export function useAwxProjectRoutes() {
             {
               id: AwxRoute.ProjectSchedules,
               path: 'schedules',
-              element: <Schedules sublistEndpoint={awxAPI`/projects`} />,
+              element: <Schedules sublistEndpoint={awxAPI`/projects`} noHeader />,
             },
             {
               path: '',

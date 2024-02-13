@@ -15,7 +15,7 @@ import { useSchedulesFilter } from './hooks/useSchedulesFilter';
 import { useScheduleToolbarActions } from './hooks/useSchedulesToolbarActions';
 import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
 
-export function Schedules(props: { sublistEndpoint?: string }) {
+export function Schedules(props: { sublistEndpoint?: string; noHeader?: boolean }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const params = useParams<{ id: string; source_id?: string }>();
@@ -48,18 +48,20 @@ export function Schedules(props: { sublistEndpoint?: string }) {
   });
   return (
     <PageLayout>
-      <PageHeader
-        title={t('Schedules')}
-        titleHelpTitle={t('Schedule')}
-        titleHelp={t(
-          'Schedules are used to launch jobs on a regular basis. They can be used to launch jobs against machines, synchronize with inventory sources, and import project content from a version control system.'
-        )}
-        titleDocLink="https://docs.ansible.com/automation-controller/latest/html/userguide/scheduling.html"
-        description={t(
-          'Schedules are used to launch jobs on a regular basis. They can be used to launch jobs against machines, synchronize with inventory sources, and import project content from a version control system.'
-        )}
-        headerActions={<ActivityStreamIcon type={'schedule'} />}
-      />
+      {!props.noHeader && (
+        <PageHeader
+          title={t('Schedules')}
+          titleHelpTitle={t('Schedule')}
+          titleHelp={t(
+            'Schedules are used to launch jobs on a regular basis. They can be used to launch jobs against machines, synchronize with inventory sources, and import project content from a version control system.'
+          )}
+          titleDocLink="https://docs.ansible.com/automation-controller/latest/html/userguide/scheduling.html"
+          description={t(
+            'Schedules are used to launch jobs on a regular basis. They can be used to launch jobs against machines, synchronize with inventory sources, and import project content from a version control system.'
+          )}
+          headerActions={<ActivityStreamIcon type={'schedule'} />}
+        />
+      )}
       <PageTable<Schedule>
         id="awx-schedules-table"
         toolbarFilters={toolbarFilters}
