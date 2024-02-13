@@ -46,7 +46,7 @@ export function WebSocketProvider(props: { children?: ReactNode }) {
       new_uri = 'ws:';
     }
     new_uri += '//' + loc.host;
-    new_uri += `/websocket/`;
+    new_uri += process.env.AWX_WEBSOCKET_PREFIX;
     setWebSocketUrl(new_uri);
   }, []);
 

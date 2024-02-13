@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { SelectSingleDialog } from '../../../../../framework/PageDialogs/SelectSingleDialog';
+import { SingleSelectDialog } from '../../../../../framework/PageDialogs/SingleSelectDialog';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxView } from '../../../common/useAwxView';
 import { useManagementJobColumns } from './useManagementJobColumns';
@@ -21,7 +21,7 @@ function SelectManagementJob(props: {
     disableQueryString: true,
   });
   return (
-    <SelectSingleDialog<SystemJobTemplate>
+    <SingleSelectDialog<SystemJobTemplate>
       {...props}
       toolbarFilters={toolbarFilters}
       tableColumns={tableColumns}
