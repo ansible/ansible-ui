@@ -25,7 +25,7 @@ module.exports = function (env, argv) {
     '/sso': {
       target: PLATFORM_SERVER,
       secure: false,
-      bypass: (req, res, options) => {
+      bypass: (req) => {
         req.headers.origin = proxyUrl.origin;
         req.headers.host = getRawHeader(req.rawHeaders, 'Host') || proxyUrl.host;
         req.referrer = getRawHeader(req.rawHeaders, 'Referer') || proxyUrl.href;
@@ -35,7 +35,11 @@ module.exports = function (env, argv) {
       target: PLATFORM_SERVER,
       secure: false,
       ws: true,
-      changeOrigin: true,
+      bypass: (req) => {
+        req.headers.origin = proxyUrl.origin;
+        req.headers.host = getRawHeader(req.rawHeaders, 'Host') || proxyUrl.host;
+        req.referrer = getRawHeader(req.rawHeaders, 'Referer') || proxyUrl.href;
+      },
     },
   };
 
