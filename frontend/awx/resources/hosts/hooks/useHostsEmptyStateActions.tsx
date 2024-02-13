@@ -97,6 +97,15 @@ export function useHostsEmptyStateActions(view: IAwxView<AwxHost>) {
               ),
       },
     ],
-    [canCreateHost, onSelectedHosts, pageNavigate, params.group_id, params.id, setDialog, t]
+    [
+      canCreateHost,
+      onSelectedHosts,
+      pageNavigate,
+      params.group_id,
+      params.id,
+      params.inventory_type,
+      setDialog,
+      t,
+    ]
   );
 }
