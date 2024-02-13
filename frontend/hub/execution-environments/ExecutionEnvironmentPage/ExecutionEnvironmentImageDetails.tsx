@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import { useOutletContext, Link, useParams } from 'react-router-dom';
 import { useTranslation, Trans } from 'react-i18next';
-import { TFunction } from 'i18next';
 import { Scrollable, useGetPageUrl } from '../../../../framework';
-import { getHumanSize } from '../../common/utils/getHumanSize';
 import { ExecutionEnvironmentImage } from './ExecutionEnvironmentImage';
 import {
   DataList,
@@ -31,23 +29,16 @@ const CodeOverflowWrapped = styled.code`
   overflow-wrap: anywhere;
 `;
 
-const createLayersFormat = (
-  image: ExecutionEnvironmentImage,
-  t: TFunction<'translation', undefined>
-) => {
+const createLayersFormat = (image: ExecutionEnvironmentImage) => {
   if (!image)
     return {
       digest: '',
       environment: [],
       labels: [],
       layers: [],
-      size: '',
     };
 
-  const { config_blob, layers, digest, tags } = image;
-
-  const sumSizes = layers.reduce((acc, curr) => acc + curr.size, 0);
-  const size = getHumanSize(sumSizes, t);
+  const { config_blob, digest, tags } = image;
 
   // convert '/bin/sh -c #(nop)  CMD ["sh"]' to 'CMD ["sh"]'
   // but keep anything without #(nop) unchanged
@@ -66,18 +57,17 @@ const createLayersFormat = (
     environment: config_blob?.data?.config?.Env || [],
     labels: tags || [],
     layers: history || [],
-    size,
   };
 };
 
 export function ExecutionEnvironmentImageDetails() {
-  const { t } = useTranslation();
   const { image, imageError } = useOutletContext<{
     image: ExecutionEnvironmentImage;
     imageError: Error;
   }>();
   const { id } = useParams<{ id: string }>();
-  const { layers, environment } = createLayersFormat(image, t);
+  const { t } = useTranslation();
+  const { layers, environment } = createLayersFormat(image);
 
   const [selectedLayer, setSelectedLayer] = useState<string>('layer-0');
 

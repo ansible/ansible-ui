@@ -1,11 +1,16 @@
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { LabelGroup, ClipboardCopyButton, Stack, StackItem } from '@patternfly/react-core';
-import { LoadingPage, PageHeader, PageLayout, useGetPageUrl } from '../../../../framework';
+import {
+  LoadingPage,
+  PageHeader,
+  PageLayout,
+  useGetPageUrl,
+  BytesCell,
+} from '../../../../framework';
 import { PageRoutedTabs } from '../../../../framework/PageTabs/PageRoutedTabs';
 import { HubError } from '../../common/HubError';
 import { hubAPI } from '../../common/api/formatPath';
-import { getHumanSize } from '../../common/utils/getHumanSize';
 import { useGet } from '../../../common/crud/useGet';
 import { HubRoute } from '../../main/HubRoutes';
 import { ShaLabel, TagLabel } from './components/ImageLabels';
@@ -90,7 +95,7 @@ export function ExecutionEnvironmentImagePage() {
               </StackItem>
               {image && (
                 <StackItem>
-                  {t`Size`}: {getHumanSize(sumLayers(image?.layers), t)}
+                  {t`Size`}: <BytesCell bytes={sumLayers(image?.layers)} />
                 </StackItem>
               )}
             </Stack>
