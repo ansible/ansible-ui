@@ -8,7 +8,7 @@ import { gatewayAPI } from '../api/gateway-api-utils';
 import { Service } from '../interfaces/Service';
 
 export function useHasService(serviceName: string) {
-  const { data } = useSWR<{ results: Service[] }>(gatewayAPI`/services`, requestGet, {
+  const { data } = useSWR<{ results: Service[] }>(gatewayAPI`/services/`, requestGet, {
     refreshInterval: 30 * 1000,
     dedupingInterval: 30 * 1000,
   });

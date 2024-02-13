@@ -23,7 +23,7 @@ import { PlatformRoute } from '../../../main/PlatformRoutes';
 export function PlatformTeamPage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const { error, data: team, refresh } = useGetItem<PlatformTeam>(gatewayV1API`/teams`, params.id);
+  const { error, data: team, refresh } = useGetItem<PlatformTeam>(gatewayV1API`/teams/`, params.id);
   const getPageUrl = useGetPageUrl();
 
   const itemActions: IPageAction<PlatformTeam>[] = useMemo(() => {

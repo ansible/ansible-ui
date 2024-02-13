@@ -10,24 +10,24 @@ import {
   usePageAlertToaster,
   usePageNavigate,
 } from '../../../../framework';
-import { PlatformRoute } from '../../../main/PlatformRoutes';
-import { useGet } from '../../../../frontend/common/crud/useGet';
-import { postRequest } from '../../../../frontend/common/crud/Data';
 import { genericErrorAdapter } from '../../../../framework/PageForm/genericErrorAdapter';
-import { AuthenticatorTypeStep } from './steps/AuthenticatorTypeStep';
-import { AuthenticatorDetailsStep } from './steps/AuthenticatorDetailsStep';
-import { AuthenticatorMappingStep } from './steps/AuthenticatorMappingStep';
-import { AuthenticatorMappingOrderStep } from './steps/AuthenticatorMappingOrderStep';
-import { AuthenticatorReviewStep } from './steps/AuthenticatorReviewStep';
+import { postRequest } from '../../../../frontend/common/crud/Data';
+import { useGet } from '../../../../frontend/common/crud/useGet';
+import { gatewayAPI } from '../../../api/gateway-api-utils';
 import { Authenticator, AuthenticatorTypeEnum } from '../../../interfaces/Authenticator';
 import { AuthenticatorMapType } from '../../../interfaces/AuthenticatorMap';
 import type {
-  AuthenticatorPlugins,
   AuthenticatorPlugin,
+  AuthenticatorPlugins,
 } from '../../../interfaces/AuthenticatorPlugin';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import { PlatformTeam } from '../../../interfaces/PlatformTeam';
-import { gatewayAPI } from '../../../api/gateway-api-utils';
+import { PlatformRoute } from '../../../main/PlatformRoutes';
+import { AuthenticatorDetailsStep } from './steps/AuthenticatorDetailsStep';
+import { AuthenticatorMappingOrderStep } from './steps/AuthenticatorMappingOrderStep';
+import { AuthenticatorMappingStep } from './steps/AuthenticatorMappingStep';
+import { AuthenticatorReviewStep } from './steps/AuthenticatorReviewStep';
+import { AuthenticatorTypeStep } from './steps/AuthenticatorTypeStep';
 
 interface Configuration {
   [key: string]: string | string[] | { [k: string]: string };
@@ -86,7 +86,7 @@ export function CreateAuthenticator() {
   const alertToaster = usePageAlertToaster();
   const pageNavigate = usePageNavigate();
 
-  const { data: plugins } = useGet<AuthenticatorPlugins>(gatewayAPI`/authenticator_plugins`);
+  const { data: plugins } = useGet<AuthenticatorPlugins>(gatewayAPI`/authenticator_plugins/`);
 
   const handleSubmit = async (values: AuthenticatorFormValues) => {
     const { name, type, configuration, mappings } = values;

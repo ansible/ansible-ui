@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import {
   LabelsCell,
@@ -9,19 +10,18 @@ import {
 } from '../../../../framework';
 import { useGet, useGetItem } from '../../../../frontend/common/crud/useGet';
 import { gatewayV1API } from '../../../api/gateway-api-utils';
-import { PlatformUser } from '../../../interfaces/PlatformUser';
-import { useUsersColumns } from '../hooks/useUserColumns';
 import { PlatformItemsResponse } from '../../../interfaces/PlatformItemsResponse';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
-import { useTranslation } from 'react-i18next';
+import { PlatformUser } from '../../../interfaces/PlatformUser';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
+import { useUsersColumns } from '../hooks/useUserColumns';
 
 export function PlatformUserDetails() {
   const params = useParams<{ id: string }>();
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const columns = useUsersColumns();
-  const { data: user, isLoading } = useGetItem<PlatformUser>(gatewayV1API`/users`, params.id);
+  const { data: user, isLoading } = useGetItem<PlatformUser>(gatewayV1API`/users/`, params.id);
   const { data: organizationsData } = useGet<PlatformItemsResponse<PlatformOrganization>>(
     gatewayV1API`/users/${params.id ?? ''}/organizations/`
   );
