@@ -21,7 +21,7 @@ export function GroupEdit() {
   const patchRequest = usePatchRequest<InventoryGroupCreate, InventoryGroup>();
   const pageNavigate = usePageNavigate();
   const params = useParams<{ group_id: string }>();
-  const { data: group } = useGetItem<InventoryGroup>(awxAPI`/groups`, params.group_id);
+  const { data: group } = useGetItem<InventoryGroup>(awxAPI`/groups/`, params.group_id);
 
   const defaultValue = useMemo(
     () => ({

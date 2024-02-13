@@ -12,7 +12,7 @@ export function GroupDetails() {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const params = useParams<{ group_id: string }>();
-  const { data: group } = useGetItem<InventoryGroup>(awxAPI`/groups`, params.group_id);
+  const { data: group } = useGetItem<InventoryGroup>(awxAPI`/groups/`, params.group_id);
 
   return (
     <PageDetails>
