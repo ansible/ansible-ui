@@ -26,7 +26,7 @@ export function ApplicationTokens() {
   const toolbarFilters = useTokensFilters();
   const params = useParams<{ id: string }>();
   const view = useAwxView<Token>({
-    url: awxAPI`/applications/${params.id ?? ''}/tokens`,
+    url: awxAPI`/applications/${params.id ?? ''}/tokens/`,
     tableColumns,
     toolbarFilters,
   });
@@ -62,13 +62,6 @@ export function ApplicationTokens() {
 
   return (
     <PageLayout>
-      <PageHeader
-        title={t('Application Tokens')}
-        description={t('List of access tokens associated with this application.')}
-        titleHelpTitle={t('Application Tokens')}
-        titleHelp={t('List of access tokens associated with this application.')}
-        titleDocLink={`${getDocsBaseUrl(config)}/html/userguide/applications_auth.html`}
-      />
       <PageTable<Token>
         id="awx-applications-token-table"
         toolbarFilters={toolbarFilters}
