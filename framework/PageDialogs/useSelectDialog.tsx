@@ -20,7 +20,7 @@ import { IView } from '../useView';
 import { usePageDialog } from './PageDialog';
 
 /**
- * @deprecated use SelectSingleDialog
+ * @deprecated use SingleSelectDialog
  */
 interface ISelectDialogOptions<T extends object, TMultiple> {
   view: IView & ISelected<T> & { itemCount?: number; pageItems: T[] | undefined };
@@ -33,7 +33,7 @@ interface ISelectDialogOptions<T extends object, TMultiple> {
 }
 
 /**
- * @deprecated use SelectSingleDialog
+ * @deprecated use SingleSelectDialog
  */
 export function useSelectDialog<
   T extends { id: number | string; name: string | undefined },
@@ -86,7 +86,7 @@ export function useSelectDialog<
 }
 
 /**
- * @deprecated use SelectSingleDialog
+ * @deprecated use SingleSelectDialog
  */
 export type SelectDialogProps<T extends object, TMultiple> = {
   title: string;
