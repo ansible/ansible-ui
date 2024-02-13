@@ -1,12 +1,12 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { usePageDialog } from '../../../../framework';
-import { SelectSingleDialog } from '../../../../framework/PageDialogs/SelectSingleDialog';
+import { SingleSelectDialog } from '../../../../framework/PageDialogs/SingleSelectDialog';
 import { gatewayAPI } from '../../../api/gateway-api-utils';
 import { usePlatformView } from '../../../hooks/usePlatformView';
+import { PlatformTeam } from '../../../interfaces/PlatformTeam';
 import { useTeamColumns } from '../hooks/useTeamColumns';
 import { useTeamFilters } from '../hooks/useTeamFilters';
-import { PlatformTeam } from '../../../interfaces/PlatformTeam';
 
 export function useSelectTeam() {
   const [_, setDialog] = usePageDialog();
@@ -37,7 +37,7 @@ function SelectTeam(props: {
     defaultSelection: props.defaultTeam ? [props.defaultTeam] : undefined,
   });
   return (
-    <SelectSingleDialog<PlatformTeam>
+    <SingleSelectDialog<PlatformTeam>
       {...props}
       toolbarFilters={toolbarFilters}
       tableColumns={tableColumns}

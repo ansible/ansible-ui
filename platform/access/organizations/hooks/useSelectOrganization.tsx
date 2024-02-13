@@ -1,12 +1,12 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { usePageDialog } from '../../../../framework';
-import { SelectSingleDialog } from '../../../../framework/PageDialogs/SelectSingleDialog';
+import { SingleSelectDialog } from '../../../../framework/PageDialogs/SingleSelectDialog';
 import { gatewayAPI } from '../../../api/gateway-api-utils';
 import { usePlatformView } from '../../../hooks/usePlatformView';
+import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import { useOrganizationColumns } from '../hooks/useOrganizationColumns';
 import { useOrganizationFilters } from '../hooks/useOrganizationFilters';
-import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 
 export function useSelectOrganization() {
   const [_, setDialog] = usePageDialog();
@@ -44,7 +44,7 @@ function SelectOrganization(props: {
     defaultSelection: props.defaultOrganization ? [props.defaultOrganization] : undefined,
   });
   return (
-    <SelectSingleDialog<PlatformOrganization>
+    <SingleSelectDialog<PlatformOrganization>
       {...props}
       toolbarFilters={toolbarFilters}
       tableColumns={tableColumns}
