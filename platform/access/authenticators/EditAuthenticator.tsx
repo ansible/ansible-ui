@@ -7,6 +7,7 @@ import {
   postRequest,
   requestGet,
   requestPatch,
+  requestDelete,
   swrOptions,
 } from '../../../frontend/common/crud/Data';
 import { useGet } from '../../../frontend/common/crud/useGet';
@@ -49,21 +50,28 @@ export function EditAuthenticator() {
   }
 
   const handleSubmit = async (values: AuthenticatorFormValues) => {
-    const { name, type, configuration, mappings } = values;
-    const plugin = plugins?.authenticators.find((a) => a.type === type);
+    const { name, configuration, mappings: newMappings } = values;
+    const plugin = plugins?.authenticators.find((a) => a.type === authenticator.type);
     if (!plugins || !plugin) {
       return;
     }
-    const request = requestPatch(gatewayAPI`/authenticators/${id.toString()}`, {
+    const request = requestPatch(gatewayAPI`/authenticators/${id.toString()}/`, {
       name,
-      type,
       configuration: formatConfiguration(configuration, plugin),
     });
 
     try {
       const authenticator = await request;
 
-      const mapRequests = mappings.map((map, index) => {
+      const controller = new AbortController();
+      const deleteRequests = mappings.map((map) => {
+        return requestDelete(
+          gatewayAPI`/authenticator_maps/${map.id.toString()}/`,
+          controller.signal
+        );
+      });
+      await Promise.all(deleteRequests);
+      const mapRequests = newMappings.map((map, index) => {
         const data = {
           name: map.name,
           map_type: map.map_type,
