@@ -86,6 +86,7 @@ export function CreateHost() {
           params?.group_id
             ? {
                 label: t('Groups'),
+                id: 'group',
                 to: getPageUrl(AwxRoute.InventoryGroups, {
                   params: {
                     id: params.group_id,
