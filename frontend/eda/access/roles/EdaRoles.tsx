@@ -2,10 +2,12 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   ITableColumn,
+  IToolbarFilter,
   PageHeader,
   PageLayout,
   PageTable,
   TextCell,
+  ToolbarFilterType,
   useGetPageUrl,
 } from '../../../../framework';
 import { edaAPI } from '../../common/eda-utils';
@@ -13,6 +15,7 @@ import { EdaRole } from '../../interfaces/EdaRole';
 import { EdaRoute } from '../../main/EdaRoutes';
 import { EdaRoleExpandedRow } from './components/EdaRoleExpandedRow';
 import { useEdaView } from '../../common/useEventDrivenView';
+import { PageSelectOption } from '../../../../framework/PageInputs/PageSelectOption';
 
 export function EdaRoles() {
   const { t } = useTranslation();
@@ -62,10 +65,32 @@ export function EdaRolesTable() {
     tableColumns: columns,
   });
 
+  const toolbarFilters = useMemo(() => {
+    const roles = view.pageItems || [];
+    const filters: IToolbarFilter[] = [
+      {
+        type: ToolbarFilterType.MultiSelect,
+        label: t('Role'),
+        key: 'name',
+        query: 'name',
+        options: roles.reduce<PageSelectOption<string>[]>((options, role) => {
+          if (!options.find((option) => option.label === role.name)) {
+            options.push({ label: role.name, value: role.name });
+          }
+          return options;
+        }, []),
+        placeholder: t('Filter by role'),
+        isPinned: true,
+      },
+    ];
+    return filters;
+  }, [view, t]);
+
   return (
     <PageTable
       id="eda-roles-table"
       tableColumns={columns}
+      toolbarFilters={toolbarFilters}
       expandedRow={(role) => <EdaRoleExpandedRow role={role} />}
       errorStateTitle={t('Error loading roles')}
       emptyStateTitle={t('There are currently no roles added for your organization.')}
