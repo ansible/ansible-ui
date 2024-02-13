@@ -1,5 +1,6 @@
 import { randomString } from '../../../../framework/utils/random-string';
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
+import { InventorySource } from '../../../../frontend/awx/interfaces/InventorySource';
 import { JobTemplate } from '../../../../frontend/awx/interfaces/JobTemplate';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
@@ -9,6 +10,8 @@ import { WorkflowNode } from '../../../../frontend/awx/interfaces/WorkflowNode';
 describe('Workflow Job templates visualizer', () => {
   let organization: Organization;
   let inventory: Inventory;
+  let project: Project;
+  let inventorySource: InventorySource;
 
   function cleanup() {
     cy.clickPageAction('delete-template');
@@ -117,7 +120,7 @@ describe('Workflow Job templates visualizer', () => {
     // Clean up
     cleanup();
   });
-  it('Adds a new node linked to an existing node with always status, and saves the visualizer.', function () {
+  it('Adds a new node linked to an existing node with always status, and save the visualizer.', function () {
     let projectNode: WorkflowNode;
     let approvalNode: WorkflowNode;
     let workflowJobTemplate: WorkflowJobTemplate;
@@ -162,9 +165,55 @@ describe('Workflow Job templates visualizer', () => {
         cy.get('g[data-id="3-unsavedNode"]').should('have.text', 'Test Node');
         cy.get(`g[data-id=${approvalNode.id}-3-unsavedNode]`).should('have.text', 'Run always');
         cy.clickButton('Save');
+        cy.get('[data-cy="alert-toaster"]').should('be.visible');
+        cy.get('[data-cy="wf-vzr-name"]').should('have.text', `${workflowJobTemplate.name}`);
+        cy.get('button[data-cy="workflow-visualizer-toolbar-close"]').click();
         cy.verifyPageTitle(`${workflowJobTemplate.name}`);
       });
     // Clean up
     cleanup();
+  });
+  it('Remove all nodes using the kebab menu of the visualizer toolbar, save and delete the template', function () {
+    cy.createAwxWorkflowJobTemplate({
+      organization: (this.globalOrganization as Organization).id,
+      inventory: inventory.id,
+    }).then((workflowJobTemplate) => {
+      cy.createAwxWorkflowVisualizerProjectNode(
+        workflowJobTemplate,
+        this.globalProject as Project
+      ).then((projectNode) => {
+        cy.createAwxOrganization().then((org) => {
+          organization = org;
+          cy.createAwxProject({ organization: organization.id }).then((p) => {
+            project = p;
+            cy.createAwxInventorySource(inventory, project).then((invSrc) => {
+              inventorySource = invSrc;
+              cy.createAwxWorkflowVisualizerInventorySourceNode(
+                workflowJobTemplate,
+                inventorySource
+              ).then((inventorySourceNode) => {
+                cy.createAwxWorkflowVisualizerManagementNode(workflowJobTemplate, 1).then(
+                  (managementNode) => {
+                    cy.createWorkflowJTSuccessNodeLink(projectNode, inventorySourceNode);
+                    cy.createWorkflowJTAlwaysNodeLink(inventorySourceNode, managementNode);
+                  }
+                );
+              });
+            });
+          });
+        });
+      });
+      cy.visit(`/templates/workflow_job_template/${workflowJobTemplate?.id}/visualizer`);
+      cy.get('[data-cy="wf-vzr-title"]')
+        .should('contain', 'Workflow Visualizer')
+        .should('be.visible');
+      cy.get('[data-cy="wf-vzr-name"]')
+        .should('contain', `${workflowJobTemplate.name}`)
+        .should('be.visible');
+      //remove-node, add-node-and-link, add-link, add-link, edit-node
+      cy.removeAllNodesFromVisualizerToolbar();
+      cy.contains('button', 'Save').click();
+      cy.deleteAwxWorkflowJobTemplate(workflowJobTemplate);
+    });
   });
 });
