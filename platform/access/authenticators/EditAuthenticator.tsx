@@ -38,13 +38,13 @@ export function EditAuthenticator() {
     swrOptions
   );
   const { data: mappingsResponse } = useSWR<{ results: AuthenticatorMap[] }>(
-    gatewayAPI`/authenticators/${id.toString()}/authenticator_maps`,
+    gatewayAPI`/authenticators/${id.toString()}/authenticator_maps/`,
     requestGet,
     swrOptions
   );
   const mappings = mappingsResponse?.results;
 
-  const { data: plugins } = useGet<AuthenticatorPlugins>(gatewayAPI`/authenticator_plugins`);
+  const { data: plugins } = useGet<AuthenticatorPlugins>(gatewayAPI`/authenticator_plugins/`);
   if (!plugins || !authenticator || !mappings) {
     return <LoadingPage />;
   }

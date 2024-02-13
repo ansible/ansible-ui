@@ -21,7 +21,7 @@ export function CreateAuthenticator() {
   const alertToaster = usePageAlertToaster();
   const pageNavigate = usePageNavigate();
 
-  const { data: plugins } = useGet<AuthenticatorPlugins>(gatewayAPI`/authenticator_plugins`);
+  const { data: plugins } = useGet<AuthenticatorPlugins>(gatewayAPI`/authenticator_plugins/`);
   if (!plugins) {
     return <LoadingPage />;
   }
