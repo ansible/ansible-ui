@@ -79,6 +79,7 @@ export type PageToolbarProps<T extends object> = {
   disableListView?: boolean;
   disableCardView?: boolean;
   disablePagination?: boolean;
+  autoHidePagination?: boolean;
   sortOptions?: PageTableSortOption[];
   /** Optional: Max selections permitted in a table. The bulk selector within the toolbar is disabled based on this value.
    */
@@ -251,7 +252,7 @@ export function PageToolbar<T extends object>(props: PageToolbarProps<T>) {
             )}
 
             {/* Pagination */}
-            {!props.disablePagination && isXxlOrLarger && (
+            {!props.disablePagination && !props.autoHidePagination && isXxlOrLarger && (
               <ToolbarItem
                 visibility={{ default: 'hidden', '2xl': 'visible' }}
                 style={{ marginLeft: 24, alignSelf: 'center' }}

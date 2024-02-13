@@ -15,6 +15,7 @@ import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 interface ResourceTypeMapper {
   inventory_sources?: string;
   projects?: string;
+  job_templates?: string;
 }
 
 export function ResourceNotifications({ resourceType }: { resourceType: string }) {
@@ -24,6 +25,13 @@ export function ResourceNotifications({ resourceType }: { resourceType: string }
   const resourceToParamMap: ResourceTypeMapper = {
     inventory_sources: 'source_id',
     projects: 'id',
+    job_templates: 'id',
+  };
+
+  const resourceToErrorMsg: ResourceTypeMapper = {
+    inventory_sources: 'inventory source',
+    projects: 'project',
+    job_templates: 'job template',
   };
 
   const params = useParams();
@@ -68,8 +76,16 @@ export function ResourceNotifications({ resourceType }: { resourceType: string }
         toolbarFilters={toolbarFilters}
         tableColumns={tableColumns}
         rowActions={rowActions}
-        errorStateTitle={t('Error loading inventory source notifications')}
-        emptyStateTitle={t('There are currently no sources added to this inventory.')}
+        errorStateTitle={t(
+          `Error loading ${
+            resourceToErrorMsg[resourceType as keyof ResourceTypeMapper]
+          } notifications`
+        )}
+        emptyStateTitle={t(
+          `There are currently no notifications added to this ${
+            resourceToErrorMsg[resourceType as keyof ResourceTypeMapper]
+          }.`
+        )}
         emptyStateDescription={t(
           'Please contact your organization administrator if there is an issue with your access.'
         )}

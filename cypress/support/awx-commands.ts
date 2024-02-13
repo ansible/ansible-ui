@@ -1277,7 +1277,7 @@ Cypress.Commands.add(
     cy.verifyPageTitle('Create Application');
     cy.get('[data-cy="name"]').type(customAppName);
     cy.get('[data-cy="description"]').type(customAppDescription);
-    cy.get('[data-cy="organization"]').type('Default');
+    cy.selectSingleSelectOption('[data-cy="organization"]', 'Default');
     cy.selectDropdownOptionByResourceName('authorization-grant-type', customGrantType);
     cy.selectDropdownOptionByResourceName('client-type', customClientType);
     cy.get('[data-cy="redirect-uris"]').type(customRedirectURIS);
@@ -1311,7 +1311,7 @@ Cypress.Commands.add(
     //Verify application details page
     cy.verifyPageTitle(customAppName);
     cy.get('[data-cy="name"]').should('contain', customAppName);
-    cy.get('[data-cy="organization"]').type('Default');
+    cy.get('[data-cy="organization"]').should('contain', 'Default');
     cy.get('[data-cy="authorization-grant-type"]').should(
       'contain',
       customGrantType === 'Authorization code'
@@ -1365,7 +1365,7 @@ Cypress.Commands.add(
 
     //Verify changes
     cy.get('[data-cy="name"]').should('contain', customAppName);
-    cy.get('[data-cy="organization"]').type('Default');
+    cy.get('[data-cy="organization"]').should('contain', 'Default');
     cy.get('[data-cy="authorization-grant-type"]').should('contain', customGrantType.toLowerCase());
     cy.get('[data-cy="client-type"]').should('contain', newCustomClientType.toLowerCase());
   }
@@ -1377,7 +1377,7 @@ Cypress.Commands.add(
     //Verify application details page
     cy.verifyPageTitle(customAppName);
     cy.get('[data-cy="name"]').should('contain', customAppName);
-    cy.get('[data-cy="organization"]').type('Default');
+    cy.get('[data-cy="organization"]').should('contain', 'Default');
     cy.get('[data-cy="authorization-grant-type"]').should(
       'contain',
       customGrantType === 'Authorization code'
