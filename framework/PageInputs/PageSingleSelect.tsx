@@ -11,7 +11,16 @@ import {
   SelectList,
   SelectOption,
 } from '@patternfly/react-core';
-import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  ReactNode,
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { Scrollable } from '../components/Scrollable';
@@ -184,68 +193,70 @@ export function PageSingleSelect<
   }, [options, visibleOptions]);
 
   return (
-    <Select
-      id={`${id}-select`}
-      selected={selectedOption?.label}
-      onSelect={onSelectHandler}
-      isOpen={isOpen}
-      onOpenChange={setIsOpen}
-      toggle={Toggle}
-      popperProps={{ appendTo: () => document.body }}
-      shouldFocusToggleOnSelect
-      innerRef={selectListRef}
-    >
-      <MenuSearch>
-        <MenuSearchInput>
-          <SearchInput
-            id={`${id}-search`}
-            ref={searchRef}
-            value={searchValue}
-            onChange={(_, value: string) => setSearchValue(value)}
-            onClear={(event) => {
-              event.stopPropagation();
-              setSearchValue('');
-            }}
-            resultsCount={`${visibleOptions.length} / ${options.length}`}
-            onKeyDown={(event) => {
-              switch (event.key) {
-                case 'ArrowDown':
-                case 'Tab': {
-                  event.preventDefault();
-                  event.stopPropagation();
-                  const firstElement = selectListRef?.current?.querySelector(
-                    'li button:not(:disabled),li input:not(:disabled)'
-                  );
-                  firstElement && (firstElement as HTMLElement).focus();
-                  break;
+    <PageSingleSelectContext.Provider value={{ open: isOpen, setOpen: setIsOpen }}>
+      <Select
+        id={`${id}-select`}
+        selected={selectedOption?.label}
+        onSelect={onSelectHandler}
+        isOpen={isOpen}
+        onOpenChange={setIsOpen}
+        toggle={Toggle}
+        popperProps={{ appendTo: () => document.body }}
+        shouldFocusToggleOnSelect
+        innerRef={selectListRef}
+      >
+        <MenuSearch>
+          <MenuSearchInput>
+            <SearchInput
+              id={`${id}-search`}
+              ref={searchRef}
+              value={searchValue}
+              onChange={(_, value: string) => setSearchValue(value)}
+              onClear={(event) => {
+                event.stopPropagation();
+                setSearchValue('');
+              }}
+              resultsCount={`${visibleOptions.length} / ${options.length}`}
+              onKeyDown={(event) => {
+                switch (event.key) {
+                  case 'ArrowDown':
+                  case 'Tab': {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    const firstElement = selectListRef?.current?.querySelector(
+                      'li button:not(:disabled),li input:not(:disabled)'
+                    );
+                    firstElement && (firstElement as HTMLElement).focus();
+                    break;
+                  }
                 }
-              }
-            }}
-          />
-        </MenuSearchInput>
-      </MenuSearch>
-      <Divider />
-      {visibleOptions.length === 0 ? (
-        <SelectOption isDisabled key="no result">
-          {t('No results found')}
-        </SelectOption>
-      ) : (
-        <ScrollableStyled>
-          {groups ? (
-            <>
-              {Object.keys(groups).map((groupName) => (
-                <SelectGroup label={groupName} key={groupName}>
-                  <PageSingleSelectList searchRef={searchRef} options={groups[groupName]} />
-                </SelectGroup>
-              ))}
-            </>
-          ) : (
-            <PageSingleSelectList searchRef={searchRef} options={visibleOptions} />
-          )}
-        </ScrollableStyled>
-      )}
-      {props.footer && <MenuFooter>{props.footer}</MenuFooter>}
-    </Select>
+              }}
+            />
+          </MenuSearchInput>
+        </MenuSearch>
+        <Divider />
+        {visibleOptions.length === 0 ? (
+          <SelectOption isDisabled key="no result">
+            {t('No results found')}
+          </SelectOption>
+        ) : (
+          <ScrollableStyled>
+            {groups ? (
+              <>
+                {Object.keys(groups).map((groupName) => (
+                  <SelectGroup label={groupName} key={groupName}>
+                    <PageSingleSelectList searchRef={searchRef} options={groups[groupName]} />
+                  </SelectGroup>
+                ))}
+              </>
+            ) : (
+              <PageSingleSelectList searchRef={searchRef} options={visibleOptions} />
+            )}
+          </ScrollableStyled>
+        )}
+        {props.footer && <MenuFooter>{props.footer}</MenuFooter>}
+      </Select>
+    </PageSingleSelectContext.Provider>
   );
 }
 
@@ -287,3 +298,24 @@ export function PageSingleSelectList(props: {
 const ScrollableStyled = styled(Scrollable)`
   max-height: 40vh;
 `;
+
+export const PageSingleSelectContext = createContext<{
+  open: boolean;
+  setOpen: (open: boolean) => void;
+}>({
+  open: false,
+  setOpen: () => {},
+});
+
+export function usePageSingleSelectContext() {
+  return useContext(PageSingleSelectContext);
+}
+
+export function PageSingleSelectProvider(props: { children: ReactNode }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <PageSingleSelectContext.Provider value={{ open, setOpen }}>
+      {props.children}
+    </PageSingleSelectContext.Provider>
+  );
+}

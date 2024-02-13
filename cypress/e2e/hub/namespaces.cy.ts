@@ -128,7 +128,7 @@ describe('Namespaces', () => {
     cy.createNamespace(nameSpaceName);
     cy.navigateTo('hub', Namespaces.url);
     cy.setTablePageSize('50');
-    cy.searchAndDisplayResource(nameSpaceName);
+    cy.filterTableBySingleText(nameSpaceName);
     cy.get('[data-cy="card-view"]').click();
     cy.contains(nameSpaceName).should('be.visible');
     cy.get('[data-cy="list-view"]').click();
@@ -169,7 +169,7 @@ describe('Namespaces', () => {
 
     cy.navigateTo('hub', 'namespaces');
     cy.get('[data-cy="table-view"]').click({ force: true });
-    cy.searchAndDisplayResource(testSignature);
+    cy.filterTableBySingleText(testSignature);
     cy.get('tbody').find('tr').should('have.length', 5);
     cy.get('[data-cy="select-all"]', { timeout: 30000 }).click();
     cy.clickToolbarKebabAction('delete-selected-namespaces');

@@ -1,18 +1,20 @@
-import { SignatureKeys } from './constants';
 import { pulpAPI } from '../../support/formatApiPathForHub';
+import { SignatureKeys } from './constants';
 
 describe('Signature Keys', () => {
   beforeEach(() => {
     cy.hubLogin();
   });
 
-  it('should render the signature keys page and display empty state when no content when no data', () => {
+  // skipping flaky test that assumes server state that is not always true. this should be a component test.
+  it.skip('should render the signature keys page and display empty state when no content when no data', () => {
     cy.navigateTo('hub', SignatureKeys.url);
     cy.verifyPageTitle(SignatureKeys.title);
     cy.get('[data-cy="empty-state-title"]')
       .should('contain', 'No signature keys yet')
       .should('be.visible');
   });
+
   it('should display name and public key mocked data in the list page', () => {
     // backend on CI not supporting signing yet so it's not possible to create signature key, mocking instead
     const resourceValues = ['name', 'public-key'];

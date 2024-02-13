@@ -45,6 +45,8 @@ Cypress.Commands.add(
 
 Cypress.Commands.add('filterTableBySingleText', (text: string) => {
   cy.filterTableByText(text, 'SingleText');
+  // TODO - this should be in future better sync, but for now, we need to have tests more stable
+  cy.wait(2000);
 });
 
 Cypress.Commands.add('filterTableByTypeAndText', (filterLabel: string | RegExp, text: string) => {
@@ -160,4 +162,11 @@ Cypress.Commands.add('selectMultiSelectOption', (selector: string, label: string
 
 Cypress.Commands.add('clickTableHeader', (text: string | RegExp) => {
   cy.get('thead').find('th').contains(text).click();
+});
+
+Cypress.Commands.add('typeBy', (selector: string, text: string) => {
+  cy.get(selector + ':not(:disabled):not(:hidden)')
+    .should('not.have.attr', 'aria-disabled', 'true')
+    .should('be.visible');
+  cy.get(selector + ':not(:disabled):not(:hidden)').type(text, { delay: 0 });
 });

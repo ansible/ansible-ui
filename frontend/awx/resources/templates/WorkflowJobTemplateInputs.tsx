@@ -1,14 +1,14 @@
+import { useEffect } from 'react';
+import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { PageFormCheckbox, PageFormDataEditor, PageFormTextInput } from '../../../../framework';
-import { PageFormSelectOrganization } from '../../access/organizations/components/PageFormOrganizationSelect';
-import { PageFormInventorySelect } from '../inventories/components/PageFormInventorySelect';
-import { PageFormLabelSelect } from '../../common/PageFormLabelSelect';
-import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
 import { PageFormCreatableSelect } from '../../../../framework/PageForm/Inputs/PageFormCreatableSelect';
-import { WebhookSubForm } from './components/WebhookSubForm';
-import { useFormContext, useWatch } from 'react-hook-form';
+import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
+import { PageFormSelectOrganization } from '../../access/organizations/components/PageFormOrganizationSelect';
+import { PageFormLabelSelect } from '../../common/PageFormLabelSelect';
 import { WorkflowJobTemplateForm } from '../../interfaces/WorkflowJobTemplate';
-import { useEffect } from 'react';
+import { PageFormInventorySelect } from '../inventories/components/PageFormInventorySelect';
+import { WebhookSubForm } from './components/WebhookSubForm';
 
 export function WorkflowJobTemplateInputs(props: {
   workflowJobTemplate?: WorkflowJobTemplateForm;

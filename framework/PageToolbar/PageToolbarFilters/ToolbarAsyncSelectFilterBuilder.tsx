@@ -1,8 +1,9 @@
 import { useCallback } from 'react';
 import { ITableColumn, IToolbarFilter, usePageDialog, ISelected } from '../../../framework';
 import { MultiSelectDialog } from '../../../framework/PageDialogs/MultiSelectDialog';
-import { SelectSingleDialog } from '../../../framework/PageDialogs/SelectSingleDialog';
+import { SingleSelectDialog } from '../../PageDialogs/SingleSelectDialog';
 import { IView, ViewExtendedOptions } from '../../useView';
+import { MultiDialogs } from '../../../frontend/hub/administration/repositories/hooks/useAddCollections';
 
 type BaseView<T extends object> = IView &
   ISelected<T> & {
@@ -17,12 +18,16 @@ export type AsyncSelectFilterBuilderProps<T extends object> = {
   toolbarFilters?: IToolbarFilter[];
   viewParams: ViewExtendedOptions<T>;
   useView: (viewParams: ViewExtendedOptions<T>) => BaseView<T>;
+  multiDialogs?: MultiDialogs;
 };
 
 export function useAsyncSingleSelectFilterBuilder<T extends object>(
   props: AsyncSelectFilterBuilderProps<T>
 ) {
-  const [_, setDialog] = usePageDialog();
+  let [, setDialog] = usePageDialog();
+  if (props.multiDialogs?.pushDialog) {
+    setDialog = props.multiDialogs.pushDialog;
+  }
 
   return {
     openBrowse: useCallback(
@@ -44,7 +49,10 @@ export function useAsyncSingleSelectFilterBuilder<T extends object>(
 export function useAsyncMultiSelectFilterBuilder<T extends object>(
   props: AsyncSelectFilterBuilderProps<T>
 ) {
-  const [_, setDialog] = usePageDialog();
+  let [, setDialog] = usePageDialog();
+  if (props.multiDialogs?.pushDialog) {
+    setDialog = props.multiDialogs.pushDialog;
+  }
 
   return {
     openBrowse: useCallback(
@@ -86,16 +94,18 @@ function SelectFilter<T extends object>(
         toolbarFilters={toolbarFilters ? toolbarFilters : []}
         tableColumns={tableColumns}
         view={view}
+        onClose={props.multiDialogs ? () => props.multiDialogs?.popDialog() : undefined}
       />
     );
   } else {
     return (
-      <SelectSingleDialog<T>
+      <SingleSelectDialog<T>
         {...props}
         onSelect={props.onSelect ? props.onSelect : () => {}}
         toolbarFilters={toolbarFilters ? toolbarFilters : []}
         tableColumns={tableColumns}
         view={view}
+        onClose={props.multiDialogs ? () => props.multiDialogs?.popDialog() : undefined}
       />
     );
   }

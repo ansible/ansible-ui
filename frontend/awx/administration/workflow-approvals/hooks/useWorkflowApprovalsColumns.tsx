@@ -58,9 +58,7 @@ export function useWorkflowApprovalsColumns(options?: {
       {
         header: t('Started'),
         cell: (workflow_approval: WorkflowApproval) =>
-          workflow_approval.started && (
-            <DateTimeCell format="date-time" value={workflow_approval.started} />
-          ),
+          workflow_approval.started && <DateTimeCell value={workflow_approval.started} />,
         sort: 'started',
         list: 'secondary',
         defaultSortDirection: 'desc',

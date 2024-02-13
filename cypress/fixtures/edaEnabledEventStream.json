@@ -1,0 +1,15 @@
+{
+  "name": "Event stream 2",
+  "source_args": "payload:\n- i: 1\n- i: 2\n- name: Fred\nstartup_delay: 60\n",
+  "source_type": "ansible.eda.generic",
+  "channel_name": "eda_155678ed_fdc0_4c9d_b69d_4e974de90c6a",
+  "is_enabled": true,
+  "status": "completed",
+  "status_message": "Pod activation-job-1-1 has successfully exited. Activation completed successfully. No restart policy is applied.",
+  "decision_environment_id": 1,
+  "user": "admin",
+  "credentials": [],
+  "id": 5,
+  "created_at": "2024-02-12T17:43:46.439835Z",
+  "modified_at": "2024-02-12T17:44:55.307697Z"
+}
