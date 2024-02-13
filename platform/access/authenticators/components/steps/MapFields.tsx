@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Text, TextVariants, Button } from '@patternfly/react-core';
 import styled from 'styled-components';
 import { AngleDownIcon, TrashIcon } from '@patternfly/react-icons';
-import type { AuthenticatorMapValues } from '../AuthenticatorForm';
+import type { AuthenticatorFormValues, AuthenticatorMapValues } from '../AuthenticatorForm';
 import {
   PageFormGrid,
   PageFormSelect,
@@ -58,8 +58,23 @@ export function MapFields(props: {
   onDelete: (id: number) => void;
 }) {
   const { index, map, onDelete } = props;
-  const { register } = useFormContext();
+  const { register, getValues } = useFormContext();
   const { t } = useTranslation();
+
+  const options = new Set<string>();
+  const { mappings = [] } = getValues() as AuthenticatorFormValues;
+
+  mappings?.forEach((mapping) => {
+    if (mapping.trigger !== 'groups') {
+      return;
+    }
+    mapping.groups_value.forEach(({ name }) => options.add(name));
+  });
+
+  const groupOptions = Array.from(options).map((name) => ({
+    value: name,
+    label: name,
+  }));
 
   const label = {
     allow: t('Allow'),
@@ -138,11 +153,7 @@ export function MapFields(props: {
               id={`mappings-${index}-groups-value`}
               name={`mappings.${index}.groups_value`}
               label={t('Groups')}
-              options={[
-                // TODO: in edit mode, derive from existing groups
-                { value: 'one', label: 'one' },
-                { value: 'two', label: 'two' },
-              ]}
+              options={groupOptions}
               isRequired
             />
           </PageFormHidden>
