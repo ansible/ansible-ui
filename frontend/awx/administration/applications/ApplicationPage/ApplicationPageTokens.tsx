@@ -6,14 +6,11 @@ import {
   IPageAction,
   PageActionSelection,
   PageActionType,
-  PageHeader,
   PageLayout,
   PageTable,
 } from '../../../../../framework';
 import { awxAPI } from '../../../common/api/awx-utils';
-import { useAwxConfig } from '../../../common/useAwxConfig';
 import { useAwxView } from '../../../common/useAwxView';
-import { getDocsBaseUrl } from '../../../common/util/getDocsBaseUrl';
 import { Token } from '../../../interfaces/Token';
 import { useDeleteTokens } from '../hooks/useDeleteTokens';
 import { useTokensColumns } from '../hooks/useTokensColumns';
@@ -21,7 +18,6 @@ import { useTokensFilters } from '../hooks/useTokensFilters';
 
 export function ApplicationTokens() {
   const { t } = useTranslation();
-  const config = useAwxConfig();
   const tableColumns = useTokensColumns();
   const toolbarFilters = useTokensFilters();
   const params = useParams<{ id: string }>();
