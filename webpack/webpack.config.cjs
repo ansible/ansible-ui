@@ -12,6 +12,7 @@ const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 const {
   AWX_ROUTE_PREFIX,
   AWX_API_PREFIX,
+  AWX_WEBSOCKET_PREFIX,
   EDA_ROUTE_PREFIX,
   EDA_API_PREFIX,
   HUB_ROUTE_PREFIX,
@@ -108,6 +109,7 @@ module.exports = function (env, argv) {
         'process.env.UI_MODE': JSON.stringify(process.env.UI_MODE),
         'process.env.AWX_ROUTE_PREFIX': JSON.stringify(AWX_ROUTE_PREFIX),
         'process.env.AWX_API_PREFIX': JSON.stringify(AWX_API_PREFIX),
+        'process.env.AWX_WEBSOCKET_PREFIX': JSON.stringify(AWX_WEBSOCKET_PREFIX),
         'process.env.EDA_ROUTE_PREFIX': JSON.stringify(EDA_ROUTE_PREFIX),
         'process.env.EDA_API_PREFIX': JSON.stringify(EDA_API_PREFIX),
         'process.env.HUB_ROUTE_PREFIX': JSON.stringify(HUB_ROUTE_PREFIX),
