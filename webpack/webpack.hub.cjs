@@ -9,7 +9,7 @@ module.exports = function (env, argv) {
 
   // publicPath is the path where the bundle is served from
   // https://webpack.js.org/guides/public-path/
-  config.output.publicPath = process.env.PUBLIC_PATH || process.env.HUB_ROUTE_PREFIX || '/';
+  config.output.publicPath = process.env.PUBLIC_PATH || process.env.ROUTE_PREFIX || '/';
 
   config.devServer.proxy = {
     '/api': {
