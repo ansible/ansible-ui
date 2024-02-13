@@ -38,8 +38,8 @@ describe('EDA Credentials- Create, Edit, Delete', () => {
     cy.clickButton(/^Create credential$/);
     cy.get('[data-cy="name"]').type(name);
     cy.get('[data-cy="description"]').type('This is a GitHub Credential.');
-    cy.get('[data-cy="secret"]').type('testtoken');
     cy.selectDropdownOptionByResourceName('credential-type', 'GitHub personal access token');
+    cy.get('[data-cy="secret"]').type('testtoken');
     cy.get('[data-cy="username"]').type('admin');
     cy.clickButton(/^Create credential$/);
     cy.hasDetail('Name', name);
@@ -61,8 +61,8 @@ describe('EDA Credentials- Create, Edit, Delete', () => {
     cy.clickButton(/^Create credential$/);
     cy.get('[data-cy="name"]').type(name);
     cy.get('[data-cy="description"]').type('This is a GitLab Credential.');
-    cy.get('[data-cy="secret"]').type('testtoken');
     cy.selectDropdownOptionByResourceName('credential-type', 'GitLab personal access token');
+    cy.get('[data-cy="secret"]').type('testtoken');
     cy.get('[data-cy="username"]').type('admin');
     cy.clickButton(/^Create credential$/);
     cy.hasDetail('Name', name);

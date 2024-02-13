@@ -7,15 +7,16 @@ import { EdaRulebook } from '../../../../frontend/eda/interfaces/EdaRulebook';
 import { EdaRulebookActivation } from '../../../../frontend/eda/interfaces/EdaRulebookActivation';
 import { ActivationRead } from '../../../../frontend/eda/interfaces/generated/eda-api';
 import { edaAPI } from '../../../support/formatApiPathForEDA';
+import { EdaControllerToken } from '../../../../frontend/eda/interfaces/EdaControllerToken';
 
 describe('EDA rulebook activations - Create', () => {
   let edaProject: EdaProject;
   let edaDecisionEnvironment: EdaDecisionEnvironment;
   let edaRuleBook: EdaRulebook;
+  let edaAwxToken: EdaControllerToken;
 
   before(() => {
     cy.edaLogin();
-    cy.ensureEdaCurrentUserAwxToken();
     cy.createEdaProject().then((project) => {
       edaProject = project;
       cy.waitEdaProjectSync(project);
@@ -23,6 +24,9 @@ describe('EDA rulebook activations - Create', () => {
         edaRuleBook = edaRuleBooks[0];
         cy.createEdaDecisionEnvironment().then((decisionEnvironment) => {
           edaDecisionEnvironment = decisionEnvironment;
+          cy.addEdaCurrentUserAwxToken('E2E AWX token ' + randomString(4)).then((awxToken) => {
+            edaAwxToken = awxToken;
+          });
         });
       });
     });
@@ -44,8 +48,8 @@ describe('EDA rulebook activations - Create', () => {
     cy.selectDropdownOptionByResourceName('project-id', edaProject.name);
     cy.selectDropdownOptionByResourceName('rulebook', edaRuleBook.name);
     cy.selectDropdownOptionByResourceName('decision-environment-id', edaDecisionEnvironment.name);
+    cy.selectDropdownOptionByResourceName('awx-token-id', edaAwxToken.name);
     cy.intercept('POST', edaAPI`/activations/`).as('edaRBA');
-    cy.get('button#awx-token-id:not(:disabled):not(:hidden)');
     cy.clickButton(/^Create rulebook activation$/);
     cy.wait('@edaRBA').then((edaRBA) => {
       const rbaToBeDeleted = edaRBA?.response?.body as ActivationRead;
