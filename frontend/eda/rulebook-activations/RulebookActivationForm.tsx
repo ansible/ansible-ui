@@ -15,8 +15,6 @@ import {
   usePageNavigate,
 } from '../../../framework';
 import { PageFormAsyncSelect } from '../../../framework/PageForm/Inputs/PageFormAsyncSelect';
-import { PageFormAsyncSingleSelect } from '../../../framework/PageForm/Inputs/PageFormAsyncSingleSelect';
-import { PageFormMultiSelect } from '../../../framework/PageForm/Inputs/PageFormMultiSelect';
 import { PageFormSection } from '../../../framework/PageForm/Utils/PageFormSection';
 import { requestGet } from '../../common/crud/Data';
 import { useGet } from '../../common/crud/useGet';
@@ -24,7 +22,6 @@ import { usePostRequest } from '../../common/crud/usePostRequest';
 import { EdaPageForm } from '../common/EdaPageForm';
 import { edaAPI } from '../common/eda-utils';
 import { EdaDecisionEnvironment } from '../interfaces/EdaDecisionEnvironment';
-import { EdaEventSource } from '../interfaces/EdaEventSource';
 import { EdaExtraVars } from '../interfaces/EdaExtraVars';
 import { EdaProject } from '../interfaces/EdaProject';
 import { EdaResult } from '../interfaces/EdaResult';
@@ -36,6 +33,10 @@ import {
 import { AwxToken, RestartPolicyEnum } from '../interfaces/generated/eda-api';
 import { EdaRoute } from '../main/EdaRoutes';
 import { EdaProjectCell } from '../projects/components/EdaProjectCell';
+import { EdaEventStream } from '../interfaces/EdaEventStream';
+import { PageFormMultiSelect } from '../../../framework/PageForm/Inputs/PageFormMultiSelect';
+import { PageFormCredentialSelect } from '../access/credentials/components/PageFormCredentialsSelect';
+import { EdaCredential } from '../interfaces/EdaCredential';
 
 export function CreateRulebookActivation() {
   const { t } = useTranslation();
@@ -58,6 +59,9 @@ export function CreateRulebookActivation() {
     }
     rulebookActivation.extra_var_id = extra_var?.id;
     rulebookActivation.rulebook_id = rulebook?.id;
+    rulebookActivation.credentials = rulebookActivation.credential_refs
+      ? rulebookActivation.credential_refs.map((credential) => `${credential.id || ''}`)
+      : undefined;
     const newRulebookActivation = await postEdaRulebookActivation(
       edaAPI`/activations/`,
       rulebookActivation
@@ -111,8 +115,11 @@ export function RulebookActivationInputs() {
     edaAPI`/decision-environments/?page=1&page_size=200`
   );
 
-  const { data: sources } = useGet<EdaResult<EdaEventSource>>(
-    edaAPI`/sources/?page=1&page_size=200`
+  const { data: tokens } = useGet<EdaResult<AwxToken>>(
+    edaAPI`/users/me/awx-tokens/?page=1&page_size=200`
+  );
+  const { data: eventStreams } = useGet<EdaResult<EdaEventStream>>(
+    edaAPI`/event-streams/?page=1&page_size=200`
   );
 
   const RESTART_OPTIONS = [
@@ -136,21 +143,6 @@ export function RulebookActivationInputs() {
       values: response.results?.sort((l, r) => compareStrings(l.name, r.name)) ?? [],
     });
   }, [projectId]);
-
-  const queryAwxTokens = useCallback(async (page: number, signal: AbortSignal) => {
-    const response = await requestGet<EdaResult<AwxToken>>(
-      edaAPI`/users/me/awx-tokens/?${page.toString()}}`,
-      signal
-    );
-    return Promise.resolve({
-      total: response.count,
-      options:
-        response.results?.map((item) => ({
-          label: item.name,
-          value: item.id,
-        })) ?? [],
-    });
-  }, []);
 
   return (
     <>
@@ -200,18 +192,22 @@ export function RulebookActivationInputs() {
         labelHelpTitle={t('Rulebook')}
       />
       <PageFormMultiSelect<IEdaRulebookActivationInputs>
-        name="sources"
-        label={t('Source(s)')}
+        name="event_streams"
+        label={t('Event stream(s)')}
         options={
-          sources?.results
-            ? sources.results.map((item) => ({
+          eventStreams?.results
+            ? eventStreams.results.map((item) => ({
                 label: item.name,
                 value: item.id,
               }))
             : []
         }
-        placeholder={t('Select source(s)')}
-        footer={<Link to={getPageUrl(EdaRoute.CreateEventSource)}>Create source</Link>}
+        placeholder={t('Select event stream(s)')}
+        footer={<Link to={getPageUrl(EdaRoute.CreateEventStream)}>Create event stream</Link>}
+      />
+      <PageFormCredentialSelect<{ credential_refs: string; id: string }>
+        name="credential_refs"
+        labelHelp={t(`Select the credentials for this rulebook activations.`)}
       />
       <PageFormSelect<IEdaRulebookActivationInputs>
         name="decision_environment_id"
@@ -234,13 +230,21 @@ export function RulebookActivationInputs() {
         labelHelp={t('Decision environments are a container image to run Ansible rulebooks.')}
         labelHelpTitle={t('Decision environment')}
       />
-      <PageFormAsyncSingleSelect<IEdaRulebookActivationInputs>
+      <PageFormSelect<IEdaRulebookActivationInputs>
         name="awx_token_id"
         label={t('Controller token')}
-        placeholder={t('Select controller token')}
-        queryPlaceholder={t('Loading controller tokens...')}
-        queryErrorText={t('Error loading controller tokens')}
-        queryOptions={queryAwxTokens}
+        placeholderText={t('Select controller token')}
+        options={
+          tokens?.results
+            ? tokens.results.map((item: { name: string; id: number }) => ({
+                label: item.name,
+                value: item.id,
+              }))
+            : []
+        }
+        footer={
+          <Link to={getPageUrl(EdaRoute.CreateControllerToken)}>Create controller token</Link>
+        }
         labelHelpTitle={t('Controller tokens')}
         labelHelp={[
           t('Controller tokens are used to authenticate with controller API.'),
@@ -279,10 +283,12 @@ export function RulebookActivationInputs() {
   );
 }
 
-type IEdaRulebookActivationInputs = Omit<EdaRulebookActivationCreate, 'sources'> & {
+type IEdaRulebookActivationInputs = Omit<EdaRulebookActivationCreate, 'event_streams'> & {
   rulebook: EdaRulebook;
-  sources?: string[];
+  event_streams?: string[];
   project_id: string;
   variables: string;
   awx_token_id: number;
+  credentials?: string[];
+  credential_refs?: EdaCredential[];
 };
