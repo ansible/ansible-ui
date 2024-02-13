@@ -1,7 +1,7 @@
-import { gatewayV1API } from '../../platform/api/gateway-api-utils';
 import { randomString } from '../../framework/utils/random-string';
-import './rest-commands';
+import { gatewayV1API } from '../../platform/api/gateway-api-utils';
 import { PlatformOrganization } from '../../platform/interfaces/PlatformOrganization';
+import './rest-commands';
 
 Cypress.Commands.add('platformLogin', () => {
   //cy.requiredVariablesAreSet(['PLATFORM_SERVER', 'PLATFORM_USERNAME', 'PLATFORM_PASSWORD']);
@@ -29,7 +29,7 @@ Cypress.Commands.add('platformLogin', () => {
     },
     {
       validate: () => {
-        cy.request({ method: 'GET', url: gatewayV1API`/me` });
+        cy.request({ method: 'GET', url: gatewayV1API`/me/` });
       },
       cacheAcrossSpecs: true,
     }

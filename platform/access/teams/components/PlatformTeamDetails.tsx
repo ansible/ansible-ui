@@ -17,7 +17,7 @@ export function PlatformTeamDetails() {
     data: team,
     isLoading,
     error,
-  } = useGetItem<PlatformTeam>(gatewayV1API`/teams`, params.id);
+  } = useGetItem<PlatformTeam>(gatewayV1API`/teams/`, params.id);
   const columns = useTeamColumns();
   if (isLoading) return <LoadingPage />;
   if (error) return <AwxError error={error} />;
