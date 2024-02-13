@@ -25,7 +25,7 @@ import {
   Title,
   ToolbarItem,
 } from '@patternfly/react-core';
-import { useVisualizationController } from '@patternfly/react-topology';
+import { observer, useVisualizationController } from '@patternfly/react-topology';
 import { usePageNavigate, usePageAlertToaster } from '../../../../../../framework';
 import { AwxRoute } from '../../../../main/AwxRoutes';
 import { postRequest } from '../../../../../common/crud/Data';
@@ -38,7 +38,7 @@ import { useRemoveGraphElements, useSaveVisualizer } from '../hooks';
 import type { ControllerState, GraphNode } from '../types';
 import { START_NODE_ID } from '../constants';
 
-export function ToolbarHeader() {
+export const ToolbarHeader = observer(() => {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const handleSave = useSaveVisualizer();
@@ -46,9 +46,9 @@ export function ToolbarHeader() {
   const { isFullScreen } = useViewOptions();
   const controller = useVisualizationController();
   const { workflowTemplate } = controller.getState<ControllerState>();
-  const isModified = controller.getElements().some((element) => {
-    return element.getState<{ modified: boolean }>().modified;
-  });
+  const isModified = controller
+    .getElements()
+    .some((element) => element.getState<ControllerState>().modified);
   const [showUnsavedChangesModal, setShowUnsavedChangesModal] = useState<boolean>(false);
 
   const handleCancel = useCallback(() => {
@@ -104,6 +104,11 @@ export function ToolbarHeader() {
               async function saveWorkflowVisualizer() {
                 try {
                   await handleSave();
+                  alertToaster.addAlert({
+                    variant: 'success',
+                    title: t('Successfully saved workflow visualizer'),
+                    timeout: 5000,
+                  });
                 } catch (error) {
                   const { genericErrors, fieldErrors } = awxErrorAdapter(error);
                   alertToaster.addAlert({
@@ -141,9 +146,9 @@ export function ToolbarHeader() {
       </Modal>
     </>
   );
-}
+});
 
-export function WorkflowVisualizerToolbar() {
+export const WorkflowVisualizerToolbar = observer(() => {
   const { t } = useTranslation();
   const config = useAwxConfig();
   const alertToaster = usePageAlertToaster();
@@ -157,7 +162,7 @@ export function WorkflowVisualizerToolbar() {
     .getGraph()
     .getNodes()
     .filter((n) => n.isVisible() && n.getId() !== START_NODE_ID) as GraphNode[];
-  const { workflowTemplate, RBAC } = controller.getState<ControllerState>();
+  const { workflowTemplate, RBAC, modified } = controller.getState<ControllerState>();
 
   const handleLaunchWorkflow = useCallback(async () => {
     if (!workflowTemplate?.id) return;
@@ -177,10 +182,16 @@ export function WorkflowVisualizerToolbar() {
               data-cy="workflow-visualizer-toolbar-save"
               icon={<CheckCircleIcon />}
               label={t('Save')}
+              isDisabled={!modified}
               onClick={() => {
                 async function saveWorkflowVisualizer() {
                   try {
                     await handleSave();
+                    alertToaster.addAlert({
+                      variant: 'success',
+                      title: t('Successfully saved workflow visualizer'),
+                      timeout: 5000,
+                    });
                   } catch (error) {
                     const { genericErrors, fieldErrors } = awxErrorAdapter(error);
                     alertToaster.addAlert({
@@ -286,4 +297,4 @@ export function WorkflowVisualizerToolbar() {
       </ToolbarItem>
     </>
   );
-}
+});

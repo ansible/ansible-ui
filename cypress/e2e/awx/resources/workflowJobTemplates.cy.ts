@@ -1,13 +1,17 @@
 import { randomString } from '../../../../framework/utils/random-string';
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
+import { InventorySource } from '../../../../frontend/awx/interfaces/InventorySource';
 import { Label } from '../../../../frontend/awx/interfaces/Label';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
+import { Project } from '../../../../frontend/awx/interfaces/Project';
 
 describe('Workflow Job templates form', () => {
   //these tests need to be enabled when workflow job templates are working
   let organization: Organization;
   let inventory: Inventory;
   let label: Label;
+  let project: Project;
+  let inventorySource: InventorySource;
 
   before(() => {
     cy.awxLogin();
@@ -82,6 +86,62 @@ describe('Workflow Job templates form', () => {
       cy.contains(/^Success$/);
       cy.clickButton(/^Close$/);
       cy.clickButton(/^Clear all filters$/);
+    });
+  });
+  it('Save and launch a workflow job template from list page', function () {
+    cy.createAwxJobTemplate({
+      organization: (this.globalOrganization as Organization).id,
+      project: (this.globalProject as Project).id,
+      inventory: inventory.id,
+    }).then((jobTemplate) => {
+      cy.createAwxWorkflowJobTemplate({
+        organization: (this.globalOrganization as Organization).id,
+        inventory: inventory.id,
+      }).then((workflowJobTemplate) => {
+        cy.createAwxWorkflowVisualizerProjectNode(
+          workflowJobTemplate,
+          this.globalProject as Project
+        ).then((projectNode) => {
+          cy.createAwxWorkflowVisualizerJobTemplateNode(workflowJobTemplate, jobTemplate).then(
+            (jobTemplateNode) => {
+              cy.createAwxOrganization().then((org) => {
+                organization = org;
+                cy.createAwxProject({ organization: organization.id }).then((p) => {
+                  project = p;
+                  cy.createAwxInventorySource(inventory, project).then((invSrc) => {
+                    inventorySource = invSrc;
+                    cy.createAwxWorkflowVisualizerInventorySourceNode(
+                      workflowJobTemplate,
+                      inventorySource
+                    ).then((inventorySourceNode) => {
+                      cy.createAwxWorkflowVisualizerManagementNode(workflowJobTemplate, 2).then(
+                        (managementNode) => {
+                          cy.createWorkflowJTSuccessNodeLink(projectNode, jobTemplateNode);
+                          cy.createWorkflowJTSuccessNodeLink(jobTemplateNode, inventorySourceNode);
+                          cy.createWorkflowJTFailureNodeLink(inventorySourceNode, managementNode);
+                        }
+                      );
+                    });
+                  });
+                });
+              });
+            }
+          );
+        });
+        cy.navigateTo('awx', 'templates');
+        cy.intercept('POST', `api/v2/workflow_job_templates/${workflowJobTemplate.id}/launch/`).as(
+          'launchWJT-WithNodes'
+        );
+        cy.searchAndDisplayResource(workflowJobTemplate.name);
+        cy.get('button[data-cy="launch-template"]').click();
+        cy.wait('@launchWJT-WithNodes')
+          .its('response.body.id')
+          .then((jobId: string) => {
+            /*there is a known React error, `create request error` happening due the output tab work in progress,but the test executes fine since there is no ui interaction here*/
+            cy.waitForWorkflowJobStatus(jobId);
+          });
+        cy.deleteAwxWorkflowJobTemplate(workflowJobTemplate);
+      });
     });
   });
 });

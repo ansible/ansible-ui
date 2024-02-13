@@ -105,11 +105,12 @@ describe('WorkflowVisualizer', () => {
     cy.get('[data-id="1356-1511"]').within(() => {
       cy.get('text').should('have.text', 'Run on fail');
     });
+    cy.contains('button:not(:disabled):not(:hidden)', 'Save').should('be.visible');
   });
 
   it('Should show the WorkflowVisualizer toolbar with Add and Cancel buttons', () => {
     cy.mount(<WorkflowVisualizer />);
-    cy.contains('button:not(:disabled):not(:hidden)', 'Save').should('be.visible');
+    cy.contains('button:disabled:not(:hidden)', 'Save').should('be.visible');
     cy.contains('button:not(:disabled):not(:hidden)', 'Add node').should('be.visible');
     cy.get('button[data-cy="workflow-visualizer-toolbar-close"]').should('be.visible');
     cy.get('button[data-cy="workflow-visualizer-toolbar-expand-collapse"]').should('be.visible');
