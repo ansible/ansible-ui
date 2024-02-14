@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
   PageFormSelect,
   PageFormSubmitHandler,
@@ -19,6 +19,9 @@ import { PageFormPeersSelect } from './components/PageFormPeersSelect';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { awxAPI } from '../../common/api/awx-utils';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
+import { requestPatch } from '../../../common/crud/Data';
+import { useSWRConfig } from 'swr';
+import { useGet } from '../../../common/crud/useGet';
 
 const InstanceType = {
   Execution: 'execution',
@@ -27,7 +30,6 @@ const InstanceType = {
 
 export interface IInstanceInput {
   hostname: string;
-  description?: string;
   listener_port: number;
   id?: string;
   managed_by_policy: boolean;
@@ -85,6 +87,58 @@ export function AddInstance() {
   );
 }
 
+export function EditInstance() {
+  const params = useParams();
+  const id = Number(params.id);
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const { data: instance } = useGet<Instance>(awxAPI`/instances/${id?.toString()}/`);
+
+  const { cache } = useSWRConfig();
+
+  const onSubmit: PageFormSubmitHandler<Instance> = async (instanceInput: Instance) => {
+    instanceInput.listener_port =
+      instanceInput.listener_port && Number(instanceInput?.listener_port);
+
+    const modifiedInput: string[] = [];
+    if (instanceInput.peers) {
+      instanceInput.peers?.map((element: { hostname: string }) => {
+        modifiedInput.push(element.hostname);
+      });
+      instanceInput.peers = modifiedInput;
+    }
+    await requestPatch<Instance>(awxAPI`/instances/${id.toString()}/`, instanceInput);
+    (cache as unknown as { clear: () => void }).clear?.();
+    navigate(-1);
+  };
+
+  const onCancel = () => navigate(-1);
+  const getPageUrl = useGetPageUrl();
+
+  if (instance) {
+    return (
+      <>
+        <PageHeader
+          title={t('Edit instance')}
+          breadcrumbs={[
+            { label: t('Instances'), to: getPageUrl(AwxRoute.Instances) },
+            { label: t('Edit instance') },
+          ]}
+        />
+        <AwxPageForm
+          submitText={t('Save')}
+          onSubmit={onSubmit}
+          cancelText={t('Cancel')}
+          onCancel={onCancel}
+          defaultValue={getInitialFormValues(instance)}
+        >
+          <InstanceInputs mode="edit" />
+        </AwxPageForm>
+      </>
+    );
+  }
+}
+
 function InstanceInputs(props: { mode: 'create' | 'edit' }) {
   const { mode } = props;
   const { t } = useTranslation();
@@ -98,11 +152,6 @@ function InstanceInputs(props: { mode: 'create' | 'edit' }) {
         isRequired
         maxLength={150}
         isDisabled={mode === 'edit'}
-      />
-      <PageFormTextInput<IInstanceInput>
-        name="description"
-        label={t('Description')}
-        placeholder={t('Enter a description')}
       />
       <PageFormTextInput<IInstanceInput>
         name="node_state"
@@ -119,12 +168,6 @@ function InstanceInputs(props: { mode: 'create' | 'edit' }) {
         labelHelp={t(
           'Select the port that Receptor will listen on for incoming connections, e.g. 27199.'
         )}
-        validate={(value) => {
-          if (Number(value) < 1024) {
-            return t('Ensure this value is greater than or equal to 1024.');
-          }
-          return undefined;
-        }}
       />
       <PageFormSelect<IInstanceInput>
         name="node_type"
@@ -172,4 +215,26 @@ function InstanceInputs(props: { mode: 'create' | 'edit' }) {
       </PageFormSection>
     </>
   );
+}
+
+function getInitialFormValues(instance: Instance | undefined) {
+  interface Hostname {
+    hostname: string;
+  }
+  const peers: Hostname[] = [];
+
+  instance?.peers.map((element: string) => {
+    peers.push({ hostname: element });
+  });
+
+  return {
+    hostname: instance?.hostname,
+    listener_port: instance?.listener_port,
+    node_state: instance?.node_state,
+    node_type: instance?.node_type,
+    peers: peers,
+    peers_from_control_nodes: instance?.peers_from_control_nodes,
+    managed_by_policy: instance?.managed_by_policy,
+    enabled: instance?.enabled,
+  };
 }
