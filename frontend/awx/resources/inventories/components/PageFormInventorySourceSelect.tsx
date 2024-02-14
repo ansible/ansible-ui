@@ -11,24 +11,26 @@ import { useSelectInventorySource } from '../hooks/useSelectInventorySource';
 export function PageFormInventorySourceSelect<
   TFieldValues extends FieldValues = FieldValues,
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
->(props: { name: TFieldName; isRequired?: boolean; inventoryId: number }) {
+>(props: { name: TFieldName; isRequired?: boolean; inventoryId?: number }) {
+  const { name, inventoryId, isRequired = false } = props;
   const { t } = useTranslation();
-  const openSelectDialog = useSelectInventorySource();
+  const openSelectDialog = useSelectInventorySource(inventoryId);
+
   const query = useCallback(async () => {
     const response = await requestGet<AwxItemsResponse<InventorySource>>(
-      awxAPI`/inventories/${props.inventoryId.toString()}/inventory_sources/`.concat(
-        `?page_size=200`
-      )
+      inventoryId === null || inventoryId === undefined
+        ? awxAPI`/inventory_sources/?page_size=200`
+        : awxAPI`/inventories/${inventoryId.toString()}/inventory_sources/?page_size=200`
     );
     return Promise.resolve({
       total: response.count,
       values: response.results as FieldPathValue<TFieldValues, Path<TFieldValues>>[],
     });
-  }, [props.inventoryId]);
+  }, [inventoryId]);
 
   return (
     <PageFormAsyncSelect<TFieldValues>
-      name={props.name}
+      name={name}
       id="inventory-source-select"
       label={t('Inventory source')}
       query={query}
@@ -38,7 +40,7 @@ export function PageFormInventorySourceSelect<
       placeholder={t('Select inventory source')}
       loadingPlaceholder={t('Loading inventory sources...')}
       loadingErrorText={t('Error loading inventory sources')}
-      isRequired={props.isRequired}
+      isRequired={isRequired}
       limit={200}
       openSelectDialog={openSelectDialog}
     />

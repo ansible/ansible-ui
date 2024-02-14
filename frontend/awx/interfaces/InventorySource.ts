@@ -94,6 +94,7 @@ export interface InventorySourceCreate {
 
 export interface InventorySourceForm {
   credential: SummaryFieldCredential;
+  credentialIdPath: number;
   inventory: number;
   source_path: { name: string };
   source_script: string;

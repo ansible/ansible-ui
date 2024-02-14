@@ -5,7 +5,7 @@ export interface Task {
   created_by: string;
   started_at: string;
   finished_at: string;
-  state: 'completed' | 'failed' | 'running' | 'waiting';
+  state: 'completed' | 'failed' | 'running' | 'waiting' | 'canceled' | 'skipped';
   error?: TaskError;
   worker: string;
   logging_cid: string;
