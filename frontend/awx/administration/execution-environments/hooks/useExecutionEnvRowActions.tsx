@@ -38,6 +38,7 @@ export function useExecutionEnvRowActions(view: IAwxView<ExecutionEnvironment>) 
         selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Delete execution environment'),
+        isHidden: (executionEnvironment) => executionEnvironment.managed,
         isDisabled: (executionEnvironment) => cannotDeleteResource(executionEnvironment, t),
         onClick: (executionEnvironment) => deleteExecutionEnvironments([executionEnvironment]),
         isDanger: true,

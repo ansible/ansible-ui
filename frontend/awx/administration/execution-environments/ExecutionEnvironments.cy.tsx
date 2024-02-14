@@ -57,6 +57,7 @@ describe('Execution Environments List', () => {
         .then((eeResponse: AwxItemsResponse<ExecutionEnvironment>) => {
           for (let i = 0; i < eeResponse.results.length; i++) {
             eeResponse.results[i].summary_fields.user_capabilities.delete = false;
+            eeResponse.results[i].managed = false;
           }
           return eeResponse;
         })
@@ -147,6 +148,7 @@ describe('Execution Environments List', () => {
         .then((eeResponse: AwxItemsResponse<ExecutionEnvironment>) => {
           for (let i = 0; i < eeResponse.results.length; i++) {
             eeResponse.results[i].summary_fields.user_capabilities.delete = true;
+            eeResponse.results[i].managed = false;
           }
           return eeResponse;
         })
@@ -170,6 +172,34 @@ describe('Execution Environments List', () => {
               'aria-disabled',
               'false'
             );
+          });
+        });
+    });
+
+    it('Delete execution environment row action is hidden if execution environment is managed', () => {
+      cy.fixture('execution_environments')
+        .then((eeResponse: AwxItemsResponse<ExecutionEnvironment>) => {
+          for (let i = 0; i < eeResponse.results.length; i++) {
+            eeResponse.results[i].summary_fields.user_capabilities.delete = true;
+            eeResponse.results[i].managed = true;
+          }
+          return eeResponse;
+        })
+        .then((eeBodyNoDeletePerms) => {
+          cy.intercept(
+            {
+              method: 'GET',
+              url: '/api/v2/execution_environments/*',
+            },
+            { body: eeBodyNoDeletePerms }
+          );
+        })
+        .then(() => {
+          cy.mount(<ExecutionEnvironments />);
+        })
+        .then(() => {
+          cy.contains('tr', 'test').within(() => {
+            cy.get('button.toggle-kebab').should('not.exist');
           });
         });
     });
