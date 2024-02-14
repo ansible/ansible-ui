@@ -7,7 +7,6 @@ describe('Add instance Form', () => {
     cy.get('[data-cy="listener-port"]').type('0');
     cy.clickButton(/^Save$/);
     cy.contains('Host name is required.').should('be.visible');
-    cy.contains('Ensure this value is greater than or equal to 1024.').should('be.visible');
   });
 
   it('should validate regex fields on save', () => {
@@ -54,7 +53,6 @@ describe('Add instance Form', () => {
         node_type: 'hop',
         node_state: 'installed',
         hostname: 'AddInstanceMockWithPeers',
-        description: 'mock instance description',
         listener_port: 9999,
         peers: ['e2eInstance0daD'],
         enabled: true,
@@ -64,7 +62,6 @@ describe('Add instance Form', () => {
     }).as('addInstanceWithPeers');
     cy.mount(<AddInstance />);
     cy.get('[data-cy="hostname"]').type('AddInstanceMockWithPeers');
-    cy.get('[data-cy="description"]').type('mock instance description');
     cy.get('[data-cy="listener-port"]').type('9999');
     cy.selectDropdownOptionByResourceName('node-type', 'Hop');
     cy.intercept(
@@ -96,7 +93,6 @@ describe('Add instance Form', () => {
           node_type: 'hop',
           node_state: 'installed',
           hostname: 'AddInstanceMockWithPeers',
-          description: 'mock instance description',
           listener_port: 9999,
           peers: ['e2eInstance0daD'],
           enabled: true,
@@ -112,7 +108,6 @@ describe('Edit instance Form', () => {
     cy.mount(<EditInstance />);
     cy.verifyPageTitle('Edit instance');
     cy.get('[data-cy="hostname"]').should('be.visible').should('be.disabled');
-    cy.get('[data-cy="description"]').should('be.visible').should('not.be.disabled');
     cy.get('[data-cy="node-state"]').should('be.visible').should('be.disabled');
     cy.get('[data-cy="listener-port"]').should('be.visible').should('not.be.disabled');
     cy.get('[data-cy="node-type-form-group"]')

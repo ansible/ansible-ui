@@ -100,7 +100,9 @@ export function EditInstance() {
   const { cache } = useSWRConfig();
 
   const onSubmit: PageFormSubmitHandler<Instance> = async (instanceInput: Instance) => {
-    instanceInput.listener_port = Number(instanceInput?.listener_port);
+    instanceInput.listener_port =
+      instanceInput.listener_port && Number(instanceInput?.listener_port);
+
     const modifiedInput: string[] = [];
     if (instanceInput.peers) {
       instanceInput.peers?.map((element: { hostname: string }) => {
@@ -167,12 +169,6 @@ function InstanceInputs(props: { mode: 'create' | 'edit' }) {
         labelHelp={t(
           'Select the port that Receptor will listen on for incoming connections, e.g. 27199.'
         )}
-        validate={(value) => {
-          if (Number(value) < 1024) {
-            return t('Ensure this value is greater than or equal to 1024.');
-          }
-          return undefined;
-        }}
       />
       <PageFormSelect<IInstanceInput>
         name="node_type"

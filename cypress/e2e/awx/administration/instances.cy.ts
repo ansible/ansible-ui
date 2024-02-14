@@ -28,7 +28,6 @@ describe('Instances', () => {
     cy.get('[data-cy="page-title"]').should('contain', 'Add instance');
 
     cy.get('[data-cy="hostname"]').type(instanceHostname);
-    cy.get('[data-cy="description"]').type('E2E Instance Description');
     cy.get('[data-cy="listener-port"]').type('9999');
     cy.get('[data-cy="enabled"]').click();
     cy.get('[data-cy="managed_by_policy"]').click();
