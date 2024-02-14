@@ -1,7 +1,7 @@
 {
   "scripts": {
     "start": "cd .. && UI_MODE=AWX BRAND='Red Hat' PRODUCT='Ansible Automation Platform' AWX_API_PREFIX='/api/controller/v2' AWX_WEBSOCKET_PREFIX='/api/controller/websocket/' HUB_API_PREFIX='/api/hub' webpack serve --mode development --config ./platform/webpack.platform.cjs --port 4100 --open",
-    "build": "cd .. && npm run clean && UI_MODE=AWX BRAND='Red Hat' PRODUCT='Ansible Automation Platform' AWX_API_PREFIX='/api/controller/v2' HUB_API_PREFIX='/api/hub' webpack --mode production --config ./platform/webpack.platform.cjs --output-path build/platform",
+    "build": "cd .. && npm run clean && UI_MODE=AWX BRAND='Red Hat' PRODUCT='Ansible Automation Platform' AWX_API_PREFIX='/api/controller/v2' AWX_WEBSOCKET_PREFIX='/api/controller/websocket/' HUB_API_PREFIX='/api/hub' webpack --mode production --config ./platform/webpack.platform.cjs --output-path build/platform",
     "e2e": "cd .. && cypress open --browser chrome --e2e --config-file=cypress.platform.config.ts",
     "e2e:run": "cd .. && cypress run --e2e --config-file=cypress.platform.config.ts",
     "component": "cd .. && cypress open --browser chrome --component --config-file=cypress.platform.config.ts",
