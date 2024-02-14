@@ -12,7 +12,7 @@ import {
 import { useHubContext } from '../../../common/useHubContext';
 import { HubRoute } from '../../../main/HubRoutes';
 import { CollectionVersionSearch } from '../Approval';
-import { useApproveCollections } from './useApproveCollections';
+import { useApproveCollectionsFrameworkModal } from './useApproveCollections';
 import { useRejectCollections } from './useRejectCollections';
 
 export function useApprovalActions(callback?: (collections: CollectionVersionSearch[]) => void) {
@@ -20,7 +20,7 @@ export function useApprovalActions(callback?: (collections: CollectionVersionSea
   const pageNavigate = usePageNavigate();
   const params = useParams();
   const rejectCollections = useRejectCollections(callback);
-  const approveCollections = useApproveCollections(callback);
+  const approveCollectionsFrameworkModal = useApproveCollectionsFrameworkModal(callback);
   const { featureFlags } = useHubContext();
   const { collection_auto_sign, require_upload_signatures, can_upload_signatures } = featureFlags;
   const autoSign = collection_auto_sign && !require_upload_signatures;
@@ -58,7 +58,7 @@ export function useApprovalActions(callback?: (collections: CollectionVersionSea
         isPinned: true,
         icon: ThumbsUpIcon,
         label: autoSign ? t('Sign and approve') : t('Approve'),
-        onClick: (collection) => approveCollections([collection]),
+        onClick: (collection) => approveCollectionsFrameworkModal([collection]),
         isDanger: false,
         isDisabled: (collection) =>
           collection?.repository?.pulp_labels?.pipeline === 'approved'
@@ -100,7 +100,7 @@ export function useApprovalActions(callback?: (collections: CollectionVersionSea
     [
       t,
       rejectCollections,
-      approveCollections,
+      approveCollectionsFrameworkModal,
       autoSign,
       can_upload_signatures,
       require_upload_signatures,

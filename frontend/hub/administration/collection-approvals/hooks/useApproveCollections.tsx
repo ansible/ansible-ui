@@ -16,7 +16,7 @@ import { SigningServiceResponse } from '../../../interfaces/generated/SigningSer
 import { CollectionVersionSearch } from '../Approval';
 import { useApprovalsColumns } from './useApprovalsColumns';
 
-export function useApproveCollections(
+export function useApproveCollectionsFrameworkModal(
   onComplete?: (collections: CollectionVersionSearch[]) => void
 ) {
   const { t } = useTranslation();
