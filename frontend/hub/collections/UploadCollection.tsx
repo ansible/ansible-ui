@@ -151,6 +151,7 @@ export function UploadCollectionByFile() {
           disableListView={true}
           disableCardView={true}
           tableColumns={tableColumns}
+          compact={true}
           toolbarFilters={toolbarFilters}
           errorStateTitle={t('Error loading repositories')}
           emptyStateTitle={t('No repositories yet')}
@@ -171,7 +172,7 @@ export function UploadCollectionByFile() {
     const namespaceName = getNamespaceNameFromFile(data.file as File);
     if (namespaceParams && namespaceName !== namespaceParams) {
       setError(
-        t(`Namespace "{{namespaceName}}" do not match namespace "{{namespaceParams}}"`, {
+        t(`Namespace "{{namespaceName}}" do not match namespace "{{namespaceParams}}."`, {
           namespaceName,
           namespaceParams,
         })
@@ -181,32 +182,45 @@ export function UploadCollectionByFile() {
 
     let lastError = '';
     try {
-      lastError = t('Error in loading namespace {{namespaceName}}', { namespaceName });
+      if (!data.file) {
+        lastError = t('Please select the file to be uploaded.');
+        throw new Error('');
+      }
+
+      lastError = t('Error in loading namespace {{namespaceName}}.', { namespaceName });
       const namespace = await requestGet<HubItemsResponse<HubNamespace>>(
         hubAPI`/_ui/v1/namespaces/?limit=1&name=${namespaceName}`
       );
       if (namespace.data.length === 0) {
-        lastError = t('Can not find namespace {{namespaceName}}', { namespaceName });
+        lastError = t('Can not find namespace {{namespaceName}}.', { namespaceName });
         throw new Error('');
       }
 
-      lastError = t('Can not find distribution for selected repository');
+      lastError = t('Can not find distribution for selected repository.');
 
       const list = await distroGetRequest(
         pulpAPI`/distributions/ansible/ansible/?repository=${selectedRepo?.pulp_href || ''}`
       );
       const base_path = list?.results[0]?.base_path;
 
-      lastError = t(`Error occured during collection upload`);
+      if (!base_path) {
+        throw new Error('');
+      }
+
+      lastError = t(`Error occured during collection upload.`);
 
       await hubPostRequestFile(
         hubAPI`/v3/plugin/ansible/content/${base_path}/collections/artifacts/`,
         data.file as Blob
       );
 
-      pageNavigate(HubRoute.Approvals);
+      if (onlyStaging) {
+        pageNavigate(HubRoute.Approvals);
+      } else {
+        pageNavigate(HubRoute.Collections);
+      }
     } catch (error) {
-      setError(lastError);
+      setError(lastError + error?.toString());
     }
   }
 
@@ -219,6 +233,7 @@ export function UploadCollectionByFile() {
         onSubmit={(data) => {
           return submitData(data);
         }}
+        disableSubmitOnEnter={true}
         singleColumn={true}
       >
         <PageFormFileUpload label={t('Collection file')} name="file" isRequired />
