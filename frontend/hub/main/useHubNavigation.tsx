@@ -49,6 +49,7 @@ import { ExecutionEnvironments } from '../execution-environments/ExecutionEnviro
 import { ExecutionEnvironmentDetails } from '../execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentDetails';
 import { ExecutionEnvironmentActivity } from '../execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentActivity';
 import { ExecutionEnvironmentImages } from '../execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentImages';
+import { ExecutionEnvironmentImageDetails } from '../execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentImageDetails';
 import { ExecutionEnvironmentAccess } from '../execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentAccess';
 import { ExecutionEnvironmentPage } from '../execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentPage';
 import { CreateHubNamespace, EditHubNamespace } from '../namespaces/HubNamespaceForm';
@@ -153,6 +154,11 @@ export function useHubNavigation() {
               element: <CollectionDocumentation />,
             },
             {
+              id: HubRoute.CollectionDocumentationContent,
+              path: 'documentation/:content_type/:content_name',
+              element: <CollectionDocumentation />,
+            },
+            {
               id: HubRoute.CollectionContents,
               path: 'contents',
               element: <CollectionContents />,
@@ -218,6 +224,13 @@ export function useHubNavigation() {
               id: HubRoute.ExecutionEnvironmentImages,
               path: 'images',
               element: <ExecutionEnvironmentImages />,
+              children: [
+                {
+                  id: HubRoute.ExecutionEnvironmentImageDetails,
+                  path: ':tag/',
+                  element: <ExecutionEnvironmentImageDetails />,
+                },
+              ],
             },
             {
               id: HubRoute.ExecutionEnvironmentAccess,

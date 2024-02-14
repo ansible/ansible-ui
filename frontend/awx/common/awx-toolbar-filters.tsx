@@ -16,6 +16,34 @@ export function useNameToolbarFilter() {
   );
 }
 
+export function useKeywordToolbarFilter() {
+  const { t } = useTranslation();
+  return useMemo<IToolbarFilter>(
+    () => ({
+      key: 'keyword',
+      label: t('Keyword'),
+      type: ToolbarFilterType.SingleText,
+      query: 'search',
+      comparison: 'contains',
+    }),
+    [t]
+  );
+}
+
+export function useInitiatedByToolbarFilter() {
+  const { t } = useTranslation();
+  return useMemo<IToolbarFilter>(
+    () => ({
+      key: 'initiated-by',
+      label: t('Initiated by (username)'),
+      type: ToolbarFilterType.SingleText,
+      query: 'actor__username__icontains',
+      comparison: 'contains',
+    }),
+    [t]
+  );
+}
+
 export function useDescriptionToolbarFilter() {
   const { t } = useTranslation();
   return useMemo<IToolbarFilter>(
@@ -170,6 +198,20 @@ export function useImageToolbarFilter() {
       label: t('Image'),
       type: ToolbarFilterType.MultiText,
       query: 'image__icontains',
+      comparison: 'contains',
+    }),
+    [t]
+  );
+}
+
+export function useHostnameToolbarFilter() {
+  const { t } = useTranslation();
+  return useMemo<IToolbarFilter>(
+    () => ({
+      key: 'hostname',
+      label: t('Host name'),
+      type: ToolbarFilterType.SingleText,
+      query: 'hostname__icontains',
       comparison: 'contains',
     }),
     [t]

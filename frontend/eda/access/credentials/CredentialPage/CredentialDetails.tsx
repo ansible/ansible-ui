@@ -7,6 +7,7 @@ import { useGet } from '../../../../common/crud/useGet';
 import { edaAPI } from '../../../common/eda-utils';
 import { EdaCredential } from '../../../interfaces/EdaCredential';
 import { CredentialOptions } from '../EditCredential';
+import { CredentialTypeEnum } from '../../../interfaces/generated/eda-api';
 
 export function CredentialDetails() {
   const { t } = useTranslation();
@@ -36,11 +37,13 @@ export function CredentialDetails() {
         {credentialOption ? credentialOption?.label : credential?.credential_type}
       </PageDetail>
       <PageDetail label={t('Username')}>{credential?.username || ''}</PageDetail>
+      {credential.credential_type === CredentialTypeEnum.AnsibleVaultPassword && (
+        <PageDetail label={t('Vault identifier')}>{credential?.key || ''}</PageDetail>
+      )}
       <PageDetail label={t('Created')}>
         {credential?.created_at ? formatDateString(credential.created_at) : ''}
       </PageDetail>
       <LastModifiedPageDetail
-        format="date-time"
         value={credential?.modified_at ? formatDateString(credential.modified_at) : ''}
       />
     </PageDetails>

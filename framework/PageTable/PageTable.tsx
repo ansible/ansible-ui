@@ -41,6 +41,7 @@ import {
 import styled from 'styled-components';
 import { IPageAction, PageActionSelection } from '../PageActions/PageAction';
 import { PageActions } from '../PageActions/PageActions';
+import { PageDetails } from '../PageDetails/PageDetails';
 import { PageDetailsFromColumns } from '../PageDetails/PageDetailsFromColumns';
 import { PageTableViewType, PageTableViewTypeE } from '../PageToolbar/PageTableViewType';
 import { PageToolbar } from '../PageToolbar/PageToolbar';
@@ -395,7 +396,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
       )}
       {!props.disablePagination &&
         (!props.autoHidePagination || (props.itemCount ?? 0) > props.perPage) && (
-          <PagePagination {...props} topBorder />
+          <PagePagination {...props} topBorder={!props.autoHidePagination} />
         )}
     </>
   );
@@ -442,14 +443,9 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
 
     if (expandedRowColumns.length) {
       expandedRowFunctions.push((item) => (
-        <PageDetailsFromColumns
-          key={keyFn(item)}
-          item={item}
-          columns={expandedRowColumns}
-          disablePadding
-          numberOfColumns="multiple"
-          labelOrientation="vertical"
-        />
+        <PageDetails disablePadding numberOfColumns="multiple" labelOrientation="vertical">
+          <PageDetailsFromColumns key={keyFn(item)} item={item} columns={expandedRowColumns} />
+        </PageDetails>
       ));
     }
 

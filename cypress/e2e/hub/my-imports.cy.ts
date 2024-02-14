@@ -17,10 +17,10 @@ describe('My imports', () => {
   before(() => {
     cy.hubLogin();
 
-    cy.getNamespace(validCollection.namespace);
+    cy.createNamespace(validCollection.namespace);
     cy.galaxykit(`-i collection upload ${validCollection.namespace} ${validCollection.name}`);
 
-    cy.getNamespace(invalidCollection.namespace);
+    cy.createNamespace(invalidCollection.namespace);
     cy.galaxykit(`-i collection upload ${invalidCollection.namespace} ${invalidCollection.name}`);
   });
 

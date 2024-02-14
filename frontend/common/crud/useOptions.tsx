@@ -1,6 +1,5 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import useSWR, { SWRConfiguration } from 'swr';
 import { createRequestError } from './RequestError';
 import { normalizeQueryString } from './normalizeQueryString';
 import { requestCommon } from './requestCommon';
@@ -8,29 +7,27 @@ import { useAbortController } from './useAbortController';
 
 export function useOptions<T>(
   url: string | undefined,
-  query?: Record<string, string | number | boolean>,
-  swrConfiguration: SWRConfiguration = {}
+  query?: Record<string, string | number | boolean>
 ) {
   const getOptions = useOptionsRequest<T>();
   url += normalizeQueryString(query);
-  const response = useSWR<T>(url, getOptions, {
-    dedupingInterval: 0,
-    ...swrConfiguration,
-  });
-  const refresh = useCallback(() => void response.mutate(), [response]);
-  let error = response.error as Error;
-  if (error && !(error instanceof Error)) {
-    error = new Error('Unknown error');
-  }
-  return useMemo(
-    () => ({
-      data: response.data,
-      error: response.isLoading ? undefined : error,
-      refresh,
-      isLoading: response.isLoading,
-    }),
-    [response.data, response.isLoading, error, refresh]
-  );
+
+  const [data, setData] = useState<T | undefined>(undefined);
+  const [error, setError] = useState<Error | undefined>(undefined);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Options is using a straight request instead of SWR
+  // because otherwise SWR would cache the response and
+  // and GETS would get the cached response instead of the correct one
+  useEffect(() => {
+    if (!url) return;
+    void getOptions(url)
+      .then((data) => setData(data))
+      .catch((error) => setError(error instanceof Error ? error : new Error('Unknown error')))
+      .finally(() => setIsLoading(false));
+  }, [getOptions, url]);
+
+  return useMemo(() => ({ data, error, isLoading }), [data, error, isLoading]);
 }
 
 /**
@@ -44,29 +41,32 @@ export function useOptions<T>(
 function useOptionsRequest<ResponseBody>() {
   const navigate = useNavigate();
   const abortController = useAbortController();
-  return async (url: string, signal?: AbortSignal) => {
-    const response = await requestCommon({
-      url,
-      method: 'OPTIONS',
-      signal: signal ?? abortController.signal,
-    });
-    if (!response.ok) {
-      if (response.status === 401) {
-        navigate('/login?navigate-back=true');
-      }
-      throw await createRequestError(response);
-    }
-    switch (response.status) {
-      case 204:
-        return null as ResponseBody;
-      default:
-        if (response.headers.get('content-type')?.includes('application/json')) {
-          return (await response.json()) as ResponseBody;
-        } else if (response.headers.get('content-type')?.includes('text/plain')) {
-          return (await response.text()) as unknown as ResponseBody;
-        } else {
-          return (await response.blob()) as unknown as ResponseBody;
+  return useCallback(
+    async (url: string, signal?: AbortSignal) => {
+      const response = await requestCommon({
+        url,
+        method: 'OPTIONS',
+        signal: signal ?? abortController.signal,
+      });
+      if (!response.ok) {
+        if (response.status === 401) {
+          navigate('/login?navigate-back=true');
         }
-    }
-  };
+        throw await createRequestError(response);
+      }
+      switch (response.status) {
+        case 204:
+          return null as ResponseBody;
+        default:
+          if (response.headers.get('content-type')?.includes('application/json')) {
+            return (await response.json()) as ResponseBody;
+          } else if (response.headers.get('content-type')?.includes('text/plain')) {
+            return (await response.text()) as unknown as ResponseBody;
+          } else {
+            return (await response.blob()) as unknown as ResponseBody;
+          }
+      }
+    },
+    [navigate, abortController]
+  );
 }

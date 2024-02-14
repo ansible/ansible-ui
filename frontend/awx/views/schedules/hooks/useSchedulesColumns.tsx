@@ -108,7 +108,7 @@ export function useSchedulesColumns(options?: { disableSort?: boolean; disableLi
       {
         header: t('Next run'),
         sort: 'next_run',
-        cell: (sched) => <DateTimeCell format="date-time" value={sched.next_run} />,
+        cell: (sched) => <DateTimeCell value={sched.next_run} />,
       },
     ],
     [typeColumn, descriptionColumn, jobTypeLabels, nameColumn, navigate, t]

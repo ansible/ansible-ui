@@ -25,7 +25,7 @@ export function useInstancesColumns(options?: { disableSort?: boolean; disableLi
   } = useNodeTypeTooltip();
 
   const nameClick = useCallback(
-    (instance: Instance) => pageNavigate(AwxRoute.InstancePage, { params: { id: instance.id } }),
+    (instance: Instance) => pageNavigate(AwxRoute.InstanceDetails, { params: { id: instance.id } }),
     [pageNavigate]
   );
 
@@ -43,7 +43,7 @@ export function useInstancesColumns(options?: { disableSort?: boolean; disableLi
   const nameColumn = useNameColumn<Instance>({
     ...options,
     onClick: nameClick,
-    header: t('Hostname'),
+    header: t('Name'),
     sort: 'hostname',
   });
 
@@ -65,7 +65,7 @@ export function useInstancesColumns(options?: { disableSort?: boolean; disableLi
       {
         cell: makeReadable,
         sort: 'node_type',
-        header: t('Instance type'),
+        header: t('Node type'),
         card: 'subtitle',
         list: 'subtitle',
       },
@@ -100,7 +100,7 @@ export function useInstancesColumns(options?: { disableSort?: boolean; disableLi
       },
       {
         header: t('Last health check'),
-        cell: (instance) => <DateTimeCell format="since" value={instance.last_health_check} />,
+        cell: (instance) => <DateTimeCell value={instance.last_health_check} />,
         card: 'hidden',
       },
       createdColumn,

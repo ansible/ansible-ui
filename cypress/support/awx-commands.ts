@@ -8,6 +8,7 @@ import { AwxToken } from '../../frontend/awx/interfaces/AwxToken';
 import { Credential } from '../../frontend/awx/interfaces/Credential';
 import { CredentialType } from '../../frontend/awx/interfaces/CredentialType';
 import { ExecutionEnvironment } from '../../frontend/awx/interfaces/ExecutionEnvironment';
+import { Instance } from '../../frontend/awx/interfaces/Instance';
 import { InstanceGroup } from '../../frontend/awx/interfaces/InstanceGroup';
 import { Inventory } from '../../frontend/awx/interfaces/Inventory';
 import { InventorySource } from '../../frontend/awx/interfaces/InventorySource';
@@ -235,10 +236,6 @@ Cypress.Commands.add('configFormatToggle', (configType: string) => {
   cy.get(`[data-cy="${configType}-form-group"] [data-cy=toggle-json]`).click();
 });
 
-Cypress.Commands.add('typeMonacoTextField', (textString: string) => {
-  cy.get('[data-cy="variables"]').type(textString);
-});
-
 Cypress.Commands.add('assertMonacoTextField', (textString: string) => {
   cy.get('[data-cy="variables"] code').should('contain', textString);
 });
@@ -310,7 +307,19 @@ Cypress.Commands.add('clickTab', (label: string | RegExp, isLink) => {
 });
 
 Cypress.Commands.add('clickButton', (label: string | RegExp) => {
-  cy.contains('button', label).click();
+  cy.contains('button:not(:disabled):not(:hidden)', label)
+    .should('not.have.attr', 'aria-disabled', 'true')
+    .should('be.visible');
+  cy.contains('button:not(:disabled):not(:hidden)', label).click();
+});
+
+Cypress.Commands.add('clickByDataCy', (dataCy: string) => {
+  // Having the check before the click is needed for a timing issue which causes:
+  // We initially found matching element(s), but while waiting for them to become actionable, they disappeared from the page.
+  cy.get(`[data-cy="${dataCy}"]:not(:disabled):not(:hidden)`)
+    .should('not.have.attr', 'aria-disabled', 'true')
+    .should('be.visible');
+  cy.get(`[data-cy="${dataCy}"]:not(:disabled):not(:hidden)`).click();
 });
 
 Cypress.Commands.add('navigateTo', (component: string, label: string) => {
@@ -340,7 +349,9 @@ Cypress.Commands.add('hasTooltip', (label: string | RegExp) => {
 
 Cypress.Commands.add('clickToolbarKebabAction', (dataCyLabel: string | RegExp) => {
   cy.get('[data-ouia-component-id="page-toolbar"]').within(() => {
-    cy.get('[data-cy*="actions-dropdown"]')
+    cy.get('[data-cy*="actions-dropdown"]:not(:disabled):not(:hidden)')
+      .should('not.have.attr', 'aria-disabled', 'true')
+      .should('be.visible')
       .click()
       .then(() => {
         cy.get(`[data-cy=${dataCyLabel}]`).click();
@@ -1263,7 +1274,7 @@ Cypress.Commands.add(
     cy.verifyPageTitle('Create Application');
     cy.get('[data-cy="name"]').type(customAppName);
     cy.get('[data-cy="description"]').type(customAppDescription);
-    cy.get('[data-cy="organization"]').type('Default');
+    cy.selectSingleSelectOption('[data-cy="organization"]', 'Default');
     cy.selectDropdownOptionByResourceName('authorization-grant-type', customGrantType);
     cy.selectDropdownOptionByResourceName('client-type', customClientType);
     cy.get('[data-cy="redirect-uris"]').type(customRedirectURIS);
@@ -1297,7 +1308,7 @@ Cypress.Commands.add(
     //Verify application details page
     cy.verifyPageTitle(customAppName);
     cy.get('[data-cy="name"]').should('contain', customAppName);
-    cy.get('[data-cy="organization"]').type('Default');
+    cy.get('[data-cy="organization"]').should('contain', 'Default');
     cy.get('[data-cy="authorization-grant-type"]').should(
       'contain',
       customGrantType === 'Authorization code'
@@ -1351,7 +1362,7 @@ Cypress.Commands.add(
 
     //Verify changes
     cy.get('[data-cy="name"]').should('contain', customAppName);
-    cy.get('[data-cy="organization"]').type('Default');
+    cy.get('[data-cy="organization"]').should('contain', 'Default');
     cy.get('[data-cy="authorization-grant-type"]').should('contain', customGrantType.toLowerCase());
     cy.get('[data-cy="client-type"]').should('contain', newCustomClientType.toLowerCase());
   }
@@ -1363,7 +1374,7 @@ Cypress.Commands.add(
     //Verify application details page
     cy.verifyPageTitle(customAppName);
     cy.get('[data-cy="name"]').should('contain', customAppName);
-    cy.get('[data-cy="organization"]').type('Default');
+    cy.get('[data-cy="organization"]').should('contain', 'Default');
     cy.get('[data-cy="authorization-grant-type"]').should(
       'contain',
       customGrantType === 'Authorization code'
@@ -1461,6 +1472,38 @@ Cypress.Commands.add('editAwxApplication', (application: Application, name: stri
   if (application?.id) {
     cy.awxRequestPatch(awxAPI`/applications/${application.id.toString()}/`, {
       name: name,
+    });
+  }
+});
+
+Cypress.Commands.add('createAwxInstance', () => {
+  cy.awxRequestPost<
+    Pick<
+      Instance,
+      | 'hostname'
+      | 'description'
+      | 'enabled'
+      | 'managed_by_policy'
+      | 'peers_from_control_nodes'
+      | 'node_state'
+      | 'node_type'
+    >,
+    Instance
+  >(awxAPI`/instances/`, {
+    hostname: 'E2EInstanceTest' + randomString(5),
+    description: 'E2E Test Instance Description',
+    enabled: true,
+    managed_by_policy: false,
+    peers_from_control_nodes: false,
+    node_state: 'installed',
+    node_type: 'execution',
+  });
+});
+
+Cypress.Commands.add('removeAwxInstance', (id: string) => {
+  if (id) {
+    cy.awxRequestPatch(awxAPI`/instances/${id}/`, {
+      node_state: 'deprovisioning',
     });
   }
 });

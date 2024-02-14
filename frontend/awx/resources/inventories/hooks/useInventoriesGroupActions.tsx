@@ -59,7 +59,7 @@ export function useInventoriesGroupActions() {
         label: t('Run command'),
         onClick: (group) =>
           pageNavigate(AwxRoute.InventoryGroups, {
-            params: { inventory_type: 'inventory', id: group.inventory },
+            params: { inventory_type: params.inventory_type, id: group.inventory },
           }),
         isDisabled: () =>
           canRunAdHocCommand
@@ -87,7 +87,7 @@ export function useInventoriesGroupActions() {
             actionColumns,
             onComplete: () =>
               pageNavigate(AwxRoute.InventoryGroups, {
-                params: { inventory_type: 'inventory', id: group.inventory },
+                params: { inventory_type: params.inventory_type, id: group.inventory },
               }),
             actionFn: (group: InventoryGroup, signal) =>
               requestDelete(awxAPI`/groups/${group.id.toString()}/`, signal),

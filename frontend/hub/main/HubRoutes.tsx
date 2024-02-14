@@ -19,6 +19,7 @@ export enum HubRoute {
   CollectionDetails = 'hub-collection-details',
   CollectionInstall = 'hub-collection-install',
   CollectionDocumentation = 'hub-collection-documentation',
+  CollectionDocumentationContent = 'hub-collection-documentation-content',
   CollectionContents = 'hub-collection-contents',
   CollectionImportLog = 'hub-collection-page-import-log',
   CollectionDistributions = 'hub-collection-distributions',
@@ -31,6 +32,7 @@ export enum HubRoute {
   ExecutionEnvironmentDetails = 'hub-create-execution-environment-details',
   ExecutionEnvironmentActivity = 'hub-create-execution-environment-activity',
   ExecutionEnvironmentImages = 'hub-create-execution-environment-images',
+  ExecutionEnvironmentImageDetails = 'hub-create-execution-environment-image-details',
   ExecutionEnvironmentAccess = 'hub-create-execution-environment-access',
 
   SignatureKeys = 'hub-signature-keys',

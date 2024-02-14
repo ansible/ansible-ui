@@ -65,6 +65,7 @@ export enum AwxRoute {
   CredentialPage = 'awx-credential-page',
   CredentialDetails = 'awx-credential-details',
   CredentialAccess = 'awx-credentials-access',
+  CredentialJobTemplates = 'awx-credentials-job-templates',
 
   Projects = 'awx-projects',
   CreateProject = 'awx-create-project',
@@ -98,6 +99,7 @@ export enum AwxRoute {
   InventoryGroupEdit = 'awx-inventory-group-edit',
   InventoryGroupDetails = 'awx-inventory-group-details',
   InventoryGroupRelatedGroups = 'awx-inventory-group-related-groups',
+  InventoryGroupRelatedGroupsCreate = 'awx-inventory-group-related-groups-create',
   InventoryGroupHost = 'awx-inventory-group-host',
   InventoryHosts = 'awx-inventory-hosts',
   InventoryHostAdd = 'awx-inventory-host-add',
@@ -199,8 +201,9 @@ export enum AwxRoute {
   InstanceGroups = 'awx-instance-groups',
 
   Instances = 'awx-instances',
+  AddInstance = 'awx-add-instance',
   EditInstance = 'awx-edit-instance',
-  InstancePage = 'awx-instance-page',
+  InstanceDetails = 'awx-instance-page',
 
   Applications = 'awx-applications',
   ApplicationPage = 'awx-application-page',

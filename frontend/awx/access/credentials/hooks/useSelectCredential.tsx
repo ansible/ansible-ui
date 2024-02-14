@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { usePageDialog, useSelectDialog } from '../../../../../framework';
-import { SelectSingleDialog } from '../../../../../framework/PageDialogs/SelectSingleDialog';
+import { SingleSelectDialog } from '../../../../../framework/PageDialogs/SingleSelectDialog';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxView } from '../../../common/useAwxView';
 import { Credential } from '../../../interfaces/Credential';
@@ -97,7 +97,7 @@ function SelectCredential(props: {
         }),
   });
   return (
-    <SelectSingleDialog<Credential>
+    <SingleSelectDialog<Credential>
       {...props}
       toolbarFilters={toolbarFilters}
       tableColumns={tableColumns}

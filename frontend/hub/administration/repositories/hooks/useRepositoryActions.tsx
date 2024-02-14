@@ -18,6 +18,7 @@ import { getRepoURL } from '../../../common/api/hub-api-utils';
 import { useClipboard } from '../../../../../framework/hooks/useClipboard';
 import { HubRoute } from '../../../main/HubRoutes';
 import { useSyncRepositories } from './useSyncRepositories';
+import { useDeleteCollectionsFromRepository } from '../../../collections/hooks/useDeleteCollectionsFromRepository';
 
 export function useRepositoryActions(options: {
   onRepositoriesDeleted: (repositories: Repository[]) => void;
@@ -60,10 +61,6 @@ export function useRepositoryActions(options: {
       {
         label: t('Copy CLI configuration'),
         onClick: (repo) => {
-          const alertSuccess: AlertProps = {
-            variant: 'success',
-            title: t('Copied to clipboard'),
-          };
           const alertNoDistro: AlertProps = {
             variant: 'danger',
             title: t('There are no distributions associated with this repository.'),
@@ -79,8 +76,8 @@ export function useRepositoryActions(options: {
                 `url=${getRepoURL(distroBasePath)}`,
                 'token=<put your token here>',
               ].join('\n');
+              // This will show alert Copied to clipboard
               writeToClipboard(cliConfig);
-              alertToaster.addAlert(alertSuccess);
             },
             () => alertToaster.addAlert(alertNoDistro)
           );
@@ -108,21 +105,30 @@ export function useRepositoryActions(options: {
   return actions;
 }
 
-export function useCollectionVersionsActions() {
+export function useCollectionVersionsActionsRemove(
+  repository: Repository,
+  callback?: (collections: CollectionVersionSearch[]) => void
+) {
   const { t } = useTranslation();
-  const actions = useMemo<IPageAction<CollectionVersionSearch>[]>(
+  const deleteCollectionsVersionsFromRepository = useDeleteCollectionsFromRepository(
+    repository,
+    callback,
+    true,
+    false
+  );
+
+  return useMemo<IPageAction<CollectionVersionSearch>[]>(
     () => [
       {
         icon: TrashIcon,
-        label: t('Delete'),
-        onClick: () => {},
-        selection: PageActionSelection.Multiple,
+        label: t('Remove'),
+        onClick: (collections) => deleteCollectionsVersionsFromRepository([collections]),
+        selection: PageActionSelection.Single,
         type: PageActionType.Button,
         isDanger: true,
+        isPinned: true,
       },
     ],
-    [t]
+    [t, deleteCollectionsVersionsFromRepository]
   );
-
-  return actions;
 }
