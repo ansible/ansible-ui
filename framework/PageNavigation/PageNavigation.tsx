@@ -88,13 +88,10 @@ function PageNavigationItemComponent(props: { item: PageNavigationItem; baseRout
     //   path.join(process.env?.ROUTE_PREFIX ?? '', route)
     // );
 
-    let prefix = process.env?.ROUTE_PREFIX ?? '';
+    let path = process.env?.ROUTE_PREFIX ?? '' + route;
+    path = path.replace('//', '/');
 
-    if (prefix.endsWith('/')) {
-      prefix = prefix.slice(0, -1);
-    }
-
-    const isActive = location.pathname.startsWith(prefix + route);
+    const isActive = location.pathname.startsWith(path);
     return (
       <NavItem
         id={id}
