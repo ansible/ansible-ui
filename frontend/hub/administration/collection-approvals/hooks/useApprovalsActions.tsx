@@ -38,7 +38,7 @@ export function useApprovalsActions(callback: (collections: CollectionVersionSea
           ? t('Sign and approve selected collections')
           : t('Approve selected collections'),
         onClick: (items) =>
-          approveCollection(items, true, t, copyToRepository, approveCollectionsFrameworkModal),
+          approveCollection(items, copyToRepository, approveCollectionsFrameworkModal, true, t),
         isDanger: false,
       },
     ],

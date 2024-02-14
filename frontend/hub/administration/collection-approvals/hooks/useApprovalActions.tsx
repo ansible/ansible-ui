@@ -19,8 +19,8 @@ import { HubRoute } from '../../../main/HubRoutes';
 import { CollectionVersionSearch } from '../Approval';
 import { useApproveCollectionsFrameworkModal } from './useApproveCollections';
 import { useRejectCollections } from './useRejectCollections';
-import { TFunction } from 'i18next';
 import { useCopyToRepository } from '../../../collections/hooks/useCopyToRepository';
+import { TFunction } from 'i18next';
 
 export function useApprovalActions(callback?: (collections: CollectionVersionSearch[]) => void) {
   const { t } = useTranslation();
@@ -70,10 +70,10 @@ export function useApprovalActions(callback?: (collections: CollectionVersionSea
         onClick: (collection) =>
           approveCollection(
             [collection],
+            copyToRepository,
+            approveCollectionsFrameworkModal,
             false,
             t,
-            copyToRepository,
-            approveCollectionsFrameworkModal
           ),
         isDanger: false,
         isDisabled: (collection) =>
@@ -128,10 +128,10 @@ export function useApprovalActions(callback?: (collections: CollectionVersionSea
 
 export function approveCollection(
   collections: CollectionVersionSearch[],
-  bulkAction: boolean,
-  t: TFunction<'translation', undefined>,
   copyToRepository: ReturnType<typeof useCopyToRepository>,
-  approveCollectionsFrameworkModal: ReturnType<typeof useApproveCollectionsFrameworkModal>
+  approveCollectionsFrameworkModal: ReturnType<typeof useApproveCollectionsFrameworkModal>,
+  bulkAction : boolean,
+  t : TFunction<"translation", undefined>,
 ) {
   async function innerAsync() {
     const repoRes = (await requestGet(
@@ -139,15 +139,7 @@ export function approveCollection(
     )) as PulpItemsResponse<Repository>;
 
     if (repoRes.count > 1) {
-      if (bulkAction) {
-        throw new Error(
-          t(
-            'You can use bulk action only when there is single approved repo, but you have multiple approved repositories.'
-          )
-        );
-      } else {
-        copyToRepository(collections[0], 'approve');
-      }
+        copyToRepository(collections[0], 'approve', bulkAction ? t(`You can only use bulk action when there is only one approved repository available.`) : undefined);
     } else {
       approveCollectionsFrameworkModal(collections);
     }
