@@ -84,7 +84,9 @@ export function PageFormCredentialSelect<
         }
         try {
           const itemsResponse = await requestGet<AwxItemsResponse<Credential>>(
-            awxAPI`/credentials/?name=${credentialName}`
+            props.credentialType
+              ? awxAPI`/credentials/?name=${credentialName}&credential_type=${props.credentialType.toString()}`
+              : awxAPI`/credentials/?name=${credentialName}`
           );
           if (itemsResponse.results.length === 0) return t('Credential not found.');
           if (props.credentialPath) setValue(props.credentialPath, itemsResponse.results[0]);

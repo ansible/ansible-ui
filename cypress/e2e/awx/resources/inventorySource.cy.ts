@@ -56,7 +56,7 @@ describe('Inventory source page', () => {
     cy.clickTableRow(inventory.name);
     cy.verifyPageTitle(inventory.name);
     cy.clickLink(/^Sources$/);
-    cy.get('#add-source').click();
+    cy.clickButton(/^Add source/);
     cy.verifyPageTitle('Add new source');
     cy.get('[data-cy="name"]').type('project source');
     cy.selectDropdownOptionByResourceName('source_control_type', 'Sourced from a Project');
