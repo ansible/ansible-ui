@@ -344,6 +344,13 @@ declare global {
         body: RequestBodyT
       ): Chainable<ResponseBodyT>;
 
+      requestPoll<ResponseT, ResultT = ResponseT>(options: {
+        url: string;
+        check: (response: Cypress.Response<ResponseT>) => ResultT | undefined;
+        interval?: number;
+        timeout?: number;
+      }): Chainable<ResponseT>;
+
       // --- AWX COMMANDS ---
 
       /**
@@ -993,6 +1000,8 @@ declare global {
       // -- HUB COMMANDS
 
       galaxykit(operation: string, ...args: string[]): Cypress.Chainable<string[]>;
+      waitOnHubTask(taskUrl: string): Cypress.Chainable<Task>;
+
       createApprovedCollection(
         namespaceName: string,
         collectionName: string,

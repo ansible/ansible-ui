@@ -3,7 +3,7 @@ import { ExecutionEnvironment } from '../../../frontend/hub/execution-environmen
 import { hubAPI } from '../../support/formatApiPathForHub';
 import { ExecutionEnvironments } from './constants';
 
-describe.skip('Execution Environments', () => {
+describe('Execution Environments', () => {
   before(() => {
     cy.hubLogin();
   });
@@ -42,11 +42,11 @@ describe('Execution Environment Details tab', () => {
   });
 
   after(() => {
-    cy.deleteHubExecutionEnvironment(executionEnvironment.name, { failOnStatusCode: true });
-    cy.deleteHubRemoteRegistry(registry.id, { failOnStatusCode: true });
+    cy.deleteHubExecutionEnvironment(executionEnvironment.name);
+    cy.deleteHubRemoteRegistry(registry.id);
   });
 
-  it.only('should render the execution environment details page', () => {
+  it('should render the execution environment details page', () => {
     // test navigating by sidebar menu
     cy.navigateTo('hub', ExecutionEnvironments.url);
     cy.filterTableBySingleText(containerName);

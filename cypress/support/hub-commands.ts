@@ -2,6 +2,7 @@
 import { randomString } from '../../framework/utils/random-string';
 import { Role } from '../../frontend/hub/access/roles/Role';
 import { RemoteRegistry } from '../../frontend/hub/administration/remote-registries/RemoteRegistry';
+import { Task } from '../../frontend/hub/administration/tasks/Task';
 import { CollectionVersionSearch } from '../../frontend/hub/collections/Collection';
 import { parsePulpIDFromURL } from '../../frontend/hub/common/api/hub-api-utils';
 import { HubItemsResponse } from '../../frontend/hub/common/useHubView';
@@ -398,7 +399,12 @@ Cypress.Commands.add(
     cy.requestDelete(
       hubAPI`/v3/plugin/execution-environments/repositories/${executionEnvironmentName}/`,
       options
-    );
+    ).then((response) => {
+      if (response.status === 202) {
+        const body = response.body as { task: string };
+        cy.waitOnHubTask(body.task);
+      }
+    });
   }
 );
 
@@ -415,3 +421,32 @@ Cypress.Commands.add(
     );
   }
 );
+
+Cypress.Commands.add('waitOnHubTask', function waitOnHubTask(taskUrl: string) {
+  cy.requestPoll<Task>({
+    url: taskUrl,
+    check: (response) => {
+      switch (response.status) {
+        case 200:
+          switch (response.body.state) {
+            case 'completed':
+              return response.body;
+            case 'failed':
+            case 'canceled':
+            case 'skipped':
+              if (response.body.error?.description) {
+                throw new Error(response.body.error.description);
+              } else {
+                throw new Error('Task failed without error message.');
+              }
+            default:
+              return undefined;
+          }
+        case 404:
+          throw new Error('Task not found');
+        default:
+          return undefined;
+      }
+    },
+  });
+});
