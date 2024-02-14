@@ -30,7 +30,7 @@ export function EdaMasthead() {
     navigate('/login');
   }, [clearAllCache, navigate]);
   return (
-    <PageMasthead brand={<EdaBrand style={{ height: 64 }} />}>
+    <PageMasthead brand={<EdaBrand style={{ height: 45, width: 45 }} />}>
       <ToolbarGroup variant="icon-button-group" style={{ flexGrow: 1 }}>
         <ToolbarItem style={{ marginLeft: 'auto' }}>
           <PageRefreshIcon />
