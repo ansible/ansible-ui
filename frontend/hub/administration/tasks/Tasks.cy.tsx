@@ -24,6 +24,8 @@ describe('Tasks List', () => {
   });
   it('Filter tasks by status = running', () => {
     cy.mount(<Tasks />);
+    cy.get('[data-cy="filter"]').click();
+    cy.get('#status').click();
     cy.get('[data-cy="filter-input"]').click();
     cy.get('#running').click();
     cy.clickButton(/^Clear all filters$/);
