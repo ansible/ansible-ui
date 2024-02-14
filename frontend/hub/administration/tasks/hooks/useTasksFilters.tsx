@@ -6,16 +6,13 @@ export function useTasksFilters() {
   const { t } = useTranslation();
   const toolbarFilters = useMemo<IToolbarFilter[]>(
     () => [
-      // TODO: add filter by name when pulpView is updated to allow selection of multiple filters from the same category
-      // {
-      //   key: 'name',
-      //   label: t('Task name'),
-      //   type: ToolbarFilterType.Text,
-      //   query: 'name__contains',
-      //   comparison: 'contains',
-      // },
-
-      // TODO: change type to MultiSelect when pulpView is updated to allow selection of multiple filters from the same category
+      {
+        key: 'name',
+        label: t('Task name'),
+        type: ToolbarFilterType.SingleText,
+        query: 'name__contains',
+        comparison: 'contains',
+      },
       {
         key: 'status',
         label: t('Status'),
