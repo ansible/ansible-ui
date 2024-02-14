@@ -1,0 +1,48 @@
+{
+  "id": 6,
+  "type": "execution_environment",
+  "url": "/api/v2/execution_environments/6/",
+  "related": {
+    "named_url": "/api/v2/execution_environments/hello/",
+    "created_by": "/api/v2/users/3/",
+    "modified_by": "/api/v2/users/3/",
+    "activity_stream": "/api/v2/execution_environments/6/activity_stream/",
+    "unified_job_templates": "/api/v2/execution_environments/6/unified_job_templates/",
+    "copy": "/api/v2/execution_environments/6/copy/"
+  },
+  "summary_fields": {
+    "created_by": {
+      "id": 3,
+      "username": "demoadmin",
+      "first_name": "",
+      "last_name": ""
+    },
+    "modified_by": {
+      "id": 3,
+      "username": "demoadmin",
+      "first_name": "",
+      "last_name": ""
+    },
+    "user_capabilities": {
+      "edit": true,
+      "delete": true,
+      "copy": true
+    },
+    "credential": {
+      "name": "Test Reg Cred"
+    },
+    "organization": {
+      "name": "Default",
+      "id": 1
+    }
+  },
+  "created": "2024-02-08T17:36:00.513423Z",
+  "modified": "2024-02-08T17:36:00.513438Z",
+  "name": "hello",
+  "description": "",
+  "organization": null,
+  "image": "gdfg",
+  "managed": false,
+  "credential": 23,
+  "pull": ""
+}

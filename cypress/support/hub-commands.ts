@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access */
 import { randomString } from '../../framework/utils/random-string';
 import { Role } from '../../frontend/hub/access/roles/Role';
+import { Task } from '../../frontend/hub/administration/tasks/Task';
 import { CollectionVersionSearch } from '../../frontend/hub/collections/Collection';
 import { parsePulpIDFromURL } from '../../frontend/hub/common/api/hub-api-utils';
 import { HubItemsResponse } from '../../frontend/hub/common/useHubView';
@@ -383,3 +384,32 @@ Cypress.Commands.add(
     );
   }
 );
+
+Cypress.Commands.add('waitOnHubTask', function waitOnHubTask(taskId: number | string) {
+  cy.requestPoll<Task>({
+    url: pulpAPI`/tasks/${taskId.toString()}/`,
+    check: (response) => {
+      switch (response.status) {
+        case 200:
+          switch (response.body.state) {
+            case 'completed':
+              return response.body;
+            case 'failed':
+            case 'canceled':
+            case 'skipped':
+              if (response.body.error?.description) {
+                throw new Error(response.body.error.description);
+              } else {
+                throw new Error('Task failed without error message.');
+              }
+            default:
+              return undefined;
+          }
+        case 404:
+          throw new Error('Task not found');
+        default:
+          return undefined;
+      }
+    },
+  });
+});

@@ -403,12 +403,12 @@ Cypress.Commands.add('selectDetailsPageKebabAction', (dataCy: string) => {
 
 Cypress.Commands.add(
   'clickTableRowKebabAction',
-  (name: string | RegExp, dataCyLabel: string | RegExp, filter?: boolean) => {
+  (name: string | RegExp, dataCyLabel: string, filter?: boolean) => {
     cy.getTableRowByText(name, filter).within(() => {
       cy.get('[data-cy*="actions-dropdown"]')
         .click()
         .then(() => {
-          cy.get(`[data-cy=${dataCyLabel}]`).click();
+          cy.clickByDataCy(dataCyLabel);
         });
     });
   }
@@ -438,11 +438,14 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add('tableHasRowWithSuccess', (name: string | RegExp, filter?: boolean) => {
-  cy.getTableRowByText(name, filter).within(() => {
-    cy.get('[data-label="Status"]').should('contain', 'Success');
-  });
-});
+Cypress.Commands.add(
+  'tableHasRowWithSuccess',
+  (name: string | RegExp, filter?: boolean, timeout?: number) => {
+    cy.getTableRowByText(name, filter).within(() => {
+      cy.get('[data-label="Status"]').should('contain', 'Success', { timeout: timeout ?? 60000 });
+    });
+  }
+);
 
 Cypress.Commands.add('selectTableRow', (name: string | RegExp, filter?: boolean) => {
   cy.getTableRowByText(name, filter).within(() => {
