@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access */
 import { randomString } from '../../framework/utils/random-string';
 import { Role } from '../../frontend/hub/access/roles/Role';
+import { RemoteRegistry } from '../../frontend/hub/administration/remote-registries/RemoteRegistry';
 import { CollectionVersionSearch } from '../../frontend/hub/collections/Collection';
 import { parsePulpIDFromURL } from '../../frontend/hub/common/api/hub-api-utils';
 import { HubItemsResponse } from '../../frontend/hub/common/useHubView';
@@ -380,6 +381,37 @@ Cypress.Commands.add(
     cy.requestPatch(
       hubAPI`/v3/plugin/ansible/content/${repository}/collections/index/${namespace}/${collection}/`,
       { deprecated: false }
+    );
+  }
+);
+
+Cypress.Commands.add(
+  'createHubExecutionEnvironment',
+  (executionEnvironment: { name: string; registry: string; upstream_name: string }) => {
+    cy.requestPost(hubAPI`/_ui/v1/execution-environments/remotes/`, executionEnvironment);
+  }
+);
+
+Cypress.Commands.add(
+  'deleteHubExecutionEnvironment',
+  (executionEnvironmentName: string, options?: { failOnStatusCode?: boolean }) => {
+    cy.requestDelete(
+      hubAPI`/v3/plugin/execution-environments/repositories/${executionEnvironmentName}/`,
+      options
+    );
+  }
+);
+
+Cypress.Commands.add('createHubRemoteRegistry', (remoteRegistry: Partial<RemoteRegistry>) => {
+  cy.requestPost(hubAPI`/_ui/v1/execution-environments/registries/`, remoteRegistry);
+});
+
+Cypress.Commands.add(
+  'deleteHubRemoteRegistry',
+  (remoteRegistryId: string, options?: { failOnStatusCode?: boolean }) => {
+    cy.requestDelete(
+      hubAPI`/_ui/v1/execution-environments/registries/${remoteRegistryId}/`,
+      options
     );
   }
 );

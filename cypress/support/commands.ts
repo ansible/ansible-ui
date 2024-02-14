@@ -43,6 +43,7 @@ import { EdaUser, EdaUserCreateUpdate } from '../../frontend/eda/interfaces/EdaU
 import { Role as HubRole } from '../../frontend/hub/access/roles/Role';
 import { RemoteRegistry } from '../../frontend/hub/administration/remote-registries/RemoteRegistry';
 import { CollectionVersionSearch } from '../../frontend/hub/collections/Collection';
+import { ExecutionEnvironment as HubExecutionEnvironment } from '../../frontend/hub/execution-environments/ExecutionEnvironment';
 import './auth';
 import './awx-commands';
 import { IAwxResources } from './awx-commands';
@@ -1040,6 +1041,24 @@ declare global {
         collectionName: string,
         namespaceName: string,
         repository: string
+      ): Cypress.Chainable<void>;
+
+      createHubExecutionEnvironment(executionEnvironment: {
+        name: string;
+        registry: string;
+        upstream_name: string;
+      }): Cypress.Chainable<HubExecutionEnvironment>;
+      deleteHubExecutionEnvironment(
+        executionEnvironmentId: string,
+        options?: { failOnStatusCode?: boolean }
+      ): Cypress.Chainable<void>;
+
+      createHubRemoteRegistry(
+        remoteRegistry: Partial<RemoteRegistry>
+      ): Cypress.Chainable<RemoteRegistry>;
+      deleteHubRemoteRegistry(
+        repositoryId: string,
+        options?: { failOnStatusCode?: boolean }
       ): Cypress.Chainable<void>;
     }
   }

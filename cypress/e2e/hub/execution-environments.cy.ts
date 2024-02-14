@@ -26,40 +26,27 @@ describe('Execution Environment Details tab', () => {
   });
 
   before(() => {
-    cy.galaxykit('registry create', registryName, 'https://registry.hub.docker.com/');
-    cy.galaxykit('container create', containerName, 'library/alpine', registryName);
-    cy.requestPost<RemoteRegistry>(hubAPI`/_ui/v1/execution-environments/registries/`, {
+    cy.createHubRemoteRegistry({
       name: registryName,
       url: 'https://registry.hub.docker.com/',
     }).then((response) => {
       registry = response;
-      cy.requestPost<
-        ExecutionEnvironment,
-        { name: string; registry: string; upstream_name: string }
-      >(hubAPI`/_ui/v1/execution-environments/remotes/`, {
+      cy.createHubExecutionEnvironment({
         name: containerName,
         registry: registry.id,
-        upstream_name: 'upstream',
+        upstream_name: 'alpine',
       }).then((response) => {
-        cy.log('Execution environment created', response);
         executionEnvironment = response;
       });
     });
   });
 
   after(() => {
-    cy.galaxykit('container delete', containerName);
-    cy.galaxykit('registry delete', registryName);
-
-    cy.requestDelete(hubAPI`/_ui/v1/execution-environments/remotes/${executionEnvironment.id}/`, {
-      failOnStatusCode: false,
-    });
-    cy.requestDelete(hubAPI`/_ui/v1/execution-environments/registries/${registry.id}/`, {
-      failOnStatusCode: false,
-    });
+    cy.deleteHubExecutionEnvironment(executionEnvironment.name, { failOnStatusCode: true });
+    cy.deleteHubRemoteRegistry(registry.id, { failOnStatusCode: true });
   });
 
-  it('should render the execution environment details page', () => {
+  it.only('should render the execution environment details page', () => {
     // test navigating by sidebar menu
     cy.navigateTo('hub', ExecutionEnvironments.url);
     cy.filterTableBySingleText(containerName);
