@@ -235,10 +235,6 @@ Cypress.Commands.add('configFormatToggle', (configType: string) => {
   cy.get(`[data-cy="${configType}-form-group"] [data-cy=toggle-json]`).click();
 });
 
-Cypress.Commands.add('typeMonacoTextField', (textString: string) => {
-  cy.get('[data-cy="variables"]').type(textString);
-});
-
 Cypress.Commands.add('assertMonacoTextField', (textString: string) => {
   cy.get('[data-cy="variables"] code').should('contain', textString);
 });

@@ -33,7 +33,7 @@ export default function AwxMain() {
         }
         masthead={<AwxMasthead />}
         navigation={navigation}
-        basename={process.env.AWX_ROUTE_PREFIX}
+        basename={process.env.ROUTE_PREFIX}
       />
     </RefreshIntervalProvider>
   );
