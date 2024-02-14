@@ -61,15 +61,7 @@ export function useApproveCollectionsFrameworkModal(
         actionColumns,
         onComplete,
         actionFn: (collection: CollectionVersionSearch) =>
-          approveCollection(
-            collection,
-            getRequest,
-            collections.length > 1,
-            t,
-            copyToRepository,
-            context,
-            pulpRequest
-          ),
+          approveCollection(collection, getRequest, t, context, pulpRequest),
       });
     },
     [
@@ -90,9 +82,7 @@ export function useApproveCollectionsFrameworkModal(
 export function approveCollection(
   collection: CollectionVersionSearch,
   getRequest: ReturnType<typeof useGetRequest>,
-  bulkAction: boolean,
   t: TFunction<'translation', undefined>,
-  copyToRepository: ReturnType<typeof useCopyToRepository>,
   context: HubContext,
   pulpRequest: ReturnType<typeof useGetRequest<PulpItemsResponse<SigningServiceResponse>>>
 ) {
@@ -104,30 +94,14 @@ export function approveCollection(
     )) as PulpItemsResponse<Repository>;
     approvedRepo = repoRes.results[0].pulp_href;
 
-    const pipeline = collection.repository?.pulp_labels?.pipeline;
-    if (pipeline === 'approved') {
-      throw new Error(t('You can only approve collections in rejected or staging repositories'));
-    }
-
-    if (repoRes.count > 1) {
-      if (bulkAction) {
-        throw new Error(
-          t(
-            'You can use bulk action only when there is single approved repo, but you have multiple approved repositories.'
-          )
-        );
-      } else {
-        copyToRepository(collection, 'approve');
-      }
-    } else {
-      await copyToRepositoryAction(
-        collection,
-        'approve',
-        [{ pulp_href: approvedRepo } as Repository],
-        context,
-        pulpRequest
-      );
-    }
+    await copyToRepositoryAction(
+      collection,
+      'approve',
+      [{ pulp_href: approvedRepo } as Repository],
+      context,
+      pulpRequest,
+      t
+    );
   }
 
   return innerAsync();

@@ -16,6 +16,7 @@ import { CollectionVersionSearch } from '../Collection';
 import { usePageDialog } from './../../../../framework';
 import { PageTable } from './../../../../framework/PageTable/PageTable';
 import { useGetRequest } from './../../../common/crud/useGet';
+import { TFunction } from 'i18next';
 
 export function useCopyToRepository() {
   const [_, setDialog] = usePageDialog();
@@ -65,7 +66,8 @@ function CopyToRepositoryModal(props: {
         operation,
         selectedRepositories,
         props.context,
-        pulpRequest
+        pulpRequest,
+        t
       );
 
       setIsLoading(false);
@@ -213,13 +215,19 @@ export async function copyToRepositoryAction(
   operation: 'approve' | 'copy',
   selectedRepositories: Repository[],
   context: HubContext,
-  pulpRequest: ReturnType<typeof useGetRequest<PulpItemsResponse<SigningServiceResponse>>>
+  pulpRequest: ReturnType<typeof useGetRequest<PulpItemsResponse<SigningServiceResponse>>>,
+  t: TFunction<'translation', undefined>
 ) {
+  debugger;
   const { repository } = collection;
   if (!repository) {
     return;
   }
 
+  const pipeline = collection.repository?.pulp_labels?.pipeline;
+  if (!(pipeline === 'staging' || pipeline === 'rejected')) {
+    throw new Error(t('You can only approve collections in rejected or staging repositories'));
+  }
   const pulpId = parsePulpIDFromURL(repository?.pulp_href);
 
   const { collection_auto_sign, require_upload_signatures } = context.featureFlags;

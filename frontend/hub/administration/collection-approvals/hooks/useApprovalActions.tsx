@@ -3,6 +3,11 @@ import { ThumbsDownIcon, ThumbsUpIcon, UploadIcon, ImportIcon } from '@patternfl
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
+import { requestGet } from '../../../../common/crud/Data';
+import { pulpAPI } from '../../../common/api/formatPath';
+import { PulpItemsResponse } from '../../../common/useHubView';
+import { Repository } from '../../repositories/Repository';
+
 import {
   IPageAction,
   PageActionSelection,
@@ -14,6 +19,8 @@ import { HubRoute } from '../../../main/HubRoutes';
 import { CollectionVersionSearch } from '../Approval';
 import { useApproveCollectionsFrameworkModal } from './useApproveCollections';
 import { useRejectCollections } from './useRejectCollections';
+import { TFunction } from 'i18next';
+import { useCopyToRepository } from '../../../collections/hooks/useCopyToRepository';
 
 export function useApprovalActions(callback?: (collections: CollectionVersionSearch[]) => void) {
   const { t } = useTranslation();
@@ -24,6 +31,8 @@ export function useApprovalActions(callback?: (collections: CollectionVersionSea
   const { featureFlags } = useHubContext();
   const { collection_auto_sign, require_upload_signatures, can_upload_signatures } = featureFlags;
   const autoSign = collection_auto_sign && !require_upload_signatures;
+
+  const copyToRepository = useCopyToRepository();
 
   return useMemo<IPageAction<CollectionVersionSearch>[]>(
     () => [
@@ -58,7 +67,14 @@ export function useApprovalActions(callback?: (collections: CollectionVersionSea
         isPinned: true,
         icon: ThumbsUpIcon,
         label: autoSign ? t('Sign and approve') : t('Approve'),
-        onClick: (collection) => approveCollectionsFrameworkModal([collection]),
+        onClick: (collection) =>
+          approveCollection(
+            [collection],
+            false,
+            t,
+            copyToRepository,
+            approveCollectionsFrameworkModal
+          ),
         isDanger: false,
         isDisabled: (collection) =>
           collection?.repository?.pulp_labels?.pipeline === 'approved'
@@ -108,4 +124,34 @@ export function useApprovalActions(callback?: (collections: CollectionVersionSea
       params,
     ]
   );
+}
+
+export function approveCollection(
+  collections: CollectionVersionSearch[],
+  bulkAction: boolean,
+  t: TFunction<'translation', undefined>,
+  copyToRepository: ReturnType<typeof useCopyToRepository>,
+  approveCollectionsFrameworkModal: ReturnType<typeof useApproveCollectionsFrameworkModal>
+) {
+  async function innerAsync() {
+    const repoRes = (await requestGet(
+      pulpAPI`/repositories/ansible/ansible/?pulp_label_select=pipeline=approved`
+    )) as PulpItemsResponse<Repository>;
+
+    if (repoRes.count > 1) {
+      if (bulkAction) {
+        throw new Error(
+          t(
+            'You can use bulk action only when there is single approved repo, but you have multiple approved repositories.'
+          )
+        );
+      } else {
+        copyToRepository(collections[0], 'approve');
+      }
+    } else {
+      approveCollectionsFrameworkModal(collections);
+    }
+  }
+
+  innerAsync();
 }

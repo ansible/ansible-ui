@@ -5,6 +5,9 @@ import { IPageAction, PageActionSelection, PageActionType } from '../../../../..
 import { useHubContext } from '../../../common/useHubContext';
 import { CollectionVersionSearch } from '../Approval';
 import { useRejectCollections } from './useRejectCollections';
+import { approveCollection } from './useApprovalActions';
+import { useCopyToRepository } from '../../../collections/hooks/useCopyToRepository';
+import { useApproveCollectionsFrameworkModal } from './useApproveCollections';
 
 export function useApprovalsActions(callback: (collections: CollectionVersionSearch[]) => void) {
   const { t } = useTranslation();
@@ -12,6 +15,9 @@ export function useApprovalsActions(callback: (collections: CollectionVersionSea
   const { featureFlags } = useHubContext();
   const { collection_auto_sign, require_upload_signatures } = featureFlags;
   const autoSign = collection_auto_sign && !require_upload_signatures;
+
+  const copyToRepository = useCopyToRepository();
+  const approveCollectionsFrameworkModal = useApproveCollectionsFrameworkModal(callback);
 
   return useMemo<IPageAction<CollectionVersionSearch>[]>(
     () => [
@@ -24,7 +30,18 @@ export function useApprovalsActions(callback: (collections: CollectionVersionSea
         isDanger: true,
       },
       { type: PageActionType.Seperator },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
+        icon: ThumbsUpIcon,
+        label: autoSign
+          ? t('Sign and approve selected collections')
+          : t('Approve selected collections'),
+        onClick: (items) =>
+          approveCollection(items, true, t, copyToRepository, approveCollectionsFrameworkModal),
+        isDanger: false,
+      },
     ],
-    [t, rejectCollections, autoSign]
+    [t, rejectCollections, approveCollection, autoSign]
   );
 }
