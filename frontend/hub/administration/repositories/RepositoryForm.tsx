@@ -1,4 +1,8 @@
+import { Label } from '@patternfly/react-core';
+import { ReactNode, useCallback } from 'react';
+import { FieldValues, UseFormSetValue, useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router';
 import { useNavigate } from 'react-router-dom';
 import {
   LoadingPage,
@@ -10,24 +14,20 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../framework';
-import { HubPageForm } from '../../common/HubPageForm';
-import { HubRoute } from '../../main/HubRoutes';
-import { pulpAPI } from '../../common/api/formatPath';
-import { IRemotes } from './../remotes/Remotes';
-import { useParams } from 'react-router';
-import { PageFormGroup } from '../../../../framework/PageForm/Inputs/PageFormGroup';
-import { useGet } from '../../../common/crud/useGet';
-import { PulpItemsResponse } from '../../common/useHubView';
-import { Repository } from './Repository';
-import { Label } from '@patternfly/react-core';
 import { PageFormAsyncSelect } from '../../../../framework/PageForm/Inputs/PageFormAsyncSelect';
-import { useCallback, ReactNode } from 'react';
-import { useSelectRemoteSingle } from './hooks/useRemoteSelector';
-import { useRepositoryBasePath, parsePulpIDFromURL } from '../../common/api/hub-api-utils';
-import { postHubRequest, putHubRequest } from '../../common/api/request';
+import { PageFormGroup } from '../../../../framework/PageForm/Inputs/PageFormGroup';
 import { PageFormWatch } from '../../../../framework/PageForm/Utils/PageFormWatch';
-import { useFormContext, UseFormSetValue, FieldValues } from 'react-hook-form';
+import { useGet } from '../../../common/crud/useGet';
 import { HubError } from '../../common/HubError';
+import { HubPageForm } from '../../common/HubPageForm';
+import { pulpAPI } from '../../common/api/formatPath';
+import { parsePulpIDFromURL, useRepositoryBasePath } from '../../common/api/hub-api-utils';
+import { postHubRequest, putHubRequest } from '../../common/api/request';
+import { PulpItemsResponse } from '../../common/useHubView';
+import { HubRoute } from '../../main/HubRoutes';
+import { IRemotes } from './../remotes/Remotes';
+import { Repository } from './Repository';
+import { useSelectRemoteSingle } from './hooks/useRemoteSelector';
 
 interface RepositoryFormProps {
   remote: IRemotes | string | null;
@@ -219,8 +219,8 @@ export function RepositoryForm() {
             'Content in repositories without a distribution will not be visible to clients for sync, download or search.'
           )}
         >
-          <PageFormWatch<string> watch={'name'}>
-            {(name: string) => {
+          <PageFormWatch<RepositoryFormProps, 'name'> watch="name">
+            {(name) => {
               return (
                 <PageFormCheckbox<RepositoryFormProps>
                   name="createDistribution"
@@ -265,8 +265,8 @@ export function RepositoryForm() {
           ))}
           {Object.keys(repositoryFormValues?.pulp_labels).length === 0 && t('None')}
           <br />
-          <PageFormWatch<string> watch={'pipeline'}>
-            {(pipeline: string) => {
+          <PageFormWatch<RepositoryFormProps, 'pipeline'> watch="pipeline">
+            {(pipeline) => {
               return (
                 <HookWrapper>
                   {(setValue) => {
