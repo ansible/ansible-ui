@@ -21,6 +21,7 @@ export function PageFormSingleSelectAwxResource<
   name: Name;
   label: string;
   isRequired?: boolean;
+  isDisabled?: boolean;
   url: string;
   toolbarFilters?: IToolbarFilter[];
   tableColumns: ITableColumn<Resource>[];
@@ -28,6 +29,7 @@ export function PageFormSingleSelectAwxResource<
   placeholder: string;
   queryPlaceholder: string;
   queryErrorText: string;
+  helperText?: string;
 }) {
   const id = useID(props);
 
@@ -79,6 +81,8 @@ export function PageFormSingleSelectAwxResource<
       queryPlaceholder={props.queryPlaceholder}
       queryErrorText={props.queryErrorText}
       isRequired={props.isRequired}
+      isDisabled={props.isDisabled}
+      helperText={props.helperText}
       footer={
         <PageSingleSelectContext.Consumer>
           {(context) => {

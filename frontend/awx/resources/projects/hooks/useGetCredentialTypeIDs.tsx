@@ -17,6 +17,9 @@ export function useGetCredentialTypeIDs() {
   const cryptoCredentialTypeResponse = useGet<AwxItemsResponse<CredentialType>>(
     awxAPI`/credential_types/?kind=cryptography`
   );
+  const registryCredentialTypeResponse = useGet<AwxItemsResponse<CredentialType>>(
+    awxAPI`/credential_types/?kind=registry`
+  );
   const credentialTypeIDs: { [key: string]: number } = useMemo(() => {
     const credentialTypeIds: { [key: string]: number } = {};
     if (scmCredentialTypeResponse?.data?.results) {
@@ -28,11 +31,15 @@ export function useGetCredentialTypeIDs() {
     if (cryptoCredentialTypeResponse?.data?.results) {
       credentialTypeIds['cryptography'] = cryptoCredentialTypeResponse?.data?.results[0]?.id;
     }
+    if (registryCredentialTypeResponse?.data?.results) {
+      credentialTypeIds['registry'] = registryCredentialTypeResponse?.data?.results[0]?.id;
+    }
     return credentialTypeIds;
   }, [
     cryptoCredentialTypeResponse?.data?.results,
     insightsCredentialTypeResponse?.data?.results,
     scmCredentialTypeResponse?.data?.results,
+    registryCredentialTypeResponse?.data?.results,
   ]);
   return credentialTypeIDs;
 }
