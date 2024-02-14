@@ -1,38 +1,5 @@
 import '@cypress/code-coverage/support';
 
-/** Get by selector, making sure it is not disabled or hidden */
-Cypress.Commands.add('getBy', (selector: string) => {
-  cy.get(`${selector}:not(:disabled):not(:hidden)`)
-    .should('not.have.attr', 'aria-disabled', 'true')
-    .should('be.visible');
-  cy.get(`${selector}:not(:disabled):not(:hidden)`);
-});
-
-/** Get by data-cy attribute, making sure it is not disabled or hidden */
-Cypress.Commands.add('getByDataCy', (dataCy: string) => {
-  cy.getBy(`[data-cy="${dataCy}"]`);
-});
-
-/** Click by selector, making sure it is not disabled or hidden */
-Cypress.Commands.add('clickBy', (selector: string) => {
-  cy.getBy(selector).click();
-});
-
-/** Click by data-cy attribute, making sure it is not disabled or hidden */
-Cypress.Commands.add('clickByDataCy', (dataCy: string) => {
-  cy.getByDataCy(dataCy).click();
-});
-
-/** Type input by selector, making sure it is not disabled or hidden */
-Cypress.Commands.add('typeBy', (selector: string, text: string) => {
-  cy.getBy(selector).type(text);
-});
-
-/** Type input by data-cy attribute, making sure it is not disabled or hidden */
-Cypress.Commands.add('typeByDataCy', (dataCy: string, text: string) => {
-  cy.getByDataCy(dataCy).type(text);
-});
-
 Cypress.Commands.add('searchAndDisplayResource', (resourceName: string) => {
   cy.get('[data-cy="text-input"]')
     .find('input')
@@ -75,7 +42,6 @@ Cypress.Commands.add(
     }
   }
 );
-
 Cypress.Commands.add('filterTableBySingleText', (text: string) => {
   cy.filterTableByText(text, 'SingleText');
   // TODO - this should be in future better sync, but for now, we need to have tests more stable
@@ -195,11 +161,4 @@ Cypress.Commands.add('selectMultiSelectOption', (selector: string, label: string
 
 Cypress.Commands.add('clickTableHeader', (text: string | RegExp) => {
   cy.get('thead').find('th').contains(text).click();
-});
-
-Cypress.Commands.add('typeBy', (selector: string, text: string) => {
-  cy.get(selector + ':not(:disabled):not(:hidden)')
-    .should('not.have.attr', 'aria-disabled', 'true')
-    .should('be.visible');
-  cy.get(selector + ':not(:disabled):not(:hidden)').type(text, { delay: 0 });
 });
