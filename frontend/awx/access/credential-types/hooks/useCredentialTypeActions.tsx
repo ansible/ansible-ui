@@ -10,16 +10,17 @@ import {
 } from '../../../../../framework';
 import { useOptions } from '../../../../common/crud/useOptions';
 import { awxAPI } from '../../../common/api/awx-utils';
-import { IAwxView } from '../../../common/useAwxView';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useDeleteCredentialTypes } from './useDeleteCredentialTypes';
 import { CredentialType } from '../../../interfaces/CredentialType';
 
-export function useCredentialTypeToolbarActions(view: IAwxView<CredentialType>) {
+export function useCredentialTypeToolbarActions(
+  onCredentialTypesDeleted: (credentialType: CredentialType[]) => void
+) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
-  const deleteCredentialTypes = useDeleteCredentialTypes(view.unselectItemsAndRefresh);
+  const deleteCredentialTypes = useDeleteCredentialTypes(onCredentialTypesDeleted);
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/credential_types/`);
   const canCreateCredentialType = Boolean(data && data.actions && data.actions['POST']);
 
