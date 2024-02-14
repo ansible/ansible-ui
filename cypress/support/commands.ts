@@ -49,6 +49,7 @@ import './awx-commands';
 import { IAwxResources } from './awx-commands';
 import './awx-user-access-commands';
 import './common-commands';
+import './core-commands';
 import './e2e';
 import './eda-commands';
 import './hub-commands';
@@ -76,49 +77,51 @@ declare global {
       // ---- UI COMMANDS ---
 
       setTableView(viewType: string): Chainable<void>;
-      createAndDeleteCustomAWXCredentialTypeUI(
-        customCredentialTypeName: string,
-        inputConfig?: string,
-        injectorConfig?: string,
-        defaultConfig?: string
-      ): Chainable<void>;
 
-      createCustomAWXApplicationFromUI(
-        customAppName: string,
-        customAppDescription: string,
-        customGrantType: string,
-        customClientType: string,
-        customRedirectURIS: string
-      ): Chainable<void>;
+      // ---------------------------------------------------------------------
+      // Core Commands
+      // ---------------------------------------------------------------------
+      // These commands are the core commands that are used to interact with the UI.
+      // They are used to interact with the UI in a way that is consistent and reliable.
+      // They check that the element is not disabled or hidden before interacting with it.
 
-      editCustomAWXApplicationFromDetailsView(
-        customAppName: string,
-        customGrantType: string,
-        customClientType: string,
-        newCustomClientType: string
-      ): Chainable<void>;
+      /** Get by selector, making sure it is not disabled or hidden */
+      getBy(selector: string): Chainable<JQuery<HTMLElement>>;
 
-      editCustomAWXApplicationFromListView(
-        customAppName: string,
-        customGrantType: string,
-        newCustomClientType: string
-      ): Chainable<void>;
+      /** Get by data-cy attribute, making sure it is not disabled or hidden */
+      getByDataCy(dataCy: string): Chainable<JQuery<HTMLElement>>;
 
-      deleteCustomAWXApplicationFromDetailsView(
-        customAppName: string,
-        customGrantType: string,
-        customClientType: string
-      ): Chainable<void>;
+      /** Click by selector, making sure it is not disabled or hidden */
+      clickBy(selector: string): Chainable<void>;
 
-      deleteCustomAWXApplicationFromListView(customAppName: string): Chainable<void>;
+      /** Click by data-cy attribute, making sure it is not disabled or hidden */
+      clickByDataCy(dataCy: string): Chainable<void>;
 
-      // --- INPUT COMMANDS ---
+      /** Type input by selector, making sure it is not disabled or hidden */
+      typeBy(selector: string, text: string): Chainable<void>;
+
+      /** Type input by data-cy attribute, making sure it is not disabled or hidden */
+      typeByDataCy(dataCy: string, text: string): Chainable<void>;
+
+      /** Select a value from a single select input by selector, making sure it is not disabled or hidden */
+      singleSelectBy(selector: string, value: string): Chainable<void>;
+
+      /** Select a value from a single select input by data-cy attribute, making sure it is not disabled or hidden */
+      singleSelectByDataCy(dataCy: string, value: string): Chainable<void>;
+
+      /** Select a value from a multi select input by selector, making sure it is not disabled or hidden */
+      multiSelectBy(selector: string, value: string): Chainable<void>;
+
+      /** Select a value from a multi select input by data-cy attribute, making sure it is not disabled or hidden */
+      multiSelectByDataCy(dataCy: string, value: string): Chainable<void>;
+
+      // ---------------------------------------------------------------------
+      // Input Commands
+      // ---------------------------------------------------------------------
 
       inputCustomCredTypeConfig(configType: string, config: string): Chainable<void>;
 
       configFormatToggle(configType: string): Chainable<void>;
-
-      typeBy(selector: string, text: string): Chainable<void>;
 
       assertMonacoTextField(textString: string): Chainable<void>;
 
@@ -346,6 +349,13 @@ declare global {
         url: string,
         body: RequestBodyT
       ): Chainable<ResponseBodyT>;
+
+      requestPoll<ResponseT, ResultT = ResponseT>(options: {
+        url: string;
+        check: (response: Cypress.Response<ResponseT>) => ResultT | undefined;
+        interval?: number;
+        timeout?: number;
+      }): Chainable<ResponseT>;
 
       // --- AWX COMMANDS ---
 
@@ -761,6 +771,42 @@ declare global {
       waitForJobToProcessEvents(jobID: string, retries?: number): Chainable<Job>;
       waitForWorkflowJobStatus(jobID: string): Chainable<Job>;
 
+      createAndDeleteCustomAWXCredentialTypeUI(
+        customCredentialTypeName: string,
+        inputConfig?: string,
+        injectorConfig?: string,
+        defaultConfig?: string
+      ): Chainable<void>;
+
+      createCustomAWXApplicationFromUI(
+        customAppName: string,
+        customAppDescription: string,
+        customGrantType: string,
+        customClientType: string,
+        customRedirectURIS: string
+      ): Chainable<void>;
+
+      editCustomAWXApplicationFromDetailsView(
+        customAppName: string,
+        customGrantType: string,
+        customClientType: string,
+        newCustomClientType: string
+      ): Chainable<void>;
+
+      editCustomAWXApplicationFromListView(
+        customAppName: string,
+        customGrantType: string,
+        newCustomClientType: string
+      ): Chainable<void>;
+
+      deleteCustomAWXApplicationFromDetailsView(
+        customAppName: string,
+        customGrantType: string,
+        customClientType: string
+      ): Chainable<void>;
+
+      deleteCustomAWXApplicationFromListView(customAppName: string): Chainable<void>;
+
       // --- EDA COMMANDS ---
 
       /**
@@ -960,6 +1006,8 @@ declare global {
       // -- HUB COMMANDS
 
       galaxykit(operation: string, ...args: string[]): Cypress.Chainable<string[]>;
+      waitOnHubTask(taskId: string): Cypress.Chainable<Task>;
+
       createApprovedCollection(
         namespaceName: string,
         collectionName: string,
