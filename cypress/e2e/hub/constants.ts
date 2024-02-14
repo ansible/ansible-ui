@@ -75,6 +75,7 @@ export const SignatureKeys = {
 export const Repositories = {
   title: 'Repository Management',
   url: 'repositories',
+  urlCreate: '/repositories/create',
 };
 
 export const Approvals = {
