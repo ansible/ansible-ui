@@ -16,7 +16,7 @@ import { useOrganizationsColumns, useOrganizationsFilters } from '../Organizatio
 export function PageFormSelectOrganization<
   TFieldValues extends FieldValues = FieldValues,
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
->(props: { name: TFieldName; isRequired?: boolean }) {
+>(props: { name: TFieldName; isRequired?: boolean; isDisabled?: boolean; helperText?: string }) {
   const { t } = useTranslation();
   const organizationColumns = useOrganizationsColumns({ disableLinks: true });
   const organizationFilters = useOrganizationsFilters();
@@ -29,6 +29,8 @@ export function PageFormSelectOrganization<
       queryPlaceholder={t('Loading organizations...')}
       queryErrorText={t('Error loading organizations')}
       isRequired={props.isRequired}
+      isDisabled={props.isDisabled}
+      helperText={props.helperText}
       url={awxAPI`/organizations/`}
       tableColumns={organizationColumns}
       toolbarFilters={organizationFilters}
