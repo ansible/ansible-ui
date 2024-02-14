@@ -239,7 +239,7 @@ declare global {
       /** Finds a table row containing text and clicks action specified by label. */
       clickTableRowKebabAction(
         name: string | RegExp,
-        dataCyLabel: string | RegExp,
+        dataCyLabel: string,
         filter?: boolean
       ): Chainable<void>;
 
