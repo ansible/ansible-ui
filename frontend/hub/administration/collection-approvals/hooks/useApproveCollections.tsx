@@ -3,10 +3,7 @@ import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { compareStrings } from '../../../../../framework';
 import { useGetRequest } from '../../../../common/crud/useGet';
-import {
-  copyToRepositoryAction,
-  useCopyToRepository,
-} from '../../../collections/hooks/useCopyToRepository';
+import { copyToRepositoryAction } from '../../../collections/hooks/useCopyToRepository';
 import { pulpAPI } from '../../../common/api/formatPath';
 import { collectionKeyFn } from '../../../common/api/hub-api-utils';
 import { useHubBulkConfirmation } from '../../../common/useHubBulkConfirmation';
@@ -31,7 +28,6 @@ export function useApproveCollectionsFrameworkModal(
   const { collection_auto_sign, require_upload_signatures } = context.featureFlags;
   const autoSign = collection_auto_sign && !require_upload_signatures;
 
-  const copyToRepository = useCopyToRepository();
   const pulpRequest = useGetRequest<PulpItemsResponse<SigningServiceResponse>>();
 
   return useCallback(
@@ -72,7 +68,6 @@ export function useApproveCollectionsFrameworkModal(
       t,
       getRequest,
       autoSign,
-      copyToRepository,
       pulpRequest,
       context,
     ]

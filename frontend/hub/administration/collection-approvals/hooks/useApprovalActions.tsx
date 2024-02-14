@@ -73,7 +73,7 @@ export function useApprovalActions(callback?: (collections: CollectionVersionSea
             copyToRepository,
             approveCollectionsFrameworkModal,
             false,
-            t,
+            t
           ),
         isDanger: false,
         isDisabled: (collection) =>
@@ -122,6 +122,7 @@ export function useApprovalActions(callback?: (collections: CollectionVersionSea
       require_upload_signatures,
       pageNavigate,
       params,
+      copyToRepository,
     ]
   );
 }
@@ -130,20 +131,24 @@ export function approveCollection(
   collections: CollectionVersionSearch[],
   copyToRepository: ReturnType<typeof useCopyToRepository>,
   approveCollectionsFrameworkModal: ReturnType<typeof useApproveCollectionsFrameworkModal>,
-  bulkAction : boolean,
-  t : TFunction<"translation", undefined>,
+  bulkAction: boolean,
+  t: TFunction<'translation', undefined>
 ) {
-  async function innerAsync() {
-    const repoRes = (await requestGet(
+  void (async () => {
+    const repoRes = await requestGet<PulpItemsResponse<Repository>>(
       pulpAPI`/repositories/ansible/ansible/?pulp_label_select=pipeline=approved`
-    )) as PulpItemsResponse<Repository>;
+    );
 
     if (repoRes.count > 1) {
-        copyToRepository(collections[0], 'approve', bulkAction ? t(`You can only use bulk action when there is only one approved repository available.`) : undefined);
+      copyToRepository(
+        collections[0],
+        'approve',
+        bulkAction
+          ? t(`You can only use bulk action when there is only one approved repository available.`)
+          : undefined
+      );
     } else {
       approveCollectionsFrameworkModal(collections);
     }
-  }
-
-  innerAsync();
+  })();
 }

@@ -23,7 +23,11 @@ export function useCopyToRepository() {
   const onClose = useCallback(() => setDialog(undefined), [setDialog]);
   const context = useHubContext();
 
-  return (collection: CollectionVersionSearch, operation: 'approve' | 'copy', displayDefaultError? : string) => {
+  return (
+    collection: CollectionVersionSearch,
+    operation: 'approve' | 'copy',
+    displayDefaultError?: string
+  ) => {
     setDialog(
       <CopyToRepositoryModal
         collection={collection}
@@ -41,7 +45,7 @@ function CopyToRepositoryModal(props: {
   onClose: () => void;
   context: HubContext;
   operation: 'approve' | 'copy';
-  displayDefaultError? : string;
+  displayDefaultError?: string;
 }) {
   const toolbarFilters = useRepositoryFilters();
   const tableColumns = useRepositoryColumns();
@@ -203,7 +207,9 @@ function CopyToRepositoryModal(props: {
         }}
       />
       {error && <HubError error={{ name: t('Error'), message: error }}></HubError>}
-      {props.displayDefaultError && <HubError error={{ name: t('Error'), message: props.displayDefaultError }}></HubError>}
+      {props.displayDefaultError && (
+        <HubError error={{ name: t('Error'), message: props.displayDefaultError }}></HubError>
+      )}
     </Modal>
   );
 }
@@ -219,9 +225,8 @@ export async function copyToRepositoryAction(
   selectedRepositories: Repository[],
   context: HubContext,
   pulpRequest: ReturnType<typeof useGetRequest<PulpItemsResponse<SigningServiceResponse>>>,
-  t: TFunction<'translation', undefined>,
+  t: TFunction<'translation', undefined>
 ) {
-  debugger;
   const { repository } = collection;
   if (!repository) {
     return;

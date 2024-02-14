@@ -42,6 +42,6 @@ export function useApprovalsActions(callback: (collections: CollectionVersionSea
         isDanger: false,
       },
     ],
-    [t, rejectCollections, approveCollection, autoSign]
+    [t, rejectCollections, autoSign, approveCollectionsFrameworkModal, copyToRepository]
   );
 }
