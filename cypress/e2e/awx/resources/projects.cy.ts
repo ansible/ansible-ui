@@ -22,13 +22,13 @@ describe('projects', () => {
     const projectName = 'E2E Project ' + randomString(4);
     cy.navigateTo('awx', 'projects');
     cy.clickLink(/^Create project$/);
-    cy.get('[data-cy="project-name"]').type(projectName);
-    cy.selectDropdownOptionByResourceName(
-      'organization',
+    cy.get('[data-cy="name"]').type(projectName);
+    cy.selectSingleSelectOption(
+      '[data-cy="organization"]',
       `${(this.globalOrganization as Organization).name}`
     );
     cy.selectDropdownOptionByResourceName('source_control_type', 'Git');
-    cy.get('[data-cy="project-scm-url"]').type('https://github.com/ansible/ansible-ui');
+    cy.get('[data-cy="scm-url"]').type('https://github.com/ansible/ansible-ui');
     cy.get('[data-cy="option-allow-override"]').click();
     cy.clickButton(/^Create project$/);
     cy.verifyPageTitle(projectName);
@@ -121,11 +121,11 @@ describe('project edit and delete tests', () => {
     cy.verifyPageTitle(project.name);
     cy.clickButton(/^Edit project$/);
     cy.verifyPageTitle('Edit Project');
-    cy.get('[data-cy="project-name"]').clear().type(`${project.name} - edited`);
+    cy.get('[data-cy="name"]').clear().type(`${project.name} - edited`);
     cy.clickButton(/^Save project$/);
     cy.verifyPageTitle(`${project.name} - edited`);
     cy.clickButton(/^Edit project$/);
-    cy.get('[data-cy="project-name"]').clear().type(`${project.name}`);
+    cy.get('[data-cy="name"]').clear().type(`${project.name}`);
     cy.clickButton(/^Save project$/);
     cy.verifyPageTitle(project.name);
   });
@@ -150,11 +150,11 @@ describe('project edit and delete tests', () => {
       cy.get('[data-cy="edit-project"]').click();
     });
     cy.verifyPageTitle('Edit Project');
-    cy.get('[data-cy="project-name"]').clear().type(`${project.name} - edited`);
+    cy.get('[data-cy="name"]').clear().type(`${project.name} - edited`);
     cy.clickButton(/^Save project$/);
     cy.verifyPageTitle(`${project.name} - edited`);
     cy.clickButton(/^Edit project$/);
-    cy.get('[data-cy="project-name"]').clear().type(`${project.name}`);
+    cy.get('[data-cy="name"]').clear().type(`${project.name}`);
     cy.clickButton(/^Save project$/);
     cy.verifyPageTitle(project.name);
   });
@@ -247,7 +247,7 @@ describe('project edit and delete tests', () => {
   //     cy.contains('td', testProject.name)
   //       .parent()
   //       .within(() => {
-  //         cy.get('#cancel-project-sync').click();
+  //         cy.get('#cancel-sync').click();
   //       });
   //     cy.get('#confirm').click();
   //     cy.clickButton(/^Cancel project sync/);

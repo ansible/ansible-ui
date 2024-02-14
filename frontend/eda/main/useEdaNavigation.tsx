@@ -42,10 +42,13 @@ import { RulebookActivationHistory } from '../rulebook-activations/RulebookActiv
 import { RulebookActivationPage } from '../rulebook-activations/RulebookActivationPage/RulebookActivationPage';
 import { RulebookActivations } from '../rulebook-activations/RulebookActivations';
 import { EdaRoute } from './EdaRoutes';
-import { CreateEventSource, EditEventSource } from '../Resources/event-sources/EventSourceForm';
-import { EventSourcePage } from '../Resources/event-sources/EventSourcePage/EventSourcePage';
-import { EventSourceDetails } from '../Resources/event-sources/EventSourcePage/EventSourceDetails';
-import { EventSources } from '../Resources/event-sources/EventSources';
+import { CreateEventStream } from '../event-streams/EventStreamForm';
+import { EventStreamPage } from '../event-streams/EventStreamPage/EventStreamPage';
+import { EventStreamDetails } from '../event-streams/EventStreamPage/EventStreamDetails';
+import { EventStreams } from '../event-streams/EventStreams';
+import { EventStreamInstanceDetails } from '../event-streams/EventStreamInstancePage/EventStreamInstanceDetails';
+import { EventStreamInstancePage } from '../event-streams/EventStreamInstancePage/EventStreamInstancePage';
+import { EventStreamHistory } from '../event-streams/EventStreamPage/EventStreamHistory';
 
 export function useEdaNavigation() {
   const { t } = useTranslation();
@@ -221,29 +224,45 @@ export function useEdaNavigation() {
       ],
     },
     {
-      id: EdaRoute.EventSources,
-      label: t('Event Sources'),
-      path: 'event-sources',
+      id: EdaRoute.EventStreams,
+      label: t('Event Streams'),
+      path: 'event-streams',
       children: [
         {
-          id: EdaRoute.CreateEventSource,
+          id: EdaRoute.CreateEventStream,
           path: 'create',
-          element: <CreateEventSource />,
+          element: <CreateEventStream />,
         },
         {
-          id: EdaRoute.EditEventSource,
-          path: 'edit/:id',
-          element: <EditEventSource />,
-        },
-        {
-          id: EdaRoute.EventSourcePage,
-          path: ':id',
-          element: <EventSourcePage />,
+          id: EdaRoute.EventStreamInstancePage,
+          path: ':id/history/:instanceId',
+          element: <EventStreamInstancePage />,
           children: [
             {
-              id: EdaRoute.EventSourceDetails,
+              id: EdaRoute.EventStreamInstanceDetails,
               path: 'details',
-              element: <EventSourceDetails />,
+              element: <EventStreamInstanceDetails />,
+            },
+            {
+              path: '',
+              element: <Navigate to="details" />,
+            },
+          ],
+        },
+        {
+          id: EdaRoute.EventStreamPage,
+          path: ':id',
+          element: <EventStreamPage />,
+          children: [
+            {
+              id: EdaRoute.EventStreamDetails,
+              path: 'details',
+              element: <EventStreamDetails />,
+            },
+            {
+              id: EdaRoute.EventStreamHistory,
+              path: 'history',
+              element: <EventStreamHistory />,
             },
             {
               path: '',
@@ -253,7 +272,7 @@ export function useEdaNavigation() {
         },
         {
           path: '',
-          element: <EventSources />,
+          element: <EventStreams />,
         },
       ],
     },

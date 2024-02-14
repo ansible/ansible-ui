@@ -284,7 +284,7 @@ export function ProjectDetails(props: { projectId?: string }) {
         </PageDetail>
       )}
       <PageDetail label={t('Cache Timeout')} helpText={cacheTimeoutHelpText}>
-        {project.scm_update_cache_timeout}
+        {`${project.scm_update_cache_timeout} seconds`}
       </PageDetail>
       {project.summary_fields.default_environment && (
         <ExecutionEnvironmentDetail

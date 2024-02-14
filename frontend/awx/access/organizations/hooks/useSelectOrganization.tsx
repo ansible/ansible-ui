@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { usePageDialog, useSelectDialog } from '../../../../../framework';
-import { SelectSingleDialog } from '../../../../../framework/PageDialogs/SelectSingleDialog';
+import { SingleSelectDialog } from '../../../../../framework/PageDialogs/SingleSelectDialog';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxView } from '../../../common/useAwxView';
 import { Organization } from '../../../interfaces/Organization';
@@ -42,7 +42,7 @@ function SelectOrganization(props: {
     defaultSelection: props.defaultOrganization ? [props.defaultOrganization] : undefined,
   });
   return (
-    <SelectSingleDialog<Organization>
+    <SingleSelectDialog<Organization>
       {...props}
       toolbarFilters={toolbarFilters}
       tableColumns={tableColumns}

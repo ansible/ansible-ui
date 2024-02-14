@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { usePageDialog } from '../../../../../framework';
-import { SelectSingleDialog } from '../../../../../framework/PageDialogs/SelectSingleDialog';
+import { SingleSelectDialog } from '../../../../../framework/PageDialogs/SingleSelectDialog';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxView } from '../../../common/useAwxView';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
@@ -18,7 +18,7 @@ function SelectJobTemplate(props: { title: string; onSelect: (template: JobTempl
     disableQueryString: true,
   });
   return (
-    <SelectSingleDialog<JobTemplate>
+    <SingleSelectDialog<JobTemplate>
       {...props}
       toolbarFilters={toolbarFilters}
       tableColumns={tableColumns}
