@@ -99,7 +99,9 @@ describe('Collections- List View', () => {
     cy.galaxykit('task wait all');
     cy.navigateTo('hub', Collections.url);
     cy.get('[data-cy="table-view"]').click();
-    cy.selectTableRow(collection);
+    cy.getTableRowBySingleText(collection).within(() => {
+      cy.get('td[data-cy=checkbox-column-cell]').click();
+    });
     cy.clickToolbarKebabAction('delete-selected-collections');
     cy.get('#confirm').click();
     cy.clickButton(/^Delete collections/);
@@ -123,7 +125,9 @@ describe('Collections- List View', () => {
     cy.galaxykit('task wait all');
     cy.navigateTo('hub', Collections.url);
     cy.get('[data-cy="table-view"]').click();
-    cy.selectTableRow(collection);
+    cy.getTableRowBySingleText(collection).within(() => {
+      cy.get('td[data-cy=checkbox-column-cell]').click();
+    });
     cy.clickToolbarKebabAction('delete-selected-entire-collections-from-repository');
     cy.get('#confirm').click();
     cy.clickButton(/^Delete collections/);
@@ -155,12 +159,8 @@ describe('Collections List- Line Item Kebab Menu', () => {
   });
 
   afterEach(() => {
-    if (Cypress.currentTest.title === 'user can deprecate a collection') {
-      cy.undeprecateCollection(collection, namespace, repository);
-      cy.galaxykit('task wait all');
-    }
-    cy.galaxykit('task wait all');
     cy.deleteNamespace(namespace);
+    cy.galaxykit('task wait all');
   });
 
   it.skip('user can upload a new version to an existing collection', () => {});
@@ -169,26 +169,24 @@ describe('Collections List- Line Item Kebab Menu', () => {
     cy.approveCollection(collection, namespace, '1.0.0');
     cy.galaxykit('task wait all');
     cy.get('[data-cy="table-view"]').click();
-    cy.clickTableRowKebabAction(collection, 'delete-entire-collection-from-system');
+    cy.clickTableRowKebabAction(collection, 'delete-entire-collection-from-system', false);
     cy.get('#confirm').click();
     cy.clickButton(/^Delete collections/);
     cy.contains(/^Success$/);
     cy.clickButton(/^Close$/);
     cy.galaxykit('task wait all');
-    cy.clickButton(/^Clear all filters$/);
   });
 
   it('user can delete entire collection from repository', () => {
     cy.approveCollection(collection, namespace, '1.0.0');
     cy.galaxykit('task wait all');
     cy.get('[data-cy="table-view"]').click();
-    cy.clickTableRowKebabAction(collection, 'delete-entire-collection-from-repository');
+    cy.clickTableRowKebabAction(collection, 'delete-entire-collection-from-repository', false);
     cy.get('#confirm').click();
     cy.clickButton(/^Delete collections/);
     cy.contains(/^Success$/);
     cy.clickButton(/^Close$/);
     cy.galaxykit('task wait all');
-    cy.clickButton(/^Clear all filters$/);
   });
 
   it('user can deprecate a collection', () => {
@@ -220,7 +218,7 @@ describe('Collections List- Line Item Kebab Menu', () => {
     cy.contains('h2', 'No results found').should('be.visible');
     repository = 'published';
 
-    cy.deleteCollection(collection, namespace, repository);
+    cy.undeprecateCollection(collection, namespace, repository);
   });
 
   it.skip('user can copy a version to repository', () => {
@@ -239,16 +237,19 @@ describe('Collections Details View', () => {
 
   beforeEach(() => {
     collection = 'hub_e2e_' + randomString(5).toLowerCase();
-    namespace = 'hub_e2e_namespace' + randomString(5).toLowerCase();
+    namespace = 'hub_e2e_namespace_' + randomString(5).toLowerCase();
     cy.hubLogin();
     cy.createNamespace(namespace);
+    cy.galaxykit('task wait all');
     cy.uploadCollection(collection, namespace);
+    cy.galaxykit('task wait all');
     cy.navigateTo('hub', Collections.url);
   });
 
   afterEach(() => {
     cy.galaxykit('task wait all');
     cy.deleteNamespace(namespace);
+    cy.galaxykit('task wait all');
   });
 
   it.skip('user can upload a new version to an existing collection', () => {});
@@ -257,7 +258,7 @@ describe('Collections Details View', () => {
     cy.approveCollection(collection, namespace, '1.0.0');
     cy.galaxykit('task wait all');
     cy.get('[data-cy="table-view"]').click();
-    cy.clickTableRow(collection);
+    cy.clickLink(collection);
     cy.wait(400);
     cy.selectDetailsPageKebabAction('delete-entire-collection-from-system');
   });
@@ -266,7 +267,7 @@ describe('Collections Details View', () => {
     cy.approveCollection(collection, namespace, '1.0.0');
     cy.galaxykit('task wait all');
     cy.get('[data-cy="table-view"]').click();
-    cy.clickTableRow(collection);
+    cy.clickLink(collection);
     cy.wait(400);
     cy.selectDetailsPageKebabAction('delete-entire-collection-from-repository');
   });
