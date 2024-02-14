@@ -40,6 +40,7 @@ import {
   EdaRulebookActivationCreate,
 } from '../../frontend/eda/interfaces/EdaRulebookActivation';
 import { EdaUser, EdaUserCreateUpdate } from '../../frontend/eda/interfaces/EdaUser';
+import { RoleDetail } from '../../frontend/eda/interfaces/generated/eda-api';
 import { Role as HubRole } from '../../frontend/hub/access/roles/Role';
 import { RemoteRegistry } from '../../frontend/hub/administration/remote-registries/RemoteRegistry';
 import { CollectionVersionSearch } from '../../frontend/hub/collections/Collection';
@@ -932,10 +933,10 @@ declare global {
       checkResourceNameAndAction(resourceTypes: string[], actions: string[]): Chainable<void>;
 
       /**
-       * getEdaRolePermissions returns the permissions of a given role id of a role
+       * getEdaRoleDetail returns the detail of a given role id of a role
        * @param roleID get
        */
-      getEdaRolePermissions(roleID: string): Chainable<EdaRole[]>;
+      getEdaRoleDetail(roleID: string): Chainable<RoleDetail>;
 
       /**
        * Deletes an EDA credential which is provided.

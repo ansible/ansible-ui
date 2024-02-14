@@ -19,6 +19,7 @@ import {
   CredentialTypeEnum,
   ImportStateEnum,
   RestartPolicyEnum,
+  RoleDetail,
   Status906Enum,
 } from '../../frontend/eda/interfaces/generated/eda-api';
 import './auth';
@@ -304,15 +305,8 @@ Cypress.Commands.add('checkResourceNameAndAction', (resourceTypes: string[], act
   });
 });
 
-Cypress.Commands.add('getEdaRolePermissions', (roleID: string) => {
-  cy.requestGet<EdaRole>(edaAPI`/roles/${roleID}`).then((response) => {
-    Cypress.log({
-      displayName: 'EDA PERMS :',
-      message: [response.name],
-    });
-    const edaRolePermissions = response.permissions;
-    return edaRolePermissions;
-  });
+Cypress.Commands.add('getEdaRoleDetail', (roleID: string) => {
+  cy.requestGet<RoleDetail>(edaAPI`/roles/${roleID}`);
 });
 
 Cypress.Commands.add(
