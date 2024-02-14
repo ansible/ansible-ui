@@ -28,6 +28,7 @@ export function EdaRolePermissions(props: { role?: EdaRole }) {
     role: t('Role'),
     decision_environment: t('Decision environment'),
     credential: t('Credential'),
+    event_stream: t('Event Stream'),
   };
 
   return (
