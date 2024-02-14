@@ -10,10 +10,39 @@ import {
   Radio,
 } from '@patternfly/react-core';
 import { useState } from 'react';
+import { usePostRequest } from '../../../../common/crud/usePostRequest';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { useDeleteRequest } from '../../../../common/crud/useDeleteRequest';
+import { IAwxView } from '../../../common/useAwxView';
 
-function DeleteGroupsDialog(props: { groups: InventoryGroup[]; onClose: () => void }) {
+function DeleteGroupsDialog(props: {
+  groups: InventoryGroup[];
+  onClose: () => void;
+  view: IAwxView<InventoryGroup>;
+}) {
   const { t } = useTranslation();
   const [deleteType, setDeleteType] = useState('');
+  const postRequest = usePostRequest();
+  const deleteRequest = useDeleteRequest();
+
+  const handleDelete = async () => {
+    for (const group of props.groups) {
+      if (deleteType === 'delete') {
+        await deleteRequest(awxAPI`/groups/${group.id.toString()}/`);
+        props.view.unselectItems(props.groups);
+        void props.view.refresh();
+        props.onClose();
+      } else {
+        await postRequest(awxAPI`/inventories/${group.inventory.toString()}/groups/`, {
+          id: group.id,
+          disassociate: true,
+        });
+        props.view.unselectItems(props.groups);
+        void props.view.refresh();
+        props.onClose();
+      }
+    }
+  };
 
   return (
     <Modal
@@ -29,7 +58,7 @@ function DeleteGroupsDialog(props: { groups: InventoryGroup[]; onClose: () => vo
           ouiaId="delete-group-modal-delete-button"
           key="delete"
           variant="danger"
-          onClick={() => {}}
+          onClick={() => void handleDelete()}
           aria-label={t`Confirm delete`}
         >
           {t(`Delete`)}
@@ -77,11 +106,11 @@ function DeleteGroupsDialog(props: { groups: InventoryGroup[]; onClose: () => vo
   );
 }
 
-export function useDeleteGroups() {
+export function useDeleteGroups(view: IAwxView<InventoryGroup>) {
   const [_, setDialog] = usePageDialog();
   const onClose = () => setDialog(undefined);
   const deleteGroups = (groups: InventoryGroup[]) => {
-    setDialog(<DeleteGroupsDialog groups={groups} onClose={onClose} />);
+    setDialog(<DeleteGroupsDialog groups={groups} onClose={onClose} view={view} />);
   };
   return deleteGroups;
 }
