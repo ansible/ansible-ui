@@ -31,7 +31,7 @@ import { HubRoute } from '../main/HubRoutes';
 import { useHubNamespaces } from '../namespaces/hooks/useHubNamespaces';
 
 interface UploadData {
-  file: unknown;
+  file: File;
 }
 
 export interface Repository {
@@ -199,7 +199,7 @@ export function UploadCollectionByFile() {
           <PageFormFileUpload label={t('Collection file')} name="file" isRequired />
           {renderRepoSelector()}
 
-          <PageFormWatch<File | undefined> watch="file">
+          <PageFormWatch<UploadData, 'file'> watch="file">
             {(file) => {
               const namespace = file?.name.split('-')[0] ?? '';
               if (namespaceParams) {
