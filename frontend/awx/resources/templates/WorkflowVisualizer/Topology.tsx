@@ -21,7 +21,7 @@ import {
   withContextMenu,
   withPanZoom,
   withSelection,
-  TopologyView,
+  TopologyView as PFTopologyView,
   ElementModel,
   Edge,
 } from '@patternfly/react-topology';
@@ -43,7 +43,13 @@ import { useCreateEdge } from './hooks';
 import { getNodeLabel } from './wizard/helpers';
 import { GRAPH_ID, NODE_DIAMETER, START_NODE_ID } from './constants';
 import { useCreateNodeComponent } from './hooks/useCreateNodeComponent';
+import { styled } from 'styled-components';
 
+const TopologyView = styled(PFTopologyView)`
+  .pf-v5-c-divider {
+    display: none;
+  }
+`;
 const graphModel: Model = {
   nodes: [],
   edges: [],
