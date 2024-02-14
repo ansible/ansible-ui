@@ -31,9 +31,7 @@ export function CredentialTypes() {
   });
 
   const toolbarActions = useCredentialTypeToolbarActions(view);
-  const rowActions = useCredentialTypeRowActions({
-    onCredentialTypesDeleted: view.unselectItemsAndRefresh,
-  });
+  const rowActions = useCredentialTypeRowActions(view.unselectItemsAndRefresh);
 
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/credential_types/`);
   const canCreateCredentialType = Boolean(data && data.actions && data.actions['POST']);

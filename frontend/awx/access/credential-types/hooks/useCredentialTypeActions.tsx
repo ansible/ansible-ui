@@ -53,11 +53,9 @@ export function useCredentialTypeToolbarActions(view: IAwxView<CredentialType>) 
   );
 }
 
-export function useCredentialTypeRowActions(options: {
-  onCredentialTypesDeleted: (credentials: CredentialType[]) => void;
-  isDetailsPageAction?: boolean;
-}) {
-  const { onCredentialTypesDeleted } = options;
+export function useCredentialTypeRowActions(
+  onCredentialTypesDeleted: (credentialType: CredentialType[]) => void
+) {
   const pageNavigate = usePageNavigate();
   const deleteCredentialTypes = useDeleteCredentialTypes(onCredentialTypesDeleted);
   const { t } = useTranslation();

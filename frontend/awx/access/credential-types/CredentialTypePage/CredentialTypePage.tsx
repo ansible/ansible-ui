@@ -27,12 +27,7 @@ export function CredentialTypePage() {
     refresh,
   } = useGetItem<CredentialType>(awxAPI`/credential_types`, params.id);
   const pageNavigate = usePageNavigate();
-  const actions = useCredentialTypeRowActions({
-    onCredentialTypesDeleted: () => pageNavigate(AwxRoute.CredentialTypes),
-    isDetailsPageAction: true,
-  });
-  const pageActions = actions;
-
+  const actions = useCredentialTypeRowActions(() => pageNavigate(AwxRoute.CredentialTypes));
   const getPageUrl = useGetPageUrl();
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
@@ -48,7 +43,7 @@ export function CredentialTypePage() {
         ]}
         headerActions={
           <PageActions<CredentialType>
-            actions={pageActions}
+            actions={actions}
             position={DropdownPosition.right}
             selectedItem={credentialType}
           />
