@@ -85,7 +85,7 @@ export function useInventoriesGroupsHostsToolbarActions(view: IAwxView<AwxHost>)
           {
             type: PageActionType.Button,
             selection: PageActionSelection.None,
-            label: t('New group'),
+            label: t('New host'),
             onClick: () =>
               pageNavigate(AwxRoute.InventoryGroupHostAdd, {
                 params: {
