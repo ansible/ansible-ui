@@ -10,14 +10,11 @@ import {
 } from '../../../../framework';
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
-import { PageFormOrganizationSelect } from '../../access/organizations/components/PageFormOrganizationSelect';
-import { getOrganizationByName } from '../../access/organizations/utils/getOrganizationByName';
+import { PageFormSelectOrganization } from '../../access/organizations/components/PageFormOrganizationSelect';
 import { AwxPageForm } from '../../common/AwxPageForm';
 import { awxAPI } from '../../common/api/awx-utils';
-import { Organization } from '../../interfaces/Organization';
 import { AwxRoute } from '../../main/AwxRoutes';
 import { ExecutionEnvironment } from '../../interfaces/ExecutionEnvironment';
-import { Credential } from '../../interfaces/Credential';
 import { PageFormCredentialSelect } from '../../access/credentials/components/PageFormCredentialSelect';
 import { getCredentialByName } from '../../access/credentials/utils/getCredentialByName';
 import useSWR from 'swr';
@@ -31,60 +28,32 @@ const PullOption = {
   Never: 'Never pull container before running.',
 };
 
-export interface IExecutionEnvInput {
-  organization?: string;
-  credential?: string;
-  pull: string;
-  name: string;
-  image: string;
-  description?: string;
-}
-
-export interface IExecutionEnvBody {
-  organization?: number | null;
-  credential?: number | null;
-  pull: string;
-  name: string;
-  image: string;
-  description?: string;
-}
-
 export function CreateExecutionEnvironment() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
   const [searchParams] = useSearchParams();
-  const postRequest = usePostRequest<IExecutionEnvBody, ExecutionEnvironment>();
-  const onSubmit: PageFormSubmitHandler<IExecutionEnvInput> = async (
-    executionEnvInput: IExecutionEnvInput
+  const postRequest = usePostRequest<ExecutionEnvironment, ExecutionEnvironment>();
+  const onSubmit: PageFormSubmitHandler<ExecutionEnvironment> = async (
+    executionEnvInput: ExecutionEnvironment
   ) => {
-    let organization: Organization | undefined;
-    let credential: Credential | undefined;
-    let modifiedInput: IExecutionEnvBody = {
-      pull: '',
-      name: '',
-      image: '',
-    };
+    if (executionEnvInput.summary_fields.credential?.name) {
+      const credential = await getCredentialByName(
+        executionEnvInput.summary_fields.credential.name
+      );
+      if (credential) {
+        executionEnvInput.credential = credential.id;
+      }
+    }
 
-    if (executionEnvInput.organization)
-      organization = await getOrganizationByName(executionEnvInput.organization);
-    if (executionEnvInput.credential)
-      credential = await getCredentialByName(executionEnvInput.credential);
-
-    modifiedInput = {
-      ...executionEnvInput,
-      organization: organization?.id,
-      credential: credential?.id,
-    };
-
-    const newExecutionEnv = await postRequest(awxAPI`/execution_environments/`, modifiedInput);
+    const newExecutionEnv = await postRequest(awxAPI`/execution_environments/`, executionEnvInput);
     pageNavigate(AwxRoute.ExecutionEnvironmentDetails, { params: { id: newExecutionEnv.id } });
   };
 
   const onCancel = () => navigate(-1);
   const getPageUrl = useGetPageUrl();
 
-  const defaultValue: Partial<IExecutionEnvInput> = {
+  const defaultValue: Partial<ExecutionEnvironment> = {
     image: searchParams.get('image') ?? '',
   };
 
@@ -97,7 +66,7 @@ export function CreateExecutionEnvironment() {
           { label: t('Create Execution Environment') },
         ]}
       />
-      <AwxPageForm<IExecutionEnvInput>
+      <AwxPageForm<ExecutionEnvironment>
         submitText={t('Create execution environment')}
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
@@ -120,32 +89,20 @@ export function EditExecutionEnvironment() {
     requestGet,
     swrOptions
   );
-  const onSubmit: PageFormSubmitHandler<IExecutionEnvInput> = async (
-    executionEnvInput: IExecutionEnvInput
+  const onSubmit: PageFormSubmitHandler<ExecutionEnvironment> = async (
+    executionEnvInput: ExecutionEnvironment
   ) => {
-    let credential: Credential | undefined;
-    let organization: Organization | undefined;
-    let modifiedInput: IExecutionEnvBody = {
-      pull: '',
-      name: '',
-      image: '',
-    };
+    let credential;
 
-    if (executionEnvInput.credential)
-      credential = await getCredentialByName(executionEnvInput.credential);
+    if (executionEnvInput.summary_fields.credential?.name) {
+      credential = await getCredentialByName(executionEnvInput.summary_fields.credential.name);
+    }
 
-    if (executionEnvInput.organization)
-      organization = await getOrganizationByName(executionEnvInput.organization);
-
-    modifiedInput = {
-      ...executionEnvInput,
-      organization: organization?.id ?? null,
-      credential: credential?.id ?? null,
-    };
+    executionEnvInput.credential = credential?.id ?? null;
 
     const editedExecutionEnv = await requestPatch<ExecutionEnvironment>(
       awxAPI`/execution_environments/${params.id ?? ''}/`,
-      modifiedInput
+      executionEnvInput
     );
     pageNavigate(AwxRoute.ExecutionEnvironmentDetails, { params: { id: editedExecutionEnv.id } });
   };
@@ -166,15 +123,6 @@ export function EditExecutionEnvironment() {
     );
   }
 
-  const defaultValue: Partial<IExecutionEnvInput> = {
-    name: execution_env.name,
-    image: execution_env.image,
-    pull: execution_env.pull,
-    description: execution_env.description,
-    credential: execution_env.summary_fields.credential?.name,
-    organization: execution_env.summary_fields.organization?.name,
-  };
-
   return (
     <PageLayout>
       <PageHeader
@@ -184,12 +132,12 @@ export function EditExecutionEnvironment() {
           { label: t('Edit Execution Environment') },
         ]}
       />
-      <AwxPageForm<IExecutionEnvInput>
+      <AwxPageForm<ExecutionEnvironment>
         submitText={t('Save')}
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
         onCancel={onCancel}
-        defaultValue={defaultValue}
+        defaultValue={execution_env}
       >
         <ExecutionEnvironmentInputs mode="edit" executionEnv={execution_env} />
       </AwxPageForm>
@@ -207,7 +155,7 @@ function ExecutionEnvironmentInputs(props: {
 
   return (
     <>
-      <PageFormTextInput<IExecutionEnvInput>
+      <PageFormTextInput<ExecutionEnvironment>
         name="name"
         label={t('Name')}
         placeholder={t('Enter a name')}
@@ -215,7 +163,7 @@ function ExecutionEnvironmentInputs(props: {
         isDisabled={props?.executionEnv?.managed || false}
         maxLength={150}
       />
-      <PageFormTextInput<IExecutionEnvInput>
+      <PageFormTextInput<ExecutionEnvironment>
         name="image"
         label={t('Image')}
         labelHelp={
@@ -245,7 +193,7 @@ function ExecutionEnvironmentInputs(props: {
         isRequired
         maxLength={150}
       />
-      <PageFormSelect<IExecutionEnvInput>
+      <PageFormSelect<ExecutionEnvironment>
         name="pull"
         label={t('Pull')}
         placeholderText={t('---------')}
@@ -264,34 +212,35 @@ function ExecutionEnvironmentInputs(props: {
           },
         ]}
       />
-      <PageFormTextInput<IExecutionEnvInput>
+      <PageFormTextInput<ExecutionEnvironment>
         name="description"
         label={t('Description')}
         placeholder={t('Enter a description')}
         isDisabled={props?.executionEnv?.managed || false}
       />
       {props.mode === 'edit' && isOrgGloballyAvailable ? (
-        <PageFormOrganizationSelect<IExecutionEnvInput> name="organization" isDisabled={true} />
+        <PageFormSelectOrganization<ExecutionEnvironment> name="organization" isDisabled={true} />
       ) : undefined}
       {props.mode === 'edit' && !isOrgGloballyAvailable ? (
-        <PageFormOrganizationSelect<IExecutionEnvInput>
+        <PageFormSelectOrganization<ExecutionEnvironment>
           name="organization"
-          helpText={t(
+          helperText={t(
             'Leave this field blank to make the execution environment globally available.'
           )}
         />
       ) : undefined}
       {props.mode === 'create' ? (
-        <PageFormOrganizationSelect<IExecutionEnvInput>
+        <PageFormSelectOrganization<ExecutionEnvironment>
           name="organization"
-          helpText={t(
+          helperText={t(
             'Leave this field blank to make the execution environment globally available.'
           )}
+          isRequired={false}
         />
       ) : undefined}
 
-      <PageFormCredentialSelect<IExecutionEnvInput>
-        name="credential"
+      <PageFormCredentialSelect<ExecutionEnvironment>
+        name="summary_fields.credential.name"
         labelHelp={t('Credential to authenticate with a protected container registry.')}
         credentialType={credentialTypeIDs.registry}
         placeholder={t('Add registry credential')}

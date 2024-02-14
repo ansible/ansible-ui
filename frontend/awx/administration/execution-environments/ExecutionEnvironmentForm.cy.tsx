@@ -1,12 +1,22 @@
 import { ExecutionEnvironment } from '../../interfaces/ExecutionEnvironment';
-import {
-  CreateExecutionEnvironment,
-  EditExecutionEnvironment,
-  IExecutionEnvInput,
-} from './ExecutionEnvironmentForm';
+import { CreateExecutionEnvironment, EditExecutionEnvironment } from './ExecutionEnvironmentForm';
 
 describe('Create Edit Execution Environment Form', () => {
   describe('Create Execution Environment', () => {
+    beforeEach(() => {
+      cy.intercept(
+        { method: 'GET', url: '/api/v2/organizations/*' },
+        { fixture: 'organizations.json' }
+      );
+      cy.intercept('POST', '/api/v2/execution_environments/', {
+        statusCode: 201,
+        fixture: 'execution_environment.json',
+      }).as('createEE');
+      cy.intercept(
+        { method: 'GET', url: '/api/v2/credentials/*' },
+        { fixture: 'credentials.json' }
+      );
+    });
     it('should validate required fields on save', () => {
       cy.mount(<CreateExecutionEnvironment />);
       cy.clickButton(/^Create execution environment$/);
@@ -15,56 +25,35 @@ describe('Create Edit Execution Environment Form', () => {
     });
 
     it('should create execution environment with only required values passed', () => {
-      cy.intercept(
-        { method: 'GET', url: '/api/v2/organizations/*' },
-        { fixture: 'organizations.json' }
-      );
-      cy.intercept('POST', '/api/v2/execution_environments/', {
-        statusCode: 201,
-        fixture: 'execution_environments.json',
-      }).as('createEE');
       cy.mount(<CreateExecutionEnvironment />);
       cy.get('[data-cy="name"]').type('Test name');
       cy.get('[data-cy="image"]').type('test/image');
       cy.clickButton(/^Create execution environment$/);
       cy.wait('@createEE')
         .its('request.body')
-        .then((createdEE: IExecutionEnvInput) => {
+        .then((createdEE) => {
           expect(createdEE).to.deep.equal({
             name: 'Test name',
             image: 'test/image',
+            summary_fields: {
+              credential: {},
+            },
           });
         });
     });
 
-    it('should create execution environment with only required values passed', () => {
-      cy.intercept(
-        { method: 'GET', url: '/api/v2/organizations/*' },
-        { fixture: 'organizations.json' }
-      );
-      cy.intercept(
-        { method: 'GET', url: '/api/v2/credentials/*' },
-        { fixture: 'credentials.json' }
-      );
-      cy.intercept(
-        { method: 'GET', url: '/api/v2/credential_types/*' },
-        { fixture: 'credentialTypes.json' }
-      );
-      cy.intercept('POST', '/api/v2/execution_environments/', {
-        statusCode: 201,
-        fixture: 'execution_environments.json',
-      }).as('createEE');
+    it('should create execution environment with all values passed', () => {
       cy.mount(<CreateExecutionEnvironment />);
       cy.get('[data-cy="name"]').type('Test name');
       cy.get('[data-cy="image"]').type('test/image');
       cy.selectDropdownOptionByResourceName('pull', 'Always pull container before running');
       cy.get('[data-cy="description"]').type('test');
-      cy.get('[data-cy="organization"]').type('Default');
+      cy.selectSingleSelectOption('[data-cy="organization"]', 'Default');
       cy.get('[data-cy="credential-select"]').type('Test Reg Cred');
       cy.clickButton(/^Create execution environment$/);
       cy.wait('@createEE')
         .its('request.body')
-        .then((createdEE: IExecutionEnvInput) => {
+        .then((createdEE: ExecutionEnvironment) => {
           expect(createdEE).to.deep.equal({
             name: 'Test name',
             image: 'test/image',
@@ -72,6 +61,11 @@ describe('Create Edit Execution Environment Form', () => {
             description: 'test',
             organization: 1,
             credential: 23,
+            summary_fields: {
+              credential: {
+                name: 'Test Reg Cred',
+              },
+            },
           });
         });
     });
@@ -106,10 +100,6 @@ describe('Create Edit Execution Environment Form', () => {
         { fixture: 'credentials.json' }
       );
       cy.intercept(
-        { method: 'GET', url: '/api/v2/credential_types/*' },
-        { fixture: 'credentialTypes.json' }
-      );
-      cy.intercept(
         { method: 'GET', url: '/api/v2/organizations/*' },
         { fixture: 'organizations.json' }
       );
@@ -141,7 +131,7 @@ describe('Create Edit Execution Environment Form', () => {
       cy.clickButton(/^Save$/);
       cy.wait('@editEE')
         .its('request.body')
-        .then((editedEE: IExecutionEnvInput) => {
+        .then((editedEE: ExecutionEnvironment) => {
           expect(editedEE.name).to.equal('Edited EE');
           expect(editedEE.image).to.equal('edited/image');
           expect(editedEE.pull).to.equal('never');
