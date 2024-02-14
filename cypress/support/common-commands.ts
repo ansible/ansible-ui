@@ -1,5 +1,38 @@
 import '@cypress/code-coverage/support';
 
+/** Get by selector, making sure it is not disabled or hidden */
+Cypress.Commands.add('getBy', (selector: string) => {
+  cy.get(`${selector}:not(:disabled):not(:hidden)`)
+    .should('not.have.attr', 'aria-disabled', 'true')
+    .should('be.visible');
+  cy.get(`${selector}:not(:disabled):not(:hidden)`);
+});
+
+/** Get by data-cy attribute, making sure it is not disabled or hidden */
+Cypress.Commands.add('getByDataCy', (dataCy: string) => {
+  cy.getBy(`[data-cy="${dataCy}"]`);
+});
+
+/** Click by selector, making sure it is not disabled or hidden */
+Cypress.Commands.add('clickBy', (selector: string) => {
+  cy.getBy(selector).click();
+});
+
+/** Click by data-cy attribute, making sure it is not disabled or hidden */
+Cypress.Commands.add('clickByDataCy', (dataCy: string) => {
+  cy.getByDataCy(dataCy).click();
+});
+
+/** Type input by selector, making sure it is not disabled or hidden */
+Cypress.Commands.add('typeBy', (selector: string, text: string) => {
+  cy.getBy(selector).type(text);
+});
+
+/** Type input by data-cy attribute, making sure it is not disabled or hidden */
+Cypress.Commands.add('typeByDataCy', (dataCy: string, text: string) => {
+  cy.getByDataCy(dataCy).type(text);
+});
+
 Cypress.Commands.add('searchAndDisplayResource', (resourceName: string) => {
   cy.get('[data-cy="text-input"]')
     .find('input')

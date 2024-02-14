@@ -109,6 +109,24 @@ declare global {
 
       // --- INPUT COMMANDS ---
 
+      /** Get by selector, making sure it is not disabled or hidden */
+      getBy(selector: string): Chainable<JQuery<HTMLElement>>;
+
+      /** Get by data-cy attribute, making sure it is not disabled or hidden */
+      getByDataCy(dataCy: string): Chainable<JQuery<HTMLElement>>;
+
+      /** Click by selector, making sure it is not disabled or hidden */
+      clickBy(selector: string): Chainable<void>;
+
+      /** Click by data-cy attribute, making sure it is not disabled or hidden */
+      clickByDataCy(dataCy: string): Chainable<void>;
+
+      /** Type input by selector, making sure it is not disabled or hidden */
+      typeBy(selector: string, text: string): Chainable<void>;
+
+      /** Type input by data-cy attribute, making sure it is not disabled or hidden */
+      typeByDataCy(dataCy: string, text: string): Chainable<void>;
+
       inputCustomCredTypeConfig(configType: string, config: string): Chainable<void>;
 
       configFormatToggle(configType: string): Chainable<void>;
