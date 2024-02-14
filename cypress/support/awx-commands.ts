@@ -403,12 +403,12 @@ Cypress.Commands.add('selectDetailsPageKebabAction', (dataCy: string) => {
 
 Cypress.Commands.add(
   'clickTableRowKebabAction',
-  (name: string | RegExp, dataCyLabel: string | RegExp, filter?: boolean) => {
+  (name: string | RegExp, dataCyLabel: string, filter?: boolean) => {
     cy.getTableRowByText(name, filter).within(() => {
       cy.get('[data-cy*="actions-dropdown"]')
         .click()
         .then(() => {
-          cy.get(`[data-cy=${dataCyLabel}]`).click();
+          cy.clickByDataCy(dataCyLabel);
         });
     });
   }
