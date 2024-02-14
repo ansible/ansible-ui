@@ -45,8 +45,6 @@ Cypress.Commands.add(
 
 Cypress.Commands.add('filterTableBySingleText', (text: string) => {
   cy.filterTableByText(text, 'SingleText');
-  // TODO - this should be in future better sync, but for now, we need to have tests more stable
-  cy.wait(2000);
 });
 
 Cypress.Commands.add('filterTableByTypeAndText', (filterLabel: string | RegExp, text: string) => {
