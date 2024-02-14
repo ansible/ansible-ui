@@ -1,5 +1,5 @@
 import { ButtonVariant } from '@patternfly/react-core';
-import { PlusIcon, TrashIcon } from '@patternfly/react-icons';
+import { PlusIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
@@ -89,7 +89,7 @@ export function useInventoriesGroupsHostsToolbarActions(view: IAwxView<AwxHost>)
             onClick: () =>
               pageNavigate(AwxRoute.InventoryGroupHostAdd, {
                 params: {
-                  id: params.id,
+                  id: params?.id,
                   inventory_type: params.inventory_type,
                   group_id: params.group_id,
                 },
@@ -123,7 +123,7 @@ export function useInventoriesGroupsHostsToolbarActions(view: IAwxView<AwxHost>)
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
-        isPinned: true
+        isPinned: true,
         label: t('Disassociate selected hosts'),
         onClick: disassociateHosts,
         isDisabled:
