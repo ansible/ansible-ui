@@ -18,7 +18,7 @@ export function useDisassociateHosts(onComplete: (hosts: AwxHost[]) => void) {
   const bulkAction = useAwxBulkConfirmation<AwxHost>();
   const disassociateHost = (hosts: AwxHost[]) => {
     bulkAction({
-      title: t('Permanently disassociate hosts', { count: hosts.length }),
+      title: t('Disassociate host from group?'),
       confirmText: t('Yes, I confirm that I want to disassociate these {{count}} hosts.', {
         count: hosts.length,
       }),
