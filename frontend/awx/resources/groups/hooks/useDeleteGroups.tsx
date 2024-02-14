@@ -13,12 +13,11 @@ import { useState } from 'react';
 import { usePostRequest } from '../../../../common/crud/usePostRequest';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useDeleteRequest } from '../../../../common/crud/useDeleteRequest';
-import { IAwxView } from '../../../common/useAwxView';
 
 function DeleteGroupsDialog(props: {
   groups: InventoryGroup[];
   onClose: () => void;
-  view: IAwxView<InventoryGroup>;
+  onDelete: () => void;
 }) {
   const { t } = useTranslation();
   const [deleteType, setDeleteType] = useState('');
@@ -29,16 +28,14 @@ function DeleteGroupsDialog(props: {
     for (const group of props.groups) {
       if (deleteType === 'delete') {
         await deleteRequest(awxAPI`/groups/${group.id.toString()}/`);
-        props.view.unselectItems(props.groups);
-        void props.view.refresh();
+        props.onDelete();
         props.onClose();
       } else {
         await postRequest(awxAPI`/inventories/${group.inventory.toString()}/groups/`, {
           id: group.id,
           disassociate: true,
         });
-        props.view.unselectItems(props.groups);
-        void props.view.refresh();
+        props.onDelete();
         props.onClose();
       }
     }
@@ -108,11 +105,11 @@ function DeleteGroupsDialog(props: {
   );
 }
 
-export function useDeleteGroups(view: IAwxView<InventoryGroup>) {
+export function useDeleteGroups(onDelete: () => void) {
   const [_, setDialog] = usePageDialog();
   const onClose = () => setDialog(undefined);
   const deleteGroups = (groups: InventoryGroup[]) => {
-    setDialog(<DeleteGroupsDialog groups={groups} onClose={onClose} view={view} />);
+    setDialog(<DeleteGroupsDialog groups={groups} onClose={onClose} onDelete={onDelete} />);
   };
   return deleteGroups;
 }
