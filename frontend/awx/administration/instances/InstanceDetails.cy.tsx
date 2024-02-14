@@ -122,13 +122,45 @@ describe('Instance Details', () => {
   });
 
   it('only admin users can edit instance', () => {
-    cy.intercept({ method: 'GET', url: '/api/v2/me' }, { fixture: 'adminUser.json' });
+    cy.intercept('GET', '/api/v2/settings/system*', {
+      IS_K8S: true,
+    }).as('isK8s');
     cy.mount(<InstanceDetails />);
     cy.wait('@getInstance')
       .its('response.body')
       .then(() => {
         cy.get('[data-cy="edit-instance"]').should('be.visible');
         cy.get('[data-cy="edit-instance"]').should('have.attr', 'aria-disabled', 'false');
+      });
+  });
+
+  it('edit instance button should be hidden for instance type control', () => {
+    cy.intercept('GET', '/api/v2/settings/system*', {
+      IS_K8S: true,
+    }).as('isK8s');
+    cy.intercept('GET', '/api/v2/instances/*', {
+      fixture: 'instance_control.json',
+    }).as('getInstance');
+    cy.mount(<InstanceDetails />);
+    cy.wait('@getInstance')
+      .its('response.body')
+      .then(() => {
+        cy.get('[data-cy="edit-instance"]').should('not.exist');
+      });
+  });
+
+  it('edit instance button should be hidden instance type hybrid', () => {
+    cy.intercept('GET', '/api/v2/settings/system*', {
+      IS_K8S: true,
+    }).as('isK8s');
+    cy.intercept('GET', '/api/v2/instances/*', {
+      fixture: 'instance_hybrid.json',
+    }).as('getInstance');
+    cy.mount(<InstanceDetails />);
+    cy.wait('@getInstance')
+      .its('response.body')
+      .then(() => {
+        cy.get('[data-cy="edit-instance"]').should('not.exist');
       });
   });
 });

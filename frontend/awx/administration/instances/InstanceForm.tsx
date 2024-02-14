@@ -29,7 +29,6 @@ const InstanceType = {
 
 export interface IInstanceInput {
   hostname: string;
-  description?: string;
   listener_port: number;
   id?: string;
   managed_by_policy: boolean;
@@ -101,7 +100,7 @@ export function EditInstance() {
   const { cache } = useSWRConfig();
 
   const onSubmit: PageFormSubmitHandler<Instance> = async (instanceInput: Instance) => {
-    instanceInput.listener_port = Number(instanceInput.listener_port);
+    instanceInput.listener_port = Number(instanceInput?.listener_port);
     const modifiedInput: string[] = [];
     if (instanceInput.peers) {
       instanceInput.peers?.map((element: { hostname: string }) => {
@@ -152,11 +151,6 @@ function InstanceInputs(props: { mode: 'create' | 'edit' }) {
         isRequired
         maxLength={150}
         isDisabled={mode === 'edit'}
-      />
-      <PageFormTextInput<IInstanceInput>
-        name="description"
-        label={t('Description')}
-        placeholder={t('Enter a description')}
       />
       <PageFormTextInput<IInstanceInput>
         name="node_state"
@@ -243,7 +237,6 @@ function getInitialFormValues(instance: Instance | undefined) {
     listener_port: instance?.listener_port,
     node_state: instance?.node_state,
     node_type: instance?.node_type,
-    description: instance?.description,
     peers: peers,
     peers_from_control_nodes: instance?.peers_from_control_nodes,
     managed_by_policy: instance?.managed_by_policy,
