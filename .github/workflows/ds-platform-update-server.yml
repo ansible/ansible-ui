@@ -5,8 +5,7 @@ on:
     inputs:
       PLATFORM_SERVER:
         type: string
-        required: true
-        description: 'PLATFORM Server'
+        description: 'Platform Server'
       UPDATE_SERVER:
         type: boolean
         required: true
@@ -28,7 +27,7 @@ jobs:
           CURRENTDATE=$(date +'%Y%m%d')
           echo $CURRENTDATE
           if([ "${{ github.event_name }}" == "workflow_dispatch" ]); then
-            echo "PLATFORM_SERVER=${{ github.event.inputs.PLATFORM_SERVER }}" >> "$GITHUB_OUTPUT"
+            echo "PLATFORM_SERVER=${{ github.event.inputs.PLATFORM_SERVER || 'https://ci-gw-${CURRENTDATE}.gcp.testing.ansible.com' }}" >> "$GITHUB_OUTPUT"
             echo "UPDATE_SERVER=${{ github.event.inputs.UPDATE_SERVER }}" >> "$GITHUB_OUTPUT"
           else 
             echo "PLATFORM_SERVER=https://ci-gw-${CURRENTDATE}.gcp.testing.ansible.com" >> "$GITHUB_OUTPUT"
