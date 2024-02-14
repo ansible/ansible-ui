@@ -26,16 +26,6 @@ export function useApprovalsActions(callback: (collections: CollectionVersionSea
         isDanger: true,
       },
       { type: PageActionType.Seperator },
-      {
-        type: PageActionType.Button,
-        selection: PageActionSelection.Multiple,
-        icon: ThumbsUpIcon,
-        label: autoSign
-          ? t('Sign and approve selected collections')
-          : t('Approve selected collections'),
-        onClick: approveCollections,
-        isDanger: false,
-      },
     ],
     [t, rejectCollections, approveCollections, autoSign]
   );
