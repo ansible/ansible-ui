@@ -8,18 +8,18 @@ const mockAuthenticator = mockPlatformAuthenticators.results[2];
 const mockPlugins = mockPlatformAuthenticatorPlugins;
 const mockMaps = mockPlatformAuthenticatorMaps;
 
-describe('PlatformTeamDetails', () => {
+describe('PlatformAuthenticatorDetails', () => {
   it('Component displays authenticator details', () => {
     cy.intercept(
       { method: 'GET', path: gatewayV1API`/authenticators/*` },
       { body: mockAuthenticator }
     );
     cy.intercept(
-      { method: 'GET', path: gatewayV1API`/authenticator_plugins` },
+      { method: 'GET', path: gatewayV1API`/authenticator_plugins/` },
       { body: mockPlugins }
     );
     cy.intercept(
-      { method: 'GET', path: gatewayV1API`/authenticator_maps?authenticator=*` },
+      { method: 'GET', path: gatewayV1API`/authenticator_maps/?authenticator=*` },
       { body: mockMaps }
     );
     cy.mount(<PlatformAuthenticatorDetails />);

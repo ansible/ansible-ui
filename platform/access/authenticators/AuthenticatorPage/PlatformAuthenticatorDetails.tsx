@@ -34,9 +34,9 @@ export function PlatformAuthenticatorDetails() {
     `/api/gateway/v1/authenticators`,
     params.id
   );
-  const { data: plugins } = useGet<AuthenticatorPlugins>(`/api/gateway/v1/authenticator_plugins`);
+  const { data: plugins } = useGet<AuthenticatorPlugins>(`/api/gateway/v1/authenticator_plugins/`);
   const mapsResponse = useGet<PlatformItemsResponse<AuthenticatorMap>>(
-    `/api/gateway/v1/authenticator_maps?authenticator=${params.id}`
+    `/api/gateway/v1/authenticator_maps/?authenticator=${params.id}`
   );
   const maps = mapsResponse?.data?.results || [];
 

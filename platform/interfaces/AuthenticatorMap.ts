@@ -7,6 +7,34 @@ export enum AuthenticatorMapType {
   'team' = 'team',
 }
 
+export interface AlwaysTriggers {
+  always: Record<string, never>;
+}
+export interface NeverTriggers {
+  never: Record<string, never>;
+}
+export interface GroupsTriggers {
+  groups: { has_or: string[] } | { has_and: string[] };
+}
+export interface AttributesTriggers {
+  attributes: {
+    join_condition: 'and' | 'or';
+    [criteria: string]:
+      | 'and'
+      | 'or'
+      | { contains: string }
+      | { matches: string }
+      | { ends_with: string }
+      | { equals: string }
+      | { in: string[] };
+  };
+}
+export type AuthenticatorMapTriggers =
+  | AlwaysTriggers
+  | NeverTriggers
+  | GroupsTriggers
+  | AttributesTriggers;
+
 export interface AuthenticatorMap {
   name: string;
   id: number;
@@ -22,9 +50,7 @@ export interface AuthenticatorMap {
   order: number;
   organization: string;
   revoke: boolean;
-  triggers: {
-    [key: string]: object;
-  };
+  triggers: AuthenticatorMapTriggers;
   map_type: AuthenticatorMapType;
   ui_summary?: string;
   summary_fields: {
