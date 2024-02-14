@@ -48,7 +48,7 @@ describe('Inventory source page', () => {
     cy.clickTableRow(inventory.name);
     cy.verifyPageTitle(inventory.name);
     cy.clickLink(/^Sources$/);
-    cy.get('#add-source').click();
+    cy.clickButton(/^Add source/);
     cy.verifyPageTitle('Add new source');
     cy.get('[data-cy="name"]').type('source 1');
     cy.selectDropdownOptionByResourceName('source_control_type', 'Sourced from a Project');
@@ -69,7 +69,7 @@ describe('Inventory source page', () => {
     cy.get('[data-cy="update_on_launch"]').check();
     cy.get('[data-cy="update-cache-timeout"]').type('1');
     cy.get('.view-lines').type('test: "output"');
-    cy.get('[data-cy="Submit"]').click();
+    cy.clickButton(/^Save$/);
     cy.verifyPageTitle('source 1');
   });
 });
