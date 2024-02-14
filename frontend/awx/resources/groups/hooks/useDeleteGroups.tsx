@@ -55,10 +55,12 @@ function DeleteGroupsDialog(props: {
       data-cy="delete-groups-dialog"
       actions={[
         <Button
+          data-cy="delete-group-modal-delete-button"
           ouiaId="delete-group-modal-delete-button"
           key="delete"
           variant="danger"
           onClick={() => void handleDelete()}
+          isDisabled={deleteType === ''}
           aria-label={t`Confirm delete`}
         >
           {t(`Delete`)}
