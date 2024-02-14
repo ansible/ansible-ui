@@ -6,11 +6,12 @@ import {
   PageFormDataEditor,
 } from '../../../../../framework';
 import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
-import type {
+import { Authenticator } from '../../../../interfaces/Authenticator';
+import {
   AuthenticatorPlugins,
   PluginConfiguration,
 } from '../../../../interfaces/AuthenticatorPlugin';
-import type { AuthenticatorFormValues } from '../AuthenticatorForm';
+import { AuthenticatorFormValues } from '../AuthenticatorForm';
 
 /* TODO: more intelligent categorization of field type to input type
     pending updates to the API */
@@ -32,14 +33,20 @@ export const dataInputTypes = [
   'UserAttrMap',
 ];
 
-export function AuthenticatorDetailsStep(props: { plugins: AuthenticatorPlugins }) {
+export function AuthenticatorDetailsStep(props: {
+  plugins: AuthenticatorPlugins;
+  authenticator?: Authenticator;
+}) {
   const { t } = useTranslation();
   const { wizardData } = usePageWizard();
 
-  const authenticator = props.plugins.authenticators.find(
-    (authenticator) => authenticator.type === (wizardData as AuthenticatorFormValues).type
-  );
-  const schema = authenticator?.configuration_schema || [];
+  const authenticatorPlugin = props.plugins.authenticators.find((plugin) => {
+    if (props.authenticator) {
+      return plugin.type === props.authenticator.type;
+    }
+    return plugin.type === (wizardData as AuthenticatorFormValues).type;
+  });
+  const schema = authenticatorPlugin?.configuration_schema || [];
   const textFields: PluginConfiguration[] = [];
   const boolFields: PluginConfiguration[] = [];
   const dataFields: PluginConfiguration[] = [];

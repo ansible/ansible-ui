@@ -4,7 +4,8 @@ import { Divider, TextContent, Text, TextVariants } from '@patternfly/react-core
 import { PageDetail, PageDetails } from '../../../../../framework';
 import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageDetailCodeEditor';
 import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
-import type { AuthenticatorPlugins } from '../../../../interfaces/AuthenticatorPlugin';
+import { Authenticator } from '../../../../interfaces/Authenticator';
+import { AuthenticatorPlugins } from '../../../../interfaces/AuthenticatorPlugin';
 import { AuthenticatorFormValues } from '../AuthenticatorForm';
 import { textInputTypes, dataInputTypes } from './AuthenticatorDetailsStep';
 
@@ -21,12 +22,16 @@ const SubHeading = styled(Text)`
   margin-block: 24px;
 `;
 
-export function AuthenticatorReviewStep(props: { plugins: AuthenticatorPlugins }) {
-  const { plugins } = props;
+export function AuthenticatorReviewStep(props: {
+  plugins: AuthenticatorPlugins;
+  authenticator?: Authenticator;
+}) {
+  const { plugins, authenticator } = props;
   const { t } = useTranslation();
   const { wizardData } = usePageWizard();
 
-  const { name, type, configuration, mappings } = wizardData as AuthenticatorFormValues;
+  const { name, configuration, mappings } = wizardData as AuthenticatorFormValues;
+  const type = authenticator ? authenticator.type : (wizardData as AuthenticatorFormValues).type;
 
   const schema =
     plugins.authenticators.find((plugin) => plugin.type === type)?.configuration_schema || [];
