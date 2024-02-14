@@ -347,14 +347,14 @@ Cypress.Commands.add('hasTooltip', (label: string | RegExp) => {
   cy.contains('.pf-v5-c-tooltip__content', label);
 });
 
-Cypress.Commands.add('clickToolbarKebabAction', (dataCyLabel: string | RegExp) => {
+Cypress.Commands.add('clickToolbarKebabAction', (dataCyLabel: string) => {
   cy.get('[data-ouia-component-id="page-toolbar"]').within(() => {
     cy.get('[data-cy*="actions-dropdown"]:not(:disabled):not(:hidden)')
       .should('not.have.attr', 'aria-disabled', 'true')
       .should('be.visible')
       .click()
       .then(() => {
-        cy.get(`[data-cy=${dataCyLabel}]`).click();
+        cy.clickByDataCy(dataCyLabel);
       });
   });
 });
@@ -405,11 +405,8 @@ Cypress.Commands.add(
   'clickTableRowKebabAction',
   (name: string | RegExp, dataCyLabel: string, filter?: boolean) => {
     cy.getTableRowByText(name, filter).within(() => {
-      cy.get('[data-cy*="actions-dropdown"]')
-        .click()
-        .then(() => {
-          cy.clickByDataCy(dataCyLabel);
-        });
+      cy.clickByDataCy('actions-dropdown');
+      cy.clickByDataCy(dataCyLabel);
     });
   }
 );
@@ -432,7 +429,7 @@ Cypress.Commands.add(
   (name: string | RegExp, iconDataCy: string, filter?: boolean) => {
     cy.getTableRowByText(name, filter).within(() => {
       cy.get('[data-cy="actions-column-cell"]').within(() => {
-        cy.get(`[data-cy="${iconDataCy}"]`).click();
+        cy.clickByDataCy(iconDataCy);
       });
     });
   }

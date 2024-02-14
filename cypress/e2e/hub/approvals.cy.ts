@@ -1,5 +1,5 @@
-import { Approvals, Collections, MyImports } from './constants';
 import { randomString } from '../../../framework/utils/random-string';
+import { Approvals, Collections, MyImports } from './constants';
 
 describe('Approvals', () => {
   let thisCollectionName: string;
@@ -46,7 +46,9 @@ describe('Approvals', () => {
   function approve(status: string) {
     cy.navigateTo('hub', Approvals.url);
     cy.verifyPageTitle(Approvals.title);
-    clickTableRowPinnedAction(thisCollectionName, 'approve');
+
+    cy.filterTableBySingleText(thisCollectionName);
+    cy.clickTableRowPinnedAction(thisCollectionName, 'view-import-logs', false);
 
     //Verify Approve and sign collections modal
     cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
@@ -97,7 +99,9 @@ describe('Approvals', () => {
   function reject(status: string) {
     cy.navigateTo('hub', Approvals.url);
     cy.verifyPageTitle(Approvals.title);
-    clickTableRowPinnedAction(thisCollectionName, 'reject');
+
+    cy.filterTableBySingleText(thisCollectionName);
+    cy.clickTableRowPinnedAction(thisCollectionName, 'view-import-logs', false);
 
     //Verify Reject modal
     cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
@@ -137,7 +141,7 @@ describe('Approvals', () => {
 
   it('user can view import logs', () => {
     cy.filterTableBySingleText(thisCollectionName);
-    clickTableRowPinnedAction(thisCollectionName, 'view-import-logs');
+    cy.clickTableRowPinnedAction(thisCollectionName, 'view-import-logs', false);
 
     cy.url().should('include', MyImports.url);
     cy.url().should('include', namespace);
@@ -151,8 +155,3 @@ describe('Approvals', () => {
     repository = 'staging';
   });
 });
-
-function clickTableRowPinnedAction(text: string, action: string) {
-  cy.filterTableBySingleText(text + '{enter}');
-  cy.get(`[data-cy="actions-column-cell"] [data-cy="${action}"]`).click();
-}
