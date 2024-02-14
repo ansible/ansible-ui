@@ -41,7 +41,11 @@ export function useMultiSelectCredential(isLookup: boolean, credentialType?: num
   });
 }
 
-export function useSingleSelectCredential(credentialType?: number, title?: string) {
+export function useSingleSelectCredential(
+  credentialType?: number,
+  title?: string,
+  sourceType?: string
+) {
   const [_, setDialog] = usePageDialog();
   const { t } = useTranslation();
   const openSelectCredential = useCallback(
@@ -51,10 +55,11 @@ export function useSingleSelectCredential(credentialType?: number, title?: strin
           title={t(title ? title : 'Select credential')}
           onSelect={onSelect}
           credentialType={credentialType}
+          sourceType={sourceType}
         />
       );
     },
-    [credentialType, setDialog, t, title]
+    [credentialType, setDialog, t, title, sourceType]
   );
   return openSelectCredential;
 }
@@ -64,6 +69,7 @@ function SelectCredential(props: {
   onSelect: (organization: Credential) => void;
   defaultCredential?: Credential;
   credentialType?: number;
+  sourceType?: string;
 }) {
   const toolbarFilters = useCredentialsFilters();
   const tableColumns = useCredentialsColumns({ disableLinks: true });
@@ -78,6 +84,17 @@ function SelectCredential(props: {
         credential_type: props.credentialType.toString(),
       },
     }),
+    ...(props.sourceType === 'scm'
+      ? {
+          queryParams: {
+            credential_type__kind: 'cloud',
+          },
+        }
+      : {
+          queryParams: {
+            credential_type__namespace: props.sourceType as string,
+          },
+        }),
   });
   return (
     <SingleSelectDialog<Credential>
