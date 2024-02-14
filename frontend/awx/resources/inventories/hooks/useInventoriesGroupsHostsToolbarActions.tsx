@@ -123,10 +123,9 @@ export function useInventoriesGroupsHostsToolbarActions(view: IAwxView<AwxHost>)
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
-        icon: TrashIcon,
+        isPinned: true
         label: t('Disassociate selected hosts'),
         onClick: disassociateHosts,
-        isDanger: true,
         isDisabled:
           view.selectedItems.length === 0 ? t('Select at least one item from the list') : undefined,
       },
