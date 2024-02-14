@@ -36,7 +36,7 @@ export function HostSelectDialog({ onSelectedHosts, groupId, inventoryId }: Host
       toolbarFilters={toolbarFilters}
       tableColumns={tableColumns}
       view={view}
-      confirmText={t('Add groups')}
+      confirmText={t('Add hosts')}
     />
   );
 }
