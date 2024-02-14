@@ -19,8 +19,9 @@ import { PageFormPeersSelect } from './components/PageFormPeersSelect';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { awxAPI } from '../../common/api/awx-utils';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
-import { requestGet, requestPatch, swrOptions } from '../../../common/crud/Data';
-import useSWR, { useSWRConfig } from 'swr';
+import { requestPatch } from '../../../common/crud/Data';
+import { useSWRConfig } from 'swr';
+import { useGet } from '../../../common/crud/useGet';
 
 const InstanceType = {
   Execution: 'execution',
@@ -91,11 +92,7 @@ export function EditInstance() {
   const id = Number(params.id);
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { data: instance } = useSWR<Instance>(
-    awxAPI`/instances/${id?.toString()}/`,
-    requestGet,
-    swrOptions
-  );
+  const { data: instance } = useGet<Instance>(awxAPI`/instances/${id?.toString()}/`);
 
   const { cache } = useSWRConfig();
 
@@ -118,26 +115,28 @@ export function EditInstance() {
   const onCancel = () => navigate(-1);
   const getPageUrl = useGetPageUrl();
 
-  return (
-    <>
-      <PageHeader
-        title={t('Edit instance')}
-        breadcrumbs={[
-          { label: t('Instances'), to: getPageUrl(AwxRoute.Instances) },
-          { label: t('Edit instance') },
-        ]}
-      />
-      <AwxPageForm
-        submitText={t('Save')}
-        onSubmit={onSubmit}
-        cancelText={t('Cancel')}
-        onCancel={onCancel}
-        defaultValue={getInitialFormValues(instance)}
-      >
-        <InstanceInputs mode="edit" />
-      </AwxPageForm>
-    </>
-  );
+  if (instance) {
+    return (
+      <>
+        <PageHeader
+          title={t('Edit instance')}
+          breadcrumbs={[
+            { label: t('Instances'), to: getPageUrl(AwxRoute.Instances) },
+            { label: t('Edit instance') },
+          ]}
+        />
+        <AwxPageForm
+          submitText={t('Save')}
+          onSubmit={onSubmit}
+          cancelText={t('Cancel')}
+          onCancel={onCancel}
+          defaultValue={getInitialFormValues(instance)}
+        >
+          <InstanceInputs mode="edit" />
+        </AwxPageForm>
+      </>
+    );
+  }
 }
 
 function InstanceInputs(props: { mode: 'create' | 'edit' }) {

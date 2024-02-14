@@ -68,10 +68,10 @@ export function useInstanceRowActions(onComplete: (instances: Instance[]) => voi
         isPinned: true,
         label: t('Edit instance'),
         onClick: (instance) => pageNavigate(AwxRoute.EditInstance, { params: { id: instance.id } }),
-        isHidden: (instance: Instance) =>
-          (instance?.node_type !== 'execution' && instance?.node_type !== 'hop') || isK8s === false,
-        isDisabled: () =>
-          !userAccess
+        isDisabled: (instance) =>
+          !userAccess ||
+          !isK8s ||
+          (instance?.node_type !== 'execution' && instance?.node_type !== 'hop')
             ? t(
                 'You do not have permission to edit instances. Please contact your organization administrator if there is an issue with your access.'
               )

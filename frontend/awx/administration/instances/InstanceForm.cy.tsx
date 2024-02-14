@@ -105,6 +105,9 @@ describe('Add instance Form', () => {
 
 describe('Edit instance Form', () => {
   it('Edit instance form should render', () => {
+    cy.intercept({ method: 'GET', url: '/api/v2/instances/*' }, { fixture: 'instance.json' }).as(
+      'getInstance'
+    );
     cy.mount(<EditInstance />);
     cy.verifyPageTitle('Edit instance');
     cy.get('[data-cy="hostname"]').should('be.visible').should('be.disabled');
