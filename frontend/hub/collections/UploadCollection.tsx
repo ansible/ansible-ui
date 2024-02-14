@@ -169,7 +169,7 @@ export function UploadCollectionByFile() {
 
   async function submitData(data: UploadData) {
     setError('');
-    const namespaceName = getNamespaceNameFromFile(data.file as File);
+    const namespaceName = getNamespaceNameFromFile(data.file);
     if (namespaceParams && namespaceName !== namespaceParams) {
       setError(
         t(`Namespace "{{namespaceName}}" do not match namespace "{{namespaceParams}}."`, {
@@ -240,7 +240,6 @@ export function UploadCollectionByFile() {
         {error && <HubError error={{ name: '', message: error }}></HubError>}
         {renderRepoSelector()}
       </HubPageForm>
-
     </>
   );
 }
