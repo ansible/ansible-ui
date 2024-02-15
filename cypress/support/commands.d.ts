@@ -202,7 +202,7 @@ declare global {
       selectDetailsPageKebabAction(dataCy: string): Chainable<void>;
 
       /** Click an action in the table toolbar kebab dropdown actions menu. */
-      clickToolbarKebabAction(dataCyLabel: string | RegExp): Chainable<void>;
+      clickToolbarKebabAction(dataCy: string): Chainable<void>;
 
       /** Get the table row containing the specified text. */
       getTableRowByText(

@@ -329,10 +329,10 @@ Cypress.Commands.add('hasTooltip', (label: string | RegExp) => {
   cy.contains('.pf-v5-c-tooltip__content', label);
 });
 
-Cypress.Commands.add('clickToolbarKebabAction', (dataCyLabel: string | RegExp) => {
+Cypress.Commands.add('clickToolbarKebabAction', (dataCy: string) => {
   cy.getBy('[data-ouia-component-id="page-toolbar"]').within(() => {
-    cy.getBy('[data-cy*="actions-dropdown"]').click();
-    cy.getBy(`[data-cy=${dataCyLabel}]`).click();
+    cy.getByDataCy('actions-dropdown').click();
+    cy.getByDataCy(dataCy).click();
   });
 });
 
