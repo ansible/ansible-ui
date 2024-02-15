@@ -270,9 +270,6 @@ declare global {
         filter?: boolean
       ): Chainable<void>;
 
-      /** Check if the table row containing the specified text also has the text 'Success'. */
-      tableHasRowWithSuccess(name: string | RegExp, filter?: boolean): Chainable<void>;
-
       /** Selects a table row by clicking on the row checkbox. */
       selectTableRow(name: string | RegExp, filter?: boolean): Chainable<void>;
 
