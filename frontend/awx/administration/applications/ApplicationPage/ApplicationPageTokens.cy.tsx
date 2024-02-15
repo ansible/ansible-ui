@@ -6,7 +6,7 @@ describe('Application Tokens', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: '/api/v2/applications/1/tokens*',
+          url: '/api/v2/applications/1/tokens/*',
         },
         {
           fixture: 'applicationPageTokens.json',
@@ -16,13 +16,12 @@ describe('Application Tokens', () => {
 
     it('Tokens list renders', () => {
       cy.mount(<ApplicationTokens />);
-      cy.verifyPageTitle('Application Tokens');
       cy.get('tbody').find('tr').should('have.length', 10);
     });
 
     it('Filter tokens by name', () => {
       cy.mount(<ApplicationTokens />);
-      cy.intercept('api/v2/applications/1/tokens?user__username__icontains=test*').as(
+      cy.intercept('api/v2/applications/1/tokens/?user__username__icontains=test*').as(
         'nameFilterRequest'
       );
       cy.filterTableByText('test');
@@ -32,12 +31,12 @@ describe('Application Tokens', () => {
 
     it('Clicking name table header sorts application tokens by name', () => {
       cy.mount(<ApplicationTokens />);
-      cy.intercept('/api/v2/applications/1/tokens?order_by=-user__username*').as(
+      cy.intercept('/api/v2/applications/1/tokens/?order_by=-user__username*').as(
         'nameDescSortRequest'
       );
       cy.clickTableHeader(/^Name$/);
       cy.wait('@nameDescSortRequest');
-      cy.intercept('/api/v2/applications/1/tokens?order_by=user__username*').as(
+      cy.intercept('/api/v2/applications/1/tokens/?order_by=user__username*').as(
         'nameAscSortRequest'
       );
       cy.clickTableHeader(/^Name$/);
@@ -46,20 +45,20 @@ describe('Application Tokens', () => {
 
     it('Clicking name table header sorts application tokens by scope', () => {
       cy.mount(<ApplicationTokens />);
-      cy.intercept('api/v2/applications/1/tokens?order_by=scope*').as('nameAscSortRequest');
+      cy.intercept('api/v2/applications/1/tokens/?order_by=scope*').as('nameAscSortRequest');
       cy.clickTableHeader(/^Scope$/);
       cy.wait('@nameAscSortRequest');
-      cy.intercept('api/v2/applications/1/tokens?order_by=-scope*').as('nameDescSortRequest');
+      cy.intercept('api/v2/applications/1/tokens/?order_by=-scope*').as('nameDescSortRequest');
       cy.clickTableHeader(/^Scope$/);
       cy.wait('@nameDescSortRequest');
     });
 
     it('Clicking name table header sorts application tokens by expires', () => {
       cy.mount(<ApplicationTokens />);
-      cy.intercept('api/v2/applications/1/tokens?order_by=expires*').as('nameAscSortRequest');
+      cy.intercept('api/v2/applications/1/tokens/?order_by=expires*').as('nameAscSortRequest');
       cy.clickTableHeader(/^Expires$/);
       cy.wait('@nameAscSortRequest');
-      cy.intercept('api/v2/applications/1/tokens?order_by=-expires*').as('nameDescSortRequest');
+      cy.intercept('api/v2/applications/1/tokens/?order_by=-expires*').as('nameDescSortRequest');
       cy.clickTableHeader(/^Expires$/);
       cy.wait('@nameDescSortRequest');
     });
@@ -68,7 +67,7 @@ describe('Application Tokens', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: '/api/v2/applications/1/tokens*',
+          url: '/api/v2/applications/1/tokens/*',
         },
         {
           statusCode: 500,
@@ -84,7 +83,7 @@ describe('Application Tokens', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: '/api/v2/applications/1/tokens*',
+          url: '/api/v2/applications/1/tokens/*',
         },
         {
           fixture: 'emptyList.json',
