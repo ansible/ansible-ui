@@ -1,9 +1,12 @@
+import { randomString } from '../../../../framework/utils/random-string';
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 import { InventorySource } from '../../../../frontend/awx/interfaces/InventorySource';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
 
 describe('Inventory source page', () => {
+  const credentialName = 'e2e-' + randomString(4);
+
   let organization: Organization;
   let project: Project;
   let inventory: Inventory;
@@ -26,7 +29,7 @@ describe('Inventory source page', () => {
       });
 
       cy.createAWXCredential({
-        name: 'my cred',
+        name: credentialName,
         kind: 'gce',
         organization: organization.id,
         credential_type: 9,
@@ -64,7 +67,7 @@ describe('Inventory source page', () => {
     cy.selectDropdownOptionByResourceName('inventory', 'Dockerfile');
     cy.get('.pf-v5-c-input-group > .pf-v5-c-button').click();
     cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
-      cy.searchAndDisplayResource('my cred');
+      cy.searchAndDisplayResource(credentialName);
       cy.get('[data-cy="checkbox-column-cell"] > label').click();
       cy.get('#confirm').click();
     });
