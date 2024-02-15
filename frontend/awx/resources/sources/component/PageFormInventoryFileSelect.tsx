@@ -29,7 +29,7 @@ export function PageFormInventoryFileSelect<
     }));
     return Promise.resolve({
       total: newResponse.length,
-      values: newResponse,
+      values: [{ name: '/ (project root)' }, ...newResponse],
     });
   }, [projectId]);
 

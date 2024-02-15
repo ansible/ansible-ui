@@ -1,20 +1,23 @@
 import { useTranslation } from 'react-i18next';
-import { PageFormHidden } from '../../../../../framework/PageForm/Utils/PageFormHidden';
-import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
-import { PageFormCredentialSelect } from '../../../access/credentials/components/PageFormCredentialSelect';
-import { PageFormCheckbox } from '../../../../../framework/PageForm/Inputs/PageFormCheckbox';
-import { PageFormProjectSelect } from '../../projects/components/PageFormProjectSelect';
-import { PageFormTextInput } from '../../../../../framework/PageForm/Inputs/PageFormTextInput';
-import { PageFormDataEditor } from '../../../../../framework/PageForm/Inputs/PageFormDataEditor';
-import { InventorySourceForm } from '../../../interfaces/InventorySource';
-import { PageFormInventoryFileSelect } from '../component/PageFormInventoryFileSelect';
-import { Help } from '../../../../../framework/components/Help';
+import { PageFormHidden } from '../../../../framework/PageForm/Utils/PageFormHidden';
+import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
+import { PageFormCredentialSelect } from '../../access/credentials/components/PageFormCredentialSelect';
+import { PageFormCheckbox } from '../../../../framework/PageForm/Inputs/PageFormCheckbox';
+import { PageFormProjectSelect } from '../projects/components/PageFormProjectSelect';
+import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
+import { PageFormDataEditor } from '../../../../framework/PageForm/Inputs/PageFormDataEditor';
+import { InventorySourceForm } from '../../interfaces/InventorySource';
+import { PageFormInventoryFileSelect } from './component/PageFormInventoryFileSelect';
+import { Help } from '../../../../framework/components/Help';
 import { useWatch } from 'react-hook-form';
 
-export function ProjectSubForm() {
+export function InventorySourceSubForm() {
   const { t } = useTranslation();
   const isUpdateOnLaunchEnabled = useWatch<InventorySourceForm>({
     name: 'update_on_launch',
+  });
+  const source = useWatch<InventorySourceForm>({
+    name: 'source',
   });
   const sourceTypes = [
     'ec2',
@@ -43,12 +46,16 @@ export function ProjectSubForm() {
             labelHelp={t(
               'Select credentials for accessing the nodes this job will be ran against. You can only select one credential of each type. For machine credentials (SSH), checking "Prompt on launch" without selecting credentials will require you to select a machine credential at run time. If you select credentials and check "Prompt on launch", the selected credential(s) become the defaults that can be updated at run time.'
             )}
+            isRequired={sourceTypes.slice(1).includes(source as string)}
+            credentialIdPath="credentialIdPath"
+            sourceType={source as string}
           />
           <PageFormHidden watch="source" hidden={(type: string) => type !== 'scm'}>
             <PageFormProjectSelect<InventorySourceForm> name="source_project" isRequired />
             <PageFormInventoryFileSelect<InventorySourceForm>
               watch="source_project"
               name="source_path"
+              isRequired
             />
           </PageFormHidden>
 
