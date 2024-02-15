@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useSWR, { SWRConfiguration } from 'swr';
 import { createRequestError } from './RequestError';
@@ -12,9 +12,28 @@ export function useGet<T>(
   swrConfiguration: SWRConfiguration = {}
 ) {
   const getRequest = useGetRequest<T>();
+  const [lastValue, setLastValue] = useState<T | undefined>();
+  const getRequestWithoutAbortError = useCallback(
+    async (url: string) => {
+      try {
+        return await getRequest(url).then((value) => {
+          setLastValue(value);
+          return value;
+        });
+      } catch (error) {
+        if (error instanceof Error && error.name === 'AbortError') {
+          // We need to return the last value if the request was aborted
+          // This is because SWR internal workings
+          return lastValue as T;
+        }
+        throw error;
+      }
+    },
+    [getRequest, lastValue]
+  );
 
   url += normalizeQueryString(query);
-  const response = useSWR<T>(url, getRequest, {
+  const response = useSWR<T>(url, getRequestWithoutAbortError, {
     dedupingInterval: 0,
     ...swrConfiguration,
   });
