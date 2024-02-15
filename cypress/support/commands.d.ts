@@ -1,9 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-namespace */
 /// <reference types="cypress" />
-import '@4tw/cypress-drag-drop';
-import '@cypress/code-coverage/support';
-import 'cypress-file-upload';
 import { SetOptional, SetRequired } from 'type-fest';
 import { AwxItemsResponse } from '../../frontend/awx/common/AwxItemsResponse';
 import { Application } from '../../frontend/awx/interfaces/Application';
