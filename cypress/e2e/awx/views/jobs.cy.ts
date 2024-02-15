@@ -161,7 +161,7 @@ describe('job delete', () => {
 
         // Even though the job is finished from the API perspective, the UI still shows it as running
         // Wait for the table job row to show with Success
-        cy.tableHasRowWithSuccess(jobName, false);
+        cy.getTableRowByText(jobName, false).should('contain', 'Success');
 
         cy.clickTableRowKebabAction(jobName, 'delete-job', false);
         cy.get('.pf-v5-c-modal-box__footer')
@@ -198,7 +198,7 @@ describe('job delete', () => {
 
       // Even though the job is finished from the API perspective, the UI still shows it as running
       // Wait for the table job row to show with Success
-      cy.tableHasRowWithSuccess(jobName, false);
+      cy.getTableRowByText(jobName, false).should('contain', 'Success');
 
       cy.selectTableRow(jobName, false);
       cy.clickToolbarKebabAction('delete-selected-jobs');
