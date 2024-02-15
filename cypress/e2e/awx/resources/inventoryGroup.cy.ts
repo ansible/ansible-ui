@@ -60,7 +60,10 @@ describe('inventory group', () => {
     cy.hasDetail(/^Name$/, groupName);
     cy.hasDetail(/^Description$/, 'This is a description');
     cy.hasDetail(/^Variables$/, 'test: true');
-    cy.selectDetailsPageKebabAction('delete-group');
+    cy.get('[data-cy="actions-dropdown"]').click();
+    cy.get('[data-cy="delete-group"]').click();
+    cy.get('[data-cy="delete-groups-dialog-radio-delete"]').click();
+    cy.get('[data-cy="delete-group-modal-delete-button"]').click();
     cy.get('[data-cy="empty-state-title"]').contains(
       /^There are currently no groups added to this inventory./
     );
