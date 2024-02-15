@@ -3,8 +3,7 @@ import { usePageNavigate, ITableColumn } from '../../../../../framework';
 import {
   useNameColumn,
   useDescriptionColumn,
-  useCreatedColumn,
-  useModifiedColumn,
+  useInventoryNameColumn,
 } from '../../../../common/columns';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { AwxHost } from '../../../interfaces/AwxHost';
@@ -19,12 +18,16 @@ export function useHostsColumns(options?: { disableSort?: boolean; disableLinks?
     ...options,
     onClick: nameClick,
   });
-  const descriptionColumn = useDescriptionColumn();
-  const createdColumn = useCreatedColumn(options);
-  const modifiedColumn = useModifiedColumn(options);
+  const descriptionColumn = useDescriptionColumn({
+    tableViewOption: undefined,
+    disableSort: false,
+  });
+  const inventoryColumn = useInventoryNameColumn(AwxRoute.InventoryDetails, {
+    tableViewOption: undefined,
+  });
   const tableColumns = useMemo<ITableColumn<AwxHost>[]>(
-    () => [nameColumn, descriptionColumn, createdColumn, modifiedColumn],
-    [nameColumn, descriptionColumn, createdColumn, modifiedColumn]
+    () => [nameColumn, descriptionColumn, inventoryColumn],
+    [nameColumn, descriptionColumn, inventoryColumn]
   );
   return tableColumns;
 }
