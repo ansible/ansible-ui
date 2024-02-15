@@ -6,14 +6,11 @@ import {
   IPageAction,
   PageActionSelection,
   PageActionType,
-  PageHeader,
   PageLayout,
   PageTable,
 } from '../../../../../framework';
 import { awxAPI } from '../../../common/api/awx-utils';
-import { useAwxConfig } from '../../../common/useAwxConfig';
 import { useAwxView } from '../../../common/useAwxView';
-import { getDocsBaseUrl } from '../../../common/util/getDocsBaseUrl';
 import { Token } from '../../../interfaces/Token';
 import { useDeleteTokens } from '../hooks/useDeleteTokens';
 import { useTokensColumns } from '../hooks/useTokensColumns';
@@ -21,12 +18,11 @@ import { useTokensFilters } from '../hooks/useTokensFilters';
 
 export function ApplicationTokens() {
   const { t } = useTranslation();
-  const config = useAwxConfig();
   const tableColumns = useTokensColumns();
   const toolbarFilters = useTokensFilters();
   const params = useParams<{ id: string }>();
   const view = useAwxView<Token>({
-    url: awxAPI`/applications/${params.id ?? ''}/tokens`,
+    url: awxAPI`/applications/${params.id ?? ''}/tokens/`,
     tableColumns,
     toolbarFilters,
   });
@@ -62,13 +58,6 @@ export function ApplicationTokens() {
 
   return (
     <PageLayout>
-      <PageHeader
-        title={t('Application Tokens')}
-        description={t('List of access tokens associated with this application.')}
-        titleHelpTitle={t('Application Tokens')}
-        titleHelp={t('List of access tokens associated with this application.')}
-        titleDocLink={`${getDocsBaseUrl(config)}/html/userguide/applications_auth.html`}
-      />
       <PageTable<Token>
         id="awx-applications-token-table"
         toolbarFilters={toolbarFilters}

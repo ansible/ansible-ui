@@ -13,7 +13,6 @@ import { CreateSchedule } from '../../views/schedules/ScheduleForm';
 import { ScheduleDetails } from '../../views/schedules/SchedulePage/ScheduleDetails';
 import { SchedulePage } from '../../views/schedules/SchedulePage/SchedulePage';
 import { ScheduleRules } from '../../views/schedules/SchedulePage/ScheduleRules';
-import { Schedules } from '../../views/schedules/Schedules';
 import { AwxRoute } from '../AwxRoutes';
 import { InventoryJobTemplates } from '../../resources/inventories/InventoryPage/InventoryJobTemplates';
 import { InventoryHosts } from '../../resources/inventories/InventoryPage/InventoryHosts';
@@ -39,6 +38,7 @@ import { InventoryHostFacts } from '../../resources/inventories/inventoryHostsPa
 import { GroupHosts } from '../../resources/groups/GroupHosts';
 import { GroupRelatedGroups } from '../../resources/groups/GroupRelatedGroups';
 import { ResourceNotifications } from '../../resources/notifications/ResourceNotifications';
+import { SchedulesList } from '../../views/schedules/SchedulesList';
 
 export function useAwxInventoryRoutes() {
   const { t } = useTranslation();
@@ -111,7 +111,7 @@ export function useAwxInventoryRoutes() {
             {
               id: AwxRoute.InventorySourceSchedules,
               path: 'schedules',
-              element: <Schedules sublistEndpoint={awxAPI`/inventory_sources`} />,
+              element: <SchedulesList sublistEndpoint={awxAPI`/inventory_sources`} />,
             },
           ],
         },
