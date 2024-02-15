@@ -116,24 +116,30 @@ describe('Remote Registry', () => {
     cy.get('[data-cy="create-remote-registry"]').should('be.visible').click();
     cy.get('[data-cy="name"]').type(remoteRegistryName);
     cy.get('[data-cy="url"]').type(RemoteRegistry.validIndexableURL);
+    cy.intercept({
+      method: 'GET',
+      url: hubAPI`/_ui/v1/execution-environments/registries/?name=${remoteRegistryName}`,
+    }).as('remoteRegistry');
     cy.get('[data-cy="Submit"]').click();
-    cy.contains('Remote registries').click();
-    cy.filterTableBySingleText(remoteRegistryName);
-    cy.get('[data-cy="actions-column-cell"]').click();
-    cy.get('[data-cy="edit-remote-registry"]').click({ force: true });
-    cy.url().should('include', `remote-registries/${remoteRegistryName}/edit`);
-    cy.get('[data-cy="url"]').clear().type(RemoteRegistry.remoteURL);
-    cy.clickButton(/^Edit remote registry$/);
-    cy.clickButton(/^Clear all filters$/);
-    cy.contains(remoteRegistryName).click();
-    cy.url().should('include', `remote-registries/details/${remoteRegistryName}`);
-    cy.get('[data-cy="name"]').should('contain', remoteRegistryName);
-    cy.get('[data-cy="url"]').should('contain', RemoteRegistry.remoteURL);
+    cy.wait('@remoteRegistry').then(() => {
+      cy.contains('Remote registries').click();
+      cy.filterTableBySingleText(remoteRegistryName);
+      cy.get('[data-cy="actions-column-cell"]').click();
+      cy.get('[data-cy="edit-remote-registry"]').click({ force: true });
+      cy.url().should('include', `remote-registries/${remoteRegistryName}/edit`);
+      cy.get('[data-cy="url"]').clear().type(RemoteRegistry.remoteURL);
+      cy.clickButton(/^Edit remote registry$/);
+      cy.clickButton(/^Clear all filters$/);
+      cy.contains(remoteRegistryName).click();
+      cy.url().should('include', `remote-registries/details/${remoteRegistryName}`);
+      cy.get('[data-cy="name"]').should('contain', remoteRegistryName);
+      cy.get('[data-cy="url"]').should('contain', RemoteRegistry.remoteURL);
 
-    // Delete the edited remote registry
-    cy.get('[data-cy="actions-dropdown"]').click();
-    cy.get('[data-cy="delete-remote-registry"]').click();
-    cy.get('#confirm').click();
-    cy.clickButton(/^Delete remote registries/);
+      // Delete the edited remote registry
+      cy.get('[data-cy="actions-dropdown"]').click();
+      cy.get('[data-cy="delete-remote-registry"]').click();
+      cy.get('#confirm').click();
+      cy.clickButton(/^Delete remote registries/);
+    });
   });
 });
