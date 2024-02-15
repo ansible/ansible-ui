@@ -19,7 +19,10 @@ import '@patternfly/patternfly/patternfly-charts.css';
 
 import '@patternfly/patternfly/patternfly-charts-theme-dark.css';
 
+import '@4tw/cypress-drag-drop';
+import '@cypress/code-coverage/support';
 import { Page } from '@patternfly/react-core';
+import 'cypress-file-upload';
 import 'cypress-react-selector';
 import type { MountReturn } from 'cypress/react';
 import { mount } from 'cypress/react18';
@@ -27,10 +30,17 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { PageFramework } from '../../framework';
 import { AwxActiveUserProvider } from '../../frontend/awx/common/useAwxActiveUser';
 import { User } from '../../frontend/awx/interfaces/User';
-import './commands';
-
 import '../../frontend/common/i18n';
+import './auth';
+import './awx-commands';
+import './awx-user-access-commands';
+import './common-commands';
+import './core-commands';
+import './e2e';
+import './eda-commands';
 import { awxAPI } from './formatApiPathForAwx';
+import './hub-commands';
+import './rest-commands';
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
