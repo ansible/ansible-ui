@@ -29,11 +29,10 @@ describe('inventory host', () => {
     cy.clickLink(/^Create inventory$/);
     cy.get('[data-cy="name"]').type(inventoryName);
     cy.selectDropdownOptionByResourceName('organization', organization.name);
-    cy.get('[data-cy="prevent_instance_group_fallback"]').click();
     cy.clickButton(/^Create inventory$/);
     cy.verifyPageTitle(inventoryName);
     cy.hasDetail(/^Organization$/, organization.name);
-    cy.clickLink(/^Groups$/);
+    cy.clickLink(/^Hosts$/);
   });
 
   afterEach(() => {
@@ -58,6 +57,10 @@ describe('inventory host', () => {
     cy.typeMonacoTextField('test: true');
     cy.clickButton(/^Create host/);
     cy.hasDetail(/^Name$/, hostName);
+    cy.hasDetail(/^Description$/, 'This is a description');
+    cy.hasDetail(/^Variables$/, 'test: true');
+    cy.clickLink(/^Inventories/);
+    cy.clickLink(hostName);
     cy.hasDetail(/^Description$/, 'This is a description');
     cy.hasDetail(/^Variables$/, 'test: true');
     cy.selectDetailsPageKebabAction('delete-host');
