@@ -56,12 +56,16 @@ export function useGetRequest<ResponseBody>() {
       abortControllerRef.current.abortController.abort();
     }
     abortControllerRef.current.abortController = new AbortController();
-    const response = await requestCommon({
-      url: url + normalizeQueryString(query),
-      method: 'GET',
-      signal: signal ?? abortControllerRef.current.abortController.signal,
-    });
-    abortControllerRef.current.abortController = undefined;
+    let response: Response;
+    try {
+      response = await requestCommon({
+        url: url + normalizeQueryString(query),
+        method: 'GET',
+        signal: signal ?? abortControllerRef.current.abortController.signal,
+      });
+    } finally {
+      abortControllerRef.current.abortController = undefined;
+    }
     if (!response.ok) {
       if (response.status === 401) {
         navigate('/login?navigate-back=true');
