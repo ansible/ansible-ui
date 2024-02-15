@@ -69,10 +69,7 @@ declare global {
       getByDataCy(dataCy: string): Chainable<JQuery<HTMLElement>>;
 
       /** Contains by selector, making sure it is not disabled or hidden */
-      containsBy(selector: string, text?: string | number | RegExp): Chainable<JQuery<HTMLElement>>;
-
-      /** Click by selector, making sure it is not disabled or hidden */
-      clickBy(selector: string, text?: string | number | RegExp): Chainable<void>;
+      containsBy(selector: string, text: string | number | RegExp): Chainable<JQuery<HTMLElement>>;
 
       /** Click by data-cy attribute, making sure it is not disabled or hidden */
       clickByDataCy(dataCy: string): Chainable<void>;

@@ -16,13 +16,8 @@ Cypress.Commands.add('getByDataCy', (dataCy: string) => {
 });
 
 /** Contains by selector, making sure it is not disabled or hidden */
-Cypress.Commands.add('containsBy', (selector: string, text?: string | number | RegExp) => {
+Cypress.Commands.add('containsBy', (selector: string, text: string | number | RegExp) => {
   cy.contains(`${selector}:not(:disabled):not(:hidden):visible:not([aria-disabled="true"])`, text);
-});
-
-/** Click by selector, making sure it is not disabled or hidden */
-Cypress.Commands.add('clickBy', (selector: string, text?: string | number | RegExp) => {
-  cy.containsBy(selector, text).click();
 });
 
 /** Click by data-cy attribute, making sure it is not disabled or hidden */
