@@ -1,6 +1,14 @@
 import { useState, MouseEvent } from 'react';
 import { useFormContext, useFieldArray } from 'react-hook-form';
-import { Dropdown, DropdownList, DropdownItem, MenuToggle } from '@patternfly/react-core';
+import {
+  Dropdown,
+  DropdownList,
+  DropdownItem,
+  MenuToggle,
+  TextContent,
+  Text,
+  TextVariants,
+} from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
@@ -9,6 +17,7 @@ import type { AuthenticatorMapValues } from '../AuthenticatorForm';
 import { MapFields } from './MapFields';
 
 export function AuthenticatorMappingStep() {
+  const { t } = useTranslation();
   const { control } = useFormContext();
   const {
     fields: mappings,
@@ -31,6 +40,15 @@ export function AuthenticatorMappingStep() {
 
   return (
     <>
+      <TextContent
+        style={{
+          paddingBottom: 15,
+          marginBottom: 15,
+          borderBottom: '1px solid var(--pf-v5-global--palette--black-400)',
+        }}
+      >
+        <Text component={TextVariants.h2}>{t('Authentication mapping')}</Text>
+      </TextContent>
       {mappings.map((map, i) => (
         <MapFields
           key={map.id}

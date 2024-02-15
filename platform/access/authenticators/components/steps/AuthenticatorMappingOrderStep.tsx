@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { TextContent, Text, TextVariants } from '@patternfly/react-core';
 import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
 import { ReorderItems } from '../../../../../framework/components/ReorderItems';
 import type { AuthenticatorFormValues, AuthenticatorMapValues } from '../AuthenticatorForm';
@@ -10,11 +11,14 @@ export function AuthenticatorMappingOrderStep() {
 
   return (
     <div>
-      <p>
-        {t(
-          'Mappings are ordered from top to bottom on the list. Use the draggable icon on the left to re-order your authentication.'
-        )}
-      </p>
+      <TextContent style={{ marginBottom: 25 }}>
+        <Text component={TextVariants.h2}>{t('Manage authentication mappings order')}</Text>
+        <Text>
+          {t(
+            'Mappings are ordered from top to bottom on the list. Use the draggable icon on the left to re-order your authentication.'
+          )}
+        </Text>
+      </TextContent>
       <ReorderItems<AuthenticatorMapValues>
         items={mappings}
         setItems={(items) => {
