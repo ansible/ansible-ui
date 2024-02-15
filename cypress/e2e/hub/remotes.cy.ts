@@ -1,5 +1,6 @@
 import { randomString } from '../../../framework/utils/random-string';
 import { Remotes } from './constants';
+import { pulpAPI } from '../../support/formatApiPathForHub';
 
 describe('Remotes', () => {
   const testSignature: string = randomString(5, undefined, { isLowercase: true });
@@ -85,16 +86,23 @@ describe('Remotes', () => {
     cy.get('[data-cy="url"]').clear().type(Remotes.remoteURL);
     cy.get('[data-cy="signed-only-warning"]').should('not.exist');
     cy.get('[data-cy="requirements-file-warning"]').should('not.exist');
+    cy.intercept({
+      method: 'GET',
+      url: pulpAPI`/remotes/ansible/collection/?name=${remoteName}`,
+    }).as('remote');
     cy.get('[data-cy="Submit"]').click();
-    cy.contains('Remotes').click();
-    cy.filterTableBySingleText(remoteName);
-    cy.get('[data-cy="actions-column-cell"]').click();
-    cy.get('[data-cy="delete-remote"]').click({ force: true });
-    cy.get('#confirm').click();
-    cy.clickButton(/^Delete remote/);
-    cy.contains(/^Success$/);
-    cy.clickButton(/^Close$/);
-    cy.clickButton(/^Clear all filters$/);
+    //needs to wait for the remote to be created
+    cy.wait('@remote').then(() => {
+      cy.contains('Remotes').click();
+      cy.filterTableBySingleText(remoteName);
+      cy.get('[data-cy="actions-column-cell"]').click();
+      cy.get('[data-cy="delete-remote"]').click({ force: true });
+      cy.get('#confirm').click();
+      cy.clickButton(/^Delete remote/);
+      cy.contains(/^Success$/);
+      cy.clickButton(/^Close$/);
+      cy.clickButton(/^Clear all filters$/);
+    });
   });
 
   it('edit a remote', () => {
