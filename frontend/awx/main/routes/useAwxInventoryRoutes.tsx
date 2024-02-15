@@ -36,6 +36,7 @@ import {
 import { GroupDetails } from '../../resources/groups/GroupDetails';
 import { InventoryHostJobs } from '../../resources/inventories/inventoryHostsPage/InventoryHostJobs';
 import { InventoryHostFacts } from '../../resources/inventories/inventoryHostsPage/InventoryHostFacts';
+import { GroupHosts } from '../../resources/groups/GroupHosts';
 import { GroupRelatedGroups } from '../../resources/groups/GroupRelatedGroups';
 import { ResourceNotifications } from '../../resources/notifications/ResourceNotifications';
 
@@ -146,10 +147,15 @@ export function useAwxInventoryRoutes() {
             },
             {
               id: AwxRoute.InventoryGroupHost,
-              path: 'hosts',
-              element: <PageNotImplemented />,
+              path: 'nested_hosts',
+              element: <GroupHosts />,
             },
           ],
+        },
+        {
+          id: AwxRoute.InventoryGroupHostAdd,
+          path: ':inventory_type/:id/group/:group_id/nested_hosts/add',
+          element: <CreateHost />,
         },
         {
           id: AwxRoute.InventoryGroupEdit,

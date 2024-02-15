@@ -1,0 +1,83 @@
+{
+  "count": 1,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 166,
+      "type": "host",
+      "url": "/api/v2/hosts/166/",
+      "related": {
+        "created_by": "/api/v2/users/3/",
+        "modified_by": "/api/v2/users/3/",
+        "variable_data": "/api/v2/hosts/166/variable_data/",
+        "groups": "/api/v2/hosts/166/groups/",
+        "all_groups": "/api/v2/hosts/166/all_groups/",
+        "job_events": "/api/v2/hosts/166/job_events/",
+        "job_host_summaries": "/api/v2/hosts/166/job_host_summaries/",
+        "activity_stream": "/api/v2/hosts/166/activity_stream/",
+        "inventory_sources": "/api/v2/hosts/166/inventory_sources/",
+        "smart_inventories": "/api/v2/hosts/166/smart_inventories/",
+        "ad_hoc_commands": "/api/v2/hosts/166/ad_hoc_commands/",
+        "ad_hoc_command_events": "/api/v2/hosts/166/ad_hoc_command_events/",
+        "ansible_facts": "/api/v2/hosts/166/ansible_facts/",
+        "inventory": "/api/v2/inventories/1/"
+      },
+      "summary_fields": {
+        "inventory": {
+          "id": 1,
+          "name": "Demo Inventory",
+          "description": "",
+          "has_active_failures": false,
+          "total_hosts": 4,
+          "hosts_with_active_failures": 0,
+          "total_groups": 1,
+          "has_inventory_sources": true,
+          "total_inventory_sources": 1,
+          "inventory_sources_with_failures": 0,
+          "organization_id": 1,
+          "kind": ""
+        },
+        "created_by": {
+          "id": 3,
+          "username": "dev",
+          "first_name": "",
+          "last_name": ""
+        },
+        "modified_by": {
+          "id": 3,
+          "username": "dev",
+          "first_name": "",
+          "last_name": ""
+        },
+        "user_capabilities": {
+          "edit": true,
+          "delete": true
+        },
+        "groups": {
+          "count": 1,
+          "results": [
+            {
+              "id": 176,
+              "name": "asdfsadf"
+            }
+          ]
+        },
+        "recent_jobs": []
+      },
+      "created": "2024-02-08T04:10:41.910087Z",
+      "modified": "2024-02-08T04:10:41.910099Z",
+      "name": "asdfasdf",
+      "description": "",
+      "inventory": 1,
+      "enabled": true,
+      "instance_id": "",
+      "variables": "---",
+      "has_active_failures": false,
+      "has_inventory_sources": false,
+      "last_job": null,
+      "last_job_host_summary": null,
+      "ansible_facts_modified": null
+    }
+  ]
+}
