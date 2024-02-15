@@ -53,12 +53,12 @@ describe('Collections- List View', () => {
       const filePath = result.filename as string;
       cy.uploadHubCollectionFile(filePath);
       cy.get('input[id="radio-non-pipeline"]').click();
-      cy.getTableRowBySingleText('community').within(() => {
+      cy.getTableRowBySingleText('validated').within(() => {
         cy.get('td[data-cy=checkbox-column-cell]').click();
       });
       cy.get('[data-cy="Submit"]').click();
-      cy.url().should('include', 'approvals');
-      cy.reload();
+      cy.galaxykit('task wait all');
+
       cy.navigateTo('hub', Collections.url);
       cy.url().should('include', 'collections');
       cy.verifyPageTitle(Collections.title);
@@ -70,7 +70,9 @@ describe('Collections- List View', () => {
       cy.clickButton(/^Delete collections/);
       cy.contains(/^Success$/);
       cy.clickButton(/^Close$/);
-      cy.clickButton(/^Clear all filters$/);
+      cy.galaxykit('task wait all');
+      cy.filterTableBySingleText(collection);
+      cy.contains('No results found');
       cy.deleteNamespace(namespace);
     });
   });
