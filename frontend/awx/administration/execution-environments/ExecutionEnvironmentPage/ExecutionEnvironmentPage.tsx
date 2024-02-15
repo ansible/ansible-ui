@@ -18,8 +18,8 @@ import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs
 import { useGetItem } from '../../../../common/crud/useGet';
 import { cannotDeleteResource, cannotEditResource } from '../../../../common/utils/RBAChelpers';
 import { awxAPI } from '../../../common/api/awx-utils';
-import { ExecutionEnvironment } from '../../../interfaces/ExecutionEnvironment';
 import { AwxRoute } from '../../../main/AwxRoutes';
+import { ExecutionEnvironment } from '../../../interfaces/ExecutionEnvironment';
 import { useDeleteExecutionEnvironments } from '../hooks/useDeleteExecutionEnvironments';
 
 export function ExecutionEnvironmentPage() {
