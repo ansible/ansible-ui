@@ -161,7 +161,8 @@ describe('job delete', () => {
 
         // Even though the job is finished from the API perspective, the UI still shows it as running
         // Wait for the table job row to show with Success
-        cy.getTableRowByText(jobName, false).should('contain', 'Success');
+        // Sometimes the job runs for more than 30 seconds, so we need to increase the timeout
+        cy.contains('tr', jobName, { timeout: 60 * 1000 }).should('contain', 'Success');
 
         cy.clickTableRowKebabAction(jobName, 'delete-job', false);
         cy.get('.pf-v5-c-modal-box__footer')
@@ -198,7 +199,8 @@ describe('job delete', () => {
 
       // Even though the job is finished from the API perspective, the UI still shows it as running
       // Wait for the table job row to show with Success
-      cy.getTableRowByText(jobName, false).should('contain', 'Success');
+      // Sometimes the job runs for more than 30 seconds, so we need to increase the timeout
+      cy.contains('tr', jobName, { timeout: 60 * 1000 }).should('contain', 'Success');
 
       cy.selectTableRow(jobName, false);
       cy.clickToolbarKebabAction('delete-selected-jobs');
