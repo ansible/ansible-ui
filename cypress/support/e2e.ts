@@ -3,8 +3,16 @@
 import '@cypress/code-coverage/support';
 import { randomString } from '../../framework/utils/random-string';
 import { HubUser } from '../../frontend/hub/interfaces/expanded/HubUser';
-import './commands';
+import './auth';
+import './awx-commands';
+import './awx-user-access-commands';
+import './common-commands';
+import './core-commands';
+import './e2e';
+import './eda-commands';
 import { hubAPI } from './formatApiPathForHub';
+import './hub-commands';
+import './rest-commands';
 
 export const galaxykitUsername: string = `e2e-${randomString(4)}`;
 export const galaxykitPassword: string = randomString(9);

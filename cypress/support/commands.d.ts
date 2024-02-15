@@ -43,16 +43,7 @@ import { EdaUser, EdaUserCreateUpdate } from '../../frontend/eda/interfaces/EdaU
 import { Role as HubRole } from '../../frontend/hub/access/roles/Role';
 import { RemoteRegistry } from '../../frontend/hub/administration/remote-registries/RemoteRegistry';
 import { CollectionVersionSearch } from '../../frontend/hub/collections/Collection';
-import './auth';
-import './awx-commands';
 import { IAwxResources } from './awx-commands';
-import './awx-user-access-commands';
-import './common-commands';
-import './core-commands';
-import './e2e';
-import './eda-commands';
-import './hub-commands';
-import './rest-commands';
 
 declare global {
   namespace Cypress {
@@ -61,15 +52,8 @@ declare global {
       awxLogin(): Chainable<void>;
       edaLogin(): Chainable<void>;
       hubLogin(): Chainable<void>;
+      platformLogin(): Chainable<void>;
       requiredVariablesAreSet(requiredVariables: string[]): Chainable<void>;
-
-      // --- NAVIGATION COMMANDS ---
-      // createGlobalProject(): Chainable<Project>;
-      /**Navigates to a page of the UI using using the links on the page sidebar. Intended as an alternative to cy.visit(). */
-      navigateTo(component: 'awx' | 'eda' | 'hub', label: string): Chainable<void>;
-
-      /**Locates a title using its label. No assertion is made. */
-      verifyPageTitle(label: string): Chainable<void>;
 
       // ---------------------------------------------------------------------
       // Core Commands
@@ -84,8 +68,11 @@ declare global {
       /** Get by data-cy attribute, making sure it is not disabled or hidden */
       getByDataCy(dataCy: string): Chainable<JQuery<HTMLElement>>;
 
+      /** Contains by selector, making sure it is not disabled or hidden */
+      containsBy(selector: string, text?: string | number | RegExp): Chainable<JQuery<HTMLElement>>;
+
       /** Click by selector, making sure it is not disabled or hidden */
-      clickBy(selector: string): Chainable<void>;
+      clickBy(selector: string, text?: string | number | RegExp): Chainable<void>;
 
       /** Click by data-cy attribute, making sure it is not disabled or hidden */
       clickByDataCy(dataCy: string): Chainable<void>;
@@ -107,6 +94,18 @@ declare global {
 
       /** Select a value from a multi select input by data-cy attribute, making sure it is not disabled or hidden */
       multiSelectByDataCy(dataCy: string, value: string): Chainable<void>;
+
+      // --- NAVIGATION COMMANDS ---
+      // createGlobalProject(): Chainable<Project>;
+      /**Navigates to a page of the UI using using the links on the page sidebar. Intended as an alternative to cy.visit(). */
+      navigateTo(component: 'platform' | 'awx' | 'eda' | 'hub', label: string): Chainable<void>;
+
+      /**Locates a title using its label. No assertion is made. */
+      verifyPageTitle(label: string): Chainable<void>;
+
+      // ---- UI COMMANDS ---
+
+      setTableView(viewType: string): Chainable<void>;
 
       // ---------------------------------------------------------------------
       // Input Commands
@@ -293,10 +292,7 @@ declare global {
       clickLink(label: string | RegExp): Chainable<void>;
       clickButton(label: string | RegExp): Chainable<void>;
 
-      /** Clicks an element with a data-cy attribute. Waits for the element to be enabled and visible. */
-      clickByDataCy(dataCy: string): Chainable<void>;
-
-      clickPageAction(dataCyLabel: string | RegExp): Chainable<void>;
+      clickPageAction(dataCy: string): Chainable<void>;
 
       /**Finds an alert by its label. Does not make an assertion.  */
       hasAlert(label: string | RegExp): Chainable<void>;
@@ -1040,8 +1036,10 @@ declare global {
       ): Cypress.Chainable<void>;
       collectionCopyVersionToRepositories(collection: string): Cypress.Chainable<void>;
       addAndApproveMultiCollections(thisRange: number): Cypress.Chainable<void>;
+
       createRepository(repositoryName: string, remoteName?: string): Cypress.Chainable<void>;
       deleteRepository(repositoryName: string): Cypress.Chainable<void>;
+
       undeprecateCollection(
         collectionName: string,
         namespaceName: string,

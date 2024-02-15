@@ -5,10 +5,8 @@ import { Task } from '../../frontend/hub/administration/tasks/Task';
 import { CollectionVersionSearch } from '../../frontend/hub/collections/Collection';
 import { parsePulpIDFromURL } from '../../frontend/hub/common/api/hub-api-utils';
 import { HubItemsResponse } from '../../frontend/hub/common/useHubView';
-import './commands';
 import { galaxykitPassword, galaxykitUsername } from './e2e';
 import { hubAPI, pulpAPI } from './formatApiPathForHub';
-import './rest-commands';
 import { escapeForShellCommand } from './utils';
 
 const apiPrefix = Cypress.env('HUB_API_PREFIX') as string;
