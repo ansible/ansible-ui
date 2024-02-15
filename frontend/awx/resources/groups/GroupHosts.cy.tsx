@@ -54,9 +54,9 @@ describe('GroupHosts', () => {
     cy.fixture('hosts.json')
       .its('results')
       .should('be.an', 'array')
-      .then((results: AwxHost[]) => {
-        const host = results[0];
-        cy.clickTableRowKebabAction(host.name, 'disassociate-selected-host');
+      .then(() => {
+        cy.get('[data-cy="checkbox-column-cell"] > label > input').click();
+        cy.get('[data-cy="disassociate-selected-hosts"]').click();
         cy.contains('Disassociate host from group?');
       });
   });
