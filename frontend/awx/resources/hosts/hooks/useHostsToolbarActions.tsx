@@ -30,6 +30,21 @@ export function useHostsToolbarActions(view: IAwxView<AwxHost>) {
         label: t('Create host'),
         onClick: () => pageNavigate(AwxRoute.CreateHost),
       },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.None,
+        variant: ButtonVariant.secondary,
+        isPinned: true,
+        label: t('Smart Inventory'),
+        isDisabled: () =>
+          view?.filterState && Object.keys(view.filterState).length !== 0
+            ? ''
+            : 'Enter at least one search filter to create a new Smart Inventory',
+        onClick: () =>
+          pageNavigate(AwxRoute.CreateSmartInventory, {
+            query: { ...view.filterState },
+          }),
+      },
       { type: PageActionType.Seperator },
       {
         type: PageActionType.Button,
@@ -41,6 +56,6 @@ export function useHostsToolbarActions(view: IAwxView<AwxHost>) {
         isDisabled: (hosts: AwxHost[]) => cannotDeleteResources(hosts, t),
       },
     ],
-    [pageNavigate, deleteHosts, t]
+    [pageNavigate, deleteHosts, view.filterState, t]
   );
 }
