@@ -2,7 +2,7 @@ export interface SummaryFieldRecentJob {
   id: number;
   status: string;
   finished: string | null;
-  canceled_on: string | null;
+  canceled_on?: string | null;
   type: string;
 }
 export interface SummaryFieldsOrganization {

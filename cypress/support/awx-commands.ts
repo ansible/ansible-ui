@@ -23,10 +23,7 @@ import { Team } from '../../frontend/awx/interfaces/Team';
 import { User } from '../../frontend/awx/interfaces/User';
 import { WorkflowJobTemplate } from '../../frontend/awx/interfaces/WorkflowJobTemplate';
 import { WorkflowNode } from '../../frontend/awx/interfaces/WorkflowNode';
-import './auth';
-import './commands';
 import { awxAPI } from './formatApiPathForAwx';
-import './rest-commands';
 
 //  AWX related custom command implementation
 
@@ -292,10 +289,7 @@ Cypress.Commands.add('setTablePageSize', (text: '10' | '20' | '50' | '100') => {
 });
 
 Cypress.Commands.add('clickLink', (label: string | RegExp) => {
-  cy.contains('a:not(:disabled):not(:hidden)', label)
-    .should('not.have.attr', 'aria-disabled', 'true')
-    .should('be.visible');
-  cy.contains('a:not(:disabled):not(:hidden)', label).click();
+  cy.containsBy('a', label).click();
 });
 
 Cypress.Commands.add('clickTab', (label: string | RegExp, isLink) => {
@@ -307,19 +301,7 @@ Cypress.Commands.add('clickTab', (label: string | RegExp, isLink) => {
 });
 
 Cypress.Commands.add('clickButton', (label: string | RegExp) => {
-  cy.contains('button:not(:disabled):not(:hidden)', label)
-    .should('not.have.attr', 'aria-disabled', 'true')
-    .should('be.visible');
-  cy.contains('button:not(:disabled):not(:hidden)', label).click();
-});
-
-Cypress.Commands.add('clickByDataCy', (dataCy: string) => {
-  // Having the check before the click is needed for a timing issue which causes:
-  // We initially found matching element(s), but while waiting for them to become actionable, they disappeared from the page.
-  cy.get(`[data-cy="${dataCy}"]:not(:disabled):not(:hidden)`)
-    .should('not.have.attr', 'aria-disabled', 'true')
-    .should('be.visible');
-  cy.get(`[data-cy="${dataCy}"]:not(:disabled):not(:hidden)`).click();
+  cy.containsBy('button', label).click();
 });
 
 Cypress.Commands.add('navigateTo', (component: string, label: string) => {
@@ -347,24 +329,18 @@ Cypress.Commands.add('hasTooltip', (label: string | RegExp) => {
   cy.contains('.pf-v5-c-tooltip__content', label);
 });
 
-Cypress.Commands.add('clickToolbarKebabAction', (dataCyLabel: string | RegExp) => {
-  cy.get('[data-ouia-component-id="page-toolbar"]').within(() => {
-    cy.get('[data-cy*="actions-dropdown"]:not(:disabled):not(:hidden)')
-      .should('not.have.attr', 'aria-disabled', 'true')
-      .should('be.visible')
-      .click()
-      .then(() => {
-        cy.get(`[data-cy=${dataCyLabel}]`).click();
-      });
+Cypress.Commands.add('clickToolbarKebabAction', (dataCy: string) => {
+  cy.getBy('[data-ouia-component-id="page-toolbar"]').within(() => {
+    cy.getByDataCy('actions-dropdown').click();
+    cy.getByDataCy(dataCy).click();
   });
 });
 
 Cypress.Commands.add('clickTableRow', (name: string | RegExp, filter?: boolean) => {
-  if (filter !== false && typeof name === 'string') {
-    cy.filterTableByText(name);
-  }
-  cy.contains('td', name).within(() => {
-    cy.get('a').click();
+  cy.getTableRowByText(name, filter).within(() => {
+    cy.contains('td', name).within(() => {
+      cy.getBy('a').click();
+    });
   });
 });
 
@@ -431,18 +407,12 @@ Cypress.Commands.add(
   'clickTableRowPinnedAction',
   (name: string | RegExp, iconDataCy: string, filter?: boolean) => {
     cy.getTableRowByText(name, filter).within(() => {
-      cy.get('[data-cy="actions-column-cell"]').within(() => {
-        cy.get(`[data-cy="${iconDataCy}"]`).click();
+      cy.getByDataCy('actions-column-cell').within(() => {
+        cy.getByDataCy(iconDataCy).click();
       });
     });
   }
 );
-
-Cypress.Commands.add('tableHasRowWithSuccess', (name: string | RegExp, filter?: boolean) => {
-  cy.getTableRowByText(name, filter).within(() => {
-    cy.get('[data-label="Status"]').should('contain', 'Success');
-  });
-});
 
 Cypress.Commands.add('selectTableRow', (name: string | RegExp, filter?: boolean) => {
   cy.getTableRowByText(name, filter).within(() => {
@@ -493,12 +463,9 @@ Cypress.Commands.add('assertModalSuccess', () => {
   });
 });
 
-Cypress.Commands.add('clickPageAction', (dataCyLabel: string | RegExp) => {
-  cy.get('[data-cy="actions-dropdown"]')
-    .click()
-    .then(() => {
-      cy.get(`[data-cy="${dataCyLabel}"]`).click();
-    });
+Cypress.Commands.add('clickPageAction', (dataCy: string) => {
+  cy.getByDataCy('actions-dropdown').click();
+  cy.getByDataCy(dataCy).click();
 });
 
 // Resources for testing AWX

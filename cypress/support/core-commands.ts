@@ -7,10 +7,7 @@
 
 /** Get by selector, making sure it is not disabled or hidden */
 Cypress.Commands.add('getBy', (selector: string) => {
-  cy.get(`${selector}:not(:disabled):not(:hidden)`)
-    .should('not.have.attr', 'aria-disabled', 'true')
-    .should('be.visible');
-  cy.get(`${selector}:not(:disabled):not(:hidden)`);
+  cy.get(`${selector}:not(:disabled):not(:hidden):visible:not([aria-disabled="true"])`);
 });
 
 /** Get by data-cy attribute, making sure it is not disabled or hidden */
@@ -18,14 +15,14 @@ Cypress.Commands.add('getByDataCy', (dataCy: string) => {
   cy.getBy(`[data-cy="${dataCy}"]`);
 });
 
-/** Click by selector, making sure it is not disabled or hidden */
-Cypress.Commands.add('clickBy', (selector: string) => {
-  cy.getBy(selector).click();
+/** Contains by selector, making sure it is not disabled or hidden */
+Cypress.Commands.add('containsBy', (selector: string, text: string | number | RegExp) => {
+  cy.contains(`${selector}:not(:disabled):not(:hidden):visible:not([aria-disabled="true"])`, text);
 });
 
 /** Click by data-cy attribute, making sure it is not disabled or hidden */
 Cypress.Commands.add('clickByDataCy', (dataCy: string) => {
-  cy.clickBy(`[data-cy="${dataCy}"]`);
+  cy.getBy(`[data-cy="${dataCy}"]`).click();
 });
 
 /** Type input by selector, making sure it is not disabled or hidden */

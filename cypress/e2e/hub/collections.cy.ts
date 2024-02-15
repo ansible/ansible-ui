@@ -16,6 +16,33 @@ describe('Collections- List View', () => {
     cy.hubLogin();
   });
 
+  it('user can sign a collection', () => {
+    const namespace = `sign_namespace_${randomString(3, undefined, { isLowercase: true })}`;
+    cy.createNamespace(namespace);
+    const collection = randomString(5, undefined, { isLowercase: true }).replace(/\d/g, '');
+    cy.uploadCollection(collection, namespace).then((result) => {
+      cy.approveCollection(collection, namespace, result.version as string);
+      cy.navigateTo('hub', Collections.url);
+      cy.get('[data-cy="table-view"]').click();
+      cy.filterTableBySingleText(collection);
+      cy.get('[data-cy="actions-column-cell"]').click();
+      cy.get('[data-cy="sign-collection"]').click();
+      cy.get('#confirm').click();
+      cy.clickButton(/^Sign collections$/);
+      cy.contains(/^Success$/);
+      cy.clickButton(/^Close$/);
+      cy.get('[data-cy="label-signed"]').contains(Collections.signedStatus);
+      cy.get('[data-cy="actions-column-cell"]').click();
+      cy.get('[data-cy="delete-entire-collection-from-system"]').click({ force: true });
+      cy.get('#confirm').click();
+      cy.clickButton(/^Delete collections/);
+      cy.contains(/^Success$/);
+      cy.clickButton(/^Close$/);
+      cy.clickButton(/^Clear all filters$/);
+      cy.deleteNamespace(namespace);
+    });
+  });
+
   it('user can upload and delete collection', () => {
     const namespace = `upload_namespace_${randomString(3, undefined, { isLowercase: true })}`;
     cy.createNamespace(namespace);
@@ -26,12 +53,12 @@ describe('Collections- List View', () => {
       const filePath = result.filename as string;
       cy.uploadHubCollectionFile(filePath);
       cy.get('input[id="radio-non-pipeline"]').click();
-      cy.getTableRowBySingleText('community').within(() => {
+      cy.getTableRowBySingleText('validated').within(() => {
         cy.get('td[data-cy=checkbox-column-cell]').click();
       });
       cy.get('[data-cy="Submit"]').click();
-      cy.url().should('include', 'approvals');
-      cy.reload();
+      cy.galaxykit('task wait all');
+
       cy.navigateTo('hub', Collections.url);
       cy.url().should('include', 'collections');
       cy.verifyPageTitle(Collections.title);
@@ -43,7 +70,9 @@ describe('Collections- List View', () => {
       cy.clickButton(/^Delete collections/);
       cy.contains(/^Success$/);
       cy.clickButton(/^Close$/);
-      cy.clickButton(/^Clear all filters$/);
+      cy.galaxykit('task wait all');
+      cy.filterTableBySingleText(collection);
+      cy.contains('No results found');
       cy.deleteNamespace(namespace);
     });
   });
