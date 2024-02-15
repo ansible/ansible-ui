@@ -9,7 +9,7 @@ import { AwxHost } from '../../interfaces/AwxHost';
 import { OptionsResponse, ActionsResponse } from '../../interfaces/OptionsResponse';
 import { useAwxView } from '../../common/useAwxView';
 import { useHostsFilters } from '../hosts/hooks/useHostsFilters';
-import { useInventoriesHostsColumns } from '../inventories/hooks/useInventoriesHostsColumns';
+import { useInventoriesGroupHostsColumns } from '../inventories/hooks/useInventoriesHostsColumns';
 import { useHostsEmptyStateActions } from '../hosts/hooks/useHostsEmptyStateActions';
 import { useInventoriesGroupsHostsToolbarActions } from '../inventories/hooks/useInventoriesGroupsHostsToolbarActions';
 import { useInventoriesGroupsHostsActions } from '../inventories/hooks/useInventoriesGroupsHostsActions';
@@ -17,7 +17,7 @@ import { useInventoriesGroupsHostsActions } from '../inventories/hooks/useInvent
 export function GroupHosts() {
   const { t } = useTranslation();
   const toolbarFilters = useHostsFilters();
-  const tableColumns = useInventoriesHostsColumns();
+  const tableColumns = useInventoriesGroupHostsColumns();
   const params = useParams<{ id: string; group_id: string; inventory_type: string }>();
   const view = useAwxView<AwxHost>({
     url: awxAPI`/groups/${params.group_id ?? ''}/all_hosts/`,
