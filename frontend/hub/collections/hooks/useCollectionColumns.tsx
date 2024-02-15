@@ -140,13 +140,23 @@ export function useCollectionColumns(_options?: { disableSort?: boolean; disable
             switch (collection.is_signed) {
               case true:
                 return (
-                  <Label icon={<CheckCircleIcon />} variant="outline" color="green">
+                  <Label
+                    data-cy="label-signed"
+                    icon={<CheckCircleIcon />}
+                    variant="outline"
+                    color="green"
+                  >
                     {t('Signed')}
                   </Label>
                 );
               case false:
                 return (
-                  <Label icon={<ExclamationTriangleIcon />} variant="outline" color="orange">
+                  <Label
+                    data-cy="label-unsigned"
+                    icon={<ExclamationTriangleIcon />}
+                    variant="outline"
+                    color="orange"
+                  >
                     {t('Unsigned')}
                   </Label>
                 );

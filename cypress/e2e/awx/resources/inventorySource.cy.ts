@@ -2,6 +2,7 @@ import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 import { InventorySource } from '../../../../frontend/awx/interfaces/InventorySource';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
+
 describe('Inventory source page', () => {
   let organization: Organization;
   let project: Project;
@@ -23,6 +24,13 @@ describe('Inventory source page', () => {
           inventorySource = invSrc;
         });
       });
+
+      cy.createAWXCredential({
+        name: 'my cred',
+        kind: 'gce',
+        organization: organization.id,
+        credential_type: 9,
+      });
     });
   });
 
@@ -43,20 +51,20 @@ describe('Inventory source page', () => {
     cy.clickButton(/^Delete inventory source/);
   });
 
-  it('creates an inventory source from the details page', () => {
+  it('creates a project inventory source', () => {
     cy.navigateTo('awx', 'inventories');
     cy.clickTableRow(inventory.name);
     cy.verifyPageTitle(inventory.name);
     cy.clickLink(/^Sources$/);
     cy.clickButton(/^Add source/);
     cy.verifyPageTitle('Add new source');
-    cy.get('[data-cy="name"]').type('source 1');
+    cy.get('[data-cy="name"]').type('project source');
     cy.selectDropdownOptionByResourceName('source_control_type', 'Sourced from a Project');
     cy.selectDropdownOptionByResourceName('project', project.name);
     cy.selectDropdownOptionByResourceName('inventory', 'Dockerfile');
     cy.get('.pf-v5-c-input-group > .pf-v5-c-button').click();
     cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
-      cy.searchAndDisplayResource('Demo Credential');
+      cy.searchAndDisplayResource('my cred');
       cy.get('[data-cy="checkbox-column-cell"] > label').click();
       cy.get('#confirm').click();
     });
@@ -69,7 +77,20 @@ describe('Inventory source page', () => {
     cy.get('[data-cy="update_on_launch"]').check();
     cy.get('[data-cy="update-cache-timeout"]').type('1');
     cy.get('.view-lines').type('test: "output"');
-    cy.clickButton(/^Save$/);
-    cy.verifyPageTitle('source 1');
+    cy.get('[data-cy="Submit"]').click();
+    cy.verifyPageTitle('project source');
+  });
+
+  it('creates an amazon ec2 inventory source', () => {
+    cy.navigateTo('awx', 'inventories');
+    cy.clickTableRow(inventory.name);
+    cy.verifyPageTitle(inventory.name);
+    cy.clickLink(/^Sources$/);
+    cy.get('#add-source').click();
+    cy.verifyPageTitle('Add new source');
+    cy.get('[data-cy="name"]').type('amazon ec2 source');
+    cy.selectDropdownOptionByResourceName('source_control_type', 'Amazon EC2');
+    cy.get('[data-cy="Submit"]').click();
+    cy.verifyPageTitle('amazon ec2 source');
   });
 });
