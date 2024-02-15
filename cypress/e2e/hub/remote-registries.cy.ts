@@ -130,12 +130,7 @@ describe('Remote Registry', () => {
       cy.get('[data-cy="url"]').clear().type(RemoteRegistry.remoteURL);
       cy.clickButton(/^Edit remote registry$/);
       cy.clickButton(/^Clear all filters$/);
-      cy.filterTableBySingleText(remoteRegistryName);
-      cy.contains('tr', remoteRegistryName).within(() => {
-        cy.contains('td', remoteRegistryName).within(() => {
-          cy.get('a').click();
-        });
-      });
+      cy.contains(remoteRegistryName).click();
       cy.url().should('include', `remote-registries/details/${remoteRegistryName}`);
       cy.get('[data-cy="name"]').should('contain', remoteRegistryName);
       cy.get('[data-cy="url"]').should('contain', RemoteRegistry.remoteURL);
