@@ -1,21 +1,35 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { PageHeader, PageLayout, useGetPageUrl } from '../../../../../framework';
+import {
+  PageActions,
+  PageHeader,
+  PageLayout,
+  useGetPageUrl,
+  usePageNavigate,
+} from '../../../../../framework';
 import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
-import { useGetItem } from '../../../../common/crud/useGet';
 import { AwxError } from '../../../common/AwxError';
-import { awxAPI } from '../../../common/api/awx-utils';
 import { AwxHost } from '../../../interfaces/AwxHost';
 import { AwxRoute } from '../../../main/AwxRoutes';
+import { useInventoriesHostsActions } from '../../inventories/hooks/useInventoriesHostsActions';
+import { DropdownPosition } from '@patternfly/react-core/deprecated';
+import { useGetHost } from '../hooks/useGetHost';
 
 export function HostPage() {
   const { t } = useTranslation();
+  const pageNavigate = usePageNavigate();
   const params = useParams<{ id: string }>();
-  const { error, data: host, refresh } = useGetItem<AwxHost>(awxAPI`/hosts`, params.id);
+  const { host, refresh, error } = useGetHost(params.id as string);
 
   const getPageUrl = useGetPageUrl();
+
+  const itemActions = useInventoriesHostsActions((_host) => {
+    pageNavigate(AwxRoute.Hosts, {
+      params: { id: params.id },
+    });
+  }, refresh);
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!host) return <LoadingPage breadcrumbs tabs />;
@@ -25,7 +39,13 @@ export function HostPage() {
       <PageHeader
         title={host?.name}
         breadcrumbs={[{ label: t('Hosts'), to: getPageUrl(AwxRoute.Hosts) }, { label: host?.name }]}
-        headerActions={[]}
+        headerActions={
+          <PageActions<AwxHost>
+            actions={itemActions}
+            position={DropdownPosition.right}
+            selectedItem={host}
+          />
+        }
       />
       <PageRoutedTabs
         backTab={{
