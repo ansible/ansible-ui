@@ -56,7 +56,7 @@ describe('GroupHosts', () => {
       .should('be.an', 'array')
       .then((results: AwxHost[]) => {
         const host = results[0];
-        cy.clickTableRowKebabAction(host.name, 'disassociate-host');
+        cy.clickTableRowKebabAction(host.name, 'disassociate-selected-host');
         cy.contains('Disassociate host from group?');
       });
   });
