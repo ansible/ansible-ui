@@ -82,21 +82,16 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add('requestPatch', function requestPatch<
-  RequestBodyT extends Cypress.RequestBody,
-  ResponseBodyT = RequestBodyT,
->(url: string, body: RequestBodyT) {
-  cy.getCookie('csrftoken').then((cookie) =>
-    cy
-      .request<ResponseBodyT>({
-        method: 'PATCH',
-        url,
-        body,
-        headers: {
-          'X-CSRFToken': cookie?.value,
-          Referer: Cypress.config().baseUrl,
-        },
-      })
-      .then((response) => response.body)
-  );
+Cypress.Commands.add('requestPoll', function requestPoll<
+  ResponseT,
+  ResultT = ResponseT,
+>(options: { url: string; check: (response: Cypress.Response<ResponseT>) => ResultT | undefined; interval?: number; timeout?: number }) {
+  cy.request<ResponseT>(options.url).then((response) => {
+    const result = options.check(response);
+    if (result !== undefined) {
+      cy.wrap(result);
+    } else {
+      cy.wait(options.interval ? options.interval : 1000).then(() => cy.requestPoll(options));
+    }
+  });
 });

@@ -173,6 +173,7 @@ export function PageAsyncSingleSelect<
         options={options ?? []}
         value={props.value}
         onSelect={props.onSelect}
+        isDisabled={props.isDisabled}
         footer={footer}
       />
     );
