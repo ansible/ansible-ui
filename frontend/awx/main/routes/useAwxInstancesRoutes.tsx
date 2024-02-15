@@ -1,8 +1,7 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageNavigationItem } from '../../../../framework';
-import { EditInstance } from '../../administration/instances/EditInstance';
-import { AddInstance } from '../../administration/instances/InstanceForm';
+import { AddInstance, EditInstance } from '../../administration/instances/InstanceForm';
 import { InstanceDetails } from '../../administration/instances/InstanceDetails';
 import { Instances } from '../../administration/instances/Instances';
 import { AwxRoute } from '../AwxRoutes';

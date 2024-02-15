@@ -22,8 +22,6 @@ import {
   RoleDetail,
   Status906Enum,
 } from '../../frontend/eda/interfaces/generated/eda-api';
-import './auth';
-import './commands';
 import { edaAPI } from './formatApiPathForEDA';
 
 /*  EDA related custom command implementation  */
