@@ -438,15 +438,6 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add(
-  'tableHasRowWithSuccess',
-  (name: string | RegExp, filter?: boolean, timeout?: number) => {
-    cy.getTableRowByText(name, filter).within(() => {
-      cy.get('[data-label="Status"]').should('contain', 'Success', { timeout: timeout ?? 60000 });
-    });
-  }
-);
-
 Cypress.Commands.add('selectTableRow', (name: string | RegExp, filter?: boolean) => {
   cy.getTableRowByText(name, filter).within(() => {
     cy.get('input[type=checkbox]').click();
