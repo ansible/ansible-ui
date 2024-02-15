@@ -126,6 +126,11 @@ export function CreateHost() {
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
         onCancel={onCancel}
+        defaultValue={{
+          name: '',
+          description: '',
+          variables: '---\n',
+        }}
       >
         <HostInputs />
       </AwxPageForm>

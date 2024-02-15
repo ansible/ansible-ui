@@ -1,4 +1,4 @@
-import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
+import { PencilAltIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -7,13 +7,12 @@ import {
   PageActionType,
   usePageNavigate,
 } from '../../../../../framework';
-import { cannotDeleteResource, cannotEditResource } from '../../../../common/utils/RBAChelpers';
+import { cannotEditResource } from '../../../../common/utils/RBAChelpers';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { AwxHost } from '../../../interfaces/AwxHost';
 import { usePatchRequest } from '../../../../common/crud/usePatchRequest';
 import { useParams } from 'react-router-dom';
-import { useDisassociateHosts } from '../../hosts/hooks/useDisassociateHosts';
 
 export function useInventoriesGroupsHostsActions(
   onDisassociate: (host: AwxHost[]) => void,
@@ -21,8 +20,6 @@ export function useInventoriesGroupsHostsActions(
 ) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
-
-  const disassociateHost = useDisassociateHosts(onDisassociate);
 
   const patchRequest = usePatchRequest<{ enabled: boolean }, AwxHost>();
 
@@ -67,18 +64,7 @@ export function useInventoriesGroupsHostsActions(
           }),
         isDisabled: (host) => cannotEditResource(host, t),
       },
-      {
-        type: PageActionType.Button,
-        selection: PageActionSelection.Single,
-        icon: TrashIcon,
-        label: t('Disassociate host'),
-        isDisabled: (host: AwxHost) => cannotDeleteResource(host, t),
-        onClick: (host) => {
-          disassociateHost([host]);
-        },
-        isDanger: true,
-      },
     ],
-    [t, handleToggleHost, pageNavigate, params.id, params.inventory_type, disassociateHost]
+    [t, handleToggleHost, pageNavigate, params.id, params.inventory_type]
   );
 }
