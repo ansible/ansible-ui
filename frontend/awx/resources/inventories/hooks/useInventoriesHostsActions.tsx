@@ -42,7 +42,7 @@ export function useInventoriesHostsActions(
       {
         type: PageActionType.Switch,
         ariaLabel: (isEnabled) =>
-          isEnabled ? t('Click to disable instance') : t('Click to enable instance'),
+          isEnabled ? t('Click to disable host') : t('Click to enable host'),
         selection: PageActionSelection.Single,
         onToggle: (host, enabled) => handleToggleHost(host, enabled),
         isSwitchOn: (host: AwxHost) => (host.enabled ? true : false),
@@ -61,10 +61,15 @@ export function useInventoriesHostsActions(
         isPinned: true,
         icon: PencilAltIcon,
         label: t('Edit host'),
-        onClick: (host) =>
-          pageNavigate(AwxRoute.InventoryHostEdit, {
-            params: { id: params.id, inventory_type: params.inventory_type, host_id: host.id },
-          }),
+        onClick: (host) => {
+          if (params.id && params.inventory_type) {
+            pageNavigate(AwxRoute.InventoryHostEdit, {
+              params: { id: params.id, inventory_type: params.inventory_type, host_id: host.id },
+            });
+          } else if (params.id) {
+            pageNavigate(AwxRoute.EditHost, { params: { id: params.id } });
+          }
+        },
         isDisabled: (host) => cannotEditResource(host, t),
       },
       {

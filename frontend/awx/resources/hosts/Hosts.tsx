@@ -8,9 +8,9 @@ import { useAwxView } from '../../common/useAwxView';
 import { getDocsBaseUrl } from '../../common/util/getDocsBaseUrl';
 import { AwxHost } from '../../interfaces/AwxHost';
 import { useHostsToolbarActions } from './hooks/useHostsToolbarActions';
-import { useHostsActions } from './hooks/useHostsActions';
 import { useHostsColumns } from './hooks/useHostsColumns';
 import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
+import { useInventoriesHostsActions } from '../inventories/hooks/useInventoriesHostsActions';
 
 export function Hosts() {
   const { t } = useTranslation();
@@ -23,7 +23,7 @@ export function Hosts() {
 
   const toolbarActions = useHostsToolbarActions(view);
 
-  const rowActions = useHostsActions(view);
+  const rowActions = useInventoriesHostsActions(view.unselectItemsAndRefresh, view.refresh);
 
   return (
     <PageLayout>
