@@ -5,7 +5,7 @@ import { CreateHost, EditHost } from './InventoryHostForm';
 describe('Create Edit Inventory Host Form', () => {
   const payload = {
     name: 'test',
-    variables: 'hello: world',
+    variables: '---\nhello: world',
     description: 'mock host description',
     inventory: 1,
   };
@@ -35,7 +35,7 @@ describe('Create Edit Inventory Host Form', () => {
       cy.mount(<CreateHost />);
       cy.get('[data-cy="name"]').type(payload.name);
       cy.get('[data-cy="description"]').type(payload.description);
-      cy.get('[data-cy="variables"]').type(payload.variables);
+      cy.get('[data-cy="variables"]').type('hello: world');
       cy.clickButton(/^Create host$/);
       cy.wait('@createHost')
         .its('request.body')
