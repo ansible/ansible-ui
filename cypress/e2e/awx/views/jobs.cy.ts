@@ -158,6 +158,7 @@ describe('job delete', () => {
         cy.filterTableByTypeAndText('ID', jobId);
         const jobName = testJob.name ? testJob.name : '';
         cy.waitForJobToProcessEvents(jobId);
+        cy.get('[data-cy="refresh"]').click();
 
         // Even though the job is finished from the API perspective, the UI still shows it as running
         // Wait for the table job row to show with Success
@@ -196,6 +197,7 @@ describe('job delete', () => {
       cy.filterTableByTypeAndText('ID', jobId);
       const jobName = jobList.name ? jobList.name : '';
       cy.waitForJobToProcessEvents(jobId);
+      cy.get('[data-cy="refresh"]').click();
 
       // Even though the job is finished from the API perspective, the UI still shows it as running
       // Wait for the table job row to show with Success
