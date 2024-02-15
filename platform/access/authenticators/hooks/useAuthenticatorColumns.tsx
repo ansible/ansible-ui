@@ -33,6 +33,7 @@ export function useAuthenticatorsColumns() {
         type: 'count',
         value: (authenticator) => authenticator?.order,
         sort: 'order',
+        defaultSort: true,
       },
       {
         header: t('Name'),
