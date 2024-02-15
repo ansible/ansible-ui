@@ -1,10 +1,9 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useSWR, { SWRConfiguration } from 'swr';
 import { createRequestError } from './RequestError';
 import { normalizeQueryString } from './normalizeQueryString';
 import { requestCommon } from './requestCommon';
-import { useAbortController } from './useAbortController';
 
 export function useGet<T>(
   url: string | undefined,
@@ -43,17 +42,26 @@ export function useGetItem<T = unknown>(url: string, id?: string | number) {
 
 export function useGetRequest<ResponseBody>() {
   const navigate = useNavigate();
-  const abortController = useAbortController();
+  const abortControllerRef = useRef<{ abortController?: AbortController }>({});
+  useEffect(() => {
+    const ref = abortControllerRef;
+    return () => ref.current.abortController?.abort();
+  }, []);
   return async (
     url: string,
     query?: Record<string, string | number | boolean>,
     signal?: AbortSignal
   ) => {
+    if (abortControllerRef.current.abortController) {
+      abortControllerRef.current.abortController.abort();
+    }
+    abortControllerRef.current.abortController = new AbortController();
     const response = await requestCommon({
       url: url + normalizeQueryString(query),
       method: 'GET',
-      signal: signal ?? abortController.signal,
+      signal: signal ?? abortControllerRef.current.abortController.signal,
     });
+    abortControllerRef.current.abortController = undefined;
     if (!response.ok) {
       if (response.status === 401) {
         navigate('/login?navigate-back=true');
