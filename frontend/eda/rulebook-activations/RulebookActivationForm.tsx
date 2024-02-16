@@ -255,6 +255,7 @@ export function RulebookActivationInputs() {
         name="restart_policy"
         label={t('Restart policy')}
         placeholderText={t('Select restart policy')}
+        isRequired
         options={RESTART_OPTIONS}
         labelHelp={restartPolicyHelpBlock}
         labelHelpTitle={t('Restart policy')}
