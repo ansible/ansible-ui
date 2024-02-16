@@ -220,7 +220,6 @@ Cypress.Commands.add(
     cy.clickPageAction('delete-credential-type');
     cy.get('#confirm').click();
     cy.clickButton(/^Delete credential type/);
-    cy.clickButton(/^Close/);
   }
 );
 
