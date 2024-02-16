@@ -14,6 +14,7 @@ import './e2e';
 import './eda-commands';
 import { hubAPI } from './formatApiPathForHub';
 import './hub-commands';
+import './platform-commands';
 import './rest-commands';
 
 export const galaxykitUsername: string = `e2e-${randomString(4)}`;
