@@ -27,7 +27,7 @@ describe('Execution Environments', () => {
   });
 });
 
-describe.skip('Execution Environment Details tab', () => {
+describe('Execution Environment Details tab', () => {
   const num = (~~(Math.random() * 1000000)).toString();
   const registry = `docker${num}`;
   const container = `remotepine${num}`;
