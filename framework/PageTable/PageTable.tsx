@@ -670,6 +670,7 @@ function TableHead<T extends object>(props: {
                       ? column.minWidth
                       : undefined,
                 maxWidth: column.maxWidth !== undefined ? column.maxWidth : undefined,
+                width: column.fullWidth ? '100%' : undefined,
               }}
               data-cy={getID(column.header + '-column-header')}
               className="bg-lighten"

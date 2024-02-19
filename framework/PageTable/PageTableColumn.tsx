@@ -78,6 +78,9 @@ interface ITableColumnCommon<T extends object> {
   /** MaxWidth for the column. */
   maxWidth?: number;
 
+  /** Makes the column take up the full width */
+  fullWidth?: boolean;
+
   /** Indicates the key for the sorting. This key is usually handled by the view to so the sorting. */
   sort?: string;
 
