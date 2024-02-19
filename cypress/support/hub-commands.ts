@@ -283,10 +283,10 @@ Cypress.Commands.add('deleteRemote', (remoteName: string) => {
   cy.galaxykit(`remote delete ${remoteName}`);
 });
 
-Cypress.Commands.add('createRemoteRegistry', (remoteRegistryName: string) => {
+Cypress.Commands.add('createRemoteRegistry', (remoteRegistryName: string, url?: string) => {
   cy.requestPost(hubAPI`/_ui/v1/execution-environments/registries/`, {
     name: remoteRegistryName,
-    url: 'https://console.redhat.com/api/automation-hub/',
+    url: url ? url : 'https://console.redhat.com/api/automation-hub/',
   });
 });
 
