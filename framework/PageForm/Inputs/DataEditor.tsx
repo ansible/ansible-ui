@@ -168,7 +168,7 @@ export function DataEditor<
       if (element) {
         element.style.minHeight = '75px';
         const visibleLines = value.split('\n').length;
-        element.style.height = `${visibleLines * 21 + 12}` + 'px';
+        element.style.height = `${visibleLines * 21 + 16}` + 'px';
       }
     }
   }, [defaultValue, idDataEditorElement, defaultLanguage]);
@@ -187,7 +187,7 @@ export function DataEditor<
       if (element) {
         element.style.minHeight = '75px';
         const visibleLines = value.split('\n').length;
-        element.style.height = `${visibleLines * 21 + 12}` + 'px';
+        element.style.height = `${visibleLines * 21 + 16}` + 'px';
       }
     });
 
@@ -207,7 +207,7 @@ export function DataEditor<
       monaco.editor.setModelLanguage(model, language);
     }
 
-    const disChangeMarkersDisposable = monaco.editor.onDidChangeMarkers(() => {
+    const didChangeMarkersDisposable = monaco.editor.onDidChangeMarkers((e) => {
       const markers = monaco.editor.getModelMarkers({
         owner: model.getLanguageId(),
         resource: model.uri,
@@ -241,7 +241,7 @@ export function DataEditor<
     }
 
     return () => {
-      disChangeMarkersDisposable.dispose();
+      didChangeMarkersDisposable.dispose();
     };
   }, [clearErrors, language, name, setError]);
 
