@@ -1,79 +1,39 @@
-import { useCallback } from 'react';
-import { FieldPath, FieldPathValue, FieldValues, Path, useFormContext } from 'react-hook-form';
+import { FieldPath, FieldValues } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { PageFormAsyncSelect } from '../../../../../framework/PageForm/Inputs/PageFormAsyncSelect';
-import { PageFormTextInput } from '../../../../../framework/PageForm/Inputs/PageFormTextInput';
-import { requestGet } from '../../../../common/crud/Data';
-import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
+import { PageFormSingleSelectAwxResource } from '../../../common/PageFormSingleSelectAwxResource';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { Organization } from '../../../interfaces/Organization';
-import { useSelectOrganization, useSelectOrganization2 } from '../hooks/useSelectOrganization';
+import { useOrganizationsColumns, useOrganizationsFilters } from '../Organizations';
 
-export function PageFormOrganizationSelect<
-  TFieldValues extends FieldValues = FieldValues,
-  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
->(props: { name: TFieldName; organizationPath?: string; isRequired?: boolean }) {
-  const { t } = useTranslation();
-  const selectOrganization = useSelectOrganization();
-  const { setValue } = useFormContext();
-  return (
-    <PageFormTextInput<TFieldValues, TFieldName, Organization>
-      name={props.name}
-      label={t('Organization')}
-      placeholder={t('Enter organization')}
-      selectTitle={t('Select a organization')}
-      selectValue={(organization: Organization) => organization.name}
-      selectOpen={selectOrganization}
-      validate={async (organizationName: string) => {
-        if (!props.isRequired && !organizationName) return;
-        try {
-          const itemsResponse = await requestGet<AwxItemsResponse<Organization>>(
-            awxAPI`/organizations/?name=${organizationName}`
-          );
-          if (itemsResponse.results.length === 0) return t('Organization not found.');
-          if (props.organizationPath) setValue(props.organizationPath, itemsResponse.results[0]);
-        } catch (err) {
-          if (err instanceof Error)
-            return t('Error validating organization: {{errMessage}}. Please reload the page.', {
-              errMessage: err.message,
-            });
-          else return t('Error validating organization. Please reload the page.');
-        }
-        return undefined;
-      }}
-      isRequired={props.isRequired}
-    />
-  );
-}
-
+/**
+ * A form input for selecting an organization.
+ *
+ * @example
+ * ```tsx
+ * <PageFormSelectOrganization<Credential> name="organization" />
+ * ```
+ */
 export function PageFormSelectOrganization<
   TFieldValues extends FieldValues = FieldValues,
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
->(props: { name: TFieldName; isRequired?: boolean }) {
+>(props: { name: TFieldName; isRequired?: boolean; isDisabled?: boolean; helperText?: string }) {
   const { t } = useTranslation();
-  const openSelectDialog = useSelectOrganization2();
-  const query = useCallback(async () => {
-    const response = await requestGet<AwxItemsResponse<Organization>>(
-      awxAPI`/organizations/`.concat(`?page_size=200`)
-    );
-    return Promise.resolve({
-      total: response.count,
-      values: response.results as FieldPathValue<TFieldValues, Path<TFieldValues>>[],
-    });
-  }, []);
+  const organizationColumns = useOrganizationsColumns({ disableLinks: true });
+  const organizationFilters = useOrganizationsFilters();
   return (
-    <PageFormAsyncSelect<TFieldValues>
+    <PageFormSingleSelectAwxResource<Organization, TFieldValues, TFieldName>
       name={props.name}
       id="organization"
       label={t('Organization')}
-      query={query}
-      valueToString={(value) => (value as Organization)?.name ?? ''}
       placeholder={t('Select organization')}
-      loadingPlaceholder={t('Loading organizations...')}
-      loadingErrorText={t('Error loading organizations')}
+      queryPlaceholder={t('Loading organizations...')}
+      queryErrorText={t('Error loading organizations')}
       isRequired={props.isRequired}
-      limit={200}
-      openSelectDialog={openSelectDialog}
+      isDisabled={props.isDisabled}
+      helperText={props.helperText}
+      url={awxAPI`/organizations/`}
+      tableColumns={organizationColumns}
+      toolbarFilters={organizationFilters}
     />
   );
 }

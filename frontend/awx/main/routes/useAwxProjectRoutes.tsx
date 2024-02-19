@@ -13,8 +13,9 @@ import { CreateSchedule } from '../../views/schedules/ScheduleForm';
 import { ScheduleDetails } from '../../views/schedules/SchedulePage/ScheduleDetails';
 import { SchedulePage } from '../../views/schedules/SchedulePage/SchedulePage';
 import { ScheduleRules } from '../../views/schedules/SchedulePage/ScheduleRules';
-import { Schedules } from '../../views/schedules/Schedules';
 import { AwxRoute } from '../AwxRoutes';
+import { ResourceNotifications } from '../../resources/notifications/ResourceNotifications';
+import { SchedulesList } from '../../views/schedules/SchedulesList';
 
 export function useAwxProjectRoutes() {
   const { t } = useTranslation();
@@ -99,12 +100,12 @@ export function useAwxProjectRoutes() {
             {
               id: AwxRoute.ProjectNotifications,
               path: 'notifications',
-              element: <PageNotImplemented />,
+              element: <ResourceNotifications resourceType="projects" />,
             },
             {
               id: AwxRoute.ProjectSchedules,
               path: 'schedules',
-              element: <Schedules sublistEndpoint={awxAPI`/projects`} />,
+              element: <SchedulesList sublistEndpoint={awxAPI`/projects`} />,
             },
             {
               path: '',

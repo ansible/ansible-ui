@@ -9,8 +9,8 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../../framework';
-import { useGetItem } from '../../../../common/crud/useGet';
 import { LastModifiedPageDetail } from '../../../../common/LastModifiedPageDetail';
+import { useGetItem } from '../../../../common/crud/useGet';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { ExecutionEnvironment } from '../../../interfaces/ExecutionEnvironment';
 import { AwxRoute } from '../../../main/AwxRoutes';
@@ -97,7 +97,6 @@ export function ExecutionEnvironmentDetailInner(props: { execution_env: Executio
       </PageDetail>
       <PageDetail data-cy="execution-environment-created" label={t('Created')}>
         <DateTimeCell
-          format="date-time"
           value={execution_env.created}
           author={execution_env?.summary_fields?.created_by?.username}
           onClick={() =>

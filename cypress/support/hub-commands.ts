@@ -1,13 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access */
 import { randomString } from '../../framework/utils/random-string';
 import { Role } from '../../frontend/hub/access/roles/Role';
+import { Task } from '../../frontend/hub/administration/tasks/Task';
 import { CollectionVersionSearch } from '../../frontend/hub/collections/Collection';
 import { parsePulpIDFromURL } from '../../frontend/hub/common/api/hub-api-utils';
 import { HubItemsResponse } from '../../frontend/hub/common/useHubView';
-import './commands';
 import { galaxykitPassword, galaxykitUsername } from './e2e';
 import { hubAPI, pulpAPI } from './formatApiPathForHub';
-import './rest-commands';
 import { escapeForShellCommand } from './utils';
 
 const apiPrefix = Cypress.env('HUB_API_PREFIX') as string;
@@ -284,10 +283,10 @@ Cypress.Commands.add('deleteRemote', (remoteName: string) => {
   cy.galaxykit(`remote delete ${remoteName}`);
 });
 
-Cypress.Commands.add('createRemoteRegistry', (remoteRegistryName: string) => {
+Cypress.Commands.add('createRemoteRegistry', (remoteRegistryName: string, url?: string) => {
   cy.requestPost(hubAPI`/_ui/v1/execution-environments/registries/`, {
     name: remoteRegistryName,
-    url: 'https://console.redhat.com/api/automation-hub/',
+    url: url ? url : 'https://console.redhat.com/api/automation-hub/',
   });
 });
 
@@ -383,3 +382,32 @@ Cypress.Commands.add(
     );
   }
 );
+
+Cypress.Commands.add('waitOnHubTask', function waitOnHubTask(taskId: number | string) {
+  cy.requestPoll<Task>({
+    url: pulpAPI`/tasks/${taskId.toString()}/`,
+    check: (response) => {
+      switch (response.status) {
+        case 200:
+          switch (response.body.state) {
+            case 'completed':
+              return response.body;
+            case 'failed':
+            case 'canceled':
+            case 'skipped':
+              if (response.body.error?.description) {
+                throw new Error(response.body.error.description);
+              } else {
+                throw new Error('Task failed without error message.');
+              }
+            default:
+              return undefined;
+          }
+        case 404:
+          throw new Error('Task not found');
+        default:
+          return undefined;
+      }
+    },
+  });
+});

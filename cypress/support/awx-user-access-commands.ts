@@ -1,15 +1,12 @@
 import '@cypress/code-coverage/support';
 import { AwxItemsResponse } from '../../frontend/awx/common/AwxItemsResponse';
 import { Credential } from '../../frontend/awx/interfaces/Credential';
-import { Role } from '../../frontend/awx/interfaces/Role';
-import { WorkflowJobTemplate } from '../../frontend/awx/interfaces/WorkflowJobTemplate';
-import './auth';
-import './commands';
-import './rest-commands';
-import { Project } from '../../frontend/awx/interfaces/Project';
 import { Inventory } from '../../frontend/awx/interfaces/Inventory';
 import { Organization } from '../../frontend/awx/interfaces/Organization';
+import { Project } from '../../frontend/awx/interfaces/Project';
+import { Role } from '../../frontend/awx/interfaces/Role';
 import { Team } from '../../frontend/awx/interfaces/Team';
+import { WorkflowJobTemplate } from '../../frontend/awx/interfaces/WorkflowJobTemplate';
 
 Cypress.Commands.add('giveUserWfjtAccess', (wfjtName: string, userId: number, roleName: string) => {
   cy.awxRequestGet<AwxItemsResponse<WorkflowJobTemplate>>(

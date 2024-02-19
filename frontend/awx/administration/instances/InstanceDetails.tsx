@@ -34,7 +34,7 @@ import { formatDateString } from '../../../../framework/utils/formatDateString';
 import { capitalizeFirstLetter } from '../../../../framework/utils/strings';
 import { LastModifiedPageDetail } from '../../../common/LastModifiedPageDetail';
 import { StatusLabel } from '../../../common/Status';
-import { useGetItem } from '../../../common/crud/useGet';
+import { useGet, useGetItem } from '../../../common/crud/useGet';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { AwxError } from '../../common/AwxError';
 import { AwxItemsResponse } from '../../common/AwxItemsResponse';
@@ -45,6 +45,7 @@ import { InstanceGroup } from '../../interfaces/InstanceGroup';
 import { AwxRoute } from '../../main/AwxRoutes';
 import { useInstanceActions } from './hooks/useInstanceActions';
 import { useNodeTypeTooltip } from './hooks/useNodeTypeTooltip';
+import { Settings } from '../../interfaces/Settings';
 
 export function InstanceDetails() {
   const { t } = useTranslation();
@@ -54,16 +55,29 @@ export function InstanceDetails() {
     useInstanceActions(params.id as string);
   const pageNavigate = usePageNavigate();
   const postRequest = usePostRequest();
+  const activeUser = useAwxActiveUser();
+  const { data } = useGet<Settings>(awxAPI`/settings/system/`);
+  const instancesType = instance?.node_type === 'execution' || instance?.node_type === 'hop';
+  const userAccess = activeUser?.is_superuser || activeUser?.is_system_auditor;
+  const isK8s = data?.IS_K8S;
+  const canAddAndEditInstances = instancesType && isK8s && userAccess;
+
   const itemActions: IPageAction<Instance>[] = useMemo(() => {
     const itemActions: IPageAction<Instance>[] = [
       {
         type: PageActionType.Button,
-        selection: PageActionSelection.Single,
+        isHidden: () => isK8s === false || !instancesType,
+        selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
         isPinned: true,
         icon: PencilAltIcon,
         label: t('Edit instance'),
-        onClick: (instance) => pageNavigate(AwxRoute.EditInstance, { params: { id: instance.id } }),
+        onClick: () => pageNavigate(AwxRoute.EditInstance, { params: { id: params.id } }),
+        isDisabled: canAddAndEditInstances
+          ? undefined
+          : t(
+              'You do not have permission to edit instances. Please contact your organization administrator if there is an issue with your access.'
+            ),
       },
       {
         type: PageActionType.Button,
@@ -78,7 +92,16 @@ export function InstanceDetails() {
       },
     ];
     return itemActions;
-  }, [t, pageNavigate, postRequest, instance?.id]);
+  }, [
+    t,
+    pageNavigate,
+    postRequest,
+    instance?.id,
+    canAddAndEditInstances,
+    isK8s,
+    params.id,
+    instancesType,
+  ]);
 
   const getPageUrl = useGetPageUrl();
 
@@ -212,7 +235,7 @@ export function InstanceDetailsTab(props: {
       <PageDetail label={t('Created')} data-cy="created">
         {formatDateString(instance.created)}
       </PageDetail>
-      <LastModifiedPageDetail format="date-time" value={instance.modified} data-cy="modified" />
+      <LastModifiedPageDetail value={instance.modified} data-cy="modified" />
       <PageDetail label={t('Forks')} data-cy="forks">
         <div>
           {t('Total forks: ')}

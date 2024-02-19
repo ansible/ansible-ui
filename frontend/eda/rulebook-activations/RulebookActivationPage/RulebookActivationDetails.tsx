@@ -76,11 +76,20 @@ export function RulebookActivationDetails() {
         >
           {rulebookActivation?.rulebook?.name || rulebookActivation?.rulebook_name || ''}
         </PageDetail>
-        {rulebookActivation.sources && rulebookActivation.sources.length > 0 && (
-          <PageDetail label={t('Sources(s)')}>
+        {rulebookActivation.event_streams && rulebookActivation.event_streams.length > 0 && (
+          <PageDetail label={t('Event stream(s)')}>
             <LabelGroup>
-              {rulebookActivation.sources.map((source) => (
-                <Label key={source?.id}>{source?.name}</Label>
+              {rulebookActivation.event_streams.map((stream) => (
+                <Label key={stream?.id}>{stream?.name}</Label>
+              ))}
+            </LabelGroup>
+          </PageDetail>
+        )}
+        {rulebookActivation.credentials && rulebookActivation.credentials.length > 0 && (
+          <PageDetail label={t('Credential(s)')}>
+            <LabelGroup>
+              {rulebookActivation.credentials.map((credential) => (
+                <Label key={credential?.id}>{credential?.name}</Label>
               ))}
             </LabelGroup>
           </PageDetail>
@@ -133,7 +142,6 @@ export function RulebookActivationDetails() {
           {rulebookActivation?.created_at ? formatDateString(rulebookActivation?.created_at) : ''}
         </PageDetail>
         <LastModifiedPageDetail
-          format="date-time"
           value={
             rulebookActivation?.modified_at ? formatDateString(rulebookActivation?.modified_at) : ''
           }

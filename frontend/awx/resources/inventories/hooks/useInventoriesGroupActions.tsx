@@ -14,9 +14,7 @@ import { useParams } from 'react-router-dom';
 import { useOptions } from '../../../../common/crud/useOptions';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { awxAPI } from '../../../common/api/awx-utils';
-import { useAwxBulkConfirmation } from '../../../common/useAwxBulkConfirmation';
-import { getItemKey, requestDelete } from '../../../../common/crud/Data';
-import { useGroupsColumns } from '../../groups/hooks/useGroupsColumns';
+import { useDeleteGroups } from '../../groups/hooks/useDeleteGroups';
 
 export function useInventoriesGroupActions() {
   const { t } = useTranslation();
@@ -30,9 +28,13 @@ export function useInventoriesGroupActions() {
     adHocOptions && adHocOptions.actions && adHocOptions.actions['POST']
   );
 
-  const bulkAction = useAwxBulkConfirmation<InventoryGroup>();
-  const confirmationColumns = useGroupsColumns();
-  const actionColumns = useMemo(() => [confirmationColumns[0]], [confirmationColumns]);
+  const onDelete = () => {
+    pageNavigate(AwxRoute.InventoryGroups, {
+      params: { inventory_type: params.inventory_type, id: params.id },
+    });
+  };
+
+  const deleteGroups = useDeleteGroups(onDelete);
 
   return useMemo<IPageAction<InventoryGroup>[]>(
     () => [
@@ -59,7 +61,7 @@ export function useInventoriesGroupActions() {
         label: t('Run command'),
         onClick: (group) =>
           pageNavigate(AwxRoute.InventoryGroups, {
-            params: { inventory_type: 'inventory', id: group.inventory },
+            params: { inventory_type: params.inventory_type, id: group.inventory },
           }),
         isDisabled: () =>
           canRunAdHocCommand
@@ -73,37 +75,10 @@ export function useInventoriesGroupActions() {
         selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Delete group'),
-        onClick: (group) => {
-          bulkAction({
-            title: t('Permanently delete group'),
-            confirmText: t('Yes, I confirm that I want to delete this group named {{ name }}', {
-              name: group.name,
-            }),
-            actionButtonText: t('Delete group'),
-            items: [group],
-            keyFn: getItemKey,
-            isDanger: true,
-            confirmationColumns,
-            actionColumns,
-            onComplete: () =>
-              pageNavigate(AwxRoute.InventoryGroups, {
-                params: { inventory_type: 'inventory', id: group.inventory },
-              }),
-            actionFn: (group: InventoryGroup, signal) =>
-              requestDelete(awxAPI`/groups/${group.id.toString()}/`, signal),
-          });
-        },
+        onClick: (group) => deleteGroups([group]),
         isDisabled: (group) => cannotDeleteResource(group, t),
       },
     ],
-    [
-      t,
-      pageNavigate,
-      canRunAdHocCommand,
-      params.inventory_type,
-      bulkAction,
-      actionColumns,
-      confirmationColumns,
-    ]
+    [t, pageNavigate, params.inventory_type, canRunAdHocCommand, deleteGroups]
   );
 }

@@ -10,22 +10,21 @@ import {
 } from '../../../../../framework';
 import { useOptions } from '../../../../common/crud/useOptions';
 import { awxAPI } from '../../../common/api/awx-utils';
-import { IAwxView } from '../../../common/useAwxView';
-import { CredentialType } from '../../../interfaces/CredentialType';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useDeleteCredentialTypes } from './useDeleteCredentialTypes';
+import { CredentialType } from '../../../interfaces/CredentialType';
 
-export function useCredentialTypeToolbarActions(view: IAwxView<CredentialType>) {
+export function useCredentialTypeToolbarActions(
+  onCredentialTypesDeleted: (credentialType: CredentialType[]) => void
+) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
-
+  const deleteCredentialTypes = useDeleteCredentialTypes(onCredentialTypesDeleted);
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/credential_types/`);
   const canCreateCredentialType = Boolean(data && data.actions && data.actions['POST']);
 
-  const deleteCredentialTypes = useDeleteCredentialTypes(view.unselectItemsAndRefresh);
-
-  const toolbarActions = useMemo<IPageAction<CredentialType>[]>(
+  return useMemo<IPageAction<CredentialType>[]>(
     () => [
       {
         type: PageActionType.Link,
@@ -47,22 +46,22 @@ export function useCredentialTypeToolbarActions(view: IAwxView<CredentialType>) 
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
         label: t('Delete selected credential types'),
-        onClick: (credentialTypes: CredentialType[]) => deleteCredentialTypes(credentialTypes),
+        onClick: deleteCredentialTypes,
         isDanger: true,
       },
     ],
     [t, canCreateCredentialType, getPageUrl, deleteCredentialTypes]
   );
-
-  return toolbarActions;
 }
 
-export function useCredentialTypeRowActions(view: IAwxView<CredentialType>) {
-  const { t } = useTranslation();
+export function useCredentialTypeRowActions(
+  onCredentialTypesDeleted: (credentialType: CredentialType[]) => void
+) {
   const pageNavigate = usePageNavigate();
-  const deleteCredentialType = useDeleteCredentialTypes(view.unselectItemsAndRefresh);
+  const deleteCredentialTypes = useDeleteCredentialTypes(onCredentialTypesDeleted);
+  const { t } = useTranslation();
 
-  const rowActions = useMemo<IPageAction<CredentialType>[]>(() => {
+  return useMemo(() => {
     const cannotDeleteCredentialTypeDueToPermissions = (credentialType: CredentialType) =>
       credentialType.summary_fields?.user_capabilities?.delete
         ? ''
@@ -80,11 +79,10 @@ export function useCredentialTypeRowActions(view: IAwxView<CredentialType>) {
         ? ''
         : t(`The credential type cannot be edited due to insufficient permissions.`);
 
-    return [
+    const actions: IPageAction<CredentialType>[] = [
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
-        // variant: ButtonVariant.primary,
         isPinned: true,
         icon: PencilAltIcon,
         label: t('Edit credential type'),
@@ -105,11 +103,11 @@ export function useCredentialTypeRowActions(view: IAwxView<CredentialType>) {
           cannotDeleteManagedCredentialType(credentialType)
             ? cannotDeleteManagedCredentialType(credentialType)
             : cannotDeleteCredentialTypeDueToPermissions(credentialType),
-        onClick: (credentialType: CredentialType) => deleteCredentialType([credentialType]),
+        onClick: (credentialType: CredentialType) => deleteCredentialTypes([credentialType]),
         isDanger: true,
       },
     ];
-  }, [deleteCredentialType, pageNavigate, t]);
 
-  return rowActions;
+    return actions;
+  }, [deleteCredentialTypes, pageNavigate, t]);
 }

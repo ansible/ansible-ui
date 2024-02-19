@@ -284,7 +284,7 @@ export function ProjectDetails(props: { projectId?: string }) {
         </PageDetail>
       )}
       <PageDetail label={t('Cache Timeout')} helpText={cacheTimeoutHelpText}>
-        {project.scm_update_cache_timeout}
+        {`${project.scm_update_cache_timeout} seconds`}
       </PageDetail>
       {project.summary_fields.default_environment && (
         <ExecutionEnvironmentDetail
@@ -302,7 +302,6 @@ export function ProjectDetails(props: { projectId?: string }) {
       </PageDetail>
       <PageDetail label={t('Created')}>
         <DateTimeCell
-          format="since"
           value={project.created}
           author={project.summary_fields?.created_by?.username}
           onClick={() =>
@@ -313,7 +312,6 @@ export function ProjectDetails(props: { projectId?: string }) {
         />
       </PageDetail>
       <LastModifiedPageDetail
-        format="since"
         value={project.modified}
         author={project.summary_fields?.modified_by?.username}
         onClick={() =>

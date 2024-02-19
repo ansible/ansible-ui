@@ -36,20 +36,15 @@ UI projects for [Ansible](https://www.ansible.com).
 |            `AWX_SERVER` | The AWX server (protocol://host:port).              |
 |          `AWX_USERNAME` | The AWX server username. (only used by Cypress)     |
 |          `AWX_PASSWORD` | The AWX server password. (only used by Cypress)     |
-|        `AWX_API_PREFIX` | The AWX server API prefix. (`/api/v2`)              |
-|      `AWX_ROUTE_PREFIX` | The AWX UI route prefix. (`/awx`)                   |
 |                         |                                                     |
 |            `EDA_SERVER` | The EDA server (protocol://host:port).              |
 |          `EDA_USERNAME` | The EDA server username. (only used by Cypress)     |
 |          `EDA_PASSWORD` | The EDA server password. (only used by Cypress)     |
-|        `EDA_API_PREFIX` | The EDA server API prefix. (`/api/eda/v1`)          |
-|      `EDA_ROUTE_PREFIX` | The EDA UI route prefix. (`/eda`)                   |
 |                         |                                                     |
 |            `HUB_SERVER` | The HUB server (protocol://host:port).              |
 |          `HUB_USERNAME` | The HUB server username. (only used by Cypress)     |
 |          `HUB_PASSWORD` | The HUB server password. (only used by Cypress)     |
 |        `HUB_API_PREFIX` | The HUB server API prefix. (`/api/automation-hub`)  |
-|      `HUB_ROUTE_PREFIX` | The HUB UI route prefix. (`/hub`)                   |
 | `HUB_GALAXYKIT_COMMAND` | The galaxykit command. (`galaxykit --ignore-certs`) |
 
 ```zsh
