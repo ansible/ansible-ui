@@ -52,9 +52,9 @@ describe('PageFormDataEditor', () => {
         />
       </PageForm>
     );
-    expect(cy.get('div#copy-button').should('be.visible'));
-    expect(cy.get('div#upload-button').should('be.visible'));
-    expect(cy.get('div#download-button').should('be.visible'));
+    expect(cy.get('button#copy-button').should('be.visible'));
+    expect(cy.get('button#upload-button').should('be.visible'));
+    expect(cy.get('button#download-button').should('be.visible'));
     expect(cy.get('div#toggle-json').should('be.visible'));
     expect(cy.get('div#toggle-yaml').should('be.visible'));
     expect(cy.get('div#data-editor-extra_vars').should('be.visible'));
