@@ -46,18 +46,20 @@ describe('Approvals', () => {
   function approve(status: string) {
     cy.navigateTo('hub', Approvals.url);
     cy.verifyPageTitle(Approvals.title);
-    clickTableRowPinnedAction(thisCollectionName, 'approve');
+    clickTableRowPinnedAction(thisCollectionName, 'sign-and-approve');
 
     //Verify Approve and sign collections modal
     cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
-      cy.get('header').contains('Approve collections');
-      cy.get('button').contains('Approve collections').should('have.attr', 'aria-disabled', 'true');
+      cy.get('header').contains('Approve and sign collections');
+      cy.get('button')
+        .contains('Approve and sign collections')
+        .should('have.attr', 'aria-disabled', 'true');
       cy.get('[data-cy="namespace-column-cell"]').should('have.text', namespace);
       cy.get('[data-cy="collection-column-cell"]').should('have.text', thisCollectionName);
       cy.get('[data-cy="version-column-cell"]').should('have.text', '1.0.0');
       cy.get('[data-cy="status-column-cell"]').should('have.text', status);
       cy.get('input[id="confirm"]').click();
-      cy.get('button').contains('Approve collections').click();
+      cy.get('button').contains('Approve and sign collections').click();
     });
 
     // handle modal
@@ -127,7 +129,7 @@ describe('Approvals', () => {
 
   it('user can approve a collection and then reject it', () => {
     approve('Needs review');
-    reject('Approved');
+    reject('Signed and Approved');
   });
 
   it('user can reject a collection and then approve it', () => {
