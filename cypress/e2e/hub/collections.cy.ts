@@ -111,6 +111,17 @@ describe('Collections List- Line Item Kebab Menu', () => {
   afterEach(() => {
     cy.deleteNamespace(namespace);
     cy.galaxykit('task wait all');
+    if (Cypress.currentTest.title === 'user can deprecate a collection') {
+      cy.undeprecateCollection(thisCollectionName, namespace, repository);
+      cy.galaxykit('task wait all');
+    }
+    if (
+      Cypress.currentTest.title ===
+      'can upload and then delete a new version to an existing collection'
+    ) {
+      cy.deleteCollectionsInNamespace(namespace);
+      cy.galaxykit('task wait all');
+    }
   });
 
   it('can upload and then delete a new version to an existing collection', () => {
@@ -208,9 +219,10 @@ describe('Collections List- Line Item Kebab Menu', () => {
   });
 
   it('can deprecate a collection', () => {
-    cy.approveCollection(collection, namespace, '1.0.0');
-    cy.visit(`/collections?page=1&perPage=50&sort=name&keywords=${collection}`);
-    cy.get(`a[href*="/collections/published/${namespace}/${collection}"]`).should('be.visible');
+    cy.visit(`/collections?page=1&perPage=50&sort=name&keywords=${thisCollectionName}`);
+    cy.get(`a[href*="/collections/published/${namespace}/${thisCollectionName}"]`).should(
+      'be.visible'
+    );
     cy.get('[data-cy="data-list-action"]').within(() => {
       cy.get('[data-cy="actions-dropdown"]')
         .click()
