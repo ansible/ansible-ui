@@ -43,6 +43,7 @@ import { RemoteRegistry } from '../../frontend/hub/administration/remote-registr
 import { IRemotes } from '../../frontend/hub/administration/remotes/Remotes';
 import { CollectionVersionSearch } from '../../frontend/hub/collections/Collection';
 import { IAwxResources } from './awx-commands';
+import { Repository } from '../../frontend/hub/administration/repositories/Repository';
 
 declare global {
   namespace Cypress {
@@ -1036,7 +1037,7 @@ declare global {
       collectionCopyVersionToRepositories(collection: string): Cypress.Chainable<void>;
       addAndApproveMultiCollections(thisRange: number): Cypress.Chainable<void>;
 
-      createRepository(repositoryName: string, remoteName?: string): Cypress.Chainable<void>;
+      createRepository(repositoryName: string, remoteName?: string): Cypress.Chainable<Repository>;
       deleteRepository(repositoryName: string): Cypress.Chainable<void>;
 
       undeprecateCollection(

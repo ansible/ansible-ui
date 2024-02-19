@@ -94,7 +94,7 @@ describe('Remotes', () => {
       url: pulpAPI`/remotes/ansible/collection/?name=${remoteName}`,
     }).as('remote');
     cy.get('[data-cy="Submit"]').click();
-    //needs to wait for the remote to be created
+    cy.url().should('include', `remotes/details/${remoteName}`);
     cy.wait('@remote').then(() => {
       cy.contains('Remotes').click();
       cy.filterTableBySingleText(remoteName);
@@ -123,7 +123,7 @@ collections:
     cy.get('[data-cy="signed_only"]').check();
     cy.get('[data-cy="sync_dependencies"]').check();
     cy.get('[data-cy="Submit"]').click();
-    // Bug in test, needs to wait for the action before naivgating.
+    cy.url().should('include', `remotes/details/${remoteName}`);
     cy.contains('Remotes').click();
     cy.filterTableBySingleText(remoteName);
     cy.get('[data-cy="actions-column-cell"]').click();
