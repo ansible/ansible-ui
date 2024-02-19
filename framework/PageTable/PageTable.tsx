@@ -933,6 +933,4 @@ function convertString(s: string) {
 
 const ExpandedStylesStack = styled(Stack)`
   gap: 12px;
-  padding-top: 12px;
-  padding-bottom: 8px;
 `;
