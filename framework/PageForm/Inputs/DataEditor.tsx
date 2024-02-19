@@ -207,7 +207,7 @@ export function DataEditor<
       monaco.editor.setModelLanguage(model, language);
     }
 
-    const didChangeMarkersDisposable = monaco.editor.onDidChangeMarkers((e) => {
+    const didChangeMarkersDisposable = monaco.editor.onDidChangeMarkers(() => {
       const markers = monaco.editor.getModelMarkers({
         owner: model.getLanguageId(),
         resource: model.uri,
