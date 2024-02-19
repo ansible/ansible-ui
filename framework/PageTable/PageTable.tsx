@@ -443,7 +443,12 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
 
     if (expandedRowColumns.length) {
       expandedRowFunctions.push((item) => (
-        <PageDetails disablePadding numberOfColumns="multiple" labelOrientation="vertical">
+        <PageDetails
+          disablePadding
+          numberOfColumns="multiple"
+          labelOrientation="vertical"
+          isCompact
+        >
           <PageDetailsFromColumns key={keyFn(item)} item={item} columns={expandedRowColumns} />
         </PageDetails>
       ));
@@ -454,12 +459,9 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
     }
 
     if (expandedRowFunctions.length === 0) return undefined;
-    if (expandedRowFunctions.length === 1) return expandedRowFunctions[0];
 
     const newExpandedRow = (item: T) => (
-      <Stack hasGutter style={{ gap: 12 }}>
-        {expandedRowFunctions.map((fn) => fn(item))}
-      </Stack>
+      <ExpandedStylesStack>{expandedRowFunctions.map((fn) => fn(item))}</ExpandedStylesStack>
     );
 
     return newExpandedRow;
@@ -928,3 +930,9 @@ function TableCells<T extends object>(props: {
 function convertString(s: string) {
   return s.toLowerCase().split(' ').join('-');
 }
+
+const ExpandedStylesStack = styled(Stack)`
+  gap: 12px;
+  padding-top: 12px;
+  padding-bottom: 8px;
+`;
