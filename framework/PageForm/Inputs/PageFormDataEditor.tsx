@@ -1,5 +1,6 @@
 import {
   AlertProps,
+  Button,
   Flex,
   FlexItem,
   ToggleGroupItem as PFToggleGroupItem,
@@ -67,7 +68,7 @@ function ActionsRow(props: {
   if (allowCopy) {
     actionItems.push(
       <Tooltip key="copy-file" content={t('Copy')}>
-        <ToggleGroupItem
+        <Button
           key="copy-button"
           id="copy-button"
           data-cy="copy-button"
@@ -75,6 +76,9 @@ function ActionsRow(props: {
           icon={<CopyIcon />}
           type="button"
           onClick={() => handleCopy()}
+          variant="plain"
+          size="sm"
+          style={{ minWidth: 0, padding: 0, paddingLeft: 8, paddingRight: 8 }}
         />
       </Tooltip>
     );
@@ -83,7 +87,7 @@ function ActionsRow(props: {
   if (allowUpload) {
     actionItems.push(
       <Tooltip key="upload-file" content={t('Upload')}>
-        <ToggleGroupItem
+        <Button
           key="upload-button"
           id="upload-button"
           data-cy="upload-button"
@@ -91,6 +95,9 @@ function ActionsRow(props: {
           icon={<UploadIcon />}
           type="button"
           onClick={() => handleUpload()}
+          variant="plain"
+          size="sm"
+          style={{ minWidth: 0, padding: 0, paddingLeft: 8, paddingRight: 8 }}
         />
       </Tooltip>
     );
@@ -99,7 +106,7 @@ function ActionsRow(props: {
   if (allowDownload) {
     actionItems.push(
       <Tooltip key="download-file" content={t('Download')}>
-        <ToggleGroupItem
+        <Button
           key="download-button"
           id="download-button"
           data-cy="download-button"
@@ -107,6 +114,9 @@ function ActionsRow(props: {
           icon={<DownloadIcon />}
           type="button"
           onClick={() => handleDownload()}
+          variant="plain"
+          size="sm"
+          style={{ minWidth: 0, padding: 0, paddingLeft: 8, paddingRight: 8 }}
         />
       </Tooltip>
     );
@@ -128,10 +138,14 @@ function ActionsRow(props: {
     )) || [];
 
   return (
-    <Flex justifyContent={{ default: 'justifyContentSpaceBetween' }}>
-      <FlexItem>
-        <ToggleGroup isCompact>{actionItems}</ToggleGroup>
-      </FlexItem>
+    <Flex
+      grow={{ default: 'grow' }}
+      columnGap={{ default: 'columnGapSm' }}
+      rowGap={{ default: 'rowGapNone' }}
+      justifyContent={{ default: 'justifyContentFlexEnd' }}
+      // style={{ marginTop: -8, marginBottom: -8 }}
+    >
+      <FlexItem>{actionItems}</FlexItem>
       <FlexItem align={{ default: 'alignRight' }}>
         <ToggleGroup isCompact>{languageActions}</ToggleGroup>
       </FlexItem>
@@ -344,23 +358,25 @@ export function PageFormDataEditor<
             }
             label={props.label}
             helperTextInvalid={!(validate && isValidating) && errorSet}
+            additionalControls={
+              <ActionsRow
+                key="actions-row"
+                allowCopy={allowCopy}
+                allowDownload={allowDownload}
+                allowUpload={allowUpload}
+                errors={errors}
+                handleCopy={() => handleCopy()}
+                handleDownload={handleDownload}
+                handleUpload={handleUpload}
+                name={name}
+                selectedLanguage={selectedLanguage}
+                setLanguage={setLanguage}
+                toggleLanguages={toggleLanguages}
+              />
+            }
           >
             {(!isExpandable || !isCollapsed) && (
               <>
-                <ActionsRow
-                  key="actions-row"
-                  allowCopy={allowCopy}
-                  allowDownload={allowDownload}
-                  allowUpload={allowUpload}
-                  errors={errors}
-                  handleCopy={() => handleCopy()}
-                  handleDownload={handleDownload}
-                  handleUpload={handleUpload}
-                  name={name}
-                  selectedLanguage={selectedLanguage}
-                  setLanguage={setLanguage}
-                  toggleLanguages={toggleLanguages}
-                />
                 {props.allowUpload ? (
                   <div
                     id="code-editor-dropzone"

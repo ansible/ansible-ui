@@ -8,6 +8,7 @@ import {
   PageFormSelect,
   PageFormTextInput,
 } from '../../../../framework';
+import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
 import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 import { awxAPI } from '../../common/api/awx-utils';
 
@@ -134,54 +135,58 @@ export function OptionActionsFormInput(props: { name: string; option: OptionsAct
         />
       );
     case 'boolean':
-      return <PageFormCheckbox label={option.label} name={props.name} />;
+      return (
+        <PageFormSection singleColumn>
+          <PageFormCheckbox label={option.label} name={props.name} />
+        </PageFormSection>
+      );
     case 'list':
       return (
-        <PageFormDataEditor
-          label={option.label}
-          name={props.name}
-          labelHelpTitle={option.label}
-          labelHelp={option.help_text}
-          allowUpload={false}
-          allowCopy={false}
-          allowDownload={false}
-          // disableLineNumbers
-          toggleLanguages={['json', 'yaml']}
-          language="json"
-          isRequired={option.required}
-        />
+        <PageFormSection singleColumn>
+          <PageFormDataEditor
+            label={option.label}
+            name={props.name}
+            labelHelpTitle={option.label}
+            labelHelp={option.help_text}
+            allowUpload={false}
+            allowDownload={false}
+            toggleLanguages={['json', 'yaml']}
+            language="json"
+            isRequired={option.required}
+          />
+        </PageFormSection>
       );
     case 'nested object':
       return (
-        <PageFormDataEditor
-          label={option.label}
-          name={props.name}
-          labelHelpTitle={option.label}
-          labelHelp={option.help_text}
-          allowUpload={false}
-          allowCopy={false}
-          allowDownload={false}
-          // disableLineNumbers
-          toggleLanguages={['json', 'yaml']}
-          language="json"
-          isRequired={option.required}
-        />
+        <PageFormSection singleColumn>
+          <PageFormDataEditor
+            label={option.label}
+            name={props.name}
+            labelHelpTitle={option.label}
+            labelHelp={option.help_text}
+            allowUpload={false}
+            allowDownload={false}
+            toggleLanguages={['json', 'yaml']}
+            language="json"
+            isRequired={option.required}
+          />
+        </PageFormSection>
       );
     case 'certificate':
       return (
-        <PageFormDataEditor
-          label={option.label}
-          name={props.name}
-          labelHelpTitle={option.label}
-          labelHelp={option.help_text}
-          allowUpload={false}
-          allowCopy={false}
-          allowDownload={false}
-          // disableLineNumbers
-          toggleLanguages={['json', 'yaml']}
-          language="json"
-          isRequired={option.required}
-        />
+        <PageFormSection singleColumn>
+          <PageFormDataEditor
+            label={option.label}
+            name={props.name}
+            labelHelpTitle={option.label}
+            labelHelp={option.help_text}
+            allowUpload={false}
+            allowDownload={false}
+            toggleLanguages={['json', 'yaml']}
+            language="json"
+            isRequired={option.required}
+          />
+        </PageFormSection>
       );
     case 'choice':
       return (
