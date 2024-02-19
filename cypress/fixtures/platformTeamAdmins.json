@@ -1,0 +1,121 @@
+{
+  "count": 3,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 12,
+      "url": "/api/gateway/v1/users/12/",
+      "created_on": "2024-02-13T15:50:26.542775Z",
+      "created_by": 2,
+      "modified_on": "2024-02-13T15:50:26.542775Z",
+      "modified_by": 2,
+      "related": {
+        "created_by": "/api/gateway/v1/users/2/",
+        "modified_by": "/api/gateway/v1/users/2/",
+        "teams": "/api/gateway/v1/users/12/teams/",
+        "organizations": "/api/gateway/v1/users/12/organizations/"
+      },
+      "summary_fields": {
+        "created_by": {
+          "id": 2,
+          "username": "admin",
+          "first_name": "",
+          "last_name": ""
+        },
+        "modified_by": {
+          "id": 2,
+          "username": "admin",
+          "first_name": "",
+          "last_name": ""
+        }
+      },
+      "username": "user1",
+      "email": "",
+      "first_name": "User",
+      "last_name": "1",
+      "last_login": null,
+      "password": "$encrypted$",
+      "is_superuser": false,
+      "is_system_auditor": false,
+      "organizations": [10],
+      "last_login_results": {}
+    },
+    {
+      "id": 13,
+      "url": "/api/gateway/v1/users/13/",
+      "created_on": "2024-02-13T15:50:44.124777Z",
+      "created_by": 2,
+      "modified_on": "2024-02-13T15:50:44.124777Z",
+      "modified_by": 2,
+      "related": {
+        "created_by": "/api/gateway/v1/users/2/",
+        "modified_by": "/api/gateway/v1/users/2/",
+        "teams": "/api/gateway/v1/users/13/teams/",
+        "organizations": "/api/gateway/v1/users/13/organizations/"
+      },
+      "summary_fields": {
+        "created_by": {
+          "id": 2,
+          "username": "admin",
+          "first_name": "",
+          "last_name": ""
+        },
+        "modified_by": {
+          "id": 2,
+          "username": "admin",
+          "first_name": "",
+          "last_name": ""
+        }
+      },
+      "username": "user2",
+      "email": "",
+      "first_name": "",
+      "last_name": "",
+      "last_login": null,
+      "password": "$encrypted$",
+      "is_superuser": false,
+      "is_system_auditor": false,
+      "organizations": [],
+      "last_login_results": {}
+    },
+    {
+      "id": 14,
+      "url": "/api/gateway/v1/users/14/",
+      "created_on": "2024-02-13T15:51:08.176675Z",
+      "created_by": 2,
+      "modified_on": "2024-02-13T15:51:08.176675Z",
+      "modified_by": 2,
+      "related": {
+        "created_by": "/api/gateway/v1/users/2/",
+        "modified_by": "/api/gateway/v1/users/2/",
+        "teams": "/api/gateway/v1/users/14/teams/",
+        "organizations": "/api/gateway/v1/users/14/organizations/"
+      },
+      "summary_fields": {
+        "created_by": {
+          "id": 2,
+          "username": "admin",
+          "first_name": "",
+          "last_name": ""
+        },
+        "modified_by": {
+          "id": 2,
+          "username": "admin",
+          "first_name": "",
+          "last_name": ""
+        }
+      },
+      "username": "user3",
+      "email": "",
+      "first_name": "",
+      "last_name": "",
+      "last_login": null,
+      "password": "$encrypted$",
+      "is_superuser": false,
+      "is_system_auditor": false,
+      "organizations": [],
+      "last_login_results": {}
+    }
+  ]
+}
