@@ -1,4 +1,5 @@
 import { randomString } from '../../../framework/utils/random-string';
+import { IRemotes } from '../../../frontend/hub/administration/remotes/Remotes';
 import { Remotes } from './constants';
 import { pulpAPI } from '../../support/formatApiPathForHub';
 
@@ -18,6 +19,7 @@ describe('Remotes', () => {
       cy.createRemote(remoteName);
     }
     cy.navigateTo('hub', 'remotes');
+    cy.get('tbody').find('tr').its('length').should('be.greaterThan', 0);
     cy.setTablePageSize('50');
     cy.filterTableBySingleText(testSignature);
     cy.get('tbody').find('tr').should('have.length', numberOfRemotes);
@@ -32,23 +34,24 @@ describe('Remotes', () => {
 
   it('explore different views and pagination', () => {
     const remoteName = generateRemoteName();
-    cy.createRemote(remoteName);
-    cy.navigateTo('hub', 'remotes');
-    cy.setTablePageSize('50');
-    cy.filterTableBySingleText(remoteName);
-    cy.get('[data-cy="card-view"]').click();
-    cy.contains(remoteName).should('be.visible');
-    cy.get('[data-cy="list-view"]').click();
-    cy.contains(remoteName).should('be.visible');
-    cy.get('[data-cy="table-view"]').click();
-    cy.contains(remoteName).should('be.visible');
-    cy.get('#select-all').click();
-    cy.clickToolbarKebabAction('delete-selected-remotes');
-    cy.get('#confirm').click();
-    cy.clickButton(/^Delete remotes$/);
-    cy.contains(/^Success$/);
-    cy.clickButton(/^Close$/);
-    cy.clickButton(/^Clear all filters$/);
+    cy.createRemote(remoteName).then((remote: IRemotes) => {
+      cy.navigateTo('hub', 'remotes');
+      cy.setTablePageSize('50');
+      cy.filterTableBySingleText(remote.name);
+      cy.get('[data-cy="card-view"]').click();
+      cy.contains(remote.name).should('be.visible');
+      cy.get('[data-cy="list-view"]').click();
+      cy.contains(remote.name).should('be.visible');
+      cy.get('[data-cy="table-view"]').click();
+      cy.contains(remote.name).should('be.visible');
+      cy.get('#select-all').click();
+      cy.clickToolbarKebabAction('delete-selected-remotes');
+      cy.get('#confirm').click();
+      cy.clickButton(/^Delete remotes$/);
+      cy.contains(/^Success$/);
+      cy.clickButton(/^Close$/);
+      cy.clickButton(/^Clear all filters$/);
+    });
   });
 
   it('create, search and delete a remote', () => {
