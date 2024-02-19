@@ -1,6 +1,6 @@
 import { ButtonVariant } from '@patternfly/react-core';
 import { DropdownPosition } from '@patternfly/react-core/deprecated';
-import { PencilAltIcon } from '@patternfly/react-icons';
+import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
@@ -16,9 +16,11 @@ import {
 } from '../../../../../framework';
 import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
 import { useGetItem } from '../../../../common/crud/useGet';
+import { cannotDeleteResource, cannotEditResource } from '../../../../common/utils/RBAChelpers';
 import { awxAPI } from '../../../common/api/awx-utils';
-import { ExecutionEnvironment } from '../../../interfaces/ExecutionEnvironment';
 import { AwxRoute } from '../../../main/AwxRoutes';
+import { ExecutionEnvironment } from '../../../interfaces/ExecutionEnvironment';
+import { useDeleteExecutionEnvironments } from '../hooks/useDeleteExecutionEnvironments';
 
 export function ExecutionEnvironmentPage() {
   const params = useParams<{ id: string }>();
@@ -27,13 +29,17 @@ export function ExecutionEnvironmentPage() {
   const getPageUrl = useGetPageUrl();
   const pageNavigate = usePageNavigate();
 
+  const deleteEE = useDeleteExecutionEnvironments((_execution_environment) =>
+    pageNavigate(AwxRoute.ExecutionEnvironments)
+  );
+
   const { data: executionEnvironment } = useGetItem<ExecutionEnvironment>(
     awxAPI`/execution_environments/`,
     params.id
   );
 
-  const itemActions: IPageAction<ExecutionEnvironment>[] = useMemo(() => {
-    const itemActions: IPageAction<ExecutionEnvironment>[] = [
+  const itemActions: IPageAction<ExecutionEnvironment>[] = useMemo(
+    () => [
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
@@ -41,14 +47,26 @@ export function ExecutionEnvironmentPage() {
         isPinned: true,
         icon: PencilAltIcon,
         label: t('Edit execution environment'),
+        isDisabled: (executionEnvironment) => cannotEditResource(executionEnvironment, t),
         onClick: (executionEnvironment) =>
           pageNavigate(AwxRoute.EditExecutionEnvironment, {
             params: { id: executionEnvironment.id },
           }),
       },
-    ];
-    return itemActions;
-  }, [t, pageNavigate]);
+      { type: PageActionType.Seperator },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        icon: TrashIcon,
+        label: t('Delete execution environment'),
+        isHidden: (executionEnvironment) => executionEnvironment.managed,
+        isDisabled: (executionEnvironment) => cannotDeleteResource(executionEnvironment, t),
+        onClick: (ee: ExecutionEnvironment) => deleteEE([ee]),
+        isDanger: true,
+      },
+    ],
+    [t, pageNavigate, deleteEE]
+  );
 
   return (
     <PageLayout>

@@ -25,11 +25,16 @@ export function PageFormCredentialSelect<
   selectTitle?: string;
   isMultiple?: boolean;
   credentialType?: number;
+  sourceType?: string;
   isDisabled?: boolean;
 }) {
   const { t } = useTranslation();
   const multiSelectelectCredential = useMultiSelectCredential(true, props.credentialType);
-  const singleSelectCredential = useSingleSelectCredential(props.credentialType, props.selectTitle);
+  const singleSelectCredential = useSingleSelectCredential(
+    props.credentialType,
+    props.selectTitle,
+    props.sourceType
+  );
   const { setValue } = useFormContext();
   return props.isMultiple ? (
     <PageFormMultiInput<Credential, TFieldValues, TFieldName>
@@ -79,7 +84,9 @@ export function PageFormCredentialSelect<
         }
         try {
           const itemsResponse = await requestGet<AwxItemsResponse<Credential>>(
-            awxAPI`/credentials/?name=${credentialName}`
+            props.credentialType
+              ? awxAPI`/credentials/?name=${credentialName}&credential_type=${props.credentialType.toString()}`
+              : awxAPI`/credentials/?name=${credentialName}`
           );
           if (itemsResponse.results.length === 0) return t('Credential not found.');
           if (props.credentialPath) setValue(props.credentialPath, itemsResponse.results[0]);

@@ -43,6 +43,6 @@ export interface ExecutionEnvironment {
   organization: number;
   image: string;
   managed: boolean;
-  credential: number;
+  credential: number | null;
   pull: string;
 }

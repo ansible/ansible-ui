@@ -54,6 +54,7 @@ describe('Instance Details', () => {
         cy.get('[data-cy="enabled"]').should('exist');
       });
   });
+
   it('Does not render install bundle if an instance has no assoicated install bundle', () => {
     cy.intercept(
       { method: 'GET', url: '/api/v2/instances/*' },
@@ -62,6 +63,7 @@ describe('Instance Details', () => {
     cy.mount(<InstanceDetails />);
     cy.get('[data-cy="download-bundle"]').should('not.exist');
   });
+
   it('Does not render instance groups if an instance has no associated instance groups', () => {
     cy.intercept(
       { method: 'GET', url: '/api/v2/instances/*/instance_groups/' },
@@ -70,6 +72,7 @@ describe('Instance Details', () => {
     cy.mount(<InstanceDetails />);
     cy.get('[data-cy="instance-groups"]').should('not.exist');
   });
+
   it('Enabled/Diabled switch is disabled if user does not have the right permissions', () => {
     cy.mount(<InstanceDetails />);
     cy.intercept({ method: 'GET', url: '/api/v2/me' }, { fixture: 'normalUser.json' });
@@ -79,6 +82,17 @@ describe('Instance Details', () => {
         cy.get('[data-cy="enabled"] #enable-instance').should('be.disabled');
       });
   });
+
+  it('non admin users cannot edit instance', () => {
+    cy.mount(<InstanceDetails />);
+    cy.intercept({ method: 'GET', url: '/api/v2/me' }, { fixture: 'normalUser.json' });
+    cy.wait('@getInstance')
+      .its('response.body')
+      .then(() => {
+        cy.get('[data-cy="enabled"] #enable-instance').should('be.disabled');
+      });
+  });
+
   it('Instance forks disabled if user does not have the right permissions', () => {
     cy.mount(<InstanceDetails />);
     cy.intercept({ method: 'GET', url: '/api/v2/me' }, { fixture: 'normalUser.json' });
@@ -87,6 +101,66 @@ describe('Instance Details', () => {
       .then(() => {
         cy.get('.pf-v5-c-slider__thumb').should('have.attr', 'aria-disabled');
         cy.get('.pf-v5-c-slider__thumb').should('have.attr', 'aria-disabled', 'true');
+      });
+  });
+
+  it('edit instance button should be hidden for non-k8s system', () => {
+    cy.intercept('GET', '/api/v2/settings/system*', {
+      IS_K8S: false,
+    }).as('isK8s');
+    cy.mount(<InstanceDetails />);
+    cy.get('[data-cy="edit-instance"]').should('not.exist');
+  });
+
+  it('edit instance button should be shown for k8s system', () => {
+    cy.intercept('GET', '/api/v2/settings/system*', {
+      IS_K8S: true,
+    }).as('isK8s');
+    cy.mount(<InstanceDetails />);
+    cy.get('[data-cy="edit-instance"]').should('be.visible');
+    cy.get('[data-cy="edit-instance"]').should('have.attr', 'aria-disabled', 'false');
+  });
+
+  it('only admin users can edit instance', () => {
+    cy.intercept('GET', '/api/v2/settings/system*', {
+      IS_K8S: true,
+    }).as('isK8s');
+    cy.mount(<InstanceDetails />);
+    cy.wait('@getInstance')
+      .its('response.body')
+      .then(() => {
+        cy.get('[data-cy="edit-instance"]').should('be.visible');
+        cy.get('[data-cy="edit-instance"]').should('have.attr', 'aria-disabled', 'false');
+      });
+  });
+
+  it('edit instance button should be hidden for instance type control', () => {
+    cy.intercept('GET', '/api/v2/settings/system*', {
+      IS_K8S: true,
+    }).as('isK8s');
+    cy.intercept('GET', '/api/v2/instances/*', {
+      fixture: 'instance_control.json',
+    }).as('getInstance');
+    cy.mount(<InstanceDetails />);
+    cy.wait('@getInstance')
+      .its('response.body')
+      .then(() => {
+        cy.get('[data-cy="edit-instance"]').should('not.exist');
+      });
+  });
+
+  it('edit instance button should be hidden instance type hybrid', () => {
+    cy.intercept('GET', '/api/v2/settings/system*', {
+      IS_K8S: true,
+    }).as('isK8s');
+    cy.intercept('GET', '/api/v2/instances/*', {
+      fixture: 'instance_hybrid.json',
+    }).as('getInstance');
+    cy.mount(<InstanceDetails />);
+    cy.wait('@getInstance')
+      .its('response.body')
+      .then(() => {
+        cy.get('[data-cy="edit-instance"]').should('not.exist');
       });
   });
 });
