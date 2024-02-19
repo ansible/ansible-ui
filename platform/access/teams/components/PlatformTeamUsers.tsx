@@ -29,13 +29,13 @@ export function PlatformTeamUsers() {
   } = useGetItem<PlatformTeam>(gatewayV1API`/teams`, params.id);
 
   const view = usePlatformView<PlatformUser>({
-    url: gatewayV1API`/teams/${team?.id?.toString() ?? ''}/users`,
+    url: gatewayV1API`/teams/${team?.id?.toString() ?? ''}/users/`,
     toolbarFilters,
     tableColumns,
   });
 
   const { data: associateOptions } = useOptions<OptionsResponse<ActionsResponse>>(
-    gatewayV1API`/teams/${team?.id?.toString() ?? ''}/users/associate`
+    gatewayV1API`/teams/${team?.id?.toString() ?? ''}/users/associate/`
   );
   const canAssociateUser = Boolean(
     associateOptions && associateOptions.actions && associateOptions.actions['POST']

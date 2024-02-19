@@ -32,13 +32,13 @@ export function PlatformTeamAdmins() {
   } = useGetItem<PlatformTeam>(gatewayV1API`/teams`, params.id);
 
   const view = usePlatformView<PlatformUser>({
-    url: gatewayV1API`/teams/${team?.id?.toString() ?? ''}/admins`,
+    url: gatewayV1API`/teams/${team?.id?.toString() ?? ''}/admins/`,
     toolbarFilters,
     tableColumns,
   });
 
   const { data: associateOptions } = useOptions<OptionsResponse<ActionsResponse>>(
-    gatewayV1API`/teams/${team?.id?.toString() ?? ''}/admins/associate`
+    gatewayV1API`/teams/${team?.id?.toString() ?? ''}/admins/associate/`
   );
   const canAssociateAdministrator = Boolean(
     associateOptions && associateOptions.actions && associateOptions.actions['POST']
@@ -60,7 +60,7 @@ export function PlatformTeamAdmins() {
       emptyStateTitle={
         canAssociateAdministrator
           ? t('There are currently no administrators associated with this team.')
-          : t('You do not have permission to associate an administrators with this team.')
+          : t('You do not have permission to associate an administrator with this team.')
       }
       emptyStateDescription={
         canAssociateAdministrator

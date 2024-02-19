@@ -22,13 +22,19 @@ export function useTeamAdminsToolbarActions(view: IPlatformView<PlatformUser>) {
   const params = useParams<{ id: string }>();
   const { data: team } = useGetItem<PlatformTeam>(gatewayV1API`/teams`, params.id);
   const { data: associateOptions } = useOptions<OptionsResponse<ActionsResponse>>(
-    gatewayV1API`/teams/${team?.id?.toString() ?? ''}/admins/associate`
+    gatewayV1API`/teams/${team?.id?.toString() ?? ''}/admins/associate/`
   );
   const { data: disassociateOptions } = useOptions<OptionsResponse<ActionsResponse>>(
-    gatewayV1API`/teams/${team?.id?.toString() ?? ''}/admins/disassociate`
+    gatewayV1API`/teams/${team?.id?.toString() ?? ''}/admins/disassociate/`
   );
 
-  const canAssociateAdmin = Boolean(associateOptions?.actions && associateOptions.actions['POST']);
+  const canAssociateAdmin = useMemo(
+    () => Boolean(associateOptions?.actions && associateOptions.actions['POST']),
+    [associateOptions?.actions]
+  );
+  console.log('🚀 ~ useTeamAdminsToolbarActions ~ team:', team);
+  console.log('🚀 ~ useTeamAdminsToolbarActions ~ canAssociateAdmin:', canAssociateAdmin);
+  console.log('🚀 ~ useTeamAdminsToolbarActions ~ associateOptions:', associateOptions);
   const canRemoveAdmin = Boolean(
     disassociateOptions?.actions && disassociateOptions.actions['POST']
   );
@@ -78,7 +84,7 @@ export function useTeamAdminsRowActions(view: IPlatformView<PlatformUser>) {
   const { data: team } = useGetItem<PlatformTeam>(gatewayV1API`/teams`, params.id);
   const removeAdmins = useRemoveTeamAdmins(view.unselectItemsAndRefresh);
   const { data: disassociateOptions } = useOptions<OptionsResponse<ActionsResponse>>(
-    gatewayV1API`/teams/${team?.id?.toString() ?? ''}/admins/disassociate`
+    gatewayV1API`/teams/${team?.id?.toString() ?? ''}/admins/disassociate/`
   );
   const canRemoveAdmin = Boolean(
     disassociateOptions?.actions && disassociateOptions.actions['POST']

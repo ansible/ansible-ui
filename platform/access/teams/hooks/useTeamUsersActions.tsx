@@ -22,10 +22,10 @@ export function useTeamUsersToolbarActions(view: IPlatformView<PlatformUser>) {
   const params = useParams<{ id: string }>();
   const { data: team } = useGetItem<PlatformTeam>(gatewayV1API`/teams`, params.id);
   const { data: associateOptions } = useOptions<OptionsResponse<ActionsResponse>>(
-    gatewayV1API`/teams/${team?.id?.toString() ?? ''}/users/associate`
+    gatewayV1API`/teams/${team?.id?.toString() ?? ''}/users/associate/`
   );
   const { data: disassociateOptions } = useOptions<OptionsResponse<ActionsResponse>>(
-    gatewayV1API`/teams/${team?.id?.toString() ?? ''}/users/disassociate`
+    gatewayV1API`/teams/${team?.id?.toString() ?? ''}/users/disassociate/`
   );
 
   const canAssociateUser = Boolean(associateOptions?.actions && associateOptions.actions['POST']);
@@ -78,7 +78,7 @@ export function useTeamUsersRowActions(view: IPlatformView<PlatformUser>) {
   const { data: team } = useGetItem<PlatformTeam>(gatewayV1API`/teams`, params.id);
   const removeUsers = useRemoveTeamUsers(view.unselectItemsAndRefresh);
   const { data: disassociateOptions } = useOptions<OptionsResponse<ActionsResponse>>(
-    gatewayV1API`/teams/${team?.id?.toString() ?? ''}/users/disassociate`
+    gatewayV1API`/teams/${team?.id?.toString() ?? ''}/users/disassociate/`
   );
   const canRemoveUser = Boolean(
     disassociateOptions?.actions && disassociateOptions.actions['POST']
