@@ -98,7 +98,7 @@ export function PageForm<T extends object>(props: PageFormProps<T>) {
   const [frameworkTranslations] = useFrameworkTranslations();
   const isMd = useBreakpoint('md');
   const isHorizontal = props.isVertical ? false : settings.formLayout === 'horizontal';
-  const multipleColumns = props.singleColumn ? false : settings.formColumns === 'multiple';
+  const multipleColumns = props.singleColumn ? false : settings.formColumns !== 'single';
 
   let children = props.children;
   if (props.disableGrid !== true) {
@@ -206,7 +206,7 @@ export function PageFormGrid(props: {
 }) {
   const settings = useSettings();
   const isHorizontal = props.isVertical ? false : settings.formLayout === 'horizontal';
-  const multipleColumns = props.singleColumn ? false : settings.formColumns === 'multiple';
+  const multipleColumns = props.singleColumn ? false : settings.formColumns !== 'single';
 
   const sm: gridItemSpanValueShape | undefined = multipleColumns ? (isHorizontal ? 12 : 12) : 12;
   const md: gridItemSpanValueShape | undefined = multipleColumns ? (isHorizontal ? 12 : 6) : 12;

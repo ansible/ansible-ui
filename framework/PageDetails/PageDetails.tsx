@@ -38,7 +38,7 @@ export function PageDetails(props: {
           '2xl': orientation,
         }}
         columnModifier={
-          numberOfColumns === 'multiple'
+          numberOfColumns !== 'single'
             ? {
                 default: '1Col',
                 sm: '1Col',
