@@ -150,6 +150,7 @@ export function OptionActionsFormInput(props: { name: string; option: OptionsAct
             labelHelp={option.help_text}
             allowUpload={false}
             allowDownload={false}
+            allowCopy={false}
             toggleLanguages={['json', 'yaml']}
             language="json"
             isRequired={option.required}
@@ -166,6 +167,7 @@ export function OptionActionsFormInput(props: { name: string; option: OptionsAct
             labelHelp={option.help_text}
             allowUpload={false}
             allowDownload={false}
+            allowCopy={false}
             toggleLanguages={['json', 'yaml']}
             language="json"
             isRequired={option.required}
@@ -182,6 +184,7 @@ export function OptionActionsFormInput(props: { name: string; option: OptionsAct
             labelHelp={option.help_text}
             allowUpload={false}
             allowDownload={false}
+            allowCopy={false}
             toggleLanguages={['json', 'yaml']}
             language="json"
             isRequired={option.required}
