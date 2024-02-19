@@ -69,7 +69,7 @@ function ActionsRow(props: {
   if (allowCopy) {
     actionItems.push(
       <Tooltip key="copy-file" content={t('Copy')}>
-        <IconButton
+        <Button
           key="copy-button"
           id="copy-button"
           data-cy="copy-button"
@@ -79,6 +79,7 @@ function ActionsRow(props: {
           onClick={() => handleCopy()}
           variant="plain"
           size="sm"
+          style={{ minWidth: 0, padding: 6, paddingLeft: 8, paddingRight: 8 }}
         />
       </Tooltip>
     );
@@ -87,7 +88,7 @@ function ActionsRow(props: {
   if (allowUpload) {
     actionItems.push(
       <Tooltip key="upload-file" content={t('Upload')}>
-        <IconButton
+        <Button
           key="upload-button"
           id="upload-button"
           data-cy="upload-button"
@@ -97,6 +98,7 @@ function ActionsRow(props: {
           onClick={() => handleUpload()}
           variant="plain"
           size="sm"
+          style={{ minWidth: 0, padding: 6, paddingLeft: 8, paddingRight: 8 }}
         />
       </Tooltip>
     );
@@ -105,7 +107,7 @@ function ActionsRow(props: {
   if (allowDownload) {
     actionItems.push(
       <Tooltip key="download-file" content={t('Download')}>
-        <IconButton
+        <Button
           key="download-button"
           id="download-button"
           data-cy="download-button"
@@ -115,6 +117,7 @@ function ActionsRow(props: {
           onClick={() => handleDownload()}
           variant="plain"
           size="sm"
+          style={{ minWidth: 0, padding: 6, paddingLeft: 8, paddingRight: 8 }}
         />
       </Tooltip>
     );
@@ -439,10 +442,3 @@ export function PageFormDataEditor<
     />
   );
 }
-
-const IconButton = styled(Button)`
-  minwidth: 0;
-  padding: 0;
-  paddingleft: 8;
-  paddingright: 8;
-`;
