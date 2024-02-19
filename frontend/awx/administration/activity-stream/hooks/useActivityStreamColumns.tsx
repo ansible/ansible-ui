@@ -37,6 +37,7 @@ export function useActivityStreamColumns(options?: {
         ),
         sort: undefined,
         list: 'secondary',
+        fullWidth: true,
       },
     ],
     [options, t]
