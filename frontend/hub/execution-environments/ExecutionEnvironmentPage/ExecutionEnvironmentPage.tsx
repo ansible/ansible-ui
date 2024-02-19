@@ -1,5 +1,5 @@
 import { DropdownPosition } from '@patternfly/react-core/deprecated';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, Trans } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import {
   LoadingPage,
@@ -7,6 +7,7 @@ import {
   PageHeader,
   PageLayout,
   useGetPageUrl,
+  DateTimeCell,
 } from '../../../../framework';
 import { PageRoutedTabs } from '../../../../framework/PageTabs/PageRoutedTabs';
 import { useGet } from '../../../common/crud/useGet';
@@ -16,6 +17,8 @@ import { HubRoute } from '../../main/HubRoutes';
 import { ExecutionEnvironment } from '../ExecutionEnvironment';
 import { useExecutionEnvironmentPageActions } from './hooks/useExecutionEnvironmentPageActions';
 import { SignStatus } from './components/SignStatus';
+import { StatusCell } from '../../../common/Status';
+import { Flex, FlexItem, Stack } from '@patternfly/react-core';
 
 export function ExecutionEnvironmentPage() {
   const { t } = useTranslation();
@@ -38,9 +41,12 @@ export function ExecutionEnvironmentPage() {
     return <HubError error={error} handleRefresh={refresh} />;
   }
 
+  
   if (isLoading || !ee) {
     return <LoadingPage />;
   }
+
+  const lastSyncTask = ee?.pulp?.repository?.remote?.last_sync_task;
 
   return (
     <PageLayout>
@@ -52,9 +58,23 @@ export function ExecutionEnvironmentPage() {
         ]}
         description={ee?.description}
         footer={
-          <div>
-            <SignStatus state={ee.pulp?.repository?.sign_state} />
-          </div>
+          <Stack hasGutter>
+            <div>
+              <SignStatus state={ee?.pulp?.repository?.sign_state} />
+            </div>
+            {!!lastSyncTask && (
+              <Flex>
+                <FlexItem>
+                  <Trans>
+                    Last updated from registry <DateTimeCell value={lastSyncTask?.finished_at} />
+                  </Trans>
+                </FlexItem>
+                <FlexItem>
+                  <StatusCell status={lastSyncTask?.state} />
+                </FlexItem>
+              </Flex>
+            )}
+          </Stack>
         }
         headerActions={
           <PageActions<ExecutionEnvironment>
