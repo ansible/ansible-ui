@@ -47,6 +47,7 @@ function ActionsRow(props: {
   selectedLanguage: string;
   errors: FieldErrors<FieldValues>;
   name: string;
+  children?: ReactNode;
 }) {
   const { t } = useTranslation();
   const {
@@ -145,6 +146,7 @@ function ActionsRow(props: {
       justifyContent={{ default: 'justifyContentFlexEnd' }}
       // style={{ marginTop: -8, marginBottom: -8 }}
     >
+      <FlexItem>{props.children}</FlexItem>
       <FlexItem>{actionItems}</FlexItem>
       <FlexItem align={{ default: 'alignRight' }}>
         <ToggleGroup isCompact>{languageActions}</ToggleGroup>
@@ -359,20 +361,26 @@ export function PageFormDataEditor<
             label={props.label}
             helperTextInvalid={!(validate && isValidating) && errorSet}
             additionalControls={
-              <ActionsRow
-                key="actions-row"
-                allowCopy={allowCopy}
-                allowDownload={allowDownload}
-                allowUpload={allowUpload}
-                errors={errors}
-                handleCopy={() => handleCopy()}
-                handleDownload={handleDownload}
-                handleUpload={handleUpload}
-                name={name}
-                selectedLanguage={selectedLanguage}
-                setLanguage={setLanguage}
-                toggleLanguages={toggleLanguages}
-              />
+              isExpandable && isCollapsed ? (
+                props.additionalControls
+              ) : (
+                <ActionsRow
+                  key="actions-row"
+                  allowCopy={allowCopy}
+                  allowDownload={allowDownload}
+                  allowUpload={allowUpload}
+                  errors={errors}
+                  handleCopy={() => handleCopy()}
+                  handleDownload={handleDownload}
+                  handleUpload={handleUpload}
+                  name={name}
+                  selectedLanguage={selectedLanguage}
+                  setLanguage={setLanguage}
+                  toggleLanguages={toggleLanguages}
+                >
+                  {props.additionalControls}
+                </ActionsRow>
+              )
             }
           >
             {(!isExpandable || !isCollapsed) && (
