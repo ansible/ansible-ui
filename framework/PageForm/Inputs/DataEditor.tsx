@@ -225,7 +225,7 @@ export function DataEditor<
     } catch (e) {
       try {
         obj = jsyaml.load(editor.getValue()) as object;
-      } catch (e) {
+      } catch {
         // do nothing
       }
     }
