@@ -40,6 +40,7 @@ import { EdaUser, EdaUserCreateUpdate } from '../../frontend/eda/interfaces/EdaU
 import { RoleDetail } from '../../frontend/eda/interfaces/generated/eda-api';
 import { Role as HubRole } from '../../frontend/hub/access/roles/Role';
 import { RemoteRegistry } from '../../frontend/hub/administration/remote-registries/RemoteRegistry';
+import { IRemotes } from '../../frontend/hub/administration/remotes/Remotes';
 import { CollectionVersionSearch } from '../../frontend/hub/collections/Collection';
 import { IAwxResources } from './awx-commands';
 
@@ -1009,9 +1010,12 @@ declare global {
       cleanupCollections(namespace: string, repo: string): Cypress.Chainable<void>;
       createHubRole(): Cypress.Chainable<HubRole>;
       deleteHubRole(role: HubRole): Cypress.Chainable<void>;
-      createRemote(remoteName: string, url?: string): Cypress.Chainable<void>;
+      createRemote(remoteName: string, url?: string): Cypress.Chainable<IRemotes>;
       deleteRemote(remoteName: string): Cypress.Chainable<void>;
-      createRemoteRegistry(remoteRegistryName: string): Cypress.Chainable<RemoteRegistry>;
+      createRemoteRegistry(
+        remoteRegistryName: string,
+        url?: string
+      ): Cypress.Chainable<RemoteRegistry>;
       deleteRemoteRegistry(remoteRegistryId: string): Cypress.Chainable<void>;
       deleteCollection(
         collectionName: string,
