@@ -80,6 +80,7 @@ describe('Remote Registry', () => {
         cy.get('[data-cy="name"]').type(remoteRegistry.name);
         cy.get('[data-cy="url"]').type(RemoteRegistry.validIndexableURL);
         cy.get('[data-cy="Submit"]').click();
+        // Bug in test, needs to wait for the action before naivgating.
         cy.contains('Remote registries').click();
         cy.filterTableBySingleText(remoteRegistry.name);
         cy.get('[data-cy="actions-column-cell"]').click();
