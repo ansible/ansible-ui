@@ -64,7 +64,7 @@ export function useRoleRowActions(onComplete: (roles: Role[]) => void) {
         isDisabled: (role) =>
           role.locked
             ? t('Built-in roles cannot be edited.')
-            : user.is_superuser
+            : user?.is_superuser
               ? undefined
               : t(
                   'You do not have permission to edit this role. Please contact your organization administrator if there is an issue with your access.'
@@ -94,6 +94,6 @@ export function useRoleRowActions(onComplete: (roles: Role[]) => void) {
         isDanger: true,
       },
     ],
-    [deleteRoles, getPageUrl, t, user.is_superuser]
+    [deleteRoles, getPageUrl, t, user?.is_superuser]
   );
 }
