@@ -1,5 +1,6 @@
 import {
   AlertProps,
+  Button,
   Flex,
   FlexItem,
   ToggleGroupItem as PFToggleGroupItem,
@@ -46,6 +47,7 @@ function ActionsRow(props: {
   selectedLanguage: string;
   errors: FieldErrors<FieldValues>;
   name: string;
+  children?: ReactNode;
 }) {
   const { t } = useTranslation();
   const {
@@ -67,7 +69,7 @@ function ActionsRow(props: {
   if (allowCopy) {
     actionItems.push(
       <Tooltip key="copy-file" content={t('Copy')}>
-        <ToggleGroupItem
+        <IconButton
           key="copy-button"
           id="copy-button"
           data-cy="copy-button"
@@ -75,6 +77,8 @@ function ActionsRow(props: {
           icon={<CopyIcon />}
           type="button"
           onClick={() => handleCopy()}
+          variant="plain"
+          size="sm"
         />
       </Tooltip>
     );
@@ -83,7 +87,7 @@ function ActionsRow(props: {
   if (allowUpload) {
     actionItems.push(
       <Tooltip key="upload-file" content={t('Upload')}>
-        <ToggleGroupItem
+        <IconButton
           key="upload-button"
           id="upload-button"
           data-cy="upload-button"
@@ -91,6 +95,8 @@ function ActionsRow(props: {
           icon={<UploadIcon />}
           type="button"
           onClick={() => handleUpload()}
+          variant="plain"
+          size="sm"
         />
       </Tooltip>
     );
@@ -99,7 +105,7 @@ function ActionsRow(props: {
   if (allowDownload) {
     actionItems.push(
       <Tooltip key="download-file" content={t('Download')}>
-        <ToggleGroupItem
+        <IconButton
           key="download-button"
           id="download-button"
           data-cy="download-button"
@@ -107,6 +113,8 @@ function ActionsRow(props: {
           icon={<DownloadIcon />}
           type="button"
           onClick={() => handleDownload()}
+          variant="plain"
+          size="sm"
         />
       </Tooltip>
     );
@@ -128,10 +136,15 @@ function ActionsRow(props: {
     )) || [];
 
   return (
-    <Flex justifyContent={{ default: 'justifyContentSpaceBetween' }}>
-      <FlexItem>
-        <ToggleGroup isCompact>{actionItems}</ToggleGroup>
-      </FlexItem>
+    <Flex
+      grow={{ default: 'grow' }}
+      columnGap={{ default: 'columnGapSm' }}
+      rowGap={{ default: 'rowGapNone' }}
+      justifyContent={{ default: 'justifyContentFlexEnd' }}
+      // style={{ marginTop: -8, marginBottom: -8 }}
+    >
+      <FlexItem>{props.children}</FlexItem>
+      <FlexItem>{actionItems}</FlexItem>
       <FlexItem align={{ default: 'alignRight' }}>
         <ToggleGroup isCompact>{languageActions}</ToggleGroup>
       </FlexItem>
@@ -148,6 +161,7 @@ export type PageFormDataEditorInputProps<
 > = {
   name: TFieldName;
   validate?: Validate<string, TFieldValues> | Record<string, Validate<string, TFieldValues>>;
+  language?: string;
   toggleLanguages?: string[];
   isExpandable?: boolean;
   allowUpload?: boolean;
@@ -163,6 +177,8 @@ export type PageFormDataEditorInputProps<
   additionalControls?: ReactNode;
   labelHelp?: string | string[] | ReactNode;
   labelHelpTitle?: string;
+
+  disableLineNumbers?: boolean;
 };
 
 export function PageFormDataEditor<
@@ -183,8 +199,10 @@ export function PageFormDataEditor<
     isRequired,
     label,
     name,
+    language,
     toggleLanguages,
     validate,
+    disableLineNumbers,
     ...formGroupInputProps
   } = props;
   const {
@@ -196,7 +214,7 @@ export function PageFormDataEditor<
     setValue,
   } = useFormContext<TFieldValues>();
 
-  const [selectedLanguage, setSelectedLanguage] = useState('yaml');
+  const [selectedLanguage, setSelectedLanguage] = useState(props.language ?? 'yaml');
   const [isCollapsed, setCollapsed] = useState(!defaultExpanded);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const alertToaster = usePageAlertToaster();
@@ -339,9 +357,10 @@ export function PageFormDataEditor<
             }
             label={props.label}
             helperTextInvalid={!(validate && isValidating) && errorSet}
-          >
-            {(!isExpandable || !isCollapsed) && (
-              <>
+            additionalControls={
+              isExpandable && isCollapsed ? (
+                props.additionalControls
+              ) : (
                 <ActionsRow
                   key="actions-row"
                   allowCopy={allowCopy}
@@ -355,7 +374,14 @@ export function PageFormDataEditor<
                   selectedLanguage={selectedLanguage}
                   setLanguage={setLanguage}
                   toggleLanguages={toggleLanguages}
-                />
+                >
+                  {props.additionalControls}
+                </ActionsRow>
+              )
+            }
+          >
+            {(!isExpandable || !isCollapsed) && (
+              <>
                 {props.allowUpload ? (
                   <div
                     id="code-editor-dropzone"
@@ -392,6 +418,7 @@ export function PageFormDataEditor<
                     onChange={onChange}
                     isReadOnly={isReadOnly || isSubmitting}
                     invalid={!(validate && isValidating) && error?.message !== undefined}
+                    disableLineNumbers={disableLineNumbers}
                   />
                 )}
               </>
@@ -412,3 +439,10 @@ export function PageFormDataEditor<
     />
   );
 }
+
+const IconButton = styled(Button)`
+  minwidth: 0;
+  padding: 0;
+  paddingleft: 8;
+  paddingright: 8;
+`;

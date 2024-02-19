@@ -1,9 +1,44 @@
 import useResizeObserver from '@react-hook/resize-observer';
+import jsyaml from 'js-yaml';
 import * as monaco from 'monaco-editor';
 import { configureMonacoYaml } from 'monaco-yaml';
 import { useEffect, useRef } from 'react';
 import { FieldPath, FieldValues, UseFormClearErrors, UseFormSetError } from 'react-hook-form';
 import { useSettings } from '../../Settings';
+
+let editorWorkerService: Worker;
+let jsonWorker: Worker;
+let yamlWorker: Worker;
+
+function getWorker(moduleId: string, label: string) {
+  switch (label) {
+    case 'editorWorkerService':
+      if (!editorWorkerService) {
+        editorWorkerService = new Worker(
+          new URL('monaco-editor/esm/vs/editor/editor.worker', import.meta.url),
+          { type: 'module' }
+        );
+      }
+      return editorWorkerService;
+    case 'json':
+      if (!jsonWorker) {
+        jsonWorker = new Worker(
+          new URL('monaco-editor/esm/vs/language/json/json.worker', import.meta.url),
+          { type: 'module' }
+        );
+      }
+      return jsonWorker;
+    case 'yaml':
+      if (!yamlWorker) {
+        yamlWorker = new Worker(new URL('monaco-yaml/yaml.worker', import.meta.url), {
+          type: 'module',
+        });
+      }
+      return yamlWorker;
+    default:
+      throw new Error(`Unknown label ${label}`);
+  }
+}
 
 export function DataEditor<
   TFieldValues extends FieldValues = FieldValues,
@@ -18,6 +53,7 @@ export function DataEditor<
   id: string;
   isReadOnly?: boolean;
   onChange: (value: string) => void;
+  disableLineNumbers?: boolean;
 }) {
   const { onChange, language, setError, name, clearErrors } = props;
   const idDataEditorElement = `data-editor-${name}`;
@@ -74,7 +110,7 @@ export function DataEditor<
 
     if (divEl.current) {
       editor = monaco?.editor?.create(divEl.current, {
-        lineNumbers: 'on',
+        lineNumbers: props.disableLineNumbers ? 'off' : 'on',
         theme: 'my-dark',
         lineDecorationsWidth: 8,
         padding: { top: 6, bottom: 8 },
@@ -87,33 +123,12 @@ export function DataEditor<
 
       editorRef.current.editor = editor;
     }
-    window.MonacoEnvironment = {
-      getWorker(moduleId, label) {
-        switch (label) {
-          case 'editorWorkerService':
-            return new Worker(
-              new URL('monaco-editor/esm/vs/editor/editor.worker', import.meta.url),
-              { type: 'module' }
-            );
-          case 'json':
-            return new Worker(
-              new URL('monaco-editor/esm/vs/language/json/json.worker', import.meta.url),
-              { type: 'module' }
-            );
-          case 'yaml':
-            return new Worker(new URL('monaco-yaml/yaml.worker', import.meta.url), {
-              type: 'module',
-            });
-          default:
-            throw new Error(`Unknown label ${label}`);
-        }
-      },
-    };
+    window.MonacoEnvironment = { getWorker };
 
     return () => {
       editor.dispose();
     };
-  }, []);
+  }, [props.disableLineNumbers]);
 
   useEffect(() => {
     const editor = editorRef?.current?.editor;
@@ -129,10 +144,20 @@ export function DataEditor<
       onChange(editor.getValue() ?? '');
     });
     const currentValue = editor.getValue();
-    if (currentValue !== props.value) {
-      editor.setValue(props.value || '');
+    let value = props.value;
+    if (typeof value === 'object') {
+      if (value === null) {
+        value = '';
+      } else {
+        language === 'json'
+          ? (value = JSON.stringify(value, null, 2))
+          : (value = jsyaml.dump(value));
+      }
     }
-    const valueArray = props.value?.split('\n') || [''];
+    if (currentValue !== value) {
+      editor.setValue(value || '');
+    }
+    const valueArray = value?.split('\n') || [''];
     const element = document.getElementById(idDataEditorElement);
     if (valueArray.length > 0 && element) {
       element.style.minHeight = '75px';
