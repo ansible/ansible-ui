@@ -7,7 +7,7 @@ import { useManagementJobFilters } from './hooks/useManagementJobFilters';
 import { useManagementJobColumns } from './hooks/useManagementJobColumns';
 import { useAwxView } from '../../common/useAwxView';
 import { awxAPI } from '../../common/api/awx-utils';
-import { useManagementJobActions } from './hooks/useManagementActions';
+import { useManagementJobRowActions } from './hooks/useManagementJobRowActions';
 
 export function ManagementJobs() {
   const { t } = useTranslation();
@@ -19,7 +19,10 @@ export function ManagementJobs() {
     toolbarFilters,
     tableColumns,
   });
-  const rowActions = useManagementJobActions(view);
+  const isPrompted = managementJob.job_type &&
+  ['cleanup_activitystream', 'cleanup_jobs'].includes(managementJob.job_type);
+
+  const rowActions = useManagementJobRowActions(view, isPrompted);
 
   return (
     <PageLayout>

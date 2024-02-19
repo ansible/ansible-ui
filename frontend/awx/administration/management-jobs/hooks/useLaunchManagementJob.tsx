@@ -1,46 +1,63 @@
 import { useTranslation } from 'react-i18next';
-import { SystemJobTemplate } from '../../interfaces/SystemJobTemplate';
-import { usePageDialogs } from '../../../../../framework';
-import { Button, Modal, NumberInput, ModalVariant } from '@patternfly/react-core';
+import { useNavigate } from 'react-router-dom';
+import { usePageAlertToaster, usePageNavigate } from '../../../../../framework';
+import { requestGet } from '../../../../common/crud/Data';
+import { usePostRequest } from '../../../../common/crud/usePostRequest';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { SystemJobTemplate } from '../../../interfaces/SystemJobTemplate';
+import { AwxRoute } from '../../../main/AwxRoutes';
+import { useGetJobOutputUrl } from '../../../views/jobs/useGetJobOutputUrl';
+import type { UnifiedJob } from '../../../interfaces/UnifiedJob';
 
-export function useLaunchManagementJob() {
+export function useLaunchManagementJob(managementJob: SystemJobTemplate) {
   const { t } = useTranslation();
-  const { pushDialog, popDialog } = usePageDialogs();
-  // const navigate = useNavigate();
-  // const postRequest = usePostRequest();
-  // const alertToaster = usePageAlertToaster();
-  // const pageNavigate = usePageNavigate();
-  //const managementJobs = useManagementJobs();
+  const navigate = useNavigate();
+  const postRequest = usePostRequest();
+  const alertToaster = usePageAlertToaster();
+  //const pageNavigate = usePageNavigate();
+  const getJobOutputUrl = useGetJobOutputUrl();
 
-  const launchManagementJob = (managementJob: SystemJobTemplate) => {
-    const dialog = (
-      <Modal
-        title={t('Cleanup Job Details')}
-        isOpen
-        key="launch"
-        onClose={popDialog}
-        variant={ModalVariant.medium}
-      >
-        <NumberInput
-          value={100}
-          onMinus={1}
-          onPlus={2}
-          inputName="input"
-          inputAriaLabel="number input"
-          minusBtnAriaLabel="minus"
-          plusBtnAriaLabel="plus"
-        />
+  return async (managementJob: SystemJobTemplate) => {
+    const launchManagementJobEndpoint = getLaunchMgtJobEndpoint(managementJob);
 
-        <Button variant="primary" onClick={() => handleLaunch(managementJob)}>
-          {t('Launch')}
-        </Button>
+    if (!launchManagementJobEndpoint) {
+      return Promise.reject(new Error('Unable to retrieve management job launch configuration'));
+    }
 
-        <Button key="cancel" variant="link" onClick={() => handleLaunch(managementJob)}>
-          {t('Cancel')}
-        </Button>
-      </Modal>
-    );
-    pushDialog(dialog);
+    try {
+      let managementJobLaunch;
+      if (
+        managementJob.job_type === 'cleanup_tokens' ||
+        managementJob.job_type === 'cleanup_sessions'
+      ) {
+        managementJobLaunch = await postRequest(launchManagementJobEndpoint, {});
+        navigate(getJobOutputUrl(managementJobLaunch as SystemJobTemplate));
+      } else {
+        console.log('Launching management job:', managementJob.job_type);
+        navigate(getJobOutputUrl(managementJobLaunch as SystemJobTemplate));
+      }
+    } catch (error) {
+      alertToaster.addAlert({
+        variant: 'danger',
+        title: t('Failed to launch management job'),
+        children: error instanceof Error && error.message,
+        timeout: 5000,
+      });
+    }
   };
-  return launchManagementJob;
+}
+
+export function getLaunchMgtJobEndpoint(managementJob: SystemJobTemplate) {
+  const validJobTypes = [
+    'cleanup_tokens',
+    'cleanup_sessions',
+    'cleanup_activitystream',
+    'cleanup_jobs',
+  ];
+
+  if (validJobTypes.includes(managementJob.job_type)) {
+    return awxAPI`/system_job_templates/${managementJob.id.toString()}/launch/`;
+  } else {
+    return undefined;
+  }
 }
