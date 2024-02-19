@@ -1,12 +1,20 @@
 import { hubAPI } from '../../support/formatApiPathForHub';
 import { ExecutionEnvironments } from './constants';
+import { randomString } from '../../../framework/utils/random-string';
 
 describe('Execution Environments', () => {
+  let remoteRegistryName = '';
   before(() => {
     cy.hubLogin();
   });
 
-  it('it should render the execution environments page', () => {
+  beforeEach(() => {
+    remoteRegistryName = `remote_registry_${randomString(3, undefined, { isLowercase: true })}`;
+
+    cy.createRemoteRegistry(remoteRegistryName);
+  });
+
+  it('can render the execution environments page', () => {
     cy.navigateTo('hub', ExecutionEnvironments.url);
     cy.verifyPageTitle(ExecutionEnvironments.title);
   });
@@ -24,6 +32,42 @@ describe('Execution Environments', () => {
       'be.calledWith',
       'https://access.redhat.com/documentation/en-us/red_hat_ansible_automation_platform/'
     );
+  it('can add and delete a new execution environment', () => {
+    const eeName = `execution_environment_${randomString(3, undefined, { isLowercase: true })}`;
+    const upstreamName = `upstream_name_${randomString(3, undefined, { isLowercase: true })}`;
+    cy.navigateTo('hub', ExecutionEnvironments.url);
+    cy.verifyPageTitle(ExecutionEnvironments.title);
+    cy.getByDataCy('add-execution-environment').click();
+    cy.getByDataCy('name').type(eeName);
+    cy.getByDataCy('upstream-name').type(upstreamName);
+    cy.contains('[data-ouia-component-id="menu-select"]', 'Select registry')
+      .click()
+      .then(() => {
+        cy.contains('button[type="button"]', `${remoteRegistryName}`).click();
+      });
+    cy.getByDataCy('Submit').click();
+    cy.url().should('contain', '/execution-environments/');
+    cy.hubListFilter(eeName);
+    cy.get('tbody').find('tr').should('have.length', 1);
+    cy.get('tbody').within(() => {
+      cy.getByDataCy('container-repository-name-column-cell').should('contain', eeName);
+      cy.get('[data-cy="actions-dropdown"]')
+        .click()
+        .then(() => {
+          cy.get(`[data-cy="delete-environment"]`).click();
+        });
+    });
+    cy.intercept('DELETE', hubAPI`/v3/plugin/execution-environments/repositories/${eeName}/`).as(
+      'deleted'
+    );
+    cy.get('[data-ouia-component-id="Permanently delete execution environments"]').within(() => {
+      cy.get('[data-ouia-component-id="confirm"]').click();
+      cy.get('[data-ouia-component-id="submit"]').click();
+      cy.clickButton('Close');
+    });
+    cy.wait('@deleted').then((deleted) => {
+      expect(deleted.response?.statusCode).to.eql(202);
+    });
   });
 });
 

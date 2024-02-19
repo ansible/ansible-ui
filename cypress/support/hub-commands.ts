@@ -46,6 +46,12 @@ Cypress.Commands.add('galaxykit', (operation: string, ...args: string[]) => {
   });
 });
 
+Cypress.Commands.add('hubListFilter', (resourceName: string) => {
+  cy.get('[data-cy="text-input"]').within(() => {
+    cy.get('input').clear().type(resourceName, { delay: 0 });
+  });
+});
+
 Cypress.Commands.add(
   'createApprovedCollection',
   (namespaceName: string, collectionName: string, tags?: string[]) => {

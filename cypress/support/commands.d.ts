@@ -1013,6 +1013,7 @@ declare global {
       deleteHubRole(role: HubRole): Cypress.Chainable<void>;
       createRemote(remoteName: string, url?: string): Cypress.Chainable<IRemotes>;
       deleteRemote(remoteName: string): Cypress.Chainable<void>;
+      hubListFilter(resourceName: string): Cypress.Chainable<void>;
       createRemoteRegistry(
         remoteRegistryName: string,
         url?: string
