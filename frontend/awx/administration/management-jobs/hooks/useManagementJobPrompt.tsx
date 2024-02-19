@@ -12,7 +12,7 @@ import { useLaunchManagementJob } from './useLaunchManagementJob';
 import { useNavigate } from 'react-router-dom';
 import { usePageAlertToaster } from '../../../../../framework';
 
-export function useManagementJobPrompt(managementJob: SystemJobTemplate[]) {
+export function useManagementJobPrompt(managementJob: SystemJobTemplate) {
   const { t } = useTranslation();
   const { pushDialog, popDialog } = usePageDialogs();
   // const pageNavigate = usePageNavigate();
@@ -25,23 +25,13 @@ export function useManagementJobPrompt(managementJob: SystemJobTemplate[]) {
   // const pageNavigate = usePageNavigate();
   // const getJobOutputUrl = useGetJobOutputUrl();
   const handleLaunch = (managementJob: SystemJobTemplate, defaultDays: number = 30) => {
-    // console.log('Launching management job:', managementJob);
-    // //pageNavigate(`/jobs/management/${managementJob.id}/output`);
-    // if (
-    //   managementJob.job_type === 'cleanup_tokens' ||
-    //   managementJob.job_type === 'cleanup_sessions'
-    // ) {
-    //   // navigate(getJobOutputUrl(managementJobLaunch as UnifiedJob));
-    //   pageNavigate(AwxRoute.JobOutput, { params: { id: managementJob.id } });
-    // } else {
-    //   //launchingManagementJob(managementJob);
     console.log('Launching management job:', managementJob.job_type, defaultDays);
   };
-  // }
-  const managementJobPrompt = (managementJob: SystemJobTemplate) => {
+
+  const managementJobPrompt = () => {
     const dialog = (
       <Modal
-        title={t('Cleanup Job Details')}
+        title={t('Launch Management Job')}
         isOpen
         key="launch"
         onClose={popDialog}

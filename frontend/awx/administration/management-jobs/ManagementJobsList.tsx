@@ -19,10 +19,7 @@ export function ManagementJobs() {
     toolbarFilters,
     tableColumns,
   });
-  const isPrompted = managementJob.job_type &&
-  ['cleanup_activitystream', 'cleanup_jobs'].includes(managementJob.job_type);
-
-  const rowActions = useManagementJobRowActions(view, isPrompted);
+  const rowActions = useManagementJobRowActions(view);
 
   return (
     <PageLayout>
