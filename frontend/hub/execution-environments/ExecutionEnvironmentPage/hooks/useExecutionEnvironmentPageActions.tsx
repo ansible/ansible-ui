@@ -1,5 +1,5 @@
 import { ButtonVariant } from '@patternfly/react-core';
-import { PencilAltIcon } from '@patternfly/react-icons';
+import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { HubRoute } from '../../../main/HubRoutes';
@@ -48,8 +48,10 @@ export function useExecutionEnvironmentPageActions(options: { refresh?: () => un
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
+        icon: TrashIcon,
         label: t('Delete'),
         onClick: (ee) => deleteExecutionEnvironments([ee]),
+        isDanger: true,
       },
       {
         type: PageActionType.Button,
