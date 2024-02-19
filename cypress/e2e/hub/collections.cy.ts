@@ -98,7 +98,7 @@ describe('Collections List- Line Item Kebab Menu', () => {
 
   beforeEach(() => {
     thisCollectionName = 'hub_e2e_' + randomString(5).toLowerCase();
-    namespace = `upload_namespace_${randomString(3, undefined, { isLowercase: true })}`;
+    namespace = `upload_namespace_${randomString(4, undefined, { isLowercase: true })}`;
     version = '1.2.3';
     cy.hubLogin();
     cy.createNamespace(namespace);
@@ -113,26 +113,10 @@ describe('Collections List- Line Item Kebab Menu', () => {
     cy.galaxykit('task wait all');
   });
 
-  it('can upload a new version to an existing collection', () => {
+  it('can upload and then delete a new version to an existing collection', () => {
     cy.galaxykit(
       `collection upload ${namespace} ${thisCollectionName} ${version} --skip-upload`
     ).then((result) => {
-      cy.visit(
-        `/administration/approvals?page=1&perPage=10&sort=namespace&status=pipeline%3Dstaging&collection=${thisCollectionName}`
-      ); //visit the collection created in the before hook
-      cy.url().should('include', 'approvals');
-      cy.get('td[data-cy="version-column-cell"]').should('contain', '1.0.0'); //assert the version we are starting with
-      cy.get('[data-ouia-component-id="approve"]').click(); //approve the collection
-      cy.get('[data-ouia-component-id="Approve collections"]').within(() => {
-        cy.get('[data-ouia-component-id="confirm"]').click();
-        cy.intercept(
-          'GET',
-          hubAPI`/pulp/api/v3/repositories/ansible/ansible/?pulp_label_select=pipeline=approved`
-        ).as('moved'); //wait for the approval request to go through so the 'Close' button can be clicked on
-        cy.get('[data-ouia-component-id="submit"]').click();
-        cy.wait('@moved');
-        cy.clickButton(/^Close$/);
-      });
       cy.navigateTo('hub', Collections.url); //navigate to the collections page and find the collection created in the before hook
       cy.verifyPageTitle(Collections.title);
       const filePath = result.filename as string;
@@ -157,8 +141,8 @@ describe('Collections List- Line Item Kebab Menu', () => {
       ).as('searchB');
       cy.get('[data-cy="text-input"]').find('input').type(thisCollectionName);
       cy.wait('@searchB');
-      cy.get('[data-ouia-component-id="approve"]').click(); //approve the new version of the collection
-      cy.get('[data-ouia-component-id="Approve collections"]').within(() => {
+      cy.get('[data-ouia-component-id="sign-and-approve"]').click(); //approve the new version of the collection
+      cy.get('[data-ouia-component-id="Approve and sign collections"]').within(() => {
         cy.get('[data-ouia-component-id="confirm"]').click();
         cy.intercept(
           'GET',
@@ -175,6 +159,27 @@ describe('Collections List- Line Item Kebab Menu', () => {
       cy.contains('h2[data-cy="data-list-name"]', `${thisCollectionName}`).click();
       cy.get(`[data-cy="${thisCollectionName}"]`).should('contain', `${thisCollectionName}`); //assert that we are looking at the collection we expect
       cy.get('[data-cy="version"]').should('contain', '1.2.3'); //assert that the version has changed
+      cy.get('[data-cy="actions-dropdown"]')
+        .click()
+        .then(() => {
+          cy.get('#delete-version-from-system').click();
+        });
+      cy.intercept(
+        'DELETE',
+        hubAPI`/v3/plugin/ansible/content/published/collections/index/${namespace}/${thisCollectionName}/versions/1.2.3`
+      ).as('delete');
+      cy.intercept('GET', hubAPI`/v3/plugin/ansible/search/collection-versions/**`).as(
+        'removeCollection'
+      );
+      cy.get('[data-ouia-component-id="Permanently delete collections versions"]').within(() => {
+        cy.get('[data-ouia-component-id="confirm"]').click();
+        cy.get('[data-ouia-component-id="submit"]').click();
+        cy.wait('@delete');
+        cy.clickButton(/^Close$/);
+      });
+      cy.wait('@removeCollection');
+      cy.url().should('contain', '/collections/');
+      cy.reload();
     });
   });
 
