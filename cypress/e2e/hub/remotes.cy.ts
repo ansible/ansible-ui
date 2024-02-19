@@ -1,7 +1,7 @@
 import { randomString } from '../../../framework/utils/random-string';
 import { IRemotes } from '../../../frontend/hub/administration/remotes/Remotes';
-import { Remotes } from './constants';
 import { pulpAPI } from '../../support/formatApiPathForHub';
+import { Remotes } from './constants';
 
 describe('Remotes', () => {
   const testSignature: string = randomString(5, undefined, { isLowercase: true });
@@ -123,6 +123,7 @@ collections:
     cy.get('[data-cy="signed_only"]').check();
     cy.get('[data-cy="sync_dependencies"]').check();
     cy.get('[data-cy="Submit"]').click();
+    // Bug in test, needs to wait for the action before naivgating.
     cy.contains('Remotes').click();
     cy.filterTableBySingleText(remoteName);
     cy.get('[data-cy="actions-column-cell"]').click();
