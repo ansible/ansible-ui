@@ -8,6 +8,7 @@ import {
   Tooltip,
 } from '@patternfly/react-core';
 import { AngleRightIcon, CopyIcon, DownloadIcon, UploadIcon } from '@patternfly/react-icons';
+import jsyaml from 'js-yaml';
 import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import {
@@ -79,7 +80,7 @@ function ActionsRow(props: {
           onClick={() => handleCopy()}
           variant="plain"
           size="sm"
-          style={{ minWidth: 0, padding: 6, paddingLeft: 8, paddingRight: 8 }}
+          style={{ minWidth: 0, padding: 0, paddingLeft: 8, paddingRight: 8 }}
         />
       </Tooltip>
     );
@@ -98,7 +99,7 @@ function ActionsRow(props: {
           onClick={() => handleUpload()}
           variant="plain"
           size="sm"
-          style={{ minWidth: 0, padding: 6, paddingLeft: 8, paddingRight: 8 }}
+          style={{ minWidth: 0, padding: 0, paddingLeft: 8, paddingRight: 8 }}
         />
       </Tooltip>
     );
@@ -117,7 +118,7 @@ function ActionsRow(props: {
           onClick={() => handleDownload()}
           variant="plain"
           size="sm"
-          style={{ minWidth: 0, padding: 6, paddingLeft: 8, paddingRight: 8 }}
+          style={{ minWidth: 0, padding: 0, paddingLeft: 8, paddingRight: 8 }}
         />
       </Tooltip>
     );
@@ -182,6 +183,7 @@ export type PageFormDataEditorInputProps<
   labelHelpTitle?: string;
 
   disableLineNumbers?: boolean;
+  isObject?: boolean;
 };
 
 export function PageFormDataEditor<
@@ -233,7 +235,6 @@ export function PageFormDataEditor<
   const handleLanguageChange = useCallback(
     (language: string) => {
       const value = getValues(name);
-
       if ((language !== 'json' && language !== 'yaml') || !value) return;
 
       if (isJsonString(value)) {
@@ -341,6 +342,23 @@ export function PageFormDataEditor<
       render={({ field: { name, onChange, value }, fieldState: { error } }) => {
         const errorSet = [...new Set(error?.message?.split('\n'))];
         const disabled = value !== undefined && value !== null && value !== '';
+
+        function handleChange(value: string) {
+          if (props.isObject) {
+            try {
+              onChange(JSON.parse(value));
+            } catch (e) {
+              try {
+                onChange(jsyaml.load(value));
+              } catch (e) {
+                onChange(value);
+              }
+            }
+          } else {
+            onChange(value);
+          }
+        }
+
         return (
           <PageFormGroup
             fieldId={id}
@@ -404,7 +422,7 @@ export function PageFormDataEditor<
                       name={name}
                       language={selectedLanguage}
                       value={value}
-                      onChange={onChange}
+                      onChange={handleChange}
                       isReadOnly={isReadOnly || isSubmitting}
                       invalid={!(validate && isValidating) && error?.message !== undefined}
                     />
@@ -418,7 +436,7 @@ export function PageFormDataEditor<
                     name={name}
                     language={selectedLanguage}
                     value={value}
-                    onChange={onChange}
+                    onChange={handleChange}
                     isReadOnly={isReadOnly || isSubmitting}
                     invalid={!(validate && isValidating) && error?.message !== undefined}
                     disableLineNumbers={disableLineNumbers}

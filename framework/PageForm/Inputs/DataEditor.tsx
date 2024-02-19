@@ -2,7 +2,7 @@ import useResizeObserver from '@react-hook/resize-observer';
 import jsyaml from 'js-yaml';
 import * as monaco from 'monaco-editor';
 import { configureMonacoYaml } from 'monaco-yaml';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { FieldPath, FieldValues, UseFormClearErrors, UseFormSetError } from 'react-hook-form';
 import { useSettings } from '../../Settings';
 
@@ -49,12 +49,16 @@ export function DataEditor<
   setError: UseFormSetError<TFieldValues>;
   clearErrors: UseFormClearErrors<TFieldValues>;
   invalid?: boolean;
-  value: string;
+  value: string | object;
   id: string;
   isReadOnly?: boolean;
   onChange: (value: string) => void;
   disableLineNumbers?: boolean;
 }) {
+  // We set the default value and language in state to avoid re-rendering the editor when the value or language changes
+  const [defaultValue] = useState(props.value);
+  const [defaultLanguage] = useState(props.language);
+
   const { onChange, language, setError, name, clearErrors } = props;
   const idDataEditorElement = `data-editor-${name}`;
 
@@ -130,6 +134,68 @@ export function DataEditor<
     };
   }, [props.disableLineNumbers]);
 
+  // Set editor default value
+  useEffect(() => {
+    const editor = editorRef?.current?.editor;
+    if (editor) {
+      let value: string = '';
+      if (typeof defaultValue === 'object') {
+        if (defaultValue === null) {
+          editor.setValue('');
+        } else {
+          switch (defaultLanguage) {
+            case 'json':
+              try {
+                value = JSON.stringify(defaultValue, null, 2);
+              } catch (e) {
+                // do nothing
+              }
+              break;
+            case 'yaml':
+              try {
+                value = jsyaml.dump(defaultValue);
+              } catch (e) {
+                // do nothing
+              }
+              break;
+          }
+        }
+      } else {
+        value = defaultValue ?? '';
+      }
+      editor.setValue(value);
+      const element = document.getElementById(idDataEditorElement);
+      if (element) {
+        element.style.minHeight = '75px';
+        const visibleLines = value.split('\n').length;
+        element.style.height = `${visibleLines * 21 + 12}` + 'px';
+      }
+    }
+  }, [defaultValue, idDataEditorElement, defaultLanguage]);
+
+  useEffect(() => {
+    const editor = editorRef?.current?.editor;
+    if (!editor) return;
+
+    const model = editor.getModel();
+    if (!model) return;
+
+    const didChangeContentDisposable = model.onDidChangeContent(() => {
+      const value = editor.getValue() ?? '';
+      onChange(value);
+      const element = document.getElementById(idDataEditorElement);
+      if (element) {
+        element.style.minHeight = '75px';
+        const visibleLines = value.split('\n').length;
+        element.style.height = `${visibleLines * 21 + 12}` + 'px';
+      }
+    });
+
+    return () => {
+      didChangeContentDisposable.dispose();
+    };
+  }, [onChange, idDataEditorElement]);
+
   useEffect(() => {
     const editor = editorRef?.current?.editor;
     if (!editor) return;
@@ -140,34 +206,44 @@ export function DataEditor<
     if (language) {
       monaco.editor.setModelLanguage(model, language);
     }
-    const didChangeContentDisposable = model.onDidChangeContent(() => {
-      onChange(editor.getValue() ?? '');
-    });
-    const currentValue = editor.getValue();
-    let value = props.value;
-    if (typeof value === 'object') {
-      if (value === null) {
-        value = '';
+
+    const disChangeMarkersDisposable = monaco.editor.onDidChangeMarkers(() => {
+      const markers = monaco.editor.getModelMarkers({
+        owner: model.getLanguageId(),
+        resource: model.uri,
+      });
+      if (markers.length > 0) {
+        setError(name, { message: markers.map((marker) => marker.message).join('\n') });
       } else {
-        language === 'json'
-          ? (value = JSON.stringify(value, null, 2))
-          : (value = jsyaml.dump(value));
+        clearErrors(name);
+      }
+    });
+
+    let obj: object | undefined = undefined;
+    try {
+      obj = JSON.parse(editor.getValue()) as object;
+    } catch (e) {
+      try {
+        obj = jsyaml.load(editor.getValue()) as object;
+      } catch (e) {
+        // do nothing
       }
     }
-    if (currentValue !== value) {
-      editor.setValue(value || '');
-    }
-    const valueArray = value?.split('\n') || [''];
-    const element = document.getElementById(idDataEditorElement);
-    if (valueArray.length > 0 && element) {
-      element.style.minHeight = '75px';
-      element.style.height = `${(valueArray.length + 3) * 19}` + 'px';
+    if (obj) {
+      switch (language) {
+        case 'json':
+          editor.setValue(JSON.stringify(obj, null, 2));
+          break;
+        case 'yaml':
+          editor.setValue(jsyaml.dump(obj));
+          break;
+      }
     }
 
     return () => {
-      didChangeContentDisposable.dispose();
+      disChangeMarkersDisposable.dispose();
     };
-  }, [props.value, language, onChange, idDataEditorElement]);
+  }, [clearErrors, language, name, setError]);
 
   useResizeObserver(divEl, () => {
     if (editorRef.current?.editor) {
@@ -182,30 +258,6 @@ export function DataEditor<
       });
     }
   }, [settings.activeTheme]);
-
-  useEffect(() => {
-    const editor = editorRef?.current?.editor;
-    if (!editor) return;
-
-    const model = editor.getModel();
-    if (!model) return;
-
-    const disChangeMarkersDisposable = monaco.editor.onDidChangeMarkers(() => {
-      const markers = monaco.editor.getModelMarkers({
-        owner: model.getLanguageId(),
-        resource: model.uri,
-      });
-      if (markers.length > 0) {
-        setError(name, { message: markers.map((marker) => marker.message).join('\n') });
-      } else {
-        clearErrors(name);
-      }
-    });
-
-    return () => {
-      disChangeMarkersDisposable.dispose();
-    };
-  }, [setError, clearErrors, name]);
 
   return (
     <div
