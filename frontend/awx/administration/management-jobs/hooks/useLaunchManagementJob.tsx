@@ -9,7 +9,7 @@ import { AwxRoute } from '../../../main/AwxRoutes';
 import { useGetJobOutputUrl } from '../../../views/jobs/useGetJobOutputUrl';
 import type { UnifiedJob } from '../../../interfaces/UnifiedJob';
 
-export function useLaunchManagementJob(managementJob: SystemJobTemplate) {
+export function useLaunchManagementJob() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const postRequest = usePostRequest();
