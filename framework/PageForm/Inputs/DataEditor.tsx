@@ -222,7 +222,7 @@ export function DataEditor<
     let obj: object | undefined = undefined;
     try {
       obj = JSON.parse(editor.getValue()) as object;
-    } catch (e) {
+    } catch {
       try {
         obj = jsyaml.load(editor.getValue()) as object;
       } catch {
