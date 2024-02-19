@@ -10,10 +10,14 @@ import {
   usePageNavigate,
 } from '../../../../../framework';
 import { ExecutionEnvironment } from '../../ExecutionEnvironment';
+import { useDeleteExecutionEnvironments } from '../../hooks/useExecutionEnvironmentsActions';
 
 export function useExecutionEnvironmentPageActions() {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
+  const deleteExecutionEnvironments = useDeleteExecutionEnvironments(() => {
+    pageNavigate(HubRoute.ExecutionEnvironments);
+  });
 
   return useMemo(() => {
     const actions: IPageAction<ExecutionEnvironment>[] = [
@@ -38,7 +42,7 @@ export function useExecutionEnvironmentPageActions() {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         label: t('Delete'),
-        onClick: () => {},
+        onClick: (ee) => deleteExecutionEnvironments([ee]),
       },
       {
         type: PageActionType.Button,
@@ -48,5 +52,5 @@ export function useExecutionEnvironmentPageActions() {
       },
     ];
     return actions;
-  }, [pageNavigate, t]);
+  }, [pageNavigate, t, deleteExecutionEnvironments]);
 }
