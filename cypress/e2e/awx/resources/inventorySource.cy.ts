@@ -1,8 +1,12 @@
+import { randomString } from '../../../../framework/utils/random-string';
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 import { InventorySource } from '../../../../frontend/awx/interfaces/InventorySource';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
+
 describe('Inventory source page', () => {
+  const credentialName = 'e2e-' + randomString(4);
+
   let organization: Organization;
   let project: Project;
   let inventory: Inventory;
@@ -23,6 +27,13 @@ describe('Inventory source page', () => {
           inventorySource = invSrc;
         });
       });
+
+      cy.createAWXCredential({
+        name: credentialName,
+        kind: 'gce',
+        organization: organization.id,
+        credential_type: 9,
+      });
     });
   });
 
@@ -39,37 +50,50 @@ describe('Inventory source page', () => {
 
     cy.verifyPageTitle(inventorySource.name);
     cy.clickPageAction('delete-inventory-source');
-    cy.get('#confirm').click();
+    cy.getBy('#confirm').click();
     cy.clickButton(/^Delete inventory source/);
   });
 
-  it('creates an inventory source from the details page', () => {
+  it('creates a project inventory source', () => {
     cy.navigateTo('awx', 'inventories');
     cy.clickTableRow(inventory.name);
     cy.verifyPageTitle(inventory.name);
     cy.clickLink(/^Sources$/);
-    cy.get('#add-source').click();
+    cy.clickButton(/^Add source/);
     cy.verifyPageTitle('Add new source');
-    cy.get('[data-cy="name"]').type('source 1');
+    cy.getBy('[data-cy="name"]').type('project source');
     cy.selectDropdownOptionByResourceName('source_control_type', 'Sourced from a Project');
     cy.selectDropdownOptionByResourceName('project', project.name);
     cy.selectDropdownOptionByResourceName('inventory', 'Dockerfile');
-    cy.get('.pf-v5-c-input-group > .pf-v5-c-button').click();
-    cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
-      cy.searchAndDisplayResource('Demo Credential');
-      cy.get('[data-cy="checkbox-column-cell"] > label').click();
-      cy.get('#confirm').click();
+    cy.getBy('.pf-v5-c-input-group > .pf-v5-c-button').click();
+    cy.getBy('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+      cy.searchAndDisplayResource(credentialName);
+      cy.getBy('[data-cy="checkbox-column-cell"] > label').click();
+      cy.getBy('#confirm').click();
     });
-    cy.get('[data-cy="host-filter"]').type('/^test$/');
-    cy.get('[data-cy="verbosity"]').type('1');
-    cy.get('[data-cy="enabled-var"]').type('foo.bar');
-    cy.get('[data-cy="enabled-value"]').type('test');
-    cy.get('[data-cy="overwrite"]').check();
-    cy.get('[data-cy="overwrite_vars"]').check();
-    cy.get('[data-cy="update_on_launch"]').check();
-    cy.get('[data-cy="update-cache-timeout"]').type('1');
-    cy.get('.view-lines').type('test: "output"');
-    cy.get('[data-cy="Submit"]').click();
-    cy.verifyPageTitle('source 1');
+    cy.getBy('[data-cy="host-filter"]').type('/^test$/');
+    cy.getBy('[data-cy="verbosity"]').type('1');
+    cy.getBy('[data-cy="enabled-var"]').type('foo.bar');
+    cy.getBy('[data-cy="enabled-value"]').type('test');
+    cy.getBy('[data-cy="overwrite"]').check();
+    cy.getBy('[data-cy="overwrite_vars"]').check();
+    cy.getBy('[data-cy="update_on_launch"]').check();
+    cy.getBy('[data-cy="update-cache-timeout"]').type('1');
+    cy.getBy('.view-lines').type('test: "output"');
+    cy.getBy('[data-cy="Submit"]').click();
+    cy.verifyPageTitle('project source');
+  });
+
+  it('creates an amazon ec2 inventory source', () => {
+    cy.navigateTo('awx', 'inventories');
+    cy.clickTableRow(inventory.name);
+    cy.verifyPageTitle(inventory.name);
+    cy.clickLink(/^Sources$/);
+    cy.getBy('#add-source').click();
+    cy.verifyPageTitle('Add new source');
+    cy.getBy('[data-cy="name"]').type('amazon ec2 source');
+    cy.selectDropdownOptionByResourceName('source_control_type', 'Amazon EC2');
+    cy.getBy('[data-cy="Submit"]').click();
+    cy.verifyPageTitle('amazon ec2 source');
   });
 });

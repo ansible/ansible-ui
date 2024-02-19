@@ -1,9 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-namespace */
 /// <reference types="cypress" />
-import '@4tw/cypress-drag-drop';
-import '@cypress/code-coverage/support';
-import 'cypress-file-upload';
 import { SetOptional, SetRequired } from 'type-fest';
 import { AwxItemsResponse } from '../../frontend/awx/common/AwxItemsResponse';
 import { Application } from '../../frontend/awx/interfaces/Application';
@@ -40,18 +37,12 @@ import {
   EdaRulebookActivationCreate,
 } from '../../frontend/eda/interfaces/EdaRulebookActivation';
 import { EdaUser, EdaUserCreateUpdate } from '../../frontend/eda/interfaces/EdaUser';
+import { RoleDetail } from '../../frontend/eda/interfaces/generated/eda-api';
 import { Role as HubRole } from '../../frontend/hub/access/roles/Role';
 import { RemoteRegistry } from '../../frontend/hub/administration/remote-registries/RemoteRegistry';
+import { IRemotes } from '../../frontend/hub/administration/remotes/Remotes';
 import { CollectionVersionSearch } from '../../frontend/hub/collections/Collection';
-import './auth';
-import './awx-commands';
 import { IAwxResources } from './awx-commands';
-import './awx-user-access-commands';
-import './common-commands';
-import './e2e';
-import './eda-commands';
-import './hub-commands';
-import './rest-commands';
 
 declare global {
   namespace Cypress {
@@ -60,60 +51,65 @@ declare global {
       awxLogin(): Chainable<void>;
       edaLogin(): Chainable<void>;
       hubLogin(): Chainable<void>;
+      platformLogin(): Chainable<void>;
       requiredVariablesAreSet(requiredVariables: string[]): Chainable<void>;
+
+      // ---------------------------------------------------------------------
+      // Core Commands
+      // ---------------------------------------------------------------------
+      // These commands are the core commands that are used to interact with the UI.
+      // They are used to interact with the UI in a way that is consistent and reliable.
+      // They check that the element is not disabled or hidden before interacting with it.
+
+      /** Get by selector, making sure it is not disabled or hidden */
+      getBy(selector: string): Chainable<JQuery<HTMLElement>>;
+
+      /** Get by data-cy attribute, making sure it is not disabled or hidden */
+      getByDataCy(dataCy: string): Chainable<JQuery<HTMLElement>>;
+
+      /** Contains by selector, making sure it is not disabled or hidden */
+      containsBy(selector: string, text: string | number | RegExp): Chainable<JQuery<HTMLElement>>;
+
+      /** Click by data-cy attribute, making sure it is not disabled or hidden */
+      clickByDataCy(dataCy: string): Chainable<void>;
+
+      /** Type input by selector, making sure it is not disabled or hidden */
+      typeBy(selector: string, text: string): Chainable<void>;
+
+      /** Type input by data-cy attribute, making sure it is not disabled or hidden */
+      typeByDataCy(dataCy: string, text: string): Chainable<void>;
+
+      /** Select a value from a single select input by selector, making sure it is not disabled or hidden */
+      singleSelectBy(selector: string, value: string): Chainable<void>;
+
+      /** Select a value from a single select input by data-cy attribute, making sure it is not disabled or hidden */
+      singleSelectByDataCy(dataCy: string, value: string): Chainable<void>;
+
+      /** Select a value from a multi select input by selector, making sure it is not disabled or hidden */
+      multiSelectBy(selector: string, value: string): Chainable<void>;
+
+      /** Select a value from a multi select input by data-cy attribute, making sure it is not disabled or hidden */
+      multiSelectByDataCy(dataCy: string, value: string): Chainable<void>;
 
       // --- NAVIGATION COMMANDS ---
       // createGlobalProject(): Chainable<Project>;
       /**Navigates to a page of the UI using using the links on the page sidebar. Intended as an alternative to cy.visit(). */
-      navigateTo(component: 'awx' | 'eda' | 'hub', label: string): Chainable<void>;
+      navigateTo(component: 'platform' | 'awx' | 'eda' | 'hub', label: string): Chainable<void>;
 
       /**Locates a title using its label. No assertion is made. */
       verifyPageTitle(label: string): Chainable<void>;
 
       // ---- UI COMMANDS ---
-      createAndDeleteCustomAWXCredentialTypeUI(
-        customCredentialTypeName: string,
-        inputConfig?: string,
-        injectorConfig?: string,
-        defaultConfig?: string
-      ): Chainable<void>;
 
-      createCustomAWXApplicationFromUI(
-        customAppName: string,
-        customAppDescription: string,
-        customGrantType: string,
-        customClientType: string,
-        customRedirectURIS: string
-      ): Chainable<void>;
+      setTableView(viewType: string): Chainable<void>;
 
-      editCustomAWXApplicationFromDetailsView(
-        customAppName: string,
-        customGrantType: string,
-        customClientType: string,
-        newCustomClientType: string
-      ): Chainable<void>;
-
-      editCustomAWXApplicationFromListView(
-        customAppName: string,
-        customGrantType: string,
-        newCustomClientType: string
-      ): Chainable<void>;
-
-      deleteCustomAWXApplicationFromDetailsView(
-        customAppName: string,
-        customGrantType: string,
-        customClientType: string
-      ): Chainable<void>;
-
-      deleteCustomAWXApplicationFromListView(customAppName: string): Chainable<void>;
-
-      // --- INPUT COMMANDS ---
+      // ---------------------------------------------------------------------
+      // Input Commands
+      // ---------------------------------------------------------------------
 
       inputCustomCredTypeConfig(configType: string, config: string): Chainable<void>;
 
       configFormatToggle(configType: string): Chainable<void>;
-
-      typeBy(selector: string, text: string): Chainable<void>;
 
       assertMonacoTextField(textString: string): Chainable<void>;
 
@@ -205,7 +201,7 @@ declare global {
       selectDetailsPageKebabAction(dataCy: string): Chainable<void>;
 
       /** Click an action in the table toolbar kebab dropdown actions menu. */
-      clickToolbarKebabAction(dataCyLabel: string | RegExp): Chainable<void>;
+      clickToolbarKebabAction(dataCy: string): Chainable<void>;
 
       /** Get the table row containing the specified text. */
       getTableRowByText(
@@ -239,7 +235,7 @@ declare global {
       /** Finds a table row containing text and clicks action specified by label. */
       clickTableRowKebabAction(
         name: string | RegExp,
-        dataCyLabel: string | RegExp,
+        dataCyLabel: string,
         filter?: boolean
       ): Chainable<void>;
 
@@ -261,9 +257,6 @@ declare global {
         iconDataCy: string,
         filter?: boolean
       ): Chainable<void>;
-
-      /** Check if the table row containing the specified text also has the text 'Success'. */
-      tableHasRowWithSuccess(name: string | RegExp, filter?: boolean): Chainable<void>;
 
       /** Selects a table row by clicking on the row checkbox. */
       selectTableRow(name: string | RegExp, filter?: boolean): Chainable<void>;
@@ -295,10 +288,7 @@ declare global {
       clickLink(label: string | RegExp): Chainable<void>;
       clickButton(label: string | RegExp): Chainable<void>;
 
-      /** Clicks an element with a data-cy attribute. Waits for the element to be enabled and visible. */
-      clickByDataCy(dataCy: string): Chainable<void>;
-
-      clickPageAction(dataCyLabel: string | RegExp): Chainable<void>;
+      clickPageAction(dataCy: string): Chainable<void>;
 
       /**Finds an alert by its label. Does not make an assertion.  */
       hasAlert(label: string | RegExp): Chainable<void>;
@@ -341,6 +331,13 @@ declare global {
         url: string,
         body: RequestBodyT
       ): Chainable<ResponseBodyT>;
+
+      requestPoll<ResponseT, ResultT = ResponseT>(options: {
+        url: string;
+        check: (response: Cypress.Response<ResponseT>) => ResultT | undefined;
+        interval?: number;
+        timeout?: number;
+      }): Chainable<ResponseT>;
 
       // --- AWX COMMANDS ---
 
@@ -756,6 +753,42 @@ declare global {
       waitForJobToProcessEvents(jobID: string, retries?: number): Chainable<Job>;
       waitForWorkflowJobStatus(jobID: string): Chainable<Job>;
 
+      createAndDeleteCustomAWXCredentialTypeUI(
+        customCredentialTypeName: string,
+        inputConfig?: string,
+        injectorConfig?: string,
+        defaultConfig?: string
+      ): Chainable<void>;
+
+      createCustomAWXApplicationFromUI(
+        customAppName: string,
+        customAppDescription: string,
+        customGrantType: string,
+        customClientType: string,
+        customRedirectURIS: string
+      ): Chainable<void>;
+
+      editCustomAWXApplicationFromDetailsView(
+        customAppName: string,
+        customGrantType: string,
+        customClientType: string,
+        newCustomClientType: string
+      ): Chainable<void>;
+
+      editCustomAWXApplicationFromListView(
+        customAppName: string,
+        customGrantType: string,
+        newCustomClientType: string
+      ): Chainable<void>;
+
+      deleteCustomAWXApplicationFromDetailsView(
+        customAppName: string,
+        customGrantType: string,
+        customClientType: string
+      ): Chainable<void>;
+
+      deleteCustomAWXApplicationFromListView(customAppName: string): Chainable<void>;
+
       // --- EDA COMMANDS ---
 
       /**
@@ -888,10 +921,10 @@ declare global {
       checkResourceNameAndAction(resourceTypes: string[], actions: string[]): Chainable<void>;
 
       /**
-       * getEdaRolePermissions returns the permissions of a given role id of a role
+       * getEdaRoleDetail returns the detail of a given role id of a role
        * @param roleID get
        */
-      getEdaRolePermissions(roleID: string): Chainable<EdaRole[]>;
+      getEdaRoleDetail(roleID: string): Chainable<RoleDetail>;
 
       /**
        * Deletes an EDA credential which is provided.
@@ -955,6 +988,8 @@ declare global {
       // -- HUB COMMANDS
 
       galaxykit(operation: string, ...args: string[]): Cypress.Chainable<string[]>;
+      waitOnHubTask(taskId: string): Cypress.Chainable<Task>;
+
       createApprovedCollection(
         namespaceName: string,
         collectionName: string,
@@ -975,9 +1010,12 @@ declare global {
       cleanupCollections(namespace: string, repo: string): Cypress.Chainable<void>;
       createHubRole(): Cypress.Chainable<HubRole>;
       deleteHubRole(role: HubRole): Cypress.Chainable<void>;
-      createRemote(remoteName: string, url?: string): Cypress.Chainable<void>;
+      createRemote(remoteName: string, url?: string): Cypress.Chainable<IRemotes>;
       deleteRemote(remoteName: string): Cypress.Chainable<void>;
-      createRemoteRegistry(remoteRegistryName: string): Cypress.Chainable<RemoteRegistry>;
+      createRemoteRegistry(
+        remoteRegistryName: string,
+        url?: string
+      ): Cypress.Chainable<RemoteRegistry>;
       deleteRemoteRegistry(remoteRegistryId: string): Cypress.Chainable<void>;
       deleteCollection(
         collectionName: string,
@@ -997,8 +1035,10 @@ declare global {
       ): Cypress.Chainable<void>;
       collectionCopyVersionToRepositories(collection: string): Cypress.Chainable<void>;
       addAndApproveMultiCollections(thisRange: number): Cypress.Chainable<void>;
+
       createRepository(repositoryName: string, remoteName?: string): Cypress.Chainable<void>;
       deleteRepository(repositoryName: string): Cypress.Chainable<void>;
+
       undeprecateCollection(
         collectionName: string,
         namespaceName: string,

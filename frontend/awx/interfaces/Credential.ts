@@ -52,6 +52,8 @@ export interface Credential
   };
   kind: string;
   credential_type: number;
+  credential_type__namespace: string;
+  credential_type__kind: string;
   inputs: Record<string, string | number>;
   cloud: boolean;
   organization: number | null;

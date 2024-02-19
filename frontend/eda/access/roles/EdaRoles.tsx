@@ -3,23 +3,19 @@ import { useTranslation } from 'react-i18next';
 import {
   ITableColumn,
   IToolbarFilter,
-  LoadingPage,
   PageHeader,
   PageLayout,
   PageTable,
   TextCell,
   ToolbarFilterType,
   useGetPageUrl,
-  useInMemoryView,
 } from '../../../../framework';
-import { PageSelectOption } from '../../../../framework/PageInputs/PageSelectOption';
-import { useGet } from '../../../common/crud/useGet';
-import { idKeyFn } from '../../../common/utils/nameKeyFn';
-import { EdaItemsResponse } from '../../common/EdaItemsResponse';
 import { edaAPI } from '../../common/eda-utils';
 import { EdaRole } from '../../interfaces/EdaRole';
 import { EdaRoute } from '../../main/EdaRoutes';
 import { EdaRoleExpandedRow } from './components/EdaRoleExpandedRow';
+import { useEdaView } from '../../common/useEventDrivenView';
+import { PageSelectOption } from '../../../../framework/PageInputs/PageSelectOption';
 
 export function EdaRoles() {
   const { t } = useTranslation();
@@ -38,8 +34,6 @@ export function EdaRoles() {
 
 export function EdaRolesTable() {
   const { t } = useTranslation();
-  const { data, isLoading, error } = useGet<EdaItemsResponse<EdaRole>>(edaAPI`/roles/`);
-  const roles = useMemo(() => data?.results ?? [], [data?.results]);
   const getPageUrl = useGetPageUrl();
   const columns = useMemo<ITableColumn<EdaRole>[]>(
     () => [
@@ -66,7 +60,13 @@ export function EdaRolesTable() {
     [t, getPageUrl]
   );
 
+  const view = useEdaView<EdaRole>({
+    url: edaAPI`/roles/`,
+    tableColumns: columns,
+  });
+
   const toolbarFilters = useMemo(() => {
+    const roles = view.pageItems || [];
     const filters: IToolbarFilter[] = [
       {
         type: ToolbarFilterType.MultiSelect,
@@ -84,17 +84,7 @@ export function EdaRolesTable() {
       },
     ];
     return filters;
-  }, [roles, t]);
-
-  const view = useInMemoryView<EdaRole>({
-    keyFn: idKeyFn,
-    items: data?.results ?? [],
-    tableColumns: columns,
-    toolbarFilters,
-    error,
-  });
-
-  if (isLoading) return <LoadingPage />;
+  }, [view, t]);
 
   return (
     <PageTable

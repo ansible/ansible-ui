@@ -44,12 +44,9 @@ describe('teams', function () {
     cy.intercept('POST', awxAPI`/teams/`).as('newTeam');
     cy.navigateTo('awx', 'teams');
     cy.clickLink(/^Create team$/);
-    cy.get('[data-cy="name"]').type(teamName);
-    cy.selectSingleSelectOption(
-      '[data-cy="organization"]',
-      `${(this.globalOrganization as Organization).name}`
-    );
-    cy.clickButton(/^Create team$/);
+    cy.typeByDataCy('name', teamName);
+    cy.singleSelectByDataCy('organization', (this.globalOrganization as Organization).name);
+    cy.clickByDataCy('Submit');
     cy.wait('@newTeam')
       .its('response.body')
       .then((team: Team) => {

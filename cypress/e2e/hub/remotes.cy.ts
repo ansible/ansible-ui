@@ -1,5 +1,7 @@
 import { randomString } from '../../../framework/utils/random-string';
+import { IRemotes } from '../../../frontend/hub/administration/remotes/Remotes';
 import { Remotes } from './constants';
+import { pulpAPI } from '../../support/formatApiPathForHub';
 
 describe('Remotes', () => {
   const testSignature: string = randomString(5, undefined, { isLowercase: true });
@@ -17,6 +19,7 @@ describe('Remotes', () => {
       cy.createRemote(remoteName);
     }
     cy.navigateTo('hub', 'remotes');
+    cy.get('tbody').find('tr').its('length').should('be.greaterThan', 0);
     cy.setTablePageSize('50');
     cy.filterTableBySingleText(testSignature);
     cy.get('tbody').find('tr').should('have.length', numberOfRemotes);
@@ -31,23 +34,24 @@ describe('Remotes', () => {
 
   it('explore different views and pagination', () => {
     const remoteName = generateRemoteName();
-    cy.createRemote(remoteName);
-    cy.navigateTo('hub', 'remotes');
-    cy.setTablePageSize('50');
-    cy.filterTableBySingleText(remoteName);
-    cy.get('[data-cy="card-view"]').click();
-    cy.contains(remoteName).should('be.visible');
-    cy.get('[data-cy="list-view"]').click();
-    cy.contains(remoteName).should('be.visible');
-    cy.get('[data-cy="table-view"]').click();
-    cy.contains(remoteName).should('be.visible');
-    cy.get('#select-all').click();
-    cy.clickToolbarKebabAction('delete-selected-remotes');
-    cy.get('#confirm').click();
-    cy.clickButton(/^Delete remotes$/);
-    cy.contains(/^Success$/);
-    cy.clickButton(/^Close$/);
-    cy.clickButton(/^Clear all filters$/);
+    cy.createRemote(remoteName).then((remote: IRemotes) => {
+      cy.navigateTo('hub', 'remotes');
+      cy.setTablePageSize('50');
+      cy.filterTableBySingleText(remote.name);
+      cy.get('[data-cy="card-view"]').click();
+      cy.contains(remote.name).should('be.visible');
+      cy.get('[data-cy="list-view"]').click();
+      cy.contains(remote.name).should('be.visible');
+      cy.get('[data-cy="table-view"]').click();
+      cy.contains(remote.name).should('be.visible');
+      cy.get('#select-all').click();
+      cy.clickToolbarKebabAction('delete-selected-remotes');
+      cy.get('#confirm').click();
+      cy.clickButton(/^Delete remotes$/);
+      cy.contains(/^Success$/);
+      cy.clickButton(/^Close$/);
+      cy.clickButton(/^Clear all filters$/);
+    });
   });
 
   it('create, search and delete a remote', () => {
@@ -85,16 +89,23 @@ describe('Remotes', () => {
     cy.get('[data-cy="url"]').clear().type(Remotes.remoteURL);
     cy.get('[data-cy="signed-only-warning"]').should('not.exist');
     cy.get('[data-cy="requirements-file-warning"]').should('not.exist');
+    cy.intercept({
+      method: 'GET',
+      url: pulpAPI`/remotes/ansible/collection/?name=${remoteName}`,
+    }).as('remote');
     cy.get('[data-cy="Submit"]').click();
-    cy.contains('Remotes').click();
-    cy.filterTableBySingleText(remoteName);
-    cy.get('[data-cy="actions-column-cell"]').click();
-    cy.get('[data-cy="delete-remote"]').click({ force: true });
-    cy.get('#confirm').click();
-    cy.clickButton(/^Delete remote/);
-    cy.contains(/^Success$/);
-    cy.clickButton(/^Close$/);
-    cy.clickButton(/^Clear all filters$/);
+    //needs to wait for the remote to be created
+    cy.wait('@remote').then(() => {
+      cy.contains('Remotes').click();
+      cy.filterTableBySingleText(remoteName);
+      cy.get('[data-cy="actions-column-cell"]').click();
+      cy.get('[data-cy="delete-remote"]').click({ force: true });
+      cy.get('#confirm').click();
+      cy.clickButton(/^Delete remote/);
+      cy.contains(/^Success$/);
+      cy.clickButton(/^Close$/);
+      cy.clickButton(/^Clear all filters$/);
+    });
   });
 
   it('edit a remote', () => {
