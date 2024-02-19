@@ -461,7 +461,7 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
     if (expandedRowFunctions.length === 0) return undefined;
 
     const newExpandedRow = (item: T) => (
-      <ExpandedStylesStack>{expandedRowFunctions.map((fn) => fn(item))}</ExpandedStylesStack>
+      <Stack hasGutter>{expandedRowFunctions.map((fn) => fn(item))}</Stack>
     );
 
     return newExpandedRow;
@@ -930,7 +930,3 @@ function TableCells<T extends object>(props: {
 function convertString(s: string) {
   return s.toLowerCase().split(' ').join('-');
 }
-
-const ExpandedStylesStack = styled(Stack)`
-  gap: 12px;
-`;
