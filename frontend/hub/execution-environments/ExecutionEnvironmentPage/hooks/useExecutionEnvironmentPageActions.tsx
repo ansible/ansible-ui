@@ -1,4 +1,4 @@
-import { ButtonVariant } from '@patternfly/react-core';
+import { AlertProps, ButtonVariant } from '@patternfly/react-core';
 import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -8,14 +8,17 @@ import {
   PageActionSelection,
   PageActionType,
   usePageNavigate,
+  usePageAlertToaster,
 } from '../../../../../framework';
 import { ExecutionEnvironment } from '../../ExecutionEnvironment';
 import { useDeleteExecutionEnvironments } from '../../hooks/useExecutionEnvironmentsActions';
 import { useSignExecutionEnvironments } from '../../hooks/useExecutionEnvironmentsActions';
+import { syncExecutionEnvironment } from '../../hooks/useExecutionEnvironmentsActions';
 
 export function useExecutionEnvironmentPageActions(options: { refresh?: () => undefined }) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
+  const alertToaster = usePageAlertToaster();
   const deleteExecutionEnvironments = useDeleteExecutionEnvironments(() => {
     pageNavigate(HubRoute.ExecutionEnvironments);
   });
@@ -42,6 +45,30 @@ export function useExecutionEnvironmentPageActions(options: { refresh?: () => un
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
+        label: t('Sync from registry'),
+        onClick: (ee: ExecutionEnvironment) => {
+          const alert: AlertProps = {
+            variant: 'info',
+            title: t(`Sync started for remote registry "${ee.name}".`),
+            timeout: 5000,
+          };
+          void syncExecutionEnvironment(ee)
+            .then(() => {
+              void refresh?.();
+              alertToaster.addAlert(alert);
+            })
+            .catch((error) => {
+              alertToaster.addAlert({
+                variant: 'danger',
+                title: t('Failed to sync remote registry.'),
+                children: error instanceof Error && error.message,
+              });
+            });
+        },
+      },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         label: t('Use in controller'),
         onClick: () => {},
       },
@@ -61,5 +88,5 @@ export function useExecutionEnvironmentPageActions(options: { refresh?: () => un
       },
     ];
     return actions;
-  }, [pageNavigate, t, deleteExecutionEnvironments, signExecutionEnvironments]);
+  }, [pageNavigate, t, alertToaster, refresh, deleteExecutionEnvironments, signExecutionEnvironments]);
 }

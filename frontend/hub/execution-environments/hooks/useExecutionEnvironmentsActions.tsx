@@ -163,7 +163,7 @@ export function useSyncExecutionEnvironments(onComplete?: (ees: ExecutionEnviron
   );
 }
 
-async function syncExecutionEnvironment(ee: ExecutionEnvironment) {
+export async function syncExecutionEnvironment(ee: ExecutionEnvironment) {
   return postRequest(
     hubAPI`/v3/plugin/execution-environments/repositories/${ee.name}/_content/sync/`,
     {}
