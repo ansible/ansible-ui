@@ -11,7 +11,11 @@ import {
 } from '@patternfly/react-core';
 import { useCallback } from 'react';
 import { PageTable } from '../PageTable/PageTable';
-import { ITableColumn, TableColumnCell } from '../PageTable/PageTableColumn';
+import {
+  ITableColumn,
+  TableColumnCell,
+  useVisibleModalColumns,
+} from '../PageTable/PageTableColumn';
 import { ISelected } from '../PageTable/useTableItems';
 import { IToolbarFilter } from '../PageToolbar/PageToolbarFilter';
 import { Collapse } from '../components/Collapse';
@@ -56,6 +60,7 @@ export function MultiSelectDialog<T extends object>(props: MultiSelectDialogProp
     onClose = props.onClose;
   }
   const [translations] = useFrameworkTranslations();
+  const modalColumns = useVisibleModalColumns(tableColumns);
   return (
     <Modal
       title={title}
@@ -93,15 +98,15 @@ export function MultiSelectDialog<T extends object>(props: MultiSelectDialogProp
           {view.selectedItems.length > 0 ? (
             <LabelGroup>
               {view.selectedItems.map((item, i) => {
-                if (tableColumns && tableColumns.length > 0) {
+                if (modalColumns && modalColumns.length > 0) {
                   return (
                     <Label key={i} onClose={() => view.unselectItem(item)}>
                       <TableColumnCell
                         item={item}
                         column={
-                          tableColumns.find(
+                          modalColumns.find(
                             (column) => column.card === 'name' || column.list === 'name'
-                          ) ?? tableColumns[0]
+                          ) ?? modalColumns[0]
                         }
                       />
                     </Label>
@@ -128,7 +133,7 @@ export function MultiSelectDialog<T extends object>(props: MultiSelectDialogProp
           }}
         >
           <PageTable<T>
-            tableColumns={tableColumns}
+            tableColumns={modalColumns}
             toolbarFilters={toolbarFilters}
             {...view}
             emptyStateTitle={props.emptyStateTitle ?? translations.noItemsFound}
