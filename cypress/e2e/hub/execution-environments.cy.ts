@@ -4,6 +4,7 @@ import { randomString } from '../../../framework/utils/random-string';
 
 describe('Execution Environments', () => {
   let remoteRegistryName = '';
+
   before(() => {
     cy.hubLogin();
   });
@@ -11,6 +12,10 @@ describe('Execution Environments', () => {
   beforeEach(() => {
     remoteRegistryName = `remote_registry_${randomString(3, undefined, { isLowercase: true })}`;
     cy.createRemoteRegistry(remoteRegistryName);
+  });
+
+  afterEach(() => {
+    cy.deleteRemoteRegistry(remoteRegistryName);
   });
 
   it('can render the execution environments page', () => {
