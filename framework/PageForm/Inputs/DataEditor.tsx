@@ -40,6 +40,9 @@ function getWorker(moduleId: string, label: string) {
   }
 }
 
+const EditorLineHeight = 21;
+const EditorLinePadding = 16;
+
 export function DataEditor<
   TFieldValues extends FieldValues = FieldValues,
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
@@ -168,7 +171,7 @@ export function DataEditor<
       if (element) {
         element.style.minHeight = '75px';
         const visibleLines = value.split('\n').length;
-        element.style.height = `${visibleLines * 21 + 16}` + 'px';
+        element.style.height = `${visibleLines * EditorLineHeight + EditorLinePadding}` + 'px';
       }
     }
   }, [defaultValue, idDataEditorElement, defaultLanguage]);
@@ -187,7 +190,7 @@ export function DataEditor<
       if (element) {
         element.style.minHeight = '75px';
         const visibleLines = value.split('\n').length;
-        element.style.height = `${visibleLines * 21 + 16}` + 'px';
+        element.style.height = `${visibleLines * EditorLineHeight + EditorLinePadding}` + 'px';
       }
     });
 
