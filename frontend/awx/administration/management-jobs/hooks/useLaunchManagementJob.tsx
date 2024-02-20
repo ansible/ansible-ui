@@ -1,41 +1,71 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { usePageAlertToaster, usePageNavigate } from '../../../../../framework';
+import { usePageAlertToaster } from '../../../../../framework';
 import { requestGet } from '../../../../common/crud/Data';
 import { usePostRequest } from '../../../../common/crud/usePostRequest';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { SystemJobTemplate } from '../../../interfaces/SystemJobTemplate';
-import { AwxRoute } from '../../../main/AwxRoutes';
+//import { AwxRoute } from '../../../main/AwxRoutes';
 import { useGetJobOutputUrl } from '../../../views/jobs/useGetJobOutputUrl';
-import type { UnifiedJob } from '../../../interfaces/UnifiedJob';
+//import type { UnifiedJob } from '../../../interfaces/UnifiedJob';
 
+// export function useLaunchManagementJob() {
+//   const { t } = useTranslation();
+//   const navigate = useNavigate();
+//   const postRequest = usePostRequest();
+//   const alertToaster = usePageAlertToaster();
+//   //const pageNavigate = usePageNavigate();
+//   const getJobOutputUrl = useGetJobOutputUrl();
+
+//   return async (managementJob: SystemJobTemplate) => {
+//     const launchManagementJobEndpoint = getLaunchMgtJobEndpoint(managementJob);
+
+//     if (!launchManagementJobEndpoint) {
+//       return Promise.reject(new Error('Unable to retrieve management job launch configuration'));
+//     }
+
+//     try {
+//       let managementJobLaunch;
+//       if (
+//         managementJob.job_type === 'cleanup_tokens' ||
+//         managementJob.job_type === 'cleanup_sessions'
+//       ) {
+//         managementJobLaunch = await postRequest(launchManagementJobEndpoint, {});
+//         navigate(getJobOutputUrl(managementJobLaunch as SystemJobTemplate));
+//       } else {
+//         console.log('Launching management job:', managementJob.job_type);
+//         navigate(getJobOutputUrl(managementJobLaunch as SystemJobTemplate));
+//       }
+//     } catch (error) {
+//       alertToaster.addAlert({
+//         variant: 'danger',
+//         title: t('Failed to launch management job'),
+//         children: error instanceof Error && error.message,
+//         timeout: 5000,
+//       });
+//     }
+//   };
+// }
 export function useLaunchManagementJob() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const postRequest = usePostRequest();
   const alertToaster = usePageAlertToaster();
-  //const pageNavigate = usePageNavigate();
   const getJobOutputUrl = useGetJobOutputUrl();
 
-  return async (managementJob: SystemJobTemplate) => {
+  const launchCleanupTokensAndSessions = async (managementJob: SystemJobTemplate) => {
     const launchManagementJobEndpoint = getLaunchMgtJobEndpoint(managementJob);
+    console.log(typeof launchManagementJobEndpoint, launchManagementJobEndpoint);
 
     if (!launchManagementJobEndpoint) {
       return Promise.reject(new Error('Unable to retrieve management job launch configuration'));
+      //throw new Error('Unable to retrieve management job launch configuration');
     }
 
     try {
-      let managementJobLaunch;
-      if (
-        managementJob.job_type === 'cleanup_tokens' ||
-        managementJob.job_type === 'cleanup_sessions'
-      ) {
-        managementJobLaunch = await postRequest(launchManagementJobEndpoint, {});
-        navigate(getJobOutputUrl(managementJobLaunch as SystemJobTemplate));
-      } else {
-        console.log('Launching management job:', managementJob.job_type);
-        navigate(getJobOutputUrl(managementJobLaunch as SystemJobTemplate));
-      }
+      const managementJobLaunch = await postRequest(launchManagementJobEndpoint, {});
+      console.log(typeof managementJobLaunch, managementJobLaunch);
+      navigate(getJobOutputUrl(managementJobLaunch as SystemJobTemplate));
     } catch (error) {
       alertToaster.addAlert({
         variant: 'danger',
@@ -45,6 +75,13 @@ export function useLaunchManagementJob() {
       });
     }
   };
+
+  const launchOtherJobTypes = (managementJob: SystemJobTemplate) => {
+    console.log('Launching management job:', managementJob.job_type);
+    navigate(getJobOutputUrl(managementJob));
+  };
+
+  return { launchCleanupTokensAndSessions, launchOtherJobTypes };
 }
 
 export function getLaunchMgtJobEndpoint(managementJob: SystemJobTemplate) {
