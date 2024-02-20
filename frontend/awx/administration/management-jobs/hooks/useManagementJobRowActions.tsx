@@ -12,25 +12,47 @@ import { SystemJobTemplate } from '../../../interfaces/SystemJobTemplate';
 import { useManagementJobPrompt } from './useManagementJobPrompt';
 import { usePageNavigate } from '../../../../../framework';
 // import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
-//import { useLaunchManagementJob } from './useLaunchManagementJob';
+import { useLaunchManagementJob } from './useLaunchManagementJob';
 
 export function useManagementJobRowActions(managementJob: SystemJobTemplate) {
   const { t } = useTranslation();
   const onManagementJobPrompt = useManagementJobPrompt(managementJob);
-  // const activeUser = useAwxActiveUser();
-  const pageNavigate = usePageNavigate();
+  //const pageNavigate = usePageNavigate();
+  const { launchCleanupTokensAndSessions, launchOtherJobTypes } = useLaunchManagementJob();
+  //const pageNavigate = usePageNavigate();
+  //const isPrompted = ['cleanup_activitystream', 'cleanup_jobs'].includes(managementJob.job_type);
 
+  //console.log('Launching management job:', managementJob.job_type);
   return useMemo<IPageAction<SystemJobTemplate>[]>(() => {
-    function handleManagementJob(managementJob: SystemJobTemplate) {
+    async function handleManagementJob(managementJob: SystemJobTemplate) {
       const isPrompted = ['cleanup_activitystream', 'cleanup_jobs'].includes(
         managementJob.job_type
       );
       console.log('Launching management job:', managementJob);
       console.log('isPrompted:', isPrompted);
-      isPrompted
-        ? onManagementJobPrompt(managementJob)
-        : pageNavigate(AwxRoute.JobOutput, { params: { id: managementJob.id } });
+      if (isPrompted) {
+        onManagementJobPrompt(managementJob);
+      } else if (
+        managementJob.job_type === 'cleanup_tokens' ||
+        managementJob.job_type === 'cleanup_sessions'
+      ) {
+        await launchCleanupTokensAndSessions(managementJob);
+      } else {
+        launchOtherJobTypes(managementJob);
+      }
     }
+    // function handleManagementJob(managementJob: SystemJobTemplate) {
+    //   const isPrompted = ['cleanup_activitystream', 'cleanup_jobs'].includes(
+    //     managementJob.job_type
+    //   );
+    //   console.log('Launching management job:', managementJob);
+    //   console.log('isPrompted:', isPrompted);
+    //   if (isPrompted) {
+    //     onManagementJobPrompt(managementJob); // Ensure that the Promise is awaited
+    //   } else {
+    //     pageNavigate(AwxRoute.JobOutput, { params: { id: managementJob.id } });
+    //   }
+    // }
 
     const rowActions: IPageAction<SystemJobTemplate> = [
       {
@@ -46,5 +68,5 @@ export function useManagementJobRowActions(managementJob: SystemJobTemplate) {
       },
     ];
     return rowActions;
-  }, [onManagementJobPrompt, pageNavigate, t]);
+  }, [onManagementJobPrompt, launchCleanupTokensAndSessions, launchOtherJobTypes, t]);
 }
