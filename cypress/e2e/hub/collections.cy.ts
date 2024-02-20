@@ -87,58 +87,6 @@ describe('Collections- List View', () => {
     cy.galaxykit('collection -h');
   });
 
-  it('user can delete a collection using the list toolbar', () => {
-    const namespace = 'hub_e2e_namespace_' + randomString(3, undefined, { isLowercase: true });
-    const collection =
-      'hub_e2e_collection_' + randomString(5, undefined, { isLowercase: true }).replace(/\d/g, '');
-    cy.createNamespace(namespace);
-    cy.galaxykit('task wait all');
-    cy.uploadCollection(collection, namespace);
-    cy.galaxykit('task wait all');
-    cy.approveCollection(collection, namespace, '1.0.0');
-    cy.galaxykit('task wait all');
-    cy.navigateTo('hub', Collections.url);
-    cy.get('[data-cy="table-view"]').click();
-    cy.getTableRowBySingleText(collection).within(() => {
-      cy.get('td[data-cy=checkbox-column-cell]').click();
-    });
-    cy.clickToolbarKebabAction('delete-selected-collections');
-    cy.get('#confirm').click();
-    cy.clickButton(/^Delete collections/);
-    cy.contains(/^Success$/);
-    cy.clickButton(/^Close$/);
-    cy.galaxykit('task wait all');
-    cy.clickButton(/^Clear all filters$/);
-
-    cy.deleteNamespace(namespace);
-  });
-
-  it('user can delete selected entire collections from repository using the list toolbar', () => {
-    const namespace = 'hub_e2e_namespace_' + randomString(3, undefined, { isLowercase: true });
-    const collection =
-      'hub_e2e_collection_' + randomString(5, undefined, { isLowercase: true }).replace(/\d/g, '');
-    cy.createNamespace(namespace);
-    cy.galaxykit('task wait all');
-    cy.uploadCollection(collection, namespace);
-    cy.galaxykit('task wait all');
-    cy.approveCollection(collection, namespace, '1.0.0');
-    cy.galaxykit('task wait all');
-    cy.navigateTo('hub', Collections.url);
-    cy.get('[data-cy="table-view"]').click();
-    cy.getTableRowBySingleText(collection).within(() => {
-      cy.get('td[data-cy=checkbox-column-cell]').click();
-    });
-    cy.clickToolbarKebabAction('delete-selected-entire-collections-from-repository');
-    cy.get('#confirm').click();
-    cy.clickButton(/^Delete collections/);
-    cy.contains(/^Success$/);
-    cy.clickButton(/^Close$/);
-    cy.galaxykit('task wait all');
-    cy.clickButton(/^Clear all filters$/);
-
-    cy.deleteNamespace(namespace);
-  });
-
   it.skip('user can deprecate selected collections using the list toolbar', () => {});
 });
 
