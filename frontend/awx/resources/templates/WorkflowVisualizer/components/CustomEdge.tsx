@@ -1,11 +1,10 @@
-import { useState, useRef, useEffect, FC, LegacyRef } from 'react';
+import { FC, LegacyRef } from 'react';
 import {
   Layer,
   StatusModifier,
   TOP_LAYER,
   WithContextMenuProps,
   WithSelectionProps,
-  integralShapePath,
   isEdge,
   useHover,
   observer,
@@ -14,24 +13,10 @@ import {
 } from '@patternfly/react-topology';
 import { css } from '@patternfly/react-styles';
 import { CustomLabel } from './CustomLabel';
-import type { CustomEdgeProps, CustomEdgeInnerProps } from '../types';
+import { type CustomEdgeProps, type CustomEdgeInnerProps } from '../types';
 import { START_NODE_ID } from '../constants';
-
-function useCenterPoint(edgePath: string) {
-  const [centerPoint, setCenterPoint] = useState<DOMPoint | undefined>();
-  const pathRef = useRef<SVGPathElement>(null);
-  const length = 0.5;
-
-  useEffect(() => {
-    const pathEl = pathRef.current;
-    if (pathEl) {
-      const totalLength = pathEl.getTotalLength();
-      setCenterPoint(pathEl.getPointAtLength(totalLength * length));
-    }
-  }, [edgePath]);
-
-  return { centerPoint, pathRef };
-}
+import { useGetPath } from '../hooks/useGetPath';
+import { EdgeTerminal } from './EdgeTerminal';
 
 const CustomEdgeInner: FC<
   CustomEdgeInnerProps &
@@ -47,19 +32,18 @@ const CustomEdgeInner: FC<
     selected,
     onSelect,
     onContextMenu,
+    targetDragRef,
+    sourceDragRef,
     ...rest
   } = props;
   const [hover, hoverRef] = useHover(0);
   const [tagHover, tagHoverRef] = useHover(0);
-  const startPoint = edgeElement.getStartPoint();
-  const endPoint = edgeElement.getEndPoint();
-  const edgePath = integralShapePath(startPoint, endPoint, 0, 20);
-  const { centerPoint, pathRef } = useCenterPoint(edgePath);
+
+  const { path: edgePath, centerPoint } = useGetPath(edgeElement);
   const isSourceRootNode = edgeElement.getSource().getId() === START_NODE_ID;
   const data = edgeElement.getData();
   if (!data) return null;
   const { tag, tagStatus } = data;
-
   const edgeStyles = css(
     `pf-topology__edge ${StatusModifier[tagStatus]}`,
     (hover || tagHover) && 'pf-m-hover'
@@ -73,16 +57,14 @@ const CustomEdgeInner: FC<
         ref={hoverRef as LegacyRef<SVGTextElement>}
         onClick={onSelect}
       >
+        <path className="pf-topology__edge__background" d={edgePath} />
         <path
-          className="pf-topology__edge__background"
-          d={integralShapePath(startPoint, endPoint, 0, 20)}
-        />
-        <path
-          d={integralShapePath(startPoint, endPoint, 0, 20)}
+          strokeMiterlimit={25}
+          strokeLinecap="round"
+          d={edgePath}
           transform="translate(0.5,0.5)"
           shapeRendering="geometricPrecision"
           className="pf-topology__edge__link"
-          ref={pathRef}
         />
       </g>
       {centerPoint ? (
@@ -97,6 +79,10 @@ const CustomEdgeInner: FC<
           {tag}
         </CustomLabel>
       ) : null}
+      <EdgeTerminal
+        target={edgeElement.getTarget().getPosition()}
+        style={`pf-topology-connector-arrow pf-topology__edge pf-topology__edge ${edgeStyles}`}
+      />
     </Layer>
   );
 });

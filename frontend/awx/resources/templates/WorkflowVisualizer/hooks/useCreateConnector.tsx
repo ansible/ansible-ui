@@ -22,7 +22,8 @@ export function useCreateConnector() {
       model.edges.push(edge);
       source.setState({ modified: true });
       controller.setState({ ...controller.getState(), modified: true });
-      controller.fromModel(model);
+      controller.fromModel(model, true);
+      controller.getGraph().layout();
     },
     [createEdge]
   );

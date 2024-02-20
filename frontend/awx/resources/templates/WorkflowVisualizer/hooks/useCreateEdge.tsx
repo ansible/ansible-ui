@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { EdgeStatus } from '../types';
+import { EdgeTerminalType } from '@patternfly/react-topology';
 
 export function useCreateEdge() {
   const { t } = useTranslation();
@@ -29,6 +30,9 @@ export function useCreateEdge() {
           tag,
           tagStatus,
           target,
+          endTerminalType: EdgeTerminalType.directional,
+          endTerminalStatus: tagStatus,
+          endTerminalSize: 14,
         },
       };
     },
