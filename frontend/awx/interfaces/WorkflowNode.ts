@@ -1,3 +1,6 @@
+import { ExecutionEnvironment } from './ExecutionEnvironment';
+import { Inventory } from './Inventory';
+
 export interface WorkflowNode {
   id: number;
   type: string;
@@ -26,6 +29,8 @@ export interface WorkflowNode {
       unified_job_type: UnifiedJobType;
       timeout?: number;
     };
+    inventory: Inventory;
+    execution_environment: ExecutionEnvironment;
   };
   created: string;
   modified: string;
@@ -43,7 +48,7 @@ export interface WorkflowNode {
   execution_environment: null;
   forks: null;
   job_slice_count: null;
-  timeout: string | null;
+  timeout: number | null;
   workflow_job_template: number;
   unified_job_template: number;
   success_nodes: number[];

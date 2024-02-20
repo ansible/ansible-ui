@@ -1,7 +1,12 @@
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { AwxRoute } from '../../../../main/AwxRoutes';
-import { PageDetail, PageDetails, useGetPageUrl } from '../../../../../../framework';
+import {
+  PageDetail,
+  PageDetails,
+  PageWizardStep,
+  useGetPageUrl,
+} from '../../../../../../framework';
 import { PageDetailCodeEditor } from '../../../../../../framework/PageDetails/PageDetailCodeEditor';
 import { usePageWizard } from '../../../../../../framework/PageWizard/PageWizardProvider';
 import { jsonToYaml } from '../../../../../../framework/utils/codeEditorUtils';
@@ -23,9 +28,9 @@ export function NodeReviewStep() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
 
-  const { wizardData, stepData } = usePageWizard() as {
+  const { wizardData, visibleSteps } = usePageWizard() as {
     wizardData: WizardFormValues;
-    stepData: Record<string, object>;
+    visibleSteps: PageWizardStep[];
   };
   const {
     approval_name,
@@ -38,7 +43,7 @@ export function NodeReviewStep() {
     node_days_to_keep,
   } = wizardData;
 
-  const hasPromptDetails = stepData.nodePromptsStep;
+  const hasPromptDetails = Boolean(visibleSteps.find((step) => step.id === 'nodePromptsStep'));
   const nodeTypeDetail = useGetNodeTypeDetail(node_type);
   const nameDetail = getValueBasedOnJobType(node_type, node_resource?.name || '', approval_name);
   const descriptionDetail = getValueBasedOnJobType(

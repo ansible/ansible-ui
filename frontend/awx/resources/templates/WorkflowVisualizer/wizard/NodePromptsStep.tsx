@@ -1,6 +1,6 @@
 import { useEffect, SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useFormContext } from 'react-hook-form';
+import { useFormContext, useWatch } from 'react-hook-form';
 import {
   PageFormDataEditor,
   PageFormGrid,
@@ -19,7 +19,7 @@ import { PageFormInventorySelect } from '../../../inventories/components/PageFor
 import { PageFormCredentialSelect } from '../../../../access/credentials/components/PageFormCredentialSelect';
 import { PageFormExecutionEnvironmentSelect } from '../../../../administration/execution-environments/components/PageFormExecutionEnvironmentSelect';
 import { PageFormInstanceGroupSelect } from '../../../../administration/instance-groups/components/PageFormInstanceGroupSelect';
-import { WizardFormValues } from '../types';
+import { PromptFormValues, WizardFormValues } from '../types';
 
 export function NodePromptsStep() {
   const { t } = useTranslation();
@@ -28,20 +28,29 @@ export function NodePromptsStep() {
     setStepData: React.Dispatch<SetStateAction<Record<string, object>>>;
   };
   const { reset } = useFormContext<WizardFormValues>();
+  const promptForm = useWatch<{ prompt: PromptFormValues }>({ name: 'prompt' });
 
-  const { launch_config: config, node_resource } = wizardData;
+  const { launch_config: config, node_resource, prompt } = wizardData;
   const template = node_resource as JobTemplate | WorkflowJobTemplate;
-  const organizationId = template?.organization;
+  const organizationId = template?.organization ?? null;
 
   useEffect(() => {
-    const {
-      launch_config: { defaults },
-    } = wizardData;
+    setStepData((prev) => ({
+      ...prev,
+      nodePromptsStep: {
+        prompt: promptForm,
+      },
+    }));
+  }, [promptForm, setStepData]);
+
+  useEffect(() => {
+    if (!config || !config?.defaults) return;
+    const { defaults } = config;
+
     const readOnlyLabels = defaults?.labels?.map((label) => ({
       ...label,
       isReadOnly: true,
     }));
-    const { prompt } = wizardData;
     const defaultPromptValues = {
       credentials: prompt?.credentials ?? defaults.credentials,
       diff_mode: prompt?.diff_mode ?? defaults.diff_mode,
@@ -49,7 +58,7 @@ export function NodePromptsStep() {
       extra_vars: prompt?.extra_vars ?? defaults.extra_vars,
       forks: prompt?.forks ?? defaults.forks,
       instance_groups: prompt?.instance_groups ?? defaults.instance_groups,
-      inventory: prompt?.inventory ?? defaults.inventory,
+      inventory: prompt?.inventory ?? (defaults.inventory.id ? defaults.inventory : null),
       job_slice_count: prompt?.job_slice_count ?? defaults.job_slice_count,
       job_tags: prompt?.job_tags ?? parseStringToTagArray(defaults.job_tags),
       job_type: prompt?.job_type ?? defaults.job_type,
@@ -70,7 +79,7 @@ export function NodePromptsStep() {
       },
     }));
     reset({ prompt: defaultPromptValues });
-  }, [reset, organizationId, wizardData, setStepData]);
+  }, [reset, organizationId, setStepData, config, prompt]);
 
   if (!config || !template) {
     return null;
