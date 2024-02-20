@@ -313,9 +313,23 @@ describe('Collections Details View', () => {
 
   it.skip('can deprecate a collection', () => {});
 
-  it.skip('can delete version from system', () => {});
+  it('user can delete version from system', () => {
+    cy.approveCollection(collection, namespace, '1.0.0');
+    cy.galaxykit('task wait all');
+    cy.get('[data-cy="table-view"]').click();
+    cy.clickLink(collection);
+    cy.wait(400);
+    cy.selectDetailsPageKebabAction('delete-version-from-system');
+  });
 
-  it.skip('can delete version from repository', () => {});
+  it('user can delete version from repository', () => {
+    cy.approveCollection(collection, namespace, '1.0.0');
+    cy.galaxykit('task wait all');
+    cy.get('[data-cy="table-view"]').click();
+    cy.clickLink(collection);
+    cy.wait(400);
+    cy.selectDetailsPageKebabAction('delete-version-from-repository');
+  });
 
   it.skip('can copy a version to repository', () => {});
 
