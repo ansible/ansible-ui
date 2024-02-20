@@ -9,7 +9,7 @@ import {
 } from '@patternfly/react-core';
 import { AngleRightIcon, CopyIcon, DownloadIcon, UploadIcon } from '@patternfly/react-icons';
 import jsyaml from 'js-yaml';
-import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
+import { ReactNode, useCallback, useRef, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import {
   Controller,
@@ -24,7 +24,6 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { usePageAlertToaster } from '../..';
 import { useClipboard } from '../../hooks/useClipboard';
-import { isJsonObject, isJsonString, jsonToYaml, yamlToJson } from '../../utils/codeEditorUtils';
 import { downloadTextFile } from '../../utils/download-file';
 import { capitalizeFirstLetter } from '../../utils/strings';
 import { DataEditor } from './DataEditor';
@@ -145,7 +144,6 @@ function ActionsRow(props: {
       columnGap={{ default: 'columnGapSm' }}
       rowGap={{ default: 'rowGapNone' }}
       justifyContent={{ default: 'justifyContentFlexEnd' }}
-      // style={{ marginTop: -8, marginBottom: -8 }}
     >
       <FlexItem>{props.children}</FlexItem>
       <FlexItem>{actionItems}</FlexItem>
@@ -204,7 +202,6 @@ export function PageFormDataEditor<
     isRequired,
     label,
     name,
-    language,
     toggleLanguages,
     validate,
     disableLineNumbers,
@@ -219,65 +216,12 @@ export function PageFormDataEditor<
     setValue,
   } = useFormContext<TFieldValues>();
 
-  const [selectedLanguage, setSelectedLanguage] = useState(props.language ?? 'yaml');
+  const [language, setLanguage] = useState(props.language ?? 'yaml');
   const [isCollapsed, setCollapsed] = useState(!defaultExpanded);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const alertToaster = usePageAlertToaster();
   const { writeToClipboard } = useClipboard();
   const id = props.id ?? name.split('.').join('-');
-
-  useEffect(() => {
-    if (!errors[name]) {
-      clearErrors(name);
-    }
-  }, [errors, name, clearErrors]);
-
-  const handleLanguageChange = useCallback(
-    (language: string) => {
-      const value = getValues(name);
-      if ((language !== 'json' && language !== 'yaml') || !value) return;
-
-      if (isJsonString(value)) {
-        return language === 'json'
-          ? setValue(name, value)
-          : setValue(name, jsonToYaml(value) as PathValue<TFieldValues, TFieldName>);
-      }
-
-      if (isJsonObject(value)) {
-        return language === 'json'
-          ? setValue(name, value)
-          : setValue(
-              name,
-              jsonToYaml(JSON.stringify(value)) as PathValue<TFieldValues, TFieldName>
-            );
-      }
-
-      language === 'json'
-        ? setValue(name, yamlToJson(value) as PathValue<TFieldValues, TFieldName>)
-        : setValue(name, value);
-    },
-    [getValues, name, setValue]
-  );
-
-  // This needs a try catch block because there is a short period of time between the syntax
-  // error getting registered and the buttons being disabled.  If a user is quick enough they could
-  // try make a syntax error and toggle the language before the buttons are disabled.
-
-  const setLanguage: (language: string) => void = useCallback(
-    (language) => {
-      try {
-        handleLanguageChange(language);
-        setSelectedLanguage(language);
-      } catch (err: unknown) {
-        if (err instanceof Error) {
-          setFormError(name, { message: err.message });
-        } else {
-          setFormError(name, { message: t('Invalid syntax') });
-        }
-      }
-    },
-    [handleLanguageChange, name, setFormError, t]
-  );
 
   const handleCopy = useCallback(() => {
     writeToClipboard(getValues(name) as string);
@@ -392,7 +336,7 @@ export function PageFormDataEditor<
                   handleDownload={handleDownload}
                   handleUpload={handleUpload}
                   name={name}
-                  selectedLanguage={selectedLanguage}
+                  selectedLanguage={language}
                   setLanguage={setLanguage}
                   toggleLanguages={toggleLanguages}
                 >
@@ -420,7 +364,7 @@ export function PageFormDataEditor<
                       id={id}
                       data-cy={id}
                       name={name}
-                      language={selectedLanguage}
+                      language={language}
                       value={value}
                       onChange={handleChange}
                       isReadOnly={isReadOnly || isSubmitting}
@@ -434,7 +378,7 @@ export function PageFormDataEditor<
                     id={id}
                     data-cy={id}
                     name={name}
-                    language={selectedLanguage}
+                    language={language}
                     value={value}
                     onChange={handleChange}
                     isReadOnly={isReadOnly || isSubmitting}
