@@ -23,7 +23,7 @@ import type { WorkflowNode, UnifiedJobType } from '../../../interfaces/WorkflowN
 export type GraphNode = Node<NodeModel, GraphNodeData>;
 export type GraphNodeData = {
   resource: WorkflowNode;
-  launch_data?: PromptFormValues;
+  launch_data: PromptFormValues;
 };
 export interface CustomNodeProps extends WithSelectionProps {
   element: GraphElement<
@@ -101,24 +101,46 @@ export interface NodeResource {
 }
 
 export interface PromptFormValues {
-  inventory: Inventory;
-  credentials: Credential[];
-  credential_passwords: { [key: string]: string };
+  inventory: Partial<Inventory> | null;
+  credentials:
+    | Credential[]
+    | {
+        id: number;
+        name: string;
+        credential_type: number;
+        passwords_needed?: string[];
+        vault_id?: string;
+      }[];
+  credential_passwords?: { [key: string]: string };
   instance_groups: { id: number; name: string }[];
-  execution_environment: ExecutionEnvironment;
+  execution_environment: ExecutionEnvironment | { id: number; name: string } | null;
   diff_mode: boolean;
   extra_vars: string;
   forks: number;
   job_slice_count: number;
   job_tags: { name: string }[];
   job_type: string;
-  labels: { name: string; id?: number }[];
+  labels: { name: string; id: number }[];
   limit: string;
   scm_branch: string;
   skip_tags: { name: string }[];
   timeout: number;
-  verbosity: number;
-  organization: number;
+  verbosity: 0 | 1 | 2 | 3 | 4 | 5;
+  organization?: number | null;
+  original?: {
+    credentials?:
+      | {
+          id: number;
+          name: string;
+          credential_type: number;
+          passwords_needed?: string[];
+          vault_id?: string;
+        }[]
+      | Credential[];
+    instance_groups?: { id: number; name: string }[];
+    labels?: { name: string; id: number }[];
+    launch_config?: LaunchConfiguration;
+  };
 }
 
 export type AllResources =
@@ -138,7 +160,7 @@ export interface WizardFormValues {
   node_days_to_keep: number;
   node_resource: AllResources | NodeResource | null;
   node_type: UnifiedJobType;
-  node_status_type: EdgeStatus;
-  launch_config: LaunchConfiguration;
+  node_status_type?: EdgeStatus;
+  launch_config: LaunchConfiguration | null;
   prompt: PromptFormValues;
 }
