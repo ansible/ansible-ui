@@ -20,7 +20,7 @@
       "users_unique": false,
       "remove_users": false,
       "configuration": {},
-      "type": "ansible_base.authentication.authenticator_plugins.local",
+      "type": "ansible_base.authenticator_plugins.local",
       "order": 1,
       "slug": "ansible_baseauthenticator_pluginslocal-local-database-authenticator"
     },
@@ -65,7 +65,7 @@
         "PUBLIC_KEY": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAiJ0xTHNSWbGVC0B3XPDYf6U3wa/YpOSsw0n3QXCn7FhqGM/3YbM/y5h3gEYfUN/l5QHoODAQuGUwukbVsa8X5Jo/5qO12I/PK89OlAkYuwD7dJhvcfssoAJA3tGm6wCPCouma7t4EqSUziDKaffWAZF9q/CbEomsa3Q5kEEaScDS78k9kQ8ZA/RElYcmFz1PVYUeAmFoBtVp6XPdrNM6qoLylD2K83pITyk5Y5jjoxuwN+LbjWYpphTRXZBlMD3qoRx6HK0ryMj7u1XV2SVHskEgKiL8bRyyjFKApfdFPTDS4csYBQJgZrOFIOdWM22k2MMv31Qv+rOh1eDl75mnBwIDAQAB",
         "SECRET": "7b1c3527-8702-4742-af69-2b74ee5742e8"
       },
-      "type": "ansible_base.authentication.authenticator_plugins.keycloak",
+      "type": "ansible_base.authenticator_plugins.keycloak",
       "order": 1,
       "slug": "ansible_baseauthenticator_pluginskeycloak-dev-keycloak-container",
       "sso_login_url": "/api/gateway/social/login/ansible_baseauthenticator_pluginskeycloak-dev-keycloak-container/"
@@ -128,7 +128,7 @@
         "USER_DN_TEMPLATE": "cn=%(user)s,ou=users,dc=example,dc=org",
         "USER_SEARCH": ["ou=users,dc=example,dc=org", "SCOPE_SUBTREE", "(cn=%(user)s)"]
       },
-      "type": "ansible_base.authentication.authenticator_plugins.ldap",
+      "type": "ansible_base.authenticator_plugins.ldap",
       "order": 1,
       "slug": "ansible_baseauthenticator_pluginsldap-dev-ldap-container"
     }

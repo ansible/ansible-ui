@@ -26,7 +26,7 @@ describe('Platform user details', () => {
     cy.intercept(gatewayV1API`/users/1/`, mockUser);
     cy.intercept(gatewayV1API`/users/1/organizations/`, { fixture: 'platformOrganizations.json' });
     cy.intercept(gatewayV1API`/users/1/authenticators/`, {
-      fixture: 'platformAuthenticators.json',
+      fixture: 'platformUserAuthenticators.json',
     });
 
     cy.mount(<PlatformUserDetails />);
@@ -41,9 +41,6 @@ describe('Platform user details', () => {
       .should('contain', 'Demo')
       .and('contain', 'New Org')
       .and('contain', 'Test Org');
-    cy.get('[data-cy="authentication-type"]')
-      .should('contain', 'Local')
-      .and('contain', 'Keycloak')
-      .and('contain', 'LDAP');
+    cy.get('[data-cy="authentication-type"]').should('contain', 'Local');
   });
 });
