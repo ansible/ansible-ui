@@ -93,7 +93,6 @@ export function RepositoryForm() {
       });
     };
 
-    let error = '';
     const promise = isEdit
       ? putHubRequest(
           pulpAPI`/repositories/ansible/ansible/${
@@ -105,33 +104,35 @@ export function RepositoryForm() {
 
     return promise
       .catch(() => {
-        error = t('Repository not created.');
+        throw new Error(t('Repository not created.'));
       })
       .then((result) => {
         const pulp_href = (result as { response: { pulp_href: string } })?.response?.pulp_href;
 
+        let distroPromise = undefined;
         if (data.createDistribution && !error) {
           if (isEdit) {
-            return getDistribution(repo?.pulp_href || '');
+            distroPromise = getDistribution(repo?.pulp_href || '');
           } else {
-            return getDistribution(pulp_href || '');
+            distroPromise = getDistribution(pulp_href || '');
           }
         }
+
+        return distroPromise?.catch(() => {
+          throw new Error(t('Distribution not created.'));
+        });
       })
       .then((result) => {
         return waitForTask(
           parsePulpIDFromURL((result as { response: { task: string } }).response.task)
-        );
+        ).catch(() => {
+          throw new Error(t('Distribution not created.'));
+        });
       })
-      .catch(() => {
-        error = t('Distribution not created.');
-      })
-      .then(() => {
-        if (error) {
-          throw new Error(error);
-        }
-      })
-      .then(() => pageNavigate(HubRoute.RepositoryPage, { params: { id: data.name as string } }));
+      .then(() => pageNavigate(HubRoute.RepositoryPage, { params: { id: data.name as string } }))
+      .catch((error) => {
+        throw new Error(error as string);
+      });
   };
   const { data, isLoading, error, refresh } = useGet<PulpItemsResponse<Repository>>(
     id ? pulpAPI`/repositories/ansible/ansible/?name=${id}` : ''
