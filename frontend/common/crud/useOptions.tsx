@@ -1,9 +1,8 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createRequestError } from './RequestError';
 import { normalizeQueryString } from './normalizeQueryString';
 import { requestCommon } from './requestCommon';
-import { useAbortController } from './useAbortController';
 
 export function useOptions<T>(
   url: string | undefined,
@@ -40,14 +39,27 @@ export function useOptions<T>(
  */
 function useOptionsRequest<ResponseBody>() {
   const navigate = useNavigate();
-  const abortController = useAbortController();
+  const abortControllerRef = useRef<{ abortController?: AbortController }>({});
+  useEffect(() => {
+    const ref = abortControllerRef;
+    return () => ref.current.abortController?.abort();
+  }, []);
   return useCallback(
     async (url: string, signal?: AbortSignal) => {
-      const response = await requestCommon({
-        url,
-        method: 'OPTIONS',
-        signal: signal ?? abortController.signal,
-      });
+      if (abortControllerRef.current.abortController) {
+        abortControllerRef.current.abortController.abort();
+      }
+      abortControllerRef.current.abortController = new AbortController();
+      let response: Response;
+      try {
+        response = await requestCommon({
+          url,
+          method: 'OPTIONS',
+          signal: signal ?? abortControllerRef.current.abortController.signal,
+        });
+      } finally {
+        abortControllerRef.current.abortController = undefined;
+      }
       if (!response.ok) {
         if (response.status === 401) {
           navigate('/login?navigate-back=true');
@@ -67,6 +79,6 @@ function useOptionsRequest<ResponseBody>() {
           }
       }
     },
-    [navigate, abortController]
+    [navigate, abortControllerRef]
   );
 }
