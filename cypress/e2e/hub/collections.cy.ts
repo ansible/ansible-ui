@@ -60,10 +60,6 @@ describe('Collections', () => {
       `/administration/approvals?page=1&perPage=100&sort=namespace&status=pipeline%3Dstaging&collection=${collection}`
     );
     cy.get('[data-cy="sign-and-approve"]').click();
-    cy.get('[aria-label="Type to filter"]').type(collection);
-    cy.wait(5000);
-    cy.get('[data-cy="approve"]').click();
-    cy.get('[data-cy="sign-and-approve"]').click();
     cy.get('[id="confirm"]').click();
     cy.clickButton('Approve and sign collections');
     cy.contains(/^Success$/);
@@ -75,18 +71,10 @@ describe('Collections', () => {
     cy.get('[data-cy="name-column-cell"]').find('div > div > a').click();
     cy.get('[data-cy="actions-dropdown"]').click({ force: true });
     cy.get('[data-cy="sign-collection"]').click();
-    cy.get('[data-cy="table-view"]').click();
-    cy.filterTableBySingleText(collection);
-    cy.get('[data-cy="name-column-cell"]').find('div > div > a').click();
-    cy.get('[data-cy="actions-dropdown"]').click({ force: true });
-    cy.get('[data-cy="sign-collection"]').click();
     cy.get('[id="confirm"]').click();
     cy.clickButton('Sign collections');
     cy.contains(/^Success$/);
     cy.clickButton(/^Close$/);
-    cy.navigateTo('hub', Collections.url);
-    cy.navigateTo('hub', Collections.url);
-    cy.clickButton(/^Clear all filters$/);
     cy.navigateTo('hub', Collections.url);
     cy.get('[data-cy="table-view"]').click();
     cy.filterTableBySingleText(collection);
