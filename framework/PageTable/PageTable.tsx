@@ -443,7 +443,12 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
 
     if (expandedRowColumns.length) {
       expandedRowFunctions.push((item) => (
-        <PageDetails disablePadding numberOfColumns="multiple" labelOrientation="vertical">
+        <PageDetails
+          disablePadding
+          numberOfColumns="multiple"
+          labelOrientation="vertical"
+          isCompact
+        >
           <PageDetailsFromColumns key={keyFn(item)} item={item} columns={expandedRowColumns} />
         </PageDetails>
       ));
@@ -454,12 +459,9 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
     }
 
     if (expandedRowFunctions.length === 0) return undefined;
-    if (expandedRowFunctions.length === 1) return expandedRowFunctions[0];
 
     const newExpandedRow = (item: T) => (
-      <Stack hasGutter style={{ gap: 12 }}>
-        {expandedRowFunctions.map((fn) => fn(item))}
-      </Stack>
+      <Stack hasGutter>{expandedRowFunctions.map((fn) => fn(item))}</Stack>
     );
 
     return newExpandedRow;
