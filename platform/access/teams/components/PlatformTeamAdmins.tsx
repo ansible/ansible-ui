@@ -59,18 +59,18 @@ export function PlatformTeamAdmins() {
       errorStateTitle={t('Error loading administrators')}
       emptyStateTitle={
         canAssociateAdministrator
-          ? t('There are currently no administrators associated with this team.')
-          : t('You do not have permission to associate an administrator with this team.')
+          ? t('There are currently no administrators added to this team.')
+          : t('You do not have permission to add an administrator to this team.')
       }
       emptyStateDescription={
         canAssociateAdministrator
-          ? t('Associate administrators by clicking the button below.')
+          ? t('Add administrators by clicking the button below.')
           : t(
               'Please contact your organization administrator if there is an issue with your access.'
             )
       }
       emptyStateIcon={canAssociateAdministrator ? undefined : CubesIcon}
-      emptyStateButtonText={canAssociateAdministrator ? t('Associate administrators') : undefined}
+      emptyStateButtonText={canAssociateAdministrator ? t('Add administrators') : undefined}
       emptyStateActions={canAssociateAdministrator ? toolbarActions.slice(0, 1) : undefined}
       {...view}
     />

@@ -31,7 +31,7 @@ describe('Team admins list', () => {
       cy.setTableView('table-view');
       cy.get('tbody').find('tr').should('have.length', 3);
       // Toolbar actions are visible
-      cy.get(`[data-cy="associate-administrator(s)"]`).should('be.visible');
+      cy.get(`[data-cy="add-administrator(s)"]`).should('be.visible');
       cy.get('.page-table-toolbar').within(() => {
         cy.get('.toggle-kebab')
           .click()
@@ -40,14 +40,14 @@ describe('Team admins list', () => {
           .should('be.visible');
       });
     });
-    it('Associate administrator(s) button is disabled if the user does not have required permissions', () => {
+    it('Add administrator(s) button is disabled if the user does not have required permissions', () => {
       cy.mount(<PlatformTeamAdmins />, {
         path: '/access/teams/:id/*',
         initialEntries: ['/access/teams/5/admins'],
       });
-      cy.get('[data-cy="associate-administrator(s)"]').should('have.attr', 'aria-disabled', 'true');
+      cy.get('[data-cy="add-administrator(s)"]').should('have.attr', 'aria-disabled', 'true');
     });
-    it('Associate administrator(s) button is enabled if the user has the required permissions', () => {
+    it('Add administrator(s) button is enabled if the user has the required permissions', () => {
       cy.stub(useOptions, 'useOptions').callsFake(() => ({
         data: {
           actions: {
@@ -68,11 +68,7 @@ describe('Team admins list', () => {
         path: '/access/teams/:id/*',
         initialEntries: ['/access/teams/5/admins'],
       });
-      cy.get('[data-cy="associate-administrator(s)"]').should(
-        'have.attr',
-        'aria-disabled',
-        'false'
-      );
+      cy.get('[data-cy="add-administrator(s)"]').should('have.attr', 'aria-disabled', 'false');
     });
   });
   describe('Empty list', () => {
@@ -94,7 +90,7 @@ describe('Team admins list', () => {
         mockPlatformTeams.results[0]
       ).as('team');
     });
-    it('Empty state is displayed correctly for user with permission to associate admins', () => {
+    it('Empty state is displayed correctly for user with permission to add admins', () => {
       cy.stub(useOptions, 'useOptions').callsFake(() => ({
         data: {
           actions: {
@@ -115,10 +111,10 @@ describe('Team admins list', () => {
         path: '/access/teams/:id/*',
         initialEntries: ['/access/teams/5/admins'],
       });
-      cy.contains(/^There are currently no administrators associated with this team.$/);
-      cy.contains(/^Associate administrators by clicking the button below.$/);
+      cy.contains(/^There are currently no administrators added to this team.$/);
+      cy.contains(/^Add administrators by clicking the button below.$/);
     });
-    it('Empty state is displayed correctly for user without permission to associate admins', () => {
+    it('Empty state is displayed correctly for user without permission to add admins', () => {
       cy.stub(useOptions, 'useOptions').callsFake(() => ({
         data: {
           actions: {},
@@ -128,7 +124,7 @@ describe('Team admins list', () => {
         path: '/access/teams/:id/*',
         initialEntries: ['/access/teams/5/admins'],
       });
-      cy.contains(/^You do not have permission to associate an administrator with this team./);
+      cy.contains(/^You do not have permission to add an administrator to this team./);
       cy.contains(
         /^Please contact your organization administrator if there is an issue with your access.$/
       );

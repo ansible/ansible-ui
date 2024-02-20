@@ -17,8 +17,8 @@ export function useAssociateTeamAdmins(onComplete: () => Promise<void>) {
 
   const associateUsers = useCallback(() => {
     selectUsers(
-      t('Associate administrators'),
-      t('Select users below to be associated with this team as administrators.'),
+      t('Add administrators'),
+      t('Select users below to be added to this team as administrators.'),
       t('Save'),
       async (users: PlatformUser[]) => {
         if (!team) return;

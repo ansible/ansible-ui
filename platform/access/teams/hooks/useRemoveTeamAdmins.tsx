@@ -39,9 +39,7 @@ export function useRemoveTeamAdmins(onComplete: (users: PlatformUser[]) => void)
       items: users.sort((l, r) => compareStrings(l.username, r.username)),
       keyFn: getItemKey,
       isDanger: true,
-      confirmationColumns: confirmationColumns?.filter((column) =>
-        [t('Username'), t('First name'), t('Last name')].includes(column.header)
-      ),
+      confirmationColumns: confirmationColumns,
       actionColumns,
       onComplete,
       actionFn: (user: PlatformUser, signal) =>
