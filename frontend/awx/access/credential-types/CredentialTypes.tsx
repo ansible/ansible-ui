@@ -30,8 +30,8 @@ export function CredentialTypes() {
     tableColumns,
   });
 
-  const toolbarActions = useCredentialTypeToolbarActions(view);
-  const rowActions = useCredentialTypeRowActions(view);
+  const toolbarActions = useCredentialTypeToolbarActions(view.unselectItemsAndRefresh);
+  const rowActions = useCredentialTypeRowActions(view.unselectItemsAndRefresh);
 
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/credential_types/`);
   const canCreateCredentialType = Boolean(data && data.actions && data.actions['POST']);

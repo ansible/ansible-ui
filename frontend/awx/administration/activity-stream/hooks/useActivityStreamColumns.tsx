@@ -2,8 +2,8 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ColumnModalOption, DateTimeCell, ITableColumn } from '../../../../../framework';
 import { ActivityStream } from '../../../interfaces/ActivityStream';
-import { ActivityStreamInitiatedByCell } from '../components/ActivityStreamInitiatedByCell';
 import { ActivityDescription } from '../components/ActivityDescription';
+import { ActivityStreamInitiatedByCell } from '../components/ActivityStreamInitiatedByCell';
 
 export function useActivityStreamColumns(options?: {
   disableSort?: boolean;
@@ -16,9 +16,7 @@ export function useActivityStreamColumns(options?: {
       {
         header: t('Time'),
         cell: (activity_stream: ActivityStream) =>
-          activity_stream.timestamp && (
-            <DateTimeCell format="date-time" value={activity_stream.timestamp} />
-          ),
+          activity_stream.timestamp && <DateTimeCell value={activity_stream.timestamp} />,
         sort: 'timestamp',
         list: 'secondary',
         defaultSortDirection: 'desc',
@@ -39,6 +37,7 @@ export function useActivityStreamColumns(options?: {
         ),
         sort: undefined,
         list: 'secondary',
+        fullWidth: true,
       },
     ],
     [options, t]

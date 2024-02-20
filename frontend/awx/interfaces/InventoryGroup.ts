@@ -54,3 +54,7 @@ export interface InventoryGroupCreate {
   inventory: number;
   variables: string;
 }
+
+export interface InventoryGroupRelatedGroup {
+  id: number;
+}

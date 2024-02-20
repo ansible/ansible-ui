@@ -22,14 +22,14 @@ export function PageFormInventoryFileSelect<
   const projectId = value?.id.toString() ?? '';
   const query = useCallback(async () => {
     const response = projectId
-      ? await requestGet<Array<string>>(awxAPI`/projects/${projectId}/inventories`)
+      ? await requestGet<Array<string>>(awxAPI`/projects/${projectId}/inventories/`)
       : [];
     const newResponse = response.map((str) => ({
       name: str,
     }));
     return Promise.resolve({
       total: newResponse.length,
-      values: newResponse,
+      values: [{ name: '/ (project root)' }, ...newResponse],
     });
   }, [projectId]);
 

@@ -50,9 +50,7 @@ describe('Credential Types', () => {
   it('create a new credential type with no configs', () => {
     const customCredentialTypeName = 'E2E Custom Credential Type' + randomString(4);
     cy.createAndDeleteCustomAWXCredentialTypeUI(customCredentialTypeName);
-    // uncomment below after it is fixed
-    //Assert page redirects to list page
-    //cy.verifyPageTitle('Credential Types');
+    cy.verifyPageTitle('Credential Types');
   });
 
   it('creates a custom credential type with input and injector configurations in JSON format in the Monaco editor', () => {
@@ -63,9 +61,7 @@ describe('Credential Types', () => {
       injectorCredType,
       'json'
     );
-    // uncomment below after it is fixed
-    //Assert page redirects to list page
-    //cy.verifyPageTitle('Credential Types');
+    cy.verifyPageTitle('Credential Types');
   });
 
   it('creates a custom credential type with input and injector configurations in YAML format in the Monaco editor', () => {
@@ -75,9 +71,7 @@ describe('Credential Types', () => {
       inputCredType,
       injectorCredType
     );
-    // uncomment below after it is fixed
-    //Assert page redirects to list page
-    //cy.verifyPageTitle('Credential Types');
+    cy.verifyPageTitle('Credential Types');
   });
 
   it('edit a credential type from the list row action and delete it using the list kebab menu', () => {
@@ -112,8 +106,7 @@ describe('Credential Types', () => {
       cy.clickButton(/^Clear all filters$/);
       cy.getTableRowByText(`${newCredentialTypeName}`).should('not.exist');
       cy.clickButton(/^Clear all filters$/);
-      //Assert page redirects to list page
-      //cy.verifyPageTitle('Credential Types');
+      cy.verifyPageTitle('Credential Types');
     });
   });
 
@@ -138,12 +131,10 @@ describe('Credential Types', () => {
       cy.clickPageAction('delete-credential-type');
       cy.get('#confirm').click();
       cy.clickButton(/^Delete credential type/);
-      cy.clickButton(/^Close/);
       cy.wait('@deleteCredType').then((deleteCredType) => {
         expect(deleteCredType?.response?.statusCode).to.eql(204);
       });
-      //Assert page redirects to list page
-      //cy.verifyPageTitle('Credential Types');
+      cy.verifyPageTitle('Credential Types');
     });
   });
 

@@ -21,7 +21,11 @@ import { cannotDeleteResources } from '../../../../common/utils/RBAChelpers';
 export function useInventoriesGroupsToolbarActions(view: IAwxView<InventoryGroup>) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
-  const deleteGroups = useDeleteGroups(view.unselectItemsAndRefresh);
+  const onDelete = () => {
+    view.unselectAll();
+    void view.refresh();
+  };
+  const deleteGroups = useDeleteGroups(onDelete);
   const params = useParams<{ id: string; inventory_type: string }>();
 
   const adhocOptions = useOptions<OptionsResponse<ActionsResponse>>(
@@ -32,7 +36,7 @@ export function useInventoriesGroupsToolbarActions(view: IAwxView<InventoryGroup
   );
 
   const groupOptions = useOptions<OptionsResponse<ActionsResponse>>(
-    awxAPI`/inventories/${params.id ?? ''}/groups`
+    awxAPI`/inventories/${params.id ?? ''}/groups/`
   ).data;
   const canCreateGroup = Boolean(
     groupOptions && groupOptions.actions && groupOptions.actions['POST']

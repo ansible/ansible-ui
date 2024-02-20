@@ -23,5 +23,6 @@ export function requestCommon(options: {
     credentials: 'include',
     headers: { ...headers, ...options.headers },
     signal,
+    redirect: 'error',
   });
 }

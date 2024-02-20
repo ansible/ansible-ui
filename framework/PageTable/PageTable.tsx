@@ -41,6 +41,7 @@ import {
 import styled from 'styled-components';
 import { IPageAction, PageActionSelection } from '../PageActions/PageAction';
 import { PageActions } from '../PageActions/PageActions';
+import { PageDetails } from '../PageDetails/PageDetails';
 import { PageDetailsFromColumns } from '../PageDetails/PageDetailsFromColumns';
 import { PageTableViewType, PageTableViewTypeE } from '../PageToolbar/PageTableViewType';
 import { PageToolbar } from '../PageToolbar/PageToolbar';
@@ -64,7 +65,6 @@ import {
   useVisibleTableColumns,
 } from './PageTableColumn';
 import { PageTableList } from './PageTableList';
-import { PageDetails } from '../PageDetails/PageDetails';
 
 const ScrollDiv = styled.div`
   height: 100%;
@@ -396,7 +396,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
       )}
       {!props.disablePagination &&
         (!props.autoHidePagination || (props.itemCount ?? 0) > props.perPage) && (
-          <PagePagination {...props} topBorder />
+          <PagePagination {...props} topBorder={!props.autoHidePagination} />
         )}
     </>
   );
@@ -443,7 +443,12 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
 
     if (expandedRowColumns.length) {
       expandedRowFunctions.push((item) => (
-        <PageDetails disablePadding numberOfColumns="multiple" labelOrientation="vertical">
+        <PageDetails
+          disablePadding
+          numberOfColumns="multiple"
+          labelOrientation="vertical"
+          isCompact
+        >
           <PageDetailsFromColumns key={keyFn(item)} item={item} columns={expandedRowColumns} />
         </PageDetails>
       ));
@@ -454,12 +459,9 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
     }
 
     if (expandedRowFunctions.length === 0) return undefined;
-    if (expandedRowFunctions.length === 1) return expandedRowFunctions[0];
 
     const newExpandedRow = (item: T) => (
-      <Stack hasGutter style={{ gap: 12 }}>
-        {expandedRowFunctions.map((fn) => fn(item))}
-      </Stack>
+      <Stack hasGutter>{expandedRowFunctions.map((fn) => fn(item))}</Stack>
     );
 
     return newExpandedRow;
@@ -670,6 +672,7 @@ function TableHead<T extends object>(props: {
                       ? column.minWidth
                       : undefined,
                 maxWidth: column.maxWidth !== undefined ? column.maxWidth : undefined,
+                width: column.fullWidth ? '100%' : undefined,
               }}
               data-cy={getID(column.header + '-column-header')}
               className="bg-lighten"

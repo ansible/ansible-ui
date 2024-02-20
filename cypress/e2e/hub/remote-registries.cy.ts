@@ -34,30 +34,31 @@ describe('Remote Registry', () => {
 
   it('explore different views and pagination', () => {
     const remoteRegistryName = generateRemoteRegistryName();
-    cy.createRemoteRegistry(remoteRegistryName);
-    cy.navigateTo('hub', RemoteRegistry.url);
-    cy.setTablePageSize('50');
-    cy.searchAndDisplayResource(remoteRegistryName);
-    cy.get('[data-cy="card-view"]').click();
-    cy.contains(remoteRegistryName).should('be.visible');
-    cy.get('[data-cy="list-view"]').click();
-    cy.contains(remoteRegistryName).should('be.visible');
-    cy.get('[data-cy="table-view"]').click();
-    cy.contains(remoteRegistryName).should('be.visible');
-    cy.get('#select-all').click();
-    cy.clickToolbarKebabAction('delete-selected-remote-registries');
-    cy.get('#confirm').click();
-    cy.clickButton(/^Delete remote registries$/);
-    cy.contains(/^Success$/);
-    cy.clickButton(/^Close$/);
-    cy.clickButton(/^Clear all filters$/);
+    cy.createRemoteRegistry(remoteRegistryName).then((remoteRegistry: IRemoteRegistry) => {
+      cy.navigateTo('hub', RemoteRegistry.url);
+      cy.setTablePageSize('50');
+      cy.filterTableBySingleText(remoteRegistry.name);
+      cy.get('[data-cy="card-view"]').click();
+      cy.contains(remoteRegistry.name).should('be.visible');
+      cy.get('[data-cy="list-view"]').click();
+      cy.contains(remoteRegistry.name).should('be.visible');
+      cy.get('[data-cy="table-view"]').click();
+      cy.contains(remoteRegistry.name).should('be.visible');
+      cy.get('#select-all').click();
+      cy.clickToolbarKebabAction('delete-selected-remote-registries');
+      cy.get('#confirm').click();
+      cy.clickButton(/^Delete remote registries$/);
+      cy.contains(/^Success$/);
+      cy.clickButton(/^Close$/);
+      cy.clickButton(/^Clear all filters$/);
+    });
   });
 
   it('sync remote registries', () => {
     const remoteRegistryName = generateRemoteRegistryName();
     cy.createRemoteRegistry(remoteRegistryName).then((remoteRegistry: IRemoteRegistry) => {
       cy.navigateTo('hub', RemoteRegistry.url);
-      cy.searchAndDisplayResource(remoteRegistryName);
+      cy.filterTableBySingleText(remoteRegistry.name);
       cy.get('[data-cy="sync-status-column-cell"]').should(
         'contain',
         RemoteRegistry.initialSyncStatus
@@ -71,22 +72,24 @@ describe('Remote Registry', () => {
 
   it('index execution environments', () => {
     const remoteRegistryName = generateRemoteRegistryName();
-    cy.navigateTo('hub', RemoteRegistry.url);
-    cy.get('[data-cy="create-remote-registry"]').should('be.visible').click();
-    cy.get('[data-cy="name"]').type(remoteRegistryName);
-    cy.get('[data-cy="url"]').type(RemoteRegistry.validIndexableURL);
-    cy.get('[data-cy="Submit"]').click();
-    cy.contains('Remote registries').click();
-    cy.searchAndDisplayResource(remoteRegistryName);
-    cy.get('[data-cy="actions-column-cell"]').click();
-    cy.get('[data-cy="index-execution-environments"]').should('be.visible').click({ force: true });
-    cy.hasAlert(`Indexing remote registry ${remoteRegistryName}`);
-    cy.get('[data-cy="actions-column-cell"]').click();
-    cy.get('[data-cy="delete-remote-registry"]').click({ force: true });
-    cy.get('#confirm').click();
-    cy.clickButton(/^Delete remote registries/);
-    cy.clickButton(/^Close$/);
-    cy.clickButton(/^Clear all filters$/);
+    cy.createRemoteRegistry(remoteRegistryName, RemoteRegistry.validIndexableURL).then(
+      (remoteRegistry: IRemoteRegistry) => {
+        cy.navigateTo('hub', RemoteRegistry.url);
+        cy.url().should('include', 'remote-registries');
+        cy.filterTableBySingleText(remoteRegistry.name);
+        cy.get('[data-cy="actions-column-cell"]').click();
+        cy.get('[data-cy="index-execution-environments"]')
+          .should('be.visible')
+          .click({ force: true });
+        cy.hasAlert(`Indexing remote registry ${remoteRegistry.name}`);
+        cy.get('[data-cy="actions-column-cell"]').click();
+        cy.get('[data-cy="delete-remote-registry"]').click({ force: true });
+        cy.get('#confirm').click();
+        cy.clickButton(/^Delete remote registries/);
+        cy.clickButton(/^Close$/);
+        cy.clickButton(/^Clear all filters$/);
+      }
+    );
   });
 
   it('create, search and delete a remote registry', () => {
@@ -101,7 +104,7 @@ describe('Remote Registry', () => {
     cy.url().should('include', `remote-registries/details/${remoteRegistryName}`);
     cy.contains('Remote registries').click();
     cy.url().should('include', RemoteRegistry.url);
-    cy.searchAndDisplayResource(remoteRegistryName);
+    cy.filterTableBySingleText(remoteRegistryName);
     cy.get('[data-cy="actions-column-cell"]').click();
     cy.get('[data-cy="delete-remote-registry"]').click({ force: true });
     cy.get('#confirm').click();
@@ -116,24 +119,35 @@ describe('Remote Registry', () => {
     cy.get('[data-cy="create-remote-registry"]').should('be.visible').click();
     cy.get('[data-cy="name"]').type(remoteRegistryName);
     cy.get('[data-cy="url"]').type(RemoteRegistry.validIndexableURL);
+    cy.intercept({
+      method: 'GET',
+      url: hubAPI`/_ui/v1/execution-environments/registries/?name=${remoteRegistryName}`,
+    }).as('remoteRegistry');
     cy.get('[data-cy="Submit"]').click();
-    cy.contains('Remote registries').click();
-    cy.searchAndDisplayResource(remoteRegistryName);
-    cy.get('[data-cy="actions-column-cell"]').click();
-    cy.get('[data-cy="edit-remote-registry"]').click({ force: true });
-    cy.url().should('include', `remote-registries/${remoteRegistryName}/edit`);
-    cy.get('[data-cy="url"]').clear().type(RemoteRegistry.remoteURL);
-    cy.clickButton(/^Edit remote registry$/);
-    cy.clickButton(/^Clear all filters$/);
-    cy.contains(remoteRegistryName).click();
-    cy.url().should('include', `remote-registries/details/${remoteRegistryName}`);
-    cy.get('[data-cy="name"]').should('contain', remoteRegistryName);
-    cy.get('[data-cy="url"]').should('contain', RemoteRegistry.remoteURL);
+    cy.wait('@remoteRegistry').then(() => {
+      cy.contains('Remote registries').click();
+      cy.filterTableBySingleText(remoteRegistryName);
+      cy.get('[data-cy="actions-column-cell"]').click();
+      cy.get('[data-cy="edit-remote-registry"]').click({ force: true });
+      cy.url().should('include', `remote-registries/${remoteRegistryName}/edit`);
+      cy.get('[data-cy="url"]').clear().type(RemoteRegistry.remoteURL);
+      cy.clickButton(/^Edit remote registry$/);
+      cy.clickButton(/^Clear all filters$/);
+      cy.filterTableBySingleText(remoteRegistryName);
+      cy.contains('tr', remoteRegistryName).within(() => {
+        cy.contains('td', remoteRegistryName).within(() => {
+          cy.get('a').click();
+        });
+      });
+      cy.url().should('include', `remote-registries/details/${remoteRegistryName}`);
+      cy.get('[data-cy="name"]').should('contain', remoteRegistryName);
+      cy.get('[data-cy="url"]').should('contain', RemoteRegistry.remoteURL);
 
-    // Delete the edited remote registry
-    cy.get('[data-cy="actions-dropdown"]').click();
-    cy.get('[data-cy="delete-remote-registry"]').click();
-    cy.get('#confirm').click();
-    cy.clickButton(/^Delete remote registries/);
+      // Delete the edited remote registry
+      cy.get('[data-cy="actions-dropdown"]').click();
+      cy.get('[data-cy="delete-remote-registry"]').click();
+      cy.get('#confirm').click();
+      cy.clickButton(/^Delete remote registries/);
+    });
   });
 });

@@ -7,7 +7,7 @@ describe('InventoryGroups', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/v2/inventories/**/groups?order_by=name&page=1&page_size=10',
+        url: '/api/v2/inventories/**/?order_by=name&page=1&page_size=10',
         hostname: 'localhost',
       },
       {
@@ -17,7 +17,7 @@ describe('InventoryGroups', () => {
     cy.intercept(
       {
         method: 'OPTIONS',
-        url: '/api/v2/inventories/**/ad_hoc_commands',
+        url: '/api/v2/inventories/**/ad_hoc_commands/',
         hostname: 'localhost',
       },
       {
@@ -27,7 +27,7 @@ describe('InventoryGroups', () => {
     cy.intercept(
       {
         method: 'OPTIONS',
-        url: '/api/v2//inventories/1/groups',
+        url: '/api/v2/inventories/1/groups/',
         hostname: 'localhost',
       },
       (req) => {
@@ -56,7 +56,9 @@ describe('InventoryGroups', () => {
         const group = results[0];
         cy.selectTableRow(group.name, false);
         cy.clickToolbarKebabAction('delete-selected-groups');
-        cy.contains('Permanently delete groups');
+        cy.get('[data-cy="delete-group-modal-delete-button"]').should('be.disabled');
+        cy.get('[data-cy="delete-groups-dialog-radio-delete"]').click();
+        cy.get('[data-cy="delete-group-modal-delete-button"]').should('be.enabled');
       });
   });
 
@@ -69,7 +71,7 @@ describe('InventoryGroups', () => {
         cy.intercept(
           {
             method: 'GET',
-            url: '/api/v2/inventories/**/groups?name__icontains=Related%20to%20group%201**',
+            url: '/api/v2/inventories/**/groups/?name__icontains=Related%20to%20group%201**',
           },
           {
             fixture: 'group.json',
@@ -89,7 +91,7 @@ describe('InventoryGroups', () => {
         cy.intercept(
           {
             method: 'GET',
-            url: '/api/v2/inventories/**/groups?created_by__username__icontains=test**',
+            url: '/api/v2/inventories/**/groups/?created_by__username__icontains=test**',
           },
           {
             fixture: 'group.json',
@@ -109,7 +111,7 @@ describe('InventoryGroups', () => {
         cy.intercept(
           {
             method: 'GET',
-            url: '/api/v2/inventories/**/groups?modified_by__username__icontains=test**',
+            url: '/api/v2/inventories/**/groups/?modified_by__username__icontains=test**',
           },
           {
             fixture: 'group.json',

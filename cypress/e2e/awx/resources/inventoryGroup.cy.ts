@@ -28,7 +28,7 @@ describe('inventory group', () => {
     cy.clickButton(/^Create inventory$/);
     cy.clickLink(/^Create inventory$/);
     cy.get('[data-cy="name"]').type(inventoryName);
-    cy.selectDropdownOptionByResourceName('organization', organization.name);
+    cy.selectSingleSelectOption('[data-cy="organization"]', organization.name);
     cy.get('[data-cy="prevent_instance_group_fallback"]').click();
     cy.clickButton(/^Create inventory$/);
     cy.verifyPageTitle(inventoryName);
@@ -38,7 +38,7 @@ describe('inventory group', () => {
 
   afterEach(() => {
     cy.visit(
-      `/infrastructure/inventories/inventory/${inventory.id}/groups?page=1&perPage=10&sort=name`
+      `/infrastructure/inventories/inventory/${inventory.id}/groups/?page=1&perPage=10&sort=name`
     );
     cy.clickPageAction('delete-inventory');
     cy.get('#confirm').click();
@@ -55,12 +55,15 @@ describe('inventory group', () => {
     cy.verifyPageTitle('Create new group');
     cy.get('[data-cy="name"]').type(groupName);
     cy.get('[data-cy="description"]').type('This is a description');
-    cy.typeMonacoTextField('test: true');
+    cy.typeBy('[data-cy="variables"]', 'test: true');
     cy.clickButton(/^Save/);
     cy.hasDetail(/^Name$/, groupName);
     cy.hasDetail(/^Description$/, 'This is a description');
     cy.hasDetail(/^Variables$/, 'test: true');
-    cy.selectDetailsPageKebabAction('delete-group');
+    cy.get('[data-cy="actions-dropdown"]').click();
+    cy.get('[data-cy="delete-group"]').click();
+    cy.get('[data-cy="delete-groups-dialog-radio-delete"]').click();
+    cy.get('[data-cy="delete-group-modal-delete-button"]').click();
     cy.get('[data-cy="empty-state-title"]').contains(
       /^There are currently no groups added to this inventory./
     );
