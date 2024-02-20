@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, SetStateAction, Dispatch } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Controller, FieldPath, useFormContext, useWatch } from 'react-hook-form';
 import { InputGroup, InputGroupItem, InputGroupText, TextInput } from '@patternfly/react-core';
@@ -19,61 +19,164 @@ import { UnifiedJobType } from '../../../../interfaces/WorkflowNode';
 import { SystemJobTemplate } from '../../../../interfaces/SystemJobTemplate';
 import { LaunchConfiguration } from '../../../../interfaces/LaunchConfiguration';
 import { usePageWizard } from '../../../../../../framework/PageWizard/PageWizardProvider';
-import type { WizardFormValues, AllResources } from '../types';
+import type { WizardFormValues, AllResources, PromptFormValues } from '../types';
+import { PageWizardStep } from '../../../../../../framework';
+import { shouldHideOtherStep } from './helpers';
+import { parseStringToTagArray } from '../../JobTemplateFormHelpers';
 
 export function NodeTypeStep(props: { hasSourceNode?: boolean }) {
-  const {
-    reset,
-    getValues,
-    formState: { defaultValues },
-  } = useFormContext<WizardFormValues>();
-  const { setWizardData, setStepData } = usePageWizard();
-  const nodeType = useWatch<WizardFormValues>({ name: 'node_type' }) as UnifiedJobType;
+  const { reset, getValues, setValue, formState, getFieldState, register, control } =
+    useFormContext<WizardFormValues>();
+
+  const { defaultValues } = formState;
+
+  const { setWizardData, setStepData, stepData, setVisibleSteps, allSteps } = usePageWizard() as {
+    setWizardData: Dispatch<SetStateAction<WizardFormValues>>;
+    setStepData: (
+      data:
+        | Record<'nodeTypeStep', Partial<WizardFormValues>>
+        | Record<'nodePromptsStep', { prompt: PromptFormValues }>
+    ) => void;
+    stepData: {
+      nodeTypeStep?: Partial<WizardFormValues>;
+      nodePromptsStep?: { prompt: PromptFormValues };
+    };
+    wizardData: Partial<WizardFormValues>;
+    visibleSteps: PageWizardStep[];
+    setVisibleSteps: (steps: PageWizardStep[]) => void;
+    allSteps: PageWizardStep[];
+  };
+
+  // Register form fields
+  register('node_type');
+  register('node_resource');
+  register('prompt');
+
+  // Watch form fields
+  const nodeType = useWatch<WizardFormValues>({
+    name: 'node_type',
+    control,
+    defaultValue: defaultValues?.node_type,
+  }) as UnifiedJobType;
   const nodeResource = useWatch<WizardFormValues>({
     name: 'node_resource',
   }) as AllResources;
 
   useEffect(() => {
-    if (defaultValues?.node_type && defaultValues.node_type !== nodeType) {
-      reset(
-        {
-          node_type: nodeType,
-          node_resource: null,
-          node_convergence: getValues('node_convergence'),
-          approval_timeout: getValues('approval_timeout'),
-          approval_name: getValues('approval_name'),
-          approval_description: getValues('approval_description'),
-          node_alias: getValues('node_alias'),
-        },
-        { keepDefaultValues: true }
-      );
+    const { isDirty, isTouched } = getFieldState('node_type');
+    const currentFormValues = getValues();
+    const isApprovalType = nodeType === UnifiedJobType.workflow_approval;
+
+    setValue('node_type', nodeType, { shouldTouch: true });
+
+    if (isDirty) {
+      setValue('node_resource', null);
+      const steps = allSteps.filter((step) => step.id !== 'nodePromptsStep');
+      setVisibleSteps(steps);
     }
-  }, [nodeType, reset, defaultValues, getValues, setStepData]);
+
+    if (isTouched && !isDirty && isApprovalType) {
+      reset(undefined, {
+        keepDefaultValues: true,
+      });
+      const steps = allSteps.filter((step) => step.id !== 'nodePromptsStep');
+      setWizardData({ ...currentFormValues, launch_config: null });
+      setStepData({ nodeTypeStep: currentFormValues });
+      setVisibleSteps(steps);
+    }
+  }, [
+    nodeType,
+    getFieldState,
+    setValue,
+    reset,
+    allSteps,
+    setWizardData,
+    setStepData,
+    setVisibleSteps,
+    getValues,
+  ]);
 
   useEffect(() => {
     const setLaunchToWizardData = async () => {
-      let launchConfig = {};
-      if (nodeResource?.type === 'job_template') {
-        const launch = await requestGet<LaunchConfiguration>(
-          awxAPI`/job_templates/${nodeResource.id.toString()}/launch/`
-        );
-        launchConfig = launch;
-      } else if (nodeResource?.type === 'workflow_job_template') {
-        const launch = await requestGet<LaunchConfiguration>(
-          awxAPI`/workflow_job_templates/${nodeResource.id.toString()}/launch/`
-        );
-        launchConfig = launch;
+      let launchConfigValue = {} as PromptFormValues;
+
+      const template = getValues('node_resource');
+
+      if (!template) return;
+      let templateType;
+      if ('type' in template) {
+        templateType = template.type;
+      } else if ('unified_job_type' in template) {
+        templateType = template.unified_job_type;
       }
-      setWizardData((prev: object) => ({ ...prev, launch_config: launchConfig }));
-      setStepData((prev) => ({
-        nodeTypeStep: {
-          ...prev.nodeTypeStep,
-          launch_config: launchConfig,
-        },
-      }));
+
+      let launchConfigResults = {} as LaunchConfiguration;
+      if (templateType === UnifiedJobType.job || templateType === 'job_template') {
+        launchConfigResults = await requestGet<LaunchConfiguration>(
+          awxAPI`/job_templates/${template.id.toString()}/launch/`
+        );
+      } else if (
+        templateType === UnifiedJobType.workflow_job ||
+        templateType === 'workflow_job_template'
+      ) {
+        launchConfigResults = await requestGet<LaunchConfiguration>(
+          awxAPI`/workflow_job_templates/${template.id.toString()}/launch/`
+        );
+      }
+      const { job_tags, skip_tags, inventory, ...defaults } = launchConfigResults.defaults;
+
+      launchConfigValue = {
+        ...defaults,
+        inventory: inventory?.id ? inventory : null,
+        job_tags: parseStringToTagArray(job_tags || ''),
+        skip_tags: parseStringToTagArray(skip_tags || ''),
+      };
+
+      const shouldShowStep = !shouldHideOtherStep(launchConfigResults);
+      if (shouldShowStep) {
+        setWizardData((prev) => ({
+          ...prev,
+          launch_config: launchConfigResults,
+        }));
+
+        setVisibleSteps(allSteps);
+
+        if (stepData.nodePromptsStep && nodeResource) {
+          const { isDirty: isNodeTypeDirty } = getFieldState('node_type');
+          if (!isNodeTypeDirty && nodeResource.id === defaultValues?.node_resource?.id) {
+            setValue('prompt', { ...stepData.nodePromptsStep?.prompt });
+          } else {
+            // If the node type is not dirty and the node resource is not the same as the default value,
+            // and the wizard data is not the same as the default value, then reset the prompt to the default value
+            // else, set the prompt data to the current data.
+            setValue('prompt', launchConfigValue);
+            if ('type' in nodeResource && nodeResource.type !== templateType) {
+              setValue('node_resource', template);
+            }
+          }
+        }
+      } else {
+        const filteredSteps = allSteps.filter((step) => step.id !== 'nodePromptsStep');
+        setVisibleSteps(filteredSteps);
+        setWizardData((prev) => ({ ...prev, launch_config: null }));
+      }
     };
-    void setLaunchToWizardData();
-  }, [nodeResource, nodeType, setWizardData, setStepData, getValues]);
+
+    if (nodeType === UnifiedJobType.job || nodeType === UnifiedJobType.workflow_job) {
+      void setLaunchToWizardData();
+    }
+  }, [
+    allSteps,
+    defaultValues,
+    getFieldState,
+    getValues,
+    nodeResource,
+    nodeType,
+    setValue,
+    setVisibleSteps,
+    setWizardData,
+    stepData,
+  ]);
 
   return (
     <>

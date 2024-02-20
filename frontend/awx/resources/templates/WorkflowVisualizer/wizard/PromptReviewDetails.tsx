@@ -13,6 +13,7 @@ import type { Credential } from '../../../../interfaces/Credential';
 import type { JobTemplate } from '../../../../interfaces/JobTemplate';
 import type { WorkflowJobTemplate } from '../../../../interfaces/WorkflowJobTemplate';
 import type { WizardFormValues } from '../types';
+import { parseStringToTagArray } from '../../JobTemplateFormHelpers';
 
 interface PromptWizardFormValues extends Omit<WizardFormValues, 'node_resource'> {
   node_resource: JobTemplate | WorkflowJobTemplate;
@@ -26,6 +27,7 @@ export function PromptReviewDetails() {
   } = usePageWizard() as {
     wizardData: PromptWizardFormValues;
   };
+
   const {
     inventory,
     credentials,
@@ -43,8 +45,10 @@ export function PromptReviewDetails() {
     skip_tags,
     timeout,
     verbosity,
-  } = prompt;
+  } = prompt || {};
 
+  const jobTags = typeof job_tags === 'string' ? parseStringToTagArray(job_tags) : job_tags;
+  const skipTags = typeof skip_tags === 'string' ? parseStringToTagArray(skip_tags) : skip_tags;
   const verbosityString = useVerbosityString(Number(verbosity));
   const inventoryUrlPaths: { [key: string]: string } = {
     '': 'inventory',
@@ -70,7 +74,10 @@ export function PromptReviewDetails() {
       <PageDetail label={t`Inventory`} isEmpty={!inventory?.id}>
         <Link
           to={getPageUrl(AwxRoute.InventoryPage, {
-            params: { id: inventory?.id, inventory_type: inventoryUrlPaths[inventory?.kind] },
+            params: {
+              id: inventory?.id?.toString(),
+              inventory_type: inventoryUrlPaths[inventory?.kind ?? ''],
+            },
           })}
         >
           {inventory?.name}
@@ -102,7 +109,7 @@ export function PromptReviewDetails() {
       )}
       <PageDetail label={t('Credentials')} isEmpty={isEmpty(credentials)}>
         <LabelGroup>
-          {Array.isArray(credentials)
+          {Array.isArray(credentials) && credentials.length > 0
             ? credentials?.map((credential) => (
                 <CredentialDetail credentialID={credential.id} key={credential.id} />
               ))
@@ -135,20 +142,20 @@ export function PromptReviewDetails() {
           {labels?.map((label) => <Label key={label.id}>{label.name}</Label>)}
         </LabelGroup>
       </PageDetail>
-      <PageDetail label={t('Job tags')} isEmpty={isEmpty(job_tags)}>
-        <LabelGroup>{job_tags?.map(({ name }) => <Label key={name}>{name}</Label>)}</LabelGroup>
+      <PageDetail label={t('Job tags')} isEmpty={isEmpty(jobTags)}>
+        <LabelGroup>{jobTags?.map(({ name }) => <Label key={name}>{name}</Label>)}</LabelGroup>
       </PageDetail>
-      <PageDetail label={t('Skip tags')} isEmpty={isEmpty(skip_tags)}>
-        <LabelGroup>{skip_tags?.map(({ name }) => <Label key={name}>{name}</Label>)}</LabelGroup>
+      <PageDetail label={t('Skip tags')} isEmpty={isEmpty(skipTags)}>
+        <LabelGroup>{skipTags?.map(({ name }) => <Label key={name}>{name}</Label>)}</LabelGroup>
       </PageDetail>
-      <PageDetailCodeEditor label={t('Extra vars')} value={extra_vars} />
+      <PageDetailCodeEditor label={t('Extra vars')} value={extra_vars || ''} />
     </>
   );
 }
 
 export function CredentialDetail({ credentialID }: { credentialID: number }) {
   const { data: credentialData } = useGet<Credential>(
-    awxAPI`/credentials/${credentialID.toString()}/`
+    awxAPI`/credentials/${credentialID?.toString()}/`
   );
   if (!credentialData) return null;
   return <CredentialLabel credential={credentialData} key={credentialID} />;

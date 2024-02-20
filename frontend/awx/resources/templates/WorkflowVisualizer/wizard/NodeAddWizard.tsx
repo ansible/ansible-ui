@@ -5,11 +5,10 @@ import { awxErrorAdapter } from '../../../../common/adapters/awxErrorAdapter';
 import { UnifiedJobType } from '../../../../interfaces/WorkflowNode';
 import { NodeTypeStep } from './NodeTypeStep';
 import { NodeReviewStep } from './NodeReviewStep';
-import { useGetInitialValues, getValueBasedOnJobType, hasDaysToKeep } from './helpers';
+import { getValueBasedOnJobType, hasDaysToKeep, shouldHideOtherStep } from './helpers';
+import { useCloseSidebar, useCreateEdge, useNodeTypeStepDefaults } from '../hooks';
 import { NODE_DIAMETER, START_NODE_ID } from '../constants';
 import { ControllerState, EdgeStatus, PromptFormValues, type WizardFormValues } from '../types';
-import { useCloseSidebar, useCreateEdge } from '../hooks';
-import { LaunchConfiguration } from '../../../../interfaces/LaunchConfiguration';
 import { NodePromptsStep } from './NodePromptsStep';
 
 interface NewGraphNode extends NodeModel {
@@ -42,6 +41,11 @@ export function NodeAddWizard() {
   const createEdge = useCreateEdge();
   const controller = useVisualizationController();
   const state = controller.getState<ControllerState>();
+  const nodeTypeStepDefaults = useNodeTypeStepDefaults();
+
+  const initialValues = {
+    nodeTypeStep: nodeTypeStepDefaults(),
+  };
 
   const steps: PageWizardStep[] = [
     {
@@ -67,8 +71,6 @@ export function NodeAddWizard() {
     },
     { id: 'review', label: t('Review'), element: <NodeReviewStep /> },
   ];
-
-  const initialValues = useGetInitialValues();
 
   const handleSubmit = async (formValues: WizardFormValues) => {
     const model = controller.toModel();
@@ -179,23 +181,5 @@ export function NodeAddWizard() {
       errorAdapter={awxErrorAdapter}
       title={t('Add node')}
     />
-  );
-}
-
-function shouldHideOtherStep(launchData: LaunchConfiguration) {
-  if (!launchData) return true;
-  return !(
-    launchData.ask_job_type_on_launch ||
-    launchData.ask_limit_on_launch ||
-    launchData.ask_verbosity_on_launch ||
-    launchData.ask_tags_on_launch ||
-    launchData.ask_skip_tags_on_launch ||
-    launchData.ask_variables_on_launch ||
-    launchData.ask_scm_branch_on_launch ||
-    launchData.ask_diff_mode_on_launch ||
-    launchData.ask_labels_on_launch ||
-    launchData.ask_forks_on_launch ||
-    launchData.ask_job_slice_count_on_launch ||
-    launchData.ask_timeout_on_launch
   );
 }
