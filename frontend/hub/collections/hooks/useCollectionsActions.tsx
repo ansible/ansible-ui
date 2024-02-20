@@ -14,7 +14,6 @@ import { CollectionVersionSearch } from '../Collection';
 import { useDeleteCollections } from './useDeleteCollections';
 import { useDeprecateCollections } from './useDeprecateCollections';
 import { useSignCollection } from './useSignCollection';
-import { useDeleteCollectionsFromRepository } from './useDeleteCollectionsFromRepository';
 
 export function useCollectionsActions(callback: (collections: CollectionVersionSearch[]) => void) {
   const { t } = useTranslation();
@@ -23,7 +22,6 @@ export function useCollectionsActions(callback: (collections: CollectionVersionS
   const deprecateCollections = useDeprecateCollections(callback);
   const context = useHubContext();
   const signCollection = useSignCollection(false, callback);
-  const deleteCollectionsFromRepository = useDeleteCollectionsFromRepository(undefined, callback);
 
   return useMemo<IPageAction<CollectionVersionSearch>[]>(
     () => [
@@ -51,17 +49,6 @@ export function useCollectionsActions(callback: (collections: CollectionVersionS
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
-        icon: TrashIcon,
-        label: t('Delete selected entire collections from repository'),
-        onClick: deleteCollectionsFromRepository,
-        isDanger: true,
-        isDisabled: context.hasPermission('ansible.delete_collection')
-          ? ''
-          : t`You do not have rights to this operation`,
-      },
-      {
-        type: PageActionType.Button,
-        selection: PageActionSelection.Multiple,
         icon: BanIcon,
         label: t('Deprecate selected collections'),
         onClick: (collections) => {
@@ -78,14 +65,6 @@ export function useCollectionsActions(callback: (collections: CollectionVersionS
         },
       },
     ],
-    [
-      t,
-      deleteCollections,
-      context,
-      pageNavigate,
-      deprecateCollections,
-      signCollection,
-      deleteCollectionsFromRepository,
-    ]
+    [t, deleteCollections, context, pageNavigate, deprecateCollections, signCollection]
   );
 }
