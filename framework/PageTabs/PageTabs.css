@@ -1,0 +1,9 @@
+.pf-v5-c-tabs.pf-m-box .pf-v5-c-tabs__list .pf-v5-c-tabs__item:last-child {
+  /* padding: 10px; */
+  border-right: thin solid var(--pf-v5-global--BorderColor--100);
+}
+
+.pf-v5-c-tabs.pf-m-box .pf-v5-c-tabs__list .pf-v5-c-tabs__item:last-child.pf-m-current {
+  /* padding: 10px; */
+  border-right: unset;
+}
