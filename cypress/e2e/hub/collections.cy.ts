@@ -111,7 +111,7 @@ describe('Collections List- Line Item Kebab Menu', () => {
     cy.galaxykit('task wait all');
 
     cy.createNamespace(namespace);
-    cy.uploadCollection(thisCollectionName, namespace);
+    cy.uploadCollection(thisCollectionName as string, namespace);
     cy.galaxykit('task wait all');
 
     cy.galaxykit(`collection move ${namespace} ${thisCollectionName} 1.0.0 staging ${repository}`);
@@ -119,7 +119,7 @@ describe('Collections List- Line Item Kebab Menu', () => {
 
   after(() => {
     if (Cypress.currentTest.title === 'user can deprecate a collection') {
-      cy.undeprecateCollection(thisCollectionName, namespace, repository);
+      cy.undeprecateCollection(thisCollectionName as string, namespace, repository);
       cy.galaxykit('task wait all');
     }
     if (
@@ -144,7 +144,9 @@ describe('Collections List- Line Item Kebab Menu', () => {
         'GET',
         hubAPI`/v3/plugin/ansible/search/collection-versions/?is_deprecated=false&repository_label=!hide_from_search&is_highest=true&keywords=${thisCollectionName}&order_by=name&offset=0&limit=10`
       ).as('searchA');
-      cy.get('[data-cy="text-input"]').find('input').type(thisCollectionName);
+      cy.get('[data-cy="text-input"]')
+        .find('input')
+        .type(thisCollectionName as string);
       cy.wait('@searchA');
       cy.contains('h2[data-cy="data-list-name"]', `${thisCollectionName}`).click();
       cy.get(`[data-cy="${thisCollectionName}"]`).should('contain', `${thisCollectionName}`);
@@ -162,7 +164,9 @@ describe('Collections List- Line Item Kebab Menu', () => {
       cy.galaxykit('task wait all');
       cy.navigateTo('hub', Collections.url);
       cy.verifyPageTitle(Collections.title);
-      cy.get('[data-cy="text-input"]').find('input').type(thisCollectionName); //navigate to the collections list and locate the collection
+      cy.get('[data-cy="text-input"]')
+        .find('input')
+        .type(thisCollectionName as string); //navigate to the collections list and locate the collection
       cy.wait('@searchA');
       cy.contains('h2[data-cy="data-list-name"]', `${thisCollectionName}`).click();
       cy.get(`[data-cy="${thisCollectionName}"]`).should('contain', `${thisCollectionName}`); //assert that we are looking at the collection we expect
