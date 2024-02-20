@@ -47,11 +47,11 @@ export function useTeamAdminsToolbarActions(view: IPlatformView<PlatformUser>) {
         variant: ButtonVariant.primary,
         isPinned: true,
         icon: PlusCircleIcon,
-        label: t('Associate administrator(s)'),
+        label: t('Add administrator(s)'),
         isDisabled: canAssociateAdmin
           ? undefined
           : t(
-              'You do not have permission to associate administrators with this team. Please contact your system administrator if there is an issue with your access.'
+              'You do not have permission to add administrators to this team. Please contact your system administrator if there is an issue with your access.'
             ),
         onClick: associateAdmins,
       },
