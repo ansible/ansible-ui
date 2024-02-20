@@ -1,6 +1,7 @@
 import { PageSection, Skeleton, Tab, TabProps, Tabs } from '@patternfly/react-core';
 import { Children, ReactNode, isValidElement, useCallback, useState } from 'react';
 import styled from 'styled-components';
+import './PageTabs.css';
 
 export function PageTabs(props: {
   children: ReactNode;
