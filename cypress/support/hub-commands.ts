@@ -46,12 +46,6 @@ Cypress.Commands.add('galaxykit', (operation: string, ...args: string[]) => {
   });
 });
 
-Cypress.Commands.add('hubListFilter', (resourceName: string) => {
-  cy.get('[data-cy="text-input"]').within(() => {
-    cy.get('input').clear().type(resourceName);
-  });
-});
-
 Cypress.Commands.add(
   'createApprovedCollection',
   (namespaceName: string, collectionName: string, tags?: string[]) => {
@@ -289,15 +283,15 @@ Cypress.Commands.add('deleteRemote', (remoteName: string) => {
   cy.galaxykit(`remote delete ${remoteName}`);
 });
 
-Cypress.Commands.add(
-  'createRemoteRegistry',
-  (remoteRegistryName: string, url: string = 'https://console.redhat.com/api/automation-hub/') => {
-    cy.galaxykit(`registry create ${remoteRegistryName} ${url}`);
-  }
-);
+Cypress.Commands.add('createRemoteRegistry', (remoteRegistryName: string, url?: string) => {
+  cy.requestPost(hubAPI`/_ui/v1/execution-environments/registries/`, {
+    name: remoteRegistryName,
+    url: url ? url : 'https://console.redhat.com/api/automation-hub/',
+  });
+});
 
-Cypress.Commands.add('deleteRemoteRegistry', (remoteRegistryName: string) => {
-  cy.galaxykit(`registry delete ${remoteRegistryName}`);
+Cypress.Commands.add('deleteRemoteRegistry', (remoteRegistryId: string) => {
+  cy.requestDelete(hubAPI`/_ui/v1/execution-environments/registries/${remoteRegistryId}/`);
 });
 
 // Skipping until deeper debug

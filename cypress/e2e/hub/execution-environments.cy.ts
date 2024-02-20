@@ -1,21 +1,18 @@
 import { hubAPI } from '../../support/formatApiPathForHub';
 import { ExecutionEnvironments } from './constants';
 import { randomString } from '../../../framework/utils/random-string';
+import { RemoteRegistry as IRemoteRegistry } from '../../../frontend/hub/administration/remote-registries/RemoteRegistry';
 
 describe('Execution Environments', () => {
-  let remoteRegistryName = '';
+  const testSignature: string = randomString(5, undefined, { isLowercase: true });
+  function generateRemoteRegistryName(): string {
+    return `test-${testSignature}-remote-registry-${randomString(5, undefined, {
+      isLowercase: true,
+    })}`;
+  }
 
   before(() => {
     cy.hubLogin();
-  });
-
-  beforeEach(() => {
-    remoteRegistryName = `remote_registry_${randomString(3, undefined, { isLowercase: true })}`;
-    cy.createRemoteRegistry(remoteRegistryName);
-  });
-
-  afterEach(() => {
-    cy.deleteRemoteRegistry(remoteRegistryName);
   });
 
   it('can render the execution environments page', () => {
@@ -37,40 +34,49 @@ describe('Execution Environments', () => {
       'https://access.redhat.com/documentation/en-us/red_hat_ansible_automation_platform/'
     );
   it('can add and delete a new execution environment', () => {
-    const eeName = `execution_environment_${randomString(3, undefined, { isLowercase: true })}`;
-    const upstreamName = `upstream_name_${randomString(3, undefined, { isLowercase: true })}`;
+    const remoteRegistryName = generateRemoteRegistryName();
+    cy.createRemoteRegistry(remoteRegistryName).then((remoteRegistry: IRemoteRegistry) => {
+      const eeName = `execution_environment_${randomString(3, undefined, { isLowercase: true })}`;
+      const upstreamName = `upstream_name_${randomString(3, undefined, { isLowercase: true })}`;
 
-    cy.navigateTo('hub', ExecutionEnvironments.url);
-    cy.verifyPageTitle(ExecutionEnvironments.title);
-    cy.getByDataCy('add-execution-environment').click();
-    cy.getByDataCy('name').type(eeName);
-    cy.getByDataCy('upstream-name').type(upstreamName);
-    cy.contains('[data-ouia-component-id="menu-select"]', 'Select registry')
-      .click()
-      .then(() => {
-        cy.contains('button[type="button"]', `${remoteRegistryName}`).click();
-      });
-    cy.getByDataCy('Submit').click();
-    cy.url().should('contain', '/execution-environments/');
-    cy.hubListFilter(eeName);
-    cy.get('tbody').find('tr').should('have.length', 1);
-    cy.get('tbody').within(() => {
-      cy.getByDataCy('container-repository-name-column-cell').should('contain', eeName);
-      cy.get('[data-cy="actions-dropdown"]')
+      cy.navigateTo('hub', ExecutionEnvironments.url);
+      cy.verifyPageTitle(ExecutionEnvironments.title);
+      cy.getByDataCy('add-execution-environment').click();
+      cy.getByDataCy('name').type(eeName);
+      cy.getByDataCy('upstream-name').type(upstreamName);
+      cy.contains('[data-ouia-component-id="menu-select"]', 'Select registry')
         .click()
         .then(() => {
-          cy.get(`[data-cy="delete-environment"]`).click();
+          cy.filterTableBySingleText(remoteRegistryName);
+          cy.getByDataCy('checkbox-column-cell').find('input').click();
+          cy.clickButton('Confirm');
         });
+      cy.getByDataCy('Submit').click();
+      cy.url().should('contain', '/execution-environments/');
+      cy.filterTableBySingleText(eeName);
+      cy.get('tbody').find('tr').should('have.length', 1);
+      cy.get('tbody').within(() => {
+        cy.getByDataCy('container-repository-name-column-cell').should('contain', eeName);
+        cy.get('[data-cy="actions-dropdown"]')
+          .click()
+          .then(() => {
+            cy.get(`[data-cy="delete-environment"]`).click();
+          });
+      });
+      cy.get('[data-ouia-component-id="Permanently delete execution environments"]').within(() => {
+        cy.get('[data-ouia-component-id="confirm"]').click();
+        cy.get('[data-ouia-component-id="submit"]').click();
+        cy.clickButton('Close');
+      });
+      cy.contains('h2', 'No results found').should('be.visible');
+      cy.get('[class*="empty-state__content"]')
+        .should('exist')
+        .should(
+          'contain',
+          'No results match this filter criteria. Clear all filters and try again.'
+        );
+      cy.deleteRemoteRegistry(remoteRegistry.id);
     });
-    cy.get('[data-ouia-component-id="Permanently delete execution environments"]').within(() => {
-      cy.get('[data-ouia-component-id="confirm"]').click();
-      cy.get('[data-ouia-component-id="submit"]').click();
-      cy.clickButton('Close');
-    });
-    cy.contains('h2', 'No results found').should('be.visible');
-    cy.get('[class*="empty-state__content"]')
-      .should('exist')
-      .should('contain', 'No results match this filter criteria. Clear all filters and try again.');
   });
 });
 
