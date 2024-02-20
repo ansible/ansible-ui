@@ -27,7 +27,7 @@ export function useManagementJobPrompt(managementJob: SystemJobTemplate) {
   const handleLaunch = (managementJob: SystemJobTemplate, defaultDays: number = 30) => {
     console.log('Launching management job:', managementJob.job_type, defaultDays);
   };
-
+  // }
   const managementJobPrompt = () => {
     const dialog = (
       <Modal
@@ -60,46 +60,3 @@ export function useManagementJobPrompt(managementJob: SystemJobTemplate) {
   };
   return managementJobPrompt;
 }
-
-//   return async (managementJob: SystemJobTemplate) => {
-//     const launchManagementJobEndpoint = getLaunchMgtJobEndpoint(managementJob);
-
-//     if (!launchManagementJobEndpoint) {
-//       return Promise.reject(new Error('Unable to retrieve management job launch configuration'));
-//     }
-
-//     try {
-//       let managementJobLaunch;
-//       if (
-//         managementJob.job_type === 'cleanup_tokens' ||
-//         managementJob.job_type === 'cleanup_sessions'
-//       ) {
-//         managementJobLaunch = await postRequest(launchManagementJobEndpoint, {});
-//       }
-//       navigate(getJobOutputUrl(managementJobLaunch));
-//     } catch (error) {
-//       alertToaster.addAlert({
-//         variant: 'danger',
-//         title: t('Failed to launch management job'),
-//         children: error instanceof Error && error.message,
-//         timeout: 5000,
-//       });
-//     }
-//   };
-// }
-// export function getLaunchMgtJobEndpoint(managementJob: SystemJobTemplate) {
-//   //   if (
-//   //     managementJob.name === 'Cleanup Activity Stream' ||
-//   //     managementJob.name === 'Cleanup Job Details'
-//   //   ) {
-//   //     return awxAPI`/system_job_templates/${managementJob.id.toString()}/launch/`;
-//   //   } else
-//   if (
-//     managementJob.name === 'Cleanup Expired OAuth 2 Tokens' ||
-//     managementJob.name === 'Cleanup Expired Sessions'
-//   ) {
-//     return awxAPI`/system_job_templates/${managementJob.id.toString()}/launch/`;
-//   } else {
-//     return undefined;
-//   }
-// }
