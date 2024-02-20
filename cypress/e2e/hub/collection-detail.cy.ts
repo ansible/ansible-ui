@@ -14,7 +14,9 @@ describe('Collections- List View', () => {
   });
 
   after(() => {
-    // TODO delete
+    cy.deleteCollection(collection, namespace, 'published');
+    cy.galaxykit('task wait all');
+    cy.deleteNamespace(namespace);
   });
 
   it('Can see collection detail', () => {
