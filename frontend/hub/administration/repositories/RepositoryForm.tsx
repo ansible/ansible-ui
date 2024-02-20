@@ -116,18 +116,17 @@ export function RepositoryForm() {
           } else {
             distroPromise = getDistribution(pulp_href || '');
           }
-        }
 
-        return distroPromise?.catch(() => {
-          throw new Error(t('Distribution not created.'));
-        });
-      })
-      .then((result) => {
-        return waitForTask(
-          parsePulpIDFromURL((result as { response: { task: string } }).response.task)
-        ).catch(() => {
-          throw new Error(t('Distribution not created.'));
-        });
+          return distroPromise
+            .then((result) => {
+              return waitForTask(
+                parsePulpIDFromURL((result as { response: { task: string } }).response.task)
+              );
+            })
+            .catch(() => {
+              throw new Error(t('Distribution not created.'));
+            });
+        }
       })
       .then(() => pageNavigate(HubRoute.RepositoryPage, { params: { id: data.name as string } }))
       .catch((error) => {
