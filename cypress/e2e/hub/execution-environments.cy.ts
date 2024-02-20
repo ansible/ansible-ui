@@ -10,7 +10,6 @@ describe('Execution Environments', () => {
 
   beforeEach(() => {
     remoteRegistryName = `remote_registry_${randomString(3, undefined, { isLowercase: true })}`;
-
     cy.createRemoteRegistry(remoteRegistryName);
   });
 
@@ -35,6 +34,7 @@ describe('Execution Environments', () => {
   it('can add and delete a new execution environment', () => {
     const eeName = `execution_environment_${randomString(3, undefined, { isLowercase: true })}`;
     const upstreamName = `upstream_name_${randomString(3, undefined, { isLowercase: true })}`;
+
     cy.navigateTo('hub', ExecutionEnvironments.url);
     cy.verifyPageTitle(ExecutionEnvironments.title);
     cy.getByDataCy('add-execution-environment').click();
@@ -57,17 +57,15 @@ describe('Execution Environments', () => {
           cy.get(`[data-cy="delete-environment"]`).click();
         });
     });
-    cy.intercept('DELETE', hubAPI`/v3/plugin/execution-environments/repositories/${eeName}/`).as(
-      'deleted'
-    );
     cy.get('[data-ouia-component-id="Permanently delete execution environments"]').within(() => {
       cy.get('[data-ouia-component-id="confirm"]').click();
       cy.get('[data-ouia-component-id="submit"]').click();
       cy.clickButton('Close');
     });
-    cy.wait('@deleted').then((deleted) => {
-      expect(deleted.response?.statusCode).to.eql(202);
-    });
+    cy.contains('h2', 'No results found').should('be.visible');
+    cy.get('[class*="empty-state__content"]')
+      .should('exist')
+      .should('contain', 'No results match this filter criteria. Clear all filters and try again.');
   });
 });
 
