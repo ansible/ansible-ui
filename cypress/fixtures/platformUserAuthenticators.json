@@ -1,0 +1,44 @@
+{
+  "count": 1,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "name": "Local Database Authenticator",
+      "id": 1,
+      "url": "/api/gateway/v1/authenticators/1/",
+      "created_on": "2024-02-19T08:27:48.520696Z",
+      "created_by": 2,
+      "modified_on": "2024-02-19T08:27:48.524809Z",
+      "modified_by": 1,
+      "related": {
+        "authenticator_maps": "/api/gateway/v1/authenticators/1/authenticator_maps/",
+        "created_by": "/api/gateway/v1/users/2/",
+        "modified_by": "/api/gateway/v1/users/1/",
+        "users": "/api/gateway/v1/authenticators/1/users/"
+      },
+      "summary_fields": {
+        "created_by": {
+          "id": 2,
+          "username": "admin",
+          "first_name": "",
+          "last_name": ""
+        },
+        "modified_by": {
+          "id": 1,
+          "username": "_system",
+          "first_name": "",
+          "last_name": ""
+        }
+      },
+      "enabled": true,
+      "create_objects": true,
+      "users_unique": false,
+      "remove_users": false,
+      "configuration": {},
+      "type": "ansible_base.authentication.authenticator_plugins.local",
+      "order": 1,
+      "slug": "ansible_base-authentication-authenticator_plugins-local__local-database-authenticator"
+    }
+  ]
+}
