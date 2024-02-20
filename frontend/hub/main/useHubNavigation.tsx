@@ -49,6 +49,7 @@ import { ExecutionEnvironments } from '../execution-environments/ExecutionEnviro
 import { ExecutionEnvironmentDetails } from '../execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentDetails';
 import { ExecutionEnvironmentActivity } from '../execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentActivity';
 import { ExecutionEnvironmentImages } from '../execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentImages';
+import { ExecutionEnvironmentImagePage } from '../execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentImagePage';
 import { ExecutionEnvironmentImageDetails } from '../execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentImageDetails';
 import { ExecutionEnvironmentAccess } from '../execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentAccess';
 import { ExecutionEnvironmentPage } from '../execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentPage';
@@ -224,13 +225,6 @@ export function useHubNavigation() {
               id: HubRoute.ExecutionEnvironmentImages,
               path: 'images',
               element: <ExecutionEnvironmentImages />,
-              children: [
-                {
-                  id: HubRoute.ExecutionEnvironmentImageDetails,
-                  path: ':tag/',
-                  element: <ExecutionEnvironmentImageDetails />,
-                },
-              ],
             },
             {
               id: HubRoute.ExecutionEnvironmentAccess,
@@ -240,6 +234,18 @@ export function useHubNavigation() {
             {
               path: '',
               element: <Navigate to="details" />,
+            },
+          ],
+        },
+        {
+          id: HubRoute.ExecutionEnvironmentImagePage,
+          path: ':id/images/:tag/',
+          element: <ExecutionEnvironmentImagePage />,
+          children: [
+            {
+              id: HubRoute.ExecutionEnvironmentImageDetails,
+              path: '',
+              element: <ExecutionEnvironmentImageDetails />,
             },
           ],
         },
