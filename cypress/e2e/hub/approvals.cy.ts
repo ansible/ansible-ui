@@ -40,27 +40,13 @@ describe('Approvals', () => {
   });
 
   it('user can upload a new collection and approve it', () => {
-    approve('Needs review');
+    approve();
   });
 
-  function approve(status: string) {
+  function approve() {
     cy.navigateTo('hub', Approvals.url);
     cy.verifyPageTitle(Approvals.title);
     clickTableRowPinnedAction(thisCollectionName, 'sign-and-approve');
-
-    //Verify Approve and sign collections modal
-    cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
-      cy.get('header').contains('Approve and sign collections');
-      cy.get('button')
-        .contains('Approve and sign collections')
-        .should('have.attr', 'aria-disabled', 'true');
-      cy.get('[data-cy="namespace-column-cell"]').should('have.text', namespace);
-      cy.get('[data-cy="collection-column-cell"]').should('have.text', thisCollectionName);
-      cy.get('[data-cy="version-column-cell"]').should('have.text', '1.0.0');
-      cy.get('[data-cy="status-column-cell"]').should('have.text', status);
-      cy.get('input[id="confirm"]').click();
-      cy.get('button').contains('Approve and sign collections').click();
-    });
 
     // handle modal
     const modal = `[aria-label="Select repositories"] `;
@@ -128,13 +114,13 @@ describe('Approvals', () => {
   }
 
   it('user can approve a collection and then reject it', () => {
-    approve('Needs review');
+    approve();
     reject('Signed and Approved');
   });
 
   it('user can reject a collection and then approve it', () => {
     reject('Needs review');
-    approve('Rejected');
+    approve();
   });
 
   it('user can view import logs', () => {
