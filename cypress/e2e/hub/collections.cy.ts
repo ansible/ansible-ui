@@ -100,17 +100,24 @@ describe('Collections List- Line Item Kebab Menu', () => {
     thisCollectionName = 'hub_e2e_' + randomString(5).toLowerCase();
     namespace = `upload_namespace_${randomString(4, undefined, { isLowercase: true })}`;
     version = '1.2.3';
+    repository = 'hub_e2e_appr_repository' + randomString(5);
+
     cy.hubLogin();
+
+    cy.galaxykit(`repository create ${repository}`);
+    cy.galaxykit('task wait all');
+
+    cy.galaxykit(`distribution create ${repository}`);
+    cy.galaxykit('task wait all');
+
     cy.createNamespace(namespace);
+    cy.uploadCollection(thisCollectionName, namespace);
     cy.galaxykit('task wait all');
-    cy.uploadCollection(collection, namespace);
-    cy.galaxykit('task wait all');
-    cy.navigateTo('hub', Collections.url);
+
+    cy.galaxykit(`collection move ${namespace} ${thisCollectionName} 1.0.0 staging ${repository}`);
   });
 
-  afterEach(() => {
-    cy.deleteNamespace(namespace);
-    cy.galaxykit('task wait all');
+  after(() => {
     if (Cypress.currentTest.title === 'user can deprecate a collection') {
       cy.undeprecateCollection(thisCollectionName, namespace, repository);
       cy.galaxykit('task wait all');
@@ -120,6 +127,8 @@ describe('Collections List- Line Item Kebab Menu', () => {
       'can upload and then delete a new version to an existing collection'
     ) {
       cy.deleteCollectionsInNamespace(namespace);
+      cy.galaxykit('task wait all');
+      cy.deleteRepository(repository);
       cy.galaxykit('task wait all');
     }
   });
@@ -144,25 +153,13 @@ describe('Collections List- Line Item Kebab Menu', () => {
       cy.get('input[id="file-upload-file-filename"]').selectFile(filePath, {
         action: 'drag-drop',
       });
+      cy.verifyPageTitle('Upload Collection');
+      cy.get('#radio-non-pipeline').click();
+      cy.getByDataCy('text-input').type(repository);
+      cy.galaxykit('task wait all');
+      cy.getByDataCy('checkbox-column-cell').click();
       cy.get('[data-cy="Submit"]').click();
-      cy.url().should('include', 'approvals');
-      cy.intercept(
-        'GET',
-        hubAPI`/v3/plugin/ansible/search/collection-versions/?repository_label=pipeline=staging&name=${thisCollectionName}&order_by=namespace&offset=0&limit=10`
-      ).as('searchB');
-      cy.get('[data-cy="text-input"]').find('input').type(thisCollectionName);
-      cy.wait('@searchB');
-      cy.get('[data-ouia-component-id="sign-and-approve"]').click(); //approve the new version of the collection
-      cy.get('[data-ouia-component-id="Approve and sign collections"]').within(() => {
-        cy.get('[data-ouia-component-id="confirm"]').click();
-        cy.intercept(
-          'GET',
-          hubAPI`/pulp/api/v3/repositories/ansible/ansible/?pulp_label_select=pipeline=approved`
-        ).as('moved');
-        cy.get('[data-ouia-component-id="submit"]').click();
-        cy.wait('@moved'); //wait for the approval request to go through so the 'Close' button can be clicked on
-        cy.clickButton(/^Close$/);
-      });
+      cy.galaxykit('task wait all');
       cy.navigateTo('hub', Collections.url);
       cy.verifyPageTitle(Collections.title);
       cy.get('[data-cy="text-input"]').find('input').type(thisCollectionName); //navigate to the collections list and locate the collection
@@ -175,22 +172,12 @@ describe('Collections List- Line Item Kebab Menu', () => {
         .then(() => {
           cy.get('#delete-version-from-system').click();
         });
-      cy.intercept(
-        'DELETE',
-        hubAPI`/v3/plugin/ansible/content/published/collections/index/${namespace}/${thisCollectionName}/versions/1.2.3`
-      ).as('delete');
-      cy.intercept('GET', hubAPI`/v3/plugin/ansible/search/collection-versions/**`).as(
-        'removeCollection'
-      );
       cy.get('[data-ouia-component-id="Permanently delete collections versions"]').within(() => {
         cy.get('[data-ouia-component-id="confirm"]').click();
         cy.get('[data-ouia-component-id="submit"]').click();
-        cy.wait('@delete');
         cy.clickButton(/^Close$/);
       });
-      cy.wait('@removeCollection');
       cy.url().should('contain', '/collections/');
-      cy.reload();
     });
   });
 
@@ -220,7 +207,7 @@ describe('Collections List- Line Item Kebab Menu', () => {
 
   it('can deprecate a collection', () => {
     cy.visit(`/collections?page=1&perPage=50&sort=name&keywords=${thisCollectionName}`);
-    cy.get(`a[href*="/collections/published/${namespace}/${thisCollectionName}"]`).should(
+    cy.get(`a[href*="/collections/${repository}/${namespace}/${thisCollectionName}"]`).should(
       'be.visible'
     );
     cy.get('[data-cy="data-list-action"]').within(() => {
@@ -234,7 +221,7 @@ describe('Collections List- Line Item Kebab Menu', () => {
       cy.get('input').click();
       cy.intercept(
         'PATCH',
-        hubAPI`/v3/plugin/ansible/content/published/collections/index/${namespace}/${collection}/`
+        hubAPI`/v3/plugin/ansible/content/${repository}/collections/index/${namespace}/${thisCollectionName}/`
       ).as('deprecated');
       cy.clickButton('Deprecate collections');
       cy.wait('@deprecated').then((deprecated) => {
@@ -246,9 +233,6 @@ describe('Collections List- Line Item Kebab Menu', () => {
     cy.visit(`/collections?page=1&perPage=50&sort=name&keywords=${collection}`);
     cy.get('[data-cy="table-view"]').click();
     cy.contains('h2', 'No results found').should('be.visible');
-    repository = 'published';
-
-    cy.undeprecateCollection(collection, namespace, repository);
   });
 
   it.skip('can copy a version to repository', () => {
