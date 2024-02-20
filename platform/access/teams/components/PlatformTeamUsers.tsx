@@ -56,18 +56,18 @@ export function PlatformTeamUsers() {
       errorStateTitle={t('Error loading users')}
       emptyStateTitle={
         canAssociateUser
-          ? t('There are currently no users associated with this team.')
-          : t('You do not have permission to associate a user with this team.')
+          ? t('There are currently no users added to this team.')
+          : t('You do not have permission to add a user to this team.')
       }
       emptyStateDescription={
         canAssociateUser
-          ? t('Associate users by clicking the button below.')
+          ? t('Add users by clicking the button below.')
           : t(
               'Please contact your organization administrator if there is an issue with your access.'
             )
       }
       emptyStateIcon={canAssociateUser ? undefined : CubesIcon}
-      emptyStateButtonText={canAssociateUser ? t('Associate users') : undefined}
+      emptyStateButtonText={canAssociateUser ? t('Add users') : undefined}
       emptyStateActions={canAssociateUser ? toolbarActions.slice(0, 1) : undefined}
       {...view}
     />

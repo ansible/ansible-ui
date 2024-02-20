@@ -32,9 +32,7 @@ export function useTeamAdminsToolbarActions(view: IPlatformView<PlatformUser>) {
     () => Boolean(associateOptions?.actions && associateOptions.actions['POST']),
     [associateOptions?.actions]
   );
-  console.log('🚀 ~ useTeamAdminsToolbarActions ~ team:', team);
-  console.log('🚀 ~ useTeamAdminsToolbarActions ~ canAssociateAdmin:', canAssociateAdmin);
-  console.log('🚀 ~ useTeamAdminsToolbarActions ~ associateOptions:', associateOptions);
+
   const canRemoveAdmin = Boolean(
     disassociateOptions?.actions && disassociateOptions.actions['POST']
   );
