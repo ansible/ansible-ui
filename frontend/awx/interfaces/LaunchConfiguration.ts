@@ -44,7 +44,7 @@ export interface LaunchConfiguration {
     extra_vars: string;
     diff_mode: false;
     job_type: 'run' | 'check';
-    verbosity: '0' | '1' | '2' | '3' | '4' | '5';
+    verbosity: 0 | 1 | 2 | 3 | 4 | 5;
     credentials: [
       {
         id: number;
@@ -56,7 +56,7 @@ export interface LaunchConfiguration {
         };
       },
     ];
-    execution_environment: { id: number; name: string } | undefined | null;
+    execution_environment: { id: number; name: string } | null;
     forks: number;
     job_slice_count: number;
     timeout: number;

@@ -1,14 +1,19 @@
 import { action, useVisualizationController } from '@patternfly/react-topology';
+import { parseVariableField } from '../../../../../../framework/utils/codeEditorUtils';
+import { awxAPI } from '../../../../common/api/awx-utils';
+import { getAddedAndRemoved } from '../../../../common/util/getAddedAndRemoved';
 import { useDeleteRequest } from '../../../../../common/crud/useDeleteRequest';
 import { useAbortController } from '../../../../../common/crud/useAbortController';
-import { awxAPI } from '../../../../common/api/awx-utils';
+import { requestGet } from '../../../../../common/crud/Data';
 import { usePostRequest } from '../../../../../common/crud/usePostRequest';
 import { usePatchRequest } from '../../../../../common/crud/usePatchRequest';
+import { AwxItemsResponse } from '../../../../common/AwxItemsResponse';
 import { ControllerState, GraphNode, EdgeStatus, GraphNodeData } from '../types';
 import { UnifiedJobType, WorkflowNode } from '../../../../interfaces/WorkflowNode';
-import { START_NODE_ID } from '../constants';
-import { parseVariableField } from '../../../../../../framework/utils/codeEditorUtils';
 import { InstanceGroup } from '../../../../interfaces/InstanceGroup';
+import { Organization } from '../../../../interfaces/Organization';
+import { Label } from '../../../../interfaces/Label';
+import { START_NODE_ID } from '../constants';
 
 interface WorkflowApprovalNode {
   name: string;
@@ -45,10 +50,10 @@ export function useSaveVisualizer() {
   const postWorkflowNodeApproval = usePostRequest<WorkflowApprovalNode, WorkflowApprovalNode>();
   const patchWorkflowNodeApproval = usePatchRequest<WorkflowApprovalNode, WorkflowApprovalNode>();
   const postAssociateNode = usePostRequest<{ id: number }>();
-  const postDisassociateNode = usePostRequest<{ id: number; disassociate: boolean }>();
-  const postAssociateLabel = usePostRequest<{ name: string; organization: number }>();
-  const postAssociateInstanceGroup = usePostRequest<{ id: number }, InstanceGroup>();
-  const postAssociateCredential = usePostRequest<{ id: number }, Credential>();
+  const postDisassociate = usePostRequest<{ id: number; disassociate: boolean }>();
+  const processCredentials = useProcessCredentials();
+  const processInstanceGroups = useProcessInstanceGroups();
+  const processLabels = useProcessLabels();
 
   const graphNodes = controller
     .getGraph()
@@ -140,13 +145,37 @@ export function useSaveVisualizer() {
       const createNodePayload: Partial<CreateWorkflowNodePayload> = {};
       const setValue = <K extends CreatePayloadProperty>(
         key: K,
-        value: CreateWorkflowNodePayload[K]
+        value: CreateWorkflowNodePayload[K],
+        isPrompt: boolean = false
       ) => {
-        if (typeof value !== 'undefined' && value !== null && value !== '') {
-          createNodePayload[key] = value;
-        }
-      };
+        if (isPrompt) {
+          const prompts = launch_data?.original?.launch_config;
+          const promptMapper = {
+            diff_mode: prompts?.ask_diff_mode_on_launch,
+            execution_environment: prompts?.ask_execution_environment_on_launch,
+            forks: prompts?.ask_forks_on_launch,
+            inventory: prompts?.ask_inventory_on_launch,
+            job_slice_count: prompts?.ask_job_slice_count_on_launch,
+            job_type: prompts?.ask_job_type_on_launch,
+            limit: prompts?.ask_limit_on_launch,
+            scm_branch: prompts?.ask_scm_branch_on_launch,
+            skip_tags: prompts?.ask_skip_tags_on_launch,
+            job_tags: prompts?.ask_tags_on_launch,
+            timeout: prompts?.ask_timeout_on_launch,
+            verbosity: prompts?.ask_verbosity_on_launch,
+          } as Record<K, boolean | undefined>;
 
+          if (!promptMapper[key]) {
+            return;
+          }
+        }
+
+        if (typeof value === 'undefined' || value === null || value === '') {
+          return;
+        }
+
+        createNodePayload[key] = value;
+      };
       const nodeData = node.getData() as GraphNodeData;
       const { launch_data, resource } = nodeData;
       const { unified_job_template } = resource.summary_fields;
@@ -157,23 +186,23 @@ export function useSaveVisualizer() {
       setValue('unified_job_template', unified_job_template.id);
 
       // Prompt values
-      setValue('diff_mode', launch_data?.diff_mode);
-      setValue('execution_environment', launch_data?.execution_environment?.id);
-      setValue('forks', launch_data?.forks);
-      setValue('inventory', launch_data?.inventory?.id);
-      setValue('job_slice_count', launch_data?.job_slice_count);
-      setValue('job_tags', launch_data?.job_tags?.map((tag) => tag.name).join(','));
-      setValue('job_type', launch_data?.job_type);
-      setValue('limit', launch_data?.limit);
-      setValue('scm_branch', launch_data?.scm_branch);
-      setValue('skip_tags', launch_data?.job_tags?.map((tag) => tag.name).join(','));
-      setValue('timeout', launch_data?.timeout);
-      setValue('verbosity', launch_data?.verbosity);
+      setValue('diff_mode', launch_data?.diff_mode, true);
+      setValue('execution_environment', launch_data?.execution_environment?.id, true);
+      setValue('forks', launch_data?.forks, true);
+      setValue('inventory', launch_data?.inventory?.id, true);
+      setValue('job_slice_count', launch_data?.job_slice_count, true);
+      setValue('job_tags', launch_data?.job_tags?.map((tag) => tag.name).join(','), true);
+      setValue('job_type', launch_data?.job_type, true);
+      setValue('limit', launch_data?.limit, true);
+      setValue('scm_branch', launch_data?.scm_branch, true);
+      setValue('skip_tags', launch_data?.job_tags?.map((tag) => tag.name).join(','), true);
+      setValue('timeout', launch_data?.timeout, true);
+      setValue('verbosity', launch_data?.verbosity, true);
 
       if (unified_job_type === UnifiedJobType.system_job && resource.extra_data?.days) {
         setValue('extra_data', { days: resource.extra_data.days });
       } else if (launch_data?.extra_vars) {
-        setValue('extra_data', parseVariableField(launch_data?.extra_vars));
+        setValue('extra_data', parseVariableField(launch_data?.extra_vars), true);
       }
 
       const newNode = await postWorkflowNode(
@@ -182,69 +211,86 @@ export function useSaveVisualizer() {
       );
 
       if (!newNode.id) return;
+      const newNodeId = newNode.id.toString();
+      await processLabels(newNodeId, launch_data);
+      await processInstanceGroups(newNodeId, launch_data);
+      await processCredentials(newNodeId, launch_data);
 
-      if (launch_data?.labels) {
-        await Promise.all(
-          launch_data?.labels.map(async (label) => {
-            await postAssociateLabel(
-              awxAPI`/workflow_job_template_nodes/${newNode.id.toString()}/labels/`,
-              {
-                name: label.name,
-                organization: launch_data.organization,
-              }
-            );
-          })
-        );
-      }
-      if (launch_data?.instance_groups) {
-        await Promise.all(
-          launch_data?.instance_groups.map(async (group) => {
-            await postAssociateInstanceGroup(
-              awxAPI`/workflow_job_template_nodes/${newNode.id.toString()}/instance_groups/`,
-              {
-                id: group.id,
-              }
-            );
-          })
-        );
-      }
-      if (launch_data?.credentials) {
-        await Promise.all(
-          launch_data?.credentials.map(async (credential) => {
-            await postAssociateCredential(
-              awxAPI`/workflow_job_template_nodes/${newNode.id.toString()}/credentials/`,
-              {
-                id: credential.id,
-              }
-            );
-          })
-        );
-      }
-
-      if (newNode.id) {
-        setCreatedNodeId(node, newNode.id.toString());
-      }
+      setCreatedNodeId(node, newNodeId.toString());
     });
     await Promise.all(promises);
   }
 
   async function updateExistingNodes(editedNodes: GraphNode[]) {
     const promises = editedNodes.map(async (node) => {
+      const updatedNodePayload: Partial<CreateWorkflowNodePayload> = {};
       const nodeData = node.getData() as GraphNodeData;
-      const nodeIdentifier = toKeyedObject('identifier', nodeData.resource.identifier);
-      const extra_data =
-        nodeData.resource.summary_fields.unified_job_template.unified_job_type ===
-          UnifiedJobType.system_job && nodeData.resource.extra_data?.days
-          ? { extra_data: { days: nodeData.resource.extra_data.days } }
-          : {};
+      const nodeId = node.getId();
+      const { launch_data, resource } = nodeData;
+      const { unified_job_template } = resource.summary_fields;
+      const { unified_job_type } = unified_job_template;
+      const setValue = <K extends CreatePayloadProperty>(
+        key: K,
+        value: CreateWorkflowNodePayload[K],
+        isPrompt: boolean = false
+      ) => {
+        if (isPrompt) {
+          const prompts = launch_data?.original?.launch_config;
+          const promptMapper = {
+            diff_mode: prompts?.ask_diff_mode_on_launch,
+            execution_environment: prompts?.ask_execution_environment_on_launch,
+            forks: prompts?.ask_forks_on_launch,
+            inventory: prompts?.ask_inventory_on_launch,
+            job_slice_count: prompts?.ask_job_slice_count_on_launch,
+            job_type: prompts?.ask_job_type_on_launch,
+            limit: prompts?.ask_limit_on_launch,
+            scm_branch: prompts?.ask_scm_branch_on_launch,
+            skip_tags: prompts?.ask_skip_tags_on_launch,
+            job_tags: prompts?.ask_tags_on_launch,
+            timeout: prompts?.ask_timeout_on_launch,
+            verbosity: prompts?.ask_verbosity_on_launch,
+          } as Record<K, boolean | undefined>;
 
-      await patchWorkflowNode(awxAPI`/workflow_job_template_nodes/${node.getId()}/`, {
-        ...nodeData,
-        ...extra_data,
-        ...nodeIdentifier,
-        all_parents_must_converge: nodeData.resource.all_parents_must_converge,
-        unified_job_template: nodeData.resource.summary_fields.unified_job_template.id,
-      });
+          if (!promptMapper[key]) {
+            return;
+          }
+        }
+
+        if (typeof value === 'undefined' || value === null || value === '') {
+          return;
+        }
+
+        updatedNodePayload[key] = value;
+      };
+
+      setValue('all_parents_must_converge', resource.all_parents_must_converge);
+      setValue('identifier', resource.identifier);
+      setValue('unified_job_template', unified_job_template.id);
+
+      // Prompt values
+      setValue('diff_mode', launch_data?.diff_mode, true);
+      setValue('execution_environment', launch_data?.execution_environment?.id, true);
+      setValue('forks', launch_data?.forks, true);
+      setValue('inventory', launch_data?.inventory?.id, true);
+      setValue('job_slice_count', launch_data?.job_slice_count, true);
+      setValue('job_tags', launch_data?.job_tags?.map((tag) => tag).join(','), true);
+      setValue('job_type', launch_data?.job_type, true);
+      setValue('limit', launch_data?.limit, true);
+      setValue('scm_branch', launch_data?.scm_branch, true);
+      setValue('skip_tags', launch_data?.job_tags?.map((tag) => tag).join(','), true);
+      setValue('timeout', launch_data?.timeout, true);
+      setValue('verbosity', launch_data?.verbosity, true);
+
+      if (unified_job_type === UnifiedJobType.system_job && resource.extra_data?.days) {
+        setValue('extra_data', { days: resource.extra_data.days });
+      } else if (launch_data?.extra_vars) {
+        setValue('extra_data', parseVariableField(launch_data?.extra_vars), true);
+      }
+
+      await processLabels(nodeId, launch_data);
+      await processInstanceGroups(nodeId, launch_data);
+      await processCredentials(nodeId, launch_data);
+      await patchWorkflowNode(awxAPI`/workflow_job_template_nodes/${nodeId}/`, updatedNodePayload);
     });
     await Promise.all(promises);
   }
@@ -393,7 +439,7 @@ export function useSaveVisualizer() {
 
     await Promise.all(
       disassociateSuccessNodes.map((node) =>
-        postDisassociateNode(
+        postDisassociate(
           awxAPI`/workflow_job_template_nodes/${node.sourceId}/success_nodes/`,
           {
             id: Number(node.targetId),
@@ -405,7 +451,7 @@ export function useSaveVisualizer() {
     );
     await Promise.all(
       disassociateFailureNodes.map((node) =>
-        postDisassociateNode(
+        postDisassociate(
           awxAPI`/workflow_job_template_nodes/${node.sourceId}/failure_nodes/`,
           {
             id: Number(node.targetId),
@@ -417,7 +463,7 @@ export function useSaveVisualizer() {
     );
     await Promise.all(
       disassociateAlwaysNodes.map((node) =>
-        postDisassociateNode(
+        postDisassociate(
           awxAPI`/workflow_job_template_nodes/${node.sourceId}/always_nodes/`,
           {
             id: Number(node.targetId),
@@ -480,3 +526,171 @@ export function toKeyedObject(
     return {};
   }
 }
+
+async function getDefaultOrganization(): Promise<number> {
+  const itemsResponse = await requestGet<AwxItemsResponse<Organization>>(awxAPI`/organizations/`);
+  return itemsResponse.results[0].id || 1;
+}
+
+const useProcessLabels = () => {
+  const postDisassociate = usePostRequest<{ id: number; disassociate: boolean }>();
+  const postAssociateLabel = usePostRequest<{ name: string; organization: number }>();
+
+  const processLabels = async (nodeId: string, launch_data: GraphNodeData['launch_data']) => {
+    const hasLabelsPrompt =
+      launch_data?.original?.launch_config?.ask_labels_on_launch || launch_data?.labels?.length > 0;
+    const existingLabels = launch_data?.original?.labels;
+
+    if (hasLabelsPrompt) {
+      const defaultOrganization = launch_data.organization ?? (await getDefaultOrganization());
+
+      const { added, removed } = getAddedAndRemoved(
+        launch_data?.original?.labels || [],
+        launch_data?.labels || ([] as Label[])
+      );
+
+      const disassociationPromises = removed.map((label: { id: number }) =>
+        postDisassociate(awxAPI`/workflow_job_template_nodes/${nodeId}/labels/`, {
+          id: label.id,
+          disassociate: true,
+        })
+      );
+
+      const associationPromises = added.map(
+        (label: { name: string; id?: number; organization?: number }) =>
+          postAssociateLabel(awxAPI`/workflow_job_template_nodes/${nodeId}/labels/`, {
+            name: label.name,
+            organization: label?.organization ?? defaultOrganization,
+          })
+      );
+
+      await Promise.all([...disassociationPromises, ...associationPromises]);
+    } else if (existingLabels) {
+      const disassociationPromises = existingLabels.map((label: { id: number }) =>
+        postDisassociate(awxAPI`/workflow_job_template_nodes/${nodeId}/labels/`, {
+          id: label.id,
+          disassociate: true,
+        })
+      );
+      await Promise.all(disassociationPromises);
+    }
+  };
+  return processLabels;
+};
+
+const useProcessInstanceGroups = () => {
+  const postDisassociate = usePostRequest<{ id: number; disassociate: boolean }>();
+  const postAssociateInstanceGroup = usePostRequest<{ id: number }, InstanceGroup>();
+
+  const processInstanceGroups = async (
+    nodeId: string,
+    launch_data: GraphNodeData['launch_data']
+  ) => {
+    const hasInstanceGroupsPrompt =
+      launch_data?.original?.launch_config?.ask_instance_groups_on_launch ||
+      launch_data?.instance_groups?.length > 0;
+    const existingInstanceGroups = launch_data?.original?.instance_groups;
+
+    if (hasInstanceGroupsPrompt) {
+      const { added, removed } = getAddedAndRemoved(
+        launch_data?.original?.instance_groups || [],
+        launch_data?.instance_groups || ([] as InstanceGroup[])
+      );
+
+      const disassociationPromises = removed.map((group: { id: number }) =>
+        postDisassociate(awxAPI`/workflow_job_template_nodes/${nodeId}/instance_groups/`, {
+          id: group.id,
+          disassociate: true,
+        })
+      );
+
+      const associationPromises = added.map((group) =>
+        postAssociateInstanceGroup(
+          awxAPI`/workflow_job_template_nodes/${nodeId}/instance_groups/`,
+          {
+            id: group.id,
+          }
+        )
+      );
+
+      await Promise.all([...disassociationPromises, ...associationPromises]);
+    } else if (existingInstanceGroups) {
+      const disassociationPromises = existingInstanceGroups.map((group: { id: number }) =>
+        postDisassociate(awxAPI`/workflow_job_template_nodes/${nodeId}/instance_groups/`, {
+          id: group.id,
+          disassociate: true,
+        })
+      );
+      await Promise.all(disassociationPromises);
+    }
+  };
+
+  return processInstanceGroups;
+};
+
+const useProcessCredentials = () => {
+  const postDisassociate = usePostRequest<{ id: number; disassociate: boolean }>();
+  const postAssociateCredential = usePostRequest<{ id: number }, Credential>();
+
+  const processCredentials = async (nodeId: string, launch_data: GraphNodeData['launch_data']) => {
+    const promptCredentials = launch_data?.credentials || [];
+    const templateCredentials = launch_data?.original?.launch_config?.defaults?.credentials || [];
+    const nodeCredentials = launch_data?.original?.credentials || [];
+
+    if (launch_data?.credentials) {
+      const { added, removed } = getAddedAndRemovedCredentials(
+        nodeCredentials,
+        promptCredentials,
+        templateCredentials
+      );
+      const disassociationPromises = removed.map((credential: { id: number }) =>
+        postDisassociate(awxAPI`/workflow_job_template_nodes/${nodeId}/credentials/`, {
+          id: credential.id,
+          disassociate: true,
+        })
+      );
+
+      const associationPromises = added.map((credential) =>
+        postAssociateCredential(awxAPI`/workflow_job_template_nodes/${nodeId}/credentials/`, {
+          id: credential.id,
+        })
+      );
+
+      await Promise.all([...disassociationPromises, ...associationPromises]);
+    }
+  };
+
+  return processCredentials;
+};
+
+interface Credential {
+  id: number;
+  name: string;
+  credential_type: number;
+}
+const getAddedAndRemovedCredentials = (
+  nodeCredentials: Credential[],
+  promptCredentials: Credential[],
+  templateCredentials: Credential[]
+) => {
+  // Step 1: Get the aggregate credentials from the template and node
+  const aggregateCredentials = [...nodeCredentials, ...templateCredentials];
+
+  // Missing step - vault ids are not being compared
+
+  // Step 2: Add credentials from prompt that are not in the aggregate
+  const added = promptCredentials.filter(
+    (promptCredential) =>
+      !aggregateCredentials.find(
+        (aggregateCredential) => aggregateCredential.id === promptCredential.id
+      )
+  );
+
+  // Step 3: Remove credentials from the aggregate that are not in the prompt
+  const removed = nodeCredentials.filter(
+    (nodeCredential) =>
+      !promptCredentials.find((promptCredential) => promptCredential.id === nodeCredential.id)
+  );
+
+  return { added, removed };
+};
