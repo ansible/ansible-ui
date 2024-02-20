@@ -68,6 +68,9 @@ export function AuthenticatorReviewStep(props: {
 
   return (
     <>
+      <TextContent style={{ marginBottom: 25 }}>
+        <Text component={TextVariants.h2}>{t('Review')}</Text>
+      </TextContent>
       <PageDetails numberOfColumns="multiple">
         <PageDetail label={t('Name')}>{name}</PageDetail>
         <PageDetail label={t('Type')}>{readableType}</PageDetail>

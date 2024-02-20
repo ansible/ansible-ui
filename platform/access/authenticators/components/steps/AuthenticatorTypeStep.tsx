@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { TextContent, Text, TextVariants } from '@patternfly/react-core';
 import { PageFormGrid, PageFormSelect } from '../../../../../framework';
 import type { AuthenticatorPlugins } from '../../../../interfaces/AuthenticatorPlugin';
 
@@ -22,13 +23,18 @@ export function AuthenticatorTypeStep(props: { plugins: AuthenticatorPlugins }) 
   });
 
   return (
-    <PageFormGrid isVertical>
-      <PageFormSelect
-        name="type"
-        label={t('Authentication setting')}
-        options={options}
-        isRequired
-      />
-    </PageFormGrid>
+    <>
+      <TextContent style={{ marginBottom: 25 }}>
+        <Text component={TextVariants.h2}>{t('Authentication details')}</Text>
+      </TextContent>
+      <PageFormGrid isVertical>
+        <PageFormSelect
+          name="type"
+          label={t('Authentication setting')}
+          options={options}
+          isRequired
+        />
+      </PageFormGrid>
+    </>
   );
 }

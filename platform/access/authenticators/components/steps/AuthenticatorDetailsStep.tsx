@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { TextContent, Text, TextVariants } from '@patternfly/react-core';
 import {
   PageFormGrid,
   PageFormTextInput,
@@ -63,6 +64,10 @@ export function AuthenticatorDetailsStep(props: {
 
   return (
     <>
+      {' '}
+      <TextContent style={{ marginBottom: 25 }}>
+        <Text component={TextVariants.h2}>{t('Authentication details')}</Text>
+      </TextContent>
       <PageFormGrid isVertical>
         <PageFormTextInput name="name" label={t('Name')} isRequired />
         {textFields.map((field) => (
