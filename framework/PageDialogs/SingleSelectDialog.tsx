@@ -1,7 +1,7 @@
 import { Button, Modal, ModalVariant } from '@patternfly/react-core';
 import { useCallback } from 'react';
 import { PageTable } from '../PageTable/PageTable';
-import { ITableColumn } from '../PageTable/PageTableColumn';
+import { ITableColumn, useVisibleModalColumns } from '../PageTable/PageTableColumn';
 import { ISelected } from '../PageTable/useTableItems';
 import { IToolbarFilter } from '../PageToolbar/PageToolbarFilter';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
@@ -30,6 +30,7 @@ export function SingleSelectDialog<T extends object>(props: SingleSelectDialogPr
   }
 
   const [translations] = useFrameworkTranslations();
+  const modalColumns = useVisibleModalColumns(tableColumns);
   return (
     <Modal
       title={title}
@@ -69,7 +70,7 @@ export function SingleSelectDialog<T extends object>(props: SingleSelectDialogPr
         }}
       >
         <PageTable<T>
-          tableColumns={tableColumns}
+          tableColumns={modalColumns}
           toolbarFilters={toolbarFilters}
           {...view}
           emptyStateTitle={props.emptyStateTitle ?? translations.noItemsFound}
