@@ -51,17 +51,6 @@ export function useCollectionsActions(callback: (collections: CollectionVersionS
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
-        icon: TrashIcon,
-        label: t('Delete selected entire collections from repository'),
-        onClick: deleteCollectionsFromRepository,
-        isDanger: true,
-        isDisabled: context.hasPermission('ansible.delete_collection')
-          ? ''
-          : t`You do not have rights to this operation`,
-      },
-      {
-        type: PageActionType.Button,
-        selection: PageActionSelection.Multiple,
         icon: BanIcon,
         label: t('Deprecate selected collections'),
         onClick: (collections) => {
