@@ -31,7 +31,7 @@ describe('Team users list', () => {
       cy.setTableView('table-view');
       cy.get('tbody').find('tr').should('have.length', 3);
       // Toolbar actions are visible
-      cy.get(`[data-cy="associate-user(s)"]`).should('be.visible');
+      cy.get(`[data-cy="add-user(s)"]`).should('be.visible');
       cy.get('.page-table-toolbar').within(() => {
         cy.get('.toggle-kebab')
           .click()
@@ -40,14 +40,14 @@ describe('Team users list', () => {
           .should('be.visible');
       });
     });
-    it('Associate user(s) button is disabled if the user does not have required permissions', () => {
+    it('Add user(s) button is disabled if the user does not have required permissions', () => {
       cy.mount(<PlatformTeamUsers />, {
         path: '/access/teams/:id/*',
         initialEntries: ['/access/teams/5/users'],
       });
-      cy.get('[data-cy="associate-user(s)"]').should('have.attr', 'aria-disabled', 'true');
+      cy.get('[data-cy="add-user(s)"]').should('have.attr', 'aria-disabled', 'true');
     });
-    it('Associate user(s) button is enabled if the user has the required permissions', () => {
+    it('Add user(s) button is enabled if the user has the required permissions', () => {
       cy.stub(useOptions, 'useOptions').callsFake(() => ({
         data: {
           actions: {
@@ -68,7 +68,7 @@ describe('Team users list', () => {
         path: '/access/teams/:id/*',
         initialEntries: ['/access/teams/5/users'],
       });
-      cy.get('[data-cy="associate-user(s)"]').should('have.attr', 'aria-disabled', 'false');
+      cy.get('[data-cy="add-user(s)"]').should('have.attr', 'aria-disabled', 'false');
     });
   });
   describe('Empty list', () => {
@@ -90,7 +90,7 @@ describe('Team users list', () => {
         mockPlatformTeams.results[0]
       ).as('team');
     });
-    it('Empty state is displayed correctly for user with permission to associate users', () => {
+    it('Empty state is displayed correctly for user with permission to add users', () => {
       cy.stub(useOptions, 'useOptions').callsFake(() => ({
         data: {
           actions: {
@@ -111,10 +111,10 @@ describe('Team users list', () => {
         path: '/access/teams/:id/*',
         initialEntries: ['/access/teams/5/users'],
       });
-      cy.contains(/^There are currently no users associated with this team.$/);
-      cy.contains(/^Associate users by clicking the button below.$/);
+      cy.contains(/^There are currently no users added to this team.$/);
+      cy.contains(/^Add users by clicking the button below.$/);
     });
-    it('Empty state is displayed correctly for user without permission to associate users', () => {
+    it('Empty state is displayed correctly for user without permission to add users', () => {
       cy.stub(useOptions, 'useOptions').callsFake(() => ({
         data: {
           actions: {},
@@ -124,7 +124,7 @@ describe('Team users list', () => {
         path: '/access/teams/:id/*',
         initialEntries: ['/access/teams/5/users'],
       });
-      cy.contains(/^You do not have permission to associate a user with this team./);
+      cy.contains(/^You do not have permission to add a user to this team./);
       cy.contains(
         /^Please contact your organization administrator if there is an issue with your access.$/
       );

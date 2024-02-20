@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ITableColumn, TextCell, useGetPageUrl } from '../../../../framework';
+import { ColumnModalOption, ITableColumn, TextCell, useGetPageUrl } from '../../../../framework';
 import { useCreatedColumn, useModifiedColumn } from '../../../../frontend/common/columns';
 import { PlatformUser } from '../../../interfaces/PlatformUser';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
@@ -53,6 +53,7 @@ export function useUsersColumns(options?: { disableLinks?: boolean }) {
         type: 'text',
         value: (user) => user.email,
         sort: 'email',
+        modal: ColumnModalOption.hidden,
       },
       {
         header: t('First name'),
@@ -72,11 +73,12 @@ export function useUsersColumns(options?: { disableLinks?: boolean }) {
         value: (user) => user.last_login,
         list: 'secondary',
         sort: 'last_login',
+        modal: ColumnModalOption.hidden,
       },
       createdColumn,
       modifiedColumn,
     ],
-    [createdColumn, getPageUrl, modifiedColumn, t]
+    [createdColumn, getPageUrl, modifiedColumn, options?.disableLinks, t]
   );
   return tableColumns;
 }

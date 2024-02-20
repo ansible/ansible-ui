@@ -17,8 +17,8 @@ export function useAssociateTeamUsers(onComplete: () => Promise<void>) {
 
   const associateUsers = useCallback(() => {
     selectUsers(
-      t('Associate users'),
-      t('Select users below to be associated with this team'),
+      t('Add users'),
+      t('Select users below to be added to this team'),
       t('Save'),
       async (users: PlatformUser[]) => {
         if (!team) return;
