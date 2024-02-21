@@ -574,7 +574,7 @@ declare global {
       createAwxInstanceGroup(
         instanceGroup?: Partial<Omit<InstanceGroup, 'id'>>
       ): Chainable<InstanceGroup>;
-      createAwxInstance(instance?: Partial<Omit<Instance, 'id'>>): Chainable<Instance>;
+      createAwxInstance(hostname: string): Chainable<Instance>;
       createAwxLabel(label: Partial<Omit<Label, 'id'>>): Chainable<Label>;
       createGlobalOrganization(): Chainable<void>;
       createGlobalProject(): Chainable<void>;
