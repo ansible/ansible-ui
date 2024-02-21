@@ -52,9 +52,12 @@ describe('Execution Environments', () => {
           cy.contains('[data-ouia-component-id="menu-select"]', 'Select registry')
             .click()
             .then(() => {
+              //This element renders differently depending on how many registries the API returns
               if (count < 11) {
+                //fewer than 11 remote registries
                 cy.contains('button[type="button"]', remoteRegistryName).click();
               } else if (count > 10 && count < 50) {
+                //between 11 and 49 remote registries
                 cy.getByDataCy('dropdown-menu')
                   .find('input')
                   .type(remoteRegistryName)
@@ -62,6 +65,7 @@ describe('Execution Environments', () => {
                     cy.getByDataCy(`${remoteRegistryName}`).click();
                   });
               } else {
+                //50 or more remote registries
                 cy.filterTableBySingleText(remoteRegistryName);
                 cy.getByDataCy('checkbox-column-cell').find('input').click();
                 cy.clickButton('Confirm');
