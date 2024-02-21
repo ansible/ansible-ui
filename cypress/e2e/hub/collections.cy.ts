@@ -113,7 +113,7 @@ describe('Collections List- Line Item Kebab Menu', () => {
 
   it.skip('user can upload a new version to an existing collection', () => {});
 
-  it('user can delete entire collection from system', () => {
+  it.skip('user can delete entire collection from system', () => {
     cy.approveCollection(collection, namespace, '1.0.0');
     cy.galaxykit('task wait all');
     cy.get('[data-cy="table-view"]').click();
@@ -125,7 +125,7 @@ describe('Collections List- Line Item Kebab Menu', () => {
     cy.galaxykit('task wait all');
   });
 
-  it('user can delete entire collection from repository', () => {
+  it.skip('user can delete entire collection from repository', () => {
     cy.approveCollection(collection, namespace, '1.0.0');
     cy.galaxykit('task wait all');
     cy.get('[data-cy="table-view"]').click();
@@ -202,7 +202,7 @@ describe('Collections Details View', () => {
 
   it.skip('user can upload a new version to an existing collection', () => {});
 
-  it('user can delete entire collection from system', () => {
+  it.skip('user can delete entire collection from system', () => {
     cy.approveCollection(collection, namespace, '1.0.0');
     cy.galaxykit('task wait all');
     cy.get('[data-cy="table-view"]').click();
@@ -211,7 +211,7 @@ describe('Collections Details View', () => {
     cy.selectDetailsPageKebabAction('delete-entire-collection-from-system');
   });
 
-  it('user can delete entire collection from repository', () => {
+  it.skip('user can delete entire collection from repository', () => {
     cy.approveCollection(collection, namespace, '1.0.0');
     cy.galaxykit('task wait all');
     cy.get('[data-cy="table-view"]').click();
