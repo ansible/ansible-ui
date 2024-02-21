@@ -50,6 +50,13 @@ function ManageTagsModal(props: {
   const [isUpdating, setIsUpdating] = useState<boolean>(false);
   const [alert, setAlert] = useState<AlertProps>();
 
+  const setTimedAlert = (alert: AlertProps, timeout = 5000) => {
+    setAlert(alert);
+    setTimeout(() => {
+      setAlert(undefined);
+    }, timeout);
+  };
+
   const { data, isLoading, error, refresh } = useGet<HubItemsResponse<ExecutionEnvironmentTag>>(
     hubAPI`/v3/plugin/execution-environments/repositories/${ee.name}/_content/tags/`,
     {
@@ -102,7 +109,7 @@ function ManageTagsModal(props: {
         }
 
         refresh();
-        setAlert(alert);
+        setTimedAlert(alert);
         setTag('');
       }
     }
@@ -119,12 +126,12 @@ function ManageTagsModal(props: {
     );
 
     if ((removeTagPost as Task).state === 'completed') {
-      setAlert({
+      setTimedAlert({
         variant: 'success',
         title: t(`Tag {{tag}} successfully removed.`, { tag }),
       });
     } else {
-      setAlert({
+      setTimedAlert({
         variant: 'danger',
         title: t(`Failed to remove tag {{tag}}.`, { tag }),
       });
