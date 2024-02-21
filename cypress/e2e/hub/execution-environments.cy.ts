@@ -22,17 +22,16 @@ describe('Execution Environments', () => {
 
   it('should open a new tab and verify correct docs url', () => {
     cy.navigateTo('hub', ExecutionEnvironments.url);
-
     cy.window().then((win) => {
       cy.stub(win, 'open').as('docsTab');
     });
-
     cy.get('[data-cy="push-container-images"]').click();
-
     cy.get('@docsTab').should(
       'be.calledWith',
       'https://access.redhat.com/documentation/en-us/red_hat_ansible_automation_platform/'
     );
+  });
+
   it('can add and delete a new execution environment', () => {
     const remoteRegistryName = generateRemoteRegistryName();
     cy.createRemoteRegistry(remoteRegistryName).then((remoteRegistry: IRemoteRegistry) => {
@@ -87,6 +86,9 @@ describe('Execution Environment Details tab', () => {
 
   before(() => {
     cy.hubLogin();
+  });
+
+  before(() => {
     cy.galaxykit('registry create', registry, 'https://registry.hub.docker.com/');
     cy.galaxykit('container create', container, 'library/alpine', registry);
   });
@@ -118,6 +120,7 @@ describe('Execution Environment Details tab', () => {
     cy.get('[aria-selected="true"]').contains('Details');
     cy.contains('Instructions');
     cy.contains('Pull this image');
+
     // in dev env should be 'localhost:4102'
     const host = window.location.host;
     const instructions = `podman pull ${host}/${container}`;
