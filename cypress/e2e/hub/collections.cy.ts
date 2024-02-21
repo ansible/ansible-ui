@@ -165,7 +165,7 @@ describe('Collections List- Line Item Kebab Menu', () => {
     });
   });
 
-  it.skip('can delete entire collection from system', () => {
+  it('can delete entire collection from system', () => {
     cy.navigateTo('hub', Collections.url);
     cy.verifyPageTitle(Collections.title);
     cy.galaxykit('task wait all');
@@ -179,7 +179,7 @@ describe('Collections List- Line Item Kebab Menu', () => {
     cy.galaxykit('task wait all');
   });
 
-  it.skip('can delete entire collection from repository', () => {
+  it('can delete entire collection from repository', () => {
     cy.navigateTo('hub', Collections.url);
     cy.verifyPageTitle(Collections.title);
     cy.galaxykit('task wait all');
@@ -291,23 +291,23 @@ describe('Collections Details View', () => {
 
   it.skip('can upload a new version to an existing collection', () => {});
 
-  it.skip('can delete entire collection from system', () => {
+  it('can delete entire collection from system', () => {
     cy.approveCollection(collection, namespace, '1.0.0');
     cy.galaxykit('task wait all');
     cy.get('[data-cy="table-view"]').click();
     cy.filterTableBySingleText(collection);
     cy.clickLink(collection);
-    cy.wait(400);
+    cy.galaxykit('task wait all'); //this is necessary, otherwise page continues reloading
     cy.selectDetailsPageKebabAction('delete-entire-collection-from-system');
   });
 
-  it.skip('can delete entire collection from repository', () => {
+  it('can delete entire collection from repository', () => {
     cy.approveCollection(collection, namespace, '1.0.0');
     cy.galaxykit('task wait all');
     cy.get('[data-cy="table-view"]').click();
     cy.filterTableBySingleText(collection);
     cy.clickLink(collection);
-    cy.wait(400);
+    cy.galaxykit('task wait all'); //this is necessary, otherwise page continues reloading
     cy.selectDetailsPageKebabAction('delete-entire-collection-from-repository');
   });
 
