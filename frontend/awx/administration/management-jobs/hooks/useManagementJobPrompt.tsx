@@ -1,51 +1,66 @@
 import { useTranslation } from 'react-i18next';
+//import React, { useState } from 'react';
 import { SystemJobTemplate } from '../../interfaces/SystemJobTemplate';
 import { usePageDialogs } from '../../../../../framework';
 import { Button, Modal, NumberInput, ModalVariant } from '@patternfly/react-core';
-import { requestGet } from '../../../../common/crud/Data';
-import { usePostRequest } from '../../../../common/crud/usePostRequest';
-import { awxAPI } from '../../../common/api/awx-utils';
-import { AwxRoute } from '../../../main/AwxRoutes';
-import { useGetJobOutputUrl } from '../../../views/jobs/useGetJobOutputUrl';
-import { usePageNavigate } from '../../../../../framework';
-import { useLaunchManagementJob } from './useLaunchManagementJob';
-import { useNavigate } from 'react-router-dom';
-import { usePageAlertToaster } from '../../../../../framework';
+//import { useLaunchManagementJob } from './useLaunchManagementJob';
+import { TextContent, Text } from '@patternfly/react-core';
 
 export function useManagementJobPrompt(managementJob: SystemJobTemplate) {
+  //const defaultDays = 30;
+  // const MAX_RETENTION = 99999;
+  //const [dataRetention, setDataRetention] = useState(defaultDays);
+  //const [value, setValue] = useState<number | ''>(defaultDays);
   const { t } = useTranslation();
   const { pushDialog, popDialog } = usePageDialogs();
-  // const pageNavigate = usePageNavigate();
-  // const launchManagementJob = useLaunchManagementJob(managementJob);
-  // const postRequest = usePostRequest();
-  // const alertToaster = usePageAlertToaster();
-  // const navigate = useNavigate();
-  // const postRequest = usePostRequest();
-  // const alertToaster = usePageAlertToaster();
-  // const pageNavigate = usePageNavigate();
-  // const getJobOutputUrl = useGetJobOutputUrl();
-  const handleLaunch = (managementJob: SystemJobTemplate, defaultDays: number = 30) => {
-    console.log('Launching management job:', managementJob.job_type, defaultDays);
-  };
+  //const launchOtherJobTypes = useLaunchManagementJob();
+ // const { launchManagementJob } = useLaunchManagementJob();
+
+  // const onMinus = () => {
+  //   const newValue = (value || 0) - 1;
+  //   setValue(newValue);
+  // };
+
+  // const onChange = (event: React.FormEvent<HTMLInputElement>) => {
+  //   // const value = (event.target as HTMLInputElement).value;
+  //   // setValue(value === '' ? value : +value);
+  //   setValue((event.target as HTMLInputElement).value);
+  // };
+
+  // const onPlus = () => {
+  //   const newValue = (value || 0) + 1;
+  //   setValue(newValue);
+  // };
+  function handleLaunch(managementJob: SystemJobTemplate) {
+    console.log('Launching management job:', managementJob);
+    //await launchManagementJob();
+  }
   // }
   const managementJobPrompt = () => {
     const dialog = (
       <Modal
         title={t('Launch Management Job')}
+        titleIconVariant="info"
         isOpen
+        width="35%"
         key="launch"
         onClose={popDialog}
-        variant={ModalVariant.medium}
+        variant={ModalVariant.small}
       >
-        <NumberInput
-          value={30}
-          onMinus={1}
-          onPlus={1}
-          inputName="input"
-          inputAriaLabel="number input"
-          minusBtnAriaLabel="minus"
-          plusBtnAriaLabel="plus"
-        />
+        <TextContent>
+          <Text>{t`Set how many days of data should be retained.`}</Text>
+
+          <NumberInput
+            value={30}
+            onMinus={2}
+            onPlus={2}
+            onChange={handleLaunch}
+            inputName="input"
+            inputAriaLabel="number input"
+            minusBtnAriaLabel="minus"
+            plusBtnAriaLabel="plus"
+          />
+        </TextContent>
 
         <Button variant="primary" onClick={() => void handleLaunch(managementJob)}>
           {t('Launch')}
