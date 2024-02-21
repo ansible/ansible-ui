@@ -66,7 +66,7 @@ export enum ColumnDashboardOption {
 
 /** Column options for setting column priority. This is used to determine the order in which
  * the column is displayed when generating a details page (PageDetailsFromColumns). */
-export enum ColumnPriorityOption {
+export enum ColumnPriority {
   /** Last: The column data will be displayed last in PageDetailsFromColumns */
   last = 'last',
 }
@@ -121,7 +121,7 @@ interface ITableColumnCommon<T extends object> {
   dashboard?: keyof typeof ColumnDashboardOption;
 
   /** Table column options for controlling the order in which the column's data is displayed in a details page. */
-  priority?: keyof typeof ColumnPriorityOption;
+  priority?: keyof typeof ColumnPriority;
 }
 
 /** Column that renders using a render function that returns a ReactNode. */

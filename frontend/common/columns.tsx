@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import {
   ColumnDashboardOption,
   ColumnModalOption,
-  ColumnPriorityOption,
+  ColumnPriority,
   ColumnTableOption,
   DateTimeCell,
   ITableColumn,
@@ -225,7 +225,7 @@ export function useCreatedColumn(options?: {
       list: 'secondary',
       modal: 'hidden',
       dashboard: 'hidden',
-      priority: ColumnPriorityOption.last,
+      priority: ColumnPriority.last,
     }),
     [t, options?.disableSort, options?.sort, options?.disableLinks, pageNavigate]
   );
@@ -275,7 +275,7 @@ export function useModifiedColumn(options?: {
       list: 'secondary',
       modal: 'hidden',
       dashboard: 'hidden',
-      priority: ColumnPriorityOption.last,
+      priority: ColumnPriority.last,
     }),
     [t, options?.disableSort, options?.sort, options?.disableLinks, pageNavigate]
   );

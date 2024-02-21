@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { Fragment, ReactNode, useMemo } from 'react';
-import { ColumnPriorityOption, ITableColumn, TableColumnCell } from '../PageTable/PageTableColumn';
+import { ColumnPriority, ITableColumn, TableColumnCell } from '../PageTable/PageTableColumn';
 import { PageDetail } from './PageDetail';
 
 export function PageDetailsFromColumns<T extends object>(props: {
@@ -12,15 +12,15 @@ export function PageDetailsFromColumns<T extends object>(props: {
 }) {
   const { item, columns, children } = props;
   /**
-   * Columns are displayed based on priority. Columns with ColumnPriorityOption.last appear last.
+   * Columns are displayed based on priority. Columns with ColumnPriority.last appear last.
    * Custom details are received as an optional 'children' prop and placed in the correct position.
    */
   const firstColumns = useMemo(
-    () => columns.filter((column) => column.priority !== ColumnPriorityOption.last).sort(),
+    () => columns.filter((column) => column.priority !== ColumnPriority.last),
     [columns]
   );
   const lastColumns = useMemo(
-    () => columns.filter((column) => column.priority === ColumnPriorityOption.last).sort(),
+    () => columns.filter((column) => column.priority === ColumnPriority.last),
     [columns]
   );
   if (!item) return <></>;
