@@ -12,7 +12,7 @@ jobs:
   merge-to-downstream:
     name: Merge Main to Downstream
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    # timeout-minutes: 10
 
     steps:
       - name: Downstream Merge

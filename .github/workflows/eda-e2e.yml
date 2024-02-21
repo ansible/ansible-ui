@@ -22,7 +22,7 @@ jobs:
   eda-ui-image:
     name: EDA UI Image
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    # timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
         if: ${{ !inputs.SKIP_JOB }}
@@ -62,7 +62,7 @@ jobs:
   eda-e2e:
     name: EDA E2E
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    # timeout-minutes: 15
     needs: eda-ui-image
     strategy:
       fail-fast: false

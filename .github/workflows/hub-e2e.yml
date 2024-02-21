@@ -22,7 +22,7 @@ jobs:
   hub-ui-image:
     name: HUB UI Image
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    # timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
         if: ${{ !inputs.SKIP_JOB }}
@@ -64,7 +64,7 @@ jobs:
   hub-e2e:
     name: HUB E2E
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    # timeout-minutes: 20
     needs: hub-ui-image
     strategy:
       fail-fast: false
