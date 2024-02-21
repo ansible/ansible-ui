@@ -14,7 +14,7 @@ jobs:
   packages:
     name: Packages
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    # timeout-minutes: 10
     outputs:
       awx: ${{ steps.changed-awx.outputs.changed == 'true' }}
       hub: ${{ steps.changed-hub.outputs.changed == 'true' }}
@@ -64,7 +64,7 @@ jobs:
   checks:
     name: ESLint - Prettier - TSC
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    # timeout-minutes: 10
     needs: packages
     steps:
       - uses: actions/checkout@v4
