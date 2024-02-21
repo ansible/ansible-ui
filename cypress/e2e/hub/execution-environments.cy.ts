@@ -1,7 +1,7 @@
 import { hubAPI } from '../../support/formatApiPathForHub';
 import { ExecutionEnvironments } from './constants';
 
-describe.skip('Execution Environments', () => {
+describe('Execution Environments', () => {
   before(() => {
     cy.hubLogin();
   });
@@ -9,6 +9,21 @@ describe.skip('Execution Environments', () => {
   it('it should render the execution environments page', () => {
     cy.navigateTo('hub', ExecutionEnvironments.url);
     cy.verifyPageTitle(ExecutionEnvironments.title);
+  });
+
+  it('should open a new tab and verify correct docs url', () => {
+    cy.navigateTo('hub', ExecutionEnvironments.url);
+
+    cy.window().then((win) => {
+      cy.stub(win, 'open').as('docsTab');
+    });
+
+    cy.get('[data-cy="push-container-images"]').click();
+
+    cy.get('@docsTab').should(
+      'be.calledWith',
+      'https://access.redhat.com/documentation/en-us/red_hat_ansible_automation_platform/'
+    );
   });
 });
 
