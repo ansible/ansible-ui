@@ -25,7 +25,7 @@ describe('Tasks', () => {
     cy.setTablePageSize('100');
     cy.clickTableRowKebabAction(newRepository, 'sync-repository', false);
     cy.get('[data-cy="Submit"]').click();
-    // Bug in test, needs to wait for the action before naivgating.
+    cy.hasAlert(`Sync started for repository "${newRepository}"`).should('be.visible');
     cy.navigateTo('hub', Tasks.url);
     cy.clickTableRow('pulp_ansible.app.tasks.collections.sync', false);
     cy.get('[data-cy="task-detail"]');
@@ -47,7 +47,7 @@ describe('Tasks', () => {
     cy.setTablePageSize('100');
     cy.clickTableRowKebabAction(newRepository, 'sync-repository', false);
     cy.get('[data-cy="Submit"]').click();
-    // Bug in test, needs to wait for the action before naivgating.
+    cy.hasAlert(`Sync started for repository "${newRepository}"`).should('be.visible');
     cy.navigateTo('hub', Tasks.url);
     cy.filterBySingleSelection(/^Status$/, 'Failed');
     cy.get('tr')
@@ -74,7 +74,7 @@ describe('Tasks', () => {
     cy.setTablePageSize('100');
     cy.clickTableRowKebabAction(newRepository, 'sync-repository', false);
     cy.get('[data-cy="Submit"]').click();
-    // Bug in test, needs to wait for the action before naivgating.
+    cy.hasAlert(`Sync started for repository "${newRepository}"`).should('be.visible');
     cy.navigateTo('hub', Tasks.url);
     cy.selectToolbarFilterType(/^Task name$/);
     cy.filterTableByText('pulp_ansible.app.tasks.collections.sync', 'SingleText');
