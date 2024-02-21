@@ -87,9 +87,7 @@ describe('Execution Environment Details tab', () => {
 
   before(() => {
     cy.hubLogin();
-  });
 
-  before(() => {
     cy.galaxykit('registry create', registry, 'https://registry.hub.docker.com/');
     cy.galaxykit('container create', container, 'library/alpine', registry);
   });
@@ -105,11 +103,9 @@ describe('Execution Environment Details tab', () => {
     cy.filterTableBySingleText(container);
     cy.get('a').contains(container).click();
     cy.verifyPageTitle(container);
-
     cy.contains('Unsigned');
 
     const tabs = ['Details', 'Activity', 'Images', 'Access'];
-
     tabs.forEach((tab) => {
       cy.contains(tab);
     });
@@ -121,16 +117,13 @@ describe('Execution Environment Details tab', () => {
     cy.visit(`/execution-environments/${container}/`);
     cy.verifyPageTitle(container);
     cy.get('[aria-selected="true"]').contains('Details');
-
     cy.contains('Instructions');
     cy.contains('Pull this image');
-
     // in dev env should be 'localhost:4102'
     const host = window.location.host;
     const instructions = `podman pull ${host}/${container}`;
     cy.get('[data-cy="clipboard-copy"] input').should('have.value', instructions);
     cy.get('[data-cy="clipboard-copy"] input').should('have.attr', 'readonly', 'readonly');
-
     cy.contains('No README');
     cy.contains('Add a README with instructions for using this container.');
     cy.get('[data-cy="add-readme"]').contains('Add');
@@ -154,13 +147,11 @@ describe('Execution Environment Details tab', () => {
       cy.clickButton('Save');
       cy.wait('@updateReadme');
     });
-
     cy.get('[data-cy="readme"]').get('h1').contains('Heading 1');
   });
 
   it('should change readme after editing', () => {
     cy.visit(`/execution-environments/${container}/`);
-
     cy.get('[data-cy="readme"]').within(() => {
       cy.contains('Heading 1');
       cy.clickButton('Edit');
@@ -173,21 +164,18 @@ describe('Execution Environment Details tab', () => {
       cy.clickButton('Save');
       cy.wait('@updateReadme');
     });
-
     cy.get('[data-cy="readme"]').get('h1').contains('Heading 1');
     cy.get('[data-cy="readme"]').get('strong').contains('bold text');
   });
 
   it('should not change readme after cancel edit', () => {
     cy.visit(`/execution-environments/${container}/`);
-
     cy.get('[data-cy="readme"]').within(() => {
       cy.clickButton('Edit');
       cy.typeBy('[data-cy="raw-markdown"]', '{enter}this should not be saved.');
       cy.contains('Preview').parent().contains('this should not be saved.');
       cy.clickButton('Cancel');
     });
-
     cy.get('[data-cy="readme"]').contains('this should not be saved.').should('not.exist');
   });
 });
