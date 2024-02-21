@@ -40,41 +40,61 @@ describe('Execution Environments', () => {
 
       cy.navigateTo('hub', ExecutionEnvironments.url);
       cy.verifyPageTitle(ExecutionEnvironments.title);
+      cy.intercept('GET', hubAPI`/_ui/v1/execution-environments/registries/?limit=50`).as(
+        'registries'
+      );
       cy.getByDataCy('add-execution-environment').click();
-      cy.getByDataCy('name').type(eeName);
-      cy.getByDataCy('upstream-name').type(upstreamName);
-      cy.contains('[data-ouia-component-id="menu-select"]', 'Select registry')
-        .click()
-        .then(() => {
-          cy.filterTableBySingleText(remoteRegistryName);
-          cy.getByDataCy('checkbox-column-cell').find('input').click();
-          cy.clickButton('Confirm');
-        });
-      cy.getByDataCy('Submit').click();
-      cy.url().should('contain', '/execution-environments/');
-      cy.filterTableBySingleText(eeName);
-      cy.get('tbody').find('tr').should('have.length', 1);
-      cy.get('tbody').within(() => {
-        cy.getByDataCy('container-repository-name-column-cell').should('contain', eeName);
-        cy.get('[data-cy="actions-dropdown"]')
-          .click()
-          .then(() => {
-            cy.get(`[data-cy="delete-environment"]`).click();
+      cy.wait('@registries')
+        .its('response.body.data.length')
+        .then((count) => {
+          cy.getByDataCy('name').type(eeName);
+          cy.getByDataCy('upstream-name').type(upstreamName);
+          cy.contains('[data-ouia-component-id="menu-select"]', 'Select registry')
+            .click()
+            .then(() => {
+              if (count < 11) {
+                cy.contains('button[type="button"]', remoteRegistryName).click();
+              } else if (count > 10 && count < 5) {
+                cy.getByDataCy('dropdown-menu')
+                  .find('input')
+                  .type(remoteRegistryName)
+                  .then(() => {
+                    cy.getByDataCy(`${remoteRegistryName}`).click();
+                  });
+              } else {
+                cy.filterTableBySingleText(remoteRegistryName);
+                cy.getByDataCy('checkbox-column-cell').find('input').click();
+                cy.clickButton('Confirm');
+              }
+            });
+          cy.getByDataCy('Submit').click();
+          cy.url().should('contain', '/execution-environments/');
+          cy.filterTableBySingleText(eeName);
+          cy.get('tbody').find('tr').should('have.length', 1);
+          cy.get('tbody').within(() => {
+            cy.getByDataCy('container-repository-name-column-cell').should('contain', eeName);
+            cy.get('[data-cy="actions-dropdown"]')
+              .click()
+              .then(() => {
+                cy.get(`[data-cy="delete-environment"]`).click();
+              });
           });
-      });
-      cy.get('[data-ouia-component-id="Permanently delete execution environments"]').within(() => {
-        cy.get('[data-ouia-component-id="confirm"]').click();
-        cy.get('[data-ouia-component-id="submit"]').click();
-        cy.clickButton('Close');
-      });
-      cy.contains('h2', 'No results found').should('be.visible');
-      cy.get('[class*="empty-state__content"]')
-        .should('exist')
-        .should(
-          'contain',
-          'No results match this filter criteria. Clear all filters and try again.'
-        );
-      cy.deleteRemoteRegistry(remoteRegistry.id);
+          cy.get('[data-ouia-component-id="Permanently delete execution environments"]').within(
+            () => {
+              cy.get('[data-ouia-component-id="confirm"]').click();
+              cy.get('[data-ouia-component-id="submit"]').click();
+              cy.clickButton('Close');
+            }
+          );
+          cy.contains('h2', 'No results found').should('be.visible');
+          cy.get('[class*="empty-state__content"]')
+            .should('exist')
+            .should(
+              'contain',
+              'No results match this filter criteria. Clear all filters and try again.'
+            );
+          cy.deleteRemoteRegistry(remoteRegistry.id);
+        });
     });
   });
 });
