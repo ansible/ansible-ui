@@ -19,7 +19,7 @@ export function PageFormInventoryFileSelect<
 }) {
   const { t } = useTranslation();
   const value = useWatch({ name: props.watch }) as Project;
-  const projectId = value?.id.toString() ?? '';
+  const projectId = value?.id?.toString() ?? '';
   const query = useCallback(async () => {
     const response = projectId
       ? await requestGet<Array<string>>(awxAPI`/projects/${projectId}/inventories/`)
