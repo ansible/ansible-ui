@@ -13,15 +13,15 @@ describe('Collections- List View', () => {
     cy.galaxykit(`collection move ${namespace} ${collection} 1.0.0 staging published`);
   });
 
-  beforeEach( () => {
+  beforeEach(() => {
     cy.hubLogin();
     navigateToDetail(namespace, collection);
   });
 
   after(() => {
-   /* cy.deleteCollection(collection, namespace, 'published');
+    cy.deleteCollection(collection, namespace, 'published');
     cy.galaxykit('task wait all');
-    cy.deleteNamespace(namespace);*/
+    cy.deleteNamespace(namespace);
   });
 
   // very basic check that documentation is rendering and basic operations are working
@@ -31,35 +31,41 @@ describe('Collections- List View', () => {
     cy.contains('Ansible version compatibility');
     cy.contains('The Arista EOS collection supports network_cli and httpapi connections.');
 
-        
-    // test search
-    cy.contains('eos_acls');
-    cy.contains('network');
-    cy.get('[aria-label="Search input"]').type('eos_acl_interfaces{enter}');
-    cy.contains('eos_acl_interfaces');
-    cy.contains('eos_acls').should('not.exist');
+    // search for links in content
+    cy.contains(
+      `[href="https://github.com/ansible-collections/arista.eos/blob/main/docs/arista.eos.eos_acl_interfaces_module.rst"]`,
+      `arista.eos.eos_acl_interfaces`
+    );
 
-    // test partial search
-    cy.get('[aria-label="Search input"]').clear().type('eos{enter}');
-    cy.contains('eos_acl_interfaces');
-    cy.contains('eos_acls');
-    cy.contains('network').should('not.exist');
+    // test search in panel
+    cy.contains('[data-cy="hub_documentation_panel"]', 'eos_acls');
+    cy.contains('[data-cy="hub_documentation_panel"]', 'network');
+    cy.get('[data-cy="hub_documentation_panel"] [aria-label="Search input"]').type(
+      'eos_acl_interfaces{enter}'
+    );
+    cy.contains('[data-cy="hub_documentation_panel"]', 'eos_acl_interfaces');
+    cy.contains('[data-cy="hub_documentation_panel"]', 'eos_acls').should('not.exist');
 
+    // test partial search in panel
+    cy.get('[data-cy="hub_documentation_panel"] [aria-label="Search input"]')
+      .clear()
+      .type('eos{enter}');
+    cy.contains('[data-cy="hub_documentation_panel"]', 'eos_acl_interfaces');
+    cy.contains('[data-cy="hub_documentation_panel"]', 'eos_acls');
+    cy.contains('[data-cy="hub_documentation_panel"]', 'network').should('not.exist');
   });
 });
 
-function navigateToDetail(namespace : string, collection : string)
-{
-    cy.navigateTo('hub', Collections.url);
-    cy.filterTableBySingleText(collection + '{enter}');
-    cy.get(`[href="/collections/published/${namespace}/${collection}"]`).click();
-    // because of flicking
-    cy.wait(1500);
-    cy.contains(collection);
-    cy.contains(namespace);
+function navigateToDetail(namespace: string, collection: string) {
+  cy.navigateTo('hub', Collections.url);
+  cy.filterTableBySingleText(collection + '{enter}');
+  cy.get(`[href="/collections/published/${namespace}/${collection}"]`).click();
+  // because of flicking
+  cy.wait(1500);
+  cy.contains(collection);
+  cy.contains(namespace);
 }
 
-function navigateToTab(tab : string)
-{
-    cy.contains('[role="tab"]', tab).click();
+function navigateToTab(tab: string) {
+  cy.contains('[role="tab"]', tab).click();
 }
