@@ -54,7 +54,7 @@ describe('Execution Environments', () => {
             .then(() => {
               if (count < 11) {
                 cy.contains('button[type="button"]', remoteRegistryName).click();
-              } else if (count > 10 && count < 5) {
+              } else if (count > 10 && count < 50) {
                 cy.getByDataCy('dropdown-menu')
                   .find('input')
                   .type(remoteRegistryName)
