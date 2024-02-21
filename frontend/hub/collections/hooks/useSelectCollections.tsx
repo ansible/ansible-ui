@@ -82,6 +82,7 @@ export function CollectionMultiSelectDialog(props: {
     },
     toolbarFilters,
     defaultSelection: props.defaultSelection,
+    defaultSort: 'name',
   });
   return (
     <MultiSelectDialog
@@ -89,7 +90,6 @@ export function CollectionMultiSelectDialog(props: {
       toolbarFilters={toolbarFilters}
       tableColumns={tableColumns}
       view={view}
-      defaultSort="name"
       confirmText={t('Select')}
       maxSelections={props.maxSelections}
       allowZeroSelections={props.allowZeroSelections}
