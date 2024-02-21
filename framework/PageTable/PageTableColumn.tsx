@@ -64,6 +64,13 @@ export enum ColumnDashboardOption {
   hidden = 'hidden',
 }
 
+/** Column options for setting column priority. This is used to determine the order in which
+ * the column is displayed when generating a details page (PageDetailsFromColumns). */
+export enum ColumnPriority {
+  /** Last: The column data will be displayed last in PageDetailsFromColumns */
+  last = 'last',
+}
+
 /** Table column common properties to all columns. */
 interface ITableColumnCommon<T extends object> {
   /** Id of the column. Used to track the column in sorting and user options. */
@@ -112,6 +119,9 @@ interface ITableColumnCommon<T extends object> {
 
   /** Table column options for controlling how the column displays in a dashboard. */
   dashboard?: keyof typeof ColumnDashboardOption;
+
+  /** Table column options for controlling the order in which the column's data is displayed in a details page. */
+  priority?: keyof typeof ColumnPriority;
 }
 
 /** Column that renders using a render function that returns a ReactNode. */
