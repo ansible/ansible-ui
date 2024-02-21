@@ -1,0 +1,65 @@
+{
+  "count": 1,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 2,
+      "hostname": "awx-control",
+      "type": "instance",
+      "url": "/api/v2/instances/2/",
+      "related": {
+        "named_url": "/api/v2/instances/receptor-hop/",
+        "jobs": "/api/v2/instances/2/jobs/",
+        "instance_groups": "/api/v2/instances/2/instance_groups/",
+        "install_bundle": "/api/v2/instances/2/install_bundle/",
+        "peers": "/api/v2/instances/2/peers/"
+      },
+      "summary_fields": {
+        "user_capabilities": {
+          "edit": false
+        },
+        "links": [
+          {
+            "id": 1,
+            "url": "",
+            "related": {
+              "source_instance": "/api/v2/instances/2/",
+              "target_instance": "/api/v2/instances/1/"
+            },
+            "source": "receptor-hop",
+            "target": "awx_1",
+            "link_state": "established"
+          }
+        ]
+      },
+      "uuid": "f1eb287a-30fb-47e4-916d-b3ee56e12436",
+      "created": "2023-12-11T18:50:29.923285Z",
+      "modified": "2023-12-11T18:50:29.923313Z",
+      "last_seen": "2023-12-19T18:58:07.825067Z",
+      "health_check_started": null,
+      "health_check_pending": false,
+      "last_health_check": null,
+      "errors": "",
+      "capacity_adjustment": "1.00",
+      "version": "",
+      "capacity": 0,
+      "consumed_capacity": 0,
+      "percent_capacity_remaining": 0.0,
+      "jobs_running": 0,
+      "jobs_total": 0,
+      "cpu": "0.0",
+      "memory": 0,
+      "cpu_capacity": 0,
+      "mem_capacity": 0,
+      "enabled": true,
+      "managed_by_policy": true,
+      "node_type": "control",
+      "node_state": "ready",
+      "ip_address": "",
+      "listener_port": 5555,
+      "peers": ["awx_1"],
+      "peers_from_control_nodes": false
+    }
+  ]
+}

@@ -1,3 +1,4 @@
+import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 import { Instances } from './Instances';
 
 describe('Instances list', () => {
@@ -27,6 +28,8 @@ describe('Instances list', () => {
       'Ansible node instances dedicated for a particular purpose indicated by node type.'
     );
     cy.get('[data-cy="add-instance"]').should('be.visible');
+    cy.get('[data-cy="remove-instance"]').should('be.visible');
+    cy.get('[data-cy="remove-instance"]').should('have.attr', 'aria-disabled', 'true');
     cy.get('tbody').find('tr').should('have.length', 10);
   });
 
@@ -44,6 +47,8 @@ describe('Instances list', () => {
       'Ansible node instances dedicated for a particular purpose indicated by node type.'
     );
     cy.get('[data-cy="add-instance"]').should('not.exist');
+    cy.get('[data-cy="remove-instance"]').should('be.visible');
+    cy.get('[data-cy="remove-instance"]').should('have.attr', 'aria-disabled', 'true');
     cy.get('tbody').find('tr').should('have.length', 10);
   });
 
@@ -65,6 +70,66 @@ describe('Instances list', () => {
     cy.filterByMultiSelection('Node type', 'Control');
     cy.wait('@controlFilterRequest');
     cy.clickButton(/^Clear all filters$/);
+  });
+
+  it('remove instance button should be disable if instance with node type control is selected', () => {
+    cy.intercept(
+      { method: 'GET', url: awxAPI`/instances/*` },
+      { fixture: 'instance_list_control.json' }
+    ).as('getInstance');
+    cy.mount(<Instances />);
+    cy.wait('@getInstance')
+      .its('response.body')
+      .then(() => {
+        cy.get('[data-cy="checkbox-column-cell"]').first().click();
+        cy.get('[data-cy="remove-instance"]').should('be.visible');
+        cy.get('[data-cy="remove-instance"]').should('have.attr', 'aria-disabled', 'true');
+      });
+  });
+
+  it('remove instance button should be enabled if instance with node type hop is selected', () => {
+    cy.intercept(
+      { method: 'GET', url: awxAPI`/instances/*` },
+      { fixture: 'instance_list_hop.json' }
+    ).as('getInstance');
+    cy.mount(<Instances />);
+    cy.wait('@getInstance')
+      .its('response.body')
+      .then(() => {
+        cy.get('[data-cy="checkbox-column-cell"]').first().click();
+        cy.get('[data-cy="remove-instance"]').should('be.visible');
+        cy.get('[data-cy="remove-instance"]').should('have.attr', 'aria-disabled', 'false');
+      });
+  });
+
+  it('remove instance button should be enabled if instance with node type execution is selected', () => {
+    cy.intercept(
+      { method: 'GET', url: awxAPI`/instances/*` },
+      { fixture: 'instance_execution.json' }
+    ).as('getInstance');
+    cy.mount(<Instances />);
+    cy.wait('@getInstance')
+      .its('response.body')
+      .then(() => {
+        cy.get('[data-cy="checkbox-column-cell"]').first().click();
+        cy.get('[data-cy="remove-instance"]').should('be.visible');
+        cy.get('[data-cy="remove-instance"]').should('have.attr', 'aria-disabled', 'false');
+      });
+  });
+
+  it('remove instance button should be disabled if instance with node type hybrid is selected', () => {
+    cy.intercept(
+      { method: 'GET', url: awxAPI`/instances/*` },
+      { fixture: 'instance_list_hybrid.json' }
+    ).as('getInstance');
+    cy.mount(<Instances />);
+    cy.wait('@getInstance')
+      .its('response.body')
+      .then(() => {
+        cy.get('[data-cy="checkbox-column-cell"]').first().click();
+        cy.get('[data-cy="remove-instance"]').should('be.visible');
+        cy.get('[data-cy="remove-instance"]').should('have.attr', 'aria-disabled', 'true');
+      });
   });
 });
 
