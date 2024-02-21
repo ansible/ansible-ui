@@ -9,12 +9,13 @@ export function PageDetails(props: {
   numberOfColumns?: 'multiple' | 'single';
   labelOrientation?: 'horizontal' | 'vertical';
   alertPrompts?: string[];
+  isCompact?: boolean;
 }) {
   const { disablePadding, alertPrompts } = props;
   const settings = useSettings();
   const orientation = props.labelOrientation ?? settings.formLayout;
   const numberOfColumns = props.numberOfColumns ? props.numberOfColumns : settings.formColumns;
-  const isCompact = false;
+  const isCompact = props.isCompact;
   return (
     <PageSectionStyled variant="light" padding={{ default: 'noPadding' }}>
       {alertPrompts &&

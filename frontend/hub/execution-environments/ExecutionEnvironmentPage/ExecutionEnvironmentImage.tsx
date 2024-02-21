@@ -19,7 +19,19 @@ export interface ExecutionEnvironmentImage {
   digest: string;
   schema_version: number;
   media_type: string;
-  config_blob: { digest?: string };
+  config_blob: {
+    digest?: string;
+    data?: {
+      history?: {
+        created: string;
+        created_by: string;
+        empty_layer: boolean;
+      }[];
+      config?: {
+        Env: string[];
+      };
+    };
+  };
   tags: string[];
   created_at: string;
   updated_at: string;

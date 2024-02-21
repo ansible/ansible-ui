@@ -16,19 +16,25 @@ import { CollectionVersionSearch } from '../Collection';
 import { usePageDialog } from './../../../../framework';
 import { PageTable } from './../../../../framework/PageTable/PageTable';
 import { useGetRequest } from './../../../common/crud/useGet';
+import { TFunction } from 'i18next';
 
 export function useCopyToRepository() {
   const [_, setDialog] = usePageDialog();
   const onClose = useCallback(() => setDialog(undefined), [setDialog]);
   const context = useHubContext();
 
-  return (collection: CollectionVersionSearch, operation: 'approve' | 'copy') => {
+  return (
+    collection: CollectionVersionSearch,
+    operation: 'approve' | 'copy',
+    displayDefaultError?: string
+  ) => {
     setDialog(
       <CopyToRepositoryModal
         collection={collection}
         onClose={onClose}
         context={context}
         operation={operation}
+        displayDefaultError={displayDefaultError}
       />
     );
   };
@@ -39,6 +45,7 @@ function CopyToRepositoryModal(props: {
   onClose: () => void;
   context: HubContext;
   operation: 'approve' | 'copy';
+  displayDefaultError?: string;
 }) {
   const toolbarFilters = useRepositoryFilters();
   const tableColumns = useRepositoryColumns();
@@ -65,7 +72,8 @@ function CopyToRepositoryModal(props: {
         operation,
         selectedRepositories,
         props.context,
-        pulpRequest
+        pulpRequest,
+        t
       );
 
       setIsLoading(false);
@@ -136,7 +144,7 @@ function CopyToRepositoryModal(props: {
           onClick={() => {
             void copyToRepositories();
           }}
-          isDisabled={selectedRepositories.length === 0}
+          isDisabled={selectedRepositories.length === 0 || props.displayDefaultError !== undefined}
           isLoading={isLoading}
         >
           {t('Select')}
@@ -199,6 +207,9 @@ function CopyToRepositoryModal(props: {
         }}
       />
       {error && <HubError error={{ name: t('Error'), message: error }}></HubError>}
+      {props.displayDefaultError && (
+        <HubError error={{ name: t('Error'), message: props.displayDefaultError }}></HubError>
+      )}
     </Modal>
   );
 }
@@ -213,13 +224,18 @@ export async function copyToRepositoryAction(
   operation: 'approve' | 'copy',
   selectedRepositories: Repository[],
   context: HubContext,
-  pulpRequest: ReturnType<typeof useGetRequest<PulpItemsResponse<SigningServiceResponse>>>
+  pulpRequest: ReturnType<typeof useGetRequest<PulpItemsResponse<SigningServiceResponse>>>,
+  t: TFunction<'translation', undefined>
 ) {
   const { repository } = collection;
   if (!repository) {
     return;
   }
 
+  const pipeline = collection.repository?.pulp_labels?.pipeline;
+  if (!(pipeline === 'staging' || pipeline === 'rejected')) {
+    throw new Error(t('You can only approve collections in rejected or staging repositories'));
+  }
   const pulpId = parsePulpIDFromURL(repository?.pulp_href);
 
   const { collection_auto_sign, require_upload_signatures } = context.featureFlags;

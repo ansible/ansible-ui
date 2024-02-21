@@ -74,14 +74,8 @@ describe('Remote Registry', () => {
     const remoteRegistryName = generateRemoteRegistryName();
     cy.createRemoteRegistry(remoteRegistryName, RemoteRegistry.validIndexableURL).then(
       (remoteRegistry: IRemoteRegistry) => {
-        cy.log(JSON.stringify(remoteRegistry), 'created Remote Registry');
         cy.navigateTo('hub', RemoteRegistry.url);
-        cy.get('[data-cy="create-remote-registry"]').should('be.visible').click();
-        cy.get('[data-cy="name"]').type(remoteRegistry.name);
-        cy.get('[data-cy="url"]').type(RemoteRegistry.validIndexableURL);
-        cy.get('[data-cy="Submit"]').click();
-        // Bug in test, needs to wait for the action before naivgating.
-        cy.contains('Remote registries').click();
+        cy.url().should('include', 'remote-registries');
         cy.filterTableBySingleText(remoteRegistry.name);
         cy.get('[data-cy="actions-column-cell"]').click();
         cy.get('[data-cy="index-execution-environments"]')
