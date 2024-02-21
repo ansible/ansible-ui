@@ -297,7 +297,7 @@ describe('Collections Details View', () => {
     cy.get('[data-cy="table-view"]').click();
     cy.filterTableBySingleText(collection);
     cy.clickLink(collection);
-    cy.wait(400);
+    cy.galaxykit('task wait all'); //this is necessary, otherwise page continues reloading
     cy.selectDetailsPageKebabAction('delete-entire-collection-from-system');
   });
 
@@ -307,7 +307,7 @@ describe('Collections Details View', () => {
     cy.get('[data-cy="table-view"]').click();
     cy.filterTableBySingleText(collection);
     cy.clickLink(collection);
-    cy.wait(400);
+    cy.galaxykit('task wait all'); //this is necessary, otherwise page continues reloading
     cy.selectDetailsPageKebabAction('delete-entire-collection-from-repository');
   });
 

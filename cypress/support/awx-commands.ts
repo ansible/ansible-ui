@@ -365,7 +365,7 @@ Cypress.Commands.add('getListCardByText', (name: string | RegExp, filter?: boole
 });
 
 Cypress.Commands.add('selectDetailsPageKebabAction', (dataCy: string) => {
-  cy.get('[data-cy="actions-dropdown"]')
+  cy.getByDataCy('actions-dropdown')
     .click()
     .then(() => {
       cy.clickByDataCy(dataCy);
