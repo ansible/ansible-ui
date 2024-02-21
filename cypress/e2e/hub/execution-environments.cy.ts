@@ -87,7 +87,6 @@ describe('Execution Environment Details tab', () => {
 
   before(() => {
     cy.hubLogin();
-
     cy.galaxykit('registry create', registry, 'https://registry.hub.docker.com/');
     cy.galaxykit('container create', container, 'library/alpine', registry);
   });
