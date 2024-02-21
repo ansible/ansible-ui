@@ -71,52 +71,55 @@ export interface InventorySource
 }
 
 export interface InventorySourceCreate {
-  credential: number;
+  credential: number | undefined;
   inventory: number;
-  source_path: string;
-  source_script: string;
-  execution_environment: SummaryFieldsExecutionEnvironment;
+  source_path: string | undefined | null;
+  source_script?: string | undefined;
+  execution_environment?: SummaryFieldsExecutionEnvironment | undefined;
   description: string;
-  name: string;
-  overwrite: boolean;
-  overwrite_vars: false;
-  source: string;
-  source_vars: string;
-  scm_branch: string;
-  update_cache_timeout: number;
-  update_on_launch: boolean;
-  verbosity: number;
-  enabled_var: string;
-  enabled_value: string;
-  host_filter: string;
+  name: string | undefined;
+  overwrite: boolean | undefined | null;
+  overwrite_vars: boolean | undefined | null;
+  source: string | undefined;
+  source_vars: string | undefined | null;
+  scm_branch?: string;
+  update_cache_timeout: number | undefined;
+  update_on_launch: boolean | undefined | null;
+  verbosity: number | undefined;
+  enabled_var: string | undefined | null;
+  enabled_value: string | undefined | null;
+  host_filter: string | undefined | null;
   source_project?: number;
 }
 
 export interface InventorySourceForm {
-  credential: SummaryFieldCredential;
-  credentialIdPath: number;
-  inventory: number;
-  source_path: { name: string };
-  source_script: string;
-  execution_environment: SummaryFieldsExecutionEnvironment;
+  credential: string | undefined;
+  credentialIdPath?: number;
+  inventory?: number;
+  source_path: { name: string | undefined | null };
+  source_script?: string;
+  execution_environment?: SummaryFieldsExecutionEnvironment;
   description: string;
-  name: string;
-  overwrite: boolean;
-  overwrite_vars: false;
-  source: string;
-  source_vars: string;
-  scm_branch: string;
-  update_cache_timeout: number;
-  update_on_launch: boolean;
-  verbosity: number;
-  enabled_var: string;
-  enabled_value: string;
-  host_filter: string;
-  source_project: {
-    name: string;
-    id: number;
-    description: string;
-    scm_type: string;
-    status: string;
-  } | null;
+  name: string | undefined;
+  overwrite: boolean | undefined | null;
+  overwrite_vars: boolean | undefined | null;
+  source: string | undefined;
+  source_vars: string | undefined | null;
+  scm_branch?: string;
+  update_cache_timeout: number | undefined;
+  update_on_launch: boolean | undefined | null;
+  verbosity: number | undefined;
+  enabled_var: string | undefined | null;
+  enabled_value: string | undefined | null;
+  host_filter: string | undefined | null;
+  source_project:
+    | {
+        name: string;
+        id: number;
+        description: string;
+        scm_type: string;
+        status: string;
+      }
+    | null
+    | undefined;
 }
