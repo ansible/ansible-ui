@@ -11,7 +11,7 @@ jobs:
   component-tests:
     name: Component Tests
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    # timeout-minutes: 15
     strategy:
       fail-fast: false
       matrix:

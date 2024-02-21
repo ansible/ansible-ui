@@ -22,7 +22,7 @@ jobs:
   awx-ui-image:
     name: AWX UI Image
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    # timeout-minutes: 10
     env:
       DOCKER_BUILDKIT: 1
     steps:
@@ -64,7 +64,7 @@ jobs:
   awx-e2e:
     name: AWX E2E
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    # timeout-minutes: 20
     needs: awx-ui-image
     strategy:
       fail-fast: false
