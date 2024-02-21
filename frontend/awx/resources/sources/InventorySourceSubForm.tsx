@@ -145,7 +145,7 @@ export function InventorySourceSubForm() {
             ) : null}
           </PageFormSection>
           <PageFormSection singleColumn>
-            <PageFormDataEditor<InventorySourceForm>
+            <PageFormDataEditor
               toggleLanguages={['yaml', 'json']}
               name="source_vars"
               label={t('Source Variables')}

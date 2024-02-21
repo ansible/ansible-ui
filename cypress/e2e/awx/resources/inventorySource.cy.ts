@@ -1,4 +1,5 @@
 import { randomString } from '../../../../framework/utils/random-string';
+import { Credential } from '../../../../frontend/awx/interfaces/Credential';
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 import { InventorySource } from '../../../../frontend/awx/interfaces/InventorySource';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
@@ -11,6 +12,7 @@ describe('Inventory source page', () => {
   let project: Project;
   let inventory: Inventory;
   let inventorySource: InventorySource;
+  let credential: Credential;
   before(() => {
     cy.awxLogin();
   });
@@ -33,6 +35,8 @@ describe('Inventory source page', () => {
         kind: 'gce',
         organization: organization.id,
         credential_type: 9,
+      }).then((cred) => {
+        credential = cred;
       });
     });
   });
@@ -41,6 +45,7 @@ describe('Inventory source page', () => {
     cy.deleteAwxProject(project, { failOnStatusCode: false });
     cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
     cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
+    cy.deleteAwxCredential(credential, { failOnStatusCode: false });
   });
 
   it('deletes an inventory source from the details page', () => {
@@ -84,7 +89,7 @@ describe('Inventory source page', () => {
     cy.verifyPageTitle('project source');
   });
 
-  it('creates an amazon ec2 inventory source', () => {
+  it('creates an amazon ec2 inventory source and edits the form', () => {
     cy.navigateTo('awx', 'inventories');
     cy.clickTableRow(inventory.name);
     cy.verifyPageTitle(inventory.name);
@@ -93,7 +98,23 @@ describe('Inventory source page', () => {
     cy.verifyPageTitle('Add new source');
     cy.getBy('[data-cy="name"]').type('amazon ec2 source');
     cy.selectDropdownOptionByResourceName('source_control_type', 'Amazon EC2');
+    cy.getBy('[data-cy="host-filter"]').type('/^test$/');
+    cy.getBy('[data-cy="verbosity"]').type('1');
+    cy.getBy('[data-cy="enabled-var"]').type('foo.bar');
+    cy.getBy('[data-cy="enabled-value"]').type('test');
+    cy.getBy('[data-cy="overwrite"]').check();
     cy.getBy('[data-cy="Submit"]').click();
     cy.verifyPageTitle('amazon ec2 source');
+    cy.clickButton('Edit inventory source');
+    cy.verifyPageTitle('Edit source');
+    cy.getBy('[data-cy="name"]').clear().type('new project');
+    cy.selectDropdownOptionByResourceName('source_control_type', 'Sourced from a Project');
+    cy.getBy('[data-cy="overwrite_vars"]').check();
+    cy.getBy('[data-cy="update_on_launch"]').check();
+    cy.getBy('[data-cy="update-cache-timeout"]').type('1');
+    cy.selectDropdownOptionByResourceName('project', project.name);
+    cy.selectDropdownOptionByResourceName('inventory', 'Dockerfile');
+    cy.getBy('[data-cy="Submit"]').click();
+    cy.verifyPageTitle('new project');
   });
 });
