@@ -165,37 +165,32 @@ describe('Collections List- Line Item Kebab Menu', () => {
     });
   });
 
-  it.skip('can delete entire collection from system', () => {
-    cy.navigateTo('hub', Collections.url);
-    cy.verifyPageTitle(Collections.title);
-    cy.galaxykit('task wait all');
-    cy.get('[data-cy="table-view"]').click();
-    cy.filterTableBySingleText(thisCollectionName);
-    cy.clickTableRowKebabAction(thisCollectionName, 'delete-entire-collection-from-system', false);
-    cy.get('#confirm').click();
-    cy.clickButton(/^Delete collections/);
-    cy.contains(/^Success$/);
-    cy.clickButton(/^Close$/);
-    cy.galaxykit('task wait all');
+  it('user can delete entire collection from system', () => {
+    deleteCollectionFromList('delete-entire-collection-from-system');
   });
 
-  it.skip('can delete entire collection from repository', () => {
-    cy.navigateTo('hub', Collections.url);
-    cy.verifyPageTitle(Collections.title);
+  it('user can delete entire collection from repository', () => {
+    deleteCollectionFromList('delete-entire-collection-from-repository');
+  });
+
+  function deleteCollectionFromList(selector: string) {
+    cy.approveCollection(thisCollectionName, namespace, '1.0.0');
     cy.galaxykit('task wait all');
     cy.get('[data-cy="table-view"]').click();
     cy.filterTableBySingleText(thisCollectionName);
-    cy.clickTableRowKebabAction(
-      thisCollectionName,
-      'delete-entire-collection-from-repository',
-      false
-    );
+    cy.clickTableRowKebabAction(thisCollectionName, selector, false);
     cy.get('#confirm').click();
     cy.clickButton(/^Delete collections/);
     cy.contains(/^Success$/);
     cy.clickButton(/^Close$/);
     cy.galaxykit('task wait all');
-  });
+
+    // check that collection is deleted
+    cy.galaxykit('task wait all');
+    cy.navigateTo('hub', Collections.url);
+    cy.filterTableBySingleText(thisCollectionName);
+    cy.contains('No results found');
+  }
 });
 
 describe('Collections List- Deprecate and Copy', () => {
@@ -291,25 +286,29 @@ describe('Collections Details View', () => {
 
   it.skip('can upload a new version to an existing collection', () => {});
 
-  it.skip('can delete entire collection from system', () => {
-    cy.approveCollection(collection, namespace, '1.0.0');
-    cy.galaxykit('task wait all');
-    cy.get('[data-cy="table-view"]').click();
-    cy.filterTableBySingleText(collection);
-    cy.clickLink(collection);
-    cy.wait(400);
-    cy.selectDetailsPageKebabAction('delete-entire-collection-from-system');
+  it('user can delete entire collection from system', () => {
+    deleteCollectionDetail('delete-entire-collection-from-system');
   });
 
-  it.skip('can delete entire collection from repository', () => {
+  it('user can delete entire collection from repository', () => {
+    deleteCollectionDetail('delete-entire-collection-from-repository');
+  });
+
+  function deleteCollectionDetail(selector: string) {
     cy.approveCollection(collection, namespace, '1.0.0');
     cy.galaxykit('task wait all');
     cy.get('[data-cy="table-view"]').click();
     cy.filterTableBySingleText(collection);
     cy.clickLink(collection);
     cy.wait(400);
-    cy.selectDetailsPageKebabAction('delete-entire-collection-from-repository');
-  });
+    cy.selectDetailsPageKebabAction(selector);
+
+    // check that collection is deleted
+    cy.galaxykit('task wait all');
+    cy.navigateTo('hub', Collections.url);
+    cy.filterTableBySingleText(collection);
+    cy.contains('No results found');
+  }
 
   it.skip('can deprecate a collection', () => {});
 
