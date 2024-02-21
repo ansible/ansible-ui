@@ -1,47 +1,39 @@
 import useResizeObserver from '@react-hook/resize-observer';
-import jsyaml from 'js-yaml';
 import * as monaco from 'monaco-editor';
 import { configureMonacoYaml } from 'monaco-yaml';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { FieldPath, FieldValues, UseFormClearErrors, UseFormSetError } from 'react-hook-form';
 import styled from 'styled-components';
-import { useSettings } from '../../Settings';
-import { useID } from '../../hooks/useID';
+import { useSettings } from '../Settings';
+import { useID } from '../hooks/useID';
+import './DataEditor.css';
 
-export enum DataEditorLanguage {
+export const enum DataEditorLanguage {
   JSON = 'json',
   YAML = 'yaml',
 }
+export type DataEditorLanguages = 'json' | 'yaml';
 
 /**
  * DataEditor is a wrapper over Monaco editor for editing JSON or YAML data.
  */
-export function DataEditor<
-  TFieldValues extends FieldValues = FieldValues,
-  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
->(props: {
+export function DataEditor(props: {
   id?: string;
-  name: TFieldName;
-  language: 'json' | 'yaml';
-  setError: UseFormSetError<TFieldValues>;
-  clearErrors: UseFormClearErrors<TFieldValues>;
-  invalid?: boolean;
-  value: string | object;
-  isReadOnly?: boolean;
+  name: string;
+  language: DataEditorLanguages;
+  value: string;
   onChange: (value: string) => void;
+  setError: (error?: string) => void;
+  isReadOnly?: boolean;
+  className?: string;
 }) {
   const id = useID(props);
+  const { name, language, value, onChange, setError, isReadOnly } = props;
 
+  // The outter div is used to contain the inner div that is absolutely positioned to fill the outer div
   const outerDivEl = useRef<HTMLDivElement>(null);
   const innerDivEl = useRef<HTMLDivElement>(null);
 
-  // We set the default value and language in state to avoid re-rendering the editor when the value or language changes
-  const [defaultValue] = useState(props.value);
-  const [defaultLanguage] = useState(props.language);
-
-  const { onChange, language, setError, name, clearErrors } = props;
-
-  // When content changes, we need to update the height of the editor
+  // When content changes, we need to update the height of the outer div to match the content
   const updateEditorHeight = useCallback((value: string) => {
     if (!outerDivEl.current) return;
     outerDivEl.current.style.minHeight = `${EditorLineHeight + EditorPadding}` + 'px';
@@ -55,53 +47,20 @@ export function DataEditor<
     if (innerDivEl.current) {
       const editor = monaco.editor.create(innerDivEl.current, {
         lineNumbers: 'on',
-        theme: 'my-dark',
+        theme: 'data-editor-dark',
         lineDecorationsWidth: 8,
         padding: { top: EditorPaddingTop, bottom: EditorPaddingBottom },
         fontSize: 14,
         fontFamily: 'RedHatMono',
         scrollBeyondLastLine: false,
         minimap: { enabled: false },
+        // renderLineHighlight: 'none',
         renderLineHighlightOnlyWhenFocus: true,
       });
       editorRef.current.editor = editor;
       return () => editor.dispose();
     }
   }, []);
-
-  // Set editor default value
-  useEffect(() => {
-    const editor = editorRef?.current?.editor;
-    if (editor) {
-      let value: string = '';
-      if (typeof defaultValue === 'object') {
-        if (defaultValue === null) {
-          editor.setValue('');
-        } else {
-          switch (defaultLanguage) {
-            case 'json':
-              try {
-                value = JSON.stringify(defaultValue, null, 2);
-              } catch (e) {
-                // do nothing
-              }
-              break;
-            case 'yaml':
-              try {
-                value = jsyaml.dump(defaultValue);
-              } catch (e) {
-                // do nothing
-              }
-              break;
-          }
-        }
-      } else {
-        value = defaultValue ?? '';
-      }
-      editor.setValue(value);
-      updateEditorHeight(value);
-    }
-  }, [defaultValue, defaultLanguage, updateEditorHeight]);
 
   // Hook up editor change event to call onChange
   useEffect(() => {
@@ -119,7 +78,24 @@ export function DataEditor<
     return () => didChangeContentDisposable.dispose();
   }, [onChange, updateEditorHeight]);
 
+  // Set editor value to change on value change
+  useEffect(() => {
+    const editor = editorRef?.current?.editor;
+    if (!editor) return;
+    if (editor.getValue() === value) return;
+    editor.setValue(value);
+    updateEditorHeight(value);
+  }, [value, updateEditorHeight]);
+
+  // Editor is read-only
+  useEffect(() => {
+    const editor = editorRef?.current?.editor;
+    if (!editor) return;
+    editor.updateOptions({ readOnly: isReadOnly });
+  }, [isReadOnly]);
+
   // Hook up editor language change event which hooks up the form errors
+  const [hasError, setHasError] = useState(false);
   useEffect(() => {
     const editor = editorRef?.current?.editor;
     if (!editor) return;
@@ -134,36 +110,12 @@ export function DataEditor<
         owner: model.getLanguageId(),
         resource: model.uri,
       });
-      if (markers.length > 0) {
-        setError(name, { message: markers.map((marker) => marker.message).join('\n') });
-      } else {
-        clearErrors(name);
-      }
+      setHasError(markers.length > 0);
+      setError(markers.length > 0 ? markers.map((marker) => marker.message).join('\n') : undefined);
     });
 
-    let obj: object | undefined = undefined;
-    try {
-      obj = JSON.parse(editor.getValue()) as object;
-    } catch {
-      try {
-        obj = jsyaml.load(editor.getValue()) as object;
-      } catch {
-        // do nothing
-      }
-    }
-    if (obj) {
-      switch (language) {
-        case 'json':
-          editor.setValue(JSON.stringify(obj, null, 2));
-          break;
-        case 'yaml':
-          editor.setValue(jsyaml.dump(obj));
-          break;
-      }
-    }
-
     return () => didChangeMarkersDisposable.dispose();
-  }, [clearErrors, language, name, setError]);
+  }, [language, setError]);
 
   // Update editor size when container size changes
   useResizeObserver(innerDivEl, () => {
@@ -177,16 +129,18 @@ export function DataEditor<
   useEffect(() => {
     const editor = editorRef?.current?.editor;
     if (!editor) return;
-    editor.updateOptions({ theme: settings.activeTheme === 'dark' ? 'my-dark' : 'my-light' });
+    editor.updateOptions({
+      theme: settings.activeTheme === 'dark' ? 'data-editor-dark' : 'data-editor-light',
+    });
   }, [settings.activeTheme]);
 
   return (
     <OuterDiv
-      className="pf-v5-c-form-control"
-      aria-invalid={props.invalid ? 'true' : undefined}
+      className={props.className}
+      aria-invalid={hasError ? 'true' : undefined}
       ref={outerDivEl}
     >
-      <InnerDiv id={id} data-cy={id} ref={innerDivEl} />
+      <InnerDiv id={id} data-cy={id} ref={innerDivEl} className="data-editor" />
     </OuterDiv>
   );
 }
@@ -266,25 +220,33 @@ configureMonacoYaml(monaco, {
 });
 
 // Set up Monaco editor dark theme
-monaco.editor.defineTheme('my-dark', {
+monaco.editor.defineTheme('data-editor-dark', {
   base: 'vs-dark',
   inherit: true,
   colors: {
     'editor.background': '#00000000',
     'minimap.background': '#00000000',
     'scrollbarSlider.background': '#FFFFFF22',
+    'editor.outline': '#00000000',
+    'editor.lineHighlightBorder': '#00000000',
+    'editor.lineHighlightBackground': '#00000000',
+    'editorLineNumber.foreground': '#FFFFFF88',
   },
   rules: [{ token: '', background: '#222222' }],
 });
 
 // Set up Monaco editor light theme
-monaco.editor.defineTheme('my-light', {
+monaco.editor.defineTheme('data-editor-light', {
   base: 'vs',
   inherit: true,
   colors: {
     'editor.background': '#FFFFFF00',
     'minimap.background': '#FFFFFF00',
     'scrollbarSlider.background': '#FFFFFF22',
+    'editor.outline': '#00000000',
+    'editor.lineHighlightBorder': '#ffffff00',
+    'editor.lineHighlightBackground': '#ffffff00',
+    'editorLineNumber.foreground': '#00000088',
   },
   rules: [],
 });

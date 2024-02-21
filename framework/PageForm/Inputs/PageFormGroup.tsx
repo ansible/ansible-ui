@@ -1,9 +1,10 @@
 import {
+  Flex,
+  FlexItem,
   FormGroup,
   FormHelperText,
   HelperText,
   HelperTextItem,
-  Split,
 } from '@patternfly/react-core';
 import { ReactNode } from 'react';
 import { Help } from '../../components/Help';
@@ -36,13 +37,13 @@ export function PageFormGroup(props: PageFormGroupProps) {
       fieldId={props.fieldId}
       label={
         props.icon ? (
-          <Split hasGutter>
-            {props.icon}
+          <Flex columnGap={{ default: 'columnGapSm' }} alignItems={{ default: 'alignItemsCenter' }}>
+            {props.icon && <FlexItem>{props.icon}</FlexItem>}
             {label}
             {labelHelp ? (
               <Help title={labelHelpTitle} help={labelHelp} marginLeft={'0px'} />
             ) : undefined}
-          </Split>
+          </Flex>
         ) : (
           label
         )
