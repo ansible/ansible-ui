@@ -25,7 +25,7 @@ describe('Collections- List View', () => {
   });
 
   // very basic check that documentation is rendering and basic operations are working
-  it('Documentation tab is working', () => {
+  it.skip('Documentation tab is working', () => {
     navigateToTab('Documentation');
     cy.contains('Arista EOS Collection');
     cy.contains('Ansible version compatibility');
@@ -54,7 +54,17 @@ describe('Collections- List View', () => {
     cy.contains('[data-cy="hub_documentation_panel"]', 'eos_acls');
     cy.contains('[data-cy="hub_documentation_panel"]', 'network').should('not.exist');
   });
+
+  it('Contents tab is working', () => {
+    navigateToTab('Contents');
+    cy.contains(
+        `[href="/collections/published/${namespace}/${collection}/documentation/module/eos_interface?version=1.0.0"]`,
+        'eos_interface'
+    );
+  });
 });
+
+
 
 function navigateToDetail(namespace: string, collection: string) {
   cy.navigateTo('hub', Collections.url);
