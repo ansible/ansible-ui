@@ -3,8 +3,14 @@ import { useTranslation } from 'react-i18next';
 import { Controller, FieldPath, useFormContext, useWatch } from 'react-hook-form';
 import { InputGroup, InputGroupItem, InputGroupText, TextInput } from '@patternfly/react-core';
 import { PageFormGroup } from '../../../../../../framework/PageForm/Inputs/PageFormGroup';
-import { PageFormGrid, PageFormSelect, PageFormTextInput } from '../../../../../../framework';
+import {
+  PageFormGrid,
+  PageFormSelect,
+  PageFormTextInput,
+  PageWizardStep,
+} from '../../../../../../framework';
 import { PageFormWatch } from '../../../../../../framework/PageForm/Utils/PageFormWatch';
+import { usePageWizard } from '../../../../../../framework/PageWizard/PageWizardProvider';
 import { awxAPI } from '../../../../common/api/awx-utils';
 import { useGet } from '../../../../../common/crud/useGet';
 import { requestGet } from '../../../../../common/crud/Data';
@@ -15,14 +21,12 @@ import { PageFormJobTemplateSelect } from '../../components/PageFormJobTemplateS
 import { PageFormProjectSelect } from '../../../projects/components/PageFormProjectSelect';
 import { PageFormManagementJobsSelect } from '../../../../administration/management-jobs/components/PageFormManagementJobsSelect';
 import { PageFormInventorySourceSelect } from '../../../inventories/components/PageFormInventorySourceSelect';
-import { UnifiedJobType } from '../../../../interfaces/WorkflowNode';
-import { SystemJobTemplate } from '../../../../interfaces/SystemJobTemplate';
-import { LaunchConfiguration } from '../../../../interfaces/LaunchConfiguration';
-import { usePageWizard } from '../../../../../../framework/PageWizard/PageWizardProvider';
-import type { WizardFormValues, AllResources, PromptFormValues } from '../types';
-import { PageWizardStep } from '../../../../../../framework';
-import { shouldHideOtherStep } from './helpers';
+import type { SystemJobTemplate } from '../../../../interfaces/SystemJobTemplate';
+import type { LaunchConfiguration } from '../../../../interfaces/LaunchConfiguration';
+import type { WizardFormValues, AllResources, PromptFormValues, UnifiedJobType } from '../types';
 import { parseStringToTagArray } from '../../JobTemplateFormHelpers';
+import { shouldHideOtherStep } from './helpers';
+import { RESOURCE_TYPE } from '../constants';
 
 export function NodeTypeStep(props: { hasSourceNode?: boolean }) {
   const { reset, getValues, setValue, formState, getFieldState, register, control } =
@@ -65,7 +69,7 @@ export function NodeTypeStep(props: { hasSourceNode?: boolean }) {
   useEffect(() => {
     const { isDirty, isTouched } = getFieldState('node_type');
     const currentFormValues = getValues();
-    const isApprovalType = nodeType === UnifiedJobType.workflow_approval;
+    const isApprovalType = nodeType === RESOURCE_TYPE.workflow_approval;
 
     setValue('node_type', nodeType, { shouldTouch: true });
 
@@ -111,12 +115,12 @@ export function NodeTypeStep(props: { hasSourceNode?: boolean }) {
       }
 
       let launchConfigResults = {} as LaunchConfiguration;
-      if (templateType === UnifiedJobType.job || templateType === 'job_template') {
+      if (templateType === RESOURCE_TYPE.job || templateType === 'job_template') {
         launchConfigResults = await requestGet<LaunchConfiguration>(
           awxAPI`/job_templates/${template.id.toString()}/launch/`
         );
       } else if (
-        templateType === UnifiedJobType.workflow_job ||
+        templateType === RESOURCE_TYPE.workflow_job ||
         templateType === 'workflow_job_template'
       ) {
         launchConfigResults = await requestGet<LaunchConfiguration>(
@@ -162,7 +166,7 @@ export function NodeTypeStep(props: { hasSourceNode?: boolean }) {
       }
     };
 
-    if (nodeType === UnifiedJobType.job || nodeType === UnifiedJobType.workflow_job) {
+    if (nodeType === RESOURCE_TYPE.job || nodeType === RESOURCE_TYPE.workflow_job) {
       void setLaunchToWizardData();
     }
   }, [
@@ -226,12 +230,12 @@ function NodeTypeInput() {
       name="node_type"
       data-cy="node-type"
       options={[
-        { label: t('Job Template'), value: UnifiedJobType.job },
-        { label: t('Workflow Job Template'), value: UnifiedJobType.workflow_job },
-        { label: t('Approval'), value: UnifiedJobType.workflow_approval },
-        { label: t('Project Sync'), value: UnifiedJobType.project_update },
-        { label: t('Inventory Source Sync'), value: UnifiedJobType.inventory_update },
-        { label: t('Management Job'), value: UnifiedJobType.system_job },
+        { label: t('Job Template'), value: RESOURCE_TYPE.job },
+        { label: t('Workflow Job Template'), value: RESOURCE_TYPE.workflow_job },
+        { label: t('Approval'), value: RESOURCE_TYPE.workflow_approval },
+        { label: t('Project Sync'), value: RESOURCE_TYPE.project_update },
+        { label: t('Inventory Source Sync'), value: RESOURCE_TYPE.inventory_update },
+        { label: t('Management Job'), value: RESOURCE_TYPE.system_job },
       ]}
     />
   );
@@ -243,7 +247,7 @@ function NodeResourceInput() {
     <PageFormWatch watch="node_type">
       {(nodeType) => {
         switch (nodeType) {
-          case UnifiedJobType.job:
+          case RESOURCE_TYPE.job:
             return (
               <PageFormJobTemplateSelect<WizardFormValues>
                 templateType="job_templates"
@@ -251,7 +255,7 @@ function NodeResourceInput() {
                 isRequired
               />
             );
-          case UnifiedJobType.workflow_job:
+          case RESOURCE_TYPE.workflow_job:
             return (
               <PageFormJobTemplateSelect<WizardFormValues>
                 templateType="workflow_job_templates"
@@ -259,7 +263,7 @@ function NodeResourceInput() {
                 isRequired
               />
             );
-          case UnifiedJobType.workflow_approval:
+          case RESOURCE_TYPE.workflow_approval:
             return (
               <>
                 <PageFormTextInput<WizardFormValues>
@@ -276,13 +280,13 @@ function NodeResourceInput() {
                 <TimeoutInputs />
               </>
             );
-          case UnifiedJobType.project_update:
+          case RESOURCE_TYPE.project_update:
             return <PageFormProjectSelect<WizardFormValues> name="node_resource" isRequired />;
-          case UnifiedJobType.inventory_update:
+          case RESOURCE_TYPE.inventory_update:
             return (
               <PageFormInventorySourceSelect<WizardFormValues> name="node_resource" isRequired />
             );
-          case UnifiedJobType.system_job:
+          case RESOURCE_TYPE.system_job:
             return (
               <>
                 <PageFormManagementJobsSelect<WizardFormValues> name="node_resource" isRequired />

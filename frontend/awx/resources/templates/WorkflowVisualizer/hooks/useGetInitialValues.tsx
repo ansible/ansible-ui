@@ -8,10 +8,16 @@ import type { Credential } from '../../../../interfaces/Credential';
 import type { InstanceGroup } from '../../../../interfaces/InstanceGroup';
 import type { Label } from '../../../../interfaces/Label';
 import type { LaunchConfiguration } from '../../../../interfaces/LaunchConfiguration';
-import { UnifiedJobType } from '../../../../interfaces/WorkflowNode';
-import { EdgeStatus, GraphNode, PromptFormValues, WizardFormValues } from '../types';
+import {
+  EdgeStatus,
+  GraphNode,
+  PromptFormValues,
+  WizardFormValues,
+  UnifiedJobType,
+} from '../types';
 import { getConvergenceType, getValueBasedOnJobType, shouldHideOtherStep } from '../wizard/helpers';
 import { jsonToYaml } from '../../../../../../framework/utils/codeEditorUtils';
+import { RESOURCE_TYPE } from '../constants';
 
 interface WizardStepState {
   nodeTypeStep?: Partial<WizardFormValues>;
@@ -32,8 +38,10 @@ export function useNodeTypeStepDefaults(): (node?: GraphNode) => CommonNodeValue
     const nodeConvergence = getConvergenceType(resource?.all_parents_must_converge);
     const nodeDaysToKeep = resource?.extra_data?.days;
     const approvalTimeout = nodeUJT?.timeout;
-    const approvalName = getValueBasedOnJobType(nodeType, '', nodeUJT?.name ?? '');
-    const approvalDescription = getValueBasedOnJobType(nodeType, '', nodeUJT?.description ?? '');
+    const approvalName = nodeType ? getValueBasedOnJobType(nodeType, '', nodeUJT?.name ?? '') : '';
+    const approvalDescription = nodeType
+      ? getValueBasedOnJobType(nodeType, '', nodeUJT?.description ?? '')
+      : '';
 
     return {
       approval_description: approvalDescription ?? defaultMapper.approval_description,
@@ -57,7 +65,7 @@ const defaultMapper: CommonNodeValues = {
   node_convergence: 'any',
   node_days_to_keep: 30,
   node_resource: null,
-  node_type: UnifiedJobType.job,
+  node_type: RESOURCE_TYPE.job,
   node_status_type: EdgeStatus.info,
 };
 
@@ -144,11 +152,11 @@ export async function getLaunchData(node: GraphNode) {
 
   const { unified_job_type, id } = unifiedJobTemplate;
 
-  if (unified_job_type === UnifiedJobType.workflow_job) {
+  if (unified_job_type === RESOURCE_TYPE.workflow_job) {
     return await requestGet<LaunchConfiguration>(
       awxAPI`/workflow_job_templates/${id.toString()}/launch/`
     );
-  } else if (unified_job_type === UnifiedJobType.job) {
+  } else if (unified_job_type === RESOURCE_TYPE.job) {
     return await requestGet<LaunchConfiguration>(awxAPI`/job_templates/${id.toString()}/launch/`);
   }
 }
@@ -171,9 +179,9 @@ async function getInstanceGroupData(nodeId: string) {
 }
 async function getTemplateCredentialData(templateId: string, templateType: UnifiedJobType) {
   const endpoint =
-    templateType === UnifiedJobType.workflow_job
+    templateType === RESOURCE_TYPE.workflow_job
       ? awxAPI`/workflow_job_templates/${templateId}/credentials/`
-      : templateType === UnifiedJobType.job
+      : templateType === RESOURCE_TYPE.job
         ? awxAPI`/job_templates/${templateId}/credentials/`
         : '';
   return endpoint ? getRelated<Credential>(endpoint) : [];
