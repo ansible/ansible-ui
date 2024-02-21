@@ -1,8 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import { Scrollable, PageTable } from '../../../../framework';
 import { useHubView } from '../../common/useHubView';
-import { PageSection, Title } from '@patternfly/react-core';
-import { useOutletContext } from 'react-router-dom';
+import { PageSection } from '@patternfly/react-core';
+import { useParams } from 'react-router-dom';
 import { hubAPI } from '../../common/api/formatPath';
 import { idKeyFn } from '../../../common/utils/nameKeyFn';
 import { useImagesFilters } from './hooks/useImagesFilters';

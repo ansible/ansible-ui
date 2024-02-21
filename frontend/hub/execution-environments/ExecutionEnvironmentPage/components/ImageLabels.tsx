@@ -19,8 +19,8 @@ export const ShaLabel = ({
   </Tooltip>
 );
 
-export const TagLabel = ({ tag }: { tag: string }) => (
-  <Label variant="outline" icon={<TagIcon />}>
+export const TagLabel = ({ tag, onClose }: { tag: string; onClose?: () => void }) => (
+  <Label variant="outline" icon={<TagIcon />} onClose={onClose}>
     {tag}
   </Label>
 );

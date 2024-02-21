@@ -19,14 +19,20 @@ export function useImagesToolbarActions({
     },
   });
 
+export function useImagesToolbarActions() {
   const { t } = useTranslation();
+  const executionEnvironmentManageTags = useExecutionEnvironmentManageTags();
+
   return useMemo<IPageAction<Image>[]>(
     () => [
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         label: t('Manage tags'),
-        onClick: () => {},
+        onClick: (image) => {
+          executionEnvironmentManageTags(ee, image);
+        },
+        isHidden: () => !!ee.pulp?.repository?.remote,
       },
       {
         type: PageActionType.Button,
@@ -45,6 +51,6 @@ export function useImagesToolbarActions({
         },
       },
     ],
-    [t, deleteImages]
+    [t, deleteImages, executionEnvironmentManageTags]
   );
 }
