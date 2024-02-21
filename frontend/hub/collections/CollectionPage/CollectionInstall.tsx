@@ -215,9 +215,9 @@ function ShowSignature(props: { collection: CollectionVersionSearch }) {
   const name = collection.collection_version?.name || '';
   const version = collection.collection_version?.version || '';
 
-  let url = hubAPI`/v3/plugin/ansible/content/${basePath}/collections/index/${namespace}/${name}/versions/${version}/`;
-  if (!basePath) {
-    url = '';
+  let url = '';
+  if (basePath) {
+    url = hubAPI`/v3/plugin/ansible/content/${basePath}/collections/index/${namespace}/${name}/versions/${version}/`;
   }
 
   const { data: signData, error: signError } = useGet<SignatureType>(url);
