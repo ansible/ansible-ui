@@ -1,5 +1,5 @@
 import { ButtonVariant } from '@patternfly/react-core';
-import { PlusIcon, TrashIcon } from '@patternfly/react-icons';
+import { ExternalLinkAltIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons';
 import { TFunction } from 'i18next';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -20,6 +20,7 @@ import { SigningServiceResponse } from '../../interfaces/generated/SigningServic
 import { HubRoute } from '../../main/HubRoutes';
 import { ExecutionEnvironment } from '../ExecutionEnvironment';
 import { useExecutionEnvironmentsColumns } from './useExecutionEnvironmentsColumns';
+import { AAPDocsURL } from '../../common/constants';
 
 export function useExecutionEnvironmentsActions(callback?: (ees: ExecutionEnvironment[]) => void) {
   const { t } = useTranslation();
@@ -40,6 +41,17 @@ export function useExecutionEnvironmentsActions(callback?: (ees: ExecutionEnviro
         label: t('Add execution environment'),
         onClick: () => {
           pageNavigate(HubRoute.CreateExecutionEnvironment);
+        },
+      },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.None,
+        variant: ButtonVariant.link,
+        isPinned: true,
+        icon: ExternalLinkAltIcon,
+        label: t('Push container images'),
+        onClick: () => {
+          window.open(AAPDocsURL, '_blank');
         },
       },
       {
