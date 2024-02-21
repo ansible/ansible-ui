@@ -1442,12 +1442,11 @@ Cypress.Commands.add('editAwxApplication', (application: Application, name: stri
   }
 });
 
-Cypress.Commands.add('createAwxInstance', () => {
+Cypress.Commands.add('createAwxInstance', (hostname: string) => {
   cy.awxRequestPost<
     Pick<
       Instance,
       | 'hostname'
-      | 'description'
       | 'enabled'
       | 'managed_by_policy'
       | 'peers_from_control_nodes'
@@ -1456,8 +1455,7 @@ Cypress.Commands.add('createAwxInstance', () => {
     >,
     Instance
   >(awxAPI`/instances/`, {
-    hostname: 'E2EInstanceTest' + randomString(5),
-    description: 'E2E Test Instance Description',
+    hostname: hostname,
     enabled: true,
     managed_by_policy: false,
     peers_from_control_nodes: false,
