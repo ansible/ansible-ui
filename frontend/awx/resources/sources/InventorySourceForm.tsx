@@ -24,7 +24,8 @@ import {
 } from '../../interfaces/InventorySource';
 import { useGet } from '../../../common/crud/useGet';
 import { Inventory } from '../../interfaces/Inventory';
-import { useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 
 export interface SourceFields extends FieldValues {
   project: Omit<InventorySource, 'source'> & {
@@ -67,7 +68,7 @@ export function CreateInventorySource() {
     const source = await postRequest(awxAPI`/inventory_sources/`, formValues);
 
     pageNavigate(AwxRoute.InventorySourceDetail, {
-      params: { source_id: source.id, inventory_type: 'inventory', id: params.id },
+      params: { source_id: source.id, inventory_type: inventory?.type, id: params.id },
     });
   };
 
@@ -84,7 +85,7 @@ export function CreateInventorySource() {
             to: getPageUrl(AwxRoute.InventoryDetails, {
               params: {
                 id: inventory?.id,
-                inventory_type: 'inventory',
+                inventory_type: inventory?.type,
               },
             }),
           },
@@ -93,7 +94,7 @@ export function CreateInventorySource() {
             to: getPageUrl(AwxRoute.InventorySources, {
               params: {
                 id: inventory?.id,
-                inventory_type: 'inventory',
+                inventory_type: inventory?.type,
               },
             }),
           },
@@ -112,6 +113,110 @@ export function CreateInventorySource() {
   );
 }
 
+export function EditInventorySource() {
+  const { t } = useTranslation();
+  const pageNavigate = usePageNavigate();
+  const navigate = useNavigate();
+  const patchRequest = usePatchRequest<InventorySourceCreate, InventorySource>();
+  const params = useParams<{ id: string; source_id: string }>();
+  const { data: inventory } = useGet<Inventory>(
+    awxAPI`/inventories/${params.id?.toString() ?? ''}/`
+  );
+
+  const { data: inventorySource } = useGet<InventorySource>(
+    awxAPI`/inventory_sources/${params.source_id?.toString() ?? ''}/`
+  );
+
+  const defaultValue: InventorySourceForm = useMemo(
+    () => ({
+      name: inventorySource?.name,
+      description: inventorySource?.description ?? '',
+      source: inventorySource?.source,
+      credential: inventorySource?.summary_fields?.credential?.name,
+      source_project: inventorySource?.summary_fields?.source_project,
+      source_path: {
+        name:
+          inventorySource?.source_path?.length === 0
+            ? '/ (project root)'
+            : inventorySource?.source_path,
+      },
+      verbosity: inventorySource?.verbosity,
+      host_filter: inventorySource?.host_filter,
+      enabled_var: inventorySource?.enabled_var,
+      enabled_value: inventorySource?.enabled_value,
+      overwrite: inventorySource?.overwrite,
+      overwrite_vars: inventorySource?.overwrite_vars,
+      update_on_launch: inventorySource?.update_on_launch,
+      update_cache_timeout: inventorySource?.update_cache_timeout,
+      source_vars: inventorySource?.source_vars,
+    }),
+    [inventorySource]
+  );
+
+  const onSubmit: PageFormSubmitHandler<InventorySourceForm> = async (values) => {
+    const formValues: InventorySourceCreate = {
+      ...values,
+      credential: values?.credentialIdPath,
+      source_path: values?.source_path?.name,
+      inventory: parseInt(params.id ?? ''),
+      source_project: values?.source_project?.id,
+    };
+
+    const source = await patchRequest(
+      awxAPI`/inventory_sources/${params.source_id ?? ''}/`,
+      formValues
+    );
+
+    pageNavigate(AwxRoute.InventorySourceDetail, {
+      params: { source_id: source.id, inventory_type: inventory?.type, id: params.id },
+    });
+  };
+
+  const getPageUrl = useGetPageUrl();
+
+  if (!inventorySource) {
+    return null;
+  }
+
+  return (
+    <PageLayout>
+      <PageHeader
+        title={t('Edit source')}
+        breadcrumbs={[
+          { label: t('Inventories'), to: getPageUrl(AwxRoute.Inventories) },
+          {
+            label: `${inventory?.name}`,
+            to: getPageUrl(AwxRoute.InventoryDetails, {
+              params: {
+                id: inventory?.id,
+                inventory_type: inventory?.type,
+              },
+            }),
+          },
+          {
+            label: t('Sources'),
+            to: getPageUrl(AwxRoute.InventorySources, {
+              params: {
+                id: inventory?.id,
+                inventory_type: inventory?.type,
+              },
+            }),
+          },
+          { label: t('Edit') },
+        ]}
+      />
+      <AwxPageForm
+        submitText={t('Save')}
+        onSubmit={onSubmit}
+        onCancel={() => navigate(-1)}
+        defaultValue={defaultValue}
+      >
+        <InventorySourceInputs />
+      </AwxPageForm>
+    </PageLayout>
+  );
+}
+
 function InventorySourceInputs() {
   const { t } = useTranslation();
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/inventory_sources/`);
@@ -119,6 +224,7 @@ function InventorySourceInputs() {
     name: 'source',
   });
   const formContext = useFormContext();
+  const [sourceType, setSourceType] = useState(source);
 
   // remove the filter when mockups/functionality for file and constructed source types are ready
   const scmTypeOptions = data?.actions?.GET?.source?.choices?.filter(([value, label]) => {
@@ -133,6 +239,13 @@ function InventorySourceInputs() {
 
   useEffect(() => {
     formContext.clearErrors();
+    if (sourceType !== source) {
+      formContext.resetField('credential', { defaultValue: '' });
+      formContext.resetField('source_project', { defaultValue: {} });
+      formContext.resetField('source_path', { defaultValue: '' });
+      setSourceType(source);
+    }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [source]);
   return (
