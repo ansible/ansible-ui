@@ -31,6 +31,7 @@ export type FormGroupTypeAheadMultiSelectProps = {
   isSubmitting: boolean;
   value: Partial<{ name: string }>[];
   onHandleClear: (chip?: string) => void;
+  isRequired?: boolean;
 };
 
 /** A PatternFly FormGroup with a PatternFly Select */
@@ -46,6 +47,8 @@ export function FormGroupTypeAheadMultiSelect(props: FormGroupTypeAheadMultiSele
     placeholderText,
     isSubmitting,
     isReadOnly,
+    isRequired,
+    helperTextInvalid,
   } = props;
 
   const [isOpen, setIsOpen] = useState(false);
@@ -74,7 +77,14 @@ export function FormGroupTypeAheadMultiSelect(props: FormGroupTypeAheadMultiSele
   const id = useID(props);
 
   return (
-    <PageFormGroup fieldId={id} label={label} labelHelp={labelHelp} labelHelpTitle={labelHelpTitle}>
+    <PageFormGroup
+      fieldId={id}
+      label={label}
+      labelHelp={labelHelp}
+      labelHelpTitle={labelHelpTitle}
+      helperTextInvalid={helperTextInvalid}
+      isRequired={isRequired}
+    >
       <Select
         chipGroupComponent={chipGroupComponent()}
         variant={SelectVariant.typeaheadMulti}
