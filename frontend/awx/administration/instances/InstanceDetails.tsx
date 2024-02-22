@@ -1,6 +1,5 @@
 import {
   Button,
-  ButtonVariant,
   Label,
   PageSection,
   Progress,
@@ -11,15 +10,11 @@ import {
   Tooltip,
 } from '@patternfly/react-core';
 import { DropdownPosition } from '@patternfly/react-core/deprecated';
-import { DownloadIcon, HeartbeatIcon, PencilAltIcon } from '@patternfly/react-icons';
-import { useMemo } from 'react';
+import { DownloadIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
 import {
   BytesCell,
-  IPageAction,
-  PageActionSelection,
-  PageActionType,
   PageActions,
   PageDetail,
   PageDetails,
@@ -34,8 +29,7 @@ import { formatDateString } from '../../../../framework/utils/formatDateString';
 import { capitalizeFirstLetter } from '../../../../framework/utils/strings';
 import { LastModifiedPageDetail } from '../../../common/LastModifiedPageDetail';
 import { StatusLabel } from '../../../common/Status';
-import { useGet, useGetItem } from '../../../common/crud/useGet';
-import { usePostRequest } from '../../../common/crud/usePostRequest';
+import { useGetItem } from '../../../common/crud/useGet';
 import { AwxError } from '../../common/AwxError';
 import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 import { awxAPI } from '../../common/api/awx-utils';
@@ -45,7 +39,7 @@ import { InstanceGroup } from '../../interfaces/InstanceGroup';
 import { AwxRoute } from '../../main/AwxRoutes';
 import { useInstanceActions } from './hooks/useInstanceActions';
 import { useNodeTypeTooltip } from './hooks/useNodeTypeTooltip';
-import { Settings } from '../../interfaces/Settings';
+import { useInstanceDetailsActions } from './hooks/useInstanceActions';
 
 export function InstanceDetails() {
   const { t } = useTranslation();
@@ -54,55 +48,10 @@ export function InstanceDetails() {
   const { instanceGroups, instanceForks, handleToggleInstance, handleInstanceForksSlider } =
     useInstanceActions(params.id as string);
   const pageNavigate = usePageNavigate();
-  const postRequest = usePostRequest();
-  const activeUser = useAwxActiveUser();
-  const { data } = useGet<Settings>(awxAPI`/settings/system/`);
-  const instancesType = instance?.node_type === 'execution' || instance?.node_type === 'hop';
-  const userAccess = activeUser?.is_superuser || activeUser?.is_system_auditor;
-  const isK8s = data?.IS_K8S;
-  const canAddAndEditInstances = instancesType && isK8s && userAccess;
-
-  const itemActions: IPageAction<Instance>[] = useMemo(() => {
-    const itemActions: IPageAction<Instance>[] = [
-      {
-        type: PageActionType.Button,
-        isHidden: () => isK8s === false || !instancesType,
-        selection: PageActionSelection.None,
-        variant: ButtonVariant.primary,
-        isPinned: true,
-        icon: PencilAltIcon,
-        label: t('Edit instance'),
-        onClick: () => pageNavigate(AwxRoute.EditInstance, { params: { id: params.id } }),
-        isDisabled: canAddAndEditInstances
-          ? undefined
-          : t(
-              'You do not have permission to edit instances. Please contact your organization administrator if there is an issue with your access.'
-            ),
-      },
-      {
-        type: PageActionType.Button,
-        selection: PageActionSelection.Single,
-        icon: HeartbeatIcon,
-        variant: ButtonVariant.secondary,
-        isPinned: true,
-        label: t('Run health check'),
-        onClick: () => {
-          void postRequest(awxAPI`/instances/${instance?.id.toString() ?? ''}/health_check/`, {});
-        },
-      },
-    ];
-    return itemActions;
-  }, [
-    t,
-    pageNavigate,
-    postRequest,
-    instance?.id,
-    canAddAndEditInstances,
-    isK8s,
-    params.id,
-    instancesType,
-  ]);
-
+  const actions = useInstanceDetailsActions({
+    onInstancesRemoved: () => pageNavigate(AwxRoute.Instances),
+    isDetailsPageAction: true,
+  });
   const getPageUrl = useGetPageUrl();
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
@@ -117,7 +66,11 @@ export function InstanceDetails() {
           { label: instance?.hostname },
         ]}
         headerActions={
-          <PageActions<Instance> actions={itemActions} position={DropdownPosition.right} />
+          <PageActions<Instance>
+            actions={actions}
+            position={DropdownPosition.right}
+            selectedItem={instance}
+          />
         }
       />
       {instance ? (

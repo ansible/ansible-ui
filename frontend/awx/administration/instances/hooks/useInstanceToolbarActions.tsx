@@ -1,5 +1,5 @@
 import { ButtonVariant } from '@patternfly/react-core';
-import { HeartbeatIcon } from '@patternfly/react-icons';
+import { HeartbeatIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
@@ -12,13 +12,17 @@ import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
 import { useGet } from '../../../../common/crud/useGet';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { Settings } from '../../../interfaces/Settings';
+import { useRemoveInstances } from './useRemoveInstances';
+import { cannotRemoveInstances } from './useInstanceActions';
 
 export function useInstanceToolbarActions(view: IAwxView<Instance>) {
   const { t } = useTranslation();
   const runHealthCheck = useRunHealthCheck(view.unselectItemsAndRefresh);
+  const removeInstances = useRemoveInstances(view.unselectItemsAndRefresh);
   const pageNavigate = usePageNavigate();
   const activeUser = useAwxActiveUser();
   const { data } = useGet<Settings>(awxAPI`/settings/system/`);
+  const isK8s = data?.IS_K8S;
 
   const canAddAndEditInstances =
     (activeUser?.is_superuser || activeUser?.is_system_auditor) && data?.IS_K8S;
@@ -27,10 +31,11 @@ export function useInstanceToolbarActions(view: IAwxView<Instance>) {
     () => [
       {
         type: PageActionType.Button,
-        isHidden: () => data?.IS_K8S === false,
+        isHidden: () => isK8s === false,
         selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
         isPinned: true,
+        icon: PlusIcon,
         label: t('Add instance'),
         onClick: () => pageNavigate(AwxRoute.AddInstance),
         isDisabled: canAddAndEditInstances
@@ -38,6 +43,17 @@ export function useInstanceToolbarActions(view: IAwxView<Instance>) {
           : t(
               'You do not have permission to add instances. Please contact your organization administrator if there is an issue with your access.'
             ),
+      },
+      {
+        type: PageActionType.Button,
+        isHidden: () => isK8s === false,
+        selection: PageActionSelection.Multiple,
+        isPinned: true,
+        icon: TrashIcon,
+        label: t('Remove instance'),
+        onClick: (instance: Instance[]) => removeInstances(instance),
+        isDisabled: (instances: Instance[]) => cannotRemoveInstances(instances, t),
+        isDanger: true,
       },
       {
         type: PageActionType.Button,
@@ -49,6 +65,6 @@ export function useInstanceToolbarActions(view: IAwxView<Instance>) {
         onClick: (instances) => runHealthCheck(instances),
       },
     ],
-    [runHealthCheck, pageNavigate, canAddAndEditInstances, t, data?.IS_K8S]
+    [t, canAddAndEditInstances, pageNavigate, isK8s, removeInstances, runHealthCheck]
   );
 }

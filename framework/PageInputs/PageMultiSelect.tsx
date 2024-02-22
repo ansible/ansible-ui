@@ -268,7 +268,7 @@ export function PageMultiSelect<
       innerRef={selectListRef}
     >
       <MenuSearch>
-        <MenuSearchInput>
+        <MenuSearchInput data-cy="search-input">
           <SearchInput
             id={`${id}-search`}
             ref={searchRef}
