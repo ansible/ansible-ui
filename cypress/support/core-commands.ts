@@ -7,7 +7,11 @@
 
 /** Get by selector, making sure it is not disabled or hidden */
 Cypress.Commands.add('getBy', (selector: string) => {
-  cy.get(`${selector}:not(:disabled):not(:hidden):visible:not([aria-disabled="true"])`);
+  cy.get(selector)
+    .should('not.be.disabled')
+    .should('not.be.hidden')
+    .should('be.visible')
+    .should('not.have.attr', 'aria-disabled', 'true');
 });
 
 /** Get by data-cy attribute, making sure it is not disabled or hidden */
@@ -17,7 +21,11 @@ Cypress.Commands.add('getByDataCy', (dataCy: string) => {
 
 /** Contains by selector, making sure it is not disabled or hidden */
 Cypress.Commands.add('containsBy', (selector: string, text: string | number | RegExp) => {
-  cy.contains(`${selector}:not(:disabled):not(:hidden):visible:not([aria-disabled="true"])`, text);
+  cy.contains(selector, text)
+    .should('not.be.disabled')
+    .should('not.be.hidden')
+    .should('be.visible')
+    .should('not.have.attr', 'aria-disabled', 'true');
 });
 
 /** Click by data-cy attribute, making sure it is not disabled or hidden */
