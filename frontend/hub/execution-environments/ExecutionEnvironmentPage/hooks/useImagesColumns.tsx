@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ITableColumn, CopyCell, DateTimeCell, BytesCell } from '../../../../../framework';
 import { LabelGroup } from '@patternfly/react-core';
@@ -32,13 +32,15 @@ export function useImagesColumns(
         header: t('Tag'),
         cell: (image) => (
           <LabelGroup style={{ maxWidth: '300px' }}>
-            {image.tags.map((tag) =>
-              isManifestList(image) ? (
-                <TagLabel key={tag} tag={tag} />
-              ) : (
-                <>{id ? <TagLink key={tag} id={id} tag={tag} /> : null}</>
-              )
-            )}
+            {image.tags.map((tag) => (
+              <Fragment key={tag}>
+                {isManifestList(image) ? (
+                  <TagLabel tag={tag} />
+                ) : (
+                  <>{id ? <TagLink id={id} tag={tag} /> : null}</>
+                )}
+              </Fragment>
+            ))}
           </LabelGroup>
         ),
       },
