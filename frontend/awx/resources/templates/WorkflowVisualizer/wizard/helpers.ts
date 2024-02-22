@@ -1,7 +1,7 @@
 import { stringIsUUID } from '../../../../common/util/strings';
 import type { LaunchConfiguration } from '../../../../interfaces/LaunchConfiguration';
-import { UnifiedJobType } from '../../../../interfaces/WorkflowNode';
-import { AllResources, NodeResource } from '../types';
+import type { AllResources, NodeResource, UnifiedJobType } from '../types';
+import { RESOURCE_TYPE } from '../constants';
 
 export function replaceIdentifier(identifier: string, alias: string): string {
   if (stringIsUUID(identifier) && typeof alias === 'string' && alias !== '') {
@@ -19,11 +19,11 @@ export function hasDaysToKeep(node: NodeResource | AllResources | null) {
 }
 
 export function getValueBasedOnJobType(
-  nodeType: UnifiedJobType | undefined,
+  nodeType: UnifiedJobType,
   defaultValue: string,
   workflowValue: string
 ): string {
-  return nodeType === UnifiedJobType.workflow_approval ? workflowValue : defaultValue;
+  return nodeType === RESOURCE_TYPE.workflow_approval ? workflowValue : defaultValue;
 }
 
 export function getConvergenceType(convergence: boolean | null | undefined): 'any' | 'all' {
