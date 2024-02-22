@@ -16,16 +16,16 @@ Cypress.Commands.add('platformLogin', () => {
         retryOnStatusCodeFailure: true,
         retryOnNetworkFailure: true,
       });
-      cy.get('[data-cy="username"]').type(Cypress.env('PLATFORM_USERNAME') as string, {
+      cy.getByDataCy('username').type(Cypress.env('PLATFORM_USERNAME') as string, {
         log: false,
         delay: 0,
       });
-      cy.get('[data-cy="password"]').type(Cypress.env('PLATFORM_PASSWORD') as string, {
+      cy.getByDataCy('password').type(Cypress.env('PLATFORM_PASSWORD') as string, {
         log: false,
         delay: 0,
       });
-      cy.get('[data-cy="Submit"]').click();
-      cy.get('[data-cy="nav-toggle"]').should('exist');
+      cy.getByDataCy('Submit').click();
+      cy.getByDataCy('nav-toggle').should('exist');
     },
     {
       validate: () => {
@@ -38,8 +38,9 @@ Cypress.Commands.add('platformLogin', () => {
 });
 
 Cypress.Commands.add('createPlatformOrganization', () => {
+  const orgName = 'platform-e2e-organization' + randomString(5).toLowerCase();
   cy.requestPost<PlatformOrganization>(gatewayV1API`/organizations/`, {
-    name: `Platform E2E Organization ${randomString(5)}`,
+    name: orgName,
   });
 });
 
