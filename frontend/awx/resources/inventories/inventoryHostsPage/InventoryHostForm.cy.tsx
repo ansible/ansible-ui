@@ -5,7 +5,7 @@ import { CreateHost, EditHost } from './InventoryHostForm';
 describe('Create Edit Inventory Host Form', () => {
   const payload = {
     name: 'test',
-    variables: '---\nhello: world',
+    variables: 'hello: world',
     description: 'mock host description',
     inventory: 1,
   };

@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import {
+  PageFormDataEditor,
   PageFormSelect,
   PageFormSubmitHandler,
   PageFormTextInput,
@@ -8,20 +9,19 @@ import {
   PageLayout,
   useGetPageUrl,
   usePageNavigate,
-  PageFormDataEditor,
 } from '../../../framework';
+import { PageFormSection } from '../../../framework/PageForm/Utils/PageFormSection';
 import { useGet } from '../../common/crud/useGet';
 import { usePostRequest } from '../../common/crud/usePostRequest';
+import { PageFormCredentialSelect } from '../access/credentials/components/PageFormCredentialsSelect';
 import { EdaPageForm } from '../common/EdaPageForm';
 import { edaAPI } from '../common/eda-utils';
+import { EdaCredential } from '../interfaces/EdaCredential';
 import { EdaDecisionEnvironment } from '../interfaces/EdaDecisionEnvironment';
-import { EdaResult } from '../interfaces/EdaResult';
 import { EdaEventStream, EdaEventStreamCreate } from '../interfaces/EdaEventStream';
+import { EdaResult } from '../interfaces/EdaResult';
 import { RestartPolicyEnum } from '../interfaces/generated/eda-api';
 import { EdaRoute } from '../main/EdaRoutes';
-import { PageFormCredentialSelect } from '../access/credentials/components/PageFormCredentialsSelect';
-import { EdaCredential } from '../interfaces/EdaCredential';
-import { PageFormSection } from '../../../framework/PageForm/Utils/PageFormSection';
 
 export function CreateEventStream() {
   const { t } = useTranslation();
@@ -154,9 +154,8 @@ export function EventStreamInputs() {
           name="source_args"
           data-cy="source-args-form-field"
           label={t('Arguments')}
-          isExpandable
+          format="yaml"
           isRequired
-          toggleLanguages={['yaml', 'json']}
           labelHelp={t(
             `The arguments for the rulebook are in a JSON or YAML format. 
             The content would be equivalent to the file passed through the '--vars' flag of ansible-rulebook command.`
