@@ -41,9 +41,9 @@ import { RoleDetail } from '../../frontend/eda/interfaces/generated/eda-api';
 import { Role as HubRole } from '../../frontend/hub/access/roles/Role';
 import { RemoteRegistry } from '../../frontend/hub/administration/remote-registries/RemoteRegistry';
 import { IRemotes } from '../../frontend/hub/administration/remotes/Remotes';
+import { Repository } from '../../frontend/hub/administration/repositories/Repository';
 import { CollectionVersionSearch } from '../../frontend/hub/collections/Collection';
 import { IAwxResources } from './awx-commands';
-import { Repository } from '../../frontend/hub/administration/repositories/Repository';
 
 declare global {
   namespace Cypress {
@@ -82,6 +82,8 @@ declare global {
 
       /** Select a value from a single select input by selector, making sure it is not disabled or hidden */
       singleSelectBy(selector: string, value: string): Chainable<void>;
+
+      selectLoadAll(): Chainable<void>;
 
       /** Select a value from a single select input by data-cy attribute, making sure it is not disabled or hidden */
       singleSelectByDataCy(dataCy: string, value: string): Chainable<void>;
