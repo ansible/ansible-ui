@@ -46,7 +46,7 @@ jobs:
           ../node_modules/.bin/tsc --emitDeclarationOnly
           cp -f ../LICENSE.md ./publish/LICENSE.md
           cp -fR ../build/framework/ ./publish
-          cp -f ../README.md ./publish/README.md
+          cp -f ./README.md ./publish/README.md
           VERSION=`cat ../package.json | jq -r '.version'` && cat ./package.json | jq --arg version $VERSION '. +{version: $version}' > ./publish/package.json
           cd publish && npm publish --verbose
         env:
