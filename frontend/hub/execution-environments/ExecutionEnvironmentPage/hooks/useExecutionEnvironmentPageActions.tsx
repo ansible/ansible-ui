@@ -49,7 +49,7 @@ export function useExecutionEnvironmentPageActions(options: { refresh?: () => un
         onClick: (ee: ExecutionEnvironment) => {
           const alert: AlertProps = {
             variant: 'info',
-            title: t(`Sync started for remote registry "${ee.name}".`),
+            title: t('Sync started for remote registry "{{name}}".', { name: ee.name }),
             timeout: 5000,
           };
           void syncExecutionEnvironment(ee)
