@@ -41,6 +41,7 @@ export interface PageFormAsyncSelectProps<
   limit: number;
 }
 
+/** @deprecated Use PageFormAsyncSingleSelect or PageFormAsyncMultiSelect instead. */
 export function PageFormAsyncSelect<
   TFieldValues extends FieldValues = FieldValues,
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
