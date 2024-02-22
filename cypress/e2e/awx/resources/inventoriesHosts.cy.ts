@@ -32,7 +32,7 @@ describe('inventory host', () => {
     cy.clickButton(/^Create inventory$/);
     cy.verifyPageTitle(inventoryName);
     cy.hasDetail(/^Organization$/, organization.name);
-    cy.clickLink(/^Hosts$/);
+    cy.clickTab(/^Hosts$/, true);
   });
 
   afterEach(() => {
