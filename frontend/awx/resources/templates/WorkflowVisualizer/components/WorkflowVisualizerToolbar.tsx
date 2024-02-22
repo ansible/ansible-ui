@@ -40,6 +40,7 @@ import { START_NODE_ID } from '../constants';
 
 export const ToolbarHeader = observer(() => {
   const { t } = useTranslation();
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const pageNavigate = usePageNavigate();
   const handleSave = useSaveVisualizer();
   const alertToaster = usePageAlertToaster();
@@ -100,8 +101,10 @@ export const ToolbarHeader = observer(() => {
             key="save-and-exit"
             data-cy="save-and-exit"
             variant="primary"
+            isLoading={isSubmitting}
             onClick={() => {
               async function saveWorkflowVisualizer() {
+                setIsSubmitting(true);
                 try {
                   await handleSave();
                   alertToaster.addAlert({
@@ -122,6 +125,8 @@ export const ToolbarHeader = observer(() => {
                     ),
                   });
                 }
+                setIsSubmitting(false);
+                setShowUnsavedChangesModal(false);
               }
               void saveWorkflowVisualizer();
             }}
@@ -156,6 +161,7 @@ export const WorkflowVisualizerToolbar = observer(() => {
   const { isFullScreen, toggleFullScreen } = useViewOptions();
   const { removeNodes } = useRemoveGraphElements();
   const handleSave = useSaveVisualizer();
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   const controller = useVisualizationController();
   const nodes = controller
@@ -183,8 +189,10 @@ export const WorkflowVisualizerToolbar = observer(() => {
               icon={<CheckCircleIcon />}
               label={t('Save')}
               isDisabled={!modified}
+              isLoading={isSubmitting}
               onClick={() => {
                 async function saveWorkflowVisualizer() {
+                  setIsSubmitting(true);
                   try {
                     await handleSave();
                     alertToaster.addAlert({
@@ -205,6 +213,7 @@ export const WorkflowVisualizerToolbar = observer(() => {
                       ),
                     });
                   }
+                  setIsSubmitting(false);
                 }
                 void saveWorkflowVisualizer();
               }}
