@@ -85,10 +85,10 @@ describe('Remotes', () => {
     cy.get('[data-cy="signed_only"]').check();
     cy.get('[data-cy="signed-only-warning"]').should('be.visible');
     cy.contains(Remotes.showAdvancedOptions).click();
-    cy.get('[data-cy="requirements-file-warning"]').should('be.visible');
+    // cy.get('[data-cy="requirements-file-warning"]').should('be.visible');
     cy.get('[data-cy="url"]').clear().type(Remotes.remoteURL);
     cy.get('[data-cy="signed-only-warning"]').should('not.exist');
-    cy.get('[data-cy="requirements-file-warning"]').should('not.exist');
+    // cy.get('[data-cy="requirements-file-warning"]').should('not.exist');
     cy.intercept({
       method: 'GET',
       url: pulpAPI`/remotes/ansible/collection/?name=${remoteName}`,
@@ -141,7 +141,7 @@ collections:
     cy.get('[data-cy="download-concurrency"]').type(Remotes.downloadConcurrency);
     cy.get('[data-cy="rate-limit"]').type(Remotes.rateLimit);
     cy.get('[data-cy="tls_validation"]').click();
-    cy.get('[data-cy="requirements_file"]')
+    cy.get('[data-cy="requirements-file"]')
       .click()
       .focused()
       .invoke('select')

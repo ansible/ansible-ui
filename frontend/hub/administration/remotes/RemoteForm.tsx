@@ -585,35 +585,16 @@ function RequirementsFile({ isCommunityRemote }: IRequirementsFile) {
   const { t } = useTranslation();
   const isRequired = isCommunityRemote;
 
-  const handleValidate = (value: string) => {
-    if (isRequired && value === yamlRequirementsTemplate) {
-      return t('YAML requirements file is required for community remotes');
-    }
-    return true;
-  };
-
   return (
     <PageFormSection singleColumn>
-      <>
-        <PageFormDataEditor<RemoteFormProps>
-          name="requirements_file"
-          label={t('Requirements file')}
-          format="yaml"
-          labelHelp={TranslationLabelHelp()}
-          labelHelpTitle={t('Requirements file')}
-          isRequired={isRequired}
-          validate={isRequired ? handleValidate : undefined}
-          data-cy="requirements-file-remotes"
-        />
-        {isRequired ? (
-          <Alert
-            data-cy="requirements-file-warning"
-            isInline
-            variant="warning"
-            title={t`YAML requirements file is required for community remotes`}
-          />
-        ) : null}
-      </>
+      <PageFormDataEditor<RemoteFormProps>
+        name="requirements_file"
+        label={t('Requirements file')}
+        format="yaml"
+        labelHelp={TranslationLabelHelp()}
+        labelHelpTitle={t('Requirements file')}
+        isRequired={isRequired}
+      />
     </PageFormSection>
   );
 }
