@@ -50,6 +50,7 @@ export function PageFormCreatableSelect<
           helperTextInvalid={error?.message}
           value={value}
           isSubmitting={isSubmitting}
+          isRequired={isRequired}
           onHandleClear={(chip?: string) => {
             const values: { name: string }[] = getValues(props.name);
             onChange(!chip ? [] : values.filter((v: { name: string }) => v.name !== chip));
