@@ -22,6 +22,7 @@ export type PageFormCreatableSelectProps<
   additionalControls?: ReactElement;
   placeholderText?: string;
   options: { value: string | { name: string }; label: string }[];
+  isReadOnly?: boolean;
   isRequired?: boolean;
   validate?:
     | Validate<FieldPathValue<TFieldValues, TFieldName>, TFieldValues>
@@ -32,7 +33,19 @@ export function PageFormCreatableSelect<
   TFieldValues extends FieldValues = FieldValues,
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >(props: PageFormCreatableSelectProps<TFieldValues, TFieldName>) {
-  const { isRequired, validate, ...rest } = props;
+  const {
+    additionalControls,
+    id,
+    isReadOnly,
+    isRequired,
+    label,
+    labelHelp,
+    labelHelpTitle,
+    name,
+    options,
+    placeholderText,
+    validate,
+  } = props;
   const {
     control,
     formState: { isSubmitting },
@@ -45,12 +58,18 @@ export function PageFormCreatableSelect<
       shouldUnregister
       render={({ field: { onChange, value }, fieldState: { error } }) => (
         <FormGroupTypeAheadMultiSelect
-          {...rest}
-          id={props.id ?? props.name}
+          additionalControls={additionalControls}
           helperTextInvalid={error?.message}
-          value={value}
+          id={id ?? name}
+          isReadOnly={isReadOnly}
           isSubmitting={isSubmitting}
           isRequired={isRequired}
+          label={label}
+          labelHelp={labelHelp}
+          labelHelpTitle={labelHelpTitle}
+          options={options}
+          placeholderText={placeholderText}
+          value={value}
           onHandleClear={(chip?: string) => {
             const values: { name: string }[] = getValues(props.name);
             onChange(!chip ? [] : values.filter((v: { name: string }) => v.name !== chip));
