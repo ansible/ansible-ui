@@ -116,6 +116,8 @@ declare global {
 
       assertMonacoTextField(textString: string): Chainable<void>;
 
+      dataEditorShouldContain(selector: string, value: string | object): Chainable<void>;
+
       /** This command works for a form field to look up item from table
        * (used for components that do not utilize the PageFormAsyncSelect component yet) */
       selectItemFromLookupModal(resource: string, itemName: string): Chainable<void>;
