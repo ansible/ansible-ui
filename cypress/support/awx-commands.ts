@@ -1,4 +1,5 @@
 import '@cypress/code-coverage/support';
+import jsyaml from 'js-yaml';
 import { SetRequired } from 'type-fest';
 import { randomString } from '../../framework/utils/random-string';
 import { AwxItemsResponse } from '../../frontend/awx/common/AwxItemsResponse';
@@ -234,6 +235,25 @@ Cypress.Commands.add('configFormatToggle', (configType: string) => {
 
 Cypress.Commands.add('assertMonacoTextField', (textString: string) => {
   cy.get('[data-cy="variables"] code').should('contain', textString);
+});
+
+Cypress.Commands.add('dataEditorShouldContain', (selector: string, value: string | object) => {
+  let yaml: string;
+  if (typeof value === 'string') {
+    yaml = value;
+  } else {
+    if (Object.keys(value).length === 0) {
+      yaml = '';
+    } else {
+      yaml = jsyaml.dump(value);
+    }
+  }
+  cy.get(selector).within(() => {
+    for (const line of yaml.split('\n')) {
+      if (line.trim() === '') continue;
+      cy.contains(line.trim()).should('be.visible');
+    }
+  });
 });
 
 Cypress.Commands.add('selectPromptOnLaunch', (resourceName: string) => {

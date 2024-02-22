@@ -598,9 +598,8 @@ function RequirementsFile({ isCommunityRemote }: IRequirementsFile) {
         <PageFormDataEditor<RemoteFormProps>
           name="requirements_file"
           label={t('Requirements file')}
-          defaultExpanded={true}
+          format="yaml"
           labelHelp={TranslationLabelHelp()}
-          toggleLanguages={['yaml']}
           labelHelpTitle={t('Requirements file')}
           isRequired={isRequired}
           validate={isRequired ? handleValidate : undefined}

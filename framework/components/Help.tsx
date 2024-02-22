@@ -1,7 +1,8 @@
-import { Button, Popover, Stack, StackItem } from '@patternfly/react-core';
+import { Button, Icon, Popover, Stack, StackItem } from '@patternfly/react-core';
 import { ExternalLinkAltIcon, OutlinedQuestionCircleIcon } from '@patternfly/react-icons';
 import { ReactNode } from 'react';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
+import { IconButton } from './IconButton';
 
 export function Help(props: {
   title?: string;
@@ -37,12 +38,17 @@ export function Help(props: {
         </Stack>
       }
     >
-      <Button
+      <IconButton>
+        <Icon size="md">
+          <OutlinedQuestionCircleIcon />
+        </Icon>
+      </IconButton>
+      {/* <Button
         variant="plain"
         style={{ padding: 0, marginLeft: marginLeft || '8px', verticalAlign: 'middle' }}
       >
         <OutlinedQuestionCircleIcon />
-      </Button>
+      </Button> */}
     </Popover>
   );
 }

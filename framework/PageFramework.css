@@ -86,3 +86,20 @@ tr.selected:hover {
 }
 
 */
+
+/* PF labels do not wrap the addition controls cleanly, so we need to override the default behavior */
+.pf-v5-c-form__group-label {
+  flex-wrap: wrap;
+  align-items: center;
+}
+.pf-v5-c-form__group-label.pf-m-info {
+  align-items: center !important;
+  justify-content: end;
+  row-gap: 8px;
+}
+.pf-v5-c-form__group-label-main {
+  flex-grow: 1;
+}
+.pf-v5-c-form__group-label-info {
+  margin-inline-start: 0 !important;
+}

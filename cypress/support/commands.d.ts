@@ -41,9 +41,9 @@ import { RoleDetail } from '../../frontend/eda/interfaces/generated/eda-api';
 import { Role as HubRole } from '../../frontend/hub/access/roles/Role';
 import { RemoteRegistry } from '../../frontend/hub/administration/remote-registries/RemoteRegistry';
 import { IRemotes } from '../../frontend/hub/administration/remotes/Remotes';
+import { Repository } from '../../frontend/hub/administration/repositories/Repository';
 import { CollectionVersionSearch } from '../../frontend/hub/collections/Collection';
 import { IAwxResources } from './awx-commands';
-import { Repository } from '../../frontend/hub/administration/repositories/Repository';
 
 declare global {
   namespace Cypress {
@@ -113,6 +113,8 @@ declare global {
       configFormatToggle(configType: string): Chainable<void>;
 
       assertMonacoTextField(textString: string): Chainable<void>;
+
+      dataEditorShouldContain(selector: string, value: string | object): Chainable<void>;
 
       /** This command works for a form field to look up item from table
        * (used for components that do not utilize the PageFormAsyncSelect component yet) */

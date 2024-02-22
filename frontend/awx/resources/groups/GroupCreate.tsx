@@ -1,18 +1,21 @@
 import { useTranslation } from 'react-i18next';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
   PageFormDataEditor,
   PageFormSubmitHandler,
   PageFormTextInput,
   usePageNavigate,
 } from '../../../../framework';
-import { useNavigate, useParams } from 'react-router-dom';
-import { InventoryGroupCreate, InventoryGroupRelatedGroup } from '../../interfaces/InventoryGroup';
+import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { AwxPageForm } from '../../common/AwxPageForm';
-import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
-import { AwxRoute } from '../../main/AwxRoutes';
 import { awxAPI } from '../../common/api/awx-utils';
-import { InventoryGroup } from '../../interfaces/InventoryGroup';
+import {
+  InventoryGroup,
+  InventoryGroupCreate,
+  InventoryGroupRelatedGroup,
+} from '../../interfaces/InventoryGroup';
+import { AwxRoute } from '../../main/AwxRoutes';
 
 export function GroupCreate() {
   const { t } = useTranslation();
@@ -75,11 +78,7 @@ export function GroupCreate() {
         placeholder={t('Enter description')}
       />
       <PageFormSection singleColumn>
-        <PageFormDataEditor
-          name="variables"
-          label={t('Variables')}
-          toggleLanguages={['yaml', 'json']}
-        />
+        <PageFormDataEditor name="variables" label={t('Variables')} format="yaml" />
       </PageFormSection>
     </AwxPageForm>
   );
