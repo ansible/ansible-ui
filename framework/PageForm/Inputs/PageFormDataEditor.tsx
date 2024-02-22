@@ -11,7 +11,7 @@ import {
 } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { usePageAlertToaster } from '../..';
-import { DataEditor, DataEditorLanguage, DataEditorLanguages } from '../../components/DataEditor';
+import { DataEditor, DataEditorLanguages } from '../../components/DataEditor';
 import { DropZone } from '../../components/DropZone';
 import { IconButton } from '../../components/IconButton';
 import { ExpandIcon } from '../../components/icons/ExpandIcon';
@@ -188,7 +188,9 @@ export function PageFormDataEditor<
                     else setError(name, { message: error });
                   }}
                   isReadOnly={props.isReadOnly || isSubmitting}
-                  className="pf-v5-c-form-control"
+                  className={
+                    props.isReadOnly ? `pf-v5-c-form-control pf-m-disabled` : `pf-v5-c-form-control`
+                  }
                 />
               </DropZone>
             )}
@@ -198,6 +200,66 @@ export function PageFormDataEditor<
       }}
       rules={{ required, validate: props.validate }}
     />
+  );
+}
+
+export function DataEditorButtons(props: {
+  handleCopy: (() => void) | false;
+  handleDownload: (() => void) | false;
+  handleUpload: (() => void) | false;
+  children?: ReactNode;
+}) {
+  const { t } = useTranslation();
+  const { handleCopy, handleDownload, handleUpload } = props;
+  if (!handleCopy && !handleDownload && !handleUpload) return <></>;
+  return (
+    <Flex spaceItems={{ default: 'spaceItemsMd' }}>
+      {handleCopy && (
+        <FlexItem>
+          <IconButton
+            id="copy-button"
+            data-cy="copy-button"
+            aria-label={t('Copy to clipboard')}
+            type="button"
+            onClick={handleCopy}
+          >
+            <Icon size="md">
+              <CopyIcon />
+            </Icon>
+          </IconButton>
+        </FlexItem>
+      )}
+      {handleUpload && (
+        <FlexItem>
+          <IconButton
+            id="upload-button"
+            data-cy="upload-button"
+            aria-label={t('Upload from file')}
+            type="button"
+            onClick={handleUpload}
+          >
+            <Icon size="md">
+              <UploadIcon />
+            </Icon>
+          </IconButton>
+        </FlexItem>
+      )}
+      {handleDownload && (
+        <FlexItem>
+          <IconButton
+            id="download-button"
+            data-cy="download-button"
+            aria-label={t('Download file')}
+            type="button"
+            onClick={handleDownload}
+          >
+            <Icon size="md">
+              <DownloadIcon />
+            </Icon>
+          </IconButton>
+        </FlexItem>
+      )}
+    </Flex>
   );
 }
 
@@ -211,61 +273,14 @@ export function DataEditorActions(props: {
 }) {
   const { t } = useTranslation();
   const { handleCopy, handleDownload, handleUpload, language, setLanguage } = props;
-  const hasButtons = !!handleCopy || !!handleDownload || !!handleUpload;
   return (
     <Flex spaceItems={{ default: 'spaceItemsLg' }}>
       <FlexItem>{props.children}</FlexItem>
-      {hasButtons && (
-        <FlexItem>
-          <Flex spaceItems={{ default: 'spaceItemsMd' }}>
-            {handleCopy && (
-              <FlexItem>
-                <IconButton
-                  id="copy-button"
-                  data-cy="copy-button"
-                  aria-label={t('Copy to clipboard')}
-                  type="button"
-                  onClick={handleCopy}
-                >
-                  <Icon size="md">
-                    <CopyIcon />
-                  </Icon>
-                </IconButton>
-              </FlexItem>
-            )}
-            {handleUpload && (
-              <FlexItem>
-                <IconButton
-                  id="upload-button"
-                  data-cy="upload-button"
-                  aria-label={t('Upload from file')}
-                  type="button"
-                  onClick={handleUpload}
-                >
-                  <Icon size="md">
-                    <UploadIcon />
-                  </Icon>
-                </IconButton>
-              </FlexItem>
-            )}
-            {handleDownload && (
-              <FlexItem>
-                <IconButton
-                  id="download-button"
-                  data-cy="download-button"
-                  aria-label={t('Download file')}
-                  type="button"
-                  onClick={handleDownload}
-                >
-                  <Icon size="md">
-                    <DownloadIcon />
-                  </Icon>
-                </IconButton>
-              </FlexItem>
-            )}
-          </Flex>
-        </FlexItem>
-      )}
+      <DataEditorButtons
+        handleCopy={handleCopy}
+        handleDownload={handleDownload}
+        handleUpload={handleUpload}
+      />
       <FlexItem align={{ default: 'alignRight' }}>
         <ToggleGroup isCompact>
           <ToggleGroupItem
@@ -330,9 +345,9 @@ function objectToString(obj: object, language: DataEditorLanguages): string {
   }
   try {
     switch (language) {
-      case DataEditorLanguage.JSON:
+      case 'json':
         return JSON.stringify(obj, null, 2);
-      case DataEditorLanguage.YAML: {
+      case 'yaml': {
         const yaml = jsyaml.dump(obj).trimEnd();
         switch (yaml) {
           case 'null':

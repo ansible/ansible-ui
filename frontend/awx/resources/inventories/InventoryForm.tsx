@@ -9,6 +9,7 @@ import {
   usePageNavigate,
 } from '../../../../framework';
 import { PageFormGroup } from '../../../../framework/PageForm/Inputs/PageFormGroup';
+import { PageFormMarkdown } from '../../../../framework/PageForm/Inputs/PageFormMarkdown';
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { PageFormSubmitHandler } from '../../../../framework/PageForm/PageForm';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
@@ -192,6 +193,9 @@ function InventoryInputs() {
           label={t('Variables')}
           format="yaml"
         />
+      </PageFormSection>
+      <PageFormSection singleColumn>
+        <PageFormMarkdown<InventoryCreate> name="variables" label={t('Variables')} />
       </PageFormSection>
       <PageFormGroup
         label={t('Options')}

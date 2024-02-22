@@ -7,11 +7,7 @@ import { useSettings } from '../Settings';
 import { useID } from '../hooks/useID';
 import './DataEditor.css';
 
-export const enum DataEditorLanguage {
-  JSON = 'json',
-  YAML = 'yaml',
-}
-export type DataEditorLanguages = 'json' | 'yaml';
+export type DataEditorLanguages = 'json' | 'yaml' | 'markdown';
 
 /**
  * DataEditor is a wrapper over Monaco editor for editing JSON or YAML data.
@@ -196,10 +192,7 @@ function getWorker(moduleId: string, label: string) {
     case 'yaml':
       if (!yamlWorker) {
         yamlWorker = new Worker(
-          new URL(
-            '../../node_modules/monaco-editor/esm/vs/language/json/json.worker',
-            import.meta.url
-          ),
+          new URL('../../node_modules/monaco-yaml/yaml.worker', import.meta.url),
           { type: 'module' }
         );
       }
