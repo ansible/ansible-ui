@@ -2,12 +2,11 @@ import { useTranslation } from 'react-i18next';
 import { useVisualizationController, NodeShape, NodeModel } from '@patternfly/react-topology';
 import { PageWizard, PageWizardStep } from '../../../../../../framework';
 import { awxErrorAdapter } from '../../../../common/adapters/awxErrorAdapter';
-import { UnifiedJobType } from '../../../../interfaces/WorkflowNode';
 import { NodeTypeStep } from './NodeTypeStep';
 import { NodeReviewStep } from './NodeReviewStep';
 import { getValueBasedOnJobType, hasDaysToKeep, shouldHideOtherStep } from './helpers';
 import { useCloseSidebar, useCreateEdge, useNodeTypeStepDefaults } from '../hooks';
-import { NODE_DIAMETER, START_NODE_ID } from '../constants';
+import { NODE_DIAMETER, START_NODE_ID, RESOURCE_TYPE } from '../constants';
 import { ControllerState, EdgeStatus, PromptFormValues, type WizardFormValues } from '../types';
 import { NodePromptsStep } from './NodePromptsStep';
 
@@ -60,7 +59,7 @@ export function NodeAddWizard() {
       hidden: (wizardData: Partial<WizardFormValues>) => {
         const { launch_config, node_resource, node_type } = wizardData;
         if (
-          (node_type === UnifiedJobType.workflow_job || node_type === UnifiedJobType.job) &&
+          (node_type === RESOURCE_TYPE.workflow_job || node_type === RESOURCE_TYPE.job) &&
           node_resource &&
           launch_config
         ) {
@@ -151,7 +150,7 @@ export function NodeAddWizard() {
       model.edges?.push(newEdge);
     }
 
-    if (node_type !== UnifiedJobType.workflow_approval) {
+    if (node_type !== RESOURCE_TYPE.workflow_approval) {
       delete nodeToCreate.data.resource.summary_fields.unified_job_template.timeout;
     }
     if (node_resource && !hasDaysToKeep(node_resource)) {

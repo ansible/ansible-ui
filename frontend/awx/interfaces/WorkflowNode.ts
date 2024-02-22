@@ -26,7 +26,13 @@ export interface WorkflowNode {
       id: number;
       name: string;
       description: string;
-      unified_job_type: UnifiedJobType;
+      unified_job_type:
+        | 'job'
+        | 'workflow_job'
+        | 'project_update'
+        | 'workflow_approval'
+        | 'inventory_update'
+        | 'system_job';
       timeout?: number;
     };
     inventory: Inventory;
@@ -64,13 +70,4 @@ export interface WorkflowApprovalNode {
   all_parents_must_converge: string;
   description?: string;
   timeout?: string;
-}
-
-export enum UnifiedJobType {
-  job = 'job',
-  workflow_job = 'workflow_job',
-  project_update = 'project_update',
-  workflow_approval = 'workflow_approval',
-  inventory_update = 'inventory_update',
-  system_job = 'system_job',
 }

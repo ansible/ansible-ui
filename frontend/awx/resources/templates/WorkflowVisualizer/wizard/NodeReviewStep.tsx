@@ -10,10 +10,10 @@ import {
 import { PageDetailCodeEditor } from '../../../../../../framework/PageDetails/PageDetailCodeEditor';
 import { usePageWizard } from '../../../../../../framework/PageWizard/PageWizardProvider';
 import { jsonToYaml } from '../../../../../../framework/utils/codeEditorUtils';
-import { UnifiedJobType } from '../../../../interfaces/WorkflowNode';
-import { WizardFormValues } from '../types';
+import { WizardFormValues, UnifiedJobType } from '../types';
 import { hasDaysToKeep, getValueBasedOnJobType } from './helpers';
 import { PromptReviewDetails } from './PromptReviewDetails';
+import { RESOURCE_TYPE } from '../constants';
 
 const ResourceLink: Record<UnifiedJobType, AwxRoute> = {
   inventory_update: AwxRoute.InventorySourceDetail,
@@ -54,7 +54,7 @@ export function NodeReviewStep() {
   const convergenceDetail = node_convergence === 'all' ? t('All') : t('Any');
   const timeoutString = useGetTimeoutString(approval_timeout);
   const timeoutDetail = getValueBasedOnJobType(node_type, '', timeoutString);
-  const showDaysToKeep = node_type === UnifiedJobType.system_job && hasDaysToKeep(node_resource);
+  const showDaysToKeep = node_type === RESOURCE_TYPE.system_job && hasDaysToKeep(node_resource);
   const extraVarsDetail = showDaysToKeep
     ? jsonToYaml(JSON.stringify({ days: node_days_to_keep }))
     : '';
