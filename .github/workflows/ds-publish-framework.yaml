@@ -21,7 +21,9 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
 
       - name: PreCache
-        run: cat package-lock.json | jq '.version = "0.0.0"' | jq '.packages."".version = "0.0.0"' > package-lock-copy.json
+        run: |
+          cp -f package-lock.json package-lock-copy.json
+          npm version 0.0.0 --no-git-tag-version
 
       - name: Cache dependencies
         id: cache
@@ -30,10 +32,16 @@ jobs:
           path: |
             ./node_modules
             /home/runner/.cache/Cypress
-          key: modules-${{ hashFiles('package-lock-copy.json') }}
+          key: modules-${{ hashFiles('package-lock.json') }}
+
+      - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: npm ci
 
       - name: PostCache
-        run: rm package-lock-copy.json
+        run: |
+          rm package-lock.json
+          mv package-lock-copy.json package-lock.json
 
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
