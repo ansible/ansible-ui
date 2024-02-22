@@ -3,6 +3,7 @@ import { TextContent, Text, TextVariants } from '@patternfly/react-core';
 import {
   PageFormGrid,
   PageFormTextInput,
+  PageFormSelect,
   PageFormSwitch,
   PageFormDataEditor,
 } from '../../../../../framework';
@@ -70,17 +71,34 @@ export function AuthenticatorDetailsStep(props: {
       </TextContent>
       <PageFormGrid isVertical>
         <PageFormTextInput name="name" label={t('Name')} isRequired />
-        {textFields.map((field) => (
-          <PageFormTextInput
-            id={`configuration-input-${field.name}`}
-            name={`configuration.${field.name}`}
-            key={field.name}
-            label={field.ui_field_label || field.name}
-            isRequired={field.required}
-            labelHelpTitle={field.ui_field_label || field.name}
-            labelHelp={field.help_text}
-          />
-        ))}
+        {textFields.map((field) =>
+          field.type === 'ChoiceField' ? (
+            <PageFormSelect
+              id={`configuration-input-${field.name}`}
+              name={`configuration.${field.name}`}
+              key={field.name}
+              label={field.ui_field_label || field.name}
+              labelHelpTitle={field.ui_field_label || field.name}
+              labelHelp={field.help_text}
+              options={Object.keys(field.choices || {}).map((option) => ({
+                value: option,
+                label: (field.choices as { [k: string]: string })[option] || option,
+              }))}
+              placeholderText={t('Select a value')}
+              isRequired={field.required}
+            />
+          ) : (
+            <PageFormTextInput
+              id={`configuration-input-${field.name}`}
+              name={`configuration.${field.name}`}
+              key={field.name}
+              label={field.ui_field_label || field.name}
+              labelHelpTitle={field.ui_field_label || field.name}
+              labelHelp={field.help_text}
+              isRequired={field.required}
+            />
+          )
+        )}
         {boolFields.map((field) => (
           <PageFormSwitch
             id={`configuration-input-${field.name}`}
