@@ -1,6 +1,6 @@
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { AwxPageForm } from '../../common/AwxPageForm';
-import { InventoryGroup, InventoryGroupCreate } from '../../interfaces/InventoryGroup';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
   PageFormDataEditor,
   PageFormSubmitHandler,
@@ -8,12 +8,12 @@ import {
   usePageNavigate,
 } from '../../../../framework';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
-import { useNavigate, useParams } from 'react-router-dom';
-import { awxAPI } from '../../common/api/awx-utils';
-import { AwxRoute } from '../../main/AwxRoutes';
-import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 import { useGetItem } from '../../../common/crud/useGet';
-import { useMemo } from 'react';
+import { usePatchRequest } from '../../../common/crud/usePatchRequest';
+import { AwxPageForm } from '../../common/AwxPageForm';
+import { awxAPI } from '../../common/api/awx-utils';
+import { InventoryGroup, InventoryGroupCreate } from '../../interfaces/InventoryGroup';
+import { AwxRoute } from '../../main/AwxRoutes';
 
 export function GroupEdit() {
   const { t } = useTranslation();
@@ -65,11 +65,7 @@ export function GroupEdit() {
       <PageFormTextInput name="name" label={t('Name')} isRequired />
       <PageFormTextInput name="description" label={t('Description')} />
       <PageFormSection singleColumn>
-        <PageFormDataEditor
-          name="variables"
-          label={t('Variables')}
-          toggleLanguages={['yaml', 'json']}
-        />
+        <PageFormDataEditor name="variables" label={t('Variables')} format="yaml" />
       </PageFormSection>
     </AwxPageForm>
   );

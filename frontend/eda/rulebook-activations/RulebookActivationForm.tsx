@@ -15,13 +15,17 @@ import {
   usePageNavigate,
 } from '../../../framework';
 import { PageFormAsyncSelect } from '../../../framework/PageForm/Inputs/PageFormAsyncSelect';
+import { PageFormMultiSelect } from '../../../framework/PageForm/Inputs/PageFormMultiSelect';
 import { PageFormSection } from '../../../framework/PageForm/Utils/PageFormSection';
 import { requestGet } from '../../common/crud/Data';
 import { useGet } from '../../common/crud/useGet';
 import { usePostRequest } from '../../common/crud/usePostRequest';
+import { PageFormCredentialSelect } from '../access/credentials/components/PageFormCredentialsSelect';
 import { EdaPageForm } from '../common/EdaPageForm';
 import { edaAPI } from '../common/eda-utils';
+import { EdaCredential } from '../interfaces/EdaCredential';
 import { EdaDecisionEnvironment } from '../interfaces/EdaDecisionEnvironment';
+import { EdaEventStream } from '../interfaces/EdaEventStream';
 import { EdaExtraVars } from '../interfaces/EdaExtraVars';
 import { EdaProject } from '../interfaces/EdaProject';
 import { EdaResult } from '../interfaces/EdaResult';
@@ -33,10 +37,6 @@ import {
 import { AwxToken, RestartPolicyEnum } from '../interfaces/generated/eda-api';
 import { EdaRoute } from '../main/EdaRoutes';
 import { EdaProjectCell } from '../projects/components/EdaProjectCell';
-import { EdaEventStream } from '../interfaces/EdaEventStream';
-import { PageFormMultiSelect } from '../../../framework/PageForm/Inputs/PageFormMultiSelect';
-import { PageFormCredentialSelect } from '../access/credentials/components/PageFormCredentialsSelect';
-import { EdaCredential } from '../interfaces/EdaCredential';
 
 export function CreateRulebookActivation() {
   const { t } = useTranslation();
@@ -270,8 +270,7 @@ export function RulebookActivationInputs() {
         <PageFormDataEditor<IEdaRulebookActivationInputs>
           name="variables"
           label={t('Variables')}
-          isExpandable
-          toggleLanguages={['yaml', 'json']}
+          format="yaml"
           labelHelp={t(
             `The variables for the rulebook are in a JSON or YAML format. 
             The content would be equivalent to the file passed through the '--vars' flag of ansible-rulebook command.`

@@ -5,10 +5,9 @@ import { AwxRoleDetails } from '../access/roles/AwxRoleDetails';
 import { AwxRolePage } from '../access/roles/AwxRolePage';
 import { AwxRoles } from '../access/roles/AwxRoles';
 import { AwxSettings } from '../administration/settings/AwxSettings';
+import { AwxSettingsCategory } from '../administration/settings/AwxSettingsCategory';
 import { Topology } from '../administration/topology/Topology';
-// import { Test } from '../analytics/AnalyticsReportBuilder/Test';
 import { Reports } from '../analytics/Reports/Reports';
-// import { ReportsList } from '../analytics/Reports/ReportsList/ReportsList';
 import { SubscriptionUsage } from '../analytics/subscription-usage/SubscriptionUsage';
 import { AwxOverview } from '../overview/AwxOverview';
 import { HostMetrics } from '../views/jobs/HostMetrics';
@@ -132,7 +131,17 @@ export function useAwxNavigation() {
           id: AwxRoute.Settings,
           label: t('Settings'),
           path: 'settings',
-          element: <AwxSettings />,
+          children: [
+            {
+              id: AwxRoute.SettingsCategory,
+              path: ':category',
+              element: <AwxSettingsCategory />,
+            },
+            {
+              path: '',
+              element: <AwxSettings />,
+            },
+          ],
         },
       ],
     },
