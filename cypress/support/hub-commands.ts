@@ -17,6 +17,9 @@ Cypress.Commands.add('galaxykit', (operation: string, ...args: string[]) => {
   const server = (Cypress.env('HUB_SERVER') as string) + apiPrefix + '/';
   const options = { failOnNonZeroExit: false };
 
+  operation = operation.trim();
+  args = args.map((arg) => arg.trim());
+
   cy.log(`${galaxykitCommand} ${operation} ${args.join(' ')}`);
 
   const cmd = `${galaxykitCommand} -c -s '${server}' -u '${galaxykitUsername}' -p '${galaxykitPassword}' ${operation} ${escapeForShellCommand(
