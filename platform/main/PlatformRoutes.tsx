@@ -18,6 +18,7 @@ export enum PlatformRoute {
   CreateTeam = 'platform-create-team',
   EditTeam = 'platform-edit-team',
   TeamUsers = 'platform-team-users',
+  TeamAdmins = 'platform-team-admins',
   TeamRoles = 'platform-team-roles',
   TeamResourceAccess = 'platform-team-resource-access',
   Organizations = 'platform-organizations',

@@ -22,7 +22,7 @@ export function PlatformUserDetails() {
   const params = useParams<{ id: string }>();
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
-  const columns = useUsersColumns();
+  const columns = useUsersColumns({ disableLinks: true });
   const { data: user, isLoading } = useGetItem<PlatformUser>(gatewayV1API`/users/`, params.id);
   const { data: organizationsData } = useGet<PlatformItemsResponse<PlatformOrganization>>(
     gatewayV1API`/users/${params.id ?? ''}/organizations/`
