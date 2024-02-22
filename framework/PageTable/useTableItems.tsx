@@ -352,7 +352,7 @@ export function useSelectedInMemory<T extends object>(
 
   const selectedItems = useMemo(() => Object.values(selectedMap), [selectedMap]);
   const allSelected = useMemo(
-    () => selectedItems.length === items?.length ?? 0,
+    () => (selectedItems.length === items?.length ? true : false),
     [items, selectedItems.length]
   );
 

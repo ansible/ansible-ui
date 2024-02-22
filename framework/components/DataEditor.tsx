@@ -177,7 +177,7 @@ function getWorker(moduleId: string, label: string) {
     case 'editorWorkerService':
       if (!editorWorkerService) {
         editorWorkerService = new Worker(
-          new URL('monaco-editor/esm/vs/editor/editor.worker', import.meta.url),
+          new URL('../../node_modules/monaco-editor/esm/vs/editor/editor.worker', import.meta.url),
           { type: 'module' }
         );
       }
@@ -185,16 +185,23 @@ function getWorker(moduleId: string, label: string) {
     case 'json':
       if (!jsonWorker) {
         jsonWorker = new Worker(
-          new URL('monaco-editor/esm/vs/language/json/json.worker', import.meta.url),
+          new URL(
+            '../../node_modules/monaco-editor/esm/vs/language/json/json.worker',
+            import.meta.url
+          ),
           { type: 'module' }
         );
       }
       return jsonWorker;
     case 'yaml':
       if (!yamlWorker) {
-        yamlWorker = new Worker(new URL('monaco-yaml/yaml.worker', import.meta.url), {
-          type: 'module',
-        });
+        yamlWorker = new Worker(
+          new URL(
+            '../../node_modules/monaco-editor/esm/vs/language/json/json.worker',
+            import.meta.url
+          ),
+          { type: 'module' }
+        );
       }
       return yamlWorker;
     default:
