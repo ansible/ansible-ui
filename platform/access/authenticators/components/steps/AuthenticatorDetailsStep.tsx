@@ -1,11 +1,11 @@
+import { Text, TextContent, TextVariants } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { TextContent, Text, TextVariants } from '@patternfly/react-core';
 import {
+  PageFormDataEditor,
   PageFormGrid,
-  PageFormTextInput,
   PageFormSelect,
   PageFormSwitch,
-  PageFormDataEditor,
+  PageFormTextInput,
 } from '../../../../../framework';
 import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
 import { Authenticator } from '../../../../interfaces/Authenticator';
@@ -121,6 +121,7 @@ export function AuthenticatorDetailsStep(props: {
             labelHelpTitle={field.ui_field_label || field.name}
             labelHelp={field.help_text}
             isRequired={field.required}
+            format="object"
           />
         ))}
       </PageFormGrid>
