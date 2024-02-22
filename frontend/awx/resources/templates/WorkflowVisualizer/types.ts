@@ -18,7 +18,7 @@ import type { Project } from '../../../interfaces/Project';
 import type { SystemJobTemplate } from '../../../interfaces/SystemJobTemplate';
 import type { WorkflowApproval } from '../../../interfaces/WorkflowApproval';
 import type { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
-import type { WorkflowNode, UnifiedJobType } from '../../../interfaces/WorkflowNode';
+import type { WorkflowNode } from '../../../interfaces/WorkflowNode';
 
 export type GraphNode = Node<NodeModel, GraphNodeData>;
 export type GraphNodeData = {
@@ -164,3 +164,11 @@ export interface WizardFormValues {
   launch_config: LaunchConfiguration | null;
   prompt: PromptFormValues;
 }
+
+export type UnifiedJobType =
+  | 'job'
+  | 'workflow_job'
+  | 'project_update'
+  | 'workflow_approval'
+  | 'inventory_update'
+  | 'system_job';

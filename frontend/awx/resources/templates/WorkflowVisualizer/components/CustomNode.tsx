@@ -19,9 +19,8 @@ import {
   observer,
 } from '@patternfly/react-topology';
 import { useViewOptions } from '../ViewOptionsProvider';
-import type { CustomNodeProps } from '../types';
+import type { CustomNodeProps, UnifiedJobType } from '../types';
 import type { SVGIconProps } from '@patternfly/react-icons/dist/js/createIcon';
-import type { UnifiedJobType } from '../../../../interfaces/WorkflowNode';
 import { START_NODE_ID } from '../constants';
 
 const NodeIcon: Record<UnifiedJobType, ElementType<SVGIconProps>> = {

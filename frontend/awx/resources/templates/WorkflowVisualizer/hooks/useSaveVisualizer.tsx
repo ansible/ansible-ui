@@ -9,11 +9,11 @@ import { usePostRequest } from '../../../../../common/crud/usePostRequest';
 import { usePatchRequest } from '../../../../../common/crud/usePatchRequest';
 import { AwxItemsResponse } from '../../../../common/AwxItemsResponse';
 import { ControllerState, GraphNode, EdgeStatus, GraphNodeData } from '../types';
-import { UnifiedJobType, WorkflowNode } from '../../../../interfaces/WorkflowNode';
+import { WorkflowNode } from '../../../../interfaces/WorkflowNode';
 import { InstanceGroup } from '../../../../interfaces/InstanceGroup';
 import { Organization } from '../../../../interfaces/Organization';
 import { Label } from '../../../../interfaces/Label';
-import { START_NODE_ID } from '../constants';
+import { START_NODE_ID, RESOURCE_TYPE } from '../constants';
 
 interface WorkflowApprovalNode {
   name: string;
@@ -199,7 +199,7 @@ export function useSaveVisualizer() {
       setValue('timeout', launch_data?.timeout, true);
       setValue('verbosity', launch_data?.verbosity, true);
 
-      if (unified_job_type === UnifiedJobType.system_job && resource.extra_data?.days) {
+      if (unified_job_type === RESOURCE_TYPE.system_job && resource.extra_data?.days) {
         setValue('extra_data', { days: resource.extra_data.days });
       } else if (launch_data?.extra_vars) {
         setValue('extra_data', parseVariableField(launch_data?.extra_vars), true);
@@ -281,7 +281,7 @@ export function useSaveVisualizer() {
       setValue('timeout', launch_data?.timeout, true);
       setValue('verbosity', launch_data?.verbosity, true);
 
-      if (unified_job_type === UnifiedJobType.system_job && resource.extra_data?.days) {
+      if (unified_job_type === RESOURCE_TYPE.system_job && resource.extra_data?.days) {
         setValue('extra_data', { days: resource.extra_data.days });
       } else if (launch_data?.extra_vars) {
         setValue('extra_data', parseVariableField(launch_data?.extra_vars), true);
@@ -303,7 +303,7 @@ export function useSaveVisualizer() {
     const nodeData = node.getData() as GraphNodeData;
     if (
       nodeData.resource.summary_fields.unified_job_template.unified_job_type ===
-      UnifiedJobType.workflow_approval
+      RESOURCE_TYPE.workflow_approval
     ) {
       newApprovalNodes.push(node);
     } else {
@@ -315,7 +315,7 @@ export function useSaveVisualizer() {
     const nodeData = node.getData() as GraphNodeData;
     if (
       nodeData.resource.summary_fields.unified_job_template.unified_job_type ===
-      UnifiedJobType.workflow_approval
+      RESOURCE_TYPE.workflow_approval
     ) {
       editedApprovalNodes.push(node);
     } else {

@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { useVisualizationController } from '@patternfly/react-topology';
 import { PageWizard, PageWizardStep, usePageAlertToaster } from '../../../../../../framework';
 import { awxErrorAdapter } from '../../../../common/adapters/awxErrorAdapter';
-import { UnifiedJobType } from '../../../../interfaces/WorkflowNode';
 import type { GraphNode, GraphNodeData, PromptFormValues, WizardFormValues } from '../types';
 import type { WorkflowNode } from '../../../../interfaces/WorkflowNode';
 import { NodeTypeStep } from './NodeTypeStep';
@@ -17,6 +16,7 @@ import {
   replaceIdentifier,
   shouldHideOtherStep,
 } from './helpers';
+import { RESOURCE_TYPE } from '../constants';
 
 type StepContent = Partial<WizardFormValues> | { prompt: Partial<PromptFormValues> };
 type StepName = 'nodeTypeStep' | 'nodePromptsStep';
@@ -76,7 +76,7 @@ export function NodeEditWizard({ node }: { node: GraphNode }) {
         }
 
         if (
-          (node_type === UnifiedJobType.workflow_job || node_type === UnifiedJobType.job) &&
+          (node_type === RESOURCE_TYPE.workflow_job || node_type === RESOURCE_TYPE.job) &&
           node_resource &&
           launch_config
         ) {
@@ -150,7 +150,7 @@ export function NodeEditWizard({ node }: { node: GraphNode }) {
       launch_data: promptValues,
     };
 
-    if (node_type !== UnifiedJobType.workflow_approval) {
+    if (node_type !== RESOURCE_TYPE.workflow_approval) {
       delete nodeToEdit.resource.summary_fields.unified_job_template.timeout;
     }
     if (!hasDaysToKeep(node_resource)) {
