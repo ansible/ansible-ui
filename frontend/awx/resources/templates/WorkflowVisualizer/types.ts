@@ -29,6 +29,7 @@ export interface CustomNodeProps extends WithSelectionProps {
   element: GraphElement<
     ElementModel,
     {
+      secondaryLabel?: string;
       resource: WorkflowNode;
     }
   >;

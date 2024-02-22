@@ -12,7 +12,7 @@ import { JobOutputEvents } from './JobOutputEvents';
 import { JobOutputToolbar } from './JobOutputToolbar';
 import { JobStatusBar } from './JobStatusBar';
 import { isJobRunning } from './util';
-import { WorkflowJobOutput } from '../WorkflowOutput/WorkflowOutput';
+import { WorkflowOutput } from '../WorkflowOutput/WorkflowOutput';
 
 const Section = styled(PageSection)`
   display: flex;
@@ -53,7 +53,7 @@ export function JobOutputInner(props: { job: Job; reloadJob: () => void }) {
         setIsFollowModeEnabled={setIsFollowModeEnabled}
       />
       {job.type === 'workflow_job' ? (
-        <WorkflowJobOutput />
+        <WorkflowOutput job={job} />
       ) : (
         <JobOutputEvents
           job={job}
