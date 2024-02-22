@@ -43,8 +43,8 @@ describe('CredentialTypeForm.cy.ts', () => {
             name: 'Created Credential Type',
             description: 'mock credential type description',
             kind: 'cloud',
-            // inputs: {},
-            // injectors: {},
+            inputs: {},
+            injectors: {},
           });
         });
     });
