@@ -111,10 +111,9 @@ export function WorkflowJobTemplateInputs(props: {
           }
           labelHelpTitle={t('Extra Variables')}
           labelHelp={t(`Optional extra variables to be applied to job template`)}
-          toggleLanguages={['yaml', 'json']}
+          format="yaml"
           label={t('Extra Variables')}
           name="extra_vars"
-          isExpandable
         />
       </PageFormSection>
       <PageFormSection title={t('Options')}>

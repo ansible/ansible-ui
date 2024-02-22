@@ -1,145 +1,116 @@
 /* eslint-disable i18next/no-literal-string */
+import jsyaml from 'js-yaml';
 import { PageForm } from '../PageForm';
 import { PageFormDataEditor } from './PageFormDataEditor';
 
-describe('PageFormDataEditor', () => {
-  interface CodeEditor {
-    extra_vars: string;
-  }
+interface ExtraVars {
+  vars: string;
+}
 
-  let yamlContent = '';
-  before(() => {
-    cy.fixture('extra_vars.yaml').then((yaml: string) => {
-      yamlContent = yaml;
+interface WithObject {
+  data: object;
+}
+
+describe('PageFormDataEditor', () => {
+  it('should handle yaml string', () => {
+    const onSubmit = cy.stub().as('onSubmit');
+
+    cy.mount(
+      <PageForm<ExtraVars>
+        onSubmit={onSubmit}
+        onCancel={() => null}
+        submitText="Submit"
+        defaultValue={{ vars: 'abc: 123' }}
+      >
+        <PageFormDataEditor<ExtraVars> label="Editor" name="vars" format="yaml" />
+      </PageForm>
+    );
+
+    cy.contains('button', 'YAML').click();
+    cy.contains('abc: 123').should('be.visible');
+    cy.contains('button', 'Submit').click();
+    cy.get('@onSubmit').should('have.have.been.calledWith', { vars: 'abc: 123' });
+
+    onSubmit.resetHistory();
+
+    cy.contains('button', 'JSON').click();
+    cy.contains('"abc": 123').should('be.visible');
+    cy.contains('button', 'Submit').click();
+    cy.get('@onSubmit').should('have.have.been.calledWith', { vars: 'abc: 123' });
+  });
+
+  it('should handle json string', () => {
+    const onSubmit = cy.stub().as('onSubmit');
+
+    cy.mount(
+      <PageForm<ExtraVars>
+        onSubmit={onSubmit}
+        onCancel={() => null}
+        submitText="Submit"
+        defaultValue={{ vars: '{ "abc": 123 }' }}
+      >
+        <PageFormDataEditor<ExtraVars> label="Editor" name="vars" format="json" />
+      </PageForm>
+    );
+
+    cy.contains('button', 'YAML').click();
+    cy.contains('abc: 123').should('be.visible');
+    cy.contains('button', 'Submit').click();
+    cy.get('@onSubmit').should('have.been.calledWith', {
+      vars: JSON.stringify({ abc: 123 }, null, 2),
+    });
+
+    onSubmit.resetHistory();
+
+    cy.contains('button', 'JSON').click();
+    cy.contains('"abc": 123').should('be.visible');
+    cy.contains('button', 'Submit').click();
+    cy.get('@onSubmit').should('have.been.calledWith', {
+      vars: JSON.stringify({ abc: 123 }, null, 2),
     });
   });
 
-  it('should mount properly', () => {
+  it('should handle object data', () => {
+    const onSubmit = cy.stub().as('onSubmit');
+
     cy.mount(
-      <PageForm<CodeEditor>
-        onSubmit={() => Promise.resolve()}
+      <PageForm<WithObject>
+        onSubmit={onSubmit}
         onCancel={() => null}
         submitText="Submit"
-        defaultValue={{ extra_vars: yamlContent }}
+        defaultValue={{ data: { def: 456 } }}
       >
-        <PageFormDataEditor
-          label="Extra Variables"
-          name="extra_vars"
-          defaultExpanded={false}
-          isExpandable
-        />
+        <PageFormDataEditor<WithObject> label="Editor" name="data" format="object" />
       </PageForm>
     );
-    expect(cy.get('label').contains('Extra Variables'));
-    expect(cy.get('div#data-editor-extra_vars').should('not.exist'));
+
+    cy.contains('button', 'YAML').click();
+    cy.contains('def: 456').should('be.visible');
+    cy.contains('button', 'Submit').click();
+    cy.get('@onSubmit').should('have.been.calledWith', { data: { def: 456 } });
+
+    onSubmit.resetHistory();
+
+    cy.contains('button', 'JSON').click();
+    cy.contains('"def": 456').should('be.visible');
+    cy.contains('button', 'Submit').click();
+    cy.get('@onSubmit').should('have.been.calledWith', { data: { def: 456 } });
   });
 
-  it('should mount expanded, upload, download, and copy button and 2 toggle language buttons', () => {
+  it('should allow to upload a file', () => {
+    const onSubmit = cy.stub().as('onSubmit');
     cy.mount(
-      <PageForm<CodeEditor>
-        submitText="submit"
-        onSubmit={() => Promise.resolve()}
-        defaultValue={{ extra_vars: '' }}
-        onCancel={() => null}
-      >
-        <PageFormDataEditor
-          label="Extra Variables"
-          name="extra_vars"
-          defaultExpanded
-          toggleLanguages={['json', 'yaml']}
-          isExpandable
-          allowUpload
-        />
+      <PageForm<WithObject> onSubmit={onSubmit} onCancel={() => null} submitText="Submit">
+        <PageFormDataEditor<WithObject> label="Editor" name="data" format="object" />
       </PageForm>
     );
-    expect(cy.get('div#copy-button').should('be.visible'));
-    expect(cy.get('div#upload-button').should('be.visible'));
-    expect(cy.get('div#download-button').should('be.visible'));
-    expect(cy.get('div#toggle-json').should('be.visible'));
-    expect(cy.get('div#toggle-yaml').should('be.visible'));
-    expect(cy.get('div#data-editor-extra_vars').should('be.visible'));
-  });
-
-  it('it should allow to upload a file', () => {
-    cy.mount(
-      <PageForm<CodeEditor>
-        onSubmit={() => Promise.resolve()}
-        onCancel={() => null}
-        submitText="submit"
-        defaultValue={{ extra_vars: '' }}
-      >
-        <PageFormDataEditor
-          label="Extra Variables"
-          name="extra_vars"
-          defaultExpanded
-          toggleLanguages={['json', 'yaml']}
-          isExpandable
-          allowUpload
-        />
-      </PageForm>
-    );
-
-    cy.fixture('extra_vars.yaml').as('yamlFixture');
-    // because of input is hidden, we need to force
-    cy.get('input[type="file"]')
-      .selectFile('@yamlFixture', { force: true })
-      .then(() => {
-        cy.get('#data-editor-extra_vars').find('textarea').should('have.value', yamlContent);
+    cy.fixture('extra_vars.yaml')
+      .as('yamlFixture')
+      .then((yaml: string) => {
+        cy.get('input[type="file"]').selectFile('@yamlFixture', { force: true });
+        cy.contains(yaml.split('\n')[0]).should('be.visible');
+        cy.contains('button', 'Submit').click();
+        cy.get('@onSubmit').should('have.been.calledWith', { data: jsyaml.load(yaml) });
       });
   });
-
-  it('it should allow to drag a file', () => {
-    cy.mount(
-      <PageForm<CodeEditor>
-        onSubmit={() => Promise.resolve()}
-        onCancel={() => null}
-        submitText="submit"
-        defaultValue={{ extra_vars: '' }}
-      >
-        <PageFormDataEditor
-          label="Extra Variables"
-          name="extra_vars"
-          defaultExpanded
-          toggleLanguages={['json', 'yaml']}
-          isExpandable
-          allowUpload
-        />
-      </PageForm>
-    );
-
-    cy.fixture('extra_vars.yaml').as('yamlFixture');
-    // because of input is hidden, we need to force
-    cy.get('input[type="file"]')
-      .selectFile('@yamlFixture', { force: true, action: 'drag-drop' })
-      .then(() => {
-        cy.get('#data-editor-extra_vars').find('textarea').should('have.value', yamlContent);
-      });
-  });
-
-  // RANDOM FAILING TEST
-  // > Uncaught NetworkError: Failed to execute 'importScripts' on 'WorkerGlobalScope': The script at 'http://localhost:8080/__cypress/src/vendors-node_modules_yaml_browser_index_js.js' failed to load.
-  //
-  // it('Invalid syntax should make toggle language buttons disabled', () => {
-  //   cy.mount(
-  //     <PageForm<CodeEditor>
-  //       onSubmit={() => Promise.resolve()}
-  //       onCancel={() => null}
-  //       submitText="submit"
-  //       defaultValue={{
-  //         extra_vars:
-  //           'playing_song_artist: Playing song, {{ song_name }} by {{ artist }}playing_playlist: {{ action }} playlist {{ playlist_name }}',
-  //       }}
-  //     >
-  //       <PageFormDataEditor
-  //         label="Extra Variables"
-  //         name="extra_vars"
-  //         defaultExpanded
-  //         toggleLanguages={['json', 'yaml']}
-  //         isExpandable
-  //       />
-  //     </PageForm>
-  //   );
-  //   cy.get('div#toggle-json').get('button.pf-v5-c-toggle-group__button').should('be.disabled');
-  //   cy.get('div#toggle-yaml').get('button.pf-v5-c-toggle-group__button').should('be.disabled');
-  // });
 });

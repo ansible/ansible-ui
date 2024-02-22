@@ -234,6 +234,7 @@ export enum AwxRoute {
   // Settings
 
   Settings = 'awx-settings',
+  SettingsCategory = 'awx-settings-category',
 
   Login = 'awx-login',
 }

@@ -1,11 +1,6 @@
-import {
-  FormGroup,
-  FormHelperText,
-  HelperText,
-  HelperTextItem,
-  Split,
-} from '@patternfly/react-core';
+import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternfly/react-core';
 import { ReactNode } from 'react';
+import styled from 'styled-components';
 import { Help } from '../../components/Help';
 
 export interface PageFormGroupProps {
@@ -35,20 +30,17 @@ export function PageFormGroup(props: PageFormGroupProps) {
       id={`${props.fieldId}-form-group`}
       fieldId={props.fieldId}
       label={
-        props.icon ? (
-          <Split hasGutter>
-            {props.icon}
-            {label}
-            {labelHelp ? (
-              <Help title={labelHelpTitle} help={labelHelp} marginLeft={'0px'} />
-            ) : undefined}
-          </Split>
-        ) : (
-          label
-        )
+        <>
+          <IconSpan>{props.icon}</IconSpan>
+          {label}
+        </>
       }
       labelIcon={
-        labelHelp && !props.icon ? <Help title={labelHelpTitle} help={labelHelp} /> : undefined
+        labelHelp ? (
+          <HelperSpan>
+            <Help title={labelHelpTitle} help={labelHelp} />
+          </HelperSpan>
+        ) : undefined
       }
       labelInfo={props.additionalControls}
       isRequired={isRequired}
@@ -67,3 +59,11 @@ export function PageFormGroup(props: PageFormGroupProps) {
     </FormGroup>
   );
 }
+
+const IconSpan = styled.span`
+  margin-right: 6px;
+`;
+
+const HelperSpan = styled.span`
+  margin-left: 4px;
+`;
