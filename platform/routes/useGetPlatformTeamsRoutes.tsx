@@ -6,6 +6,8 @@ import { CreatePlatformTeam, EditPlatformTeam } from '../access/teams/components
 import { PlatformTeamList } from '../access/teams/components/PlatformTeamList';
 import { PlatformTeamPage } from '../access/teams/components/PlatformTeamPage';
 import { PlatformRoute } from '../main/PlatformRoutes';
+import { PlatformTeamUsers } from '../access/teams/components/PlatformTeamUsers';
+import { PlatformTeamAdmins } from '../access/teams/components/PlatformTeamAdmins';
 
 export function useGetPlatformTeamsRoutes() {
   const { t } = useTranslation();
@@ -43,7 +45,12 @@ export function useGetPlatformTeamsRoutes() {
             {
               id: PlatformRoute.TeamUsers,
               path: 'users',
-              element: <PageNotImplemented />,
+              element: <PlatformTeamUsers />,
+            },
+            {
+              id: PlatformRoute.TeamAdmins,
+              path: 'admins',
+              element: <PlatformTeamAdmins />,
             },
             {
               id: PlatformRoute.TeamResourceAccess,

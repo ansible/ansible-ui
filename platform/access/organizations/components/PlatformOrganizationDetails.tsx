@@ -14,7 +14,7 @@ export function PlatformOrganizationDetails() {
   );
   return (
     <PageDetails>
-      <PageDetailsFromColumns item={organization} columns={columns} />;
+      <PageDetailsFromColumns item={organization} columns={columns} />
     </PageDetails>
   );
 }

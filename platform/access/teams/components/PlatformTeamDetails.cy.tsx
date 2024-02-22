@@ -1,4 +1,3 @@
-import { DateTime } from 'luxon';
 import mockPlatformTeams from '../../../../cypress/fixtures/platformTeams.json';
 import { gatewayV1API } from '../../../api/gateway-api-utils';
 import { PlatformTeamDetails } from './PlatformTeamDetails';
