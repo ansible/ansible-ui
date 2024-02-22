@@ -90,6 +90,7 @@ export function NodeEditWizard({ node }: { node: GraphNode }) {
 
   const handleSubmit = async (formValues: WizardFormValues) => {
     const nodeData = node.getData() as { resource: WorkflowNode };
+    const nodeOriginalResources = initialValues?.nodePromptsStep?.prompt?.original;
 
     const {
       approval_name,
@@ -103,22 +104,23 @@ export function NodeEditWizard({ node }: { node: GraphNode }) {
       launch_config,
       prompt,
     } = formValues;
-
     const promptValues = prompt;
 
-    if (launch_config) {
-      promptValues.original = {
-        launch_config,
-      };
-    }
-    if (node_resource && 'organization' in node_resource) {
-      promptValues.organization = node_resource.organization ?? null;
-    }
-    if (initialValues.nodePromptsStep?.prompt?.original) {
-      promptValues.original = {
-        ...promptValues.original,
-        ...initialValues.nodePromptsStep.prompt.original,
-      };
+    if (promptValues) {
+      if (node_resource && 'organization' in node_resource) {
+        promptValues.organization = node_resource.organization ?? null;
+      }
+      if (launch_config) {
+        promptValues.original = {
+          launch_config,
+        };
+      }
+      if (nodeOriginalResources) {
+        promptValues.original = {
+          ...promptValues.original,
+          ...nodeOriginalResources,
+        };
+      }
     }
 
     const nodeName = getValueBasedOnJobType(node_type, node_resource?.name || '', approval_name);
