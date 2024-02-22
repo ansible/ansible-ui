@@ -164,7 +164,7 @@ describe('Collections List- Line Item Kebab Menu', () => {
       cy.url().should('contain', '/collections/');
     });
   });
-
+// WATCH
   it('can delete entire collection from system', () => {
     cy.navigateTo('hub', Collections.url);
     cy.verifyPageTitle(Collections.title);
