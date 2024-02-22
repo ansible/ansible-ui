@@ -11,8 +11,9 @@ module.exports = function (env, argv) {
   // https://webpack.js.org/guides/public-path/
   config.output.publicPath = process.env.PUBLIC_PATH || process.env.ROUTE_PREFIX || '/';
 
-  config.devServer.proxy = {
-    '/api': {
+  config.devServer.proxy = [
+    {
+      context: ['/api'],
       target: HUB_SERVER,
       secure: false,
       bypass: (req) => {
@@ -21,6 +22,7 @@ module.exports = function (env, argv) {
         req.headers.referer = proxyUrl.href;
       },
     },
-  };
+  ];
+
   return config;
 };

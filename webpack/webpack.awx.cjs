@@ -10,8 +10,9 @@ module.exports = function (env, argv) {
   // https://webpack.js.org/guides/public-path/
   config.output.publicPath = process.env.PUBLIC_PATH || process.env.ROUTE_PREFIX || '/';
 
-  config.devServer.proxy = {
-    '/api': {
+  config.devServer.proxy = [
+    {
+      context: ['/api', '/sso'],
       target: AWX_SERVER,
       secure: false,
       bypass: (req) => {
@@ -20,29 +21,22 @@ module.exports = function (env, argv) {
         req.headers.referer = proxyUrl.href;
       },
     },
-    '/sso': {
-      target: AWX_SERVER,
-      secure: false,
-      bypass: (req, res, options) => {
-        req.headers.origin = proxyUrl.origin;
-        req.headers.host = getRawHeader(req.rawHeaders, 'Host') || proxyUrl.host;
-        req.referrer = getRawHeader(req.rawHeaders, 'Referer') || proxyUrl.href;
-      },
-    },
-    '/websocket': {
+    {
+      context: '/websocket',
       target: AWX_SERVER,
       secure: false,
       ws: true,
       changeOrigin: true,
     },
-  };
+  ];
+
   return config;
 };
 
-function getRawHeader(rawHeaders, headerName) {
-  const index = rawHeaders.indexOf(headerName);
-  if (index === -1) {
-    return null;
-  }
-  return rawHeaders[index + 1];
-}
+// function getRawHeader(rawHeaders, headerName) {
+//   const index = rawHeaders.indexOf(headerName);
+//   if (index === -1) {
+//     return null;
+//   }
+//   return rawHeaders[index + 1];
+// }
