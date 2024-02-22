@@ -19,32 +19,9 @@ jobs:
         with:
           node-version: 18
           registry-url: 'https://registry.npmjs.org'
-
-      - name: PreCache
-        run: |
-          cp -f package-lock.json package-lock-copy.json
-          npm version 0.0.0 --no-git-tag-version
-
-      - name: Cache dependencies
-        id: cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            ./node_modules
-            /home/runner/.cache/Cypress
-          key: modules-${{ hashFiles('package-lock.json') }}
+          cache: 'npm'
 
       - name: Install dependencies
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: npm ci
-
-      - name: PostCache
-        run: |
-          rm package-lock.json
-          mv package-lock-copy.json package-lock.json
-
-      - name: Install dependencies
-        if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
 
       - name: Publish Framework
