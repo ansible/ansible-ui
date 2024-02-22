@@ -1,42 +1,44 @@
 import { useTranslation } from 'react-i18next';
-//import React, { useState } from 'react';
-import { SystemJobTemplate } from '../../interfaces/SystemJobTemplate';
+import React, { useState } from 'react';
+//import { SystemJobTemplate } from '../../interfaces/SystemJobTemplate';
 import { usePageDialogs } from '../../../../../framework';
 import { Button, Modal, NumberInput, ModalVariant } from '@patternfly/react-core';
-//import { useLaunchManagementJob } from './useLaunchManagementJob';
+import { useLaunchManagementJob } from './useLaunchManagementJob';
 import { TextContent, Text } from '@patternfly/react-core';
+import { SystemJobTemplate } from '../../../interfaces/SystemJobTemplate';
 
-export function useManagementJobPrompt(managementJob: SystemJobTemplate) {
-  //const defaultDays = 30;
+export function useManagementJobPrompt() {
+  const defaultDays = 3;
   // const MAX_RETENTION = 99999;
   //const [dataRetention, setDataRetention] = useState(defaultDays);
-  //const [value, setValue] = useState<number | ''>(defaultDays);
+  const [value, setValue] = useState<number | ''>(defaultDays);
   const { t } = useTranslation();
   const { pushDialog, popDialog } = usePageDialogs();
   //const launchOtherJobTypes = useLaunchManagementJob();
- // const { launchManagementJob } = useLaunchManagementJob();
+  const { launchOtherJobTypes } = useLaunchManagementJob();
 
-  // const onMinus = () => {
-  //   const newValue = (value || 0) - 1;
-  //   setValue(newValue);
-  // };
+  const onMinus = () => {
+    const newValue = (value || 0) - 1;
+    setValue(newValue);
+  };
 
-  // const onChange = (event: React.FormEvent<HTMLInputElement>) => {
-  //   // const value = (event.target as HTMLInputElement).value;
-  //   // setValue(value === '' ? value : +value);
-  //   setValue((event.target as HTMLInputElement).value);
-  // };
+  const handleChange = (event: React.FormEvent<HTMLInputElement>) => {
+    // const value = (event.target as HTMLInputElement).value;
+    // setValue(value === '' ? value : +value);
+    setValue((event.target as HTMLInputElement).value);
+  };
 
-  // const onPlus = () => {
-  //   const newValue = (value || 0) + 1;
-  //   setValue(newValue);
-  // };
-  function handleLaunch(managementJob: SystemJobTemplate) {
-    console.log('Launching management job:', managementJob);
-    //await launchManagementJob();
+  const onPlus = () => {
+    const newValue = (value || 0) + 1;
+    setValue(newValue);
+  };
+
+  async function handleLaunch(managementJob: SystemJobTemplate): Promise<void> {
+    console.log('managementJob type from the MODAL', managementJob, typeof managementJob);
+    await launchOtherJobTypes(managementJob);
   }
-  // }
-  const managementJobPrompt = () => {
+
+  const managementJobPrompt = (managementJob: SystemJobTemplate) => {
     const dialog = (
       <Modal
         title={t('Launch Management Job')}
@@ -51,10 +53,10 @@ export function useManagementJobPrompt(managementJob: SystemJobTemplate) {
           <Text>{t`Set how many days of data should be retained.`}</Text>
 
           <NumberInput
-            value={30}
-            onMinus={2}
-            onPlus={2}
-            onChange={handleLaunch}
+            value={value}
+            onMinus={onMinus}
+            onPlus={onPlus}
+            onChange={handleChange}
             inputName="input"
             inputAriaLabel="number input"
             minusBtnAriaLabel="minus"
@@ -62,7 +64,13 @@ export function useManagementJobPrompt(managementJob: SystemJobTemplate) {
           />
         </TextContent>
 
-        <Button variant="primary" onClick={() => void handleLaunch(managementJob)}>
+        <Button
+          variant="primary"
+          onClick={() => {
+            console.log('launch on click', managementJob);
+            void handleLaunch(managementJob);
+          }}
+        >
           {t('Launch')}
         </Button>
 
