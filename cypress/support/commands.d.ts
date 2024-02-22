@@ -1032,7 +1032,11 @@ declare global {
           failOnStatusCode?: boolean;
         }
       ): Cypress.Chainable<void>;
-      uploadCollection(collection: string, namespace: string): Cypress.Chainable<void>;
+      uploadCollection(
+        collection: string,
+        namespace: string,
+        version?: string
+      ): Cypress.Chainable<void>;
       approveCollection(
         collection: string,
         namespace: string,
