@@ -1,6 +1,7 @@
 import { randomString } from '../../framework/utils/random-string';
 import { gatewayV1API } from '../../platform/api/gateway-api-utils';
 import { PlatformOrganization } from '../../platform/interfaces/PlatformOrganization';
+import { PlatformUser } from '../../platform/interfaces/PlatformUser';
 import './rest-commands';
 
 Cypress.Commands.add('platformLogin', () => {
@@ -37,6 +38,16 @@ Cypress.Commands.add('platformLogin', () => {
   cy.visit(`/`, { retryOnStatusCodeFailure: true, retryOnNetworkFailure: true });
 });
 
+Cypress.Commands.add('platformLogout', () => {
+  cy.get('[data-ouia-component-id="account-menu"]')
+    .click()
+    .then(() => {
+      cy.intercept('POST', gatewayV1API`/logout/`).as('logout');
+      cy.contains('a', 'Logout').click();
+      cy.wait('@logout');
+    });
+});
+
 Cypress.Commands.add('createPlatformOrganization', () => {
   const orgName = 'platform-e2e-organization' + randomString(5).toLowerCase();
   cy.requestPost<PlatformOrganization>(gatewayV1API`/organizations/`, {
@@ -55,5 +66,28 @@ Cypress.Commands.add(
   ) => {
     if (!organization?.id) return;
     cy.requestDelete(gatewayV1API`/organizations/${organization?.id.toString()}/`, options);
+  }
+);
+
+Cypress.Commands.add('createPlatformUser', (org: PlatformOrganization) => {
+  const userName = 'platform-e2e-user' + randomString(5).toLowerCase();
+  cy.requestPost<PlatformUser>(gatewayV1API`/users/`, {
+    username: userName,
+    password: 'password123',
+    organizations: [org.id],
+  });
+});
+
+Cypress.Commands.add(
+  'deletePlatformUser',
+  (
+    user: PlatformUser,
+    options?: {
+      /** Whether to fail on response codes other than 2xx and 3xx */
+      failOnStatusCode?: boolean;
+    }
+  ) => {
+    if (!user?.id) return;
+    cy.requestDelete(gatewayV1API`/users/${user?.id.toString()}/`, options);
   }
 );
