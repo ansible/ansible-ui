@@ -1,5 +1,4 @@
 import { action, useVisualizationController } from '@patternfly/react-topology';
-import { parseVariableField } from '../../../../../../framework/utils/codeEditorUtils';
 import { awxAPI } from '../../../../common/api/awx-utils';
 import { getAddedAndRemoved } from '../../../../common/util/getAddedAndRemoved';
 import { useDeleteRequest } from '../../../../../common/crud/useDeleteRequest';
@@ -202,9 +201,8 @@ export function useSaveVisualizer() {
       if (unified_job_type === RESOURCE_TYPE.system_job && resource.extra_data?.days) {
         setValue('extra_data', { days: resource.extra_data.days });
       } else if (launch_data?.extra_vars) {
-        setValue('extra_data', parseVariableField(launch_data?.extra_vars), true);
+        setValue('extra_data', launch_data.extra_vars, true);
       }
-
       const newNode = await postWorkflowNode(
         awxAPI`/workflow_job_templates/${state.workflowTemplate.id.toString()}/workflow_nodes/`,
         createNodePayload
@@ -284,7 +282,7 @@ export function useSaveVisualizer() {
       if (unified_job_type === RESOURCE_TYPE.system_job && resource.extra_data?.days) {
         setValue('extra_data', { days: resource.extra_data.days });
       } else if (launch_data?.extra_vars) {
-        setValue('extra_data', parseVariableField(launch_data?.extra_vars), true);
+        setValue('extra_data', launch_data?.extra_vars, true);
       }
 
       await processLabels(nodeId, launch_data);

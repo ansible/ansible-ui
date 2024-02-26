@@ -41,7 +41,7 @@ export interface LaunchConfiguration {
     scm_branch: string;
     job_tags: string;
     skip_tags: string;
-    extra_vars: string;
+    extra_vars: Record<string, unknown>;
     diff_mode: false;
     job_type: 'run' | 'check';
     verbosity: 0 | 1 | 2 | 3 | 4 | 5;

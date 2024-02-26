@@ -115,7 +115,7 @@ export interface PromptFormValues {
   instance_groups: { id: number; name: string }[];
   execution_environment: ExecutionEnvironment | { id: number; name: string } | null;
   diff_mode: boolean;
-  extra_vars: string;
+  extra_vars: Record<string, unknown>;
   forks: number;
   job_slice_count: number;
   job_tags: { name: string }[];

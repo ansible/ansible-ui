@@ -16,7 +16,6 @@ import {
   UnifiedJobType,
 } from '../types';
 import { getConvergenceType, getValueBasedOnJobType, shouldHideOtherStep } from '../wizard/helpers';
-import { jsonToYaml } from '../../../../../../framework/utils/codeEditorUtils';
 import { RESOURCE_TYPE } from '../constants';
 
 interface WizardStepState {
@@ -123,7 +122,7 @@ export function useGetInitialValues(): (node: GraphNode) => Promise<WizardStepSt
         diff_mode: prompt?.diff_mode ?? (defaults?.diff_mode || false),
         execution_environment:
           prompt?.execution_environment ?? (defaults?.execution_environment || null),
-        extra_vars: prompt?.extra_vars ?? jsonToYaml(JSON.stringify(defaults?.extra_data)),
+        extra_vars: prompt?.extra_vars ?? defaults?.extra_data,
         forks: prompt?.forks ?? (defaults?.forks || 0),
         instance_groups: prompt?.instance_groups ?? (nodeInstanceGroups || []),
         inventory: prompt?.inventory ?? (nodeData?.resource?.summary_fields?.inventory || null),

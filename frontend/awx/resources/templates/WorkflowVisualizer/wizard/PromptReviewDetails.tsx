@@ -148,7 +148,7 @@ export function PromptReviewDetails() {
       <PageDetail label={t('Skip tags')} isEmpty={isEmpty(skipTags)}>
         <LabelGroup>{skipTags?.map(({ name }) => <Label key={name}>{name}</Label>)}</LabelGroup>
       </PageDetail>
-      <PageDetailCodeEditor label={t('Extra vars')} value={extra_vars || ''} />
+      <PageDetailCodeEditor label={t('Extra vars')} value={JSON.stringify(extra_vars) || ''} />
     </>
   );
 }

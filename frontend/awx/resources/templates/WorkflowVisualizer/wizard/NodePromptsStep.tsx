@@ -261,11 +261,9 @@ export function NodePromptsStep() {
         <PageFormDataEditor<WizardFormValues>
           labelHelpTitle={t('Variables')}
           labelHelp={t(`Optional extra variables to be applied to job template`)}
-          toggleLanguages={['yaml', 'json']}
+          format="yaml"
           label={t('Variables')}
           name="prompt.extra_vars"
-          isExpandable
-          defaultExpanded
         />
       </ConditionalField>
     </PageFormGrid>
