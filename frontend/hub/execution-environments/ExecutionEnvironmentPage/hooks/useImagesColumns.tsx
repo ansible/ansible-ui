@@ -5,6 +5,7 @@ import { LabelGroup } from '@patternfly/react-core';
 import { TagLink, ShaLink, TagLabel, ShaLabel } from '../components/ImageLabels';
 import styled from 'styled-components';
 import { getContainersURL } from '../../../common/utils/getContainersURL';
+import { isManifestList } from '../../../common/utils/isManifestList';
 import { ImageLayer, ExecutionEnvironmentImage as Image } from '../ExecutionEnvironmentImage';
 
 const DigestAndCopyCell = styled.div`
@@ -12,16 +13,13 @@ const DigestAndCopyCell = styled.div`
   gap: 8px;
 `;
 
-export function useImagesColumns(
-  id: string | undefined,
-  isManifestList: (image: Image) => boolean
-) {
+export function useImagesColumns(id: string) {
   const { t } = useTranslation();
 
   const instructions =
     'podman pull ' +
     getContainersURL({
-      name: id || '',
+      name: id,
     });
 
   const sumLayers = (layers: ImageLayer[]) => layers.reduce((acc, curr) => acc + curr.size, 0);
@@ -34,11 +32,7 @@ export function useImagesColumns(
           <LabelGroup style={{ maxWidth: '300px' }}>
             {image.tags.map((tag) => (
               <Fragment key={tag}>
-                {isManifestList(image) ? (
-                  <TagLabel tag={tag} />
-                ) : (
-                  <>{id ? <TagLink id={id} tag={tag} /> : null}</>
-                )}
+                {isManifestList(image) ? <TagLabel tag={tag} /> : <TagLink id={id} tag={tag} />}
               </Fragment>
             ))}
           </LabelGroup>
@@ -65,13 +59,15 @@ export function useImagesColumns(
             {isManifestList(image) ? (
               <ShaLabel digest={image.digest} />
             ) : (
-              <>{id && <ShaLink id={id} digest={image.digest} />}</>
+              <>
+                <ShaLink id={id} digest={image.digest} />
+              </>
             )}
             <CopyCell minWidth={50} text={instructions} />
           </DigestAndCopyCell>
         ),
       },
     ],
-    [id, instructions, isManifestList, t]
+    [id, instructions, t]
   );
 }

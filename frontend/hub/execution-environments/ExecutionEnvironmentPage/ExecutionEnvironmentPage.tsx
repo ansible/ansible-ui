@@ -23,6 +23,7 @@ export function ExecutionEnvironmentPage() {
   const {
     data: ee,
     error,
+    isLoading,
     refresh,
   } = useGet<ExecutionEnvironment>(
     hubAPI`/v3/plugin/execution-environments/repositories/${params.id ?? ''}/`,
@@ -33,26 +34,26 @@ export function ExecutionEnvironmentPage() {
   const getPageUrl = useGetPageUrl();
   const pageActions = useExecutionEnvironmentPageActions({ refresh });
 
-  if (!ee && !error) {
-    return <LoadingPage />;
-  }
-
   if (error) {
     return <HubError error={error} handleRefresh={refresh} />;
+  }
+
+  if (isLoading || !ee) {
+    return <LoadingPage />;
   }
 
   return (
     <PageLayout>
       <PageHeader
-        title={ee?.name}
+        title={ee.name}
         breadcrumbs={[
           { label: t('Execution Environments'), to: getPageUrl(HubRoute.ExecutionEnvironments) },
-          { label: ee?.name },
+          { label: ee.name },
         ]}
         description={ee?.description}
         footer={
           <div>
-            <SignStatus state={ee?.pulp?.repository?.sign_state} />
+            <SignStatus state={ee.pulp?.repository?.sign_state} />
           </div>
         }
         headerActions={
@@ -86,7 +87,8 @@ export function ExecutionEnvironmentPage() {
             dataCy: 'execution-environment-access-tab',
           },
         ]}
-        params={{ id: ee?.name }}
+        params={{ id: ee.name }}
+        componentParams={{ executionEnvironment: ee }}
       />
     </PageLayout>
   );
