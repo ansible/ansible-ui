@@ -1,10 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access */
 import { randomString } from '../../framework/utils/random-string';
 import { Role } from '../../frontend/hub/access/roles/Role';
+import { RemoteRegistry } from '../../frontend/hub/administration/remote-registries/RemoteRegistry';
 import { Task } from '../../frontend/hub/administration/tasks/Task';
 import { CollectionVersionSearch } from '../../frontend/hub/collections/Collection';
 import { parsePulpIDFromURL } from '../../frontend/hub/common/api/hub-api-utils';
 import { HubItemsResponse } from '../../frontend/hub/common/useHubView';
+import { ExecutionEnvironment as HubExecutionEnvironment } from '../../frontend/hub/execution-environments/ExecutionEnvironment';
 import { galaxykitPassword, galaxykitUsername } from './e2e';
 import { hubAPI, pulpAPI } from './formatApiPathForHub';
 import { escapeForShellCommand } from './utils';
@@ -386,9 +388,53 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add('waitOnHubTask', function waitOnHubTask(taskId: number | string) {
+Cypress.Commands.add(
+  'createHubExecutionEnvironment',
+  (executionEnvironment: Partial<HubExecutionEnvironment>) => {
+    cy.requestPost(hubAPI`/_ui/v1/execution-environments/remotes/`, {
+      name: `e2e-${randomString(4, undefined, { isLowercase: true })}`,
+      upstream_name: 'alpine',
+      ...executionEnvironment,
+    });
+  }
+);
+
+Cypress.Commands.add(
+  'deleteHubExecutionEnvironment',
+  (executionEnvironmentName: string, options?: { failOnStatusCode?: boolean }) => {
+    cy.requestDelete(
+      hubAPI`/v3/plugin/execution-environments/repositories/${executionEnvironmentName}/`,
+      options
+    ).then((response) => {
+      if (response.status === 202) {
+        const body = response.body as { task: string };
+        cy.waitOnHubTask(body.task);
+      }
+    });
+  }
+);
+
+Cypress.Commands.add('createHubRemoteRegistry', (remoteRegistry?: Partial<RemoteRegistry>) => {
+  cy.requestPost(hubAPI`/_ui/v1/execution-environments/registries/`, {
+    name: `e2e-${randomString(4, undefined, { isLowercase: true })}`,
+    url: 'https://registry.hub.docker.com/',
+    ...remoteRegistry,
+  });
+});
+
+Cypress.Commands.add(
+  'deleteHubRemoteRegistry',
+  (remoteRegistryId: string, options?: { failOnStatusCode?: boolean }) => {
+    cy.requestDelete(
+      hubAPI`/_ui/v1/execution-environments/registries/${remoteRegistryId}/`,
+      options
+    );
+  }
+);
+
+Cypress.Commands.add('waitOnHubTask', function waitOnHubTask(taskUrl: string) {
   cy.requestPoll<Task>({
-    url: pulpAPI`/tasks/${taskId.toString()}/`,
+    url: taskUrl,
     check: (response) => {
       switch (response.status) {
         case 200:

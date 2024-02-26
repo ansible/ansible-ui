@@ -1,6 +1,6 @@
 /* istanbul ignore file */
 
-const randomCharacters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+const randomCharacters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
 const randomCharactersLowercase = 'abcdefghijklmnopqrstuvwxyz0123456789';
 
