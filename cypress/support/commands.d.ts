@@ -1062,7 +1062,7 @@ declare global {
           failOnStatusCode?: boolean;
         }
       ): Cypress.Chainable<void>;
-      createPlatformUser(org: PlatformOrganization): Cypress.Chainable<PlatformUser>;
+      createPlatformUser(org?: PlatformOrganization): Cypress.Chainable<PlatformUser>;
       deletePlatformUser(
         user: PlatformUser,
         options?: {
