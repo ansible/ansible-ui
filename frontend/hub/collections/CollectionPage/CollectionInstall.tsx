@@ -1,27 +1,24 @@
-import { Button, PageSection } from '@patternfly/react-core';
+import { Button, CodeBlock, CodeBlockCode, Label, Title } from '@patternfly/react-core';
 import { DownloadIcon } from '@patternfly/react-icons';
-import React from 'react';
-import { useTranslation } from 'react-i18next';
-import { useOutletContext } from 'react-router-dom';
-import { CopyCell, LoadingPage, PageDetail, PageDetails, Scrollable } from '../../../../framework';
+import React, { useState } from 'react';
+import { Trans, useTranslation } from 'react-i18next';
+import { Link, useOutletContext } from 'react-router-dom';
+import {
+  CopyCell,
+  LoadingPage,
+  PageDetail,
+  PageDetails,
+  useGetPageUrl,
+} from '../../../../framework';
 import { requestGet } from '../../../common/crud/Data';
-import { HubError } from '../../common/HubError';
-import { hubAPI } from '../../common/api/formatPath';
-import { useRepositoryBasePath } from '../../common/api/hub-api-utils';
-import { CollectionVersionSearch } from '../Collection';
-import { Label } from '@patternfly/react-core';
-import { Title } from '@patternfly/react-core';
 import { useGet } from '../../../common/crud/useGet';
-import { pulpAPI } from '../../common/api/formatPath';
-import { CollectionVersionsContent } from './CollectionDocumentation';
-import { Trans } from 'react-i18next';
+import { HubError } from '../../common/HubError';
+import { hubAPI, pulpAPI } from '../../common/api/formatPath';
+import { useRepositoryBasePath } from '../../common/api/hub-api-utils';
 import { HubRoute } from '../../main/HubRoutes';
-import { useGetPageUrl } from '../../../../framework';
-import { Link } from 'react-router-dom';
+import { CollectionVersionSearch } from '../Collection';
+import { CollectionVersionsContent } from './CollectionDocumentation';
 import './collection-info.css';
-import { useState } from 'react';
-import { CodeBlock } from '@patternfly/react-core';
-import { CodeBlockCode } from '@patternfly/react-core';
 
 export function CollectionInstall() {
   const { t } = useTranslation();
@@ -79,127 +76,123 @@ export function CollectionInstall() {
   }
 
   return (
-    <Scrollable>
-      <PageSection variant="light">
-        <PageDetails numberOfColumns={'single'}>
-          <PageDetail>{collection.collection_version?.description}</PageDetail>
+    <PageDetails numberOfColumns={'single'}>
+      <PageDetail>{collection.collection_version?.description}</PageDetail>
 
-          <PageDetail>
-            {collection.collection_version?.tags?.map((tag, i) => (
-              <Label key={i} variant="outline">
-                {tag?.name}
-              </Label>
-            ))}
-          </PageDetail>
+      <PageDetail>
+        {collection.collection_version?.tags?.map((tag, i) => (
+          <Label key={i} variant="outline">
+            {tag?.name}
+          </Label>
+        ))}
+      </PageDetail>
 
-          <Title headingLevel="h2">{t('Install')}</Title>
-          <PageDetail label={t('License')}>
-            {content?.license ? content?.license.join(', ') : ''}
-          </PageDetail>
-          <PageDetail label={t('Installation')}>
-            <CopyCell
-              text={`ansible-galaxy collection install ${
-                collection?.collection_version?.namespace ?? ''
-              }.${collection?.collection_version?.name ?? ''}`}
-            />
+      <Title headingLevel="h2">{t('Install')}</Title>
+      <PageDetail label={t('License')}>
+        {content?.license ? content?.license.join(', ') : ''}
+      </PageDetail>
+      <PageDetail label={t('Installation')}>
+        <CopyCell
+          text={`ansible-galaxy collection install ${
+            collection?.collection_version?.namespace ?? ''
+          }.${collection?.collection_version?.name ?? ''}`}
+        />
 
-            <PageDetail>
-              {t(
-                `Note: Installing collection with ansible-galaxy is only supported in ansible 2.13.9+`
-              )}
-            </PageDetail>
-          </PageDetail>
+        <PageDetail>
+          {t(
+            `Note: Installing collection with ansible-galaxy is only supported in ansible 2.13.9+`
+          )}
+        </PageDetail>
+      </PageDetail>
 
-          <PageDetail label={t('Download')}>
-            {!IS_COMMUNITY ? (
-              <div>
-                <Trans>
-                  To download this collection, configure your client to connect to one of the{' '}
-                  <Link
-                    to={getPageUrl(HubRoute.CollectionDistributions, {
-                      params: {
-                        repository: collection.repository?.name,
-                        namespace: collection.collection_version?.namespace,
-                        name: collection.collection_version?.name,
-                      },
-                      query: { version: collection.collection_version?.version },
-                    })}
-                  >
-                    distributions&nbsp;
-                  </Link>
-                  of this repository.
-                </Trans>
-              </div>
-            ) : null}
+      <PageDetail label={t('Download')}>
+        {!IS_COMMUNITY ? (
+          <div>
+            <Trans>
+              To download this collection, configure your client to connect to one of the{' '}
+              <Link
+                to={getPageUrl(HubRoute.CollectionDistributions, {
+                  params: {
+                    repository: collection.repository?.name,
+                    namespace: collection.collection_version?.namespace,
+                    name: collection.collection_version?.name,
+                  },
+                  query: { version: collection.collection_version?.version },
+                })}
+              >
+                distributions&nbsp;
+              </Link>
+              of this repository.
+            </Trans>
+          </div>
+        ) : null}
 
-            <a href="/#" ref={downloadLinkRef} style={{ display: 'none' }}>
-              {t(`Link`)}
-            </a>
-            <Button
-              variant="link"
-              icon={<DownloadIcon />}
-              onClick={() => {
-                void Download(basePath, collection, downloadLinkRef);
-              }}
+        <a href="/#" ref={downloadLinkRef} style={{ display: 'none' }}>
+          {t(`Link`)}
+        </a>
+        <Button
+          variant="link"
+          icon={<DownloadIcon />}
+          onClick={() => {
+            void Download(basePath, collection, downloadLinkRef);
+          }}
+        >
+          {t(`Download tarball`)}
+        </Button>
+      </PageDetail>
+
+      <PageDetail label={t('Signature')}>
+        <Button
+          variant="link"
+          icon={<DownloadIcon />}
+          onClick={() => {
+            if (!showSignature) {
+              setShowSignature(true);
+            } else {
+              setShowSignature(false);
+            }
+          }}
+        >
+          {showSignature ? t(`Hide signature`) : t(`Show signature`)}
+        </Button>
+        {showSignature && <ShowSignature collection={collection} />}
+      </PageDetail>
+
+      <PageDetail label={t('Requires')}>
+        {collection?.collection_version?.requires_ansible &&
+          `${t('Ansible')} ${collection.collection_version?.requires_ansible}`}
+      </PageDetail>
+
+      <PageDetail>
+        {content?.docs_blob?.collection_readme ? (
+          <>
+            <div className="hub-readme-container">
+              <div
+                className="pf-v5-c-content"
+                dangerouslySetInnerHTML={{
+                  __html: content?.docs_blob?.collection_readme.html,
+                }}
+              />
+              <div className="hub-fade-out" />
+            </div>
+            <Link
+              to={getPageUrl(HubRoute.CollectionDocumentation, {
+                params: {
+                  repository: collection.repository?.name,
+                  namespace: collection.collection_version?.namespace,
+                  name: collection.collection_version?.name,
+                },
+                query: { version: collection.collection_version?.version },
+              })}
             >
-              {t(`Download tarball`)}
-            </Button>
-          </PageDetail>
-
-          <PageDetail label={t('Signature')}>
-            <Button
-              variant="link"
-              icon={<DownloadIcon />}
-              onClick={() => {
-                if (!showSignature) {
-                  setShowSignature(true);
-                } else {
-                  setShowSignature(false);
-                }
-              }}
-            >
-              {showSignature ? t(`Hide signature`) : t(`Show signature`)}
-            </Button>
-            {showSignature && <ShowSignature collection={collection} />}
-          </PageDetail>
-
-          <PageDetail label={t('Requires')}>
-            {collection?.collection_version?.requires_ansible &&
-              `${t('Ansible')} ${collection.collection_version?.requires_ansible}`}
-          </PageDetail>
-
-          <PageDetail>
-            {content?.docs_blob?.collection_readme ? (
-              <>
-                <div className="hub-readme-container">
-                  <div
-                    className="pf-v5-c-content"
-                    dangerouslySetInnerHTML={{
-                      __html: content?.docs_blob?.collection_readme.html,
-                    }}
-                  />
-                  <div className="hub-fade-out" />
-                </div>
-                <Link
-                  to={getPageUrl(HubRoute.CollectionDocumentation, {
-                    params: {
-                      repository: collection.repository?.name,
-                      namespace: collection.collection_version?.namespace,
-                      name: collection.collection_version?.name,
-                    },
-                    query: { version: collection.collection_version?.version },
-                  })}
-                >
-                  {t`Go to documentation`}
-                </Link>
-              </>
-            ) : (
-              ''
-            )}
-          </PageDetail>
-        </PageDetails>
-      </PageSection>
-    </Scrollable>
+              {t`Go to documentation`}
+            </Link>
+          </>
+        ) : (
+          ''
+        )}
+      </PageDetail>
+    </PageDetails>
   );
 }
 

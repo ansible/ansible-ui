@@ -14,11 +14,14 @@ function formatTimeout(
     seconds: seconds.toString(),
   });
 }
-export function WorkflowApprovalNodeDetails(props: { selectedNode: WorkflowNode }) {
+export function WorkflowApprovalNodeDetails(props: {
+  selectedNode: WorkflowNode;
+  disableScroll?: boolean;
+}) {
   const { t } = useTranslation();
   const { selectedNode } = props;
   return (
-    <PageDetails>
+    <PageDetails disableScroll={props.disableScroll}>
       <PageDetail label={t('Name')}>
         {selectedNode.identifier ?? selectedNode.summary_fields.unified_job_template.name}
       </PageDetail>

@@ -3,13 +3,7 @@ import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { useEffect, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import {
-  DateTimeCell,
-  LoadingPage,
-  PageDetail,
-  PageDetails,
-  Scrollable,
-} from '../../../../framework';
+import { DateTimeCell, LoadingPage, PageDetail, PageDetails } from '../../../../framework';
 import { EmptyStateNoData } from '../../../../framework/components/EmptyStateNoData';
 import { useGet } from '../../../common/crud/useGet';
 import { HubError } from '../../common/HubError';
@@ -181,29 +175,27 @@ export function ExecutionEnvironmentActivity() {
     );
 
   return (
-    <Scrollable>
-      <PageDetails numberOfColumns="single">
-        <PageDetail>
-          <Table data-cy="activities-table">
-            <Thead>
-              <Tr>
-                <Th width={15}>{t('Change')}</Th>
-                <Th width={10}>{t('Date')}</Th>
+    <PageDetails numberOfColumns="single">
+      <PageDetail>
+        <Table data-cy="activities-table">
+          <Thead>
+            <Tr>
+              <Th width={15}>{t('Change')}</Th>
+              <Th width={10}>{t('Date')}</Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {activities?.map((activity, i) => (
+              <Tr key={i}>
+                <Td>{activity.action}</Td>
+                <Td>
+                  <DateTimeCell value={activity.created} />
+                </Td>
               </Tr>
-            </Thead>
-            <Tbody>
-              {activities?.map((activity, i) => (
-                <Tr key={i}>
-                  <Td>{activity.action}</Td>
-                  <Td>
-                    <DateTimeCell value={activity.created} />
-                  </Td>
-                </Tr>
-              ))}
-            </Tbody>
-          </Table>
-        </PageDetail>
-      </PageDetails>
-    </Scrollable>
+            ))}
+          </Tbody>
+        </Table>
+      </PageDetail>
+    </PageDetails>
   );
 }

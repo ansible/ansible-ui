@@ -1,7 +1,7 @@
 import { Button, Modal, ModalVariant } from '@patternfly/react-core';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PageDetail, PageDetails, Scrollable, usePageDialog } from '../../../framework';
+import { PageDetail, PageDetails, usePageDialog } from '../../../framework';
 import { PageDetailCodeEditor } from '../../../framework/PageDetails/PageDetailCodeEditor';
 import { formatDateString } from '../../../framework/utils/formatDateString';
 import { EdaRuleAuditEvent } from '../interfaces/EdaRuleAuditEvent';
@@ -30,14 +30,12 @@ export function EventPayloadDialog(props: EventPayloadModalProps) {
         </Button>,
       ]}
     >
-      <Scrollable>
-        <PageDetails>
-          <PageDetail label={t('Name')}>{props?.event?.source_name || ''}</PageDetail>
-          <PageDetail label={t('Source type')}>{props?.event?.source_type || ''}</PageDetail>
-          <PageDetail label={t('Timestamp')}>
-            {props?.event?.received_at ? formatDateString(props.event?.received_at) : ''}
-          </PageDetail>
-        </PageDetails>
+      <PageDetails>
+        <PageDetail label={t('Name')}>{props?.event?.source_name || ''}</PageDetail>
+        <PageDetail label={t('Source type')}>{props?.event?.source_type || ''}</PageDetail>
+        <PageDetail label={t('Timestamp')}>
+          {props?.event?.received_at ? formatDateString(props.event?.received_at) : ''}
+        </PageDetail>
         {props?.event?.payload && (
           <PageDetails numberOfColumns="single">
             <PageDetailCodeEditor
@@ -47,7 +45,7 @@ export function EventPayloadDialog(props: EventPayloadModalProps) {
             />
           </PageDetails>
         )}
-      </Scrollable>
+      </PageDetails>
     </Modal>
   );
 }

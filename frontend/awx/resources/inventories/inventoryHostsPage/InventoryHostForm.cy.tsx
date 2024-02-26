@@ -96,7 +96,7 @@ describe('Create Edit Inventory Host Form', () => {
       cy.get('[data-cy="name"]').type('Edited Host');
       cy.get('[data-cy="description"]').clear();
       cy.get('[data-cy="description"]').type('Edited Description');
-      cy.get('[data-cy="variables"]').type('s');
+      cy.getBy('[data-cy="variables"]').type('s');
       cy.clickButton(/^Save host$/);
       cy.wait('@editHost')
         .its('request.body')
