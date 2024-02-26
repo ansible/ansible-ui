@@ -6,9 +6,10 @@ import {
   LoadingPage,
   PageDetail,
   PageDetails,
-  useGetPageUrl
+  useGetPageUrl,
 } from '../../../../framework';
 import { formatDateString } from '../../../../framework/utils/formatDateString';
+import { capitalizeFirstLetter } from '../../../../framework/utils/strings';
 import { LastModifiedPageDetail } from '../../../common/LastModifiedPageDetail';
 import { StatusCell } from '../../../common/Status';
 import { useGetItem } from '../../../common/crud/useGet';
@@ -158,3 +159,9 @@ function restartPolicyName(policy: RestartPolicyEnum, t: (str: string) => string
       return t('On failure');
     case RestartPolicyEnum.Always:
       return t('Always');
+    case RestartPolicyEnum.Never:
+      return t('Never');
+    default:
+      return capitalizeFirstLetter(policy);
+  }
+}
