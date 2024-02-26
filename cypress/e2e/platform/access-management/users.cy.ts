@@ -26,6 +26,7 @@ describe('Users - create, edit and delete', () => {
   });
 
   afterEach(() => {
+    cy.platformLogin();
     cy.deletePlatformUser(platformUser);
     cy.deletePlatformOrganization(organization);
   });
