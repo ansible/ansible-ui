@@ -3,11 +3,14 @@ import { DateTimeCell, PageDetail, PageDetails } from '../../../../../../framewo
 import { PageDetailCodeEditor } from '../../../../../../framework/PageDetails/PageDetailCodeEditor';
 import { WorkflowNode } from '../../../../interfaces/WorkflowNode';
 
-export function SystemJobNodeDetails(props: { selectedNode: WorkflowNode }) {
+export function SystemJobNodeDetails(props: {
+  selectedNode: WorkflowNode;
+  disableScroll?: boolean;
+}) {
   const { t } = useTranslation();
   const { selectedNode } = props;
   return (
-    <PageDetails>
+    <PageDetails disableScroll={props.disableScroll}>
       <PageDetail label={t('Name')}>
         {selectedNode.identifier ?? selectedNode.summary_fields.unified_job_template.name}
       </PageDetail>

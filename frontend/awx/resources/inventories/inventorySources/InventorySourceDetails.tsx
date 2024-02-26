@@ -38,7 +38,10 @@ export type WebsocketInventorySource = {
   status: string;
 } & InventorySource;
 
-export function InventorySourceDetails(props: { inventorySourceId?: string }) {
+export function InventorySourceDetails(props: {
+  inventorySourceId?: string;
+  disableScroll?: boolean;
+}) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const params = useParams<{ source_id: string; id: string }>();
@@ -196,7 +199,7 @@ export function InventorySourceDetails(props: { inventorySourceId?: string }) {
     summary_fields.current_job || summary_fields.last_job;
 
   return (
-    <PageDetails>
+    <PageDetails disableScroll={props.disableScroll}>
       <PageDetail label={t`Name`}>
         {props.inventorySourceId ? (
           <Link

@@ -28,7 +28,7 @@ function useInstanceGroups(templateId: string) {
   return data?.results ?? [];
 }
 
-export function TemplateDetails(props: { templateId?: string }) {
+export function TemplateDetails(props: { templateId?: string; disableScroll?: boolean }) {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
 
@@ -58,7 +58,7 @@ export function TemplateDetails(props: { templateId?: string }) {
   };
 
   return (
-    <PageDetails>
+    <PageDetails disableScroll={props.disableScroll}>
       <PageDetail label={t('Name')}>
         {props.templateId ? (
           <Link to={getPageUrl(AwxRoute.JobTemplateDetails, { params: { id: props.templateId } })}>

@@ -34,7 +34,7 @@ import { getDocsBaseUrl } from '../../../common/util/getDocsBaseUrl';
 import { Project } from '../../../interfaces/Project';
 import { AwxRoute } from '../../../main/AwxRoutes';
 
-export function ProjectDetails(props: { projectId?: string }) {
+export function ProjectDetails(props: { projectId?: string; disableScroll?: boolean }) {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const urlId = props?.projectId ? props.projectId : params.id;
@@ -209,7 +209,7 @@ export function ProjectDetails(props: { projectId?: string }) {
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!project) return <LoadingPage breadcrumbs tabs />;
   return (
-    <PageDetails>
+    <PageDetails disableScroll={props.disableScroll}>
       <PageDetail label={t('Name')}>
         {props.projectId ? (
           <Link to={getPageUrl(AwxRoute.ProjectDetails, { params: { id: props.projectId } })}>
