@@ -139,7 +139,7 @@ export function PageFormMarkdown<
                   id={id}
                   name={name}
                   language="markdown"
-                  value={value}
+                  value={value || ''}
                   onChange={onChange}
                   setError={(error) => {
                     if (!error) clearErrors(name);
@@ -153,7 +153,7 @@ export function PageFormMarkdown<
               </DropZone>
             )}
             {isExpanded && preview && (
-              <PreviewContainer className="pf-v5-c-form-control pf-m-disabled">
+              <PreviewContainer>
                 <TextContent>{<ReactMarkdown>{value}</ReactMarkdown>}</TextContent>
               </PreviewContainer>
             )}
@@ -211,5 +211,6 @@ function MarkdownActions(props: {
 }
 
 const PreviewContainer = styled.div`
-  padding: 16px;
+  padding: 16px 24px 16px 24px;
+  border: thin solid var(--pf-v5-global--BorderColor--100);
 `;
