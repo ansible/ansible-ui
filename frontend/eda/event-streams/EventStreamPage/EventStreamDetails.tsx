@@ -1,13 +1,8 @@
 import { Label, LabelGroup, PageSection } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
-import {
-  LoadingPage,
-  PageDetail,
-  PageDetails,
-  Scrollable,
-  useGetPageUrl,
-} from '../../../../framework';
+import { LoadingPage, PageDetail, PageDetails, useGetPageUrl } from '../../../../framework';
+import { PageDetailCodeEditor } from '../../../../framework/PageDetails/PageDetailCodeEditor';
 import { formatDateString } from '../../../../framework/utils/formatDateString';
 import { capitalizeFirstLetter } from '../../../../framework/utils/strings';
 import { LastModifiedPageDetail } from '../../../common/LastModifiedPageDetail';
@@ -17,7 +12,6 @@ import { edaAPI } from '../../common/eda-utils';
 import { EdaEventStream } from '../../interfaces/EdaEventStream';
 import { RestartPolicyEnum } from '../../interfaces/generated/eda-api';
 import { EdaRoute } from '../../main/EdaRoutes';
-import { PageDetailCodeEditor } from '../../../../framework/PageDetails/PageDetailCodeEditor';
 
 export function EventStreamDetails() {
   const { t } = useTranslation();
@@ -38,50 +32,48 @@ export function EventStreamDetails() {
     return <LoadingPage />;
   }
   return (
-    <Scrollable>
-      <PageDetails>
-        <PageDetail label={t('Event stream ID')}>{eventStream?.id || ''}</PageDetail>
-        <PageDetail label={t('Name')}>{eventStream?.name || ''}</PageDetail>
-        <PageDetail label={t('Description')}>{eventStream?.description || ''}</PageDetail>
-        <PageDetail label={t('Source type')}>{eventStream?.source_type || ''}</PageDetail>
-        {eventStream.credentials && eventStream.credentials.length > 0 && (
-          <PageDetail label={t('Credential(s)')}>
-            <LabelGroup>
-              {eventStream.credentials.map((credential) => (
-                <Label key={credential?.id}>{credential?.name}</Label>
-              ))}
-            </LabelGroup>
-          </PageDetail>
+    <PageDetails>
+      <PageDetail label={t('Event stream ID')}>{eventStream?.id || ''}</PageDetail>
+      <PageDetail label={t('Name')}>{eventStream?.name || ''}</PageDetail>
+      <PageDetail label={t('Description')}>{eventStream?.description || ''}</PageDetail>
+      <PageDetail label={t('Source type')}>{eventStream?.source_type || ''}</PageDetail>
+      {eventStream.credentials && eventStream.credentials.length > 0 && (
+        <PageDetail label={t('Credential(s)')}>
+          <LabelGroup>
+            {eventStream.credentials.map((credential) => (
+              <Label key={credential?.id}>{credential?.name}</Label>
+            ))}
+          </LabelGroup>
+        </PageDetail>
+      )}
+      <PageDetail
+        label={t('Decision environment')}
+        helpText={t('Decision environments are a container image to run Ansible rulebooks.')}
+      >
+        {eventStream && eventStream?.decision_environment?.id ? (
+          <Link
+            to={getPageUrl(EdaRoute.DecisionEnvironmentPage, {
+              params: { id: eventStream?.decision_environment?.id },
+            })}
+          >
+            {eventStream?.decision_environment?.name}
+          </Link>
+        ) : (
+          eventStream?.decision_environment?.name || ''
         )}
-        <PageDetail
-          label={t('Decision environment')}
-          helpText={t('Decision environments are a container image to run Ansible rulebooks.')}
-        >
-          {eventStream && eventStream?.decision_environment?.id ? (
-            <Link
-              to={getPageUrl(EdaRoute.DecisionEnvironmentPage, {
-                params: { id: eventStream?.decision_environment?.id },
-              })}
-            >
-              {eventStream?.decision_environment?.name}
-            </Link>
-          ) : (
-            eventStream?.decision_environment?.name || ''
-          )}
-        </PageDetail>
-        <PageDetail label={t('Event stream status')}>
-          <StatusCell status={eventStream?.status || ''} />
-        </PageDetail>
-        <PageDetail label={t('Restart policy')} helpText={restartPolicyHelpBlock}>
-          {eventStream?.restart_policy ? restartPolicyName(eventStream?.restart_policy, t) : ''}
-        </PageDetail>
-        <PageDetail label={t('Created')}>
-          {eventStream?.created_at ? formatDateString(eventStream?.created_at) : ''}
-        </PageDetail>
-        <LastModifiedPageDetail
-          value={eventStream?.modified_at ? formatDateString(eventStream?.modified_at) : ''}
-        />
-      </PageDetails>
+      </PageDetail>
+      <PageDetail label={t('Event stream status')}>
+        <StatusCell status={eventStream?.status || ''} />
+      </PageDetail>
+      <PageDetail label={t('Restart policy')} helpText={restartPolicyHelpBlock}>
+        {eventStream?.restart_policy ? restartPolicyName(eventStream?.restart_policy, t) : ''}
+      </PageDetail>
+      <PageDetail label={t('Created')}>
+        {eventStream?.created_at ? formatDateString(eventStream?.created_at) : ''}
+      </PageDetail>
+      <LastModifiedPageDetail
+        value={eventStream?.modified_at ? formatDateString(eventStream?.modified_at) : ''}
+      />
       {eventStream?.source_args && (
         <PageSection variant="light">
           <PageDetailCodeEditor
@@ -92,7 +84,7 @@ export function EventStreamDetails() {
           />
         </PageSection>
       )}
-    </Scrollable>
+    </PageDetails>
   );
 }
 

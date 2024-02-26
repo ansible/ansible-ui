@@ -46,53 +46,51 @@ export function UserDetails<T extends UserDetailsType>(props: {
   const { user, organizations, options } = props;
 
   return (
-    <>
-      <PageDetails>
-        <PageDetail label={t('First name')}>{user.first_name}</PageDetail>
-        <PageDetail label={t('Last name')}>{user.last_name}</PageDetail>
-        <PageDetail label={t('Email')}>{user.email}</PageDetail>
-        <PageDetail label={t('Username')}>{user.username}</PageDetail>
-        {organizations && organizations.length > 0 && (
-          <PageDetail label={t('Organization', { count: organizations.length })}>
-            <LabelsCell labelsWithLinks={organizations} />
-          </PageDetail>
-        )}
-        {user.last_login && (
-          <PageDetail label={t('Last login')}>
-            <DateTimeCell value={user.last_login} />
-          </PageDetail>
-        )}
-        {options?.showAuthType && (
-          <PageDetail label={t('Authentication type')}>
-            <AuthenticationType user={user} />
-          </PageDetail>
-        )}{' '}
-        {options?.showUserType && (
-          <PageDetail label={t('User type')}>
-            <UserType user={user} />
-          </PageDetail>
-        )}
-        <PageDetail label={t('Created')}>
-          <DateTimeCell
-            value={user.created ?? user.created_at ?? user.date_joined ?? user.created_on}
-          />
+    <PageDetails>
+      <PageDetail label={t('First name')}>{user.first_name}</PageDetail>
+      <PageDetail label={t('Last name')}>{user.last_name}</PageDetail>
+      <PageDetail label={t('Email')}>{user.email}</PageDetail>
+      <PageDetail label={t('Username')}>{user.username}</PageDetail>
+      {organizations && organizations.length > 0 && (
+        <PageDetail label={t('Organization', { count: organizations.length })}>
+          <LabelsCell labelsWithLinks={organizations} />
         </PageDetail>
-        {(user.modified || user.modified_at || user.modified_on) && (
-          <LastModifiedPageDetail
-            data-cy="modified"
-            value={user.modified ?? user.modified_at ?? user.modified_on}
-          />
-        )}
-        {user.roles && user.roles.length > 0 && (
-          <PageDetail label={t('Role(s)')}>
-            <LabelGroup>
-              {user.roles.map((role) => (
-                <Label key={role?.id}>{role?.name}</Label>
-              ))}
-            </LabelGroup>
-          </PageDetail>
-        )}
-      </PageDetails>
-    </>
+      )}
+      {user.last_login && (
+        <PageDetail label={t('Last login')}>
+          <DateTimeCell value={user.last_login} />
+        </PageDetail>
+      )}
+      {options?.showAuthType && (
+        <PageDetail label={t('Authentication type')}>
+          <AuthenticationType user={user} />
+        </PageDetail>
+      )}{' '}
+      {options?.showUserType && (
+        <PageDetail label={t('User type')}>
+          <UserType user={user} />
+        </PageDetail>
+      )}
+      <PageDetail label={t('Created')}>
+        <DateTimeCell
+          value={user.created ?? user.created_at ?? user.date_joined ?? user.created_on}
+        />
+      </PageDetail>
+      {(user.modified || user.modified_at || user.modified_on) && (
+        <LastModifiedPageDetail
+          data-cy="modified"
+          value={user.modified ?? user.modified_at ?? user.modified_on}
+        />
+      )}
+      {user.roles && user.roles.length > 0 && (
+        <PageDetail label={t('Role(s)')}>
+          <LabelGroup>
+            {user.roles.map((role) => (
+              <Label key={role?.id}>{role?.name}</Label>
+            ))}
+          </LabelGroup>
+        </PageDetail>
+      )}
+    </PageDetails>
   );
 }
