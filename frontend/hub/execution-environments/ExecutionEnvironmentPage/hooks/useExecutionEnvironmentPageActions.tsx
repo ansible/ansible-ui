@@ -29,6 +29,11 @@ export function useExecutionEnvironmentPageActions(options: { refresh?: () => un
     void refresh?.();
   });
 
+  const isSyncRunning = (ee: ExecutionEnvironment) =>
+    ['running', 'waiting', 'pending'].includes(
+      ee.pulp?.repository?.remote?.last_sync_task?.state || ''
+    );
+
   return useMemo(() => {
     const actions: IPageAction<ExecutionEnvironment>[] = [
       {
@@ -47,6 +52,7 @@ export function useExecutionEnvironmentPageActions(options: { refresh?: () => un
         selection: PageActionSelection.Single,
         label: t('Sync from registry'),
         isHidden: (ee: ExecutionEnvironment) => !ee.pulp?.repository?.remote,
+        isDisabled: (ee) => (isSyncRunning(ee) ? t('Sync is already running.') : undefined),
         onClick: (ee: ExecutionEnvironment) => {
           const alert: AlertProps = {
             variant: 'info',
@@ -89,5 +95,12 @@ export function useExecutionEnvironmentPageActions(options: { refresh?: () => un
       },
     ];
     return actions;
-  }, [pageNavigate, t, alertToaster, refresh, deleteExecutionEnvironments, signExecutionEnvironments]);
+  }, [
+    pageNavigate,
+    t,
+    alertToaster,
+    refresh,
+    deleteExecutionEnvironments,
+    signExecutionEnvironments,
+  ]);
 }
