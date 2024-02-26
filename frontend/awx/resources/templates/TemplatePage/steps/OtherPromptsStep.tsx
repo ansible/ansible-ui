@@ -171,11 +171,9 @@ export function OtherPromptsStep(props: OtherPromptsStepProps) {
         <PageFormDataEditor<TemplateLaunch>
           labelHelpTitle={t('Variables')}
           labelHelp={t(`Optional extra variables to be applied to job template`)}
-          toggleLanguages={['yaml', 'json']}
+          format="yaml"
           label={t('Variables')}
           name="extra_vars"
-          isExpandable
-          defaultExpanded
         />
       </ConditionalField>
     </PageFormGrid>

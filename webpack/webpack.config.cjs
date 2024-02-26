@@ -92,7 +92,7 @@ module.exports = function (env, argv) {
     },
     plugins: [
       new MonacoWebpackPlugin({
-        languages: ['yaml', 'json'],
+        languages: ['yaml', 'json', 'markdown'],
       }),
       new webpack.DefinePlugin({
         'process.env.NODE_ENV': isProduction

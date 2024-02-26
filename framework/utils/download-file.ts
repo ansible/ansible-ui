@@ -1,9 +1,9 @@
-export function downloadTextFile(name: string, content: string) {
+export function downloadTextFile(name: string, content: string, extension: string = 'txt') {
   const file = new Blob(content.split('/n'), { type: 'text/plain' });
 
   const element = document.createElement('a');
   element.href = URL.createObjectURL(file);
-  element.download = name + '.txt';
+  element.download = name + '.' + extension;
 
   document.body.appendChild(element);
   element.click();

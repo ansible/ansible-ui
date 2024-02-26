@@ -7,6 +7,7 @@ export interface PluginConfiguration {
   default?: string;
   type: string;
   ui_field_label?: string;
+  choices?: { [name: string]: string };
 }
 
 export interface AuthenticatorPlugin {

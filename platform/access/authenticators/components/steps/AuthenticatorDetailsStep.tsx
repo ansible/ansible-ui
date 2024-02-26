@@ -1,10 +1,11 @@
+import { Text, TextContent, TextVariants } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { TextContent, Text, TextVariants } from '@patternfly/react-core';
 import {
-  PageFormGrid,
-  PageFormTextInput,
-  PageFormSwitch,
   PageFormDataEditor,
+  PageFormGrid,
+  PageFormSelect,
+  PageFormSwitch,
+  PageFormTextInput,
 } from '../../../../../framework';
 import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
 import { Authenticator } from '../../../../interfaces/Authenticator';
@@ -70,17 +71,34 @@ export function AuthenticatorDetailsStep(props: {
       </TextContent>
       <PageFormGrid isVertical>
         <PageFormTextInput name="name" label={t('Name')} isRequired />
-        {textFields.map((field) => (
-          <PageFormTextInput
-            id={`configuration-input-${field.name}`}
-            name={`configuration.${field.name}`}
-            key={field.name}
-            label={field.ui_field_label || field.name}
-            isRequired={field.required}
-            labelHelpTitle={field.ui_field_label || field.name}
-            labelHelp={field.help_text}
-          />
-        ))}
+        {textFields.map((field) =>
+          field.type === 'ChoiceField' ? (
+            <PageFormSelect
+              id={`configuration-input-${field.name}`}
+              name={`configuration.${field.name}`}
+              key={field.name}
+              label={field.ui_field_label || field.name}
+              labelHelpTitle={field.ui_field_label || field.name}
+              labelHelp={field.help_text}
+              options={Object.keys(field.choices || {}).map((option) => ({
+                value: option,
+                label: (field.choices as { [k: string]: string })[option] || option,
+              }))}
+              placeholderText={t('Select a value')}
+              isRequired={field.required}
+            />
+          ) : (
+            <PageFormTextInput
+              id={`configuration-input-${field.name}`}
+              name={`configuration.${field.name}`}
+              key={field.name}
+              label={field.ui_field_label || field.name}
+              labelHelpTitle={field.ui_field_label || field.name}
+              labelHelp={field.help_text}
+              isRequired={field.required}
+            />
+          )
+        )}
         {boolFields.map((field) => (
           <PageFormSwitch
             id={`configuration-input-${field.name}`}
@@ -103,6 +121,7 @@ export function AuthenticatorDetailsStep(props: {
             labelHelpTitle={field.ui_field_label || field.name}
             labelHelp={field.help_text}
             isRequired={field.required}
+            format="object"
           />
         ))}
       </PageFormGrid>
