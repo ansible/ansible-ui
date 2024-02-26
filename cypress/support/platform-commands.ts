@@ -73,12 +73,12 @@ Cypress.Commands.add(
 Cypress.Commands.add(
   'createPlatformUser',
   (organization?: SetOptional<PlatformOrganization, 'id'>) => {
-    if (organization !== undefined) {
+    if (organization?.id) {
       const userName = 'platform-e2e-user' + randomString(5).toLowerCase();
       cy.requestPost<PlatformUser>(gatewayV1API`/users/`, {
         username: userName,
         password: 'password123',
-        organizations: [organization?.id],
+        organizations: [organization.id],
       });
     } else {
       const userName = 'platform-e2e-user' + randomString(5).toLowerCase();
