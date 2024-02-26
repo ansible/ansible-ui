@@ -1,6 +1,6 @@
+import { awxAPI } from '../common/api/awx-utils';
+import { InstanceGroup } from '../interfaces/InstanceGroup';
 import { CreateJobTemplate } from './TemplateForm';
-import { awxAPI } from '../../common/api/awx-utils';
-import type { InstanceGroup } from '../../interfaces/InstanceGroup';
 
 describe('Create job template ', () => {
   const instanceGroups: Partial<InstanceGroup>[] = [{ id: 123, name: 'default_group' }];
