@@ -49,6 +49,10 @@ import { EventStreams } from '../event-streams/EventStreams';
 import { EventStreamInstanceDetails } from '../event-streams/EventStreamInstancePage/EventStreamInstanceDetails';
 import { EventStreamInstancePage } from '../event-streams/EventStreamInstancePage/EventStreamInstancePage';
 import { EventStreamHistory } from '../event-streams/EventStreamPage/EventStreamHistory';
+import { CreateWebhook, EditWebhook } from '../webhooks/EditWebhook';
+import { WebhookPage } from '../webhooks/WebhookPage/WebhookPage';
+import { WebhookDetails } from '../webhooks/WebhookPage/WebhookDetails';
+import { Webhooks } from '../webhooks/Webhooks';
 
 export function useEdaNavigation() {
   const { t } = useTranslation();
@@ -273,6 +277,43 @@ export function useEdaNavigation() {
         {
           path: '',
           element: <EventStreams />,
+        },
+      ],
+    },
+    {
+      id: EdaRoute.Webhooks,
+      label: t('Webhooks'),
+      path: 'webhooks',
+      children: [
+        {
+          id: EdaRoute.CreateWebhook,
+          path: 'create',
+          element: <CreateWebhook />,
+        },
+        {
+          id: EdaRoute.EditWebhook,
+          path: 'edit/:id',
+          element: <EditWebhook />,
+        },
+        {
+          id: EdaRoute.WebhookPage,
+          path: ':id',
+          element: <WebhookPage />,
+          children: [
+            {
+              id: EdaRoute.WebhookDetails,
+              path: 'details',
+              element: <WebhookDetails />,
+            },
+            {
+              path: '',
+              element: <Navigate to="details" />,
+            },
+          ],
+        },
+        {
+          path: '',
+          element: <Webhooks />,
         },
       ],
     },
