@@ -4,6 +4,7 @@ import {
   Node,
   NodeModel,
   NodeShape,
+  NodeStatus,
   action,
 } from '@patternfly/react-topology';
 import { useCallback } from 'react';
@@ -17,22 +18,23 @@ export function useHandleCollectNodeProps() {
       const isDragging = monitor.isDragging();
 
       const target = monitor.getDropResult() as Node;
-      const isInvalidLinkTarget: boolean =
-        target?.getState<{ isInvalidLinkTarget: boolean }>()?.isInvalidLinkTarget ?? false;
+      const nodeStatus = target?.getNodeStatus() || NodeStatus.default;
 
       const sourceNode = monitor.getItem() as Node;
 
       if (!isDragging) {
         const iteratedNode = props.element as Node<NodeModel, GraphNodeData>;
-        iteratedNode.setState({ ...props.element.getState(), isInvalidLinkTarget: false });
-        action(() => iteratedNode.setNodeShape(NodeShape.circle))();
+        action(() => {
+          iteratedNode.setNodeShape(NodeShape.circle);
+          iteratedNode.setNodeStatus(NodeStatus.default);
+        })();
       }
       if (isDragging) {
         targetNodeAncestors(sourceNode);
       }
       return {
         ...props,
-        canDrop: isInvalidLinkTarget,
+        canDrop: nodeStatus !== NodeStatus.danger,
         edgeDragging: isDragging,
       };
     },

@@ -11,13 +11,13 @@ import {
 } from '@patternfly/react-icons';
 import {
   DefaultNode,
-  LabelPosition,
-  NodeStatus,
   WithContextMenuProps,
   WithCreateConnectorProps,
   WithSelectionProps,
+  isNode,
   observer,
 } from '@patternfly/react-topology';
+
 import { useViewOptions } from '../ViewOptionsProvider';
 import type { CustomNodeProps, UnifiedJobType } from '../types';
 import type { SVGIconProps } from '@patternfly/react-icons/dist/js/createIcon';
@@ -35,34 +35,22 @@ const NodeIcon: Record<UnifiedJobType, ElementType<SVGIconProps>> = {
 export const CustomNode: FC<
   CustomNodeProps & WithContextMenuProps & WithSelectionProps & WithCreateConnectorProps
 > = observer((props) => {
+  const { element, onSelect, ...rest } = props;
   const { setSidebarMode } = useViewOptions();
-
-  const { element, contextMenuOpen, onContextMenu, onSelect, selected, ...rest } = props;
   const data = element.getData();
-  const isInvalidLinkTarget = element.getState<{ isInvalidLinkTarget: boolean }>()
-    .isInvalidLinkTarget;
-
   const id = element.getId();
-  const jobType = data && data.resource.summary_fields?.unified_job_template?.unified_job_type;
-  if (!data && id !== START_NODE_ID) return null;
+  const jobType = data && data.resource?.summary_fields?.unified_job_template?.unified_job_type;
+  if ((!data && id !== START_NODE_ID) || !isNode(element)) return null;
   const Icon = jobType ? NodeIcon[jobType] : TrashIcon;
   return id !== START_NODE_ID ? (
     <DefaultNode
-      dragging={false}
-      nodeStatus={isInvalidLinkTarget ? NodeStatus.danger : NodeStatus.default}
-      showStatusDecorator
-      canDrop={!isInvalidLinkTarget}
       element={element}
       labelClassName={`${id}-node-label`}
-      contextMenuOpen={contextMenuOpen}
-      labelPosition={LabelPosition.right}
-      onContextMenu={onContextMenu}
       onSelect={(e) => {
         if (!jobType) return;
         setSidebarMode('view');
         onSelect && onSelect(e);
       }}
-      selected={selected}
       truncateLength={20}
       {...rest}
     >
@@ -72,13 +60,10 @@ export const CustomNode: FC<
     </DefaultNode>
   ) : (
     <DefaultNode
+      {...rest}
       element={element}
       labelClassName={`${id}-node-label`}
-      contextMenuOpen={contextMenuOpen}
-      labelPosition={LabelPosition.right}
-      onContextMenu={onContextMenu}
       dragging={false}
-      selected={false}
       truncateLength={20}
     >
       <g transform={`translate(13, 13)`}>

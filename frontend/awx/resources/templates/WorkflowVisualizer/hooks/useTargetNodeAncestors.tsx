@@ -1,4 +1,10 @@
-import { ElementModel, GraphElement, NodeShape, action } from '@patternfly/react-topology';
+import {
+  ElementModel,
+  GraphElement,
+  NodeShape,
+  NodeStatus,
+  action,
+} from '@patternfly/react-topology';
 import { useCallback } from 'react';
 import { WorkflowNode } from '../../../../interfaces/WorkflowNode';
 
@@ -47,8 +53,10 @@ export function useTargetNodeAncestors() {
       .forEach((ancestorId) => {
         newNodes.forEach((node) => {
           if (node.getId() === ancestorId) {
-            node.setState({ ...node.getState(), isInvalidLinkTarget: true });
-            action(() => node.setNodeShape(NodeShape.hexagon))();
+            action(() => {
+              node.setNodeShape(NodeShape.hexagon);
+              node.setNodeStatus(NodeStatus.danger);
+            })();
           }
         });
       });

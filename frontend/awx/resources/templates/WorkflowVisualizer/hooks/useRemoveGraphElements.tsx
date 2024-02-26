@@ -9,6 +9,7 @@ import {
   Edge,
   Node,
   useVisualizationController,
+  NodeStatus,
 } from '@patternfly/react-topology';
 import { GraphNode, type GraphEdgeData, type GraphNodeData, EdgeStatus } from '../types';
 import { Label } from '@patternfly/react-core';
@@ -137,9 +138,10 @@ export function useRemoveGraphElements() {
 
   const handleRemoveLink = action((element: Edge) => {
     element.setVisible(false);
-    element.getSource().setState({ modified: true, isInvalidLinkTarget: false });
-
-    element.getTarget().setState({ modified: true, isInvalidLinkTarget: false });
+    element.getSource().setState({ modified: true });
+    element.getTarget().setState({ modified: true });
+    element.getSource().setNodeStatus(NodeStatus.default);
+    element.getTarget().setNodeStatus(NodeStatus.default);
     const controller = element.getController();
     const model = controller.toModel();
 
