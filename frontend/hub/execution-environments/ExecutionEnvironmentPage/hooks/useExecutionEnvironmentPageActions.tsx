@@ -46,6 +46,7 @@ export function useExecutionEnvironmentPageActions(options: { refresh?: () => un
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         label: t('Sync from registry'),
+        isHidden: (ee: ExecutionEnvironment) => !ee.pulp?.repository?.remote,
         onClick: (ee: ExecutionEnvironment) => {
           const alert: AlertProps = {
             variant: 'info',
