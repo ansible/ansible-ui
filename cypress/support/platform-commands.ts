@@ -69,7 +69,7 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add('createPlatformUser', (org: PlatformOrganization) => {
+Cypress.Commands.add('createPlatformUser', (org?: PlatformOrganization) => {
   const userName = 'platform-e2e-user' + randomString(5).toLowerCase();
   cy.requestPost<PlatformUser>(gatewayV1API`/users/`, {
     username: userName,
