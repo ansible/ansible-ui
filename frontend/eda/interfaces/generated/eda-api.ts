@@ -2975,7 +2975,7 @@ export interface WebhookCreate {
   hmac_algorithm?:	string,
   header_key?:	string,
   auth_type?:string,
-  hmac_signature_prefix: string,
+  hmac_signature_prefix?: string,
   hmac_format?: string,
   secret: string,
   test_mode?: boolean,
@@ -2988,6 +2988,4 @@ export interface WebhookRef {
   name: string;
   description?: string;
   webhook_type?: WebhookTypeEnum;
-  username?: string | null;
 }
-

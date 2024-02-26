@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { LoadingPage, PageDetail, PageDetails, Scrollable } from '../../../../framework';
+import { LoadingPage, PageDetail, PageDetails } from '../../../../framework';
 import { formatDateString } from '../../../../framework/utils/formatDateString';
 import { LastModifiedPageDetail } from '../../../common/LastModifiedPageDetail';
 import { useGet } from '../../../common/crud/useGet';
@@ -18,7 +18,7 @@ export function WebhookDetails() {
     return <LoadingPage />;
   }
   return (
-    <Scrollable>
+    <>
       <PageDetails>
         <PageDetail label={t('Name')}>{webhook?.name || ''}</PageDetail>
         <PageDetail label={t('Url')}>{webhook?.url || ''}</PageDetail>
@@ -57,6 +57,6 @@ export function WebhookDetails() {
           />
         </PageSection>
       )}
-    </Scrollable>
+    </>
   );
 }
