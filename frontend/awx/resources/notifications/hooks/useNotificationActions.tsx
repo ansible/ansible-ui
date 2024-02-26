@@ -11,6 +11,8 @@ interface ToggleNotification {
 }
 
 interface NotificationActionProps {
+  notificationApproval: Array<NotificationTemplate> | undefined;
+  notificationApprovalRefresh: () => undefined;
   notificationStarted: Array<NotificationTemplate> | undefined;
   notificationStartedRefresh: () => undefined;
   notificationSuccess: Array<NotificationTemplate> | undefined;
@@ -22,6 +24,8 @@ interface NotificationActionProps {
 }
 
 export function useNotificationActions({
+  notificationApproval,
+  notificationApprovalRefresh,
   notificationStarted,
   notificationStartedRefresh,
   notificationSuccess,
@@ -46,13 +50,15 @@ export function useNotificationActions({
         awxAPI`/${resourceType}/${resourceId ?? ''}/notification_templates_${status}/`,
         postData
       );
+      notificationApprovalRefresh();
       notificationStartedRefresh();
       notificationSuccessRefresh();
       notificationErrorRefresh();
     },
     [
-      resourceId,
       resourceType,
+      resourceId,
+      notificationApprovalRefresh,
       notificationStartedRefresh,
       notificationSuccessRefresh,
       notificationErrorRefresh,
@@ -70,53 +76,52 @@ export function useNotificationActions({
     }
     return false;
   };
-  const rowActions = useMemo<IPageAction<NotificationTemplate>[]>(
-    () => [
-      {
+
+  const rowActions = useMemo<IPageAction<NotificationTemplate>[]>(() => {
+    const createNotificationAction = (
+      notificationType: string,
+      label: string,
+      status: string,
+      notifications?: Array<NotificationTemplate>
+    ): IPageAction<NotificationTemplate> => {
+      return {
         isPinned: true,
         ariaLabel: (isEnabled) =>
-          isEnabled ? t('Click to disable schedule') : t('Click to enable schedule'),
+          isEnabled
+            ? t(`Click to disable ${notificationType}`)
+            : t(`Click to enable ${notificationType}`),
         type: PageActionType.Switch,
         selection: PageActionSelection.Single,
-        labelOff: t('Start'),
-        label: t('Start'),
+        labelOff: t(label),
+        label: t(label),
         onToggle: (notificationTemplate: NotificationTemplate, enable: boolean) =>
-          toggleNotification(notificationTemplate.id, enable, 'started'),
+          toggleNotification(notificationTemplate.id, enable, status),
         isSwitchOn: (notificationTemplate: NotificationTemplate) =>
-          isNotificationDisabled(notificationTemplate, notificationStarted),
+          isNotificationDisabled(notificationTemplate, notifications),
         showPinnedLabel: true,
         isReversed: true,
-      },
-      {
-        isPinned: true,
-        ariaLabel: (isEnabled) =>
-          isEnabled ? t('Click to disable schedule') : t('Click to enable schedule'),
-        type: PageActionType.Switch,
-        selection: PageActionSelection.Single,
-        labelOff: t('Success'),
-        label: t('Success'),
-        isSwitchOn: (notificationTemplate: NotificationTemplate) =>
-          isNotificationDisabled(notificationTemplate, notificationSuccess),
-        onToggle: (notificationTemplate: NotificationTemplate, enable: boolean) =>
-          toggleNotification(notificationTemplate.id, enable, 'success'),
-        showPinnedLabel: true,
-      },
-      {
-        isPinned: true,
-        ariaLabel: (isEnabled) =>
-          isEnabled ? t('Click to disable schedule') : t('Click to enable schedule'),
-        type: PageActionType.Switch,
-        selection: PageActionSelection.Single,
-        labelOff: t('Failure'),
-        label: t('Failure'),
-        isSwitchOn: (notificationTemplate: NotificationTemplate) =>
-          isNotificationDisabled(notificationTemplate, notificationError),
-        onToggle: (notificationTemplate: NotificationTemplate, enable: boolean) =>
-          toggleNotification(notificationTemplate.id, enable, 'error'),
-        showPinnedLabel: true,
-      },
-    ],
-    [notificationStarted, notificationSuccess, notificationError, t, toggleNotification]
-  );
+      };
+    };
+    const notificationArray = [
+      createNotificationAction('start', 'Start', 'started', notificationStarted),
+      createNotificationAction('success', 'Success', 'success', notificationSuccess),
+      createNotificationAction('failure', 'Failure', 'error', notificationError),
+    ];
+
+    if (resourceType === 'organizations') {
+      notificationArray.unshift(
+        createNotificationAction('approval', 'Apply', 'approvals', notificationApproval)
+      );
+    }
+    return notificationArray;
+  }, [
+    notificationStarted,
+    notificationSuccess,
+    notificationError,
+    resourceType,
+    t,
+    toggleNotification,
+    notificationApproval,
+  ]);
   return rowActions;
 }
