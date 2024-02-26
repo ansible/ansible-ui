@@ -6,6 +6,7 @@ import { Task } from '../../frontend/hub/administration/tasks/Task';
 import { CollectionVersionSearch } from '../../frontend/hub/collections/Collection';
 import { parsePulpIDFromURL } from '../../frontend/hub/common/api/hub-api-utils';
 import { HubItemsResponse } from '../../frontend/hub/common/useHubView';
+import { ExecutionEnvironment as HubExecutionEnvironment } from '../../frontend/hub/execution-environments/ExecutionEnvironment';
 import { galaxykitPassword, galaxykitUsername } from './e2e';
 import { hubAPI, pulpAPI } from './formatApiPathForHub';
 import { escapeForShellCommand } from './utils';
@@ -389,8 +390,12 @@ Cypress.Commands.add(
 
 Cypress.Commands.add(
   'createHubExecutionEnvironment',
-  (executionEnvironment: { name: string; registry: string; upstream_name: string }) => {
-    cy.requestPost(hubAPI`/_ui/v1/execution-environments/remotes/`, executionEnvironment);
+  (executionEnvironment: Partial<HubExecutionEnvironment>) => {
+    cy.requestPost(hubAPI`/_ui/v1/execution-environments/remotes/`, {
+      name: `e2e-${randomString(4, undefined, { isLowercase: true })}`,
+      upstream_name: 'alpine',
+      ...executionEnvironment,
+    });
   }
 );
 
@@ -409,8 +414,12 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add('createHubRemoteRegistry', (remoteRegistry: Partial<RemoteRegistry>) => {
-  cy.requestPost(hubAPI`/_ui/v1/execution-environments/registries/`, remoteRegistry);
+Cypress.Commands.add('createHubRemoteRegistry', (remoteRegistry?: Partial<RemoteRegistry>) => {
+  cy.requestPost(hubAPI`/_ui/v1/execution-environments/registries/`, {
+    name: `e2e-${randomString(4, undefined, { isLowercase: true })}`,
+    url: 'https://registry.hub.docker.com/',
+    ...remoteRegistry,
+  });
 });
 
 Cypress.Commands.add(

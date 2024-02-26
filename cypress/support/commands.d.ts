@@ -1051,18 +1051,16 @@ declare global {
         repository: string
       ): Cypress.Chainable<void>;
 
-      createHubExecutionEnvironment(executionEnvironment: {
-        name: string;
-        registry: string;
-        upstream_name: string;
-      }): Cypress.Chainable<HubExecutionEnvironment>;
+      createHubExecutionEnvironment(
+        executionEnvironment: Partial<HubExecutionEnvironment>
+      ): Cypress.Chainable<HubExecutionEnvironment>;
       deleteHubExecutionEnvironment(
         executionEnvironmentId: string,
         options?: { failOnStatusCode?: boolean }
       ): Cypress.Chainable<void>;
 
       createHubRemoteRegistry(
-        remoteRegistry: Partial<RemoteRegistry>
+        remoteRegistry?: Partial<RemoteRegistry>
       ): Cypress.Chainable<RemoteRegistry>;
       deleteHubRemoteRegistry(
         repositoryId: string,

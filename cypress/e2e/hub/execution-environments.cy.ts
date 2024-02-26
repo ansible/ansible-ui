@@ -1,24 +1,15 @@
 import { randomString } from '../../../framework/utils/random-string';
-import {
-  RemoteRegistry as IRemoteRegistry,
-  RemoteRegistry,
-} from '../../../frontend/hub/administration/remote-registries/RemoteRegistry';
+import { RemoteRegistry } from '../../../frontend/hub/administration/remote-registries/RemoteRegistry';
 import { ExecutionEnvironment } from '../../../frontend/hub/execution-environments/ExecutionEnvironment';
 import { hubAPI } from '../../support/formatApiPathForHub';
 import { ExecutionEnvironments } from './constants';
 
-const testSignature: string = randomString(5, undefined, { isLowercase: true });
-
 function generateRemoteRegistryName(): string {
-  return `test-${testSignature}-remote-registry-${randomString(5, undefined, {
-    isLowercase: true,
-  })}`;
+  return `e2e-${randomString(5, undefined, { isLowercase: true })}`;
 }
 
 function generateEEName(): string {
-  return `test-${testSignature}-ee-${randomString(5, undefined, {
-    isLowercase: true,
-  })}`;
+  return `e2e-${randomString(5, undefined, { isLowercase: true })}`;
 }
 
 describe('Execution Environments', () => {
@@ -32,29 +23,25 @@ describe('Execution Environments', () => {
   });
 
   it('should open a new tab and verify correct docs url', () => {
-    const registryName = generateRemoteRegistryName();
-    const containerName = generateEEName();
-
-    cy.galaxykit('registry create', registryName, 'https://registry.hub.docker.com/');
-    cy.galaxykit('container create', containerName, 'library/alpine', registryName);
-
-    cy.navigateTo('hub', ExecutionEnvironments.url);
-    cy.window().then((win) => {
-      cy.stub(win, 'open').as('docsTab');
+    cy.createHubRemoteRegistry().then((remoteRegistry) => {
+      cy.createHubExecutionEnvironment({ registry: remoteRegistry.id }).then(
+        (executionEnvironment) => {
+          cy.navigateTo('hub', ExecutionEnvironments.url);
+          cy.window().then((win) => cy.stub(win, 'open').as('docsTab'));
+          cy.get('[data-cy="push-container-images"]').click();
+          cy.get('@docsTab').should(
+            'be.calledWith',
+            'https://access.redhat.com/documentation/en-us/red_hat_ansible_automation_platform/'
+          );
+          cy.deleteHubExecutionEnvironment(executionEnvironment.name);
+          cy.deleteHubRemoteRegistry(remoteRegistry.id);
+        }
+      );
     });
-    cy.get('[data-cy="push-container-images"]').click();
-    cy.get('@docsTab').should(
-      'be.calledWith',
-      'https://access.redhat.com/documentation/en-us/red_hat_ansible_automation_platform/'
-    );
-
-    cy.galaxykit('container delete', containerName);
-    cy.galaxykit('registry delete', registryName);
   });
 
   it('can add and delete a new execution environment', () => {
-    const remoteRegistryName = generateRemoteRegistryName();
-    cy.createRemoteRegistry(remoteRegistryName).then((remoteRegistry: IRemoteRegistry) => {
+    cy.createHubRemoteRegistry().then((remoteRegistry) => {
       const eeName = `execution_environment_${randomString(3, undefined, { isLowercase: true })}`;
       const upstreamName = `upstream_name_${randomString(3, undefined, { isLowercase: true })}`;
 
@@ -75,18 +62,18 @@ describe('Execution Environments', () => {
               //This element renders differently depending on how many registries the API returns
               if (count < 11) {
                 //fewer than 11 remote registries
-                cy.contains('button[type="button"]', remoteRegistryName).click();
+                cy.contains('button[type="button"]', remoteRegistry.name).click();
               } else if (count > 10 && count < 50) {
                 //between 11 and 49 remote registries
                 cy.getByDataCy('dropdown-menu')
                   .find('input')
-                  .type(remoteRegistryName)
+                  .type(remoteRegistry.name)
                   .then(() => {
-                    cy.getByDataCy(`${remoteRegistryName}`).click();
+                    cy.getByDataCy(`${remoteRegistry.name}`).click();
                   });
               } else {
                 //50 or more remote registries
-                cy.filterTableBySingleText(remoteRegistryName);
+                cy.filterTableBySingleText(remoteRegistry.name);
                 cy.getByDataCy('checkbox-column-cell').find('input').click();
                 cy.clickButton('Confirm');
               }
@@ -117,33 +104,21 @@ describe('Execution Environments', () => {
               'contain',
               'No results match this filter criteria. Clear all filters and try again.'
             );
-          cy.deleteRemoteRegistry(remoteRegistry.id);
+          cy.deleteHubRemoteRegistry(remoteRegistry.id);
         });
     });
   });
 });
 
 describe('Execution Environment Details tab', () => {
-  const num = (~~(Math.random() * 1000000)).toString();
-  const registryName = `docker${num}`;
-  const containerName = `remotepine${num}`;
   let registry: RemoteRegistry;
   let executionEnvironment: ExecutionEnvironment;
 
   before(() => {
-    cy.hubLogin();
-  });
-
-  before(() => {
-    cy.createHubRemoteRegistry({
-      name: registryName,
-      url: 'https://registry.hub.docker.com/',
-    }).then((response) => {
+    cy.createHubRemoteRegistry().then((response) => {
       registry = response;
       cy.createHubExecutionEnvironment({
-        name: containerName,
         registry: registry.id,
-        upstream_name: 'alpine',
       }).then((response) => {
         executionEnvironment = response;
       });
@@ -158,9 +133,9 @@ describe('Execution Environment Details tab', () => {
   it('should render the execution environment details page', () => {
     // test navigating by sidebar menu
     cy.navigateTo('hub', ExecutionEnvironments.url);
-    cy.filterTableBySingleText(containerName);
-    cy.get('a').contains(containerName).click();
-    cy.verifyPageTitle(containerName);
+    cy.filterTableBySingleText(executionEnvironment.name);
+    cy.get('a').contains(executionEnvironment.name).click();
+    cy.verifyPageTitle(executionEnvironment.name);
     cy.contains('Unsigned');
 
     const tabs = ['Details', 'Activity', 'Images', 'Access'];
@@ -172,15 +147,15 @@ describe('Execution Environment Details tab', () => {
 
   it('should render details page tab with instructions and empty readme', () => {
     // test visiting by URL
-    cy.visit(`/execution-environments/${containerName}/`);
-    cy.verifyPageTitle(containerName);
+    cy.visit(`/execution-environments/${executionEnvironment.name}/`);
+    cy.verifyPageTitle(executionEnvironment.name);
     cy.get('[aria-selected="true"]').contains('Details');
     cy.contains('Instructions');
     cy.contains('Pull this image');
 
     // in dev env should be 'localhost:4102'
     const host = window.location.host;
-    const instructions = `podman pull ${host}/${containerName}`;
+    const instructions = `podman pull ${host}/${executionEnvironment.name}`;
     cy.get('[data-cy="clipboard-copy"] input').should('have.value', instructions);
     cy.get('[data-cy="clipboard-copy"] input').should('have.attr', 'readonly', 'readonly');
     cy.contains('No README');
@@ -189,8 +164,8 @@ describe('Execution Environment Details tab', () => {
   });
 
   it('should add readme with markdown editor', () => {
-    cy.visit(`/execution-environments/${containerName}/`);
-    cy.verifyPageTitle(containerName);
+    cy.visit(`/execution-environments/${executionEnvironment.name}/`);
+    cy.verifyPageTitle(executionEnvironment.name);
     cy.clickButton('Add');
     cy.contains('README');
     cy.get('[data-cy="readme"]').within(() => {
@@ -201,7 +176,7 @@ describe('Execution Environment Details tab', () => {
       cy.contains('Cancel');
       cy.intercept(
         'PUT',
-        hubAPI`/v3/plugin/execution-environments/repositories/${containerName}/_content/readme/`
+        hubAPI`/v3/plugin/execution-environments/repositories/${executionEnvironment.name}/_content/readme/`
       ).as('updateReadme');
       cy.clickButton('Save');
       cy.wait('@updateReadme');
@@ -210,7 +185,7 @@ describe('Execution Environment Details tab', () => {
   });
 
   it('should change readme after editing', () => {
-    cy.visit(`/execution-environments/${containerName}/`);
+    cy.visit(`/execution-environments/${executionEnvironment.name}/`);
     cy.get('[data-cy="readme"]').within(() => {
       cy.contains('Heading 1');
       cy.clickButton('Edit');
@@ -218,7 +193,7 @@ describe('Execution Environment Details tab', () => {
       cy.contains('Preview').parent().get('strong').contains('bold text');
       cy.intercept(
         'PUT',
-        hubAPI`/v3/plugin/execution-environments/repositories/${containerName}/_content/readme/`
+        hubAPI`/v3/plugin/execution-environments/repositories/${executionEnvironment.name}/_content/readme/`
       ).as('updateReadme');
       cy.clickButton('Save');
       cy.wait('@updateReadme');
@@ -228,7 +203,7 @@ describe('Execution Environment Details tab', () => {
   });
 
   it('should not change readme after cancel edit', () => {
-    cy.visit(`/execution-environments/${containerName}/`);
+    cy.visit(`/execution-environments/${executionEnvironment.name}/`);
     cy.get('[data-cy="readme"]').within(() => {
       cy.clickButton('Edit');
       cy.typeBy('[data-cy="raw-markdown"]', '{enter}this should not be saved.');
