@@ -1,26 +1,27 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { PageHeader, useGetPageUrl } from '../../../../../framework';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
-  usePageNavigate,
-  PageFormSubmitHandler,
-  PageLayout,
-  PageFormTextInput,
   PageFormDataEditor,
+  PageFormSubmitHandler,
+  PageFormTextInput,
+  PageHeader,
+  PageLayout,
+  useGetPageUrl,
+  usePageNavigate,
 } from '../../../../../framework';
-import { requestPatch } from '../../../../common/crud/Data';
-import { usePostRequest } from '../../../../common/crud/usePostRequest';
-import { awxAPI } from '../../../common/api/awx-utils';
-import { AwxPageForm } from '../../../common/AwxPageForm';
-import { AwxHost } from '../../../interfaces/AwxHost';
-import { AwxRoute } from '../../../main/AwxRoutes';
 import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
-import { useEffect, useState } from 'react';
+import { requestPatch } from '../../../../common/crud/Data';
+import { useGetRequest } from '../../../../common/crud/useGet';
+import { usePostRequest } from '../../../../common/crud/usePostRequest';
+import { AwxPageForm } from '../../../common/AwxPageForm';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { AwxHost } from '../../../interfaces/AwxHost';
+import { InventoryGroup } from '../../../interfaces/InventoryGroup';
+import { AwxRoute } from '../../../main/AwxRoutes';
 import { useGetHost } from '../../hosts/hooks/useGetHost';
 import { useGetInventory } from '../InventoryPage/InventoryPage';
-import { InventoryGroup } from '../../../interfaces/InventoryGroup';
-import { useGetRequest } from '../../../../common/crud/useGet';
 
 export interface IHostInput {
   name: string;
@@ -239,11 +240,7 @@ function HostInputs() {
         placeholder={t('Enter a description')}
       />
       <PageFormSection singleColumn>
-        <PageFormDataEditor<IHostInput>
-          toggleLanguages={['yaml', 'json']}
-          name="variables"
-          label={t('Variables')}
-        />
+        <PageFormDataEditor<IHostInput> format="yaml" name="variables" label={t('Variables')} />
       </PageFormSection>
     </>
   );

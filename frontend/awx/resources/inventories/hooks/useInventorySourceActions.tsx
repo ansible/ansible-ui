@@ -15,6 +15,7 @@ import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
 import { InventorySource } from '../../../interfaces/InventorySource';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useDeleteInventorySources } from './useDeleteInventorySources';
+import { useParams } from 'react-router-dom';
 
 type InventorySourceActionOptions = {
   onInventorySourcesDeleted: (inventorySources: InventorySource[]) => void;
@@ -26,6 +27,7 @@ export function useInventorySourceActions({
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const deleteInventorySources = useDeleteInventorySources(onInventorySourcesDeleted);
+  const params = useParams<{ inventory_type: string }>();
 
   const activeUser = useAwxActiveUser();
   const alertToaster = usePageAlertToaster();
@@ -86,6 +88,7 @@ export function useInventorySourceActions({
           pageNavigate(AwxRoute.InventorySourceEdit, {
             params: {
               id: inventorySource.inventory,
+              inventory_type: params.inventory_type,
               source_id: inventorySource.id,
             },
           }),
@@ -116,5 +119,5 @@ export function useInventorySourceActions({
       },
     ];
     return itemActions;
-  }, [deleteInventorySources, pageNavigate, handleUpdate, activeUser, t]);
+  }, [deleteInventorySources, pageNavigate, handleUpdate, activeUser, t, params.inventory_type]);
 }

@@ -1,4 +1,5 @@
 import '@cypress/code-coverage/support';
+import jsyaml from 'js-yaml';
 import { SetRequired } from 'type-fest';
 import { randomString } from '../../framework/utils/random-string';
 import { AwxItemsResponse } from '../../frontend/awx/common/AwxItemsResponse';
@@ -220,7 +221,6 @@ Cypress.Commands.add(
     cy.clickPageAction('delete-credential-type');
     cy.get('#confirm').click();
     cy.clickButton(/^Delete credential type/);
-    cy.clickButton(/^Close/);
   }
 );
 
@@ -235,6 +235,25 @@ Cypress.Commands.add('configFormatToggle', (configType: string) => {
 
 Cypress.Commands.add('assertMonacoTextField', (textString: string) => {
   cy.get('[data-cy="variables"] code').should('contain', textString);
+});
+
+Cypress.Commands.add('dataEditorShouldContain', (selector: string, value: string | object) => {
+  let yaml: string;
+  if (typeof value === 'string') {
+    yaml = value;
+  } else {
+    if (Object.keys(value).length === 0) {
+      yaml = '';
+    } else {
+      yaml = jsyaml.dump(value);
+    }
+  }
+  cy.get(selector).within(() => {
+    for (const line of yaml.split('\n')) {
+      if (line.trim() === '') continue;
+      cy.contains(line.trim()).should('be.visible');
+    }
+  });
 });
 
 Cypress.Commands.add('selectPromptOnLaunch', (resourceName: string) => {
@@ -369,7 +388,7 @@ Cypress.Commands.add('selectDetailsPageKebabAction', (dataCy: string) => {
   cy.get('[data-cy="actions-dropdown"]')
     .click()
     .then(() => {
-      cy.get(`[data-cy="${dataCy}"]`).click();
+      cy.clickByDataCy(dataCy);
       cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
         cy.get('[data-ouia-component-id="confirm"]').click();
         cy.get('[data-ouia-component-id="submit"]').click();
@@ -1443,12 +1462,11 @@ Cypress.Commands.add('editAwxApplication', (application: Application, name: stri
   }
 });
 
-Cypress.Commands.add('createAwxInstance', () => {
+Cypress.Commands.add('createAwxInstance', (hostname: string) => {
   cy.awxRequestPost<
     Pick<
       Instance,
       | 'hostname'
-      | 'description'
       | 'enabled'
       | 'managed_by_policy'
       | 'peers_from_control_nodes'
@@ -1457,8 +1475,7 @@ Cypress.Commands.add('createAwxInstance', () => {
     >,
     Instance
   >(awxAPI`/instances/`, {
-    hostname: 'E2EInstanceTest' + randomString(5),
-    description: 'E2E Test Instance Description',
+    hostname: hostname,
     enabled: true,
     managed_by_policy: false,
     peers_from_control_nodes: false,

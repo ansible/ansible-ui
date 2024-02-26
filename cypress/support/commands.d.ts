@@ -40,6 +40,8 @@ import { EdaUser, EdaUserCreateUpdate } from '../../frontend/eda/interfaces/EdaU
 import { RoleDetail } from '../../frontend/eda/interfaces/generated/eda-api';
 import { Role as HubRole } from '../../frontend/hub/access/roles/Role';
 import { RemoteRegistry } from '../../frontend/hub/administration/remote-registries/RemoteRegistry';
+import { IRemotes } from '../../frontend/hub/administration/remotes/Remotes';
+import { Repository } from '../../frontend/hub/administration/repositories/Repository';
 import { CollectionVersionSearch } from '../../frontend/hub/collections/Collection';
 import { ExecutionEnvironment as HubExecutionEnvironment } from '../../frontend/hub/execution-environments/ExecutionEnvironment';
 import { IAwxResources } from './awx-commands';
@@ -82,6 +84,8 @@ declare global {
       /** Select a value from a single select input by selector, making sure it is not disabled or hidden */
       singleSelectBy(selector: string, value: string): Chainable<void>;
 
+      selectLoadAll(): Chainable<void>;
+
       /** Select a value from a single select input by data-cy attribute, making sure it is not disabled or hidden */
       singleSelectByDataCy(dataCy: string, value: string): Chainable<void>;
 
@@ -112,6 +116,8 @@ declare global {
       configFormatToggle(configType: string): Chainable<void>;
 
       assertMonacoTextField(textString: string): Chainable<void>;
+
+      dataEditorShouldContain(selector: string, value: string | object): Chainable<void>;
 
       /** This command works for a form field to look up item from table
        * (used for components that do not utilize the PageFormAsyncSelect component yet) */
@@ -573,7 +579,7 @@ declare global {
       createAwxInstanceGroup(
         instanceGroup?: Partial<Omit<InstanceGroup, 'id'>>
       ): Chainable<InstanceGroup>;
-      createAwxInstance(instance?: Partial<Omit<Instance, 'id'>>): Chainable<Instance>;
+      createAwxInstance(hostname: string): Chainable<Instance>;
       createAwxLabel(label: Partial<Omit<Label, 'id'>>): Chainable<Label>;
       createGlobalOrganization(): Chainable<void>;
       createGlobalProject(): Chainable<void>;
@@ -1010,9 +1016,12 @@ declare global {
       cleanupCollections(namespace: string, repo: string): Cypress.Chainable<void>;
       createHubRole(): Cypress.Chainable<HubRole>;
       deleteHubRole(role: HubRole): Cypress.Chainable<void>;
-      createRemote(remoteName: string, url?: string): Cypress.Chainable<void>;
+      createRemote(remoteName: string, url?: string): Cypress.Chainable<IRemotes>;
       deleteRemote(remoteName: string): Cypress.Chainable<void>;
-      createRemoteRegistry(remoteRegistryName: string): Cypress.Chainable<RemoteRegistry>;
+      createRemoteRegistry(
+        remoteRegistryName: string,
+        url?: string
+      ): Cypress.Chainable<RemoteRegistry>;
       deleteRemoteRegistry(remoteRegistryId: string): Cypress.Chainable<void>;
       deleteCollection(
         collectionName: string,
@@ -1033,7 +1042,7 @@ declare global {
       collectionCopyVersionToRepositories(collection: string): Cypress.Chainable<void>;
       addAndApproveMultiCollections(thisRange: number): Cypress.Chainable<void>;
 
-      createRepository(repositoryName: string, remoteName?: string): Cypress.Chainable<void>;
+      createRepository(repositoryName: string, remoteName?: string): Cypress.Chainable<Repository>;
       deleteRepository(repositoryName: string): Cypress.Chainable<void>;
 
       undeprecateCollection(

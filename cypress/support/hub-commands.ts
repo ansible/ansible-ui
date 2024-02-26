@@ -18,6 +18,9 @@ Cypress.Commands.add('galaxykit', (operation: string, ...args: string[]) => {
   const server = (Cypress.env('HUB_SERVER') as string) + apiPrefix + '/';
   const options = { failOnNonZeroExit: false };
 
+  operation = operation.trim();
+  args = args.map((arg) => arg.trim());
+
   cy.log(`${galaxykitCommand} ${operation} ${args.join(' ')}`);
 
   const cmd = `${galaxykitCommand} -c -s '${server}' -u '${galaxykitUsername}' -p '${galaxykitPassword}' ${operation} ${escapeForShellCommand(
@@ -284,10 +287,10 @@ Cypress.Commands.add('deleteRemote', (remoteName: string) => {
   cy.galaxykit(`remote delete ${remoteName}`);
 });
 
-Cypress.Commands.add('createRemoteRegistry', (remoteRegistryName: string) => {
+Cypress.Commands.add('createRemoteRegistry', (remoteRegistryName: string, url?: string) => {
   cy.requestPost(hubAPI`/_ui/v1/execution-environments/registries/`, {
     name: remoteRegistryName,
-    url: 'https://console.redhat.com/api/automation-hub/',
+    url: url ? url : 'https://console.redhat.com/api/automation-hub/',
   });
 });
 

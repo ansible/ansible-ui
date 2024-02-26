@@ -1,6 +1,7 @@
 import '@cypress/code-coverage/support';
 
 Cypress.Commands.add('searchAndDisplayResource', (resourceName: string) => {
+  //Note: this command won't work for Hub filtering
   cy.get('[data-cy="text-input"]')
     .find('input')
     .type(resourceName)

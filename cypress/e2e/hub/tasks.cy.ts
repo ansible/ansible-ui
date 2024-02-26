@@ -1,5 +1,5 @@
-import { Repositories, Tasks } from './constants';
 import { randomString } from '../../../framework/utils/random-string';
+import { Repositories, Tasks } from './constants';
 
 describe('Tasks', () => {
   let newRemote: string;
@@ -25,6 +25,7 @@ describe('Tasks', () => {
     cy.setTablePageSize('100');
     cy.clickTableRowKebabAction(newRepository, 'sync-repository', false);
     cy.get('[data-cy="Submit"]').click();
+    cy.hasAlert(`Sync started for repository "${newRepository}"`).should('be.visible');
     cy.navigateTo('hub', Tasks.url);
     cy.clickTableRow('pulp_ansible.app.tasks.collections.sync', false);
     cy.get('[data-cy="task-detail"]');
@@ -46,6 +47,7 @@ describe('Tasks', () => {
     cy.setTablePageSize('100');
     cy.clickTableRowKebabAction(newRepository, 'sync-repository', false);
     cy.get('[data-cy="Submit"]').click();
+    cy.hasAlert(`Sync started for repository "${newRepository}"`).should('be.visible');
     cy.navigateTo('hub', Tasks.url);
     cy.filterBySingleSelection(/^Status$/, 'Failed');
     cy.get('tr')
@@ -72,7 +74,7 @@ describe('Tasks', () => {
     cy.setTablePageSize('100');
     cy.clickTableRowKebabAction(newRepository, 'sync-repository', false);
     cy.get('[data-cy="Submit"]').click();
-
+    cy.hasAlert(`Sync started for repository "${newRepository}"`).should('be.visible');
     cy.navigateTo('hub', Tasks.url);
     cy.selectToolbarFilterType(/^Task name$/);
     cy.filterTableByText('pulp_ansible.app.tasks.collections.sync', 'SingleText');
