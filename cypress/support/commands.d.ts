@@ -1063,7 +1063,7 @@ declare global {
         }
       ): Cypress.Chainable<void>;
       createPlatformUser(
-        organization?: Partial<Pick<PlatformOrganization, 'id'>>
+        organization?: SetOptional<PlatformOrganization, 'id'>
       ): Cypress.Chainable<PlatformUser>;
       deletePlatformUser(
         user: PlatformUser,
