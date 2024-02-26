@@ -74,7 +74,7 @@ Cypress.Commands.add('createPlatformUser', (org?: PlatformOrganization) => {
   cy.requestPost<PlatformUser>(gatewayV1API`/users/`, {
     username: userName,
     password: 'password123',
-    organizations: [org.id],
+    organizations: [org?.id],
   });
 });
 
