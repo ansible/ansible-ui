@@ -132,7 +132,7 @@ export function PageAsyncSingleSelect<
           <FlexItem>
             <Spinner size="md" />
           </FlexItem>
-          <FlexItem>{t('Loading...')}</FlexItem>
+          <FlexItem id="loading">{t('Loading...')}</FlexItem>
         </Flex>
       ) : (
         <Split hasGutter>

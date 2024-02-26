@@ -57,7 +57,7 @@ describe('EditGroup', () => {
     cy.fixture('groupDetails.json').then((group: InventoryGroup) => {
       cy.get('[data-cy="name"]').should('have.value', group.name);
       cy.get('[data-cy="description"]').should('have.value', group.description);
-      cy.get('.view-lines').contains(/^---$/);
+      cy.get('.view-lines').contains('test: true');
     });
   });
 });

@@ -1,15 +1,15 @@
+import { useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
+import { PageFormDataEditor } from '../../../../framework';
+import { PageFormCheckbox } from '../../../../framework/PageForm/Inputs/PageFormCheckbox';
+import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { PageFormHidden } from '../../../../framework/PageForm/Utils/PageFormHidden';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
-import { PageFormCredentialSelect } from '../../access/credentials/components/PageFormCredentialSelect';
-import { PageFormCheckbox } from '../../../../framework/PageForm/Inputs/PageFormCheckbox';
-import { PageFormProjectSelect } from '../projects/components/PageFormProjectSelect';
-import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
-import { PageFormDataEditor } from '../../../../framework/PageForm/Inputs/PageFormDataEditor';
-import { InventorySourceForm } from '../../interfaces/InventorySource';
-import { PageFormInventoryFileSelect } from './component/PageFormInventoryFileSelect';
 import { Help } from '../../../../framework/components/Help';
-import { useWatch } from 'react-hook-form';
+import { PageFormCredentialSelect } from '../../access/credentials/components/PageFormCredentialSelect';
+import { InventorySourceForm } from '../../interfaces/InventorySource';
+import { PageFormProjectSelect } from '../projects/components/PageFormProjectSelect';
+import { PageFormInventoryFileSelect } from './component/PageFormInventoryFileSelect';
 
 export function InventorySourceSubForm() {
   const { t } = useTranslation();
@@ -145,11 +145,7 @@ export function InventorySourceSubForm() {
             ) : null}
           </PageFormSection>
           <PageFormSection singleColumn>
-            <PageFormDataEditor
-              toggleLanguages={['yaml', 'json']}
-              name="source_vars"
-              label={t('Source Variables')}
-            />
+            <PageFormDataEditor name="source_vars" label={t('Source Variables')} format="yaml" />
           </PageFormSection>
         </PageFormSection>
       </PageFormHidden>

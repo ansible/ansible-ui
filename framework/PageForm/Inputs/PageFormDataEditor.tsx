@@ -1,414 +1,366 @@
-import {
-  AlertProps,
-  Flex,
-  FlexItem,
-  ToggleGroupItem as PFToggleGroupItem,
-  ToggleGroup,
-  Tooltip,
-} from '@patternfly/react-core';
-import { AngleRightIcon, CopyIcon, DownloadIcon, UploadIcon } from '@patternfly/react-icons';
-import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
-import { useDropzone } from 'react-dropzone';
+import { Flex, FlexItem, Icon, ToggleGroup, ToggleGroupItem } from '@patternfly/react-core';
+import { CopyIcon, DownloadIcon, UploadIcon } from '@patternfly/react-icons';
+import jsyaml from 'js-yaml';
+import { ReactNode, useCallback, useLayoutEffect, useRef, useState } from 'react';
 import {
   Controller,
-  FieldErrors,
   FieldPathByValue,
   FieldValues,
-  PathValue,
   Validate,
   useFormContext,
 } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
 import { usePageAlertToaster } from '../..';
+import { DataEditor, DataEditorLanguages } from '../../components/DataEditor';
+import { DropZone } from '../../components/DropZone';
+import { IconButton } from '../../components/IconButton';
+import { ExpandIcon } from '../../components/icons/ExpandIcon';
 import { useClipboard } from '../../hooks/useClipboard';
-import { isJsonObject, isJsonString, jsonToYaml, yamlToJson } from '../../utils/codeEditorUtils';
+import { useID } from '../../hooks/useID';
 import { downloadTextFile } from '../../utils/download-file';
-import { capitalizeFirstLetter } from '../../utils/strings';
-import { DataEditor } from './DataEditor';
 import { PageFormGroup } from './PageFormGroup';
-
-const ToggleGroupItem = styled(PFToggleGroupItem)`
-  &&:first-child#copy-button {
-    margin-right: auto;
-  }
-`;
-
-function ActionsRow(props: {
-  handleCopy: () => void;
-  handleDownload: () => void;
-  handleUpload: () => void;
-  allowCopy?: boolean;
-  allowDownload?: boolean;
-  allowUpload?: boolean;
-  toggleLanguages?: string[];
-  setLanguage: (language: string) => void;
-  selectedLanguage: string;
-  errors: FieldErrors<FieldValues>;
-  name: string;
-}) {
-  const { t } = useTranslation();
-  const {
-    handleCopy,
-    handleDownload,
-    handleUpload,
-    allowCopy,
-    allowDownload,
-    allowUpload,
-    toggleLanguages,
-    setLanguage,
-    selectedLanguage,
-    errors,
-    name,
-  } = props;
-
-  const actionItems: JSX.Element[] = [];
-
-  if (allowCopy) {
-    actionItems.push(
-      <Tooltip key="copy-file" content={t('Copy')}>
-        <ToggleGroupItem
-          key="copy-button"
-          id="copy-button"
-          data-cy="copy-button"
-          aria-label={t('Copy to clipboard')}
-          icon={<CopyIcon />}
-          type="button"
-          onClick={() => handleCopy()}
-        />
-      </Tooltip>
-    );
-  }
-
-  if (allowUpload) {
-    actionItems.push(
-      <Tooltip key="upload-file" content={t('Upload')}>
-        <ToggleGroupItem
-          key="upload-button"
-          id="upload-button"
-          data-cy="upload-button"
-          aria-label={t('Upload from file')}
-          icon={<UploadIcon />}
-          type="button"
-          onClick={() => handleUpload()}
-        />
-      </Tooltip>
-    );
-  }
-
-  if (allowDownload) {
-    actionItems.push(
-      <Tooltip key="download-file" content={t('Download')}>
-        <ToggleGroupItem
-          key="download-button"
-          id="download-button"
-          data-cy="download-button"
-          aria-label={t('Download file')}
-          icon={<DownloadIcon />}
-          type="button"
-          onClick={() => handleDownload()}
-        />
-      </Tooltip>
-    );
-  }
-
-  const languageActions: JSX.Element[] =
-    toggleLanguages?.map((language) => (
-      <ToggleGroupItem
-        key={language}
-        id={`toggle-${language}`}
-        data-cy={`toggle-${language}`}
-        aria-label={t('Toggle to {{language}}', { language })}
-        isSelected={selectedLanguage === language}
-        isDisabled={Boolean(errors[name])}
-        text={language}
-        type="button"
-        onChange={() => setLanguage(language)}
-      />
-    )) || [];
-
-  return (
-    <Flex justifyContent={{ default: 'justifyContentSpaceBetween' }}>
-      <FlexItem>
-        <ToggleGroup isCompact>{actionItems}</ToggleGroup>
-      </FlexItem>
-      <FlexItem align={{ default: 'alignRight' }}>
-        <ToggleGroup isCompact>{languageActions}</ToggleGroup>
-      </FlexItem>
-    </Flex>
-  );
-}
+import { useRequiredValidationRule } from './validation-hooks';
 
 export type PageFormDataEditorInputProps<
   TFieldValues extends FieldValues = FieldValues,
-  TFieldName extends FieldPathByValue<TFieldValues, undefined | string> = FieldPathByValue<
+  TFieldName extends FieldPathByValue<
     TFieldValues,
-    undefined | string
-  >,
+    object | string | undefined | null
+  > = FieldPathByValue<TFieldValues, object | string | undefined | null>,
 > = {
-  name: TFieldName;
-  validate?: Validate<string, TFieldValues> | Record<string, Validate<string, TFieldValues>>;
-  toggleLanguages?: string[];
-  isExpandable?: boolean;
-  allowUpload?: boolean;
-  allowCopy?: boolean;
-  allowDownload?: boolean;
-  defaultExpanded?: boolean;
-
+  // Standard form group props
   id?: string;
-  label?: string;
-  isReadOnly?: boolean;
-  isRequired?: boolean;
-
-  additionalControls?: ReactNode;
+  name: TFieldName;
+  label: string;
   labelHelp?: string | string[] | ReactNode;
   labelHelpTitle?: string;
+  additionalControls?: ReactNode;
+
+  format: DataEditorLanguages | 'object';
+
+  // Features - Enable all by default and only turn them off if needed
+  disableCopy?: boolean;
+  disableUpload?: boolean;
+  disableDownload?: boolean;
+  disableExpand?: boolean;
+
+  /** If the editor is expandable, it will be collapsed by default. */
+  defaultCollapsed?: boolean;
+
+  // Validation
+  isRequired?: boolean;
+  validate?: Validate<string, TFieldValues> | Record<string, Validate<string, TFieldValues>>;
+
+  /** Indicates that the field is read-only. */
+  isReadOnly?: boolean;
+
+  /** Defaults empty value to array for json */
+  isArray?: boolean;
 };
 
 export function PageFormDataEditor<
   TFieldValues extends FieldValues = FieldValues,
-  TFieldName extends FieldPathByValue<TFieldValues, undefined | string> = FieldPathByValue<
+  TFieldName extends FieldPathByValue<
     TFieldValues,
-    undefined | string
-  >,
+    object | string | undefined | null
+  > = FieldPathByValue<TFieldValues, object | string | undefined | null>,
 >(props: PageFormDataEditorInputProps<TFieldValues, TFieldName>) {
   const { t } = useTranslation();
   const {
-    allowCopy = true,
-    allowDownload = true,
-    allowUpload = true,
-    defaultExpanded,
-    isExpandable,
-    isReadOnly,
-    isRequired,
-    label,
     name,
-    toggleLanguages,
+    format: valueFormat,
+    disableCopy,
+    disableUpload,
+    disableDownload,
+    disableExpand,
     validate,
-    ...formGroupInputProps
+    isArray,
   } = props;
+  const id = useID(props);
   const {
-    formState: { isSubmitting, isValidating, errors },
-    setError: setFormError,
-    clearErrors,
+    formState: { isSubmitting, isValidating },
+    setError,
     getValues,
+    clearErrors,
     control,
-    setValue,
   } = useFormContext<TFieldValues>();
+  const defaultLanguage = 'yaml';
+  const [language, setLanguage] = useState<DataEditorLanguages>(defaultLanguage); // TODO settings.defaultCodeLanguage
+  const [isExpanded, setExpanded] = useState(!props.defaultCollapsed);
 
-  const [selectedLanguage, setSelectedLanguage] = useState('yaml');
-  const [isCollapsed, setCollapsed] = useState(!defaultExpanded);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  // Here we store the value the data editor is working with
+  const [dataEditorValue, setDataEditorValue] = useState<string>(() => {
+    const value = getValues(name);
+    if (typeof value === 'string') return value as string;
+    else return objectToString(value, defaultLanguage);
+  });
+
   const alertToaster = usePageAlertToaster();
   const { writeToClipboard } = useClipboard();
-  const id = props.id ?? name.split('.').join('-');
 
-  useEffect(() => {
-    if (!errors[name]) {
-      clearErrors(name);
-    }
-  }, [errors, name, clearErrors]);
-
-  const handleLanguageChange = useCallback(
-    (language: string) => {
-      const value = getValues(name);
-
-      if ((language !== 'json' && language !== 'yaml') || !value) return;
-
-      if (isJsonString(value)) {
-        return language === 'json'
-          ? setValue(name, value)
-          : setValue(name, jsonToYaml(value) as PathValue<TFieldValues, TFieldName>);
-      }
-
-      if (isJsonObject(value)) {
-        return language === 'json'
-          ? setValue(name, value)
-          : setValue(
-              name,
-              jsonToYaml(JSON.stringify(value)) as PathValue<TFieldValues, TFieldName>
-            );
-      }
-
-      language === 'json'
-        ? setValue(name, yamlToJson(value) as PathValue<TFieldValues, TFieldName>)
-        : setValue(name, value);
-    },
-    [getValues, name, setValue]
+  const handleCopy = useCallback(
+    () => writeToClipboard(objectToString(valueToObject(getValues(name), isArray), language)),
+    [getValues, isArray, language, name, writeToClipboard]
   );
-
-  // This needs a try catch block because there is a short period of time between the syntax
-  // error getting registered and the buttons being disabled.  If a user is quick enough they could
-  // try make a syntax error and toggle the language before the buttons are disabled.
-
-  const setLanguage: (language: string) => void = useCallback(
-    (language) => {
-      try {
-        handleLanguageChange(language);
-        setSelectedLanguage(language);
-      } catch (err: unknown) {
-        if (err instanceof Error) {
-          setFormError(name, { message: err.message });
-        } else {
-          setFormError(name, { message: t('Invalid syntax') });
-        }
-      }
-    },
-    [handleLanguageChange, name, setFormError, t]
-  );
-
-  const handleCopy = useCallback(() => {
-    writeToClipboard(getValues(name) as string);
-  }, [getValues, name, writeToClipboard]);
-
-  const handleUpload = useCallback(() => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
-    }
-  }, []);
-
-  const handleDownload = useCallback(() => {
-    const fileName = name || 'codeEditorData';
-    downloadTextFile(fileName, getValues(name) as string);
-    const alert: AlertProps = {
-      variant: 'success',
-      title: t('File downloaded'),
-    };
-    alertToaster.addAlert(alert);
-  }, [alertToaster, getValues, name, t]);
 
   const onDrop = useCallback(
-    (acceptedFiles: File[]) => {
-      const file = acceptedFiles[0];
-      const reader = new FileReader();
-      reader.onload = () => {
-        const contents = reader.result;
-        if (typeof contents === 'string') {
-          setValue(name, contents as PathValue<TFieldValues, TFieldName>);
-          // Alert for a successful file upload
-          const alert: AlertProps = {
-            variant: 'success',
-            title: t('File uploaded'),
-          };
-          alertToaster.addAlert(alert);
-        }
-      };
-      reader.onerror = () => {
-        // Alert for a failed file upload
-        const alert: AlertProps = {
-          variant: 'danger',
-          title: t('Failed to upload file'),
-          children: t('Unable to upload'),
-        };
-        alertToaster.addAlert(alert);
-      };
-      reader.readAsText(file);
+    (contents: string) => {
+      setDataEditorValue(objectToString(valueToObject(contents, isArray), language));
     },
-    [setValue, name, t, alertToaster]
+    [isArray, language]
   );
 
-  const dropzone = useDropzone({
-    onDrop,
-    multiple: false,
-  });
+  const dropZoneInputRef = useRef<HTMLInputElement>(null);
+  const handleUpload = useCallback(() => dropZoneInputRef.current?.click(), []);
+
+  const handleDownload = useCallback(() => {
+    const fileName = name || 'data';
+    const extension = language === 'json' ? 'json' : 'yaml';
+    downloadTextFile(
+      fileName,
+      objectToString(valueToObject(getValues(name), isArray), language),
+      extension
+    );
+    alertToaster.addAlert({ variant: 'success', title: t('File downloaded'), timeout: true });
+  }, [alertToaster, getValues, isArray, language, name, t]);
+
+  useLayoutEffect(() => {
+    const value = objectToString(valueToObject(getValues(name)), language);
+    setDataEditorValue(value);
+  }, [getValues, isArray, language, name]);
+
+  const required = useRequiredValidationRule(props.label, props.isRequired);
 
   return (
     <Controller<TFieldValues, TFieldName>
       name={name}
       control={control}
       shouldUnregister
-      render={({ field: { name, onChange, value }, fieldState: { error } }) => {
-        const errorSet = [...new Set(error?.message?.split('\n'))];
-        const disabled = value !== undefined && value !== null && value !== '';
+      render={({ field: { name, onChange }, fieldState: { error } }) => {
+        function handleChange(stringValue: string) {
+          switch (valueFormat) {
+            case 'object':
+              onChange(valueToObject(stringValue, isArray));
+              return;
+            default:
+              onChange(objectToString(valueToObject(stringValue, isArray), valueFormat));
+              break;
+          }
+        }
         return (
           <PageFormGroup
             fieldId={id}
-            {...formGroupInputProps}
             icon={
-              isExpandable ? (
-                <AngleRightIcon
-                  data-cy="expandable"
-                  style={{
-                    transform: isCollapsed ? 'rotate(0deg)' : 'rotate(90deg)',
-                    transition: 'transform',
-                  }}
-                  onClick={() => setCollapsed((c) => !c)}
-                  aria-label={t('Expand or collapse extra variables')}
-                />
-              ) : undefined
+              !disableExpand && <ExpandIcon isExpanded={isExpanded} setExpanded={setExpanded} />
             }
             label={props.label}
-            helperTextInvalid={!(validate && isValidating) && errorSet}
+            labelHelpTitle={props.labelHelpTitle}
+            labelHelp={props.labelHelp}
+            additionalControls={
+              <DataEditorActions
+                handleCopy={!disableCopy && handleCopy}
+                handleUpload={!disableUpload && handleUpload}
+                handleDownload={!disableDownload && handleDownload}
+                language={language}
+                setLanguage={setLanguage}
+              >
+                {props.additionalControls}
+              </DataEditorActions>
+            }
+            helperTextInvalid={!(validate && isValidating) && error?.message?.split('\n')}
+            isRequired={props.isRequired}
           >
-            {(!isExpandable || !isCollapsed) && (
-              <>
-                <ActionsRow
-                  key="actions-row"
-                  allowCopy={allowCopy}
-                  allowDownload={allowDownload}
-                  allowUpload={allowUpload}
-                  errors={errors}
-                  handleCopy={() => handleCopy()}
-                  handleDownload={handleDownload}
-                  handleUpload={handleUpload}
+            {isExpanded && (
+              <DropZone
+                onDrop={onDrop}
+                isDisabled={isSubmitting || props.isReadOnly}
+                inputRef={dropZoneInputRef}
+              >
+                <DataEditor
+                  data-cy={id}
+                  id={id}
                   name={name}
-                  selectedLanguage={selectedLanguage}
-                  setLanguage={setLanguage}
-                  toggleLanguages={toggleLanguages}
+                  language={language}
+                  value={dataEditorValue}
+                  onChange={handleChange}
+                  setError={(error) => {
+                    if (!error) clearErrors(name);
+                    else setError(name, { message: error });
+                  }}
+                  isReadOnly={props.isReadOnly || isSubmitting}
+                  className={
+                    props.isReadOnly ? `pf-v5-c-form-control pf-m-disabled` : `pf-v5-c-form-control`
+                  }
                 />
-                {props.allowUpload ? (
-                  <div
-                    id="code-editor-dropzone"
-                    {...dropzone.getRootProps({ disabled })}
-                    style={{ width: '100%', height: '100%' }}
-                  >
-                    <input
-                      id="code-editor-dropzone-input"
-                      {...dropzone.getInputProps()}
-                      ref={fileInputRef}
-                    />
-                    <DataEditor<TFieldValues, TFieldName>
-                      setError={setFormError}
-                      clearErrors={clearErrors}
-                      id={id}
-                      data-cy={id}
-                      name={name}
-                      language={selectedLanguage}
-                      value={value}
-                      onChange={onChange}
-                      isReadOnly={isReadOnly || isSubmitting}
-                      invalid={!(validate && isValidating) && error?.message !== undefined}
-                    />
-                  </div>
-                ) : (
-                  <DataEditor<TFieldValues, TFieldName>
-                    setError={setFormError}
-                    clearErrors={clearErrors}
-                    id={id}
-                    data-cy={id}
-                    name={name}
-                    language={selectedLanguage}
-                    value={value}
-                    onChange={onChange}
-                    isReadOnly={isReadOnly || isSubmitting}
-                    invalid={!(validate && isValidating) && error?.message !== undefined}
-                  />
-                )}
-              </>
+              </DropZone>
             )}
+            {!isExpanded && <div className="pf-v5-c-form-control" />}
           </PageFormGroup>
         );
       }}
-      rules={{
-        required:
-          typeof label === 'string' && isRequired === true
-            ? {
-                value: true,
-                message: `${capitalizeFirstLetter(label.toLocaleLowerCase())} is required.`,
-              }
-            : undefined,
-        validate: props.validate,
-      }}
+      rules={{ required, validate: props.validate }}
     />
   );
+}
+
+export function DataEditorButtons(props: {
+  handleCopy: (() => void) | false;
+  handleDownload: (() => void) | false;
+  handleUpload: (() => void) | false;
+  children?: ReactNode;
+}) {
+  const { t } = useTranslation();
+  const { handleCopy, handleDownload, handleUpload } = props;
+  if (!handleCopy && !handleDownload && !handleUpload) return <></>;
+  return (
+    <Flex spaceItems={{ default: 'spaceItemsMd' }}>
+      {handleCopy && (
+        <FlexItem>
+          <IconButton
+            id="copy-button"
+            data-cy="copy-button"
+            aria-label={t('Copy to clipboard')}
+            type="button"
+            onClick={handleCopy}
+          >
+            <Icon size="md">
+              <CopyIcon />
+            </Icon>
+          </IconButton>
+        </FlexItem>
+      )}
+      {handleUpload && (
+        <FlexItem>
+          <IconButton
+            id="upload-button"
+            data-cy="upload-button"
+            aria-label={t('Upload from file')}
+            type="button"
+            onClick={handleUpload}
+          >
+            <Icon size="md">
+              <UploadIcon />
+            </Icon>
+          </IconButton>
+        </FlexItem>
+      )}
+      {handleDownload && (
+        <FlexItem>
+          <IconButton
+            id="download-button"
+            data-cy="download-button"
+            aria-label={t('Download file')}
+            type="button"
+            onClick={handleDownload}
+          >
+            <Icon size="md">
+              <DownloadIcon />
+            </Icon>
+          </IconButton>
+        </FlexItem>
+      )}
+    </Flex>
+  );
+}
+
+export function DataEditorActions(props: {
+  handleCopy: (() => void) | false;
+  handleDownload: (() => void) | false;
+  handleUpload: (() => void) | false;
+  language: string;
+  setLanguage: (language: DataEditorLanguages) => void;
+  children?: ReactNode;
+}) {
+  const { t } = useTranslation();
+  const { handleCopy, handleDownload, handleUpload, language, setLanguage } = props;
+  return (
+    <Flex spaceItems={{ default: 'spaceItemsLg' }}>
+      <FlexItem>{props.children}</FlexItem>
+      <DataEditorButtons
+        handleCopy={handleCopy}
+        handleDownload={handleDownload}
+        handleUpload={handleUpload}
+      />
+      <FlexItem align={{ default: 'alignRight' }}>
+        <ToggleGroup isCompact>
+          <ToggleGroupItem
+            id="toggle-yaml"
+            data-cy="toggle-yaml"
+            aria-label={t('Toggle to YAML')}
+            isSelected={language === 'yaml'}
+            text="YAML"
+            type="button"
+            onChange={() => setLanguage('yaml')}
+          />
+          <ToggleGroupItem
+            id="toggle-json"
+            data-cy="toggle-json"
+            aria-label={t('Toggle to JSON')}
+            isSelected={language === 'json'}
+            text="JSON"
+            type="button"
+            onChange={() => setLanguage('json')}
+          />
+        </ToggleGroup>
+      </FlexItem>
+    </Flex>
+  );
+}
+
+function valueToObject(value: string | object | undefined | null, isArray?: boolean): object {
+  if (value === undefined || value === null) {
+    return isArray ? [] : {};
+  }
+
+  if (typeof value === 'string') {
+    try {
+      value = JSON.parse(value) as object;
+    } catch {
+      try {
+        value = jsyaml.load(value as string) as object;
+      } catch {
+        return {};
+      }
+    }
+  }
+
+  if (isArray) {
+    if (Array.isArray(value)) {
+      return value as object;
+    } else {
+      return [];
+    }
+  } else {
+    if (Array.isArray(value)) {
+      return {};
+    } else {
+      return value;
+    }
+  }
+}
+
+function objectToString(obj: object, language: DataEditorLanguages): string {
+  if (obj === null || obj === undefined) {
+    return '';
+  }
+  try {
+    switch (language) {
+      case 'json':
+        return JSON.stringify(obj, null, 2);
+      case 'yaml': {
+        const yaml = jsyaml.dump(obj).trimEnd();
+        switch (yaml) {
+          case 'null':
+          case '{}':
+          case '[]':
+            return '';
+          default:
+            return yaml;
+        }
+      }
+    }
+  } catch {
+    // do nothing
+  }
+  return '';
 }

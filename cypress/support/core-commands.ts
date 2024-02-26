@@ -7,7 +7,11 @@
 
 /** Get by selector, making sure it is not disabled or hidden */
 Cypress.Commands.add('getBy', (selector: string) => {
-  cy.get(`${selector}:not(:disabled):not(:hidden):visible:not([aria-disabled="true"])`);
+  cy.get(selector)
+    .should('not.be.disabled')
+    .should('not.be.hidden')
+    .should('be.visible')
+    .should('not.have.attr', 'aria-disabled', 'true');
 });
 
 /** Get by data-cy attribute, making sure it is not disabled or hidden */
@@ -17,7 +21,11 @@ Cypress.Commands.add('getByDataCy', (dataCy: string) => {
 
 /** Contains by selector, making sure it is not disabled or hidden */
 Cypress.Commands.add('containsBy', (selector: string, text: string | number | RegExp) => {
-  cy.contains(`${selector}:not(:disabled):not(:hidden):visible:not([aria-disabled="true"])`, text);
+  cy.contains(selector, text)
+    .should('not.be.disabled')
+    .should('not.be.hidden')
+    .should('be.visible')
+    .should('not.have.attr', 'aria-disabled', 'true');
 });
 
 /** Click by data-cy attribute, making sure it is not disabled or hidden */
@@ -35,15 +43,27 @@ Cypress.Commands.add('typeByDataCy', (dataCy: string, text: string) => {
   cy.typeBy(`[data-cy="${dataCy}"]`, text);
 });
 
+Cypress.Commands.add('selectLoadAll', () => {
+  cy.get('#loading').should('not.exist');
+  cy.get('button').then((buttons) => {
+    for (let i = 0; i <= buttons.length; i++) {
+      const button = buttons[i];
+      if (button?.innerText === 'Load more') {
+        button.click();
+        cy.selectLoadAll();
+      }
+    }
+  });
+});
+
 /** Select a value from a single select input by selector, making sure it is not disabled or hidden */
 Cypress.Commands.add('singleSelectBy', (selector: string, value: string) => {
-  cy.getBy(selector)
-    .click()
-    .parent()
-    .get('.pf-v5-c-menu__content')
-    .within(() => {
-      cy.contains('.pf-v5-c-menu__item-text', value).parent().click();
-    });
+  cy.getBy(selector).click();
+  cy.get('.pf-v5-c-menu__content').within(() => {
+    cy.selectLoadAll();
+    cy.getByDataCy('search-input').type(value);
+    cy.contains('.pf-v5-c-menu__item-text', value).parent().click();
+  });
 });
 
 /** Select a value from a single select input by data-cy attribute, making sure it is not disabled or hidden */
@@ -53,17 +73,16 @@ Cypress.Commands.add('singleSelectByDataCy', (dataCy: string, value: string) => 
 
 /** Select a value from a multi select input by selector, making sure it is not disabled or hidden */
 Cypress.Commands.add('multiSelectBy', (selector: string, value: string) => {
-  cy.getBy(selector)
-    .click()
-    .parent()
-    .get('.pf-v5-c-menu__content')
-    .within(() => {
-      cy.contains('.pf-v5-c-menu__item-text', value)
-        .parent()
-        .within(() => {
-          cy.get('input').click();
-        });
-    });
+  cy.getBy(selector).click();
+  cy.get('.pf-v5-c-menu__content').within(() => {
+    cy.selectLoadAll();
+    cy.getByDataCy('search-input').type(value);
+    cy.contains('.pf-v5-c-menu__item-text', value)
+      .parent()
+      .within(() => {
+        cy.get('input').click();
+      });
+  });
 });
 
 /** Select a value from a multi select input by data-cy attribute, making sure it is not disabled or hidden */

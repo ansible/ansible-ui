@@ -188,9 +188,9 @@ function InventoryInputs() {
       />
       <PageFormSection singleColumn>
         <PageFormDataEditor<InventoryCreate>
-          toggleLanguages={['yaml', 'json']}
           name="variables"
           label={t('Variables')}
+          format="yaml"
         />
       </PageFormSection>
       <PageFormGroup
