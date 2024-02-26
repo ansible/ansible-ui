@@ -4,6 +4,7 @@
   flex-grow: 1;
   overflow-y: hidden;
   position: relative;
+  pointer-events: none;
 }
 
 .scrollable-inner {
@@ -11,6 +12,7 @@
   flex-direction: column;
   flex-grow: 1;
   overflow-y: auto;
+  pointer-events: none;
 }
 
 .scrollable-shadow-top {
