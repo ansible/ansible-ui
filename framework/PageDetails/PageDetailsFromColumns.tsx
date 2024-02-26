@@ -15,6 +15,7 @@ export function PageDetailsFromColumns<T extends object>(props: {
   const columnsWithValue = useMemo(
     () =>
       columns.filter((column) => {
+        if (!item) return false;
         if ('value' in column && column.value) {
           const itemValue = column.value(item);
           if (itemValue === undefined) return false;
