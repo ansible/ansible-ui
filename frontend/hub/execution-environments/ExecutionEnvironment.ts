@@ -2,6 +2,7 @@ export interface ExecutionEnvironment {
   id: string;
   pulp_href: string;
   name: string;
+  registry: string;
   pulp?: {
     repository?: {
       id: string;

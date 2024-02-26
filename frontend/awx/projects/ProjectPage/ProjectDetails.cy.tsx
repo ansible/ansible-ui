@@ -11,7 +11,7 @@ describe('ProjectDetails', () => {
     cy.get('#organization').should('have.text', 'Default');
     cy.get('#last-job-status').invoke('text').as('Success');
     cy.get('#source-control-type').should('have.text', 'Git');
-    cy.get('.pf-v5-c-truncate__start').should(
+    cy.get('#source-control-revision').should(
       'have.text',
       '347e44fea036c94d5f60e544de006453ee5c71ad'
     );

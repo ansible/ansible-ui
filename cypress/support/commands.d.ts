@@ -43,6 +43,7 @@ import { RemoteRegistry } from '../../frontend/hub/administration/remote-registr
 import { IRemotes } from '../../frontend/hub/administration/remotes/Remotes';
 import { Repository } from '../../frontend/hub/administration/repositories/Repository';
 import { CollectionVersionSearch } from '../../frontend/hub/collections/Collection';
+import { ExecutionEnvironment as HubExecutionEnvironment } from '../../frontend/hub/execution-environments/ExecutionEnvironment';
 import { IAwxResources } from './awx-commands';
 
 declare global {
@@ -993,7 +994,7 @@ declare global {
       // -- HUB COMMANDS
 
       galaxykit(operation: string, ...args: string[]): Cypress.Chainable<string[]>;
-      waitOnHubTask(taskId: string): Cypress.Chainable<Task>;
+      waitOnHubTask(taskUrl: string): Cypress.Chainable<Task>;
 
       createApprovedCollection(
         namespaceName: string,
@@ -1032,7 +1033,11 @@ declare global {
           failOnStatusCode?: boolean;
         }
       ): Cypress.Chainable<void>;
-      uploadCollection(collection: string, namespace: string): Cypress.Chainable<void>;
+      uploadCollection(
+        collection: string,
+        namespace: string,
+        version?: string
+      ): Cypress.Chainable<void>;
       approveCollection(
         collection: string,
         namespace: string,
@@ -1048,6 +1053,22 @@ declare global {
         collectionName: string,
         namespaceName: string,
         repository: string
+      ): Cypress.Chainable<void>;
+
+      createHubExecutionEnvironment(
+        executionEnvironment: Partial<HubExecutionEnvironment>
+      ): Cypress.Chainable<HubExecutionEnvironment>;
+      deleteHubExecutionEnvironment(
+        executionEnvironmentId: string,
+        options?: { failOnStatusCode?: boolean }
+      ): Cypress.Chainable<void>;
+
+      createHubRemoteRegistry(
+        remoteRegistry?: Partial<RemoteRegistry>
+      ): Cypress.Chainable<RemoteRegistry>;
+      deleteHubRemoteRegistry(
+        repositoryId: string,
+        options?: { failOnStatusCode?: boolean }
       ): Cypress.Chainable<void>;
     }
   }
