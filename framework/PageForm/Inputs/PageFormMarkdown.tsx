@@ -214,7 +214,7 @@ function MarkdownActions(props: {
 }
 
 const PreviewContainer = styled.div`
-  padding: 16px 24px 16px 24px;
+  padding: 24px;
   border: thin solid var(--pf-v5-global--BorderColor--100);
   td,
   th {
