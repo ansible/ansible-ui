@@ -10,6 +10,7 @@ import { OrganizationPage } from '../../access/organizations/OrganizationPage/Or
 import { OrganizationTeams } from '../../access/organizations/OrganizationPage/OrganizationTeams';
 import { Organizations } from '../../access/organizations/Organizations';
 import { AwxRoute } from '../AwxRoutes';
+import { ResourceNotifications } from '../../resources/notifications/ResourceNotifications';
 
 export function useAwxOrganizationRoutes() {
   const { t } = useTranslation();
@@ -57,7 +58,7 @@ export function useAwxOrganizationRoutes() {
             {
               id: AwxRoute.OrganizationNotifications,
               path: 'notifications',
-              element: <PageNotImplemented />,
+              element: <ResourceNotifications resourceType="organizations" />,
             },
             {
               path: '',
