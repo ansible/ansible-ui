@@ -31,23 +31,29 @@ describe('Workflow Job templates form', () => {
     cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
   });
 
-  it('Should create job template with all fields except for prompt on launch values', () => {
+  it('Should create workflow job template', () => {
     const jtName = 'E2E ' + randomString(4);
 
     cy.navigateTo('awx', 'templates');
     cy.clickButton(/^Create template$/);
     cy.clickLink(/^Create workflow job template$/);
+
     cy.get('[data-cy="name"]').type(jtName);
     cy.get('[data-cy="description"]').type('this is a description');
+    cy.selectSingleSelectOption('[data-cy="organization"]', organization.name);
+    cy.selectDropdownOptionByResourceName('inventory', inventory.name);
+    cy.get('[data-cy="limit"]').type('mock-limit');
+    cy.get('[data-cy="scm-branch"]').type('mock-scm-branch');
     cy.selectDropdownOptionByResourceName('labels', label.name.toString());
     cy.get('[data-cy="job_tags-form-group"]').within(() => {
-      cy.get('input').type('test job tag');
+      cy.get('input[type="text"]').type('test job tag');
       cy.contains('Create "test job tag"').click();
     });
     cy.get('[data-cy="skip_tags-form-group"]').within(() => {
-      cy.get('input').type('test skip tag');
+      cy.get('input[type="text"]').type('test skip tag');
       cy.contains('Create "test skip tag"').click();
     });
+
     cy.get('[data-cy="Submit"]').click();
     cy.get('button[data-cy="workflow-visualizer-toolbar-close"]').should('be.visible');
   });
