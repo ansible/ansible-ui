@@ -1,6 +1,8 @@
 import { randomString } from '../../framework/utils/random-string';
 import { gatewayV1API } from '../../platform/api/gateway-api-utils';
 import { PlatformOrganization } from '../../platform/interfaces/PlatformOrganization';
+import { PlatformUser } from '../../platform/interfaces/PlatformUser';
+import { SetOptional } from 'type-fest';
 import './rest-commands';
 
 Cypress.Commands.add('platformLogin', () => {
@@ -16,16 +18,16 @@ Cypress.Commands.add('platformLogin', () => {
         retryOnStatusCodeFailure: true,
         retryOnNetworkFailure: true,
       });
-      cy.get('[data-cy="username"]').type(Cypress.env('PLATFORM_USERNAME') as string, {
+      cy.getByDataCy('username').type(Cypress.env('PLATFORM_USERNAME') as string, {
         log: false,
         delay: 0,
       });
-      cy.get('[data-cy="password"]').type(Cypress.env('PLATFORM_PASSWORD') as string, {
+      cy.getByDataCy('password').type(Cypress.env('PLATFORM_PASSWORD') as string, {
         log: false,
         delay: 0,
       });
-      cy.get('[data-cy="Submit"]').click();
-      cy.get('[data-cy="nav-toggle"]').should('exist');
+      cy.getByDataCy('Submit').click();
+      cy.getByDataCy('nav-toggle').should('exist');
     },
     {
       validate: () => {
@@ -37,9 +39,20 @@ Cypress.Commands.add('platformLogin', () => {
   cy.visit(`/`, { retryOnStatusCodeFailure: true, retryOnNetworkFailure: true });
 });
 
+Cypress.Commands.add('platformLogout', () => {
+  cy.get('[data-ouia-component-id="account-menu"]')
+    .click()
+    .then(() => {
+      cy.intercept('POST', gatewayV1API`/logout/`).as('logout');
+      cy.contains('a', 'Logout').click();
+      cy.wait('@logout');
+    });
+});
+
 Cypress.Commands.add('createPlatformOrganization', () => {
+  const orgName = 'platform-e2e-organization' + randomString(5).toLowerCase();
   cy.requestPost<PlatformOrganization>(gatewayV1API`/organizations/`, {
-    name: `Platform E2E Organization ${randomString(5)}`,
+    name: orgName,
   });
 });
 
@@ -54,5 +67,39 @@ Cypress.Commands.add(
   ) => {
     if (!organization?.id) return;
     cy.requestDelete(gatewayV1API`/organizations/${organization?.id.toString()}/`, options);
+  }
+);
+
+Cypress.Commands.add(
+  'createPlatformUser',
+  (organization?: SetOptional<PlatformOrganization, 'id'>) => {
+    if (organization?.id) {
+      const userName = 'platform-e2e-user' + randomString(5).toLowerCase();
+      cy.requestPost<PlatformUser>(gatewayV1API`/users/`, {
+        username: userName,
+        password: 'password123',
+        organizations: [organization.id],
+      });
+    } else {
+      const userName = 'platform-e2e-user' + randomString(5).toLowerCase();
+      cy.requestPost<PlatformUser>(gatewayV1API`/users/`, {
+        username: userName,
+        password: 'password123',
+      });
+    }
+  }
+);
+
+Cypress.Commands.add(
+  'deletePlatformUser',
+  (
+    user: PlatformUser,
+    options?: {
+      /** Whether to fail on response codes other than 2xx and 3xx */
+      failOnStatusCode?: boolean;
+    }
+  ) => {
+    if (!user?.id) return;
+    cy.requestDelete(gatewayV1API`/users/${user?.id.toString()}/`, options);
   }
 );

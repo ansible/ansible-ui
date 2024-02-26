@@ -45,6 +45,7 @@ import { Repository } from '../../frontend/hub/administration/repositories/Repos
 import { CollectionVersionSearch } from '../../frontend/hub/collections/Collection';
 import { PlatformOrganization } from '../../platform/interfaces/PlatformOrganization';
 import { IAwxResources } from './awx-commands';
+import { PlatformUser } from '../../platform/interfaces/PlatformUser';
 
 declare global {
   namespace Cypress {
@@ -54,6 +55,7 @@ declare global {
       edaLogin(): Chainable<void>;
       hubLogin(): Chainable<void>;
       platformLogin(): Chainable<void>;
+      platformLogout(): Chainable<void>;
       requiredVariablesAreSet(requiredVariables: string[]): Chainable<void>;
 
       // ---------------------------------------------------------------------
@@ -1055,6 +1057,16 @@ declare global {
       createPlatformOrganization(): Cypress.Chainable<PlatformOrganization>;
       deletePlatformOrganization(
         organization: PlatformOrganization,
+        options?: {
+          /** Whether to fail on response codes other than 2xx and 3xx */
+          failOnStatusCode?: boolean;
+        }
+      ): Cypress.Chainable<void>;
+      createPlatformUser(
+        organization?: SetOptional<PlatformOrganization, 'id'>
+      ): Cypress.Chainable<PlatformUser>;
+      deletePlatformUser(
+        user: PlatformUser,
         options?: {
           /** Whether to fail on response codes other than 2xx and 3xx */
           failOnStatusCode?: boolean;
