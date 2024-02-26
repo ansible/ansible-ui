@@ -22,7 +22,7 @@ export function ExecutionEnvironmentImages() {
 
   const id = executionEnvironment.name;
 
-  const tableColumns = useImagesColumns(id);
+  const tableColumns = useImagesColumns({ id });
   const rowActions = useImagesToolbarActions(id);
   const toolbarFilters = useImagesFilters();
 

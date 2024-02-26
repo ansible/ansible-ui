@@ -16,7 +16,7 @@ export function useDeleteImages({
   onComplete?: (images: ExecutionEnvironmentImage[]) => void;
 }) {
   const { t } = useTranslation();
-  const confirmationColumns = useImagesColumns(id);
+  const confirmationColumns = useImagesColumns({ id, disableLinks: true });
   const actionColumns = useMemo(() => [confirmationColumns[0]], [confirmationColumns]);
   const bulkAction = useHubBulkConfirmation<ExecutionEnvironmentImage>();
   return useCallback(

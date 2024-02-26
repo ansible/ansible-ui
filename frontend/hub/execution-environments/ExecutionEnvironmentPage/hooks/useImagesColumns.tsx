@@ -13,7 +13,13 @@ const DigestAndCopyCell = styled.div`
   gap: 8px;
 `;
 
-export function useImagesColumns(id: string) {
+export function useImagesColumns({
+  id,
+  disableLinks = false,
+}: {
+  id: string;
+  disableLinks?: boolean;
+}) {
   const { t } = useTranslation();
 
   const instructions =
@@ -32,7 +38,11 @@ export function useImagesColumns(id: string) {
           <LabelGroup style={{ maxWidth: '300px' }}>
             {image.tags.map((tag) => (
               <Fragment key={tag}>
-                {isManifestList(image) ? <TagLabel tag={tag} /> : <TagLink id={id} tag={tag} />}
+                {isManifestList(image) || disableLinks ? (
+                  <TagLabel tag={tag} />
+                ) : (
+                  <TagLink id={id} tag={tag} />
+                )}
               </Fragment>
             ))}
           </LabelGroup>
@@ -56,7 +66,7 @@ export function useImagesColumns(id: string) {
         header: t('Digest'),
         cell: (image) => (
           <DigestAndCopyCell>
-            {isManifestList(image) ? (
+            {isManifestList(image) || disableLinks ? (
               <ShaLabel digest={image.digest} />
             ) : (
               <>
@@ -68,6 +78,6 @@ export function useImagesColumns(id: string) {
         ),
       },
     ],
-    [id, instructions, t]
+    [id, instructions, t, disableLinks]
   );
 }
