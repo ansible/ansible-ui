@@ -301,7 +301,10 @@ export function TemplateLaunchWizard() {
         title={t('Prompt on Launch')}
         breadcrumbs={[
           { label: t('Templates'), to: getPageUrl(AwxRoute.Templates) },
-          { label: t('Templates') },
+          {
+            label: template.name,
+            to: getPageUrl(AwxRoute.JobTemplateDetails, { params: { id: resourceId } }),
+          },
         ]}
       />
       <PageWizard<TemplateLaunch>

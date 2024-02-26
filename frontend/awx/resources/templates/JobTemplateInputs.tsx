@@ -228,11 +228,11 @@ export function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm }) {
           <PageFormCheckbox label={t('Prompt on launch')} name="ask_diff_mode_on_launch" />
         }
       />
-      <PageFormInstanceGroupSelect<{ instanceGroups: string; id: number }>
+      <PageFormInstanceGroupSelect<JobTemplateForm>
         additionalControls={
           <PageFormCheckbox label={t('Prompt on launch')} name="ask_instance_groups_on_launch" />
         }
-        name="instanceGroups"
+        name="instance_groups"
         labelHelp={t(`Select the instance groups for this job template to run on.`)}
       />
       <PageFormCreatableSelect<JobTemplateForm>

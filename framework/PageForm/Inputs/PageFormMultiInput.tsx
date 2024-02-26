@@ -22,10 +22,13 @@ import { useFrameworkTranslations } from '../../useFrameworkTranslations';
 import { capitalizeFirstLetter } from '../../utils/strings';
 import { PageFormGroup, PageFormGroupProps } from './PageFormGroup';
 
-const ChipHolder = styled.div<{ isDisabled?: boolean }>`
+interface ChipHolderProps {
+  readonly $isDisabled: boolean;
+}
+const ChipHolder = styled.div<ChipHolderProps>`
   --pf-v5-c-form-control--Height: auto;
-  background-color: ${(props: { isDisabled?: boolean }) =>
-    props.isDisabled ? 'var(--pf-v5-global--disabled-color--300)' : null};
+  background-color: ${(props) =>
+    props.$isDisabled ? 'var(--pf-v5-global--disabled-color--300)' : null};
 `;
 
 export type PageFormMultiInputProps<
@@ -88,7 +91,7 @@ export function PageFormMultiInput<
             <InputGroup>
               {value?.length ? (
                 <ChipHolder
-                  isDisabled={isSubmitting || isDisabled}
+                  $isDisabled={isSubmitting || (isDisabled ?? false)}
                   className="pf-v5-c-form-control"
                 >
                   <ChipGroup

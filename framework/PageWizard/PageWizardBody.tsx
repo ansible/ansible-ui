@@ -98,7 +98,12 @@ export function PageWizardBody<T>({
             data-cy={`wizard-section-${activeStep.id}`}
             style={{ display: 'flex', flexDirection: 'column', height: '100%' }}
           >
-            <PageSection variant="light" isFilled hasOverflowScroll>
+            <PageSection
+              aria-label="Wizard step content"
+              hasOverflowScroll
+              isFilled
+              variant="light"
+            >
               {activeStep?.element}
             </PageSection>
             <PageWizardFooter onNext={() => void onNext({})} onBack={onBack} onCancel={onClose} />
