@@ -15,6 +15,7 @@ export function useGetDetailComponent(selectedNode: WorkflowNode) {
         component = (
           <ProjectDetails
             projectId={selectedNode?.summary_fields.unified_job_template.id.toString()}
+            disableScroll
           />
         );
         break;
@@ -22,6 +23,7 @@ export function useGetDetailComponent(selectedNode: WorkflowNode) {
         component = (
           <TemplateDetails
             templateId={selectedNode?.summary_fields.unified_job_template.id.toString()}
+            disableScroll
           />
         );
 
@@ -30,6 +32,7 @@ export function useGetDetailComponent(selectedNode: WorkflowNode) {
         component = (
           <WorkflowJobTemplateDetails
             templateId={selectedNode?.summary_fields.unified_job_template.id.toString()}
+            disableScroll
           />
         );
 
@@ -38,14 +41,15 @@ export function useGetDetailComponent(selectedNode: WorkflowNode) {
         component = (
           <InventorySourceDetails
             inventorySourceId={selectedNode?.summary_fields.unified_job_template.id.toString()}
+            disableScroll
           />
         );
         break;
       case UnifiedJobType.system_job:
-        component = <SystemJobNodeDetails selectedNode={selectedNode} />;
+        component = <SystemJobNodeDetails selectedNode={selectedNode} disableScroll />;
         break;
       case UnifiedJobType.workflow_approval:
-        component = <WorkflowApprovalNodeDetails selectedNode={selectedNode} />;
+        component = <WorkflowApprovalNodeDetails selectedNode={selectedNode} disableScroll />;
         break;
 
       default:

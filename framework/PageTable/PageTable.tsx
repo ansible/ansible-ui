@@ -453,6 +453,7 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
             numberOfColumns="multiple"
             labelOrientation="vertical"
             isCompact
+            disableScroll
           >
             <PageDetailsFromColumns key={keyFn(item)} item={item} columns={expandedRowColumns} />
           </PageDetails>

@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { LoadingPage, PageDetail, PageDetails, Scrollable } from '../../../../framework';
+import { LoadingPage, PageDetail, PageDetails } from '../../../../framework';
 import { PageDetailCodeEditor } from '../../../../framework/PageDetails/PageDetailCodeEditor';
 import { formatDateString } from '../../../../framework/utils/formatDateString';
 import { AwxItemsResponse } from '../../../awx/common/AwxItemsResponse';
@@ -30,21 +30,19 @@ export function ActivationInstanceDetails() {
     return <LoadingPage />;
   }
   return (
-    <Scrollable>
-      <PageDetails>
-        <PageDetail label={t('Name')}>
-          {`${activationInstance?.id || ''} - ${activationInstance?.name || ''}`}
-        </PageDetail>
-        <PageDetail label={t('Status')}>
-          {<StatusCell status={activationInstance?.status || 'unknown'} />}
-        </PageDetail>
-        <PageDetail label={t('Start date')}>
-          {activationInstance?.started_at ? formatDateString(activationInstance?.started_at) : ''}
-        </PageDetail>
-        <PageDetail label={t('End date')}>
-          {activationInstance?.ended_at ? formatDateString(activationInstance?.ended_at) : ''}
-        </PageDetail>
-      </PageDetails>
+    <PageDetails>
+      <PageDetail label={t('Name')}>
+        {`${activationInstance?.id || ''} - ${activationInstance?.name || ''}`}
+      </PageDetail>
+      <PageDetail label={t('Status')}>
+        {<StatusCell status={activationInstance?.status || 'unknown'} />}
+      </PageDetail>
+      <PageDetail label={t('Start date')}>
+        {activationInstance?.started_at ? formatDateString(activationInstance?.started_at) : ''}
+      </PageDetail>
+      <PageDetail label={t('End date')}>
+        {activationInstance?.ended_at ? formatDateString(activationInstance?.ended_at) : ''}
+      </PageDetail>
       <PageDetailsSection>
         {activationInstanceLog?.results?.length ? (
           <PageDetailCodeEditor
@@ -54,6 +52,6 @@ export function ActivationInstanceDetails() {
           />
         ) : null}
       </PageDetailsSection>
-    </Scrollable>
+    </PageDetails>
   );
 }

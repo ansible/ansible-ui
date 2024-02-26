@@ -19,7 +19,10 @@ import { awxAPI } from '../../common/api/awx-utils';
 import { WorkflowJobTemplate } from '../../interfaces/WorkflowJobTemplate';
 import { AwxRoute } from '../../main/AwxRoutes';
 
-export function WorkflowJobTemplateDetails(props: { templateId?: string }) {
+export function WorkflowJobTemplateDetails(props: {
+  templateId?: string;
+  disableScroll?: boolean;
+}) {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const urlId = props?.templateId ? props.templateId : params.id;
@@ -44,7 +47,7 @@ export function WorkflowJobTemplateDetails(props: { templateId?: string }) {
   };
 
   return (
-    <PageDetails>
+    <PageDetails disableScroll={props.disableScroll}>
       <PageDetail label={t('Name')}>
         {props.templateId ? (
           <Link
