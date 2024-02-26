@@ -35,7 +35,7 @@ function useActivityColumn() {
       header: t('Activity'),
       cell: (item) => <Sparkline jobs={item.summary_fields?.recent_jobs} />,
       value: (item) =>
-        item.summary_fields?.recent_jobs && item.summary_fields?.recent_jobs?.length > 0,
+        item.summary_fields?.recent_jobs?.length ? item.summary_fields?.recent_jobs : undefined,
       table: ColumnTableOption.expanded,
       card: 'hidden',
       list: 'hidden',

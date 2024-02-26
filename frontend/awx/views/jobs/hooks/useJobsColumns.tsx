@@ -120,7 +120,7 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
         header: t('Source'),
         cell: (job: UnifiedJob) =>
           inventorySourceChoices?.map(([string, label]) => (string === job.source ? label : null)),
-        value: (job: UnifiedJob) => !!job.source,
+        value: (job: UnifiedJob) => (job.source ? job.source : undefined),
         table: ColumnTableOption.expanded,
         card: 'hidden',
         list: 'hidden',
@@ -171,7 +171,7 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
             {job.summary_fields?.job_template?.name}
           </Link>
         ),
-        value: (job: UnifiedJob) => !!job.summary_fields?.job_template,
+        value: (job: UnifiedJob) => job.summary_fields?.job_template?.name,
         table: ColumnTableOption.expanded,
         card: 'hidden',
         list: 'hidden',
@@ -190,7 +190,7 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
             {job.summary_fields?.workflow_job_template?.name}
           </Link>
         ),
-        value: (job: UnifiedJob) => !!job.summary_fields?.workflow_job_template,
+        value: (job: UnifiedJob) => job.summary_fields?.workflow_job_template?.name,
         table: ColumnTableOption.expanded,
         card: 'hidden',
         list: 'hidden',
@@ -212,7 +212,7 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
             {job.summary_fields.source_workflow_job?.name}
           </Link>
         ),
-        value: (job: UnifiedJob) => !!job.summary_fields?.source_workflow_job,
+        value: (job: UnifiedJob) => job.summary_fields?.source_workflow_job?.name,
         table: ColumnTableOption.expanded,
         card: 'hidden',
         list: 'hidden',
@@ -234,7 +234,7 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
             {job.summary_fields?.inventory?.name}
           </Link>
         ),
-        value: (job: UnifiedJob) => !!job.summary_fields?.inventory,
+        value: (job: UnifiedJob) => job.summary_fields?.inventory?.name,
         table: ColumnTableOption.expanded,
         card: 'hidden',
         list: 'hidden',
@@ -253,7 +253,7 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
             {job.summary_fields?.project?.name}
           </Link>
         ),
-        value: (job: UnifiedJob) => !!job.summary_fields?.project,
+        value: (job: UnifiedJob) => job.summary_fields?.project?.name,
         table: ColumnTableOption.expanded,
         card: 'hidden',
         list: 'hidden',
@@ -298,7 +298,10 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
             ))}
           </LabelGroup>
         ),
-        value: (job: UnifiedJob) => !!job.summary_fields?.credentials?.length,
+        value: (job: UnifiedJob) =>
+          job.summary_fields?.credentials?.length
+            ? job.summary_fields?.credentials?.length
+            : undefined,
         table: ColumnTableOption.expanded,
         card: 'hidden',
         list: 'hidden',
@@ -323,7 +326,10 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
             ))}
           </ChipGroup>
         ),
-        value: (job: UnifiedJob) => (job.summary_fields?.labels?.results.length ?? 0) > 0,
+        value: (job: UnifiedJob) =>
+          job.summary_fields?.labels?.results.length
+            ? job.summary_fields?.labels?.results.length
+            : undefined,
         table: ColumnTableOption.expanded,
         card: 'hidden',
         list: 'hidden',
@@ -334,7 +340,7 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
       {
         header: t('Explanation'),
         cell: (job: UnifiedJob) => job.job_explanation,
-        value: (job: UnifiedJob) => job.job_explanation,
+        value: (job: UnifiedJob) => (job.job_explanation ? job.job_explanation : undefined),
         table: ColumnTableOption.expanded,
         card: 'hidden',
         list: 'hidden',
