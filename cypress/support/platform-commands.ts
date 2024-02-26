@@ -2,6 +2,7 @@ import { randomString } from '../../framework/utils/random-string';
 import { gatewayV1API } from '../../platform/api/gateway-api-utils';
 import { PlatformOrganization } from '../../platform/interfaces/PlatformOrganization';
 import { PlatformUser } from '../../platform/interfaces/PlatformUser';
+import { SetOptional } from 'type-fest';
 import './rest-commands';
 
 Cypress.Commands.add('platformLogin', () => {
@@ -71,7 +72,7 @@ Cypress.Commands.add(
 
 Cypress.Commands.add(
   'createPlatformUser',
-  (organization?: Partial<Pick<PlatformOrganization, 'id'>>) => {
+  (organization?: SetOptional<PlatformOrganization, 'id'>) => {
     if (organization !== undefined) {
       const userName = 'platform-e2e-user' + randomString(5).toLowerCase();
       cy.requestPost<PlatformUser>(gatewayV1API`/users/`, {
