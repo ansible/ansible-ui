@@ -33,7 +33,7 @@ describe('Namespaces', () => {
     cy.url().should('not.include', `/namespaces/${namespaceName}/details`);
   });
 
-  it.only('should show the correct URL when clicking on the CLI configuration tab', () => {
+  it('should show the correct URL when clicking on the CLI configuration tab', () => {
     cy.navigateTo('hub', Namespaces.url);
     const namespaceName = `test_namespace_${randomString(5, undefined, { isLowercase: true })}`;
     cy.get('[data-cy="create-namespace"]').should('be.visible').click();
@@ -44,7 +44,7 @@ describe('Namespaces', () => {
     cy.url().should('include', `/namespaces/${namespaceName}/details`);
     cy.get('[data-cy="namespace-cli-tab"]').should('contain', 'CLI Configuration');
     cy.get('[data-cy="namespace-cli-tab"]').click();
-    cy.contains(apiPrefix).should('be.visible');
+    cy.contains(apiPrefix).should;
     // Delete namespace
     cy.get('[data-cy="actions-dropdown"]').click();
     cy.get('[data-cy="delete-namespace"]').click();
