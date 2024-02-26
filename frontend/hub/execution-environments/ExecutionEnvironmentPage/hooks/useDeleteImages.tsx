@@ -22,7 +22,7 @@ export function useDeleteImages({
   return useCallback(
     (images: ExecutionEnvironmentImage[]) => {
       bulkAction({
-        title: t('Permanently delete execution environment image', {
+        title: t('Permanently delete execution environment images', {
           count: images.length,
         }),
         confirmText: t(
