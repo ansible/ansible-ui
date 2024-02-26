@@ -9,9 +9,9 @@ import {
 import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashboardCard';
 import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxView } from '../../common/useAwxView';
+import { useInventoriesColumns } from '../../infrastructure/inventories/hooks/useInventoriesColumns';
 import { Inventory } from '../../interfaces/Inventory';
 import { AwxRoute } from '../../main/AwxRoutes';
-import { useInventoriesColumns } from '../../resources/inventories/hooks/useInventoriesColumns';
 
 export function AwxRecentInventoriesCard() {
   const { t } = useTranslation();

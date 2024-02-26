@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageNavigationItem } from '../../../../framework';
 import { PageNotImplemented } from '../../../../framework/PageEmptyStates/PageNotImplemented';
-import { InstanceGroups } from '../../administration/instance-groups/InstanceGroups';
+import { InstanceGroups } from '../../infrastructure/instance-groups/InstanceGroups';
 import { AwxRoute } from '../AwxRoutes';
 
 export function useAwxInstanceGroupsRoutes() {

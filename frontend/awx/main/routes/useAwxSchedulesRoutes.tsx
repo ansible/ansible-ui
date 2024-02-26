@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageNavigationItem } from '../../../../framework';
-import { CreateSchedule } from '../../views/schedules/ScheduleForm';
-import { Schedules } from '../../views/schedules/Schedules';
+import { CreateSchedule } from '../../schedules/ScheduleForm';
+import { Schedules } from '../../schedules/Schedules';
 import { AwxRoute } from '../AwxRoutes';
 
 export function useAwxSchedulesRoutes() {

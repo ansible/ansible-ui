@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageNavigationItem } from '../../../../framework';
-import { AddInstance, EditInstance } from '../../administration/instances/InstanceForm';
-import { InstanceDetails } from '../../administration/instances/InstanceDetails';
-import { Instances } from '../../administration/instances/Instances';
+import { InstanceDetails } from '../../infrastructure/instances/InstanceDetails';
+import { AddInstance, EditInstance } from '../../infrastructure/instances/InstanceForm';
+import { Instances } from '../../infrastructure/instances/Instances';
 import { AwxRoute } from '../AwxRoutes';
 
 export function useAwxInstancesRoutes() {

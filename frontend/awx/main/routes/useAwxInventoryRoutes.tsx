@@ -2,46 +2,46 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageNavigationItem } from '../../../../framework';
 import { PageNotImplemented } from '../../../../framework/PageEmptyStates/PageNotImplemented';
+import { ResourceNotifications } from '../../administration/job-notifications/notifications/ResourceNotifications';
 import { awxAPI } from '../../common/api/awx-utils';
-import { Inventories } from '../../resources/inventories/Inventories';
-import { CreateInventory, EditInventory } from '../../resources/inventories/InventoryForm';
-import { InventoryDetails } from '../../resources/inventories/InventoryPage/InventoryDetails';
-import { InventoryPage } from '../../resources/inventories/InventoryPage/InventoryPage';
-import { InventorySourceDetails } from '../../resources/inventories/inventorySources/InventorySourceDetails';
-import { InventorySourcePage } from '../../resources/inventories/inventorySources/InventorySourcePage';
-import { CreateSchedule } from '../../views/schedules/ScheduleForm';
-import { ScheduleDetails } from '../../views/schedules/SchedulePage/ScheduleDetails';
-import { SchedulePage } from '../../views/schedules/SchedulePage/SchedulePage';
-import { ScheduleRules } from '../../views/schedules/SchedulePage/ScheduleRules';
-import { AwxRoute } from '../AwxRoutes';
-import { InventoryJobTemplates } from '../../resources/inventories/InventoryPage/InventoryJobTemplates';
-import { InventoryHosts } from '../../resources/inventories/InventoryPage/InventoryHosts';
-import { InventorySources } from '../../resources/inventories/InventoryPage/InventorySources';
-import { InventoryGroups } from '../../resources/inventories/InventoryPage/InventoryGroups';
-import { GroupPage } from '../../resources/groups/GroupPage';
-import { InventoryHostPage } from '../../resources/inventories/inventoryHostsPage/InventoryHostPage';
-import { InventoryHostDetails } from '../../resources/inventories/inventoryHostsPage/InventoryHostDetails';
+import { Inventories } from '../../infrastructure/inventories/Inventories';
+import { CreateInventory, EditInventory } from '../../infrastructure/inventories/InventoryForm';
+import { InventoryDetails } from '../../infrastructure/inventories/InventoryPage/InventoryDetails';
+import { InventoryGroups } from '../../infrastructure/inventories/InventoryPage/InventoryGroups';
+import { InventoryHosts } from '../../infrastructure/inventories/InventoryPage/InventoryHosts';
+import { InventoryJobTemplates } from '../../infrastructure/inventories/InventoryPage/InventoryJobTemplates';
+import { InventoryPage } from '../../infrastructure/inventories/InventoryPage/InventoryPage';
+import { InventorySources } from '../../infrastructure/inventories/InventoryPage/InventorySources';
+import { GroupDetails } from '../../infrastructure/inventories/groups/GroupDetails';
+import { GroupHosts } from '../../infrastructure/inventories/groups/GroupHosts';
+import { GroupPage } from '../../infrastructure/inventories/groups/GroupPage';
+import { GroupRelatedGroups } from '../../infrastructure/inventories/groups/GroupRelatedGroups';
 import {
   CreateGroup,
-  EditGroup,
   CreateRelatedGroup,
-} from '../../resources/inventories/inventoryGroup/InventoryGroupForm';
-import { InventoryHostGroups } from '../../resources/inventories/inventoryHostsPage/InventoryHostGroups';
-import {
-  CreateInventorySource,
-  EditInventorySource,
-} from '../../resources/sources/InventorySourceForm';
+  EditGroup,
+} from '../../infrastructure/inventories/inventoryGroup/InventoryGroupForm';
+import { InventoryHostDetails } from '../../infrastructure/inventories/inventoryHostsPage/InventoryHostDetails';
+import { InventoryHostFacts } from '../../infrastructure/inventories/inventoryHostsPage/InventoryHostFacts';
 import {
   CreateHost,
   EditHost,
-} from '../../resources/inventories/inventoryHostsPage/InventoryHostForm';
-import { GroupDetails } from '../../resources/groups/GroupDetails';
-import { InventoryHostJobs } from '../../resources/inventories/inventoryHostsPage/InventoryHostJobs';
-import { InventoryHostFacts } from '../../resources/inventories/inventoryHostsPage/InventoryHostFacts';
-import { GroupHosts } from '../../resources/groups/GroupHosts';
-import { GroupRelatedGroups } from '../../resources/groups/GroupRelatedGroups';
-import { ResourceNotifications } from '../../resources/notifications/ResourceNotifications';
-import { SchedulesList } from '../../views/schedules/SchedulesList';
+} from '../../infrastructure/inventories/inventoryHostsPage/InventoryHostForm';
+import { InventoryHostGroups } from '../../infrastructure/inventories/inventoryHostsPage/InventoryHostGroups';
+import { InventoryHostJobs } from '../../infrastructure/inventories/inventoryHostsPage/InventoryHostJobs';
+import { InventoryHostPage } from '../../infrastructure/inventories/inventoryHostsPage/InventoryHostPage';
+import { InventorySourceDetails } from '../../infrastructure/inventories/inventorySources/InventorySourceDetails';
+import { InventorySourcePage } from '../../infrastructure/inventories/inventorySources/InventorySourcePage';
+import {
+  CreateInventorySource,
+  EditInventorySource,
+} from '../../infrastructure/inventories/sources/InventorySourceForm';
+import { CreateSchedule } from '../../schedules/ScheduleForm';
+import { ScheduleDetails } from '../../schedules/SchedulePage/ScheduleDetails';
+import { SchedulePage } from '../../schedules/SchedulePage/SchedulePage';
+import { ScheduleRules } from '../../schedules/SchedulePage/ScheduleRules';
+import { SchedulesList } from '../../schedules/SchedulesList';
+import { AwxRoute } from '../AwxRoutes';
 
 export function useAwxInventoryRoutes() {
   const { t } = useTranslation();

@@ -5,7 +5,7 @@ import { JobTemplate } from '../../../../frontend/awx/interfaces/JobTemplate';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
 import { User } from '../../../../frontend/awx/interfaces/User';
-import { getJobsAPIUrl } from '../../../../frontend/awx/views/jobs/jobUtils';
+import { getJobsAPIUrl } from '../../../../frontend/awx/jobs/jobUtils';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 
 const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000).toISOString();

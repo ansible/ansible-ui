@@ -7,8 +7,8 @@ import { useGetPageUrl } from '../../../../framework/PageNavigation/useGetPageUr
 import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxView } from '../../common/useAwxView';
 import { Job } from '../../interfaces/Job';
+import { useJobsColumns } from '../../jobs/hooks/useJobsColumns';
 import { AwxRoute } from '../../main/AwxRoutes';
-import { useJobsColumns } from '../../views/jobs/hooks/useJobsColumns';
 
 export function AwxRecentJobsCard() {
   const getPageUrl = useGetPageUrl();

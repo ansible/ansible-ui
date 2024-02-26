@@ -17,8 +17,8 @@ import { StatusCell } from '../../common/Status';
 import { useOptions } from '../../common/crud/useOptions';
 import { ActionsResponse, OptionsResponse } from '../interfaces/OptionsResponse';
 import { UnifiedJob } from '../interfaces/UnifiedJob';
+import { getLaunchedByDetails, getScheduleUrl, isJobRunning } from '../jobs/jobUtils';
 import { AwxRoute } from '../main/AwxRoutes';
-import { getLaunchedByDetails, getScheduleUrl, isJobRunning } from '../views/jobs/jobUtils';
 import { awxAPI } from './api/awx-utils';
 
 export function useJobIdColumn<T extends UnifiedJob>() {

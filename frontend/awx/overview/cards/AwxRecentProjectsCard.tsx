@@ -11,7 +11,7 @@ import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxView } from '../../common/useAwxView';
 import { Project } from '../../interfaces/Project';
 import { AwxRoute } from '../../main/AwxRoutes';
-import { useProjectsColumns } from '../../resources/projects/hooks/useProjectsColumns';
+import { useProjectsColumns } from '../../projects/hooks/useProjectsColumns';
 
 export function AwxRecentProjectsCard() {
   const view = useAwxView<Project>({

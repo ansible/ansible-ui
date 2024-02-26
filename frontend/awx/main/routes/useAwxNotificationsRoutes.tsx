@@ -3,8 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router-dom';
 import { PageNavigationItem } from '../../../../framework';
 import { PageNotImplemented } from '../../../../framework/PageEmptyStates/PageNotImplemented';
-import { NotificationPage } from '../../administration/notifications/NotificationPage/NotificationPage';
-import { Notifications } from '../../administration/notifications/Notifications';
+import { NotificationPage } from '../../administration/job-notifications/NotificationPage/NotificationPage';
+import { Notifications } from '../../administration/job-notifications/Notifications';
 import { AwxRoute } from '../AwxRoutes';
 
 export function useAwxNotificationsRoutes() {

@@ -13,10 +13,10 @@ import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFor
 import { requestGet, requestPatch, swrOptions } from '../../../common/crud/Data';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { useInvalidateCacheOnUnmount } from '../../../common/useInvalidateCache';
-import { PageFormExecutionEnvironmentSelect } from '../../administration/execution-environments/components/PageFormExecutionEnvironmentSelect';
-import { PageFormInstanceGroupSelect } from '../../administration/instance-groups/components/PageFormInstanceGroupSelect';
 import { AwxPageForm } from '../../common/AwxPageForm';
 import { awxAPI } from '../../common/api/awx-utils';
+import { PageFormExecutionEnvironmentSelect } from '../../infrastructure/execution-environments/components/PageFormExecutionEnvironmentSelect';
+import { PageFormInstanceGroupSelect } from '../../infrastructure/instance-groups/components/PageFormInstanceGroupSelect';
 import { InstanceGroup } from '../../interfaces/InstanceGroup';
 import { Organization } from '../../interfaces/Organization';
 import { AwxRoute } from '../../main/AwxRoutes';

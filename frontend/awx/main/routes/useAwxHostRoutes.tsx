@@ -2,8 +2,8 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageNavigationItem } from '../../../../framework';
 import { PageNotImplemented } from '../../../../framework/PageEmptyStates/PageNotImplemented';
-import { HostPage } from '../../resources/hosts/HostPage/HostPage';
-import { Hosts } from '../../resources/hosts/Hosts';
+import { HostPage } from '../../infrastructure/hosts/HostPage/HostPage';
+import { Hosts } from '../../infrastructure/hosts/Hosts';
 import { AwxRoute } from '../AwxRoutes';
 
 export function useAwxHostRoutes() {

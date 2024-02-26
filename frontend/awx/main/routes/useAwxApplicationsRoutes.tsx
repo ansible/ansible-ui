@@ -4,12 +4,12 @@ import { PageNavigationItem } from '../../../../framework';
 import {
   CreateApplication,
   EditApplication,
-} from '../../administration/applications/ApplicationForm';
-import { ApplicationClientSecretModal } from '../../administration/applications/ApplicationPage/ApplicationClientSecretModal';
-import { ApplicationPage } from '../../administration/applications/ApplicationPage/ApplicationPage';
-import { ApplicationPageDetails } from '../../administration/applications/ApplicationPage/ApplicationPageDetails';
-import { ApplicationTokens } from '../../administration/applications/ApplicationPage/ApplicationPageTokens';
-import { Applications } from '../../administration/applications/Applications';
+} from '../../administration/oauth-applications/ApplicationForm';
+import { ApplicationClientSecretModal } from '../../administration/oauth-applications/ApplicationPage/ApplicationClientSecretModal';
+import { ApplicationPage } from '../../administration/oauth-applications/ApplicationPage/ApplicationPage';
+import { ApplicationPageDetails } from '../../administration/oauth-applications/ApplicationPage/ApplicationPageDetails';
+import { ApplicationTokens } from '../../administration/oauth-applications/ApplicationPage/ApplicationPageTokens';
+import { Applications } from '../../administration/oauth-applications/Applications';
 import { Application } from '../../interfaces/Application';
 import { AwxRoute } from '../AwxRoutes';
 
