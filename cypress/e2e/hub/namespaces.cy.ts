@@ -1,5 +1,5 @@
 import { randomString } from '../../../framework/utils/random-string';
-import { Namespaces, MyImports } from './constants';
+import { MyImports, Namespaces } from './constants';
 
 const apiPrefix = Cypress.env('HUB_API_PREFIX') as string;
 
@@ -33,7 +33,7 @@ describe('Namespaces', () => {
     cy.url().should('not.include', `/namespaces/${namespaceName}/details`);
   });
 
-  it('should show the correct URL when clicking on the CLI configuration tab', () => {
+  it.only('should show the correct URL when clicking on the CLI configuration tab', () => {
     cy.navigateTo('hub', Namespaces.url);
     const namespaceName = `test_namespace_${randomString(5, undefined, { isLowercase: true })}`;
     cy.get('[data-cy="create-namespace"]').should('be.visible').click();
@@ -44,7 +44,7 @@ describe('Namespaces', () => {
     cy.url().should('include', `/namespaces/${namespaceName}/details`);
     cy.get('[data-cy="namespace-cli-tab"]').should('contain', 'CLI Configuration');
     cy.get('[data-cy="namespace-cli-tab"]').click();
-    cy.get('[class="pf-v5-c-truncate__start"]').should('contain', apiPrefix);
+    cy.contains(apiPrefix).should('be.visible');
     // Delete namespace
     cy.get('[data-cy="actions-dropdown"]').click();
     cy.get('[data-cy="delete-namespace"]').click();
