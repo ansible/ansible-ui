@@ -201,7 +201,14 @@ export function InventorySourceDetails(props: { inventorySourceId?: string }) {
         {props.inventorySourceId ? (
           <Link
             to={getPageUrl(AwxRoute.InventorySourceDetail, {
-              params: { id: props.inventorySourceId },
+              params: {
+                source_id: inventorySource.id,
+                id: inventorySource?.inventory,
+                inventory_type:
+                  inventorySource?.summary_fields?.inventory.kind === ''
+                    ? 'inventory'
+                    : inventorySource?.summary_fields?.inventory.kind,
+              },
             })}
           >
             {inventorySource.name}
