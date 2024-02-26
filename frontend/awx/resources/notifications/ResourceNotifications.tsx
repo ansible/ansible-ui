@@ -16,6 +16,7 @@ interface ResourceTypeMapper {
   inventory_sources?: string;
   projects?: string;
   job_templates?: string;
+  organizations?: string;
 }
 
 export function ResourceNotifications({ resourceType }: { resourceType: string }) {
@@ -26,12 +27,14 @@ export function ResourceNotifications({ resourceType }: { resourceType: string }
     inventory_sources: 'source_id',
     projects: 'id',
     job_templates: 'id',
+    organizations: 'id',
   };
 
   const resourceToErrorMsg: ResourceTypeMapper = {
     inventory_sources: 'inventory source',
     projects: 'project',
     job_templates: 'job template',
+    organizations: 'organization',
   };
 
   const params = useParams();
@@ -49,9 +52,19 @@ export function ResourceNotifications({ resourceType }: { resourceType: string }
     AwxItemsResponse<NotificationTemplate>
   >(awxAPI`/${resourceType}/${resourceId ?? ''}/notification_templates_error/`);
 
+  const approval = useGet<AwxItemsResponse<NotificationTemplate>>(
+    awxAPI`/${resourceType}/${resourceId ?? ''}/notification_templates_approvals/`
+  );
+  const { data: notificationApproval, refresh: notificationApprovalRefresh } =
+    resourceType === 'organizations'
+      ? approval
+      : { data: { results: [] }, refresh: () => undefined };
+
   const toolbarFilters = useNotificationFilters();
   const tableColumns = useNotificationsColumns();
   const rowActions = useNotificationActions({
+    notificationApproval: notificationApproval?.results,
+    notificationApprovalRefresh,
     notificationStarted: notificationStarted?.results,
     notificationStartedRefresh,
     notificationSuccess: notificationSuccess?.results,
