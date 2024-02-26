@@ -10,6 +10,7 @@ import {
 } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import styled from 'styled-components';
 import { DataEditorButtons, usePageAlertToaster } from '../..';
 import { DataEditor } from '../../components/DataEditor';
@@ -154,7 +155,9 @@ export function PageFormMarkdown<
             )}
             {isExpanded && preview && (
               <PreviewContainer>
-                <TextContent>{<ReactMarkdown>{value}</ReactMarkdown>}</TextContent>
+                <TextContent>
+                  {<ReactMarkdown remarkPlugins={[remarkGfm]}>{value}</ReactMarkdown>}
+                </TextContent>
               </PreviewContainer>
             )}
             {!isExpanded && <div className="pf-v5-c-form-control" />}
@@ -213,4 +216,14 @@ function MarkdownActions(props: {
 const PreviewContainer = styled.div`
   padding: 16px 24px 16px 24px;
   border: thin solid var(--pf-v5-global--BorderColor--100);
+  td {
+    padding: 2px 16px 2px 0;
+    vertical-align: top;
+  }
+  code {
+    display: inline-block;
+    background: var(--pf-v5-global--BackgroundColor--200);
+    padding: 2px 6px;
+    border-radius: 6px;
+  }
 `;
