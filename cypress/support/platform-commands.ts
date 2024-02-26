@@ -69,14 +69,25 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add('createPlatformUser', (org?: PlatformOrganization) => {
-  const userName = 'platform-e2e-user' + randomString(5).toLowerCase();
-  cy.requestPost<PlatformUser>(gatewayV1API`/users/`, {
-    username: userName,
-    password: 'password123',
-    organizations: [org?.id],
-  });
-});
+Cypress.Commands.add(
+  'createPlatformUser',
+  (organization?: Partial<Pick<PlatformOrganization, 'id'>>) => {
+    if (organization !== undefined) {
+      const userName = 'platform-e2e-user' + randomString(5).toLowerCase();
+      cy.requestPost<PlatformUser>(gatewayV1API`/users/`, {
+        username: userName,
+        password: 'password123',
+        organizations: [organization?.id],
+      });
+    } else {
+      const userName = 'platform-e2e-user' + randomString(5).toLowerCase();
+      cy.requestPost<PlatformUser>(gatewayV1API`/users/`, {
+        username: userName,
+        password: 'password123',
+      });
+    }
+  }
+);
 
 Cypress.Commands.add(
   'deletePlatformUser',
