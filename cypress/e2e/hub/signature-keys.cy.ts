@@ -12,11 +12,11 @@ describe('Signature Keys', () => {
     cy.navigateTo('hub', SignatureKeys.url);
     cy.wait('@signatureKeys')
       .its(`response.body.results[0].public_key`)
-      .then((public_key) => {
+      .then((public_key: string) => {
         cy.get(`[data-cy="${resourceValues[1]}-column-cell"]`)
           .first()
           .within(() => {
-            cy.get('.pf-v5-c-truncate__start').should('contain', public_key as string);
+            cy.contains(public_key).should('be.visible');
           });
       });
     cy.wait('@signatureKeys')
@@ -36,11 +36,11 @@ describe('Signature Keys', () => {
     cy.navigateTo('hub', SignatureKeys.url);
     cy.wait('@signatureKeys')
       .its(`response.body.results[0].pubkey_fingerprint`)
-      .then((pubkey_fingerprint) => {
+      .then((pubkey_fingerprint: string) => {
         cy.get(`[data-cy="${resourceValue}-column-cell"]`)
           .first()
           .within(() => {
-            cy.get('.pf-v5-c-truncate__start').should('contain', pubkey_fingerprint as string);
+            cy.contains(pubkey_fingerprint).should('be.visible');
           });
       });
   });

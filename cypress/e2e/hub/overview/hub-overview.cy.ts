@@ -35,7 +35,7 @@ describe.skip('HUB Overview', () => {
       .first()
       .within(() => {
         cy.get('.pf-v5-c-title').should('contain', HubOverview.title);
-        cy.get('span.pf-v5-c-truncate__start').should('contain', HubOverview.description);
+        cy.contains(HubOverview.description).should('be.visible');
       });
     cy.contains('button', 'Manage view').should('be.visible');
   });
