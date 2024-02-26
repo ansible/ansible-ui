@@ -26,7 +26,7 @@ describe('Users - create, edit and delete', () => {
   });
 
   afterEach(() => {
-    cy.platformLogin();
+    cy.platformLogin(); //added this line due to an 'unauthorized' error
     cy.deletePlatformUser(platformUser);
     cy.deletePlatformOrganization(organization);
   });
