@@ -442,16 +442,22 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
     }
 
     if (expandedRowColumns.length) {
-      expandedRowFunctions.push((item) => (
-        <PageDetails
-          disablePadding
-          numberOfColumns="multiple"
-          labelOrientation="vertical"
-          isCompact
-        >
-          <PageDetailsFromColumns key={keyFn(item)} item={item} columns={expandedRowColumns} />
-        </PageDetails>
-      ));
+      expandedRowFunctions.push((item) => {
+        const hasColumnWithValues = expandedRowColumns.some(
+          (column) => column.value?.(item) !== undefined
+        );
+        if (!hasColumnWithValues) return null;
+        return (
+          <PageDetails
+            disablePadding
+            numberOfColumns="multiple"
+            labelOrientation="vertical"
+            isCompact
+          >
+            <PageDetailsFromColumns key={keyFn(item)} item={item} columns={expandedRowColumns} />
+          </PageDetails>
+        );
+      });
     }
 
     if (props.expandedRow) {
@@ -460,9 +466,13 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
 
     if (expandedRowFunctions.length === 0) return undefined;
 
-    const newExpandedRow = (item: T) => (
-      <Stack hasGutter>{expandedRowFunctions.map((fn) => fn(item))}</Stack>
-    );
+    const newExpandedRow = (item: T) => {
+      const expandedRowContent = expandedRowFunctions
+        .map((fn) => fn(item))
+        .filter((content) => content !== null && content !== undefined);
+      if (expandedRowContent.length === 0) return null;
+      return <Stack hasGutter>{expandedRowFunctions.map((fn) => fn(item))}</Stack>;
+    };
 
     return newExpandedRow;
   }, [descriptionColumns, expandedRowColumns, keyFn, props.expandedRow]);
@@ -742,7 +752,7 @@ function TableRow<T extends object>(props: {
   } = props;
   const [expanded, setExpanded] = useState(false);
   const settings = useSettings();
-  const expandedContent = expandedRow?.(item);
+  const expandedRowHasContent = expandedRow?.(item);
   const disableRow = useCallback(
     (item: T) => {
       if (selectedItems?.length === maxSelections) {
@@ -771,7 +781,7 @@ function TableRow<T extends object>(props: {
         {expandedRow && (
           <Td
             expand={
-              expandedContent
+              expandedRowHasContent
                 ? {
                     rowIndex,
                     isExpanded: expanded,
@@ -779,7 +789,7 @@ function TableRow<T extends object>(props: {
                   }
                 : undefined
             }
-            style={{ paddingLeft: expandedContent ? 8 : 4 }}
+            style={{ paddingLeft: expandedRowHasContent ? 8 : 4 }}
             data-cy={'expand-column-cell'}
           />
         )}
@@ -837,7 +847,7 @@ function TableRow<T extends object>(props: {
           scrollRight={props.scrollRight}
         />
       </Tr>
-      {expandedRow && expanded && expandedContent && (
+      {expandedRow && expanded && expandedRowHasContent && (
         <Tr
           isExpanded={expanded}
           style={{ boxShadow: 'unset' }}
@@ -857,7 +867,7 @@ function TableRow<T extends object>(props: {
             colSpan={columns.length}
             style={{ paddingBottom: settings.tableLayout === 'compact' ? 12 : 24, paddingTop: 0 }}
           >
-            <CollapseColumn>{expandedContent}</CollapseColumn>
+            <CollapseColumn>{expandedRowHasContent}</CollapseColumn>
           </Td>
           {rowActions !== undefined && rowActions.length > 0 && (
             <Td

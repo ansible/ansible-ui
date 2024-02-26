@@ -16,7 +16,7 @@ export function useLastUsedColumn() {
   const column = useMemo<ITableColumn<Project>>(
     () => ({
       header: t('Last used'),
-      value: (project) => project.last_job_run,
+      value: (project) => (project.last_job_run ? project.last_job_run : undefined),
       cell: (item) => {
         if (!item.last_job_run) return <></>;
         return (
