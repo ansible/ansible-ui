@@ -1,3 +1,4 @@
+import { ChangeEvent, MouseEvent, ReactNode } from 'react';
 import { Chip, ChipGroup } from '@patternfly/react-core';
 import {
   Select,
@@ -13,17 +14,18 @@ export type FormGroupTypeAheadMultiSelectProps = {
   id?: string;
 
   label: string;
-  labelHelp?: string | string[] | React.ReactNode;
+  labelHelp?: string | string[] | ReactNode;
   labelHelpTitle?: string;
 
   helperText?: string;
   helperTextInvalid?: string;
 
+  additionalControls?: ReactNode;
   isReadOnly?: boolean;
-  placeholderText?: string | React.ReactNode;
+  placeholderText?: string | ReactNode;
   options: { value: string | { name: string }; label: string }[];
   onSelect?: (
-    event: React.MouseEvent | React.ChangeEvent,
+    event: MouseEvent | ChangeEvent,
     value: string | SelectOptionObject,
     isPlaceholder?: boolean
   ) => void;
@@ -37,18 +39,20 @@ export type FormGroupTypeAheadMultiSelectProps = {
 /** A PatternFly FormGroup with a PatternFly Select */
 export function FormGroupTypeAheadMultiSelect(props: FormGroupTypeAheadMultiSelectProps) {
   const {
+    additionalControls,
+    helperText,
+    helperTextInvalid,
+    isReadOnly,
+    isRequired,
+    isSubmitting,
     label,
     labelHelp,
     labelHelpTitle,
-    onHandleSelection,
     onHandleClear,
-    value,
+    onHandleSelection,
     options,
     placeholderText,
-    isSubmitting,
-    isReadOnly,
-    isRequired,
-    helperTextInvalid,
+    value,
   } = props;
 
   const [isOpen, setIsOpen] = useState(false);
@@ -84,6 +88,8 @@ export function FormGroupTypeAheadMultiSelect(props: FormGroupTypeAheadMultiSele
       labelHelpTitle={labelHelpTitle}
       helperTextInvalid={helperTextInvalid}
       isRequired={isRequired}
+      additionalControls={additionalControls}
+      helperText={helperText}
     >
       <Select
         chipGroupComponent={chipGroupComponent()}
