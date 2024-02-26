@@ -4,14 +4,6 @@ import { ExecutionEnvironment } from '../../../frontend/hub/execution-environmen
 import { hubAPI } from '../../support/formatApiPathForHub';
 import { ExecutionEnvironments } from './constants';
 
-function generateRemoteRegistryName(): string {
-  return `e2e-${randomString(5, undefined, { isLowercase: true })}`;
-}
-
-function generateEEName(): string {
-  return `e2e-${randomString(5, undefined, { isLowercase: true })}`;
-}
-
 describe('Execution Environments', () => {
   before(() => {
     cy.hubLogin();
