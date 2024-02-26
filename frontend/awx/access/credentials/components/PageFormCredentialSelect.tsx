@@ -29,7 +29,7 @@ export function PageFormCredentialSelect<
   isDisabled?: boolean;
 }) {
   const { t } = useTranslation();
-  const multiSelectelectCredential = useMultiSelectCredential(true, props.credentialType);
+  const multiSelectCredential = useMultiSelectCredential(true, props.credentialType);
   const singleSelectCredential = useSingleSelectCredential(
     props.credentialType,
     props.selectTitle,
@@ -44,7 +44,7 @@ export function PageFormCredentialSelect<
       id="credential-select"
       label={props.label ? props.label : t('Credential')}
       selectTitle={props.selectTitle ? props.selectTitle : t('Select credentials')}
-      selectOpen={multiSelectelectCredential}
+      selectOpen={multiSelectCredential}
       validate={async (credentials: Credential[]) => {
         if (!props.isRequired) {
           return;
