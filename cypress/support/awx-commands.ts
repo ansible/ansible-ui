@@ -59,10 +59,10 @@ Cypress.Commands.add('removeNodeInVisualizer', (nodeName: string) => {
   cy.get('li[data-cy="remove-node"] ').click();
 });
 
-/* Custom Cypress command called `removeAllNodesFromVisualizerToolbar`. 
-This command removes all the nodes via the visualizer toolbar. 
-It verifies that the bulk remove modal is visible, clicks the confirm checkbox, 
-clicks the remove all nodes button, asserts all nodes were removed 
+/* Custom Cypress command called `removeAllNodesFromVisualizerToolbar`.
+This command removes all the nodes via the visualizer toolbar.
+It verifies that the bulk remove modal is visible, clicks the confirm checkbox,
+clicks the remove all nodes button, asserts all nodes were removed
 successfully, and closes the modal.
 */
 Cypress.Commands.add('removeAllNodesFromVisualizerToolbar', () => {
@@ -864,6 +864,19 @@ Cypress.Commands.add(
     }
   ) => {
     cy.awxRequestDelete(awxAPI`/inventories/${inventory.id.toString()}/`, options);
+  }
+);
+
+Cypress.Commands.add(
+  'deleteAwxInventorySource',
+  (
+    inventorySource: InventorySource,
+    options?: {
+      /** Whether to fail on response codes other than 2xx and 3xx */
+      failOnStatusCode?: boolean;
+    }
+  ) => {
+    cy.awxRequestDelete(awxAPI`/inventory_sources/${inventorySource.id.toString()}/`, options);
   }
 );
 

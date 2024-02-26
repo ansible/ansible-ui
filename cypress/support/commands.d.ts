@@ -655,6 +655,14 @@ declare global {
           failOnStatusCode?: boolean;
         }
       ): Chainable<void>;
+
+      deleteAwxInventorySource(
+        inventorySource: InventorySource,
+        options?: {
+          /** Whether to fail on response codes other than 2xx and 3xx */
+          failOnStatusCode?: boolean;
+        }
+      ): Chainable<void>;
       deleteAwxJobTemplate(
         jobTemplate: JobTemplate,
         options?: {
