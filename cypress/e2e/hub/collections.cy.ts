@@ -49,7 +49,34 @@ describe('Collections', () => {
     });
   });
 
-  it('should approve and sign collection version', () => {
+  it('can sign and approve a collection version', () => {
+    const namespace = `sign_namespace_${randomString(3, undefined, { isLowercase: true })}`;
+    cy.createNamespace(namespace);
+    const collection = randomString(5, undefined, { isLowercase: true }).replace(/\d/g, '');
+    cy.uploadCollection(collection, namespace, '3.0.0').then((result) => {
+      cy.approveCollection(collection, namespace, result.version as string);
+      cy.navigateTo('hub', Collections.url);
+      cy.get('[data-cy="table-view"]').click();
+      cy.filterTableBySingleText(collection);
+      cy.get('[data-cy="actions-column-cell"]').click();
+      cy.get('[data-cy="sign-collection"]').click();
+      cy.get('#confirm').click();
+      cy.clickButton(/^Sign collections$/);
+      cy.contains(/^Success$/);
+      cy.clickButton(/^Close$/);
+      cy.get('[data-cy="label-signed"]').contains(Collections.signedStatus);
+      cy.get('[data-cy="actions-column-cell"]').click();
+      cy.get('[data-cy="delete-entire-collection-from-system"]').click({ force: true });
+      cy.get('#confirm').click();
+      cy.clickButton(/^Delete collections/);
+      cy.contains(/^Success$/);
+      cy.clickButton(/^Close$/);
+      cy.clickButton(/^Clear all filters$/);
+      cy.deleteNamespace(namespace);
+    });
+  });
+
+  it.skip('should approve and sign collection version', () => {
     const namespace = `sign_namespace_${randomString(3, undefined, { isLowercase: true })}`;
     cy.createNamespace(namespace);
     const collection = randomString(5, undefined, { isLowercase: true }).replace(/\d/g, '');
