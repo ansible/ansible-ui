@@ -9,7 +9,7 @@ import {
   useGetPageUrl,
 } from '../../../../framework';
 import { PageRoutedTabs } from '../../../../framework/PageTabs/PageRoutedTabs';
-import { useGetItem } from '../../../common/crud/useGet';
+import { useGet } from '../../../common/crud/useGet';
 import { HubError } from '../../common/HubError';
 import { hubAPI } from '../../common/api/formatPath';
 import { HubRoute } from '../../main/HubRoutes';
@@ -24,13 +24,14 @@ export function ExecutionEnvironmentPage() {
     data: ee,
     error,
     refresh,
-  } = useGetItem<ExecutionEnvironment>(
-    hubAPI`/v3/plugin/execution-environments/repositories/`,
-    params.id
+  } = useGet<ExecutionEnvironment>(
+    hubAPI`/v3/plugin/execution-environments/repositories/${params.id ?? ''}/`,
+    undefined,
+    { refreshInterval: 10000 }
   );
 
   const getPageUrl = useGetPageUrl();
-  const pageActions = useExecutionEnvironmentPageActions();
+  const pageActions = useExecutionEnvironmentPageActions({ refresh });
 
   if (!ee && !error) {
     return <LoadingPage />;
