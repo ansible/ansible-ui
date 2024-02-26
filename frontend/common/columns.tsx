@@ -92,6 +92,7 @@ export function useDescriptionColumn<T extends { description?: string | null | u
       list: 'description',
       card: 'description',
       modal: ColumnModalOption.hidden,
+      dashboard: ColumnDashboardOption.hidden,
     }),
     [t]
   );
