@@ -9,6 +9,8 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../framework';
+import { PageFormMarkdown } from '../../../framework/PageForm/Inputs/PageFormMarkdown';
+import { PageFormSection } from '../../../framework/PageForm/Utils/PageFormSection';
 import { useGet } from '../../common/crud/useGet';
 import { usePostRequest } from '../../common/crud/usePostRequest';
 import { usePutRequest } from '../../common/crud/usePutRequest';
@@ -18,7 +20,6 @@ import { HubPageForm } from '../common/HubPageForm';
 import { hubAPI } from '../common/api/formatPath';
 import { HubRoute } from '../main/HubRoutes';
 import { HubNamespace } from './HubNamespace';
-import { PageFormMarkdown } from '../../../framework/PageForm/Inputs/PageFormMarkdown';
 
 export function CreateHubNamespace() {
   const { t } = useTranslation();
@@ -143,7 +144,9 @@ function HubNamespaceInputs(props: { isDisabled?: boolean; isRequired?: boolean 
         label={t('Logo URL')}
         placeholder={t('Enter logo URL')}
       />
-      <PageFormMarkdown<HubNamespace> label={t('Markdown')} name="resources" />
+      <PageFormSection singleColumn>
+        <PageFormMarkdown<HubNamespace> label={t('Markdown')} name="resources" />
+      </PageFormSection>
     </>
   );
 }
