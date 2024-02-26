@@ -76,10 +76,6 @@ tr.selected:hover {
 
 /* Leaving these here until until we make sure the PF5 upgrade has handled these
 
-.pf-v5-c-truncate__start {
-  min-width: unset;
-}
-
 .pf-v5-c-toolbar .pf-v5-c-toolbar__content {
   flex-wrap: wrap;
   row-gap: 8px;
