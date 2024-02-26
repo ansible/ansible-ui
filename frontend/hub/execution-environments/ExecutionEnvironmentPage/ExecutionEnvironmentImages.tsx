@@ -23,7 +23,6 @@ export function ExecutionEnvironmentImages() {
   const id = executionEnvironment.name;
 
   const tableColumns = useImagesColumns({ id });
-  const rowActions = useImagesToolbarActions(id);
   const toolbarFilters = useImagesFilters();
 
   const view = useHubView<Image>({
@@ -34,6 +33,11 @@ export function ExecutionEnvironmentImages() {
     queryParams: {
       exclude_child_manifests: 'true',
     },
+  });
+
+  const rowActions = useImagesToolbarActions({
+    id,
+    refresh: view.refresh,
   });
 
   return (

@@ -5,8 +5,19 @@ import { IPageAction, PageActionType, PageActionSelection } from '../../../../..
 import { ExecutionEnvironmentImage as Image } from '../ExecutionEnvironmentImage';
 import { useDeleteImages } from './useDeleteImages';
 
-export function useImagesToolbarActions(id: string) {
-  const deleteImages = useDeleteImages({ id });
+export function useImagesToolbarActions({
+  id,
+  refresh,
+}: {
+  id: string;
+  refresh?: () => Promise<void>;
+}) {
+  const deleteImages = useDeleteImages({
+    id,
+    onComplete: () => {
+      void refresh?.();
+    },
+  });
 
   const { t } = useTranslation();
   return useMemo<IPageAction<Image>[]>(
