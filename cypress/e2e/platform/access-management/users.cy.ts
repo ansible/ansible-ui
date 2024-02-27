@@ -13,9 +13,6 @@ describe('Users - create, edit and delete', () => {
 
   before(() => {
     cy.platformLogin();
-  });
-
-  beforeEach(() => {
     cy.createPlatformOrganization().then((org) => {
       organization = org;
 
@@ -25,8 +22,7 @@ describe('Users - create, edit and delete', () => {
     });
   });
 
-  afterEach(() => {
-    cy.platformLogin(); //added this line due to an 'unauthorized' error
+  after(() => {
     cy.deletePlatformUser(platformUser);
     cy.deletePlatformOrganization(organization);
   });
@@ -45,6 +41,7 @@ describe('Users - create, edit and delete', () => {
     cy.get('[data-cy="create-user"]').click();
     cy.get('[data-cy="username"]').type(userName);
     cy.get('[data-cy="password"]').type('password123');
+    cy.get('[data-cy="confirmpassword"]').type('password123');
     cy.get('[data-cy="first-name"]').type(firstName);
     cy.get('[data-cy="last-name"]').type(lastName);
     cy.get('[data-cy="email"]').type(userEmail);
@@ -77,7 +74,15 @@ describe('Users - create, edit and delete', () => {
         cy.wait('@displayedUser').then(() => {
           cy.contains('[data-cy="authentication-type"]', 'Local').should('be.visible');
         });
-        cy.selectDetailsPageKebabAction('delete-user');
+        // Logout and log back in as admin to delete newly created user
+        cy.platformLogout();
+        cy.platformLogin();
+        cy.navigateTo('platform', 'users');
+        cy.filterTableBySingleText(`${createdUser.username}`);
+        cy.get('#select-all').click();
+        cy.clickToolbarKebabAction('delete-selected-users');
+        cy.get('#confirm').click();
+        cy.clickButton(/^Delete users/);
         cy.clickButton('Close');
       });
   });
