@@ -20,7 +20,7 @@ import { pulpAPI } from '../../common/api/formatPath';
 import { PulpItemsResponse } from '../../common/useHubView';
 import { HubRoute } from '../../main/HubRoutes';
 import { Repository } from '../repositories/Repository';
-import { IRemotes } from './Remotes';
+import { HubRemote } from './Remotes';
 import { useRemoteActions } from './hooks/useRemoteActions';
 
 function useErrorHandlerAndLoading<T>(
@@ -51,7 +51,7 @@ export function RemoteDetails() {
     data: remotesData,
     error: errorRemotes,
     refresh: refreshRemotes,
-  } = useGet<PulpItemsResponse<IRemotes>>(pulpAPI`/remotes/ansible/collection/?name=${params.id}`);
+  } = useGet<PulpItemsResponse<HubRemote>>(pulpAPI`/remotes/ansible/collection/?name=${params.id}`);
   const remote = remotesData?.results?.[0];
   const remoteHref = remote?.pulp_href;
 
@@ -88,7 +88,7 @@ export function RemoteDetails() {
             { label: remote?.name },
           ]}
           headerActions={
-            <PageActions<IRemotes>
+            <PageActions<HubRemote>
               actions={pageActions}
               position={DropdownPosition.right}
               selectedItem={remote}
