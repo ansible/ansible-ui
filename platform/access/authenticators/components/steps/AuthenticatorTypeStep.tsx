@@ -29,6 +29,7 @@ export function AuthenticatorTypeStep(props: { plugins: AuthenticatorPlugins }) 
       </TextContent>
       <PageFormGrid isVertical>
         <PageFormSelect
+          id="authentication-type-select"
           name="type"
           label={t('Authentication setting')}
           options={options}

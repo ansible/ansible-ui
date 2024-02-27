@@ -65,7 +65,6 @@ export function AuthenticatorDetailsStep(props: {
 
   return (
     <>
-      {' '}
       <TextContent style={{ marginBottom: 25 }}>
         <Text component={TextVariants.h2}>{t('Authentication details')}</Text>
       </TextContent>
@@ -112,18 +111,22 @@ export function AuthenticatorDetailsStep(props: {
         ))}
       </PageFormGrid>
       <PageFormGrid isVertical singleColumn>
-        {dataFields.map((field) => (
-          <PageFormDataEditor
-            id={`configuration-editor-${field.name}`}
-            name={`configuration.${field.name}`}
-            key={field.name}
-            label={field.ui_field_label || field.name}
-            labelHelpTitle={field.ui_field_label || field.name}
-            labelHelp={field.help_text}
-            isRequired={field.required}
-            format="object"
-          />
-        ))}
+        {dataFields.map((field) => {
+          const fieldType = schema.find((fieldDef) => fieldDef.name === field.name)?.type;
+          return (
+            <PageFormDataEditor
+              id={`configuration-editor-${field.name}`}
+              name={`configuration.${field.name}`}
+              key={field.name}
+              label={field.ui_field_label || field.name}
+              labelHelpTitle={field.ui_field_label || field.name}
+              labelHelp={field.help_text}
+              isRequired={field.required}
+              format="json"
+              isArray={!!fieldType && ['LIST_FIELD', 'LDAPSearchField'].includes(fieldType)}
+            />
+          );
+        })}
       </PageFormGrid>
     </>
   );
