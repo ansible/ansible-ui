@@ -5,6 +5,7 @@ import { PageNotImplemented } from '../../../../framework/PageEmptyStates/PageNo
 import { HostPage } from '../../resources/hosts/HostPage/HostPage';
 import { Hosts } from '../../resources/hosts/Hosts';
 import { AwxRoute } from '../AwxRoutes';
+import { HostJobs } from '../../resources/hosts/HostPage/HostJobs';
 
 export function useAwxHostRoutes() {
   const { t } = useTranslation();
@@ -37,7 +38,7 @@ export function useAwxHostRoutes() {
             {
               id: AwxRoute.HostJobs,
               path: 'jobs',
-              element: <PageNotImplemented />,
+              element: <HostJobs />,
             },
           ],
         },
