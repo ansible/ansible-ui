@@ -21,6 +21,7 @@ export function DataEditor(props: {
   setError: (error?: string) => void;
   isReadOnly?: boolean;
   className?: string;
+  lineNumbers?: boolean;
 }) {
   const id = useID(props);
   const { language, value, onChange, setError, isReadOnly } = props;
@@ -42,9 +43,9 @@ export function DataEditor(props: {
   useEffect(() => {
     if (innerDivEl.current) {
       const editor = monaco.editor.create(innerDivEl.current, {
-        lineNumbers: 'on',
+        lineNumbers: props.lineNumbers ? 'on' : 'off',
+        lineDecorationsWidth: props.lineNumbers ? undefined : 0,
         theme: 'data-editor-dark',
-        lineDecorationsWidth: 8,
         padding: { top: EditorPaddingTop, bottom: EditorPaddingBottom },
         fontSize: 14,
         fontFamily: 'RedHatMono',
@@ -59,7 +60,7 @@ export function DataEditor(props: {
       editorRef.current.editor = editor;
       return () => editor.dispose();
     }
-  }, []);
+  }, [props.lineNumbers]);
 
   // Hook up editor change event to call onChange
   useEffect(() => {
