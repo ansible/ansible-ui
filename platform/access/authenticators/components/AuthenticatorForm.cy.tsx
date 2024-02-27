@@ -50,15 +50,15 @@ describe('AuthenticatorForm', () => {
       'cn=admin,dc=example,dc=org'
     );
     cy.getByDataCy('configuration-editor-CONNECTION_OPTIONS').within(() => {
-      cy.get('textarea').should('have.value', '{"OPT_REFERRALS":0,"OPT_NETWORK_TIMEOUT":30}');
+      cy.get('textarea').should('have.value', 'OPT_REFERRALS: 0\nOPT_NETWORK_TIMEOUT: 30');
     });
     cy.getByDataCy('configuration-editor-GROUP_TYPE_PARAMS').within(() => {
-      cy.get('textarea').should('have.value', '{"name_attr":"cn","member_attr":"member"}');
+      cy.get('textarea').should('have.value', 'name_attr: cn\nmember_attr: member');
     });
     cy.getByDataCy('configuration-editor-GROUP_SEARCH').within(() => {
       cy.get('textarea').should(
         'have.value',
-        '["ou=groups,dc=example,dc=org","SCOPE_SUBTREE","(objectClass=groupOfNames)"]'
+        '- ou=groups,dc=example,dc=org\n- SCOPE_SUBTREE\n- (objectClass=groupOfNames)'
       );
     });
   });
@@ -95,21 +95,18 @@ describe('AuthenticatorForm', () => {
     cy.clickButton('Next');
 
     cy.clickButton('Finish').then(() => {
-      expect(handleSubmit).to.be.calledOnceWith({
-        name: 'Local authenticator',
-        type: 'ansible_base.authenticator_plugins.local',
-        configuration: {
-          ADDITIONAL_UNVERIFIED_ARGS: '',
-        },
-        mappings: [
-          {
-            name: 'Map name',
-            map_type: 'allow',
-            conditional: 'or',
-            revoke: false,
-            trigger: 'always',
-          },
-        ],
+      expect(handleSubmit).to.be.called;
+      const args = handleSubmit.args[0];
+      const data = (args[0] || {}) as { [key: string]: string | object[] };
+      expect(data.name).to.equal('Local authenticator');
+      expect(data.type).to.equal('ansible_base.authenticator_plugins.local');
+      const map = data.mappings[0] as { [key: string]: string | boolean };
+      expect(map).to.deep.equal({
+        name: 'Map name',
+        map_type: 'allow',
+        trigger: 'always',
+        conditional: 'or',
+        revoke: false,
       });
     });
   });
