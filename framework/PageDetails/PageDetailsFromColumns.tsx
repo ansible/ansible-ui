@@ -18,7 +18,12 @@ export function PageDetailsFromColumns<T extends object>(props: {
         if (!item) return false;
         if ('value' in column && column.value) {
           const itemValue = column.value(item);
-          if (itemValue === undefined) return false;
+          if (
+            itemValue === undefined ||
+            itemValue === null ||
+            (typeof itemValue === 'string' && itemValue.trim().length === 0)
+          )
+            return false;
         }
         return true;
       }),
