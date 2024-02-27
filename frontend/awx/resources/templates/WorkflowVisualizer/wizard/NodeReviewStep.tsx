@@ -58,10 +58,23 @@ export function NodeReviewStep() {
   const extraVarsDetail = showDaysToKeep
     ? jsonToYaml(JSON.stringify({ days: node_days_to_keep }))
     : '';
-  const resourceDetailsLink = getPageUrl(ResourceLink[node_type], {
+
+  let resourceDetailsLink = getPageUrl(ResourceLink[node_type], {
     params: { id: node_resource?.id },
   });
 
+  if (node_resource && 'type' in node_resource && node_resource.type === 'inventory_source') {
+    resourceDetailsLink = getPageUrl(AwxRoute.InventorySourceDetail, {
+      params: {
+        source_id: node_resource?.id,
+        id: node_resource?.inventory,
+        inventory_type:
+          node_resource?.summary_fields?.inventory.kind === ''
+            ? 'inventory'
+            : node_resource?.summary_fields?.inventory.kind,
+      },
+    });
+  }
   return (
     <>
       <PageDetails numberOfColumns="single">
