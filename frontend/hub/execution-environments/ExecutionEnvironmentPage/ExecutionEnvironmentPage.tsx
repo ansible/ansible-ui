@@ -41,7 +41,6 @@ export function ExecutionEnvironmentPage() {
     return <HubError error={error} handleRefresh={refresh} />;
   }
 
-  
   if (isLoading || !ee) {
     return <LoadingPage />;
   }
