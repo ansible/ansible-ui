@@ -81,6 +81,7 @@ export function NodeAddWizard() {
     const {
       approval_name,
       approval_description,
+      launch_config,
       node_type,
       node_resource,
       approval_timeout,
@@ -90,11 +91,18 @@ export function NodeAddWizard() {
       node_status_type,
       prompt,
     } = formValues;
+    const promptValues = prompt;
 
-    const promptValues = {
-      ...prompt,
-      organization: prompt?.organization,
-    };
+    if (promptValues) {
+      if (node_resource && 'organization' in node_resource) {
+        promptValues.organization = node_resource.organization ?? null;
+      }
+      if (launch_config) {
+        promptValues.original = {
+          launch_config,
+        };
+      }
+    }
 
     const nodeName = getValueBasedOnJobType(node_type, node_resource?.name || '', approval_name);
     const nodeLabel = node_alias === '' ? nodeName : node_alias;

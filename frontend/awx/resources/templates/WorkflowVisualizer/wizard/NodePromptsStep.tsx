@@ -263,8 +263,7 @@ export function NodePromptsStep() {
           labelHelp={t(`Optional extra variables to be applied to job template`)}
           label={t('Variables')}
           name="prompt.extra_vars"
-          isExpandable
-          defaultExpanded
+          format="yaml"
         />
       </ConditionalField>
     </PageFormGrid>
