@@ -12,7 +12,7 @@ export function useManagementJobRowActions() {
   const { t } = useTranslation();
   const { launchCleanupTokensAndSessions } = useLaunchManagementJob();
   const managementJobPrompt = useManagementJobPrompt();
-  //const launchManagementJob = useLaunchManagementJob(managementJob);
+  const launchManagementJob = useLaunchManagementJob();
 
   return useMemo<IPageAction<SystemJobTemplate>[]>(
     () => {
@@ -29,7 +29,8 @@ export function useManagementJobRowActions() {
           managementJob.job_type === 'cleanup_sessions'
         ) {
           console.log('Launching TOKEN AND SESSIONS', 'MANAGEMENT JOB TYPE', managementJob);
-          await launchCleanupTokensAndSessions(managementJob);
+          // await launchCleanupTokensAndSessions(managementJob);
+          await launchManagementJob(managementJob);
         }
       }
 
