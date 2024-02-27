@@ -16,19 +16,19 @@ describe('Execution Environments', () => {
 
   it('should open a new tab and verify correct docs url', () => {
     cy.createHubRemoteRegistry().then((remoteRegistry) => {
-      cy.createHubExecutionEnvironment({ registry: remoteRegistry.id }).then(
-        (executionEnvironment) => {
-          cy.navigateTo('hub', ExecutionEnvironments.url);
-          cy.window().then((win) => cy.stub(win, 'open').as('docsTab'));
-          cy.get('[data-cy="push-container-images"]').click();
-          cy.get('@docsTab').should(
-            'be.calledWith',
-            'https://access.redhat.com/documentation/en-us/red_hat_ansible_automation_platform/'
-          );
-          cy.deleteHubExecutionEnvironment(executionEnvironment.name);
-          cy.deleteHubRemoteRegistry(remoteRegistry.id);
-        }
-      );
+      cy.createHubExecutionEnvironment({
+        executionEnvironment: { registry: remoteRegistry.id },
+      }).then((executionEnvironment) => {
+        cy.navigateTo('hub', ExecutionEnvironments.url);
+        cy.window().then((win) => cy.stub(win, 'open').as('docsTab'));
+        cy.get('[data-cy="push-container-images"]').click();
+        cy.get('@docsTab').should(
+          'be.calledWith',
+          'https://access.redhat.com/documentation/en-us/red_hat_ansible_automation_platform/'
+        );
+        cy.deleteHubExecutionEnvironment({ name: executionEnvironment.name });
+        cy.deleteHubRemoteRegistry({ id: remoteRegistry.id });
+      });
     });
   });
 
@@ -61,7 +61,7 @@ describe('Execution Environments', () => {
                   .find('input')
                   .type(remoteRegistry.name)
                   .then(() => {
-                    cy.getByDataCy(`${remoteRegistry.name}`).click();
+                    cy.clickButton(`${remoteRegistry.name}`);
                   });
               } else {
                 //50 or more remote registries
@@ -96,21 +96,21 @@ describe('Execution Environments', () => {
               'contain',
               'No results match this filter criteria. Clear all filters and try again.'
             );
-          cy.deleteHubRemoteRegistry(remoteRegistry.id);
+          cy.deleteHubRemoteRegistry({ id: remoteRegistry.id });
         });
     });
   });
 });
 
 describe('Execution Environment Details tab', () => {
-  let registry: RemoteRegistry;
+  let remoteRegistry: RemoteRegistry;
   let executionEnvironment: ExecutionEnvironment;
 
   before(() => {
     cy.createHubRemoteRegistry().then((response) => {
-      registry = response;
+      remoteRegistry = response;
       cy.createHubExecutionEnvironment({
-        registry: registry.id,
+        executionEnvironment: { registry: remoteRegistry.id },
       }).then((response) => {
         executionEnvironment = response;
       });
@@ -118,8 +118,8 @@ describe('Execution Environment Details tab', () => {
   });
 
   after(() => {
-    cy.deleteHubExecutionEnvironment(executionEnvironment.name);
-    cy.deleteHubRemoteRegistry(registry.id);
+    cy.deleteHubExecutionEnvironment({ name: executionEnvironment.name });
+    cy.deleteHubRemoteRegistry({ id: remoteRegistry.id });
   });
 
   it('should render the execution environment details page', () => {
