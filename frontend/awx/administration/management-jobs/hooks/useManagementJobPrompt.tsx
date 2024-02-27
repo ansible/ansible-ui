@@ -8,34 +8,36 @@ import { TextContent, Text } from '@patternfly/react-core';
 import { SystemJobTemplate } from '../../../interfaces/SystemJobTemplate';
 
 export function useManagementJobPrompt() {
-  const defaultDays = 3;
-  // const MAX_RETENTION = 99999;
-  //const [dataRetention, setDataRetention] = useState(defaultDays);
-  const [value, setValue] = useState<number | ''>(defaultDays);
+  //const defaultDays = 3;
+  const MAX_RETENTION = 99999;
+  const [dataRetention, setDataRetention] = useState<number | ''>(3);
   const { t } = useTranslation();
   const { pushDialog, popDialog } = usePageDialogs();
-  //const launchOtherJobTypes = useLaunchManagementJob();
-  const { launchOtherJobTypes } = useLaunchManagementJob();
+  const launchManagementJob = useLaunchManagementJob();
+  //const { launchOtherJobTypes } = useLaunchManagementJob();
 
   const onMinus = () => {
-    const newValue = (value || 0) - 1;
-    setValue(newValue);
+    const newValue = (dataRetention || 0) - 1;
+    setDataRetention(newValue);
+    console.log(newValue);
   };
 
   const handleChange = (event: React.FormEvent<HTMLInputElement>) => {
-    // const value = (event.target as HTMLInputElement).value;
-    // setValue(value === '' ? value : +value);
-    setValue((event.target as HTMLInputElement).value);
+    const dataRetention = (event.target as HTMLInputElement).value;
+    setDataRetention(dataRetention === '' ? dataRetention : +dataRetention);
   };
 
   const onPlus = () => {
-    const newValue = (value || 0) + 1;
-    setValue(newValue);
+    const newValue = (dataRetention || 0) + 1;
+    setDataRetention(newValue);
+    console.log(newValue);
   };
 
-  async function handleLaunch(managementJob: SystemJobTemplate): Promise<void> {
-    console.log('managementJob type from the MODAL', managementJob, typeof managementJob);
-    await launchOtherJobTypes(managementJob);
+  async function handleLaunch(
+    managementJob: SystemJobTemplate,
+    dataRetention: number
+  ): Promise<void> {
+    await launchManagementJob(managementJob, dataRetention);
   }
 
   const managementJobPrompt = (managementJob: SystemJobTemplate) => {
@@ -53,7 +55,7 @@ export function useManagementJobPrompt() {
           <Text>{t`Set how many days of data should be retained.`}</Text>
 
           <NumberInput
-            value={value}
+            value={dataRetention}
             onMinus={onMinus}
             onPlus={onPlus}
             onChange={handleChange}
@@ -61,6 +63,9 @@ export function useManagementJobPrompt() {
             inputAriaLabel="number input"
             minusBtnAriaLabel="minus"
             plusBtnAriaLabel="plus"
+            max={MAX_RETENTION}
+            min={0}
+            widthChars={5}
           />
         </TextContent>
 
