@@ -7,6 +7,7 @@ import {
   PageHeader,
   PageLayout,
   useGetPageUrl,
+  usePageNavigate,
 } from '../../../../framework';
 import { PageRoutedTabs } from '../../../../framework/PageTabs/PageRoutedTabs';
 import { AwxError } from '../../../../frontend/awx/common/AwxError';
@@ -21,7 +22,8 @@ export function PlatformUserPage() {
   const params = useParams<{ id: string }>();
   const { error, data: user, refresh } = useGetItem<PlatformUser>(gatewayV1API`/users/`, params.id);
   const getPageUrl = useGetPageUrl();
-  const actions = useUserRowActions();
+  const pageNavigate = usePageNavigate();
+  const actions = useUserRowActions(() => pageNavigate(PlatformRoute.Users));
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!user) return <LoadingPage breadcrumbs tabs />;
   return (
