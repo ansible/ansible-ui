@@ -4,12 +4,16 @@ import { TrashIcon } from '@patternfly/react-icons';
 import { IPageAction, PageActionType, PageActionSelection } from '../../../../../framework';
 import { ExecutionEnvironmentImage as Image } from '../ExecutionEnvironmentImage';
 import { useDeleteImages } from './useDeleteImages';
+import { useExecutionEnvironmentManageTags } from './useExecutionEnvironmentManageTags';
+import { ExecutionEnvironment } from '../../ExecutionEnvironment';
 
 export function useImagesToolbarActions({
   id,
+  executionEnvironment,
   refresh,
 }: {
   id: string;
+  executionEnvironment: ExecutionEnvironment;
   refresh?: () => Promise<void>;
 }) {
   const deleteImages = useDeleteImages({
@@ -18,10 +22,10 @@ export function useImagesToolbarActions({
       void refresh?.();
     },
   });
-
-export function useImagesToolbarActions() {
   const { t } = useTranslation();
-  const executionEnvironmentManageTags = useExecutionEnvironmentManageTags();
+  const executionEnvironmentManageTags = useExecutionEnvironmentManageTags(() => {
+    void refresh?.();
+  });
 
   return useMemo<IPageAction<Image>[]>(
     () => [
@@ -30,9 +34,9 @@ export function useImagesToolbarActions() {
         selection: PageActionSelection.Single,
         label: t('Manage tags'),
         onClick: (image) => {
-          executionEnvironmentManageTags(ee, image);
+          executionEnvironmentManageTags(executionEnvironment, image);
         },
-        isHidden: () => !!ee.pulp?.repository?.remote,
+        isHidden: () => !!executionEnvironment.pulp?.repository?.remote,
       },
       {
         type: PageActionType.Button,
@@ -51,6 +55,6 @@ export function useImagesToolbarActions() {
         },
       },
     ],
-    [t, deleteImages, executionEnvironmentManageTags]
+    [t, executionEnvironment, deleteImages, executionEnvironmentManageTags]
   );
 }

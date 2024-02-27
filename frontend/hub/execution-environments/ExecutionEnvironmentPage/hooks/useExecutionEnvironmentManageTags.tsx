@@ -29,12 +29,12 @@ import { Task } from '../../../administration/tasks/Task';
 
 const VALID_TAG_REGEX = /^[A-Za-z0-9][A-Za-z0-9._-]*$/;
 
-export function useExecutionEnvironmentManageTags() {
+export function useExecutionEnvironmentManageTags(onComplete?: () => void) {
   const [_, setDialog] = usePageDialog();
   const onClose = useCallback(() => setDialog(undefined), [setDialog]);
 
   return (ee: ExecutionEnvironment, image: ExecutionEnvironmentImage) => {
-    setDialog(<ManageTagsModal ee={ee} image={image} onClose={onClose} />);
+    setDialog(<ManageTagsModal ee={ee} image={image} onClose={onClose} onComplete={onComplete} />);
   };
 }
 
@@ -42,8 +42,9 @@ function ManageTagsModal(props: {
   ee: ExecutionEnvironment;
   image: ExecutionEnvironmentImage;
   onClose: () => void;
+  onComplete?: () => void;
 }) {
-  const { ee, image, onClose } = props;
+  const { ee, image, onClose, onComplete } = props;
   const { t } = useTranslation();
   const [tag, setTag] = useState<string>('');
   const [tagFormError, setTagFormError] = useState<string>('');
@@ -109,6 +110,7 @@ function ManageTagsModal(props: {
         }
 
         refresh();
+        onComplete?.();
         setTimedAlert(alert);
         setTag('');
       }
