@@ -1,24 +1,24 @@
-import { AlertProps, ButtonVariant } from '@patternfly/react-core';
-import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { ButtonVariant } from '@patternfly/react-core';
+import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { HubRoute } from '../../../main/HubRoutes';
 import {
   IPageAction,
   PageActionSelection,
   PageActionType,
   usePageNavigate,
-  usePageAlertToaster,
 } from '../../../../../framework';
 import { ExecutionEnvironment } from '../../ExecutionEnvironment';
-import { useDeleteExecutionEnvironments } from '../../hooks/useExecutionEnvironmentsActions';
-import { useSignExecutionEnvironments } from '../../hooks/useExecutionEnvironmentsActions';
-import { syncExecutionEnvironment } from '../../hooks/useExecutionEnvironmentsActions';
+import {
+  useDeleteExecutionEnvironments,
+  useSyncExecutionEnvironments,
+  useSignExecutionEnvironments,
+} from '../../hooks/useExecutionEnvironmentsActions';
 
 export function useExecutionEnvironmentPageActions(options: { refresh?: () => undefined }) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
-  const alertToaster = usePageAlertToaster();
   const deleteExecutionEnvironments = useDeleteExecutionEnvironments(() => {
     pageNavigate(HubRoute.ExecutionEnvironments);
   });
@@ -26,6 +26,10 @@ export function useExecutionEnvironmentPageActions(options: { refresh?: () => un
   const { refresh } = options;
 
   const signExecutionEnvironments = useSignExecutionEnvironments(() => {
+    void refresh?.();
+  });
+
+  const syncExecutionEnvironments = useSyncExecutionEnvironments(() => {
     void refresh?.();
   });
 
@@ -53,25 +57,7 @@ export function useExecutionEnvironmentPageActions(options: { refresh?: () => un
         label: t('Sync from registry'),
         isHidden: (ee: ExecutionEnvironment) => !ee.pulp?.repository?.remote,
         isDisabled: (ee) => (isSyncRunning(ee) ? t('Sync is already running.') : undefined),
-        onClick: (ee: ExecutionEnvironment) => {
-          const alert: AlertProps = {
-            variant: 'info',
-            title: t('Sync started for remote registry "{{name}}".', { name: ee.name }),
-            timeout: 5000,
-          };
-          void syncExecutionEnvironment(ee)
-            .then(() => {
-              void refresh?.();
-              alertToaster.addAlert(alert);
-            })
-            .catch((error) => {
-              alertToaster.addAlert({
-                variant: 'danger',
-                title: t('Failed to sync remote registry.'),
-                children: error instanceof Error && error.message,
-              });
-            });
-        },
+        onClick: (ee: ExecutionEnvironment) => syncExecutionEnvironments([ee]),
       },
       {
         type: PageActionType.Button,
@@ -98,9 +84,8 @@ export function useExecutionEnvironmentPageActions(options: { refresh?: () => un
   }, [
     pageNavigate,
     t,
-    alertToaster,
-    refresh,
     deleteExecutionEnvironments,
     signExecutionEnvironments,
+    syncExecutionEnvironments,
   ]);
 }

@@ -10,7 +10,7 @@ import {
   compareStrings,
   usePageNavigate,
 } from '../../../../framework';
-import { postRequest, requestGet } from '../../../common/crud/Data';
+import { requestGet } from '../../../common/crud/Data';
 import { hubAPI, pulpAPI } from '../../common/api/formatPath';
 import { hubAPIDelete, hubAPIPost } from '../../common/api/hub-api-utils';
 import { useHubBulkConfirmation } from '../../common/useHubBulkConfirmation';
@@ -163,8 +163,8 @@ export function useSyncExecutionEnvironments(onComplete?: (ees: ExecutionEnviron
   );
 }
 
-export async function syncExecutionEnvironment(ee: ExecutionEnvironment) {
-  return postRequest(
+async function syncExecutionEnvironment(ee: ExecutionEnvironment) {
+  return hubAPIPost(
     hubAPI`/v3/plugin/execution-environments/repositories/${ee.name}/_content/sync/`,
     {}
   );
