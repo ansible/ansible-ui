@@ -6,7 +6,7 @@ import { randomE2Ename } from '../../support/utils';
 import { Collections } from './constants';
 import { randomString } from '../../../framework/utils/random-string';
 import { hubAPI } from '../../support/formatApiPathForHub';
-import { Approvals, Collections } from './constants';
+import { Collections } from './constants';
 describe('Collections', () => {
   let namespace: HubNamespace;
   let repository: Repository;
@@ -74,45 +74,6 @@ describe('Collections', () => {
       cy.clickButton(/^Clear all filters$/);
       cy.deleteNamespace(namespace);
     });
-  });
-
-  it.skip('should approve and sign collection version', () => {
-    const namespace = `sign_namespace_${randomString(3, undefined, { isLowercase: true })}`;
-    cy.createNamespace(namespace);
-    const collection = randomString(5, undefined, { isLowercase: true }).replace(/\d/g, '');
-    cy.galaxykit('namespace create', namespace);
-    cy.galaxykit('collection upload', namespace, collection, '2.0.0');
-    cy.navigateTo('hub', Approvals.url);
-    cy.visit(
-      `/administration/approvals?page=1&perPage=100&sort=namespace&status=pipeline%3Dstaging&collection=${collection}`
-    );
-    cy.get('[data-cy="sign-and-approve"]').click();
-    cy.get('[id="confirm"]').click();
-    cy.clickButton('Approve and sign collections');
-    cy.contains(/^Success$/);
-    cy.clickButton(/^Close$/);
-    cy.clickButton(/^Clear all filters$/);
-    cy.navigateTo('hub', Collections.url);
-    cy.get('[data-cy="table-view"]').click();
-    cy.filterTableBySingleText(collection);
-    cy.get('[data-cy="name-column-cell"]').find('div > div > a').click();
-    cy.get('[data-cy="actions-dropdown"]').click({ force: true });
-    cy.get('[data-cy="sign-collection"]').click();
-    cy.get('[id="confirm"]').click();
-    cy.clickButton('Sign collections');
-    cy.contains(/^Success$/);
-    cy.clickButton(/^Close$/);
-    cy.navigateTo('hub', Collections.url);
-    cy.get('[data-cy="table-view"]').click();
-    cy.filterTableBySingleText(collection);
-    cy.get('[data-cy="actions-column-cell"]').click();
-    cy.get('[data-cy="delete-entire-collection-from-system"]').click({ force: true });
-    cy.get('#confirm').click();
-    cy.clickButton(/^Delete collections/);
-    cy.contains(/^Success$/);
-    cy.clickButton(/^Close$/);
-    cy.clickButton(/^Clear all filters$/);
-    cy.deleteNamespace(namespace);
   });
 
   it('it should render the collections page', () => {
