@@ -125,7 +125,7 @@ export function PageFormDataEditor<
   }, [alertToaster, getValues, isArray, language, name, t]);
 
   useLayoutEffect(() => {
-    const value = objectToString(valueToObject(getValues(name)), language);
+    const value = objectToString(valueToObject(getValues(name), isArray), language);
     setDataEditorValue(value);
   }, [getValues, isArray, language, name]);
 
