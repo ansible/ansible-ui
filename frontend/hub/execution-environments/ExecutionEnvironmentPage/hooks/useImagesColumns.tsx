@@ -1,10 +1,11 @@
-import { useMemo } from 'react';
+import { useMemo, Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ITableColumn, CopyCell, DateTimeCell, BytesCell } from '../../../../../framework';
 import { LabelGroup } from '@patternfly/react-core';
 import { TagLink, ShaLink, TagLabel, ShaLabel } from '../components/ImageLabels';
 import styled from 'styled-components';
 import { getContainersURL } from '../../../common/utils/getContainersURL';
+import { isManifestList } from '../../../common/utils/isManifestList';
 import { ImageLayer, ExecutionEnvironmentImage as Image } from '../ExecutionEnvironmentImage';
 
 const DigestAndCopyCell = styled.div`
@@ -12,16 +13,19 @@ const DigestAndCopyCell = styled.div`
   gap: 8px;
 `;
 
-export function useImagesColumns(
-  id: string | undefined,
-  isManifestList: (image: Image) => boolean
-) {
+export function useImagesColumns({
+  id,
+  disableLinks = false,
+}: {
+  id: string;
+  disableLinks?: boolean;
+}) {
   const { t } = useTranslation();
 
   const instructions =
     'podman pull ' +
     getContainersURL({
-      name: id || '',
+      name: id,
     });
 
   const sumLayers = (layers: ImageLayer[]) => layers.reduce((acc, curr) => acc + curr.size, 0);
@@ -32,13 +36,15 @@ export function useImagesColumns(
         header: t('Tag'),
         cell: (image) => (
           <LabelGroup style={{ maxWidth: '300px' }}>
-            {image.tags.map((tag) =>
-              isManifestList(image) ? (
-                <TagLabel key={tag} tag={tag} />
-              ) : (
-                <>{id ? <TagLink key={tag} id={id} tag={tag} /> : null}</>
-              )
-            )}
+            {image.tags.map((tag) => (
+              <Fragment key={tag}>
+                {isManifestList(image) || disableLinks ? (
+                  <TagLabel tag={tag} />
+                ) : (
+                  <TagLink id={id} tag={tag} />
+                )}
+              </Fragment>
+            ))}
           </LabelGroup>
         ),
       },
@@ -60,16 +66,18 @@ export function useImagesColumns(
         header: t('Digest'),
         cell: (image) => (
           <DigestAndCopyCell>
-            {isManifestList(image) ? (
+            {isManifestList(image) || disableLinks ? (
               <ShaLabel digest={image.digest} />
             ) : (
-              <>{id && <ShaLink id={id} digest={image.digest} />}</>
+              <>
+                <ShaLink id={id} digest={image.digest} />
+              </>
             )}
             <CopyCell minWidth={50} text={instructions} />
           </DigestAndCopyCell>
         ),
       },
     ],
-    [id, instructions, isManifestList, t]
+    [id, instructions, t, disableLinks]
   );
 }

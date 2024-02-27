@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { LoadingPage, PageDetail, PageDetails, Scrollable } from '../../../../framework';
+import { LoadingPage, PageDetail, PageDetails } from '../../../../framework';
 import { PageDetailCodeEditor } from '../../../../framework/PageDetails/PageDetailCodeEditor';
 import { formatDateString } from '../../../../framework/utils/formatDateString';
 import { AwxItemsResponse } from '../../../awx/common/AwxItemsResponse';
@@ -30,21 +30,19 @@ export function EventStreamInstanceDetails() {
     return <LoadingPage />;
   }
   return (
-    <Scrollable>
-      <PageDetails>
-        <PageDetail label={t('Name')}>
-          {`${eventStreamInstance?.id || ''} - ${eventStreamInstance?.name || ''}`}
-        </PageDetail>
-        <PageDetail label={t('Status')}>
-          {<StatusCell status={eventStreamInstance?.status || 'unknown'} />}
-        </PageDetail>
-        <PageDetail label={t('Start date')}>
-          {eventStreamInstance?.started_at ? formatDateString(eventStreamInstance?.started_at) : ''}
-        </PageDetail>
-        <PageDetail label={t('End date')}>
-          {eventStreamInstance?.ended_at ? formatDateString(eventStreamInstance?.ended_at) : ''}
-        </PageDetail>
-      </PageDetails>
+    <PageDetails>
+      <PageDetail label={t('Name')}>
+        {`${eventStreamInstance?.id || ''} - ${eventStreamInstance?.name || ''}`}
+      </PageDetail>
+      <PageDetail label={t('Status')}>
+        {<StatusCell status={eventStreamInstance?.status || 'unknown'} />}
+      </PageDetail>
+      <PageDetail label={t('Start date')}>
+        {eventStreamInstance?.started_at ? formatDateString(eventStreamInstance?.started_at) : ''}
+      </PageDetail>
+      <PageDetail label={t('End date')}>
+        {eventStreamInstance?.ended_at ? formatDateString(eventStreamInstance?.ended_at) : ''}
+      </PageDetail>
       <PageDetailsSection>
         {eventStreamInstanceLog?.results?.length ? (
           <PageDetailCodeEditor
@@ -55,6 +53,6 @@ export function EventStreamInstanceDetails() {
           />
         ) : null}
       </PageDetailsSection>
-    </Scrollable>
+    </PageDetails>
   );
 }

@@ -177,6 +177,11 @@ describe('Collections List- Line Item Kebab Menu', () => {
     cy.contains(/^Success$/);
     cy.clickButton(/^Close$/);
     cy.galaxykit('task wait all');
+
+    //Verify collection has been deleted from system
+    cy.navigateTo('hub', Collections.url);
+    cy.filterTableBySingleText(thisCollectionName);
+    cy.contains('No results found');
   });
 
   it('can delete entire collection from repository', () => {
@@ -195,6 +200,11 @@ describe('Collections List- Line Item Kebab Menu', () => {
     cy.contains(/^Success$/);
     cy.clickButton(/^Close$/);
     cy.galaxykit('task wait all');
+
+    //Verify collection has been deleted from repository
+    cy.navigateTo('hub', Collections.url);
+    cy.filterTableBySingleText(thisCollectionName);
+    cy.contains('No results found');
   });
 });
 
@@ -278,7 +288,7 @@ describe('Collections Details View', () => {
     cy.hubLogin();
     cy.createNamespace(namespace);
     cy.galaxykit('task wait all');
-    cy.uploadCollection(collection, namespace);
+    cy.uploadCollection(collection, namespace, '1.0.0');
     cy.galaxykit('task wait all');
     cy.navigateTo('hub', Collections.url);
   });
@@ -299,6 +309,11 @@ describe('Collections Details View', () => {
     cy.clickLink(collection);
     cy.galaxykit('task wait all'); //this is necessary, otherwise page continues reloading
     cy.selectDetailsPageKebabAction('delete-entire-collection-from-system');
+
+    //Verify collection has been deleted from system
+    cy.navigateTo('hub', Collections.url);
+    cy.filterTableBySingleText(collection);
+    cy.contains('No results found');
   });
 
   it('can delete entire collection from repository', () => {
@@ -309,13 +324,74 @@ describe('Collections Details View', () => {
     cy.clickLink(collection);
     cy.galaxykit('task wait all'); //this is necessary, otherwise page continues reloading
     cy.selectDetailsPageKebabAction('delete-entire-collection-from-repository');
+
+    //Verify collection has been deleted from repository
+    cy.navigateTo('hub', Collections.url);
+    cy.filterTableBySingleText(collection);
+    cy.contains('No results found');
   });
 
   it.skip('can deprecate a collection', () => {});
 
-  it.skip('can delete version from system', () => {});
+  it('user can delete version from system', () => {
+    cy.uploadCollection(collection, namespace, '1.1.0');
+    cy.galaxykit('task wait all');
+    cy.approveCollection(collection, namespace, '1.0.0');
+    cy.galaxykit('task wait all');
+    cy.approveCollection(collection, namespace, '1.1.0');
+    cy.galaxykit('task wait all');
+    cy.get('[data-cy="table-view"]').click();
+    cy.filterTableBySingleText(collection);
+    cy.clickLink(collection);
+    cy.url().should('contain', `/collections/published/${namespace}/${collection}/details`);
+    cy.get('.pf-v5-c-menu-toggle').click();
+    cy.get('.pf-v5-c-menu__item-text').contains('1.0.0').click();
+    cy.url().should(
+      'contain',
+      `/collections/published/${namespace}/${collection}/details?version=1.0.0`
+    );
+    cy.selectDetailsPageKebabAction('delete-version-from-system');
+    cy.clickButton(/^Close$/);
 
-  it.skip('can delete version from repository', () => {});
+    //Verify the version has been deleted
+    cy.galaxykit('task wait all');
+    cy.navigateTo('hub', Collections.url);
+    cy.filterTableBySingleText(collection);
+    cy.clickLink(collection);
+    cy.url().should('contain', `/collections/published/${namespace}/${collection}/details`);
+    cy.get('.pf-v5-c-menu-toggle').click();
+    cy.get('.pf-v5-c-menu__item-text').should('have.length', '1').contains('1.1.0');
+  });
+
+  it('user can delete version from repository', () => {
+    cy.uploadCollection(collection, namespace, '1.1.0');
+    cy.galaxykit('task wait all');
+    cy.approveCollection(collection, namespace, '1.0.0');
+    cy.galaxykit('task wait all');
+    cy.approveCollection(collection, namespace, '1.1.0');
+    cy.galaxykit('task wait all');
+    cy.get('[data-cy="table-view"]').click();
+    cy.filterTableBySingleText(collection);
+    cy.clickLink(collection);
+    cy.url().should('contain', `/collections/published/${namespace}/${collection}/details`);
+    cy.get('.pf-v5-c-menu-toggle').click();
+    cy.get('.pf-v5-c-menu__item-text').contains('1.0.0').click();
+    cy.url().should(
+      'contain',
+      `/collections/published/${namespace}/${collection}/details?version=1.0.0`
+    );
+    cy.selectDetailsPageKebabAction('delete-version-from-repository');
+    cy.clickButton(/^Close$/);
+
+    //Verify the version has been deleted
+    cy.galaxykit('task wait all');
+    cy.navigateTo('hub', Collections.url);
+    cy.filterTableBySingleText(collection);
+    cy.clickLink(collection);
+    cy.url().should('contain', `/collections/published/${namespace}/${collection}/details`);
+    cy.get('.pf-v5-c-menu-toggle').click();
+    cy.get('.pf-v5-c-menu__item-text').should('have.length', '1').contains('1.1.0');
+  });
 
   it.skip('can copy a version to repository', () => {});
 

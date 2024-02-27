@@ -6,7 +6,6 @@ import {
   LoadingPage,
   PageDetail,
   PageDetails,
-  Scrollable,
   useGetPageUrl,
 } from '../../../../framework';
 import { formatDateString } from '../../../../framework/utils/formatDateString';
@@ -42,111 +41,103 @@ export function RulebookActivationDetails() {
     return <LoadingPage />;
   }
   return (
-    <Scrollable>
-      <PageDetails
-        alertPrompts={
-          rulebookActivation.status === Status906Enum.Error ||
-          rulebookActivation.status === Status906Enum.Failed
-            ? [`${t('Rulebook Activation error: ')}${rulebookActivation?.status_message || ''}`]
-            : []
-        }
+    <PageDetails
+      alertPrompts={
+        rulebookActivation.status === Status906Enum.Error ||
+        rulebookActivation.status === Status906Enum.Failed
+          ? [`${t('Rulebook Activation error: ')}${rulebookActivation?.status_message || ''}`]
+          : []
+      }
+    >
+      <PageDetail label={t('Activation ID')}>{rulebookActivation?.id || ''}</PageDetail>
+      <PageDetail label={t('Name')}>{rulebookActivation?.name || ''}</PageDetail>
+      <PageDetail label={t('Description')}>{rulebookActivation?.description || ''}</PageDetail>
+      <PageDetail
+        label={t('Project')}
+        helpText={t('Projects are a logical collection of rulebooks.')}
       >
-        <PageDetail label={t('Activation ID')}>{rulebookActivation?.id || ''}</PageDetail>
-        <PageDetail label={t('Name')}>{rulebookActivation?.name || ''}</PageDetail>
-        <PageDetail label={t('Description')}>{rulebookActivation?.description || ''}</PageDetail>
-        <PageDetail
-          label={t('Project')}
-          helpText={t('Projects are a logical collection of rulebooks.')}
-        >
-          {rulebookActivation && rulebookActivation.project?.id ? (
-            <Link
-              to={getPageUrl(EdaRoute.ProjectPage, {
-                params: { id: rulebookActivation.project.id },
-              })}
-            >
-              {rulebookActivation?.project?.name}
-            </Link>
-          ) : (
-            rulebookActivation?.project?.name || ''
-          )}
-        </PageDetail>
-        <PageDetail
-          label={t('Rulebook')}
-          helpText={t('Rulebooks will be shown according to the project selected.')}
-        >
-          {rulebookActivation?.rulebook?.name || rulebookActivation?.rulebook_name || ''}
-        </PageDetail>
-        {rulebookActivation.event_streams && rulebookActivation.event_streams.length > 0 && (
-          <PageDetail label={t('Event stream(s)')}>
-            <LabelGroup>
-              {rulebookActivation.event_streams.map((stream) => (
-                <Label key={stream?.id}>{stream?.name}</Label>
-              ))}
-            </LabelGroup>
-          </PageDetail>
+        {rulebookActivation && rulebookActivation.project?.id ? (
+          <Link
+            to={getPageUrl(EdaRoute.ProjectPage, {
+              params: { id: rulebookActivation.project.id },
+            })}
+          >
+            {rulebookActivation?.project?.name}
+          </Link>
+        ) : (
+          rulebookActivation?.project?.name || ''
         )}
-        {rulebookActivation.credentials && rulebookActivation.credentials.length > 0 && (
-          <PageDetail label={t('Credential(s)')}>
-            <LabelGroup>
-              {rulebookActivation.credentials.map((credential) => (
-                <Label key={credential?.id}>{credential?.name}</Label>
-              ))}
-            </LabelGroup>
-          </PageDetail>
+      </PageDetail>
+      <PageDetail
+        label={t('Rulebook')}
+        helpText={t('Rulebooks will be shown according to the project selected.')}
+      >
+        {rulebookActivation?.rulebook?.name || rulebookActivation?.rulebook_name || ''}
+      </PageDetail>
+      {rulebookActivation.event_streams && rulebookActivation.event_streams.length > 0 && (
+        <PageDetail label={t('Event stream(s)')}>
+          <LabelGroup>
+            {rulebookActivation.event_streams.map((stream) => (
+              <Label key={stream?.id}>{stream?.name}</Label>
+            ))}
+          </LabelGroup>
+        </PageDetail>
+      )}
+      {rulebookActivation.credentials && rulebookActivation.credentials.length > 0 && (
+        <PageDetail label={t('Credential(s)')}>
+          <LabelGroup>
+            {rulebookActivation.credentials.map((credential) => (
+              <Label key={credential?.id}>{credential?.name}</Label>
+            ))}
+          </LabelGroup>
+        </PageDetail>
+      )}
+      <PageDetail
+        label={t('Decision environment')}
+        helpText={t('Decision environments are a container image to run Ansible rulebooks.')}
+      >
+        {rulebookActivation && rulebookActivation?.decision_environment?.id ? (
+          <Link
+            to={getPageUrl(EdaRoute.DecisionEnvironmentPage, {
+              params: { id: rulebookActivation?.decision_environment?.id },
+            })}
+          >
+            {rulebookActivation?.decision_environment?.name}
+          </Link>
+        ) : (
+          rulebookActivation?.decision_environment?.name || ''
         )}
-        <PageDetail
-          label={t('Decision environment')}
-          helpText={t('Decision environments are a container image to run Ansible rulebooks.')}
-        >
-          {rulebookActivation && rulebookActivation?.decision_environment?.id ? (
-            <Link
-              to={getPageUrl(EdaRoute.DecisionEnvironmentPage, {
-                params: { id: rulebookActivation?.decision_environment?.id },
-              })}
-            >
-              {rulebookActivation?.decision_environment?.name}
-            </Link>
-          ) : (
-            rulebookActivation?.decision_environment?.name || ''
-          )}
-        </PageDetail>
-        <PageDetail label={t('Restart policy')} helpText={restartPolicyHelpBlock}>
-          {rulebookActivation?.restart_policy
-            ? restartPolicyName(rulebookActivation?.restart_policy, t)
-            : ''}
-        </PageDetail>
-        <PageDetail label={t('Activation status')}>
-          <StatusCell status={rulebookActivation?.status || ''} />
-        </PageDetail>
-        {rulebookActivation.status !== Status906Enum.Error &&
-          rulebookActivation.status !== Status906Enum.Failed &&
-          !!rulebookActivation?.status_message && (
-            <PageDetail label={t('Status message')}>
-              {rulebookActivation?.status_message}
-            </PageDetail>
-          )}
-        <PageDetail label={t('Project git hash')}>
-          <CopyCell text={rulebookActivation?.git_hash ?? ''} />
-        </PageDetail>
-        <PageDetail label={t('Number of rules')}>{rulebookActivation?.rules_count || 0}</PageDetail>
-        <PageDetail label={t('Fire count')}>
-          {rulebookActivation?.rules_fired_count || 0}
-        </PageDetail>
-        <PageDetail label={t('Last restarted')}>
-          {rulebookActivation?.restarted_at
-            ? formatDateString(rulebookActivation.restarted_at)
-            : ''}
-        </PageDetail>
-        <PageDetail label={t('Restart count')}>{rulebookActivation?.restart_count || 0}</PageDetail>
-        <PageDetail label={t('Created')}>
-          {rulebookActivation?.created_at ? formatDateString(rulebookActivation?.created_at) : ''}
-        </PageDetail>
-        <LastModifiedPageDetail
-          value={
-            rulebookActivation?.modified_at ? formatDateString(rulebookActivation?.modified_at) : ''
-          }
-        />
-      </PageDetails>
+      </PageDetail>
+      <PageDetail label={t('Restart policy')} helpText={restartPolicyHelpBlock}>
+        {rulebookActivation?.restart_policy
+          ? restartPolicyName(rulebookActivation?.restart_policy, t)
+          : ''}
+      </PageDetail>
+      <PageDetail label={t('Activation status')}>
+        <StatusCell status={rulebookActivation?.status || ''} />
+      </PageDetail>
+      {rulebookActivation.status !== Status906Enum.Error &&
+        rulebookActivation.status !== Status906Enum.Failed &&
+        !!rulebookActivation?.status_message && (
+          <PageDetail label={t('Status message')}>{rulebookActivation?.status_message}</PageDetail>
+        )}
+      <PageDetail label={t('Project git hash')}>
+        <CopyCell text={rulebookActivation?.git_hash ?? ''} />
+      </PageDetail>
+      <PageDetail label={t('Number of rules')}>{rulebookActivation?.rules_count || 0}</PageDetail>
+      <PageDetail label={t('Fire count')}>{rulebookActivation?.rules_fired_count || 0}</PageDetail>
+      <PageDetail label={t('Last restarted')}>
+        {rulebookActivation?.restarted_at ? formatDateString(rulebookActivation.restarted_at) : ''}
+      </PageDetail>
+      <PageDetail label={t('Restart count')}>{rulebookActivation?.restart_count || 0}</PageDetail>
+      <PageDetail label={t('Created')}>
+        {rulebookActivation?.created_at ? formatDateString(rulebookActivation?.created_at) : ''}
+      </PageDetail>
+      <LastModifiedPageDetail
+        value={
+          rulebookActivation?.modified_at ? formatDateString(rulebookActivation?.modified_at) : ''
+        }
+      />
       {rulebookActivation?.extra_var?.id && (
         <PageSection variant="light">
           <EdaExtraVarsCell
@@ -158,7 +149,7 @@ export function RulebookActivationDetails() {
           />
         </PageSection>
       )}
-    </Scrollable>
+    </PageDetails>
   );
 }
 
