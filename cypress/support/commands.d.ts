@@ -40,12 +40,34 @@ import { EdaUser, EdaUserCreateUpdate } from '../../frontend/eda/interfaces/EdaU
 import { RoleDetail } from '../../frontend/eda/interfaces/generated/eda-api';
 import { Role as HubRole } from '../../frontend/hub/access/roles/Role';
 import { RemoteRegistry } from '../../frontend/hub/administration/remote-registries/RemoteRegistry';
-import { IRemotes } from '../../frontend/hub/administration/remotes/Remotes';
+import { HubRemote } from '../../frontend/hub/administration/remotes/Remotes';
 import { Repository } from '../../frontend/hub/administration/repositories/Repository';
 import { CollectionVersionSearch } from '../../frontend/hub/collections/Collection';
+import { ExecutionEnvironment as HubExecutionEnvironment } from '../../frontend/hub/execution-environments/ExecutionEnvironment';
+import { HubNamespace } from '../../frontend/hub/namespaces/HubNamespace';
 import { PlatformOrganization } from '../../platform/interfaces/PlatformOrganization';
-import { IAwxResources } from './awx-commands';
 import { PlatformUser } from '../../platform/interfaces/PlatformUser';
+import { IAwxResources } from './awx-commands';
+import {
+  HubCreateExecutionEnvironmentOptions,
+  HubCreateNamespaceOptions,
+  HubCreateRemoteOptions,
+  HubCreateRemoteRegistryOptions,
+  HubCreateRepositoryOptions,
+  HubCreateRoleOptions,
+  HubDeleteExecutionEnvironmentOptions,
+  HubDeleteNamespaceOptions,
+  HubDeleteRemoteOptions,
+  HubDeleteRemoteRegistryOptions,
+  HubDeleteRepositoryOptions,
+  HubDeleteRequestOptions,
+  HubDeleteRoleOptions,
+  HubGetRequestOptions,
+  HubPatchRequestOptions,
+  HubPostRequestOptions,
+  HubPutRequestOptions,
+  HubRequestOptions,
+} from './hub-commands';
 
 declare global {
   namespace Cypress {
@@ -993,17 +1015,61 @@ declare global {
       deleteEdaDecisionEnvironment(decisionEnvironment: EdaDecisionEnvironment): Chainable<void>;
       waitEdaDESync(edaDE: EdaDecisionEnvironment): Chainable<EdaDecisionEnvironment>;
 
-      // -- HUB COMMANDS
+      // HUB Request Commands
+      hubRequest<T>(options: HubRequestOptions): Cypress.Chainable<Response<T>>;
+      hubGetRequest<T>(options: HubGetRequestOptions): Cypress.Chainable<Response<T>>;
+      hubPutRequest<T>(
+        options: HubPutRequestOptions
+      ): Cypress.Chainable<Response<T> | Response<Task>>;
+      hubPatchRequest<T>(
+        options: HubPatchRequestOptions
+      ): Cypress.Chainable<Response<T> | Response<Task>>;
+      hubPostRequest<T>(
+        options: HubPostRequestOptions
+      ): Cypress.Chainable<Response<T> | Response<Task>>;
+      hubDeleteRequest<T>(
+        options: HubDeleteRequestOptions
+      ): Cypress.Chainable<Response<T> | Response<Task>>;
+      waitOnHubTask(taskUrl: string): Cypress.Chainable<Task>;
 
+      // HUB Execution Environment Commands
+      createHubExecutionEnvironment(
+        options: HubCreateExecutionEnvironmentOptions
+      ): Cypress.Chainable<HubExecutionEnvironment>;
+      deleteHubExecutionEnvironment(
+        options: HubDeleteExecutionEnvironmentOptions
+      ): Cypress.Chainable<void>;
+
+      // HUB Remote Registry Commands
+      createHubRemoteRegistry(
+        options?: HubCreateRemoteRegistryOptions
+      ): Cypress.Chainable<RemoteRegistry>;
+      deleteHubRemoteRegistry(options: HubDeleteRemoteRegistryOptions): Cypress.Chainable<void>;
+
+      // HUB Repository Commands
+      createHubRepository(options?: HubCreateRepositoryOptions): Cypress.Chainable<Repository>;
+      deleteHubRepository(options: HubDeleteRepositoryOptions): Cypress.Chainable<void>;
+
+      // HUB Namespace Commands
+      createHubNamespace(options?: HubCreateNamespaceOptions): Cypress.Chainable<HubNamespace>;
+      deleteHubNamespace(options: HubDeleteNamespaceOptions): Cypress.Chainable<void>;
+
+      // HUB Role Commands
+      createHubRole(options?: HubCreateRoleOptions): Cypress.Chainable<HubRole>;
+      deleteHubRole(options: HubDeleteRoleOptions): Cypress.Chainable<void>;
+
+      // HUB Remote Commands
+      createHubRemote(options?: HubCreateRemoteOptions): Cypress.Chainable<HubRemote>;
+      deleteHubRemote(options: HubDeleteRemoteOptions): Cypress.Chainable<void>;
+
+      // HUB GalaxyKit Commands
       galaxykit(operation: string, ...args: string[]): Cypress.Chainable<string[]>;
-      waitOnHubTask(taskId: string): Cypress.Chainable<Task>;
 
       createApprovedCollection(
         namespaceName: string,
         collectionName: string,
         tags?: string[]
       ): Cypress.Chainable<void>;
-      getOrCreateCollection(): Cypress.Chainable<string>;
       deleteCommunityCollectionFromSystem(
         collection: CollectionVersionSearch,
         options?: {
@@ -1016,9 +1082,7 @@ declare global {
       deleteNamespace(namespaceName: string): Cypress.Chainable<void>;
       deleteCollectionsInNamespace(namespaceName: string): Cypress.Chainable<void>;
       cleanupCollections(namespace: string, repo: string): Cypress.Chainable<void>;
-      createHubRole(): Cypress.Chainable<HubRole>;
-      deleteHubRole(role: HubRole): Cypress.Chainable<void>;
-      createRemote(remoteName: string, url?: string): Cypress.Chainable<IRemotes>;
+      createRemote(remoteName: string, url?: string): Cypress.Chainable<HubRemote>;
       deleteRemote(remoteName: string): Cypress.Chainable<void>;
       createRemoteRegistry(
         remoteRegistryName: string,
@@ -1035,7 +1099,11 @@ declare global {
           failOnStatusCode?: boolean;
         }
       ): Cypress.Chainable<void>;
-      uploadCollection(collection: string, namespace: string): Cypress.Chainable<void>;
+      uploadCollection(
+        collection: string,
+        namespace: string,
+        version?: string
+      ): Cypress.Chainable<void>;
       approveCollection(
         collection: string,
         namespace: string,

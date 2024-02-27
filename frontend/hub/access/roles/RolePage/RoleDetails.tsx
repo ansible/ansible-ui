@@ -6,7 +6,6 @@ import {
   PageDetail,
   PageDetails,
   PageLayout,
-  Scrollable,
 } from '../../../../../framework';
 import { useGet } from '../../../../common/crud/useGet';
 import { HubError } from '../../../common/HubError';
@@ -30,22 +29,20 @@ export function RoleDetails() {
 
   return (
     <PageLayout>
-      <Scrollable>
-        <PageDetails>
-          <PageDetail label={t('Name')}>{role.name || ''}</PageDetail>
-          <PageDetail label={t('Description')}>
-            {lockedRolesWithDescription[role.name] ?? role.description}
-          </PageDetail>
-          <PageDetail label={t('Created')}>
-            <DateTimeCell value={role.pulp_created} />
-          </PageDetail>
-        </PageDetails>
-        <PageDetails numberOfColumns={'single'}>
-          <PageDetail label={t('Permissions')}>
-            <RolePermissions role={role} showCustom={true} />
-          </PageDetail>
-        </PageDetails>
-      </Scrollable>
+      <PageDetails>
+        <PageDetail label={t('Name')}>{role.name || ''}</PageDetail>
+        <PageDetail label={t('Description')}>
+          {lockedRolesWithDescription[role.name] ?? role.description}
+        </PageDetail>
+        <PageDetail label={t('Created')}>
+          <DateTimeCell value={role.pulp_created} />
+        </PageDetail>
+      </PageDetails>
+      <PageDetails numberOfColumns={'single'}>
+        <PageDetail label={t('Permissions')}>
+          <RolePermissions role={role} showCustom={true} />
+        </PageDetail>
+      </PageDetails>
     </PageLayout>
   );
 }

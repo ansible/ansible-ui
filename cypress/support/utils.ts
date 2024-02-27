@@ -1,3 +1,5 @@
+import { randomString } from '../../framework/utils/random-string';
+
 /**
  * Utility function to escape arguments for safe inclusion in shell commands.
  */
@@ -41,4 +43,8 @@ function escapeArgs(argsString: string, args: string[]) {
   });
 
   return argsString;
+}
+
+export function randomE2Ename(): string {
+  return 'e2e_' + randomString(5, undefined, { isLowercase: true });
 }

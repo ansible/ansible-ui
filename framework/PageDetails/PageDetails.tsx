@@ -2,6 +2,7 @@ import { Alert, DescriptionList, PageSection } from '@patternfly/react-core';
 import { ReactNode } from 'react';
 import styled from 'styled-components';
 import { useSettings } from '../Settings';
+import { Scrollable } from '../components/Scrollable';
 
 export function PageDetails(props: {
   children?: ReactNode;
@@ -10,13 +11,15 @@ export function PageDetails(props: {
   labelOrientation?: 'horizontal' | 'vertical';
   alertPrompts?: string[];
   isCompact?: boolean;
+  disableScroll?: boolean;
 }) {
   const { disablePadding, alertPrompts } = props;
   const settings = useSettings();
   const orientation = props.labelOrientation ?? settings.formLayout;
   const numberOfColumns = props.numberOfColumns ? props.numberOfColumns : settings.formColumns;
   const isCompact = props.isCompact;
-  return (
+
+  let component = (
     <PageSectionStyled variant="light" padding={{ default: 'noPadding' }}>
       {alertPrompts &&
         alertPrompts.length > 0 &&
@@ -57,6 +60,10 @@ export function PageDetails(props: {
       </DescriptionList>
     </PageSectionStyled>
   );
+  if (!props.disableScroll) {
+    component = <Scrollable>{component}</Scrollable>;
+  }
+  return component;
 }
 
 const PageSectionStyled = styled(PageSection)`

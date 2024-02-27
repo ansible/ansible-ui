@@ -37,9 +37,8 @@ import { useAwxActiveUser } from '../../common/useAwxActiveUser';
 import { Instance } from '../../interfaces/Instance';
 import { InstanceGroup } from '../../interfaces/InstanceGroup';
 import { AwxRoute } from '../../main/AwxRoutes';
-import { useInstanceActions } from './hooks/useInstanceActions';
+import { useInstanceActions, useInstanceDetailsActions } from './hooks/useInstanceActions';
 import { useNodeTypeTooltip } from './hooks/useNodeTypeTooltip';
-import { useInstanceDetailsActions } from './hooks/useInstanceActions';
 
 export function InstanceDetails() {
   const { t } = useTranslation();
@@ -112,7 +111,7 @@ export function InstanceDetailsTab(props: {
   const toolTipMap: { [item: string]: string } = useNodeTypeTooltip();
   const capacityAvailable = instance.cpu_capacity !== 0 && instance.mem_capacity !== 0;
   return (
-    <PageDetails numberOfColumns={props.numberOfColumns}>
+    <PageDetails numberOfColumns={props.numberOfColumns} disableScroll>
       <PageDetail label={t('Name')} data-cy="name">
         <Button
           variant="link"

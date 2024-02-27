@@ -1,5 +1,5 @@
 import { randomString } from '../../../framework/utils/random-string';
-import { IRemotes } from '../../../frontend/hub/administration/remotes/Remotes';
+import { HubRemote } from '../../../frontend/hub/administration/remotes/Remotes';
 import { pulpAPI } from '../../support/formatApiPathForHub';
 import { Remotes } from './constants';
 
@@ -34,7 +34,7 @@ describe('Remotes', () => {
 
   it('explore different views and pagination', () => {
     const remoteName = generateRemoteName();
-    cy.createRemote(remoteName).then((remote: IRemotes) => {
+    cy.createRemote(remoteName).then((remote: HubRemote) => {
       cy.navigateTo('hub', 'remotes');
       cy.setTablePageSize('50');
       cy.filterTableBySingleText(remote.name);

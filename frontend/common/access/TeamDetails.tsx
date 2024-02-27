@@ -50,52 +50,50 @@ export function TeamDetails<T extends TeamDetailsType>(props: {
   const { team, organizationDetailsUrl, createdByUserDetailsUrl, modifiedByUserDetailsUrl } = props;
 
   return (
-    <>
-      <PageDetails>
-        <PageDetail label={t('Name')}>{team.name}</PageDetail>
-        {team.description && <PageDetail label={t('Description')}>{team.description}</PageDetail>}
-        {team.summary_fields?.organization && (
-          <PageDetail label={t('Organization')}>
-            {organizationDetailsUrl ? (
-              <LabelsCell
-                labelsWithLinks={[
-                  { name: team.summary_fields?.organization?.name, link: organizationDetailsUrl },
-                ]}
-              />
-            ) : (
-              <LabelsCell labels={[team.summary_fields?.organization?.name]} />
-            )}
-          </PageDetail>
-        )}
-        {(team.created || team.created_on || team.created_at) && (
-          <PageDetail label={t('Created')}>
-            <DateTimeCell
-              author={team.summary_fields?.created_by?.username}
-              value={team.created ?? team.created_on ?? team.created_at}
-              onClick={
-                createdByUserDetailsUrl
-                  ? () => {
-                      navigate(createdByUserDetailsUrl);
-                    }
-                  : undefined
-              }
+    <PageDetails>
+      <PageDetail label={t('Name')}>{team.name}</PageDetail>
+      {team.description && <PageDetail label={t('Description')}>{team.description}</PageDetail>}
+      {team.summary_fields?.organization && (
+        <PageDetail label={t('Organization')}>
+          {organizationDetailsUrl ? (
+            <LabelsCell
+              labelsWithLinks={[
+                { name: team.summary_fields?.organization?.name, link: organizationDetailsUrl },
+              ]}
             />
-          </PageDetail>
-        )}
-        {(team.modified || team.modified_on || team.modified_at) && (
-          <LastModifiedPageDetail
-            author={team.summary_fields?.modified_by?.username}
-            value={team.modified ?? team.modified_on ?? team.modified_at}
+          ) : (
+            <LabelsCell labels={[team.summary_fields?.organization?.name]} />
+          )}
+        </PageDetail>
+      )}
+      {(team.created || team.created_on || team.created_at) && (
+        <PageDetail label={t('Created')}>
+          <DateTimeCell
+            author={team.summary_fields?.created_by?.username}
+            value={team.created ?? team.created_on ?? team.created_at}
             onClick={
-              modifiedByUserDetailsUrl
+              createdByUserDetailsUrl
                 ? () => {
-                    navigate(modifiedByUserDetailsUrl);
+                    navigate(createdByUserDetailsUrl);
                   }
                 : undefined
             }
           />
-        )}
-      </PageDetails>
-    </>
+        </PageDetail>
+      )}
+      {(team.modified || team.modified_on || team.modified_at) && (
+        <LastModifiedPageDetail
+          author={team.summary_fields?.modified_by?.username}
+          value={team.modified ?? team.modified_on ?? team.modified_at}
+          onClick={
+            modifiedByUserDetailsUrl
+              ? () => {
+                  navigate(modifiedByUserDetailsUrl);
+                }
+              : undefined
+          }
+        />
+      )}
+    </PageDetails>
   );
 }
