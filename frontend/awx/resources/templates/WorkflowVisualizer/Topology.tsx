@@ -24,6 +24,8 @@ import {
   TopologyView as PFTopologyView,
   ElementModel,
   Edge,
+  NodeStatus,
+  LabelPosition,
 } from '@patternfly/react-topology';
 import { EmptyStateNoData } from '../../../../../framework/components/EmptyStateNoData';
 import type { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
@@ -50,7 +52,7 @@ const TopologyView = styled(PFTopologyView)`
     display: none;
   }
 `;
-const graphModel: Model = {
+export const graphModel: Model = {
   nodes: [],
   edges: [],
   graph: {
@@ -175,10 +177,11 @@ export const Visualizer = ({ data: { workflowNodes = [], template } }: TopologyP
         width: NODE_DIAMETER,
         height: NODE_DIAMETER,
         shape: NodeShape.circle,
+        status: NodeStatus.default,
+        labelPosition: LabelPosition.bottom,
         data: {
           resource: n,
         },
-        state: { isInvalidLinkTarget: false },
       };
 
       return node;

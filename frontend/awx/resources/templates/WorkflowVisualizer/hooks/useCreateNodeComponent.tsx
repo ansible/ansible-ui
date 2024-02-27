@@ -8,8 +8,10 @@ import {
   GraphModel,
   Node,
   NodeModel,
+  NodeStatus,
   TargetType,
   WithCreateConnectorProps,
+  isNode,
   nodeDragSourceSpec,
   withContextMenu,
   withCreateConnector,
@@ -56,8 +58,9 @@ export function useCreateNodeComponent(): () => FunctionComponent<
           source: Node<NodeModel, GraphNodeData>,
           target: Node<NodeModel, GraphNodeData> | Graph<GraphModel, GraphModel>
         ) => {
-          const targetState = target.getState<{ isInvalidLinkTarget: boolean }>();
-          if (targetState.isInvalidLinkTarget) {
+          if (!isNode(target)) return;
+          const nodeStatus = target.getNodeStatus();
+          if (nodeStatus === NodeStatus.danger) {
             return;
           }
           createConnector(source, target);
