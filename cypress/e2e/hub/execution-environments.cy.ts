@@ -61,7 +61,7 @@ describe('Execution Environments', () => {
                   .find('input')
                   .type(remoteRegistry.name)
                   .then(() => {
-                    cy.getByDataCy(`${remoteRegistry.name}`).click();
+                    cy.clickButton(`${remoteRegistry.name}`);
                   });
               } else {
                 //50 or more remote registries
