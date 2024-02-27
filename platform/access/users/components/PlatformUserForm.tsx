@@ -27,13 +27,33 @@ import { PlatformTeam } from '../../../interfaces/PlatformTeam';
 import { PlatformUser } from '../../../interfaces/PlatformUser';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
+import { PageFormSingleSelect } from '../../../../framework/PageForm/Inputs/PageFormSingleSelect';
+
+const UserType = {
+  SystemAdministrator: 'System administrator',
+  SystemAuditor: 'System auditor',
+  NormalUser: 'Normal user',
+};
+
+type IUserInput = PlatformUser & { userType: string; confirmPassword: string };
 
 export function CreatePlatformUser() {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const navigate = useNavigate();
   const postRequest = usePostRequest<PlatformUser>();
-  const onSubmit: PageFormSubmitHandler<PlatformUser> = async (user) => {
+  const onSubmit: PageFormSubmitHandler<IUserInput> = async (
+    userInput,
+    setError,
+    setFieldError
+  ) => {
+    const { userType, confirmPassword, ...user } = userInput;
+    user.is_superuser = userType === UserType.SystemAdministrator;
+    user.is_system_auditor = userType === UserType.SystemAuditor;
+    if (confirmPassword !== user.password) {
+      setFieldError('confirmPassword', { message: t('Password does not match.') });
+      return false;
+    }
     const createdUser = await postRequest(gatewayV1API`/users/`, user);
     const teamIds = (user as unknown as { teams: number[] }).teams;
     if (teamIds) {
@@ -48,6 +68,10 @@ export function CreatePlatformUser() {
     pageNavigate(PlatformRoute.UserDetails, { params: { id: createdUser.id } });
   };
   const getPageUrl = useGetPageUrl();
+  const defaultValue: Partial<IUserInput> = {
+    userType: UserType.NormalUser,
+  };
+
   return (
     <PageLayout>
       <PageHeader
@@ -57,11 +81,12 @@ export function CreatePlatformUser() {
           { label: t('Create user') },
         ]}
       />
-      <PageForm
+      <PageForm<IUserInput>
         submitText={t('Create user')}
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
         onCancel={() => navigate(-1)}
+        defaultValue={defaultValue}
       >
         <PlatformUserInputs isCreate />
       </PageForm>
@@ -86,8 +111,17 @@ export function EditPlatformUser() {
   } = useGetAll<PlatformTeam>(gatewayV1API`/teams/`);
   const patchUser = usePatchRequest<PlatformUser, PlatformUser>();
   const patchTeam = usePatchRequest<Partial<PlatformTeam>, PlatformTeam>();
-  const onSubmit: PageFormSubmitHandler<PlatformUser> = useCallback(
-    async (user) => {
+  const onSubmit: PageFormSubmitHandler<IUserInput> = useCallback(
+    async (userInput: IUserInput, setError, setFieldError) => {
+      const { userType, confirmPassword, ...user } = userInput;
+      user.is_superuser = userType === UserType.SystemAdministrator;
+      user.is_system_auditor = userType === UserType.SystemAuditor;
+      if (user.password) {
+        if (confirmPassword !== user.password) {
+          setFieldError('confirmPassword', { message: t('Password does not match.') });
+          return false;
+        }
+      }
       await patchUser(gatewayV1API`/users/${id.toString()}/`, user);
       const teamIds = (user as unknown as { teams: number[] }).teams;
       if (teamIds && teams) {
@@ -107,7 +141,7 @@ export function EditPlatformUser() {
       }
       navigate(-1);
     },
-    [id, navigate, patchTeam, patchUser, teams]
+    [id, navigate, patchTeam, patchUser, t, teams]
   );
   const getPageUrl = useGetPageUrl();
 
@@ -122,6 +156,17 @@ export function EditPlatformUser() {
   if (error) return <AwxError error={error} />;
   if (teamError) return <AwxError error={teamError} />;
   if (!userWithTeams) return <PageNotFound />;
+
+  const { password, ...defaultUserValue } = userWithTeams;
+  const defaultValue: Partial<IUserInput> = {
+    ...defaultUserValue,
+    userType: userWithTeams.is_superuser
+      ? UserType.SystemAdministrator
+      : userWithTeams.is_system_auditor
+        ? UserType.SystemAuditor
+        : UserType.NormalUser,
+  };
+
   return (
     <PageLayout>
       <PageHeader
@@ -131,11 +176,11 @@ export function EditPlatformUser() {
           { label: t('Edit user') },
         ]}
       />
-      <PageForm
+      <PageForm<IUserInput>
         submitText={t('Save user')}
         onSubmit={onSubmit}
         onCancel={() => navigate(-1)}
-        defaultValue={userWithTeams as unknown as PlatformUser}
+        defaultValue={defaultValue}
       >
         <PlatformUserInputs />
       </PageForm>
@@ -173,15 +218,50 @@ function PlatformUserInputs(props: { isCreate?: boolean }) {
   return (
     <>
       <PageFormSection>
-        <PageFormTextInput<PlatformUser>
+        <PageFormTextInput<IUserInput>
           name="username"
           label={t('Username')}
           placeholder={t('Enter username')}
           isRequired
         />
+        <PageFormSingleSelect<IUserInput>
+          name="userType"
+          label={t('User type')}
+          placeholder={t('Select user type')}
+          options={[
+            {
+              label: t('System administrator'),
+              description: t('Has full access to the system and can manage other users.'),
+              value: UserType.SystemAdministrator,
+            },
+            {
+              label: t('System auditor'),
+              description: t('Has read-only access to the system and can view all resources.'),
+              value: UserType.SystemAuditor,
+            },
+            {
+              label: t('Normal user'),
+              description: t(
+                'Has access limited to the resources for which they have been granted the appropriate roles.'
+              ),
+              value: UserType.NormalUser,
+            },
+          ]}
+          isRequired
+        />
+      </PageFormSection>
+
+      <PageFormSection>
         <PageFormTextInput<PlatformUser>
           name="password"
           label={t('Password')}
+          placeholder={t('Enter password')}
+          type="password"
+          isRequired={props.isCreate}
+        />
+        <PageFormTextInput<IUserInput>
+          name="confirmPassword"
+          label={t('Confirm password')}
           placeholder={t('Enter password')}
           type="password"
           isRequired={props.isCreate}
@@ -204,39 +284,23 @@ function PlatformUserInputs(props: { isCreate?: boolean }) {
         placeholder={t('Enter email')}
       />
 
-      <PageFormSection title={t('User Type')} singleColumn>
-        <PageFormCheckbox<PlatformUser>
-          name="is_superuser"
-          label={t('System administrator')}
-          description={t(
-            'System administrators have full access to the system and can manage other users.'
-          )}
-        />
-        <PageFormCheckbox<PlatformUser>
-          name="is_system_auditor"
-          label={t('System auditor')}
-          description={t(
-            'System auditors have read-only access to the system and can view all resources.'
-          )}
-        />
-      </PageFormSection>
-
-      <PageFormSection singleColumn title={t('Organizations')}>
+      <PageFormSection singleColumn>
         <PageFormAsyncMultiSelect<PlatformUser>
           name="organizations"
           placeholder={t('Select organizations')}
+          label={t('Organizations')}
           queryOptions={queryOrganizations}
           queryPlaceholder={t('Loading organizations...')}
           queryErrorText={(error) => t('Error loading organizations: {{error}}', { error })}
         />
       </PageFormSection>
 
-      <PageFormSection singleColumn title={t('Teams')}>
+      <PageFormSection singleColumn>
         <PageFormAsyncMultiSelect
           name="teams"
+          label={t('Teams')}
           placeholder={t('Select teams')}
           queryOptions={queryTeams}
-          isRequired
           queryPlaceholder={t('Loading teams...')}
           queryErrorText={(error) => t('Error loading teams: {{error}}', { error })}
         />
