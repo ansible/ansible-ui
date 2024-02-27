@@ -6,7 +6,6 @@ import { usePlatformView } from '../../../hooks/usePlatformView';
 import { PlatformUser } from '../../../interfaces/PlatformUser';
 import { gatewayV1API } from '../../../api/gateway-api-utils';
 import { useParams } from 'react-router-dom';
-import { PlatformTeam } from '../../../interfaces/PlatformTeam';
 import { useGetItem } from '../../../../frontend/common/crud/useGet';
 import { AwxError } from '../../../../frontend/awx/common/AwxError';
 import {
@@ -16,35 +15,36 @@ import {
 import { useOptions } from '../../../../frontend/common/crud/useOptions';
 import { CubesIcon } from '@patternfly/react-icons';
 import {
-  useTeamAdminsRowActions,
-  useTeamAdminsToolbarActions,
-} from '../hooks/useTeamAdminsActions';
+  useOrganizationAdminsRowActions,
+  useOrganizationAdminsToolbarActions,
+} from '../hooks/useOrganizationAdminsActions';
+import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 
-export function PlatformTeamAdmins() {
+export function PlatformOrganizationAdmins() {
   const { t } = useTranslation();
   const toolbarFilters = useUsersFilters();
   const tableColumns = useUsersColumns();
   const params = useParams<{ id: string }>();
   const {
-    data: team,
+    data: organization,
     isLoading,
     error,
-  } = useGetItem<PlatformTeam>(gatewayV1API`/teams`, params.id);
+  } = useGetItem<PlatformOrganization>(gatewayV1API`/organizations`, params.id);
 
   const view = usePlatformView<PlatformUser>({
-    url: gatewayV1API`/teams/${team?.id?.toString() ?? ''}/admins/`,
+    url: gatewayV1API`/organizations/${organization?.id?.toString() ?? ''}/admins/`,
     toolbarFilters,
     tableColumns,
   });
 
   const { data: associateOptions, isLoading: isLoadingOptions } = useOptions<
     OptionsResponse<ActionsResponse>
-  >(gatewayV1API`/teams/${team?.id?.toString() ?? ''}/admins/associate/`);
+  >(gatewayV1API`/organizations/${organization?.id?.toString() ?? ''}/admins/associate/`);
   const canAssociateAdministrator = Boolean(
     associateOptions && associateOptions.actions && associateOptions.actions['POST']
   );
-  const toolbarActions = useTeamAdminsToolbarActions(view);
-  const rowActions = useTeamAdminsRowActions(view);
+  const toolbarActions = useOrganizationAdminsToolbarActions(view);
+  const rowActions = useOrganizationAdminsRowActions(view);
 
   if (isLoading || isLoadingOptions) return <LoadingPage />;
   if (error) return <AwxError error={error} />;
@@ -59,8 +59,8 @@ export function PlatformTeamAdmins() {
       errorStateTitle={t('Error loading administrators')}
       emptyStateTitle={
         canAssociateAdministrator
-          ? t('There are currently no administrators added to this team.')
-          : t('You do not have permission to add an administrator to this team.')
+          ? t('There are currently no administrators added to this organization.')
+          : t('You do not have permission to add an administrator to this organization.')
       }
       emptyStateDescription={
         canAssociateAdministrator

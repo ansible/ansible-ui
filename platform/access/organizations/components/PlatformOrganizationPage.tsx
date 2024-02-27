@@ -51,7 +51,12 @@ export function PlatformOrganizationPage() {
           page: PlatformRoute.Organizations,
           persistentFilterKey: 'organizations',
         }}
-        tabs={[{ label: t('Details'), page: PlatformRoute.OrganizationDetails }]}
+        tabs={[
+          { label: t('Details'), page: PlatformRoute.OrganizationDetails },
+          { label: t('Users'), page: PlatformRoute.OrganizationUsers },
+          { label: t('Administrators'), page: PlatformRoute.OrganizationAdmins },
+          { label: t('Teams'), page: PlatformRoute.OrganizationTeams },
+        ]}
         params={{ id: organization.id }}
       />
     </PageLayout>
