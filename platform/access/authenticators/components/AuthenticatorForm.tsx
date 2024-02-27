@@ -131,7 +131,11 @@ export function AuthenticatorForm(props: AuthenticatorFormProps) {
 
     const configuration: Configuration = {};
     plugin?.configuration_schema.forEach((field) => {
-      configuration[field.name] = authenticator.configuration[field.name];
+      let val = authenticator.configuration[field.name];
+      if (field.type === 'URLListField' && Array.isArray(val)) {
+        val = val.join(',');
+      }
+      configuration[field.name] = typeof val === 'string' ? val : JSON.stringify(val);
     });
     initialValues.details.configuration = configuration;
 

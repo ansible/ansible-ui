@@ -91,15 +91,21 @@ function AddMappingDropdown(props: { onSelect: (value: AuthenticatorMapType) => 
       onSelect={onSelect}
       onOpenChange={(isOpen: boolean) => setIsOpen(isOpen)}
       toggle={(ref) => (
-        <Toggle ref={ref} onClick={() => setIsOpen(!isOpen)}>
+        <Toggle ref={ref} onClick={() => setIsOpen(!isOpen)} id="add-mapping">
           <PlusCircleIcon style={{ marginRight: 5 }} /> {t('Add authentication mapping')}
         </Toggle>
       )}
     >
       <DropdownList>
-        <DropdownItem value="allow">{t('Allow')}</DropdownItem>
-        <DropdownItem value="organization">{t('Organization')}</DropdownItem>
-        <DropdownItem value="team">{t('Team')}</DropdownItem>
+        <DropdownItem value="allow" ouiaId="add-map-allow">
+          {t('Allow')}
+        </DropdownItem>
+        <DropdownItem value="organization" ouiaId="add-map-organization">
+          {t('Organization')}
+        </DropdownItem>
+        <DropdownItem value="team" ouiaId="add-map-team">
+          {t('Team')}
+        </DropdownItem>
       </DropdownList>
     </Dropdown>
   );

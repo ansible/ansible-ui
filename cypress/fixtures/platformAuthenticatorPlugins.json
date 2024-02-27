@@ -103,7 +103,8 @@
           "required": true,
           "default": null,
           "type": "ChoiceField",
-          "ui_field_label": "LDAP Group Type"
+          "ui_field_label": "LDAP Group Type",
+          "choices": { "MemberDNGroupType": "MemberDNGroupType" }
         },
         {
           "name": "GROUP_TYPE_PARAMS",

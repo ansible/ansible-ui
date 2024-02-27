@@ -65,7 +65,6 @@ export function AuthenticatorDetailsStep(props: {
 
   return (
     <>
-      {' '}
       <TextContent style={{ marginBottom: 25 }}>
         <Text component={TextVariants.h2}>{t('Authentication details')}</Text>
       </TextContent>
