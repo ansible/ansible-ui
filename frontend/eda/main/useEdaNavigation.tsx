@@ -228,59 +228,6 @@ export function useEdaNavigation() {
       ],
     },
     {
-      id: EdaRoute.EventStreams,
-      label: t('Event Streams'),
-      path: 'event-streams',
-      children: [
-        {
-          id: EdaRoute.CreateEventStream,
-          path: 'create',
-          element: <CreateEventStream />,
-        },
-        {
-          id: EdaRoute.EventStreamInstancePage,
-          path: ':id/history/:instanceId',
-          element: <EventStreamInstancePage />,
-          children: [
-            {
-              id: EdaRoute.EventStreamInstanceDetails,
-              path: 'details',
-              element: <EventStreamInstanceDetails />,
-            },
-            {
-              path: '',
-              element: <Navigate to="details" />,
-            },
-          ],
-        },
-        {
-          id: EdaRoute.EventStreamPage,
-          path: ':id',
-          element: <EventStreamPage />,
-          children: [
-            {
-              id: EdaRoute.EventStreamDetails,
-              path: 'details',
-              element: <EventStreamDetails />,
-            },
-            {
-              id: EdaRoute.EventStreamHistory,
-              path: 'history',
-              element: <EventStreamHistory />,
-            },
-            {
-              path: '',
-              element: <Navigate to="details" />,
-            },
-          ],
-        },
-        {
-          path: '',
-          element: <EventStreams />,
-        },
-      ],
-    },
-    {
       id: EdaRoute.Webhooks,
       label: t('Webhooks'),
       path: 'webhooks',
