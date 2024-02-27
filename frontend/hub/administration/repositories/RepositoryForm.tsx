@@ -29,12 +29,12 @@ import {
 import { postHubRequest, putHubRequest } from '../../common/api/request';
 import { PulpItemsResponse } from '../../common/useHubView';
 import { HubRoute } from '../../main/HubRoutes';
-import { IRemotes } from './../remotes/Remotes';
+import { HubRemote } from './../remotes/Remotes';
 import { Repository } from './Repository';
 import { useSelectRemoteSingle } from './hooks/useRemoteSelector';
 
 interface RepositoryFormProps {
-  remote: IRemotes | string | null;
+  remote: HubRemote | string | null;
   name: string | null;
   description: string | null;
   retain_repo_versions: number | null;
@@ -71,7 +71,7 @@ export function RepositoryForm() {
       payload.pulp_labels.pipeline = data.pipeline;
     }
     if (data.remote) {
-      const remote = data.remote as IRemotes;
+      const remote = data.remote as HubRemote;
       payload.remote = remote.pulp_href;
     }
 
@@ -143,7 +143,7 @@ export function RepositoryForm() {
   }
   // FIXME this should be replaced by typeahead component once it's implemented
   const page_size = 50;
-  const remote = useGet<PulpItemsResponse<IRemotes>>(
+  const remote = useGet<PulpItemsResponse<HubRemote>>(
     pulpAPI`/remotes/ansible/collection/?offset=0&limit=${page_size.toString()}`
   );
   const query = useCallback(() => {
@@ -169,7 +169,7 @@ export function RepositoryForm() {
     return <HubError error={error} handleRefresh={refresh} />;
   }
 
-  const getRemote = (url: string): IRemotes | null => {
+  const getRemote = (url: string): HubRemote | null => {
     return remote?.data?.results?.find((r) => r.pulp_href === url) || null;
   };
   if (!baseLoading && !!baseData && isEdit) {
@@ -318,7 +318,7 @@ export function RepositoryForm() {
           loadingPlaceholder={t('Loading remote...')}
           loadingErrorText={t('Error loading remote')}
           limit={page_size}
-          valueToString={(value: IRemotes) => {
+          valueToString={(value: HubRemote) => {
             return value.name;
           }}
           openSelectDialog={remoteSelector}

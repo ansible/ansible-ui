@@ -7,14 +7,14 @@ import {
   ToolbarFilterType,
 } from '../../../../../framework';
 import {
-  useAsyncSingleSelectFilterBuilder,
   AsyncSelectFilterBuilderProps,
+  useAsyncSingleSelectFilterBuilder,
 } from '../../../../../framework/PageToolbar/PageToolbarFilters/ToolbarAsyncSelectFilterBuilder';
-import { useHubView } from '../../../common/useHubView';
-import { IRemotes } from './../../remotes/Remotes';
 import { pulpAPI } from '../../../common/api/formatPath';
+import { useHubView } from '../../../common/useHubView';
+import { HubRemote } from './../../remotes/Remotes';
 
-function useParameters(): AsyncSelectFilterBuilderProps<IRemotes> {
+function useParameters(): AsyncSelectFilterBuilderProps<HubRemote> {
   const tableColumns = useRemoteColumns();
   const toolbarFilters = useRemoteFilters();
   const { t } = useTranslation();
@@ -37,12 +37,12 @@ function useParameters(): AsyncSelectFilterBuilderProps<IRemotes> {
 export function useSelectRemoteSingle() {
   const params = useParameters();
 
-  return useAsyncSingleSelectFilterBuilder<IRemotes>(params);
+  return useAsyncSingleSelectFilterBuilder<HubRemote>(params);
 }
 
 export function useRemoteColumns(_options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const { t } = useTranslation();
-  return useMemo<ITableColumn<IRemotes>[]>(
+  return useMemo<ITableColumn<HubRemote>[]>(
     () => [
       {
         header: t('Name'),

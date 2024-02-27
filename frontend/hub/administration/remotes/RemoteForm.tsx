@@ -30,7 +30,7 @@ import { appendTrailingSlash, hubAPIPut, parsePulpIDFromURL } from '../../common
 import { useHubContext } from '../../common/useHubContext';
 import { PulpItemsResponse } from '../../common/useHubView';
 import { HubRoute } from '../../main/HubRoutes';
-import { IRemotes } from './Remotes';
+import { HubRemote } from './Remotes';
 import { REMOTE_COMMUNITY_COLLECTIONS_URL, yamlRequirementsTemplate } from './constants';
 
 interface SecretInput {
@@ -49,7 +49,7 @@ interface IRequirementsFile {
   isCommunityRemote: boolean;
 }
 
-interface RemoteFormProps extends IRemotes {
+interface RemoteFormProps extends HubRemote {
   client_key?: string | null;
   password?: string | null;
   proxy_password?: string | null;
@@ -84,7 +84,7 @@ export function CreateRemote() {
   clearCacheByKey(pulpAPI`/remotes/ansible/collection/`);
   const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
-  const postRequest = usePostRequest<IRemotes>();
+  const postRequest = usePostRequest<HubRemote>();
   const onSubmit: PageFormSubmitHandler<RemoteFormProps> = async (remote) => {
     const url: string = appendTrailingSlash(remote.url);
     if (remote?.requirements_file === yamlRequirementsTemplate) {
@@ -115,7 +115,7 @@ export function CreateRemote() {
           { label: t('Create Remote') },
         ]}
       />
-      <HubPageForm<IRemotes>
+      <HubPageForm<HubRemote>
         submitText={t('Create remote')}
         onSubmit={onSubmit}
         onCancel={() => navigate(-1)}

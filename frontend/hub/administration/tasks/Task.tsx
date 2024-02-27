@@ -13,7 +13,7 @@ export interface Task {
   parent_task: string;
   child_tasks: string[];
   progress_reports: [];
-  created_resources: [];
+  created_resources: unknown[];
   reserved_resources_record: string[];
 }
 

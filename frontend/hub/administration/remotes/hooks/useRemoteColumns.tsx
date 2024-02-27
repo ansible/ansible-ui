@@ -8,12 +8,12 @@ import {
   useGetPageUrl,
 } from '../../../../../framework';
 import { HubRoute } from '../../../main/HubRoutes';
-import { IRemotes } from '../Remotes';
+import { HubRemote } from '../Remotes';
 
 export function useRemoteColumns() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
-  const tableColumns = useMemo<ITableColumn<IRemotes>[]>(
+  const tableColumns = useMemo<ITableColumn<HubRemote>[]>(
     () => [
       {
         header: t('Remote name'),

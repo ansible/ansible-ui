@@ -10,15 +10,15 @@ import {
 } from '../../../../../framework';
 import { IHubView } from '../../../common/useHubView';
 import { HubRoute } from '../../../main/HubRoutes';
-import { IRemotes } from '../Remotes';
+import { HubRemote } from '../Remotes';
 import { useDeleteRemotes } from './useDeleteRemotes';
 
-export function useRemoteToolbarActions(view: IHubView<IRemotes>) {
+export function useRemoteToolbarActions(view: IHubView<HubRemote>) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const deleteRemotes = useDeleteRemotes(view.unselectItemsAndRefresh);
 
-  const actions = useMemo<IPageAction<IRemotes>[]>(
+  const actions = useMemo<IPageAction<HubRemote>[]>(
     () => [
       {
         icon: PlusIcon,
