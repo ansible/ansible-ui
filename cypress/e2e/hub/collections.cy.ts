@@ -177,6 +177,11 @@ describe('Collections List- Line Item Kebab Menu', () => {
     cy.contains(/^Success$/);
     cy.clickButton(/^Close$/);
     cy.galaxykit('task wait all');
+
+    //Verify collection has been deleted from system
+    cy.navigateTo('hub', Collections.url);
+    cy.filterTableBySingleText(thisCollectionName);
+    cy.contains('No results found');
   });
 
   it('can delete entire collection from repository', () => {
@@ -195,6 +200,11 @@ describe('Collections List- Line Item Kebab Menu', () => {
     cy.contains(/^Success$/);
     cy.clickButton(/^Close$/);
     cy.galaxykit('task wait all');
+
+    //Verify collection has been deleted from repository
+    cy.navigateTo('hub', Collections.url);
+    cy.filterTableBySingleText(thisCollectionName);
+    cy.contains('No results found');
   });
 });
 
@@ -299,6 +309,11 @@ describe('Collections Details View', () => {
     cy.clickLink(collection);
     cy.galaxykit('task wait all'); //this is necessary, otherwise page continues reloading
     cy.selectDetailsPageKebabAction('delete-entire-collection-from-system');
+
+    //Verify collection has been deleted from system
+    cy.navigateTo('hub', Collections.url);
+    cy.filterTableBySingleText(collection);
+    cy.contains('No results found');
   });
 
   it('can delete entire collection from repository', () => {
@@ -309,6 +324,11 @@ describe('Collections Details View', () => {
     cy.clickLink(collection);
     cy.galaxykit('task wait all'); //this is necessary, otherwise page continues reloading
     cy.selectDetailsPageKebabAction('delete-entire-collection-from-repository');
+
+    //Verify collection has been deleted from repository
+    cy.navigateTo('hub', Collections.url);
+    cy.filterTableBySingleText(collection);
+    cy.contains('No results found');
   });
 
   it.skip('can deprecate a collection', () => {});
