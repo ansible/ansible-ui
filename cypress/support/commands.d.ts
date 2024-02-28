@@ -305,6 +305,8 @@ declare global {
       /** Selects a table row in the active modal dialog, by clicking on the row checkbox. */
       selectTableRowInDialog(name: string | RegExp, filter?: boolean): Chainable<void>;
 
+      getModal(): Chainable<JQuery<HTMLElement>>;
+
       // --- DETAILS COMMANDS ---
       /**Finds a button with a particular label and clicks it. */
       clickTab(label: string | RegExp, isLink?: boolean): Chainable<void>;

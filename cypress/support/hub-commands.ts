@@ -25,7 +25,7 @@ export interface HubRequestOptions {
   failOnStatusCode?: boolean;
 }
 Cypress.Commands.add('hubRequest', (options: HubRequestOptions) => {
-  cy.getCookie('csrftoken').then((cookie) =>
+  cy.getCookie('csrftoken', { log: false }).then((cookie) =>
     cy
       .request({
         ...options,

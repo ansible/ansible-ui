@@ -163,3 +163,7 @@ Cypress.Commands.add('selectMultiSelectOption', (selector: string, label: string
 Cypress.Commands.add('clickTableHeader', (text: string | RegExp) => {
   cy.get('thead').find('th').contains(text).click();
 });
+
+Cypress.Commands.add('getModal', () => {
+  cy.get('[data-ouia-component-type="PF5/ModalContent"]');
+});
