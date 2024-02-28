@@ -42,13 +42,6 @@ import { RulebookActivationHistory } from '../rulebook-activations/RulebookActiv
 import { RulebookActivationPage } from '../rulebook-activations/RulebookActivationPage/RulebookActivationPage';
 import { RulebookActivations } from '../rulebook-activations/RulebookActivations';
 import { EdaRoute } from './EdaRoutes';
-import { CreateEventStream } from '../event-streams/EventStreamForm';
-import { EventStreamPage } from '../event-streams/EventStreamPage/EventStreamPage';
-import { EventStreamDetails } from '../event-streams/EventStreamPage/EventStreamDetails';
-import { EventStreams } from '../event-streams/EventStreams';
-import { EventStreamInstanceDetails } from '../event-streams/EventStreamInstancePage/EventStreamInstanceDetails';
-import { EventStreamInstancePage } from '../event-streams/EventStreamInstancePage/EventStreamInstancePage';
-import { EventStreamHistory } from '../event-streams/EventStreamPage/EventStreamHistory';
 import { CreateWebhook, EditWebhook } from '../webhooks/EditWebhook';
 import { WebhookPage } from '../webhooks/WebhookPage/WebhookPage';
 import { WebhookDetails } from '../webhooks/WebhookPage/WebhookDetails';
