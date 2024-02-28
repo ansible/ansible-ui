@@ -26,6 +26,8 @@ export function DataEditor(props: {
   const id = useID(props);
   const { language, value, onChange, setError, isReadOnly } = props;
 
+  const [ready, setReady] = useState(false);
+
   // The outter div is used to contain the inner div that is absolutely positioned to fill the outer div
   const outerDivEl = useRef<HTMLDivElement>(null);
   const innerDivEl = useRef<HTMLDivElement>(null);
@@ -42,6 +44,7 @@ export function DataEditor(props: {
   const editorRef = useRef<{ editor?: monaco.editor.IStandaloneCodeEditor }>({});
   useEffect(() => {
     if (innerDivEl.current) {
+      const createDisposable = monaco.editor.onDidCreateEditor(() => setReady(true));
       const editor = monaco.editor.create(innerDivEl.current, {
         lineNumbers: props.lineNumbers ? 'on' : 'off',
         lineDecorationsWidth: props.lineNumbers ? undefined : 0,
@@ -58,7 +61,10 @@ export function DataEditor(props: {
         },
       });
       editorRef.current.editor = editor;
-      return () => editor.dispose();
+      return () => {
+        createDisposable.dispose();
+        editor.dispose();
+      };
     }
   }, [props.lineNumbers]);
 
@@ -140,7 +146,13 @@ export function DataEditor(props: {
       aria-invalid={hasError ? 'true' : undefined}
       ref={outerDivEl}
     >
-      <InnerDiv id={id} data-cy={id} ref={innerDivEl} className="data-editor" />
+      <InnerDiv
+        id={id}
+        data-cy={id}
+        ref={innerDivEl}
+        className="data-editor"
+        aria-disabled={ready ? 'false' : 'true'}
+      />
     </OuterDiv>
   );
 }
