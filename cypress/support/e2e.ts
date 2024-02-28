@@ -16,7 +16,7 @@ import { hubAPI } from './formatApiPathForHub';
 import './hub-commands';
 import './rest-commands';
 
-export const galaxykitUsername: string = `e2e-${randomString(4)}`;
+export const galaxykitUsername: string = `e2e_${randomString(4)}`;
 export const galaxykitPassword: string = randomString(9);
 export let galaxyE2EUserID: number;
 

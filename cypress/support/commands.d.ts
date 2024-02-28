@@ -43,7 +43,7 @@ import { RemoteRegistry } from '../../frontend/hub/administration/remote-registr
 import { HubRemote } from '../../frontend/hub/administration/remotes/Remotes';
 import { Repository } from '../../frontend/hub/administration/repositories/Repository';
 import { CollectionVersionSearch } from '../../frontend/hub/collections/Collection';
-import { PulpItemsResponse } from '../../frontend/hub/common/useHubView';
+import { HubItemsResponse, PulpItemsResponse } from '../../frontend/hub/common/useHubView';
 import { ExecutionEnvironment as HubExecutionEnvironment } from '../../frontend/hub/execution-environments/ExecutionEnvironment';
 import { HubNamespace } from '../../frontend/hub/namespaces/HubNamespace';
 import { IAwxResources } from './awx-commands';
@@ -65,7 +65,11 @@ import {
   HubPatchRequestOptions,
   HubPostRequestOptions,
   HubPutRequestOptions,
+  HubQueryExecutionEnvironmentsOptions,
+  HubQueryNamespacesOptions,
   HubQueryRemotesOptions,
+  HubQueryRepositoriesOptions,
+  HubQueryRolesOptions,
   HubRequestOptions,
 } from './hub-commands';
 
@@ -1032,6 +1036,9 @@ declare global {
       waitOnHubTask(taskUrl: string): Cypress.Chainable<Task>;
 
       // HUB Execution Environment Commands
+      queryHubExecutionEnvironments(
+        options?: HubQueryExecutionEnvironmentsOptions
+      ): Cypress.Chainable<Response<HubItemsResponse<HubExecutionEnvironment>>>;
       createHubExecutionEnvironment(
         options: HubCreateExecutionEnvironmentOptions
       ): Cypress.Chainable<HubExecutionEnvironment>;
@@ -1046,14 +1053,23 @@ declare global {
       deleteHubRemoteRegistry(options: HubDeleteRemoteRegistryOptions): Cypress.Chainable<void>;
 
       // HUB Repository Commands
+      queryHubRepositories(
+        options?: HubQueryRepositoriesOptions
+      ): Cypress.Chainable<Response<PulpItemsResponse<Repository>>>;
       createHubRepository(options?: HubCreateRepositoryOptions): Cypress.Chainable<Repository>;
       deleteHubRepository(options: HubDeleteRepositoryOptions): Cypress.Chainable<void>;
 
       // HUB Namespace Commands
+      queryHubNamespaces(
+        options?: HubQueryNamespacesOptions
+      ): Cypress.Chainable<Response<HubItemsResponse<HubNamespace>>>;
       createHubNamespace(options?: HubCreateNamespaceOptions): Cypress.Chainable<HubNamespace>;
       deleteHubNamespace(options: HubDeleteNamespaceOptions): Cypress.Chainable<void>;
 
       // HUB Role Commands
+      queryHubRoles(
+        options?: HubQueryRolesOptions
+      ): Cypress.Chainable<Response<PulpItemsResponse<HubRole>>>;
       createHubRole(options?: HubCreateRoleOptions): Cypress.Chainable<HubRole>;
       deleteHubRole(options: HubDeleteRoleOptions): Cypress.Chainable<void>;
 
