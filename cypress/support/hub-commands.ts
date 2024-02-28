@@ -14,6 +14,7 @@ import { HubNamespace } from '../../frontend/hub/namespaces/HubNamespace';
 import { galaxykitPassword, galaxykitUsername } from './e2e';
 import { hubAPI, pulpAPI } from './formatApiPathForHub';
 import { escapeForShellCommand, randomE2Ename } from './utils';
+import shell from 'shell-escape-tag';
 
 const apiPrefix = Cypress.env('HUB_API_PREFIX') as string;
 
@@ -452,6 +453,33 @@ Cypress.Commands.add(
       ...options,
       url: hubAPI`/v3/plugin/execution-environments/repositories/${options.name}/`,
     });
+  }
+);
+
+Cypress.Commands.add(
+  'pushLocalContainer',
+  (localName: string, remoteName: string, registry: string = 'docker.io/') => {
+    const log = (op: string, { code, stderr, stdout }: Cypress.Exec) =>
+      /* eslint-disable no-console */
+      console.log(`OPERATION=${op} CODE=${code} ERR=${stderr} OUT=${stdout}`);
+
+    const server: string = (Cypress.env('HUB_HOST') as string) || 'localhost:5001';
+
+    const podmanPull = shell`podman pull ${registry + remoteName}` as string;
+    const podmanImageTag: string =
+      shell`podman image tag ${remoteName} ${server}/${localName}:latest` as string;
+    const podmanLogin: string =
+      shell`podman login ${server} --tls-verify=false --username=admin --password=admin` as string;
+    const podmanPush: string =
+      shell`podman push ${server}/${localName}:latest --tls-verify=false` as string;
+    cy.exec(podmanPull)
+      .then((resp: Cypress.Exec) => log(podmanPull, resp))
+      .then(() => cy.exec(podmanImageTag))
+      .then((resp: Cypress.Exec) => log(podmanImageTag, resp))
+      .then(() => cy.exec(podmanLogin, { failOnNonZeroExit: false }))
+      .then((resp: Cypress.Exec) => log(podmanLogin, resp))
+      .then(() => cy.exec(podmanPush, { failOnNonZeroExit: false }))
+      .then((resp: Cypress.Exec) => log(podmanPush, resp));
   }
 );
 

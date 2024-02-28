@@ -1301,6 +1301,11 @@ declare global {
       createHubExecutionEnvironment(
         options: HubCreateExecutionEnvironmentOptions
       ): Cypress.Chainable<HubExecutionEnvironment>;
+      pushLocalContainer(
+        localName: string,
+        remoteName: string,
+        registry?: string
+      ): Cypress.Chainable<void>;
       deleteHubExecutionEnvironment(
         options: HubDeleteExecutionEnvironmentOptions
       ): Cypress.Chainable<void>;

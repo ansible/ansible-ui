@@ -205,3 +205,33 @@ describe('Execution Environment Details tab', () => {
     cy.get('[data-cy="readme"]').contains('this should not be saved.').should('not.exist');
   });
 });
+
+describe('Execution Environment Activity tab', () => {
+  it('should display empty activity tab', () => {
+    cy.createHubRemoteRegistry().then((remoteRegistry) => {
+      cy.createHubExecutionEnvironment({
+        executionEnvironment: { registry: remoteRegistry.id },
+      }).then((executionEnvironment) => {
+        cy.visit(`${ExecutionEnvironments.url}/${executionEnvironment.name}/activity`);
+        cy.contains('No activities yet');
+        cy.contains('Activities will appear once you push something');
+      });
+    });
+  });
+
+  it('should display populated activity tab', () => {
+    const eeName = 'localpine' + randomString(5).toLowerCase();
+    cy.pushLocalContainer(eeName, 'alpine');
+    cy.intercept(
+      'GET',
+      hubAPI`/v3/plugin/execution-environments/repositories/${eeName}/_content/history/*`
+    ).as('getActivity');
+    cy.visit(`${ExecutionEnvironments.url}/${eeName}/activity`);
+    cy.contains('Change');
+    cy.contains('Date');
+    cy.contains(`${eeName} was added`);
+    cy.contains('sha256');
+    cy.contains('latest was added');
+    cy.wait('@getActivity');
+  });
+});
