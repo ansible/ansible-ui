@@ -578,7 +578,7 @@ Cypress.Commands.add('deleteHubCollection', (options: HubDeleteCollectionOptions
   cy.hubDeleteRequest({
     ...options,
     url: hubAPI`/v3/plugin/ansible/content/${
-      options.repository.name ?? 'community'
+      options.repository?.name ?? 'community'
     }/collections/index/${options.collection_version?.namespace ?? ''}/${
       options.collection_version?.name ?? ''
     }/`,

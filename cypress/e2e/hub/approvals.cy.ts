@@ -4,18 +4,18 @@ import { randomE2Ename } from '../../support/utils';
 import { Approvals, Collections, MyImports } from './constants';
 
 describe('Approvals', () => {
-  let collectionName: string;
   let repository: Repository;
   let namespace: HubNamespace;
+  let collectionName: string;
 
   before(() => {
-    collectionName = randomE2Ename();
     // Need at least two repositories so the select repostories modal can be tested
     cy.createHubRepository({ repository: { pulp_labels: { pipeline: 'approved' } } }).then(
       (repositoryResult) => {
         repository = repositoryResult;
         cy.createHubNamespace().then((namespaceResult) => {
           namespace = namespaceResult;
+          collectionName = randomE2Ename();
           cy.uploadCollection(collectionName, namespace.name);
         });
       }
