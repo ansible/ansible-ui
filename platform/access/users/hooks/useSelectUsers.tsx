@@ -11,6 +11,7 @@ function SelectUsers(props: {
   description: string;
   confirmText: string;
   onSelect: (users: PlatformUser[]) => Promise<void>;
+  customFilter?: (user: PlatformUser) => boolean;
 }) {
   const toolbarFilters = useUsersFilters();
   const tableColumns = useUsersColumns({ disableLinks: true });
@@ -19,6 +20,7 @@ function SelectUsers(props: {
     toolbarFilters,
     tableColumns,
     disableQueryString: true,
+    customFilter: props.customFilter,
   });
   return (
     <MultiSelectDialog
@@ -37,7 +39,8 @@ export function useSelectUsers() {
       title: string,
       description: string,
       confirmText: string,
-      onSelect: (users: PlatformUser[]) => Promise<void>
+      onSelect: (users: PlatformUser[]) => Promise<void>,
+      customFilter?: (user: PlatformUser) => boolean
     ) => {
       setDialog(
         <SelectUsers
@@ -45,6 +48,7 @@ export function useSelectUsers() {
           description={description}
           confirmText={confirmText}
           onSelect={onSelect}
+          customFilter={customFilter}
         />
       );
     },
