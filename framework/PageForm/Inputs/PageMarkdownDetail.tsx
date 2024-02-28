@@ -1,8 +1,7 @@
-import React from 'react';
-import styled from 'styled-components';
 import { TextContent } from '@patternfly/react-core';
-import remarkGfm from 'remark-gfm';
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import styled from 'styled-components';
 export type MarkdownPreviewProps = {
   value: string | undefined;
   label?: string | undefined;
@@ -12,7 +11,7 @@ export function PageMarkdownDetail(props: MarkdownPreviewProps) {
   const { value, label } = props;
   return (
     <PreviewLabelContainer className="pf-v5-c-form__group">
-      {label && <LabelSpan>{label}</LabelSpan>}
+      {label && <LabelDiv>{label}</LabelDiv>}
       <PreviewContainer>
         <TextContent>
           {<ReactMarkdown remarkPlugins={[remarkGfm]}>{value}</ReactMarkdown>}
@@ -22,13 +21,14 @@ export function PageMarkdownDetail(props: MarkdownPreviewProps) {
   );
 }
 
-const LabelSpan = styled.span`
+const LabelDiv = styled.div`
   font-size: 14px;
   font-weight: bold;
+  margin-bottom: 8px;
 `;
 
 const PreviewLabelContainer = styled.div`
-  padding: 0px 24px 24px 24px;
+  grid-column: span 3;
 `;
 
 const PreviewContainer = styled.div`

@@ -17,8 +17,8 @@ import { useClipboard } from '../../hooks/useClipboard';
 import { useID } from '../../hooks/useID';
 import { downloadTextFile } from '../../utils/download-file';
 import { PageFormGroup } from './PageFormGroup';
-import { useRequiredValidationRule } from './validation-hooks';
 import { PageMarkdownDetail } from './PageMarkdownDetail';
+import { useRequiredValidationRule } from './validation-hooks';
 
 export type PageFormMarkdownInputProps<
   TFieldValues extends FieldValues = FieldValues,
@@ -132,6 +132,7 @@ export function PageFormMarkdown<
                 onDrop={onDrop}
                 isDisabled={isSubmitting || props.isReadOnly}
                 inputRef={dropZoneInputRef}
+                accept={{ 'text/markdown': ['.md'] }}
               >
                 <DataEditor
                   data-cy={id}
