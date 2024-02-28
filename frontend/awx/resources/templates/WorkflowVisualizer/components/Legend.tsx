@@ -122,7 +122,7 @@ export const Legend = () => {
               </DescriptionListDescription>
               <DescriptionListDescription>
                 <LegendDescription
-                  label={t('Run on always')}
+                  label={t('Run always')}
                   icon={
                     <Icon status="info">
                       <CircleIcon />

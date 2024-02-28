@@ -1,40 +1,48 @@
-import { TopologySideBar as PFTopologySideBar } from '@patternfly/react-topology';
-import { WorkflowNode } from '../../../interfaces/WorkflowNode';
 import { useTranslation } from 'react-i18next';
-import { ActionList, Button, Title } from '@patternfly/react-core';
-import styled from 'styled-components';
-import { useGetDetailComponent } from './hooks/useGetDetailComponent';
+import { ActionList, Button, PageSection } from '@patternfly/react-core';
+import { useVisualizationController } from '@patternfly/react-topology';
+import { Scrollable } from '../../../../../framework';
+import { useCloseSidebar, useGetDetailComponent } from './hooks';
+import { useViewOptions } from './ViewOptionsProvider';
+import { SidebarHeader } from './components';
 
-const TopologySideBar = styled(PFTopologySideBar)`
-  padding-top: 20px;
-  padding-left: 20px;
-`;
-export function WorkflowVisualizerNodeDetails(props: {
-  selectedNode: WorkflowNode;
-  setSelectedNode: (node: WorkflowNode | undefined) => void;
-}) {
-  const { selectedNode, setSelectedNode } = props;
+import type { WorkflowNode } from '../../../interfaces/WorkflowNode';
+import type { ControllerState, GraphNode } from './types';
+
+export function WorkflowVisualizerNodeDetails({ node }: { node: GraphNode }) {
   const { t } = useTranslation();
+  const closeSidebar = useCloseSidebar();
+  const { removeNodes } = useViewOptions();
+  const { setSidebarMode } = useViewOptions();
 
-  const getDetails = useGetDetailComponent(selectedNode);
+  const nodeData = node.getData()?.resource as WorkflowNode;
+  const getDetails = useGetDetailComponent(nodeData);
+
+  const controller = useVisualizationController();
+  const { RBAC } = controller.getState<ControllerState>();
+
+  const handleEdit = () => setSidebarMode('edit');
+  const handleRemove = () => {
+    removeNodes([node]);
+    closeSidebar();
+  };
 
   return (
-    <TopologySideBar
-      data-cy="workflow-topology-sidebar"
-      show
-      header={<Title headingLevel="h1">{t('Node details')}</Title>}
-      resizable
-      onClose={() => setSelectedNode(undefined)}
-    >
-      {getDetails}
-      <ActionList data-cy="workflow-topology-sidebar-actions" style={{ paddingBottom: '20px' }}>
-        <Button variant="primary" onClick={() => {}}>
-          {t('Edit')}
-        </Button>
-        <Button variant="danger" onClick={() => {}}>
-          {t('Remove')}
-        </Button>
-      </ActionList>
-    </TopologySideBar>
+    <>
+      <SidebarHeader title={t('Node details')} onClose={closeSidebar} />
+      <Scrollable borderTop>{getDetails}</Scrollable>
+      {RBAC?.edit && (
+        <PageSection variant="light" isFilled={false} className="bg-lighten border-top">
+          <ActionList data-cy="workflow-topology-sidebar-actions">
+            <Button data-cy="edit-node" variant="primary" onClick={handleEdit}>
+              {t('Edit')}
+            </Button>
+            <Button data-cy="remove-node" variant="danger" onClick={handleRemove}>
+              {t('Remove')}
+            </Button>
+          </ActionList>
+        </PageSection>
+      )}
+    </>
   );
 }

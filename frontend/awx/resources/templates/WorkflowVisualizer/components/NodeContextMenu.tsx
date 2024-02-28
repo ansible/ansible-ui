@@ -1,7 +1,19 @@
 import { ReactElement } from 'react';
-import { useTranslation } from 'react-i18next';
-import { ContextMenuSeparator, ContextMenuItem } from '@patternfly/react-topology';
+import {
+  ContextMenuSeparator,
+  ContextMenuItem,
+  action,
+  useVisualizationController,
+  useVisualizationState,
+  Node,
+  NodeModel,
+} from '@patternfly/react-topology';
 import { PencilAltIcon, MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
+
+import { useTranslation } from 'react-i18next';
+import { useViewOptions } from '../ViewOptionsProvider';
+import { GraphNodeData } from '../types';
+import { START_NODE_ID } from '../constants';
 
 interface MenuItem {
   key: string;
@@ -11,44 +23,67 @@ interface MenuItem {
   onClick?: () => void;
 }
 
-export function useNodeMenuItems(): MenuItem[] {
+export function useNodeMenuItems(element: Node<NodeModel, GraphNodeData>): MenuItem[] {
   const { t } = useTranslation();
-  return [
-    {
-      key: 'edit-node',
-      icon: <PencilAltIcon />,
-      label: t('Edit node'),
-      onClick: () => alert(`Selected: Edit node`),
-    },
-    {
-      key: 'add-link',
-      icon: <PlusCircleIcon />,
-      label: t('Add link'),
-      onClick: () => alert(`Selected: Add Link`),
-    },
-    {
-      key: 'add-node-and-link',
-      icon: <PlusCircleIcon />,
-      label: t('Add node and link'),
-      onClick: () => alert(`Selected: Add Node and Link`),
-    },
-    {
-      key: 'separator',
-      label: '-',
-    },
-    {
-      key: 'remove-node',
-      icon: <MinusCircleIcon />,
-      isDanger: true,
-      label: t('Remove node'),
-      onClick: () => alert(`Selected: Remove Node`),
-    },
-  ];
+  const { selectedIds } = useVisualizationController().getState<{ selectedIds: string[] }>();
+  const { setSidebarMode } = useViewOptions();
+  const [_, setSelectedIds] = useVisualizationState('selectedIds', selectedIds);
+  const { removeNodes } = useViewOptions();
+  const [__, setSourceNode] = useVisualizationState('sourceNode');
+  const id = element.getId();
+
+  return id === START_NODE_ID
+    ? [
+        {
+          key: 'add-node',
+          icon: <PlusCircleIcon />,
+          label: t('Add node'),
+          onClick: () => {
+            setSidebarMode('add');
+          },
+        },
+      ]
+    : [
+        {
+          key: 'edit-node',
+          icon: <PencilAltIcon />,
+          label: t('Edit node'),
+          onClick: () => {
+            action(() => {
+              setSidebarMode('edit');
+              setSelectedIds([id]);
+            })();
+          },
+        },
+        {
+          key: 'add-node-and-link',
+          icon: <PlusCircleIcon />,
+          label: t('Add node and link'),
+          onClick: () => {
+            setSidebarMode('add');
+            setSourceNode(element);
+          },
+        },
+        {
+          key: 'separator',
+          label: '-',
+        },
+        {
+          key: 'remove-node',
+          icon: <MinusCircleIcon />,
+          isDanger: true,
+          label: t('Remove node'),
+          onClick: () => {
+            removeNodes([element]);
+          },
+        },
+      ];
 }
 
-export function NodeContextMenu() {
-  const items = useNodeMenuItems();
+export function NodeContextMenu(props: { element: Node<NodeModel, GraphNodeData> }) {
+  const { element } = props;
 
+  const items = useNodeMenuItems(element);
   return items.map((item) => {
     if (item.label === '-') {
       return <ContextMenuSeparator component="li" key={`separator:${item.key}`} />;
@@ -60,7 +95,9 @@ export function NodeContextMenu() {
         key={item.key}
         icon={item.icon}
         isDanger={item.isDanger}
-        onClick={item.onClick}
+        onClick={() => {
+          item?.onClick && item.onClick();
+        }}
       >
         {item.label}
       </ContextMenuItem>

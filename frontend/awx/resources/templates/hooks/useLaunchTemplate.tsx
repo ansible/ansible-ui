@@ -36,10 +36,10 @@ export function useLaunchTemplate() {
         let launchJob;
         if (template.type === 'job_template') {
           launchJob = await postRequest(launchEndpoint, {});
+          navigate(getJobOutputUrl(launchJob as UnifiedJob));
         } else if (template.type === 'workflow_job_template') {
           launchJob = await postRequest(launchEndpoint, {});
         }
-        navigate(getJobOutputUrl(launchJob as UnifiedJob));
       } else {
         if (template.type === 'job_template') {
           pageNavigate(AwxRoute.TemplateLaunchWizard, { params: { id: template.id } });
