@@ -538,6 +538,16 @@ Cypress.Commands.add('deleteHubRole', (options: HubDeleteRoleOptions) => {
 });
 
 // HUB Remote Commands
+export type HubQueryRemotesOptions = { qs?: { limit?: number } } & Omit<
+  HubGetRequestOptions,
+  'url'
+>;
+Cypress.Commands.add('queryHubRemotes', (options?: HubQueryRemotesOptions) => {
+  cy.hubGetRequest({
+    ...options,
+    url: pulpAPI`/remotes/ansible/collection/`,
+  });
+});
 export type HubCreateRemoteOptions = { remote: Partial<HubRemote> } & Omit<
   HubPostRequestOptions,
   'url' | 'body'

@@ -34,4 +34,18 @@ describe('HUB API Commands', () => {
       cy.deleteHubRemote(remote);
     });
   });
+
+  it('should cleanup old e2e remotes', () => {
+    const oneHourAgo = new Date();
+    oneHourAgo.setHours(oneHourAgo.getHours() - 1);
+    cy.queryHubRemotes().then((response) => {
+      for (const remote of response.body.results) {
+        if (remote.name.startsWith('e2e_')) {
+          if (new Date(remote.pulp_created ?? '') < oneHourAgo) {
+            cy.deleteHubRemote(remote);
+          }
+        }
+      }
+    });
+  });
 });

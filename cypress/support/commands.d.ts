@@ -43,6 +43,7 @@ import { RemoteRegistry } from '../../frontend/hub/administration/remote-registr
 import { HubRemote } from '../../frontend/hub/administration/remotes/Remotes';
 import { Repository } from '../../frontend/hub/administration/repositories/Repository';
 import { CollectionVersionSearch } from '../../frontend/hub/collections/Collection';
+import { PulpItemsResponse } from '../../frontend/hub/common/useHubView';
 import { ExecutionEnvironment as HubExecutionEnvironment } from '../../frontend/hub/execution-environments/ExecutionEnvironment';
 import { HubNamespace } from '../../frontend/hub/namespaces/HubNamespace';
 import { IAwxResources } from './awx-commands';
@@ -64,6 +65,7 @@ import {
   HubPatchRequestOptions,
   HubPostRequestOptions,
   HubPutRequestOptions,
+  HubQueryRemotesOptions,
   HubRequestOptions,
 } from './hub-commands';
 
@@ -1056,6 +1058,9 @@ declare global {
       deleteHubRole(options: HubDeleteRoleOptions): Cypress.Chainable<void>;
 
       // HUB Remote Commands
+      queryHubRemotes(
+        options?: HubQueryRemotesOptions
+      ): Cypress.Chainable<Response<PulpItemsResponse<HubRemote>>>;
       createHubRemote(options?: HubCreateRemoteOptions): Cypress.Chainable<HubRemote>;
       deleteHubRemote(options: HubDeleteRemoteOptions): Cypress.Chainable<void>;
 
