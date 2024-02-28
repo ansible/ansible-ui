@@ -23,6 +23,7 @@ export interface Instance {
     peers: string;
     health_check?: string;
     install_bundle?: string;
+    receptor_addresses: string;
   };
   summary_fields: {
     user_capabilities: {
@@ -54,4 +55,19 @@ export interface Instance {
   node_state: string;
   ip_address: null;
   listener_port: number;
+}
+
+export interface Peer extends Instance {
+  id: number;
+  url: string;
+  address: string;
+  port: number;
+  protocol: string;
+  websocket_path: string;
+  is_internal: boolean;
+  canonical: boolean;
+  instance: number;
+  peers_from_control_nodes: boolean;
+  full_address: string;
+  name: string;
 }

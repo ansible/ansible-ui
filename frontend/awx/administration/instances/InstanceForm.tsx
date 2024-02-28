@@ -15,7 +15,6 @@ import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFor
 import { AwxPageForm } from '../../common/AwxPageForm';
 import { Instance } from '../../interfaces/Instance';
 import { AwxRoute } from '../../main/AwxRoutes';
-import { PageFormPeersSelect } from './components/PageFormPeersSelect';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { awxAPI } from '../../common/api/awx-utils';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
@@ -186,10 +185,6 @@ function InstanceInputs(props: { mode: 'create' | 'edit' }) {
         isRequired
         isDisabled={mode === 'edit'}
       />
-      <PageFormPeersSelect
-        name="peers"
-        labelHelp={t('Select the peers instances.')}
-      ></PageFormPeersSelect>
       <PageFormSection title={t('Options')} singleColumn>
         <PageFormCheckbox<IInstanceInput>
           name="enabled"

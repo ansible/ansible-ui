@@ -1520,26 +1520,27 @@ Cypress.Commands.add('editAwxApplication', (application: Application, name: stri
   }
 });
 
-Cypress.Commands.add('createAwxInstance', (hostname: string) => {
-  cy.awxRequestPost<
-    Pick<
-      Instance,
-      | 'hostname'
-      | 'enabled'
-      | 'managed_by_policy'
-      | 'peers_from_control_nodes'
-      | 'node_state'
-      | 'node_type'
-    >,
-    Instance
-  >(awxAPI`/instances/`, {
-    hostname: hostname,
-    enabled: true,
-    managed_by_policy: false,
-    peers_from_control_nodes: false,
-    node_state: 'installed',
-    node_type: 'execution',
-  });
+Cypress.Commands.add('createAwxInstance', (hostname: string, listener_port?: number) => {
+  if (listener_port) {
+    cy.awxRequestPost<Partial<Instance>, Instance>(awxAPI`/instances/`, {
+      hostname: hostname,
+      listener_port: listener_port,
+      enabled: true,
+      managed_by_policy: false,
+      peers_from_control_nodes: false,
+      node_state: 'installed',
+      node_type: 'execution',
+    });
+  } else {
+    cy.awxRequestPost<Partial<Instance>, Instance>(awxAPI`/instances/`, {
+      hostname: hostname,
+      enabled: true,
+      managed_by_policy: false,
+      peers_from_control_nodes: false,
+      node_state: 'installed',
+      node_type: 'execution',
+    });
+  }
 });
 
 Cypress.Commands.add('removeAwxInstance', (id: string) => {
