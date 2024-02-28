@@ -96,7 +96,10 @@ describe('Approvals', () => {
       cy.contains(namespace.name);
       cy.contains(collectionName);
 
-      cy.deleteCollection(collectionName, namespace.name, 'published');
+      cy.deleteHubCollection({
+        repository: { name: 'published' },
+        collection_version: { namespace: namespace.name, name: collectionName },
+      });
       cy.deleteHubNamespace(namespace);
     });
   });

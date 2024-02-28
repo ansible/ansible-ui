@@ -561,3 +561,15 @@ Cypress.Commands.add('deleteHubRemote', (options: HubDeleteRemoteOptions) => {
     url: pulpAPI`/remotes/ansible/collection/${pulpUUID ?? ''}/`,
   });
 });
+
+// HUB Collection Commands
+export type HubDeleteCollectionOptions = {
+  repository: { name: string };
+  collection_version: { name: string; namespace: string };
+} & Omit<HubDeleteRequestOptions, 'url'>;
+Cypress.Commands.add('deleteHubCollection', (options: HubDeleteCollectionOptions) => {
+  cy.hubDeleteRequest({
+    ...options,
+    url: hubAPI`/v3/plugin/ansible/content/${options.repository.name}/collections/index/${options.collection_version.namespace}/${options.collection_version.name}/`,
+  });
+});

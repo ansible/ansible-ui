@@ -53,6 +53,7 @@ import {
   HubCreateRemoteRegistryOptions,
   HubCreateRepositoryOptions,
   HubCreateRoleOptions,
+  HubDeleteCollectionOptions,
   HubDeleteExecutionEnvironmentOptions,
   HubDeleteNamespaceOptions,
   HubDeleteRemoteOptions,
@@ -1060,6 +1061,9 @@ declare global {
       // HUB Remote Commands
       createHubRemote(options?: HubCreateRemoteOptions): Cypress.Chainable<HubRemote>;
       deleteHubRemote(options: HubDeleteRemoteOptions): Cypress.Chainable<void>;
+
+      // HUB Collection Commands
+      deleteHubCollection(options: HubDeleteCollectionOptions): Cypress.Chainable<void>;
 
       // HUB GalaxyKit Commands
       galaxykit(operation: string, ...args: string[]): Cypress.Chainable<string[]>;
