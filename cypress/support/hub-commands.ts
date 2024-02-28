@@ -14,7 +14,6 @@ import { HubNamespace } from '../../frontend/hub/namespaces/HubNamespace';
 import { galaxykitPassword, galaxykitUsername } from './e2e';
 import { hubAPI, pulpAPI } from './formatApiPathForHub';
 import { escapeForShellCommand, randomE2Ename } from './utils';
-import shell from 'shell-escape-tag';
 
 const apiPrefix = Cypress.env('HUB_API_PREFIX') as string;
 
@@ -465,13 +464,10 @@ Cypress.Commands.add(
 
     const server: string = (Cypress.env('HUB_HOST') as string) || 'localhost:5001';
 
-    const podmanPull = shell`podman pull ${registry + remoteName}` as string;
-    const podmanImageTag: string =
-      shell`podman image tag ${remoteName} ${server}/${localName}:latest` as string;
-    const podmanLogin: string =
-      shell`podman login ${server} --tls-verify=false --username=admin --password=admin` as string;
-    const podmanPush: string =
-      shell`podman push ${server}/${localName}:latest --tls-verify=false` as string;
+    const podmanPull = `podman pull ${registry + remoteName}`;
+    const podmanImageTag: string = `podman image tag ${remoteName} ${server}/${localName}:latest`;
+    const podmanLogin: string = `podman login ${server} --tls-verify=false --username=admin --password=admin`;
+    const podmanPush: string = `podman push ${server}/${localName}:latest --tls-verify=false`;
     cy.exec(podmanPull)
       .then((resp: Cypress.Exec) => log(podmanPull, resp))
       .then(() => cy.exec(podmanImageTag))
