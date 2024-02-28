@@ -2945,41 +2945,41 @@ export interface EventStreamRead {
 /**
  */
 export enum WebhookTypeEnum {
-  GitHub='GitHub',
-  GitLab='GitLab',
-  ServiceNow='Service Now',
-  Generic='Generic',
+  GitHub = 'GitHub',
+  GitLab = 'GitLab',
+  ServiceNow = 'Service Now',
+  Generic = 'Generic',
 }
 export interface Webhook {
-  name?:string,
-  test_mode?: boolean,
-  user: string,
-  hmac_algorithm?: string,
-  header_key?: string,
-  hmac_signature_prefix: string,
-  hmac_format?: string,
-  auth_type: string,
-  additional_data_headers?: string[],
-  id: number,
-  url: string,
-  created_at: string
-  modified_at:string,
-  test_content_type?: string,
-  test_content?: string,
-  test_error_message?: string,
+  name?: string;
+  test_mode?: boolean;
+  user: string;
+  hmac_algorithm?: string;
+  header_key?: string;
+  hmac_signature_prefix: string;
+  hmac_format?: string;
+  auth_type: string;
+  additional_data_headers?: string[];
+  id: number;
+  url: string;
+  created_at: string;
+  modified_at: string;
+  test_content_type?: string;
+  test_content?: string;
+  test_error_message?: string;
 }
 
 export interface WebhookCreate {
-  type: WebhookTypeEnum,
-  name:	string,
-  hmac_algorithm?:	string,
-  header_key?:	string,
-  auth_type?:string,
-  hmac_signature_prefix?: string,
-  hmac_format?: string,
-  secret: string,
-  test_mode?: boolean,
-  additional_data_headers?: string[],
+  type: WebhookTypeEnum;
+  name: string;
+  hmac_algorithm?: string;
+  header_key?: string;
+  auth_type?: string;
+  hmac_signature_prefix?: string;
+  hmac_format?: string;
+  secret: string;
+  test_mode?: boolean;
+  additional_data_headers?: string[];
 }
 
 /** Serializer for Webhook reference. */
