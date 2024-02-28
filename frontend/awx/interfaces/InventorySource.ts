@@ -7,9 +7,18 @@ import {
 export interface InventorySource
   extends Omit<
     SwaggerInventorySource,
-    'id' | 'type' | 'name' | 'source' | 'inventory' | 'related' | 'summary_fields' | 'scm_branch'
+    | 'id'
+    | 'type'
+    | 'name'
+    | 'description'
+    | 'source'
+    | 'inventory'
+    | 'related'
+    | 'summary_fields'
+    | 'scm_branch'
   > {
   name: string;
+  description: string;
   id: number;
   source: string;
   scm_branch: string;

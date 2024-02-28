@@ -3,10 +3,10 @@ import { PageDetail, PageDetails } from '../../../../../../framework';
 import { WorkflowNode } from '../../../../interfaces/WorkflowNode';
 
 function formatTimeout(
-  timeout: number | null,
+  timeout: number | undefined,
   t: (s: string, v?: { minutes: string; seconds: string }) => string
 ) {
-  if (timeout === null) return;
+  if (timeout === undefined) return;
   const minutes = Math.floor(timeout / 60);
   const seconds = timeout - Math.floor(timeout / 60) * 60;
   return t('{{minutes}} min {{seconds}} sec ', {
