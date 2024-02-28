@@ -59,6 +59,7 @@ describe('Approvals', () => {
       cy.contains('button', 'Select').click();
     });
     cy.getModal().should('not.exist');
+    cy.get('#refresh').click();
 
     // Verify Approved
     cy.filterTableBySingleText(collectionName);
@@ -88,6 +89,7 @@ describe('Approvals', () => {
       cy.containsBy('button', 'Close').click();
     });
     cy.getModal().should('not.exist');
+    cy.get('#refresh').click();
 
     // Verify Rejected
     cy.filterTableBySingleText(collectionName);
