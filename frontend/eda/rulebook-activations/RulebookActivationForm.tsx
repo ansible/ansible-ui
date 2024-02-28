@@ -25,7 +25,6 @@ import { EdaPageForm } from '../common/EdaPageForm';
 import { edaAPI } from '../common/eda-utils';
 import { EdaCredential } from '../interfaces/EdaCredential';
 import { EdaDecisionEnvironment } from '../interfaces/EdaDecisionEnvironment';
-import { EdaEventStream } from '../interfaces/EdaEventStream';
 import { EdaExtraVars } from '../interfaces/EdaExtraVars';
 import { EdaProject } from '../interfaces/EdaProject';
 import { EdaResult } from '../interfaces/EdaResult';
@@ -118,9 +117,6 @@ export function RulebookActivationInputs() {
 
   const { data: tokens } = useGet<EdaResult<AwxToken>>(
     edaAPI`/users/me/awx-tokens/?page=1&page_size=200`
-  );
-  const { data: eventStreams } = useGet<EdaResult<EdaEventStream>>(
-    edaAPI`/event-streams/?page=1&page_size=200`
   );
   const { data: webhooks } = useGet<EdaResult<EdaWebhook>>(edaAPI`/webhooks/?page=1&page_size=200`);
 
