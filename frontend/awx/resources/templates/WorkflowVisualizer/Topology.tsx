@@ -205,7 +205,7 @@ export const Visualizer = ({ data: { workflowNodes = [], template } }: TopologyP
       },
     };
 
-    visualization.fromModel(model, false);
+    visualization.fromModel(model, true);
   }, [t, visualization, createEdge, workflowNodes]);
 
   return (
