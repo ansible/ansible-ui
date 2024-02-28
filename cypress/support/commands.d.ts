@@ -211,7 +211,7 @@ declare global {
       filterTableByText(text: string, variant?: 'SingleText' | 'MultiText'): Chainable<void>;
 
       /** Filter the table using it's current filter by entering text in 'ToolbarFilterType.SingleText' filter. */
-      filterTableBySingleText(text: string): Chainable<void>;
+      filterTableBySingleText(text: string, wait?: boolean): Chainable<void>;
 
       /** Filter the table using specified filter and text. */
       filterTableByTypeAndText(filterLabel: string | RegExp, text: string): Chainable<void>;
