@@ -19,6 +19,7 @@ export function Jobs() {
   const product: string = process.env.PRODUCT ?? t('AWX');
   const toolbarFilters = useJobsFilters();
   const tableColumns = useJobsColumns();
+
   const view = useAwxView<UnifiedJob>({
     url: awxAPI`/unified_jobs/`,
     queryParams: {
@@ -27,6 +28,7 @@ export function Jobs() {
     toolbarFilters,
     tableColumns,
   });
+
   usePersistentFilters('jobs');
   const config = useAwxConfig();
 

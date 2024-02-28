@@ -5,6 +5,7 @@ import { usePersistentFilters } from '../../../common/PersistentFilters';
 import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxView } from '../../common/useAwxView';
 import { useHostsJobsColumns } from '../../resources/inventories/inventoryHostsPage/hooks/useHostsJobsColumns';
+import { useJobsColumns } from './hooks/useJobsColumns';
 import { useJobRowActions } from '../../views/jobs/hooks/useJobRowActions';
 import { useJobToolbarActions } from '../../views/jobs/hooks/useJobToolbarActions';
 import { UnifiedJob } from '../../interfaces/UnifiedJob';
@@ -12,8 +13,21 @@ import { useJobsFilters } from '../../views/jobs/hooks/useJobsFilters';
 
 export function JobsList(props: { jobHosts?: string }) {
   const { t } = useTranslation();
-  const tableColumns = useHostsJobsColumns();
+  const tableColumns = useJobsColumns();
   const toolbarFilters = useJobsFilters();
+  const hostJobsColumns = useHostsJobsColumns();
+  const jobsColumns = useJobsColumns();
+  const getTableColumns = (jobHosts?: string) => {
+    if (jobHosts) {
+      console.log('using hostJobsColumns');
+      console.log(hostJobsColumns);
+      return hostJobsColumns;
+    } else {
+      console.log('using JobsColumns');
+      console.log(jobsColumns);
+      return jobsColumns;
+    }
+  };
   const getQueryParams = (jobHosts?: string) => {
     const jobsQueryParams: { [key: string]: string } = {};
     if (jobHosts) {
@@ -24,7 +38,7 @@ export function JobsList(props: { jobHosts?: string }) {
   const view = useAwxView<UnifiedJob>({
     url: awxAPI`/unified_jobs/`,
     toolbarFilters,
-    tableColumns,
+    tableColumns: getTableColumns(props.jobHosts),
     queryParams: getQueryParams(props.jobHosts),
   });
   const rowActions = useJobRowActions(view.unselectItemsAndRefresh);
