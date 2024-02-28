@@ -17,7 +17,7 @@ describe('Collections- List View', () => {
       cy.approveCollection(collection, namespace, result.version as string);
       cy.navigateTo('hub', Collections.url);
       cy.get('[data-cy="table-view"]').click();
-      cy.filterTableBySingleText(collection);
+      cy.filterTableBySingleText(collection, true);
       cy.get('[data-cy="actions-column-cell"]').click();
       cy.get('[data-cy="sign-collection"]').click();
       cy.get('#confirm').click();
@@ -57,7 +57,7 @@ describe('Collections- List View', () => {
       cy.url().should('include', 'collections');
       cy.verifyPageTitle(Collections.title);
       cy.get('[data-cy="table-view"]').click();
-      cy.filterTableBySingleText(collection);
+      cy.filterTableBySingleText(collection, true);
       cy.get('[data-cy="actions-column-cell"]').click();
       cy.get('[data-cy="delete-entire-collection-from-system"]').click({ force: true });
       cy.get('#confirm').click();
