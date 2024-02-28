@@ -6,7 +6,7 @@ import { LastModifiedPageDetail } from '../../../common/LastModifiedPageDetail';
 import { useGet } from '../../../common/crud/useGet';
 import { edaAPI } from '../../common/eda-utils';
 import { EdaWebhook } from '../../interfaces/EdaWebhook';
-import { DescriptionListGroup, DescriptionListTerm, PageSection } from '@patternfly/react-core';
+import { DescriptionListGroup, DescriptionListTerm } from '@patternfly/react-core';
 import { StandardPopover } from '../../../../framework/components/StandardPopover';
 import { PageDetailCodeEditor } from '../../../../framework/PageDetails/PageDetailCodeEditor';
 
