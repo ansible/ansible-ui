@@ -48,16 +48,16 @@ export function CreateRulebookActivation() {
 
   const onSubmit: PageFormSubmitHandler<IEdaRulebookActivationInputs> = async ({
     rulebook,
-    variables,
+    extra_var,
     ...rulebookActivation
   }) => {
-    let extra_var: { id: number } | undefined;
-    if (variables && variables.trim().length > 0) {
-      extra_var = await postEdaExtraVars(edaAPI`/extra-vars/`, {
-        extra_var: variables,
+    let extra_var_id: { id: number } | undefined;
+    if (extra_var && extra_var.trim().length > 0) {
+      extra_var_id = await postEdaExtraVars(edaAPI`/extra-vars/`, {
+        extra_var: extra_var,
       });
     }
-    rulebookActivation.extra_var_id = extra_var?.id;
+    rulebookActivation.extra_var_id = extra_var_id?.id;
     rulebookActivation.rulebook_id = rulebook?.id;
     rulebookActivation.credentials = rulebookActivation.credential_refs
       ? rulebookActivation.credential_refs.map((credential) => `${credential.id || ''}`)
@@ -88,7 +88,7 @@ export function CreateRulebookActivation() {
         defaultValue={{
           restart_policy: RestartPolicyEnum.OnFailure,
           is_enabled: true,
-          variables: '',
+          extra_var: '',
         }}
       >
         <RulebookActivationInputs />
@@ -269,7 +269,7 @@ export function RulebookActivationInputs() {
       />
       <PageFormSection singleColumn>
         <PageFormDataEditor<IEdaRulebookActivationInputs>
-          name="variables"
+          name="extra_var"
           label={t('Variables')}
           format="yaml"
           labelHelp={t(
@@ -287,7 +287,7 @@ type IEdaRulebookActivationInputs = Omit<EdaRulebookActivationCreate, 'event_str
   rulebook: EdaRulebook;
   event_streams?: string[];
   project_id: string;
-  variables: string;
+  extra_var: string;
   awx_token_id: number;
   credentials?: string[];
   credential_refs?: EdaCredential[];
