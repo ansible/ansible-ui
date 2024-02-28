@@ -23,9 +23,7 @@ describe('Approvals', () => {
   });
 
   after(() => {
-    cy.getHubCollection(collectionName).then((collection) => {
-      cy.deleteHubCollection(collection);
-    });
+    cy.deleteHubCollectionByName(collectionName);
     cy.deleteHubNamespace(namespace);
     cy.deleteHubRepository(repository);
   });

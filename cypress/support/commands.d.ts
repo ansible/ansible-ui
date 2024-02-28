@@ -1065,6 +1065,7 @@ declare global {
       // HUB Collection Commands
       getHubCollection(name: string): Cypress.Chainable<CollectionVersionSearch>;
       deleteHubCollection(options: HubDeleteCollectionOptions): Cypress.Chainable<void>;
+      deleteHubCollectionByName(name: string): Cypress.Chainable<void>;
 
       // HUB GalaxyKit Commands
       galaxykit(operation: string, ...args: string[]): Cypress.Chainable<string[]>;

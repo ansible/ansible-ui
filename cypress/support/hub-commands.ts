@@ -584,3 +584,10 @@ Cypress.Commands.add('deleteHubCollection', (options: HubDeleteCollectionOptions
     }/`,
   });
 });
+Cypress.Commands.add('deleteHubCollectionByName', (name: string) => {
+  cy.getHubCollection(name).then((collection) => {
+    if (collection) {
+      cy.deleteHubCollection({ collection_version: collection.collection_version });
+    }
+  });
+});
