@@ -1,9 +1,11 @@
+import { ExecutionEnvironment } from './ExecutionEnvironment';
+import { Inventory } from './Inventory';
+
 export interface WorkflowNode {
   id: number;
   type: string;
   url: string;
   related: {
-    named_url: string;
     labels: string;
     credentials: string;
     instance_groups: string;
@@ -24,13 +26,23 @@ export interface WorkflowNode {
       id: number;
       name: string;
       description: string;
-      unified_job_type: UnifiedJobType;
-      timeout: number;
+      unified_job_type:
+        | 'job'
+        | 'workflow_job'
+        | 'project_update'
+        | 'workflow_approval'
+        | 'inventory_update'
+        | 'system_job';
+      timeout?: number;
     };
+    inventory: Inventory;
+    execution_environment: ExecutionEnvironment;
   };
   created: string;
   modified: string;
-  extra_data: object;
+  extra_data: {
+    days?: number;
+  };
   inventory: null;
   scm_branch: null;
   job_type: null;
@@ -42,7 +54,7 @@ export interface WorkflowNode {
   execution_environment: null;
   forks: null;
   job_slice_count: null;
-  timeout: string | null;
+  timeout: number | null;
   workflow_job_template: number;
   unified_job_template: number;
   success_nodes: number[];
@@ -55,16 +67,7 @@ export interface WorkflowNode {
 export interface WorkflowApprovalNode {
   name: string;
   type: 'Workflow Approval';
-  convergence: string;
+  all_parents_must_converge: string;
   description?: string;
   timeout?: string;
-}
-
-export enum UnifiedJobType {
-  job = 'job',
-  workflow_job = 'workflow_job',
-  project_update = 'project_update',
-  workflow_approval = 'workflow_approval',
-  inventory_update = 'inventory_update',
-  system_job = 'system_job',
 }

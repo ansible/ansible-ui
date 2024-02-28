@@ -28,6 +28,52 @@ import { awxAPI } from './formatApiPathForAwx';
 
 //  AWX related custom command implementation
 
+Cypress.Commands.add(
+  'editNodeInVisualizer',
+  (nodeName: string, newNodeType: string, newNodeName?: string) => {
+    cy.contains('text', nodeName)
+      .parents('[data-kind="node"]')
+      .within(() => {
+        cy.get('.pf-topology__node__action-icon').click();
+      });
+    cy.get('li[data-cy="edit-node"] ').click();
+    cy.get('[data-cy="workflow-topology-sidebar"]').should('be.visible');
+    cy.get('[data-cy="node-type-form-group"]').within(() => {
+      cy.get('button').click();
+      cy.contains('li', newNodeType).click();
+    });
+    if (newNodeType === 'Approval' && newNodeName !== undefined) {
+      cy.get('[data-cy="node-resource-name-form-group"]').within(() => {
+        cy.get('[data-cy="node-resource-name"]').clear().type(newNodeName);
+      });
+    }
+  }
+);
+
+Cypress.Commands.add('removeNodeInVisualizer', (nodeName: string) => {
+  cy.contains('text', nodeName)
+    .parents('[data-kind="node"]')
+    .within(() => {
+      cy.get('.pf-topology__node__action-icon').click();
+    });
+  cy.get('li[data-cy="remove-node"] ').click();
+});
+
+/* Custom Cypress command called `removeAllNodesFromVisualizerToolbar`.
+This command removes all the nodes via the visualizer toolbar.
+It verifies that the bulk remove modal is visible, clicks the confirm checkbox,
+clicks the remove all nodes button, asserts all nodes were removed
+successfully, and closes the modal.
+*/
+Cypress.Commands.add('removeAllNodesFromVisualizerToolbar', () => {
+  cy.get('[data-cy="workflow-visualizer-toolbar-kebab"]').click();
+  cy.get('[data-cy="workflow-visualizer-toolbar-remove-all"]').click();
+  cy.clickModalConfirmCheckbox();
+  cy.clickModalButton('Remove all nodes');
+  cy.assertModalSuccess();
+  cy.clickModalButton('Close');
+});
+
 /* The above code is adding a custom Cypress command called
 `createAwxWorkflowVisualizerJobTemplateNode`. This command is used to create a new workflow job
 template node in an AWX (Ansible Tower) instance. */
@@ -159,6 +205,19 @@ Cypress.Commands.add(
   function (firstNode: WorkflowNode, secondNode: WorkflowNode) {
     cy.requestPost<WorkflowNode>(
       `/api/v2/workflow_job_template_nodes/${firstNode.id}/failure_nodes/`,
+      {
+        id: secondNode.id,
+      }
+    );
+  }
+);
+
+//Always Node creation
+Cypress.Commands.add(
+  'createWorkflowJTAlwaysNodeLink',
+  function (firstNode: WorkflowNode, secondNode: WorkflowNode) {
+    cy.requestPost<WorkflowNode>(
+      `/api/v2/workflow_job_template_nodes/${firstNode.id}/always_nodes/`,
       {
         id: secondNode.id,
       }
@@ -808,6 +867,19 @@ Cypress.Commands.add(
   }
 );
 
+Cypress.Commands.add(
+  'deleteAwxInventorySource',
+  (
+    inventorySource: InventorySource,
+    options?: {
+      /** Whether to fail on response codes other than 2xx and 3xx */
+      failOnStatusCode?: boolean;
+    }
+  ) => {
+    cy.awxRequestDelete(awxAPI`/inventory_sources/${inventorySource.id.toString()}/`, options);
+  }
+);
+
 Cypress.Commands.add('createAWXSchedule', () => {
   cy.requestPost<Schedule>(awxAPI`/schedules/`, {
     name: 'E2E Schedule ' + randomString(4),
@@ -919,7 +991,7 @@ Cypress.Commands.add(
         cy.intercept(
           {
             method: 'GET',
-            url: awxAPI`/workflow_job_templates/${results.id.toString()}/workflow_nodes/`,
+            url: awxAPI`/workflow_job_templates/${results.id.toString()}/workflow_nodes/*`,
           },
           { fixture: fixtureFile }
         )
