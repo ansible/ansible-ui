@@ -32,6 +32,7 @@ describe('Approvals', () => {
     cy.hubLogin();
     cy.navigateTo('hub', Approvals.url);
     cy.verifyPageTitle(Approvals.title);
+    cy.clearAllFilters();
   });
 
   it('should load the approvals page', () => {
