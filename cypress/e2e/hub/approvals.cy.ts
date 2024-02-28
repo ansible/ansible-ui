@@ -37,7 +37,7 @@ describe('Approvals', () => {
 
   it('user should be able to view import logs', () => {
     // View Import Logs
-    cy.filterTableBySingleText(collectionName);
+    cy.filterTableBySingleText(collectionName, true);
     cy.clickTableRowPinnedAction(collectionName, 'view-import-logs', false);
     cy.verifyPageTitle(MyImports.title);
     cy.url().should('include', MyImports.url);
@@ -50,11 +50,11 @@ describe('Approvals', () => {
 
   it('user should be able to approve collection', () => {
     // Approve Collection
-    cy.filterTableBySingleText(collectionName);
+    cy.filterTableBySingleText(collectionName, true);
     cy.clickTableRowPinnedAction(collectionName, 'sign-and-approve', false);
     cy.getModal().within(() => {
       cy.contains('Select repositories');
-      cy.filterTableBySingleText('published');
+      cy.filterTableBySingleText('published', true);
       cy.get(`[name="data-list-check-published"]`).click();
       cy.contains('button', 'Select').click();
     });
@@ -62,7 +62,7 @@ describe('Approvals', () => {
     cy.get('#refresh').click();
 
     // Verify Approved
-    cy.filterTableBySingleText(collectionName);
+    cy.filterTableBySingleText(collectionName, true);
     cy.get('tr').should('have.length', 2);
     cy.getTableRowByText(collectionName, false).within(() => {
       cy.contains(collectionName);
@@ -73,7 +73,7 @@ describe('Approvals', () => {
 
     // Verify Collection
     cy.navigateTo('hub', Collections.url);
-    cy.filterTableBySingleText(collectionName);
+    cy.filterTableBySingleText(collectionName, true);
     cy.contains(collectionName);
     cy.contains(namespace.name);
     cy.contains('published');
@@ -81,7 +81,7 @@ describe('Approvals', () => {
 
   it('user should be able to reject collection', () => {
     // Reject Collection
-    cy.filterTableBySingleText(collectionName);
+    cy.filterTableBySingleText(collectionName, true);
     cy.clickTableRowPinnedAction(collectionName, 'reject', false);
     cy.getModal().within(() => {
       cy.get('input[id="confirm"]').click();
@@ -92,7 +92,7 @@ describe('Approvals', () => {
     cy.get('#refresh').click();
 
     // Verify Rejected
-    cy.filterTableBySingleText(collectionName);
+    cy.filterTableBySingleText(collectionName, true);
     cy.get('tr').should('have.length', 2);
     cy.getTableRowByText(collectionName, false).within(() => {
       cy.contains(collectionName);
