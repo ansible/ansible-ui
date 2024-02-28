@@ -43,9 +43,7 @@ export function CredentialDetails() {
       <PageDetail label={t('Created')}>
         {credential?.created_at ? formatDateString(credential.created_at) : ''}
       </PageDetail>
-      <LastModifiedPageDetail
-        value={credential?.modified_at ? formatDateString(credential.modified_at) : ''}
-      />
+      <LastModifiedPageDetail value={credential?.modified_at ? credential.modified_at : ''} />
     </PageDetails>
   );
 }
