@@ -1,5 +1,6 @@
 import { useCloseSidebar } from './useCloseSidebar';
 import { useCreateEdge } from './useCreateEdge';
+import { useDedupeOldNodes } from './useDedupeOldNodes';
 import { useGetDetailComponent } from './useGetDetailComponent';
 import { useRemoveGraphElements } from './useRemoveGraphElements';
 import { useRemoveNode } from './useRemoveNode';
@@ -10,6 +11,7 @@ import { useGetInitialValues, useNodeTypeStepDefaults } from './useGetInitialVal
 export {
   useCloseSidebar,
   useCreateEdge,
+  useDedupeOldNodes,
   useGetDetailComponent,
   useGetInitialValues,
   useNodeTypeStepDefaults,
