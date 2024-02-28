@@ -1,4 +1,4 @@
-import { Flex, FlexItem, TextContent, ToggleGroup, ToggleGroupItem } from '@patternfly/react-core';
+import { Flex, FlexItem, ToggleGroup, ToggleGroupItem } from '@patternfly/react-core';
 import { ReactNode, useCallback, useRef, useState } from 'react';
 import {
   Controller,
@@ -9,9 +9,6 @@ import {
   useFormContext,
 } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
-import styled from 'styled-components';
 import { DataEditorButtons, usePageAlertToaster } from '../..';
 import { DataEditor } from '../../components/DataEditor';
 import { DropZone } from '../../components/DropZone';
@@ -21,6 +18,7 @@ import { useID } from '../../hooks/useID';
 import { downloadTextFile } from '../../utils/download-file';
 import { PageFormGroup } from './PageFormGroup';
 import { useRequiredValidationRule } from './validation-hooks';
+import { PageMarkdownDetail } from './PageMarkdownDetail';
 
 export type PageFormMarkdownInputProps<
   TFieldValues extends FieldValues = FieldValues,
@@ -153,13 +151,7 @@ export function PageFormMarkdown<
                 />
               </DropZone>
             )}
-            {isExpanded && preview && (
-              <PreviewContainer>
-                <TextContent>
-                  {<ReactMarkdown remarkPlugins={[remarkGfm]}>{value}</ReactMarkdown>}
-                </TextContent>
-              </PreviewContainer>
-            )}
+            {isExpanded && preview && <PageMarkdownDetail value={value} />}
             {!isExpanded && <div className="pf-v5-c-form-control" />}
           </PageFormGroup>
         );
@@ -212,19 +204,3 @@ function MarkdownActions(props: {
     </Flex>
   );
 }
-
-const PreviewContainer = styled.div`
-  padding: 24px;
-  border: thin solid var(--pf-v5-global--BorderColor--100);
-  td,
-  th {
-    padding: 2px 16px 2px 0;
-    vertical-align: top;
-  }
-  code {
-    display: inline-block;
-    background: var(--pf-v5-global--BackgroundColor--200);
-    padding: 2px 6px;
-    border-radius: 6px;
-  }
-`;

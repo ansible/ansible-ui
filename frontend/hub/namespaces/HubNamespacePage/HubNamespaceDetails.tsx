@@ -4,20 +4,18 @@ import { PageDetailsFromColumns } from '../../../../framework/PageDetails/PageDe
 import { useGet } from '../../../common/crud/useGet';
 import { HubError } from '../../common/HubError';
 import { hubAPI } from '../../common/api/formatPath';
-import { HubItemsResponse } from '../../common/useHubView';
 import { HubNamespace } from '../HubNamespace';
 import { useHubNamespacesColumns } from '../hooks/useHubNamespacesColumns';
+import { PageMarkdownDetail } from '../../../../framework/PageForm/Inputs/PageMarkdownDetail';
+import { useTranslation } from 'react-i18next';
 
 export function HubNamespaceDetails() {
+  const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const {
-    data: response,
-    error,
-    refresh,
-  } = useGet<HubItemsResponse<HubNamespace>>(hubAPI`/_ui/v1/namespaces/?limit=1&name=${params.id}`);
+  const { data, error, refresh } = useGet<HubNamespace>(hubAPI`/_ui/v1/namespaces/${params.id}/`);
   const tableColumns = useHubNamespacesColumns();
 
-  if (!response || !response.data || (response.data.length === 0 && !error)) {
+  if (!data || !data) {
     return <LoadingPage />;
   }
 
@@ -26,8 +24,13 @@ export function HubNamespaceDetails() {
   }
 
   return (
-    <PageDetails>
-      <PageDetailsFromColumns item={response.data[0]} columns={tableColumns} />
-    </PageDetails>
+    <>
+      <PageDetails>
+        <PageDetailsFromColumns item={data} columns={tableColumns} />
+      </PageDetails>
+      <div>
+        <PageMarkdownDetail label={t('Markdown')} value={data.resources} />
+      </div>
+    </>
   );
 }
