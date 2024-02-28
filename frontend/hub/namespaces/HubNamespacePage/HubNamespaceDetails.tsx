@@ -12,10 +12,12 @@ import { useTranslation } from 'react-i18next';
 export function HubNamespaceDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const { data, error, refresh } = useGet<HubNamespace>(hubAPI`/_ui/v1/namespaces/${params.id}/`);
+  const { data, error, isLoading, refresh } = useGet<HubNamespace>(
+    hubAPI`/_ui/v1/namespaces/${params.id}/`
+  );
   const tableColumns = useHubNamespacesColumns();
 
-  if (!data || !data) {
+  if (isLoading) {
     return <LoadingPage />;
   }
 
@@ -28,9 +30,9 @@ export function HubNamespaceDetails() {
       <PageDetails>
         <PageDetailsFromColumns item={data} columns={tableColumns} />
       </PageDetails>
-      <div>
-        <PageMarkdownDetail label={t('Markdown')} value={data.resources} />
-      </div>
+      {data?.resources ? (
+        <PageMarkdownDetail label={t('Resources')} value={data?.resources} />
+      ) : null}
     </>
   );
 }
