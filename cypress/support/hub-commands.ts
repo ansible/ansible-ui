@@ -25,7 +25,7 @@ export interface HubRequestOptions {
   failOnStatusCode?: boolean;
 }
 Cypress.Commands.add('hubRequest', (options: HubRequestOptions) => {
-  cy.getCookie('csrftoken').then((cookie) =>
+  cy.getCookie('csrftoken', { log: false }).then((cookie) =>
     cy
       .request({
         ...options,
@@ -559,5 +559,35 @@ Cypress.Commands.add('deleteHubRemote', (options: HubDeleteRemoteOptions) => {
   cy.hubDeleteRequest({
     ...options,
     url: pulpAPI`/remotes/ansible/collection/${pulpUUID ?? ''}/`,
+  });
+});
+
+// HUB Collection Commands
+Cypress.Commands.add('getHubCollection', (name: string) => {
+  return cy
+    .requestGet<HubItemsResponse<CollectionVersionSearch>>(
+      hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${name}`
+    )
+    .then((itemsResponse) => itemsResponse.data[0]);
+});
+export type HubDeleteCollectionOptions = {
+  repository?: { name: string };
+  collection_version?: { name: string; namespace: string };
+} & Omit<HubDeleteRequestOptions, 'url'>;
+Cypress.Commands.add('deleteHubCollection', (options: HubDeleteCollectionOptions) => {
+  cy.hubDeleteRequest({
+    ...options,
+    url: hubAPI`/v3/plugin/ansible/content/${
+      options.repository?.name ?? 'community'
+    }/collections/index/${options.collection_version?.namespace ?? ''}/${
+      options.collection_version?.name ?? ''
+    }/`,
+  });
+});
+Cypress.Commands.add('deleteHubCollectionByName', (name: string) => {
+  cy.getHubCollection(name).then((collection) => {
+    if (collection) {
+      cy.deleteHubCollection(collection);
+    }
   });
 });

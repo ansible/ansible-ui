@@ -26,8 +26,8 @@ describe('Execution Environments', () => {
           'be.calledWith',
           'https://access.redhat.com/documentation/en-us/red_hat_ansible_automation_platform/'
         );
-        cy.deleteHubExecutionEnvironment({ name: executionEnvironment.name });
-        cy.deleteHubRemoteRegistry({ id: remoteRegistry.id });
+        cy.deleteHubExecutionEnvironment(executionEnvironment);
+        cy.deleteHubRemoteRegistry(remoteRegistry);
       });
     });
   });
@@ -118,8 +118,8 @@ describe('Execution Environment Details tab', () => {
   });
 
   after(() => {
-    cy.deleteHubExecutionEnvironment({ name: executionEnvironment.name });
-    cy.deleteHubRemoteRegistry({ id: remoteRegistry.id });
+    cy.deleteHubExecutionEnvironment(executionEnvironment);
+    cy.deleteHubRemoteRegistry(remoteRegistry);
   });
 
   it('should render the execution environment details page', () => {
