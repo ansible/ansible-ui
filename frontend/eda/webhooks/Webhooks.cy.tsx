@@ -1,4 +1,4 @@
-import { edaAPI } from '../../common/eda-utils';
+import { edaAPI } from '../common/eda-utils';
 import { Webhooks } from './Webhooks';
 
 describe('Webhooks.cy.ts', () => {

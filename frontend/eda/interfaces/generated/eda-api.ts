@@ -2951,7 +2951,7 @@ export enum WebhookTypeEnum {
   Generic = 'Generic',
 }
 export interface Webhook {
-  name?: string;
+  name: string;
   test_mode?: boolean;
   user: string;
   hmac_algorithm?: string;
