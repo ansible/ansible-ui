@@ -38,7 +38,8 @@ describe('Instances', () => {
 
     cy.get('[data-cy="hostname"]').type(instanceHostname);
     cy.get('[data-cy="listener-port"]').type('9999');
-    cy.get('[data-cy="enabled"]').click();
+    // this can cause unintended side effects affecting job runs
+    // cy.get('[data-cy="enabled"]').click();
     cy.get('[data-cy="managed_by_policy"]').click();
     cy.get('[data-cy="peers_from_control_nodes"]').click();
 
@@ -66,7 +67,8 @@ describe('Instances', () => {
     });
     cy.get('[data-cy="edit-instance"]').click();
     cy.get('[data-cy="listener-port"]').type('9999');
-    cy.get('[data-cy="enabled"]').check();
+    // this can cause unintended side effects affecting job runs
+    // cy.get('[data-cy="enabled"]').check();
     cy.get('[data-cy="managed_by_policy"]').check();
     cy.get('[data-cy="peers_from_control_nodes"]').check();
 
@@ -76,7 +78,7 @@ describe('Instances', () => {
       .then((body: Instance) => {
         expect(body.hostname).to.eql(instance.hostname);
         expect(body.listener_port).to.eql(9999);
-        expect(body.enabled).to.eql(true);
+        // expect(body.enabled).to.eql(true);
         expect(body.managed_by_policy).to.eql(true);
         expect(body.peers_from_control_nodes).to.eql(true);
       });

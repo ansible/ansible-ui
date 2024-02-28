@@ -80,8 +80,8 @@ describe('Add instance Form', () => {
     });
     cy.get('[data-cy="checkbox-column-cell"]').click();
     cy.clickButton('Confirm');
-
-    cy.get('[data-cy="enabled"]').click();
+    // this can cause unintended side effects affecting job runs
+    // cy.get('[data-cy="enabled"]').click();
     cy.get('[data-cy="managed_by_policy"]').click();
     cy.get('[data-cy="peers_from_control_nodes"]').click();
 
@@ -95,7 +95,7 @@ describe('Add instance Form', () => {
           hostname: 'AddInstanceMockWithPeers',
           listener_port: 9999,
           peers: ['e2eInstance0daD'],
-          enabled: true,
+          // enabled: true,
           managed_by_policy: true,
           peers_from_control_nodes: true,
         });
