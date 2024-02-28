@@ -4,17 +4,29 @@ import { Approvals, Collections, MyImports } from './constants';
 describe('Approvals', () => {
   it('user can upload a new collection, approve, reject, approve, and view import logs', () => {
     cy.createHubNamespace().then((namespace) => {
-      const collectionName = randomE2Ename();
-      cy.uploadCollection(collectionName, namespace.name);
+      // Need 2 collections otherwise there is a chance the dialog will not show the select
+      const collection1Name = randomE2Ename();
+      cy.uploadCollection(collection1Name, namespace.name);
+      const collection2Name = randomE2Ename();
+      cy.uploadCollection(collection2Name, namespace.name);
 
-      // Approve Collection
       cy.navigateTo('hub', Approvals.url);
       cy.verifyPageTitle(Approvals.title);
-      cy.filterTableByText(collectionName, 'SingleText');
-      cy.clickTableRowPinnedAction(collectionName, 'sign-and-approve', false);
+
+      // Verify collection 1 shows up in table
+      cy.filterTableBySingleText(collection1Name);
+      cy.contains('tr', collection1Name);
+
+      // Verify collection 2 shows up in table
+      cy.filterTableBySingleText(collection2Name);
+      cy.contains('tr', collection2Name);
+
+      // Approve Collection
+      cy.filterTableBySingleText(collection1Name);
+      cy.clickTableRowPinnedAction(collection1Name, 'sign-and-approve', false);
       cy.getModal().within(() => {
         cy.contains('Select repositories');
-        cy.filterTableByText('published', 'SingleText');
+        cy.filterTableBySingleText('published');
         cy.get(`[name="data-list-check-published"]`).click();
         cy.contains('button', 'Select').click();
       });
@@ -22,10 +34,10 @@ describe('Approvals', () => {
 
       // Verify Approved
       cy.navigateTo('hub', Approvals.url);
-      cy.filterTableByText(collectionName, 'SingleText');
+      cy.filterTableBySingleText(collection1Name);
       cy.get('tr').should('have.length', 2);
-      cy.getTableRowByText(collectionName, false).within(() => {
-        cy.contains(collectionName);
+      cy.getTableRowByText(collection1Name, false).within(() => {
+        cy.contains(collection1Name);
         cy.contains(namespace.name);
         cy.contains('published');
         cy.contains('Signed and Approved');
@@ -33,16 +45,15 @@ describe('Approvals', () => {
 
       // Verify Collection
       cy.navigateTo('hub', Collections.url);
-      cy.filterTableByText(collectionName, 'SingleText');
-      cy.contains(collectionName);
+      cy.filterTableBySingleText(collection1Name);
+      cy.contains(collection1Name);
       cy.contains(namespace.name);
       cy.contains('published');
 
       // Reject Collection
       cy.navigateTo('hub', Approvals.url);
-      cy.verifyPageTitle(Approvals.title);
-      cy.filterTableByText(collectionName, 'SingleText');
-      cy.clickTableRowPinnedAction(collectionName, 'reject', false);
+      cy.filterTableBySingleText(collection1Name);
+      cy.clickTableRowPinnedAction(collection1Name, 'reject', false);
       cy.getModal().within(() => {
         cy.get('input[id="confirm"]').click();
         cy.get('button').contains('Reject collections').click();
@@ -52,22 +63,21 @@ describe('Approvals', () => {
 
       // Verify Rejected
       cy.navigateTo('hub', Approvals.url);
-      cy.filterTableByText(collectionName, 'SingleText');
+      cy.filterTableBySingleText(collection1Name);
       cy.get('tr').should('have.length', 2);
-      cy.getTableRowByText(collectionName, false).within(() => {
-        cy.contains(collectionName);
+      cy.getTableRowByText(collection1Name, false).within(() => {
+        cy.contains(collection1Name);
         cy.contains(namespace.name);
         cy.contains('Rejected');
       });
 
       // Approve Collection
       cy.navigateTo('hub', Approvals.url);
-      cy.verifyPageTitle(Approvals.title);
-      cy.filterTableByText(collectionName, 'SingleText');
-      cy.clickTableRowPinnedAction(collectionName, 'sign-and-approve', false);
+      cy.filterTableBySingleText(collection1Name);
+      cy.clickTableRowPinnedAction(collection1Name, 'sign-and-approve', false);
       cy.getModal().within(() => {
         cy.contains('Select repositories');
-        cy.filterTableByText('published', 'SingleText');
+        cy.filterTableBySingleText('published');
         cy.get(`[name="data-list-check-published"]`).click();
         cy.contains('button', 'Select').click();
       });
@@ -75,10 +85,10 @@ describe('Approvals', () => {
 
       // Verify Approved
       cy.navigateTo('hub', Approvals.url);
-      cy.filterTableByText(collectionName, 'SingleText');
+      cy.filterTableBySingleText(collection1Name);
       cy.get('tr').should('have.length', 2);
-      cy.getTableRowByText(collectionName, false).within(() => {
-        cy.contains(collectionName);
+      cy.getTableRowByText(collection1Name, false).within(() => {
+        cy.contains(collection1Name);
         cy.contains(namespace.name);
         cy.contains('published');
         cy.contains('Signed and Approved');
@@ -86,19 +96,23 @@ describe('Approvals', () => {
 
       // View Import Logs
       cy.navigateTo('hub', Approvals.url);
-      cy.filterTableByText(collectionName, 'SingleText');
-      cy.clickTableRowPinnedAction(collectionName, 'view-import-logs', false);
+      cy.filterTableBySingleText(collection1Name);
+      cy.clickTableRowPinnedAction(collection1Name, 'view-import-logs', false);
       cy.verifyPageTitle(MyImports.title);
       cy.url().should('include', MyImports.url);
       cy.url().should('include', namespace.name);
-      cy.url().should('include', collectionName);
+      cy.url().should('include', collection1Name);
       cy.url().should('include', '1.0.0');
       cy.contains(namespace.name);
-      cy.contains(collectionName);
+      cy.contains(collection1Name);
 
       cy.deleteHubCollection({
         repository: { name: 'published' },
-        collection_version: { namespace: namespace.name, name: collectionName },
+        collection_version: { namespace: namespace.name, name: collection1Name },
+      });
+      cy.deleteHubCollection({
+        repository: { name: 'staging' },
+        collection_version: { namespace: namespace.name, name: collection2Name },
       });
       cy.deleteHubNamespace(namespace);
     });
