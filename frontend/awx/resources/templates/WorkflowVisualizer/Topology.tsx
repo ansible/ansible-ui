@@ -41,7 +41,7 @@ import {
 } from './components';
 import { EdgeStatus } from './types';
 import { ViewOptionsContext, ViewOptionsProvider } from './ViewOptionsProvider';
-import { useCreateEdge } from './hooks';
+import { useCreateEdge, useDedupeOldNodes } from './hooks';
 import { getNodeLabel } from './wizard/helpers';
 import { GRAPH_ID, NODE_DIAMETER, START_NODE_ID } from './constants';
 import { useCreateNodeComponent } from './hooks/useCreateNodeComponent';
@@ -72,6 +72,7 @@ interface TopologyProps {
 
 export const Visualizer = ({ data: { workflowNodes = [], template } }: TopologyProps) => {
   const { t } = useTranslation();
+  const dedupeOldNodes = useDedupeOldNodes();
   const createEdge = useCreateEdge();
   const createNodeComponent = useCreateNodeComponent();
   const handleSelectedNode = useCallback(
@@ -205,8 +206,11 @@ export const Visualizer = ({ data: { workflowNodes = [], template } }: TopologyP
       },
     };
 
+    dedupeOldNodes(visualization);
+
     visualization.fromModel(model, true);
-  }, [t, visualization, createEdge, workflowNodes]);
+    visualization.getGraph().reset();
+  }, [t, visualization, createEdge, workflowNodes, dedupeOldNodes]);
 
   return (
     <VisualizationProvider controller={visualization}>
