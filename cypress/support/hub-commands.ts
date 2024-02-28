@@ -563,13 +563,24 @@ Cypress.Commands.add('deleteHubRemote', (options: HubDeleteRemoteOptions) => {
 });
 
 // HUB Collection Commands
+Cypress.Commands.add('getHubCollection', (name: string) => {
+  return cy
+    .requestGet<HubItemsResponse<CollectionVersionSearch>>(
+      hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${name}`
+    )
+    .then((itemsResponse) => itemsResponse.data[0]);
+});
 export type HubDeleteCollectionOptions = {
-  repository: { name: string };
-  collection_version: { name: string; namespace: string };
+  repository?: { name: string };
+  collection_version?: { name: string; namespace: string };
 } & Omit<HubDeleteRequestOptions, 'url'>;
 Cypress.Commands.add('deleteHubCollection', (options: HubDeleteCollectionOptions) => {
   cy.hubDeleteRequest({
     ...options,
-    url: hubAPI`/v3/plugin/ansible/content/${options.repository.name}/collections/index/${options.collection_version.namespace}/${options.collection_version.name}/`,
+    url: hubAPI`/v3/plugin/ansible/content/${
+      options.repository.name ?? 'community'
+    }/collections/index/${options.collection_version?.namespace ?? ''}/${
+      options.collection_version?.name ?? ''
+    }/`,
   });
 });

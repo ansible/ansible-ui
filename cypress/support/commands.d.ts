@@ -1063,6 +1063,7 @@ declare global {
       deleteHubRemote(options: HubDeleteRemoteOptions): Cypress.Chainable<void>;
 
       // HUB Collection Commands
+      getHubCollection(name: string): Cypress.Chainable<CollectionVersionSearch>;
       deleteHubCollection(options: HubDeleteCollectionOptions): Cypress.Chainable<void>;
 
       // HUB GalaxyKit Commands
