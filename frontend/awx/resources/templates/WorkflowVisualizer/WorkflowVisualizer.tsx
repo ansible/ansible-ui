@@ -3,25 +3,24 @@ import { ShareAltIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { getPatternflyColor } from '../../../../../framework';
-import { useGet, useGetItem } from '../../../../common/crud/useGet';
+import { useAwxGetAllPages } from '../../../common/useAwxGetAllPages';
+import { useGetItem } from '../../../../common/crud/useGet';
 import { AwxError } from '../../../common/AwxError';
-import type { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { awxAPI } from '../../../common/api/awx-utils';
+import { Visualizer } from './Topology';
 import type { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 import type { WorkflowNode } from '../../../interfaces/WorkflowNode';
-import { Visualizer } from './Topology';
 
 export function WorkflowVisualizer() {
   const { t } = useTranslation();
-  const { id } = useParams<{ id?: string }>();
+  const { id } = useParams<{ id: string }>();
   const {
-    data: wfNodes,
+    items: workflowNodes,
     error: workflowNodeError,
-    refresh: workflowNodeRefresh,
     isLoading: workflowNodeIsLoading,
-  } = useGet<AwxItemsResponse<WorkflowNode>>(
-    awxAPI`/workflow_job_templates/${Number(id).toString()}/workflow_nodes/`
-  );
+    refresh: workflowNodeRefresh,
+  } = useAwxGetAllPages<WorkflowNode>(awxAPI`/workflow_job_templates/${id ?? ''}/workflow_nodes/`);
+
   const {
     data: workflowJobTemplate,
     error: workflowError,
@@ -34,7 +33,7 @@ export function WorkflowVisualizer() {
     return <AwxError error={error} handleRefresh={workflowRefresh || workflowNodeRefresh} />;
   }
 
-  if (workflowIsLoading || workflowNodeIsLoading || !workflowJobTemplate || !wfNodes) {
+  if (workflowIsLoading || workflowNodeIsLoading || !workflowJobTemplate || !workflowNodes) {
     return (
       <Bullseye>
         <EmptyState>
@@ -63,7 +62,7 @@ export function WorkflowVisualizer() {
   return (
     <Visualizer
       data={{
-        nodes: wfNodes?.results,
+        workflowNodes,
         template: workflowJobTemplate,
       }}
     />

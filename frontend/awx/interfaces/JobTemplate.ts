@@ -51,7 +51,7 @@ export interface JobTemplate
   > {
   id: number;
   host_config_key: string;
-  description?: string;
+  description: string;
   extra_vars: string;
   diff_mode: boolean;
   forks: number;

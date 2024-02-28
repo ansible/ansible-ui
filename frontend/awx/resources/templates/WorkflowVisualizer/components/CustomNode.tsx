@@ -3,20 +3,25 @@ import {
   ClipboardCheckIcon,
   ClockIcon,
   CogIcon,
+  HomeIcon,
   ProcessAutomationIcon,
   ShareAltIcon,
   SyncAltIcon,
+  TrashIcon,
 } from '@patternfly/react-icons';
 import {
   DefaultNode,
-  LabelPosition,
   WithContextMenuProps,
-  WithDragNodeProps,
+  WithCreateConnectorProps,
   WithSelectionProps,
+  isNode,
+  observer,
 } from '@patternfly/react-topology';
-import type { CustomNodeProps } from '../types';
+
+import { useViewOptions } from '../ViewOptionsProvider';
+import type { CustomNodeProps, UnifiedJobType } from '../types';
 import type { SVGIconProps } from '@patternfly/react-icons/dist/js/createIcon';
-import type { UnifiedJobType } from '../../../../interfaces/WorkflowNode';
+import { START_NODE_ID } from '../constants';
 
 const NodeIcon: Record<UnifiedJobType, ElementType<SVGIconProps>> = {
   inventory_update: ProcessAutomationIcon,
@@ -28,24 +33,24 @@ const NodeIcon: Record<UnifiedJobType, ElementType<SVGIconProps>> = {
 };
 
 export const CustomNode: FC<
-  CustomNodeProps & WithContextMenuProps & WithSelectionProps & WithDragNodeProps
-> = ({ element, contextMenuOpen, onContextMenu, onSelect, selected, ...rest }) => {
+  CustomNodeProps & WithContextMenuProps & WithSelectionProps & WithCreateConnectorProps
+> = observer((props) => {
+  const { element, onSelect, ...rest } = props;
+  const { setSidebarMode } = useViewOptions();
   const data = element.getData();
-
-  if (!data || !data.jobType) return null;
-
-  const Icon = NodeIcon[data.jobType];
-
-  return (
+  const id = element.getId();
+  const jobType = data && data.resource?.summary_fields?.unified_job_template?.unified_job_type;
+  if ((!data && id !== START_NODE_ID) || !isNode(element)) return null;
+  const Icon = jobType ? NodeIcon[jobType] : TrashIcon;
+  return id !== START_NODE_ID ? (
     <DefaultNode
       element={element}
-      labelClassName={`${data.id}-node-label`}
-      contextMenuOpen={contextMenuOpen}
-      labelPosition={LabelPosition.right}
-      onContextMenu={onContextMenu}
-      onSelect={onSelect}
-      selected={selected}
-      showStatusDecorator
+      labelClassName={`${id}-node-label`}
+      onSelect={(e) => {
+        if (!jobType) return;
+        setSidebarMode('view');
+        onSelect && onSelect(e);
+      }}
       truncateLength={20}
       {...rest}
     >
@@ -53,5 +58,17 @@ export const CustomNode: FC<
         <Icon style={{ color: '#393F44' }} width={25} height={25} />
       </g>
     </DefaultNode>
+  ) : (
+    <DefaultNode
+      {...rest}
+      element={element}
+      labelClassName={`${id}-node-label`}
+      dragging={false}
+      truncateLength={20}
+    >
+      <g transform={`translate(13, 13)`}>
+        <HomeIcon style={{ color: '#393F44' }} width={25} height={25} />
+      </g>
+    </DefaultNode>
   );
-};
+});

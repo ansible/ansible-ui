@@ -180,7 +180,7 @@ describe('Job templates form Create, Edit, Delete', function () {
       });
   });
 
-  it('should edit a job template using the kebab menu of the template list page page', function () {
+  it('should edit a job template using the kebab menu of the template list page', function () {
     cy.createAwxJobTemplate({
       organization: (this.globalOrganization as Organization).id,
       project: (this.globalProject as Project).id,

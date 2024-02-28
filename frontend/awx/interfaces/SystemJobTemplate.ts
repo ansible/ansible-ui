@@ -1,10 +1,15 @@
 import { SystemJobTemplate as SwaggerSystemJobTemplate } from './generated-from-swagger/api';
 
 export interface SystemJobTemplate
-  extends Omit<SwaggerSystemJobTemplate, 'id' | 'name' | 'type' | 'summary_fields' | 'related'> {
+  extends Omit<
+    SwaggerSystemJobTemplate,
+    'id' | 'name' | 'description' | 'type' | 'summary_fields' | 'related' | 'job_type'
+  > {
   id: number;
   name: string;
-  type: string;
+  description: string;
+  type: 'system_job_template';
+  job_type: 'cleanup_jobs' | 'cleanup_activitystream' | 'cleanup_sessions' | 'cleanup_tokens';
   related: {
     last_job: string;
     next_schedule: string;

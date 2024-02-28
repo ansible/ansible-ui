@@ -162,6 +162,14 @@ declare global {
       singleSelectShouldContainOption(selector: string, label: string | RegExp): Chainable<void>;
       selectSingleSelectOption(selector: string, label: string | RegExp): Chainable<void>;
 
+      editNodeInVisualizer(
+        nodeName: string,
+        newNodeType: string,
+        newNodeName?: string
+      ): Chainable<void>;
+
+      removeAllNodesFromVisualizerToolbar(): Chainable<void>;
+      removeNodeInVisualizer(nodeName: string): Chainable<void>;
       multiSelectShouldHaveSelectedOption(
         selector: string,
         label: string | RegExp
@@ -647,6 +655,14 @@ declare global {
           failOnStatusCode?: boolean;
         }
       ): Chainable<void>;
+
+      deleteAwxInventorySource(
+        inventorySource: InventorySource,
+        options?: {
+          /** Whether to fail on response codes other than 2xx and 3xx */
+          failOnStatusCode?: boolean;
+        }
+      ): Chainable<void>;
       deleteAwxJobTemplate(
         jobTemplate: JobTemplate,
         options?: {
@@ -772,6 +788,11 @@ declare global {
       ): Chainable<WorkflowNode>;
 
       createWorkflowJTFailureNodeLink(
+        firstNode: WorkflowNode,
+        secondNode: WorkflowNode
+      ): Chainable<WorkflowNode>;
+
+      createWorkflowJTAlwaysNodeLink(
         firstNode: WorkflowNode,
         secondNode: WorkflowNode
       ): Chainable<WorkflowNode>;
