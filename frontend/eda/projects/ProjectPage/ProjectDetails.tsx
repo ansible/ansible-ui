@@ -63,9 +63,7 @@ export function ProjectDetails() {
       <PageDetail label={t('Created')}>
         {project?.created_at ? formatDateString(project.created_at) : ''}
       </PageDetail>
-      <LastModifiedPageDetail
-        value={project?.modified_at ? formatDateString(project.modified_at) : ''}
-      />
+      <LastModifiedPageDetail value={project?.modified_at ? project.modified_at : ''} />
       {!!project?.verify_ssl && (
         <PageDetail label={t('Enabled option')}>
           <DescriptionListGroup>
