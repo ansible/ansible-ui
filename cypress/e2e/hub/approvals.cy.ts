@@ -30,17 +30,13 @@ describe('Approvals', () => {
 
   beforeEach(() => {
     cy.hubLogin();
-    cy.navigateTo('hub', Approvals.url);
-    cy.verifyPageTitle(Approvals.title);
-    cy.clearAllFilters();
-  });
-
-  it('should load the approvals page', () => {
-    cy.navigateTo('hub', Approvals.url);
-    cy.verifyPageTitle(Approvals.title);
   });
 
   it('user should be able to view import logs', () => {
+    cy.navigateTo('hub', Approvals.url);
+    cy.verifyPageTitle(Approvals.title);
+    cy.clearAllFilters();
+
     // View Import Logs
     cy.filterTableBySingleText(collectionName);
     cy.clickTableRowPinnedAction(collectionName, 'view-import-logs', false);
@@ -54,6 +50,10 @@ describe('Approvals', () => {
   });
 
   it('user should be able to approve collection', () => {
+    cy.navigateTo('hub', Approvals.url);
+    cy.verifyPageTitle(Approvals.title);
+    cy.clearAllFilters();
+
     // Approve Collection
     cy.filterTableBySingleText(collectionName);
     cy.clickTableRowPinnedAction(collectionName, 'sign-and-approve', false);
@@ -66,7 +66,6 @@ describe('Approvals', () => {
     cy.getModal().should('not.exist');
 
     // Verify Approved
-    cy.navigateTo('hub', Approvals.url);
     cy.filterTableBySingleText(collectionName);
     cy.get('tr').should('have.length', 2);
     cy.getTableRowByText(collectionName, false).within(() => {
@@ -85,8 +84,11 @@ describe('Approvals', () => {
   });
 
   it('user should be able to reject collection', () => {
-    // Reject Collection
     cy.navigateTo('hub', Approvals.url);
+    cy.verifyPageTitle(Approvals.title);
+    cy.clearAllFilters();
+
+    // Reject Collection
     cy.filterTableBySingleText(collectionName);
     cy.clickTableRowPinnedAction(collectionName, 'reject', false);
     cy.getModal().within(() => {
@@ -97,7 +99,6 @@ describe('Approvals', () => {
     cy.getModal().should('not.exist');
 
     // Verify Rejected
-    cy.navigateTo('hub', Approvals.url);
     cy.filterTableBySingleText(collectionName);
     cy.get('tr').should('have.length', 2);
     cy.getTableRowByText(collectionName, false).within(() => {
