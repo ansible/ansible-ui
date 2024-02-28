@@ -53,7 +53,7 @@ describe('inventory host', () => {
     cy.clickButton(/^Create host$/);
     cy.verifyPageTitle('Create Host');
     cy.get('[data-cy="name"]').type(hostName);
-    cy.get('[data-cy="description"]').type('This is a description');
+    cy.get('[data-cy="description"]').type('This is the description');
     cy.typeMonacoTextField('test: true');
     cy.clickButton(/^Create host/);
     cy.hasDetail(/^Name$/, hostName);
