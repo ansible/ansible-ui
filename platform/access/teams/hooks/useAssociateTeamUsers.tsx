@@ -7,6 +7,8 @@ import { gatewayV1API } from '../../../api/gateway-api-utils';
 import { PlatformTeam } from '../../../interfaces/PlatformTeam';
 import { useParams } from 'react-router-dom';
 import { useGetItem } from '../../../../frontend/common/crud/useGet';
+import { requestGet } from '../../../../frontend/common/crud/Data';
+import { PlatformItemsResponse } from '../../../interfaces/PlatformItemsResponse';
 
 export function useAssociateTeamUsers(onComplete: () => Promise<void>) {
   const { t } = useTranslation();
@@ -15,7 +17,10 @@ export function useAssociateTeamUsers(onComplete: () => Promise<void>) {
   const params = useParams<{ id: string }>();
   const { data: team } = useGetItem<PlatformTeam>(gatewayV1API`/teams`, params.id);
 
-  const associateUsers = useCallback(() => {
+  const associateUsers = useCallback(async () => {
+    const teamUsers = await requestGet<PlatformItemsResponse<PlatformUser>>(
+      gatewayV1API`/teams/${team?.id?.toString() ?? ''}/users/`
+    );
     selectUsers(
       t('Add users'),
       t('Select users below to be added to this team'),
@@ -26,7 +31,8 @@ export function useAssociateTeamUsers(onComplete: () => Promise<void>) {
           instances: users.map((user) => user.id.toString()),
         });
         await onComplete();
-      }
+      },
+      (user: PlatformUser) => !teamUsers?.results?.some((teamUser) => teamUser.id === user.id)
     );
   }, [onComplete, postRequest, selectUsers, t, team]);
   return associateUsers;

@@ -53,9 +53,10 @@ export function usePlatformView<T extends { id: number }>(options: {
 
   defaultSort?: string | undefined;
   defaultSortDirection?: 'asc' | 'desc' | undefined;
+  customFilter?: (item: T) => boolean;
 }): IPlatformView<T> {
   let { url } = options;
-  const { toolbarFilters, tableColumns, disableQueryString } = options;
+  const { toolbarFilters, tableColumns, disableQueryString, customFilter } = options;
 
   let defaultSort: string | undefined = options.defaultSort;
   let defaultSortDirection: 'asc' | 'desc' | undefined = options.defaultSortDirection;
@@ -132,7 +133,12 @@ export function usePlatformView<T extends { id: number }>(options: {
     }
   }
 
-  const selection = useSelected(data?.results ?? [], getItemKey, options.defaultSelection);
+  const filteredResults = useMemo(
+    () => (customFilter !== undefined ? data?.results?.filter(customFilter) : data?.results),
+    [customFilter, data?.results]
+  );
+
+  const selection = useSelected(filteredResults ?? [], getItemKey, options.defaultSelection);
 
   if (data?.count !== undefined) {
     itemCountRef.current.itemCount = data?.count;
@@ -157,8 +163,9 @@ export function usePlatformView<T extends { id: number }>(options: {
   return useMemo(() => {
     return {
       refresh,
-      itemCount: itemCountRef.current.itemCount,
-      pageItems: data?.results,
+      itemCount:
+        customFilter !== undefined ? filteredResults?.length : itemCountRef.current.itemCount,
+      pageItems: filteredResults,
       error,
       ...view,
       ...selection,
@@ -167,8 +174,9 @@ export function usePlatformView<T extends { id: number }>(options: {
       refreshing,
     };
   }, [
-    data?.results,
+    customFilter,
     error,
+    filteredResults,
     refresh,
     refreshing,
     selectItemsAndRefresh,

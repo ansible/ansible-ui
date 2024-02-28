@@ -7,6 +7,8 @@ import { gatewayV1API } from '../../../api/gateway-api-utils';
 import { useParams } from 'react-router-dom';
 import { useGetItem } from '../../../../frontend/common/crud/useGet';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
+import { requestGet } from '../../../../frontend/common/crud/Data';
+import { PlatformItemsResponse } from '../../../interfaces/PlatformItemsResponse';
 
 export function useAssociateOrganizationAdmins(onComplete: () => Promise<void>) {
   const { t } = useTranslation();
@@ -18,7 +20,10 @@ export function useAssociateOrganizationAdmins(onComplete: () => Promise<void>) 
     params.id
   );
 
-  const associateUsers = useCallback(() => {
+  const associateUsers = useCallback(async () => {
+    const orgAdmins = await requestGet<PlatformItemsResponse<PlatformUser>>(
+      gatewayV1API`/organizations/${organization?.id?.toString() ?? ''}/admins/`
+    );
     selectUsers(
       t('Add administrators'),
       t('Select users below to be added to this organization as administrators.'),
@@ -32,7 +37,8 @@ export function useAssociateOrganizationAdmins(onComplete: () => Promise<void>) 
           }
         );
         await onComplete();
-      }
+      },
+      (user: PlatformUser) => !orgAdmins?.results?.some((orgAdmin) => orgAdmin.id === user.id)
     );
   }, [onComplete, postRequest, selectUsers, t, organization]);
   return associateUsers;
