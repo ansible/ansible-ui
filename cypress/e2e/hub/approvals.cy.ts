@@ -1,146 +1,103 @@
+import { Repository } from '../../../frontend/hub/administration/repositories/Repository';
+import { HubNamespace } from '../../../frontend/hub/namespaces/HubNamespace';
+import { randomE2Ename } from '../../support/utils';
 import { Approvals, Collections, MyImports } from './constants';
-import { randomString } from '../../../framework/utils/random-string';
 
 describe('Approvals', () => {
-  let thisCollectionName: string;
-  let namespace: string;
-  let repository: string;
-  let anotherRepoName: string;
+  let repository: Repository;
+  let namespace: HubNamespace;
+  let collectionName: string;
 
   before(() => {
-    // this is important, we need at least two approved repos (this one and published) to test approve modal
-    // there is no way we can test approval to single repo, we have no control over the number of approved repos in system
-    // (except mocking the API, which can be done in future).
-    anotherRepoName = 'hub_e2e_new_repo_' + randomString(5).toLowerCase();
-    cy.galaxykit(`repository create ${anotherRepoName} --pipeline approved`);
-    cy.galaxykit('task wait all');
-    repository = 'staging';
+    // Need at least two repositories so the select repostories modal can be tested
+    cy.createHubRepository({ repository: { pulp_labels: { pipeline: 'approved' } } }).then(
+      (repositoryResult) => {
+        repository = repositoryResult;
+        cy.createHubNamespace().then((namespaceResult) => {
+          namespace = namespaceResult;
+          collectionName = randomE2Ename();
+          cy.uploadCollection(collectionName, namespace.name);
+        });
+      }
+    );
   });
 
   after(() => {
-    cy.galaxykit(`-i repository delete ${anotherRepoName}`);
+    cy.deleteHubCollectionByName(collectionName);
+    cy.deleteHubNamespace(namespace);
+    cy.deleteHubRepository(repository);
   });
 
   beforeEach(() => {
-    thisCollectionName = 'hub_e2e_' + randomString(5).toLowerCase();
-    namespace = 'hub_e2e_appr_namespace' + randomString(5).toLowerCase();
     cy.hubLogin();
-    cy.createNamespace(namespace);
-    cy.galaxykit('task wait all');
-    cy.uploadCollection(thisCollectionName, namespace);
-    cy.galaxykit('task wait all');
-
-    cy.navigateTo('hub', Approvals.url);
-  });
-
-  afterEach(() => {
-    cy.deleteCollection(thisCollectionName, namespace, repository);
-    cy.galaxykit('task wait all');
-    cy.deleteNamespace(namespace);
-  });
-
-  it('user can upload a new collection and approve it', () => {
-    approve();
-  });
-
-  function approve() {
     cy.navigateTo('hub', Approvals.url);
     cy.verifyPageTitle(Approvals.title);
-    clickTableRowPinnedAction(thisCollectionName, 'sign-and-approve');
+    cy.contains('button', 'Clear all filters').click();
+  });
 
-    // handle modal
-    const modal = `[aria-label="Select repositories"] `;
-    cy.get(modal).within(() => {
+  it('user should be able to view import logs', () => {
+    // View Import Logs
+    cy.filterTableBySingleText(collectionName, true);
+    cy.clickTableRowPinnedAction(collectionName, 'view-import-logs', false);
+    cy.verifyPageTitle(MyImports.title);
+    cy.url().should('include', MyImports.url);
+    cy.url().should('include', namespace.name);
+    cy.url().should('include', collectionName);
+    cy.url().should('include', '1.0.0');
+    cy.contains(namespace.name);
+    cy.contains(collectionName);
+  });
+
+  it('user should be able to approve collection', () => {
+    // Approve Collection
+    cy.filterTableBySingleText(collectionName, true);
+    cy.clickTableRowPinnedAction(collectionName, 'sign-and-approve', false);
+    cy.getModal().within(() => {
       cy.contains('Select repositories');
-      cy.filterTableBySingleText('published{enter}');
-      cy.contains('published');
+      cy.filterTableBySingleText('published', true);
       cy.get(`[name="data-list-check-published"]`).click();
       cy.contains('button', 'Select').click();
     });
+    cy.getModal().should('not.exist');
+    cy.get('#refresh').click();
 
-    cy.galaxykit('task wait all');
-    cy.get(modal).should('not.exist');
-
-    // verify its really approved
-    cy.navigateTo('hub', Approvals.url);
-    cy.filterTableBySingleText(thisCollectionName + '{enter}');
-    cy.contains(thisCollectionName);
-    cy.contains(namespace);
-    cy.contains('published');
-
-    cy.navigateTo('hub', Collections.url);
-    cy.get(`[aria-label="Type to filter"]`).type(thisCollectionName + '{enter}');
-    cy.contains('Clear all filters');
-    cy.contains(thisCollectionName);
-    cy.contains(namespace);
-    cy.contains('published');
-
-    repository = 'published';
-  }
-
-  it('user can upload a new collection and reject it', () => {
-    reject('Needs review');
-  });
-
-  function reject(status: string) {
-    cy.navigateTo('hub', Approvals.url);
-    cy.verifyPageTitle(Approvals.title);
-    clickTableRowPinnedAction(thisCollectionName, 'reject');
-
-    //Verify Reject modal
-    cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
-      cy.get('header').contains('Reject collections');
-      cy.get('button').contains('Reject collections').should('have.attr', 'aria-disabled', 'true');
-      cy.get('[data-cy="namespace-column-cell"]').should('have.text', namespace);
-      cy.get('[data-cy="collection-column-cell"]').should('have.text', thisCollectionName);
-      cy.get('[data-cy="version-column-cell"]').should('have.text', '1.0.0');
-      cy.get('[data-cy="status-column-cell"]').should('have.text', status);
-      cy.get('input[id="confirm"]').click();
-      cy.get('button').contains('Reject collections').click();
+    // Verify Approved
+    cy.filterTableBySingleText(collectionName, true);
+    cy.get('tr').should('have.length', 2);
+    cy.getTableRowByText(collectionName, false).within(() => {
+      cy.contains(collectionName);
+      cy.contains(namespace.name);
+      cy.contains('published');
+      cy.contains('Signed and Approved');
     });
 
-    cy.galaxykit('task wait all');
-    cy.assertModalSuccess();
-    cy.clickModalButton('Close');
-
-    // verify its really rejected
-    cy.navigateTo('hub', Approvals.url);
-    cy.filterTableBySingleText(thisCollectionName + '{enter}');
-    cy.contains(thisCollectionName);
-    cy.contains(namespace);
-    cy.contains('rejected');
-
-    repository = 'rejected';
-  }
-
-  it('user can approve a collection and then reject it', () => {
-    approve();
-    reject('Signed and Approved');
+    // Verify Collection
+    cy.navigateTo('hub', Collections.url);
+    cy.filterTableBySingleText(collectionName, true);
+    cy.contains(collectionName);
+    cy.contains(namespace.name);
+    cy.contains('published');
   });
 
-  it('user can reject a collection and then approve it', () => {
-    reject('Needs review');
-    approve();
-  });
+  it('user should be able to reject collection', () => {
+    // Reject Collection
+    cy.filterTableBySingleText(collectionName, true);
+    cy.clickTableRowPinnedAction(collectionName, 'reject', false);
+    cy.getModal().within(() => {
+      cy.get('input[id="confirm"]').click();
+      cy.get('button').contains('Reject collections').click();
+      cy.containsBy('button', 'Close').click();
+    });
+    cy.getModal().should('not.exist');
+    cy.get('#refresh').click();
 
-  it('user can view import logs', () => {
-    cy.filterTableBySingleText(thisCollectionName);
-    clickTableRowPinnedAction(thisCollectionName, 'view-import-logs');
-
-    cy.url().should('include', MyImports.url);
-    cy.url().should('include', namespace);
-    cy.url().should('include', thisCollectionName);
-    cy.url().should('include', '1.0.0');
-
-    cy.verifyPageTitle(MyImports.title);
-    cy.contains(namespace);
-    cy.contains(thisCollectionName);
-
-    repository = 'staging';
+    // Verify Rejected
+    cy.filterTableBySingleText(collectionName, true);
+    cy.get('tr').should('have.length', 2);
+    cy.getTableRowByText(collectionName, false).within(() => {
+      cy.contains(collectionName);
+      cy.contains(namespace.name);
+      cy.contains('Rejected');
+    });
   });
 });
-
-function clickTableRowPinnedAction(text: string, action: string) {
-  cy.filterTableBySingleText(text + '{enter}');
-  cy.get(`[data-cy="actions-column-cell"] [data-cy="${action}"]`).click();
-}

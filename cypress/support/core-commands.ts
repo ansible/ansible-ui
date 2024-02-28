@@ -9,9 +9,10 @@
 Cypress.Commands.add('getBy', (selector: string) => {
   cy.get(selector)
     .should('not.be.disabled')
+    .should('not.have.attr', 'aria-disabled', 'true')
     .should('not.be.hidden')
-    .should('be.visible')
-    .should('not.have.attr', 'aria-disabled', 'true');
+    .should('be.visible');
+  cy.get(selector);
 });
 
 /** Get by data-cy attribute, making sure it is not disabled or hidden */
@@ -23,9 +24,10 @@ Cypress.Commands.add('getByDataCy', (dataCy: string) => {
 Cypress.Commands.add('containsBy', (selector: string, text: string | number | RegExp) => {
   cy.contains(selector, text)
     .should('not.be.disabled')
+    .should('not.have.attr', 'aria-disabled', 'true')
     .should('not.be.hidden')
-    .should('be.visible')
-    .should('not.have.attr', 'aria-disabled', 'true');
+    .should('be.visible');
+  cy.contains(selector, text);
 });
 
 /** Click by data-cy attribute, making sure it is not disabled or hidden */
