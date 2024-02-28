@@ -1,12 +1,11 @@
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { LoadingPage, PageDetail, PageDetails } from '../../../../framework';
+import { LoadingPage, PageDetail, PageDetails, Scrollable } from '../../../../framework';
 import { PageDetailCodeEditor } from '../../../../framework/PageDetails/PageDetailCodeEditor';
 import { formatDateString } from '../../../../framework/utils/formatDateString';
 import { AwxItemsResponse } from '../../../awx/common/AwxItemsResponse';
 import { StatusCell } from '../../../common/Status';
 import { useGet, useGetItem } from '../../../common/crud/useGet';
-import { PageDetailsSection } from '../../common/PageDetailsSection';
 import { edaAPI } from '../../common/eda-utils';
 import { EdaActivationInstance } from '../../interfaces/EdaActivationInstance';
 import { EdaActivationInstanceLog } from '../../interfaces/EdaActivationInstanceLog';
@@ -30,20 +29,23 @@ export function ActivationInstanceDetails() {
     return <LoadingPage />;
   }
   return (
-    <PageDetails>
-      <PageDetail label={t('Name')}>
-        {`${activationInstance?.id || ''} - ${activationInstance?.name || ''}`}
-      </PageDetail>
-      <PageDetail label={t('Status')}>
-        {<StatusCell status={activationInstance?.status || 'unknown'} />}
-      </PageDetail>
-      <PageDetail label={t('Start date')}>
-        {activationInstance?.started_at ? formatDateString(activationInstance?.started_at) : ''}
-      </PageDetail>
-      <PageDetail label={t('End date')}>
-        {activationInstance?.ended_at ? formatDateString(activationInstance?.ended_at) : ''}
-      </PageDetail>
-      <PageDetailsSection>
+    <Scrollable>
+      <PageDetails disableScroll={true}>
+        <PageDetail label={t('Name')}>
+          {`${activationInstance?.id || ''} - ${activationInstance?.name || ''}`}
+        </PageDetail>
+        <PageDetail label={t('Status')}>
+          {<StatusCell status={activationInstance?.status || 'unknown'} />}
+        </PageDetail>
+        <PageDetail label={t('Start date')}>
+          {activationInstance?.started_at ? formatDateString(activationInstance?.started_at) : ''}
+        </PageDetail>
+        <PageDetail label={t('End date')}>
+          {activationInstance?.ended_at ? formatDateString(activationInstance?.ended_at) : ''}
+        </PageDetail>
+      </PageDetails>
+
+      <PageDetails disableScroll={true} numberOfColumns={'single'}>
         {activationInstanceLog?.results?.length ? (
           <PageDetailCodeEditor
             label={t('Output')}
@@ -51,7 +53,7 @@ export function ActivationInstanceDetails() {
             showCopyToClipboard={true}
           />
         ) : null}
-      </PageDetailsSection>
-    </PageDetails>
+      </PageDetails>
+    </Scrollable>
   );
 }
