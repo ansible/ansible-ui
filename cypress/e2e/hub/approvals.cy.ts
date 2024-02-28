@@ -30,13 +30,12 @@ describe('Approvals', () => {
 
   beforeEach(() => {
     cy.hubLogin();
+    cy.navigateTo('hub', Approvals.url);
+    cy.verifyPageTitle(Approvals.title);
+    cy.contains('button', 'Clear all filters').click();
   });
 
   it('user should be able to view import logs', () => {
-    cy.navigateTo('hub', Approvals.url);
-    cy.verifyPageTitle(Approvals.title);
-    cy.clearAllFilters();
-
     // View Import Logs
     cy.filterTableBySingleText(collectionName);
     cy.clickTableRowPinnedAction(collectionName, 'view-import-logs', false);
@@ -50,10 +49,6 @@ describe('Approvals', () => {
   });
 
   it('user should be able to approve collection', () => {
-    cy.navigateTo('hub', Approvals.url);
-    cy.verifyPageTitle(Approvals.title);
-    cy.clearAllFilters();
-
     // Approve Collection
     cy.filterTableBySingleText(collectionName);
     cy.clickTableRowPinnedAction(collectionName, 'sign-and-approve', false);
@@ -84,10 +79,6 @@ describe('Approvals', () => {
   });
 
   it('user should be able to reject collection', () => {
-    cy.navigateTo('hub', Approvals.url);
-    cy.verifyPageTitle(Approvals.title);
-    cy.clearAllFilters();
-
     // Reject Collection
     cy.filterTableBySingleText(collectionName);
     cy.clickTableRowPinnedAction(collectionName, 'reject', false);
