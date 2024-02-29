@@ -28,7 +28,7 @@ describe('inventory host', () => {
     cy.clickButton(/^Create inventory$/);
     cy.clickLink(/^Create inventory$/);
     cy.get('[data-cy="name"]').type(inventoryName);
-    cy.selectDropdownOptionByResourceName('organization', organization.name);
+    cy.selectSingleSelectOption('[data-cy="organization"]', organization.name);
     cy.clickButton(/^Create inventory$/);
     cy.verifyPageTitle(inventoryName);
     cy.hasDetail(/^Organization$/, organization.name);
@@ -37,7 +37,7 @@ describe('inventory host', () => {
 
   afterEach(() => {
     cy.visit(
-      `/infrastructure/inventories/inventory/${inventory.id}/hosts/?page=1&perPage=10&host=name`
+      `/infrastructure/inventories/inventory/${inventory.id}/hosts/?page=1&perPage=10&sort=name`
     );
     cy.clickPageAction('delete-inventory');
     cy.get('#confirm').click();
@@ -50,11 +50,14 @@ describe('inventory host', () => {
 
   it('can create and delete a inventory host', () => {
     const hostName = 'E2E Inventory host ' + randomString(4);
+    cy.get('[data-cy="empty-state-title"]').contains(
+      /^There are currently no hosts added to this inventory./
+    );
     cy.clickButton(/^Create host$/);
     cy.verifyPageTitle('Create Host');
     cy.get('[data-cy="name"]').type(hostName);
     cy.get('[data-cy="description"]').type('This is the description');
-    cy.typeMonacoTextField('test: true');
+    cy.typeBy('[data-cy="variables"]', 'test: true');
     cy.clickButton(/^Create host/);
     cy.hasDetail(/^Name$/, hostName);
     //cy.hasDetail(/^Description$/, 'This is a description'); TODO: add after when description is fixed
