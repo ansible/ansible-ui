@@ -432,6 +432,10 @@ Cypress.Commands.add(
   }
 );
 
+Cypress.Commands.add('getTableRowBy', (column: string, name: string | RegExp) => {
+  cy.contains(`[data-cy='${column}-column-cell']`, name).parent();
+});
+
 Cypress.Commands.add('getTableRowBySingleText', (name: string | RegExp, filter?: boolean) => {
   cy.getTableRowByText(name, filter, 'SingleText');
 });
@@ -452,6 +456,14 @@ Cypress.Commands.add('selectDetailsPageKebabAction', (dataCy: string) => {
         cy.get('[data-ouia-component-id="confirm"]').click();
         cy.get('[data-ouia-component-id="submit"]').click();
       });
+    });
+});
+
+Cypress.Commands.add('clickKebabAction', (dataCyLabel: string) => {
+  cy.get('[data-cy*="actions-dropdown"]')
+    .click()
+    .then(() => {
+      cy.clickByDataCy(dataCyLabel);
     });
 });
 

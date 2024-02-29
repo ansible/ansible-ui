@@ -66,6 +66,7 @@ export function useRepositoriesColumns(_options?: {
         header: t('Created at'),
         cell: (repository) => <DateTimeCell value={repository.pulp_created} />,
         sort: 'pulp_created',
+        defaultSortDirection: 'desc',
       },
     ],
     [t, getPageUrl]

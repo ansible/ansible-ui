@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access */
 import { SetRequired } from 'type-fest';
-import { randomString } from '../../framework/utils/random-string';
+import { randomLowercaseString, randomString } from '../../framework/utils/random-string';
 import { Role } from '../../frontend/hub/access/roles/Role';
 import { RemoteRegistry } from '../../frontend/hub/administration/remote-registries/RemoteRegistry';
 import { HubRemote } from '../../frontend/hub/administration/remotes/Remotes';
@@ -8,8 +8,9 @@ import { Repository } from '../../frontend/hub/administration/repositories/Repos
 import { Task } from '../../frontend/hub/administration/tasks/Task';
 import { CollectionVersionSearch } from '../../frontend/hub/collections/Collection';
 import { parsePulpIDFromURL } from '../../frontend/hub/common/api/hub-api-utils';
-import { HubItemsResponse } from '../../frontend/hub/common/useHubView';
+import { HubItemsResponse, PulpItemsResponse } from '../../frontend/hub/common/useHubView';
 import { ExecutionEnvironment as HubExecutionEnvironment } from '../../frontend/hub/execution-environments/ExecutionEnvironment';
+import { HubDistribution } from '../../frontend/hub/interfaces/expanded/HubDistribution';
 import { HubNamespace } from '../../frontend/hub/namespaces/HubNamespace';
 import { galaxykitPassword, galaxykitUsername } from './e2e';
 import { hubAPI, pulpAPI } from './formatApiPathForHub';
@@ -471,7 +472,12 @@ Cypress.Commands.add('createHubRepository', (options?: HubCreateRepositoryOption
     ...options,
     url: pulpAPI`/repositories/ansible/ansible/`,
     body: {
+      description: null,
       name: randomE2Ename(),
+      private: false,
+      pulp_labels: {},
+      remote: null,
+      retain_repo_versions: 1,
       ...options?.repository,
     },
   });
@@ -488,6 +494,39 @@ Cypress.Commands.add('deleteHubRepository', (options: HubDeleteRepositoryOptions
   });
 });
 
+// HUB Repository Distribution Commands
+export type HubCreateRepositoryDistributionOptions = {
+  distribution: Partial<HubDistribution>;
+} & Omit<HubPostRequestOptions, 'url' | 'body'>;
+Cypress.Commands.add(
+  'createHubRepositoryDistribution',
+  (options?: HubCreateRepositoryDistributionOptions) => {
+    cy.hubPostRequest({
+      ...options,
+      url: pulpAPI`/distributions/ansible/ansible/`,
+      body: {
+        name: randomE2Ename(),
+        base_path: randomLowercaseString(32),
+        ...options?.distribution,
+      },
+    });
+  }
+);
+export type HubDeleteRepositoryDistributionOptions = { pulp_href: string } & Omit<
+  HubDeleteRequestOptions,
+  'url'
+>;
+Cypress.Commands.add(
+  'deleteHubRepositoryDistributionByName',
+  (name: string, options?: Omit<HubDeleteRequestOptions, 'url'>) => {
+    cy.hubGetRequest<PulpItemsResponse<{ pulp_href: string }>>({
+      url: pulpAPI`/distributions/ansible/ansible/?name=${name}`,
+    }).then((response) => {
+      cy.hubDeleteRequest({ ...options, url: response.body.results[0].pulp_href });
+    });
+  }
+);
+
 // HUB Namespace Commands
 export type HubCreateNamespaceOptions = { namespace: Partial<HubNamespace> } & Omit<
   HubPostRequestOptions,
@@ -497,10 +536,7 @@ Cypress.Commands.add('createHubNamespace', (options?: HubCreateNamespaceOptions)
   cy.hubPostRequest({
     ...options,
     url: hubAPI`/_ui/v1/namespaces/`,
-    body: {
-      name: randomE2Ename(),
-      ...options?.namespace,
-    },
+    body: { name: randomE2Ename(), ...options?.namespace },
   });
 });
 export type HubDeleteNamespaceOptions = { name: string } & Omit<HubDeleteRequestOptions, 'url'>;

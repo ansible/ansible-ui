@@ -44,6 +44,7 @@ import { HubRemote } from '../../frontend/hub/administration/remotes/Remotes';
 import { Repository } from '../../frontend/hub/administration/repositories/Repository';
 import { CollectionVersionSearch } from '../../frontend/hub/collections/Collection';
 import { ExecutionEnvironment as HubExecutionEnvironment } from '../../frontend/hub/execution-environments/ExecutionEnvironment';
+import { HubDistribution } from '../../frontend/hub/interfaces/expanded/HubDistribution';
 import { HubNamespace } from '../../frontend/hub/namespaces/HubNamespace';
 import { IAwxResources } from './awx-commands';
 import {
@@ -51,6 +52,7 @@ import {
   HubCreateNamespaceOptions,
   HubCreateRemoteOptions,
   HubCreateRemoteRegistryOptions,
+  HubCreateRepositoryDistributionOptions,
   HubCreateRepositoryOptions,
   HubCreateRoleOptions,
   HubDeleteCollectionOptions,
@@ -246,6 +248,9 @@ declare global {
         variant?: 'MultiText' | 'SingleText'
       ): Chainable<void>;
 
+      /** Get the row with the column whose cell contains the specified text */
+      getTableRowBy(column: string, name: string | RegExp): Chainable<JQuery<HTMLTableRowElement>>;
+
       /** Get the table row containing the specified text with 'ToolbarFilterType.SingleText' filter. */
       getTableRowBySingleText(name: string | RegExp, filter?: boolean): Chainable<void>;
 
@@ -267,6 +272,9 @@ declare global {
 
       /** Finds a table row containing text and clicks the link inside that row. */
       clickTableRow(name: string | RegExp, filter?: boolean): Chainable<void>;
+
+      /** Click the action in the kebab dropdown. */
+      clickKebabAction(dataCyLabel: string): Chainable<void>;
 
       /** Finds a table row containing text and clicks action specified by label. */
       clickTableRowKebabAction(
@@ -1070,6 +1078,12 @@ declare global {
       // HUB Repository Commands
       createHubRepository(options?: HubCreateRepositoryOptions): Cypress.Chainable<Repository>;
       deleteHubRepository(options: HubDeleteRepositoryOptions): Cypress.Chainable<void>;
+
+      // HUB Repository Distribution Commands
+      createHubRepositoryDistribution(
+        options?: HubCreateRepositoryDistributionOptions
+      ): Cypress.Chainable<HubDistribution>;
+      deleteHubRepositoryDistributionByName(name: string): Cypress.Chainable<void>;
 
       // HUB Namespace Commands
       createHubNamespace(options?: HubCreateNamespaceOptions): Cypress.Chainable<HubNamespace>;
