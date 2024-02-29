@@ -44,7 +44,6 @@ export function DataEditor(props: {
   const editorRef = useRef<{ editor?: monaco.editor.IStandaloneCodeEditor }>({});
   useEffect(() => {
     if (innerDivEl.current) {
-      const createDisposable = monaco.editor.onDidCreateEditor(() => setReady(true));
       const editor = monaco.editor.create(innerDivEl.current, {
         lineNumbers: props.lineNumbers ? 'on' : 'off',
         lineDecorationsWidth: props.lineNumbers ? undefined : 0,
@@ -61,10 +60,7 @@ export function DataEditor(props: {
         },
       });
       editorRef.current.editor = editor;
-      return () => {
-        createDisposable.dispose();
-        editor.dispose();
-      };
+      return () => editor.dispose();
     }
   }, [props.lineNumbers]);
 
@@ -77,6 +73,7 @@ export function DataEditor(props: {
     if (!model) return;
 
     const didChangeContentDisposable = model.onDidChangeContent(() => {
+      setReady(true);
       const value = editor.getValue() ?? '';
       onChange(value);
       updateEditorHeight(value);
