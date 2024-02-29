@@ -8,8 +8,8 @@ import { TextContent, Text } from '@patternfly/react-core';
 import { SystemJobTemplate } from '../../../interfaces/SystemJobTemplate';
 
 export function useManagementJobPrompt() {
-  const defaultDays = 30;
-  const [dataRetention, setDataRetention] = useState<number | undefined>(defaultDays);
+  //const defaultDays = 30;
+  const [dataRetention, setDataRetention] = useState<number | ''>(3);
   const { t } = useTranslation();
   const { pushDialog, popDialog } = usePageDialogs();
   const launchManagementJob = useLaunchManagementJob();
@@ -17,16 +17,19 @@ export function useManagementJobPrompt() {
   const onMinus = () => {
     const newValue = (dataRetention || 0) - 1;
     setDataRetention(newValue);
+    console.log(dataRetention);
   };
 
   const handleChange = (event: React.FormEvent<HTMLInputElement>) => {
-    const newValue = event.currentTarget.value;
-    setDataRetention(newValue === '' ? '' : +newValue);
+    const dataRetention = (event.target as HTMLInputElement).value;
+    setDataRetention(dataRetention === '' ? dataRetention : +dataRetention);
+    console.log(dataRetention);
   };
 
   const onPlus = () => {
     const newValue = (dataRetention || 0) + 1;
     setDataRetention(newValue);
+    console.log(dataRetention);
   };
 
   async function handleLaunch(
@@ -60,13 +63,14 @@ export function useManagementJobPrompt() {
             minusBtnAriaLabel="minus"
             plusBtnAriaLabel="plus"
             widthChars={5}
+            aria-label="Number input example"
           />
         </TextContent>
 
         <Button
           variant="primary"
           onClick={() => {
-            void handleLaunch(managementJob);
+            void handleLaunch(managementJob, dataRetention);
           }}
         >
           {t('Launch')}
