@@ -26,7 +26,6 @@ export function useExecutionEnvironmentsActions(callback?: (ees: ExecutionEnviro
   const { t } = useTranslation();
   const context = useHubContext();
   const deleteExecutionEnvironments = useDeleteExecutionEnvironments(callback);
-  const syncExecutionEnvironments = useSyncExecutionEnvironments(callback);
   const signExecutionEnvironments = useSignExecutionEnvironments(callback);
   const pageNavigate = usePageNavigate();
 
@@ -68,17 +67,6 @@ export function useExecutionEnvironmentsActions(callback?: (ees: ExecutionEnviro
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
-        label: t('Sync selected environments'),
-        onClick: syncExecutionEnvironments,
-        isDisabled:
-          context.hasPermission('container.change_containernamespace') &&
-          context.hasPermission('container.namespace_change_containerdistribution')
-            ? ''
-            : t`You do not have rights to this operation`,
-      },
-      {
-        type: PageActionType.Button,
-        selection: PageActionSelection.Multiple,
         label: t('Sign selected environments'),
         onClick: signExecutionEnvironments,
         isDisabled:
@@ -88,14 +76,7 @@ export function useExecutionEnvironmentsActions(callback?: (ees: ExecutionEnviro
             : t`You do not have rights to this operation`,
       },
     ],
-    [
-      t,
-      context,
-      deleteExecutionEnvironments,
-      syncExecutionEnvironments,
-      signExecutionEnvironments,
-      pageNavigate,
-    ]
+    [t, context, deleteExecutionEnvironments, signExecutionEnvironments, pageNavigate]
   );
 }
 
