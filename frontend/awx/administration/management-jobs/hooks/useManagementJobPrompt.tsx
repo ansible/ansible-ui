@@ -8,34 +8,30 @@ import { TextContent, Text } from '@patternfly/react-core';
 import { SystemJobTemplate } from '../../../interfaces/SystemJobTemplate';
 
 export function useManagementJobPrompt() {
-  //const defaultDays = 3;
-  const MAX_RETENTION = 99999;
-  const [dataRetention, setDataRetention] = useState<number | ''>(3);
+  const defaultDays = 30;
+  const [dataRetention, setDataRetention] = useState<number | undefined>(defaultDays);
   const { t } = useTranslation();
   const { pushDialog, popDialog } = usePageDialogs();
   const launchManagementJob = useLaunchManagementJob();
-  //const { launchOtherJobTypes } = useLaunchManagementJob();
 
   const onMinus = () => {
     const newValue = (dataRetention || 0) - 1;
     setDataRetention(newValue);
-    console.log(newValue);
   };
 
   const handleChange = (event: React.FormEvent<HTMLInputElement>) => {
-    const dataRetention = (event.target as HTMLInputElement).value;
-    setDataRetention(dataRetention === '' ? dataRetention : +dataRetention);
+    const newValue = event.currentTarget.value;
+    setDataRetention(newValue === '' ? '' : +newValue);
   };
 
   const onPlus = () => {
     const newValue = (dataRetention || 0) + 1;
     setDataRetention(newValue);
-    console.log(newValue);
   };
 
   async function handleLaunch(
     managementJob: SystemJobTemplate,
-    dataRetention: number
+    dataRetention?: number
   ): Promise<void> {
     await launchManagementJob(managementJob, dataRetention);
   }
@@ -63,8 +59,6 @@ export function useManagementJobPrompt() {
             inputAriaLabel="number input"
             minusBtnAriaLabel="minus"
             plusBtnAriaLabel="plus"
-            max={MAX_RETENTION}
-            min={0}
             widthChars={5}
           />
         </TextContent>
@@ -72,7 +66,6 @@ export function useManagementJobPrompt() {
         <Button
           variant="primary"
           onClick={() => {
-            console.log('launch on click', managementJob);
             void handleLaunch(managementJob);
           }}
         >
