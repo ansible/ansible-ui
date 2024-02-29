@@ -17,8 +17,9 @@ import { HubRoute } from '../../main/HubRoutes';
 import { ExecutionEnvironment } from '../ExecutionEnvironment';
 import { useExecutionEnvironmentPageActions } from './hooks/useExecutionEnvironmentPageActions';
 import { SignStatus } from './components/SignStatus';
-import { StatusCell } from '../../../common/Status';
+import { StatusLabel } from '../../../common/Status';
 import { Flex, FlexItem, Stack } from '@patternfly/react-core';
+import { HelperText } from '../../common/HelperText';
 
 export function ExecutionEnvironmentPage() {
   const { t } = useTranslation();
@@ -62,14 +63,17 @@ export function ExecutionEnvironmentPage() {
               <SignStatus state={ee?.pulp?.repository?.sign_state} />
             </div>
             {!!lastSyncTask && (
-              <Flex>
+              <Flex gap={{ default: 'gapSm' }}>
                 <FlexItem>
                   <Trans>
                     Last updated from registry <DateTimeCell value={lastSyncTask?.finished_at} />
                   </Trans>
                 </FlexItem>
                 <FlexItem>
-                  <StatusCell status={lastSyncTask?.state} />
+                  <StatusLabel status={lastSyncTask?.state} />
+                </FlexItem>
+                <FlexItem>
+                  <HelperText content={lastSyncTask.error.description} />
                 </FlexItem>
               </Flex>
             )}
