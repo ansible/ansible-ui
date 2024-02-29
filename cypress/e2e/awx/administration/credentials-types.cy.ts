@@ -147,6 +147,7 @@ describe('Credential Types', () => {
     ).should('be.visible');
     cy.contains('button', 'Cancel').click();
     cy.get('input[data-cy=select-all]').click();
+    cy.reload();
   });
 
   it('delete a credential type from the list row action', () => {
