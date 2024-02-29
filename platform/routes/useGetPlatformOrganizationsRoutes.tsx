@@ -10,6 +10,8 @@ import { PlatformOrganizationList } from '../access/organizations/components/Pla
 import { PlatformOrganizationPage } from '../access/organizations/components/PlatformOrganizationPage';
 import { PlatformRoute } from '../main/PlatformRoutes';
 import { PlatformOrganizationAdmins } from '../access/organizations/components/PlatformOrganizationAdmins';
+import { PlatformOrganizationUsers } from '../access/organizations/components/PlatformOrganizationUsers';
+import { PlatformOrganizationAddAccess } from '../access/organizations/components/PlatformOrganizationAddAccess';
 
 export function useGetPlatformOrganizationsRoutes() {
   const { t } = useTranslation();
@@ -42,7 +44,7 @@ export function useGetPlatformOrganizationsRoutes() {
             {
               id: PlatformRoute.OrganizationUsers,
               path: 'users',
-              element: <PageNotImplemented />,
+              element: <PlatformOrganizationUsers />,
             },
             {
               id: PlatformRoute.OrganizationAdmins,
@@ -55,6 +57,16 @@ export function useGetPlatformOrganizationsRoutes() {
               element: <PageNotImplemented />,
             },
           ],
+        },
+        {
+          id: PlatformRoute.OrganizationAddUsers,
+          path: ':id/users/add-users',
+          element: <PlatformOrganizationAddAccess />,
+        },
+        {
+          id: PlatformRoute.OrganizationAddTeams,
+          path: ':id/teams/add-teams',
+          element: <PlatformOrganizationAddAccess />,
         },
         {
           path: '',
