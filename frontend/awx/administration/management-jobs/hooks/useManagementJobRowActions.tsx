@@ -4,8 +4,6 @@ import { useTranslation } from 'react-i18next';
 import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
 import { SystemJobTemplate } from '../../../interfaces/SystemJobTemplate';
 import { useManagementJobPrompt } from './useManagementJobPrompt';
-
-// import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
 import { useLaunchManagementJob } from './useLaunchManagementJob';
 
 export function useManagementJobRowActions() {
@@ -21,15 +19,11 @@ export function useManagementJobRowActions() {
           managementJob.job_type === 'cleanup_activitystream' ||
           managementJob.job_type === 'cleanup_jobs'
         ) {
-          console.log(managementJob);
-          console.log('Launching PROMPT MODAL', managementJob.job_type);
           managementJobPrompt(managementJob);
         } else if (
           managementJob.job_type === 'cleanup_tokens' ||
           managementJob.job_type === 'cleanup_sessions'
         ) {
-          console.log('Launching TOKEN AND SESSIONS', 'MANAGEMENT JOB TYPE', managementJob);
-          // await launchCleanupTokensAndSessions(managementJob);
           await launchManagementJob(managementJob);
         }
       }
