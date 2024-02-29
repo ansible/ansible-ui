@@ -62,7 +62,7 @@ export function ExecutionEnvironmentPage() {
             <div>
               <SignStatus state={ee?.pulp?.repository?.sign_state} />
             </div>
-            {!!lastSyncTask && (
+            {!!lastSyncTask?.state && (
               <Flex gap={{ default: 'gapSm' }}>
                 <FlexItem>
                   <Trans>
@@ -72,9 +72,11 @@ export function ExecutionEnvironmentPage() {
                 <FlexItem>
                   <StatusLabel status={lastSyncTask?.state} />
                 </FlexItem>
-                <FlexItem>
-                  <HelperText content={lastSyncTask.error.description} />
-                </FlexItem>
+                {lastSyncTask?.error && (
+                  <FlexItem>
+                    <HelperText content={lastSyncTask?.error?.description} />
+                  </FlexItem>
+                )}
               </Flex>
             )}
           </Stack>
