@@ -22,7 +22,6 @@ import '@patternfly/patternfly/patternfly-charts-theme-dark.css';
 import '@4tw/cypress-drag-drop';
 import '@cypress/code-coverage/support';
 import { Page } from '@patternfly/react-core';
-import 'cypress-file-upload';
 import 'cypress-react-selector';
 import type { MountReturn } from 'cypress/react';
 import { mount } from 'cypress/react18';
