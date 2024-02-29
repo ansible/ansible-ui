@@ -53,6 +53,7 @@ import {
   HubCreateRemoteRegistryOptions,
   HubCreateRepositoryOptions,
   HubCreateRoleOptions,
+  HubDeleteCollectionOptions,
   HubDeleteExecutionEnvironmentOptions,
   HubDeleteNamespaceOptions,
   HubDeleteRemoteOptions,
@@ -219,7 +220,7 @@ declare global {
       filterTableByText(text: string, variant?: 'SingleText' | 'MultiText'): Chainable<void>;
 
       /** Filter the table using it's current filter by entering text in 'ToolbarFilterType.SingleText' filter. */
-      filterTableBySingleText(text: string): Chainable<void>;
+      filterTableBySingleText(text: string, disableWait?: boolean): Chainable<void>;
 
       /** Filter the table using specified filter and text. */
       filterTableByTypeAndText(filterLabel: string | RegExp, text: string): Chainable<void>;
@@ -312,6 +313,8 @@ declare global {
 
       /** Selects a table row in the active modal dialog, by clicking on the row checkbox. */
       selectTableRowInDialog(name: string | RegExp, filter?: boolean): Chainable<void>;
+
+      getModal(): Chainable<JQuery<HTMLElement>>;
 
       // --- DETAILS COMMANDS ---
       /**Finds a button with a particular label and clicks it. */
@@ -1079,6 +1082,11 @@ declare global {
       // HUB Remote Commands
       createHubRemote(options?: HubCreateRemoteOptions): Cypress.Chainable<HubRemote>;
       deleteHubRemote(options: HubDeleteRemoteOptions): Cypress.Chainable<void>;
+
+      // HUB Collection Commands
+      getHubCollection(name: string): Cypress.Chainable<CollectionVersionSearch>;
+      deleteHubCollection(options: HubDeleteCollectionOptions): Cypress.Chainable<void>;
+      deleteHubCollectionByName(name: string): Cypress.Chainable<void>;
 
       // HUB GalaxyKit Commands
       galaxykit(operation: string, ...args: string[]): Cypress.Chainable<string[]>;
