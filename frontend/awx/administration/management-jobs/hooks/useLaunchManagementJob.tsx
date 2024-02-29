@@ -13,7 +13,7 @@ export function useLaunchManagementJob() {
   const alertToaster = usePageAlertToaster();
   const getJobOutputUrl = useGetJobOutputUrl();
 
-  const launchManagementJob = async (managementJob: SystemJobTemplate, extra_vars?: number) => {
+  const launchManagementJob = async (managementJob: SystemJobTemplate, days?: number) => {
     const launchManagementJobEndpoint = getLaunchMgtJobEndpoint(managementJob);
     if (!launchManagementJobEndpoint) {
       return Promise.reject(new Error('Unable to retrieve management job launch configuration'));
@@ -25,9 +25,8 @@ export function useLaunchManagementJob() {
         const managementJobLaunch = await postRequest(launchManagementJobEndpoint, {});
         targetUrl = getJobOutputUrl(managementJobLaunch as SystemJobTemplate);
       } else if (['cleanup_activitystream', 'cleanup_jobs'].includes(managementJob.job_type)) {
-        const postData = extra_vars ? { extra_vars: { days: extra_vars } } : {};
         const managementJobLaunch = await postRequest(launchManagementJobEndpoint, {
-          postData,
+          extra_vars: { days },
         });
         targetUrl = getJobOutputUrl(managementJobLaunch as SystemJobTemplate);
       }
