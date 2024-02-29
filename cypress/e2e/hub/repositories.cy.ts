@@ -20,7 +20,6 @@ describe('Repositories Page', () => {
     cy.getByDataCy('Submit').click();
     cy.verifyPageTitle(repositoryName);
     cy.get('[data-cy="description"]').should('contain', repositoryDescription);
-    cy.galaxykit('-i repository delete ' + repositoryName);
   });
 
   it('should be able to edit a repository', () => {
@@ -68,6 +67,24 @@ describe('Repositories Page', () => {
       cy.clickPageAction('copy-cli-configuration');
       cy.get('[data-cy="alert-toaster"]').should('be.visible');
       cy.deleteHubRepository(repository);
+    });
+  });
+
+  it('should sync repository', () => {
+    cy.createHubRemote().then((remote) => {
+      cy.createHubRepository({ repository: { remote: remote.pulp_href } }).then((repository) => {
+        cy.filterTableBySingleText(repository.name, true);
+        cy.clickTableRowKebabAction(repository.name, 'sync-repository', false);
+        cy.get('button').contains('Sync').click();
+        cy.get('[data-cy="alert-toaster"]')
+          .should('be.visible')
+          .should('contain', `Sync started for repository "${repository.name}".`);
+        cy.get('[data-cy="alert-toaster"]').within(() => {
+          cy.get('button').click();
+        });
+        cy.deleteHubRepository(repository);
+      });
+      cy.deleteHubRemote(remote);
     });
   });
 });
