@@ -28,6 +28,7 @@ describe('inventory host', () => {
     cy.clickButton(/^Create inventory$/);
     cy.clickLink(/^Create inventory$/);
     cy.get('[data-cy="name"]').type(inventoryName);
+
     cy.selectSingleSelectOption('[data-cy="organization"]', organization.name);
     cy.clickButton(/^Create inventory$/);
     cy.verifyPageTitle(inventoryName);
