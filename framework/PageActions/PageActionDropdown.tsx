@@ -20,13 +20,13 @@ import { isPageActionHidden, usePageActionDisabled } from './PageActionUtils';
 const IconSpan = styled.span`
   padding-right: 4px;
 `;
-const StyledDropdownItem = styled.div<{ hasSwitches: boolean; isDanger: boolean }>`
-  --pf-v5-c-dropdown__menu-item-icon--Width: ${({ hasSwitches }) =>
-    hasSwitches ? '40px' : undefined};
-  --pf-v5-c-dropdown__menu-item-icon--MarginRight: ${({ hasSwitches }) =>
-    hasSwitches ? '16px' : undefined};
-  --pf-v5-c-dropdown__menu-item--Color: ${({ isDanger }) =>
-    isDanger ? 'var(--pf-v5-global--danger-color--100)' : undefined};
+const StyledDropdownItem = styled.div<{ $hasSwitches: boolean; $isDanger: boolean }>`
+  --pf-v5-c-dropdown__menu-item-icon--Width: ${({ $hasSwitches }) =>
+    $hasSwitches ? '40px' : undefined};
+  --pf-v5-c-dropdown__menu-item-icon--MarginRight: ${({ $hasSwitches }) =>
+    $hasSwitches ? '16px' : undefined};
+  --pf-v5-c-dropdown__menu-item--Color: ${({ $isDanger }) =>
+    $isDanger ? 'var(--pf-v5-global--danger-color--100)' : undefined};
 `;
 
 const ActionSwitchDiv = styled.div`
@@ -216,7 +216,7 @@ function PageDropdownActionItem<T extends object>(props: {
       }
       return (
         <Tooltip key={action.label} content={tooltip} trigger={tooltip ? undefined : 'manual'}>
-          <StyledDropdownItem hasSwitches={hasSwitches} isDanger={Boolean(action.isDanger)}>
+          <StyledDropdownItem $hasSwitches={hasSwitches} $isDanger={Boolean(action.isDanger)}>
             <DropdownItem
               icon={
                 Icon ? (
