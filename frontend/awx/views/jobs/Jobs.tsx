@@ -76,7 +76,7 @@ export function Jobs() {
         )}
         headerActions={<ActivityStreamIcon type={'job'} />}
       />
-      <JobsList />
+      <JobsList columns={tableColumns} />
     </PageLayout>
   );
 }
