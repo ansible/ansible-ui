@@ -73,7 +73,6 @@ export function DataEditor(props: {
     if (!model) return;
 
     const didChangeContentDisposable = model.onDidChangeContent(() => {
-      setReady(true);
       const value = editor.getValue() ?? '';
       onChange(value);
       updateEditorHeight(value);
@@ -125,6 +124,7 @@ export function DataEditor(props: {
     const editor = editorRef?.current?.editor;
     if (!editor) return;
     editor.layout();
+    setReady(true);
   });
 
   // Update editor theme when settings change
