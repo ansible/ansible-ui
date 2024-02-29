@@ -20,7 +20,6 @@ describe('Repositories Page', () => {
     cy.getByDataCy('Submit').click();
     cy.verifyPageTitle(repositoryName);
     cy.get('[data-cy="description"]').should('contain', repositoryDescription);
-    // TODO
     cy.galaxykit('-i repository delete ' + repositoryName);
   });
 
