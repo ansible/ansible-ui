@@ -32,7 +32,7 @@ export function PlatformOrganizationList() {
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(gatewayV1API`/organizations/`);
   const canCreateOrganization = Boolean(data && data.actions && data.actions['POST']);
   const toolbarActions = useOrganizationToolbarActions(view);
-  const rowActions = useOrganizationRowActions(view);
+  const rowActions = useOrganizationRowActions(view.unselectItemsAndRefresh);
 
   return (
     <PageLayout>
