@@ -614,8 +614,8 @@ Cypress.Commands.add('deleteHubCollectionByName', (name: string) => {
     //with the same name. Without this code, the DELETE request would be made twice
     //on the same collection, resulting in an API error
     for (const collection of itemsResponse.data) {
-      const repeatedName = itemsResponse.data[0].collection_version.name;
-      if (collection.collection_version.name === repeatedName) {
+      const repeatedName = itemsResponse.data[0]?.collection_version?.name;
+      if (collection?.collection_version?.name === repeatedName) {
         cy.deleteHubCollection(collection);
         break;
       } else {
