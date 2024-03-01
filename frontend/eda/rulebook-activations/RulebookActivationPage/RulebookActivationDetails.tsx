@@ -16,7 +16,7 @@ import { StatusCell } from '../../../common/Status';
 import { useGetItem } from '../../../common/crud/useGet';
 import { edaAPI } from '../../common/eda-utils';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
-import { RestartPolicyEnum, Status906Enum } from '../../interfaces/generated/eda-api';
+import { LogLevelEnum, RestartPolicyEnum, Status906Enum } from '../../interfaces/generated/eda-api';
 import { EdaRoute } from '../../main/EdaRoutes';
 import { EdaExtraVarsCell } from '../components/EdaExtraVarCell';
 import { SelectVariant } from '@patternfly/react-core/deprecated';
@@ -127,6 +127,9 @@ export function RulebookActivationDetails() {
               {rulebookActivation?.status_message}
             </PageDetail>
           )}
+        <PageDetail label={t('Log level')} helpText={t('Error | Info | Debug')}>
+          {logLevelName(rulebookActivation?.log_level, t)}
+        </PageDetail>
         <PageDetail label={t('Project git hash')}>
           <CopyCell text={rulebookActivation?.git_hash ?? ''} />
         </PageDetail>
@@ -172,5 +175,17 @@ function restartPolicyName(policy: RestartPolicyEnum, t: (str: string) => string
       return t('Never');
     default:
       return capitalizeFirstLetter(policy);
+  }
+}
+function logLevelName(logLevel: LogLevelEnum, t: (str: string) => string) {
+  switch (logLevel) {
+    case LogLevelEnum.error:
+      return t('Error');
+    case LogLevelEnum.info:
+      return t('Info');
+    case LogLevelEnum.debug:
+      return t('Debug');
+    default:
+      return capitalizeFirstLetter(logLevel);
   }
 }
