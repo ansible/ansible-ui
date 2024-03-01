@@ -29,7 +29,7 @@ export function PlatformTeamList() {
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(gatewayV1API`/teams/`);
   const canCreateTeam = Boolean(data && data.actions && data.actions['POST']);
   const toolbarActions = useTeamToolbarActions(view);
-  const rowActions = useTeamRowActions(view);
+  const rowActions = useTeamRowActions(view.unselectItemsAndRefresh);
 
   return (
     <PageLayout>
