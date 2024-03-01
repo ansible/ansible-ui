@@ -1,6 +1,6 @@
-import { Repositories } from './constants';
 import { randomString } from '../../../framework/utils/random-string';
 import { pulpAPI } from '../../support/formatApiPathForHub';
+import { Repositories } from './constants';
 
 describe('Repositories', () => {
   let repositoryName: string;
@@ -171,7 +171,7 @@ describe('Repositories Remove collection', () => {
       cy.contains('Add collections versions to repository');
 
       collections.forEach((collection) => {
-        cy.filterTableBySingleText(collection + '{enter}');
+        cy.filterTableBySingleText(collection);
         cy.contains(collection);
         cy.get(`[data-cy="checkbox-column-cell"]`).click();
       });
@@ -192,7 +192,7 @@ describe('Repositories Remove collection', () => {
     cy.get(modal).should('not.exist');
 
     // Remove first collection
-    cy.filterTableBySingleText(collections[0] + '{enter}');
+    cy.filterTableBySingleText(collections[0]);
     cy.get(`[aria-label="table view"]`).click();
     cy.get(`[data-cy="remove"]`).click();
     cy.clickModalConfirmCheckbox();
