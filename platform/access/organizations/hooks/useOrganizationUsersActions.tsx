@@ -37,12 +37,12 @@ export function useOrganizationUsersToolbarActions(view: IPlatformView<PlatformU
     gatewayV1API`/organizations/${organization?.id?.toString() ?? ''}/users/disassociate/`
   );
 
-  const canAssociateAdmin = useMemo(
+  const canAssociateUser = useMemo(
     () => Boolean(associateOptions?.actions && associateOptions.actions['POST']),
     [associateOptions?.actions]
   );
 
-  const canRemoveAdmin = Boolean(
+  const canRemoveUser = Boolean(
     disassociateOptions?.actions && disassociateOptions.actions['POST']
   );
   const removeUsers = useRemoveOrganizationUsers(view.unselectItemsAndRefresh);
@@ -55,8 +55,8 @@ export function useOrganizationUsersToolbarActions(view: IPlatformView<PlatformU
         variant: ButtonVariant.primary,
         isPinned: true,
         icon: PlusCircleIcon,
-        label: t('Add user(s)'),
-        isDisabled: canAssociateAdmin
+        label: t('Add users'),
+        isDisabled: canAssociateUser
           ? undefined
           : t(
               'You do not have permission to add users to this organization. Please contact your system administrator if there is an issue with your access.'
@@ -73,7 +73,7 @@ export function useOrganizationUsersToolbarActions(view: IPlatformView<PlatformU
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
         label: t('Remove selected users'),
-        isDisabled: canRemoveAdmin
+        isDisabled: canRemoveUser
           ? undefined
           : t(
               'You do not have permission to remove users from this organization. Please contact your system administrator if there is an issue with your access.'
@@ -82,7 +82,7 @@ export function useOrganizationUsersToolbarActions(view: IPlatformView<PlatformU
         isDanger: true,
       },
     ],
-    [t, canAssociateAdmin, canRemoveAdmin, removeUsers, pageNavigate, params.id]
+    [t, canAssociateUser, canRemoveUser, removeUsers, pageNavigate, params.id]
   );
 
   return toolbarActions;
@@ -91,15 +91,16 @@ export function useOrganizationUsersToolbarActions(view: IPlatformView<PlatformU
 export function useOrganizationUsersRowActions(view: IPlatformView<PlatformUser>) {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
+  const pageNavigate = usePageNavigate();
   const { data: organization } = useGetItem<PlatformOrganization>(
     gatewayV1API`/organizations`,
     params.id
   );
   const removeUsers = useRemoveOrganizationUsers(view.unselectItemsAndRefresh);
   const { data: disassociateOptions } = useOptions<OptionsResponse<ActionsResponse>>(
-    gatewayV1API`/organizations/${organization?.id?.toString() ?? ''}/admins/disassociate/`
+    gatewayV1API`/organizations/${organization?.id?.toString() ?? ''}/users/disassociate/`
   );
-  const canRemoveAdmin = Boolean(
+  const canRemoveUser = Boolean(
     disassociateOptions?.actions && disassociateOptions.actions['POST']
   );
 
@@ -113,21 +114,24 @@ export function useOrganizationUsersRowActions(view: IPlatformView<PlatformUser>
         icon: CogIcon,
         label: t(`Manage roles`),
         // isDisabled: // TODO
-        onClick: () => alert('TODO'),
+        onClick: (user: PlatformUser) =>
+          pageNavigate(PlatformRoute.OrganizationManageUserRoles, {
+            params: { id: params.id, userId: user.id },
+          }),
       },
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Remove user'),
-        isDisabled: canRemoveAdmin
+        isDisabled: canRemoveUser
           ? ''
           : t(`The user cannot be removed due to insufficient permissions.`),
         onClick: (user) => removeUsers([user]),
         isDanger: true,
       },
     ];
-  }, [canRemoveAdmin, removeUsers, t]);
+  }, [canRemoveUser, removeUsers, t]);
 
   return rowActions;
 }

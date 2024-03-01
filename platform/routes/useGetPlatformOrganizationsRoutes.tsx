@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PageNavigationItem, PageNotImplemented } from '../../framework';
+import { PageNavigationItem } from '../../framework';
 import { PlatformOrganizationDetails } from '../access/organizations/components/PlatformOrganizationDetails';
 import {
   CreatePlatformOrganization,
@@ -11,7 +11,8 @@ import { PlatformOrganizationPage } from '../access/organizations/components/Pla
 import { PlatformRoute } from '../main/PlatformRoutes';
 import { PlatformOrganizationAdmins } from '../access/organizations/components/PlatformOrganizationAdmins';
 import { PlatformOrganizationUsers } from '../access/organizations/components/PlatformOrganizationUsers';
-import { PlatformOrganizationAddAccess } from '../access/organizations/components/PlatformOrganizationAddAccess';
+import { PlatformOrganizationManageAccess } from '../access/organizations/components/PlatformOrganizationManageAccess';
+import { PlatformOrganizationTeams } from '../access/organizations/components/PlatformOrganizationTeams';
 
 export function useGetPlatformOrganizationsRoutes() {
   const { t } = useTranslation();
@@ -54,19 +55,29 @@ export function useGetPlatformOrganizationsRoutes() {
             {
               id: PlatformRoute.OrganizationTeams,
               path: 'resource-access',
-              element: <PageNotImplemented />,
+              element: <PlatformOrganizationTeams />,
             },
           ],
         },
         {
           id: PlatformRoute.OrganizationAddUsers,
           path: ':id/users/add-users',
-          element: <PlatformOrganizationAddAccess />,
+          element: <PlatformOrganizationManageAccess />,
         },
         {
           id: PlatformRoute.OrganizationAddTeams,
           path: ':id/teams/add-teams',
-          element: <PlatformOrganizationAddAccess />,
+          element: <PlatformOrganizationManageAccess />,
+        },
+        {
+          id: PlatformRoute.OrganizationManageUserRoles,
+          path: ':id/users/:userId/manage-roles',
+          element: <PlatformOrganizationManageAccess />,
+        },
+        {
+          id: PlatformRoute.OrganizationManageTeamRoles,
+          path: ':id/teams/:teamId/manage-roles',
+          element: <PlatformOrganizationManageAccess />,
         },
         {
           path: '',

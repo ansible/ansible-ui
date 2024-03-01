@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useUsersFilters } from '../../users/hooks/useUsersFilters';
 import { useUsersColumns } from '../../users/hooks/useUserColumns';
-import { LoadingPage, PageTable } from '../../../../framework';
+import { PageTable } from '../../../../framework';
 import { usePlatformView } from '../../../hooks/usePlatformView';
 import { PlatformUser } from '../../../interfaces/PlatformUser';
 import { gatewayV1API } from '../../../api/gateway-api-utils';
@@ -19,6 +19,7 @@ import {
   useOrganizationUsersRowActions,
   useOrganizationUsersToolbarActions,
 } from '../hooks/useOrganizationUsersActions';
+import { LoadingState } from '../../../../framework/components/LoadingState';
 
 export function PlatformOrganizationUsers() {
   const { t } = useTranslation();
@@ -46,7 +47,7 @@ export function PlatformOrganizationUsers() {
   const toolbarActions = useOrganizationUsersToolbarActions(view);
   const rowActions = useOrganizationUsersRowActions(view);
 
-  if (isLoading || isLoadingOptions) return <LoadingPage />;
+  if (isLoading || isLoadingOptions) return <LoadingState />;
   if (error) return <AwxError error={error} />;
 
   return (

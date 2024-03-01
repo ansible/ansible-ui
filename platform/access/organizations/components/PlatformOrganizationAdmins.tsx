@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useUsersFilters } from '../../users/hooks/useUsersFilters';
 import { useUsersColumns } from '../../users/hooks/useUserColumns';
-import { LoadingPage, PageTable } from '../../../../framework';
+import { PageTable } from '../../../../framework';
 import { usePlatformView } from '../../../hooks/usePlatformView';
 import { PlatformUser } from '../../../interfaces/PlatformUser';
 import { gatewayV1API } from '../../../api/gateway-api-utils';
@@ -19,6 +19,7 @@ import {
   useOrganizationAdminsToolbarActions,
 } from '../hooks/useOrganizationAdminsActions';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
+import { LoadingState } from '../../../../framework/components/LoadingState';
 
 export function PlatformOrganizationAdmins() {
   const { t } = useTranslation();
@@ -46,12 +47,12 @@ export function PlatformOrganizationAdmins() {
   const toolbarActions = useOrganizationAdminsToolbarActions(view);
   const rowActions = useOrganizationAdminsRowActions(view);
 
-  if (isLoading || isLoadingOptions) return <LoadingPage />;
+  if (isLoading || isLoadingOptions) return <LoadingState />;
   if (error) return <AwxError error={error} />;
 
   return (
     <PageTable<PlatformUser>
-      id="platform-admins-table"
+      id="platform-organization-admins-table"
       toolbarFilters={toolbarFilters}
       toolbarActions={toolbarActions}
       tableColumns={tableColumns}
