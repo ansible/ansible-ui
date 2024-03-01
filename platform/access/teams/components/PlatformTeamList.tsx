@@ -1,6 +1,12 @@
 import { CubesIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { PageHeader, PageLayout, PageTable, usePageNavigate } from '../../../../framework';
+import {
+  LoadingPage,
+  PageHeader,
+  PageLayout,
+  PageTable,
+  usePageNavigate,
+} from '../../../../framework';
 import {
   ActionsResponse,
   OptionsResponse,
@@ -13,6 +19,7 @@ import { PlatformRoute } from '../../../main/PlatformRoutes';
 import { useTeamRowActions, useTeamToolbarActions } from '../hooks/useTeamActions';
 import { useTeamColumns } from '../hooks/useTeamColumns';
 import { useTeamFilters } from '../hooks/useTeamFilters';
+import { AwxError } from '../../../../frontend/awx/common/AwxError';
 
 export function PlatformTeamList() {
   const { t } = useTranslation();
@@ -26,10 +33,17 @@ export function PlatformTeamList() {
     tableColumns,
   });
 
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>(gatewayV1API`/teams/`);
+  const {
+    data,
+    isLoading: isLoadingOptions,
+    error,
+  } = useOptions<OptionsResponse<ActionsResponse>>(gatewayV1API`/teams/`);
   const canCreateTeam = Boolean(data && data.actions && data.actions['POST']);
   const toolbarActions = useTeamToolbarActions(view);
   const rowActions = useTeamRowActions(view);
+
+  if (isLoadingOptions) return <LoadingPage />;
+  if (error) return <AwxError error={error} />;
 
   return (
     <PageLayout>
