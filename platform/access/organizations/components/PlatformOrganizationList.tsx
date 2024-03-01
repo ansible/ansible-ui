@@ -1,6 +1,12 @@
 import { CubesIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { PageHeader, PageLayout, PageTable, usePageNavigate } from '../../../../framework';
+import {
+  LoadingPage,
+  PageHeader,
+  PageLayout,
+  PageTable,
+  usePageNavigate,
+} from '../../../../framework';
 import {
   ActionsResponse,
   OptionsResponse,
@@ -16,6 +22,7 @@ import {
 } from '../hooks/useOrganizationActions';
 import { useOrganizationColumns } from '../hooks/useOrganizationColumns';
 import { useOrganizationFilters } from '../hooks/useOrganizationFilters';
+import { AwxError } from '../../../../frontend/awx/common/AwxError';
 
 export function PlatformOrganizationList() {
   const { t } = useTranslation();
@@ -29,10 +36,17 @@ export function PlatformOrganizationList() {
     tableColumns,
   });
 
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>(gatewayV1API`/organizations/`);
+  const {
+    data,
+    isLoading: isLoadingOptions,
+    error,
+  } = useOptions<OptionsResponse<ActionsResponse>>(gatewayV1API`/organizations/`);
   const canCreateOrganization = Boolean(data && data.actions && data.actions['POST']);
   const toolbarActions = useOrganizationToolbarActions(view);
   const rowActions = useOrganizationRowActions(view);
+
+  if (isLoadingOptions) return <LoadingPage />;
+  if (error) return <AwxError error={error} />;
 
   return (
     <PageLayout>
