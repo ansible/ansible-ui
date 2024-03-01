@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-/* eslint-disable @typescript-eslint/no-namespace */
 /// <reference types="cypress" />
 import { SetOptional, SetRequired } from 'type-fest';
 import { AwxItemsResponse } from '../../frontend/awx/common/AwxItemsResponse';
@@ -71,26 +69,41 @@ import {
 declare global {
   namespace Cypress {
     interface Chainable {
-      // =====================================================================
-      // Core Commands - Commands to help interact with elements ensuring they are not disabled or hidden
-      // Login Commands - Commands to help login to the different applications
-      // Navigation Commands - Commands to help navigate to different pages
-      // Input Commands - Commands to help input data into forms
-      // Table Commands - Commands to help interact with tables
-      // Modal Commands - Commands to help interact with modals
-      // Details Commands - Commands to help interact with details pages
-      // REST API Commands - Commands to help interact with the REST API
-      // AWX Commands - Commands to help interact with AWX
-      // EDA Commands - Commands to help interact with EDA
-      // HUB Commands - Commands to help interact with HUB
-      // =====================================================================
+      // ==============================================================================================================
+      // Login Commands
+      // ==============================================================================================================
 
-      // =====================================================================
+      /** Login to the AWX application */
+      awxLogin(): Chainable<void>;
+
+      /** Login to the EDA application */
+      edaLogin(): Chainable<void>;
+
+      /** Logout of the EDA application */
+      edaLogout(): Chainable<EdaUser | undefined>;
+
+      /** Login to the HUB application */
+      hubLogin(): Chainable<void>;
+
+      /** Check that the required environment variables are set */
+      requiredVariablesAreSet(requiredVariables: string[]): Chainable<void>;
+
+      // ==============================================================================================================
+      // Navigation Commands
+      // ==============================================================================================================
+
+      /**
+       * Navigates to a page of the UI using using the links on the page sidebar.
+       * Intended as an alternative to cy.visit().
+       */
+      navigateTo(component: 'platform' | 'awx' | 'eda' | 'hub', label: string): Chainable<void>;
+
+      /** Locates a title using its label. No assertion is made. */
+      verifyPageTitle(label: string): Chainable<void>;
+
+      // ==============================================================================================================
       // Core Commands
-      // ---------------------------------------------------------------------
-      // Commands to help interact with elements ensuring they are not disabled or hidden.
-      // They are used to interact with the UI in a way that is consistent and reliable.
-      // =====================================================================
+      // ==============================================================================================================
 
       /** Get by selector, making sure it is not disabled or hidden */
       getBy(selector: string): Chainable<JQuery<HTMLElement>>;
@@ -101,74 +114,78 @@ declare global {
       /** Contains by selector, making sure it is not disabled or hidden */
       containsBy(selector: string, text: string | number | RegExp): Chainable<JQuery<HTMLElement>>;
 
-      /** Click by data-cy attribute, making sure it is not disabled or hidden */
+      /** @deprecated use cy.getBy('selector').click() */
       clickByDataCy(dataCy: string): Chainable<void>;
 
       /** Type input by selector, making sure it is not disabled or hidden */
+      /** @deprecated use cy.getBy('selector').type("text") */
       typeBy(selector: string, text: string): Chainable<void>;
 
       /** Type input by data-cy attribute, making sure it is not disabled or hidden */
+      /** @deprecated use cy.getByDataCy('dataCy').type("text") */
       typeByDataCy(dataCy: string, text: string): Chainable<void>;
 
-      /** Select a value from a single select input by selector, making sure it is not disabled or hidden */
+      /**
+       * Select a value from a single select input by selector, making sure it is not disabled or hidden.
+       * - Opens the dropdown
+       * - Loads all items if it is an async select
+       * - Searches for the value
+       * - Selects the value
+       * - Closes the dropdown
+       */
       singleSelectBy(selector: string, value: string): Chainable<void>;
 
-      /** Used internally to load all items in the singleSelectBy command */
-      selectLoadAll(): Chainable<void>;
-
-      /** Select a value from a single select input by data-cy attribute, making sure it is not disabled or hidden */
+      /**
+       * Select a value from a single select input by data-cy attribute, making sure it is not disabled or hidden.
+       * - Opens the dropdown
+       * - Loads all items if it is an async select
+       * - Searches for the value
+       * - Selects the value
+       * - Closes the dropdown
+       */
       singleSelectByDataCy(dataCy: string, value: string): Chainable<void>;
 
-      /** Select a value from a multi select input by selector, making sure it is not disabled or hidden */
+      /**
+       * Select a value from a multi select input by selector, making sure it is not disabled or hidden.
+       * - Opens the dropdown
+       * - Loads all items if it is an async select
+       * - Searches for the value
+       * - Selects the value
+       * - Closes the dropdown
+       */
       multiSelectBy(selector: string, value: string): Chainable<void>;
 
-      /** Select a value from a multi select input by data-cy attribute, making sure it is not disabled or hidden */
+      /**
+       * Select a value from a multi select input by data-cy attribute, making sure it is not disabled or hidden.
+       * - Opens the dropdown
+       * - Loads all items if it is an async select
+       * - Searches for the value
+       * - Selects the value
+       * - Closes the dropdown
+       */
       multiSelectByDataCy(dataCy: string, value: string): Chainable<void>;
 
-      // =====================================================================
-      // Login Commands
-      // ---------------------------------------------------------------------
-      // Commands to help login to the different applications
-      // =====================================================================
+      /** Used internally to load all items in the singleSelectBy and multiSelectBy commands */
+      selectLoadAll(): Chainable<void>;
 
-      /** Login to the AWX application */
-      awxLogin(): Chainable<void>;
-
-      /** Login to the EDA application */
-      edaLogin(): Chainable<void>;
-
-      /** Login to the HUB application */
-      edaLogout(): Chainable<EdaUser | undefined>;
-
-      /** Login to the HUB application */
-      hubLogin(): Chainable<void>;
-
-      /** Check that the required environment variables are set */
-      requiredVariablesAreSet(requiredVariables: string[]): Chainable<void>;
-
-      // --- NAVIGATION COMMANDS ---
-      // createGlobalProject(): Chainable<Project>;
-      /**Navigates to a page of the UI using using the links on the page sidebar. Intended as an alternative to cy.visit(). */
-      navigateTo(component: 'platform' | 'awx' | 'eda' | 'hub', label: string): Chainable<void>;
-
-      /**Locates a title using its label. No assertion is made. */
-      verifyPageTitle(label: string): Chainable<void>;
-
-      // ---- UI COMMANDS ---
-
-      setTableView(viewType: string): Chainable<void>;
-
-      // ---------------------------------------------------------------------
+      // ==============================================================================================================
       // Input Commands
-      // ---------------------------------------------------------------------
+      // ==============================================================================================================
 
-      inputCustomCredTypeConfig(configType: string, config: string): Chainable<void>;
+      /** @deprecated use cy.getBy('selector').click() */
+      clickLink(label: string | RegExp): Chainable<void>;
 
-      configFormatToggle(configType: string): Chainable<void>;
+      /** @deprecated use cy.getBy('selector').click() */
+      clickButton(label: string | RegExp): Chainable<void>;
 
-      assertMonacoTextField(textString: string): Chainable<void>;
+      /** Finds a tooltip by its label. Does not make an assertion. */
+      hasTooltip(label: string | RegExp): Chainable<void>;
 
+      dataEditorSetFormat(configType: string): Chainable<void>;
       dataEditorShouldContain(selector: string, value: string | object): Chainable<void>;
+
+      /** @deprecated use cy.dataEditorShouldContain */
+      assertMonacoTextField(textString: string): Chainable<void>;
 
       /** This command works for a form field to look up item from table
        * (used for components that do not utilize the PageFormAsyncSelect component yet) */
@@ -183,8 +200,6 @@ declare global {
        * */
       selectDropdownOptionByResourceName(resource: string, itemName: string): Chainable<void>;
 
-      selectPromptOnLaunch(resourceName: string): Chainable<void>;
-
       singleSelectShouldHaveSelectedOption(
         selector: string,
         label: string | RegExp
@@ -192,34 +207,19 @@ declare global {
       singleSelectShouldContainOption(selector: string, label: string | RegExp): Chainable<void>;
       selectSingleSelectOption(selector: string, label: string | RegExp): Chainable<void>;
 
-      editNodeInVisualizer(
-        nodeName: string,
-        newNodeType: string,
-        newNodeName?: string
-      ): Chainable<void>;
-
-      removeAllNodesFromVisualizerToolbar(): Chainable<void>;
-      removeNodeInVisualizer(nodeName: string): Chainable<void>;
+      // TODO REMOVE only needed in one test
       multiSelectShouldHaveSelectedOption(
         selector: string,
         label: string | RegExp
       ): Chainable<void>;
+
+      // TODO REMOVE only needed in one test
       multiSelectShouldNotHaveSelectedOption(
         selector: string,
         label: string | RegExp
       ): Chainable<void>;
+
       selectMultiSelectOption(selector: string, label: string | RegExp): Chainable<void>;
-
-      clickTableHeader(name: string | RegExp): Chainable<void>;
-
-      // --- TABLE COMMANDS ---
-
-      /** Change the current filter type in the table toolbar. */
-      selectToolbarFilterType(filterLabel: string | RegExp): Chainable<void>;
-
-      setTablePageSize(text: '10' | '20' | '50' | '100'): Chainable<void>;
-
-      getFiltersToolbarItem(): Chainable<JQuery<HTMLElement>>;
 
       /**
        * Find the toolbar filter select, click it and returns the opened menu element.
@@ -234,6 +234,23 @@ declare global {
       openToolbarFilterTypeSelect(): Chainable<JQuery<HTMLElement>>;
 
       searchAndDisplayResource(resourceName: string): Chainable<void>;
+
+      // ==============================================================================================================
+      // Table Commands
+      // ==============================================================================================================
+
+      clickTableHeader(name: string | RegExp): Chainable<void>;
+
+      setTableView(viewType: string): Chainable<void>;
+      setTablePageSize(text: '10' | '20' | '50' | '100'): Chainable<void>;
+
+      /** Change the current filter type in the table toolbar. */
+      selectToolbarFilterType(filterLabel: string | RegExp): Chainable<void>;
+
+      getFiltersToolbarItem(): Chainable<JQuery<HTMLElement>>;
+
+      filterTableByTextFilter(text: string): Chainable<void>;
+      filterTableByTextFilter(filterDataCy: string, text: string): Chainable<void>;
 
       filterBySingleSelection(
         filterType: RegExp | string,
@@ -263,8 +280,6 @@ declare global {
 
       clearAllFilters(): Chainable<void>;
 
-      selectDetailsPageKebabAction(dataCy: string): Chainable<void>;
-
       /** Click an action in the table toolbar kebab dropdown actions menu. */
       clickToolbarKebabAction(dataCy: string): Chainable<void>;
 
@@ -280,12 +295,6 @@ declare global {
 
       /** Get the list row containing the specified text. */
       getListRowByText(name: string | RegExp, filter?: boolean): Chainable<void>;
-
-      /** Select the create resource option from a toolbar create dropdown button.  ie. AWX template list toolbar **/
-      clickToolbarDropdownCreateButton(
-        createButtonLabel: string | RegExp,
-        createButtonOption: string
-      ): Chainable<void>;
 
       /**
        * Get the list card containing the specified text.
@@ -329,7 +338,28 @@ declare global {
       /**Expands a table row by locating the row using the provided name and thenclicking the "expand-toggle" button on that row.*/
       expandTableRow(name: string | RegExp, filter?: boolean): Chainable<void>;
 
-      // --- MODAL COMMANDS ---
+      /** Selects a table row in the active modal dialog, by clicking on the row checkbox. */
+      selectTableRowInDialog(name: string | RegExp, filter?: boolean): Chainable<void>;
+
+      // ==============================================================================================================
+      // Details Commands
+      // ==============================================================================================================
+
+      selectDetailsPageKebabAction(dataCy: string): Chainable<void>;
+
+      /**Finds a button with a particular label and clicks it. */
+      clickTab(label: string | RegExp, isLink?: boolean): Chainable<void>;
+
+      /**Asserts that a specific detail term (dt) is displayed and contains text fromthe provided detail description (dd)*/
+      hasDetail(detailTerm: string | RegExp, detailDescription: string | RegExp): Chainable<void>;
+
+      clickPageAction(dataCy: string): Chainable<void>;
+
+      // ==============================================================================================================
+      // Modal Commands
+      // ==============================================================================================================
+
+      getModal(): Chainable<JQuery<HTMLElement>>;
 
       /** Clicks a button in the active modal dialog. */
       clickModalButton(label: string | RegExp): Chainable<void>;
@@ -340,32 +370,19 @@ declare global {
       /** Assert that the active modal dialog contains "Success". */
       assertModalSuccess(): Chainable<void>;
 
-      /** Selects a table row in the active modal dialog, by clicking on the row checkbox. */
-      selectTableRowInDialog(name: string | RegExp, filter?: boolean): Chainable<void>;
+      // ==============================================================================================================
+      // Alert Commands
+      // ==============================================================================================================
 
-      getModal(): Chainable<JQuery<HTMLElement>>;
-
-      // --- DETAILS COMMANDS ---
-      /**Finds a button with a particular label and clicks it. */
-      clickTab(label: string | RegExp, isLink?: boolean): Chainable<void>;
-
-      /**Asserts that a specific detail term (dt) is displayed and contains text fromthe provided detail description (dd)*/
-      hasDetail(detailTerm: string | RegExp, detailDescription: string | RegExp): Chainable<void>;
-
-      clickLink(label: string | RegExp): Chainable<void>;
-      clickButton(label: string | RegExp): Chainable<void>;
-
-      clickPageAction(dataCy: string): Chainable<void>;
-
-      /**Finds an alert by its label. Does not make an assertion.  */
+      /** Finds an alert by its label. Does not make an assertion. */
       hasAlert(label: string | RegExp): Chainable<void>;
 
-      /**Finds a tooltip by its label. Does not make an assertion.  */
-      hasTooltip(label: string | RegExp): Chainable<void>;
+      // ==============================================================================================================
+      // REST API Commands
+      // ==============================================================================================================
 
-      // --- REST API COMMANDS ---
+      requestGet<T>(url: string): Chainable<T>;
 
-      /** Sends a request to the API to create a particular resource. */
       requestPost<ResponseT, RequestT = ResponseT>(
         url: string,
         data: Partial<RequestT>
@@ -381,10 +398,6 @@ declare global {
         data: Partial<RequestT>
       ): Chainable<ResponseT>;
 
-      /** Sends a request to the API to get a particular resource. */
-      requestGet<T>(url: string): Chainable<T>;
-
-      /** Sends a request to the API to delete a particular resource. */
       requestDelete(
         url: string,
         options?: {
@@ -393,20 +406,16 @@ declare global {
         }
       ): Chainable;
 
-      /** Sends a request to the API to patch a particular resource. */
-      requestPatch<RequestBodyT extends Cypress.RequestBody, ResponseBodyT = RequestBodyT>(
-        url: string,
-        body: RequestBodyT
-      ): Chainable<ResponseBodyT>;
-
+      /** Polls a GET request to the API until the check function returns a result. */
       requestPoll<ResponseT, ResultT = ResponseT>(options: {
         url: string;
         check: (response: Cypress.Response<ResponseT>) => ResultT | undefined;
         interval?: number;
-        timeout?: number;
       }): Chainable<ResponseT>;
 
-      // --- AWX COMMANDS ---
+      // ==============================================================================================================
+      // AWX Commands
+      // ==============================================================================================================
 
       /**
        * This command is written to allow asynchronous resource creation in an AWX build using
@@ -869,7 +878,22 @@ declare global {
 
       deleteCustomAWXApplicationFromListView(customAppName: string): Chainable<void>;
 
-      // --- EDA COMMANDS ---
+      editNodeInVisualizer(
+        nodeName: string,
+        newNodeType: string,
+        newNodeName?: string
+      ): Chainable<void>;
+
+      removeAllNodesFromVisualizerToolbar(): Chainable<void>;
+      removeNodeInVisualizer(nodeName: string): Chainable<void>;
+
+      inputCustomCredTypeConfig(configType: string, config: string): Chainable<void>;
+
+      selectPromptOnLaunch(resourceName: string): Chainable<void>;
+
+      // ==============================================================================================================
+      // EDA Commands
+      // ==============================================================================================================
 
       /**
        * selects Eda role that is passed inside the role selection modal
@@ -1065,6 +1089,10 @@ declare global {
       deleteEdaDecisionEnvironment(decisionEnvironment: EdaDecisionEnvironment): Chainable<void>;
       waitEdaDESync(edaDE: EdaDecisionEnvironment): Chainable<EdaDecisionEnvironment>;
 
+      // ==============================================================================================================
+      // HUB Commands
+      // ==============================================================================================================
+
       // HUB Request Commands
       hubRequest<T>(options: HubRequestOptions): Cypress.Chainable<Response<T>>;
       hubGetRequest<T>(options: HubGetRequestOptions): Cypress.Chainable<Response<T>>;
@@ -1176,16 +1204,9 @@ declare global {
         repository: string
       ): Cypress.Chainable<void>;
 
-      // =====================================================================
+      // ==============================================================================================================
       // END OF COMMANDS
-      // =====================================================================
-
-      // =====================================================================
-      // Platform Commands
-      // =====================================================================
-
-      // Login to the platform
-      platformLogin(): Chainable<void>;
+      // ==============================================================================================================
     }
   }
 }

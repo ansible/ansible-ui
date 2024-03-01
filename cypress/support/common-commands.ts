@@ -43,6 +43,30 @@ Cypress.Commands.add(
     }
   }
 );
+
+Cypress.Commands.add('filterTableByTextFilter', (param1: string, param2?: string) => {
+  // Change filter type if needed
+  const selector = param2 ? param1 : undefined;
+  if (selector) {
+    cy.selectToolbarFilterType(selector);
+  }
+
+  // Filter by text
+  const text = param2 ? param2 : param1;
+  cy.getFiltersToolbarItem().within(() => {
+    cy.get('[data-cy="text-input"]').within(() => {
+      cy.get('input').clear().type(text, { delay: 0 });
+    });
+  });
+
+  // Only click the apply filter if it is a multi text filter
+  cy.get('[data-cy="apply-filter"]').then((jqueryResult) => {
+    if (jqueryResult.length === 1 && jqueryResult[0].tagName === 'BUTTON') {
+      jqueryResult[0].click();
+    }
+  });
+});
+
 Cypress.Commands.add('filterTableBySingleText', (text: string, disableWait?: boolean) => {
   cy.filterTableByText(text, 'SingleText');
   // TODO - this should be in future better sync, but for now, we need to have tests more stable
