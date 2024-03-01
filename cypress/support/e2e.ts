@@ -2,7 +2,6 @@
 // import 'cypress-axe';
 import '@4tw/cypress-drag-drop';
 import '@cypress/code-coverage/support';
-import 'cypress-file-upload';
 import { randomString } from '../../framework/utils/random-string';
 import { HubUser } from '../../frontend/hub/interfaces/expanded/HubUser';
 import './auth';
