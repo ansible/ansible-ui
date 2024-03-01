@@ -19,7 +19,15 @@ export interface ExecutionEnvironment {
         name: string;
         upstream_name: string;
         registry: string;
-        last_sync_task: object;
+        last_sync_task: {
+          state: string;
+          started_at: string;
+          finished_at: string;
+          error: {
+            traceback: string;
+            description: string;
+          };
+        };
         created_at: string;
         updated_at: string;
         include_foreign_layers: boolean;

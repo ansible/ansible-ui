@@ -216,7 +216,7 @@ function handleError(error: unknown, defaultMessage: string) {
   if (error instanceof RequestError) {
     throw error;
   } else {
-    throw new Error(defaultMessage);
+    throw new Error((error as string) ?? defaultMessage);
   }
 }
 
