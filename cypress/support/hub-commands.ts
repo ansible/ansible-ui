@@ -621,8 +621,10 @@ Cypress.Commands.add('deleteHubCollection', (options: HubDeleteCollectionOptions
   });
 });
 Cypress.Commands.add('deleteHubCollectionByName', (name: string) => {
-  cy.getHubCollection(name).then((collection) => {
-    if (collection) {
+  cy.requestGet<HubItemsResponse<CollectionVersionSearch>>(
+    hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${name}`
+  ).then((itemsResponse) => {
+    for (const collection of itemsResponse.data) {
       cy.deleteHubCollection(collection);
     }
   });

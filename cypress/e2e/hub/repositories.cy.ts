@@ -66,6 +66,9 @@ describe('Repositories Page', () => {
       cy.verifyPageTitle(repository.name);
       cy.clickPageAction('copy-cli-configuration');
       cy.get('[data-cy="alert-toaster"]').should('be.visible');
+      cy.get('[data-cy="alert-toaster"]').within(() => {
+        cy.get('button').click();
+      });
       cy.deleteHubRepository(repository);
     });
   });
