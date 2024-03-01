@@ -42,7 +42,6 @@ export function useOrganizationTeamsToolbarActions() {
 
 export function useOrganizationTeamsRowActions() {
   const { t } = useTranslation();
-  const pageNavigate = usePageNavigate();
 
   const rowActions = useMemo<IPageAction<PlatformTeam>[]>(() => {
     return [
@@ -54,10 +53,10 @@ export function useOrganizationTeamsRowActions() {
         icon: CogIcon,
         label: t(`Manage roles`),
         // isDisabled: // TODO
-        onClick: (team: PlatformTeam) =>
-          pageNavigate(PlatformRoute.OrganizationManageTeamRoles, {
-            params: { id: team.organization, teamId: team.id },
-          }),
+        onClick: () =>
+          alert(
+            'TODO: Modal to view role assignments for the team and optionally trigger navigation to the Manage Roles wizard'
+          ), // Modal to view roles and optionally navigate to PlatformRoute.OrganizationManageTeamRoles to edit roles
       },
     ];
   }, [t]);

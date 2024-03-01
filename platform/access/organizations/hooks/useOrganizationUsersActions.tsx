@@ -91,7 +91,6 @@ export function useOrganizationUsersToolbarActions(view: IPlatformView<PlatformU
 export function useOrganizationUsersRowActions(view: IPlatformView<PlatformUser>) {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const pageNavigate = usePageNavigate();
   const { data: organization } = useGetItem<PlatformOrganization>(
     gatewayV1API`/organizations`,
     params.id
@@ -114,10 +113,10 @@ export function useOrganizationUsersRowActions(view: IPlatformView<PlatformUser>
         icon: CogIcon,
         label: t(`Manage roles`),
         // isDisabled: // TODO
-        onClick: (user: PlatformUser) =>
-          pageNavigate(PlatformRoute.OrganizationManageUserRoles, {
-            params: { id: params.id, userId: user.id },
-          }),
+        onClick: () =>
+          alert(
+            'TODO: Modal to view role assignments for the user and optionally trigger navigation to the Manage Roles wizard'
+          ), // Modal to view roles and optionally navigate to PlatformRoute.OrganizationManageUserRoles to edit roles
       },
       {
         type: PageActionType.Button,
