@@ -71,19 +71,26 @@ import {
 declare global {
   namespace Cypress {
     interface Chainable {
-      edaLogout(): Chainable<EdaUser | undefined>;
-      awxLogin(): Chainable<void>;
-      edaLogin(): Chainable<void>;
-      hubLogin(): Chainable<void>;
-      platformLogin(): Chainable<void>;
-      requiredVariablesAreSet(requiredVariables: string[]): Chainable<void>;
+      // =====================================================================
+      // Core Commands - Commands to help interact with elements ensuring they are not disabled or hidden
+      // Login Commands - Commands to help login to the different applications
+      // Navigation Commands - Commands to help navigate to different pages
+      // Input Commands - Commands to help input data into forms
+      // Table Commands - Commands to help interact with tables
+      // Modal Commands - Commands to help interact with modals
+      // Details Commands - Commands to help interact with details pages
+      // REST API Commands - Commands to help interact with the REST API
+      // AWX Commands - Commands to help interact with AWX
+      // EDA Commands - Commands to help interact with EDA
+      // HUB Commands - Commands to help interact with HUB
+      // =====================================================================
 
-      // ---------------------------------------------------------------------
+      // =====================================================================
       // Core Commands
       // ---------------------------------------------------------------------
-      // These commands are the core commands that are used to interact with the UI.
+      // Commands to help interact with elements ensuring they are not disabled or hidden.
       // They are used to interact with the UI in a way that is consistent and reliable.
-      // They check that the element is not disabled or hidden before interacting with it.
+      // =====================================================================
 
       /** Get by selector, making sure it is not disabled or hidden */
       getBy(selector: string): Chainable<JQuery<HTMLElement>>;
@@ -106,6 +113,7 @@ declare global {
       /** Select a value from a single select input by selector, making sure it is not disabled or hidden */
       singleSelectBy(selector: string, value: string): Chainable<void>;
 
+      /** Used internally to load all items in the singleSelectBy command */
       selectLoadAll(): Chainable<void>;
 
       /** Select a value from a single select input by data-cy attribute, making sure it is not disabled or hidden */
@@ -116,6 +124,27 @@ declare global {
 
       /** Select a value from a multi select input by data-cy attribute, making sure it is not disabled or hidden */
       multiSelectByDataCy(dataCy: string, value: string): Chainable<void>;
+
+      // =====================================================================
+      // Login Commands
+      // ---------------------------------------------------------------------
+      // Commands to help login to the different applications
+      // =====================================================================
+
+      /** Login to the AWX application */
+      awxLogin(): Chainable<void>;
+
+      /** Login to the EDA application */
+      edaLogin(): Chainable<void>;
+
+      /** Login to the HUB application */
+      edaLogout(): Chainable<EdaUser | undefined>;
+
+      /** Login to the HUB application */
+      hubLogin(): Chainable<void>;
+
+      /** Check that the required environment variables are set */
+      requiredVariablesAreSet(requiredVariables: string[]): Chainable<void>;
 
       // --- NAVIGATION COMMANDS ---
       // createGlobalProject(): Chainable<Project>;
@@ -1146,6 +1175,17 @@ declare global {
         namespaceName: string,
         repository: string
       ): Cypress.Chainable<void>;
+
+      // =====================================================================
+      // END OF COMMANDS
+      // =====================================================================
+
+      // =====================================================================
+      // Platform Commands
+      // =====================================================================
+
+      // Login to the platform
+      platformLogin(): Chainable<void>;
     }
   }
 }
