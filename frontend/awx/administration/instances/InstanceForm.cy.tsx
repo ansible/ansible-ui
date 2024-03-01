@@ -75,7 +75,6 @@ describe('Add instance Form', () => {
       }
     );
 
-    cy.get('[data-cy="enabled"]').click();
     cy.get('[data-cy="managed_by_policy"]').click();
     cy.get('[data-cy="peers_from_control_nodes"]').click();
 
@@ -88,7 +87,6 @@ describe('Add instance Form', () => {
           node_state: 'installed',
           hostname: 'AddInstanceMockWithPeers',
           listener_port: 9999,
-          enabled: true,
           managed_by_policy: true,
           peers_from_control_nodes: true,
         });

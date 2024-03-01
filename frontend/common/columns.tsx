@@ -565,7 +565,6 @@ export function useAddressColumn<
         <TextCell
           text={item.address}
           iconSize="sm"
-          // to={disableLinks ? undefined : url?.replace(':id', item}
           onClick={!disableLinks && onClick ? () => onClick?.(item) : undefined}
         />
       ),

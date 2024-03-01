@@ -26,7 +26,7 @@ import { formatDateString } from '../../../../framework/utils/formatDateString';
 import { capitalizeFirstLetter } from '../../../../framework/utils/strings';
 import { LastModifiedPageDetail } from '../../../common/LastModifiedPageDetail';
 import { StatusLabel } from '../../../common/Status';
-import { useGet, useGetItem } from '../../../common/crud/useGet';
+import { useGetItem } from '../../../common/crud/useGet';
 import { AwxError } from '../../common/AwxError';
 import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 import { awxAPI } from '../../common/api/awx-utils';
@@ -36,7 +36,6 @@ import { InstanceGroup } from '../../interfaces/InstanceGroup';
 import { AwxRoute } from '../../main/AwxRoutes';
 import { useInstanceActions } from './hooks/useInstanceActions';
 import { useNodeTypeTooltip } from './hooks/useNodeTypeTooltip';
-import { Settings } from '../../interfaces/Settings';
 
 export function InstanceDetails() {
   const params = useParams<{ id: string }>();
@@ -85,11 +84,6 @@ export function InstanceDetailsTab(props: {
   } = props;
   const toolTipMap: { [item: string]: string } = useNodeTypeTooltip();
   const capacityAvailable = instance.cpu_capacity !== 0 && instance.mem_capacity !== 0;
-  const { data } = useGet<Settings>(awxAPI`/settings/system/`);
-  const instancesType = instance?.node_type === 'execution' || instance?.node_type === 'hop';
-  const userAccess = activeUser?.is_superuser || activeUser?.is_system_auditor;
-  const isK8s = data?.IS_K8S;
-  const canEditAndRemoveInstances = instancesType && isK8s && userAccess;
 
   return (
     <>
@@ -185,7 +179,7 @@ export function InstanceDetailsTab(props: {
             onChange={(_event: SliderOnChangeEvent, value: number) =>
               void handleInstanceForksSlider(instance, value)
             }
-            isDisabled={!canEditAndRemoveInstances || !capacityAvailable}
+            isDisabled={!activeUser?.is_superuser || !instance.enabled || !capacityAvailable}
           />
         </PageDetail>
         <PageDetail label={t('Enabled')} data-cy="enabled">

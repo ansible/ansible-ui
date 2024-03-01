@@ -13,9 +13,11 @@ describe('Instances', () => {
   beforeEach(() => {
     cy.awxLogin();
     cy.navigateTo('awx', 'instances');
-    cy.createAwxInstance('E2EInstanceTest' + randomString(5)).then((ins: Instance) => {
-      instance = ins;
-    });
+    if (Cypress.currentTest.title !== 'user can bulk remove instances') {
+      cy.createAwxInstance('E2EInstanceTest' + randomString(5)).then((ins: Instance) => {
+        instance = ins;
+      });
+    }
   });
 
   afterEach(() => {
@@ -137,9 +139,7 @@ describe('Instances', () => {
   it('user can bulk remove instances', () => {
     for (let i = 0; i < 5; i++) {
       const instanceName = generateInstanceName();
-      cy.createAwxInstance(instanceName).then((ins: Instance) => {
-        instance = ins;
-      });
+      cy.createAwxInstance(instanceName);
     }
     cy.intercept('PATCH', '/api/v2/instances/*').as('removedInstance');
     cy.get('[data-cy="remove-instance"]').should('have.attr', 'aria-disabled', 'true');
@@ -182,7 +182,7 @@ describe('Instances', () => {
     cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
       cy.get('header').contains('Select peer addresses');
       cy.get('button').contains('Associate peer(s)').should('have.attr', 'aria-disabled', 'true');
-      cy.filterTableBySingleText(instanceToAssociate.hostname + '{enter}');
+      cy.filterTableBySingleText(instanceToAssociate.hostname, true);
       cy.getByDataCy('checkbox-column-cell').find('input').click();
       cy.get('button').contains('Associate peer(s)').click();
       cy.get('button').contains('Close').click();
@@ -192,7 +192,7 @@ describe('Instances', () => {
       .its('response')
       .then((response) => {
         expect(response?.statusCode).to.eql(200);
-        cy.filterTableBySingleText(instanceToAssociate.hostname + '{enter}');
+        cy.filterTableBySingleText(instanceToAssociate.hostname, true);
         cy.get('[data-cy="instance-name-column-cell"]').click();
       });
     cy.url().then((currentUrl) => {
