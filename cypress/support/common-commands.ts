@@ -41,6 +41,7 @@ Cypress.Commands.add(
     if (variant === 'MultiText') {
       cy.clickByDataCy('apply-filter');
     }
+    cy.contains('.pf-v5-c-chip__text', text);
   }
 );
 
