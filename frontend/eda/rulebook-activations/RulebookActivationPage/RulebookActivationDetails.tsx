@@ -177,7 +177,7 @@ function restartPolicyName(policy: RestartPolicyEnum, t: (str: string) => string
       return capitalizeFirstLetter(policy);
   }
 }
-function logLevelName(logLevel: LogLevelEnum, t: (str: string) => string) {
+export function logLevelName(logLevel: LogLevelEnum, t: (str: string) => string) {
   switch (logLevel) {
     case LogLevelEnum.error:
       return t('Error');

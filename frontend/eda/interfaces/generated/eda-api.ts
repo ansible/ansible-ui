@@ -2801,6 +2801,7 @@ export interface EventStreamCreate {
    * * `never` - never
    */
   restart_policy?: RestartPolicyEnum;
+  log_level: LogLevelEnum;
 }
 
 /** Serializer for the Activation Instance model. */
@@ -2929,6 +2930,7 @@ export interface EventStreamRead {
    * * `never` - never
    */
   restart_policy?: RestartPolicyEnum;
+  log_level: LogLevelEnum;
   /**
    * @min -2147483648
    * @max 2147483647
