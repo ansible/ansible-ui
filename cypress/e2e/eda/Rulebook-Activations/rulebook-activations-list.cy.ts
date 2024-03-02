@@ -3,6 +3,7 @@ import { EdaDecisionEnvironment } from '../../../../frontend/eda/interfaces/EdaD
 import { EdaProject } from '../../../../frontend/eda/interfaces/EdaProject';
 import { EdaRulebook } from '../../../../frontend/eda/interfaces/EdaRulebook';
 import { EdaRulebookActivation } from '../../../../frontend/eda/interfaces/EdaRulebookActivation';
+import { LogLevelEnum } from '../../../../frontend/eda/interfaces/generated/eda-api';
 
 describe('EDA rulebook activations- Create, Edit, Delete', () => {
   let edaProject: EdaProject;
@@ -24,6 +25,7 @@ describe('EDA rulebook activations- Create, Edit, Delete', () => {
           cy.createEdaRulebookActivation({
             rulebook_id: edaRuleBook.id,
             decision_environment_id: decisionEnvironment.id,
+            log_level: LogLevelEnum.error,
           }).then((edaRulebookActivation) => {
             edaRBA = edaRulebookActivation;
           });
