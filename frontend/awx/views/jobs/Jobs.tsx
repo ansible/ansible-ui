@@ -1,4 +1,4 @@
-import { PageHeader, PageLayout, PageTable } from '../../../../framework';
+import { PageHeader, PageLayout } from '../../../../framework';
 
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -9,17 +9,17 @@ import { useAwxView } from '../../common/useAwxView';
 import { useAwxWebSocketSubscription } from '../../common/useAwxWebSocket';
 import { getDocsBaseUrl } from '../../common/util/getDocsBaseUrl';
 import { UnifiedJob } from '../../interfaces/UnifiedJob';
-import { useJobRowActions } from './hooks/useJobRowActions';
-import { useJobToolbarActions } from './hooks/useJobToolbarActions';
 import { useJobsColumns } from './hooks/useJobsColumns';
 import { useJobsFilters } from './hooks/useJobsFilters';
 import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
+import { JobsList } from './JobsList';
 
 export function Jobs() {
   const { t } = useTranslation();
   const product: string = process.env.PRODUCT ?? t('AWX');
   const toolbarFilters = useJobsFilters();
   const tableColumns = useJobsColumns();
+
   const view = useAwxView<UnifiedJob>({
     url: awxAPI`/unified_jobs/`,
     queryParams: {
@@ -28,8 +28,7 @@ export function Jobs() {
     toolbarFilters,
     tableColumns,
   });
-  const toolbarActions = useJobToolbarActions(view.unselectItemsAndRefresh);
-  const rowActions = useJobRowActions(view.unselectItemsAndRefresh);
+
   usePersistentFilters('jobs');
   const config = useAwxConfig();
 
@@ -76,37 +75,8 @@ export function Jobs() {
           { product }
         )}
         headerActions={<ActivityStreamIcon type={'job'} />}
-        // headerActions={
-        //   <ToggleGroup aria-label={t('show graph toggle')}>
-        //     <ToggleGroupItem
-        //       icon={<TachometerAltIcon />}
-        //       aria-label={t('toggle show graph')}
-        //       isSelected={showGraph}
-        //       onChange={() => setShowGraph((show) => !show)}
-        //     />
-        //   </ToggleGroup>
-        // }
       />
-      <PageTable
-        id="awx-jobs-table"
-        toolbarFilters={toolbarFilters}
-        tableColumns={tableColumns}
-        toolbarActions={toolbarActions}
-        rowActions={rowActions}
-        errorStateTitle={t('Error loading jobs')}
-        emptyStateTitle={t('No jobs yet')}
-        emptyStateDescription={t('Please run a job to populate this list.')}
-        {...view}
-        defaultSubtitle={t('Job')}
-        // topContent={
-        //   showGraph && (
-        //     <PageSection>
-        //       <JobsChart height={250} />
-        //     </PageSection>
-        //   )
-        // }
-        limitFiltersToOneOrOperation
-      />
+      <JobsList columns={tableColumns} />
     </PageLayout>
   );
 }
