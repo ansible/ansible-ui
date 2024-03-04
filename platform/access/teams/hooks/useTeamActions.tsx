@@ -60,10 +60,10 @@ export function useTeamToolbarActions(view: IPlatformView<PlatformTeam>) {
   return toolbarActions;
 }
 
-export function useTeamRowActions(view: IPlatformView<PlatformTeam>) {
+export function useTeamRowActions(onTeamsDeleted: (teams: PlatformTeam[]) => void) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
-  const deleteTeams = useDeleteTeams(view.unselectItemsAndRefresh);
+  const deleteTeams = useDeleteTeams(onTeamsDeleted);
 
   const rowActions = useMemo<IPageAction<PlatformTeam>[]>(() => {
     // TODO: Update based on RBAC information from Teams API

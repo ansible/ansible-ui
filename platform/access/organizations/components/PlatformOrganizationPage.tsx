@@ -7,6 +7,7 @@ import {
   PageHeader,
   PageLayout,
   useGetPageUrl,
+  usePageNavigate,
 } from '../../../../framework';
 import { PageRoutedTabs } from '../../../../framework/PageTabs/PageRoutedTabs';
 import { AwxError } from '../../../../frontend/awx/common/AwxError';
@@ -25,7 +26,8 @@ export function PlatformOrganizationPage() {
     refresh,
   } = useGetItem<PlatformOrganization>(gatewayV1API`/organizations/`, params.id);
   const getPageUrl = useGetPageUrl();
-  const actions = useOrganizationRowActions();
+  const pageNavigate = usePageNavigate();
+  const actions = useOrganizationRowActions(() => pageNavigate(PlatformRoute.Organizations));
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!organization) return <LoadingPage breadcrumbs tabs />;

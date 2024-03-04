@@ -60,10 +60,12 @@ export function useOrganizationToolbarActions(view: IPlatformView<PlatformOrgani
   return toolbarActions;
 }
 
-export function useOrganizationRowActions(view?: IPlatformView<PlatformOrganization>) {
+export function useOrganizationRowActions(
+  onOrganizationsDeleted: (organizations: PlatformOrganization[]) => void
+) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
-  const deleteOrganizations = useDeleteOrganizations((o) => view?.unselectItemsAndRefresh(o));
+  const deleteOrganizations = useDeleteOrganizations(onOrganizationsDeleted);
 
   const rowActions = useMemo<IPageAction<PlatformOrganization>[]>(() => {
     // TODO: Update based on RBAC information from Organizations API
