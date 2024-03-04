@@ -5,32 +5,33 @@ import { usePostRequest } from '../../../../common/crud/usePostRequest';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { SystemJobTemplate } from '../../../interfaces/SystemJobTemplate';
 import { useGetJobOutputUrl } from '../../../views/jobs/useGetJobOutputUrl';
+import { useManagementJobPrompt } from '../hooks/useManagementJobPrompt';
 
 export function useLaunchManagementJob() {
   const { t } = useTranslation();
+  const launchManagementJobPrompt = useManagementJobPrompt();
   const navigate = useNavigate();
   const postRequest = usePostRequest();
   const alertToaster = usePageAlertToaster();
   const getJobOutputUrl = useGetJobOutputUrl();
 
-  const launchManagementJob = async (managementJob: SystemJobTemplate, days?: number) => {
+  return async (managementJob: SystemJobTemplate) => {
     const launchManagementJobEndpoint = getLaunchMgtJobEndpoint(managementJob);
     if (!launchManagementJobEndpoint) {
       return Promise.reject(new Error('Unable to retrieve management job launch configuration'));
     }
 
     try {
-      let targetUrl;
-      if (['cleanup_tokens', 'cleanup_sessions'].includes(managementJob.job_type)) {
-        const managementJobLaunch = await postRequest(launchManagementJobEndpoint, {});
-        targetUrl = getJobOutputUrl(managementJobLaunch as SystemJobTemplate);
-      } else if (['cleanup_activitystream', 'cleanup_jobs'].includes(managementJob.job_type)) {
-        const managementJobLaunch = await postRequest(launchManagementJobEndpoint, {
-          extra_vars: { days },
-        });
-        targetUrl = getJobOutputUrl(managementJobLaunch as SystemJobTemplate);
+      if (canLaunchWithoutPrompt(managementJob)) {
+        const launchMgtJob = await postRequest(launchManagementJobEndpoint, {});
+        navigate(getJobOutputUrl(launchMgtJob as SystemJobTemplate));
+      } else {
+        launchManagementJobPrompt(managementJob);
+        // const managementJobLaunch = await postRequest(launchManagementJobEndpoint, {
+        //   extra_vars: { days: 2 },
+        // });
+        // navigate(getJobOutputUrl(managementJobLaunch as SystemJobTemplate));
       }
-      navigate(targetUrl);
     } catch (error) {
       alertToaster.addAlert({
         variant: 'danger',
@@ -40,7 +41,6 @@ export function useLaunchManagementJob() {
       });
     }
   };
-  return launchManagementJob;
 }
 
 export function getLaunchMgtJobEndpoint(managementJob: SystemJobTemplate) {
@@ -55,4 +55,10 @@ export function getLaunchMgtJobEndpoint(managementJob: SystemJobTemplate) {
   } else {
     return undefined;
   }
+}
+
+export function canLaunchWithoutPrompt(launchMgtData: SystemJobTemplate) {
+  return (
+    launchMgtData.job_type === 'cleanup_tokens' || launchMgtData.job_type === 'cleanup_sessions'
+  );
 }
