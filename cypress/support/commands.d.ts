@@ -422,7 +422,7 @@ declare global {
       );
 
       /** Selects a table row by clicking on the row checkbox. */
-      selectTableRowNew(
+      selectTableRowCheckbox(
         columnDataCy: string,
         text: string,
         options?: { disableFilter?: boolean }
