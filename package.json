@@ -37,6 +37,7 @@
     "e2e:run:awx": "cypress run --e2e --config-file=cypress.awx.config.ts",
     "e2e:run:hub": "cypress run --e2e --config-file=cypress.hub.config.ts",
     "e2e:run:eda": "cypress run --e2e --config-file=cypress.eda.config.ts",
+    "cypress:spec": "cypress run --spec cypress/e2e/hub/collections.cy.ts",
     "component": "cypress open --browser chrome --component",
     "component:run": "cypress run --component",
     "coverage": "open coverage/lcov-report/index.html",

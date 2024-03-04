@@ -31,7 +31,6 @@ describe('Collections', () => {
     cy.hubLogin();
     cy.navigateTo('hub', Collections.url);
     cy.verifyPageTitle(Collections.title);
-    cy.get('[data-cy="table-view"]').click();
   });
 
   describe('Collections List Page', () => {
@@ -39,6 +38,7 @@ describe('Collections', () => {
       cy.uploadCollection(collectionName, namespace.name).then((result) => {
         cy.approveCollection(collectionName, namespace.name, result.version as string);
         // Sign collection
+        cy.getByDataCy('table-view').click();
         cy.filterTableBySingleText(collectionName, true);
         cy.clickTableRowKebabAction(collectionName, 'sign-collection', false);
         cy.get('#confirm').click();
@@ -66,6 +66,7 @@ describe('Collections', () => {
           // Verify collection has been uploaded
           cy.verifyPageTitle(Collections.title);
           // Delete collection
+          cy.getByDataCy('table-view').click();
           cy.filterTableBySingleText(collectionName, true);
           cy.clickTableRowKebabAction(
             collectionName,
@@ -78,6 +79,7 @@ describe('Collections', () => {
           cy.clickButton(/^Close$/);
           cy.getModal().should('not.exist');
           // Verify collection has been deleted from system
+          cy.getByDataCy('table-view').click();
           cy.filterTableBySingleText(collectionName, true);
           cy.contains('No results found');
         }
@@ -92,6 +94,7 @@ describe('Collections', () => {
       cy.galaxykit(
         `collection upload ${namespace.name} ${collectionName} 1.2.3 --skip-upload`
       ).then((result: { filename: string }) => {
+        cy.getByDataCy('table-view').click();
         cy.filterTableBySingleText(collectionName, true);
         cy.clickTableRow(collectionName, false);
         // Details Page
@@ -112,6 +115,7 @@ describe('Collections', () => {
         cy.get('[data-cy="Submit"]').click();
         // Collections Page
         cy.verifyPageTitle(Collections.title);
+        cy.getByDataCy('table-view').click();
         cy.filterTableBySingleText(collectionName, true);
         cy.clickTableRow(collectionName, false);
         // Details Page
@@ -137,6 +141,7 @@ describe('Collections', () => {
         `collection move ${namespace.name} ${collectionName} 1.0.0 staging ${repository.name}`
       );
       // Delete collection from system
+      cy.getByDataCy('table-view').click();
       cy.filterTableBySingleText(collectionName, true);
       cy.clickTableRowKebabAction(collectionName, 'delete-entire-collection-from-system', false);
       cy.get('#confirm').click();
@@ -145,8 +150,12 @@ describe('Collections', () => {
       cy.clickButton(/^Close$/);
       // Verify collection has been deleted from system
       cy.navigateTo('hub', Collections.url);
-      cy.filterTableBySingleText(collectionName, true);
-      cy.contains('No results found').should('be.visible');
+      cy.getHubCollection(collectionName).then((deleted) => {
+        //Assert that the query returns an empty array, indicating no API results exist
+        expect(deleted.data).to.be.empty;
+      });
+      //Removed the lines attempting to assert that filtering the list for the collection returns an empty list
+      //these lines fail if there are no Collections present
     });
 
     it('can delete entire collection from repository', () => {
@@ -155,6 +164,7 @@ describe('Collections', () => {
         `collection move ${namespace.name} ${collectionName} 1.0.0 staging ${repository.name}`
       );
       // Delete collection from repository
+      cy.getByDataCy('table-view').click();
       cy.filterTableBySingleText(collectionName, true);
       cy.clickTableRowKebabAction(
         collectionName,
@@ -166,8 +176,12 @@ describe('Collections', () => {
       cy.contains(/^Success$/);
       cy.clickButton(/^Close$/);
       //Verify collection has been deleted from repository
-      cy.filterTableBySingleText(collectionName, true);
-      cy.contains('No results found').should('be.visible');
+      cy.getHubCollection(collectionName).then((deleted) => {
+        //Assert that the query returns an empty array, indicating no API results exist
+        expect(deleted.data).to.be.empty;
+      });
+      //Removed the lines attempting to assert that filtering the list for the collection returns an empty list
+      //these lines fail if there are no Collections present
     });
 
     it('can deprecate a collection', () => {
@@ -175,6 +189,7 @@ describe('Collections', () => {
       cy.galaxykit(
         `collection move ${namespace.name} ${collectionName} 1.0.0 staging ${repository.name}`
       );
+      cy.getByDataCy('table-view').click();
       cy.filterTableBySingleText(collectionName, true);
       cy.clickTableRowKebabAction(collectionName, 'deprecate-collection', false);
       cy.getModal().within(() => {
@@ -199,6 +214,7 @@ describe('Collections', () => {
     it('can delete entire collection from system', () => {
       cy.uploadCollection(collectionName, namespace.name, '1.0.0');
       cy.approveCollection(collectionName, namespace.name, '1.0.0');
+      cy.getByDataCy('table-view').click();
       cy.filterTableBySingleText(collectionName, true);
       cy.clickLink(collectionName);
       cy.verifyPageTitle(`${namespace.name}.${collectionName}`);
@@ -206,13 +222,18 @@ describe('Collections', () => {
       cy.selectDetailsPageKebabAction('delete-entire-collection-from-system');
       // Verify collection has been deleted from system
       cy.verifyPageTitle(Collections.title);
-      cy.filterTableBySingleText(collectionName, true);
-      cy.contains('No results found');
+      cy.getHubCollection(collectionName).then((deleted) => {
+        //Assert that the query returns an empty array, indicating no API results exist
+        expect(deleted.data).to.be.empty;
+      });
+      //Removed the lines attempting to assert that filtering the list for the collection returns an empty list
+      //these lines fail if there are no Collections present
     });
 
     it('can delete entire collection from repository', () => {
       cy.uploadCollection(collectionName, namespace.name, '1.0.0');
       cy.approveCollection(collectionName, namespace.name, '1.0.0');
+      cy.getByDataCy('table-view').click();
       cy.filterTableBySingleText(collectionName, true);
       cy.clickLink(collectionName);
       cy.verifyPageTitle(`${namespace.name}.${collectionName}`);
@@ -220,8 +241,12 @@ describe('Collections', () => {
       cy.selectDetailsPageKebabAction('delete-entire-collection-from-repository');
       // Verify collection has been deleted from system
       cy.verifyPageTitle(Collections.title);
-      cy.filterTableBySingleText(collectionName, true);
-      cy.contains('No results found');
+      cy.getHubCollection(collectionName).then((deleted) => {
+        //Assert that the query returns an empty array, indicating no API results exist
+        expect(deleted.data).to.be.empty;
+      });
+      //Removed the lines attempting to assert that filtering the list for the collection returns an empty list
+      //these lines fail if there are no Collections present
     });
 
     it('user can delete version from system', () => {
@@ -230,6 +255,7 @@ describe('Collections', () => {
       cy.approveCollection(collectionName, namespace.name, '1.0.0');
       cy.approveCollection(collectionName, namespace.name, '1.1.0');
       // Delete version from system
+      cy.getByDataCy('table-view').click();
       cy.filterTableBySingleText(collectionName, true);
       cy.clickLink(collectionName);
       cy.verifyPageTitle(`${namespace.name}.${collectionName}`);
@@ -244,6 +270,7 @@ describe('Collections', () => {
       cy.clickButton(/^Close$/);
       //Verify the version has been deleted
       cy.navigateTo('hub', Collections.url);
+      cy.getByDataCy('table-view').click();
       cy.filterTableBySingleText(collectionName, true);
       cy.clickLink(collectionName);
       cy.verifyPageTitle(`${namespace.name}.${collectionName}`);
@@ -259,6 +286,7 @@ describe('Collections', () => {
       cy.approveCollection(collectionName, namespace.name, '1.0.0');
       cy.approveCollection(collectionName, namespace.name, '1.1.0');
       // Delete version from repository
+      cy.getByDataCy('table-view').click();
       cy.filterTableBySingleText(collectionName, true);
       cy.clickLink(collectionName);
       cy.verifyPageTitle(`${namespace.name}.${collectionName}`);
@@ -273,6 +301,7 @@ describe('Collections', () => {
       cy.clickButton(/^Close$/);
       //Verify the version has been deleted
       cy.navigateTo('hub', Collections.url);
+      cy.getByDataCy('table-view').click();
       cy.filterTableBySingleText(collectionName);
       cy.clickLink(collectionName);
       cy.verifyPageTitle(`${namespace.name}.${collectionName}`);
@@ -297,9 +326,10 @@ describe('Collections', () => {
         cy.clickButton('Close');
         cy.navigateTo('hub', Collections.url);
         cy.verifyPageTitle(Collections.title);
-        cy.get('[data-cy="table-view"]').click();
-        cy.filterTableBySingleText(collectionName, true);
-        cy.contains('h2', 'No results found').should('be.visible');
+        cy.getHubCollection(collectionName).then((deprecated) => {
+          //Assert that the object returned shows that is_deprecated is equal to true
+          expect(deprecated.is_deprecated).to.eql(true);
+        });
         cy.deleteHubCollectionByName(collectionName);
       });
     });
@@ -356,6 +386,7 @@ describe('Collections', () => {
           cy.get('[data-cy="Submit"]').click();
           cy.verifyPageTitle(Collections.title);
           //Navigate back to the details screen of the collection after upload
+          cy.getByDataCy('table-view').click();
           cy.filterTableBySingleText(collectionName, true);
           cy.clickTableRow(collectionName, false);
           cy.verifyPageTitle(collectionName);
