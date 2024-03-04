@@ -236,4 +236,6 @@ export enum AwxRoute {
   Settings = 'awx-settings',
 
   Login = 'awx-login',
+
+  RunCommand = 'awx-run-command',
 }

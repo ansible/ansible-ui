@@ -42,6 +42,7 @@ import { GroupHosts } from '../../resources/groups/GroupHosts';
 import { GroupRelatedGroups } from '../../resources/groups/GroupRelatedGroups';
 import { ResourceNotifications } from '../../resources/notifications/ResourceNotifications';
 import { SchedulesList } from '../../views/schedules/SchedulesList';
+import { AwxRunCommand } from '../../common/AwxRunCommand';
 
 export function useAwxInventoryRoutes() {
   const { t } = useTranslation();
@@ -122,6 +123,11 @@ export function useAwxInventoryRoutes() {
           id: AwxRoute.InventoryHostAdd,
           path: ':inventory_type/:id/add',
           element: <CreateHost />,
+        },
+        {
+          id: AwxRoute.RunCommand,
+          path: ':inventory_type/:id/run_command',
+          element: <AwxRunCommand />,
         },
         {
           id: AwxRoute.InventoryHostEdit,
