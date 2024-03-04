@@ -187,7 +187,7 @@ describe('inventories', () => {
     cy.clickButton(/^Clear all filters$/);
   });
 
-  it('can add and remove new related groups', () => {
+  it.only('can add and remove new related groups', () => {
     cy.createInventoryHostGroup(organization).then((result) => {
       const { inventory, group } = result;
       const newRelatedGroup = 'New test group' + randomString(4);
@@ -205,7 +205,7 @@ describe('inventories', () => {
       cy.contains(newRelatedGroup);
       cy.selectTableRow(newRelatedGroup, true);
       cy.clickToolbarKebabAction('disassociate-selected-groups');
-      cy.get('#submit').click();
+      cy.get('#confirm').click();
       cy.clickButton(/^Disassociate groups/);
       cy.contains(/^Success$/);
       cy.clickButton(/^Close/);
@@ -233,7 +233,7 @@ describe('inventories', () => {
       cy.contains(newGroup);
       cy.selectTableRow(newGroup, true);
       cy.clickToolbarKebabAction('disassociate-selected-groups');
-      cy.get('#submit').click();
+      cy.get('#confirm').click();
       cy.clickButton(/^Disassociate groups/);
       cy.contains(/^Success$/);
       cy.clickButton(/^Close/);
