@@ -9,7 +9,7 @@ import {
 import { PlatformRoute } from '../../../main/PlatformRoutes';
 import { AuthenticatorTypeStep } from './steps/AuthenticatorTypeStep';
 import { AuthenticatorDetailsStep, validateDetailsStep } from './steps/AuthenticatorDetailsStep';
-import { AuthenticatorMappingStep } from './steps/AuthenticatorMappingStep';
+import { AuthenticatorMappingStep, validateMappingStep } from './steps/AuthenticatorMappingStep';
 import { AuthenticatorMappingOrderStep } from './steps/AuthenticatorMappingOrderStep';
 import { AuthenticatorReviewStep } from './steps/AuthenticatorReviewStep';
 import { authenticatorErrorAdapter } from './authenticatorErrorAdapter';
@@ -103,6 +103,9 @@ export function AuthenticatorForm(props: AuthenticatorFormProps) {
       id: 'mapping',
       label: t('Mapping'),
       inputs: <AuthenticatorMappingStep />,
+      validate: (formData, _) => {
+        return validateMappingStep(formData, t);
+      },
     },
     {
       id: 'order',
