@@ -7,13 +7,16 @@ import {
   PageFormSwitch,
   PageFormTextInput,
 } from '../../../../../framework';
+import { postRequest, requestPatch } from '../../../../../frontend/common/crud/Data';
 import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
 import { Authenticator } from '../../../../interfaces/Authenticator';
+import { gatewayAPI } from '../../../../api/gateway-api-utils';
 import {
   AuthenticatorPlugins,
+  AuthenticatorPlugin,
   PluginConfiguration,
 } from '../../../../interfaces/AuthenticatorPlugin';
-import { AuthenticatorFormValues } from '../AuthenticatorForm';
+import { AuthenticatorFormValues, formatConfiguration, Configuration } from '../AuthenticatorForm';
 
 /* TODO: more intelligent categorization of field type to input type
     pending updates to the API */
@@ -130,4 +133,26 @@ export function AuthenticatorDetailsStep(props: {
       </PageFormGrid>
     </>
   );
+}
+
+export async function validateDetailsStep(
+  formData: { name: string; configuration: Configuration },
+  wizardData: AuthenticatorFormValues,
+  plugins: AuthenticatorPlugins,
+  authenticator?: Authenticator
+) {
+  const type = authenticator ? authenticator.type : wizardData.type;
+  const plugin = plugins.authenticators.find((plugin) => plugin.type === type);
+  const request = authenticator ? requestPatch : postRequest;
+  try {
+    await request(gatewayAPI`/authenticators/?validate=True`, {
+      name: formData.name,
+      type,
+      configuration: formatConfiguration(formData.configuration, plugin as AuthenticatorPlugin),
+    });
+  } catch (error) {
+    (error as { configurationSchema?: PluginConfiguration[] }).configurationSchema =
+      plugin?.configuration_schema;
+    throw error;
+  }
 }
