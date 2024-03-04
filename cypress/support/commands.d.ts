@@ -300,7 +300,7 @@ declare global {
        */
       filterTableByTextFilter(filterDataCy: string, text: string): Chainable<void>;
 
-      /** @deprecated use cy.filterTableByText2 instead */
+      /** @deprecated use cy.filterTableByTextFilter instead */
       filterTableByText(text: string, variant?: 'SingleText' | 'MultiText'): Chainable<void>;
 
       /**

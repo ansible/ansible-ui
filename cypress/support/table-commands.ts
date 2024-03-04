@@ -71,8 +71,8 @@ Cypress.Commands.add('filterTableByTextFilter', (filterDataCy: string, text: str
       cy.get('input').clear().type(text, { delay: 0 });
     });
     // Only click the apply filter if it is a multi text filter
-    cy.get('[data-cy="apply-filter"]').then((jqueryResult) => {
-      if (jqueryResult.length === 1 && jqueryResult[0].tagName === 'BUTTON') {
+    cy.get('button').then((jqueryResult) => {
+      if (jqueryResult.length === 1 && jqueryResult[0].getAttribute('data-cy') === 'apply-filter') {
         jqueryResult[0].click();
       }
     });
@@ -85,19 +85,12 @@ Cypress.Commands.add('filterTableByTextFilter', (filterDataCy: string, text: str
 
 Cypress.Commands.add('filterTableBySingleSelect', (filterDataCy: string, optionLabel: string) => {
   cy.selectTableFilter(filterDataCy);
-  cy.get('.pf-v5-c-menu__content').within(() => {
-    cy.contains('.pf-v5-c-menu__item-text', optionLabel).click();
-  });
+  cy.singleSelectByDataCy('filter-input', optionLabel);
 });
 
 Cypress.Commands.add('filterTableByMultiSelect', (filterDataCy: string, optionLabels: string[]) => {
   cy.selectTableFilter(filterDataCy);
-  cy.get('.pf-v5-c-menu__content').within(() => {
-    for (const optionLabel of optionLabels) {
-      cy.contains('.pf-v5-c-menu__item-text', optionLabel).click();
-    }
-  });
-  cy.get('.pf-v5-c-menu__content').click('topRight');
+  cy.multiSelectByDataCy('filter-input', optionLabels);
 });
 
 Cypress.Commands.add(
