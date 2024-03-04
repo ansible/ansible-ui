@@ -181,7 +181,7 @@ describe('Execution Environment Details tab', () => {
     cy.get('[data-cy="readme"]').within(() => {
       cy.contains('Heading 1');
       cy.clickButton('Edit');
-      cy.getByDataCy('raw-markdown').clear().type('{enter}**bold text**');
+      cy.getByDataCy('raw-markdown').type('{enter}**bold text**');
       cy.contains('Preview').parent().get('strong').contains('bold text');
       cy.intercept(
         'PUT',
