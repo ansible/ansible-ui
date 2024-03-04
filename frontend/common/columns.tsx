@@ -52,6 +52,7 @@ export function useNameColumn<
   sort?: string;
   disableSort?: boolean;
   disableLinks?: boolean;
+  defaultSort?: boolean;
 }) {
   const { url, onClick, disableSort, disableLinks } = options ?? {};
   const { t } = useTranslation();
