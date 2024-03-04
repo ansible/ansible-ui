@@ -74,7 +74,7 @@ export function useNameColumn<
       sort: disableSort ? undefined : options?.sort ?? 'name',
       card: 'name',
       list: 'name',
-      defaultSort: options?.defaultSort,
+      defaultSort: typeof options?.defaultSort !== 'undefined' ? options?.defaultSort : true,
     }),
     [
       options?.header,
