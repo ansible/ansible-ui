@@ -78,7 +78,6 @@ describe('Organizations - create, edit and delete', () => {
     cy.intercept('DELETE', gatewayV1API`/organizations/*`).as('delete');
     cy.clickButton(/^Delete organization/);
     cy.wait('@delete');
-    cy.contains(/^Close/).click();
   });
 
   it('bulk create and delete organization from the organizations list toolbar', () => {
