@@ -25,7 +25,6 @@ import { EdaPageForm } from '../common/EdaPageForm';
 import { edaAPI } from '../common/eda-utils';
 import { EdaCredential } from '../interfaces/EdaCredential';
 import { EdaDecisionEnvironment } from '../interfaces/EdaDecisionEnvironment';
-import { EdaEventStream } from '../interfaces/EdaEventStream';
 import { EdaExtraVars } from '../interfaces/EdaExtraVars';
 import { EdaProject } from '../interfaces/EdaProject';
 import { EdaResult } from '../interfaces/EdaResult';
@@ -37,6 +36,7 @@ import {
 import { AwxToken, LogLevelEnum, RestartPolicyEnum } from '../interfaces/generated/eda-api';
 import { EdaRoute } from '../main/EdaRoutes';
 import { EdaProjectCell } from '../projects/components/EdaProjectCell';
+import { EdaWebhook } from '../interfaces/EdaWebhook';
 
 export function CreateRulebookActivation() {
   const { t } = useTranslation();
@@ -119,9 +119,7 @@ export function RulebookActivationInputs() {
   const { data: tokens } = useGet<EdaResult<AwxToken>>(
     edaAPI`/users/me/awx-tokens/?page=1&page_size=200`
   );
-  const { data: eventStreams } = useGet<EdaResult<EdaEventStream>>(
-    edaAPI`/event-streams/?page=1&page_size=200`
-  );
+  const { data: webhooks } = useGet<EdaResult<EdaWebhook>>(edaAPI`/webhooks/?page=1&page_size=200`);
 
   const RESTART_OPTIONS = [
     { label: t('On failure'), value: 'on-failure' },
@@ -199,19 +197,20 @@ export function RulebookActivationInputs() {
         labelHelpTitle={t('Rulebook')}
       />
       <PageFormMultiSelect<IEdaRulebookActivationInputs>
-        name="event_streams"
-        label={t('Event stream(s)')}
+        name="webhooks"
+        label={t('Webhook(s)')}
         options={
-          eventStreams?.results
-            ? eventStreams.results.map((item) => ({
-                label: item.name,
-                value: item.id,
+          webhooks?.results
+            ? webhooks.results.map((item) => ({
+                label: item?.name || '',
+                value: `${item.id}`,
               }))
             : []
         }
-        placeholder={t('Select event stream(s)')}
-        footer={<Link to={getPageUrl(EdaRoute.CreateEventStream)}>Create event stream</Link>}
+        placeholder={t('Select webhook(s)')}
+        footer={<Link to={getPageUrl(EdaRoute.CreateWebhook)}>Create webhook</Link>}
       />
+
       <PageFormCredentialSelect<{ credential_refs: string; id: string }>
         name="credential_refs"
         labelHelp={t(`Select the credentials for this rulebook activations.`)}
@@ -302,6 +301,7 @@ export function RulebookActivationInputs() {
 type IEdaRulebookActivationInputs = Omit<EdaRulebookActivationCreate, 'event_streams'> & {
   rulebook: EdaRulebook;
   event_streams?: string[];
+  webhooks?: string[];
   project_id: string;
   extra_var: string;
   awx_token_id: number;

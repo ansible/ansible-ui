@@ -51,7 +51,7 @@
     "docker:run": "concurrently npm:docker:run:awx npm:docker:run:hub npm:docker:run:eda -c cyan,green,blue",
     "docker:run:awx": "echo https://localhost:4101 && docker run --name awx-ui --rm -e LOG_LEVEL=debug -p 4101:443 -e AWX_SERVER=$AWX_SERVER awx-ui",
     "docker:run:hub": "echo https://localhost:4102 && docker run --name hub-ui --rm -e LOG_LEVEL=debug -p 4102:443 -e HUB_SERVER=$HUB_SERVER hub-ui",
-    "docker:run:eda": "echo https://localhost:4103 && docker run --name eda-ui --rm -e LOG_LEVEL=debug -p 4103:443 -e EDA_SERVER=$EDA_SERVER eda-ui"
+    "docker:run:eda": "echo https://localhost:4103 && docker run --name eda-ui --rm -e LOG_LEVEL=debug -p 4103:443 -e EDA_SERVER=$EDA_SERVER -e EDA_SERVER_UUID=$EDA_SERVER_UUID -e EDA_WEBHOOK_SERVER='http://example.com' eda-ui"
   },
   "dependencies": {
     "@ansible/react-json-chart-builder": "2.0.1",
