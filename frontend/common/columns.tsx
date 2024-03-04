@@ -74,9 +74,18 @@ export function useNameColumn<
       sort: disableSort ? undefined : options?.sort ?? 'name',
       card: 'name',
       list: 'name',
-      defaultSort: true,
+      defaultSort: options?.defaultSort,
     }),
-    [disableLinks, disableSort, options?.sort, onClick, options?.header, t, url]
+    [
+      options?.header,
+      options?.sort,
+      options?.defaultSort,
+      t,
+      disableSort,
+      disableLinks,
+      url,
+      onClick,
+    ]
   );
   return column;
 }
