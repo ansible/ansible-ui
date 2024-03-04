@@ -46,10 +46,13 @@ Cypress.Commands.add('multiSelectByDataCy', (dataCy: string, values: string[]) =
 
 Cypress.Commands.add('selectLoadAll', () => {
   cy.get('#loading').should('not.exist');
-  cy.get('#load-more').then(($el) => {
-    if ($el.length) {
-      $el[0].click();
-      cy.selectLoadAll();
-    }
+  cy.document().then((document) => {
+    document.body.querySelectorAll('.pf-v5-c-menu__content').forEach((menu) => {
+      const loadMore = menu.querySelector('#load-more');
+      if (loadMore) {
+        loadMore.dispatchEvent(new Event('click', { bubbles: true }));
+        cy.selectLoadAll();
+      }
+    });
   });
 });
