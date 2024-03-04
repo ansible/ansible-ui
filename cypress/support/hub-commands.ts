@@ -10,10 +10,12 @@ import { CollectionVersionSearch } from '../../frontend/hub/collections/Collecti
 import { parsePulpIDFromURL } from '../../frontend/hub/common/api/hub-api-utils';
 import { HubItemsResponse } from '../../frontend/hub/common/useHubView';
 import { ExecutionEnvironment as HubExecutionEnvironment } from '../../frontend/hub/execution-environments/ExecutionEnvironment';
+import { PayloadDataType as HubExecutionEnvironmentPayload } from '../../frontend/hub/execution-environments/ExecutionEnvironmentForm';
 import { HubNamespace } from '../../frontend/hub/namespaces/HubNamespace';
 import { galaxykitPassword, galaxykitUsername } from './e2e';
 import { hubAPI, pulpAPI } from './formatApiPathForHub';
 import { escapeForShellCommand, randomE2Ename } from './utils';
+import { ExecutionEnvironments } from '../e2e/hub/constants';
 
 const apiPrefix = Cypress.env('HUB_API_PREFIX') as string;
 
@@ -422,7 +424,7 @@ Cypress.Commands.add(
   }
 );
 export type HubCreateExecutionEnvironmentOptions = {
-  executionEnvironment: SetRequired<Partial<HubExecutionEnvironment>, 'registry'>;
+  executionEnvironment: SetRequired<Partial<HubExecutionEnvironmentPayload>, 'registry'>;
 } & Omit<HubPostRequestOptions, 'url' | 'body'>;
 
 Cypress.Commands.add(
@@ -433,7 +435,7 @@ Cypress.Commands.add(
       url: hubAPI`/_ui/v1/execution-environments/remotes/`,
       body: {
         name: randomE2Ename(),
-        upstream_name: 'alpine',
+        upstream_name: 'library/alpine',
         ...options?.executionEnvironment,
       },
     });
@@ -456,26 +458,27 @@ Cypress.Commands.add(
 );
 
 Cypress.Commands.add(
-  'pushLocalContainer',
-  (localName: string, remoteName: string, registry: string = 'docker.io/') => {
-    const log = (op: string, { code, stderr, stdout }: Cypress.Exec) =>
-      /* eslint-disable no-console */
-      console.log(`OPERATION=${op} CODE=${code} ERR=${stderr} OUT=${stdout}`);
+  'syncRemoteExecutionEnvironment',
+  (executionEnvironment: HubExecutionEnvironment) => {
+    cy.visit(`${ExecutionEnvironments.url}/${executionEnvironment.name}/`);
+    cy.getByDataCy('actions-dropdown').click();
+    cy.getByDataCy('sync-from-registry').click();
 
-    const server: string = (Cypress.env('HUB_HOST') as string) || 'localhost:5001';
-
-    const podmanPull = `podman pull ${registry + remoteName}`;
-    const podmanImageTag: string = `podman image tag ${remoteName} ${server}/${localName}:latest`;
-    const podmanLogin: string = `podman login ${server} --tls-verify=false --username=admin --password=admin`;
-    const podmanPush: string = `podman push ${server}/${localName}:latest --tls-verify=false`;
-    cy.exec(podmanPull)
-      .then((resp: Cypress.Exec) => log(podmanPull, resp))
-      .then(() => cy.exec(podmanImageTag))
-      .then((resp: Cypress.Exec) => log(podmanImageTag, resp))
-      .then(() => cy.exec(podmanLogin, { failOnNonZeroExit: false }))
-      .then((resp: Cypress.Exec) => log(podmanLogin, resp))
-      .then(() => cy.exec(podmanPush, { failOnNonZeroExit: false }))
-      .then((resp: Cypress.Exec) => log(podmanPush, resp));
+    cy.clickModalConfirmCheckbox();
+    cy.intercept(
+      'POST',
+      hubAPI`/v3/plugin/execution-environments/repositories/${executionEnvironment.name}/_content/sync/`
+    ).as('eeSync');
+    cy.clickButton('Sync execution environments');
+    cy.wait('@eeSync').then((xhr) => {
+      const task = xhr?.response?.body?.task as string;
+      cy.waitOnHubTask(task).then((currentSubject: unknown) => {
+        const task = currentSubject as Task;
+        expect(task.state).to.be.eql('completed');
+        cy.contains('Success');
+        cy.clickButton('Close');
+      });
+    });
   }
 );
 

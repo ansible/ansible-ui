@@ -1309,6 +1309,9 @@ declare global {
       deleteHubExecutionEnvironment(
         options: HubDeleteExecutionEnvironmentOptions
       ): Cypress.Chainable<void>;
+      syncRemoteExecutionEnvironment(
+        executionEnvironment: HubExecutionEnvironment
+      ): Cypress.Chainable<void>;
 
       // HUB Remote Registry Commands
       createHubRemoteRegistry(

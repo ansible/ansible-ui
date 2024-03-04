@@ -220,18 +220,29 @@ describe('Execution Environment Activity tab', () => {
   });
 
   it('should display populated activity tab', () => {
-    const eeName = 'localpine' + randomString(5).toLowerCase();
-    cy.pushLocalContainer(eeName, 'alpine');
-    cy.intercept(
-      'GET',
-      hubAPI`/v3/plugin/execution-environments/repositories/${eeName}/_content/history/*`
-    ).as('getActivity');
-    cy.visit(`${ExecutionEnvironments.url}/${eeName}/activity`);
-    cy.contains('Change');
-    cy.contains('Date');
-    cy.contains(`${eeName} was added`);
-    cy.contains('sha256');
-    cy.contains('latest was added');
-    cy.wait('@getActivity');
+    cy.createHubRemoteRegistry().then((remoteRegistry) => {
+      cy.createHubExecutionEnvironment({
+        executionEnvironment: {
+          include_tags: ['latest'],
+          registry: remoteRegistry.id,
+        },
+      }).then((executionEnvironment) => {
+        cy.syncRemoteExecutionEnvironment(executionEnvironment);
+
+        const eeName = executionEnvironment.name;
+
+        cy.intercept(
+          'GET',
+          hubAPI`/v3/plugin/execution-environments/repositories/${eeName}/_content/history/*`
+        ).as('getActivity');
+        cy.visit(`${ExecutionEnvironments.url}/${eeName}/activity`);
+        cy.contains('Change');
+        cy.contains('Date');
+        cy.contains(`${eeName} was added`);
+        cy.contains('sha256');
+        cy.contains('latest was added');
+        cy.wait('@getActivity');
+      });
+    });
   });
 });
