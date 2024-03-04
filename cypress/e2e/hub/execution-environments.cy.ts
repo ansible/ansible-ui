@@ -204,6 +204,19 @@ describe('Execution Environment Details tab', () => {
     });
     cy.get('[data-cy="readme"]').contains('this should not be saved.').should('not.exist');
   });
+
+  it('should successfully sync execution environment from Docker registry', () => {
+    cy.createHubRemoteRegistry().then((remoteRegistry) => {
+      cy.createHubExecutionEnvironment({
+        executionEnvironment: {
+          include_tags: ['latest'],
+          registry: remoteRegistry.id,
+        },
+      }).then((executionEnvironment) => {
+        cy.syncRemoteExecutionEnvironment(executionEnvironment);
+      });
+    });
+  });
 });
 
 describe('Execution Environment Activity tab', () => {
