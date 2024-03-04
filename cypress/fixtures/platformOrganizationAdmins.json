@@ -1,0 +1,169 @@
+{
+  "count": 4,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 2,
+      "url": "/api/gateway/v1/users/2/",
+      "created_on": "2024-02-27T06:29:29.669958Z",
+      "created_by": 1,
+      "modified_on": "2024-02-27T06:29:29.669958Z",
+      "modified_by": 1,
+      "related": {
+        "authenticators": "/api/gateway/v1/users/2/authenticators/",
+        "created_by": "/api/gateway/v1/users/1/",
+        "modified_by": "/api/gateway/v1/users/1/",
+        "organizations": "/api/gateway/v1/users/2/organizations/",
+        "teams": "/api/gateway/v1/users/2/teams/"
+      },
+      "summary_fields": {
+        "created_by": {
+          "id": 1,
+          "username": "_system",
+          "first_name": "",
+          "last_name": ""
+        },
+        "modified_by": {
+          "id": 1,
+          "username": "_system",
+          "first_name": "",
+          "last_name": ""
+        }
+      },
+      "username": "admin",
+      "email": "admin@example.com",
+      "first_name": "",
+      "last_name": "",
+      "last_login": "2024-02-27T14:44:07.224776Z",
+      "password": "$encrypted$",
+      "is_superuser": true,
+      "is_system_auditor": false,
+      "organizations": [],
+      "last_login_results": {
+        "1": {
+          "access_allowed": null,
+          "last_login_map_results": [],
+          "last_login_attempt": "2024-02-27T14:44:07.201216Z"
+        }
+      }
+    },
+    {
+      "id": 5,
+      "url": "/api/gateway/v1/users/5/",
+      "created_on": "2024-02-27T06:30:21.015401Z",
+      "created_by": 2,
+      "modified_on": "2024-02-27T06:30:21.015401Z",
+      "modified_by": 2,
+      "related": {
+        "authenticators": "/api/gateway/v1/users/5/authenticators/",
+        "created_by": "/api/gateway/v1/users/2/",
+        "modified_by": "/api/gateway/v1/users/2/",
+        "organizations": "/api/gateway/v1/users/5/organizations/",
+        "teams": "/api/gateway/v1/users/5/teams/"
+      },
+      "summary_fields": {
+        "created_by": {
+          "id": 2,
+          "username": "admin",
+          "first_name": "",
+          "last_name": ""
+        },
+        "modified_by": {
+          "id": 2,
+          "username": "admin",
+          "first_name": "",
+          "last_name": ""
+        }
+      },
+      "username": "dev",
+      "email": "",
+      "first_name": "",
+      "last_name": "",
+      "last_login": "2024-02-27T16:29:36.043277Z",
+      "password": "$encrypted$",
+      "is_superuser": true,
+      "is_system_auditor": false,
+      "organizations": [],
+      "last_login_results": {}
+    },
+    {
+      "id": 6,
+      "url": "/api/gateway/v1/users/6/",
+      "created_on": "2024-02-27T06:30:26.211429Z",
+      "created_by": 2,
+      "modified_on": "2024-02-27T06:30:26.211429Z",
+      "modified_by": 2,
+      "related": {
+        "authenticators": "/api/gateway/v1/users/6/authenticators/",
+        "created_by": "/api/gateway/v1/users/2/",
+        "modified_by": "/api/gateway/v1/users/2/",
+        "organizations": "/api/gateway/v1/users/6/organizations/",
+        "teams": "/api/gateway/v1/users/6/teams/"
+      },
+      "summary_fields": {
+        "created_by": {
+          "id": 2,
+          "username": "admin",
+          "first_name": "",
+          "last_name": ""
+        },
+        "modified_by": {
+          "id": 2,
+          "username": "admin",
+          "first_name": "",
+          "last_name": ""
+        }
+      },
+      "username": "e2e",
+      "email": "",
+      "first_name": "",
+      "last_name": "",
+      "last_login": null,
+      "password": "$encrypted$",
+      "is_superuser": true,
+      "is_system_auditor": false,
+      "organizations": [],
+      "last_login_results": {}
+    },
+    {
+      "id": 60,
+      "url": "/api/gateway/v1/users/60/",
+      "created_on": "2024-02-27T16:40:17.060957Z",
+      "created_by": 5,
+      "modified_on": "2024-02-27T16:40:17.060957Z",
+      "modified_by": 5,
+      "related": {
+        "authenticators": "/api/gateway/v1/users/60/authenticators/",
+        "created_by": "/api/gateway/v1/users/5/",
+        "modified_by": "/api/gateway/v1/users/5/",
+        "organizations": "/api/gateway/v1/users/60/organizations/",
+        "teams": "/api/gateway/v1/users/60/teams/"
+      },
+      "summary_fields": {
+        "created_by": {
+          "id": 5,
+          "username": "dev",
+          "first_name": "",
+          "last_name": ""
+        },
+        "modified_by": {
+          "id": 5,
+          "username": "dev",
+          "first_name": "",
+          "last_name": ""
+        }
+      },
+      "username": "test-user",
+      "email": "",
+      "first_name": "",
+      "last_name": "",
+      "last_login": null,
+      "password": "$encrypted$",
+      "is_superuser": false,
+      "is_system_auditor": false,
+      "organizations": [1],
+      "last_login_results": {}
+    }
+  ]
+}

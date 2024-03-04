@@ -34,16 +34,16 @@ export function PlatformTeamUsers() {
     tableColumns,
   });
 
-  const { data: associateOptions } = useOptions<OptionsResponse<ActionsResponse>>(
-    gatewayV1API`/teams/${team?.id?.toString() ?? ''}/users/associate/`
-  );
+  const { data: associateOptions, isLoading: isLoadingOptions } = useOptions<
+    OptionsResponse<ActionsResponse>
+  >(gatewayV1API`/teams/${team?.id?.toString() ?? ''}/users/associate/`);
   const canAssociateUser = Boolean(
     associateOptions && associateOptions.actions && associateOptions.actions['POST']
   );
   const toolbarActions = useTeamUsersToolbarActions(view);
   const rowActions = useTeamUsersRowActions(view);
 
-  if (isLoading) return <LoadingPage />;
+  if (isLoading || isLoadingOptions) return <LoadingPage />;
   if (error) return <AwxError error={error} />;
 
   return (
