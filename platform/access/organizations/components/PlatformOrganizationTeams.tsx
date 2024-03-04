@@ -43,7 +43,7 @@ export function PlatformOrganizationTeams() {
 
   const { data: createTeamOptions, isLoading: isLoadingOptions } = useOptions<
     OptionsResponse<ActionsResponse>
-  >(gatewayV1API`/organizations/teams/`);
+  >(gatewayV1API`/teams/`);
   const canCreateTeam = Boolean(
     createTeamOptions && createTeamOptions.actions && createTeamOptions.actions['POST']
   );
