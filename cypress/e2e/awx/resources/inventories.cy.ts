@@ -93,7 +93,7 @@ describe('inventories', () => {
     cy.verifyPageTitle(inventory.name);
     cy.clickButton(/^Edit inventory/);
     cy.selectDropdownOptionByResourceName('labels', label.name);
-    cy.typeBy('[data-cy="variables"]', 'remote_install_path: /opt/my_app_config');
+    cy.getByDataCy('variables').type('remote_install_path: /opt/my_app_config');
     cy.contains('button', 'Save inventory').click();
     cy.verifyPageTitle(inventory.name);
     cy.assertMonacoTextField('remote_install_path: /opt/my_app_config');
@@ -205,7 +205,7 @@ describe('inventories', () => {
       cy.contains(newRelatedGroup);
       cy.selectTableRow(newRelatedGroup, true);
       cy.clickToolbarKebabAction('disassociate-selected-groups');
-      cy.get('#confirm').click();
+      cy.get('#submit').click();
       cy.clickButton(/^Disassociate groups/);
       cy.contains(/^Success$/);
       cy.clickButton(/^Close/);
@@ -233,7 +233,7 @@ describe('inventories', () => {
       cy.contains(newGroup);
       cy.selectTableRow(newGroup, true);
       cy.clickToolbarKebabAction('disassociate-selected-groups');
-      cy.get('#confirm').click();
+      cy.get('#submit').click();
       cy.clickButton(/^Disassociate groups/);
       cy.contains(/^Success$/);
       cy.clickButton(/^Close/);

@@ -114,68 +114,99 @@ declare global {
       /** Contains by selector, making sure it is not disabled or hidden */
       containsBy(selector: string, text: string | number | RegExp): Chainable<JQuery<HTMLElement>>;
 
-      /** @deprecated use cy.getBy('selector').click() */
-      clickByDataCy(dataCy: string): Chainable<void>;
-
-      /** Type input by selector, making sure it is not disabled or hidden */
-      /** @deprecated use cy.getBy('selector').type("text") */
-      typeBy(selector: string, text: string): Chainable<void>;
-
-      /** Type input by data-cy attribute, making sure it is not disabled or hidden */
-      /** @deprecated use cy.getByDataCy('dataCy').type("text") */
-      typeByDataCy(dataCy: string, text: string): Chainable<void>;
-
-      /**
-       * Select a value from a single select input by selector, making sure it is not disabled or hidden.
-       * - Opens the dropdown
-       * - Loads all items if it is an async select
-       * - Searches for the value
-       * - Selects the value
-       * - Closes the dropdown
-       */
-      singleSelectBy(selector: string, value: string): Chainable<void>;
-
-      /**
-       * Select a value from a single select input by data-cy attribute, making sure it is not disabled or hidden.
-       * - Opens the dropdown
-       * - Loads all items if it is an async select
-       * - Searches for the value
-       * - Selects the value
-       * - Closes the dropdown
-       */
-      singleSelectByDataCy(dataCy: string, value: string): Chainable<void>;
-
-      /**
-       * Select a value from a multi select input by selector, making sure it is not disabled or hidden.
-       * - Opens the dropdown
-       * - Loads all items if it is an async select
-       * - Searches for the value
-       * - Selects the value
-       * - Closes the dropdown
-       */
-      multiSelectBy(selector: string, value: string): Chainable<void>;
-
-      /**
-       * Select a value from a multi select input by data-cy attribute, making sure it is not disabled or hidden.
-       * - Opens the dropdown
-       * - Loads all items if it is an async select
-       * - Searches for the value
-       * - Selects the value
-       * - Closes the dropdown
-       */
-      multiSelectByDataCy(dataCy: string, value: string): Chainable<void>;
-
-      /** Used internally to load all items in the singleSelectBy and multiSelectBy commands */
-      selectLoadAll(): Chainable<void>;
+      /** Contains by data-cy attribute, making sure it is not disabled or hidden */
+      containsByDataCy(
+        dataCy: string,
+        text: string | number | RegExp
+      ): Chainable<JQuery<HTMLElement>>;
 
       // ==============================================================================================================
       // Input Commands
       // ==============================================================================================================
 
-      /** @deprecated use cy.getBy('selector').click() */
+      /**
+       * Select a value from a single select input by selector, making sure it is not disabled or hidden.
+       *
+       * - Opens the dropdown
+       * - Loads all items if it is an async select
+       * - Searches for the value
+       * - Selects the value
+       * - Closes the dropdown
+       *
+       * @example Select inventory
+       * ```
+       * cy.singleSelectBy('#inventory-select', 'inventory1');
+       * ```
+       *
+       * @param selector - The selector of the single select input
+       * @param value - The value to select
+       */
+      singleSelectBy(selector: string, value: string): Chainable<void>;
+
+      /**
+       * Select a value from a single select input by data-cy attribute, making sure it is not disabled or hidden.
+       *
+       * - Opens the dropdown
+       * - Loads all items if it is an async select
+       * - Searches for the value
+       * - Selects the value
+       * - Closes the dropdown
+       *
+       * @example Select inventory
+       * ```
+       * cy.singleSelectByDataCy('inventory-select', 'inventory1');
+       * ```
+       *
+       * @param dataCy - The data-cy attribute of the single select input
+       * @param value - The value to select
+       */
+      singleSelectByDataCy(dataCy: string, value: string): Chainable<void>;
+
+      /**
+       * Select a value from a multi select input by selector, making sure it is not disabled or hidden.
+       *
+       * - Opens the dropdown
+       * - Loads all items if it is an async select
+       * - Searches for the value
+       * - Selects the values
+       * - Closes the dropdown
+       *
+       * @example Adding uses to a team
+       * ```
+       * cy.multiSelectByDataCy('#user-select', ['user1', 'user2']);
+       * ```
+       *
+       * @param selector - The selector of the multi select input
+       * @param values - The values to select
+       */
+      multiSelectBy(selector: string, values: string[]): Chainable<void>;
+
+      /**
+       * Select a value from a multi select input by data-cy attribute, making sure it is not disabled or hidden.
+       *
+       * - Opens the dropdown
+       * - Loads all items if it is an async select
+       * - Searches for the value
+       * - Selects the values
+       * - Closes the dropdown
+       *
+       * @example Adding uses to a team
+       * ```
+       * cy.multiSelectByDataCy('user-select', ['user1', 'user2']);
+       * ```
+       *
+       * @param dataCy - The data-cy attribute of the multi select input
+       * @param values - The values to select
+       */
+      multiSelectByDataCy(dataCy: string, values: string[]): Chainable<void>;
+
+      /** Used internally to load all items in the singleSelectBy and multiSelectBy commands */
+      selectLoadAll(): Chainable<void>;
+
+      /** @deprecated use cy.containsBy('a', 'label').click() or cy.getByDataCy */
       clickLink(label: string | RegExp): Chainable<void>;
 
-      /** @deprecated use cy.getBy('selector').click() */
+      /** @deprecated use cy.containsBy('button', 'label').click() or cy.getByDataCy */
       clickButton(label: string | RegExp): Chainable<void>;
 
       /** Finds a tooltip by its label. Does not make an assertion. */
@@ -221,6 +252,12 @@ declare global {
 
       selectMultiSelectOption(selector: string, label: string | RegExp): Chainable<void>;
 
+      searchAndDisplayResource(resourceName: string): Chainable<void>;
+
+      // ==============================================================================================================
+      // Table Commands
+      // ==============================================================================================================
+
       /**
        * Find the toolbar filter select, click it and returns the opened menu element.
        *
@@ -233,45 +270,193 @@ declare global {
        */
       openToolbarFilterTypeSelect(): Chainable<JQuery<HTMLElement>>;
 
-      searchAndDisplayResource(resourceName: string): Chainable<void>;
-
-      // ==============================================================================================================
-      // Table Commands
-      // ==============================================================================================================
-
+      /** @deprecated use cy.contains('th', 'text').click() */
       clickTableHeader(name: string | RegExp): Chainable<void>;
 
-      setTableView(viewType: string): Chainable<void>;
-      setTablePageSize(text: '10' | '20' | '50' | '100'): Chainable<void>;
+      setTableView(
+        view: 'table' | 'list' | 'cards',
+        options?: { ignoreNotFound?: boolean }
+      ): Chainable<void>;
 
-      /** Change the current filter type in the table toolbar. */
-      selectToolbarFilterType(filterLabel: string | RegExp): Chainable<void>;
+      setTablePageSize(text: string): Chainable<void>;
 
-      getFiltersToolbarItem(): Chainable<JQuery<HTMLElement>>;
+      /** Select the active table toolbar filter by data-cy */
+      selectTableFilter(dataCy: string): Chainable<void>;
 
-      filterTableByTextFilter(text: string): Chainable<void>;
+      /**
+       * Select the active table toolbar filter by label
+       * @deprecated prefer cy.selectTableFilter instead which uses data-cy
+       */
+      selectToolbarFilterByLabel(label: string | RegExp): Chainable<void>;
+
+      /**
+       * Filters the table by using a filter that has a text input.
+       * This is used when the filter is a text input.
+       * @example
+       * ```
+       * cy.filterTableByText('name', organization.name);
+       * cy.filterTableByText('description', organization.description);
+       * ```
+       */
       filterTableByTextFilter(filterDataCy: string, text: string): Chainable<void>;
 
+      /** @deprecated use cy.filterTableByText2 instead */
+      filterTableByText(text: string, variant?: 'SingleText' | 'MultiText'): Chainable<void>;
+
+      /**
+       * Filters the table by using a filter that has a single select input.
+       * This is used when the filter is a single select dropdown.
+       * @example
+       * ```
+       * cy.filterTableBySingleSelect('status', "Success");
+       * cy.filterTableBySingleSelect('status', "Pending");
+       * ```
+       */
+      filterTableBySingleSelect(filterDataCy: string, optionLabel: string): Chainable<void>;
+
+      /**
+       * Filters the table by using a filter that has a multi select input.
+       * This is used when the filter is a multi select dropdown.
+       * @example
+       * ```
+       * cy.filterTableByMultiSelect('status', ["Success", "Pending"]);
+       * ```
+       */
+      filterTableByMultiSelect(filterDataCy: string, optionLabels: string[]): Chainable<void>;
+
+      /**
+       * Gets a table row containing the specified text for the specified column.
+       *
+       * @example
+       * ```
+       * cy.getTableRow('name', organization.name).within(() => {});
+       * cy.getTableRow('id', organization.id).within(() => {});
+       * ```
+       *
+       * @param columnDataCy - The data-cy attribute of the column to filter by.
+       * @param text - The text to search for in the column.
+       * @param options.disableFilter - This should not be used in general.
+       *
+       * @note Filtering will use the filter that has the same data-cy as the columnDataCy.
+       */
+      getTableRow(
+        columnDataCy: string,
+        text: string,
+        options?: { disableFilter?: boolean }
+      ): Chainable<JQuery<HTMLTableRowElement>>;
+
+      /**
+       * Gets a table cell containing the specified text for the specified column.
+       *
+       * @example
+       * ```
+       * cy.getTableCell('name', organization.name).within(() => {
+       *  cy.get('a').click();
+       * });
+       * ```
+       *
+       * @param cellDataCy - The data-cy attribute of the column to filter by.
+       * @param text - The text to search for in the column.
+       * @param options.disableFilter - This should not be used in general.
+       *
+       * @note Filtering will use the filter that has the same data-cy as the columnDataCy.
+       */
+      getTableCell(
+        cellDataCy: string,
+        text: string,
+        options?: { disableFilter?: boolean }
+      ): Chainable<JQuery<HTMLTableRowElement>>;
+
+      /**
+       * Click the link in the table row that contains the specified text for the specified column.
+       * Often used to navigate to a detail page.
+       *
+       * @example
+       * ```
+       * cy.clickTableRowLink('name', organization.name)
+       * ```
+       *
+       * @param columnDataCy - The data-cy attribute of the column to filter by.
+       * @param text - The text to search for in the column.
+       * @param options.disableFilter - This should not be used in general.
+       *
+       * @note Filtering will use the filter that has the same data-cy as the columnDataCy.
+       */
+      clickTableRowLink(columnDataCy: string, text: string, options?: { disableFilter?: boolean });
+
+      /**
+       * Click and action in a kebab dropdown
+       *
+       * @example
+       * ```
+       * cy.clickKebabAction('kebab-dropdown', 'edit')
+       * ```
+       *
+       * @param kebabDataCy - The data-cy attribute of the kebab dropdown.
+       * @param actionDataCy - The data-cy attribute of the action to click.
+       */
+      clickKebabAction(kebabDataCy: string, actionDataCy: string): Chainable<void>;
+
+      /**
+       * Click the action in the table row that contains the specified text for the specified column.
+       *
+       * @example
+       * ```
+       * cy.clickTableRowAction('name', organization.name, 'edit')
+       * cy.clickTableRowAction('name', organization.name, 'delete', { inKebab: true })
+       * ```
+       *
+       * @param columnDataCy - The data-cy attribute of the column to filter by.
+       * @param text - The text to search for in the column.
+       * @param actionDataCy - The data-cy attribute of the action to click.
+       * @param options.inKebab - Indicates that the action is in a kebab dropdown.
+       * @param options.disableFilter - This should not be used in general.
+       *
+       * @note Filtering will use the filter that has the same data-cy as the columnDataCy.
+       */
+      clickTableRowAction(
+        columnDataCy: string,
+        text: string,
+        actionDataCy: string,
+        options?: { inKebab?: boolean; disableFilter?: boolean }
+      );
+
+      /** Selects a table row by clicking on the row checkbox. */
+      selectTableRowNew(
+        columnDataCy: string,
+        text: string,
+        options?: { disableFilter?: boolean }
+      ): Chainable<void>;
+
+      /** @deprecated use cy.getTableRow instead */
+      clickTableRow(name: string | RegExp, filter?: boolean): Chainable<void>;
+
+      /** @deprecated use cy.getTableRow instead */
+      getTableRowByText(
+        name: string | RegExp,
+        filter?: boolean,
+        variant?: 'MultiText' | 'SingleText'
+      ): Chainable<void>;
+
+      /** @deprecated use cy.filterTableBySelect instead */
       filterBySingleSelection(
         filterType: RegExp | string,
         selectLabel: RegExp | string
       ): Chainable<void>;
 
+      /** @deprecated use cy.filterTableBySelect instead */
       filterByMultiSelection(
         filterType: RegExp | string,
         selectLabel: RegExp | string
       ): Chainable<void>;
 
-      /** Filter the table using it's current filter by entering text. */
-      filterTableByText(text: string, variant?: 'SingleText' | 'MultiText'): Chainable<void>;
-
-      /** Filter the table using it's current filter by entering text in 'ToolbarFilterType.SingleText' filter. */
+      /** @deprecated use cy.filterTableBySelect instead */
       filterTableBySingleText(text: string, disableWait?: boolean): Chainable<void>;
 
-      /** Filter the table using specified filter and text. */
+      /** @deprecated use cy.filterTableByText instead */
       filterTableByTypeAndText(filterLabel: string | RegExp, text: string): Chainable<void>;
 
-      /** Filter the table using specified filter and text with 'ToolbarFilterType.SingleText' filter. */
+      /** @deprecated use cy.filterTableByText instead */
       filterTableByTypeAndSingleText(
         filterLabel: string | RegExp,
         text: string,
@@ -282,13 +467,6 @@ declare global {
 
       /** Click an action in the table toolbar kebab dropdown actions menu. */
       clickToolbarKebabAction(dataCy: string): Chainable<void>;
-
-      /** Get the table row containing the specified text. */
-      getTableRowByText(
-        name: string | RegExp,
-        filter?: boolean,
-        variant?: 'MultiText' | 'SingleText'
-      ): Chainable<void>;
 
       /** Get the table row containing the specified text with 'ToolbarFilterType.SingleText' filter. */
       getTableRowBySingleText(name: string | RegExp, filter?: boolean): Chainable<void>;

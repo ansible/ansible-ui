@@ -352,15 +352,6 @@ Cypress.Commands.add('selectDropdownOptionByResourceName', (resource: string, it
     });
 });
 
-Cypress.Commands.add('setTablePageSize', (text: '10' | '20' | '50' | '100') => {
-  cy.get('[data-cy="pagination"]')
-    .first()
-    .within(() => {
-      cy.get('#options-menu-bottom-toggle').click();
-      cy.contains('button', `${text} per page`).click();
-    });
-});
-
 Cypress.Commands.add('clickLink', (label: string | RegExp) => {
   cy.containsBy('a', label).click();
 });
@@ -442,7 +433,7 @@ Cypress.Commands.add('selectDetailsPageKebabAction', (dataCy: string) => {
   cy.get('[data-cy="actions-dropdown"]')
     .click()
     .then(() => {
-      cy.clickByDataCy(dataCy);
+      cy.getByDataCy(dataCy).click();
       cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
         cy.get('[data-ouia-component-id="confirm"]').click();
         cy.get('[data-ouia-component-id="submit"]').click();
@@ -457,7 +448,7 @@ Cypress.Commands.add(
       cy.get('[data-cy*="actions-dropdown"]')
         .click()
         .then(() => {
-          cy.clickByDataCy(dataCyLabel);
+          cy.getByDataCy(dataCyLabel).click();
         });
     });
   }
