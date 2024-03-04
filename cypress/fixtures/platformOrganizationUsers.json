@@ -3,81 +3,77 @@
   "next": null,
   "previous": null,
   "results": [
-      {
-          "id": 10,
-          "url": "/api/gateway/v1/users/10/",
-          "created_on": "2024-03-04T16:19:34.557442Z",
-          "created_by": 5,
-          "modified_on": "2024-03-04T16:19:34.557442Z",
-          "modified_by": 5,
-          "related": {
-              "created_by": "/api/gateway/v1/users/5/",
-              "modified_by": "/api/gateway/v1/users/5/"
-          },
-          "summary_fields": {
-              "created_by": {
-                  "id": 5,
-                  "username": "dev",
-                  "first_name": "",
-                  "last_name": ""
-              },
-              "modified_by": {
-                  "id": 5,
-                  "username": "dev",
-                  "first_name": "",
-                  "last_name": ""
-              }
-          },
-          "username": "test-user1",
-          "email": "",
-          "first_name": "",
-          "last_name": "",
-          "last_login": null,
-          "password": "$encrypted$",
-          "is_superuser": false,
-          "is_system_auditor": false,
-          "organizations": [
-              1
-          ],
-          "last_login_results": {}
+    {
+      "id": 10,
+      "url": "/api/gateway/v1/users/10/",
+      "created_on": "2024-03-04T16:19:34.557442Z",
+      "created_by": 5,
+      "modified_on": "2024-03-04T16:19:34.557442Z",
+      "modified_by": 5,
+      "related": {
+        "created_by": "/api/gateway/v1/users/5/",
+        "modified_by": "/api/gateway/v1/users/5/"
       },
-      {
-          "id": 11,
-          "url": "/api/gateway/v1/users/11/",
-          "created_on": "2024-03-04T16:19:47.553858Z",
-          "created_by": 5,
-          "modified_on": "2024-03-04T16:19:47.553858Z",
-          "modified_by": 5,
-          "related": {
-              "created_by": "/api/gateway/v1/users/5/",
-              "modified_by": "/api/gateway/v1/users/5/"
-          },
-          "summary_fields": {
-              "created_by": {
-                  "id": 5,
-                  "username": "dev",
-                  "first_name": "",
-                  "last_name": ""
-              },
-              "modified_by": {
-                  "id": 5,
-                  "username": "dev",
-                  "first_name": "",
-                  "last_name": ""
-              }
-          },
-          "username": "test-user2",
-          "email": "",
+      "summary_fields": {
+        "created_by": {
+          "id": 5,
+          "username": "dev",
           "first_name": "",
-          "last_name": "",
-          "last_login": null,
-          "password": "$encrypted$",
-          "is_superuser": false,
-          "is_system_auditor": false,
-          "organizations": [
-              1
-          ],
-          "last_login_results": {}
-      }
+          "last_name": ""
+        },
+        "modified_by": {
+          "id": 5,
+          "username": "dev",
+          "first_name": "",
+          "last_name": ""
+        }
+      },
+      "username": "test-user1",
+      "email": "",
+      "first_name": "",
+      "last_name": "",
+      "last_login": null,
+      "password": "$encrypted$",
+      "is_superuser": false,
+      "is_system_auditor": false,
+      "organizations": [1],
+      "last_login_results": {}
+    },
+    {
+      "id": 11,
+      "url": "/api/gateway/v1/users/11/",
+      "created_on": "2024-03-04T16:19:47.553858Z",
+      "created_by": 5,
+      "modified_on": "2024-03-04T16:19:47.553858Z",
+      "modified_by": 5,
+      "related": {
+        "created_by": "/api/gateway/v1/users/5/",
+        "modified_by": "/api/gateway/v1/users/5/"
+      },
+      "summary_fields": {
+        "created_by": {
+          "id": 5,
+          "username": "dev",
+          "first_name": "",
+          "last_name": ""
+        },
+        "modified_by": {
+          "id": 5,
+          "username": "dev",
+          "first_name": "",
+          "last_name": ""
+        }
+      },
+      "username": "test-user2",
+      "email": "",
+      "first_name": "",
+      "last_name": "",
+      "last_login": null,
+      "password": "$encrypted$",
+      "is_superuser": false,
+      "is_system_auditor": false,
+      "organizations": [1],
+      "last_login_results": {}
+    }
   ]
 }
