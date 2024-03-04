@@ -4,9 +4,6 @@ import { Repository } from '../../../frontend/hub/administration/repositories/Re
 import { HubNamespace } from '../../../frontend/hub/namespaces/HubNamespace';
 import { randomE2Ename } from '../../support/utils';
 import { Collections } from './constants';
-import { randomString } from '../../../framework/utils/random-string';
-import { hubAPI } from '../../support/formatApiPathForHub';
-import { Collections } from './constants';
 describe('Collections', () => {
   let namespace: HubNamespace;
   let repository: Repository;
@@ -15,104 +12,11 @@ describe('Collections', () => {
   before(() => {
     cy.createHubNamespace().then((namespaceResult) => {
       namespace = namespaceResult;
-    cy.hubLogin();
-  });
-
-  it('can sign a collection', () => {
-    const namespace = `sign_namespace_${randomString(3, undefined, { isLowercase: true })}`;
-    cy.createNamespace(namespace);
-    const collection = randomString(5, undefined, { isLowercase: true }).replace(/\d/g, '');
-    cy.uploadCollection(collection, namespace).then((result) => {
-      cy.approveCollection(collection, namespace, result.version as string);
-      cy.navigateTo('hub', Collections.url);
-      cy.get('[data-cy="table-view"]').click();
-      cy.filterTableBySingleText(collection);
-      cy.get('[data-cy="actions-column-cell"]').click();
-      cy.get('[data-cy="sign-collection"]').click();
-      cy.get('#confirm').click();
-      cy.clickButton(/^Sign collections$/);
-      cy.contains(/^Success$/);
-      cy.clickButton(/^Close$/);
-      cy.get('[data-cy="label-signed"]').contains(Collections.signedStatus);
-      cy.get('[data-cy="actions-column-cell"]').click();
-      cy.get('[data-cy="delete-entire-collection-from-system"]').click({ force: true });
-      cy.get('#confirm').click();
-      cy.clickButton(/^Delete collections/);
-      cy.contains(/^Success$/);
-      cy.clickButton(/^Close$/);
-      cy.clickButton(/^Clear all filters$/);
-      cy.deleteNamespace(namespace);
     });
     cy.createHubRepository().then((repositoryResult) => {
       repository = repositoryResult;
       cy.galaxykit(`distribution create ${repository.name}`);
     });
-  });
-
-  it('can sign and approve a collection version', () => {
-    const namespace = `sign_namespace_${randomString(3, undefined, { isLowercase: true })}`;
-    cy.createNamespace(namespace);
-    const collection = randomString(5, undefined, { isLowercase: true }).replace(/\d/g, '');
-    cy.uploadCollection(collection, namespace, '3.0.0').then((result) => {
-      cy.approveCollection(collection, namespace, result.version as string);
-      cy.navigateTo('hub', Collections.url);
-      cy.get('[data-cy="table-view"]').click();
-      cy.filterTableBySingleText(collection);
-      cy.get('[data-cy="actions-column-cell"]').click();
-      cy.get('[data-cy="sign-collection"]').click();
-      cy.get('#confirm').click();
-      cy.clickButton(/^Sign collections$/);
-      cy.contains(/^Success$/);
-      cy.clickButton(/^Close$/);
-      cy.get('[data-cy="label-signed"]').contains(Collections.signedStatus);
-      cy.get('[data-cy="actions-column-cell"]').click();
-      cy.get('[data-cy="delete-entire-collection-from-system"]').click({ force: true });
-      cy.get('#confirm').click();
-      cy.clickButton(/^Delete collections/);
-      cy.contains(/^Success$/);
-      cy.clickButton(/^Close$/);
-      cy.clickButton(/^Clear all filters$/);
-      cy.deleteNamespace(namespace);
-    });
-  });
-
-  it('it should render the collections page', () => {
-    cy.navigateTo('hub', Collections.url);
-    cy.verifyPageTitle(Collections.title);
-  });
-
-  it('should call galaxykit without error', () => {
-    cy.galaxykit('collection -h');
-  });
-
-  it.skip('can deprecate selected collections using the list toolbar', () => {});
-});
-
-describe('Collections List- Line Item Kebab Menu', () => {
-  let thisCollectionName: string;
-  let namespace: string;
-  let repository: string;
-  let version: string;
-
-  beforeEach(() => {
-    thisCollectionName = 'hub_e2e_' + randomString(5).toLowerCase();
-    namespace = `upload_namespace_${randomString(4, undefined, { isLowercase: true })}`;
-    version = '1.2.3';
-    repository = 'hub_e2e_appr_repository' + randomString(5);
-
-    cy.hubLogin();
-
-    cy.galaxykit(`repository create ${repository}`);
-    cy.galaxykit('task wait all');
-
-    cy.galaxykit(`distribution create ${repository}`);
-    cy.galaxykit('task wait all');
-
-    cy.createNamespace(namespace);
-    cy.uploadCollection(thisCollectionName, namespace);
-    cy.galaxykit('task wait all');
-
-    cy.galaxykit(`collection move ${namespace} ${thisCollectionName} 1.0.0 staging ${repository}`);
   });
 
   after(() => {
@@ -145,6 +49,33 @@ describe('Collections List- Line Item Kebab Menu', () => {
         // Verify collection has been signed
         cy.get('[data-cy="label-signed"]').contains(Collections.signedStatus);
         cy.deleteHubCollectionByName(collectionName);
+      });
+    });
+
+    it('can sign and approve a collection version', () => {
+      const namespace = `sign_namespace_${randomString(3, undefined, { isLowercase: true })}`;
+      cy.createNamespace(namespace);
+      const collection = randomString(5, undefined, { isLowercase: true }).replace(/\d/g, '');
+      cy.uploadCollection(collection, namespace, '3.0.0').then((result) => {
+        cy.approveCollection(collection, namespace, result.version as string);
+        cy.navigateTo('hub', Collections.url);
+        cy.get('[data-cy="table-view"]').click();
+        cy.filterTableBySingleText(collection);
+        cy.get('[data-cy="actions-column-cell"]').click();
+        cy.get('[data-cy="sign-collection"]').click();
+        cy.get('#confirm').click();
+        cy.clickButton(/^Sign collections$/);
+        cy.contains(/^Success$/);
+        cy.clickButton(/^Close$/);
+        cy.get('[data-cy="label-signed"]').contains(Collections.signedStatus);
+        cy.get('[data-cy="actions-column-cell"]').click();
+        cy.get('[data-cy="delete-entire-collection-from-system"]').click({ force: true });
+        cy.get('#confirm').click();
+        cy.clickButton(/^Delete collections/);
+        cy.contains(/^Success$/);
+        cy.clickButton(/^Close$/);
+        cy.clickButton(/^Clear all filters$/);
+        cy.deleteNamespace(namespace);
       });
     });
 
