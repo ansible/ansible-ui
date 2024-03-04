@@ -1,16 +1,16 @@
+import { PageSection, Title } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import { useOutletContext } from 'react-router-dom';
+import { Table, Thead, Tbody, Th, Tr, Td } from '@patternfly/react-table';
 import { Scrollable, PageTable } from '../../../../framework';
 import { useHubView } from '../../common/useHubView';
-import { PageSection, Title } from '@patternfly/react-core';
-import { useOutletContext } from 'react-router-dom';
 import { hubAPI } from '../../common/api/formatPath';
 import { idKeyFn } from '../../../common/utils/nameKeyFn';
-import { useImagesFilters } from './hooks/useImagesFilters';
-import { useImagesToolbarActions } from './hooks/useImagesToolbarActions';
-import { useImagesColumns } from './hooks/useImagesColumns';
-import { Table, Thead, Tbody, Th, Tr, Td } from '@patternfly/react-table';
-import { ShaLink } from './components/ImageLabels';
 import { isManifestList } from '../../common/utils/isManifestList';
+import { useImagesToolbarActions } from './hooks/useImagesToolbarActions';
+import { useImagesFilters } from './hooks/useImagesFilters';
+import { useImagesColumns } from './hooks/useImagesColumns';
+import { ShaLink } from './components/ImageLabels';
 import { ExecutionEnvironmentImage as Image } from './ExecutionEnvironmentImage';
 import { ExecutionEnvironment } from '../ExecutionEnvironment';
 
@@ -37,6 +37,7 @@ export function ExecutionEnvironmentImages() {
 
   const rowActions = useImagesToolbarActions({
     id,
+    executionEnvironment,
     refresh: view.refresh,
   });
 
