@@ -187,7 +187,7 @@ describe('inventories', () => {
     cy.clickButton(/^Clear all filters$/);
   });
 
-  it.only('can add and remove new related groups', () => {
+  it('can add and remove new related groups', () => {
     cy.createInventoryHostGroup(organization).then((result) => {
       const { inventory, group } = result;
       const newRelatedGroup = 'New test group' + randomString(4);
