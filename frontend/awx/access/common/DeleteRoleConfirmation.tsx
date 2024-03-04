@@ -43,6 +43,7 @@ export function DeleteRoleConfirmation(props: DeleteRoleConfirmationProps) {
       onClose={onCloseClicked}
       actions={[
         <Button
+          id="submit"
           ouiaId="delete-role-modal-delete-button"
           key="delete"
           variant="danger"

@@ -13,7 +13,9 @@ import './e2e';
 import './eda-commands';
 import { hubAPI } from './formatApiPathForHub';
 import './hub-commands';
+import './input-commands';
 import './rest-commands';
+import './table-commands';
 
 export const galaxykitUsername: string = `e2e-${randomString(4)}`;
 export const galaxykitPassword: string = randomString(9);
@@ -71,3 +73,5 @@ Cypress.on('uncaught:exception', (_err, _runnable) => {
   // fixes problems with monaco loading workers
   return false;
 });
+
+// Cypress.Keyboard.defaults({ keystrokeDelay: 0 });
