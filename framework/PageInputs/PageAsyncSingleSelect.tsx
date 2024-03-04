@@ -82,8 +82,8 @@ export function PageAsyncSingleSelect<
   }, [options]);
 
   const uniqueTotal = useMemo(() => {
-    if (uniqueOptions && options) {
-      return total - options.length + uniqueOptions.length;
+    if (uniqueOptions) {
+      return total - (options ? options.length : 0) + uniqueOptions.length;
     }
     return total;
   }, [options, total, uniqueOptions]);
@@ -177,7 +177,7 @@ export function PageAsyncSingleSelect<
           <SplitItem>
             {t('{{count}} of {{total}}', {
               count: uniqueOptions?.length ?? 0,
-              total: uniqueTotal,
+              uniqueTotal,
             })}
           </SplitItem>
         </Split>

@@ -175,7 +175,7 @@ export function PageAsyncMultiSelect<
           <SplitItem>
             {t('{{count}} of {{total}}', {
               count: uniqueOptions?.length ?? 0,
-              total: uniqueTotal,
+              uniqueTotal,
             })}
           </SplitItem>
         </Split>
