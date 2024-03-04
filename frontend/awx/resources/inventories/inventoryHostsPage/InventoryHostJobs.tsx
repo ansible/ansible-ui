@@ -7,5 +7,6 @@ export function InventoryHostJobs() {
   usePersistentFilters('inventories');
   const jobsColumns = useHostsJobsColumns();
   const { id = '' } = useParams<{ id: string }>();
-  return <JobsList jobHosts={id} columns={jobsColumns} />;
+  const queryParams = { job__hosts: id, not__launch_type: 'sync' };
+  return <JobsList queryParams={queryParams} columns={jobsColumns} />;
 }

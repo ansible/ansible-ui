@@ -9,22 +9,20 @@ import { useJobToolbarActions } from '../../views/jobs/hooks/useJobToolbarAction
 import { UnifiedJob } from '../../interfaces/UnifiedJob';
 import { useJobsFilters } from '../../views/jobs/hooks/useJobsFilters';
 
-export function JobsList(props: { jobHosts?: string; columns: ITableColumn<UnifiedJob>[] }) {
+type QueryParams = { [key: string]: string };
+
+export function JobsList(props: {
+  queryParams?: QueryParams;
+  columns: ITableColumn<UnifiedJob>[];
+}) {
   const { t } = useTranslation();
   const toolbarFilters = useJobsFilters();
   const tableColumns = props.columns;
-  const getQueryParams = (jobHosts?: string) => {
-    const jobsQueryParams: { [key: string]: string } = {};
-    if (jobHosts) {
-      jobsQueryParams.job__hosts = jobHosts;
-    }
-    return jobsQueryParams;
-  };
   const view = useAwxView<UnifiedJob>({
     url: awxAPI`/unified_jobs/`,
     toolbarFilters,
     tableColumns,
-    queryParams: getQueryParams(props.jobHosts),
+    queryParams: props?.queryParams ?? {},
   });
   const rowActions = useJobRowActions(view.unselectItemsAndRefresh);
   const toolbarActions = useJobToolbarActions(view.unselectItemsAndRefresh);
