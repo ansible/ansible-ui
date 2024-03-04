@@ -46,13 +46,10 @@ Cypress.Commands.add('multiSelectByDataCy', (dataCy: string, values: string[]) =
 
 Cypress.Commands.add('selectLoadAll', () => {
   cy.get('#loading').should('not.exist');
-  cy.get('button').then((buttons) => {
-    for (let i = 0; i <= buttons.length; i++) {
-      const button = buttons[i];
-      if (button?.innerText === 'Load more') {
-        button.click();
-        cy.selectLoadAll();
-      }
+  cy.get('#load-more').then(($el) => {
+    if ($el.length) {
+      $el[0].click();
+      cy.selectLoadAll();
     }
   });
 });
