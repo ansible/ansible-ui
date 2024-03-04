@@ -9,17 +9,6 @@ Cypress.Commands.add(
     cy.get('table').should('exist');
     if (options?.ignoreNotFound) {
       cy.get('button').then((jqueryResult) => {
-        if (jqueryResult.length === 0) {
-          return;
-        }
-
-        if (jqueryResult.length === 1) {
-          if (jqueryResult[0].getAttribute('data-cy') === `${view}-view`) {
-            jqueryResult[0].click();
-          }
-          return;
-        }
-
         for (let i = 0; i < jqueryResult.length; i++) {
           if (jqueryResult[i].getAttribute('data-cy') === `${view}-view`) {
             jqueryResult[i].click();
@@ -72,8 +61,11 @@ Cypress.Commands.add('filterTableByTextFilter', (filterDataCy: string, text: str
     });
     // Only click the apply filter if it is a multi text filter
     cy.get('button').then((jqueryResult) => {
-      if (jqueryResult.length === 1 && jqueryResult[0].getAttribute('data-cy') === 'apply-filter') {
-        jqueryResult[0].click();
+      for (let i = 0; i < jqueryResult.length; i++) {
+        if (jqueryResult[i].getAttribute('data-cy') === 'apply-filter') {
+          jqueryResult[i].click();
+          break;
+        }
       }
     });
   });
