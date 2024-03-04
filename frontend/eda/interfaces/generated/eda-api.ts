@@ -44,6 +44,7 @@ export interface ActivationCreate {
    * * `never` - never
    */
   restart_policy?: RestartPolicyEnum;
+  log_level: LogLevelEnum;
 }
 
 /** Serializer for the Activation Instance model. */
@@ -173,6 +174,7 @@ export interface ActivationRead {
    * @min -2147483648
    * @max 2147483647
    */
+  log_level: LogLevelEnum;
   restart_count?: number;
   /** Name of the referenced rulebook */
   rulebook_name: string;
@@ -936,7 +938,11 @@ export enum RestartPolicyEnum {
   OnFailure = 'on-failure',
   Never = 'never',
 }
-
+export enum LogLevelEnum {
+  error = 'error',
+  info = 'info',
+  debug = 'debug',
+}
 export interface RoleDetail {
   /**
    * Unique UUID of the role
@@ -2795,6 +2801,7 @@ export interface EventStreamCreate {
    * * `never` - never
    */
   restart_policy?: RestartPolicyEnum;
+  log_level: LogLevelEnum;
 }
 
 /** Serializer for the Activation Instance model. */
@@ -2864,6 +2871,7 @@ export interface EventStreamList {
    * * `never` - never
    */
   restart_policy?: RestartPolicyEnum;
+  log_level: LogLevelEnum;
   /**
    * @min -2147483648
    * @max 2147483647
@@ -2922,6 +2930,7 @@ export interface EventStreamRead {
    * * `never` - never
    */
   restart_policy?: RestartPolicyEnum;
+  log_level: LogLevelEnum;
   /**
    * @min -2147483648
    * @max 2147483647

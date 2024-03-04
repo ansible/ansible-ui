@@ -3,6 +3,7 @@ import { EdaProject } from '../../../../frontend/eda/interfaces/EdaProject';
 import { EdaRulebook } from '../../../../frontend/eda/interfaces/EdaRulebook';
 import { EdaRulebookActivation } from '../../../../frontend/eda/interfaces/EdaRulebookActivation';
 import { IAwxResources } from '../../../support/awx-commands';
+import { LogLevelEnum } from '../../../../frontend/eda/interfaces/generated/eda-api';
 
 // JT skipping this test as RBAs are not activating in the test environment
 // Would this make more sense as a component test?
@@ -26,6 +27,7 @@ describe.skip('EDA rulebook activations- Create, Edit, Delete', () => {
           cy.createEdaRulebookActivation({
             rulebook_id: edaRuleBook.id,
             decision_environment_id: decisionEnvironment.id,
+            log_level: LogLevelEnum.error,
           }).then((edaRulebookActivation) => {
             edaRBA = edaRulebookActivation;
           });

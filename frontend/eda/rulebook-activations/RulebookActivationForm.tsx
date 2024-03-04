@@ -34,7 +34,7 @@ import {
   EdaRulebookActivation,
   EdaRulebookActivationCreate,
 } from '../interfaces/EdaRulebookActivation';
-import { AwxToken, RestartPolicyEnum } from '../interfaces/generated/eda-api';
+import { AwxToken, LogLevelEnum, RestartPolicyEnum } from '../interfaces/generated/eda-api';
 import { EdaRoute } from '../main/EdaRoutes';
 import { EdaProjectCell } from '../projects/components/EdaProjectCell';
 
@@ -87,6 +87,7 @@ export function CreateRulebookActivation() {
         onCancel={onCancel}
         defaultValue={{
           restart_policy: RestartPolicyEnum.OnFailure,
+          log_level: LogLevelEnum.error,
           is_enabled: true,
           extra_var: '',
         }}
@@ -126,6 +127,12 @@ export function RulebookActivationInputs() {
     { label: t('On failure'), value: 'on-failure' },
     { label: t('Always'), value: 'always' },
     { label: t('Never'), value: 'never' },
+  ];
+
+  const LOG_LEVEL_OPTIONS = [
+    { label: t('Error'), value: 'error' },
+    { label: t('Info'), value: 'info' },
+    { label: t('Debug'), value: 'debug' },
   ];
 
   const projectId = useWatch<IEdaRulebookActivationInputs>({
@@ -259,6 +266,15 @@ export function RulebookActivationInputs() {
         options={RESTART_OPTIONS}
         labelHelp={restartPolicyHelpBlock}
         labelHelpTitle={t('Restart policy')}
+      />
+      <PageFormSelect<IEdaRulebookActivationInputs>
+        name="log_level"
+        label={t('Log level')}
+        placeholderText={t('Select log level')}
+        isRequired
+        options={LOG_LEVEL_OPTIONS}
+        labelHelp={t('Error | Info | Debug')}
+        labelHelpTitle={t('Log level')}
       />
       <PageFormSwitch<IEdaRulebookActivationInputs>
         id="rulebook-activation"
