@@ -12,7 +12,7 @@ on:
         default: false
         description: 'Update server on success'
   schedule:
-    - cron: '0 8 * * *'
+    - cron: '0 9 * * *'
 
 jobs:
   setup:
