@@ -68,7 +68,7 @@ export function MapFields(props: {
     if (mapping.trigger !== 'groups') {
       return;
     }
-    mapping.groups_value.forEach(({ name }) => options.add(name));
+    mapping.groups_value?.forEach(({ name }) => options.add(name));
   });
 
   const groupOptions = Array.from(options).map((name) => ({
