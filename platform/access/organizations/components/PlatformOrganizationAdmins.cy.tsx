@@ -1,5 +1,5 @@
-import { gatewayV1API } from '../../../../cypress/support/formatApiPathForPlatform';
 import mockPlatformOrganizations from '../../../../cypress/fixtures/platformOrganizations.json';
+import { gatewayV1API } from '../../../../cypress/support/formatApiPathForPlatform';
 import * as useOptions from '../../../../frontend/common/crud/useOptions';
 import { PlatformOrganizationAdmins } from './PlatformOrganizationAdmins';
 
@@ -28,7 +28,7 @@ describe('Organization admins list', () => {
         path: '/access/organizations/:id/*',
         initialEntries: ['/access/organizations/3/admins'],
       });
-      cy.setTableView('table-view');
+      cy.setTableView('table');
       cy.get('tbody').find('tr').should('have.length', 4);
       // Toolbar actions are visible
       cy.get(`[data-cy="add-administrator(s)"]`).should('be.visible');

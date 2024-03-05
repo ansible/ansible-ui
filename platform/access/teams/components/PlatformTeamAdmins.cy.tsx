@@ -1,7 +1,7 @@
-import { gatewayV1API } from '../../../../cypress/support/formatApiPathForPlatform';
 import mockPlatformTeams from '../../../../cypress/fixtures/platformTeams.json';
-import { PlatformTeamAdmins } from './PlatformTeamAdmins';
+import { gatewayV1API } from '../../../../cypress/support/formatApiPathForPlatform';
 import * as useOptions from '../../../../frontend/common/crud/useOptions';
+import { PlatformTeamAdmins } from './PlatformTeamAdmins';
 
 describe('Team admins list', () => {
   describe('Non-empty list', () => {
@@ -28,7 +28,7 @@ describe('Team admins list', () => {
         path: '/access/teams/:id/*',
         initialEntries: ['/access/teams/5/admins'],
       });
-      cy.setTableView('table-view');
+      cy.setTableView('table');
       cy.get('tbody').find('tr').should('have.length', 3);
       // Toolbar actions are visible
       cy.get(`[data-cy="add-administrator(s)"]`).should('be.visible');

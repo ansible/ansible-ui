@@ -1,7 +1,7 @@
-import { gatewayV1API } from '../../../../cypress/support/formatApiPathForPlatform';
 import mockPlatformTeams from '../../../../cypress/fixtures/platformTeams.json';
-import { PlatformTeamUsers } from './PlatformTeamUsers';
+import { gatewayV1API } from '../../../../cypress/support/formatApiPathForPlatform';
 import * as useOptions from '../../../../frontend/common/crud/useOptions';
+import { PlatformTeamUsers } from './PlatformTeamUsers';
 
 describe('Team users list', () => {
   describe('Non-empty list', () => {
@@ -28,7 +28,7 @@ describe('Team users list', () => {
         path: '/access/teams/:id/*',
         initialEntries: ['/access/teams/5/users'],
       });
-      cy.setTableView('table-view');
+      cy.setTableView('table');
       cy.get('tbody').find('tr').should('have.length', 3);
       // Toolbar actions are visible
       cy.get(`[data-cy="add-user(s)"]`).should('be.visible');
