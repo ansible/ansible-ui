@@ -35,7 +35,7 @@ describe('Approvals', () => {
     cy.contains('button', 'Clear all filters').click();
   });
 
-  it('user should be able to view import logs', () => {
+  it('should be able to view import logs', () => {
     // View Import Logs
     cy.filterTableBySingleText(collectionName, true);
     cy.clickTableRowPinnedAction(collectionName, 'view-import-logs', false);
@@ -48,7 +48,7 @@ describe('Approvals', () => {
     cy.contains(collectionName);
   });
 
-  it('user should be able to approve collection', () => {
+  it('should be able to approve collection', () => {
     // Approve Collection
     cy.filterTableBySingleText(collectionName, true);
     cy.clickTableRowPinnedAction(collectionName, 'sign-and-approve', false);
@@ -60,7 +60,6 @@ describe('Approvals', () => {
     });
     cy.getModal().should('not.exist');
     cy.get('#refresh').click();
-
     // Verify Approved
     cy.filterTableBySingleText(collectionName, true);
     cy.get('tr').should('have.length', 2);
@@ -70,7 +69,6 @@ describe('Approvals', () => {
       cy.contains('published');
       cy.contains('Signed and Approved');
     });
-
     // Verify Collection
     cy.navigateTo('hub', Collections.url);
     cy.filterTableBySingleText(collectionName, true);
@@ -79,7 +77,7 @@ describe('Approvals', () => {
     cy.contains('published');
   });
 
-  it('user should be able to reject collection', () => {
+  it('should be able to reject collection', () => {
     // Reject Collection
     cy.filterTableBySingleText(collectionName, true);
     cy.clickTableRowPinnedAction(collectionName, 'reject', false);
@@ -90,7 +88,6 @@ describe('Approvals', () => {
     });
     cy.getModal().should('not.exist');
     cy.get('#refresh').click();
-
     // Verify Rejected
     cy.filterTableBySingleText(collectionName, true);
     cy.get('tr').should('have.length', 2);
@@ -100,4 +97,6 @@ describe('Approvals', () => {
       cy.contains('Rejected');
     });
   });
+
+  it.skip('can upload a signature to a collection', () => {});
 });
