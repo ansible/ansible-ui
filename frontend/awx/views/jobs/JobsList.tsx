@@ -38,9 +38,11 @@ export function JobsList(props: {
         rowActions={rowActions}
         toolbarActions={toolbarActions}
         errorStateTitle={t('Error loading jobs')}
-        emptyStateTitle={t('There are no related jobs')}
+        emptyStateTitle={t('No jobs yet')}
+        emptyStateDescription={t('Please run a job to populate this list.')}
         emptyStateIcon={CubesIcon}
         {...view}
+        limitFiltersToOneOrOperation
       />
     </PageLayout>
   );
