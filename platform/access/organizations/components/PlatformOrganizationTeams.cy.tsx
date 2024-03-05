@@ -1,5 +1,5 @@
-import { gatewayV1API } from '../../../../cypress/support/formatApiPathForPlatform';
 import mockPlatformOrganizations from '../../../../cypress/fixtures/platformOrganizations.json';
+import { gatewayV1API } from '../../../../cypress/support/formatApiPathForPlatform';
 import * as useOptions from '../../../../frontend/common/crud/useOptions';
 import { PlatformOrganizationTeams } from './PlatformOrganizationTeams';
 
@@ -30,7 +30,7 @@ describe('Organization teams list', () => {
         path: '/access/organizations/:id/*',
         initialEntries: ['/access/organizations/1/teams'],
       });
-      cy.setTableView('table-view');
+      cy.setTableView('table');
       cy.get('tbody').find('tr').should('have.length', 2);
       // Toolbar actions are visible
       cy.get(`[data-cy="add-roles"]`).should('be.visible');
