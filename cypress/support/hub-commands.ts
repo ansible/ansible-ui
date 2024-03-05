@@ -565,9 +565,9 @@ Cypress.Commands.add('deleteHubRemote', (options: HubDeleteRemoteOptions) => {
 // HUB Collection Commands
 Cypress.Commands.add('getHubCollection', (name: string) => {
   return cy
-    .requestGet<HubItemsResponse<CollectionVersionSearch>>(
-      hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${name}`
-    )
+    .requestGet<
+      HubItemsResponse<CollectionVersionSearch>
+    >(hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${name}`)
     .then((itemsResponse) => itemsResponse.data[0]);
 });
 export type HubDeleteCollectionOptions = {
