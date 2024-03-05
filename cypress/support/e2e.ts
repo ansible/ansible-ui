@@ -20,7 +20,7 @@ import './table-commands';
 // Platform Imports
 import './platform-commands';
 
-export const galaxykitUsername: string = `e2e-${randomString(4)}`;
+export const galaxykitUsername: string = `e2e_${randomString(4)}`;
 export const galaxykitPassword: string = randomString(9);
 export let galaxyE2EUserID: number;
 
