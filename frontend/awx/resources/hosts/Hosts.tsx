@@ -10,7 +10,7 @@ import { AwxHost } from '../../interfaces/AwxHost';
 import { useHostsToolbarActions } from './hooks/useHostsToolbarActions';
 import { useHostsColumns } from './hooks/useHostsColumns';
 import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
-import { useInventoriesHostsActions } from '../inventories/hooks/useInventoriesHostsActions';
+import { useHostsActions } from './hooks/useHostsActions';
 
 export function Hosts() {
   const { t } = useTranslation();
@@ -23,7 +23,7 @@ export function Hosts() {
 
   const toolbarActions = useHostsToolbarActions(view);
 
-  const rowActions = useInventoriesHostsActions(view.unselectItemsAndRefresh, view.refresh);
+  const rowActions = useHostsActions(view.unselectItemsAndRefresh, view.refresh);
 
   return (
     <PageLayout>

@@ -11,11 +11,11 @@ import { cannotDeleteResource, cannotEditResource } from '../../../../common/uti
 import { awxAPI } from '../../../common/api/awx-utils';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { AwxHost } from '../../../interfaces/AwxHost';
-import { useDeleteHosts } from '../../hosts/hooks/useDeleteHosts';
+import { useDeleteHosts } from './useDeleteHosts';
 import { usePatchRequest } from '../../../../common/crud/usePatchRequest';
 import { useParams } from 'react-router-dom';
 
-export function useInventoriesHostsActions(
+export function useHostsActions(
   onDelete: (host: AwxHost[]) => void,
   onToggle: (() => Promise<void>) | (() => void)
 ) {

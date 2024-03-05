@@ -13,7 +13,7 @@ import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { AwxError } from '../../../common/AwxError';
 import { AwxHost } from '../../../interfaces/AwxHost';
 import { AwxRoute } from '../../../main/AwxRoutes';
-import { useInventoriesHostsActions } from '../../inventories/hooks/useInventoriesHostsActions';
+import { useHostsActions } from '../hooks/useHostsActions';
 import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { useGetHost } from '../hooks/useGetHost';
 
@@ -25,7 +25,7 @@ export function HostPage() {
 
   const getPageUrl = useGetPageUrl();
 
-  const itemActions = useInventoriesHostsActions((_host) => {
+  const itemActions = useHostsActions((_host) => {
     pageNavigate(AwxRoute.Hosts, {
       params: { id: params.id },
     });
