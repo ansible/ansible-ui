@@ -28,7 +28,6 @@ describe('Platform Teams - create, edit and delete with existing global platform
 
   after(function () {
     cy.deletePlatformUser(platformUser1, { failOnStatusCode: false });
-    cy.deletePlatformTeam(platformTeam1, { failOnStatusCode: false });
     cy.deletePlatformOrganization(platformOrganization, { failOnStatusCode: false });
   });
 
@@ -125,77 +124,57 @@ describe('Platform Teams - create, edit and delete with existing global platform
     });
   });
 
-  it('can delete a team from the details page', function () {
-    cy.createPlatformTeam(this.globalPlatformOrganization as PlatformOrganization).then(
-      (testPlatformTeam: PlatformTeam) => {
-        cy.setTableView('table');
-        cy.clickTableRow(testPlatformTeam.name);
-        cy.verifyPageTitle(testPlatformTeam.name);
-        cy.clickPageAction('delete-team');
-        cy.intercept('DELETE', gatewayV1API`/teams/${testPlatformTeam.id.toString()}/`).as(
-          'deleteTeam'
-        );
-        cy.get('#confirm').click();
-        cy.clickButton(/^Delete team/);
-        cy.wait('@deleteTeam')
-          .its('response')
-          .then((response) => {
-            expect(response?.statusCode).to.eql(204);
-            cy.verifyPageTitle('Teams');
-          });
-      }
-    );
-  });
-
-  it('can delete a team from the teams list row item', function () {
-    cy.createPlatformTeam(this.globalPlatformOrganization as PlatformOrganization).then(
-      (testPlatformTeam: PlatformTeam) => {
-        cy.setTableView('table');
-        cy.intercept('DELETE', gatewayV1API`/teams/${testPlatformTeam.id.toString()}/`).as(
-          'deleteTeam'
-        );
-        cy.clickTableRowKebabAction(testPlatformTeam.name, 'delete-team');
-        cy.get('#confirm').click();
-        cy.clickButton(/^Delete team/);
-        cy.wait('@deleteTeam')
-          .its('response')
-          .then((response) => {
-            expect(response?.statusCode).to.eql(204);
-            cy.contains(/^Success$/);
-            cy.clickButton(/^Close$/);
-            cy.clickButton(/^Clear all filters$/);
-          });
-      }
-    );
-  });
-
-  it('can delete a team from the teams list toolbar', function () {
+  it('can bulk delete a team from the teams list toolbar', function () {
     const globalPlatformOrganization = this.globalPlatformOrganization as PlatformOrganization;
     cy.createPlatformTeam(globalPlatformOrganization).then((testPlatformTeam: PlatformTeam) => {
       cy.setTableView('table');
       cy.selectTableRow(testPlatformTeam.name);
+      cy.selectTableRow(platformTeam1.name);
       cy.clickToolbarKebabAction('delete-selected-teams');
       cy.get('#confirm').click();
       cy.intercept('DELETE', gatewayV1API`/teams/${testPlatformTeam.id.toString()}/`).as(
-        'deleteTeam'
+        'deleteTeam1'
+      );
+      cy.intercept('DELETE', gatewayV1API`/teams/${platformTeam1.id.toString()}/`).as(
+        'deleteTeam2'
       );
       cy.clickButton(/^Delete team/);
-      cy.wait('@deleteTeam')
-        .its('response')
-        .then((response) => {
-          expect(response?.statusCode).to.eql(204);
-          cy.contains(/^Success$/);
-          cy.clickButton(/^Close$/);
-          cy.clickButton(/^Clear all filters$/);
-        });
+      cy.wait(['@deleteTeam1', '@deleteTeam2']).then((deleteTeamArr) => {
+        expect(deleteTeamArr[0]?.response?.statusCode).to.eql(204);
+        expect(deleteTeamArr[1]?.response?.statusCode).to.eql(204);
+        cy.contains(/^Success$/);
+        cy.clickButton(/^Close$/);
+        cy.clickButton(/^Clear all filters$/);
+      });
     });
+  });
+
+  it('can create a team with an organization and a single user', function () {
+    const teamName = `Platform E2E Team ${randomString(4)}`;
+    cy.intercept('POST', gatewayV1API`/teams/`).as('createPlatformTeam');
+    cy.containsBy('a', 'Create team').click();
+    cy.getByDataCy('name').type(teamName);
+    cy.singleSelectByDataCy('organization', `${platformOrganization.name}`);
+    cy.singleSelectBy('[data-cy="users"]', platformUser1.username);
+    cy.getByDataCy('Submit').click();
+    cy.wait('@createPlatformTeam')
+      .its('response.body')
+      .then((platformTeam: PlatformTeam) => {
+        cy.verifyPageTitle(platformTeam.name);
+        cy.intercept('DELETE', gatewayV1API`/teams/${platformTeam.id.toString()}/`).as(
+          'deletePlatformTeam'
+        );
+        cy.selectDetailsPageKebabAction('delete-team');
+        cy.wait('@deletePlatformTeam')
+          .its('response')
+          .then((response) => {
+            expect(response?.statusCode).to.eql(204);
+          });
+      });
   });
 });
 
 describe.skip('Platform Teams - create, edit and delete with new organization and user', function () {
-  let platformUser: PlatformUser;
-  let platformOrganization: PlatformOrganization;
-
   before(function () {
     cy.platformLogin();
   });
@@ -203,38 +182,6 @@ describe.skip('Platform Teams - create, edit and delete with new organization an
   beforeEach(function () {
     cy.navigateTo('platform', 'teams');
     cy.verifyPageTitle('Teams');
-  });
-
-  it('can create a team with an organization and a single user', function () {
-    cy.createPlatformOrganization().then((platformOrg: PlatformOrganization) => {
-      platformOrganization = platformOrg;
-      cy.createPlatformUser().then((createdPlatformUser: PlatformUser) => {
-        platformUser = createdPlatformUser;
-        const teamName = `Platform E2E Team ${randomString(4)}`;
-        cy.intercept('POST', gatewayV1API`/teams/`).as('createPlatformTeam');
-        cy.containsBy('button', 'Create team').click();
-        cy.getByDataCy('name').type(teamName);
-        cy.singleSelectByDataCy('organization', `${platformOrganization.name}`);
-        cy.singleSelectBy('[data-cy="users"]', platformUser.username);
-        cy.getByDataCy('Submit').click();
-        cy.wait('@createPlatformTeam')
-          .its('response.body')
-          .then((platformTeam: PlatformTeam) => {
-            cy.verifyPageTitle(platformTeam.name);
-            cy.intercept('DELETE', gatewayV1API`/teams/${platformTeam.id.toString()}/`).as(
-              'deletePlatformTeam'
-            );
-            cy.selectDetailsPageKebabAction('delete-team');
-            cy.wait('@deletePlatformTeam')
-              .its('response')
-              .then((response) => {
-                expect(response?.statusCode).to.eql(204);
-              });
-          });
-        cy.deletePlatformUser(platformUser, { failOnStatusCode: false });
-      });
-      cy.deletePlatformOrganization(platformOrganization, { failOnStatusCode: false });
-    });
   });
   // tests for tabs Roles, Users, Administrators, and Resource Access
   it.skip('can remove users from the team via the teams list row item', function () {});
