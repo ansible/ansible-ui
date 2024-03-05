@@ -16,6 +16,7 @@ import './hub-commands';
 import './input-commands';
 import './rest-commands';
 import './table-commands';
+import './platform-commands';
 
 // Platform Imports
 import './platform-commands';
@@ -44,6 +45,10 @@ before(function () {
       }).then((response) => {
         galaxyE2EUserID = response.id;
       });
+      break;
+    case '4100': // Platform
+      cy.platformLogin();
+      cy.createGlobalPlatformOrganization();
   }
 });
 
