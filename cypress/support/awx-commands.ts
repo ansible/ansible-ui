@@ -418,10 +418,6 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add('getTableRowBy', (column: string, name: string | RegExp) => {
-  cy.contains(`[data-cy='${column}-column-cell']`, name).parent();
-});
-
 Cypress.Commands.add('getTableRowBySingleText', (name: string | RegExp, filter?: boolean) => {
   cy.getTableRowByText(name, filter, 'SingleText');
 });
