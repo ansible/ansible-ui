@@ -118,8 +118,8 @@ export function usePermissionCategories(
     () =>
       allGroups.map((group) => ({
         ...group,
-        selectedPermissions: group.allPermissions.filter(
-          (permission) => permissions?.includes(permission)
+        selectedPermissions: group.allPermissions.filter((permission) =>
+          permissions?.includes(permission)
         ),
         availablePermissions: group.allPermissions.filter(
           (permission) => !permissions?.includes(permission)

@@ -136,7 +136,7 @@ export function PageDashboardChart(props: {
                     labels={(point: { datum: { y: string | number } }) => point.datum.y.toString()}
                     labelComponent={
                       <ChartLegendTooltip
-                        title={(datum: { x: number | string }) => datum.x}
+                        // title={(datum: { x: number | string }) => datum.x}
                         legendData={legendData}
                         cornerRadius={8}
                       />
