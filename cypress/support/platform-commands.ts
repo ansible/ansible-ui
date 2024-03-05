@@ -5,6 +5,8 @@ import { PlatformOrganization } from '../../platform/interfaces/PlatformOrganiza
 import { PlatformUser } from '../../platform/interfaces/PlatformUser';
 import { PlatformTeam } from '../../platform/interfaces/PlatformTeam';
 
+/* The `Cypress.Commands.add('platformLogin', () => { ... })` function is a custom Cypress command that
+handles the login process for a platform application. Here's a breakdown of what it does: */
 Cypress.Commands.add('platformLogin', () => {
   //cy.requiredVariablesAreSet(['PLATFORM_SERVER', 'PLATFORM_USERNAME', 'PLATFORM_PASSWORD']);
   cy.session(
@@ -39,6 +41,8 @@ Cypress.Commands.add('platformLogin', () => {
   cy.visit(`/`, { retryOnStatusCodeFailure: true, retryOnNetworkFailure: true });
 });
 
+/* The `Cypress.Commands.add('platformLogout', () => { ... })` function is a custom Cypress command
+that handles the logout process for a platform application. Here's a breakdown of what it does: */
 Cypress.Commands.add('platformLogout', () => {
   cy.get('[data-ouia-component-id="account-menu"]')
     .click()
@@ -49,13 +53,18 @@ Cypress.Commands.add('platformLogout', () => {
     });
 });
 
+/* The `Cypress.Commands.add('createPlatformOrganization', () => { ... })` function is a custom Cypress
+command that is responsible for creating a new platform organization. Here's a breakdown of what it
+does: */
 Cypress.Commands.add('createPlatformOrganization', () => {
-  const orgName = 'platform-e2e-organization' + randomString(5).toLowerCase();
+  const orgName = `Platform E2E Organization-${randomString(5).toLowerCase()}`;
   cy.requestPost<PlatformOrganization>(gatewayV1API`/organizations/`, {
     name: orgName,
   });
 });
 
+/* The `Cypress.Commands.add('deletePlatformOrganization', ...)` function is a custom Cypress command
+that is responsible for deleting a platform organization. Here's a breakdown of what it does: */
 Cypress.Commands.add(
   'deletePlatformOrganization',
   (
@@ -70,6 +79,8 @@ Cypress.Commands.add(
   }
 );
 
+/* This `Cypress.Commands.add('createPlatformUser', ...)` function is a custom Cypress command that is
+responsible for creating a new platform user. Here's a breakdown of what it does: */
 Cypress.Commands.add('createPlatformUser', (platformOrganization?: PlatformOrganization) => {
   cy.requestPost<PlatformUser>(gatewayV1API`/users/`, {
     username: platformOrganization
@@ -79,6 +90,9 @@ Cypress.Commands.add('createPlatformUser', (platformOrganization?: PlatformOrgan
     organizations: platformOrganization ? [platformOrganization.id] : [],
   }).then((user) => user);
 });
+
+/* This `Cypress.Commands.add('deletePlatformUser', ...)` function is a custom Cypress command that is
+responsible for deleting a platform user. Here's a breakdown of what it does: */
 Cypress.Commands.add(
   'deletePlatformUser',
   (
@@ -93,10 +107,12 @@ Cypress.Commands.add(
   }
 );
 
+/* This `Cypress.Commands.add('createPlatformTeam', ...)` function is a custom Cypress command that is
+responsible for creating a new platform team. Here's a breakdown of what it does: */
 Cypress.Commands.add(
   'createPlatformTeam',
   function (platformOrganization: PlatformOrganization, platformUser?: PlatformUser) {
-    cy.requestPost<Pick<Team, 'name' | 'organization'>, Team>(gatewayV1API`/teams/`, {
+    cy.requestPost<PlatformTeam>(gatewayV1API`/teams/`, {
       name: platformUser
         ? `Platform E2E Team with user ${randomString(5)}`
         : `Platform E2E Team ${randomString(5)}`,
@@ -106,6 +122,8 @@ Cypress.Commands.add(
   }
 );
 
+/* This `Cypress.Commands.add('deletePlatformTeam', ...)` function is a custom Cypress command that is
+responsible for deleting a platform team. Here's a breakdown of what it does: */
 Cypress.Commands.add(
   'deletePlatformTeam',
   (
@@ -121,17 +139,17 @@ Cypress.Commands.add(
   }
 );
 
+/* The `Cypress.Commands.add('createGlobalPlatformOrganization', function () { ... })` function is a
+custom Cypress command that is responsible for creating a global platform organization if it doesn't
+already exist. Here's a breakdown of what it does: */
 const GLOBAL_PLATFORM_ORG_NAME = 'Global Platform Level Organization';
 
-/** Creates a global organization if it doesn't exist. */
 Cypress.Commands.add('createGlobalPlatformOrganization', function () {
-  cy.requestGet<PlatformItemsResponse<PlatformOrganization>>(
-    gatewayV1API`/organizations?name=${GLOBAL_PLATFORM_ORG_NAME}`
-  )
+  cy.requestGet<PlatformOrganization>(gatewayV1API`/organizations?name=${GLOBAL_PLATFORM_ORG_NAME}`)
     .its('results')
     .then((platformOrgResults: PlatformOrganization[]) => {
       if (platformOrgResults.length === 0) {
-        cy.requestPost<PlatformItemsResponse<PlatformOrganization>>(gatewayV1API`/organizations/`, {
+        cy.requestPost<PlatformOrganization>(gatewayV1API`/organizations/`, {
           name: GLOBAL_PLATFORM_ORG_NAME,
         });
         cy.wait(100).then(() => cy.createGlobalPlatformOrganization());

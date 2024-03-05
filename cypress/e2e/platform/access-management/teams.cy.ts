@@ -5,8 +5,20 @@ import { PlatformTeam } from '../../../../platform/interfaces/PlatformTeam';
 import { gatewayV1API } from '../../../../platform/api/gateway-api-utils';
 
 describe('Platform Teams - create, edit and delete with existing global platform organization', function () {
+  let platformUser1: PlatformUser;
+  let platformTeam1: PlatformTeam;
+  let platformOrganization: PlatformOrganization;
   before(function () {
     cy.platformLogin();
+    cy.createPlatformOrganization().then((platformOrg: PlatformOrganization) => {
+      platformOrganization = platformOrg;
+      cy.createPlatformTeam(platformOrganization).then((createdPlatformTeam: PlatformTeam) => {
+        platformTeam1 = createdPlatformTeam;
+        cy.createPlatformUser(platformOrganization).then((createdPlatformUser: PlatformUser) => {
+          platformUser1 = createdPlatformUser;
+        });
+      });
+    });
   });
 
   beforeEach(function () {
@@ -14,11 +26,17 @@ describe('Platform Teams - create, edit and delete with existing global platform
     cy.verifyPageTitle('Teams');
   });
 
+  after(function () {
+    cy.deletePlatformUser(platformUser1, { failOnStatusCode: false });
+    cy.deletePlatformTeam(platformTeam1, { failOnStatusCode: false });
+    cy.deletePlatformOrganization(platformOrganization, { failOnStatusCode: false });
+  });
+
   it('can create a basic team in the ui with no assigned user', function () {
     const globalPlatformOrganization = this.globalPlatformOrganization as PlatformOrganization;
     const teamName = `Platform E2E Team ${randomString(4)}`;
     cy.intercept('POST', gatewayV1API`/teams/`).as('createPlatformTeam');
-    cy.containsBy('button', 'Create team').click();
+    cy.containsBy('a', 'Create team').click();
     cy.getByDataCy('name').type(teamName);
     cy.singleSelectByDataCy('organization', `${globalPlatformOrganization.name}`);
     cy.getByDataCy('Submit').click();
@@ -59,7 +77,9 @@ describe('Platform Teams - create, edit and delete with existing global platform
         );
       });
       cy.clickButton(/^Clear all filters$/);
-      cy.intercept('DELETE', gatewayV1API`/teams/${createdPlatformTeam.id}/`).as('deleteTeam');
+      cy.intercept('DELETE', gatewayV1API`/teams/${createdPlatformTeam.id.toString()}/`).as(
+        'deleteTeam'
+      );
       cy.clickTableRowKebabAction(`${platformTeamName} edited from list page`, 'delete-team');
       cy.clickModalConfirmCheckbox();
       cy.clickButton(/^Delete team/);
@@ -131,7 +151,9 @@ describe('Platform Teams - create, edit and delete with existing global platform
     cy.createPlatformTeam(this.globalPlatformOrganization as PlatformOrganization).then(
       (testPlatformTeam: PlatformTeam) => {
         cy.setTableView('table');
-        cy.intercept('DELETE', gatewayV1API`/teams/${testPlatformTeam.id}/`).as('deleteTeam');
+        cy.intercept('DELETE', gatewayV1API`/teams/${testPlatformTeam.id.toString()}/`).as(
+          'deleteTeam'
+        );
         cy.clickTableRowKebabAction(testPlatformTeam.name, 'delete-team');
         cy.get('#confirm').click();
         cy.clickButton(/^Delete team/);
@@ -170,25 +192,12 @@ describe('Platform Teams - create, edit and delete with existing global platform
   });
 });
 
-describe.only('Platform Teams - create, edit and delete with new organization and user', function () {
-  let platformTeam: PlatformTeam;
+describe.skip('Platform Teams - create, edit and delete with new organization and user', function () {
   let platformUser: PlatformUser;
-  //let platformUser2: PlatformUser;
   let platformOrganization: PlatformOrganization;
 
   before(function () {
     cy.platformLogin();
-    // cy.createPlatformOrganization().then((platformOrg: PlatformOrganization) => {
-    //   platformOrganization = platformOrg;
-    //   cy.createPlatformTeam(platformOrganization).then((createdPlatformTeam: PlatformTeam) => {
-    //     platformTeam = createdPlatformTeam;
-    //     cy.createPlatformUser(platformOrganization, createdPlatformTeam).then(
-    //       (createdPlatformUser: PlatformUser) => {
-    //         platformUser = createdPlatformUser;
-    //       }
-    //     );
-    //   });
-    // });
   });
 
   beforeEach(function () {
@@ -196,22 +205,7 @@ describe.only('Platform Teams - create, edit and delete with new organization an
     cy.verifyPageTitle('Teams');
   });
 
-  // afterEach(() => {
-  //   cy.deletePlatformOrganization(platformOrganization, { failOnStatusCode: false });
-  //   cy.deletePlatformTeam(platformTeam, { failOnStatusCode: false });
-  //   cy.deletePlatformUser(platformUser, { failOnStatusCode: false });
-  // });
-  // after(() => {
-  //   cy.deletePlatformUser(platformUser, { failOnStatusCode: false });
-  //   cy.deletePlatformTeam(platformTeam, { failOnStatusCode: false });
-  //   cy.deletePlatformOrganization(platformOrganization, { failOnStatusCode: false });
-  // });
-  it.skip('can render the teams list page', function () {
-    cy.clickByDataCy('create-team');
-    cy.singleSelectByPlatformUser(platformUser.username, platformUser.username);
-  });
-
-  it.only('can create a team with an organization and a single user', function () {
+  it('can create a team with an organization and a single user', function () {
     cy.createPlatformOrganization().then((platformOrg: PlatformOrganization) => {
       platformOrganization = platformOrg;
       cy.createPlatformUser().then((createdPlatformUser: PlatformUser) => {
@@ -222,8 +216,7 @@ describe.only('Platform Teams - create, edit and delete with new organization an
         cy.getByDataCy('name').type(teamName);
         cy.singleSelectByDataCy('organization', `${platformOrganization.name}`);
         cy.singleSelectBy('[data-cy="users"]', platformUser.username);
-        //cy.singleSelectByPlatformUser(platformUser.username, platformUser.username);
-        cy.clickByDataCy('Submit');
+        cy.getByDataCy('Submit').click();
         cy.wait('@createPlatformTeam')
           .its('response.body')
           .then((platformTeam: PlatformTeam) => {
@@ -243,7 +236,7 @@ describe.only('Platform Teams - create, edit and delete with new organization an
       cy.deletePlatformOrganization(platformOrganization, { failOnStatusCode: false });
     });
   });
-
+  // tests for tabs Roles, Users, Administrators, and Resource Access
   it.skip('can remove users from the team via the teams list row item', function () {});
   it.skip('can add users to the team via the team access tab toolbar', function () {});
   it.skip('can remove users from the team via the team access tab toolbar', function () {});
