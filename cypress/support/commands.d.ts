@@ -1415,7 +1415,18 @@ declare global {
 
       platformLogin(): Chainable<void>;
       platformLogout(): Chainable<void>;
-
+      createGlobalPlatformOrganization(): Chainable<void>;
+      createPlatformTeam(
+        platformTeam: PlatformOrganization,
+        platformUser?: PlatformUser
+      ): Cypress.Chainable<PlatformTeam>;
+      deletePlatformTeam(
+        platformTeam: PlatformOrganization,
+        options?: {
+          /** Whether to fail on response codes other than 2xx and 3xx */
+          failOnStatusCode?: boolean;
+        }
+      ): Cypress.Chainable<PlatformTeam>;
       createPlatformOrganization(): Cypress.Chainable<PlatformOrganization>;
       deletePlatformOrganization(
         organization: PlatformOrganization,

@@ -1,9 +1,9 @@
+import './rest-commands';
 import { randomString } from '../../framework/utils/random-string';
 import { gatewayV1API } from '../../platform/api/gateway-api-utils';
 import { PlatformOrganization } from '../../platform/interfaces/PlatformOrganization';
 import { PlatformUser } from '../../platform/interfaces/PlatformUser';
-import { SetOptional } from 'type-fest';
-import './rest-commands';
+import { PlatformTeam } from '../../platform/interfaces/PlatformTeam';
 
 Cypress.Commands.add('platformLogin', () => {
   //cy.requiredVariablesAreSet(['PLATFORM_SERVER', 'PLATFORM_USERNAME', 'PLATFORM_PASSWORD']);
@@ -70,26 +70,15 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add(
-  'createPlatformUser',
-  (organization?: SetOptional<PlatformOrganization, 'id'>) => {
-    if (organization?.id) {
-      const userName = 'platform-e2e-user' + randomString(5).toLowerCase();
-      cy.requestPost<PlatformUser>(gatewayV1API`/users/`, {
-        username: userName,
-        password: 'password123',
-        organizations: [organization.id],
-      });
-    } else {
-      const userName = 'platform-e2e-user' + randomString(5).toLowerCase();
-      cy.requestPost<PlatformUser>(gatewayV1API`/users/`, {
-        username: userName,
-        password: 'password123',
-      });
-    }
-  }
-);
-
+Cypress.Commands.add('createPlatformUser', (platformOrganization?: PlatformOrganization) => {
+  cy.requestPost<PlatformUser>(gatewayV1API`/users/`, {
+    username: platformOrganization
+      ? `e2e-platform-user-with-org-${randomString(4).toLowerCase()}`
+      : `e2e-platform-user-${randomString(4).toLowerCase()}`,
+    password: 'pw',
+    organizations: platformOrganization ? [platformOrganization.id] : [],
+  }).then((user) => user);
+});
 Cypress.Commands.add(
   'deletePlatformUser',
   (
@@ -103,3 +92,51 @@ Cypress.Commands.add(
     cy.requestDelete(gatewayV1API`/users/${user?.id.toString()}/`, options);
   }
 );
+
+Cypress.Commands.add(
+  'createPlatformTeam',
+  function (platformOrganization: PlatformOrganization, platformUser?: PlatformUser) {
+    cy.requestPost<Pick<Team, 'name' | 'organization'>, Team>(gatewayV1API`/teams/`, {
+      name: platformUser
+        ? `Platform E2E Team with user ${randomString(5)}`
+        : `Platform E2E Team ${randomString(5)}`,
+      organization: platformOrganization.id,
+      users: platformUser ? [platformUser.id] : [],
+    });
+  }
+);
+
+Cypress.Commands.add(
+  'deletePlatformTeam',
+  (
+    platformTeam: PlatformTeam,
+    options?: {
+      /** Whether to fail on response codes other than 2xx and 3xx */
+      failOnStatusCode?: boolean;
+    }
+  ) => {
+    if (platformTeam.id) {
+      cy.requestDelete(gatewayV1API`/teams/${platformTeam.id.toString()}/`, options);
+    }
+  }
+);
+
+const GLOBAL_PLATFORM_ORG_NAME = 'Global Platform Level Organization';
+
+/** Creates a global organization if it doesn't exist. */
+Cypress.Commands.add('createGlobalPlatformOrganization', function () {
+  cy.requestGet<PlatformItemsResponse<PlatformOrganization>>(
+    gatewayV1API`/organizations?name=${GLOBAL_PLATFORM_ORG_NAME}`
+  )
+    .its('results')
+    .then((platformOrgResults: PlatformOrganization[]) => {
+      if (platformOrgResults.length === 0) {
+        cy.requestPost<PlatformItemsResponse<PlatformOrganization>>(gatewayV1API`/organizations/`, {
+          name: GLOBAL_PLATFORM_ORG_NAME,
+        });
+        cy.wait(100).then(() => cy.createGlobalPlatformOrganization());
+      } else {
+        cy.wrap(platformOrgResults[0]).as('globalPlatformOrganization');
+      }
+    });
+});
