@@ -53,7 +53,6 @@ describe('Collections', () => {
     });
 
     it('can sign and approve a collection version', () => {
-      cy.createNamespace(namespace);
       cy.uploadCollection(collectionName, namespace.name, '3.0.0').then((result) => {
         cy.approveCollection(collectionName, namespace.name, result.version as string);
         cy.navigateTo('hub', Collections.url);
@@ -73,7 +72,6 @@ describe('Collections', () => {
         cy.contains(/^Success$/);
         cy.clickButton(/^Close$/);
         cy.clickButton(/^Clear all filters$/);
-        cy.deleteNamespace(namespace);
       });
     });
 

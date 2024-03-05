@@ -176,8 +176,8 @@ export function PageMultiSelect<
                       textMaxWidth={maxChipSize}
                       style={{ marginTop: -2, marginBottom: -2 }}
                       onClick={() =>
-                        onSelect((previousValues) =>
-                          previousValues?.filter((v) => v !== option.value)
+                        onSelect(
+                          (previousValues) => previousValues?.filter((v) => v !== option.value)
                         )
                       }
                     >
