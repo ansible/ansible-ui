@@ -1,9 +1,5 @@
 import '@cypress/code-coverage/support';
 
-Cypress.Commands.add('setTableView', (viewType: string) => {
-  cy.get(`[data-cy="${viewType}"]`).should('be.visible').click();
-});
-
 Cypress.Commands.add('searchAndDisplayResource', (resourceName: string) => {
   //Note: this command won't work for Hub filtering
   cy.get('[data-cy="text-input"]')

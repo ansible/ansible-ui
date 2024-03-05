@@ -28,7 +28,7 @@ describe('Teams list', () => {
     it('Teams list renders', () => {
       cy.mount(<PlatformTeamList />);
       cy.verifyPageTitle('Teams');
-      cy.setTableView('table-view');
+      cy.setTableView('table');
       cy.get('tbody').find('tr').should('have.length', 3);
       // Toolbar actions are visible
       cy.get(`[data-cy="create-team"]`).should('be.visible');

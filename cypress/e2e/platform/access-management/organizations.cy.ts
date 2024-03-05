@@ -1,6 +1,6 @@
 import { randomString } from '../../../../framework/utils/random-string';
-import { PlatformOrganization } from '../../../../platform/interfaces/PlatformOrganization';
 import { gatewayV1API } from '../../../../platform/api/gateway-api-utils';
+import { PlatformOrganization } from '../../../../platform/interfaces/PlatformOrganization';
 
 describe('Organizations - create, edit and delete', () => {
   const organizationName = 'Platform E2E Organization ' + randomString(4);
@@ -24,7 +24,7 @@ describe('Organizations - create, edit and delete', () => {
   });
 
   it('renders the organization details page', () => {
-    cy.setTableView('table-view');
+    cy.setTableView('table');
     cy.clickTableRow(organizationName);
     cy.verifyPageTitle(organizationName);
     cy.clickLink(/^Details$/);
@@ -57,7 +57,7 @@ describe('Organizations - create, edit and delete', () => {
   it('edits an organization from the details view', () => {
     cy.createPlatformOrganization().then((organization: PlatformOrganization) => {
       const orgName = organization?.name;
-      cy.setTableView('table-view');
+      cy.setTableView('table');
       cy.clickTableRow(orgName);
       cy.verifyPageTitle(orgName);
       cy.get('[data-cy="edit-organization"]').click();

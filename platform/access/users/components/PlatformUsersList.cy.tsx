@@ -28,7 +28,7 @@ describe('Users list', () => {
     it('Users list renders', () => {
       cy.mount(<PlatformUsersList />);
       cy.verifyPageTitle('Users');
-      cy.setTableView('table-view');
+      cy.setTableView('table');
       cy.get('tbody').find('tr').should('have.length', 4);
       // Toolbar actions are visible
       cy.get(`[data-cy="create-user"]`).should('be.visible');
