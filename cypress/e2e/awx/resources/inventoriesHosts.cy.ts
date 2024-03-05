@@ -10,9 +10,6 @@ describe('inventory host', () => {
 
   before(() => {
     cy.awxLogin();
-  });
-
-  beforeEach(() => {
     cy.createAwxOrganization().then((org) => {
       organization = org;
       cy.createAwxInventory({ organization: organization.id }).then((inv) => {
@@ -22,7 +19,9 @@ describe('inventory host', () => {
         user = testUser;
       });
     });
+  });
 
+  beforeEach(() => {
     const inventoryName = 'E2E Inventory host ' + randomString(4);
     cy.navigateTo('awx', 'inventories');
     cy.verifyPageTitle('Inventories');
