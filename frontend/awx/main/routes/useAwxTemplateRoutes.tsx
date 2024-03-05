@@ -23,6 +23,7 @@ import { ScheduleRules } from '../../views/schedules/SchedulePage/ScheduleRules'
 import { Schedules } from '../../views/schedules/Schedules';
 import { AwxRoute } from '../AwxRoutes';
 import { ResourceNotifications } from '../../resources/notifications/ResourceNotifications';
+import { TemplateJobs } from '../../resources/templates/TemplatePage/TemplateJobs';
 
 export function useAwxTemplateRoutes() {
   const { t } = useTranslation();
@@ -107,7 +108,7 @@ export function useAwxTemplateRoutes() {
                 {
                   id: AwxRoute.JobTemplateJobs,
                   path: 'job',
-                  element: <PageNotImplemented />,
+                  element: <TemplateJobs />,
                 },
                 {
                   id: AwxRoute.JobTemplateNotifications,

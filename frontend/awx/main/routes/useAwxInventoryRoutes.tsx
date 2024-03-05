@@ -42,6 +42,7 @@ import { GroupHosts } from '../../resources/groups/GroupHosts';
 import { GroupRelatedGroups } from '../../resources/groups/GroupRelatedGroups';
 import { ResourceNotifications } from '../../resources/notifications/ResourceNotifications';
 import { SchedulesList } from '../../views/schedules/SchedulesList';
+import { InventoryJobs } from '../../resources/inventories/InventoryPage/InventoryJobs';
 
 export function useAwxInventoryRoutes() {
   const { t } = useTranslation();
@@ -203,7 +204,7 @@ export function useAwxInventoryRoutes() {
             {
               id: AwxRoute.InventoryJobs,
               path: 'jobs',
-              element: <PageNotImplemented />,
+              element: <InventoryJobs />,
             },
             {
               id: AwxRoute.InventoryJobTemplates,

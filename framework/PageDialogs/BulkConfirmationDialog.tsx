@@ -160,6 +160,7 @@ function BulkConfirmationDialog<T extends object>(props: BulkConfirmationDialog<
       onClose={onCloseClicked}
       actions={[
         <Button
+          id="submit"
           key="submit"
           ouiaId="submit"
           variant={isDanger ? 'danger' : 'primary'}

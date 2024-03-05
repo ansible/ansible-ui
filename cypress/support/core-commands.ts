@@ -1,93 +1,39 @@
-// ---------------------------------------------------------------------
-// Core Commands
-// ---------------------------------------------------------------------
-// These commands are the core commands that are used to interact with the UI.
-// They are used to interact with the UI in a way that is consistent and reliable.
-// They check that the element is not disabled or hidden before interacting with it.
-
-/** Get by selector, making sure it is not disabled or hidden */
 Cypress.Commands.add('getBy', (selector: string) => {
   cy.get(selector)
     .should('not.be.disabled')
     .should('not.have.attr', 'aria-disabled', 'true')
     .should('not.be.hidden')
     .should('be.visible');
+
+  // The following line is necessary to avoid flakiness in the tests
+  // It's a workaround when the element is found and while assertions are running, the element is replaced
   cy.get(selector);
 });
 
-/** Get by data-cy attribute, making sure it is not disabled or hidden */
 Cypress.Commands.add('getByDataCy', (dataCy: string) => {
   cy.getBy(`[data-cy="${dataCy}"]`);
 });
 
-/** Contains by selector, making sure it is not disabled or hidden */
 Cypress.Commands.add('containsBy', (selector: string, text: string | number | RegExp) => {
   cy.contains(selector, text)
     .should('not.be.disabled')
     .should('not.have.attr', 'aria-disabled', 'true')
     .should('not.be.hidden')
     .should('be.visible');
+
+  // The following line is necessary to avoid flakiness in the tests
+  // It's a workaround when the element is found and while assertions are running, the element is replaced
   cy.contains(selector, text);
 });
 
-/** Click by data-cy attribute, making sure it is not disabled or hidden */
-Cypress.Commands.add('clickByDataCy', (dataCy: string) => {
-  cy.getBy(`[data-cy="${dataCy}"]`).click();
-});
+Cypress.Commands.add('containsByDataCy', (dataCy: string, text: string | number | RegExp) => {
+  cy.contains(`[data-cy="${dataCy}"]`, text)
+    .should('not.be.disabled')
+    .should('not.have.attr', 'aria-disabled', 'true')
+    .should('not.be.hidden')
+    .should('be.visible');
 
-/** Type input by selector, making sure it is not disabled or hidden */
-Cypress.Commands.add('typeBy', (selector: string, text: string) => {
-  cy.getBy(selector).type(text);
-});
-
-/** Type input by data-cy attribute, making sure it is not disabled or hidden */
-Cypress.Commands.add('typeByDataCy', (dataCy: string, text: string) => {
-  cy.typeBy(`[data-cy="${dataCy}"]`, text);
-});
-
-Cypress.Commands.add('selectLoadAll', () => {
-  cy.get('#loading').should('not.exist');
-  cy.get('button').then((buttons) => {
-    for (let i = 0; i <= buttons.length; i++) {
-      const button = buttons[i];
-      if (button?.innerText === 'Load more') {
-        button.click();
-        cy.selectLoadAll();
-      }
-    }
-  });
-});
-
-/** Select a value from a single select input by selector, making sure it is not disabled or hidden */
-Cypress.Commands.add('singleSelectBy', (selector: string, value: string) => {
-  cy.getBy(selector).click();
-  cy.get('.pf-v5-c-menu__content').within(() => {
-    cy.selectLoadAll();
-    cy.getByDataCy('search-input').type(value);
-    cy.contains('.pf-v5-c-menu__item-text', value).parent().click();
-  });
-});
-
-/** Select a value from a single select input by data-cy attribute, making sure it is not disabled or hidden */
-Cypress.Commands.add('singleSelectByDataCy', (dataCy: string, value: string) => {
-  cy.singleSelectBy(`[data-cy="${dataCy}"]`, value);
-});
-
-/** Select a value from a multi select input by selector, making sure it is not disabled or hidden */
-Cypress.Commands.add('multiSelectBy', (selector: string, value: string) => {
-  cy.getBy(selector).click();
-  cy.get('.pf-v5-c-menu__content').within(() => {
-    cy.selectLoadAll();
-    cy.getByDataCy('search-input').type(value);
-    cy.contains('.pf-v5-c-menu__item-text', value)
-      .parent()
-      .within(() => {
-        cy.get('input').click();
-      });
-  });
-});
-
-/** Select a value from a multi select input by data-cy attribute, making sure it is not disabled or hidden */
-Cypress.Commands.add('multiSelectByDataCy', (dataCy: string, value: string) => {
-  cy.multiSelectBy(`[data-cy="${dataCy}"]`, value);
+  // The following line is necessary to avoid flakiness in the tests
+  // It's a workaround when the element is found and while assertions are running, the element is replaced
+  cy.contains(`[data-cy="${dataCy}"]`, text);
 });

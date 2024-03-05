@@ -18,6 +18,7 @@ import { edaAPI } from '../../common/eda-utils';
 import { EdaEventStream } from '../../interfaces/EdaEventStream';
 import { RestartPolicyEnum } from '../../interfaces/generated/eda-api';
 import { EdaRoute } from '../../main/EdaRoutes';
+import { logLevelName } from '../../rulebook-activations/RulebookActivationPage/RulebookActivationDetails';
 
 export function EventStreamDetails() {
   const { t } = useTranslation();
@@ -74,6 +75,9 @@ export function EventStreamDetails() {
         </PageDetail>
         <PageDetail label={t('Restart policy')} helpText={restartPolicyHelpBlock}>
           {eventStream?.restart_policy ? restartPolicyName(eventStream?.restart_policy, t) : ''}
+        </PageDetail>
+        <PageDetail label={t('Log level')} helpText={t('Error | Info | Debug')}>
+          {logLevelName(eventStream.log_level, t)}
         </PageDetail>
         <PageDetail label={t('Created')}>
           {eventStream?.created_at ? formatDateString(eventStream?.created_at) : ''}

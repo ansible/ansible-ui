@@ -1,13 +1,16 @@
 //Tests a user's ability to create, edit, and delete rulebook activations in the EDA UI.
 //IMPORTANT: rulebook activations do not have Edit capability in the UI. They can only be enabled or disabled.
 import { randomString } from '../../../../framework/utils/random-string';
+import { EdaControllerToken } from '../../../../frontend/eda/interfaces/EdaControllerToken';
 import { EdaDecisionEnvironment } from '../../../../frontend/eda/interfaces/EdaDecisionEnvironment';
 import { EdaProject } from '../../../../frontend/eda/interfaces/EdaProject';
 import { EdaRulebook } from '../../../../frontend/eda/interfaces/EdaRulebook';
 import { EdaRulebookActivation } from '../../../../frontend/eda/interfaces/EdaRulebookActivation';
-import { ActivationRead } from '../../../../frontend/eda/interfaces/generated/eda-api';
+import {
+  ActivationRead,
+  LogLevelEnum,
+} from '../../../../frontend/eda/interfaces/generated/eda-api';
 import { edaAPI } from '../../../support/formatApiPathForEDA';
-import { EdaControllerToken } from '../../../../frontend/eda/interfaces/EdaControllerToken';
 
 describe('EDA rulebook activations - Create', () => {
   let edaProject: EdaProject;
@@ -124,12 +127,14 @@ describe.skip('EDA rulebook activations- Edit, Delete', () => {
           cy.createEdaRulebookActivation({
             rulebook_id: edaRuleBook.id,
             decision_environment_id: edaDecisionEnvironment.id,
+            log_level: LogLevelEnum.error,
           }).then((edaRulebookActivation) => {
             edaRBA = edaRulebookActivation;
           });
           cy.createEdaRulebookActivation({
             rulebook_id: edaRuleBook.id,
             decision_environment_id: edaDecisionEnvironment.id,
+            log_level: LogLevelEnum.error,
             is_enabled: false,
           }).then((edaRulebookActivation) => {
             edaDisabledRBA = edaRulebookActivation;

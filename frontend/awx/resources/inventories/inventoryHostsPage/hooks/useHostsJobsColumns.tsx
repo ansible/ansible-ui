@@ -43,9 +43,11 @@ export function useHostsJobsColumns(options?: { disableSort?: boolean; disableLi
       }),
     [jobPaths, pageNavigate]
   );
+
   const nameColumn = useNameColumn({
     ...options,
     onClick: nameClick,
+    defaultSort: false,
   });
 
   const statusColumn = useMemo<ITableColumn<UnifiedJob>>(
@@ -77,6 +79,8 @@ export function useHostsJobsColumns(options?: { disableSort?: boolean; disableLi
         return <DateTimeCell value={job.finished} />;
       },
       sort: 'finished',
+      defaultSortDirection: 'desc',
+      defaultSort: true,
     }),
     [t]
   );

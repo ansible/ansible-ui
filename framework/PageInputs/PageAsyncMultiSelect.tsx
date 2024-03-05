@@ -137,6 +137,7 @@ export function PageAsyncMultiSelect<
           <SplitItem isFilled>
             {options?.length !== total && (
               <Button
+                id="load-lmore"
                 variant="link"
                 isInline
                 onClick={(e) => {

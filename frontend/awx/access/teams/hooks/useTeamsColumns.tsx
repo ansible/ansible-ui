@@ -1,5 +1,4 @@
 import { useCallback, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import { ITableColumn, usePageNavigate } from '../../../../../framework';
 import {
   useCreatedColumn,
@@ -13,14 +12,13 @@ import { Team } from '../../../interfaces/Team';
 import { AwxRoute } from '../../../main/AwxRoutes';
 
 export function useTeamsColumns(options?: { disableLinks?: boolean; disableSort?: boolean }) {
-  const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const nameColumnClick = useCallback(
     (team: Team) => pageNavigate(AwxRoute.TeamDetails, { params: { id: team.id } }),
     [pageNavigate]
   );
   const idColumn = useIdColumn();
-  const nameColumn = useNameColumn({ header: t('Team'), ...options, onClick: nameColumnClick });
+  const nameColumn = useNameColumn({ ...options, onClick: nameColumnClick });
   const descriptionColumn = useDescriptionColumn();
 
   const organizationColumn = useOrganizationNameColumn(AwxRoute.OrganizationDetails, options);

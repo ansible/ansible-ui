@@ -43,10 +43,10 @@ describe('teams', function () {
     const teamName = 'E2E Team ' + randomString(4);
     cy.intercept('POST', awxAPI`/teams/`).as('newTeam');
     cy.navigateTo('awx', 'teams');
-    cy.clickLink(/^Create team$/);
-    cy.typeByDataCy('name', teamName);
+    cy.containsBy('a', /^Create team$/).click();
+    cy.getByDataCy('name').type(teamName);
     cy.singleSelectByDataCy('organization', (this.globalOrganization as Organization).name);
-    cy.clickByDataCy('Submit');
+    cy.getByDataCy('Submit').click();
     cy.wait('@newTeam')
       .its('response.body')
       .then((team: Team) => {
@@ -68,32 +68,42 @@ describe('teams', function () {
     cy.requestPost<User>(awxAPI`/users/${user2.id.toString()}/roles/`, {
       id: team.summary_fields.object_roles.member_role.id,
     });
+
     cy.navigateTo('awx', 'teams');
-    cy.searchAndDisplayResource(team.name);
-    cy.get(`[data-cy="row-id-${team.id}"]`).within(() => {
-      cy.get('[data-cy="actions-dropdown"]').click();
-      cy.get('[data-cy="remove-users"]').click();
+
+    // Remove users
+    cy.clickTableRowAction('name', team.name, 'remove-users', { inKebab: true });
+
+    // Select users
+    cy.getModal().within(() => {
+      cy.selectTableRowCheckbox('username', user1.username);
+      cy.selectTableRowCheckbox('username', user2.username);
+      cy.get('#submit').click();
     });
-    cy.get(`[data-cy="row-id-${user1.id}"]`).find('input').click();
-    cy.get(`[data-cy="row-id-${user2.id}"]`).find('input').click();
-    cy.get('#confirm').click();
-    cy.get('#confirm').click();
-    cy.clickButton(/^Remove user/);
-    cy.contains(/^Success$/);
-    cy.clickButton(/^Close$/);
+
+    // Confirm and remove users
+    cy.getModal().within(() => {
+      cy.get('#confirm').click();
+      cy.get('#submit').click();
+      cy.contains(/^Success$/).should('be.visible');
+      cy.containsBy('button', /^Close$/).click();
+    });
+
+    // Verify modal is closed
+    cy.getModal().should('not.exist');
   });
 
   it('can render the team details page', function () {
     cy.navigateTo('awx', 'teams');
-    cy.clickTableRow(team.name);
+    cy.clickTableRowLink('name', team.name);
     cy.verifyPageTitle(team.name);
-    cy.clickLink(/^Details$/);
-    cy.get('[data-cy="name"]').should('contain', team.name);
+    cy.clickTab(/^Details$/, true);
+    cy.hasDetail('Name', team.name);
   });
 
   it('can edit a team from the details page', function () {
     cy.navigateTo('awx', 'teams');
-    cy.clickTableRow(team.name);
+    cy.clickTableRowLink('name', team.name);
     cy.clickButton(/^Edit team$/);
     cy.verifyPageTitle('Edit Team');
     cy.get('[data-cy="name"]')

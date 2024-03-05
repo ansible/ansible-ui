@@ -100,7 +100,7 @@ describe('jobs', () => {
   it('filters jobs by id', () => {
     cy.navigateTo('awx', 'jobs');
     const jobId = jobList.id ? jobList.id.toString() : '';
-    cy.selectToolbarFilterType('ID');
+    cy.selectToolbarFilterByLabel('ID');
     cy.get('#filter-input').type(jobId, { delay: 0 });
     cy.get('[aria-label="apply filter"]').click();
     cy.get('tr').should('have.length.greaterThan', 0);

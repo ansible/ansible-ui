@@ -44,6 +44,7 @@ export interface ActivationCreate {
    * * `never` - never
    */
   restart_policy?: RestartPolicyEnum;
+  log_level: LogLevelEnum;
 }
 
 /** Serializer for the Activation Instance model. */
@@ -143,6 +144,7 @@ export interface ActivationRead {
   is_enabled?: boolean;
   decision_environment?: DecisionEnvironmentRef | null;
   event_streams?: EventStreamRef[];
+  webhooks?: WebhookRef[];
   credentials?: CredentialRef[];
 
   /**
@@ -173,6 +175,7 @@ export interface ActivationRead {
    * @min -2147483648
    * @max 2147483647
    */
+  log_level: LogLevelEnum;
   restart_count?: number;
   /** Name of the referenced rulebook */
   rulebook_name: string;
@@ -936,7 +939,11 @@ export enum RestartPolicyEnum {
   OnFailure = 'on-failure',
   Never = 'never',
 }
-
+export enum LogLevelEnum {
+  error = 'error',
+  info = 'info',
+  debug = 'debug',
+}
 export interface RoleDetail {
   /**
    * Unique UUID of the role
@@ -2795,6 +2802,7 @@ export interface EventStreamCreate {
    * * `never` - never
    */
   restart_policy?: RestartPolicyEnum;
+  log_level: LogLevelEnum;
 }
 
 /** Serializer for the Activation Instance model. */
@@ -2864,6 +2872,7 @@ export interface EventStreamList {
    * * `never` - never
    */
   restart_policy?: RestartPolicyEnum;
+  log_level: LogLevelEnum;
   /**
    * @min -2147483648
    * @max 2147483647
@@ -2922,6 +2931,7 @@ export interface EventStreamRead {
    * * `never` - never
    */
   restart_policy?: RestartPolicyEnum;
+  log_level: LogLevelEnum;
   /**
    * @min -2147483648
    * @max 2147483647
@@ -2939,4 +2949,52 @@ export interface EventStreamRead {
   /** @format date-time */
   restarted_at?: string | null;
   status_message?: string | null;
+}
+
+/**
+ */
+export enum WebhookTypeEnum {
+  GitHub = 'GitHub',
+  GitLab = 'GitLab',
+  ServiceNow = 'Service Now',
+  Generic = 'Generic',
+}
+export interface Webhook {
+  name: string;
+  test_mode?: boolean;
+  user: string;
+  hmac_algorithm?: string;
+  header_key?: string;
+  hmac_signature_prefix: string;
+  hmac_format?: string;
+  auth_type: string;
+  additional_data_headers?: string[];
+  id: number;
+  url: string;
+  created_at: string;
+  modified_at: string;
+  test_content_type?: string;
+  test_content?: string;
+  test_error_message?: string;
+}
+
+export interface WebhookCreate {
+  type: WebhookTypeEnum;
+  name: string;
+  hmac_algorithm?: string;
+  header_key?: string;
+  auth_type?: string;
+  hmac_signature_prefix?: string;
+  hmac_format?: string;
+  secret: string;
+  test_mode?: boolean;
+  additional_data_headers?: string[];
+}
+
+/** Serializer for Webhook reference. */
+export interface WebhookRef {
+  id: number;
+  name: string;
+  description?: string;
+  webhook_type?: WebhookTypeEnum;
 }
