@@ -1,6 +1,12 @@
 import { CubesIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { PageHeader, PageLayout, PageTable, usePageNavigate } from '../../../../framework';
+import {
+  LoadingPage,
+  PageHeader,
+  PageLayout,
+  PageTable,
+  usePageNavigate,
+} from '../../../../framework';
 import {
   ActionsResponse,
   OptionsResponse,
@@ -13,6 +19,7 @@ import { PlatformRoute } from '../../../main/PlatformRoutes';
 import { useUserRowActions, useUserToolbarActions } from '../hooks/useUserActions';
 import { useUsersColumns } from '../hooks/useUserColumns';
 import { useUsersFilters } from '../hooks/useUsersFilters';
+import { AwxError } from '../../../../frontend/awx/common/AwxError';
 
 export function PlatformUsersList() {
   const { t } = useTranslation();
@@ -26,10 +33,17 @@ export function PlatformUsersList() {
     tableColumns,
   });
 
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>(gatewayV1API`/users/`);
+  const {
+    data,
+    isLoading: isLoadingOptions,
+    error,
+  } = useOptions<OptionsResponse<ActionsResponse>>(gatewayV1API`/users/`);
   const canCreateUser = Boolean(data && data.actions && data.actions['POST']);
   const toolbarActions = useUserToolbarActions(view);
   const rowActions = useUserRowActions(view.unselectItemsAndRefresh);
+
+  if (isLoadingOptions) return <LoadingPage />;
+  if (error) return <AwxError error={error} />;
 
   return (
     <PageLayout>

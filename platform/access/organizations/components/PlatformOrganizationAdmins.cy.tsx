@@ -31,7 +31,7 @@ describe('Organization admins list', () => {
       cy.setTableView('table');
       cy.get('tbody').find('tr').should('have.length', 4);
       // Toolbar actions are visible
-      cy.get(`[data-cy="add-administrator(s)"]`).should('be.visible');
+      cy.get(`[data-cy="add-administrators"]`).should('be.visible');
       cy.get('.page-table-toolbar').within(() => {
         cy.get('.toggle-kebab')
           .click()
@@ -40,14 +40,14 @@ describe('Organization admins list', () => {
           .should('be.visible');
       });
     });
-    it('Add administrator(s) button is disabled if the user does not have required permissions', () => {
+    it('Add administrators button is disabled if the user does not have required permissions', () => {
       cy.mount(<PlatformOrganizationAdmins />, {
         path: '/access/organizations/:id/*',
         initialEntries: ['/access/organizations/3/admins'],
       });
-      cy.get('[data-cy="add-administrator(s)"]').should('have.attr', 'aria-disabled', 'true');
+      cy.get('[data-cy="add-administrators"]').should('have.attr', 'aria-disabled', 'true');
     });
-    it('Add administrator(s) button is enabled if the user has the required permissions', () => {
+    it('Add administrators button is enabled if the user has the required permissions', () => {
       cy.stub(useOptions, 'useOptions').callsFake(() => ({
         data: {
           actions: {
@@ -68,7 +68,7 @@ describe('Organization admins list', () => {
         path: '/access/organizations/:id/*',
         initialEntries: ['/access/organizations/3/admins'],
       });
-      cy.get('[data-cy="add-administrator(s)"]').should('have.attr', 'aria-disabled', 'false');
+      cy.get('[data-cy="add-administrators"]').should('have.attr', 'aria-disabled', 'false');
     });
   });
   describe('Empty list', () => {

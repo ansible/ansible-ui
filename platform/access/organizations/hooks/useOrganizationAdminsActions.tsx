@@ -50,7 +50,7 @@ export function useOrganizationAdminsToolbarActions(view: IPlatformView<Platform
         variant: ButtonVariant.primary,
         isPinned: true,
         icon: PlusCircleIcon,
-        label: t('Add administrator(s)'),
+        label: t('Add administrators'),
         isDisabled: canAssociateAdmin
           ? undefined
           : t(
