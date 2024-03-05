@@ -1,335 +1,425 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
-import { randomString } from '../../../framework/utils/random-string';
-import { hubAPI } from '../../support/formatApiPathForHub';
+import { Repository } from '../../../frontend/hub/administration/repositories/Repository';
+import { HubNamespace } from '../../../frontend/hub/namespaces/HubNamespace';
+import { randomE2Ename } from '../../support/utils';
 import { Collections } from './constants';
+describe('Collections', () => {
+  let namespace: HubNamespace;
+  let repository: Repository;
+  let collectionName: string;
 
-describe('Collections- List View', () => {
   before(() => {
+    cy.createHubNamespace().then((namespaceResult) => {
+      namespace = namespaceResult;
+    });
+    cy.createHubRepository().then((repositoryResult) => {
+      repository = repositoryResult;
+      cy.galaxykit(`distribution create ${repository.name}`);
+    });
+  });
+
+  after(() => {
+    // TODO - this is another PR - cy.deletehubDistribution(repository.name);
+    cy.deleteHubRepository(repository);
+    cy.deleteCollectionsInNamespace(namespace.name);
+    cy.deleteHubNamespace({ ...namespace, failOnStatusCode: false });
+  });
+
+  beforeEach(() => {
+    collectionName = randomE2Ename();
     cy.hubLogin();
-  });
-
-  it('can sign a collection', () => {
-    const namespace = `sign_namespace_${randomString(3, undefined, { isLowercase: true })}`;
-    cy.createNamespace(namespace);
-    const collection = randomString(5, undefined, { isLowercase: true }).replace(/\d/g, '');
-    cy.uploadCollection(collection, namespace).then((result) => {
-      cy.approveCollection(collection, namespace, result.version as string);
-      cy.navigateTo('hub', Collections.url);
-      cy.get('[data-cy="table-view"]').click();
-      cy.filterTableBySingleText(collection);
-      cy.get('[data-cy="actions-column-cell"]').click();
-      cy.get('[data-cy="sign-collection"]').click();
-      cy.get('#confirm').click();
-      cy.clickButton(/^Sign collections$/);
-      cy.contains(/^Success$/);
-      cy.clickButton(/^Close$/);
-      cy.get('[data-cy="label-signed"]').contains(Collections.signedStatus);
-      cy.get('[data-cy="actions-column-cell"]').click();
-      cy.get('[data-cy="delete-entire-collection-from-system"]').click({ force: true });
-      cy.get('#confirm').click();
-      cy.clickButton(/^Delete collections/);
-      cy.contains(/^Success$/);
-      cy.clickButton(/^Close$/);
-      cy.clickButton(/^Clear all filters$/);
-      cy.deleteNamespace(namespace);
-    });
-  });
-
-  it('can upload and delete collection', () => {
-    const namespace = 'hub_e2e_namespace_' + randomString(3, undefined, { isLowercase: true });
-    cy.createNamespace(namespace);
-    const collection =
-      'hub_e2e_collection_' + randomString(5, undefined, { isLowercase: true }).replace(/\d/g, '');
-    cy.galaxykit(`collection upload ${namespace} ${collection} --skip-upload`).then((result) => {
-      cy.navigateTo('hub', Collections.url);
-      cy.verifyPageTitle(Collections.title);
-      const filePath = result.filename as string;
-      cy.uploadHubCollectionFile(filePath);
-      cy.get('input[id="radio-non-pipeline"]').click();
-      cy.getTableRowBySingleText('validated').within(() => {
-        cy.get('td[data-cy=checkbox-column-cell]').click();
-      });
-      cy.get('[data-cy="Submit"]').click();
-      cy.galaxykit('task wait all');
-
-      cy.navigateTo('hub', Collections.url);
-      cy.url().should('include', 'collections');
-      cy.verifyPageTitle(Collections.title);
-      cy.get('[data-cy="table-view"]').click();
-      cy.filterTableBySingleText(collection);
-      cy.get('[data-cy="actions-column-cell"]').click();
-      cy.get('[data-cy="delete-entire-collection-from-system"]').click({ force: true });
-      cy.get('#confirm').click();
-      cy.clickButton(/^Delete collections/);
-      cy.contains(/^Success$/);
-      cy.clickButton(/^Close$/);
-      cy.galaxykit('task wait all');
-      cy.filterTableBySingleText(collection);
-      cy.contains('No results found');
-      cy.deleteNamespace(namespace);
-    });
-  });
-
-  it('should render the collections page', () => {
     cy.navigateTo('hub', Collections.url);
     cy.verifyPageTitle(Collections.title);
   });
 
-  it('should call galaxykit without error', () => {
-    cy.galaxykit('collection -h');
-  });
-
-  it.skip('can deprecate selected collections using the list toolbar', () => {});
-});
-
-describe('Collections List- Line Item Kebab Menu', () => {
-  let thisCollectionName: string;
-  let namespace: string;
-  let repository: string;
-  let version: string;
-
-  beforeEach(() => {
-    thisCollectionName = 'hub_e2e_' + randomString(5).toLowerCase();
-    namespace = `upload_namespace_${randomString(4, undefined, { isLowercase: true })}`;
-    version = '1.2.3';
-    repository = 'hub_e2e_appr_repository' + randomString(5);
-
-    cy.hubLogin();
-
-    cy.galaxykit(`repository create ${repository}`);
-    cy.galaxykit('task wait all');
-
-    cy.galaxykit(`distribution create ${repository}`);
-    cy.galaxykit('task wait all');
-
-    cy.createNamespace(namespace);
-    cy.uploadCollection(thisCollectionName, namespace);
-    cy.galaxykit('task wait all');
-
-    cy.galaxykit(`collection move ${namespace} ${thisCollectionName} 1.0.0 staging ${repository}`);
-  });
-
-  after(() => {
-    cy.deleteCollectionsInNamespace(namespace);
-    cy.galaxykit('task wait all');
-    cy.deleteRepository(repository);
-    cy.galaxykit('task wait all');
-  });
-
-  it('can upload and then delete a new version to an existing collection', () => {
-    cy.galaxykit(
-      `collection upload ${namespace} ${thisCollectionName} ${version} --skip-upload`
-    ).then((result) => {
-      cy.navigateTo('hub', Collections.url); //navigate to the collections page and find the collection created in the before hook
-      cy.verifyPageTitle(Collections.title);
-      const filePath = result.filename as string;
-      cy.intercept(
-        'GET',
-        hubAPI`/v3/plugin/ansible/search/collection-versions/?is_deprecated=false&repository_label=!hide_from_search&is_highest=true&keywords=${thisCollectionName}&order_by=name&offset=0&limit=10`
-      ).as('searchA');
-      cy.get('[data-cy="text-input"]').find('input').type(thisCollectionName);
-      cy.wait('@searchA');
-      cy.contains('h2[data-cy="data-list-name"]', `${thisCollectionName}`).click();
-      cy.get(`[data-cy="${thisCollectionName}"]`).should('contain', `${thisCollectionName}`);
-      cy.get('[data-ouia-component-id="upload-new-version"]').click(); //upload a new version of the collection
-      cy.get('#file-upload-file-browse-button').click();
-      cy.get('input[id="file-upload-file-filename"]').selectFile(filePath, {
-        action: 'drag-drop',
-      });
-      cy.verifyPageTitle('Upload Collection');
-      cy.get('#radio-non-pipeline').click();
-      cy.getByDataCy('text-input').type(repository);
-      cy.galaxykit('task wait all');
-      cy.getByDataCy('checkbox-column-cell').click();
-      cy.get('[data-cy="Submit"]').click();
-      cy.galaxykit('task wait all');
-      cy.navigateTo('hub', Collections.url);
-      cy.verifyPageTitle(Collections.title);
-      cy.get('[data-cy="text-input"]').find('input').type(thisCollectionName); //navigate to the collections list and locate the collection
-      cy.wait('@searchA');
-      cy.contains('h2[data-cy="data-list-name"]', `${thisCollectionName}`).click();
-      cy.get(`[data-cy="${thisCollectionName}"]`).should('contain', `${thisCollectionName}`); //assert that we are looking at the collection we expect
-      cy.get('[data-cy="version"]').should('contain', '1.2.3'); //assert that the version has changed
-      cy.get('[data-cy="actions-dropdown"]')
-        .click()
-        .then(() => {
-          cy.get('#delete-version-from-system').click();
-        });
-      cy.get('[data-ouia-component-id="Permanently delete collections versions"]').within(() => {
-        cy.get('[data-ouia-component-id="confirm"]').click();
-        cy.get('[data-ouia-component-id="submit"]').click();
+  describe('Collections List Page', () => {
+    it('can sign a collection', () => {
+      cy.uploadCollection(collectionName, namespace.name).then((result) => {
+        cy.approveCollection(collectionName, namespace.name, result.version as string);
+        // Sign collection
+        cy.getByDataCy('table-view').click();
+        cy.filterTableBySingleText(collectionName, true);
+        cy.clickTableRowKebabAction(collectionName, 'sign-collection', false);
+        cy.get('#confirm').click();
+        cy.clickButton(/^Sign collections$/);
+        cy.contains(/^Success$/);
         cy.clickButton(/^Close$/);
+        cy.getModal().should('not.exist');
+        // Verify collection has been signed
+        cy.get('[data-cy="label-signed"]').contains(Collections.signedStatus);
+        cy.deleteHubCollectionByName(collectionName);
       });
-      cy.url().should('contain', '/collections/');
     });
-  });
 
-  it('can delete entire collection from system', () => {
-    cy.navigateTo('hub', Collections.url);
-    cy.verifyPageTitle(Collections.title);
-    cy.galaxykit('task wait all');
-    cy.get('[data-cy="table-view"]').click();
-    cy.filterTableBySingleText(thisCollectionName);
-    cy.clickTableRowKebabAction(thisCollectionName, 'delete-entire-collection-from-system', false);
-    cy.get('#confirm').click();
-    cy.clickButton(/^Delete collections/);
-    cy.contains(/^Success$/);
-    cy.clickButton(/^Close$/);
-    cy.galaxykit('task wait all');
-  });
+    it('can upload and delete collection', () => {
+      cy.galaxykit(`collection upload ${namespace.name} ${collectionName} --skip-upload`).then(
+        (result) => {
+          // Upload collection
+          const filePath = result.filename as string;
+          cy.uploadHubCollectionFile(filePath);
+          cy.get('input[id="radio-non-pipeline"]').click();
+          cy.getTableRowBySingleText('validated', true).within(() => {
+            cy.get('td[data-cy=checkbox-column-cell]').click();
+          });
+          cy.get('[data-cy="Submit"]').click();
+          // Verify collection has been uploaded
+          cy.verifyPageTitle(Collections.title);
+          // Delete collection
+          cy.getByDataCy('table-view').click();
+          cy.filterTableBySingleText(collectionName, true);
+          cy.clickTableRowKebabAction(
+            collectionName,
+            'delete-entire-collection-from-system',
+            false
+          );
+          cy.get('#confirm').click();
+          cy.clickButton(/^Delete collections/);
+          cy.contains(/^Success$/);
+          cy.clickButton(/^Close$/);
+          cy.getModal().should('not.exist');
+          // Verify collection has been deleted from system
+          cy.getByDataCy('table-view').click();
+          cy.filterTableBySingleText(collectionName, true);
+          cy.contains('No results found');
+        }
+      );
+    });
 
-  it('can delete entire collection from repository', () => {
-    cy.navigateTo('hub', Collections.url);
-    cy.verifyPageTitle(Collections.title);
-    cy.galaxykit('task wait all');
-    cy.get('[data-cy="table-view"]').click();
-    cy.filterTableBySingleText(thisCollectionName);
-    cy.clickTableRowKebabAction(
-      thisCollectionName,
-      'delete-entire-collection-from-repository',
-      false
-    );
-    cy.get('#confirm').click();
-    cy.clickButton(/^Delete collections/);
-    cy.contains(/^Success$/);
-    cy.clickButton(/^Close$/);
-    cy.galaxykit('task wait all');
-  });
-});
-
-describe('Collections List- Deprecate and Copy', () => {
-  let thisCollectionName: string;
-  let namespace: string;
-  let repository: string;
-
-  beforeEach(() => {
-    thisCollectionName = 'hub_e2e_' + randomString(5).toLowerCase();
-    namespace = `upload_namespace_${randomString(4, undefined, { isLowercase: true })}`;
-    repository = 'hub_e2e_appr_repository' + randomString(5);
-
-    cy.hubLogin();
-
-    cy.galaxykit(`repository create ${repository}`);
-    cy.galaxykit('task wait all');
-
-    cy.galaxykit(`distribution create ${repository}`);
-    cy.galaxykit('task wait all');
-
-    cy.createNamespace(namespace);
-    cy.uploadCollection(thisCollectionName, namespace);
-    cy.galaxykit('task wait all');
-
-    cy.galaxykit(`collection move ${namespace} ${thisCollectionName} 1.0.0 staging ${repository}`);
-  });
-
-  after(() => {
-    cy.undeprecateCollection(thisCollectionName, namespace, repository);
-    cy.galaxykit('task wait all');
-  });
-
-  it('can deprecate a collection', () => {
-    cy.visit(`/collections?page=1&perPage=50&sort=name&keywords=${thisCollectionName}`);
-    cy.get(`a[href*="/collections/${repository}/${namespace}/${thisCollectionName}"]`).should(
-      'be.visible'
-    );
-    cy.get('[data-cy="data-list-action"]').within(() => {
-      cy.get('[data-cy="actions-dropdown"]')
-        .click()
-        .then(() => {
-          cy.get('#deprecate-collection').click();
+    it('can upload and then delete a new version to an existing collection', () => {
+      cy.uploadCollection(collectionName, namespace.name);
+      cy.galaxykit(
+        `collection move ${namespace.name} ${collectionName} 1.0.0 staging ${repository.name}`
+      );
+      cy.galaxykit(
+        `collection upload ${namespace.name} ${collectionName} 1.2.3 --skip-upload`
+      ).then((result: { filename: string }) => {
+        cy.getByDataCy('table-view').click();
+        cy.filterTableBySingleText(collectionName, true);
+        cy.clickTableRow(collectionName, false);
+        // Details Page
+        cy.get(`[data-cy="${collectionName}"]`).should('contain', `${collectionName}`);
+        // Upload new version
+        cy.clickPageAction('upload-new-version');
+        cy.get('#file-upload-file-browse-button').click();
+        cy.get('input[id="file-upload-file-filename"]').selectFile(result.filename, {
+          action: 'drag-drop',
         });
-    });
-    cy.get('[data-ouia-component-id="Permanently deprecate collections"]').within(() => {
-      cy.get('input').click();
-      cy.intercept(
-        'PATCH',
-        hubAPI`/v3/plugin/ansible/content/${repository}/collections/index/${namespace}/${thisCollectionName}/`
-      ).as('deprecated');
-      cy.clickButton('Deprecate collections');
-      cy.wait('@deprecated').then((deprecated) => {
-        expect(deprecated.response?.statusCode).to.eql(202);
+        // Upload page
+        cy.verifyPageTitle('Upload Collection');
+        cy.get('#radio-non-pipeline').click();
+        cy.filterTableBySingleText(repository.name, true);
+        cy.getTableRowByText(repository.name, false).within(() => {
+          cy.getByDataCy('checkbox-column-cell').click();
+        });
+        cy.get('[data-cy="Submit"]').click();
+        // Collections Page
+        cy.verifyPageTitle(Collections.title);
+        cy.getByDataCy('table-view').click();
+        cy.filterTableBySingleText(collectionName, true);
+        cy.clickTableRow(collectionName, false);
+        // Details Page
+        cy.get(`[data-cy="${collectionName}"]`).should('contain', `${collectionName}`); //assert that we are looking at the collection we expect
+        cy.get('[data-cy="version"]').should('contain', '1.2.3'); //assert that the version has changed
+        cy.get('[data-cy="actions-dropdown"]')
+          .click()
+          .then(() => {
+            cy.get('#delete-version-from-system').click();
+          });
+        cy.get('[data-ouia-component-id="Permanently delete collections versions"]').within(() => {
+          cy.get('[data-ouia-component-id="confirm"]').click();
+          cy.get('[data-ouia-component-id="submit"]').click();
+          cy.clickButton(/^Close$/);
+        });
       });
-      cy.clickButton('Close');
+      cy.deleteHubCollectionByName(collectionName);
     });
-    cy.clickButton('Clear all filters');
-    cy.visit(`/collections?page=1&perPage=50&sort=name&keywords=${thisCollectionName}`);
-    cy.get('[data-cy="table-view"]').click();
-    cy.contains('h2', 'No results found').should('be.visible');
-    cy.undeprecateCollection(thisCollectionName, namespace, repository);
+
+    it('can delete entire collection from system', () => {
+      cy.uploadCollection(collectionName, namespace.name);
+      cy.galaxykit(
+        `collection move ${namespace.name} ${collectionName} 1.0.0 staging ${repository.name}`
+      );
+      // Delete collection from system
+      cy.getByDataCy('table-view').click();
+      cy.filterTableBySingleText(collectionName, true);
+      cy.clickTableRowKebabAction(collectionName, 'delete-entire-collection-from-system', false);
+      cy.get('#confirm').click();
+      cy.clickButton(/^Delete collections/);
+      cy.contains(/^Success$/);
+      cy.clickButton(/^Close$/);
+      // Verify collection has been deleted from system
+      cy.navigateTo('hub', Collections.url);
+      cy.getHubCollection(collectionName).then((deleted) => {
+        //Assert that the query returns an empty array, indicating no API results exist
+        expect(deleted.data).to.be.empty;
+      });
+      //Removed the lines attempting to assert that filtering the list for the collection returns an empty list
+      //these lines fail if there are no Collections present
+    });
+
+    it('can delete entire collection from repository', () => {
+      cy.uploadCollection(collectionName, namespace.name);
+      cy.galaxykit(
+        `collection move ${namespace.name} ${collectionName} 1.0.0 staging ${repository.name}`
+      );
+      // Delete collection from repository
+      cy.getByDataCy('table-view').click();
+      cy.filterTableBySingleText(collectionName, true);
+      cy.clickTableRowKebabAction(
+        collectionName,
+        'delete-entire-collection-from-repository',
+        false
+      );
+      cy.get('#confirm').click();
+      cy.clickButton(/^Delete collections/);
+      cy.contains(/^Success$/);
+      cy.clickButton(/^Close$/);
+      //Verify collection has been deleted from repository
+      cy.getHubCollection(collectionName).then((deleted) => {
+        //Assert that the query returns an empty array, indicating no API results exist
+        expect(deleted.data).to.be.empty;
+      });
+      //Removed the lines attempting to assert that filtering the list for the collection returns an empty list
+      //these lines fail if there are no Collections present
+    });
+
+    it('can deprecate a collection', () => {
+      cy.uploadCollection(collectionName, namespace.name);
+      cy.galaxykit(
+        `collection move ${namespace.name} ${collectionName} 1.0.0 staging ${repository.name}`
+      );
+      cy.getByDataCy('table-view').click();
+      cy.filterTableBySingleText(collectionName, true);
+      cy.clickTableRowKebabAction(collectionName, 'deprecate-collection', false);
+      cy.getModal().within(() => {
+        cy.get('#confirm').click();
+        cy.clickButton('Deprecate collections');
+        cy.clickButton('Close');
+      });
+      cy.getModal().should('not.exist');
+      cy.contains('h2', 'No results found').should('be.visible');
+      cy.deleteHubCollectionByName(collectionName);
+    });
+
+    it.skip('can copy a version to repository', () => {
+      //skipping this test because the Copy to Repository option is disabled for admin user
+      cy.collectionCopyVersionToRepositories(collectionName);
+      repository = 'community';
+      cy.deleteCollection(collectionName, namespace.name, repository);
+    });
   });
 
-  it.skip('can copy a version to repository', () => {
-    //skipping this test because the Copy to Repository option is disabled for admin user
-    cy.collectionCopyVersionToRepositories(thisCollectionName);
-    repository = 'community';
+  describe('Collection Details Page', () => {
+    it('can delete entire collection from system', () => {
+      cy.uploadCollection(collectionName, namespace.name, '1.0.0');
+      cy.approveCollection(collectionName, namespace.name, '1.0.0');
+      cy.getByDataCy('table-view').click();
+      cy.filterTableBySingleText(collectionName, true);
+      cy.clickLink(collectionName);
+      cy.verifyPageTitle(`${namespace.name}.${collectionName}`);
+      cy.contains('Loading').should('not.exist');
+      cy.selectDetailsPageKebabAction('delete-entire-collection-from-system');
+      // Verify collection has been deleted from system
+      cy.verifyPageTitle(Collections.title);
+      cy.getHubCollection(collectionName).then((deleted) => {
+        //Assert that the query returns an empty array, indicating no API results exist
+        expect(deleted.data).to.be.empty;
+      });
+      //Removed the lines attempting to assert that filtering the list for the collection returns an empty list
+      //these lines fail if there are no Collections present
+    });
 
-    cy.deleteCollection(thisCollectionName, namespace, repository);
+    it('can delete entire collection from repository', () => {
+      cy.uploadCollection(collectionName, namespace.name, '1.0.0');
+      cy.approveCollection(collectionName, namespace.name, '1.0.0');
+      cy.getByDataCy('table-view').click();
+      cy.filterTableBySingleText(collectionName, true);
+      cy.clickLink(collectionName);
+      cy.verifyPageTitle(`${namespace.name}.${collectionName}`);
+      cy.contains('Loading').should('not.exist');
+      cy.selectDetailsPageKebabAction('delete-entire-collection-from-repository');
+      // Verify collection has been deleted from system
+      cy.verifyPageTitle(Collections.title);
+      cy.getHubCollection(collectionName).then((deleted) => {
+        //Assert that the query returns an empty array, indicating no API results exist
+        expect(deleted.data).to.be.empty;
+      });
+      //Removed the lines attempting to assert that filtering the list for the collection returns an empty list
+      //these lines fail if there are no Collections present
+    });
+
+    it('user can delete version from system', () => {
+      cy.uploadCollection(collectionName, namespace.name, '1.0.0');
+      cy.uploadCollection(collectionName, namespace.name, '1.1.0');
+      cy.approveCollection(collectionName, namespace.name, '1.0.0');
+      cy.approveCollection(collectionName, namespace.name, '1.1.0');
+      // Delete version from system
+      cy.getByDataCy('table-view').click();
+      cy.filterTableBySingleText(collectionName, true);
+      cy.clickLink(collectionName);
+      cy.verifyPageTitle(`${namespace.name}.${collectionName}`);
+      cy.contains('Loading').should('not.exist');
+      cy.get('.pf-v5-c-menu-toggle').click();
+      cy.get('.pf-v5-c-menu__item-text').contains('1.0.0').click();
+      cy.url().should(
+        'contain',
+        `/collections/published/${namespace.name}/${collectionName}/details?version=1.0.0`
+      );
+      cy.selectDetailsPageKebabAction('delete-version-from-system');
+      cy.clickButton(/^Close$/);
+      //Verify the version has been deleted
+      cy.navigateTo('hub', Collections.url);
+      cy.getByDataCy('table-view').click();
+      cy.filterTableBySingleText(collectionName, true);
+      cy.clickLink(collectionName);
+      cy.verifyPageTitle(`${namespace.name}.${collectionName}`);
+      cy.contains('Loading').should('not.exist');
+      cy.get('.pf-v5-c-menu-toggle').click();
+      cy.get('.pf-v5-c-menu__item-text').should('have.length', '1').contains('1.1.0');
+      cy.deleteHubCollectionByName(collectionName);
+    });
+
+    it('user can delete version from repository', () => {
+      cy.uploadCollection(collectionName, namespace.name, '1.0.0');
+      cy.uploadCollection(collectionName, namespace.name, '1.1.0');
+      cy.approveCollection(collectionName, namespace.name, '1.0.0');
+      cy.approveCollection(collectionName, namespace.name, '1.1.0');
+      // Delete version from repository
+      cy.getByDataCy('table-view').click();
+      cy.filterTableBySingleText(collectionName, true);
+      cy.clickLink(collectionName);
+      cy.verifyPageTitle(`${namespace.name}.${collectionName}`);
+      cy.contains('Loading').should('not.exist');
+      cy.get('.pf-v5-c-menu-toggle').click();
+      cy.get('.pf-v5-c-menu__item-text').contains('1.0.0').click();
+      cy.url().should(
+        'contain',
+        `/collections/published/${namespace.name}/${collectionName}/details?version=1.0.0`
+      );
+      cy.selectDetailsPageKebabAction('delete-version-from-repository');
+      cy.clickButton(/^Close$/);
+      //Verify the version has been deleted
+      cy.navigateTo('hub', Collections.url);
+      cy.getByDataCy('table-view').click();
+      cy.filterTableBySingleText(collectionName);
+      cy.clickLink(collectionName);
+      cy.verifyPageTitle(`${namespace.name}.${collectionName}`);
+      cy.url().should(
+        'contain',
+        `/collections/published/${namespace.name}/${collectionName}/details`
+      );
+      cy.get('.pf-v5-c-menu-toggle').click();
+      cy.get('.pf-v5-c-menu__item-text').should('have.length', '1').contains('1.1.0');
+      cy.deleteHubCollectionByName(collectionName);
+    });
+
+    it('can deprecate a collection', () => {
+      cy.uploadCollection(collectionName, namespace.name).then((result) => {
+        cy.approveCollection(collectionName, namespace.name, result.version as string);
+        cy.visit(
+          `/collections/published/${namespace.name}/${collectionName}/details?version=${
+            result.version as string
+          }`
+        );
+        cy.selectDetailsPageKebabAction('deprecate-collection');
+        cy.clickButton('Close');
+        cy.navigateTo('hub', Collections.url);
+        cy.verifyPageTitle(Collections.title);
+        cy.getHubCollection(collectionName).then((deprecated) => {
+          //Assert that the object returned shows that is_deprecated is equal to true
+          expect(deprecated.is_deprecated).to.eql(true);
+        });
+        cy.deleteHubCollectionByName(collectionName);
+      });
+    });
+
+    it.skip('can copy a version to repository', () => {
+      //skipping this test because the Copy to Repository option is disabled for admin user
+    });
+
+    it('can sign a collection', () => {
+      cy.uploadCollection(collectionName, namespace.name).then((result) => {
+        cy.approveCollection(collectionName, namespace.name, result.version as string);
+        // Sign collection
+        cy.visit(
+          `/collections/published/${namespace.name}/${collectionName}/details?version=${
+            result.version as string
+          }`
+        );
+        cy.selectDetailsPageKebabAction('sign-collection');
+        cy.clickButton(/^Close$/);
+        cy.getModal().should('not.exist');
+        // Verify collection has been signed
+        cy.get('[data-cy="label-signed"]').contains(Collections.signedStatus);
+        cy.deleteHubCollectionByName(collectionName);
+      });
+    });
+
+    it('can sign a selected version of a collection', () => {
+      cy.uploadCollection(collectionName, namespace.name).then(() => {
+        cy.galaxykit(
+          `collection move ${namespace.name} ${collectionName} 1.0.0 staging ${repository.name}`
+        );
+        cy.galaxykit(
+          `collection upload ${namespace.name} ${collectionName} 1.2.3 --skip-upload`
+        ).then((result: { filename: string }) => {
+          //Visit the details screen of the newly uploaded collection
+          cy.visit(
+            `/collections/${repository.name}/${namespace.name}/${collectionName}/details?version=1.0.0`
+          );
+          //Assert baseline version nuumber
+          cy.getByDataCy('version').should('contain', '1.0.0');
+          cy.get(`[data-cy="${collectionName}"]`).should('contain', `${collectionName}`);
+          //Upload new version to the collection
+          cy.clickPageAction('upload-new-version');
+          cy.get('#file-upload-file-browse-button').click();
+          cy.get('input[id="file-upload-file-filename"]').selectFile(result.filename, {
+            action: 'drag-drop',
+          });
+          cy.verifyPageTitle('Upload Collection');
+          cy.get('#radio-non-pipeline').click();
+          cy.filterTableBySingleText(repository.name, true);
+          cy.getTableRowByText(repository.name, false).within(() => {
+            cy.getByDataCy('checkbox-column-cell').click();
+          });
+          cy.get('[data-cy="Submit"]').click();
+          cy.verifyPageTitle(Collections.title);
+          //Navigate back to the details screen of the collection after upload
+          cy.getByDataCy('table-view').click();
+          cy.filterTableBySingleText(collectionName, true);
+          cy.clickTableRow(collectionName, false);
+          cy.verifyPageTitle(collectionName);
+          cy.contains('[type="button"]', '(latest)')
+            .click()
+            .then(() => {
+              cy.contains('[type="button"]', '1.0.0 updated').click();
+            });
+          //Select the first version of the collection in order to sign it
+          cy.getByDataCy('version').should('contain', '1.0.0');
+          cy.getByDataCy('signed-state').should('contain', 'Unsigned');
+          cy.selectDetailsPageKebabAction('sign-selected-version');
+          cy.getModal().then(() => {
+            cy.clickButton(/^Close$/);
+          });
+          //Reload the page to reflect and assert the newly signed version
+          cy.reload();
+          cy.getByDataCy('version').should('contain', '1.0.0');
+          cy.getByDataCy('signed-state').should('contain', 'Signed');
+          //Display the other version of the collection to assert that it is not signed
+          cy.contains('[type="button"]', '1.0.0 updated')
+            .click()
+            .then(() => {
+              cy.contains('[type="button"]', '(latest)').click();
+            });
+          cy.getByDataCy('version').should('contain', '1.2.3');
+          cy.getByDataCy('signed-state').should('contain', 'Unsigned');
+          //Delete the collection
+          cy.deleteHubCollectionByName(collectionName);
+        });
+      });
+    });
+
+    it.skip('can access the Install tab and download a tarball', () => {});
   });
-});
-
-describe('Collections Details View', () => {
-  let collection: string;
-  let namespace: string;
-
-  beforeEach(() => {
-    collection = 'hub_e2e_' + randomString(5).toLowerCase();
-    namespace = 'hub_e2e_namespace_' + randomString(5).toLowerCase();
-    cy.hubLogin();
-    cy.createNamespace(namespace);
-    cy.galaxykit('task wait all');
-    cy.uploadCollection(collection, namespace);
-    cy.galaxykit('task wait all');
-    cy.navigateTo('hub', Collections.url);
-  });
-
-  afterEach(() => {
-    cy.galaxykit('task wait all');
-    cy.deleteNamespace(namespace);
-    cy.galaxykit('task wait all');
-  });
-
-  it.skip('can upload a new version to an existing collection', () => {});
-
-  it('can delete entire collection from system', () => {
-    cy.approveCollection(collection, namespace, '1.0.0');
-    cy.galaxykit('task wait all');
-    cy.get('[data-cy="table-view"]').click();
-    cy.filterTableBySingleText(collection);
-    cy.clickLink(collection);
-    cy.galaxykit('task wait all'); //this is necessary, otherwise page continues reloading
-    cy.selectDetailsPageKebabAction('delete-entire-collection-from-system');
-  });
-
-  it('can delete entire collection from repository', () => {
-    cy.approveCollection(collection, namespace, '1.0.0');
-    cy.galaxykit('task wait all');
-    cy.get('[data-cy="table-view"]').click();
-    cy.filterTableBySingleText(collection);
-    cy.clickLink(collection);
-    cy.galaxykit('task wait all'); //this is necessary, otherwise page continues reloading
-    cy.selectDetailsPageKebabAction('delete-entire-collection-from-repository');
-  });
-
-  it.skip('can deprecate a collection', () => {});
-
-  it.skip('can delete version from system', () => {});
-
-  it.skip('can delete version from repository', () => {});
-
-  it.skip('can copy a version to repository', () => {});
-
-  it.skip('can access the Install tab and download a tarball', () => {});
-});
-
-describe.skip('Collection Approvals List', () => {
-  before(() => {
-    cy.hubLogin();
-  });
-
-  it.skip('can approve a collection', () => {});
-
-  it.skip('can reject a collection', () => {});
-
-  it.skip('can upload a signature to a collection', () => {});
 });

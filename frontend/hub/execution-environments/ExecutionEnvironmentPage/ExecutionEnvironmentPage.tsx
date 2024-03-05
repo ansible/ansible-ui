@@ -1,5 +1,5 @@
 import { DropdownPosition } from '@patternfly/react-core/deprecated';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, Trans } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import {
   LoadingPage,
@@ -7,6 +7,7 @@ import {
   PageHeader,
   PageLayout,
   useGetPageUrl,
+  DateTimeCell,
 } from '../../../../framework';
 import { PageRoutedTabs } from '../../../../framework/PageTabs/PageRoutedTabs';
 import { useGet } from '../../../common/crud/useGet';
@@ -16,6 +17,9 @@ import { HubRoute } from '../../main/HubRoutes';
 import { ExecutionEnvironment } from '../ExecutionEnvironment';
 import { useExecutionEnvironmentPageActions } from './hooks/useExecutionEnvironmentPageActions';
 import { SignStatus } from './components/SignStatus';
+import { StatusLabel } from '../../../common/Status';
+import { Flex, FlexItem, Stack } from '@patternfly/react-core';
+import { HelperText } from '../../common/HelperText';
 
 export function ExecutionEnvironmentPage() {
   const { t } = useTranslation();
@@ -23,6 +27,7 @@ export function ExecutionEnvironmentPage() {
   const {
     data: ee,
     error,
+    isLoading,
     refresh,
   } = useGet<ExecutionEnvironment>(
     hubAPI`/v3/plugin/execution-environments/repositories/${params.id ?? ''}/`,
@@ -33,27 +38,48 @@ export function ExecutionEnvironmentPage() {
   const getPageUrl = useGetPageUrl();
   const pageActions = useExecutionEnvironmentPageActions({ refresh });
 
-  if (!ee && !error) {
-    return <LoadingPage />;
-  }
-
   if (error) {
     return <HubError error={error} handleRefresh={refresh} />;
   }
 
+  if (isLoading || !ee) {
+    return <LoadingPage />;
+  }
+
+  const lastSyncTask = ee?.pulp?.repository?.remote?.last_sync_task;
+
   return (
     <PageLayout>
       <PageHeader
-        title={ee?.name}
+        title={ee.name}
         breadcrumbs={[
           { label: t('Execution Environments'), to: getPageUrl(HubRoute.ExecutionEnvironments) },
-          { label: ee?.name },
+          { label: ee.name },
         ]}
         description={ee?.description}
         footer={
-          <div>
-            <SignStatus state={ee?.pulp?.repository?.sign_state} />
-          </div>
+          <Stack hasGutter>
+            <div>
+              <SignStatus state={ee?.pulp?.repository?.sign_state} />
+            </div>
+            {!!lastSyncTask?.state && (
+              <Flex gap={{ default: 'gapSm' }}>
+                <FlexItem>
+                  <Trans>
+                    Last updated from registry <DateTimeCell value={lastSyncTask?.finished_at} />
+                  </Trans>
+                </FlexItem>
+                <FlexItem>
+                  <StatusLabel status={lastSyncTask?.state} />
+                </FlexItem>
+                {lastSyncTask?.error && (
+                  <FlexItem>
+                    <HelperText content={lastSyncTask?.error?.description} />
+                  </FlexItem>
+                )}
+              </Flex>
+            )}
+          </Stack>
         }
         headerActions={
           <PageActions<ExecutionEnvironment>
@@ -86,7 +112,8 @@ export function ExecutionEnvironmentPage() {
             dataCy: 'execution-environment-access-tab',
           },
         ]}
-        params={{ id: ee?.name }}
+        params={{ id: ee.name }}
+        componentParams={{ executionEnvironment: ee }}
       />
     </PageLayout>
   );

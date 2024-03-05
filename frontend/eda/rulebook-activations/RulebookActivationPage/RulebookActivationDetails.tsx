@@ -1,4 +1,4 @@
-import { Label, LabelGroup, PageSection } from '@patternfly/react-core';
+import { Label, LabelGroup } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
 import {
@@ -16,9 +16,10 @@ import { StatusCell } from '../../../common/Status';
 import { useGetItem } from '../../../common/crud/useGet';
 import { edaAPI } from '../../common/eda-utils';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
-import { RestartPolicyEnum, Status906Enum } from '../../interfaces/generated/eda-api';
+import { LogLevelEnum, RestartPolicyEnum, Status906Enum } from '../../interfaces/generated/eda-api';
 import { EdaRoute } from '../../main/EdaRoutes';
 import { EdaExtraVarsCell } from '../components/EdaExtraVarCell';
+import { SelectVariant } from '@patternfly/react-core/deprecated';
 
 export function RulebookActivationDetails() {
   const { t } = useTranslation();
@@ -44,6 +45,7 @@ export function RulebookActivationDetails() {
   return (
     <Scrollable>
       <PageDetails
+        disableScroll={true}
         alertPrompts={
           rulebookActivation.status === Status906Enum.Error ||
           rulebookActivation.status === Status906Enum.Failed
@@ -125,6 +127,9 @@ export function RulebookActivationDetails() {
               {rulebookActivation?.status_message}
             </PageDetail>
           )}
+        <PageDetail label={t('Log level')} helpText={t('Error | Info | Debug')}>
+          {logLevelName(rulebookActivation?.log_level, t)}
+        </PageDetail>
         <PageDetail label={t('Project git hash')}>
           <CopyCell text={rulebookActivation?.git_hash ?? ''} />
         </PageDetail>
@@ -142,13 +147,11 @@ export function RulebookActivationDetails() {
           {rulebookActivation?.created_at ? formatDateString(rulebookActivation?.created_at) : ''}
         </PageDetail>
         <LastModifiedPageDetail
-          value={
-            rulebookActivation?.modified_at ? formatDateString(rulebookActivation?.modified_at) : ''
-          }
+          value={rulebookActivation?.modified_at ? rulebookActivation?.modified_at : ''}
         />
       </PageDetails>
       {rulebookActivation?.extra_var?.id && (
-        <PageSection variant="light">
+        <PageDetails disableScroll={true} numberOfColumns={SelectVariant.single}>
           <EdaExtraVarsCell
             label={t('Variables')}
             helpText={t(
@@ -156,7 +159,7 @@ export function RulebookActivationDetails() {
             )}
             id={rulebookActivation.extra_var.id}
           />
-        </PageSection>
+        </PageDetails>
       )}
     </Scrollable>
   );
@@ -172,5 +175,17 @@ function restartPolicyName(policy: RestartPolicyEnum, t: (str: string) => string
       return t('Never');
     default:
       return capitalizeFirstLetter(policy);
+  }
+}
+export function logLevelName(logLevel: LogLevelEnum, t: (str: string) => string) {
+  switch (logLevel) {
+    case LogLevelEnum.error:
+      return t('Error');
+    case LogLevelEnum.info:
+      return t('Info');
+    case LogLevelEnum.debug:
+      return t('Debug');
+    default:
+      return capitalizeFirstLetter(logLevel);
   }
 }

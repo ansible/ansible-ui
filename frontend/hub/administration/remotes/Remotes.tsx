@@ -9,7 +9,7 @@ import { useRemoteColumns } from './hooks/useRemoteColumns';
 import { useRemoteFilters } from './hooks/useRemoteFilters';
 import { useRemoteToolbarActions } from './hooks/useRemoteToolbarActions';
 
-export interface IRemotes {
+export interface HubRemote {
   auth_url?: string | null;
   ca_cert?: string | null;
   client_cert: string | null;
@@ -35,7 +35,7 @@ export function Remotes() {
   const { t } = useTranslation();
   const toolbarFilters = useRemoteFilters();
   const tableColumns = useRemoteColumns();
-  const view = useHubView<IRemotes>({
+  const view = useHubView<HubRemote>({
     url: pulpAPI`/remotes/ansible/collection/`,
     keyFn: pulpHrefKeyFn,
     toolbarFilters,
@@ -48,7 +48,7 @@ export function Remotes() {
   return (
     <PageLayout>
       <PageHeader title={t('Remotes')} description={t('Remotes')} />
-      <PageTable<IRemotes>
+      <PageTable<HubRemote>
         id="hub-remotes-table"
         defaultSubtitle={t('Remote')}
         emptyStateButtonClick={() => pageNavigate(HubRoute.CreateRemote)}

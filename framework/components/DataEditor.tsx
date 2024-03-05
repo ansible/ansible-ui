@@ -21,9 +21,12 @@ export function DataEditor(props: {
   setError: (error?: string) => void;
   isReadOnly?: boolean;
   className?: string;
+  lineNumbers?: boolean;
 }) {
   const id = useID(props);
   const { language, value, onChange, setError, isReadOnly } = props;
+
+  const [ready, setReady] = useState(false);
 
   // The outter div is used to contain the inner div that is absolutely positioned to fill the outer div
   const outerDivEl = useRef<HTMLDivElement>(null);
@@ -42,9 +45,9 @@ export function DataEditor(props: {
   useEffect(() => {
     if (innerDivEl.current) {
       const editor = monaco.editor.create(innerDivEl.current, {
-        lineNumbers: 'on',
+        lineNumbers: props.lineNumbers ? 'on' : 'off',
+        lineDecorationsWidth: props.lineNumbers ? undefined : 0,
         theme: 'data-editor-dark',
-        lineDecorationsWidth: 8,
         padding: { top: EditorPaddingTop, bottom: EditorPaddingBottom },
         fontSize: 14,
         fontFamily: 'RedHatMono',
@@ -59,7 +62,7 @@ export function DataEditor(props: {
       editorRef.current.editor = editor;
       return () => editor.dispose();
     }
-  }, []);
+  }, [props.lineNumbers]);
 
   // Hook up editor change event to call onChange
   useEffect(() => {
@@ -121,6 +124,7 @@ export function DataEditor(props: {
     const editor = editorRef?.current?.editor;
     if (!editor) return;
     editor.layout();
+    setReady(true);
   });
 
   // Update editor theme when settings change
@@ -139,7 +143,13 @@ export function DataEditor(props: {
       aria-invalid={hasError ? 'true' : undefined}
       ref={outerDivEl}
     >
-      <InnerDiv id={id} data-cy={id} ref={innerDivEl} className="data-editor" />
+      <InnerDiv
+        id={id}
+        data-cy={id}
+        ref={innerDivEl}
+        className="data-editor"
+        aria-disabled={ready ? 'false' : 'true'}
+      />
     </OuterDiv>
   );
 }

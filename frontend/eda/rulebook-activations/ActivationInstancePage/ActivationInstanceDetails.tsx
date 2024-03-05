@@ -6,7 +6,6 @@ import { formatDateString } from '../../../../framework/utils/formatDateString';
 import { AwxItemsResponse } from '../../../awx/common/AwxItemsResponse';
 import { StatusCell } from '../../../common/Status';
 import { useGet, useGetItem } from '../../../common/crud/useGet';
-import { PageDetailsSection } from '../../common/PageDetailsSection';
 import { edaAPI } from '../../common/eda-utils';
 import { EdaActivationInstance } from '../../interfaces/EdaActivationInstance';
 import { EdaActivationInstanceLog } from '../../interfaces/EdaActivationInstanceLog';
@@ -31,7 +30,7 @@ export function ActivationInstanceDetails() {
   }
   return (
     <Scrollable>
-      <PageDetails>
+      <PageDetails disableScroll={true}>
         <PageDetail label={t('Name')}>
           {`${activationInstance?.id || ''} - ${activationInstance?.name || ''}`}
         </PageDetail>
@@ -45,7 +44,8 @@ export function ActivationInstanceDetails() {
           {activationInstance?.ended_at ? formatDateString(activationInstance?.ended_at) : ''}
         </PageDetail>
       </PageDetails>
-      <PageDetailsSection>
+
+      <PageDetails disableScroll={true} numberOfColumns={'single'}>
         {activationInstanceLog?.results?.length ? (
           <PageDetailCodeEditor
             label={t('Output')}
@@ -53,7 +53,7 @@ export function ActivationInstanceDetails() {
             showCopyToClipboard={true}
           />
         ) : null}
-      </PageDetailsSection>
+      </PageDetails>
     </Scrollable>
   );
 }

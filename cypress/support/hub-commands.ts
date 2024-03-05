@@ -1,15 +1,111 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access */
+import { SetRequired } from 'type-fest';
 import { randomString } from '../../framework/utils/random-string';
 import { Role } from '../../frontend/hub/access/roles/Role';
+import { RemoteRegistry } from '../../frontend/hub/administration/remote-registries/RemoteRegistry';
+import { HubRemote } from '../../frontend/hub/administration/remotes/Remotes';
+import { Repository } from '../../frontend/hub/administration/repositories/Repository';
 import { Task } from '../../frontend/hub/administration/tasks/Task';
 import { CollectionVersionSearch } from '../../frontend/hub/collections/Collection';
 import { parsePulpIDFromURL } from '../../frontend/hub/common/api/hub-api-utils';
 import { HubItemsResponse } from '../../frontend/hub/common/useHubView';
+import { ExecutionEnvironment as HubExecutionEnvironment } from '../../frontend/hub/execution-environments/ExecutionEnvironment';
+import { HubNamespace } from '../../frontend/hub/namespaces/HubNamespace';
 import { galaxykitPassword, galaxykitUsername } from './e2e';
 import { hubAPI, pulpAPI } from './formatApiPathForHub';
-import { escapeForShellCommand } from './utils';
+import { escapeForShellCommand, randomE2Ename } from './utils';
 
 const apiPrefix = Cypress.env('HUB_API_PREFIX') as string;
+
+export interface HubRequestOptions {
+  method: 'DELETE' | 'GET' | 'PATCH' | 'POST' | 'PUT';
+  url: string;
+  body?: object;
+  qs?: object;
+  failOnStatusCode?: boolean;
+}
+Cypress.Commands.add('hubRequest', (options: HubRequestOptions) => {
+  cy.getCookie('csrftoken', { log: false }).then((cookie) =>
+    cy
+      .request({
+        ...options,
+        headers: { 'X-CSRFToken': cookie?.value, Referer: Cypress.config().baseUrl },
+      })
+      .then((response) => {
+        switch (response.status) {
+          case 202: // Accepted
+            return cy.waitOnHubTask((response.body as { task: string }).task);
+        }
+      })
+  );
+});
+
+export type HubGetRequestOptions = Pick<HubRequestOptions, 'url' | 'qs' | 'failOnStatusCode'>;
+Cypress.Commands.add('hubGetRequest', (options: HubGetRequestOptions) => {
+  cy.hubRequest({ ...options, method: 'GET' });
+});
+
+export type HubPutRequestOptions = Pick<
+  HubRequestOptions,
+  'url' | 'body' | 'qs' | 'failOnStatusCode'
+>;
+Cypress.Commands.add('hubPutRequest', (options: HubPutRequestOptions) => {
+  cy.hubRequest({ ...options, method: 'PUT' });
+});
+
+export type HubPostRequestOptions = Pick<
+  HubRequestOptions,
+  'url' | 'body' | 'qs' | 'failOnStatusCode'
+>;
+Cypress.Commands.add('hubPostRequest', (options: HubPostRequestOptions) => {
+  cy.hubRequest({ ...options, method: 'POST' }).then((response) => {
+    if (response.status === 201) {
+      return response.body;
+    }
+  });
+});
+
+export type HubPatchRequestOptions = Pick<
+  HubRequestOptions,
+  'url' | 'body' | 'qs' | 'failOnStatusCode'
+>;
+Cypress.Commands.add('hubPatchRequest', (options: HubPatchRequestOptions) => {
+  cy.hubRequest({ ...options, method: 'PATCH' });
+});
+
+export type HubDeleteRequestOptions = Pick<HubRequestOptions, 'url' | 'qs' | 'failOnStatusCode'>;
+Cypress.Commands.add('hubDeleteRequest', (options: HubDeleteRequestOptions) => {
+  cy.hubRequest({ ...options, method: 'DELETE' });
+});
+
+Cypress.Commands.add('waitOnHubTask', function waitOnHubTask(taskUrl: string) {
+  cy.requestPoll<Task>({
+    url: taskUrl,
+    check: (response) => {
+      switch (response.status) {
+        case 200:
+          switch (response.body.state) {
+            case 'completed':
+              return response.body;
+            case 'failed':
+            case 'canceled':
+            case 'skipped':
+              if (response.body.error?.description) {
+                throw new Error(response.body.error.description);
+              } else {
+                throw new Error('Task failed without error message.');
+              }
+            default:
+              return undefined;
+          }
+        case 404:
+          throw new Error('Task not found');
+        default:
+          return undefined;
+      }
+    },
+  });
+});
 
 // GalaxyKit Integration: To invoke `galaxykit` commands for generating resource
 Cypress.Commands.add('galaxykit', (operation: string, ...args: string[]) => {
@@ -115,7 +211,7 @@ Cypress.Commands.add('addAndApproveMultiCollections', (numberOfCollections = 1) 
   const approveMultiCollections = (namespace: string) => {
     cy.visit('/administration/approvals?page=1&perPage=100');
     cy.verifyPageTitle('Collection Approvals');
-    cy.selectToolbarFilterType('Namespace');
+    cy.selectToolbarFilterByLabel('Namespace');
     cy.intercept(
       'GET',
       hubAPI`/v3/plugin/ansible/search/collection-versions/?repository_label=pipeline=staging&namespace=${namespace}&order_by=namespace&offset=0&limit=100`
@@ -139,61 +235,6 @@ Cypress.Commands.add('addAndApproveMultiCollections', (numberOfCollections = 1) 
 
   uploadCollection(namespace, numberOfCollections);
   approveMultiCollections(namespace);
-});
-
-Cypress.Commands.add('getOrCreateCollection', () => {
-  let newCollectionVersion;
-  cy.requestGet<HubItemsResponse<CollectionVersionSearch>>(
-    hubAPI`/v3/plugin/ansible/search/collection-versions/?is_deprecated=false&repository_label=!hide_from_search&is_highest=true&keywords=spm_toolbox&offset=0&limit=10`
-  ).then((result) => {
-    const collectionA = result.data.length;
-    cy.requestGet<HubItemsResponse<CollectionVersionSearch>>(
-      hubAPI`/v3/plugin/ansible/search/collection-versions/?is_deprecated=false&repository_label=!hide_from_search&is_highest=true&keywords=ds8000&offset=0&limit=10`
-    ).then((result) => {
-      const collectionB = result.data.length;
-      cy.requestGet<HubItemsResponse<CollectionVersionSearch>>(
-        hubAPI`/v3/plugin/ansible/search/collection-versions/?is_deprecated=false&repository_label=!hide_from_search&is_highest=true&keywords=operator_collection_sdk&offset=0&limit=10`
-      ).then((result) => {
-        const collectionC = result.data.length;
-        cy.requestGet<HubItemsResponse<CollectionVersionSearch>>(
-          hubAPI`/v3/plugin/ansible/search/collection-versions/?is_deprecated=false&repository_label=!hide_from_search&is_highest=true&keywords=ibm_zosmf&offset=0&limit=10`
-        ).then((result) => {
-          const collectionD = result.data.length;
-          cy.requestGet<HubItemsResponse<CollectionVersionSearch>>(
-            hubAPI`/v3/plugin/ansible/search/collection-versions/?is_deprecated=false&repository_label=!hide_from_search&is_highest=true&keywords=mas_airgap&offset=0&limit=10`
-          ).then((result) => {
-            const collectionE = result.data.length;
-            cy.requestGet<HubItemsResponse<CollectionVersionSearch>>(
-              hubAPI`/v3/plugin/ansible/search/collection-versions/?is_deprecated=false&repository_label=!hide_from_search&is_highest=true&keywords=qradar&offset=0&limit=10`
-            ).then((result) => {
-              const collectionF = result.data.length;
-              if (collectionA === 0) {
-                newCollectionVersion = 'ibm-spm_toolbox-1.0.2.tar.gz';
-                return newCollectionVersion;
-              } else if (collectionB === 0) {
-                newCollectionVersion = 'ibm-ds8000-1.1.0.tar.gz';
-                return newCollectionVersion;
-              } else if (collectionC === 0) {
-                newCollectionVersion = 'ibm-operator_collection_sdk-1.1.0.tar.gz';
-                return newCollectionVersion;
-              } else if (collectionD === 0) {
-                newCollectionVersion = 'ibm-ibm_zosmf-1.4.1.tar.gz';
-                return newCollectionVersion;
-              } else if (collectionE === 0) {
-                newCollectionVersion = 'ibm-mas_airgap-2.6.2.tar.gz';
-                return newCollectionVersion;
-              } else if (collectionF === 0) {
-                newCollectionVersion = 'ibm-qradar-3.0.0.tar.gz';
-                return newCollectionVersion;
-              } else {
-                return 'All test collections currently exist. Please delete one or more and re-run the test.';
-              }
-            });
-          });
-        });
-      });
-    });
-  });
 });
 
 Cypress.Commands.add(
@@ -252,29 +293,6 @@ Cypress.Commands.add('deleteCollectionsInNamespace', (namespaceName: string) => 
   });
 });
 
-Cypress.Commands.add('createHubRole', () => {
-  cy.requestPost<Pick<Role, 'name' | 'description' | 'permissions'>, Role>(pulpAPI`/roles/`, {
-    name: `galaxy.e2erole${randomString(4)}`,
-    description: 'E2E custom role description',
-    permissions: ['galaxy.add_namespace', 'container.namespace_change_containerdistribution'],
-  });
-});
-
-Cypress.Commands.add(
-  'deleteHubRole',
-  (
-    role: Role,
-    options?: {
-      /** Whether to fail on response codes other than 2xx and 3xx */
-      failOnStatusCode?: boolean;
-    }
-  ) => {
-    if (role?.name) {
-      cy.requestDelete(pulpAPI`/roles/${parsePulpIDFromURL(role.pulp_href) as string}/`, options);
-    }
-  }
-);
-
 Cypress.Commands.add('createRemote', (remoteName: string, url?: string) => {
   cy.requestPost(pulpAPI`/remotes/ansible/collection/`, {
     name: remoteName,
@@ -326,9 +344,12 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add('uploadCollection', (collection: string, namespace: string) => {
-  cy.galaxykit(`collection upload ${namespace} ${collection}`);
-});
+Cypress.Commands.add(
+  'uploadCollection',
+  (collection: string, namespace: string, version?: string) => {
+    cy.galaxykit(`collection upload ${namespace} ${collection} ${version ? version : '1.0.0'}`);
+  }
+);
 
 Cypress.Commands.add(
   'approveCollection',
@@ -386,31 +407,220 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add('waitOnHubTask', function waitOnHubTask(taskId: number | string) {
-  cy.requestPoll<Task>({
-    url: pulpAPI`/tasks/${taskId.toString()}/`,
-    check: (response) => {
-      switch (response.status) {
-        case 200:
-          switch (response.body.state) {
-            case 'completed':
-              return response.body;
-            case 'failed':
-            case 'canceled':
-            case 'skipped':
-              if (response.body.error?.description) {
-                throw new Error(response.body.error.description);
-              } else {
-                throw new Error('Task failed without error message.');
-              }
-            default:
-              return undefined;
-          }
-        case 404:
-          throw new Error('Task not found');
-        default:
-          return undefined;
-      }
+// HUB Execution Environment Commands
+export type HubCreateExecutionEnvironmentOptions = {
+  executionEnvironment: SetRequired<Partial<HubExecutionEnvironment>, 'registry'>;
+} & Omit<HubPostRequestOptions, 'url' | 'body'>;
+
+Cypress.Commands.add(
+  'createHubExecutionEnvironment',
+  (options: HubCreateExecutionEnvironmentOptions) => {
+    cy.hubPostRequest({
+      ...options,
+      url: hubAPI`/_ui/v1/execution-environments/remotes/`,
+      body: {
+        name: randomE2Ename(),
+        upstream_name: 'alpine',
+        ...options?.executionEnvironment,
+      },
+    });
+  }
+);
+
+export type HubDeleteExecutionEnvironmentOptions = { name: string } & Omit<
+  HubDeleteRequestOptions,
+  'url'
+>;
+
+Cypress.Commands.add(
+  'deleteHubExecutionEnvironment',
+  (options: HubDeleteExecutionEnvironmentOptions) => {
+    cy.hubDeleteRequest({
+      ...options,
+      url: hubAPI`/v3/plugin/execution-environments/repositories/${options.name}/`,
+    });
+  }
+);
+
+// HUB Remote Registry Commands
+export type HubCreateRemoteRegistryOptions = {
+  remoteRegistry: Partial<RemoteRegistry>;
+} & Omit<HubPostRequestOptions, 'url' | 'body'>;
+
+Cypress.Commands.add('createHubRemoteRegistry', (options?: HubCreateRemoteRegistryOptions) => {
+  cy.hubPostRequest({
+    ...options,
+    url: hubAPI`/_ui/v1/execution-environments/registries/`,
+    body: {
+      name: randomE2Ename(),
+      url: 'https://registry.hub.docker.com/',
+      ...options?.remoteRegistry,
     },
+  });
+});
+
+export type HubDeleteRemoteRegistryOptions = { id: string } & Omit<HubDeleteRequestOptions, 'url'>;
+
+Cypress.Commands.add('deleteHubRemoteRegistry', (options: HubDeleteRemoteRegistryOptions) => {
+  cy.hubDeleteRequest({
+    ...options,
+    url: hubAPI`/_ui/v1/execution-environments/registries/${options.id}/`,
+  });
+});
+
+// HUB Repository Commands
+export type HubCreateRepositoryOptions = {
+  repository: Partial<Repository>;
+} & Omit<HubPostRequestOptions, 'url' | 'body'>;
+
+Cypress.Commands.add('createHubRepository', (options?: HubCreateRepositoryOptions) => {
+  cy.hubPostRequest({
+    ...options,
+    url: pulpAPI`/repositories/ansible/ansible/`,
+    body: {
+      name: randomE2Ename(),
+      ...options?.repository,
+    },
+  });
+});
+
+export type HubDeleteRepositoryOptions = { pulp_href: string } & Omit<
+  HubDeleteRequestOptions,
+  'url'
+>;
+
+Cypress.Commands.add('deleteHubRepository', (options: HubDeleteRepositoryOptions) => {
+  const pulpUUID = parsePulpIDFromURL(options.pulp_href);
+  cy.hubDeleteRequest({
+    ...options,
+    url: pulpAPI`/repositories/ansible/ansible/${pulpUUID ?? ''}/`,
+  });
+});
+
+// HUB Namespace Commands
+export type HubCreateNamespaceOptions = { namespace: Partial<HubNamespace> } & Omit<
+  HubPostRequestOptions,
+  'url' | 'body'
+>;
+
+Cypress.Commands.add('createHubNamespace', (options?: HubCreateNamespaceOptions) => {
+  cy.hubPostRequest({
+    ...options,
+    url: hubAPI`/_ui/v1/namespaces/`,
+    body: {
+      name: randomE2Ename(),
+      ...options?.namespace,
+    },
+  });
+});
+
+export type HubDeleteNamespaceOptions = { name: string } & Omit<HubDeleteRequestOptions, 'url'>;
+
+Cypress.Commands.add('deleteHubNamespace', (options: HubDeleteNamespaceOptions) => {
+  cy.hubDeleteRequest({
+    ...options,
+    url: hubAPI`/_ui/v1/namespaces/${options.name}/`,
+  });
+});
+
+// HUB Role Commands
+export type HubCreateRoleOptions = { role: Partial<Role> } & Omit<
+  HubPostRequestOptions,
+  'url' | 'body'
+>;
+
+Cypress.Commands.add('createHubRole', (options?: HubCreateRoleOptions) => {
+  cy.hubPostRequest({
+    ...options,
+    url: pulpAPI`/roles/`,
+    body: {
+      name: `galaxy.e2erole${randomString(4)}`,
+      description: 'E2E custom role description',
+      permissions: ['galaxy.add_namespace', 'container.namespace_change_containerdistribution'],
+      ...options?.role,
+    },
+  });
+});
+
+export type HubDeleteRoleOptions = { pulp_href: string } & Omit<HubDeleteRequestOptions, 'url'>;
+
+Cypress.Commands.add('deleteHubRole', (options: HubDeleteRoleOptions) => {
+  const pulpUUID = parsePulpIDFromURL(options.pulp_href);
+  cy.hubDeleteRequest({
+    ...options,
+    url: pulpAPI`/roles/${pulpUUID ?? ''}/`,
+  });
+});
+
+// HUB Remote Commands
+export type HubCreateRemoteOptions = { remote: Partial<HubRemote> } & Omit<
+  HubPostRequestOptions,
+  'url' | 'body'
+>;
+
+Cypress.Commands.add('createHubRemote', (options?: HubCreateRemoteOptions) => {
+  cy.hubPostRequest({
+    ...options,
+    url: pulpAPI`/remotes/ansible/collection/`,
+    body: {
+      name: randomE2Ename(),
+      url: 'https://console.redhat.com/api/automation-hub/',
+      ...options?.remote,
+    },
+  });
+});
+
+export type HubDeleteRemoteOptions = { pulp_href: string } & Omit<HubDeleteRequestOptions, 'url'>;
+
+Cypress.Commands.add('deleteHubRemote', (options: HubDeleteRemoteOptions) => {
+  const pulpUUID = parsePulpIDFromURL(options.pulp_href);
+  cy.hubDeleteRequest({
+    ...options,
+    url: pulpAPI`/remotes/ansible/collection/${pulpUUID ?? ''}/`,
+  });
+});
+
+// HUB Collection Commands
+Cypress.Commands.add('getHubCollection', (name: string) => {
+  return cy
+    .requestGet<
+      HubItemsResponse<CollectionVersionSearch>
+    >(hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${name}`)
+    .then((itemsResponse) => itemsResponse.data[0]);
+});
+
+export type HubDeleteCollectionOptions = {
+  repository?: { name: string };
+  collection_version?: { name: string; namespace: string };
+} & Omit<HubDeleteRequestOptions, 'url'>;
+
+Cypress.Commands.add('deleteHubCollection', (options: HubDeleteCollectionOptions) => {
+  cy.hubDeleteRequest({
+    ...options,
+    url: hubAPI`/v3/plugin/ansible/content/${
+      options.repository?.name ?? 'community'
+    }/collections/index/${options.collection_version?.namespace ?? ''}/${
+      options.collection_version?.name ?? ''
+    }/`,
+  });
+});
+
+Cypress.Commands.add('deleteHubCollectionByName', (name: string) => {
+  cy.requestGet<HubItemsResponse<CollectionVersionSearch>>(
+    hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${name}`
+  ).then((itemsResponse) => {
+    //itemsResponse is an array that can return more than one item with the same name
+    //the following code is written to prevent multiple DELETE requests of a collection
+    //with the same name. Without this code, the DELETE request would be made twice
+    //on the same collection, resulting in an API error
+    for (const collection of itemsResponse.data) {
+      const repeatedName = itemsResponse.data[0]?.collection_version?.name;
+      if (collection?.collection_version?.name === repeatedName) {
+        cy.deleteHubCollection(collection);
+        break;
+      } else {
+        cy.deleteHubCollection(collection);
+      }
+    }
   });
 });

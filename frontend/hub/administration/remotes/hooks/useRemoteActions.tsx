@@ -9,15 +9,15 @@ import {
   usePageNavigate,
 } from '../../../../../framework';
 import { HubRoute } from '../../../main/HubRoutes';
-import { IRemotes } from '../Remotes';
+import { HubRemote } from '../Remotes';
 import { useDeleteRemotes } from './useDeleteRemotes';
 
-export function useRemoteActions(options: { onRemotesDeleted: (remotes: IRemotes[]) => void }) {
+export function useRemoteActions(options: { onRemotesDeleted: (remotes: HubRemote[]) => void }) {
   const { onRemotesDeleted } = options;
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const deleteRemotes = useDeleteRemotes(onRemotesDeleted);
-  const actions = useMemo<IPageAction<IRemotes>[]>(
+  const actions = useMemo<IPageAction<HubRemote>[]>(
     () => [
       {
         icon: PencilAltIcon,

@@ -74,7 +74,7 @@ describe('Inventory source page', () => {
     cy.getBy('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
       cy.searchAndDisplayResource(credentialName);
       cy.getBy('[data-cy="checkbox-column-cell"] > label').click();
-      cy.getBy('#confirm').click();
+      cy.getBy('#submit').click();
     });
     cy.getBy('[data-cy="host-filter"]').type('/^test$/');
     cy.getBy('[data-cy="verbosity"]').type('1');

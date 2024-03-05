@@ -31,15 +31,16 @@ export function EventPayloadDialog(props: EventPayloadModalProps) {
       ]}
     >
       <Scrollable>
-        <PageDetails>
+        <PageDetails disableScroll={true}>
           <PageDetail label={t('Name')}>{props?.event?.source_name || ''}</PageDetail>
           <PageDetail label={t('Source type')}>{props?.event?.source_type || ''}</PageDetail>
           <PageDetail label={t('Timestamp')}>
             {props?.event?.received_at ? formatDateString(props.event?.received_at) : ''}
           </PageDetail>
         </PageDetails>
+
         {props?.event?.payload && (
-          <PageDetails numberOfColumns="single">
+          <PageDetails disableScroll={true} numberOfColumns="single">
             <PageDetailCodeEditor
               label={t('Event log')}
               value={JSON.stringify(props?.event?.payload)}

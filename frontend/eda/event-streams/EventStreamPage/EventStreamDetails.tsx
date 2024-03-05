@@ -1,4 +1,4 @@
-import { Label, LabelGroup, PageSection } from '@patternfly/react-core';
+import { Label, LabelGroup } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
 import {
@@ -8,6 +8,7 @@ import {
   Scrollable,
   useGetPageUrl,
 } from '../../../../framework';
+import { PageDetailCodeEditor } from '../../../../framework/PageDetails/PageDetailCodeEditor';
 import { formatDateString } from '../../../../framework/utils/formatDateString';
 import { capitalizeFirstLetter } from '../../../../framework/utils/strings';
 import { LastModifiedPageDetail } from '../../../common/LastModifiedPageDetail';
@@ -17,7 +18,7 @@ import { edaAPI } from '../../common/eda-utils';
 import { EdaEventStream } from '../../interfaces/EdaEventStream';
 import { RestartPolicyEnum } from '../../interfaces/generated/eda-api';
 import { EdaRoute } from '../../main/EdaRoutes';
-import { PageDetailCodeEditor } from '../../../../framework/PageDetails/PageDetailCodeEditor';
+import { logLevelName } from '../../rulebook-activations/RulebookActivationPage/RulebookActivationDetails';
 
 export function EventStreamDetails() {
   const { t } = useTranslation();
@@ -39,7 +40,7 @@ export function EventStreamDetails() {
   }
   return (
     <Scrollable>
-      <PageDetails>
+      <PageDetails disableScroll={true}>
         <PageDetail label={t('Event stream ID')}>{eventStream?.id || ''}</PageDetail>
         <PageDetail label={t('Name')}>{eventStream?.name || ''}</PageDetail>
         <PageDetail label={t('Description')}>{eventStream?.description || ''}</PageDetail>
@@ -75,22 +76,23 @@ export function EventStreamDetails() {
         <PageDetail label={t('Restart policy')} helpText={restartPolicyHelpBlock}>
           {eventStream?.restart_policy ? restartPolicyName(eventStream?.restart_policy, t) : ''}
         </PageDetail>
+        <PageDetail label={t('Log level')} helpText={t('Error | Info | Debug')}>
+          {logLevelName(eventStream.log_level, t)}
+        </PageDetail>
         <PageDetail label={t('Created')}>
           {eventStream?.created_at ? formatDateString(eventStream?.created_at) : ''}
         </PageDetail>
-        <LastModifiedPageDetail
-          value={eventStream?.modified_at ? formatDateString(eventStream?.modified_at) : ''}
-        />
+        <LastModifiedPageDetail value={eventStream?.modified_at ? eventStream?.modified_at : ''} />
       </PageDetails>
       {eventStream?.source_args && (
-        <PageSection variant="light">
+        <PageDetails disableScroll={true} numberOfColumns={'single'}>
           <PageDetailCodeEditor
             value={eventStream.source_args}
             showCopyToClipboard={true}
             label={t('Arguments')}
             helpText={t('Arguments')}
           />
-        </PageSection>
+        </PageDetails>
       )}
     </Scrollable>
   );

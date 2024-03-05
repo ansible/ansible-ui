@@ -17,7 +17,7 @@ type TemplateLaunch = JobLaunch & WorkflowJobLaunch;
 export function useLaunchTemplate() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const postRequest = usePostRequest();
+  const postRequest = usePostRequest<Partial<JobTemplate | WorkflowJobTemplate>, UnifiedJob>();
   const alertToaster = usePageAlertToaster();
   const pageNavigate = usePageNavigate();
   const getJobOutputUrl = useGetJobOutputUrl();
@@ -33,19 +33,12 @@ export function useLaunchTemplate() {
       const launchConfig = await requestGet<TemplateLaunch>(launchEndpoint);
 
       if (canLaunchWithoutPrompt(launchConfig)) {
-        let launchJob;
-        if (template.type === 'job_template') {
-          launchJob = await postRequest(launchEndpoint, {});
-        } else if (template.type === 'workflow_job_template') {
-          launchJob = await postRequest(launchEndpoint, {});
-        }
-        navigate(getJobOutputUrl(launchJob as UnifiedJob));
+        const launchJob = await postRequest(launchEndpoint, {});
+        navigate(getJobOutputUrl(launchJob));
       } else {
-        if (template.type === 'job_template') {
-          pageNavigate(AwxRoute.TemplateLaunchWizard, { params: { id: template.id } });
-        } else if (template.type === 'workflow_job_template') {
-          pageNavigate(AwxRoute.WorkflowJobTemplateLaunchWizard, { params: { id: template.id } });
-        }
+        pageNavigate(AwxRoute.TemplateLaunchWizard, {
+          params: { id: template.id },
+        });
       }
     } catch (error) {
       alertToaster.addAlert({

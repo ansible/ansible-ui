@@ -30,11 +30,11 @@ function SelectJobTemplate(props: { title: string; onSelect: (template: JobTempl
 export function useSelectJobTemplate() {
   const [_, setDialog] = usePageDialog();
   const { t } = useTranslation();
-  const openSelectInventory = useCallback(
+  const openSelectTemplate = useCallback(
     (onSelect: (template: JobTemplate) => void) => {
       setDialog(<SelectJobTemplate title={t('Select job template')} onSelect={onSelect} />);
     },
     [setDialog, t]
   );
-  return openSelectInventory;
+  return openSelectTemplate;
 }

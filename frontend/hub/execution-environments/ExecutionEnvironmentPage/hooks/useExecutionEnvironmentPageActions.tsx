@@ -1,7 +1,7 @@
-import { ButtonVariant } from '@patternfly/react-core';
-import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { ButtonVariant } from '@patternfly/react-core';
+import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { HubRoute } from '../../../main/HubRoutes';
 import {
   IPageAction,
@@ -10,8 +10,11 @@ import {
   usePageNavigate,
 } from '../../../../../framework';
 import { ExecutionEnvironment } from '../../ExecutionEnvironment';
-import { useDeleteExecutionEnvironments } from '../../hooks/useExecutionEnvironmentsActions';
-import { useSignExecutionEnvironments } from '../../hooks/useExecutionEnvironmentsActions';
+import {
+  useDeleteExecutionEnvironments,
+  useSyncExecutionEnvironments,
+  useSignExecutionEnvironments,
+} from '../../hooks/useExecutionEnvironmentsActions';
 
 export function useExecutionEnvironmentPageActions(options: { refresh?: () => undefined }) {
   const { t } = useTranslation();
@@ -26,6 +29,15 @@ export function useExecutionEnvironmentPageActions(options: { refresh?: () => un
     void refresh?.();
   });
 
+  const syncExecutionEnvironments = useSyncExecutionEnvironments(() => {
+    void refresh?.();
+  });
+
+  const isSyncRunning = (ee: ExecutionEnvironment) =>
+    ['running', 'waiting', 'pending'].includes(
+      ee.pulp?.repository?.remote?.last_sync_task?.state || ''
+    );
+
   return useMemo(() => {
     const actions: IPageAction<ExecutionEnvironment>[] = [
       {
@@ -39,6 +51,14 @@ export function useExecutionEnvironmentPageActions(options: { refresh?: () => un
           pageNavigate(HubRoute.EditExecutionEnvironment, { params: { id: ee?.name } }),
       },
       { type: PageActionType.Seperator },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        label: t('Sync from registry'),
+        isHidden: (ee: ExecutionEnvironment) => !ee.pulp?.repository?.remote,
+        isDisabled: (ee) => (isSyncRunning(ee) ? t('Sync is already running.') : undefined),
+        onClick: (ee: ExecutionEnvironment) => syncExecutionEnvironments([ee]),
+      },
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
@@ -61,5 +81,11 @@ export function useExecutionEnvironmentPageActions(options: { refresh?: () => un
       },
     ];
     return actions;
-  }, [pageNavigate, t, deleteExecutionEnvironments, signExecutionEnvironments]);
+  }, [
+    pageNavigate,
+    t,
+    deleteExecutionEnvironments,
+    signExecutionEnvironments,
+    syncExecutionEnvironments,
+  ]);
 }

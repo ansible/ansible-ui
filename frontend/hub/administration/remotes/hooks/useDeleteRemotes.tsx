@@ -4,15 +4,15 @@ import { nameKeyFn } from '../../../../common/utils/nameKeyFn';
 import { pulpAPI } from '../../../common/api/formatPath';
 import { hubAPIDelete, parsePulpIDFromURL } from '../../../common/api/hub-api-utils';
 import { useHubBulkConfirmation } from '../../../common/useHubBulkConfirmation';
-import { IRemotes } from '../Remotes';
+import { HubRemote } from '../Remotes';
 import { useRemoteColumns } from './useRemoteColumns';
 
-export function useDeleteRemotes(onComplete: (remotes: IRemotes[]) => void) {
+export function useDeleteRemotes(onComplete: (remotes: HubRemote[]) => void) {
   const { t } = useTranslation();
   const confirmationColumns = useRemoteColumns();
-  const bulkAction = useHubBulkConfirmation<IRemotes>();
+  const bulkAction = useHubBulkConfirmation<HubRemote>();
 
-  const deleteRemotes = (remotes: IRemotes[]) => {
+  const deleteRemotes = (remotes: HubRemote[]) => {
     bulkAction({
       title: t('Permanently delete remotes', { count: remotes.length }),
       confirmText: t('Yes, I confirm that I want to delete these {{count}} remotes.', {
@@ -26,7 +26,7 @@ export function useDeleteRemotes(onComplete: (remotes: IRemotes[]) => void) {
       actionColumns: confirmationColumns,
       onComplete,
       alertPrompts: [t('This will also delete all associated resources under this remote.')],
-      actionFn: async (remote: IRemotes, signal: AbortSignal) =>
+      actionFn: async (remote: HubRemote, signal: AbortSignal) =>
         await hubAPIDelete(
           pulpAPI`/remotes/ansible/collection/${parsePulpIDFromURL(remote.pulp_href)}/`,
           signal
