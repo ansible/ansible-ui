@@ -52,6 +52,29 @@ describe('Collections', () => {
       });
     });
 
+    it('can sign and approve a collection version', () => {
+      cy.uploadCollection(collectionName, namespace.name, '3.0.0').then((result) => {
+        cy.approveCollection(collectionName, namespace.name, result.version as string);
+        cy.navigateTo('hub', Collections.url);
+        cy.get('[data-cy="table-view"]').click();
+        cy.filterTableBySingleText(collectionName);
+        cy.get('[data-cy="actions-column-cell"]').click();
+        cy.get('[data-cy="sign-collection"]').click();
+        cy.get('#confirm').click();
+        cy.clickButton(/^Sign collections$/);
+        cy.contains(/^Success$/);
+        cy.clickButton(/^Close$/);
+        cy.get('[data-cy="label-signed"]').contains(Collections.signedStatus);
+        cy.get('[data-cy="actions-column-cell"]').click();
+        cy.get('[data-cy="delete-entire-collection-from-system"]').click({ force: true });
+        cy.get('#confirm').click();
+        cy.clickButton(/^Delete collections/);
+        cy.contains(/^Success$/);
+        cy.clickButton(/^Close$/);
+        cy.clickButton(/^Clear all filters$/);
+      });
+    });
+
     it('can upload and delete collection', () => {
       cy.galaxykit(`collection upload ${namespace.name} ${collectionName} --skip-upload`).then(
         (result) => {
