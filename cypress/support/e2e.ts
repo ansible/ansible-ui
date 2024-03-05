@@ -81,6 +81,8 @@ before(function () {
       });
       break;
     }
+    case '4103': // EDA
+      break;
   }
 });
 
@@ -101,7 +103,18 @@ after(function () {
 });
 
 beforeEach(function () {
-  cy.visit('/');
+  const devBaseUrlPort = Cypress.config().baseUrl?.split(':').slice(-1).toString();
+  switch (devBaseUrlPort) {
+    case '4101': // AWX
+      cy.visit('/');
+      break;
+    case '4102': // HUB
+      cy.visit('/');
+      break;
+    case '4103': // EDA
+      cy.visit('/');
+      break;
+  }
 });
 
 // AWX E2E Port: 4101
