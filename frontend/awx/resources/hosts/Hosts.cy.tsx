@@ -1,5 +1,6 @@
 import { ToolbarFilterType } from '../../../../framework';
 import * as useOptions from '../../../common/crud/useOptions';
+import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 import { AwxHost } from '../../interfaces/AwxHost';
 import { Hosts } from './Hosts';
 
@@ -61,8 +62,8 @@ describe('Hosts.cy.ts', () => {
     it('disable delete row action if the user does not have permissions', () => {
       cy.mount(<Hosts />);
       cy.fixture('hosts')
-        .then((hosts) => {
-          for (let i = 0; i < (hosts.results as AwxHost[]).length; i++) {
+        .then((hosts: AwxItemsResponse<AwxHost>) => {
+          for (let i = 0; i < hosts.results.length; i++) {
             hosts.results[i].summary_fields.user_capabilities.delete = false;
             hosts.results[i].name = 'test';
           }
@@ -95,8 +96,8 @@ describe('Hosts.cy.ts', () => {
 
     it('disable edit row action if the user does not have permissions', () => {
       cy.fixture('hosts')
-        .then((hosts) => {
-          for (let i = 0; i < (hosts.results as AwxHost[]).length; i++) {
+        .then((hosts: AwxItemsResponse<AwxHost>) => {
+          for (let i = 0; i < hosts.results.length; i++) {
             hosts.results[i].summary_fields.user_capabilities.edit = false;
             hosts.results[i].name = 'test';
           }

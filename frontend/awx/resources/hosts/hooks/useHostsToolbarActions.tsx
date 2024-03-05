@@ -67,6 +67,6 @@ export function useHostsToolbarActions(view: IAwxView<AwxHost>) {
         isDisabled: (hosts: AwxHost[]) => cannotDeleteResources(hosts, t),
       },
     ],
-    [pageNavigate, deleteHosts, view.filterState, t]
+    [pageNavigate, deleteHosts, canCreateHost, view.filterState, t]
   );
 }
