@@ -417,4 +417,28 @@ describe('Workflow Job templates visualizer', () => {
       );
     });
   });
+  it('Should launch a workflow job template from the visualizer, and navigate to the output page.', function () {
+    let projectNode: WorkflowNode;
+    cy.createAwxWorkflowVisualizerProjectNode(workflowJobTemplate, project)
+      .then((projNode) => {
+        projectNode = projNode;
+        cy.createAwxWorkflowVisualizerApprovalNode(workflowJobTemplate).then((appNode) => {
+          cy.createWorkflowJTSuccessNodeLink(projectNode, appNode);
+        });
+      })
+      .then(() => {
+        cy.visit(`/templates/workflow_job_template/${workflowJobTemplate?.id}/visualizer`);
+        cy.contains('Workflow Visualizer').should('be.visible');
+        cy.get('[data-cy="workflow-visualizer-toolbar-kebab"]').click();
+        cy.intercept('POST', `api/v2/workflow_job_templates/${workflowJobTemplate.id}/launch/`).as(
+          'launchWJT-WithNodes'
+        );
+        cy.clickButton('Launch');
+        cy.wait('@launchWJT-WithNodes')
+          .its('response.body.id')
+          .then((jobId: string) => {
+            cy.url().should('contain', `/jobs/workflow/${jobId}/output`);
+          });
+      });
+  });
 });
