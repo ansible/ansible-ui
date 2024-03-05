@@ -46,8 +46,8 @@ export function AwxRunCommand() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const alertToaster = usePageAlertToaster();
+  const [selectedEE, setSelectedEE] = useState<ExecutionEnvironment>();
   const { data: organization } = useGetItem<Organization>(awxAPI`/organizations/`);
-  const [selectedEE, setSelectEE] = useState<ExecutionEnvironment[]>();
 
   const toolbarFilters = useExecutionEnvironmentsFilters();
   const tableColumns = useExecutionEnvironmentsColumns({ disableLinks: true });
@@ -68,13 +68,11 @@ export function AwxRunCommand() {
     tableColumns,
     disableQueryString: true,
     queryParams: defaultParams,
-    defaultSelection: selectedEE ? selectedEE : [],
   });
 
   useEffect(() => {
-    console.log(view.selectedItems)
-    setSelectEE(view.selectedItems);
-  },[view.selectedItems])
+    console.log(selectedEE)
+  },[selectedEE])
 
   const commandOptions = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/ad_hoc_commands/`)
     .data?.actions?.POST;
@@ -262,13 +260,14 @@ export function AwxRunCommand() {
           errorStateTitle={t('Error loading execution environments')}
           emptyStateTitle={t('No execution environments available')}
           emptyStateDescription={t('Please create a execution environment')}
+          {...view}
+          isSelectMultiple={false}
           onSelect={() => null}
           disableCardView
           disableListView
           compact
           disableBodyPadding
-          isSelectMultiple={false}
-          {...view}
+          // isSelected={(e) => (selectedEE ? selectedEE.id === e.id : false)}
         />
       ),
     },
