@@ -56,6 +56,7 @@ export function DeleteRoleConfirmation(props: DeleteRoleConfirmationProps) {
           {t(`Delete`)}
         </Button>,
         <Button
+          id="cancel"
           ouiaId="delete-role-modal-cancel-button"
           key="cancel"
           variant="link"

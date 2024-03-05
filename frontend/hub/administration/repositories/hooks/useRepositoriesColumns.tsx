@@ -15,7 +15,7 @@ export function useRepositoriesColumns(_options?: {
   const tableColumns = useMemo<ITableColumn<Repository>[]>(
     () => [
       {
-        header: t('Repository name'),
+        header: t('Name'),
         cell: (repository) => (
           <TextCell
             text={repository.name}

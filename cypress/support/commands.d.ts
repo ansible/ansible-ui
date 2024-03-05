@@ -424,7 +424,7 @@ declare global {
       );
 
       /** Selects a table row by clicking on the row checkbox. */
-      selectTableRowCheckbox(
+      selectTableRowByCheckbox(
         columnDataCy: string,
         text: string,
         options?: { disableFilter?: boolean }
@@ -485,9 +485,6 @@ declare global {
 
       /** Finds a table row containing text and clicks the link inside that row. */
       clickTableRow(name: string | RegExp, filter?: boolean): Chainable<void>;
-
-      /** Click the action in the kebab dropdown. */
-      clickKebabAction(dataCyLabel: string): Chainable<void>;
 
       /** Finds a table row containing text and clicks action specified by label. */
       clickTableRowKebabAction(

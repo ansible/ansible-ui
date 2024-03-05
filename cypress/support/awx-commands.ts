@@ -445,14 +445,6 @@ Cypress.Commands.add('selectDetailsPageKebabAction', (dataCy: string) => {
     });
 });
 
-Cypress.Commands.add('clickKebabAction', (dataCyLabel: string) => {
-  cy.get('[data-cy*="actions-dropdown"]')
-    .click()
-    .then(() => {
-      cy.clickByDataCy(dataCyLabel);
-    });
-});
-
 Cypress.Commands.add(
   'clickTableRowKebabAction',
   (name: string | RegExp, dataCyLabel: string, filter?: boolean) => {
