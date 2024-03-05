@@ -20,10 +20,10 @@ import { CreateSchedule } from '../../views/schedules/ScheduleForm';
 import { ScheduleDetails } from '../../views/schedules/SchedulePage/ScheduleDetails';
 import { SchedulePage } from '../../views/schedules/SchedulePage/SchedulePage';
 import { ScheduleRules } from '../../views/schedules/SchedulePage/ScheduleRules';
-import { Schedules } from '../../views/schedules/Schedules';
 import { AwxRoute } from '../AwxRoutes';
 import { ResourceNotifications } from '../../resources/notifications/ResourceNotifications';
 import { TemplateJobs } from '../../resources/templates/TemplatePage/TemplateJobs';
+import { SchedulesList } from '../../views/schedules/SchedulesList';
 
 export function useAwxTemplateRoutes() {
   const { t } = useTranslation();
@@ -123,7 +123,7 @@ export function useAwxTemplateRoutes() {
                 {
                   id: AwxRoute.JobTemplateSchedules,
                   path: 'schedules',
-                  element: <Schedules sublistEndpoint={awxAPI`/job_templates`} />,
+                  element: <SchedulesList sublistEndpoint={awxAPI`/job_templates`} />,
                 },
                 {
                   path: '',
@@ -229,7 +229,7 @@ export function useAwxTemplateRoutes() {
                 {
                   id: AwxRoute.WorkflowJobTemplateSchedules,
                   path: 'schedules',
-                  element: <Schedules sublistEndpoint={awxAPI`/workflow_job_templates`} />,
+                  element: <SchedulesList sublistEndpoint={awxAPI`/workflow_job_templates`} />,
                 },
                 {
                   id: AwxRoute.WorkflowJobTemplateNotifications,
