@@ -53,6 +53,7 @@ export function useNameColumn<
   sort?: string;
   disableSort?: boolean;
   disableLinks?: boolean;
+  defaultSort?: boolean;
 }) {
   const { url, onClick, disableSort, disableLinks } = options ?? {};
   const { t } = useTranslation();
@@ -74,9 +75,18 @@ export function useNameColumn<
       sort: disableSort ? undefined : options?.sort ?? 'name',
       card: 'name',
       list: 'name',
-      defaultSort: true,
+      defaultSort: typeof options?.defaultSort !== 'undefined' ? options?.defaultSort : true,
     }),
-    [disableLinks, disableSort, options?.sort, onClick, options?.header, t, url]
+    [
+      options?.header,
+      options?.sort,
+      options?.defaultSort,
+      t,
+      disableSort,
+      disableLinks,
+      url,
+      onClick,
+    ]
   );
   return column;
 }

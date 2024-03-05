@@ -72,9 +72,9 @@ export function MultiSelectDialog<T extends object>(props: MultiSelectDialogProp
       tabIndex={0}
       actions={[
         <Button
-          key="confirm"
+          key="submit"
           variant="primary"
-          id="confirm"
+          id="submit"
           onClick={() => {
             onClose();
             onSelect(view.selectedItems);

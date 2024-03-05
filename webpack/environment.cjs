@@ -11,6 +11,9 @@ const EDA_PROTOCOL = process.env.EDA_PROTOCOL || 'http';
 const EDA_HOST = process.env.EDA_HOST || 'localhost:8000';
 const EDA_SERVER =
   process.env.EDA_SERVER || process.env.CYPRESS_EDA_SERVER || `${EDA_PROTOCOL}://${EDA_HOST}`;
+const EDA_SERVER_UUID = process.env.EDA_SERVER_UUID || process.env.CYPRESS_EDA_SERVER_UUID || ``;
+const EDA_WEBHOOK_SERVER =
+  process.env.EDA_WEBHOOK_SERVER || process.env.CYPRESS_EDA_WEBHOOK_SERVER || ``;
 const EDA_USERNAME = process.env.EDA_USERNAME || process.env.CYPRESS_EDA_USERNAME || 'admin';
 const EDA_PASSWORD = process.env.EDA_PASSWORD || process.env.CYPRESS_EDA_PASSWORD || 'testpass';
 const EDA_API_PREFIX = process.env.EDA_API_PREFIX || '/api/eda/v1';
@@ -35,6 +38,8 @@ module.exports = {
   EDA_API_PREFIX,
   EDA_PASSWORD,
   EDA_SERVER,
+  EDA_SERVER_UUID,
+  EDA_WEBHOOK_SERVER,
   EDA_USERNAME,
   HUB_API_PREFIX,
   HUB_PASSWORD,

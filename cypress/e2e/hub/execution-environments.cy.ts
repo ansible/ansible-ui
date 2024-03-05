@@ -163,7 +163,7 @@ describe('Execution Environment Details tab', () => {
     cy.get('[data-cy="readme"]').within(() => {
       cy.contains('Raw Markdown');
       cy.contains('Preview');
-      cy.typeBy('[data-cy="raw-markdown"]', '# Heading 1');
+      cy.getByDataCy('raw-markdown').type('# Heading 1');
       cy.contains('Preview').parent().get('h1').contains('Heading 1');
       cy.contains('Cancel');
       cy.intercept(
@@ -181,7 +181,7 @@ describe('Execution Environment Details tab', () => {
     cy.get('[data-cy="readme"]').within(() => {
       cy.contains('Heading 1');
       cy.clickButton('Edit');
-      cy.typeBy('[data-cy="raw-markdown"]', '{enter}**bold text**');
+      cy.getByDataCy('raw-markdown').type('{enter}**bold text**');
       cy.contains('Preview').parent().get('strong').contains('bold text');
       cy.intercept(
         'PUT',
@@ -198,7 +198,7 @@ describe('Execution Environment Details tab', () => {
     cy.visit(`/execution-environments/${executionEnvironment.name}/`);
     cy.get('[data-cy="readme"]').within(() => {
       cy.clickButton('Edit');
-      cy.typeBy('[data-cy="raw-markdown"]', '{enter}this should not be saved.');
+      cy.getByDataCy('raw-markdown').clear().type('{enter}this should not be saved.');
       cy.contains('Preview').parent().contains('this should not be saved.');
       cy.clickButton('Cancel');
     });

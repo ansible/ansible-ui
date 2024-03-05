@@ -14,10 +14,6 @@ Cypress.Commands.add('searchAndDisplayResource', (resourceName: string) => {
     });
 });
 
-Cypress.Commands.add('getFiltersToolbarItem', () => {
-  cy.get('#filter').parent().parent().parent().parent();
-});
-
 Cypress.Commands.add('getListRowByText', (name: string | RegExp, filter?: boolean) => {
   if (filter !== false && typeof name === 'string') {
     cy.filterTableByText(name);
@@ -30,12 +26,6 @@ Cypress.Commands.add('openToolbarFilterTypeSelect', () => {
   cy.get('#filter-select');
 });
 
-Cypress.Commands.add('selectToolbarFilterType', (text: string | RegExp) => {
-  cy.openToolbarFilterTypeSelect().within(() => {
-    cy.clickButton(text);
-  });
-});
-
 Cypress.Commands.add(
   'filterTableByText',
   (text: string, variant: 'SingleText' | 'MultiText' = 'MultiText') => {
@@ -45,11 +35,12 @@ Cypress.Commands.add(
         cy.get('input').clear().type(text, { delay: 0 });
       });
     if (variant === 'MultiText') {
-      cy.clickByDataCy('apply-filter');
+      cy.getByDataCy('apply-filter').click();
     }
     cy.contains('.pf-v5-c-chip__text', text);
   }
 );
+
 Cypress.Commands.add('filterTableBySingleText', (text: string, disableWait?: boolean) => {
   cy.filterTableByText(text, 'SingleText');
   // TODO - this should be in future better sync, but for now, we need to have tests more stable
@@ -59,14 +50,14 @@ Cypress.Commands.add('filterTableBySingleText', (text: string, disableWait?: boo
 });
 
 Cypress.Commands.add('filterTableByTypeAndText', (filterLabel: string | RegExp, text: string) => {
-  cy.selectToolbarFilterType(filterLabel);
+  cy.selectToolbarFilterByLabel(filterLabel);
   cy.filterTableByText(text);
 });
 
 Cypress.Commands.add(
   'filterTableByTypeAndSingleText',
   (filterLabel: string | RegExp, text: string) => {
-    cy.selectToolbarFilterType(filterLabel);
+    cy.selectToolbarFilterByLabel(filterLabel);
     cy.filterTableByText(text, 'SingleText');
   }
 );
@@ -85,7 +76,7 @@ Cypress.Commands.add('clearAllFilters', () => {
 Cypress.Commands.add(
   'filterBySingleSelection',
   (filterType: RegExp | string, selectLabel: RegExp | string) => {
-    cy.selectToolbarFilterType(filterType);
+    cy.selectToolbarFilterByLabel(filterType);
     cy.get('#filter-input').click();
     cy.get('#filter-input-select').within(() => {
       cy.contains(selectLabel).click();
@@ -96,7 +87,7 @@ Cypress.Commands.add(
 Cypress.Commands.add(
   'filterByMultiSelection',
   (filterType: RegExp | string, selectLabel: RegExp | string) => {
-    cy.selectToolbarFilterType(filterType);
+    cy.selectToolbarFilterByLabel(filterType);
     cy.get('#filter-input').click();
     cy.get('#filter-input-select').within(() => {
       cy.contains(selectLabel).click();
