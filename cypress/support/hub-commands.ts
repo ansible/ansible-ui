@@ -408,6 +408,19 @@ Cypress.Commands.add(
 );
 
 // HUB Execution Environment Commands
+export type HubQueryExecutionEnvironmentsOptions = { qs?: { limit?: number } } & Omit<
+  HubGetRequestOptions,
+  'url'
+>;
+Cypress.Commands.add(
+  'queryHubExecutionEnvironments',
+  (options?: HubQueryExecutionEnvironmentsOptions) => {
+    cy.hubGetRequest({
+      ...options,
+      url: hubAPI`/_ui/v1/execution-environments/remotes/`,
+    });
+  }
+);
 export type HubCreateExecutionEnvironmentOptions = {
   executionEnvironment: SetRequired<Partial<HubExecutionEnvironment>, 'registry'>;
 } & Omit<HubPostRequestOptions, 'url' | 'body'>;
@@ -469,6 +482,16 @@ Cypress.Commands.add('deleteHubRemoteRegistry', (options: HubDeleteRemoteRegistr
 });
 
 // HUB Repository Commands
+export type HubQueryRepositoriesOptions = { qs?: { limit?: number } } & Omit<
+  HubGetRequestOptions,
+  'url'
+>;
+Cypress.Commands.add('queryHubRepositories', (options?: HubQueryRepositoriesOptions) => {
+  cy.hubGetRequest({
+    ...options,
+    url: pulpAPI`/repositories/ansible/ansible/`,
+  });
+});
 export type HubCreateRepositoryOptions = {
   repository: Partial<Repository>;
 } & Omit<HubPostRequestOptions, 'url' | 'body'>;
@@ -498,6 +521,16 @@ Cypress.Commands.add('deleteHubRepository', (options: HubDeleteRepositoryOptions
 });
 
 // HUB Namespace Commands
+export type HubQueryNamespacesOptions = { qs?: { limit?: number } } & Omit<
+  HubGetRequestOptions,
+  'url'
+>;
+Cypress.Commands.add('queryHubNamespaces', (options?: HubQueryNamespacesOptions) => {
+  cy.hubGetRequest({
+    ...options,
+    url: hubAPI`/_ui/v1/namespaces/`,
+  });
+});
 export type HubCreateNamespaceOptions = { namespace: Partial<HubNamespace> } & Omit<
   HubPostRequestOptions,
   'url' | 'body'
@@ -524,6 +557,13 @@ Cypress.Commands.add('deleteHubNamespace', (options: HubDeleteNamespaceOptions) 
 });
 
 // HUB Role Commands
+export type HubQueryRolesOptions = { qs?: { limit?: number } } & Omit<HubGetRequestOptions, 'url'>;
+Cypress.Commands.add('queryHubRoles', (options?: HubQueryRolesOptions) => {
+  cy.hubGetRequest({
+    ...options,
+    url: pulpAPI`/roles/`,
+  });
+});
 export type HubCreateRoleOptions = { role: Partial<Role> } & Omit<
   HubPostRequestOptions,
   'url' | 'body'
@@ -553,6 +593,16 @@ Cypress.Commands.add('deleteHubRole', (options: HubDeleteRoleOptions) => {
 });
 
 // HUB Remote Commands
+export type HubQueryRemotesOptions = { qs?: { limit?: number } } & Omit<
+  HubGetRequestOptions,
+  'url'
+>;
+Cypress.Commands.add('queryHubRemotes', (options?: HubQueryRemotesOptions) => {
+  cy.hubGetRequest({
+    ...options,
+    url: pulpAPI`/remotes/ansible/collection/`,
+  });
+});
 export type HubCreateRemoteOptions = { remote: Partial<HubRemote> } & Omit<
   HubPostRequestOptions,
   'url' | 'body'
