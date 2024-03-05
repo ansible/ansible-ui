@@ -28,8 +28,10 @@ before(function () {
       cy.createGlobalOrganization();
       cy.createGlobalProject();
       break;
-    case '4102': // HUB
+    case '4102': {
+      // HUB
       cy.hubLogin();
+
       cy.requestPost<{ id: number }, HubUser>(hubAPI`/_ui/v1/users/`, {
         username: galaxykitUsername,
         first_name: '',
@@ -41,6 +43,44 @@ before(function () {
       }).then((response) => {
         galaxyE2EUserID = response.id;
       });
+
+      const oneHourAgo = new Date();
+      oneHourAgo.setHours(oneHourAgo.getHours() - 1);
+
+      // cleanup old e2e repositories
+      cy.queryHubRepositories().then((response) => {
+        for (const repository of response.body.results) {
+          if (repository.name.startsWith('e2e_') || repository.name.startsWith('hub_e2e_')) {
+            if (new Date(repository.pulp_created ?? '') < oneHourAgo) {
+              cy.deleteHubRepository(repository);
+            }
+          }
+        }
+      });
+
+      // should cleanup old e2e roles
+      cy.queryHubRoles().then((response) => {
+        for (const role of response.body.results) {
+          if (role.name.startsWith('e2e_') || role.name.startsWith('hub_e2e_')) {
+            if (new Date(role.pulp_created ?? '') < oneHourAgo) {
+              cy.deleteHubRole(role);
+            }
+          }
+        }
+      });
+
+      // cleanup old e2e remotes
+      cy.queryHubRemotes().then((response) => {
+        for (const remote of response.body.results) {
+          if (remote.name.startsWith('e2e_') || remote.name.startsWith('hub_e2e_')) {
+            if (new Date(remote.pulp_created ?? '') < oneHourAgo) {
+              cy.deleteHubRemote(remote);
+            }
+          }
+        }
+      });
+      break;
+    }
   }
 });
 
@@ -58,6 +98,10 @@ after(function () {
       });
       break;
   }
+});
+
+beforeEach(function () {
+  cy.visit('/');
 });
 
 // AWX E2E Port: 4101
