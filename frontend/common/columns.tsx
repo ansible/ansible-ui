@@ -102,6 +102,7 @@ export function useDescriptionColumn<T extends { description?: string | null | u
       list: 'description',
       card: 'description',
       modal: ColumnModalOption.hidden,
+      dashboard: ColumnDashboardOption.hidden,
     }),
     [t]
   );
@@ -148,7 +149,7 @@ export function useLabelsColumn() {
         );
       },
       table: ColumnTableOption.expanded,
-      value: (item) => item.summary_fields?.labels && item.summary_fields.labels.results.length > 0,
+      value: (item) => (item.summary_fields?.labels.results.length ? true : undefined),
       card: 'hidden',
       list: 'hidden',
       modal: ColumnModalOption.hidden,
@@ -172,8 +173,7 @@ export function useCredentialsColumn() {
           ))}
         </LabelGroup>
       ),
-      value: (item) =>
-        item.summary_fields?.credentials && item.summary_fields.credentials.length > 0,
+      value: (item) => (item.summary_fields?.credentials?.length ? true : undefined),
       table: ColumnTableOption.expanded,
       card: 'hidden',
       list: 'hidden',
