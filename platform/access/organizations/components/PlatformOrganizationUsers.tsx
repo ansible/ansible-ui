@@ -14,14 +14,14 @@ import {
 } from '../../../../frontend/awx/interfaces/OptionsResponse';
 import { useOptions } from '../../../../frontend/common/crud/useOptions';
 import { CubesIcon } from '@patternfly/react-icons';
-import {
-  useOrganizationAdminsRowActions,
-  useOrganizationAdminsToolbarActions,
-} from '../hooks/useOrganizationAdminsActions';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
+import {
+  useOrganizationUsersRowActions,
+  useOrganizationUsersToolbarActions,
+} from '../hooks/useOrganizationUsersActions';
 import { LoadingState } from '../../../../framework/components/LoadingState';
 
-export function PlatformOrganizationAdmins() {
+export function PlatformOrganizationUsers() {
   const { t } = useTranslation();
   const toolbarFilters = useUsersFilters();
   const tableColumns = useUsersColumns();
@@ -33,46 +33,46 @@ export function PlatformOrganizationAdmins() {
   } = useGetItem<PlatformOrganization>(gatewayV1API`/organizations`, params.id);
 
   const view = usePlatformView<PlatformUser>({
-    url: gatewayV1API`/organizations/${organization?.id?.toString() ?? ''}/admins/`,
+    url: gatewayV1API`/organizations/${organization?.id?.toString() ?? ''}/users/`,
     toolbarFilters,
     tableColumns,
   });
 
   const { data: associateOptions, isLoading: isLoadingOptions } = useOptions<
     OptionsResponse<ActionsResponse>
-  >(gatewayV1API`/organizations/${organization?.id?.toString() ?? ''}/admins/associate/`);
-  const canAssociateAdministrator = Boolean(
+  >(gatewayV1API`/organizations/${organization?.id?.toString() ?? ''}/users/associate/`);
+  const canAssociateUser = Boolean(
     associateOptions && associateOptions.actions && associateOptions.actions['POST']
   );
-  const toolbarActions = useOrganizationAdminsToolbarActions(view);
-  const rowActions = useOrganizationAdminsRowActions(view);
+  const toolbarActions = useOrganizationUsersToolbarActions(view);
+  const rowActions = useOrganizationUsersRowActions(view);
 
   if (isLoading || isLoadingOptions) return <LoadingState />;
   if (error) return <AwxError error={error} />;
 
   return (
     <PageTable<PlatformUser>
-      id="platform-organization-admins-table"
+      id="platform-organization-users-table"
       toolbarFilters={toolbarFilters}
       toolbarActions={toolbarActions}
       tableColumns={tableColumns}
       rowActions={rowActions}
-      errorStateTitle={t('Error loading administrators')}
+      errorStateTitle={t('Error loading users')}
       emptyStateTitle={
-        canAssociateAdministrator
-          ? t('There are currently no administrators added to this organization.')
-          : t('You do not have permission to add an administrator to this organization.')
+        canAssociateUser
+          ? t('There are currently no users added to this organization.')
+          : t('You do not have permission to add a user to this organization.')
       }
       emptyStateDescription={
-        canAssociateAdministrator
-          ? t('Add administrators by clicking the button below.')
+        canAssociateUser
+          ? t('Add users by clicking the button below.')
           : t(
               'Please contact your organization administrator if there is an issue with your access.'
             )
       }
-      emptyStateIcon={canAssociateAdministrator ? undefined : CubesIcon}
-      emptyStateButtonText={canAssociateAdministrator ? t('Add administrators') : undefined}
-      emptyStateActions={canAssociateAdministrator ? toolbarActions.slice(0, 1) : undefined}
+      emptyStateIcon={canAssociateUser ? undefined : CubesIcon}
+      emptyStateButtonText={canAssociateUser ? t('Add user(s)') : undefined}
+      emptyStateActions={canAssociateUser ? toolbarActions.slice(0, 1) : undefined}
       {...view}
     />
   );

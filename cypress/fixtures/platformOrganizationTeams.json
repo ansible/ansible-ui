@@ -1,0 +1,87 @@
+{
+  "count": 2,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "name": "Test team 1",
+      "id": 2,
+      "url": "/api/gateway/v1/teams/2/",
+      "created_on": "2024-03-04T16:19:54.539999Z",
+      "created_by": 5,
+      "modified_on": "2024-03-04T16:19:54.539999Z",
+      "modified_by": 5,
+      "related": {
+        "admins": "/api/gateway/v1/teams/2/admins/",
+        "created_by": "/api/gateway/v1/users/5/",
+        "modified_by": "/api/gateway/v1/users/5/",
+        "organization": "/api/gateway/v1/organizations/1/",
+        "parents": "/api/gateway/v1/teams/2/parents/",
+        "users": "/api/gateway/v1/teams/2/users/"
+      },
+      "summary_fields": {
+        "created_by": {
+          "id": 5,
+          "username": "dev",
+          "first_name": "",
+          "last_name": ""
+        },
+        "modified_by": {
+          "id": 5,
+          "username": "dev",
+          "first_name": "",
+          "last_name": ""
+        },
+        "organization": {
+          "id": 1,
+          "name": "Demo Org"
+        }
+      },
+      "organization": 1,
+      "users": [],
+      "admins": [],
+      "parents": [],
+      "description": ""
+    },
+    {
+      "name": "Test team 2",
+      "id": 3,
+      "url": "/api/gateway/v1/teams/3/",
+      "created_on": "2024-03-04T16:20:08.945282Z",
+      "created_by": 5,
+      "modified_on": "2024-03-04T16:20:08.945282Z",
+      "modified_by": 5,
+      "related": {
+        "admins": "/api/gateway/v1/teams/3/admins/",
+        "created_by": "/api/gateway/v1/users/5/",
+        "modified_by": "/api/gateway/v1/users/5/",
+        "organization": "/api/gateway/v1/organizations/1/",
+        "parents": "/api/gateway/v1/teams/3/parents/",
+        "users": "/api/gateway/v1/teams/3/users/"
+      },
+      "summary_fields": {
+        "created_by": {
+          "id": 5,
+          "username": "dev",
+          "first_name": "",
+          "last_name": ""
+        },
+        "modified_by": {
+          "id": 5,
+          "username": "dev",
+          "first_name": "",
+          "last_name": ""
+        },
+        "organization": {
+          "id": 1,
+          "name": "Demo Org"
+        }
+      },
+      "organization": 1,
+      "users": [],
+      "admins": [],
+      "parents": [],
+      "description": "Test description"
+    }
+  ]
+}
