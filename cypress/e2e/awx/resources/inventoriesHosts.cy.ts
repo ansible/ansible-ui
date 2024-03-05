@@ -45,6 +45,9 @@ describe('inventory host', () => {
     cy.get('#confirm').click();
     cy.clickButton(/^Delete inventory/);
     cy.verifyPageTitle('Inventories');
+  });
+
+  after(() => {
     cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
     cy.deleteAwxUser(user, { failOnStatusCode: false });
     cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
