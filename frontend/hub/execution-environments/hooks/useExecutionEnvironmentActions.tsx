@@ -51,6 +51,7 @@ export function useExecutionEnvironmentActions(callback?: (ees: ExecutionEnviron
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         label: t('Sync selected environments'),
+        isHidden: (ee: ExecutionEnvironment) => !ee.pulp?.repository?.remote,
         onClick: (ee) => syncExecutionEnvironments([ee]),
         isDisabled:
           context.hasPermission('container.change_containernamespace') &&

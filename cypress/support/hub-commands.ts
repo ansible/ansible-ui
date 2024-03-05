@@ -212,7 +212,7 @@ Cypress.Commands.add('addAndApproveMultiCollections', (numberOfCollections = 1) 
   const approveMultiCollections = (namespace: string) => {
     cy.visit('/administration/approvals?page=1&perPage=100');
     cy.verifyPageTitle('Collection Approvals');
-    cy.selectToolbarFilterType('Namespace');
+    cy.selectToolbarFilterByLabel('Namespace');
     cy.intercept(
       'GET',
       hubAPI`/v3/plugin/ansible/search/collection-versions/?repository_label=pipeline=staging&namespace=${namespace}&order_by=namespace&offset=0&limit=100`
@@ -601,9 +601,9 @@ Cypress.Commands.add('deleteHubRemote', (options: HubDeleteRemoteOptions) => {
 // HUB Collection Commands
 Cypress.Commands.add('getHubCollection', (name: string) => {
   return cy
-    .requestGet<HubItemsResponse<CollectionVersionSearch>>(
-      hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${name}`
-    )
+    .requestGet<
+      HubItemsResponse<CollectionVersionSearch>
+    >(hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${name}`)
     .then((itemsResponse) => itemsResponse.data[0]);
 });
 export type HubDeleteCollectionOptions = {

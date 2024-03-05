@@ -42,9 +42,9 @@ export function SingleSelectDialog<T extends object>(props: SingleSelectDialogPr
       tabIndex={0}
       actions={[
         <Button
-          key="confirm"
+          key="submit"
           variant="primary"
-          id="confirm"
+          id="submit"
           onClick={() => {
             onClose();
             if (view.selectedItems.length > 0) {

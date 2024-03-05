@@ -265,11 +265,11 @@ Cypress.Commands.add(
     cy.get('[data-cy="description"]').type(`${credentialTypeDesc}`);
     if (inputConfig && injectorConfig) {
       if (defaultFormat === 'json') {
-        cy.configFormatToggle('inputs');
+        cy.dataEditorSetFormat('inputs');
       }
       cy.inputCustomCredTypeConfig('inputs', inputConfig);
       if (defaultFormat === 'json') {
-        cy.configFormatToggle('injectors');
+        cy.dataEditorSetFormat('injectors');
       }
       cy.inputCustomCredTypeConfig('injectors', injectorConfig);
     }
@@ -283,13 +283,8 @@ Cypress.Commands.add(
   }
 );
 
-/** @param
- * Configuration format YAML-JSON and JSON-YAML toggle switch
- *
- */
-
-Cypress.Commands.add('configFormatToggle', (configType: string) => {
-  cy.get(`[data-cy="${configType}-form-group"] [data-cy=toggle-json]`).click();
+Cypress.Commands.add('dataEditorSetFormat', (dataCy: string, format: 'json' | 'yaml' = 'json') => {
+  cy.get(`[data-cy="${dataCy}-form-group"] [data-cy=toggle-${format}]`).click();
 });
 
 Cypress.Commands.add('assertMonacoTextField', (textString: string) => {
@@ -354,15 +349,6 @@ Cypress.Commands.add('selectDropdownOptionByResourceName', (resource: string, it
             cy.contains('li', itemName).click();
           });
       }
-    });
-});
-
-Cypress.Commands.add('setTablePageSize', (text: '10' | '20' | '50' | '100') => {
-  cy.get('[data-cy="pagination"]')
-    .first()
-    .within(() => {
-      cy.get('#options-menu-bottom-toggle').click();
-      cy.contains('button', `${text} per page`).click();
     });
 });
 
@@ -451,7 +437,7 @@ Cypress.Commands.add('selectDetailsPageKebabAction', (dataCy: string) => {
   cy.get('[data-cy="actions-dropdown"]')
     .click()
     .then(() => {
-      cy.clickByDataCy(dataCy);
+      cy.getByDataCy(dataCy).click();
       cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
         cy.get('[data-ouia-component-id="confirm"]').click();
         cy.get('[data-ouia-component-id="submit"]').click();
@@ -474,7 +460,7 @@ Cypress.Commands.add(
       cy.get('[data-cy*="actions-dropdown"]')
         .click()
         .then(() => {
-          cy.clickByDataCy(dataCyLabel);
+          cy.getByDataCy(dataCyLabel).click();
         });
     });
   }
