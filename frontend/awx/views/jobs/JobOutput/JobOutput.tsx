@@ -12,6 +12,7 @@ import { JobOutputEvents } from './JobOutputEvents';
 import { JobOutputToolbar } from './JobOutputToolbar';
 import { JobStatusBar } from './JobStatusBar';
 import { isJobRunning } from './util';
+import { WorkflowJobOutput } from '../WorkflowOutput/WorkflowOutput';
 
 const Section = styled(PageSection)`
   display: flex;
@@ -51,14 +52,18 @@ export function JobOutputInner(props: { job: Job; reloadJob: () => void }) {
         isFollowModeEnabled={isFollowModeEnabled}
         setIsFollowModeEnabled={setIsFollowModeEnabled}
       />
-      <JobOutputEvents
-        job={job}
-        reloadJob={reloadJob}
-        toolbarFilters={toolbarFilters}
-        filterState={filterState}
-        isFollowModeEnabled={isFollowModeEnabled}
-        setIsFollowModeEnabled={setIsFollowModeEnabled}
-      />
+      {job.type === 'workflow_job' ? (
+        <WorkflowJobOutput />
+      ) : (
+        <JobOutputEvents
+          job={job}
+          reloadJob={reloadJob}
+          toolbarFilters={toolbarFilters}
+          filterState={filterState}
+          isFollowModeEnabled={isFollowModeEnabled}
+          setIsFollowModeEnabled={setIsFollowModeEnabled}
+        />
+      )}
     </Section>
   );
 }
