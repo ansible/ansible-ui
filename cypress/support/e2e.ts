@@ -24,12 +24,12 @@ export let galaxyE2EUserID: number;
 before(function () {
   const devBaseUrlPort = Cypress.config().baseUrl?.split(':').slice(-1).toString();
   switch (devBaseUrlPort) {
-    case '4101': // AWX
+    case '4101': // AWX E2E
       cy.createGlobalOrganization();
       cy.createGlobalProject();
       break;
     case '4102': {
-      // HUB
+      // HUB E2E
       cy.hubLogin();
 
       cy.requestPost<{ id: number }, HubUser>(hubAPI`/_ui/v1/users/`, {
@@ -81,7 +81,7 @@ before(function () {
       });
       break;
     }
-    case '4103': // EDA
+    case '4103': // EDA E2E
       break;
   }
 });
@@ -89,7 +89,7 @@ before(function () {
 after(function () {
   const devBaseUrlPort = Cypress.config().baseUrl?.split(':').slice(-1).toString();
   switch (devBaseUrlPort) {
-    case '4102': // HUB
+    case '4102': // HUB E2E
       cy.requestGet<HubUser>(hubAPI`/_ui/v1/users/${galaxyE2EUserID.toString()}/`).then((user) => {
         user.is_superuser = false;
         cy.requestPut(hubAPI`/_ui/v1/users/${galaxyE2EUserID.toString()}/`, user).then(() => {
@@ -105,24 +105,17 @@ after(function () {
 beforeEach(function () {
   const devBaseUrlPort = Cypress.config().baseUrl?.split(':').slice(-1).toString();
   switch (devBaseUrlPort) {
-    case '4101': // AWX
+    case '4101': // AWX E2E
+    case '4102': // HUB E2E
+    case '4103': // EDA E2E
       cy.visit('/');
       break;
-    case '4102': // HUB
-      cy.visit('/');
-      break;
-    case '4103': // EDA
-      cy.visit('/');
+    case '4201': // AWX Component
+    case '4202': // HUB Component
+    case '4203': // EDA Component
       break;
   }
 });
-
-// AWX E2E Port: 4101
-// AWX Component Port: 4201
-// HUB E2E Port: 4102
-// HUB Component Port: 4202
-// EDA E2E Port: 4103
-// EDA Component Port: 4203
 
 Cypress.on('uncaught:exception', (_err, _runnable) => {
   // returning false here prevents Cypress from
