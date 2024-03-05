@@ -18,7 +18,7 @@ import { awxAPI } from '../../../common/api/awx-utils';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { UnifiedJob } from '../../../interfaces/UnifiedJob';
 import { AwxRoute } from '../../../main/AwxRoutes';
-import { getLaunchedByDetails, getScheduleUrl, isJobRunning } from '../jobUtils';
+import { getLaunchedByDetails, getScheduleUrl } from '../jobUtils';
 import { useGetJobOutputUrl } from '../useGetJobOutputUrl';
 
 export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
@@ -273,10 +273,9 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
           </Link>
         ),
         value: (job: UnifiedJob) =>
-          job.type !== 'workflow_job' &&
-          !isJobRunning(job.status) &&
-          job.status !== 'canceled' &&
-          !!job.summary_fields?.execution_environment,
+          job.summary_fields?.execution_environment
+            ? job.summary_fields?.execution_environment.name
+            : undefined,
         table: ColumnTableOption.expanded,
         card: 'hidden',
         list: 'hidden',
