@@ -108,7 +108,7 @@ beforeEach(function () {
     case '4101': // AWX E2E
     case '4102': // HUB E2E
     case '4103': // EDA E2E
-      // cy.visit('/'); Enabling this line will cause the test to fail
+      cy.visit('/');
       break;
     case '4201': // AWX Component
     case '4202': // HUB Component
