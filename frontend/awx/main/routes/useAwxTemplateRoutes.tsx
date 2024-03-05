@@ -24,6 +24,7 @@ import { Schedules } from '../../views/schedules/Schedules';
 import { AwxRoute } from '../AwxRoutes';
 import { ResourceNotifications } from '../../resources/notifications/ResourceNotifications';
 import { TemplateJobs } from '../../resources/templates/TemplatePage/TemplateJobs';
+import { SchedulesList } from '../../views/schedules/SchedulesList';
 
 export function useAwxTemplateRoutes() {
   const { t } = useTranslation();
@@ -123,7 +124,7 @@ export function useAwxTemplateRoutes() {
                 {
                   id: AwxRoute.JobTemplateSchedules,
                   path: 'schedules',
-                  element: <Schedules sublistEndpoint={awxAPI`/job_templates`} />,
+                  element: <SchedulesList sublistEndpoint={awxAPI`/job_templates`} />,
                 },
                 {
                   path: '',
