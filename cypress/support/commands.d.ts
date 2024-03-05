@@ -73,6 +73,7 @@ import {
   HubQueryRolesOptions,
   HubRequestOptions,
 } from './hub-commands';
+import { PlatformTeam } from '../../platform/interfaces/PlatformTeam';
 
 declare global {
   namespace Cypress {
@@ -1417,11 +1418,11 @@ declare global {
       platformLogout(): Chainable<void>;
       createGlobalPlatformOrganization(): Chainable<void>;
       createPlatformTeam(
-        platformTeam: PlatformOrganization,
+        platformOrganization: PlatformOrganization,
         platformUser?: PlatformUser
       ): Cypress.Chainable<PlatformTeam>;
       deletePlatformTeam(
-        platformTeam: PlatformOrganization,
+        platformTeam: PlatformTeam,
         options?: {
           /** Whether to fail on response codes other than 2xx and 3xx */
           failOnStatusCode?: boolean;
@@ -1435,9 +1436,11 @@ declare global {
           failOnStatusCode?: boolean;
         }
       ): Cypress.Chainable<void>;
+
       createPlatformUser(
-        organization?: SetOptional<PlatformOrganization, 'id'>
+        platformOrganization?: PlatformOrganization
       ): Cypress.Chainable<PlatformUser>;
+
       deletePlatformUser(
         user: PlatformUser,
         options?: {
