@@ -10,6 +10,9 @@ describe('inventory host', () => {
 
   before(() => {
     cy.awxLogin();
+  });
+
+  beforeEach(() => {
     cy.createAwxOrganization().then((org) => {
       organization = org;
       cy.createAwxInventory({ organization: organization.id }).then((inv) => {
@@ -19,9 +22,7 @@ describe('inventory host', () => {
         user = testUser;
       });
     });
-  });
 
-  beforeEach(() => {
     const inventoryName = 'E2E Inventory host ' + randomString(4);
     cy.navigateTo('awx', 'inventories');
     cy.verifyPageTitle('Inventories');
@@ -67,5 +68,34 @@ describe('inventory host', () => {
     cy.get('[data-cy="empty-state-title"]').contains(
       /^There are currently no hosts added to this inventory./
     );
+  });
+
+  it('test pagination', () => {
+    //can all of this be fixture?
+    const hostName = 'E2E Inventory host ' + randomString(4);
+    const hostName2 = 'E2E Inventory host2 ' + randomString(4);
+    cy.get('[data-cy="empty-state-title"]').contains(
+      /^There are currently no hosts added to this inventory./
+    );
+    cy.clickButton(/^Create host$/);
+    cy.verifyPageTitle('Create Host');
+    cy.get('[data-cy="name"]').type(hostName);
+    cy.get('[data-cy="description"]').type('This is the description');
+    cy.typeBy('[data-cy="variables"]', 'test: true');
+    cy.clickButton(/^Create host/);
+    cy.visit(
+      `/infrastructure/inventories/inventory/${inventory.id}/hosts/?page=1&perPage=10&sort=name`
+    );
+    cy.clickButton(/^Create host$/);
+    cy.verifyPageTitle('Create Host');
+    cy.get('[data-cy="name"]').type(hostName2);
+    cy.get('[data-cy="description"]').type('This is the description');
+    cy.typeBy('[data-cy="variables"]', 'test: true');
+    cy.clickButton(/^Create host/);
+    cy.visit(
+      `/infrastructure/inventories/inventory/${inventory.id}/hosts/?page=1&perPage=10&sort=name`
+    );
+    //
+    cy.get('[data-cy="actions-dropdwon"]').click();
   });
 });
