@@ -258,7 +258,7 @@ export function PageFormTextInput<
           <PageFormGroup
             fieldId={id}
             label={label}
-            labelHelpTitle={labelHelpTitle}
+            labelHelpTitle={labelHelpTitle ?? label}
             labelHelp={labelHelp}
             additionalControls={additionalControls}
             helperText={helperText}

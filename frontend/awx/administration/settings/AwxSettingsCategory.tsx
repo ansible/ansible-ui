@@ -7,7 +7,7 @@ import { AwxError } from '../../common/AwxError';
 import { awxAPI } from '../../common/api/awx-utils';
 import { AwxRoute } from '../../main/AwxRoutes';
 import { AwxSettingsActionsForm, AwxSettingsOptionsAction } from './AwxSettingsActionsForm';
-import { useAwxSettingsGroups } from './useAwxSettingsGroups';
+import { awxSettingsExcludeKeys, useAwxSettingsGroups } from './useAwxSettingsGroups';
 
 export function AwxSettingsCategory() {
   const { t } = useTranslation();
@@ -26,6 +26,7 @@ export function AwxSettingsCategory() {
     const categoryOptions: Record<string, AwxSettingsOptionsAction> = {};
     if (category && options) {
       for (const [key, value] of Object.entries(options)) {
+        if (awxSettingsExcludeKeys.includes(key)) continue;
         if (category?.slugs.includes(value.category_slug)) {
           categoryOptions[key] = value;
         }

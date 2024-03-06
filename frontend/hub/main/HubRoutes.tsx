@@ -79,5 +79,7 @@ export enum HubRoute {
   RoleDetails = 'hub-role-details',
   EditRole = 'hub-edit-role',
 
+  Settings = 'hub-settings',
+
   Login = 'hub-login',
 }

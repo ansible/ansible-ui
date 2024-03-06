@@ -1,21 +1,25 @@
-import { ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
+import { Button, ButtonVariant, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
 import { DropdownItem } from '@patternfly/react-core/deprecated';
-import { ExternalLinkAltIcon, QuestionCircleIcon, UserCircleIcon } from '@patternfly/react-icons';
+import {
+  CogIcon,
+  ExternalLinkAltIcon,
+  QuestionCircleIcon,
+  UserCircleIcon,
+} from '@patternfly/react-icons';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageMasthead, usePageNavigate } from '../../../framework';
 import { PageMastheadDropdown } from '../../../framework/PageMasthead/PageMastheadDropdown';
-import { PageSettingsIcon } from '../../../framework/PageMasthead/PageSettingsIcon';
 import { PageThemeSwitcher } from '../../../framework/PageMasthead/PageThemeSwitcher';
 import { useAnsibleAboutModal } from '../../common/AboutModal';
 import { PageRefreshIcon } from '../../common/PageRefreshIcon';
 import { postRequest } from '../../common/crud/Data';
 import { useClearCache } from '../../common/useInvalidateCache';
-import EdaBrand from './eda-logo.svg';
 import { edaAPI } from '../common/eda-utils';
 import { useEdaActiveUser } from '../common/useEdaActiveUser';
 import { EdaRoute } from './EdaRoutes';
+import EdaBrand from './eda-logo.svg';
 
 export function EdaMasthead() {
   const { t } = useTranslation();
@@ -39,7 +43,12 @@ export function EdaMasthead() {
           <PageThemeSwitcher />
         </ToolbarItem>
         <ToolbarItem>
-          <PageSettingsIcon />
+          <Button
+            data-cy="settings-icon"
+            icon={<CogIcon />}
+            variant={ButtonVariant.plain}
+            onClick={() => pageNavigate(EdaRoute.Settings)}
+          />
         </ToolbarItem>
         {/* <ToolbarItem>
           <PageNotificationsIcon count={0} onClick={() => pageNavigate(EdaRoute.Notifications)} />

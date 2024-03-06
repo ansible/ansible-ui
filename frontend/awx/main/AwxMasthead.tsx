@@ -1,13 +1,17 @@
-import { Icon, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
+import { Button, ButtonVariant, Icon, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
 import { DropdownItem } from '@patternfly/react-core/deprecated';
-import { ExternalLinkAltIcon, QuestionCircleIcon, UserCircleIcon } from '@patternfly/react-icons';
+import {
+  CogIcon,
+  ExternalLinkAltIcon,
+  QuestionCircleIcon,
+  UserCircleIcon,
+} from '@patternfly/react-icons';
 import { useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageMasthead, useGetPageUrl, usePageNavigate } from '../../../framework';
 import { PageMastheadDropdown } from '../../../framework/PageMasthead/PageMastheadDropdown';
 import { PageNotificationsIcon } from '../../../framework/PageMasthead/PageNotificationsIcon';
-import { PageSettingsIcon } from '../../../framework/PageMasthead/PageSettingsIcon';
 import { PageThemeSwitcher } from '../../../framework/PageMasthead/PageThemeSwitcher';
 import { usePageNotifications } from '../../../framework/PageNotifications/PageNotificationsProvider';
 import { useAnsibleAboutModal } from '../../common/AboutModal';
@@ -49,7 +53,12 @@ export function AwxMasthead() {
           <PageThemeSwitcher />
         </ToolbarItem>
         <ToolbarItem>
-          <PageSettingsIcon />
+          <Button
+            data-cy="settings-icon"
+            icon={<CogIcon />}
+            variant={ButtonVariant.plain}
+            onClick={() => pageNavigate(AwxRoute.Settings)}
+          />
         </ToolbarItem>
         <ToolbarItem>
           <PageNotificationsIcon />

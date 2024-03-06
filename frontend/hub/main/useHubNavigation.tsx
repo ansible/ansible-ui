@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router-dom';
 import { PageNotImplemented } from '../../../framework';
 import { PageNavigationItem } from '../../../framework/PageNavigation/PageNavigationItem';
+import { PageSettings } from '../../../framework/PageSettings/PageSettings';
 import { RoleDetails } from '../access/roles/RolePage/RoleDetails';
 import { CreateRole, EditRole } from '../access/roles/RolePage/RoleForm';
 import { RolePage } from '../access/roles/RolePage/RolePage';
@@ -18,10 +19,10 @@ import { RemoteDetails } from '../administration/remotes/RemoteDetails';
 import { CreateRemote, EditRemote } from '../administration/remotes/RemoteForm';
 import { Remotes } from '../administration/remotes/Remotes';
 import { Repositories } from '../administration/repositories/Repositories';
+import { RepositoryForm } from '../administration/repositories/RepositoryForm';
 import { RepositoryAccess } from '../administration/repositories/RepositoryPage/RepositoryAccess';
 import { RepositoryCollectionVersion } from '../administration/repositories/RepositoryPage/RepositoryCollectionVersion';
 import { RepositoryDetails } from '../administration/repositories/RepositoryPage/RepositoryDetails';
-import { RepositoryForm } from '../administration/repositories/RepositoryForm';
 import { RepositoryPage } from '../administration/repositories/RepositoryPage/RepositoryPage';
 import { RepositoryVersions } from '../administration/repositories/RepositoryPage/RepositoryVersions';
 import { RepositoryVersionCollections } from '../administration/repositories/RepositoryVersionPage/RepositoryVersionCollections';
@@ -45,14 +46,15 @@ import {
   CreateExecutionEnvironment,
   EditExecutionEnvironment,
 } from '../execution-environments/ExecutionEnvironmentForm';
-import { ExecutionEnvironments } from '../execution-environments/ExecutionEnvironments';
-import { ExecutionEnvironmentDetails } from '../execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentDetails';
-import { ExecutionEnvironmentActivity } from '../execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentActivity';
-import { ExecutionEnvironmentImages } from '../execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentImages';
-import { ExecutionEnvironmentImagePage } from '../execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentImagePage';
-import { ExecutionEnvironmentImageDetails } from '../execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentImageDetails';
 import { ExecutionEnvironmentAccess } from '../execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentAccess';
+import { ExecutionEnvironmentActivity } from '../execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentActivity';
+import { ExecutionEnvironmentDetails } from '../execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentDetails';
+import { ExecutionEnvironmentImageDetails } from '../execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentImageDetails';
+import { ExecutionEnvironmentImagePage } from '../execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentImagePage';
+import { ExecutionEnvironmentImages } from '../execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentImages';
 import { ExecutionEnvironmentPage } from '../execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentPage';
+import { ExecutionEnvironments } from '../execution-environments/ExecutionEnvironments';
+import { MyImports } from '../my-imports/MyImports';
 import { CreateHubNamespace, EditHubNamespace } from '../namespaces/HubNamespaceForm';
 import { HubNamespaceCLI } from '../namespaces/HubNamespacePage/HubNamespaceCLI';
 import { HubNamespaceCollections } from '../namespaces/HubNamespacePage/HubNamespaceCollections';
@@ -61,7 +63,6 @@ import { HubNamespacePage } from '../namespaces/HubNamespacePage/HubNamespacePag
 import { Namespaces } from '../namespaces/HubNamespaces';
 import { HubOverview } from '../overview/HubOverview';
 import { HubRoute } from './HubRoutes';
-import { MyImports } from '../my-imports/MyImports';
 
 export function useHubNavigation() {
   const { t } = useTranslation();
@@ -498,6 +499,12 @@ export function useHubNavigation() {
       path: 'my-imports',
       element: <MyImports />,
       hidden: true,
+    },
+    {
+      id: HubRoute.Settings,
+      label: t('Settings'),
+      path: 'settings',
+      element: <PageSettings />,
     },
     {
       path: '',

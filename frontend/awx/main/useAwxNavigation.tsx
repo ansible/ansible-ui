@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router-dom';
 import { PageNavigationItem } from '../../../framework/PageNavigation/PageNavigationItem';
+import { PageSettings } from '../../../framework/PageSettings/PageSettings';
 import { AwxRoleDetails } from '../access/roles/AwxRoleDetails';
 import { AwxRolePage } from '../access/roles/AwxRolePage';
 import { AwxRoles } from '../access/roles/AwxRoles';
@@ -132,6 +133,11 @@ export function useAwxNavigation() {
           label: t('Settings'),
           path: 'settings',
           children: [
+            {
+              id: AwxRoute.SettingsPreferences,
+              path: 'preferences',
+              element: <PageSettings />,
+            },
             {
               id: AwxRoute.SettingsCategory,
               path: ':category',

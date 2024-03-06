@@ -1,21 +1,17 @@
-import { useTranslation } from 'react-i18next';
-import React from 'react';
 import { CodeBlock, PageSection, Stack, StackItem, TextInput, Title } from '@patternfly/react-core';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
-import { IContents, IContentsOption } from '../../Collection';
+import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { PFColorE } from '../../../../../framework';
-import { useState, useEffect } from 'react';
+import { IContents, IContentsOption } from '../../Collection';
 
+import { AngleDownIcon, AngleRightIcon } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
 import styles from '@patternfly/react-styles/css/components/ExpandableSection/expandable-section';
-import { AngleDownIcon, AngleRightIcon } from '@patternfly/react-icons';
-import { ISample } from '../../Collection';
-import { useGetPageUrl } from '../../../../../framework';
-import { CollectionVersionSearch } from '../../Collection';
-import { useSettings } from '../../../../../framework';
+import { useGetPageUrl, usePageSettings } from '../../../../../framework';
+import { CollectionVersionSearch, ISample } from '../../Collection';
 
-import { applyDocFormatters } from './DocumentationParsers';
-import { renderPluginConfiguration } from './DocumentationParsers';
+import { applyDocFormatters, renderPluginConfiguration } from './DocumentationParsers';
 
 export type GroupType = {
   name: string;
@@ -33,7 +29,7 @@ export function CollectionDocumentationTabContent(props: {
   const splitString = '- name';
   const [optionsState, setOptionsState] = useState<OptionRecord[]>([]);
   const getPageUrl = useGetPageUrl();
-  const settings = useSettings();
+  const settings = usePageSettings();
   const [paramsFilter, setParamsFilter] = useState('');
   const [error, setError] = useState('');
   const [json, setJson] = useState('');
@@ -557,7 +553,7 @@ export type Params = {
   groups: GroupType[];
   docParams: DocParams;
   url: string;
-  settings: ReturnType<typeof useSettings>;
+  settings: ReturnType<typeof usePageSettings>;
 };
 
 export type DocParams = {
