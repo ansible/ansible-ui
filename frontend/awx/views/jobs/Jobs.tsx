@@ -17,20 +17,16 @@ import { JobsList } from './JobsList';
 export function Jobs() {
   const { t } = useTranslation();
   const product: string = process.env.PRODUCT ?? t('AWX');
-  const toolbarFilters = useJobsFilters();
   const tableColumns = useJobsColumns();
-
-  const view = useAwxView<UnifiedJob>({
-    url: awxAPI`/unified_jobs/`,
-    queryParams: {
-      not__launch_type: 'sync',
-    },
-    toolbarFilters,
-    tableColumns,
-  });
 
   usePersistentFilters('jobs');
   const config = useAwxConfig();
+  const toolbarFilters = useJobsFilters();
+  const view = useAwxView<UnifiedJob>({
+    url: awxAPI`/unified_jobs/`,
+    toolbarFilters,
+    tableColumns,
+  });
 
   // const [showGraph, setShowGraph] = useState(false);
 
