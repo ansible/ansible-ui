@@ -31,10 +31,12 @@ export function useStatusDecorator() {
     const decorator = (
       <Decorator
         x={x}
+        data-cy={`node-decorator-${status}`}
         y={y}
         radius={DEFAULT_DECORATOR_RADIUS}
         showBackground
         icon={Icon}
+        className={`node-decorator-${status}-${element.getId()}`}
         ariaLabel={status}
       />
     );
@@ -61,18 +63,18 @@ function getStatusIcon(nodeType: string, centerPoint: { x: number; y: number }) 
   switch (nodeType) {
     case 'success':
     case 'successful':
-      return <CheckCircleIcon style={{ fill: pfSuccess }} />;
+      return <CheckCircleIcon data-cy="successful-icon" style={{ fill: pfSuccess }} />;
     case 'running':
       return (
-        <IconWrapper centerPoint={centerPoint}>
+        <IconWrapper data-cy="running-icon" centerPoint={centerPoint}>
           <SyncAltIcon style={{ fill: pfInfo }} />
         </IconWrapper>
       );
     case 'fail':
     case 'failed':
-      return <ExclamationCircleIcon style={{ fill: pfDanger }} />;
+      return <ExclamationCircleIcon data-cy="failed-icon" style={{ fill: pfDanger }} />;
     case 'pending':
-      return <ClockIcon style={{ fill: pfInfo }} />;
+      return <ClockIcon sdata-cy="pending-icon" style={{ fill: pfInfo }} />;
     default:
       return null;
   }

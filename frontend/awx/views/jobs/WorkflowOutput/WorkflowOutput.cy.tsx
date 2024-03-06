@@ -1,4 +1,3 @@
-import { UnifiedJob } from '../../interfaces/UnifiedJob';
 import { WorkflowOutput } from './WorkflowOutput';
 import job from '../../../../../cypress/fixtures/workflow_job.json';
 import { WorkflowJob } from '../../../interfaces/WorkflowJob';

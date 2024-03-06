@@ -28,7 +28,7 @@ export function useCredentialsColumns(options?: { disableSort?: boolean; disable
   const createdColumn = useCreatedColumn(options);
   const modifiedColumn = useModifiedColumn(options);
 
-  const { items: allCredTypes } = useAwxGetAllPages<CredentialType>(awxAPI`/credential_types/`);
+  const { results: allCredTypes } = useAwxGetAllPages<CredentialType>(awxAPI`/credential_types/`);
 
   const credentialTypesMap: { [id: number]: string } = useMemo(() => {
     if (allCredTypes) {

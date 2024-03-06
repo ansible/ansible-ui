@@ -27,17 +27,17 @@ export function useAwxGetAllPages<T extends object>(url: string, queryParams?: Q
     }
   );
 
-  const items = useMemo(() => {
-    return data?.reduce((items: T[], page: AwxItemsResponse<T>) => {
+  const results = useMemo(() => {
+    return data?.reduce((results: T[], page: AwxItemsResponse<T>) => {
       if (Array.isArray(page.results)) {
-        return [...items, ...page.results];
+        return [...results, ...page.results];
       }
-      return items;
+      return results;
     }, []);
   }, [data]);
 
   const refresh = useCallback(() => {
     void mutate();
   }, [mutate]);
-  return { items, error, isLoading, refresh };
+  return { results, error, isLoading, refresh };
 }
