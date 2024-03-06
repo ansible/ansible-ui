@@ -29,6 +29,7 @@ export function Help(props: {
                 variant="link"
                 onClick={() => window.open(docLink, '_blank')}
                 isInline
+                type="button"
               >
                 {translations.documentation}
               </Button>
@@ -37,7 +38,7 @@ export function Help(props: {
         </Stack>
       }
     >
-      <IconButton>
+      <IconButton type="button">
         <Icon size="md">
           <OutlinedQuestionCircleIcon />
         </Icon>
