@@ -233,11 +233,11 @@ export function PageFormTextInput<
             : error?.message
           : undefined;
 
-        let massagedValue: string = value;
+        let parsedValue: string = value;
         switch (type) {
           case 'datetime-local':
             if (value) {
-              massagedValue = new Date(value).toISOString().slice(0, 16);
+              parsedValue = new Date(value).toISOString().slice(0, 16);
             }
             break;
         }
@@ -268,7 +268,7 @@ export function PageFormTextInput<
                   id={id}
                   placeholder={placeholder}
                   onChange={(_event, value: string) => onChangeHandler(value)}
-                  value={massagedValue ?? ''}
+                  value={parsedValue ?? ''}
                   aria-describedby={id ? `${id}-form-group` : undefined}
                   validated={helperTextInvalid ? 'error' : undefined}
                   type={type === 'password' ? (showSecret ? 'text' : 'password') : type}
