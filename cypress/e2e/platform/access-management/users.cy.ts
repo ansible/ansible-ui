@@ -45,12 +45,7 @@ describe('Users - create, edit and delete', () => {
     cy.get('[data-cy="first-name"]').type(firstName);
     cy.get('[data-cy="last-name"]').type(lastName);
     cy.get('[data-cy="email"]').type(userEmail);
-    cy.get('[data-cy="organizations-form-group"]')
-      .click()
-      .then(() => {
-        cy.get(`[data-cy="${organization.name}"]`).click();
-      });
-    cy.get('[data-cy="organizations-form-group"]').click();
+    cy.singleSelectBy('[data-cy="organizations"]', organization.name);
     cy.intercept('POST', gatewayV1API`/users/`).as('createdUser');
     cy.get('[data-cy="Submit"]').click();
     cy.wait('@createdUser')
