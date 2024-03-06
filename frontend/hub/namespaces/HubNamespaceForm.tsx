@@ -145,7 +145,14 @@ function HubNamespaceInputs(props: { isDisabled?: boolean; isRequired?: boolean 
         placeholder={t('Enter logo URL')}
       />
       <PageFormSection singleColumn>
-        <PageFormMarkdown<HubNamespace> label={t('Markdown')} name="resources" />
+        <PageFormMarkdown<HubNamespace>
+          label={t('Resources')}
+          name="resources"
+          labelHelpTitle="Resources"
+          labelHelp={t(
+            'You can can customize the Resources on your profile by entering custom markdown here.'
+          )}
+        />
       </PageFormSection>
     </>
   );
