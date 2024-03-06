@@ -5,22 +5,22 @@ import { requestPatch } from '../../../../common/crud/Data';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useParams } from 'react-router-dom';
 import { useGetItem } from '../../../../common/crud/useGet';
-import { Peer } from '../../../interfaces/Instance';
+import { Instance, Peer } from '../../../interfaces/Instance';
 
 export function useAssociatePeersToInstance() {
   const { t } = useTranslation();
   const userProgressDialog = useAwxBulkActionDialog<Peer>();
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
-  const { data: instance } = useGetItem<Peer>(awxAPI`/instances/`, params.id);
-  const px = instance?.peers as number[];
+  const { data: instance } = useGetItem<Instance>(awxAPI`/instances/`, params.id);
+  const { peers = [] } = instance ?? {};
 
   const addPeersToInstance = useCallback(
     (instances: Peer[], onComplete: () => void) => {
       if (instances) {
         for (const p of instances) {
-          if (!px.includes(p.id)) {
-            px.push(p.id);
+          if (!peers.includes(p.id)) {
+            peers.push(p.id);
           }
         }
 
@@ -31,14 +31,14 @@ export function useAssociatePeersToInstance() {
           actionColumns: [{ header: 'Name', cell: (peer: Peer) => peer.address }],
           actionFn: () =>
             requestPatch(awxAPI`/instances/${id.toString()}/`, {
-              peers: px,
+              peers: peers,
             }),
           processingText: t('Associating {{count}} peers...', { count: instances.length }),
           onComplete,
         });
       }
     },
-    [userProgressDialog, t, id, px]
+    [userProgressDialog, t, id, peers]
   );
   return addPeersToInstance;
 }

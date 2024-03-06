@@ -8,7 +8,7 @@ import { useAssociatePeersToInstance } from './useAssociatePeersToInstance';
 import { usePeersToAssociateColumns } from './usePeersColumns';
 import { useGetItem } from '../../../../common/crud/useGet';
 import { useParams } from 'react-router-dom';
-import { Peer } from '../../../interfaces/Instance';
+import { Peer, Instance } from '../../../interfaces/Instance';
 
 function SelectAssociates(props: {
   accessUrl?: string;
@@ -18,7 +18,7 @@ function SelectAssociates(props: {
 }) {
   const { t } = useTranslation();
   const params = useParams<{ id?: string }>();
-  const { data: instance } = useGetItem<Peer>(awxAPI`/instances/`, params.id);
+  const { data: instance } = useGetItem<Instance>(awxAPI`/instances/`, params.id);
 
   const toolbarFilters = usePeersTabFilters();
   const columns = usePeersToAssociateColumns(undefined);

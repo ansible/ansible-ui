@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
@@ -36,7 +33,6 @@ export interface IInstanceInput {
   enabled: boolean;
   node_state: string;
   node_type: string;
-  peers: string[];
 }
 
 export function AddInstance() {
@@ -48,15 +44,6 @@ export function AddInstance() {
   const onSubmit: PageFormSubmitHandler<Instance> = async (instanceInput: Instance) => {
     instanceInput.node_state = 'installed';
     instanceInput.listener_port = Number(instanceInput.listener_port);
-
-    const modifiedInput: string[] = [];
-    if (instanceInput.peers) {
-      instanceInput.peers?.map((element: { hostname: string }) => {
-        modifiedInput.push(element.hostname);
-      });
-      instanceInput.peers = modifiedInput;
-    }
-
     const newInstance = await postRequest(awxAPI`/instances/`, instanceInput);
     pageNavigate(AwxRoute.InstanceDetails, { params: { id: newInstance.id } });
   };
@@ -98,14 +85,6 @@ export function EditInstance() {
   const onSubmit: PageFormSubmitHandler<Instance> = async (instanceInput: Instance) => {
     instanceInput.listener_port =
       instanceInput.listener_port && Number(instanceInput?.listener_port);
-
-    const modifiedInput: string[] = [];
-    if (instanceInput.peers) {
-      instanceInput.peers?.map((element: { hostname: string }) => {
-        modifiedInput.push(element.hostname);
-      });
-      instanceInput.peers = modifiedInput;
-    }
     await requestPatch<Instance>(awxAPI`/instances/${id.toString()}/`, instanceInput);
     (cache as unknown as { clear: () => void }).clear?.();
     navigate(-1);
@@ -213,23 +192,14 @@ function InstanceInputs(props: { mode: 'create' | 'edit' }) {
 }
 
 function getInitialFormValues(instance: Instance | undefined) {
-  interface Hostname {
-    hostname: string;
-  }
-  const peers: Hostname[] = [];
-
-  instance?.peers.map((element: string) => {
-    peers.push({ hostname: element });
-  });
-
   return {
     hostname: instance?.hostname,
     listener_port: instance?.listener_port,
     node_state: instance?.node_state,
     node_type: instance?.node_type,
-    peers: peers,
     peers_from_control_nodes: instance?.peers_from_control_nodes,
     managed_by_policy: instance?.managed_by_policy,
     enabled: instance?.enabled,
+    peers: [],
   };
 }

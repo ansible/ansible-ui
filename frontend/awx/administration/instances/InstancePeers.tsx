@@ -23,17 +23,10 @@ export function InstancePeers() {
 
 export function InstancePeersTab(props: { instance: Instance }) {
   const { instance } = props;
-  const currentPeers = instance.peers as string[];
-
-  return (
-    <ResourcePeersList
-      url={awxAPI`/instances/${instance.id.toString()}/peers/`}
-      currentPeers={currentPeers}
-    />
-  );
+  return <ResourcePeersList url={awxAPI`/instances/${instance.id.toString()}/peers/`} />;
 }
 
-export function ResourcePeersList(props: { url: string; currentPeers: string[] }) {
+export function ResourcePeersList(props: { url: string }) {
   const { t } = useTranslation();
   const { url } = props;
   const toolbarFilters = usePeersTabFilters();

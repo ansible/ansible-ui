@@ -7,38 +7,6 @@ import { awxAPI } from '../../../common/api/awx-utils';
 import { Instance } from '../../../interfaces/Instance';
 import { Peer } from '../../../interfaces/Peer';
 
-export interface ReceptorAddresses {
-  results: [
-    {
-      id: number;
-      url: string;
-      address: string;
-      port: number;
-      protocol: string;
-      websocket_path: string;
-      is_internal: boolean;
-      canonical: boolean;
-      instance: number;
-      peers_from_control_nodes: boolean;
-      full_address: string;
-    },
-  ];
-}
-
-export interface ReceptorAddress {
-  id: number;
-  url: string;
-  address: string;
-  port: number;
-  protocol: string;
-  websocket_path: string;
-  is_internal: boolean;
-  canonical: boolean;
-  instance: number;
-  peers_from_control_nodes: boolean;
-  full_address: string;
-}
-
 export function usePeersColumns(_options?: { disableLinks?: boolean; disableSort?: boolean }) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();

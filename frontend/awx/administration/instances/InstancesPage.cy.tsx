@@ -158,4 +158,20 @@ describe('Instances Page', () => {
         cy.get('[data-cy="remove-instance"]').should('not.exist');
       });
   });
+
+  it('peers tab should be hidden for non-k8s system', () => {
+    cy.intercept('GET', '/api/v2/settings/system*', {
+      IS_K8S: false,
+    }).as('isK8s');
+    cy.mount(<InstancePage />);
+    cy.get('[data-cy="instances-peers-tab"]').should('not.exist');
+  });
+
+  it('peers tab should be shown for k8s system', () => {
+    cy.intercept('GET', '/api/v2/settings/system*', {
+      IS_K8S: true,
+    }).as('isK8s');
+    cy.mount(<InstancePage />);
+    cy.get('[data-cy="instances-peers-tab"]').should('not.exist');
+  });
 });

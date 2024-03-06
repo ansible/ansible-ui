@@ -10,19 +10,22 @@ import {
 } from '../../../../framework';
 import { PageRoutedTabs } from '../../../../framework/PageTabs/PageRoutedTabs';
 import { LoadingPage } from '../../../../framework';
-import { useGetItem } from '../../../common/crud/useGet';
+import { useGet, useGetItem } from '../../../common/crud/useGet';
 import { AwxError } from '../../common/AwxError';
 import { awxAPI } from '../../common/api/awx-utils';
 import { Instance } from '../../interfaces/Instance';
 import { AwxRoute } from '../../main/AwxRoutes';
 import { useViewActivityStream } from '../../access/common/useViewActivityStream';
 import { useInstanceDetailsActions } from './hooks/useInstanceActions';
+import { Settings } from '../../interfaces/Settings';
 
 export function InstancePage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const { error, data: instance, refresh } = useGetItem<Instance>(awxAPI`/instances`, params.id);
   const pageNavigate = usePageNavigate();
+  const { data } = useGet<Settings>(awxAPI`/settings/system/`);
+  const isK8s = !data?.IS_K8S;
   const itemActions = useInstanceDetailsActions({
     onInstancesRemoved: () => pageNavigate(AwxRoute.Instances),
     isDetailsPageAction: true,
@@ -58,7 +61,11 @@ export function InstancePage() {
         }}
         tabs={[
           { label: t('Details'), page: AwxRoute.InstanceDetails, dataCy: 'instances-details-tab' },
-          { label: t('Peers'), page: AwxRoute.InstancePeers, dataCy: 'instances-peers-tab' },
+          !isK8s && {
+            label: t('Peers'),
+            page: AwxRoute.InstancePeers,
+            dataCy: 'instances-peers-tab',
+          },
         ]}
         params={{ id: instance.id }}
       />

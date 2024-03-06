@@ -14,8 +14,8 @@ import { Instance } from '../../../interfaces/Instance';
 export function useDisassociatePeer(onComplete: (peers: Peer[]) => void) {
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
-  const { data: instance } = useGetItem<Instance>(awxAPI`/instances`, id);
-  const px = instance?.peers as number[];
+  const { data: instance } = useGetItem<Instance>(awxAPI`/instances/`, id);
+  const { peers = [] } = instance ?? {};
 
   const columns = usePeersColumns(undefined);
   const confirmationColumns = useMemo(
@@ -31,22 +31,22 @@ export function useDisassociatePeer(onComplete: (peers: Peer[]) => void) {
   const deleteActionNameColumn = useAddressColumn({ disableLinks: true, disableSort: true });
   const actionColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn]);
   const bulkAction = useAwxBulkConfirmation<Peer>();
-  const removeInstances = (peers: Peer[]) => {
-    for (const p of peers) {
-      if (px.includes(p.id)) {
-        px.splice(px.indexOf(p.id), 1);
+  const removeInstances = (peersToRemove: Peer[]) => {
+    for (const p of peersToRemove) {
+      if (peers.includes(p.id)) {
+        peers.splice(peers.indexOf(p.id), 1);
       }
     }
     bulkAction({
-      title: t('Disassociate peers', { count: peers.length }),
+      title: t('Disassociate peers', { count: peersToRemove.length }),
       confirmText:
-        peers.length === 1
+        peersToRemove.length === 1
           ? t('Yes, I confirm that I want to disassociate this peer.')
           : t('Yes, I confirm that I want to disassociate these {{count}} peers.', {
-              count: peers.length,
+              count: peersToRemove.length,
             }),
-      actionButtonText: t('Disassociate peer', { count: peers.length }),
-      items: peers.sort((l, r) => compareStrings(l.name, r.name)),
+      actionButtonText: t('Disassociate peer', { count: peersToRemove.length }),
+      items: peersToRemove.sort((l, r) => compareStrings(l.name, r.name)),
       keyFn: getItemKey,
       isDanger: true,
       confirmationColumns,
@@ -54,7 +54,7 @@ export function useDisassociatePeer(onComplete: (peers: Peer[]) => void) {
       onComplete,
       actionFn: () =>
         requestPatch(awxAPI`/instances/${id.toString()}/`, {
-          peers: px,
+          peers: peers,
         }),
     });
   };
