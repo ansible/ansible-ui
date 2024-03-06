@@ -67,10 +67,12 @@ export function ScheduleInputs(props: {
         return;
       }
 
+      const pathnameSplit = pathname.split('/');
+      const resourceType = pathnameSplit[1] === 'projects' ? 'projects' : pathnameSplit[2];
       try {
         const response = await requestGet<
           Project | JobTemplate | WorkflowJobTemplate | InventorySource
-        >(`${resourceEndPoints[pathname.split('/')[2]]}${params?.id}/`);
+        >(`${resourceEndPoints[resourceType]}${params?.id}/`);
         setValue('unified_job_template_object', response);
         setValue('unified_job_template', response.id);
       } catch (err) {

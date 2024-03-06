@@ -17,7 +17,7 @@ import { useScheduleToolbarActions } from './hooks/useSchedulesToolbarActions';
 export function SchedulesList(props: { sublistEndpoint?: string }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const params = useParams<{ id: string; source_id?: string }>();
+  const params = useParams<{ inventory_type: string; id: string; source_id?: string }>();
   const location = useLocation();
   const toolbarFilters = useSchedulesFilter();
   const tableColumns = useSchedulesColumns();
