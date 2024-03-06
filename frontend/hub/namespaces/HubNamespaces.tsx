@@ -16,6 +16,7 @@ import { useHubNamespaceActions } from './hooks/useHubNamespaceActions';
 import { useHubNamespaceFilters } from './hooks/useHubNamespaceFilters';
 import { useHubNamespaceToolbarActions } from './hooks/useHubNamespaceToolbarActions';
 import { useHubNamespacesColumns } from './hooks/useHubNamespacesColumns';
+import { PlusCircleIcon } from '@patternfly/react-icons';
 
 export function Namespaces() {
   const { t } = useTranslation();
@@ -78,6 +79,7 @@ export function CommonNamespaces({ url }: { url: string }) {
       emptyStateTitle={t('No namespaces yet')}
       emptyStateDescription={t('To get started, create an namespace.')}
       emptyStateButtonText={t('Create namespace')}
+      emptyStateButtonIcon={<PlusCircleIcon />}
       emptyStateButtonClick={() => pageNavigate(HubRoute.CreateNamespace)}
       {...view}
       defaultSubtitle={t('Namespace')}
