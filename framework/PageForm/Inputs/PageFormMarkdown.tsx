@@ -1,4 +1,4 @@
-import { Flex, FlexItem, TextContent, ToggleGroup, ToggleGroupItem } from '@patternfly/react-core';
+import { Flex, FlexItem, ToggleGroup, ToggleGroupItem } from '@patternfly/react-core';
 import { ReactNode, useCallback, useRef, useState } from 'react';
 import {
   Controller,
@@ -9,8 +9,6 @@ import {
   useFormContext,
 } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import ReactMarkdown from 'react-markdown';
-import styled from 'styled-components';
 import { DataEditorButtons, usePageAlertToaster } from '../..';
 import { DataEditor } from '../../components/DataEditor';
 import { DropZone } from '../../components/DropZone';
@@ -19,6 +17,7 @@ import { useClipboard } from '../../hooks/useClipboard';
 import { useID } from '../../hooks/useID';
 import { downloadTextFile } from '../../utils/download-file';
 import { PageFormGroup } from './PageFormGroup';
+import { PageMarkdownDetail } from './PageMarkdownDetail';
 import { useRequiredValidationRule } from './validation-hooks';
 
 export type PageFormMarkdownInputProps<
@@ -133,13 +132,14 @@ export function PageFormMarkdown<
                 onDrop={onDrop}
                 isDisabled={isSubmitting || props.isReadOnly}
                 inputRef={dropZoneInputRef}
+                accept={{ 'text/markdown': ['.md'] }}
               >
                 <DataEditor
                   data-cy={id}
                   id={id}
                   name={name}
                   language="markdown"
-                  value={value}
+                  value={value || ''}
                   onChange={onChange}
                   setError={(error) => {
                     if (!error) clearErrors(name);
@@ -152,11 +152,7 @@ export function PageFormMarkdown<
                 />
               </DropZone>
             )}
-            {isExpanded && preview && (
-              <PreviewContainer className="pf-v5-c-form-control pf-m-disabled">
-                <TextContent>{<ReactMarkdown>{value}</ReactMarkdown>}</TextContent>
-              </PreviewContainer>
-            )}
+            {isExpanded && preview && <PageMarkdownDetail value={value} />}
             {!isExpanded && <div className="pf-v5-c-form-control" />}
           </PageFormGroup>
         );
@@ -209,7 +205,3 @@ function MarkdownActions(props: {
     </Flex>
   );
 }
-
-const PreviewContainer = styled.div`
-  padding: 16px;
-`;
