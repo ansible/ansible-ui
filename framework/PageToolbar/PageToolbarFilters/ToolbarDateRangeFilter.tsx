@@ -21,6 +21,12 @@ interface IToolbarDateFilterOption {
   isCustom?: boolean;
 }
 
+export enum DateRangeFilterPresets {
+  Last24Hours = 'last24hours',
+  LastWeek = 'last7days',
+  LastMonth = 'last30days',
+}
+
 export interface IToolbarDateRangeFilterProps {
   id?: string;
   label?: string;

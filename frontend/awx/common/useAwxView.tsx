@@ -1,6 +1,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import useSWR from 'swr';
-import { ISelected, ITableColumn, IToolbarFilter, useSelected } from '../../../framework';
+import {
+  ISelected,
+  ITableColumn,
+  IToolbarFilter,
+  ToolbarFilterType,
+  useSelected,
+} from '../../../framework';
 import { IView, useView } from '../../../framework/useView';
 import { getItemKey, swrOptions, useFetcher } from '../../common/crud/Data';
 import { RequestError } from '../../common/crud/RequestError';
@@ -70,8 +76,10 @@ export function useAwxView<T extends { id: number }>(options: {
 
   const { page, perPage, sort, sortDirection, filterState } = view;
 
-  let queryString = options?.queryParams ? `?${getQueryString(options.queryParams)}` : '';
-
+  let queryString =
+    options?.queryParams && Object.keys(options.queryParams).length
+      ? `?${getQueryString(options.queryParams)}`
+      : '';
   if (filterState) {
     for (const key in filterState) {
       const toolbarFilter = toolbarFilters?.find((filter) => filter.key === key);
@@ -91,9 +99,39 @@ export function useAwxView<T extends { id: number }>(options: {
             queryString += values.map((value) => `${toolbarFilter.query}=${value}`).join('&');
           } else {
             if (values.length > 1) {
-              queryString += values.map((value) => `or__${toolbarFilter.query}=${value}`).join('&');
+              if (toolbarFilter.type === ToolbarFilterType.DateRange) {
+                queryString += `${toolbarFilter.query}__gte=${values[0]}&${toolbarFilter.query}__lte=${values[1]}`;
+              } else {
+                queryString += values
+                  .map((value) => `or__${toolbarFilter.query}=${value}`)
+                  .join('&');
+              }
             } else {
-              queryString += `${toolbarFilter.query}=${values[0]}`;
+              if (toolbarFilter.type === ToolbarFilterType.DateRange) {
+                const date = new Date(Date.now() - 24 * 60 * 60 * 1000);
+                date.setSeconds(0);
+                date.setMilliseconds(0);
+                switch (values[0]) {
+                  case 'last24hours':
+                    queryString += `${toolbarFilter.query}__gte=${new Date(
+                      date.getTime() - 24 * 60 * 60 * 1000
+                    ).toISOString()}`;
+                    break;
+
+                  case 'last7days':
+                    queryString += `${toolbarFilter.query}__gte=${new Date(
+                      date.getTime() - 7 * 24 * 60 * 60 * 1000
+                    ).toISOString()}`;
+                    break;
+                  case 'last30days':
+                    queryString += `${toolbarFilter.query}__gte=${new Date(
+                      date.getTime() - 30 * 24 * 60 * 60 * 1000
+                    ).toISOString()}`;
+                    break;
+                }
+              } else {
+                queryString += `${toolbarFilter.query}=${values[0]}`;
+              }
             }
           }
         }

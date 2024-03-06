@@ -198,7 +198,12 @@ export function PageToolbarFilters(props: PageToolbarFiltersProps) {
                   switch (filter.type) {
                     case ToolbarFilterType.SingleSelect:
                     case ToolbarFilterType.MultiSelect:
-                      return filter.options?.find((o) => o.value === value)?.label ?? value;
+                    case ToolbarFilterType.DateRange:
+                      return (
+                        filter.options?.find((o) => {
+                          return o.value === value;
+                        })?.label ?? value
+                      );
                     case ToolbarFilterType.AsyncSingleSelect:
                     case ToolbarFilterType.AsyncMultiSelect:
                       return {
