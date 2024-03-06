@@ -61,13 +61,13 @@ describe('Execution Environments', () => {
                   .find('input')
                   .type(remoteRegistry.name)
                   .then(() => {
-                    cy.clickButton(`${remoteRegistry.name}`);
+                    cy.containsBy('button', `${remoteRegistry.name}`).click();
                   });
               } else {
                 //50 or more remote registries
                 cy.filterTableBySingleText(remoteRegistry.name);
                 cy.getByDataCy('checkbox-column-cell').find('input').click();
-                cy.clickButton('Confirm');
+                cy.containsBy('button', 'Confirm').click();
               }
             });
           cy.getByDataCy('Submit').click();
@@ -86,7 +86,7 @@ describe('Execution Environments', () => {
             () => {
               cy.get('[data-ouia-component-id="confirm"]').click();
               cy.get('[data-ouia-component-id="submit"]').click();
-              cy.clickButton('Close');
+              cy.containsBy('button', 'Close').click();
             }
           );
           cy.contains('h2', 'No results found').should('be.visible');
@@ -158,7 +158,7 @@ describe('Execution Environment Details tab', () => {
   it('should add readme with markdown editor', () => {
     cy.visit(`/execution-environments/${executionEnvironment.name}/`);
     cy.verifyPageTitle(executionEnvironment.name);
-    cy.clickButton('Add');
+    cy.containsBy('button', 'Add').click();
     cy.contains('README');
     cy.get('[data-cy="readme"]').within(() => {
       cy.contains('Raw Markdown');
@@ -170,7 +170,7 @@ describe('Execution Environment Details tab', () => {
         'PUT',
         hubAPI`/v3/plugin/execution-environments/repositories/${executionEnvironment.name}/_content/readme/`
       ).as('updateReadme');
-      cy.clickButton('Save');
+      cy.containsBy('button', 'Save').click();
       cy.wait('@updateReadme');
     });
     cy.get('[data-cy="readme"]').get('h1').contains('Heading 1');
@@ -180,14 +180,14 @@ describe('Execution Environment Details tab', () => {
     cy.visit(`/execution-environments/${executionEnvironment.name}/`);
     cy.get('[data-cy="readme"]').within(() => {
       cy.contains('Heading 1');
-      cy.clickButton('Edit');
+      cy.containsBy('button', 'Edit').click();
       cy.getByDataCy('raw-markdown').type('{enter}**bold text**');
       cy.contains('Preview').parent().get('strong').contains('bold text');
       cy.intercept(
         'PUT',
         hubAPI`/v3/plugin/execution-environments/repositories/${executionEnvironment.name}/_content/readme/`
       ).as('updateReadme');
-      cy.clickButton('Save');
+      cy.containsBy('button', 'Save').click();
       cy.wait('@updateReadme');
     });
     cy.get('[data-cy="readme"]').get('h1').contains('Heading 1');
@@ -197,11 +197,76 @@ describe('Execution Environment Details tab', () => {
   it('should not change readme after cancel edit', () => {
     cy.visit(`/execution-environments/${executionEnvironment.name}/`);
     cy.get('[data-cy="readme"]').within(() => {
-      cy.clickButton('Edit');
+      cy.containsBy('button', 'Edit').click();
       cy.getByDataCy('raw-markdown').clear().type('{enter}this should not be saved.');
       cy.contains('Preview').parent().contains('this should not be saved.');
-      cy.clickButton('Cancel');
+      cy.containsBy('button', 'Cancel').click();
     });
     cy.get('[data-cy="readme"]').contains('this should not be saved.').should('not.exist');
+  });
+
+  it('should successfully sync execution environment from Docker registry', () => {
+    cy.createHubRemoteRegistry().then((remoteRegistry) => {
+      cy.createHubExecutionEnvironment({
+        executionEnvironment: {
+          include_tags: ['latest'],
+          registry: remoteRegistry.id,
+        },
+      }).then((executionEnvironment) => {
+        cy.syncRemoteExecutionEnvironment(executionEnvironment);
+        cy.deleteHubExecutionEnvironment(executionEnvironment).then(() => {
+          cy.deleteHubRemoteRegistry(remoteRegistry);
+        });
+      });
+    });
+  });
+});
+
+describe('Execution Environment Activity tab', () => {
+  it('should display empty activity tab', () => {
+    cy.createHubRemoteRegistry().then((remoteRegistry) => {
+      cy.createHubExecutionEnvironment({
+        executionEnvironment: { registry: remoteRegistry.id },
+      }).then((executionEnvironment) => {
+        cy.visit(`${ExecutionEnvironments.url}/${executionEnvironment.name}/activity`);
+        cy.contains('No activities yet');
+        cy.contains('Activities will appear once you push something');
+
+        cy.deleteHubExecutionEnvironment(executionEnvironment).then(() => {
+          cy.deleteHubRemoteRegistry(remoteRegistry);
+        });
+      });
+    });
+  });
+
+  it('should display populated activity tab', () => {
+    cy.createHubRemoteRegistry().then((remoteRegistry) => {
+      cy.createHubExecutionEnvironment({
+        executionEnvironment: {
+          include_tags: ['latest'],
+          registry: remoteRegistry.id,
+        },
+      }).then((executionEnvironment) => {
+        cy.syncRemoteExecutionEnvironment(executionEnvironment);
+
+        const eeName = executionEnvironment.name;
+
+        cy.intercept(
+          'GET',
+          hubAPI`/v3/plugin/execution-environments/repositories/${eeName}/_content/history/*`
+        ).as('getActivity');
+        cy.visit(`${ExecutionEnvironments.url}/${eeName}/activity`);
+        cy.contains('Change');
+        cy.contains('Date');
+        cy.contains(`${eeName} was added`);
+        cy.contains('sha256');
+        cy.contains('latest was added');
+        cy.wait('@getActivity');
+
+        cy.deleteHubExecutionEnvironment(executionEnvironment).then(() => {
+          cy.deleteHubRemoteRegistry(remoteRegistry);
+        });
+      });
+    });
   });
 });
