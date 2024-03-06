@@ -34,7 +34,6 @@ describe('inventory host', () => {
     cy.verifyPageTitle(inventoryName);
     cy.hasDetail(/^Organization$/, organization.name);
     cy.clickTab(/^Hosts$/, true);
-    cy.wait(1000);
   });
 
   afterEach(() => {
@@ -59,7 +58,7 @@ describe('inventory host', () => {
     cy.verifyPageTitle('Create Host');
     cy.get('[data-cy="name"]').type(hostName);
     cy.get('[data-cy="description"]').type('This is the description');
-    cy.typeBy('[data-cy="variables"]', 'test: true');
+    cy.getByDataCy('variables').type('test: true');
     cy.clickButton(/^Create host/);
     cy.hasDetail(/^Name$/, hostName);
     //cy.hasDetail(/^Description$/, 'This is a description'); TODO: add after when description is fixed
