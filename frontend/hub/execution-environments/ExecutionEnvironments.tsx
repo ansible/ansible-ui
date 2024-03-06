@@ -9,6 +9,7 @@ import { useExecutionEnvironmentActions } from './hooks/useExecutionEnvironmentA
 import { useExecutionEnvironmentFilters } from './hooks/useExecutionEnvironmentFilters';
 import { useExecutionEnvironmentsActions } from './hooks/useExecutionEnvironmentsActions';
 import { useExecutionEnvironmentsColumns } from './hooks/useExecutionEnvironmentsColumns';
+import { PlusCircleIcon } from '@patternfly/react-icons';
 
 export function ExecutionEnvironments() {
   const { t } = useTranslation();
@@ -41,6 +42,7 @@ export function ExecutionEnvironments() {
         errorStateTitle={t('Error loading execution environments')}
         emptyStateTitle={t('No execution environments yet')}
         emptyStateButtonText={t('Add Execution Environment')}
+        emptyStateButtonIcon={<PlusCircleIcon />}
         emptyStateButtonClick={() => navigate(HubRoute.CreateExecutionEnvironment)}
         {...view}
         defaultSubtitle={t('Execution Environment')}

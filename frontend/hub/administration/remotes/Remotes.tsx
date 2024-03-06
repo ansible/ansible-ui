@@ -8,6 +8,7 @@ import { useRemoteActions } from './hooks/useRemoteActions';
 import { useRemoteColumns } from './hooks/useRemoteColumns';
 import { useRemoteFilters } from './hooks/useRemoteFilters';
 import { useRemoteToolbarActions } from './hooks/useRemoteToolbarActions';
+import { PlusCircleIcon } from '@patternfly/react-icons';
 
 export interface HubRemote {
   auth_url?: string | null;
@@ -53,6 +54,7 @@ export function Remotes() {
         defaultSubtitle={t('Remote')}
         emptyStateButtonClick={() => pageNavigate(HubRoute.CreateRemote)}
         emptyStateButtonText={t('Create remote')}
+        emptyStateButtonIcon={<PlusCircleIcon />}
         emptyStateTitle={t('No remotes yet')}
         errorStateTitle={t('Error loading remotes')}
         rowActions={rowActions}

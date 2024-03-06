@@ -9,6 +9,7 @@ import { useCollectionActions } from './hooks/useCollectionActions';
 import { useCollectionColumns } from './hooks/useCollectionColumns';
 import { useCollectionFilters } from './hooks/useCollectionFilters';
 import { useCollectionsActions } from './hooks/useCollectionsActions';
+import { PlusCircleIcon } from '@patternfly/react-icons';
 
 export function Collections() {
   const { t } = useTranslation();
@@ -54,6 +55,7 @@ export function Collections() {
         emptyStateTitle={t('No collections yet')}
         emptyStateDescription={t('To get started, upload a collection.')}
         emptyStateButtonText={t('Upload collection')}
+        emptyStateButtonIcon={<PlusCircleIcon />}
         emptyStateButtonClick={() => pageNavigate(HubRoute.UploadCollection)}
         {...view}
         defaultTableView="list"
