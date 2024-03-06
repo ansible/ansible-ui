@@ -1,5 +1,5 @@
 type ResourceRBAC = {
-  summary_fields: { user_capabilities: { edit: boolean; delete: boolean } };
+  summary_fields: { user_capabilities: { edit: boolean; delete: boolean; copy?: boolean } };
 };
 
 export const cannotEditResource = (
@@ -24,3 +24,8 @@ export function cannotDeleteResources(resources: ResourceRBAC[], t: (string: str
   }
   return '';
 }
+
+export const cannotCopyResource = (resource: ResourceRBAC, t: (string: string) => string) =>
+  resource?.summary_fields?.user_capabilities?.copy
+    ? ''
+    : t(`This cannot be copied due to insufficient permissions.`);
