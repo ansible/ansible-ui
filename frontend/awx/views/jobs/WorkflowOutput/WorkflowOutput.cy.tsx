@@ -1,7 +1,7 @@
 import { WorkflowOutput } from './WorkflowOutput';
 import job from '../../../../../cypress/fixtures/workflow_job.json';
-import { WorkflowJob } from '../../../interfaces/WorkflowJob';
 import workflowNodes from '../../../../../cypress/fixtures/workflow_nodes.json';
+import { Job } from '../../../interfaces/Job';
 describe('Workflow Output', () => {
   before(() => {
     cy.intercept(
@@ -26,11 +26,11 @@ describe('Workflow Output', () => {
     );
   });
   it('should mount with correct number of nodes', () => {
-    cy.mount(<WorkflowOutput job={job as unknown as WorkflowJob} />);
+    cy.mount(<WorkflowOutput job={job as unknown as Job} reloadJob={() => null} />);
     cy.get('g[data-kind="node"]').should('have.length', workflowNodes.results.length + 1); // The +1 accounts for the start node
   });
   it('should show status icon, and elapsed time label', () => {
-    cy.mount(<WorkflowOutput job={job as unknown as WorkflowJob} />);
+    cy.mount(<WorkflowOutput job={job as unknown as Job} reloadJob={() => null} />);
     cy.get('g[data-type="failed-node"]').each((outterNode) => {
       cy.wrap(outterNode).within((node) => {
         cy.get('text').should('have.text', `${node.text()}`);

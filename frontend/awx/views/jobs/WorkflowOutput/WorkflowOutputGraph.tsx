@@ -17,27 +17,52 @@ import { Legend } from '../../../resources/templates/WorkflowVisualizer/componen
 import { useWorkflowOuput } from './hooks/useWorkflowOutput';
 import { useEffect } from 'react';
 import styled from 'styled-components';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { requestGet } from '../../../../common/crud/Data';
+import { WorkflowNode } from '../../../interfaces/WorkflowNode';
+import { useTranslation } from 'react-i18next';
+import { secondsToHHMMSS } from '../../../../../framework/utils/dateTimeHelpers';
+import { Job } from '../../../interfaces/Job';
 
 const TopologyView = styled(PFTopologyView)`
   .pf-v5-c-divider {
     display: none;
   }
 `;
-export const WorkflowOutputGraph = observer((props: { jobId?: number }) => {
+export const WorkflowOutputGraph = observer((props: { job?: Job; reloadJob: () => void }) => {
   const controller = useVisualizationController();
+  const { t } = useTranslation();
   const model = controller.toModel();
   const nodes = model.nodes;
-  const message = useWorkflowOuput(props.jobId?.toString() as string);
+  const message = useWorkflowOuput(props.reloadJob, props.job);
+  const node = controller.getNodeById(message?.workflow_node_id?.toString() || '');
   useEffect(() => {
+    const getElapsedTime = async (nodeId: number) => {
+      if (!props.job || !nodeId) return;
+
+      const newNode: WorkflowNode | undefined = await requestGet<WorkflowNode>(
+        awxAPI`/workflow_job_nodes/${nodeId.toString()}/`
+      );
+
+      node?.setData({
+        ...node?.getData(),
+        secondaryLabel: newNode
+          ? t(`Elapsed time ${secondsToHHMMSS(newNode?.summary_fields?.job?.elapsed || 0)}`)
+          : '',
+      });
+      return;
+    };
     if (!message?.workflow_node_id || !message?.status || !nodes?.length) {
       return;
     }
+
+    if (message.finished) {
+      void getElapsedTime(message.workflow_node_id);
+    }
     action(() => {
-      controller
-        .getNodeById(message?.workflow_node_id?.toString() || '')
-        ?.setNodeStatus(message.status as NodeStatus);
+      node?.setNodeStatus(message.status as NodeStatus);
     })();
-  }, [controller, message, model, nodes]);
+  }, [node, message, props.job, t, nodes]);
   return (
     <ViewOptionsProvider>
       <ViewOptionsContext.Consumer>

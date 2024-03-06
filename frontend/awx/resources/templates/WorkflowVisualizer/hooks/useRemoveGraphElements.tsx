@@ -138,6 +138,8 @@ export function useRemoveGraphElements() {
 
   const handleRemoveLink = action((element: Edge) => {
     element.setVisible(false);
+    element.getSource().setState({ modified: true });
+    element.getTarget().setState({ modified: true });
     element.getSource().setNodeStatus(NodeStatus.default);
     element.getTarget().setNodeStatus(NodeStatus.default);
     const controller = element.getController();

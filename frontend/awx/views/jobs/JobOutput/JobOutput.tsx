@@ -53,7 +53,7 @@ export function JobOutputInner(props: { job: Job; reloadJob: () => void }) {
         setIsFollowModeEnabled={setIsFollowModeEnabled}
       />
       {job.type === 'workflow_job' ? (
-        <WorkflowOutput job={job} />
+        <WorkflowOutput job={job} reloadJob={reloadJob} />
       ) : (
         <JobOutputEvents
           job={job}

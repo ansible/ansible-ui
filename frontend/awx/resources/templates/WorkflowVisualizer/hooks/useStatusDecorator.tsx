@@ -74,6 +74,7 @@ function getStatusIcon(nodeType: string, centerPoint: { x: number; y: number }) 
     case 'failed':
       return <ExclamationCircleIcon data-cy="failed-icon" style={{ fill: pfDanger }} />;
     case 'pending':
+    case 'waiting':
       return <ClockIcon sdata-cy="pending-icon" style={{ fill: pfInfo }} />;
     default:
       return null;

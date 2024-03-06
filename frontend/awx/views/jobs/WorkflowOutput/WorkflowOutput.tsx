@@ -32,7 +32,7 @@ import { useCreateEdge } from '../../../resources/templates/WorkflowVisualizer/h
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxGetAllPages } from '../../../common/useAwxGetAllPages';
 import { secondsToHHMMSS } from '../../../../../framework/utils/dateTimeHelpers';
-import { WorkflowJob } from '../../../interfaces/WorkflowJob';
+import { Job } from '../../../interfaces/Job';
 
 export const graphModel: Model = {
   nodes: [],
@@ -45,7 +45,7 @@ export const graphModel: Model = {
   },
 };
 
-export const WorkflowOutput = (props: { job: WorkflowJob }) => {
+export const WorkflowOutput = (props: { job: Job; reloadJob: () => void }) => {
   const { t } = useTranslation();
   const createEdge = useCreateEdge();
 
@@ -138,7 +138,7 @@ export const WorkflowOutput = (props: { job: WorkflowJob }) => {
         status: status || NodeStatus.default,
         labelPosition: LabelPosition.bottom,
         data: {
-          secondaryLabel: t(`Elapsed time ${time}`),
+          secondaryLabel: time ? t(`Elapsed time ${time}`) : undefined,
           resource: n,
         },
       };
@@ -170,7 +170,7 @@ export const WorkflowOutput = (props: { job: WorkflowJob }) => {
 
   return (
     <VisualizationProvider controller={visualization}>
-      <WorkflowOutputGraph jobId={props.job.id} />
+      <WorkflowOutputGraph job={props.job} reloadJob={props.reloadJob} />
     </VisualizationProvider>
   );
 };

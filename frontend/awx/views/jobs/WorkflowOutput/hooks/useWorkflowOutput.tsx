@@ -1,8 +1,7 @@
 import { useCallback, useState } from 'react';
-import { awxAPI } from '../../../../common/api/awx-utils';
 import { useAwxWebSocketSubscription } from '../../../../common/useAwxWebSocket';
-import { useAwxGetAllPages } from '../../../../common/useAwxGetAllPages';
 import { WorkflowNode } from '../../../../interfaces/WorkflowNode';
+import { Job } from '../../../../interfaces/Job';
 
 export type WebSocketMessage = {
   group_name?: string;
@@ -11,27 +10,25 @@ export type WebSocketMessage = {
   inventory_id?: number;
   unified_job_id?: number;
   workflow_node_id?: number;
+  finished?: string;
 };
 export type WebSocketWorkflowNode = WorkflowNode & { job?: WebSocketMessage };
-export function useWorkflowOuput(jobId: string) {
+export function useWorkflowOuput(reloadJob: () => void, job?: Job) {
   const [message, setMessage] = useState<WebSocketMessage>();
-  const { refresh } = useAwxGetAllPages<WorkflowNode>(
-    awxAPI`/workflow_jobs/${jobId}/workflow_nodes/`
-  );
 
   const handleWebSocketMessage = useCallback(
     (message?: WebSocketMessage) => {
       if (!message) return;
       setMessage(message);
       if (
-        message?.group_name === 'workflow_jobs' &&
-        message?.unified_job_id?.toString() === jobId &&
+        message?.group_name === 'jobs' &&
+        message?.unified_job_id?.toString() === job?.id.toString() &&
         message?.status
       ) {
-        refresh();
+        reloadJob();
       }
     },
-    [refresh, jobId]
+    [job?.id, reloadJob]
   );
   useAwxWebSocketSubscription(
     {
