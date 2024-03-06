@@ -10,10 +10,12 @@ import { CollectionVersionSearch } from '../../frontend/hub/collections/Collecti
 import { parsePulpIDFromURL } from '../../frontend/hub/common/api/hub-api-utils';
 import { HubItemsResponse } from '../../frontend/hub/common/useHubView';
 import { ExecutionEnvironment as HubExecutionEnvironment } from '../../frontend/hub/execution-environments/ExecutionEnvironment';
+import { PayloadDataType as HubExecutionEnvironmentPayload } from '../../frontend/hub/execution-environments/ExecutionEnvironmentForm';
 import { HubNamespace } from '../../frontend/hub/namespaces/HubNamespace';
 import { galaxykitPassword, galaxykitUsername } from './e2e';
 import { hubAPI, pulpAPI } from './formatApiPathForHub';
 import { escapeForShellCommand, randomE2Ename } from './utils';
+import { ExecutionEnvironments } from '../e2e/hub/constants';
 
 const apiPrefix = Cypress.env('HUB_API_PREFIX') as string;
 
@@ -422,7 +424,7 @@ Cypress.Commands.add(
   }
 );
 export type HubCreateExecutionEnvironmentOptions = {
-  executionEnvironment: SetRequired<Partial<HubExecutionEnvironment>, 'registry'>;
+  executionEnvironment: SetRequired<Partial<HubExecutionEnvironmentPayload>, 'registry'>;
 } & Omit<HubPostRequestOptions, 'url' | 'body'>;
 
 Cypress.Commands.add(
@@ -433,7 +435,7 @@ Cypress.Commands.add(
       url: hubAPI`/_ui/v1/execution-environments/remotes/`,
       body: {
         name: randomE2Ename(),
-        upstream_name: 'alpine',
+        upstream_name: 'library/alpine',
         ...options?.executionEnvironment,
       },
     });
@@ -451,6 +453,31 @@ Cypress.Commands.add(
     cy.hubDeleteRequest({
       ...options,
       url: hubAPI`/v3/plugin/execution-environments/repositories/${options.name}/`,
+    });
+  }
+);
+
+Cypress.Commands.add(
+  'syncRemoteExecutionEnvironment',
+  (executionEnvironment: HubExecutionEnvironment) => {
+    cy.visit(`${ExecutionEnvironments.url}/${executionEnvironment.name}/`);
+    cy.getByDataCy('actions-dropdown').click();
+    cy.getByDataCy('sync-from-registry').click();
+
+    cy.clickModalConfirmCheckbox();
+    cy.intercept(
+      'POST',
+      hubAPI`/v3/plugin/execution-environments/repositories/${executionEnvironment.name}/_content/sync/`
+    ).as('eeSync');
+    cy.clickButton('Sync execution environments');
+    cy.wait('@eeSync').then((xhr) => {
+      const task = xhr?.response?.body?.task as string;
+      cy.waitOnHubTask(task).then((currentSubject: unknown) => {
+        const task = currentSubject as Task;
+        expect(task.state).to.be.eql('completed');
+        cy.contains('Success');
+        cy.clickButton('Close');
+      });
     });
   }
 );
