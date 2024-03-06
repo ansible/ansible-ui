@@ -160,7 +160,7 @@ export function PageAsyncSingleSelect<
           <SplitItem isFilled>
             {options?.length !== total && (
               <Button
-                id="load-lmore"
+                id="load-more"
                 variant="link"
                 isInline
                 onClick={(e) => {
