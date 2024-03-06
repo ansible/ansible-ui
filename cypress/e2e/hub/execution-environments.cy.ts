@@ -214,6 +214,9 @@ describe('Execution Environment Details tab', () => {
         },
       }).then((executionEnvironment) => {
         cy.syncRemoteExecutionEnvironment(executionEnvironment);
+        cy.deleteHubExecutionEnvironment(executionEnvironment).then(() => {
+          cy.deleteHubRemoteRegistry(remoteRegistry);
+        });
       });
     });
   });
@@ -255,6 +258,10 @@ describe('Execution Environment Activity tab', () => {
         cy.contains('sha256');
         cy.contains('latest was added');
         cy.wait('@getActivity');
+
+        cy.deleteHubExecutionEnvironment(executionEnvironment).then(() => {
+          cy.deleteHubRemoteRegistry(remoteRegistry);
+        });
       });
     });
   });
