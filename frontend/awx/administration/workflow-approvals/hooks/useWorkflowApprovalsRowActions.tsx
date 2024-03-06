@@ -1,5 +1,5 @@
 import { ButtonVariant } from '@patternfly/react-core';
-import { ThumbsDownIcon, ThumbsUpIcon, TrashIcon } from '@patternfly/react-icons';
+import { MinusCircleIcon, ThumbsDownIcon, ThumbsUpIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
@@ -7,6 +7,8 @@ import { WorkflowApproval } from '../../../interfaces/WorkflowApproval';
 import { useApproveWorkflowApprovals } from './useApproveWorkflowApprovals';
 import { useDeleteWorkflowApprovals } from './useDeleteWorkflowApprovals';
 import { useDenyWorkflowApprovals } from './useDenyWorkflowApprovals';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { usePostRequest } from '../../../../common/crud/usePostRequest';
 
 export function useWorkflowApprovalsRowActions(
   onComplete: (workflow_approvals: WorkflowApproval[]) => void
@@ -15,6 +17,7 @@ export function useWorkflowApprovalsRowActions(
   const approveWorkflowApprovals = useApproveWorkflowApprovals(onComplete);
   const deleteWorkflowApprovals = useDeleteWorkflowApprovals(onComplete);
   const denyWorkflowApprovals = useDenyWorkflowApprovals(onComplete);
+  const postRequest = usePostRequest();
 
   return useMemo<IPageAction<WorkflowApproval>[]>(() => {
     const cannotDeleteWorkflowApproval = (workflow_approval: WorkflowApproval) => {
@@ -72,6 +75,23 @@ export function useWorkflowApprovalsRowActions(
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
+        variant: ButtonVariant.secondary,
+        isPinned: true,
+        icon: MinusCircleIcon,
+        label: t(`Cancel`),
+        isDisabled: (workflow_approval: WorkflowApproval) => cannotDeny(workflow_approval),
+        isHidden: (workflow_approval: WorkflowApproval) =>
+          ['successful', 'failed', 'error', 'canceled'].includes(workflow_approval.status),
+        onClick: (workflow_approval: WorkflowApproval) =>
+          postRequest(
+            awxAPI`/workflow_jobs/${workflow_approval?.summary_fields?.workflow_job?.id.toString()}/cancel/`,
+            {}
+          ),
+      },
+
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t(`Delete workflow approval`),
         isDisabled: (workflow_approval: WorkflowApproval) =>
@@ -82,5 +102,5 @@ export function useWorkflowApprovalsRowActions(
       },
     ];
     return actions;
-  }, [deleteWorkflowApprovals, denyWorkflowApprovals, approveWorkflowApprovals, t]);
+  }, [t, approveWorkflowApprovals, denyWorkflowApprovals, postRequest, deleteWorkflowApprovals]);
 }
