@@ -5,7 +5,7 @@ import { JobTemplate } from '../../../../frontend/awx/interfaces/JobTemplate';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
 import { User } from '../../../../frontend/awx/interfaces/User';
-import { WorkflowApproval } from '../../../../frontend/awx/interfaces/generated-from-swagger/api';
+import { WorkflowApproval } from '../../../../frontend/awx/interfaces/WorkflowApproval';
 import { getJobsAPIUrl } from '../../../../frontend/awx/views/jobs/jobUtils';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 
