@@ -1,21 +1,35 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { compareStrings } from '../../../../../framework';
 import { useAddressColumn } from '../../../../common/columns';
-import { getItemKey, requestPatch } from '../../../../common/crud/Data';
+import { getItemKey, requestGet, requestPatch } from '../../../../common/crud/Data';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxBulkConfirmation } from '../../../common/useAwxBulkConfirmation';
 import { Peer } from '../../../interfaces/Peer';
 import { usePeersColumns } from './usePeersColumns';
 import { useParams } from 'react-router-dom';
-import { useGetItem } from '../../../../common/crud/useGet';
 import { Instance } from '../../../interfaces/Instance';
 
 export function useDisassociatePeer(onComplete: (peers: Peer[]) => void) {
+  const [data, setData] = useState<Instance>();
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
-  const { data: instance } = useGetItem<Instance>(awxAPI`/instances/`, id);
-  const { peers = [] } = instance ?? {};
+  const { peers = [] } = data ?? {};
+  const { t } = useTranslation();
+  const deleteActionNameColumn = useAddressColumn({ disableLinks: true, disableSort: true });
+  const actionColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn]);
+  const bulkAction = useAwxBulkConfirmation<Peer>();
+
+  useMemo(() => {
+    if (!peers) return;
+    void requestGet<Instance>(awxAPI`/instances/${id.toString()}/`)
+      .then((res) => {
+        setData(res);
+      })
+      .catch(() => {
+        setData(undefined);
+      });
+  }, [id, peers]);
 
   const columns = usePeersColumns(undefined);
   const confirmationColumns = useMemo(
@@ -26,17 +40,13 @@ export function useDisassociatePeer(onComplete: (peers: Peer[]) => void) {
     [columns]
   );
 
-  const { t } = useTranslation();
-
-  const deleteActionNameColumn = useAddressColumn({ disableLinks: true, disableSort: true });
-  const actionColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn]);
-  const bulkAction = useAwxBulkConfirmation<Peer>();
   const removeInstances = (peersToRemove: Peer[]) => {
     for (const p of peersToRemove) {
       if (peers.includes(p.id)) {
         peers.splice(peers.indexOf(p.id), 1);
       }
     }
+
     bulkAction({
       title: t('Disassociate peers', { count: peersToRemove.length }),
       confirmText:
