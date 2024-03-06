@@ -10,7 +10,7 @@ import {
   useFormContext,
 } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { usePageAlertToaster } from '../..';
+import { usePageAlertToaster, usePageSettings } from '../..';
 import { DataEditor, DataEditorLanguages } from '../../components/DataEditor';
 import { DropZone } from '../../components/DropZone';
 import { IconButton } from '../../components/IconButton';
@@ -84,7 +84,8 @@ export function PageFormDataEditor<
     clearErrors,
     control,
   } = useFormContext<TFieldValues>();
-  const defaultLanguage = 'yaml';
+  const settings = usePageSettings();
+  const defaultLanguage = settings.dataEditorFormat ?? 'yaml';
   const [language, setLanguage] = useState<DataEditorLanguages>(defaultLanguage); // TODO settings.defaultCodeLanguage
   const [isExpanded, setExpanded] = useState(!props.defaultCollapsed);
 
