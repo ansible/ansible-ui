@@ -84,7 +84,7 @@ describe('AWX Cleanup', () => {
     });
   });
 
-  it.only('cleanup workflow approvals', () => {
+  it('cleanup workflow approvals', () => {
     cy.awxRequestGet<AwxItemsResponse<Job>>(
       awxAPI`/workflow_approvals/?name__startswith=E2E&page=1&page_size=200&created__lt=${tenMinutesAgo}`
     ).then((result) => {
