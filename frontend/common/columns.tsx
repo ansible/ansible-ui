@@ -149,7 +149,7 @@ export function useLabelsColumn() {
         );
       },
       table: ColumnTableOption.expanded,
-      value: (item) => (item.summary_fields?.labels.results.length ? true : undefined),
+      value: (item) => (item.summary_fields?.labels?.results.length ? true : undefined),
       card: 'hidden',
       list: 'hidden',
       modal: ColumnModalOption.hidden,
