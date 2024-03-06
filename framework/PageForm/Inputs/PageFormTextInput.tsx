@@ -237,16 +237,19 @@ export function PageFormTextInput<
         switch (type) {
           case 'datetime-local':
             if (value) {
-              parsedValue = new Date(value).toISOString().slice(0, 16);
+              const utcDate = new Date(value);
+              const localDate = new Date(utcDate.getTime() - utcDate.getTimezoneOffset() * 60000);
+              parsedValue = localDate.toISOString().slice(0, 16);
             }
             break;
         }
 
         function onChangeHandler(value: string) {
           switch (props.type) {
-            case 'datetime-local':
+            case 'datetime-local': {
               onChange(new Date(value).toISOString());
               break;
+            }
             default:
               onChange(value.trimStart());
           }
