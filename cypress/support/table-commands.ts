@@ -6,7 +6,7 @@ Cypress.Commands.add(
       ignoreNotFound?: boolean;
     }
   ) => {
-    cy.get('table').should('exist');
+    cy.getByDataCy('table-view-toggle').should('exist');
     if (options?.ignoreNotFound) {
       cy.get('button').then((jqueryResult) => {
         for (let i = 0; i < jqueryResult.length; i++) {
