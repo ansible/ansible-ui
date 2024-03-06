@@ -261,7 +261,7 @@ type ExecutionEnvironmentFormProps = {
   namespace?: { name: string };
 };
 
-type PayloadDataType = {
+export type PayloadDataType = {
   include_tags?: string[];
   exclude_tags?: string[];
   name: string;
