@@ -62,8 +62,8 @@ export function useFilters(actions?: { [key: string]: ActionsResponse }) {
   }, [actions]);
 }
 
-function craftRequestUrl(optionsPath: string, params: QueryParams | undefined) {
-  let url = `api/v2/${optionsPath}/?page=1&page_size=200`;
+function craftRequestUrl(optionsPath: string, params: QueryParams | undefined, page: number) {
+  let url = `api/v2/${optionsPath}/?page=${page}&page_size=200`;
 
   if (params) {
     const queryParams = Object.entries(params)
@@ -83,8 +83,11 @@ export function useDynamicToolbarFilters<T extends Organization | UnifiedJob | U
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/${optionsPath}/`);
   const filterableFields = useFilters(data?.actions?.GET);
   const queryResource = useCallback(
-    async (resourceKey: string) => {
-      const resources = await requestGet<AwxItemsResponse<T>>(craftRequestUrl(optionsPath, params));
+    async (page: number, signal: AbortSignal, resourceKey: string) => {
+      const resources = await requestGet<AwxItemsResponse<T>>(
+        craftRequestUrl(optionsPath, params, page),
+        signal
+      );
       return {
         total: resources.count,
         options: resources.results.map((resource) => ({
@@ -154,7 +157,8 @@ export function useDynamicToolbarFilters<T extends Organization | UnifiedJob | U
             query: field.query,
             label: t(field.label),
             type: ToolbarFilterType.AsyncMultiSelect,
-            queryOptions: () => queryResource(field.key),
+            queryOptions: (page: number, signal: AbortSignal) =>
+              queryResource(page, signal, field.key),
             placeholder: `Select ${field.key}`,
             queryPlaceholder: `Loading ${field.key}...`,
             queryErrorText: `Failed to load ${field.key} options`,
