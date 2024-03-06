@@ -7,7 +7,6 @@ import {
   ToolbarFilterType,
   useSelected,
 } from '../../../framework';
-import { DateRangeFilterPresets } from '../../../framework/PageToolbar/PageToolbarFilters/ToolbarDateRangeFilter';
 import { IView, useView } from '../../../framework/useView';
 import { getItemKey, swrOptions, useFetcher } from '../../common/crud/Data';
 import { RequestError } from '../../common/crud/RequestError';
@@ -112,23 +111,19 @@ export function useAwxView<T extends { id: number }>(options: {
                 const date = new Date(Date.now() - 24 * 60 * 60 * 1000);
                 date.setSeconds(0);
                 date.setMilliseconds(0);
-                switch (values[0] as DateRangeFilterPresets) {
-                  case DateRangeFilterPresets.LastHour:
-                    queryString += `${toolbarFilter.query}__gte=${new Date(
-                      date.getTime() - 60 * 60 * 1000
-                    ).toISOString()}`;
-                    break;
-                  case DateRangeFilterPresets.Last24Hours:
+                switch (values[0]) {
+                  case 'last24hours':
                     queryString += `${toolbarFilter.query}__gte=${new Date(
                       date.getTime() - 24 * 60 * 60 * 1000
                     ).toISOString()}`;
                     break;
-                  case DateRangeFilterPresets.LastWeek:
+
+                  case 'last7days':
                     queryString += `${toolbarFilter.query}__gte=${new Date(
                       date.getTime() - 7 * 24 * 60 * 60 * 1000
                     ).toISOString()}`;
                     break;
-                  case DateRangeFilterPresets.LastMonth:
+                  case 'last30days':
                     queryString += `${toolbarFilter.query}__gte=${new Date(
                       date.getTime() - 30 * 24 * 60 * 60 * 1000
                     ).toISOString()}`;
