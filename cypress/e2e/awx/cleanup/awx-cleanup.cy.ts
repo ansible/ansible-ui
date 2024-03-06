@@ -83,4 +83,17 @@ describe('AWX Cleanup', () => {
       }
     });
   });
+
+  it.only('cleanup workflow approvals', () => {
+    cy.awxRequestGet<AwxItemsResponse<Job>>(
+      awxAPI`/workflow_approvals/?name__startswith=E2E&page=1&page_size=200&created__lt=${tenMinutesAgo}`
+    ).then((result) => {
+      for (const resource of result.results ?? []) {
+        cy.awxRequestPost(awxAPI`/workflow_approvals/${resource.id.toString()}/deny/`, {}, false);
+        cy.awxRequestDelete(awxAPI`/workflow_approvals/${resource.id.toString()}/`, {
+          failOnStatusCode: false,
+        });
+      }
+    });
+  });
 });
