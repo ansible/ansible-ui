@@ -231,6 +231,10 @@ describe('Execution Environment Activity tab', () => {
         cy.visit(`${ExecutionEnvironments.url}/${executionEnvironment.name}/activity`);
         cy.contains('No activities yet');
         cy.contains('Activities will appear once you push something');
+
+        cy.deleteHubExecutionEnvironment(executionEnvironment).then(() => {
+          cy.deleteHubRemoteRegistry(remoteRegistry);
+        });
       });
     });
   });
