@@ -2,7 +2,6 @@
 // import 'cypress-axe';
 import '@4tw/cypress-drag-drop';
 import '@cypress/code-coverage/support';
-import 'cypress-file-upload';
 import { randomString } from '../../framework/utils/random-string';
 import { HubUser } from '../../frontend/hub/interfaces/expanded/HubUser';
 import './auth';
@@ -14,9 +13,11 @@ import './e2e';
 import './eda-commands';
 import { hubAPI } from './formatApiPathForHub';
 import './hub-commands';
+import './input-commands';
 import './rest-commands';
+import './table-commands';
 
-export const galaxykitUsername: string = `e2e-${randomString(4)}`;
+export const galaxykitUsername: string = `e2e_${randomString(4)}`;
 export const galaxykitPassword: string = randomString(9);
 export let galaxyE2EUserID: number;
 
@@ -72,3 +73,5 @@ Cypress.on('uncaught:exception', (_err, _runnable) => {
   // fixes problems with monaco loading workers
   return false;
 });
+
+// Cypress.Keyboard.defaults({ keystrokeDelay: 0 });

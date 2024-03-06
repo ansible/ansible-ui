@@ -63,5 +63,11 @@ export enum EdaRoute {
 
   CreateControllerToken = 'eda-create-controller-token',
 
+  Webhooks = 'eda-webhooks',
+  CreateWebhook = 'eda-create-webhook',
+  EditWebhook = 'eda-edit-webhook',
+  WebhookPage = 'eda-webhook-page',
+  WebhookDetails = 'eda-webhook-details',
+
   Login = 'eda-login',
 }

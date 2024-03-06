@@ -1,6 +1,6 @@
 import { Button, Flex, FlexItem, Spinner, Split, SplitItem, Stack } from '@patternfly/react-core';
 import { SyncAltIcon } from '@patternfly/react-icons';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { PageMultiSelect, PageMultiSelectProps } from './PageMultiSelect';
@@ -123,6 +123,27 @@ export function PageAsyncMultiSelect<
 
   useEffect(() => queryHandler(page), [page, queryHandler]);
 
+  const uniqueOptions = useMemo(() => {
+    if (options) {
+      const uniqueValues = new Set<ValueT>();
+      return options.filter((option) => {
+        if (uniqueValues.has(option.value)) {
+          return false;
+        }
+        uniqueValues.add(option.value);
+        return true;
+      });
+    }
+    return options;
+  }, [options]);
+
+  const uniqueTotal = useMemo(() => {
+    if (uniqueOptions) {
+      return total - (options ? options.length : 0) + uniqueOptions.length;
+    }
+    return total;
+  }, [options, total, uniqueOptions]);
+
   const footer = (
     <Stack hasGutter>
       {loading ? (
@@ -137,6 +158,7 @@ export function PageAsyncMultiSelect<
           <SplitItem isFilled>
             {options?.length !== total && (
               <Button
+                id="load-lmore"
                 variant="link"
                 isInline
                 onClick={(e) => {
@@ -152,8 +174,8 @@ export function PageAsyncMultiSelect<
           </SplitItem>
           <SplitItem>
             {t('{{count}} of {{total}}', {
-              count: options?.length ?? 0,
-              total,
+              count: uniqueOptions?.length ?? 0,
+              total: uniqueTotal,
             })}
           </SplitItem>
         </Split>
@@ -168,7 +190,7 @@ export function PageAsyncMultiSelect<
         id={props.id}
         icon={props.icon}
         placeholder={props.placeholder}
-        options={options ?? []}
+        options={uniqueOptions ?? []}
         values={props.values}
         onSelect={props.onSelect}
         variant={props.variant}

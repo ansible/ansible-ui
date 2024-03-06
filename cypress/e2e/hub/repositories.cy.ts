@@ -1,18 +1,23 @@
-import { Repositories } from './constants';
 import { randomString } from '../../../framework/utils/random-string';
 import { pulpAPI } from '../../support/formatApiPathForHub';
+import { Repositories } from './constants';
 
 describe('Repositories', () => {
+  let repositoryName: string;
+  let remoteName: string;
   before(() => {
     cy.hubLogin();
+  });
+  afterEach(() => {
+    cy.galaxykit('-i repository delete ' + repositoryName);
+    cy.galaxykit('-i remote delete ' + remoteName);
   });
   it('should render the repositories page', () => {
     cy.navigateTo('hub', Repositories.url);
     cy.verifyPageTitle(Repositories.title);
   });
   it('should copy CLI to clipboard', () => {
-    const repositoryName =
-      'repositories_repository_' + randomString(6, undefined, { isLowercase: true });
+    repositoryName = 'repositories_repository_' + randomString(6, undefined, { isLowercase: true });
     cy.navigateTo('hub', Repositories.url);
     cy.verifyPageTitle(Repositories.title);
     cy.get('[data-cy="create-repository"]').should('be.visible').click();
@@ -21,11 +26,37 @@ describe('Repositories', () => {
     cy.get('[data-cy="actions-dropdown"]').click();
     cy.get('[data-cy="copy-cli-configuration"]').click();
     cy.get('[data-cy="alert-toaster"]').should('be.visible');
-    cy.galaxykit('-i repository delete ' + repositoryName);
+    //dismiss alert
+    cy.get('[data-cy="alert-toaster"]').within(() => {
+      cy.get('button').click();
+    });
+  });
+  it('should sync repository', () => {
+    remoteName = 'repositories_repository_' + randomString(6, undefined, { isLowercase: true });
+    cy.createRemote(remoteName).then(() => {
+      repositoryName =
+        'repositories_repository_' + randomString(6, undefined, { isLowercase: true });
+      cy.navigateTo('hub', Repositories.url);
+      cy.verifyPageTitle(Repositories.title);
+      cy.get('[data-cy="create-repository"]').should('be.visible').click();
+      cy.get('[data-cy="name"]').type(repositoryName);
+      cy.get('#remote').click();
+      cy.get('button').contains(remoteName).click();
+      cy.get('[data-cy="Submit"]').click();
+      cy.get('[data-cy="actions-dropdown"]').click();
+      cy.get('[data-cy="sync-repository"]').click();
+      cy.get('button').contains('Sync').click();
+      cy.get('[data-cy="alert-toaster"]')
+        .should('be.visible')
+        .should('contain', `Sync started for repository "${repositoryName}".`);
+      //dismiss alert
+      cy.get('[data-cy="alert-toaster"]').within(() => {
+        cy.get('button').click();
+      });
+    });
   });
   it('should be able to create a repository', () => {
-    const repositoryName =
-      'repositories_repository_' + randomString(6, undefined, { isLowercase: true });
+    repositoryName = 'repositories_repository_' + randomString(6, undefined, { isLowercase: true });
     const repositoryDescription = 'Here goes description';
     cy.navigateTo('hub', Repositories.url);
     cy.verifyPageTitle(Repositories.title);
@@ -37,11 +68,9 @@ describe('Repositories', () => {
     // new repository should be create and an user redirected to its detail page
     cy.verifyPageTitle(repositoryName);
     cy.get('[data-cy="description"]').should('contain', repositoryDescription);
-    cy.galaxykit('-i repository delete ' + repositoryName);
   });
   it('should be able to edit a repository', () => {
-    const repositoryName =
-      'repositories_repository_' + randomString(6, undefined, { isLowercase: true });
+    repositoryName = 'repositories_repository_' + randomString(6, undefined, { isLowercase: true });
     const repositoryDescription = 'Here goes description';
     cy.intercept({
       method: 'GET',
@@ -61,24 +90,23 @@ describe('Repositories', () => {
     cy.wait('@editRepository').then(() => {
       cy.get('[data-cy="description"]').should('contain', repositoryDescription);
     });
-    cy.galaxykit('-i repository delete ' + repositoryName);
   });
   it('should be able to delete a repository', () => {
-    const repositoryName =
+    const repositoryNameLocal =
       'repositories_repository_' + randomString(6, undefined, { isLowercase: true });
     cy.navigateTo('hub', Repositories.url);
     cy.verifyPageTitle(Repositories.title);
     cy.get('[data-cy="create-repository"]').should('be.visible').click();
     cy.url().should('include', Repositories.urlCreate);
-    cy.get('[data-cy="name"]').type(repositoryName);
+    cy.get('[data-cy="name"]').type(repositoryNameLocal);
     cy.get('[data-cy="Submit"]').click();
-    cy.verifyPageTitle(repositoryName);
+    cy.verifyPageTitle(repositoryNameLocal);
     cy.get('[data-cy="actions-dropdown"]').click();
     cy.get('[data-cy="delete-repository"]').click();
     cy.get('#confirm').click();
     cy.get('button').contains('Delete repositories').click();
     cy.verifyPageTitle(Repositories.title);
-    cy.get('[data-cy="text-input"]').type(repositoryName);
+    cy.get('[data-cy="text-input"]').type(repositoryNameLocal);
     cy.get('.pf-v5-c-empty-state').should('be.visible');
     cy.get('.pf-v5-c-empty-state').contains('No results found');
   });
@@ -143,7 +171,7 @@ describe('Repositories Remove collection', () => {
       cy.contains('Add collections versions to repository');
 
       collections.forEach((collection) => {
-        cy.filterTableBySingleText(collection + '{enter}');
+        cy.filterTableBySingleText(collection);
         cy.contains(collection);
         cy.get(`[data-cy="checkbox-column-cell"]`).click();
       });
@@ -164,7 +192,7 @@ describe('Repositories Remove collection', () => {
     cy.get(modal).should('not.exist');
 
     // Remove first collection
-    cy.filterTableBySingleText(collections[0] + '{enter}');
+    cy.filterTableBySingleText(collections[0]);
     cy.get(`[aria-label="table view"]`).click();
     cy.get(`[data-cy="remove"]`).click();
     cy.clickModalConfirmCheckbox();

@@ -1,5 +1,5 @@
-import { InstanceGroups } from './InstanceGroups';
 import * as useOptions from '../../../common/crud/useOptions';
+import { InstanceGroups } from './InstanceGroups';
 
 describe('Instance Groups List', () => {
   describe('Non-empty list', () => {

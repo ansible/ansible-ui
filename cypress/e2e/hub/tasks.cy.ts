@@ -75,7 +75,7 @@ describe('Tasks', () => {
         cy.get('[data-cy="Submit"]').click();
         cy.hasAlert(`Sync started for repository "${repository.name}"`).should('be.visible');
         cy.navigateTo('hub', Tasks.url);
-        cy.selectToolbarFilterType(/^Task name$/);
+        cy.selectToolbarFilterByLabel(/^Task name$/);
         cy.filterTableByText('pulp_ansible.app.tasks.collections.sync', 'SingleText');
         cy.filterBySingleSelection(/^Status$/, 'Running');
         cy.clickTableRowKebabAction('pulp_ansible.app.tasks.collections.sync', 'stop-task', false);

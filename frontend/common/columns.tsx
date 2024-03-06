@@ -53,6 +53,7 @@ export function useNameColumn<
   sort?: string;
   disableSort?: boolean;
   disableLinks?: boolean;
+  defaultSort?: boolean;
 }) {
   const { url, onClick, disableSort, disableLinks } = options ?? {};
   const { t } = useTranslation();
@@ -74,9 +75,18 @@ export function useNameColumn<
       sort: disableSort ? undefined : options?.sort ?? 'name',
       card: 'name',
       list: 'name',
-      defaultSort: true,
+      defaultSort: typeof options?.defaultSort !== 'undefined' ? options?.defaultSort : true,
     }),
-    [disableLinks, disableSort, options?.sort, onClick, options?.header, t, url]
+    [
+      options?.header,
+      options?.sort,
+      options?.defaultSort,
+      t,
+      disableSort,
+      disableLinks,
+      url,
+      onClick,
+    ]
   );
   return column;
 }
@@ -92,6 +102,7 @@ export function useDescriptionColumn<T extends { description?: string | null | u
       list: 'description',
       card: 'description',
       modal: ColumnModalOption.hidden,
+      dashboard: ColumnDashboardOption.hidden,
     }),
     [t]
   );
@@ -138,7 +149,7 @@ export function useLabelsColumn() {
         );
       },
       table: ColumnTableOption.expanded,
-      value: (item) => item.summary_fields?.labels && item.summary_fields.labels.results.length > 0,
+      value: (item) => (item.summary_fields?.labels.results.length ? true : undefined),
       card: 'hidden',
       list: 'hidden',
       modal: ColumnModalOption.hidden,
@@ -162,8 +173,7 @@ export function useCredentialsColumn() {
           ))}
         </LabelGroup>
       ),
-      value: (item) =>
-        item.summary_fields?.credentials && item.summary_fields.credentials.length > 0,
+      value: (item) => (item.summary_fields?.credentials?.length ? true : undefined),
       table: ColumnTableOption.expanded,
       card: 'hidden',
       list: 'hidden',

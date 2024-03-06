@@ -28,7 +28,6 @@ import {
 import { observer, useVisualizationController } from '@patternfly/react-topology';
 import { usePageNavigate, usePageAlertToaster } from '../../../../../../framework';
 import { AwxRoute } from '../../../../main/AwxRoutes';
-import { postRequest } from '../../../../../common/crud/Data';
 import { awxErrorAdapter } from '../../../../common/adapters/awxErrorAdapter';
 import { getDocsBaseUrl } from '../../../../common/util/getDocsBaseUrl';
 import { useAwxConfig } from '../../../../common/useAwxConfig';
@@ -37,6 +36,7 @@ import { AddNodeButton } from './AddNodeButton';
 import { useRemoveGraphElements, useSaveVisualizer } from '../hooks';
 import type { ControllerState, GraphNode } from '../types';
 import { START_NODE_ID } from '../constants';
+import { useLaunchTemplate } from '../../hooks/useLaunchTemplate';
 
 export const ToolbarHeader = observer(() => {
   const { t } = useTranslation();
@@ -163,6 +163,7 @@ export const WorkflowVisualizerToolbar = observer(() => {
   const handleSave = useSaveVisualizer();
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
+  const launch = useLaunchTemplate();
   const controller = useVisualizationController();
   const nodes = controller
     .getGraph()
@@ -171,12 +172,8 @@ export const WorkflowVisualizerToolbar = observer(() => {
   const { workflowTemplate, RBAC, modified } = controller.getState<ControllerState>();
 
   const handleLaunchWorkflow = useCallback(async () => {
-    if (!workflowTemplate?.id) return;
-    await postRequest(
-      `/api/v2/workflow_job_templates/${workflowTemplate.id.toString()}/launch/`,
-      {}
-    );
-  }, [workflowTemplate?.id]);
+    await launch(workflowTemplate);
+  }, [launch, workflowTemplate]);
 
   return (
     <>

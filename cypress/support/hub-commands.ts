@@ -25,7 +25,7 @@ export interface HubRequestOptions {
   failOnStatusCode?: boolean;
 }
 Cypress.Commands.add('hubRequest', (options: HubRequestOptions) => {
-  cy.getCookie('csrftoken').then((cookie) =>
+  cy.getCookie('csrftoken', { log: false }).then((cookie) =>
     cy
       .request({
         ...options,
@@ -211,7 +211,7 @@ Cypress.Commands.add('addAndApproveMultiCollections', (numberOfCollections = 1) 
   const approveMultiCollections = (namespace: string) => {
     cy.visit('/administration/approvals?page=1&perPage=100');
     cy.verifyPageTitle('Collection Approvals');
-    cy.selectToolbarFilterType('Namespace');
+    cy.selectToolbarFilterByLabel('Namespace');
     cy.intercept(
       'GET',
       hubAPI`/v3/plugin/ansible/search/collection-versions/?repository_label=pipeline=staging&namespace=${namespace}&order_by=namespace&offset=0&limit=100`
@@ -408,9 +408,23 @@ Cypress.Commands.add(
 );
 
 // HUB Execution Environment Commands
+export type HubQueryExecutionEnvironmentsOptions = { qs?: { limit?: number } } & Omit<
+  HubGetRequestOptions,
+  'url'
+>;
+Cypress.Commands.add(
+  'queryHubExecutionEnvironments',
+  (options?: HubQueryExecutionEnvironmentsOptions) => {
+    cy.hubGetRequest({
+      ...options,
+      url: hubAPI`/_ui/v1/execution-environments/remotes/`,
+    });
+  }
+);
 export type HubCreateExecutionEnvironmentOptions = {
   executionEnvironment: SetRequired<Partial<HubExecutionEnvironment>, 'registry'>;
 } & Omit<HubPostRequestOptions, 'url' | 'body'>;
+
 Cypress.Commands.add(
   'createHubExecutionEnvironment',
   (options: HubCreateExecutionEnvironmentOptions) => {
@@ -425,10 +439,12 @@ Cypress.Commands.add(
     });
   }
 );
+
 export type HubDeleteExecutionEnvironmentOptions = { name: string } & Omit<
   HubDeleteRequestOptions,
   'url'
 >;
+
 Cypress.Commands.add(
   'deleteHubExecutionEnvironment',
   (options: HubDeleteExecutionEnvironmentOptions) => {
@@ -443,6 +459,7 @@ Cypress.Commands.add(
 export type HubCreateRemoteRegistryOptions = {
   remoteRegistry: Partial<RemoteRegistry>;
 } & Omit<HubPostRequestOptions, 'url' | 'body'>;
+
 Cypress.Commands.add('createHubRemoteRegistry', (options?: HubCreateRemoteRegistryOptions) => {
   cy.hubPostRequest({
     ...options,
@@ -454,7 +471,9 @@ Cypress.Commands.add('createHubRemoteRegistry', (options?: HubCreateRemoteRegist
     },
   });
 });
+
 export type HubDeleteRemoteRegistryOptions = { id: string } & Omit<HubDeleteRequestOptions, 'url'>;
+
 Cypress.Commands.add('deleteHubRemoteRegistry', (options: HubDeleteRemoteRegistryOptions) => {
   cy.hubDeleteRequest({
     ...options,
@@ -463,9 +482,20 @@ Cypress.Commands.add('deleteHubRemoteRegistry', (options: HubDeleteRemoteRegistr
 });
 
 // HUB Repository Commands
+export type HubQueryRepositoriesOptions = { qs?: { limit?: number } } & Omit<
+  HubGetRequestOptions,
+  'url'
+>;
+Cypress.Commands.add('queryHubRepositories', (options?: HubQueryRepositoriesOptions) => {
+  cy.hubGetRequest({
+    ...options,
+    url: pulpAPI`/repositories/ansible/ansible/`,
+  });
+});
 export type HubCreateRepositoryOptions = {
   repository: Partial<Repository>;
 } & Omit<HubPostRequestOptions, 'url' | 'body'>;
+
 Cypress.Commands.add('createHubRepository', (options?: HubCreateRepositoryOptions) => {
   cy.hubPostRequest({
     ...options,
@@ -476,10 +506,12 @@ Cypress.Commands.add('createHubRepository', (options?: HubCreateRepositoryOption
     },
   });
 });
+
 export type HubDeleteRepositoryOptions = { pulp_href: string } & Omit<
   HubDeleteRequestOptions,
   'url'
 >;
+
 Cypress.Commands.add('deleteHubRepository', (options: HubDeleteRepositoryOptions) => {
   const pulpUUID = parsePulpIDFromURL(options.pulp_href);
   cy.hubDeleteRequest({
@@ -489,10 +521,21 @@ Cypress.Commands.add('deleteHubRepository', (options: HubDeleteRepositoryOptions
 });
 
 // HUB Namespace Commands
+export type HubQueryNamespacesOptions = { qs?: { limit?: number } } & Omit<
+  HubGetRequestOptions,
+  'url'
+>;
+Cypress.Commands.add('queryHubNamespaces', (options?: HubQueryNamespacesOptions) => {
+  cy.hubGetRequest({
+    ...options,
+    url: hubAPI`/_ui/v1/namespaces/`,
+  });
+});
 export type HubCreateNamespaceOptions = { namespace: Partial<HubNamespace> } & Omit<
   HubPostRequestOptions,
   'url' | 'body'
 >;
+
 Cypress.Commands.add('createHubNamespace', (options?: HubCreateNamespaceOptions) => {
   cy.hubPostRequest({
     ...options,
@@ -503,7 +546,9 @@ Cypress.Commands.add('createHubNamespace', (options?: HubCreateNamespaceOptions)
     },
   });
 });
+
 export type HubDeleteNamespaceOptions = { name: string } & Omit<HubDeleteRequestOptions, 'url'>;
+
 Cypress.Commands.add('deleteHubNamespace', (options: HubDeleteNamespaceOptions) => {
   cy.hubDeleteRequest({
     ...options,
@@ -512,10 +557,18 @@ Cypress.Commands.add('deleteHubNamespace', (options: HubDeleteNamespaceOptions) 
 });
 
 // HUB Role Commands
+export type HubQueryRolesOptions = { qs?: { limit?: number } } & Omit<HubGetRequestOptions, 'url'>;
+Cypress.Commands.add('queryHubRoles', (options?: HubQueryRolesOptions) => {
+  cy.hubGetRequest({
+    ...options,
+    url: pulpAPI`/roles/`,
+  });
+});
 export type HubCreateRoleOptions = { role: Partial<Role> } & Omit<
   HubPostRequestOptions,
   'url' | 'body'
 >;
+
 Cypress.Commands.add('createHubRole', (options?: HubCreateRoleOptions) => {
   cy.hubPostRequest({
     ...options,
@@ -528,7 +581,9 @@ Cypress.Commands.add('createHubRole', (options?: HubCreateRoleOptions) => {
     },
   });
 });
+
 export type HubDeleteRoleOptions = { pulp_href: string } & Omit<HubDeleteRequestOptions, 'url'>;
+
 Cypress.Commands.add('deleteHubRole', (options: HubDeleteRoleOptions) => {
   const pulpUUID = parsePulpIDFromURL(options.pulp_href);
   cy.hubDeleteRequest({
@@ -538,10 +593,21 @@ Cypress.Commands.add('deleteHubRole', (options: HubDeleteRoleOptions) => {
 });
 
 // HUB Remote Commands
+export type HubQueryRemotesOptions = { qs?: { limit?: number } } & Omit<
+  HubGetRequestOptions,
+  'url'
+>;
+Cypress.Commands.add('queryHubRemotes', (options?: HubQueryRemotesOptions) => {
+  cy.hubGetRequest({
+    ...options,
+    url: pulpAPI`/remotes/ansible/collection/`,
+  });
+});
 export type HubCreateRemoteOptions = { remote: Partial<HubRemote> } & Omit<
   HubPostRequestOptions,
   'url' | 'body'
 >;
+
 Cypress.Commands.add('createHubRemote', (options?: HubCreateRemoteOptions) => {
   cy.hubPostRequest({
     ...options,
@@ -553,11 +619,58 @@ Cypress.Commands.add('createHubRemote', (options?: HubCreateRemoteOptions) => {
     },
   });
 });
+
 export type HubDeleteRemoteOptions = { pulp_href: string } & Omit<HubDeleteRequestOptions, 'url'>;
+
 Cypress.Commands.add('deleteHubRemote', (options: HubDeleteRemoteOptions) => {
   const pulpUUID = parsePulpIDFromURL(options.pulp_href);
   cy.hubDeleteRequest({
     ...options,
     url: pulpAPI`/remotes/ansible/collection/${pulpUUID ?? ''}/`,
+  });
+});
+
+// HUB Collection Commands
+Cypress.Commands.add('getHubCollection', (name: string) => {
+  return cy
+    .requestGet<
+      HubItemsResponse<CollectionVersionSearch>
+    >(hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${name}`)
+    .then((itemsResponse) => itemsResponse.data[0]);
+});
+
+export type HubDeleteCollectionOptions = {
+  repository?: { name: string };
+  collection_version?: { name: string; namespace: string };
+} & Omit<HubDeleteRequestOptions, 'url'>;
+
+Cypress.Commands.add('deleteHubCollection', (options: HubDeleteCollectionOptions) => {
+  cy.hubDeleteRequest({
+    ...options,
+    url: hubAPI`/v3/plugin/ansible/content/${
+      options.repository?.name ?? 'community'
+    }/collections/index/${options.collection_version?.namespace ?? ''}/${
+      options.collection_version?.name ?? ''
+    }/`,
+  });
+});
+
+Cypress.Commands.add('deleteHubCollectionByName', (name: string) => {
+  cy.requestGet<HubItemsResponse<CollectionVersionSearch>>(
+    hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${name}`
+  ).then((itemsResponse) => {
+    //itemsResponse is an array that can return more than one item with the same name
+    //the following code is written to prevent multiple DELETE requests of a collection
+    //with the same name. Without this code, the DELETE request would be made twice
+    //on the same collection, resulting in an API error
+    for (const collection of itemsResponse.data) {
+      const repeatedName = itemsResponse.data[0]?.collection_version?.name;
+      if (collection?.collection_version?.name === repeatedName) {
+        cy.deleteHubCollection(collection);
+        break;
+      } else {
+        cy.deleteHubCollection(collection);
+      }
+    }
   });
 });
