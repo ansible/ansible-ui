@@ -9,6 +9,8 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../framework';
+import { PageFormMarkdown } from '../../../framework/PageForm/Inputs/PageFormMarkdown';
+import { PageFormSection } from '../../../framework/PageForm/Utils/PageFormSection';
 import { useGet } from '../../common/crud/useGet';
 import { usePostRequest } from '../../common/crud/usePostRequest';
 import { usePutRequest } from '../../common/crud/usePutRequest';
@@ -142,6 +144,16 @@ function HubNamespaceInputs(props: { isDisabled?: boolean; isRequired?: boolean 
         label={t('Logo URL')}
         placeholder={t('Enter logo URL')}
       />
+      <PageFormSection singleColumn>
+        <PageFormMarkdown<HubNamespace>
+          label={t('Resources')}
+          name="resources"
+          labelHelpTitle={t('Resources')}
+          labelHelp={t(
+            'You can can customize the Resources on your profile by entering custom markdown here.'
+          )}
+        />
+      </PageFormSection>
     </>
   );
 }
