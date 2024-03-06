@@ -1,6 +1,6 @@
 import { AlertProps } from '@patternfly/react-core';
 import { ReactNode, useCallback } from 'react';
-import { useDropzone } from 'react-dropzone';
+import { Accept, useDropzone } from 'react-dropzone';
 import { useTranslation } from 'react-i18next';
 import { usePageAlertToaster } from '..';
 
@@ -9,6 +9,7 @@ export function DropZone(props: {
   onDrop: (contents: string) => void;
   isDisabled?: boolean;
   inputRef?: React.RefObject<HTMLInputElement>;
+  accept?: Accept;
 }) {
   const { t } = useTranslation();
   const alertToaster = usePageAlertToaster();
@@ -46,7 +47,7 @@ export function DropZone(props: {
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
     noClick: true,
-    accept: {
+    accept: props.accept ?? {
       'application/json': ['.json'],
       'text/yaml': ['.yaml', '.yml'],
     },

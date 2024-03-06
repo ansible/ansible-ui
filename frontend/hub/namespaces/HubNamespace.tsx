@@ -14,4 +14,5 @@ export interface HubNamespace {
     },
   ];
   related_fields: object;
+  resources: string;
 }
