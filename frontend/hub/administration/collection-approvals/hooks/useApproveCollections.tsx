@@ -2,14 +2,13 @@ import { TFunction } from 'i18next';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { compareStrings } from '../../../../../framework';
-import { useGetRequest } from '../../../../common/crud/useGet';
+import { requestGet } from '../../../../common/crud/Data';
 import { copyToRepositoryAction } from '../../../collections/hooks/useCopyToRepository';
 import { pulpAPI } from '../../../common/api/formatPath';
 import { collectionKeyFn } from '../../../common/api/hub-api-utils';
 import { useHubBulkConfirmation } from '../../../common/useHubBulkConfirmation';
 import { HubContext, useHubContext } from '../../../common/useHubContext';
 import { PulpItemsResponse } from '../../../common/useHubView';
-import { SigningServiceResponse } from '../../../interfaces/generated/SigningServiceResponse';
 import { CollectionVersionSearch } from '../Approval';
 import { useApprovalsColumns } from './useApprovalsColumns';
 
@@ -22,13 +21,9 @@ export function useApproveCollectionsFrameworkModal(
 
   const bulkAction = useHubBulkConfirmation<CollectionVersionSearch>();
 
-  const getRequest = useGetRequest();
-
   const context = useHubContext();
   const { collection_auto_sign, require_upload_signatures } = context.featureFlags;
   const autoSign = collection_auto_sign && !require_upload_signatures;
-
-  const pulpRequest = useGetRequest<PulpItemsResponse<SigningServiceResponse>>();
 
   return useCallback(
     (collections: CollectionVersionSearch[]) => {
@@ -57,36 +52,24 @@ export function useApproveCollectionsFrameworkModal(
         actionColumns,
         onComplete,
         actionFn: (collection: CollectionVersionSearch) =>
-          approveCollection(collection, getRequest, t, context, pulpRequest),
+          approveCollection(collection, t, context),
       });
     },
-    [
-      actionColumns,
-      bulkAction,
-      confirmationColumns,
-      onComplete,
-      t,
-      getRequest,
-      autoSign,
-      pulpRequest,
-      context,
-    ]
+    [actionColumns, bulkAction, confirmationColumns, onComplete, t, autoSign, context]
   );
 }
 
 export function approveCollection(
   collection: CollectionVersionSearch,
-  getRequest: ReturnType<typeof useGetRequest>,
   t: TFunction<'translation', undefined>,
-  context: HubContext,
-  pulpRequest: ReturnType<typeof useGetRequest<PulpItemsResponse<SigningServiceResponse>>>
+  context: HubContext
 ) {
   let approvedRepo = '';
 
   async function innerAsync() {
-    const repoRes = (await getRequest(
+    const repoRes = await requestGet<PulpItemsResponse<Repository>>(
       pulpAPI`/repositories/ansible/ansible/?pulp_label_select=pipeline=approved`
-    )) as PulpItemsResponse<Repository>;
+    );
     approvedRepo = repoRes.results[0].pulp_href;
 
     await copyToRepositoryAction(
@@ -94,7 +77,6 @@ export function approveCollection(
       'approve',
       [{ pulp_href: approvedRepo } as Repository],
       context,
-      pulpRequest,
       t
     );
   }
