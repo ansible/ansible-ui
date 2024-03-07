@@ -310,12 +310,3 @@ export const PageSingleSelectContext = createContext<{
 export function usePageSingleSelectContext() {
   return useContext(PageSingleSelectContext);
 }
-
-export function PageSingleSelectProvider(props: { children: ReactNode }) {
-  const [open, setOpen] = useState(false);
-  return (
-    <PageSingleSelectContext.Provider value={{ open, setOpen }}>
-      {props.children}
-    </PageSingleSelectContext.Provider>
-  );
-}

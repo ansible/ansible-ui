@@ -1,5 +1,5 @@
 import { ButtonVariant } from '@patternfly/react-core';
-import { PlusIcon, TrashIcon } from '@patternfly/react-icons';
+import { PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -21,7 +21,7 @@ export function useRemoteRegistriesToolbarActions(view: IHubView<RemoteRegistry>
   const actions = useMemo<IPageAction<RemoteRegistry>[]>(
     () => [
       {
-        icon: PlusIcon,
+        icon: PlusCircleIcon,
         isPinned: true,
         label: t('Create remote registry'),
         onClick: () => pageNavigate(HubRoute.CreateRemoteRegistry),

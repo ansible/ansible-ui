@@ -22,6 +22,7 @@ import { useViewOptions } from '../ViewOptionsProvider';
 import type { CustomNodeProps, UnifiedJobType } from '../types';
 import type { SVGIconProps } from '@patternfly/react-icons/dist/js/createIcon';
 import { START_NODE_ID } from '../constants';
+import { useStatusDecorator } from '../hooks/useStatusDecorator';
 
 const NodeIcon: Record<UnifiedJobType, ElementType<SVGIconProps>> = {
   inventory_update: ProcessAutomationIcon,
@@ -37,6 +38,7 @@ export const CustomNode: FC<
 > = observer((props) => {
   const { element, onSelect, ...rest } = props;
   const { setSidebarMode } = useViewOptions();
+  const statusDecorator = useStatusDecorator();
   const data = element.getData();
   const id = element.getId();
   const jobType = data && data.resource?.summary_fields?.unified_job_template?.unified_job_type;
@@ -45,6 +47,8 @@ export const CustomNode: FC<
   return id !== START_NODE_ID ? (
     <DefaultNode
       element={element}
+      showLabel
+      secondaryLabel={data?.secondaryLabel}
       labelClassName={`${id}-node-label`}
       onSelect={(e) => {
         if (!jobType) return;
@@ -57,6 +61,7 @@ export const CustomNode: FC<
       <g transform={`translate(13, 13)`}>
         <Icon style={{ color: '#393F44' }} width={25} height={25} />
       </g>
+      {statusDecorator(element)}
     </DefaultNode>
   ) : (
     <DefaultNode

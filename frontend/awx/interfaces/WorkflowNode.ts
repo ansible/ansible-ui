@@ -22,6 +22,15 @@ export interface WorkflowNode {
       name: string;
       description: string;
     };
+    job?: {
+      description: string;
+      elapsed: number;
+      failed: boolean;
+      id: number;
+      name: string;
+      status: string;
+      type: string;
+    };
     unified_job_template: {
       id: number;
       name: string;

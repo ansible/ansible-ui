@@ -1,11 +1,5 @@
 import { ButtonVariant } from '@patternfly/react-core';
-import {
-  MinusCircleIcon,
-  PencilAltIcon,
-  PlusCircleIcon,
-  PlusIcon,
-  TrashIcon,
-} from '@patternfly/react-icons';
+import { MinusCircleIcon, PencilAltIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -75,7 +69,7 @@ export function Organizations() {
         selection: PageActionSelection.None,
         isPinned: true,
         variant: ButtonVariant.primary,
-        icon: PlusIcon,
+        icon: PlusCircleIcon,
         label: t('Create organization'),
         href: getPageUrl(AwxRoute.CreateOrganization),
       },

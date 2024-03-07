@@ -1,5 +1,5 @@
 import { ButtonVariant } from '@patternfly/react-core';
-import { PlusCircleIcon, PlusIcon, SyncIcon, TrashIcon } from '@patternfly/react-icons';
+import { PlusCircleIcon, SyncIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -33,7 +33,7 @@ export function useTeamToolbarActions(view: IAwxView<Team>) {
         selection: PageActionSelection.None,
         isPinned: true,
         variant: ButtonVariant.primary,
-        icon: PlusIcon,
+        icon: PlusCircleIcon,
         label: t('Create team'),
         isDisabled: canCreateTeam
           ? undefined

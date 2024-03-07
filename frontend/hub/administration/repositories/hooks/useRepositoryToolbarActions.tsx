@@ -1,5 +1,5 @@
 import { ButtonVariant } from '@patternfly/react-core';
-import { PlusIcon, TrashIcon } from '@patternfly/react-icons';
+import { PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -20,7 +20,7 @@ export function useRepositoryToolbarActions(view: IHubView<Repository>) {
   const actions = useMemo<IPageAction<Repository>[]>(
     () => [
       {
-        icon: PlusIcon,
+        icon: PlusCircleIcon,
         isPinned: true,
         label: t('Create repository'),
         onClick: () => pageNavigate(HubRoute.CreateRepository),

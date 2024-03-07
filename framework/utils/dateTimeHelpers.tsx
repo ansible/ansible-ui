@@ -1,4 +1,4 @@
-import { DateTime } from 'luxon';
+import { DateTime, Duration } from 'luxon';
 
 export function formatDateString(dateObj: string, tz?: string) {
   return tz !== null
@@ -14,4 +14,7 @@ export function dateToInputDateTime(dt: string, tz?: string | null) {
     dateTime = DateTime.fromISO(dt);
   }
   return [dateTime.toFormat('yyyy-LL-dd'), dateTime.toFormat('h:mm a')];
+}
+export function secondsToHHMMSS(seconds: number): string {
+  return Duration.fromObject({ seconds }).toFormat('hh:mm:ss');
 }

@@ -23,13 +23,18 @@ export function useDeleteCollections(
 
   return useCallback(
     (collections: CollectionVersionSearch[]) => {
-      const confirmText = version
+      let confirmText = version
         ? t('Yes, I confirm that I want to delete these {{count}} collections versions.', {
             count: collections.length,
           })
         : t('Yes, I confirm that I want to delete these {{count}} collections.', {
             count: collections.length,
           });
+
+      confirmText +=
+        ' ' +
+        t(`Note that if you selected one collection in multiple repositories, it will be 
+      deleted only once from all repositories.`);
 
       const title = version
         ? t('Permanently delete collections versions', { count: collections.length })
