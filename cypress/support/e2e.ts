@@ -16,7 +16,6 @@ import './hub-commands';
 import './input-commands';
 import './rest-commands';
 import './table-commands';
-import './platform-commands';
 
 // Platform Imports
 import './platform-commands';
@@ -28,12 +27,14 @@ export let galaxyE2EUserID: number;
 before(function () {
   const devBaseUrlPort = Cypress.config().baseUrl?.split(':').slice(-1).toString();
   switch (devBaseUrlPort) {
-    case '4101': // AWX
+    case '4101': // AWX E2E
       cy.createGlobalOrganization();
       cy.createGlobalProject();
       break;
-    case '4102': // HUB
+    case '4102': {
+      // HUB E2E
       cy.hubLogin();
+
       cy.requestPost<{ id: number }, HubUser>(hubAPI`/_ui/v1/users/`, {
         username: galaxykitUsername,
         first_name: '',
@@ -45,17 +46,57 @@ before(function () {
       }).then((response) => {
         galaxyE2EUserID = response.id;
       });
+
+      const oneHourAgo = new Date();
+      oneHourAgo.setHours(oneHourAgo.getHours() - 1);
+
+      // cleanup old e2e repositories
+      cy.queryHubRepositories().then((response) => {
+        for (const repository of response.body.results) {
+          if (repository.name.startsWith('e2e_') || repository.name.startsWith('hub_e2e_')) {
+            if (new Date(repository.pulp_created ?? '') < oneHourAgo) {
+              cy.deleteHubRepository(repository);
+            }
+          }
+        }
+      });
+
+      // should cleanup old e2e roles
+      cy.queryHubRoles().then((response) => {
+        for (const role of response.body.results) {
+          if (role.name.startsWith('e2e_') || role.name.startsWith('hub_e2e_')) {
+            if (new Date(role.pulp_created ?? '') < oneHourAgo) {
+              cy.deleteHubRole(role);
+            }
+          }
+        }
+      });
+
+      // cleanup old e2e remotes
+      cy.queryHubRemotes().then((response) => {
+        for (const remote of response.body.results) {
+          if (remote.name.startsWith('e2e_') || remote.name.startsWith('hub_e2e_')) {
+            if (new Date(remote.pulp_created ?? '') < oneHourAgo) {
+              cy.deleteHubRemote(remote);
+            }
+          }
+        }
+      });
+      break;
+    }
+    case '4103': // EDA E2E
       break;
     case '4100': // Platform
       cy.platformLogin();
       cy.createGlobalPlatformOrganization();
+      break;
   }
 });
 
 after(function () {
   const devBaseUrlPort = Cypress.config().baseUrl?.split(':').slice(-1).toString();
   switch (devBaseUrlPort) {
-    case '4102': // HUB
+    case '4102': // HUB E2E
       cy.requestGet<HubUser>(hubAPI`/_ui/v1/users/${galaxyE2EUserID.toString()}/`).then((user) => {
         user.is_superuser = false;
         cy.requestPut(hubAPI`/_ui/v1/users/${galaxyE2EUserID.toString()}/`, user).then(() => {
@@ -68,12 +109,20 @@ after(function () {
   }
 });
 
-// AWX E2E Port: 4101
-// AWX Component Port: 4201
-// HUB E2E Port: 4102
-// HUB Component Port: 4202
-// EDA E2E Port: 4103
-// EDA Component Port: 4203
+beforeEach(function () {
+  const devBaseUrlPort = Cypress.config().baseUrl?.split(':').slice(-1).toString();
+  switch (devBaseUrlPort) {
+    case '4101': // AWX E2E
+    case '4102': // HUB E2E
+    case '4103': // EDA E2E
+      // cy.visit('/'); we want this long term but it's causing issues with the current setup
+      break;
+    case '4201': // AWX Component
+    case '4202': // HUB Component
+    case '4203': // EDA Component
+      break;
+  }
+});
 
 Cypress.on('uncaught:exception', (_err, _runnable) => {
   // returning false here prevents Cypress from

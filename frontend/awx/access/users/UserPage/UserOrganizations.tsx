@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { ButtonVariant } from '@patternfly/react-core';
-import { MinusCircleIcon, PlusIcon } from '@patternfly/react-icons';
+import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
@@ -54,7 +54,7 @@ function UserOrganizationsInternal(props: { user: User }) {
         selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
         isPinned: true,
-        icon: PlusIcon,
+        icon: PlusCircleIcon,
         label: t('Add user to organizations'),
         onClick: () => selectOrganizationsAddUsers([user]),
       },
