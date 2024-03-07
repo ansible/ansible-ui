@@ -25,6 +25,7 @@ import { HubRoute } from '../../main/HubRoutes';
 import { CollectionVersionSearch } from '../Collection';
 import { useCollectionActions } from '../hooks/useCollectionActions';
 import { useSelectCollectionVersionSingle } from '../hooks/useCollectionVersionSelector';
+import { PageSingleSelectContext } from '../../../../framework/PageInputs/PageSingleSelect';
 
 export function CollectionPage() {
   const { t } = useTranslation();
@@ -166,19 +167,24 @@ export function CollectionPage() {
               placeholder={''}
               value={collection?.collection_version?.version || version || ''}
               footer={
-                <Button
-                  variant="link"
-                  onClick={() => {
-                    singleSelectorBrowser?.(
-                      (selection) => {
-                        setVersionParams(selection);
-                      },
-                      collection?.collection_version?.version || version || ''
-                    );
-                  }}
-                >
-                  {t`Browse`}
-                </Button>
+                <PageSingleSelectContext.Consumer>
+                  {(context) => (
+                    <Button
+                      variant="link"
+                      onClick={() => {
+                        context.setOpen(false);
+                        singleSelectorBrowser?.(
+                          (selection) => {
+                            setVersionParams(selection);
+                          },
+                          collection?.collection_version?.version || version || ''
+                        );
+                      }}
+                    >
+                      {t`Browse`}
+                    </Button>
+                  )}
+                </PageSingleSelectContext.Consumer>
               }
             />
             {collection?.collection_version &&
