@@ -11,6 +11,10 @@ import { useDeleteNotifications } from './useDeleteNotifications';
 import { NotificationTemplate } from '../../../interfaces/NotificationTemplate';
 import { ButtonVariant } from '@patternfly/react-core';
 import { AwxRoute } from '../../../main/AwxRoutes';
+import { cannotDeleteResources } from '../../../../common/utils/RBAChelpers';
+import { useOptions } from '../../../../common/crud/useOptions';
+import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
+import { awxAPI } from '../../../common/api/awx-utils';
 
 export function useNotificationsToolbarActions(
   onComplete: (notification: NotificationTemplate[]) => void
@@ -18,6 +22,13 @@ export function useNotificationsToolbarActions(
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const deleteNotifications = useDeleteNotifications(onComplete);
+
+  const notificationsOptions = useOptions<OptionsResponse<ActionsResponse>>(
+    awxAPI`/notification_templates/`
+  ).data;
+  const canAddNotificationTemplate = Boolean(
+    notificationsOptions && notificationsOptions.actions && notificationsOptions.actions['POST']
+  );
 
   return useMemo<IPageAction<NotificationTemplate>[]>(
     () => [
@@ -30,6 +41,12 @@ export function useNotificationsToolbarActions(
         icon: PlusIcon,
         label: t('Add notification template'),
         onClick: () => pageNavigate(AwxRoute.AddNotificationTemplate),
+        isDisabled: () =>
+          canAddNotificationTemplate
+            ? undefined
+            : t(
+                `You do not have permission to add notification templates. Please contact your organization administrator if there is an issue with your access.`
+              ),
       },
       {
         type: PageActionType.Button,
@@ -37,9 +54,10 @@ export function useNotificationsToolbarActions(
         icon: TrashIcon,
         label: t('Delete selected notifications'),
         onClick: deleteNotifications,
+        isDisabled: (notification) => cannotDeleteResources(notification, t),
         isDanger: true,
       },
     ],
-    [pageNavigate, deleteNotifications, t]
+    [canAddNotificationTemplate, pageNavigate, deleteNotifications, t]
   );
 }

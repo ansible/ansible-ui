@@ -11,7 +11,11 @@ import { NotificationTemplate } from '../../../interfaces/NotificationTemplate';
 import { useDeleteNotifications } from './useDeleteNotifications';
 import { useCopyNotification } from './useCopyNotification';
 import { AwxRoute } from '../../../main/AwxRoutes';
-import { cannotCopyResource, cannotEditResource } from '../../../../common/utils/RBAChelpers';
+import {
+  cannotCopyResource,
+  cannotDeleteResource,
+  cannotEditResource,
+} from '../../../../common/utils/RBAChelpers';
 
 export function useNotificationsRowActions(
   onComplete: (notification: NotificationTemplate[]) => void,
@@ -36,6 +40,7 @@ export function useNotificationsRowActions(
           }),
         isDisabled: (notification) => cannotEditResource(notification, t),
         isDanger: false,
+        isPinned: true,
       },
       {
         type: PageActionType.Button,
@@ -45,6 +50,7 @@ export function useNotificationsRowActions(
         onClick: (notification: NotificationTemplate) => copyNotification(notification),
         isDisabled: (notification) => cannotCopyResource(notification, t),
         isDanger: false,
+        isPinned: true,
       },
       { type: PageActionType.Seperator },
       {
@@ -53,6 +59,7 @@ export function useNotificationsRowActions(
         icon: TrashIcon,
         label: t(`Delete notification template`),
         onClick: (notification: NotificationTemplate) => deleteNotifications([notification]),
+        isDisabled: (notification) => cannotDeleteResource(notification, t),
         isDanger: true,
       },
     ];
