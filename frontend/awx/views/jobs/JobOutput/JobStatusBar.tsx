@@ -1,10 +1,13 @@
-import { Badge, Flex, FlexItem, Split, SplitItem } from '@patternfly/react-core';
+import { Badge, Flex, FlexItem, Split, SplitItem, Button, Icon } from '@patternfly/react-core';
+import { ProjectDiagramIcon } from '@patternfly/react-icons';
 import { DateTime, Duration } from 'luxon';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { StatusLabel } from '../../../../common/Status';
 import { Job } from '../../../interfaces/Job';
+import { usePageNavigate } from '../../../../../framework';
+import { AwxRoute } from '../../../main/AwxRoutes';
 
 const HeaderTitle = styled.div`
   display: inline-flex;
@@ -19,6 +22,7 @@ const HeaderTitle = styled.div`
 export function JobStatusBar(props: { job: Job }) {
   const { job } = props;
   const { t } = useTranslation();
+  const pageNavigate = usePageNavigate();
   const [activeJobElapsedTime, setActiveJobElapsedTime] = useState('00:00:00');
 
   useEffect(() => {
@@ -60,6 +64,21 @@ export function JobStatusBar(props: { job: Job }) {
       </SplitItem>
       <SplitItem>
         <Flex>
+          <Button
+            variant="link"
+            data-cy="edit-workflow"
+            aria-label={t`Edit workflow`}
+            style={{ margin: 0 }}
+            onClick={() => {
+              pageNavigate(AwxRoute.WorkflowVisualizer, {
+                params: { id: job.unified_job_template },
+              });
+            }}
+          >
+            <Icon>
+              <ProjectDiagramIcon />
+            </Icon>
+          </Button>
           <Count label={t('Plays')} count={playCount} />
           <Count label={t('Tasks')} count={taskCount} />
           <Count label={t('Hosts')} count={totalHostCount} />
