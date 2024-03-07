@@ -55,7 +55,7 @@ describe('inventory group', () => {
     cy.verifyPageTitle('Create new group');
     cy.get('[data-cy="name"]').type(groupName);
     cy.get('[data-cy="description"]').type('This is a description');
-    cy.getByDataCy('variables').type('test: true');
+    cy.dataEditorTypeByDataCy('variables', 'test: true');
     cy.clickButton(/^Save/);
     cy.hasDetail(/^Name$/, groupName);
     cy.hasDetail(/^Description$/, 'This is a description');
