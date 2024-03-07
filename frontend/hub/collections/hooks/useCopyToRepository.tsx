@@ -18,7 +18,7 @@ import { PageTable } from './../../../../framework/PageTable/PageTable';
 import { useGetRequest } from './../../../common/crud/useGet';
 import { TFunction } from 'i18next';
 
-export function useCopyToRepository() {
+export function useCopyToRepository(refresh: (collections: CollectionVersionSearch[]) => void) {
   const [_, setDialog] = usePageDialog();
   const onClose = useCallback(() => setDialog(undefined), [setDialog]);
   const context = useHubContext();
@@ -31,7 +31,10 @@ export function useCopyToRepository() {
     setDialog(
       <CopyToRepositoryModal
         collection={collection}
-        onClose={onClose}
+        onClose={() => {
+          onClose();
+          refresh([]);
+        }}
         context={context}
         operation={operation}
         displayDefaultError={displayDefaultError}
@@ -233,7 +236,7 @@ export async function copyToRepositoryAction(
   }
 
   const pipeline = collection.repository?.pulp_labels?.pipeline;
-  if (!(pipeline === 'staging' || pipeline === 'rejected')) {
+  if (operation === 'approve' && !(pipeline === 'staging' || pipeline === 'rejected')) {
     throw new Error(t('You can only approve collections in rejected or staging repositories'));
   }
   const pulpId = parsePulpIDFromURL(repository?.pulp_href);
@@ -271,10 +274,7 @@ export async function copyToRepositoryAction(
     params.signing_service = signingService;
   }
 
-  const api_op = {
-    approve: 'move_collection_version',
-    copy: 'copy_collection_version',
-  }[operation];
+  const api_op = operation === 'approve' ? 'move_collection_version' : 'copy_collection_version';
 
   await hubAPIPost(pulpAPI`/repositories/ansible/ansible/${pulpId}/${api_op}/`, params);
 }
