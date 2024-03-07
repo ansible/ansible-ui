@@ -55,7 +55,7 @@ export function SingleSelectDialog<T extends object>(props: SingleSelectDialogPr
         >
           {confirmText ?? translations.confirmText}
         </Button>,
-        <Button key="cancel" variant="link" onClick={onClose}>
+        <Button id="cancel" key="cancel" variant="link" onClick={onClose}>
           {cancelText ?? translations.cancelText}
         </Button>,
       ]}

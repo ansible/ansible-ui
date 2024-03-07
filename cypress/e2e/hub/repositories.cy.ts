@@ -1,299 +1,231 @@
-import { randomString } from '../../../framework/utils/random-string';
+import { HubRemote } from '../../../frontend/hub/administration/remotes/Remotes';
+import { Repository } from '../../../frontend/hub/administration/repositories/Repository';
+import { HubNamespace } from '../../../frontend/hub/namespaces/HubNamespace';
 import { pulpAPI } from '../../support/formatApiPathForHub';
+import { randomE2Ename } from '../../support/utils';
 import { Repositories } from './constants';
 
 describe('Repositories', () => {
-  let repositoryName: string;
-  let remoteName: string;
+  const collectionName = randomE2Ename();
+  let namespace: HubNamespace;
+  let remote: HubRemote;
+  let repository: Repository;
+
   before(() => {
     cy.hubLogin();
+
+    // Create namespace and upload collection only once in the before hook
+    // as it is not necessary to create a new namespace and upload collection for each test
+    cy.createHubNamespace().then((namespaceResult) => {
+      namespace = namespaceResult;
+      cy.galaxykit(`collection upload ${namespace.name} ${collectionName}`);
+    });
   });
+
+  after(() => {
+    cy.deleteHubCollectionByName(collectionName);
+    cy.deleteHubNamespace(namespace);
+  });
+
+  beforeEach(() => {
+    cy.navigateTo('hub', Repositories.url);
+    cy.verifyPageTitle(Repositories.title);
+
+    // Create remote and repository before each test
+    // Note: Some tests like create and delete do not use this shared remote and repository
+    // otherwise it would cause issues in the after eachhook when deleting
+    cy.createHubRemote().then((remoteResult) => {
+      remote = remoteResult;
+      cy.createHubRepository({
+        repository: { remote: remote.pulp_href, retain_repo_versions: 2 },
+      }).then((repositoryResult) => {
+        repository = repositoryResult;
+        cy.createHubRepositoryDistribution({
+          distribution: { name: repository.name, repository: repository.pulp_href },
+        });
+      });
+    });
+  });
+
   afterEach(() => {
-    cy.galaxykit('-i repository delete ' + repositoryName);
-    cy.galaxykit('-i remote delete ' + remoteName);
+    cy.deleteHubRepositoryDistributionByName(repository.name);
+    cy.deleteHubRepository(repository);
+    cy.deleteHubRemote(remote);
   });
-  it('should render the repositories page', () => {
-    cy.navigateTo('hub', Repositories.url);
-    cy.verifyPageTitle(Repositories.title);
+
+  it('should be able to create a repository', () => {
+    const repositoryName = randomE2Ename();
+    const repositoryDescription = 'Here goes description';
+
+    // Create repository
+    cy.getByDataCy('create-repository').click();
+    cy.verifyPageTitle('Create Repository');
+    cy.getByDataCy('name').type(repositoryName);
+    cy.getByDataCy('description').type(repositoryDescription);
+    cy.intercept({
+      method: 'POST',
+      url: pulpAPI`/repositories/ansible/ansible/`,
+    }).as('createRepository');
+    cy.getByDataCy('Submit').click();
+    cy.wait('@createRepository').then((result) => {
+      const createdRepository = result.response!.body as Repository;
+
+      // Repository Details
+      cy.verifyPageTitle(repositoryName);
+      cy.hasDetail('Name', repositoryName);
+      cy.hasDetail('Description', repositoryDescription);
+
+      // Cleanup
+      cy.deleteHubRepository(createdRepository);
+    });
   });
+
+  it('should be able to delete a repository', () => {
+    cy.createHubRepository().then((repositoryToDelete) => {
+      cy.clickTableRowLink('name', repositoryToDelete.name);
+
+      // Repository Details
+      cy.verifyPageTitle(repositoryToDelete.name);
+      cy.get('[data-cy="actions-dropdown"]').click();
+      cy.get('[data-cy="delete-repository"]').click();
+      cy.get('#confirm').click();
+      cy.get('button').contains('Delete repositories').click();
+
+      // Repositories Page
+      cy.verifyPageTitle(Repositories.title);
+      cy.filterTableByTextFilter('name', repositoryToDelete.name);
+      cy.get('.pf-v5-c-empty-state').should('be.visible');
+      cy.get('.pf-v5-c-empty-state').contains('No results found');
+    });
+  });
+
+  it('should be able to edit a repository', () => {
+    const repositoryDescription = 'Here goes description';
+
+    cy.clickTableRowAction('name', repository.name, 'edit-repository', { inKebab: true });
+
+    // Edit repository
+    cy.verifyPageTitle('Edit Repository');
+    cy.getByDataCy('description').clear().type(repositoryDescription);
+    cy.getByDataCy('Submit').click();
+
+    // Repository Details
+    cy.verifyPageTitle(repository.name);
+    cy.hasDetail('Name', repository.name);
+    cy.hasDetail('Description', repositoryDescription);
+  });
+
   it('should copy CLI to clipboard', () => {
-    repositoryName = 'repositories_repository_' + randomString(6, undefined, { isLowercase: true });
-    cy.navigateTo('hub', Repositories.url);
-    cy.verifyPageTitle(Repositories.title);
-    cy.get('[data-cy="create-repository"]').should('be.visible').click();
-    cy.get('[data-cy="name"]').type(repositoryName);
-    cy.get('[data-cy="Submit"]').click();
-    cy.get('[data-cy="actions-dropdown"]').click();
-    cy.get('[data-cy="copy-cli-configuration"]').click();
+    cy.clickTableRowLink('name', repository.name);
+
+    // Repository Details
+    cy.verifyPageTitle(repository.name);
+    cy.clickPageAction('copy-cli-configuration');
     cy.get('[data-cy="alert-toaster"]').should('be.visible');
-    //dismiss alert
     cy.get('[data-cy="alert-toaster"]').within(() => {
       cy.get('button').click();
     });
   });
+
   it('should sync repository', () => {
-    remoteName = 'repositories_repository_' + randomString(6, undefined, { isLowercase: true });
-    cy.createRemote(remoteName).then(() => {
-      repositoryName =
-        'repositories_repository_' + randomString(6, undefined, { isLowercase: true });
-      cy.navigateTo('hub', Repositories.url);
-      cy.verifyPageTitle(Repositories.title);
-      cy.get('[data-cy="create-repository"]').should('be.visible').click();
-      cy.get('[data-cy="name"]').type(repositoryName);
-      cy.get('#remote').click();
-      cy.get('button').contains(remoteName).click();
-      cy.get('[data-cy="Submit"]').click();
-      cy.get('[data-cy="actions-dropdown"]').click();
-      cy.get('[data-cy="sync-repository"]').click();
+    cy.clickTableRowAction('name', repository.name, 'sync-repository', { inKebab: true });
+
+    // Sync modal
+    cy.getModal().within(() => {
       cy.get('button').contains('Sync').click();
-      cy.get('[data-cy="alert-toaster"]')
-        .should('be.visible')
-        .should('contain', `Sync started for repository "${repositoryName}".`);
-      //dismiss alert
-      cy.get('[data-cy="alert-toaster"]').within(() => {
-        cy.get('button').click();
-      });
-    });
-  });
-  it('should be able to create a repository', () => {
-    repositoryName = 'repositories_repository_' + randomString(6, undefined, { isLowercase: true });
-    const repositoryDescription = 'Here goes description';
-    cy.navigateTo('hub', Repositories.url);
-    cy.verifyPageTitle(Repositories.title);
-    cy.get('[data-cy="create-repository"]').should('be.visible').click();
-    cy.url().should('include', Repositories.urlCreate);
-    cy.get('[data-cy="name"]').type(repositoryName);
-    cy.get('[data-cy="description"]').type(repositoryDescription);
-    cy.get('[data-cy="Submit"]').click();
-    // new repository should be create and an user redirected to its detail page
-    cy.verifyPageTitle(repositoryName);
-    cy.get('[data-cy="description"]').should('contain', repositoryDescription);
-  });
-  it('should be able to edit a repository', () => {
-    repositoryName = 'repositories_repository_' + randomString(6, undefined, { isLowercase: true });
-    const repositoryDescription = 'Here goes description';
-    cy.intercept({
-      method: 'GET',
-      url: pulpAPI`/repositories/ansible/ansible/?name=${repositoryName}`,
-    }).as('editRepository');
-    cy.navigateTo('hub', Repositories.url);
-    cy.verifyPageTitle(Repositories.title);
-    cy.get('[data-cy="create-repository"]').should('be.visible').click();
-    cy.url().should('include', Repositories.urlCreate);
-    cy.get('[data-cy="name"]').type(repositoryName);
-    cy.get('[data-cy="Submit"]').click();
-    cy.verifyPageTitle(repositoryName);
-    cy.get('[data-cy="edit-repository"]').click();
-    cy.get('[data-cy="description"]').type(repositoryDescription);
-    cy.get('[data-cy="Submit"]').click();
-    // wait for page to reload new data
-    cy.wait('@editRepository').then(() => {
-      cy.get('[data-cy="description"]').should('contain', repositoryDescription);
-    });
-  });
-  it('should be able to delete a repository', () => {
-    const repositoryNameLocal =
-      'repositories_repository_' + randomString(6, undefined, { isLowercase: true });
-    cy.navigateTo('hub', Repositories.url);
-    cy.verifyPageTitle(Repositories.title);
-    cy.get('[data-cy="create-repository"]').should('be.visible').click();
-    cy.url().should('include', Repositories.urlCreate);
-    cy.get('[data-cy="name"]').type(repositoryNameLocal);
-    cy.get('[data-cy="Submit"]').click();
-    cy.verifyPageTitle(repositoryNameLocal);
-    cy.get('[data-cy="actions-dropdown"]').click();
-    cy.get('[data-cy="delete-repository"]').click();
-    cy.get('#confirm').click();
-    cy.get('button').contains('Delete repositories').click();
-    cy.verifyPageTitle(Repositories.title);
-    cy.get('[data-cy="text-input"]').type(repositoryNameLocal);
-    cy.get('.pf-v5-c-empty-state').should('be.visible');
-    cy.get('.pf-v5-c-empty-state').contains('No results found');
-  });
-});
-
-describe('Repositories Remove collection', () => {
-  let collections: string[];
-  let namespace: string;
-  let repository: string;
-  let numCollections: number;
-
-  afterEach(() => {
-    collections?.forEach((collection) => {
-      cy.galaxykit('-i collection delete ', namespace, collection, '1.0.0', repository);
-      cy.galaxykit('task wait all');
-    });
-    cy.galaxykit('task wait all');
-    cy.galaxykit('-i repository delete', repository);
-    cy.galaxykit('task wait all');
-    cy.galaxykit('-i namespace delete', namespace);
-  });
-
-  beforeEach(() => {
-    cy.hubLogin();
-  });
-
-  it('it should add and then remove the collections', () => {
-    // fill data
-    numCollections = 3;
-    collections = [];
-    for (let i = 0; i < numCollections; i++) {
-      collections.push('hub_e2e_collection_' + randomString(5, undefined, { isLowercase: true }));
-    }
-
-    namespace = 'hub_e2e_appr_namespace' + randomString(5).toLowerCase();
-    repository = 'hub_e2e_appr_repository' + randomString(5);
-
-    cy.galaxykit(`repository create ${repository}`);
-    cy.galaxykit('task wait all');
-
-    cy.galaxykit(`distribution create ${repository}`);
-    cy.galaxykit('task wait all');
-
-    cy.galaxykit(`namespace create ${namespace}`);
-    cy.galaxykit('task wait all');
-
-    collections.forEach((collection) => {
-      cy.galaxykit(`collection upload ${namespace} ${collection}`);
-      cy.galaxykit('task wait all');
     });
 
-    // add collections
-    cy.navigateTo('hub', Repositories.url);
-    cy.filterTableBySingleText(repository);
-    cy.contains(`[data-cy="repository-name-column-cell"] a`, repository).click();
-    cy.contains(`a[role="tab"]`, 'Collection versions').click();
+    cy.get('[data-cy="alert-toaster"]')
+      .should('be.visible')
+      .should('contain', `Sync started for repository "${repository.name}".`);
+    cy.get('[data-cy="alert-toaster"]').within(() => {
+      cy.get('button').click();
+    });
+  });
 
-    cy.get(`[data-cy="add-collections"]`).click();
+  it('should be able to add and remove collection versions', () => {
+    // Repository Details
+    cy.clickTableRowLink('name', repository.name);
+    cy.verifyPageTitle(repository.name);
 
-    const modal = `[aria-label="Add collections versions to repository"] `;
-    cy.get(modal).within(() => {
-      cy.contains('Add collections versions to repository');
+    // Collection versions tab
+    cy.clickTab('Collection versions', true);
 
-      collections.forEach((collection) => {
-        cy.filterTableBySingleText(collection);
-        cy.contains(collection);
-        cy.get(`[data-cy="checkbox-column-cell"]`).click();
-      });
-
+    // Add collections
+    cy.getByDataCy('add-collections').click();
+    cy.getModal().within(() => {
+      cy.filterTableByTextFilter('namespace', namespace.name);
+      cy.selectTableRowByCheckbox('name', collectionName, { disableFilter: true });
       cy.contains('button', 'Select').click();
     });
-    cy.get(modal).should('not.exist');
+    cy.getModal().should('not.exist');
 
-    collections.forEach((collection) => {
-      cy.contains(collection);
+    // Verify collections are added and visible
+    cy.setTableView('table');
+    cy.getTableRow('name', collectionName, { disableFilter: true }).should('be.visible');
+
+    // Should show the remove dialog from row action
+    cy.clickTableRowAction('name', collectionName, 'remove', { disableFilter: true });
+    cy.getModal().within(() => {
+      cy.contains('button', 'Delete collections versions').should('be.visible');
+      cy.get('#cancel').click();
     });
 
-    // verify you can open and close modal using different button
-    cy.contains('button', 'Add collections').click();
-    cy.get(modal).within(() => {
-      cy.contains('button', 'Cancel').click();
+    // Remove collection using table bulk action
+    cy.selectTableRowByCheckbox('name', collectionName, { disableFilter: true });
+    cy.containsBy('button', 'Remove collections').click();
+    cy.getModal().within(() => {
+      cy.get('#confirm').click();
+      cy.get('#submit').click();
+      cy.contains('button', 'Close').click();
     });
-    cy.get(modal).should('not.exist');
 
-    // Remove first collection
-    cy.filterTableBySingleText(collections[0]);
+    // Verify collections are removed
+    cy.contains('tr', collectionName).should('not.exist');
+  });
+
+  it('should be able to revert repository version', () => {
+    // Repository Details
+    cy.clickTableRowLink('name', repository.name);
+    cy.verifyPageTitle(repository.name);
+
+    // Collection versions tab
+    cy.clickTab('Collection versions', true);
+    cy.contains('No collection versions yet');
+
+    // Add collections
+    cy.getByDataCy('add-collections').click();
+    cy.getModal().within(() => {
+      cy.filterTableByTextFilter('namespace', namespace.name);
+      cy.selectTableRowByCheckbox('name', collectionName, { disableFilter: true });
+      cy.contains('button', 'Select').click();
+    });
+    cy.getModal().should('not.exist');
+
+    // Verify collections are added and visible
     cy.get(`[aria-label="table view"]`).click();
-    cy.get(`[data-cy="remove"]`).click();
-    cy.clickModalConfirmCheckbox();
-    cy.clickModalButton('Delete collections versions');
-    cy.assertModalSuccess();
-    cy.clickModalButton('Close');
-    cy.contains('button', 'Clear all filters').click();
-    cy.contains(collections[0]).should('not.exist');
+    cy.getTableRow('name', collectionName, { disableFilter: true }).should('be.visible');
 
-    // bulk remove rest
-    cy.get(`[data-cy="select-all"]`).click();
-    cy.contains('button', 'Remove collections').click();
-    cy.clickModalConfirmCheckbox();
-    cy.clickModalButton('Remove collections versions');
-    cy.assertModalSuccess();
-    cy.clickModalButton('Close');
-    cy.contains('No collection versions yet');
-  });
-});
+    // Versions tab
+    cy.clickTab(/Versions/, true);
 
-describe('Repositories - revert to repository version', () => {
-  let collections: string[];
-  let namespace: string;
-  let repository: string;
-  let numCollections: number;
-
-  beforeEach(() => {
-    cy.hubLogin();
-    namespace = 'hub_e2e_appr_namespace' + randomString(5).toLowerCase();
-    repository = 'hub_e2e_appr_repository' + randomString(5);
-
-    cy.galaxykit(`repository create ${repository}`);
-    cy.galaxykit('task wait all');
-
-    cy.galaxykit(`distribution create ${repository}`);
-    cy.galaxykit('task wait all');
-
-    cy.galaxykit(`namespace create ${namespace}`);
-    cy.galaxykit('task wait all');
-  });
-
-  afterEach(() => {
-    collections?.forEach((collection) => {
-      cy.galaxykit('-i collection delete ', namespace, collection, '1.0.0', repository);
-      cy.galaxykit('task wait all');
-    });
-    cy.galaxykit('task wait all');
-    cy.galaxykit('-i repository delete', repository);
-    cy.galaxykit('task wait all');
-    cy.galaxykit('-i namespace delete', namespace);
-  });
-
-  it('it should revert to repository version', () => {
-    numCollections = 1;
-
-    collections = [];
-    for (let i = 0; i < numCollections; i++) {
-      collections.push('hub_e2e_collection_' + randomString(5, undefined, { isLowercase: true }));
-    }
-
-    cy.navigateTo('hub', Repositories.url);
-    cy.filterTableBySingleText(repository);
-    cy.contains(`[data-cy="repository-name-column-cell"] a`, repository).click();
-    cy.contains(`a[role="tab"]`, 'Collection versions').click();
-
-    // can see empty repository
-    cy.contains('No collection versions yet');
-
-    // set retained versions count
-    cy.get(`[data-cy="edit-repository"]`).click();
-    cy.get(`[data-cy="Submit"]`);
-    cy.get(`[data-cy="retain-repo-versions"]`).type('1');
-    cy.get(`[data-cy="Submit"]`).click();
-    cy.get(`[data-cy="Submit"]`).should('not.exist');
-
-    // add collections to repo
-    collections.forEach((collection) => {
-      cy.galaxykit(`collection upload ${namespace} ${collection}`);
-      cy.galaxykit('task wait all');
-      cy.galaxykit(`collection move ${namespace} ${collection} 1.0.0 staging ${repository}`);
-      cy.galaxykit('task wait all');
-    });
-
-    cy.contains('No collection versions yet').should('not.exist');
-
-    // can revert to repository
-    cy.contains(`a[role="tab"]`, 'Versions').click();
+    // Revert repository version
     cy.contains('Version number');
-    cy.get(`[data-cy="actions-dropdown"]`);
-    cy.get(`[data-cy="actions-dropdown"]`).eq(1).click();
-    cy.contains(`a[data-cy="revert-to-this-version"]`, 'Revert to this version').click();
+    // Takes a while for the version to switch to 1 (latest)
+    cy.contains('td', '1 (latest)', { timeout: 60 * 1000 }).should('be.visible');
+    cy.clickTableRowAction('version-number', '0', 'revert-to-this-version', {
+      inKebab: true,
+      disableFilter: true,
+    });
+    cy.getModal().within(() => {
+      cy.get('#confirm').click();
+      cy.get('#submit').click();
+      cy.contains('button', 'Close').click();
+    });
 
-    cy.clickModalConfirmCheckbox();
-    cy.clickModalButton('Revert to repository version');
-    cy.assertModalSuccess();
-    cy.clickModalButton('Close');
-
-    cy.galaxykit('task wait all');
-
-    cy.contains(`a[role="tab"]`, 'Collection versions').click();
-    // can see empty repository again
+    // Collection versions tab
+    cy.clickTab('Collection versions', true);
+    // Verify collections are removed since we are reverting to repository version 0
     cy.contains('No collection versions yet');
   });
 });
