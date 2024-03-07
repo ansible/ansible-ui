@@ -80,6 +80,7 @@ export enum HubRoute {
   EditRole = 'hub-edit-role',
 
   Settings = 'hub-settings',
+  SettingsPreferences = 'hub-settings-preferences',
 
   Login = 'hub-login',
 }

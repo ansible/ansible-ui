@@ -70,6 +70,7 @@ export enum EdaRoute {
   WebhookDetails = 'eda-webhook-details',
 
   Settings = 'eda-settings',
+  SettingsPreferences = 'eda-settings-preferences',
 
   Login = 'eda-login',
 }

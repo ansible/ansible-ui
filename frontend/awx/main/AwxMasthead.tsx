@@ -1,11 +1,6 @@
-import { Button, ButtonVariant, Icon, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
+import { Icon, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
 import { DropdownItem } from '@patternfly/react-core/deprecated';
-import {
-  CogIcon,
-  ExternalLinkAltIcon,
-  QuestionCircleIcon,
-  UserCircleIcon,
-} from '@patternfly/react-icons';
+import { ExternalLinkAltIcon, QuestionCircleIcon, UserCircleIcon } from '@patternfly/react-icons';
 import { useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -51,14 +46,6 @@ export function AwxMasthead() {
         </ToolbarItem>
         <ToolbarItem>
           <PageThemeSwitcher />
-        </ToolbarItem>
-        <ToolbarItem>
-          <Button
-            data-cy="settings-icon"
-            icon={<CogIcon />}
-            variant={ButtonVariant.plain}
-            onClick={() => pageNavigate(AwxRoute.Settings)}
-          />
         </ToolbarItem>
         <ToolbarItem>
           <PageNotificationsIcon />

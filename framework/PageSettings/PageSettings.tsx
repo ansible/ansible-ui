@@ -7,16 +7,11 @@ import { PageHeader } from '../PageHeader';
 import { PageLayout } from '../PageLayout';
 import { IPageSettings, PageSettingsContext } from './PageSettingsProvider';
 
-export function PageSettings(props: { hideBreadcrumb?: boolean }) {
+export function PageSettings() {
   const { t } = useTranslation();
   return (
     <PageLayout>
       <PageHeader
-        breadcrumbs={
-          !props.hideBreadcrumb
-            ? [{ label: t('Settings'), to: '..' }, { label: t('User Preferences') }]
-            : undefined
-        }
         title={t('User Preferences')}
         titleHelp={t('Per user preferences for the user interface.')}
       />

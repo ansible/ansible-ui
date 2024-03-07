@@ -1,11 +1,6 @@
-import { Button, ButtonVariant, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
+import { ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
 import { DropdownItem } from '@patternfly/react-core/deprecated';
-import {
-  CogIcon,
-  ExternalLinkAltIcon,
-  QuestionCircleIcon,
-  UserCircleIcon,
-} from '@patternfly/react-icons';
+import { ExternalLinkAltIcon, QuestionCircleIcon, UserCircleIcon } from '@patternfly/react-icons';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -41,14 +36,6 @@ export function EdaMasthead() {
         </ToolbarItem>
         <ToolbarItem>
           <PageThemeSwitcher />
-        </ToolbarItem>
-        <ToolbarItem>
-          <Button
-            data-cy="settings-icon"
-            icon={<CogIcon />}
-            variant={ButtonVariant.plain}
-            onClick={() => pageNavigate(EdaRoute.Settings)}
-          />
         </ToolbarItem>
         {/* <ToolbarItem>
           <PageNotificationsIcon count={0} onClick={() => pageNavigate(EdaRoute.Notifications)} />

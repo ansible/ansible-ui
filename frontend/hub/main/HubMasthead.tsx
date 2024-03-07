@@ -1,10 +1,10 @@
-import { Button, ButtonVariant, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
+import { ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
 import { DropdownItem } from '@patternfly/react-core/deprecated';
-import { CogIcon, QuestionCircleIcon, UserCircleIcon } from '@patternfly/react-icons';
+import { QuestionCircleIcon, UserCircleIcon } from '@patternfly/react-icons';
 import { useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { PageMasthead, useGetPageUrl, usePageNavigate } from '../../../framework';
+import { PageMasthead, useGetPageUrl } from '../../../framework';
 import { PageMastheadDropdown } from '../../../framework/PageMasthead/PageMastheadDropdown';
 import { PageNotificationsIcon } from '../../../framework/PageMasthead/PageNotificationsIcon';
 import { PageThemeSwitcher } from '../../../framework/PageMasthead/PageThemeSwitcher';
@@ -28,7 +28,6 @@ export function HubMasthead() {
   const navigate = useNavigate();
   const context = useHubContext();
   useHubNotifications();
-  const pageNavigate = usePageNavigate();
   const logout = useCallback(async () => {
     await postRequest(hubAPI`/_ui/v1/auth/logout/`, {});
     clearAllCache();
@@ -42,14 +41,6 @@ export function HubMasthead() {
         </ToolbarItem>
         <ToolbarItem>
           <PageThemeSwitcher />
-        </ToolbarItem>
-        <ToolbarItem>
-          <Button
-            data-cy="settings-icon"
-            icon={<CogIcon />}
-            variant={ButtonVariant.plain}
-            onClick={() => pageNavigate(HubRoute.Settings)}
-          />
         </ToolbarItem>
         <ToolbarItem>
           <PageNotificationsIcon />

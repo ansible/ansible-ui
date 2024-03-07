@@ -66,7 +66,7 @@ export function useAwxSettingsGroups() {
       },
       {
         id: 'authentication',
-        name: t('Authentication'),
+        name: t('Authentication Providers'),
         defaultSlugs: [
           'authentication',
           'azuread-oauth2',

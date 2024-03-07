@@ -95,7 +95,7 @@ export function AwxSettingsActionsForm(props: {
         }
       }
       await patch(awxAPI`/settings/all/`, patchData);
-      navigate(-1);
+      navigate('..');
     },
     [navigate, patch, props.options]
   );
@@ -130,7 +130,7 @@ export function AwxSettingsActionsForm(props: {
     <PageForm
       defaultValue={props.data}
       submitText={t('Save')}
-      onCancel={() => navigate(-1)}
+      onCancel={() => navigate('..')}
       onSubmit={onSubmit}
     >
       {Object.entries(options).map(([key, option]) => {

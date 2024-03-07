@@ -504,7 +504,14 @@ export function useHubNavigation() {
       id: HubRoute.Settings,
       label: t('Settings'),
       path: 'settings',
-      element: <PageSettings hideBreadcrumb />,
+      children: [
+        {
+          id: HubRoute.SettingsPreferences,
+          label: t('User Preferences'),
+          path: 'preferences',
+          element: <PageSettings />,
+        },
+      ],
     },
     {
       path: '',

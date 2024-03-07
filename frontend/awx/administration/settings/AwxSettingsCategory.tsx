@@ -1,18 +1,20 @@
 import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { LoadingPage, PageHeader, PageLayout, useGetPageUrl } from '../../../../framework';
+import { LoadingPage, PageHeader, PageLayout } from '../../../../framework';
 import { useGet } from '../../../common/crud/useGet';
 import { AwxError } from '../../common/AwxError';
 import { awxAPI } from '../../common/api/awx-utils';
-import { AwxRoute } from '../../main/AwxRoutes';
 import { AwxSettingsActionsForm, AwxSettingsOptionsAction } from './AwxSettingsActionsForm';
 import { awxSettingsExcludeKeys, useAwxSettingsGroups } from './useAwxSettingsGroups';
 
-export function AwxSettingsCategory() {
-  const { t } = useTranslation();
+export function AwxSettingsCategoryRoute() {
   const { category: categoryId } = useParams<{ category: string }>();
+  return <AwxSettingsCategory categoryId={categoryId ?? ''} />;
+}
+
+export function AwxSettingsCategory(props: { categoryId: string }) {
   const { isLoading, error, groups, options } = useAwxSettingsGroups();
+  const { categoryId } = props;
   const group = groups.find((group) =>
     group.categories.some((category) => category.id === categoryId)
   );
@@ -20,7 +22,6 @@ export function AwxSettingsCategory() {
   const all = useGet<{ results: { url: string; slug: string; name: string }[] }>(
     awxAPI`/settings/all/`
   );
-  const getPageUrl = useGetPageUrl();
 
   const categoryOptions = useMemo(() => {
     const categoryOptions: Record<string, AwxSettingsOptionsAction> = {};
@@ -42,13 +43,7 @@ export function AwxSettingsCategory() {
 
   return (
     <PageLayout>
-      <PageHeader
-        title={category.name}
-        breadcrumbs={[
-          { label: t('Settings'), to: getPageUrl(AwxRoute.Settings) },
-          { label: category.name },
-        ]}
-      />
+      <PageHeader title={category.name} />
       <AwxSettingsActionsForm options={categoryOptions} data={all.data} />
     </PageLayout>
   );
