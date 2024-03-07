@@ -6,6 +6,7 @@ import { awxAPI } from '../../../common/api/awx-utils';
 import { SystemJobTemplate } from '../../../interfaces/SystemJobTemplate';
 import { useGetJobOutputUrl } from '../../../views/jobs/useGetJobOutputUrl';
 import { useManagementJobPrompt } from '../hooks/useManagementJobPrompt';
+import { UnifiedJob } from '../../../interfaces/UnifiedJob';
 
 export function useLaunchManagementJob() {
   const { t } = useTranslation();
@@ -24,14 +25,14 @@ export function useLaunchManagementJob() {
     try {
       if (canLaunchWithoutPrompt(managementJob)) {
         const launchMgtJob = await postRequest(launchManagementJobEndpoint, {});
-        navigate(getJobOutputUrl(launchMgtJob as SystemJobTemplate));
+        navigate(getJobOutputUrl(launchMgtJob as UnifiedJob));
       } else {
         launchManagementJobPrompt(managementJob);
         console.log('launching management job with prompt...', managementJob);
         // const managementJobLaunch = await postRequest(launchManagementJobEndpoint, {
         //   extra_vars: { days: 2 },
         // });
-        // navigate(getJobOutputUrl(managementJobLaunch as SystemJobTemplate));
+        // navigate(getJobOutputUrl(managementJobLaunch as UnifiedJob));
       }
     } catch (error) {
       alertToaster.addAlert({
