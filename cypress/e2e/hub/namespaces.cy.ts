@@ -13,19 +13,16 @@ describe('Namespaces', () => {
     cy.hubLogin();
   });
 
-  it('it should render the namespaces page', () => {
-    cy.navigateTo('hub', Namespaces.url);
-    cy.verifyPageTitle(Namespaces.title);
-  });
-
   it('create, search and delete a namespace', () => {
     cy.navigateTo('hub', Namespaces.url);
+    cy.verifyPageTitle(Namespaces.title);
     const namespaceName = `test_namespace_${randomString(5, undefined, { isLowercase: true })}`;
-    cy.get('h1').should('contain', Namespaces.title);
     cy.get('[data-cy="create-namespace"]').should('be.visible').click();
     cy.url().should('include', Namespaces.urlCreate);
     cy.get('[data-cy="name"]').type(namespaceName);
     cy.get('[data-cy="company"]').type('test company');
+    cy.get('[data-cy="link-text-0"]').type('test link');
+    cy.get('[data-cy="link-url-0"]').type('https://test.com');
     cy.get('[data-cy="Submit"]').click();
     cy.url().should('include', `/namespaces/${namespaceName}/details`);
     cy.selectDetailsPageKebabAction('delete-namespace');
@@ -60,6 +57,9 @@ describe('Namespaces', () => {
     cy.get('[data-cy="name"]').type(namespaceName);
     cy.get('[data-cy="description"]').type('test description');
     cy.get('[data-cy="company"]').type('test company');
+    cy.get('[data-cy="link-text-0"]').type('test link');
+    cy.get('[data-cy="link-url-0"]').type('https://test.com');
+
     cy.get('[data-cy="Submit"]').click();
     cy.url().should('include', `/namespaces/${namespaceName}/details`);
     cy.get('[data-cy="namespace-details-tab"]').should('contain', 'Details');
@@ -68,6 +68,10 @@ describe('Namespaces', () => {
     cy.get('[data-cy="name"]').should('contain', namespaceName);
     cy.get('[data-cy="description"]').should('contain', 'test description');
     cy.get('[data-cy="company"]').should('contain', 'test company');
+    cy.get('[data-cy="key-value-list-title"]').should('contain', 'Useful links');
+    cy.get('[data-cy="item-key-0"]').should('contain', 'test link');
+    const linkUrl = 'https://test.com';
+    cy.get(`[data-cy="item-value-${linkUrl}"]`).should('contain', linkUrl);
     // Delete namespace
     cy.get('[data-cy="actions-dropdown"]').click();
     cy.get('[data-cy="delete-namespace"]').click();
