@@ -40,7 +40,21 @@ export function useCollectionsActions(callback: (collections: CollectionVersionS
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
         label: t('Delete selected collections'),
-        onClick: deleteCollections,
+        onClick: (collections: CollectionVersionSearch[]) => {
+          // filter them
+          const foundCollections: string[] = [];
+          const newCollections: CollectionVersionSearch[] = [];
+          collections.forEach((collection) => {
+            if (foundCollections.includes(collection.collection_version?.name || '')) {
+              return;
+            }
+
+            foundCollections.push(collection.collection_version?.name || '');
+            newCollections.push(collection);
+          });
+
+          deleteCollections(newCollections);
+        },
         isDanger: true,
         isDisabled: context.hasPermission('ansible.delete_collection')
           ? ''
