@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import React, { useState } from 'react';
 //import { SystemJobTemplate } from '../../interfaces/SystemJobTemplate';
 import { usePageDialogs } from '../../../../../framework';
-import { Button, Modal, NumberInput, ModalVariant } from '@patternfly/react-core';
+import { Button, Modal, ModalVariant, TextInput } from '@patternfly/react-core';
 //import { useLaunchManagementJob } from './useLaunchManagementJob';
 import { TextContent, Text } from '@patternfly/react-core';
 import { SystemJobTemplate } from '../../../interfaces/SystemJobTemplate';
@@ -12,41 +12,31 @@ export function useManagementJobPrompt() {
   const [dataRetention, setDataRetention] = useState(defaultDays);
   const { t } = useTranslation();
   const { pushDialog, popDialog } = usePageDialogs();
-  //const [isManagementPromptOpen, setIsManagementPromptOpen] = useState(false);
-  //const launchManagementJob = useLaunchManagementJob();
-  const managementJobPrompt = (managementJob: SystemJobTemplate) => {
-    const onMinus = () => {
-      setDataRetention((prevDataRetention) => Math.max((prevDataRetention || 0) - 1, 0));
-    };
+ // const launchPromptManagementJob = useLaunchManagementJob();
 
+  const managementJobPrompt = (managementJob: SystemJobTemplate) => {
     const handleChange = (event: React.FormEvent<HTMLInputElement>) => {
       const value = event.currentTarget.value;
       setDataRetention(parseInt(value) || 0);
       console.log(dataRetention);
     };
 
-    const onPlus = () => {
-      setDataRetention((prevDataRetention) => (prevDataRetention || 0) + 1);
-      console.log(dataRetention);
-    };
     const handleCancel = () => {
       popDialog();
-      setDataRetention(defaultDays);
+      //setDataRetention(defaultDays);
     };
 
     const handleLaunch = () => {
-      console.log(dataRetention);
+      console.log('launch button from', managementJob);
       popDialog();
-      return dataRetention;
     };
 
-    // const managementJobPrompt = (managementJob: SystemJobTemplate) => {
     const dialog = (
       <Modal
         title={t('Launch Management Job')}
         titleIconVariant="info"
         isOpen
-        width="25%"
+        width="20%"
         key="launch"
         onClose={popDialog}
         variant={ModalVariant.small}
@@ -54,18 +44,11 @@ export function useManagementJobPrompt() {
         <TextContent>
           <Text>{t`Set how many days of data should be retained.`}</Text>
 
-          <NumberInput
+          <TextInput
+            id="data-retention"
             value={dataRetention}
-            onMinus={onMinus}
-            onPlus={onPlus}
             type="number"
             onChange={handleChange}
-            inputName="input"
-            inputAriaLabel="number input"
-            minusBtnAriaLabel="minus"
-            plusBtnAriaLabel="plus"
-            widthChars={5}
-            aria-label="Number input example"
           />
         </TextContent>
 
