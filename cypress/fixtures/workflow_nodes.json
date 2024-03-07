@@ -19,6 +19,15 @@
         "workflow_job_template": "/api/v2/workflow_job_templates/8178/"
       },
       "summary_fields": {
+        "job": {
+          "id": 127,
+          "name": "Fail",
+          "description": "",
+          "status": "failed",
+          "failed": true,
+          "elapsed": 7.415,
+          "type": "job"
+        },
         "workflow_job_template": {
           "id": 8178,
           "name": "alex wfjt",
@@ -70,6 +79,15 @@
         "workflow_job_template": "/api/v2/workflow_job_templates/8178/"
       },
       "summary_fields": {
+        "job": {
+          "id": 128,
+          "name": "Chatty Payload",
+          "description": "",
+          "status": "successful",
+          "failed": false,
+          "elapsed": 7.358,
+          "type": "job"
+        },
         "workflow_job_template": {
           "id": 8178,
           "name": "alex wfjt",
@@ -121,6 +139,15 @@
         "workflow_job_template": "/api/v2/workflow_job_templates/8178/"
       },
       "summary_fields": {
+        "job": {
+          "id": 131,
+          "name": "Bursting events",
+          "description": "",
+          "status": "successful",
+          "failed": false,
+          "elapsed": 9.88,
+          "type": "job"
+        },
         "workflow_job_template": {
           "id": 8178,
           "name": "alex wfjt",
@@ -173,6 +200,15 @@
         "workflow_job_template": "/api/v2/workflow_job_templates/8178/"
       },
       "summary_fields": {
+        "job": {
+          "id": 129,
+          "name": "Debug 50",
+          "description": "",
+          "status": "successful",
+          "failed": false,
+          "elapsed": 57.736,
+          "type": "job"
+        },
         "workflow_job_template": {
           "id": 8178,
           "name": "alex wfjt",
@@ -224,6 +260,15 @@
         "workflow_job_template": "/api/v2/workflow_job_templates/8178/"
       },
       "summary_fields": {
+        "job": {
+          "id": 130,
+          "name": "Debug Loop",
+          "description": "",
+          "status": "successful",
+          "failed": false,
+          "elapsed": 61.028,
+          "type": "job"
+        },
         "workflow_job_template": {
           "id": 8178,
           "name": "alex wfjt",

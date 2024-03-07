@@ -9,6 +9,8 @@ import { useRepositoriesColumns } from './hooks/useRepositoriesColumns';
 import { useRepositoryActions } from './hooks/useRepositoryActions';
 import { useRepositoryFilters } from './hooks/useRepositorySelector';
 import { useRepositoryToolbarActions } from './hooks/useRepositoryToolbarActions';
+import { PlusCircleIcon } from '@patternfly/react-icons';
+import { Icon } from '@patternfly/react-core';
 
 export function Repositories() {
   const { t } = useTranslation();
@@ -39,6 +41,11 @@ export function Repositories() {
         defaultSubtitle={t('Repository')}
         emptyStateButtonClick={() => pageNavigate(HubRoute.CreateRepository)}
         emptyStateButtonText={t('Create repository')}
+        emptyStateButtonIcon={
+          <Icon>
+            <PlusCircleIcon />
+          </Icon>
+        }
         emptyStateTitle={t('No repositories yet')}
         errorStateTitle={t('Error loading repositories')}
         rowActions={rowActions}

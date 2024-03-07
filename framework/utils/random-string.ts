@@ -21,3 +21,7 @@ export function randomString(
   }
   return text;
 }
+
+export function randomLowercaseString(length: number): string {
+  return randomString(length, undefined, { isLowercase: true });
+}

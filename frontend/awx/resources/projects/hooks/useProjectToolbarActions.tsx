@@ -1,5 +1,5 @@
 import { ButtonVariant } from '@patternfly/react-core';
-import { BanIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons';
+import { BanIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -32,7 +32,7 @@ export function useProjectToolbarActions(onComplete: (projects: Project[]) => vo
         selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
         isPinned: true,
-        icon: PlusIcon,
+        icon: PlusCircleIcon,
         label: t('Create project'),
         isDisabled: canCreateProject
           ? undefined

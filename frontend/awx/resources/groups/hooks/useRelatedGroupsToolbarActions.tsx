@@ -10,7 +10,7 @@ import {
   usePageDialog,
   usePageNavigate,
 } from '../../../../../framework';
-import { PlusIcon, TrashIcon } from '@patternfly/react-icons';
+import { PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import { useParams } from 'react-router-dom';
 import { useOptions } from '../../../../common/crud/useOptions';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
@@ -71,7 +71,7 @@ export function useRelatedGroupsToolbarActions(view: IAwxView<InventoryGroup>) {
         selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
         isPinned: true,
-        icon: PlusIcon,
+        icon: PlusCircleIcon,
         label: t('Add group'),
         actions: [
           {

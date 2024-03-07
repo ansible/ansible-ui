@@ -43,6 +43,7 @@ import { Repository } from '../../frontend/hub/administration/repositories/Repos
 import { CollectionVersionSearch } from '../../frontend/hub/collections/Collection';
 import { HubItemsResponse, PulpItemsResponse } from '../../frontend/hub/common/useHubView';
 import { ExecutionEnvironment as HubExecutionEnvironment } from '../../frontend/hub/execution-environments/ExecutionEnvironment';
+import { HubDistribution } from '../../frontend/hub/interfaces/expanded/HubDistribution';
 import { HubNamespace } from '../../frontend/hub/namespaces/HubNamespace';
 import { IAwxResources } from './awx-commands';
 import {
@@ -50,6 +51,7 @@ import {
   HubCreateNamespaceOptions,
   HubCreateRemoteOptions,
   HubCreateRemoteRegistryOptions,
+  HubCreateRepositoryDistributionOptions,
   HubCreateRepositoryOptions,
   HubCreateRoleOptions,
   HubDeleteCollectionOptions,
@@ -209,10 +211,8 @@ declare global {
       /** Used internally to load all items in the singleSelectBy and multiSelectBy commands */
       selectLoadAll(): Chainable<void>;
 
-      /** @deprecated use cy.containsBy('a', 'label').click() or cy.getByDataCy */
       clickLink(label: string | RegExp): Chainable<void>;
 
-      /** @deprecated use cy.containsBy('button', 'label').click() or cy.getByDataCy */
       clickButton(label: string | RegExp): Chainable<void>;
 
       /** Finds a tooltip by its label. Does not make an assertion. */
@@ -428,7 +428,7 @@ declare global {
       );
 
       /** Selects a table row by clicking on the row checkbox. */
-      selectTableRowCheckbox(
+      selectTableRowByCheckbox(
         columnDataCy: string,
         text: string,
         options?: { disableFilter?: boolean }
@@ -1304,6 +1304,9 @@ declare global {
       deleteHubExecutionEnvironment(
         options: HubDeleteExecutionEnvironmentOptions
       ): Cypress.Chainable<void>;
+      syncRemoteExecutionEnvironment(
+        executionEnvironment: HubExecutionEnvironment
+      ): Cypress.Chainable<void>;
 
       // HUB Remote Registry Commands
       createHubRemoteRegistry(
@@ -1317,6 +1320,12 @@ declare global {
       ): Cypress.Chainable<Response<PulpItemsResponse<Repository>>>;
       createHubRepository(options?: HubCreateRepositoryOptions): Cypress.Chainable<Repository>;
       deleteHubRepository(options: HubDeleteRepositoryOptions): Cypress.Chainable<void>;
+
+      // HUB Repository Distribution Commands
+      createHubRepositoryDistribution(
+        options?: HubCreateRepositoryDistributionOptions
+      ): Cypress.Chainable<HubDistribution>;
+      deleteHubRepositoryDistributionByName(name: string): Cypress.Chainable<void>;
 
       // HUB Namespace Commands
       queryHubNamespaces(

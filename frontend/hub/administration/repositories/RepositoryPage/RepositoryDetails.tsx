@@ -38,7 +38,7 @@ export function RepositoryDetails() {
 
   return (
     <PageDetails>
-      <PageDetail label={t('Repository name')}>{params.id}</PageDetail>
+      <PageDetail label={t('Name')}>{params.id}</PageDetail>
       <PageDetail label={t('Description')}>{repository.description || t('None')}</PageDetail>
       <PageDetail label={t('Retained version count')}>{repository.retain_repo_versions}</PageDetail>
       <PageDetail label={t('Distribution')}>
