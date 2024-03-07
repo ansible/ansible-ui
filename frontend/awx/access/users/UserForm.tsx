@@ -19,6 +19,11 @@ import { awxAPI } from '../../common/api/awx-utils';
 import { User } from '../../interfaces/User';
 import { AwxRoute } from '../../main/AwxRoutes';
 import { PageFormSelectOrganization } from '../organizations/components/PageFormOrganizationSelect';
+import { useOrganizationsColumns, useOrganizationsFilters } from '../organizations/Organizations';
+import { Organization } from '../../interfaces/Organization';
+import { useAwxView } from '../../common/useAwxView';
+import { PageMultiSelectList } from '../../../../framework/PageTable/PageMultiSelectList';
+import { useEffect } from 'react';
 
 const UserType = {
   SystemAdministrator: 'System administrator',
@@ -154,6 +159,19 @@ type IUserInput = User & { userType: string; confirmPassword: string };
 function UserInputs(props: { mode: 'create' | 'edit' }) {
   const { mode } = props;
   const { t } = useTranslation();
+
+  const toolbarFilters = useOrganizationsFilters();
+  const tableColumns = useOrganizationsColumns({ disableLinks: true });
+  const view = useAwxView<Organization>({
+    url: awxAPI`/organizations/`,
+    toolbarFilters,
+    tableColumns,
+    disableQueryString: true,
+  });
+  useEffect(() => {
+    console.log('🚀 ~ useEffect ~ view.selectedItems:', view.selectedItems);
+  }, [view.selectedItems]);
+
   return (
     <>
       <PageFormTextInput<IUserInput>
@@ -232,6 +250,12 @@ function UserInputs(props: { mode: 'create' | 'edit' }) {
         name="email"
         label={t('Email')}
         placeholder={t('Enter email')}
+      />
+      <PageMultiSelectList
+        {...props}
+        toolbarFilters={toolbarFilters}
+        tableColumns={tableColumns}
+        view={view}
       />
     </>
   );
