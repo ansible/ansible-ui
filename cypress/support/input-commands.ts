@@ -56,3 +56,14 @@ Cypress.Commands.add('selectLoadAll', () => {
     });
   });
 });
+
+Cypress.Commands.add('dataEditorType', (selector: string, value: string, clear?: boolean) => {
+  cy.getBy(selector)
+    .click()
+    .focused()
+    .type(clear ? '{ctrl}a' + value : value, { delay: 0 });
+});
+
+Cypress.Commands.add('dataEditorTypeByDataCy', (dataCy: string, value: string, clear?: boolean) => {
+  cy.dataEditorType(`[data-cy="${dataCy}"]`, value, clear);
+});

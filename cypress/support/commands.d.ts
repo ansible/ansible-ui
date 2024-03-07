@@ -223,6 +223,8 @@ declare global {
 
       dataEditorSetFormat(configType: string): Chainable<void>;
       dataEditorShouldContain(selector: string, value: string | object): Chainable<void>;
+      dataEditorType(selector: string, value: string, clear?: boolean): Chainable<void>;
+      dataEditorTypeByDataCy(dataCy: string, value: string, clear?: boolean): Chainable<void>;
 
       /** @deprecated use cy.dataEditorShouldContain */
       assertMonacoTextField(textString: string): Chainable<void>;
