@@ -38,6 +38,7 @@ export function SchedulesList(props: { sublistEndpoint?: string }) {
   usePersistentFilters(resource_type ? `${resource_type}-schedules` : 'schedules');
 
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(apiEndPoint ?? awxAPI`/schedules/`);
+  const isBaseScheduleList = params?.id;
   const canCreateSchedule = Boolean(data && data.actions && data.actions['POST']);
   const createUrl = useGetSchedulCreateUrl(apiEndPoint);
   const toolbarActions = useScheduleToolbarActions(
@@ -63,15 +64,25 @@ export function SchedulesList(props: { sublistEndpoint?: string }) {
           : t('You do not have permission to create a schedule')
       }
       emptyStateDescription={
-        canCreateSchedule
-          ? t('Please create a schedule by using the button below.')
-          : t(
-              'Please contact your organization administrator if there is an issue with your access.'
-            )
+        isBaseScheduleList
+          ? canCreateSchedule
+            ? t('Please create a schedule from a resource')
+            : t(
+                'Please contact your organization administrator if there is an issue with your access.'
+              )
+          : canCreateSchedule
+            ? t('Please create a schedule by using the button below.')
+            : t(
+                'Please contact your organization administrator if there is an issue with your access.'
+              )
       }
       emptyStateIcon={canCreateSchedule ? undefined : CubesIcon}
-      emptyStateButtonText={canCreateSchedule ? t('Create schedule') : undefined}
-      emptyStateButtonClick={canCreateSchedule ? () => navigate(createUrl) : undefined}
+      emptyStateButtonText={
+        canCreateSchedule && !isBaseScheduleList ? t('Create schedule') : undefined
+      }
+      emptyStateButtonClick={
+        canCreateSchedule && !isBaseScheduleList ? () => navigate(createUrl) : undefined
+      }
       {...view}
     />
   );
