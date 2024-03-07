@@ -209,10 +209,8 @@ declare global {
       /** Used internally to load all items in the singleSelectBy and multiSelectBy commands */
       selectLoadAll(): Chainable<void>;
 
-      /** @deprecated use cy.containsBy('a', 'label').click() or cy.getByDataCy */
       clickLink(label: string | RegExp): Chainable<void>;
 
-      /** @deprecated use cy.containsBy('button', 'label').click() or cy.getByDataCy */
       clickButton(label: string | RegExp): Chainable<void>;
 
       /** Finds a tooltip by its label. Does not make an assertion. */
