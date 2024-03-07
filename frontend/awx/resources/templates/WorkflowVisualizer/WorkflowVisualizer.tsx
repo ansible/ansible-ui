@@ -7,7 +7,7 @@ import { useAwxGetAllPages } from '../../../common/useAwxGetAllPages';
 import { useGetItem } from '../../../../common/crud/useGet';
 import { AwxError } from '../../../common/AwxError';
 import { awxAPI } from '../../../common/api/awx-utils';
-import { Visualizer } from './Topology';
+import { WorkflowTopology } from './WorkflowTopology';
 import type { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 import type { WorkflowNode } from '../../../interfaces/WorkflowNode';
 
@@ -15,7 +15,7 @@ export function WorkflowVisualizer() {
   const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const {
-    items: workflowNodes,
+    results: workflowNodes,
     error: workflowNodeError,
     isLoading: workflowNodeIsLoading,
     refresh: workflowNodeRefresh,
@@ -60,7 +60,7 @@ export function WorkflowVisualizer() {
   }
 
   return (
-    <Visualizer
+    <WorkflowTopology
       data={{
         workflowNodes,
         template: workflowJobTemplate,

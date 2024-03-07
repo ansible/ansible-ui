@@ -17,6 +17,15 @@ export interface WorkflowJob
   name: string;
   summary_fields: {
     inventory?: SummaryFieldInventory;
+    job?: {
+      id: number;
+      name: string;
+      description: string;
+      status: string;
+      failed: false;
+      elapsed: number;
+      type: string;
+    };
     workflow_job_template: SummaryFieldWorkflowJobTemplate;
     unified_job_template: SummaryFieldUnifiedJobTemplate;
     created_by: SummaryFieldsByUser;

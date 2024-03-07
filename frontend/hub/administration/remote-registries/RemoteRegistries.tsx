@@ -9,6 +9,8 @@ import { useRemoteRegistriesColumns } from './hooks/useRemoteRegistriesColumns';
 import { useRemoteRegistriesToolbarActions } from './hooks/useRemoteRegistriesToolbarActions';
 import { useRemoteRegistryActions } from './hooks/useRemoteRegistryActions';
 import { useRemoteRegistryFilters } from './hooks/useRemoteRegistryFilters';
+import { PlusCircleIcon } from '@patternfly/react-icons';
+import { Icon } from '@patternfly/react-core';
 
 export function RemoteRegistries() {
   const { t } = useTranslation();
@@ -41,6 +43,11 @@ export function RemoteRegistries() {
           pageNavigate(HubRoute.CreateRemoteRegistry);
         }}
         emptyStateButtonText={t('Create remote registry')}
+        emptyStateButtonIcon={
+          <Icon>
+            <PlusCircleIcon />
+          </Icon>
+        }
         emptyStateTitle={t('No remote registries yet')}
         errorStateTitle={t('Error loading remote registries')}
         rowActions={rowActions}

@@ -6,6 +6,10 @@ export interface HubNamespace {
   email: string;
   avatar_url: string;
   description: string;
+  links: {
+    name: string;
+    url: string;
+  }[];
   groups: [
     {
       id: number;
@@ -14,4 +18,5 @@ export interface HubNamespace {
     },
   ];
   related_fields: object;
+  resources: string;
 }

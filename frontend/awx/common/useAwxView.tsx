@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import useSWR from 'swr';
 import { ISelected, ITableColumn, IToolbarFilter, useSelected } from '../../../framework';
 import { IView, useView } from '../../../framework/useView';
@@ -14,6 +14,7 @@ export type IAwxView<T extends { id: number }> = IView &
     selectItemsAndRefresh: (items: T[]) => void;
     unselectItemsAndRefresh: (items: T[]) => void;
     limitFiltersToOneOrOperation: true;
+    updateItem: (item: T) => void;
   };
 
 export type QueryParams = {
@@ -156,6 +157,23 @@ export function useAwxView<T extends { id: number }>(options: {
     [refresh, selection]
   );
 
+  const [items, setItems] = useState<T[]>([]);
+  useEffect(() => {
+    setItems(data?.results ?? []);
+  }, [data?.results]);
+
+  const updateItem = useCallback(
+    (item: T) => {
+      const index = items.findIndex((i) => i.id === item.id);
+      if (index !== -1) {
+        const newItems = [...items];
+        newItems[index] = item;
+        setItems(newItems);
+      }
+    },
+    [items]
+  );
+
   return useMemo(() => {
     return {
       refresh,
@@ -167,14 +185,18 @@ export function useAwxView<T extends { id: number }>(options: {
       selectItemsAndRefresh,
       unselectItemsAndRefresh,
       limitFiltersToOneOrOperation: true,
+      data: items,
+      updateItem,
     };
   }, [
     data?.results,
     error,
+    items,
     refresh,
     selectItemsAndRefresh,
     selection,
     unselectItemsAndRefresh,
+    updateItem,
     view,
   ]);
 }

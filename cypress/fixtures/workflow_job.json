@@ -1,0 +1,87 @@
+{
+  "id": 126,
+  "type": "workflow_job",
+  "url": "/api/v2/workflow_jobs/126/",
+  "related": {
+    "created_by": "/api/v2/users/3/",
+    "modified_by": "/api/v2/users/3/",
+    "unified_job_template": "/api/v2/workflow_job_templates/39/",
+    "workflow_job_template": "/api/v2/workflow_job_templates/39/",
+    "notifications": "/api/v2/workflow_jobs/126/notifications/",
+    "workflow_nodes": "/api/v2/workflow_jobs/126/workflow_nodes/",
+    "labels": "/api/v2/workflow_jobs/126/labels/",
+    "activity_stream": "/api/v2/workflow_jobs/126/activity_stream/",
+    "relaunch": "/api/v2/workflow_jobs/126/relaunch/",
+    "cancel": "/api/v2/workflow_jobs/126/cancel/"
+  },
+  "summary_fields": {
+    "workflow_job_template": {
+      "id": 39,
+      "name": "alex efjt",
+      "description": ""
+    },
+    "unified_job_template": {
+      "id": 39,
+      "name": "alex efjt",
+      "description": "",
+      "unified_job_type": "workflow_job"
+    },
+    "created_by": {
+      "id": 3,
+      "username": "dev",
+      "first_name": "",
+      "last_name": ""
+    },
+    "modified_by": {
+      "id": 3,
+      "username": "dev",
+      "first_name": "",
+      "last_name": ""
+    },
+    "user_capabilities": {
+      "delete": true,
+      "start": true
+    },
+    "labels": {
+      "count": 0,
+      "results": []
+    }
+  },
+  "created": "2024-03-05T20:46:14.078236Z",
+  "modified": "2024-03-05T20:46:14.409078Z",
+  "name": "alex efjt",
+  "description": "",
+  "unified_job_template": 39,
+  "launch_type": "manual",
+  "status": "failed",
+  "failed": true,
+  "started": "2024-03-05T20:46:14.401691Z",
+  "finished": "2024-03-05T20:47:17.360480Z",
+  "canceled_on": null,
+  "elapsed": 62.959,
+  "job_args": "",
+  "job_cwd": "",
+  "job_env": {},
+  "job_explanation": "No error handling paths found, marking workflow as failed",
+  "result_traceback": "",
+  "launched_by": {
+    "id": 3,
+    "name": "dev",
+    "type": "user",
+    "url": "/api/v2/users/3/"
+  },
+  "work_unit_id": null,
+  "workflow_job_template": 39,
+  "extra_vars": "{}",
+  "allow_simultaneous": false,
+  "job_template": null,
+  "is_sliced_job": false,
+  "inventory": null,
+  "limit": null,
+  "scm_branch": null,
+  "webhook_service": "",
+  "webhook_credential": null,
+  "webhook_guid": "",
+  "skip_tags": "",
+  "job_tags": ""
+}
