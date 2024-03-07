@@ -1,5 +1,5 @@
 import { ButtonVariant } from '@patternfly/react-core';
-import { PlusIcon, TrashIcon } from '@patternfly/react-icons';
+import { PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -25,7 +25,7 @@ export function useHubNamespaceToolbarActions(view: IHubView<HubNamespace>) {
         selection: PageActionSelection.None,
         isPinned: true,
         variant: ButtonVariant.primary,
-        icon: PlusIcon,
+        icon: PlusCircleIcon,
         label: t('Create namespace'),
         href: getPageUrl(HubRoute.CreateNamespace),
       },

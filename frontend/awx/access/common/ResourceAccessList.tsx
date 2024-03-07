@@ -1,5 +1,5 @@
 import { ButtonVariant } from '@patternfly/react-core';
-import { MinusCircleIcon, PlusIcon } from '@patternfly/react-icons';
+import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -88,7 +88,7 @@ export function ResourceAccessList(props: { url: string; resource: ResourceType 
         selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
         isPinned: true,
-        icon: PlusIcon,
+        icon: PlusCircleIcon,
         label: t('Add users'),
         isDisabled: canAddAndRemoveUsers
           ? undefined

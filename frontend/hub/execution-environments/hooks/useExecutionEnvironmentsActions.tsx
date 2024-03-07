@@ -1,5 +1,5 @@
 import { ButtonVariant } from '@patternfly/react-core';
-import { ExternalLinkAltIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons';
+import { ExternalLinkAltIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import { TFunction } from 'i18next';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -36,7 +36,7 @@ export function useExecutionEnvironmentsActions(callback?: (ees: ExecutionEnviro
         selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
         isPinned: true,
-        icon: PlusIcon,
+        icon: PlusCircleIcon,
         label: t('Add execution environment'),
         onClick: () => {
           pageNavigate(HubRoute.CreateExecutionEnvironment);
