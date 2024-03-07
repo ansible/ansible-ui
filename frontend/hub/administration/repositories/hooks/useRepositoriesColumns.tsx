@@ -15,7 +15,7 @@ export function useRepositoriesColumns(_options?: {
   const tableColumns = useMemo<ITableColumn<Repository>[]>(
     () => [
       {
-        header: t('Repository name'),
+        header: t('Name'),
         cell: (repository) => (
           <TextCell
             text={repository.name}
@@ -66,6 +66,7 @@ export function useRepositoriesColumns(_options?: {
         header: t('Created at'),
         cell: (repository) => <DateTimeCell value={repository.pulp_created} />,
         sort: 'pulp_created',
+        defaultSortDirection: 'desc',
       },
     ],
     [t, getPageUrl]
