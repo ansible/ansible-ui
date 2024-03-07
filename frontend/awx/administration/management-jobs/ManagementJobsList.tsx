@@ -19,7 +19,7 @@ export function ManagementJobs() {
     toolbarFilters,
     tableColumns,
   });
-  const rowActions = useManagementJobRowActions(view);
+  const rowActions = useManagementJobRowActions();
 
   return (
     <PageLayout>
@@ -39,7 +39,6 @@ export function ManagementJobs() {
         toolbarFilters={toolbarFilters}
         tableColumns={tableColumns}
         rowActions={rowActions}
-        loadingStateTitle={t('Loading management jobs')}
         errorStateTitle={t('Error loading management jobs')}
         emptyStateTitle="No management jobs yet"
         {...view}
