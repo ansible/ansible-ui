@@ -306,7 +306,7 @@ describe('Job templates form Create, Edit, Delete', function () {
       project: (this.globalProject as Project).id,
       inventory: inventory.id,
     }).then((jobTemplate) => {
-      const newSchedule = 'test-schedule-100'
+      const newSchedule = 'test-schedule-100';
       cy.navigateTo('awx', 'templates');
       cy.clickTableRow(jobTemplate.name);
       cy.verifyPageTitle(jobTemplate.name);
@@ -314,7 +314,7 @@ describe('Job templates form Create, Edit, Delete', function () {
       cy.getBy('[data-cy="create-schedule"]').click();
       cy.get('[data-cy="name"]').type(newSchedule);
       cy.get('[data-cy="Submit"]').click();
-      cy.get('[data-cy="name"]').contains(newSchedule)
+      cy.get('[data-cy="name"]').contains(newSchedule);
     });
   });
 });
