@@ -90,10 +90,12 @@ export function useDynamicToolbarFilters<T extends Organization | UnifiedJob | U
       );
       return {
         total: resources.count,
-        options: resources.results.map((resource) => ({
-          label: resource[resourceKey as keyof typeof resource]?.toString() || '',
-          value: resource[resourceKey as keyof typeof resource]?.toString() || '',
-        })),
+        options: resources.results
+          .map((resource) => ({
+            label: resource[resourceKey as keyof typeof resource]?.toString() || '',
+            value: resource[resourceKey as keyof typeof resource]?.toString() || '',
+          }))
+          .sort((a, b) => a.label.localeCompare(b.label)),
       };
     },
     [optionsPath, params]
