@@ -48,7 +48,7 @@ export const CustomLabel: FC<
           style={getEdgeStyles(status)}
           x={0}
           y={0}
-          width={isSourceRootNode ? textSize.width + 20 : textSize.width + 50}
+          width={isSourceRootNode || !onContextMenu ? textSize.width + 20 : textSize.width + 50}
           height={height}
           rx={15}
           ry={15}
@@ -57,13 +57,13 @@ export const CustomLabel: FC<
       <text
         ref={textRef as LegacyRef<SVGTextElement>}
         style={{ fill: 'white' }}
-        x={isSourceRootNode ? 10 : paddingX}
+        x={isSourceRootNode || !onContextMenu ? 10 : paddingX}
         y={height / 2}
         dy="0.35em"
       >
         {children}
       </text>
-      {!isSourceRootNode && (
+      {!isSourceRootNode && onContextMenu && (
         <g ref={iconRef} className="pf-topology__node__action-icon">
           <line
             className="pf-topology__node__separator"

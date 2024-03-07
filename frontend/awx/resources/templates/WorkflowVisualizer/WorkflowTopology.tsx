@@ -70,7 +70,7 @@ interface TopologyProps {
   };
 }
 
-export const Visualizer = ({ data: { workflowNodes = [], template } }: TopologyProps) => {
+export const WorkflowTopology = ({ data: { workflowNodes = [], template } }: TopologyProps) => {
   const { t } = useTranslation();
   const dedupeOldNodes = useDedupeOldNodes();
   const createEdge = useCreateEdge();
