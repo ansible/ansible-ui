@@ -7,6 +7,12 @@ export interface PageWizardStep {
   inputs?: React.ReactNode;
   element?: React.ReactNode;
   hidden?: (wizardData: object) => boolean;
+  /*
+    Validate is called before proceeding to the next step. If it throws an
+    error, the wizard will stay on the current step and pass the error to
+    the wizard's errorAdapter for handling.
+  */
+  validate?: (formData: object, wizardData: object) => Promise<void> | void;
 }
 
 export interface PageWizardState {
