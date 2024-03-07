@@ -17,6 +17,7 @@ export function useTasksRowActions(onComplete?: (tasks: Task[]) => void) {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: StopIcon,
+        isPinned: true,
         label: t('Stop task'),
         onClick: (task) => stopTask([task]),
         isDanger: true,
