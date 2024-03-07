@@ -1,11 +1,5 @@
 import { AlertProps, ButtonVariant } from '@patternfly/react-core';
-import {
-  MinusCircleIcon,
-  PlusCircleIcon,
-  PlusIcon,
-  RedoIcon,
-  TrashIcon,
-} from '@patternfly/react-icons';
+import { MinusCircleIcon, PlusCircleIcon, RedoIcon, TrashIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -70,7 +64,7 @@ export function useRulebookActivationsActions(view: IEdaView<EdaRulebookActivati
         selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
         isPinned: true,
-        icon: PlusIcon,
+        icon: PlusCircleIcon,
         label: t('Create rulebook activation'),
         onClick: () => pageNavigate(EdaRoute.CreateRulebookActivation),
       },
