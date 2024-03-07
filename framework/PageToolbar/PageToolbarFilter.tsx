@@ -4,7 +4,7 @@ import { Dispatch, SetStateAction, useCallback, useState } from 'react';
 import { PageAsyncMultiSelect } from '../PageInputs/PageAsyncMultiSelect';
 import { PageAsyncSingleSelect } from '../PageInputs/PageAsyncSingleSelect';
 import { PageMultiSelect } from '../PageInputs/PageMultiSelect';
-import { PageSingleSelect } from '../PageInputs/PageSingleSelect';
+import { PageSingleSelect, PageSingleSelectContext } from '../PageInputs/PageSingleSelect';
 import { useBreakpoint } from '../components/useBreakPoint';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
 import {
@@ -365,17 +365,23 @@ function ToolbarFilterComponent(props: {
           isRequired={filter.isRequired}
           footer={
             filter.openBrowse ? (
-              <Button
-                variant="link"
-                onClick={() => {
-                  filter.openBrowse?.(
-                    (selection) => setFilterValues(() => [selection]),
-                    filterValues && filterValues.length > 0 ? filterValues[0] : undefined
-                  );
-                }}
-              >
-                Browse
-              </Button>
+              <PageSingleSelectContext.Consumer>
+                {(context) => (
+                  <Button
+                    variant="link"
+                    onClick={() => {
+                      // close the menu before opening browse modal
+                      context.setOpen(false);
+                      filter.openBrowse?.(
+                        (selection) => setFilterValues(() => [selection]),
+                        filterValues && filterValues.length > 0 ? filterValues[0] : undefined
+                      );
+                    }}
+                  >
+                    Browse
+                  </Button>
+                )}
+              </PageSingleSelectContext.Consumer>
             ) : undefined
           }
         />
