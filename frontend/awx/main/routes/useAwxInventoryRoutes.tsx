@@ -9,7 +9,7 @@ import { InventoryDetails } from '../../resources/inventories/InventoryPage/Inve
 import { InventoryPage } from '../../resources/inventories/InventoryPage/InventoryPage';
 import { InventorySourceDetails } from '../../resources/inventories/inventorySources/InventorySourceDetails';
 import { InventorySourcePage } from '../../resources/inventories/inventorySources/InventorySourcePage';
-import { CreateSchedule } from '../../views/schedules/ScheduleForm';
+import { CreateSchedule } from '../../views/schedules/wizard/ScheduleAddWizard';
 import { ScheduleDetails } from '../../views/schedules/SchedulePage/ScheduleDetails';
 import { SchedulePage } from '../../views/schedules/SchedulePage/SchedulePage';
 import { ScheduleRules } from '../../views/schedules/SchedulePage/ScheduleRules';
