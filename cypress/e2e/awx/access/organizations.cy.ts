@@ -128,7 +128,7 @@ describe('organizations edit and delete', function () {
 
   it('deletes an organization from the organizations list toolbar', function () {
     cy.navigateTo('awx', 'organizations');
-    cy.selectTableRowCheckbox('name', `${organization.name}`);
+    cy.selectTableRowByCheckbox('name', `${organization.name}`);
     cy.clickToolbarKebabAction('delete-selected-organizations');
     cy.getModal().within(() => {
       cy.get('#confirm').click();
