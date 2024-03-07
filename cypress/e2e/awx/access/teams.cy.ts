@@ -76,8 +76,8 @@ describe('teams', function () {
 
     // Select users
     cy.getModal().within(() => {
-      cy.selectTableRowCheckbox('username', user1.username);
-      cy.selectTableRowCheckbox('username', user2.username);
+      cy.selectTableRowByCheckbox('username', user1.username);
+      cy.selectTableRowByCheckbox('username', user2.username);
       cy.get('#submit').click();
     });
 

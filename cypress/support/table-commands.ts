@@ -143,7 +143,7 @@ Cypress.Commands.add(
 );
 
 Cypress.Commands.add(
-  'selectTableRowCheckbox',
+  'selectTableRowByCheckbox',
   (columnDataCy: string, text: string, options?: { disableFilter?: boolean }) => {
     cy.getTableRow(columnDataCy, text, options).within(() => {
       cy.get('[data-cy="checkbox-column-cell"]').within(() => {

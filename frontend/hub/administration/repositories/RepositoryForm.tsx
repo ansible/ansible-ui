@@ -247,23 +247,20 @@ export function RepositoryForm() {
             }}
           </PageFormWatch>
         </PageFormGroup>
-        <PageFormGroup
+        <PageFormSelect
+          name={'pipeline'}
           label={t('Pipeline')}
           labelHelp={t(
             'Pipeline adds repository labels with pre-defined meanings: None - users require permissions to modify content in this repository to upload collection. Approved - collections can be moved here on approval. Publishing directly to this repository is disabled. Staging - collections uploaded here require approval before showing up on the search page. Anyone with upload permissions for a namespace can upload collections to this repository'
           )}
-        >
-          <PageFormSelect
-            name={'pipeline'}
-            placeholderText={t('Select a pipeline')}
-            isRequired
-            options={[
-              { value: 'none', label: t('None') },
-              { value: 'approved', label: t('Approved') },
-              { value: 'staging', label: t('Staging') },
-            ]}
-          />
-        </PageFormGroup>
+          placeholderText={t('Select a pipeline')}
+          isRequired
+          options={[
+            { value: 'none', label: t('None') },
+            { value: 'approved', label: t('Approved') },
+            { value: 'staging', label: t('Staging') },
+          ]}
+        />
         <PageFormGroup
           label={t('Labels')}
           labelHelp={t(
@@ -271,6 +268,32 @@ export function RepositoryForm() {
               'Hide from search (hide_from_search) - prevent collections in this repository from showing up on the home page\n' +
               '(pipeline: *) - see Pipeline above'
           )}
+          additionalControls={
+            <PageFormWatch<RepositoryFormProps, 'pipeline'> watch="pipeline">
+              {(pipeline) => {
+                return (
+                  <HookWrapper>
+                    {(setValue) => {
+                      if (pipeline === 'staging') {
+                        // eslint-disable-next-line i18next/no-literal-string
+                        setValue('hide_from_search', true);
+                      } else {
+                        // eslint-disable-next-line i18next/no-literal-string
+                        setValue('hide_from_search', false);
+                      }
+                      return (
+                        <PageFormCheckbox<RepositoryFormProps>
+                          name="hide_from_search"
+                          label={t('Hide from search')}
+                          isDisabled={pipeline === 'staging'}
+                        />
+                      );
+                    }}
+                  </HookWrapper>
+                );
+              }}
+            </PageFormWatch>
+          }
         >
           {Object.keys(repositoryFormValues?.pulp_labels).map((label) => (
             <Label key={label}>
@@ -281,30 +304,6 @@ export function RepositoryForm() {
           ))}
           {Object.keys(repositoryFormValues?.pulp_labels).length === 0 && t('None')}
           <br />
-          <PageFormWatch<RepositoryFormProps, 'pipeline'> watch="pipeline">
-            {(pipeline) => {
-              return (
-                <HookWrapper>
-                  {(setValue) => {
-                    if (pipeline === 'staging') {
-                      // eslint-disable-next-line i18next/no-literal-string
-                      setValue('hide_from_search', true);
-                    } else {
-                      // eslint-disable-next-line i18next/no-literal-string
-                      setValue('hide_from_search', false);
-                    }
-                    return (
-                      <PageFormCheckbox<RepositoryFormProps>
-                        name="hide_from_search"
-                        label={t('Hide from search')}
-                        isDisabled={pipeline === 'staging'}
-                      />
-                    );
-                  }}
-                </HookWrapper>
-              );
-            }}
-          </PageFormWatch>
         </PageFormGroup>
         <PageFormGroup label={t('Private')} labelHelp={t('Make the repository private.')}>
           <PageFormCheckbox<RepositoryFormProps> name="private" label={t('Make private')} />

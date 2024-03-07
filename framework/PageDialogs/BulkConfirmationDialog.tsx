@@ -172,7 +172,7 @@ function BulkConfirmationDialog<T extends object>(props: BulkConfirmationDialog<
         >
           {actionButtonText}
         </Button>,
-        <Button key="cancel" variant="link" onClick={onClose}>
+        <Button id="cancel" key="cancel" variant="link" onClick={onClose}>
           {translations.cancelText}
         </Button>,
       ]}
