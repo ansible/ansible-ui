@@ -73,7 +73,7 @@ export function CredentialDetailsInner(props: { credential: Credential }) {
   }
 
   const {
-    items: inputSources,
+    results: inputSources,
     error: inputSourcesError,
     isLoading: isInputSourceLoading,
     refresh: refreshInputSources,
