@@ -9,3 +9,4 @@ Dockerfile
 *.svg
 *.sh
 .prettierignore
+.*.sw[po]

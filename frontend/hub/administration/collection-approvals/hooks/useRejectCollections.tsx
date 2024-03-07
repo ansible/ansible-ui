@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { compareStrings } from '../../../../../framework';
-import { useGetRequest } from '../../../../common/crud/useGet';
+import { requestGet } from '../../../../common/crud/Data';
 import { pulpAPI } from '../../../common/api/formatPath';
 import { collectionKeyFn, hubAPIPost, parsePulpIDFromURL } from '../../../common/api/hub-api-utils';
 import { useHubBulkConfirmation } from '../../../common/useHubBulkConfirmation';
@@ -17,8 +17,6 @@ export function useRejectCollections(
   const actionColumns = useMemo(() => [confirmationColumns[0]], [confirmationColumns]);
 
   const bulkAction = useHubBulkConfirmation<CollectionVersionSearch>();
-
-  const getRequest = useGetRequest();
 
   return useCallback(
     (collections: CollectionVersionSearch[]) => {
@@ -39,23 +37,20 @@ export function useRejectCollections(
         confirmationColumns,
         actionColumns,
         onComplete,
-        actionFn: (collection: CollectionVersionSearch) => rejectCollection(collection, getRequest),
+        actionFn: (collection: CollectionVersionSearch) => rejectCollection(collection),
       });
     },
-    [actionColumns, bulkAction, confirmationColumns, onComplete, t, getRequest]
+    [actionColumns, bulkAction, confirmationColumns, onComplete, t]
   );
 }
 
-export function rejectCollection(
-  collection: CollectionVersionSearch,
-  getRequest: ReturnType<typeof useGetRequest>
-) {
+export function rejectCollection(collection: CollectionVersionSearch) {
   let rejectedRepo = '';
 
   async function innerAsync() {
-    const repoRes = (await getRequest(
+    const repoRes = await requestGet<PulpItemsResponse<Repository>>(
       pulpAPI`/repositories/ansible/ansible/?name=rejected`
-    )) as PulpItemsResponse<Repository>;
+    );
     rejectedRepo = repoRes.results[0].pulp_href;
 
     await hubAPIPost(

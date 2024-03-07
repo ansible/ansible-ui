@@ -9,12 +9,13 @@ import { HubError } from '../../common/HubError';
 import { hubAPI, pulpAPI } from '../../common/api/formatPath';
 import { hubAPIPost, parsePulpIDFromURL } from '../../common/api/hub-api-utils';
 import { HubContext, useHubContext } from '../../common/useHubContext';
-import { HubItemsResponse, PulpItemsResponse, useHubView } from '../../common/useHubView';
+import { PulpItemsResponse, HubItemsResponse, useHubView } from '../../common/useHubView';
 import { AnsibleAnsibleRepositoryResponse } from '../../interfaces/generated/AnsibleAnsibleRepositoryResponse';
 import { SigningServiceResponse } from '../../interfaces/generated/SigningServiceResponse';
 import { CollectionVersionSearch } from '../Collection';
 import { usePageDialog } from './../../../../framework';
 import { PageTable } from './../../../../framework/PageTable/PageTable';
+import { requestGet } from './../../../common/crud/Data';
 import { useGetRequest } from './../../../common/crud/useGet';
 import { TFunction } from 'i18next';
 
@@ -53,8 +54,6 @@ function CopyToRepositoryModal(props: {
   const { collection } = props;
   const request = useGetRequest<HubItemsResponse<CollectionVersionSearch>>();
 
-  const pulpRequest = useGetRequest<PulpItemsResponse<SigningServiceResponse>>();
-
   const [selectedRepositories, setSelectedRepositories] = useState<Repository[]>([]);
   const [fixedRepositories, setFixedRepositories] = useState<Repository[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -67,14 +66,7 @@ function CopyToRepositoryModal(props: {
     try {
       setIsLoading(true);
 
-      await copyToRepositoryAction(
-        collection,
-        operation,
-        selectedRepositories,
-        props.context,
-        pulpRequest,
-        t
-      );
+      await copyToRepositoryAction(collection, operation, selectedRepositories, props.context, t);
 
       setIsLoading(false);
       props.onClose();
@@ -224,7 +216,6 @@ export async function copyToRepositoryAction(
   operation: 'approve' | 'copy',
   selectedRepositories: Repository[],
   context: HubContext,
-  pulpRequest: ReturnType<typeof useGetRequest<PulpItemsResponse<SigningServiceResponse>>>,
   t: TFunction<'translation', undefined>
 ) {
   const { repository } = collection;
@@ -246,7 +237,7 @@ export async function copyToRepositoryAction(
   const signingServiceName = context?.settings?.GALAXY_COLLECTION_SIGNING_SERVICE;
   if (((operation === 'approve' && autoSign) || operation === 'copy') && signingServiceName) {
     const url = pulpAPI`/signing-services/?name=${signingServiceName}`;
-    const signingServiceList = await pulpRequest(url);
+    const signingServiceList = await requestGet<PulpItemsResponse<SigningServiceResponse>>(url);
     signingService = signingServiceList?.results?.[0].pulp_href;
   }
 
