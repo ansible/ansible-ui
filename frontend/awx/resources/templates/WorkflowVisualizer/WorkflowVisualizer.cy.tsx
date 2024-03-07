@@ -154,7 +154,7 @@ describe('WorkflowVisualizer', () => {
     cy.get('.toggle-kebab')
       .click()
       .get('.pf-v5-c-menu__item-text')
-      .contains('Remove all nodes')
+      .contains('Remove all steps')
       .should('be.visible');
     cy.get('.toggle-kebab').click();
     cy.get('.toggle-kebab')

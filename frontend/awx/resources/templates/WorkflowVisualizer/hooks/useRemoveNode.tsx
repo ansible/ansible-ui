@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { EdgeModel } from '@patternfly/react-topology';
 import { useCreateEdge } from './useCreateEdge';
 import { EdgeStatus, GraphNode } from '../types';
+import { START_NODE_ID } from '../constants';
 
 export function useRemoveNode() {
   const createEdge = useCreateEdge();
@@ -11,17 +12,39 @@ export function useRemoveNode() {
       const newEdges: EdgeModel[] = [];
 
       element.setVisible(false);
-      element.getSourceEdges().forEach((sourceEdge) => {
-        sourceEdge.setVisible(false);
-        element.getTargetEdges().forEach((targetEdge) => {
-          targetEdge.setVisible(false);
-          const newSourceId = targetEdge.getSource().getId();
-          const newTargetId = sourceEdge.getTarget().getId();
-          const { tagStatus } = sourceEdge.getData() as { tagStatus: EdgeStatus };
-          const newEdge = createEdge(newSourceId, newTargetId, tagStatus);
+      const edgesToParents = element.getTargetEdges();
+      const edgesToChildren = element.getSourceEdges();
 
-          newEdges.push(newEdge);
-          targetEdge.getSource().setState({ modified: true });
+      edgesToParents.forEach((parentEdge) => {
+        parentEdge.setVisible(false);
+      });
+
+      // Create new edges from the removed node's parents to its children
+      edgesToChildren.forEach((childEdge) => {
+        childEdge.setVisible(false);
+
+        edgesToParents.forEach((parentEdge) => {
+          parentEdge.getSource().setState({ modified: true });
+
+          const newParentId = parentEdge.getSource().getId();
+          const newChildId = childEdge.getTarget().getId();
+          const newEdgeId = `${newParentId}-${newChildId}`;
+          let { tagStatus } = childEdge.getData() as { tagStatus: EdgeStatus };
+
+          // If the new parent node is the start node,
+          // set the edge status to info/always
+          if (newParentId === START_NODE_ID) {
+            tagStatus = EdgeStatus.info;
+          }
+
+          if (element.getController().getEdgeById(newEdgeId)) {
+            // If the edge already exists, set it to visible
+            element.getController().getEdgeById(newEdgeId)?.setVisible(true);
+          } else {
+            // If the edge does not exist, create a new edge
+            const newEdge = createEdge(newParentId, newChildId, tagStatus);
+            newEdges.push(newEdge);
+          }
         });
       });
 
@@ -29,7 +52,8 @@ export function useRemoveNode() {
       if (!model.edges) {
         model.edges = [];
       }
-      model.edges.push(...newEdges);
+      model.edges = [...model.edges, ...newEdges];
+
       element.getController().fromModel(model);
     },
     [createEdge]

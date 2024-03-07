@@ -7,7 +7,7 @@ import { Project } from '../../../../frontend/awx/interfaces/Project';
 import { WorkflowJobTemplate } from '../../../../frontend/awx/interfaces/WorkflowJobTemplate';
 import { WorkflowNode } from '../../../../frontend/awx/interfaces/WorkflowNode';
 
-describe.skip('Workflow Job templates visualizer', () => {
+describe('Workflow Job templates visualizer', () => {
   let organization: Organization;
   let project: Project;
   let inventory: Inventory;
@@ -146,7 +146,7 @@ describe.skip('Workflow Job templates visualizer', () => {
         cy.verifyPageTitle(`${workflowJobTemplate.name}`);
       });
   });
-  it('Remove all nodes using the kebab menu of the visualizer toolbar, save and delete the template', function () {
+  it('Remove all steps using the kebab menu of the visualizer toolbar, save and delete the template', function () {
     cy.createAwxWorkflowVisualizerProjectNode(workflowJobTemplate, project).then((projectNode) => {
       cy.createAwxWorkflowVisualizerInventorySourceNode(workflowJobTemplate, inventorySource).then(
         (inventorySourceNode) => {
@@ -417,7 +417,7 @@ describe.skip('Workflow Job templates visualizer', () => {
       );
     });
   });
-  it('Should launch a workflow job template from the visualizer, and navigate to the output page.', function () {
+  it.skip('Should launch a workflow job template from the visualizer, and navigate to the output page.', function () {
     let projectNode: WorkflowNode;
     cy.createAwxWorkflowVisualizerProjectNode(workflowJobTemplate, project)
       .then((projNode) => {
