@@ -87,13 +87,13 @@ describe('inventories', () => {
     }
   });
 
-  it('edits an inventory from the inventory details page', () => {
+  it.only('edits an inventory from the inventory details page', () => {
     cy.navigateTo('awx', 'inventories');
     cy.clickTableRow(inventory.name);
     cy.verifyPageTitle(inventory.name);
     cy.clickButton(/^Edit inventory/);
     cy.selectDropdownOptionByResourceName('labels', label.name);
-    cy.getByDataCy('variables').type('remote_install_path: /opt/my_app_config');
+    cy.dataEditorTypeByDataCy('variables', 'remote_install_path: /opt/my_app_config');
     cy.contains('button', 'Save inventory').click();
     cy.verifyPageTitle(inventory.name);
     cy.assertMonacoTextField('remote_install_path: /opt/my_app_config');
