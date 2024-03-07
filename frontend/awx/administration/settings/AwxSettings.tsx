@@ -46,12 +46,12 @@ export function AwxSettings() {
                   <CardTitle>
                     <Title headingLevel="h3">
                       <Link to={getPageUrl(AwxRoute.SettingsPreferences)}>
-                        {t('User interface')}
+                        {t('User preferences')}
                       </Link>
                     </Title>
                   </CardTitle>
                   <p style={{ opacity: 0.7, fontSize: 'smaller', marginTop: 2 }}>
-                    {t('User interface preferences')}
+                    {t('Per user preferences for the user interface.')}
                   </p>
                 </CardHeader>
               </Card>
