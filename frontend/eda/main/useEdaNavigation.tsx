@@ -421,7 +421,7 @@ export function useEdaNavigation() {
       id: EdaRoute.Settings,
       label: t('Settings'),
       path: 'settings',
-      element: <PageSettings />,
+      element: <PageSettings hideBreadcrumb />,
     },
     {
       path: '',
