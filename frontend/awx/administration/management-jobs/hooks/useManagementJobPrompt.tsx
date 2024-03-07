@@ -52,7 +52,7 @@ export function useManagementJobPrompt() {
           />
         </TextContent>
 
-        <Button variant="primary" onClick={() => handleLaunch(managementJob, dataRetention)}>
+        <Button variant="primary" onClick={() => handleLaunch()}>
           {t('Launch')}
         </Button>
 

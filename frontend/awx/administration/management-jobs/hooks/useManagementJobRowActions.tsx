@@ -10,7 +10,7 @@ export function useManagementJobRowActions() {
   const launchManagementJob = useLaunchManagementJob();
 
   return useMemo<IPageAction<SystemJobTemplate>[]>(() => {
-    const rowActions: IPageAction<SystemJobTemplate> = [
+    const rowActions: IPageAction<SystemJobTemplate>[] = [
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
