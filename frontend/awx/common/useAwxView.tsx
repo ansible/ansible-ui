@@ -13,6 +13,7 @@ export type IAwxView<T extends { id: number }> = IView &
     refresh: () => Promise<void>;
     selectItemsAndRefresh: (items: T[]) => void;
     unselectItemsAndRefresh: (items: T[]) => void;
+    limitFiltersToOneOrOperation: true;
     updateItem: (item: T) => void;
   };
 
@@ -183,6 +184,7 @@ export function useAwxView<T extends { id: number }>(options: {
       ...selection,
       selectItemsAndRefresh,
       unselectItemsAndRefresh,
+      limitFiltersToOneOrOperation: true,
       data: items,
       updateItem,
     };
