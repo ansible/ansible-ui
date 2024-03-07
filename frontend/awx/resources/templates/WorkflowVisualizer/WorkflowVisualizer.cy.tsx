@@ -111,7 +111,7 @@ describe('WorkflowVisualizer', () => {
   it('Should show the WorkflowVisualizer toolbar with Add and Cancel buttons', () => {
     cy.mount(<WorkflowVisualizer />);
     cy.contains('button:disabled:not(:hidden)', 'Save').should('be.visible');
-    cy.contains('button:not(:disabled):not(:hidden)', 'Add node').should('be.visible');
+    cy.contains('button:not(:disabled):not(:hidden)', 'Add step').should('be.visible');
     cy.get('button[data-cy="workflow-visualizer-toolbar-close"]').should('be.visible');
     cy.get('button[data-cy="workflow-visualizer-toolbar-expand-collapse"]').should('be.visible');
     cy.get('svg[data-cy="workflow-visualizer-toolbar-collapse"]').should('not.exist');
@@ -195,7 +195,7 @@ describe('WorkflowVisualizer', () => {
     cy.get('li[data-cy="remove-node"]').within(() => {
       cy.get('button').click({ force: true });
     });
-    cy.get('div[aria-label="Remove node"]').should('be.visible');
+    cy.get('div[aria-label="Remove step"]').should('be.visible');
     cy.clickButton('Cancel');
     cy.get('[data-id="1510"] .pf-topology__node__action-icon').should('be.visible');
     cy.get('[data-id="1510"] .pf-topology__node__action-icon').click();
@@ -203,7 +203,7 @@ describe('WorkflowVisualizer', () => {
       cy.get('button').click({ force: true });
     });
     cy.clickModalConfirmCheckbox();
-    cy.clickModalButton('Remove node');
+    cy.clickModalButton('Remove step');
     cy.clickModalButton('Close');
     cy.get('[data-id="1510"] .pf-topology__node__action-icon').should('not.exist');
   });

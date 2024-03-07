@@ -213,7 +213,7 @@ describe.skip('Workflow Job templates visualizer', () => {
   it('Create a job template node using a JT with multiple dependencies and then edit the node to use a different resource', function () {
     cy.visit(`/templates/workflow_job_template/${workflowJobTemplate?.id}/visualizer`);
     cy.contains('Workflow Visualizer').should('be.visible');
-    cy.clickButton('Add node');
+    cy.clickButton('Add step');
 
     cy.selectDropdownOptionByResourceName('node-type', 'Job Template');
     cy.selectDropdownOptionByResourceName('job-template-select', `${jobTemplate.name}`);
@@ -307,7 +307,7 @@ describe.skip('Workflow Job templates visualizer', () => {
         cy.clickModalButton('Close');
         cy.clickButton('Save');
         cy.get('[data-cy="alert-toaster"]').should('be.visible');
-        cy.clickButton('Add node');
+        cy.clickButton('Add step');
         cy.selectDropdownOptionByResourceName('node-type', 'Job Template');
         cy.selectDropdownOptionByResourceName('job-template-select', `${jobTemplate.name}`);
         cy.selectDropdownOptionByResourceName('node-convergence', 'All');
@@ -391,14 +391,14 @@ describe.skip('Workflow Job templates visualizer', () => {
                 .should('be.visible');
               cy.removeAllNodesFromVisualizerToolbar();
               cy.contains('button', 'Save').click();
-              cy.clickButton('Add node');
+              cy.clickButton('Add step');
               cy.selectDropdownOptionByResourceName('node-type', 'Job Template');
               cy.selectDropdownOptionByResourceName('job-template-select', `${jobTemplate.name}`);
               cy.selectDropdownOptionByResourceName('node-convergence', 'All');
               cy.get('[data-cy="node-alias"]').type('Test Node');
               cy.clickButton('Next');
               cy.clickButton('Finish');
-              cy.clickButton('Add node');
+              cy.clickButton('Add step');
               cy.selectDropdownOptionByResourceName('node-type', 'Project Sync');
               cy.selectDropdownOptionByResourceName('project', `${project.name}`);
               cy.selectDropdownOptionByResourceName('node-convergence', 'All');

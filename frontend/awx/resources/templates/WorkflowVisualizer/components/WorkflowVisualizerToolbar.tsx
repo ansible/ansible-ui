@@ -266,7 +266,7 @@ export const WorkflowVisualizerToolbar = observer(() => {
                   isDanger
                   icon={<MinusCircleIcon />}
                 >
-                  {t('Remove all nodes')}
+                  {t('Remove all steps')}
                 </DropdownItem>
               </>
             )}
