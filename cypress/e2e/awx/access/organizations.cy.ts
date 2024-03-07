@@ -5,6 +5,7 @@ import { randomString } from '../../../../framework/utils/random-string';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { User } from '../../../../frontend/awx/interfaces/User';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
+import { randomE2Ename } from '../../../support/utils';
 
 describe('organizations', () => {
   before(() => {
@@ -17,10 +18,10 @@ describe('organizations', () => {
   });
 
   it('creates and then deletes a basic organization', () => {
-    const organizationName = 'E2E Organization ' + randomString(4);
+    const organizationName = randomE2Ename();
     cy.navigateTo('awx', 'organizations');
     cy.clickLink(/^Create organization$/);
-    cy.get('[data-cy="organization-name"]').type(organizationName);
+    cy.getByDataCy('organization-name').type(organizationName);
     cy.clickButton(/^Create organization$/);
     cy.verifyPageTitle(organizationName);
     cy.clickPageAction('delete-organization');
@@ -33,7 +34,7 @@ describe('organizations', () => {
 
   it('renders the organization details page', function () {
     cy.navigateTo('awx', 'organizations');
-    cy.clickTableRow(`${(this.globalOrganization as Organization).name}`);
+    cy.clickTableRowLink('name', `${(this.globalOrganization as Organization).name}`);
     cy.verifyPageTitle(`${(this.globalOrganization as Organization).name}`);
     cy.clickLink(/^Details$/);
     cy.contains('#name', `${(this.globalOrganization as Organization).name}`);
@@ -49,8 +50,7 @@ describe('organizations edit and delete', function () {
   });
 
   beforeEach(function () {
-    const stringRandom = randomString(4);
-    const orgName = 'E2E Organization ' + `${stringRandom}`;
+    const orgName = randomE2Ename();
     cy.createAwxOrganization(orgName).then((testOrganization) => {
       organization = testOrganization;
       cy.createAwxUser(organization).then((testUser) => {
@@ -68,42 +68,44 @@ describe('organizations edit and delete', function () {
   it('edits an organization from the list view', function () {
     const stringRandom = randomString(4);
     cy.navigateTo('awx', 'organizations');
-    cy.getTableRowByText(`${organization.name}`).within(() => {
-      cy.get('#edit-organization').click();
-    });
+    cy.clickTableRowAction('name', `${organization.name}`, 'edit-organization');
     cy.verifyPageTitle('Edit Organization');
-    cy.get('[data-cy="organization-name"]')
+    cy.getByDataCy('organization-name')
       .clear()
       .type('now-edited ' + `${stringRandom}`);
     cy.clickButton(/^Save organization$/);
     cy.verifyPageTitle('now-edited ' + `${stringRandom}`);
-    cy.get('[data-cy="edit-organization"]').click();
-    cy.get('[data-cy="organization-name"]').clear().type(`${organization.name}`);
+    cy.getByDataCy('edit-organization').click();
+    cy.getByDataCy('organization-name').clear().type(`${organization.name}`);
     cy.clickButton(/^Save organization$/);
     cy.verifyPageTitle(`${organization.name}`);
   });
 
   it('edits an organization from the details page', function () {
     const stringRandom = randomString(4);
+
     cy.navigateTo('awx', 'organizations');
-    cy.clickTableRow(`${organization.name}`);
+    cy.clickTableRowLink('name', `${organization.name}`);
     cy.verifyPageTitle(`${organization.name}`);
-    cy.clickButton(/^Edit organization$/);
+
+    cy.containsBy('button', /^Edit organization/).click();
     cy.verifyPageTitle('Edit Organization');
-    cy.get('[data-cy="organization-name"]')
+    cy.getByDataCy('organization-name')
       .clear()
       .type('now-edited ' + `${stringRandom}`);
-    cy.clickButton(/^Save organization$/);
+    cy.containsBy('button', /^Save organization/).click();
+
     cy.verifyPageTitle('now-edited ' + `${stringRandom}`);
-    cy.get('[data-cy="edit-organization"]').click();
-    cy.get('[data-cy="organization-name"]').clear().type(`${organization.name}`);
-    cy.clickButton(/^Save organization$/);
+    cy.getByDataCy('edit-organization').click();
+    cy.getByDataCy('organization-name').clear().type(`${organization.name}`);
+    cy.containsBy('button', /^Save organization/).click();
+
     cy.verifyPageTitle(`${organization.name}`);
   });
 
   it('deletes an organization from the details page', function () {
     cy.navigateTo('awx', 'organizations');
-    cy.clickTableRow(organization.name);
+    cy.clickTableRowLink('name', `${organization.name}`);
     cy.verifyPageTitle(organization.name);
     cy.clickPageAction('delete-organization');
     cy.get('#confirm').click();
@@ -115,36 +117,24 @@ describe('organizations edit and delete', function () {
 
   it('deletes an organization from the organizations list row item', function () {
     cy.navigateTo('awx', 'organizations');
-    cy.searchAndDisplayResource(organization.name);
-    cy.get(`[data-cy="row-id-${organization.id}"]`).within(() => {
-      cy.get('[data-cy="actions-dropdown"]').click();
-      cy.get('[data-cy="delete-organization"]').click();
+    cy.clickTableRowAction('name', `${organization.name}`, 'delete-organization', {
+      inKebab: true,
     });
     cy.get('#confirm').click();
     cy.clickButton(/^Delete organization/);
     cy.contains(/^Success$/);
     cy.clickButton(/^Close$/);
-    cy.clickButton(/^Clear all filters$/);
   });
 
   it('deletes an organization from the organizations list toolbar', function () {
-    const endOfName = organization.name.split(' ').slice(-1).toString();
     cy.navigateTo('awx', 'organizations');
-    cy.intercept(
-      'GET',
-      awxAPI`/organizations/?name__icontains=${endOfName}&order_by=name&page=1&page_size=10`
-    ).as('orgResult');
-    cy.searchAndDisplayResource(`${endOfName}`);
-    cy.wait('@orgResult').then(() => {
-      cy.get(`[data-cy="row-id-${organization.id}"]`).within(() => {
-        cy.get('input').click();
-      });
-      cy.clickToolbarKebabAction('delete-selected-organizations');
+    cy.selectTableRowCheckbox('name', `${organization.name}`);
+    cy.clickToolbarKebabAction('delete-selected-organizations');
+    cy.getModal().within(() => {
       cy.get('#confirm').click();
       cy.clickButton(/^Delete organization/);
       cy.contains(/^Success$/);
       cy.clickButton(/^Close$/);
-      cy.clickButton(/^Clear all filters$/);
     });
   });
 });
