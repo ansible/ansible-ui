@@ -87,7 +87,7 @@ describe('inventories', () => {
     }
   });
 
-  it.only('edits an inventory from the inventory details page', () => {
+  it('edits an inventory from the inventory details page', () => {
     cy.navigateTo('awx', 'inventories');
     cy.clickTableRow(inventory.name);
     cy.verifyPageTitle(inventory.name);
