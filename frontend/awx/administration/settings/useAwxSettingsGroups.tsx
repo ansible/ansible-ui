@@ -133,7 +133,6 @@ export function useAwxSettingsGroups() {
         const indexA = group.defaultSlugs?.indexOf(a.slugs[0]) ?? -1;
         const indexB = group.defaultSlugs?.indexOf(b.slugs[0]) ?? -1;
         return indexA - indexB;
-        // return a.name.localeCompare(b.name);
       })
     );
     return groups;

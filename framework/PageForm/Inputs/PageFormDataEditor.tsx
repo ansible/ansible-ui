@@ -34,6 +34,7 @@ export type PageFormDataEditorInputProps<
   label: string;
   labelHelp?: string | string[] | ReactNode;
   labelHelpTitle?: string;
+  helperText?: string | undefined;
   additionalControls?: ReactNode;
 
   format: DataEditorLanguages | 'object';
@@ -168,6 +169,7 @@ export function PageFormDataEditor<
                 {props.additionalControls}
               </DataEditorActions>
             }
+            helperText={props.helperText}
             helperTextInvalid={!(validate && isValidating) && error?.message?.split('\n')}
             isRequired={props.isRequired}
           >
