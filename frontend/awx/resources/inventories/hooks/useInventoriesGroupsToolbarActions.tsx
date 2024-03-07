@@ -8,7 +8,7 @@ import {
   PageActionType,
   usePageNavigate,
 } from '../../../../../framework';
-import { PlusIcon, TrashIcon } from '@patternfly/react-icons';
+import { PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import { useDeleteGroups } from '../../groups/hooks/useDeleteGroups';
 import { useParams } from 'react-router-dom';
 import { useOptions } from '../../../../common/crud/useOptions';
@@ -49,7 +49,7 @@ export function useInventoriesGroupsToolbarActions(view: IAwxView<InventoryGroup
         selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
         isPinned: true,
-        icon: PlusIcon,
+        icon: PlusCircleIcon,
         label: t('Create group'),
         onClick: () =>
           pageNavigate(String(AwxRoute.InventoryGroupCreate), {

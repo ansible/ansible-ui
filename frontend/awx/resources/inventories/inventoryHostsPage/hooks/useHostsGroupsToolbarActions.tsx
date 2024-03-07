@@ -1,5 +1,5 @@
 import { ButtonVariant } from '@patternfly/react-core';
-import { PlusIcon } from '@patternfly/react-icons';
+import { PlusCircleIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
@@ -48,7 +48,7 @@ export function useHostsGroupsToolbarActions(view: IAwxView<InventoryGroup>) {
         selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
         isPinned: true,
-        icon: PlusIcon,
+        icon: PlusCircleIcon,
         label: t('Associate'),
         onClick: () => openInventoryHostsGroupsAddModal({ onAdd: associateGroups }),
         isDisabled: () =>
