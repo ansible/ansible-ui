@@ -15,13 +15,13 @@ import { DateRangeFilterPresets } from '../../../../framework/PageToolbar/PageTo
 interface DynamicToolbarFiltersProps {
   /** API path of resource */
   optionsPath: string;
-  /** Query parameters */
+  /** Any additional query parameters needed to query resource values */
   params?: QueryParams;
-  /** Pre-sorted keys */
+  /** A list of keys to order the filters toolbar */
   preSortedKeys?: string[];
-  /** Pre-filled value keys */
+  /** A list of keys to pre-populate dropdown values */
   preFilledValueKeys?: string[];
-  /** Additional filters */
+  /** Any additional filters needed not provided by the API */
   additionalFilters?: IToolbarFilter[];
 }
 
