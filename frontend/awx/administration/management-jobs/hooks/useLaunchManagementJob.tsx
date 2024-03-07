@@ -27,6 +27,7 @@ export function useLaunchManagementJob() {
         navigate(getJobOutputUrl(launchMgtJob as SystemJobTemplate));
       } else {
         launchManagementJobPrompt(managementJob);
+        console.log('launching management job with prompt...', managementJob);
         // const managementJobLaunch = await postRequest(launchManagementJobEndpoint, {
         //   extra_vars: { days: 2 },
         // });
