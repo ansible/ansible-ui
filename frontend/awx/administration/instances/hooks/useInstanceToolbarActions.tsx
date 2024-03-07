@@ -1,5 +1,5 @@
 import { ButtonVariant } from '@patternfly/react-core';
-import { HeartbeatIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons';
+import { HeartbeatIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
@@ -35,7 +35,7 @@ export function useInstanceToolbarActions(view: IAwxView<Instance>) {
         selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
         isPinned: true,
-        icon: PlusIcon,
+        icon: PlusCircleIcon,
         label: t('Add instance'),
         onClick: () => pageNavigate(AwxRoute.AddInstance),
         isDisabled: canAddAndEditInstances

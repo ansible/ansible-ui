@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { ButtonVariant } from '@patternfly/react-core';
-import { CubesIcon, MinusCircleIcon, PlusIcon } from '@patternfly/react-icons';
+import { CubesIcon, MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
@@ -55,7 +55,7 @@ function UserTeamsInternal(props: { user: User }) {
         selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
         isPinned: true,
-        icon: PlusIcon,
+        icon: PlusCircleIcon,
         label: t('Add user to teams'),
         isDisabled: canAddUserToTeam
           ? undefined
@@ -115,7 +115,7 @@ function UserTeamsInternal(props: { user: User }) {
         }
         emptyStateIcon={canAddUserToTeam ? undefined : CubesIcon}
         emptyStateButtonText={canAddUserToTeam ? t('Add team') : undefined}
-        emptyStateButtonIcon={canAddUserToTeam ? <PlusIcon /> : null}
+        emptyStateButtonIcon={canAddUserToTeam ? <PlusCircleIcon /> : null}
         emptyStateButtonClick={canAddUserToTeam ? () => selectTeamsAddUsers([user]) : undefined}
         {...view}
       />
