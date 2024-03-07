@@ -233,8 +233,26 @@ export function PageFormTextInput<
             : error?.message
           : undefined;
 
+        let parsedValue: string = value;
+        switch (type) {
+          case 'datetime-local':
+            if (value) {
+              const utcDate = new Date(value);
+              const localDate = new Date(utcDate.getTime() - utcDate.getTimezoneOffset() * 60000);
+              parsedValue = localDate.toISOString().slice(0, 16);
+            }
+            break;
+        }
+
         function onChangeHandler(value: string) {
-          onChange(value.trimStart());
+          switch (props.type) {
+            case 'datetime-local': {
+              onChange(new Date(value).toISOString());
+              break;
+            }
+            default:
+              onChange(value.trimStart());
+          }
         }
         return (
           <PageFormGroup
@@ -253,7 +271,7 @@ export function PageFormTextInput<
                   id={id}
                   placeholder={placeholder}
                   onChange={(_event, value: string) => onChangeHandler(value)}
-                  value={value ?? ''}
+                  value={parsedValue ?? ''}
                   aria-describedby={id ? `${id}-form-group` : undefined}
                   validated={helperTextInvalid ? 'error' : undefined}
                   type={type === 'password' ? (showSecret ? 'text' : 'password') : type}

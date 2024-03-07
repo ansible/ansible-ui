@@ -6,7 +6,7 @@ import {
   EmptyStateHeader,
   EmptyStateIcon,
 } from '@patternfly/react-core';
-import { CubesIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons';
+import { CubesIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
@@ -55,7 +55,7 @@ function UserRolesInternal(props: { user: User }) {
         selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
         isPinned: true,
-        icon: PlusIcon,
+        icon: PlusCircleIcon,
         label: t('Add role to user'),
         onClick: () => pageNavigate(AwxRoute.AddRolesToUser, { params: { id: user.id } }),
       },

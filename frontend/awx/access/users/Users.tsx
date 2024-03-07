@@ -4,7 +4,6 @@ import {
   MinusCircleIcon,
   PencilAltIcon,
   PlusCircleIcon,
-  PlusIcon,
   TrashIcon,
 } from '@patternfly/react-icons';
 import { useMemo } from 'react';
@@ -68,7 +67,7 @@ export function Users() {
         selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
         isPinned: true,
-        icon: PlusIcon,
+        icon: PlusCircleIcon,
         label: t('Create user'),
         isDisabled: canCreateUser
           ? undefined
@@ -266,7 +265,7 @@ export function AccessTable(props: { url: string }) {
         selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
         isPinned: true,
-        icon: PlusIcon,
+        icon: PlusCircleIcon,
         label: t('Add users'),
         shortLabel: t('Add access'),
         href: getPageUrl(AwxRoute.CreateUser),

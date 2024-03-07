@@ -37,25 +37,31 @@ export function PageWizardBody<T>({
   }, [navigate, onCancel]);
 
   const onNext = useCallback(
-    (formData: object) => {
+    async (formData: object) => {
       const filteredSteps = allSteps.filter((step) =>
         isStepVisible(step, { ...wizardData, ...formData })
       );
 
-      if (activeStep !== null) {
-        const isLastStep = activeStep?.id === filteredSteps[filteredSteps.length - 1]?.id;
-        if (isLastStep) {
-          return onSubmit(wizardData as T);
-        }
-
-        const activeStepIndex = filteredSteps.findIndex((step) => step.id === activeStep?.id);
-        const nextStep = filteredSteps[activeStepIndex + 1];
-
-        setWizardData((prev: object) => ({ ...prev, ...formData }));
-        setStepData((prev) => ({ ...prev, [activeStep?.id]: formData }));
-        setVisibleSteps(filteredSteps);
-        setActiveStep(nextStep);
+      if (activeStep === null) {
+        return Promise.resolve();
       }
+
+      if (activeStep.validate) {
+        await activeStep.validate(formData, wizardData);
+      }
+
+      const isLastStep = activeStep?.id === filteredSteps[filteredSteps.length - 1]?.id;
+      if (isLastStep) {
+        return onSubmit(wizardData as T);
+      }
+
+      const activeStepIndex = filteredSteps.findIndex((step) => step.id === activeStep?.id);
+      const nextStep = filteredSteps[activeStepIndex + 1];
+
+      setWizardData((prev: object) => ({ ...prev, ...formData }));
+      setStepData((prev) => ({ ...prev, [activeStep?.id]: formData }));
+      setVisibleSteps(filteredSteps);
+      setActiveStep(nextStep);
       return Promise.resolve();
     },
     [

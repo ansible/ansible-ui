@@ -10,8 +10,10 @@ import { CollectionVersionSearch } from '../../frontend/hub/collections/Collecti
 import { parsePulpIDFromURL } from '../../frontend/hub/common/api/hub-api-utils';
 import { HubItemsResponse, PulpItemsResponse } from '../../frontend/hub/common/useHubView';
 import { ExecutionEnvironment as HubExecutionEnvironment } from '../../frontend/hub/execution-environments/ExecutionEnvironment';
+import { PayloadDataType as HubExecutionEnvironmentPayload } from '../../frontend/hub/execution-environments/ExecutionEnvironmentForm';
 import { HubDistribution } from '../../frontend/hub/interfaces/expanded/HubDistribution';
 import { HubNamespace } from '../../frontend/hub/namespaces/HubNamespace';
+import { ExecutionEnvironments } from '../e2e/hub/constants';
 import { galaxykitPassword, galaxykitUsername } from './e2e';
 import { hubAPI, pulpAPI } from './formatApiPathForHub';
 import { escapeForShellCommand, randomE2Ename } from './utils';
@@ -409,8 +411,21 @@ Cypress.Commands.add(
 );
 
 // HUB Execution Environment Commands
+export type HubQueryExecutionEnvironmentsOptions = { qs?: { limit?: number } } & Omit<
+  HubGetRequestOptions,
+  'url'
+>;
+Cypress.Commands.add(
+  'queryHubExecutionEnvironments',
+  (options?: HubQueryExecutionEnvironmentsOptions) => {
+    cy.hubGetRequest({
+      ...options,
+      url: hubAPI`/_ui/v1/execution-environments/remotes/`,
+    });
+  }
+);
 export type HubCreateExecutionEnvironmentOptions = {
-  executionEnvironment: SetRequired<Partial<HubExecutionEnvironment>, 'registry'>;
+  executionEnvironment: SetRequired<Partial<HubExecutionEnvironmentPayload>, 'registry'>;
 } & Omit<HubPostRequestOptions, 'url' | 'body'>;
 
 Cypress.Commands.add(
@@ -421,7 +436,7 @@ Cypress.Commands.add(
       url: hubAPI`/_ui/v1/execution-environments/remotes/`,
       body: {
         name: randomE2Ename(),
-        upstream_name: 'alpine',
+        upstream_name: 'library/alpine',
         ...options?.executionEnvironment,
       },
     });
@@ -439,6 +454,31 @@ Cypress.Commands.add(
     cy.hubDeleteRequest({
       ...options,
       url: hubAPI`/v3/plugin/execution-environments/repositories/${options.name}/`,
+    });
+  }
+);
+
+Cypress.Commands.add(
+  'syncRemoteExecutionEnvironment',
+  (executionEnvironment: HubExecutionEnvironment) => {
+    cy.visit(`${ExecutionEnvironments.url}/${executionEnvironment.name}/`);
+    cy.getByDataCy('actions-dropdown').click();
+    cy.getByDataCy('sync-from-registry').click();
+
+    cy.clickModalConfirmCheckbox();
+    cy.intercept(
+      'POST',
+      hubAPI`/v3/plugin/execution-environments/repositories/${executionEnvironment.name}/_content/sync/`
+    ).as('eeSync');
+    cy.clickButton('Sync execution environments');
+    cy.wait('@eeSync').then((xhr) => {
+      const task = xhr?.response?.body?.task as string;
+      cy.waitOnHubTask(task).then((currentSubject: unknown) => {
+        const task = currentSubject as Task;
+        expect(task.state).to.be.eql('completed');
+        cy.contains('Success');
+        cy.clickButton('Close');
+      });
     });
   }
 );
@@ -470,6 +510,16 @@ Cypress.Commands.add('deleteHubRemoteRegistry', (options: HubDeleteRemoteRegistr
 });
 
 // HUB Repository Commands
+export type HubQueryRepositoriesOptions = { qs?: { limit?: number } } & Omit<
+  HubGetRequestOptions,
+  'url'
+>;
+Cypress.Commands.add('queryHubRepositories', (options?: HubQueryRepositoriesOptions) => {
+  cy.hubGetRequest({
+    ...options,
+    url: pulpAPI`/repositories/ansible/ansible/`,
+  });
+});
 export type HubCreateRepositoryOptions = {
   repository: Partial<Repository>;
 } & Omit<HubPostRequestOptions, 'url' | 'body'>;
@@ -537,6 +587,16 @@ Cypress.Commands.add(
 );
 
 // HUB Namespace Commands
+export type HubQueryNamespacesOptions = { qs?: { limit?: number } } & Omit<
+  HubGetRequestOptions,
+  'url'
+>;
+Cypress.Commands.add('queryHubNamespaces', (options?: HubQueryNamespacesOptions) => {
+  cy.hubGetRequest({
+    ...options,
+    url: hubAPI`/_ui/v1/namespaces/`,
+  });
+});
 export type HubCreateNamespaceOptions = { namespace: Partial<HubNamespace> } & Omit<
   HubPostRequestOptions,
   'url' | 'body'
@@ -560,6 +620,13 @@ Cypress.Commands.add('deleteHubNamespace', (options: HubDeleteNamespaceOptions) 
 });
 
 // HUB Role Commands
+export type HubQueryRolesOptions = { qs?: { limit?: number } } & Omit<HubGetRequestOptions, 'url'>;
+Cypress.Commands.add('queryHubRoles', (options?: HubQueryRolesOptions) => {
+  cy.hubGetRequest({
+    ...options,
+    url: pulpAPI`/roles/`,
+  });
+});
 export type HubCreateRoleOptions = { role: Partial<Role> } & Omit<
   HubPostRequestOptions,
   'url' | 'body'
@@ -589,6 +656,16 @@ Cypress.Commands.add('deleteHubRole', (options: HubDeleteRoleOptions) => {
 });
 
 // HUB Remote Commands
+export type HubQueryRemotesOptions = { qs?: { limit?: number } } & Omit<
+  HubGetRequestOptions,
+  'url'
+>;
+Cypress.Commands.add('queryHubRemotes', (options?: HubQueryRemotesOptions) => {
+  cy.hubGetRequest({
+    ...options,
+    url: pulpAPI`/remotes/ansible/collection/`,
+  });
+});
 export type HubCreateRemoteOptions = { remote: Partial<HubRemote> } & Omit<
   HubPostRequestOptions,
   'url' | 'body'

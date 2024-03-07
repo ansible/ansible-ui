@@ -140,7 +140,12 @@ export function OptionActionsFormInput(props: { name: string; option: AwxSetting
     case 'boolean':
       return (
         <PageFormSection singleColumn>
-          <PageFormCheckbox label={option.label} name={props.name} />
+          <PageFormCheckbox
+            label={option.label}
+            name={props.name}
+            labelHelpTitle={option.label}
+            labelHelp={option.help_text}
+          />
         </PageFormSection>
       );
     case 'list':
