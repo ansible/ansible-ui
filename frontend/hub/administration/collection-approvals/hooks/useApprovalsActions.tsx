@@ -16,7 +16,7 @@ export function useApprovalsActions(callback: (collections: CollectionVersionSea
   const { collection_auto_sign, require_upload_signatures } = featureFlags;
   const autoSign = collection_auto_sign && !require_upload_signatures;
 
-  const copyToRepository = useCopyToRepository();
+  const copyToRepository = useCopyToRepository(callback);
   const approveCollectionsFrameworkModal = useApproveCollectionsFrameworkModal(callback);
 
   return useMemo<IPageAction<CollectionVersionSearch>[]>(

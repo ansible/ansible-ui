@@ -19,7 +19,7 @@ import { useSignCollection } from './useSignCollection';
 import { useUploadSignature } from './useUploadSignature';
 
 export function useCollectionActions(
-  callback?: (collections: CollectionVersionSearch[]) => void,
+  callback: (collections: CollectionVersionSearch[]) => void,
   // determine if the menu item is rendered in list or in detail, which defines its redirections
   detail?: boolean
 ) {
@@ -41,7 +41,7 @@ export function useCollectionActions(
     detail
   );
   const deleteCollectionsVersions = useDeleteCollections(callback, true, detail);
-  const copyToRepository = useCopyToRepository();
+  const copyToRepository = useCopyToRepository(callback);
   const signCollectionVersion = useSignCollection(true, callback);
   const signCollection = useSignCollection(false, callback);
   const uploadSignature = useUploadSignature();

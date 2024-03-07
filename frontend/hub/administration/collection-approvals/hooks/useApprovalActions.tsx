@@ -22,7 +22,7 @@ import { useRejectCollections } from './useRejectCollections';
 import { useCopyToRepository } from '../../../collections/hooks/useCopyToRepository';
 import { TFunction } from 'i18next';
 
-export function useApprovalActions(callback?: (collections: CollectionVersionSearch[]) => void) {
+export function useApprovalActions(callback: (collections: CollectionVersionSearch[]) => void) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const params = useParams();
@@ -32,7 +32,7 @@ export function useApprovalActions(callback?: (collections: CollectionVersionSea
   const { collection_auto_sign, require_upload_signatures, can_upload_signatures } = featureFlags;
   const autoSign = collection_auto_sign && !require_upload_signatures;
 
-  const copyToRepository = useCopyToRepository();
+  const copyToRepository = useCopyToRepository(callback);
 
   return useMemo<IPageAction<CollectionVersionSearch>[]>(
     () => [
