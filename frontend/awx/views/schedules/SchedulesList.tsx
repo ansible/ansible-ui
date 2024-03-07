@@ -17,7 +17,7 @@ import { useScheduleToolbarActions } from './hooks/useSchedulesToolbarActions';
 export function SchedulesList(props: { sublistEndpoint?: string }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const params = useParams<{ inventory_type?: string; id: string; source_id?: string }>();
+  const params = useParams<{ inventory_type?: string; id?: string; source_id?: string }>();
   const location = useLocation();
   const toolbarFilters = useSchedulesFilter();
   const tableColumns = useSchedulesColumns();
@@ -40,7 +40,11 @@ export function SchedulesList(props: { sublistEndpoint?: string }) {
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(apiEndPoint ?? awxAPI`/schedules/`);
   const canCreateSchedule = Boolean(data && data.actions && data.actions['POST']);
   const createUrl = useGetSchedulCreateUrl(apiEndPoint);
-  const toolbarActions = useScheduleToolbarActions(view.unselectItemsAndRefresh, apiEndPoint);
+  const toolbarActions = useScheduleToolbarActions(
+    view.unselectItemsAndRefresh,
+    apiEndPoint,
+    params?.id
+  );
   const rowActions = useSchedulesActions({
     onScheduleToggleorDeleteCompleted: () => void view.refresh(),
     sublistEndpoint: apiEndPoint,
