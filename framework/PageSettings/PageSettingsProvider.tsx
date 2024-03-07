@@ -27,7 +27,7 @@ export function PageSettingsProvider(props: {
   defaultRefreshInterval: number;
 }) {
   const [settings, setSettingsState] = useState<IPageSettings>(() => {
-    const preferencesStorage = localStorage.getItem('preferences');
+    const preferencesStorage = localStorage.getItem('user-preferences');
     let settings: IPageSettings = {};
     if (preferencesStorage) {
       try {
@@ -50,8 +50,19 @@ export function PageSettingsProvider(props: {
     return settings;
   });
 
+  const setSettings = useCallback((settings: IPageSettings) => {
+    const activeTheme =
+      settings.theme !== 'light' && settings.theme !== 'dark'
+        ? window.matchMedia('(prefers-color-scheme: dark)').matches
+          ? 'dark'
+          : 'light'
+        : settings.theme;
+    settings.activeTheme = activeTheme;
+    localStorage.setItem('user-preferences', JSON.stringify(settings));
+    setSettingsState(settings);
+  }, []);
+
   useEffect(() => {
-    localStorage.setItem('preferences', JSON.stringify(settings));
     const activeTheme =
       settings.theme !== 'light' && settings.theme !== 'dark'
         ? window.matchMedia('(prefers-color-scheme: dark)').matches
@@ -64,28 +75,6 @@ export function PageSettingsProvider(props: {
       document.documentElement.classList.remove('pf-v5-theme-dark');
     }
   }, [settings]);
-
-  const setSettings = useCallback((settings: IPageSettings) => {
-    localStorage.setItem('theme', settings.theme ?? 'system');
-    localStorage.setItem('tableLayout', settings.tableLayout ?? 'comfortable');
-    localStorage.setItem('formColumns', settings.formColumns ?? 'multiple');
-    localStorage.setItem('formLayout', settings.formLayout ?? 'vertical');
-    localStorage.setItem('dateFormat', settings.dateFormat ?? 'since');
-    const activeTheme =
-      settings.theme !== 'light' && settings.theme !== 'dark'
-        ? window.matchMedia('(prefers-color-scheme: dark)').matches
-          ? 'dark'
-          : 'light'
-        : settings.theme;
-    settings.activeTheme = activeTheme;
-    setSettingsState(settings);
-
-    if (activeTheme === 'dark') {
-      document.documentElement.classList.add('pf-v5-theme-dark');
-    } else {
-      document.documentElement.classList.remove('pf-v5-theme-dark');
-    }
-  }, []);
 
   return (
     <SWRConfig
