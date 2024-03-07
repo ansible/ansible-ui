@@ -20,13 +20,20 @@ import { HubPageForm } from '../common/HubPageForm';
 import { hubAPI } from '../common/api/formatPath';
 import { HubRoute } from '../main/HubRoutes';
 import { HubNamespace } from './HubNamespace';
+import { UsefulLinksFields } from './UsefulLinksFields';
 
 export function CreateHubNamespace() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
   const postRequest = usePostRequest<HubNamespace>();
-  const onSubmit: PageFormSubmitHandler<HubNamespace> = async (namespace) => {
+  const onSubmit: PageFormSubmitHandler<HubNamespace> = async (namespace: HubNamespace) => {
+    if (namespace?.links?.length === 1) {
+      if (namespace.links[0].name === '' && namespace.links[0].url === '') {
+        namespace.links = [];
+      }
+    }
+
     const createdNamespace = await postRequest(hubAPI`/_ui/v1/namespaces/`, namespace);
     pageNavigate(HubRoute.NamespacePage, { params: { id: createdNamespace.name } });
   };
@@ -45,9 +52,10 @@ export function CreateHubNamespace() {
         submitText={t('Create namespace')}
         onSubmit={onSubmit}
         onCancel={() => navigate(-1)}
-        defaultValue={{ groups: [] }}
+        defaultValue={{ groups: [], links: [{ name: '', url: '' }] }}
       >
         <HubNamespaceInputs isDisabled={false} isRequired={true} />
+        <UsefulLinksFields />
       </HubPageForm>
     </PageLayout>
   );
@@ -66,6 +74,12 @@ export function EditHubNamespace() {
   } = useGet<HubNamespace>(hubAPI`/_ui/v1/my-namespaces/${name}/`);
   const putRequest = usePutRequest<HubNamespace, HubNamespace>();
   const onSubmit: PageFormSubmitHandler<HubNamespace> = async (namespace) => {
+    if (namespace?.links?.length === 1) {
+      if (namespace.links[0].name === '' && namespace.links[0].url === '') {
+        namespace.links = [];
+      }
+    }
+
     await putRequest(hubAPI`/_ui/v1/my-namespaces/${name}/`, namespace);
     clearCacheByKey(hubAPI`/_ui/v1/my-namespaces/${name}/`);
     navigate(-1);
@@ -77,7 +91,7 @@ export function EditHubNamespace() {
   }
 
   if (!namespace && !error) {
-    return <LoadingPage></LoadingPage>;
+    return <LoadingPage />;
   }
 
   if (!namespace) {
@@ -94,6 +108,11 @@ export function EditHubNamespace() {
       </PageLayout>
     );
   }
+
+  if (namespace.links.length === 0) {
+    namespace.links = [{ name: '', url: '' }];
+  }
+
   return (
     <PageLayout>
       <PageHeader
@@ -112,6 +131,7 @@ export function EditHubNamespace() {
         defaultValue={namespace}
       >
         <HubNamespaceInputs isDisabled={true} />
+        <UsefulLinksFields />
       </HubPageForm>
     </PageLayout>
   );
