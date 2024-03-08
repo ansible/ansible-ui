@@ -301,7 +301,7 @@ export interface AwxTokenCreate {
 }
 
 export interface CredentialType {
-  id: string;
+  id: number;
   name: string;
   description: string;
   namespace: string;
