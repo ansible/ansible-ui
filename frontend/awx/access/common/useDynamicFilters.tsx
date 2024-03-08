@@ -83,7 +83,7 @@ export function useFilters(actions?: { [key: string]: ActionsResponse }) {
 }
 
 function craftRequestUrl(optionsPath: string, params: QueryParams | undefined, page: number) {
-  let url = `api/v2/${optionsPath}/?page=${page}&page_size=100`;
+  let url = awxAPI`/${optionsPath}/?page=${page.toString()}&page_size=100`;
 
   if (params) {
     const queryParams = Object.entries(params)
@@ -127,7 +127,7 @@ export function useDynamicToolbarFilters<T>(props: DynamicToolbarFiltersProps) {
       if (!resourceKey) return value;
       const resourceLabelKey = asyncKey?.resourceLabelKey || resourceKey;
       try {
-        const resource = await requestGet<T>(`api/v2/${asyncKey?.resourcePath}/${value}/`);
+        const resource = await requestGet<T>(awxAPI`/${asyncKey?.resourcePath}/${value}/`);
         return resource[resourceLabelKey as keyof typeof resource]?.toString() || '';
       } catch {
         return value;
