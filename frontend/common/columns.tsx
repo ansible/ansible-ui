@@ -115,7 +115,7 @@ export function useDescriptionColumn<
       modal: ColumnModalOption.hidden,
       dashboard: ColumnDashboardOption.hidden,
     }),
-    [t, disableSort, options]
+    [t, options]
   );
   return column;
 }
