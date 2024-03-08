@@ -8,19 +8,15 @@ import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 import { awxAPI } from '../../common/api/awx-utils';
 import { QueryParams } from '../../common/useAwxView';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
-// import { Organization } from '../../interfaces/Organization';
-// import { UnifiedJob } from '../../interfaces/UnifiedJob';
-// import { UnifiedJobTemplate } from '../../interfaces/generated-from-swagger/api';
-// import { Project } from '../../interfaces/Project';
 
 interface DynamicToolbarFiltersProps {
   /** API endpoint for the options that generated the filters */
   optionsPath: string;
 
-  /** These keys will be sorted first before the rest of the keys */
+  /** A list of keys to order the filters toolbar */
   preSortedKeys?: string[];
 
-  /** Keys for filters that will be loaded asynchronously from the API */
+  /** A list of keys to pre-populate dropdown values. Note: knownAwxFilterKeys adds some keys that require quering specific endpoints */
   preFilledValueKeys?: string[];
 
   /** Additional filters in addition to the dynamic filters */
@@ -79,10 +75,6 @@ function craftRequestUrl(optionsPath: string, params: QueryParams | undefined, p
 
 export function useDynamicToolbarFilters<T>(props: DynamicToolbarFiltersProps) {
   const { optionsPath, preSortedKeys, preFilledValueKeys, additionalFilters } = props;
-  // export function useDynamicToolbarFilters<
-  //   T extends Organization | UnifiedJob | UnifiedJobTemplate | Project,
-  // >(props: DynamicToolbarFiltersProps) {
-  //   const { optionsPath, preFilledValueKeys, preSortedKeys, params, additionalFilters } = props;
   const { t } = useTranslation();
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/${optionsPath}/`);
   const filterableFields = useFilters(data?.actions?.GET);
@@ -269,7 +261,8 @@ export interface AsyncKeyOptions {
   valueKey?: string;
 }
 
-const knownAwxFilterKeys: Record<string, AsyncKeyOptions> = {
+/** A list of known keys that require querying specific endpoints. We pre-fetch these values if available */
+export const knownAwxFilterKeys: Record<string, AsyncKeyOptions> = {
   organization: {
     resourceType: 'organizations',
     params: { order_by: '-created' },
