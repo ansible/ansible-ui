@@ -8,13 +8,18 @@ import { Project } from '../../../interfaces/Project';
 export function useProjectsFilters() {
   const createdByToolbarFilter = useCreatedByToolbarFilter();
   const modifiedByToolbarFilter = useModifiedByToolbarFilter();
-
   const toolbarFilters = useDynamicToolbarFilters<Project>({
     optionsPath: 'projects',
     preSortedKeys: ['name', 'id', 'status', 'scm_type', 'created-by', 'modified-by'],
     asyncKeys: {
       name: { resourcePath: 'projects', params: { order_by: '-created' } },
       id: { resourcePath: 'projects', params: { order_by: '-id' } },
+      organization: {
+        resourcePath: 'organizations',
+        params: { order_by: '-created' },
+        resourceLabelKey: 'name',
+        resourceKey: 'id',
+      },
     },
     additionalFilters: [createdByToolbarFilter, modifiedByToolbarFilter],
   });
