@@ -755,7 +755,7 @@ function TableRow<T extends object>(props: {
     maxSelections,
     selectedItems,
   } = props;
-  const expandedRowHasContent = expandedRow?.(item);
+  const expandedRowHasContent = !!expandedRow?.(item);
   const [expanded, setExpanded] = useState(!!props.defaultExpandedRows && expandedRowHasContent);
   const settings = useSettings();
   const disableRow = useCallback(
