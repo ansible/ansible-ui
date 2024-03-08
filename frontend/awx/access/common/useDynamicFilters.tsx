@@ -13,10 +13,10 @@ interface DynamicToolbarFiltersProps {
   /** API endpoint for the options that generated the filters */
   optionsPath: string;
 
-  /** These keys will be sorted first before the rest of the keys */
+  /** A list of keys to order the filters toolbar */
   preSortedKeys?: string[];
 
-  /** Keys for filters that will be loaded asynchronously from the API */
+  /** A list of keys to pre-populate dropdown values. Note: knownAwxFilterKeys adds some keys that require quering specific endpoints */
   preFilledValueKeys?: string[];
 
   /** Additional filters in addition to the dynamic filters */
@@ -261,7 +261,8 @@ export interface AsyncKeyOptions {
   valueKey?: string;
 }
 
-const knownAwxFilterKeys: Record<string, AsyncKeyOptions> = {
+/** A list of known keys that require querying specific endpoints. We pre-fetch these values if available */
+export const knownAwxFilterKeys: Record<string, AsyncKeyOptions> = {
   organization: {
     resourceType: 'organizations',
     params: { order_by: '-created' },
