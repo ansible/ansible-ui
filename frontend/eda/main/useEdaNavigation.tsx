@@ -5,7 +5,7 @@ import { PageSettings } from '../../../framework/PageSettings/PageSettings';
 import { CredentialDetails } from '../access/credentials/CredentialPage/CredentialDetails';
 import { CredentialPage } from '../access/credentials/CredentialPage/CredentialPage';
 import { Credentials } from '../access/credentials/Credentials';
-import { CreateCredential, EditCredential } from '../access/credentials/EditCredential';
+import { CreateCredential, EditCredential } from '../access/credentials/CredentialForm';
 import { EdaRoleDetails } from '../access/roles/EdaRoleDetails';
 import { EdaRolePage } from '../access/roles/EdaRolePage';
 import { EdaRoles } from '../access/roles/EdaRoles';

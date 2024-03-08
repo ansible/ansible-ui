@@ -300,18 +300,61 @@ export interface AwxTokenCreate {
   token: string;
 }
 
+export interface CredentialType {
+  id: string;
+  name: string;
+  description: string;
+  namespace: string;
+  managed: boolean;
+  injectors: { [key: string]: string };
+  summary_fields: {
+    created_by?: string;
+    modified_by?: string;
+    user_capabilities: {
+      edit: boolean;
+      delete: boolean;
+    };
+  };
+  inputs: {
+    fields: {
+      id: string;
+      label: string;
+      type: string;
+      help_text: string;
+      ask_at_runtime?: boolean;
+    }[];
+    required: string[];
+  };
+  related: {
+    credentials: string;
+    activity_stream: string;
+  };
+}
+
+export interface CredentialTypeCreate {
+  id: string;
+  name: string;
+  description: string;
+  namespace: string;
+  managed: boolean;
+  injectors: { [key: string]: string };
+  inputs: {
+    fields: {
+      id: string;
+      label: string;
+      type: string;
+      help_text: string;
+      ask_at_runtime?: boolean;
+    }[];
+  };
+}
+
 export interface Credential {
   name: string;
   description?: string;
-  username?: string | null;
-  key?: string | null;
-  /**
-   * * `Container Registry` - Container Registry
-   * * `GitHub Personal Access Token` - GitHub Personal Access Token
-   * * `GitLab Personal Access Token` - GitLab Personal Access Token
-   * * `Vault` - Vault
-   */
-  credential_type?: CredentialTypeEnum;
+    key?: string | null;
+  credential_type_id?: string;
+  inputs: object | undefined;
   id: number;
   /** @format date-time */
   created_at: string;
@@ -328,7 +371,7 @@ export interface CredentialCreate {
    * * `GitLab Personal Access Token` - GitLab Personal Access Token
    * * `Vault` - Vault
    */
-  credential_type?: CredentialTypeEnum;
+  credential_type_id?: string;
   username?: string | null;
   key?: string | null;
   secret?: string | null;

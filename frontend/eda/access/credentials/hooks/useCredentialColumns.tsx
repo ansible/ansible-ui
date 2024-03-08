@@ -32,7 +32,7 @@ export function useCredentialColumns() {
       },
       {
         header: t('Type'),
-        cell: (credential) => <TextCell text={credential.credential_type} />,
+        cell: (credential) => <TextCell text={credential.credential_type_id} />,
       },
       {
         header: t('Created'),

@@ -25,7 +25,7 @@ export function CredentialPage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const pageNavigate = usePageNavigate();
-  const { data: credential } = useGet<EdaCredential>(edaAPI`/credentials/${params.id ?? ''}/`);
+  const { data: credential } = useGet<EdaCredential>(edaAPI`/eda-credentials/${params.id ?? ''}/`);
 
   const deleteCredentials = useDeleteCredentials((deleted) => {
     if (deleted.length > 0) {
