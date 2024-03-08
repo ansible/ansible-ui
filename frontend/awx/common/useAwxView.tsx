@@ -157,14 +157,15 @@ export function useAwxView<T extends { id: number }>(options: {
     [refresh, selection]
   );
 
-  const [items, setItems] = useState<T[]>([]);
+  const [items, setItems] = useState<T[] | undefined>(undefined);
   useEffect(() => {
-    setItems(data?.results ?? []);
+    setItems(data?.results);
   }, [data?.results]);
 
   const updateItem = useCallback(
     (item: T) => {
-      const index = items.findIndex((i) => i.id === item.id);
+      if (!items) return;
+      const index = items?.findIndex((i) => i.id === item.id);
       if (index !== -1) {
         const newItems = [...items];
         newItems[index] = item;
@@ -178,18 +179,16 @@ export function useAwxView<T extends { id: number }>(options: {
     return {
       refresh,
       itemCount: itemCountRef.current.itemCount,
-      pageItems: data?.results,
+      pageItems: items,
       error,
       ...view,
       ...selection,
       selectItemsAndRefresh,
       unselectItemsAndRefresh,
       limitFiltersToOneOrOperation: true,
-      data: items,
       updateItem,
     };
   }, [
-    data?.results,
     error,
     items,
     refresh,
