@@ -55,7 +55,7 @@ Cypress.Commands.add('selectToolbarFilterByLabel', (text: string | RegExp) => {
 
 Cypress.Commands.add(
   'filterTableByTextFilter',
-  (filterDataCy: string, text: string, options: { disableFilterSelection?: boolean }) => {
+  (filterDataCy: string, text: string, options?: { disableFilterSelection?: boolean }) => {
     if (!options?.disableFilterSelection) {
       cy.selectTableFilter(filterDataCy);
     }

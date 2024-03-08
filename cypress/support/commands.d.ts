@@ -309,7 +309,7 @@ declare global {
       filterTableByTextFilter(
         filterDataCy: string,
         text: string,
-        options: { disableFilterSelection?: boolean }
+        options?: { disableFilterSelection?: boolean }
       ): Chainable<void>;
 
       /** @deprecated use cy.filterTableByTextFilter instead */
