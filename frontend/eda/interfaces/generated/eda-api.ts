@@ -352,7 +352,7 @@ export interface CredentialTypeCreate {
 export interface Credential {
   name: string;
   description?: string;
-    key?: string | null;
+  key?: string | null;
   credential_type_id?: string;
   inputs: object | undefined;
   id: number;
