@@ -20,34 +20,32 @@ interface DynamicToolbarFiltersProps {
   preSortedKeys?: string[];
 
   /** Keys and options for filters that will be loaded asynchronously */
-  asyncKeys?: {
-    [key: string]:
-      | {
-          /** The API endpoint for the options that will be loaded asynchronously
-           * @example 'execution_environments'
-           */
-          resourcePath: string;
-          /**
-           * The query parameters for the options that will be loaded asynchronously
-           * @example { order_by: '-created' }
-           */
-          params: QueryParams;
-          /**
-           * The key to be used as the label for the resource
-           * @example 'name'
-           */
-          resourceLabelKey?: string;
-          /**
-           * The key to be used as the value for the resource
-           * @example 'id'
-           */
-          resourceKey?: string;
-        }
-      | undefined;
-  };
+  asyncKeys?: { [key: string]: AsyncKeyOptions | undefined };
 
   /** Additional filters in addition to the dynamic filters */
   additionalFilters?: IToolbarFilter[];
+}
+
+interface AsyncKeyOptions {
+  /** The API endpoint for the options that will be loaded asynchronously
+   * @example 'execution_environments'
+   */
+  resourcePath: string;
+  /**
+   * The query parameters for the options that will be loaded asynchronously
+   * @example { order_by: '-created' }
+   */
+  params: QueryParams;
+  /**
+   * The key to be used as the label for the resource
+   * @example 'name'
+   */
+  resourceLabelKey?: string;
+  /**
+   * The key to be used as the value for the resource
+   * @example 'id'
+   */
+  resourceKey?: string;
 }
 
 interface FilterableFields {
@@ -147,15 +145,7 @@ export function useDynamicToolbarFilters<T extends Organization | UnifiedJob | U
     const getToolbars = (
       filterableFields: FilterableFields[],
       preSortedKeys?: string[],
-      asyncKeys?: {
-        [key: string]:
-          | {
-              optionsPath: string;
-              params: QueryParams;
-              resourceKey: string;
-            }
-          | undefined;
-      },
+      asyncKeys?: { [key: string]: AsyncKeyOptions | undefined },
       additionalFilters?: IToolbarFilter[]
     ): IToolbarFilter[] => {
       const toolbarFilters: IToolbarFilter[] = [];
@@ -252,7 +242,15 @@ export function useDynamicToolbarFilters<T extends Organization | UnifiedJob | U
       return toolbarFilters;
     };
     return getToolbars(filterableFields, preSortedKeys, asyncKeys, additionalFilters);
-  }, [filterableFields, preSortedKeys, asyncKeys, additionalFilters, t, queryResource]);
+  }, [
+    filterableFields,
+    preSortedKeys,
+    asyncKeys,
+    additionalFilters,
+    t,
+    queryResource,
+    queryResourceLabel,
+  ]);
 
   return filters;
 }
