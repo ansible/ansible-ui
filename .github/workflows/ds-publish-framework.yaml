@@ -22,7 +22,10 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm i
+        run: |
+          rm -rf package-lock.json
+          rm -rf node_modules
+          npm i
 
       - name: Publish Framework
         working-directory: ./framework
