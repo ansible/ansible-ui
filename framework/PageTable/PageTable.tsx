@@ -755,8 +755,8 @@ function TableRow<T extends object>(props: {
     maxSelections,
     selectedItems,
   } = props;
-  const expandedRowHasContent = !!expandedRow?.(item);
-  const [expanded, setExpanded] = useState(!!props.defaultExpandedRows && expandedRowHasContent);
+  const expandedRowContent = expandedRow?.(item);
+  const [expanded, setExpanded] = useState(!!props.defaultExpandedRows && !!expandedRowContent);
   const settings = useSettings();
   const disableRow = useCallback(
     (item: T) => {
@@ -786,7 +786,7 @@ function TableRow<T extends object>(props: {
         {expandedRow && (
           <Td
             expand={
-              expandedRowHasContent
+              expandedRowContent
                 ? {
                     rowIndex,
                     isExpanded: expanded,
@@ -794,7 +794,7 @@ function TableRow<T extends object>(props: {
                   }
                 : undefined
             }
-            style={{ paddingLeft: expandedRowHasContent ? 8 : 4 }}
+            style={{ paddingLeft: expandedRowContent ? 8 : 4 }}
             data-cy={'expand-column-cell'}
           />
         )}
@@ -852,7 +852,7 @@ function TableRow<T extends object>(props: {
           scrollRight={props.scrollRight}
         />
       </Tr>
-      {expandedRow && expanded && expandedRowHasContent && (
+      {expandedRow && expanded && expandedRowContent && (
         <Tr
           isExpanded={expanded}
           style={{ boxShadow: 'unset' }}
@@ -872,7 +872,7 @@ function TableRow<T extends object>(props: {
             colSpan={columns.length}
             style={{ paddingBottom: settings.tableLayout === 'compact' ? 12 : 24, paddingTop: 0 }}
           >
-            <CollapseColumn>{expandedRowHasContent}</CollapseColumn>
+            <CollapseColumn>{expandedRowContent}</CollapseColumn>
           </Td>
           {rowActions !== undefined && rowActions.length > 0 && (
             <Td
