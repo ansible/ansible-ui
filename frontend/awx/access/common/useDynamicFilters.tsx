@@ -11,6 +11,7 @@ import { UnifiedJob } from '../../interfaces/UnifiedJob';
 import { UnifiedJobTemplate } from '../../interfaces/generated-from-swagger/api';
 import { requestGet } from '../../../common/crud/Data';
 import { DateRangeFilterPresets } from '../../../../framework/PageToolbar/PageToolbarFilters/ToolbarDateRangeFilter';
+import { Project } from '../../interfaces/Project';
 
 interface DynamicToolbarFiltersProps {
   /** API path of resource */
@@ -63,7 +64,7 @@ export function useFilters(actions?: { [key: string]: ActionsResponse }) {
 }
 
 function craftRequestUrl(optionsPath: string, params: QueryParams | undefined, page: number) {
-  let url = `api/v2/${optionsPath}/?page=${page}&page_size=200`;
+  let url = `api/v2/${optionsPath}/?page=${page}&page_size=100`;
 
   if (params) {
     const queryParams = Object.entries(params)
@@ -75,9 +76,9 @@ function craftRequestUrl(optionsPath: string, params: QueryParams | undefined, p
   return url;
 }
 
-export function useDynamicToolbarFilters<T extends Organization | UnifiedJob | UnifiedJobTemplate>(
-  props: DynamicToolbarFiltersProps
-) {
+export function useDynamicToolbarFilters<
+  T extends Organization | UnifiedJob | UnifiedJobTemplate | Project,
+>(props: DynamicToolbarFiltersProps) {
   const { optionsPath, preFilledValueKeys, preSortedKeys, params, additionalFilters } = props;
   const { t } = useTranslation();
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/${optionsPath}/`);
