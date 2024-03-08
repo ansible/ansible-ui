@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import useSWR from 'swr';
 import {
   ISelected,
@@ -19,6 +19,7 @@ export type IEdaView<T extends { id: number | string }> = IView &
     refresh: () => Promise<void>;
     selectItemsAndRefresh: (items: T[]) => void;
     unselectItemsAndRefresh: (items: T[]) => void;
+    updateItem: (item: T) => void;
   };
 
 export type QueryParams = {
@@ -140,11 +141,31 @@ export function useEdaView<T extends { id: number | string }>(options: {
     [refresh, selection]
   );
 
+  const [items, setItems] = useState<T[] | undefined>(undefined);
+
+  useEffect(() => {
+    setItems(data?.results);
+  }, [data?.results]);
+
+  const updateItem = useCallback(
+    (item: T) => {
+      if (!item) return;
+      const index = items?.findIndex((i) => getItemKey(i) === getItemKey(item));
+      if (index !== undefined && index !== -1) {
+        const newItems = [...(items || [])];
+        newItems[index] = item;
+        setItems(newItems);
+      }
+    },
+    [items]
+  );
+
   return useMemo(() => {
     return {
       refresh,
       itemCount: itemCountRef.current.itemCount,
-      pageItems: data?.results,
+      pageItems: items,
+      updateItem,
       error,
       ...view,
       ...selection,
@@ -152,7 +173,8 @@ export function useEdaView<T extends { id: number | string }>(options: {
       unselectItemsAndRefresh,
     };
   }, [
-    data?.results,
+    items,
+    updateItem,
     error,
     refresh,
     selectItemsAndRefresh,
