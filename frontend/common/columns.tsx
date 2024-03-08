@@ -91,20 +91,25 @@ export function useNameColumn<
   return column;
 }
 
-export function useDescriptionColumn<T extends { description?: string | null | undefined }>() {
+export function useDescriptionColumn<
+  T extends { description?: string | null | undefined },
+>(options?: { tableViewOption?: ColumnTableOption; sortKey?: string; disableSort?: boolean }) {
   const { t } = useTranslation();
   const column = useMemo<ITableColumn<T>>(
     () => ({
       header: t('Description'),
       type: 'description',
       value: (item) => item.description,
-      table: ColumnTableOption.description,
+      table:
+        options && 'tableViewOption' in options
+          ? options.tableViewOption
+          : ColumnTableOption.description,
       list: 'description',
       card: 'description',
       modal: ColumnModalOption.hidden,
       dashboard: ColumnDashboardOption.hidden,
     }),
-    [t]
+    [t, options]
   );
   return column;
 }
@@ -387,16 +392,8 @@ export function useExecutionEnvColumn<
   return column;
 }
 
-export function useInventoryNameColumn(
-  inventoryDetailsRoute: string,
-  options?: {
-    disableLinks?: boolean;
-    disableSort?: boolean;
-  }
-) {
-  const { t } = useTranslation();
-  const getPageUrl = useGetPageUrl();
-  const column: ITableColumn<{
+export function useInventoryNameColumn<
+  T extends {
     summary_fields?: {
       inventory?: {
         id: number;
@@ -404,7 +401,18 @@ export function useInventoryNameColumn(
         kind: string;
       };
     };
-  }> = useMemo(
+  },
+>(
+  inventoryDetailsRoute: string,
+  options?: {
+    disableLinks?: boolean;
+    disableSort?: boolean;
+    tableViewOption?: ColumnTableOption;
+  }
+) {
+  const { t } = useTranslation();
+  const getPageUrl = useGetPageUrl();
+  const column = useMemo<ITableColumn<T>>(
     () => ({
       header: t('Inventory'),
       cell: (item) => (
@@ -421,12 +429,15 @@ export function useInventoryNameColumn(
       ),
       value: (item) => item.summary_fields?.inventory?.name,
       sort: options?.disableSort ? undefined : 'inventory',
-      table: ColumnTableOption.expanded,
+      table:
+        options && 'tableViewOption' in options
+          ? options.tableViewOption
+          : ColumnTableOption.expanded,
       card: 'hidden',
       list: 'hidden',
       modal: ColumnModalOption.hidden,
     }),
-    [getPageUrl, options?.disableLinks, options?.disableSort, inventoryDetailsRoute, t]
+    [getPageUrl, options, inventoryDetailsRoute, t]
   );
   return column;
 }
