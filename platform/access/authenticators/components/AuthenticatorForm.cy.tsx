@@ -3,9 +3,22 @@ import plugins from '../../../../cypress/fixtures/platformAuthenticatorPlugins.j
 import authenticators from '../../../../cypress/fixtures/platformAuthenticators.json';
 import { Authenticator } from '../../../interfaces/Authenticator';
 import { AuthenticatorPlugins } from '../../../interfaces/AuthenticatorPlugin';
+import { gatewayAPI } from '../../../api/gateway-api-utils';
 
 describe('AuthenticatorForm', () => {
   const voidFn = async () => {};
+  beforeEach(() => {
+    cy.intercept(
+      {
+        method: 'POST',
+        url: gatewayAPI`/authenticators/?validate=True`,
+      },
+      {
+        detail: 'Request would have been accepted',
+      }
+    );
+  });
+
   it('should render form wizard', () => {
     cy.mount(<AuthenticatorForm plugins={plugins as AuthenticatorPlugins} handleSubmit={voidFn} />);
     cy.selectDropdownOptionByResourceName('authentication-type-select', 'Local');

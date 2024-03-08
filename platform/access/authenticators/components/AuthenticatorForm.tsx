@@ -7,12 +7,12 @@ import {
   useGetPageUrl,
 } from '../../../../framework';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
-import { genericErrorAdapter } from '../../../../framework/PageForm/genericErrorAdapter';
 import { AuthenticatorTypeStep } from './steps/AuthenticatorTypeStep';
-import { AuthenticatorDetailsStep } from './steps/AuthenticatorDetailsStep';
-import { AuthenticatorMappingStep } from './steps/AuthenticatorMappingStep';
+import { AuthenticatorDetailsStep, validateDetailsStep } from './steps/AuthenticatorDetailsStep';
+import { AuthenticatorMappingStep, validateMappingStep } from './steps/AuthenticatorMappingStep';
 import { AuthenticatorMappingOrderStep } from './steps/AuthenticatorMappingOrderStep';
 import { AuthenticatorReviewStep } from './steps/AuthenticatorReviewStep';
+import { authenticatorErrorAdapter } from './authenticatorErrorAdapter';
 import { Authenticator, AuthenticatorTypeEnum } from '../../../interfaces/Authenticator';
 import { AuthenticatorMap, AuthenticatorMapType } from '../../../interfaces/AuthenticatorMap';
 import type {
@@ -22,7 +22,7 @@ import type {
 import type { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import type { PlatformTeam } from '../../../interfaces/PlatformTeam';
 
-interface Configuration {
+export interface Configuration {
   [key: string]: string | string[] | { [k: string]: string };
 }
 
@@ -90,16 +90,29 @@ export function AuthenticatorForm(props: AuthenticatorFormProps) {
       id: 'details',
       label: t('Authentication details'),
       inputs: <AuthenticatorDetailsStep plugins={plugins} authenticator={authenticator} />,
+      validate: async (formData, wizardData) => {
+        return validateDetailsStep(
+          formData as { name: string; configuration: Configuration },
+          wizardData as AuthenticatorFormValues,
+          plugins,
+          authenticator
+        );
+      },
     },
     {
       id: 'mapping',
       label: t('Mapping'),
       inputs: <AuthenticatorMappingStep />,
+      validate: (formData, _) => {
+        return validateMappingStep(formData, t);
+      },
     },
     {
       id: 'order',
       label: t('Mapping order'),
       inputs: <AuthenticatorMappingOrderStep />,
+      hidden: (wizardData) =>
+        !mappings.length && !(wizardData as { mappings?: object[] }).mappings?.length,
     },
     {
       id: 'review',
@@ -166,7 +179,7 @@ export function AuthenticatorForm(props: AuthenticatorFormProps) {
         steps={steps}
         defaultValue={initialValues}
         onSubmit={props.handleSubmit}
-        errorAdapter={genericErrorAdapter}
+        errorAdapter={authenticatorErrorAdapter}
         disableGrid
       />
     </PageLayout>
