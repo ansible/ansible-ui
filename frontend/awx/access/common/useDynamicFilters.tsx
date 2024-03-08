@@ -17,7 +17,7 @@ interface DynamicToolbarFiltersProps {
   preSortedKeys?: string[];
 
   /** Keys and options for filters that will be loaded asynchronously */
-  asyncKeys?: { [key: string]: AsyncKeyOptions | undefined };
+  asyncFilterKeys?: { [key: string]: AsyncKeyOptions | undefined };
 
   /** Additional filters in addition to the dynamic filters */
   additionalFilters?: IToolbarFilter[];
@@ -96,7 +96,7 @@ function craftRequestUrl(optionsPath: string, params: QueryParams | undefined, p
 }
 
 export function useDynamicToolbarFilters<T>(props: DynamicToolbarFiltersProps) {
-  const { optionsPath, preSortedKeys, asyncKeys, additionalFilters } = props;
+  const { optionsPath, preSortedKeys, asyncFilterKeys: asyncKeys, additionalFilters } = props;
   const { t } = useTranslation();
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/${optionsPath}/`);
   const filterableFields = useFilters(data?.actions?.GET);

@@ -5,7 +5,7 @@ export function useJobsFilters() {
   const toolBarFilters = useDynamicToolbarFilters<UnifiedJob>({
     optionsPath: 'unified_jobs',
     preSortedKeys: ['name', 'description', 'status'],
-    asyncKeys: {
+    asyncFilterKeys: {
       name: { resourceType: 'unified_jobs', params: { order_by: '-finished' } },
       id: { resourceType: 'unified_jobs', params: { order_by: '-id' } },
       execution_environment: {
