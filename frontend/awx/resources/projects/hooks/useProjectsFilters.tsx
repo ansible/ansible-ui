@@ -12,13 +12,13 @@ export function useProjectsFilters() {
     optionsPath: 'projects',
     preSortedKeys: ['name', 'id', 'status', 'scm_type', 'created-by', 'modified-by'],
     asyncKeys: {
-      name: { resourcePath: 'projects', params: { order_by: '-created' } },
-      id: { resourcePath: 'projects', params: { order_by: '-id' } },
+      name: { resourceType: 'projects', params: { order_by: '-created' } },
+      id: { resourceType: 'projects', params: { order_by: '-id' } },
       organization: {
-        resourcePath: 'organizations',
+        resourceType: 'organizations',
         params: { order_by: '-created' },
-        resourceLabelKey: 'name',
-        resourceKey: 'id',
+        labelKey: 'name',
+        valueKey: 'id',
       },
     },
     additionalFilters: [createdByToolbarFilter, modifiedByToolbarFilter],

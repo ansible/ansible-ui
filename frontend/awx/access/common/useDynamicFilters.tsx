@@ -27,7 +27,7 @@ interface AsyncKeyOptions {
   /** The API endpoint for the options that will be loaded asynchronously
    * @example 'execution_environments'
    */
-  resourcePath: string;
+  resourceType: string;
   /**
    * The query parameters for the options that will be loaded asynchronously
    * @example { order_by: '-created' }
@@ -37,12 +37,12 @@ interface AsyncKeyOptions {
    * The key to be used as the label for the resource
    * @example 'name'
    */
-  resourceLabelKey?: string;
+  labelKey?: string;
   /**
    * The key to be used as the value for the resource
    * @example 'id'
    */
-  resourceKey?: string;
+  valueKey?: string;
 }
 
 interface FilterableFields {
@@ -103,10 +103,10 @@ export function useDynamicToolbarFilters<T>(props: DynamicToolbarFiltersProps) {
   const queryResource = useCallback(
     async (page: number, signal: AbortSignal, key: string) => {
       const asyncKey = asyncKeys?.[key];
-      const resourceKey = asyncKey?.resourceKey || key;
-      const resourceLabelKey = asyncKey?.resourceLabelKey || resourceKey;
+      const resourceKey = asyncKey?.valueKey || key;
+      const resourceLabelKey = asyncKey?.labelKey || resourceKey;
       const resources = await requestGet<AwxItemsResponse<T>>(
-        craftRequestUrl(asyncKey ? asyncKey.resourcePath : optionsPath, asyncKey?.params, page),
+        craftRequestUrl(asyncKey ? asyncKey.resourceType : optionsPath, asyncKey?.params, page),
         signal
       );
       return {
@@ -123,11 +123,11 @@ export function useDynamicToolbarFilters<T>(props: DynamicToolbarFiltersProps) {
   const queryResourceLabel = useCallback(
     async (value: string, key: string) => {
       const asyncKey = asyncKeys?.[key];
-      const resourceKey = asyncKey?.resourceKey;
+      const resourceKey = asyncKey?.valueKey;
       if (!resourceKey) return value;
-      const resourceLabelKey = asyncKey?.resourceLabelKey || resourceKey;
+      const resourceLabelKey = asyncKey?.labelKey || resourceKey;
       try {
-        const resource = await requestGet<T>(awxAPI`/${asyncKey?.resourcePath}/${value}/`);
+        const resource = await requestGet<T>(awxAPI`/${asyncKey?.resourceType}/${value}/`);
         return resource[resourceLabelKey as keyof typeof resource]?.toString() || '';
       } catch {
         return value;

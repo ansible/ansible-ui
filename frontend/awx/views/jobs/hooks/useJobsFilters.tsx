@@ -6,19 +6,19 @@ export function useJobsFilters() {
     optionsPath: 'unified_jobs',
     preSortedKeys: ['name', 'description', 'status'],
     asyncKeys: {
-      name: { resourcePath: 'unified_jobs', params: { order_by: '-finished' } },
-      id: { resourcePath: 'unified_jobs', params: { order_by: '-id' } },
+      name: { resourceType: 'unified_jobs', params: { order_by: '-finished' } },
+      id: { resourceType: 'unified_jobs', params: { order_by: '-id' } },
       execution_environment: {
-        resourcePath: 'execution_environments',
+        resourceType: 'execution_environments',
         params: { order_by: '-created' },
-        resourceLabelKey: 'name',
-        resourceKey: 'id',
+        labelKey: 'name',
+        valueKey: 'id',
       },
       unified_job_template: {
-        resourcePath: 'unified_job_templates',
+        resourceType: 'unified_job_templates',
         params: { order_by: '-created' },
-        resourceLabelKey: 'name',
-        resourceKey: 'id',
+        labelKey: 'name',
+        valueKey: 'id',
       },
     },
   });
