@@ -53,27 +53,32 @@ Cypress.Commands.add('selectToolbarFilterByLabel', (text: string | RegExp) => {
   });
 });
 
-Cypress.Commands.add('filterTableByTextFilter', (filterDataCy: string, text: string) => {
-  cy.selectTableFilter(filterDataCy);
-  cy.get('#filters').within(() => {
-    cy.get('#filter-input').within(() => {
-      cy.get('input').clear().type(text, { delay: 0 });
-    });
-    // Only click the apply filter if it is a multi text filter
-    cy.get('button').then((jqueryResult) => {
-      for (let i = 0; i < jqueryResult.length; i++) {
-        if (jqueryResult[i].getAttribute('data-cy') === 'apply-filter') {
-          jqueryResult[i].click();
-          break;
+Cypress.Commands.add(
+  'filterTableByTextFilter',
+  (filterDataCy: string, text: string, options?: { disableFilterSelection?: boolean }) => {
+    if (!options?.disableFilterSelection) {
+      cy.selectTableFilter(filterDataCy);
+    }
+    cy.get('#filters').within(() => {
+      cy.get('#filter-input').within(() => {
+        cy.get('input').clear().type(text, { delay: 0 });
+      });
+      // Only click the apply filter if it is a multi text filter
+      cy.get('button').then((jqueryResult) => {
+        for (let i = 0; i < jqueryResult.length; i++) {
+          if (jqueryResult[i].getAttribute('data-cy') === 'apply-filter') {
+            jqueryResult[i].click();
+            break;
+          }
         }
-      }
+      });
     });
-  });
 
-  // Wait for the chip to show up
-  // This handles the debounce of the single text filter
-  cy.contains('.pf-v5-c-chip__text', text);
-});
+    // Wait for the chip to show up
+    // This handles the debounce of the single text filter
+    cy.contains('.pf-v5-c-chip__text', text);
+  }
+);
 
 Cypress.Commands.add('filterTableBySingleSelect', (filterDataCy: string, optionLabel: string) => {
   cy.selectTableFilter(filterDataCy);

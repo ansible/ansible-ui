@@ -220,6 +220,8 @@ declare global {
 
       dataEditorSetFormat(configType: string): Chainable<void>;
       dataEditorShouldContain(selector: string, value: string | object): Chainable<void>;
+      dataEditorType(selector: string, value: string, clear?: boolean): Chainable<void>;
+      dataEditorTypeByDataCy(dataCy: string, value: string, clear?: boolean): Chainable<void>;
 
       /** @deprecated use cy.dataEditorShouldContain */
       assertMonacoTextField(textString: string): Chainable<void>;
@@ -304,7 +306,11 @@ declare global {
        * cy.filterTableByText('description', organization.description);
        * ```
        */
-      filterTableByTextFilter(filterDataCy: string, text: string): Chainable<void>;
+      filterTableByTextFilter(
+        filterDataCy: string,
+        text: string,
+        options?: { disableFilterSelection?: boolean }
+      ): Chainable<void>;
 
       /** @deprecated use cy.filterTableByTextFilter instead */
       filterTableByText(text: string, variant?: 'SingleText' | 'MultiText'): Chainable<void>;

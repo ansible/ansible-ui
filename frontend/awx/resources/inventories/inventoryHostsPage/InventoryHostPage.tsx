@@ -12,7 +12,7 @@ import {
 import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
 import { AwxHost } from '../../../interfaces/AwxHost';
 import { AwxRoute } from '../../../main/AwxRoutes';
-import { useInventoriesHostsActions } from '../hooks/useInventoriesHostsActions';
+import { useHostsActions } from '../../hosts/hooks/useHostsActions';
 import { useGetInventory } from '../InventoryPage/InventoryPage';
 import { useGetHost } from '../../hosts/hooks/useGetHost';
 
@@ -28,7 +28,7 @@ export function InventoryHostPage() {
   const { host, refresh } = useGetHost(params.host_id as string);
   const pageNavigate = usePageNavigate();
 
-  const itemActions = useInventoriesHostsActions((_host) => {
+  const itemActions = useHostsActions((_host) => {
     pageNavigate(AwxRoute.InventoryHosts, {
       params: { inventory_type: params.inventory_type, id: params.id },
     });
