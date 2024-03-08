@@ -197,6 +197,8 @@ export type PageTableProps<T extends object> = {
    * Example: (Status is pending or success) and type is inventory.
    */
   limitFiltersToOneOrOperation?: boolean;
+
+  defaultExpandedRows?: boolean;
 };
 
 /**
@@ -561,6 +563,7 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
                 disableLastRowBorder={props.disableLastRowBorder}
                 maxSelections={maxSelections}
                 selectedItems={props.selectedItems}
+                defaultExpandedRows={props.defaultExpandedRows}
               />
             ))}
           </Tbody>
@@ -733,6 +736,7 @@ function TableRow<T extends object>(props: {
   disableLastRowBorder?: boolean;
   maxSelections?: number;
   selectedItems?: T[];
+  defaultExpandedRows?: boolean;
 }) {
   const {
     columns,
@@ -751,9 +755,9 @@ function TableRow<T extends object>(props: {
     maxSelections,
     selectedItems,
   } = props;
-  const [expanded, setExpanded] = useState(false);
-  const settings = useSettings();
   const expandedRowHasContent = expandedRow?.(item);
+  const [expanded, setExpanded] = useState(!!props.defaultExpandedRows && expandedRowHasContent);
+  const settings = useSettings();
   const disableRow = useCallback(
     (item: T) => {
       if (selectedItems?.length === maxSelections) {
