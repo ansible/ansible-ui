@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import useSWR from 'swr';
 import {
   ISelected,
@@ -35,6 +35,7 @@ export type IHubView<T extends object> = IView &
     pageItems: T[] | undefined;
     refresh: () => Promise<void>;
     unselectItemsAndRefresh: (items: T[]) => void;
+    updateItem: (item: T) => void;
   };
 
 interface CommonResponse<T extends object> {
@@ -190,15 +191,36 @@ export function useHubView<T extends object>({
     [refresh, selection]
   );
 
+  const [items, setItems] = useState<T[] | undefined>(undefined);
+
+  useEffect(() => {
+    setItems(pageItems);
+  }, [pageItems]);
+
+  const updateItem = useCallback(
+    (item: T) => {
+      if (items) {
+        const index = items.findIndex((i) => keyFn(i) === keyFn(item));
+        if (index !== -1) {
+          const newItems = [...items];
+          newItems[index] = item;
+          setItems(newItems);
+        }
+      }
+    },
+    [items, keyFn]
+  );
+
   return useMemo(() => {
     return {
       refresh,
+      updateItem,
       itemCount: itemCountRef.current.itemCount,
-      pageItems,
+      pageItems: items,
       error,
       ...view,
       ...selection,
       unselectItemsAndRefresh,
     };
-  }, [error, pageItems, refresh, selection, unselectItemsAndRefresh, view]);
+  }, [error, refresh, selection, unselectItemsAndRefresh, items, view, updateItem]);
 }
