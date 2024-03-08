@@ -306,7 +306,11 @@ declare global {
        * cy.filterTableByText('description', organization.description);
        * ```
        */
-      filterTableByTextFilter(filterDataCy: string, text: string): Chainable<void>;
+      filterTableByTextFilter(
+        filterDataCy: string,
+        text: string,
+        options?: { disableFilterSelection?: boolean }
+      ): Chainable<void>;
 
       /** @deprecated use cy.filterTableByTextFilter instead */
       filterTableByText(text: string, variant?: 'SingleText' | 'MultiText'): Chainable<void>;
