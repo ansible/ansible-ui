@@ -252,7 +252,7 @@ export function EditProject() {
           onSubmit={onSubmit}
           cancelText={t('Cancel')}
           onCancel={onCancel}
-          defaultValue={{ ...project, eda_credential_id: project?.credential?.id }}
+          defaultValue={{ ...project, eda_credential_id: project?.eda_credential?.id }}
         >
           <ProjectEditInputs />
         </EdaPageForm>

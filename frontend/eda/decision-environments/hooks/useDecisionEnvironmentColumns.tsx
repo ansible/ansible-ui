@@ -117,9 +117,9 @@ export function useDecisionEnvironmentColumns() {
       {
         header: t('Credential'),
         cell: (decisionEnvironment) => (
-          <EdaCredentialCell eda_credential_id={decisionEnvironment?.credential?.id} />
+          <EdaCredentialCell eda_credential_id={decisionEnvironment?.eda_credential?.id} />
         ),
-        value: (decisionEnvironment) => decisionEnvironment?.credential?.id,
+        value: (decisionEnvironment) => decisionEnvironment?.eda_credential?.id,
         modal: 'hidden',
         dashboard: 'hidden',
       },
