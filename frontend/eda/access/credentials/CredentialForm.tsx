@@ -28,10 +28,12 @@ function CredentialInputs(props: { editMode: boolean }) {
   const { data: credentialTypes } = useGet<EdaResult<EdaCredentialType>>(
     edaAPI`/credential-types/?page=1&page_size=200`
   );
-  const credentialType = useWatch<EdaCredentialCreate>({
-    name: 'credential_type_id',
-    defaultValue: undefined,
-  }) as string;
+  const credentialType = Number(
+    useWatch<EdaCredentialCreate>({
+      name: 'credential_type_id',
+      defaultValue: undefined,
+    })
+  );
 
   return (
     <>
@@ -68,14 +70,11 @@ function CredentialInputs(props: { editMode: boolean }) {
         labelHelpTitle={t('Credential type')}
       />
       {credentialType !== undefined &&
-        credentialType !== '' &&
         credentialTypes?.results !== undefined &&
-        credentialTypes.results.find(
-          (credential) => credential?.id.toString() === credentialType
-        ) && (
+        credentialTypes.results.find((credentialtype) => credentialtype?.id === credentialType) && (
           <CredentialFormInputs
-            credentialType={credentialTypes.results.find(
-              (credential) => credential.id.toString() === credentialType
+            credentialType={credentialTypes?.results?.find(
+              (credentialtype) => credentialtype.id === credentialType
             )}
           />
         )}
@@ -125,9 +124,7 @@ export function EditCredential() {
   const navigate = useNavigate();
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
-  const { data: credential } = useGet<EdaCredentialCreate>(
-    edaAPI`/eda-credentials/${id.toString()}/`
-  );
+  const { data: credential } = useGet<EdaCredential>(edaAPI`/eda-credentials/${id.toString()}/`);
 
   const { cache } = useSWRConfig();
   const patchRequest = usePatchRequest<EdaCredentialCreate, EdaCredential>();
@@ -166,7 +163,10 @@ export function EditCredential() {
           onSubmit={onSubmit}
           cancelText={t('Cancel')}
           onCancel={onCancel}
-          defaultValue={credential}
+          defaultValue={{
+            ...credential,
+            credential_type_id: credential?.credential_type?.id || undefined,
+          }}
         >
           <CredentialInputs editMode={true} />
         </EdaPageForm>

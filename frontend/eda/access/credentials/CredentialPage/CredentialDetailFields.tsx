@@ -6,7 +6,7 @@ import { EdaCredentialType } from '../../../interfaces/EdaCredentialType';
 
 export function CredentialDetailFields(props: { credential: EdaCredential }) {
   const { data: credentialType } = useGet<EdaCredentialType>(
-    edaAPI`/credential-types/${props.credential.credential_type_id ?? ''}/`
+    edaAPI`/credential-types/` + `${props.credential.credential_type?.id ?? ''}/`
   );
   const fields = credentialType?.inputs?.fields;
 

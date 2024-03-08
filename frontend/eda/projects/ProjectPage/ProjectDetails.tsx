@@ -43,14 +43,16 @@ export function ProjectDetails() {
         {project?.url || ''}
       </PageDetail>
       <PageDetail label={t('Credential')} helpText={t('The token needed to utilize the SCM URL.')}>
-        {project && project.credential ? (
+        {project && project.eda_credential ? (
           <Link
-            to={getPageUrl(EdaRoute.CredentialPage, { params: { id: project?.credential?.id } })}
+            to={getPageUrl(EdaRoute.CredentialPage, {
+              params: { id: project?.eda_credential?.id },
+            })}
           >
-            {project?.credential?.name}
+            {project?.eda_credential?.name}
           </Link>
         ) : (
-          project?.credential?.name || ''
+          project?.eda_credential?.name || ''
         )}
       </PageDetail>
       <PageDetail label={t('Git hash')}>

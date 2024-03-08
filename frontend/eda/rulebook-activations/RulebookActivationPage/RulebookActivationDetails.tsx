@@ -87,10 +87,10 @@ export function RulebookActivationDetails() {
             </LabelGroup>
           </PageDetail>
         )}
-        {rulebookActivation.credentials && rulebookActivation.credentials.length > 0 && (
+        {rulebookActivation.eda_credentials && rulebookActivation.eda_credentials.length > 0 && (
           <PageDetail label={t('Credential(s)')}>
             <LabelGroup>
-              {rulebookActivation.credentials.map((credential) => (
+              {rulebookActivation.eda_credentials.map((credential) => (
                 <Label key={credential?.id}>{credential?.name}</Label>
               ))}
             </LabelGroup>

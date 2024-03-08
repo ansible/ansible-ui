@@ -89,7 +89,7 @@ describe('Credentials.cy.ts', () => {
       }
     );
     cy.intercept(
-      { method: 'GET', url: edaAPI`/activations/?credential_id=100` },
+      { method: 'GET', url: edaAPI`/activations/?eda_credential_id=100` },
       { count: 0, next: null, previous: null, page_size: 20, page: 1, results: [] }
     );
     cy.get('[data-cy="checkbox-column-cell"]').first().click();
@@ -117,7 +117,7 @@ describe('Credentials.cy.ts', () => {
       }
     );
     cy.intercept(
-      { method: 'GET', url: edaAPI`/activations/?credential_id=100` },
+      { method: 'GET', url: edaAPI`/activations/?eda_credential_id=100` },
       {
         count: 1,
         next: null,

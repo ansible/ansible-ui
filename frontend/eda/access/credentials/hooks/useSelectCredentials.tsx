@@ -34,7 +34,7 @@ function SelectEdaCredentials(props: {
   const toolbarFilters = useCredentialFilters();
   const tableColumns = useCredentialColumns();
   const view = useEdaView<EdaCredential>({
-    url: edaAPI`/credentials/`,
+    url: edaAPI`/eda-credentials/`,
     toolbarFilters,
     tableColumns: tableColumns,
     disableQueryString: true,

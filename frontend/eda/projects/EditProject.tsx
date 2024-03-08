@@ -27,7 +27,7 @@ import { EdaRoute } from '../main/EdaRoutes';
 
 function ProjectCreateInputs() {
   const { t } = useTranslation();
-  const { data: credentials } = useGet<EdaResult<EdaCredential>>(edaAPI`/credentials/`);
+  const { data: credentials } = useGet<EdaResult<EdaCredential>>(edaAPI`/eda-credentials/`);
   const isValidUrl = useIsValidUrl();
   const getPageUrl = useGetPageUrl();
   return (
@@ -64,7 +64,7 @@ function ProjectCreateInputs() {
         labelHelp={t('HTTP[S] protocol address of a repository, such as GitHub or GitLab.')}
       />
       <PageFormSelect
-        name={'credential_id'}
+        name={'eda_credential_id'}
         label={t('Credential')}
         placeholderText={t('Select credential')}
         options={
@@ -130,7 +130,7 @@ function ProjectEditInputs() {
         placeholder={t('Git')}
       />
       <PageFormSelect
-        name={'credential_id'}
+        name={'eda_credential_id'}
         isRequired={false}
         label={t('Credential')}
         labelHelpTitle={t('Credential')}
@@ -252,7 +252,7 @@ export function EditProject() {
           onSubmit={onSubmit}
           cancelText={t('Cancel')}
           onCancel={onCancel}
-          defaultValue={{ ...project, credential_id: project?.credential?.id }}
+          defaultValue={{ ...project, eda_credential_id: project?.credential?.id }}
         >
           <ProjectEditInputs />
         </EdaPageForm>

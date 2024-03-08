@@ -59,9 +59,10 @@ export function CreateRulebookActivation() {
     }
     rulebookActivation.extra_var_id = extra_var_id?.id;
     rulebookActivation.rulebook_id = rulebook?.id;
-    rulebookActivation.credentials = rulebookActivation.credential_refs
+    rulebookActivation.eda_credentials = rulebookActivation.credential_refs
       ? rulebookActivation.credential_refs.map((credential) => `${credential.id || ''}`)
       : undefined;
+    delete rulebookActivation.credential_refs;
     const newRulebookActivation = await postEdaRulebookActivation(
       edaAPI`/activations/`,
       rulebookActivation
@@ -305,6 +306,6 @@ type IEdaRulebookActivationInputs = Omit<EdaRulebookActivationCreate, 'event_str
   project_id: string;
   extra_var: string;
   awx_token_id: number;
-  credentials?: string[];
+  eda_credentials?: string[];
   credential_refs?: EdaCredential[];
 };
