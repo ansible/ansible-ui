@@ -123,6 +123,7 @@ function FiltersToolbarItem(props: PageToolbarFiltersProps) {
             }))}
             placeholder=""
             data-cy={selectedFilter}
+            disableSortOptions
           />
           <ToolbarFilterComponent
             id="filter-input"
@@ -222,6 +223,7 @@ export function PageToolbarFilters(props: PageToolbarFiltersProps) {
                   switch (filter.type) {
                     case ToolbarFilterType.SingleSelect:
                     case ToolbarFilterType.MultiSelect:
+                    case ToolbarFilterType.DateRange:
                       // The value is a label, we need to get the real value from the option
                       value = filter.options.find((o) => o.label === value)?.value ?? value;
                       break;
@@ -353,6 +355,7 @@ function ToolbarFilterComponent(props: {
           onSelect={(item) => setFilterValues(() => [item])}
           options={filter.options}
           isRequired={filter.isRequired}
+          disableSortOptions={filter.disableSortOptions}
         />
       );
 
@@ -383,6 +386,7 @@ function ToolbarFilterComponent(props: {
               </Button>
             ) : undefined
           }
+          disableSortOptions={filter.disableSortOptions}
         />
       );
 
@@ -414,6 +418,7 @@ function ToolbarFilterComponent(props: {
                 </Button>
               ) : undefined
             }
+            disableSortOptions={filter.disableSortOptions}
           />
         );
       }
@@ -444,6 +449,7 @@ function ToolbarFilterComponent(props: {
           }
           variant="count"
           disableClearSelection
+          disableSortOptions={filter.disableSortOptions}
         />
       );
 
@@ -457,6 +463,7 @@ function ToolbarFilterComponent(props: {
             value={filterValues && filterValues?.length > 0 ? filterValues[0] : ''}
             onSelect={(item) => setFilterValues(() => [item])}
             options={filter.options}
+            disableSortOptions={filter.disableSortOptions}
           />
         );
       }
@@ -470,6 +477,7 @@ function ToolbarFilterComponent(props: {
           options={filter.options}
           variant="count"
           disableClearSelection
+          disableSortOptions={filter.disableSortOptions}
         />
       );
 

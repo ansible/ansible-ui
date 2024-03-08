@@ -1,12 +1,12 @@
 import { CubesIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { ITableColumn, PageLayout, PageTable } from '../../../../framework';
+import { ITableColumn, PageTable } from '../../../../framework';
 import { usePersistentFilters } from '../../../common/PersistentFilters';
 import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxView } from '../../common/useAwxView';
+import { UnifiedJob } from '../../interfaces/UnifiedJob';
 import { useJobRowActions } from '../../views/jobs/hooks/useJobRowActions';
 import { useJobToolbarActions } from '../../views/jobs/hooks/useJobToolbarActions';
-import { UnifiedJob } from '../../interfaces/UnifiedJob';
 import { useJobsFilters } from '../../views/jobs/hooks/useJobsFilters';
 
 type QueryParams = { [key: string]: string };
@@ -30,20 +30,18 @@ export function JobsList(props: {
   usePersistentFilters('jobs');
 
   return (
-    <PageLayout>
-      <PageTable<UnifiedJob>
-        id="awx-jobs-table"
-        toolbarFilters={toolbarFilters}
-        tableColumns={tableColumns}
-        rowActions={rowActions}
-        toolbarActions={toolbarActions}
-        errorStateTitle={t('Error loading jobs')}
-        emptyStateTitle={t('No jobs yet')}
-        emptyStateDescription={t('Please run a job to populate this list.')}
-        emptyStateIcon={CubesIcon}
-        {...view}
-        limitFiltersToOneOrOperation
-      />
-    </PageLayout>
+    <PageTable<UnifiedJob>
+      id="awx-jobs-table"
+      toolbarFilters={toolbarFilters}
+      tableColumns={tableColumns}
+      rowActions={rowActions}
+      toolbarActions={toolbarActions}
+      errorStateTitle={t('Error loading jobs')}
+      emptyStateTitle={t('No jobs yet')}
+      emptyStateDescription={t('Please run a job to populate this list.')}
+      emptyStateIcon={CubesIcon}
+      {...view}
+      limitFiltersToOneOrOperation
+    />
   );
 }

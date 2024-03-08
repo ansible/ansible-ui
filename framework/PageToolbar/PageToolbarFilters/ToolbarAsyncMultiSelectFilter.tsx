@@ -35,6 +35,8 @@ export interface IToolbarAsyncMultiSelectFilter extends ToolbarFilterCommon {
    * else the select will contain a clear button.
    */
   isRequired?: boolean;
+
+  disableSortOptions?: boolean;
 }
 
 /**
