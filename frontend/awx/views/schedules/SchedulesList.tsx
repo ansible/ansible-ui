@@ -60,7 +60,7 @@ export function SchedulesList(props: { sublistEndpoint?: string }) {
       }
       emptyStateDescription={
         canCreateSchedule
-          ? t('Please create a schedule from a resource')
+          ? t('Please create a schedule by using the button below.')
           : t(
               'Please contact your organization administrator if there is an issue with your access.'
             )
