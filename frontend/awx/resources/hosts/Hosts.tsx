@@ -25,7 +25,7 @@ export function Hosts() {
 
   const toolbarActions = useHostsToolbarActions(view);
 
-  const rowActions = useHostsActions(view.unselectItemsAndRefresh, view.refresh);
+  const rowActions = useHostsActions(view.unselectItemsAndRefresh, view.updateItem);
 
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/hosts/`);
   const canCreateHost = Boolean(data && data.actions && data.actions['POST']);

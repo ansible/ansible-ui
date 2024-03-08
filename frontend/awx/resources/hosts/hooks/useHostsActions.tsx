@@ -12,29 +12,28 @@ import { awxAPI } from '../../../common/api/awx-utils';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { AwxHost } from '../../../interfaces/AwxHost';
 import { useDeleteHosts } from './useDeleteHosts';
-import { usePatchRequest } from '../../../../common/crud/usePatchRequest';
 import { useParams } from 'react-router-dom';
+import { requestPatch } from '../../../../common/crud/Data';
 
 export function useHostsActions(
   onDelete: (host: AwxHost[]) => void,
-  onToggle: (() => Promise<void>) | (() => void)
+  onToggle: (host: AwxHost) => void
 ) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
 
   const deleteHosts = useDeleteHosts(onDelete);
 
-  const patchRequest = usePatchRequest<{ enabled: boolean }, AwxHost>();
-
   const params = useParams<{ id: string; inventory_type: string; host_id: string }>();
 
   const handleToggleHost: (host: AwxHost, enabled: boolean) => Promise<void> = useCallback(
     async (host, enabled) => {
-      await patchRequest(awxAPI`/hosts/${host.id.toString()}/`, { enabled });
-      await onToggle();
-      return Promise.resolve();
+      const patchedHost = await requestPatch<AwxHost>(awxAPI`/hosts/${host.id.toString()}/`, {
+        enabled,
+      });
+      onToggle(patchedHost);
     },
-    [onToggle, patchRequest]
+    [onToggle]
   );
 
   return useMemo<IPageAction<AwxHost>[]>(
