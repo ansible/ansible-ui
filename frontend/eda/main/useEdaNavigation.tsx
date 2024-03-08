@@ -46,6 +46,13 @@ import { CreateWebhook, EditWebhook } from '../webhooks/EditWebhook';
 import { WebhookDetails } from '../webhooks/WebhookPage/WebhookDetails';
 import { WebhookPage } from '../webhooks/WebhookPage/WebhookPage';
 import { Webhooks } from '../webhooks/Webhooks';
+import { CredentialTypes } from '../access/credential-types/CredentialTypes';
+import { CredentialTypeDetails } from '../access/credential-types/CredentialTypePage/CredentialTypeDetails';
+import { CredentialTypePage } from '../access/credential-types/CredentialTypePage/CredentialTypePage';
+import {
+  CreateCredentialType,
+  EditCredentialType,
+} from '../access/credential-types/CredentialTypeForm';
 import { EdaRoute } from './EdaRoutes';
 
 export function useEdaNavigation() {
@@ -412,6 +419,43 @@ export function useEdaNavigation() {
             {
               path: '',
               element: <Credentials />,
+            },
+          ],
+        },
+        {
+          id: EdaRoute.CredentialTypes,
+          label: t('CredentialTypes'),
+          path: 'credential-types',
+          children: [
+            {
+              id: EdaRoute.CreateCredentialType,
+              path: 'create',
+              element: <CreateCredentialType />,
+            },
+            {
+              id: EdaRoute.EditCredentialType,
+              path: 'edit/:id',
+              element: <EditCredentialType />,
+            },
+            {
+              id: EdaRoute.CredentialTypePage,
+              path: ':id',
+              element: <CredentialTypePage />,
+              children: [
+                {
+                  id: EdaRoute.CredentialTypeDetails,
+                  path: 'details',
+                  element: <CredentialTypeDetails />,
+                },
+                {
+                  path: '',
+                  element: <Navigate to="details" />,
+                },
+              ],
+            },
+            {
+              path: '',
+              element: <CredentialTypes />,
             },
           ],
         },
