@@ -8,9 +8,11 @@ import { useAwxView } from '../../common/useAwxView';
 import { getDocsBaseUrl } from '../../common/util/getDocsBaseUrl';
 import { AwxHost } from '../../interfaces/AwxHost';
 import { useHostsToolbarActions } from './hooks/useHostsToolbarActions';
-import { useHostsActions } from './hooks/useHostsActions';
 import { useHostsColumns } from './hooks/useHostsColumns';
 import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
+import { useHostsActions } from './hooks/useHostsActions';
+import { useOptions } from '../../../common/crud/useOptions';
+import { OptionsResponse, ActionsResponse } from '../../interfaces/OptionsResponse';
 
 export function Hosts() {
   const { t } = useTranslation();
@@ -23,7 +25,10 @@ export function Hosts() {
 
   const toolbarActions = useHostsToolbarActions(view);
 
-  const rowActions = useHostsActions(view);
+  const rowActions = useHostsActions(view.unselectItemsAndRefresh, view.updateItem);
+
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/hosts/`);
+  const canCreateHost = Boolean(data && data.actions && data.actions['POST']);
 
   return (
     <PageLayout>
@@ -53,10 +58,20 @@ export function Hosts() {
         tableColumns={tableColumns}
         rowActions={rowActions}
         errorStateTitle={t('Error loading hosts')}
-        emptyStateTitle={t('No hosts yet')}
-        emptyStateDescription={t('To get started, create an host.')}
-        emptyStateButtonText={t('Create host')}
-        emptyStateButtonClick={() => pageNavigate(AwxRoute.CreateHost)}
+        emptyStateTitle={
+          canCreateHost
+            ? t('There are currently no hosts added')
+            : t('You do not have permission to create a host.')
+        }
+        emptyStateDescription={
+          canCreateHost
+            ? t('Please create a host by using the button below.')
+            : t(
+                'Please contact your organization administrator if there is an issue with your access.'
+              )
+        }
+        emptyStateButtonText={canCreateHost ? t('Create host') : undefined}
+        emptyStateButtonClick={canCreateHost ? () => pageNavigate(AwxRoute.CreateHost) : undefined}
         {...view}
         defaultSubtitle={t('Host')}
       />

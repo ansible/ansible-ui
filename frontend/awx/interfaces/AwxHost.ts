@@ -42,6 +42,11 @@ export interface AwxHost
       id: number;
       username: string;
     };
+    inventory: {
+      id: number;
+      name: string;
+      kind: string;
+    };
   };
   variables: string;
   enabled: boolean;

@@ -11,7 +11,7 @@ import { OptionsResponse, ActionsResponse } from '../../../interfaces/OptionsRes
 import { useAwxView } from '../../../common/useAwxView';
 import { useHostsFilters } from '../../hosts/hooks/useHostsFilters';
 import { useInventoriesHostsToolbarActions } from '../hooks/useInventoriesHostsToolbarActions';
-import { useInventoriesHostsActions } from '../hooks/useInventoriesHostsActions';
+import { useHostsActions } from '../../hosts/hooks/useHostsActions';
 import { useInventoriesHostsColumns } from '../hooks/useInventoriesHostsColumns';
 
 export function InventoryHosts() {
@@ -26,7 +26,7 @@ export function InventoryHosts() {
     tableColumns,
   });
   const toolbarActions = useInventoriesHostsToolbarActions(view);
-  const rowActions = useInventoriesHostsActions(view.unselectItemsAndRefresh, view.refresh);
+  const rowActions = useHostsActions(view.unselectItemsAndRefresh, view.updateItem);
 
   const hostOptions = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/hosts/`).data;
   const canCreateHost = Boolean(hostOptions && hostOptions.actions && hostOptions.actions['POST']);

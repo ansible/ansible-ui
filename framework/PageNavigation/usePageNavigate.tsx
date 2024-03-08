@@ -11,7 +11,7 @@ export function usePageNavigate() {
       pageId: string,
       options?: {
         params?: Record<string, string | number | undefined>;
-        query?: Record<string, string | number | undefined>;
+        query?: Record<string, string | string[] | number | number[] | undefined>;
       }
     ) => {
       const url = getPageUrl(pageId, options);
