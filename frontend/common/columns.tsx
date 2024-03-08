@@ -94,12 +94,6 @@ export function useNameColumn<
 export function useDescriptionColumn<
   T extends { description?: string | null | undefined },
 >(options?: { tableViewOption?: ColumnTableOption; sortKey?: string; disableSort?: boolean }) {
-  let disableSort: boolean = true;
-
-  if (options && 'disableSort' in options) {
-    disableSort = options?.disableSort ?? true;
-  }
-
   const { t } = useTranslation();
   const column = useMemo<ITableColumn<T>>(
     () => ({
