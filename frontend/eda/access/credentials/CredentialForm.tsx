@@ -59,7 +59,7 @@ function CredentialInputs(props: { editMode: boolean }) {
         placeholderText={t('Select credential type')}
         options={
           credentialTypes?.results
-            ? credentialTypes.results.map((item: { name: string; id: string }) => ({
+            ? credentialTypes.results.map((item: { name: string; id: number }) => ({
                 label: item.name,
                 value: item.id,
               }))
@@ -70,10 +70,12 @@ function CredentialInputs(props: { editMode: boolean }) {
       {credentialType !== undefined &&
         credentialType !== '' &&
         credentialTypes?.results !== undefined &&
-        credentialTypes.results.find((credential) => credential?.id === credentialType) && (
+        credentialTypes.results.find(
+          (credential) => credential?.id.toString() === credentialType
+        ) && (
           <CredentialFormInputs
             credentialType={credentialTypes.results.find(
-              (credential) => credential.id === credentialType
+              (credential) => credential.id.toString() === credentialType
             )}
           />
         )}
