@@ -11,16 +11,7 @@ export function useProjectsFilters() {
   const toolbarFilters = useDynamicToolbarFilters<Project>({
     optionsPath: 'projects',
     preSortedKeys: ['name', 'id', 'status', 'scm_type', 'created-by', 'modified-by'],
-    asyncFilterKeys: {
-      name: { resourceType: 'projects', params: { order_by: '-created' } },
-      id: { resourceType: 'projects', params: { order_by: '-id' } },
-      organization: {
-        resourceType: 'organizations',
-        params: { order_by: '-created' },
-        labelKey: 'name',
-        valueKey: 'id',
-      },
-    },
+    preFilledValueKeys: ['name', 'id'],
     additionalFilters: [createdByToolbarFilter, modifiedByToolbarFilter],
   });
   return toolbarFilters;

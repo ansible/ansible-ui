@@ -16,33 +16,11 @@ interface DynamicToolbarFiltersProps {
   /** These keys will be sorted first before the rest of the keys */
   preSortedKeys?: string[];
 
-  /** Keys and options for filters that will be loaded asynchronously */
-  asyncFilterKeys?: { [key: string]: AsyncKeyOptions | undefined };
+  /** Keys for filters that will be loaded asynchronously from the API */
+  preFilledValueKeys?: string[];
 
   /** Additional filters in addition to the dynamic filters */
   additionalFilters?: IToolbarFilter[];
-}
-
-interface AsyncKeyOptions {
-  /** The API endpoint for the options that will be loaded asynchronously
-   * @example 'execution_environments'
-   */
-  resourceType: string;
-  /**
-   * The query parameters for the options that will be loaded asynchronously
-   * @example { order_by: '-created' }
-   */
-  params: QueryParams;
-  /**
-   * The key to be used as the label for the resource
-   * @example 'name'
-   */
-  labelKey?: string;
-  /**
-   * The key to be used as the value for the resource
-   * @example 'id'
-   */
-  valueKey?: string;
 }
 
 interface FilterableFields {
@@ -96,58 +74,69 @@ function craftRequestUrl(optionsPath: string, params: QueryParams | undefined, p
 }
 
 export function useDynamicToolbarFilters<T>(props: DynamicToolbarFiltersProps) {
-  const { optionsPath, preSortedKeys, asyncFilterKeys: asyncKeys, additionalFilters } = props;
+  const { optionsPath, preSortedKeys, preFilledValueKeys, additionalFilters } = props;
   const { t } = useTranslation();
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/${optionsPath}/`);
   const filterableFields = useFilters(data?.actions?.GET);
   const queryResource = useCallback(
     async (page: number, signal: AbortSignal, key: string) => {
-      const asyncKey = asyncKeys?.[key];
-      const resourceKey = asyncKey?.valueKey || key;
-      const resourceLabelKey = asyncKey?.labelKey || resourceKey;
-      const resources = await requestGet<AwxItemsResponse<T>>(
-        craftRequestUrl(asyncKey ? asyncKey.resourceType : optionsPath, asyncKey?.params, page),
-        signal
-      );
-      return {
-        total: resources.count,
-        options: resources.results.map((resource) => ({
-          label: resource[resourceLabelKey as keyof typeof resource]?.toString() || '',
-          desciption: resource['description' as keyof typeof resource],
-          value: resource[resourceKey as keyof typeof resource]?.toString() || '',
-        })),
-      };
+      const knownAwxFilterKey = knownAwxFilterKeys[key];
+      if (knownAwxFilterKey) {
+        const resources = await requestGet<AwxItemsResponse<T>>(
+          craftRequestUrl(knownAwxFilterKey.resourceType, knownAwxFilterKey.params, page),
+          signal
+        );
+        return {
+          total: resources.count,
+          options: resources.results.map((resource) => ({
+            label: resource[knownAwxFilterKey.labelKey as keyof typeof resource]?.toString() || '',
+            value: resource[knownAwxFilterKey.valueKey as keyof typeof resource]?.toString() || '',
+          })),
+        };
+      } else {
+        const resources = await requestGet<AwxItemsResponse<T>>(
+          craftRequestUrl(optionsPath, undefined, page),
+          signal
+        );
+        return {
+          total: resources.count,
+          options: resources.results.map((resource) => ({
+            label: resource[key as keyof typeof resource]?.toString() || '',
+            value: resource[key as keyof typeof resource]?.toString() || '',
+          })),
+        };
+      }
     },
-    [asyncKeys, optionsPath]
+    [optionsPath]
   );
-  const queryResourceLabel = useCallback(
-    async (value: string, key: string) => {
-      const asyncKey = asyncKeys?.[key];
-      const resourceKey = asyncKey?.valueKey;
-      if (!resourceKey) return value;
-      const resourceLabelKey = asyncKey?.labelKey || resourceKey;
+  const queryResourceLabel = useCallback(async (value: string, key: string) => {
+    const knownAwxFilterKey = knownAwxFilterKeys[key];
+    if (knownAwxFilterKey) {
       try {
-        const resource = await requestGet<T>(awxAPI`/${asyncKey?.resourceType}/${value}/`);
-        return resource[resourceLabelKey as keyof typeof resource]?.toString() || '';
+        const resource = await requestGet<T>(awxAPI`/${knownAwxFilterKey.resourceType}/${value}/`);
+        return resource[knownAwxFilterKey.labelKey as keyof typeof resource]?.toString() || '';
       } catch {
         return value;
       }
-    },
-    [asyncKeys]
-  );
+    }
+    return value;
+  }, []);
 
   const filters: IToolbarFilter[] = useMemo(() => {
     const getToolbars = (
       filterableFields: FilterableFields[],
       preSortedKeys?: string[],
-      asyncKeys?: { [key: string]: AsyncKeyOptions | undefined },
+      preFilledValueKeys?: string[],
       additionalFilters?: IToolbarFilter[]
     ): IToolbarFilter[] => {
       const toolbarFilters: IToolbarFilter[] = [];
 
       filterableFields.forEach((field) => {
-        // Check if field.key is included in asyncKeys
-        const isPreFilled = !!asyncKeys?.[field.key];
+        // Check if field.key is included in preFilledValueKeys
+        let isPreFilled = preFilledValueKeys?.includes(field.key) || false;
+        if (knownAwxFilterKeys[field.key]) {
+          isPreFilled = true;
+        }
 
         // handle fields with options
         if (field.type === 'choice') {
@@ -191,7 +180,7 @@ export function useDynamicToolbarFilters<T>(props: DynamicToolbarFiltersProps) {
             ],
           });
         } else if (isPreFilled) {
-          // Check if field.key is included in asyncKeys
+          // Check if field.key is included in preFilledValueKeys
           toolbarFilters.push({
             key: field.key,
             query: field.query,
@@ -236,11 +225,11 @@ export function useDynamicToolbarFilters<T>(props: DynamicToolbarFiltersProps) {
 
       return toolbarFilters;
     };
-    return getToolbars(filterableFields, preSortedKeys, asyncKeys, additionalFilters);
+    return getToolbars(filterableFields, preSortedKeys, preFilledValueKeys, additionalFilters);
   }, [
     filterableFields,
     preSortedKeys,
-    asyncKeys,
+    preFilledValueKeys,
     additionalFilters,
     t,
     queryResource,
@@ -249,3 +238,52 @@ export function useDynamicToolbarFilters<T>(props: DynamicToolbarFiltersProps) {
 
   return filters;
 }
+
+export interface AsyncKeyOptions {
+  /** The API endpoint for the options that will be loaded asynchronously
+   * @example 'execution_environments'
+   */
+  resourceType: string;
+  /**
+   * The query parameters for the options that will be loaded asynchronously
+   * @example { order_by: '-created' }
+   */
+  params?: QueryParams;
+  /**
+   * The key to be used as the label for the resource
+   * @example 'name'
+   */
+  labelKey?: string;
+  /**
+   * The key to be used as the value for the resource
+   * @example 'id'
+   */
+  valueKey?: string;
+}
+
+const knownAwxFilterKeys: Record<string, AsyncKeyOptions> = {
+  organization: {
+    resourceType: 'organizations',
+    params: { order_by: '-created' },
+    labelKey: 'name',
+    valueKey: 'id',
+  },
+  project: {
+    resourceType: 'projects',
+    params: { order_by: '-created' },
+    labelKey: 'name',
+    valueKey: 'id',
+  },
+  execution_environment: {
+    resourceType: 'execution_environments',
+    params: { order_by: '-created' },
+    labelKey: 'name',
+    valueKey: 'id',
+  },
+  unified_job_template: {
+    resourceType: 'unified_job_templates',
+    params: { order_by: '-created' },
+    labelKey: 'name',
+    valueKey: 'id',
+  },
+};

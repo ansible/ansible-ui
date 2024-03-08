@@ -41,7 +41,6 @@ export function JobsList(props: {
       emptyStateDescription={t('Please run a job to populate this list.')}
       emptyStateIcon={CubesIcon}
       {...view}
-      limitFiltersToOneOrOperation
     />
   );
 }
