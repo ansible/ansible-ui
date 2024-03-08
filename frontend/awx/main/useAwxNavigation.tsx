@@ -135,7 +135,7 @@ export function useAwxNavigation() {
     },
     {
       id: AwxRoute.Access,
-      label: t('Access'),
+      label: t('Access Management'),
       path: 'access',
       children: [
         {

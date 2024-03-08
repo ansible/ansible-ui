@@ -119,6 +119,14 @@ export function AwxSettingsActionsForm(props: {
           groups.push(group);
         }
         group.options[key] = option;
+      } else if (key.startsWith('AUTH_LDAP')) {
+        const groupName = key.substring(5, 9).replace(/_/g, ' ');
+        let group = groups.find((group) => group.groupName === groupName);
+        if (!group) {
+          group = { groupName, options: {} };
+          groups.push(group);
+        }
+        group.options[key] = option;
       } else {
         options[key] = option;
       }
@@ -142,7 +150,7 @@ export function AwxSettingsActionsForm(props: {
             key={group.groupName}
             title={group.groupName}
             canCollapse
-            defaultCollapsed
+            defaultCollapsed={group.groupName !== 'LDAP'}
           >
             {Object.entries(group.options).map(([key, option]) => {
               return <OptionActionsFormInput key={key} name={key} option={option} />;

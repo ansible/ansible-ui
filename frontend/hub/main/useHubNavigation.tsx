@@ -427,7 +427,7 @@ export function useHubNavigation() {
     },
     {
       id: HubRoute.Access,
-      label: t('Access'),
+      label: t('Access Management'),
       path: 'access',
       children: [
         {

@@ -260,7 +260,7 @@ export function useEdaNavigation() {
     },
     {
       id: EdaRoute.Access,
-      label: t('Access'),
+      label: t('Access Management'),
       path: 'access',
       children: [
         {
