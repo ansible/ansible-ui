@@ -12,7 +12,10 @@ describe('CollectionMultiSelectDialog', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: '**/plugin/ansible/search/collection-versions**&offset=0&*',
+        url: '**/plugin/ansible/search/collection-versions/*',
+        query: {
+          offset: '0',
+        },
         hostname: 'localhost',
       },
       {
@@ -22,7 +25,10 @@ describe('CollectionMultiSelectDialog', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: '**/plugin/ansible/search/collection-versions/**&offset=10&*',
+        url: '**/plugin/ansible/search/collection-versions/*',
+        query: {
+          offset: '10',
+        },
         hostname: 'localhost',
       },
       {
