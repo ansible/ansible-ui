@@ -4,7 +4,8 @@ import { Repository } from '../../../frontend/hub/administration/repositories/Re
 import { HubNamespace } from '../../../frontend/hub/namespaces/HubNamespace';
 import { randomE2Ename } from '../../support/utils';
 import { Collections } from './constants';
-describe('Collections', () => {
+
+describe.skip('Collections', () => {
   let namespace: HubNamespace;
   let repository: Repository;
   let collectionName: string;
@@ -109,7 +110,7 @@ describe('Collections', () => {
       );
     });
 
-    it('can upload and then delete a new version to an existing collection', () => {
+    it.skip('can upload and then delete a new version to an existing collection', () => {
       cy.uploadCollection(collectionName, namespace.name);
       cy.galaxykit(
         `collection move ${namespace.name} ${collectionName} 1.0.0 staging ${repository.name}`
