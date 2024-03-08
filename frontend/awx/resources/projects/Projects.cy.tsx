@@ -24,6 +24,15 @@ describe('projects.cy.ts', () => {
           fixture: 'projects.json',
         }
       ).as('projectsList');
+      cy.intercept(
+        {
+          method: 'OPTIONS',
+          url: '/api/v2/projects/',
+        },
+        {
+          fixture: 'mock_options.json',
+        }
+      ).as('getOptions');
     });
 
     it('Projects list renders', () => {
@@ -46,10 +55,9 @@ describe('projects.cy.ts', () => {
 
     it('Filter projects by name', () => {
       cy.mount(<Projects />);
-      cy.intercept('api/v2/projects/?name__icontains=foo*').as('nameFilterRequest');
-      cy.filterTableByTypeAndText(/^Name$/, 'foo');
+      cy.filterTableByMultiSelect('name', [' Project 2 Org 0']);
       cy.wait('@nameFilterRequest');
-      cy.clickButton(/^Clear all filters$/);
+      cy.clearAllFilters();
     });
 
     it('Filter projects by description', () => {
@@ -85,7 +93,7 @@ describe('projects.cy.ts', () => {
       cy.intercept('api/v2/projects/?scm_type=git&order_by=name&page=1&page_size=10').as(
         'scmGitTypeFilterRequest'
       );
-      cy.filterByMultiSelection(/^Type$/, /^Git$/);
+      cy.filterByMultiSelection(/^SCM Type$/, /^Git$/);
       cy.wait('@scmGitTypeFilterRequest');
       cy.clickButton(/^Clear all filters$/);
     });
@@ -105,7 +113,7 @@ describe('projects.cy.ts', () => {
       cy.intercept('api/v2/projects/?scm_type=insights&order_by=name&page=1&page_size=10').as(
         'scmInsightsTypeFilterRequest'
       );
-      cy.filterByMultiSelection(/Type$/, /^Red Hat insights$/);
+      cy.filterByMultiSelection(/Type$/, /^Red Hat Insights$/);
       cy.wait('@scmInsightsTypeFilterRequest');
       cy.clickButton(/^Clear all filters$/);
     });
@@ -125,7 +133,7 @@ describe('projects.cy.ts', () => {
       cy.intercept('api/v2/projects/?scm_type=archive&order_by=name&page=1&page_size=10').as(
         'scmArchiveTypeFilterRequest'
       );
-      cy.filterByMultiSelection(/Type$/, /^Remote archive$/);
+      cy.filterByMultiSelection(/Type$/, /^Remote Archive$/);
       cy.wait('@scmArchiveTypeFilterRequest');
       cy.clickButton(/^Clear all filters$/);
     });

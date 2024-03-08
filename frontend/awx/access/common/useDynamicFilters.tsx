@@ -86,7 +86,7 @@ export function useFilters(actions?: { [key: string]: ActionsResponse }) {
 }
 
 function craftRequestUrl(optionsPath: string, params: QueryParams | undefined, page: number) {
-  let url = `api/v2/${optionsPath}/?page=${page}&page_size=200`;
+  let url = `api/v2/${optionsPath}/?page=${page}&page_size=100`;
 
   if (params) {
     const queryParams = Object.entries(params)
