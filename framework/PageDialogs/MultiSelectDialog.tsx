@@ -1,27 +1,12 @@
-import {
-  Button,
-  Label,
-  LabelGroup,
-  Modal,
-  ModalBoxBody,
-  ModalVariant,
-  Skeleton,
-  Split,
-  SplitItem,
-} from '@patternfly/react-core';
+import { Button, Modal, ModalBoxBody, ModalVariant } from '@patternfly/react-core';
 import { useCallback } from 'react';
-import { PageTable } from '../PageTable/PageTable';
-import {
-  ITableColumn,
-  TableColumnCell,
-  useVisibleModalColumns,
-} from '../PageTable/PageTableColumn';
+import { ITableColumn, useVisibleModalColumns } from '../PageTable/PageTableColumn';
 import { ISelected } from '../PageTable/useTableItems';
 import { IToolbarFilter } from '../PageToolbar/PageToolbarFilter';
-import { Collapse } from '../components/Collapse';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
 import { IView } from '../useView';
 import { usePageDialog } from './PageDialog';
+import { PageMultiSelectList } from '../PageTable/PageMultiSelectList';
 
 export type MultiSelectDialogProps<T extends object> = {
   title: string;
@@ -47,6 +32,8 @@ export function MultiSelectDialog<T extends object>(props: MultiSelectDialogProp
     view,
     tableColumns,
     toolbarFilters,
+    emptyStateTitle,
+    errorStateTitle,
     confirmText,
     cancelText,
     onSelect,
@@ -90,62 +77,15 @@ export function MultiSelectDialog<T extends object>(props: MultiSelectDialogProp
       hasNoBodyWrapper
     >
       <ModalBoxBody style={{ overflow: 'hidden' }}>
-        <Split hasGutter>
-          <SplitItem style={{ fontWeight: 'bold', whiteSpace: 'nowrap' }}>
-            {translations.selectedText}
-          </SplitItem>
-          {view.selectedItems.length > 0 ? (
-            <LabelGroup>
-              {view.selectedItems.map((item, i) => {
-                if (modalColumns && modalColumns.length > 0) {
-                  return (
-                    <Label key={i} onClose={() => view.unselectItem(item)}>
-                      <TableColumnCell
-                        item={item}
-                        column={
-                          modalColumns.find(
-                            (column) => column.card === 'name' || column.list === 'name'
-                          ) ?? modalColumns[0]
-                        }
-                      />
-                    </Label>
-                  );
-                }
-                return <></>;
-              })}
-            </LabelGroup>
-          ) : (
-            <SplitItem style={{ fontStyle: 'italic' }}>{translations.noneSelectedText}</SplitItem>
-          )}
-        </Split>
+        <PageMultiSelectList
+          view={view}
+          tableColumns={modalColumns}
+          toolbarFilters={toolbarFilters}
+          emptyStateTitle={emptyStateTitle}
+          errorStateTitle={errorStateTitle}
+          maxSelections={maxSelections}
+        />
       </ModalBoxBody>
-      <Collapse open={view.itemCount === undefined}>
-        <Skeleton height="80px" />
-      </Collapse>
-      <Collapse open={view.itemCount !== undefined}>
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            maxHeight: 500,
-            overflow: 'hidden',
-          }}
-        >
-          <PageTable<T>
-            tableColumns={modalColumns}
-            toolbarFilters={toolbarFilters}
-            {...view}
-            emptyStateTitle={props.emptyStateTitle ?? translations.noItemsFound}
-            errorStateTitle={props.errorStateTitle ?? translations.errorText}
-            showSelect
-            disableCardView
-            disableListView
-            compact
-            disableBodyPadding
-            maxSelections={maxSelections}
-          />
-        </div>
-      </Collapse>
     </Modal>
   );
 }
