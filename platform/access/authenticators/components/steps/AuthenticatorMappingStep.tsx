@@ -12,6 +12,7 @@ import {
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
+import { RequestError } from '../../../../../frontend/common/crud/RequestError';
 import { AuthenticatorMapType } from '../../../../interfaces/AuthenticatorMap';
 import type { AuthenticatorMapValues } from '../AuthenticatorForm';
 import { MapFields } from './MapFields';
@@ -109,4 +110,20 @@ function AddMappingDropdown(props: { onSelect: (value: AuthenticatorMapType) => 
       </DropdownList>
     </Dropdown>
   );
+}
+
+export function validateMappingStep(formData: object, t: (s: string) => string) {
+  const mappings = (formData as { mappings: AuthenticatorMapValues[] }).mappings;
+  const names = mappings.map((mapping) => mapping.name);
+  const hasDuplicateNames = names.length !== new Set(names).size;
+
+  if (!hasDuplicateNames) {
+    return;
+  }
+
+  const errors = {
+    non_field_errors: [t('Mapping names must be unique')],
+  };
+
+  throw new RequestError('', '', 400, '', errors);
 }
