@@ -8,6 +8,10 @@ import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 import { awxAPI } from '../../common/api/awx-utils';
 import { QueryParams } from '../../common/useAwxView';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
+// import { Organization } from '../../interfaces/Organization';
+// import { UnifiedJob } from '../../interfaces/UnifiedJob';
+// import { UnifiedJobTemplate } from '../../interfaces/generated-from-swagger/api';
+// import { Project } from '../../interfaces/Project';
 
 interface DynamicToolbarFiltersProps {
   /** API endpoint for the options that generated the filters */
@@ -75,6 +79,10 @@ function craftRequestUrl(optionsPath: string, params: QueryParams | undefined, p
 
 export function useDynamicToolbarFilters<T>(props: DynamicToolbarFiltersProps) {
   const { optionsPath, preSortedKeys, preFilledValueKeys, additionalFilters } = props;
+  // export function useDynamicToolbarFilters<
+  //   T extends Organization | UnifiedJob | UnifiedJobTemplate | Project,
+  // >(props: DynamicToolbarFiltersProps) {
+  //   const { optionsPath, preFilledValueKeys, preSortedKeys, params, additionalFilters } = props;
   const { t } = useTranslation();
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/${optionsPath}/`);
   const filterableFields = useFilters(data?.actions?.GET);

@@ -10,8 +10,8 @@ export function useProjectsFilters() {
   const modifiedByToolbarFilter = useModifiedByToolbarFilter();
   const toolbarFilters = useDynamicToolbarFilters<Project>({
     optionsPath: 'projects',
-    preSortedKeys: ['name', 'id', 'status', 'scm_type', 'created-by', 'modified-by'],
     preFilledValueKeys: ['name', 'id'],
+    preSortedKeys: ['name', 'id', 'status', 'scm_type', 'created-by', 'modified-by'],
     additionalFilters: [createdByToolbarFilter, modifiedByToolbarFilter],
   });
   return toolbarFilters;
