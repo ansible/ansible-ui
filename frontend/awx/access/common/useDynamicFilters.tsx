@@ -1,27 +1,25 @@
 import { useCallback, useMemo } from 'react';
-import { awxAPI } from '../../common/api/awx-utils';
-import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
-import { useOptions } from '../../../common/crud/useOptions';
-import { IToolbarFilter, ToolbarFilterType } from '../../../../framework';
 import { useTranslation } from 'react-i18next';
+import { IToolbarFilter, ToolbarFilterType } from '../../../../framework';
+import { useOptions } from '../../../common/crud/useOptions';
 import { AwxItemsResponse } from '../../common/AwxItemsResponse';
+import { awxAPI } from '../../common/api/awx-utils';
 import { QueryParams } from '../../common/useAwxView';
-import { Organization } from '../../interfaces/Organization';
-import { UnifiedJob } from '../../interfaces/UnifiedJob';
-import { UnifiedJobTemplate } from '../../interfaces/generated-from-swagger/api';
 import { requestGet } from '../../../common/crud/Data';
 import { DateRangeFilterPresets } from '../../../../framework/PageToolbar/PageToolbarFilters/ToolbarDateRangeFilter';
+import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 
 interface DynamicToolbarFiltersProps {
-  /** API path of resource */
+  /** API endpoint for the options that generated the filters */
   optionsPath: string;
-  /** Any additional query parameters needed to query resource values */
-  params?: QueryParams;
-  /** A list of keys to order the filters toolbar */
+
+  /** These keys will be sorted first before the rest of the keys */
   preSortedKeys?: string[];
-  /** A list of keys to pre-populate dropdown values */
+
+  /** Keys for filters that will be loaded asynchronously from the API */
   preFilledValueKeys?: string[];
-  /** Any additional filters needed not provided by the API */
+
+  /** Additional filters in addition to the dynamic filters */
   additionalFilters?: IToolbarFilter[];
 }
 
@@ -63,56 +61,82 @@ export function useFilters(actions?: { [key: string]: ActionsResponse }) {
 }
 
 function craftRequestUrl(optionsPath: string, params: QueryParams | undefined, page: number) {
-  let url = `api/v2/${optionsPath}/?page=${page}&page_size=200`;
+  let url = awxAPI`/${optionsPath}/?page=${page.toString()}&page_size=100`;
 
   if (params) {
     const queryParams = Object.entries(params)
       .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
       .join('&');
-    url += queryParams;
+    url += '&' + queryParams;
   }
 
   return url;
 }
 
-export function useDynamicToolbarFilters<T extends Organization | UnifiedJob | UnifiedJobTemplate>(
-  props: DynamicToolbarFiltersProps
-) {
-  const { optionsPath, preFilledValueKeys, preSortedKeys, params, additionalFilters } = props;
+export function useDynamicToolbarFilters<T>(props: DynamicToolbarFiltersProps) {
+  const { optionsPath, preSortedKeys, preFilledValueKeys, additionalFilters } = props;
   const { t } = useTranslation();
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/${optionsPath}/`);
   const filterableFields = useFilters(data?.actions?.GET);
   const queryResource = useCallback(
-    async (page: number, signal: AbortSignal, resourceKey: string) => {
-      const resources = await requestGet<AwxItemsResponse<T>>(
-        craftRequestUrl(optionsPath, params, page),
-        signal
-      );
-      return {
-        total: resources.count,
-        options: resources.results
-          .map((resource) => ({
-            label: resource[resourceKey as keyof typeof resource]?.toString() || '',
-            value: resource[resourceKey as keyof typeof resource]?.toString() || '',
-          }))
-          .sort((a, b) => a.label.localeCompare(b.label)),
-      };
+    async (page: number, signal: AbortSignal, key: string) => {
+      const knownAwxFilterKey = knownAwxFilterKeys[key];
+      if (knownAwxFilterKey) {
+        const resources = await requestGet<AwxItemsResponse<T>>(
+          craftRequestUrl(knownAwxFilterKey.resourceType, knownAwxFilterKey.params, page),
+          signal
+        );
+        return {
+          total: resources.count,
+          options: resources.results.map((resource) => ({
+            label: resource[knownAwxFilterKey.labelKey as keyof typeof resource]?.toString() || '',
+            value: resource[knownAwxFilterKey.valueKey as keyof typeof resource]?.toString() || '',
+          })),
+        };
+      } else {
+        const resources = await requestGet<AwxItemsResponse<T>>(
+          craftRequestUrl(optionsPath, undefined, page),
+          signal
+        );
+        return {
+          total: resources.count,
+          options: resources.results.map((resource) => ({
+            label: resource[key as keyof typeof resource]?.toString() || '',
+            value: resource[key as keyof typeof resource]?.toString() || '',
+          })),
+        };
+      }
     },
-    [optionsPath, params]
+    [optionsPath]
   );
+  const queryResourceLabel = useCallback(async (value: string, key: string) => {
+    const knownAwxFilterKey = knownAwxFilterKeys[key];
+    if (knownAwxFilterKey) {
+      try {
+        const resource = await requestGet<T>(awxAPI`/${knownAwxFilterKey.resourceType}/${value}/`);
+        return resource[knownAwxFilterKey.labelKey as keyof typeof resource]?.toString() || '';
+      } catch {
+        return value;
+      }
+    }
+    return value;
+  }, []);
 
   const filters: IToolbarFilter[] = useMemo(() => {
     const getToolbars = (
       filterableFields: FilterableFields[],
-      preFilledValueKeys?: string[],
       preSortedKeys?: string[],
+      preFilledValueKeys?: string[],
       additionalFilters?: IToolbarFilter[]
     ): IToolbarFilter[] => {
       const toolbarFilters: IToolbarFilter[] = [];
 
       filterableFields.forEach((field) => {
         // Check if field.key is included in preFilledValueKeys
-        const isPreFilled = preFilledValueKeys?.includes(field.key);
+        let isPreFilled = preFilledValueKeys?.includes(field.key) || false;
+        if (knownAwxFilterKeys[field.key]) {
+          isPreFilled = true;
+        }
 
         // handle fields with options
         if (field.type === 'choice') {
@@ -120,23 +144,25 @@ export function useDynamicToolbarFilters<T extends Organization | UnifiedJob | U
             key: field.key,
             label: t(field.label),
             type: ToolbarFilterType.MultiSelect,
-            placeholder: t(`Select ${field.key}`),
+            placeholder: t(`Select {{field}}`, { field: field.label.toLowerCase() }),
             query: field.query,
             options: field.options
               ? field.options.map((option) => ({ label: option.label, value: option.value }))
               : [],
+            disableSortOptions: true,
           });
         } else if (field.type === 'boolean') {
           toolbarFilters.push({
             key: field.key,
             label: t(field.label),
             type: ToolbarFilterType.SingleSelect,
-            placeholder: t(`Filter by ${field.label}`),
+            placeholder: t(`Filter by {{field}}`, { field: field.label.toLowerCase() }),
             query: field.query,
             options: [
               { label: t('True'), value: 'true' },
               { label: t('False'), value: 'false' },
             ],
+            disableSortOptions: true,
           });
         } else if (field.type === 'datetime') {
           // daterange calculations found in useAwxView.tsx
@@ -144,9 +170,10 @@ export function useDynamicToolbarFilters<T extends Organization | UnifiedJob | U
             key: field.key,
             label: t(field.label),
             type: ToolbarFilterType.DateRange,
-            placeholder: t(`Filter by ${field.label}`),
+            placeholder: t(`Filter by {{field}}`, { field: field.label.toLowerCase() }),
             query: field.query,
             options: [
+              { label: t('Last hour'), value: DateRangeFilterPresets.LastHour },
               { label: t('Last 24 hours'), value: DateRangeFilterPresets.Last24Hours },
               { label: t('Last 7 days'), value: DateRangeFilterPresets.LastWeek },
               { label: t('Last 30 days'), value: DateRangeFilterPresets.LastMonth },
@@ -161,9 +188,10 @@ export function useDynamicToolbarFilters<T extends Organization | UnifiedJob | U
             type: ToolbarFilterType.AsyncMultiSelect,
             queryOptions: (page: number, signal: AbortSignal) =>
               queryResource(page, signal, field.key),
-            placeholder: `Select ${field.key}`,
-            queryPlaceholder: `Loading ${field.key}...`,
-            queryErrorText: `Failed to load ${field.key} options`,
+            placeholder: t(`Select {{field}}`, { field: field.label.toLowerCase() }),
+            queryPlaceholder: t('Loading...'),
+            queryErrorText: t('Failed to load options.'),
+            queryLabel: (value: string) => queryResourceLabel(value, field.key),
           });
         } else {
           toolbarFilters.push({
@@ -197,8 +225,65 @@ export function useDynamicToolbarFilters<T extends Organization | UnifiedJob | U
 
       return toolbarFilters;
     };
-    return getToolbars(filterableFields, preFilledValueKeys, preSortedKeys, additionalFilters);
-  }, [filterableFields, additionalFilters, queryResource, preFilledValueKeys, preSortedKeys, t]);
+    return getToolbars(filterableFields, preSortedKeys, preFilledValueKeys, additionalFilters);
+  }, [
+    filterableFields,
+    preSortedKeys,
+    preFilledValueKeys,
+    additionalFilters,
+    t,
+    queryResource,
+    queryResourceLabel,
+  ]);
 
   return filters;
 }
+
+export interface AsyncKeyOptions {
+  /** The API endpoint for the options that will be loaded asynchronously
+   * @example 'execution_environments'
+   */
+  resourceType: string;
+  /**
+   * The query parameters for the options that will be loaded asynchronously
+   * @example { order_by: '-created' }
+   */
+  params?: QueryParams;
+  /**
+   * The key to be used as the label for the resource
+   * @example 'name'
+   */
+  labelKey?: string;
+  /**
+   * The key to be used as the value for the resource
+   * @example 'id'
+   */
+  valueKey?: string;
+}
+
+const knownAwxFilterKeys: Record<string, AsyncKeyOptions> = {
+  organization: {
+    resourceType: 'organizations',
+    params: { order_by: '-created' },
+    labelKey: 'name',
+    valueKey: 'id',
+  },
+  project: {
+    resourceType: 'projects',
+    params: { order_by: '-created' },
+    labelKey: 'name',
+    valueKey: 'id',
+  },
+  execution_environment: {
+    resourceType: 'execution_environments',
+    params: { order_by: '-created' },
+    labelKey: 'name',
+    valueKey: 'id',
+  },
+  unified_job_template: {
+    resourceType: 'unified_job_templates',
+    params: { order_by: '-created' },
+    labelKey: 'name',
+    valueKey: 'id',
+  },
+};
