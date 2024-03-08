@@ -353,7 +353,7 @@ export interface Credential {
   name: string;
   description?: string;
   key?: string | null;
-  credential_type: {id?: number; name?: string; };
+  credential_type: { id?: number; name?: string };
   inputs: object | undefined;
   id: number;
   /** @format date-time */
@@ -431,7 +431,7 @@ export interface DecisionEnvironmentRead {
   name: string;
   description?: string;
   image_url: string;
-  eda_credential?: {name: string; id:number};
+  eda_credential?: { name: string; id: number };
   /** @format date-time */
   created_at: string;
   /** @format date-time */
