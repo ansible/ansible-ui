@@ -1,4 +1,13 @@
-import { Badge, Flex, FlexItem, Split, SplitItem, Button, Icon } from '@patternfly/react-core';
+import {
+  Badge,
+  Flex,
+  FlexItem,
+  Split,
+  SplitItem,
+  Button,
+  Icon,
+  Tooltip,
+} from '@patternfly/react-core';
 import { ProjectDiagramIcon } from '@patternfly/react-icons';
 import { DateTime, Duration } from 'luxon';
 import { useEffect, useState } from 'react';
@@ -64,24 +73,26 @@ export function JobStatusBar(props: { job: Job }) {
       </SplitItem>
       <SplitItem>
         <Flex>
-          <Button
-            variant="link"
-            data-cy="edit-workflow"
-            aria-label={t`Edit workflow`}
-            style={{ margin: 0 }}
-            onClick={() => {
-              pageNavigate(AwxRoute.WorkflowVisualizer, {
-                params: { id: job.unified_job_template },
-              });
-            }}
-          >
-            <Icon>
-              <ProjectDiagramIcon />
-            </Icon>
-          </Button>
-          <Count label={t('Plays')} count={playCount} />
-          <Count label={t('Tasks')} count={taskCount} />
-          <Count label={t('Hosts')} count={totalHostCount} />
+          <Tooltip content={t('Workflow visualizer')}>
+            <Button
+              variant="link"
+              style={{ marginRight: 'var(--pf-v5-global--spacer--sm)' }}
+              data-cy="edit-workflow"
+              aria-label={t`Edit workflow`}
+              onClick={() => {
+                pageNavigate(AwxRoute.WorkflowVisualizer, {
+                  params: { id: job.unified_job_template },
+                });
+              }}
+            >
+              <Icon>
+                <ProjectDiagramIcon />
+              </Icon>
+            </Button>
+          </Tooltip>
+          <Count label={t('Plays')} count={playCount || 12} />
+          <Count label={t('Tasks')} count={taskCount || 13} />
+          <Count label={t('Hosts')} count={totalHostCount || 14} />
           <Count label={t('Unreachable')} count={darkCount} />
           <Count label={t('Failed')} count={failureCount} />
           <FlexItem>
