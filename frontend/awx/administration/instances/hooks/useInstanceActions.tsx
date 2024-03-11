@@ -1,21 +1,22 @@
 import pDebounce from 'p-debounce';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { postRequest, requestGet, requestPatch } from '../../../../common/crud/Data';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { Instance } from '../../../interfaces/Instance';
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';
-import { HeartbeatIcon, PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
+import { HeartbeatIcon, PencilAltIcon, SpinnerIcon, TrashIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import {
   usePageNavigate,
   IPageAction,
   PageActionType,
   PageActionSelection,
+  usePageAlertToaster,
 } from '../../../../../framework';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useRemoveInstances } from './useRemoveInstances';
-import { ButtonVariant } from '@patternfly/react-core';
+import { AlertProps, ButtonVariant } from '@patternfly/react-core';
 import { useGet, useGetItem } from '../../../../common/crud/useGet';
 import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
 import { Settings } from '../../../interfaces/Settings';
@@ -100,9 +101,11 @@ export function useInstanceActions(instanceId: string) {
 
 export function useInstanceDetailsActions(options: {
   onInstancesRemoved: (instance: Instance[]) => void;
+  onInstanceToggled: () => void;
+  onHealthCheckComplete: () => void;
   isDetailsPageAction?: boolean;
 }) {
-  const { onInstancesRemoved } = options;
+  const { onInstancesRemoved, onInstanceToggled, onHealthCheckComplete } = options;
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const pageNavigate = usePageNavigate();
@@ -115,9 +118,31 @@ export function useInstanceDetailsActions(options: {
   const userAccess = activeUser?.is_superuser || activeUser?.is_system_auditor;
   const isK8s = data?.IS_K8S;
   const canEditAndRemoveInstances = instancesType && isK8s && userAccess;
+  const alertToaster = usePageAlertToaster();
+
+  const handleToggleInstance: (instance: Instance, enabled: boolean) => Promise<void> = useCallback(
+    async (instance, enabled) => {
+      await requestPatch(awxAPI`/instances/${instance.id.toString()}/`, { enabled });
+      onInstanceToggled();
+    },
+    [onInstanceToggled]
+  );
 
   return useMemo<IPageAction<Instance>[]>(
     () => [
+      {
+        type: PageActionType.Switch,
+        ariaLabel: (isEnabled) =>
+          isEnabled ? t('Click to disable instance') : t('Click to enable instance'),
+        selection: PageActionSelection.Single,
+        isPinned: true,
+        onToggle: (instance, enabled) => handleToggleInstance(instance, enabled),
+        isSwitchOn: (instance) => instance.enabled,
+        label: t('Enabled'),
+        labelOff: t('Disabled'),
+        showPinnedLabel: false,
+        isHidden: () => instance?.node_type === 'hop',
+      },
       {
         type: PageActionType.Button,
         isHidden: () => isK8s === false || !instancesType,
@@ -137,7 +162,6 @@ export function useInstanceDetailsActions(options: {
         type: PageActionType.Button,
         isHidden: () => isK8s === false || !instancesType,
         selection: PageActionSelection.Single,
-        isPinned: true,
         icon: TrashIcon,
         label: t('Remove instance'),
         onClick: (instance: Instance) => removeInstances([instance]),
@@ -151,17 +175,52 @@ export function useInstanceDetailsActions(options: {
       },
       {
         type: PageActionType.Button,
+        isHidden: () => isK8s === false || !instancesType,
         selection: PageActionSelection.Single,
-        icon: HeartbeatIcon,
+        icon: instance?.health_check_pending ? SpinnerIcon : HeartbeatIcon,
         variant: ButtonVariant.secondary,
-        isPinned: true,
-        label: t('Run health check'),
+        label: instance?.health_check_pending ? t('Health check running') : t('Run health check'),
+        isDisabled: (instance) =>
+          instance.node_type !== 'execution'
+            ? t('Cannot run health check on a {{ type }} instance', { type: instance.node_type })
+            : instance.health_check_pending
+              ? t('Health check pending')
+              : undefined,
         onClick: (instance: Instance) => {
-          void postRequest(awxAPI`/instances/${instance?.id.toString() ?? ''}/health_check/`, {});
+          const alert: AlertProps = {
+            variant: 'success',
+            title: t(`Running health check on ${instance.hostname}.`),
+            timeout: 4000,
+          };
+          postRequest(awxAPI`/instances/${instance.id.toString()}/health_check/`, {})
+            .then(() => {
+              alertToaster.addAlert(alert);
+              onHealthCheckComplete();
+            })
+            .catch((error) => {
+              alertToaster.addAlert({
+                variant: 'danger',
+                title: t('Failed to perform health check'),
+                children: error instanceof Error && error.message,
+              });
+            });
         },
       },
     ],
-    [t, canEditAndRemoveInstances, isK8s, instancesType, pageNavigate, params.id, removeInstances]
+    [
+      t,
+      canEditAndRemoveInstances,
+      isK8s,
+      instancesType,
+      pageNavigate,
+      params.id,
+      removeInstances,
+      alertToaster,
+      handleToggleInstance,
+      instance?.health_check_pending,
+      instance?.node_type,
+      onHealthCheckComplete,
+    ]
   );
 }
 
