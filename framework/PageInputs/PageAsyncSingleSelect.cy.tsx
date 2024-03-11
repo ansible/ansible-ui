@@ -1,7 +1,8 @@
 /* eslint-disable i18next/no-literal-string */
 import { PageSection } from '@patternfly/react-core';
 import { useState } from 'react';
-import { PageAsyncSingleSelect, PageAsyncSingleSelectQueryResult } from './PageAsyncSingleSelect';
+import { PageAsyncSelectQueryResult } from './PageAsyncSelectOptions';
+import { PageAsyncSingleSelect } from './PageAsyncSingleSelect';
 
 const queryOptions = async (page: number, _signal: AbortSignal) => {
   const pageSize = 10;
@@ -24,7 +25,7 @@ const placeholderText = 'Placeholder';
 function PageAsyncSingleSelectTest<T>(props: {
   placeholder: string;
   defaultValue?: T;
-  queryOptions: (page: number, signal: AbortSignal) => Promise<PageAsyncSingleSelectQueryResult<T>>;
+  queryOptions: (page: number, signal: AbortSignal) => Promise<PageAsyncSelectQueryResult<T>>;
 }) {
   const { placeholder, defaultValue: defaultValues, queryOptions } = props;
   const [value, setValue] = useState<T | undefined>(() => defaultValues);
@@ -43,8 +44,8 @@ function PageAsyncSingleSelectTest<T>(props: {
 
 describe('PageAsyncSingleSelect', () => {
   it('should show loading options state', () => {
-    let optionsResolve: (result: PageAsyncSingleSelectQueryResult<number>) => void = () => null;
-    const optionPromise = new Promise<PageAsyncSingleSelectQueryResult<number>>(
+    let optionsResolve: (result: PageAsyncSelectQueryResult<number>) => void = () => null;
+    const optionPromise = new Promise<PageAsyncSelectQueryResult<number>>(
       (r) => (optionsResolve = r)
     );
     cy.mount(
