@@ -5,7 +5,7 @@ export function useCredentialsFilters() {
   const toolBarFilters = useDynamicToolbarFilters<Credential>({
     optionsPath: 'credentials',
     preSortedKeys: ['name'],
-    preFilledValueKeys: ['name'],
+    preFilledValueKeys: ['name', 'credential_type'],
   });
 
   return toolBarFilters;
