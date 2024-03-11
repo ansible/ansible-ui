@@ -217,3 +217,17 @@ export function useHostnameToolbarFilter() {
     [t]
   );
 }
+
+export function useAddressToolbarFilter() {
+  const { t } = useTranslation();
+  return useMemo<IToolbarFilter>(
+    () => ({
+      key: 'address',
+      label: t('Instance name'),
+      type: ToolbarFilterType.SingleText,
+      query: 'address__icontains',
+      comparison: 'contains',
+    }),
+    [t]
+  );
+}

@@ -554,3 +554,37 @@ const inventoryUrlPaths: { [key: string]: string } = {
   smart: 'smart_inventory',
   constructed: 'constructed_inventory',
 };
+
+export function useAddressColumn<
+  T extends {
+    address: string;
+  },
+>(options?: {
+  header?: string;
+  url?: string;
+  onClick?: (item: T) => void;
+  sort?: string;
+  disableSort?: boolean;
+  disableLinks?: boolean;
+}) {
+  const { onClick, disableSort, disableLinks } = options ?? {};
+  const { t } = useTranslation();
+  const column = useMemo<ITableColumn<T>>(
+    () => ({
+      header: options?.header ?? t('Instance name'),
+      cell: (item: T) => (
+        <TextCell
+          text={item.address}
+          iconSize="sm"
+          onClick={!disableLinks && onClick ? () => onClick?.(item) : undefined}
+        />
+      ),
+      sort: disableSort ? undefined : options?.sort ?? 'name',
+      card: 'name',
+      list: 'name',
+      defaultSort: true,
+    }),
+    [disableLinks, disableSort, options?.sort, onClick, options?.header, t]
+  );
+  return column;
+}

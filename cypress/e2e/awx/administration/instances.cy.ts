@@ -4,6 +4,7 @@ import { awxAPI } from '../../../support/formatApiPathForAwx';
 
 describe('Instances', () => {
   let instance: Instance;
+  let instanceToAssociate: Instance;
   const testSignature: string = randomString(5, undefined, { isLowercase: true });
   function generateInstanceName(): string {
     return `test-${testSignature}-instance-${randomString(5, undefined, { isLowercase: true })}`;
@@ -12,9 +13,11 @@ describe('Instances', () => {
   beforeEach(() => {
     cy.awxLogin();
     cy.navigateTo('awx', 'instances');
-    cy.createAwxInstance('E2EInstanceTest' + randomString(5)).then((ins: Instance) => {
-      instance = ins;
-    });
+    if (Cypress.currentTest.title !== 'user can bulk remove instances') {
+      cy.createAwxInstance('E2EInstanceTest' + randomString(5)).then((ins: Instance) => {
+        instance = ins;
+      });
+    }
   });
 
   afterEach(() => {
@@ -24,6 +27,10 @@ describe('Instances', () => {
     ) {
       cy.removeAwxInstance(instance.id.toString(), { failOnStatusCode: false });
     }
+  });
+
+  after(() => {
+    cy.removeAwxInstance(instanceToAssociate.id.toString(), { failOnStatusCode: false });
   });
 
   it('render the instances list page', () => {
@@ -132,9 +139,7 @@ describe('Instances', () => {
   it('user can bulk remove instances', () => {
     for (let i = 0; i < 5; i++) {
       const instanceName = generateInstanceName();
-      cy.createAwxInstance(instanceName).then((ins: Instance) => {
-        instance = ins;
-      });
+      cy.createAwxInstance(instanceName);
     }
     cy.intercept('PATCH', '/api/v2/instances/*').as('removedInstance');
     cy.get('[data-cy="remove-instance"]').should('have.attr', 'aria-disabled', 'true');
@@ -156,5 +161,43 @@ describe('Instances', () => {
       .then((response) => {
         expect(response?.statusCode).to.eql(200);
       });
+  });
+
+  it('user can associate peers to instance', () => {
+    //Create an extra instance to be associated
+    cy.createAwxInstance('E2EInstanceTestToAssociate' + randomString(5), 9999).then(
+      (ins: Instance) => {
+        instanceToAssociate = ins;
+      }
+    );
+
+    cy.intercept('PATCH', '/api/v2/instances/*').as('associatePeer');
+    cy.clickTableRow(instance.hostname);
+    cy.get('[data-cy="instances-peers-tab"]').click();
+    cy.url().then((currentUrl) => {
+      expect(currentUrl.includes('peers')).to.be.true;
+    });
+    cy.get('[data-cy="refresh"]').click();
+    cy.get('[data-cy="associate-peer"]').click();
+    cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+      cy.get('header').contains('Select peer addresses');
+      cy.get('button').contains('Associate peer(s)').should('have.attr', 'aria-disabled', 'true');
+      cy.filterTableBySingleText(instanceToAssociate.hostname, true);
+      cy.getByDataCy('checkbox-column-cell').find('input').click();
+      cy.get('button').contains('Associate peer(s)').click();
+      cy.get('button').contains('Close').click();
+    });
+
+    cy.wait('@associatePeer')
+      .its('response')
+      .then((response) => {
+        expect(response?.statusCode).to.eql(200);
+        cy.filterTableBySingleText(instanceToAssociate.hostname, true);
+        cy.get('[data-cy="instance-name-column-cell"]').click();
+      });
+    cy.url().then((currentUrl) => {
+      expect(currentUrl.includes('details')).to.be.true;
+    });
+    cy.get('[data-cy="instances-details-tab"]').should('be.visible');
   });
 });

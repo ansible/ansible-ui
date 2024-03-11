@@ -97,6 +97,7 @@ export function PageRoutedTabs(props: {
               </TabTitleText>
             }
             href={getPageUrl(props.backTab.page, { params: props.params, query })}
+            data-cy={props.backTab.label.replace(' ', '-').toLocaleLowerCase()}
           />
         )}
         {tabs}

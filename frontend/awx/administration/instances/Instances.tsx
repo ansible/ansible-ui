@@ -8,7 +8,10 @@ import { useInstanceRowActions } from './hooks/useInstanceRowActions';
 import { useInstanceToolbarActions } from './hooks/useInstanceToolbarActions';
 import { useInstancesColumns } from './hooks/useInstancesColumns';
 import { useInstancesFilters } from './hooks/useInstancesFilter';
-import { useHostnameToolbarFilter } from '../../common/awx-toolbar-filters';
+import {
+  useAddressToolbarFilter,
+  useHostnameToolbarFilter,
+} from '../../common/awx-toolbar-filters';
 import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
 
 export function Instances() {
@@ -59,6 +62,16 @@ export function usePeersFilters() {
   const toolbarFilters = useMemo<IToolbarFilter[]>(
     () => [hostnameToolbarFilter],
     [hostnameToolbarFilter]
+  );
+  return toolbarFilters;
+}
+
+export function usePeersTabFilters() {
+  const addressToolbarFilter = useAddressToolbarFilter();
+
+  const toolbarFilters = useMemo<IToolbarFilter[]>(
+    () => [addressToolbarFilter],
+    [addressToolbarFilter]
   );
   return toolbarFilters;
 }
