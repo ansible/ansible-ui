@@ -2,7 +2,6 @@ import { t } from 'i18next';
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  PageForm,
   PageFormCheckbox,
   PageFormDataEditor,
   PageFormSelect,
@@ -10,6 +9,7 @@ import {
 } from '../../../../framework';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
 import { usePatchRequest } from '../../../common/crud/usePatchRequest';
+import { AwxPageForm } from '../../common/AwxPageForm';
 import { awxAPI } from '../../common/api/awx-utils';
 
 export interface AwxSettingsOptionsResponse {
@@ -135,7 +135,7 @@ export function AwxSettingsActionsForm(props: {
   }, [props.options]);
 
   return (
-    <PageForm
+    <AwxPageForm
       defaultValue={props.data}
       submitText={t('Save')}
       onCancel={() => navigate('..')}
@@ -158,7 +158,7 @@ export function AwxSettingsActionsForm(props: {
           </PageFormSection>
         );
       })}
-    </PageForm>
+    </AwxPageForm>
   );
 }
 
