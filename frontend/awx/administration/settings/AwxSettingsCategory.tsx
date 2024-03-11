@@ -5,7 +5,11 @@ import { useGet } from '../../../common/crud/useGet';
 import { AwxError } from '../../common/AwxError';
 import { awxAPI } from '../../common/api/awx-utils';
 import { AwxSettingsActionsForm, AwxSettingsOptionsAction } from './AwxSettingsActionsForm';
-import { awxSettingsExcludeKeys, useAwxSettingsGroups } from './useAwxSettingsGroups';
+import {
+  awxSettingsExcludeKeys,
+  useAwxSettingsGroups,
+  useAwxSettingsGroupsBase,
+} from './useAwxSettingsGroups';
 
 export function AwxSettingsCategoryRoute() {
   const { category: categoryId } = useParams<{ category: string }>();
@@ -36,14 +40,18 @@ export function AwxSettingsCategory(props: { categoryId: string }) {
     return categoryOptions;
   }, [category, options]);
 
+  const groupsBase = useAwxSettingsGroupsBase();
+
   if (error) return <AwxError error={error} />;
   if (isLoading || !group || !category) return <LoadingPage />;
   if (all.error) return <AwxError error={all.error} />;
   if (all.isLoading || !all.data) return <LoadingPage />;
 
+  const title = groupsBase.find((group) => group.id === categoryId)?.name;
+
   return (
     <PageLayout>
-      <PageHeader title={category.name} />
+      <PageHeader title={title ?? category.name} />
       <AwxSettingsActionsForm options={categoryOptions} data={all.data} />
     </PageLayout>
   );

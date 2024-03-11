@@ -25,27 +25,27 @@ export const awxSettingsExcludeKeys: string[] = [
   'BULK_HOST_MAX_DELETE',
 ];
 
-export function useAwxSettingsGroups() {
+export function useAwxSettingsGroupsBase() {
   const { t } = useTranslation();
   const groupsBase = useMemo(() => {
     const awxGroups: IAwxSettingsGroup[] = [
       {
         id: 'system',
-        name: t('System'),
+        name: t('System Settings'),
         description: t('System settings plus analytics.'),
         defaultSlugs: ['system'],
         categories: [],
       },
       {
         id: 'jobs',
-        name: t('Job settings'),
+        name: t('Job Settings'),
         description: t('Job settings and limits.'),
         defaultSlugs: ['jobs'],
         categories: [],
       },
       {
         id: 'logging',
-        name: t('Logging'),
+        name: t('Logging Settings'),
         description: t('Controller logging settings.'),
         defaultSlugs: ['logging'],
         categories: [],
@@ -93,6 +93,11 @@ export function useAwxSettingsGroups() {
     ];
     return awxGroups;
   }, [t]);
+  return groupsBase;
+}
+
+export function useAwxSettingsGroups() {
+  const groupsBase = useAwxSettingsGroupsBase();
 
   const options = useOptions<AwxSettingsOptionsResponse>(awxAPI`/settings/all/`);
 

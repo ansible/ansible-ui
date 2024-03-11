@@ -235,7 +235,7 @@ export enum AwxRoute {
 
   Settings = 'awx-settings',
   SettingsPreferences = 'awx-settings-preferences',
-  SettingsSystem = 'awx-settings-groups',
+  SettingsSystem = 'awx-settings-system',
   SettingsJobs = 'awx-settings-jobs',
   SettingsLogging = 'awx-settings-logging',
   SettingsCustomizeLogin = 'awx-settings-customize-login',
