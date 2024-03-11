@@ -29,7 +29,7 @@ export function ScheduleInputs(props: {
   onError: (err: Error) => void;
 }) {
   const { timeZones, zoneLinks, onError } = props;
-  const params: { [string: string]: string } = useParams<{ id: string; source_id?: string }>();
+  const params: { [string: string]: string } = useParams<{ id?: string; source_id?: string }>();
   const { pathname } = useLocation();
   const { t } = useTranslation();
   const { setValue } = useFormContext();
@@ -175,7 +175,7 @@ export function ScheduleInputs(props: {
 
   return (
     <>
-      {pathname.split('/')[2] === 'schedules' ? (
+      {pathname.split('/')[1] === 'schedules' ? (
         <>
           <PageFormSelect<ScheduleFormWizard>
             isRequired={!params['*']?.startsWith('schedules')}
