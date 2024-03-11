@@ -40,7 +40,6 @@ export function useApprovalActions(callback: (collections: CollectionVersionSear
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
-        isPinned: true,
         variant: ButtonVariant.primary,
         icon: UploadIcon,
         label: t('Upload signature'),
@@ -86,7 +85,6 @@ export function useApprovalActions(callback: (collections: CollectionVersionSear
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
-        isPinned: true,
         icon: ImportIcon,
         label: t('View Import Logs'),
         onClick: (collection) =>

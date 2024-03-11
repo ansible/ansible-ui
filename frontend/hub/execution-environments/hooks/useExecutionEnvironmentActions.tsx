@@ -39,17 +39,6 @@ export function useExecutionEnvironmentActions(callback?: (ees: ExecutionEnviron
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
-        icon: TrashIcon,
-        label: t('Delete environment'),
-        onClick: (ee) => deleteExecutionEnvironments([ee]),
-        isDanger: true,
-        isDisabled: context.hasPermission('container.delete_containerrepository')
-          ? ''
-          : t`You do not have rights to this operation`,
-      },
-      {
-        type: PageActionType.Button,
-        selection: PageActionSelection.Single,
         label: t('Sync selected environments'),
         isHidden: (ee: ExecutionEnvironment) => !ee.pulp?.repository?.remote,
         onClick: (ee) => syncExecutionEnvironments([ee]),
@@ -69,6 +58,17 @@ export function useExecutionEnvironmentActions(callback?: (ees: ExecutionEnviron
           context.featureFlags.container_signing
             ? ''
             : t`You do not have rights to this operation`,
+      },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        icon: TrashIcon,
+        label: t('Delete environment'),
+        onClick: (ee) => deleteExecutionEnvironments([ee]),
+        isDanger: true,
+        isDisabled: context.hasPermission('container.delete_containerrepository')
+          ? ''
+          : t`You do not have rights to this operation`,
       },
     ],
     [
