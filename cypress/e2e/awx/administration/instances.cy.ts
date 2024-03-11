@@ -2,35 +2,19 @@ import { randomString } from '../../../../framework/utils/random-string';
 import { Instance } from '../../../../frontend/awx/interfaces/Instance';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 
-describe('Instances', () => {
+describe('Instances - Add/Edit', () => {
   let instance: Instance;
-  let instanceToAssociate: Instance;
-  const testSignature: string = randomString(5, undefined, { isLowercase: true });
-  function generateInstanceName(): string {
-    return `test-${testSignature}-instance-${randomString(5, undefined, { isLowercase: true })}`;
-  }
 
   beforeEach(() => {
     cy.awxLogin();
     cy.navigateTo('awx', 'instances');
-    if (Cypress.currentTest.title !== 'user can bulk remove instances') {
-      cy.createAwxInstance('E2EInstanceTest' + randomString(5)).then((ins: Instance) => {
-        instance = ins;
-      });
-    }
+    cy.createAwxInstance('E2EInstanceTest' + randomString(5)).then((ins: Instance) => {
+      instance = ins;
+    });
   });
 
   afterEach(() => {
-    if (
-      !Cypress.currentTest.title.includes('user can remove') &&
-      Cypress.currentTest.title !== 'user can bulk remove instances'
-    ) {
-      cy.removeAwxInstance(instance.id.toString(), { failOnStatusCode: false });
-    }
-  });
-
-  after(() => {
-    cy.removeAwxInstance(instanceToAssociate.id.toString(), { failOnStatusCode: false });
+    cy.removeAwxInstance(instance.id.toString(), { failOnStatusCode: false });
   });
 
   it('render the instances list page', () => {
@@ -38,7 +22,7 @@ describe('Instances', () => {
   });
 
   it('user can add a new instance and navigate to the details page', () => {
-    const instanceHostname = 'E2EInstanceTest' + randomString(5);
+    const instanceHostname = 'E2EInstanceTestAdd' + randomString(5);
 
     cy.get('[data-cy="add-instance"]').click();
     cy.get('[data-cy="page-title"]').should('contain', 'Add instance');
@@ -88,7 +72,26 @@ describe('Instances', () => {
         expect(body.peers_from_control_nodes).to.eql(true);
       });
   });
+});
 
+describe('Instances - Remove', () => {
+  let instance: Instance;
+  const testSignature: string = randomString(5, undefined, { isLowercase: true });
+  function generateInstanceName(): string {
+    return `test-${testSignature}-instance-${randomString(5, undefined, { isLowercase: true })}`;
+  }
+
+  beforeEach(() => {
+    cy.awxLogin();
+    cy.navigateTo('awx', 'instances');
+    cy.createAwxInstance('E2EInstanceTestRemove' + randomString(5)).then((ins: Instance) => {
+      instance = ins;
+    });
+  });
+
+  after(() => {
+    cy.removeAwxInstance(instance.id.toString(), { failOnStatusCode: false });
+  });
   it('user can remove an instance from details page', () => {
     cy.intercept('PATCH', '/api/v2/instances/*').as('removedInstance');
 
@@ -162,6 +165,24 @@ describe('Instances', () => {
         expect(response?.statusCode).to.eql(200);
       });
   });
+});
+
+describe('Instances - Peers', () => {
+  let instance: Instance;
+  let instanceToAssociate: Instance;
+
+  before(() => {
+    cy.awxLogin();
+    cy.navigateTo('awx', 'instances');
+    cy.createAwxInstance('E2EInstanceTestLA' + randomString(5), 8888).then((ins: Instance) => {
+      instance = ins;
+    });
+  });
+
+  after(() => {
+    cy.removeAwxInstance(instance?.id.toString(), { failOnStatusCode: false });
+    cy.removeAwxInstance(instanceToAssociate?.id.toString(), { failOnStatusCode: false });
+  });
 
   it('user can associate peers to instance', () => {
     //Create an extra instance to be associated
@@ -177,7 +198,6 @@ describe('Instances', () => {
     cy.url().then((currentUrl) => {
       expect(currentUrl.includes('peers')).to.be.true;
     });
-    cy.get('[data-cy="refresh"]').click();
     cy.get('[data-cy="associate-peer"]').click();
     cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
       cy.get('header').contains('Select peer addresses');
@@ -199,5 +219,32 @@ describe('Instances', () => {
       expect(currentUrl.includes('details')).to.be.true;
     });
     cy.get('[data-cy="instances-details-tab"]').should('be.visible');
+  });
+});
+
+describe('Instances - Listener Addresses', () => {
+  let instance: Instance;
+
+  beforeEach(() => {
+    cy.awxLogin();
+    cy.navigateTo('awx', 'instances');
+    cy.createAwxInstance('E2EInstanceTestLA' + randomString(5), 8888).then((ins: Instance) => {
+      instance = ins;
+    });
+  });
+
+  after(() => {
+    cy.removeAwxInstance(instance?.id.toString(), { failOnStatusCode: false });
+  });
+
+  it('user can navigate to the listener addresses tab in details page', () => {
+    cy.clickTableRow(instance?.hostname);
+    cy.get('[data-cy="instances-listener-addresses-tab"]').click();
+    cy.url().then((currentUrl) => {
+      expect(currentUrl.includes('listener-addresses')).to.be.true;
+    });
+    cy.getByDataCy('address-column-cell').contains(instance?.hostname);
+    cy.getByDataCy('port-column-cell').contains(instance?.listener_port);
+    cy.getByDataCy('protocol-column-cell').contains(instance?.protocol);
   });
 });
