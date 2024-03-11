@@ -207,6 +207,7 @@ export enum AwxRoute {
   InstancePage = 'awx-instance-page',
   InstanceDetails = 'awx-instance-details',
   InstancePeers = 'awx-instance-peers',
+  InstanceListenerAddresses = 'awx-instance-listener-addresses',
 
   Applications = 'awx-applications',
   ApplicationPage = 'awx-application-page',

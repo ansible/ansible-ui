@@ -62,7 +62,7 @@ describe('Instances list', () => {
     cy.clickButton(/^Clear all filters$/);
   });
 
-  it('Filter instances by name', () => {
+  it('Filter instances by node', () => {
     cy.mount(<Instances />);
     cy.intercept('/api/v2/instances/?not__node_type=control%2Chybrid&node_type=control*').as(
       'controlFilterRequest'

@@ -5,10 +5,9 @@ import { useAddressColumn } from '../../../../common/columns';
 import { getItemKey, requestGet, requestPatch } from '../../../../common/crud/Data';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxBulkConfirmation } from '../../../common/useAwxBulkConfirmation';
-import { Peer } from '../../../interfaces/Peer';
 import { usePeersColumns } from './usePeersColumns';
 import { useParams } from 'react-router-dom';
-import { Instance } from '../../../interfaces/Instance';
+import { Instance, Peer } from '../../../interfaces/Instance';
 
 export function useDisassociatePeer(onComplete: (peers: Peer[]) => void) {
   const [data, setData] = useState<Instance>();
@@ -31,7 +30,7 @@ export function useDisassociatePeer(onComplete: (peers: Peer[]) => void) {
       });
   }, [id, peers]);
 
-  const columns = usePeersColumns(undefined);
+  const columns = usePeersColumns();
   const confirmationColumns = useMemo(
     () =>
       columns.filter((item) =>

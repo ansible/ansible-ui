@@ -47,6 +47,7 @@ export interface Instance {
   node_state: string;
   ip_address: null;
   listener_port: number;
+  protocol: string;
 }
 
 export interface Peer extends Instance {
