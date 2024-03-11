@@ -4,8 +4,6 @@ import {
   ColumnModalOption,
   DateTimeCell,
   ITableColumn,
-  TextCell,
-  useGetPageUrl,
   usePageNavigate,
 } from '../../../../../framework';
 import { useIdColumn, useNameColumn } from '../../../../common/columns';
@@ -20,7 +18,6 @@ export function useWorkflowApprovalsColumns(options?: {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const idColumn = useIdColumn(false);
-  const getPageUrl = useGetPageUrl();
   const nameClick = useCallback(
     (workflow_approval: WorkflowApproval) =>
       pageNavigate(AwxRoute.WorkflowApprovalDetails, { params: { id: workflow_approval.id } }),
@@ -34,27 +31,6 @@ export function useWorkflowApprovalsColumns(options?: {
     () => [
       idColumn,
       nameColumn,
-      {
-        header: t('Workflow Job'),
-        cell: (workflow_approval: WorkflowApproval) => {
-          if ('name' in workflow_approval.summary_fields.source_workflow_job) {
-            return (
-              <TextCell
-                text={workflow_approval.summary_fields.source_workflow_job.name ?? ''}
-                to={getPageUrl(AwxRoute.JobOutput, {
-                  params: {
-                    ':job_type': 'workflow',
-                    ':id': workflow_approval.summary_fields.source_workflow_job.id,
-                  },
-                })}
-                disableLinks={options?.disableLinks}
-              />
-            );
-          }
-        },
-        sort: undefined,
-        list: 'secondary',
-      },
       {
         header: t('Started'),
         cell: (workflow_approval: WorkflowApproval) =>
@@ -73,7 +49,7 @@ export function useWorkflowApprovalsColumns(options?: {
         defaultSortDirection: 'desc',
       },
     ],
-    [getPageUrl, idColumn, nameColumn, options?.disableLinks, t]
+    [idColumn, nameColumn, t]
   );
   return tableColumns;
 }
