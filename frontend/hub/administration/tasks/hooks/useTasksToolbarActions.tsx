@@ -1,4 +1,4 @@
-import { StopIcon } from '@patternfly/react-icons';
+import { StopCircleIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -25,7 +25,7 @@ export function useTasksToolbarActions(onComplete?: (tasks: Task[]) => void) {
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
-        icon: StopIcon,
+        icon: StopCircleIcon,
         label: t('Stop tasks'),
         onClick: (tasks) => stopTasks(tasks),
         isDanger: true,

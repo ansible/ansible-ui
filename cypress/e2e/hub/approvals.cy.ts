@@ -38,7 +38,7 @@ describe('Approvals', () => {
   it('should be able to view import logs', () => {
     // View Import Logs
     cy.filterTableBySingleText(collectionName, true);
-    cy.clickTableRowPinnedAction(collectionName, 'view-import-logs', false);
+    cy.clickTableRowKebabAction(collectionName, 'view-import-logs', false);
     cy.verifyPageTitle(MyImports.title);
     cy.url().should('include', MyImports.url);
     cy.url().should('include', namespace.name);
