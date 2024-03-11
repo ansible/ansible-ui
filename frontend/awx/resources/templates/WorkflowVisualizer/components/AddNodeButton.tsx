@@ -11,12 +11,12 @@ export function AddNodeButton(props: { variant?: 'primary' | 'secondary' }) {
       data-cy="add-node-button"
       icon={<PlusCircleIcon />}
       variant={props.variant || 'secondary'}
-      label={t('Add node')}
+      label={t('Add step')}
       onClick={() => {
         setSidebarMode('add');
       }}
     >
-      {t('Add node')}
+      {t('Add step')}
     </Button>
   );
 }
