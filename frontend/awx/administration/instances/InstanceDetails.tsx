@@ -39,8 +39,9 @@ import { useNodeTypeTooltip } from './hooks/useNodeTypeTooltip';
 export function InstanceDetails() {
   const params = useParams<{ id: string }>();
   const { error, data: instance, refresh } = useGetItem<Instance>(awxAPI`/instances`, params.id);
-  const { instanceGroups, instanceForks, handleToggleInstance, handleInstanceForksSlider } =
-    useInstanceActions(params.id as string);
+  const { instanceGroups, instanceForks, handleInstanceForksSlider } = useInstanceActions(
+    params.id as string
+  );
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!instance) return <LoadingPage breadcrumbs tabs />;
   return (
