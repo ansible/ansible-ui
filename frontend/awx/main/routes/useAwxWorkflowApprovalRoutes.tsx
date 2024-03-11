@@ -1,11 +1,11 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageNavigationItem } from '../../../../framework';
-import { PageNotImplemented } from '../../../../framework/PageEmptyStates/PageNotImplemented';
 import { WorkflowApprovalDetails } from '../../administration/workflow-approvals/WorkflowApprovalPage/WorkflowApprovalDetails';
 import { WorkflowApprovalPage } from '../../administration/workflow-approvals/WorkflowApprovalPage/WorkflowApprovalPage';
 import { WorkflowApprovals } from '../../administration/workflow-approvals/WorkflowApprovals';
 import { AwxRoute } from '../AwxRoutes';
+import { JobDetails } from '../../views/jobs/JobDetails';
 
 export function useAwxWorkflowApprovalRoutes() {
   const { t } = useTranslation();
@@ -27,8 +27,8 @@ export function useAwxWorkflowApprovalRoutes() {
             },
             {
               id: AwxRoute.WorkflowApprovalWorkflowJobDetails,
-              path: 'workflow-job-details',
-              element: <PageNotImplemented />,
+              path: ':job_type/:job_id/job-details',
+              element: <JobDetails />,
             },
           ],
         },

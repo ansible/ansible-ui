@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
-import { PageAsyncMultiSelectOptionsFn } from '../../PageInputs/PageAsyncMultiSelect';
-import { PageAsyncQueryErrorTextType } from '../../PageInputs/PageAsyncSingleSelect';
+import {
+  PageAsyncQueryErrorText,
+  PageAsyncSelectOptionsFn,
+} from '../../PageInputs/PageAsyncSelectOptions';
 import { ToolbarFilterType } from '../PageToolbarFilter';
 import { ToolbarFilterCommon } from './ToolbarFilterCommon';
 
@@ -14,13 +16,13 @@ export interface IToolbarAsyncMultiSelectFilter extends ToolbarFilterCommon {
   type: ToolbarFilterType.AsyncMultiSelect;
 
   /** The function to query for options. */
-  queryOptions: PageAsyncMultiSelectOptionsFn<string>;
+  queryOptions: PageAsyncSelectOptionsFn<string>;
 
   /** The placeholder to show while querying. */
   queryPlaceholder?: string;
 
   /** The placeholder to show if the query fails. */
-  queryErrorText?: PageAsyncQueryErrorTextType;
+  queryErrorText?: PageAsyncQueryErrorText;
 
   /** The function to query for the label of a value. */
   queryLabel?: (value: string) => Promise<string | undefined>;

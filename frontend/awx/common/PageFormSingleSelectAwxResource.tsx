@@ -4,7 +4,7 @@ import { FieldPath, FieldValues, PathValue, useFormContext, useWatch } from 'rea
 import { ITableColumn, IToolbarFilter, usePageDialog } from '../../../framework';
 import { SingleSelectDialog } from '../../../framework/PageDialogs/SingleSelectDialog';
 import { PageFormAsyncSingleSelect } from '../../../framework/PageForm/Inputs/PageFormAsyncSingleSelect';
-import { PageAsyncSingleSelectOptionsFn } from '../../../framework/PageInputs/PageAsyncSingleSelect';
+import { PageAsyncSelectOptionsFn } from '../../../framework/PageInputs/PageAsyncSelectOptions';
 import { PageSingleSelectContext } from '../../../framework/PageInputs/PageSingleSelect';
 import { useID } from '../../../framework/hooks/useID';
 import { requestGet } from '../../common/crud/Data';
@@ -33,7 +33,7 @@ export function PageFormSingleSelectAwxResource<
 }) {
   const id = useID(props);
 
-  const queryOptions = useCallback<PageAsyncSingleSelectOptionsFn<PathValue<FormData, Name>>>(
+  const queryOptions = useCallback<PageAsyncSelectOptionsFn<PathValue<FormData, Name>>>(
     async (page: number, signal: AbortSignal) => {
       const response = await requestGet<AwxItemsResponse<Resource>>(
         props.url.concat(`?page_size=200&page=${page}`),

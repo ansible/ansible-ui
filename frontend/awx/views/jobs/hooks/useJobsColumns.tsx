@@ -107,7 +107,7 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
       },
       {
         header: t('Finished'),
-        cell: (job: UnifiedJob) => job.finished && <DateTimeCell value={job.started} />,
+        cell: (job: UnifiedJob) => (job.finished ? <DateTimeCell value={job.started} /> : '--'),
         sort: 'finished',
         card: 'hidden',
         list: 'secondary',

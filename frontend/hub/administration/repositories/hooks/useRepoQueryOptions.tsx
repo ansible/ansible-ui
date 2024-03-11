@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { PageAsyncSingleSelectOptionsFn } from '../../../../../framework/PageInputs/PageAsyncSingleSelect';
+import { PageAsyncSelectOptionsFn } from '../../../../../framework/PageInputs/PageAsyncSelectOptions';
 import { useGetRequest } from '../../../../common/crud/useGet';
 import { pulpAPI } from '../../../common/api/formatPath';
 import { PulpItemsResponse } from '../../../common/useHubView';
@@ -7,7 +7,7 @@ import { AnsibleAnsibleRepositoryResponse as Repository } from '../../../interfa
 
 export function useRepoQueryOptions() {
   const repoRequest = useGetRequest<PulpItemsResponse<Repository>>();
-  return useCallback(
+  return useCallback<PageAsyncSelectOptionsFn<string>>(
     (page) => {
       const pageSize = 10;
 
@@ -27,5 +27,5 @@ export function useRepoQueryOptions() {
       return load();
     },
     [repoRequest]
-  ) as PageAsyncSingleSelectOptionsFn<string>;
+  );
 }
