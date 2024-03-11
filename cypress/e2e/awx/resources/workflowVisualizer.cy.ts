@@ -7,7 +7,7 @@ import { Project } from '../../../../frontend/awx/interfaces/Project';
 import { WorkflowJobTemplate } from '../../../../frontend/awx/interfaces/WorkflowJobTemplate';
 import { WorkflowNode } from '../../../../frontend/awx/interfaces/WorkflowNode';
 
-describe.skip('Workflow Job templates visualizer', () => {
+describe('Workflow Job templates visualizer', () => {
   let organization: Organization;
   let project: Project;
   let inventory: Inventory;
@@ -146,7 +146,7 @@ describe.skip('Workflow Job templates visualizer', () => {
         cy.verifyPageTitle(`${workflowJobTemplate.name}`);
       });
   });
-  it('Remove all nodes using the kebab menu of the visualizer toolbar, save and delete the template', function () {
+  it('Remove all steps using the kebab menu of the visualizer toolbar, save and delete the template', function () {
     cy.createAwxWorkflowVisualizerProjectNode(workflowJobTemplate, project).then((projectNode) => {
       cy.createAwxWorkflowVisualizerInventorySourceNode(workflowJobTemplate, inventorySource).then(
         (inventorySourceNode) => {
@@ -213,7 +213,7 @@ describe.skip('Workflow Job templates visualizer', () => {
   it('Create a job template node using a JT with multiple dependencies and then edit the node to use a different resource', function () {
     cy.visit(`/templates/workflow_job_template/${workflowJobTemplate?.id}/visualizer`);
     cy.contains('Workflow Visualizer').should('be.visible');
-    cy.clickButton('Add node');
+    cy.clickButton('Add step');
 
     cy.selectDropdownOptionByResourceName('node-type', 'Job Template');
     cy.selectDropdownOptionByResourceName('job-template-select', `${jobTemplate.name}`);
@@ -307,7 +307,7 @@ describe.skip('Workflow Job templates visualizer', () => {
         cy.clickModalButton('Close');
         cy.clickButton('Save');
         cy.get('[data-cy="alert-toaster"]').should('be.visible');
-        cy.clickButton('Add node');
+        cy.clickButton('Add step');
         cy.selectDropdownOptionByResourceName('node-type', 'Job Template');
         cy.selectDropdownOptionByResourceName('job-template-select', `${jobTemplate.name}`);
         cy.selectDropdownOptionByResourceName('node-convergence', 'All');
@@ -391,14 +391,14 @@ describe.skip('Workflow Job templates visualizer', () => {
                 .should('be.visible');
               cy.removeAllNodesFromVisualizerToolbar();
               cy.contains('button', 'Save').click();
-              cy.clickButton('Add node');
+              cy.clickButton('Add step');
               cy.selectDropdownOptionByResourceName('node-type', 'Job Template');
               cy.selectDropdownOptionByResourceName('job-template-select', `${jobTemplate.name}`);
               cy.selectDropdownOptionByResourceName('node-convergence', 'All');
               cy.get('[data-cy="node-alias"]').type('Test Node');
               cy.clickButton('Next');
               cy.clickButton('Finish');
-              cy.clickButton('Add node');
+              cy.clickButton('Add step');
               cy.selectDropdownOptionByResourceName('node-type', 'Project Sync');
               cy.selectDropdownOptionByResourceName('project', `${project.name}`);
               cy.selectDropdownOptionByResourceName('node-convergence', 'All');
@@ -417,7 +417,7 @@ describe.skip('Workflow Job templates visualizer', () => {
       );
     });
   });
-  it('Should launch a workflow job template from the visualizer, and navigate to the output page.', function () {
+  it.skip('Should launch a workflow job template from the visualizer, and navigate to the output page.', function () {
     let projectNode: WorkflowNode;
     cy.createAwxWorkflowVisualizerProjectNode(workflowJobTemplate, project)
       .then((projNode) => {

@@ -62,7 +62,7 @@ export function useRemoveGraphElements() {
       const hasMultipleNodes = nodes.length > 1;
       bulkAction({
         keyFn: (item) => item.getId(),
-        title: hasMultipleNodes ? t('Remove all nodes') : t('Remove node'),
+        title: hasMultipleNodes ? t('Remove all steps') : t('Remove step'),
         items: nodes,
         confirmText: hasMultipleNodes
           ? t('Yes, I confirm that I want to remove these {{count}} nodes.', {
@@ -70,8 +70,8 @@ export function useRemoveGraphElements() {
             })
           : t('Yes, I confirm that I want to remove this node.'),
         actionButtonText: hasMultipleNodes
-          ? t('Remove all nodes', { count: nodes.length })
-          : t('Remove node'),
+          ? t('Remove all steps', { count: nodes.length })
+          : t('Remove step'),
         isDanger: true,
         confirmationColumns: nodeConfirmationColumns,
         actionColumns: nodeActionColumns,
