@@ -5,7 +5,7 @@ import { usePeersTabFilters } from '../Instances';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxView } from '../../../common/useAwxView';
 import { useAssociatePeersToInstance } from './useAssociatePeersToInstance';
-import { usePeersToAssociateColumns } from './usePeersColumns';
+import { usePeersColumns } from './usePeersColumns';
 import { useGetItem } from '../../../../common/crud/useGet';
 import { useParams } from 'react-router-dom';
 import { Peer, Instance } from '../../../interfaces/Instance';
@@ -21,7 +21,7 @@ function SelectAssociates(props: {
   const { data: instance } = useGetItem<Instance>(awxAPI`/instances/`, params.id);
 
   const toolbarFilters = usePeersTabFilters();
-  const columns = usePeersToAssociateColumns(undefined);
+  const columns = usePeersColumns();
   const tableColumns = useMemo(
     () =>
       columns.filter((item) =>

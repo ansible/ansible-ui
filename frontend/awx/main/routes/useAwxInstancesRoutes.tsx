@@ -7,6 +7,7 @@ import { Instances } from '../../administration/instances/Instances';
 import { AwxRoute } from '../AwxRoutes';
 import { InstancePage } from '../../administration/instances/InstancesPage';
 import { InstancePeers } from '../../administration/instances/InstancePeers';
+import { InstanceListenerAddresses } from '../../administration/instances/InstanceListenerAddresses';
 
 export function useAwxInstancesRoutes() {
   const { t } = useTranslation();
@@ -36,6 +37,11 @@ export function useAwxInstancesRoutes() {
               id: AwxRoute.InstanceDetails,
               path: 'details',
               element: <InstanceDetails />,
+            },
+            {
+              id: AwxRoute.InstanceListenerAddresses,
+              path: 'listener-addresses',
+              element: <InstanceListenerAddresses />,
             },
             {
               id: AwxRoute.InstancePeers,
