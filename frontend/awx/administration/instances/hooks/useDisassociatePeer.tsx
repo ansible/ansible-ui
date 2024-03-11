@@ -22,7 +22,7 @@ export function useDisassociatePeer(onComplete: (peers: Peer[]) => void) {
 
   useMemo(() => {
     if (!peers) return;
-    void requestGet<Instance>(awxAPI`/instances/${id.toString()}/`)
+    requestGet<Instance>(awxAPI`/instances/${id.toString()}/`)
       .then((res) => {
         setData(res);
       })
