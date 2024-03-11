@@ -22,11 +22,13 @@ import { InventoryGroup } from '../../../interfaces/InventoryGroup';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useGetHost } from '../../hosts/hooks/useGetHost';
 import { useGetInventory } from '../InventoryPage/InventoryPage';
+import { ICatalogBreadcrumb } from '../../../../../framework';
 
 export interface IHostInput {
   name: string;
   description?: string;
   variables?: string;
+  inventory_name?: string;
 }
 
 export function CreateHost() {
@@ -139,21 +141,39 @@ export function CreateHost() {
   );
 }
 
-function useHostParams() : { id?: string; inventory_type?: string; host_id?: string, group_id? : string }
-{
-  const params = useParams<{ id: string; inventory_type: string; host_id: string, group_id : string }>();
+function useHostParams(): {
+  id?: string;
+  inventory_type?: string;
+  host_id?: string;
+  group_id?: string;
+  inventory_host: boolean;
+} {
+  const params = useParams<{
+    id: string;
+    inventory_type: string;
+    host_id: string;
+    group_id: string;
+  }>();
 
   let id = params.id;
   let host_id = params.host_id;
 
-  if (!host_id)
-  {
+  let inventory_host = true;
+
+  if (!host_id) {
     // this means the form was opened from host list, which passes host_id as id, so we have to rename it
     host_id = id;
     id = undefined;
+    inventory_host = false;
   }
 
-  return { id, host_id, inventory_type : params.inventory_type, group_id : params.group_id  };
+  return {
+    id,
+    host_id,
+    inventory_type: params.inventory_type,
+    group_id: params.group_id,
+    inventory_host,
+  };
 }
 
 export function EditHost() {
@@ -164,7 +184,6 @@ export function EditHost() {
   const params = useHostParams();
 
   const { host: hostResponse } = useGetHost(params.host_id ?? '');
-  const inventoryResponse = useGetInventory(params.id, params.inventory_type);
 
   const [host, setHost] = useState<AwxHost | undefined>(hostResponse);
 
@@ -191,42 +210,55 @@ export function EditHost() {
     name: host.name,
     description: host.description,
     variables: host.variables,
+    inventory_name: host.summary_fields?.inventory.name,
   };
+
+  let breadcrumbs: ICatalogBreadcrumb[] = [];
+
+  if (params.inventory_host) {
+    breadcrumbs = [
+      { label: t('Inventories'), to: getPageUrl(AwxRoute.Inventories) },
+      {
+        label: t(`${hostResponse?.summary_fields?.inventory.name}`),
+        to: getPageUrl(AwxRoute.InventoryDetails, {
+          params: { id: params.id, inventory_type: params.inventory_type },
+        }),
+      },
+      {
+        label: t('Hosts'),
+        to: getPageUrl(AwxRoute.InventoryHosts, {
+          params: {
+            id: params.id,
+            inventory_type: params.inventory_type,
+            host_id: params.host_id,
+          },
+        }),
+      },
+      {
+        label: t(`${hostResponse?.name}`),
+        to: getPageUrl(AwxRoute.InventoryHostDetails, {
+          params: {
+            id: params.id,
+            inventory_type: params.inventory_type,
+            host_id: params.host_id,
+          },
+        }),
+      },
+      { label: t('Edit') },
+    ];
+  } else {
+    breadcrumbs = [
+      {
+        label: t('Hosts'),
+        to: getPageUrl(AwxRoute.Hosts),
+      },
+      { label: t('Edit') },
+    ];
+  }
+
   return (
     <PageLayout>
-      <PageHeader
-        breadcrumbs={[
-          { label: t('Inventories'), to: getPageUrl(AwxRoute.Inventories) },
-          {
-            label: t(`${inventoryResponse?.name}`),
-            to: getPageUrl(AwxRoute.InventoryDetails, {
-              params: { id: params.id, inventory_type: params.inventory_type },
-            }),
-          },
-          {
-            label: t('Hosts'),
-            to: getPageUrl(AwxRoute.InventoryHosts, {
-              params: {
-                id: params.id,
-                inventory_type: params.inventory_type,
-                host_id: params.host_id,
-              },
-            }),
-          },
-          {
-            label: t(`${hostResponse?.name}`),
-            to: getPageUrl(AwxRoute.InventoryHostDetails, {
-              params: {
-                id: params.id,
-                inventory_type: params.inventory_type,
-                host_id: params.host_id,
-              },
-            }),
-          },
-          { label: t('Edit') },
-        ]}
-        title={t('Edit host')}
-      />
+      <PageHeader breadcrumbs={breadcrumbs} title={t('Edit host')} />
       <AwxPageForm<IHostInput>
         submitText={t('Save host')}
         onSubmit={onSubmit}
@@ -234,13 +266,13 @@ export function EditHost() {
         onCancel={onCancel}
         defaultValue={defaultValue}
       >
-        <HostInputs />
+        <HostInputs edit_mode={true} inventory_host={params.inventory_host} />
       </AwxPageForm>
     </PageLayout>
   );
 }
 
-function HostInputs() {
+function HostInputs(props: { edit_mode?: boolean; inventory_host?: boolean }) {
   const { t } = useTranslation();
   return (
     <>
@@ -256,6 +288,13 @@ function HostInputs() {
         label={t('Description')}
         placeholder={t('Enter a description')}
       />
+      {!props.inventory_host && props.edit_mode && (
+        <PageFormTextInput<IHostInput>
+          name="inventory_name"
+          label={t('Inventory')}
+          isDisabled={true}
+        />
+      )}
       <PageFormSection singleColumn>
         <PageFormDataEditor<IHostInput> format="yaml" name="variables" label={t('Variables')} />
       </PageFormSection>
