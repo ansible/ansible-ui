@@ -67,9 +67,8 @@ export function useHostsActions(
             });
           } else if (params.id) {
             pageNavigate(AwxRoute.EditHost, { params: { id: params.id } });
-          } else
-          {
-            pageNavigate(AwxRoute.EditHost, { params: { host_id: host.id } });
+          } else {
+            pageNavigate(AwxRoute.EditHost, { params: { id: host.id } });
           }
         },
         isDisabled: (host) => cannotEditResource(host, t),
