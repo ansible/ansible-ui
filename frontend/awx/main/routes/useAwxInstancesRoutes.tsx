@@ -5,6 +5,8 @@ import { AddInstance, EditInstance } from '../../administration/instances/Instan
 import { InstanceDetails } from '../../administration/instances/InstanceDetails';
 import { Instances } from '../../administration/instances/Instances';
 import { AwxRoute } from '../AwxRoutes';
+import { InstancePage } from '../../administration/instances/InstancesPage';
+import { InstancePeers } from '../../administration/instances/InstancePeers';
 
 export function useAwxInstancesRoutes() {
   const { t } = useTranslation();
@@ -26,9 +28,21 @@ export function useAwxInstancesRoutes() {
           element: <EditInstance />,
         },
         {
-          id: AwxRoute.InstanceDetails,
-          path: ':id/details',
-          element: <InstanceDetails />,
+          id: AwxRoute.InstancePage,
+          path: ':id',
+          element: <InstancePage />,
+          children: [
+            {
+              id: AwxRoute.InstanceDetails,
+              path: 'details',
+              element: <InstanceDetails />,
+            },
+            {
+              id: AwxRoute.InstancePeers,
+              path: 'peers',
+              element: <InstancePeers />,
+            },
+          ],
         },
         {
           path: '',
