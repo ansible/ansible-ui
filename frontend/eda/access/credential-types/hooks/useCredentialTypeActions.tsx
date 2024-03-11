@@ -52,6 +52,14 @@ export function useCredentialTypeRowActions(
   const { t } = useTranslation();
 
   return useMemo(() => {
+    const cannotDeleteManagedCredentialType = (credentialType: EdaCredentialType) =>
+      credentialType.managed
+        ? t(`The credential type cannot be deleted because it is read-only.`)
+        : '';
+    const cannotEditManagedCredentialType = (credentialType: EdaCredentialType) =>
+      credentialType.managed
+        ? t(`The credential type cannot be edited because it is read-only.`)
+        : '';
     const actions: IPageAction<EdaCredentialType>[] = [
       {
         type: PageActionType.Button,
@@ -59,6 +67,8 @@ export function useCredentialTypeRowActions(
         isPinned: true,
         icon: PencilAltIcon,
         label: t('Edit credential type'),
+        isDisabled: (credentialType: EdaCredentialType) =>
+          cannotEditManagedCredentialType(credentialType),
         onClick: (credentialType) =>
           pageNavigate(EdaRoute.EditCredentialType, { params: { id: credentialType.id } }),
       },
@@ -68,6 +78,8 @@ export function useCredentialTypeRowActions(
         selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Delete credential type'),
+        isDisabled: (credentialType: EdaCredentialType) =>
+          cannotDeleteManagedCredentialType(credentialType),
         onClick: (credentialType: EdaCredentialType) => deleteCredentialTypes([credentialType]),
         isDanger: true,
       },
