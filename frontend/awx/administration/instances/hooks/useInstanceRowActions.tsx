@@ -1,4 +1,4 @@
-import { ButtonVariant } from '@patternfly/react-core';
+import { AlertProps, ButtonVariant } from '@patternfly/react-core';
 import { HeartbeatIcon, PencilAltIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -6,13 +6,13 @@ import {
   IPageAction,
   PageActionSelection,
   PageActionType,
+  usePageAlertToaster,
   usePageNavigate,
 } from '../../../../../framework';
-import { requestPatch } from '../../../../common/crud/Data';
+import { postRequest, requestPatch } from '../../../../common/crud/Data';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { Instance } from '../../../interfaces/Instance';
 import { AwxRoute } from '../../../main/AwxRoutes';
-import { useRunHealthCheck } from './useRunHealthCheck';
 import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
 import { useGet } from '../../../../common/crud/useGet';
 import { Settings } from '../../../interfaces/Settings';
@@ -23,7 +23,7 @@ export function useInstanceRowActions(onComplete: (instances: Instance[]) => voi
   const activeUser = useAwxActiveUser();
   const { data } = useGet<Settings>(awxAPI`/settings/system/`);
 
-  const runHealthCheck = useRunHealthCheck(onComplete);
+  const alertToaster = usePageAlertToaster();
   const handleToggleInstance: (instance: Instance, enabled: boolean) => Promise<void> = useCallback(
     async (instance, enabled) => {
       await requestPatch(awxAPI`/instances/${instance.id.toString()}/`, { enabled });
@@ -47,6 +47,7 @@ export function useInstanceRowActions(onComplete: (instances: Instance[]) => voi
         label: t('Enabled'),
         labelOff: t('Disabled'),
         showPinnedLabel: false,
+        isHidden: (instance) => instance.node_type === 'hop',
       },
       {
         type: PageActionType.Button,
@@ -56,10 +57,30 @@ export function useInstanceRowActions(onComplete: (instances: Instance[]) => voi
         isDisabled: (instance) =>
           instance.node_type !== 'execution'
             ? t('Cannot run health check on a {{ type }} instance', { type: instance.node_type })
-            : undefined,
+            : instance.health_check_pending
+              ? t('Health check pending')
+              : undefined,
         icon: HeartbeatIcon,
         label: t('Run health check'),
-        onClick: (instance: Instance) => runHealthCheck([instance]),
+        onClick: (instance: Instance) => {
+          const alert: AlertProps = {
+            variant: 'success',
+            title: t(`Running health check on ${instance.hostname}.`),
+            timeout: 4000,
+          };
+          postRequest(awxAPI`/instances/${instance.id.toString()}/health_check/`, {})
+            .then(() => {
+              alertToaster.addAlert(alert);
+              onComplete([instance]);
+            })
+            .catch((error) => {
+              alertToaster.addAlert({
+                variant: 'danger',
+                title: t('Failed to perform health check'),
+                children: error instanceof Error && error.message,
+              });
+            });
+        },
       },
       {
         type: PageActionType.Button,
@@ -78,6 +99,6 @@ export function useInstanceRowActions(onComplete: (instances: Instance[]) => voi
             : undefined,
       },
     ],
-    [t, handleToggleInstance, runHealthCheck, pageNavigate, isK8s, userAccess]
+    [t, handleToggleInstance, onComplete, alertToaster, pageNavigate, isK8s, userAccess]
   );
 }
