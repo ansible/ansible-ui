@@ -24,6 +24,9 @@ describe('AWX Settings', () => {
 
     cy.navigateTo('awx', 'settings-system');
     cy.verifyPageTitle('System Settings');
+    cy.getByDataCy('ACTIVITY_STREAM_ENABLED_FOR_INVENTORY_SYNC')
+      .scrollIntoView()
+      .should('be.visible');
     cy.getByDataCy('ACTIVITY_STREAM_ENABLED_FOR_INVENTORY_SYNC').should('not.be.checked');
     cy.getByDataCy('ACTIVITY_STREAM_ENABLED_FOR_INVENTORY_SYNC').click();
     cy.getByDataCy('ACTIVITY_STREAM_ENABLED_FOR_INVENTORY_SYNC').should('be.checked');
@@ -44,6 +47,7 @@ describe('AWX Settings', () => {
 
     cy.navigateTo('awx', 'settings-jobs');
     cy.verifyPageTitle('Job Settings');
+    cy.getByDataCy('AWX_ROLES_ENABLED').scrollIntoView().should('be.visible');
     cy.getByDataCy('AWX_ROLES_ENABLED').should('be.checked');
     cy.getByDataCy('AWX_ROLES_ENABLED').click();
     cy.getByDataCy('AWX_ROLES_ENABLED').should('not.be.checked');
@@ -67,6 +71,7 @@ describe('AWX Settings', () => {
 
     cy.navigateTo('awx', 'settings-customize-login');
     cy.verifyPageTitle('Customize Login');
+    cy.getByDataCy('custom-login-info').scrollIntoView().should('be.visible');
     cy.getByDataCy('custom-login-info').should('be.empty');
     cy.getByDataCy('custom-login-info').type('my custom login info');
     cy.intercept('PATCH', awxAPI`/settings/all/`).as('patchSettings');
@@ -84,6 +89,7 @@ describe('AWX Settings', () => {
 
     cy.navigateTo('awx', 'settings-troubleshooting');
     cy.verifyPageTitle('Troubleshooting');
+    cy.getByDataCy('AWX_CLEANUP_PATHS').scrollIntoView().should('be.visible');
     cy.getByDataCy('AWX_CLEANUP_PATHS').should('be.checked');
     cy.getByDataCy('AWX_CLEANUP_PATHS').click();
     cy.getByDataCy('AWX_CLEANUP_PATHS').should('not.be.checked');

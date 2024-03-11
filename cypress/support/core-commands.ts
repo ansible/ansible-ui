@@ -1,5 +1,4 @@
 Cypress.Commands.add('getBy', (selector: string) => {
-  cy.get(selector).scrollIntoView();
   cy.get(selector)
     .should('not.be.disabled')
     .should('not.have.attr', 'aria-disabled', 'true')
@@ -16,7 +15,6 @@ Cypress.Commands.add('getByDataCy', (dataCy: string) => {
 });
 
 Cypress.Commands.add('containsBy', (selector: string, text: string | number | RegExp) => {
-  cy.get(selector).scrollIntoView();
   cy.contains(selector, text)
     .should('not.be.disabled')
     .should('not.have.attr', 'aria-disabled', 'true')
