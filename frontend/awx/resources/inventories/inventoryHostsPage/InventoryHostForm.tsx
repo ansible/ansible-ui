@@ -72,54 +72,69 @@ export function CreateHost() {
   const inventoryResponse = useGetInventory(params.id, params.inventory_type);
 
 
-  
+  let breadcrumbs : ICatalogBreadcrumb[] = [];
+
+  if (params.inventory_host)
+  {
+    breadcrumbs =  [
+      { label: t('Inventories'), to: getPageUrl(AwxRoute.Inventories) },
+      {
+        label: t(`${inventoryResponse?.name}`),
+        to: getPageUrl(AwxRoute.InventoryDetails, {
+          params: { id: params.id, inventory_type: params.inventory_type },
+        }),
+      },
+      params?.group_id
+        ? {
+            label: t('Groups'),
+            id: 'group',
+            to: getPageUrl(AwxRoute.InventoryGroups, {
+              params: {
+                id: params.group_id,
+                inventory_type: params.inventory_type,
+              },
+            }),
+          }
+        : {
+            label: t('Hosts'),
+            id: 'hosts',
+            to: getPageUrl(AwxRoute.InventoryHosts, {
+              params: {
+                id: params.id,
+                inventory_type: params.inventory_type,
+                host_id: params.host_id,
+              },
+            }),
+          },
+      params?.group_id
+        ? {
+            label: t(`${groupName}`),
+            to: getPageUrl(AwxRoute.InventoryGroupDetails, {
+              params: {
+                id: params.group_id,
+                inventory_type: params.inventory_type,
+                group_id: params.group_id,
+              },
+            }),
+          }
+        : {},
+      { label: t('Add') },
+    ];
+  }else
+  {
+    breadcrumbs = [
+      {
+        label: t('Hosts'),
+        to: getPageUrl(AwxRoute.Hosts),
+      },
+      { label: t('Create') },
+    ];
+  }
+
   return (
     <PageLayout>
       <PageHeader
-        breadcrumbs={[
-          { label: t('Inventories'), to: getPageUrl(AwxRoute.Inventories) },
-          {
-            label: t(`${inventoryResponse?.name}`),
-            to: getPageUrl(AwxRoute.InventoryDetails, {
-              params: { id: params.id, inventory_type: params.inventory_type },
-            }),
-          },
-          params?.group_id
-            ? {
-                label: t('Groups'),
-                id: 'group',
-                to: getPageUrl(AwxRoute.InventoryGroups, {
-                  params: {
-                    id: params.group_id,
-                    inventory_type: params.inventory_type,
-                  },
-                }),
-              }
-            : {
-                label: t('Hosts'),
-                id: 'hosts',
-                to: getPageUrl(AwxRoute.InventoryHosts, {
-                  params: {
-                    id: params.id,
-                    inventory_type: params.inventory_type,
-                    host_id: params.host_id,
-                  },
-                }),
-              },
-          params?.group_id
-            ? {
-                label: t(`${groupName}`),
-                to: getPageUrl(AwxRoute.InventoryGroupDetails, {
-                  params: {
-                    id: params.group_id,
-                    inventory_type: params.inventory_type,
-                    group_id: params.group_id,
-                  },
-                }),
-              }
-            : {},
-          { label: t('Add') },
-        ]}
+        breadcrumbs={breadcrumbs}
         title={t('Create Host')}
       />
       <AwxPageForm
