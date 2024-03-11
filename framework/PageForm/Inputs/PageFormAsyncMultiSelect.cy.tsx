@@ -1,7 +1,7 @@
 /* eslint-disable i18next/no-literal-string */
 import { PageSection } from '@patternfly/react-core';
 import { PartialDeep } from 'type-fest';
-import { PageAsyncMultiSelectQueryResult } from '../../PageInputs/PageAsyncMultiSelect';
+import { PageAsyncSelectQueryResult } from '../../PageInputs/PageAsyncSelectOptions';
 import { PageForm } from '../PageForm';
 import {
   PageFormAsyncMultiSelect,
@@ -45,8 +45,8 @@ function PageFormAsyncMultiSelectTest(
 
 describe('PageFormAsyncMultiSelect', () => {
   it('should show loading options state', () => {
-    let optionsResolve: (result: PageAsyncMultiSelectQueryResult<number>) => void = () => null;
-    const optionPromise = new Promise<PageAsyncMultiSelectQueryResult<number>>(
+    let optionsResolve: (result: PageAsyncSelectQueryResult<number>) => void = () => null;
+    const optionPromise = new Promise<PageAsyncSelectQueryResult<number>>(
       (r) => (optionsResolve = r)
     );
     cy.mount(

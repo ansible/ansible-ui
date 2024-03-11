@@ -1,8 +1,8 @@
-import { ToolbarFilterType } from '../PageToolbarFilter';
 import {
-  PageAsyncQueryErrorTextType,
-  PageAsyncSingleSelectOptionsFn,
-} from './../../PageInputs/PageAsyncSingleSelect';
+  PageAsyncQueryErrorText,
+  PageAsyncSelectOptionsFn,
+} from '../../PageInputs/PageAsyncSelectOptions';
+import { ToolbarFilterType } from '../PageToolbarFilter';
 import { ToolbarFilterCommon } from './ToolbarFilterCommon';
 
 /** A function to open a single selection browse modal for a toolbar filter. */
@@ -15,13 +15,13 @@ export interface IToolbarAsyncSingleSelectFilter extends ToolbarFilterCommon {
   type: ToolbarFilterType.AsyncSingleSelect;
 
   /** The function to query for options. */
-  queryOptions: PageAsyncSingleSelectOptionsFn<string>;
+  queryOptions: PageAsyncSelectOptionsFn<string>;
 
   /** The placeholder to show while querying. */
   queryPlaceholder?: string;
 
   /** The placeholder to show if the query fails. */
-  queryErrorText?: PageAsyncQueryErrorTextType;
+  queryErrorText?: PageAsyncQueryErrorText;
 
   /** The function to open the browse modal. */
   openBrowse?: ToolbarOpenSingleSelectBrowse;

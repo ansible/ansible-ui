@@ -3,23 +3,14 @@ import { SyncAltIcon } from '@patternfly/react-icons';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
+import { PageAsyncSelectOptionsFn } from './PageAsyncSelectOptions';
 import { PageMultiSelect, PageMultiSelectProps } from './PageMultiSelect';
 import { PageSelectOption } from './PageSelectOption';
-
-export interface PageAsyncMultiSelectQueryResult<ValueT> {
-  total: number;
-  options: PageSelectOption<ValueT>[];
-}
-
-export type PageAsyncMultiSelectOptionsFn<ValueT> = (
-  page: number,
-  signal: AbortSignal
-) => Promise<PageAsyncMultiSelectQueryResult<ValueT>>;
 
 export interface PageAsyncMultiSelectProps<ValueT>
   extends Omit<PageMultiSelectProps<ValueT>, 'options'> {
   /** The function to query for options. */
-  queryOptions: PageAsyncMultiSelectOptionsFn<ValueT>;
+  queryOptions: PageAsyncSelectOptionsFn<ValueT>;
 
   /** The placeholder to show while querying. */
   queryPlaceholder?: string;
@@ -158,7 +149,7 @@ export function PageAsyncMultiSelect<
           <SplitItem isFilled>
             {options?.length !== total && (
               <Button
-                id="load-lmore"
+                id="load-more"
                 variant="link"
                 isInline
                 onClick={(e) => {

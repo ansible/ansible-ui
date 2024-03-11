@@ -1,7 +1,8 @@
 /* eslint-disable i18next/no-literal-string */
 import { PageSection } from '@patternfly/react-core';
 import { useState } from 'react';
-import { PageAsyncMultiSelect, PageAsyncMultiSelectQueryResult } from './PageAsyncMultiSelect';
+import { PageAsyncMultiSelect } from './PageAsyncMultiSelect';
+import { PageAsyncSelectQueryResult } from './PageAsyncSelectOptions';
 
 const queryOptions = async (page: number, _signal: AbortSignal) => {
   const pageSize = 10;
@@ -24,7 +25,7 @@ const placeholderText = 'Placeholder';
 function PageAsyncMultiSelectTest<T>(props: {
   placeholder?: string;
   defaultValues?: T[];
-  queryOptions: (page: number, signal: AbortSignal) => Promise<PageAsyncMultiSelectQueryResult<T>>;
+  queryOptions: (page: number, signal: AbortSignal) => Promise<PageAsyncSelectQueryResult<T>>;
 }) {
   const { placeholder, defaultValues, queryOptions } = props;
   const [values, setValues] = useState<T[] | undefined>(() => defaultValues);
@@ -43,8 +44,8 @@ function PageAsyncMultiSelectTest<T>(props: {
 
 describe('PageAsyncMultiSelect', () => {
   it('should show loading options state', () => {
-    let optionsResolve: (result: PageAsyncMultiSelectQueryResult<number>) => void = () => null;
-    const optionPromise = new Promise<PageAsyncMultiSelectQueryResult<number>>(
+    let optionsResolve: (result: PageAsyncSelectQueryResult<number>) => void = () => null;
+    const optionPromise = new Promise<PageAsyncSelectQueryResult<number>>(
       (r) => (optionsResolve = r)
     );
     cy.mount(
