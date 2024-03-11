@@ -52,7 +52,7 @@ export function CreateSchedule() {
   const steps: PageWizardStep[] = [
     {
       id: 'typeStep',
-      label: t('Node details'),
+      label: t('Details'),
       inputs: <ScheduleInputs onError={() => {}} zoneLinks={links} timeZones={timeZones} />,
     },
     {
@@ -60,6 +60,7 @@ export function CreateSchedule() {
       label: t('Prompts'),
       inputs: <PageNotImplemented />,
     },
+    { id: 'survey', label: t('Survey'), element: <PageNotImplemented /> },
     { id: 'occurrences', label: t('Occurrences'), element: <PageNotImplemented /> },
     { id: 'exceptions', label: t('Exceptions'), element: <PageNotImplemented /> },
     { id: 'review', label: t('Review'), element: <PageNotImplemented /> },
