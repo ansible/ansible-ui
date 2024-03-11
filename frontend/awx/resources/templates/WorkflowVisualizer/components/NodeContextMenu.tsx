@@ -37,7 +37,7 @@ export function useNodeMenuItems(element: Node<NodeModel, GraphNodeData>): MenuI
         {
           key: 'add-node',
           icon: <PlusCircleIcon />,
-          label: t('Add node'),
+          label: t('Add step'),
           onClick: () => {
             setSidebarMode('add');
           },
@@ -47,7 +47,7 @@ export function useNodeMenuItems(element: Node<NodeModel, GraphNodeData>): MenuI
         {
           key: 'edit-node',
           icon: <PencilAltIcon />,
-          label: t('Edit node'),
+          label: t('Edit step'),
           onClick: () => {
             action(() => {
               setSidebarMode('edit');
@@ -58,7 +58,7 @@ export function useNodeMenuItems(element: Node<NodeModel, GraphNodeData>): MenuI
         {
           key: 'add-node-and-link',
           icon: <PlusCircleIcon />,
-          label: t('Add node and link'),
+          label: t('Add step and link'),
           onClick: () => {
             setSidebarMode('add');
             setSourceNode(element);
@@ -72,7 +72,7 @@ export function useNodeMenuItems(element: Node<NodeModel, GraphNodeData>): MenuI
           key: 'remove-node',
           icon: <MinusCircleIcon />,
           isDanger: true,
-          label: t('Remove node'),
+          label: t('Remove step'),
           onClick: () => {
             removeNodes([element]);
           },
