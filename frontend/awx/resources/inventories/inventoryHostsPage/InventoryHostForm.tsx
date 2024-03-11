@@ -29,6 +29,10 @@ import { useCallback } from 'react';
 import { Inventory } from '../../../interfaces/Inventory';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { PageAsyncSingleSelectOptionsFn } from '../../../../../framework/PageInputs/PageAsyncSingleSelect';
+import { PageSingleSelectContext } from '../../../../../framework/PageInputs/PageSingleSelect';
+import { Button } from '@patternfly/react-core';
+import { useSelectInventorySingle } from './hooks/useInventorySelector';
+import { useFormContext } from 'react-hook-form';
 
 export interface IHostInput {
   name: string;
@@ -303,22 +307,25 @@ export function EditHost() {
 function HostInputs(props: { edit_mode?: boolean; inventory_host?: boolean }) {
   const { t } = useTranslation();
 
-  const queryOptions = useCallback<PageAsyncSingleSelectOptionsFn<number>>(
-    async (page: number, signal: AbortSignal) => {
-      const response = await requestGet<AwxItemsResponse<Inventory>>(awxAPI`/inventories/`);
+  const queryOptions = useCallback<PageAsyncSingleSelectOptionsFn<number>>(async () => {
+    const response = await requestGet<AwxItemsResponse<Inventory>>(
+      awxAPI`/inventories/?order_by=name`
+    );
+    return Promise.resolve({
+      total: response.count,
+      options:
+        response.results?.map((resource) => ({
+          label: resource.name,
+          value: resource.id,
+          description: resource.description,
+        })) ?? [],
+    });
+  }, []);
 
-      return Promise.resolve({
-        total: response.count,
-        options:
-          response.results?.map((resource) => ({
-            label: resource.name,
-            value: resource.id as number,
-            description: resource.description,
-          })) ?? [],
-      });
-    },
-    []
-  );
+  const selectInventorySingle = useSelectInventorySingle();
+  const registrySelector = selectInventorySingle.openBrowse;
+
+  const { setValue } = useFormContext<IHostInput>();
 
   return (
     <>
@@ -347,6 +354,26 @@ function HostInputs(props: { edit_mode?: boolean; inventory_host?: boolean }) {
           label={t('Inventory')}
           placeholder={t('Select Inventory')}
           queryOptions={queryOptions}
+          footer={
+            <PageSingleSelectContext.Consumer>
+              {(context) => {
+                return (
+                  <Button
+                    variant="link"
+                    onClick={() => {
+                      context.setOpen(false);
+                      registrySelector((inventory) => {
+                        setValue('inventory.id', inventory.id);
+                      });
+                    }}
+                    tabIndex={0}
+                  >
+                    Browse
+                  </Button>
+                );
+              }}
+            </PageSingleSelectContext.Consumer>
+          }
         />
       )}
       <PageFormSection singleColumn>
