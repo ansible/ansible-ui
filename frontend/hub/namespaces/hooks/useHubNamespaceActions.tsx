@@ -38,19 +38,19 @@ export function useHubNamespaceActions(options?: {
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
-        icon: TrashIcon,
-        label: t('Delete namespace'),
-        onClick: (namespace) => deleteHubNamespaces([namespace]),
-        isDanger: true,
-      },
-      {
-        type: PageActionType.Button,
-        selection: PageActionSelection.Single,
         variant: ButtonVariant.primary,
         icon: ImportIcon,
         label: t('Imports'),
         onClick: (namespace) =>
           pageNavigate(HubRoute.MyImports, { query: { namespace: namespace.name } }),
+      },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        icon: TrashIcon,
+        label: t('Delete namespace'),
+        onClick: (namespace) => deleteHubNamespaces([namespace]),
+        isDanger: true,
       },
     ];
     return actions;

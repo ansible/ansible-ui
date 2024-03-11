@@ -46,29 +46,18 @@ describe('Tasks List', () => {
   it('Row action for stopping a task is disabled if the task is not running/waiting', () => {
     cy.mount(<Tasks />);
     cy.contains('tr', 'pulp_ansible.app.tasks.copy.move_collection').within(() => {
-      cy.get('button.toggle-kebab').click();
-      cy.contains('.pf-v5-c-dropdown__menu-item', /^Stop task$/).should(
-        'have.attr',
-        'aria-disabled',
-        'true'
-      );
+      cy.get('[data-cy="stop-task"]').should('have.attr', 'aria-disabled', 'true');
     });
   });
   it('Row action for stopping a task is enabled if the task is running', () => {
     cy.mount(<Tasks />);
     cy.contains('tr', 'galaxy_ng.app.tasks.namespaces._create_pulp_namespace').within(() => {
-      cy.get('button.toggle-kebab').click();
-      cy.contains('.pf-v5-c-dropdown__menu-item', /^Stop task$/).should(
-        'have.attr',
-        'aria-disabled',
-        'false'
-      );
+      cy.get('[data-cy="stop-task"]').should('have.attr', 'aria-disabled', 'false');
     });
   });
   it('Stop a running task', () => {
     cy.mount(<Tasks />);
     cy.contains('tr', 'galaxy_ng.app.tasks.namespaces._create_pulp_namespace').within(() => {
-      cy.get('button.toggle-kebab').click();
       cy.get('[data-cy="stop-task"]').click();
     });
     cy.clickModalConfirmCheckbox();

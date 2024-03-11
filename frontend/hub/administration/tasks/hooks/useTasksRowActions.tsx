@@ -1,4 +1,4 @@
-import { StopIcon } from '@patternfly/react-icons';
+import { StopCircleIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
@@ -16,7 +16,8 @@ export function useTasksRowActions(onComplete?: (tasks: Task[]) => void) {
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
-        icon: StopIcon,
+        icon: StopCircleIcon,
+        isPinned: true,
         label: t('Stop task'),
         onClick: (task) => stopTask([task]),
         isDanger: true,
