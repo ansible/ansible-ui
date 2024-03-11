@@ -72,6 +72,7 @@ function craftRequestUrl(optionsPath: string, params: QueryParams | undefined, p
 
   return url;
 }
+
 export function useDynamicToolbarFilters<T>(props: DynamicToolbarFiltersProps) {
   const { optionsPath, preSortedKeys, preFilledValueKeys, additionalFilters } = props;
   const { t } = useTranslation();
