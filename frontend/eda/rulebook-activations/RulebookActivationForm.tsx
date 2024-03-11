@@ -212,8 +212,9 @@ export function RulebookActivationInputs() {
         footer={<Link to={getPageUrl(EdaRoute.CreateWebhook)}>Create webhook</Link>}
       />
 
-      <PageFormCredentialSelect<{ credential_refs: string; id: string }>
+      <PageFormCredentialSelect<{ credential_refs: string; id: string; credentialKind: string }>
         name="credential_refs"
+        credentialKind={'vault'}
         labelHelp={t(`Select the credentials for this rulebook activations.`)}
       />
       <PageFormSelect<IEdaRulebookActivationInputs>

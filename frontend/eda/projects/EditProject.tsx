@@ -27,7 +27,9 @@ import { EdaRoute } from '../main/EdaRoutes';
 
 function ProjectCreateInputs() {
   const { t } = useTranslation();
-  const { data: credentials } = useGet<EdaResult<EdaCredential>>(edaAPI`/eda-credentials/`);
+  const { data: credentials } = useGet<EdaResult<EdaCredential>>(
+    edaAPI`/eda-credentials/` + `?credential_type__kind=scm&page_size=300`
+  );
   const isValidUrl = useIsValidUrl();
   const getPageUrl = useGetPageUrl();
   return (
@@ -104,7 +106,9 @@ function ProjectCreateInputs() {
 function ProjectEditInputs() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
-  const { data: credentials } = useGet<EdaResult<EdaCredential>>(edaAPI`/credentials/`);
+  const { data: credentials } = useGet<EdaResult<EdaCredential>>(
+    edaAPI`/credentials/` + `?credential_type__kind=scm&page_size=300`
+  );
   return (
     <>
       <PageFormTextInput<EdaProjectCreate>

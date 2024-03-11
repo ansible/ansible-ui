@@ -26,7 +26,9 @@ import { EdaRoute } from '../main/EdaRoutes';
 function DecisionEnvironmentInputs() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
-  const { data: credentials } = useGet<EdaResult<EdaCredential>>(edaAPI`/eda-credentials/`);
+  const { data: credentials } = useGet<EdaResult<EdaCredential>>(
+    edaAPI`/eda-credentials/` + `?credential_type__kind=registry&page_size=300`
+  );
   const imageHelpBlock = (
     <>
       <p>

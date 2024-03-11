@@ -7,9 +7,9 @@ import { EdaCredential } from '../../../../eda/interfaces/EdaCredential';
 export function PageFormCredentialSelect<
   TFieldValues extends FieldValues = FieldValues,
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
->(props: { name: TFieldName; labelHelp: string; isRequired?: boolean }) {
+>(props: { name: TFieldName; labelHelp: string; isRequired?: boolean; credentialKind?: string }) {
   const { t } = useTranslation();
-  const selectCredential = useSelectCredentials();
+  const selectCredential = useSelectCredentials(props.credentialKind);
 
   return (
     <PageFormMultiInput<EdaCredential, TFieldValues, TFieldName>
