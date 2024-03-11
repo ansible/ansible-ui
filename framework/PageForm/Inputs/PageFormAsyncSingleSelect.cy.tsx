@@ -1,7 +1,7 @@
 /* eslint-disable i18next/no-literal-string */
 import { PageSection } from '@patternfly/react-core';
 import { PartialDeep } from 'type-fest';
-import { PageAsyncSingleSelectQueryResult } from '../../PageInputs/PageAsyncSingleSelect';
+import { PageAsyncSelectQueryResult } from '../../PageInputs/PageAsyncSelectOptions';
 import { PageForm } from '../PageForm';
 import {
   PageFormAsyncSingleSelect,
@@ -45,8 +45,8 @@ function PageFormAsyncSingleSelectTest(
 
 describe('PageFormAsyncSingleSelect', () => {
   it('should show loading options state', () => {
-    let optionsResolve: (result: PageAsyncSingleSelectQueryResult<number>) => void = () => null;
-    const optionPromise = new Promise<PageAsyncSingleSelectQueryResult<number>>(
+    let optionsResolve: (result: PageAsyncSelectQueryResult<number>) => void = () => null;
+    const optionPromise = new Promise<PageAsyncSelectQueryResult<number>>(
       (r) => (optionsResolve = r)
     );
     cy.mount(

@@ -51,9 +51,13 @@ export function WorkflowApprovalPage() {
         }}
         tabs={[
           { label: t('Details'), page: AwxRoute.WorkflowApprovalDetails },
-          { label: t('Jobs'), page: AwxRoute.WorkflowApprovalWorkflowJobDetails },
+          { label: t('Workflow job details'), page: AwxRoute.WorkflowApprovalWorkflowJobDetails },
         ]}
-        params={{ id: params.id || 0 }}
+        params={{
+          id: params.id || 0,
+          job_id: workflowApproval?.summary_fields?.workflow_job?.id,
+          job_type: 'workflow',
+        }}
       />
     </PageLayout>
   );

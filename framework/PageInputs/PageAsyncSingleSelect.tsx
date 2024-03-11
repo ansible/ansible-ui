@@ -3,31 +3,20 @@ import { SyncAltIcon } from '@patternfly/react-icons';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
+import { PageAsyncQueryErrorText, PageAsyncSelectOptionsFn } from './PageAsyncSelectOptions';
 import { PageSelectOption } from './PageSelectOption';
 import { PageSingleSelect, PageSingleSelectProps } from './PageSingleSelect';
-
-export interface PageAsyncSingleSelectQueryResult<ValueT> {
-  total: number;
-  options: PageSelectOption<ValueT>[];
-}
-
-export type PageAsyncSingleSelectOptionsFn<ValueT> = (
-  page: number,
-  signal: AbortSignal
-) => Promise<PageAsyncSingleSelectQueryResult<ValueT>>;
-
-export type PageAsyncQueryErrorTextType = string | ((error: Error) => string);
 
 export interface PageAsyncSingleSelectProps<ValueT>
   extends Omit<PageSingleSelectProps<ValueT>, 'options'> {
   /** The function to query for options. */
-  queryOptions: PageAsyncSingleSelectOptionsFn<ValueT>;
+  queryOptions: PageAsyncSelectOptionsFn<ValueT>;
 
   /** The placeholder to show while querying. */
   queryPlaceholder?: string;
 
   /** The placeholder to show if the query fails. */
-  queryErrorText?: PageAsyncQueryErrorTextType;
+  queryErrorText?: PageAsyncQueryErrorText;
 }
 
 /**
@@ -160,7 +149,7 @@ export function PageAsyncSingleSelect<
           <SplitItem isFilled>
             {options?.length !== total && (
               <Button
-                id="load-lmore"
+                id="load-more"
                 variant="link"
                 isInline
                 onClick={(e) => {
