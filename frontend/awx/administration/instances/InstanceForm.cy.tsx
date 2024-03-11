@@ -75,13 +75,6 @@ describe('Add instance Form', () => {
       }
     );
 
-    cy.get('[data-cy="peer-select-form-group"]').within(() => {
-      cy.get('button').eq(1).click();
-    });
-    cy.get('[data-cy="checkbox-column-cell"]').click();
-    cy.clickButton('Confirm');
-
-    cy.get('[data-cy="enabled"]').click();
     cy.get('[data-cy="managed_by_policy"]').click();
     cy.get('[data-cy="peers_from_control_nodes"]').click();
 
@@ -94,8 +87,6 @@ describe('Add instance Form', () => {
           node_state: 'installed',
           hostname: 'AddInstanceMockWithPeers',
           listener_port: 9999,
-          peers: ['e2eInstance0daD'],
-          enabled: true,
           managed_by_policy: true,
           peers_from_control_nodes: true,
         });
@@ -117,11 +108,6 @@ describe('Edit instance Form', () => {
       .should('be.visible')
       .within(() => {
         cy.get('button').should('be.visible').should('be.disabled');
-      });
-    cy.get('[data-cy="peer-select-form-group"]')
-      .should('be.visible')
-      .within(() => {
-        cy.get('button').should('be.visible').should('not.be.disabled');
       });
     cy.get('[data-cy="enabled"]').should('be.visible').should('not.be.disabled');
     cy.get('[data-cy="managed_by_policy"]').should('be.visible').should('not.be.disabled');
