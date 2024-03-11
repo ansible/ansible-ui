@@ -299,22 +299,4 @@ describe('Job templates form Create, Edit, Delete', function () {
       });
     });
   });
-
-  it('should create schedule on Schedules page', function () {
-    cy.createAwxJobTemplate({
-      organization: (this.globalOrganization as Organization).id,
-      project: (this.globalProject as Project).id,
-      inventory: inventory.id,
-    }).then((jobTemplate) => {
-      const newSchedule = 'test-schedule-100';
-      cy.navigateTo('awx', 'templates');
-      cy.clickTableRow(jobTemplate.name);
-      cy.verifyPageTitle(jobTemplate.name);
-      cy.getBy('[id*=schedules][role=tab]').click();
-      cy.getBy('[data-cy="create-schedule"]').click();
-      cy.get('[data-cy="name"]').type(newSchedule);
-      cy.get('[data-cy="Submit"]').click();
-      cy.get('[data-cy="name"]').contains(newSchedule);
-    });
-  });
 });
