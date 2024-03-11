@@ -139,12 +139,29 @@ export function CreateHost() {
   );
 }
 
+function useHostParams() : { id?: string; inventory_type?: string; host_id?: string, group_id? : string }
+{
+  const params = useParams<{ id: string; inventory_type: string; host_id: string, group_id : string }>();
+
+  let id = params.id;
+  let host_id = params.host_id;
+
+  if (!host_id)
+  {
+    // this means the form was opened from host list, which passes host_id as id, so we have to rename it
+    host_id = id;
+    id = undefined;
+  }
+
+  return { id, host_id, inventory_type : params.inventory_type, group_id : params.group_id  };
+}
+
 export function EditHost() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
   const getPageUrl = useGetPageUrl();
-  const params = useParams<{ id: string; inventory_type: string; host_id: string }>();
+  const params = useHostParams();
 
   const { host: hostResponse } = useGetHost(params.host_id ?? '');
   const inventoryResponse = useGetInventory(params.id, params.inventory_type);
