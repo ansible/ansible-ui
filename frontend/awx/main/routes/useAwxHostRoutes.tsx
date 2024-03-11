@@ -44,12 +44,12 @@ export function useAwxHostRoutes() {
               path: 'jobs',
               element: <HostJobs />,
             },
-            {
-              id: AwxRoute.EditHost,
-              path: 'edit',
-              element: <EditHost />,
-            },
           ],
+        },
+        {
+          id: AwxRoute.EditHost,
+          path: ':id/edit',
+          element: <EditHost />,
         },
         {
           id: AwxRoute.CreateHost,

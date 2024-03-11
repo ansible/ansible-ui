@@ -191,9 +191,14 @@ export function EditHost() {
 
   const onSubmit: PageFormSubmitHandler<IHostInput> = async (hostInput: IHostInput) => {
     await requestPatch<AwxHost>(awxAPI`/hosts/${params.host_id ?? ''}/`, hostInput);
-    pageNavigate(AwxRoute.InventoryHostDetails, {
-      params: { inventory_type: params.inventory_type, id: params.id, host_id: params.host_id },
-    });
+
+    if (params.inventory_host) {
+      pageNavigate(AwxRoute.InventoryHostDetails, {
+        params: { inventory_type: params.inventory_type, id: params.id, host_id: params.host_id },
+      });
+    } else {
+      pageNavigate(AwxRoute.Hosts);
+    }
   };
 
   const onCancel = () => navigate(-1);
