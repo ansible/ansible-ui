@@ -37,12 +37,8 @@ export function CreateHost() {
   const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
   const getPageUrl = useGetPageUrl();
-  const params = useParams<{
-    id: string;
-    inventory_type: string;
-    host_id: string;
-    group_id: string;
-  }>();
+  const params = useHostParams();
+
   const postRequest = usePostRequest<AwxHost>();
   const getRequest = useGetRequest<InventoryGroup>();
 
@@ -158,13 +154,17 @@ function useHostParams(): {
   let id = params.id;
   let host_id = params.host_id;
 
-  let inventory_host = true;
+  let inventory_host = false;
 
   if (!host_id) {
     // this means the form was opened from host list, which passes host_id as id, so we have to rename it
     host_id = id;
     id = undefined;
-    inventory_host = false;
+  }
+
+  if (id)
+  {
+    inventory_host = true;
   }
 
   return {
