@@ -97,15 +97,7 @@ export function InstanceDetailsTab(props: {
         </Tooltip>
       </PageDetail>
       <PageDetail label={t('Status')} data-cy="node-status">
-        <StatusCell
-          status={
-            !instance.enabled
-              ? 'disabled'
-              : instance.health_check_pending
-                ? 'running'
-                : instance.node_state
-          }
-        />
+        <StatusCell status={instance.health_check_pending ? 'running' : instance.node_state} />
       </PageDetail>
       {instanceGroups && instanceGroups.results.length > 0 && (
         <PageDetail label={t(`Instance groups`)} data-cy="instance-groups">

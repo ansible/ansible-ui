@@ -57,15 +57,7 @@ export function useInstancesColumns(options?: { disableSort?: boolean; disableLi
       {
         header: t('Status'),
         cell: (instance) => (
-          <StatusCell
-            status={
-              !instance.enabled
-                ? 'disabled'
-                : instance.health_check_pending
-                  ? 'running'
-                  : instance.node_state
-            }
-          />
+          <StatusCell status={instance.health_check_pending ? 'running' : instance.node_state} />
         ),
         sort: 'errors',
       },
