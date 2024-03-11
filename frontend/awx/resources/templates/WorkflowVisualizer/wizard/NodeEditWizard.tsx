@@ -179,7 +179,7 @@ export function NodeEditWizard({ node }: { node: GraphNode }) {
       onSubmit={handleSubmit}
       defaultValue={initialValues}
       errorAdapter={awxErrorAdapter}
-      title={t('Edit node')}
+      title={t('Edit step')}
     />
   );
 }

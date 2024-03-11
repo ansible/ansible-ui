@@ -22,7 +22,7 @@ import {
 import { FunctionComponent, useCallback } from 'react';
 import { GraphNode, GraphNodeData } from '../types';
 import { useCreateConnector } from './useCreateConnector';
-import { CONNECTOR_SOURCE_DROP, CONNECTOR_TARGET_DROP } from '../constants';
+import { CONNECTOR_SOURCE_DROP, CONNECTOR_TARGET_DROP, START_NODE_ID } from '../constants';
 import { CustomNode, NodeContextMenu } from '../components';
 import { useHandleCollectNodeProps } from './useHandleCollectNodeProps';
 
@@ -59,10 +59,21 @@ export function useCreateNodeComponent(): () => FunctionComponent<
           target: Node<NodeModel, GraphNodeData> | Graph<GraphModel, GraphModel>
         ) => {
           if (!isNode(target)) return;
+
           const nodeStatus = target.getNodeStatus();
           if (nodeStatus === NodeStatus.danger) {
             return;
           }
+
+          // If the target node is a root node
+          // Hide the edge from the start node to the target node
+          if (target.getTargetEdges().length === 1) {
+            const edge = target.getTargetEdges()[0];
+            if (edge.getSource().getId() === START_NODE_ID) {
+              edge.setVisible(false);
+            }
+          }
+
           createConnector(source, target);
         }
       )(

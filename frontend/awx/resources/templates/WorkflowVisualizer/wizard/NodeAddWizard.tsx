@@ -186,7 +186,7 @@ export function NodeAddWizard() {
       onSubmit={handleSubmit}
       defaultValue={initialValues}
       errorAdapter={awxErrorAdapter}
-      title={t('Add node')}
+      title={t('Add step')}
     />
   );
 }
