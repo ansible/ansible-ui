@@ -62,6 +62,11 @@ export function InstancePage() {
         tabs={[
           { label: t('Details'), page: AwxRoute.InstanceDetails, dataCy: 'instances-details-tab' },
           !isK8s && {
+            label: t('Listener Addresses'),
+            page: AwxRoute.InstanceListenerAddresses,
+            dataCy: 'instances-listener-addresses-tab',
+          },
+          !isK8s && {
             label: t('Peers'),
             page: AwxRoute.InstancePeers,
             dataCy: 'instances-peers-tab',

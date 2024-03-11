@@ -5,11 +5,10 @@ import { useParams } from 'react-router-dom';
 import { IPageAction, PageActionSelection, PageActionType, PageTable } from '../../../../framework';
 import { useGetItem } from '../../../common/crud/useGet';
 import { awxAPI } from '../../common/api/awx-utils';
-import { Instance } from '../../interfaces/Instance';
+import { Instance, Peer } from '../../interfaces/Instance';
 import { usePeersTabFilters } from './Instances';
 import { usePeersColumns } from './hooks/usePeersColumns';
 import { useAwxView } from '../../common/useAwxView';
-import { Peer } from '../../interfaces/Peer';
 import { useMemo } from 'react';
 import { useSelectAssociatePeers } from './hooks/useSelectAssociatePeers';
 import { useDisassociatePeer } from './hooks/useDisassociatePeer';
@@ -30,7 +29,7 @@ export function ResourcePeersList(props: { url: string }) {
   const { t } = useTranslation();
   const { url } = props;
   const toolbarFilters = usePeersTabFilters();
-  const columns = usePeersColumns(undefined);
+  const columns = usePeersColumns();
   const tableColumns = useMemo(
     () =>
       columns.filter((item) =>
