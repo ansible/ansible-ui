@@ -23,12 +23,18 @@ import { AwxRoute } from '../../../main/AwxRoutes';
 import { useGetHost } from '../../hosts/hooks/useGetHost';
 import { useGetInventory } from '../InventoryPage/InventoryPage';
 import { ICatalogBreadcrumb } from '../../../../../framework';
+import { PageFormAsyncSingleSelect } from '../../../../../framework/PageForm/Inputs/PageFormAsyncSingleSelect';
+import { requestGet } from '../../../../common/crud/Data';
+import { useCallback } from 'react';
+import { Inventory } from '../../../interfaces/Inventory';
+import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
+import { PageAsyncSingleSelectOptionsFn } from '../../../../../framework/PageInputs/PageAsyncSingleSelect';
 
 export interface IHostInput {
   name: string;
   description?: string;
   variables?: string;
-  inventory_name?: string;
+  inventory?: { name?: string; id?: number };
 }
 
 export function CreateHost() {
@@ -58,25 +64,30 @@ export function CreateHost() {
   }, [getRequest, params?.group_id]);
 
   const onSubmit: PageFormSubmitHandler<IHostInput> = async (hostInput: IHostInput) => {
-    const modifiedHostInput = { ...hostInput, inventory: Number(params.id) };
+    const inventory_id = params.id || hostInput.inventory?.id;
+
+    const modifiedHostInput = { ...hostInput, inventory: Number(inventory_id) };
     const newHost = params?.group_id
       ? await postRequest(awxAPI`/groups/${params.group_id}/hosts/`, modifiedHostInput as AwxHost)
       : await postRequest(awxAPI`/hosts/`, modifiedHostInput as AwxHost);
-    pageNavigate(AwxRoute.InventoryHostDetails, {
-      params: { inventory_type: params.inventory_type, id: params.id, host_id: newHost.id },
-    });
+
+    if (params.inventory_host) {
+      pageNavigate(AwxRoute.InventoryHostDetails, {
+        params: { inventory_type: params.inventory_type, id: inventory_id, host_id: newHost.id },
+      });
+    } else {
+      pageNavigate(AwxRoute.Hosts);
+    }
   };
 
   const onCancel = () => navigate(-1);
 
   const inventoryResponse = useGetInventory(params.id, params.inventory_type);
 
+  let breadcrumbs: ICatalogBreadcrumb[] = [];
 
-  let breadcrumbs : ICatalogBreadcrumb[] = [];
-
-  if (params.inventory_host)
-  {
-    breadcrumbs =  [
+  if (params.inventory_host) {
+    breadcrumbs = [
       { label: t('Inventories'), to: getPageUrl(AwxRoute.Inventories) },
       {
         label: t(`${inventoryResponse?.name}`),
@@ -120,8 +131,7 @@ export function CreateHost() {
         : {},
       { label: t('Add') },
     ];
-  }else
-  {
+  } else {
     breadcrumbs = [
       {
         label: t('Hosts'),
@@ -133,10 +143,7 @@ export function CreateHost() {
 
   return (
     <PageLayout>
-      <PageHeader
-        breadcrumbs={breadcrumbs}
-        title={t('Create Host')}
-      />
+      <PageHeader breadcrumbs={breadcrumbs} title={t('Create Host')} />
       <AwxPageForm
         submitText={t('Create host')}
         onSubmit={onSubmit}
@@ -148,13 +155,13 @@ export function CreateHost() {
           variables: '---\n',
         }}
       >
-        <HostInputs />
+        <HostInputs edit_mode={false} inventory_host={params.inventory_host} />
       </AwxPageForm>
     </PageLayout>
   );
 }
 
-function useHostParams(mode : 'edit' | 'create'): {
+function useHostParams(mode: 'edit' | 'create'): {
   id?: string;
   inventory_type?: string;
   host_id?: string;
@@ -173,14 +180,13 @@ function useHostParams(mode : 'edit' | 'create'): {
 
   let inventory_host = false;
 
-  if (!host_id && mode == 'edit') {
+  if (!host_id && mode === 'edit') {
     // this means the form was opened from host list, which passes host_id as id, so we have to rename it
     host_id = id;
     id = undefined;
   }
 
-  if (id)
-  {
+  if (id) {
     inventory_host = true;
   }
 
@@ -232,7 +238,7 @@ export function EditHost() {
     name: host.name,
     description: host.description,
     variables: host.variables,
-    inventory_name: host.summary_fields?.inventory.name,
+    inventory: { name: host.summary_fields?.inventory.name },
   };
 
   let breadcrumbs: ICatalogBreadcrumb[] = [];
@@ -296,6 +302,24 @@ export function EditHost() {
 
 function HostInputs(props: { edit_mode?: boolean; inventory_host?: boolean }) {
   const { t } = useTranslation();
+
+  const queryOptions = useCallback<PageAsyncSingleSelectOptionsFn<number>>(
+    async (page: number, signal: AbortSignal) => {
+      const response = await requestGet<AwxItemsResponse<Inventory>>(awxAPI`/inventories/`);
+
+      return Promise.resolve({
+        total: response.count,
+        options:
+          response.results?.map((resource) => ({
+            label: resource.name,
+            value: resource.id as number,
+            description: resource.description,
+          })) ?? [],
+      });
+    },
+    []
+  );
+
   return (
     <>
       <PageFormTextInput<IHostInput>
@@ -312,9 +336,17 @@ function HostInputs(props: { edit_mode?: boolean; inventory_host?: boolean }) {
       />
       {!props.inventory_host && props.edit_mode && (
         <PageFormTextInput<IHostInput>
-          name="inventory_name"
+          name="inventory.name"
           label={t('Inventory')}
           isDisabled={true}
+        />
+      )}
+      {!props.inventory_host && !props.edit_mode && (
+        <PageFormAsyncSingleSelect
+          name="inventory.id"
+          label={t('Inventory')}
+          placeholder={t('Select Inventory')}
+          queryOptions={queryOptions}
         />
       )}
       <PageFormSection singleColumn>
