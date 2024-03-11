@@ -69,7 +69,7 @@ Cypress.Commands.add('removeAllNodesFromVisualizerToolbar', () => {
   cy.get('[data-cy="workflow-visualizer-toolbar-kebab"]').click();
   cy.get('[data-cy="workflow-visualizer-toolbar-remove-all"]').click();
   cy.clickModalConfirmCheckbox();
-  cy.clickModalButton('Remove all nodes');
+  cy.clickModalButton('Remove all steps');
   cy.assertModalSuccess();
   cy.clickModalButton('Close');
 });
