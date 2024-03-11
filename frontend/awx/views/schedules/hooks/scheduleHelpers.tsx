@@ -22,7 +22,7 @@ import { InventorySource } from '../../../interfaces/InventorySource';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
 import { LaunchConfiguration } from '../../../interfaces/LaunchConfiguration';
 import { Project } from '../../../interfaces/Project';
-import { ScheduleFormFields } from '../../../interfaces/ScheduleFormFields';
+import { ScheduleFormWizard } from '../types';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { PageFormInventorySelect } from '../../../resources/inventories/components/PageFormInventorySelect';
@@ -179,11 +179,11 @@ export function useGetPromptOnLaunchFields(
         break;
       case 'ask_execution_environment_on_launch':
         fields.push(
-          <PageFormExecutionEnvironmentSelect<ScheduleFormFields>
+          <PageFormExecutionEnvironmentSelect<ScheduleFormWizard>
             key={`${fieldName}`}
             executionEnvironmentIdPath="execution_environment.id"
             organizationId={organizationId}
-            name="execution_environment.name"
+            name="prompt.execution_environment.name"
           />
         );
         break;
@@ -283,13 +283,13 @@ export function useGetPromptOnLaunchFields(
         break;
       case 'ask_tags_on_launch':
         fields.push(
-          <PageFormCreatableSelect<ScheduleFormFields>
+          <PageFormCreatableSelect<ScheduleFormWizard>
             key={`${fieldName}`}
             labelHelpTitle={t('Job tags')}
             labelHelp={t(
               'Tags are useful when you have a large playbook, and you want to run a specific part of a play or task. Use commas to separate multiple tags. Refer to the documentation for details on the usage of tags.'
             )}
-            name="arrayedJobTags"
+            name="prompt.job_tags"
             placeholderText={t('Select or create job tags')}
             label={t('Job tags')}
             options={arrayedJobTags}
@@ -298,13 +298,13 @@ export function useGetPromptOnLaunchFields(
         break;
       case 'ask_skip_tags_on_launch':
         fields.push(
-          <PageFormCreatableSelect<ScheduleFormFields>
+          <PageFormCreatableSelect<ScheduleFormWizard>
             key={`${fieldName}`}
             labelHelpTitle={t('Skip tags')}
             labelHelp={t(
               'Skip tags are useful when you have a large playbook, and you want to skip specific parts of a play or task. Use commas to separate multiple tags. Refer to the documentation for details on the usage of tags.'
             )}
-            name="arrayedSkipTags"
+            name="prompt.skip_tags"
             placeholderText={t('Select or create skip tags')}
             label={t('Skip tags')}
             options={arrayedSkipTags}
@@ -359,7 +359,7 @@ export function useGetPromptOnLaunchFields(
   return fields;
 }
 
-export function buildScheduleContainer(values: ScheduleFormFields) {
+export function buildScheduleContainer(values: ScheduleFormWizard) {
   const set = new RRuleSet();
 
   const startRule = buildDateTimeObj({

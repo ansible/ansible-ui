@@ -14,7 +14,7 @@ import { InventorySource } from '../../../interfaces/InventorySource';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
 import { LaunchConfiguration } from '../../../interfaces/LaunchConfiguration';
 import { Project } from '../../../interfaces/Project';
-import { ScheduleFormFields } from '../../../interfaces/ScheduleFormFields';
+import { ScheduleFormWizard } from '../types';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 import { PageFormInventorySelect } from '../../../resources/inventories/components/PageFormInventorySelect';
 import { PageFormInventorySourceSelect } from '../../../resources/inventories/components/PageFormInventorySourceSelect';
@@ -175,7 +175,7 @@ export function ScheduleInputs(props: {
     <>
       {pathname.split('/')[2] === 'schedules' ? (
         <>
-          <PageFormSelect<ScheduleFormFields>
+          <PageFormSelect<ScheduleFormWizard>
             isRequired={!params['*']?.startsWith('schedules')}
             labelHelpTitle={t('Resource type')}
             labelHelp={t('Select a resource type onto which this schedule will be applied.')}
@@ -224,11 +224,11 @@ export function ScheduleInputs(props: {
         <>
           <PageFormTextInput name={'name'} isRequired label={t('Schedule Name')} />
           <PageFormTextInput name={'description'} label={t('Description')} />
-          <PageFormDateTimePicker<ScheduleFormFields>
+          <PageFormDateTimePicker<ScheduleFormWizard>
             label={t('Start date/time')}
             name={'startDateTime'}
           />
-          <PageFormSelect<ScheduleFormFields>
+          <PageFormSelect<ScheduleFormWizard>
             name="timezone"
             placeholderText={t('Select time zone')}
             label={t('Time zone')}
