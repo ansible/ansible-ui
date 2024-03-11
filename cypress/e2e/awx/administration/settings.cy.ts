@@ -53,6 +53,7 @@ describe('AWX Settings', () => {
     cy.wait('@patchSettings').its('response.statusCode').should('eq', 200);
 
     cy.navigateTo('awx', 'settings-jobs');
+    cy.get('[data-cy=AWX_ROLES_ENABLED]').scrollIntoView().should('be.visible');
     cy.getByDataCy('AWX_ROLES_ENABLED').should('not.be.checked');
 
     cy.requestPatch(awxAPI`/settings/all/`, { AWX_ROLES_ENABLED: true });
