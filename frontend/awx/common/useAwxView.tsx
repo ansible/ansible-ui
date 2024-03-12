@@ -118,7 +118,6 @@ export function useAwxView<T extends { id: number }>(options: {
 
   url += queryString;
   const fetcher = useFetcher();
-
   const response = useSWR<AwxItemsResponse<T>>(url, fetcher, swrOptions);
   const { data, mutate } = response;
   const refresh = useCallback(async () => {
