@@ -1,4 +1,4 @@
-import { useDynamicToolbarFilters } from '../../../access/common/useDynamicFilters';
+import { useDynamicToolbarFilters } from '../../../common/useDynamicFilters';
 import { UnifiedJob } from '../../../interfaces/UnifiedJob';
 
 export function useJobsFilters() {
