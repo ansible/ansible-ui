@@ -55,66 +55,6 @@ export function useCollectionActions(
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
-        icon: UploadIcon,
-        variant: ButtonVariant.secondary,
-        isPinned: true,
-        label: t('Upload new version'),
-        onClick: () => pageNavigate(HubRoute.UploadCollection),
-      },
-      { type: PageActionType.Seperator },
-      {
-        type: PageActionType.Button,
-        selection: PageActionSelection.Single,
-        icon: TrashIcon,
-        label: t('Delete entire collection from system'),
-        onClick: (collection) => deleteCollections([collection]),
-        isDanger: true,
-        isDisabled: context.hasPermission('ansible.delete_collection')
-          ? ''
-          : t('You do not have rights to this operation'),
-      },
-      {
-        type: PageActionType.Button,
-        selection: PageActionSelection.Single,
-        icon: TrashIcon,
-        label: t('Delete entire collection from repository'),
-        onClick: (collection) => deleteCollectionsFromRepository([collection]),
-        isDanger: true,
-        isDisabled: context.hasPermission('ansible.delete_collection')
-          ? ''
-          : t('You do not have rights to this operation'),
-      },
-      {
-        type: PageActionType.Button,
-        selection: PageActionSelection.Single,
-        icon: TrashIcon,
-        label: t('Delete version from system'),
-        isDanger: true,
-        onClick: (collection) => {
-          deleteCollectionsVersions([collection]);
-        },
-        isHidden: () => (detail ? false : true),
-        isDisabled: context.hasPermission('ansible.delete_collection')
-          ? ''
-          : t('You do not have rights to this operation'),
-      },
-      {
-        type: PageActionType.Button,
-        selection: PageActionSelection.Single,
-        icon: TrashIcon,
-        label: t('Delete version from repository'),
-        isDanger: true,
-        onClick: (collection) => {
-          deleteCollectionsVersionsFromRepository([collection]);
-        },
-        isHidden: () => (detail ? false : true),
-        isDisabled: context.hasPermission('ansible.delete_collection')
-          ? ''
-          : t('You do not have rights to this operation'),
-      },
-      {
-        type: PageActionType.Button,
-        selection: PageActionSelection.Single,
         icon: KeyIcon,
         label: t('Sign collection'),
         onClick: (collection) => {
@@ -158,6 +98,66 @@ export function useCollectionActions(
         isDisabled: context.featureFlags.display_repositories
           ? ''
           : t`You dont have rights to this operation`,
+      },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        icon: UploadIcon,
+        variant: ButtonVariant.secondary,
+        isPinned: true,
+        label: t('Upload new version'),
+        onClick: () => pageNavigate(HubRoute.UploadCollection),
+      },
+      { type: PageActionType.Seperator },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        icon: TrashIcon,
+        label: t('Delete version from system'),
+        isDanger: true,
+        onClick: (collection) => {
+          deleteCollectionsVersions([collection]);
+        },
+        isHidden: () => (detail ? false : true),
+        isDisabled: context.hasPermission('ansible.delete_collection')
+          ? ''
+          : t('You do not have rights to this operation'),
+      },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        icon: TrashIcon,
+        label: t('Delete version from repository'),
+        isDanger: true,
+        onClick: (collection) => {
+          deleteCollectionsVersionsFromRepository([collection]);
+        },
+        isHidden: () => (detail ? false : true),
+        isDisabled: context.hasPermission('ansible.delete_collection')
+          ? ''
+          : t('You do not have rights to this operation'),
+      },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        icon: TrashIcon,
+        label: t('Delete entire collection from repository'),
+        onClick: (collection) => deleteCollectionsFromRepository([collection]),
+        isDanger: true,
+        isDisabled: context.hasPermission('ansible.delete_collection')
+          ? ''
+          : t('You do not have rights to this operation'),
+      },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        icon: TrashIcon,
+        label: t('Delete entire collection from system'),
+        onClick: (collection) => deleteCollections([collection]),
+        isDanger: true,
+        isDisabled: context.hasPermission('ansible.delete_collection')
+          ? ''
+          : t('You do not have rights to this operation'),
       },
     ],
     [

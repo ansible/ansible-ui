@@ -59,6 +59,7 @@ export function useExecutionEnvironmentActions(callback?: (ees: ExecutionEnviron
             ? ''
             : t`You do not have rights to this operation`,
       },
+      { type: PageActionType.Seperator },
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
