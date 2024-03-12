@@ -6,6 +6,10 @@ import { HostPage } from '../../resources/hosts/HostPage/HostPage';
 import { Hosts } from '../../resources/hosts/Hosts';
 import { AwxRoute } from '../AwxRoutes';
 import { HostJobs } from '../../resources/hosts/HostPage/HostJobs';
+import {
+  CreateHost,
+  EditHost,
+} from '../../resources/inventories/inventoryHostsPage/InventoryHostForm';
 
 export function useAwxHostRoutes() {
   const { t } = useTranslation();
@@ -41,6 +45,16 @@ export function useAwxHostRoutes() {
               element: <HostJobs />,
             },
           ],
+        },
+        {
+          id: AwxRoute.EditHost,
+          path: ':id/edit',
+          element: <EditHost />,
+        },
+        {
+          id: AwxRoute.CreateHost,
+          path: 'create',
+          element: <CreateHost />,
         },
         {
           path: '',

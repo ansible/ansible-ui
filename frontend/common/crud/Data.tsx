@@ -91,7 +91,7 @@ export function usePostFetcher() {
 }
 
 export function getItemKey(item: { id: number | string }) {
-  return item.id.toString();
+  return item?.id.toString();
 }
 
 export const swrOptions: SWRConfiguration = {
