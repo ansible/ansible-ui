@@ -242,7 +242,7 @@ export function EditHost() {
     name: host.name,
     description: host.description,
     variables: host.variables,
-    inventory: { name: host.summary_fields?.inventory.name },
+    inventory: { name: host.summary_fields?.inventory?.name },
   };
 
   let breadcrumbs: ICatalogBreadcrumb[] = [];
@@ -251,7 +251,7 @@ export function EditHost() {
     breadcrumbs = [
       { label: t('Inventories'), to: getPageUrl(AwxRoute.Inventories) },
       {
-        label: t(`${hostResponse?.summary_fields?.inventory.name}`),
+        label: t(`${hostResponse?.summary_fields?.inventory?.name}`),
         to: getPageUrl(AwxRoute.InventoryDetails, {
           params: { id: params.id, inventory_type: params.inventory_type },
         }),
@@ -315,8 +315,8 @@ function HostInputs(props: { edit_mode?: boolean; inventory_host?: boolean }) {
       total: response.count,
       options:
         response.results?.map((resource) => ({
-          label: resource.name,
-          value: resource.id,
+          label: resource?.name,
+          value: resource?.id,
           description: resource.description,
         })) ?? [],
     });
