@@ -3,7 +3,7 @@ import { DateTime } from 'luxon';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { useSettings } from '../Settings';
+import { usePageSettings } from '../PageSettings/PageSettingsProvider';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
 import { formatDateString } from '../utils/formatDateString';
 
@@ -30,7 +30,7 @@ export function DateTimeCell(props: {
   const [translations] = useFrameworkTranslations();
   const { author, onClick } = props;
   const [dateTime, setDateTime] = useState<string | null>(null);
-  const settings = useSettings();
+  const settings = usePageSettings();
   const format = settings.dateFormat ? settings.dateFormat : 'date-time';
 
   const updateTime = useCallback(

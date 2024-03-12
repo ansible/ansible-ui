@@ -3,7 +3,7 @@ import * as monaco from 'monaco-editor';
 import { configureMonacoYaml } from 'monaco-yaml';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
-import { useSettings } from '../Settings';
+import { usePageSettings } from '../PageSettings/PageSettingsProvider';
 import { useID } from '../hooks/useID';
 import './DataEditor.css';
 
@@ -128,7 +128,7 @@ export function DataEditor(props: {
   });
 
   // Update editor theme when settings change
-  const settings = useSettings();
+  const settings = usePageSettings();
   useEffect(() => {
     const editor = editorRef?.current?.editor;
     if (!editor) return;

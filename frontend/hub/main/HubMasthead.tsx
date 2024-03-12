@@ -7,7 +7,6 @@ import { useNavigate } from 'react-router-dom';
 import { PageMasthead, useGetPageUrl } from '../../../framework';
 import { PageMastheadDropdown } from '../../../framework/PageMasthead/PageMastheadDropdown';
 import { PageNotificationsIcon } from '../../../framework/PageMasthead/PageNotificationsIcon';
-import { PageSettingsIcon } from '../../../framework/PageMasthead/PageSettingsIcon';
 import { PageThemeSwitcher } from '../../../framework/PageMasthead/PageThemeSwitcher';
 import { usePageNotifications } from '../../../framework/PageNotifications/PageNotificationsProvider';
 import { useAnsibleAboutModal } from '../../common/AboutModal';
@@ -42,9 +41,6 @@ export function HubMasthead() {
         </ToolbarItem>
         <ToolbarItem>
           <PageThemeSwitcher />
-        </ToolbarItem>
-        <ToolbarItem>
-          <PageSettingsIcon />
         </ToolbarItem>
         <ToolbarItem>
           <PageNotificationsIcon />

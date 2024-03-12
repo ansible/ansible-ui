@@ -1,17 +1,23 @@
 import { Icon } from '@patternfly/react-core';
-import { AngleRightIcon } from '@patternfly/react-icons';
+import { AngleDownIcon } from '@patternfly/react-icons';
 import { t } from 'i18next';
 
 export function ExpandIcon(props: {
   isExpanded: boolean;
   setExpanded: (expanded: boolean) => void;
+  direction?: 'left' | 'right';
+  size?: 'sm' | 'md' | 'lg';
 }) {
   return (
-    <Icon size="md">
-      <AngleRightIcon
+    <Icon size={props.size ?? 'md'}>
+      <AngleDownIcon
         data-cy="expandable"
         style={{
-          transform: props.isExpanded ? 'rotate(90deg)' : 'rotate(0deg)',
+          transform: props.isExpanded
+            ? 'rotate(0deg)'
+            : props.direction === 'left'
+              ? 'rotate(90deg)'
+              : 'rotate(-90deg)',
           transition: 'transform 0.2s',
           alignSelf: 'center',
         }}

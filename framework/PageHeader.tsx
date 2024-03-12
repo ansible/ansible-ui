@@ -140,7 +140,7 @@ export function PageHeader(props: PageHeaderProps) {
             {title ? (
               props.titleHelp ? (
                 <Popover
-                  headerContent={props.titleHelpTitle}
+                  headerContent={props.titleHelpTitle ?? props.title}
                   bodyContent={
                     <Stack hasGutter>
                       {typeof props.titleHelp === 'string' ? (

@@ -1,5 +1,6 @@
 import { FormSection, GridItem } from '@patternfly/react-core';
-import { ReactNode, useMemo } from 'react';
+import { ReactNode, useMemo, useState } from 'react';
+import { ExpandIcon } from '../../components/icons/ExpandIcon';
 import { PageFormGrid } from '../PageForm';
 
 /**
@@ -18,7 +19,11 @@ export function PageFormSection(props: {
   children: ReactNode;
   singleColumn?: boolean;
   isHorizontal?: boolean;
+  canCollapse?: boolean;
+  defaultCollapsed?: boolean;
 }) {
+  const [isCollapsed, setIsCollapsed] = useState(props.defaultCollapsed);
+
   const sectionClassNames = useMemo(
     () =>
       props.isHorizontal
@@ -39,11 +44,28 @@ export function PageFormSection(props: {
   }
   return (
     <FormSection
-      title={props.title}
+      title={
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          {props.canCollapse && (
+            <ExpandIcon
+              isExpanded={!isCollapsed}
+              setExpanded={() => setIsCollapsed(!isCollapsed)}
+              // direction="left"
+              size="lg"
+            />
+          )}
+          {props.title}
+        </div>
+      }
       style={{ marginTop: 16 }}
       className={sectionClassNames.join(' ')}
     >
-      <PageFormGrid singleColumn={props.singleColumn}>{props.children}</PageFormGrid>
+      <PageFormGrid
+        singleColumn={props.singleColumn}
+        className={isCollapsed ? 'pf-v5-u-display-none' : undefined}
+      >
+        {props.children}
+      </PageFormGrid>
     </FormSection>
   );
 }
