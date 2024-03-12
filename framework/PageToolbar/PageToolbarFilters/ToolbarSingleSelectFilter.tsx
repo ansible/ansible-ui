@@ -7,4 +7,5 @@ export interface IToolbarSingleSelectFilter extends ToolbarFilterCommon {
   options: PageSelectOption<string>[];
   isRequired?: boolean;
   placeholder: string;
+  disableSortOptions?: boolean;
 }

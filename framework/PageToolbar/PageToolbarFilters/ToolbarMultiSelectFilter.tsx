@@ -6,4 +6,5 @@ export interface IToolbarMultiSelectFilter extends ToolbarFilterCommon {
   type: ToolbarFilterType.MultiSelect;
   options: PageSelectOption<string>[];
   placeholder: string;
+  disableSortOptions?: boolean;
 }

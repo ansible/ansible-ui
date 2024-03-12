@@ -21,6 +21,13 @@ interface IToolbarDateFilterOption {
   isCustom?: boolean;
 }
 
+export enum DateRangeFilterPresets {
+  LastHour = 'lastHour',
+  Last24Hours = 'last24hours',
+  LastWeek = 'last7days',
+  LastMonth = 'last30days',
+}
+
 export interface IToolbarDateRangeFilterProps {
   id?: string;
   label?: string;
@@ -79,6 +86,7 @@ export function ToolbarDateRangeFilter(props: IToolbarDateRangeFilterProps) {
         onSelect={onSelectChange}
         options={props.options}
         placeholder={placeholder}
+        disableSortOptions
       />
       {selectedOption && selectedOption.isCustom && (
         <DateRange to={to} setTo={setTo} from={from} setFrom={setFrom} />
