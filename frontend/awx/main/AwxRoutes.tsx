@@ -194,6 +194,7 @@ export enum AwxRoute {
   ManagementJobScheduleDetails = 'awx-management-job-schedule-details',
   ManagementJobScheduleRules = 'awx-management-job-schedule-rules',
   ManagementJobEditSchedule = 'awx-management-job-edit-schedule',
+  ManagementJobScheduleCreate = 'awx-management-job-schedule-create',
 
   CreateInstanceGroup = 'awx-create-instance-group',
   EditInstanceGroup = 'awx-edit-instance-group',
