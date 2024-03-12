@@ -8,7 +8,7 @@ describe('Instances - Add/Edit', () => {
   beforeEach(() => {
     cy.awxLogin();
     cy.navigateTo('awx', 'instances');
-    cy.createAwxInstance('E2EInstanceTest' + randomString(5)).then((ins: Instance) => {
+    cy.createAwxInstance('E2EInstanceTestAddEdit' + randomString(5)).then((ins: Instance) => {
       instance = ins;
     });
   });
@@ -22,28 +22,27 @@ describe('Instances - Add/Edit', () => {
   });
 
   it('user can add a new instance and navigate to the details page', () => {
-    const instanceHostname = 'E2EInstanceTestAdd' + randomString(5);
+    const instanceHostname = 'E2EInstanceTestAddEdit' + randomString(5);
 
-    cy.get('[data-cy="add-instance"]').click();
-    cy.get('[data-cy="page-title"]').should('contain', 'Add instance');
+    cy.getByDataCy('add-instance').click();
+    cy.getByDataCy('page-title').should('contain', 'Add instance');
 
-    cy.get('[data-cy="hostname"]').type(instanceHostname);
-    cy.get('[data-cy="listener-port"]').type('9999');
-    cy.get('[data-cy="enabled"]').click();
-    cy.get('[data-cy="managed_by_policy"]').click();
-    cy.get('[data-cy="peers_from_control_nodes"]').click();
+    cy.getByDataCy('hostname').type(instanceHostname);
+    cy.getByDataCy('listener-port').type('9999');
+    cy.getByDataCy('managed_by_policy').click();
+    cy.getByDataCy('peers_from_control_nodes').click();
 
     cy.intercept('POST', awxAPI`/instances/`).as('newInstance');
-    cy.get('[data-cy="Submit"]').click();
+    cy.getByDataCy('Submit').click();
     cy.wait('@newInstance')
       .its('response.body')
       .then((instance: Instance) => {
         cy.navigateTo('awx', 'instances');
         cy.clickTableRow(instanceHostname);
-        cy.get('[data-cy="name"]').should('contain', instanceHostname);
-        cy.get('[data-cy="node-type"]').should('contain', 'Execution');
-        cy.get('[data-cy="status"]').should('contain', 'Installed');
-        cy.get('[data-cy="listener-port"]').should('contain', '9999');
+        cy.getByDataCy('name').should('contain', instanceHostname);
+        cy.getByDataCy('node-type').should('contain', 'Execution');
+        cy.getByDataCy('status').should('contain', 'Installed');
+        cy.getByDataCy('listener-port').should('contain', '9999');
         cy.removeAwxInstance(instance.id.toString(), { failOnStatusCode: false });
       });
   });
@@ -55,11 +54,11 @@ describe('Instances - Add/Edit', () => {
     cy.url().then((currentUrl) => {
       expect(currentUrl.includes('details')).to.be.true;
     });
-    cy.get('[data-cy="edit-instance"]').click();
-    cy.get('[data-cy="listener-port"]').type('9999');
-    cy.get('[data-cy="enabled"]').check();
-    cy.get('[data-cy="managed_by_policy"]').check();
-    cy.get('[data-cy="peers_from_control_nodes"]').check();
+    cy.getByDataCy('edit-instance').click();
+    cy.getByDataCy('listener-port').type('9999');
+    cy.getByDataCy('enabled').check();
+    cy.getByDataCy('managed_by_policy').check();
+    cy.getByDataCy('peers_from_control_nodes').check();
 
     cy.clickButton(/^Save$/);
     cy.wait('@editedInstance')
@@ -100,11 +99,11 @@ describe('Instances - Remove', () => {
       expect(currentUrl.includes('details')).to.be.true;
     });
 
-    cy.get('[data-cy="remove-instance"]').click();
+    cy.getByDataCy('remove-instance').click();
     cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
       cy.get('header').contains('Permanently remove instances');
       cy.get('button').contains('Remove instance').should('have.attr', 'aria-disabled', 'true');
-      cy.get('[data-cy="name-column-cell"]').should('have.text', instance.hostname);
+      cy.getByDataCy('name-column-cell').should('have.text', instance.hostname);
       cy.get('input[id="confirm"]').click();
       cy.get('button').contains('Remove instance').click();
     });
@@ -127,7 +126,7 @@ describe('Instances - Remove', () => {
     cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
       cy.get('header').contains('Permanently remove instances');
       cy.get('button').contains('Remove instance').should('have.attr', 'aria-disabled', 'true');
-      cy.get('[data-cy="name-column-cell"]').should('have.text', instance.hostname);
+      cy.getByDataCy('name-column-cell').should('have.text', instance.hostname);
       cy.get('input[id="confirm"]').click();
       cy.get('button').contains('Remove instance').click();
     });
@@ -194,11 +193,11 @@ describe('Instances - Peers', () => {
 
     cy.intercept('PATCH', '/api/v2/instances/*').as('associatePeer');
     cy.clickTableRow(instance.hostname);
-    cy.get('[data-cy="instances-peers-tab"]').click();
+    cy.getByDataCy('instances-peers-tab').click();
     cy.url().then((currentUrl) => {
       expect(currentUrl.includes('peers')).to.be.true;
     });
-    cy.get('[data-cy="associate-peer"]').click();
+    cy.getByDataCy('associate-peer').click();
     cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
       cy.get('header').contains('Select peer addresses');
       cy.get('button').contains('Associate peer(s)').should('have.attr', 'aria-disabled', 'true');
@@ -213,12 +212,12 @@ describe('Instances - Peers', () => {
       .then((response) => {
         expect(response?.statusCode).to.eql(200);
         cy.filterTableBySingleText(instanceToAssociate.hostname, true);
-        cy.get('[data-cy="instance-name-column-cell"]').click();
+        cy.getByDataCy('instance-name-column-cell').click();
       });
     cy.url().then((currentUrl) => {
       expect(currentUrl.includes('details')).to.be.true;
     });
-    cy.get('[data-cy="instances-details-tab"]').should('be.visible');
+    cy.getByDataCy('instances-details-tab').should('be.visible');
   });
 });
 
@@ -239,7 +238,7 @@ describe('Instances - Listener Addresses', () => {
 
   it('user can navigate to the listener addresses tab in details page', () => {
     cy.clickTableRow(instance?.hostname);
-    cy.get('[data-cy="instances-listener-addresses-tab"]').click();
+    cy.getByDataCy('instances-listener-addresses-tab').click();
     cy.url().then((currentUrl) => {
       expect(currentUrl.includes('listener-addresses')).to.be.true;
     });
