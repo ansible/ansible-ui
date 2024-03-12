@@ -99,6 +99,7 @@ describe('Instances - Remove', () => {
       expect(currentUrl.includes('details')).to.be.true;
     });
 
+    cy.getByDataCy('actions-dropdown').click();
     cy.getByDataCy('remove-instance').click();
     cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
       cy.get('header').contains('Permanently remove instances');
