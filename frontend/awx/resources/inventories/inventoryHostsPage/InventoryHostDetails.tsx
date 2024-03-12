@@ -60,7 +60,8 @@ export function InventoryHostDetailsInner(props: { host: AwxHost }) {
       <PageDetail label={t('Activity')}>
         <Sparkline jobs={recentPlaybookJobs} />
       </PageDetail>
-      <PageDetail label={t('Inventory')}>
+      <PageDetail label={t('Description')}>{host.description}</PageDetail>
+      <PageDetail label={t('Inventory')} helpText={t(`The inventory that this host belongs to.`)}>
         <TextCell
           text={host.summary_fields?.inventory?.name}
           to={getPageUrl(AwxRoute.InventoryDetails, {
