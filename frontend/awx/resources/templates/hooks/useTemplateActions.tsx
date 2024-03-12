@@ -79,6 +79,19 @@ export function useTemplateActions({
         isDanger: false,
         isPinned: true,
       },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        icon: CopyIcon,
+        label: t('Copy template'),
+        onClick: (template: Template) => copyTemplate(template),
+        isDisabled: (template: Template) =>
+          !template?.summary_fields.user_capabilities.copy
+            ? t('You do not have permission to copy this template')
+            : undefined,
+        ouiaId: 'job-template-detail-copy-button',
+        isDanger: false,
+      },
       { type: PageActionType.Seperator },
       {
         type: PageActionType.Button,
@@ -95,20 +108,6 @@ export function useTemplateActions({
         },
         ouiaId: 'job-template-detail-delete-button',
         isDanger: true,
-      },
-      {
-        type: PageActionType.Button,
-        selection: PageActionSelection.Single,
-        icon: CopyIcon,
-        label: t('Copy template'),
-        onClick: (template: Template) => copyTemplate(template),
-        isDisabled: (template: Template) =>
-          !template?.summary_fields.user_capabilities.copy
-            ? t('You do not have permission to copy this template')
-            : undefined,
-        ouiaId: 'job-template-detail-copy-button',
-        isDanger: false,
-        isPinned: true,
       },
     ];
     return itemActions;
