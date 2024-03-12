@@ -118,9 +118,11 @@ describe('Instances - Remove', () => {
 
   it('user can remove an instance from instance page toolbar', () => {
     cy.intercept('PATCH', '/api/v2/instances/*').as('removedInstance');
+    cy.get('[data-cy="actions-dropdown"]').click();
     cy.get('[data-cy="remove-instance"]').should('have.attr', 'aria-disabled', 'true');
     cy.filterTableByText(instance.hostname);
     cy.contains('tr', instance.hostname).find('input').check();
+    cy.get('[data-cy="actions-dropdown"]').click();
     cy.get('[data-cy="remove-instance"]').should('have.attr', 'aria-disabled', 'false');
     cy.get('[data-cy="remove-instance"]').click();
 
@@ -145,10 +147,12 @@ describe('Instances - Remove', () => {
       cy.createAwxInstance(instanceName);
     }
     cy.intercept('PATCH', '/api/v2/instances/*').as('removedInstance');
+    cy.get('[data-cy="actions-dropdown"]').click();
     cy.get('[data-cy="remove-instance"]').should('have.attr', 'aria-disabled', 'true');
     cy.filterTableByText(testSignature);
     cy.get('tbody').find('tr').should('have.length', 5);
     cy.get('[data-cy="select-all"]', { timeout: 30000 }).click();
+    cy.get('[data-cy="actions-dropdown"]').click();
     cy.get('[data-cy="remove-instance"]').should('have.attr', 'aria-disabled', 'false');
     cy.get('[data-cy="remove-instance"]').click();
 
