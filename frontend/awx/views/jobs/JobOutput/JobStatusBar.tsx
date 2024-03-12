@@ -85,7 +85,7 @@ export function JobStatusBar(props: { job: Job }) {
       </SplitItem>
       <SplitItem>
         <Flex>
-          <PageActionButton iconOnly action={viewWFVisAction} />
+          {job.type === 'workflow_job' && <PageActionButton iconOnly action={viewWFVisAction} />}
           <Count label={t('Plays')} count={playCount} />
           <Count label={t('Tasks')} count={taskCount} />
           <Count label={t('Hosts')} count={totalHostCount} />
