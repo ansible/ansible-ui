@@ -59,6 +59,8 @@ export interface PageSingleSelectProps<ValueT> {
 
   /** Disables the toggle to open and close the menu */
   isDisabled?: boolean;
+
+  disableSortOptions?: boolean;
 }
 
 /**
@@ -170,14 +172,16 @@ export function PageSingleSelect<
     }
   }, [onSelect, options, props.isRequired, selectedOption]);
 
-  const visibleOptions = useMemo(
-    () =>
-      options.filter((option) => {
-        if (searchValue === '') return true;
-        else return option.label.toLowerCase().includes(searchValue.toLowerCase());
-      }),
-    [options, searchValue]
-  );
+  const visibleOptions = useMemo(() => {
+    const newOptions = options.filter((option) => {
+      if (searchValue === '') return true;
+      else return option.label.toLowerCase().includes(searchValue.toLowerCase());
+    });
+    if (!props.disableSortOptions) {
+      newOptions.sort((a, b) => a.label.toLowerCase().localeCompare(b.label.toLowerCase()));
+    }
+    return newOptions;
+  }, [options, props.disableSortOptions, searchValue]);
 
   const groups = useMemo(() => {
     const hasGroups = options.some((option) => !!option.group);
