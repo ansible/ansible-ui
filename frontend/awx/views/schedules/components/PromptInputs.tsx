@@ -16,7 +16,8 @@ import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardPro
 import { SetStateAction, useEffect } from 'react';
 import { ScheduleFormWizard } from '../types';
 import { useWatch } from 'react-hook-form';
-import { PromptFormValues } from '../../../resources/templates/WorkflowVisualizer/types';
+import { PromptFormValues, WizardFormValues } from '../../../resources/templates/WorkflowVisualizer/types';
+import { PageFormCredentialSelect } from '../../../access/credentials/components/PageFormCredentialSelect';
 
 export function PromptInputs(props: { onError: (err: Error) => void; }) {
   const { t } = useTranslation();
@@ -28,7 +29,7 @@ export function PromptInputs(props: { onError: (err: Error) => void; }) {
   );
 
   const { wizardData, setStepData, stepData } = usePageWizard() as {
-    wizardData: ScheduleFormWizard;
+    wizardData;
     stepData;
     setStepData: React.Dispatch<SetStateAction<Record<string, object>>>;
   };
@@ -43,53 +44,21 @@ export function PromptInputs(props: { onError: (err: Error) => void; }) {
     }));
     console.log(promptForm);
   }, [promptForm, setStepData]);
-
+  console.log(wizardData);
   return (
     <>
       <PageFormInventorySelect name="scheduleInventory" isRequired />
-      <br />
       <Divider />
       <PageFormHidden watch="scheduleInventory" hidden={(v: Inventory) => v?.id === undefined}>
-        <PageFormSingleSelect<CredentialType>
-          name="credentialCategories"
-          label={t('Credential categories')}
-          placeholderText={t('Select credential category')}
-          
-          options={
-            credentialCategories
-              .sort((l, r) => compareStrings(l[1], r[1]))
-              .map((credentialType) => ({
-                label: credentialType[1],
-                value: credentialType[0],
-              })) ?? []
-          }
-          isRequired
+        <PageFormCredentialSelect<WizardFormValues>
+          name='credentials'
+          label={t('Credentials')}
+          placeholder={t('Add credentials')}
+          labelHelp={t(
+            'Select credentials for accessing the nodes this job will be ran against. You can only select one credential of each type. For machine credentials (SSH), checking "Prompt on launch" without selecting credentials will require you to select a machine credential at run time. If you select credentials and check "Prompt on launch", the selected credential(s) become the defaults that can be updated at run time.'
+          )}
+          isMultiple
         />
-        <PageFormHidden
-          watch="credentialCategories"
-          hidden={(v: CredentialType) => v === undefined}
-        >
-          <PageFormMultiSelect<CredentialType>
-            name="credential"
-            label={t('Machine')}
-            placeholderText={t('Select machine')}
-            options={
-              itemsResponse?.data?.results
-                .filter((v) => v.kind === 'ssh')
-                .sort((l, r) => compareStrings(l.name, r.name))
-                .map((credentialType) => ({
-                  label: credentialType.name,
-                  value: credentialType.id,
-                })) ?? []
-            }
-            isRequired
-          />
-        </PageFormHidden>
-        <PageFormHidden watch="credential" hidden={(v: Credential) => v?.id === undefined}>
-          {/* <ChipGroup categoryName={} >
-            <Chip  />
-          </ChipGroup> */}
-        </PageFormHidden>
       </PageFormHidden>
       <Divider />
     </>
