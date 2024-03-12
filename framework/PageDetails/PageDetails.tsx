@@ -1,7 +1,7 @@
 import { Alert, DescriptionList, PageSection } from '@patternfly/react-core';
 import { ReactNode } from 'react';
 import styled from 'styled-components';
-import { useSettings } from '../Settings';
+import { usePageSettings } from '../PageSettings/PageSettingsProvider';
 import { Scrollable } from '../components/Scrollable';
 
 export function PageDetails(props: {
@@ -14,7 +14,7 @@ export function PageDetails(props: {
   disableScroll?: boolean;
 }) {
   const { disablePadding, alertPrompts } = props;
-  const settings = useSettings();
+  const settings = usePageSettings();
   const orientation = props.labelOrientation ?? settings.formLayout;
   const numberOfColumns = props.numberOfColumns ? props.numberOfColumns : settings.formColumns;
   const isCompact = props.isCompact;

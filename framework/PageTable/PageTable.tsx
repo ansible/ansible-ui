@@ -43,11 +43,11 @@ import { IPageAction, PageActionSelection } from '../PageActions/PageAction';
 import { PageActions } from '../PageActions/PageActions';
 import { PageDetails } from '../PageDetails/PageDetails';
 import { PageDetailsFromColumns } from '../PageDetails/PageDetailsFromColumns';
+import { usePageSettings } from '../PageSettings/PageSettingsProvider';
 import { PageTableViewType, PageTableViewTypeE } from '../PageToolbar/PageTableViewType';
 import { PageToolbar } from '../PageToolbar/PageToolbar';
 import { IFilterState, IToolbarFilter } from '../PageToolbar/PageToolbarFilter';
 import { usePageToolbarSortOptionsFromColumns } from '../PageToolbar/PageToolbarSort';
-import { useSettings } from '../Settings';
 import { EmptyStateError } from '../components/EmptyStateError';
 import { EmptyStateNoData } from '../components/EmptyStateNoData';
 import { Scrollable } from '../components/Scrollable';
@@ -514,7 +514,7 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
   useResizeObserver(containerRef, () => updateScroll(containerRef.current));
   useEffect(() => updateScroll(containerRef.current), [updateScroll]);
 
-  const settings = useSettings();
+  const settings = usePageSettings();
 
   let returnElement: JSX.Element;
   if (props.itemCount === undefined || pageItems === undefined) {
@@ -757,7 +757,7 @@ function TableRow<T extends object>(props: {
   } = props;
   const expandedRowContent = expandedRow?.(item);
   const [expanded, setExpanded] = useState(!!props.defaultExpandedRows && !!expandedRowContent);
-  const settings = useSettings();
+  const settings = usePageSettings();
   const disableRow = useCallback(
     (item: T) => {
       if (selectedItems?.length === maxSelections) {

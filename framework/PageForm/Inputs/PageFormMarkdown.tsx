@@ -111,7 +111,7 @@ export function PageFormMarkdown<
               !disableExpand && <ExpandIcon isExpanded={isExpanded} setExpanded={setExpanded} />
             }
             label={props.label}
-            labelHelpTitle={props.labelHelpTitle}
+            labelHelpTitle={props.labelHelpTitle ?? props.label}
             labelHelp={props.labelHelp}
             additionalControls={
               <MarkdownActions

@@ -62,7 +62,7 @@ export function PageFormSwitch<
             fieldId={id}
             data-cy={id + '-form-group'}
             label={label}
-            labelHelpTitle={labelHelpTitle}
+            labelHelpTitle={labelHelpTitle ?? label}
             labelHelp={labelHelp}
             helperText={helperText}
             helperTextInvalid={helperTextInvalid}
