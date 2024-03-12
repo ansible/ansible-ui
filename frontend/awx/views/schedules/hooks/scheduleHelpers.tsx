@@ -28,7 +28,7 @@ import { AwxRoute } from '../../../main/AwxRoutes';
 import { PageFormInventorySelect } from '../../../resources/inventories/components/PageFormInventorySelect';
 
 export const resourceEndPoints: { [key: string]: string } = {
-  inventory: awxAPI`/inventories/`,
+  inventories: awxAPI`/inventories/`,
   projects: awxAPI`/projects/`,
   job_template: awxAPI`/job_templates/`,
   workflow_job_template: awxAPI`/workflow_job_templates/`,
@@ -42,21 +42,37 @@ export const scheduleResourceTypeOptions: string[] = [
 
 export function useGetSchedulCreateUrl(sublistEndPoint?: string) {
   const getPageUrl = useGetPageUrl();
+  const params = useParams<{
+    inventory_type?: string;
+    id: string;
+    source_id: string;
+    schedule_id?: string;
+  }>();
   const createScheduleContainerRoutes: { [key: string]: string } = {
-    inventory: getPageUrl(AwxRoute.InventorySourceScheduleCreate),
-    job_templates: getPageUrl(AwxRoute.JobTemplateScheduleCreate),
-    workflow_job_templates: getPageUrl(AwxRoute.WorkflowJobTemplateScheduleCreate),
-    projects: getPageUrl(AwxRoute.ProjectScheduleCreate),
+    inventory_sources: getPageUrl(AwxRoute.InventorySourceScheduleCreate, {
+      params: { inventory_type: params.inventory_type, id: params.id, source_id: params.source_id },
+    }),
+    job_templates: getPageUrl(AwxRoute.JobTemplateScheduleCreate, {
+      params: { id: params.id },
+    }),
+    workflow_job_templates: getPageUrl(AwxRoute.WorkflowJobTemplateScheduleCreate, {
+      params: { id: params.id },
+    }),
+    projects: getPageUrl(AwxRoute.ProjectScheduleCreate, {
+      params: { id: params.id },
+    }),
+    management_job: getPageUrl(AwxRoute.ManagementJobScheduleCreate, {
+      params: { id: params.id },
+    }),
   };
 
-  const params = useParams<{ id: string; schedule_id?: string }>();
   if (!sublistEndPoint) return getPageUrl(AwxRoute.CreateSchedule);
   let createUrl: string = getPageUrl(AwxRoute.CreateSchedule);
   const resource_type = Object.keys(createScheduleContainerRoutes).find((route) =>
     sublistEndPoint?.split('/').includes(route)
   );
-  if (resource_type && params?.id) {
-    createUrl = createScheduleContainerRoutes[resource_type].replace(':id', params.id);
+  if (resource_type) {
+    createUrl = createScheduleContainerRoutes[resource_type];
   }
   return createUrl;
 }
