@@ -1,10 +1,10 @@
 import { DescriptionList, PageSection } from '@patternfly/react-core';
 import { ReactNode } from 'react';
-import { useSettings } from '../../../framework/Settings';
+import { usePageSettings } from '../../../framework/PageSettings/PageSettingsProvider';
 
 export function PageDetailsSection(props: { children?: ReactNode; disablePadding?: boolean }) {
   const { disablePadding } = props;
-  const settings = useSettings();
+  const settings = usePageSettings();
   const isCompact = false;
   return (
     <PageSection

@@ -1,11 +1,15 @@
 import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router-dom';
 import { PageNavigationItem } from '../../../framework/PageNavigation/PageNavigationItem';
+import { PageSettings } from '../../../framework/PageSettings/PageSettings';
 import { AwxRoleDetails } from '../access/roles/AwxRoleDetails';
 import { AwxRolePage } from '../access/roles/AwxRolePage';
 import { AwxRoles } from '../access/roles/AwxRoles';
 import { AwxSettings } from '../administration/settings/AwxSettings';
-import { AwxSettingsCategory } from '../administration/settings/AwxSettingsCategory';
+import {
+  AwxSettingsCategory,
+  AwxSettingsCategoryRoute,
+} from '../administration/settings/AwxSettingsCategory';
 import { Topology } from '../administration/topology/Topology';
 import { Reports } from '../analytics/Reports/Reports';
 import { SubscriptionUsage } from '../analytics/subscription-usage/SubscriptionUsage';
@@ -127,15 +131,22 @@ export function useAwxNavigation() {
         awxNotificationsRoutes,
         awxManagementJobsRoutes,
         awxApplicationsRoutes,
+      ],
+    },
+    {
+      id: AwxRoute.Access,
+      label: t('Access Management'),
+      path: 'access',
+      children: [
         {
-          id: AwxRoute.Settings,
-          label: t('Settings'),
-          path: 'settings',
+          id: AwxRoute.SettingsAuthentication,
+          label: t('Authentication'),
+          path: 'authentication',
           children: [
             {
               id: AwxRoute.SettingsCategory,
               path: ':category',
-              element: <AwxSettingsCategory />,
+              element: <AwxSettingsCategoryRoute />,
             },
             {
               path: '',
@@ -143,13 +154,6 @@ export function useAwxNavigation() {
             },
           ],
         },
-      ],
-    },
-    {
-      id: AwxRoute.Access,
-      label: t('Access'),
-      path: 'access',
-      children: [
         awxOrganizationRoutes,
         awxTeamsRoutes,
         awxUsersRoutes,
@@ -182,6 +186,53 @@ export function useAwxNavigation() {
         },
         awxCredentialRoutes,
         awxCredentialTypesRoutes,
+      ],
+    },
+    {
+      id: AwxRoute.Settings,
+      label: t('Settings'),
+      path: 'settings',
+      children: [
+        {
+          id: AwxRoute.SettingsPreferences,
+          label: t('User Preferences'),
+          path: 'preferences',
+          element: <PageSettings />,
+        },
+        {
+          id: AwxRoute.SettingsSystem,
+          label: t('System'),
+          path: 'system',
+          element: <AwxSettingsCategory categoryId="system" key="system" />,
+        },
+        {
+          id: AwxRoute.SettingsJobs,
+          label: t('Job'),
+          path: 'job-settings',
+          element: <AwxSettingsCategory categoryId="jobs" key="jobs" />,
+        },
+        {
+          id: AwxRoute.SettingsLogging,
+          label: t('Logging'),
+          path: 'logging',
+          element: <AwxSettingsCategory categoryId="logging" key="logging" />,
+        },
+        {
+          id: AwxRoute.SettingsCustomizeLogin,
+          label: t('Customize Login'),
+          path: 'customize-login',
+          element: <AwxSettingsCategory categoryId="ui" key="ui" />,
+        },
+        {
+          id: AwxRoute.SettingsTroubleshooting,
+          label: t('Troubleshooting'),
+          path: 'troubleshooting',
+          element: <AwxSettingsCategory categoryId="debug" key="debug" />,
+        },
+        {
+          path: '',
+          element: <Navigate to=".." />,
+        },
       ],
     },
     {
