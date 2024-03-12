@@ -1,21 +1,18 @@
-import {
-  Badge,
-  Flex,
-  FlexItem,
-  Split,
-  SplitItem,
-  Button,
-  Icon,
-  Tooltip,
-} from '@patternfly/react-core';
+import { Badge, Flex, FlexItem, Split, SplitItem, ButtonVariant } from '@patternfly/react-core';
 import { ProjectDiagramIcon } from '@patternfly/react-icons';
 import { DateTime, Duration } from 'luxon';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { StatusLabel } from '../../../../common/Status';
 import { Job } from '../../../interfaces/Job';
-import { usePageNavigate } from '../../../../../framework';
+import {
+  PageActionType,
+  IPageActionButton,
+  usePageNavigate,
+  PageActionSelection,
+} from '../../../../../framework';
+import { PageActionButton } from '../../../../../framework/PageActions/PageActionButton';
 import { AwxRoute } from '../../../main/AwxRoutes';
 
 const HeaderTitle = styled.div`
@@ -63,6 +60,21 @@ export function JobStatusBar(props: { job: Job }) {
     ? Duration.fromObject({ seconds: Number(job.elapsed) }).toFormat('hh:mm:ss')
     : activeJobElapsedTime;
 
+  const viewWFVisAction = useMemo<IPageActionButton>(
+    () => ({
+      type: PageActionType.Button,
+      selection: PageActionSelection.None,
+      variant: ButtonVariant.primary,
+      icon: ProjectDiagramIcon,
+      label: t('View workflow visualizer'),
+      onClick: () =>
+        pageNavigate(AwxRoute.WorkflowVisualizer, {
+          params: { id: job.unified_job_template },
+        }),
+    }),
+    [t, job.unified_job_template, pageNavigate]
+  );
+
   return (
     <Split hasGutter>
       <SplitItem isFilled>
@@ -73,26 +85,10 @@ export function JobStatusBar(props: { job: Job }) {
       </SplitItem>
       <SplitItem>
         <Flex>
-          <Tooltip content={t('Workflow visualizer')}>
-            <Button
-              variant="link"
-              style={{ marginRight: 'var(--pf-v5-global--spacer--sm)' }}
-              data-cy="edit-workflow"
-              aria-label={t`Edit workflow`}
-              onClick={() => {
-                pageNavigate(AwxRoute.WorkflowVisualizer, {
-                  params: { id: job.unified_job_template },
-                });
-              }}
-            >
-              <Icon>
-                <ProjectDiagramIcon />
-              </Icon>
-            </Button>
-          </Tooltip>
-          <Count label={t('Plays')} count={playCount || 12} />
-          <Count label={t('Tasks')} count={taskCount || 13} />
-          <Count label={t('Hosts')} count={totalHostCount || 14} />
+          <PageActionButton iconOnly action={viewWFVisAction} />
+          <Count label={t('Plays')} count={playCount} />
+          <Count label={t('Tasks')} count={taskCount} />
+          <Count label={t('Hosts')} count={totalHostCount} />
           <Count label={t('Unreachable')} count={darkCount} />
           <Count label={t('Failed')} count={failureCount} />
           <FlexItem>
