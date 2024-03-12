@@ -1,10 +1,16 @@
-import { Badge, Flex, FlexItem, Split, SplitItem } from '@patternfly/react-core';
+import { Badge, Flex, FlexItem, Split, SplitItem, ButtonVariant } from '@patternfly/react-core';
+import { MinusCircleIcon } from '@patternfly/react-icons';
 import { DateTime, Duration } from 'luxon';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { StatusLabel } from '../../../../common/Status';
 import { Job } from '../../../interfaces/Job';
+import { PageActionType, IPageActionButton, PageActionSelection } from '../../../../../framework';
+import { PageActionButton } from '../../../../../framework/PageActions/PageActionButton';
+import { useCancelJobs } from '../hooks/useCancelJobs';
+import { isJobRunning } from './util';
+import { cannotCancelJob } from '../hooks/useJobHeaderActions';
 
 const HeaderTitle = styled.div`
   display: inline-flex;
@@ -16,10 +22,13 @@ const HeaderTitle = styled.div`
   }
 `;
 
-export function JobStatusBar(props: { job: Job }) {
-  const { job } = props;
+export function JobStatusBar(props: { job: Job; reloadJob: () => void }) {
+  const { job, reloadJob } = props;
   const { t } = useTranslation();
   const [activeJobElapsedTime, setActiveJobElapsedTime] = useState('00:00:00');
+  const cancelJobs = useCancelJobs(() => {
+    reloadJob();
+  });
 
   useEffect(() => {
     let secTimer: ReturnType<typeof setInterval>; // eslint-disable-line prefer-const
@@ -50,6 +59,19 @@ export function JobStatusBar(props: { job: Job }) {
     ? Duration.fromObject({ seconds: Number(job.elapsed) }).toFormat('hh:mm:ss')
     : activeJobElapsedTime;
 
+  const cancelJobAction = useMemo<IPageActionButton>(
+    () => ({
+      type: PageActionType.Button,
+      selection: PageActionSelection.None,
+      variant: ButtonVariant.secondary,
+      icon: MinusCircleIcon,
+      label: t(`Cancel job`),
+      isDisabled: () => cannotCancelJob(job, t),
+      onClick: () => cancelJobs([job]),
+    }),
+    [t, job, cancelJobs]
+  );
+
   return (
     <Split hasGutter>
       <SplitItem isFilled>
@@ -60,6 +82,9 @@ export function JobStatusBar(props: { job: Job }) {
       </SplitItem>
       <SplitItem>
         <Flex>
+          {job.type === 'workflow_job' && isJobRunning(job?.status) && (
+            <PageActionButton iconOnly action={cancelJobAction} />
+          )}
           <Count label={t('Plays')} count={playCount} />
           <Count label={t('Tasks')} count={taskCount} />
           <Count label={t('Hosts')} count={totalHostCount} />

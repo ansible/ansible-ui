@@ -42,7 +42,7 @@ export function JobOutputInner(props: { job: Job; reloadJob: () => void }) {
   }
   return (
     <Section variant="light">
-      <JobStatusBar job={job} />
+      <JobStatusBar job={job} reloadJob={reloadJob} />
       <HostStatusBar counts={job.host_status_counts || {}} />
       <JobOutputToolbar
         toolbarFilters={toolbarFilters}
