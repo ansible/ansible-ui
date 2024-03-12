@@ -64,7 +64,7 @@ export function useExecutionEnvironmentActions(callback?: (ees: ExecutionEnviron
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: TrashIcon,
-        label: t('Delete environment'),
+        label: t('Delete execution environment'),
         onClick: (ee) => deleteExecutionEnvironments([ee]),
         isDanger: true,
         isDisabled: context.hasPermission('container.delete_containerrepository')
