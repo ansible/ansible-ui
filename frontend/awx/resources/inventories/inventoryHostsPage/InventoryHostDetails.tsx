@@ -9,8 +9,23 @@ import { AwxRoute } from '../../../main/AwxRoutes';
 import { useGetHost } from '../../hosts/hooks/useGetHost';
 import { Sparkline } from '../../templates/components/Sparkline';
 
-export function InventoryHostDetails() {
+function useHostDetailParams() {
   const params = useParams<{ id: string; inventory_type: string; host_id: string }>();
+
+  let id = params.id;
+  let host_id = params.host_id;
+
+  if (!host_id) {
+    // the detail is called from the hosts list, id here means host_id, not inventory_id
+    host_id = id;
+    id = undefined;
+  }
+
+  return { id, host_id, inventory_type: params.inventory_type };
+}
+
+export function InventoryHostDetails() {
+  const params = useHostDetailParams();
   const { host } = useGetHost(params.host_id as string);
 
   if (!host) {
