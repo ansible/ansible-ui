@@ -61,6 +61,9 @@ export function useGetSchedulCreateUrl(sublistEndPoint?: string) {
     projects: getPageUrl(AwxRoute.ProjectScheduleCreate, {
       params: { id: params.id },
     }),
+    management_job: getPageUrl(AwxRoute.ManagementJobScheduleCreate, {
+      params: { id: params.id },
+    }),
   };
 
   if (!sublistEndPoint) return getPageUrl(AwxRoute.CreateSchedule);
