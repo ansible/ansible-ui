@@ -48,6 +48,14 @@ export function useInstanceRowActions(onComplete: (instances: Instance[]) => voi
         labelOff: t('Disabled'),
         showPinnedLabel: false,
         isHidden: (instance) => instance.node_type === 'hop',
+        isDisabled: (instance) =>
+          !userAccess ||
+          !isK8s ||
+          (instance?.node_type !== 'execution' && instance?.node_type !== 'hop')
+            ? t(
+                'You do not have permission to edit instances. Please contact your organization administrator if there is an issue with your access.'
+              )
+            : undefined,
       },
       {
         type: PageActionType.Button,

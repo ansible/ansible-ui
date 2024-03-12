@@ -142,6 +142,11 @@ export function useInstanceDetailsActions(options: {
         labelOff: t('Disabled'),
         showPinnedLabel: false,
         isHidden: () => instance?.node_type === 'hop',
+        isDisabled: canEditAndRemoveInstances
+          ? undefined
+          : t(
+              'You do not have permission to edit instances. Please contact your organization administrator if there is an issue with your access.'
+            ),
       },
       {
         type: PageActionType.Button,

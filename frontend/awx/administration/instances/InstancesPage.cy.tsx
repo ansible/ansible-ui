@@ -22,10 +22,12 @@ describe('Instances Page', () => {
     cy.getByDataCy('instances-peers-tab').should('be.enabled');
     cy.getByDataCy('edit-instance').should('be.visible');
     cy.getByDataCy('edit-instance').should('be.enabled');
+    cy.getByDataCy('actions-dropdown').click();
     cy.getByDataCy('remove-instance').should('be.visible');
-    cy.getByDataCy('remove-instance').should('be.enabled');
+    cy.getByDataCy('remove-instance').should('have.attr', 'aria-disabled', 'false');
     cy.getByDataCy('run-health-check').should('be.visible');
-    cy.getByDataCy('run-health-check').should('be.enabled');
+    cy.getByDataCy('run-health-check').should('have.attr', 'aria-disabled', 'false');
+    cy.getByDataCy('toggle-switch').should('be.visible');
   });
 
   it('edit instance button should be hidden for non-k8s system', () => {
@@ -94,6 +96,7 @@ describe('Instances Page', () => {
     cy.wait('@getInstance')
       .its('response.body')
       .then(() => {
+        cy.getByDataCy('actions-dropdown').click();
         cy.getByDataCy('remove-instance').should('be.visible');
         cy.getByDataCy('remove-instance').should('have.attr', 'aria-disabled', 'true');
       });
@@ -104,6 +107,7 @@ describe('Instances Page', () => {
       IS_K8S: false,
     }).as('isK8s');
     cy.mount(<InstancePage />);
+    cy.get('[data-cy="actions-dropdown"]').click();
     cy.get('[data-cy="remove-instance"]').should('not.exist');
   });
 
@@ -112,6 +116,7 @@ describe('Instances Page', () => {
       IS_K8S: true,
     }).as('isK8s');
     cy.mount(<InstancePage />);
+    cy.getByDataCy('actions-dropdown').click();
     cy.getByDataCy('remove-instance').should('be.visible');
     cy.getByDataCy('remove-instance').should('have.attr', 'aria-disabled', 'false');
   });
@@ -124,6 +129,7 @@ describe('Instances Page', () => {
     cy.wait('@getInstance')
       .its('response.body')
       .then(() => {
+        cy.getByDataCy('actions-dropdown').click();
         cy.getByDataCy('remove-instance').should('be.visible');
         cy.getByDataCy('remove-instance').should('have.attr', 'aria-disabled', 'false');
       });
@@ -140,6 +146,7 @@ describe('Instances Page', () => {
     cy.wait('@getInstance')
       .its('response.body')
       .then(() => {
+        cy.get('[data-cy="actions-dropdown"]').click();
         cy.get('[data-cy="remove-instance"]').should('not.exist');
       });
   });
@@ -155,6 +162,7 @@ describe('Instances Page', () => {
     cy.wait('@getInstance')
       .its('response.body')
       .then(() => {
+        cy.get('[data-cy="actions-dropdown"]').click();
         cy.get('[data-cy="remove-instance"]').should('not.exist');
       });
   });
@@ -191,5 +199,15 @@ describe('Instances Page', () => {
     cy.mount(<InstancePage />);
     cy.getByDataCy('instances-listener-addresses-tab').should('be.visible');
     cy.getByDataCy('instances-listener-addresses-tab').should('be.enabled');
+  });
+
+  it('Enabled/Disabled switch is disabled if user does not have the right permissions', () => {
+    cy.mount(<InstancePage />);
+    cy.intercept({ method: 'GET', url: '/api/v2/me' }, { fixture: 'normalUser.json' });
+    cy.wait('@getInstance')
+      .its('response.body')
+      .then(() => {
+        cy.get('.pf-v5-c-switch__input').should('be.disabled');
+      });
   });
 });
