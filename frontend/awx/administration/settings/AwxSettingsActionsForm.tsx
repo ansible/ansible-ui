@@ -1,8 +1,7 @@
 import { t } from 'i18next';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  PageForm,
   PageFormCheckbox,
   PageFormDataEditor,
   PageFormSelect,
@@ -10,6 +9,7 @@ import {
 } from '../../../../framework';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
 import { usePatchRequest } from '../../../common/crud/usePatchRequest';
+import { AwxPageForm } from '../../common/AwxPageForm';
 import { awxAPI } from '../../common/api/awx-utils';
 
 export interface AwxSettingsOptionsResponse {
@@ -95,23 +95,73 @@ export function AwxSettingsActionsForm(props: {
         }
       }
       await patch(awxAPI`/settings/all/`, patchData);
-      navigate(-1);
+      navigate('..');
     },
     [navigate, patch, props.options]
   );
+
+  // This is used for AWX LDAP settings which need groups
+  const { options, groups } = useMemo(() => {
+    const options: Record<string, AwxSettingsOptionsAction> = {};
+    const groups: { groupName: string; options: Record<string, AwxSettingsOptionsAction> }[] = [];
+    for (const [key, option] of Object.entries(props.options)) {
+      if (
+        key.startsWith('AUTH_LDAP_1') ||
+        key.startsWith('AUTH_LDAP_2') ||
+        key.startsWith('AUTH_LDAP_3') ||
+        key.startsWith('AUTH_LDAP_4') ||
+        key.startsWith('AUTH_LDAP_5')
+      ) {
+        const groupName = key.substring(5, 11).replace(/_/g, ' ');
+        let group = groups.find((group) => group.groupName === groupName);
+        if (!group) {
+          group = { groupName, options: {} };
+          groups.push(group);
+        }
+        group.options[key] = option;
+      } else if (key.startsWith('AUTH_LDAP')) {
+        const groupName = key.substring(5, 9).replace(/_/g, ' ');
+        let group = groups.find((group) => group.groupName === groupName);
+        if (!group) {
+          group = { groupName, options: {} };
+          groups.push(group);
+        }
+        group.options[key] = option;
+      } else {
+        options[key] = option;
+      }
+    }
+    return { options, groups };
+  }, [props.options]);
+
   return (
-    <PageForm
+    <AwxPageForm
       defaultValue={props.data}
       submitText={t('Save')}
-      onCancel={() => navigate(-1)}
+      onCancel={() => navigate('..')}
       onSubmit={onSubmit}
     >
-      {Object.entries(props.options).map(([key, option]) => {
+      {Object.entries(options).map(([key, option]) => {
         return <OptionActionsFormInput key={key} name={key} option={option} />;
       })}
-    </PageForm>
+      {groups.map((group) => {
+        return (
+          <PageFormSection
+            key={group.groupName}
+            title={group.groupName}
+            canCollapse
+            defaultCollapsed={group.groupName !== 'LDAP'}
+          >
+            {Object.entries(group.options).map(([key, option]) => {
+              return <OptionActionsFormInput key={key} name={key} option={option} />;
+            })}
+          </PageFormSection>
+        );
+      })}
+    </AwxPageForm>
   );
 }
+
 export function OptionActionsFormInput(props: { name: string; option: AwxSettingsOptionsAction }) {
   const option = props.option;
   switch (option.type) {

@@ -1,4 +1,3 @@
-import { ChangeEvent, MouseEvent, ReactNode } from 'react';
 import { Chip, ChipGroup } from '@patternfly/react-core';
 import {
   Select,
@@ -6,7 +5,7 @@ import {
   SelectOptionObject,
   SelectVariant,
 } from '@patternfly/react-core/deprecated';
-import React, { useState } from 'react';
+import { ChangeEvent, MouseEvent, ReactNode, useState } from 'react';
 import { getID, useID } from '../../hooks/useID';
 import { PageFormGroup } from './PageFormGroup';
 
@@ -85,7 +84,7 @@ export function FormGroupTypeAheadMultiSelect(props: FormGroupTypeAheadMultiSele
       fieldId={id}
       label={label}
       labelHelp={labelHelp}
-      labelHelpTitle={labelHelpTitle}
+      labelHelpTitle={labelHelpTitle ?? label}
       helperTextInvalid={helperTextInvalid}
       isRequired={isRequired}
       additionalControls={additionalControls}

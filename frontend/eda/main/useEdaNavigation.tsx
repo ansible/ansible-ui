@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router-dom';
 import { PageNavigationItem } from '../../../framework/PageNavigation/PageNavigationItem';
+import { PageSettings } from '../../../framework/PageSettings/PageSettings';
 import { CredentialDetails } from '../access/credentials/CredentialPage/CredentialDetails';
 import { CredentialPage } from '../access/credentials/CredentialPage/CredentialPage';
 import { Credentials } from '../access/credentials/Credentials';
@@ -41,11 +42,11 @@ import { RulebookActivationDetails } from '../rulebook-activations/RulebookActiv
 import { RulebookActivationHistory } from '../rulebook-activations/RulebookActivationPage/RulebookActivationHistory';
 import { RulebookActivationPage } from '../rulebook-activations/RulebookActivationPage/RulebookActivationPage';
 import { RulebookActivations } from '../rulebook-activations/RulebookActivations';
-import { EdaRoute } from './EdaRoutes';
 import { CreateWebhook, EditWebhook } from '../webhooks/EditWebhook';
-import { WebhookPage } from '../webhooks/WebhookPage/WebhookPage';
 import { WebhookDetails } from '../webhooks/WebhookPage/WebhookDetails';
+import { WebhookPage } from '../webhooks/WebhookPage/WebhookPage';
 import { Webhooks } from '../webhooks/Webhooks';
+import { EdaRoute } from './EdaRoutes';
 
 export function useEdaNavigation() {
   const { t } = useTranslation();
@@ -259,7 +260,7 @@ export function useEdaNavigation() {
     },
     {
       id: EdaRoute.Access,
-      label: t('Access'),
+      label: t('Access Management'),
       path: 'access',
       children: [
         {
@@ -413,6 +414,19 @@ export function useEdaNavigation() {
               element: <Credentials />,
             },
           ],
+        },
+      ],
+    },
+    {
+      id: EdaRoute.Settings,
+      label: t('Settings'),
+      path: 'settings',
+      children: [
+        {
+          id: EdaRoute.SettingsPreferences,
+          label: t('User Preferences'),
+          path: 'preferences',
+          element: <PageSettings />,
         },
       ],
     },

@@ -6,16 +6,15 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageMasthead, usePageNavigate } from '../../../framework';
 import { PageMastheadDropdown } from '../../../framework/PageMasthead/PageMastheadDropdown';
-import { PageSettingsIcon } from '../../../framework/PageMasthead/PageSettingsIcon';
 import { PageThemeSwitcher } from '../../../framework/PageMasthead/PageThemeSwitcher';
 import { useAnsibleAboutModal } from '../../common/AboutModal';
 import { PageRefreshIcon } from '../../common/PageRefreshIcon';
 import { postRequest } from '../../common/crud/Data';
 import { useClearCache } from '../../common/useInvalidateCache';
-import EdaBrand from './eda-logo.svg';
 import { edaAPI } from '../common/eda-utils';
 import { useEdaActiveUser } from '../common/useEdaActiveUser';
 import { EdaRoute } from './EdaRoutes';
+import EdaBrand from './eda-logo.svg';
 
 export function EdaMasthead() {
   const { t } = useTranslation();
@@ -37,9 +36,6 @@ export function EdaMasthead() {
         </ToolbarItem>
         <ToolbarItem>
           <PageThemeSwitcher />
-        </ToolbarItem>
-        <ToolbarItem>
-          <PageSettingsIcon />
         </ToolbarItem>
         {/* <ToolbarItem>
           <PageNotificationsIcon count={0} onClick={() => pageNavigate(EdaRoute.Notifications)} />

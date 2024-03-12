@@ -66,7 +66,7 @@ export function PageFormCreatableSelect<
           isRequired={isRequired}
           label={label}
           labelHelp={labelHelp}
-          labelHelpTitle={labelHelpTitle}
+          labelHelpTitle={labelHelpTitle ?? label}
           options={options}
           placeholderText={placeholderText}
           value={value}
