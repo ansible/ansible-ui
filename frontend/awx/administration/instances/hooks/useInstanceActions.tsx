@@ -5,7 +5,7 @@ import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { Instance } from '../../../interfaces/Instance';
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';
-import { HeartbeatIcon, PencilAltIcon, SpinnerIcon, TrashIcon } from '@patternfly/react-icons';
+import { HeartbeatIcon, PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import {
   usePageNavigate,
@@ -217,7 +217,6 @@ export function useInstanceDetailsActions(options: {
       removeInstances,
       alertToaster,
       handleToggleInstance,
-      instance?.health_check_pending,
       instance?.node_type,
       onHealthCheckComplete,
     ]
