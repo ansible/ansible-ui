@@ -112,7 +112,7 @@ export function InstanceDetailsTab(props: {
           ))}
         </PageDetail>
       )}
-      {instance.related?.install_bundle && (
+      {!instance.managed && instance.related?.install_bundle && (
         <PageDetail label={t`Download bundle`} data-cy="download-bundle">
           <Button
             size="sm"
