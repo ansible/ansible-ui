@@ -22,6 +22,7 @@ import { PageFormProjectSelect } from '../../../resources/projects/components/Pa
 import { PageFormJobTemplateSelect } from '../../../resources/templates/components/PageFormJobTemplateSelect';
 import { PageFormWorkflowJobTemplateSelect } from '../../../resources/templates/components/PageFormWorkflowJobTemplateSelect';
 import { resourceEndPoints, useGetPromptOnLaunchFields } from '../hooks/scheduleHelpers';
+import { PageFormManagementJobsSelect } from '../../../administration/management-jobs/components/PageFormManagementJobsSelect';
 
 export function ScheduleInputs(props: {
   timeZones: { value: string; label: string; key: string }[];
@@ -29,7 +30,7 @@ export function ScheduleInputs(props: {
   onError: (err: Error) => void;
 }) {
   const { timeZones, zoneLinks, onError } = props;
-  const params: { [string: string]: string } = useParams<{ id: string; source_id?: string }>();
+  const params: { [string: string]: string } = useParams<{ id?: string; source_id?: string }>();
   const { pathname } = useLocation();
   const { t } = useTranslation();
   const { setValue } = useFormContext();
@@ -67,10 +68,12 @@ export function ScheduleInputs(props: {
         return;
       }
 
+      const pathnameSplit = pathname.split('/');
+      const resourceType = pathnameSplit[1] === 'projects' ? 'projects' : pathnameSplit[2];
       try {
         const response = await requestGet<
           Project | JobTemplate | WorkflowJobTemplate | InventorySource
-        >(`${resourceEndPoints[pathname.split('/')[2]]}${params?.id}/`);
+        >(`${resourceEndPoints[resourceType]}${params?.id}/`);
         setValue('unified_job_template_object', response);
         setValue('unified_job_template', response.id);
       } catch (err) {
@@ -187,6 +190,7 @@ export function ScheduleInputs(props: {
               { label: t('Workflow job template'), value: 'workflow_job_template' },
               { label: t('Inventory source'), value: 'inventory_source' },
               { label: t('Project'), value: 'project' },
+              { label: t('Management job template'), value: 'management_job_template' },
             ]}
             fieldNameToResetOnFieldChange="unified_job_template_object"
             placeholderText={t('Select job type')}
@@ -217,6 +221,9 @@ export function ScheduleInputs(props: {
                 </>
               ),
               project: <PageFormProjectSelect name="unified_job_template_object" />,
+              management_job_template: (
+                <PageFormManagementJobsSelect name="unified_job_template_object" />
+              ),
             }[resourceType]}
         </>
       ) : null}
