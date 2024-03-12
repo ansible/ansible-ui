@@ -1,0 +1,204 @@
+{
+  "name": "Unified Job List",
+  "renders": ["application/json", "text/html"],
+  "parses": ["application/json"],
+  "actions": {
+    "GET": {
+      "id": {
+        "type": "integer",
+        "label": "ID",
+        "help_text": "Database ID for this unified job.",
+        "filterable": true
+      },
+      "type": {
+        "type": "choice",
+        "label": "Type",
+        "help_text": "Data type for this unified job.",
+        "filterable": true,
+        "choices": [
+          ["project_update", "SCM Update"],
+          ["inventory_update", "Inventory Sync"],
+          ["job", "Playbook Run"],
+          ["ad_hoc_command", "Command"],
+          ["system_job", "Management Job"],
+          ["workflow_job", "Workflow Job"]
+        ]
+      },
+      "url": {
+        "type": "string",
+        "label": "Url",
+        "help_text": "URL for this unified job.",
+        "filterable": false
+      },
+      "related": {
+        "type": "object",
+        "label": "Related",
+        "help_text": "Data structure with URLs of related resources.",
+        "filterable": false
+      },
+      "summary_fields": {
+        "type": "object",
+        "label": "Summary fields",
+        "help_text": "Data structure with name/description for related resources.  The output for some objects may be limited for performance reasons.",
+        "filterable": false
+      },
+      "created": {
+        "type": "datetime",
+        "label": "Created",
+        "help_text": "Timestamp when this unified job was created.",
+        "filterable": true
+      },
+      "modified": {
+        "type": "datetime",
+        "label": "Modified",
+        "help_text": "Timestamp when this unified job was last modified.",
+        "filterable": true
+      },
+      "name": {
+        "type": "string",
+        "label": "Name",
+        "help_text": "Name of this unified job.",
+        "filterable": true
+      },
+      "description": {
+        "type": "string",
+        "label": "Description",
+        "help_text": "Optional description of this unified job.",
+        "filterable": true
+      },
+      "unified_job_template": {
+        "type": "id",
+        "label": "unified job template",
+        "filterable": true
+      },
+      "launch_type": {
+        "type": "choice",
+        "label": "Launch type",
+        "filterable": true,
+        "choices": [
+          ["manual", "Manual"],
+          ["relaunch", "Relaunch"],
+          ["callback", "Callback"],
+          ["scheduled", "Scheduled"],
+          ["dependency", "Dependency"],
+          ["workflow", "Workflow"],
+          ["webhook", "Webhook"],
+          ["sync", "Sync"],
+          ["scm", "SCM Update"]
+        ]
+      },
+      "status": {
+        "type": "choice",
+        "label": "Status",
+        "filterable": true,
+        "choices": [
+          ["new", "New"],
+          ["pending", "Pending"],
+          ["waiting", "Waiting"],
+          ["running", "Running"],
+          ["successful", "Successful"],
+          ["failed", "Failed"],
+          ["error", "Error"],
+          ["canceled", "Canceled"]
+        ]
+      },
+      "execution_environment": {
+        "type": "id",
+        "label": "Execution environment",
+        "help_text": "The container image to be used for execution.",
+        "filterable": true
+      },
+      "failed": {
+        "type": "boolean",
+        "label": "Failed",
+        "filterable": true
+      },
+      "started": {
+        "type": "datetime",
+        "label": "Started",
+        "help_text": "The date and time the job was queued for starting.",
+        "filterable": true
+      },
+      "finished": {
+        "type": "datetime",
+        "label": "Finished",
+        "help_text": "The date and time the job finished execution.",
+        "filterable": true
+      },
+      "canceled_on": {
+        "type": "datetime",
+        "label": "Canceled on",
+        "help_text": "The date and time when the cancel request was sent.",
+        "filterable": true
+      },
+      "elapsed": {
+        "type": "decimal",
+        "label": "Elapsed",
+        "help_text": "Elapsed time in seconds that the job ran.",
+        "filterable": true
+      },
+      "job_explanation": {
+        "type": "string",
+        "label": "Job explanation",
+        "help_text": "A status field to indicate the state of the job if it wasn't able to run and capture stdout",
+        "filterable": true
+      },
+      "execution_node": {
+        "type": "string",
+        "label": "Execution node",
+        "help_text": "The node the job executed on.",
+        "filterable": true
+      },
+      "controller_node": {
+        "type": "string",
+        "label": "Controller node",
+        "help_text": "The instance that managed the execution environment.",
+        "filterable": true
+      },
+      "launched_by": {
+        "type": "field",
+        "label": "Launched by",
+        "filterable": false
+      },
+      "work_unit_id": {
+        "type": "string",
+        "label": "Work unit id",
+        "help_text": "The Receptor work unit ID associated with this job.",
+        "filterable": true
+      }
+    }
+  },
+  "types": [
+    "project_update",
+    "inventory_update",
+    "job",
+    "ad_hoc_command",
+    "system_job",
+    "workflow_job"
+  ],
+  "search_fields": ["description", "name", "job__playbook"],
+  "related_search_fields": [
+    "organization__search",
+    "created_by__search",
+    "workflow_job__search",
+    "schedule__search",
+    "notifications__search",
+    "instance_group__search",
+    "project_update__search",
+    "job_launch_config__search",
+    "unifiedjob_blocked_jobs__search",
+    "execution_environment__search",
+    "credentials__search",
+    "labels__search",
+    "modified_by__search",
+    "inventory_update__search",
+    "workflow_job_node__search",
+    "job__search",
+    "workflow_approval__search",
+    "system_job__search",
+    "ad_hoc_command__search",
+    "unified_job_template__search",
+    "dependent_jobs__search"
+  ],
+  "max_page_size": 200
+}

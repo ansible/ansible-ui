@@ -30,7 +30,9 @@ Cypress.Commands.add('multiSelectBy', (selector: string, values: string[]) => {
     .within(() => {
       cy.selectLoadAll();
       for (const value of values) {
-        cy.getByDataCy('search-input').clear().type(value);
+        cy.getByDataCy('search-input').within(() => {
+          cy.get('input').clear().type(value);
+        });
         cy.contains('.pf-v5-c-menu__item-text', value)
           .parent()
           .within(() => {
@@ -47,13 +49,11 @@ Cypress.Commands.add('multiSelectByDataCy', (dataCy: string, values: string[]) =
 Cypress.Commands.add('selectLoadAll', () => {
   cy.get('#loading').should('not.exist');
   cy.document().then((document) => {
-    document.body.querySelectorAll('.pf-v5-c-menu__content').forEach((menu) => {
-      const loadMore = menu.querySelector('#load-more');
-      if (loadMore) {
-        loadMore.dispatchEvent(new Event('click', { bubbles: true }));
-        cy.selectLoadAll();
-      }
-    });
+    const loadMore = document.body.querySelector('#load-more');
+    if (loadMore) {
+      cy.get('#load-more').click();
+      cy.selectLoadAll();
+    }
   });
 });
 
