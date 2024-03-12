@@ -14,18 +14,18 @@ describe('Instances Page', () => {
     cy.mount(<InstancePage />);
     cy.get('[data-cy="page-title"]').should('have.text', 'receptor-1');
     cy.contains('nav[aria-label="Breadcrumb"]', 'receptor-1').should('exist');
-    cy.get('[data-cy="back-to instances"]').should('be.visible');
-    cy.get('[data-cy="back-to instances"]').should('be.enabled');
-    cy.get('[data-cy="instances-details-tab"]').should('be.visible');
-    cy.get('[data-cy="instances-details-tab"]').should('be.enabled');
-    cy.get('[data-cy="instances-peers-tab"]').should('be.visible');
-    cy.get('[data-cy="instances-peers-tab"]').should('be.enabled');
-    cy.get('[data-cy="edit-instance"]').should('be.visible');
-    cy.get('[data-cy="edit-instance"]').should('be.enabled');
-    cy.get('[data-cy="remove-instance"]').should('be.visible');
-    cy.get('[data-cy="remove-instance"]').should('be.enabled');
-    cy.get('[data-cy="run-health-check"]').should('be.visible');
-    cy.get('[data-cy="run-health-check"]').should('be.enabled');
+    cy.getByDataCy('back-to instances').should('be.visible');
+    cy.getByDataCy('back-to instances').should('be.enabled');
+    cy.getByDataCy('instances-details-tab').should('be.visible');
+    cy.getByDataCy('instances-details-tab').should('be.enabled');
+    cy.getByDataCy('instances-peers-tab').should('be.visible');
+    cy.getByDataCy('instances-peers-tab').should('be.enabled');
+    cy.getByDataCy('edit-instance').should('be.visible');
+    cy.getByDataCy('edit-instance').should('be.enabled');
+    cy.getByDataCy('remove-instance').should('be.visible');
+    cy.getByDataCy('remove-instance').should('be.enabled');
+    cy.getByDataCy('run-health-check').should('be.visible');
+    cy.getByDataCy('run-health-check').should('be.enabled');
   });
 
   it('edit instance button should be hidden for non-k8s system', () => {
@@ -33,7 +33,7 @@ describe('Instances Page', () => {
       IS_K8S: false,
     }).as('isK8s');
     cy.mount(<InstancePage />);
-    cy.get('[data-cy="edit-instance"]').should('not.exist');
+    cy.getByDataCy('edit-instance').should('not.exist');
   });
 
   it('edit instance button should be shown for k8s system', () => {
@@ -41,8 +41,8 @@ describe('Instances Page', () => {
       IS_K8S: true,
     }).as('isK8s');
     cy.mount(<InstancePage />);
-    cy.get('[data-cy="edit-instance"]').should('be.visible');
-    cy.get('[data-cy="edit-instance"]').should('have.attr', 'aria-disabled', 'false');
+    cy.getByDataCy('edit-instance').should('be.visible');
+    cy.getByDataCy('edit-instance').should('have.attr', 'aria-disabled', 'false');
   });
 
   it('only admin users can edit instance', () => {
@@ -53,8 +53,8 @@ describe('Instances Page', () => {
     cy.wait('@getInstance')
       .its('response.body')
       .then(() => {
-        cy.get('[data-cy="edit-instance"]').should('be.visible');
-        cy.get('[data-cy="edit-instance"]').should('have.attr', 'aria-disabled', 'false');
+        cy.getByDataCy('edit-instance').should('be.visible');
+        cy.getByDataCy('edit-instance').should('have.attr', 'aria-disabled', 'false');
       });
   });
 
@@ -94,8 +94,8 @@ describe('Instances Page', () => {
     cy.wait('@getInstance')
       .its('response.body')
       .then(() => {
-        cy.get('[data-cy="remove-instance"]').should('be.visible');
-        cy.get('[data-cy="remove-instance"]').should('have.attr', 'aria-disabled', 'true');
+        cy.getByDataCy('remove-instance').should('be.visible');
+        cy.getByDataCy('remove-instance').should('have.attr', 'aria-disabled', 'true');
       });
   });
 
@@ -112,8 +112,8 @@ describe('Instances Page', () => {
       IS_K8S: true,
     }).as('isK8s');
     cy.mount(<InstancePage />);
-    cy.get('[data-cy="remove-instance"]').should('be.visible');
-    cy.get('[data-cy="remove-instance"]').should('have.attr', 'aria-disabled', 'false');
+    cy.getByDataCy('remove-instance').should('be.visible');
+    cy.getByDataCy('remove-instance').should('have.attr', 'aria-disabled', 'false');
   });
 
   it('only admin users can remove instance', () => {
@@ -124,8 +124,8 @@ describe('Instances Page', () => {
     cy.wait('@getInstance')
       .its('response.body')
       .then(() => {
-        cy.get('[data-cy="remove-instance"]').should('be.visible');
-        cy.get('[data-cy="remove-instance"]').should('have.attr', 'aria-disabled', 'false');
+        cy.getByDataCy('remove-instance').should('be.visible');
+        cy.getByDataCy('remove-instance').should('have.attr', 'aria-disabled', 'false');
       });
   });
 
@@ -172,6 +172,24 @@ describe('Instances Page', () => {
       IS_K8S: true,
     }).as('isK8s');
     cy.mount(<InstancePage />);
-    cy.get('[data-cy="instances-peers-tab"]').should('not.exist');
+    cy.getByDataCy('instances-peers-tab').should('be.visible');
+    cy.getByDataCy('instances-peers-tab').should('be.enabled');
+  });
+
+  it('listener addresses tab should be hidden for non-k8s system', () => {
+    cy.intercept('GET', '/api/v2/settings/system*', {
+      IS_K8S: false,
+    }).as('isK8s');
+    cy.mount(<InstancePage />);
+    cy.get('[data-cy="instances-listener-addresses-tab"]').should('not.exist');
+  });
+
+  it('listener addresses tab should be shown for k8s system', () => {
+    cy.intercept('GET', '/api/v2/settings/system*', {
+      IS_K8S: true,
+    }).as('isK8s');
+    cy.mount(<InstancePage />);
+    cy.getByDataCy('instances-listener-addresses-tab').should('be.visible');
+    cy.getByDataCy('instances-listener-addresses-tab').should('be.enabled');
   });
 });
