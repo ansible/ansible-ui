@@ -28,7 +28,6 @@ import { requestGet } from '../../../../common/crud/Data';
 import { useCallback } from 'react';
 import { Inventory } from '../../../interfaces/Inventory';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
-import { PageAsyncSingleSelectOptionsFn } from '../../../../../framework/PageInputs/PageAsyncSingleSelect';
 import { PageSingleSelectContext } from '../../../../../framework/PageInputs/PageSingleSelect';
 import { Button } from '@patternfly/react-core';
 import { useSelectInventorySingle } from './hooks/useInventorySelector';
@@ -307,7 +306,7 @@ export function EditHost() {
 function HostInputs(props: { edit_mode?: boolean; inventory_host?: boolean }) {
   const { t } = useTranslation();
 
-  const queryOptions = useCallback<PageAsyncSingleSelectOptionsFn<number>>(async () => {
+  const queryOptions = useCallback(async () => {
     const response = await requestGet<AwxItemsResponse<Inventory>>(
       awxAPI`/inventories/?order_by=name`
     );
