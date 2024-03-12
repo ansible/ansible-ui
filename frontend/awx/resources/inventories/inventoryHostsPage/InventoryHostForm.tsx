@@ -184,7 +184,6 @@ function useHostParams(mode: 'edit' | 'create'): {
   let inventory_host = false;
 
   if (!host_id && mode === 'edit') {
-    // this means the form was opened from host list, which passes host_id as id, so we have to rename it
     host_id = id;
     id = undefined;
   }
@@ -350,6 +349,7 @@ function HostInputs(props: { edit_mode?: boolean; inventory_host?: boolean }) {
       {!props.inventory_host && !props.edit_mode && (
         <PageFormAsyncSingleSelect
           name="inventory.id"
+          isRequired
           label={t('Inventory')}
           placeholder={t('Select Inventory')}
           queryOptions={queryOptions}
