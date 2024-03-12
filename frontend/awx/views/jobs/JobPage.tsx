@@ -1,26 +1,21 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { PageHeader, PageLayout } from '../../../../framework';
-import { useGetPageUrl } from '../../../../framework/PageNavigation/useGetPageUrl';
+import { PageLayout } from '../../../../framework';
 import { PageRoutedTabs } from '../../../../framework/PageTabs/PageRoutedTabs';
 import { useGet } from '../../../common/crud/useGet';
 import { awxAPI } from '../../common/api/awx-utils';
 import { Job } from '../../interfaces/Job';
 import { AwxRoute } from '../../main/AwxRoutes';
+import { JobHeader } from './JobHeader';
 
 export function JobPage() {
   const { t } = useTranslation();
-  const getPageUrl = useGetPageUrl();
   const params = useParams<{ id: string; job_type: string }>();
-  const { job } = useGetJob(params.id, params.job_type);
   // TODO handle 404/no job
   return (
     <PageLayout>
-      <PageHeader
-        title={job?.name}
-        breadcrumbs={[{ label: t('Jobs'), to: getPageUrl(AwxRoute.Jobs) }, { label: job?.name }]}
-      />
+      <JobHeader />
       <PageRoutedTabs
         backTab={{
           label: t('Back to Jobs'),
