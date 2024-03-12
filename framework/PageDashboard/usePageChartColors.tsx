@@ -1,7 +1,7 @@
-import { useSettings } from '../Settings';
+import { usePageSettings } from '../PageSettings/PageSettingsProvider';
 
 export function usePageChartColors() {
-  const { activeTheme } = useSettings();
+  const { activeTheme } = usePageSettings();
 
   let successfulColor = 'var(--pf-v5-chart-color-green-300)';
   let failedColor = 'var(--pf-v5-chart-color-red-100)';

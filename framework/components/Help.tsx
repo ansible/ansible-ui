@@ -39,7 +39,7 @@ export function Help(props: {
       }
     >
       <IconButton type="button">
-        <Icon size="md">
+        <Icon size="sm">
           <OutlinedQuestionCircleIcon />
         </Icon>
       </IconButton>

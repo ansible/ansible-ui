@@ -87,7 +87,7 @@ Cypress.Commands.add('mount', (component, route, activeUserFixture) => {
   });
   return mount(
     <MemoryRouter initialEntries={route?.initialEntries || ['/1']}>
-      <PageFramework>
+      <PageFramework defaultRefreshInterval={60}>
         <AwxActiveUserProvider>
           <Page>
             <Routes>

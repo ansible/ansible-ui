@@ -106,7 +106,7 @@ export function PageFormAsyncSelect<
             fieldId={id}
             label={label}
             labelHelp={labelHelp}
-            labelHelpTitle={labelHelpTitle}
+            labelHelpTitle={labelHelpTitle ?? label}
             helperTextInvalid={loadingError ? loadingErrorText : error?.message}
             isRequired={isRequired}
             additionalControls={additionalControls}

@@ -10,7 +10,7 @@ import {
   useFormContext,
 } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { usePageAlertToaster } from '../..';
+import { usePageAlertToaster, usePageSettings } from '../..';
 import { DataEditor, DataEditorLanguages } from '../../components/DataEditor';
 import { DropZone } from '../../components/DropZone';
 import { IconButton } from '../../components/IconButton';
@@ -34,6 +34,7 @@ export type PageFormDataEditorInputProps<
   label: string;
   labelHelp?: string | string[] | ReactNode;
   labelHelpTitle?: string;
+  helperText?: string | undefined;
   additionalControls?: ReactNode;
 
   format: DataEditorLanguages | 'object';
@@ -84,7 +85,8 @@ export function PageFormDataEditor<
     clearErrors,
     control,
   } = useFormContext<TFieldValues>();
-  const defaultLanguage = 'yaml';
+  const settings = usePageSettings();
+  const defaultLanguage = settings.dataEditorFormat ?? 'yaml';
   const [language, setLanguage] = useState<DataEditorLanguages>(defaultLanguage); // TODO settings.defaultCodeLanguage
   const [isExpanded, setExpanded] = useState(!props.defaultCollapsed);
 
@@ -154,7 +156,7 @@ export function PageFormDataEditor<
               !disableExpand && <ExpandIcon isExpanded={isExpanded} setExpanded={setExpanded} />
             }
             label={props.label}
-            labelHelpTitle={props.labelHelpTitle}
+            labelHelpTitle={props.labelHelpTitle ?? props.label}
             labelHelp={props.labelHelp}
             additionalControls={
               <DataEditorActions
@@ -167,6 +169,7 @@ export function PageFormDataEditor<
                 {props.additionalControls}
               </DataEditorActions>
             }
+            helperText={props.helperText}
             helperTextInvalid={!(validate && isValidating) && error?.message?.split('\n')}
             isRequired={props.isRequired}
           >

@@ -1,12 +1,12 @@
-import { useContext, ReactNode } from 'react';
-import { FormProvider, DefaultValues } from 'react-hook-form';
 import { Form } from '@patternfly/react-core';
+import { ReactNode, useContext } from 'react';
+import { DefaultValues, FormProvider } from 'react-hook-form';
+import { PageSettingsContext } from '../PageSettings/PageSettingsProvider';
 import { useBreakpoint } from '../components/useBreakPoint';
-import { SettingsContext } from '../Settings';
 import { ErrorAlert } from './ErrorAlert';
-import { ErrorAdapter } from './typesErrorAdapter';
+import { PageFormSubmitHandler, useFormErrors } from './PageForm';
 import { genericErrorAdapter } from './genericErrorAdapter';
-import { useFormErrors, PageFormSubmitHandler } from './PageForm';
+import { ErrorAdapter } from './typesErrorAdapter';
 
 export interface GenericFormProps<T extends object> {
   children?: ReactNode;
@@ -23,7 +23,7 @@ export function GenericForm<T extends object>(props: GenericFormProps<T>) {
 
   const { form, handleSubmit, error, setError, handleSubmitError, setFieldError } =
     useFormErrors<T>(props.defaultValue, errorAdapter);
-  const [settings] = useContext(SettingsContext);
+  const [settings] = useContext(PageSettingsContext);
   const isMd = useBreakpoint('md');
   const isHorizontal = props.isVertical ? false : settings.formLayout === 'horizontal';
 

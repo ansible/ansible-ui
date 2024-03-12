@@ -20,7 +20,7 @@ import {
 import styled from 'styled-components';
 import { Scrollable } from '../components/Scrollable';
 import { useBreakpoint } from '../components/useBreakPoint';
-import { SettingsContext } from '../Settings';
+import { PageSettingsContext } from '../PageSettings/PageSettingsProvider';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
 import { ErrorAlert } from './ErrorAlert';
 import { genericErrorAdapter } from './genericErrorAdapter';
@@ -94,7 +94,7 @@ export function PageForm<T extends object>(props: PageFormProps<T>) {
 
   const { form, handleSubmit, error, setError, handleSubmitError, setFieldError } =
     useFormErrors<T>(props.defaultValue, errorAdapter);
-  const [settings] = useContext(SettingsContext);
+  const [settings] = useContext(PageSettingsContext);
   const [frameworkTranslations] = useFrameworkTranslations();
   const isMd = useBreakpoint('md');
   const isHorizontal = props.isVertical ? false : settings.formLayout === 'horizontal';
@@ -204,7 +204,7 @@ export function PageFormGrid(props: {
   singleColumn?: boolean;
   className?: string;
 }) {
-  const [settings] = useContext(SettingsContext);
+  const [settings] = useContext(PageSettingsContext);
   const isHorizontal = props.isVertical ? false : settings.formLayout === 'horizontal';
   const multipleColumns = props.singleColumn ? false : settings.formColumns === 'multiple';
 

@@ -58,7 +58,7 @@ export function PageFormSingleSelect<
           <PageFormGroup
             fieldId={id}
             label={props.label}
-            labelHelpTitle={props.labelHelpTitle}
+            labelHelpTitle={props.labelHelpTitle ?? props.label}
             labelHelp={props.labelHelp}
             helperText={props.helperText}
             helperTextInvalid={helperTextInvalid}

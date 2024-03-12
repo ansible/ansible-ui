@@ -25,6 +25,9 @@ export function PageApp(props: {
    * SEE: https://reactrouter.com/en/main/routers/create-browser-router#basename
    */
   basename?: string;
+
+  /** The default refresh interval for the page in seconds. */
+  defaultRefreshInterval: number;
 }) {
   const { navigation, basename, masthead } = props;
   const routes = useMemo(
@@ -32,7 +35,7 @@ export function PageApp(props: {
       {
         path: '',
         element: (
-          <PageFramework>
+          <PageFramework defaultRefreshInterval={props.defaultRefreshInterval}>
             <Outlet />
           </PageFramework>
         ),
@@ -59,7 +62,7 @@ export function PageApp(props: {
         ],
       },
     ],
-    [masthead, navigation, props.login, props.root]
+    [masthead, navigation, props.defaultRefreshInterval, props.login, props.root]
   );
   const router = useMemo(() => createBrowserRouter(routes, { basename }), [basename, routes]);
   return (
