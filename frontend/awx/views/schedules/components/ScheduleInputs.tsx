@@ -173,7 +173,7 @@ export function ScheduleInputs(props: {
 
   return (
     <>
-      {pathname.split('/')[2] === 'schedules' ? (
+      {pathname.split('/')[1] === 'schedules' ? (
         <>
           <PageFormSelect<ScheduleFormWizard>
             isRequired={!params['*']?.startsWith('schedules')}
