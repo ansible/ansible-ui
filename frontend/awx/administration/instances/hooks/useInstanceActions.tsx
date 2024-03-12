@@ -175,11 +175,11 @@ export function useInstanceDetailsActions(options: {
       },
       {
         type: PageActionType.Button,
-        isHidden: () => isK8s === false || !instancesType,
+        isHidden: () => isK8s === false || !(instance?.node_type === 'execution'),
         selection: PageActionSelection.Single,
-        icon: instance?.health_check_pending ? SpinnerIcon : HeartbeatIcon,
+        icon: HeartbeatIcon,
         variant: ButtonVariant.secondary,
-        label: instance?.health_check_pending ? t('Health check running') : t('Run health check'),
+        label: t('Run health check'),
         isDisabled: (instance) =>
           instance.node_type !== 'execution'
             ? t('Cannot run health check on a {{ type }} instance', { type: instance.node_type })
