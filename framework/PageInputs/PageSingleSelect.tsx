@@ -1,4 +1,5 @@
 import {
+  Bullseye,
   Divider,
   MenuFooter,
   MenuSearch,
@@ -10,20 +11,23 @@ import {
   SelectGroup,
   SelectList,
   SelectOption,
+  Spinner,
 } from '@patternfly/react-core';
 import {
+  Dispatch,
   ReactNode,
+  SetStateAction,
   createContext,
   useCallback,
   useContext,
   useEffect,
   useMemo,
   useRef,
-  useState,
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { Scrollable } from '../components/Scrollable';
+import { useOverridableState } from '../components/useOverridableState';
 import { getID } from '../hooks/useID';
 import { PageSelectOption } from './PageSelectOption';
 
@@ -57,8 +61,49 @@ export interface PageSingleSelectProps<ValueT> {
    */
   isRequired?: boolean;
 
-  /** Disables the toggle to open and close the menu */
+  // TODO - make this a string
+  /** Indicates if the select is disabled */
   isDisabled?: boolean;
+
+  /**
+   * Indicates if the select is open.
+   * Handled by the component if not provided.
+   */
+  open?: boolean;
+
+  /**
+   * The function to set the open state.
+   * Handled by the component if not provided.
+   */
+  setOpen?: Dispatch<SetStateAction<boolean>>;
+
+  /**
+   * The search value to filter the options.
+   * Handled by the component if not provided.
+   */
+  searchValue?: string;
+
+  /**
+   * The function to set the search value.
+   * Handled by the component if not provided.
+   */
+  setSearchValue?: Dispatch<SetStateAction<string>>;
+
+  /**
+   * Indicates if the select is loading.
+   * This is a helper to show a loading spinner in the dropdown.
+   * Used by `PageAsyncSingleSelect`.
+   */
+  isLoading?: boolean;
+
+  /**
+   * Function to load the label for a selected value.
+   * This is used when the selected value option is not present in the options.
+   * Used by `PageAsyncSingleSelect`.
+   */
+  queryLabel?: (value: ValueT) => ReactNode;
+
+  disableAutoSelect?: boolean;
 }
 
 /**
@@ -100,8 +145,14 @@ export function PageSingleSelect<
   ValueT,
 >(props: PageSingleSelectProps<ValueT>) {
   const { t } = useTranslation();
-  const { id, icon, value, onSelect, options, placeholder } = props;
-  const [isOpen, setIsOpen] = useState(false);
+  const { id, icon, value, onSelect, options, placeholder, queryLabel } = props;
+
+  const [open, setOpen] = useOverridableState(props.open ?? false, props.setOpen);
+  const [searchValue, setSearchValue] = useOverridableState(
+    props.searchValue ?? '',
+    props.setSearchValue
+  );
+
   const selectListRef = useRef<HTMLDivElement>(null);
 
   const selectedOption = useMemo(
@@ -109,19 +160,27 @@ export function PageSingleSelect<
     [options, value]
   );
 
+  const selectedLabel = useMemo(() => {
+    let selectedLabel: ReactNode = selectedOption?.label;
+    if (!selectedLabel && value !== undefined) {
+      selectedLabel = queryLabel?.(value);
+    }
+    return selectedLabel;
+  }, [queryLabel, selectedOption?.label, value]);
+
   const Toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
     <MenuToggle
       id={id}
       ref={toggleRef}
-      onClick={() => setIsOpen((open) => !open)}
-      isExpanded={isOpen}
+      onClick={() => setOpen((open) => !open)}
+      isExpanded={open}
       onKeyDown={(event) => {
         switch (event.key) {
           case 'Tab':
           case 'Enter':
             break;
           default:
-            setIsOpen(true);
+            setOpen(true);
             setTimeout(() => {
               if (searchRef.current) {
                 searchRef.current.focus();
@@ -138,7 +197,7 @@ export function PageSingleSelect<
       isDisabled={props.isDisabled}
       isFullWidth
     >
-      {selectedOption ? selectedOption.label : <span style={{ opacity: 0.7 }}>{placeholder}</span>}
+      {selectedLabel ? selectedLabel : <span style={{ opacity: 0.7 }}>{placeholder}</span>}
     </MenuToggle>
   );
 
@@ -150,33 +209,34 @@ export function PageSingleSelect<
       });
       if (newSelectedOption) {
         onSelect(newSelectedOption.value);
-        setIsOpen(false);
+        setOpen(false);
       }
     },
-    [onSelect, options]
+    [onSelect, options, setOpen]
   );
 
-  const [searchValue, setSearchValue] = useState('');
   const searchRef = useRef<HTMLInputElement>(null);
   useEffect(() => {
-    if (!isOpen) {
+    if (!open) {
       setSearchValue('');
     }
-  }, [isOpen]);
+  }, [open, setSearchValue]);
 
   useEffect(() => {
-    if (props.isRequired && !selectedOption && options.length > 0) {
+    if (!props.disableAutoSelect && props.isRequired && !selectedOption && options.length === 1) {
       onSelect(options[0].value);
     }
-  }, [onSelect, options, props.isRequired, selectedOption]);
+  }, [onSelect, options, props.disableAutoSelect, props.isRequired, selectedOption]);
 
   const visibleOptions = useMemo(
     () =>
-      options.filter((option) => {
-        if (searchValue === '') return true;
-        else return option.label.toLowerCase().includes(searchValue.toLowerCase());
-      }),
-    [options, searchValue]
+      props.setSearchValue
+        ? options
+        : options.filter((option) => {
+            if (searchValue === '') return true;
+            else return option.label.toLowerCase().includes(searchValue.toLowerCase());
+          }),
+    [options, props.setSearchValue, searchValue]
   );
 
   const groups = useMemo(() => {
@@ -193,13 +253,13 @@ export function PageSingleSelect<
   }, [options, visibleOptions]);
 
   return (
-    <PageSingleSelectContext.Provider value={{ open: isOpen, setOpen: setIsOpen }}>
+    <PageSingleSelectContext.Provider value={{ open, setOpen }}>
       <Select
         id={`${id}-select`}
-        selected={selectedOption?.label}
+        selected={selectedOption}
         onSelect={onSelectHandler}
-        isOpen={isOpen}
-        onOpenChange={setIsOpen}
+        isOpen={open}
+        onOpenChange={setOpen}
         toggle={Toggle}
         popperProps={{ appendTo: () => document.body }}
         shouldFocusToggleOnSelect
@@ -236,9 +296,17 @@ export function PageSingleSelect<
         </MenuSearch>
         <Divider />
         {visibleOptions.length === 0 ? (
-          <SelectOption isDisabled key="no result">
-            {t('No results found')}
-          </SelectOption>
+          <>
+            {props.isLoading ? (
+              <Bullseye style={{ padding: 16 }}>
+                <Spinner />
+              </Bullseye>
+            ) : (
+              <SelectOption isDisabled key="no result">
+                {t('No results found')}
+              </SelectOption>
+            )}
+          </>
         ) : (
           <ScrollableStyled>
             {groups ? (

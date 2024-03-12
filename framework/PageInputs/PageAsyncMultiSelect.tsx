@@ -15,7 +15,7 @@ export interface PageAsyncMultiSelectProps<ValueT>
   /** The placeholder to show while querying. */
   queryPlaceholder?: string;
 
-  /** The placeholder to show if the query fails. */
+  /** The text to show if the query fails. */
   queryErrorText?: string | ((error: Error) => string);
 }
 
@@ -88,22 +88,14 @@ export function PageAsyncMultiSelect<
             })
             .catch((err) => {
               if (abortController.signal.aborted) return;
-              if (err instanceof Error) {
-                setLoadingError(err);
-              } else {
-                setLoadingError(new Error(t('Unknown error')));
-              }
+              setLoadingError(err instanceof Error ? err : new Error(t('Unknown error')));
             })
             .finally(() => {
               if (abortController.signal.aborted) return;
               setLoading(false);
             });
         } catch (err) {
-          if (err instanceof Error) {
-            setLoadingError(err);
-          } else {
-            setLoadingError(new Error(t('Unknown error')));
-          }
+          setLoadingError(err instanceof Error ? err : new Error(t('Unknown error')));
           setLoading(false);
         }
         return true;
