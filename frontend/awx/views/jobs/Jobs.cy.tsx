@@ -12,7 +12,7 @@ describe('Jobs.cy.ts', () => {
       {
         fixture: 'jobs.json',
       }
-    );
+    ).as('getJobs');
   });
   it('renders job list', () => {
     cy.mount(<Jobs />);
@@ -74,7 +74,6 @@ describe('Jobs.cy.ts', () => {
       .should('be.an', 'array')
       .then((results: UnifiedJob[]) => {
         const job = results[4]; // job with summary_fields.user_capabilities.delete: false
-        cy.selectToolbarFilterByLabel('ID');
         cy.selectTableRow(job.id.toString(), false);
         cy.clickToolbarKebabAction('delete-selected-jobs');
         cy.contains(
@@ -145,7 +144,6 @@ describe('Jobs.cy.ts', () => {
       .should('be.an', 'array')
       .then((results: UnifiedJob[]) => {
         const job = results[0];
-        cy.selectToolbarFilterByLabel('ID');
         cy.selectTableRow(job.id.toString(), false);
         cy.clickToolbarKebabAction('cancel-selected-jobs');
         cy.contains(

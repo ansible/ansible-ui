@@ -178,8 +178,13 @@ export function useSelected<T extends object>(
     [keyFn]
   );
 
-  const selectAll = useCallback(() => selectItems(items), [items, selectItems]);
-
+  // By using a ref, we can ensure that the items used in the selectAll function are the same as the items
+  // without having to create a new selectAll function every time the items change.
+  const itemsRef = useRef<T[]>(items);
+  useEffect(() => {
+    itemsRef.current = items;
+  }, [items]);
+  const selectAll = useCallback(() => selectItems(itemsRef.current), [selectItems]);
   const unselectItems = useCallback(
     (items: T[]) => {
       for (const item of items) {
