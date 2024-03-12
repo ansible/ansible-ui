@@ -116,6 +116,7 @@ function ToolbarSortSelect(props: {
   );
   return (
     <PageSingleSelect
+      id="toolbar-sort-select-expand"
       placeholder=""
       value={sort}
       onSelect={onSelect}
