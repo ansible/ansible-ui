@@ -6,6 +6,7 @@ import { PageNotImplemented } from '../../../../framework/PageEmptyStates/PageNo
 import { ManagementJobPage } from '../../administration/management-jobs/ManagementJobPage/ManagementJobPage';
 import { ManagementJobs } from '../../administration/management-jobs/ManagementJobs';
 import { AwxRoute } from '../AwxRoutes';
+import { CreateSchedule } from '../../views/schedules/wizard/ScheduleAddWizard';
 
 export function useAwxManagementJobsRoutes() {
   const { t } = useTranslation();
@@ -19,6 +20,11 @@ export function useAwxManagementJobsRoutes() {
           id: AwxRoute.ManagementJobEditSchedule,
           path: ':id/schedules/:schedule_id/edit',
           element: <PageNotImplemented />,
+        },
+        {
+          id: AwxRoute.ManagementJobScheduleCreate,
+          path: ':id/schedules/create',
+          element: <CreateSchedule />,
         },
         {
           id: AwxRoute.ManagementJobPage,
