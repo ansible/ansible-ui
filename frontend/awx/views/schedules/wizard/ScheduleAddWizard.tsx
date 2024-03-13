@@ -11,13 +11,15 @@ import {
 import { useGetPageUrl } from '../../../../../framework/PageNavigation/useGetPageUrl';
 import { dateToInputDateTime } from '../../../../../framework/utils/dateTimeHelpers';
 import { AwxRoute } from '../../../main/AwxRoutes';
-import { ScheduleInputs } from '../components/ScheduleInputs';
 import { ScheduleFormWizard } from '../types';
 import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
 import { useGetTimezones } from '../hooks/useGetTimezones';
 import { PromptInputs } from '../components/PromptInputs';
+import { OccurrencesStep } from './OccurrencesStep';
+import { FREQUENCIES_DEFAULT_VALUES } from './constants';
+import { ScheduleInputs } from '../components/ScheduleInputs';
 
-export function CreateSchedule() {
+export function ScheduleAddWizard() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const now = DateTime.now();
@@ -29,7 +31,11 @@ export function CreateSchedule() {
 
   const [currentDate, time]: string[] = dateToInputDateTime(closestQuarterHour.toISO() as string);
   const handleSubmit = async (formValues: ScheduleFormWizard) => {
-    const { unified_job_template_object, launch_config, prompt } = formValues;
+    const {
+      details: { unified_job_template_object },
+      launch_config,
+      prompt,
+    } = formValues;
     const promptValues = prompt;
 
     if (promptValues) {
@@ -52,7 +58,7 @@ export function CreateSchedule() {
 
   const steps: PageWizardStep[] = [
     {
-      id: 'typeStep',
+      id: 'details',
       label: t('Details'),
       inputs: <ScheduleInputs onError={() => {}} zoneLinks={links} timeZones={timeZones} />,
     },
@@ -62,10 +68,26 @@ export function CreateSchedule() {
       inputs: <PromptInputs onError={() => {}} />,
     },
     { id: 'survey', label: t('Survey'), element: <PageNotImplemented /> },
-    { id: 'occurrences', label: t('Occurrences'), element: <PageNotImplemented /> },
-    { id: 'exceptions', label: t('Exceptions'), element: <PageNotImplemented /> },
-    { id: 'review', label: t('Review'), element: <PageNotImplemented /> },
+    { id: 'occurrences', label: t('Occurrences'), inputs: <OccurrencesStep /> },
+    {
+      id: 'exceptions',
+      label: t('Exceptions'),
+      hidden: () => true,
+      element: <PageNotImplemented />,
+    },
+    { id: 'review', label: t('Review'), hidden: () => true, inputs: <PageNotImplemented /> },
   ];
+  const initialValues = {
+    details: {
+      name: '',
+      description: '',
+      resource_type: '',
+      resourceName: '',
+      startDateTime: { date: currentDate, time: time },
+    },
+    occurrences: [FREQUENCIES_DEFAULT_VALUES],
+  };
+
   return (
     <PageLayout>
       <PageHeader
@@ -77,8 +99,9 @@ export function CreateSchedule() {
       />
       <PageWizard<ScheduleFormWizard>
         steps={steps}
+        singleColumn={false}
         onCancel={onCancel}
-        defaultValue={{ startDateTime: { date: currentDate, time: time } }}
+        defaultValue={initialValues}
         onSubmit={handleSubmit}
         errorAdapter={awxErrorAdapter}
       />
