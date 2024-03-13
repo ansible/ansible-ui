@@ -79,7 +79,7 @@ export function CreateHost() {
         params: { inventory_type: params.inventory_type, id: inventory_id, host_id: newHost.id },
       });
     } else {
-      pageNavigate(AwxRoute.Hosts);
+      pageNavigate(AwxRoute.HostDetails, { params: { id: newHost.id } });
     }
   };
 
