@@ -1,26 +1,18 @@
-import { Dispatch, SetStateAction, useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 export function useOverridableState<T extends string | boolean | number | undefined>(
   value: T,
-  setValue?: Dispatch<SetStateAction<T>>
-): [T, Dispatch<SetStateAction<T>>] {
+  setValue?: (value: T) => void
+): [T, (value: T) => void] {
   const [valueState, setValueState] = useState<T>(() => value);
   useEffect(() => setValueState(value), [value]);
 
-  const setValueFn = useCallback<Dispatch<SetStateAction<T>>>(
-    (param: ((value: T) => T) | T) => {
+  const setValueFn = useCallback<(value: T) => void>(
+    (value: T) => {
       if (setValue) {
-        if (typeof param === 'function') {
-          setValue((prev) => param(prev));
-        } else {
-          setValue(param);
-        }
+        setValue(value);
       } else {
-        if (typeof param === 'function') {
-          setValueState((prev) => param(prev));
-        } else {
-          setValueState(param);
-        }
+        setValueState(value);
       }
     },
     [setValue]

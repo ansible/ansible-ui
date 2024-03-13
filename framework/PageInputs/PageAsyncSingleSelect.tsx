@@ -63,16 +63,13 @@ export function PageAsyncSingleSelect<
     []
   );
 
-  const abortController = useRef(new AbortController()).current;
-  useEffect(() => () => abortController.abort(), [abortController]);
-
   const onSelect = useRef(props.onSelect).current;
 
   const queryOptions = useRef(props.queryOptions).current;
 
   const queryHandler = useCallback(() => {
-    setLoading((loading) => {
-      if (loading) return loading;
+    const abortController = new AbortController();
+    setLoading(() => {
       setAllLoaded(false);
       setLoadingError(undefined);
       setOptions((prevOptions) => {
@@ -128,7 +125,8 @@ export function PageAsyncSingleSelect<
         });
       return true;
     });
-  }, [abortController.signal, onSelect, queryOptions, searchValue, t]);
+    return () => abortController.abort();
+  }, [onSelect, queryOptions, searchValue, t]);
 
   const onLoadMore = useCallback(
     (e: React.MouseEvent) => {

@@ -14,9 +14,7 @@ import {
   Spinner,
 } from '@patternfly/react-core';
 import {
-  Dispatch,
   ReactNode,
-  SetStateAction,
   createContext,
   useCallback,
   useContext,
@@ -75,7 +73,7 @@ export interface PageSingleSelectProps<ValueT> {
    * The function to set the open state.
    * Handled by the component if not provided.
    */
-  setOpen?: Dispatch<SetStateAction<boolean>>;
+  setOpen?: (open: boolean) => void;
 
   /**
    * The search value to filter the options.
@@ -87,7 +85,7 @@ export interface PageSingleSelectProps<ValueT> {
    * The function to set the search value.
    * Handled by the component if not provided.
    */
-  setSearchValue?: Dispatch<SetStateAction<string>>;
+  setSearchValue?: (searchValue: string) => void;
 
   /**
    * Indicates if the select is loading.
@@ -172,7 +170,7 @@ export function PageSingleSelect<
     <MenuToggle
       id={id}
       ref={toggleRef}
-      onClick={() => setOpen((open) => !open)}
+      onClick={() => setOpen(!open)}
       isExpanded={open}
       onKeyDown={(event) => {
         switch (event.key) {
