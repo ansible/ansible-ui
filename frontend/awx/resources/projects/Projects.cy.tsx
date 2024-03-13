@@ -157,7 +157,7 @@ describe('projects.cy.ts', () => {
     it('Cancel project sync toolbar button shows error dialog if project sync is not running', () => {
       cy.mount(<Projects />);
       cy.filterTableByMultiSelect('name', [' Project 1 Org 0']);
-      cy.selectTableRowCheckbox('name', ' Project 1 Org 0', { disableFilter: true });
+      cy.selectTableRowByCheckbox('name', ' Project 1 Org 0', { disableFilter: true });
       cy.get('.page-table-toolbar').within(() => {
         cy.get('.toggle-kebab')
           .click()
@@ -182,7 +182,7 @@ describe('projects.cy.ts', () => {
     it('Cancel project sync toolbar button shows error dialog if user has insufficient permissions', () => {
       cy.mount(<Projects />);
       cy.filterTableByMultiSelect('name', [' Project 2 Org 0']);
-      cy.selectTableRowCheckbox('name', ' Project 2 Org 0', {
+      cy.selectTableRowByCheckbox('name', ' Project 2 Org 0', {
         disableFilter: true,
       });
       cy.get('.page-table-toolbar').within(() => {
