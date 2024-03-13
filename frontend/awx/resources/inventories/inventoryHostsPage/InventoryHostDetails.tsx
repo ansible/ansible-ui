@@ -1,16 +1,38 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { DateTimeCell, PageDetail, PageDetails, usePageNavigate } from '../../../../../framework';
+import {
+  DateTimeCell,
+  PageDetail,
+  PageDetails,
+  TextCell,
+  usePageNavigate,
+} from '../../../../../framework';
 import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageDetailCodeEditor';
 import { LastModifiedPageDetail } from '../../../../common/LastModifiedPageDetail';
 import { AwxHost } from '../../../interfaces/AwxHost';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useGetHost } from '../../hosts/hooks/useGetHost';
 import { Sparkline } from '../../templates/components/Sparkline';
+import { useGetPageUrl } from '../../../../../framework';
+
+function useHostDetailParams() {
+  const params = useParams<{ id: string; inventory_type: string; host_id: string }>();
+
+  let id = params.id;
+  let host_id = params.host_id;
+
+  if (!host_id) {
+    // the detail is called from the hosts list, id here means host_id, not inventory_id
+    host_id = id;
+    id = undefined;
+  }
+
+  return { id, host_id, inventory_type: params.inventory_type };
+}
 
 export function InventoryHostDetails() {
-  const params = useParams<{ id: string; inventory_type: string; host_id: string }>();
+  const params = useHostDetailParams();
   const { host } = useGetHost(params.host_id as string);
 
   if (!host) {
@@ -23,6 +45,7 @@ export function InventoryHostDetails() {
 export function InventoryHostDetailsInner(props: { host: AwxHost }) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
+  const getPageUrl = useGetPageUrl();
 
   const host = props.host;
 
@@ -36,6 +59,15 @@ export function InventoryHostDetailsInner(props: { host: AwxHost }) {
       <PageDetail label={t('Name')}>{host.name}</PageDetail>
       <PageDetail label={t('Activity')}>
         <Sparkline jobs={recentPlaybookJobs} />
+      </PageDetail>
+      <PageDetail label={t('Description')}>{host.description}</PageDetail>
+      <PageDetail label={t('Inventory')} helpText={t(`The inventory that this host belongs to.`)}>
+        <TextCell
+          text={host.summary_fields?.inventory?.name}
+          to={getPageUrl(AwxRoute.InventoryDetails, {
+            params: { id: host.summary_fields?.inventory?.id },
+          })}
+        />
       </PageDetail>
       <PageDetail label={t('Created')}>
         <DateTimeCell
