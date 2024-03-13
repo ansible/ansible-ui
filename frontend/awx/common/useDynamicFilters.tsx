@@ -173,7 +173,6 @@ export function useDynamicToolbarFilters<T>(props: DynamicToolbarFiltersProps) {
             placeholder: t(`Filter by {{field}}`, { field: field.label.toLowerCase() }),
             query: field.query,
             options: [
-              { label: t('Last hour'), value: DateRangeFilterPresets.LastHour },
               { label: t('Last 24 hours'), value: DateRangeFilterPresets.Last24Hours },
               { label: t('Last 7 days'), value: DateRangeFilterPresets.LastWeek },
               { label: t('Last 30 days'), value: DateRangeFilterPresets.LastMonth },
@@ -283,6 +282,12 @@ export const knownAwxFilterKeys: Record<string, AsyncKeyOptions> = {
   },
   unified_job_template: {
     resourceType: 'unified_job_templates',
+    params: { order_by: '-created' },
+    labelKey: 'name',
+    valueKey: 'id',
+  },
+  credential_type: {
+    resourceType: 'credential_type',
     params: { order_by: '-created' },
     labelKey: 'name',
     valueKey: 'id',
