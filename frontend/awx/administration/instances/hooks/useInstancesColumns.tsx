@@ -15,7 +15,8 @@ import { Instance } from '../../../interfaces/Instance';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useNodeTypeTooltip } from './useNodeTypeTooltip';
 import { InstanceForksSlider } from '../components/InstanceForksSlider';
-import { StatusCell } from '../../../../common/Status';
+import { StatusCell, StatusLabel } from '../../../../common/Status';
+import { Unavailable } from '../../../../../framework/components/Unavailable';
 
 export function useInstancesColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const { t } = useTranslation();
@@ -89,7 +90,7 @@ export function useInstancesColumns(options?: { disableSort?: boolean; disableLi
           instance.node_type === 'hop' ? undefined : instance.enabled ? (
             <Progress value={Math.round(100 - instance.percent_capacity_remaining)} />
           ) : (
-            t('Unavailable')
+            <Unavailable>{t(`Unavailable`)}</Unavailable>
           ),
         list: 'secondary',
       },
