@@ -2,6 +2,8 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router-dom';
 import { PageNavigationItem, removeNavigationItemById } from '../../framework';
+import { PageSettings } from '../../framework/PageSettings/PageSettings';
+import { AwxSettingsCategory } from '../../frontend/awx/administration/settings/AwxSettingsCategory';
 import { AwxRoute } from '../../frontend/awx/main/AwxRoutes';
 import { useAwxNavigation } from '../../frontend/awx/main/useAwxNavigation';
 import { EdaRoute } from '../../frontend/eda/main/EdaRoutes';
@@ -40,6 +42,7 @@ export function usePlatformNavigation() {
 
   const pageNavigationItems = useMemo<PageNavigationItem[]>(() => {
     removeNavigationItemById(awxNav, AwxRoute.Overview);
+    removeNavigationItemById(awxNav, AwxRoute.Settings);
     const credentials = removeNavigationItemById(awxNav, AwxRoute.Credentials)!;
     const credentialTypes = removeNavigationItemById(awxNav, AwxRoute.CredentialTypes)!;
     const awxRolesRoute = removeNavigationItemById(awxNav, AwxRoute.Roles);
@@ -165,6 +168,53 @@ export function usePlatformNavigation() {
       // label: t('QuickStarts'),
       path: 'quickstarts',
       element: <QuickStartsPage />,
+    });
+    navigationItems.push({
+      id: AwxRoute.Settings,
+      label: t('Settings'),
+      path: 'settings',
+      children: [
+        {
+          id: AwxRoute.SettingsPreferences,
+          label: t('User Preferences'),
+          path: 'preferences',
+          element: <PageSettings />,
+        },
+        {
+          id: AwxRoute.SettingsSystem,
+          label: t('Syste Settings'),
+          path: 'system',
+          element: <AwxSettingsCategory categoryId="system" key="system" />,
+        },
+        {
+          id: AwxRoute.SettingsJobs,
+          label: t('Job Settings'),
+          path: 'job-settings',
+          element: <AwxSettingsCategory categoryId="jobs" key="jobs" />,
+        },
+        {
+          id: AwxRoute.SettingsLogging,
+          label: t('Logging Settings'),
+          path: 'logging',
+          element: <AwxSettingsCategory categoryId="logging" key="logging" />,
+        },
+        {
+          id: AwxRoute.SettingsCustomizeLogin,
+          label: t('Customize Login'),
+          path: 'customize-login',
+          element: <AwxSettingsCategory categoryId="ui" key="ui" />,
+        },
+        {
+          id: AwxRoute.SettingsTroubleshooting,
+          label: t('Troubleshooting'),
+          path: 'troubleshooting',
+          element: <AwxSettingsCategory categoryId="debug" key="debug" />,
+        },
+        {
+          path: '',
+          element: <Navigate to=".." />,
+        },
+      ],
     });
     navigationItems.push({
       id: PlatformRoute.Root,
