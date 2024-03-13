@@ -318,7 +318,7 @@ export const knownAwxFilterKeys: Record<string, AsyncKeyOptions> = {
     queryParams: { node_type: 'control' },
   },
   credential_type: {
-    resourceType: 'credential_type',
+    resourceType: 'credential_types',
     params: { order_by: '-created' },
     labelKey: 'name',
     valueKey: 'id',
