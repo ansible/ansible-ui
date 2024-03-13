@@ -73,7 +73,6 @@ function ProjectCreateInputs() {
   );
 
   const isValidUrl = useIsValidUrl();
-  const getPageUrl = useGetPageUrl();
   return (
     <>
       <PageFormTextInput<EdaProjectCreate>
