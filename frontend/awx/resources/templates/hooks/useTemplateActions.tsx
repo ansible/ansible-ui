@@ -44,7 +44,7 @@ export function useTemplateActions({
         selection: PageActionSelection.Single,
         isPinned: true,
         icon: ProjectDiagramIcon,
-        label: t('Workflow Visualizer'),
+        label: t('View workflow visualizer'),
         ouiaId: 'job-template-detail-edit-button',
         href: (template) =>
           getPageUrl(AwxRoute.WorkflowVisualizer, { params: { id: template.id } }),
