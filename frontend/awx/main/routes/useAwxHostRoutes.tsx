@@ -10,6 +10,7 @@ import {
   CreateHost,
   EditHost,
 } from '../../resources/inventories/inventoryHostsPage/InventoryHostForm';
+import { InventoryHostDetails } from '../../resources/inventories/inventoryHostsPage/InventoryHostDetails';
 
 export function useAwxHostRoutes() {
   const { t } = useTranslation();
@@ -27,7 +28,7 @@ export function useAwxHostRoutes() {
             {
               id: AwxRoute.HostDetails,
               path: 'details',
-              element: <PageNotImplemented />,
+              element: <InventoryHostDetails />,
             },
             {
               id: AwxRoute.HostFacts,
