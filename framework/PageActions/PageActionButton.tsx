@@ -1,12 +1,16 @@
 import { Button, ButtonVariant, Tooltip } from '@patternfly/react-core';
 import { ComponentClass, Fragment, FunctionComponent } from 'react';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { useID } from '../hooks/useID';
 import {
   IPageActionButton,
   IPageActionButtonMultiple,
   IPageActionButtonSingle,
+  IPageActionLink,
+  IPageActionLinkSingle,
   PageActionSelection,
+  PageActionType,
 } from './PageAction';
 import { usePageActionDisabled } from './PageActionUtils';
 
@@ -15,7 +19,12 @@ const IconSpan = styled.span`
 `;
 
 export function PageActionButton<T extends object>(props: {
-  action: IPageActionButton | IPageActionButtonSingle<T> | IPageActionButtonMultiple<T>;
+  action:
+    | IPageActionButton
+    | IPageActionButtonSingle<T>
+    | IPageActionButtonMultiple<T>
+    | IPageActionLink
+    | IPageActionLinkSingle<T>;
 
   /** Turn primary buttons to secondary if there are items selected */
   isSecondary?: boolean;
@@ -26,6 +35,8 @@ export function PageActionButton<T extends object>(props: {
 
   selectedItem?: T;
   selectedItems?: T[];
+
+  isLink?: boolean;
 }) {
   const { action, isSecondary, wrapper, iconOnly, selectedItem, selectedItems } = props;
 
@@ -58,6 +69,23 @@ export function PageActionButton<T extends object>(props: {
     variant = ButtonVariant.plain;
   }
 
+  let to: string;
+  if (action.type === PageActionType.Link) {
+    switch (action.selection) {
+      case PageActionSelection.None:
+        to = action.href;
+        break;
+      case PageActionSelection.Single:
+        if (selectedItem) {
+          to = action.href(selectedItem);
+        } else to = '';
+        break;
+      default:
+        to = '';
+        break;
+    }
+  }
+
   const id = useID(action);
   const content = iconOnly && Icon ? <Icon /> : action.label;
 
@@ -78,20 +106,25 @@ export function PageActionButton<T extends object>(props: {
           }
           isAriaDisabled={!!isDisabled}
           onClick={() => {
-            switch (action.selection) {
-              case PageActionSelection.None:
-                action.onClick();
-                break;
-              case PageActionSelection.Single:
-                if (selectedItem) action.onClick(selectedItem);
-                break;
-              case PageActionSelection.Multiple:
-                if (selectedItems) action.onClick(selectedItems);
-                break;
+            if (action.type !== PageActionType.Link) {
+              switch (action.selection) {
+                case PageActionSelection.None:
+                  action.onClick();
+                  break;
+                case PageActionSelection.Single:
+                  if (selectedItem) action.onClick(selectedItem);
+                  break;
+                case PageActionSelection.Multiple:
+                  if (selectedItems) action.onClick(selectedItems);
+                  break;
+              }
             }
           }}
           aria-label={iconOnly ? action.label : ''}
           ouiaId={id}
+          component={
+            action.type === PageActionType.Link ? (p) => <Link {...p} to={to} /> : undefined
+          }
         >
           {content}
         </Button>
