@@ -1,5 +1,3 @@
-import { useCallback, useEffect, useRef } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   ComponentFactory,
   DagreLayout,
@@ -7,32 +5,36 @@ import {
   EdgeModel,
   Graph,
   GraphComponent,
+  LabelPosition,
   Model,
   ModelKind,
   NodeShape,
+  NodeStatus,
   Visualization,
   VisualizationProvider,
   withPanZoom,
-  LabelPosition,
-  NodeStatus,
 } from '@patternfly/react-topology';
+import { useCallback, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import type { WorkflowNode } from '../../../interfaces/WorkflowNode';
 
-import { EdgeStatus } from '../../../resources/templates/WorkflowVisualizer/types';
-import { CustomNode, CustomEdge } from '../../../resources/templates/WorkflowVisualizer/components';
-import { getNodeLabel } from '../../../resources/templates/WorkflowVisualizer/wizard/helpers';
-import { WorkflowOutputGraph } from './WorkflowOutputGraph';
+import { secondsToHHMMSS } from '../../../../../framework/utils/dateTimeHelpers';
+import { AwxError } from '../../../common/AwxError';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { useAwxGetAllPages } from '../../../common/useAwxGetAllPages';
+import { Job } from '../../../interfaces/Job';
+import { WorkflowVisualizerLoader } from '../../../resources/templates/WorkflowVisualizer/WorkflowVisualizerLoader';
+import { CustomEdge, CustomNode } from '../../../resources/templates/WorkflowVisualizer/components';
 import {
   GRAPH_ID,
   NODE_DIAMETER,
   START_NODE_ID,
 } from '../../../resources/templates/WorkflowVisualizer/constants';
 import { useCreateEdge } from '../../../resources/templates/WorkflowVisualizer/hooks';
-import { awxAPI } from '../../../common/api/awx-utils';
-import { useAwxGetAllPages } from '../../../common/useAwxGetAllPages';
-import { secondsToHHMMSS } from '../../../../../framework/utils/dateTimeHelpers';
-import { Job } from '../../../interfaces/Job';
+import { EdgeStatus } from '../../../resources/templates/WorkflowVisualizer/types';
+import { getNodeLabel } from '../../../resources/templates/WorkflowVisualizer/wizard/helpers';
+import { WorkflowOutputGraph } from './WorkflowOutputGraph';
 
 export const graphModel: Model = {
   nodes: [],
@@ -45,13 +47,24 @@ export const graphModel: Model = {
   },
 };
 
+function useFetchWorkflowNodes(jobId: string) {
+  const { results, isLoading, error, refresh } = useAwxGetAllPages<WorkflowNode>(
+    awxAPI`/workflow_jobs/${jobId || ''}/workflow_nodes/`
+  );
+
+  if (isLoading) return <WorkflowVisualizerLoader />;
+
+  if (error) return <AwxError error={error} handleRefresh={refresh} />;
+
+  return results;
+}
+
 export const WorkflowOutput = (props: { job: Job; reloadJob: () => void }) => {
   const { t } = useTranslation();
   const createEdge = useCreateEdge();
 
-  const { results: workflowNodes } = useAwxGetAllPages<WorkflowNode>(
-    awxAPI`/workflow_jobs/${props.job.id.toString() || ''}/workflow_nodes/`
-  );
+  const workflowNodes = useFetchWorkflowNodes(props.job.id.toString()) as WorkflowNode[];
+
   const baselineComponentFactory: ComponentFactory = useCallback(
     (kind: ModelKind, type: string) => {
       switch (type) {
