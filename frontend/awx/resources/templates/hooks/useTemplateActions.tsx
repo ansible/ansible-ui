@@ -50,6 +50,20 @@ export function useTemplateActions({
           getPageUrl(AwxRoute.WorkflowVisualizer, { params: { id: template.id } }),
       },
       {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        icon: RocketIcon,
+        label: t('Launch template'),
+        onClick: (template: Template) => void launchTemplate(template),
+        isDisabled: (template: Template) =>
+          !template?.summary_fields.user_capabilities.start
+            ? t('You do not have permission to launch this template')
+            : undefined,
+        ouiaId: 'job-template-detail-launch-button',
+        isDanger: false,
+        isPinned: true,
+      },
+      {
         type: PageActionType.Link,
         selection: PageActionSelection.Single,
         isPinned: true,
@@ -64,20 +78,6 @@ export function useTemplateActions({
               : AwxRoute.EditWorkflowJobTemplate,
             { params: { id: template?.id.toString() } }
           ),
-      },
-      {
-        type: PageActionType.Button,
-        selection: PageActionSelection.Single,
-        icon: RocketIcon,
-        label: t('Launch template'),
-        onClick: (template: Template) => void launchTemplate(template),
-        isDisabled: (template: Template) =>
-          !template?.summary_fields.user_capabilities.start
-            ? t('You do not have permission to launch this template')
-            : undefined,
-        ouiaId: 'job-template-detail-launch-button',
-        isDanger: false,
-        isPinned: true,
       },
       {
         type: PageActionType.Button,
