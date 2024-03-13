@@ -1,10 +1,19 @@
-import { Badge, Flex, FlexItem, Split, SplitItem } from '@patternfly/react-core';
+import { Badge, Flex, FlexItem, Split, SplitItem, ButtonVariant } from '@patternfly/react-core';
+import { ProjectDiagramIcon } from '@patternfly/react-icons';
 import { DateTime, Duration } from 'luxon';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { StatusLabel } from '../../../../common/Status';
 import { Job } from '../../../interfaces/Job';
+import {
+  PageActionType,
+  IPageActionButton,
+  usePageNavigate,
+  PageActionSelection,
+} from '../../../../../framework';
+import { PageActionButton } from '../../../../../framework/PageActions/PageActionButton';
+import { AwxRoute } from '../../../main/AwxRoutes';
 
 const HeaderTitle = styled.div`
   display: inline-flex;
@@ -19,6 +28,7 @@ const HeaderTitle = styled.div`
 export function JobStatusBar(props: { job: Job }) {
   const { job } = props;
   const { t } = useTranslation();
+  const pageNavigate = usePageNavigate();
   const [activeJobElapsedTime, setActiveJobElapsedTime] = useState('00:00:00');
 
   useEffect(() => {
@@ -50,6 +60,21 @@ export function JobStatusBar(props: { job: Job }) {
     ? Duration.fromObject({ seconds: Number(job.elapsed) }).toFormat('hh:mm:ss')
     : activeJobElapsedTime;
 
+  const viewWFVisAction = useMemo<IPageActionButton>(
+    () => ({
+      type: PageActionType.Button,
+      selection: PageActionSelection.None,
+      variant: ButtonVariant.primary,
+      icon: ProjectDiagramIcon,
+      label: t('View workflow visualizer'),
+      onClick: () =>
+        pageNavigate(AwxRoute.WorkflowVisualizer, {
+          params: { id: job.unified_job_template },
+        }),
+    }),
+    [t, job.unified_job_template, pageNavigate]
+  );
+
   return (
     <Split hasGutter>
       <SplitItem isFilled>
@@ -60,6 +85,7 @@ export function JobStatusBar(props: { job: Job }) {
       </SplitItem>
       <SplitItem>
         <Flex>
+          {job.type === 'workflow_job' && <PageActionButton iconOnly action={viewWFVisAction} />}
           <Count label={t('Plays')} count={playCount} />
           <Count label={t('Tasks')} count={taskCount} />
           <Count label={t('Hosts')} count={totalHostCount} />
