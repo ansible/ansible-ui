@@ -4,7 +4,6 @@ import { ComponentClass, FunctionComponent } from 'react';
 import { IPageAction, PageActionType } from './PageAction';
 import { PageActionButton } from './PageActionButton';
 import { PageActionDropdown } from './PageActionDropdown';
-import { PageActionLink } from './PageActionLink';
 import { PageActionSwitch } from './PageActionSwitch';
 import { usePageActionDisabled } from './PageActionUtils';
 
@@ -77,12 +76,13 @@ export function PageActionPinned<T extends object>(props: PageActionPinnedProps<
 
     case PageActionType.Link:
       return (
-        <PageActionLink
+        <PageActionButton
           action={action}
           selectedItem={selectedItem}
           selectedItems={selectedItems}
           iconOnly={props.iconOnly}
           wrapper={wrapper}
+          isLink
         />
       );
 
