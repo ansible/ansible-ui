@@ -1,4 +1,4 @@
-import { useDynamicToolbarFilters } from '../../common/useDynamicFilters';
+import { useDynamicToolbarFilters } from '../../../common/useDynamicFilters';
 import { Credential } from '../../../interfaces/Credential';
 import {
   useCreatedByToolbarFilter,
