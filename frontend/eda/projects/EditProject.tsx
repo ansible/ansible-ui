@@ -24,7 +24,7 @@ import { EdaCredential } from '../interfaces/EdaCredential';
 import { EdaProject, EdaProjectCreate, EdaProjectRead } from '../interfaces/EdaProject';
 import { EdaResult } from '../interfaces/EdaResult';
 import { EdaRoute } from '../main/EdaRoutes';
-import { Trans } from 'react-i18next/index';
+import { Trans } from 'react-i18next';
 import { getDocsBaseUrl } from '../../awx/common/util/getDocsBaseUrl';
 
 function ProjectCreateInputs() {
@@ -119,19 +119,17 @@ function ProjectCreateInputs() {
               }))
             : []
         }
-        footer={<Link to={getPageUrl(EdaRoute.CreateCredential)}>{t('Create credential')}</Link>}
         labelHelpTitle={t('Credential')}
         labelHelp={t('The token needed to utilize the SCM URL.')}
       />
       <PageFormSelect
         name={'signature_validation_credential_id'}
-        isRequired={false}
         label={t('Content Signature Validation Credential')}
         labelHelpTitle={t('Content Signature Validation Credential')}
         labelHelp={t(
           'Enable content signing to verify that the content has remained secure when a project is synced. If the content has been tampered with, the job will not run.'
         )}
-        placeholderText={''}
+        placeholderText={t('Select validation credential')}
         options={
           verifyCredentials?.results
             ? verifyCredentials.results.map((item: { name: string; id: number }) => ({
