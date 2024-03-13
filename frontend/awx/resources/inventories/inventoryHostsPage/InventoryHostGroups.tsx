@@ -14,18 +14,26 @@ import { useHostsGroupsColumns } from './hooks/useHostsGroupsColumns';
 import { InventoryGroup } from '../../../interfaces/InventoryGroup';
 import { useInventoryHostGroupsAddModal } from './InventoryHostGroupsModal';
 import { useAssociateGroupsToHost } from './hooks/useAssociateGroupsToHost';
+import { useGetHost } from '../../hosts/hooks/useGetHost';
 
-export function InventoryHostGroups() {
+export function InventoryHostGroups(props: { page: string }) {
   const { t } = useTranslation();
   const toolbarFilters = useHostsGroupsFilters();
   const tableColumns = useHostsGroupsColumns();
+  const isHostPage: boolean = props.page === 'host';
   const params = useParams<{ id: string; inventory_type: string; host_id: string }>();
+  const { host } = useGetHost(isHostPage ? params.id ?? '' : params.host_id ?? '');
+
+  const inventoryId = String(host?.inventory) ?? '';
+  const hostId = isHostPage ? params.id ?? '' : params.host_id ?? '';
+
   const view = useAwxView<InventoryGroup>({
-    url: awxAPI`/hosts/${params.host_id ?? ''}/all_groups/`,
+    url: awxAPI`/hosts/${hostId ?? ''}/all_groups/`,
     toolbarFilters,
     tableColumns,
   });
-  const toolbarActions = useHostsGroupsToolbarActions(view);
+
+  const toolbarActions = useHostsGroupsToolbarActions(view, inventoryId, hostId, isHostPage);
   const rowActions = useHostsGroupsActions();
 
   const openInventoryHostsGroupsAddModal = useInventoryHostGroupsAddModal();
@@ -63,7 +71,12 @@ export function InventoryHostGroups() {
         emptyStateButtonText={canCreateGroup ? t('Add group') : undefined}
         emptyStateButtonClick={
           canCreateGroup
-            ? () => openInventoryHostsGroupsAddModal({ onAdd: associateGroups })
+            ? () =>
+                openInventoryHostsGroupsAddModal({
+                  onAdd: associateGroups,
+                  inventoryId: inventoryId,
+                  hostId: hostId,
+                })
             : undefined
         }
         {...view}

@@ -9,6 +9,8 @@ describe('Inventory Host Groups List', () => {
     onAdd: (items: InventoryGroup[]) => {
       items;
     },
+    inventoryId: '',
+    hostId: '',
   };
   describe('Non-empty list', () => {
     beforeEach(() => {
