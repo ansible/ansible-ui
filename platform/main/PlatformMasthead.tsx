@@ -25,7 +25,6 @@ import {
   usePageNavigate,
 } from '../../framework';
 import { PageMastheadDropdown } from '../../framework/PageMasthead/PageMastheadDropdown';
-import { PageSettingsIcon } from '../../framework/PageMasthead/PageSettingsIcon';
 import { PageThemeSwitcher } from '../../framework/PageMasthead/PageThemeSwitcher';
 import { useAwxNotifications } from '../../frontend/awx/main/AwxMasthead';
 import { PageRefreshIcon } from '../../frontend/common/PageRefreshIcon';
@@ -100,9 +99,6 @@ export function PlatformMasthead() {
         </ToolbarItem>
         <ToolbarItem>
           <PageThemeSwitcher />
-        </ToolbarItem>
-        <ToolbarItem>
-          <PageSettingsIcon />
         </ToolbarItem>
         <ToolbarItem>
           <PageNotificationsIcon />

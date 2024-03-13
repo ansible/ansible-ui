@@ -11,7 +11,6 @@ import { PageApp } from '../../framework/PageNavigation/PageApp';
 import { AwxActiveUserProvider } from '../../frontend/awx/common/useAwxActiveUser';
 import { AwxConfigProvider } from '../../frontend/awx/common/useAwxConfig';
 import { WebSocketProvider } from '../../frontend/awx/common/useAwxWebSocket';
-import { RefreshIntervalProvider } from '../../frontend/common/components/RefreshInterval';
 import '../../frontend/common/i18n';
 import { EdaActiveUserProvider } from '../../frontend/eda/common/useEdaActiveUser';
 import { HubContextProvider } from '../../frontend/hub/common/useHubContext';
@@ -25,29 +24,28 @@ import { usePlatformNavigation } from './usePlatformNavigation';
 export default function PlatformMain() {
   const navigation = usePlatformNavigation();
   return (
-    <RefreshIntervalProvider>
-      <PageApp
-        login={<PlatformLogin />}
-        root={
-          <QuickStartProvider>
-            <WebSocketProvider>
-              <ActivePlatformUserProvider>
-                <AwxActiveUserProvider>
-                  <AwxConfigProvider>
-                    <HubContextProvider>
-                      <EdaActiveUserProvider>
-                        <Outlet />
-                      </EdaActiveUserProvider>
-                    </HubContextProvider>
-                  </AwxConfigProvider>
-                </AwxActiveUserProvider>
-              </ActivePlatformUserProvider>
-            </WebSocketProvider>
-          </QuickStartProvider>
-        }
-        masthead={<PlatformMasthead />}
-        navigation={navigation}
-      />
-    </RefreshIntervalProvider>
+    <PageApp
+      login={<PlatformLogin />}
+      root={
+        <QuickStartProvider>
+          <WebSocketProvider>
+            <ActivePlatformUserProvider>
+              <AwxActiveUserProvider>
+                <AwxConfigProvider>
+                  <HubContextProvider>
+                    <EdaActiveUserProvider>
+                      <Outlet />
+                    </EdaActiveUserProvider>
+                  </HubContextProvider>
+                </AwxConfigProvider>
+              </AwxActiveUserProvider>
+            </ActivePlatformUserProvider>
+          </WebSocketProvider>
+        </QuickStartProvider>
+      }
+      masthead={<PlatformMasthead />}
+      navigation={navigation}
+      defaultRefreshInterval={30}
+    />
   );
 }
