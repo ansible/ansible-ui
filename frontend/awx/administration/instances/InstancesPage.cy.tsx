@@ -97,8 +97,8 @@ describe('Instances Page', () => {
       .its('response.body')
       .then(() => {
         cy.getByDataCy('actions-dropdown').click();
-        cy.getByDataCy('remove-instance').should('be.visible');
-        cy.getByDataCy('remove-instance').should('have.attr', 'aria-disabled', 'true');
+        cy.get('[data-cy="remove-instance"]').should('be.visible');
+        cy.get('[data-cy="remove-instance"]').should('have.attr', 'aria-disabled', 'true');
       });
   });
 
