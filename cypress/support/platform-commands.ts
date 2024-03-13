@@ -158,3 +158,18 @@ Cypress.Commands.add('createGlobalPlatformOrganization', function () {
       }
     });
 });
+
+Cypress.Commands.add('searchAndDisplayResourcePlatform', (resourceName: string) => {
+  cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+    cy.get('[data-cy="text-input"]').find('input').type(resourceName);
+  });
+});
+
+Cypress.Commands.add('selectItemFromLookupModalPlatform', () => {
+  cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+    cy.get('[data-ouia-component-id="simple-table"] tbody').within(() => {
+      cy.get('[data-cy="checkbox-column-cell"] input').click();
+    });
+    cy.clickButton(/^Save/);
+  });
+});
