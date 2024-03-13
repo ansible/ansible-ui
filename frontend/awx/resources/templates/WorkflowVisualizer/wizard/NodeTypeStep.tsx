@@ -1,32 +1,32 @@
-import { useEffect, SetStateAction, Dispatch } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Controller, FieldPath, useFormContext, useWatch } from 'react-hook-form';
 import { InputGroup, InputGroupItem, InputGroupText, TextInput } from '@patternfly/react-core';
-import { PageFormGroup } from '../../../../../../framework/PageForm/Inputs/PageFormGroup';
+import { Dispatch, SetStateAction, useEffect } from 'react';
+import { Controller, FieldPath, useFormContext, useWatch } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import {
   PageFormGrid,
   PageFormSelect,
   PageFormTextInput,
   PageWizardStep,
 } from '../../../../../../framework';
+import { PageFormGroup } from '../../../../../../framework/PageForm/Inputs/PageFormGroup';
 import { PageFormWatch } from '../../../../../../framework/PageForm/Utils/PageFormWatch';
 import { usePageWizard } from '../../../../../../framework/PageWizard/PageWizardProvider';
-import { awxAPI } from '../../../../common/api/awx-utils';
-import { useGet } from '../../../../../common/crud/useGet';
 import { requestGet } from '../../../../../common/crud/Data';
-import { AwxItemsResponse } from '../../../../common/AwxItemsResponse';
-import { getDocsBaseUrl } from '../../../../common/util/getDocsBaseUrl';
-import { useAwxConfig } from '../../../../common/useAwxConfig';
-import { PageFormJobTemplateSelect } from '../../components/PageFormJobTemplateSelect';
-import { PageFormProjectSelect } from '../../../projects/components/PageFormProjectSelect';
+import { useGet } from '../../../../../common/crud/useGet';
 import { PageFormManagementJobsSelect } from '../../../../administration/management-jobs/components/PageFormManagementJobsSelect';
-import { PageFormInventorySourceSelect } from '../../../inventories/components/PageFormInventorySourceSelect';
-import type { SystemJobTemplate } from '../../../../interfaces/SystemJobTemplate';
+import { AwxItemsResponse } from '../../../../common/AwxItemsResponse';
+import { awxAPI } from '../../../../common/api/awx-utils';
+import { useAwxConfig } from '../../../../common/useAwxConfig';
+import { getDocsBaseUrl } from '../../../../common/util/getDocsBaseUrl';
 import type { LaunchConfiguration } from '../../../../interfaces/LaunchConfiguration';
-import type { WizardFormValues, AllResources, PromptFormValues, UnifiedJobType } from '../types';
+import type { SystemJobTemplate } from '../../../../interfaces/SystemJobTemplate';
+import { PageFormInventorySourceSelect } from '../../../inventories/components/PageFormInventorySourceSelect';
+import { PageFormProjectSelect } from '../../../projects/components/PageFormProjectSelect';
 import { parseStringToTagArray } from '../../JobTemplateFormHelpers';
-import { shouldHideOtherStep } from './helpers';
+import { PageFormJobTemplateSelect } from '../../components/PageFormJobTemplateSelect';
 import { RESOURCE_TYPE } from '../constants';
+import type { AllResources, PromptFormValues, UnifiedJobType, WizardFormValues } from '../types';
+import { shouldHideOtherStep } from './helpers';
 
 export function NodeTypeStep(props: { hasSourceNode?: boolean }) {
   const { reset, getValues, setValue, formState, getFieldState, register, control } =
@@ -362,7 +362,7 @@ function TimeoutInputs() {
               <PageFormGrid>
                 <InputGroupItem isFill>
                   <TextInput
-                    placeholder="Timeout in minutes"
+                    placeholder={t('Timeout in minutes')}
                     onChange={(_event, value: string) =>
                       onChangeHandler({ input: Number(value), unit: 'minutes' })
                     }
@@ -376,7 +376,7 @@ function TimeoutInputs() {
                 </InputGroupItem>
                 <InputGroupItem isFill>
                   <TextInput
-                    placeholder="Timeout in_seconds"
+                    placeholder={t('Timeout in seconds')}
                     onChange={(_event, value: string) =>
                       onChangeHandler({ input: Number(value), unit: 'seconds' })
                     }
