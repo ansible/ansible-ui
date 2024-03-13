@@ -182,7 +182,7 @@ export function usePlatformNavigation() {
         },
         {
           id: AwxRoute.SettingsSystem,
-          label: t('Syste Settings'),
+          label: t('System Settings'),
           path: 'system',
           element: <AwxSettingsCategory categoryId="system" key="system" />,
         },
