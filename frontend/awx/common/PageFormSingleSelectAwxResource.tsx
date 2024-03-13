@@ -38,10 +38,9 @@ export function PageFormSingleSelectAwxResource<
     async (options) => {
       // await new Promise((resolve) => setTimeout(resolve, 2000));
 
-      const next = options.next ? Number(options.next) : 999999;
       try {
-        let url = props.url + `?page_size=10&order_by=-id`;
-        if (next) url = url + `&id__lt=${next}`;
+        let url = props.url + `?page_size=10&order_by=name`;
+        if (options.next) url = url + `&name__gt=${options.next}`;
         if (options.search) url = url + `&name__icontains=${options.search}`;
         const response = await requestGet<AwxItemsResponse<Resource>>(url, options.signal);
         return {
@@ -52,7 +51,7 @@ export function PageFormSingleSelectAwxResource<
               value: resource.id as PathValue<FormData, Name>,
               description: resource.description,
             })) ?? [],
-          next: response.results[response.results.length - 1]?.id,
+          next: response.results[response.results.length - 1]?.name,
         };
       } catch (error) {
         return {
