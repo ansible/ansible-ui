@@ -214,7 +214,7 @@ export function RulebookActivationInputs() {
 
       <PageFormCredentialSelect<{ credential_refs: string; id: string; credentialKind: string }>
         name="credential_refs"
-        credentialKind={'vault'}
+        credentialKind={'vault, cloud'}
         labelHelp={t(`Select the credentials for this rulebook activations.`)}
       />
       <PageFormSelect<IEdaRulebookActivationInputs>

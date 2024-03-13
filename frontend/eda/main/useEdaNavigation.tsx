@@ -424,7 +424,7 @@ export function useEdaNavigation() {
         },
         {
           id: EdaRoute.CredentialTypes,
-          label: t('CredentialTypes'),
+          label: t('Credential Types'),
           path: 'credential-types',
           children: [
             {

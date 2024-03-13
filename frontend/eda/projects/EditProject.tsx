@@ -24,12 +24,54 @@ import { EdaCredential } from '../interfaces/EdaCredential';
 import { EdaProject, EdaProjectCreate, EdaProjectRead } from '../interfaces/EdaProject';
 import { EdaResult } from '../interfaces/EdaResult';
 import { EdaRoute } from '../main/EdaRoutes';
+import { Trans } from 'react-i18next/index';
+import { getDocsBaseUrl } from '../../awx/common/util/getDocsBaseUrl';
 
 function ProjectCreateInputs() {
   const { t } = useTranslation();
   const { data: credentials } = useGet<EdaResult<EdaCredential>>(
     edaAPI`/eda-credentials/` + `?credential_type__kind=scm&page_size=300`
   );
+  const { data: verifyCredentials } = useGet<EdaResult<EdaCredential>>(
+    edaAPI`/eda-credentials/` + `?credential_type__kind=cryptography&page_size=300`
+  );
+  const sourceControlRefspecHelp = (
+    <Trans i18nKey="sourceControlRefspecHelp">
+      <span>
+        A refspec to fetch (passed to the Ansible git module). This parameter allows access to
+        references via the branch field not otherwise available.
+        <br />
+        <br />
+        Note: This field assumes the remote name is &quot;origin&quot;.
+        <br />
+        <br />
+        Examples include:
+        <ul style={{ margin: '10px 0 10px 20px' }}>
+          <li>
+            <code>refs/*:refs/remotes/origin/*</code>
+          </li>
+          <li>
+            <code>refs/pull/62/head:refs/remotes/origin/pull/62/head</code>
+          </li>
+        </ul>
+        The first fetches all references. The second fetches the Github pull request number 62, in
+        this example the branch needs to be &quot;pull/62/head&quot;.
+        <br />
+        <br />
+        {t`For more information, refer to the`}{' '}
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          href={`${getDocsBaseUrl(
+            undefined
+          )}/html/userguide/projects.html#manage-playbooks-using-source-control`}
+        >
+          {t`Documentation.`}
+        </a>
+      </span>
+    </Trans>
+  );
+
   const isValidUrl = useIsValidUrl();
   const getPageUrl = useGetPageUrl();
   return (
@@ -81,6 +123,39 @@ function ProjectCreateInputs() {
         labelHelpTitle={t('Credential')}
         labelHelp={t('The token needed to utilize the SCM URL.')}
       />
+      <PageFormSelect
+        name={'signature_validation_credential_id'}
+        isRequired={false}
+        label={t('Content Signature Validation Credential')}
+        labelHelpTitle={t('Content Signature Validation Credential')}
+        labelHelp={t(
+          'Enable content signing to verify that the content has remained secure when a project is synced. If the content has been tampered with, the job will not run.'
+        )}
+        placeholderText={''}
+        options={
+          verifyCredentials?.results
+            ? verifyCredentials.results.map((item: { name: string; id: number }) => ({
+                label: item.name,
+                value: item.id,
+              }))
+            : []
+        }
+      />
+      <PageFormTextInput
+        name="scm_branch"
+        label={t('Source Control Branch/Tag/Commit')}
+        placeholder={''}
+        labelHelp={t(
+          'Branch to checkout. In addition to branches, you can input tags, commit hashes, and arbitrary refs. Some commit hashes and refs may not be available unless you also provide a custom refspec.'
+        )}
+      />
+      <PageFormTextInput
+        name="scm_refspec"
+        label={t('Source Control Refspec')}
+        placeholder={''}
+        labelHelpTitle={''}
+        labelHelp={sourceControlRefspecHelp}
+      />
       <PageFormGroup label={t('Options')}>
         <PageFormCheckbox<EdaProjectCreate>
           label={
@@ -108,6 +183,45 @@ function ProjectEditInputs() {
   const getPageUrl = useGetPageUrl();
   const { data: credentials } = useGet<EdaResult<EdaCredential>>(
     edaAPI`/credentials/` + `?credential_type__kind=scm&page_size=300`
+  );
+  const { data: verifyCredentials } = useGet<EdaResult<EdaCredential>>(
+    edaAPI`/eda-credentials/` + `?credential_type__kind=cryptography&page_size=300`
+  );
+  const sourceControlRefspecHelp = (
+    <Trans i18nKey="sourceControlRefspecHelp">
+      <span>
+        A refspec to fetch (passed to the Ansible git module). This parameter allows access to
+        references via the branch field not otherwise available.
+        <br />
+        <br />
+        Note: This field assumes the remote name is &quot;origin&quot;.
+        <br />
+        <br />
+        Examples include:
+        <ul style={{ margin: '10px 0 10px 20px' }}>
+          <li>
+            <code>refs/*:refs/remotes/origin/*</code>
+          </li>
+          <li>
+            <code>refs/pull/62/head:refs/remotes/origin/pull/62/head</code>
+          </li>
+        </ul>
+        The first fetches all references. The second fetches the Github pull request number 62, in
+        this example the branch needs to be &quot;pull/62/head&quot;.
+        <br />
+        <br />
+        {t`For more information, refer to the`}{' '}
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          href={`${getDocsBaseUrl(
+            undefined
+          )}/html/userguide/projects.html#manage-playbooks-using-source-control`}
+        >
+          {t`Documentation.`}
+        </a>
+      </span>
+    </Trans>
   );
   return (
     <>
@@ -149,6 +263,39 @@ function ProjectEditInputs() {
             : []
         }
         footer={<Link to={getPageUrl(EdaRoute.CreateCredential)}>{t('Create credential')}</Link>}
+      />
+      <PageFormSelect
+        name={'signature_validation_credential_id'}
+        isRequired={false}
+        label={t('Content Signature Validation Credential')}
+        labelHelpTitle={t('Content Signature Validation Credential')}
+        labelHelp={t(
+          'Enable content signing to verify that the content has remained secure when a project is synced. If the content has been tampered with, the job will not run.'
+        )}
+        placeholderText={t('')}
+        options={
+          verifyCredentials?.results
+            ? verifyCredentials.results.map((item: { name: string; id: number }) => ({
+                label: item.name,
+                value: item.id,
+              }))
+            : []
+        }
+      />
+      <PageFormTextInput
+        name="scm_branch"
+        label={t('Source Control Branch/Tag/Commit')}
+        placeholder={''}
+        labelHelp={t(
+          'Branch to checkout. In addition to branches, you can input tags, commit hashes, and arbitrary refs. Some commit hashes and refs may not be available unless you also provide a custom refspec.'
+        )}
+      />
+      <PageFormTextInput
+        name="scm_refspec"
+        label={t('Source Control Refspec')}
+        placeholder={''}
+        labelHelpTitle={''}
+        labelHelp={sourceControlRefspecHelp}
       />
       <PageFormGroup label={t('Options')}>
         <PageFormCheckbox

@@ -34,15 +34,10 @@ function SelectEdaCredentials(props: {
   const toolbarFilters = useCredentialFilters();
   const tableColumns = useCredentialColumns();
   const view = useEdaView<EdaCredential>({
-    url: edaAPI`/eda-credentials/`,
+    url: edaAPI`/eda-credentials/?credential_type__kind=vault&credential_type__kind=cloud&page_size=300`,
     toolbarFilters,
     tableColumns: tableColumns,
     disableQueryString: true,
-    ...(props.credentialKind && {
-      queryParams: {
-        credential_type__kind: props.credentialKind,
-      },
-    }),
   });
   return (
     <MultiSelectDialog<EdaCredential>

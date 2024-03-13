@@ -37,6 +37,7 @@ interface IFieldTypeBoolean extends IFieldTypeBase {
 
 export function CredentialFormInputs(props: { credentialType: EdaCredentialType | undefined }) {
   const fields = props?.credentialType?.inputs.fields;
+  console.log('Debug CredentialFormInputs - credentialType: ', props.credentialType);
   return fields?.map((field) => {
     return (
       <CredentialFormInput
@@ -105,7 +106,13 @@ export function CredentialFormInput(props: { field: FieldType | undefined; requi
   if (props.field.type === 'boolean') {
     return (
       <PageFormSection singleColumn>
-        <PageFormCheckbox label={props.field.label} name={props.field.id} />
+        <PageFormCheckbox
+          label={props.field.label}
+          name={`inputs.${props.field.id}`}
+          labelHelpTitle={props.field.label}
+          labelHelp={props.field.help_text}
+          isRequired={props.required.includes(props.field.id)}
+        />
       </PageFormSection>
     );
   }
