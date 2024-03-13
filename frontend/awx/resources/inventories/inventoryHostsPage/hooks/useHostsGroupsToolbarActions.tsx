@@ -27,7 +27,7 @@ export function useHostsGroupsToolbarActions(
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
 
-  const disassociateGroups = useDisassociateGroups(view.unselectItemsAndRefresh);
+  const disassociateGroups = useDisassociateGroups(view.unselectItemsAndRefresh, hostId);
 
   const adhocOptions = useOptions<OptionsResponse<ActionsResponse>>(
     awxAPI`/inventories/${inventoryId ?? ''}/ad_hoc_commands/`
@@ -42,7 +42,7 @@ export function useHostsGroupsToolbarActions(
   );
 
   const openInventoryHostsGroupsAddModal = useInventoryHostGroupsAddModal();
-  const associateGroups = useAssociateGroupsToHost(view.unselectItemsAndRefresh);
+  const associateGroups = useAssociateGroupsToHost(view.unselectItemsAndRefresh, hostId);
 
   return useMemo<IPageAction<InventoryGroup>[]>(
     () => [

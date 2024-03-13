@@ -34,10 +34,10 @@ export function InventoryHostGroups(props: { page: string }) {
   });
 
   const toolbarActions = useHostsGroupsToolbarActions(view, inventoryId, hostId, isHostPage);
-  const rowActions = useHostsGroupsActions();
+  const rowActions = useHostsGroupsActions(inventoryId);
 
   const openInventoryHostsGroupsAddModal = useInventoryHostGroupsAddModal();
-  const associateGroups = useAssociateGroupsToHost(view.unselectItemsAndRefresh);
+  const associateGroups = useAssociateGroupsToHost(view.unselectItemsAndRefresh, hostId);
 
   const groupOptions = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/groups/`).data;
   const canCreateGroup = Boolean(
