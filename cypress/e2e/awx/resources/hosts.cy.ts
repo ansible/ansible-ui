@@ -3,7 +3,7 @@ import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { User } from '../../../../frontend/awx/interfaces/User';
 
-describe('inventory host', () => {
+describe('host and inventory host', () => {
   let organization: Organization;
   let inventory: Inventory;
   let user: User;
@@ -27,19 +27,19 @@ describe('inventory host', () => {
     cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
   });
 
-  it('can create and delete a inventory host', () => {
+  it('can create, edit and delete a inventory host', () => {
     cy.visit(`/infrastructure/inventories/inventory/${inventory.id}/details`);
     cy.clickTab(/^Hosts$/, true);
-    createAndDeleteHost(true, inventory.name);
+    createAndEditAndDeleteHost(true, inventory.name);
   });
 
-  it('can create and delete a host', () => {
+  it('can create, edit and delete a host', () => {
     cy.visit(`/infrastructure/hosts`);
-    createAndDeleteHost(false, inventory.name);
+    createAndEditAndDeleteHost(false, inventory.name);
   });
 });
 
-function createAndDeleteHost(inventory_host: boolean, inventory: string) {
+function createAndEditAndDeleteHost(inventory_host: boolean, inventory: string) {
   const hostName = 'E2E Inventory host ' + randomString(4);
 
   if (inventory_host) {
@@ -48,6 +48,7 @@ function createAndDeleteHost(inventory_host: boolean, inventory: string) {
     );
   }
 
+  // create
   cy.clickButton(/^Create host$/);
   cy.verifyPageTitle('Create Host');
   cy.get('[data-cy="name"]').type(hostName);
@@ -70,6 +71,15 @@ function createAndDeleteHost(inventory_host: boolean, inventory: string) {
   cy.hasDetail(/^Name$/, hostName);
   cy.hasDetail(/^Description$/, 'This is the description');
   cy.hasDetail(/^Variables$/, 'test: true');
+
+  // edit
+  cy.get(`[data-cy='edit-host']`).click();
+  cy.get('[data-cy="description"]').clear().type('This is the description edited');
+
+  cy.get(`[data-cy='Submit']`).click();
+  cy.hasDetail(/^Description$/, 'This is the description edited');
+
+  // delete
   cy.selectDetailsPageKebabAction('delete-host');
 
   if (inventory_host) {
