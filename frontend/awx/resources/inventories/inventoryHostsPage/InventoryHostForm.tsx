@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { useCallback, useEffect, useState } from 'react';
-import { useFormContext } from 'react-hook-form';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
@@ -14,20 +13,17 @@ import {
   usePageNavigate,
 } from '../../../../../framework';
 import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
-import { requestGet, requestPatch } from '../../../../common/crud/Data';
+import { requestPatch } from '../../../../common/crud/Data';
 import { useGetRequest } from '../../../../common/crud/useGet';
 import { usePostRequest } from '../../../../common/crud/usePostRequest';
-import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { AwxPageForm } from '../../../common/AwxPageForm';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { AwxHost } from '../../../interfaces/AwxHost';
-import { Inventory } from '../../../interfaces/Inventory';
 import { InventoryGroup } from '../../../interfaces/InventoryGroup';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useGetHost } from '../../hosts/hooks/useGetHost';
 import { useGetInventory } from '../InventoryPage/InventoryPage';
 import { PageFormInventorySelect } from '../components/PageFormInventorySelect';
-import { useSelectInventorySingle } from './hooks/useInventorySelector';
 
 export interface IHostInput {
   name: string;
@@ -300,27 +296,6 @@ export function EditHost() {
 
 function HostInputs(props: { edit_mode?: boolean; inventory_host?: boolean }) {
   const { t } = useTranslation();
-
-  const queryOptions = useCallback(async () => {
-    const response = await requestGet<AwxItemsResponse<Inventory>>(
-      awxAPI`/inventories/?order_by=name`
-    );
-    return Promise.resolve({
-      total: response.count,
-      options:
-        response.results?.map((resource) => ({
-          label: resource?.name,
-          value: resource?.id,
-          description: resource.description,
-        })) ?? [],
-    });
-  }, []);
-
-  const selectInventorySingle = useSelectInventorySingle();
-  const registrySelector = selectInventorySingle.openBrowse;
-
-  const { setValue } = useFormContext<IHostInput>();
-
   return (
     <>
       <PageFormTextInput<IHostInput>

@@ -246,6 +246,7 @@ export function PageAsyncMultiSelect<
       isLoading={loading}
       disableClearSelection={props.disableClearSelection}
       disableClearChips={props.disableClearChips}
+      queryLabel={props.queryLabel}
     />
   );
 }

@@ -149,6 +149,7 @@ export function PageMultiSelect<
     variant,
     disableClearSelection,
     maxChipSize,
+    queryLabel,
   } = props;
   const [open, setOpen] = useOverridableState(props.open ?? false, props.setOpen);
   const [searchValue, setSearchValue] = useOverridableState(
@@ -158,16 +159,18 @@ export function PageMultiSelect<
 
   const selectListRef = useRef<HTMLDivElement>(null);
 
-  const selectedOptions = useMemo(
-    () =>
-      options.filter((option: PageSelectOption<ValueT>) => {
-        if (values === undefined || values === null) {
-          return false;
-        }
-        return values.includes(option.value);
-      }),
-    [options, values]
-  );
+  const selectedOptions = useMemo(() => {
+    const selectedOptions: PageSelectOption<ValueT>[] = [];
+    for (const value of values ?? []) {
+      const option = options.find((option) => option.value === value);
+      if (option) {
+        selectedOptions.push(option);
+      } else if (queryLabel) {
+        selectedOptions.push({ label: queryLabel(value) as string, value });
+      }
+    }
+    return selectedOptions;
+  }, [options, queryLabel, values]);
 
   const Toggle = (toggleRef: Ref<MenuToggleElement>) => {
     return (
