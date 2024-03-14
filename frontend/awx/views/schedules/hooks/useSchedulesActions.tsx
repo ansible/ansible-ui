@@ -30,15 +30,6 @@ export function useSchedulesActions(options: {
   const rowActions = useMemo<IPageAction<Schedule>[]>(
     () => [
       {
-        type: PageActionType.Link,
-        selection: PageActionSelection.Single,
-        icon: PencilAltIcon,
-        label: t(`Edit schedule`),
-        isDisabled: (schedule) => cannotEditResource(schedule, t, canCreateSchedule),
-        href: () => editUrl,
-        isPinned: true,
-      },
-      {
         isPinned: true,
         ariaLabel: (isEnabled) =>
           isEnabled ? t('Click to disable schedule') : t('Click to enable schedule'),
@@ -49,6 +40,15 @@ export function useSchedulesActions(options: {
         isDisabled: (schedule) => cannotEditResource(schedule, t, canCreateSchedule),
         onToggle: (schedule, enabled) => handleToggleSchedule(schedule, enabled),
         isSwitchOn: (schedule) => schedule.enabled,
+      },
+      {
+        type: PageActionType.Link,
+        selection: PageActionSelection.Single,
+        icon: PencilAltIcon,
+        label: t(`Edit schedule`),
+        isDisabled: (schedule) => cannotEditResource(schedule, t, canCreateSchedule),
+        href: () => editUrl,
+        isPinned: true,
       },
       { type: PageActionType.Seperator },
       {
