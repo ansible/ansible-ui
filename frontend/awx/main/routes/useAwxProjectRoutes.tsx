@@ -9,7 +9,7 @@ import { CreateProject, EditProject } from '../../resources/projects/ProjectPage
 import { ProjectJobTemplates } from '../../resources/projects/ProjectPage/ProjectJobTemplates';
 import { ProjectPage } from '../../resources/projects/ProjectPage/ProjectPage';
 import { Projects } from '../../resources/projects/Projects';
-import { CreateSchedule } from '../../views/schedules/wizard/ScheduleAddWizard';
+import { ScheduleAddWizard } from '../../views/schedules/wizard/ScheduleAddWizard';
 import { ScheduleDetails } from '../../views/schedules/SchedulePage/ScheduleDetails';
 import { SchedulePage } from '../../views/schedules/SchedulePage/SchedulePage';
 import { ScheduleRules } from '../../views/schedules/SchedulePage/ScheduleRules';
@@ -38,7 +38,7 @@ export function useAwxProjectRoutes() {
         {
           id: AwxRoute.ProjectScheduleCreate,
           path: ':id/schedules/create',
-          element: <CreateSchedule />,
+          element: <ScheduleAddWizard />,
         },
         {
           id: AwxRoute.ProjectScheduleEdit,
