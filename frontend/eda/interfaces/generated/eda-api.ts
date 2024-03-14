@@ -897,6 +897,9 @@ export interface Project {
   url: string;
   git_hash: string;
   import_state: ImportStateEnum;
+  scm_type?: string;
+  scm_branch?: string;
+  scm_refspec?: string;
   import_error: string | null;
   /** @format uuid */
   import_task_id: string | null;
@@ -911,6 +914,7 @@ export interface ProjectCreateRequest {
   name: string;
   description?: string;
   eda_credential_id?: number | null;
+  signature_validation_credential_id?: number | null;
   verify_ssl?: boolean;
 }
 
@@ -919,11 +923,15 @@ export interface ProjectRead {
   name: string;
   description?: string;
   eda_credential?: CredentialRef | null;
+  signature_validation_credential?: CredentialRef | null;
   verify_ssl?: boolean;
   id: number;
   url: string;
   git_hash: string;
   import_state: ImportStateEnum;
+  scm_type?: string;
+  scm_branch?: string;
+  scm_refspec?: string;
   import_error: string | null;
   /** @format uuid */
   import_task_id: string | null;
@@ -931,6 +939,7 @@ export interface ProjectRead {
   created_at: string;
   /** @format date-time */
   modified_at: string;
+
 }
 
 export interface ProjectRef {
