@@ -210,6 +210,7 @@ export const WorkflowTopology = ({ data: { workflowNodes = [], template } }: Top
 
     visualization.fromModel(model, true);
     visualization.getGraph().reset();
+    visualization.getGraph().layout();
   }, [t, visualization, createEdge, workflowNodes, dedupeOldNodes]);
 
   return (
