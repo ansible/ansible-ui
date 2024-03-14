@@ -151,7 +151,6 @@ export function useDynamicToolbarFilters(props: DynamicToolbarFiltersProps) {
   const queryResourceLabel = useCallback((value: string, key: string) => {
     const knownAwxFilterKey = knownAwxFilterKeys[key];
     if (knownAwxFilterKey) {
-      console.log('knownAwxFilterKey', knownAwxFilterKey);
       return (
         <AsyncQueryLabel
           url={awxAPI`/${knownAwxFilterKey.apiPath}/`}

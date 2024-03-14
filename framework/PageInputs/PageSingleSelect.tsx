@@ -163,7 +163,6 @@ export function PageSingleSelect<
   const selectedLabel = useMemo(() => {
     let selectedLabel: ReactNode = selectedOption?.label;
     if (!selectedLabel && value !== undefined && value !== '') {
-      console.log(value);
       selectedLabel = queryLabel?.(value);
     }
     return selectedLabel;

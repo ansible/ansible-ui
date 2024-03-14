@@ -70,6 +70,6 @@ function useOptionsRequest<ResponseBody>() {
           }
       }
     },
-    [navigate, abortControllerRef]
+    [navigate]
   );
 }
