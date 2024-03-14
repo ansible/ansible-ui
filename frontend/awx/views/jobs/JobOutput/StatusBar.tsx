@@ -5,6 +5,7 @@ import {
   pfDanger,
   pfInfo,
   pfSuccess,
+  pfUnreachable,
   pfWarning,
 } from '../../../../../framework/components/pfcolors';
 import type { HostStatusCounts } from '../../../interfaces/Job';
@@ -88,7 +89,7 @@ export function WorkflowNodesStatusBar(props: { nodes: WorkflowNode[] }) {
       label: t`Failed`,
     },
     unreachable: {
-      color: 'var(--pf-v5-global--danger-color--300)',
+      color: pfUnreachable,
       label: t`Unreachable`,
     },
   };
