@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { RRule } from 'rrule';
+import { Frequency, RRule } from 'rrule';
 import { useGetPageUrl } from '../../../../../framework';
 import { AwxRoute } from '../../../main/AwxRoutes';
 
@@ -16,6 +16,19 @@ export function useScheuleRulesRoutes() {
     [getPageUrl]
   );
   return scheduleRulesRoutes;
+}
+
+export function useGetFrequencyOptions() {
+  const { t } = useTranslation();
+  return [
+    { label: t('Yearly'), value: Frequency.YEARLY },
+    { label: t('Monthly'), value: Frequency.MONTHLY },
+    { label: t('Weekly'), value: Frequency.WEEKLY },
+    { label: t('Daily'), value: Frequency.DAILY },
+    { label: t('Hourly'), value: Frequency.HOURLY },
+    { label: t('Minutely'), value: Frequency.MINUTELY },
+    { label: t('Secondly'), value: Frequency.SECONDLY },
+  ];
 }
 
 export function useGetWeekdayOptions() {

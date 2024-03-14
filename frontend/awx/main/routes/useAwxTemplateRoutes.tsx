@@ -16,7 +16,7 @@ import {
 import { WorkflowJobTemplateDetails } from '../../resources/templates/WorkflowJobTemplatePage/WorkflowJobTemplateDetails';
 import { WorkflowJobTemplatePage } from '../../resources/templates/WorkflowJobTemplatePage/WorkflowJobTemplatePage';
 import { WorkflowVisualizer } from '../../resources/templates/WorkflowVisualizer/WorkflowVisualizer';
-import { CreateSchedule } from '../../views/schedules/wizard/ScheduleAddWizard';
+import { ScheduleAddWizard } from '../../views/schedules/wizard/ScheduleAddWizard';
 import { ScheduleDetails } from '../../views/schedules/SchedulePage/ScheduleDetails';
 import { SchedulePage } from '../../views/schedules/SchedulePage/SchedulePage';
 import { ScheduleRules } from '../../views/schedules/SchedulePage/ScheduleRules';
@@ -48,7 +48,7 @@ export function useAwxTemplateRoutes() {
             {
               id: AwxRoute.JobTemplateScheduleCreate,
               path: ':id/schedules/create',
-              element: <CreateSchedule />,
+              element: <ScheduleAddWizard />,
             },
             {
               id: AwxRoute.JobTemplateEditSchedule,
@@ -154,7 +154,7 @@ export function useAwxTemplateRoutes() {
             {
               id: AwxRoute.WorkflowJobTemplateScheduleCreate,
               path: ':id/schedules/create',
-              element: <CreateSchedule />,
+              element: <ScheduleAddWizard />,
             },
             {
               id: AwxRoute.WorkflowJobTemplateEditSchedule,
