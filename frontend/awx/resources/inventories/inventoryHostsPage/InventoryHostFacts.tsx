@@ -5,11 +5,13 @@ import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageD
 import { useGet } from '../../../../common/crud/useGet';
 import { awxAPI } from '../../../common/api/awx-utils';
 
-export function InventoryHostFacts() {
+export function InventoryHostFacts(props: { page: string }) {
   const { t } = useTranslation();
   const params = useParams<{ id: string; inventory_type: string; host_id: string }>();
 
-  const { data: facts } = useGet<object>(awxAPI`/hosts/${params.host_id ?? ''}/ansible_facts`);
+  const { data: facts } = useGet<object>(
+    awxAPI`/hosts/${props.page === 'host' ? params.id ?? '' : params.host_id ?? ''}/ansible_facts`
+  );
 
   return (
     <PageDetails>
