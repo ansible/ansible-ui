@@ -15,6 +15,7 @@ import { ScheduleInputs } from '../components/ScheduleInputs';
 import { ScheduleFormWizard } from '../types';
 import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
 import { useGetTimezones } from '../hooks/useGetTimezones';
+import { PromptInputs } from '../components/PromptInputs';
 
 export function CreateSchedule() {
   const { t } = useTranslation();
@@ -58,7 +59,7 @@ export function CreateSchedule() {
     {
       id: 'promptsStep',
       label: t('Prompts'),
-      inputs: <PageNotImplemented />,
+      inputs: <PromptInputs onError={() => {}} />,
     },
     { id: 'survey', label: t('Survey'), element: <PageNotImplemented /> },
     { id: 'occurrences', label: t('Occurrences'), element: <PageNotImplemented /> },
