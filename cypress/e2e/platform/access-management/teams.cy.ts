@@ -349,7 +349,79 @@ describe('Platform Teams - tabs tests', function () {
     });
   });
   // Administrators tab
-  it.skip('can add and remove users as administrators to the team from the administrators tab', function () {});
+  it('can add and remove users as administrators to the team from the administrators tab', function () {
+    //creates a team with global organization
+    // add users platformUser1 and platformUser2 to the team from the Administrators tab
+    // remove users platformUser1 and platformUser2 from the team from the Administrators tab list items
+    const globalPlatformOrganization = this.globalPlatformOrganization as PlatformOrganization;
+    cy.createPlatformTeam(globalPlatformOrganization).then((createdPlatformTeam: PlatformTeam) => {
+      cy.createPlatformUser(globalPlatformOrganization).then((createdUser1: PlatformUser) => {
+        cy.createPlatformUser(globalPlatformOrganization).then((createdUser2: PlatformUser) => {
+          cy.navigateTo('platform', 'teams');
+          cy.verifyPageTitle('Teams');
+          cy.setTableView('table');
+          cy.clickTableRowLink('name', createdPlatformTeam.name);
+          cy.clickTab('Administrators', true);
+
+          // search first user createdUser1 and add as admin
+          cy.intercept('GET', gatewayV1API`/users/?order_by=username&page=1&page_size=10`).as(
+            'getUsers'
+          );
+          cy.getByDataCy('add-administrator(s)').click();
+
+          // wait for the users call to load users in the modal
+          cy.wait('@getUsers');
+          cy.searchAndDisplayResourcePlatform(createdUser1.username);
+          cy.intercept(
+            'GET',
+            gatewayV1API`/users/?username__contains=${createdUser1.username}&order_by=username&page=1&page_size=10`
+          ).as('getUsersAfterSearch1');
+
+          cy.wait('@getUsersAfterSearch1');
+          cy.selectItemFromLookupModalPlatform();
+          cy.intercept(
+            'GET',
+            gatewayV1API`/teams/${createdPlatformTeam.id.toString()}/admins/?order_by=username&page=1&page_size=10`
+          ).as('getAdminsList');
+          cy.wait('@getAdminsList')
+            .its('response.body')
+            .then((body: { results: { username: string }[] }) => {
+              const admin = body.results[0]?.username;
+              expect(admin).to.eql(createdUser1.username);
+            });
+
+          //search second user createdUser2 and add as admin
+          cy.intercept(
+            'GET',
+            gatewayV1API`/users/?username__contains=${createdUser2.username}&order_by=username&page=1&page_size=10`
+          ).as('getUsersAfterSearch2');
+          cy.getByDataCy('add-administrator(s)').click();
+          cy.wait('@getUsers');
+          cy.searchAndDisplayResourcePlatform(createdUser2.username);
+          cy.intercept(
+            'GET',
+            gatewayV1API`/users/?username__contains=${createdUser2.username}&order_by=username&page=1&page_size=10`
+          ).as('getUsersAfterSearch2');
+
+          cy.wait('@getUsersAfterSearch2');
+          cy.selectItemFromLookupModalPlatform();
+          cy.intercept(
+            'GET',
+            gatewayV1API`/teams/${createdPlatformTeam.id.toString()}/admins/?order_by=username&page=1&page_size=10`
+          ).as('getAdminsList2');
+          cy.wait('@getAdminsList2')
+            .its('response.body.results')
+            .then((results: PlatformUser[]) => {
+              const admins = results?.map((user) => user.username);
+              expect(admins).to.include(createdUser2.username);
+            });
+          cy.deletePlatformUser(createdUser2, { failOnStatusCode: false });
+        });
+        cy.deletePlatformUser(createdUser1, { failOnStatusCode: false });
+      });
+      cy.deletePlatformTeam(createdPlatformTeam, { failOnStatusCode: false });
+    });
+  });
   // Roles tab
   it.skip('can add and remove a role from a user via the team roles tab', function () {});
   // Resource Access tab
