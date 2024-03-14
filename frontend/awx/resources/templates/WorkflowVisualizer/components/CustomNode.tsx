@@ -19,36 +19,36 @@ import {
 } from '@patternfly/react-topology';
 
 import { useViewOptions } from '../ViewOptionsProvider';
-import type { CustomNodeProps, UnifiedJobType } from '../types';
-import type { SVGIconProps } from '@patternfly/react-icons/dist/js/createIcon';
 import { START_NODE_ID } from '../constants';
-import { useStatusDecorator } from '../hooks/useStatusDecorator';
+import type { CustomNodeProps } from '../types';
+import type { SVGIconProps } from '@patternfly/react-icons/dist/js/createIcon';
 
-const NodeIcon: Record<UnifiedJobType, ElementType<SVGIconProps>> = {
+const NodeIcon: { [key: string]: ElementType<SVGIconProps> } = {
   inventory_update: ProcessAutomationIcon,
   job: ClipboardCheckIcon,
   project_update: SyncAltIcon,
   system_job: CogIcon,
   workflow_approval: ClockIcon,
   workflow_job: ShareAltIcon,
+  deleted_resource: TrashIcon,
 };
 
 export const CustomNode: FC<
   CustomNodeProps & WithContextMenuProps & WithSelectionProps & WithCreateConnectorProps
-> = observer((props) => {
-  const { element, onSelect, ...rest } = props;
+> = observer(({ element, onSelect, ...rest }) => {
   const { setSidebarMode } = useViewOptions();
-  const statusDecorator = useStatusDecorator();
-  const data = element.getData();
+  const { unified_job_type: jobType } =
+    element.getData()?.resource?.summary_fields?.unified_job_template || {};
+
   const id = element.getId();
-  const jobType = data && data.resource?.summary_fields?.unified_job_template?.unified_job_type;
-  if ((!data && id !== START_NODE_ID) || !isNode(element)) return null;
-  const Icon = jobType ? NodeIcon[jobType] : TrashIcon;
+  if ((!jobType && id !== START_NODE_ID) || !isNode(element)) return null;
+
+  const Icon = NodeIcon[jobType ?? 'deleted_resource'];
+
   return id !== START_NODE_ID ? (
     <DefaultNode
-      element={element}
       showLabel
-      secondaryLabel={data?.secondaryLabel}
+      element={element}
       labelClassName={`${id}-node-label`}
       onSelect={(e) => {
         if (!jobType) return;
@@ -61,7 +61,6 @@ export const CustomNode: FC<
       <g transform={`translate(13, 13)`}>
         <Icon style={{ color: '#393F44' }} width={25} height={25} />
       </g>
-      {statusDecorator(element)}
     </DefaultNode>
   ) : (
     <DefaultNode
