@@ -51,7 +51,7 @@ const CustomEdgeInner: FC<
   return (
     <Layer id={dragging ? TOP_LAYER : undefined} {...rest}>
       <g
-        data-test-id="task-handler"
+        data-test-id="workflow-visualizer-edge"
         className={edgeStyles}
         fillOpacity={0}
         ref={hoverRef as LegacyRef<SVGTextElement>}
