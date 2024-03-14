@@ -327,7 +327,6 @@ export function CreateProject() {
   const postRequest = usePostRequest<EdaProjectCreate, EdaProject>();
 
   const onSubmit: PageFormSubmitHandler<EdaProjectCreate> = async (project) => {
-    console.log('Debug - project: ', project);
     const newProject = await postRequest(edaAPI`/projects/`, project);
     (cache as unknown as { clear: () => void }).clear?.();
     pageNavigate(EdaRoute.ProjectPage, { params: { id: newProject.id } });

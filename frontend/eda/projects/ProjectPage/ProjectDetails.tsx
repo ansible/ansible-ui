@@ -6,7 +6,6 @@ import {
   LoadingPage,
   PageDetail,
   PageDetails,
-  TextCell,
   useGetPageUrl,
 } from '../../../../framework';
 import { StandardPopover } from '../../../../framework/components/StandardPopover';
