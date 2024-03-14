@@ -1,0 +1,465 @@
+{
+  "count": 8,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 190,
+      "type": "workflow_job_node",
+      "url": "/api/v2/workflow_job_nodes/190/",
+      "related": {
+        "labels": "/api/v2/workflow_job_nodes/190/labels/",
+        "credentials": "/api/v2/workflow_job_nodes/190/credentials/",
+        "instance_groups": "/api/v2/workflow_job_nodes/190/instance_groups/",
+        "success_nodes": "/api/v2/workflow_job_nodes/190/success_nodes/",
+        "failure_nodes": "/api/v2/workflow_job_nodes/190/failure_nodes/",
+        "always_nodes": "/api/v2/workflow_job_nodes/190/always_nodes/",
+        "unified_job_template": "/api/v2/job_templates/10/",
+        "job": "/api/v2/jobs/173/",
+        "workflow_job": "/api/v2/workflow_jobs/152/"
+      },
+      "summary_fields": {
+        "job": {
+          "id": 173,
+          "name": "my_template",
+          "description": "",
+          "status": "error",
+          "failed": true,
+          "elapsed": 0.142,
+          "type": "job"
+        },
+        "workflow_job": {
+          "id": 152,
+          "name": "test",
+          "description": ""
+        },
+        "unified_job_template": {
+          "id": 10,
+          "name": "my_template",
+          "description": "",
+          "unified_job_type": "job"
+        }
+      },
+      "created": "2024-03-12T13:49:02.677804Z",
+      "modified": "2024-03-13T10:41:31.959874Z",
+      "extra_data": {},
+      "inventory": null,
+      "scm_branch": null,
+      "job_type": null,
+      "job_tags": null,
+      "skip_tags": null,
+      "limit": null,
+      "diff_mode": null,
+      "verbosity": null,
+      "execution_environment": null,
+      "forks": null,
+      "job_slice_count": null,
+      "timeout": null,
+      "job": 173,
+      "workflow_job": 152,
+      "unified_job_template": 10,
+      "success_nodes": [192],
+      "failure_nodes": [193],
+      "always_nodes": [191],
+      "all_parents_must_converge": false,
+      "do_not_run": false,
+      "identifier": "Remove VMWare Host"
+    },
+    {
+      "id": 191,
+      "type": "workflow_job_node",
+      "url": "/api/v2/workflow_job_nodes/191/",
+      "related": {
+        "labels": "/api/v2/workflow_job_nodes/191/labels/",
+        "credentials": "/api/v2/workflow_job_nodes/191/credentials/",
+        "instance_groups": "/api/v2/workflow_job_nodes/191/instance_groups/",
+        "success_nodes": "/api/v2/workflow_job_nodes/191/success_nodes/",
+        "failure_nodes": "/api/v2/workflow_job_nodes/191/failure_nodes/",
+        "always_nodes": "/api/v2/workflow_job_nodes/191/always_nodes/",
+        "unified_job_template": "/api/v2/workflow_approval_templates/19/",
+        "job": "/api/v2/workflow_approvals/175/",
+        "workflow_job": "/api/v2/workflow_jobs/152/"
+      },
+      "summary_fields": {
+        "job": {
+          "id": 175,
+          "name": "Approval node 123",
+          "description": "",
+          "status": "canceled",
+          "failed": true,
+          "elapsed": 1617.866,
+          "type": "workflow_approval",
+          "canceled_on": "2024-03-13T11:08:30.512490Z",
+          "timed_out": false
+        },
+        "workflow_job": {
+          "id": 152,
+          "name": "test",
+          "description": ""
+        },
+        "unified_job_template": {
+          "id": 19,
+          "name": "Approval node 123",
+          "description": "",
+          "unified_job_type": "workflow_approval"
+        }
+      },
+      "created": "2024-03-12T13:49:02.690771Z",
+      "modified": "2024-03-13T10:41:32.674479Z",
+      "extra_data": {},
+      "inventory": null,
+      "scm_branch": null,
+      "job_type": null,
+      "job_tags": null,
+      "skip_tags": null,
+      "limit": null,
+      "diff_mode": null,
+      "verbosity": null,
+      "execution_environment": null,
+      "forks": null,
+      "job_slice_count": null,
+      "timeout": null,
+      "job": 175,
+      "workflow_job": 152,
+      "unified_job_template": 19,
+      "success_nodes": [195],
+      "failure_nodes": [],
+      "always_nodes": [],
+      "all_parents_must_converge": false,
+      "do_not_run": false,
+      "identifier": "Approval node 123"
+    },
+    {
+      "id": 192,
+      "type": "workflow_job_node",
+      "url": "/api/v2/workflow_job_nodes/192/",
+      "related": {
+        "labels": "/api/v2/workflow_job_nodes/192/labels/",
+        "credentials": "/api/v2/workflow_job_nodes/192/credentials/",
+        "instance_groups": "/api/v2/workflow_job_nodes/192/instance_groups/",
+        "success_nodes": "/api/v2/workflow_job_nodes/192/success_nodes/",
+        "failure_nodes": "/api/v2/workflow_job_nodes/192/failure_nodes/",
+        "always_nodes": "/api/v2/workflow_job_nodes/192/always_nodes/",
+        "unified_job_template": "/api/v2/projects/12/",
+        "workflow_job": "/api/v2/workflow_jobs/152/"
+      },
+      "summary_fields": {
+        "workflow_job": {
+          "id": 152,
+          "name": "test",
+          "description": ""
+        },
+        "unified_job_template": {
+          "id": 12,
+          "name": "test project",
+          "description": "",
+          "unified_job_type": "project_update"
+        }
+      },
+      "created": "2024-03-12T13:49:02.706344Z",
+      "modified": "2024-03-12T13:49:02.706358Z",
+      "extra_data": {},
+      "inventory": null,
+      "scm_branch": null,
+      "job_type": null,
+      "job_tags": null,
+      "skip_tags": null,
+      "limit": null,
+      "diff_mode": null,
+      "verbosity": null,
+      "execution_environment": null,
+      "forks": null,
+      "job_slice_count": null,
+      "timeout": null,
+      "job": null,
+      "workflow_job": 152,
+      "unified_job_template": 12,
+      "success_nodes": [197],
+      "failure_nodes": [],
+      "always_nodes": [],
+      "all_parents_must_converge": false,
+      "do_not_run": true,
+      "identifier": "Project sync 1"
+    },
+    {
+      "id": 193,
+      "type": "workflow_job_node",
+      "url": "/api/v2/workflow_job_nodes/193/",
+      "related": {
+        "labels": "/api/v2/workflow_job_nodes/193/labels/",
+        "credentials": "/api/v2/workflow_job_nodes/193/credentials/",
+        "instance_groups": "/api/v2/workflow_job_nodes/193/instance_groups/",
+        "success_nodes": "/api/v2/workflow_job_nodes/193/success_nodes/",
+        "failure_nodes": "/api/v2/workflow_job_nodes/193/failure_nodes/",
+        "always_nodes": "/api/v2/workflow_job_nodes/193/always_nodes/",
+        "unified_job_template": "/api/v2/inventory_sources/14/",
+        "job": "/api/v2/inventory_updates/174/",
+        "workflow_job": "/api/v2/workflow_jobs/152/"
+      },
+      "summary_fields": {
+        "job": {
+          "id": 174,
+          "name": "test_constructed_inventory - Auto-created source for: test_constructed_inventory",
+          "description": "",
+          "status": "successful",
+          "failed": false,
+          "elapsed": 2.804,
+          "type": "inventory_update"
+        },
+        "workflow_job": {
+          "id": 152,
+          "name": "test",
+          "description": ""
+        },
+        "unified_job_template": {
+          "id": 14,
+          "name": "Auto-created source for: test_constructed_inventory",
+          "description": "",
+          "unified_job_type": "inventory_update"
+        }
+      },
+      "created": "2024-03-12T13:49:02.719353Z",
+      "modified": "2024-03-13T10:41:32.608499Z",
+      "extra_data": {},
+      "inventory": null,
+      "scm_branch": null,
+      "job_type": null,
+      "job_tags": null,
+      "skip_tags": null,
+      "limit": null,
+      "diff_mode": null,
+      "verbosity": null,
+      "execution_environment": null,
+      "forks": null,
+      "job_slice_count": null,
+      "timeout": null,
+      "job": 174,
+      "workflow_job": 152,
+      "unified_job_template": 14,
+      "success_nodes": [196],
+      "failure_nodes": [],
+      "always_nodes": [],
+      "all_parents_must_converge": false,
+      "do_not_run": false,
+      "identifier": "Inventory sync 1"
+    },
+    {
+      "id": 194,
+      "type": "workflow_job_node",
+      "url": "/api/v2/workflow_job_nodes/194/",
+      "related": {
+        "labels": "/api/v2/workflow_job_nodes/194/labels/",
+        "credentials": "/api/v2/workflow_job_nodes/194/credentials/",
+        "instance_groups": "/api/v2/workflow_job_nodes/194/instance_groups/",
+        "success_nodes": "/api/v2/workflow_job_nodes/194/success_nodes/",
+        "failure_nodes": "/api/v2/workflow_job_nodes/194/failure_nodes/",
+        "always_nodes": "/api/v2/workflow_job_nodes/194/always_nodes/",
+        "unified_job_template": "/api/v2/job_templates/10/",
+        "workflow_job": "/api/v2/workflow_jobs/152/"
+      },
+      "summary_fields": {
+        "workflow_job": {
+          "id": 152,
+          "name": "test",
+          "description": ""
+        },
+        "unified_job_template": {
+          "id": 10,
+          "name": "my_template",
+          "description": "",
+          "unified_job_type": "job"
+        }
+      },
+      "created": "2024-03-12T13:49:02.732737Z",
+      "modified": "2024-03-12T13:49:02.732747Z",
+      "extra_data": {},
+      "inventory": null,
+      "scm_branch": null,
+      "job_type": null,
+      "job_tags": null,
+      "skip_tags": null,
+      "limit": null,
+      "diff_mode": null,
+      "verbosity": null,
+      "execution_environment": null,
+      "forks": null,
+      "job_slice_count": null,
+      "timeout": null,
+      "job": null,
+      "workflow_job": 152,
+      "unified_job_template": 10,
+      "success_nodes": [],
+      "failure_nodes": [],
+      "always_nodes": [],
+      "all_parents_must_converge": false,
+      "do_not_run": true,
+      "identifier": "Collection 1 role"
+    },
+    {
+      "id": 195,
+      "type": "workflow_job_node",
+      "url": "/api/v2/workflow_job_nodes/195/",
+      "related": {
+        "labels": "/api/v2/workflow_job_nodes/195/labels/",
+        "credentials": "/api/v2/workflow_job_nodes/195/credentials/",
+        "instance_groups": "/api/v2/workflow_job_nodes/195/instance_groups/",
+        "success_nodes": "/api/v2/workflow_job_nodes/195/success_nodes/",
+        "failure_nodes": "/api/v2/workflow_job_nodes/195/failure_nodes/",
+        "always_nodes": "/api/v2/workflow_job_nodes/195/always_nodes/",
+        "unified_job_template": "/api/v2/job_templates/10/",
+        "workflow_job": "/api/v2/workflow_jobs/152/"
+      },
+      "summary_fields": {
+        "workflow_job": {
+          "id": 152,
+          "name": "test",
+          "description": ""
+        },
+        "unified_job_template": {
+          "id": 10,
+          "name": "my_template",
+          "description": "",
+          "unified_job_type": "job"
+        }
+      },
+      "created": "2024-03-12T13:49:02.746281Z",
+      "modified": "2024-03-12T13:49:02.746292Z",
+      "extra_data": {},
+      "inventory": null,
+      "scm_branch": null,
+      "job_type": null,
+      "job_tags": null,
+      "skip_tags": null,
+      "limit": null,
+      "diff_mode": null,
+      "verbosity": null,
+      "execution_environment": null,
+      "forks": null,
+      "job_slice_count": null,
+      "timeout": null,
+      "job": null,
+      "workflow_job": 152,
+      "unified_job_template": 10,
+      "success_nodes": [194],
+      "failure_nodes": [],
+      "always_nodes": [],
+      "all_parents_must_converge": false,
+      "do_not_run": true,
+      "identifier": "Job template 2"
+    },
+    {
+      "id": 196,
+      "type": "workflow_job_node",
+      "url": "/api/v2/workflow_job_nodes/196/",
+      "related": {
+        "labels": "/api/v2/workflow_job_nodes/196/labels/",
+        "credentials": "/api/v2/workflow_job_nodes/196/credentials/",
+        "instance_groups": "/api/v2/workflow_job_nodes/196/instance_groups/",
+        "success_nodes": "/api/v2/workflow_job_nodes/196/success_nodes/",
+        "failure_nodes": "/api/v2/workflow_job_nodes/196/failure_nodes/",
+        "always_nodes": "/api/v2/workflow_job_nodes/196/always_nodes/",
+        "unified_job_template": "/api/v2/job_templates/10/",
+        "job": "/api/v2/jobs/176/",
+        "workflow_job": "/api/v2/workflow_jobs/152/"
+      },
+      "summary_fields": {
+        "job": {
+          "id": 176,
+          "name": "my_template",
+          "description": "",
+          "status": "error",
+          "failed": true,
+          "elapsed": 0.285,
+          "type": "job"
+        },
+        "workflow_job": {
+          "id": 152,
+          "name": "test",
+          "description": ""
+        },
+        "unified_job_template": {
+          "id": 10,
+          "name": "my_template",
+          "description": "",
+          "unified_job_type": "job"
+        }
+      },
+      "created": "2024-03-12T13:49:02.758293Z",
+      "modified": "2024-03-13T10:41:36.134057Z",
+      "extra_data": {},
+      "inventory": null,
+      "scm_branch": null,
+      "job_type": null,
+      "job_tags": null,
+      "skip_tags": null,
+      "limit": null,
+      "diff_mode": null,
+      "verbosity": null,
+      "execution_environment": null,
+      "forks": null,
+      "job_slice_count": null,
+      "timeout": null,
+      "job": 176,
+      "workflow_job": 152,
+      "unified_job_template": 10,
+      "success_nodes": [195],
+      "failure_nodes": [],
+      "always_nodes": [],
+      "all_parents_must_converge": false,
+      "do_not_run": false,
+      "identifier": "Job template 3"
+    },
+    {
+      "id": 197,
+      "type": "workflow_job_node",
+      "url": "/api/v2/workflow_job_nodes/197/",
+      "related": {
+        "labels": "/api/v2/workflow_job_nodes/197/labels/",
+        "credentials": "/api/v2/workflow_job_nodes/197/credentials/",
+        "instance_groups": "/api/v2/workflow_job_nodes/197/instance_groups/",
+        "success_nodes": "/api/v2/workflow_job_nodes/197/success_nodes/",
+        "failure_nodes": "/api/v2/workflow_job_nodes/197/failure_nodes/",
+        "always_nodes": "/api/v2/workflow_job_nodes/197/always_nodes/",
+        "unified_job_template": "/api/v2/workflow_job_templates/8/",
+        "workflow_job": "/api/v2/workflow_jobs/152/"
+      },
+      "summary_fields": {
+        "workflow_job": {
+          "id": 152,
+          "name": "test",
+          "description": ""
+        },
+        "unified_job_template": {
+          "id": 8,
+          "name": "test",
+          "description": "",
+          "unified_job_type": "workflow_job"
+        }
+      },
+      "created": "2024-03-12T13:49:02.770198Z",
+      "modified": "2024-03-12T13:49:02.770208Z",
+      "extra_data": {},
+      "inventory": null,
+      "scm_branch": null,
+      "job_type": null,
+      "job_tags": null,
+      "skip_tags": null,
+      "limit": null,
+      "diff_mode": null,
+      "verbosity": null,
+      "execution_environment": null,
+      "forks": null,
+      "job_slice_count": null,
+      "timeout": null,
+      "job": null,
+      "workflow_job": 152,
+      "unified_job_template": 8,
+      "success_nodes": [195],
+      "failure_nodes": [],
+      "always_nodes": [],
+      "all_parents_must_converge": false,
+      "do_not_run": true,
+      "identifier": "Workflow 1"
+    }
+  ]
+}
