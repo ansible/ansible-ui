@@ -29,6 +29,10 @@ export interface CustomNodeProps extends WithSelectionProps {
   element: GraphElement<
     ElementModel,
     {
+      badge?: string;
+      badgeColor?: string;
+      badgeTextColor?: string;
+      badgeBorderColor?: string;
       secondaryLabel?: string;
       resource: WorkflowNode;
     }

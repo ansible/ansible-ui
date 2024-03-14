@@ -56,6 +56,10 @@ export const CustomNode: FC<
         onSelect && onSelect(e);
       }}
       truncateLength={20}
+      badge={data?.badge}
+      badgeColor={data?.badgeColor}
+      badgeTextColor={data?.badgeTextColor}
+      badgeBorderColor={data?.badgeBorderColor}
       {...rest}
     >
       <g transform={`translate(13, 13)`}>
