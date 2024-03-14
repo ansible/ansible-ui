@@ -48,7 +48,18 @@ const NodeIcon: { [key: string]: ElementType<SVGIconProps> } = {
 };
 
 interface WorkflowOutputNodeProps extends WithSelectionProps {
-  element: GraphElement<ElementModel, { secondaryLabel?: string; resource: WorkflowNode }>;
+  element: GraphElement<
+    ElementModel,
+    {
+      badge?: string;
+      badgeColor?: string;
+      badgeTextColor?: string;
+      badgeBorderColor?: string;
+
+      secondaryLabel?: string;
+      resource: WorkflowNode;
+    }
+  >;
 }
 
 export const WorkflowOutputNode = observer(({ element, selected }: WorkflowOutputNodeProps) => {
@@ -57,6 +68,7 @@ export const WorkflowOutputNode = observer(({ element, selected }: WorkflowOutpu
   const statusDecorator = useStatusDecorator();
   const { job, unified_job_template } = element?.getData()?.resource?.summary_fields || {};
   const { unified_job_type: templateType } = unified_job_template || {};
+  const data = element.getData();
 
   const Icon = NodeIcon[templateType ?? 'deleted_resource'];
 
@@ -81,9 +93,13 @@ export const WorkflowOutputNode = observer(({ element, selected }: WorkflowOutpu
       hover={job?.type ? hover : false}
       labelClassName={`${element.getId()}-node-label`}
       onSelect={handleSelect}
-      secondaryLabel={element.getData()?.secondaryLabel}
+      secondaryLabel={data?.secondaryLabel}
       selected={job?.type ? selected : false}
       truncateLength={20}
+      badge={data?.badge}
+      badgeColor={data?.badgeColor}
+      badgeTextColor={data?.badgeTextColor}
+      badgeBorderColor={data?.badgeBorderColor}
     >
       <g transform={`translate(13, 13)`} ref={hoverRef as LegacyRef<SVGGElement>}>
         <Icon style={{ color: '#393F44' }} width={25} height={25} />
