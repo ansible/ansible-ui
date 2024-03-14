@@ -112,6 +112,12 @@ export const WorkflowOutput = (props: { job: Job; reloadJob: () => void }) => {
         resource: { always_nodes: [] },
       },
     };
+    const greyBadgeLabel = {
+      badge: 'ALL',
+      badgeColor: '#D2D2D2',
+      badgeTextColor: 'black',
+      badgeBorderColor: '#B8BBBE',
+    };
     const nodes = workflowNodes.map((n) => {
       const nodeId = n.id.toString();
       const nodeType = 'node';
@@ -146,6 +152,10 @@ export const WorkflowOutput = (props: { job: Job; reloadJob: () => void }) => {
           resource: n,
         },
       };
+
+      if (n.all_parents_must_converge) {
+        return { ...node, data: { ...node.data, ...greyBadgeLabel } };
+      }
 
       return node;
     });
