@@ -236,7 +236,7 @@ export function useAwxInventoryRoutes() {
             {
               id: AwxRoute.InventoryHostFacts,
               path: 'facts',
-              element: <InventoryHostFacts />,
+              element: <InventoryHostFacts page="inventory" />,
             },
           ],
         },
