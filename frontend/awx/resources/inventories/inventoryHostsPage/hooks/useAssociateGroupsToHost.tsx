@@ -5,15 +5,16 @@ import { useNameColumn } from '../../../../../common/columns';
 import { getItemKey, postRequest } from '../../../../../common/crud/Data';
 import { awxAPI } from '../../../../common/api/awx-utils';
 import { InventoryGroup } from '../../../../interfaces/InventoryGroup';
-import { useParams } from 'react-router-dom';
 import { useAwxBulkActionDialog } from '../../../../common/useAwxBulkActionDialog';
 
-export function useAssociateGroupsToHost(onComplete: (groups: InventoryGroup[]) => void) {
+export function useAssociateGroupsToHost(
+  onComplete: (groups: InventoryGroup[]) => void,
+  hostId: string
+) {
   const { t } = useTranslation();
   const addActionNameColumn = useNameColumn({ disableLinks: true, disableSort: true });
   const actionColumns = useMemo(() => [addActionNameColumn], [addActionNameColumn]);
   const bulkAction = useAwxBulkActionDialog<InventoryGroup>();
-  const params = useParams<{ id: string; inventory_type: string; host_id: string }>();
   const associateGroupsToHost = (groups: InventoryGroup[]) => {
     bulkAction({
       title: t('Add host to groups', { count: groups.length }),
@@ -23,7 +24,7 @@ export function useAssociateGroupsToHost(onComplete: (groups: InventoryGroup[]) 
       onComplete,
       actionFn: async (group: InventoryGroup, signal: AbortSignal) => {
         await postRequest(
-          awxAPI`/hosts/${params.host_id ?? ''}/groups/`,
+          awxAPI`/hosts/${hostId ?? ''}/groups/`,
           {
             id: group.id,
           },

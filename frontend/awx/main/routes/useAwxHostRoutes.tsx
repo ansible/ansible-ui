@@ -11,6 +11,7 @@ import {
   EditHost,
 } from '../../resources/inventories/inventoryHostsPage/InventoryHostForm';
 import { InventoryHostDetails } from '../../resources/inventories/inventoryHostsPage/InventoryHostDetails';
+import { InventoryHostGroups } from '../../resources/inventories/inventoryHostsPage/InventoryHostGroups';
 
 export function useAwxHostRoutes() {
   const { t } = useTranslation();
@@ -38,7 +39,7 @@ export function useAwxHostRoutes() {
             {
               id: AwxRoute.HostGroups,
               path: 'groups',
-              element: <PageNotImplemented />,
+              element: <InventoryHostGroups page="host" />,
             },
             {
               id: AwxRoute.HostJobs,

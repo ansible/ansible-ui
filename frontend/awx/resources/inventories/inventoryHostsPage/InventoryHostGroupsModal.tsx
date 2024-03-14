@@ -1,6 +1,5 @@
 import { t } from 'i18next';
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
 import { MultiSelectDialog, usePageDialog } from '../../../../../framework';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxView } from '../../../common/useAwxView';
@@ -10,17 +9,21 @@ import { useHostsGroupsFilters } from './hooks/useHostsGroupsFilters';
 
 export interface InventoryHostGroupsAddModalProps {
   onAdd: (items: InventoryGroup[]) => void;
+  inventoryId: string;
+  hostId: string;
 }
 
-export function InventoryHostGroupsAddModal(props: { onAdd: (items: InventoryGroup[]) => void }) {
-  const params = useParams<{ id: string; inventory_type: string; host_id: string }>();
-
+export function InventoryHostGroupsAddModal(props: {
+  onAdd: (items: InventoryGroup[]) => void;
+  inventoryId: string;
+  hostId: string;
+}) {
   const toolbarFilters = useHostsGroupsFilters();
   const tableColumns = useHostsGroupsColumns({ disableLinks: true });
 
   const view = useAwxView<InventoryGroup>({
-    url: awxAPI`/inventories/${params.id ?? ''}/groups/`,
-    queryParams: { not__hosts: params.host_id ?? '' },
+    url: awxAPI`/inventories/${props.inventoryId ?? ''}/groups/`,
+    queryParams: { not__hosts: props.hostId ?? '' },
     toolbarFilters,
     tableColumns,
   });

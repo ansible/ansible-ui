@@ -10,12 +10,16 @@ import {
 import { cannotEditResource } from '../../../../../common/utils/RBAChelpers';
 import { AwxRoute } from '../../../../main/AwxRoutes';
 import { InventoryGroup } from '../../../../interfaces/InventoryGroup';
-import { useParams } from 'react-router-dom';
+import { useGetItem } from '../../../../../common/crud/useGet';
+import { Inventory } from '../../../../interfaces/generated-from-swagger/api';
+import { awxAPI } from '../../../../common/api/awx-utils';
 
-export function useHostsGroupsActions() {
+export function useHostsGroupsActions(inventoryId: string) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
-  const params = useParams<{ inventory_type: string; id: string }>();
+
+  const { data: inventory } = useGetItem<Inventory>(awxAPI`/inventories/`, inventoryId);
+  const inventoryType = inventory?.type;
 
   return useMemo<IPageAction<InventoryGroup>[]>(
     () => [
@@ -27,11 +31,11 @@ export function useHostsGroupsActions() {
         label: t('Edit group'),
         onClick: (group) =>
           pageNavigate(AwxRoute.InventoryGroupEdit, {
-            params: { inventory_type: params.inventory_type, id: params.id, group_id: group.id },
+            params: { inventory_type: inventoryType, id: inventoryId, group_id: group.id },
           }),
         isDisabled: (group) => cannotEditResource(group, t),
       },
     ],
-    [t, pageNavigate, params.id, params.inventory_type]
+    [t, pageNavigate, inventoryId, inventoryType]
   );
 }
