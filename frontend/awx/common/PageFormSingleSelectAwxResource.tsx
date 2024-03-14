@@ -36,8 +36,6 @@ export function PageFormSingleSelectAwxResource<
 
   const queryOptions = useCallback<PageAsyncSelectOptionsFn<PathValue<FormData, Name>>>(
     async (options) => {
-      // await new Promise((resolve) => setTimeout(resolve, 2000));
-
       try {
         let url = props.url + `?page_size=10&order_by=name`;
         if (options.next) url = url + `&name__gt=${options.next}`;
@@ -57,7 +55,7 @@ export function PageFormSingleSelectAwxResource<
         return {
           remaining: 0,
           options: [],
-          next: undefined,
+          next: 0,
         };
       }
     },

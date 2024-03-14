@@ -1,7 +1,10 @@
 /* eslint-disable i18next/no-literal-string */
 import { PageSection } from '@patternfly/react-core';
 import { PartialDeep } from 'type-fest';
-import { PageAsyncSelectQueryResult } from '../../PageInputs/PageAsyncSelectOptions';
+import {
+  asyncSelectTestQuery,
+  asyncSelectTestQueryLabel,
+} from '../../PageInputs/PageAsyncSingleSelect.cy';
 import { PageForm } from '../PageForm';
 import {
   PageFormAsyncSingleSelect,
@@ -12,64 +15,30 @@ interface ITest {
   selected: number;
 }
 
-const queryOptions = async (page: number, _signal: AbortSignal) => {
-  const pageSize = 10;
-  await new Promise((resolve) => setTimeout(resolve, 0));
-  return {
-    total: 100,
-    options: new Array(pageSize).fill(0).map((_, index) => {
-      const value = index + (page - 1) * pageSize + 1;
-      return {
-        value: value,
-        label: `Option ${value}`,
-        description: `Description ${value}`,
-      };
-    }),
-  };
-};
-
-const placeholderText = 'Placeholder';
-
 function PageFormAsyncSingleSelectTest(
-  props: PageFormAsyncSingleSelectProps<ITest> & { defaultValue?: PartialDeep<ITest> }
+  props: Omit<PageFormAsyncSingleSelectProps<ITest>, 'placeholder' | 'queryLabel'> & {
+    defaultValue?: PartialDeep<ITest>;
+  }
 ) {
   const { defaultValue, ...componentProps } = props;
   return (
     <PageSection>
       <PageForm<ITest> onSubmit={() => Promise.resolve()} defaultValue={defaultValue}>
-        <PageFormAsyncSingleSelect<ITest> id="test" {...componentProps} />
+        <PageFormAsyncSingleSelect<ITest>
+          id="test"
+          {...componentProps}
+          placeholder="Select value"
+          queryLabel={asyncSelectTestQueryLabel}
+        />
       </PageForm>
     </PageSection>
   );
 }
 
 describe('PageFormAsyncSingleSelect', () => {
-  it('should show loading options state', () => {
-    let optionsResolve: (result: PageAsyncSelectQueryResult<number>) => void = () => null;
-    const optionPromise = new Promise<PageAsyncSelectQueryResult<number>>(
-      (r) => (optionsResolve = r)
-    );
-    cy.mount(
-      <PageFormAsyncSingleSelectTest
-        name="selected"
-        placeholder={placeholderText}
-        queryOptions={async () => await optionPromise}
-      />
-    );
-    cy.get('#test')
-      .should('have.text', 'Loading options...')
-      .then(() => optionsResolve({ total: 0, options: [] }));
-  });
-
   it('should show queried options', () => {
-    cy.mount(
-      <PageFormAsyncSingleSelectTest
-        name="selected"
-        placeholder={placeholderText}
-        queryOptions={queryOptions}
-      />
-    );
-    cy.get('#test').should('not.have.text', 'Loading options...');
+    cy.mount(<PageFormAsyncSingleSelectTest name="selected" queryOptions={asyncSelectTestQuery} />);
+    cy.get('#test').should('not.have.text', 'Select value');
     cy.get('#test').click();
     cy.get('#test-select').should('contain', 'Option 1');
     cy.get('#test-select').should('contain', 'Option 2');
@@ -79,7 +48,6 @@ describe('PageFormAsyncSingleSelect', () => {
     cy.mount(
       <PageFormAsyncSingleSelectTest
         name="selected"
-        placeholder={placeholderText}
         queryOptions={async () => {
           await new Promise((resolve) => setTimeout(resolve, 1));
           throw new Error();
@@ -93,8 +61,7 @@ describe('PageFormAsyncSingleSelect', () => {
     cy.mount(
       <PageFormAsyncSingleSelectTest
         name="selected"
-        placeholder={placeholderText}
-        queryOptions={queryOptions}
+        queryOptions={asyncSelectTestQuery}
         defaultValue={{ selected: 2 }}
       />
     );

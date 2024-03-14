@@ -40,7 +40,7 @@ export interface PageSingleSelectProps<ValueT> {
   placeholder: ReactNode;
 
   /** The selected value. */
-  value: ValueT;
+  value: ValueT | undefined;
 
   /** The function to set the selected value. */
   onSelect: (value: ValueT) => void;
@@ -59,7 +59,7 @@ export interface PageSingleSelectProps<ValueT> {
    */
   isRequired?: boolean;
 
-  // TODO - make this a string
+  // TODO isDisabled should be a string
   /** Indicates if the select is disabled */
   isDisabled?: boolean;
 
@@ -102,6 +102,8 @@ export interface PageSingleSelectProps<ValueT> {
   queryLabel?: (value: ValueT) => ReactNode;
 
   disableAutoSelect?: boolean;
+
+  disableSortOptions?: boolean;
 }
 
 /**
@@ -176,17 +178,16 @@ export function PageSingleSelect<
         switch (event.key) {
           case 'Tab':
           case 'Enter':
+          case 'Shift':
             break;
           default:
             setOpen(true);
             setTimeout(() => {
               if (searchRef.current) {
                 searchRef.current.focus();
-                if (event.key.length === 1) {
-                  setSearchValue(event.key.trim());
-                }
+                searchRef.current.value = event.key;
               }
-            }, 0);
+            }, 1);
             break;
         }
       }}
@@ -226,16 +227,25 @@ export function PageSingleSelect<
     }
   }, [onSelect, options, props.disableAutoSelect, props.isRequired, selectedOption]);
 
-  const visibleOptions = useMemo(
-    () =>
-      props.setSearchValue
-        ? options
-        : options.filter((option) => {
-            if (searchValue === '') return true;
-            else return option.label.toLowerCase().includes(searchValue.toLowerCase());
-          }),
-    [options, props.setSearchValue, searchValue]
-  );
+  const visibleOptions = useMemo(() => {
+    let visibleOptions = options;
+    if (!props.setSearchValue) {
+      visibleOptions = visibleOptions.filter((option) => {
+        if (searchValue === '') return true;
+        else return option.label.toLowerCase().includes(searchValue.toLowerCase());
+      });
+    }
+    if (!props.disableSortOptions) {
+      visibleOptions = visibleOptions.sort((a, b) => {
+        const lhs = a.label.toLowerCase();
+        const rhs = b.label.toLowerCase();
+        if (lhs < rhs) return -1;
+        if (lhs > rhs) return 1;
+        return 0;
+      });
+    }
+    return visibleOptions;
+  }, [options, props.disableSortOptions, props.setSearchValue, searchValue]);
 
   const groups = useMemo(() => {
     const hasGroups = options.some((option) => !!option.group);
@@ -274,7 +284,11 @@ export function PageSingleSelect<
                 event.stopPropagation();
                 setSearchValue('');
               }}
-              resultsCount={`${visibleOptions.length} / ${options.length}`}
+              resultsCount={
+                visibleOptions.length !== options.length
+                  ? `${visibleOptions.length} / ${options.length}`
+                  : undefined
+              }
               onKeyDown={(event) => {
                 switch (event.key) {
                   case 'ArrowDown':
@@ -297,7 +311,7 @@ export function PageSingleSelect<
           <>
             {props.isLoading ? (
               <Bullseye style={{ padding: 16 }}>
-                <Spinner />
+                <Spinner size="lg" />
               </Bullseye>
             ) : (
               <SelectOption isDisabled key="no result">

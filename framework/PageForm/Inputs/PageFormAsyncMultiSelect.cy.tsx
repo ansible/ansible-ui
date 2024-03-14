@@ -2,6 +2,10 @@
 import { PageSection } from '@patternfly/react-core';
 import { PartialDeep } from 'type-fest';
 import { PageAsyncSelectQueryResult } from '../../PageInputs/PageAsyncSelectOptions';
+import {
+  asyncSelectTestQuery,
+  asyncSelectTestQueryLabel,
+} from '../../PageInputs/PageAsyncSingleSelect.cy';
 import { PageForm } from '../PageForm';
 import {
   PageFormAsyncMultiSelect,
@@ -12,32 +16,21 @@ interface ITest {
   selected: number[];
 }
 
-const queryOptions = async (page: number, _signal: AbortSignal) => {
-  const pageSize = 10;
-  await new Promise((resolve) => setTimeout(resolve, 0));
-  return {
-    total: 100,
-    options: new Array(pageSize).fill(0).map((_, index) => {
-      const value = index + (page - 1) * pageSize + 1;
-      return {
-        value: value,
-        label: `Option ${value}`,
-        description: `Description ${value}`,
-      };
-    }),
-  };
-};
-
-const placeholderText = 'Placeholder';
-
 function PageFormAsyncMultiSelectTest(
-  props: PageFormAsyncMultiSelectProps<ITest> & { defaultValue?: PartialDeep<ITest> }
+  props: Omit<PageFormAsyncMultiSelectProps<ITest>, 'placeholder' | 'queryLabel'> & {
+    defaultValue?: PartialDeep<ITest>;
+  }
 ) {
   const { defaultValue, ...componentProps } = props;
   return (
     <PageSection>
       <PageForm<ITest> onSubmit={() => Promise.resolve()} defaultValue={defaultValue}>
-        <PageFormAsyncMultiSelect<ITest> id="test" {...componentProps} />
+        <PageFormAsyncMultiSelect<ITest>
+          id="test"
+          {...componentProps}
+          placeholder="Select value"
+          queryLabel={asyncSelectTestQueryLabel}
+        />
       </PageForm>
     </PageSection>
   );
@@ -52,23 +45,16 @@ describe('PageFormAsyncMultiSelect', () => {
     cy.mount(
       <PageFormAsyncMultiSelectTest
         name="selected"
-        placeholder={placeholderText}
         queryOptions={async () => await optionPromise}
       />
     );
     cy.get('#test')
       .should('have.text', 'Loading options...')
-      .then(() => optionsResolve({ total: 0, options: [] }));
+      .then(() => optionsResolve({ remaining: 0, options: [], next: 0 }));
   });
 
   it('should show queried options', () => {
-    cy.mount(
-      <PageFormAsyncMultiSelectTest
-        name="selected"
-        placeholder={placeholderText}
-        queryOptions={queryOptions}
-      />
-    );
+    cy.mount(<PageFormAsyncMultiSelectTest name="selected" queryOptions={asyncSelectTestQuery} />);
     cy.get('#test').should('not.have.text', 'Loading options...');
     cy.get('#test').click();
     cy.get('#test-select').should('contain', 'Option 1');
@@ -79,7 +65,6 @@ describe('PageFormAsyncMultiSelect', () => {
     cy.mount(
       <PageFormAsyncMultiSelectTest
         name="selected"
-        placeholder={placeholderText}
         queryOptions={async () => {
           await new Promise((resolve) => setTimeout(resolve, 1));
           throw new Error();
@@ -93,8 +78,7 @@ describe('PageFormAsyncMultiSelect', () => {
     cy.mount(
       <PageFormAsyncMultiSelectTest
         name="selected"
-        placeholder={placeholderText}
-        queryOptions={queryOptions}
+        queryOptions={asyncSelectTestQuery}
         defaultValue={{ selected: [1, 2] }}
       />
     );

@@ -36,6 +36,8 @@ export type PageFormAsyncMultiSelectProps<
   | 'queryErrorText'
   | 'disableClearChips'
   | 'disableClearSelection'
+  | 'onBrowse'
+  | 'queryLabel'
 > &
   Pick<
     PageFormGroupProps,
@@ -89,6 +91,8 @@ export function PageFormAsyncMultiSelect<
               footer={props.footer}
               disableClearChips={props.disableClearChips}
               disableClearSelection={props.disableClearSelection}
+              onBrowse={props.onBrowse}
+              queryLabel={props.queryLabel}
             />
           </PageFormGroup>
         );

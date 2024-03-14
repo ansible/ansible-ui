@@ -35,7 +35,7 @@ export interface PageAsyncSelectQueryResult<ValueT> {
    * The cursor to indicate the next query.
    * Passed to the `next` parameter of the query function when getting more options.
    */
-  next?: string | number;
+  next: string | number;
 }
 
 /** The placeholder to show if the query fails. */

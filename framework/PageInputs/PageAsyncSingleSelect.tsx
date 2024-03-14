@@ -67,8 +67,13 @@ export function PageAsyncSingleSelect<
 
   const queryOptions = useRef(props.queryOptions).current;
 
+  const activeAbortController = useRef<AbortController | null>(null);
   const queryHandler = useCallback(() => {
+    if (activeAbortController.current) {
+      activeAbortController.current.abort();
+    }
     const abortController = new AbortController();
+    activeAbortController.current = abortController;
     setLoading(() => {
       setAllLoaded(false);
       setLoadingError(undefined);
@@ -80,7 +85,7 @@ export function PageAsyncSingleSelect<
         }
       });
       void queryOptions({
-        next: nextRef.current,
+        next: nextRef.current!,
         signal: abortController.signal,
         search: searchValue,
       })
@@ -149,8 +154,6 @@ export function PageAsyncSingleSelect<
     [queryHandler]
   );
 
-  // useEffect(() => queryHandler(), [queryHandler]);
-
   useEffect(() => {
     if (open) {
       setTotal(0);
@@ -165,6 +168,18 @@ export function PageAsyncSingleSelect<
       <Flex>
         <FlexItem grow={{ default: 'grow' }}>
           <ActionList>
+            {!allLoaded && (
+              <ActionListItem>
+                <Button
+                  id="load-more"
+                  isLoading={loading}
+                  onClick={onLoadMore}
+                  isDisabled={loading}
+                >
+                  {loading ? t('Loading...') : t('Load more')}
+                </Button>
+              </ActionListItem>
+            )}
             {props.onBrowse && (
               <ActionListItem>
                 <Button
@@ -175,23 +190,12 @@ export function PageAsyncSingleSelect<
                     setOpen(false);
                     props.onBrowse?.();
                   }}
+                  variant="secondary"
                 >
                   {t('Browse')}
                 </Button>
               </ActionListItem>
             )}
-            {!allLoaded && (
-              <ActionListItem>
-                <Button id="load-more" isLoading={loading} onClick={onLoadMore}>
-                  {t('Load more')}
-                </Button>
-              </ActionListItem>
-            )}
-            {/* <ActionListItem>
-              <Button id="reset" onClick={onReset}>
-                {t('Reset')}
-              </Button>
-            </ActionListItem> */}
           </ActionList>
         </FlexItem>
         {!allLoaded && total !== 0 && (
@@ -224,7 +228,6 @@ export function PageAsyncSingleSelect<
     );
   }
 
-  // if (options) {
   return (
     <PageSingleSelect
       id={props.id}
@@ -244,20 +247,6 @@ export function PageAsyncSingleSelect<
       disableAutoSelect
     />
   );
-  // }
-
-  // return (
-  //   <ButtonFullWidth
-  //     id={props.id}
-  //     variant="control"
-  //     isLoading
-  //     style={{ opacity: 0.7 }}
-  //     isDisabled
-  //     disabled
-  //   >
-  //     {props.queryPlaceholder ?? t('Loading options...')}
-  //   </ButtonFullWidth>
-  // );
 }
 
 const ButtonFullWidth = styled(Button)`

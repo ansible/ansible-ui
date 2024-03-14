@@ -1,8 +1,10 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
+  ICatalogBreadcrumb,
   PageFormDataEditor,
   PageFormSubmitHandler,
   PageFormTextInput,
@@ -12,26 +14,20 @@ import {
   usePageNavigate,
 } from '../../../../../framework';
 import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
-import { requestPatch } from '../../../../common/crud/Data';
+import { requestGet, requestPatch } from '../../../../common/crud/Data';
 import { useGetRequest } from '../../../../common/crud/useGet';
 import { usePostRequest } from '../../../../common/crud/usePostRequest';
+import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { AwxPageForm } from '../../../common/AwxPageForm';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { AwxHost } from '../../../interfaces/AwxHost';
+import { Inventory } from '../../../interfaces/Inventory';
 import { InventoryGroup } from '../../../interfaces/InventoryGroup';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useGetHost } from '../../hosts/hooks/useGetHost';
 import { useGetInventory } from '../InventoryPage/InventoryPage';
-import { ICatalogBreadcrumb } from '../../../../../framework';
-import { PageFormAsyncSingleSelect } from '../../../../../framework/PageForm/Inputs/PageFormAsyncSingleSelect';
-import { requestGet } from '../../../../common/crud/Data';
-import { useCallback } from 'react';
-import { Inventory } from '../../../interfaces/Inventory';
-import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
-import { PageSingleSelectContext } from '../../../../../framework/PageInputs/PageSingleSelect';
-import { Button } from '@patternfly/react-core';
+import { PageFormInventorySelect } from '../components/PageFormInventorySelect';
 import { useSelectInventorySingle } from './hooks/useInventorySelector';
-import { useFormContext } from 'react-hook-form';
 
 export interface IHostInput {
   name: string;
@@ -347,33 +343,7 @@ function HostInputs(props: { edit_mode?: boolean; inventory_host?: boolean }) {
         />
       )}
       {!props.inventory_host && !props.edit_mode && (
-        <PageFormAsyncSingleSelect
-          name="inventory.id"
-          isRequired
-          label={t('Inventory')}
-          placeholder={t('Select Inventory')}
-          queryOptions={queryOptions}
-          footer={
-            <PageSingleSelectContext.Consumer>
-              {(context) => {
-                return (
-                  <Button
-                    variant="link"
-                    onClick={() => {
-                      context.setOpen(false);
-                      registrySelector((inventory) => {
-                        setValue('inventory.id', inventory.id);
-                      });
-                    }}
-                    tabIndex={0}
-                  >
-                    Browse
-                  </Button>
-                );
-              }}
-            </PageSingleSelectContext.Consumer>
-          }
-        />
+        <PageFormInventorySelect name="inventory.id" isRequired />
       )}
       <PageFormSection singleColumn>
         <PageFormDataEditor<IHostInput> format="yaml" name="variables" label={t('Variables')} />

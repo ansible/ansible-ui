@@ -1,4 +1,5 @@
 import {
+  Bullseye,
   Chip,
   ChipGroup,
   Divider,
@@ -12,12 +13,14 @@ import {
   SelectGroup,
   SelectList,
   SelectOption,
+  Spinner,
 } from '@patternfly/react-core';
 import { TimesIcon } from '@patternfly/react-icons';
-import { ReactNode, Ref, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { ReactNode, Ref, useCallback, useEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { Scrollable } from '../components/Scrollable';
+import { useOverridableState } from '../components/useOverridableState';
 import { getID } from '../hooks/useID';
 import { PageSelectOption } from './PageSelectOption';
 
@@ -31,6 +34,7 @@ export interface PageMultiSelectProps<ValueT> {
   /** The placeholder to show when no values are selected. */
   placeholder: ReactNode;
 
+  // TODO isDisabled should be a string
   /** Disables the toggle to open and close the menu */
   isDisabled?: boolean;
 
@@ -50,6 +54,37 @@ export interface PageMultiSelectProps<ValueT> {
   footer?: ReactNode;
 
   /**
+   * Indicates if the select is open.
+   * Handled by the component if not provided.
+   */
+  open?: boolean;
+
+  /**
+   * The function to set the open state.
+   * Handled by the component if not provided.
+   */
+  setOpen?: (open: boolean) => void;
+
+  /**
+   * The search value to filter the options.
+   * Handled by the component if not provided.
+   */
+  searchValue?: string;
+
+  /**
+   * The function to set the search value.
+   * Handled by the component if not provided.
+   */
+  setSearchValue?: (searchValue: string) => void;
+
+  /**
+   * Indicates if the select is loading.
+   * This is a helper to show a loading spinner in the dropdown.
+   * Used by `PageAsyncSingleSelect`.
+   */
+  isLoading?: boolean;
+
+  /**
    * Whether to disable the clear selection button.
    *
    * User by the toolbar since clearing the select is part of the toolbar filter chips already.
@@ -61,6 +96,8 @@ export interface PageMultiSelectProps<ValueT> {
   maxChipSize?: string;
 
   disableSortOptions?: boolean;
+
+  queryLabel?: (value: ValueT) => ReactNode;
 }
 
 /**
@@ -113,7 +150,12 @@ export function PageMultiSelect<
     disableClearSelection,
     maxChipSize,
   } = props;
-  const [isOpen, setIsOpen] = useState(false);
+  const [open, setOpen] = useOverridableState(props.open ?? false, props.setOpen);
+  const [searchValue, setSearchValue] = useOverridableState(
+    props.searchValue ?? '',
+    props.setSearchValue
+  );
+
   const selectListRef = useRef<HTMLDivElement>(null);
 
   const selectedOptions = useMemo(
@@ -132,23 +174,22 @@ export function PageMultiSelect<
       <MenuToggle
         id={id}
         ref={toggleRef}
-        onClick={() => setIsOpen((open) => !open)}
-        isExpanded={isOpen}
+        onClick={() => setOpen(!open)}
+        isExpanded={open}
         onKeyDown={(event) => {
           switch (event.key) {
             case 'Tab':
             case 'Enter':
+            case 'Shift':
               break;
             default:
-              setIsOpen(true);
+              setOpen(true);
               setTimeout(() => {
                 if (searchRef.current) {
                   searchRef.current.focus();
-                  if (event.key.length === 1) {
-                    setSearchValue(event.key.trim());
-                  }
+                  searchRef.current.value = event.key;
                 }
-              }, 0);
+              }, 1);
               break;
           }
         }}
@@ -228,13 +269,12 @@ export function PageMultiSelect<
     [onSelect, options]
   );
 
-  const [searchValue, setSearchValue] = useState('');
   const searchRef = useRef<HTMLInputElement>(null);
   useEffect(() => {
-    if (!isOpen) {
+    if (!open) {
       setSearchValue('');
     }
-  }, [isOpen]);
+  }, [open, setSearchValue]);
 
   const visibleOptions = useMemo(() => {
     const newOptions = options.filter((option) => {
@@ -265,8 +305,8 @@ export function PageMultiSelect<
       id={`${id}-select`}
       selected={selected}
       onSelect={onSelectHandler}
-      isOpen={isOpen}
-      onOpenChange={setIsOpen}
+      isOpen={open}
+      onOpenChange={setOpen}
       toggle={Toggle}
       popperProps={{ appendTo: () => document.body }}
       innerRef={selectListRef}
@@ -282,7 +322,11 @@ export function PageMultiSelect<
               event.stopPropagation();
               setSearchValue('');
             }}
-            resultsCount={`${visibleOptions.length} / ${options.length}`}
+            resultsCount={
+              visibleOptions.length !== options.length
+                ? `${visibleOptions.length} / ${options.length}`
+                : undefined
+            }
             onKeyDown={(event) => {
               switch (event.key) {
                 case 'ArrowDown':
@@ -302,9 +346,17 @@ export function PageMultiSelect<
       </MenuSearch>
       <Divider />
       {visibleOptions.length === 0 ? (
-        <SelectOption isDisabled key="no result">
-          {t('No results found')}
-        </SelectOption>
+        <>
+          {props.isLoading ? (
+            <Bullseye style={{ padding: 16 }}>
+              <Spinner size="lg" />
+            </Bullseye>
+          ) : (
+            <SelectOption isDisabled key="no result">
+              {t('No results found')}
+            </SelectOption>
+          )}
+        </>
       ) : (
         <ScrollableStyled>
           {groups ? (
