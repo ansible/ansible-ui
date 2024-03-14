@@ -5,7 +5,7 @@ export function requestCommon(options: {
   method: string;
   body?: unknown;
   headers?: HeadersInit;
-  signal: AbortSignal;
+  signal?: AbortSignal;
 }) {
   const { url, method, body, signal } = options;
 

@@ -1,4 +1,3 @@
-import { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useClearCache } from '../useInvalidateCache';
 import { createRequestError } from './RequestError';
@@ -15,27 +14,13 @@ import { requestCommon } from './requestCommon';
 export function usePostRequest<RequestBody, ResponseBody = RequestBody>() {
   const navigate = useNavigate();
   const { clearCacheByKey } = useClearCache();
-  const abortControllerRef = useRef<{ abortController?: AbortController }>({});
-  useEffect(() => {
-    const ref = abortControllerRef;
-    return () => ref.current.abortController?.abort();
-  }, []);
   return async (url: string, body: RequestBody, signal?: AbortSignal) => {
-    if (abortControllerRef.current.abortController) {
-      abortControllerRef.current.abortController.abort();
-    }
-    abortControllerRef.current.abortController = new AbortController();
-    let response: Response;
-    try {
-      response = await requestCommon({
-        url,
-        method: 'POST',
-        body,
-        signal: signal ?? abortControllerRef.current.abortController.signal,
-      });
-    } finally {
-      abortControllerRef.current.abortController = undefined;
-    }
+    const response: Response = await requestCommon({
+      url,
+      method: 'POST',
+      body,
+      signal,
+    });
     if (!response.ok) {
       if (response.status === 401) {
         navigate('/login?navigate-back=true');

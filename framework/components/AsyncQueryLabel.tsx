@@ -1,39 +1,32 @@
 import { Spinner } from '@patternfly/react-core';
-import { ReactNode, useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { ReactNode } from 'react';
+import { RequestError } from '../../frontend/common/crud/RequestError';
 import { useGetItem } from '../../frontend/common/crud/useGet';
-
-export function ToolbarAsyncQueryChip<T>(props: {
-  value: T;
-  query?: (value: T) => Promise<string | undefined>;
-}) {
-  const { value, query: query } = props;
-  const [label, setLabel] = useState<string | undefined>(undefined);
-  useEffect(() => {
-    if (query) {
-      void query(value).then((label) => setLabel(label));
-    }
-  }, [value, query]);
-  return <>{label || value}</>;
-}
 
 /** Asychronously queries a label from a URL */
 export function AsyncQueryLabel(props: {
   url: string;
-  id: number | string;
+  id: number | string | undefined;
   field?: string;
 }): ReactNode {
-  const { t } = useTranslation();
   const { data, isLoading, error } = useGetItem<Record<string, unknown>>(props.url, props.id);
+
+  if (props.id === undefined) return null;
 
   if (isLoading) return <Spinner size="md" />;
 
   if (error) {
-    return t('Not found');
+    if (error.name === 'RequestError') {
+      const requestError = error as RequestError;
+      if (requestError.statusCode === 404) {
+        return props.id.toString();
+      }
+    }
+    return error.message;
   }
 
   if (!data) {
-    return t('Not found');
+    return props.id.toString();
   }
 
   const value = data[props.field ?? 'name'];

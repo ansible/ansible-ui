@@ -71,7 +71,7 @@ function craftRequestUrl(
   queryKey: string,
   queryParams?: Record<string, string>
 ) {
-  let url = awxAPI`/${optionsPath}/?page_size=100&order_by=${queryKey}`;
+  let url = awxAPI`/${optionsPath}/?page_size=10&order_by=${queryKey}`;
   if (queryOptions.next) {
     url += `&${queryKey}__gt=${queryOptions.next}`;
   }
@@ -151,6 +151,7 @@ export function useDynamicToolbarFilters(props: DynamicToolbarFiltersProps) {
   const queryResourceLabel = useCallback((value: string, key: string) => {
     const knownAwxFilterKey = knownAwxFilterKeys[key];
     if (knownAwxFilterKey) {
+      console.log('knownAwxFilterKey', knownAwxFilterKey);
       return (
         <AsyncQueryLabel
           url={awxAPI`/${knownAwxFilterKey.apiPath}/`}

@@ -166,7 +166,9 @@ export function PageMultiSelect<
       if (option) {
         selectedOptions.push(option);
       } else if (queryLabel) {
-        selectedOptions.push({ label: queryLabel(value) as string, value });
+        if (value !== undefined) {
+          selectedOptions.push({ label: queryLabel(value) as string, value });
+        }
       }
     }
     return selectedOptions;
