@@ -1,4 +1,4 @@
-import { Weekday } from 'rrule';
+import { RRule, Weekday } from 'rrule';
 import { InventorySource } from '../../interfaces/InventorySource';
 import { JobTemplate } from '../../interfaces/JobTemplate';
 import { LaunchConfiguration } from '../../interfaces/LaunchConfiguration';
@@ -6,16 +6,26 @@ import { Project } from '../../interfaces/Project';
 import { WorkflowJobTemplate } from '../../interfaces/WorkflowJobTemplate';
 import { SystemJob } from '../../interfaces/generated-from-swagger/api';
 import { PromptFormValues } from '../../resources/templates/WorkflowVisualizer/types';
+
+export enum Frequency {
+  YEARLY = 0,
+  MONTHLY = 1,
+  WEEKLY = 2,
+  DAILY = 3,
+  HOURLY = 4,
+  MINUTELY = 5,
+  SECONDLY = 6,
+}
 export type ScheduleResources =
   | InventorySource
   | SystemJob
   | JobTemplate
   | Project
   | WorkflowJobTemplate;
-export interface Occurrence {
+export interface OccurrenceFields {
   id: number;
-  freq: number | null;
-  interval: number | null;
+  freq: Frequency;
+  interval: number | undefined;
   wkst: Weekday;
   byweekday: null;
   byweekno: null;
@@ -30,6 +40,7 @@ export interface Occurrence {
   endTime: string | null;
   count: null;
   endingType: string | null;
+  rules: { id: number; rule: RRule }[];
 }
 export interface ScheduleFormWizard {
   details: {
@@ -42,8 +53,7 @@ export interface ScheduleFormWizard {
     startDateTime: { date: string; time: string };
     timezone: string;
   };
-  occurrence: Occurrence | null;
-  occurrences: Occurrence[];
+  occurrence: OccurrenceFields | null;
   launch_config: LaunchConfiguration | null;
   prompt: PromptFormValues;
 }

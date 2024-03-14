@@ -16,7 +16,7 @@ import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
 import { useGetTimezones } from '../hooks/useGetTimezones';
 import { PromptInputs } from '../components/PromptInputs';
 import { OccurrencesStep } from './OccurrencesStep';
-import { FREQUENCIES_DEFAULT_VALUES } from './constants';
+import { Frequency, RRule } from 'rrule';
 import { ScheduleInputs } from '../components/ScheduleInputs';
 
 export function ScheduleAddWizard() {
@@ -68,7 +68,7 @@ export function ScheduleAddWizard() {
       inputs: <PromptInputs onError={() => {}} />,
     },
     { id: 'survey', label: t('Survey'), element: <PageNotImplemented /> },
-    { id: 'occurrences', label: t('Occurrences'), inputs: <OccurrencesStep /> },
+    { id: 'occurrence', label: t('Occurrences'), inputs: <OccurrencesStep /> },
     {
       id: 'exceptions',
       label: t('Exceptions'),
@@ -85,7 +85,25 @@ export function ScheduleAddWizard() {
       resourceName: '',
       startDateTime: { date: currentDate, time: time },
     },
-    occurrences: [FREQUENCIES_DEFAULT_VALUES],
+    occurrence: {
+      freq: Frequency.WEEKLY,
+      interval: 1,
+      wkst: RRule.SU,
+      byweekday: null,
+      byweekno: null,
+      bymonth: null,
+      bymonthday: null,
+      byyearday: null,
+      bysetpos: null,
+      until: null,
+      endDate: '',
+      endTime: '',
+      count: null,
+      byminute: null,
+      byhour: null,
+      endingType: '',
+      rules: [],
+    },
   };
 
   return (

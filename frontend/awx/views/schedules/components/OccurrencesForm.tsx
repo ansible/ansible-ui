@@ -1,13 +1,16 @@
-import { useWatch } from 'react-hook-form';
+import { useFormContext } from 'react-hook-form';
 import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
 import { PageFormSelect, PageFormTextInput } from '../../../../../framework';
-import { Occurrence, ScheduleFormWizard } from '../types';
+import { OccurrenceFields } from '../types';
 import { useTranslation } from 'react-i18next';
-import { Frequency } from 'rrule';
-import { useGetMonthOptions, useGetWeekdayOptions } from '../hooks/ruleHelpers';
+import { RRule } from 'rrule';
+import {
+  useGetFrequencyOptions,
+  useGetMonthOptions,
+  useGetWeekdayOptions,
+} from '../hooks/ruleHelpers';
 import { PageFormMultiSelect } from '../../../../../framework/PageForm/Inputs/PageFormMultiSelect';
 import {
-  FREQUENCIES_DEFAULT_VALUES,
   WEEKS_OF_YEAR,
   DAYS_OF_MONTH,
   DAYS_OF_YEAR,
@@ -17,47 +20,41 @@ import {
 import { PageFormDateTimePicker } from '../../../../../framework/PageForm/Inputs/PageFormDateTimePicker';
 import { ActionGroup, Button } from '@patternfly/react-core';
 
-export function OccurrencesForm(props: {
-  isOpen: boolean;
-  removeMap: (id: number) => void;
-  addMap: (values: Occurrence) => void;
-  setIsOpen: (isOpen: boolean) => void;
-}) {
+export function OccurrencesForm(props: { isOpen: boolean; setIsOpen: (isOpen: boolean) => void }) {
   const { t } = useTranslation();
-  const frequencyOptions = Object.values(Frequency)
-    .filter((freq) => isNaN(Number(freq)))
-    .map((freq) => ({ name: freq, value: freq, label: freq.toString() }));
+  const { getValues, reset } = useFormContext();
 
   const weekdayOptions = useGetWeekdayOptions();
-  const occurrence = useWatch({ name: 'occurrences' }) as Occurrence;
+  const frequencyOptions = useGetFrequencyOptions();
   const monthOptions = useGetMonthOptions();
+
   return (
     <PageFormSection title={t('Define occurances')}>
       <PageFormSection>
-        <PageFormSelect<ScheduleFormWizard>
-          name={`occurrence.freq`}
+        <PageFormSelect<OccurrenceFields>
+          name={`freq`}
           isRequired
           label={t('Frequency')}
           options={frequencyOptions}
         />
-        <PageFormTextInput<ScheduleFormWizard>
-          name={`occurrence.interval`}
+        <PageFormTextInput<OccurrenceFields>
+          name={`interval`}
           label={t('Interval')}
           type="number"
         />
-        <PageFormSelect<ScheduleFormWizard>
-          name={`occurrence.wkst`}
+        <PageFormSelect<OccurrenceFields>
+          name={`wkst`}
           label={t('Week Start')}
           options={weekdayOptions}
         />
-        <PageFormMultiSelect<ScheduleFormWizard>
+        <PageFormMultiSelect<OccurrenceFields>
           label={t('Weekdays')}
-          name={`occurrence.byweekday`}
+          name={`byweekday`}
           options={weekdayOptions}
           placeholder={t('Select days of the week on which to run the schedule')}
         />
-        <PageFormMultiSelect<ScheduleFormWizard>
-          name={`occurrence.bymonth`}
+        <PageFormMultiSelect<OccurrenceFields>
+          name={`bymonth`}
           label={t('Months')}
           options={monthOptions}
           labelHelpTitle={t('Months')}
@@ -66,8 +63,8 @@ export function OccurrencesForm(props: {
           )}
           placeholder={t('Select days of the week on which to run the schedule')}
         />
-        <PageFormMultiSelect<ScheduleFormWizard>
-          name={`occurrence.byweekno`}
+        <PageFormMultiSelect<OccurrenceFields>
+          name={`byweekno`}
           options={WEEKS_OF_YEAR}
           placeholder={t('Select weeks of the year on which to run the schedule')}
           label={t('Annual week(s) number')}
@@ -76,8 +73,8 @@ export function OccurrencesForm(props: {
           )}
           labelHelpTitle={t('Annual weeks(s) number')}
         />
-        <PageFormMultiSelect<ScheduleFormWizard>
-          name={`occurrence.byminute`}
+        <PageFormMultiSelect<OccurrenceFields>
+          name={`byminute`}
           placeholder={t('Select minutes of the hour on which to run the schedule')}
           options={MINUTES_OF_HOUR}
           label={t('Minute(s) of hour')}
@@ -86,8 +83,8 @@ export function OccurrencesForm(props: {
           )}
           labelHelpTitle={t('Minute(s) of hour')}
         />
-        <PageFormMultiSelect<ScheduleFormWizard>
-          name={`occurrence.byhour`}
+        <PageFormMultiSelect<OccurrenceFields>
+          name={`byhour`}
           placeholder={t('Select hour of day on which to run the schedule')}
           options={HOURS_OF_DAY}
           label={t('Hour of day')}
@@ -96,8 +93,8 @@ export function OccurrencesForm(props: {
           )}
           labelHelpTitle={t('Hour of day')}
         />
-        <PageFormMultiSelect<ScheduleFormWizard>
-          name={`occurrence.bymonthday`}
+        <PageFormMultiSelect<OccurrenceFields>
+          name={`bymonthday`}
           placeholder={t('Select days of the month on which to run the schedule')}
           options={DAYS_OF_MONTH}
           label={t('Monthly day(s) number')}
@@ -106,8 +103,8 @@ export function OccurrencesForm(props: {
           )}
           labelHelpTitle={t('Monthly day(s) number')}
         />
-        <PageFormMultiSelect<ScheduleFormWizard>
-          name={`occurrence.byyearday`}
+        <PageFormMultiSelect<OccurrenceFields>
+          name={`byyearday`}
           placeholder={t('Select days of the year on which to run the schedule')}
           options={DAYS_OF_YEAR}
           label={t('Annual day(s) number')}
@@ -116,10 +113,10 @@ export function OccurrencesForm(props: {
           )}
           labelHelpTitle={t('Annual day(s) number')}
         />
-        <PageFormMultiSelect<ScheduleFormWizard>
+        <PageFormMultiSelect<OccurrenceFields>
           placeholder={t('Select days')}
           options={DAYS_OF_YEAR}
-          name={`occurrence.bysetpos`}
+          name={`bysetpos`}
           labelHelp={t(
             'Use this field to filter down indexed occurances based on those declared using the form fields in the Define occurances section. See the iCalendar RFC for bysetpos field more information.'
           )}
@@ -127,16 +124,16 @@ export function OccurrencesForm(props: {
           label={t('Occurances')}
         />
 
-        <PageFormTextInput<ScheduleFormWizard>
+        <PageFormTextInput<OccurrenceFields>
           labelHelpTitle={t('Count')}
           label={t('Count')}
-          name={`occurrence.count`}
+          name={`count`}
           labelHelp={t('The number of this rule should be used.')}
           min={0}
           type="number"
         />
-        <PageFormDateTimePicker<ScheduleFormWizard>
-          name={`occurrence.until`}
+        <PageFormDateTimePicker<OccurrenceFields>
+          name={`until`}
           timePlaceHolder="HH:MM AM/PM"
           label={t('Until')}
           labelHelpTitle={t('Until')}
@@ -148,10 +145,11 @@ export function OccurrencesForm(props: {
         <Button
           variant="secondary"
           onClick={() => {
-            props.addMap({
-              ...FREQUENCIES_DEFAULT_VALUES,
-              id: occurrence.id,
-            });
+            const { rules, endDate, endTime, endingType, ...stepData } =
+              getValues() as OccurrenceFields;
+            const rule = new RRule(stepData);
+            const ruleId = rules?.length + 1 || 1;
+            reset({ rules: [...(rules || []), { rule, id: ruleId }] }, { keepDefaultValues: true });
             props.setIsOpen(false);
           }}
         >
@@ -161,6 +159,7 @@ export function OccurrencesForm(props: {
           variant="secondary"
           isDanger
           onClick={() => {
+            reset({ keepDefaultValues: true });
             props.setIsOpen(false);
           }}
         >

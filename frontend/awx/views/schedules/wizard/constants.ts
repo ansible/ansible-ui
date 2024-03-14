@@ -1,8 +1,8 @@
-import { RRule } from 'rrule';
+import { Frequency, RRule } from 'rrule';
 
-export const FREQUENCIES_DEFAULT_VALUES = {
-  freq: 0,
-  interval: 0,
+export const OCCURRENCES_DEFAULT_VALUES = {
+  freq: Frequency.WEEKLY,
+  interval: 1,
   wkst: RRule.SU,
   byweekday: null,
   byweekno: null,
@@ -17,6 +17,7 @@ export const FREQUENCIES_DEFAULT_VALUES = {
   byminute: null,
   byhour: null,
   endingType: '',
+  rules: [],
 };
 
 export const WEEKS_OF_YEAR = Array.from({ length: 52 }, (_, i) => i + 1).map((week) => ({

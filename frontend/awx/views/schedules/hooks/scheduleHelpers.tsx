@@ -3,7 +3,7 @@ import { ReactElement } from 'react';
 import { useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useParams } from 'react-router-dom';
-import { Frequency, RRule, RRuleSet } from 'rrule';
+import { RRule } from 'rrule';
 import {
   PageFormDataEditor,
   PageFormSelect,
@@ -373,23 +373,6 @@ export function useGetPromptOnLaunchFields(
     }
   });
   return fields;
-}
-
-export function buildScheduleContainer(values: ScheduleFormWizard) {
-  const set = new RRuleSet();
-
-  const startRule = buildDateTimeObj({
-    date: values.details.startDateTime.date,
-    time: values.details.startDateTime.time,
-    timezone: values.details.timezone,
-    start: !values.occurrences[0].until,
-  });
-  startRule.origOptions.tzid = values.details.timezone;
-  startRule.origOptions.freq = values.occurrences[0].freq || Frequency.WEEKLY;
-  startRule.origOptions.interval = values.occurrences[0].interval || 0;
-  set.rrule(startRule);
-
-  return set;
 }
 
 export const parseTime = (time: string) => [

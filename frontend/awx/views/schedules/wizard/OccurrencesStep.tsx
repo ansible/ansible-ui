@@ -5,29 +5,21 @@ import { useState } from 'react';
 import { OccurrencesForm } from '../components/OccurrencesForm';
 import { OccurrencesList } from '../components/OccurrencesList';
 import { PlusCircleIcon } from '@patternfly/react-icons';
-import { useFieldArray, useFormContext } from 'react-hook-form';
-import { FREQUENCIES_DEFAULT_VALUES } from './constants';
+import { useFormContext } from 'react-hook-form';
+import { RRule } from 'rrule';
 
 export function OccurrencesStep() {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const { control, setValue } = useFormContext();
-  const {
-    fields,
-    append: addMap,
-    remove: removeMap,
-  } = useFieldArray({
-    control,
-    name: 'occurrences',
-  });
-
+  const { getValues } = useFormContext();
+  const rules = getValues('rules') as { id: number; rule: RRule }[];
+  const hasRules = rules?.length > 0;
   return (
     <PageFormSection title={t('Occurrences')} singleColumn>
-      {!isOpen && (
+      {!isOpen && hasRules && (
         <Button
           icon={<PlusCircleIcon />}
           onClick={() => {
-            setValue('occurrence', { ...FREQUENCIES_DEFAULT_VALUES, id: fields.length + 1 || 1 });
             setIsOpen(true);
           }}
           variant="link"
@@ -35,15 +27,9 @@ export function OccurrencesStep() {
           {t('Add occurrence')}
         </Button>
       )}
-      {isOpen && (
-        <OccurrencesForm
-          removeMap={removeMap}
-          addMap={addMap}
-          isOpen={isOpen}
-          setIsOpen={setIsOpen}
-        />
-      )}
-      <OccurrencesList />
+      {isOpen && <OccurrencesForm isOpen={isOpen} setIsOpen={setIsOpen} />}
+
+      {(hasRules || (!isOpen && !hasRules)) && <OccurrencesList setIsOpen={setIsOpen} />}
     </PageFormSection>
   );
 }
