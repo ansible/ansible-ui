@@ -939,7 +939,6 @@ export interface ProjectRead {
   created_at: string;
   /** @format date-time */
   modified_at: string;
-
 }
 
 export interface ProjectRef {
