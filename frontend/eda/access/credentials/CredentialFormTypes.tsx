@@ -37,7 +37,6 @@ interface IFieldTypeBoolean extends IFieldTypeBase {
 
 export function CredentialFormInputs(props: { credentialType: EdaCredentialType | undefined }) {
   const fields = props?.credentialType?.inputs.fields;
-  console.log('Debug CredentialFormInputs - credentialType: ', props.credentialType);
   return fields?.map((field) => {
     return (
       <CredentialFormInput

@@ -8,7 +8,6 @@ export function CredentialDetailFields(props: { credential: EdaCredential }) {
   const { data: credentialType } = useGet<EdaCredentialType>(
     edaAPI`/credential-types/` + `${props.credential.credential_type?.id ?? ''}/`
   );
-  const fields = credentialType?.inputs?.fields;
 
   if (!credentialType) {
     return <LoadingPage />;

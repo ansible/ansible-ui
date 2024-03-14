@@ -17,7 +17,6 @@ import { StandardPopover } from '../../../framework/components/StandardPopover';
 import { useGet } from '../../common/crud/useGet';
 import { usePatchRequest } from '../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../common/crud/usePostRequest';
-import { useIsValidUrl } from '../../common/validation/useIsValidUrl';
 import { EdaPageForm } from '../common/EdaPageForm';
 import { edaAPI } from '../common/eda-utils';
 import { EdaCredential } from '../interfaces/EdaCredential';
@@ -72,7 +71,6 @@ function ProjectCreateInputs() {
     </Trans>
   );
 
-  const isValidUrl = useIsValidUrl();
   return (
     <>
       <PageFormTextInput<EdaProjectCreate>
@@ -102,7 +100,6 @@ function ProjectCreateInputs() {
         isRequired={true}
         label={t('SCM URL')}
         placeholder={t('Enter SCM URL')}
-        validate={isValidUrl}
         labelHelpTitle={t('SCM URL')}
         labelHelp={t('HTTP[S] protocol address of a repository, such as GitHub or GitLab.')}
       />

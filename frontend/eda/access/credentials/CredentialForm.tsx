@@ -19,21 +19,44 @@ import { EdaCredential, EdaCredentialCreate } from '../../interfaces/EdaCredenti
 import { EdaRoute } from '../../main/EdaRoutes';
 import { EdaResult } from '../../interfaces/EdaResult';
 import { EdaCredentialType } from '../../interfaces/EdaCredentialType';
-import { useWatch } from 'react-hook-form';
+import { useFormContext, useWatch } from 'react-hook-form';
 import { CredentialFormInputs } from './CredentialFormTypes';
+import { useCallback, useEffect } from 'react';
 
 // eslint-disable-next-line react/prop-types
 function CredentialInputs(props: { editMode: boolean }) {
   const { t } = useTranslation();
+  const { setValue } = useFormContext();
   const { data: credentialTypes } = useGet<EdaResult<EdaCredentialType>>(
     edaAPI`/credential-types/?page=1&page_size=200`
   );
-  const credentialType = Number(
+  const credentialTypeId = Number(
     useWatch<EdaCredentialCreate>({
       name: 'credential_type_id',
       defaultValue: undefined,
     })
   );
+
+  const credentialType =
+    credentialTypeId !== undefined && credentialTypes?.results !== undefined
+      ? credentialTypes.results.find((credentialtype) => credentialtype?.id === credentialTypeId)
+      : undefined;
+
+  const setDefaultValuesForType = useCallback(() => {
+    const fields = credentialType?.inputs?.fields;
+    if (!credentialType) return;
+
+    fields?.map((field) => {
+      if (field?.default !== undefined) {
+        setValue(`inputs.${field.id}`, field.default);
+      }
+    });
+  }, [credentialType, setValue]);
+
+  useEffect(() => {
+    if (props.editMode || !credentialTypeId) return;
+    setDefaultValuesForType();
+  }, [setValue, props, credentialTypeId, setDefaultValuesForType]);
 
   return (
     <>
@@ -69,15 +92,7 @@ function CredentialInputs(props: { editMode: boolean }) {
         }
         labelHelpTitle={t('Credential type')}
       />
-      {credentialType !== undefined &&
-        credentialTypes?.results !== undefined &&
-        credentialTypes.results.find((credentialtype) => credentialtype?.id === credentialType) && (
-          <CredentialFormInputs
-            credentialType={credentialTypes?.results?.find(
-              (credentialtype) => credentialtype.id === credentialType
-            )}
-          />
-        )}
+      {credentialType !== undefined && <CredentialFormInputs credentialType={credentialType} />}
     </>
   );
 }

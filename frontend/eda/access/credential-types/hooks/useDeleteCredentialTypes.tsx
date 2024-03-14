@@ -20,7 +20,7 @@ export function useDeleteCredentialTypes(
   return useCallback(
     async (credentialTypes: EdaCredentialType[]) => {
       bulkAction({
-        title: t('Permanently delete credentials', { count: credentialTypes.length }),
+        title: t('Permanently delete credential types', { count: credentialTypes.length }),
         confirmText: t('Yes, I confirm that I want to delete these {{count}} credential types.', {
           count: credentialTypes.length,
         }),
@@ -32,7 +32,7 @@ export function useDeleteCredentialTypes(
         actionColumns,
         onComplete,
         actionFn: (credentialType: EdaCredentialType, signal) => {
-          const url = edaAPI`/credentials/${credentialType.id.toString()}/`;
+          const url = edaAPI`/credential-types/${credentialType.id.toString()}/`;
           return requestDelete(url, signal);
         },
       });

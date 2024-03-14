@@ -303,18 +303,10 @@ export interface AwxTokenCreate {
 export interface CredentialType {
   id: number;
   name: string;
-  description: string;
-  namespace: string;
+  description?: string;
+  namespace?: string;
   managed: boolean;
-  injectors: { [key: string]: string };
-  summary_fields: {
-    created_by?: string;
-    modified_by?: string;
-    user_capabilities: {
-      edit: boolean;
-      delete: boolean;
-    };
-  };
+  injectors?: { [key: string]: string };
   inputs: {
     fields: {
       id: string;
@@ -322,6 +314,7 @@ export interface CredentialType {
       type: string;
       help_text: string;
       ask_at_runtime?: boolean;
+      default?: number | string | boolean;
     }[];
     required: string[];
   };
@@ -334,17 +327,18 @@ export interface CredentialType {
 export interface CredentialTypeCreate {
   id: string;
   name: string;
-  description: string;
-  namespace: string;
-  managed: boolean;
-  injectors: { [key: string]: string };
-  inputs: {
+  description?: string;
+  namespace?: string;
+  managed?: boolean;
+  injectors?: { [key: string]: string };
+  inputs?: {
     fields: {
       id: string;
       label: string;
       type: string;
       help_text: string;
       ask_at_runtime?: boolean;
+      default?: number | string | boolean;
     }[];
   };
 }
@@ -354,7 +348,7 @@ export interface Credential {
   description?: string;
   key?: string | null;
   credential_type: { id?: number; name?: string };
-  inputs: object | undefined;
+  inputs?: object;
   id: number;
   /** @format date-time */
   created_at: string;
@@ -365,16 +359,11 @@ export interface Credential {
 export interface CredentialCreate {
   name: string;
   description?: string;
-  /**
-   * * `Container Registry` - Container Registry
-   * * `GitHub Personal Access Token` - GitHub Personal Access Token
-   * * `GitLab Personal Access Token` - GitLab Personal Access Token
-   * * `Vault` - Vault
-   */
   credential_type_id: number;
   username?: string | null;
   key?: string | null;
   secret?: string | null;
+  inputs?: object;
 }
 
 /** Serializer for Credential reference. */
@@ -382,27 +371,8 @@ export interface CredentialRef {
   id: number;
   name: string;
   description?: string;
-  /**
-   * * `Container Registry` - Container Registry
-   * * `GitHub Personal Access Token` - GitHub Personal Access Token
-   * * `GitLab Personal Access Token` - GitLab Personal Access Token
-   */
-  credential_type?: CredentialTypeEnum;
+  credential_type?: number;
   username?: string | null;
-}
-
-/**
- * * `Container Registry` - Container Registry
- * * `GitHub Personal Access Token` - GitHub Personal Access Token
- * * `GitLab Personal Access Token` - GitLab Personal Access Token
- * * `Extra Vars` - Extra Vars
- * * `Ansible Vault Password` - Ansible Vault Password
- */
-export enum CredentialTypeEnum {
-  ContainerRegistry = 'Container Registry',
-  GitHubPersonalAccessToken = 'GitHub Personal Access Token',
-  GitLabPersonalAccessToken = 'GitLab Personal Access Token',
-  AnsibleVaultPassword = 'Vault',
 }
 
 export interface DecisionEnvironment {
@@ -823,14 +793,10 @@ export interface PaginatedUserListList {
 export interface PatchedCredentialCreate {
   name?: string;
   description?: string;
-  /**
-   * * `Container Registry` - Container Registry
-   * * `GitHub Personal Access Token` - GitHub Personal Access Token
-   * * `GitLab Personal Access Token` - GitLab Personal Access Token
-   */
-  credential_type?: CredentialTypeEnum;
+  credential_type?: number;
   username?: string | null;
   secret?: string | null;
+  inputs?: object;
 }
 
 export interface PatchedCurrentUserUpdate {
