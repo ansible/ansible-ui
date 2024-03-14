@@ -56,12 +56,13 @@ interface StatusProps {
 }
 
 type HostStatusCountType = 'ok' | 'skipped' | 'changed' | 'failures' | 'dark';
-type WorkflowStatusCountType = 'dark' | JobStatus;
+type WorkflowStatusCountType = JobStatus | 'dark';
 
-type HostStatusType = { [key in HostStatusCountType]: StatusProps };
+type CommonStatusType = Record<'dark', StatusProps>;
+type HostStatusType = Record<HostStatusCountType, StatusProps>;
 type WorkflowStatusType = Record<WorkflowStatusCountType, StatusProps>;
 
-type SegmentProps = Partial<Record<WorkflowStatusCountType, number>>;
+type WFNodesStatusProps = Partial<Record<WorkflowStatusCountType, number>>;
 
 export function WorkflowNodesStatusBar(props: { nodes: WorkflowNode[] }) {
   const { t } = useTranslation();
@@ -105,7 +106,7 @@ export function WorkflowNodesStatusBar(props: { nodes: WorkflowNode[] }) {
     },
   };
 
-  const segments: SegmentProps = {};
+  const segments: WFNodesStatusProps = {};
 
   props.nodes.map((node) => {
     const nodeStatus = (node?.summary_fields?.job?.status ?? 'dark') as WorkflowStatusCountType;
@@ -162,7 +163,8 @@ function StatusBar<T extends object, K extends object>(props: StatusBarProps<T, 
 
   const barSegments = Object.keys(status).map((key) => {
     const count = (counts[key as keyof T] as number) || 0;
-    const jobStatus = status[key as keyof K] as StatusProps;
+    const jobStatus =
+      (status[key as keyof K] as StatusProps) ?? (status as CommonStatusType)['dark'];
     return (
       <Tooltip
         key={key}
@@ -195,8 +197,14 @@ function StatusBar<T extends object, K extends object>(props: StatusBarProps<T, 
         {Object.keys(counts).map((key) => (
           <LegendItem
             key={key}
-            color={(status[key as keyof K] as StatusProps).color}
-            label={(status[key as keyof K] as StatusProps).label}
+            color={
+              (status[key as keyof K] as StatusProps)?.color ??
+              (status as CommonStatusType)['dark'].color
+            }
+            label={
+              (status[key as keyof K] as StatusProps)?.label ??
+              (status as CommonStatusType)['dark'].label
+            }
             percent={(((counts[key as keyof T] as number) ?? 0) / totalCounts) * 100}
           />
         ))}
