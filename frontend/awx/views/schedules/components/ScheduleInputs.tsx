@@ -23,6 +23,7 @@ import { PageFormJobTemplateSelect } from '../../../resources/templates/componen
 import { PageFormWorkflowJobTemplateSelect } from '../../../resources/templates/components/PageFormWorkflowJobTemplateSelect';
 import { resourceEndPoints, useGetPromptOnLaunchFields } from '../hooks/scheduleHelpers';
 import { PageFormManagementJobsSelect } from '../../../administration/management-jobs/components/PageFormManagementJobsSelect';
+import { Divider } from '@patternfly/react-core';
 
 export function ScheduleInputs(props: {
   timeZones: { value: string; label: string; key: string }[];
@@ -36,12 +37,12 @@ export function ScheduleInputs(props: {
   const { setValue } = useFormContext();
   const [timezoneMessage, setTimezoneMessage] = useState('');
   const resourceType = useWatch({
-    name: 'resource_type',
+    name: 'details.resource_type',
   }) as string;
   const launchConfiguration = useWatch({ name: 'launchConfiguration' }) as LaunchConfiguration;
   const inventory = useWatch({ name: 'inventory' }) as RegularInventory;
-  const timeZone = useWatch({ name: 'timezone' }) as string;
-  const resourceForSchedule = useWatch({ name: 'unified_job_template_object' }) as
+  const timeZone = useWatch({ name: 'details.timezone' }) as string;
+  const resourceForSchedule = useWatch({ name: 'details.unified_job_template_object' }) as
     | InventorySource
     | Project
     | JobTemplate
@@ -177,13 +178,13 @@ export function ScheduleInputs(props: {
   return (
     <>
       {pathname.split('/')[1] === 'schedules' ? (
-        <>
+        <PageFormSection>
           <PageFormSelect<ScheduleFormWizard>
             isRequired={!params['*']?.startsWith('schedules')}
             labelHelpTitle={t('Resource type')}
             labelHelp={t('Select a resource type onto which this schedule will be applied.')}
-            name="resource_type"
-            id="resource_type"
+            name="details.resource_type"
+            id="details.resource_type"
             label={t('Resource Type')}
             options={[
               { label: t('Job template'), value: 'job_template' },
@@ -192,15 +193,17 @@ export function ScheduleInputs(props: {
               { label: t('Project'), value: 'project' },
               { label: t('Management job template'), value: 'management_job_template' },
             ]}
-            fieldNameToResetOnFieldChange="unified_job_template_object"
+            fieldNameToResetOnFieldChange="details.unified_job_template_object"
             placeholderText={t('Select job type')}
           />
 
           {resourceType &&
             {
-              job_template: <PageFormJobTemplateSelect name="unified_job_template_object" />,
+              job_template: (
+                <PageFormJobTemplateSelect name="details.unified_job_template_object" />
+              ),
               workflow_job_template: (
-                <PageFormWorkflowJobTemplateSelect name="unified_job_template_object" />
+                <PageFormWorkflowJobTemplateSelect name="details.unified_job_template_object" />
               ),
               inventory_source: (
                 <>
@@ -208,45 +211,50 @@ export function ScheduleInputs(props: {
                     labelHelp={t(
                       'First, select the inventory to which the desired inventory source belongs.'
                     )}
-                    name="inventory"
+                    name="details.inventory"
                     isRequired
                   />
                   {inventory?.id && (
                     <PageFormInventorySourceSelect
                       inventoryId={inventory?.id}
                       isRequired
-                      name="unified_job_template_object"
+                      name="details.unified_job_template_object"
                     />
                   )}
                 </>
               ),
-              project: <PageFormProjectSelect name="unified_job_template_object" />,
+              project: <PageFormProjectSelect name="details.unified_job_template_object" />,
               management_job_template: (
-                <PageFormManagementJobsSelect name="unified_job_template_object" />
+                <PageFormManagementJobsSelect name="details.unified_job_template_object" />
               ),
             }[resourceType]}
-        </>
+        </PageFormSection>
       ) : null}
       {resourceForSchedule ? (
         <>
-          <PageFormTextInput name={'name'} isRequired label={t('Schedule Name')} />
-          <PageFormTextInput name={'description'} label={t('Description')} />
-          <PageFormDateTimePicker<ScheduleFormWizard>
-            label={t('Start date/time')}
-            name={'startDateTime'}
-          />
-          <PageFormSelect<ScheduleFormWizard>
-            name="timezone"
-            placeholderText={t('Select time zone')}
-            label={t('Time zone')}
-            options={timeZones}
-            helperText={timezoneMessage}
-          />
-          {promptOnLaunchFields?.length ? (
-            <PageFormSection title={t('Prompt on launch fields')}>
-              {promptOnLaunchFields.map((field) => field)}
-            </PageFormSection>
-          ) : null}
+          <PageFormSection singleColumn>
+            <Divider />
+          </PageFormSection>
+          <PageFormSection>
+            <PageFormTextInput name={'name'} isRequired label={t('Schedule Name')} />
+            <PageFormTextInput name={'description'} label={t('Description')} />
+            <PageFormDateTimePicker<ScheduleFormWizard>
+              label={t('Start date/time')}
+              name={'details.startDateTime'}
+            />
+            <PageFormSelect<ScheduleFormWizard>
+              name="details.timezone"
+              placeholderText={t('Select time zone')}
+              label={t('Time zone')}
+              options={timeZones}
+              helperText={timezoneMessage}
+            />
+            {promptOnLaunchFields?.length ? (
+              <PageFormSection title={t('Prompt on launch fields')}>
+                {promptOnLaunchFields.map((field) => field)}
+              </PageFormSection>
+            ) : null}
+          </PageFormSection>
         </>
       ) : null}
     </>
