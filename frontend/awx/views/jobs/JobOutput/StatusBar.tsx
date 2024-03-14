@@ -10,6 +10,7 @@ import {
 } from '../../../../../framework/components/pfcolors';
 import type { HostStatusCounts } from '../../../interfaces/Job';
 import { WorkflowNode } from '../../../interfaces/WorkflowNode';
+import { JobStatus } from './util';
 
 const BarWrapper = styled.div`
   background-color: var(--pf-v5-global--Color--light-300);
@@ -49,46 +50,56 @@ const LegendBox = styled.span`
   margin-right: 8px;
 `;
 
-type HostStatusCountType = 'ok' | 'skipped' | 'changed' | 'failures' | 'dark';
-type WorkflowStatusCountType = 'successful' | 'canceled' | 'error' | 'unreachable' | 'pending';
-
 interface StatusProps {
   color: string;
   label: string;
 }
 
-type HostStatusType = { [key in HostStatusCountType]: StatusProps };
-type WorkflowNodeStatusType = { [key in WorkflowStatusCountType]: StatusProps };
+type HostStatusCountType = 'ok' | 'skipped' | 'changed' | 'failures' | 'dark';
+type WorkflowStatusCountType = 'dark' | JobStatus;
 
-interface SegmentProps {
-  successful?: number;
-  canceled?: number;
-  error?: number;
-  unreachable?: number;
-  pending?: number;
-}
+type HostStatusType = { [key in HostStatusCountType]: StatusProps };
+type WorkflowStatusType = Record<WorkflowStatusCountType, StatusProps>;
+
+type SegmentProps = Partial<Record<WorkflowStatusCountType, number>>;
 
 export function WorkflowNodesStatusBar(props: { nodes: WorkflowNode[] }) {
   const { t } = useTranslation();
 
-  const workflowStatus: WorkflowNodeStatusType = {
+  const workflowStatus: WorkflowStatusType = {
     successful: {
       color: pfSuccess,
       label: t`Success`,
     },
     canceled: {
-      color: pfInfo,
+      color: pfWarning,
       label: t`Canceled`,
+    },
+    new: {
+      color: pfInfo,
+      label: t`New`,
     },
     pending: {
       color: pfInfo,
       label: t`Pending`,
     },
+    waiting: {
+      color: pfInfo,
+      label: t`Waiting`,
+    },
+    running: {
+      color: pfInfo,
+      label: t`Running`,
+    },
     error: {
+      color: pfDanger,
+      label: t`Error`,
+    },
+    failed: {
       color: pfDanger,
       label: t`Failed`,
     },
-    unreachable: {
+    dark: {
       color: pfUnreachable,
       label: t`Unreachable`,
     },
@@ -97,12 +108,10 @@ export function WorkflowNodesStatusBar(props: { nodes: WorkflowNode[] }) {
   const segments: SegmentProps = {};
 
   props.nodes.map((node) => {
-    const nodeStatus = (node?.summary_fields?.job?.status ??
-      'unreachable') as WorkflowStatusCountType;
+    const nodeStatus = (node?.summary_fields?.job?.status ?? 'dark') as WorkflowStatusCountType;
 
     const nodeVal = segments[nodeStatus];
-    segments[nodeStatus as WorkflowStatusCountType] =
-      nodeStatus in segments && nodeVal ? nodeVal + 1 : 1;
+    segments[nodeStatus] = nodeStatus in segments && nodeVal ? nodeVal + 1 : 1;
   });
 
   return <StatusBar counts={segments} status={workflowStatus} />;
@@ -129,7 +138,7 @@ export function HostStatusBar(props: { counts: HostStatusCounts }) {
       label: t`Failed`,
     },
     dark: {
-      color: 'var(--pf-v5-global--danger-color--300)',
+      color: pfUnreachable,
       label: t`Unreachable`,
     },
   };
