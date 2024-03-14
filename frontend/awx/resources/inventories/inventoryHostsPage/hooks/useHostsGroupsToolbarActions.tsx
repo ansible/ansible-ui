@@ -2,7 +2,6 @@ import { ButtonVariant } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
 import {
   IPageAction,
   PageActionType,
@@ -19,15 +18,19 @@ import { useDisassociateGroups } from './useDisassociateGroups';
 import { useInventoryHostGroupsAddModal } from '../InventoryHostGroupsModal';
 import { useAssociateGroupsToHost } from './useAssociateGroupsToHost';
 
-export function useHostsGroupsToolbarActions(view: IAwxView<InventoryGroup>) {
+export function useHostsGroupsToolbarActions(
+  view: IAwxView<InventoryGroup>,
+  inventoryId: string,
+  hostId: string,
+  hostPage: boolean
+) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
-  const params = useParams<{ id: string; inventory_type: string; host_id: string }>();
 
-  const disassociateGroups = useDisassociateGroups(view.unselectItemsAndRefresh);
+  const disassociateGroups = useDisassociateGroups(view.unselectItemsAndRefresh, hostId);
 
   const adhocOptions = useOptions<OptionsResponse<ActionsResponse>>(
-    awxAPI`/inventories/${params.id ?? ''}/ad_hoc_commands/`
+    awxAPI`/inventories/${inventoryId ?? ''}/ad_hoc_commands/`
   ).data;
   const canRunAdHocCommand = Boolean(
     adhocOptions && adhocOptions.actions && adhocOptions.actions['POST']
@@ -39,7 +42,7 @@ export function useHostsGroupsToolbarActions(view: IAwxView<InventoryGroup>) {
   );
 
   const openInventoryHostsGroupsAddModal = useInventoryHostGroupsAddModal();
-  const associateGroups = useAssociateGroupsToHost(view.unselectItemsAndRefresh);
+  const associateGroups = useAssociateGroupsToHost(view.unselectItemsAndRefresh, hostId);
 
   return useMemo<IPageAction<InventoryGroup>[]>(
     () => [
@@ -50,7 +53,12 @@ export function useHostsGroupsToolbarActions(view: IAwxView<InventoryGroup>) {
         isPinned: true,
         icon: PlusCircleIcon,
         label: t('Associate'),
-        onClick: () => openInventoryHostsGroupsAddModal({ onAdd: associateGroups }),
+        onClick: () =>
+          openInventoryHostsGroupsAddModal({
+            onAdd: associateGroups,
+            inventoryId: inventoryId ?? '',
+            hostId: hostId ?? '',
+          }),
         isDisabled: () =>
           canCreateGroup
             ? undefined
@@ -62,6 +70,7 @@ export function useHostsGroupsToolbarActions(view: IAwxView<InventoryGroup>) {
         type: PageActionType.Button,
         selection: PageActionSelection.None,
         variant: ButtonVariant.secondary,
+        isHidden: () => hostPage,
         isPinned: true,
         label: t('Run Command'),
         onClick: () => pageNavigate(AwxRoute.Inventories),
@@ -92,6 +101,9 @@ export function useHostsGroupsToolbarActions(view: IAwxView<InventoryGroup>) {
       canCreateGroup,
       pageNavigate,
       canRunAdHocCommand,
+      hostId,
+      hostPage,
+      inventoryId,
     ]
   );
 }
