@@ -1463,6 +1463,8 @@ declare global {
           failOnStatusCode?: boolean;
         }
       ): Cypress.Chainable<void>;
+      searchAndDisplayResourcePlatform(resourceName: string): Cypress.Chainable<void>;
+      selectItemFromLookupModalPlatform(): Cypress.Chainable<void>;
     }
   }
 }
