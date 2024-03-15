@@ -15,6 +15,7 @@ import { CreateUser, EditCurrentUser, EditUser } from '../access/users/EditUser'
 import { ControllerTokens } from '../access/users/UserPage/ControllerTokens';
 import { EdaMyDetails } from '../access/users/UserPage/EdaMyDetails';
 import { EdaUserDetails } from '../access/users/UserPage/EdaUserDetails';
+import { UserTeams } from '../access/users/UserPage/UserTeams';
 import { MyPage } from '../access/users/UserPage/MyPage';
 import { UserPage } from '../access/users/UserPage/UserPage';
 import { Users } from '../access/users/Users';
@@ -320,6 +321,11 @@ export function useEdaNavigation() {
                   id: EdaRoute.UserDetails,
                   path: 'details',
                   element: <EdaUserDetails />,
+                },
+                {
+                  id: EdaRoute.UserTeams,
+                  path: 'teams',
+                  element: <UserTeams />,
                 },
                 {
                   id: EdaRoute.UserTokens,

@@ -91,12 +91,13 @@ export function UserPage() {
   }, [canEditUser, deleteUsers, isViewingSelf, pageNavigate, isActionTab, t]);
 
   if (!activeUser) return <LoadingPage breadcrumbs tabs />;
-  const tabs = isViewingSelf
-    ? [
-        { label: t('Details'), page: EdaRoute.UserDetails },
-        { label: t('Controller Tokens'), page: EdaRoute.UserTokens },
-      ]
-    : [{ label: t('Details'), page: EdaRoute.UserDetails }];
+
+  const tabs = [
+    { label: t('Details'), page: EdaRoute.UserDetails },
+    { label: t('Teams'), page: EdaRoute.UserTeams },
+    isViewingSelf ? { label: t('Controller Tokens'), page: EdaRoute.UserTokens } : null,
+  ].filter(Boolean);
+
   return (
     <PageLayout>
       <PageHeader
