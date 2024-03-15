@@ -305,10 +305,12 @@ export function EditHost() {
 function HostInputs(props: { edit_mode?: boolean; inventory_host?: boolean }) {
   const { t } = useTranslation();
 
-  const queryOptions = useCallback(async () => {
+  const page_size = 10;
+  const queryOptions = useCallback(async (page: number) => {
     const response = await requestGet<AwxItemsResponse<Inventory>>(
-      awxAPI`/inventories/?order_by=name`
+      awxAPI`/inventories/?order_by=name&page=${page.toString()}&page_size=${page_size.toString()}`
     );
+
     return Promise.resolve({
       total: response.count,
       options:
