@@ -2,7 +2,7 @@ import { AwxHost } from '../../../interfaces/AwxHost';
 import type { IHostInput } from './InventoryHostForm';
 import { CreateHost, EditHost } from './InventoryHostForm';
 
-describe('Create Edit Inventory Host Form', () => {
+describe('Create Edit Inventory/Standalone Host Form', () => {
   const payload = {
     name: 'test',
     variables: 'hello: world',
@@ -14,6 +14,16 @@ describe('Create Edit Inventory Host Form', () => {
       cy.intercept(
         {
           method: 'GET',
+          url: '/api/v2/inventories/*',
+        },
+        {
+          fixture: 'inventories.json',
+        }
+      );
+
+      cy.intercept(
+        {
+          method: 'GET',
           url: '/api/v2/inventories/*/',
         },
         {
@@ -21,32 +31,54 @@ describe('Create Edit Inventory Host Form', () => {
         }
       );
     });
-    it('Validate required fields on create', () => {
-      cy.mount(<CreateHost />);
-      cy.clickButton(/^Create host$/);
-      cy.contains('Name is required.').should('be.visible');
-    });
 
-    it('Create host using correct field values', () => {
-      cy.intercept('POST', '/api/v2/hosts/', {
-        statusCode: 201,
-        body: payload,
-      }).as('createHost');
-      cy.mount(<CreateHost />);
-      cy.get('[data-cy="name"]').type(payload.name);
-      cy.get('[data-cy="description"]').type(payload.description);
-      cy.get('[data-cy="variables"]').type('hello: world');
-      cy.clickButton(/^Create host$/);
-      cy.wait('@createHost')
-        .its('request.body')
-        .then((createdHost: IHostInput) => {
-          expect(createdHost).to.deep.equal({
-            name: payload.name,
-            description: payload.description,
-            variables: payload.variables,
-            inventory: payload.inventory,
-          });
+    const types = ['inventory host', 'host'];
+
+    types.forEach((type) => {
+      const path = type === 'inventory host' ? '/inventories/inventory/:id/add' : '/hosts/create';
+
+      const initialEntries =
+        type === 'inventory host' ? [`/inventories/inventory/1/add`] : [`/hosts/create`];
+
+      it(`Validate required fields on create (${type})`, () => {
+        cy.mount(<CreateHost />, {
+          path,
+          initialEntries,
         });
+        cy.clickButton(/^Create host$/);
+        cy.contains('Name is required.').should('be.visible');
+      });
+
+      it(`Create host using correct field values (${type})`, () => {
+        cy.intercept('POST', '/api/v2/hosts/', {
+          statusCode: 201,
+          body: payload,
+        }).as('createHost');
+        cy.mount(<CreateHost />, {
+          path,
+          initialEntries,
+        });
+        cy.get('[data-cy="name"]').type(payload.name);
+        cy.get('[data-cy="description"]').type(payload.description);
+        cy.get('[data-cy="variables"]').type('hello: world');
+
+        if (type === 'host') {
+          cy.get(`[data-cy='inventory-id']`).click();
+          cy.get(`[id='demo-inventory']`).click();
+        }
+
+        cy.clickButton(/^Create host$/);
+        cy.wait('@createHost')
+          .its('request.body')
+          .then((createdHost: IHostInput) => {
+            expect(createdHost).to.deep.equal({
+              name: payload.name,
+              description: payload.description,
+              variables: payload.variables,
+              inventory: payload.inventory,
+            });
+          });
+      });
     });
   });
 
@@ -69,7 +101,7 @@ describe('Create Edit Inventory Host Form', () => {
           host.name = payload.name;
           host.variables = payload.variables;
           host.description = payload.description;
-          // @ts-ignore
+          // @ts-expect-error: we dont need all of the data
           host.summary_fields = { inventory: { id: 1, name: 'test inventory', kind: '' } };
           return host;
         })
