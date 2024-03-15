@@ -25,7 +25,7 @@ export function InventoryHosts() {
     toolbarFilters,
     tableColumns,
   });
-  const toolbarActions = useInventoriesHostsToolbarActions(view, params.inventory_type || '');
+  const toolbarActions = useInventoriesHostsToolbarActions(view);
   const rowActions = useHostsActions(view.unselectItemsAndRefresh, view.updateItem);
 
   const hostOptions = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/hosts/`).data;
