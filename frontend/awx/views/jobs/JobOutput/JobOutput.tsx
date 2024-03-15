@@ -44,14 +44,16 @@ export function JobOutputInner(props: { job: Job; reloadJob: () => void }) {
     <Section variant="light">
       <JobStatusBar job={job} />
       <HostStatusBar counts={job.host_status_counts || {}} />
-      <JobOutputToolbar
-        toolbarFilters={toolbarFilters}
-        filterState={filterState}
-        setFilterState={setFilterState}
-        jobStatus={job.status}
-        isFollowModeEnabled={isFollowModeEnabled}
-        setIsFollowModeEnabled={setIsFollowModeEnabled}
-      />
+      {job.type !== 'workflow_job' && (
+        <JobOutputToolbar
+          toolbarFilters={toolbarFilters}
+          filterState={filterState}
+          setFilterState={setFilterState}
+          jobStatus={job.status}
+          isFollowModeEnabled={isFollowModeEnabled}
+          setIsFollowModeEnabled={setIsFollowModeEnabled}
+        />
+      )}
       {job.type === 'workflow_job' ? (
         <WorkflowOutput job={job} reloadJob={reloadJob} />
       ) : (
