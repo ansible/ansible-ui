@@ -61,8 +61,20 @@ describe('Create Edit Inventory Host Form', () => {
           return host;
         })
         .then((host) => {
-          cy.intercept({ method: 'GET', url: '/api/v2/hosts/*/' }, { body: host }).as('getHost');
           cy.intercept('PATCH', '/api/v2/hosts/*', { statusCode: 201, body: host }).as('editHost');
+        });
+
+      cy.fixture('awxHost')
+        .then((host: AwxHost) => {
+          host.name = payload.name;
+          host.variables = payload.variables;
+          host.description = payload.description;
+          // @ts-ignore
+          host.summary_fields = { inventory: { id: 1, name: 'test inventory', kind: '' } };
+          return host;
+        })
+        .then((host) => {
+          cy.intercept({ method: 'GET', url: '/api/v2/hosts/*/' }, { body: host }).as('getHost');
         });
 
       cy.intercept(
@@ -76,17 +88,18 @@ describe('Create Edit Inventory Host Form', () => {
       );
     });
 
-    const types = ['inventory host'];
+    const types = ['inventory host', 'host'];
 
-    types.forEach( (type) => {
+    types.forEach((type) => {
+      const path =
+        type === 'inventory host'
+          ? '/inventories/inventory/:id/host/:host_id/edit'
+          : '/hosts/:id/edit';
 
-      const path = type === 'inventory host' ?
-        '/inventories/inventory/:id/host/:host_id/edit' :
-        '/hosts/:id/edit';
-
-      const initialEntries = type === 'inventory host' ?
-        [`/inventories/inventory/1/host/435/edit`] :
-        [`/hosts/435/edit`];
+      const initialEntries =
+        type === 'inventory host'
+          ? [`/inventories/inventory/1/host/435/edit`]
+          : [`/hosts/435/edit`];
 
       it(`Preload the form with correct values (${type})`, () => {
         cy.mount(<EditHost />, {
@@ -95,6 +108,10 @@ describe('Create Edit Inventory Host Form', () => {
         });
         cy.get('[data-cy="name"]').should('have.value', payload.name);
         cy.get('[data-cy="description"]').should('have.value', payload.description);
+
+        if (type === 'host') {
+          cy.get('[data-cy="inventory-name"]').should('have.value', 'test inventory');
+        }
         cy.get('.mtk22').should('contain.text', 'hello');
         cy.get('.mtk5').should('contain.text', 'world');
       });
