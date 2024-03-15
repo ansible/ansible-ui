@@ -88,8 +88,7 @@ export function useHostsActions(
     [t, handleToggleHost, pageNavigate, params.id, params.inventory_type, deleteHosts]
   );
 
-  if (params.inventory_type === 'smart_inventory')
-  {
+  if (params.inventory_type === 'smart_inventory') {
     return [];
   }
 
