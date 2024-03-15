@@ -6,7 +6,6 @@ import {
   Skeleton,
   Slider,
   SliderOnChangeEvent,
-  Switch,
   Tooltip,
 } from '@patternfly/react-core';
 import { DownloadIcon } from '@patternfly/react-icons';
@@ -25,7 +24,7 @@ import { LoadingPage } from '../../../../framework/components/LoadingPage';
 import { formatDateString } from '../../../../framework/utils/formatDateString';
 import { capitalizeFirstLetter } from '../../../../framework/utils/strings';
 import { LastModifiedPageDetail } from '../../../common/LastModifiedPageDetail';
-import { StatusLabel } from '../../../common/Status';
+import { StatusCell } from '../../../common/Status';
 import { useGetItem } from '../../../common/crud/useGet';
 import { AwxError } from '../../common/AwxError';
 import { AwxItemsResponse } from '../../common/AwxItemsResponse';
@@ -40,8 +39,9 @@ import { useNodeTypeTooltip } from './hooks/useNodeTypeTooltip';
 export function InstanceDetails() {
   const params = useParams<{ id: string }>();
   const { error, data: instance, refresh } = useGetItem<Instance>(awxAPI`/instances`, params.id);
-  const { instanceGroups, instanceForks, handleToggleInstance, handleInstanceForksSlider } =
-    useInstanceActions(params.id as string);
+  const { instanceGroups, instanceForks, handleInstanceForksSlider } = useInstanceActions(
+    params.id as string
+  );
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!instance) return <LoadingPage breadcrumbs tabs />;
   return (
@@ -50,7 +50,6 @@ export function InstanceDetails() {
         <InstanceDetailsTab
           instance={instance}
           instanceGroups={instanceGroups}
-          handleToggleInstance={handleToggleInstance}
           instanceForks={instanceForks}
           handleInstanceForksSlider={handleInstanceForksSlider}
         />
@@ -67,7 +66,6 @@ export function InstanceDetailsTab(props: {
   instance: Instance;
   instanceGroups: AwxItemsResponse<InstanceGroup> | undefined;
   instanceForks: number;
-  handleToggleInstance: (instance: Instance, isEnabled: boolean) => Promise<void>;
   handleInstanceForksSlider: (instance: Instance, value: number) => Promise<void>;
   numberOfColumns?: 'multiple' | 'single' | undefined;
 }) {
@@ -75,126 +73,112 @@ export function InstanceDetailsTab(props: {
   const pageNavigate = usePageNavigate();
   const getPageUrl = useGetPageUrl();
   const activeUser = useAwxActiveUser();
-  const {
-    instance,
-    instanceGroups,
-    handleToggleInstance,
-    instanceForks,
-    handleInstanceForksSlider,
-  } = props;
+  const { instance, instanceGroups, instanceForks, handleInstanceForksSlider } = props;
   const toolTipMap: { [item: string]: string } = useNodeTypeTooltip();
   const capacityAvailable = instance.cpu_capacity !== 0 && instance.mem_capacity !== 0;
 
   return (
-    <>
-      <PageDetails numberOfColumns={props.numberOfColumns} disableScroll>
-        <PageDetail label={t('Name')} data-cy="name">
+    <PageDetails numberOfColumns={props.numberOfColumns} disableScroll>
+      <PageDetail label={t('Name')} data-cy="name">
+        <Button
+          variant="link"
+          isInline
+          onClick={() =>
+            pageNavigate(AwxRoute.InstanceDetails, {
+              params: { id: instance.id },
+            })
+          }
+        >
+          {instance.hostname}
+        </Button>
+      </PageDetail>
+      <PageDetail label={t('Node type')} data-cy="node-type">
+        <Tooltip content={toolTipMap[instance.node_type]}>
+          <Dotted>{`${capitalizeFirstLetter(instance.node_type)}`}</Dotted>
+        </Tooltip>
+      </PageDetail>
+      <PageDetail label={t('Status')} data-cy="node-status">
+        <StatusCell status={instance.health_check_pending ? 'running' : instance.node_state} />
+      </PageDetail>
+      {instanceGroups && instanceGroups.results.length > 0 && (
+        <PageDetail label={t(`Instance groups`)} data-cy="instance-groups">
+          {instanceGroups.results.map((instance) => (
+            <Label color="blue" style={{ marginRight: '10px' }} key={instance.id}>
+              <Link to={getPageUrl(AwxRoute.InstanceGroupDetails, { params: { id: instance.id } })}>
+                {/* eslint-disable-next-line i18next/no-literal-string */}
+                {instance.name}
+              </Link>
+            </Label>
+          ))}
+        </PageDetail>
+      )}
+      {!instance.managed && instance.related?.install_bundle && (
+        <PageDetail label={t`Download bundle`} data-cy="download-bundle">
           <Button
-            variant="link"
-            isInline
-            onClick={() =>
-              pageNavigate(AwxRoute.InstanceDetails, {
-                params: { id: instance.id },
-              })
-            }
+            size="sm"
+            aria-label={t`Download Bundle`}
+            component="a"
+            download={`${instance.related?.install_bundle}`}
+            href={`${instance.related?.install_bundle}`}
+            target="_blank"
+            variant="secondary"
+            rel="noopener noreferrer"
           >
-            {instance.hostname}
+            <DownloadIcon />
           </Button>
         </PageDetail>
-        <PageDetail label={t('Node type')} data-cy="node-type">
-          <Tooltip content={toolTipMap[instance.node_type]}>
-            <Dotted>{`${capitalizeFirstLetter(instance.node_type)}`}</Dotted>
-          </Tooltip>
+      )}
+      {instance.listener_port && (
+        <PageDetail label={t`Listener port`} data-cy="listener-port">
+          {instance.listener_port}
         </PageDetail>
-        <PageDetail label={t('Status')} data-cy="node-status">
-          <StatusLabel dataCy="node-label-status" status={instance.node_state} />
-        </PageDetail>
-        {instanceGroups && instanceGroups.results.length > 0 && (
-          <PageDetail label={t(`Instance groups`)} data-cy="instance-groups">
-            {instanceGroups.results.map((instance) => (
-              <Label color="blue" style={{ marginRight: '10px' }} key={instance.id}>
-                <Link
-                  to={getPageUrl(AwxRoute.InstanceGroupDetails, { params: { id: instance.id } })}
-                >
-                  {/* eslint-disable-next-line i18next/no-literal-string */}
-                  {instance.name}
-                </Link>
-              </Label>
-            ))}
-          </PageDetail>
-        )}
-        {instance.related?.install_bundle && (
-          <PageDetail label={t`Download bundle`} data-cy="download-bundle">
-            <Button
-              size="sm"
-              aria-label={t`Download Bundle`}
-              component="a"
-              download={`${instance.related?.install_bundle}`}
-              href={`${instance.related?.install_bundle}`}
-              target="_blank"
-              variant="secondary"
-              rel="noopener noreferrer"
-            >
-              <DownloadIcon />
-            </Button>
-          </PageDetail>
-        )}
-        {instance.listener_port && (
-          <PageDetail label={t`Listener port`} data-cy="listener-port">
-            {instance.listener_port}
-          </PageDetail>
-        )}
-        <PageDetail label={t('Used capacity')} data-cy="used-capacity">
+      )}
+      <PageDetail label={t('Used capacity')} data-cy="used-capacity">
+        {instance.enabled ? (
           <Progress value={Math.round(100 - instance.percent_capacity_remaining)} />
-        </PageDetail>
-        <PageDetail label={t('Running jobs')} data-cy="running-jobs">
-          {instance.jobs_running.toString()}
-        </PageDetail>
-        <PageDetail label={t('Total jobs')} data-cy="total-jobs">
-          {instance.jobs_total.toString()}
-        </PageDetail>
-        <PageDetail label={t('Policy type')} data-cy="policy-type">
-          {instance.managed_by_policy ? t('Auto') : t('Manual')}
-        </PageDetail>
-        <PageDetail label={t('Memory')} data-cy="memory">
-          <BytesCell bytes={instance.memory} />
-        </PageDetail>
-        <PageDetail label={t('Last health check')} data-cy="last-health-check">
-          {formatDateString(instance.last_health_check)}
-        </PageDetail>
-        <PageDetail label={t('Created')} data-cy="created">
-          {formatDateString(instance.created)}
-        </PageDetail>
-        <LastModifiedPageDetail value={instance.modified} data-cy="modified" />
+        ) : (
+          t('Unavailable')
+        )}
+      </PageDetail>
+      <PageDetail label={t('Running jobs')} data-cy="running-jobs">
+        {instance.jobs_running.toString()}
+      </PageDetail>
+      <PageDetail label={t('Total jobs')} data-cy="total-jobs">
+        {instance.jobs_total.toString()}
+      </PageDetail>
+      <PageDetail label={t('Policy type')} data-cy="policy-type">
+        {instance.managed_by_policy ? t('Auto') : t('Manual')}
+      </PageDetail>
+      <PageDetail label={t('Memory')} data-cy="memory">
+        <BytesCell bytes={instance.memory} />
+      </PageDetail>
+      <PageDetail label={t('Last health check')} data-cy="last-health-check">
+        {formatDateString(instance.last_health_check)}
+      </PageDetail>
+      <PageDetail label={t('Created')} data-cy="created">
+        {formatDateString(instance.created)}
+      </PageDetail>
+      <LastModifiedPageDetail value={instance.modified} data-cy="modified" />
+      {instance.node_type !== 'hop' ? (
         <PageDetail label={t('Forks')} data-cy="forks">
           <div>
             {t('Total forks: ')}
             {instanceForks}
           </div>
-          <Slider
-            areCustomStepsContinuous
-            max={instance.mem_capacity}
-            min={instance.cpu_capacity}
-            value={instanceForks}
-            onChange={(_event: SliderOnChangeEvent, value: number) =>
-              void handleInstanceForksSlider(instance, value)
-            }
-            isDisabled={!activeUser?.is_superuser || !instance.enabled || !capacityAvailable}
-          />
+          {instanceForks > 0 ? (
+            <Slider
+              areCustomStepsContinuous
+              max={instance.mem_capacity}
+              min={instance.cpu_capacity}
+              value={instanceForks}
+              onChange={(_event: SliderOnChangeEvent, value: number) =>
+                void handleInstanceForksSlider(instance, value)
+              }
+              isDisabled={!activeUser?.is_superuser || !instance.enabled || !capacityAvailable}
+            />
+          ) : undefined}
         </PageDetail>
-        <PageDetail label={t('Enabled')} data-cy="enabled">
-          <Switch
-            id="enable-instance"
-            isDisabled={!activeUser?.is_superuser}
-            label={t('Enabled')}
-            labelOff={t('Disabled')}
-            isChecked={instance.enabled}
-            onChange={() => {
-              void handleToggleInstance(instance, !instance.enabled);
-            }}
-          />
-        </PageDetail>
-      </PageDetails>
-    </>
+      ) : undefined}
+    </PageDetails>
   );
 }
