@@ -36,7 +36,7 @@ export function useHostsActions(
     [onToggle]
   );
 
-  return useMemo<IPageAction<AwxHost>[]>(
+  let actions = useMemo<IPageAction<AwxHost>[]>(
     () => [
       {
         type: PageActionType.Switch,
@@ -87,4 +87,11 @@ export function useHostsActions(
     ],
     [t, handleToggleHost, pageNavigate, params.id, params.inventory_type, deleteHosts]
   );
+
+  if (params.inventory_type === 'smart_inventory')
+  {
+    return [];
+  }
+
+  return actions;
 }
