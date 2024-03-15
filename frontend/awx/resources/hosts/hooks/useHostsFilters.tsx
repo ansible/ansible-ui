@@ -17,7 +17,7 @@ export function useHostsFilters() {
   const params = useParams<{ inventory_type: string }>();
 
   const toolbarFilters = useMemo<IToolbarFilter[]>(() => {
-    let filters = [nameToolbarFilter, descriptionToolbarFilter, modifiedByToolbarFilter];
+    const filters = [nameToolbarFilter, descriptionToolbarFilter, modifiedByToolbarFilter];
 
     if (params.inventory_type === 'inventory') {
       filters.push(createdByToolbarFilter);
@@ -28,6 +28,7 @@ export function useHostsFilters() {
     descriptionToolbarFilter,
     createdByToolbarFilter,
     modifiedByToolbarFilter,
+    params.inventory_type,
   ]);
   return toolbarFilters;
 }

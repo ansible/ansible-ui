@@ -36,7 +36,7 @@ export function useHostsActions(
     [onToggle]
   );
 
-  let actions = useMemo<IPageAction<AwxHost>[]>(
+  const actions = useMemo<IPageAction<AwxHost>[]>(
     () => [
       {
         type: PageActionType.Switch,

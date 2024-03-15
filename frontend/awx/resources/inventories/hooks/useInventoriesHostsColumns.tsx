@@ -20,7 +20,7 @@ function useActivityColumn(name: 'Activity' | 'Recent jobs') {
       card: 'hidden',
       list: 'hidden',
     }),
-    [t]
+    [t, name]
   );
   return column;
 }
@@ -90,7 +90,16 @@ export function useInventoriesHostsColumns(options?: {
       actions = [...actions, recentJobs, inventoryColumn];
     }
     return actions;
-  }, [nameColumn, descriptionColumn, relatedGroupColumn, createdColumn, modifiedColumn]);
+  }, [
+    nameColumn,
+    descriptionColumn,
+    relatedGroupColumn,
+    createdColumn,
+    modifiedColumn,
+    recentJobs,
+    inventoryColumn,
+    params.inventory_type,
+  ]);
   return tableColumns;
 }
 
