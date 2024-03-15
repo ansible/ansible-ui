@@ -18,7 +18,7 @@ import { OptionsResponse, ActionsResponse } from '../../../interfaces/OptionsRes
 import { IAwxView } from '../../../common/useAwxView';
 import { useDeleteHosts } from '../../hosts/hooks/useDeleteHosts';
 
-export function useInventoriesHostsToolbarActions(view: IAwxView<AwxHost>) {
+export function useInventoriesHostsToolbarActions(view: IAwxView<AwxHost>, inventory_type : string) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const deleteHosts = useDeleteHosts(view.unselectItemsAndRefresh);
@@ -87,6 +87,7 @@ export function useInventoriesHostsToolbarActions(view: IAwxView<AwxHost>) {
       params.id,
       canCreateHost,
       canRunAdHocCommand,
+      inventory_type,
     ]
   );
 }
