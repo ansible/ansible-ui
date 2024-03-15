@@ -29,8 +29,7 @@ export function InventoryHosts() {
   const rowActions = useHostsActions(view.unselectItemsAndRefresh, view.updateItem);
 
   const hostOptions = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/hosts/`).data;
-  const canCreateHost = Boolean(hostOptions && hostOptions.actions && hostOptions.actions['POST']);
-
+  const canCreateHost = Boolean(hostOptions && hostOptions.actions && hostOptions.actions['POST'] && params.inventory_type === 'inventory');
   usePersistentFilters('inventories');
 
   return (
