@@ -19,11 +19,18 @@ export function useRunHealthCheck(onComplete: (instances: Instance[]) => void) {
       return t(`Health checks can only be run on execution instances.`);
     return '';
   };
+  const cannotRunHealthCheckDueToPending = (instance: Instance) => {
+    if (instance.health_check_pending)
+      return t(
+        `Instance has pending health checks. Wait for those to complete before attempting another health check.`
+      );
+    return '';
+  };
 
   const runHealthCheckOnInstances = (instances: Instance[]) => {
-    const nonHealthCheckableInstances: Instance[] = instances.filter(
-      cannotRunHealthCheckDueToNodeType
-    );
+    const nonHealthCheckableInstances: Instance[] = instances
+      .filter(cannotRunHealthCheckDueToNodeType)
+      .filter(cannotRunHealthCheckDueToPending);
 
     bulkAction({
       title: t('Run health checks on these instances', { count: instances.length }),
@@ -49,15 +56,15 @@ export function useRunHealthCheck(onComplete: (instances: Instance[]) => void) {
               : []),
           ]
         : undefined,
-      isItemNonActionable: (instance: Instance) => cannotRunHealthCheckDueToNodeType(instance),
-
+      isItemNonActionable: (instance: Instance) =>
+        cannotRunHealthCheckDueToNodeType(instance) || cannotRunHealthCheckDueToPending(instance),
       keyFn: getItemKey,
-      isDanger: true,
+      isDanger: false,
       confirmationColumns,
       actionColumns,
       onComplete,
       actionFn: async (instance: Instance) =>
-        postRequest(awxAPI`/instances/${instance.id.toString()}/health_check`, {}),
+        postRequest(awxAPI`/instances/${instance.id.toString()}/health_check/`, {}),
     });
   };
   return runHealthCheckOnInstances;
