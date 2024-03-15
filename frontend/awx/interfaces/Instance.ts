@@ -48,6 +48,7 @@ export interface Instance {
   ip_address: null;
   listener_port: number;
   protocol: string;
+  managed: boolean;
 }
 
 export interface Peer extends Instance {

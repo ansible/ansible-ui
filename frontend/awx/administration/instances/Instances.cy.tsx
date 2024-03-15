@@ -27,6 +27,7 @@ describe('Instances list', () => {
       'contain',
       'Ansible node instances dedicated for a particular purpose indicated by node type.'
     );
+    cy.get('[data-cy="actions-dropdown"]').click();
     cy.get('[data-cy="add-instance"]').should('be.visible');
     cy.get('[data-cy="remove-instance"]').should('be.visible');
     cy.get('[data-cy="remove-instance"]').should('have.attr', 'aria-disabled', 'true');
@@ -47,6 +48,7 @@ describe('Instances list', () => {
       'Ansible node instances dedicated for a particular purpose indicated by node type.'
     );
     cy.get('[data-cy="add-instance"]').should('not.exist');
+    cy.get('[data-cy="actions-dropdown"]').click();
     cy.get('[data-cy="remove-instance"]').should('be.visible');
     cy.get('[data-cy="remove-instance"]').should('have.attr', 'aria-disabled', 'true');
     cy.get('tbody').find('tr').should('have.length', 10);
@@ -82,6 +84,7 @@ describe('Instances list', () => {
       .its('response.body')
       .then(() => {
         cy.get('[data-cy="checkbox-column-cell"]').first().click();
+        cy.get('[data-cy="actions-dropdown"]').click();
         cy.get('[data-cy="remove-instance"]').should('be.visible');
         cy.get('[data-cy="remove-instance"]').should('have.attr', 'aria-disabled', 'true');
       });
@@ -97,6 +100,7 @@ describe('Instances list', () => {
       .its('response.body')
       .then(() => {
         cy.get('[data-cy="checkbox-column-cell"]').first().click();
+        cy.get('[data-cy="actions-dropdown"]').click();
         cy.get('[data-cy="remove-instance"]').should('be.visible');
         cy.get('[data-cy="remove-instance"]').should('have.attr', 'aria-disabled', 'false');
       });
@@ -112,6 +116,7 @@ describe('Instances list', () => {
       .its('response.body')
       .then(() => {
         cy.get('[data-cy="checkbox-column-cell"]').first().click();
+        cy.get('[data-cy="actions-dropdown"]').click();
         cy.get('[data-cy="remove-instance"]').should('be.visible');
         cy.get('[data-cy="remove-instance"]').should('have.attr', 'aria-disabled', 'false');
       });
@@ -127,6 +132,7 @@ describe('Instances list', () => {
       .its('response.body')
       .then(() => {
         cy.get('[data-cy="checkbox-column-cell"]').first().click();
+        cy.get('[data-cy="actions-dropdown"]').click();
         cy.get('[data-cy="remove-instance"]').should('be.visible');
         cy.get('[data-cy="remove-instance"]').should('have.attr', 'aria-disabled', 'true');
       });
