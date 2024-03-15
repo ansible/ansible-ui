@@ -28,6 +28,8 @@ export function InstancePage() {
   const isK8s = !data?.IS_K8S;
   const itemActions = useInstanceDetailsActions({
     onInstancesRemoved: () => pageNavigate(AwxRoute.Instances),
+    onInstanceToggled: refresh,
+    onHealthCheckComplete: refresh,
     isDetailsPageAction: true,
   });
   const viewActivityStreamAction = useViewActivityStream('instance');

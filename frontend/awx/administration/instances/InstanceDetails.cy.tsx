@@ -24,7 +24,7 @@ describe('Instance Details', () => {
           'have.text',
           `${capitalizeFirstLetter(instance.node_type)}`
         );
-        cy.get('[data-cy="node-label-status"]').should(
+        cy.get('[data-cy="status"]').should(
           'have.text',
           `${capitalizeFirstLetter(instance.node_state)}`
         );
@@ -51,7 +51,6 @@ describe('Instance Details', () => {
           formatDateString(instance.modified)
         );
         cy.get('[data-cy="forks"]').should('exist');
-        cy.get('[data-cy="enabled"]').should('exist');
       });
   });
 
@@ -71,29 +70,6 @@ describe('Instance Details', () => {
     ).as('getInstanceGroups');
     cy.mount(<InstanceDetails />);
     cy.get('[data-cy="instance-groups"]').should('not.exist');
-  });
-
-  it('Enabled/Diabled switch is disabled if user does not have the right permissions', () => {
-    cy.mount(<InstanceDetails />);
-    cy.intercept({ method: 'GET', url: '/api/v2/me' }, { fixture: 'normalUser.json' });
-    cy.wait('@getInstance')
-      .its('response.body')
-      .then(() => {
-        cy.get('[data-cy="enabled"] #enable-instance').should('be.disabled');
-      });
-  });
-
-  it('non admin users cannot edit instance', () => {
-    cy.intercept('GET', '/api/v2/settings/system*', {
-      IS_K8S: true,
-    }).as('isK8s');
-    cy.intercept({ method: 'GET', url: '/api/v2/me' }, { fixture: 'normalUser.json' });
-    cy.mount(<InstanceDetails />);
-    cy.wait('@getInstance')
-      .its('response.body')
-      .then(() => {
-        cy.get('[data-cy="enabled"] #enable-instance').should('be.disabled');
-      });
   });
 
   it('Instance forks disabled if user does not have the right permissions', () => {
