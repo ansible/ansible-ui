@@ -19,7 +19,7 @@ export function useHostsFilters() {
   const toolbarFilters = useMemo<IToolbarFilter[]>(() => {
     const filters = [nameToolbarFilter, descriptionToolbarFilter, modifiedByToolbarFilter];
 
-    if (params.inventory_type === 'inventory') {
+    if (params.inventory_type === 'inventory' || !params.inventory_type) {
       filters.push(createdByToolbarFilter);
     }
     return filters;
