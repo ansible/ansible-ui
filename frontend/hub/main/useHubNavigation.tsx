@@ -7,6 +7,10 @@ import { RoleDetails } from '../access/roles/RolePage/RoleDetails';
 import { CreateRole, EditRole } from '../access/roles/RolePage/RoleForm';
 import { RolePage } from '../access/roles/RolePage/RolePage';
 import { Roles } from '../access/roles/Roles';
+import { UserDetails } from '../access/users/UserPage/UserDetails';
+import { UserPage } from '../access/users/UserPage/UserPage';
+import { UserTeams } from '../access/users/UserPage/UserTeams';
+import { Users } from '../access/users/Users';
 import { Token } from '../access/token/Token';
 import { Approvals } from '../administration/collection-approvals/Approvals';
 import { RemoteRegistries } from '../administration/remote-registries/RemoteRegistries';
@@ -446,7 +450,33 @@ export function useHubNavigation() {
           id: HubRoute.Users,
           label: t('Users'),
           path: 'users',
-          element: <PageNotImplemented />,
+          children: [
+            {
+              id: HubRoute.UserPage,
+              element: <UserPage />,
+              path: ':id',
+              children: [
+                {
+                  id: HubRoute.UserDetails,
+                  path: 'details',
+                  element: <UserDetails />,
+                },
+                {
+                  id: HubRoute.UserTeams,
+                  path: 'teams',
+                  element: <UserTeams />,
+                },
+                {
+                  path: '',
+                  element: <Navigate to="details" replace />,
+                },
+              ],
+            },
+            {
+              path: '',
+              element: <Users />,
+            },
+          ],
         },
         {
           id: HubRoute.Roles,

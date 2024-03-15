@@ -3,15 +3,15 @@ import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { LoadingState } from '../../../../../framework/components/LoadingState';
 import { PageLayout, PageTable, TextCell } from '../../../../../framework';
-import { useEdaView } from '../../../common/useEventDrivenView';
+import { useHubView } from '../../../common/useHubView';
 import { useGet } from '../../../../common/crud/useGet';
-import { edaAPI } from '../../../common/eda-utils';
-import { EdaUser } from '../../../interfaces/EdaUser';
+import { hubAPI } from '../../../common/api/formatPath';
+import { HubUser } from '../../../interfaces/expanded/HubUser';
 
 export function UserTeams() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const { data: user } = useGet<EdaUser>(params.id ? edaAPI`/users/${params.id}/` : null);
+  const { data: user } = useGet<HubUser>(params.id ? hubAPI`/_ui/v1/users/${params.id}/` : null);
   const tableColumns = [
     {
       header: t('Name'),
@@ -25,13 +25,11 @@ export function UserTeams() {
       cell: (team) => <TextCell text={team?.name} />,
     },
   ]; // TODO useUserTeamsColumns()
-  const view = useEdaView<EdaControllerToken>({
-    // TODO api
-    url: params.id ? edaAPI`/v1/users/${params.id}/teams` : null,
+  const view = useHubView<HubControllerToken>({
+    // TODO
+    url: params.id ? hubAPI`/v1/users/${params.id}/teams` : null,
     tableColumns,
   });
-  const toolbarActions = []; // TODO useUserTeamsActions(view)
-  const rowActions = []; // TODO useUserTeamActions(view)
 
   if (!user) return <LoadingState />;
 
@@ -40,8 +38,8 @@ export function UserTeams() {
     <PageLayout>
       <PageTable
         tableColumns={tableColumns}
-        toolbarActions={toolbarActions}
-        rowActions={rowActions}
+        toolbarActions={[]}
+        rowActions={[]}
         errorStateTitle={t('Error loading user teams')}
         emptyStateTitle={t('There are currently no teams added to this user.')}
         emptyStateDescription={t('Add teams by clicking the button below.')}
