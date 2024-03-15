@@ -76,46 +76,59 @@ describe('Create Edit Inventory Host Form', () => {
       );
     });
 
-    it('Preload the form with correct values', () => {
-      cy.mount(<EditHost />, {
-        path: '/inventories/inventory/:id/host/:host_id/edit',
-        initialEntries: [`/inventories/inventory/1/host/435/edit`],
-      });
-      cy.get('[data-cy="name"]').should('have.value', payload.name);
-      cy.get('[data-cy="description"]').should('have.value', payload.description);
-      cy.get('.mtk22').should('contain.text', 'hello');
-      cy.get('.mtk5').should('contain.text', 'world');
-    });
+    const types = ['inventory host'];
 
-    it('Check correct request body is passed after editing host', () => {
-      cy.mount(<EditHost />, {
-        path: '/inventories/inventory/:id/host/:host_id/edit',
-        initialEntries: [`/inventories/inventory/1/host/435/edit`],
-      });
-      cy.get('[data-cy="name"]').clear();
-      cy.get('[data-cy="name"]').type('Edited Host');
-      cy.get('[data-cy="description"]').clear();
-      cy.get('[data-cy="description"]').type('Edited Description');
-      cy.getBy('[data-cy="variables"]').type('s');
-      cy.clickButton(/^Save host$/);
-      cy.wait('@editHost')
-        .its('request.body')
-        .then((editedHost: IHostInput) => {
-          expect(editedHost.name).to.equal('Edited Host');
-          expect(editedHost.description).to.equal('Edited Description');
-          expect(editedHost.variables).to.equal(`${payload.variables}s`);
+    types.forEach( (type) => {
+
+      const path = type === 'inventory host' ?
+        '/inventories/inventory/:id/host/:host_id/edit' :
+        '/hosts/:id/edit';
+
+      const initialEntries = type === 'inventory host' ?
+        [`/inventories/inventory/1/host/435/edit`] :
+        [`/hosts/435/edit`];
+
+      it(`Preload the form with correct values (${type})`, () => {
+        cy.mount(<EditHost />, {
+          path,
+          initialEntries,
         });
-    });
-
-    it('Validate required fields on save', () => {
-      cy.mount(<EditHost />, {
-        path: '/inventories/inventory/:id/host/:host_id/edit',
-        initialEntries: [`/inventories/inventory/1/host/435/edit`],
+        cy.get('[data-cy="name"]').should('have.value', payload.name);
+        cy.get('[data-cy="description"]').should('have.value', payload.description);
+        cy.get('.mtk22').should('contain.text', 'hello');
+        cy.get('.mtk5').should('contain.text', 'world');
       });
-      cy.get('[data-cy="name"]').should('have.value', payload.name);
-      cy.get('[data-cy="name"]').clear();
-      cy.clickButton(/^Save host$/);
-      cy.get('.pf-v5-c-helper-text__item-text').contains('Name is required');
+
+      it(`Check correct request body is passed after editing host (${type})`, () => {
+        cy.mount(<EditHost />, {
+          path,
+          initialEntries,
+        });
+        cy.get('[data-cy="name"]').clear();
+        cy.get('[data-cy="name"]').type('Edited Host');
+        cy.get('[data-cy="description"]').clear();
+        cy.get('[data-cy="description"]').type('Edited Description');
+        cy.getBy('[data-cy="variables"]').type('s');
+        cy.clickButton(/^Save host$/);
+        cy.wait('@editHost')
+          .its('request.body')
+          .then((editedHost: IHostInput) => {
+            expect(editedHost.name).to.equal('Edited Host');
+            expect(editedHost.description).to.equal('Edited Description');
+            expect(editedHost.variables).to.equal(`${payload.variables}s`);
+          });
+      });
+
+      it(`Validate required fields on save (${type})`, () => {
+        cy.mount(<EditHost />, {
+          path,
+          initialEntries,
+        });
+        cy.get('[data-cy="name"]').should('have.value', payload.name);
+        cy.get('[data-cy="name"]').clear();
+        cy.clickButton(/^Save host$/);
+        cy.get('.pf-v5-c-helper-text__item-text').contains('Name is required');
+      });
     });
   });
 });
