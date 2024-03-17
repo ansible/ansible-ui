@@ -23,6 +23,7 @@ export function useInventoriesHostsToolbarActions(view: IAwxView<AwxHost>) {
   const pageNavigate = usePageNavigate();
   const deleteHosts = useDeleteHosts(view.unselectItemsAndRefresh);
   const params = useParams<{ id: string; inventory_type: string }>();
+  const inventory_type = params.inventory_type;
 
   const adhocOptions = useOptions<OptionsResponse<ActionsResponse>>(
     awxAPI`/inventories/${params.id ?? ''}/ad_hoc_commands/`
@@ -34,9 +35,11 @@ export function useInventoriesHostsToolbarActions(view: IAwxView<AwxHost>) {
   const hostOptions = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/hosts/`).data;
   const canCreateHost = Boolean(hostOptions && hostOptions.actions && hostOptions.actions['POST']);
 
-  return useMemo<IPageAction<AwxHost>[]>(
-    () => [
-      {
+  return useMemo<IPageAction<AwxHost>[]>(() => {
+    const actions: IPageAction<AwxHost>[] = [];
+
+    if (inventory_type === 'inventory') {
+      actions.push({
         type: PageActionType.Button,
         selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
@@ -53,23 +56,27 @@ export function useInventoriesHostsToolbarActions(view: IAwxView<AwxHost>) {
             : t(
                 'You do not have permission to create a host. Please contact your organization administrator if there is an issue with your access.'
               ),
-      },
-      {
-        type: PageActionType.Button,
-        selection: PageActionSelection.None,
-        variant: ButtonVariant.secondary,
-        isPinned: true,
-        label: t('Run Command'),
-        onClick: () => pageNavigate(AwxRoute.Inventories),
-        isDisabled: () =>
-          canRunAdHocCommand
-            ? undefined
-            : t(
-                'You do not have permission to run an ad hoc command. Please contact your organization administrator if there is an issue with your access.'
-              ),
-      },
-      { type: PageActionType.Seperator },
-      {
+      });
+    }
+
+    actions.push({
+      type: PageActionType.Button,
+      selection: PageActionSelection.None,
+      variant: ButtonVariant.secondary,
+      isPinned: true,
+      label: t('Run Command'),
+      onClick: () => pageNavigate(AwxRoute.Inventories),
+      isDisabled: () =>
+        canRunAdHocCommand
+          ? undefined
+          : t(
+              'You do not have permission to run an ad hoc command. Please contact your organization administrator if there is an issue with your access.'
+            ),
+    });
+
+    if (inventory_type === 'inventory') {
+      actions.push({ type: PageActionType.Seperator });
+      actions.push({
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
@@ -77,16 +84,17 @@ export function useInventoriesHostsToolbarActions(view: IAwxView<AwxHost>) {
         onClick: deleteHosts,
         isDanger: true,
         isDisabled: (hosts: AwxHost[]) => cannotDeleteResources(hosts, t),
-      },
-    ],
-    [
-      t,
-      deleteHosts,
-      pageNavigate,
-      params.inventory_type,
-      params.id,
-      canCreateHost,
-      canRunAdHocCommand,
-    ]
-  );
+      });
+    }
+    return actions;
+  }, [
+    t,
+    deleteHosts,
+    pageNavigate,
+    params.inventory_type,
+    params.id,
+    canCreateHost,
+    canRunAdHocCommand,
+    inventory_type,
+  ]);
 }
