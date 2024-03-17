@@ -28,18 +28,20 @@ export function AnsibleAboutModal(props: AnsibleAboutModalProps) {
         <TextList component="dl">
           {Object.entries(props.versionInfo ?? {}).map(([product, info]) => {
             return (
-              <TextListItem key={product} component="dt">
-                {t(product)}
-                <TextList component="dd">
+              <>
+                <TextListItem key={product} component="dt">
+                  {t(product)}
+                </TextListItem>
+                <TextList component="dl">
                   {typeof info === 'string'
                     ? info
                     : Object.entries(info).map(([key, value]) => (
-                        <TextListItem key={key} component="dt">
+                        <TextListItem key={key} component="dd">
                           {t(value)}
                         </TextListItem>
                       ))}
                 </TextList>
-              </TextListItem>
+              </>
             );
           })}
         </TextList>

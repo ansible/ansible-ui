@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
+import { edaAPI } from '../common/eda-utils';
 
 type ProductVersionInfo = Record<string, string | Record<string, string>>;
 
 export function useEdaProductVersionInfo() {
   const [productVersionInfo, setProductVersionInfo] = useState<ProductVersionInfo>();
   useEffect(() => {
-    fetch('/api/v2/config/')
+    fetch(edaAPI`/ping/`)
       .then((response) => response.json())
       .then((data) => setProductVersionInfo(data));
   }, []);
