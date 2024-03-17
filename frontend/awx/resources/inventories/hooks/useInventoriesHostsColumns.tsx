@@ -7,19 +7,20 @@ import { AwxRoute } from '../../../main/AwxRoutes';
 import { AwxHost } from '../../../interfaces/AwxHost';
 import { useParams } from 'react-router-dom';
 import { Sparkline } from '../../templates/components/Sparkline';
+import { useInventoryNameColumn } from '../../../../common/columns';
 
-function useActivityColumn() {
+function useActivityColumn(name: 'Activity' | 'Recent jobs') {
   const { t } = useTranslation();
   const column: ITableColumn<AwxHost> = useMemo(
     () => ({
-      header: t('Activity'),
+      header: name === 'Activity' ? t('Activity') : name === 'Recent jobs' ? t('Recent jobs') : '',
       cell: (item) => <Sparkline jobs={item.summary_fields?.recent_jobs} />,
       value: (item) =>
         item.summary_fields?.recent_jobs && item.summary_fields?.recent_jobs?.length > 0,
       card: 'hidden',
       list: 'hidden',
     }),
-    [t]
+    [t, name]
   );
   return column;
 }
@@ -64,10 +65,41 @@ export function useInventoriesHostsColumns(options?: {
   const createdColumn = useCreatedColumn(options);
   const modifiedColumn = useModifiedColumn(options);
   const relatedGroupColumn = useRelatedGroupsColumn();
-  const tableColumns = useMemo<ITableColumn<AwxHost>[]>(
-    () => [nameColumn, descriptionColumn, relatedGroupColumn, createdColumn, modifiedColumn],
-    [nameColumn, descriptionColumn, relatedGroupColumn, createdColumn, modifiedColumn]
-  );
+  const recentJobs = useActivityColumn('Recent jobs');
+  const inventoryColumn = useInventoryNameColumn(AwxRoute.InventoryDetails, {
+    tableViewOption: undefined,
+  });
+
+  const tableColumns = useMemo<ITableColumn<AwxHost>[]>(() => {
+    let columns: ITableColumn<AwxHost>[] = [nameColumn];
+
+    if (params.inventory_type === 'inventory') {
+      columns = [
+        ...columns,
+        nameColumn,
+        descriptionColumn,
+        relatedGroupColumn,
+        createdColumn,
+        modifiedColumn,
+      ];
+    }
+
+    if (params.inventory_type === 'smart_inventory') {
+      recentJobs.sort = '';
+      inventoryColumn.sort = '';
+      columns = [...columns, recentJobs, inventoryColumn];
+    }
+    return columns;
+  }, [
+    nameColumn,
+    descriptionColumn,
+    relatedGroupColumn,
+    createdColumn,
+    modifiedColumn,
+    recentJobs,
+    inventoryColumn,
+    params.inventory_type,
+  ]);
   return tableColumns;
 }
 
@@ -92,7 +124,7 @@ export function useInventoriesGroupHostsColumns(options?: {
     ...options,
     onClick: nameClick,
   });
-  const activityColumn = useActivityColumn();
+  const activityColumn = useActivityColumn('Activity');
   const descriptionColumn = useDescriptionColumn();
   const createdColumn = useCreatedColumn(options);
   const modifiedColumn = useModifiedColumn(options);
