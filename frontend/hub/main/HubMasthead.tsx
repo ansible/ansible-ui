@@ -58,7 +58,7 @@ export function HubMasthead() {
             <></>
             <DropdownItem
               id="about"
-              onClick={() => openAnsibleAboutModal({ versionInfo, userInfo })}
+              onClick={() => openAnsibleAboutModal({ versionInfo })}
               data-cy="masthead-about"
             >
               {t('About')}
