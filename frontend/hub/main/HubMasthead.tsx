@@ -29,19 +29,11 @@ export function HubMasthead() {
   const { activeHubUser, refreshActiveHubUser } = useHubActiveUser();
   const logout = useCallback(async () => {
     await postRequest(hubAPI`/_ui/v1/auth/logout/`, {});
-    clearAllCache();
-    navigate('/login');
-  }, [clearAllCache, navigate]);
-
-  const userInfo = context.user.username;
-
-    refreshUser();
-  }, [clearAllCache, refreshUser]);
-
-    void userContext?.mutate();
-  }, [clearAllCache, userContext]);
     refreshActiveHubUser?.();
   }, [refreshActiveHubUser]);
+
+  const userInfo = activeHubUser?.username;
+
   return (
     <PageMasthead brand={<GalaxyBrand style={{ height: 48, marginTop: -8 }} />}>
       <ToolbarGroup variant="icon-button-group" style={{ flexGrow: 1 }}>

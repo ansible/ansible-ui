@@ -34,22 +34,11 @@ export function AwxMasthead() {
     await fetch('/api/logout/');
     refreshActiveAwxUser?.();
   }, [refreshActiveAwxUser]);
-    clearAllCache();
-    navigate('/login');
-  }, [clearAllCache, navigate]);
+
   let userInfo = '';
-  if (activeUser) {
-    userInfo = activeUser.username;
+  if (activeAwxUser) {
+    userInfo = activeAwxUser.username;
   }
-
-    refreshUser();
-  }, [clearAllCache, refreshUser]);
-    void activeUserContext?.mutate();
-  }, [activeUserContext, clearAllCache]);
-
-
-    refreshActiveAwxUser?.();
-  }, [refreshActiveAwxUser]);
   return (
     <PageMasthead brand={<AwxBrand style={{ height: 60 }} />}>
       <ToolbarGroup variant="icon-button-group" style={{ flexGrow: 1 }}>

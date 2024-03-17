@@ -23,16 +23,10 @@ export function EdaMasthead() {
   const { activeEdaUser, refreshActiveEdaUser } = useEdaActiveUser();
   const logout = useCallback(async () => {
     await postRequest(edaAPI`/auth/session/logout/`, {});
-    clearAllCache();
-    navigate('/login');
-  }, [clearAllCache, navigate]);
-  const userInfo = activeUser?.username;
-    refreshUser();
-  }, [clearAllCache, refreshUser]);
-    void userContext?.mutate();
-  }, [clearAllCache, userContext]);
     refreshActiveEdaUser?.();
   }, [refreshActiveEdaUser]);
+
+  const userInfo = activeEdaUser?.username;
   return (
     <PageMasthead brand={<EdaBrand style={{ height: 45, width: 45 }} />}>
       <ToolbarGroup variant="icon-button-group" style={{ flexGrow: 1 }}>
