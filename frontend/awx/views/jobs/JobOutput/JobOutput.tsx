@@ -6,13 +6,16 @@ import styled from 'styled-components';
 import { IFilterState, ToolbarFilterType, type IToolbarFilter } from '../../../../../framework';
 import { Job } from '../../../interfaces/Job';
 import { useGetJob } from '../JobPage';
-import { HostStatusBar } from './HostStatusBar';
+import { HostStatusBar, WorkflowNodesStatusBar } from './StatusBar';
 import './JobOutput.css';
 import { JobOutputEvents } from './JobOutputEvents';
 import { JobOutputToolbar } from './JobOutputToolbar';
 import { JobStatusBar } from './JobStatusBar';
 import { isJobRunning } from './util';
 import { WorkflowOutput } from '../WorkflowOutput/WorkflowOutput';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { useAwxGetAllPages } from '../../../common/useAwxGetAllPages';
+import { WorkflowNode } from '../../../interfaces/WorkflowNode';
 
 const Section = styled(PageSection)`
   display: flex;
@@ -37,22 +40,30 @@ export function JobOutputInner(props: { job: Job; reloadJob: () => void }) {
   const isRunning = isJobRunning(job.status);
   const [isFollowModeEnabled, setIsFollowModeEnabled] = useState(isRunning);
 
+  const { results: workflowNodes } = useAwxGetAllPages<WorkflowNode>(
+    awxAPI`/workflow_jobs/${props.job.id.toString() || ''}/workflow_nodes/`
+  );
+
   if (!job) {
     return <Skeleton />;
   }
   return (
     <Section variant="light">
       <JobStatusBar job={job} />
-      <HostStatusBar counts={job.host_status_counts || {}} />
-      {job.type !== 'workflow_job' && (
-        <JobOutputToolbar
-          toolbarFilters={toolbarFilters}
-          filterState={filterState}
-          setFilterState={setFilterState}
-          jobStatus={job.status}
-          isFollowModeEnabled={isFollowModeEnabled}
-          setIsFollowModeEnabled={setIsFollowModeEnabled}
-        />
+      {job.type === 'workflow_job' ? (
+        <WorkflowNodesStatusBar nodes={workflowNodes || []} />
+      ) : (
+        <>
+          <HostStatusBar counts={job.host_status_counts || {}} />
+          <JobOutputToolbar
+            toolbarFilters={toolbarFilters}
+            filterState={filterState}
+            setFilterState={setFilterState}
+            jobStatus={job.status}
+            isFollowModeEnabled={isFollowModeEnabled}
+            setIsFollowModeEnabled={setIsFollowModeEnabled}
+          />
+        </>
       )}
       {job.type === 'workflow_job' ? (
         <WorkflowOutput job={job} reloadJob={reloadJob} />
