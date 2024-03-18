@@ -17,10 +17,12 @@ export type PageMultiSelectListProps<T extends object> = {
   errorStateTitle?: string;
   defaultSort?: string;
   maxSelections?: number;
+  isCompact?: boolean;
 };
 
 export function PageMultiSelectList<T extends object>(props: PageMultiSelectListProps<T>) {
-  const { view, tableColumns, toolbarFilters, maxSelections, labelForSelectedItems } = props;
+  const { view, tableColumns, toolbarFilters, maxSelections, labelForSelectedItems, isCompact } =
+    props;
   const [translations] = useFrameworkTranslations();
 
   return (
@@ -33,7 +35,7 @@ export function PageMultiSelectList<T extends object>(props: PageMultiSelectList
           style={{
             display: 'flex',
             flexDirection: 'column',
-            maxHeight: 500,
+            maxHeight: isCompact ? 500 : undefined,
             overflow: 'hidden',
           }}
         >
@@ -75,7 +77,7 @@ export function PageMultiSelectList<T extends object>(props: PageMultiSelectList
             showSelect
             disableCardView
             disableListView
-            compact
+            compact={isCompact}
             disableBodyPadding
             maxSelections={maxSelections}
           />

@@ -8,11 +8,12 @@ export function AddOrganizationUsers() {
       label: 'Select User',
       inputs: <AwxSelectUsersStep />,
     },
+    { id: 'review', label: 'Review', element: <div>hi</div> },
   ];
 
   const onSubmit = (data) => {
     console.log(data);
   };
 
-  return <PageWizard steps={steps} onSubmit={onSubmit} />;
+  return <PageWizard steps={steps} onSubmit={onSubmit} disableGrid />;
 }
