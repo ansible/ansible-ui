@@ -63,7 +63,7 @@ describe('Create Edit Inventory/Standalone Host Form', () => {
         cy.get('[data-cy="variables"]').type('hello: world');
 
         if (type === 'host') {
-          cy.get(`[data-cy='inventory-id']`).click();
+          cy.get(`#inventory-select-typeahead`).click();
           cy.get(`[id='demo-inventory']`).click();
         }
 
