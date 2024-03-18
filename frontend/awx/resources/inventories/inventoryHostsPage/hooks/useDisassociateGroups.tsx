@@ -7,9 +7,11 @@ import { awxAPI } from '../../../../common/api/awx-utils';
 import { useAwxBulkConfirmation } from '../../../../common/useAwxBulkConfirmation';
 import { useHostsGroupsColumns } from './useHostsGroupsColumns';
 import { InventoryGroup } from '../../../../interfaces/InventoryGroup';
-import { useParams } from 'react-router-dom';
 
-export function useDisassociateGroups(onComplete: (groups: InventoryGroup[]) => void) {
+export function useDisassociateGroups(
+  onComplete: (groups: InventoryGroup[]) => void,
+  hostId: string
+) {
   const { t } = useTranslation();
   const confirmationColumns = useHostsGroupsColumns({
     disableLinks: true,
@@ -18,7 +20,7 @@ export function useDisassociateGroups(onComplete: (groups: InventoryGroup[]) => 
   const deleteActionNameColumn = useNameColumn({ disableLinks: true, disableSort: true });
   const actionColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn]);
   const bulkAction = useAwxBulkConfirmation<InventoryGroup>();
-  const params = useParams<{ id: string; inventory_type: string; host_id: string }>();
+  // const params = useParams<{ id: string; inventory_type: string; host_id: string }>();
   const disassociateGroups = (groups: InventoryGroup[]) => {
     bulkAction({
       title: t('Disassociate group from host?', { count: groups.length }),
@@ -37,7 +39,7 @@ export function useDisassociateGroups(onComplete: (groups: InventoryGroup[]) => 
       onComplete,
       actionFn: async (group: InventoryGroup, signal) => {
         await postRequest(
-          awxAPI`/hosts/${params.host_id ?? ''}/groups/`,
+          awxAPI`/hosts/${hostId ?? ''}/groups/`,
           {
             disassociate: true,
             id: group.id,

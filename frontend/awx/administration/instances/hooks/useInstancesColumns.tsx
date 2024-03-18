@@ -3,18 +3,20 @@ import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   BytesCell,
+  ColumnModalOption,
   ColumnTableOption,
-  DateTimeCell,
   ITableColumn,
   usePageNavigate,
 } from '../../../../../framework';
 import { Dotted } from '../../../../../framework/components/Dotted';
 import { capitalizeFirstLetter } from '../../../../../framework/utils/strings';
-import { StatusCell } from '../../../../common/Status';
 import { useCreatedColumn, useModifiedColumn, useNameColumn } from '../../../../common/columns';
 import { Instance } from '../../../interfaces/Instance';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useNodeTypeTooltip } from './useNodeTypeTooltip';
+import { InstanceForksSlider } from '../components/InstanceForksSlider';
+import { StatusCell } from '../../../../common/Status';
+import { Unavailable } from '../../../../../framework/components/Unavailable';
 
 export function useInstancesColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const { t } = useTranslation();
@@ -56,9 +58,7 @@ export function useInstancesColumns(options?: { disableSort?: boolean; disableLi
       {
         header: t('Status'),
         cell: (instance) => (
-          <StatusCell
-            status={!instance.enabled ? 'disabled' : instance.errors ? 'error' : 'healthy'}
-          />
+          <StatusCell status={instance.health_check_pending ? 'running' : instance.node_state} />
         ),
         sort: 'errors',
       },
@@ -70,38 +70,41 @@ export function useInstancesColumns(options?: { disableSort?: boolean; disableLi
         list: 'subtitle',
       },
       {
+        header: t('Capacity Adjustment'),
+        cell: (instance: Instance) => <InstanceForksSlider instance={instance} />,
+        modal: ColumnModalOption.hidden,
+      },
+      {
         header: t('Running jobs'),
         cell: (instance) => instance.jobs_running,
+        table: ColumnTableOption.expanded,
       },
       {
         header: t('Total jobs'),
         cell: (instance) => instance.jobs_total,
-        list: 'secondary',
         table: ColumnTableOption.expanded,
       },
       {
         header: t('Used capacity'),
-        cell: (instance) => (
-          <Progress value={Math.round(100 - instance.percent_capacity_remaining)} />
-        ),
+        cell: (instance) =>
+          instance.node_type === 'hop' ? undefined : instance.enabled ? (
+            <Progress value={Math.round(100 - instance.percent_capacity_remaining)} />
+          ) : (
+            <Unavailable>{t(`Unavailable`)}</Unavailable>
+          ),
         list: 'secondary',
-        table: ColumnTableOption.expanded,
       },
       {
         header: t('Memory'),
         cell: (instance) => instance.memory && <BytesCell bytes={instance.memory} />,
         sort: 'memory',
         list: 'secondary',
+        table: ColumnTableOption.expanded,
       },
       {
         header: t('Policy type'),
         cell: (instance) => (instance.managed_by_policy ? t('Auto') : t('Manual')),
         table: ColumnTableOption.expanded,
-      },
-      {
-        header: t('Last health check'),
-        cell: (instance) => <DateTimeCell value={instance.last_health_check} />,
-        card: 'hidden',
       },
       createdColumn,
       modifiedColumn,

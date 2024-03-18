@@ -71,7 +71,7 @@ export function CreateHost() {
         params: { inventory_type: params.inventory_type, id: inventory_id, host_id: newHost.id },
       });
     } else {
-      pageNavigate(AwxRoute.Hosts);
+      pageNavigate(AwxRoute.HostDetails, { params: { id: newHost.id } });
     }
   };
 
@@ -214,7 +214,7 @@ export function EditHost() {
         params: { inventory_type: params.inventory_type, id: params.id, host_id: params.host_id },
       });
     } else {
-      pageNavigate(AwxRoute.Hosts);
+      pageNavigate(AwxRoute.HostDetails, { params: { id: params.host_id } });
     }
   };
 

@@ -1,4 +1,4 @@
-import { SystemJobTemplate } from '../../../../../ansible-ui/frontend/awx/interfaces/SystemJobTemplate';
+import { SystemJobTemplate } from '../../../../frontend/awx/interfaces/SystemJobTemplate';
 
 describe('Management Jobs', () => {
   it('render the management jobs list page, assert the management jobs listed', () => {

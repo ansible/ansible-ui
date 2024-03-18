@@ -44,10 +44,24 @@ export function useTemplateActions({
         selection: PageActionSelection.Single,
         isPinned: true,
         icon: ProjectDiagramIcon,
-        label: t('Workflow Visualizer'),
+        label: t('View workflow visualizer'),
         ouiaId: 'job-template-detail-edit-button',
         href: (template) =>
           getPageUrl(AwxRoute.WorkflowVisualizer, { params: { id: template.id } }),
+      },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        icon: RocketIcon,
+        label: t('Launch template'),
+        onClick: (template: Template) => void launchTemplate(template),
+        isDisabled: (template: Template) =>
+          !template?.summary_fields.user_capabilities.start
+            ? t('You do not have permission to launch this template')
+            : undefined,
+        ouiaId: 'job-template-detail-launch-button',
+        isDanger: false,
+        isPinned: true,
       },
       {
         type: PageActionType.Link,
@@ -68,16 +82,15 @@ export function useTemplateActions({
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
-        icon: RocketIcon,
-        label: t('Launch template'),
-        onClick: (template: Template) => void launchTemplate(template),
+        icon: CopyIcon,
+        label: t('Copy template'),
+        onClick: (template: Template) => copyTemplate(template),
         isDisabled: (template: Template) =>
-          !template?.summary_fields.user_capabilities.start
-            ? t('You do not have permission to launch this template')
+          !template?.summary_fields.user_capabilities.copy
+            ? t('You do not have permission to copy this template')
             : undefined,
-        ouiaId: 'job-template-detail-launch-button',
+        ouiaId: 'job-template-detail-copy-button',
         isDanger: false,
-        isPinned: true,
       },
       { type: PageActionType.Seperator },
       {
@@ -95,20 +108,6 @@ export function useTemplateActions({
         },
         ouiaId: 'job-template-detail-delete-button',
         isDanger: true,
-      },
-      {
-        type: PageActionType.Button,
-        selection: PageActionSelection.Single,
-        icon: CopyIcon,
-        label: t('Copy template'),
-        onClick: (template: Template) => copyTemplate(template),
-        isDisabled: (template: Template) =>
-          !template?.summary_fields.user_capabilities.copy
-            ? t('You do not have permission to copy this template')
-            : undefined,
-        ouiaId: 'job-template-detail-copy-button',
-        isDanger: false,
-        isPinned: true,
       },
     ];
     return itemActions;

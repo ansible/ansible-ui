@@ -13,6 +13,7 @@ import { useState } from 'react';
 import { usePostRequest } from '../../../../common/crud/usePostRequest';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useDeleteRequest } from '../../../../common/crud/useDeleteRequest';
+import { AwxError } from '../../../common/AwxError';
 
 function DeleteGroupsDialog(props: {
   groups: InventoryGroup[];
@@ -24,20 +25,49 @@ function DeleteGroupsDialog(props: {
   const postRequest = usePostRequest();
   const deleteRequest = useDeleteRequest();
 
+  const [deletedGroups, setDeletedGroups] = useState<InventoryGroup[]>([]);
+  const [error, setError] = useState('');
+
   const handleDelete = async () => {
+    const currentlyDeletedGroups: InventoryGroup[] = [];
+    const failedGroups: InventoryGroup[] = [];
+
+    setError('');
+
     for (const group of props.groups) {
-      if (deleteType === 'delete') {
-        await deleteRequest(awxAPI`/groups/${group.id.toString()}/`);
-        props.onDelete();
-        props.onClose();
-      } else {
-        await postRequest(awxAPI`/inventories/${group.inventory.toString()}/groups/`, {
-          id: group.id,
-          disassociate: true,
-        });
-        props.onDelete();
-        props.onClose();
+      if (deletedGroups.includes(group)) {
+        continue;
       }
+
+      try {
+        if (deleteType === 'delete') {
+          await deleteRequest(awxAPI`/groups/${group.id.toString()}/`);
+        } else {
+          await postRequest(awxAPI`/inventories/${group.inventory.toString()}/groups/`, {
+            id: group.id,
+            disassociate: true,
+          });
+        }
+        currentlyDeletedGroups.push(group);
+      } catch (ex) {
+        failedGroups.push(group);
+      }
+    }
+
+    let errorStr = '';
+    setDeletedGroups(currentlyDeletedGroups);
+    if (failedGroups.length > 0) {
+      errorStr = t(`Deletion of those groups failed: `);
+      failedGroups.forEach((failedGroup, index) => {
+        if (index !== 0) {
+          errorStr += ', ';
+        }
+        errorStr += failedGroup.name;
+      });
+      setError(errorStr);
+    } else {
+      props.onDelete();
+      props.onClose();
     }
   };
 
@@ -100,6 +130,7 @@ function DeleteGroupsDialog(props: {
           label={t('Promote child groups and hosts')}
           id="radio-promote-group"
         />
+        {error && <AwxError error={new Error(error)} />}
       </>
     </Modal>
   );

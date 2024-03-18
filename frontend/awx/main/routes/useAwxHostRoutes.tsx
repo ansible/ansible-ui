@@ -1,7 +1,6 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageNavigationItem } from '../../../../framework';
-import { PageNotImplemented } from '../../../../framework/PageEmptyStates/PageNotImplemented';
 import { HostPage } from '../../resources/hosts/HostPage/HostPage';
 import { Hosts } from '../../resources/hosts/Hosts';
 import { AwxRoute } from '../AwxRoutes';
@@ -10,6 +9,9 @@ import {
   CreateHost,
   EditHost,
 } from '../../resources/inventories/inventoryHostsPage/InventoryHostForm';
+import { InventoryHostDetails } from '../../resources/inventories/inventoryHostsPage/InventoryHostDetails';
+import { InventoryHostGroups } from '../../resources/inventories/inventoryHostsPage/InventoryHostGroups';
+import { InventoryHostFacts } from '../../resources/inventories/inventoryHostsPage/InventoryHostFacts';
 
 export function useAwxHostRoutes() {
   const { t } = useTranslation();
@@ -27,17 +29,17 @@ export function useAwxHostRoutes() {
             {
               id: AwxRoute.HostDetails,
               path: 'details',
-              element: <PageNotImplemented />,
+              element: <InventoryHostDetails />,
             },
             {
               id: AwxRoute.HostFacts,
               path: 'facts',
-              element: <PageNotImplemented />,
+              element: <InventoryHostFacts page="host" />,
             },
             {
               id: AwxRoute.HostGroups,
               path: 'groups',
-              element: <PageNotImplemented />,
+              element: <InventoryHostGroups page="host" />,
             },
             {
               id: AwxRoute.HostJobs,

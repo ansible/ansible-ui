@@ -26,7 +26,7 @@ describe('Inventory Host Groups List', () => {
     });
 
     it('Inventory Host Groups list renders', () => {
-      cy.mount(<InventoryHostGroups />, {
+      cy.mount(<InventoryHostGroups page={'inventory'} />, {
         path: '/inventories/:inventory_type/:id/hosts/:host_id/*',
         initialEntries: ['/inventories/inventory/1/hosts/1/groups'],
       });
@@ -34,7 +34,7 @@ describe('Inventory Host Groups List', () => {
     });
 
     it('Filter Host Groups by name', () => {
-      cy.mount(<InventoryHostGroups />, {
+      cy.mount(<InventoryHostGroups page={'inventory'} />, {
         path: '/inventories/:inventory_type/:id/hosts/:host_id/*',
         initialEntries: ['/inventories/inventory/1/hosts/1/groups'],
       });
@@ -53,7 +53,7 @@ describe('Inventory Host Groups List', () => {
     });
 
     it('Filter Host Groups by created by', () => {
-      cy.mount(<InventoryHostGroups />, {
+      cy.mount(<InventoryHostGroups page={'inventory'} />, {
         path: '/inventories/:inventory_type/:id/hosts/:host_id/*',
         initialEntries: ['/inventories/inventory/1/hosts/1/groups'],
       });
@@ -72,7 +72,7 @@ describe('Inventory Host Groups List', () => {
     });
 
     it('Filter Host Groups by modified by', () => {
-      cy.mount(<InventoryHostGroups />, {
+      cy.mount(<InventoryHostGroups page={'inventory'} />, {
         path: '/inventories/:inventory_type/:id/hosts/:host_id/*',
         initialEntries: ['/inventories/inventory/1/hosts/1/groups'],
       });
@@ -91,7 +91,7 @@ describe('Inventory Host Groups List', () => {
     });
 
     it('Add group button is enabled if the user has permission to add a group', () => {
-      cy.mount(<InventoryHostGroups />, {
+      cy.mount(<InventoryHostGroups page={'inventory'} />, {
         path: '/inventories/:inventory_type/:id/hosts/:host_id/*',
         initialEntries: ['/inventories/inventory/1/hosts/1/groups'],
       });
@@ -99,7 +99,7 @@ describe('Inventory Host Groups List', () => {
     });
 
     it('Edit inventory group row action is enabled if the user has permission to edit inventory group', () => {
-      cy.mount(<InventoryHostGroups />, {
+      cy.mount(<InventoryHostGroups page={'inventory'} />, {
         path: '/inventories/:inventory_type/:id/hosts/:host_id/*',
         initialEntries: ['/inventories/inventory/1/hosts/1/groups'],
       });
@@ -116,7 +116,7 @@ describe('Inventory Host Groups List', () => {
           actions: {},
         },
       }));
-      cy.mount(<InventoryHostGroups />, {
+      cy.mount(<InventoryHostGroups page={'inventory'} />, {
         path: '/inventories/:inventory_type/:id/hosts/:host_id/*',
         initialEntries: ['/inventories/inventory/1/hosts/1/groups'],
       });
@@ -141,7 +141,7 @@ describe('Inventory Host Groups List', () => {
           );
         })
         .then(() => {
-          cy.mount(<InventoryHostGroups />, {
+          cy.mount(<InventoryHostGroups page={'inventory'} />, {
             path: '/inventories/:inventory_type/:id/hosts/:host_id/*',
             initialEntries: ['/inventories/inventory/1/hosts/1/groups'],
           });
@@ -172,7 +172,7 @@ describe('Inventory Host Groups List', () => {
           statusCode: 500,
         }
       );
-      cy.mount(<InventoryHostGroups />, {
+      cy.mount(<InventoryHostGroups page={'inventory'} />, {
         path: '/inventories/:inventory_type/:id/hosts/:host_id/*',
         initialEntries: ['/inventories/inventory/1/hosts/1/groups'],
       });
@@ -209,7 +209,7 @@ describe('Inventory Host Groups List', () => {
           },
         },
       }));
-      cy.mount(<InventoryHostGroups />, {
+      cy.mount(<InventoryHostGroups page={'inventory'} />, {
         path: '/inventories/:inventory_type/:id/hosts/:host_id/*',
         initialEntries: ['/inventories/inventory/1/hosts/1/groups'],
       });
@@ -223,7 +223,7 @@ describe('Inventory Host Groups List', () => {
           actions: {},
         },
       }));
-      cy.mount(<InventoryHostGroups />, {
+      cy.mount(<InventoryHostGroups page={'inventory'} />, {
         path: '/inventories/:inventory_type/:id/hosts/:host_id/*',
         initialEntries: ['/inventories/inventory/1/hosts/1/groups'],
       });

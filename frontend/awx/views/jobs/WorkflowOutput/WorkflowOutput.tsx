@@ -13,6 +13,7 @@ import {
   Visualization,
   VisualizationProvider,
   withPanZoom,
+  withSelection,
   LabelPosition,
   NodeStatus,
 } from '@patternfly/react-topology';
@@ -20,7 +21,7 @@ import {
 import type { WorkflowNode } from '../../../interfaces/WorkflowNode';
 
 import { EdgeStatus } from '../../../resources/templates/WorkflowVisualizer/types';
-import { CustomNode, CustomEdge } from '../../../resources/templates/WorkflowVisualizer/components';
+import { CustomEdge, CustomNode } from '../../../resources/templates/WorkflowVisualizer/components';
 import { getNodeLabel } from '../../../resources/templates/WorkflowVisualizer/wizard/helpers';
 import { WorkflowOutputGraph } from './WorkflowOutputGraph';
 import {
@@ -33,6 +34,7 @@ import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxGetAllPages } from '../../../common/useAwxGetAllPages';
 import { secondsToHHMMSS } from '../../../../../framework/utils/dateTimeHelpers';
 import { Job } from '../../../interfaces/Job';
+import { WorkflowOutputNode } from './WorkflowOutputNode';
 
 export const graphModel: Model = {
   nodes: [],
@@ -57,12 +59,14 @@ export const WorkflowOutput = (props: { job: Job; reloadJob: () => void }) => {
       switch (type) {
         case 'group':
           return DefaultGroup;
+        case START_NODE_ID:
+          return CustomNode;
         default:
           switch (kind) {
             case ModelKind.graph:
               return withPanZoom()(GraphComponent);
             case ModelKind.node:
-              return CustomNode;
+              return withSelection()(WorkflowOutputNode);
             case ModelKind.edge:
               return CustomEdge;
             default:
@@ -108,6 +112,12 @@ export const WorkflowOutput = (props: { job: Job; reloadJob: () => void }) => {
         resource: { always_nodes: [] },
       },
     };
+    const greyBadgeLabel = {
+      badge: 'ALL',
+      badgeColor: '#D2D2D2',
+      badgeTextColor: 'black',
+      badgeBorderColor: '#B8BBBE',
+    };
     const nodes = workflowNodes.map((n) => {
       const nodeId = n.id.toString();
       const nodeType = 'node';
@@ -142,6 +152,10 @@ export const WorkflowOutput = (props: { job: Job; reloadJob: () => void }) => {
           resource: n,
         },
       };
+
+      if (n.all_parents_must_converge) {
+        return { ...node, data: { ...node.data, ...greyBadgeLabel } };
+      }
 
       return node;
     });

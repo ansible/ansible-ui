@@ -1,6 +1,6 @@
 import { ButtonVariant } from '@patternfly/react-core';
 import { HeartbeatIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
 import { IAwxView } from '../../../common/useAwxView';
@@ -27,6 +27,26 @@ export function useInstanceToolbarActions(view: IAwxView<Instance>) {
   const canAddAndEditInstances =
     (activeUser?.is_superuser || activeUser?.is_system_auditor) && data?.IS_K8S;
 
+  const cannotRunHealthCheckDueToPending = useCallback(
+    (instance: Instance) => {
+      if (instance.health_check_pending)
+        return t(
+          `Instance has pending health checks. Wait for those to complete before attempting another health check.`
+        );
+      return '';
+    },
+    [t]
+  );
+
+  const cannotRunHealthCheckDueToNodeType = useCallback(
+    (instance: Instance) => {
+      if (instance.node_type !== 'execution')
+        return t(`Health checks can only be run on execution instances.`);
+      return '';
+    },
+    [t]
+  );
+
   return useMemo<IPageAction<Instance>[]>(
     () => [
       {
@@ -48,7 +68,6 @@ export function useInstanceToolbarActions(view: IAwxView<Instance>) {
         type: PageActionType.Button,
         isHidden: () => isK8s === false,
         selection: PageActionSelection.Multiple,
-        isPinned: true,
         icon: TrashIcon,
         label: t('Remove instance'),
         onClick: (instance: Instance[]) => removeInstances(instance),
@@ -59,12 +78,28 @@ export function useInstanceToolbarActions(view: IAwxView<Instance>) {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         variant: ButtonVariant.primary,
-        isPinned: true,
         icon: HeartbeatIcon,
         label: t('Run health check'),
         onClick: (instances) => runHealthCheck(instances),
+        isDisabled: (instances) =>
+          instances.some(
+            (instance) =>
+              cannotRunHealthCheckDueToNodeType(instance) ||
+              cannotRunHealthCheckDueToPending(instance)
+          )
+            ? 'Cannot run health checks on one or more of the selected instances'
+            : '',
       },
     ],
-    [t, canAddAndEditInstances, pageNavigate, isK8s, removeInstances, runHealthCheck]
+    [
+      t,
+      canAddAndEditInstances,
+      pageNavigate,
+      isK8s,
+      removeInstances,
+      runHealthCheck,
+      cannotRunHealthCheckDueToNodeType,
+      cannotRunHealthCheckDueToPending,
+    ]
   );
 }
