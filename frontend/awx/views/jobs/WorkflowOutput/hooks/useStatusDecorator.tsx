@@ -3,6 +3,7 @@ import {
   ClockIcon,
   ExclamationCircleIcon,
   SyncAltIcon,
+  WarningTriangleIcon,
 } from '@patternfly/react-icons';
 import {
   DEFAULT_DECORATOR_RADIUS,
@@ -15,7 +16,7 @@ import {
 } from '@patternfly/react-topology';
 import { useCallback } from 'react';
 import styled, { keyframes } from 'styled-components';
-import { pfDanger, pfInfo, pfSuccess } from '../../../../../../framework';
+import { pfDanger, pfInfo, pfSuccess, pfWarning } from '../../../../../../framework';
 
 export function useStatusDecorator() {
   return useCallback((element: GraphElement) => {
@@ -76,6 +77,8 @@ function getStatusIcon(nodeType: string, centerPoint: { x: number; y: number }) 
     case 'pending':
     case 'waiting':
       return <ClockIcon sdata-cy="pending-icon" style={{ fill: pfInfo }} />;
+    case 'canceled':
+      return <WarningTriangleIcon data-cy="canceled-icon" style={{ fill: pfWarning }} />;
     default:
       return null;
   }
