@@ -150,7 +150,6 @@ describe('Hosts.cy.ts', () => {
             })
             .then(() => {
               cy.mount(component, params);
-              cy.wait(2000);
               cy.get(`tr [data-cy="actions-dropdown"]`).click();
               cy.get(`[data-cy="delete-host"]`).as('deleteButton');
               cy.get('@deleteButton').should('have.attr', 'aria-disabled', 'true');
