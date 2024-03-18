@@ -134,8 +134,9 @@ export function ImportList({
     }
 
     return Promise.resolve({
-      total: count,
+      remaining: 0,
       options: namespaces,
+      next: 0,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -180,6 +181,7 @@ export function ImportList({
                 {t`Browse`}
               </Button>
             }
+            queryLabel={(value) => value}
           />
         </NamespaceSelector>
       </NamespaceSelectorWrapper>

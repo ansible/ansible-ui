@@ -1,3 +1,4 @@
+import { ReactNode } from 'react';
 import {
   PageAsyncQueryErrorText,
   PageAsyncSelectOptionsFn,
@@ -27,7 +28,7 @@ export interface IToolbarAsyncSingleSelectFilter extends ToolbarFilterCommon {
   openBrowse?: ToolbarOpenSingleSelectBrowse;
 
   /** The function to query for the label of a value. */
-  queryLabel?: (value: string) => Promise<string | undefined>;
+  queryLabel: (value: string) => ReactNode;
 
   /**
    * Whether the select required an option to be selected.

@@ -1,4 +1,6 @@
+import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 import { Application } from '../../interfaces/Application';
+import { Organization } from '../../interfaces/Organization';
 import { CreateApplication, EditApplication } from './ApplicationForm';
 
 describe('Create Edit Application Form', () => {
@@ -99,10 +101,16 @@ describe('Create Edit Application Form', () => {
         { method: 'GET', url: '/api/v2/applications/*/' },
         { fixture: 'application.json' }
       );
-      cy.intercept(
-        { method: 'GET', url: '/api/v2/organizations/*' },
-        { fixture: 'organizations.json' }
-      );
+
+      cy.fixture('organizations').then((organizations: AwxItemsResponse<Organization>) => {
+        cy.intercept({ method: 'GET', url: '/api/v2/organizations/*' }, { body: organizations });
+        for (const organization of organizations.results) {
+          cy.intercept(
+            { method: 'GET', url: `/api/v2/organizations/${organization.id}` },
+            { body: organization }
+          );
+        }
+      });
     });
 
     it('should preload the form with current values', () => {

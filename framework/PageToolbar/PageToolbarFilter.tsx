@@ -7,10 +7,7 @@ import { PageMultiSelect } from '../PageInputs/PageMultiSelect';
 import { PageSingleSelect, PageSingleSelectContext } from '../PageInputs/PageSingleSelect';
 import { useBreakpoint } from '../components/useBreakPoint';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
-import {
-  AsyncQueryChip,
-  IToolbarAsyncMultiSelectFilter,
-} from './PageToolbarFilters/ToolbarAsyncMultiSelectFilter';
+import { IToolbarAsyncMultiSelectFilter } from './PageToolbarFilters/ToolbarAsyncMultiSelectFilter';
 import { IToolbarAsyncSingleSelectFilter } from './PageToolbarFilters/ToolbarAsyncSingleSelectFilter';
 import {
   IToolbarDateRangeFilter,
@@ -207,10 +204,7 @@ export function PageToolbarFilters(props: PageToolbarFiltersProps) {
                       );
                     case ToolbarFilterType.AsyncSingleSelect:
                     case ToolbarFilterType.AsyncMultiSelect:
-                      return {
-                        key: value,
-                        node: <AsyncQueryChip value={value} queryLabel={filter.queryLabel} />,
-                      };
+                      return { key: value, node: filter.queryLabel(value) };
                     default:
                       return value;
                   }
@@ -392,6 +386,7 @@ function ToolbarFilterComponent(props: {
               </PageSingleSelectContext.Consumer>
             ) : undefined
           }
+          queryLabel={filter.queryLabel}
           disableSortOptions={filter.disableSortOptions}
         />
       );
@@ -424,6 +419,7 @@ function ToolbarFilterComponent(props: {
                 </Button>
               ) : undefined
             }
+            queryLabel={filter.queryLabel}
             disableSortOptions={filter.disableSortOptions}
           />
         );
@@ -455,6 +451,7 @@ function ToolbarFilterComponent(props: {
           }
           variant="count"
           disableClearSelection
+          queryLabel={filter.queryLabel}
           disableSortOptions={filter.disableSortOptions}
         />
       );

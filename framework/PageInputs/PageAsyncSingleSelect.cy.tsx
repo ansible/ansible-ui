@@ -1,69 +1,66 @@
 /* eslint-disable i18next/no-literal-string */
 import { PageSection } from '@patternfly/react-core';
-import { useState } from 'react';
-import { PageAsyncSelectQueryResult } from './PageAsyncSelectOptions';
-import { PageAsyncSingleSelect } from './PageAsyncSingleSelect';
+import { ReactNode, useState } from 'react';
+import { PageAsyncSelectQueryOptions, PageAsyncSelectQueryResult } from './PageAsyncSelectOptions';
+import { PageAsyncSingleSelect, PageAsyncSingleSelectProps } from './PageAsyncSingleSelect';
 
-const queryOptions = async (page: number, _signal: AbortSignal) => {
+export const asyncSelectTestOptions = new Array(50).fill(0).map((_, index) => ({
+  value: index + 1,
+  label: `Option ${index + 1}`,
+  description: `Description ${index + 1}`,
+}));
+
+export function asyncSelectTestQuery(
+  queryOptions: PageAsyncSelectQueryOptions
+): Promise<PageAsyncSelectQueryResult<number>> {
   const pageSize = 10;
-  await new Promise((resolve) => setTimeout(resolve, 0));
-  return {
-    total: 100,
-    options: new Array(pageSize).fill(0).map((_, index) => {
-      const value = index + (page - 1) * pageSize + 1;
-      return {
-        value: value,
-        label: `Option ${value}`,
-        description: `Description ${value}`,
-      };
-    }),
-  };
-};
+  const searchedOptions = asyncSelectTestOptions.filter((option) => {
+    if (!queryOptions.search) return true;
+    return option.label.includes(queryOptions.search);
+  });
+  const page = queryOptions.next ? Number(queryOptions.next) : 1;
+  const start = (page - 1) * pageSize;
+  const end = start + pageSize;
+  const options = searchedOptions.slice(start, end);
+  return Promise.resolve({
+    options,
+    remaining: searchedOptions.length - end,
+    next: page + 1,
+  });
+}
 
-const placeholderText = 'Placeholder';
+export function asyncSelectTestQueryLabel(value: number): ReactNode {
+  return `Option ${value}`;
+}
 
-function PageAsyncSingleSelectTest<T>(props: {
-  placeholder: string;
-  defaultValue?: T;
-  queryOptions: (page: number, signal: AbortSignal) => Promise<PageAsyncSelectQueryResult<T>>;
-}) {
-  const { placeholder, defaultValue: defaultValues, queryOptions } = props;
-  const [value, setValue] = useState<T | undefined>(() => defaultValues);
+function PageAsyncSingleSelectTest(
+  props: Omit<
+    PageAsyncSingleSelectProps<number>,
+    'value' | 'onSelect' | 'placeholder' | 'queryLabel'
+  > & {
+    defaultValue?: number;
+  }
+) {
+  const { defaultValue, ...rest } = props;
+  const [value, setValue] = useState<number | undefined>(() => defaultValue);
   return (
     <PageSection>
-      <PageAsyncSingleSelect
+      <PageAsyncSingleSelect<number>
+        {...rest}
         id="test"
         value={value}
-        placeholder={placeholder}
         onSelect={setValue}
-        queryOptions={queryOptions}
+        placeholder="Select value"
+        queryLabel={asyncSelectTestQueryLabel}
       />
     </PageSection>
   );
 }
 
 describe('PageAsyncSingleSelect', () => {
-  it('should show loading options state', () => {
-    let optionsResolve: (result: PageAsyncSelectQueryResult<number>) => void = () => null;
-    const optionPromise = new Promise<PageAsyncSelectQueryResult<number>>(
-      (r) => (optionsResolve = r)
-    );
-    cy.mount(
-      <PageAsyncSingleSelectTest
-        placeholder={placeholderText}
-        queryOptions={async () => await optionPromise}
-      />
-    );
-    cy.get('#test')
-      .should('have.text', 'Loading options...')
-      .then(() => optionsResolve({ total: 0, options: [] }));
-  });
-
   it('should show queried options', () => {
-    cy.mount(
-      <PageAsyncSingleSelectTest placeholder={placeholderText} queryOptions={queryOptions} />
-    );
-    cy.get('#test').should('not.have.text', 'Loading options...');
+    cy.mount(<PageAsyncSingleSelectTest queryOptions={asyncSelectTestQuery} />);
+    cy.get('#test').should('to.have.text', 'Select value');
     cy.singleSelectShouldContainOption('#test', 'Option 1');
     cy.singleSelectShouldContainOption('#test', 'Option 2');
   });
@@ -71,24 +68,23 @@ describe('PageAsyncSingleSelect', () => {
   it('should show query error', () => {
     cy.mount(
       <PageAsyncSingleSelectTest
-        placeholder={placeholderText}
         queryOptions={async () => {
           await new Promise((resolve) => setTimeout(resolve, 1));
           throw new Error();
         }}
       />
     );
+    cy.get('#test').click();
     cy.get('#test').should('have.text', 'Error loading options');
   });
 
   it('should show initial value', () => {
-    cy.mount(
-      <PageAsyncSingleSelectTest
-        placeholder={placeholderText}
-        queryOptions={queryOptions}
-        defaultValue={1}
-      />
-    );
+    cy.mount(<PageAsyncSingleSelectTest queryOptions={asyncSelectTestQuery} defaultValue={1} />);
     cy.singleSelectShouldHaveSelectedOption('#test', 'Option 1');
+  });
+
+  it('should show initial value even if option is not in first queried result', () => {
+    cy.mount(<PageAsyncSingleSelectTest queryOptions={asyncSelectTestQuery} defaultValue={11} />);
+    cy.singleSelectShouldHaveSelectedOption('#test', 'Option 11');
   });
 });

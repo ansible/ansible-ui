@@ -12,7 +12,12 @@ import {
   PageLayout,
   useGetPageUrl,
 } from '../../../../framework';
+import {
+  PageAsyncSelectQueryOptions,
+  PageAsyncSelectQueryResult,
+} from '../../../../framework/PageInputs/PageAsyncSelectOptions';
 import { PageAsyncSingleSelect } from '../../../../framework/PageInputs/PageAsyncSingleSelect';
+import { PageSingleSelectContext } from '../../../../framework/PageInputs/PageSingleSelect';
 import { PageRoutedTabs } from '../../../../framework/PageTabs/PageRoutedTabs';
 import { singleSelectBrowseAdapter } from '../../../../framework/PageToolbar/PageToolbarFilters/ToolbarAsyncSingleSelectFilter';
 import { requestGet } from '../../../common/crud/Data';
@@ -25,7 +30,6 @@ import { HubRoute } from '../../main/HubRoutes';
 import { CollectionVersionSearch } from '../Collection';
 import { useCollectionActions } from '../hooks/useCollectionActions';
 import { useSelectCollectionVersionSingle } from '../hooks/useCollectionVersionSelector';
-import { PageSingleSelectContext } from '../../../../framework/PageInputs/PageSingleSelect';
 
 export function CollectionPage() {
   const { t } = useTranslation();
@@ -85,8 +89,9 @@ export function CollectionPage() {
 
   // load collection versions
   const queryOptions = useCallback(
-    (page: number) => {
+    (options: PageAsyncSelectQueryOptions): Promise<PageAsyncSelectQueryResult<string>> => {
       const pageSize = 10;
+      const page = options.next ? Number(options.next) : 1;
 
       async function load() {
         const data = await requestGet<HubItemsResponse<CollectionVersionSearch>>(
@@ -96,7 +101,7 @@ export function CollectionPage() {
         );
 
         return {
-          total: data.meta.count,
+          remaining: data.meta.count - pageSize * page,
           options: data.data.map((item) => {
             let label =
               item.collection_version?.version +
@@ -114,6 +119,7 @@ export function CollectionPage() {
               label,
             };
           }),
+          next: page + 1,
         };
       }
 
@@ -164,7 +170,7 @@ export function CollectionPage() {
               onSelect={(item: string) => {
                 setVersionParams(item);
               }}
-              placeholder={''}
+              placeholder={t('Select version')}
               value={collection?.collection_version?.version || version || ''}
               footer={
                 <PageSingleSelectContext.Consumer>
@@ -186,6 +192,7 @@ export function CollectionPage() {
                   )}
                 </PageSingleSelectContext.Consumer>
               }
+              queryLabel={(value) => value}
             />
             {collection?.collection_version &&
               t('Last updated') +
