@@ -64,7 +64,7 @@ describe('Create Edit Inventory/Standalone Host Form', () => {
 
         if (type === 'host') {
           cy.get(`#inventory-select-typeahead`).click();
-          cy.get(`[id='demo-inventory']`).click();
+          cy.get(`[data-cy='demo-inventory']`).click();
         }
 
         cy.clickButton(/^Create host$/);
