@@ -9,7 +9,7 @@ describe('awxErrorAdapter', () => {
     expect(result.fieldErrors.length).equal(0);
   });
 
-  it('should return empty arrays when passed an Error instance', () => {
+  it('should return generic error message when passed an Error instance', () => {
     const error = new Error('Something went wrong');
     const result = awxErrorAdapter(error);
     expect(result.genericErrors).to.deep.equal([{ message: 'Something went wrong' }]);
