@@ -21,20 +21,11 @@ export function useDeleteRequest<ResponseBody = unknown>() {
     return () => ref.current.abortController?.abort();
   }, []);
   return async (url: string, signal?: AbortSignal) => {
-    if (abortControllerRef.current.abortController) {
-      abortControllerRef.current.abortController.abort();
-    }
-    abortControllerRef.current.abortController = new AbortController();
-    let response: Response;
-    try {
-      response = await requestCommon({
-        url,
-        method: 'DELETE',
-        signal: signal ?? abortControllerRef.current.abortController.signal,
-      });
-    } finally {
-      abortControllerRef.current.abortController = undefined;
-    }
+    const response: Response = await requestCommon({
+      url,
+      method: 'DELETE',
+      signal: signal,
+    });
     if (!response.ok) {
       if (response.status === 401) {
         navigate('/login?navigate-back=true');

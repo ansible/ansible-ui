@@ -1,4 +1,6 @@
+import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 import { ExecutionEnvironment } from '../../interfaces/ExecutionEnvironment';
+import { Organization } from '../../interfaces/Organization';
 import { CreateExecutionEnvironment, EditExecutionEnvironment } from './ExecutionEnvironmentForm';
 
 describe('Create Edit Execution Environment Form', () => {
@@ -99,10 +101,16 @@ describe('Create Edit Execution Environment Form', () => {
         { method: 'GET', url: '/api/v2/credentials/*' },
         { fixture: 'credentials.json' }
       );
-      cy.intercept(
-        { method: 'GET', url: '/api/v2/organizations/*' },
-        { fixture: 'organizations.json' }
-      );
+
+      cy.fixture('organizations').then((organizations: AwxItemsResponse<Organization>) => {
+        cy.intercept({ method: 'GET', url: '/api/v2/organizations/*' }, { body: organizations });
+        for (const organization of organizations.results) {
+          cy.intercept(
+            { method: 'GET', url: `/api/v2/organizations/${organization.id}` },
+            { body: organization }
+          );
+        }
+      });
     });
 
     it('should preload the form with current values', () => {

@@ -54,7 +54,7 @@ async function requestFactory<ResponseBody>(url: string, options: Options) {
   const method = options.method;
   const body = options.json;
   const headers = options.headers;
-  const signal = options.signal || new AbortController().signal;
+  const signal = options.signal;
 
   const result = await requestCommon({
     url,

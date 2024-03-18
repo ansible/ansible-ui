@@ -23,10 +23,7 @@ describe('projects', () => {
     cy.navigateTo('awx', 'projects');
     cy.clickLink(/^Create project$/);
     cy.get('[data-cy="name"]').type(projectName);
-    cy.selectSingleSelectOption(
-      '[data-cy="organization"]',
-      `${(this.globalOrganization as Organization).name}`
-    );
+    cy.singleSelectByDataCy('organization', `${(this.globalOrganization as Organization).name}`);
     cy.selectDropdownOptionByResourceName('source_control_type', 'Git');
     cy.get('[data-cy="scm-url"]').type('https://github.com/ansible/ansible-ui');
     cy.get('[data-cy="option-allow-override"]').click();
