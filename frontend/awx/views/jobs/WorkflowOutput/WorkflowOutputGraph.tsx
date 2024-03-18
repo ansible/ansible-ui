@@ -14,7 +14,7 @@ import {
   ViewOptionsProvider,
 } from '../../../resources/templates/WorkflowVisualizer/ViewOptionsProvider';
 import { Legend } from '../../../resources/templates/WorkflowVisualizer/components';
-import { useWorkflowOuput } from './hooks/useWorkflowOutput';
+import { useWorkflowOutput } from './hooks/useWorkflowOutput';
 import { useEffect } from 'react';
 import styled from 'styled-components';
 import { awxAPI } from '../../../common/api/awx-utils';
@@ -34,7 +34,7 @@ export const WorkflowOutputGraph = observer((props: { job?: Job; reloadJob: () =
   const { t } = useTranslation();
   const model = controller.toModel();
   const nodes = model.nodes;
-  const message = useWorkflowOuput(props.reloadJob, props.job);
+  const message = useWorkflowOutput(props.reloadJob, props.job);
   const node = controller.getNodeById(message?.workflow_node_id?.toString() || '');
   useEffect(() => {
     const getElapsedTime = async (nodeId: number) => {
