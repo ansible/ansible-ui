@@ -25,6 +25,12 @@ import type { WorkflowNode } from '../../../interfaces/WorkflowNode';
 
 const StyledNode = styled(DefaultNode)`
   cursor: pointer;
+  &.unexecuted-job {
+    .pf-topology__node__background {
+      fill: var(--pf-v5-chart-color-black-300);
+      stroke: var(--pf-v5-global--Color--200);
+    }
+  }
   ${({ hover }) => (hover === true ? `cursor: pointer;` : `cursor: default;`)}
 `;
 
@@ -100,6 +106,7 @@ export const WorkflowOutputNode = observer(({ element, selected }: WorkflowOutpu
       badgeColor={data?.badgeColor}
       badgeTextColor={data?.badgeTextColor}
       badgeBorderColor={data?.badgeBorderColor}
+      className={job ? '' : 'unexecuted-job'}
     >
       <g transform={`translate(13, 13)`} ref={hoverRef as LegacyRef<SVGGElement>}>
         <Icon style={{ color: '#393F44' }} width={25} height={25} />
