@@ -135,10 +135,7 @@ export function EditInventorySource() {
       credential: inventorySource?.summary_fields?.credential?.name,
       source_project: inventorySource?.summary_fields?.source_project,
       source_path: {
-        name:
-          inventorySource?.source_path?.length === 0
-            ? '/ (project root)'
-            : inventorySource?.source_path,
+        name: inventorySource?.source_path,
       },
       verbosity: inventorySource?.verbosity,
       host_filter: inventorySource?.host_filter,
@@ -157,7 +154,7 @@ export function EditInventorySource() {
     const formValues: InventorySourceCreate = {
       ...values,
       credential: values?.credentialIdPath,
-      source_path: values?.source_path?.name,
+      source_path: values?.source_path?.name ?? '',
       inventory: parseInt(params.id ?? ''),
       source_project: values?.source_project?.id,
     };
