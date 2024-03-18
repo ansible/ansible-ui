@@ -97,7 +97,7 @@ export function useCollectionActions(
         },
         isDisabled: context.featureFlags.display_repositories
           ? ''
-          : t`You dont have rights to this operation`,
+          : t`You do not have rights to this operation`,
       },
       {
         type: PageActionType.Button,
