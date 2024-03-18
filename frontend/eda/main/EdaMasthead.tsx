@@ -51,7 +51,7 @@ export function EdaMasthead() {
             </DropdownItem>
             <DropdownItem
               id="about"
-              onClick={() => openAnsibleAboutModal({ versionInfo, userInfo })}
+              onClick={() => openAnsibleAboutModal({ versionInfo })}
               data-cy="masthead-about"
             >
               {t('About')}
