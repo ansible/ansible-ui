@@ -24,7 +24,7 @@ describe('Credential Types List', () => {
     it('Filter credential types by name', () => {
       cy.mount(<CredentialTypes />);
       cy.intercept('api/v2/credential_types/?name__icontains=foo*').as('nameFilterRequest');
-      cy.filterTableByTypeAndText(/^Name$/, 'foo');
+      cy.filterTableByTextFilter('name', 'foo');
       cy.wait('@nameFilterRequest');
       cy.clickButton(/^Clear all filters$/);
     });
@@ -32,7 +32,7 @@ describe('Credential Types List', () => {
     it('Filter credential types by description', () => {
       cy.mount(<CredentialTypes />);
       cy.intercept('api/v2/credential_types/?description__icontains=foo*').as('descFilterRequest');
-      cy.filterTableByTypeAndText(/^Description$/, 'foo');
+      cy.filterTableByTextFilter('description', 'foo');
       cy.wait('@descFilterRequest');
       cy.clickButton(/^Clear all filters$/);
     });
@@ -42,7 +42,7 @@ describe('Credential Types List', () => {
       cy.intercept('api/v2/credential_types/?created_by__username__icontains=foo*').as(
         'createdByFilterRequest'
       );
-      cy.filterTableByTypeAndText(/^Created by$/, 'foo');
+      cy.filterTableByTextFilter('created-by', 'foo');
       cy.wait('@createdByFilterRequest');
       cy.clickButton(/^Clear all filters$/);
     });
@@ -52,7 +52,7 @@ describe('Credential Types List', () => {
       cy.intercept('api/v2/credential_types/?modified_by__username__icontains=foo*').as(
         'modifiedByFilterRequest'
       );
-      cy.filterTableByTypeAndText(/^Modified by$/, 'foo');
+      cy.filterTableByTextFilter('modified-by', 'foo');
       cy.wait('@modifiedByFilterRequest');
       cy.clickButton(/^Clear all filters$/);
     });
