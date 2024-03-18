@@ -107,6 +107,12 @@ describe('Inventory source page', () => {
     cy.verifyPageTitle('amazon ec2 source');
     cy.clickButton('Edit inventory source');
     cy.verifyPageTitle('Edit source');
+    cy.getBy('[data-cy="name"]').clear().type('updated amazon ec2 source');
+    cy.getBy('[data-cy="overwrite_vars"]').check();
+    cy.getBy('[data-cy="Submit"]').click();
+    cy.verifyPageTitle('updated amazon ec2 source');
+    cy.clickButton('Edit inventory source');
+    cy.verifyPageTitle('Edit source');
     cy.getBy('[data-cy="name"]').clear().type('new project');
     cy.selectDropdownOptionByResourceName('source_control_type', 'Sourced from a Project');
     cy.getBy('[data-cy="overwrite_vars"]').check();
