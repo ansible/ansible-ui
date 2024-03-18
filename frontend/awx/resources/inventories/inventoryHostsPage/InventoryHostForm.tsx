@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { useEffect, useState } from 'react';
+import { Button } from '@patternfly/react-core';
+import { useCallback, useEffect, useState } from 'react';
+import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
@@ -12,18 +14,22 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../../framework';
+import { PageFormAsyncSingleSelect } from '../../../../../framework/PageForm/Inputs/PageFormAsyncSingleSelect';
 import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
-import { requestPatch } from '../../../../common/crud/Data';
+import { PageSingleSelectContext } from '../../../../../framework/PageInputs/PageSingleSelect';
+import { requestGet, requestPatch } from '../../../../common/crud/Data';
 import { useGetRequest } from '../../../../common/crud/useGet';
 import { usePostRequest } from '../../../../common/crud/usePostRequest';
+import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { AwxPageForm } from '../../../common/AwxPageForm';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { AwxHost } from '../../../interfaces/AwxHost';
+import { Inventory } from '../../../interfaces/Inventory';
 import { InventoryGroup } from '../../../interfaces/InventoryGroup';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useGetHost } from '../../hosts/hooks/useGetHost';
 import { useGetInventory } from '../InventoryPage/InventoryPage';
-import { PageFormInventorySelect } from '../components/PageFormInventorySelect';
+import { useSelectInventorySingle } from './hooks/useInventorySelector';
 
 export interface IHostInput {
   name: string;
@@ -296,6 +302,28 @@ export function EditHost() {
 
 function HostInputs(props: { edit_mode?: boolean; inventory_host?: boolean }) {
   const { t } = useTranslation();
+
+  const queryOptions = useCallback(async () => {
+    const response = await requestGet<AwxItemsResponse<Inventory>>(
+      awxAPI`/inventories/?order_by=name`
+    );
+    return {
+      remaining: response.count - response.results?.length,
+      options:
+        response.results?.map((resource) => ({
+          label: resource?.name,
+          value: resource?.id,
+          description: resource.description,
+        })) ?? [],
+      next: 1,
+    };
+  }, []);
+
+  const selectInventorySingle = useSelectInventorySingle();
+  const registrySelector = selectInventorySingle.openBrowse;
+
+  const { setValue } = useFormContext<IHostInput>();
+
   return (
     <>
       <PageFormTextInput<IHostInput>
@@ -318,7 +346,34 @@ function HostInputs(props: { edit_mode?: boolean; inventory_host?: boolean }) {
         />
       )}
       {!props.inventory_host && !props.edit_mode && (
-        <PageFormInventorySelect name="inventory.id" isRequired />
+        <PageFormAsyncSingleSelect
+          name="inventory.id"
+          isRequired
+          label={t('Inventory')}
+          placeholder={t('Select Inventory')}
+          queryOptions={queryOptions}
+          footer={
+            <PageSingleSelectContext.Consumer>
+              {(context) => {
+                return (
+                  <Button
+                    variant="link"
+                    onClick={() => {
+                      context.setOpen(false);
+                      registrySelector((inventory) => {
+                        setValue('inventory.id', inventory.id);
+                      });
+                    }}
+                    tabIndex={0}
+                  >
+                    Browse
+                  </Button>
+                );
+              }}
+            </PageSingleSelectContext.Consumer>
+          }
+          queryLabel={() => t('TODO')}
+        />
       )}
       <PageFormSection singleColumn>
         <PageFormDataEditor<IHostInput> format="yaml" name="variables" label={t('Variables')} />
