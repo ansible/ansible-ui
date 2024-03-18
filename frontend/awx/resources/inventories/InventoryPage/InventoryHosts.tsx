@@ -49,7 +49,7 @@ export function InventoryHosts() {
         emptyStateTitle={
           canCreateHost
             ? t('There are currently no hosts added to this inventory.')
-            : t('You do not have permission to create a host')
+            : t('You do not have permission to create a host.')
         }
         emptyStateDescription={
           canCreateHost

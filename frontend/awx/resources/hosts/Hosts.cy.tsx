@@ -14,7 +14,7 @@ describe('Hosts.cy.ts', () => {
 
   types.forEach((type) => {
     const typeDesc = ` (${type})`;
-    const component = type == hosts ? <Hosts /> : <InventoryHosts />;
+    const component = type === hosts ? <Hosts /> : <InventoryHosts />;
     const path = type === inventory_hosts ? '/inventories/:inventory_type/:id/hosts' : '/hosts';
     const initialEntries =
       type === inventory_hosts ? [`/inventories/inventory/1/hosts`] : [`/hosts`];
@@ -28,7 +28,7 @@ describe('Hosts.cy.ts', () => {
         cy.intercept(
           {
             method: 'GET',
-            url: type == hosts ? '/api/v2/hosts/*' : '/api/v2/inventories/1/hosts/*',
+            url: type === hosts ? '/api/v2/hosts/*' : '/api/v2/inventories/1/hosts/*',
           },
           {
             fixture: 'hosts.json',
@@ -100,9 +100,16 @@ describe('Hosts.cy.ts', () => {
         cy.contains('button', /^Create host$/).as('createButton');
         cy.get('@createButton').should('have.attr', 'aria-disabled', 'true');
         cy.get('@createButton').click({ force: true });
-        cy.hasTooltip(
-          /^You do not have permission to create a host. Please contact your system administrator if there is an issue with your access.$/
-        );
+
+        if (type === hosts) {
+          cy.hasTooltip(
+            /^You do not have permission to create a host. Please contact your system administrator if there is an issue with your access.$/
+          );
+        } else {
+          cy.hasTooltip(
+            /^You do not have permission to create a host. Please contact your organization administrator if there is an issue with your access.$/
+          );
+        }
       });
 
       it('disable delete row action if the user does not have permissions', () => {
@@ -115,13 +122,13 @@ describe('Hosts.cy.ts', () => {
             }
             return hosts;
           })
-          .then((hosts) => {
+          .then((hostsList) => {
             cy.intercept(
               {
                 method: 'GET',
-                url: '/api/v2/hosts/*',
+                url: type === hosts ? '/api/v2/hosts/*' : '/api/v2/inventories/1/hosts/*',
               },
-              { body: hosts }
+              { body: hostsList }
             );
           })
           .then(() => {
@@ -149,13 +156,13 @@ describe('Hosts.cy.ts', () => {
             }
             return hosts;
           })
-          .then((hosts) => {
+          .then((hostsList) => {
             cy.intercept(
               {
                 method: 'GET',
-                url: '/api/v2/hosts/*',
+                url: type === hosts ? '/api/v2/hosts/*' : '/api/v2/inventories/1/hosts/*',
               },
-              { body: hosts }
+              { body: hostsList }
             );
           })
           .then(() => {
@@ -179,7 +186,7 @@ describe('Hosts.cy.ts', () => {
         cy.intercept(
           {
             method: 'GET',
-            url: '/api/v2/hosts/*',
+            url: type === hosts ? '/api/v2/hosts/*' : '/api/v2/inventories/1/hosts/*',
           },
           {
             fixture: 'emptyList.json',
@@ -205,7 +212,11 @@ describe('Hosts.cy.ts', () => {
           },
         }));
         cy.mount(component, params);
-        cy.contains(/^There are currently no hosts added$/);
+        if (type === hosts) {
+          cy.contains(/^There are currently no hosts added$/);
+        } else {
+          cy.contains(/^There are currently no hosts added to this inventory.$/);
+        }
         cy.contains(/^Please create a host by using the button below.$/);
         cy.contains('button', /^Create host$/).should('be.visible');
         cy.contains('button', /^Create host$/).click();
