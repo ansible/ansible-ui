@@ -20,7 +20,6 @@ export function InventoryHosts() {
   const toolbarFilters = useHostsFilters();
   const tableColumns = useInventoriesHostsColumns();
   const params = useParams<{ id: string; inventory_type: string }>();
-  console.log('params id: ' + params.id);
   const view = useAwxView<AwxHost>({
     url: awxAPI`/inventories/${params.id ?? ''}/hosts/`,
     toolbarFilters,
