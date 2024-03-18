@@ -13,7 +13,7 @@ export type WebSocketMessage = {
   finished?: string;
 };
 export type WebSocketWorkflowNode = WorkflowNode & { job?: WebSocketMessage };
-export function useWorkflowOuput(reloadJob: () => void, job?: Job) {
+export function useWorkflowOutput(reloadJob: () => void, job?: Job) {
   const [message, setMessage] = useState<WebSocketMessage>();
 
   const handleWebSocketMessage = useCallback(

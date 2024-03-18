@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   CheckCircleIcon,
@@ -250,6 +250,16 @@ export const WorkflowVisualizerToolbar = observer(() => {
             </DropdownItem>
             {RBAC?.start && (
               <DropdownItem
+                tooltipProps={
+                  modified || nodes.length === 0
+                    ? {
+                        content: modified
+                          ? t('Save the workflow before launching')
+                          : t('Add a step to the workflow before launching'),
+                      }
+                    : undefined
+                }
+                isAriaDisabled={nodes.length === 0 || modified}
                 data-cy="workflow-visualizer-toolbar-launch"
                 onClick={() => void handleLaunchWorkflow()}
                 icon={<RocketIcon />}
@@ -261,6 +271,12 @@ export const WorkflowVisualizerToolbar = observer(() => {
               <>
                 <Divider />
                 <DropdownItem
+                  isAriaDisabled={nodes.length === 0}
+                  tooltipProps={
+                    nodes.length === 0
+                      ? { content: t('Add a step to the workflow before removing') }
+                      : undefined
+                  }
                   data-cy="workflow-visualizer-toolbar-remove-all"
                   onClick={() => removeNodes(nodes)}
                   isDanger
