@@ -432,6 +432,41 @@ describe('Workflow Visualizer', () => {
         }
       );
     });
+
+    it('Can access an existing workflow visualizer and delete the link between two nodes', function () {
+      let projectNode: WorkflowNode;
+      let approvalNode: WorkflowNode;
+      cy.createAwxWorkflowVisualizerProjectNode(workflowJobTemplate, project)
+        .then((projNode) => {
+          projectNode = projNode;
+          cy.createAwxWorkflowVisualizerApprovalNode(workflowJobTemplate).then((appNode) => {
+            approvalNode = appNode;
+            cy.createWorkflowJTFailureNodeLink(projectNode, appNode);
+          });
+        })
+        .then(() => {
+          cy.visit(`/templates/workflow_job_template/${workflowJobTemplate?.id}/visualizer`);
+          cy.contains('Workflow Visualizer').should('be.visible');
+          cy.contains('Run on fail').should('be.visible');
+          cy.get(`g[data-id="${projectNode.id}-${approvalNode.id}"]`).within(() => {
+            cy.get('[data-cy="edge-context-menu_kebab"]').click({ force: true });
+          });
+          cy.getByDataCy('remove-link').click();
+          cy.getModal().within(() => {
+            cy.get('[data-ouia-component-id="confirm"]').click();
+            cy.get('[data-ouia-component-id="submit"]').click();
+            cy.clickButton('Close');
+          });
+          cy.getByDataCy('workflow-visualizer-toolbar-save').click();
+          cy.get('[data-cy="alert-toaster"]').should(
+            'have.text',
+            'Success alert:Successfully saved workflow visualizer'
+          );
+          cy.reload();
+          cy.contains('Workflow Visualizer').should('be.visible');
+          cy.contains('Run on fail').should('not.exist');
+        });
+    });
   });
 
   describe('Workflow Visualizer- Job Output', () => {
