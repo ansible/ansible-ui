@@ -41,6 +41,7 @@ export interface SourceFields extends FieldValues {
       | 'rhv'
       | 'controller'
       | 'insights'
+      | 'terraform'
       | null;
   };
   id: number;

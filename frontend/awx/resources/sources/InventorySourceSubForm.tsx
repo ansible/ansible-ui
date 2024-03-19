@@ -28,6 +28,7 @@ export function InventorySourceSubForm() {
     'rhv',
     'controller',
     'insights',
+    'terraform',
   ];
 
   return (
