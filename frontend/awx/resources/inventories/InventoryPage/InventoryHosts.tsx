@@ -35,6 +35,28 @@ export function InventoryHosts() {
       hostOptions.actions['POST'] &&
       params.inventory_type === 'inventory'
   );
+
+  let emptyStateTitle = '';
+  let emptyStateDescription = '';
+
+  if (params.inventory_type === 'inventory')
+  {
+    emptyStateTitle = canCreateHost
+    ? t('There are currently no hosts added to this inventory.')
+    : t('You do not have permission to create a host.');
+
+    emptyStateDescription=
+      canCreateHost
+        ? t('Please create a host by using the button below.')
+        : t(
+            'Please contact your organization administrator if there is an issue with your access.'
+          );
+  }else
+  {
+    emptyStateTitle = t('No Hosts Found');
+    emptyStateDescription = t('Please add Hosts to populate this list');
+  }
+
   usePersistentFilters('inventories');
   return (
     <PageLayout>
@@ -46,16 +68,10 @@ export function InventoryHosts() {
         rowActions={rowActions}
         errorStateTitle={t('Error loading inventory hosts')}
         emptyStateTitle={
-          canCreateHost
-            ? t('There are currently no hosts added to this inventory.')
-            : t('You do not have permission to create a host.')
+          emptyStateTitle
         }
         emptyStateDescription={
-          canCreateHost
-            ? t('Please create a host by using the button below.')
-            : t(
-                'Please contact your organization administrator if there is an issue with your access.'
-              )
+          emptyStateDescription
         }
         emptyStateIcon={canCreateHost ? undefined : CubesIcon}
         emptyStateButtonText={canCreateHost ? t('Create host') : undefined}

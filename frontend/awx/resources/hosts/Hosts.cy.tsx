@@ -273,10 +273,18 @@ describe('Hosts.cy.ts', () => {
 
       function testCreatePermissions() {
         cy.mount(component, params);
-        cy.contains(/^You do not have permission to create a host.$/);
-        cy.contains(
-          /^Please contact your organization administrator if there is an issue with your access.$/
-        );
+
+        if (dynamic === false)
+        {
+          cy.contains(/^You do not have permission to create a host.$/);
+          cy.contains(
+            /^Please contact your organization administrator if there is an issue with your access.$/
+          );
+        }else
+        {
+          cy.contains(/^No Hosts Found$/)
+          cy.contains(/^Please add Hosts to populate this list$/)
+        }
         cy.contains('button', /^Create host$/).should('not.exist');
       }
     });
