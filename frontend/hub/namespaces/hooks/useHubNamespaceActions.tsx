@@ -45,6 +45,9 @@ export function useHubNamespaceActions(options?: {
           pageNavigate(HubRoute.MyImports, { query: { namespace: namespace.name } }),
       },
       {
+        type: PageActionType.Seperator,
+      },
+      {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: TrashIcon,
