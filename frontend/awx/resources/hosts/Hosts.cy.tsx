@@ -89,17 +89,23 @@ describe('Hosts.cy.ts', () => {
 
         cy.openToolbarFilterTypeSelect().within(() => {
           cy.contains(/^Name$/).should('be.visible');
-          cy.contains(/^Description$/).should('be.visible');
+          
+          if (type !== smart_inventory_hosts) {
+            cy.contains(/^Description$/).should('be.visible');
+          }
+          
+          cy.contains(/^Created by$/).should('be.visible');
+          
+          cy.contains(/^Modified by$/).should('be.visible');
 
           if (type !== smart_inventory_hosts) {
-            cy.contains(/^Created by$/).should('be.visible');
+            cy.contains('button', /^Description$/).click();
           }
-          cy.contains(/^Modified by$/).should('be.visible');
-          cy.contains('button', /^Description$/).click();
         });
         cy.filterTableByText('Description');
-        cy.wait('@descriptionFilterRequest');
-
+        if (type !== smart_inventory_hosts) {
+          cy.wait('@descriptionFilterRequest');
+        }
         if (type === hosts) {
           cy.get('[data-cy="smart-inventory"]').should('not.be.disabled');
         }
