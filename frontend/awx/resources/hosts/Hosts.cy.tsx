@@ -19,13 +19,20 @@ describe('Hosts.cy.ts', () => {
     const path = type === hosts ? '/hosts' : '/inventories/:inventory_type/:id/hosts';
 
     let inventory_type = '';
-    
-    const dynamic = (type === smart_inventory_hosts || type == constructed_inventory_hosts) ? true : false;
+
+    const dynamic =
+      type === smart_inventory_hosts || type === constructed_inventory_hosts ? true : false;
 
     switch (type) {
-      case inventory_hosts : inventory_type = 'inventory';break;
-      case smart_inventory_hosts : inventory_type = 'smart_inventory';break;
-      case constructed_inventory_hosts : inventory_type = 'constructed_inventory';break;
+      case inventory_hosts:
+        inventory_type = 'inventory';
+        break;
+      case smart_inventory_hosts:
+        inventory_type = 'smart_inventory';
+        break;
+      case constructed_inventory_hosts:
+        inventory_type = 'constructed_inventory';
+        break;
     }
 
     const initialEntries = type === hosts ? [`/hosts`] : [`/inventories/${inventory_type}/1/hosts`];
@@ -99,13 +106,13 @@ describe('Hosts.cy.ts', () => {
 
         cy.openToolbarFilterTypeSelect().within(() => {
           cy.contains(/^Name$/).should('be.visible');
-          
+
           if (dynamic === false) {
             cy.contains(/^Description$/).should('be.visible');
           }
-          
+
           cy.contains(/^Created by$/).should('be.visible');
-          
+
           cy.contains(/^Modified by$/).should('be.visible');
 
           if (dynamic === false) {

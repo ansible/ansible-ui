@@ -74,16 +74,13 @@ export function useInventoriesHostsColumns(options?: {
     let columns: ITableColumn<AwxHost>[] = [nameColumn];
 
     if (params.inventory_type === 'inventory') {
-      columns = [
-        ...columns,
-        descriptionColumn,
-        relatedGroupColumn,
-        createdColumn,
-        modifiedColumn,
-      ];
+      columns = [...columns, descriptionColumn, relatedGroupColumn, createdColumn, modifiedColumn];
     }
 
-    if (params.inventory_type === 'smart_inventory' || params.inventory_type === 'constructed_inventory') {
+    if (
+      params.inventory_type === 'smart_inventory' ||
+      params.inventory_type === 'constructed_inventory'
+    ) {
       recentJobs.sort = '';
       inventoryColumn.sort = '';
       columns = [...columns, recentJobs, inventoryColumn];
