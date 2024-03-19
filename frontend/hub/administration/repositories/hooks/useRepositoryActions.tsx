@@ -85,6 +85,7 @@ export function useRepositoryActions(options: {
         selection: PageActionSelection.Single,
         type: PageActionType.Button,
       },
+      { type: PageActionType.Seperator },
       {
         icon: TrashIcon,
         label: t('Delete repository'),
