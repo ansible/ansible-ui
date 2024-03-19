@@ -9,15 +9,25 @@ describe('Hosts.cy.ts', () => {
   const hosts = 'hosts';
   const inventory_hosts = 'inventory_hosts';
   const smart_inventory_hosts = 'smart_inventory_hosts';
+  const constructed_inventory_hosts = 'constructed_inventory_hosts';
 
-  const types = [hosts, inventory_hosts, smart_inventory_hosts];
+  const types = [hosts, inventory_hosts, smart_inventory_hosts, constructed_inventory_hosts];
 
   types.forEach((type) => {
     const typeDesc = ` (${type})`;
     const component = type === hosts ? <Hosts /> : <InventoryHosts />;
     const path = type === hosts ? '/hosts' : '/inventories/:inventory_type/:id/hosts';
 
-    const inventory_type = type === smart_inventory_hosts ? 'smart_inventory' : 'inventory';
+    let inventory_type = '';
+    
+    const dynamic = (type === smart_inventory_hosts || type == constructed_inventory_hosts) ? true : false;
+
+    switch (type) {
+      case inventory_hosts : inventory_type = 'inventory';break;
+      case smart_inventory_hosts : inventory_type = 'smart_inventory';break;
+      case constructed_inventory_hosts : inventory_type = 'constructed_inventory';break;
+    }
+
     const initialEntries = type === hosts ? [`/hosts`] : [`/inventories/${inventory_type}/1/hosts`];
     const params = {
       path,
@@ -49,7 +59,7 @@ describe('Hosts.cy.ts', () => {
         }
       });
 
-      if (type !== smart_inventory_hosts) {
+      if (type !== smart_inventory_hosts && type !== constructed_inventory_hosts) {
         it('should render inventory list', () => {
           cy.mount(component, params);
           if (type === hosts) {
@@ -59,8 +69,8 @@ describe('Hosts.cy.ts', () => {
         });
       }
 
-      if (type === smart_inventory_hosts) {
-        it('smart inventory does not have any actions beside run command', () => {
+      if (type === smart_inventory_hosts || type === constructed_inventory_hosts) {
+        it('smart or constructed inventory does not have any actions beside run command', () => {
           cy.mount(component, params);
           cy.get(`[data-cy='edit-host]`).should('not.exist');
           cy.get(`[data-cy='create-host]`).should('not.exist');
@@ -90,7 +100,7 @@ describe('Hosts.cy.ts', () => {
         cy.openToolbarFilterTypeSelect().within(() => {
           cy.contains(/^Name$/).should('be.visible');
           
-          if (type !== smart_inventory_hosts) {
+          if (dynamic === false) {
             cy.contains(/^Description$/).should('be.visible');
           }
           
@@ -98,12 +108,12 @@ describe('Hosts.cy.ts', () => {
           
           cy.contains(/^Modified by$/).should('be.visible');
 
-          if (type !== smart_inventory_hosts) {
+          if (dynamic === false) {
             cy.contains('button', /^Description$/).click();
           }
         });
         cy.filterTableByText('Description');
-        if (type !== smart_inventory_hosts) {
+        if (dynamic === false) {
           cy.wait('@descriptionFilterRequest');
         }
         if (type === hosts) {
@@ -112,7 +122,7 @@ describe('Hosts.cy.ts', () => {
         cy.clickButton(/^Clear all filters$/);
       });
 
-      if (type !== smart_inventory_hosts) {
+      if (dynamic === false) {
         it('disable "create host" toolbar action if the user does not have permissions', () => {
           cy.stub(useOptions, 'useOptions').callsFake(() => ({
             data: {
@@ -212,7 +222,7 @@ describe('Hosts.cy.ts', () => {
         ).as('emptyList');
       });
 
-      if (type !== smart_inventory_hosts) {
+      if (dynamic === false) {
         it('display Empty State and create button for user with permission to create hosts', () => {
           cy.stub(useOptions, 'useOptions').callsFake(() => ({
             data: {
