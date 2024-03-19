@@ -1,36 +1,36 @@
 import { FieldPathByValue, FieldValues, PathValue } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { PageFormAsyncSingleSelect } from '../../../../framework/PageForm/Inputs/PageFormAsyncSingleSelect';
+import { PageFormAsyncMultiSelect } from '../../../../framework/PageForm/Inputs/PageFormAsyncMultiSelect';
 import { PageAsyncSelectOptionsFn } from '../../../../framework/PageInputs/PageAsyncSelectOptions';
 import { AsyncQueryLabel } from '../../../../framework/components/AsyncQueryLabel';
 import { gatewayAPI } from '../../../api/gateway-api-utils';
 import { useQueryPlatformOptions } from '../../../common/useQueryPlatformOptions';
-import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
+import { PlatformTeam } from '../../../interfaces/PlatformTeam';
 
-export function PageFormPlatformOrganizationSelect<
+export function PageFormPlatformTeamsSelect<
   TFieldValues extends FieldValues = FieldValues,
-  TFieldName extends FieldPathByValue<TFieldValues, number> = FieldPathByValue<
+  TFieldName extends FieldPathByValue<TFieldValues, number[]> = FieldPathByValue<
     TFieldValues,
-    number
+    number[]
   >,
 >(props: { name: TFieldName; isRequired?: boolean }) {
   const { t } = useTranslation();
-  const queryOptions = useQueryPlatformOptions<PlatformOrganization, 'name', 'id'>({
-    url: gatewayAPI`/organizations/`,
+  const queryOptions = useQueryPlatformOptions<PlatformTeam, 'name', 'id'>({
+    url: gatewayAPI`/teams/`,
     labelKey: 'name',
     valueKey: 'id',
     orderQuery: 'order_by',
   });
   return (
-    <PageFormAsyncSingleSelect<TFieldValues, TFieldName>
+    <PageFormAsyncMultiSelect<TFieldValues, TFieldName>
       name={props.name}
-      id="organization"
-      label={t('Organization')}
-      placeholder={t('Select organization')}
+      id="teams"
+      label={t('Teams')}
+      placeholder={t('Select teams')}
       queryOptions={queryOptions as PageAsyncSelectOptionsFn<PathValue<TFieldValues, TFieldName>>}
-      queryPlaceholder={t('Loading organizations...')}
-      queryErrorText={t('Error loading organizations')}
-      queryLabel={(id: number) => <AsyncQueryLabel id={id} url={gatewayAPI`/organizations/`} />}
+      queryPlaceholder={t('Loading teams...')}
+      queryErrorText={t('Error loading teams')}
+      queryLabel={(id: number) => <AsyncQueryLabel id={id} url={gatewayAPI`/teams/`} />}
       isRequired={props.isRequired}
     />
   );

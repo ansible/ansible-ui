@@ -1,4 +1,3 @@
-import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
@@ -12,20 +11,16 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../framework';
-import { PageFormAsyncMultiSelect } from '../../../../framework/PageForm/Inputs/PageFormAsyncMultiSelect';
-import { PageFormAsyncSingleSelect } from '../../../../framework/PageForm/Inputs/PageFormAsyncSingleSelect';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
 import { AwxError } from '../../../../frontend/awx/common/AwxError';
-import { requestGet } from '../../../../frontend/common/crud/Data';
 import { useGet } from '../../../../frontend/common/crud/useGet';
 import { usePatchRequest } from '../../../../frontend/common/crud/usePatchRequest';
 import { usePostRequest } from '../../../../frontend/common/crud/usePostRequest';
 import { gatewayV1API } from '../../../api/gateway-api-utils';
-import { PlatformItemsResponse } from '../../../interfaces/PlatformItemsResponse';
-import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import { PlatformTeam } from '../../../interfaces/PlatformTeam';
-import { PlatformUser } from '../../../interfaces/PlatformUser';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
+import { PageFormPlatformOrganizationSelect } from '../../organizations/components/PageFormPlatformOrganizationSelect';
+import { PageFormPlatformUsersSelect } from '../../users/components/PageFormPlatformUsersSelect';
 
 export function CreatePlatformTeam() {
   const { t } = useTranslation();
@@ -100,30 +95,6 @@ export function EditPlatformTeam() {
 
 function PlatformTeamInputs() {
   const { t } = useTranslation();
-  const queryOrganizations = useCallback(async (page: number) => {
-    const organizations = await requestGet<PlatformItemsResponse<PlatformOrganization>>(
-      gatewayV1API`/organizations/?page=${page.toString()}`
-    );
-    return {
-      total: organizations.count,
-      options: organizations.results.map((organization) => ({
-        label: organization.name,
-        value: organization.id,
-      })),
-    };
-  }, []);
-  const queryUsers = useCallback(async (page: number) => {
-    const users = await requestGet<PlatformItemsResponse<PlatformUser>>(
-      gatewayV1API`/users/?page=${page.toString()}`
-    );
-    return {
-      total: users.count,
-      options: users.results.map((user) => ({
-        label: user.username,
-        value: user.id,
-      })),
-    };
-  }, []);
   return (
     <>
       <PageFormTextInput<PlatformTeam>
@@ -137,24 +108,9 @@ function PlatformTeamInputs() {
         name="description"
         placeholder={t('Enter description')}
       />
-      <PageFormAsyncSingleSelect<PlatformTeam>
-        name="organization"
-        label={t('Organization')}
-        placeholder={t('Select organization')}
-        queryOptions={queryOrganizations}
-        isRequired
-        queryPlaceholder={t('Loading organizations...')}
-        queryErrorText={(error) => t('Error loading organizations: {{error}}', { error })}
-      />
-
-      <PageFormSection title={t('Members')} singleColumn>
-        <PageFormAsyncMultiSelect<PlatformTeam>
-          name="users"
-          placeholder={t('Select users')}
-          queryOptions={queryUsers}
-          queryPlaceholder={t('Loading users...')}
-          queryErrorText={(error) => t('Error loading users: {{error}}', { error })}
-        />
+      <PageFormPlatformOrganizationSelect name="organization" />
+      <PageFormSection singleColumn>
+        <PageFormPlatformUsersSelect name="users" isRequired />
       </PageFormSection>
     </>
   );
