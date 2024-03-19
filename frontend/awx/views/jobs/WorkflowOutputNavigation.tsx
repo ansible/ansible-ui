@@ -27,18 +27,13 @@ export function WorkflowOutputNavigation(props: WorkflowOutputNavigationProps) {
 
   const { workflowNodes } = props;
 
-  const relevantResults = workflowNodes.filter(
-    ({ job, summary_fields }) =>
-      job && job.toString() !== id && summary_fields?.job?.type !== 'workflow_approval'
-  );
-
   useEffect(() => {
-    setFilteredNodes(relevantResults);
+    setFilteredNodes(workflowNodes);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [workflowNodes]);
 
-  const totalResults = relevantResults?.length || 0;
+  const totalResults = workflowNodes.length || 0;
 
   const statuses: Record<string, string[]> = useMemo(
     () => ({
@@ -64,7 +59,7 @@ export function WorkflowOutputNavigation(props: WorkflowOutputNavigationProps) {
 
     if (value === selected) {
       setSelected(undefined);
-      setFilteredNodes(relevantResults);
+      setFilteredNodes(workflowNodes);
     } else {
       setSelected(value);
 

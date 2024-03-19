@@ -11,19 +11,26 @@ import { Flex, FlexItem } from '@patternfly/react-core';
 import { useGet } from '../../../common/crud/useGet';
 import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 import { awxAPI } from '../../common/api/awx-utils';
-import { WorkflowNode } from '../../interfaces/WorkflowNode';
+import { WorkflowJobNode } from '../../interfaces/WorkflowNode';
 
 export function JobHeader() {
   const { t } = useTranslation();
+  const { id } = useParams<{ id: string }>();
   const pageNavigate = usePageNavigate();
   const getPageUrl = useGetPageUrl();
   const params = useParams<{ id: string; job_type: string }>();
   const { job } = useGetJob(params.id, params.job_type);
 
   const wfJobId = job?.summary_fields?.source_workflow_job?.id;
-  const { data: workflowNodes } = useGet<AwxItemsResponse<WorkflowNode>>(
+  const { data: workflowNodes } = useGet<AwxItemsResponse<WorkflowJobNode>>(
     wfJobId ? awxAPI`/workflow_jobs/${wfJobId.toString()}/workflow_nodes/` : ''
   );
+
+  const relevantNodes =
+    workflowNodes?.results.filter(
+      ({ job, summary_fields }) =>
+        job && job.toString() !== id && summary_fields?.job?.type !== 'workflow_approval'
+    ) ?? [];
 
   const actions = useJobHeaderActions(() => pageNavigate(AwxRoute.Jobs));
   return (
@@ -32,9 +39,11 @@ export function JobHeader() {
       breadcrumbs={[{ label: t('Jobs'), to: getPageUrl(AwxRoute.Jobs) }, { label: job?.name }]}
       headerActions={
         <Flex>
-          <FlexItem>
-            <WorkflowOutputNavigation workflowNodes={workflowNodes?.results ?? []} />
-          </FlexItem>
+          {relevantNodes?.length > 0 && (
+            <FlexItem>
+              <WorkflowOutputNavigation workflowNodes={relevantNodes} />
+            </FlexItem>
+          )}
           <FlexItem>
             <PageActions<Job>
               actions={actions}
