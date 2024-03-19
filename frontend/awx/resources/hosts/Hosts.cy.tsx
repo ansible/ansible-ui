@@ -66,7 +66,7 @@ describe('Hosts.cy.ts', () => {
         }
       });
 
-      if (type !== smart_inventory_hosts && type !== constructed_inventory_hosts) {
+      if (dynamic === false) {
         it('should render inventory list', () => {
           cy.mount(component, params);
           if (type === hosts) {
@@ -76,7 +76,7 @@ describe('Hosts.cy.ts', () => {
         });
       }
 
-      if (type === smart_inventory_hosts || type === constructed_inventory_hosts) {
+      if (dynamic === true) {
         it('smart or constructed inventory does not have any actions beside run command', () => {
           cy.mount(component, params);
           cy.get(`[data-cy='edit-host]`).should('not.exist');
