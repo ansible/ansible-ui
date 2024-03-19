@@ -8,19 +8,26 @@ import { AnsibleAnsibleRepositoryResponse as Repository } from '../../../interfa
 export function useRepoQueryOptions() {
   const repoRequest = useGetRequest<PulpItemsResponse<Repository>>();
   return useCallback<PageAsyncSelectOptionsFn<string>>(
-    (page) => {
+    ({ next, search }) => {
       const pageSize = 10;
+      const page = next ? Number(next) : 1;
 
       async function load() {
-        const data = await repoRequest(pulpAPI`/repositories/ansible/ansible/`, {
+        const query: Record<string, string | number> = {
           offset: pageSize * (page - 1),
           limit: pageSize,
-        });
+          ordering: 'name',
+        };
+        if (search) {
+          query['name__icontains'] = search;
+        }
+        const data = await repoRequest(pulpAPI`/repositories/ansible/ansible/`, query);
         return {
-          total: data.count,
+          remaining: data.count - (pageSize * (page - 1) + data.results.length),
           options: data.results.map((r) => {
             return { label: r.name, value: r.name };
           }),
+          next: page + 1,
         };
       }
 

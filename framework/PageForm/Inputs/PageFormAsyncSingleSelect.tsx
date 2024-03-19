@@ -35,6 +35,8 @@ export type PageFormAsyncSingleSelectProps<
   | 'queryOptions'
   | 'queryPlaceholder'
   | 'queryErrorText'
+  | 'onBrowse'
+  | 'queryLabel'
 > &
   Pick<
     PageFormGroupProps,
@@ -86,6 +88,9 @@ export function PageFormAsyncSingleSelect<
               onSelect={onChange}
               isDisabled={props.isDisabled || props.isReadOnly || isSubmitting}
               footer={props.footer}
+              onBrowse={props.onBrowse}
+              queryLabel={props.queryLabel}
+              disableAutoSelect
             />
           </PageFormGroup>
         );

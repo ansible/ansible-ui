@@ -1,22 +1,33 @@
-import { Button, Flex, FlexItem, Spinner, Split, SplitItem, Stack } from '@patternfly/react-core';
+import {
+  ActionList,
+  ActionListItem,
+  Button,
+  Flex,
+  FlexItem,
+  Stack,
+  debounce,
+} from '@patternfly/react-core';
 import { SyncAltIcon } from '@patternfly/react-icons';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
+import { SetRequired } from 'type-fest';
 import { PageAsyncSelectOptionsFn } from './PageAsyncSelectOptions';
 import { PageMultiSelect, PageMultiSelectProps } from './PageMultiSelect';
 import { PageSelectOption } from './PageSelectOption';
 
 export interface PageAsyncMultiSelectProps<ValueT>
-  extends Omit<PageMultiSelectProps<ValueT>, 'options'> {
+  extends SetRequired<Omit<PageMultiSelectProps<ValueT>, 'options'>, 'queryLabel'> {
   /** The function to query for options. */
   queryOptions: PageAsyncSelectOptionsFn<ValueT>;
 
   /** The placeholder to show while querying. */
   queryPlaceholder?: string;
 
-  /** The placeholder to show if the query fails. */
+  /** The text to show if the query fails. */
   queryErrorText?: string | ((error: Error) => string);
+
+  onBrowse?: () => void;
 }
 
 /**
@@ -44,153 +55,162 @@ export function PageAsyncMultiSelect<
   const { t } = useTranslation();
 
   const [loading, setLoading] = useState(false);
+  const [allLoaded, setAllLoaded] = useState(false);
   const [loadingError, setLoadingError] = useState<Error>();
   const [total, setTotal] = useState(0);
   const [options, setOptions] = useState<PageSelectOption<ValueT>[] | null>();
-  const [page, setPage] = useState(1);
+  const [open, setOpen] = useState(false);
 
-  const abortController = useRef(new AbortController()).current;
-  useEffect(() => () => abortController.abort(), [abortController]);
-
-  const onSelect = useRef(props.onSelect).current;
+  const nextRef = useRef<number | string | undefined>();
+  const [searchValue, setSearchValue] = useState<string>('');
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const setSearch = useCallback(
+    debounce((search: string) => setSearchValue(search), 200),
+    []
+  );
 
   const queryOptions = useRef(props.queryOptions).current;
 
-  const queryHandler = useCallback(
-    (page: number) => {
-      setLoading((loading) => {
-        if (loading) return loading;
-        setLoadingError(undefined);
-        setOptions((prevOptions) => {
-          if (prevOptions) {
-            return prevOptions;
-          } else {
-            return undefined;
-          }
-        });
-        try {
-          void queryOptions(page, abortController.signal)
-            .then((result) => {
-              if (abortController.signal.aborted) return;
-              setOptions((prevOptions) => {
-                let newOptions: PageSelectOption<ValueT>[];
-                if (prevOptions) {
-                  newOptions = [...prevOptions, ...result.options];
-                } else {
-                  newOptions = result.options;
-                }
-                if (result.total === 1) {
-                  onSelect(() => newOptions.map((option) => option.value));
-                }
-                return newOptions;
-              });
-              setTotal(result.total);
-            })
-            .catch((err) => {
-              if (abortController.signal.aborted) return;
-              if (err instanceof Error) {
-                setLoadingError(err);
-              } else {
-                setLoadingError(new Error(t('Unknown error')));
-              }
-            })
-            .finally(() => {
-              if (abortController.signal.aborted) return;
-              setLoading(false);
-            });
-        } catch (err) {
-          if (err instanceof Error) {
-            setLoadingError(err);
-          } else {
-            setLoadingError(new Error(t('Unknown error')));
-          }
-          setLoading(false);
+  const activeAbortController = useRef<AbortController | null>(null);
+  const queryHandler = useCallback(() => {
+    if (activeAbortController.current) {
+      activeAbortController.current.abort();
+    }
+    const abortController = new AbortController();
+    activeAbortController.current = abortController;
+    setLoading(() => {
+      setAllLoaded(false);
+      setLoadingError(undefined);
+      setOptions((prevOptions) => {
+        if (prevOptions) {
+          return prevOptions;
+        } else {
+          return undefined;
         }
-        return true;
       });
+      void queryOptions({
+        next: nextRef.current!,
+        signal: abortController.signal,
+        search: searchValue,
+      })
+        .then((result) => {
+          if (abortController.signal.aborted) return;
+          nextRef.current = result.next;
+          if (!result.remaining) {
+            setAllLoaded(true);
+          }
+          setOptions((prevOptions) => {
+            if (abortController.signal.aborted) return prevOptions;
+            let newOptions: PageSelectOption<ValueT>[] = [
+              ...(prevOptions ?? []),
+              ...result.options,
+            ];
+            const uniqueValues = new Set<ValueT>();
+            newOptions = newOptions.filter((option) => {
+              if (uniqueValues.has(option.value)) return false;
+              uniqueValues.add(option.value);
+              return true;
+            });
+            newOptions.sort((a, b) => {
+              const lhs = a.label.toLowerCase();
+              const rhs = b.label.toLowerCase();
+              if (lhs < rhs) return -1;
+              if (lhs > rhs) return 1;
+              return 0;
+            });
+            setTotal(result.remaining + newOptions.length);
+            return newOptions;
+          });
+        })
+        .catch((err) => {
+          if (abortController.signal.aborted) return;
+          setLoadingError(err instanceof Error ? err : new Error(t('Unknown error')));
+        })
+        .finally(() => {
+          if (abortController.signal.aborted) return;
+          setLoading(false);
+        });
+      return true;
+    });
+    return () => abortController.abort();
+  }, [queryOptions, searchValue, t]);
+
+  const onLoadMore = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      queryHandler();
     },
-    [abortController.signal, onSelect, queryOptions, t]
+    [queryHandler]
   );
 
-  useEffect(() => queryHandler(page), [page, queryHandler]);
+  const onReset = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setTotal(0);
+      setOptions([]);
+      nextRef.current = undefined;
+      queryHandler();
+    },
+    [queryHandler]
+  );
 
-  const uniqueOptions = useMemo(() => {
-    if (options) {
-      const uniqueValues = new Set<ValueT>();
-      return options.filter((option) => {
-        if (uniqueValues.has(option.value)) {
-          return false;
-        }
-        uniqueValues.add(option.value);
-        return true;
-      });
+  useEffect(() => {
+    if (open) {
+      setTotal(0);
+      setOptions([]);
+      nextRef.current = undefined;
+      queryHandler();
     }
-    return options;
-  }, [options]);
-
-  const uniqueTotal = useMemo(() => {
-    if (uniqueOptions) {
-      return total - (options ? options.length : 0) + uniqueOptions.length;
-    }
-    return total;
-  }, [options, total, uniqueOptions]);
+  }, [open, queryHandler]);
 
   const footer = (
     <Stack hasGutter>
-      {loading ? (
-        <Flex alignItems={{ default: 'alignItemsCenter' }} spaceItems={{ default: 'spaceItemsMd' }}>
-          <FlexItem>
-            <Spinner size="md" />
-          </FlexItem>
-          <FlexItem id="loading">{t('Loading...')}</FlexItem>
-        </Flex>
-      ) : (
-        <Split hasGutter>
-          <SplitItem isFilled>
-            {options?.length !== total && (
-              <Button
-                id="load-more"
-                variant="link"
-                isInline
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  setPage((page) => page + 1);
-                }}
-                size="sm"
-              >
-                {t('Load more')}
-              </Button>
+      <Flex>
+        <FlexItem grow={{ default: 'grow' }}>
+          <ActionList>
+            {props.onBrowse && (
+              <ActionListItem>
+                <Button
+                  id="browse"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setOpen(false);
+                    props.onBrowse?.();
+                  }}
+                >
+                  {t('Browse')}
+                </Button>
+              </ActionListItem>
             )}
-          </SplitItem>
-          <SplitItem>
-            {t('{{count}} of {{total}}', {
-              count: uniqueOptions?.length ?? 0,
-              total: uniqueTotal,
+            {!allLoaded && (
+              <ActionListItem>
+                <Button
+                  id="load-more"
+                  isLoading={loading}
+                  onClick={onLoadMore}
+                  isDisabled={loading}
+                >
+                  {loading ? t('Loading...') : t('Load more')}
+                </Button>
+              </ActionListItem>
+            )}
+          </ActionList>
+        </FlexItem>
+        {!allLoaded && total !== 0 && (
+          <FlexItem>
+            {t('Loaded {{count}} of {{total}}', {
+              count: options?.length ?? 0,
+              total: total,
             })}
-          </SplitItem>
-        </Split>
-      )}
+          </FlexItem>
+        )}
+      </Flex>
       {props.footer}
     </Stack>
   );
-
-  if (options) {
-    return (
-      <PageMultiSelect
-        id={props.id}
-        icon={props.icon}
-        placeholder={props.placeholder}
-        options={uniqueOptions ?? []}
-        values={props.values}
-        onSelect={props.onSelect}
-        variant={props.variant}
-        footer={footer}
-        disableClearSelection={props.disableClearSelection}
-        disableClearChips={props.disableClearChips}
-      />
-    );
-  }
 
   if (loadingError) {
     return (
@@ -200,14 +220,7 @@ export function PageAsyncMultiSelect<
         isDanger
         icon={<SyncAltIcon />}
         iconPosition="right"
-        onClick={(_e) => {
-          setPage((page) => {
-            if (page === 1) {
-              queryHandler(1);
-            }
-            return 1;
-          });
-        }}
+        onClick={onReset}
       >
         {typeof props.queryErrorText === 'function'
           ? props.queryErrorText(loadingError)
@@ -217,16 +230,24 @@ export function PageAsyncMultiSelect<
   }
 
   return (
-    <ButtonFullWidth
+    <PageMultiSelect
       id={props.id}
-      variant="control"
-      isLoading
-      style={{ opacity: 0.7 }}
-      isDisabled
-      disabled
-    >
-      {props.queryPlaceholder ?? t('Loading options...')}
-    </ButtonFullWidth>
+      icon={props.icon}
+      placeholder={props.placeholder}
+      options={options ?? []}
+      values={props.values}
+      onSelect={props.onSelect}
+      variant={props.variant}
+      footer={footer}
+      open={open}
+      setOpen={setOpen}
+      searchValue={searchValue}
+      setSearchValue={setSearch}
+      isLoading={loading}
+      disableClearSelection={props.disableClearSelection}
+      disableClearChips={props.disableClearChips}
+      queryLabel={props.queryLabel}
+    />
   );
 }
 

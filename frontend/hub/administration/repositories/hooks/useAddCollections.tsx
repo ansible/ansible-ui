@@ -1,41 +1,36 @@
-import { AnsibleAnsibleRepositoryResponse as AnsibleRepository } from '../../../interfaces/generated/AnsibleAnsibleRepositoryResponse';
-import { Repository } from '../Repository';
 import { Modal } from '@patternfly/react-core';
 import { usePageDialogs } from '../../../../../framework';
-import { useHubView } from '../../../common/useHubView';
 import { CollectionVersionSearch } from '../../../collections/Collection';
 import { hubAPI } from '../../../common/api/formatPath';
 import { collectionKeyFn } from '../../../common/api/hub-api-utils';
+import { useHubView } from '../../../common/useHubView';
+import { AnsibleAnsibleRepositoryResponse as AnsibleRepository } from '../../../interfaces/generated/AnsibleAnsibleRepositoryResponse';
+import { Repository } from '../Repository';
 
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IToolbarFilter, ToolbarFilterType } from '../../../../../framework';
-import { useState } from 'react';
 import { useSelectRepositorySingle } from './useRepositorySelector';
 
-import { useRepoQueryOptions } from './useRepoQueryOptions';
-import { singleSelectBrowseAdapter } from '../../../../../framework/PageToolbar/PageToolbarFilters/ToolbarAsyncSingleSelectFilter';
-import { PageTable } from '../../../../../framework';
-import { collectionId } from '../RepositoryPage/RepositoryCollectionVersion';
 import { ReactNode } from 'react';
-import { useGetPageUrl } from '../../../../../framework';
-import { ITableColumn } from '../../../../../framework';
+import { ITableColumn, PageTable, useGetPageUrl } from '../../../../../framework';
+import { singleSelectBrowseAdapter } from '../../../../../framework/PageToolbar/PageToolbarFilters/ToolbarAsyncSingleSelectFilter';
+import { collectionId } from '../RepositoryPage/RepositoryCollectionVersion';
+import { useRepoQueryOptions } from './useRepoQueryOptions';
 
 import { AnsibleTowerIcon } from '@patternfly/react-icons';
 
 import { TextCell } from '../../../../../framework';
 
-import { HubRoute } from '../../../main/HubRoutes';
-import { useSearchParams } from '../../../../../framework/components/useSearchParams';
 import { Button } from '@patternfly/react-core';
+import { useSearchParams } from '../../../../../framework/components/useSearchParams';
+import { HubRoute } from '../../../main/HubRoutes';
 
-import { requestGet } from '../../../../common/crud/Data';
-import { PulpItemsResponse } from '../../../common/useHubView';
-import { pulpAPI } from '../../../common/api/formatPath';
-import { postRequest } from '../../../../common/crud/Data';
-import { parsePulpIDFromURL } from '../../../common/api/hub-api-utils';
-import { waitForTask } from '../../../common/api/hub-api-utils';
+import { postRequest, requestGet } from '../../../../common/crud/Data';
 import { HubError } from '../../../common/HubError';
+import { pulpAPI } from '../../../common/api/formatPath';
+import { parsePulpIDFromURL, waitForTask } from '../../../common/api/hub-api-utils';
+import { PulpItemsResponse } from '../../../common/useHubView';
 
 export function useAddCollections(repository: Repository, refresh: () => void) {
   const { pushDialog, popDialog } = usePageDialogs();
@@ -251,6 +246,8 @@ function useRepositoryCollectionVersionFiltersAdd(multiDialogs: MultiDialogs) {
         query: 'repository_name',
         queryOptions: repoQueryOptions,
         openBrowse: repoSelector,
+        queryLabel: (value) => value,
+        placeholder: t('Select repositories'),
       },
     ],
     [t, repoSelector, repoQueryOptions]
