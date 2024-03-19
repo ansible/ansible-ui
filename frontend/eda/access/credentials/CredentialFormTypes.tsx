@@ -1,6 +1,5 @@
 import {
   PageFormCheckbox,
-  PageFormDataEditor,
   PageFormSelect,
   PageFormTextArea,
   PageFormTextInput,
