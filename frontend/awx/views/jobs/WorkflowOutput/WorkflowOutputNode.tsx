@@ -34,7 +34,7 @@ const StyledNode = styled(DefaultNode)`
   ${({ hover }) => (hover === true ? `cursor: pointer;` : `cursor: default;`)}
 `;
 
-const jobPaths: { [key: string]: string } = {
+export const jobPaths: { [key: string]: string } = {
   project_update: 'project',
   inventory_update: 'inventory',
   job: 'playbook',
