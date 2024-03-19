@@ -3,11 +3,12 @@ import { InventoryGroup } from '../../../interfaces/InventoryGroup';
 
 describe('InventoryGroups', () => {
   let groupsOptions = 'groups_options.json';
+
   beforeEach(() => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/v2/inventories/**/?order_by=name&page=1&page_size=10',
+        url: '/api/v2/inventories/**/?*',
         hostname: 'localhost',
       },
       {
