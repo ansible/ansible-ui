@@ -30,16 +30,16 @@ describe('host and inventory host', () => {
   it('can create, edit and delete a inventory host', () => {
     cy.visit(`/infrastructure/inventories/inventory/${inventory.id}/details`);
     cy.clickTab(/^Hosts$/, true);
-    createAndEditAndDeleteHost(true, inventory.name);
+    createAndEditAndDeleteHost(true, inventory);
   });
 
   it('can create, edit and delete a host', () => {
     cy.visit(`/infrastructure/hosts`);
-    createAndEditAndDeleteHost(false, inventory.name);
+    createAndEditAndDeleteHost(false, inventory);
   });
 });
 
-function createAndEditAndDeleteHost(inventory_host: boolean, inventory: string) {
+function createAndCheckHost(inventory_host: boolean, inventory: string) {
   const hostName = 'E2E Inventory host ' + randomString(4);
 
   if (inventory_host) {
@@ -72,14 +72,36 @@ function createAndEditAndDeleteHost(inventory_host: boolean, inventory: string) 
   cy.hasDetail(/^Description$/, 'This is the description');
   cy.hasDetail(/^Variables$/, 'test: true');
 
-  // edit
+  return hostName;
+}
+
+function editHost(inventoryID: number, inventory_host: boolean, hostName: string) {
+  if (inventory_host) {
+    cy.visit(
+      `/infrastructure/inventories/inventory/${inventoryID}/hosts/?page=1&perPage=10&sort=name`
+    );
+  } else {
+    cy.visit('/infrastructure/hosts?page=1&perPage=10&sort=name');
+  }
+  cy.searchAndDisplayResource(hostName);
+
   cy.get(`[data-cy='edit-host']`).click();
+  cy.verifyPageTitle('Edit host');
   cy.get('[data-cy="description"]').clear().type('This is the description edited');
-
   cy.get(`[data-cy='Submit']`).click();
-  cy.hasDetail(/^Description$/, 'This is the description edited');
 
-  // delete
+  cy.hasDetail(/^Description$/, 'This is the description edited');
+}
+
+function deleteHost(inventoryID: number, inventory_host: boolean, hostName: string) {
+  if (inventory_host) {
+    cy.visit(
+      `/infrastructure/inventories/inventory/${inventoryID}/hosts/?page=1&perPage=10&sort=name`
+    );
+  } else {
+    cy.visit('/infrastructure/hosts?page=1&perPage=10&sort=name');
+  }
+  cy.contains(hostName).click();
   cy.selectDetailsPageKebabAction('delete-host');
 
   if (inventory_host) {
@@ -90,4 +112,14 @@ function createAndEditAndDeleteHost(inventory_host: boolean, inventory: string) 
     cy.searchAndDisplayResource(hostName);
     cy.contains('No results found');
   }
+}
+
+function createAndEditAndDeleteHost(inventory_host: boolean, inventory: Inventory) {
+  //create
+  const hostName = createAndCheckHost(inventory_host, inventory.name);
+
+  // edit
+  editHost(inventory.id, inventory_host, hostName);
+  // delete
+  deleteHost(inventory.id, inventory_host, hostName);
 }
