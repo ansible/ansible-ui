@@ -76,7 +76,6 @@ export function useInventoriesHostsColumns(options?: {
     if (params.inventory_type === 'inventory') {
       columns = [
         ...columns,
-        nameColumn,
         descriptionColumn,
         relatedGroupColumn,
         createdColumn,
