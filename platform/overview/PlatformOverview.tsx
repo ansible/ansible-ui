@@ -31,7 +31,7 @@ export function PlatformOverview() {
       <PageHeader
         title={t(`Welcome to the Ansible Automation Platform`)}
         description={t(
-          'Empower, Automate, Connect: Unleash Possibilities with the Ansible Automation Platform.'
+          'Empower, automate, connect: Unleash possibilities with the Ansible Automation Platform.'
         )}
         controls={
           <Button icon={<CogIcon />} variant="link" onClick={openManageDashboard}>
@@ -47,8 +47,8 @@ export function PlatformOverview() {
                 <PageDashboardCard
                   key={resource.id}
                   width="xxl"
-                  title={t('Quick starts')}
-                  subtitle={t('Learn Ansible automation with hands-on quickstarts.')}
+                  title={t('Quick Starts')}
+                  subtitle={t('Learn Ansible automation with hands-on quick starts.')}
                   canCollapse
                 >
                   <Divider />
