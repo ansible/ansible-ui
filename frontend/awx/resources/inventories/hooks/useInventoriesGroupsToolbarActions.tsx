@@ -43,26 +43,35 @@ export function useInventoriesGroupsToolbarActions(view: IAwxView<InventoryGroup
   );
 
   return useMemo<IPageAction<InventoryGroup>[]>(
-    () => [
+    () => {
+      
+      const actions : IPageAction<InventoryGroup>[] = [];
+
+      if (params.inventory_type === 'inventory')
       {
-        type: PageActionType.Button,
-        selection: PageActionSelection.None,
-        variant: ButtonVariant.primary,
-        isPinned: true,
-        icon: PlusCircleIcon,
-        label: t('Create group'),
-        onClick: () =>
-          pageNavigate(String(AwxRoute.InventoryGroupCreate), {
-            params: { inventory_type: params.inventory_type, id: params.id },
-          }),
-        isDisabled: () =>
-          canCreateGroup
-            ? undefined
-            : t(
-                'You do not have permission to create a group. Please contact your organization administrator if there is an issue with your access.'
-              ),
-      },
-      {
+        actions.push(
+          {
+            type: PageActionType.Button,
+            selection: PageActionSelection.None,
+            variant: ButtonVariant.primary,
+            isPinned: true,
+            icon: PlusCircleIcon,
+            label: t('Create group'),
+            onClick: () =>
+              pageNavigate(String(AwxRoute.InventoryGroupCreate), {
+                params: { inventory_type: params.inventory_type, id: params.id },
+              }),
+            isDisabled: () =>
+              canCreateGroup
+                ? undefined
+                : t(
+                    'You do not have permission to create a group. Please contact your organization administrator if there is an issue with your access.'
+                  ),
+          }
+        );
+      }
+
+      actions.push({
         type: PageActionType.Button,
         selection: PageActionSelection.None,
         variant: ButtonVariant.secondary,
@@ -77,21 +86,29 @@ export function useInventoriesGroupsToolbarActions(view: IAwxView<InventoryGroup
               : t(
                   'You do not have permission to run an ad hoc command. Please contact your organization administrator if there is an issue with your access.'
                 ),
-      },
-      { type: PageActionType.Seperator },
+      });
+
+      if (params.inventory_type === 'inventory')
       {
-        type: PageActionType.Button,
-        selection: PageActionSelection.Multiple,
-        icon: TrashIcon,
-        label: t('Delete selected groups'),
-        onClick: deleteGroups,
-        isDanger: true,
-        isDisabled:
-          view.selectedItems.length === 0
-            ? t('Select at least one item from the list')
-            : (groups: InventoryGroup[]) => cannotDeleteResources(groups, t),
-      },
-    ],
+        actions.push( { type: PageActionType.Seperator });
+
+        actions.push(
+          {
+            type: PageActionType.Button,
+            selection: PageActionSelection.Multiple,
+            icon: TrashIcon,
+            label: t('Delete selected groups'),
+            onClick: deleteGroups,
+            isDanger: true,
+            isDisabled:
+              view.selectedItems.length === 0
+                ? t('Select at least one item from the list')
+                : (groups: InventoryGroup[]) => cannotDeleteResources(groups, t),
+          }
+        );
+      }
+      return actions;
+    },
     [
       t,
       deleteGroups,
