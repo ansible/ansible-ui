@@ -80,7 +80,11 @@ export function translateVersion(name: string | undefined, t: TFunction) {
     pulp_core_version: t`Pulp Core version`,
     pulp_ansible_version: t`Pulp Ansible Version`,
     pulp_container_version: t`Pulp Container Version`,
-    available_versions: t`Ansible Versions`,
+    version: t`Version`,
+    active_node: t`Active Node`,
+    install_uuid: t`Install UUID`,
+    instances: t`Instances`,
+    instance_groups: t`Instance Groups`,
   };
 
   return VERSION_NAMES[name as string] || name;
