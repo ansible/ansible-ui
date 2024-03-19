@@ -42,82 +42,72 @@ export function useInventoriesGroupsToolbarActions(view: IAwxView<InventoryGroup
     groupOptions && groupOptions.actions && groupOptions.actions['POST']
   );
 
-  return useMemo<IPageAction<InventoryGroup>[]>(
-    () => {
-      
-      const actions : IPageAction<InventoryGroup>[] = [];
+  return useMemo<IPageAction<InventoryGroup>[]>(() => {
+    const actions: IPageAction<InventoryGroup>[] = [];
 
-      if (params.inventory_type === 'inventory')
-      {
-        actions.push(
-          {
-            type: PageActionType.Button,
-            selection: PageActionSelection.None,
-            variant: ButtonVariant.primary,
-            isPinned: true,
-            icon: PlusCircleIcon,
-            label: t('Create group'),
-            onClick: () =>
-              pageNavigate(String(AwxRoute.InventoryGroupCreate), {
-                params: { inventory_type: params.inventory_type, id: params.id },
-              }),
-            isDisabled: () =>
-              canCreateGroup
-                ? undefined
-                : t(
-                    'You do not have permission to create a group. Please contact your organization administrator if there is an issue with your access.'
-                  ),
-          }
-        );
-      }
-
+    if (params.inventory_type === 'inventory') {
       actions.push({
         type: PageActionType.Button,
         selection: PageActionSelection.None,
-        variant: ButtonVariant.secondary,
+        variant: ButtonVariant.primary,
         isPinned: true,
-        label: t('Run Command'),
-        onClick: () => pageNavigate(AwxRoute.Inventories),
+        icon: PlusCircleIcon,
+        label: t('Create group'),
+        onClick: () =>
+          pageNavigate(String(AwxRoute.InventoryGroupCreate), {
+            params: { inventory_type: params.inventory_type, id: params.id },
+          }),
         isDisabled: () =>
+          canCreateGroup
+            ? undefined
+            : t(
+                'You do not have permission to create a group. Please contact your organization administrator if there is an issue with your access.'
+              ),
+      });
+    }
+
+    actions.push({
+      type: PageActionType.Button,
+      selection: PageActionSelection.None,
+      variant: ButtonVariant.secondary,
+      isPinned: true,
+      label: t('Run Command'),
+      onClick: () => pageNavigate(AwxRoute.Inventories),
+      isDisabled: () =>
+        view.selectedItems.length === 0
+          ? t('Select at least one item from the list')
+          : canRunAdHocCommand
+            ? undefined
+            : t(
+                'You do not have permission to run an ad hoc command. Please contact your organization administrator if there is an issue with your access.'
+              ),
+    });
+
+    if (params.inventory_type === 'inventory') {
+      actions.push({ type: PageActionType.Seperator });
+
+      actions.push({
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
+        icon: TrashIcon,
+        label: t('Delete selected groups'),
+        onClick: deleteGroups,
+        isDanger: true,
+        isDisabled:
           view.selectedItems.length === 0
             ? t('Select at least one item from the list')
-            : canRunAdHocCommand
-              ? undefined
-              : t(
-                  'You do not have permission to run an ad hoc command. Please contact your organization administrator if there is an issue with your access.'
-                ),
+            : (groups: InventoryGroup[]) => cannotDeleteResources(groups, t),
       });
-
-      if (params.inventory_type === 'inventory')
-      {
-        actions.push( { type: PageActionType.Seperator });
-
-        actions.push(
-          {
-            type: PageActionType.Button,
-            selection: PageActionSelection.Multiple,
-            icon: TrashIcon,
-            label: t('Delete selected groups'),
-            onClick: deleteGroups,
-            isDanger: true,
-            isDisabled:
-              view.selectedItems.length === 0
-                ? t('Select at least one item from the list')
-                : (groups: InventoryGroup[]) => cannotDeleteResources(groups, t),
-          }
-        );
-      }
-      return actions;
-    },
-    [
-      t,
-      deleteGroups,
-      pageNavigate,
-      params.inventory_type,
-      params.id,
-      canCreateGroup,
-      canRunAdHocCommand,
-      view.selectedItems.length,
-    ]
-  );
+    }
+    return actions;
+  }, [
+    t,
+    deleteGroups,
+    pageNavigate,
+    params.inventory_type,
+    params.id,
+    canCreateGroup,
+    canRunAdHocCommand,
+    view.selectedItems.length,
+  ]);
 }

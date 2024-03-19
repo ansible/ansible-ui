@@ -27,25 +27,20 @@ export function useInventoriesGroupsColumns(options?: {
   const createdColumn = useCreatedColumn(options);
   const modifiedColumn = useModifiedColumn(options);
   const relatedGroupColumn = useRelatedGroupsColumn();
-  
-  const tableColumns = useMemo<ITableColumn<InventoryGroup>[]>(
-    () => {
-            let columns : ITableColumn<InventoryGroup>[] = [];
-            
-            if (params.inventory_type === 'inventory')
-            {
-              columns = [nameColumn, relatedGroupColumn, createdColumn, modifiedColumn];
-            }
 
-            if (params.inventory_type === 'constructed_inventory')
-            {
-              columns = [nameColumn];
-            }
+  const tableColumns = useMemo<ITableColumn<InventoryGroup>[]>(() => {
+    let columns: ITableColumn<InventoryGroup>[] = [];
 
-            return columns;
-          },
-    [nameColumn, relatedGroupColumn, createdColumn, modifiedColumn, params.inventory_type]
-  );
+    if (params.inventory_type === 'inventory') {
+      columns = [nameColumn, relatedGroupColumn, createdColumn, modifiedColumn];
+    }
+
+    if (params.inventory_type === 'constructed_inventory') {
+      columns = [nameColumn];
+    }
+
+    return columns;
+  }, [nameColumn, relatedGroupColumn, createdColumn, modifiedColumn, params.inventory_type]);
   return tableColumns;
 }
 
