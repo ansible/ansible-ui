@@ -8,11 +8,11 @@ export function AddOrganizationUsers() {
       label: 'Select User',
       inputs: <AwxSelectUsersStep />,
     },
-    { id: 'review', label: 'Review', element: <div>hi</div> },
+    { id: 'review', label: 'Review', element: <div>TODO</div> },
   ];
 
-  const onSubmit = (data) => {
-    console.log(data);
+  const onSubmit = async (/* data */) => {
+    // console.log(data);
   };
 
   return <PageWizard steps={steps} onSubmit={onSubmit} disableGrid />;
