@@ -1,18 +1,18 @@
-import { useTranslation } from 'react-i18next';
 import { useMemo } from 'react';
-import { PageHeader, PageLayout, PageTable, IToolbarFilter } from '../../../../framework';
+import { useTranslation } from 'react-i18next';
+import { IToolbarFilter, PageHeader, PageLayout, PageTable } from '../../../../framework';
+import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
 import { awxAPI } from '../../common/api/awx-utils';
+import {
+  useAddressToolbarFilter,
+  useHostnameToolbarFilter,
+} from '../../common/awx-toolbar-filters';
 import { useAwxView } from '../../common/useAwxView';
 import { Instance } from '../../interfaces/Instance';
 import { useInstanceRowActions } from './hooks/useInstanceRowActions';
 import { useInstanceToolbarActions } from './hooks/useInstanceToolbarActions';
 import { useInstancesColumns } from './hooks/useInstancesColumns';
 import { useInstancesFilters } from './hooks/useInstancesFilter';
-import {
-  useAddressToolbarFilter,
-  useHostnameToolbarFilter,
-} from '../../common/awx-toolbar-filters';
-import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
 
 export function Instances() {
   const { t } = useTranslation();

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { ReactNode } from 'react';
 import {
   PageAsyncQueryErrorText,
   PageAsyncSelectOptionsFn,
@@ -25,7 +25,7 @@ export interface IToolbarAsyncMultiSelectFilter extends ToolbarFilterCommon {
   queryErrorText?: PageAsyncQueryErrorText;
 
   /** The function to query for the label of a value. */
-  queryLabel?: (value: string) => Promise<string | undefined>;
+  queryLabel: (value: string) => ReactNode;
 
   /** The function to open the browse modal. */
   openBrowse?: ToolbarOpenMultiSelectBrowse;
@@ -71,18 +71,4 @@ export function multiSelectBrowseAdapter<T>(
         : []
     );
   };
-}
-
-export function AsyncQueryChip(props: {
-  value: string;
-  queryLabel?: (value: string) => Promise<string | undefined>;
-}) {
-  const { value, queryLabel } = props;
-  const [label, setLabel] = useState<string | undefined>(undefined);
-  useEffect(() => {
-    if (queryLabel) {
-      void queryLabel(value).then((label) => setLabel(label));
-    }
-  }, [value, queryLabel]);
-  return <>{label || value}</>;
 }

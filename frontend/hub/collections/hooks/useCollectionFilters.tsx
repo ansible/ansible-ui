@@ -62,6 +62,8 @@ export function useCollectionFilters() {
         query: 'repository_name',
         queryOptions: repoQueryOptions,
         openBrowse: repoSelector,
+        queryLabel: (value) => value,
+        placeholder: t('Select repositories'),
       },
     ];
     return filters;

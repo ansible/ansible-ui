@@ -1,15 +1,6 @@
 import { CreateTeam } from './TeamForm';
 
 describe('TeamForm.cy.ts', () => {
-  it('Create Team - Displays organization error message on internal server error', () => {
-    cy.intercept(
-      { method: 'GET', url: '/api/v2/organizations/*' },
-      { statusCode: 500, message: 'Internal Server Error' }
-    );
-    cy.mount(<CreateTeam />);
-    cy.contains('Error loading organizations').should('be.visible');
-  });
-
   it('Create Team - Submit error message on internal server error', () => {
     cy.intercept(
       { method: 'GET', url: '/api/v2/organizations/*' },

@@ -1,12 +1,16 @@
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IToolbarFilter, ToolbarFilterType } from '../../../framework';
+import {
+  PageAsyncSelectQueryOptions,
+  PageAsyncSelectQueryResult,
+} from '../../../framework/PageInputs/PageAsyncSelectOptions';
 import { DateRangeFilterPresets } from '../../../framework/PageToolbar/PageToolbarFilters/ToolbarDateRangeFilter';
+import { AsyncQueryLabel } from '../../../framework/components/AsyncQueryLabel';
 import { requestGet } from '../../common/crud/Data';
 import { useOptions } from '../../common/crud/useOptions';
 import { AwxItemsResponse } from '../common/AwxItemsResponse';
 import { awxAPI } from '../common/api/awx-utils';
-import { QueryParams } from '../common/useAwxView';
 import { ActionsResponse, OptionsResponse } from '../interfaces/OptionsResponse';
 
 interface DynamicToolbarFiltersProps {
@@ -60,64 +64,100 @@ export function useFilters(actions?: { [key: string]: ActionsResponse }) {
   }, [actions]);
 }
 
-function craftRequestUrl(optionsPath: string, params: QueryParams | undefined, page: number) {
-  let url = awxAPI`/${optionsPath}/?page=${page.toString()}&page_size=100`;
-
-  if (params) {
-    const queryParams = Object.entries(params)
-      .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
-      .join('&');
-    url += '&' + queryParams;
+function craftRequestUrl(
+  queryOptions: PageAsyncSelectQueryOptions,
+  optionsPath: string,
+  labelKey: string,
+  queryKey: string,
+  queryParams?: Record<string, string>
+) {
+  let url = awxAPI`/${optionsPath}/?page_size=10&order_by=${queryKey}`;
+  if (queryOptions.next) {
+    url += `&${queryKey}__gt=${queryOptions.next}`;
   }
-
+  if (queryOptions.search) {
+    url += `&${labelKey}__icontains=${queryOptions.search}`;
+  }
+  if (queryParams) {
+    Object.entries(queryParams).forEach(([key, value]) => {
+      url += `&${key}=${value}`;
+    });
+  }
   return url;
 }
 
-export function useDynamicToolbarFilters<T>(props: DynamicToolbarFiltersProps) {
+export function useDynamicToolbarFilters(props: DynamicToolbarFiltersProps) {
   const { optionsPath, preSortedKeys, preFilledValueKeys, additionalFilters } = props;
   const { t } = useTranslation();
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/${optionsPath}/`);
   const filterableFields = useFilters(data?.actions?.GET);
-  const queryResource = useCallback(
-    async (page: number, signal: AbortSignal, key: string) => {
+  const queryResource = useCallback<
+    (
+      queryOptions: PageAsyncSelectQueryOptions,
+      key: string
+    ) => Promise<PageAsyncSelectQueryResult<string>>
+  >(
+    async (queryOptions: PageAsyncSelectQueryOptions, key: string) => {
       const knownAwxFilterKey = knownAwxFilterKeys[key];
       if (knownAwxFilterKey) {
-        const resources = await requestGet<AwxItemsResponse<T>>(
-          craftRequestUrl(knownAwxFilterKey.resourceType, knownAwxFilterKey.params, page),
-          signal
+        const labelKey = knownAwxFilterKey.labelKey || 'name';
+        const valueKey = knownAwxFilterKey.valueKey || 'id';
+        const itemsResponse = await requestGet<
+          AwxItemsResponse<Record<string, string | number | undefined>>
+        >(
+          craftRequestUrl(
+            queryOptions,
+            knownAwxFilterKey.apiPath,
+            labelKey,
+            valueKey,
+            knownAwxFilterKey.queryParams
+          ),
+          queryOptions.signal
         );
+        let next: string = '';
+        if (itemsResponse.results.length > 0) {
+          const value = itemsResponse.results[itemsResponse.results.length - 1][valueKey];
+          next = value?.toString() ?? '';
+        }
         return {
-          total: resources.count,
-          options: resources.results.map((resource) => ({
-            label: resource[knownAwxFilterKey.labelKey as keyof typeof resource]?.toString() || '',
-            value: resource[knownAwxFilterKey.valueKey as keyof typeof resource]?.toString() || '',
-          })),
+          remaining: itemsResponse.count - itemsResponse.results.length,
+          options: itemsResponse.results.map((resource) => {
+            const label = resource[labelKey]?.toString() || '';
+            return { label, value: resource[valueKey]?.toString() || '' };
+          }),
+          next,
         };
       } else {
-        const resources = await requestGet<AwxItemsResponse<T>>(
-          craftRequestUrl(optionsPath, undefined, page),
-          signal
-        );
+        const itemsResponse = await requestGet<
+          AwxItemsResponse<Record<string, string | number | undefined>>
+        >(craftRequestUrl(queryOptions, optionsPath, key, key), queryOptions.signal);
+        let next: string = '';
+        if (itemsResponse.results.length > 0) {
+          const value = itemsResponse.results[itemsResponse.results.length - 1][key];
+          next = value?.toString() ?? '';
+        }
         return {
-          total: resources.count,
-          options: resources.results.map((resource) => ({
-            label: resource[key as keyof typeof resource]?.toString() || '',
-            value: resource[key as keyof typeof resource]?.toString() || '',
+          remaining: itemsResponse.count - itemsResponse.results.length,
+          options: itemsResponse.results.map((resource) => ({
+            label: resource[key]?.toString() || '',
+            value: resource[key]?.toString() || '',
           })),
+          next,
         };
       }
     },
     [optionsPath]
   );
-  const queryResourceLabel = useCallback(async (value: string, key: string) => {
+  const queryResourceLabel = useCallback((value: string, key: string) => {
     const knownAwxFilterKey = knownAwxFilterKeys[key];
     if (knownAwxFilterKey) {
-      try {
-        const resource = await requestGet<T>(awxAPI`/${knownAwxFilterKey.resourceType}/${value}/`);
-        return resource[knownAwxFilterKey.labelKey as keyof typeof resource]?.toString() || '';
-      } catch {
-        return value;
-      }
+      return (
+        <AsyncQueryLabel
+          url={awxAPI`/${knownAwxFilterKey.apiPath}/`}
+          id={value}
+          field={knownAwxFilterKey.labelKey}
+        />
+      );
     }
     return value;
   }, []);
@@ -146,9 +186,7 @@ export function useDynamicToolbarFilters<T>(props: DynamicToolbarFiltersProps) {
             type: ToolbarFilterType.MultiSelect,
             placeholder: t(`Select {{field}}`, { field: field.label.toLowerCase() }),
             query: field.query,
-            options: field.options
-              ? field.options.map((option) => ({ label: option.label, value: option.value }))
-              : [],
+            options: field.options ? field.options : [],
             disableSortOptions: true,
           });
         } else if (field.type === 'boolean') {
@@ -186,8 +224,7 @@ export function useDynamicToolbarFilters<T>(props: DynamicToolbarFiltersProps) {
             query: field.query,
             label: t(field.label),
             type: ToolbarFilterType.AsyncMultiSelect,
-            queryOptions: (page: number, signal: AbortSignal) =>
-              queryResource(page, signal, field.key),
+            queryOptions: (options) => queryResource(options, field.key),
             placeholder: t(`Select {{field}}`, { field: field.label.toLowerCase() }),
             queryPlaceholder: t('Loading...'),
             queryErrorText: t('Failed to load options.'),
@@ -239,52 +276,44 @@ export function useDynamicToolbarFilters<T>(props: DynamicToolbarFiltersProps) {
   return filters;
 }
 
-export interface AsyncKeyOptions {
+interface AsyncKeyOptions {
   /** The API endpoint for the options that will be loaded asynchronously
    * @example 'execution_environments'
    */
-  resourceType: string;
+  apiPath: string;
+
   /**
-   * The query parameters for the options that will be loaded asynchronously
-   * @example { order_by: '-created' }
-   */
-  params?: QueryParams;
-  /**
-   * The key to be used as the label for the resource
-   * @example 'name'
+   * The key to be used as the label for the resource.
+   * @default 'name'
    */
   labelKey?: string;
+
   /**
-   * The key to be used as the value for the resource
-   * @example 'id'
+   * The key to be used as the value for the resource.
+   * @default 'id'
    */
   valueKey?: string;
+
+  /**
+   * Additional query parameters to be used when fetching the options
+   */
+  queryParams?: Record<string, string>;
 }
 
 /** A list of known keys that require querying specific endpoints. We pre-fetch these values if available */
 export const knownAwxFilterKeys: Record<string, AsyncKeyOptions> = {
-  organization: {
-    resourceType: 'organizations',
-    params: { order_by: '-created' },
-    labelKey: 'name',
-    valueKey: 'id',
+  organization: { apiPath: 'organizations' },
+  project: { apiPath: 'projects' },
+  execution_environment: { apiPath: 'execution_environments' },
+  unified_job_template: { apiPath: 'unified_job_templates' },
+  execution_node: {
+    labelKey: 'hostname',
+    apiPath: 'instances',
+    queryParams: { node_type: 'execution' },
   },
-  project: {
-    resourceType: 'projects',
-    params: { order_by: '-created' },
-    labelKey: 'name',
-    valueKey: 'id',
-  },
-  execution_environment: {
-    resourceType: 'execution_environments',
-    params: { order_by: '-created' },
-    labelKey: 'name',
-    valueKey: 'id',
-  },
-  unified_job_template: {
-    resourceType: 'unified_job_templates',
-    params: { order_by: '-created' },
-    labelKey: 'name',
-    valueKey: 'id',
+  controller_node: {
+    labelKey: 'hostname',
+    apiPath: 'instances',
+    queryParams: { node_type: 'control' },
   },
 };

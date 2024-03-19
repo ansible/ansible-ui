@@ -1,13 +1,14 @@
-import { Button } from '@patternfly/react-core';
+import { Spinner } from '@patternfly/react-core';
 import { useCallback } from 'react';
 import { FieldPath, FieldValues, PathValue, useFormContext, useWatch } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { ITableColumn, IToolbarFilter, usePageDialog } from '../../../framework';
 import { SingleSelectDialog } from '../../../framework/PageDialogs/SingleSelectDialog';
 import { PageFormAsyncSingleSelect } from '../../../framework/PageForm/Inputs/PageFormAsyncSingleSelect';
 import { PageAsyncSelectOptionsFn } from '../../../framework/PageInputs/PageAsyncSelectOptions';
-import { PageSingleSelectContext } from '../../../framework/PageInputs/PageSingleSelect';
 import { useID } from '../../../framework/hooks/useID';
 import { requestGet } from '../../common/crud/Data';
+import { useGetItem } from '../../common/crud/useGet';
 import { AwxItemsResponse } from './AwxItemsResponse';
 import { useAwxView } from './useAwxView';
 
@@ -34,20 +35,29 @@ export function PageFormSingleSelectAwxResource<
   const id = useID(props);
 
   const queryOptions = useCallback<PageAsyncSelectOptionsFn<PathValue<FormData, Name>>>(
-    async (page: number, signal: AbortSignal) => {
-      const response = await requestGet<AwxItemsResponse<Resource>>(
-        props.url.concat(`?page_size=200&page=${page}`),
-        signal
-      );
-      return Promise.resolve({
-        total: response.count,
-        options:
-          response.results?.map((resource) => ({
-            label: resource.name,
-            value: resource.id as PathValue<FormData, Name>,
-            description: resource.description,
-          })) ?? [],
-      });
+    async (options) => {
+      try {
+        let url = props.url + `?page_size=10&order_by=name`;
+        if (options.next) url = url + `&name__gt=${options.next}`;
+        if (options.search) url = url + `&name__icontains=${options.search}`;
+        const response = await requestGet<AwxItemsResponse<Resource>>(url, options.signal);
+        return {
+          remaining: response.count - response.results.length,
+          options:
+            response.results?.map((resource) => ({
+              label: resource.name,
+              value: resource.id as PathValue<FormData, Name>,
+              description: resource.description,
+            })) ?? [],
+          next: response.results[response.results.length - 1]?.name,
+        };
+      } catch (error) {
+        return {
+          remaining: 0,
+          options: [],
+          next: 0,
+        };
+      }
     },
     [props.url]
   );
@@ -71,6 +81,11 @@ export function PageFormSingleSelectAwxResource<
     [props.label, props.tableColumns, props.toolbarFilters, props.url, setDialog, value]
   );
 
+  const queryLabel = useCallback(
+    (value: Value) => <AwxAsyncName url={props.url} id={value as unknown as number} />,
+    [props.url]
+  );
+
   return (
     <PageFormAsyncSingleSelect<FormData, Name>
       id={id}
@@ -83,26 +98,12 @@ export function PageFormSingleSelectAwxResource<
       isRequired={props.isRequired}
       isDisabled={props.isDisabled}
       helperText={props.helperText}
-      footer={
-        <PageSingleSelectContext.Consumer>
-          {(context) => {
-            return (
-              <Button
-                variant="link"
-                onClick={() => {
-                  context.setOpen(false);
-                  openSelectDialog((resource) => {
-                    setValue(props.name, resource.id as PathValue<FormData, Name>);
-                  });
-                }}
-                tabIndex={0}
-              >
-                Browse
-              </Button>
-            );
-          }}
-        </PageSingleSelectContext.Consumer>
+      onBrowse={() =>
+        openSelectDialog((resource) =>
+          setValue(props.name, resource.id as PathValue<FormData, Name>)
+        )
       }
+      queryLabel={queryLabel}
     />
   );
 }
@@ -133,4 +134,13 @@ function SelectResource<
       view={view}
     />
   );
+}
+
+function AwxAsyncName(props: { url: string; id: number; nameProp?: string }) {
+  const { t } = useTranslation();
+  const { data, isLoading, error } = useGetItem<Record<string, string>>(props.url, props.id);
+  if (isLoading) return <Spinner size="md" />;
+  if (error) return t('Not found');
+  if (!data) return t('Not found');
+  return data[props.nameProp ?? 'name'];
 }

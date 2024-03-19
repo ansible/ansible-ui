@@ -42,6 +42,8 @@ export function useApprovalFilters() {
         query: 'repository_name',
         queryOptions: repoQueryOptions,
         openBrowse: repoSelector,
+        queryLabel: (value) => value,
+        placeholder: t('Select repositories'),
       },
       {
         key: 'status',

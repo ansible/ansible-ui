@@ -8,7 +8,7 @@ Cypress.Commands.add('singleSelectBy', (selector: string, value: string) => {
     .its('body')
     .find('.pf-v5-c-menu__content')
     .within(() => {
-      cy.selectLoadAll();
+      // cy.selectLoadAll();
       cy.getByDataCy('search-input').type(value);
       cy.contains('.pf-v5-c-menu__item-text', value).parent().click();
     });
@@ -28,7 +28,7 @@ Cypress.Commands.add('multiSelectBy', (selector: string, values: string[]) => {
     .its('body')
     .find('.pf-v5-c-menu__content')
     .within(() => {
-      cy.selectLoadAll();
+      // cy.selectLoadAll();
       for (const value of values) {
         cy.getByDataCy('search-input').within(() => {
           cy.get('input').clear().type(value);
