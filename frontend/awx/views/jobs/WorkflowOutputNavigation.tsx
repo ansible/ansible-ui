@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import {
   MenuToggle,
   MenuToggleElement,
@@ -21,17 +21,11 @@ interface WorkflowOutputNavigationProps {
 export function WorkflowOutputNavigation(props: WorkflowOutputNavigationProps) {
   const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [selected, setSelected] = useState<string | undefined>();
-  const [filteredNodes, setFilteredNodes] = useState<WorkflowJobNode[]>([]);
-
   const { workflowNodes } = props;
 
-  useEffect(() => {
-    setFilteredNodes(workflowNodes);
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [workflowNodes]);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [selected, setSelected] = useState<string | undefined>();
+  const [filteredNodes, setFilteredNodes] = useState<WorkflowJobNode[]>(workflowNodes);
 
   const totalResults = workflowNodes.length || 0;
 
@@ -123,7 +117,7 @@ export function WorkflowOutputNavigation(props: WorkflowOutputNavigationProps) {
       </SelectGroup>
       <SelectGroup label={t`Workflow nodes`} key="workflow-nodes" data-cy="workflow-nodes">
         <SelectList>
-          {filteredNodes?.map((node: WorkflowJobNode) => (
+          {filteredNodes.map((node: WorkflowJobNode) => (
             <SelectOption
               key={node.id}
               to={
