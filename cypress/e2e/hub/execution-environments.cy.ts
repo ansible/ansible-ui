@@ -79,7 +79,7 @@ describe('Execution Environments', () => {
             cy.get('[data-cy="actions-dropdown"]')
               .click()
               .then(() => {
-                cy.get(`[data-cy="delete-environment"]`).click();
+                cy.get(`[data-cy="delete-execution-environment"]`).click();
               });
           });
           cy.get('[data-ouia-component-id="Permanently delete execution environments"]').within(
