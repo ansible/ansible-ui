@@ -1,5 +1,6 @@
 import { randomString } from '../../../../framework/utils/random-string';
 import { Credential } from '../../../../frontend/awx/interfaces/Credential';
+import { ExecutionEnvironment } from '../../../../frontend/awx/interfaces/ExecutionEnvironment';
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 import { InventorySource } from '../../../../frontend/awx/interfaces/InventorySource';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
@@ -7,12 +8,14 @@ import { Project } from '../../../../frontend/awx/interfaces/Project';
 
 describe('Inventory source page', () => {
   const credentialName = 'e2e-' + randomString(4);
+  const executionEnvironmentName = 'e2e-' + randomString(4);
 
   let organization: Organization;
   let project: Project;
   let inventory: Inventory;
   let inventorySource: InventorySource;
   let credential: Credential;
+  let executionEnvironment: ExecutionEnvironment;
   before(() => {
     cy.awxLogin();
   });
@@ -30,6 +33,9 @@ describe('Inventory source page', () => {
         });
       });
 
+      cy.createAwxExecutionEnvironment({ name: executionEnvironmentName }).then((ee) => {
+        executionEnvironment = ee;
+      });
       cy.createAWXCredential({
         name: credentialName,
         kind: 'gce',
@@ -45,6 +51,7 @@ describe('Inventory source page', () => {
     cy.deleteAwxProject(project, { failOnStatusCode: false });
     cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
     cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
+    cy.deleteAwxExecutionEnvironment(executionEnvironment, { failOnStatusCode: false });
     cy.deleteAwxCredential(credential, { failOnStatusCode: false });
   });
 
@@ -70,7 +77,17 @@ describe('Inventory source page', () => {
     cy.selectDropdownOptionByResourceName('source_control_type', 'Sourced from a Project');
     cy.selectDropdownOptionByResourceName('project', project.name);
     cy.selectDropdownOptionByResourceName('inventory', 'Dockerfile');
-    cy.getBy('.pf-v5-c-input-group > .pf-v5-c-button').click();
+    cy.getBy('[data-cy="execution-environment-select-form-group"]').within(() => {
+      cy.getBy('.pf-v5-c-input-group > .pf-v5-c-button').click();
+    });
+    cy.getBy('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+      cy.searchAndDisplayResource(executionEnvironmentName);
+      cy.getBy('[data-cy="checkbox-column-cell"] > label').click();
+      cy.contains('button', 'Confirm').click();
+    });
+    cy.getBy('[data-cy="credential-select-form-group"]').within(() => {
+      cy.getBy('.pf-v5-c-input-group > .pf-v5-c-button').click();
+    });
     cy.getBy('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
       cy.searchAndDisplayResource(credentialName);
       cy.getBy('[data-cy="checkbox-column-cell"] > label').click();

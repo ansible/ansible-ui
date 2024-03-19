@@ -775,6 +775,22 @@ Cypress.Commands.add(
 );
 
 Cypress.Commands.add(
+  'deleteAwxExecutionEnvironment',
+  (
+    execution_environment: ExecutionEnvironment,
+    options?: {
+      /** Whether to fail on response codes other than 2xx and 3xx */
+      failOnStatusCode?: boolean;
+    }
+  ) => {
+    cy.awxRequestDelete(
+      awxAPI`/execution_environments/${execution_environment.id.toString()}/`,
+      options
+    );
+  }
+);
+
+Cypress.Commands.add(
   'createEdaSpecificAwxProject',
   (options?: { project?: Partial<Omit<Project, 'id'>> }) => {
     cy.createAwxProject({
