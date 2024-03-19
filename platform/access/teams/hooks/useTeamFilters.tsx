@@ -1,43 +1,34 @@
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 import { IToolbarFilter, ToolbarFilterType } from '../../../../framework';
 import { IToolbarAsyncMultiSelectFilter } from '../../../../framework/PageToolbar/PageToolbarFilters/ToolbarAsyncMultiSelectFilter';
+import { AsyncQueryLabel } from '../../../../framework/components/AsyncQueryLabel';
 import { useNameToolbarFilter } from '../../../../frontend/awx/common/awx-toolbar-filters';
-import { requestGet } from '../../../../frontend/common/crud/Data';
-import { gatewayV1API } from '../../../api/gateway-api-utils';
-import { PlatformItemsResponse } from '../../../interfaces/PlatformItemsResponse';
+import { gatewayAPI } from '../../../api/gateway-api-utils';
+import { useQueryPlatformOptions } from '../../../common/useQueryPlatformOptions';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 
 export function useTeamFilters() {
   const nameToolbarFilter = useNameToolbarFilter();
-  const queryOrganizations = useCallback(async (page: number) => {
-    const organizations = await requestGet<PlatformItemsResponse<PlatformOrganization>>(
-      gatewayV1API`/organizations/?page=${page.toString()}`
-    );
-    return {
-      total: organizations.count,
-      options: organizations.results.map((organization) => ({
-        label: organization.name,
-        value: organization.id.toString(),
-      })),
-    };
-  }, []);
+  const queryOptions = useQueryPlatformOptions<PlatformOrganization, 'name', 'id'>({
+    url: gatewayAPI`/organizations/`,
+    labelKey: 'name',
+    valueKey: 'id',
+    orderQuery: 'order_by',
+  });
   const organizationFilter = useMemo(() => {
     const filter: IToolbarAsyncMultiSelectFilter = {
       key: 'organization',
       query: 'organization',
       label: 'Organization',
       type: ToolbarFilterType.AsyncMultiSelect,
-      queryOptions: queryOrganizations,
-      placeholder: 'Select organization',
+      queryOptions,
+      placeholder: 'Select organizations',
       queryPlaceholder: 'Loading organizations...',
       queryErrorText: 'Failed to load organizations.',
-      queryLabel: (id: string) =>
-        requestGet<PlatformOrganization>(gatewayV1API`/organizations/${id}/`).then(
-          (organization) => organization?.name
-        ),
+      queryLabel: (id: string) => <AsyncQueryLabel id={id} url={gatewayAPI`/organizations/`} />,
     };
     return filter;
-  }, [queryOrganizations]);
+  }, [queryOptions]);
 
   const toolbarFilters = useMemo<IToolbarFilter[]>(
     () => [nameToolbarFilter, organizationFilter],
