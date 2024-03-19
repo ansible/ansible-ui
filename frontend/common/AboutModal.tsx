@@ -74,13 +74,13 @@ export function useAnsibleAboutModal() {
 
 export function translateVersion(name: string | undefined, t: TFunction) {
   const VERSION_NAMES: Record<string, string> = {
-    server_version: t`Server version`,
-    galaxy_ng_version: t`GalaxyNG version`,
-    galaxy_importer_version: t`Galaxy importer version`,
-    pulp_core_version: t`Pulpcore version`,
-    pulp_ansible_version: t`Pulp ansible version`,
-    pulp_container_version: t`Pulp container version`,
-    available_versions: t`Ansible versions`,
+    server_version: t`Server Version`,
+    galaxy_ng_version: t`Galaxy NG version`,
+    galaxy_importer_version: t`Galaxy Importer Version`,
+    pulp_core_version: t`Pulp Core version`,
+    pulp_ansible_version: t`Pulp Ansible Version`,
+    pulp_container_version: t`Pulp Container Version`,
+    available_versions: t`Ansible Versions`,
   };
 
   return VERSION_NAMES[name as string] || name;
