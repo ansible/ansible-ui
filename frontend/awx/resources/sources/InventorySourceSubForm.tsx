@@ -6,6 +6,7 @@ import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFor
 import { PageFormHidden } from '../../../../framework/PageForm/Utils/PageFormHidden';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
 import { PageFormCredentialSelect } from '../../access/credentials/components/PageFormCredentialSelect';
+import { PageFormExecutionEnvironmentSelect } from '../../administration/execution-environments/components/PageFormExecutionEnvironmentSelect';
 import { InventorySourceForm } from '../../interfaces/InventorySource';
 import { PageFormProjectSelect } from '../projects/components/PageFormProjectSelect';
 import { PageFormInventoryFileSelect } from './component/PageFormInventoryFileSelect';
@@ -49,6 +50,12 @@ export function InventorySourceSubForm() {
             isRequired={sourceTypes.slice(1).includes(source as string)}
             credentialIdPath="credentialIdPath"
             sourceType={source as string}
+          />
+          <PageFormExecutionEnvironmentSelect<InventorySourceForm>
+            name="execution_environment"
+            label={t('Execution environment')}
+            executionEnvironmentIdPath="execution_environmentIdPath"
+            isRequired={source === 'terraform'}
           />
           <PageFormHidden watch="source" hidden={(type: string) => type !== 'scm'}>
             <PageFormProjectSelect<InventorySourceForm> name="source_project" isRequired />
