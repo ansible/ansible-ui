@@ -18,7 +18,7 @@ export function useDeleteCredentialTypes(
   const actionColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn]);
   const bulkAction = useEdaBulkConfirmation<EdaCredentialType>();
   return useCallback(
-    async (credentialTypes: EdaCredentialType[]) => {
+    (credentialTypes: EdaCredentialType[]) => {
       bulkAction({
         title: t('Permanently delete credential types', { count: credentialTypes.length }),
         confirmText: t('Yes, I confirm that I want to delete these {{count}} credential types.', {
