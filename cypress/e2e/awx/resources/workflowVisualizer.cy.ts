@@ -43,15 +43,15 @@ describe('Workflow Visualizer', () => {
     }).then((wfjt) => (workflowJobTemplate = wfjt));
   });
 
-  // afterEach(() => {
-  //   cy.deleteAwxWorkflowJobTemplate(workflowJobTemplate, { failOnStatusCode: false });
-  // });
+  afterEach(() => {
+    cy.deleteAwxWorkflowJobTemplate(workflowJobTemplate, { failOnStatusCode: false });
+  });
 
-  // after(function () {
-  //   cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
-  //   cy.deleteAwxInventorySource(inventorySource, { failOnStatusCode: false });
-  //   cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
-  // });
+  after(function () {
+    cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
+    cy.deleteAwxInventorySource(inventorySource, { failOnStatusCode: false });
+    cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
+  });
 
   describe('Workflow Visualizer Create and Edit Nodes', () => {
     it('should render a workflow visualizer view with multiple nodes present', () => {
