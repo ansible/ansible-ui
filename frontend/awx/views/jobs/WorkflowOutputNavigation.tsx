@@ -7,6 +7,7 @@ import {
   SelectGroup,
   SelectList,
 } from '@patternfly/react-core';
+import { CheckCircleIcon, ExclamationCircleIcon } from '@patternfly/react-icons';
 import { Link, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { stringIsUUID } from '../../common/util/strings';
@@ -91,7 +92,7 @@ export function WorkflowOutputNavigation(props: WorkflowOutputNavigationProps) {
         } as React.CSSProperties
       }
     >
-      {t(`Workflow jobs 1/{{totalResults}}`, { totalResults })}
+      {t(`Workflow Job 1/{{totalResults}}`, { totalResults })}
     </MenuToggle>
   );
 
@@ -107,11 +108,17 @@ export function WorkflowOutputNavigation(props: WorkflowOutputNavigationProps) {
     >
       <SelectGroup label={t`Workflow statuses`} key="workflow-status" data-cy="workflow-status">
         <SelectList>
-          <SelectOption value="failed" key="failed" description={t`Filter by failed jobs`}>
+          <SelectOption
+            value="failed"
+            key="failed"
+            icon={<ExclamationCircleIcon />}
+            description={t`Filter by failed jobs`}
+          >
             {t`Failed`}
           </SelectOption>
           <SelectOption
             value={'successful'}
+            icon={<CheckCircleIcon />}
             key="successful"
             description={t`Filter by successful jobs`}
           >
