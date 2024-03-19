@@ -2,6 +2,7 @@ import { AboutModal, TextContent, TextList, TextListItem } from '@patternfly/rea
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { usePageDialog } from '../../framework';
+import { TFunction } from 'i18next';
 
 export interface AnsibleAboutModalProps {
   versionInfo?: ProductVersionInfo;
@@ -10,8 +11,9 @@ export interface AnsibleAboutModalProps {
 type ProductVersionInfo = Record<string, string | Record<string, string>>;
 
 export function AnsibleAboutModal(props: AnsibleAboutModalProps) {
-  const [_dialog, setDialog] = usePageDialog();
   const { t } = useTranslation();
+  const [_dialog, setDialog] = usePageDialog();
+
   return (
     <AboutModal
       isOpen
@@ -22,28 +24,31 @@ export function AnsibleAboutModal(props: AnsibleAboutModalProps) {
       trademark={t(`Copyright {{fullYear}} Red Hat, Inc.`, { fullYear: new Date().getFullYear() })}
       brandImageSrc="/static/media/brand-logo.svg"
       brandImageAlt={t('Brand Logo')}
+      backgroundImageSrc="/static/media/brand-logo.svg"
       productName={process.env.PRODUCT ?? t('AWX')}
     >
       <TextContent>
         <TextList component="dl">
-          {Object.entries(props.versionInfo ?? {}).map(([product, info]) => {
-            return (
-              <>
-                <TextListItem key={product} component="dt">
-                  {t(product)}
-                </TextListItem>
-                <TextList component="dl">
-                  {typeof info === 'string'
-                    ? info
-                    : Object.entries(info).map(([key, value]) => (
-                        <TextListItem key={key} component="dd">
-                          {t(value)}
-                        </TextListItem>
-                      ))}
-                </TextList>
-              </>
-            );
-          })}
+          {Object.entries(props.versionInfo ?? {})
+            .filter(([product]) => product !== 'galaxy_ng_commit')
+            .map(([product, info]) => {
+              return (
+                <>
+                  <TextListItem key={t(product)} component="dt">
+                    {translateVersion(product, t)}
+                  </TextListItem>
+                  <TextList component="dl">
+                    {typeof info === 'string'
+                      ? info
+                      : Object.entries(info).map(([key, value]) => (
+                          <TextListItem key={key} component="dt">
+                            {t(value)}
+                          </TextListItem>
+                        ))}
+                  </TextList>
+                </>
+              );
+            })}
         </TextList>
       </TextContent>
     </AboutModal>
@@ -65,4 +70,18 @@ export function useAnsibleAboutModal() {
     }
   }, [props, setDialog]);
   return setProps;
+}
+
+export function translateVersion(name: string | undefined, t: TFunction) {
+  const VERSION_NAMES: Record<string, string> = {
+    server_version: t`Server version`,
+    galaxy_ng_version: t`GalaxyNG version`,
+    galaxy_importer_version: t`Galaxy importer version`,
+    pulp_core_version: t`Pulpcore version`,
+    pulp_ansible_version: t`Pulp ansible version`,
+    pulp_container_version: t`Pulp container version`,
+    available_versions: t`Ansible versions`,
+  };
+
+  return VERSION_NAMES[name as string] || name;
 }
