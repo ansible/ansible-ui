@@ -84,7 +84,7 @@ export function useInventoriesHostsColumns(options?: {
       ];
     }
 
-    if (params.inventory_type === 'smart_inventory') {
+    if (params.inventory_type === 'smart_inventory' || params.inventory_type === 'constructed_inventory') {
       recentJobs.sort = '';
       inventoryColumn.sort = '';
       columns = [...columns, recentJobs, inventoryColumn];
