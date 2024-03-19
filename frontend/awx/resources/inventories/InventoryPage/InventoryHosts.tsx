@@ -36,7 +36,6 @@ export function InventoryHosts() {
       params.inventory_type === 'inventory'
   );
   usePersistentFilters('inventories');
-
   return (
     <PageLayout>
       <PageTable<AwxHost>
@@ -49,7 +48,7 @@ export function InventoryHosts() {
         emptyStateTitle={
           canCreateHost
             ? t('There are currently no hosts added to this inventory.')
-            : t('You do not have permission to create a host')
+            : t('You do not have permission to create a host.')
         }
         emptyStateDescription={
           canCreateHost
