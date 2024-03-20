@@ -24,6 +24,15 @@ describe('projects.cy.ts', () => {
           fixture: 'projects.json',
         }
       ).as('projectsList');
+      cy.intercept(
+        {
+          method: 'OPTIONS',
+          url: '/api/v2/projects/',
+        },
+        {
+          fixture: 'mock_options.json',
+        }
+      ).as('getOptions');
     });
 
     it('Projects list renders', () => {
@@ -46,18 +55,16 @@ describe('projects.cy.ts', () => {
 
     it('Filter projects by name', () => {
       cy.mount(<Projects />);
-      cy.intercept('api/v2/projects/?name__icontains=foo*').as('nameFilterRequest');
-      cy.filterTableByTypeAndText(/^Name$/, 'foo');
-      cy.wait('@nameFilterRequest');
-      cy.clickButton(/^Clear all filters$/);
+      cy.filterTableByMultiSelect('name', [' Project 2 Org 0']);
+      cy.clearAllFilters();
     });
 
     it('Filter projects by description', () => {
       cy.mount(<Projects />);
       cy.intercept('api/v2/projects/?description__icontains=bar*').as('descriptionFilterRequest');
-      cy.filterTableByTypeAndText(/^Description$/, 'bar');
+      cy.filterTableByTextFilter('description', 'bar');
       cy.wait('@descriptionFilterRequest');
-      cy.clickButton(/^Clear all filters$/);
+      cy.clearAllFilters();
     });
 
     it('Filter projects by created by', () => {
@@ -65,9 +72,9 @@ describe('projects.cy.ts', () => {
       cy.intercept('api/v2/projects/?created_by__username__icontains=baz*').as(
         'createdByFilterRequest'
       );
-      cy.filterTableByTypeAndText(/^Created by$/, 'baz');
+      cy.filterTableByTextFilter('created-by', 'baz');
       cy.wait('@createdByFilterRequest');
-      cy.clickButton(/^Clear all filters$/);
+      cy.clearAllFilters();
     });
 
     it('Filter projects by modified by', () => {
@@ -75,9 +82,9 @@ describe('projects.cy.ts', () => {
       cy.intercept('api/v2/projects/?modified_by__username__icontains=qux*').as(
         'modifiedByFilterRequest'
       );
-      cy.filterTableByTypeAndText(/^Modified by$/, 'qux');
+      cy.filterTableByTextFilter('modified-by', 'qux');
       cy.wait('@modifiedByFilterRequest');
-      cy.clickButton(/^Clear all filters$/);
+      cy.clearAllFilters();
     });
 
     it('Filter projects by Type = Git', () => {
@@ -85,9 +92,9 @@ describe('projects.cy.ts', () => {
       cy.intercept('api/v2/projects/?scm_type=git&order_by=name&page=1&page_size=10').as(
         'scmGitTypeFilterRequest'
       );
-      cy.filterByMultiSelection(/^Type$/, /^Git$/);
+      cy.filterTableByMultiSelect('scm-type', ['Git']);
       cy.wait('@scmGitTypeFilterRequest');
-      cy.clickButton(/^Clear all filters$/);
+      cy.clearAllFilters();
     });
 
     it('Filter projects by Type = Subversion', () => {
@@ -95,9 +102,9 @@ describe('projects.cy.ts', () => {
       cy.intercept('api/v2/projects/?scm_type=svn&order_by=name&page=1&page_size=10').as(
         'scmSvnTypeFilterRequest'
       );
-      cy.filterByMultiSelection(/Type$/, /^Subversion$/);
+      cy.filterTableByMultiSelect('scm-type', ['Subversion']);
       cy.wait('@scmSvnTypeFilterRequest');
-      cy.clickButton(/^Clear all filters$/);
+      cy.clearAllFilters();
     });
 
     it('Filter projects by Type = Insights', () => {
@@ -105,9 +112,9 @@ describe('projects.cy.ts', () => {
       cy.intercept('api/v2/projects/?scm_type=insights&order_by=name&page=1&page_size=10').as(
         'scmInsightsTypeFilterRequest'
       );
-      cy.filterByMultiSelection(/Type$/, /^Red Hat insights$/);
+      cy.filterTableByMultiSelect('scm-type', ['Red Hat Insights']);
       cy.wait('@scmInsightsTypeFilterRequest');
-      cy.clickButton(/^Clear all filters$/);
+      cy.clearAllFilters();
     });
 
     it('Filter projects by Type = Manual', () => {
@@ -115,9 +122,9 @@ describe('projects.cy.ts', () => {
       cy.intercept('api/v2/projects/?scm_type=&order_by=name&page=1&page_size=10').as(
         'scmManualTypeFilterRequest'
       );
-      cy.filterByMultiSelection(/Type$/, /^Manual$/);
+      cy.filterTableByMultiSelect('scm-type', ['Manual']);
       cy.wait('@scmManualTypeFilterRequest');
-      cy.clickButton(/^Clear all filters$/);
+      cy.clearAllFilters();
     });
 
     it('Filter projects by Type = Remote Archive', () => {
@@ -125,9 +132,9 @@ describe('projects.cy.ts', () => {
       cy.intercept('api/v2/projects/?scm_type=archive&order_by=name&page=1&page_size=10').as(
         'scmArchiveTypeFilterRequest'
       );
-      cy.filterByMultiSelection(/Type$/, /^Remote archive$/);
+      cy.filterTableByMultiSelect('scm-type', ['Remote Archive']);
       cy.wait('@scmArchiveTypeFilterRequest');
-      cy.clickButton(/^Clear all filters$/);
+      cy.clearAllFilters();
     });
 
     it('Sync project calls API /update endpoint', () => {
@@ -149,7 +156,8 @@ describe('projects.cy.ts', () => {
 
     it('Cancel project sync toolbar button shows error dialog if project sync is not running', () => {
       cy.mount(<Projects />);
-      cy.selectTableRow(' Project 1 Org 0');
+      cy.filterTableByMultiSelect('name', [' Project 1 Org 0']);
+      cy.selectTableRowByCheckbox('name', ' Project 1 Org 0', { disableFilter: true });
       cy.get('.page-table-toolbar').within(() => {
         cy.get('.toggle-kebab')
           .click()
@@ -173,7 +181,10 @@ describe('projects.cy.ts', () => {
 
     it('Cancel project sync toolbar button shows error dialog if user has insufficient permissions', () => {
       cy.mount(<Projects />);
-      cy.selectTableRow(' Project 2 Org 0');
+      cy.filterTableByMultiSelect('name', [' Project 2 Org 0']);
+      cy.selectTableRowByCheckbox('name', ' Project 2 Org 0', {
+        disableFilter: true,
+      });
       cy.get('.page-table-toolbar').within(() => {
         cy.get('.toggle-kebab')
           .click()

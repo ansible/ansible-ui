@@ -165,6 +165,19 @@
         "label": "Work unit id",
         "help_text": "The Receptor work unit ID associated with this job.",
         "filterable": true
+      },
+      "scm_type": {
+        "type": "choice",
+        "label": "SCM Type",
+        "help_text": "Specifies the source control system used to store the project.",
+        "filterable": true,
+        "choices": [
+          ["", "Manual"],
+          ["git", "Git"],
+          ["svn", "Subversion"],
+          ["insights", "Red Hat Insights"],
+          ["archive", "Remote Archive"]
+        ]
       }
     }
   },
