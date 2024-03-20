@@ -389,8 +389,8 @@ function testCreatePermissionsForbidden(
       /^Please contact your organization administrator if there is an issue with your access.$/
     );
   } else {
-    cy.contains(/^No Hosts Found$/);
-    cy.contains(/^Please add Hosts to populate this list$/);
+    cy.contains(/^No hosts Found$/);
+    cy.contains(/^Please add hosts to populate this list$/);
   }
   cy.contains('button', /^Create host$/).should('not.exist');
 }

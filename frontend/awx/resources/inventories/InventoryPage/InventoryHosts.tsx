@@ -48,8 +48,8 @@ export function InventoryHosts() {
       ? t('Please create a host by using the button below.')
       : t('Please contact your organization administrator if there is an issue with your access.');
   } else {
-    emptyStateTitle = t('No Hosts Found');
-    emptyStateDescription = t('Please add Hosts to populate this list');
+    emptyStateTitle = t('No hosts Found');
+    emptyStateDescription = t('Please add hosts to populate this list');
   }
 
   usePersistentFilters('inventories');
