@@ -5,11 +5,13 @@ import { AwxHost } from '../../interfaces/AwxHost';
 import { Hosts } from './Hosts';
 import { InventoryHosts } from '../inventories/InventoryPage/InventoryHosts';
 
+const hosts = 'hosts';
+const inventory_hosts = 'inventory_hosts';
+const smart_inventory_hosts = 'smart_inventory_hosts';
+const constructed_inventory_hosts = 'constructed_inventory_hosts';
+
 describe('Hosts.cy.ts', () => {
-  const hosts = 'hosts';
-  const inventory_hosts = 'inventory_hosts';
-  const smart_inventory_hosts = 'smart_inventory_hosts';
-  const constructed_inventory_hosts = 'constructed_inventory_hosts';
+  
 
   const types = [hosts, inventory_hosts, smart_inventory_hosts, constructed_inventory_hosts];
 
@@ -231,43 +233,21 @@ describe('Hosts.cy.ts', () => {
 
       if (!dynamic) {
         it('display Empty State and create button for user with permission to create hosts', () => {
-          cy.stub(useOptions, 'useOptions').callsFake(() => ({
-            data: {
-              actions: {
-                POST: {
-                  name: {
-                    type: ToolbarFilterType.MultiText,
-                    required: true,
-                    label: 'Name',
-                    max_length: 512,
-                    help_text: 'Name of this team.',
-                    filterable: true,
-                  },
-                },
-              },
-            },
-          }));
-          cy.mount(component, params);
-          if (type === hosts) {
-            cy.contains(/^There are currently no hosts added$/);
-          } else {
-            cy.contains(/^There are currently no hosts added to this inventory.$/);
-          }
-          cy.contains(/^Please create a host by using the button below.$/);
-          cy.contains('button', /^Create host$/).should('be.visible');
-          cy.contains('button', /^Create host$/).click();
+          testCreatePermissions(component, params, type);
         });
+
         it('display Empty state for user without permission to create ', () => {
           cy.stub(useOptions, 'useOptions').callsFake(() => ({
             data: {
               actions: {},
             },
           }));
-          testCreatePermissions(component, params, dynamic);
+          testCreatePermissionsForbidden(component, params, dynamic);
         });
+
       } else {
         it('display Empty state for smart inventory', () => {
-          testCreatePermissions(component, params, dynamic);
+          testCreatePermissionsForbidden(component, params, dynamic);
         });
       }
 
@@ -278,7 +258,7 @@ describe('Hosts.cy.ts', () => {
 
 type paramsType = { path: string; initialEntries: string[]; } | undefined;
 
-function testCreatePermissions(component : React.ReactElement, params : paramsType, dynamic : boolean) {
+function testCreatePermissionsForbidden(component : React.ReactElement, params : paramsType, dynamic : boolean) {
   cy.mount(component, params);
 
   if (!dynamic) {
@@ -291,4 +271,33 @@ function testCreatePermissions(component : React.ReactElement, params : paramsTy
     cy.contains(/^Please add Hosts to populate this list$/);
   }
   cy.contains('button', /^Create host$/).should('not.exist');
+}
+
+function testCreatePermissions(component : React.ReactElement, params : paramsType, type : string) 
+{
+  cy.stub(useOptions, 'useOptions').callsFake(() => ({
+    data: {
+      actions: {
+        POST: {
+          name: {
+            type: ToolbarFilterType.MultiText,
+            required: true,
+            label: 'Name',
+            max_length: 512,
+            help_text: 'Name of this team.',
+            filterable: true,
+          },
+        },
+      },
+    },
+  }));
+  cy.mount(component, params);
+  if (type === hosts) {
+    cy.contains(/^There are currently no hosts added$/);
+  } else {
+    cy.contains(/^There are currently no hosts added to this inventory.$/);
+  }
+  cy.contains(/^Please create a host by using the button below.$/);
+  cy.contains('button', /^Create host$/).should('be.visible');
+  cy.contains('button', /^Create host$/).click();
 }
