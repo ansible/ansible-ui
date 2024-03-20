@@ -155,32 +155,7 @@ describe('Hosts.cy.ts', () => {
         });
 
         it('disable delete row action if the user does not have permissions', () => {
-          cy.mount(component, params);
-          cy.fixture('hosts')
-            .then((hosts: AwxItemsResponse<AwxHost>) => {
-              for (let i = 0; i < hosts.results.length; i++) {
-                hosts.results[i].summary_fields.user_capabilities.delete = false;
-                hosts.results[i].name = 'test';
-              }
-              return hosts;
-            })
-            .then((hostsList) => {
-              cy.intercept(
-                {
-                  method: 'GET',
-                  url: type === hosts ? '/api/v2/hosts/*' : '/api/v2/inventories/1/hosts/*',
-                },
-                { body: hostsList }
-              );
-            })
-            .then(() => {
-              cy.mount(component, params);
-              cy.get(`tr [data-cy="actions-dropdown"]`).click();
-              cy.get(`[data-cy="delete-host"]`).as('deleteButton');
-              cy.get('@deleteButton').should('have.attr', 'aria-disabled', 'true');
-              cy.get('@deleteButton').click();
-              cy.hasTooltip('This cannot be deleted due to insufficient permission');
-            });
+         disableDeleteRowAction(component, params, type);
         });
 
         it('disable edit row action if the user does not have permissions', () => {
@@ -305,4 +280,34 @@ function disableEditRowAction(component : React.ReactElement, params : paramsTyp
       'This cannot be edited due to insufficient permission'
     );
   });
+}
+
+function disableDeleteRowAction(component : React.ReactElement, params : paramsType, type : string)
+{
+  cy.mount(component, params);
+  cy.fixture('hosts')
+    .then((hosts: AwxItemsResponse<AwxHost>) => {
+      for (let i = 0; i < hosts.results.length; i++) {
+        hosts.results[i].summary_fields.user_capabilities.delete = false;
+        hosts.results[i].name = 'test';
+      }
+      return hosts;
+    })
+    .then((hostsList) => {
+      cy.intercept(
+        {
+          method: 'GET',
+          url: type === hosts ? '/api/v2/hosts/*' : '/api/v2/inventories/1/hosts/*',
+        },
+        { body: hostsList }
+      );
+    })
+    .then(() => {
+      cy.mount(component, params);
+      cy.get(`tr [data-cy="actions-dropdown"]`).click();
+      cy.get(`[data-cy="delete-host"]`).as('deleteButton');
+      cy.get('@deleteButton').should('have.attr', 'aria-disabled', 'true');
+      cy.get('@deleteButton').click();
+      cy.hasTooltip('This cannot be deleted due to insufficient permission');
+    });
 }
