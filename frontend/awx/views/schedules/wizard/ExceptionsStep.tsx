@@ -7,15 +7,15 @@ import { ListItemType, OccurrencesList } from '../components/OccurrencesList';
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import { useFormContext } from 'react-hook-form';
 
-export function OccurrencesStep() {
+export function ExceptionsStep() {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const { getValues } = useFormContext();
-  const rules = getValues('rules') as ListItemType[];
-  const hasRules = rules?.length > 0;
+  const exceptions = getValues('exceptions') as ListItemType[];
+  const hasExceptions = exceptions?.length > 0;
   return (
-    <PageFormSection title={t('Occurrences')} singleColumn>
-      {!isOpen && hasRules && (
+    <PageFormSection title={t('Exceptions')} singleColumn>
+      {!isOpen && hasExceptions && (
         <Button
           icon={<PlusCircleIcon />}
           onClick={() => {
@@ -23,15 +23,15 @@ export function OccurrencesStep() {
           }}
           variant="link"
         >
-          {t('Add occurrence')}
+          {t('Add exception')}
         </Button>
       )}
       {isOpen && (
-        <OccurrencesForm title={t('Define occurrences')} isOpen={isOpen} setIsOpen={setIsOpen} />
+        <OccurrencesForm isOpen={isOpen} title={t('Define exceptions')} setIsOpen={setIsOpen} />
       )}
 
-      {(hasRules || (!isOpen && !hasRules)) && (
-        <OccurrencesList listItems={rules} ruleType="exceptions" setIsOpen={setIsOpen} />
+      {(hasExceptions || (!isOpen && !hasExceptions)) && (
+        <OccurrencesList listItems={exceptions} ruleType="exception" setIsOpen={setIsOpen} />
       )}
     </PageFormSection>
   );

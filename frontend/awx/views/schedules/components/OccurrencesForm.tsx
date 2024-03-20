@@ -20,7 +20,11 @@ import {
 import { PageFormDateTimePicker } from '../../../../../framework/PageForm/Inputs/PageFormDateTimePicker';
 import { ActionGroup, Button } from '@patternfly/react-core';
 
-export function OccurrencesForm(props: { isOpen: boolean; setIsOpen: (isOpen: boolean) => void }) {
+export function OccurrencesForm(props: {
+  title: string;
+  isOpen: boolean;
+  setIsOpen: (isOpen: boolean) => void;
+}) {
   const { t } = useTranslation();
   const { getValues, reset } = useFormContext();
 
@@ -29,7 +33,7 @@ export function OccurrencesForm(props: { isOpen: boolean; setIsOpen: (isOpen: bo
   const monthOptions = useGetMonthOptions();
 
   return (
-    <PageFormSection title={t('Define occurances')}>
+    <PageFormSection title={props.title}>
       <PageFormSection>
         <PageFormSelect<OccurrenceFields>
           name={`freq`}
@@ -145,11 +149,22 @@ export function OccurrencesForm(props: { isOpen: boolean; setIsOpen: (isOpen: bo
         <Button
           variant="secondary"
           onClick={() => {
-            const { rules, endDate, endTime, endingType, ...stepData } =
-              getValues() as OccurrenceFields;
+            const {
+              rules = [],
+              exceptions = [],
+              endDate,
+              endTime,
+              endingType,
+              ...stepData
+            } = getValues() as OccurrenceFields;
             const rule = new RRule(stepData);
-            const ruleId = rules?.length + 1 || 1;
-            reset({ rules: [...(rules || []), { rule, id: ruleId }] }, { keepDefaultValues: true });
+            const ruleType = props.title === t('Define occurrences') ? 'rules' : 'exceptions';
+            const ruleId = ruleType === 'rules' ? rules.length + 1 : exceptions.length + 1;
+            const ruleArray = ruleType === 'rules' ? [...rules] : [...exceptions];
+            reset(
+              { [`${ruleType}`]: [...ruleArray, { rule, id: ruleId }] },
+              { keepDefaultValues: true }
+            );
             props.setIsOpen(false);
           }}
         >

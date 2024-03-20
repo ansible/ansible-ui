@@ -40,20 +40,21 @@ export interface OccurrenceFields {
   endTime: string | null;
   count: null;
   endingType: string | null;
-  rules: { id: number; rule: RRule }[];
+  rules?: { id: number; rule: RRule }[] | [];
+  exceptions?: { id: number; exception: RRule }[];
 }
 export interface ScheduleFormWizard {
-  details: {
-    unified_job_template_object: ScheduleResources | null;
-    unified_job_template: number | undefined;
-    resourceName: string;
-    name: string;
-    description?: string;
-    resource_type: string;
-    startDateTime: { date: string; time: string };
-    timezone: string;
-  };
-  occurrence: OccurrenceFields | null;
+  unified_job_template_object: ScheduleResources | null;
+  unified_job_template: number | undefined;
+  inventory?: number;
+  resourceName: string;
+  name: string;
+  description?: string;
+  resource_type: string;
+  startDateTime: { date: string; time: string };
+  timezone: string;
+  occurrences: OccurrenceFields | null;
+  exceptions: OccurrenceFields | null;
   launch_config: LaunchConfiguration | null;
   prompt: PromptFormValues;
 }
