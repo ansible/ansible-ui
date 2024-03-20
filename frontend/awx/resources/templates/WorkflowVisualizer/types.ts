@@ -74,6 +74,7 @@ export enum JobType {
   workflow_approval = 'workflow_approval',
   inventory_update = 'inventory_update',
   system_job = 'system_job',
+  job_template = 'job_template',
 }
 
 export enum EdgeStatus {
@@ -99,6 +100,11 @@ export interface NodeResource {
   description: string;
   unified_job_type?: UnifiedJobType;
   timeout?: number;
+  type?: string;
+  inventory?: number;
+  project?: number;
+  ask_inventory_on_launch?: boolean;
+  summary_fields?: { inventory: { kind: string } };
 }
 
 export interface PromptFormValues {
