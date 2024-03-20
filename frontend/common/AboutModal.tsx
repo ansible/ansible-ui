@@ -13,7 +13,6 @@ type ProductVersionInfo = Record<string, string | Record<string, string>>;
 export function AnsibleAboutModal(props: AnsibleAboutModalProps) {
   const { t } = useTranslation();
   const [_dialog, setDialog] = usePageDialog();
-
   return (
     <AboutModal
       isOpen
@@ -22,9 +21,15 @@ export function AnsibleAboutModal(props: AnsibleAboutModalProps) {
         props.onClose?.();
       }}
       trademark={t(`Copyright {{fullYear}} Red Hat, Inc.`, { fullYear: new Date().getFullYear() })}
-      brandImageSrc="/static/media/brand-logo.svg"
+      brandImageSrc={
+        process.env.PRODUCT === 'Automation Hub'
+          ? '/static/media/galaxy-logo-ansibull.png'
+          : process.env.PRODUCT === 'Eda'
+            ? '/static/media/eda-icon.svg'
+            : '/static/media/awx-logo.svg'
+      }
       brandImageAlt={t('Brand Logo')}
-      backgroundImageSrc="/static/media/brand-logo.svg"
+      backgroundImageSrc="/static/media/ansible-brand.svg"
       productName={process.env.PRODUCT ?? t('AWX')}
     >
       <TextContent>
