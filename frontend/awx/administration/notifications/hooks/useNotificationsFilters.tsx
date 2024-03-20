@@ -1,9 +1,10 @@
-import { useMemo } from 'react';
-import { IToolbarFilter } from '../../../../../framework';
-import { useNameToolbarFilter } from '../../../common/awx-toolbar-filters';
+import { useDynamicToolbarFilters } from '../../../common/useDynamicFilters';
 
 export function useNotificationsFilters() {
-  const nameToolbarFilter = useNameToolbarFilter();
-  const toolbarFilters = useMemo<IToolbarFilter[]>(() => [nameToolbarFilter], [nameToolbarFilter]);
+  const toolbarFilters = useDynamicToolbarFilters({
+    optionsPath: 'notification_templates',
+    preSortedKeys: ['name'],
+    preFilledValueKeys: ['name', 'id'],
+  });
   return toolbarFilters;
 }

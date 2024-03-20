@@ -28,10 +28,8 @@ describe('Notifications.cy.tsx', () => {
         { fixture: 'notification_templates.json' }
       );
       cy.mount(<Notifications />);
-      cy.intercept('/api/v2/notification_templates/?name__icontains=notification*').as(
-        'nameFilterRequest'
-      );
-      cy.filterTableByTextFilter('name', 'notification', { disableFilterSelection: true });
+      cy.intercept('/api/v2/notification_templates/?name=notification*').as('nameFilterRequest');
+      cy.filterTableByMultiSelect('name', ['csantiago_notification']);
       cy.wait('@nameFilterRequest');
       cy.clearAllFilters();
     });
