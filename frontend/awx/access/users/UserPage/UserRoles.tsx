@@ -6,7 +6,7 @@ import {
   EmptyStateHeader,
   EmptyStateIcon,
 } from '@patternfly/react-core';
-import { CubesIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
+import { CubesIcon, PlusCircleIcon, MinusCircleIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
@@ -63,7 +63,7 @@ function UserRolesInternal(props: { user: User }) {
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
-        icon: TrashIcon,
+        icon: MinusCircleIcon,
         label: t('Remove selected roles from user'),
         onClick: () => alert('TODO'),
         isDanger: true,
@@ -78,7 +78,7 @@ function UserRolesInternal(props: { user: User }) {
         selection: PageActionSelection.Single,
         variant: ButtonVariant.primary,
         isPinned: true,
-        icon: TrashIcon,
+        icon: MinusCircleIcon,
         label: t('Remove role from user'),
         onClick: () => alert('TODO'),
         isDanger: true,
