@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next';
 import {
   IPageAction,
   ITableColumn,
-  IToolbarFilter,
   PageActionSelection,
   PageActionType,
   PageHeader,
@@ -25,9 +24,7 @@ import {
 import { awxAPI } from '../../common/api/awx-utils';
 import {
   useCreatedByToolbarFilter,
-  useDescriptionToolbarFilter,
   useModifiedByToolbarFilter,
-  useNameToolbarFilter,
 } from '../../common/awx-toolbar-filters';
 import { useAwxConfig } from '../../common/useAwxConfig';
 import { useAwxView } from '../../common/useAwxView';
@@ -38,6 +35,7 @@ import { useSelectUsersAddOrganizations } from '../users/hooks/useSelectUsersAdd
 import { useSelectUsersRemoveOrganizations } from '../users/hooks/useSelectUsersRemoveOrganizations';
 import { useDeleteOrganizations } from './hooks/useDeleteOrganizations';
 import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
+import { useDynamicToolbarFilters } from '../../common/useDynamicFilters';
 
 export function Organizations() {
   const { t } = useTranslation();
@@ -189,19 +187,14 @@ export function Organizations() {
 }
 
 export function useOrganizationsFilters() {
-  const nameToolbarFilter = useNameToolbarFilter();
-  const descriptionToolbarFilter = useDescriptionToolbarFilter();
   const createdByToolbarFilter = useCreatedByToolbarFilter();
   const modifiedByToolbarFilter = useModifiedByToolbarFilter();
-  const toolbarFilters = useMemo<IToolbarFilter[]>(
-    () => [
-      nameToolbarFilter,
-      descriptionToolbarFilter,
-      createdByToolbarFilter,
-      modifiedByToolbarFilter,
-    ],
-    [nameToolbarFilter, descriptionToolbarFilter, createdByToolbarFilter, modifiedByToolbarFilter]
-  );
+  const toolbarFilters = useDynamicToolbarFilters({
+    optionsPath: 'organizations',
+    preSortedKeys: ['name', 'description', 'created-by', 'modified-by'],
+    preFilledValueKeys: ['name', 'id'],
+    additionalFilters: [createdByToolbarFilter, modifiedByToolbarFilter],
+  });
   return toolbarFilters;
 }
 
