@@ -146,114 +146,71 @@ describe('Hosts.cy.ts', () => {
       });
     });
   });
-});
-/*const types = [hosts, inventory_hosts, smart_inventory_hosts, constructed_inventory_hosts];
+
+  const types = [smart_inventory_hosts, constructed_inventory_hosts];
 
   types.forEach((type) => {
+    const typeDescription =
+      type === smart_inventory_hosts
+        ? 'test smart inventory host'
+        : 'test constructed inventory host';
 
-    const typeDesc = ` (${type})`;
-    const component = type === hosts ? <Hosts /> : <InventoryHosts />;
-    const path = type === hosts ? '/hosts' : '/inventories/:inventory_type/:id/hosts';
+    describe(typeDescription, () => {
+      const typeDesc = ` (${type})`;
+      const component = <InventoryHosts />;
+      const path = '/inventories/:inventory_type/:id/hosts';
+      const dynamic = true;
+      let inventory_type = '';
 
-    let inventory_type = '';
-
-    const dynamic =
-      type === smart_inventory_hosts || type === constructed_inventory_hosts ? true : false;
-
-    switch (type) {
-      case inventory_hosts:
-        inventory_type = 'inventory';
-        break;
-      case smart_inventory_hosts:
-        inventory_type = 'smart_inventory';
-        break;
-      case constructed_inventory_hosts:
-        inventory_type = 'constructed_inventory';
-        break;
-    }
-
-    const initialEntries = type === hosts ? [`/hosts`] : [`/inventories/${inventory_type}/1/hosts`];
-    const params = {
-      path,
-      initialEntries,
-    };
-
-    describe('Non-empty list' + typeDesc, () => {
-      beforeEach(() => {
-        nonEmptyListBeforeEach(type);
-      });
-
-      if (!dynamic) {
-        it('should render inventory list', () => {
-          cy.mount(component, params);
-          if (type === hosts) {
-            cy.verifyPageTitle('Hosts');
-          }
-          cy.get('table').find('tr').should('have.length', 10);
-        });
+      switch (type) {
+        case smart_inventory_hosts:
+          inventory_type = 'smart_inventory';
+          break;
+        case constructed_inventory_hosts:
+          inventory_type = 'constructed_inventory';
+          break;
       }
 
-      if (dynamic) {
+      const initialEntries = [`/inventories/${inventory_type}/1/hosts`];
+      const params = {
+        path,
+        initialEntries,
+      };
+
+      describe('Non-empty list' + typeDesc, () => {
+        beforeEach(() => {
+          nonEmptyListBeforeEach(type);
+        });
+
         it('smart or constructed inventory does not have any actions beside run command', () => {
           testActions(component, params);
         });
-      }
 
-      it('should have filters for Name, Description, Created By and Modified By', () => {
-       testFilters(component, params, type, dynamic);
+        it('should have filters for Name, Created By and Modified By', () => {
+          testFilters(component, params, type, dynamic);
+        });
       });
 
-      if (!dynamic) {
-        it('disable "create host" toolbar action if the user does not have permissions', () => {
-         disableCreateRowAction(component, params, type);
-        });
-
-        it('disable delete row action if the user does not have permissions', () => {
-         disableDeleteRowAction(component, params, type);
-        });
-
-        it('disable edit row action if the user does not have permissions', () => {
-         disableEditRowAction(component, params, type);
-        });
-      }
-    });
-
-    describe('Empty list' + typeDesc, () => {
-      beforeEach(() => {
-        cy.intercept(
-          {
-            method: 'GET',
-            url: type === hosts ? '/api/v2/hosts/*' : '/api/v2/inventories/1/hosts/*',
-          },
-          {
-            fixture: 'emptyList.json',
-          }
-        ).as('emptyList');
-      });
-
-      if (!dynamic) {
-        it('display Empty State and create button for user with permission to create hosts', () => {
-          testCreatePermissions(component, params, type);
-        });
-
-        it('display Empty state for user without permission to create ', () => {
-          cy.stub(useOptions, 'useOptions').callsFake(() => ({
-            data: {
-              actions: {},
+      describe('Empty list' + typeDesc, () => {
+        beforeEach(() => {
+          cy.intercept(
+            {
+              method: 'GET',
+              url: type === hosts ? '/api/v2/hosts/*' : '/api/v2/inventories/1/hosts/*',
             },
-          }));
-          testCreatePermissionsForbidden(component, params, dynamic);
+            {
+              fixture: 'emptyList.json',
+            }
+          ).as('emptyList');
         });
 
-      } else {
         it('display Empty state for smart inventory', () => {
           testCreatePermissionsForbidden(component, params, dynamic);
         });
-      }
-
-     
+      });
     });
-  });*/
+  });
+});
 
 type paramsType = { path: string; initialEntries: string[] } | undefined;
 
