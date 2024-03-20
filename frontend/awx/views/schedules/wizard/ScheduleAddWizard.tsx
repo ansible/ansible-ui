@@ -14,10 +14,11 @@ import { AwxRoute } from '../../../main/AwxRoutes';
 import { ScheduleFormWizard } from '../types';
 import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
 import { useGetTimezones } from '../hooks/useGetTimezones';
-import { PromptInputs } from '../components/PromptInputs';
 import { OccurrencesStep } from './OccurrencesStep';
 import { Frequency, RRule } from 'rrule';
+import { ExceptionsStep } from './ExceptionsStep';
 import { ScheduleInputs } from '../components/ScheduleInputs';
+import { PromptInputs } from '../components/PromptInputs';
 
 export function ScheduleAddWizard() {
   const { t } = useTranslation();
@@ -31,13 +32,8 @@ export function ScheduleAddWizard() {
 
   const [currentDate, time]: string[] = dateToInputDateTime(closestQuarterHour.toISO() as string);
   const handleSubmit = async (formValues: ScheduleFormWizard) => {
-    const {
-      details: { unified_job_template_object },
-      launch_config,
-      prompt,
-    } = formValues;
+    const { unified_job_template_object = {}, launch_config, prompt } = formValues;
     const promptValues = prompt;
-
     if (promptValues) {
       if (unified_job_template_object && 'organization' in unified_job_template_object) {
         promptValues.organization = unified_job_template_object.organization ?? null;
@@ -68,14 +64,13 @@ export function ScheduleAddWizard() {
       inputs: <PromptInputs onError={() => {}} />,
     },
     { id: 'survey', label: t('Survey'), element: <PageNotImplemented /> },
-    { id: 'occurrence', label: t('Occurrences'), inputs: <OccurrencesStep /> },
+    { id: 'occurrences', label: t('Occurrences'), inputs: <OccurrencesStep /> },
     {
       id: 'exceptions',
       label: t('Exceptions'),
-      hidden: () => true,
-      element: <PageNotImplemented />,
+      inputs: <ExceptionsStep />,
     },
-    { id: 'review', label: t('Review'), hidden: () => true, inputs: <PageNotImplemented /> },
+    { id: 'review', label: t('Review'), inputs: <PageNotImplemented /> },
   ];
   const initialValues = {
     details: {
@@ -85,7 +80,7 @@ export function ScheduleAddWizard() {
       resourceName: '',
       startDateTime: { date: currentDate, time: time },
     },
-    occurrence: {
+    occurrences: {
       freq: Frequency.WEEKLY,
       interval: 1,
       wkst: RRule.SU,
@@ -103,6 +98,25 @@ export function ScheduleAddWizard() {
       byhour: null,
       endingType: '',
       rules: [],
+    },
+    exceptions: {
+      freq: Frequency.WEEKLY,
+      interval: 1,
+      wkst: RRule.SU,
+      byweekday: null,
+      byweekno: null,
+      bymonth: null,
+      bymonthday: null,
+      byyearday: null,
+      bysetpos: null,
+      until: null,
+      endDate: '',
+      endTime: '',
+      count: null,
+      byminute: null,
+      byhour: null,
+      endingType: '',
+      exceptions: [],
     },
   };
 

@@ -10,14 +10,16 @@ import {
 import { useMemo } from 'react';
 import { PencilAltIcon } from '@patternfly/react-icons';
 import { RRule } from 'rrule';
-import { useFormContext } from 'react-hook-form';
-
-export function OccurrencesList(props: { setIsOpen: (isOpen: boolean) => void }) {
+export type ListItemType = { id: number } & { [key: string]: RRule };
+export function OccurrencesList(props: {
+  listItems: ListItemType[];
+  ruleType: string;
+  setIsOpen: (isOpen: boolean) => void;
+}) {
+  const { setIsOpen, ruleType, listItems } = props;
+  const isExceptions = ruleType === 'exception';
   const { t } = useTranslation();
-  const { getValues } = useFormContext();
-  const rules = getValues('rules') as { id: number; rule: RRule }[];
-
-  const rowActions = useMemo<IPageAction<{ rule: RRule }>[]>(
+  const rowActions = useMemo<IPageAction<ListItemType>[]>(
     () => [
       {
         type: PageActionType.Button,
@@ -30,17 +32,17 @@ export function OccurrencesList(props: { setIsOpen: (isOpen: boolean) => void })
     ],
     [t]
   );
-  const columns = useMemo<ITableColumn<{ rule: RRule }>[]>(
+  const columns = useMemo<ITableColumn<ListItemType>[]>(
     () => [
       {
         header: 'Rrule',
         type: 'text',
-        value: (item: { rule: RRule }) => RRule.optionsToString(item.rule.options),
+        value: (item: ListItemType) => RRule.optionsToString(item.rule.options),
       },
       {
         header: 'Description',
         type: 'text',
-        value: (item: { rule: RRule }) => {
+        value: (item: ListItemType) => {
           const ruleOptions = new RRule(item.rule.options);
           const text = t('Non-parseable rule');
           try {
@@ -56,34 +58,44 @@ export function OccurrencesList(props: { setIsOpen: (isOpen: boolean) => void })
   );
 
   const view = {
-    pageItems: rules,
-    keyFn: (item: { rule: RRule; id: number }) => {
+    pageItems: listItems,
+    keyFn: (item: ListItemType) => {
       return item?.id?.toString();
     },
     tableColumns: columns,
-    itemCount: rules?.length || 0,
+    itemCount: listItems?.length || 0,
   };
-
+  const description = isExceptions
+    ? t(
+        'Schedule rules are a component of an overall schedule.  A schedule rule is used to determine when a schedule will run.  A schedule can have multiple rules.'
+      )
+    : t(
+        'Schedule exception are a component of an overall schedule.  A schedule exception is used to exclude dates from the schedule.  A schedule can have multiple exceptions.'
+      );
   return (
     <div>
       <PageHeader
-        title={t('Schedule Rules')}
-        titleHelpTitle={t('Schedule Rules')}
+        title={isExceptions ? t('Schedule Exceptions') : t('Schedule Rules')}
+        titleHelpTitle={isExceptions ? t('Schedule Exceptions') : t('Schedule Rules')}
         titleHelp={t('Create as many schedule rules as you need.')}
         titleDocLink="https://docs.ansible.com/automation-controller/latest/html/userguide/scheduling.html"
-        description={t(
-          'Schedule rules are a component of an overall schedule.  A schedule rule is used to determine when a schedule will run.  A schedule can have multiple rules.'
-        )}
+        description={description}
       />
-      <PageTable<{ id: number; rule: RRule }>
+      <PageTable<ListItemType>
         id="awx-schedule-rules-table"
         rowActions={rowActions}
-        errorStateTitle={t('Error loading occurrences')}
-        emptyStateTitle={t('No occurrences yet')}
-        emptyStateDescription={t('To get started, create an occurrence.')}
-        emptyStateButtonText={t('Create Occurrence')}
-        emptyStateButtonClick={() => props.setIsOpen(true)}
-        defaultSubtitle={t('Occurrences')}
+        errorStateTitle={
+          isExceptions ? t('Error loading exceptions') : t('Error loading occurrences')
+        }
+        emptyStateTitle={isExceptions ? t('No exceptions yet') : t('No occurrences yet')}
+        emptyStateDescription={
+          isExceptions
+            ? t('To get started, create an exception.')
+            : t('To get started, create an occurrence.')
+        }
+        emptyStateButtonText={isExceptions ? t('Create exception') : t('Create Occurrence')}
+        emptyStateButtonClick={() => setIsOpen(true)}
+        defaultSubtitle={isExceptions ? t('Exceptions') : t('Occurrences')}
         disablePagination
         page={1}
         perPage={1}
