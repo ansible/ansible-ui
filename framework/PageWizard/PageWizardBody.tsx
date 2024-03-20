@@ -6,6 +6,7 @@ import { PageForm } from '../PageForm/PageForm';
 import { PageWizardFooter } from './PageWizardFooter';
 import { usePageWizard, isStepVisible } from './PageWizardProvider';
 import type { PageWizardBody } from './types';
+import { t } from 'i18next';
 
 export function PageWizardBody<T>({
   onCancel,
@@ -95,6 +96,7 @@ export function PageWizardBody<T>({
             disableGrid={disableGrid}
             isVertical={isVertical}
             singleColumn={singleColumn}
+            isWizard
           >
             <StepErrors />
             {activeStep.inputs}
@@ -105,7 +107,7 @@ export function PageWizardBody<T>({
             style={{ display: 'flex', flexDirection: 'column', height: '100%' }}
           >
             <PageSection
-              aria-label="Wizard step content"
+              aria-label={t('Wizard step content')}
               hasOverflowScroll
               isFilled
               variant="light"
