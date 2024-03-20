@@ -4,14 +4,14 @@ import { Credentials } from './Credentials';
 describe('Credentials.cy.ts', () => {
   beforeEach(() => {
     cy.intercept(
-      { method: 'GET', url: edaAPI`/credentials/?page=1&page_size=10` },
+      { method: 'GET', url: edaAPI`/eda-credentials/?page=1&page_size=10` },
       {
         fixture: 'edaCredentials.json',
       }
     );
 
     cy.intercept(
-      { method: 'GET', url: edaAPI`/credentials/?page=2&page_size=10` },
+      { method: 'GET', url: edaAPI`/eda-credentials/?page=2&page_size=10` },
       {
         count: 5,
         next: null,
@@ -83,7 +83,7 @@ describe('Credentials.cy.ts', () => {
   it('Can delete a Credential not in use', () => {
     cy.mount(<Credentials />);
     cy.intercept(
-      { method: 'DELETE', url: edaAPI`/credentials/100/` },
+      { method: 'DELETE', url: edaAPI`/eda-credentials/100/` },
       {
         statusCode: 204,
       }
@@ -111,7 +111,7 @@ describe('Credentials.cy.ts', () => {
   it('can delete a Credential in use', () => {
     cy.mount(<Credentials />);
     cy.intercept(
-      { method: 'DELETE', url: edaAPI`/credentials/100/?force=true` },
+      { method: 'DELETE', url: edaAPI`/eda-credentials/100/?force=true` },
       {
         statusCode: 204,
       }
@@ -173,7 +173,7 @@ describe('Empty list', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: edaAPI`/credentials/*`,
+        url: edaAPI`/eda-credentials/*`,
       },
       {
         fixture: 'emptyList.json',
