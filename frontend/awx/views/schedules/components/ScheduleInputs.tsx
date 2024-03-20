@@ -37,12 +37,12 @@ export function ScheduleInputs(props: {
   const { setValue } = useFormContext();
   const [timezoneMessage, setTimezoneMessage] = useState('');
   const resourceType = useWatch({
-    name: 'details.resource_type',
+    name: 'resource_type',
   }) as string;
   const launchConfiguration = useWatch({ name: 'launchConfiguration' }) as LaunchConfiguration;
   const inventory = useWatch({ name: 'inventory' }) as RegularInventory;
-  const timeZone = useWatch({ name: 'details.timezone' }) as string;
-  const resourceForSchedule = useWatch({ name: 'details.unified_job_template_object' }) as
+  const timeZone = useWatch({ name: 'timezone' }) as string;
+  const resourceForSchedule = useWatch({ name: 'unified_job_template_object' }) as
     | InventorySource
     | Project
     | JobTemplate
@@ -183,8 +183,9 @@ export function ScheduleInputs(props: {
             isRequired={!params['*']?.startsWith('schedules')}
             labelHelpTitle={t('Resource type')}
             labelHelp={t('Select a resource type onto which this schedule will be applied.')}
-            name="details.resource_type"
-            id="details.resource_type"
+            name="resource_type"
+            id="resource_type"
+            data-cy="resource-type"
             label={t('Resource Type')}
             options={[
               { label: t('Job template'), value: 'job_template' },
@@ -193,39 +194,53 @@ export function ScheduleInputs(props: {
               { label: t('Project'), value: 'project' },
               { label: t('Management job template'), value: 'management_job_template' },
             ]}
-            fieldNameToResetOnFieldChange="details.unified_job_template_object"
+            fieldNameToResetOnFieldChange="unified_job_template_object"
             placeholderText={t('Select job type')}
           />
 
           {resourceType &&
             {
               job_template: (
-                <PageFormJobTemplateSelect name="details.unified_job_template_object" />
+                <PageFormJobTemplateSelect<ScheduleFormWizard>
+                  isRequired
+                  name="unified_job_template_object"
+                />
               ),
               workflow_job_template: (
-                <PageFormWorkflowJobTemplateSelect name="details.unified_job_template_object" />
+                <PageFormWorkflowJobTemplateSelect<ScheduleFormWizard>
+                  isRequired
+                  name="unified_job_template_object"
+                />
               ),
               inventory_source: (
                 <>
-                  <PageFormInventorySelect
+                  <PageFormInventorySelect<ScheduleFormWizard>
+                    isRequired
                     labelHelp={t(
                       'First, select the inventory to which the desired inventory source belongs.'
                     )}
-                    name="details.inventory"
-                    isRequired
+                    name="inventory"
                   />
                   {inventory?.id && (
-                    <PageFormInventorySourceSelect
-                      inventoryId={inventory?.id}
+                    <PageFormInventorySourceSelect<ScheduleFormWizard>
                       isRequired
-                      name="details.unified_job_template_object"
+                      inventoryId={inventory?.id}
+                      name="unified_job_template_object"
                     />
                   )}
                 </>
               ),
-              project: <PageFormProjectSelect name="details.unified_job_template_object" />,
+              project: (
+                <PageFormProjectSelect<ScheduleFormWizard>
+                  isRequired
+                  name="unified_job_template_object"
+                />
+              ),
               management_job_template: (
-                <PageFormManagementJobsSelect name="details.unified_job_template_object" />
+                <PageFormManagementJobsSelect<ScheduleFormWizard>
+                  isRequired
+                  name="unified_job_template_object"
+                />
               ),
             }[resourceType]}
         </PageFormSection>
@@ -236,14 +251,18 @@ export function ScheduleInputs(props: {
             <Divider />
           </PageFormSection>
           <PageFormSection>
-            <PageFormTextInput name={'name'} isRequired label={t('Schedule Name')} />
-            <PageFormTextInput name={'description'} label={t('Description')} />
+            <PageFormTextInput<ScheduleFormWizard>
+              name={'name'}
+              isRequired
+              label={t('Schedule Name')}
+            />
+            <PageFormTextInput<ScheduleFormWizard> name={'description'} label={t('Description')} />
             <PageFormDateTimePicker<ScheduleFormWizard>
               label={t('Start date/time')}
-              name={'details.startDateTime'}
+              name={'startDateTime'}
             />
             <PageFormSelect<ScheduleFormWizard>
-              name="details.timezone"
+              name="timezone"
               placeholderText={t('Select time zone')}
               label={t('Time zone')}
               options={timeZones}
