@@ -263,28 +263,32 @@ describe('Hosts.cy.ts', () => {
               actions: {},
             },
           }));
-          testCreatePermissions();
+          testCreatePermissions(component, params, dynamic);
         });
       } else {
         it('display Empty state for smart inventory', () => {
-          testCreatePermissions();
+          testCreatePermissions(component, params, dynamic);
         });
       }
 
-      function testCreatePermissions() {
-        cy.mount(component, params);
-
-        if (!dynamic) {
-          cy.contains(/^You do not have permission to create a host.$/);
-          cy.contains(
-            /^Please contact your organization administrator if there is an issue with your access.$/
-          );
-        } else {
-          cy.contains(/^No Hosts Found$/);
-          cy.contains(/^Please add Hosts to populate this list$/);
-        }
-        cy.contains('button', /^Create host$/).should('not.exist');
-      }
+     
     });
   });
 });
+
+type paramsType = { path: string; initialEntries: string[]; } | undefined;
+
+function testCreatePermissions(component : React.ReactElement, params : paramsType, dynamic : boolean) {
+  cy.mount(component, params);
+
+  if (!dynamic) {
+    cy.contains(/^You do not have permission to create a host.$/);
+    cy.contains(
+      /^Please contact your organization administrator if there is an issue with your access.$/
+    );
+  } else {
+    cy.contains(/^No Hosts Found$/);
+    cy.contains(/^Please add Hosts to populate this list$/);
+  }
+  cy.contains('button', /^Create host$/).should('not.exist');
+}
