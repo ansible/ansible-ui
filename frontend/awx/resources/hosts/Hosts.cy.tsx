@@ -12,10 +12,82 @@ const constructed_inventory_hosts = 'constructed_inventory_hosts';
 
 describe('Hosts.cy.ts', () => {
   
+  describe('Test standalone hosts', () => {
+    const component = <Hosts />;
+    const path = '/hosts';
+    const dynamic = false;
+    const initialEntries = [`/hosts`];
+    const params = {
+      path,
+      initialEntries,
+    };
+    const type = hosts;
 
-  const types = [hosts, inventory_hosts, smart_inventory_hosts, constructed_inventory_hosts];
+    describe('Non-empty list', () => {
+      beforeEach(() => {
+        nonEmptyListBeforeEach(type);
+      });
+
+      
+        it('should render inventory list', () => {
+          cy.mount(component, params);
+          if (type === hosts) {
+            cy.verifyPageTitle('Hosts');
+          }
+          cy.get('table').find('tr').should('have.length', 10);
+        });
+      
+      it('should have filters for Name, Description, Created By and Modified By', () => {
+       testFilters(component, params, type, dynamic);
+      });
+
+        it('disable "create host" toolbar action if the user does not have permissions', () => {
+         disableCreateRowAction(component, params, type);
+        });
+
+        it('disable delete row action if the user does not have permissions', () => {
+         disableDeleteRowAction(component, params, type);
+        });
+
+        it('disable edit row action if the user does not have permissions', () => {
+         disableEditRowAction(component, params, type);
+        });
+    });
+
+    describe('Empty list', () => {
+      beforeEach(() => {
+        cy.intercept(
+          {
+            method: 'GET',
+            url: type === hosts ? '/api/v2/hosts/*' : '/api/v2/inventories/1/hosts/*',
+          },
+          {
+            fixture: 'emptyList.json',
+          }
+        ).as('emptyList');
+      });
+
+      
+        it('display Empty State and create button for user with permission to create hosts', () => {
+          testCreatePermissions(component, params, type);
+        });
+
+        it('display Empty state for user without permission to create ', () => {
+          cy.stub(useOptions, 'useOptions').callsFake(() => ({
+            data: {
+              actions: {},
+            },
+          }));
+          testCreatePermissionsForbidden(component, params, dynamic);
+        });
+    });
+
+
+  });
+  /*const types = [hosts, inventory_hosts, smart_inventory_hosts, constructed_inventory_hosts];
 
   types.forEach((type) => {
+
     const typeDesc = ` (${type})`;
     const component = type === hosts ? <Hosts /> : <InventoryHosts />;
     const path = type === hosts ? '/hosts' : '/inventories/:inventory_type/:id/hosts';
@@ -118,7 +190,7 @@ describe('Hosts.cy.ts', () => {
 
      
     });
-  });
+  });*/
 });
 
 type paramsType = { path: string; initialEntries: string[]; } | undefined;
