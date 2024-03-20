@@ -316,53 +316,6 @@ function disableCreateRowAction(component: React.ReactElement, params: paramsTyp
   }
 }
 
-function testCreatePermissionsForbidden(
-  component: React.ReactElement,
-  params: paramsType,
-  dynamic: boolean
-) {
-  cy.mount(component, params);
-
-  if (!dynamic) {
-    cy.contains(/^You do not have permission to create a host.$/);
-    cy.contains(
-      /^Please contact your organization administrator if there is an issue with your access.$/
-    );
-  } else {
-    cy.contains(/^No Hosts Found$/);
-    cy.contains(/^Please add Hosts to populate this list$/);
-  }
-  cy.contains('button', /^Create host$/).should('not.exist');
-}
-
-function testCreatePermissions(component: React.ReactElement, params: paramsType, type: string) {
-  cy.stub(useOptions, 'useOptions').callsFake(() => ({
-    data: {
-      actions: {
-        POST: {
-          name: {
-            type: ToolbarFilterType.MultiText,
-            required: true,
-            label: 'Name',
-            max_length: 512,
-            help_text: 'Name of this team.',
-            filterable: true,
-          },
-        },
-      },
-    },
-  }));
-  cy.mount(component, params);
-  if (type === hosts) {
-    cy.contains(/^There are currently no hosts added$/);
-  } else {
-    cy.contains(/^There are currently no hosts added to this inventory.$/);
-  }
-  cy.contains(/^Please create a host by using the button below.$/);
-  cy.contains('button', /^Create host$/).should('be.visible');
-  cy.contains('button', /^Create host$/).click();
-}
-
 function disableEditRowAction(component: React.ReactElement, params: paramsType, type: string) {
   cy.fixture('hosts')
     .then((hosts: AwxItemsResponse<AwxHost>) => {
@@ -421,4 +374,51 @@ function disableDeleteRowAction(component: React.ReactElement, params: paramsTyp
       cy.get('@deleteButton').click();
       cy.hasTooltip('This cannot be deleted due to insufficient permission');
     });
+}
+
+function testCreatePermissionsForbidden(
+  component: React.ReactElement,
+  params: paramsType,
+  dynamic: boolean
+) {
+  cy.mount(component, params);
+
+  if (!dynamic) {
+    cy.contains(/^You do not have permission to create a host.$/);
+    cy.contains(
+      /^Please contact your organization administrator if there is an issue with your access.$/
+    );
+  } else {
+    cy.contains(/^No Hosts Found$/);
+    cy.contains(/^Please add Hosts to populate this list$/);
+  }
+  cy.contains('button', /^Create host$/).should('not.exist');
+}
+
+function testCreatePermissions(component: React.ReactElement, params: paramsType, type: string) {
+  cy.stub(useOptions, 'useOptions').callsFake(() => ({
+    data: {
+      actions: {
+        POST: {
+          name: {
+            type: ToolbarFilterType.MultiText,
+            required: true,
+            label: 'Name',
+            max_length: 512,
+            help_text: 'Name of this team.',
+            filterable: true,
+          },
+        },
+      },
+    },
+  }));
+  cy.mount(component, params);
+  if (type === hosts) {
+    cy.contains(/^There are currently no hosts added$/);
+  } else {
+    cy.contains(/^There are currently no hosts added to this inventory.$/);
+  }
+  cy.contains(/^Please create a host by using the button below.$/);
+  cy.contains('button', /^Create host$/).should('be.visible');
+  cy.contains('button', /^Create host$/).click();
 }
