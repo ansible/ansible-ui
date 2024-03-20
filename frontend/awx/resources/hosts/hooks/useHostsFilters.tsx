@@ -17,7 +17,7 @@ export function useHostsFilters() {
   const params = useParams<{ inventory_type: string }>();
 
   const toolbarFilters = useMemo<IToolbarFilter[]>(() => {
-    let filters: IToolbarFilter[] = [
+    const filters: IToolbarFilter[] = [
       nameToolbarFilter,
       createdByToolbarFilter,
       modifiedByToolbarFilter,
