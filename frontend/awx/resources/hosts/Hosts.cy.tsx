@@ -80,11 +80,7 @@ describe('Hosts.cy.ts', () => {
 
       if (dynamic) {
         it('smart or constructed inventory does not have any actions beside run command', () => {
-          cy.mount(component, params);
-          cy.get(`[data-cy='edit-host]`).should('not.exist');
-          cy.get(`[data-cy='create-host]`).should('not.exist');
-          cy.get(`[data-cy='run-command']`);
-          cy.get(`[data-cy='actions-dropdown']`).should('not.exist');
+          testActions(component, params);
         });
       }
 
@@ -146,6 +142,15 @@ describe('Hosts.cy.ts', () => {
 });
 
 type paramsType = { path: string; initialEntries: string[]; } | undefined;
+
+function testActions(component : React.ReactElement, params : paramsType)
+{
+  cy.mount(component, params);
+          cy.get(`[data-cy='edit-host]`).should('not.exist');
+          cy.get(`[data-cy='create-host]`).should('not.exist');
+          cy.get(`[data-cy='run-command']`);
+          cy.get(`[data-cy='actions-dropdown']`).should('not.exist');
+}
 
 function testFilters(component : React.ReactElement, params : paramsType, type : string, dynamic : boolean)
 {
