@@ -184,36 +184,7 @@ describe('Hosts.cy.ts', () => {
         });
 
         it('disable edit row action if the user does not have permissions', () => {
-          cy.fixture('hosts')
-            .then((hosts: AwxItemsResponse<AwxHost>) => {
-              for (let i = 0; i < hosts.results.length; i++) {
-                hosts.results[i].summary_fields.user_capabilities.edit = false;
-                hosts.results[i].name = 'test';
-              }
-              return hosts;
-            })
-            .then((hostsList) => {
-              cy.intercept(
-                {
-                  method: 'GET',
-                  url: type === hosts ? '/api/v2/hosts/*' : '/api/v2/inventories/1/hosts/*',
-                },
-                { body: hostsList }
-              );
-            })
-            .then(() => {
-              cy.mount(component, params);
-            })
-            .then(() => {
-              cy.contains('tr', 'test').within(() => {
-                cy.get('button[aria-label="Edit host"]').as('editButton');
-              });
-              cy.get('@editButton').should('have.attr', 'aria-disabled', 'true');
-              cy.get('@editButton').click();
-              cy.get('@editButton').hasTooltip(
-                'This cannot be edited due to insufficient permission'
-              );
-            });
+         disableEditRowAction(component, params, type);
         });
       }
     });
@@ -300,4 +271,38 @@ function testCreatePermissions(component : React.ReactElement, params : paramsTy
   cy.contains(/^Please create a host by using the button below.$/);
   cy.contains('button', /^Create host$/).should('be.visible');
   cy.contains('button', /^Create host$/).click();
+}
+
+function disableEditRowAction(component : React.ReactElement, params : paramsType, type : string)
+{
+  cy.fixture('hosts')
+  .then((hosts: AwxItemsResponse<AwxHost>) => {
+    for (let i = 0; i < hosts.results.length; i++) {
+      hosts.results[i].summary_fields.user_capabilities.edit = false;
+      hosts.results[i].name = 'test';
+    }
+    return hosts;
+  })
+  .then((hostsList) => {
+    cy.intercept(
+      {
+        method: 'GET',
+        url: type === hosts ? '/api/v2/hosts/*' : '/api/v2/inventories/1/hosts/*',
+      },
+      { body: hostsList }
+    );
+  })
+  .then(() => {
+    cy.mount(component, params);
+  })
+  .then(() => {
+    cy.contains('tr', 'test').within(() => {
+      cy.get('button[aria-label="Edit host"]').as('editButton');
+    });
+    cy.get('@editButton').should('have.attr', 'aria-disabled', 'true');
+    cy.get('@editButton').click();
+    cy.get('@editButton').hasTooltip(
+      'This cannot be edited due to insufficient permission'
+    );
+  });
 }
