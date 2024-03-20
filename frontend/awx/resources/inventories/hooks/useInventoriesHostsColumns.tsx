@@ -71,23 +71,19 @@ export function useInventoriesHostsColumns(options?: {
   });
 
   const tableColumns = useMemo<ITableColumn<AwxHost>[]>(() => {
-    let columns: ITableColumn<AwxHost>[] = [nameColumn];
+    let columns: ITableColumn<AwxHost>[] = [];
 
     if (params.inventory_type === 'inventory') {
-      columns = [
-        ...columns,
-        nameColumn,
-        descriptionColumn,
-        relatedGroupColumn,
-        createdColumn,
-        modifiedColumn,
-      ];
+      columns = [nameColumn, descriptionColumn, relatedGroupColumn, createdColumn, modifiedColumn];
     }
 
-    if (params.inventory_type === 'smart_inventory') {
+    if (
+      params.inventory_type === 'smart_inventory' ||
+      params.inventory_type === 'constructed_inventory'
+    ) {
       recentJobs.sort = '';
       inventoryColumn.sort = '';
-      columns = [...columns, recentJobs, inventoryColumn];
+      columns = [nameColumn, recentJobs, inventoryColumn];
     }
     return columns;
   }, [
