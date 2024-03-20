@@ -1,14 +1,16 @@
+import { useVisualizationController } from '@patternfly/react-topology';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useVisualizationController } from '@patternfly/react-topology';
 import { PageWizard, PageWizardStep, usePageAlertToaster } from '../../../../../../framework';
+import { RequestError } from '../../../../../common/crud/RequestError';
 import { awxErrorAdapter } from '../../../../common/adapters/awxErrorAdapter';
-import type { GraphNode, GraphNodeData, PromptFormValues, WizardFormValues } from '../types';
 import type { WorkflowNode } from '../../../../interfaces/WorkflowNode';
-import { NodeTypeStep } from './NodeTypeStep';
+import { RESOURCE_TYPE } from '../constants';
+import { useCloseSidebar, useGetInitialValues } from '../hooks';
+import type { GraphNode, GraphNodeData, PromptFormValues, WizardFormValues } from '../types';
 import { NodePromptsStep } from './NodePromptsStep';
 import { NodeReviewStep } from './NodeReviewStep';
-import { useCloseSidebar, useGetInitialValues } from '../hooks';
+import { NodeTypeStep } from './NodeTypeStep';
 import {
   getNodeLabel,
   getValueBasedOnJobType,
@@ -16,7 +18,6 @@ import {
   replaceIdentifier,
   shouldHideOtherStep,
 } from './helpers';
-import { RESOURCE_TYPE } from '../constants';
 
 type StepContent = Partial<WizardFormValues> | { prompt: Partial<PromptFormValues> };
 type StepName = 'nodeTypeStep' | 'nodePromptsStep';
@@ -63,6 +64,33 @@ export function NodeEditWizard({ node }: { node: GraphNode }) {
       id: 'nodeTypeStep',
       label: t('Node details'),
       inputs: <NodeTypeStep />,
+      validate: (wizardData: Partial<WizardFormValues>) => {
+        const { node_resource } = wizardData;
+        if (node_resource?.type === 'job_template') {
+          if (
+            'project' in node_resource &&
+            'inventory' in node_resource &&
+            'ask_inventory_on_launch' in node_resource
+          ) {
+            if (
+              !node_resource?.project ||
+              node_resource?.project === null ||
+              ((!node_resource?.inventory || node_resource?.inventory === null) &&
+                !node_resource?.ask_inventory_on_launch)
+            ) {
+              const errors = {
+                __all__: [
+                  t(
+                    'Job Templates with a missing inventory or project cannot be selected when creating or editing nodes. Select another template or fix the missing fields to proceed.'
+                  ),
+                ],
+              };
+
+              throw new RequestError('', '', 400, '', errors);
+            }
+          }
+        }
+      },
     },
     {
       id: 'nodePromptsStep',
