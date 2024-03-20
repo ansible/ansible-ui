@@ -17,22 +17,14 @@ export function useHostsFilters() {
   const params = useParams<{ inventory_type: string }>();
 
   const toolbarFilters = useMemo<IToolbarFilter[]>(() => {
-    let filters: IToolbarFilter[] = [];
+    let filters: IToolbarFilter[] = [
+      nameToolbarFilter,
+      createdByToolbarFilter,
+      modifiedByToolbarFilter,
+    ];
 
     if (!params.inventory_type || params.inventory_type === 'inventory') {
-      filters = [
-        nameToolbarFilter,
-        descriptionToolbarFilter,
-        createdByToolbarFilter,
-        modifiedByToolbarFilter,
-      ];
-    }
-
-    if (
-      params.inventory_type === 'smart_inventory' ||
-      params.inventory_type === 'constructed_inventory'
-    ) {
-      filters = [nameToolbarFilter, createdByToolbarFilter, modifiedByToolbarFilter];
+      filters.splice(1, 0, descriptionToolbarFilter);
     }
 
     return filters;
