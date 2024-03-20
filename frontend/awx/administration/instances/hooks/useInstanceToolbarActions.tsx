@@ -1,5 +1,5 @@
 import { ButtonVariant } from '@patternfly/react-core';
-import { HeartbeatIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
+import { HeartbeatIcon, PlusCircleIcon, MinusCircleIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
@@ -68,7 +68,7 @@ export function useInstanceToolbarActions(view: IAwxView<Instance>) {
         type: PageActionType.Button,
         isHidden: () => isK8s === false,
         selection: PageActionSelection.Multiple,
-        icon: TrashIcon,
+        icon: MinusCircleIcon,
         label: t('Remove instance'),
         onClick: (instance: Instance[]) => removeInstances(instance),
         isDisabled: (instances: Instance[]) => cannotRemoveInstances(instances, t),

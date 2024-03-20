@@ -5,7 +5,7 @@ import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { Instance } from '../../../interfaces/Instance';
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';
-import { HeartbeatIcon, PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
+import { HeartbeatIcon, PencilAltIcon, MinusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import {
   usePageNavigate,
@@ -167,7 +167,7 @@ export function useInstanceDetailsActions(options: {
         type: PageActionType.Button,
         isHidden: () => isK8s === false || !instancesType,
         selection: PageActionSelection.Single,
-        icon: TrashIcon,
+        icon: MinusCircleIcon,
         label: t('Remove instance'),
         onClick: (instance: Instance) => removeInstances([instance]),
         isDisabled: () =>
