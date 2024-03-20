@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-/// <reference types="cypress" />
-
 import { randomString } from '../../../../framework/utils/random-string';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { User } from '../../../../frontend/awx/interfaces/User';
@@ -34,7 +31,10 @@ describe('organizations', () => {
 
   it('renders the organization details page', function () {
     cy.navigateTo('awx', 'organizations');
-    cy.clickTableRowLink('name', `${(this.globalOrganization as Organization).name}`);
+    cy.filterTableByMultiSelect('name', [(this.globalOrganization as Organization).name]);
+    cy.get('[data-cy="name-column-cell"]').within(() => {
+      cy.get('a').click();
+    });
     cy.verifyPageTitle(`${(this.globalOrganization as Organization).name}`);
     cy.clickLink(/^Details$/);
     cy.contains('#name', `${(this.globalOrganization as Organization).name}`);
@@ -68,7 +68,10 @@ describe('organizations edit and delete', function () {
   it('edits an organization from the list view', function () {
     const stringRandom = randomString(4);
     cy.navigateTo('awx', 'organizations');
-    cy.clickTableRowAction('name', `${organization.name}`, 'edit-organization');
+    cy.filterTableByMultiSelect('name', [organization.name]);
+    cy.getByDataCy('actions-column-cell').within(() => {
+      cy.getByDataCy('edit-organization').click();
+    });
     cy.verifyPageTitle('Edit Organization');
     cy.getByDataCy('organization-name')
       .clear()
@@ -85,7 +88,10 @@ describe('organizations edit and delete', function () {
     const stringRandom = randomString(4);
 
     cy.navigateTo('awx', 'organizations');
-    cy.clickTableRowLink('name', `${organization.name}`);
+    cy.filterTableByMultiSelect('name', [organization.name]);
+    cy.get('[data-cy="name-column-cell"]').within(() => {
+      cy.get('a').click();
+    });
     cy.verifyPageTitle(`${organization.name}`);
 
     cy.containsBy('button', /^Edit organization/).click();
@@ -105,7 +111,10 @@ describe('organizations edit and delete', function () {
 
   it('deletes an organization from the details page', function () {
     cy.navigateTo('awx', 'organizations');
-    cy.clickTableRowLink('name', `${organization.name}`);
+    cy.filterTableByMultiSelect('name', [organization.name]);
+    cy.get('[data-cy="name-column-cell"]').within(() => {
+      cy.get('a').click();
+    });
     cy.verifyPageTitle(organization.name);
     cy.clickPageAction('delete-organization');
     cy.get('#confirm').click();
@@ -117,8 +126,9 @@ describe('organizations edit and delete', function () {
 
   it('deletes an organization from the organizations list row item', function () {
     cy.navigateTo('awx', 'organizations');
-    cy.clickTableRowAction('name', `${organization.name}`, 'delete-organization', {
-      inKebab: true,
+    cy.filterTableByMultiSelect('name', [organization.name]);
+    cy.getByDataCy('actions-column-cell').within(() => {
+      cy.clickKebabAction('actions-dropdown', 'delete-organization');
     });
     cy.get('#confirm').click();
     cy.clickButton(/^Delete organization/);
@@ -128,7 +138,10 @@ describe('organizations edit and delete', function () {
 
   it('deletes an organization from the organizations list toolbar', function () {
     cy.navigateTo('awx', 'organizations');
-    cy.selectTableRowByCheckbox('name', `${organization.name}`);
+    cy.filterTableByMultiSelect('name', [organization.name]);
+    cy.get('[data-cy="checkbox-column-cell"]').within(() => {
+      cy.get('input').click();
+    });
     cy.clickToolbarKebabAction('delete-selected-organizations');
     cy.getModal().within(() => {
       cy.get('#confirm').click();
