@@ -16,7 +16,6 @@ import {
 } from '../../frontend/eda/interfaces/EdaRulebookActivation';
 import { EdaUser, EdaUserCreateUpdate } from '../../frontend/eda/interfaces/EdaUser';
 import {
-  CredentialTypeEnum,
   ImportStateEnum,
   RestartPolicyEnum,
   RoleDetail,
@@ -239,7 +238,7 @@ Cypress.Commands.add('pollEdaResults', (url: string) => {
 Cypress.Commands.add('createEdaCredential', () => {
   cy.requestPost<EdaCredentialCreate>(edaAPI`/credentials/`, {
     name: 'E2E Credential ' + randomString(4),
-    credential_type: CredentialTypeEnum.ContainerRegistry,
+    credential_type: 1,
     secret: 'test token',
     description: 'This is a container registry credential',
     username: 'admin',
