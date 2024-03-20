@@ -133,25 +133,7 @@ describe('Hosts.cy.ts', () => {
 
       if (!dynamic) {
         it('disable "create host" toolbar action if the user does not have permissions', () => {
-          cy.stub(useOptions, 'useOptions').callsFake(() => ({
-            data: {
-              actions: {},
-            },
-          }));
-          cy.mount(component, params);
-          cy.contains('button', /^Create host$/).as('createButton');
-          cy.get('@createButton').should('have.attr', 'aria-disabled', 'true');
-          cy.get('@createButton').click({ force: true });
-
-          if (type === hosts) {
-            cy.hasTooltip(
-              /^You do not have permission to create a host. Please contact your system administrator if there is an issue with your access.$/
-            );
-          } else {
-            cy.hasTooltip(
-              /^You do not have permission to create a host. Please contact your organization administrator if there is an issue with your access.$/
-            );
-          }
+         disableCreateRowAction(component, params, type);
         });
 
         it('disable delete row action if the user does not have permissions', () => {
@@ -310,4 +292,27 @@ function disableDeleteRowAction(component : React.ReactElement, params : paramsT
       cy.get('@deleteButton').click();
       cy.hasTooltip('This cannot be deleted due to insufficient permission');
     });
+}
+
+function disableCreateRowAction(component : React.ReactElement, params : paramsType, type : string)
+{
+  cy.stub(useOptions, 'useOptions').callsFake(() => ({
+    data: {
+      actions: {},
+    },
+  }));
+  cy.mount(component, params);
+  cy.contains('button', /^Create host$/).as('createButton');
+  cy.get('@createButton').should('have.attr', 'aria-disabled', 'true');
+  cy.get('@createButton').click({ force: true });
+
+  if (type === hosts) {
+    cy.hasTooltip(
+      /^You do not have permission to create a host. Please contact your system administrator if there is an issue with your access.$/
+    );
+  } else {
+    cy.hasTooltip(
+      /^You do not have permission to create a host. Please contact your organization administrator if there is an issue with your access.$/
+    );
+  }
 }
