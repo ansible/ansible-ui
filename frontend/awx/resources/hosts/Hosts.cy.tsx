@@ -89,46 +89,7 @@ describe('Hosts.cy.ts', () => {
       }
 
       it('should have filters for Name, Description, Created By and Modified By', () => {
-        cy.mount(component, params);
-
-        if (type === hosts) {
-          cy.intercept('/api/v2/hosts/?description__icontains=Description*').as(
-            'descriptionFilterRequest'
-          );
-        } else {
-          cy.intercept('/api/v2/inventories/1/hosts/?description__icontains=Description*').as(
-            'descriptionFilterRequest'
-          );
-        }
-
-        if (type === hosts) {
-          cy.verifyPageTitle('Hosts');
-          cy.get('[data-cy="smart-inventory"]').should('have.attr', 'aria-disabled', 'true');
-        }
-
-        cy.openToolbarFilterTypeSelect().within(() => {
-          cy.contains(/^Name$/).should('be.visible');
-
-          if (!dynamic) {
-            cy.contains(/^Description$/).should('be.visible');
-          }
-
-          cy.contains(/^Created by$/).should('be.visible');
-
-          cy.contains(/^Modified by$/).should('be.visible');
-
-          if (!dynamic) {
-            cy.contains('button', /^Description$/).click();
-          }
-        });
-        cy.filterTableByText('Description');
-        if (!dynamic) {
-          cy.wait('@descriptionFilterRequest');
-        }
-        if (type === hosts) {
-          cy.get('[data-cy="smart-inventory"]').should('not.be.disabled');
-        }
-        cy.clickButton(/^Clear all filters$/);
+       testFilters(component, params, type, dynamic);
       });
 
       if (!dynamic) {
@@ -315,4 +276,48 @@ function disableCreateRowAction(component : React.ReactElement, params : paramsT
       /^You do not have permission to create a host. Please contact your organization administrator if there is an issue with your access.$/
     );
   }
+}
+
+function testFilters(component : React.ReactElement, params : paramsType, type : string, dynamic : boolean)
+{
+  cy.mount(component, params);
+
+  if (type === hosts) {
+    cy.intercept('/api/v2/hosts/?description__icontains=Description*').as(
+      'descriptionFilterRequest'
+    );
+  } else {
+    cy.intercept('/api/v2/inventories/1/hosts/?description__icontains=Description*').as(
+      'descriptionFilterRequest'
+    );
+  }
+
+  if (type === hosts) {
+    cy.verifyPageTitle('Hosts');
+    cy.get('[data-cy="smart-inventory"]').should('have.attr', 'aria-disabled', 'true');
+  }
+
+  cy.openToolbarFilterTypeSelect().within(() => {
+    cy.contains(/^Name$/).should('be.visible');
+
+    if (!dynamic) {
+      cy.contains(/^Description$/).should('be.visible');
+    }
+
+    cy.contains(/^Created by$/).should('be.visible');
+
+    cy.contains(/^Modified by$/).should('be.visible');
+
+    if (!dynamic) {
+      cy.contains('button', /^Description$/).click();
+    }
+  });
+  cy.filterTableByText('Description');
+  if (!dynamic) {
+    cy.wait('@descriptionFilterRequest');
+  }
+  if (type === hosts) {
+    cy.get('[data-cy="smart-inventory"]').should('not.be.disabled');
+  }
+  cy.clickButton(/^Clear all filters$/);
 }
