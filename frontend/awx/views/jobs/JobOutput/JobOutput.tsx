@@ -40,7 +40,7 @@ export function JobOutputInner(props: { job: Job; reloadJob: () => void }) {
   const isRunning = isJobRunning(job.status);
   const [isFollowModeEnabled, setIsFollowModeEnabled] = useState(isRunning);
 
-  const { results: workflowNodes } = useAwxGetAllPages<WorkflowNode>(
+  const { results: workflowNodes, refresh } = useAwxGetAllPages<WorkflowNode>(
     awxAPI`/workflow_jobs/${props.job.id.toString() || ''}/workflow_nodes/`
   );
 
@@ -66,7 +66,7 @@ export function JobOutputInner(props: { job: Job; reloadJob: () => void }) {
         </>
       )}
       {job.type === 'workflow_job' ? (
-        <WorkflowOutput job={job} reloadJob={reloadJob} />
+        <WorkflowOutput job={job} reloadJob={reloadJob} refreshNodeStatus={refresh} />
       ) : (
         <JobOutputEvents
           job={job}
