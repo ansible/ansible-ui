@@ -54,11 +54,13 @@ export interface PageFormProps<T extends object> {
   footer?: ReactNode;
   errorAdapter?: ErrorAdapter;
   disableSubmitOnEnter?: boolean;
+  isWizard?: boolean;
 }
 
 export function useFormErrors<T extends object>(
   defaultValue: DefaultValues<T> | undefined,
-  errorAdapter: ErrorAdapter
+  errorAdapter: ErrorAdapter,
+  isWizard = false
 ) {
   const form = useForm<T>({
     defaultValues: defaultValue ?? ({} as DefaultValues<T>),
@@ -71,16 +73,22 @@ export function useFormErrors<T extends object>(
 
     // Handle generic errors
     if (genericErrors.length > 0) {
-      setError(genericErrors.map((error) => error.message));
+      const parsedGenericErrorMessages = genericErrors.map((genericError) => genericError.message);
+      setError(parsedGenericErrorMessages);
+      // This is necessary to handle the wizard case where the error is not associated with a field
+      // then the step itself should be marked as invalid
+      if (isWizard) {
+        setFieldError('root', { message: parsedGenericErrorMessages.join(' ') });
+      }
     } else {
       setError(null);
     }
 
     // Handle field errors
     if (fieldErrors.length > 0) {
-      fieldErrors.forEach((error) => {
-        setFieldError(error.name as unknown as Path<T>, {
-          message: typeof error.message === 'string' ? error.message : undefined,
+      fieldErrors.forEach((fieldError) => {
+        setFieldError(fieldError.name as unknown as Path<T>, {
+          message: typeof fieldError.message === 'string' ? fieldError.message : undefined,
         });
       });
     }
@@ -90,10 +98,10 @@ export function useFormErrors<T extends object>(
 }
 
 export function PageForm<T extends object>(props: PageFormProps<T>) {
-  const { errorAdapter = genericErrorAdapter } = props;
+  const { errorAdapter = genericErrorAdapter, isWizard = false } = props;
 
   const { form, handleSubmit, error, setError, handleSubmitError, setFieldError } =
-    useFormErrors<T>(props.defaultValue, errorAdapter);
+    useFormErrors<T>(props.defaultValue, errorAdapter, isWizard);
   const [settings] = useContext(PageSettingsContext);
   const [frameworkTranslations] = useFrameworkTranslations();
   const isMd = useBreakpoint('md');
@@ -155,7 +163,6 @@ export function PageForm<T extends object>(props: PageFormProps<T>) {
         }}
       >
         {error && <ErrorAlert error={error} isMd={isMd} onCancel={props.onCancel} />}
-
         <Scrollable>
           <FormContainer
             variant="light"

@@ -28,7 +28,7 @@ export interface JobTemplate
     | 'allow_simultaneous'
     | 'ask_credential_on_launch'
     | 'ask_diff_mode_on_launch'
-    | 'ask_evecution_environment_on_launch'
+    | 'ask_execution_environment_on_launch'
     | 'ask_forks_on_launch'
     | 'ask_instance_groups_on_launch'
     | 'ask_inventory_on_launch'
