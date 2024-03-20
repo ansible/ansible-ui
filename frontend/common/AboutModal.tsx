@@ -24,7 +24,7 @@ export function AnsibleAboutModal(props: AnsibleAboutModalProps) {
       brandImageSrc={
         process.env.PRODUCT === 'Automation Hub'
           ? '/static/media/galaxy-logo-ansibull.png'
-          : process.env.PRODUCT === 'Eda'
+          : process.env.PRODUCT === 'EDA Server'
             ? '/static/media/eda-icon.svg'
             : '/static/media/awx-logo.svg'
       }
@@ -35,7 +35,7 @@ export function AnsibleAboutModal(props: AnsibleAboutModalProps) {
       <TextContent>
         <TextList component="dl">
           {Object.entries(props.versionInfo ?? {})
-            .filter(([product]) => product !== 'galaxy_ng_commit')
+            .filter(([product]) => product !== 'galaxy_ng_commit' && product !== 'ha')
             .map(([product, info]) => {
               return (
                 <>
@@ -90,6 +90,7 @@ export function translateVersion(name: string | undefined, t: TFunction) {
     install_uuid: t`Install UUID`,
     instances: t`Instances`,
     instance_groups: t`Instance Groups`,
+    ansible_versions: t`Ansible Versions`,
   };
 
   return VERSION_NAMES[name as string] || name;
