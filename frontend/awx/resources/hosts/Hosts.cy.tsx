@@ -11,7 +11,6 @@ const smart_inventory_hosts = 'smart_inventory_hosts';
 const constructed_inventory_hosts = 'constructed_inventory_hosts';
 
 describe('Hosts.cy.ts', () => {
-  
   describe('Test standalone hosts', () => {
     const component = <Hosts />;
     const path = '/hosts';
@@ -28,30 +27,29 @@ describe('Hosts.cy.ts', () => {
         nonEmptyListBeforeEach(type);
       });
 
-      
-        it('should render inventory list', () => {
-          cy.mount(component, params);
-          if (type === hosts) {
-            cy.verifyPageTitle('Hosts');
-          }
-          cy.get('table').find('tr').should('have.length', 10);
-        });
-      
-      it('should have filters for Name, Description, Created By and Modified By', () => {
-       testFilters(component, params, type, dynamic);
+      it('should render inventory list', () => {
+        cy.mount(component, params);
+        if (type === hosts) {
+          cy.verifyPageTitle('Hosts');
+        }
+        cy.get('table').find('tr').should('have.length', 10);
       });
 
-        it('disable "create host" toolbar action if the user does not have permissions', () => {
-         disableCreateRowAction(component, params, type);
-        });
+      it('should have filters for Name, Description, Created By and Modified By', () => {
+        testFilters(component, params, type, dynamic);
+      });
 
-        it('disable delete row action if the user does not have permissions', () => {
-         disableDeleteRowAction(component, params, type);
-        });
+      it('disable "create host" toolbar action if the user does not have permissions', () => {
+        disableCreateRowAction(component, params, type);
+      });
 
-        it('disable edit row action if the user does not have permissions', () => {
-         disableEditRowAction(component, params, type);
-        });
+      it('disable delete row action if the user does not have permissions', () => {
+        disableDeleteRowAction(component, params, type);
+      });
+
+      it('disable edit row action if the user does not have permissions', () => {
+        disableEditRowAction(component, params, type);
+      });
     });
 
     describe('Empty list', () => {
@@ -67,24 +65,89 @@ describe('Hosts.cy.ts', () => {
         ).as('emptyList');
       });
 
-      
-        it('display Empty State and create button for user with permission to create hosts', () => {
-          testCreatePermissions(component, params, type);
-        });
+      it('display Empty State and create button for user with permission to create hosts', () => {
+        testCreatePermissions(component, params, type);
+      });
 
-        it('display Empty state for user without permission to create ', () => {
-          cy.stub(useOptions, 'useOptions').callsFake(() => ({
-            data: {
-              actions: {},
-            },
-          }));
-          testCreatePermissionsForbidden(component, params, dynamic);
-        });
+      it('display Empty state for user without permission to create ', () => {
+        cy.stub(useOptions, 'useOptions').callsFake(() => ({
+          data: {
+            actions: {},
+          },
+        }));
+        testCreatePermissionsForbidden(component, params, dynamic);
+      });
+    });
+  });
+
+  describe('Test inventory hosts', () => {
+    const component = <InventoryHosts />;
+    const path = '/inventories/:inventory_type/:id/hosts';
+    const dynamic = false;
+
+    const initialEntries = [`/inventories/inventory/1/hosts`];
+    const params = {
+      path,
+      initialEntries,
+    };
+    const type = inventory_hosts;
+
+    describe('Non-empty list', () => {
+      beforeEach(() => {
+        nonEmptyListBeforeEach(type);
+      });
+
+      it('should render inventory list', () => {
+        cy.mount(component, params);
+        cy.get('table').find('tr').should('have.length', 10);
+      });
+
+      it('should have filters for Name, Description, Created By and Modified By', () => {
+        testFilters(component, params, type, dynamic);
+      });
+
+      it('disable "create host" toolbar action if the user does not have permissions', () => {
+        disableCreateRowAction(component, params, type);
+      });
+
+      it('disable delete row action if the user does not have permissions', () => {
+        disableDeleteRowAction(component, params, type);
+      });
+
+      it('disable edit row action if the user does not have permissions', () => {
+        disableEditRowAction(component, params, type);
+      });
     });
 
+    describe('Empty list', () => {
+      beforeEach(() => {
+        cy.intercept(
+          {
+            method: 'GET',
+            url: '/api/v2/inventories/1/hosts/*',
+          },
+          {
+            fixture: 'emptyList.json',
+          }
+        ).as('emptyList');
+      });
 
+      it('display Empty State and create button for user with permission to create hosts', () => {
+        testCreatePermissions(component, params, type);
+      });
+
+      it('display Empty state for user without permission to create ', () => {
+        cy.stub(useOptions, 'useOptions').callsFake(() => ({
+          data: {
+            actions: {},
+          },
+        }));
+        testCreatePermissionsForbidden(component, params, dynamic);
+      });
+    });
   });
-  /*const types = [hosts, inventory_hosts, smart_inventory_hosts, constructed_inventory_hosts];
+});
+/*const types = [hosts, inventory_hosts, smart_inventory_hosts, constructed_inventory_hosts];
 
   types.forEach((type) => {
 
@@ -191,12 +254,10 @@ describe('Hosts.cy.ts', () => {
      
     });
   });*/
-});
 
-type paramsType = { path: string; initialEntries: string[]; } | undefined;
+type paramsType = { path: string; initialEntries: string[] } | undefined;
 
-function nonEmptyListBeforeEach(type : string)
-{
+function nonEmptyListBeforeEach(type: string) {
   cy.intercept(
     {
       method: 'GET',
@@ -220,17 +281,20 @@ function nonEmptyListBeforeEach(type : string)
   }
 }
 
-function testActions(component : React.ReactElement, params : paramsType)
-{
+function testActions(component: React.ReactElement, params: paramsType) {
   cy.mount(component, params);
-          cy.get(`[data-cy='edit-host]`).should('not.exist');
-          cy.get(`[data-cy='create-host]`).should('not.exist');
-          cy.get(`[data-cy='run-command']`);
-          cy.get(`[data-cy='actions-dropdown']`).should('not.exist');
+  cy.get(`[data-cy='edit-host]`).should('not.exist');
+  cy.get(`[data-cy='create-host]`).should('not.exist');
+  cy.get(`[data-cy='run-command']`);
+  cy.get(`[data-cy='actions-dropdown']`).should('not.exist');
 }
 
-function testFilters(component : React.ReactElement, params : paramsType, type : string, dynamic : boolean)
-{
+function testFilters(
+  component: React.ReactElement,
+  params: paramsType,
+  type: string,
+  dynamic: boolean
+) {
   cy.mount(component, params);
 
   if (type === hosts) {
@@ -273,8 +337,7 @@ function testFilters(component : React.ReactElement, params : paramsType, type :
   cy.clickButton(/^Clear all filters$/);
 }
 
-function disableCreateRowAction(component : React.ReactElement, params : paramsType, type : string)
-{
+function disableCreateRowAction(component: React.ReactElement, params: paramsType, type: string) {
   cy.stub(useOptions, 'useOptions').callsFake(() => ({
     data: {
       actions: {},
@@ -296,7 +359,11 @@ function disableCreateRowAction(component : React.ReactElement, params : paramsT
   }
 }
 
-function testCreatePermissionsForbidden(component : React.ReactElement, params : paramsType, dynamic : boolean) {
+function testCreatePermissionsForbidden(
+  component: React.ReactElement,
+  params: paramsType,
+  dynamic: boolean
+) {
   cy.mount(component, params);
 
   if (!dynamic) {
@@ -311,8 +378,7 @@ function testCreatePermissionsForbidden(component : React.ReactElement, params :
   cy.contains('button', /^Create host$/).should('not.exist');
 }
 
-function testCreatePermissions(component : React.ReactElement, params : paramsType, type : string) 
-{
+function testCreatePermissions(component: React.ReactElement, params: paramsType, type: string) {
   cy.stub(useOptions, 'useOptions').callsFake(() => ({
     data: {
       actions: {
@@ -340,43 +406,38 @@ function testCreatePermissions(component : React.ReactElement, params : paramsTy
   cy.contains('button', /^Create host$/).click();
 }
 
-
-function disableEditRowAction(component : React.ReactElement, params : paramsType, type : string)
-{
+function disableEditRowAction(component: React.ReactElement, params: paramsType, type: string) {
   cy.fixture('hosts')
-  .then((hosts: AwxItemsResponse<AwxHost>) => {
-    for (let i = 0; i < hosts.results.length; i++) {
-      hosts.results[i].summary_fields.user_capabilities.edit = false;
-      hosts.results[i].name = 'test';
-    }
-    return hosts;
-  })
-  .then((hostsList) => {
-    cy.intercept(
-      {
-        method: 'GET',
-        url: type === hosts ? '/api/v2/hosts/*' : '/api/v2/inventories/1/hosts/*',
-      },
-      { body: hostsList }
-    );
-  })
-  .then(() => {
-    cy.mount(component, params);
-  })
-  .then(() => {
-    cy.contains('tr', 'test').within(() => {
-      cy.get('button[aria-label="Edit host"]').as('editButton');
+    .then((hosts: AwxItemsResponse<AwxHost>) => {
+      for (let i = 0; i < hosts.results.length; i++) {
+        hosts.results[i].summary_fields.user_capabilities.edit = false;
+        hosts.results[i].name = 'test';
+      }
+      return hosts;
+    })
+    .then((hostsList) => {
+      cy.intercept(
+        {
+          method: 'GET',
+          url: type === hosts ? '/api/v2/hosts/*' : '/api/v2/inventories/1/hosts/*',
+        },
+        { body: hostsList }
+      );
+    })
+    .then(() => {
+      cy.mount(component, params);
+    })
+    .then(() => {
+      cy.contains('tr', 'test').within(() => {
+        cy.get('button[aria-label="Edit host"]').as('editButton');
+      });
+      cy.get('@editButton').should('have.attr', 'aria-disabled', 'true');
+      cy.get('@editButton').click();
+      cy.get('@editButton').hasTooltip('This cannot be edited due to insufficient permission');
     });
-    cy.get('@editButton').should('have.attr', 'aria-disabled', 'true');
-    cy.get('@editButton').click();
-    cy.get('@editButton').hasTooltip(
-      'This cannot be edited due to insufficient permission'
-    );
-  });
 }
 
-function disableDeleteRowAction(component : React.ReactElement, params : paramsType, type : string)
-{
+function disableDeleteRowAction(component: React.ReactElement, params: paramsType, type: string) {
   cy.mount(component, params);
   cy.fixture('hosts')
     .then((hosts: AwxItemsResponse<AwxHost>) => {
