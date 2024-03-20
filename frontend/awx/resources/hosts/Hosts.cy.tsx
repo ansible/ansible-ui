@@ -147,6 +147,73 @@ describe('Hosts.cy.ts', () => {
 
 type paramsType = { path: string; initialEntries: string[]; } | undefined;
 
+function testFilters(component : React.ReactElement, params : paramsType, type : string, dynamic : boolean)
+{
+  cy.mount(component, params);
+
+  if (type === hosts) {
+    cy.intercept('/api/v2/hosts/?description__icontains=Description*').as(
+      'descriptionFilterRequest'
+    );
+  } else {
+    cy.intercept('/api/v2/inventories/1/hosts/?description__icontains=Description*').as(
+      'descriptionFilterRequest'
+    );
+  }
+
+  if (type === hosts) {
+    cy.verifyPageTitle('Hosts');
+    cy.get('[data-cy="smart-inventory"]').should('have.attr', 'aria-disabled', 'true');
+  }
+
+  cy.openToolbarFilterTypeSelect().within(() => {
+    cy.contains(/^Name$/).should('be.visible');
+
+    if (!dynamic) {
+      cy.contains(/^Description$/).should('be.visible');
+    }
+
+    cy.contains(/^Created by$/).should('be.visible');
+
+    cy.contains(/^Modified by$/).should('be.visible');
+
+    if (!dynamic) {
+      cy.contains('button', /^Description$/).click();
+    }
+  });
+  cy.filterTableByText('Description');
+  if (!dynamic) {
+    cy.wait('@descriptionFilterRequest');
+  }
+  if (type === hosts) {
+    cy.get('[data-cy="smart-inventory"]').should('not.be.disabled');
+  }
+  cy.clickButton(/^Clear all filters$/);
+}
+
+function disableCreateRowAction(component : React.ReactElement, params : paramsType, type : string)
+{
+  cy.stub(useOptions, 'useOptions').callsFake(() => ({
+    data: {
+      actions: {},
+    },
+  }));
+  cy.mount(component, params);
+  cy.contains('button', /^Create host$/).as('createButton');
+  cy.get('@createButton').should('have.attr', 'aria-disabled', 'true');
+  cy.get('@createButton').click({ force: true });
+
+  if (type === hosts) {
+    cy.hasTooltip(
+      /^You do not have permission to create a host. Please contact your system administrator if there is an issue with your access.$/
+    );
+  } else {
+    cy.hasTooltip(
+      /^You do not have permission to create a host. Please contact your organization administrator if there is an issue with your access.$/
+    );
+  }
+}
+
 function testCreatePermissionsForbidden(component : React.ReactElement, params : paramsType, dynamic : boolean) {
   cy.mount(component, params);
 
@@ -190,6 +257,7 @@ function testCreatePermissions(component : React.ReactElement, params : paramsTy
   cy.contains('button', /^Create host$/).should('be.visible');
   cy.contains('button', /^Create host$/).click();
 }
+
 
 function disableEditRowAction(component : React.ReactElement, params : paramsType, type : string)
 {
@@ -253,71 +321,4 @@ function disableDeleteRowAction(component : React.ReactElement, params : paramsT
       cy.get('@deleteButton').click();
       cy.hasTooltip('This cannot be deleted due to insufficient permission');
     });
-}
-
-function disableCreateRowAction(component : React.ReactElement, params : paramsType, type : string)
-{
-  cy.stub(useOptions, 'useOptions').callsFake(() => ({
-    data: {
-      actions: {},
-    },
-  }));
-  cy.mount(component, params);
-  cy.contains('button', /^Create host$/).as('createButton');
-  cy.get('@createButton').should('have.attr', 'aria-disabled', 'true');
-  cy.get('@createButton').click({ force: true });
-
-  if (type === hosts) {
-    cy.hasTooltip(
-      /^You do not have permission to create a host. Please contact your system administrator if there is an issue with your access.$/
-    );
-  } else {
-    cy.hasTooltip(
-      /^You do not have permission to create a host. Please contact your organization administrator if there is an issue with your access.$/
-    );
-  }
-}
-
-function testFilters(component : React.ReactElement, params : paramsType, type : string, dynamic : boolean)
-{
-  cy.mount(component, params);
-
-  if (type === hosts) {
-    cy.intercept('/api/v2/hosts/?description__icontains=Description*').as(
-      'descriptionFilterRequest'
-    );
-  } else {
-    cy.intercept('/api/v2/inventories/1/hosts/?description__icontains=Description*').as(
-      'descriptionFilterRequest'
-    );
-  }
-
-  if (type === hosts) {
-    cy.verifyPageTitle('Hosts');
-    cy.get('[data-cy="smart-inventory"]').should('have.attr', 'aria-disabled', 'true');
-  }
-
-  cy.openToolbarFilterTypeSelect().within(() => {
-    cy.contains(/^Name$/).should('be.visible');
-
-    if (!dynamic) {
-      cy.contains(/^Description$/).should('be.visible');
-    }
-
-    cy.contains(/^Created by$/).should('be.visible');
-
-    cy.contains(/^Modified by$/).should('be.visible');
-
-    if (!dynamic) {
-      cy.contains('button', /^Description$/).click();
-    }
-  });
-  cy.filterTableByText('Description');
-  if (!dynamic) {
-    cy.wait('@descriptionFilterRequest');
-  }
-  if (type === hosts) {
-    cy.get('[data-cy="smart-inventory"]').should('not.be.disabled');
-  }
-  cy.clickButton(/^Clear all filters$/);
 }
