@@ -66,7 +66,7 @@ describe('Hosts.cy.ts', () => {
         }
       });
 
-      if (dynamic === false) {
+      if (!dynamic) {
         it('should render inventory list', () => {
           cy.mount(component, params);
           if (type === hosts) {
@@ -76,7 +76,7 @@ describe('Hosts.cy.ts', () => {
         });
       }
 
-      if (dynamic === true) {
+      if (dynamic) {
         it('smart or constructed inventory does not have any actions beside run command', () => {
           cy.mount(component, params);
           cy.get(`[data-cy='edit-host]`).should('not.exist');
@@ -107,7 +107,7 @@ describe('Hosts.cy.ts', () => {
         cy.openToolbarFilterTypeSelect().within(() => {
           cy.contains(/^Name$/).should('be.visible');
 
-          if (dynamic === false) {
+          if (!dynamic) {
             cy.contains(/^Description$/).should('be.visible');
           }
 
@@ -115,12 +115,12 @@ describe('Hosts.cy.ts', () => {
 
           cy.contains(/^Modified by$/).should('be.visible');
 
-          if (dynamic === false) {
+          if (!dynamic) {
             cy.contains('button', /^Description$/).click();
           }
         });
         cy.filterTableByText('Description');
-        if (dynamic === false) {
+        if (!dynamic) {
           cy.wait('@descriptionFilterRequest');
         }
         if (type === hosts) {
@@ -129,7 +129,7 @@ describe('Hosts.cy.ts', () => {
         cy.clickButton(/^Clear all filters$/);
       });
 
-      if (dynamic === false) {
+      if (!dynamic) {
         it('disable "create host" toolbar action if the user does not have permissions', () => {
           cy.stub(useOptions, 'useOptions').callsFake(() => ({
             data: {
@@ -229,7 +229,7 @@ describe('Hosts.cy.ts', () => {
         ).as('emptyList');
       });
 
-      if (dynamic === false) {
+      if (!dynamic) {
         it('display Empty State and create button for user with permission to create hosts', () => {
           cy.stub(useOptions, 'useOptions').callsFake(() => ({
             data: {
@@ -274,7 +274,7 @@ describe('Hosts.cy.ts', () => {
       function testCreatePermissions() {
         cy.mount(component, params);
 
-        if (dynamic === false) {
+        if (!dynamic) {
           cy.contains(/^You do not have permission to create a host.$/);
           cy.contains(
             /^Please contact your organization administrator if there is an issue with your access.$/
