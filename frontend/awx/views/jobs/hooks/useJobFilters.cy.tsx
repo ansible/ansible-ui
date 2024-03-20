@@ -29,6 +29,6 @@ describe('useJobsFilters', () => {
     cy.mount(<Test />);
     cy.wait('@getOptions');
     cy.waitForReact(10000, '#root');
-    cy.getReact('TestInner').getProps('filters').should('have.length', 19);
+    cy.getReact('TestInner').getProps('filters').should('have.length', 20);
   });
 });
