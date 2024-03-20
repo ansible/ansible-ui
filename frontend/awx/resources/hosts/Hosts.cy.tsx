@@ -45,27 +45,7 @@ describe('Hosts.cy.ts', () => {
 
     describe('Non-empty list' + typeDesc, () => {
       beforeEach(() => {
-        cy.intercept(
-          {
-            method: 'GET',
-            url: type === hosts ? '/api/v2/hosts/*' : '/api/v2/inventories/1/hosts/*',
-          },
-          {
-            fixture: 'hosts.json',
-          }
-        ).as('hostsList');
-
-        if (type !== hosts) {
-          cy.intercept(
-            {
-              method: 'GET',
-              url: '/api/v2/inventories/1/*',
-            },
-            {
-              fixture: 'inventories.json',
-            }
-          );
-        }
+        nonEmptyListBeforeEach(type);
       });
 
       if (!dynamic) {
@@ -142,6 +122,31 @@ describe('Hosts.cy.ts', () => {
 });
 
 type paramsType = { path: string; initialEntries: string[]; } | undefined;
+
+function nonEmptyListBeforeEach(type : string)
+{
+  cy.intercept(
+    {
+      method: 'GET',
+      url: type === hosts ? '/api/v2/hosts/*' : '/api/v2/inventories/1/hosts/*',
+    },
+    {
+      fixture: 'hosts.json',
+    }
+  ).as('hostsList');
+
+  if (type !== hosts) {
+    cy.intercept(
+      {
+        method: 'GET',
+        url: '/api/v2/inventories/1/*',
+      },
+      {
+        fixture: 'inventories.json',
+      }
+    );
+  }
+}
 
 function testActions(component : React.ReactElement, params : paramsType)
 {
