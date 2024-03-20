@@ -141,11 +141,15 @@ export async function validateDetailsStep(
   plugins: AuthenticatorPlugins,
   authenticator?: Authenticator
 ) {
-  const type = authenticator ? authenticator.type : wizardData.type;
+  const isEditMode = !!authenticator;
+  const type = isEditMode ? authenticator.type : wizardData.type;
   const plugin = plugins.authenticators.find((plugin) => plugin.type === type);
-  const request = authenticator ? requestPatch : postRequest;
+  const request = isEditMode ? requestPatch : postRequest;
+  const url = isEditMode
+    ? gatewayAPI`/authenticators/${authenticator.id.toString()}/?validate=True`
+    : gatewayAPI`/authenticators/?validate=True`;
   try {
-    await request(gatewayAPI`/authenticators/?validate=True`, {
+    await request(url, {
       name: formData.name,
       type,
       configuration: formatConfiguration(formData.configuration, plugin as AuthenticatorPlugin),
