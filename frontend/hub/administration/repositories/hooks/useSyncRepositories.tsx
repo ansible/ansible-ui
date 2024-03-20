@@ -1,17 +1,17 @@
 import { Modal, ModalVariant } from '@patternfly/react-core';
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  PageForm,
-  usePageDialog,
   PageFormSwitch,
   errorToAlertProps,
   usePageAlertToaster,
+  usePageDialog,
 } from '../../../../../framework';
-import { Repository } from '../Repository';
-import { useCallback } from 'react';
-import { postHubRequest } from '../../../common/api/request';
+import { HubPageForm } from '../../../common/HubPageForm';
 import { pulpAPI } from '../../../common/api/formatPath';
 import { parsePulpIDFromURL } from '../../../common/api/hub-api-utils';
+import { postHubRequest } from '../../../common/api/request';
+import { Repository } from '../Repository';
 
 interface SyncFormProps {
   mirror: boolean;
@@ -40,7 +40,7 @@ export function useSyncRepositories() {
         tabIndex={0}
         hasNoBodyWrapper
       >
-        <PageForm<SyncFormProps>
+        <HubPageForm<SyncFormProps>
           submitText={t('Sync')}
           onSubmit={(values: SyncFormProps) => {
             return postHubRequest(
@@ -84,7 +84,7 @@ export function useSyncRepositories() {
             labelOff={t`Force a sync to happen.`}
           />
           <br />
-        </PageForm>
+        </HubPageForm>
       </Modal>
     );
   };

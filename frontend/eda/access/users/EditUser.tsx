@@ -3,7 +3,6 @@ import { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
-  PageForm,
   PageFormSubmitHandler,
   PageFormTextInput,
   PageHeader,
@@ -15,6 +14,7 @@ import { PageFormMultiSelect } from '../../../../framework/PageForm/Inputs/PageF
 import { useGet } from '../../../common/crud/useGet';
 import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
+import { EdaPageForm } from '../../common/EdaPageForm';
 import { edaAPI } from '../../common/eda-utils';
 import { EdaResult } from '../../interfaces/EdaResult';
 import { EdaRole } from '../../interfaces/EdaRole';
@@ -61,14 +61,14 @@ export function CreateUser() {
           { label: t('Create User') },
         ]}
       />
-      <PageForm
+      <EdaPageForm<UserInput>
         submitText={t('Create user')}
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
         onCancel={onCancel}
       >
         <UserInputs mode="create" />
-      </PageForm>
+      </EdaPageForm>
     </>
   );
 }
@@ -111,7 +111,7 @@ export function EditCurrentUser() {
         title={`${t('Edit')} ${user?.username || t('User')}`}
         breadcrumbs={[{ label: `${t('Edit user')}` }]}
       />
-      <PageForm<UserInput>
+      <EdaPageForm<UserInput>
         submitText={t('Save user')}
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
@@ -119,7 +119,7 @@ export function EditCurrentUser() {
         defaultValue={editUser}
       >
         <CurrentUserInputs />
-      </PageForm>
+      </EdaPageForm>
     </PageLayout>
   );
 }
@@ -178,7 +178,7 @@ export function EditUser() {
           { label: `${t('Edit')} ${user?.username || t('Credential')}` },
         ]}
       />
-      <PageForm<UserInput>
+      <EdaPageForm<UserInput>
         submitText={t('Save user')}
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
@@ -186,7 +186,7 @@ export function EditUser() {
         defaultValue={defaultValue}
       >
         <UserInputs mode="edit" />
-      </PageForm>
+      </EdaPageForm>
     </PageLayout>
   );
 }
