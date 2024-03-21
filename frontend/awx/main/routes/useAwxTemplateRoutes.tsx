@@ -134,7 +134,7 @@ export function useAwxTemplateRoutes() {
             {
               id: AwxRoute.TemplateLaunchWizard,
               path: ':id/launch',
-              element: <TemplateLaunchWizard />,
+              element: <TemplateLaunchWizard jobType="job_templates" />,
             },
           ],
         },
@@ -241,6 +241,11 @@ export function useAwxTemplateRoutes() {
                   element: <Navigate to="details" />,
                 },
               ],
+            },
+            {
+              id: AwxRoute.WorkflowJobTemplateLaunchWizard,
+              path: ':id/launch',
+              element: <TemplateLaunchWizard jobType="workflow_job_templates" />,
             },
           ],
         },
