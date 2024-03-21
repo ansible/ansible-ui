@@ -101,7 +101,15 @@ export function PageFormSelectAwxResource<
         />
       );
     },
-    [props.label, props.tableColumns, props.toolbarFilters, props.url, setDialog, value, props.single]
+    [
+      props.label,
+      props.tableColumns,
+      props.toolbarFilters,
+      props.url,
+      setDialog,
+      value,
+      props.single,
+    ]
   );
 
   const queryLabel = useCallback(
