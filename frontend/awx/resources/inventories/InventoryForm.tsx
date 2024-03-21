@@ -26,6 +26,9 @@ import { InstanceGroup } from '../../interfaces/InstanceGroup';
 import { Inventory } from '../../interfaces/Inventory';
 import { Label } from '../../interfaces/Label';
 import { AwxRoute } from '../../main/AwxRoutes';
+import { PageFormSingleSelectAwxResource } from '../../common/PageFormSingleSelectAwxResource';
+import { useInventoriesColumns } from './hooks/useInventoriesColumns';
+import { useInventoriesFilters } from './hooks/useInventoriesFilters';
 
 export type InventoryCreate = Inventory & {
   instanceGroups: InstanceGroup[];
@@ -206,6 +209,7 @@ export function EditInventory() {
 function InventoryInputs(props: { inventoryKind: string }) {
   const { t } = useTranslation();
   const { inventoryKind } = props;
+
   return (
     <>
       <PageFormTextInput<InventoryCreate>
@@ -231,6 +235,10 @@ function InventoryInputs(props: { inventoryKind: string }) {
           isRequired
         />
       )}
+
+      {inventoryKind === 'constructed' && 
+         <PageFormSingleSelectInventories />
+      }
       <PageFormInstanceGroupSelect<InventoryCreate>
         name="instanceGroups"
         labelHelp={t(`Select the instance groups for this inventory to run on.`)}
@@ -267,6 +275,29 @@ function InventoryInputs(props: { inventoryKind: string }) {
       )}
 
     </>
+  );
+}
+
+function PageFormSingleSelectInventories()
+{
+  const filters = useInventoriesFilters();
+  const columns = useInventoriesColumns();
+  const { t } = useTranslation();
+
+  return (
+    <PageFormSingleSelectAwxResource<Inventory>
+    name={'inventory'}
+    id="inventory"
+    label={t('Inventories')}
+    placeholder={t('Select inventories')}
+    queryPlaceholder={t('Loading inventories...')}
+    queryErrorText={t('Error loading inventories')}
+    isRequired={true}
+    helperText={''}
+    url={awxAPI`/inventories/`}
+    tableColumns={columns}
+    toolbarFilters={filters}
+    />
   );
 }
 
@@ -321,10 +352,4 @@ async function submitInstanceGroups(
 
   const results = await Promise.all([...disassociationPromises, ...associationPromises]);
   return results;
-}
-
-function PageFormSelectInventories()
-{
-
-  return <></>;
 }
