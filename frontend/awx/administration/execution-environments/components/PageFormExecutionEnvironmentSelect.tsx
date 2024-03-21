@@ -1,66 +1,43 @@
-import { ReactElement } from 'react';
-import { FieldPath, FieldValues, useFormContext } from 'react-hook-form';
+import { FieldPath, FieldValues } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { PageFormTextInput } from '../../../../../framework/PageForm/Inputs/PageFormTextInput';
-import { requestGet } from '../../../../common/crud/Data';
-import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
+import { useExecutionEnvironmentFilters } from '../../../../hub/execution-environments/hooks/useExecutionEnvironmentFilters';
+import { PageFormSingleSelectAwxResource } from '../../../common/PageFormSingleSelectAwxResource';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { ExecutionEnvironment } from '../../../interfaces/ExecutionEnvironment';
-import { useSelectExecutionEnvironments } from '../hooks/useSelectExecutionEnvironments';
+import { useExecutionEnvironmentsColumns } from '../hooks/useExecutionEnvironmentsColumns';
 
 export function PageFormExecutionEnvironmentSelect<
   TFieldValues extends FieldValues = FieldValues,
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >(props: {
   name: TFieldName;
-  executionEnvironmentPath?: string;
-  executionEnvironmentIdPath?: string;
-  organizationId?: string;
-  additionalControls?: ReactElement;
   isRequired?: boolean;
-  label?: string;
-  isDisabled?: boolean;
-  // tooltip?: string;
+  isDisabled?: string;
+  helperText?: string;
+  organizationId?: string;
+  additionalControls?: React.ReactNode;
 }) {
-  const { name, organizationId, executionEnvironmentIdPath, executionEnvironmentPath, ...rest } =
-    props;
   const { t } = useTranslation();
-  const selectExecutionEnvironment = useSelectExecutionEnvironments(organizationId ?? undefined);
-  const { setValue } = useFormContext();
+  const columns = useExecutionEnvironmentsColumns({ disableLinks: true });
+  const filters = useExecutionEnvironmentFilters();
+  const url = props.organizationId
+    ? awxAPI`/execution_environments/?organization=${props.organizationId}`
+    : awxAPI`/execution_environments/`;
   return (
-    // <Tooltip content={props.tooltip} trigger={props.tooltip ? undefined : 'manual'}>
-    <PageFormTextInput<TFieldValues, TFieldName, ExecutionEnvironment>
-      {...rest}
-      label={props.label ?? t('Execution environment')}
-      name={name}
-      id="execution-environment-select"
-      placeholder={t('Add execution environment')}
-      labelHelpTitle={t('Execution environment')}
-      labelHelp={t('The container image to be used for execution.')}
-      selectTitle={t('Select an execution environment')}
-      selectValue={(executionEnvironment: ExecutionEnvironment) => executionEnvironment.name}
-      selectOpen={selectExecutionEnvironment}
-      validate={async (executionEnvironmentName: string) => {
-        if (!executionEnvironmentName && !props.isRequired) {
-          return undefined;
-        }
-        try {
-          const itemsResponse = await requestGet<AwxItemsResponse<ExecutionEnvironment>>(
-            awxAPI`/execution_environments/?name=${executionEnvironmentName}`
-          );
-          if (itemsResponse.results.length === 0) return t('Execution environment not found.');
-          if (executionEnvironmentPath)
-            setValue(executionEnvironmentPath, itemsResponse.results[0]);
-          if (executionEnvironmentIdPath)
-            setValue(executionEnvironmentIdPath, itemsResponse.results[0].id);
-        } catch (err) {
-          if (err instanceof Error) return err.message;
-          else return 'Unknown error';
-        }
-        return undefined;
-      }}
+    <PageFormSingleSelectAwxResource<ExecutionEnvironment, TFieldValues, TFieldName>
+      name={props.name}
+      id="execution-environment"
+      label={t('Execution environment')}
+      placeholder={t('Select execution environment')}
+      queryPlaceholder={t('Loading execution environments...')}
+      queryErrorText={t('Error loading execution environments')}
       isRequired={props.isRequired}
+      isDisabled={props.isDisabled}
+      helperText={props.helperText}
+      url={url}
+      tableColumns={columns}
+      toolbarFilters={filters}
+      additionalControls={props.additionalControls}
     />
-    // </Tooltip>
   );
 }

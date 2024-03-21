@@ -162,10 +162,7 @@ function OrganizationInputs(props: { orgId?: number }) {
       />
       <PageFormExecutionEnvironmentSelect<OrganizationFields>
         organizationId={orgId ? orgId.toString() : undefined}
-        name="organization.summary_fields.default_environment.name"
-        label={t('Default execution environment')}
-        executionEnvironmentPath="organization.summary_fields.default_environment"
-        executionEnvironmentIdPath="organization.default_environment"
+        name="organization.default_environment"
       />
       {/* TODO: galaxyCredentials */}
     </>

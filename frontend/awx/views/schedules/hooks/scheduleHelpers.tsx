@@ -22,10 +22,10 @@ import { InventorySource } from '../../../interfaces/InventorySource';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
 import { LaunchConfiguration } from '../../../interfaces/LaunchConfiguration';
 import { Project } from '../../../interfaces/Project';
-import { ScheduleFormWizard } from '../types';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { PageFormInventorySelect } from '../../../resources/inventories/components/PageFormInventorySelect';
+import { ScheduleFormWizard } from '../types';
 
 export const resourceEndPoints: { [key: string]: string } = {
   inventories: awxAPI`/inventories/`,
@@ -197,9 +197,8 @@ export function useGetPromptOnLaunchFields(
         fields.push(
           <PageFormExecutionEnvironmentSelect<ScheduleFormWizard>
             key={`${fieldName}`}
-            executionEnvironmentIdPath="execution_environment.id"
             organizationId={organizationId}
-            name="prompt.execution_environment.name"
+            name="inventory"
           />
         );
         break;
