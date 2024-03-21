@@ -6,6 +6,7 @@ import { Project } from '../../interfaces/Project';
 import { WorkflowJobTemplate } from '../../interfaces/WorkflowJobTemplate';
 import { SystemJob } from '../../interfaces/generated-from-swagger/api';
 import { PromptFormValues } from '../../resources/templates/WorkflowVisualizer/types';
+import { InstanceGroup } from '../../interfaces/InstanceGroup';
 
 export enum Frequency {
   YEARLY = 0,
@@ -56,5 +57,7 @@ export interface ScheduleFormWizard {
   occurrences: OccurrenceFields | null;
   exceptions: OccurrenceFields | null;
   launch_config: LaunchConfiguration | null;
-  prompt: PromptFormValues;
+  prompt: PromptFormValues | null;
+  defaultInstanceGroups: InstanceGroup[];
+  newInstanceGroups: InstanceGroup[];
 }

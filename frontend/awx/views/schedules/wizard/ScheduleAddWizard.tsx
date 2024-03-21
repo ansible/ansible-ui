@@ -1,6 +1,5 @@
-import { DateTime } from 'luxon';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import {
   PageHeader,
   PageLayout,
@@ -9,28 +8,33 @@ import {
   PageWizardStep,
 } from '../../../../../framework';
 import { useGetPageUrl } from '../../../../../framework/PageNavigation/useGetPageUrl';
-import { dateToInputDateTime } from '../../../../../framework/utils/dateTimeHelpers';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { ScheduleFormWizard } from '../types';
 import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
-import { useGetTimezones } from '../hooks/useGetTimezones';
 import { OccurrencesStep } from './OccurrencesStep';
-import { Frequency, RRule } from 'rrule';
 import { ExceptionsStep } from './ExceptionsStep';
 import { ScheduleInputs } from '../components/ScheduleInputs';
 import { PromptInputs } from '../components/PromptInputs';
+import { getScheduleWizardConfig } from '../hooks/useScheduleWizardConfig';
+import { useEffect, useMemo, useState } from 'react';
 
 export function ScheduleAddWizard() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
-  const now = DateTime.now();
-
-  const closestQuarterHour: DateTime = DateTime.fromMillis(
-    Math.ceil(now.toMillis() / 900000) * 900000
-  );
   const navigate = useNavigate();
+  const params = useParams<{ id?: string; source_id?: string }>();
+  const { pathname } = useLocation();
+  const [scheduleWizardConfig, setSceduleWizardConfg] = useState({} as ScheduleFormWizard);
 
-  const [currentDate, time]: string[] = dateToInputDateTime(closestQuarterHour.toISO() as string);
+  useEffect(() => {
+    void (async () => {
+      if (params.id) {
+        const res = await getScheduleWizardConfig(params, pathname, () => {});
+        res !== undefined ? setSceduleWizardConfg(res) : null;
+      }
+    })();
+  }, [params, pathname]);
+
   const handleSubmit = async (formValues: ScheduleFormWizard) => {
     const { unified_job_template_object = {}, launch_config, prompt } = formValues;
     const promptValues = prompt;
@@ -50,75 +54,29 @@ export function ScheduleAddWizard() {
 
   const onCancel = () => navigate(-1);
 
-  const { timeZones, links } = useGetTimezones();
-
-  const steps: PageWizardStep[] = [
-    {
-      id: 'details',
-      label: t('Details'),
-      inputs: <ScheduleInputs onError={() => {}} zoneLinks={links} timeZones={timeZones} />,
-    },
-    {
-      id: 'promptsStep',
-      label: t('Prompts'),
-      inputs: <PromptInputs onError={() => {}} />,
-    },
-    { id: 'survey', label: t('Survey'), element: <PageNotImplemented /> },
-    { id: 'occurrences', label: t('Occurrences'), inputs: <OccurrencesStep /> },
-    {
-      id: 'exceptions',
-      label: t('Exceptions'),
-      inputs: <ExceptionsStep />,
-    },
-    { id: 'review', label: t('Review'), inputs: <PageNotImplemented /> },
-  ];
-  const initialValues = {
-    details: {
-      name: '',
-      description: '',
-      resource_type: '',
-      resourceName: '',
-      startDateTime: { date: currentDate, time: time },
-    },
-    occurrences: {
-      freq: Frequency.WEEKLY,
-      interval: 1,
-      wkst: RRule.SU,
-      byweekday: null,
-      byweekno: null,
-      bymonth: null,
-      bymonthday: null,
-      byyearday: null,
-      bysetpos: null,
-      until: null,
-      endDate: '',
-      endTime: '',
-      count: null,
-      byminute: null,
-      byhour: null,
-      endingType: '',
-      rules: [],
-    },
-    exceptions: {
-      freq: Frequency.WEEKLY,
-      interval: 1,
-      wkst: RRule.SU,
-      byweekday: null,
-      byweekno: null,
-      bymonth: null,
-      bymonthday: null,
-      byyearday: null,
-      bysetpos: null,
-      until: null,
-      endDate: '',
-      endTime: '',
-      count: null,
-      byminute: null,
-      byhour: null,
-      endingType: '',
-      exceptions: [],
-    },
-  };
+  const steps: PageWizardStep[] = useMemo(
+    () => [
+      {
+        id: 'details',
+        label: t('Details'),
+        inputs: <ScheduleInputs config={scheduleWizardConfig} />,
+      },
+      {
+        id: 'promptsStep',
+        label: t('Prompts'),
+        inputs: <PromptInputs />,
+      },
+      { id: 'survey', label: t('Survey'), element: <PageNotImplemented /> },
+      { id: 'occurrences', label: t('Occurrences'), inputs: <OccurrencesStep /> },
+      {
+        id: 'exceptions',
+        label: t('Exceptions'),
+        inputs: <ExceptionsStep />,
+      },
+      { id: 'review', label: t('Review'), inputs: <PageNotImplemented /> },
+    ],
+    [scheduleWizardConfig, t]
+  );
 
   return (
     <PageLayout>
@@ -133,7 +91,7 @@ export function ScheduleAddWizard() {
         steps={steps}
         singleColumn={false}
         onCancel={onCancel}
-        defaultValue={initialValues}
+        defaultValue={scheduleWizardConfig}
         onSubmit={handleSubmit}
         errorAdapter={awxErrorAdapter}
       />

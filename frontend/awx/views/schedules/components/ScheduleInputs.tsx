@@ -1,179 +1,58 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useParams } from 'react-router-dom';
 import { PageFormSelect, PageFormTextInput } from '../../../../../framework';
 import { PageFormDateTimePicker } from '../../../../../framework/PageForm/Inputs/PageFormDateTimePicker';
 import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
-import { requestGet } from '../../../../common/crud/Data';
-import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
-import { awxAPI } from '../../../common/api/awx-utils';
-import { InstanceGroup } from '../../../interfaces/InstanceGroup';
-import { RegularInventory } from '../../../interfaces/Inventory';
-import { InventorySource } from '../../../interfaces/InventorySource';
-import { JobTemplate } from '../../../interfaces/JobTemplate';
-import { LaunchConfiguration } from '../../../interfaces/LaunchConfiguration';
-import { Project } from '../../../interfaces/Project';
 import { ScheduleFormWizard } from '../types';
-import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 import { PageFormInventorySelect } from '../../../resources/inventories/components/PageFormInventorySelect';
 import { PageFormInventorySourceSelect } from '../../../resources/inventories/components/PageFormInventorySourceSelect';
 import { PageFormProjectSelect } from '../../../resources/projects/components/PageFormProjectSelect';
 import { PageFormJobTemplateSelect } from '../../../resources/templates/components/PageFormJobTemplateSelect';
 import { PageFormWorkflowJobTemplateSelect } from '../../../resources/templates/components/PageFormWorkflowJobTemplateSelect';
-import { resourceEndPoints, useGetPromptOnLaunchFields } from '../hooks/scheduleHelpers';
 import { PageFormManagementJobsSelect } from '../../../administration/management-jobs/components/PageFormManagementJobsSelect';
 import { Divider } from '@patternfly/react-core';
+import { useGetTimezones } from '../hooks/useGetTimezones';
 
-export function ScheduleInputs(props: {
-  timeZones: { value: string; label: string; key: string }[];
-  zoneLinks?: { [key: string]: string };
-  onError: (err: Error) => void;
-}) {
-  const { timeZones, zoneLinks, onError } = props;
+export function ScheduleInputs(props: { config: ScheduleFormWizard | object }) {
+  const { config } = props;
   const params: { [string: string]: string } = useParams<{ id?: string; source_id?: string }>();
   const { pathname } = useLocation();
   const { t } = useTranslation();
-  const { setValue } = useFormContext();
+  const { timeZones, links } = useGetTimezones();
   const [timezoneMessage, setTimezoneMessage] = useState('');
-  const resourceType = useWatch({
-    name: 'resource_type',
-  }) as string;
-  const launchConfiguration = useWatch({ name: 'launchConfiguration' }) as LaunchConfiguration;
-  const inventory = useWatch({ name: 'inventory' }) as RegularInventory;
   const timeZone = useWatch({ name: 'timezone' }) as string;
-  const resourceForSchedule = useWatch({ name: 'unified_job_template_object' }) as
-    | InventorySource
-    | Project
-    | JobTemplate
-    | WorkflowJobTemplate;
+  const { setValue } = useFormContext();
+
   useEffect(() => {
-    if (!zoneLinks) {
+    if (!links || !timeZone) {
       return;
     }
 
-    if (timeZone?.length && zoneLinks[timeZone]) {
+    if (timeZone?.length && links[timeZone]) {
       setTimezoneMessage(
-        t(`Warning: ${timeZone} is a link to ${zoneLinks[timeZone]} and will be saved as that.`)
+        t(`Warning: ${timeZone} is a link to ${links[timeZone]} and will be saved as that.`)
       );
     } else {
       setTimezoneMessage('');
     }
-  }, [timeZone, t, zoneLinks]);
-
-  const promptOnLaunchFields = useGetPromptOnLaunchFields(resourceForSchedule);
+  }, [timeZone, t, links, timeZones]);
 
   useEffect(() => {
-    const resource = async () => {
-      if (resourceForSchedule || !params?.id) {
-        return;
-      }
-
-      const pathnameSplit = pathname.split('/');
-      const resourceType = pathnameSplit[1] === 'projects' ? 'projects' : pathnameSplit[2];
-      try {
-        const response = await requestGet<
-          Project | JobTemplate | WorkflowJobTemplate | InventorySource
-        >(`${resourceEndPoints[resourceType]}${params?.id}/`);
-        setValue('unified_job_template_object', response);
-        setValue('unified_job_template', response.id);
-      } catch (err) {
-        if (err instanceof Error) {
-          onError(err);
-        }
-      }
-    };
-
-    void resource();
-  }, [params, pathname, resourceForSchedule, setValue, onError]);
-
-  useEffect(() => {
-    const getDefaultInstanceGroups = async (url: string) => {
-      return requestGet<AwxItemsResponse<InstanceGroup>>(`${url}`)
-        .then((response) => {
-          setValue('defaultInstanceGroups', response.results);
-          setValue('newInstanceGroups', response.results);
-        })
-        .catch((err) => {
-          if (err instanceof Error) {
-            onError(err);
-          }
-        });
-    };
-
-    if (launchConfiguration && launchConfiguration?.ask_instance_groups_on_launch) {
-      if (pathname.split('/').includes('job_template')) {
-        void getDefaultInstanceGroups(
-          awxAPI`/job_templates/${launchConfiguration.job_template_data.id.toString()}/instance_groups/`
-        );
-      }
-      if (pathname.split('/').includes('workflow_ job_template')) {
-        void getDefaultInstanceGroups(
-          awxAPI`/workflow_job_templates/${launchConfiguration.job_template_data.id.toString()}/instance_groups/`
-        );
-      }
+    if ('unified_job_template_object' in config) {
+      setValue('unified_job_template_object', config.unified_job_template_object);
+      setValue('unified_job_template', config.unified_job_template);
+      setValue('resource_type', config.resource_type);
+      setValue('startDateTime', config.startDateTime);
+      setValue('exceptions', config.exceptions);
+      setValue('occurrences', config.occurrences);
+      setValue('prompt', config.prompt);
+      setValue('defaultInstanceGroups', config.defaultInstanceGroups);
+      setValue('newInstanceGroups', config.newInstanceGroups);
+      setValue('launch_config', config.launch_config);
     }
-  }, [launchConfiguration, params.id, pathname, onError, setValue]);
-
-  const launchConfig = useCallback(
-    async (id: string, resource_type: string) => {
-      return requestGet<LaunchConfiguration>(`${resourceEndPoints[resource_type]}${id}/launch/`)
-        .then((response) => {
-          setValue('launchConfiguration', response);
-          setValue('defaultLabels', response.defaults.labels);
-          setValue('labels', response.defaults.labels);
-          setValue('credentials', response.defaults.credentials);
-          setValue('newCredentials', response.defaults.credentials);
-          setValue('extra_vars', response.defaults.extra_vars);
-          setValue('limit', response.defaults.limit);
-          setValue('diff_mode', response.defaults.diff_mode);
-          setValue('scm_branch', response.defaults.scm_branch);
-          setValue('forks', response.defaults.forks);
-          setValue('job_slice_count', response.defaults.job_slice_count);
-          setValue('timeout', response.defaults.timeout);
-          setValue('verbosity', response.defaults.verbosity);
-          setValue('job_type', response.defaults.job_type);
-          setValue('inventory', response.defaults.inventory);
-          if (JSON.stringify(response.defaults.execution_environment) !== '{}') {
-            setValue('execution_environment', {
-              ...response?.defaults?.execution_environment,
-            });
-          }
-          if (response.defaults.skip_tags) {
-            setValue(
-              'arrayedSkipTags',
-              response.defaults.skip_tags.split(',')?.map((tag) => ({ name: tag }))
-            );
-          }
-          if (response.defaults.job_tags) {
-            setValue(
-              'arrayedJobTags',
-              response.defaults.job_tags.split(',')?.map((tag) => ({ name: tag }))
-            );
-          }
-        })
-        .catch((err) => {
-          if (err instanceof Error) {
-            onError(err);
-          }
-        });
-    },
-    [onError, setValue]
-  );
-
-  useEffect(() => {
-    const resType = resourceType ?? pathname.split('/')[2];
-    if (
-      (resType !== 'job_template' && resType !== 'workflow_job_template') ||
-      (!resourceForSchedule?.id && !params?.id)
-    )
-      return;
-    if (resourceForSchedule?.id) {
-      void launchConfig(resourceForSchedule.id.toString(), resType);
-      return;
-    }
-    void launchConfig(params.id, resType);
-  }, [launchConfig, pathname, resourceForSchedule?.id, params.id, resourceType]);
+  }, [config, setValue]);
 
   return (
     <>
@@ -198,7 +77,8 @@ export function ScheduleInputs(props: {
             placeholderText={t('Select job type')}
           />
 
-          {resourceType &&
+          {'inventory' in config &&
+            config.resource_type &&
             {
               job_template: (
                 <PageFormJobTemplateSelect<ScheduleFormWizard>
@@ -221,10 +101,10 @@ export function ScheduleInputs(props: {
                     )}
                     name="inventory"
                   />
-                  {inventory?.id && (
+                  {config.inventory && (
                     <PageFormInventorySourceSelect<ScheduleFormWizard>
                       isRequired
-                      inventoryId={inventory?.id}
+                      inventoryId={config.inventory}
                       name="unified_job_template_object"
                     />
                   )}
@@ -242,10 +122,10 @@ export function ScheduleInputs(props: {
                   name="unified_job_template_object"
                 />
               ),
-            }[resourceType]}
+            }[config.resource_type]}
         </PageFormSection>
       ) : null}
-      {resourceForSchedule ? (
+      {'unified_job_template_object' in config && config.unified_job_template_object ? (
         <>
           <PageFormSection singleColumn>
             <Divider />
@@ -268,11 +148,6 @@ export function ScheduleInputs(props: {
               options={timeZones}
               helperText={timezoneMessage}
             />
-            {promptOnLaunchFields?.length ? (
-              <PageFormSection title={t('Prompt on launch fields')}>
-                {promptOnLaunchFields.map((field) => field)}
-              </PageFormSection>
-            ) : null}
           </PageFormSection>
         </>
       ) : null}

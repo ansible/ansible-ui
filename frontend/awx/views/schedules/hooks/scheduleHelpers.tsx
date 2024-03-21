@@ -1,6 +1,5 @@
 import { DateTime } from 'luxon';
 import { ReactElement } from 'react';
-import { useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useParams } from 'react-router-dom';
 import { RRule } from 'rrule';
@@ -26,6 +25,7 @@ import { ScheduleFormWizard } from '../types';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { PageFormInventorySelect } from '../../../resources/inventories/components/PageFormInventorySelect';
+import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
 
 export const resourceEndPoints: { [key: string]: string } = {
   inventories: awxAPI`/inventories/`,
@@ -128,10 +128,11 @@ export const promptonLaunchFieldNames: PromptOnLaunchField[] = [
 export function useGetPromptOnLaunchFields(
   resourceForSchedule: JobTemplate | WorkflowJobTemplate | InventorySource | Project
 ) {
+  const { wizardData } = usePageWizard() as {
+    wizardData: ScheduleFormWizard;
+  };
   const fields: ReactElement[] = [];
-  const promptFields: LaunchConfiguration = useWatch({
-    name: 'launchConfiguration',
-  }) as LaunchConfiguration;
+  const promptFields = wizardData.launch_config as LaunchConfiguration;
   const { t } = useTranslation();
 
   const arrayedJobTags: { name: string; value: string; label: string }[] =
