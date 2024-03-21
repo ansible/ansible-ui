@@ -51,13 +51,7 @@ describe('Job templates form Create, Edit, Delete', function () {
         cy.navigateTo('awx', 'templates');
         cy.filterTableByMultiSelect('name', [jtName]);
         cy.getTableRow('name', jtName, { disableFilter: true }).should('be.visible');
-        // cy.getTableRowByText(jtName).should('be.visible');
         cy.intercept('POST', `api/v2/job_templates/${id}/launch/`).as('postLaunch');
-        // cy.searchAndDisplayResource(jtName);
-        // cy.filterTableByMultiSelect('name', [jtName]);
-        // cy.get(`[data-cy="row-id-${id}"]`).within(() => {
-        //   cy.get('[data-cy="launch-template"]').click();
-        // });
         cy.clickTableRowAction('name', jtName, 'launch-template', { disableFilter: true });
         cy.wait('@postLaunch')
           .its('response.body.id')
@@ -70,8 +64,6 @@ describe('Job templates form Create, Edit, Delete', function () {
           inKebab: true,
           disableFilter: true,
         });
-        // cy.clickTableRowKebabAction(jtName, 'delete-template');
-        // cy.get('#confirm').click();
         cy.intercept('DELETE', awxAPI`/job_templates/${id}/`).as('deleteJobTemplate');
         cy.clickModalConfirmCheckbox();
         cy.get('[data-ouia-component-id="submit"]').click();
@@ -81,7 +73,6 @@ describe('Job templates form Create, Edit, Delete', function () {
         cy.contains(/^Success$/);
         cy.clickButton(/^Close$/);
         cy.clearAllFilters();
-        // cy.clickButton(/^Clear all filters$/);
       });
   });
 
@@ -106,13 +97,8 @@ describe('Job templates form Create, Edit, Delete', function () {
       .then((id: string) => {
         cy.verifyPageTitle(jtName);
         cy.navigateTo('awx', 'templates');
-        // cy.getTableRowByText(jtName).should('be.visible');
         cy.filterTableByMultiSelect('name', [jtName]);
         cy.getTableRow('name', jtName, { disableFilter: true }).should('be.visible');
-        // cy.searchAndDisplayResource(jtName);
-        // cy.get(`[data-cy="row-id-${id}"]`).within(() => {
-        //   cy.get('[data-cy="launch-template"]').click();
-        // });
         cy.clickTableRowAction('name', jtName, 'launch-template', { disableFilter: true });
         cy.selectDropdownOptionByResourceName('inventory', inventory.name);
         cy.clickButton(/^Next/);
@@ -132,21 +118,18 @@ describe('Job templates form Create, Edit, Delete', function () {
           });
         cy.navigateTo('awx', 'templates');
         cy.intercept('DELETE', awxAPI`/job_templates/${id}/`).as('deleteJobTemplate');
-        // cy.clickTableRowKebabAction(jtName, 'delete-template');
         cy.filterTableByMultiSelect('name', [jtName]);
         cy.clickTableRowAction('name', jtName, 'delete-template', {
           inKebab: true,
           disableFilter: true,
         });
         cy.clickModalConfirmCheckbox();
-        // cy.get('#confirm').click();
         cy.get('[data-ouia-component-id="submit"]').click();
         cy.wait('@deleteJobTemplate').then((deleteJobTemplate) => {
           expect(deleteJobTemplate?.response?.statusCode).to.eql(204);
         });
         cy.contains(/^Success$/);
         cy.clickButton(/^Close$/);
-        // cy.clickButton(/^Clear all filters$/);
         cy.clearAllFilters();
       });
   });
@@ -195,15 +178,12 @@ describe('Job templates form Create, Edit, Delete', function () {
           disableFilter: true,
         });
         cy.clickModalConfirmCheckbox();
-        // cy.clickTableRowKebabAction(jtName, 'delete-template');
-        // cy.get('#confirm').click();
         cy.get('[data-ouia-component-id="submit"]').click();
         cy.wait('@deleteJobTemplate').then((deleteJobTemplate) => {
           expect(deleteJobTemplate?.response?.statusCode).to.eql(204);
         });
         cy.contains(/^Success$/);
         cy.clickButton(/^Close$/);
-        // cy.clickButton(/^Clear all filters$/);
         cy.clearAllFilters();
       });
   });
@@ -216,7 +196,6 @@ describe('Job templates form Create, Edit, Delete', function () {
     }).then((jobTemplate) => {
       cy.navigateTo('awx', 'templates');
       const newName = (jobTemplate.name ?? '') + ' edited';
-      // cy.getTableRowByText(jobTemplate.name).should('be.visible');
       cy.filterTableByMultiSelect('name', [jobTemplate.name]);
       cy.getTableRow('name', jobTemplate.name, { disableFilter: true }).should('be.visible');
       cy.selectTableRowByCheckbox('name', jobTemplate.name, { disableFilter: true });
@@ -252,7 +231,6 @@ describe('Job templates form Create, Edit, Delete', function () {
       cy.navigateTo('awx', 'templates');
       const newName = (jobTemplate.name ?? '') + ' edited';
       cy.navigateTo('awx', 'templates');
-      // cy.clickTableRow(jobTemplate.name);
       cy.filterTableByMultiSelect('name', [jobTemplate.name]);
       cy.clickTableRowLink('name', jobTemplate.name, { disableFilter: true });
       cy.verifyPageTitle(jobTemplate.name);
@@ -286,7 +264,6 @@ describe('Job templates form Create, Edit, Delete', function () {
       inventory: inventory.id,
     }).then((jobTemplate) => {
       cy.navigateTo('awx', 'templates');
-      // cy.clickTableRow(jobTemplate.name);
       cy.filterTableByMultiSelect('name', [jobTemplate.name]);
       cy.clickTableRowLink('name', jobTemplate.name, { disableFilter: true });
       cy.verifyPageTitle(jobTemplate.name);
@@ -316,8 +293,6 @@ describe('Job templates form Create, Edit, Delete', function () {
         cy.filterTableByMultiSelect('name', [jobTemplate1.name, jobTemplate2.name]);
         cy.selectTableRowByCheckbox('name', jobTemplate1.name, { disableFilter: true });
         cy.selectTableRowByCheckbox('name', jobTemplate2.name, { disableFilter: true });
-        // cy.selectTableRow(jobTemplate1.name);
-        // cy.selectTableRow(jobTemplate2.name);
         cy.clickToolbarKebabAction('delete-selected-templates');
         cy.intercept('DELETE', awxAPI`/job_templates/${jobTemplate1.id.toString()}/`).as(
           'deleteJobTemplate1'
@@ -333,7 +308,6 @@ describe('Job templates form Create, Edit, Delete', function () {
         });
         cy.assertModalSuccess();
         cy.clickButton(/^Close$/);
-        // cy.clickButton(/^Clear all filters$/);
         cy.clearAllFilters();
       });
     });
