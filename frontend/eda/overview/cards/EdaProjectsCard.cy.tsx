@@ -15,7 +15,7 @@ describe('EdaProjectsCard.cy.ts', () => {
           {
             name: 'Project 1',
             description: '',
-            credential_id: null,
+            eda_credential_id: null,
             id: 2,
             url: 'https://github.com/ansible/ansible-ui',
             git_hash: '97de22df481212ebf5a5bec3743b950552cbb0d9',
