@@ -30,6 +30,25 @@ import { parseStringToTagArray } from '../JobTemplateFormHelpers';
 import { useLabelPayload } from '../hooks/useLabelPayload';
 import { CredentialPasswordsStep, OtherPromptsStep, TemplateLaunchReviewStep } from './steps';
 
+export const formFieldToLaunchConfig = {
+  job_type: 'ask_job_type_on_launch',
+  inventory: 'ask_inventory_on_launch',
+  credentials: 'ask_credential_on_launch',
+  execution_environment: 'ask_execution_environment_on_launch',
+  instance_groups: 'ask_instance_groups_on_launch',
+  scm_branch: 'ask_scm_branch_on_launch',
+  forks: 'ask_forks_on_launch',
+  diff_mode: 'ask_diff_mode_on_launch',
+  job_slice: 'ask_job_slice_count_on_launch',
+  lables: 'ask_labels_on_launch',
+  limit: 'ask_limit_on_launch',
+  skip_tags: 'ask_skip_tags_on_launch',
+  job_tags: 'ask_tags_on_launch',
+  timeout: 'ask_timeout_on_launch',
+  extra_vars: 'ask_variables_on_launch',
+  verbosity: 'ask_verbosity_on_launch',
+};
+
 export interface TemplateLaunch {
   inventory: Inventory;
   credentials: Credential[];
@@ -71,7 +90,7 @@ interface LaunchPayload {
 }
 type LaunchPayloadProperty = keyof LaunchPayload;
 
-export function TemplateLaunchWizard() {
+export function TemplateLaunchWizard({ jobType }: { jobType: string }) {
   const { t } = useTranslation();
 
   const postRequest = usePostRequest<Partial<LaunchPayload>, UnifiedJob>();
@@ -86,12 +105,12 @@ export function TemplateLaunchWizard() {
     data: template,
     error: getTemplateError,
     refresh: getTemplateRefresh,
-  } = useGet<JobTemplate>(awxAPI`/job_templates/${resourceId}/`);
+  } = useGet<JobTemplate>(awxAPI`/${jobType}/${resourceId}/`);
   const {
     data: config,
     error: getLaunchError,
     refresh: getLaunchRefresh,
-  } = useGet<LaunchConfiguration>(awxAPI`/job_templates/${resourceId}/launch/`);
+  } = useGet<LaunchConfiguration>(awxAPI`/${jobType}/${resourceId}/launch/`);
   const error = getTemplateError || getLaunchError;
   const refresh = getTemplateRefresh || getLaunchRefresh;
   const getJobOutputUrl = useGetJobOutputUrl();
@@ -126,9 +145,21 @@ export function TemplateLaunchWizard() {
 
         const payload: Partial<LaunchPayload> = {};
         const setValue = <K extends LaunchPayloadProperty>(key: K, value: LaunchPayload[K]) => {
-          if (typeof value !== 'undefined' && value !== null) {
-            payload[key] = value;
+          const isValid = typeof value !== 'undefined' && value !== null;
+          if (!isValid) {
+            return;
           }
+
+          if (jobType === 'workflow_job_templates') {
+            if (
+              config[formFieldToLaunchConfig[key as keyof unknown] as keyof LaunchConfiguration]
+            ) {
+              payload[key] = value;
+            }
+            return;
+          }
+
+          payload[key] = value;
         };
 
         setValue(
@@ -155,7 +186,7 @@ export function TemplateLaunchWizard() {
         setValue('timeout', timeout);
         setValue('verbosity', verbosity);
 
-        const job = await postRequest(awxAPI`/job_templates/${resourceId}/launch/`, payload);
+        const job = await postRequest(awxAPI`/${jobType}/${resourceId}/launch/`, payload);
         if (job) {
           navigate(getJobOutputUrl(job));
         }
