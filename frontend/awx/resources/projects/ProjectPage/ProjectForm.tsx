@@ -70,9 +70,6 @@ export function CreateProject() {
     ) {
       project.signature_validation_credential = null;
     }
-    if (!project.summary_fields.default_environment.name) {
-      project.default_environment = null;
-    }
 
     // Create new project
     const newProject = await postRequest(awxAPI`/projects/`, project);
@@ -132,9 +129,6 @@ export function EditProject() {
       !project.summary_fields.signature_validation_credential.name
     ) {
       project.signature_validation_credential = null;
-    }
-    if (!project.summary_fields.default_environment.name) {
-      project.default_environment = null;
     }
 
     // Update project
@@ -254,9 +248,6 @@ function ProjectInputs(props: { project?: Project }) {
             ? t('Select an organization before selecting the execution environment.')
             : undefined
         }
-        // tooltip={
-        //   org ? '' : t(`Select an organization before editing the default execution environment.`)
-        // }
       />
       <PageFormSelect<Project>
         isRequired
