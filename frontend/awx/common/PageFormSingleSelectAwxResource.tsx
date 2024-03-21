@@ -131,32 +131,36 @@ export function PageFormSelectAwxResource<
         isDisabled={props.isDisabled}
         helperText={props.helperText}
         onBrowse={() =>
-          openSelectDialog((resource) =>
-            setValue(props.name, (resource as Resource).id as PathValue<FormData, Name>)
-          )
+          openSelectDialog((resource) => {
+            setValue(props.name, (resource as Resource).id as PathValue<FormData, Name>);
+          })
         }
         queryLabel={queryLabel}
       />
     );
   } else {
-    <PageFormAsyncMultiSelect<FormData, Name>
-      id={id}
-      name={props.name}
-      label={props.label}
-      queryOptions={queryOptions}
-      placeholder={props.placeholder}
-      queryPlaceholder={props.queryPlaceholder}
-      queryErrorText={props.queryErrorText}
-      isRequired={props.isRequired}
-      isDisabled={props.isDisabled}
-      helperText={props.helperText}
-      onBrowse={() =>
-        openSelectDialog((resource) => setValue(props.name, resource as PathValue<FormData, Name>))
-      }
-      queryLabel={queryLabel}
-    />;
+    return (
+      <PageFormAsyncMultiSelect<FormData, Name>
+        id={id}
+        name={props.name}
+        label={props.label}
+        queryOptions={queryOptions}
+        placeholder={props.placeholder}
+        queryPlaceholder={props.queryPlaceholder}
+        queryErrorText={props.queryErrorText}
+        isRequired={props.isRequired}
+        isDisabled={props.isDisabled}
+        helperText={props.helperText}
+        onBrowse={() =>
+          openSelectDialog((resource) => {
+            const resources = resource as Resource[];
+            setValue(props.name, resources.map((res) => res.id) as PathValue<FormData, Name>);
+          })
+        }
+        queryLabel={queryLabel}
+      />
+    );
   }
-  return <></>;
 }
 
 function SelectResource<

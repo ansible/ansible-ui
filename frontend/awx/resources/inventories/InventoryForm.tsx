@@ -26,7 +26,10 @@ import { InstanceGroup } from '../../interfaces/InstanceGroup';
 import { Inventory } from '../../interfaces/Inventory';
 import { Label } from '../../interfaces/Label';
 import { AwxRoute } from '../../main/AwxRoutes';
-import { PageFormSingleSelectAwxResource } from '../../common/PageFormSingleSelectAwxResource';
+import {
+  PageFormMultiSelectAwxResource,
+  PageFormSingleSelectAwxResource,
+} from '../../common/PageFormSingleSelectAwxResource';
 import { useInventoriesColumns } from './hooks/useInventoriesColumns';
 import { useInventoriesFilters } from './hooks/useInventoriesFilters';
 
@@ -49,7 +52,6 @@ export function CreateInventory(props: { inventoryKind: '' | 'constructed' | 'sm
 
   const onSubmit: PageFormSubmitHandler<InventoryCreate> = async (data) => {
     const { instanceGroups, ...inventory } = data;
-
     const newInventory = await postRequest(awxAPI`/inventories/`, inventory);
 
     // Update new inventory with selected instance groups
@@ -236,11 +238,14 @@ function InventoryInputs(props: { inventoryKind: string }) {
         />
       )}
 
-      {inventoryKind === 'constructed' && <PageFormSingleSelectInventories />}
       <PageFormInstanceGroupSelect<InventoryCreate>
         name="instanceGroups"
         labelHelp={t(`Select the instance groups for this inventory to run on.`)}
       />
+      {inventoryKind === 'constructed' && <PageFormSingleSelectInventories id={'inventory'} />}
+
+      {inventoryKind === 'constructed' && <PageFormMultiSelectInventories id={'inventories'} />}
+
       {inventoryKind === '' && (
         <PageFormLabelSelect<InventoryCreate>
           labelHelpTitle={t('Labels')}
@@ -275,15 +280,35 @@ function InventoryInputs(props: { inventoryKind: string }) {
   );
 }
 
-function PageFormSingleSelectInventories() {
+function PageFormMultiSelectInventories(props: { id: string }) {
   const filters = useInventoriesFilters();
   const columns = useInventoriesColumns();
   const { t } = useTranslation();
+  return (
+    <PageFormMultiSelectAwxResource<Inventory>
+      name={'inventories'}
+      id={props.id}
+      label={t('Inventories')}
+      placeholder={t('Select inventories')}
+      queryPlaceholder={t('Loading inventories...')}
+      queryErrorText={t('Error loading inventories')}
+      isRequired={true}
+      helperText={''}
+      url={awxAPI`/inventories/`}
+      tableColumns={columns}
+      toolbarFilters={filters}
+    />
+  );
+}
 
+function PageFormSingleSelectInventories(props: { id: string }) {
+  const filters = useInventoriesFilters();
+  const columns = useInventoriesColumns();
+  const { t } = useTranslation();
   return (
     <PageFormSingleSelectAwxResource<Inventory>
       name={'inventory'}
-      id="inventory"
+      id={props.id}
       label={t('Inventories')}
       placeholder={t('Select inventories')}
       queryPlaceholder={t('Loading inventories...')}
