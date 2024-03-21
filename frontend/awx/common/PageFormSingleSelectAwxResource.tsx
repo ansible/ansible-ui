@@ -136,7 +136,7 @@ function SelectResource<
   );
 }
 
-function AwxAsyncName(props: { url: string; id: number; nameProp?: string }) {
+export function AwxAsyncName(props: { url: string; id: number; nameProp?: string }) {
   const { t } = useTranslation();
   const { data, isLoading, error } = useGetItem<Record<string, string>>(props.url, props.id);
   if (isLoading) return <Spinner size="md" />;
