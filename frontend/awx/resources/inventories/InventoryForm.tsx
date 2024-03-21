@@ -32,13 +32,20 @@ export type InventoryCreate = Inventory & {
   labels: Label[];
 };
 
-export function CreateInventory() {
+const kinds: { [key: string]: string } = {
+  '': 'inventory',
+  smart: 'smart_inventory',
+  constructed: 'constructed_inventory',
+};
+
+export function CreateInventory(props: { inventoryKind: '' | 'constructed' | 'smart' }) {
   const { t } = useTranslation();
+  const { inventoryKind } = props;
   const pageNavigate = usePageNavigate();
   const postRequest = usePostRequest<Inventory, Inventory>();
 
   const onSubmit: PageFormSubmitHandler<InventoryCreate> = async (data) => {
-    const { labels, instanceGroups, ...inventory } = data;
+    const { instanceGroups, ...inventory } = data;
 
     const newInventory = await postRequest(awxAPI`/inventories/`, inventory);
 
@@ -47,38 +54,61 @@ export function CreateInventory() {
       await submitInstanceGroups(newInventory, instanceGroups ?? [], []);
 
     // Update new inventory with selected labels
-    if (labels.length > 0) await submitLabels(newInventory, labels);
+    if (newInventory.kind === '' && data.labels.length > 0)
+      await submitLabels(newInventory, data.labels);
 
     pageNavigate(AwxRoute.InventoryDetails, {
-      params: { inventory_type: newInventory.type, id: newInventory.id },
+      params: { inventory_type: kinds[newInventory.kind], id: newInventory.id },
     });
   };
 
   const getPageUrl = useGetPageUrl();
+  const title =
+    inventoryKind === ''
+      ? t('Create Inventory')
+      : inventoryKind === 'smart'
+        ? t('Create Smart Inventory')
+        : t('Create Constructed Inventory');
+
+  const defaultValue =
+    inventoryKind === 'smart'
+      ? {
+          kind: inventoryKind,
+          name: '',
+          description: '',
+          instanceGroups: [],
+          variables: '---\n',
+        }
+      : inventoryKind === 'constructed'
+        ? {
+            kind: inventoryKind,
+          }
+        : {
+            kind: inventoryKind,
+            name: '',
+            description: '',
+            instanceGroups: [],
+            labels: [],
+            variables: '---\n',
+            prevent_instance_group_fallback: false,
+          };
 
   return (
     <PageLayout>
       <PageHeader
-        title={t('Create Inventory')}
+        title={title}
         breadcrumbs={[
           { label: t('Inventories'), to: getPageUrl(AwxRoute.Inventories) },
-          { label: t('Create Inventory') },
+          { label: title },
         ]}
       />
       <AwxPageForm
         submitText={t('Create inventory')}
         onSubmit={onSubmit}
         onCancel={() => pageNavigate(AwxRoute.Inventories)}
-        defaultValue={{
-          name: '',
-          description: '',
-          instanceGroups: [],
-          labels: [],
-          variables: '---\n',
-          prevent_instance_group_fallback: false,
-        }}
+        defaultValue={defaultValue}
       >
-        <InventoryInputs />
+        <InventoryInputs inventoryKind={inventoryKind} />
       </AwxPageForm>
     </PageLayout>
   );
@@ -130,13 +160,31 @@ export function EditInventory() {
     );
   }
 
+  const title =
+    inventory.kind === ''
+      ? t('Edit Inventory')
+      : inventory.kind === 'smart'
+        ? t('Edit Smart Inventory')
+        : t('Edit Constructed Inventory');
+
+  const defaultValue =
+    inventory.kind === 'smart'
+      ? { ...inventory, instanceGroups: originalInstanceGroups }
+      : inventory.kind === 'constructed'
+        ? {}
+        : {
+            ...inventory,
+            instanceGroups: originalInstanceGroups,
+            labels: inventory.summary_fields?.labels?.results ?? [],
+          };
+
   return (
     <PageLayout>
       <PageHeader
-        title={t('Edit Inventory')}
+        title={title}
         breadcrumbs={[
           { label: t('Inventories'), to: getPageUrl(AwxRoute.Inventories) },
-          { label: t('Edit Inventory') },
+          { label: title },
         ]}
       />
       <AwxPageForm<InventoryCreate>
@@ -144,23 +192,20 @@ export function EditInventory() {
         onSubmit={onSubmit}
         onCancel={() =>
           pageNavigate(AwxRoute.InventoryDetails, {
-            params: { id, inventory_type: inventory.type },
+            params: { id, inventory_type: kinds[inventory.kind] },
           })
         }
-        defaultValue={{
-          ...inventory,
-          instanceGroups: originalInstanceGroups,
-          labels: inventory.summary_fields?.labels?.results ?? [],
-        }}
+        defaultValue={defaultValue}
       >
-        <InventoryInputs />
+        <InventoryInputs inventoryKind={inventory.kind} />
       </AwxPageForm>
     </PageLayout>
   );
 }
 
-function InventoryInputs() {
+function InventoryInputs(props: { inventoryKind: string }) {
   const { t } = useTranslation();
+  const { inventoryKind } = props;
   return (
     <>
       <PageFormTextInput<InventoryCreate>
@@ -175,17 +220,30 @@ function InventoryInputs() {
         placeholder={t('Enter description')}
       />
       <PageFormSelectOrganization<InventoryCreate> name="organization" isRequired />
+      {inventoryKind === 'smart' && (
+        <PageFormTextInput<InventoryCreate>
+          name="host_filter"
+          label={t('Smart host filter')}
+          labelHelp={t(
+            `Populate the hosts for this inventory by using a search filter. Example: ansible_facts__ansible_distribution:"RedHat". Refer to the Ansible Controller documentation for further syntax and examples.`
+          )}
+          placeholder={t('Enter smart host filter')}
+          isRequired
+        />
+      )}
       <PageFormInstanceGroupSelect<InventoryCreate>
         name="instanceGroups"
         labelHelp={t(`Select the instance groups for this inventory to run on.`)}
       />
-      <PageFormLabelSelect<InventoryCreate>
-        labelHelpTitle={t('Labels')}
-        labelHelp={t(
-          `Optional labels that describe this inventory, such as 'dev' or 'test'. Labels can be used to group and filter inventories and completed jobs.`
-        )}
-        name="labels"
-      />
+      {inventoryKind === '' && (
+        <PageFormLabelSelect<InventoryCreate>
+          labelHelpTitle={t('Labels')}
+          labelHelp={t(
+            `Optional labels that describe this inventory, such as 'dev' or 'test'. Labels can be used to group and filter inventories and completed jobs.`
+          )}
+          name="labels"
+        />
+      )}
       <PageFormSection singleColumn>
         <PageFormDataEditor<InventoryCreate>
           name="variables"
@@ -193,17 +251,19 @@ function InventoryInputs() {
           format="yaml"
         />
       </PageFormSection>
-      <PageFormGroup
-        label={t('Options')}
-        labelHelp={t(
-          'If enabled, the inventory will prevent adding any organization instance groups to the list of preferred instances groups to run associated job templates on. Note: If this setting is enabled and you provided an empty list, the global instance groups will be applied.'
-        )}
-      >
-        <PageFormCheckbox<InventoryCreate>
-          label={t('Prevent instance group fallback')}
-          name="prevent_instance_group_fallback"
-        />
-      </PageFormGroup>
+      {inventoryKind === '' && (
+        <PageFormGroup
+          label={t('Options')}
+          labelHelp={t(
+            'If enabled, the inventory will prevent adding any organization instance groups to the list of preferred instances groups to run associated job templates on. Note: If this setting is enabled and you provided an empty list, the global instance groups will be applied.'
+          )}
+        >
+          <PageFormCheckbox<InventoryCreate>
+            label={t('Prevent instance group fallback')}
+            name="prevent_instance_group_fallback"
+          />
+        </PageFormGroup>
+      )}
     </>
   );
 }
