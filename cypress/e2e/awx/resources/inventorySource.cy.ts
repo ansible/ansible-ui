@@ -78,17 +78,17 @@ describe('Inventory source page', () => {
     cy.selectDropdownOptionByResourceName('project', project.name);
     cy.selectDropdownOptionByResourceName('inventory', 'Dockerfile');
     cy.getBy('[data-cy="execution-environment-select-form-group"]').within(() => {
-      cy.getBy('.pf-v5-c-input-group > .pf-v5-c-button').click();
+      cy.getBy('[data-ouia-component-id="lookup-execution_environment-button"]').click();
     });
-    cy.getBy('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+    cy.getBy('[data-ouia-component-id="Select an execution environment-dialog"]').within(() => {
       cy.searchAndDisplayResource(executionEnvironmentName);
       cy.getBy('[data-cy="checkbox-column-cell"] > label').click();
       cy.contains('button', 'Confirm').click();
     });
     cy.getBy('[data-cy="credential-select-form-group"]').within(() => {
-      cy.getBy('.pf-v5-c-input-group > .pf-v5-c-button').click();
+      cy.getBy('[data-ouia-component-id="lookup-credential-button"]').click();
     });
-    cy.getBy('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+    cy.getBy('[data-ouia-component-id="Select credential"]').within(() => {
       cy.searchAndDisplayResource(credentialName);
       cy.getBy('[data-cy="checkbox-column-cell"] > label').click();
       cy.getBy('#submit').click();
