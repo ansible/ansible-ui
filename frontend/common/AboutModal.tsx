@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { usePageDialog } from '../../framework';
 import { TFunction } from 'i18next';
+import styled from 'styled-components';
 
 export interface AnsibleAboutModalProps {
   versionInfo?: ProductVersionInfo;
@@ -10,6 +11,10 @@ export interface AnsibleAboutModalProps {
 }
 
 type ProductVersionInfo = Record<string, string | Record<string, string>>;
+
+const ListItemDiv = styled.div`
+  font-weight: normal;
+`;
 
 export function AnsibleAboutModal(props: AnsibleAboutModalProps) {
   const { t } = useTranslation();
@@ -52,13 +57,13 @@ export function AnsibleAboutModal(props: AnsibleAboutModalProps) {
                               {Object.entries(value).map(([foo, bar]) => (
                                 <TextList component="dl" key={foo}>
                                   <TextListItem component="dt">{foo}</TextListItem>
-                                  <TextListItem component="dt">{bar}</TextListItem>
+                                  <TextListItem component="dd">{bar as string}</TextListItem>
                                 </TextList>
                               ))}
                             </TextListItem>
                           ) : (
                             <TextListItem key={key} component="dt">
-                              {t(value)}
+                              <ListItemDiv>{t(value)}</ListItemDiv>
                             </TextListItem>
                           );
                         })}
@@ -102,7 +107,7 @@ export function translateVersion(name: string | undefined, t: TFunction) {
     install_uuid: t`Install UUID`,
     instances: t`Instances`,
     instance_groups: t`Instance Groups`,
-    ansible_versions: t`Ansible Versions`,
+    available_versions: t`Available Versions`,
   };
 
   return VERSION_NAMES[name as string] || name;
