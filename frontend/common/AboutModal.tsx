@@ -19,6 +19,7 @@ const ListItemDiv = styled.div`
 export function AnsibleAboutModal(props: AnsibleAboutModalProps) {
   const { t } = useTranslation();
   const [_dialog, setDialog] = usePageDialog();
+
   return (
     <AboutModal
       isOpen
@@ -56,8 +57,12 @@ export function AnsibleAboutModal(props: AnsibleAboutModalProps) {
                             <TextListItem key={key} component="dt">
                               {Object.entries(value).map(([foo, bar]) => (
                                 <TextList component="dl" key={foo}>
-                                  <TextListItem component="dt">{foo}</TextListItem>
-                                  <TextListItem component="dd">{bar as string}</TextListItem>
+                                  <TextListItem component="dt">
+                                    {translateVersion(foo, t)}
+                                  </TextListItem>
+                                  <TextListItem component="dd">
+                                    <ListItemDiv>{bar as string}</ListItemDiv>
+                                  </TextListItem>
                                 </TextList>
                               ))}
                             </TextListItem>
@@ -71,6 +76,14 @@ export function AnsibleAboutModal(props: AnsibleAboutModalProps) {
                 </>
               );
             })}
+          <TextListItem key={t('Username')} component="dt">
+            {t('Username')}
+          </TextListItem>
+          <TextList component="dl">
+            <TextListItem key={t('username')} component="dt">
+              <ListItemDiv>{t('username')}</ListItemDiv>
+            </TextListItem>
+          </TextList>
         </TextList>
       </TextContent>
     </AboutModal>
@@ -108,6 +121,12 @@ export function translateVersion(name: string | undefined, t: TFunction) {
     instances: t`Instances`,
     instance_groups: t`Instance Groups`,
     available_versions: t`Available Versions`,
+    node: t`Node`,
+    node_type: t`Node type`,
+    uuid: t`UUID`,
+    heartbeat: t`Heartbeat`,
+    capacity: t`Capacity`,
+    name: t`Name`,
   };
 
   return VERSION_NAMES[name as string] || name;
