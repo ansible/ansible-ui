@@ -1432,10 +1432,7 @@ declare global {
       platformLogin(): Chainable<void>;
       platformLogout(): Chainable<void>;
       createGlobalPlatformOrganization(): Chainable<void>;
-      createPlatformTeam(
-        platformOrganization: PlatformOrganization,
-        platformUser?: PlatformUser
-      ): Cypress.Chainable<PlatformTeam>;
+      createPlatformTeam(platformTeam: Partial<PlatformTeam>): Cypress.Chainable<PlatformTeam>;
       deletePlatformTeam(
         platformTeam: PlatformTeam,
         options?: {
@@ -1463,7 +1460,7 @@ declare global {
           failOnStatusCode?: boolean;
         }
       ): Cypress.Chainable<void>;
-      searchAndDisplayResourcePlatform(resourceName: string): Cypress.Chainable<void>;
+      searchAndDisplayResourceInModalPlatform(resourceName: string): Cypress.Chainable<void>;
       selectItemFromLookupModalPlatform(): Cypress.Chainable<void>;
     }
   }

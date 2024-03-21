@@ -109,18 +109,11 @@ Cypress.Commands.add(
 
 /* This `Cypress.Commands.add('createPlatformTeam', ...)` function is a custom Cypress command that is
 responsible for creating a new platform team. Here's a breakdown of what it does: */
-Cypress.Commands.add(
-  'createPlatformTeam',
-  function (platformOrganization: PlatformOrganization, platformUser?: PlatformUser) {
-    cy.requestPost<PlatformTeam>(gatewayV1API`/teams/`, {
-      name: platformUser
-        ? `Platform E2E Team with user ${randomString(5)}`
-        : `Platform E2E Team ${randomString(5)}`,
-      organization: platformOrganization.id,
-      users: platformUser ? [platformUser.id] : [],
-    });
-  }
-);
+Cypress.Commands.add('createPlatformTeam', function (platformTeam: Partial<PlatformTeam>) {
+  cy.requestPost<Partial<PlatformTeam>>(gatewayV1API`/teams/`, {
+    ...platformTeam,
+  });
+});
 
 /* This `Cypress.Commands.add('deletePlatformTeam', ...)` function is a custom Cypress command that is
 responsible for deleting a platform team. Here's a breakdown of what it does: */
@@ -159,7 +152,7 @@ Cypress.Commands.add('createGlobalPlatformOrganization', function () {
     });
 });
 
-Cypress.Commands.add('searchAndDisplayResourcePlatform', (resourceName: string) => {
+Cypress.Commands.add('searchAndDisplayResourceInModalPlatform', (resourceName: string) => {
   cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
     cy.get('[data-cy="text-input"]').find('input').type(resourceName);
   });
