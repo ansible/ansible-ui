@@ -242,18 +242,18 @@ export function useAwxInventoryRoutes() {
         },
         {
           id: AwxRoute.EditInventory,
-          path: ':id/edit',
+          path: ':inventory_type/:id/edit',
           element: <EditInventory />,
         },
         {
           id: AwxRoute.CreateInventory,
           path: 'inventory/create',
-          element: <CreateInventory />,
+          element: <CreateInventory inventoryKind="" />,
         },
         {
           id: AwxRoute.CreateSmartInventory,
           path: 'smart_inventory/create',
-          element: <PageNotImplemented />,
+          element: <CreateInventory inventoryKind="smart" />,
         },
         {
           path: '',

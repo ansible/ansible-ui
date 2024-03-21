@@ -45,7 +45,7 @@ export function GroupEdit() {
       editGroup
     );
     pageNavigate(AwxRoute.InventoryGroupDetails, {
-      params: { inventory_type: 'inventroy', id: editedGroup.inventory, group_id: editedGroup.id },
+      params: { inventory_type: 'inventory', id: editedGroup.inventory, group_id: editedGroup.id },
     });
   };
 
