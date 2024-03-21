@@ -46,6 +46,12 @@ export function useInventoryActions({
       }
     };
 
+    const kinds: { [key: string]: string } = {
+      '': 'inventory',
+      smart: 'smart_inventory',
+      constructed: 'constructed_inventory',
+    };
+
     return [
       {
         type: PageActionType.Button,
@@ -56,7 +62,9 @@ export function useInventoryActions({
         label: t('Edit inventory'),
         isDisabled: (inventory: Inventory) => cannotEditInventory(inventory),
         onClick: (inventory) =>
-          pageNavigate(AwxRoute.EditInventory, { params: { id: inventory.id } }),
+          pageNavigate(AwxRoute.EditInventory, {
+            params: { inventory_type: kinds[inventory.kind], id: inventory.id },
+          }),
       },
       {
         type: PageActionType.Button,
