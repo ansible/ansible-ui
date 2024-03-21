@@ -375,6 +375,38 @@ export interface CredentialRef {
   username?: string | null;
 }
 
+export interface Organization {
+  name: string;
+  description?: string;
+  key?: string | null;
+  credential_type: { id?: number; name?: string };
+  inputs?: object;
+  id: number;
+  /** @format date-time */
+  created_at: string;
+  /** @format date-time */
+  modified_at: string;
+}
+
+export interface OrganizationCreate {
+  name: string;
+  description?: string;
+  credential_type_id: number;
+  username?: string | null;
+  key?: string | null;
+  secret?: string | null;
+  inputs?: object;
+}
+
+/** Serializer for Organization reference. */
+export interface OrganizationRef {
+  id: number;
+  name: string;
+  description?: string;
+  credential_type?: number;
+  username?: string | null;
+}
+
 export interface DecisionEnvironment {
   name: string;
   description?: string;
