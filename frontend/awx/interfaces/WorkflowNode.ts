@@ -73,6 +73,10 @@ export interface WorkflowNode {
   identifier: string;
 }
 
+export interface WorkflowJobNode extends WorkflowNode {
+  job?: string | number;
+}
+
 export interface WorkflowApprovalNode {
   name: string;
   type: 'Workflow Approval';
