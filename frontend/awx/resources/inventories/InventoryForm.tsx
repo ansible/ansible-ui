@@ -27,6 +27,10 @@ import { Inventory } from '../../interfaces/Inventory';
 import { Label } from '../../interfaces/Label';
 import { AwxRoute } from '../../main/AwxRoutes';
 
+import { PageFormMultiSelectAwxResource } from '../../common/PageFormMultiSelectAwxResource';
+import { useInventoriesColumns } from './hooks/useInventoriesColumns';
+import { useInventoriesFilters } from './hooks/useInventoriesFilters';
+
 export type InventoryCreate = Inventory & {
   instanceGroups: InstanceGroup[];
   labels: Label[];
@@ -82,6 +86,10 @@ export function CreateInventory(props: { inventoryKind: '' | 'constructed' | 'sm
       : inventoryKind === 'constructed'
         ? {
             kind: inventoryKind,
+            name: '',
+            description: '',
+            instanceGroups: [],
+            inputInventories: [],
           }
         : {
             kind: inventoryKind,
@@ -235,6 +243,7 @@ function InventoryInputs(props: { inventoryKind: string }) {
         name="instanceGroups"
         labelHelp={t(`Select the instance groups for this inventory to run on.`)}
       />
+      {inventoryKind === 'constructed' && <PageFormMultiSelectInventories />}
       {inventoryKind === '' && (
         <PageFormLabelSelect<InventoryCreate>
           labelHelpTitle={t('Labels')}
@@ -319,4 +328,25 @@ async function submitInstanceGroups(
 
   const results = await Promise.all([...disassociationPromises, ...associationPromises]);
   return results;
+}
+
+function PageFormMultiSelectInventories() {
+  const filters = useInventoriesFilters();
+  const columns = useInventoriesColumns();
+  const { t } = useTranslation();
+  return (
+    <PageFormMultiSelectAwxResource<Inventory>
+      name={'inputInventories'}
+      id={'inputInventories'}
+      label={t('Inventories')}
+      placeholder={t('Select inventories')}
+      queryPlaceholder={t('Loading inventories...')}
+      queryErrorText={t('Error loading inventories')}
+      isRequired={true}
+      helperText={''}
+      url={awxAPI`/inventories/`}
+      tableColumns={columns}
+      toolbarFilters={filters}
+    />
+  );
 }
