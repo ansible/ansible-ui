@@ -236,9 +236,7 @@ function InventoryInputs(props: { inventoryKind: string }) {
         />
       )}
 
-      {inventoryKind === 'constructed' && 
-         <PageFormSingleSelectInventories />
-      }
+      {inventoryKind === 'constructed' && <PageFormSingleSelectInventories />}
       <PageFormInstanceGroupSelect<InventoryCreate>
         name="instanceGroups"
         labelHelp={t(`Select the instance groups for this inventory to run on.`)}
@@ -273,30 +271,28 @@ function InventoryInputs(props: { inventoryKind: string }) {
           />
         </PageFormGroup>
       )}
-
     </>
   );
 }
 
-function PageFormSingleSelectInventories()
-{
+function PageFormSingleSelectInventories() {
   const filters = useInventoriesFilters();
   const columns = useInventoriesColumns();
   const { t } = useTranslation();
 
   return (
     <PageFormSingleSelectAwxResource<Inventory>
-    name={'inventory'}
-    id="inventory"
-    label={t('Inventories')}
-    placeholder={t('Select inventories')}
-    queryPlaceholder={t('Loading inventories...')}
-    queryErrorText={t('Error loading inventories')}
-    isRequired={true}
-    helperText={''}
-    url={awxAPI`/inventories/`}
-    tableColumns={columns}
-    toolbarFilters={filters}
+      name={'inventory'}
+      id="inventory"
+      label={t('Inventories')}
+      placeholder={t('Select inventories')}
+      queryPlaceholder={t('Loading inventories...')}
+      queryErrorText={t('Error loading inventories')}
+      isRequired={true}
+      helperText={''}
+      url={awxAPI`/inventories/`}
+      tableColumns={columns}
+      toolbarFilters={filters}
     />
   );
 }

@@ -12,12 +12,7 @@ import { useGetItem } from '../../common/crud/useGet';
 import { AwxItemsResponse } from './AwxItemsResponse';
 import { useAwxView } from './useAwxView';
 
-export function PageFormSingleSelectAwxResource<
-  Resource extends { id: number; name: string; description?: string | null | undefined },
-  FormData extends FieldValues = FieldValues,
-  Name extends FieldPath<FormData> = FieldPath<FormData>,
-  Value extends number = PathValue<FormData, Name>,
->(props: {
+export type PageFormSelectAwxResourceProps<Name, Resource extends object, Value> = {
   id?: string;
   name: Name;
   label: string;
@@ -31,7 +26,14 @@ export function PageFormSingleSelectAwxResource<
   queryPlaceholder: string;
   queryErrorText: string;
   helperText?: string;
-}) {
+};
+
+export function PageFormSingleSelectAwxResource<
+  Resource extends { id: number; name: string; description?: string | null | undefined },
+  FormData extends FieldValues = FieldValues,
+  Name extends FieldPath<FormData> = FieldPath<FormData>,
+  Value extends number = PathValue<FormData, Name>,
+>(props: PageFormSelectAwxResourceProps<Name, Resource, Value>) {
   const id = useID(props);
 
   const queryOptions = useCallback<PageAsyncSelectOptionsFn<PathValue<FormData, Name>>>(
