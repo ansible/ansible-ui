@@ -1,25 +1,25 @@
+import { Flex, FlexItem, Stack } from '@patternfly/react-core';
 import { DropdownPosition } from '@patternfly/react-core/deprecated';
-import { useTranslation, Trans } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import {
+  DateTimeCell,
   LoadingPage,
   PageActions,
   PageHeader,
   PageLayout,
   useGetPageUrl,
-  DateTimeCell,
 } from '../../../../framework';
 import { PageRoutedTabs } from '../../../../framework/PageTabs/PageRoutedTabs';
+import { StatusLabel } from '../../../common/Status';
 import { useGet } from '../../../common/crud/useGet';
+import { HelperText } from '../../common/HelperText';
 import { HubError } from '../../common/HubError';
 import { hubAPI } from '../../common/api/formatPath';
 import { HubRoute } from '../../main/HubRoutes';
 import { ExecutionEnvironment } from '../ExecutionEnvironment';
-import { useExecutionEnvironmentPageActions } from './hooks/useExecutionEnvironmentPageActions';
 import { SignStatus } from './components/SignStatus';
-import { StatusLabel } from '../../../common/Status';
-import { Flex, FlexItem, Stack } from '@patternfly/react-core';
-import { HelperText } from '../../common/HelperText';
+import { useExecutionEnvironmentPageActions } from './hooks/useExecutionEnvironmentPageActions';
 
 export function ExecutionEnvironmentPage() {
   const { t } = useTranslation();
@@ -31,8 +31,7 @@ export function ExecutionEnvironmentPage() {
     refresh,
   } = useGet<ExecutionEnvironment>(
     hubAPI`/v3/plugin/execution-environments/repositories/${params.id ?? ''}/`,
-    undefined,
-    { refreshInterval: 10000 }
+    undefined
   );
 
   const getPageUrl = useGetPageUrl();
