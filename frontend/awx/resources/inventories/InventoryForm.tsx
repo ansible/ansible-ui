@@ -30,6 +30,7 @@ import { requestGet } from '../../../common/crud/Data';
 import { PageFormMultiSelectAwxResource } from '../../common/PageFormMultiSelectAwxResource';
 import { useInventoriesColumns } from './hooks/useInventoriesColumns';
 import { useInventoriesFilters } from './hooks/useInventoriesFilters';
+import { TFunction } from 'i18next';
 
 
 export type InventoryCreate = Inventory & {
@@ -57,13 +58,10 @@ export function CreateInventory(props: { inventoryKind: '' | 'constructed' | 'sm
     let inputInventories : InputInventory[] = [];
     if (props.inventoryKind == 'constructed')
     {
-        inputInventories = await loadInstances(data.inventories || []);
+        inputInventories = await loadInputInventories(data.inventories || [], t);
         data.inputInventories = inputInventories;
-        debugger;
     }
-    return;
 
-    // load input inventories
     const urlType = props.inventoryKind == 'constructed' ? 'constructed_inventories' : 'inventories';
     const newInventory = await postRequest(awxAPI`/${urlType}/`, inventory);
 
@@ -316,7 +314,7 @@ async function submitLabels(inventory: Inventory, labels: Label[]) {
 
 type InputInventory = { id : number; url : string, type : string};
 
-async function loadInstances(inventories : number[])
+async function loadInputInventories(inventories : number[], t: TFunction<"translation", undefined> )
 {
   const promises : unknown[] = [];
   const inventoriesData : InputInventory[] = inventories.map ( (inv) => { return { id : inv, url : '', type : ''} })
@@ -329,6 +327,9 @@ async function loadInstances(inventories : number[])
           const inv = inventoriesData.find( (inv) => inv.id === id);
           if (inv) { inv.url = result.results[0].url || ''; inv.type = result.results[0].type || '' }
         }
+      }).catch( () =>
+      {
+        throw new Error(t(`Error loading input inventory with id {{id}}.`, { id : id}));
       });
 
     promises.push(promise);
