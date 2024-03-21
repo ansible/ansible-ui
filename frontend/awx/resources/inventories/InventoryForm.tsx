@@ -251,6 +251,7 @@ function InventoryInputs(props: { inventoryKind: string }) {
           format="yaml"
         />
       </PageFormSection>
+
       {inventoryKind === '' && (
         <PageFormGroup
           label={t('Options')}
@@ -264,6 +265,7 @@ function InventoryInputs(props: { inventoryKind: string }) {
           />
         </PageFormGroup>
       )}
+
     </>
   );
 }
@@ -319,4 +321,10 @@ async function submitInstanceGroups(
 
   const results = await Promise.all([...disassociationPromises, ...associationPromises]);
   return results;
+}
+
+function PageFormSelectInventories()
+{
+
+  return <></>;
 }

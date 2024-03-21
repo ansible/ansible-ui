@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import {
   AsyncSelectFilterBuilderProps,
   useAsyncSingleSelectFilterBuilder,
+  useAsyncMultiSelectFilterBuilder,
 } from '../../../../../../framework/PageToolbar/PageToolbarFilters/ToolbarAsyncSelectFilterBuilder';
 
 import { useAwxView } from '../../../../common/useAwxView';
@@ -39,6 +40,12 @@ export function useSelectInventorySingle() {
   const params = useParameters();
 
   return useAsyncSingleSelectFilterBuilder<Inventory>(params);
+}
+
+export function useSelectInventoryMulti() {
+  const params = useParameters();
+
+  return useAsyncMultiSelectFilterBuilder<Inventory>(params);
 }
 
 export function useColumns() {
