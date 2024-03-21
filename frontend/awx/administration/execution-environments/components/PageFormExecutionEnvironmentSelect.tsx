@@ -21,7 +21,7 @@ export function PageFormExecutionEnvironmentSelect<
   const columns = useExecutionEnvironmentsColumns({ disableLinks: true });
   const filters = useExecutionEnvironmentFilters();
   const url = props.organizationId
-    ? awxAPI`/execution_environments/?organization=${props.organizationId}`
+    ? awxAPI`/execution_environments/?or__organization__isnull=True&or__organization__id=${props.organizationId}`
     : awxAPI`/execution_environments/`;
   return (
     <PageFormSingleSelectAwxResource<ExecutionEnvironment, TFieldValues, TFieldName>

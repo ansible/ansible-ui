@@ -74,7 +74,7 @@ describe('Job templates form Create, Edit, Delete', function () {
       });
   });
 
-  it.only('creation of job template using the prompt on launch wizard', function () {
+  it('creation of job template using the prompt on launch wizard', function () {
     cy.intercept('POST', awxAPI`/job_templates`).as('createPOLJT');
     const jtName = 'E2E-POLJT ' + randomString(4);
 
@@ -155,7 +155,7 @@ describe('Job templates form Create, Edit, Delete', function () {
         cy.clickButton(/^Next/);
         cy.selectItemFromLookupModal('credential-select', machineCredential.name);
         cy.clickButton(/^Next/);
-        cy.selectItemFromLookupModal('execution-environment-select', executionEnvironment);
+        cy.singleSelectByDataCy('execution-environment', executionEnvironment);
         cy.clickButton(/^Next/);
         cy.selectItemFromLookupModal('instance-group-select', instanceGroup);
         cy.clickButton(/^Next/);
