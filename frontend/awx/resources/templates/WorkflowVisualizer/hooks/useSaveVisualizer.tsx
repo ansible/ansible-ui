@@ -15,6 +15,7 @@ import { InstanceGroup } from '../../../../interfaces/InstanceGroup';
 import { Organization } from '../../../../interfaces/Organization';
 import { Label } from '../../../../interfaces/Label';
 import { START_NODE_ID, RESOURCE_TYPE } from '../constants';
+import { useAwxGetAllPages } from '../../../../common/useAwxGetAllPages';
 
 interface WorkflowApprovalNode {
   name: string;
@@ -42,7 +43,7 @@ interface CreateWorkflowNodePayload {
 }
 type CreatePayloadProperty = keyof CreateWorkflowNodePayload;
 
-export function useSaveVisualizer() {
+export function useSaveVisualizer(templateId: string) {
   const controller = useVisualizationController();
   const abortController = useAbortController();
   const deleteRequest = useDeleteRequest();
@@ -55,6 +56,10 @@ export function useSaveVisualizer() {
   const processCredentials = useProcessCredentials();
   const processInstanceGroups = useProcessInstanceGroups();
   const processLabels = useProcessLabels();
+
+  const { refresh: workflowNodeRefresh } = useAwxGetAllPages<WorkflowNode>(
+    awxAPI`/workflow_job_templates/${templateId ?? ''}/workflow_nodes/`
+  );
 
   return useCallback(async () => {
     const graphNodes = controller
@@ -519,7 +524,9 @@ export function useSaveVisualizer() {
         )
       )
     );
+
     action(() => {
+      workflowNodeRefresh();
       controller.setState({ ...state, modified: false });
       controller
         .getElements()
@@ -538,6 +545,7 @@ export function useSaveVisualizer() {
     processCredentials,
     processInstanceGroups,
     processLabels,
+    workflowNodeRefresh,
   ]);
 }
 

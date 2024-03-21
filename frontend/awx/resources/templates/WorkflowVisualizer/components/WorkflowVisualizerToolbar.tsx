@@ -42,11 +42,11 @@ export const ToolbarHeader = observer(() => {
   const { t } = useTranslation();
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const pageNavigate = usePageNavigate();
-  const handleSave = useSaveVisualizer();
   const alertToaster = usePageAlertToaster();
   const { isFullScreen } = useViewOptions();
   const controller = useVisualizationController();
   const { workflowTemplate } = controller.getState<ControllerState>();
+  const handleSave = useSaveVisualizer(workflowTemplate?.id?.toString());
   const isModified = controller
     .getElements()
     .some((element) => element.getState<ControllerState>().modified);
@@ -160,7 +160,6 @@ export const WorkflowVisualizerToolbar = observer(() => {
   const [isKebabOpen, setIsKebabOpen] = useState<boolean>(false);
   const { isFullScreen, toggleFullScreen } = useViewOptions();
   const { removeNodes } = useRemoveGraphElements();
-  const handleSave = useSaveVisualizer();
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   const launch = useLaunchTemplate();
@@ -170,6 +169,7 @@ export const WorkflowVisualizerToolbar = observer(() => {
     .getNodes()
     .filter((n) => n.isVisible() && n.getId() !== START_NODE_ID) as GraphNode[];
   const { workflowTemplate, RBAC, modified } = controller.getState<ControllerState>();
+  const handleSave = useSaveVisualizer(workflowTemplate?.id?.toString());
 
   const handleLaunchWorkflow = useCallback(async () => {
     await launch(workflowTemplate);
