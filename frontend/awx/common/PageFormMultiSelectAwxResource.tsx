@@ -34,10 +34,23 @@ export function PageFormMultiSelectAwxResource<
 }) {
   const id = useID(props);
 
+  function constructQueryParams() {
+    let queryString = '&';
+    if (props.queryParams) {
+      Object.keys(props.queryParams).forEach((key) => {
+        queryString += key + '=' + props.queryParams?.[key];
+      });
+    } else {
+      return '';
+    }
+
+    return queryString;
+  }
+
   const queryOptions = useCallback<PageAsyncSelectOptionsFn<PathValue<FormData, Name>>>(
     async (options) => {
       try {
-        let url = props.url + `?page_size=10&order_by=name`;
+        let url = props.url + `?page_size=10&order_by=name` + constructQueryParams();
         if (options.next) url = url + `&name__gt=${options.next}`;
         if (options.search) url = url + `&name__icontains=${options.search}`;
         const response = await requestGet<AwxItemsResponse<Resource>>(url, options.signal);
@@ -134,7 +147,7 @@ function SelectResource<
     tableColumns: props.tableColumns,
     disableQueryString: true,
     defaultSelection: props.defaultSelection as Resource[],
-    queryParams : props.queryParams,
+    queryParams: props.queryParams,
   });
   return (
     <MultiSelectDialog<Resource>

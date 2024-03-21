@@ -33,12 +33,13 @@ import { useInventoriesFilters } from './hooks/useInventoriesFilters';
 import { TFunction } from 'i18next';
 import { QueryParams } from '../../common/useAwxView';
 
+// TODO - filter for query string not__kind=smart&not__kind=constructed
 
 export type InventoryCreate = Inventory & {
   instanceGroups: InstanceGroup[];
   labels: Label[];
-  inventories? : number[];
-  inputInventories? : InputInventory[]; 
+  inventories?: number[];
+  inputInventories?: InputInventory[];
 };
 
 const kinds: { [key: string]: string } = {
@@ -56,14 +57,14 @@ export function CreateInventory(props: { inventoryKind: '' | 'constructed' | 'sm
   const onSubmit: PageFormSubmitHandler<InventoryCreate> = async (data) => {
     const { instanceGroups, ...inventory } = data;
 
-    let inputInventories : InputInventory[] = [];
-    if (props.inventoryKind == 'constructed')
-    {
-        inputInventories = await loadInputInventories(data.inventories || [], t);
-        data.inputInventories = inputInventories;
+    let inputInventories: InputInventory[] = [];
+    if (props.inventoryKind == 'constructed') {
+      inputInventories = await loadInputInventories(data.inventories || [], t);
+      data.inputInventories = inputInventories;
     }
 
-    const urlType = props.inventoryKind == 'constructed' ? 'constructed_inventories' : 'inventories';
+    const urlType =
+      props.inventoryKind == 'constructed' ? 'constructed_inventories' : 'inventories';
     const newInventory = await postRequest(awxAPI`/${urlType}/`, inventory);
 
     // Update new inventory with selected instance groups
@@ -71,8 +72,7 @@ export function CreateInventory(props: { inventoryKind: '' | 'constructed' | 'sm
       await submitInstanceGroups(newInventory, instanceGroups ?? [], []);
 
     // Update new inventory with selected input inventories
-    if (data?.inventories?.length && data.inventories.length > 0)
-    {
+    if (data?.inventories?.length && data.inventories.length > 0) {
       await submitInputInventories(newInventory, inputInventories || [], []);
     }
 
@@ -357,7 +357,7 @@ async function submitInputInventories(
   const { added, removed } = getAddedAndRemoved(
     originalInputInventories ?? ([] as InputInventory[]),
     currentInputInventories ?? ([] as InputInventory[])
-  ); 
+  );
 
   if (added.length === 0 && removed.length === 0) {
     return;
@@ -379,29 +379,34 @@ async function submitInputInventories(
   return results;
 }
 
-type InputInventory = { id : number; url : string, type : string; name : string};
+type InputInventory = { id: number; url: string; type: string; name: string };
 
-async function loadInputInventories(inventories : number[], t: TFunction<"translation", undefined> )
-{
-  const promises : unknown[] = [];
-  const inventoriesData : InputInventory[] = inventories.map ( (inv) => { return { id : inv, url : '', type : '', name : ''} })
-  
-  inventories.forEach( (id) => {
-    const promise = requestGet<AwxItemsResponse<Inventory>>(awxAPI`/inventories/?id=${id.toString()}`).then(
-      (result : AwxItemsResponse<Inventory>) => {
-        if (result.results.length > 0)
-        {
-          const inv = inventoriesData.find( (inv) => inv.id === id);
-          if (inv) { inv.url = result.results[0].url || ''; inv.type = result.results[0].type || '' }
+async function loadInputInventories(inventories: number[], t: TFunction<'translation', undefined>) {
+  const promises: unknown[] = [];
+  const inventoriesData: InputInventory[] = inventories.map((inv) => {
+    return { id: inv, url: '', type: '', name: '' };
+  });
+
+  inventories.forEach((id) => {
+    const promise = requestGet<AwxItemsResponse<Inventory>>(
+      awxAPI`/inventories/?id=${id.toString()}`
+    )
+      .then((result: AwxItemsResponse<Inventory>) => {
+        if (result.results.length > 0) {
+          const inv = inventoriesData.find((inv) => inv.id === id);
+          if (inv) {
+            inv.url = result.results[0].url || '';
+            inv.type = result.results[0].type || '';
+          }
         }
-      }).catch( () =>
-      {
-        throw new Error(t(`Error loading input inventory with id {{id}}.`, { id : id}));
+      })
+      .catch(() => {
+        throw new Error(t(`Error loading input inventory with id {{id}}.`, { id: id }));
       });
 
     promises.push(promise);
   });
-  
+
   await Promise.all(promises);
   return inventoriesData;
 }
@@ -410,7 +415,6 @@ function PageFormMultiSelectInventories() {
   const filters = useInventoriesFilters();
   const columns = useInventoriesColumns();
   const { t } = useTranslation();
-  const queryParams : QueryParams= { not__kind : 'smart,constructed' }
   return (
     <PageFormMultiSelectAwxResource<Inventory>
       name={'inventories'}
@@ -424,7 +428,7 @@ function PageFormMultiSelectInventories() {
       url={awxAPI`/inventories/`}
       tableColumns={columns}
       toolbarFilters={filters}
-      queryParams={queryParams}
+      queryParams={{ kind: '' }}
     />
   );
 }
