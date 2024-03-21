@@ -22,7 +22,7 @@ export function useDedupeOldNodes() {
       key.endsWith('-unsavedNode')
     );
     staleNodeKeys.forEach((key) => {
-      const staleNode = controller.getNodeById(key);
+      const staleNode = controller.getElementById(key);
       if (staleNode) {
         action(() => {
           staleNode.setId(key);
