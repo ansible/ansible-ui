@@ -21,6 +21,7 @@ import {
   useModifiedColumn,
   useNameColumn,
 } from '../../../common/columns';
+import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
 import { awxAPI } from '../../common/api/awx-utils';
 import {
   useCreatedByToolbarFilter,
@@ -28,14 +29,13 @@ import {
 } from '../../common/awx-toolbar-filters';
 import { useAwxConfig } from '../../common/useAwxConfig';
 import { useAwxView } from '../../common/useAwxView';
+import { useDynamicToolbarFilters } from '../../common/useDynamicFilters';
 import { getDocsBaseUrl } from '../../common/util/getDocsBaseUrl';
 import { Organization } from '../../interfaces/Organization';
 import { AwxRoute } from '../../main/AwxRoutes';
 import { useSelectUsersAddOrganizations } from '../users/hooks/useSelectUsersAddOrganizations';
 import { useSelectUsersRemoveOrganizations } from '../users/hooks/useSelectUsersRemoveOrganizations';
 import { useDeleteOrganizations } from './hooks/useDeleteOrganizations';
-import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
-import { useDynamicToolbarFilters } from '../../common/useDynamicFilters';
 
 export function Organizations() {
   const { t } = useTranslation();
@@ -204,6 +204,7 @@ export function useOrganizationsColumns(options?: {
 }) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
+  const getPageUrl = useGetPageUrl();
   const idColumn = useIdColumn();
   const nameClick = useCallback(
     (organization: Organization) =>
@@ -232,10 +233,50 @@ export function useOrganizationsColumns(options?: {
         type: 'count',
         value: (organization) => organization.summary_fields?.related_field_counts?.teams,
       },
+      {
+        header: t('Admins'),
+        type: 'count',
+        value: (organization) => organization.summary_fields?.related_field_counts?.admins,
+      },
+      {
+        header: t('Inventories'),
+        type: 'count',
+        value: (organization) => organization.summary_fields?.related_field_counts?.inventories,
+      },
+      {
+        header: t('Projects'),
+        type: 'count',
+        value: (organization) => organization.summary_fields?.related_field_counts?.projects,
+      },
+      {
+        header: t('Job templates'),
+        type: 'count',
+        value: (organization) => organization.summary_fields?.related_field_counts?.job_templates,
+      },
+      {
+        header: t('Hosts'),
+        type: 'count',
+        value: (organization) => organization.summary_fields?.related_field_counts?.hosts,
+      },
+      {
+        header: t('Max hosts'),
+        type: 'count',
+        value: (organization) => organization.max_hosts,
+      },
+      {
+        id: 'execution-environment',
+        header: t('Default environment'),
+        type: 'text',
+        value: (organization) => organization.summary_fields?.default_environment?.name,
+        to: (organization) =>
+          getPageUrl(AwxRoute.ExecutionEnvironmentDetails, {
+            params: { id: organization.summary_fields?.default_environment?.id },
+          }),
+      },
       createdColumn,
       modifiedColumn,
     ],
-    [idColumn, nameColumn, descriptionColumn, t, createdColumn, modifiedColumn]
+    [idColumn, nameColumn, descriptionColumn, t, createdColumn, modifiedColumn, getPageUrl]
   );
   return tableColumns;
 }
