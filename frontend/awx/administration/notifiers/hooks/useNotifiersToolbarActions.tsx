@@ -7,7 +7,7 @@ import {
   PageActionType,
   usePageNavigate,
 } from '../../../../../framework';
-import { useDeleteNotifications } from './useDeleteNotifications';
+import { useDeleteNotifiers } from './useDeleteNotifiers';
 import { NotificationTemplate } from '../../../interfaces/NotificationTemplate';
 import { ButtonVariant } from '@patternfly/react-core';
 import { AwxRoute } from '../../../main/AwxRoutes';
@@ -16,12 +16,12 @@ import { useOptions } from '../../../../common/crud/useOptions';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { awxAPI } from '../../../common/api/awx-utils';
 
-export function useNotificationsToolbarActions(
+export function useNotifiersToolbarActions(
   onComplete: (notification: NotificationTemplate[]) => void
 ) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
-  const deleteNotifications = useDeleteNotifications(onComplete);
+  const deleteNotifiers = useDeleteNotifiers(onComplete);
 
   const notificationsOptions = useOptions<OptionsResponse<ActionsResponse>>(
     awxAPI`/notification_templates/`
@@ -39,25 +39,25 @@ export function useNotificationsToolbarActions(
         variant: ButtonVariant.primary,
         isPinned: true,
         icon: PlusIcon,
-        label: t('Add notification template'),
+        label: t('Add notifier'),
         onClick: () => pageNavigate(AwxRoute.AddNotificationTemplate),
         isDisabled: () =>
           canAddNotificationTemplate
             ? undefined
             : t(
-                `You do not have permission to add notification templates. Please contact your organization administrator if there is an issue with your access.`
+                `You do not have permission to add notifiers. Please contact your organization administrator if there is an issue with your access.`
               ),
       },
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
-        label: t('Delete selected notifications'),
-        onClick: deleteNotifications,
+        label: t('Delete selected notifiers'),
+        onClick: deleteNotifiers,
         isDisabled: (notification) => cannotDeleteResources(notification, t),
         isDanger: true,
       },
     ],
-    [canAddNotificationTemplate, pageNavigate, deleteNotifications, t]
+    [canAddNotificationTemplate, pageNavigate, deleteNotifiers, t]
   );
 }

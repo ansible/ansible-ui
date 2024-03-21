@@ -5,12 +5,12 @@ import { usePostRequest } from '../../../../common/crud/usePostRequest';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { NotificationTemplate } from '../../../interfaces/NotificationTemplate';
 
-export function useCopyNotification(onComplete: () => void) {
+export function useCopyNotifier(onComplete: () => void) {
   const { t } = useTranslation();
   const postRequest = usePostRequest();
   const alertToaster = usePageAlertToaster();
 
-  const copyNotification = (notification: NotificationTemplate) => {
+  const copyNotifier = (notification: NotificationTemplate) => {
     const alert: AlertProps = {
       variant: 'success',
       title: t(`${notification.name} copied.`),
@@ -27,11 +27,11 @@ export function useCopyNotification(onComplete: () => void) {
       .catch((error) => {
         alertToaster.replaceAlert(alert, {
           variant: 'danger',
-          title: t('Failed to copy inventory'),
+          title: t('Failed to copy notifier'),
           children: error instanceof Error && error.message,
         });
       })
       .finally(onComplete);
   };
-  return copyNotification;
+  return copyNotifier;
 }

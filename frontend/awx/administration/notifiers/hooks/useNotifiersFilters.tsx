@@ -1,6 +1,6 @@
 import { useDynamicToolbarFilters } from '../../../common/useDynamicFilters';
 
-export function useNotificationsFilters() {
+export function useNotifiersFilters() {
   const toolbarFilters = useDynamicToolbarFilters({
     optionsPath: 'notification_templates',
     preSortedKeys: ['name'],

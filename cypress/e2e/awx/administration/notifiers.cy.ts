@@ -1,18 +1,18 @@
 import { NotificationTemplate } from '../../../../frontend/awx/interfaces/NotificationTemplate';
 import { randomE2Ename } from '../../../support/utils';
 
-describe('notifications', () => {
+describe('notifiers', () => {
   before(() => {
     cy.awxLogin();
   });
 
-  it('renders the notification list page', () => {
+  it('renders the notifier page', () => {
     cy.navigateTo('awx', 'notification-templates');
-    cy.verifyPageTitle('Notifications');
+    cy.verifyPageTitle('Notifiers');
   });
 });
 
-describe('notifications copy and delete', () => {
+describe('notifiers copy and delete', () => {
   let notificationTemplate: NotificationTemplate;
 
   before(() => {
@@ -26,11 +26,11 @@ describe('notifications copy and delete', () => {
     });
   });
 
-  it('copies a notification from the list view', () => {
+  it('copies a notifier from the list view', () => {
     cy.navigateTo('awx', 'notification-templates');
     cy.filterTableByMultiSelect('name', [notificationTemplate.name]);
     cy.getByDataCy('actions-column-cell').within(() => {
-      cy.getByDataCy('copy-notification-template').click();
+      cy.getByDataCy('copy-notifier').click();
     });
     cy.get('[data-cy="alert-toaster"]').contains('copied').should('be.visible');
     cy.clickButton(/^Clear all filters/);
@@ -39,37 +39,37 @@ describe('notifications copy and delete', () => {
     cy.get('[data-cy="checkbox-column-cell"]').within(() => {
       cy.get('input').click();
     });
-    cy.clickToolbarKebabAction('delete-selected-notifications');
+    cy.clickToolbarKebabAction('delete-selected-notifiers');
     cy.getModal().within(() => {
       cy.get('#confirm').click();
-      cy.clickButton(/^Delete notifications/);
+      cy.clickButton(/^Delete notifiers/);
       cy.contains(/^Success$/);
       cy.clickButton(/^Close$/);
     });
   });
 
-  it('deletes a notification from the list row item', () => {
+  it('deletes a notifier from the list row item', () => {
     cy.navigateTo('awx', 'notification-templates');
     cy.filterTableByMultiSelect('name', [notificationTemplate.name]);
     cy.getByDataCy('actions-column-cell').within(() => {
-      cy.clickKebabAction('actions-dropdown', 'delete-notification-template');
+      cy.clickKebabAction('actions-dropdown', 'delete-notifier');
     });
     cy.get('#confirm').click();
-    cy.clickButton(/^Delete notifications/);
+    cy.clickButton(/^Delete notifiers/);
     cy.contains(/^Success$/);
     cy.clickButton(/^Close$/);
   });
 
-  it('deletes a notification from the toolbar', () => {
+  it('deletes a notifier from the toolbar', () => {
     cy.navigateTo('awx', 'notification-templates');
     cy.filterTableByMultiSelect('name', [notificationTemplate.name]);
     cy.get('[data-cy="checkbox-column-cell"]').within(() => {
       cy.get('input').click();
     });
-    cy.clickToolbarKebabAction('delete-selected-notifications');
+    cy.clickToolbarKebabAction('delete-selected-notifiers');
     cy.getModal().within(() => {
       cy.get('#confirm').click();
-      cy.clickButton(/^Delete notifications/);
+      cy.clickButton(/^Delete notifiers/);
       cy.contains(/^Success$/);
       cy.clickButton(/^Close$/);
     });

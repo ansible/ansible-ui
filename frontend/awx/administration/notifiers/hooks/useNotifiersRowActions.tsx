@@ -8,8 +8,8 @@ import {
   usePageNavigate,
 } from '../../../../../framework';
 import { NotificationTemplate } from '../../../interfaces/NotificationTemplate';
-import { useDeleteNotifications } from './useDeleteNotifications';
-import { useCopyNotification } from './useCopyNotification';
+import { useDeleteNotifiers } from './useDeleteNotifiers';
+import { useCopyNotifier } from './useCopyNotifier';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import {
   cannotCopyResource,
@@ -17,14 +17,14 @@ import {
   cannotEditResource,
 } from '../../../../common/utils/RBAChelpers';
 
-export function useNotificationsRowActions(
+export function useNotifiersRowActions(
   onComplete: (notification: NotificationTemplate[]) => void,
-  onNotificationCopied = () => null
+  onNotifierCopied = () => null
 ) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
-  const deleteNotifications = useDeleteNotifications(onComplete);
-  const copyNotification = useCopyNotification(onNotificationCopied);
+  const deleteNotifiers = useDeleteNotifiers(onComplete);
+  const copyNotifier = useCopyNotifier(onNotifierCopied);
 
   return useMemo<IPageAction<NotificationTemplate>[]>(() => {
     return [
@@ -33,7 +33,7 @@ export function useNotificationsRowActions(
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: PencilAltIcon,
-        label: t(`Edit notification template`),
+        label: t(`Edit notifier`),
         onClick: (notification) =>
           pageNavigate(AwxRoute.EditNotificationTemplate, {
             params: { id: notification.id },
@@ -46,8 +46,8 @@ export function useNotificationsRowActions(
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: CopyIcon,
-        label: t(`Copy notification template`),
-        onClick: (notification: NotificationTemplate) => copyNotification(notification),
+        label: t(`Copy notifier`),
+        onClick: (notification: NotificationTemplate) => copyNotifier(notification),
         isDisabled: (notification) => cannotCopyResource(notification, t),
         isDanger: false,
         isPinned: true,
@@ -57,11 +57,11 @@ export function useNotificationsRowActions(
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: TrashIcon,
-        label: t(`Delete notification template`),
-        onClick: (notification: NotificationTemplate) => deleteNotifications([notification]),
+        label: t(`Delete notifier`),
+        onClick: (notification: NotificationTemplate) => deleteNotifiers([notification]),
         isDisabled: (notification) => cannotDeleteResource(notification, t),
         isDanger: true,
       },
     ];
-  }, [pageNavigate, copyNotification, deleteNotifications, t]);
+  }, [pageNavigate, copyNotifier, deleteNotifiers, t]);
 }

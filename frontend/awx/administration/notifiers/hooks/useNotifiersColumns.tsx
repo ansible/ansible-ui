@@ -4,7 +4,7 @@ import { ITableColumn, TextCell } from '../../../../../framework';
 import { NotificationTemplate } from '../../../interfaces/NotificationTemplate';
 import { StatusCell } from '../../../../common/Status';
 
-export function useNotificationsColumns() {
+export function useNotifiersColumns() {
   const { t } = useTranslation();
   const tableColumns = useMemo<ITableColumn<NotificationTemplate>[]>(
     () => [
