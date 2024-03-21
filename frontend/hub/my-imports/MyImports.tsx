@@ -1,32 +1,32 @@
-import { useTranslation } from 'react-i18next';
-import { useEffect, useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
-import { useGet } from '../../common/crud/useGet';
-import { HubItemsResponse } from '../common/useHubView';
-import { hubAPI } from '../common/api/formatPath';
-import { HubRoute } from '../main/HubRoutes';
 import {
-  Scrollable,
-  PageLayout,
-  PageHeader,
-  useGetPageUrl,
-  IFilterState,
-} from '../../../framework';
-import {
-  PageSection,
   Drawer,
   DrawerContent,
   DrawerContentBody,
-  Flex,
-  FlexItem,
-  DrawerPanelContent,
   DrawerHead,
   DrawerPanelBody,
+  DrawerPanelContent,
+  Flex,
+  FlexItem,
+  PageSection,
   Title,
 } from '@patternfly/react-core';
+import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Link, useSearchParams } from 'react-router-dom';
+import {
+  IFilterState,
+  PageHeader,
+  PageLayout,
+  Scrollable,
+  useGetPageUrl,
+} from '../../../framework';
+import { useGet } from '../../common/crud/useGet';
 import { CollectionImport, CollectionVersionSearch } from '../collections/Collection';
-import { ImportLog } from './components/ImportLog';
+import { hubAPI } from '../common/api/formatPath';
+import { HubItemsResponse } from '../common/useHubView';
+import { HubRoute } from '../main/HubRoutes';
 import { ImportList } from './components/ImportList';
+import { ImportLog } from './components/ImportLog';
 
 export function MyImports() {
   const { t } = useTranslation();
@@ -107,8 +107,7 @@ export function MyImports() {
     error: collectionImportError,
   } = useGet<CollectionImport>(
     collectionImport?.id ? hubAPI`/_ui/v1/imports/collections/${collectionImport?.id ?? ''}/` : '',
-    undefined,
-    { refreshInterval: 10000 }
+    undefined
   );
 
   const {
@@ -121,8 +120,7 @@ export function MyImports() {
       namespace: namespaceQP,
       name: collectionImport?.name ?? '',
       version: collectionImport?.version ?? '',
-    },
-    { refreshInterval: 10000 }
+    }
   );
 
   const collection =
