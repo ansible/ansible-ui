@@ -302,11 +302,9 @@ interface AsyncKeyOptions {
 
 /** A list of known keys that require querying specific endpoints. We pre-fetch these values if available */
 export const knownAwxFilterKeys: Record<string, AsyncKeyOptions> = {
-  credential: { apiPath: 'credentials' },
-  execution_environment: { apiPath: 'execution_environments' },
-  default_environment: { apiPath: 'execution_environments' },
   organization: { apiPath: 'organizations' },
   project: { apiPath: 'projects' },
+  execution_environment: { apiPath: 'execution_environments' },
   unified_job_template: { apiPath: 'unified_job_templates' },
   execution_node: {
     labelKey: 'hostname',
