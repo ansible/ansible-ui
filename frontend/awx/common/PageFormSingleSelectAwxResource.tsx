@@ -51,7 +51,7 @@ export function PageFormSelectAwxResource<
   FormData extends FieldValues = FieldValues,
   Name extends FieldPath<FormData> = FieldPath<FormData>,
   Value extends number = PathValue<FormData, Name>,
->(props: PageFormSelectAwxResourceProps<Name, Resource, Value> & { single : boolean}) {
+>(props: PageFormSelectAwxResourceProps<Name, Resource, Value> & { single: boolean }) {
   const id = useID(props);
 
   const queryOptions = useCallback<PageAsyncSelectOptionsFn<PathValue<FormData, Name>>>(
