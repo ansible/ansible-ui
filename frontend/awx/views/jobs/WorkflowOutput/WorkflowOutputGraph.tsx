@@ -54,13 +54,37 @@ export const WorkflowOutputGraph = observer(
         });
         return;
       };
+
       if (!message?.workflow_node_id || !message?.status || !nodes?.length) {
         return;
+      }
+
+      if (message?.unified_job_id && message.unified_job_id !== props.job?.id) {
+        if (node) {
+          const { resource } = node.getData() as { resource: WorkflowNode };
+          action(() => {
+            node.setData({
+              ...node.getData(),
+              resource: {
+                ...resource,
+                summary_fields: {
+                  ...resource.summary_fields,
+                  job: {
+                    ...resource.summary_fields.job,
+                    id: message.unified_job_id,
+                    type: message.type,
+                  },
+                },
+              },
+            });
+          })();
+        }
       }
 
       if (message.finished) {
         void getElapsedTime(message.workflow_node_id);
       }
+
       action(() => {
         node?.setNodeStatus(message.status as NodeStatus);
       })();
@@ -69,6 +93,7 @@ export const WorkflowOutputGraph = observer(
     useEffect(() => {
       refreshNodeStatus();
     }, [node, refreshNodeStatus]);
+
     return (
       <ViewOptionsProvider>
         <ViewOptionsContext.Consumer>

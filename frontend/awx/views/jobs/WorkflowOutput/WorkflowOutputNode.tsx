@@ -12,9 +12,12 @@ import {
 import {
   DefaultNode,
   ElementModel,
+  Layer,
+  TOP_LAYER,
   GraphElement,
-  observer,
+  NodeStatus,
   WithSelectionProps,
+  observer,
   useHover,
 } from '@patternfly/react-topology';
 import { usePageNavigate } from '../../../../../framework';
@@ -24,14 +27,18 @@ import type { SVGIconProps } from '@patternfly/react-icons/dist/js/createIcon';
 import type { WorkflowNode } from '../../../interfaces/WorkflowNode';
 
 const StyledNode = styled(DefaultNode)`
-  cursor: pointer;
+  &.pf-m-hover {
+    cursor: pointer;
+  }
   &.unexecuted-job {
+    &:hover {
+      cursor: default;
+    }
     .pf-topology__node__background {
       fill: var(--pf-v5-chart-color-black-300);
       stroke: var(--pf-v5-global--Color--200);
     }
   }
-  ${({ hover }) => (hover === true ? `cursor: pointer;` : `cursor: default;`)}
 `;
 
 export const jobPaths: { [key: string]: string } = {
@@ -72,10 +79,10 @@ export const WorkflowOutputNode = observer(({ element, selected }: WorkflowOutpu
   const [hover, hoverRef] = useHover();
   const pageNavigate = usePageNavigate();
   const statusDecorator = useStatusDecorator();
-  const { job, unified_job_template } = element?.getData()?.resource?.summary_fields || {};
-  const { unified_job_type: templateType } = unified_job_template || {};
+  const status = element.getController().getNodeById(element.getId())?.getNodeStatus();
   const data = element.getData();
-
+  const { job, unified_job_template } = data?.resource?.summary_fields || {};
+  const { unified_job_type: templateType } = unified_job_template || {};
   const Icon = NodeIcon[templateType ?? 'deleted_resource'];
 
   function handleSelect() {
@@ -93,25 +100,28 @@ export const WorkflowOutputNode = observer(({ element, selected }: WorkflowOutpu
   }
 
   return (
-    <StyledNode
-      showLabel
-      element={element}
-      hover={job?.type ? hover : false}
-      labelClassName={`${element.getId()}-node-label`}
-      onSelect={handleSelect}
-      secondaryLabel={data?.secondaryLabel}
-      selected={job?.type ? selected : false}
-      truncateLength={20}
-      badge={data?.badge}
-      badgeColor={data?.badgeColor}
-      badgeTextColor={data?.badgeTextColor}
-      badgeBorderColor={data?.badgeBorderColor}
-      className={job ? '' : 'unexecuted-job'}
-    >
-      <g transform={`translate(13, 13)`} ref={hoverRef as LegacyRef<SVGGElement>}>
-        <Icon style={{ color: '#393F44' }} width={25} height={25} />
+    <Layer id={hover ? TOP_LAYER : undefined}>
+      <g ref={hoverRef as LegacyRef<SVGGElement>}>
+        <StyledNode
+          showLabel
+          element={element}
+          labelClassName={`${element.getId()}-node-label`}
+          onSelect={handleSelect}
+          secondaryLabel={data?.secondaryLabel}
+          selected={job?.type ? selected : false}
+          truncateLength={20}
+          badge={data?.badge}
+          badgeColor={data?.badgeColor}
+          badgeTextColor={data?.badgeTextColor}
+          badgeBorderColor={data?.badgeBorderColor}
+          className={status === NodeStatus.default && !job ? 'unexecuted-job' : ''}
+        >
+          <g transform={`translate(13, 13)`}>
+            <Icon style={{ color: '#393F44' }} width={25} height={25} />
+          </g>
+          {statusDecorator(element)}
+        </StyledNode>
       </g>
-      {statusDecorator(element)}
-    </StyledNode>
+    </Layer>
   );
 });

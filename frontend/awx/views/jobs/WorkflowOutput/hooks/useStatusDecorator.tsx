@@ -73,6 +73,7 @@ function getStatusIcon(nodeType: string, centerPoint: { x: number; y: number }) 
       );
     case 'fail':
     case 'failed':
+    case 'error':
       return <ExclamationCircleIcon data-cy="failed-icon" style={{ fill: pfDanger }} />;
     case 'pending':
     case 'waiting':
