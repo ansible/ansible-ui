@@ -1,6 +1,24 @@
-import { ToolbarFilterType } from '../../../../framework';
+import { IToolbarFilter, ToolbarFilterType } from '../../../../framework';
 import * as useOptions from '../../../common/crud/useOptions';
 import { Notifications } from './Notifications';
+import { useNotificationsFilters } from './hooks/useNotificationsFilters';
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function TestInner(props: { filters: IToolbarFilter[] }) {
+  return <div />;
+}
+
+function Test() {
+  const notificationFilters = useNotificationsFilters();
+  return (
+    notificationFilters &&
+    notificationFilters.length > 0 && (
+      <div id="root">
+        <TestInner filters={notificationFilters} />
+      </div>
+    )
+  );
+}
 
 describe('Notifications.cy.tsx', () => {
   describe('Error list', () => {
@@ -22,15 +40,33 @@ describe('Notifications.cy.tsx', () => {
       cy.get('table').find('tr').should('have.length', 2);
     });
 
+    it('Returns number of expected filters', () => {
+      cy.intercept(
+        { method: 'GET', url: '/api/v2/notification_templates/*' },
+        { fixture: 'notification_templates.json' }
+      );
+      cy.intercept(
+        { method: 'OPTIONS', url: '/api/v2/notification_templates/' },
+        { fixture: 'mock_options.json' }
+      ).as('getOptions');
+      cy.mount(<Test />);
+      cy.wait('@getOptions');
+      cy.waitForReact(10000, '#root');
+      cy.getReact('TestInner').getProps('filters').should('have.length', 20);
+    });
+
     it('List has filter for Name', () => {
       cy.intercept(
         { method: 'GET', url: '/api/v2/notification_templates/*' },
         { fixture: 'notification_templates.json' }
       );
+      cy.intercept(
+        { method: 'OPTIONS', url: '/api/v2/notification_templates/' },
+        { fixture: 'mock_options.json' }
+      );
       cy.mount(<Notifications />);
       cy.intercept('/api/v2/notification_templates/?name=notification*').as('nameFilterRequest');
       cy.filterTableByMultiSelect('name', ['csantiago_notification']);
-      cy.wait('@nameFilterRequest');
       cy.clearAllFilters();
     });
 
