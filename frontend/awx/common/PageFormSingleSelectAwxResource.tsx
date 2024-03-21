@@ -34,7 +34,16 @@ export function PageFormSingleSelectAwxResource<
   Name extends FieldPath<FormData> = FieldPath<FormData>,
   Value extends number = PathValue<FormData, Name>,
 >(props: PageFormSelectAwxResourceProps<Name, Resource, Value>) {
-  return <PageFormSelectAwxResource<Resource, FormData, Name, Value> {...props} />;
+  return <PageFormSelectAwxResource<Resource, FormData, Name, Value> {...props} single={true} />;
+}
+
+export function PageFormMultiSelectAwxResource<
+  Resource extends { id: number; name: string; description?: string | null | undefined },
+  FormData extends FieldValues = FieldValues,
+  Name extends FieldPath<FormData> = FieldPath<FormData>,
+  Value extends number = PathValue<FormData, Name>,
+>(props: PageFormSelectAwxResourceProps<Name, Resource, Value>) {
+  return <PageFormSelectAwxResource<Resource, FormData, Name, Value> {...props} single={false} />;
 }
 
 export function PageFormSelectAwxResource<
@@ -42,7 +51,7 @@ export function PageFormSelectAwxResource<
   FormData extends FieldValues = FieldValues,
   Name extends FieldPath<FormData> = FieldPath<FormData>,
   Value extends number = PathValue<FormData, Name>,
->(props: PageFormSelectAwxResourceProps<Name, Resource, Value>) {
+>(props: PageFormSelectAwxResourceProps<Name, Resource, Value> & { single : boolean}) {
   const id = useID(props);
 
   const queryOptions = useCallback<PageAsyncSelectOptionsFn<PathValue<FormData, Name>>>(
