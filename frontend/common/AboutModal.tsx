@@ -8,6 +8,7 @@ export interface AnsibleAboutModalProps {
   versionInfo?: ProductVersionInfo;
   onClose?: () => void;
 }
+
 type ProductVersionInfo = Record<string, string | Record<string, string>>;
 
 export function AnsibleAboutModal(props: AnsibleAboutModalProps) {
@@ -45,11 +46,22 @@ export function AnsibleAboutModal(props: AnsibleAboutModalProps) {
                   <TextList component="dl">
                     {typeof info === 'string'
                       ? info
-                      : Object.entries(info).map(([key, value]) => (
-                          <TextListItem key={key} component="dt">
-                            {t(value)}
-                          </TextListItem>
-                        ))}
+                      : Object.entries(info).map(([key, value]) => {
+                          return typeof value === 'object' ? (
+                            <TextListItem key={key} component="dt">
+                              {Object.entries(value).map(([foo, bar]) => (
+                                <TextList component="dl" key={foo}>
+                                  <TextListItem component="dt">{foo}</TextListItem>
+                                  <TextListItem component="dt">{bar}</TextListItem>
+                                </TextList>
+                              ))}
+                            </TextListItem>
+                          ) : (
+                            <TextListItem key={key} component="dt">
+                              {t(value)}
+                            </TextListItem>
+                          );
+                        })}
                   </TextList>
                 </>
               );
