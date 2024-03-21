@@ -47,7 +47,11 @@ export const graphModel: Model = {
   },
 };
 
-export const WorkflowOutput = (props: { job: Job; reloadJob: () => void }) => {
+export const WorkflowOutput = (props: {
+  job: Job;
+  reloadJob: () => void;
+  refreshNodeStatus: () => void;
+}) => {
   const { t } = useTranslation();
   const createEdge = useCreateEdge();
 
@@ -184,7 +188,11 @@ export const WorkflowOutput = (props: { job: Job; reloadJob: () => void }) => {
 
   return (
     <VisualizationProvider controller={visualization}>
-      <WorkflowOutputGraph job={props.job} reloadJob={props.reloadJob} />
+      <WorkflowOutputGraph
+        job={props.job}
+        reloadJob={props.reloadJob}
+        refreshNodeStatus={props.refreshNodeStatus}
+      />
     </VisualizationProvider>
   );
 };
