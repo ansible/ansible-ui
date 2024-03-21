@@ -3,17 +3,17 @@ import { useGet } from '../../../../common/crud/useGet';
 import { EdaCredential } from '../../../interfaces/EdaCredential';
 import { EdaRoute } from '../../../main/EdaRoutes';
 
-export function EdaCredentialCell(props: { credential_id?: number | null }) {
+export function EdaCredentialCell(props: { eda_credential_id?: number | null }) {
   const getPageUrl = useGetPageUrl();
   const { data } = useGet<EdaCredential>(
-    props.credential_id ? `/api/eda/v1/credentials/${props.credential_id}/` : undefined,
+    props.eda_credential_id ? `/api/eda/v1/eda-credentials/${props.eda_credential_id}/` : undefined,
     { dedupingInterval: 10 * 1000 }
   );
   if (!data) {
-    switch (typeof props.credential_id) {
+    switch (typeof props.eda_credential_id) {
       case 'number':
       case 'string':
-        return <>{props.credential_id}</>;
+        return <>{props.eda_credential_id}</>;
     }
     return <></>;
   }
@@ -21,7 +21,7 @@ export function EdaCredentialCell(props: { credential_id?: number | null }) {
     <TextCell
       text={data.name}
       to={
-        props.credential_id
+        props.eda_credential_id
           ? getPageUrl(EdaRoute.CredentialPage, {
               params: { id: data.id },
             })

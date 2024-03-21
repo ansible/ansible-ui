@@ -26,7 +26,9 @@ import { EdaRoute } from '../main/EdaRoutes';
 function DecisionEnvironmentInputs() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
-  const { data: credentials } = useGet<EdaResult<EdaCredential>>(edaAPI`/credentials/`);
+  const { data: credentials } = useGet<EdaResult<EdaCredential>>(
+    edaAPI`/eda-credentials/` + `?credential_type__kind=registry&page_size=300`
+  );
   const imageHelpBlock = (
     <>
       <p>
@@ -66,7 +68,7 @@ function DecisionEnvironmentInputs() {
         labelHelp={imageHelpBlock}
       />
       <PageFormSelect
-        name={'credential_id'}
+        name={'eda_credential_id'}
         label={t('Credential')}
         isRequired={false}
         placeholderText={t('Select credential')}
@@ -171,7 +173,7 @@ export function EditDecisionEnvironment() {
           onCancel={onCancel}
           defaultValue={{
             ...decisionEnvironment,
-            credential_id: decisionEnvironment?.credential?.id || undefined,
+            eda_credential_id: decisionEnvironment?.eda_credential?.id || undefined,
           }}
         >
           <DecisionEnvironmentInputs />

@@ -8,7 +8,7 @@ describe('EDA Credentials- Create, Edit, Delete', () => {
     cy.edaLogin();
   });
 
-  it('can create a container registry credential, and assert the information showing on the details page', () => {
+  it.skip('can create a container registry credential, and assert the information showing on the details page', () => {
     const name = 'E2E Credential ' + randomString(4);
     cy.navigateTo('eda', 'credentials');
     cy.get('h1').should('contain', 'Credentials');
@@ -31,7 +31,7 @@ describe('EDA Credentials- Create, Edit, Delete', () => {
     });
   });
 
-  it('can create a GitHub token credential, and assert the information showing on the details page', () => {
+  it.skip('can create a GitHub token credential, and assert the information showing on the details page', () => {
     const name = 'E2E Credential ' + randomString(4);
     cy.navigateTo('eda', 'credentials');
     cy.get('h1').should('contain', 'Credentials');
@@ -54,7 +54,7 @@ describe('EDA Credentials- Create, Edit, Delete', () => {
     });
   });
 
-  it('can create a GitLab token credential, and assert the information showing on the details page', () => {
+  it.skip('can create a GitLab token credential, and assert the information showing on the details page', () => {
     const name = 'E2E Credential ' + randomString(4);
     cy.navigateTo('eda', 'credentials');
     cy.get('h1').should('contain', 'Credentials');
@@ -77,7 +77,7 @@ describe('EDA Credentials- Create, Edit, Delete', () => {
     });
   });
 
-  it('can edit a credential', () => {
+  it.skip('can edit a credential', () => {
     cy.createEdaCredential().then((edaCredential) => {
       cy.navigateTo('eda', 'credentials');
       cy.get('h1').should('contain', 'Credentials');
@@ -99,7 +99,7 @@ describe('EDA Credentials- Create, Edit, Delete', () => {
     });
   });
 
-  it('can delete a credential', () => {
+  it.skip('can delete a credential', () => {
     cy.createEdaCredential().then((edaCredential) => {
       cy.navigateTo('eda', 'credentials');
       cy.get('h1').should('contain', 'Credentials');

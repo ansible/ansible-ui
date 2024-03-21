@@ -21,7 +21,7 @@ describe('Projects.cy.ts', () => {
           {
             name: 'Test 3',
             description: '',
-            credential_id: null,
+            eda_credential_id: null,
             id: 11,
             url: 'https://github.com/ansible/ansible-ui',
             git_hash: 'a1c2b012f84de83c4a9fa5126430816bf68364b2',
@@ -34,7 +34,7 @@ describe('Projects.cy.ts', () => {
           {
             name: 'Test 4',
             description: '',
-            credential_id: null,
+            eda_credential_id: null,
             id: 12,
             url: 'https://github.com/ansible/ansible-ui',
             git_hash: 'a1c2b012f84de83c4a9fa5126430816bf68364b2',

@@ -5,7 +5,7 @@ import { PageSettings } from '../../../framework/PageSettings/PageSettings';
 import { CredentialDetails } from '../access/credentials/CredentialPage/CredentialDetails';
 import { CredentialPage } from '../access/credentials/CredentialPage/CredentialPage';
 import { Credentials } from '../access/credentials/Credentials';
-import { CreateCredential, EditCredential } from '../access/credentials/EditCredential';
+import { CreateCredential, EditCredential } from '../access/credentials/CredentialForm';
 import { EdaRoleDetails } from '../access/roles/EdaRoleDetails';
 import { EdaRolePage } from '../access/roles/EdaRolePage';
 import { EdaRoles } from '../access/roles/EdaRoles';
@@ -46,6 +46,13 @@ import { CreateWebhook, EditWebhook } from '../webhooks/EditWebhook';
 import { WebhookDetails } from '../webhooks/WebhookPage/WebhookDetails';
 import { WebhookPage } from '../webhooks/WebhookPage/WebhookPage';
 import { Webhooks } from '../webhooks/Webhooks';
+import { CredentialTypes } from '../access/credential-types/CredentialTypes';
+import { CredentialTypeDetails } from '../access/credential-types/CredentialTypePage/CredentialTypeDetails';
+import { CredentialTypePage } from '../access/credential-types/CredentialTypePage/CredentialTypePage';
+import {
+  CreateCredentialType,
+  EditCredentialType,
+} from '../access/credential-types/CredentialTypeForm';
 import { EdaRoute } from './EdaRoutes';
 
 export function useEdaNavigation() {
@@ -412,6 +419,43 @@ export function useEdaNavigation() {
             {
               path: '',
               element: <Credentials />,
+            },
+          ],
+        },
+        {
+          id: EdaRoute.CredentialTypes,
+          label: t('Credential Types'),
+          path: 'credential-types',
+          children: [
+            {
+              id: EdaRoute.CreateCredentialType,
+              path: 'create',
+              element: <CreateCredentialType />,
+            },
+            {
+              id: EdaRoute.EditCredentialType,
+              path: 'edit/:id',
+              element: <EditCredentialType />,
+            },
+            {
+              id: EdaRoute.CredentialTypePage,
+              path: ':id',
+              element: <CredentialTypePage />,
+              children: [
+                {
+                  id: EdaRoute.CredentialTypeDetails,
+                  path: 'details',
+                  element: <CredentialTypeDetails />,
+                },
+                {
+                  path: '',
+                  element: <Navigate to="details" />,
+                },
+              ],
+            },
+            {
+              path: '',
+              element: <CredentialTypes />,
             },
           ],
         },

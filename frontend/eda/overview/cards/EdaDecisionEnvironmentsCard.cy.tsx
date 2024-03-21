@@ -31,7 +31,7 @@ describe('EdaDecisionEnvironmentsCard.cy.ts', () => {
             name: 'DE1',
             description: 'This is DE1',
             image_url: 'quay.io/ansible/ansible-rulebook:latest',
-            credential_id: null,
+            eda_credential_id: null,
             id: 2,
             created_at: '2023-06-21T13:35:14.393063Z',
             modified_at: '2023-06-21T13:35:14.393075Z',

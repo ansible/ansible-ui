@@ -59,9 +59,10 @@ export function CreateRulebookActivation() {
     }
     rulebookActivation.extra_var_id = extra_var_id?.id;
     rulebookActivation.rulebook_id = rulebook?.id;
-    rulebookActivation.credentials = rulebookActivation.credential_refs
+    rulebookActivation.eda_credentials = rulebookActivation.credential_refs
       ? rulebookActivation.credential_refs.map((credential) => `${credential.id || ''}`)
       : undefined;
+    delete rulebookActivation.credential_refs;
     const newRulebookActivation = await postEdaRulebookActivation(
       edaAPI`/activations/`,
       rulebookActivation
@@ -211,8 +212,9 @@ export function RulebookActivationInputs() {
         footer={<Link to={getPageUrl(EdaRoute.CreateWebhook)}>Create webhook</Link>}
       />
 
-      <PageFormCredentialSelect<{ credential_refs: string; id: string }>
+      <PageFormCredentialSelect<{ credential_refs: string; id: string; credentialKind: string }>
         name="credential_refs"
+        credentialKind={'vault, cloud'}
         labelHelp={t(`Select the credentials for this rulebook activations.`)}
       />
       <PageFormSelect<IEdaRulebookActivationInputs>
@@ -305,6 +307,6 @@ type IEdaRulebookActivationInputs = Omit<EdaRulebookActivationCreate, 'event_str
   project_id: string;
   extra_var: string;
   awx_token_id: number;
-  credentials?: string[];
+  eda_credentials?: string[];
   credential_refs?: EdaCredential[];
 };
