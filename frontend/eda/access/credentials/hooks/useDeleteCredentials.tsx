@@ -18,7 +18,7 @@ export function useDeleteCredentials(onComplete?: (credentials: EdaCredential[])
   const bulkAction = useEdaBulkConfirmation<EdaCredential>();
   return useCallback(
     async (credentials: EdaCredential[]) => {
-      const inUseDes = await InUseResources(credentials, edaAPI`/activations/?credential_id=`);
+      const inUseDes = await InUseResources(credentials, edaAPI`/activations/?eda_credential_id=`);
       const inUseMessage =
         inUseDes && inUseDes.length > 0
           ? [t(`The following credentials are in use: ${inUseDes.join()}`)]
@@ -39,7 +39,7 @@ export function useDeleteCredentials(onComplete?: (credentials: EdaCredential[])
         onComplete,
         alertPrompts: inUseMessage,
         actionFn: (credential: EdaCredential, signal) => {
-          const url = edaAPI`/credentials/${credential.id.toString()}/`;
+          const url = edaAPI`/eda-credentials/${credential.id.toString()}/`;
           return requestDelete(url + forceParameter, signal);
         },
       });

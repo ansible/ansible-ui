@@ -15,7 +15,7 @@ export function Credentials() {
   const toolbarFilters = useCredentialFilters();
   const tableColumns = useCredentialColumns();
   const view = useEdaView<EdaCredential>({
-    url: edaAPI`/credentials/`,
+    url: edaAPI`/eda-credentials/`,
     toolbarFilters,
     tableColumns,
   });

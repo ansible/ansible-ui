@@ -31,7 +31,7 @@ export function DecisionEnvironmentDetails() {
   );
 
   const { data: credential } = useGet<EdaCredential>(
-    edaAPI`/credentials/${decisionEnvironment?.credential?.id.toString() ?? ''}/`
+    edaAPI`/eda-credentials/` + `${decisionEnvironment?.eda_credential?.id.toString() ?? ''}/`
   );
 
   const getPageUrl = useGetPageUrl();
@@ -47,10 +47,10 @@ export function DecisionEnvironmentDetails() {
         label={t('Credential')}
         helpText={t('The token needed to utilize the Decision environment image.')}
       >
-        {decisionEnvironment && decisionEnvironment.credential?.id ? (
+        {decisionEnvironment && decisionEnvironment.eda_credential?.id ? (
           <Link
             to={getPageUrl(EdaRoute.CredentialPage, {
-              params: { id: decisionEnvironment?.credential?.id },
+              params: { id: decisionEnvironment?.eda_credential?.id },
             })}
           >
             {credential?.name}

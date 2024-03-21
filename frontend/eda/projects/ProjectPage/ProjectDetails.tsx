@@ -6,7 +6,6 @@ import {
   LoadingPage,
   PageDetail,
   PageDetails,
-  TextCell,
   useGetPageUrl,
 } from '../../../../framework';
 import { StandardPopover } from '../../../../framework/components/StandardPopover';
@@ -17,6 +16,7 @@ import { useGetItem } from '../../../common/crud/useGet';
 import { edaAPI } from '../../common/eda-utils';
 import { EdaProjectRead } from '../../interfaces/EdaProject';
 import { EdaRoute } from '../../main/EdaRoutes';
+import { capitalizeFirstLetter } from '../../../../framework/utils/strings';
 
 export function ProjectDetails() {
   const { t } = useTranslation();
@@ -34,7 +34,7 @@ export function ProjectDetails() {
         label={t('SCM type')}
         helpText={t('There is currently only one SCM type available for use.')}
       >
-        <TextCell text={'Git'} />
+        {project?.scm_type ? capitalizeFirstLetter(project?.scm_type) : t('Git')}
       </PageDetail>
       <PageDetail
         label={t('SCM URL')}
@@ -43,14 +43,34 @@ export function ProjectDetails() {
         {project?.url || ''}
       </PageDetail>
       <PageDetail label={t('Credential')} helpText={t('The token needed to utilize the SCM URL.')}>
-        {project && project.credential ? (
+        {project && project.eda_credential ? (
           <Link
-            to={getPageUrl(EdaRoute.CredentialPage, { params: { id: project?.credential?.id } })}
+            to={getPageUrl(EdaRoute.CredentialPage, {
+              params: { id: project?.eda_credential?.id },
+            })}
           >
-            {project?.credential?.name}
+            {project?.eda_credential?.name}
           </Link>
         ) : (
-          project?.credential?.name || ''
+          project?.eda_credential?.name || ''
+        )}
+      </PageDetail>
+      <PageDetail
+        label={t('Content Signature Validation Credential')}
+        helpText={t(
+          'Enable content signing to verify that the content has remained secure when a project is synced. If the content has been tampered with, the job will not run.'
+        )}
+      >
+        {project && project.signature_validation_credential ? (
+          <Link
+            to={getPageUrl(EdaRoute.CredentialPage, {
+              params: { id: project?.signature_validation_credential?.id },
+            })}
+          >
+            {project?.signature_validation_credential?.name}
+          </Link>
+        ) : (
+          project?.signature_validation_credential?.name || ''
         )}
       </PageDetail>
       <PageDetail label={t('Git hash')}>
@@ -59,6 +79,10 @@ export function ProjectDetails() {
       <PageDetail label={t('Status')}>
         <StatusCell status={project?.import_state || ''} />
       </PageDetail>
+      <PageDetail label={t('Source Control Branch/Tag/Commit')}>
+        {project?.scm_branch || ''}
+      </PageDetail>
+      <PageDetail label={t('Source Control Refspec')}>{project?.scm_refspec || ''}</PageDetail>
       <PageDetail label={t('Import error')}>{project?.import_error || ''}</PageDetail>
       <PageDetail label={t('Created')}>
         {project?.created_at ? formatDateString(project.created_at) : ''}

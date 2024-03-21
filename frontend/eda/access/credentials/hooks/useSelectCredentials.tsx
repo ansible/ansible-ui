@@ -7,7 +7,7 @@ import { EdaCredential } from '../../../interfaces/EdaCredential';
 import { useEdaView } from '../../../common/useEventDrivenView';
 import { MultiSelectDialog, usePageDialog } from '../../../../../framework';
 
-export function useSelectCredentials(credentialType?: number, title?: string) {
+export function useSelectCredentials(credentialKind?: string, title?: string) {
   const [_, setDialog] = usePageDialog();
   const { t } = useTranslation();
   const openSelectCredentials = useCallback(
@@ -16,11 +16,11 @@ export function useSelectCredentials(credentialType?: number, title?: string) {
         <SelectEdaCredentials
           title={t(title ? title : 'Select credential')}
           onSelect={onSelect}
-          credentialType={credentialType}
+          credentialKind={credentialKind}
         />
       );
     },
-    [credentialType, setDialog, t, title]
+    [credentialKind, setDialog, t, title]
   );
   return openSelectCredentials;
 }
@@ -29,20 +29,15 @@ function SelectEdaCredentials(props: {
   title: string;
   onSelect: (credentials: EdaCredential[]) => void;
   defaultEdaCredential?: EdaCredential;
-  credentialType?: number;
+  credentialKind?: string;
 }) {
   const toolbarFilters = useCredentialFilters();
   const tableColumns = useCredentialColumns();
   const view = useEdaView<EdaCredential>({
-    url: edaAPI`/credentials/`,
+    url: edaAPI`/eda-credentials/?credential_type__kind=vault&credential_type__kind=cloud&page_size=300`,
     toolbarFilters,
     tableColumns: tableColumns,
     disableQueryString: true,
-    ...(props.credentialType && {
-      queryParams: {
-        credential_type: props.credentialType.toString(),
-      },
-    }),
   });
   return (
     <MultiSelectDialog<EdaCredential>
