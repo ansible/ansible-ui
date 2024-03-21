@@ -87,16 +87,20 @@ export function PageFormSelectAwxResource<
   const [_, setDialog] = usePageDialog();
   const { setValue } = useFormContext<FormData>();
   const value = useWatch<FormData>({ name: props.name });
+
   const openSelectDialog = useCallback(
     (onSelect: (resource: Resource | Resource[]) => void) => {
+
+      let values : Resource[] = [];
+
       setDialog(
         <SelectResource<Resource>
           title={props.label}
           url={props.url}
-          onSelect={onSelect}
+          onSelect={ (resource) => { onSelect(resource); }}
           toolbarFilters={props.toolbarFilters}
           tableColumns={props.tableColumns}
-          defaultSelection={value ? [{ id: value }] : []}
+          defaultSelection={value ? (props.single ? [{ id: value }] : values) : []}
           single={props.single}
         />
       );
@@ -174,6 +178,7 @@ function SelectResource<
   tableColumns: ITableColumn<Resource>[];
   single: boolean;
 }) {
+  debugger;
   const view = useAwxView<Resource>({
     url: props.url,
     toolbarFilters: props.toolbarFilters,
