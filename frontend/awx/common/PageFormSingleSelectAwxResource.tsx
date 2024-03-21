@@ -11,6 +11,8 @@ import { requestGet } from '../../common/crud/Data';
 import { useGetItem } from '../../common/crud/useGet';
 import { AwxItemsResponse } from './AwxItemsResponse';
 import { useAwxView } from './useAwxView';
+import { QueryParams } from './useAwxView';
+import { constructQueryParams } from './PageFormMultiSelectAwxResource';
 
 export function PageFormSingleSelectAwxResource<
   Resource extends { id: number; name: string; description?: string | null | undefined },
@@ -31,13 +33,14 @@ export function PageFormSingleSelectAwxResource<
   queryPlaceholder: string;
   queryErrorText: string;
   helperText?: string;
+  queryParams?: QueryParams;
 }) {
   const id = useID(props);
 
   const queryOptions = useCallback<PageAsyncSelectOptionsFn<PathValue<FormData, Name>>>(
     async (options) => {
       try {
-        let url = props.url + `?page_size=10&order_by=name`;
+        let url = props.url + `?page_size=10&order_by=name` + constructQueryParams(props.queryParams || {});
         if (options.next) url = url + `&name__gt=${options.next}`;
         if (options.search) url = url + `&name__icontains=${options.search}`;
         const response = await requestGet<AwxItemsResponse<Resource>>(url, options.signal);
@@ -75,6 +78,7 @@ export function PageFormSingleSelectAwxResource<
           toolbarFilters={props.toolbarFilters}
           tableColumns={props.tableColumns}
           defaultSelection={value ? [{ id: value }] : []}
+          queryParams={props.queryParams}
         />
       );
     },
@@ -117,6 +121,7 @@ function SelectResource<
   defaultSelection?: { id: number }[];
   toolbarFilters?: IToolbarFilter[];
   tableColumns: ITableColumn<Resource>[];
+  queryParams?: QueryParams;
 }) {
   const view = useAwxView<Resource>({
     url: props.url,
@@ -124,6 +129,7 @@ function SelectResource<
     tableColumns: props.tableColumns,
     disableQueryString: true,
     defaultSelection: props.defaultSelection as Resource[],
+    queryParams : props.queryParams,
   });
   return (
     <SingleSelectDialog<Resource>
