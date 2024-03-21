@@ -34,6 +34,15 @@ export function PageFormSingleSelectAwxResource<
   Name extends FieldPath<FormData> = FieldPath<FormData>,
   Value extends number = PathValue<FormData, Name>,
 >(props: PageFormSelectAwxResourceProps<Name, Resource, Value>) {
+  return <PageFormSelectAwxResource<Resource, FormData, Name, Value> {...props} />;
+}
+
+export function PageFormSelectAwxResource<
+  Resource extends { id: number; name: string; description?: string | null | undefined },
+  FormData extends FieldValues = FieldValues,
+  Name extends FieldPath<FormData> = FieldPath<FormData>,
+  Value extends number = PathValue<FormData, Name>,
+>(props: PageFormSelectAwxResourceProps<Name, Resource, Value>) {
   const id = useID(props);
 
   const queryOptions = useCallback<PageAsyncSelectOptionsFn<PathValue<FormData, Name>>>(
