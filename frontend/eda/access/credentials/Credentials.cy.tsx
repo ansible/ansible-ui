@@ -4,14 +4,14 @@ import { Credentials } from './Credentials';
 describe('Credentials.cy.ts', () => {
   beforeEach(() => {
     cy.intercept(
-      { method: 'GET', url: edaAPI`/credentials/?page=1&page_size=10` },
+      { method: 'GET', url: edaAPI`/eda-credentials/?page=1&page_size=10` },
       {
         fixture: 'edaCredentials.json',
       }
     );
 
     cy.intercept(
-      { method: 'GET', url: edaAPI`/credentials/?page=2&page_size=10` },
+      { method: 'GET', url: edaAPI`/eda-credentials/?page=2&page_size=10` },
       {
         count: 5,
         next: null,
@@ -83,13 +83,13 @@ describe('Credentials.cy.ts', () => {
   it('Can delete a Credential not in use', () => {
     cy.mount(<Credentials />);
     cy.intercept(
-      { method: 'DELETE', url: edaAPI`/credentials/100/` },
+      { method: 'DELETE', url: edaAPI`/eda-credentials/100/` },
       {
         statusCode: 204,
       }
     );
     cy.intercept(
-      { method: 'GET', url: edaAPI`/activations/?credential_id=100` },
+      { method: 'GET', url: edaAPI`/activations/?eda_credential_id=100` },
       { count: 0, next: null, previous: null, page_size: 20, page: 1, results: [] }
     );
     cy.get('[data-cy="checkbox-column-cell"]').first().click();
@@ -111,13 +111,13 @@ describe('Credentials.cy.ts', () => {
   it('can delete a Credential in use', () => {
     cy.mount(<Credentials />);
     cy.intercept(
-      { method: 'DELETE', url: edaAPI`/credentials/100/?force=true` },
+      { method: 'DELETE', url: edaAPI`/eda-credentials/100/?force=true` },
       {
         statusCode: 204,
       }
     );
     cy.intercept(
-      { method: 'GET', url: edaAPI`/activations/?credential_id=100` },
+      { method: 'GET', url: edaAPI`/activations/?eda_credential_id=100` },
       {
         count: 1,
         next: null,
@@ -173,7 +173,7 @@ describe('Empty list', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: edaAPI`/credentials/*`,
+        url: edaAPI`/eda-credentials/*`,
       },
       {
         fixture: 'emptyList.json',

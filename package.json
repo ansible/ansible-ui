@@ -48,6 +48,7 @@
     "docker:build:awx": "docker build --target awx-ui --tag awx-ui .",
     "docker:build:hub": "docker build --target hub-ui --tag hub-ui .",
     "docker:build:eda": "docker build --target eda-ui --tag eda-ui .",
+    "docker:build:eda:arm": "docker build --platform linux/arm64 --target eda-ui --tag eda-ui .",
     "docker:run": "concurrently npm:docker:run:awx npm:docker:run:hub npm:docker:run:eda -c cyan,green,blue",
     "docker:run:awx": "echo https://localhost:4101 && docker run --name awx-ui --rm -e LOG_LEVEL=debug -p 4101:443 -e AWX_SERVER=$AWX_SERVER awx-ui",
     "docker:run:hub": "echo https://localhost:4102 && docker run --name hub-ui --rm -e LOG_LEVEL=debug -p 4102:443 -e HUB_SERVER=$HUB_SERVER hub-ui",

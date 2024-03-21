@@ -1,4 +1,3 @@
-import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSWRConfig } from 'swr';
@@ -17,47 +16,48 @@ import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { EdaPageForm } from '../../common/EdaPageForm';
 import { edaAPI } from '../../common/eda-utils';
 import { EdaCredential, EdaCredentialCreate } from '../../interfaces/EdaCredential';
-import { CredentialTypeEnum } from '../../interfaces/generated/eda-api';
 import { EdaRoute } from '../../main/EdaRoutes';
-import { PageFormHidden } from '../../../../framework/PageForm/Utils/PageFormHidden';
+import { EdaResult } from '../../interfaces/EdaResult';
+import { EdaCredentialType } from '../../interfaces/EdaCredentialType';
+import { useFormContext, useWatch } from 'react-hook-form';
+import { CredentialFormInputs } from './CredentialFormTypes';
+import { useCallback, useEffect } from 'react';
 
-export function CredentialOptions(t: TFunction<'translation'>) {
-  return [
-    {
-      label: t('GitHub personal access token'),
-      description: t('GitHub personal access token'),
-      value: CredentialTypeEnum.GitHubPersonalAccessToken,
-    },
-    {
-      label: t('GitLab personal access token'),
-      description: t('GitLab personal access token'),
-      value: CredentialTypeEnum.GitLabPersonalAccessToken,
-    },
-    {
-      label: t('Container registry'),
-      description: t('Container registry token'),
-      value: CredentialTypeEnum.ContainerRegistry,
-    },
-    {
-      label: t('Vault'),
-      description: t('Vault'),
-      value: CredentialTypeEnum.AnsibleVaultPassword,
-    },
-  ];
-}
-function CredentialInputs() {
+// eslint-disable-next-line react/prop-types
+function CredentialInputs(props: { editMode: boolean }) {
   const { t } = useTranslation();
-  const credentialTypeHelpBlock = (
-    <>
-      <p>{t('The credential type defines what the credential will be used for.')}</p>
-      <br />
-      <p>{t('There are five types:')}</p>
-      <p>{t('GitHub Personal Access Token')}</p>
-      <p>{t('GitLab Personal Access Token')}</p>
-      <p>{t('Container Registry')}</p>
-      <p>{t('Vault')}</p>
-    </>
+  const { setValue } = useFormContext();
+  const { data: credentialTypes } = useGet<EdaResult<EdaCredentialType>>(
+    edaAPI`/credential-types/?page=1&page_size=200`
   );
+  const credentialTypeId = Number(
+    useWatch<EdaCredentialCreate>({
+      name: 'credential_type_id',
+      defaultValue: undefined,
+    })
+  );
+
+  const credentialType =
+    credentialTypeId !== undefined && credentialTypes?.results !== undefined
+      ? credentialTypes.results.find((credentialtype) => credentialtype?.id === credentialTypeId)
+      : undefined;
+
+  const setDefaultValuesForType = useCallback(() => {
+    const fields = credentialType?.inputs?.fields;
+    if (!credentialType) return;
+
+    fields?.map((field) => {
+      if (field?.default !== undefined) {
+        setValue(`inputs.${field.id}`, field.default);
+      }
+    });
+  }, [credentialType, setValue]);
+
+  useEffect(() => {
+    if (props.editMode || !credentialTypeId) return;
+    setDefaultValuesForType();
+  }, [setValue, props, credentialTypeId, setDefaultValuesForType]);
+
   return (
     <>
       <PageFormTextInput<EdaCredentialCreate>
@@ -76,60 +76,23 @@ function CredentialInputs() {
         maxLength={150}
       />
       <PageFormSelect<EdaCredentialCreate>
-        name="credential_type"
+        name="credential_type_id"
         data-cy="credential-type-form-field"
         label={t('Credential type')}
         isRequired
+        isReadOnly={props.editMode}
         placeholderText={t('Select credential type')}
-        options={CredentialOptions(t)}
-        labelHelp={credentialTypeHelpBlock}
+        options={
+          credentialTypes?.results
+            ? credentialTypes.results.map((item: { name: string; id: number }) => ({
+                label: item.name,
+                value: item.id,
+              }))
+            : []
+        }
         labelHelpTitle={t('Credential type')}
       />
-      <PageFormHidden
-        watch="credential_type"
-        hidden={(type: CredentialTypeEnum) =>
-          type !== CredentialTypeEnum.GitHubPersonalAccessToken &&
-          type !== CredentialTypeEnum.GitLabPersonalAccessToken &&
-          type !== CredentialTypeEnum.ContainerRegistry
-        }
-      >
-        <PageFormTextInput<EdaCredentialCreate>
-          name="username"
-          label={t('Username')}
-          placeholder={t('Enter username')}
-        />
-        <PageFormTextInput<EdaCredentialCreate>
-          name="secret"
-          data-cy="token-form-field"
-          label={t('Token/Password')}
-          type="password"
-          placeholder={t('Enter credential token or password')}
-          isRequired
-          labelHelp={t('Tokens/passwords allow you to authenticate to your destination.')}
-          labelHelpTitle={t('Token/Password')}
-        />
-      </PageFormHidden>
-      <PageFormHidden
-        watch="credential_type"
-        hidden={(type: CredentialTypeEnum) => type !== CredentialTypeEnum.AnsibleVaultPassword}
-      >
-        <PageFormTextInput<EdaCredentialCreate>
-          name="key"
-          data-cy="vault-identifier-form-field"
-          label={t('Vault identifier')}
-          placeholder={t('Vault identifier')}
-        />
-        <PageFormTextInput<EdaCredentialCreate>
-          name="secret"
-          data-cy="vault-password-form-field"
-          label={t('Vault password')}
-          type="password"
-          placeholder={t('Enter vault password')}
-          isRequired
-          labelHelp={t('Vault password')}
-          labelHelpTitle={t('Vault password')}
-        />
-      </PageFormHidden>
+      {credentialType !== undefined && <CredentialFormInputs credentialType={credentialType} />}
     </>
   );
 }
@@ -143,7 +106,7 @@ export function CreateCredential() {
   const postRequest = usePostRequest<EdaCredentialCreate, EdaCredential>();
 
   const onSubmit: PageFormSubmitHandler<EdaCredentialCreate> = async (credential) => {
-    const newCredential = await postRequest(edaAPI`/credentials/`, credential);
+    const newCredential = await postRequest(edaAPI`/eda-credentials/`, credential);
     (cache as unknown as { clear: () => void }).clear?.();
     pageNavigate(EdaRoute.CredentialPage, { params: { id: newCredential.id } });
   };
@@ -165,7 +128,7 @@ export function CreateCredential() {
         cancelText={t('Cancel')}
         onCancel={onCancel}
       >
-        <CredentialInputs />
+        <CredentialInputs editMode={false} />
       </EdaPageForm>
     </PageLayout>
   );
@@ -176,13 +139,13 @@ export function EditCredential() {
   const navigate = useNavigate();
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
-  const { data: credential } = useGet<EdaCredentialCreate>(edaAPI`/credentials/${id.toString()}/`);
+  const { data: credential } = useGet<EdaCredential>(edaAPI`/eda-credentials/${id.toString()}/`);
 
   const { cache } = useSWRConfig();
   const patchRequest = usePatchRequest<EdaCredentialCreate, EdaCredential>();
 
   const onSubmit: PageFormSubmitHandler<EdaCredentialCreate> = async (credential) => {
-    await patchRequest(edaAPI`/credentials/${id.toString()}/`, credential);
+    await patchRequest(edaAPI`/eda-credentials/${id.toString()}/`, credential);
     (cache as unknown as { clear: () => void }).clear?.();
     navigate(-1);
   };
@@ -215,9 +178,12 @@ export function EditCredential() {
           onSubmit={onSubmit}
           cancelText={t('Cancel')}
           onCancel={onCancel}
-          defaultValue={credential}
+          defaultValue={{
+            ...credential,
+            credential_type_id: credential?.credential_type?.id || undefined,
+          }}
         >
-          <CredentialInputs />
+          <CredentialInputs editMode={true} />
         </EdaPageForm>
       </PageLayout>
     );

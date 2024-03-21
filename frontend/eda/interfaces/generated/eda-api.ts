@@ -145,7 +145,7 @@ export interface ActivationRead {
   decision_environment?: DecisionEnvironmentRef | null;
   event_streams?: EventStreamRef[];
   webhooks?: WebhookRef[];
-  credentials?: CredentialRef[];
+  eda_credentials?: CredentialRef[];
 
   /**
    * * `starting` - starting
@@ -300,18 +300,55 @@ export interface AwxTokenCreate {
   token: string;
 }
 
+export interface CredentialType {
+  id: number;
+  name: string;
+  description?: string;
+  namespace?: string;
+  managed: boolean;
+  injectors?: { [key: string]: string };
+  inputs: {
+    fields: {
+      id: string;
+      label: string;
+      type: string;
+      help_text: string;
+      ask_at_runtime?: boolean;
+      default?: number | string | boolean;
+    }[];
+    required: string[];
+  };
+  related: {
+    credentials: string;
+    activity_stream: string;
+  };
+}
+
+export interface CredentialTypeCreate {
+  id: string;
+  name: string;
+  description?: string;
+  namespace?: string;
+  managed?: boolean;
+  injectors?: { [key: string]: string };
+  inputs?: {
+    fields: {
+      id: string;
+      label: string;
+      type: string;
+      help_text: string;
+      ask_at_runtime?: boolean;
+      default?: number | string | boolean;
+    }[];
+  };
+}
+
 export interface Credential {
   name: string;
   description?: string;
-  username?: string | null;
   key?: string | null;
-  /**
-   * * `Container Registry` - Container Registry
-   * * `GitHub Personal Access Token` - GitHub Personal Access Token
-   * * `GitLab Personal Access Token` - GitLab Personal Access Token
-   * * `Vault` - Vault
-   */
-  credential_type?: CredentialTypeEnum;
+  credential_type: { id?: number; name?: string };
+  inputs?: object;
   id: number;
   /** @format date-time */
   created_at: string;
@@ -322,16 +359,11 @@ export interface Credential {
 export interface CredentialCreate {
   name: string;
   description?: string;
-  /**
-   * * `Container Registry` - Container Registry
-   * * `GitHub Personal Access Token` - GitHub Personal Access Token
-   * * `GitLab Personal Access Token` - GitLab Personal Access Token
-   * * `Vault` - Vault
-   */
-  credential_type?: CredentialTypeEnum;
+  credential_type_id: number;
   username?: string | null;
   key?: string | null;
   secret?: string | null;
+  inputs?: object;
 }
 
 /** Serializer for Credential reference. */
@@ -339,34 +371,15 @@ export interface CredentialRef {
   id: number;
   name: string;
   description?: string;
-  /**
-   * * `Container Registry` - Container Registry
-   * * `GitHub Personal Access Token` - GitHub Personal Access Token
-   * * `GitLab Personal Access Token` - GitLab Personal Access Token
-   */
-  credential_type?: CredentialTypeEnum;
+  credential_type?: number;
   username?: string | null;
-}
-
-/**
- * * `Container Registry` - Container Registry
- * * `GitHub Personal Access Token` - GitHub Personal Access Token
- * * `GitLab Personal Access Token` - GitLab Personal Access Token
- * * `Extra Vars` - Extra Vars
- * * `Ansible Vault Password` - Ansible Vault Password
- */
-export enum CredentialTypeEnum {
-  ContainerRegistry = 'Container Registry',
-  GitHubPersonalAccessToken = 'GitHub Personal Access Token',
-  GitLabPersonalAccessToken = 'GitLab Personal Access Token',
-  AnsibleVaultPassword = 'Vault',
 }
 
 export interface DecisionEnvironment {
   name: string;
   description?: string;
   image_url: string;
-  credential_id: number | null;
+  eda_credential_id: number | null;
   id: number;
   /** @format date-time */
   created_at: string;
@@ -379,7 +392,7 @@ export interface DecisionEnvironmentCreate {
   name: string;
   description?: string;
   image_url: string;
-  credential_id?: number | null;
+  eda_credential_id?: number | null;
 }
 
 /** Serializer for reading the DecisionEnvironment with embedded objects. */
@@ -388,7 +401,7 @@ export interface DecisionEnvironmentRead {
   name: string;
   description?: string;
   image_url: string;
-  credential?: CredentialRef | null;
+  eda_credential?: { name: string; id: number };
   /** @format date-time */
   created_at: string;
   /** @format date-time */
@@ -780,14 +793,10 @@ export interface PaginatedUserListList {
 export interface PatchedCredentialCreate {
   name?: string;
   description?: string;
-  /**
-   * * `Container Registry` - Container Registry
-   * * `GitHub Personal Access Token` - GitHub Personal Access Token
-   * * `GitLab Personal Access Token` - GitLab Personal Access Token
-   */
-  credential_type?: CredentialTypeEnum;
+  credential_type?: number;
   username?: string | null;
   secret?: string | null;
+  inputs?: object;
 }
 
 export interface PatchedCurrentUserUpdate {
@@ -809,7 +818,7 @@ export interface PatchedDecisionEnvironmentCreate {
   name?: string;
   description?: string;
   image_url?: string;
-  credential_id?: number | null;
+  eda_credential_id?: number | null;
 }
 
 export interface PatchedProjectUpdateRequest {
@@ -818,7 +827,7 @@ export interface PatchedProjectUpdateRequest {
   /** Description of the project */
   description?: string | null;
   /** Credential id of the project */
-  credential_id?: number | null;
+  eda_credential_id?: number | null;
   /** Indicates if SSL verification is enabled */
   verify_ssl?: boolean;
 }
@@ -848,12 +857,15 @@ export interface PermissionRef {
 export interface Project {
   name: string;
   description?: string;
-  credential_id?: number | null;
+  eda_credential_id?: number | null;
   verify_ssl?: boolean;
   id: number;
   url: string;
   git_hash: string;
   import_state: ImportStateEnum;
+  scm_type?: string;
+  scm_branch?: string;
+  scm_refspec?: string;
   import_error: string | null;
   /** @format uuid */
   import_task_id: string | null;
@@ -867,7 +879,8 @@ export interface ProjectCreateRequest {
   url: string;
   name: string;
   description?: string;
-  credential_id?: number | null;
+  eda_credential_id?: number | null;
+  signature_validation_credential_id?: number | null;
   verify_ssl?: boolean;
 }
 
@@ -875,12 +888,16 @@ export interface ProjectCreateRequest {
 export interface ProjectRead {
   name: string;
   description?: string;
-  credential?: CredentialRef | null;
+  eda_credential?: CredentialRef | null;
+  signature_validation_credential?: CredentialRef | null;
   verify_ssl?: boolean;
   id: number;
   url: string;
   git_hash: string;
   import_state: ImportStateEnum;
+  scm_type?: string;
+  scm_branch?: string;
+  scm_refspec?: string;
   import_error: string | null;
   /** @format uuid */
   import_task_id: string | null;
@@ -1511,7 +1528,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     activationsList: (
       query?: {
         /** Filter by Credential ID. */
-        credential_id?: number;
+        eda_credential_id?: number;
         /** Filter by Decision Environment ID. */
         decision_environment_id?: number;
         /** Filter by activation name. */
