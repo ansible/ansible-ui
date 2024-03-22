@@ -157,7 +157,7 @@ function ProjectCreateInputs() {
               <TextListItem component={TextListItemVariants.li}>
                 {t`Verify SSL`}
                 <StandardPopover
-                  header=""
+                  header={t('Verify SSL')}
                   content={t(
                     'Enabling this option verifies the SSL with HTTPS when the project is imported.'
                   )}
@@ -298,7 +298,7 @@ function ProjectEditInputs() {
               <TextListItem component={TextListItemVariants.li}>
                 {t`Verify SSL`}
                 <StandardPopover
-                  header=""
+                  header={t('Verify SSL')}
                   content={t(
                     'Enabling this option verifies the SSL with HTTPS when the project is imported.'
                   )}
