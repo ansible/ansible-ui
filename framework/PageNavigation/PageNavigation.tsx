@@ -10,6 +10,7 @@ import { useState } from 'react';
 import { usePageNavBarClick, usePageNavSideBar } from './PageNavSidebar';
 import './PageNavigation.css';
 import { PageNavigationItem } from './PageNavigationItem';
+// import path from 'node:path';
 
 /** Renders a sidebar navigation menu from an arroy of navigation items. */
 export function PageNavigation(props: { navigation: PageNavigationItem[] }) {
@@ -78,7 +79,16 @@ function PageNavigationItemComponent(props: { item: PageNavigationItem; baseRout
   const hasChildNavItems = 'children' in item && item.children?.find((child) => child.label);
 
   if (!hasChildNavItems && 'label' in item) {
-    const isActive = location.pathname.endsWith(route);
+    // *getting webpack issues trying to use node path module
+    // Module build failed: Reading from "node:path" is not handled by plugins (Unhandled scheme).*
+    // const isActive = location.pathname.startsWith(
+    //   path.join(process.env?.ROUTE_PREFIX ?? '', route)
+    // );
+
+    let path = process.env?.ROUTE_PREFIX ?? '' + route;
+    path = path.replace('//', '/');
+
+    const isActive = location.pathname.startsWith(path);
     return (
       <NavItem
         id={id}
