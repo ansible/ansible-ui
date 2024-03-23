@@ -39,7 +39,10 @@ export function AwxMasthead() {
     clearAllCache();
     navigate('/login');
   }, [clearAllCache, navigate]);
-
+  let userInfo = '';
+  if (activeUser) {
+    userInfo = activeUser.username;
+  }
   return (
     <PageMasthead brand={<AwxBrand style={{ height: 60 }} />}>
       <ToolbarGroup variant="icon-button-group" style={{ flexGrow: 1 }}>
@@ -66,7 +69,7 @@ export function AwxMasthead() {
             </DropdownItem>
             <DropdownItem
               id="about"
-              onClick={() => openAnsibleAboutModal({ versionInfo })}
+              onClick={() => openAnsibleAboutModal({ versionInfo, userInfo })}
               data-cy="masthead-about"
             >
               {t('About')}

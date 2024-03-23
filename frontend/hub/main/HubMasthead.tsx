@@ -21,11 +21,9 @@ import { HubItemsResponse } from '../common/useHubView';
 import { HubRoute } from './HubRoutes';
 import GalaxyBrand from './galaxy-logo.svg';
 import { useHubProductVersionInfo } from './useHubProductVersionInfo';
-import { HubUser } from '../common/useHubContext';
 
 export function HubMasthead() {
   const { t } = useTranslation();
-  const { data: userInfo } = useGet<HubUser>(hubAPI`/_ui/v1/me/`);
   const versionInfo = useHubProductVersionInfo();
   const openAnsibleAboutModal = useAnsibleAboutModal();
   const { clearAllCache } = useClearCache();
@@ -37,6 +35,9 @@ export function HubMasthead() {
     clearAllCache();
     navigate('/login');
   }, [clearAllCache, navigate]);
+
+  const userInfo = context.user.username;
+
   return (
     <PageMasthead brand={<GalaxyBrand style={{ height: 48, marginTop: -8 }} />}>
       <ToolbarGroup variant="icon-button-group" style={{ flexGrow: 1 }}>

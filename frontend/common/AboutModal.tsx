@@ -4,11 +4,10 @@ import { useTranslation } from 'react-i18next';
 import { usePageDialog } from '../../framework';
 import { TFunction } from 'i18next';
 import styled from 'styled-components';
-import { HubUser } from '../hub/common/useHubContext';
 
 export interface AnsibleAboutModalProps {
   versionInfo?: ProductVersionInfo;
-  userInfo?: HubUser;
+  userInfo?: string;
   onClose?: () => void;
 }
 
@@ -82,8 +81,8 @@ export function AnsibleAboutModal(props: AnsibleAboutModalProps) {
             {t('Username')}
           </TextListItem>
           <TextList component="dl">
-            <TextListItem key={props.userInfo?.username} component="dt">
-              <ListItemDiv>{props.userInfo?.username}</ListItemDiv>
+            <TextListItem key={t('Username')} component="dt">
+              <ListItemDiv>{props.userInfo}</ListItemDiv>
             </TextListItem>
           </TextList>
         </TextList>
