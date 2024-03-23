@@ -121,12 +121,14 @@ export function CollectionDocumentation() {
       <DrawerContent
         panelContent={
           isDrawerOpen ? (
-            <CollectionDocumentationTabPanel
-              setDrawerOpen={setDrawerOpen}
-              groups={groups}
-              setSearchText={setSearchText}
-              searchText={searchText}
-            />
+            <div data-cy="hub_documentation_panel">
+              <CollectionDocumentationTabPanel
+                setDrawerOpen={setDrawerOpen}
+                groups={groups}
+                setSearchText={setSearchText}
+                searchText={searchText}
+              />
+            </div>
           ) : undefined
         }
       >
@@ -143,7 +145,7 @@ export function CollectionDocumentation() {
             role="button"
           >
             {content && (
-              <>
+              <div data-cy="hub_documentation_content">
                 <PageSection variant="light" id="Title_part">
                   <Title headingLevel="h1">
                     {content?.content_type + ' > ' + content?.content_name}
@@ -187,7 +189,7 @@ export function CollectionDocumentation() {
                   collection={collection}
                   renderJSON={renderJson}
                 />
-              </>
+              </div>
             )}
             {/* If html is available, insert it directly */}
             {html && (
