@@ -20,11 +20,9 @@ import { HubItemsResponse } from '../common/useHubView';
 import { HubRoute } from './HubRoutes';
 import GalaxyBrand from './galaxy-logo.svg';
 import { useHubProductVersionInfo } from './useHubProductVersionInfo';
-import { HubUser } from '../common/useHubContext';
 
 export function HubMasthead() {
   const { t } = useTranslation();
-  const { data: userInfo } = useGet<HubUser>(hubAPI`/_ui/v1/me/`);
   const versionInfo = useHubProductVersionInfo();
   const openAnsibleAboutModal = useAnsibleAboutModal();
   useHubNotifications();
@@ -60,7 +58,7 @@ export function HubMasthead() {
             <></>
             <DropdownItem
               id="about"
-              onClick={() => openAnsibleAboutModal({ versionInfo, userInfo })}
+              onClick={() => openAnsibleAboutModal({ versionInfo })}
               data-cy="masthead-about"
             >
               {t('About')}

@@ -32,8 +32,18 @@ export function AwxMasthead() {
   useAwxNotifications();
   const logout = useCallback(async () => {
     await fetch('/api/logout/');
+<<<<<<< HEAD
     refreshActiveAwxUser?.();
   }, [refreshActiveAwxUser]);
+=======
+    clearAllCache();
+    navigate('/login');
+  }, [clearAllCache, navigate]);
+  let userInfo = '';
+  if (activeUser) {
+    userInfo = activeUser.username;
+  }
+>>>>>>> 2dc2b6177 (fix userInfo prop for awx and hub)
   return (
     <PageMasthead brand={<AwxBrand style={{ height: 60 }} />}>
       <ToolbarGroup variant="icon-button-group" style={{ flexGrow: 1 }}>
@@ -60,7 +70,7 @@ export function AwxMasthead() {
             </DropdownItem>
             <DropdownItem
               id="about"
-              onClick={() => openAnsibleAboutModal({ versionInfo })}
+              onClick={() => openAnsibleAboutModal({ versionInfo, userInfo })}
               data-cy="masthead-about"
             >
               {t('About')}
