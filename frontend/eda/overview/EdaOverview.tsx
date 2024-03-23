@@ -68,22 +68,31 @@ export function EdaOverview() {
           >
             <CardBody>
               <Stack hasGutter>
-                <Text>
-                  {t('To learn how to get started, ')}
-                  <Link
-                    to="https://access.redhat.com/documentation/en-us/red_hat_ansible_automation_platform/2.4/html/eda-getting-started-guide/index"
-                    target="_blank"
-                  >
-                    {t('view the documentation, ')}
-                  </Link>
-                  <Link
-                    to="https://www.redhat.com/en/engage/event-driven-ansible-20220907"
-                    target="_blank"
-                  >
-                    {t('check out our instruct guides')}
-                  </Link>
-                  {t(', or follow the steps below.')}
-                </Text>
+              <Text>
+                {t('To learn how to get started, ')}
+                {t('view the documentations (')}
+                <Link
+                  to="https://access.redhat.com/documentation/en-us/red_hat_ansible_automation_platform/2.4/html/eda-getting-started-guide/index"
+                  target="_blank"
+                >
+                  {t('Quick start guide')}
+                </Link>
+                {t(' and ')}
+                <Link
+                  to="https://access.redhat.com/documentation/en-us/red_hat_ansible_automation_platform/2.4/html/event-driven_ansible_controller_user_guide/index"
+                  target="_blank"
+                >
+                  {t('Controller user guide')}
+                </Link>
+                {t('), ')}
+                <Link
+                  to="https://www.redhat.com/en/engage/event-driven-ansible-20220907"
+                  target="_blank"
+                >
+                  {t('check out our instruct guides')}
+                </Link>
+                {t(', or follow the steps below.')}
+              </Text>
                 <ProgressStepper>
                   <ProgressStep
                     variant={hasControllerToken ? 'success' : 'info'}
