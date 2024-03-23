@@ -35,6 +35,10 @@ export function AwxMasthead() {
     refreshActiveAwxUser?.();
   }, [refreshActiveAwxUser]);
 
+  let userInfo = '';
+  if (activeAwxUser) {
+    userInfo = activeAwxUser.username;
+  }
   return (
     <PageMasthead brand={<AwxBrand style={{ height: 60 }} />}>
       <ToolbarGroup variant="icon-button-group" style={{ flexGrow: 1 }}>
@@ -61,7 +65,7 @@ export function AwxMasthead() {
             </DropdownItem>
             <DropdownItem
               id="about"
-              onClick={() => openAnsibleAboutModal({ versionInfo })}
+              onClick={() => openAnsibleAboutModal({ versionInfo, userInfo })}
               data-cy="masthead-about"
             >
               {t('About')}
