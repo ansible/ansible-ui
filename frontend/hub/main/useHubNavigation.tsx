@@ -110,7 +110,7 @@ export function useHubNavigation() {
             },
             {
               path: '',
-              element: <Navigate to="details" />,
+              element: <Navigate to="details" replace />,
             },
           ],
         },
@@ -182,7 +182,7 @@ export function useHubNavigation() {
             },
             {
               path: '',
-              element: <Navigate to="details" />,
+              element: <Navigate to="details" replace />,
             },
           ],
         },
@@ -234,7 +234,7 @@ export function useHubNavigation() {
             },
             {
               path: '',
-              element: <Navigate to="details" />,
+              element: <Navigate to="details" replace />,
             },
           ],
         },
@@ -317,7 +317,7 @@ export function useHubNavigation() {
                 },
                 {
                   path: '',
-                  element: <Navigate to="details" />,
+                  element: <Navigate to="details" replace />,
                 },
               ],
             },
@@ -338,7 +338,7 @@ export function useHubNavigation() {
                 },
                 {
                   path: '',
-                  element: <Navigate to="details" />,
+                  element: <Navigate to="details" replace />,
                 },
               ],
             },
@@ -475,7 +475,7 @@ export function useHubNavigation() {
                 },
                 {
                   path: '',
-                  element: <Navigate to="details" />,
+                  element: <Navigate to="details" replace />,
                 },
               ],
             },
@@ -515,7 +515,7 @@ export function useHubNavigation() {
     },
     {
       path: '',
-      element: <Navigate to={'./overview'} />,
+      element: <Navigate to={'./overview'} replace />,
     },
   ];
   return navigationItems;

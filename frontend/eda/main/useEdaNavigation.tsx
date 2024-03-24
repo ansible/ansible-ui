@@ -293,7 +293,7 @@ export function useEdaNavigation() {
                 },
                 {
                   path: '',
-                  element: <Navigate to="details" />,
+                  element: <Navigate to="details" replace />,
                 },
               ],
             },
@@ -334,7 +334,7 @@ export function useEdaNavigation() {
                 },
                 {
                   path: '',
-                  element: <Navigate to="details" />,
+                  element: <Navigate to="details" replace />,
                 },
               ],
             },
