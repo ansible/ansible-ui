@@ -31,6 +31,10 @@ export interface CustomNodeProps extends WithSelectionProps {
     {
       secondaryLabel?: string;
       resource: WorkflowNode;
+      badge?: string;
+      badgeTextColor?: string;
+      badgeColor?: string;
+      badgeBorderColor?: string;
     }
   >;
 }

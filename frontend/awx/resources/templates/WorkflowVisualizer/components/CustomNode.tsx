@@ -41,6 +41,7 @@ export const CustomNode: FC<
     element.getData()?.resource?.summary_fields?.unified_job_template || {};
 
   const id = element.getId();
+  const data = element.getData();
   if ((!jobType && id !== START_NODE_ID) || !isNode(element)) return null;
 
   const Icon = NodeIcon[jobType ?? 'deleted_resource'];
@@ -57,6 +58,10 @@ export const CustomNode: FC<
       }}
       truncateLength={20}
       {...rest}
+      badge={data?.badge}
+      badgeColor={data?.badgeColor}
+      badgeTextColor={data?.badgeTextColor}
+      badgeBorderColor={data?.badgeBorderColor}
     >
       <g transform={`translate(13, 13)`}>
         <Icon style={{ color: '#393F44' }} width={25} height={25} />
@@ -69,6 +74,10 @@ export const CustomNode: FC<
       labelClassName={`${id}-node-label`}
       dragging={false}
       truncateLength={20}
+      badge={data?.badge}
+      badgeColor={data?.badgeColor}
+      badgeTextColor={data?.badgeTextColor}
+      badgeBorderColor={data?.badgeBorderColor}
     >
       <g transform={`translate(13, 13)`}>
         <HomeIcon style={{ color: '#393F44' }} width={25} height={25} />

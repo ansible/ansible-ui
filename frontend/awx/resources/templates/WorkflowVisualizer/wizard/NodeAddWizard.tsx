@@ -10,6 +10,7 @@ import { NodePromptsStep } from './NodePromptsStep';
 import { NodeReviewStep } from './NodeReviewStep';
 import { NodeTypeStep } from './NodeTypeStep';
 import { getValueBasedOnJobType, hasDaysToKeep, shouldHideOtherStep } from './helpers';
+import { greyBadgeLabel } from '../../../../views/jobs/WorkflowOutput/WorkflowOutput';
 
 interface NewGraphNode extends NodeModel {
   data: {
@@ -134,7 +135,7 @@ export function NodeAddWizard() {
 
     const nodeName = getValueBasedOnJobType(node_type, node_resource?.name || '', approval_name);
     const nodeLabel = node_alias === '' ? nodeName : node_alias;
-    const nodeToCreate: NewGraphNode = {
+    let nodeToCreate: NewGraphNode = {
       id: `${nodes.length + 1}-unsavedNode`,
       type: 'node',
       label: nodeLabel,
@@ -168,6 +169,9 @@ export function NodeAddWizard() {
         launch_data: promptValues,
       },
     };
+    if (node_convergence === 'all') {
+      nodeToCreate = { ...nodeToCreate, data: { ...nodeToCreate.data, ...greyBadgeLabel } };
+    }
     if (!state.sourceNode) {
       const rootEdge = createEdge(START_NODE_ID, nodeToCreate.id, EdgeStatus.info);
       model.edges?.push(rootEdge);
