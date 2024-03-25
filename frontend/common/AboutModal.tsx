@@ -32,7 +32,7 @@ export function AnsibleAboutModal(props: AnsibleAboutModalProps) {
       brandImageSrc={
         process.env.PRODUCT === 'Automation Hub'
           ? '/static/media/galaxy-logo-ansibull.png'
-          : process.env.PRODUCT === 'EDA Server'
+          : process.env.PRODUCT === 'Event Driven Automation'
             ? '/static/media/eda-icon.svg'
             : '/static/media/awx-logo.svg'
       }
