@@ -309,7 +309,21 @@ function InventoryInputs(props: { inventoryKind: string }) {
         name="instanceGroups"
         labelHelp={t(`Select the instance groups for this inventory to run on.`)}
       />
-      {inventoryKind === 'constructed' && <PageFormMultiSelectInventories />}
+      {inventoryKind === 'constructed' && 
+        <>
+          <PageFormMultiSelectInventories />
+          <PageFormTextInput 
+            name='update_cache_timeout'
+            id='update_cache_timeout'
+            type='number'
+            label={t(`Cache timeout (seconds)`)}
+            labelHelp={t(`The cache timeout for the related auto-created inventory source, special to constructed inventory`)}
+            validate={ (item) => 
+              (Number.parseFloat(item) >= 0) ? undefined : t('This field must be a number and have a value between 0 and 2147483647')
+            }
+          />
+        </>
+      }
       {inventoryKind === '' && (
         <PageFormLabelSelect<InventoryCreate>
           labelHelpTitle={t('Labels')}
