@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import {
+  LoadingPage,
   PageFormCheckbox,
   PageFormDataEditor,
   PageHeader,
@@ -147,22 +148,28 @@ export function EditInventory() {
   const id = Number(params.id);
 
   const urlType =
-      params.inventory_type === 'constructedconstructed_inventory' ? 'constructed_inventories' : 'inventories';
+      params.inventory_type === 'constructed_inventory' ? 'constructed_inventories' : 'inventories';
 
   const { data: inventory } = useGet<Inventory>(awxAPI`/${urlType}/${id.toString()}/`);
   const { data: igResponse } = useGet<AwxItemsResponse<InstanceGroup>>(
-    awxAPI`/${urlType}/${id.toString()}/instance_groups/`
+    awxAPI`/inventories/${id.toString()}/instance_groups/`
   );
 
+  const inputInventoriesUrl = params.inventory_type === 'constructed_inventory' ? awxAPI`/inventories/${id.toString()}/input_inventories/` : '';
   const { data: inputInventoriesResponse } = useGet<AwxItemsResponse<InputInventory>>(
-    awxAPI`/${urlType}/${id.toString()}/inputInventories/`
+    inputInventoriesUrl
   );
 
-  debugger;
   // Fetch instance groups associated with the inventory
   const originalInstanceGroups = igResponse?.results;
   const onSubmit: PageFormSubmitHandler<InventoryCreate> = async (data) => {
     const { organization, labels, instanceGroups, ...editedInventory } = data;
+
+    let inputInventories: InputInventory[] = [];
+    if (params.inventory_type === 'constructed_inventory') {
+      inputInventories = await loadInputInventories(data.inventories || [], t);
+      data.inputInventories = inputInventories;
+    }
 
     // Update the inventory
     const updatedInventory = await requestPatch<Inventory>(
@@ -183,7 +190,9 @@ export function EditInventory() {
 
   const getPageUrl = useGetPageUrl();
 
-  if (!inventory) {
+  const isLoaded = (inventory && igResponse && (params.inventory_type === 'constructed_inventory' ? inputInventoriesResponse : true)) ? true : false;
+    
+  if (!isLoaded || !inventory) {
     return (
       <PageLayout>
         <PageHeader
@@ -192,6 +201,7 @@ export function EditInventory() {
             { label: t('Edit Inventory') },
           ]}
         />
+        <LoadingPage></LoadingPage>;
       </PageLayout>
     );
   }
@@ -208,7 +218,7 @@ export function EditInventory() {
       ? { ...inventory, instanceGroups: originalInstanceGroups }
       : inventory.kind === 'constructed'
         ? {
-          ...inventory, instanceGrous : originalInstanceGroups, inventories : inputInventoriesResponse 
+          ...inventory, instanceGrous : originalInstanceGroups, inventories : inputInventoriesResponse?.results?.map( (item) => item.id ), 
         }
         : {
             ...inventory,
