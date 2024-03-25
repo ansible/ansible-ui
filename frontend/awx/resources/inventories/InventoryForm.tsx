@@ -33,6 +33,7 @@ import { useInventoriesColumns } from './hooks/useInventoriesColumns';
 import { useInventoriesFilters } from './hooks/useInventoriesFilters';
 import { TFunction } from 'i18next';
 import { PageFormSingleSelect } from '../../../../framework/PageForm/Inputs/PageFormSingleSelect';
+import { AwxError } from '../../common/AwxError';
 
 // TODO - filter for query string not__kind=smart&not__kind=constructed
 
@@ -156,17 +157,21 @@ export function EditInventory() {
   const urlType =
     params.inventory_type === 'constructed_inventory' ? 'constructed_inventories' : 'inventories';
 
-  const { data: inventory } = useGet<Inventory>(awxAPI`/${urlType}/${id.toString()}/`);
-  const { data: igResponse } = useGet<AwxItemsResponse<InstanceGroup>>(
+  const inventoryRequest = useGet<Inventory>(awxAPI`/${urlType}/${id.toString()}/`);
+  const iGroupsRequest = useGet<AwxItemsResponse<InstanceGroup>>(
     awxAPI`/inventories/${id.toString()}/instance_groups/`
   );
+
+  const inventory = inventoryRequest.data;
+  const igResponse = iGroupsRequest.data;
 
   const inputInventoriesUrl =
     params.inventory_type === 'constructed_inventory'
       ? awxAPI`/inventories/${id.toString()}/input_inventories/`
       : '';
-  const { data: inputInventoriesResponse } =
-    useGet<AwxItemsResponse<InputInventory>>(inputInventoriesUrl);
+  const inputInventoriesRequest = useGet<AwxItemsResponse<InputInventory>>(inputInventoriesUrl);
+
+  const inputInventoriesResponse = inputInventoriesRequest.data;
 
   // Fetch instance groups associated with the inventory
   const originalInstanceGroups = igResponse?.results;
@@ -219,7 +224,9 @@ export function EditInventory() {
       ? true
       : false;
 
-  if (!isLoaded || !inventory) {
+  const isError = inventoryRequest.error || iGroupsRequest.error || inputInventoriesRequest.error;
+
+  if (!isLoaded || !inventory || isError) {
     return (
       <PageLayout>
         <PageHeader
@@ -228,7 +235,10 @@ export function EditInventory() {
             { label: t('Edit Inventory') },
           ]}
         />
-        <LoadingPage></LoadingPage>;
+        {!isLoaded && !isError && <LoadingPage></LoadingPage>}
+        {inventoryRequest.error && <AwxError error={inventoryRequest.error} />}
+        {iGroupsRequest.error && <AwxError error={iGroupsRequest.error} />}
+        {inputInventoriesRequest.error && <AwxError error={inputInventoriesRequest.error} />}
       </PageLayout>
     );
   }
