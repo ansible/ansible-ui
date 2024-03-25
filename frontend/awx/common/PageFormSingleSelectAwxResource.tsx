@@ -40,7 +40,8 @@ export function PageFormSingleSelectAwxResource<
   const queryOptions = useCallback<PageAsyncSelectOptionsFn<PathValue<FormData, Name>>>(
     async (options) => {
       try {
-        let url = props.url + `?page_size=10&order_by=name` + constructQueryParams(props.queryParams || {});
+        let url =
+          props.url + `?page_size=10&order_by=name` + constructQueryParams(props.queryParams || {});
         if (options.next) url = url + `&name__gt=${options.next}`;
         if (options.search) url = url + `&name__icontains=${options.search}`;
         const response = await requestGet<AwxItemsResponse<Resource>>(url, options.signal);
@@ -62,7 +63,7 @@ export function PageFormSingleSelectAwxResource<
         };
       }
     },
-    [props.url]
+    [props.url, props.queryParams]
   );
 
   const [_, setDialog] = usePageDialog();
@@ -82,7 +83,15 @@ export function PageFormSingleSelectAwxResource<
         />
       );
     },
-    [props.label, props.tableColumns, props.toolbarFilters, props.url, setDialog, value]
+    [
+      props.label,
+      props.tableColumns,
+      props.toolbarFilters,
+      props.url,
+      setDialog,
+      value,
+      props.queryParams,
+    ]
   );
 
   const queryLabel = useCallback(
@@ -129,7 +138,7 @@ function SelectResource<
     tableColumns: props.tableColumns,
     disableQueryString: true,
     defaultSelection: props.defaultSelection as Resource[],
-    queryParams : props.queryParams,
+    queryParams: props.queryParams,
   });
   return (
     <SingleSelectDialog<Resource>
