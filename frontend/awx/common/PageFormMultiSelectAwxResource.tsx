@@ -30,7 +30,7 @@ export function PageFormMultiSelectAwxResource<
   queryPlaceholder: string;
   queryErrorText: string;
   helperText?: string;
-  labelHelp? : string;
+  labelHelp?: string;
   queryParams?: QueryParams;
 }) {
   const id = useID(props);

@@ -32,6 +32,7 @@ import { PageFormMultiSelectAwxResource } from '../../common/PageFormMultiSelect
 import { useInventoriesColumns } from './hooks/useInventoriesColumns';
 import { useInventoriesFilters } from './hooks/useInventoriesFilters';
 import { TFunction } from 'i18next';
+import { PageFormSingleSelect } from '../../../../framework/PageForm/Inputs/PageFormSingleSelect';
 
 // TODO - filter for query string not__kind=smart&not__kind=constructed
 
@@ -112,6 +113,8 @@ export function CreateInventory(props: { inventoryKind: '' | 'constructed' | 'sm
             description: '',
             instanceGroups: [],
             inputInventories: [],
+            verbosity: 0,
+            update_cache_timeout: 0,
           }
         : {
             kind: inventoryKind,
@@ -309,21 +312,42 @@ function InventoryInputs(props: { inventoryKind: string }) {
         name="instanceGroups"
         labelHelp={t(`Select the instance groups for this inventory to run on.`)}
       />
-      {inventoryKind === 'constructed' && 
+      {inventoryKind === 'constructed' && (
         <>
           <PageFormMultiSelectInventories />
-          <PageFormTextInput 
-            name='update_cache_timeout'
-            id='update_cache_timeout'
-            type='number'
+          <PageFormTextInput
+            name="update_cache_timeout"
+            id="update_cache_timeout"
+            type="number"
             label={t(`Cache timeout (seconds)`)}
-            labelHelp={t(`The cache timeout for the related auto-created inventory source, special to constructed inventory`)}
-            validate={ (item) => 
-              (Number.parseFloat(item) >= 0) ? undefined : t('This field must be a number and have a value between 0 and 2147483647')
+            labelHelp={t(
+              `The cache timeout for the related auto-created inventory source, special to constructed inventory`
+            )}
+            validate={(item) =>
+              Number.parseFloat(item) >= 0
+                ? undefined
+                : t('This field must be a number and have a value between 0 and 2147483647')
             }
           />
+          <PageFormSingleSelect
+            name="verbosity"
+            id="verbosity"
+            label={t(`Verbosity`)}
+            placeholder={''}
+            labelHelp={t(
+              'The verbosity level for the related auto-created inventory source, special to constructed inventory'
+            )}
+            options={[
+              { value: 0, label: t('0 (Normal)') },
+              { value: 1, label: t('1 (Verbose)') },
+              { value: 2, label: t('2 (More Verbose)') },
+              { value: 3, label: t('3 (Debug)') },
+              { value: 4, label: t('4 (Connection Debug)') },
+              { value: 5, label: t('5 (WinRM Debug)') },
+            ]}
+          />
         </>
-      }
+      )}
       {inventoryKind === '' && (
         <PageFormLabelSelect<InventoryCreate>
           labelHelpTitle={t('Labels')}
