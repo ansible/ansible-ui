@@ -110,7 +110,7 @@ function PlatformTeamInputs() {
       />
       <PageFormPlatformOrganizationSelect name="organization" />
       <PageFormSection singleColumn>
-        <PageFormPlatformUsersSelect name="users" isRequired />
+        <PageFormPlatformUsersSelect name="users" />
       </PageFormSection>
     </>
   );
