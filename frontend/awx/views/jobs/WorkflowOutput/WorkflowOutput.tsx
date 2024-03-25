@@ -46,6 +46,12 @@ export const graphModel: Model = {
     visible: false,
   },
 };
+export const greyBadgeLabel = {
+  badge: 'ALL',
+  badgeColor: '#D2D2D2',
+  badgeTextColor: 'black',
+  badgeBorderColor: '#B8BBBE',
+};
 
 export const WorkflowOutput = (props: {
   job: Job;
@@ -115,12 +121,6 @@ export const WorkflowOutput = (props: {
       data: {
         resource: { always_nodes: [] },
       },
-    };
-    const greyBadgeLabel = {
-      badge: 'ALL',
-      badgeColor: '#D2D2D2',
-      badgeTextColor: 'black',
-      badgeBorderColor: '#B8BBBE',
     };
     const nodes = workflowNodes.map((n) => {
       const nodeId = n.id.toString();

@@ -138,7 +138,7 @@ describe('Workflow Job templates visualizer', () => {
         cy.get('[data-cy="node-alias"]').type('Test Node');
         cy.clickButton('Next');
         cy.clickButton('Finish');
-        cy.get('g[data-id="3-unsavedNode"]').should('have.text', 'Test Node');
+        cy.get('g[data-id="3-unsavedNode"]').should('have.text', 'ALLTest Node');
         cy.get(`g[data-id=${approvalNode.id}-3-unsavedNode]`).should('have.text', 'Run always');
         cy.clickButton('Save');
         cy.get('[data-cy="alert-toaster"]').should('be.visible');
@@ -221,7 +221,7 @@ describe('Workflow Job templates visualizer', () => {
     cy.get('[data-cy="node-alias"]').type('Test Node');
     cy.clickButton('Next');
     cy.clickButton('Finish');
-    cy.get('g[data-id="1-unsavedNode"]').should('have.text', 'Test Node');
+    cy.get('g[data-id="1-unsavedNode"]').should('have.text', 'ALLTest Node');
     cy.get(`g[data-id="1-unsavedNode"] .pf-topology__node__action-icon`).click({
       force: true,
     });
@@ -232,7 +232,7 @@ describe('Workflow Job templates visualizer', () => {
     cy.get('[data-cy="node-alias"]').type(`Project Node`);
     cy.clickButton('Next');
     cy.clickButton('Finish');
-    cy.get('g[data-id="1-unsavedNode"]').should('have.text', 'Test NodeProject Node');
+    cy.get('g[data-id="1-unsavedNode"]').should('have.text', 'ALLTest NodeProject Node');
     cy.clickButton('Save');
     cy.get('[data-cy="alert-toaster"]').should('be.visible');
     cy.get('button[data-cy="workflow-visualizer-toolbar-close"]').click();
@@ -265,7 +265,7 @@ describe('Workflow Job templates visualizer', () => {
         cy.get('[data-cy="node-alias"]').type('Test Node');
         cy.clickButton('Next');
         cy.clickButton('Finish');
-        cy.get('g[data-id="3-unsavedNode"]').should('have.text', 'Test Node');
+        cy.get('g[data-id="3-unsavedNode"]').should('have.text', 'ALLTest Node');
         cy.get(`g[data-id=${approvalNode.id}-3-unsavedNode]`).should('have.text', 'Run always');
         cy.clickButton('Save');
         cy.get('[data-cy="alert-toaster"]').should(
@@ -355,7 +355,7 @@ describe('Workflow Job templates visualizer', () => {
         cy.get('[data-cy="node-alias"]').type('Test Node');
         cy.clickButton('Next');
         cy.clickButton('Finish');
-        cy.get('g[data-id="3-unsavedNode"]').should('have.text', 'Test Node');
+        cy.get('g[data-id="3-unsavedNode"]').should('have.text', 'ALLTest Node');
         cy.get(`g[data-id=${projectNode.id}-3-unsavedNode]`).should('have.text', 'Run always');
         cy.get(`g[data-id=${projectNode.id}] .pf-topology__node__action-icon`).click({
           force: true,
