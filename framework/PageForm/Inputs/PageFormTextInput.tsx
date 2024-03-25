@@ -353,7 +353,7 @@ export function PageFormTextInput<
                 value: min,
                 message: `${capitalizeFirstLetter(
                   label.toLocaleLowerCase()
-                )} must be less than ${min}.`,
+                )} must be greater or equal to ${min}.`,
               }
             : minLength,
 
