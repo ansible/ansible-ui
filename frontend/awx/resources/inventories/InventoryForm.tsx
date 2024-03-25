@@ -143,12 +143,22 @@ export function CreateInventory(props: { inventoryKind: '' | 'constructed' | 'sm
 export function EditInventory() {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
-  const params = useParams<{ id?: string }>();
+  const params = useParams<{ id?: string, inventory_type : string }>();
   const id = Number(params.id);
-  const { data: inventory } = useGet<Inventory>(awxAPI`/inventories/${id.toString()}/`);
+
+  const urlType =
+      params.inventory_type === 'constructedconstructed_inventory' ? 'constructed_inventories' : 'inventories';
+
+  const { data: inventory } = useGet<Inventory>(awxAPI`/${urlType}/${id.toString()}/`);
   const { data: igResponse } = useGet<AwxItemsResponse<InstanceGroup>>(
-    awxAPI`/inventories/${id.toString()}/instance_groups/`
+    awxAPI`/${urlType}/${id.toString()}/instance_groups/`
   );
+
+  const { data: inputInventoriesResponse } = useGet<AwxItemsResponse<InputInventory>>(
+    awxAPI`/${urlType}/${id.toString()}/inputInventories/`
+  );
+
+  debugger;
   // Fetch instance groups associated with the inventory
   const originalInstanceGroups = igResponse?.results;
   const onSubmit: PageFormSubmitHandler<InventoryCreate> = async (data) => {
@@ -156,7 +166,7 @@ export function EditInventory() {
 
     // Update the inventory
     const updatedInventory = await requestPatch<Inventory>(
-      awxAPI`/inventories/${id.toString()}/`,
+      awxAPI`/${urlType}/${id.toString()}/`,
       editedInventory
     );
     const promises = [];
@@ -197,7 +207,9 @@ export function EditInventory() {
     inventory.kind === 'smart'
       ? { ...inventory, instanceGroups: originalInstanceGroups }
       : inventory.kind === 'constructed'
-        ? {}
+        ? {
+          ...inventory, instanceGrous : originalInstanceGroups, inventories : inputInventoriesResponse 
+        }
         : {
             ...inventory,
             instanceGroups: originalInstanceGroups,
