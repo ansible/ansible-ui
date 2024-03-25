@@ -40,7 +40,7 @@ export const formFieldToLaunchConfig = {
   forks: 'ask_forks_on_launch',
   diff_mode: 'ask_diff_mode_on_launch',
   job_slice: 'ask_job_slice_count_on_launch',
-  lables: 'ask_labels_on_launch',
+  labels: 'ask_labels_on_launch',
   limit: 'ask_limit_on_launch',
   skip_tags: 'ask_skip_tags_on_launch',
   job_tags: 'ask_tags_on_launch',
