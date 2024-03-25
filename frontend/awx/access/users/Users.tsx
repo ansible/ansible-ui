@@ -8,7 +8,6 @@ import {
 } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
 import {
   IPageAction,
   PageActionSelection,
@@ -247,12 +246,11 @@ export function Users() {
 }
 
 /* deprecated (see access/organizations/OrganizationPage/OrganizationAccess.tsx) */
-export function AccessTable(props: { url: string; addUsersRoute?: string }) {
+export function AccessTable(props: { url: string }) {
   const { t } = useTranslation();
   const toolbarFilters = useUsersFilters();
   const tableColumns = useUsersColumns();
   const getPageUrl = useGetPageUrl();
-  const params = useParams();
   const view = useAwxView<User>({
     url: props.url,
     toolbarFilters,
@@ -270,7 +268,7 @@ export function AccessTable(props: { url: string; addUsersRoute?: string }) {
         icon: PlusCircleIcon,
         label: t('Add users'),
         shortLabel: t('Add access'),
-        href: getPageUrl(props.addUsersRoute || AwxRoute.CreateUser, { params }),
+        href: getPageUrl(AwxRoute.CreateUser),
       },
       {
         type: PageActionType.Button,
@@ -284,7 +282,7 @@ export function AccessTable(props: { url: string; addUsersRoute?: string }) {
         isDanger: true,
       },
     ],
-    [getPageUrl, t, props.addUsersRoute, params]
+    [getPageUrl, t]
   );
 
   const rowActions = useMemo<IPageAction<User>[]>(

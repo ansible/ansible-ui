@@ -7,12 +7,7 @@ import { AccessTable } from '../../users/Users';
  * TODO: AccessTable should be replaced with ResourceAccessList component
  * and then deleted (it's no longer used anywhere else)
  */
-export function OrganizationAccess(props: { addUsersRoute?: string }) {
+export function OrganizationAccess() {
   const params = useParams<{ id: string }>();
-  return (
-    <AccessTable
-      url={awxAPI`/organizations/${params.id ?? ''}/access_list/`}
-      addUsersRoute={props.addUsersRoute}
-    />
-  );
+  return <AccessTable url={awxAPI`/organizations/${params.id ?? ''}/access_list/`} />;
 }

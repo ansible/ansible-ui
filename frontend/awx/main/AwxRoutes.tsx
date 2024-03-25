@@ -144,7 +144,6 @@ export enum AwxRoute {
   OrganizationPage = 'awx-organization-page',
   OrganizationDetails = 'awx-organization-details',
   OrganizationUsers = 'awx-organization-users',
-  OrganizationAddUsers = 'awx-organization-add-users',
   OrganizationTeams = 'awx-organization-teams',
   OrganizationExecutionEnvironments = 'awx-organization-execution-environments',
   OrganizationNotifications = 'awx-organization-notifications',

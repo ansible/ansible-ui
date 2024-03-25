@@ -8,7 +8,6 @@ import { OrganizationAccess } from '../../access/organizations/OrganizationPage/
 import { OrganizationDetails } from '../../access/organizations/OrganizationPage/OrganizationDetails';
 import { OrganizationPage } from '../../access/organizations/OrganizationPage/OrganizationPage';
 import { OrganizationTeams } from '../../access/organizations/OrganizationPage/OrganizationTeams';
-import { AddOrganizationUsers } from '../../access/organizations/components/AddOrganizationUsers';
 import { Organizations } from '../../access/organizations/Organizations';
 import { AwxRoute } from '../AwxRoutes';
 import { ResourceNotifications } from '../../resources/notifications/ResourceNotifications';
@@ -44,12 +43,7 @@ export function useAwxOrganizationRoutes() {
             {
               id: AwxRoute.OrganizationUsers,
               path: 'users',
-              element: <OrganizationAccess addUsersRoute={AwxRoute.OrganizationAddUsers} />,
-            },
-            {
-              id: AwxRoute.OrganizationAddUsers,
-              path: 'users/add',
-              element: <AddOrganizationUsers />,
+              element: <OrganizationAccess />,
             },
             {
               id: AwxRoute.OrganizationTeams,
