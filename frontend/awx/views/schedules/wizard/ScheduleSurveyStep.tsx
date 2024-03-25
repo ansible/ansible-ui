@@ -27,7 +27,7 @@ export function ScheduleSurveyStep() {
   });
 
   return (
-    <PageFormSection singleColumn>
+    <PageFormSection>
       {survey_spec?.spec.map((element, index) =>
         element.type === 'text' ? (
           <PageFormTextInput
