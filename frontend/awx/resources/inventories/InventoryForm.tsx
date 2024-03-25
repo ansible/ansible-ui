@@ -67,18 +67,21 @@ export function CreateInventory(props: { inventoryKind: '' | 'constructed' | 'sm
       props.inventoryKind === 'constructed' ? 'constructed_inventories' : 'inventories';
     const newInventory = await postRequest(awxAPI`/${urlType}/`, inventory);
 
+    const promises: Promise<unknown>[] = [];
     // Update new inventory with selected instance groups
     if (instanceGroups?.length > 0)
-      await submitInstanceGroups(newInventory, instanceGroups ?? [], []);
+      promises.push(submitInstanceGroups(newInventory, instanceGroups ?? [], []));
 
     // Update new inventory with selected input inventories
     if (data?.inventories?.length && data.inventories.length > 0) {
-      await submitInputInventories(newInventory, inputInventories || [], []);
+      promises.push(submitInputInventories(newInventory, inputInventories || [], []));
     }
 
     // Update new inventory with selected labels
     if (newInventory.kind === '' && data.labels.length > 0)
-      await submitLabels(newInventory, data.labels);
+      promises.push(submitLabels(newInventory, data.labels));
+
+    await Promise.all(promises);
 
     pageNavigate(AwxRoute.InventoryDetails, {
       params: { inventory_type: kinds[newInventory.kind], id: newInventory.id },
@@ -144,21 +147,23 @@ export function CreateInventory(props: { inventoryKind: '' | 'constructed' | 'sm
 export function EditInventory() {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
-  const params = useParams<{ id?: string, inventory_type : string }>();
+  const params = useParams<{ id?: string; inventory_type: string }>();
   const id = Number(params.id);
 
   const urlType =
-      params.inventory_type === 'constructed_inventory' ? 'constructed_inventories' : 'inventories';
+    params.inventory_type === 'constructed_inventory' ? 'constructed_inventories' : 'inventories';
 
   const { data: inventory } = useGet<Inventory>(awxAPI`/${urlType}/${id.toString()}/`);
   const { data: igResponse } = useGet<AwxItemsResponse<InstanceGroup>>(
     awxAPI`/inventories/${id.toString()}/instance_groups/`
   );
 
-  const inputInventoriesUrl = params.inventory_type === 'constructed_inventory' ? awxAPI`/inventories/${id.toString()}/input_inventories/` : '';
-  const { data: inputInventoriesResponse } = useGet<AwxItemsResponse<InputInventory>>(
-    inputInventoriesUrl
-  );
+  const inputInventoriesUrl =
+    params.inventory_type === 'constructed_inventory'
+      ? awxAPI`/inventories/${id.toString()}/input_inventories/`
+      : '';
+  const { data: inputInventoriesResponse } =
+    useGet<AwxItemsResponse<InputInventory>>(inputInventoriesUrl);
 
   // Fetch instance groups associated with the inventory
   const originalInstanceGroups = igResponse?.results;
@@ -181,17 +186,36 @@ export function EditInventory() {
     promises.push(
       submitInstanceGroups(updatedInventory, instanceGroups ?? [], originalInstanceGroups ?? [])
     );
+
     promises.push(submitLabels(inventory as Inventory, labels || []));
+
+    // Update new inventory with selected input inventories
+    if (data?.inventories?.length && data.inventories.length > 0) {
+      promises.push(
+        submitInputInventories(
+          data,
+          inputInventories || [],
+          inputInventoriesResponse?.results || []
+        )
+      );
+    }
+
     await Promise.all(promises);
+
     pageNavigate(AwxRoute.InventoryDetails, {
-      params: { id: updatedInventory.id, inventory_type: updatedInventory.type },
+      params: { id: updatedInventory.id, inventory_type: params.inventory_type },
     });
   };
 
   const getPageUrl = useGetPageUrl();
 
-  const isLoaded = (inventory && igResponse && (params.inventory_type === 'constructed_inventory' ? inputInventoriesResponse : true)) ? true : false;
-    
+  const isLoaded =
+    inventory &&
+    igResponse &&
+    (params.inventory_type === 'constructed_inventory' ? inputInventoriesResponse : true)
+      ? true
+      : false;
+
   if (!isLoaded || !inventory) {
     return (
       <PageLayout>
@@ -218,8 +242,10 @@ export function EditInventory() {
       ? { ...inventory, instanceGroups: originalInstanceGroups }
       : inventory.kind === 'constructed'
         ? {
-          ...inventory, instanceGrous : originalInstanceGroups, inventories : inputInventoriesResponse?.results?.map( (item) => item.id ), 
-        }
+            ...inventory,
+            instanceGrous: originalInstanceGroups,
+            inventories: inputInventoriesResponse?.results?.map((item) => item.id),
+          }
         : {
             ...inventory,
             instanceGroups: originalInstanceGroups,
