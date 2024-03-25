@@ -471,7 +471,7 @@ function PageFormMultiSelectInventories() {
       queryPlaceholder={t('Loading inventories...')}
       queryErrorText={t('Error loading inventories')}
       isRequired={true}
-      helperText={''}
+      labelHelp={t(`Select Input Inventories for the constructed inventory plugin.`)}
       url={awxAPI`/inventories/`}
       tableColumns={columns}
       toolbarFilters={filters}

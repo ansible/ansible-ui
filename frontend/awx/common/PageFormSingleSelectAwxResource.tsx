@@ -33,6 +33,7 @@ export function PageFormSingleSelectAwxResource<
   queryPlaceholder: string;
   queryErrorText: string;
   helperText?: string;
+  labelHelp? : string;
   queryParams?: QueryParams;
 }) {
   const id = useID(props);
@@ -111,6 +112,7 @@ export function PageFormSingleSelectAwxResource<
       isRequired={props.isRequired}
       isDisabled={props.isDisabled}
       helperText={props.helperText}
+      labelHelp={props.labelHelp}
       onBrowse={() =>
         openSelectDialog((resource) =>
           setValue(props.name, resource.id as PathValue<FormData, Name>)

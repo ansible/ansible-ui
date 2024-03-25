@@ -30,6 +30,7 @@ export function PageFormMultiSelectAwxResource<
   queryPlaceholder: string;
   queryErrorText: string;
   helperText?: string;
+  labelHelp? : string;
   queryParams?: QueryParams;
 }) {
   const id = useID(props);
@@ -114,6 +115,7 @@ export function PageFormMultiSelectAwxResource<
       isRequired={props.isRequired}
       isDisabled={props.isDisabled}
       helperText={props.helperText}
+      labelHelp={props.labelHelp}
       onBrowse={() =>
         openSelectDialog((resources: Resource[]) => {
           if (resources) {
