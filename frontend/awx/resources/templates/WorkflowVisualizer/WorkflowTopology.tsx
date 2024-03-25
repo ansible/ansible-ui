@@ -46,6 +46,7 @@ import { getNodeLabel } from './wizard/helpers';
 import { GRAPH_ID, NODE_DIAMETER, START_NODE_ID } from './constants';
 import { useCreateNodeComponent } from './hooks/useCreateNodeComponent';
 import { styled } from 'styled-components';
+import { greyBadgeLabel } from '../../../views/jobs/WorkflowOutput/WorkflowOutput';
 
 const TopologyView = styled(PFTopologyView)`
   .pf-v5-c-divider {
@@ -184,6 +185,10 @@ export const WorkflowTopology = ({ data: { workflowNodes = [], template } }: Top
           resource: n,
         },
       };
+
+      if (n.all_parents_must_converge) {
+        return { ...node, data: { ...node.data, ...greyBadgeLabel } };
+      }
 
       return node;
     });
