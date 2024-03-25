@@ -31,7 +31,6 @@ import { PageFormMultiSelectAwxResource } from '../../common/PageFormMultiSelect
 import { useInventoriesColumns } from './hooks/useInventoriesColumns';
 import { useInventoriesFilters } from './hooks/useInventoriesFilters';
 import { TFunction } from 'i18next';
-import { QueryParams } from '../../common/useAwxView';
 
 // TODO - filter for query string not__kind=smart&not__kind=constructed
 
@@ -58,13 +57,13 @@ export function CreateInventory(props: { inventoryKind: '' | 'constructed' | 'sm
     const { instanceGroups, ...inventory } = data;
 
     let inputInventories: InputInventory[] = [];
-    if (props.inventoryKind == 'constructed') {
+    if (props.inventoryKind === 'constructed') {
       inputInventories = await loadInputInventories(data.inventories || [], t);
       data.inputInventories = inputInventories;
     }
 
     const urlType =
-      props.inventoryKind == 'constructed' ? 'constructed_inventories' : 'inventories';
+      props.inventoryKind === 'constructed' ? 'constructed_inventories' : 'inventories';
     const newInventory = await postRequest(awxAPI`/${urlType}/`, inventory);
 
     // Update new inventory with selected instance groups

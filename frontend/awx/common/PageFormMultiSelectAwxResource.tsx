@@ -37,7 +37,8 @@ export function PageFormMultiSelectAwxResource<
   const queryOptions = useCallback<PageAsyncSelectOptionsFn<PathValue<FormData, Name>>>(
     async (options) => {
       try {
-        let url = props.url + `?page_size=10&order_by=name` + constructQueryParams(props.queryParams || {});
+        let url =
+          props.url + `?page_size=10&order_by=name` + constructQueryParams(props.queryParams || {});
         if (options.next) url = url + `&name__gt=${options.next}`;
         if (options.search) url = url + `&name__icontains=${options.search}`;
         const response = await requestGet<AwxItemsResponse<Resource>>(url, options.signal);
@@ -59,7 +60,7 @@ export function PageFormMultiSelectAwxResource<
         };
       }
     },
-    [props.url]
+    [props.url, props.queryParams]
   );
 
   const [_, setDialog] = usePageDialog();
@@ -85,7 +86,15 @@ export function PageFormMultiSelectAwxResource<
         />
       );
     },
-    [props.label, props.tableColumns, props.toolbarFilters, props.url, setDialog, value]
+    [
+      props.label,
+      props.tableColumns,
+      props.toolbarFilters,
+      props.url,
+      setDialog,
+      value,
+      props.queryParams,
+    ]
   );
 
   const queryLabel = useCallback(
@@ -147,15 +156,15 @@ function SelectResource<
   );
 }
 
-export function constructQueryParams(queryParams : QueryParams) {
-    let queryString = '&';
-    if (queryParams) {
-      Object.keys(queryParams).forEach((key) => {
-        queryString += key + '=' + queryParams?.[key];
-      });
-    } else {
-      return '';
-    }
-
-    return queryString;
+export function constructQueryParams(queryParams: QueryParams) {
+  let queryString = '&';
+  if (queryParams) {
+    Object.keys(queryParams).forEach((key) => {
+      queryString += key + '=' + queryParams?.[key];
+    });
+  } else {
+    return '';
   }
+
+  return queryString;
+}
