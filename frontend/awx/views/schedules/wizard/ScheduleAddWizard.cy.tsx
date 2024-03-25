@@ -24,6 +24,7 @@ describe('ScheduleAddWizard', () => {
       name: 'Mock Job Template',
       description: 'Job Template Description',
       unified_job_type: 'job',
+      survey_enabled: true,
     };
     const mockTemplates = {
       count: 1,
@@ -67,6 +68,20 @@ describe('ScheduleAddWizard', () => {
       });
 
       cy.get('[data-cy="wizard-nav"]').within(() => {
+        cy.get('li').should('have.length', 5);
+        ['Details', 'Prompts', 'Occurrences', 'Exceptions', 'Review'].forEach((text, index) => {
+          cy.get('li')
+            .eq(index)
+            .should((el) => expect(el.text().trim()).to.equal(text));
+        });
+      });
+
+      cy.selectDropdownOptionByResourceName('resource_type', 'Job template');
+      cy.selectDropdownOptionByResourceName('job-template-select', 'Mock Job Template');
+      cy.get('[data-cy="name"]').type('Test Schedule');
+      cy.clickButton(/^Next$/);
+
+      cy.get('[data-cy="wizard-nav"]').within(() => {
         cy.get('li').should('have.length', 6);
         ['Details', 'Prompts', 'Survey', 'Occurrences', 'Exceptions', 'Review'].forEach(
           (text, index) => {
@@ -76,11 +91,6 @@ describe('ScheduleAddWizard', () => {
           }
         );
       });
-
-      cy.selectDropdownOptionByResourceName('resource_type', 'Job template');
-      cy.selectDropdownOptionByResourceName('job-template-select', 'Mock Job Template');
-      cy.get('[data-cy="name"]').type('Test Schedule');
-      cy.clickButton(/^Next$/);
     });
 
     it('Should not go to next step due to failed validation', () => {
