@@ -108,7 +108,7 @@ function PlatformTeamInputs() {
         name="description"
         placeholder={t('Enter description')}
       />
-      <PageFormPlatformOrganizationSelect name="organization" />
+      <PageFormPlatformOrganizationSelect name="organization" isRequired />
       <PageFormSection singleColumn>
         <PageFormPlatformUsersSelect name="users" />
       </PageFormSection>
