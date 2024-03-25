@@ -19,6 +19,8 @@ import { Frequency, RRule } from 'rrule';
 import { ExceptionsStep } from './ExceptionsStep';
 import { ScheduleInputs } from '../components/ScheduleInputs';
 import { PromptInputs } from '../components/PromptInputs';
+import { ScheduleSurveyStep } from './ScheduleSurveyStep';
+import { LaunchConfiguration } from '../../../interfaces/LaunchConfiguration';
 
 export function ScheduleAddWizard() {
   const { t } = useTranslation();
@@ -63,7 +65,20 @@ export function ScheduleAddWizard() {
       label: t('Prompts'),
       inputs: <PromptInputs onError={() => {}} />,
     },
-    { id: 'survey', label: t('Survey'), element: <PageNotImplemented /> },
+    {
+      id: 'survey',
+      label: t('Survey'),
+      inputs: <ScheduleSurveyStep />,
+      hidden: (wizardData: Partial<LaunchConfiguration>) => {
+        if (Object.keys(wizardData).length === 0) {
+          return true;
+        }
+        if (wizardData.unified_job_template_object?.survey_enabled) {
+          return false;
+        }
+        return true;
+      },
+    },
     { id: 'occurrences', label: t('Occurrences'), inputs: <OccurrencesStep /> },
     {
       id: 'exceptions',
