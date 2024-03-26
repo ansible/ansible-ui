@@ -15,21 +15,14 @@ import {
   Panel,
   CardBody,
 } from '@patternfly/react-core';
-import {
-  Table,
-  Thead,
-  Tr,
-  Th,
-  Tbody,
-  Td,
-} from '@patternfly/react-table';
+import { Table, Thead, Tr, Th, Tbody, Td } from '@patternfly/react-table';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { useAwxConfig } from '../../../common/useAwxConfig';
 import { getDocsBaseUrl } from '../../../common/util/getDocsBaseUrl';
 
 export function ConstructedInventoryHint() {
   const config = useAwxConfig();
-  const {t} = useTranslation();
+  const { t } = useTranslation();
 
   return (
     <Alert
@@ -39,15 +32,12 @@ export function ConstructedInventoryHint() {
       title={t`How to use constructed inventory plugin`}
       actionLinks={
         <AlertActionLink
-          href={`${getDocsBaseUrl(
-            config
-          )}/html/userguide/inventories.html#constructed-inventories`}
+          href={`${getDocsBaseUrl(config)}/html/userguide/inventories.html#constructed-inventories`}
           component="a"
           target="_blank"
           rel="noopener noreferrer"
         >
-          {t`View constructed inventory documentation here`}{' '}
-          <ExternalLinkAltIcon />
+          {t`View constructed inventory documentation here`} <ExternalLinkAltIcon />
         </AlertActionLink>
       }
     >
@@ -60,10 +50,7 @@ export function ConstructedInventoryHint() {
       </span>
       <br />
       <br />
-      <Table
-        aria-label={t`Constructed inventory parameters table`}
-        variant="compact"
-      >
+      <Table aria-label={t`Constructed inventory parameters table`} variant="compact">
         <Thead>
           <Tr>
             <Th>{t`Parameter`}</Th>
@@ -73,7 +60,7 @@ export function ConstructedInventoryHint() {
         <Tbody>
           <Tr ouiaId="plugin-row">
             <Td dataLabel={t`name`}>
-              <code>plugin</code>
+              <code>{t`plugin`}</code>
               <p style={{ color: 'blue' }}>{t`string`}</p>
               <p style={{ color: 'red' }}>{t`required`}</p>
             </Td>
@@ -84,7 +71,7 @@ export function ConstructedInventoryHint() {
           </Tr>
           <Tr key="strict">
             <Td dataLabel={t`name`}>
-              <code>strict</code>
+              <code>{t('strict')}</code>
               <p style={{ color: 'blue' }}>{t`boolean`}</p>
             </Td>
             <Td dataLabel={t`description`}>
@@ -98,7 +85,7 @@ export function ConstructedInventoryHint() {
           </Tr>
           <Tr key="groups">
             <Td dataLabel={t`name`}>
-              <code>groups</code>
+              <code>{t(`groups`)}</code>
               <p style={{ color: 'blue' }}>{t`dictionary`}</p>
             </Td>
             <Td dataLabel={t`description`}>
@@ -107,7 +94,7 @@ export function ConstructedInventoryHint() {
           </Tr>
           <Tr key="compose">
             <Td dataLabel={t`name`}>
-              <code>compose</code>
+              <code>{t('compose')}</code>
               <p style={{ color: 'blue' }}>{t`dictionary`}</p>
             </Td>
             <Td dataLabel={t`description`}>
@@ -124,11 +111,13 @@ export function ConstructedInventoryHint() {
       <Panel>
         <CardBody>
           <Form autoComplete="off">
-          <div style={{ 
-                paddingTop : 25,
-                paddingLeft : 20,
-            }}>
-                <b>{t`Constructed inventory examples`}</b>
+            <div
+              style={{
+                paddingTop: 25,
+                paddingLeft: 20,
+              }}
+            >
+              <b>{t`Constructed inventory examples`}</b>
             </div>
             <LimitToIntersectionExample />
             <FilterOnNestedGroupExample />
@@ -141,13 +130,13 @@ export function ConstructedInventoryHint() {
 }
 
 function LimitToIntersectionExample() {
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   const [copied, setCopied] = React.useState(false);
-  const clipboardCopyFunc = (event : unknown, text : string) => {
-    navigator.clipboard.writeText(text.toString());
+  const clipboardCopyFunc = (event: unknown, text: string) => {
+    clipboardCopy(text);
   };
 
-  const onClick = (event : unknown, text : string) => {
+  const onClick = (event: unknown, text: string) => {
     clipboardCopyFunc(event, text);
     setCopied(true);
   };
@@ -178,10 +167,7 @@ groups:
           {limitToIntersectionLimit}
         </ClipboardCopy>
       </FormGroup>
-      <FormGroup
-        label={t`Source vars`}
-        fieldId="intersection-example-source-vars"
-      >
+      <FormGroup label={t`Source vars`} fieldId="intersection-example-source-vars">
         <CodeBlock
           actions={
             <CodeBlockAction>
@@ -195,9 +181,7 @@ groups:
                 variant="plain"
                 onTooltipHidden={() => setCopied(false)}
               >
-                {copied
-                  ? t`Successfully copied to clipboard!`
-                  : t`Copy to clipboard`}
+                {copied ? t`Successfully copied to clipboard!` : t`Copy to clipboard`}
               </ClipboardCopyButton>
             </CodeBlockAction>
           }
@@ -211,13 +195,13 @@ groups:
   );
 }
 function FilterOnNestedGroupExample() {
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   const [copied, setCopied] = React.useState(false);
-  const clipboardCopyFunc = (event : unknown, text : string) => {
-    navigator.clipboard.writeText(text.toString());
+  const clipboardCopyFunc = (event: unknown, text: string) => {
+    clipboardCopy(text);
   };
 
-  const onClick = (event : unknown, text : string) => {
+  const onClick = (event: unknown, text: string) => {
     clipboardCopyFunc(event, text);
     setCopied(true);
   };
@@ -265,10 +249,7 @@ function FilterOnNestedGroupExample() {
           {nestedGroupsInventoryLimit}
         </ClipboardCopy>
       </FormGroup>
-      <FormGroup
-        label={t`Source vars`}
-        fieldId="nested-groups-example-source-vars"
-      >
+      <FormGroup label={t`Source vars`} fieldId="nested-groups-example-source-vars">
         <CodeBlock
           actions={
             <CodeBlockAction>
@@ -282,9 +263,7 @@ function FilterOnNestedGroupExample() {
                 variant="plain"
                 onTooltipHidden={() => setCopied(false)}
               >
-                {copied
-                  ? t`Successfully copied to clipboard!`
-                  : t`Copy to clipboard`}
+                {copied ? t`Successfully copied to clipboard!` : t`Copy to clipboard`}
               </ClipboardCopyButton>
             </CodeBlockAction>
           }
@@ -297,14 +276,19 @@ function FilterOnNestedGroupExample() {
     </FormFieldGroupExpandable>
   );
 }
+
+function clipboardCopy(text: string) {
+  void navigator.clipboard.writeText(text);
+}
+
 function HostsByProcessorTypeExample() {
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   const [copied, setCopied] = React.useState(false);
-  const clipboardCopyFunc = (event : unknown, text : string) => {
-    navigator.clipboard.writeText(text.toString());
+  const clipboardCopyFunc = (event: unknown, text: string) => {
+    clipboardCopy(text);
   };
 
-  const onClick = (event : unknown, text : string) => {
+  const onClick = (event: unknown, text: string) => {
     clipboardCopyFunc(event, text);
     setCopied(true);
   };
@@ -350,9 +334,7 @@ groups:
                 variant="plain"
                 onTooltipHidden={() => setCopied(false)}
               >
-                {copied
-                  ? t`Successfully copied to clipboard!`
-                  : t`Copy to clipboard`}
+                {copied ? t`Successfully copied to clipboard!` : t`Copy to clipboard`}
               </ClipboardCopyButton>
             </CodeBlockAction>
           }
@@ -365,5 +347,3 @@ groups:
     </FormFieldGroupExpandable>
   );
 }
-
-
