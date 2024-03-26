@@ -9,7 +9,6 @@ import {
   NodeStatus,
   observer,
 } from '@patternfly/react-topology';
-import { useInterval } from '@patternfly/react-core';
 import {
   ViewOptionsContext,
   ViewOptionsProvider,
@@ -19,11 +18,11 @@ import { useWorkflowOutput } from './hooks/useWorkflowOutput';
 import { useEffect } from 'react';
 import styled from 'styled-components';
 import { awxAPI } from '../../../common/api/awx-utils';
-import { requestGet } from '../../../../common/crud/Data';
 import { WorkflowNode } from '../../../interfaces/WorkflowNode';
 import { useTranslation } from 'react-i18next';
 import { secondsToHHMMSS } from '../../../../../framework/utils/dateTimeHelpers';
 import { Job } from '../../../interfaces/Job';
+import { useGet } from '../../../../common/crud/useGet';
 
 const TopologyView = styled(PFTopologyView)`
   .pf-v5-c-divider {
@@ -38,18 +37,13 @@ export const WorkflowOutputGraph = observer(
     const nodes = model.nodes;
     const message = useWorkflowOutput(props.reloadJob, props.job);
 
-    let newNode: WorkflowNode | undefined;
+    const nodeId = message?.workflow_node_id?.toString();
 
-    const getNode = async (nodeId: number | undefined) => {
-      if (!nodeId) return;
-
-      newNode = await requestGet<WorkflowNode>(awxAPI`/workflow_job_nodes/${nodeId.toString()}/`);
-    };
-
-    useInterval(() => {
-      if (['running', 'pending', 'waiting'].includes(props.job?.status ?? ''))
-        void getNode(message?.workflow_node_id);
-    }, 1000);
+    const { data: newNode } = useGet<WorkflowNode>(
+      nodeId ? awxAPI`/workflow_job_nodes/${nodeId}/` : '',
+      undefined,
+      { refreshInterval: 1000 }
+    );
 
     const node = controller.getNodeById(message?.workflow_node_id?.toString() || '');
     const { refreshNodeStatus } = props;
