@@ -18,11 +18,11 @@ import { useWorkflowOutput } from './hooks/useWorkflowOutput';
 import { useEffect } from 'react';
 import styled from 'styled-components';
 import { awxAPI } from '../../../common/api/awx-utils';
-import { requestGet } from '../../../../common/crud/Data';
 import { WorkflowNode } from '../../../interfaces/WorkflowNode';
 import { useTranslation } from 'react-i18next';
 import { secondsToHHMMSS } from '../../../../../framework/utils/dateTimeHelpers';
 import { Job } from '../../../interfaces/Job';
+import { useGet } from '../../../../common/crud/useGet';
 
 const TopologyView = styled(PFTopologyView)`
   .pf-v5-c-divider {
@@ -36,15 +36,20 @@ export const WorkflowOutputGraph = observer(
     const model = controller.toModel();
     const nodes = model.nodes;
     const message = useWorkflowOutput(props.reloadJob, props.job);
+
+    const nodeId = message?.workflow_node_id?.toString();
+
+    const { data: newNode } = useGet<WorkflowNode>(
+      nodeId ? awxAPI`/workflow_job_nodes/${nodeId}/` : '',
+      undefined,
+      { refreshInterval: 1000 }
+    );
+
     const node = controller.getNodeById(message?.workflow_node_id?.toString() || '');
     const { refreshNodeStatus } = props;
     useEffect(() => {
-      const getElapsedTime = async (nodeId: number) => {
+      const getElapsedTime = (nodeId: number) => {
         if (!props.job || !nodeId) return;
-
-        const newNode: WorkflowNode | undefined = await requestGet<WorkflowNode>(
-          awxAPI`/workflow_job_nodes/${nodeId.toString()}/`
-        );
 
         node?.setData({
           ...node?.getData(),
@@ -88,7 +93,7 @@ export const WorkflowOutputGraph = observer(
       action(() => {
         node?.setNodeStatus(message.status as NodeStatus);
       })();
-    }, [node, message, props.job, t, nodes]);
+    }, [node, message, props.job, t, nodes, newNode]);
 
     useEffect(() => {
       refreshNodeStatus();
