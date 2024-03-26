@@ -34,6 +34,7 @@ import { useInventoriesFilters } from './hooks/useInventoriesFilters';
 import { TFunction } from 'i18next';
 import { PageFormSingleSelect } from '../../../../framework/PageForm/Inputs/PageFormSingleSelect';
 import { AwxError } from '../../common/AwxError';
+import { ConstructedInventoryHint } from './components/ConstructedInventoryHint';
 
 
 // TODO - filter for query string not__kind=smart&not__kind=constructed
@@ -117,6 +118,7 @@ export function CreateInventory(props: { inventoryKind: '' | 'constructed' | 'sm
             inputInventories: [],
             verbosity: 0,
             update_cache_timeout: 0,
+            limit: '',
           }
         : {
             kind: inventoryKind,
@@ -357,6 +359,17 @@ function InventoryInputs(props: { inventoryKind: string }) {
               { value: 5, label: t('5 (WinRM Debug)') },
             ]}
           />
+          <PageFormSection singleColumn>
+            <ConstructedInventoryHint/>
+          </PageFormSection>
+          <PageFormTextInput
+            name="limit"
+            id="limit"
+            label={t(`Limit`)}
+            labelHelp={t(
+              `The limit to restrict the returned hosts for the related auto-created inventory source, special to constructed inventory.`
+            )}
+          />        
         </>
       )}
       {inventoryKind === '' && (
