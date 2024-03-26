@@ -5,6 +5,7 @@ import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
 import { WorkflowJobTemplate } from '../../../../frontend/awx/interfaces/WorkflowJobTemplate';
 import { WorkflowNode } from '../../../../frontend/awx/interfaces/WorkflowNode';
+import { awxAPI } from '../../../support/formatApiPathForAwx';
 
 describe('Workflow Visualizer', () => {
   let organization: Organization;
@@ -71,9 +72,10 @@ describe('Workflow Visualizer', () => {
       cy.visit(`/templates/workflow_job_template/${workflowJobTemplate?.id}/visualizer`);
       cy.contains('Workflow Visualizer').should('be.visible');
       cy.get('[data-cy="workflow-visualizer-toolbar-kebab"]').click();
-      cy.intercept('POST', `api/v2/workflow_job_templates/${workflowJobTemplate.id}/launch/`).as(
-        'launchWJT-WithNodes'
-      );
+      cy.intercept(
+        'POST',
+        awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/launch/`
+      ).as('launchWJT-WithNodes');
       cy.clickButton('Launch');
       cy.wait('@launchWJT-WithNodes')
         .its('response.body.id')
@@ -118,6 +120,25 @@ describe('Workflow Visualizer', () => {
       cy.get(`g[class*="node-label"]`).contains(jobTemplate.name).should('be.visible');
       cy.get(`g[class*="node-label"]`).contains(project.name).should('be.visible');
       cy.contains('Success').should('be.visible');
+    });
+
+    it('can launch a job and follow the node links to the related job output screens', function () {
+      cy.visit(`/templates/workflow_job_template/${workflowJobTemplate?.id}/visualizer`);
+      cy.contains('Workflow Visualizer').should('be.visible');
+      cy.get('[data-cy="workflow-visualizer-toolbar-kebab"]').click();
+      cy.intercept('POST', `api/v2/workflow_job_templates/${workflowJobTemplate.id}/launch/`).as(
+        'launchWJT-WithNodes'
+      );
+      cy.clickButton('Launch');
+      cy.wait('@launchWJT-WithNodes')
+        .its('response.body.id')
+        .then((jobId: string) => {
+          cy.url().should('contain', `/jobs/workflow/${jobId}/output`);
+          cy.contains('Global Project').click({ force: true });
+          cy.getByDataCy('Global Project').should('be.visible');
+          cy.getByDataCy('Output').should('be.visible');
+          cy.visit(`/jobs/workflow/${jobId}/output`);
+        });
     });
   });
 });
