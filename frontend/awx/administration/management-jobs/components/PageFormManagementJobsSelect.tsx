@@ -34,7 +34,7 @@ export function PageFormManagementJobsSelect<
     <PageFormAsyncSelect<TFieldValues>
       name={props.name}
       id="management-job-template-select"
-      label={t('Management Job Template')}
+      label={t('Management job template')}
       query={query}
       valueToString={(value) => {
         if (value && typeof value === 'string') {
