@@ -9,6 +9,7 @@ import {
   NodeStatus,
   observer,
 } from '@patternfly/react-topology';
+import { useInterval } from '@patternfly/react-core';
 import {
   ViewOptionsContext,
   ViewOptionsProvider,
@@ -36,15 +37,25 @@ export const WorkflowOutputGraph = observer(
     const model = controller.toModel();
     const nodes = model.nodes;
     const message = useWorkflowOutput(props.reloadJob, props.job);
+
+    let newNode: WorkflowNode | undefined;
+
+    const getNode = async (nodeId: number | undefined) => {
+      if (!nodeId) return;
+
+      newNode = await requestGet<WorkflowNode>(awxAPI`/workflow_job_nodes/${nodeId.toString()}/`);
+    };
+
+    useInterval(() => {
+      if (['running', 'pending', 'waiting'].includes(props.job?.status ?? ''))
+        void getNode(message?.workflow_node_id);
+    }, 1000);
+
     const node = controller.getNodeById(message?.workflow_node_id?.toString() || '');
     const { refreshNodeStatus } = props;
     useEffect(() => {
-      const getElapsedTime = async (nodeId: number) => {
+      const getElapsedTime = (nodeId: number) => {
         if (!props.job || !nodeId) return;
-
-        const newNode: WorkflowNode | undefined = await requestGet<WorkflowNode>(
-          awxAPI`/workflow_job_nodes/${nodeId.toString()}/`
-        );
 
         node?.setData({
           ...node?.getData(),
@@ -88,7 +99,7 @@ export const WorkflowOutputGraph = observer(
       action(() => {
         node?.setNodeStatus(message.status as NodeStatus);
       })();
-    }, [node, message, props.job, t, nodes]);
+    }, [node, message, props.job, t, nodes, newNode]);
 
     useEffect(() => {
       refreshNodeStatus();
