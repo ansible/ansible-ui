@@ -25,6 +25,7 @@ import { EdaResult } from '../interfaces/EdaResult';
 import { EdaRoute } from '../main/EdaRoutes';
 import { Trans } from 'react-i18next';
 import { getDocsBaseUrl } from '../../awx/common/util/getDocsBaseUrl';
+import { PageFormSelectOrganization } from '../access/organizations/components/PageFormOrganizationSelect';
 
 function ProjectCreateInputs() {
   const { t } = useTranslation();
@@ -86,6 +87,7 @@ function ProjectCreateInputs() {
         placeholder={t('Enter description')}
         maxLength={150}
       />
+      <PageFormSelectOrganization<EdaProjectCreate> name="organization_id" />
       <PageFormTextInput
         name="type"
         aria-disabled={true}
@@ -232,6 +234,7 @@ function ProjectEditInputs() {
         placeholder={t('Enter description')}
         maxLength={150}
       />
+      <PageFormSelectOrganization<EdaProjectCreate> name="organization_id" />
       <PageFormTextInput
         name="type"
         aria-disabled={true}
@@ -397,7 +400,11 @@ export function EditProject() {
           onSubmit={onSubmit}
           cancelText={t('Cancel')}
           onCancel={onCancel}
-          defaultValue={{ ...project, eda_credential_id: project?.eda_credential?.id }}
+          defaultValue={{
+            ...project,
+            eda_credential_id: project?.eda_credential?.id,
+            organization_id: project?.organization?.id,
+          }}
         >
           <ProjectEditInputs />
         </EdaPageForm>

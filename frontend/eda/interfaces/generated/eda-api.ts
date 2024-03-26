@@ -403,8 +403,6 @@ export interface OrganizationRef {
   id: number;
   name: string;
   description?: string;
-  credential_type?: number;
-  username?: string | null;
 }
 
 export interface DecisionEnvironment {
@@ -912,6 +910,7 @@ export interface ProjectCreateRequest {
   name: string;
   description?: string;
   eda_credential_id?: number | null;
+  organization_id?: number | null;
   signature_validation_credential_id?: number | null;
   verify_ssl?: boolean;
 }
@@ -921,6 +920,7 @@ export interface ProjectRead {
   name: string;
   description?: string;
   eda_credential?: CredentialRef | null;
+  organization?: OrganizationRef | null;
   signature_validation_credential?: CredentialRef | null;
   verify_ssl?: boolean;
   id: number;
