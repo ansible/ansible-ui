@@ -538,7 +538,7 @@ function PageFormMultiSelectInventories() {
     <PageFormMultiSelectAwxResource<Inventory>
       name={'inventories'}
       id={'inventories'}
-      label={t('Inventories')}
+      label={t('Input Inventories')}
       placeholder={t('Select inventories')}
       queryPlaceholder={t('Loading inventories...')}
       queryErrorText={t('Error loading inventories')}
