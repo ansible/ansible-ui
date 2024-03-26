@@ -41,8 +41,8 @@ export function useAwxOrganizationRoutes() {
               element: <OrganizationDetails />,
             },
             {
-              id: AwxRoute.OrganizationAccess,
-              path: 'access',
+              id: AwxRoute.OrganizationUsers,
+              path: 'users',
               element: <OrganizationAccess />,
             },
             {

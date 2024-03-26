@@ -67,7 +67,7 @@ import {
 import { PageTableList } from './PageTableList';
 
 const ScrollDiv = styled.div`
-  height: 100%;
+  flex: 1;
 `;
 
 export type PageTableProps<T extends object> = {
