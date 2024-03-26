@@ -10,7 +10,7 @@ describe('Overview - Quick Starts', () => {
   it('checks the browse content titles user can see in the hands on quick starts on Automation Hub ', () => {
     cy.get('[data-cy="app-description"]').should(
       'have.text',
-      'Empower, Automate, Connect: Unleash possibilities with the Ansible Automation Platform.'
+      'Empower, automate, connect: Unleash possibilities with the Ansible Automation Platform.'
     );
     cy.get('[data-cy="quick-starts"]').within(() => {
       cy.get('[data-cy="card-title"]').should('have.text', 'Quick starts');
