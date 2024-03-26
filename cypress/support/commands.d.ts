@@ -1431,6 +1431,19 @@ declare global {
 
       platformLogin(): Chainable<void>;
       platformLogout(): Chainable<void>;
+      selectAuthenticationType(authenticationType: string): Cypress.Chainable<void>;
+      createLocalPlatformAuthenticator(
+        localAuthenticatorName: string,
+        isEnabled?: boolean
+      ): Cypress.Chainable<Authenticator>;
+      deleteLocalPlatformAuthenticator(
+        localAuthenticator: Authenticator,
+        options?: {
+          /** Whether to fail on response codes other than 2xx and 3xx */
+          failOnStatusCode?: boolean;
+        }
+      ): Cypress.Chainable<void>;
+
       createGlobalPlatformOrganization(): Chainable<void>;
       createPlatformTeam(platformTeam: Partial<PlatformTeam>): Cypress.Chainable<PlatformTeam>;
       deletePlatformTeam(
@@ -1462,6 +1475,7 @@ declare global {
       ): Cypress.Chainable<void>;
       searchAndDisplayResourceInModalPlatform(resourceName: string): Cypress.Chainable<void>;
       selectItemFromLookupModalPlatform(): Cypress.Chainable<void>;
+      searchAndDisplayResourceByName(resourceName: string): Cypress.Chainable<void>;
     }
   }
 }
