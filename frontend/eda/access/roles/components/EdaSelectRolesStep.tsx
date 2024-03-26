@@ -1,11 +1,11 @@
 import { useMemo } from 'react';
-import { EdaRbacRole } from '../../../interfaces/EdaRBACRole';
 import { ITableColumn, TextCell } from '../../../../../framework';
 import { useTranslation } from 'react-i18next';
 import { useEdaRolesFilters } from '../hooks/useEdaRolesFilters';
 import { useEdaView } from '../../../common/useEventDrivenView';
 import { edaAPI } from '../../../common/eda-utils';
 import { SelectRolesStep } from '../../../../common/access/RolesWizard/steps/SelectRolesStep';
+import { EdaRbacRole } from '../../../interfaces/EdaRbacRole';
 
 export function EdaSelectRolesStep(props: { contentType: string }) {
   const toolbarFilters = useEdaRolesFilters();
