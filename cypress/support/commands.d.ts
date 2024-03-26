@@ -858,6 +858,13 @@ declare global {
           failOnStatusCode?: boolean;
         }
       ): Chainable<void>;
+      deleteAwxExecutionEnvironment(
+        executionEnvironment: ExecutionEnvironment,
+        options?: {
+          /** Whether to fail on response codes other than 2xx and 3xx */
+          failOnStatusCode?: boolean;
+        }
+      ): Chainable<void>;
       deleteAwxCredential(
         credential: Credential,
         options?: {

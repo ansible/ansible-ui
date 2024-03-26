@@ -157,6 +157,8 @@ export function InventorySourceDetails(props: {
     satellite6:
       'https://docs.ansible.com/ansible/latest/collections/theforeman/foreman/foreman_inventory.html',
     rhv: 'https://docs.ansible.com/ansible/latest/collections/ovirt/ovirt/ovirt_inventory.html',
+    terraform:
+      'https://github.com/ansible-collections/cloud.terraform/blob/main/plugins/inventory/terraform_state.py',
     vmware:
       'https://docs.ansible.com/ansible/latest/collections/community/vmware/vmware_vm_inventory_inventory.html',
     constructed:
