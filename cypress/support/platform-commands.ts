@@ -4,6 +4,7 @@ import { gatewayV1API } from '../../platform/api/gateway-api-utils';
 import { PlatformOrganization } from '../../platform/interfaces/PlatformOrganization';
 import { PlatformUser } from '../../platform/interfaces/PlatformUser';
 import { PlatformTeam } from '../../platform/interfaces/PlatformTeam';
+import { Authenticator } from '../../platform/interfaces/Authenticator';
 
 /* The `Cypress.Commands.add('platformLogin', () => { ... })` function is a custom Cypress command that
 handles the login process for a platform application. Here's a breakdown of what it does: */
@@ -52,6 +53,33 @@ Cypress.Commands.add('platformLogout', () => {
       cy.wait('@logout');
     });
 });
+
+Cypress.Commands.add(
+  'createLocalPlatformAuthenticator',
+  (localAuthenticatorName: string, isEnabled?: boolean) => {
+    cy.requestPost('api/gateway/v1/authenticators/', {
+      name: localAuthenticatorName,
+      type: 'ansible_base.authentication.authenticator_plugins.local',
+      configuration: {},
+      enabled: isEnabled,
+    });
+  }
+);
+
+Cypress.Commands.add(
+  'deleteLocalPlatformAuthenticator',
+  (
+    localAuthenticator: Authenticator,
+    options?: {
+      /** Whether to fail on response codes other than 2xx and 3xx */
+      failOnStatusCode?: boolean;
+    }
+  ) => {
+    if (localAuthenticator.id !== 1) {
+      cy.requestDelete(gatewayV1API`/authenticators/${localAuthenticator.id.toString()}/`, options);
+    }
+  }
+);
 
 /* The `Cypress.Commands.add('createPlatformOrganization', () => { ... })` function is a custom Cypress
 command that is responsible for creating a new platform organization. Here's a breakdown of what it
@@ -165,4 +193,20 @@ Cypress.Commands.add('selectItemFromLookupModalPlatform', () => {
     });
     cy.clickButton(/^Save/);
   });
+});
+
+Cypress.Commands.add('selectAuthenticationType', (authenticationType: string) => {
+  cy.get('[data-cy="authentication-type-select-form-group"] [data-ouia-component-id="menu-select"]')
+    .click()
+    .within(() => {
+      cy.get(`[data-cy="${authenticationType}"]`).click();
+    });
+});
+
+Cypress.Commands.add('searchAndDisplayResourceByName', (resourceName: string) => {
+  cy.get('[data-ouia-component-id="page-toolbar"]').within(() => {
+    cy.get('button[data-cy="filter"]').click();
+  });
+  cy.get('.pf-v5-c-menu [data-cy="name"]').click();
+  cy.get('[data-cy="text-input"]').find('input').type(resourceName);
 });
