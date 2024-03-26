@@ -1,5 +1,5 @@
 import React from 'react';
-import { t } from '@lingui/macro';
+import { useTranslation } from 'react-i18next';
 import {
   Alert,
   AlertActionLink,
@@ -16,7 +16,7 @@ import {
   CardBody,
 } from '@patternfly/react-core';
 import {
-  TableComposable,
+  Table,
   Thead,
   Tr,
   Th,
@@ -24,10 +24,10 @@ import {
   Td,
 } from '@patternfly/react-table';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
-import { useConfig } from 'contexts/Config';
 
 export function ConstructedInventoryHint() {
-  const config = useConfig();
+  //const config = useConfig();
+  const {t} = useTranslation();
 
   return (
     <Alert
@@ -37,9 +37,9 @@ export function ConstructedInventoryHint() {
       title={t`How to use constructed inventory plugin`}
       actionLinks={
         <AlertActionLink
-          href={`${getDocsBaseUrl(
+          href={`${/*getDocsBaseUrl(
             config
-          )}/html/userguide/inventories.html#constructed-inventories`}
+          )*/''}/html/userguide/inventories.html#constructed-inventories`}
           component="a"
           target="_blank"
           rel="noopener noreferrer"
@@ -58,7 +58,7 @@ export function ConstructedInventoryHint() {
       </span>
       <br />
       <br />
-      <TableComposable
+      <Table
         aria-label={t`Constructed inventory parameters table`}
         variant="compact"
       >
@@ -116,7 +116,7 @@ export function ConstructedInventoryHint() {
             </Td>
           </Tr>
         </Tbody>
-      </TableComposable>
+      </Table>
       <br />
       <br />
       <Panel>
@@ -134,12 +134,13 @@ export function ConstructedInventoryHint() {
 }
 
 function LimitToIntersectionExample() {
+  const {t} = useTranslation();
   const [copied, setCopied] = React.useState(false);
-  const clipboardCopyFunc = (event, text) => {
+  const clipboardCopyFunc = (event : unknown, text : string) => {
     navigator.clipboard.writeText(text.toString());
   };
 
-  const onClick = (event, text) => {
+  const onClick = (event : unknown, text : string) => {
     clipboardCopyFunc(event, text);
     setCopied(true);
   };
@@ -203,12 +204,13 @@ groups:
   );
 }
 function FilterOnNestedGroupExample() {
+  const {t} = useTranslation();
   const [copied, setCopied] = React.useState(false);
-  const clipboardCopyFunc = (event, text) => {
+  const clipboardCopyFunc = (event : unknown, text : string) => {
     navigator.clipboard.writeText(text.toString());
   };
 
-  const onClick = (event, text) => {
+  const onClick = (event : unknown, text : string) => {
     clipboardCopyFunc(event, text);
     setCopied(true);
   };
@@ -289,12 +291,13 @@ function FilterOnNestedGroupExample() {
   );
 }
 function HostsByProcessorTypeExample() {
+  const {t} = useTranslation();
   const [copied, setCopied] = React.useState(false);
-  const clipboardCopyFunc = (event, text) => {
+  const clipboardCopyFunc = (event : unknown, text : string) => {
     navigator.clipboard.writeText(text.toString());
   };
 
-  const onClick = (event, text) => {
+  const onClick = (event : unknown, text : string) => {
     clipboardCopyFunc(event, text);
     setCopied(true);
   };
@@ -356,7 +359,7 @@ groups:
   );
 }
 
-export default function getDocsBaseUrl(config) {
+export default function getDocsBaseUrl(config : any) {
   let version = 'latest';
   const licenseType = config?.license_info?.license_type;
 
