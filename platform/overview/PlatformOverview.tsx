@@ -47,7 +47,7 @@ export function PlatformOverview() {
                 <PageDashboardCard
                   key={resource.id}
                   width="xxl"
-                  title={t('Quick Starts')}
+                  title={t('Quick starts')}
                   subtitle={t('Learn Ansible automation with hands-on quick starts.')}
                   canCollapse
                 >
