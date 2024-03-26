@@ -35,6 +35,7 @@ import { TFunction } from 'i18next';
 import { PageFormSingleSelect } from '../../../../framework/PageForm/Inputs/PageFormSingleSelect';
 import { AwxError } from '../../common/AwxError';
 
+
 // TODO - filter for query string not__kind=smart&not__kind=constructed
 
 export type InventoryCreate = Inventory & {
