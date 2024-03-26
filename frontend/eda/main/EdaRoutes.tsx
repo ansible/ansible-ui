@@ -22,6 +22,8 @@ export enum EdaRoute {
   EditProject = 'eda-edit-project',
   ProjectPage = 'eda-project-page',
   ProjectDetails = 'eda-project-details',
+  ProjectUsers = 'eda-project-users',
+  ProjectAddUsers = 'eda-project-add-users',
 
   DecisionEnvironments = 'eda-decision-environments',
   CreateDecisionEnvironment = 'eda-create-decision-environment',
