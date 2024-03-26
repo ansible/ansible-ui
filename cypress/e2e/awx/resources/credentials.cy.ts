@@ -44,7 +44,6 @@ describe('credentials', () => {
   });
 
   after(() => {
-    cy.deleteAwxCredential(credential, { failOnStatusCode: false });
     cy.deleteAwxUser(user, { failOnStatusCode: false });
     cy.requestDelete(awxAPI`/organizations/${organization.id.toString()}/`, {
       failOnStatusCode: false,
