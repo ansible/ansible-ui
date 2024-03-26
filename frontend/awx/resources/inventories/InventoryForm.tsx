@@ -36,7 +36,6 @@ import { PageFormSingleSelect } from '../../../../framework/PageForm/Inputs/Page
 import { AwxError } from '../../common/AwxError';
 import { ConstructedInventoryHint } from './components/ConstructedInventoryHint';
 
-
 // TODO - filter for query string not__kind=smart&not__kind=constructed
 
 export type InventoryCreate = Inventory & {
@@ -360,7 +359,7 @@ function InventoryInputs(props: { inventoryKind: string }) {
             ]}
           />
           <PageFormSection singleColumn>
-            <ConstructedInventoryHint/>
+            <ConstructedInventoryHint />
           </PageFormSection>
           <PageFormTextInput
             name="limit"
@@ -369,7 +368,7 @@ function InventoryInputs(props: { inventoryKind: string }) {
             labelHelp={t(
               `The limit to restrict the returned hosts for the related auto-created inventory source, special to constructed inventory.`
             )}
-          />        
+          />
         </>
       )}
       {inventoryKind === '' && (
