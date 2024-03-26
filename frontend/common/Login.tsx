@@ -15,16 +15,26 @@ const Wrapper = styled.div`
   background-position: center;
   background-size: cover;
 `;
+const Logo = styled.img`
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  width: 500px; /* Adjust size as needed */
+  height: auto;
+`;
 
 const Inner = styled.div`
-  max-inline-size: 550px;
-  margin-inline: auto;
+  max-width: 550px;
+  margin: 0 auto;
   padding: 3rem 3.5rem;
   background-color: var(--pf-v5-global--BackgroundColor--100);
 
   .pf-v5-theme-dark & {
     background-color: var(--pf-v5-global--BackgroundColor--300);
   }
+`;
+const LeftHalf = styled.div`
+  width: 50%; /* Take up 50% of the width */
 `;
 
 const Heading = styled(Title)`
@@ -45,17 +55,20 @@ export function Login(props: LoginProps) {
   return (
     <ErrorBoundary message={translations.errorText}>
       <Wrapper>
-        <Inner>
-          <Heading headingLevel="h1" size={TitleSizes['2xl']}>
-            {t('Welcome to {{productName}}', { productName })}
-          </Heading>
-          <LoginForm
-            apiUrl={props.apiUrl}
-            authOptions={props.authOptions}
-            onLoginUrl={props.onLoginUrl}
-            hideInputs={props.hideInputs}
-          />
-        </Inner>
+        <LeftHalf>
+          <Inner>
+            <Heading headingLevel="h1" size={TitleSizes['2xl']}>
+              {t('Welcome to {{productName}}', { productName })}
+            </Heading>
+            <LoginForm
+              apiUrl={props.apiUrl}
+              authOptions={props.authOptions}
+              onLoginUrl={props.onLoginUrl}
+              hideInputs={props.hideInputs}
+            />
+          </Inner>
+        </LeftHalf>
+        <Logo src="/static/media/brand-logo.svg" alt="Logo" />
       </Wrapper>
     </ErrorBoundary>
   );
