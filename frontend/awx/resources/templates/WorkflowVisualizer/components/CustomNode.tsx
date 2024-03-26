@@ -42,7 +42,7 @@ export const CustomNode: FC<
 
   const id = element.getId();
   const data = element.getData();
-  if ((!jobType && id !== START_NODE_ID) || !isNode(element)) return null;
+  if (!data && isNode(element)) return null;
 
   const Icon = NodeIcon[jobType ?? 'deleted_resource'];
 
