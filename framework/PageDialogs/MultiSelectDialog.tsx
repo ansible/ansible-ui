@@ -84,6 +84,7 @@ export function MultiSelectDialog<T extends object>(props: MultiSelectDialogProp
           emptyStateTitle={emptyStateTitle}
           errorStateTitle={errorStateTitle}
           maxSelections={maxSelections}
+          isCompact
         />
       </ModalBoxBody>
     </Modal>
