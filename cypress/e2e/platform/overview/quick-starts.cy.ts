@@ -10,14 +10,14 @@ describe('Overview - Quick Starts', () => {
   it('checks the browse content titles user can see in the hands on quick starts on Automation Hub ', () => {
     cy.get('[data-cy="app-description"]').should(
       'have.text',
-      'Empower, Automate, Connect: Unleash Possibilities with the Ansible Automation Platform.'
+      'Empower, automate, connect: Unleash possibilities with the Ansible Automation Platform.'
     );
     cy.get('[data-cy="quick-starts"]').within(() => {
       cy.get('[data-cy="card-title"]').should('have.text', 'Quick starts');
 
       cy.get('[data-cy="card-subtitle"]').should(
         'have.text',
-        'Learn Ansible automation with hands-on quickstarts.'
+        'Learn Ansible automation with hands-on quick starts.'
       );
       cy.contains('p', 'Finding content in Ansible Automation Platform');
       cy.get('.pfext-markdown-view.pfext-quick-start-tile-description').should(
