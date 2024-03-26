@@ -61,6 +61,6 @@ describe('schedules', () => {
   it('loads the correct options for the schedule wizard', () => {
     cy.navigateTo('awx', 'schedules');
     cy.getBy('[data-cy="create-schedule"]').click();
-    cy.get('.pf-v5-c-form__label-text').contains(/Resource Type/);
+    cy.get('.pf-v5-c-form__label-text').contains(/Resource type/);
   });
 });
