@@ -71,6 +71,6 @@ export interface LaunchConfiguration {
     name: string;
     id: number;
     description: string;
-    survey_enabled: string;
+    survey_enabled: boolean;
   };
 }

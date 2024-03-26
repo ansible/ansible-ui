@@ -13,14 +13,13 @@ import { dateToInputDateTime } from '../../../../../framework/utils/dateTimeHelp
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { ScheduleFormWizard } from '../types';
 import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
-import { useGetTimezones } from '../hooks/useGetTimezones';
 import { OccurrencesStep } from './OccurrencesStep';
 import { Frequency, RRule } from 'rrule';
 import { ExceptionsStep } from './ExceptionsStep';
-import { ScheduleInputs } from '../components/ScheduleInputs';
 import { PromptInputs } from '../components/PromptInputs';
 import { ScheduleSurveyStep } from './ScheduleSurveyStep';
 import { LaunchConfiguration } from '../../../interfaces/LaunchConfiguration';
+import { NodeTypeStep } from '../../../resources/templates/WorkflowVisualizer/wizard/NodeTypeStep';
 
 export function ScheduleAddWizard() {
   const { t } = useTranslation();
@@ -52,13 +51,11 @@ export function ScheduleAddWizard() {
 
   const onCancel = () => navigate(-1);
 
-  const { timeZones, links } = useGetTimezones();
-
   const steps: PageWizardStep[] = [
     {
       id: 'details',
       label: t('Details'),
-      inputs: <ScheduleInputs onError={() => {}} zoneLinks={links} timeZones={timeZones} />,
+      inputs: <NodeTypeStep />,
     },
     {
       id: 'promptsStep',

@@ -37,8 +37,8 @@ export function PageFormJobTemplateSelect<
       id="job-template-select"
       label={
         props.templateType === 'workflow_job_templates'
-          ? t('Workflow Job Template')
-          : t('Job Template')
+          ? t('Workflow job template')
+          : t('Job template')
       }
       query={query}
       valueToString={(value) => {
