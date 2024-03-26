@@ -1,7 +1,7 @@
 import { PageSection } from '@patternfly/react-core';
 import { useCallback, useEffect } from 'react';
 import { useFormState } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { PageForm } from '../PageForm/PageForm';
 import { PageWizardFooter } from './PageWizardFooter';
 import { usePageWizard, isStepVisible } from './PageWizardProvider';
@@ -27,6 +27,7 @@ export function PageWizardBody<T>({
     visibleSteps,
     wizardData,
   } = usePageWizard();
+  const [_, setSearchParams] = useSearchParams();
 
   const onClose = useCallback((): void => {
     if (onCancel) {
@@ -58,6 +59,8 @@ export function PageWizardBody<T>({
       const activeStepIndex = filteredSteps.findIndex((step) => step.id === activeStep?.id);
       const nextStep = filteredSteps[activeStepIndex + 1];
 
+      // Clear search params
+      setSearchParams(new URLSearchParams(''));
       setWizardData((prev: object) => ({ ...prev, ...formData }));
       setStepData((prev) => ({ ...prev, [activeStep?.id]: formData }));
       setVisibleSteps(filteredSteps);
@@ -69,6 +72,7 @@ export function PageWizardBody<T>({
       allSteps,
       onSubmit,
       setActiveStep,
+      setSearchParams,
       setStepData,
       setVisibleSteps,
       setWizardData,
@@ -79,8 +83,10 @@ export function PageWizardBody<T>({
   const onBack = useCallback(() => {
     const activeStepIndex = visibleSteps.findIndex((step) => step.id === activeStep?.id);
     const previousStep = visibleSteps[activeStepIndex - 1];
+    // Clear search params
+    setSearchParams(new URLSearchParams(''));
     setActiveStep(previousStep);
-  }, [activeStep, visibleSteps, setActiveStep]);
+  }, [visibleSteps, setSearchParams, setActiveStep, activeStep?.id]);
 
   return (
     <>

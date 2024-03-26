@@ -46,6 +46,8 @@ import { CreateWebhook, EditWebhook } from '../webhooks/EditWebhook';
 import { WebhookPage } from '../webhooks/WebhookPage/WebhookPage';
 import { WebhookDetails } from '../webhooks/WebhookPage/WebhookDetails';
 import { Webhooks } from '../webhooks/Webhooks';
+import { EdaProjectAddUsers } from '../projects/components/EdaProjectAddUsers';
+import { PageNotImplemented } from '../../../framework';
 
 export function useEdaNavigation() {
   const { t } = useTranslation();
@@ -175,7 +177,17 @@ export function useEdaNavigation() {
               path: '',
               element: <Navigate to="details" />,
             },
+            {
+              id: EdaRoute.ProjectUsers,
+              path: 'users',
+              element: <PageNotImplemented />,
+            },
           ],
+        },
+        {
+          id: EdaRoute.ProjectAddUsers,
+          path: ':id/users/add-users',
+          element: <EdaProjectAddUsers />,
         },
         {
           path: '',
