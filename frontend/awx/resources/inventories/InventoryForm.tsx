@@ -36,8 +36,6 @@ import { PageFormSingleSelect } from '../../../../framework/PageForm/Inputs/Page
 import { AwxError } from '../../common/AwxError';
 import { ConstructedInventoryHint } from './components/ConstructedInventoryHint';
 
-// TODO - filter for query string not__kind=smart&not__kind=constructed
-
 export type InventoryCreate = Inventory & {
   instanceGroups: InstanceGroup[];
   labels: Label[];
@@ -76,7 +74,11 @@ export function CreateInventory(props: { inventoryKind: '' | 'constructed' | 'sm
       promises.push(submitInstanceGroups(newInventory, instanceGroups ?? [], []));
 
     // Update new inventory with selected input inventories
-    if (data?.inventories?.length && data.inventories.length > 0) {
+    if (
+      props.inventoryKind === 'constructed' &&
+      data?.inventories?.length &&
+      data.inventories.length > 0
+    ) {
       promises.push(submitInputInventories(newInventory, inputInventories || [], []));
     }
 
@@ -141,6 +143,7 @@ export function CreateInventory(props: { inventoryKind: '' | 'constructed' | 'sm
       <AwxPageForm
         submitText={t('Create inventory')}
         onSubmit={onSubmit}
+        disableSubmitOnEnter={true}
         onCancel={() => pageNavigate(AwxRoute.Inventories)}
         defaultValue={defaultValue}
       >
@@ -177,6 +180,7 @@ export function EditInventory() {
 
   // Fetch instance groups associated with the inventory
   const originalInstanceGroups = igResponse?.results;
+
   const onSubmit: PageFormSubmitHandler<InventoryCreate> = async (data) => {
     const { organization, labels, instanceGroups, ...editedInventory } = data;
 
@@ -197,10 +201,16 @@ export function EditInventory() {
       submitInstanceGroups(updatedInventory, instanceGroups ?? [], originalInstanceGroups ?? [])
     );
 
-    promises.push(submitLabels(inventory as Inventory, labels || []));
+    if (params.inventory_type === 'smart_inventory') {
+      promises.push(submitLabels(inventory as Inventory, labels || []));
+    }
 
     // Update new inventory with selected input inventories
-    if (data?.inventories?.length && data.inventories.length > 0) {
+    if (
+      params.inventory_type === 'constructed_inventory' &&
+      data?.inventories?.length &&
+      data.inventories.length > 0
+    ) {
       promises.push(
         submitInputInventories(
           data,
@@ -279,6 +289,7 @@ export function EditInventory() {
       <AwxPageForm<InventoryCreate>
         submitText={t('Save inventory')}
         onSubmit={onSubmit}
+        disableSubmitOnEnter={true}
         onCancel={() =>
           pageNavigate(AwxRoute.InventoryDetails, {
             params: { id, inventory_type: kinds[inventory.kind] },
