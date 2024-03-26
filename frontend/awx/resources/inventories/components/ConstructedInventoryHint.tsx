@@ -24,9 +24,11 @@ import {
   Td,
 } from '@patternfly/react-table';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
+import { useAwxConfig } from '../../../common/useAwxConfig';
+import { getDocsBaseUrl } from '../../../common/util/getDocsBaseUrl';
 
 export function ConstructedInventoryHint() {
-  //const config = useConfig();
+  const config = useAwxConfig();
   const {t} = useTranslation();
 
   return (
@@ -37,9 +39,9 @@ export function ConstructedInventoryHint() {
       title={t`How to use constructed inventory plugin`}
       actionLinks={
         <AlertActionLink
-          href={`${/*getDocsBaseUrl(
+          href={`${getDocsBaseUrl(
             config
-          )*/''}/html/userguide/inventories.html#constructed-inventories`}
+          )}/html/userguide/inventories.html#constructed-inventories`}
           component="a"
           target="_blank"
           rel="noopener noreferrer"
@@ -122,7 +124,12 @@ export function ConstructedInventoryHint() {
       <Panel>
         <CardBody>
           <Form autoComplete="off">
-            <b>{t`Constructed inventory examples`}</b>
+          <div style={{ 
+                paddingTop : 25,
+                paddingLeft : 20,
+            }}>
+                <b>{t`Constructed inventory examples`}</b>
+            </div>
             <LimitToIntersectionExample />
             <FilterOnNestedGroupExample />
             <HostsByProcessorTypeExample />
@@ -357,17 +364,6 @@ groups:
       </FormGroup>
     </FormFieldGroupExpandable>
   );
-}
-
-export default function getDocsBaseUrl(config : any) {
-  let version = 'latest';
-  const licenseType = config?.license_info?.license_type;
-
-  if (licenseType && licenseType !== 'open' && config?.version) {
-    version = parseFloat(config?.version.split('-')[0]).toFixed(1);
-  }
-
-  return `https://docs.ansible.com/automation-controller/${version}`;
 }
 
 
