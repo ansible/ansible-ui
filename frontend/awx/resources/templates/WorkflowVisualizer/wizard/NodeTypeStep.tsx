@@ -516,7 +516,7 @@ function ScheduleAddResource() {
         name="resource_type"
         id="resource_type"
         data-cy="resource-type"
-        label={t('Resource Type')}
+        label={t('Resource type')}
         options={[
           { label: t('Job template'), value: 'job_template' },
           { label: t('Workflow job template'), value: 'workflow_job_template' },
@@ -606,7 +606,7 @@ function ScheduleDetails() {
         <PageFormTextInput<ScheduleFormWizard>
           name={'name'}
           isRequired
-          label={t('Schedule Name')}
+          label={t('Schedule name')}
         />
         <PageFormTextInput<ScheduleFormWizard> name={'description'} label={t('Description')} />
         <PageFormDateTimePicker<ScheduleFormWizard>
