@@ -106,7 +106,7 @@ export function OrganizationPageTabs(props: { organization: Organization }) {
       }}
       tabs={[
         { label: t('Details'), page: AwxRoute.OrganizationDetails },
-        { label: t('Access'), page: AwxRoute.OrganizationAccess },
+        { label: t('Users'), page: AwxRoute.OrganizationUsers },
         { label: t('Teams'), page: AwxRoute.OrganizationTeams },
         { label: t('Execution environments'), page: AwxRoute.OrganizationExecutionEnvironments },
         { label: t('Notifications'), page: AwxRoute.OrganizationNotifications },
