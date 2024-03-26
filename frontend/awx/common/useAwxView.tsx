@@ -109,7 +109,7 @@ export function useAwxView<T extends { id: number }>(options: {
               }
             } else {
               if (toolbarFilter.type === ToolbarFilterType.DateRange) {
-                const date = new Date(Date.now() - 24 * 60 * 60 * 1000);
+                const date = new Date(Date.now());
                 date.setSeconds(0);
                 date.setMilliseconds(0);
                 switch (values[0] as DateRangeFilterPresets) {
