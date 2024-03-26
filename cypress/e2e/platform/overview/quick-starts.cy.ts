@@ -17,7 +17,7 @@ describe('Overview - Quick Starts', () => {
 
       cy.get('[data-cy="card-subtitle"]').should(
         'have.text',
-        'Learn Ansible automation with hands-on quickstarts.'
+        'Learn Ansible automation with hands-on quick starts.'
       );
       cy.contains('p', 'Finding content in Ansible Automation Platform');
       cy.get('.pfext-markdown-view.pfext-quick-start-tile-description').should(
