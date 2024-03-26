@@ -201,7 +201,7 @@ export function EditInventory() {
       submitInstanceGroups(updatedInventory, instanceGroups ?? [], originalInstanceGroups ?? [])
     );
 
-    if (params.inventory_type === 'smart_inventory') {
+    if (params.inventory_type === 'inventory') {
       promises.push(submitLabels(inventory as Inventory, labels || []));
     }
 
