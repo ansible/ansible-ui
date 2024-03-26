@@ -6,47 +6,70 @@ describe('Organizations - create, edit and delete', () => {
   const organizationName = 'Platform E2E Organization ' + randomString(4);
   const listEditedOrganizationName = `edited Organization ${randomString(4)}`;
   const detailsEditedOrganizationName = `edited Organization ${randomString(4)}`;
-
-  beforeEach(() => {
-    cy.navigateTo('platform', 'organizations');
-    cy.verifyPageTitle('Organizations');
-  });
+  let organization: PlatformOrganization;
 
   before(() => {
     cy.platformLogin();
   });
 
-  it('creates a basic organization', () => {
+  beforeEach(() => {
+    cy.createPlatformOrganization().then((org) => {
+      organization = org;
+    });
+
+    cy.navigateTo('platform', 'organizations');
+    cy.verifyPageTitle('Organizations');
+    cy.setTableView('table');
+  });
+
+  afterEach(() => {
+    cy.deletePlatformOrganization(organization, { failOnStatusCode: false });
+  });
+
+  it('creates a basic organization and deletes it from the details screen', () => {
     cy.get('[data-cy="create-organization"]').click();
     cy.get('[data-cy="name"]').type(organizationName);
     cy.clickButton(/^Create organization$/);
     cy.verifyPageTitle(organizationName);
+    cy.clickPageAction('delete-organization');
+    cy.get('#confirm').click();
+    cy.intercept('DELETE', gatewayV1API`/organizations/*`).as('delete');
+    cy.clickButton(/^Delete organization/);
+    cy.wait('@delete');
   });
 
   it('renders the organization details page', () => {
-    cy.setTableView('table');
-    cy.clickTableRow(organizationName);
-    cy.verifyPageTitle(organizationName);
+    cy.filterTableByTextFilter('name', organization.name, { disableFilterSelection: true });
+    cy.getByDataCy('name-column-cell').contains(organization.name).click();
+    cy.verifyPageTitle(organization.name);
     cy.clickLink(/^Details$/);
-    cy.contains('#name', organizationName);
+    cy.contains('#name', organization.name);
   });
 
   it('edits an organization from the list view', () => {
-    cy.getTableRowByText(organizationName).within(() => {
-      cy.get('#edit-organization').click();
-    });
+    cy.filterTableByTextFilter('name', organization.name, { disableFilterSelection: true });
+    cy.getByDataCy('edit-organization').click();
     cy.verifyPageTitle('Edit organization');
     cy.get('[data-cy="name"]').clear().type(`${listEditedOrganizationName} from list page`);
+    const orgId = `${organization.id}`.toString();
+    cy.intercept('PATCH', gatewayV1API`/organizations/${orgId}`).as('edited');
     cy.clickButton(/^Save organization$/);
-    cy.verifyPageTitle('Organizations');
-    cy.clickButton(/^Clear all filters$/);
+    cy.wait('@edited')
+      .its('response.body.name')
+      .then((editedName) => {
+        cy.verifyPageTitle('Organizations');
+        cy.clickButton(/^Clear all filters$/);
+        cy.filterTableByTextFilter('name', `${editedName}`, { disableFilterSelection: true });
+        cy.getByDataCy('name-column-cell').should('contain', `${editedName}`);
+      });
   });
 
   it('deletes an organization from the organizations list view', () => {
-    cy.clickTableRowKebabAction(
-      `${listEditedOrganizationName} from list page`,
-      'delete-organization'
-    );
+    cy.filterTableByTextFilter('name', organization.name, { disableFilterSelection: true });
+    cy.clickTableRowAction('name', organization.name, 'delete-organization', {
+      inKebab: true,
+      disableFilter: true,
+    });
     cy.get('#confirm').click();
     cy.clickButton(/^Delete organization/);
     cy.contains(/^Success$/);
@@ -55,29 +78,20 @@ describe('Organizations - create, edit and delete', () => {
   });
 
   it('edits an organization from the details view', () => {
-    cy.createPlatformOrganization().then((organization: PlatformOrganization) => {
-      const orgName = organization?.name;
-      cy.setTableView('table');
-      cy.clickTableRow(orgName);
-      cy.verifyPageTitle(orgName);
-      cy.get('[data-cy="edit-organization"]').click();
-      cy.verifyPageTitle('Edit organization');
-      cy.get('[data-cy="name"]').clear().type(`${detailsEditedOrganizationName} from details page`);
-      cy.clickButton(/^Save organization$/);
-      cy.verifyPageTitle(`${detailsEditedOrganizationName} from details page`);
-    });
-  });
-
-  it('deletes an organization from the organizations details page', () => {
-    cy.clickTableRow(`${detailsEditedOrganizationName} from details page`);
-    cy.verifyPageTitle(`${detailsEditedOrganizationName} from details page`);
-    cy.clickLink(/^Details$/);
-    cy.contains('#name', `${detailsEditedOrganizationName} from details page`);
-    cy.clickPageAction('delete-organization');
-    cy.get('#confirm').click();
-    cy.intercept('DELETE', gatewayV1API`/organizations/*`).as('delete');
-    cy.clickButton(/^Delete organization/);
-    cy.wait('@delete');
+    cy.filterTableByTextFilter('name', organization.name, { disableFilterSelection: true });
+    cy.getByDataCy('name-column-cell').contains(organization.name).click();
+    cy.verifyPageTitle(organization.name);
+    cy.get('[data-cy="edit-organization"]').click();
+    cy.verifyPageTitle('Edit organization');
+    cy.get('[data-cy="name"]').clear().type(`${detailsEditedOrganizationName} from details page`);
+    const orgId = `${organization.id}`.toString();
+    cy.intercept('PATCH', gatewayV1API`/organizations/${orgId}`).as('edited');
+    cy.clickButton(/^Save organization$/);
+    cy.wait('@edited')
+      .its('response.body.name')
+      .then((editedName) => {
+        cy.verifyPageTitle(`${editedName}`);
+      });
   });
 
   it('bulk create and delete organization from the organizations list toolbar', () => {
