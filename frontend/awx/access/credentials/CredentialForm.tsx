@@ -36,7 +36,10 @@ export function CreateCredential() {
   const postRequest = usePostRequest<Credential>();
   const getPageUrl = useGetPageUrl();
   const onSubmit: PageFormSubmitHandler<CredentialForm> = async (credential) => {
-    credential.user = activeUser?.id;
+    // can send only one of org, user, team
+    if (!credential.organization) {
+      credential.user = activeUser?.id;
+    }
     const newCredential = await postRequest(awxAPI`/credentials/`, credential);
     pageNavigate(AwxRoute.CredentialDetails, { params: { id: newCredential.id } });
   };
@@ -71,7 +74,10 @@ export function EditCredential() {
   const patch = usePatchRequest();
 
   const onSubmit: PageFormSubmitHandler<CredentialForm> = async (editedCredential) => {
-    editedCredential.user = activeUser?.id;
+    // can send only one of org, user, team
+    if (!editedCredential.organization) {
+      editedCredential.user = activeUser?.id;
+    }
     await patch(awxAPI`/credentials/${id.toString()}/`, editedCredential);
     navigate(-1);
   };
