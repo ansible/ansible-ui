@@ -13,7 +13,7 @@ interface SelectRolesStepProps<T extends object> {
 }
 
 const StyledTitle = styled(Title)`
-  margin-bottom: 4vh;
+  margin-bottom: 1rem;
 `;
 
 export function SelectRolesStep<T extends object>(props: SelectRolesStepProps<T>) {
