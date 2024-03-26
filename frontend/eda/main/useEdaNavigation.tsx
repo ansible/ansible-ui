@@ -59,6 +59,8 @@ import {
 } from '../access/credential-types/CredentialTypeForm';
 import { EdaRoute } from './EdaRoutes';
 import { useEdaOrganizationRoutes } from './routes/useEdaOrganizationsRoutes';
+import { EdaProjectAddUsers } from '../projects/components/EdaProjectAddUsers';
+import { PageNotImplemented } from '../../../framework';
 
 export function useEdaNavigation() {
   const { t } = useTranslation();
@@ -199,7 +201,17 @@ export function useEdaNavigation() {
               path: '',
               element: <Navigate to="details" />,
             },
+            {
+              id: EdaRoute.ProjectUsers,
+              path: 'users',
+              element: <PageNotImplemented />,
+            },
           ],
+        },
+        {
+          id: EdaRoute.ProjectAddUsers,
+          path: ':id/users/add-users',
+          element: <EdaProjectAddUsers />,
         },
         {
           path: '',
