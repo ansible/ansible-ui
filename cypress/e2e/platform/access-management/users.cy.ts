@@ -72,13 +72,7 @@ describe('Users - create, edit and delete', () => {
         // Logout and log back in as admin to delete newly created user
         cy.platformLogout();
         cy.platformLogin();
-        cy.navigateTo('platform', 'users');
-        cy.filterTableBySingleText(`${createdUser.username}`);
-        cy.get('#select-all').click();
-        cy.clickToolbarKebabAction('delete-selected-users');
-        cy.get('#confirm').click();
-        cy.clickButton(/^Delete users/);
-        cy.clickButton('Close');
+        cy.deletePlatformUser(createdUser);
       });
   });
 });
