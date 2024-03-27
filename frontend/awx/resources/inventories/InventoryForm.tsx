@@ -26,8 +26,6 @@ import { InstanceGroup } from '../../interfaces/InstanceGroup';
 import { Inventory } from '../../interfaces/Inventory';
 import { Label } from '../../interfaces/Label';
 import { AwxRoute } from '../../main/AwxRoutes';
-import { data } from 'cypress/types/jquery';
-import { useEffect, useMemo, useState } from 'react';
 
 export type InventoryCreate = Inventory & {
   instanceGroups: InstanceGroup[];

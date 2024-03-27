@@ -1,9 +1,10 @@
+import { CyHttpMessages } from 'cypress/types/net-stubbing';
 import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 import { InstanceGroup } from '../../interfaces/InstanceGroup';
 import { Inventory } from '../../interfaces/Inventory';
 import { Label } from '../../interfaces/Label';
 import { Organization } from '../../interfaces/Organization';
-import { CreateInventory, EditInventory } from './InventoryForm';
+import { CreateInventory, EditInventory, InventoryCreate } from './InventoryForm';
 
 describe('Create Edit Inventory Form', () => {
   const payload = {
@@ -141,7 +142,7 @@ describe('Create Edit Inventory Form', () => {
           inventory.prevent_instance_group_fallback = payload.prevent_instance_group_fallback;
           inventory.organization = payload.organization;
         })
-        .then((inventory) => {
+        .then((inventory: Inventory) => {
           cy.intercept({ method: 'GET', url: '/api/v2/inventories/*/' }, { body: inventory });
         });
     });
@@ -164,7 +165,7 @@ describe('Create Edit Inventory Form', () => {
         );
         cy.get('.pf-v5-c-select__toggle').should('contain', payload.labels[0].name);
         cy.get('[data-cy="variables"]').should('have.text', payload.variables);
-        cy.wait('@loadIG').then((req) => {
+        cy.wait('@loadIG').then(() => {
           cy.get('[data-cy="instance-group-select-form-group"]').should('contain', 'controlplane');
         });
         cy.get('[data-cy="labels-form-group"]').should('contain', 'test label');
@@ -196,7 +197,7 @@ describe('Create Edit Inventory Form', () => {
         cy.clickButton(/^Save inventory$/);
         cy.wait('@EditInvReq')
           .its('request.body')
-          .then((editedInventory) => {
+          .then((editedInventory: InventoryCreate) => {
             expect(editedInventory.name).to.equal('Edited name');
             expect(editedInventory.description).to.equal('Edited description');
             expect(editedInventory.variables).to.equal(`${payload.variables}s`);
@@ -205,29 +206,43 @@ describe('Create Edit Inventory Form', () => {
             });
           });
 
-        cy.intercept('POST', '/api/v2/inventories/*/instance_groups/', (req) => {
-          const editedIG = req.body;
-          if ('disassociate' in editedIG) {
-            expect(editedIG.disassociate).to.equal(true);
-            cy.fixture('instance_groups').then((igResponse: AwxItemsResponse<InstanceGroup>) => {
-              expect(editedIG.id).to.equal(igResponse.results[0].id);
-            });
-          } else {
-            cy.fixture('instance_groups').then((igResponse: AwxItemsResponse<InstanceGroup>) => {
-              expect(editedIG.id).to.equal(igResponse.results[1].id);
-            });
+        cy.intercept(
+          'POST',
+          '/api/v2/inventories/*/instance_groups/',
+          (req: CyHttpMessages.IncomingHttpRequest) => {
+            const editedIG: { disassociate?: boolean; id: number } = req.body as {
+              disassociate?: boolean;
+              id: number;
+            };
+            if ('disassociate' in editedIG) {
+              expect(editedIG.disassociate).to.equal(true);
+              cy.fixture('instance_groups').then((igResponse: AwxItemsResponse<InstanceGroup>) => {
+                expect(editedIG.id).to.equal(igResponse.results[0].id);
+              });
+            } else {
+              cy.fixture('instance_groups').then((igResponse: AwxItemsResponse<InstanceGroup>) => {
+                expect(editedIG.id).to.equal(igResponse.results[1].id);
+              });
+            }
           }
-        });
+        );
 
-        cy.intercept({ method: 'POST', url: '/api/v2/inventories/*/labels/' }, (req) => {
-          const editedLabel = req.body;
-          if ('disassociate' in editedLabel) {
-            expect(editedLabel.disassociate).to.equal(true);
-            expect(editedLabel.id).to.equal(1);
-          } else {
-            expect(editedLabel.name).to.equal('edited test');
+        cy.intercept(
+          { method: 'POST', url: '/api/v2/inventories/*/labels/' },
+          (req: CyHttpMessages.IncomingHttpRequest) => {
+            const editedLabel: { disassociate?: boolean; id?: number; name: string } = req.body as {
+              disassociate?: boolean;
+              id?: number;
+              name: string;
+            };
+            if ('disassociate' in editedLabel) {
+              expect(editedLabel.disassociate).to.equal(true);
+              expect(editedLabel.id).to.equal(1);
+            } else {
+              expect(editedLabel.name).to.equal('edited test');
+            }
           }
-        });
+        );
       });
 
       it(`Validate required fields on save (${kind})`, () => {
