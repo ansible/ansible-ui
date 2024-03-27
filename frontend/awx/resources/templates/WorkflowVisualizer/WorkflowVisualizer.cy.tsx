@@ -28,7 +28,7 @@ describe('WorkflowVisualizer', () => {
           cy.get(`[data-id="${node.id}"]`).should('be.visible');
           cy.get(`[data-id="${node.id}"] text`).should(
             'have.text',
-            node.summary_fields.unified_job_template.name
+            node.summary_fields?.unified_job_template?.name
           );
         });
       });

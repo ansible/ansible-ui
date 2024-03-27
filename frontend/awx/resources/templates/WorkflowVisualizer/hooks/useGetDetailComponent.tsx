@@ -14,7 +14,7 @@ export function useGetDetailComponent(selectedNode: WorkflowNode | undefined) {
       return null;
     }
     let component;
-    switch (selectedNode?.summary_fields.unified_job_template.unified_job_type) {
+    switch (selectedNode?.summary_fields?.unified_job_template?.unified_job_type) {
       case RESOURCE_TYPE.project_update:
         component = (
           <ProjectDetails
