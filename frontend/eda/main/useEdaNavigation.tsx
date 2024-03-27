@@ -56,6 +56,7 @@ import {
 import { EdaRoute } from './EdaRoutes';
 import { useEdaOrganizationRoutes } from './routes/useEdaOrganizationsRoutes';
 import { EdaProjectAddUsers } from '../projects/components/EdaProjectAddUsers';
+import { EdaProjectAddTeams } from '../projects/components/EdaProjectAddTeams';
 import { PageNotImplemented } from '../../../framework';
 
 export function useEdaNavigation() {
@@ -198,6 +199,11 @@ export function useEdaNavigation() {
           id: EdaRoute.ProjectAddUsers,
           path: ':id/users/add-users',
           element: <EdaProjectAddUsers />,
+        },
+        {
+          id: EdaRoute.ProjectAddTeams,
+          path: ':id/teams/add-teams',
+          element: <EdaProjectAddTeams />,
         },
         {
           path: '',
