@@ -29,16 +29,16 @@ describe('host and inventory host', () => {
     cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
   });
 
-  // it('can create, edit and delete a inventory host', () => {
-  //   cy.visit(`/infrastructure/inventories/inventory/${inventory.id}/details`);
-  //   cy.clickTab(/^Hosts$/, true);
-  //   createAndEditAndDeleteHost(true, inventory);
-  // });
+  it('can create, edit and delete a inventory host', () => {
+    cy.visit(`/infrastructure/inventories/inventory/${inventory.id}/details`);
+    cy.clickTab(/^Hosts$/, true);
+    createAndEditAndDeleteHost(true, inventory);
+  });
 
-  // it('can create, edit and delete a host', () => {
-  //   cy.visit(`/infrastructure/hosts`);
-  //   createAndEditAndDeleteHost(false, inventory);
-  // });
+  it('can create, edit and delete a host', () => {
+    cy.visit(`/infrastructure/hosts`);
+    createAndEditAndDeleteHost(false, inventory);
+  });
 
   it('can work with groups tab', () => {
     cy.createInventoryHostGroup(organization).then((result) => {
