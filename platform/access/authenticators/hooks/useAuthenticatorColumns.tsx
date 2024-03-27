@@ -1,25 +1,10 @@
-import { TFunction } from 'i18next';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ITableColumn, TextCell, useGetPageUrl } from '../../../../framework';
 import { useCreatedColumn, useModifiedColumn } from '../../../../frontend/common/columns';
-import { Authenticator, AuthenticatorTypeEnum } from '../../../interfaces/Authenticator';
+import { getAuthenticatorTypeLabel } from '../getAuthenticatorTypeLabel';
+import { Authenticator } from '../../../interfaces/Authenticator';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
-
-export function authenticatorTypeLabel(type: AuthenticatorTypeEnum, t: TFunction<'translation'>) {
-  switch (type) {
-    case AuthenticatorTypeEnum.LDAP:
-      return t('LDAP');
-    case AuthenticatorTypeEnum.Local:
-      return t('Local');
-    case AuthenticatorTypeEnum.Keycloak:
-      return t('Keycloak');
-    case AuthenticatorTypeEnum.SAML:
-      return t('SAML');
-    default:
-      return type;
-  }
-}
 
 export function useAuthenticatorsColumns() {
   const { t } = useTranslation();
@@ -53,7 +38,7 @@ export function useAuthenticatorsColumns() {
       {
         header: t('Authentication type'),
         type: 'text',
-        value: (authenticator) => authenticatorTypeLabel(authenticator.type, t),
+        value: (authenticator) => getAuthenticatorTypeLabel(authenticator.type, t),
         sort: 'type',
       },
       createdColumn,
