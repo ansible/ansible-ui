@@ -189,7 +189,7 @@ export function InventorySourceDetails(props: {
         <PageDetail label={t`Last job status`}>
           <Tooltip
             position="top"
-            content={lastJob ? <LastJobTooltipjob job={lastJob}/> : undefined}
+            content={lastJob ? <LastJobTooltip job={lastJob} /> : undefined}
             key={lastJob.id}
           >
             <Link
@@ -315,21 +315,24 @@ export function InventorySourceDetails(props: {
   );
 }
 
-export function LastJobTooltipjob(props : {job : { id: number; status: string; finished: string }}) {
+export function LastJobTooltip(props: { job: { id: number; status: string; finished: string } }) {
   const job = props.job;
+  const { t } = useTranslation();
+
   return (
-  <>
-    <div>{t`MOST RECENT SYNC`}</div>
-    <div>
-      {t`JOB ID:`} {job.id}
-    </div>
-    <div>
-      {t`STATUS:`} {job.status.toUpperCase()}
-    </div>
-    {job.finished && (
+    <>
+      <div>{t`MOST RECENT SYNC`}</div>
       <div>
-        {t`FINISHED:`} {formatDateString(job.finished)}
+        {t`JOB ID:`} {job.id}
       </div>
-    )}
-  </>
-)}
+      <div>
+        {t`STATUS:`} {job.status.toUpperCase()}
+      </div>
+      {job.finished && (
+        <div>
+          {t`FINISHED:`} {formatDateString(job.finished)}
+        </div>
+      )}
+    </>
+  );
+}

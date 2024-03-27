@@ -29,9 +29,10 @@ import { AwxRoute } from '../../../main/AwxRoutes';
 import { useGetInventory } from './InventoryPage';
 import { InventorySource } from '../../../interfaces/InventorySource';
 import { AwxError } from '../../../common/AwxError';
-import { data } from 'cypress/types/jquery';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
-
+import { Tooltip } from '@patternfly/react-core';
+import { LastJobTooltip } from '../inventorySources/InventorySourceDetails';
+import { StatusLabel } from '../../../../common/Status';
 
 function useInstanceGroups(inventoryId: string) {
   const { data } = useGet<{ results: InstanceGroup[] }>(
@@ -78,7 +79,10 @@ export function InventoryDetailsInner(props: { inventory: Inventory }) {
     constructed: 'constructed_inventory',
   };
 
-  const inventorySourceUrl = inventory.kind === 'constructed' ? awxAPI`/inventories/${params.id ?? ''}/inventory_sources/` : '';
+  const inventorySourceUrl =
+    inventory.kind === 'constructed'
+      ? awxAPI`/inventories/${params.id ?? ''}/inventory_sources/`
+      : '';
 
   const inventorySourceRequest = useGet<AwxItemsResponse<InventorySource>>(inventorySourceUrl);
 
@@ -87,28 +91,26 @@ export function InventoryDetailsInner(props: { inventory: Inventory }) {
   const inventorySourceSyncJob =
     inventorySourceData?.summary_fields?.current_job ||
     inventorySourceData?.summary_fields?.last_job ||
-  undefined;
+    undefined;
 
-  if (inputInventoriesError)
-  {
-    return <AwxError error={inputInventoriesError}/>;
+  if (inputInventoriesError) {
+    return <AwxError error={inputInventoriesError} />;
   }
 
-  if (inventorySourceRequest.error)
-  {
-    return <AwxError error={inventorySourceRequest.error}/>;
+  if (inventorySourceRequest.error) {
+    return <AwxError error={inventorySourceRequest.error} />;
   }
 
-  if (!inventorySourceData)
-  {
-    return <AwxError error={ new Error(t('Inventory source not found'))}/>;
+  if (!inventorySourceData && !inventorySourceRequest.data) {
+    return <AwxError error={new Error(t('Inventory source not found'))} />;
   }
 
-  if ( (!inputInventories && !inputInventoriesError) || (!inventorySourceRequest.data && !inventorySourceRequest.error))
-  {
-    return <LoadingPage/>;
+  if (
+    (!inputInventories && !inputInventoriesError) ||
+    (!inventorySourceRequest.data && !inventorySourceRequest.error)
+  ) {
+    return <LoadingPage />;
   }
-
 
   return (
     <PageDetails>
@@ -239,51 +241,41 @@ export function InventoryDetailsInner(props: { inventory: Inventory }) {
   );
 }
 
-
-
-function JobStatusLabel(props : { job : {
-  description: string;
-  failed: boolean;
-  finished: string;
-  id: number;
-  license_error: boolean;
-  name: string;
-  status: string;
-} | undefined }) {
-  debugger;
-  const {t} = useTranslation();
-  const job = props.job;
-  if (!job) {
+function JobStatusLabel(props: {
+  job:
+    | {
+        description: string;
+        failed: boolean;
+        finished: string;
+        id: number;
+        license_error: boolean;
+        name: string;
+        status: string;
+      }
+    | undefined;
+}) {
+  const { t } = useTranslation();
+  const getPageUrl = useGetPageUrl();
+  const lastJob = props.job;
+  if (!lastJob) {
     return null;
   }
 
-  return <PageDetail label={t('Last job status')}>{JSON.stringify(job)}</PageDetail>;
-
-  /*
   return (
-    <Tooltip
-      position="top"
-      content={
-        <>
-          <div>{t`MOST RECENT SYNC`}</div>
-          <div>
-            {t`JOB ID:`} {job.id}
-          </div>
-          <div>
-            {t`STATUS:`} {job.status.toUpperCase()}
-          </div>
-          {job.finished && (
-            <div>
-              {t`FINISHED:`} {formatDateString(job.finished)}
-            </div>
-          )}
-        </>
-      }
-      key={job.id}
-    >
-      <Link to={`/jobs/inventory/${job.id}`}>
-        <StatusLabel status={job.status} />
-      </Link>
-    </Tooltip>
-  );*/
+    <PageDetail label={t`Last job status`}>
+      <Tooltip
+        position="top"
+        content={lastJob ? <LastJobTooltip job={lastJob} /> : undefined}
+        key={lastJob.id}
+      >
+        <Link
+          to={getPageUrl(AwxRoute.JobOutput, {
+            params: { id: lastJob.id, job_type: 'inventory' },
+          })}
+        >
+          <StatusLabel status={lastJob.status} />
+        </Link>
+      </Tooltip>
+    </PageDetail>
+  );
 }
