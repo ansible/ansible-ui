@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { PageDetails, PageDetail, LoadingPage, Scrollable } from '../../../../framework';
 import { useGet, useGetItem } from '../../../../frontend/common/crud/useGet';
 import { PageDetailCodeEditor } from '../../../../framework/PageDetails/PageDetailCodeEditor';
+import { getAuthenticatorTypeLabel } from '../getAuthenticatorTypeLabel';
 import type { PlatformItemsResponse } from '../../../interfaces/PlatformItemsResponse';
 import type { Authenticator } from '../../../interfaces/Authenticator';
 import type { AuthenticatorPlugins } from '../../../interfaces/AuthenticatorPlugin';
@@ -70,14 +71,7 @@ export function PlatformAuthenticatorDetails() {
     }
   });
 
-  const typeLabels: { [k: string]: string } = {
-    local: t('Local'),
-    ldap: t('LDAP'),
-    saml: t('SAML'),
-    keycloak: t('Keycloak'),
-  };
-  const typeKey = authenticator.type.split('.').pop();
-  const type = typeKey ? typeLabels[typeKey] ?? typeKey : authenticator.type;
+  const type = getAuthenticatorTypeLabel(authenticator.type, t);
 
   return (
     <Scrollable>

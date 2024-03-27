@@ -8,6 +8,7 @@ import { Authenticator } from '../../../../interfaces/Authenticator';
 import { AuthenticatorPlugins } from '../../../../interfaces/AuthenticatorPlugin';
 import { AuthenticatorFormValues } from '../AuthenticatorForm';
 import { textInputTypes, dataInputTypes } from './AuthenticatorDetailsStep';
+import { getAuthenticatorTypeLabel } from '../../getAuthenticatorTypeLabel';
 
 type Field = {
   label: string;
@@ -57,14 +58,7 @@ export function AuthenticatorReviewStep(props: {
     }
   });
 
-  const typeLabels: { [k: string]: string } = {
-    local: t('Local'),
-    ldap: t('LDAP'),
-    saml: t('SAML'),
-    keycloak: t('Keycloak'),
-  };
-  const typeKey = type.split('.').pop();
-  const readableType = typeKey ? typeLabels[typeKey] ?? typeKey : type;
+  const readableType = getAuthenticatorTypeLabel(type, t);
 
   return (
     <>
