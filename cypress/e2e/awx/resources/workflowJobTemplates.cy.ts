@@ -44,7 +44,7 @@ describe('Workflow Job templates form', () => {
 
     cy.get('[data-cy="name"]').type(jtName);
     cy.get('[data-cy="description"]').type('this is a description');
-    cy.selectSingleSelectOption('[data-cy="organization"]', organization.name);
+    cy.singleSelectBy('[data-cy="organization"]', organization.name);
     cy.selectDropdownOptionByResourceName('inventory', inventory.name);
     cy.get('[data-cy="limit"]').type('mock-limit');
     cy.get('[data-cy="scm-branch"]').type('mock-scm-branch');
@@ -71,7 +71,10 @@ describe('Workflow Job templates form', () => {
       const newName = (workflowJobTemplate.name ?? '') + ' edited';
       if (!workflowJobTemplate.name) return;
 
-      cy.clickTableRowPinnedAction(workflowJobTemplate?.name, 'edit-template', true);
+      cy.filterTableByMultiSelect('name', [workflowJobTemplate?.name]);
+      cy.clickTableRowAction('name', workflowJobTemplate?.name, 'edit-template', {
+        disableFilter: true,
+      });
       cy.get('[data-cy="name"]').clear().type(newName);
       cy.get('[data-cy="description"]').type('this is a new description');
       cy.clickButton(/^Save workflow job template$/);
@@ -86,7 +89,11 @@ describe('Workflow Job templates form', () => {
       inventory: inventory.id,
     }).then((workflowJobTemplate) => {
       if (!workflowJobTemplate.name) return;
-      cy.clickTableRowKebabAction(workflowJobTemplate?.name, 'delete-template');
+      cy.filterTableByMultiSelect('name', [workflowJobTemplate?.name]);
+      cy.clickTableRowAction('name', workflowJobTemplate?.name, 'delete-template', {
+        inKebab: true,
+        disableFilter: true,
+      });
       cy.get('#confirm').click();
       cy.clickButton(/^Delete template/);
       cy.contains(/^Success$/);
@@ -138,7 +145,7 @@ describe('Workflow Job templates form', () => {
         cy.intercept('POST', `api/v2/workflow_job_templates/${workflowJobTemplate.id}/launch/`).as(
           'launchWJT-WithNodes'
         );
-        cy.searchAndDisplayResource(workflowJobTemplate.name);
+        cy.filterTableByMultiSelect('name', [workflowJobTemplate.name]);
         cy.get('button[data-cy="launch-template"]').click();
         cy.wait('@launchWJT-WithNodes')
           .its('response.body.id')
