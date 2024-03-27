@@ -101,14 +101,15 @@ export function InventoryDetailsInner(props: { inventory: Inventory }) {
     return <AwxError error={inventorySourceRequest.error} />;
   }
 
-  if (!inventorySourceData && !inventorySourceRequest.data) {
+  if (inventory.kind === 'constructed' && !inventorySourceData && !inventorySourceRequest.data) {
     return <AwxError error={new Error(t('Inventory source not found'))} />;
   }
 
-  if (
-    (!inputInventories && !inputInventoriesError) ||
-    (!inventorySourceRequest.data && !inventorySourceRequest.error)
-  ) {
+  if (inventory.kind === 'constructed' && 
+    ( (!inventorySourceRequest.data && !inventorySourceRequest.error) ||
+      (!inputInventories && !inputInventoriesError)
+    ))
+  {
     return <LoadingPage />;
   }
 
