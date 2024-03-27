@@ -3,15 +3,13 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { ErrorBoundary } from '../../framework/components/ErrorBoundary';
 import { useFrameworkTranslations } from '../../framework/useFrameworkTranslations';
-import background from '../../node_modules/@patternfly/patternfly/assets/images/pfbg_1200.jpg';
 import { LoginForm } from './LoginForm';
 import type { AuthOption } from './SocialAuthLogin';
 
 const Wrapper = styled.div`
   min-height: 100dvh;
   padding-block: 50px;
-  background-color: #444;
-  background-image: url(${background});
+  background-color: #151515;
   background-position: center;
   background-size: cover;
 `;
@@ -93,19 +91,20 @@ export function Login(props: LoginProps) {
           </Inner>
         </LeftHalf>
         <RightHalf>
-          <ServiceLogo
-            src={
-              process.env.PRODUCT === 'Automation Hub'
-                ? '/static/media/galaxy-logo-ansibull.svg'
-                : process.env.PRODUCT === 'Event Driven Automation'
-                  ? '/static/media/eda-icon.svg'
-                  : '/static/media/awx-logo.svg'
-            }
-            alt="logo"
-          />
+          <ServiceLogo src={logoString(process.env.PRODUCT)} alt="logo" />
         </RightHalf>
         <Logo src="/static/media/ansible-mark.svg" alt="ansible mark" />
       </Wrapper>
     </ErrorBoundary>
   );
+}
+
+export function logoString(name: string | undefined) {
+  const LOGO_URL: Record<string, string> = {
+    'Automation Hub': '/static/media/galaxy-logo-ansibull.svg',
+    'Event Driven Automation': '/static/media/eda-icon.svg',
+    AWX: '/static/media/awx-logo.svg',
+  };
+
+  return LOGO_URL[name as string] || name;
 }
