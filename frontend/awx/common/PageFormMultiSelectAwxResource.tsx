@@ -10,6 +10,7 @@ import { useAwxView } from './useAwxView';
 import { AwxAsyncName } from './PageFormSingleSelectAwxResource';
 import { PageFormAsyncMultiSelect } from '../../../framework/PageForm/Inputs/PageFormAsyncMultiSelect';
 import { QueryParams } from './useAwxView';
+import { getQueryString } from './useAwxView';
 
 export function PageFormMultiSelectAwxResource<
   Resource extends { id: number; name: string; description?: string | null | undefined },
@@ -39,7 +40,7 @@ export function PageFormMultiSelectAwxResource<
     async (options) => {
       try {
         let url =
-          props.url + `?page_size=10&order_by=name` + constructQueryParams(props.queryParams || {});
+          props.url + `?page_size=10&order_by=name` + getQueryString(props.queryParams || {});
         if (options.next) url = url + `&name__gt=${options.next}`;
         if (options.search) url = url + `&name__icontains=${options.search}`;
         const response = await requestGet<AwxItemsResponse<Resource>>(url, options.signal);
@@ -156,17 +157,4 @@ function SelectResource<
       view={view}
     />
   );
-}
-
-export function constructQueryParams(queryParams: QueryParams) {
-  let queryString = '&';
-  if (queryParams) {
-    Object.keys(queryParams).forEach((key) => {
-      queryString += key + '=' + queryParams?.[key];
-    });
-  } else {
-    return '';
-  }
-
-  return queryString;
 }

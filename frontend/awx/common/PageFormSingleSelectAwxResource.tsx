@@ -12,7 +12,7 @@ import { useGetItem } from '../../common/crud/useGet';
 import { AwxItemsResponse } from './AwxItemsResponse';
 import { useAwxView } from './useAwxView';
 import { QueryParams } from './useAwxView';
-import { constructQueryParams } from './PageFormMultiSelectAwxResource';
+import { getQueryString } from './useAwxView';
 
 export function PageFormSingleSelectAwxResource<
   Resource extends { id: number; name: string; description?: string | null | undefined },
@@ -42,7 +42,7 @@ export function PageFormSingleSelectAwxResource<
     async (options) => {
       try {
         let url =
-          props.url + `?page_size=10&order_by=name` + constructQueryParams(props.queryParams || {});
+          props.url + `?page_size=10&order_by=name` + getQueryString(props.queryParams || {});
         if (options.next) url = url + `&name__gt=${options.next}`;
         if (options.search) url = url + `&name__icontains=${options.search}`;
         const response = await requestGet<AwxItemsResponse<Resource>>(url, options.signal);
