@@ -76,10 +76,8 @@ describe('ScheduleAddWizard', () => {
         });
       });
 
-      cy.selectDropdownOptionByResourceName('resource_type', 'Job template');
+      cy.selectDropdownOptionByResourceName('node_type', 'Job template');
       cy.selectDropdownOptionByResourceName('job-template-select', 'Mock Job Template');
-      cy.get('[data-cy="name"]').type('Test Schedule');
-      cy.clickButton(/^Next$/);
 
       cy.get('[data-cy="wizard-nav"]').within(() => {
         cy.get('li').should('have.length', 6);
@@ -98,7 +96,7 @@ describe('ScheduleAddWizard', () => {
         initialEntries: ['/schedules/add'],
         path: '/schedules/add',
       });
-      cy.selectDropdownOptionByResourceName('resource_type', 'Job template');
+      cy.selectDropdownOptionByResourceName('node_type', 'Job template');
       cy.clickButton(/^Next$/);
       cy.get('[data-cy="name-form-group"]').within(() => {
         cy.get('span.pf-v5-c-helper-text__item-text').should(
