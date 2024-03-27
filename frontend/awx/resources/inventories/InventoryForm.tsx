@@ -126,7 +126,7 @@ export function EditInventory() {
   // Fetch instance groups associated with the inventory
   const originalInstanceGroups = igResponse?.results;
   const onSubmit: PageFormSubmitHandler<InventoryCreate> = async (data) => {
-    const { organization, labels, instanceGroups, ...editedInventory } = data;
+    const { labels, instanceGroups, ...editedInventory } = data;
 
     // Update the inventory
     const updatedInventory = await requestPatch<Inventory>(
