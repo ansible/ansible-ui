@@ -122,22 +122,44 @@ describe('Workflow Visualizer', () => {
       cy.contains('Success').should('be.visible');
     });
 
-    it('can launch a job and follow the node links to the related job output screens', function () {
+    it('can view the details pages of related job on a WFJT either by clicking the job nodes or by toggling the Workflow Jobs dropdown', function () {
       cy.visit(`/templates/workflow_job_template/${workflowJobTemplate?.id}/visualizer`);
       cy.contains('Workflow Visualizer').should('be.visible');
       cy.get('[data-cy="workflow-visualizer-toolbar-kebab"]').click();
-      cy.intercept('POST', `api/v2/workflow_job_templates/${workflowJobTemplate.id}/launch/`).as(
-        'launchWJT-WithNodes'
-      );
+      cy.intercept(
+        'POST',
+        awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/launch/`
+      ).as('launchWJT-WithNodes');
       cy.clickButton('Launch');
       cy.wait('@launchWJT-WithNodes')
         .its('response.body.id')
         .then((jobId: string) => {
           cy.url().should('contain', `/jobs/workflow/${jobId}/output`);
+          cy.intercept('GET', awxAPI`/project_updates/**`).as('wfJobs');
           cy.contains('Global Project').click({ force: true });
+          cy.wait('@wfJobs');
           cy.getByDataCy('Global Project').should('be.visible');
           cy.getByDataCy('Output').should('be.visible');
+          cy.intercept('GET', awxAPI`/workflow_jobs/${jobId}/`).as('wfNodes');
           cy.visit(`/jobs/workflow/${jobId}/output`);
+          cy.wait('@wfNodes');
+          cy.getByDataCy('page-title')
+            .should('be.visible')
+            .and('contain', `${workflowJobTemplate.name}`);
+          cy.contains(jobTemplate.name).click({ force: true });
+          cy.getByDataCy(`${jobTemplate.name}`).should('be.visible');
+          cy.getByDataCy('Output').should('be.visible');
+          cy.contains('button', 'Workflow Job 1/1')
+            .click()
+            .then(() => {
+              cy.contains('Global Project').click();
+            });
+          cy.getByDataCy('page-title').should('be.visible').and('contain', 'Global Project');
+          cy.contains('button', 'Workflow Job 1/1')
+            .click()
+            .then(() => {
+              cy.contains(`${jobTemplate.name}`).click();
+            });
         });
     });
   });
