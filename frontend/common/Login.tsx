@@ -16,16 +16,24 @@ const Wrapper = styled.div`
   background-size: cover;
 `;
 const Logo = styled.img`
-  position: fixed;
-  bottom: 10px;
-  right: 10px;
-  width: 500px; /* Adjust size as needed */
+  position: absolute;
+  bottom: -100px;
+  right: -100px;
+  width: 500px;
   height: auto;
 `;
 
+const ServiceLogo = styled.img`
+  position: absolute;
+  bottom: 275px;
+  right: -200px;
+  height: 150px;
+  width: auto;
+`;
+
 const Inner = styled.div`
-  max-width: 550px;
-  margin: 0 auto;
+  max-width: 500px;
+  margin: 2rem 2rem 0 auto;
   padding: 3rem 3.5rem;
   background-color: var(--pf-v5-global--BackgroundColor--100);
 
@@ -34,7 +42,12 @@ const Inner = styled.div`
   }
 `;
 const LeftHalf = styled.div`
-  width: 50%; /* Take up 50% of the width */
+  width: 50%;
+`;
+
+const RightHalf = styled.div`
+  width: 50%;
+  position: relative; /* Ensure positioning context for the logo */
 `;
 
 const Heading = styled(Title)`
@@ -79,7 +92,19 @@ export function Login(props: LoginProps) {
             />
           </Inner>
         </LeftHalf>
-        <Logo src="/static/media/brand-logo.svg" alt="Logo" />
+        <RightHalf>
+          <ServiceLogo
+            src={
+              process.env.PRODUCT === 'Automation Hub'
+                ? '/static/media/galaxy-logo-ansibull.svg'
+                : process.env.PRODUCT === 'Event Driven Automation'
+                  ? '/static/media/eda-icon.svg'
+                  : '/static/media/awx-logo.svg'
+            }
+            alt="logo"
+          />
+        </RightHalf>
+        <Logo src="/static/media/ansible-mark.svg" alt="ansible mark" />
       </Wrapper>
     </ErrorBoundary>
   );
