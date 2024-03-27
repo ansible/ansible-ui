@@ -16,10 +16,10 @@ import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
 import { OccurrencesStep } from './OccurrencesStep';
 import { Frequency, RRule } from 'rrule';
 import { ExceptionsStep } from './ExceptionsStep';
-import { PromptInputs } from '../components/PromptInputs';
 import { ScheduleSurveyStep } from './ScheduleSurveyStep';
 import { LaunchConfiguration } from '../../../interfaces/LaunchConfiguration';
 import { NodeTypeStep } from '../../../resources/templates/WorkflowVisualizer/wizard/NodeTypeStep';
+import { NodePromptsStep } from '../../../resources/templates/WorkflowVisualizer/wizard/NodePromptsStep';
 
 export function ScheduleAddWizard() {
   const { t } = useTranslation();
@@ -60,7 +60,7 @@ export function ScheduleAddWizard() {
     {
       id: 'promptsStep',
       label: t('Prompts'),
-      inputs: <PromptInputs onError={() => {}} />,
+      inputs: <NodePromptsStep />,
     },
     {
       id: 'survey',
