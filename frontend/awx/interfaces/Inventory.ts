@@ -5,6 +5,7 @@ import {
   SummaryFieldObjectRole,
 } from './summary-fields/summary-fields';
 import { Label } from './Label';
+import { SummaryJob } from '../resources/inventories/InventoryPage/InventoryDetails';
 
 export interface CommonInventory
   extends Omit<

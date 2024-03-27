@@ -11,6 +11,7 @@ import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
 import {
   DateTimeCell,
+  LoadingPage,
   PageDetail,
   PageDetails,
   TextCell,
@@ -26,6 +27,10 @@ import { InstanceGroup } from '../../../interfaces/InstanceGroup';
 import { Inventory } from '../../../interfaces/Inventory';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useGetInventory } from './InventoryPage';
+import { InventorySource } from '../../../interfaces/InventorySource';
+import { AwxError } from '../../../common/AwxError';
+import { data } from 'cypress/types/jquery';
+
 
 function useInstanceGroups(inventoryId: string) {
   const { data } = useGet<{ results: InstanceGroup[] }>(
@@ -72,9 +77,35 @@ export function InventoryDetailsInner(props: { inventory: Inventory }) {
     constructed: 'constructed_inventory',
   };
 
+  const inventorySourceUrl = inventory.kind === 'constructed' ? awxAPI`/inventories/${params.id ?? ''}/inventory_sources/` : '';
+
+  const inventorySourceRequest = useGet<InventorySource>(inventorySourceUrl);
+
+  const inventorySourceSyncJob =
+    inventorySourceRequest.data?.summary_fields?.current_job ||
+    inventorySourceRequest.data?.summary_fields?.last_job ||
+  null;
+
+  if (inputInventoriesError)
+  {
+    return <AwxError error={inputInventoriesError}/>;
+  }
+
+  if (inventorySourceRequest.error)
+  {
+    return <AwxError error={inventorySourceRequest.error}/>;
+  }
+
+  if ( (!inputInventories && !inputInventoriesError) || (!inventorySourceRequest.data && !inventorySourceRequest.error))
+  {
+    return <LoadingPage/>;
+  }
+
   return (
     <PageDetails>
       <PageDetail label={t('Name')}>{inventory.name}</PageDetail>
+      {inventory.kind === 'constructed' && <JobStatusLabel job={inventorySourceSyncJob} />}
+
       <PageDetail label={t('Description')}>{inventory.description}</PageDetail>
       <PageDetail label={t('Type')}>{inventoryTypes[inventory.kind]}</PageDetail>
       <PageDetail label={t('Organization')}>
@@ -198,4 +229,44 @@ export function InventoryDetailsInner(props: { inventory: Inventory }) {
       />
     </PageDetails>
   );
+}
+
+
+
+function JobStatusLabel(props : { job : unknown }) {
+  const {t} = useTranslation();
+  const job = props.job;
+  if (!job) {
+    return null;
+  }
+
+  return <PageDetail label={t('Last job status')}>{JSON.stringify(job)}</PageDetail>;
+
+  /*
+  return (
+    <Tooltip
+      position="top"
+      content={
+        <>
+          <div>{t`MOST RECENT SYNC`}</div>
+          <div>
+            {t`JOB ID:`} {job.id}
+          </div>
+          <div>
+            {t`STATUS:`} {job.status.toUpperCase()}
+          </div>
+          {job.finished && (
+            <div>
+              {t`FINISHED:`} {formatDateString(job.finished)}
+            </div>
+          )}
+        </>
+      }
+      key={job.id}
+    >
+      <Link to={`/jobs/inventory/${job.id}`}>
+        <StatusLabel status={job.status} />
+      </Link>
+    </Tooltip>
+  );*/
 }
