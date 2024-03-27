@@ -9,6 +9,7 @@ import { EdaWebhook } from '../../interfaces/EdaWebhook';
 import { DescriptionListGroup, DescriptionListTerm } from '@patternfly/react-core';
 import { StandardPopover } from '../../../../framework/components/StandardPopover';
 import { PageDetailCodeEditor } from '../../../../framework/PageDetails/PageDetailCodeEditor';
+import { EdaOrganizationCell } from '../../access/organizations/components/EdaOrganizationCell';
 
 export function WebhookDetails() {
   const { t } = useTranslation();
@@ -21,6 +22,9 @@ export function WebhookDetails() {
     <Scrollable>
       <PageDetails disableScroll={true}>
         <PageDetail label={t('Name')}>{webhook?.name || ''}</PageDetail>
+        <PageDetail label={t('Organization')}>
+          <EdaOrganizationCell organization_id={webhook?.organization_id} />
+        </PageDetail>
         <PageDetail label={t('Url')}>{webhook?.url || ''}</PageDetail>
         <PageDetail label={t('Hmac algorithm')}>{webhook?.hmac_algorithm || ''}</PageDetail>
         <PageDetail label={t('Hmac signature prefix')}>

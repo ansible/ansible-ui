@@ -3024,6 +3024,7 @@ export interface Webhook {
   auth_type: string;
   additional_data_headers?: string[];
   id: number;
+  organization_id: number;
   url: string;
   created_at: string;
   modified_at: string;
@@ -3035,6 +3036,7 @@ export interface Webhook {
 export interface WebhookCreate {
   type: WebhookTypeEnum;
   name: string;
+  organization_id?: number;
   hmac_algorithm?: string;
   header_key?: string;
   auth_type?: string;

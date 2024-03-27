@@ -23,6 +23,7 @@ import { StandardPopover } from '../../../framework/components/StandardPopover';
 import { TFunction } from 'i18next/index';
 import { WebhookTypeEnum } from '../interfaces/generated/eda-api';
 import { PageFormHidden } from '../../../framework/PageForm/Utils/PageFormHidden';
+import { PageFormSelectOrganization } from '../access/organizations/components/PageFormOrganizationSelect';
 
 export function WebhookOptions(t: TFunction<'translation'>) {
   return [
@@ -71,6 +72,7 @@ function WebhookInputs(props: { editMode: boolean }) {
         isRequired
         maxLength={150}
       />
+      <PageFormSelectOrganization<EdaWebhookCreate> name="organization_id" />
       <PageFormTextInput<EdaWebhookCreate>
         name="secret"
         data-cy="secret-form-field"
