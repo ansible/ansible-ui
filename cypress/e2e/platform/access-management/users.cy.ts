@@ -23,8 +23,8 @@ describe('Users - create, edit and delete', () => {
   });
 
   after(() => {
-    cy.deletePlatformUser(platformUser);
-    cy.deletePlatformOrganization(organization);
+    cy.deletePlatformUser(platformUser, { failOnStatusCode: false });
+    cy.deletePlatformOrganization(organization, { failOnStatusCode: false });
   });
 
   it('renders the users list', () => {
