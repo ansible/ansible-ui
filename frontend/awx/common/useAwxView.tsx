@@ -28,7 +28,7 @@ export type QueryParams = {
   [key: string]: string;
 };
 
-function getQueryString(queryParams: QueryParams) {
+export function getQueryString(queryParams: QueryParams) {
   return Object.entries(queryParams)
     .map(([key, value = '']) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
     .join('&');
