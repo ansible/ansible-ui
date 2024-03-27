@@ -1,21 +1,21 @@
-import { useCallback } from 'react';
 import { action, useVisualizationController } from '@patternfly/react-topology';
+import { useCallback } from 'react';
 import { parseVariableField } from '../../../../../../framework/utils/codeEditorUtils';
-import { awxAPI } from '../../../../common/api/awx-utils';
-import { getAddedAndRemoved } from '../../../../common/util/getAddedAndRemoved';
-import { useDeleteRequest } from '../../../../../common/crud/useDeleteRequest';
-import { useAbortController } from '../../../../../common/crud/useAbortController';
 import { requestGet } from '../../../../../common/crud/Data';
-import { usePostRequest } from '../../../../../common/crud/usePostRequest';
+import { useAbortController } from '../../../../../common/crud/useAbortController';
+import { useDeleteRequest } from '../../../../../common/crud/useDeleteRequest';
 import { usePatchRequest } from '../../../../../common/crud/usePatchRequest';
+import { usePostRequest } from '../../../../../common/crud/usePostRequest';
+import { awxAPI } from '../../../../common/api/awx-utils';
 import { AwxItemsResponse } from '../../../../common/AwxItemsResponse';
-import { ControllerState, GraphNode, EdgeStatus, GraphNodeData } from '../types';
-import { WorkflowNode } from '../../../../interfaces/WorkflowNode';
-import { InstanceGroup } from '../../../../interfaces/InstanceGroup';
-import { Organization } from '../../../../interfaces/Organization';
-import { Label } from '../../../../interfaces/Label';
-import { START_NODE_ID, RESOURCE_TYPE } from '../constants';
 import { useAwxGetAllPages } from '../../../../common/useAwxGetAllPages';
+import { getAddedAndRemoved } from '../../../../common/util/getAddedAndRemoved';
+import { InstanceGroup } from '../../../../interfaces/InstanceGroup';
+import { Label } from '../../../../interfaces/Label';
+import { Organization } from '../../../../interfaces/Organization';
+import { WorkflowNode } from '../../../../interfaces/WorkflowNode';
+import { RESOURCE_TYPE, START_NODE_ID } from '../constants';
+import { ControllerState, EdgeStatus, GraphNode, GraphNodeData } from '../types';
 
 interface WorkflowApprovalNode {
   name: string;
@@ -47,12 +47,12 @@ export function useSaveVisualizer(templateId: string) {
   const controller = useVisualizationController();
   const abortController = useAbortController();
   const deleteRequest = useDeleteRequest();
-  const postWorkflowNode = usePostRequest<Partial<CreateWorkflowNodePayload>, WorkflowNode>();
   const patchWorkflowNode = usePatchRequest<Partial<CreateWorkflowNodePayload>, WorkflowNode>();
-  const postWorkflowNodeApproval = usePostRequest<WorkflowApprovalNode, WorkflowApprovalNode>();
   const patchWorkflowNodeApproval = usePatchRequest<WorkflowApprovalNode, WorkflowApprovalNode>();
   const postAssociateNode = usePostRequest<{ id: number }>();
   const postDisassociate = usePostRequest<{ id: number; disassociate: boolean }>();
+  const postWorkflowNode = usePostRequest<Partial<CreateWorkflowNodePayload>, WorkflowNode>();
+  const postWorkflowNodeApproval = usePostRequest<WorkflowApprovalNode, WorkflowApprovalNode>();
   const processCredentials = useProcessCredentials();
   const processInstanceGroups = useProcessInstanceGroups();
   const processLabels = useProcessLabels();
@@ -240,7 +240,6 @@ export function useSaveVisualizer(templateId: string) {
         await processLabels(newNodeId, launch_data);
         await processInstanceGroups(newNodeId, launch_data);
         await processCredentials(newNodeId, launch_data);
-
         setCreatedNodeId(node, newNodeId.toString());
       });
       await Promise.all(promises);
@@ -366,45 +365,52 @@ export function useSaveVisualizer(templateId: string) {
         resource: { always_nodes = [], failure_nodes = [], success_nodes = [] },
       } = nodeData;
 
-      success_nodes.forEach((successNodeId) => {
-        sourceEdges.forEach((edge) => {
-          const { tagStatus } = edge.getData() as { tagStatus: EdgeStatus };
-          if (successNodeId.toString() === edge.getTarget().getId()) {
-            if (tagStatus !== EdgeStatus.success || !edge.isVisible()) {
-              disassociateSuccessNodes.push({
-                sourceId: node.getId(),
-                targetId: successNodeId.toString(),
-              });
+      if (success_nodes.length > 0) {
+        success_nodes.forEach((successNodeId) => {
+          sourceEdges.forEach((edge) => {
+            const { tagStatus } = edge.getData() as { tagStatus: EdgeStatus };
+            if (successNodeId.toString() === edge.getTarget().getId()) {
+              if (tagStatus !== EdgeStatus.success || !edge.isVisible()) {
+                disassociateSuccessNodes.push({
+                  sourceId: node.getId(),
+                  targetId: successNodeId.toString(),
+                });
+              }
             }
-          }
+          });
         });
-      });
-      failure_nodes.forEach((failureNodeId) => {
-        sourceEdges.forEach((edge) => {
-          const { tagStatus } = edge.getData() as { tagStatus: EdgeStatus };
-          if (failureNodeId.toString() === edge.getTarget().getId()) {
-            if (tagStatus !== EdgeStatus.danger || !edge.isVisible()) {
-              disassociateFailureNodes.push({
-                sourceId: node.getId(),
-                targetId: failureNodeId.toString(),
-              });
+      }
+      if (failure_nodes.length > 0) {
+        failure_nodes.forEach((failureNodeId) => {
+          sourceEdges.forEach((edge) => {
+            const { tagStatus } = edge.getData() as { tagStatus: EdgeStatus };
+            if (failureNodeId.toString() === edge.getTarget().getId()) {
+              if (tagStatus !== EdgeStatus.danger || !edge.isVisible()) {
+                disassociateFailureNodes.push({
+                  sourceId: node.getId(),
+                  targetId: failureNodeId.toString(),
+                });
+              }
             }
-          }
+          });
         });
-      });
-      always_nodes.forEach((alwaysNodeId) => {
-        sourceEdges.forEach((edge) => {
-          const { tagStatus } = edge.getData() as { tagStatus: EdgeStatus };
-          if (alwaysNodeId.toString() === edge.getTarget().getId()) {
-            if (tagStatus !== EdgeStatus.info || !edge.isVisible()) {
-              disassociateAlwaysNodes.push({
-                sourceId: node.getId(),
-                targetId: alwaysNodeId.toString(),
-              });
+      }
+
+      if (always_nodes.length > 0) {
+        always_nodes.forEach((alwaysNodeId) => {
+          sourceEdges.forEach((edge) => {
+            const { tagStatus } = edge.getData() as { tagStatus: EdgeStatus };
+            if (alwaysNodeId.toString() === edge.getTarget().getId()) {
+              if (tagStatus !== EdgeStatus.info || !edge.isVisible()) {
+                disassociateAlwaysNodes.push({
+                  sourceId: node.getId(),
+                  targetId: alwaysNodeId.toString(),
+                });
+              }
             }
-          }
+          });
         });
-      });
+      }
 
       sourceEdges.forEach((edge) => {
         if (!edge.isVisible()) return;
@@ -447,7 +453,7 @@ export function useSaveVisualizer(templateId: string) {
       if (isNewNode && !isDeleted) {
         handleNewNode(node);
       }
-      if (isEdited) {
+      if (isEdited && !isDeleted) {
         handleEditNode(node);
       }
     });
@@ -465,12 +471,6 @@ export function useSaveVisualizer(templateId: string) {
         handleEdgeModification(node);
       }
     });
-
-    await Promise.all(
-      deletedNodeIds.map((id) =>
-        deleteRequest(awxAPI`/workflow_job_template_nodes/${id}/`, abortController.signal)
-      )
-    );
 
     await Promise.all(
       disassociateSuccessNodes.map((node) =>
@@ -539,6 +539,11 @@ export function useSaveVisualizer(templateId: string) {
           },
           abortController.signal
         )
+      )
+    );
+    await Promise.all(
+      deletedNodeIds.map((id) =>
+        deleteRequest(awxAPI`/workflow_job_template_nodes/${id}/`, abortController.signal)
       )
     );
 
