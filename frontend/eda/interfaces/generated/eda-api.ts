@@ -346,6 +346,7 @@ export interface CredentialTypeCreate {
 export interface Credential {
   name: string;
   description?: string;
+  organization_id?: number;
   key?: string | null;
   credential_type: { id?: number; name?: string };
   inputs?: object;
@@ -359,6 +360,7 @@ export interface Credential {
 export interface CredentialCreate {
   name: string;
   description?: string;
+  organization_id?: number;
   credential_type_id: number;
   username?: string | null;
   key?: string | null;

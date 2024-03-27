@@ -7,6 +7,7 @@ import { useGet } from '../../../../common/crud/useGet';
 import { edaAPI } from '../../../common/eda-utils';
 import { EdaCredential } from '../../../interfaces/EdaCredential';
 import { CredentialDetailFields } from './CredentialDetailFields';
+import { EdaOrganizationCell } from '../../organizations/components/EdaOrganizationCell';
 
 export function CredentialDetails() {
   const { t } = useTranslation();
@@ -19,6 +20,9 @@ export function CredentialDetails() {
     <PageDetails>
       <PageDetail label={t('Name')}>{credential?.name || ''}</PageDetail>
       <PageDetail label={t('Description')}>{credential?.description || ''}</PageDetail>
+      <PageDetail label={t('Organization')}>
+        <EdaOrganizationCell organization_id={credential?.organization_id} />
+      </PageDetail>
       <CredentialDetailFields credential={credential} />
       <PageDetail label={t('Created')}>
         {credential?.created_at ? formatDateString(credential.created_at) : ''}

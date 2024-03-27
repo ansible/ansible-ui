@@ -22,6 +22,7 @@ import { EdaCredentialType } from '../../interfaces/EdaCredentialType';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { CredentialFormInputs } from './CredentialFormTypes';
 import { useCallback, useEffect } from 'react';
+import { PageFormSelectOrganization } from '../organizations/components/PageFormOrganizationSelect';
 
 // eslint-disable-next-line react/prop-types
 function CredentialInputs(props: { editMode: boolean }) {
@@ -75,6 +76,7 @@ function CredentialInputs(props: { editMode: boolean }) {
         placeholder={t('Enter description ')}
         maxLength={150}
       />
+      <PageFormSelectOrganization<EdaCredentialCreate> name="organization_id" />
       <PageFormSelect<EdaCredentialCreate>
         name="credential_type_id"
         data-cy="credential-type-form-field"
