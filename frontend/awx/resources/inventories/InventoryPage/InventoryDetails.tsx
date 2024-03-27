@@ -30,6 +30,7 @@ import { useGetInventory } from './InventoryPage';
 import { InventorySource } from '../../../interfaces/InventorySource';
 import { AwxError } from '../../../common/AwxError';
 import { data } from 'cypress/types/jquery';
+import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 
 
 function useInstanceGroups(inventoryId: string) {
@@ -79,12 +80,14 @@ export function InventoryDetailsInner(props: { inventory: Inventory }) {
 
   const inventorySourceUrl = inventory.kind === 'constructed' ? awxAPI`/inventories/${params.id ?? ''}/inventory_sources/` : '';
 
-  const inventorySourceRequest = useGet<InventorySource>(inventorySourceUrl);
+  const inventorySourceRequest = useGet<AwxItemsResponse<InventorySource>>(inventorySourceUrl);
+
+  const inventorySourceData = inventorySourceRequest.data?.results[0];
 
   const inventorySourceSyncJob =
-    inventorySourceRequest.data?.summary_fields?.current_job ||
-    inventorySourceRequest.data?.summary_fields?.last_job ||
-  null;
+    inventorySourceData?.summary_fields?.current_job ||
+    inventorySourceData?.summary_fields?.last_job ||
+  undefined;
 
   if (inputInventoriesError)
   {
@@ -96,16 +99,21 @@ export function InventoryDetailsInner(props: { inventory: Inventory }) {
     return <AwxError error={inventorySourceRequest.error}/>;
   }
 
+  if (!inventorySourceData)
+  {
+    return <AwxError error={ new Error(t('Inventory source not found'))}/>;
+  }
+
   if ( (!inputInventories && !inputInventoriesError) || (!inventorySourceRequest.data && !inventorySourceRequest.error))
   {
     return <LoadingPage/>;
   }
 
+
   return (
     <PageDetails>
       <PageDetail label={t('Name')}>{inventory.name}</PageDetail>
       {inventory.kind === 'constructed' && <JobStatusLabel job={inventorySourceSyncJob} />}
-
       <PageDetail label={t('Description')}>{inventory.description}</PageDetail>
       <PageDetail label={t('Type')}>{inventoryTypes[inventory.kind]}</PageDetail>
       <PageDetail label={t('Organization')}>
@@ -233,7 +241,16 @@ export function InventoryDetailsInner(props: { inventory: Inventory }) {
 
 
 
-function JobStatusLabel(props : { job : unknown }) {
+function JobStatusLabel(props : { job : {
+  description: string;
+  failed: boolean;
+  finished: string;
+  id: number;
+  license_error: boolean;
+  name: string;
+  status: string;
+} | undefined }) {
+  debugger;
   const {t} = useTranslation();
   const job = props.job;
   if (!job) {
