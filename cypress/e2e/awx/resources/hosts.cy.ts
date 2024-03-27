@@ -27,11 +27,38 @@ describe('host and inventory host', () => {
     cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
   });
 
+<<<<<<< HEAD
   // tests
+=======
+>>>>>>> 7cdea5aeb (remove comment out)
   it('can create, edit and delete a inventory host', () => {
     cy.visit(`/infrastructure/inventories/inventory/${inventory.id}/details`);
     cy.clickTab(/^Hosts$/, true);
     createAndEditAndDeleteHost(true, inventory);
+<<<<<<< HEAD
+=======
+  });
+
+  it('can create, edit and delete a host', () => {
+    cy.visit(`/infrastructure/hosts`);
+    createAndEditAndDeleteHost(false, inventory);
+  });
+
+  it('can work with groups tab', () => {
+    cy.createInventoryHostGroup(organization).then((result) => {
+      const { inventory, host, group } = result;
+      cy.visit('/infrastructure/hosts?page=1&perPage=10&sort=name');
+      cy.contains(host.name).click();
+      expect(host.inventory).to.eq(inventory.id);
+      expect(group.inventory).to.eq(inventory.id);
+      cy.clickLink(/^Groups$/);
+      cy.get('[data-cy="edit-group"]').click();
+      cy.verifyPageTitle('Edit group');
+      cy.get('[data-cy="name-form-group"]').type('-changed');
+      cy.get('[data-cy="Submit"]').click();
+      cy.verifyPageTitle(group.name + '-changed');
+    });
+>>>>>>> 7cdea5aeb (remove comment out)
   });
 
   it('can create, edit and delete a host', () => {
