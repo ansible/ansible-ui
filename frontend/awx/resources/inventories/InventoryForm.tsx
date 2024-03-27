@@ -26,6 +26,8 @@ import { InstanceGroup } from '../../interfaces/InstanceGroup';
 import { Inventory } from '../../interfaces/Inventory';
 import { Label } from '../../interfaces/Label';
 import { AwxRoute } from '../../main/AwxRoutes';
+import { data } from 'cypress/types/jquery';
+import { useEffect, useMemo, useState } from 'react';
 
 export type InventoryCreate = Inventory & {
   instanceGroups: InstanceGroup[];
@@ -120,11 +122,12 @@ export function EditInventory() {
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
   const { data: inventory } = useGet<Inventory>(awxAPI`/inventories/${id.toString()}/`);
-  const { data: igResponse } = useGet<AwxItemsResponse<InstanceGroup>>(
+  const { data: igResponse, isLoading: igLoading } = useGet<AwxItemsResponse<InstanceGroup>>(
     awxAPI`/inventories/${id.toString()}/instance_groups/`
   );
   // Fetch instance groups associated with the inventory
-  const originalInstanceGroups = igResponse?.results;
+  const originalInstanceGroups = igLoading ? [] : igResponse?.results;
+
   const onSubmit: PageFormSubmitHandler<InventoryCreate> = async (data) => {
     const { labels, instanceGroups, ...editedInventory } = data;
 
@@ -147,38 +150,25 @@ export function EditInventory() {
 
   const getPageUrl = useGetPageUrl();
 
-  if (!inventory) {
-    return (
-      <PageLayout>
-        <PageHeader
-          breadcrumbs={[
-            { label: t('Inventories'), to: getPageUrl(AwxRoute.Inventories) },
-            { label: t('Edit Inventory') },
-          ]}
-        />
-      </PageLayout>
-    );
-  }
-
   const title =
-    inventory.kind === ''
+    inventory?.kind === ''
       ? t('Edit Inventory')
-      : inventory.kind === 'smart'
+      : inventory?.kind === 'smart'
         ? t('Edit Smart Inventory')
         : t('Edit Constructed Inventory');
 
   const defaultValue =
-    inventory.kind === 'smart'
+    inventory?.kind === 'smart'
       ? { ...inventory, instanceGroups: originalInstanceGroups }
-      : inventory.kind === 'constructed'
+      : inventory?.kind === 'constructed'
         ? {}
         : {
             ...inventory,
             instanceGroups: originalInstanceGroups,
-            labels: inventory.summary_fields?.labels?.results ?? [],
+            labels: inventory?.summary_fields?.labels?.results ?? [],
           };
 
-  return (
+  return inventory && !igLoading ? (
     <PageLayout>
       <PageHeader
         title={title}
@@ -199,6 +189,15 @@ export function EditInventory() {
       >
         <InventoryInputs inventoryKind={inventory.kind} />
       </AwxPageForm>
+    </PageLayout>
+  ) : (
+    <PageLayout>
+      <PageHeader
+        breadcrumbs={[
+          { label: t('Inventories'), to: getPageUrl(AwxRoute.Inventories) },
+          { label: t('Edit Inventory') },
+        ]}
+      />
     </PageLayout>
   );
 }

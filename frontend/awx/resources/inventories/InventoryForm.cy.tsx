@@ -121,6 +121,16 @@ describe('Create Edit Inventory Form', () => {
       );
       cy.intercept({ method: 'GET', url: '/api/v2/labels/*' }, { fixture: 'labels.json' });
 
+      cy.fixture('instance_groups')
+        .then((ig_response: AwxItemsResponse<InstanceGroup>) => {
+          ig_response.results = [ig_response.results[0]];
+          cy.intercept(
+            { method: 'GET', url: '/api/v2/inventories/*/instance_groups/' },
+            { body: ig_response }
+          );
+        })
+        .as('loadIG');
+
       cy.fixture('inventory')
         .then((inventory: Inventory) => {
           inventory.kind = payload.kind as '' | 'smart' | 'constructed';
@@ -143,13 +153,6 @@ describe('Create Edit Inventory Form', () => {
         kind === '' ? [`/inventories/inventory/1/edit`] : [`/inventories/smart_inventory/2/edit`];
 
       it(`Preload the form with correct values (${kind})`, () => {
-        cy.fixture('instance_groups').then((ig_response: AwxItemsResponse<InstanceGroup>) => {
-          ig_response.results = [ig_response.results[0]];
-          cy.intercept(
-            { method: 'GET', url: '/api/v2/inventories/*/instance_groups/' },
-            { body: ig_response }
-          );
-        });
         cy.mount(<EditInventory />, {
           path,
           initialEntries,
@@ -161,6 +164,10 @@ describe('Create Edit Inventory Form', () => {
         );
         cy.get('.pf-v5-c-select__toggle').should('contain', payload.labels[0].name);
         cy.get('[data-cy="variables"]').should('have.text', payload.variables);
+        cy.wait('@loadIG').then((req) => {
+          cy.get('[data-cy="instance-group-select-form-group"]').should('contain', 'controlplane');
+        });
+        cy.get('[data-cy="labels-form-group"]').should('contain', 'test label');
       });
 
       it(`Check correct request body is passed after editing inventory (${kind})`, () => {
@@ -216,6 +223,7 @@ describe('Create Edit Inventory Form', () => {
           const editedLabel = req.body;
           if ('disassociate' in editedLabel) {
             expect(editedLabel.disassociate).to.equal(true);
+            expect(editedLabel.id).to.equal(1);
           } else {
             expect(editedLabel.name).to.equal('edited test');
           }
