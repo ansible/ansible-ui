@@ -258,14 +258,14 @@ export function EditInventory() {
   }
 
   const title =
-    inventory.kind === ''
+    inventory?.kind === ''
       ? t('Edit Inventory')
-      : inventory.kind === 'smart'
+      : inventory?.kind === 'smart'
         ? t('Edit Smart Inventory')
         : t('Edit Constructed Inventory');
 
   const defaultValue =
-    inventory.kind === 'smart'
+    inventory?.kind === 'smart'
       ? { ...inventory, instanceGroups: originalInstanceGroups }
       : inventory.kind === 'constructed'
         ? {
@@ -276,7 +276,7 @@ export function EditInventory() {
         : {
             ...inventory,
             instanceGroups: originalInstanceGroups,
-            labels: inventory.summary_fields?.labels?.results ?? [],
+            labels: inventory?.summary_fields?.labels?.results ?? [],
           };
 
   return (
@@ -301,6 +301,15 @@ export function EditInventory() {
       >
         <InventoryInputs inventoryKind={inventory.kind} />
       </AwxPageForm>
+    </PageLayout>
+  ) : (
+    <PageLayout>
+      <PageHeader
+        breadcrumbs={[
+          { label: t('Inventories'), to: getPageUrl(AwxRoute.Inventories) },
+          { label: t('Edit Inventory') },
+        ]}
+      />
     </PageLayout>
   );
 }
