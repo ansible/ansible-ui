@@ -7,6 +7,7 @@ import { edaAPI } from '../../common/eda-utils';
 import { EdaCredential } from '../../interfaces/EdaCredential';
 import { EdaDecisionEnvironmentRead } from '../../interfaces/EdaDecisionEnvironment';
 import { EdaRoute } from '../../main/EdaRoutes';
+import { EdaOrganizationCell } from '../../access/organizations/components/EdaOrganizationCell';
 
 export function DecisionEnvironmentDetails() {
   const { t } = useTranslation();
@@ -40,6 +41,9 @@ export function DecisionEnvironmentDetails() {
     <PageDetails>
       <PageDetail label={t('Name')}>{decisionEnvironment?.name || ''}</PageDetail>
       <PageDetail label={t('Description')}>{decisionEnvironment?.description || ''}</PageDetail>
+      <PageDetail label={t('Organization')}>
+        <EdaOrganizationCell organization_id={decisionEnvironment?.organization_id} />
+      </PageDetail>
       <PageDetail label={t('Image')} helpText={imageHelpBlock}>
         {decisionEnvironment?.image_url || ''}
       </PageDetail>

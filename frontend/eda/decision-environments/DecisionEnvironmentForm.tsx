@@ -22,6 +22,7 @@ import {
 } from '../interfaces/EdaDecisionEnvironment';
 import { EdaResult } from '../interfaces/EdaResult';
 import { EdaRoute } from '../main/EdaRoutes';
+import { PageFormSelectOrganization } from '../access/organizations/components/PageFormOrganizationSelect';
 
 function DecisionEnvironmentInputs() {
   const { t } = useTranslation();
@@ -58,6 +59,7 @@ function DecisionEnvironmentInputs() {
         placeholder={t('Enter description')}
         maxLength={150}
       />
+      <PageFormSelectOrganization<EdaDecisionEnvironment> name="organization_id" />
       <PageFormTextInput<EdaDecisionEnvironment>
         name="image_url"
         label={t('Image')}

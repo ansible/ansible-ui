@@ -410,6 +410,7 @@ export interface DecisionEnvironment {
   description?: string;
   image_url: string;
   eda_credential_id: number | null;
+  organization_id: number | null;
   id: number;
   /** @format date-time */
   created_at: string;
@@ -423,6 +424,7 @@ export interface DecisionEnvironmentCreate {
   description?: string;
   image_url: string;
   eda_credential_id?: number | null;
+  organization_id: number | null;
 }
 
 /** Serializer for reading the DecisionEnvironment with embedded objects. */
@@ -431,7 +433,8 @@ export interface DecisionEnvironmentRead {
   name: string;
   description?: string;
   image_url: string;
-  eda_credential?: { name: string; id: number };
+  eda_credential?: CredentialRef;
+  organization_id?: number;
   /** @format date-time */
   created_at: string;
   /** @format date-time */
