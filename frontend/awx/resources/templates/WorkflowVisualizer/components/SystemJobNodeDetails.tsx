@@ -12,13 +12,13 @@ export function SystemJobNodeDetails(props: {
   return (
     <PageDetails disableScroll={props.disableScroll}>
       <PageDetail label={t('Name')}>
-        {selectedNode.identifier ?? selectedNode.summary_fields.unified_job_template.name}
+        {selectedNode.identifier ?? selectedNode.summary_fields?.unified_job_template?.name}
       </PageDetail>
       <PageDetail
-        isEmpty={!selectedNode.summary_fields.unified_job_template.description}
+        isEmpty={!selectedNode.summary_fields?.unified_job_template?.description}
         label={t('Description')}
       >
-        {selectedNode.summary_fields.unified_job_template.description}
+        {selectedNode.summary_fields?.unified_job_template?.description}
       </PageDetail>
       <PageDetail label={t('Type')}>{t('System job template')}</PageDetail>
       <PageDetail label={t('Convergence')}>

@@ -98,7 +98,10 @@ export function useSaveVisualizer(templateId: string) {
     async function createApprovalNodes(approvalNodes: GraphNode[]) {
       const promises = approvalNodes.map(async (node) => {
         const nodeData = node.getData() as GraphNodeData;
+        const nodeTemplate = node.getData()?.resource?.summary_fields?.unified_job_template;
         const nodeIdentifier = toKeyedObject('identifier', nodeData.resource.identifier);
+
+        if (!nodeTemplate) return;
 
         const workflowNode = await postWorkflowNode(
           awxAPI`/workflow_job_templates/${state.workflowTemplate.id.toString()}/workflow_nodes/`,
@@ -108,13 +111,14 @@ export function useSaveVisualizer(templateId: string) {
           },
           abortController.signal
         );
+
         if (workflowNode && workflowNode.id) {
           await postWorkflowNodeApproval(
             awxAPI`/workflow_job_template_nodes/${workflowNode.id.toString()}/create_approval_template/`,
             {
-              name: nodeData.resource.summary_fields.unified_job_template.name,
-              description: nodeData.resource.summary_fields.unified_job_template.description || '',
-              timeout: nodeData.resource.summary_fields.unified_job_template.timeout || 0,
+              name: nodeTemplate.name,
+              description: nodeTemplate.description || '',
+              timeout: nodeTemplate.timeout || 0,
             },
             abortController.signal
           );
@@ -127,8 +131,10 @@ export function useSaveVisualizer(templateId: string) {
     async function updateApprovalNodes(approvalNodes: GraphNode[]) {
       const promises = approvalNodes.map(async (node) => {
         const nodeData = node.getData() as GraphNodeData;
+        const nodeTemplate = node.getData()?.resource?.summary_fields?.unified_job_template;
         const nodeIdentifier = toKeyedObject('identifier', nodeData.resource.identifier);
-        const approvalNodeId = nodeData.resource.summary_fields.unified_job_template.id;
+
+        if (!nodeTemplate) return;
 
         const workflowNode = await patchWorkflowNode(
           awxAPI`/workflow_job_template_nodes/${node.getId()}/`,
@@ -138,13 +144,14 @@ export function useSaveVisualizer(templateId: string) {
           },
           abortController.signal
         );
+
         if (workflowNode && workflowNode.id) {
           await patchWorkflowNodeApproval(
-            awxAPI`/workflow_approval_templates/${approvalNodeId.toString()}/`,
+            awxAPI`/workflow_approval_templates/${nodeTemplate.id.toString()}/`,
             {
-              name: nodeData.resource.summary_fields.unified_job_template.name,
-              description: nodeData.resource.summary_fields.unified_job_template.description || '',
-              timeout: nodeData.resource.summary_fields.unified_job_template.timeout || 0,
+              name: nodeTemplate.name,
+              description: nodeTemplate.description || '',
+              timeout: nodeTemplate.timeout || 0,
             },
             abortController.signal
           );
@@ -192,7 +199,8 @@ export function useSaveVisualizer(templateId: string) {
         const nodeData = node.getData() as GraphNodeData;
         const { launch_data, resource } = nodeData;
         const { unified_job_template } = resource.summary_fields;
-        const { unified_job_type } = unified_job_template;
+
+        if (!unified_job_template) return;
 
         setValue('all_parents_must_converge', resource.all_parents_must_converge);
         setValue('identifier', resource?.identifier);
@@ -212,7 +220,10 @@ export function useSaveVisualizer(templateId: string) {
         setValue('timeout', launch_data?.timeout, true);
         setValue('verbosity', launch_data?.verbosity, true);
 
-        if (unified_job_type === RESOURCE_TYPE.system_job && resource.extra_data?.days) {
+        if (
+          unified_job_template.unified_job_type === RESOURCE_TYPE.system_job &&
+          resource.extra_data?.days
+        ) {
           setValue('extra_data', { days: resource.extra_data.days });
         } else if (launch_data?.extra_vars) {
           setValue('extra_data', parseVariableField(launch_data?.extra_vars), true);
@@ -243,7 +254,9 @@ export function useSaveVisualizer(templateId: string) {
           const nodeId = node.getId();
           const { launch_data, resource } = nodeData;
           const { unified_job_template } = resource.summary_fields;
-          const { unified_job_type } = unified_job_template;
+
+          if (!unified_job_template) return;
+
           const setValue = <K extends CreatePayloadProperty>(
             key: K,
             value: CreateWorkflowNodePayload[K],
@@ -296,7 +309,10 @@ export function useSaveVisualizer(templateId: string) {
           setValue('timeout', launch_data?.timeout, true);
           setValue('verbosity', launch_data?.verbosity, true);
 
-          if (unified_job_type === RESOURCE_TYPE.system_job && resource.extra_data?.days) {
+          if (
+            unified_job_template.unified_job_type === RESOURCE_TYPE.system_job &&
+            resource.extra_data?.days
+          ) {
             setValue('extra_data', { days: resource.extra_data.days });
           } else if (launch_data?.extra_vars) {
             setValue('extra_data', parseVariableField(launch_data?.extra_vars), true);
@@ -320,8 +336,9 @@ export function useSaveVisualizer(templateId: string) {
 
     function handleNewNode(node: GraphNode) {
       const nodeData = node.getData() as GraphNodeData;
+
       if (
-        nodeData.resource.summary_fields.unified_job_template.unified_job_type ===
+        nodeData.resource.summary_fields?.unified_job_template?.unified_job_type ===
         RESOURCE_TYPE.workflow_approval
       ) {
         newApprovalNodes.push(node);
@@ -333,7 +350,7 @@ export function useSaveVisualizer(templateId: string) {
     function handleEditNode(node: GraphNode) {
       const nodeData = node.getData() as GraphNodeData;
       if (
-        nodeData.resource.summary_fields.unified_job_template.unified_job_type ===
+        nodeData.resource.summary_fields?.unified_job_template?.unified_job_type ===
         RESOURCE_TYPE.workflow_approval
       ) {
         editedApprovalNodes.push(node);

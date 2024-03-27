@@ -1,4 +1,5 @@
 import React, { useCallback, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
   CheckCircleIcon,
@@ -40,17 +41,21 @@ import { useLaunchTemplate } from '../../hooks/useLaunchTemplate';
 
 export const ToolbarHeader = observer(() => {
   const { t } = useTranslation();
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const pageNavigate = usePageNavigate();
   const alertToaster = usePageAlertToaster();
-  const { isFullScreen } = useViewOptions();
+  const { id: templateId } = useParams<{ id: string }>();
   const controller = useVisualizationController();
   const { workflowTemplate } = controller.getState<ControllerState>();
-  const handleSave = useSaveVisualizer(workflowTemplate?.id?.toString());
+
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [showUnsavedChangesModal, setShowUnsavedChangesModal] = useState<boolean>(false);
+
+  const { isFullScreen } = useViewOptions();
+  const handleSave = useSaveVisualizer(templateId || '');
+
   const isModified = controller
     .getElements()
     .some((element) => element.getState<ControllerState>().modified);
-  const [showUnsavedChangesModal, setShowUnsavedChangesModal] = useState<boolean>(false);
 
   const handleCancel = useCallback(() => {
     if (isModified) {
@@ -58,9 +63,9 @@ export const ToolbarHeader = observer(() => {
       return;
     }
     pageNavigate(AwxRoute.WorkflowJobTemplateDetails, {
-      params: { id: workflowTemplate?.id },
+      params: { id: templateId },
     });
-  }, [pageNavigate, workflowTemplate?.id, isModified]);
+  }, [pageNavigate, templateId, isModified]);
 
   return (
     <>
@@ -139,7 +144,7 @@ export const ToolbarHeader = observer(() => {
             variant="danger"
             onClick={() => {
               pageNavigate(AwxRoute.WorkflowJobTemplateDetails, {
-                params: { id: workflowTemplate?.id },
+                params: { id: templateId },
               });
             }}
           >
@@ -157,19 +162,22 @@ export const WorkflowVisualizerToolbar = observer(() => {
   const { t } = useTranslation();
   const config = useAwxConfig();
   const alertToaster = usePageAlertToaster();
+  const { id: templateId } = useParams();
+  const controller = useVisualizationController();
+  const { workflowTemplate, RBAC, modified } = controller.getState<ControllerState>();
+
   const [isKebabOpen, setIsKebabOpen] = useState<boolean>(false);
-  const { isFullScreen, toggleFullScreen } = useViewOptions();
-  const { removeNodes } = useRemoveGraphElements();
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
+  const { isFullScreen, toggleFullScreen } = useViewOptions();
+  const { removeNodes } = useRemoveGraphElements();
+  const handleSave = useSaveVisualizer(templateId || '');
   const launch = useLaunchTemplate();
-  const controller = useVisualizationController();
+
   const nodes = controller
     .getGraph()
     .getNodes()
     .filter((n) => n.isVisible() && n.getId() !== START_NODE_ID) as GraphNode[];
-  const { workflowTemplate, RBAC, modified } = controller.getState<ControllerState>();
-  const handleSave = useSaveVisualizer(workflowTemplate?.id?.toString());
 
   const handleLaunchWorkflow = useCallback(async () => {
     await launch(workflowTemplate);

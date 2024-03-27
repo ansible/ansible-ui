@@ -181,7 +181,7 @@ export function NodeEditWizard({ node }: { node: GraphNode }) {
     };
 
     if (node_type !== RESOURCE_TYPE.workflow_approval) {
-      delete nodeToEdit.resource.summary_fields.unified_job_template.timeout;
+      delete nodeToEdit.resource.summary_fields?.unified_job_template?.timeout;
     }
     if (!hasDaysToKeep(node_resource)) {
       nodeToEdit.resource.extra_data = {};

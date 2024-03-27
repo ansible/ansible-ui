@@ -23,23 +23,23 @@ export function WorkflowApprovalNodeDetails(props: {
   return (
     <PageDetails disableScroll={props.disableScroll}>
       <PageDetail label={t('Name')}>
-        {selectedNode.identifier ?? selectedNode.summary_fields.unified_job_template.name}
+        {selectedNode.identifier ?? selectedNode.summary_fields?.unified_job_template?.name}
       </PageDetail>
       <PageDetail
-        isEmpty={!selectedNode.summary_fields.unified_job_template.description}
+        isEmpty={!selectedNode.summary_fields?.unified_job_template?.description}
         label={t('Description')}
       >
-        {selectedNode.summary_fields.unified_job_template.description}
+        {selectedNode.summary_fields?.unified_job_template?.description}
       </PageDetail>
       <PageDetail label={t('Type')}>{t('Workflow approval')}</PageDetail>
       <PageDetail label={t('Convergence')}>
         {selectedNode.all_parents_must_converge ? t('All') : t('Any')}
       </PageDetail>
       <PageDetail
-        isEmpty={!selectedNode.summary_fields.unified_job_template.timeout}
+        isEmpty={!selectedNode.summary_fields?.unified_job_template?.timeout}
         label={t('Timeout')}
       >
-        {formatTimeout(selectedNode.summary_fields.unified_job_template.timeout, t)}
+        {formatTimeout(selectedNode.summary_fields?.unified_job_template?.timeout, t)}
       </PageDetail>
     </PageDetails>
   );

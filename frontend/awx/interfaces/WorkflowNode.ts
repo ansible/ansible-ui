@@ -31,7 +31,7 @@ export interface WorkflowNode {
       status: string;
       type: string;
     };
-    unified_job_template: {
+    unified_job_template?: {
       id: number;
       name: string;
       description: string;
