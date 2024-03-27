@@ -20,9 +20,11 @@ import { useHubContext } from '../common/useHubContext';
 import { HubItemsResponse } from '../common/useHubView';
 import { HubRoute } from './HubRoutes';
 import GalaxyBrand from './galaxy-logo.svg';
+import { useHubProductVersionInfo } from './useHubProductVersionInfo';
 
 export function HubMasthead() {
   const { t } = useTranslation();
+  const versionInfo = useHubProductVersionInfo();
   const openAnsibleAboutModal = useAnsibleAboutModal();
   const { clearAllCache } = useClearCache();
   const navigate = useNavigate();
@@ -33,6 +35,9 @@ export function HubMasthead() {
     clearAllCache();
     navigate('/login');
   }, [clearAllCache, navigate]);
+
+  const userInfo = context.user.username;
+
   return (
     <PageMasthead brand={<GalaxyBrand style={{ height: 48, marginTop: -8 }} />}>
       <ToolbarGroup variant="icon-button-group" style={{ flexGrow: 1 }}>
@@ -60,7 +65,7 @@ export function HubMasthead() {
             <></>
             <DropdownItem
               id="about"
-              onClick={() => openAnsibleAboutModal({})}
+              onClick={() => openAnsibleAboutModal({ versionInfo, userInfo })}
               data-cy="masthead-about"
             >
               {t('About')}

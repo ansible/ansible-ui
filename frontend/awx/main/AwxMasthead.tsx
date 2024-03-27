@@ -22,9 +22,11 @@ import { getDocsBaseUrl } from '../common/util/getDocsBaseUrl';
 import { WorkflowApproval } from '../interfaces/WorkflowApproval';
 import { AwxRoute } from './AwxRoutes';
 import AwxBrand from './awx-logo.svg';
+import { useAwxProductVersionInfo } from './useAwxProductVersionInfo';
 
 export function AwxMasthead() {
   const { t } = useTranslation();
+  const versionInfo = useAwxProductVersionInfo();
   const openAnsibleAboutModal = useAnsibleAboutModal();
   const { clearAllCache } = useClearCache();
   const config = useAwxConfig();
@@ -37,7 +39,10 @@ export function AwxMasthead() {
     clearAllCache();
     navigate('/login');
   }, [clearAllCache, navigate]);
-
+  let userInfo = '';
+  if (activeUser) {
+    userInfo = activeUser.username;
+  }
   return (
     <PageMasthead brand={<AwxBrand style={{ height: 60 }} />}>
       <ToolbarGroup variant="icon-button-group" style={{ flexGrow: 1 }}>
@@ -64,7 +69,7 @@ export function AwxMasthead() {
             </DropdownItem>
             <DropdownItem
               id="about"
-              onClick={() => openAnsibleAboutModal({})}
+              onClick={() => openAnsibleAboutModal({ versionInfo, userInfo })}
               data-cy="masthead-about"
             >
               {t('About')}
