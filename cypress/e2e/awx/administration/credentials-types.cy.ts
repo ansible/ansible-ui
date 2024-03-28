@@ -47,6 +47,36 @@ describe('Credential Types', () => {
     });
   });
 
+  it('Filter credential types by name', () => {
+    cy.navigateTo('awx', 'credential-types');
+    cy.filterTableByMultiSelect('name', [credentialType.name]);
+    cy.get('tr').should('have.length.greaterThan', 0);
+    cy.contains(credentialType.name).should('be.visible');
+    cy.clearAllFilters();
+  });
+
+  it('Filter credential types by description', () => {
+    cy.navigateTo('awx', 'credential-types');
+    cy.filterTableByTextFilter('description', credentialType.description);
+    cy.get('tr').should('have.length.greaterThan', 0);
+    cy.contains(credentialType.description).should('be.visible');
+    cy.clearAllFilters();
+  });
+
+  it('Filter credential types by Created By', () => {
+    cy.navigateTo('awx', 'credential-types');
+    cy.filterTableByTextFilter('created-by', 'awx');
+    cy.get('tr').should('have.length.greaterThan', 0);
+    cy.clearAllFilters();
+  });
+
+  it('Filter credential types by Modified By', () => {
+    cy.navigateTo('awx', 'credential-types');
+    cy.filterTableByTextFilter('modified-by', 'awx');
+    cy.get('tr').should('have.length.greaterThan', 0);
+    cy.clearAllFilters();
+  });
+
   it('create a new credential type with no configs', () => {
     const customCredentialTypeName = 'E2E Custom Credential Type' + randomString(4);
     cy.createAndDeleteCustomAWXCredentialTypeUI(customCredentialTypeName);
