@@ -146,7 +146,9 @@ describe('Workflow Visualizer', () => {
           cy.getByDataCy('page-title')
             .should('be.visible')
             .and('contain', `${workflowJobTemplate.name}`);
+          cy.intercept('GET', awxAPI`/jobs/**`).as('jobs');
           cy.contains(jobTemplate.name).click({ force: true });
+          cy.wait('@jobs');
           cy.getByDataCy(`${jobTemplate.name}`).should('be.visible');
           cy.getByDataCy('Output').should('be.visible');
           cy.contains('button', 'Workflow Job 1/1')
