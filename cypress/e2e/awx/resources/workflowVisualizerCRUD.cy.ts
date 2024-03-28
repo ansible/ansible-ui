@@ -148,7 +148,7 @@ describe('Workflow Visualizer', () => {
       cy.contains('Workflow Visualizer').should('be.visible');
       cy.get(`g[data-id="${projectNode.id}"]`)
         .should('be.visible')
-        .and('contain', `${projectNode.summary_fields.unified_job_template.name}`);
+        .and('contain', `${projectNode?.summary_fields?.unified_job_template?.name}`);
       cy.get(`g[data-id="${approvalNode.id}"] [class*="node-label"]`).should('be.visible').click();
       cy.getByDataCy('workflow-topology-sidebar').should('be.visible');
       cy.contains('h2', 'Node details').should('be.visible');
@@ -333,6 +333,7 @@ describe('Workflow Visualizer', () => {
             'have.text',
             'Success alert:Successfully saved workflow visualizer'
           );
+          cy.getBy('button[id="fit-to-screen"]').click();
           cy.get('button[data-cy="workflow-visualizer-toolbar-close"]').click();
           cy.get('[data-cy="page-title"]').should('have.text', `${workflowJobTemplate.name}`);
         });
@@ -377,6 +378,7 @@ describe('Workflow Visualizer', () => {
                   'have.text',
                   'Success alert:Successfully saved workflow visualizer'
                 );
+                cy.getBy('button[id="fit-to-screen"]').click();
                 cy.get('button[data-cy="workflow-visualizer-toolbar-close"]').click();
                 cy.get('[data-cy="page-title"]').should('have.text', `${workflowJobTemplate.name}`);
               });

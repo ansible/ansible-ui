@@ -152,6 +152,7 @@ describe('Workflow Visualizer', () => {
           cy.getBy('button[id="fit-to-screen"]').click();
           cy.contains(jobTemplate.name).should('be.visible');
           cy.getByDataCy('relaunch-job').should('be.visible');
+          cy.getBy('button[id="reset-view"]').should('be.visible').click();
           cy.contains(jobTemplate.name).click({ force: true });
           cy.getByDataCy(`${jobTemplate.name}`).should('be.visible');
           cy.getByDataCy('Output').should('be.visible');
