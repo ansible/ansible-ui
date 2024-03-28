@@ -97,7 +97,9 @@ export function NodeTypeStep(props: { hasSourceNode?: boolean }) {
 
     if (isDirty) {
       setValue('node_resource', null);
-      const steps = allSteps.filter((step) => step.id !== 'nodePromptsStep');
+      const steps = allSteps.filter(
+        (step) => step.id !== 'nodePromptsStep' && step.id !== 'survey'
+      );
       setVisibleSteps(steps);
     }
 
@@ -105,7 +107,9 @@ export function NodeTypeStep(props: { hasSourceNode?: boolean }) {
       reset(undefined, {
         keepDefaultValues: true,
       });
-      const steps = allSteps.filter((step) => step.id !== 'nodePromptsStep');
+      const steps = allSteps.filter(
+        (step) => step.id !== 'nodePromptsStep' && step.id !== 'survey'
+      );
       setWizardData({ ...currentFormValues, launch_config: null });
       setStepData({ nodeTypeStep: currentFormValues });
       setVisibleSteps(steps);
@@ -188,8 +192,9 @@ export function NodeTypeStep(props: { hasSourceNode?: boolean }) {
           ...prev,
           launch_config: launchConfigResults,
         }));
+        const filteredSteps = allSteps.filter((step) => step.id !== 'survey');
 
-        setVisibleSteps(allSteps);
+        setVisibleSteps(filteredSteps);
 
         if (stepData.nodePromptsStep && nodeResource) {
           const { isDirty: isNodeTypeDirty } = getFieldState('node_type');
@@ -206,7 +211,9 @@ export function NodeTypeStep(props: { hasSourceNode?: boolean }) {
           }
         }
       } else {
-        const filteredSteps = allSteps.filter((step) => step.id !== 'nodePromptsStep');
+        const filteredSteps = allSteps.filter(
+          (step) => step.id !== 'nodePromptsStep' && step.id !== 'survey'
+        );
         setVisibleSteps(filteredSteps);
         setWizardData((prev) => ({ ...prev, launch_config: null }));
       }
@@ -544,7 +551,6 @@ function ScheduleAddResource() {
           { label: t('Project'), value: 'project' },
           { label: t('Management job template'), value: 'management_job_template' },
         ]}
-        fieldNameToResetOnFieldChange="node_resource"
         placeholderText={t('Select job type')}
       />
 
