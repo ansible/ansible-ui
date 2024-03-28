@@ -308,6 +308,7 @@ export const knownAwxFilterKeys: Record<string, AsyncKeyOptions> = {
   project: { apiPath: 'projects' },
   execution_environment: { apiPath: 'execution_environments' },
   unified_job_template: { apiPath: 'unified_job_templates' },
+  credential_type: { apiPath: 'credential_types' },
   execution_node: {
     labelKey: 'hostname',
     apiPath: 'instances',
