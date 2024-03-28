@@ -1004,9 +1004,7 @@ declare global {
         inventorySourceId: InventorySource
       ): Chainable<WorkflowNode>;
 
-      createAwxWorkflowVisualizerWJTNode(
-        workflowJT: WorkflowJobTemplate
-      ): Chainable<WorkflowJobTemplate>;
+      createAwxWorkflowVisualizerWJTNode(workflowJT: WorkflowJobTemplate): Chainable<WorkflowNode>;
 
       createAwxWorkflowVisualizerManagementNode(
         workflowJobTemplate: WorkflowJobTemplate,
