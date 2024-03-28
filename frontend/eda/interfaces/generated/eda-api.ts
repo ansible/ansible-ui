@@ -35,6 +35,7 @@ export interface ActivationCreate {
   description?: string;
   is_enabled?: boolean;
   decision_environment_id: number;
+  organization_id?: number;
   sources?: [];
   rulebook_id: number;
   extra_var_id?: number | null;
@@ -146,6 +147,7 @@ export interface ActivationRead {
   event_streams?: EventStreamRef[];
   webhooks?: WebhookRef[];
   eda_credentials?: CredentialRef[];
+  organization?: OrganizationRef;
 
   /**
    * * `starting` - starting
@@ -346,7 +348,7 @@ export interface CredentialTypeCreate {
 export interface Credential {
   name: string;
   description?: string;
-  organization_id?: number;
+  organization?: OrganizationRef;
   key?: string | null;
   credential_type: { id?: number; name?: string };
   inputs?: object;
@@ -436,7 +438,7 @@ export interface DecisionEnvironmentRead {
   description?: string;
   image_url: string;
   eda_credential?: CredentialRef;
-  organization_id?: number;
+  organization?: OrganizationRef;
   /** @format date-time */
   created_at: string;
   /** @format date-time */
@@ -453,6 +455,7 @@ export interface DecisionEnvironmentRef {
 
 export interface ExtraVar {
   id: number;
+  organization_id?: number;
   /** Content of the extra_var */
   extra_var: string;
 }
@@ -3024,7 +3027,7 @@ export interface Webhook {
   auth_type: string;
   additional_data_headers?: string[];
   id: number;
-  organization_id: number;
+  organization: OrganizationRef;
   url: string;
   created_at: string;
   modified_at: string;

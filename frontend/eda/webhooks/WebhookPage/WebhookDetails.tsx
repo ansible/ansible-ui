@@ -1,6 +1,12 @@
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
-import { LoadingPage, PageDetail, PageDetails, Scrollable } from '../../../../framework';
+import { Link, useParams } from 'react-router-dom';
+import {
+  LoadingPage,
+  PageDetail,
+  PageDetails,
+  Scrollable,
+  useGetPageUrl,
+} from '../../../../framework';
 import { formatDateString } from '../../../../framework/utils/formatDateString';
 import { LastModifiedPageDetail } from '../../../common/LastModifiedPageDetail';
 import { useGet } from '../../../common/crud/useGet';
@@ -9,11 +15,13 @@ import { EdaWebhook } from '../../interfaces/EdaWebhook';
 import { DescriptionListGroup, DescriptionListTerm } from '@patternfly/react-core';
 import { StandardPopover } from '../../../../framework/components/StandardPopover';
 import { PageDetailCodeEditor } from '../../../../framework/PageDetails/PageDetailCodeEditor';
-import { EdaOrganizationCell } from '../../access/organizations/components/EdaOrganizationCell';
+import { EdaRoute } from '../../main/EdaRoutes';
 
 export function WebhookDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
+  const getPageUrl = useGetPageUrl();
+
   const { data: webhook } = useGet<EdaWebhook>(edaAPI`/webhooks/${params.id ?? ''}/`);
   if (!webhook) {
     return <LoadingPage />;
@@ -23,7 +31,17 @@ export function WebhookDetails() {
       <PageDetails disableScroll={true}>
         <PageDetail label={t('Name')}>{webhook?.name || ''}</PageDetail>
         <PageDetail label={t('Organization')}>
-          <EdaOrganizationCell organization_id={webhook?.organization_id} />
+          {webhook && webhook.organization ? (
+            <Link
+              to={getPageUrl(EdaRoute.OrganizationPage, {
+                params: { id: webhook?.organization?.id },
+              })}
+            >
+              {webhook?.organization?.name}
+            </Link>
+          ) : (
+            webhook?.organization?.name || ''
+          )}
         </PageDetail>
         <PageDetail label={t('Url')}>{webhook?.url || ''}</PageDetail>
         <PageDetail label={t('Hmac algorithm')}>{webhook?.hmac_algorithm || ''}</PageDetail>
