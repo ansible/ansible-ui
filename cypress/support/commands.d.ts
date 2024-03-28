@@ -73,6 +73,7 @@ import {
   HubQueryRolesOptions,
   HubRequestOptions,
 } from './hub-commands';
+import { NotificationTemplate } from '../../frontend/awx/interfaces/NotificationTemplate';
 
 declare global {
   namespace Cypress {
@@ -1080,6 +1081,16 @@ declare global {
       inputCustomCredTypeConfig(configType: string, config: string): Chainable<void>;
 
       selectPromptOnLaunch(resourceName: string): Chainable<void>;
+
+      createNotificationTemplate(notificationName: string): Chainable<NotificationTemplate>;
+
+      deleteNotificationTemplate(
+        notification: NotificationTemplate,
+        options?: {
+          /** Whether to fail on response codes other than 2xx and 3xx */
+          failOnStatusCode?: boolean;
+        }
+      ): Chainable<void>;
 
       // ==============================================================================================================
       // EDA Commands
