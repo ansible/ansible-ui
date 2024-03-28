@@ -21,38 +21,24 @@ describe('inventory group', () => {
     });
   });
 
-  beforeEach(() => {
-    const inventoryName = 'E2E Inventory group ' + randomString(4);
-    cy.navigateTo('awx', 'inventories');
-    cy.verifyPageTitle('Inventories');
-    cy.clickButton(/^Create inventory$/);
-    cy.clickLink(/^Create inventory$/);
-    cy.get('[data-cy="name"]').type(inventoryName);
-    cy.singleSelectBy('[data-cy="organization"]', organization.name);
-    cy.get('[data-cy="prevent_instance_group_fallback"]').click();
-    cy.clickButton(/^Create inventory$/);
-    cy.verifyPageTitle(inventoryName);
-    cy.hasDetail(/^Organization$/, organization.name);
-    cy.clickLink(/^Groups$/);
-  });
-
-  afterEach(() => {
-    cy.visit(
-      `/infrastructure/inventories/inventory/${inventory.id}/groups/?page=1&perPage=10&sort=name`
-    );
-    cy.clickPageAction('delete-inventory');
-    cy.get('#confirm').click();
-    cy.clickButton(/^Delete inventory/);
-    cy.verifyPageTitle('Inventories');
+  after(() => {
     cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
     cy.deleteAwxUser(user, { failOnStatusCode: false });
     cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
   });
 
   it('can create and delete a group', () => {
+    cy.visit(`/infrastructure/inventories/inventory/${inventory.id}/details`);
+    cy.clickLink(/^Groups$/);
     const groupName = 'E2E Inventory group ' + randomString(4);
+    createGroup(groupName);
+    deleteGroup();
+  });
+
+  function createGroup(groupName: string) {
     cy.clickButton(/^Create group$/);
     cy.verifyPageTitle('Create new group');
+
     cy.get('[data-cy="name"]').type(groupName);
     cy.get('[data-cy="description"]').type('This is a description');
     cy.dataEditorTypeByDataCy('variables', 'test: true');
@@ -60,6 +46,9 @@ describe('inventory group', () => {
     cy.hasDetail(/^Name$/, groupName);
     cy.hasDetail(/^Description$/, 'This is a description');
     cy.hasDetail(/^Variables$/, 'test: true');
+  }
+
+  function deleteGroup() {
     cy.get('[data-cy="actions-dropdown"]').click();
     cy.get('[data-cy="delete-group"]').click();
     cy.get('[data-cy="delete-groups-dialog-radio-delete"]').click();
@@ -67,5 +56,5 @@ describe('inventory group', () => {
     cy.get('[data-cy="empty-state-title"]').contains(
       /^There are currently no groups added to this inventory./
     );
-  });
+  }
 });
