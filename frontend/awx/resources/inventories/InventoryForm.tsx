@@ -35,6 +35,8 @@ import { TFunction } from 'i18next';
 import { PageFormSingleSelect } from '../../../../framework/PageForm/Inputs/PageFormSingleSelect';
 import { AwxError } from '../../common/AwxError';
 import { ConstructedInventoryHint } from './components/ConstructedInventoryHint';
+import { Trans } from 'react-i18next';
+import { Link } from 'react-router-dom';
 
 export type InventoryCreate = Inventory & {
   instanceGroups: InstanceGroup[];
@@ -306,6 +308,48 @@ export function EditInventory() {
 function InventoryInputs(props: { inventoryKind: string }) {
   const { t } = useTranslation();
   const { inventoryKind } = props;
+
+  const jsonExample = `
+  {
+    "somevar": "somevalue"
+    "somepassword": "Magic"
+  }
+`;
+  const yamlExample = `
+  ---
+  somevar: somevalue
+  somepassword: magic
+`;
+
+  const labelHelpVarsInventory: React.ReactNode = (
+    <>
+      <Trans>
+        Variables must be in JSON or YAML syntax. Use the radio button to toggle between the two.
+      </Trans>
+      <br />
+      <br />
+      <Trans>JSON:</Trans>
+      <pre>{jsonExample}</pre>
+      <br />
+      <Trans>YAML:</Trans>
+      <pre>{yamlExample}</pre>
+      <br />
+      <Trans>
+        View JSON examples at{' '}
+        <Link to="http://www.json.org" target="_blank" rel="noopener noreferrer">
+          www.json.org
+        </Link>
+      </Trans>
+      <br />
+      <Trans>
+        View YAML examples at{' '}
+        <Link to="http://docs.ansible.com/YAMLSyntax.html" target="_blank" rel="noopener noreferrer">
+          docs.ansible.com
+        </Link>
+      </Trans>
+    </>
+  );
+
   return (
     <>
       <PageFormTextInput<InventoryCreate>
@@ -394,8 +438,10 @@ function InventoryInputs(props: { inventoryKind: string }) {
       <PageFormSection singleColumn>
         <PageFormDataEditor<InventoryCreate>
           name="variables"
-          label={t('Variables')}
+          label={inventoryKind === 'constructed' ? t('Source vars') : t('Variables')}
           format="yaml"
+          isRequired={inventoryKind === 'constructed' ? true : false}
+          labelHelp={labelHelpVarsInventory}
         />
       </PageFormSection>
       {inventoryKind === '' && (
