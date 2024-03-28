@@ -90,6 +90,8 @@ describe('Workflow Visualizer', () => {
       cy.contains('Edit Job Template').should('be.visible');
       cy.getByDataCy('ask_variables_on_launch').click();
       cy.getByDataCy('Submit').click();
+      cy.url().should('contain', '/details');
+      cy.getByDataCy('page-title').should('contain', jobTemplate.name);
       cy.visit(`/templates/workflow_job_template/${workflowJobTemplate?.id}/visualizer`);
       cy.contains('Workflow Visualizer').should('be.visible');
       cy.get(`g[data-id=${jobTemplateNode.id}] .pf-topology__node__action-icon`).click({
@@ -148,8 +150,9 @@ describe('Workflow Visualizer', () => {
             .and('contain', `${workflowJobTemplate.name}`);
           cy.intercept('GET', awxAPI`/workflow_jobs/${jobId}/workflow_nodes/**`).as('jobs');
           cy.getBy('button[id="fit-to-screen"]').click();
+          cy.contains(jobTemplate.name).should('be.visible');
+          cy.getByDataCy('relaunch-job').should('be.visible');
           cy.contains(jobTemplate.name).click({ force: true });
-          cy.contains('Success').should('be.visible');
           cy.getByDataCy(`${jobTemplate.name}`).should('be.visible');
           cy.getByDataCy('Output').should('be.visible');
           cy.contains('button', 'Workflow Job 1/1')

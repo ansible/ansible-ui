@@ -6,6 +6,7 @@ import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
 import { WorkflowJobTemplate } from '../../../../frontend/awx/interfaces/WorkflowJobTemplate';
 import { WorkflowNode } from '../../../../frontend/awx/interfaces/WorkflowNode';
+import { awxAPI } from '../../../support/formatApiPathForAwx';
 
 describe('Workflow Visualizer', () => {
   let organization: Organization;
@@ -22,7 +23,6 @@ describe('Workflow Visualizer', () => {
     organization = this.globalOrganization as Organization;
     project = this.globalProject as Project;
     cy.awxLogin();
-
     cy.createAwxInventory({ organization: organization.id })
       .then((i) => {
         inventory = i;
@@ -56,7 +56,7 @@ describe('Workflow Visualizer', () => {
     cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
   });
 
-  describe('Workflow Visualizer: Create', () => {
+  describe('Workflow Visualizer: Add Nodes', () => {
     it('should render a workflow visualizer view with multiple nodes present', () => {
       cy.renderWorkflowVisualizerNodesFromFixtureFile(
         `${workflowJobTemplate.name}`,
@@ -68,7 +68,6 @@ describe('Workflow Visualizer', () => {
       cy.get('[class*="43-node-label"]').should('exist').should('contain', 'bar');
       cy.get('[class*="42-node-label"]').should('exist').should('contain', '1');
       cy.get('[class*="41-node-label"]').should('exist').should('contain', 'Demo Project');
-      cy.deleteAwxWorkflowJobTemplate(workflowJobTemplate);
     });
 
     it('Should create a workflow job template and then navigate to the visualizer, and then navigate to the details view after clicking cancel', () => {
@@ -79,17 +78,25 @@ describe('Workflow Visualizer', () => {
       cy.clickLink(/^Create workflow job template$/);
       cy.get('[data-cy="name"]').type(jtName);
       cy.get('[data-cy="description"]').type('this is a description');
+      cy.intercept('POST', awxAPI`/workflow_job_templates/`).as('newWfjt');
       cy.get('[data-cy="Submit"]').click();
-      cy.get('[data-cy="workflow-visualizer"]').should('be.visible');
-      cy.get('h4.pf-v5-c-empty-state__title-text').should(
-        'have.text',
-        'There are currently no nodes in this workflow'
-      );
-      cy.get('div.pf-v5-c-empty-state__actions').within(() => {
-        cy.get('[data-cy="add-node-button"]').should('be.visible');
-      });
-      cy.get('button[data-cy="workflow-visualizer-toolbar-close"]').click();
-      cy.verifyPageTitle(`${jtName}`);
+      cy.wait('@newWfjt')
+        .its('response.body')
+        .then((wfjt: WorkflowJobTemplate) => {
+          expect(wfjt.description).to.eql('this is a description');
+          cy.get('[data-cy="workflow-visualizer"]').should('be.visible');
+          cy.get('h4.pf-v5-c-empty-state__title-text').should(
+            'have.text',
+            'There are currently no nodes in this workflow'
+          );
+          cy.get('div.pf-v5-c-empty-state__actions').within(() => {
+            cy.get('[data-cy="add-node-button"]').should('be.visible');
+          });
+          cy.get('button[data-cy="workflow-visualizer-toolbar-close"]').click();
+          cy.getByDataCy('description').should('contain', wfjt.description);
+          cy.verifyPageTitle(`${jtName}`);
+          cy.deleteAwxWorkflowJobTemplate(wfjt, { failOnStatusCode: false });
+        });
     });
   });
 
@@ -118,10 +125,20 @@ describe('Workflow Visualizer', () => {
       cy.get('[data-cy="node-alias"]').type('Test Node');
       cy.clickButton('Next');
       cy.clickButton('Finish');
+      cy.intercept(
+        'POST',
+        awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/workflow_nodes/`
+      ).as('saved');
+      cy.clickButton('Save');
+      cy.wait('@saved');
+      cy.get('[data-cy="alert-toaster"]').should('be.visible');
+      cy.get(`g[data-id="${projectNode.id}-${approvalNode.id}"]`).should(
+        'have.text',
+        'Run on success'
+      );
       cy.get('g[data-id="3-unsavedNode"]').should('have.text', 'ALLTest Node');
       cy.get(`g[data-id=${approvalNode.id}-3-unsavedNode]`).should('have.text', 'Run always');
-      cy.clickButton('Save');
-      cy.get('[data-cy="alert-toaster"]').should('be.visible');
+      cy.getBy('button[id="fit-to-screen"]').click();
       cy.get('button[data-cy="workflow-visualizer-toolbar-close"]').click();
       cy.verifyPageTitle(`${workflowJobTemplate.name}`);
     });
@@ -129,6 +146,16 @@ describe('Workflow Visualizer', () => {
     it('Adds a new node specifically linked to an already existing node.', function () {
       cy.visit(`/templates/workflow_job_template/${workflowJobTemplate?.id}/visualizer`);
       cy.contains('Workflow Visualizer').should('be.visible');
+      cy.get(`g[data-id="${projectNode.id}"]`)
+        .should('be.visible')
+        .and('contain', `${projectNode.summary_fields.unified_job_template.name}`);
+      cy.get(`g[data-id="${approvalNode.id}"] [class*="node-label"]`).should('be.visible').click();
+      cy.getByDataCy('workflow-topology-sidebar').should('be.visible');
+      cy.contains('h2', 'Node details').should('be.visible');
+      cy.getByDataCy('type').should('contain', 'Workflow approval');
+      cy.getByDataCy('workflow-topology-sidebar').within(() => {
+        cy.getBy('[aria-label="Close"]').click();
+      });
       cy.get(`g[data-id=${approvalNode.id}] .pf-topology__node__action-icon`).click({
         force: true,
       });
@@ -283,7 +310,7 @@ describe('Workflow Visualizer', () => {
           cy.clickModalButton('Close');
           cy.clickButton('Save');
           cy.get('[data-cy="alert-toaster"]').should('be.visible');
-          cy.reload();
+          cy.getBy('button[id="fit-to-screen"]').click();
           cy.clickButton('Add step');
           cy.selectDropdownOptionByResourceName('node-type', 'Job Template');
           cy.selectDropdownOptionByResourceName('job-template-select', `${jobTemplate.name}`);
@@ -329,8 +356,8 @@ describe('Workflow Visualizer', () => {
                   .should('contain', `${workflowJobTemplate.name}`)
                   .should('be.visible');
                 cy.removeAllNodesFromVisualizerToolbar();
-                cy.contains('button', 'Save').click();
-                cy.reload();
+                cy.contains('button', 'Save').should('be.visible').click();
+                cy.getBy('button[id="fit-to-screen"]').click();
                 cy.clickButton('Add step');
                 cy.selectDropdownOptionByResourceName('node-type', 'Job Template');
                 cy.selectDropdownOptionByResourceName('job-template-select', `${jobTemplate.name}`);
@@ -360,7 +387,7 @@ describe('Workflow Visualizer', () => {
   });
 
   describe('Workflow Visualizer: Delete Nodes or Links', () => {
-    it('Remove all steps using the kebab menu of the visualizer toolbar, save and delete the template', function () {
+    it('Remove all steps using the kebab menu of the visualizer toolbar and save changes', function () {
       cy.createAwxWorkflowVisualizerProjectNode(workflowJobTemplate, project).then(
         (projectNode) => {
           cy.createAwxWorkflowVisualizerInventorySourceNode(
@@ -381,7 +408,6 @@ describe('Workflow Visualizer', () => {
           cy.removeAllNodesFromVisualizerToolbar();
           cy.contains('button', 'Save').click();
           cy.get('[data-kind="node"]').should('have.length', 0);
-          cy.deleteAwxWorkflowJobTemplate(workflowJobTemplate);
         }
       );
     });
@@ -392,6 +418,7 @@ describe('Workflow Visualizer', () => {
         cy.createAwxWorkflowVisualizerApprovalNode(workflowJobTemplate).then(() => {
           cy.visit(`/templates/workflow_job_template/${workflowJobTemplate?.id}/visualizer`);
           cy.contains('Workflow Visualizer').should('be.visible');
+          cy.get('[data-kind="node"]').should('have.length', 3);
           cy.get(`g[data-id=${projectNode.id}] .pf-topology__node__action-icon`).click({
             force: true,
           });

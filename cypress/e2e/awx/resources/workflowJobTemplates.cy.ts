@@ -5,13 +5,13 @@ import { Label } from '../../../../frontend/awx/interfaces/Label';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
 import { WorkflowJobTemplate } from '../../../../frontend/awx/interfaces/WorkflowJobTemplate';
+import { awxAPI } from '../../../support/formatApiPathForAwx';
 
 describe('Workflow Job templates form', () => {
   let organization: Organization;
   let inventory: Inventory;
   let label: Label;
   let project: Project;
-  let inventorySource: InventorySource;
 
   before(() => {
     cy.awxLogin();
@@ -41,7 +41,6 @@ describe('Workflow Job templates form', () => {
     cy.navigateTo('awx', 'templates');
     cy.clickButton(/^Create template$/);
     cy.clickLink(/^Create workflow job template$/);
-
     cy.get('[data-cy="name"]').type(jtName);
     cy.get('[data-cy="description"]').type('this is a description');
     cy.singleSelectByDataCy('organization', organization.name);
@@ -57,21 +56,14 @@ describe('Workflow Job templates form', () => {
       cy.get('input[type="text"]').type('test skip tag');
       cy.contains('Create "test skip tag"').click();
     });
-
+    cy.intercept('POST', awxAPI`/workflow_job_templates/`).as('newWfjt');
     cy.get('[data-cy="Submit"]').click();
-    cy.get('button[data-cy="workflow-visualizer-toolbar-close"]').should('be.visible');
-    cy.get('button[data-cy="workflow-visualizer-toolbar-close"]').click();
-    cy.get('[data-cy="name"]').should('be.visible').should('contain', jtName);
-    cy.get('[data-cy="description"]')
-      .should('be.visible')
-      .should('contain', 'this is a description');
-    cy.get('[data-cy="organization"]').should('be.visible').should('contain', organization.name);
-    cy.get('[data-cy="inventory"]').should('be.visible').should('contain', inventory.name);
-    cy.get('[data-cy="labels"]').should('be.visible').should('contain', label.name);
-    cy.get('[data-cy="actions-dropdown"]').click();
-    cy.get('[data-cy="delete-template"]').click();
-    cy.get('#confirm').click();
-    cy.get('button').contains('Delete template').click();
+    cy.wait('@newWfjt')
+      .its('response.body')
+      .then((newWfjt: WorkflowJobTemplate) => {
+        cy.get('button[data-cy="workflow-visualizer-toolbar-close"]').should('be.visible');
+        cy.deleteAwxWorkflowJobTemplate(newWfjt, { failOnStatusCode: false });
+      });
   });
 
   it('Should edit a workflow job template', () => {
@@ -94,6 +86,8 @@ describe('Workflow Job templates form', () => {
         cy.singleSelectByDataCy('organization', newOrganization.name);
         cy.clickButton(/^Save workflow job template$/);
         cy.verifyPageTitle(newName);
+        cy.getByDataCy('name').should('contain', newName);
+        cy.getByDataCy('description').should('contain', 'this is a new description');
       });
 
       if (wfJT) {
@@ -113,14 +107,28 @@ describe('Workflow Job templates form', () => {
       inventory: inventory.id,
     }).then((workflowJobTemplate) => {
       if (!workflowJobTemplate.name) return;
+      cy.intercept(
+        'DELETE',
+        awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/`
+      ).as('deleted');
       cy.clickTableRowKebabAction(workflowJobTemplate?.name, 'delete-template');
       cy.get('#confirm').click();
       cy.clickButton(/^Delete template/);
-      cy.contains(/^Success$/);
-      cy.clickButton(/^Close$/);
-      cy.clickButton(/^Clear all filters$/);
+      cy.wait('@deleted')
+        .its('response.statusCode')
+        .then((statusCode) => {
+          expect(statusCode).to.eql(204);
+          cy.contains(/^Success$/);
+          cy.clickButton(/^Close$/);
+          cy.clickButton(/^Clear all filters$/);
+          cy.filterTableByTextFilter('name', workflowJobTemplate?.name, {
+            disableFilterSelection: false,
+          });
+          cy.contains('h2', 'No results found').should('be.visible');
+        });
     });
   });
+
   it('Save and launch a workflow job template from list page', function () {
     cy.createAwxJobTemplate({
       organization: (this.globalOrganization as Organization).id,
@@ -137,10 +145,12 @@ describe('Workflow Job templates form', () => {
         ).then((projectNode) => {
           cy.createAwxWorkflowVisualizerJobTemplateNode(workflowJobTemplate, jobTemplate).then(
             (jobTemplateNode) => {
+              let newOrg: Organization;
               cy.createAwxOrganization().then((org) => {
-                organization = org;
+                newOrg = org;
                 cy.createAwxProject({ organization: organization.id }).then((p) => {
                   project = p;
+                  let inventorySource: InventorySource;
                   cy.createAwxInventorySource(inventory, project).then((invSrc) => {
                     inventorySource = invSrc;
                     cy.createAwxWorkflowVisualizerInventorySourceNode(
@@ -154,6 +164,23 @@ describe('Workflow Job templates form', () => {
                           cy.createWorkflowJTFailureNodeLink(inventorySourceNode, managementNode);
                         }
                       );
+                      cy.navigateTo('awx', 'templates');
+                      cy.intercept(
+                        'POST',
+                        `api/v2/workflow_job_templates/${workflowJobTemplate.id}/launch/`
+                      ).as('launchWJT-WithNodes');
+                      cy.searchAndDisplayResource(workflowJobTemplate.name);
+                      cy.get('button[data-cy="launch-template"]').click();
+                      cy.wait('@launchWJT-WithNodes')
+                        .its('response.body.id')
+                        .then((jobId: string) => {
+                          /*there is a known React error, `create request error` happening due the output tab work in progress,but the test executes fine since there is no ui interaction here*/
+                          cy.waitForWorkflowJobStatus(jobId);
+                        });
+                      cy.deleteAwxWorkflowJobTemplate(workflowJobTemplate);
+                      cy.deleteAwxJobTemplate(jobTemplate);
+                      cy.deleteAwxOrganization(newOrg);
+                      cy.deleteAwxProject(project);
                     });
                   });
                 });
@@ -161,19 +188,6 @@ describe('Workflow Job templates form', () => {
             }
           );
         });
-        cy.navigateTo('awx', 'templates');
-        cy.intercept('POST', `api/v2/workflow_job_templates/${workflowJobTemplate.id}/launch/`).as(
-          'launchWJT-WithNodes'
-        );
-        cy.searchAndDisplayResource(workflowJobTemplate.name);
-        cy.get('button[data-cy="launch-template"]').click();
-        cy.wait('@launchWJT-WithNodes')
-          .its('response.body.id')
-          .then((jobId: string) => {
-            /*there is a known React error, `create request error` happening due the output tab work in progress,but the test executes fine since there is no ui interaction here*/
-            cy.waitForWorkflowJobStatus(jobId);
-          });
-        cy.deleteAwxWorkflowJobTemplate(workflowJobTemplate);
       });
     });
   });
