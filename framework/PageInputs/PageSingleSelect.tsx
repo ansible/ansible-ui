@@ -276,6 +276,7 @@ export function PageSingleSelect<
         <MenuSearch>
           <MenuSearchInput data-cy="search-input">
             <SearchInput
+              label={t('Search input')}
               id={`${id}-search`}
               ref={searchRef}
               value={searchValue}
