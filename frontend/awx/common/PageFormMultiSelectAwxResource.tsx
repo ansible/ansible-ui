@@ -40,7 +40,7 @@ export function PageFormMultiSelectAwxResource<
     async (options) => {
       try {
         let url =
-          props.url + `?page_size=10&order_by=name` + getQueryString(props.queryParams || {});
+          props.url + `?page_size=10&order_by=name&` + getQueryString(props.queryParams || {});
         if (options.next) url = url + `&name__gt=${options.next}`;
         if (options.search) url = url + `&name__icontains=${options.search}`;
         const response = await requestGet<AwxItemsResponse<Resource>>(url, options.signal);
