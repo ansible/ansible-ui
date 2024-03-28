@@ -7,12 +7,15 @@ import { useCredentialActions } from './hooks/useCredentialActions';
 import { useCredentialToolbarActions } from './hooks/useCredentialToolbarActions';
 import { useCredentialsColumns } from './hooks/useCredentialsColumns';
 import { useCredentialsFilters } from './hooks/useCredentialsFilters';
+import { usePersistentFilters } from '../../../common/PersistentFilters';
 
 export function CredentialsList(props: { url: string }) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
-  const toolbarFilters = useCredentialsFilters();
   const tableColumns = useCredentialsColumns();
+
+  usePersistentFilters('credentials');
+  const toolbarFilters = useCredentialsFilters();
 
   const view = useAwxView<Credential>({
     url: props.url,
