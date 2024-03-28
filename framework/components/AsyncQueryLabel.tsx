@@ -9,7 +9,9 @@ export function AsyncQueryLabel(props: {
   id: number | string | undefined;
   field?: string;
 }): ReactNode {
-  const { data, isLoading, error } = useGetItem<Record<string, unknown>>(props.url, props.id);
+  const { data, isLoading, error } = useGetItem<Record<string, unknown>>(props.url, props.id, {
+    refreshInterval: 0, // Disable refresh on querying labels
+  });
 
   if (props.id === undefined) return null;
 
