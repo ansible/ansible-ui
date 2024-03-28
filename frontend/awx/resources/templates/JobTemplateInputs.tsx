@@ -127,8 +127,7 @@ export function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm }) {
             name="ask_execution_environment_on_launch"
           />
         }
-        name="execution_environment.name"
-        executionEnvironmentIdPath="execution_environment.id"
+        name="execution_environment.id"
         organizationId={organizationId ?? ''}
       />
       <PageFormCredentialSelect<JobTemplateForm>

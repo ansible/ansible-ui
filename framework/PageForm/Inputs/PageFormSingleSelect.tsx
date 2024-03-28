@@ -6,6 +6,7 @@ import {
   Validate,
   useFormContext,
 } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { PageSingleSelect, PageSingleSelectProps } from '../../PageInputs/PageSingleSelect';
 import { useID } from '../../hooks/useID';
 import { useFrameworkTranslations } from '../../useFrameworkTranslations';
@@ -41,6 +42,7 @@ export function PageFormSingleSelect<
   const { isSubmitting, isValidating } = formState;
 
   const [translations] = useFrameworkTranslations();
+  const { t } = useTranslation();
 
   return (
     <Controller<TFieldValues, TFieldName>
@@ -53,7 +55,13 @@ export function PageFormSingleSelect<
             ? translations.validating
             : error?.message
           : undefined;
-
+        let isDisabled = props.isDisabled;
+        if (!isDisabled && props.isReadOnly) {
+          isDisabled = t('Readonly');
+        }
+        if (isSubmitting) {
+          isDisabled = '';
+        }
         return (
           <PageFormGroup
             fieldId={id}
@@ -72,7 +80,7 @@ export function PageFormSingleSelect<
               aria-describedby={id ? `${id}-form-group` : undefined}
               value={value}
               onSelect={onChange}
-              isDisabled={props.isDisabled || props.isReadOnly || isSubmitting}
+              isDisabled={isDisabled}
               footer={props.footer}
             />
           </PageFormGroup>

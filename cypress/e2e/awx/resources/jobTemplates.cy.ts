@@ -40,7 +40,7 @@ describe('Job templates form Create, Edit, Delete', function () {
     cy.selectDropdownOptionByResourceName('inventory', inventory.name);
     cy.selectDropdownOptionByResourceName('project', `${(this.globalProject as Project).name}`);
     cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
-    cy.selectItemFromLookupModal('execution-environment-select', executionEnvironment);
+    cy.singleSelectByDataCy('execution-environment', executionEnvironment);
     cy.selectItemFromLookupModal('credential-select', machineCredential.name);
     cy.get('[data-cy="Submit"]').click();
     cy.wait('@createJT')
@@ -104,7 +104,7 @@ describe('Job templates form Create, Edit, Delete', function () {
         cy.clickButton(/^Next/);
         cy.selectItemFromLookupModal('credential-select', machineCredential.name);
         cy.clickButton(/^Next/);
-        cy.selectItemFromLookupModal('execution-environment-select', executionEnvironment);
+        cy.singleSelectByDataCy('execution-environment', executionEnvironment);
         cy.clickButton(/^Next/);
         cy.selectItemFromLookupModal('instance-group-select', instanceGroup);
         cy.clickButton(/^Next/);
@@ -155,7 +155,7 @@ describe('Job templates form Create, Edit, Delete', function () {
         cy.clickButton(/^Next/);
         cy.selectItemFromLookupModal('credential-select', machineCredential.name);
         cy.clickButton(/^Next/);
-        cy.selectItemFromLookupModal('execution-environment-select', executionEnvironment);
+        cy.singleSelectByDataCy('execution-environment', executionEnvironment);
         cy.clickButton(/^Next/);
         cy.selectItemFromLookupModal('instance-group-select', instanceGroup);
         cy.clickButton(/^Next/);

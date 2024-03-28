@@ -12,6 +12,7 @@ export function AsyncQueryLabel(props: {
   const { data, isLoading, error } = useGetItem<Record<string, unknown>>(props.url, props.id);
 
   if (props.id === undefined) return null;
+  if (props.id === null) return null;
 
   if (isLoading) return <Spinner size="md" />;
 
@@ -22,7 +23,7 @@ export function AsyncQueryLabel(props: {
         return props.id.toString();
       }
     }
-    return error.message;
+    return props.id.toString();
   }
 
   if (!data) {

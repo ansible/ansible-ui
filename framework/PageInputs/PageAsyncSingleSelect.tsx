@@ -65,7 +65,7 @@ export function PageAsyncSingleSelect<
 
   const onSelect = useRef(props.onSelect).current;
 
-  const queryOptions = useRef(props.queryOptions).current;
+  const queryOptions = props.queryOptions;
 
   const activeAbortController = useRef<AbortController | null>(null);
   const queryHandler = useCallback(() => {

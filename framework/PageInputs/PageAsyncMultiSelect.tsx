@@ -69,7 +69,7 @@ export function PageAsyncMultiSelect<
     []
   );
 
-  const queryOptions = useRef(props.queryOptions).current;
+  const queryOptions = props.queryOptions;
 
   const activeAbortController = useRef<AbortController | null>(null);
   const queryHandler = useCallback(() => {

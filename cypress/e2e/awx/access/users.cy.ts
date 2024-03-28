@@ -40,7 +40,7 @@ describe('Users List Actions', () => {
     cy.get('[data-cy="username"]').type(userName);
     cy.get('[data-cy="password"]').type(password);
     cy.get('[data-cy="confirmpassword"]').type(password);
-    cy.selectSingleSelectOption('[data-cy="organization"]', organization.name);
+    cy.singleSelectByDataCy('organization', organization.name);
     cy.clickButton(/^Create user$/);
     cy.verifyPageTitle(userName);
     // Clean up this user

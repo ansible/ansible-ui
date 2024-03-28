@@ -263,9 +263,7 @@ export function TemplateLaunchWizard({ jobType }: { jobType: string }) {
       label: t('Execution Environment'),
       inputs: (
         <PageFormExecutionEnvironmentSelect<TemplateLaunch>
-          name="execution_environment.name"
-          executionEnvironmentPath="execution_environment"
-          executionEnvironmentIdPath="execution_environment.id"
+          name="execution_environment.id"
           organizationId={template.organization?.toString() ?? ''}
         />
       ),

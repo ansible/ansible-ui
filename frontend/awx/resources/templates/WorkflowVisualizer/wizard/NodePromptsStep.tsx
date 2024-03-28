@@ -1,6 +1,6 @@
-import { useEffect, SetStateAction } from 'react';
-import { useTranslation } from 'react-i18next';
+import { SetStateAction, useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import {
   PageFormDataEditor,
   PageFormGrid,
@@ -9,16 +9,16 @@ import {
   PageFormTextInput,
 } from '../../../../../../framework';
 import { PageFormCreatableSelect } from '../../../../../../framework/PageForm/Inputs/PageFormCreatableSelect';
-import { PageFormLabelSelect } from '../../../../common/PageFormLabelSelect';
-import type { JobTemplate } from '../../../../interfaces/JobTemplate';
-import type { WorkflowJobTemplate } from '../../../../interfaces/WorkflowJobTemplate';
-import { parseStringToTagArray } from '../../JobTemplateFormHelpers';
-import { ConditionalField } from '../../TemplatePage/steps/ConditionalField';
 import { usePageWizard } from '../../../../../../framework/PageWizard/PageWizardProvider';
-import { PageFormInventorySelect } from '../../../inventories/components/PageFormInventorySelect';
 import { PageFormCredentialSelect } from '../../../../access/credentials/components/PageFormCredentialSelect';
 import { PageFormExecutionEnvironmentSelect } from '../../../../administration/execution-environments/components/PageFormExecutionEnvironmentSelect';
 import { PageFormInstanceGroupSelect } from '../../../../administration/instance-groups/components/PageFormInstanceGroupSelect';
+import { PageFormLabelSelect } from '../../../../common/PageFormLabelSelect';
+import type { JobTemplate } from '../../../../interfaces/JobTemplate';
+import type { WorkflowJobTemplate } from '../../../../interfaces/WorkflowJobTemplate';
+import { PageFormInventorySelect } from '../../../inventories/components/PageFormInventorySelect';
+import { parseStringToTagArray } from '../../JobTemplateFormHelpers';
+import { ConditionalField } from '../../TemplatePage/steps/ConditionalField';
 import { PromptFormValues, WizardFormValues } from '../types';
 
 export function NodePromptsStep() {
@@ -104,9 +104,7 @@ export function NodePromptsStep() {
       </ConditionalField>
       <ConditionalField isHidden={!config.ask_execution_environment_on_launch}>
         <PageFormExecutionEnvironmentSelect<WizardFormValues>
-          name="prompt.execution_environment.name"
-          executionEnvironmentPath="prompt.execution_environment"
-          executionEnvironmentIdPath="prompt.execution_environment.id"
+          name="prompt.execution_environment.id"
           organizationId={organizationId?.toString() ?? ''}
         />
       </ConditionalField>
