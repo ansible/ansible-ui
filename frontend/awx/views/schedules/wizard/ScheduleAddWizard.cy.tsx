@@ -43,6 +43,7 @@ describe('ScheduleAddWizard', () => {
       cy.intercept('/api/v2/job_templates/100/', { id: 100, name: 'Mock Job Template' });
       cy.intercept('/api/v2/job_templates/100/launch/', {
         ask_credential_on_launch: true,
+        survey_enabled: true,
         defaults: {
           credentials: [
             {
@@ -68,8 +69,8 @@ describe('ScheduleAddWizard', () => {
       });
 
       cy.get('[data-cy="wizard-nav"]').within(() => {
-        cy.get('li').should('have.length', 5);
-        ['Details', 'Prompts', 'Occurrences', 'Exceptions', 'Review'].forEach((text, index) => {
+        cy.get('li').should('have.length', 4);
+        ['Details', 'Occurrences', 'Exceptions', 'Review'].forEach((text, index) => {
           cy.get('li')
             .eq(index)
             .should((el) => expect(el.text().trim()).to.equal(text));
@@ -104,7 +105,7 @@ describe('ScheduleAddWizard', () => {
           'Schedule name is required.'
         );
       });
-      cy.get('[data-cy="wizard-nav-item-promptsStep"]').within(() => {
+      cy.get('[data-cy="wizard-nav-item-nodePromptsStep"]').within(() => {
         cy.get('button').should('be.disabled');
       });
     });
