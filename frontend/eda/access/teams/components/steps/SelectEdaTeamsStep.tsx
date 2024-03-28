@@ -1,11 +1,11 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ITableColumn, TextCell } from '../../../../../../framework';
-import { SelectTeamsStep } from '../../../../../common/access/RolesWizard/steps/SelectTeamsStep';
 // import { useTeamsFilters } from '../../hooks/useTeamsFilters';
-import { useEdaView } from '../../../../common/useEventDrivenView';
 import { edaAPI } from '../../../../common/eda-utils';
 import { Team } from '../../../../../awx/interfaces/Team';
+import { useMultiSelectListView } from '../../../../common/useMultiSelectListView';
+import { PageMultiSelectList } from '../../../../../../framework/PageTable/PageMultiSelectList';
 
 export function SelectEdaTeamsStep() {
   // const toolbarFilters = useTeamsFilters();
@@ -24,11 +24,14 @@ export function SelectEdaTeamsStep() {
     ];
   }, [t]);
 
-  const view = useEdaView<Team>({
-    url: edaAPI`/teams/`,
-    toolbarFilters: [],
-    tableColumns,
-  });
+  const view = useMultiSelectListView(
+    {
+      url: edaAPI`/teams/`,
+      toolbarFilters: [],
+      tableColumns,
+    },
+    'teams'
+  );
 
-  return <SelectTeamsStep view={view} tableColumns={tableColumns} toolbarFilters={[]} />;
+  return <PageMultiSelectList view={view} tableColumns={tableColumns} toolbarFilters={[]} />;
 }
