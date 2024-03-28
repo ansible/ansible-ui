@@ -42,7 +42,7 @@ describe('host and inventory host', () => {
     cy.createInventoryHostGroup(organization).then((result) => {
       const { inventory, host, group } = result;
       cy.visit('/infrastructure/hosts?page=1&perPage=10&sort=name');
-      cy.contains(host.name).click();
+      cy.contains(host.name || '').click();
       expect(host.inventory).to.eq(inventory.id);
       expect(group.inventory).to.eq(inventory.id);
       cy.clickLink(/^Groups$/);
