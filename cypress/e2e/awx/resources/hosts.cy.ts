@@ -2,13 +2,11 @@ import { randomString } from '../../../../framework/utils/random-string';
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { User } from '../../../../frontend/awx/interfaces/User';
-import { InventoryGroupCreate } from '../../../../frontend/awx/interfaces/InventoryGroup';
 
 describe('host and inventory host', () => {
   let organization: Organization;
   let inventory: Inventory;
   let user: User;
-  let group: InventoryGroup;
 
   before(() => {
     cy.awxLogin();
