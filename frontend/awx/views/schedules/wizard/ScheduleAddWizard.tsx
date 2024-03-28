@@ -83,7 +83,7 @@ export function ScheduleAddWizard() {
         if (Object.keys(wizardData).length === 0) {
           return true;
         }
-        if (wizardData.node_resource?.survey_enabled) {
+        if (wizardData.launch_config?.survey_enabled) {
           return false;
         }
         return true;

@@ -186,15 +186,22 @@ export function NodeTypeStep(props: { hasSourceNode?: boolean }) {
         skip_tags: parseStringToTagArray(skip_tags || ''),
       };
 
-      const shouldShowStep = !shouldHideOtherStep(launchConfigResults);
-      if (shouldShowStep) {
+      const shouldShowPromptStep = !shouldHideOtherStep(launchConfigResults);
+      const shouldShowSurveyStep = launchConfigResults.survey_enabled;
+      if (shouldShowPromptStep || shouldShowSurveyStep) {
         setWizardData((prev) => ({
           ...prev,
           launch_config: launchConfigResults,
         }));
-        const filteredSteps = allSteps.filter((step) => step.id !== 'survey');
-
-        setVisibleSteps(filteredSteps);
+        if (shouldShowPromptStep && shouldShowSurveyStep) {
+          setVisibleSteps(allSteps);
+        } else if (shouldShowPromptStep) {
+          const filteredSteps = allSteps.filter((step) => step.id !== 'survey');
+          setVisibleSteps(filteredSteps);
+        } else {
+          const filteredSteps = allSteps.filter((step) => step.id !== 'nodePromptsStep');
+          setVisibleSteps(filteredSteps);
+        }
 
         if (stepData.nodePromptsStep && nodeResource) {
           const { isDirty: isNodeTypeDirty } = getFieldState('node_type');
