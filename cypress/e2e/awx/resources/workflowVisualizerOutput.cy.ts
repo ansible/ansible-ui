@@ -150,6 +150,8 @@ describe('Workflow Visualizer', () => {
           cy.getBy('button[id="fit-to-screen"]').click();
           cy.wait('@jobs');
           cy.contains(jobTemplate.name).click({ force: true });
+          cy.wait('@jobs');
+          cy.contains('Success').should('be.visible');
           cy.getByDataCy(`${jobTemplate.name}`).should('be.visible');
           cy.getByDataCy('Output').should('be.visible');
           cy.contains('button', 'Workflow Job 1/1')
