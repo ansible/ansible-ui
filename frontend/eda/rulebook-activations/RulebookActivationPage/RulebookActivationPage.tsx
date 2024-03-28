@@ -161,6 +161,7 @@ export function RulebookActivationPage() {
         tabs={[
           { label: t('Details'), page: EdaRoute.RulebookActivationDetails },
           { label: t('History'), page: EdaRoute.RulebookActivationHistory },
+          { label: t('Team Access'), page: EdaRoute.RulebookActivationTeamAccess },
         ]}
         params={{ id: params.id }}
       />
