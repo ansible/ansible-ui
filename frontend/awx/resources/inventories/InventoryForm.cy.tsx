@@ -6,8 +6,27 @@ import { Label } from '../../interfaces/Label';
 import { Organization } from '../../interfaces/Organization';
 import { CreateInventory, EditInventory, InventoryCreate } from './InventoryForm';
 
+export type regularPayload = {
+  kind: string;
+  name: string;
+  description: string;
+  labels: Array<{ name: string }>;
+  variables: string;
+  prevent_instance_group_fallback: boolean;
+  organization: number;
+};
+
+export type smartPayload = {
+  kind: string;
+  name: string;
+  description: string;
+  variables: string;
+  organization: number;
+  host_filter: string;
+};
+
 describe('Create Edit Inventory Form', () => {
-  const payload = {
+  const regularPayload = {
     kind: '',
     name: 'test',
     description: 'test description',
@@ -17,7 +36,16 @@ describe('Create Edit Inventory Form', () => {
     organization: 1,
   };
 
-  const kinds: ('' | 'smart' | 'constructed')[] = [''];
+  const smartPayload = {
+    kind: 'smart',
+    name: 'smart test',
+    description: 'smart test description',
+    variables: 'hello:world',
+    organization: 1,
+    host_filter: 'name__icontains=local',
+  };
+
+  const kinds: ('' | 'smart' | 'constructed')[] = ['', 'smart'];
 
   describe('Create Inventory', () => {
     beforeEach(() => {
@@ -31,14 +59,15 @@ describe('Create Edit Inventory Form', () => {
       );
       cy.intercept({ method: 'GET', url: '/api/v2/labels/*' }, { fixture: 'labels.json' });
     });
-
     kinds.forEach((kind) => {
       const path = '/inventories/:inventory_type/create';
 
       const initialEntries =
         kind === '' ? [`/inventories/inventory/create`] : [`/inventories/smart_inventory/create`];
 
-      it(`Validate required fields on create (${kind})`, () => {
+      const payload: regularPayload | smartPayload = kind === '' ? regularPayload : smartPayload;
+
+      it(`Validate required fields on create (${kind === '' ? 'regular' : kind})`, () => {
         cy.mount(<CreateInventory inventoryKind={kind} />, {
           path,
           initialEntries,
@@ -46,9 +75,12 @@ describe('Create Edit Inventory Form', () => {
         cy.clickButton(/^Create inventory$/);
         cy.contains('Name is required.').should('be.visible');
         cy.contains('Organization is required.').should('be.visible');
+        if (kind === 'smart') {
+          cy.contains('Smart host filter is required.').should('be.visible');
+        }
       });
 
-      it(`Create host using correct field values (${kind})`, () => {
+      it(`Create inventory using correct field values (${kind === '' ? 'regular' : kind})`, () => {
         cy.intercept('POST', '/api/v2/inventories/', {
           statusCode: 201,
           fixture: 'inventory.json',
@@ -58,9 +90,11 @@ describe('Create Edit Inventory Form', () => {
           statusCode: 204,
         }).as('submitInstanceGroup');
 
-        cy.intercept('POST', '/api/v2/inventories/*/labels/', {
-          statusCode: 204,
-        }).as('submitLabels');
+        if (kind === '') {
+          cy.intercept('POST', '/api/v2/inventories/*/labels/', {
+            statusCode: 204,
+          }).as('submitLabels');
+        }
 
         cy.mount(<CreateInventory inventoryKind={kind} />, {
           path,
@@ -73,10 +107,15 @@ describe('Create Edit Inventory Form', () => {
         cy.fixture('organizations').then((orgResponse: AwxItemsResponse<Organization>) => {
           cy.selectSingleSelectOption('[data-cy="organization"]', orgResponse.results[0].name);
         });
-        cy.get('[id^=pf-select-toggle-id-][id$=-select-multi-typeahead-typeahead]').type(
-          payload.labels[0].name
-        );
-        cy.get('.pf-v5-c-select__menu-item').click();
+        if (kind === 'smart' && 'host_filter' in payload) {
+          cy.get('[data-cy="host-filter"]').type(payload.host_filter);
+        }
+        if (kind === '' && 'labels' in payload) {
+          cy.get('[id^=pf-select-toggle-id-][id$=-select-multi-typeahead-typeahead]').type(
+            payload.labels[0].name
+          );
+          cy.get('.pf-v5-c-select__menu-item').click();
+        }
         cy.get('.pf-v5-c-input-group > .pf-v5-c-button').click();
         cy.fixture('instance_groups').then((ig_response: AwxItemsResponse<InstanceGroup>) =>
           cy.selectTableRowInDialog(ig_response.results[0].name)
@@ -131,29 +170,37 @@ describe('Create Edit Inventory Form', () => {
           );
         })
         .as('loadIG');
-
-      cy.fixture('inventory')
-        .then((inventory: Inventory) => {
-          inventory.kind = payload.kind as '' | 'smart' | 'constructed';
-          inventory.name = payload.name;
-          inventory.description = payload.description;
-          inventory.summary_fields.labels.results = payload.labels as Label[];
-          inventory.variables = payload.variables;
-          inventory.prevent_instance_group_fallback = payload.prevent_instance_group_fallback;
-          inventory.organization = payload.organization;
-        })
-        .then((inventory: Inventory) => {
-          cy.intercept({ method: 'GET', url: '/api/v2/inventories/*/' }, { body: inventory });
-        });
     });
-
     kinds.forEach((kind) => {
       const path = '/inventories/:inventory_type/:id/edit';
 
       const initialEntries =
         kind === '' ? [`/inventories/inventory/1/edit`] : [`/inventories/smart_inventory/2/edit`];
 
-      it(`Preload the form with correct values (${kind})`, () => {
+      const payload = kind === '' ? regularPayload : smartPayload;
+
+      it(`Preload the form with correct values (${kind === '' ? 'regular' : kind})`, () => {
+        cy.fixture('inventory')
+          .then((inventory: Inventory) => {
+            inventory.kind = payload.kind as '' | 'smart' | 'constructed';
+            inventory.name = payload.name;
+            inventory.description = payload.description;
+            if (kind === '' && 'labels' in payload) {
+              inventory.summary_fields.labels.results = payload.labels as Label[];
+            }
+            inventory.variables = payload.variables;
+            if (kind === '' && 'prevent_instance_group_fallback' in payload) {
+              inventory.prevent_instance_group_fallback = payload.prevent_instance_group_fallback;
+            }
+            inventory.organization = payload.organization;
+
+            if (kind === 'smart' && 'host_filter' in payload) {
+              inventory.host_filter = payload.host_filter;
+            }
+          })
+          .then((inventory: Inventory) => {
+            cy.intercept({ method: 'GET', url: '/api/v2/inventories/*/' }, { body: inventory });
+          });
         cy.mount(<EditInventory />, {
           path,
           initialEntries,
@@ -163,15 +210,40 @@ describe('Create Edit Inventory Form', () => {
         cy.fixture('organization').then((organization: Organization) =>
           cy.get('[data-cy="organization"]').should('contain', organization.name)
         );
-        cy.get('.pf-v5-c-select__toggle').should('contain', payload.labels[0].name);
+        if (kind === 'smart' && 'host_filter' in payload) {
+          cy.get('[data-cy="host-filter"]').should('have.value', payload.host_filter);
+        }
         cy.get('[data-cy="variables"]').should('have.text', payload.variables);
         cy.wait('@loadIG').then(() => {
           cy.get('[data-cy="instance-group-select-form-group"]').should('contain', 'controlplane');
         });
-        cy.get('[data-cy="labels-form-group"]').should('contain', 'test label');
+        if (kind === '' && 'labels' in payload) {
+          cy.get('[data-cy="labels-form-group"]').should('contain', payload.labels[0].name);
+        }
       });
 
-      it(`Check correct request body is passed after editing inventory (${kind})`, () => {
+      it(`Check correct request body is passed after editing inventory (${kind === '' ? 'regular' : kind})`, () => {
+        cy.fixture('inventory')
+          .then((inventory: Inventory) => {
+            inventory.kind = payload.kind as '' | 'smart' | 'constructed';
+            inventory.name = payload.name;
+            inventory.description = payload.description;
+            if (kind === '' && 'labels' in payload) {
+              inventory.summary_fields.labels.results = payload.labels as Label[];
+            }
+            inventory.variables = payload.variables;
+            if (kind === '' && 'prevent_instance_group_fallback' in payload) {
+              inventory.prevent_instance_group_fallback = payload.prevent_instance_group_fallback;
+            }
+            inventory.organization = payload.organization;
+
+            if (kind === 'smart' && 'host_filter' in payload) {
+              inventory.host_filter = payload.host_filter;
+            }
+          })
+          .then((inventory: Inventory) => {
+            cy.intercept({ method: 'GET', url: '/api/v2/inventories/*/' }, { body: inventory });
+          });
         cy.mount(<EditInventory />, {
           path,
           initialEntries,
@@ -184,11 +256,17 @@ describe('Create Edit Inventory Form', () => {
         cy.fixture('organizations').then((orgResponse: AwxItemsResponse<Organization>) => {
           cy.selectSingleSelectOption('[data-cy="organization"]', orgResponse.results[1].name);
         });
-        cy.get('.pf-v5-c-select__toggle-clear').click();
-        cy.get('[id^=pf-select-toggle-id-][id$=-select-multi-typeahead-typeahead]').type(
-          'edited test'
-        );
-        cy.get('.pf-v5-c-select__menu-item').click();
+        if (kind === 'smart' && 'host_filter' in payload) {
+          cy.get('[data-cy="host-filter"]').clear();
+          cy.get('[data-cy="host-filter"]').type('name__icontains=edited-local');
+        }
+        if (kind === '') {
+          cy.get('.pf-v5-c-select__toggle-clear').click();
+          cy.get('[id^=pf-select-toggle-id-][id$=-select-multi-typeahead-typeahead]').type(
+            'edited test'
+          );
+          cy.get('.pf-v5-c-select__menu-item').click();
+        }
         cy.get('.pf-v5-c-input-group > .pf-v5-c-button').click();
         cy.fixture('instance_groups').then((ig_response: AwxItemsResponse<InstanceGroup>) =>
           cy.selectTableRowInDialog(ig_response.results[1].name)
@@ -201,6 +279,9 @@ describe('Create Edit Inventory Form', () => {
             expect(editedInventory.name).to.equal('Edited name');
             expect(editedInventory.description).to.equal('Edited description');
             expect(editedInventory.variables).to.equal(`${payload.variables}s`);
+            if (kind === 'smart' && 'host_filter' in payload) {
+              expect(editedInventory.host_filter).to.equal('name__icontains=edited-local');
+            }
             cy.fixture('organizations').then((orgResponse: AwxItemsResponse<Organization>) => {
               expect(editedInventory.organization).to.equal(orgResponse.results[1].id);
             });
@@ -245,7 +326,7 @@ describe('Create Edit Inventory Form', () => {
         );
       });
 
-      it(`Validate required fields on save (${kind})`, () => {
+      it(`Validate required fields on save (${kind === '' ? 'regular' : kind})`, () => {
         cy.mount(<EditInventory />, {
           path,
           initialEntries,
@@ -253,6 +334,10 @@ describe('Create Edit Inventory Form', () => {
         cy.clickButton(/^Save inventory$/);
         cy.get('[data-cy="name"]').clear();
         cy.contains('Name is required.').should('be.visible');
+        if (kind === 'smart') {
+          cy.get('[data-cy="host-filter"]').clear();
+          cy.contains('Smart host filter is required.').should('be.visible');
+        }
       });
     });
   });
