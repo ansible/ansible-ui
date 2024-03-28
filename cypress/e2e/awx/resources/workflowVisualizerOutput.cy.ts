@@ -148,7 +148,6 @@ describe('Workflow Visualizer', () => {
             .and('contain', `${workflowJobTemplate.name}`);
           cy.intercept('GET', awxAPI`/workflow_jobs/${jobId}/workflow_nodes/**`).as('jobs');
           cy.getBy('button[id="fit-to-screen"]').click();
-          cy.wait('@jobs');
           cy.contains(jobTemplate.name).click({ force: true });
           cy.contains('Success').should('be.visible');
           cy.getByDataCy(`${jobTemplate.name}`).should('be.visible');
