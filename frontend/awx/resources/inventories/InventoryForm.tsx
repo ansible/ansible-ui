@@ -37,6 +37,7 @@ import { AwxError } from '../../common/AwxError';
 import { ConstructedInventoryHint } from './components/ConstructedInventoryHint';
 import { Trans } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import { ansibleDocUrls } from '../../main/ansibleDocsUrls';
 
 export type InventoryCreate = Inventory & {
   instanceGroups: InstanceGroup[];
@@ -321,7 +322,14 @@ function InventoryInputs(props: { inventoryKind: string }) {
   somepassword: magic
 `;
 
-  const labelHelpVarsInventory: React.ReactNode = (
+  const yamlExampleConstructed = `
+      ---
+      plugin: constructed
+      strict: true
+      use_vars_plugins: true
+    `;
+
+  const labelHelpVarsInventory = (
     <>
       <Trans>
         Variables must be in JSON or YAML syntax. Use the radio button to toggle between the two.
@@ -343,12 +351,53 @@ function InventoryInputs(props: { inventoryKind: string }) {
       <br />
       <Trans>
         View YAML examples at{' '}
-        <Link to="http://docs.ansible.com/YAMLSyntax.html" target="_blank" rel="noopener noreferrer">
+        <Link
+          to="http://docs.ansible.com/YAMLSyntax.html"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           docs.ansible.com
         </Link>
       </Trans>
     </>
   );
+
+  const labelHelpVarsSmartInventory =
+    t(`Enter inventory variables using either JSON or YAML syntax. 
+  Use the radio button to toggle between the two. 
+  Refer to the Ansible Controller documentation for example syntax.
+  `);
+
+  const labelHelpVarsConstructedInventory = (
+    <>
+      <Trans>
+        Variables used to configure the constructed inventory plugin. For a detailed description of
+        how to configure this plugin, see{' '}
+        <a href={ansibleDocUrls.constructed} target="_blank" rel="noopener noreferrer">
+          constructed inventory
+        </a>{' '}
+        plugin configuration guide.
+      </Trans>
+      <br />
+      <br />
+      <hr />
+      <br />
+      <Trans>
+        Variables must be in JSON or YAML syntax. Use the radio button to toggle between the two.
+      </Trans>
+      <br />
+      <br />
+      <Trans>YAML:</Trans>
+      <pre>{yamlExampleConstructed}</pre>
+    </>
+  );
+
+  const labelHelp =
+    inventoryKind === ''
+      ? labelHelpVarsInventory
+      : inventoryKind === 'smart'
+        ? labelHelpVarsSmartInventory
+        : labelHelpVarsConstructedInventory;
 
   return (
     <>
@@ -441,7 +490,7 @@ function InventoryInputs(props: { inventoryKind: string }) {
           label={inventoryKind === 'constructed' ? t('Source vars') : t('Variables')}
           format="yaml"
           isRequired={inventoryKind === 'constructed' ? true : false}
-          labelHelp={labelHelpVarsInventory}
+          labelHelp={labelHelp}
         />
       </PageFormSection>
       {inventoryKind === '' && (
