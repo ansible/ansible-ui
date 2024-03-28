@@ -1,17 +1,39 @@
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { usePageDialog, useSelectDialog } from '../../../../../framework';
+import { IToolbarFilter, usePageDialog, useSelectDialog } from '../../../../../framework';
 import { SingleSelectDialog } from '../../../../../framework/PageDialogs/SingleSelectDialog';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxView } from '../../../common/useAwxView';
 import { Credential } from '../../../interfaces/Credential';
 import { useCredentialsColumns } from './useCredentialsColumns';
-import { useCredentialsFilters } from './useCredentialsFilters';
+import {
+  useCreatedByToolbarFilter,
+  useDescriptionToolbarFilter,
+  useModifiedByToolbarFilter,
+  useNameToolbarFilter,
+} from '../../../common/awx-toolbar-filters';
+
+const useToolbarFilters = () => {
+  const nameToolbarFilter = useNameToolbarFilter();
+  const descriptionToolbarFilter = useDescriptionToolbarFilter();
+  const createdByToolbarFilter = useCreatedByToolbarFilter();
+  const modifiedByToolbarFilter = useModifiedByToolbarFilter();
+  const toolbarFilters = useMemo<IToolbarFilter[]>(
+    () => [
+      nameToolbarFilter,
+      descriptionToolbarFilter,
+      createdByToolbarFilter,
+      modifiedByToolbarFilter,
+    ],
+    [createdByToolbarFilter, descriptionToolbarFilter, modifiedByToolbarFilter, nameToolbarFilter]
+  );
+  return toolbarFilters;
+};
 
 export function useMultiSelectCredential(isLookup: boolean, credentialType?: number) {
   const { t } = useTranslation();
-  const toolbarFilters = useCredentialsFilters();
   const tableColumns = useCredentialsColumns({ disableLinks: true });
+  const toolbarFilters = useToolbarFilters();
   const columns = useMemo(
     () =>
       isLookup
@@ -71,8 +93,8 @@ function SelectCredential(props: {
   credentialType?: number;
   sourceType?: string;
 }) {
-  const toolbarFilters = useCredentialsFilters();
   const tableColumns = useCredentialsColumns({ disableLinks: true });
+  const toolbarFilters = useToolbarFilters();
   const view = useAwxView<Credential>({
     url: awxAPI`/credentials/`,
     toolbarFilters,
