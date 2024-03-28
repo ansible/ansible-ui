@@ -21,33 +21,7 @@ describe('inventory group', () => {
     });
   });
 
-<<<<<<< HEAD
-  beforeEach(() => {
-    const inventoryName = 'E2E Inventory group ' + randomString(4);
-    cy.navigateTo('awx', 'inventories');
-    cy.verifyPageTitle('Inventories');
-    cy.clickButton(/^Create inventory$/);
-    cy.clickLink(/^Create inventory$/);
-    cy.get('[data-cy="name"]').type(inventoryName);
-    cy.singleSelectBy('[data-cy="organization"]', organization.name);
-    cy.get('[data-cy="prevent_instance_group_fallback"]').click();
-    cy.clickButton(/^Create inventory$/);
-    cy.verifyPageTitle(inventoryName);
-    cy.hasDetail(/^Organization$/, organization.name);
-    cy.clickLink(/^Groups$/);
-  });
-
-  afterEach(() => {
-    cy.visit(
-      `/infrastructure/inventories/inventory/${inventory.id}/groups/?page=1&perPage=10&sort=name`
-    );
-    cy.clickPageAction('delete-inventory');
-    cy.get('#confirm').click();
-    cy.clickButton(/^Delete inventory/);
-    cy.verifyPageTitle('Inventories');
-=======
   after(() => {
->>>>>>> 5f452182f (updated the inventory group test)
     cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
     cy.deleteAwxUser(user, { failOnStatusCode: false });
     cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
