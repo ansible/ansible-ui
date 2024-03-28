@@ -29,7 +29,7 @@ export function NotificationPage() {
       <PageHeader
         title={notificationTemplate?.name}
         breadcrumbs={[
-          { label: t('Notifications'), to: getPageUrl(AwxRoute.NotificationTemplates) },
+          { label: t('Notifiers'), to: getPageUrl(AwxRoute.NotificationTemplates) },
           { label: notificationTemplate?.name },
         ]}
         headerActions={[]}
