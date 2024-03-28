@@ -146,7 +146,7 @@ describe('Workflow Visualizer', () => {
           cy.getByDataCy('page-title')
             .should('be.visible')
             .and('contain', `${workflowJobTemplate.name}`);
-          cy.intercept('GET', awxAPI`/workflow_jobs/${jobId}/workflow_nodes/`).as('jobs');
+          cy.intercept('GET', awxAPI`/workflow_jobs/${jobId}/workflow_nodes/**`).as('jobs');
           cy.contains(jobTemplate.name).click({ force: true });
           cy.wait('@jobs');
           cy.getByDataCy(`${jobTemplate.name}`).should('be.visible');
