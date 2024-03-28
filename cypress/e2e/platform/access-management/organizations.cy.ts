@@ -26,7 +26,7 @@ describe('Organizations - create, edit and delete', () => {
     cy.deletePlatformOrganization(organization, { failOnStatusCode: false });
   });
 
-  it('creates a basic organization and deletes it from the details screen', () => {
+  it('creates a basic organization and deletes it from the details page', () => {
     cy.get('[data-cy="create-organization"]').click();
     cy.get('[data-cy="name"]').type(organizationName);
     cy.clickButton(/^Create organization$/);
