@@ -30,6 +30,19 @@ export function ProjectDetails() {
     <PageDetails>
       <PageDetail label={t('Name')}>{project?.name || ''}</PageDetail>
       <PageDetail label={t('Description')}>{project?.description || ''}</PageDetail>
+      <PageDetail label={t('Organization')}>
+        {project && project.organization ? (
+          <Link
+            to={getPageUrl(EdaRoute.OrganizationPage, {
+              params: { id: project?.organization?.id },
+            })}
+          >
+            {project?.organization?.name}
+          </Link>
+        ) : (
+          project?.organization?.name || ''
+        )}
+      </PageDetail>
       <PageDetail
         label={t('SCM type')}
         helpText={t('There is currently only one SCM type available for use.')}

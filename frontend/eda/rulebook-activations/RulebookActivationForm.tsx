@@ -37,6 +37,7 @@ import { AwxToken, LogLevelEnum, RestartPolicyEnum } from '../interfaces/generat
 import { EdaRoute } from '../main/EdaRoutes';
 import { EdaProjectCell } from '../projects/components/EdaProjectCell';
 import { EdaWebhook } from '../interfaces/EdaWebhook';
+import { PageFormSelectOrganization } from '../access/organizations/components/PageFormOrganizationSelect';
 
 export function CreateRulebookActivation() {
   const { t } = useTranslation();
@@ -55,6 +56,7 @@ export function CreateRulebookActivation() {
     if (extra_var && extra_var.trim().length > 0) {
       extra_var_id = await postEdaExtraVars(edaAPI`/extra-vars/`, {
         extra_var: extra_var,
+        organization_id: rulebookActivation?.organization_id,
       });
     }
     rulebookActivation.extra_var_id = extra_var_id?.id;
@@ -165,6 +167,7 @@ export function RulebookActivationInputs() {
         id={'description'}
         placeholder={t('Enter description')}
       />
+      <PageFormSelectOrganization<IEdaRulebookActivationInputs> name="organization_id" />
       <PageFormSelect<IEdaRulebookActivationInputs>
         name="project_id"
         label={t('Project')}
