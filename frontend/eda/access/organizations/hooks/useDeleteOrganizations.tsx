@@ -20,7 +20,7 @@ export function useDeleteOrganizations(onComplete: (organizations: EdaOrganizati
       confirmText: t('Yes, I confirm that I want to delete these {{count}} organizations.', {
         count: organizations.length,
       }),
-      actionButtonText: t('Delete organization', { count: organizations.length }),
+      actionButtonText: t('Delete organizations', { count: organizations.length }),
       items: organizations.sort((l, r) => compareStrings(l.name, r.name)),
       keyFn: getItemKey,
       isDanger: true,

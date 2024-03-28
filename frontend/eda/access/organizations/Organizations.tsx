@@ -110,8 +110,8 @@ export function Organizations() {
         tableColumns={tableColumns}
         rowActions={rowActions}
         errorStateTitle={t('Error loading organizations')}
-        emptyStateTitle={t('No organizations yet')}
-        emptyStateDescription={t('To get started, create an organization.')}
+        emptyStateTitle={t('There are currently no organizations created.')}
+        emptyStateDescription={t('Please create an organization by using the button below.')}
         emptyStateButtonText={t('Create organization')}
         emptyStateButtonClick={() => pageNavigate(EdaRoute.CreateOrganization)}
         {...view}

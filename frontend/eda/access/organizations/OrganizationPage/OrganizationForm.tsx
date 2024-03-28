@@ -8,15 +8,15 @@ import {
   PageLayout,
   useGetPageUrl,
   usePageNavigate,
-} from '../../../../framework';
-import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
-import { requestGet, requestPatch, swrOptions } from '../../../common/crud/Data';
-import { usePostRequest } from '../../../common/crud/usePostRequest';
-import { useInvalidateCacheOnUnmount } from '../../../common/useInvalidateCache';
-import { EdaPageForm } from '../../common/EdaPageForm';
-import { EdaOrganization } from '../../interfaces/EdaOrganization';
-import { EdaRoute } from '../../main/EdaRoutes';
-import { edaAPI } from '../../common/eda-utils';
+} from '../../../../../framework';
+import { PageFormTextInput } from '../../../../../framework/PageForm/Inputs/PageFormTextInput';
+import { requestGet, requestPatch, swrOptions } from '../../../../common/crud/Data';
+import { usePostRequest } from '../../../../common/crud/usePostRequest';
+import { useInvalidateCacheOnUnmount } from '../../../../common/useInvalidateCache';
+import { EdaPageForm } from '../../../common/EdaPageForm';
+import { EdaOrganization } from '../../../interfaces/EdaOrganization';
+import { EdaRoute } from '../../../main/EdaRoutes';
+import { edaAPI } from '../../../common/eda-utils';
 
 interface OrganizationFields extends FieldValues {
   organization: EdaOrganization;

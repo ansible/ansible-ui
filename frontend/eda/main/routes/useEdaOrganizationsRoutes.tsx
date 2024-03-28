@@ -2,7 +2,10 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router-dom';
 import { PageNavigationItem } from '../../../../framework';
-import { CreateOrganization, EditOrganization } from '../../access/organizations/OrganizationForm';
+import {
+  CreateOrganization,
+  EditOrganization,
+} from '../../access/organizations/OrganizationPage/OrganizationForm';
 import { OrganizationDetails } from '../../access/organizations/OrganizationPage/OrganizationDetails';
 import { OrganizationPage } from '../../access/organizations/OrganizationPage/OrganizationPage';
 import { Organizations } from '../../access/organizations/Organizations';
