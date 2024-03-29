@@ -1,7 +1,4 @@
-import { Page } from '@patternfly/react-core';
 import { ReactNode, createContext, useContext, useEffect, useState } from 'react';
-import { PageLayout } from '../../../framework';
-import { LoadingState } from '../../../framework/components/LoadingState';
 import { useGet } from '../../common/crud/useGet';
 import { hubAPI } from './api/formatPath';
 
@@ -82,33 +79,43 @@ export type HubContext = {
   user: HubUser;
 };
 
+const defaultContextValues: HubContext = {
+  errors: [],
+  featureFlags: {} as HubFeatureFlags,
+  settings: {} as HubSettings,
+  user: {} as HubUser,
+  hasPermission: () => false,
+};
+
 export const HubContext = createContext<HubContext | null>(null);
 
-export const useHubContext = (): HubContext => useContext(HubContext) as HubContext;
+export const useHubContext = () => {
+  const context = useContext(HubContext);
+  return context || defaultContextValues;
+};
 
 export const HubContextProvider = ({ children }: { children: ReactNode }) => {
   const getFeatureFlags = useGet<HubFeatureFlags>(hubAPI`/_ui/v1/feature-flags/`);
   const getSettings = useGet<HubSettings>(hubAPI`/_ui/v1/settings/`);
   const getUser = useGet<HubUser>(hubAPI`/_ui/v1/me/`);
 
-  const [context, setContext] = useState<HubContext | null>(null);
-
+  const [context, setContext] = useState<HubContext>(defaultContextValues);
   useEffect(() => {
-    if (getFeatureFlags.isLoading || getSettings.isLoading || getUser.isLoading) {
-      return;
+    if (!getFeatureFlags.isLoading && !getSettings.isLoading && !getUser.isLoading) {
+      const currentUser = getUser.data || defaultContextValues.user;
+      setContext({
+        errors: [
+          getFeatureFlags.error,
+          getSettings.error,
+          getUser.error,
+          ...(getFeatureFlags.data?._messages || []),
+        ].filter(Boolean) as string[],
+        featureFlags: getFeatureFlags.data || defaultContextValues.featureFlags,
+        settings: getSettings.data || defaultContextValues.settings,
+        user: currentUser,
+        hasPermission: hasPermission(currentUser),
+      });
     }
-
-    setContext({
-      errors: [
-        getFeatureFlags.error,
-        getSettings.error,
-        getUser.error,
-        ...(getFeatureFlags.data?._messages || []),
-      ].filter(Boolean) as string[],
-      featureFlags: getFeatureFlags.data as HubFeatureFlags,
-      settings: getSettings.data as HubSettings,
-      user: getUser.data as HubUser,
-    } as HubContext);
   }, [
     getFeatureFlags.isLoading,
     getFeatureFlags.data,
@@ -121,36 +128,16 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
     getUser.error,
   ]);
 
-  return context ? (
-    <HubContext.Provider
-      value={{
-        ...context,
-        hasPermission: hasPermission(context),
-      }}
-    >
-      {children}
-    </HubContext.Provider>
-  ) : (
-    <Page>
-      <PageLayout>
-        <LoadingState />
-      </PageLayout>
-    </Page>
-  );
+  return <HubContext.Provider value={context}>{children}</HubContext.Provider>;
 };
-
-const hasPermission =
-  ({ user }: HubContext) =>
-  (name: string) => {
-    if (!user?.model_permissions) {
-      return false;
-    }
-
-    if (!user.model_permissions[name]) {
-      // eslint-disable-next-line no-console
-      console.error(`Unknown permission ${name}`);
-      return !!user.is_superuser;
-    }
-
-    return !!user.model_permissions[name].has_model_permission;
-  };
+const hasPermission = (user: HubUser) => (name: string) => {
+  if (!user?.model_permissions) {
+    return false;
+  }
+  if (!user.model_permissions[name]) {
+    // eslint-disable-next-line no-console
+    console.error(`Unknown permission ${name}`);
+    return !!user.is_superuser;
+  }
+  return !!user.model_permissions[name].has_model_permission;
+};
