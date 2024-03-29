@@ -116,7 +116,6 @@ describe('schedules', () => {
   it('project does not renders prompt step', () => {
     cy.navigateTo('awx', 'schedules');
     cy.getBy('[data-cy="create-schedule"]').click();
-    // cy.selectDropdownOptionByResourceName('node_type', 'Project');
     cy.getBy('[data-cy="node_type-form-group"]').click();
     cy.getBy('[data-cy="project"]').click();
     cy.selectDropdownOptionByResourceName('project', project.name);
