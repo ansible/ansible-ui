@@ -25,7 +25,7 @@ export function PageFormSelectOrganization<
   return (
     <PageFormSingleSelectEdaResource<EdaOrganization, TFieldValues, TFieldName>
       name={props.name}
-      id="organization"
+      id="organization_id"
       label={t('Organization')}
       placeholder={t('Select organization')}
       queryPlaceholder={t('Loading organizations...')}
