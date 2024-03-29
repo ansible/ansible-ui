@@ -16,6 +16,10 @@ const StyledTitle = styled(Title)`
   margin-bottom: 1rem;
 `;
 
+/*
+ * Deprecated
+ * use useMultiSelectListView hook instead of this component
+ */
 export function SelectRolesStep<T extends object>(props: SelectRolesStepProps<T>) {
   const { setValue } = useFormContext();
   const { t } = useTranslation();
