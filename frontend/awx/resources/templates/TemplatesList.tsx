@@ -43,6 +43,7 @@ export function TemplatesList(props: {
   ) => {
     const templateQueryParams: { [key: string]: string } = {
       type: 'job_template,workflow_job_template',
+      // order_by: '-last_job_run',
     };
     if (projectId) {
       templateQueryParams.project__id = projectId;
