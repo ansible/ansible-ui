@@ -14,6 +14,8 @@ interface PageNavigationComponent {
   path: string;
   element: JSX.Element;
   hidden?: boolean;
+  badge?: string;
+  badgeColor?: 'blue' | 'cyan' | 'green' | 'orange' | 'purple' | 'red' | 'grey' | 'gold';
 }
 
 /**
