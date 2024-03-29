@@ -259,11 +259,6 @@ export function useOrganizationsColumns(options?: {
         value: (organization) => organization.summary_fields?.related_field_counts?.hosts,
       },
       {
-        header: t('Max hosts'),
-        type: 'count',
-        value: (organization) => organization.max_hosts,
-      },
-      {
         id: 'execution-environment',
         header: t('Default environment'),
         type: 'text',
