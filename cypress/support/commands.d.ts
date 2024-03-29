@@ -14,6 +14,7 @@ import { Job } from '../../frontend/awx/interfaces/Job';
 import { JobEvent } from '../../frontend/awx/interfaces/JobEvent';
 import { JobTemplate } from '../../frontend/awx/interfaces/JobTemplate';
 import { Label } from '../../frontend/awx/interfaces/Label';
+import { NotificationTemplate } from '../../frontend/awx/interfaces/NotificationTemplate';
 import { Organization } from '../../frontend/awx/interfaces/Organization';
 import { Project } from '../../frontend/awx/interfaces/Project';
 import { Role } from '../../frontend/awx/interfaces/Role';
@@ -45,8 +46,7 @@ import { HubItemsResponse, PulpItemsResponse } from '../../frontend/hub/common/u
 import { ExecutionEnvironment as HubExecutionEnvironment } from '../../frontend/hub/execution-environments/ExecutionEnvironment';
 import { HubDistribution } from '../../frontend/hub/interfaces/expanded/HubDistribution';
 import { HubNamespace } from '../../frontend/hub/namespaces/HubNamespace';
-import { PlatformOrganization } from '../../platform/interfaces/PlatformOrganization';
-import { PlatformUser } from '../../platform/interfaces/PlatformUser';
+import { Authenticator } from '../../platform/interfaces/Authenticator';
 import { IAwxResources } from './awx-commands';
 import {
   HubCreateExecutionEnvironmentOptions,
@@ -75,7 +75,11 @@ import {
   HubQueryRolesOptions,
   HubRequestOptions,
 } from './hub-commands';
+
+// Platform Imports
+import { PlatformOrganization } from '../../platform/interfaces/PlatformOrganization';
 import { PlatformTeam } from '../../platform/interfaces/PlatformTeam';
+import { PlatformUser } from '../../platform/interfaces/PlatformUser';
 
 declare global {
   namespace Cypress {
@@ -1007,9 +1011,7 @@ declare global {
         inventorySourceId: InventorySource
       ): Chainable<WorkflowNode>;
 
-      createAwxWorkflowVisualizerWJTNode(
-        workflowJT: WorkflowJobTemplate
-      ): Chainable<WorkflowJobTemplate>;
+      createAwxWorkflowVisualizerWJTNode(workflowJT: WorkflowJobTemplate): Chainable<WorkflowNode>;
 
       createAwxWorkflowVisualizerManagementNode(
         workflowJobTemplate: WorkflowJobTemplate,
@@ -1083,6 +1085,16 @@ declare global {
       inputCustomCredTypeConfig(configType: string, config: string): Chainable<void>;
 
       selectPromptOnLaunch(resourceName: string): Chainable<void>;
+
+      createNotificationTemplate(notificationName: string): Chainable<NotificationTemplate>;
+
+      deleteNotificationTemplate(
+        notification: NotificationTemplate,
+        options?: {
+          /** Whether to fail on response codes other than 2xx and 3xx */
+          failOnStatusCode?: boolean;
+        }
+      ): Chainable<void>;
 
       // ==============================================================================================================
       // EDA Commands
