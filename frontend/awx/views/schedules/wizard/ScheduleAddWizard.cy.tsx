@@ -91,7 +91,7 @@ describe('ScheduleAddWizard', () => {
       cy.selectDropdownOptionByResourceName('job-template-select', 'Mock Job Template');
 
       cy.get('[data-cy="wizard-nav"]').within(() => {
-        ['Details', 'Prompts', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
+        ['Details', 'Prompts', 'Survey', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
           cy.get('li')
             .eq(index)
             .should((el) => expect(el.text().trim()).to.equal(text));
@@ -128,17 +128,16 @@ describe('ScheduleAddWizard', () => {
       });
 
       cy.get('[data-cy="wizard-nav"]').within(() => {
-        ['Details', 'Prompts', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
+        ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
           cy.get('li')
             .eq(index)
             .should((el) => expect(el.text().trim()).to.equal(text));
         });
       });
 
-      cy.selectDropdownOptionByResourceName('resource_type', 'Job template');
+      cy.selectDropdownOptionByResourceName('node_type', 'Job template');
       cy.selectDropdownOptionByResourceName('job-template-select', 'Mock Job Template');
       cy.get('[data-cy="name"]').type('Test Schedule');
-      cy.clickButton(/^Next$/);
       cy.clickButton(/^Next$/);
     });
     it('Should create a very basic rule.', () => {
