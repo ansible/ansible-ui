@@ -13,7 +13,7 @@ import { dateToInputDateTime } from '../../../../../framework/utils/dateTimeHelp
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { ScheduleFormWizard } from '../types';
 import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
-import { OccurrencesStep } from './OccurrencesStep';
+import { RulesStep } from './RulesStep';
 import { Frequency, RRule } from 'rrule';
 import { ExceptionsStep } from './ExceptionsStep';
 import { ScheduleSurveyStep } from './ScheduleSurveyStep';
@@ -89,7 +89,7 @@ export function ScheduleAddWizard() {
         return true;
       },
     },
-    { id: 'occurrences', label: t('Occurrences'), inputs: <OccurrencesStep /> },
+    { id: 'rules', label: t('Rules'), inputs: <RulesStep /> },
     {
       id: 'exceptions',
       label: t('Exceptions'),
@@ -105,7 +105,8 @@ export function ScheduleAddWizard() {
       resourceName: '',
       startDateTime: { date: currentDate, time: time },
     },
-    occurrences: {
+    rules: {
+      id: undefined,
       freq: Frequency.WEEKLY,
       interval: 1,
       wkst: RRule.SU,
@@ -116,8 +117,6 @@ export function ScheduleAddWizard() {
       byyearday: null,
       bysetpos: null,
       until: null,
-      endDate: '',
-      endTime: '',
       count: null,
       byminute: null,
       byhour: null,
@@ -125,9 +124,10 @@ export function ScheduleAddWizard() {
       rules: [],
     },
     exceptions: {
-      freq: Frequency.WEEKLY,
-      interval: 1,
-      wkst: RRule.SU,
+      id: undefined,
+      freq: null,
+      interval: null,
+      wkst: null,
       byweekday: null,
       byweekno: null,
       bymonth: null,
@@ -135,8 +135,6 @@ export function ScheduleAddWizard() {
       byyearday: null,
       bysetpos: null,
       until: null,
-      endDate: '',
-      endTime: '',
       count: null,
       byminute: null,
       byhour: null,

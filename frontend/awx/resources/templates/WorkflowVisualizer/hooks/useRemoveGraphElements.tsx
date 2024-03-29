@@ -1,21 +1,33 @@
-import { useCallback, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useBulkConfirmation, ITableColumn, TextCell } from '../../../../../../framework';
+import { Label } from '@patternfly/react-core';
 import {
-  EdgeModel,
-  GraphElement,
-  NodeModel,
   action,
   Edge,
+  EdgeModel,
+  GraphElement,
   Node,
-  useVisualizationController,
+  NodeModel,
   NodeStatus,
+  useVisualizationController,
 } from '@patternfly/react-topology';
-import { GraphNode, type GraphEdgeData, type GraphNodeData, EdgeStatus } from '../types';
-import { Label } from '@patternfly/react-core';
-import { useRemoveNode } from './useRemoveNode';
-import { useCreateEdge } from './useCreateEdge';
+import { useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { ITableColumn, TextCell, useBulkConfirmation } from '../../../../../../framework';
 import { START_NODE_ID } from '../constants';
+import { EdgeStatus, GraphNode, type GraphEdgeData, type GraphNodeData } from '../types';
+import { useCreateEdge } from './useCreateEdge';
+import { useRemoveNode } from './useRemoveNode';
+
+type resource = {
+  summary_fields: {
+    unified_job_template: {
+      name: string;
+    };
+  };
+};
+
+type DataType = {
+  resource?: resource;
+};
 
 export function useRemoveGraphElements() {
   const { t } = useTranslation();
@@ -34,7 +46,12 @@ export function useRemoveGraphElements() {
   const nodeNameColumn = useMemo<ITableColumn<Node>>(
     () => ({
       header: t('Name'),
-      cell: (item: Node) => <TextCell text={item.getLabel() || t('DELETED')} iconSize="sm" />,
+      cell: (item: Node) => {
+        const data = item.getData() as DataType;
+        const resource = data?.resource;
+        const name = resource?.summary_fields?.unified_job_template?.name;
+        return <TextCell text={name || t('DELETED')} iconSize="sm" />;
+      },
     }),
     [t]
   );

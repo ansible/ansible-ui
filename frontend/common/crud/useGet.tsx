@@ -35,9 +35,13 @@ export function useGet<T>(
 }
 
 /** Helper function */
-export function useGetItem<T = unknown>(url: string, id?: string | number) {
+export function useGetItem<T = unknown>(
+  url: string,
+  id?: string | number,
+  swrOptions?: SWRConfiguration
+) {
   if (url.endsWith('/')) url = url.slice(0, url.length - 1);
-  return useGet<T>(id ? `${url}/${id}/` : undefined);
+  return useGet<T>(id ? `${url}/${id}/` : undefined, undefined, swrOptions);
 }
 
 export function useGetRequest<ResponseBody>() {
