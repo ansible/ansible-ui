@@ -10,7 +10,14 @@ export function useProjectsFilters() {
 
   const toolbarFilters = useDynamicToolbarFilters({
     optionsPath: 'projects',
-    preFilledValueKeys: ['name', 'id'],
+    preFilledValueKeys: {
+      name: {
+        apiPath: 'projects',
+      },
+      id: {
+        apiPath: 'projects',
+      },
+    },
     preSortedKeys: ['name', 'id', 'status', 'scm_type', 'created-by', 'modified-by'],
     additionalFilters: [createdByToolbarFilter, modifiedByToolbarFilter],
   });
