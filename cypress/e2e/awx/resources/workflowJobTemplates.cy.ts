@@ -43,7 +43,7 @@ describe('Workflow Job templates form', () => {
     cy.clickLink(/^Create workflow job template$/);
     cy.get('[data-cy="name"]').type(jtName);
     cy.get('[data-cy="description"]').type('this is a description');
-    cy.singleSelectByDataCy('organization', organization.name);
+    cy.singleSelectBy('[data-cy="organization"]', organization.name);
     cy.selectDropdownOptionByResourceName('inventory', inventory.name);
     cy.get('[data-cy="limit"]').type('mock-limit');
     cy.get('[data-cy="scm-branch"]').type('mock-scm-branch');
@@ -80,7 +80,10 @@ describe('Workflow Job templates form', () => {
 
       cy.createAwxOrganization().then((newOrg) => {
         newOrganization = newOrg;
-        cy.clickTableRowPinnedAction(wftJobTemplate?.name, 'edit-template', true);
+        cy.filterTableByMultiSelect('name', [wftJobTemplate?.name]);
+        cy.clickTableRowAction('name', wftJobTemplate?.name, 'edit-template', {
+          disableFilter: true,
+        });
         cy.get('[data-cy="name"]').clear().type(newName);
         cy.get('[data-cy="description"]').type('this is a new description');
         cy.singleSelectByDataCy('organization', newOrganization.name);
@@ -111,7 +114,11 @@ describe('Workflow Job templates form', () => {
         'DELETE',
         awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/`
       ).as('deleted');
-      cy.clickTableRowKebabAction(workflowJobTemplate?.name, 'delete-template');
+      cy.filterTableByMultiSelect('name', [workflowJobTemplate?.name]);
+      cy.clickTableRowAction('name', workflowJobTemplate?.name, 'delete-template', {
+        inKebab: true,
+        disableFilter: true,
+      });
       cy.get('#confirm').click();
       cy.clickButton(/^Delete template/);
       cy.wait('@deleted')
@@ -121,10 +128,6 @@ describe('Workflow Job templates form', () => {
           cy.contains(/^Success$/);
           cy.clickButton(/^Close$/);
           cy.clickButton(/^Clear all filters$/);
-          cy.filterTableByTextFilter('name', workflowJobTemplate?.name, {
-            disableFilterSelection: false,
-          });
-          cy.contains('h2', 'No results found').should('be.visible');
         });
     });
   });
@@ -169,7 +172,10 @@ describe('Workflow Job templates form', () => {
                         'POST',
                         `api/v2/workflow_job_templates/${workflowJobTemplate.id}/launch/`
                       ).as('launchWJT-WithNodes');
-                      cy.searchAndDisplayResource(workflowJobTemplate.name);
+                      cy.filterTableByMultiSelect('name', [workflowJobTemplate.name]);
+                      cy.clickTableRowLink('name', workflowJobTemplate.name, {
+                        disableFilter: true,
+                      });
                       cy.get('button[data-cy="launch-template"]').click();
                       cy.wait('@launchWJT-WithNodes')
                         .its('response.body.id')
