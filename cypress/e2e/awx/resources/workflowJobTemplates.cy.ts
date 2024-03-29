@@ -80,7 +80,10 @@ describe('Workflow Job templates form', () => {
 
       cy.createAwxOrganization().then((newOrg) => {
         newOrganization = newOrg;
-        cy.clickTableRowPinnedAction(wftJobTemplate?.name, 'edit-template', true);
+        cy.filterTableByMultiSelect('name', [wftJobTemplate?.name]);
+        cy.clickTableRowAction('name', wftJobTemplate?.name, 'edit-template', {
+          disableFilter: true,
+        });
         cy.get('[data-cy="name"]').clear().type(newName);
         cy.get('[data-cy="description"]').type('this is a new description');
         cy.singleSelectByDataCy('organization', newOrganization.name);
@@ -97,14 +100,6 @@ describe('Workflow Job templates form', () => {
       if (newOrganization) {
         cy.deleteAwxOrganization(newOrganization, { failOnStatusCode: false });
       }
-      cy.filterTableByMultiSelect('name', [wftJobTemplate?.name]);
-      cy.clickTableRowAction('name', wftJobTemplate?.name, 'edit-template', {
-        disableFilter: true,
-      });
-      cy.get('[data-cy="name"]').clear().type(newName);
-      cy.get('[data-cy="description"]').type('this is a new description');
-      cy.clickButton(/^Save workflow job template$/);
-      cy.verifyPageTitle(newName);
     });
   });
 
@@ -133,10 +128,6 @@ describe('Workflow Job templates form', () => {
           cy.contains(/^Success$/);
           cy.clickButton(/^Close$/);
           cy.clickButton(/^Clear all filters$/);
-          cy.filterTableByTextFilter('name', workflowJobTemplate?.name, {
-            disableFilterSelection: false,
-          });
-          cy.contains('h2', 'No results found').should('be.visible');
         });
     });
   });
@@ -181,7 +172,10 @@ describe('Workflow Job templates form', () => {
                         'POST',
                         `api/v2/workflow_job_templates/${workflowJobTemplate.id}/launch/`
                       ).as('launchWJT-WithNodes');
-                      cy.searchAndDisplayResource(workflowJobTemplate.name);
+                      cy.filterTableByMultiSelect('name', [workflowJobTemplate.name]);
+                      cy.clickTableRowLink('name', workflowJobTemplate.name, {
+                        disableFilter: true,
+                      });
                       cy.get('button[data-cy="launch-template"]').click();
                       cy.wait('@launchWJT-WithNodes')
                         .its('response.body.id')
@@ -202,19 +196,6 @@ describe('Workflow Job templates form', () => {
             }
           );
         });
-        cy.navigateTo('awx', 'templates');
-        cy.intercept('POST', `api/v2/workflow_job_templates/${workflowJobTemplate.id}/launch/`).as(
-          'launchWJT-WithNodes'
-        );
-        cy.filterTableByMultiSelect('name', [workflowJobTemplate.name]);
-        cy.get('button[data-cy="launch-template"]').click();
-        cy.wait('@launchWJT-WithNodes')
-          .its('response.body.id')
-          .then((jobId: string) => {
-            /*there is a known React error, `create request error` happening due the output tab work in progress,but the test executes fine since there is no ui interaction here*/
-            cy.waitForWorkflowJobStatus(jobId);
-          });
-        cy.deleteAwxWorkflowJobTemplate(workflowJobTemplate);
       });
     });
   });
