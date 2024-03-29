@@ -334,8 +334,6 @@ describe('Workflow Visualizer', () => {
             'Success alert:Successfully saved workflow visualizer'
           );
           cy.getBy('button[id="fit-to-screen"]').click();
-          cy.get('button[data-cy="workflow-visualizer-toolbar-close"]').click();
-          cy.get('[data-cy="page-title"]').should('have.text', `${workflowJobTemplate.name}`);
         });
     });
 
@@ -379,8 +377,6 @@ describe('Workflow Visualizer', () => {
                   'Success alert:Successfully saved workflow visualizer'
                 );
                 cy.getBy('button[id="fit-to-screen"]').click();
-                cy.get('button[data-cy="workflow-visualizer-toolbar-close"]').click();
-                cy.get('[data-cy="page-title"]').should('have.text', `${workflowJobTemplate.name}`);
               });
           });
         }

@@ -140,32 +140,44 @@ describe('Workflow Visualizer', () => {
           cy.intercept('GET', awxAPI`/project_updates/**`).as('wfJobs');
           cy.contains('Global Project').click({ force: true });
           cy.wait('@wfJobs');
+          cy.intercept('GET', awxAPI`/workflow_jobs/${jobId}/`).as('job');
+          cy.intercept(
+            'GET',
+            awxAPI`/workflow_jobs/${jobId}/workflow_nodes/?page=1&page_size=200`
+          ).as('wfNodes');
           cy.getByDataCy('Global Project').should('be.visible');
           cy.getByDataCy('Output').should('be.visible');
-          cy.intercept('GET', awxAPI`/workflow_jobs/${jobId}/`).as('wfNodes');
           cy.visit(`/jobs/workflow/${jobId}/output`);
-          cy.wait('@wfNodes');
-          cy.getByDataCy('page-title')
-            .should('be.visible')
-            .and('contain', `${workflowJobTemplate.name}`);
-          cy.intercept('GET', awxAPI`/workflow_jobs/${jobId}/workflow_nodes/**`).as('jobs');
-          cy.getBy('button[id="fit-to-screen"]').click();
-          cy.contains(jobTemplate.name).should('be.visible');
-          cy.getByDataCy('relaunch-job').should('be.visible');
-          cy.getBy('button[id="reset-view"]').should('be.visible').click();
-          cy.contains(jobTemplate.name).click({ force: true });
-          cy.getByDataCy(`${jobTemplate.name}`).should('be.visible');
-          cy.getByDataCy('Output').should('be.visible');
-          cy.contains('button', 'Workflow Job 1/1')
-            .click()
-            .then(() => {
-              cy.contains('Global Project').click();
-            });
-          cy.getByDataCy('page-title').should('be.visible').and('contain', 'Global Project');
-          cy.contains('button', 'Workflow Job 1/1')
-            .click()
-            .then(() => {
-              cy.contains(`${jobTemplate.name}`).click();
+          cy.wait('@job', { timeout: 10000 });
+          cy.wait('@wfNodes')
+            .its('response.body.results[1]')
+            .then((results: WorkflowNode) => {
+              cy.getByDataCy('page-title')
+                .should('be.visible')
+                .and('contain', `${workflowJobTemplate.name}`);
+              cy.intercept('GET', awxAPI`/workflow_jobs/${jobId}/workflow_nodes/**`).as('jobs');
+              cy.getBy('button[id="fit-to-screen"]').click();
+              cy.contains(jobTemplate.name).should('be.visible');
+              cy.getByDataCy('relaunch-job').should('be.visible');
+              cy.getBy(`g[data-id="${results.id}"]`)
+                .get('[data-cy="successful-icon"]')
+                .should('be.visible');
+              cy.getBy(`g[data-id="${results.id}"]`).within(() => {
+                cy.contains(jobTemplate.name).click({ force: true });
+              });
+              cy.getByDataCy(`${jobTemplate.name}`).should('be.visible');
+              cy.getByDataCy('Output').should('be.visible');
+              cy.contains('button', 'Workflow Job 1/1')
+                .click()
+                .then(() => {
+                  cy.contains('Global Project').click();
+                });
+              cy.getByDataCy('page-title').should('be.visible').and('contain', 'Global Project');
+              cy.contains('button', 'Workflow Job 1/1')
+                .click()
+                .then(() => {
+                  cy.contains(`${jobTemplate.name}`).click();
+                });
             });
         });
     });
