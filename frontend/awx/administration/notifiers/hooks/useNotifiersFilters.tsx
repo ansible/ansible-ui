@@ -10,7 +10,10 @@ export function useNotifiersFilters() {
   const toolbarFilters = useDynamicToolbarFilters({
     optionsPath: 'notification_templates',
     preSortedKeys: ['name', 'id', 'created-by', 'modified-by'],
-    preFilledValueKeys: ['name', 'id'],
+    preFilledValueKeys: {
+      name: { apiPath: 'notification_templates' },
+      id: { apiPath: 'notification_templates' },
+    },
     additionalFilters: [createdByToolbarFilter, modifiedByToolbarFilter],
   });
   return toolbarFilters;
