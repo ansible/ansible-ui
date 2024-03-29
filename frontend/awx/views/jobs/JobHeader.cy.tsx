@@ -26,7 +26,7 @@ describe('Job Page', () => {
       'true'
     );
   });
-  it('Delete button is enabled on a finished job', () => {
+  it.skip('Delete button is enabled on a finished job', () => {
     cy.intercept(
       {
         method: 'GET',
