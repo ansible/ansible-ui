@@ -7,6 +7,7 @@ import {
 } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { ButtonVariant } from '@patternfly/react-core';
 import {
   IPageAction,
   PageActionSelection,
@@ -45,6 +46,7 @@ export function useTemplateActions({
         isPinned: true,
         icon: ProjectDiagramIcon,
         label: t('View workflow visualizer'),
+        variant: ButtonVariant.primary,
         ouiaId: 'job-template-detail-edit-button',
         href: (template) =>
           getPageUrl(AwxRoute.WorkflowVisualizer, { params: { id: template.id } }),

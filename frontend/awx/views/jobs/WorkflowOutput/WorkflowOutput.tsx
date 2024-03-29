@@ -46,6 +46,12 @@ export const graphModel: Model = {
     visible: false,
   },
 };
+export const greyBadgeLabel = {
+  badge: 'ALL',
+  badgeColor: '#D2D2D2',
+  badgeTextColor: 'black',
+  badgeBorderColor: '#B8BBBE',
+};
 
 export const WorkflowOutput = (props: {
   job: Job;
@@ -116,17 +122,11 @@ export const WorkflowOutput = (props: {
         resource: { always_nodes: [] },
       },
     };
-    const greyBadgeLabel = {
-      badge: 'ALL',
-      badgeColor: '#D2D2D2',
-      badgeTextColor: 'black',
-      badgeBorderColor: '#B8BBBE',
-    };
     const nodes = workflowNodes.map((n) => {
       const nodeId = n.id.toString();
       const nodeType = 'node';
-      const nodeName = n.summary_fields?.unified_job_template?.name;
-      const nodeLabel = getNodeLabel(nodeName, n.identifier);
+      const nodeName = n.summary_fields?.unified_job_template?.name || '';
+      const nodeLabel = getNodeLabel(nodeName, n.identifier) || t('Deleted');
 
       n.success_nodes.forEach((id) => {
         edges.push(createEdge(nodeId, id.toString(), EdgeStatus.success));
@@ -145,7 +145,7 @@ export const WorkflowOutput = (props: {
       const node = {
         id: nodeId,
         type: status ? `${status}-node` : nodeType,
-        label: nodeLabel ?? t('Deleted'),
+        label: nodeLabel,
         width: NODE_DIAMETER,
         height: NODE_DIAMETER,
         shape: NodeShape.circle,

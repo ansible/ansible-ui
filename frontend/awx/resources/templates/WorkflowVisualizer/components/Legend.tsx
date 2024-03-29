@@ -34,6 +34,7 @@ const Panel = styled(PFPanel)`
   bottom: 60px;
   border-radius: var(--pf-v5-global--BorderRadius--sm);
   box-shadow: var(--pf-v5-global--BoxShadow--sm);
+  z-index: 1;
 `;
 
 export const Legend = () => {

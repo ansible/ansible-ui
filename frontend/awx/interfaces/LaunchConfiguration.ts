@@ -67,4 +67,10 @@ export interface LaunchConfiguration {
     id: number;
     description: string;
   };
+  unified_job_template_object: {
+    name: string;
+    id: number;
+    description: string;
+    survey_enabled: boolean;
+  };
 }

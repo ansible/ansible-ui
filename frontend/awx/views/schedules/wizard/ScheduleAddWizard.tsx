@@ -13,12 +13,13 @@ import { dateToInputDateTime } from '../../../../../framework/utils/dateTimeHelp
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { ScheduleFormWizard } from '../types';
 import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
-import { useGetTimezones } from '../hooks/useGetTimezones';
-import { OccurrencesStep } from './OccurrencesStep';
+import { RulesStep } from './RulesStep';
 import { Frequency, RRule } from 'rrule';
 import { ExceptionsStep } from './ExceptionsStep';
-import { ScheduleInputs } from '../components/ScheduleInputs';
 import { PromptInputs } from '../components/PromptInputs';
+import { ScheduleSurveyStep } from './ScheduleSurveyStep';
+import { LaunchConfiguration } from '../../../interfaces/LaunchConfiguration';
+import { NodeTypeStep } from '../../../resources/templates/WorkflowVisualizer/wizard/NodeTypeStep';
 
 export function ScheduleAddWizard() {
   const { t } = useTranslation();
@@ -50,21 +51,32 @@ export function ScheduleAddWizard() {
 
   const onCancel = () => navigate(-1);
 
-  const { timeZones, links } = useGetTimezones();
-
   const steps: PageWizardStep[] = [
     {
       id: 'details',
       label: t('Details'),
-      inputs: <ScheduleInputs onError={() => {}} zoneLinks={links} timeZones={timeZones} />,
+      inputs: <NodeTypeStep />,
     },
     {
       id: 'promptsStep',
       label: t('Prompts'),
       inputs: <PromptInputs onError={() => {}} />,
     },
-    { id: 'survey', label: t('Survey'), element: <PageNotImplemented /> },
-    { id: 'occurrences', label: t('Occurrences'), inputs: <OccurrencesStep /> },
+    {
+      id: 'survey',
+      label: t('Survey'),
+      inputs: <ScheduleSurveyStep />,
+      hidden: (wizardData: Partial<LaunchConfiguration>) => {
+        if (Object.keys(wizardData).length === 0) {
+          return true;
+        }
+        if (wizardData.unified_job_template_object?.survey_enabled) {
+          return false;
+        }
+        return true;
+      },
+    },
+    { id: 'rules', label: t('Rules'), inputs: <RulesStep /> },
     {
       id: 'exceptions',
       label: t('Exceptions'),
@@ -80,7 +92,8 @@ export function ScheduleAddWizard() {
       resourceName: '',
       startDateTime: { date: currentDate, time: time },
     },
-    occurrences: {
+    rules: {
+      id: undefined,
       freq: Frequency.WEEKLY,
       interval: 1,
       wkst: RRule.SU,
@@ -91,8 +104,6 @@ export function ScheduleAddWizard() {
       byyearday: null,
       bysetpos: null,
       until: null,
-      endDate: '',
-      endTime: '',
       count: null,
       byminute: null,
       byhour: null,
@@ -100,9 +111,10 @@ export function ScheduleAddWizard() {
       rules: [],
     },
     exceptions: {
-      freq: Frequency.WEEKLY,
-      interval: 1,
-      wkst: RRule.SU,
+      id: undefined,
+      freq: null,
+      interval: null,
+      wkst: null,
       byweekday: null,
       byweekno: null,
       bymonth: null,
@@ -110,8 +122,6 @@ export function ScheduleAddWizard() {
       byyearday: null,
       bysetpos: null,
       until: null,
-      endDate: '',
-      endTime: '',
       count: null,
       byminute: null,
       byhour: null,

@@ -46,6 +46,7 @@ import { getNodeLabel } from './wizard/helpers';
 import { GRAPH_ID, NODE_DIAMETER, START_NODE_ID } from './constants';
 import { useCreateNodeComponent } from './hooks/useCreateNodeComponent';
 import { styled } from 'styled-components';
+import { greyBadgeLabel } from '../../../views/jobs/WorkflowOutput/WorkflowOutput';
 
 const TopologyView = styled(PFTopologyView)`
   .pf-v5-c-divider {
@@ -158,8 +159,8 @@ export const WorkflowTopology = ({ data: { workflowNodes = [], template } }: Top
     const nodes = workflowNodes.map((n) => {
       const nodeId = n.id.toString();
       const nodeType = 'node';
-      const nodeName = n.summary_fields?.unified_job_template?.name;
-      const nodeLabel = getNodeLabel(nodeName, n.identifier);
+      const nodeName = n.summary_fields?.unified_job_template?.name || '';
+      const nodeLabel = getNodeLabel(nodeName, n.identifier) || t('Deleted');
 
       n.success_nodes.forEach((id) => {
         edges.push(createEdge(nodeId, id.toString(), EdgeStatus.success));
@@ -174,7 +175,7 @@ export const WorkflowTopology = ({ data: { workflowNodes = [], template } }: Top
       const node = {
         id: nodeId,
         type: nodeType,
-        label: nodeLabel ?? t('Deleted'),
+        label: nodeLabel,
         width: NODE_DIAMETER,
         height: NODE_DIAMETER,
         shape: NodeShape.circle,
@@ -184,6 +185,10 @@ export const WorkflowTopology = ({ data: { workflowNodes = [], template } }: Top
           resource: n,
         },
       };
+
+      if (n.all_parents_must_converge) {
+        return { ...node, data: { ...node.data, ...greyBadgeLabel } };
+      }
 
       return node;
     });
