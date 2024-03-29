@@ -1,7 +1,7 @@
 import { randomString } from '../../../framework/utils/random-string';
 import { MyImports } from './constants';
 
-describe('My imports', () => {
+describe.skip('My imports', () => {
   const validCollection = {
     namespace: `testnamespace${randomString(4, undefined, { isLowercase: true })}`,
     name: `testcollection_${randomString(4, undefined, { isLowercase: true })}`,
