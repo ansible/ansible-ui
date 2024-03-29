@@ -149,7 +149,7 @@ export function NodeTypeStep(props: { hasSourceNode?: boolean }) {
   useEffect(() => {
     const setLaunchToWizardData = async () => {
       let launchConfigValue = {} as PromptFormValues;
-      let template;
+      let template = getValues('node_resource');
 
       template = getValues('node_resource');
       if (!template && nodeResource) {
