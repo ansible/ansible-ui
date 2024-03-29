@@ -37,8 +37,7 @@ export function PageFormSingleSelectEdaResource<
   const queryOptions = useCallback<PageAsyncSelectOptionsFn<PathValue<FormData, Name>>>(
     async (options) => {
       try {
-        let url = props.url + `?page_size=10&order_by=name`;
-        if (options.next) url = url + `&name__gt=${options.next}`;
+        let url = props.url + `?order_by=name&page_size=${options?.next || 10}`;
         if (options.search) url = url + `&name__icontains=${options.search}`;
         const response = await requestGet<EdaItemsResponse<Resource>>(url, options?.signal);
         return {
@@ -49,7 +48,7 @@ export function PageFormSingleSelectEdaResource<
               value: resource.id as PathValue<FormData, Name>,
               description: resource.description,
             })) ?? [],
-          next: response.results[response.results.length - 1]?.name,
+          next: response.count,
         };
       } catch (error) {
         return {

@@ -121,6 +121,7 @@ export function CreateDecisionEnvironment() {
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
         onCancel={onCancel}
+        defaultValue={{ organization_id: undefined }}
       >
         <DecisionEnvironmentInputs />
       </EdaPageForm>
@@ -176,6 +177,7 @@ export function EditDecisionEnvironment() {
           defaultValue={{
             ...decisionEnvironment,
             eda_credential_id: decisionEnvironment?.eda_credential?.id || undefined,
+            organization_id: decisionEnvironment?.organization?.id || undefined,
           }}
         >
           <DecisionEnvironmentInputs />
