@@ -177,7 +177,9 @@ describe('Workflow Job templates form', () => {
                           /*there is a known React error, `create request error` happening due the output tab work in progress,but the test executes fine since there is no ui interaction here*/
                           cy.waitForWorkflowJobStatus(jobId);
                         });
-                      cy.deleteAwxWorkflowJobTemplate(workflowJobTemplate);
+                      cy.deleteAwxWorkflowJobTemplate(workflowJobTemplate, {
+                        failOnStatusCode: false,
+                      });
                       cy.deleteAwxJobTemplate(jobTemplate);
                       cy.deleteAwxOrganization(newOrg);
                       cy.deleteAwxProject(project);
