@@ -25,6 +25,7 @@ import { User } from '../../frontend/awx/interfaces/User';
 import { WorkflowJobTemplate } from '../../frontend/awx/interfaces/WorkflowJobTemplate';
 import { WorkflowNode } from '../../frontend/awx/interfaces/WorkflowNode';
 import { awxAPI } from './formatApiPathForAwx';
+import { NotificationTemplate } from '../../frontend/awx/interfaces/NotificationTemplate';
 
 //  AWX related custom command implementation
 
@@ -1550,3 +1551,41 @@ Cypress.Commands.add('removeAwxInstance', (id: string) => {
     });
   }
 });
+
+Cypress.Commands.add('createNotificationTemplate', (notificationName: string) => {
+  cy.awxRequestPost<
+    Pick<
+      NotificationTemplate,
+      'name' | 'organization' | 'notification_type' | 'notification_configuration'
+    >,
+    NotificationTemplate
+  >(awxAPI`/notification_templates/`, {
+    name: notificationName ? notificationName : 'E2E Notification ' + randomString(4),
+    organization: 1,
+    notification_type: 'email',
+    notification_configuration: {
+      host: '127.0.0.1',
+      port: 10,
+      sender: 'sjdkfljdslf@jkdljfldjjfkjd.com',
+      timeout: 30,
+      use_ssl: false,
+      use_tls: false,
+      password: '',
+      username: '',
+      recipients: ['sdfdsfsdfsdfs'],
+    },
+  });
+});
+
+Cypress.Commands.add(
+  'deleteNotificationTemplate',
+  (
+    notification: NotificationTemplate,
+    options?: {
+      /** Whether to fail on response codes other than 2xx and 3xx */
+      failOnStatusCode?: boolean;
+    }
+  ) => {
+    cy.awxRequestDelete(awxAPI`/notification_templates/${notification.id.toString()}/`, options);
+  }
+);

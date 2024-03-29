@@ -16,14 +16,16 @@ export enum Frequency {
   MINUTELY = 5,
   SECONDLY = 6,
 }
+
+export type RuleListItemType = { id: number; rule: RRule };
 export type ScheduleResources =
   | InventorySource
   | SystemJob
   | JobTemplate
   | Project
   | WorkflowJobTemplate;
-export interface OccurrenceFields {
-  id: number;
+export interface RuleFields {
+  id: number | undefined;
   freq: Frequency;
   interval: number | undefined;
   wkst: Weekday;
@@ -35,13 +37,11 @@ export interface OccurrenceFields {
   bysetpos: null;
   byminute: null;
   byhour: null;
-  until: null;
-  endDate: string | null;
-  endTime: string | null;
+  until: { date: string; time: string } | null;
   count: null;
   endingType: string | null;
-  rules?: { id: number; rule: RRule }[] | [];
-  exceptions?: { id: number; exception: RRule }[];
+  rules: RuleListItemType[] | [];
+  exceptions: RuleListItemType[] | [];
 }
 export interface ScheduleFormWizard {
   unified_job_template_object: ScheduleResources | null;
@@ -53,8 +53,8 @@ export interface ScheduleFormWizard {
   resource_type: string;
   startDateTime: { date: string; time: string };
   timezone: string;
-  occurrences: OccurrenceFields | null;
-  exceptions: OccurrenceFields | null;
+  occurrences: RuleFields | null;
+  exceptions: RuleFields | null;
   launch_config: LaunchConfiguration | null;
   prompt: PromptFormValues;
 }

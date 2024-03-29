@@ -4,7 +4,6 @@ export enum AwxRoute {
   Overview = 'awx-overview',
 
   // Views
-
   Jobs = 'awx-jobs',
   JobPage = 'awx-job-page',
   JobOutput = 'awx-job-output',
@@ -22,7 +21,6 @@ export enum AwxRoute {
   WorkflowApprovalWorkflowJobDetails = 'awx-workflow-approval-workflow-job-details',
 
   // Resources
-
   Templates = 'awx-templates',
   CreateJobTemplate = 'awx-create-job-template',
   CreateWorkflowJobTemplate = 'awx-create-workflow-job-template',
@@ -135,7 +133,6 @@ export enum AwxRoute {
   HostJobs = 'awx-host-jobs',
 
   // Access
-
   Access = 'awx-access',
 
   Organizations = 'awx-organizations',
@@ -172,7 +169,6 @@ export enum AwxRoute {
   RoleDetails = 'awx-role-details',
 
   // Administration
-
   CredentialTypes = 'awx-credential-types',
   CredentialTypePage = 'awx-credential-type-page',
   CredentialTypeDetails = 'awx-credential-type-details',
@@ -183,6 +179,8 @@ export enum AwxRoute {
   NotificationTemplates = 'awx-notification-templates',
   NotificationTemplatePage = 'awx-notification-template-page',
   NotificationTemplateDetails = 'awx-notification-template-details',
+  EditNotificationTemplate = 'awx-edit-notification-template',
+  AddNotificationTemplate = 'awx-add-notification-template',
 
   ManagementJobs = 'awx-management-jobs',
   ManagementJobPage = 'awx-management-job-page',
@@ -227,7 +225,6 @@ export enum AwxRoute {
   TopologyView = 'awx-topology-view',
 
   // Analytics
-
   Analytics = 'awx-analytics',
   Reports = 'awx-reports',
   AutomationCalculator = 'awx-automation-calculator',
@@ -236,7 +233,6 @@ export enum AwxRoute {
   SubscriptionUsage = 'awx-subscription-usage',
 
   // Settings
-
   Settings = 'awx-settings',
   SettingsPreferences = 'awx-settings-preferences',
   SettingsSystem = 'awx-settings-system',
