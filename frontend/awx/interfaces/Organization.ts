@@ -1,8 +1,8 @@
 import { Organization as SwaggerOrganization } from './generated-from-swagger/api';
 import {
+  SummaryFieldObjectRole,
   SummaryFieldsByUser,
   SummaryFieldsExecutionEnvironment,
-  SummaryFieldObjectRole,
 } from './summary-fields/summary-fields';
 
 export interface Organization extends Omit<SwaggerOrganization, 'id' | 'summary_fields'> {
@@ -37,6 +37,7 @@ export interface Organization extends Omit<SwaggerOrganization, 'id' | 'summary_
       job_templates: number;
       admins: number;
       projects: number;
+      hosts: number;
     };
     default_environment: SummaryFieldsExecutionEnvironment;
   };
