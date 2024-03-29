@@ -143,7 +143,8 @@ export interface WorkflowJobTemplateForm
     id: number;
   } | null;
   webhook_service?: string;
-  organization: { name: string; id: number } | null;
+  organization?: number | string | null;
+  summary_fields?: Partial<WorkflowJobTemplate['summary_fields']>;
 }
 
 export interface WorkflowJobTemplateCreate
