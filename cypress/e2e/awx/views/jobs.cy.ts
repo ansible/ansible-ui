@@ -138,7 +138,6 @@ describe('job delete', () => {
         );
       });
     });
-    cy.reload();
   });
 
   afterEach(() => {
