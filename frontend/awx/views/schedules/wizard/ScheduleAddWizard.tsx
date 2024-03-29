@@ -16,10 +16,12 @@ import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
 import { RulesStep } from './RulesStep';
 import { Frequency, RRule } from 'rrule';
 import { ExceptionsStep } from './ExceptionsStep';
-import { PromptInputs } from '../components/PromptInputs';
 import { ScheduleSurveyStep } from './ScheduleSurveyStep';
-import { LaunchConfiguration } from '../../../interfaces/LaunchConfiguration';
 import { NodeTypeStep } from '../../../resources/templates/WorkflowVisualizer/wizard/NodeTypeStep';
+import { NodePromptsStep } from '../../../resources/templates/WorkflowVisualizer/wizard/NodePromptsStep';
+import { WizardFormValues } from '../../../resources/templates/WorkflowVisualizer/types';
+import { shouldHideOtherStep } from '../../../resources/templates/WorkflowVisualizer/wizard/helpers';
+import { RESOURCE_TYPE } from '../../../resources/templates/WorkflowVisualizer/constants';
 
 export function ScheduleAddWizard() {
   const { t } = useTranslation();
@@ -58,19 +60,30 @@ export function ScheduleAddWizard() {
       inputs: <NodeTypeStep />,
     },
     {
-      id: 'promptsStep',
+      id: 'nodePromptsStep',
       label: t('Prompts'),
-      inputs: <PromptInputs onError={() => {}} />,
+      inputs: <NodePromptsStep />,
+      hidden: (wizardData: Partial<WizardFormValues>) => {
+        const { launch_config, node_resource, node_type } = wizardData;
+        if (
+          (node_type === RESOURCE_TYPE.workflow_job || node_type === RESOURCE_TYPE.job) &&
+          node_resource &&
+          launch_config
+        ) {
+          return shouldHideOtherStep(launch_config);
+        }
+        return true;
+      },
     },
     {
       id: 'survey',
       label: t('Survey'),
       inputs: <ScheduleSurveyStep />,
-      hidden: (wizardData: Partial<LaunchConfiguration>) => {
+      hidden: (wizardData: Partial<WizardFormValues>) => {
         if (Object.keys(wizardData).length === 0) {
           return true;
         }
-        if (wizardData.unified_job_template_object?.survey_enabled) {
+        if (wizardData.launch_config?.survey_enabled) {
           return false;
         }
         return true;

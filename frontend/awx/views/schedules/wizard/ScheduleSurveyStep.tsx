@@ -4,17 +4,17 @@ import { PageFormSelect, PageFormTextArea, PageFormTextInput } from '../../../..
 import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
 import { useGet } from '../../../../common/crud/useGet';
 import { awxAPI } from '../../../common/api/awx-utils';
-import { LaunchConfiguration } from '../../../interfaces/LaunchConfiguration';
 import { Spec, Survey } from '../../../interfaces/Survey';
 import { PageSelectOption } from '../../../../../framework/PageInputs/PageSelectOption';
 import { PageFormCreatableSelect } from '../../../../../framework/PageForm/Inputs/PageFormCreatableSelect';
+import { WizardFormValues } from '../../../resources/templates/WorkflowVisualizer/types';
 
 export function ScheduleSurveyStep() {
   const { t } = useTranslation();
   const { wizardData } = usePageWizard();
-  const { unified_job_template_object } = wizardData as LaunchConfiguration;
+  const { node_resource } = wizardData as WizardFormValues;
   const { data: survey_spec } = useGet<Survey>(
-    awxAPI`/job_templates/${unified_job_template_object.id.toString()}/survey_spec/`
+    awxAPI`/job_templates/${node_resource ? node_resource.id.toString() : ''}/survey_spec/`
   );
 
   const choicesTo: PageSelectOption<string>[] = [];
