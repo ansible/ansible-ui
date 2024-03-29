@@ -1,25 +1,26 @@
-import { useMemo } from 'react';
-import { IToolbarFilter } from '../../../../../framework';
 import {
   useCreatedByToolbarFilter,
   useModifiedByToolbarFilter,
-  useNameToolbarFilter,
-  useDescriptionToolbarFilter,
 } from '../../../common/awx-toolbar-filters';
+import { useDynamicToolbarFilters } from '../../../common/useDynamicFilters';
 
 export function useTemplateFilters() {
-  const nameToolbarFilter = useNameToolbarFilter();
-  const descriptionToolbarFilter = useDescriptionToolbarFilter();
   const createdByToolbarFilter = useCreatedByToolbarFilter();
   const modifiedByToolbarFilter = useModifiedByToolbarFilter();
-  const toolbarFilters = useMemo<IToolbarFilter[]>(
-    () => [
-      nameToolbarFilter,
-      descriptionToolbarFilter,
-      createdByToolbarFilter,
-      modifiedByToolbarFilter,
-    ],
-    [nameToolbarFilter, descriptionToolbarFilter, createdByToolbarFilter, modifiedByToolbarFilter]
-  );
+  const toolbarFilters = useDynamicToolbarFilters({
+    optionsPath: 'unified_job_templates',
+    preSortedKeys: ['name', 'description', 'status', 'created-by', 'modified-by'],
+    preFilledValueKeys: {
+      name: {
+        apiPath: 'unified_job_templates',
+        queryParams: { type: 'job_template,workflow_job_template' },
+      },
+      id: {
+        apiPath: 'unified_job_templates',
+        queryParams: { type: 'job_template,workflow_job_template' },
+      },
+    },
+    additionalFilters: [createdByToolbarFilter, modifiedByToolbarFilter],
+  });
   return toolbarFilters;
 }

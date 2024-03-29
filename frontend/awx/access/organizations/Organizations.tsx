@@ -192,7 +192,14 @@ export function useOrganizationsFilters() {
   const toolbarFilters = useDynamicToolbarFilters({
     optionsPath: 'organizations',
     preSortedKeys: ['name', 'description', 'created-by', 'modified-by'],
-    preFilledValueKeys: ['name', 'id'],
+    preFilledValueKeys: {
+      name: {
+        apiPath: 'organizations',
+      },
+      id: {
+        apiPath: 'organizations',
+      },
+    },
     additionalFilters: [createdByToolbarFilter, modifiedByToolbarFilter],
   });
   return toolbarFilters;

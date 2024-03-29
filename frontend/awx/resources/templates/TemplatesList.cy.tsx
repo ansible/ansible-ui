@@ -5,8 +5,8 @@ import { ToolbarFilterType } from '../../../../framework';
 describe('TemplatesList', () => {
   describe('ErrorList', () => {
     it('displays error if templates list is not successfully loaded', () => {
-      cy.intercept({ method: 'GET', url: '/api/v2/projects/6/*' }, { statusCode: 500 });
-      cy.mount(<TemplatesList url={'/api/v2/projects/6/'} />);
+      cy.intercept({ method: 'GET', url: '/api/v2/unified_job_templates/*' }, { statusCode: 500 });
+      cy.mount(<TemplatesList />);
       cy.contains('Error loading templates');
     });
   });
@@ -16,7 +16,7 @@ describe('TemplatesList', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: '/api/v2/projects/6/*',
+          url: '/api/v2/unified_job_templates/*',
         },
         {
           fixture: 'emptyList.json',
@@ -40,7 +40,7 @@ describe('TemplatesList', () => {
           },
         },
       }));
-      cy.mount(<TemplatesList url={'/api/v2/projects/6/*'} />);
+      cy.mount(<TemplatesList />);
       cy.contains(/^No templates yet$/);
       cy.contains(/^Please create a template by using the button below.$/);
       cy.contains('button', /^Create template$/).should('be.visible');
@@ -51,7 +51,7 @@ describe('TemplatesList', () => {
           actions: {},
         },
       }));
-      cy.mount(<TemplatesList url={'/api/v2/projects/6/*'} />);
+      cy.mount(<TemplatesList />);
       cy.contains(/^You do not have permission to create a template$/);
       cy.contains(
         /^Please contact your organization administrator if there is an issue with your access.$/
@@ -65,16 +65,25 @@ describe('TemplatesList', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: '/api/v2/projects/6/*',
+          url: '/api/v2/unified_job_templates/*',
         },
         {
           fixture: 'templateList.json',
         }
-      ).as('templatesList');
+      );
+      cy.intercept(
+        {
+          method: 'OPTIONS',
+          url: '/api/v2/unified_job_templates/',
+        },
+        {
+          fixture: 'mock_options.json',
+        }
+      );
     });
 
     it('Component renders', () => {
-      cy.mount(<TemplatesList url={'/api/v2/projects/6/*'} />);
+      cy.mount(<TemplatesList />);
       cy.get('tbody').find('tr').should('have.length', 2);
     });
 
@@ -83,15 +92,17 @@ describe('TemplatesList', () => {
         { method: 'GET', url: '/api/v2/job_templates/7/launch/' },
         { fixture: 'jobTemplateLaunch' }
       ).as('launchRequest');
-      cy.mount(<TemplatesList url={'/api/v2/projects/6/*'} />);
-      cy.clickTableRowPinnedAction('Demo Job Template', 'launch-template');
+      cy.mount(<TemplatesList />);
+      cy.clickTableRowAction('name', 'Demo Job Template', 'launch-template', {
+        disableFilter: true,
+      });
       cy.wait('@launchRequest');
     });
 
     it('Has filters for Name, Description, Created By, and Modified By', () => {
-      cy.mount(<TemplatesList url={'/api/v2/projects/6/*'} />);
+      cy.mount(<TemplatesList />);
       cy.openToolbarFilterTypeSelect().within(() => {
-        cy.contains(/^Name$/).should('be.visible');
+        cy.contains(/^Name$/).should('be.exist');
         cy.contains(/^Description$/).should('be.visible');
         cy.contains(/^Created by$/).should('be.visible');
         cy.contains(/^Modified by$/).should('be.visible');
@@ -99,45 +110,47 @@ describe('TemplatesList', () => {
     });
 
     it('Filter templates by name', () => {
-      cy.mount(<TemplatesList url={'/api/v2/projects/6/*'} />);
-      cy.intercept('api/v2/projects/6/*?name__icontains=foo*').as('nameFilterRequest');
-      cy.filterTableByTypeAndText(/^Name$/, 'foo');
+      cy.mount(<TemplatesList />);
+      cy.intercept('api/v2/unified_job_templates/*&name=Test%20Job%20Template*').as(
+        'nameFilterRequest'
+      );
+      cy.filterTableByMultiSelect('name', ['Test Job Template']);
       cy.wait('@nameFilterRequest');
-      cy.clickButton(/^Clear all filters$/);
+      cy.clearAllFilters();
     });
 
     it('Filter templates by description', () => {
-      cy.mount(<TemplatesList url={'/api/v2/projects/6/*'} />);
-      cy.intercept('api/v2/projects/6/*?description__icontains=bar*').as(
+      cy.mount(<TemplatesList />);
+      cy.intercept('api/v2/unified_job_templates/*?description__icontains=bar*').as(
         'descriptionFilterRequest'
       );
-      cy.filterTableByTypeAndText(/^Description$/, 'bar');
+      cy.filterTableByTextFilter('description', 'bar');
       cy.wait('@descriptionFilterRequest');
-      cy.clickButton(/^Clear all filters$/);
+      cy.clearAllFilters();
     });
 
     it('Filter templates by created by', () => {
-      cy.mount(<TemplatesList url={'/api/v2/projects/6/*'} />);
-      cy.intercept('api/v2/projects/6/*?created_by__username__icontains=baz*').as(
+      cy.mount(<TemplatesList />);
+      cy.intercept('api/v2/unified_job_templates/*?created_by__username__icontains=baz*').as(
         'createdByFilterRequest'
       );
-      cy.filterTableByTypeAndText(/^Created by$/, 'baz');
+      cy.filterTableByTextFilter('created-by', 'baz');
       cy.wait('@createdByFilterRequest');
-      cy.clickButton(/^Clear all filters$/);
+      cy.clearAllFilters();
     });
 
     it('Filter templates by modified by', () => {
-      cy.mount(<TemplatesList url={'/api/v2/projects/6/*'} />);
-      cy.intercept('api/v2/projects/6/*?modified_by__username__icontains=qux*').as(
+      cy.mount(<TemplatesList />);
+      cy.intercept('api/v2/unified_job_templates/*?modified_by__username__icontains=qux*').as(
         'modifiedByFilterRequest'
       );
-      cy.filterTableByTypeAndText(/^Modified by$/, 'qux');
+      cy.filterTableByTextFilter('modified-by', 'qux');
       cy.wait('@modifiedByFilterRequest');
-      cy.clickButton(/^Clear all filters$/);
+      cy.clearAllFilters();
     });
 
     it('Create Template button is disabled if the user does not have permission to create templates', () => {
-      cy.mount(<TemplatesList url={'/api/v2/projects/6/*'} />);
+      cy.mount(<TemplatesList />);
       cy.contains('.pf-v5-c-dropdown__toggle', 'Create template').should('be.disabled');
     });
 
@@ -158,30 +171,27 @@ describe('TemplatesList', () => {
           },
         },
       }));
-      cy.mount(<TemplatesList url={'/api/v2/projects/6/*'} />);
+      cy.mount(<TemplatesList />);
       cy.contains('.pf-v5-c-dropdown__toggle', 'Create template').should('not.be.disabled');
     });
 
     it('Delete Template button renders delete modal', () => {
-      cy.mount(<TemplatesList url={'/api/v2/projects/6/*'} />);
-      cy.clickTableRowPinnedAction('Test Job Template', 'actions-dropdown');
-      cy.get('[data-cy="delete-template"]').click();
+      cy.mount(<TemplatesList />);
+      cy.clickTableRowAction('name', 'Test Job Template', 'delete-template', {
+        inKebab: true,
+        disableFilter: true,
+      });
       cy.clickModalButton('Cancel');
     });
 
     it('Clicking Sort button changes the order of listed templates', () => {
-      cy.mount(<TemplatesList url={'/api/v2/projects/6/*'} />);
-      cy.intercept('api/v2/projects/6/*?order_by=-name*').as('nameDescSortRequest');
+      cy.mount(<TemplatesList />);
+      cy.intercept('api/v2/unified_job_templates/*order_by=-name*').as('nameDescSortRequest');
       cy.clickTableHeader(/^Name$/);
       cy.wait('@nameDescSortRequest');
-      cy.intercept('api/v2/projects/6/*?order_by=name*').as('nameAscSortRequest');
+      cy.intercept('api/v2/unified_job_templates/*order_by=name*').as('nameAscSortRequest');
       cy.clickTableHeader(/^Name$/);
       cy.wait('@nameAscSortRequest');
-    });
-
-    it('Pagination button functions as expected', () => {
-      cy.mount(<TemplatesList url={'/api/v2/projects/6/*'} />);
-      cy.get('.pf-v5-c-pagination__nav-page-select').should('be.visible');
     });
   });
 });

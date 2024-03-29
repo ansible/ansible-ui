@@ -20,6 +20,15 @@ describe('Templates', () => {
           fixture: 'unifiedJobTemplates.json',
         }
       ).as('templatesList');
+      cy.intercept(
+        {
+          method: 'OPTIONS',
+          url: '/api/v2/unified_job_templates/',
+        },
+        {
+          fixture: 'mock_options.json',
+        }
+      );
     });
 
     it('Component renders', () => {
@@ -34,7 +43,9 @@ describe('Templates', () => {
         { fixture: 'jobTemplateLaunch' }
       ).as('launchRequest');
       cy.mount(<Templates />);
-      cy.clickTableRowPinnedAction('Demo Job Template', 'launch-template');
+      cy.clickTableRowAction('name', 'Demo Job Template', 'launch-template', {
+        disableFilter: true,
+      });
       cy.wait('@launchRequest');
     });
   });
