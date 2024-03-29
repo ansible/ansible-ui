@@ -29,12 +29,12 @@ export function WorkflowJobTemplateInputs(props: {
         name="name"
         label={t('Name')}
         isRequired
-        placeholder={t('Add a name for this job template')}
+        placeholder={t('Add a name for this workflow job template')}
       />
       <PageFormTextInput<WorkflowJobTemplateForm>
         name="description"
         label={t('Description')}
-        placeholder={t('Add a description for this job template')}
+        placeholder={t('Add a description for this workflow job template')}
       />
       <PageFormSelectOrganization<WorkflowJobTemplateForm> name="organization" />
       <PageFormInventorySelect<WorkflowJobTemplateForm>

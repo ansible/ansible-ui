@@ -4,9 +4,9 @@ import { InventorySource } from '../../../../frontend/awx/interfaces/InventorySo
 import { Label } from '../../../../frontend/awx/interfaces/Label';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
+import { WorkflowJobTemplate } from '../../../../frontend/awx/interfaces/WorkflowJobTemplate';
 
 describe('Workflow Job templates form', () => {
-  //these tests need to be enabled when workflow job templates are working
   let organization: Organization;
   let inventory: Inventory;
   let label: Label;
@@ -44,7 +44,7 @@ describe('Workflow Job templates form', () => {
 
     cy.get('[data-cy="name"]').type(jtName);
     cy.get('[data-cy="description"]').type('this is a description');
-    cy.selectSingleSelectOption('[data-cy="organization"]', organization.name);
+    cy.singleSelectByDataCy('organization', organization.name);
     cy.selectDropdownOptionByResourceName('inventory', inventory.name);
     cy.get('[data-cy="limit"]').type('mock-limit');
     cy.get('[data-cy="scm-branch"]').type('mock-scm-branch');
@@ -60,22 +60,49 @@ describe('Workflow Job templates form', () => {
 
     cy.get('[data-cy="Submit"]').click();
     cy.get('button[data-cy="workflow-visualizer-toolbar-close"]').should('be.visible');
+    cy.get('button[data-cy="workflow-visualizer-toolbar-close"]').click();
+    cy.get('[data-cy="name"]').should('be.visible').should('contain', jtName);
+    cy.get('[data-cy="description"]')
+      .should('be.visible')
+      .should('contain', 'this is a description');
+    cy.get('[data-cy="organization"]').should('be.visible').should('contain', organization.name);
+    cy.get('[data-cy="inventory"]').should('be.visible').should('contain', inventory.name);
+    cy.get('[data-cy="labels"]').should('be.visible').should('contain', label.name);
+    cy.get('[data-cy="actions-dropdown"]').click();
+    cy.get('[data-cy="delete-template"]').click();
+    cy.get('#confirm').click();
+    cy.get('button').contains('Delete template').click();
   });
 
   it('Should edit a workflow job template', () => {
+    let newOrganization: Organization;
+    let wfJT: WorkflowJobTemplate;
     cy.navigateTo('awx', 'templates');
     cy.createAwxWorkflowJobTemplate({
       organization: organization.id,
       inventory: inventory.id,
-    }).then((workflowJobTemplate) => {
-      const newName = (workflowJobTemplate.name ?? '') + ' edited';
-      if (!workflowJobTemplate.name) return;
+    }).then((wftJobTemplate) => {
+      wfJT = wftJobTemplate;
+      const newName = (wftJobTemplate.name ?? '') + ' edited';
+      if (!wftJobTemplate.name) return;
 
-      cy.clickTableRowPinnedAction(workflowJobTemplate?.name, 'edit-template', true);
-      cy.get('[data-cy="name"]').clear().type(newName);
-      cy.get('[data-cy="description"]').type('this is a new description');
-      cy.clickButton(/^Save workflow job template$/);
-      cy.verifyPageTitle(newName);
+      cy.createAwxOrganization().then((newOrg) => {
+        newOrganization = newOrg;
+        cy.clickTableRowPinnedAction(wftJobTemplate?.name, 'edit-template', true);
+        cy.get('[data-cy="name"]').clear().type(newName);
+        cy.get('[data-cy="description"]').type('this is a new description');
+        cy.singleSelectByDataCy('organization', newOrganization.name);
+        cy.clickButton(/^Save workflow job template$/);
+        cy.verifyPageTitle(newName);
+      });
+
+      if (wfJT) {
+        cy.deleteAwxWorkflowJobTemplate(wfJT, { failOnStatusCode: false });
+      }
+
+      if (newOrganization) {
+        cy.deleteAwxOrganization(newOrganization, { failOnStatusCode: false });
+      }
     });
   });
 
