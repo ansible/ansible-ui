@@ -151,7 +151,6 @@ export function NodeTypeStep(props: { hasSourceNode?: boolean }) {
       let launchConfigValue = {} as PromptFormValues;
       let template = getValues('node_resource');
 
-      template = getValues('node_resource');
       if (!template && nodeResource) {
         template = nodeResource;
       }
