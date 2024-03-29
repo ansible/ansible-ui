@@ -45,6 +45,7 @@ import { InventorySource } from '../../../../interfaces/InventorySource';
 import { Project } from '../../../../interfaces/Project';
 import { JobTemplate } from '../../../../interfaces/JobTemplate';
 import { WorkflowJobTemplate } from '../../../../interfaces/WorkflowJobTemplate';
+import { resourceEndPoints } from '../../../../views/schedules/hooks/scheduleHelpers';
 
 export function NodeTypeStep(props: { hasSourceNode?: boolean }) {
   const { reset, getValues, setValue, formState, getFieldState, register, control } =
@@ -52,6 +53,7 @@ export function NodeTypeStep(props: { hasSourceNode?: boolean }) {
 
   const { defaultValues } = formState;
 
+  const params = useParams<{ id?: string }>();
   const { pathname } = useLocation();
 
   const { setWizardData, setStepData, stepData, setVisibleSteps, allSteps } = usePageWizard() as {
@@ -85,11 +87,6 @@ export function NodeTypeStep(props: { hasSourceNode?: boolean }) {
   const nodeResource = useWatch<WizardFormValues>({
     name: 'node_resource',
   }) as AllResources;
-  const resourceForSchedule = useWatch({ name: 'unified_job_template_object' }) as
-    | InventorySource
-    | Project
-    | JobTemplate
-    | WorkflowJobTemplate;
 
   useEffect(() => {
     const { isDirty, isTouched } = getFieldState('node_type');
@@ -100,7 +97,9 @@ export function NodeTypeStep(props: { hasSourceNode?: boolean }) {
 
     if (isDirty) {
       setValue('node_resource', null);
-      const steps = allSteps.filter((step) => step.id !== 'nodePromptsStep');
+      const steps = allSteps.filter(
+        (step) => step.id !== 'nodePromptsStep' && step.id !== 'survey'
+      );
       setVisibleSteps(steps);
     }
 
@@ -108,7 +107,9 @@ export function NodeTypeStep(props: { hasSourceNode?: boolean }) {
       reset(undefined, {
         keepDefaultValues: true,
       });
-      const steps = allSteps.filter((step) => step.id !== 'nodePromptsStep');
+      const steps = allSteps.filter(
+        (step) => step.id !== 'nodePromptsStep' && step.id !== 'survey'
+      );
       setWizardData({ ...currentFormValues, launch_config: null });
       setStepData({ nodeTypeStep: currentFormValues });
       setVisibleSteps(steps);
@@ -126,10 +127,33 @@ export function NodeTypeStep(props: { hasSourceNode?: boolean }) {
   ]);
 
   useEffect(() => {
+    const getResource = async () => {
+      if (!nodeResource) {
+        if (!params?.id) return;
+        const pathnameSplit = pathname.split('/');
+        const resourceType = pathnameSplit[1] === 'projects' ? 'projects' : pathnameSplit[2];
+        const nodeType = resourceType.split('_template')[0];
+        setValue('node_type', nodeType as UnifiedJobType);
+        const response = await requestGet<
+          Project | JobTemplate | WorkflowJobTemplate | InventorySource
+        >(`${resourceEndPoints[resourceType]}${params?.id}/`);
+        setValue('node_resource', response);
+      }
+    };
+
+    if (pathname.split('/').includes('schedules')) {
+      void getResource();
+    }
+  }, [nodeResource, params?.id, pathname, setValue]);
+
+  useEffect(() => {
     const setLaunchToWizardData = async () => {
       let launchConfigValue = {} as PromptFormValues;
+      let template = getValues('node_resource');
 
-      const template = getValues('node_resource');
+      if (!template && nodeResource) {
+        template = nodeResource;
+      }
 
       if (!template) return;
       let templateType;
@@ -161,14 +185,22 @@ export function NodeTypeStep(props: { hasSourceNode?: boolean }) {
         skip_tags: parseStringToTagArray(skip_tags || ''),
       };
 
-      const shouldShowStep = !shouldHideOtherStep(launchConfigResults);
-      if (shouldShowStep) {
+      const shouldShowPromptStep = !shouldHideOtherStep(launchConfigResults);
+      const shouldShowSurveyStep = launchConfigResults.survey_enabled;
+      if (shouldShowPromptStep || shouldShowSurveyStep) {
         setWizardData((prev) => ({
           ...prev,
           launch_config: launchConfigResults,
         }));
-
-        setVisibleSteps(allSteps);
+        if (shouldShowPromptStep && shouldShowSurveyStep) {
+          setVisibleSteps(allSteps);
+        } else if (shouldShowPromptStep) {
+          const filteredSteps = allSteps.filter((step) => step.id !== 'survey');
+          setVisibleSteps(filteredSteps);
+        } else {
+          const filteredSteps = allSteps.filter((step) => step.id !== 'nodePromptsStep');
+          setVisibleSteps(filteredSteps);
+        }
 
         if (stepData.nodePromptsStep && nodeResource) {
           const { isDirty: isNodeTypeDirty } = getFieldState('node_type');
@@ -185,7 +217,9 @@ export function NodeTypeStep(props: { hasSourceNode?: boolean }) {
           }
         }
       } else {
-        const filteredSteps = allSteps.filter((step) => step.id !== 'nodePromptsStep');
+        const filteredSteps = allSteps.filter(
+          (step) => step.id !== 'nodePromptsStep' && step.id !== 'survey'
+        );
         setVisibleSteps(filteredSteps);
         setWizardData((prev) => ({ ...prev, launch_config: null }));
       }
@@ -212,7 +246,7 @@ export function NodeTypeStep(props: { hasSourceNode?: boolean }) {
       {pathname.split('/')[1] === 'schedules' ? (
         <>
           <ScheduleAddResource />
-          {resourceForSchedule && <ScheduleDetails />}
+          {nodeResource && <ScheduleDetails />}
         </>
       ) : (
         <>
@@ -504,47 +538,37 @@ function ScheduleAddResource() {
 
   const inventory = useWatch({ name: 'inventory' }) as RegularInventory;
   const resourceType = useWatch({
-    name: 'resource_type',
+    name: 'node_type',
   }) as string;
-
   return (
     <PageFormSection>
-      <PageFormSelect<ScheduleFormWizard>
+      <PageFormSelect<WizardFormValues>
         isRequired={!params['*']?.startsWith('schedules')}
         labelHelpTitle={t('Resource type')}
         labelHelp={t('Select a resource type onto which this schedule will be applied.')}
-        name="resource_type"
-        id="resource_type"
+        name="node_type"
+        id="node_type"
         data-cy="resource-type"
         label={t('Resource type')}
         options={[
-          { label: t('Job template'), value: 'job_template' },
-          { label: t('Workflow job template'), value: 'workflow_job_template' },
+          { label: t('Job template'), value: RESOURCE_TYPE.job },
+          { label: t('Workflow job template'), value: RESOURCE_TYPE.workflow_job },
           { label: t('Inventory source'), value: 'inventory_source' },
           { label: t('Project'), value: 'project' },
           { label: t('Management job template'), value: 'management_job_template' },
         ]}
-        fieldNameToResetOnFieldChange="unified_job_template_object"
         placeholderText={t('Select job type')}
       />
 
       {resourceType &&
         {
-          job_template: (
-            <PageFormJobTemplateSelect<ScheduleFormWizard>
-              isRequired
-              name="unified_job_template_object"
-            />
-          ),
-          workflow_job_template: (
-            <PageFormWorkflowJobTemplateSelect<ScheduleFormWizard>
-              isRequired
-              name="unified_job_template_object"
-            />
+          job: <PageFormJobTemplateSelect<WizardFormValues> isRequired name="node_resource" />,
+          workflow_job: (
+            <PageFormWorkflowJobTemplateSelect<WizardFormValues> isRequired name="node_resource" />
           ),
           inventory_source: (
             <>
-              <PageFormInventorySelect<ScheduleFormWizard>
+              <PageFormInventorySelect<WizardFormValues>
                 isRequired
                 labelHelp={t(
                   'First, select the inventory to which the desired inventory source belongs.'
@@ -552,25 +576,17 @@ function ScheduleAddResource() {
                 name="inventory"
               />
               {inventory && inventory?.id && (
-                <PageFormInventorySourceSelect<ScheduleFormWizard>
+                <PageFormInventorySourceSelect<WizardFormValues>
                   isRequired
                   inventoryId={inventory?.id}
-                  name="unified_job_template_object"
+                  name="node_resource"
                 />
               )}
             </>
           ),
-          project: (
-            <PageFormProjectSelect<ScheduleFormWizard>
-              isRequired
-              name="unified_job_template_object"
-            />
-          ),
+          project: <PageFormProjectSelect<WizardFormValues> isRequired name="node_resource" />,
           management_job_template: (
-            <PageFormManagementJobsSelect<ScheduleFormWizard>
-              isRequired
-              name="unified_job_template_object"
-            />
+            <PageFormManagementJobsSelect<WizardFormValues> isRequired name="node_resource" />
           ),
         }[resourceType]}
     </PageFormSection>
