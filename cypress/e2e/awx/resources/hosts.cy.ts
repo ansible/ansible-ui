@@ -48,6 +48,7 @@ describe('host and inventory host', () => {
     cy.createInventoryHostGroup(organization).then((result) => {
       const { inventory, host, group } = result;
       cy.visit('/infrastructure/hosts?page=1&perPage=10&sort=name');
+      cy.searchAndDisplayResource(host.name);
       cy.contains(host.name || '').click();
       expect(host.inventory).to.eq(inventory.id);
       expect(group.inventory).to.eq(inventory.id);
@@ -122,6 +123,12 @@ describe('host and inventory host', () => {
     } else {
       cy.visit('/infrastructure/hosts?page=1&perPage=10&sort=name');
     }
+<<<<<<< HEAD
+=======
+    cy.searchAndDisplayResource(hostName);
+    cy.contains(hostName).click();
+    cy.selectDetailsPageKebabAction('delete-host');
+>>>>>>> 349a32705 (review changes)
 
     cy.searchAndDisplayResource(hostName);
     cy.get(`[data-cy="actions-column-cell"] [data-cy="actions-dropdown"]`).click();
