@@ -49,9 +49,9 @@ describe('host and inventory host', () => {
       cy.clickLink(/^Groups$/);
       cy.get('[data-cy="edit-group"]').click();
       cy.verifyPageTitle('Edit group');
-      cy.get('[data-cy="name-form-group"]').type('-changed');
+      cy.get('[data-cy="name-form-group"]').type('-changed name');
       cy.get('[data-cy="Submit"]').click();
-      cy.verifyPageTitle(group.name + '-changed');
+      cy.verifyPageTitle(group.name + '-changed name');
     });
   });
 
