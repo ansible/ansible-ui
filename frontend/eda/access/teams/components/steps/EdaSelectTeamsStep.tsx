@@ -3,19 +3,19 @@ import { useTranslation } from 'react-i18next';
 import { ITableColumn, TextCell } from '../../../../../../framework';
 // import { useTeamsFilters } from '../../hooks/useTeamsFilters';
 import { edaAPI } from '../../../../common/eda-utils';
-import { Team } from '../../../../../awx/interfaces/Team';
 import { useMultiSelectListView } from '../../../../common/useMultiSelectListView';
 import { PageMultiSelectList } from '../../../../../../framework/PageTable/PageMultiSelectList';
+import { EdaTeam } from '../../../../interfaces/EdaTeam';
 
 export function EdaSelectTeamsStep() {
   // const toolbarFilters = useTeamsFilters();
   const { t } = useTranslation();
 
-  const tableColumns: ITableColumn<Team>[] = useMemo(() => {
+  const tableColumns: ITableColumn<EdaTeam>[] = useMemo(() => {
     return [
       {
         header: t('Name'),
-        cell: (team: Team) => <TextCell text={team.name} />,
+        cell: (team: EdaTeam) => <TextCell text={team.name} />,
         card: 'name',
         list: 'name',
         sort: 'username',
@@ -24,7 +24,7 @@ export function EdaSelectTeamsStep() {
     ];
   }, [t]);
 
-  const view = useMultiSelectListView<Team>(
+  const view = useMultiSelectListView<EdaTeam>(
     {
       url: edaAPI`/teams/`,
       toolbarFilters: [],
