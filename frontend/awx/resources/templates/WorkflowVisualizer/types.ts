@@ -31,6 +31,10 @@ export interface CustomNodeProps extends WithSelectionProps {
     {
       secondaryLabel?: string;
       resource: WorkflowNode;
+      badge?: string;
+      badgeTextColor?: string;
+      badgeColor?: string;
+      badgeBorderColor?: string;
     }
   >;
 }
@@ -170,6 +174,7 @@ export interface WizardFormValues {
   node_status_type?: EdgeStatus;
   launch_config: LaunchConfiguration | null;
   prompt: PromptFormValues;
+  inventory?: Inventory;
 }
 
 export type UnifiedJobType =

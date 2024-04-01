@@ -48,7 +48,7 @@ UI projects for [Ansible](https://www.ansible.com).
 | `HUB_GALAXYKIT_COMMAND` | The galaxykit command. (`galaxykit --ignore-certs`) |
 
 ```zsh
-export AWX_SERVER=http://localhost:8043
+export AWX_SERVER=https://localhost:8043
 export AWX_USERNAME='my-user'
 export AWX_PASSWORD='my-password'
 

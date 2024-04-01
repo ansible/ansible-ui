@@ -1,25 +1,18 @@
-import { useMemo } from 'react';
-import { IToolbarFilter } from '../../../../../framework';
+import { useDynamicToolbarFilters } from '../../../common/useDynamicFilters';
 import {
   useCreatedByToolbarFilter,
-  useDescriptionToolbarFilter,
   useModifiedByToolbarFilter,
-  useNameToolbarFilter,
 } from '../../../common/awx-toolbar-filters';
 
 export function useCredentialsFilters() {
-  const nameToolbarFilter = useNameToolbarFilter();
-  const descriptionToolbarFilter = useDescriptionToolbarFilter();
   const createdByToolbarFilter = useCreatedByToolbarFilter();
   const modifiedByToolbarFilter = useModifiedByToolbarFilter();
-  const toolbarFilters = useMemo<IToolbarFilter[]>(
-    () => [
-      nameToolbarFilter,
-      descriptionToolbarFilter,
-      createdByToolbarFilter,
-      modifiedByToolbarFilter,
-    ],
-    [nameToolbarFilter, descriptionToolbarFilter, createdByToolbarFilter, modifiedByToolbarFilter]
-  );
-  return toolbarFilters;
+  const toolBarFilters = useDynamicToolbarFilters({
+    optionsPath: 'credentials',
+    preSortedKeys: ['name', 'credential_type', 'created-by', 'modified-by'],
+    preFilledValueKeys: { name: { apiPath: 'credentials' }, id: { apiPath: 'credentials' } },
+    additionalFilters: [createdByToolbarFilter, modifiedByToolbarFilter],
+  });
+
+  return toolBarFilters;
 }

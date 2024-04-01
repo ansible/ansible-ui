@@ -20,8 +20,8 @@ interface DynamicToolbarFiltersProps {
   /** A list of keys to order the filters toolbar */
   preSortedKeys?: string[];
 
-  /** A list of keys to pre-populate dropdown values. Note: knownAwxFilterKeys adds some keys that require quering specific endpoints */
-  preFilledValueKeys?: string[];
+  /** An object of keys to pre-populate dropdown values. Note: knownAwxFilterKeys adds some keys that require quering specific endpoints */
+  preFilledValueKeys?: Record<string, AsyncKeyOptions>;
 
   /** Additional filters in addition to the dynamic filters */
   additionalFilters?: IToolbarFilter[];
@@ -98,86 +98,69 @@ export function useDynamicToolbarFilters(props: DynamicToolbarFiltersProps) {
     ) => Promise<PageAsyncSelectQueryResult<string>>
   >(
     async (queryOptions: PageAsyncSelectQueryOptions, key: string) => {
-      const knownAwxFilterKey = knownAwxFilterKeys[key];
-      if (knownAwxFilterKey) {
-        const labelKey = knownAwxFilterKey.labelKey || 'name';
-        const valueKey = knownAwxFilterKey.valueKey || 'id';
-        const itemsResponse = await requestGet<
-          AwxItemsResponse<Record<string, string | number | undefined>>
-        >(
-          craftRequestUrl(
-            queryOptions,
-            knownAwxFilterKey.apiPath,
-            labelKey,
-            valueKey,
-            knownAwxFilterKey.queryParams
-          ),
-          queryOptions.signal
-        );
-        let next: string = '';
-        if (itemsResponse.results.length > 0) {
-          const value = itemsResponse.results[itemsResponse.results.length - 1][valueKey];
-          next = value?.toString() ?? '';
-        }
-        return {
-          remaining: itemsResponse.count - itemsResponse.results.length,
-          options: itemsResponse.results.map((resource) => {
-            const label = resource[labelKey]?.toString() || '';
-            return { label, value: resource[valueKey]?.toString() || '' };
-          }),
-          next,
-        };
-      } else {
-        const itemsResponse = await requestGet<
-          AwxItemsResponse<Record<string, string | number | undefined>>
-        >(craftRequestUrl(queryOptions, optionsPath, key, key), queryOptions.signal);
-        let next: string = '';
-        if (itemsResponse.results.length > 0) {
-          const value = itemsResponse.results[itemsResponse.results.length - 1][key];
-          next = value?.toString() ?? '';
-        }
-        return {
-          remaining: itemsResponse.count - itemsResponse.results.length,
-          options: itemsResponse.results.map((resource) => ({
-            label: resource[key]?.toString() || '',
-            value: resource[key]?.toString() || '',
-          })),
-          next,
-        };
-      }
-    },
-    [optionsPath]
-  );
-  const queryResourceLabel = useCallback((value: string, key: string) => {
-    const knownAwxFilterKey = knownAwxFilterKeys[key];
-    if (knownAwxFilterKey) {
-      return (
-        <AsyncQueryLabel
-          url={awxAPI`/${knownAwxFilterKey.apiPath}/`}
-          id={value}
-          field={knownAwxFilterKey.labelKey}
-        />
+      const knownAwxFilter = knownAwxFilterKeys[key] || preFilledValueKeys?.[key];
+      const labelKey = knownAwxFilter.labelKey || key;
+      const valueKey = knownAwxFilter.valueKey || key;
+      const itemsResponse = await requestGet<
+        AwxItemsResponse<Record<string, string | number | undefined>>
+      >(
+        craftRequestUrl(
+          queryOptions,
+          knownAwxFilter.apiPath,
+          labelKey,
+          valueKey,
+          knownAwxFilter.queryParams
+        ),
+        queryOptions.signal
       );
-    }
-    return value;
-  }, []);
+      let next: string = '';
+      if (itemsResponse.results.length > 0) {
+        const value = itemsResponse.results[itemsResponse.results.length - 1][valueKey];
+        next = value?.toString() ?? '';
+      }
+      return {
+        remaining: itemsResponse.count - itemsResponse.results.length,
+        options: itemsResponse.results.map((resource) => {
+          const label = resource[labelKey]?.toString() || '';
+          return { label, value: resource[valueKey]?.toString() || '' };
+        }),
+        next,
+      };
+    },
+    [preFilledValueKeys]
+  );
+  const queryResourceLabel = useCallback(
+    (value: string, key: string) => {
+      const knownAwxFilter = knownAwxFilterKeys[key] || preFilledValueKeys?.[key];
+      if (knownAwxFilter) {
+        return (
+          <AsyncQueryLabel
+            url={awxAPI`/${knownAwxFilter.apiPath}/`}
+            id={value}
+            field={knownAwxFilter.labelKey}
+          />
+        );
+      }
+      return value;
+    },
+    [preFilledValueKeys]
+  );
 
   const filters: IToolbarFilter[] = useMemo(() => {
     const getToolbars = (
       filterableFields: FilterableFields[],
       preSortedKeys?: string[],
-      preFilledValueKeys?: string[],
+      preFilledValueKeys?: Record<string, AsyncKeyOptions>,
       additionalFilters?: IToolbarFilter[]
     ): IToolbarFilter[] => {
       const toolbarFilters: IToolbarFilter[] = [];
 
       filterableFields.forEach((field) => {
-        // Check if field.key is included in preFilledValueKeys
-        let isPreFilled = preFilledValueKeys?.includes(field.key) || false;
+        // Check if key is in preFilledValueKeys
+        let isPreFilled = preFilledValueKeys && preFilledValueKeys[field.key] ? true : false;
         if (knownAwxFilterKeys[field.key]) {
           isPreFilled = true;
         }
-
         // handle fields with options
         if (field.type === 'choice') {
           toolbarFilters.push({
@@ -237,6 +220,10 @@ export function useDynamicToolbarFilters(props: DynamicToolbarFiltersProps) {
             type: ToolbarFilterType.MultiText,
             query: `${field.key}__icontains`,
             comparison: 'contains',
+            placeholder: t(`Filter by {{field}} ({{fieldType}})`, {
+              field: field.label.toLowerCase(),
+              fieldType: field.type.toLowerCase(),
+            }),
           });
         }
       });
@@ -302,17 +289,22 @@ interface AsyncKeyOptions {
 
 /** A list of known keys that require querying specific endpoints. We pre-fetch these values if available */
 export const knownAwxFilterKeys: Record<string, AsyncKeyOptions> = {
-  organization: { apiPath: 'organizations' },
-  project: { apiPath: 'projects' },
-  execution_environment: { apiPath: 'execution_environments' },
-  unified_job_template: { apiPath: 'unified_job_templates' },
+  credential_type: { apiPath: 'credential_types', labelKey: 'name', valueKey: 'id' },
+  credential: { apiPath: 'credentials', labelKey: 'name', valueKey: 'id' },
+  default_environment: { apiPath: 'execution_environments', labelKey: 'name', valueKey: 'id' },
+  organization: { apiPath: 'organizations', labelKey: 'name', valueKey: 'id' },
+  project: { apiPath: 'projects', labelKey: 'name', valueKey: 'id' },
+  execution_environment: { apiPath: 'execution_environments', labelKey: 'name', valueKey: 'id' },
+  unified_job_template: { apiPath: 'unified_job_templates', labelKey: 'name', valueKey: 'id' },
   execution_node: {
     labelKey: 'hostname',
     apiPath: 'instances',
+    valueKey: 'id',
     queryParams: { node_type: 'execution' },
   },
   controller_node: {
     labelKey: 'hostname',
+    valueKey: 'id',
     apiPath: 'instances',
     queryParams: { node_type: 'control' },
   },

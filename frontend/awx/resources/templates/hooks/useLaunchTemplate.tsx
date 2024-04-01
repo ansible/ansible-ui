@@ -36,7 +36,12 @@ export function useLaunchTemplate() {
         const launchJob = await postRequest(launchEndpoint, {});
         navigate(getJobOutputUrl(launchJob));
       } else {
-        pageNavigate(AwxRoute.TemplateLaunchWizard, {
+        const awxRoute =
+          template.type === 'workflow_job_template'
+            ? AwxRoute.WorkflowJobTemplateLaunchWizard
+            : AwxRoute.TemplateLaunchWizard;
+
+        pageNavigate(awxRoute, {
           params: { id: template.id },
         });
       }

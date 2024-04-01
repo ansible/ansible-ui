@@ -1,20 +1,21 @@
-import { useCallback } from 'react';
 import { action, useVisualizationController } from '@patternfly/react-topology';
+import { useCallback } from 'react';
 import { parseVariableField } from '../../../../../../framework/utils/codeEditorUtils';
-import { awxAPI } from '../../../../common/api/awx-utils';
-import { getAddedAndRemoved } from '../../../../common/util/getAddedAndRemoved';
-import { useDeleteRequest } from '../../../../../common/crud/useDeleteRequest';
-import { useAbortController } from '../../../../../common/crud/useAbortController';
 import { requestGet } from '../../../../../common/crud/Data';
-import { usePostRequest } from '../../../../../common/crud/usePostRequest';
+import { useAbortController } from '../../../../../common/crud/useAbortController';
+import { useDeleteRequest } from '../../../../../common/crud/useDeleteRequest';
 import { usePatchRequest } from '../../../../../common/crud/usePatchRequest';
+import { usePostRequest } from '../../../../../common/crud/usePostRequest';
+import { awxAPI } from '../../../../common/api/awx-utils';
 import { AwxItemsResponse } from '../../../../common/AwxItemsResponse';
-import { ControllerState, GraphNode, EdgeStatus, GraphNodeData } from '../types';
-import { WorkflowNode } from '../../../../interfaces/WorkflowNode';
+import { useAwxGetAllPages } from '../../../../common/useAwxGetAllPages';
+import { getAddedAndRemoved } from '../../../../common/util/getAddedAndRemoved';
 import { InstanceGroup } from '../../../../interfaces/InstanceGroup';
-import { Organization } from '../../../../interfaces/Organization';
 import { Label } from '../../../../interfaces/Label';
-import { START_NODE_ID, RESOURCE_TYPE } from '../constants';
+import { Organization } from '../../../../interfaces/Organization';
+import { WorkflowNode } from '../../../../interfaces/WorkflowNode';
+import { RESOURCE_TYPE, START_NODE_ID } from '../constants';
+import { ControllerState, EdgeStatus, GraphNode, GraphNodeData } from '../types';
 
 interface WorkflowApprovalNode {
   name: string;
@@ -42,19 +43,23 @@ interface CreateWorkflowNodePayload {
 }
 type CreatePayloadProperty = keyof CreateWorkflowNodePayload;
 
-export function useSaveVisualizer() {
+export function useSaveVisualizer(templateId: string) {
   const controller = useVisualizationController();
   const abortController = useAbortController();
   const deleteRequest = useDeleteRequest();
-  const postWorkflowNode = usePostRequest<Partial<CreateWorkflowNodePayload>, WorkflowNode>();
   const patchWorkflowNode = usePatchRequest<Partial<CreateWorkflowNodePayload>, WorkflowNode>();
-  const postWorkflowNodeApproval = usePostRequest<WorkflowApprovalNode, WorkflowApprovalNode>();
   const patchWorkflowNodeApproval = usePatchRequest<WorkflowApprovalNode, WorkflowApprovalNode>();
   const postAssociateNode = usePostRequest<{ id: number }>();
   const postDisassociate = usePostRequest<{ id: number; disassociate: boolean }>();
+  const postWorkflowNode = usePostRequest<Partial<CreateWorkflowNodePayload>, WorkflowNode>();
+  const postWorkflowNodeApproval = usePostRequest<WorkflowApprovalNode, WorkflowApprovalNode>();
   const processCredentials = useProcessCredentials();
   const processInstanceGroups = useProcessInstanceGroups();
   const processLabels = useProcessLabels();
+
+  const { refresh: workflowNodeRefresh } = useAwxGetAllPages<WorkflowNode>(
+    awxAPI`/workflow_job_templates/${templateId ?? ''}/workflow_nodes/`
+  );
 
   return useCallback(async () => {
     const graphNodes = controller
@@ -93,7 +98,10 @@ export function useSaveVisualizer() {
     async function createApprovalNodes(approvalNodes: GraphNode[]) {
       const promises = approvalNodes.map(async (node) => {
         const nodeData = node.getData() as GraphNodeData;
+        const nodeTemplate = node.getData()?.resource?.summary_fields?.unified_job_template;
         const nodeIdentifier = toKeyedObject('identifier', nodeData.resource.identifier);
+
+        if (!nodeTemplate) return;
 
         const workflowNode = await postWorkflowNode(
           awxAPI`/workflow_job_templates/${state.workflowTemplate.id.toString()}/workflow_nodes/`,
@@ -103,13 +111,14 @@ export function useSaveVisualizer() {
           },
           abortController.signal
         );
+
         if (workflowNode && workflowNode.id) {
           await postWorkflowNodeApproval(
             awxAPI`/workflow_job_template_nodes/${workflowNode.id.toString()}/create_approval_template/`,
             {
-              name: nodeData.resource.summary_fields.unified_job_template.name,
-              description: nodeData.resource.summary_fields.unified_job_template.description || '',
-              timeout: nodeData.resource.summary_fields.unified_job_template.timeout || 0,
+              name: nodeTemplate.name,
+              description: nodeTemplate.description || '',
+              timeout: nodeTemplate.timeout || 0,
             },
             abortController.signal
           );
@@ -122,8 +131,10 @@ export function useSaveVisualizer() {
     async function updateApprovalNodes(approvalNodes: GraphNode[]) {
       const promises = approvalNodes.map(async (node) => {
         const nodeData = node.getData() as GraphNodeData;
+        const nodeTemplate = node.getData()?.resource?.summary_fields?.unified_job_template;
         const nodeIdentifier = toKeyedObject('identifier', nodeData.resource.identifier);
-        const approvalNodeId = nodeData.resource.summary_fields.unified_job_template.id;
+
+        if (!nodeTemplate) return;
 
         const workflowNode = await patchWorkflowNode(
           awxAPI`/workflow_job_template_nodes/${node.getId()}/`,
@@ -133,13 +144,14 @@ export function useSaveVisualizer() {
           },
           abortController.signal
         );
+
         if (workflowNode && workflowNode.id) {
           await patchWorkflowNodeApproval(
-            awxAPI`/workflow_approval_templates/${approvalNodeId.toString()}/`,
+            awxAPI`/workflow_approval_templates/${nodeTemplate.id.toString()}/`,
             {
-              name: nodeData.resource.summary_fields.unified_job_template.name,
-              description: nodeData.resource.summary_fields.unified_job_template.description || '',
-              timeout: nodeData.resource.summary_fields.unified_job_template.timeout || 0,
+              name: nodeTemplate.name,
+              description: nodeTemplate.description || '',
+              timeout: nodeTemplate.timeout || 0,
             },
             abortController.signal
           );
@@ -187,7 +199,8 @@ export function useSaveVisualizer() {
         const nodeData = node.getData() as GraphNodeData;
         const { launch_data, resource } = nodeData;
         const { unified_job_template } = resource.summary_fields;
-        const { unified_job_type } = unified_job_template;
+
+        if (!unified_job_template) return;
 
         setValue('all_parents_must_converge', resource.all_parents_must_converge);
         setValue('identifier', resource?.identifier);
@@ -207,7 +220,10 @@ export function useSaveVisualizer() {
         setValue('timeout', launch_data?.timeout, true);
         setValue('verbosity', launch_data?.verbosity, true);
 
-        if (unified_job_type === RESOURCE_TYPE.system_job && resource.extra_data?.days) {
+        if (
+          unified_job_template.unified_job_type === RESOURCE_TYPE.system_job &&
+          resource.extra_data?.days
+        ) {
           setValue('extra_data', { days: resource.extra_data.days });
         } else if (launch_data?.extra_vars) {
           setValue('extra_data', parseVariableField(launch_data?.extra_vars), true);
@@ -224,7 +240,6 @@ export function useSaveVisualizer() {
         await processLabels(newNodeId, launch_data);
         await processInstanceGroups(newNodeId, launch_data);
         await processCredentials(newNodeId, launch_data);
-
         setCreatedNodeId(node, newNodeId.toString());
       });
       await Promise.all(promises);
@@ -238,7 +253,9 @@ export function useSaveVisualizer() {
           const nodeId = node.getId();
           const { launch_data, resource } = nodeData;
           const { unified_job_template } = resource.summary_fields;
-          const { unified_job_type } = unified_job_template;
+
+          if (!unified_job_template) return;
+
           const setValue = <K extends CreatePayloadProperty>(
             key: K,
             value: CreateWorkflowNodePayload[K],
@@ -291,7 +308,10 @@ export function useSaveVisualizer() {
           setValue('timeout', launch_data?.timeout, true);
           setValue('verbosity', launch_data?.verbosity, true);
 
-          if (unified_job_type === RESOURCE_TYPE.system_job && resource.extra_data?.days) {
+          if (
+            unified_job_template.unified_job_type === RESOURCE_TYPE.system_job &&
+            resource.extra_data?.days
+          ) {
             setValue('extra_data', { days: resource.extra_data.days });
           } else if (launch_data?.extra_vars) {
             setValue('extra_data', parseVariableField(launch_data?.extra_vars), true);
@@ -315,8 +335,9 @@ export function useSaveVisualizer() {
 
     function handleNewNode(node: GraphNode) {
       const nodeData = node.getData() as GraphNodeData;
+
       if (
-        nodeData.resource.summary_fields.unified_job_template.unified_job_type ===
+        nodeData.resource.summary_fields?.unified_job_template?.unified_job_type ===
         RESOURCE_TYPE.workflow_approval
       ) {
         newApprovalNodes.push(node);
@@ -328,7 +349,7 @@ export function useSaveVisualizer() {
     function handleEditNode(node: GraphNode) {
       const nodeData = node.getData() as GraphNodeData;
       if (
-        nodeData.resource.summary_fields.unified_job_template.unified_job_type ===
+        nodeData.resource.summary_fields?.unified_job_template?.unified_job_type ===
         RESOURCE_TYPE.workflow_approval
       ) {
         editedApprovalNodes.push(node);
@@ -344,45 +365,52 @@ export function useSaveVisualizer() {
         resource: { always_nodes = [], failure_nodes = [], success_nodes = [] },
       } = nodeData;
 
-      success_nodes.forEach((successNodeId) => {
-        sourceEdges.forEach((edge) => {
-          const { tagStatus } = edge.getData() as { tagStatus: EdgeStatus };
-          if (successNodeId.toString() === edge.getTarget().getId()) {
-            if (tagStatus !== EdgeStatus.success || !edge.isVisible()) {
-              disassociateSuccessNodes.push({
-                sourceId: node.getId(),
-                targetId: successNodeId.toString(),
-              });
+      if (success_nodes.length > 0) {
+        success_nodes.forEach((successNodeId) => {
+          sourceEdges.forEach((edge) => {
+            const { tagStatus } = edge.getData() as { tagStatus: EdgeStatus };
+            if (successNodeId.toString() === edge.getTarget().getId()) {
+              if (tagStatus !== EdgeStatus.success || !edge.isVisible()) {
+                disassociateSuccessNodes.push({
+                  sourceId: node.getId(),
+                  targetId: successNodeId.toString(),
+                });
+              }
             }
-          }
+          });
         });
-      });
-      failure_nodes.forEach((failureNodeId) => {
-        sourceEdges.forEach((edge) => {
-          const { tagStatus } = edge.getData() as { tagStatus: EdgeStatus };
-          if (failureNodeId.toString() === edge.getTarget().getId()) {
-            if (tagStatus !== EdgeStatus.danger || !edge.isVisible()) {
-              disassociateFailureNodes.push({
-                sourceId: node.getId(),
-                targetId: failureNodeId.toString(),
-              });
+      }
+      if (failure_nodes.length > 0) {
+        failure_nodes.forEach((failureNodeId) => {
+          sourceEdges.forEach((edge) => {
+            const { tagStatus } = edge.getData() as { tagStatus: EdgeStatus };
+            if (failureNodeId.toString() === edge.getTarget().getId()) {
+              if (tagStatus !== EdgeStatus.danger || !edge.isVisible()) {
+                disassociateFailureNodes.push({
+                  sourceId: node.getId(),
+                  targetId: failureNodeId.toString(),
+                });
+              }
             }
-          }
+          });
         });
-      });
-      always_nodes.forEach((alwaysNodeId) => {
-        sourceEdges.forEach((edge) => {
-          const { tagStatus } = edge.getData() as { tagStatus: EdgeStatus };
-          if (alwaysNodeId.toString() === edge.getTarget().getId()) {
-            if (tagStatus !== EdgeStatus.info || !edge.isVisible()) {
-              disassociateAlwaysNodes.push({
-                sourceId: node.getId(),
-                targetId: alwaysNodeId.toString(),
-              });
+      }
+
+      if (always_nodes.length > 0) {
+        always_nodes.forEach((alwaysNodeId) => {
+          sourceEdges.forEach((edge) => {
+            const { tagStatus } = edge.getData() as { tagStatus: EdgeStatus };
+            if (alwaysNodeId.toString() === edge.getTarget().getId()) {
+              if (tagStatus !== EdgeStatus.info || !edge.isVisible()) {
+                disassociateAlwaysNodes.push({
+                  sourceId: node.getId(),
+                  targetId: alwaysNodeId.toString(),
+                });
+              }
             }
-          }
+          });
         });
-      });
+      }
 
       sourceEdges.forEach((edge) => {
         if (!edge.isVisible()) return;
@@ -425,7 +453,7 @@ export function useSaveVisualizer() {
       if (isNewNode && !isDeleted) {
         handleNewNode(node);
       }
-      if (isEdited) {
+      if (isEdited && !isDeleted) {
         handleEditNode(node);
       }
     });
@@ -443,12 +471,6 @@ export function useSaveVisualizer() {
         handleEdgeModification(node);
       }
     });
-
-    await Promise.all(
-      deletedNodeIds.map((id) =>
-        deleteRequest(awxAPI`/workflow_job_template_nodes/${id}/`, abortController.signal)
-      )
-    );
 
     await Promise.all(
       disassociateSuccessNodes.map((node) =>
@@ -519,7 +541,14 @@ export function useSaveVisualizer() {
         )
       )
     );
+    await Promise.all(
+      deletedNodeIds.map((id) =>
+        deleteRequest(awxAPI`/workflow_job_template_nodes/${id}/`, abortController.signal)
+      )
+    );
+
     action(() => {
+      workflowNodeRefresh();
       controller.setState({ ...state, modified: false });
       controller
         .getElements()
@@ -538,6 +567,7 @@ export function useSaveVisualizer() {
     processCredentials,
     processInstanceGroups,
     processLabels,
+    workflowNodeRefresh,
   ]);
 }
 

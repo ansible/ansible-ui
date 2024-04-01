@@ -1,4 +1,7 @@
 import {
+  Flex,
+  FlexItem,
+  Label,
   Nav,
   NavExpandable,
   NavItem,
@@ -87,9 +90,18 @@ function PageNavigationItemComponent(props: { item: PageNavigationItem; baseRout
         className={isActive ? 'bg-lighten' : undefined}
         onClick={() => onClickNavItem(route)}
         data-cy={id}
-        style={{ display: 'flex', alignItems: 'left', flexDirection: 'column' }}
+        style={{ display: 'flex', alignItems: 'stretch', flexDirection: 'column' }}
       >
-        {item.label}
+        <Flex>
+          <FlexItem grow={{ default: 'grow' }}>{item.label}</FlexItem>
+          {'badge' in item && item.badge && (
+            <FlexItem>
+              <Label isCompact variant="outline" color={item.badgeColor}>
+                {item.badge}
+              </Label>
+            </FlexItem>
+          )}
+        </Flex>
         {item.subtitle && (
           <div style={{ fontSize: 'x-small', opacity: 0.5, textAlign: 'left' }}>
             {item.subtitle}
