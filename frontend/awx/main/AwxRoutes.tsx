@@ -169,6 +169,9 @@ export enum AwxRoute {
   RoleDetails = 'awx-role-details',
 
   // Administration
+  Administration = 'awx-administration',
+  Infrastructure = 'awx-infrastructure',
+
   CredentialTypes = 'awx-credential-types',
   CredentialTypePage = 'awx-credential-type-page',
   CredentialTypeDetails = 'awx-credential-type-details',

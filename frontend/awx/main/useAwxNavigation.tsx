@@ -69,6 +69,7 @@ export function useAwxNavigation() {
     awxSchedulesRoutes,
     awxProjectRoutes,
     {
+      id: AwxRoute.Infrastructure,
       label: t('Infrastructure'),
       path: 'infrastructure',
       children: [
@@ -123,6 +124,7 @@ export function useAwxNavigation() {
       ],
     },
     {
+      id: AwxRoute.Administration,
       label: t('Administration'),
       path: 'administration',
       children: [
