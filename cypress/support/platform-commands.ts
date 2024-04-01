@@ -109,15 +109,24 @@ Cypress.Commands.add(
 
 /* This `Cypress.Commands.add('createPlatformUser', ...)` function is a custom Cypress command that is
 responsible for creating a new platform user. Here's a breakdown of what it does: */
-Cypress.Commands.add('createPlatformUser', (platformOrganization?: PlatformOrganization) => {
-  cy.requestPost<PlatformUser>(gatewayV1API`/users/`, {
-    username: platformOrganization
-      ? `e2e-platform-user-with-org-${randomString(4).toLowerCase()}`
-      : `e2e-platform-user-${randomString(4).toLowerCase()}`,
-    password: 'pw',
-    organizations: platformOrganization ? [platformOrganization.id] : [],
-  }).then((user) => user);
-});
+
+Cypress.Commands.add(
+  'createPlatformUser',
+  (
+    platformOrganization?: PlatformOrganization,
+    userType: 'admin' | 'auditor' | 'normal' = 'normal'
+  ) => {
+    cy.requestPost<PlatformUser>(gatewayV1API`/users/`, {
+      username: platformOrganization
+        ? `e2e-platform-user-with-org-${randomString(2).toLowerCase()}`
+        : `e2e-platform-user-${randomString(2).toLowerCase()}`,
+      password: 'password',
+      is_superuser: userType === 'admin',
+      is_system_auditor: userType === 'auditor',
+      organizations: platformOrganization ? [platformOrganization.id] : [],
+    }).then((user) => user);
+  }
+);
 
 /* This `Cypress.Commands.add('deletePlatformUser', ...)` function is a custom Cypress command that is
 responsible for deleting a platform user. Here's a breakdown of what it does: */
@@ -203,10 +212,13 @@ Cypress.Commands.add('selectAuthenticationType', (authenticationType: string) =>
     });
 });
 
-Cypress.Commands.add('searchAndDisplayResourceByName', (resourceName: string) => {
-  cy.get('[data-ouia-component-id="page-toolbar"]').within(() => {
-    cy.get('button[data-cy="filter"]').click();
-  });
-  cy.get('.pf-v5-c-menu [data-cy="name"]').click();
-  cy.get('[data-cy="text-input"]').find('input').type(resourceName);
-});
+Cypress.Commands.add(
+  'searchAndDisplayResourceByFilterOption',
+  (resourceName: string, filterOption: string) => {
+    cy.get('[data-ouia-component-id="page-toolbar"]').within(() => {
+      cy.get('button[data-cy="filter"]').click();
+    });
+    cy.get(`.pf-v5-c-menu [data-cy="${filterOption}"]`).click();
+    cy.get('[data-cy="text-input"]').find('input').type(resourceName);
+  }
+);

@@ -1475,8 +1475,9 @@ declare global {
       ): Cypress.Chainable<void>;
 
       createPlatformUser(
-        platformOrganization?: PlatformOrganization
-      ): Cypress.Chainable<PlatformUser>;
+        platformOrganization?: PlatformOrganization,
+        userType?: 'admin' | 'auditor' | 'normal'
+      ): Chainable<PlatformUser>;
 
       deletePlatformUser(
         user: PlatformUser,
@@ -1487,7 +1488,10 @@ declare global {
       ): Cypress.Chainable<void>;
       searchAndDisplayResourceInModalPlatform(resourceName: string): Cypress.Chainable<void>;
       selectItemFromLookupModalPlatform(): Cypress.Chainable<void>;
-      searchAndDisplayResourceByName(resourceName: string): Cypress.Chainable<void>;
+      searchAndDisplayResourceByFilterOption(
+        resourceName: string,
+        filterOption: string
+      ): Cypress.Chainable<void>;
     }
   }
 }
