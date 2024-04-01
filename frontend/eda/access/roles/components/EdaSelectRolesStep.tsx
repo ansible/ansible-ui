@@ -51,6 +51,7 @@ export function EdaSelectRolesStep(props: {
       tableColumns={tableColumns}
       toolbarFilters={toolbarFilters}
       fieldNameForPreviousStep={fieldNameForPreviousStep}
+      descriptionForRoleSelection={descriptionForRoleSelection}
     />
   );
 }
