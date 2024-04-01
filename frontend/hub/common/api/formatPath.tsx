@@ -93,8 +93,14 @@ function hubApiTag(strings: TemplateStringsArray, ...values: ParamsValue[]) {
   return url;
 }
 
+export let hubApiPath = process.env.HUB_API_PREFIX;
+
+export function setHubApiPath(path: string) {
+  hubApiPath = path;
+}
+
 export function hubAPI(strings: TemplateStringsArray, ...values: ParamsValue[]) {
-  const base = process.env.HUB_API_PREFIX;
+  const base = hubApiPath;
   if (base && base.endsWith('/')) {
     throw new Error(`Invalid HUB_API_PREFIX - must NOT end with a slash`);
   }
@@ -102,7 +108,7 @@ export function hubAPI(strings: TemplateStringsArray, ...values: ParamsValue[]) 
 }
 
 export function pulpAPI(strings: TemplateStringsArray, ...values: ParamsValue[]) {
-  const base = process.env.HUB_API_PREFIX;
+  const base = hubApiPath;
   if (base && base.endsWith('/')) {
     throw new Error(`Invalid HUB_API_PREFIX - must NOT end with a slash`);
   }
