@@ -1,0 +1,8 @@
+{
+  "name": "E2E TACACS Authenticator",
+  "hostname": "tacacs.hostname.com",
+  "protocol": "pap",
+  "sharedSecret": "tacacsSecret",
+  "clientAddressEnabled": true,
+  "additionalFields": "E2E Test TACACS Data"
+}

@@ -126,7 +126,6 @@ describe('User Types - creates users of type normal, system auditor and system a
       .its('response.body')
       .then((createdUser: PlatformUser) => {
         cy.verifyPageTitle(createdUser.username);
-        cy.log(createdUser.username);
         cy.navigateTo('platform', 'users');
         cy.verifyPageTitle('Users');
         cy.filterTableBySingleText(`${createdUser.username}`);
@@ -159,7 +158,6 @@ describe('User Types - creates users of type normal, system auditor and system a
       .its('response.body')
       .then((createdUser: PlatformUser) => {
         cy.verifyPageTitle(createdUser.username);
-        cy.log(createdUser.username);
         cy.navigateTo('platform', 'users');
         cy.verifyPageTitle('Users');
         cy.filterTableBySingleText(`${createdUser.username}`);
@@ -191,7 +189,6 @@ describe('User Types - creates users of type normal, system auditor and system a
       .its('response.body')
       .then((createdNormalUser: PlatformUser) => {
         cy.verifyPageTitle(createdNormalUser.username);
-        cy.log(createdNormalUser.username);
         cy.platformLogout();
         // login as normal user credentials
         cy.get('[data-cy="username"]').type(createdNormalUser.username);

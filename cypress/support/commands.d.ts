@@ -1443,6 +1443,7 @@ declare global {
 
       platformLogin(): Chainable<void>;
       platformLogout(): Chainable<void>;
+      selectResourceFromDropDown(resourceName: string): Cypress.Chainable<void>;
       selectAuthenticationType(authenticationType: string): Cypress.Chainable<void>;
       createLocalPlatformAuthenticator(
         localAuthenticatorName: string,
