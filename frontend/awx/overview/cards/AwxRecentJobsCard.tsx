@@ -29,7 +29,7 @@ export function AwxRecentJobsCard() {
       subtitle={t('Recently finished jobs')}
       width="md"
       height="md"
-      linkText={t('Go to Jobs')}
+      linkText={t('View all Jobs')}
       to={getPageUrl(AwxRoute.Jobs)}
     >
       <PageTable<Job>
