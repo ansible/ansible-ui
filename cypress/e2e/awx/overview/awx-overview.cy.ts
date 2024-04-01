@@ -84,7 +84,7 @@ describe('AWX Overview', () => {
     );
     cy.navigateTo('awx', 'overview');
     cy.get('[data-cy="jobs"]').should('contain', 'Jobs');
-    cy.checkAnchorLinks('Go to Jobs');
+    cy.checkAnchorLinks('View all Jobs');
     cy.wait('@getJobs')
       .its('response.body.results')
       .then((results: AwxItemsResponse<Job>) => {
@@ -119,7 +119,7 @@ describe('AWX Overview', () => {
     );
     cy.navigateTo('awx', 'overview');
     cy.get('[data-cy="projects"]').should('contain', 'Projects');
-    cy.checkAnchorLinks('Go to Projects');
+    cy.checkAnchorLinks('View all Projects');
     cy.wait('@getProjects')
       .its('response.body.results')
       .then((results: AwxItemsResponse<Project>) => {
@@ -157,7 +157,7 @@ describe('AWX Overview', () => {
     );
     cy.navigateTo('awx', 'overview');
     cy.get('[data-cy="inventories"]').should('contain', 'Inventories');
-    cy.checkAnchorLinks('Go to Inventories');
+    cy.checkAnchorLinks('View all Inventories');
     cy.wait('@getInventories')
       .its('response.body.results')
       .then((results: AwxItemsResponse<Inventory>) => {

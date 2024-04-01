@@ -34,7 +34,7 @@ export function AwxRecentInventoriesCard() {
       subtitle={t('Recently updated inventories')}
       width="md"
       height="md"
-      linkText={t('Go to Inventories')}
+      linkText={t('View all Inventories')}
       to={getPageUrl(AwxRoute.Inventories)}
     >
       <PageTable<Inventory>
