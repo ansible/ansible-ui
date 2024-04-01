@@ -1,12 +1,12 @@
 import { PageWizard, PageWizardStep } from '../../../../framework';
-import { SelectEdaTeamsStep } from '../../access/teams/components/steps/SelectEdaTeamsStep';
+import { EdaSelectTeamsStep } from '../../access/teams/components/steps/EdaSelectTeamsStep';
 
 export function EdaProjectAddTeams() {
   const steps: PageWizardStep[] = [
     {
       id: 'teams',
       label: 'Select Teams',
-      inputs: <SelectEdaTeamsStep />,
+      inputs: <EdaSelectTeamsStep />,
     },
     { id: 'review', label: 'Review', element: <div>TODO</div> },
   ];
