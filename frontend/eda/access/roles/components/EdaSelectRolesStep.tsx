@@ -4,13 +4,17 @@ import { useTranslation } from 'react-i18next';
 import { useEdaRolesFilters } from '../hooks/useEdaRolesFilters';
 import { edaAPI } from '../../../common/eda-utils';
 import { useMultiSelectListView } from '../../../common/useMultiSelectListView';
-import { PageMultiSelectList } from '../../../../../framework/PageTable/PageMultiSelectList';
 import { EdaRbacRole } from '../../../interfaces/EdaRbacRole';
+import { SelectRolesStep } from '../../../../common/access/RolesWizard/steps/SelectRolesStep';
 
-export function EdaSelectRolesStep(props: { contentType: string }) {
+export function EdaSelectRolesStep(props: {
+  contentType: string;
+  fieldNameForPreviousStep?: string;
+  descriptionForRoleSelection?: string;
+}) {
   const toolbarFilters = useEdaRolesFilters();
   const { t } = useTranslation();
-  const { contentType } = props;
+  const { contentType, fieldNameForPreviousStep, descriptionForRoleSelection } = props;
 
   const tableColumns: ITableColumn<EdaRbacRole>[] = useMemo(() => {
     return [
@@ -33,7 +37,7 @@ export function EdaSelectRolesStep(props: { contentType: string }) {
   const view = useMultiSelectListView<EdaRbacRole>(
     {
       url: edaAPI`/role_definitions/`,
-      // toolbarFilters,
+      toolbarFilters,
       tableColumns,
       queryParams: {
         content_type__model: contentType,
@@ -41,8 +45,13 @@ export function EdaSelectRolesStep(props: { contentType: string }) {
     },
     'roles'
   );
-
   return (
-    <PageMultiSelectList view={view} tableColumns={tableColumns} toolbarFilters={toolbarFilters} />
+    <SelectRolesStep
+      view={view}
+      tableColumns={tableColumns}
+      toolbarFilters={toolbarFilters}
+      fieldNameForPreviousStep={fieldNameForPreviousStep}
+      descriptionForRoleSelection={descriptionForRoleSelection}
+    />
   );
 }

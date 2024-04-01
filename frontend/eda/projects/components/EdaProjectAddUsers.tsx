@@ -13,6 +13,7 @@ import { EdaProject } from '../../interfaces/EdaProject';
 import { useParams } from 'react-router-dom';
 import { useGet } from '../../../common/crud/useGet';
 import { edaAPI } from '../../common/eda-utils';
+import { EdaUser } from '../../interfaces/EdaUser';
 
 export function EdaProjectAddUsers() {
   const { t } = useTranslation();
@@ -22,16 +23,30 @@ export function EdaProjectAddUsers() {
 
   const steps: PageWizardStep[] = [
     {
-      id: 'user',
-      label: 'Select User',
+      id: 'users',
+      label: t('Select user(s)'),
       inputs: <EdaSelectUsersStep />,
+      validate: (formData, _) => {
+        const { users } = formData as { users: EdaUser[] };
+        if (!users?.length) {
+          throw new Error(t('Select at least one user.'));
+        }
+      },
     },
     {
       id: 'roles',
-      label: 'Select Roles',
-      inputs: <EdaSelectRolesStep contentType="project" />,
+      label: t('Select roles to apply'),
+      inputs: (
+        <EdaSelectRolesStep
+          contentType="project"
+          fieldNameForPreviousStep="users"
+          descriptionForRoleSelection={t('Choose roles to apply to {{projectName}}.', {
+            projectName: project?.name,
+          })}
+        />
+      ),
     },
-    { id: 'review', label: 'Review', element: <div>TODO</div> },
+    { id: 'review', label: t('Review'), element: <div>TODO</div> },
   ];
 
   const onSubmit = async (/* data */) => {
