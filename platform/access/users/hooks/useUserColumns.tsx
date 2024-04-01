@@ -10,11 +10,9 @@ export function useUsersColumns(options?: { disableLinks?: boolean }) {
   const getPageUrl = useGetPageUrl();
   const createdColumn = useCreatedColumn({
     sort: 'created_on',
-    // hideByDefaultInTableView: true,
   });
   const modifiedColumn = useModifiedColumn({
     sort: 'modified_on',
-    // hideByDefaultInTableView: true,
   });
 
   const tableColumns = useMemo<ITableColumn<PlatformUser>[]>(
@@ -42,7 +40,6 @@ export function useUsersColumns(options?: { disableLinks?: boolean }) {
         type: 'text',
         value: (user) => {
           if (user.is_superuser) return t('System adminsitrator');
-          if (user.is_system_auditor) return t('System auditor');
           return t('Normal user');
         },
         card: 'subtitle',

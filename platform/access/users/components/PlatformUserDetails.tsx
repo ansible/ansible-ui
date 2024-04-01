@@ -52,7 +52,7 @@ export function PlatformUserDetails() {
         ) : null}
         {authenticators?.results?.length && readableAuthenticatorTypes?.length ? (
           <PageDetail
-            label={t('Authentication type', { count: readableAuthenticatorTypes?.length })}
+            label={t('Authentication method', { count: readableAuthenticatorTypes?.length })}
           >
             <LabelsCell
               numLabels={3}

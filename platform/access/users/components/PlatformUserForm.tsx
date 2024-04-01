@@ -29,7 +29,6 @@ import { PageFormPlatformTeamsSelect } from '../../teams/components/PageFormPlat
 
 const UserType = {
   SystemAdministrator: 'System administrator',
-  SystemAuditor: 'System auditor',
   NormalUser: 'Normal user',
 };
 
@@ -47,7 +46,6 @@ export function CreatePlatformUser() {
   ) => {
     const { userType, confirmPassword, ...user } = userInput;
     user.is_superuser = userType === UserType.SystemAdministrator;
-    user.is_system_auditor = userType === UserType.SystemAuditor;
     if (confirmPassword !== user.password) {
       setFieldError('confirmPassword', { message: t('Password does not match.') });
       return false;
@@ -113,7 +111,6 @@ export function EditPlatformUser() {
     async (userInput: IUserInput, setError, setFieldError) => {
       const { userType, confirmPassword, ...user } = userInput;
       user.is_superuser = userType === UserType.SystemAdministrator;
-      user.is_system_auditor = userType === UserType.SystemAuditor;
       if (user.password) {
         if (confirmPassword !== user.password) {
           setFieldError('confirmPassword', { message: t('Password does not match.') });
@@ -158,11 +155,7 @@ export function EditPlatformUser() {
   const { password, ...defaultUserValue } = userWithTeams;
   const defaultValue: Partial<IUserInput> = {
     ...defaultUserValue,
-    userType: userWithTeams.is_superuser
-      ? UserType.SystemAdministrator
-      : userWithTeams.is_system_auditor
-        ? UserType.SystemAuditor
-        : UserType.NormalUser,
+    userType: userWithTeams.is_superuser ? UserType.SystemAdministrator : UserType.NormalUser,
   };
 
   return (
@@ -206,11 +199,6 @@ function PlatformUserInputs(props: { isCreate?: boolean }) {
               label: t('System administrator'),
               description: t('Has full access to the system and can manage other users.'),
               value: UserType.SystemAdministrator,
-            },
-            {
-              label: t('System auditor'),
-              description: t('Has read-only access to the system and can view all resources.'),
-              value: UserType.SystemAuditor,
             },
             {
               label: t('Normal user'),
