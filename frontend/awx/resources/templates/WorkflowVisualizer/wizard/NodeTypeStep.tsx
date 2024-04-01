@@ -628,6 +628,7 @@ function ScheduleDetails() {
         <PageFormDateTimePicker<ScheduleFormWizard>
           label={t('Start date/time')}
           name={'startDateTime'}
+          isRequired
         />
         <PageFormSelect<ScheduleFormWizard>
           name="timezone"
@@ -635,6 +636,7 @@ function ScheduleDetails() {
           label={t('Time zone')}
           options={timeZones}
           helperText={timezoneMessage}
+          isRequired
         />
       </PageFormSection>
     </>

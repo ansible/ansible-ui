@@ -13,6 +13,7 @@ export type PageFormDateTimePickerProps<
   labelHelp?: string | string[] | ReactNode;
   labelHelpTitle?: string;
   isDisabled?: boolean;
+  isRequired?: boolean;
 };
 export function PageFormDateTimePicker<
   TFieldValues extends FieldValues = FieldValues,
@@ -40,6 +41,7 @@ export function PageFormDateTimePicker<
                 field.onChange({ ...field.value, time });
               }}
               timePlaceHolder={props.timePlaceHolder}
+              isRequired={props.isRequired}
             />
           </>
         );
