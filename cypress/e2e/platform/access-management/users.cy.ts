@@ -95,7 +95,7 @@ describe('Users - create, edit and delete', () => {
   });
 });
 
-describe('User Types - creates users of type normal, system auditor and system admin', () => {
+describe('User Types - creates users of type normal and system admin', () => {
   before(() => {
     cy.platformLogin();
   });
@@ -103,44 +103,6 @@ describe('User Types - creates users of type normal, system auditor and system a
   beforeEach(() => {
     cy.navigateTo('platform', 'users');
     cy.verifyPageTitle('Users');
-  });
-
-  it('create a user of type system auditor in the ui and delete it', () => {
-    const userName = `platform-e2e-admin-${randomString(3).toLowerCase()}`;
-    const firstName = `FirstName${randomString(2)}`;
-    const lastName = `LastName ${randomString(2)}`;
-    const userEmail = `user${randomString(3)}@email.com`;
-    const password = 'password';
-
-    cy.get('[data-cy="create-user"]').click();
-    cy.get('[data-cy="username"]').type(userName);
-    cy.get('[data-cy="password"]').type(password);
-    cy.get('[data-cy="confirmpassword"]').type(password);
-    cy.singleSelectByDataCy('usertype', 'System auditor');
-    cy.get('[data-cy="first-name"]').type(firstName);
-    cy.get('[data-cy="last-name"]').type(lastName);
-    cy.get('[data-cy="email"]').type(userEmail);
-    cy.intercept('POST', gatewayV1API`/users/`).as('createdUser');
-    cy.get('[data-cy="Submit"]').click();
-    cy.wait('@createdUser')
-      .its('response.body')
-      .then((createdUser: PlatformUser) => {
-        cy.verifyPageTitle(createdUser.username);
-        cy.navigateTo('platform', 'users');
-        cy.verifyPageTitle('Users');
-        //assert created user is System Auditor
-        cy.filterTableBySingleText(`${createdUser.username}`).then(() => {
-          cy.get('tbody tr td[data-cy="user-type-column-cell"]').should(
-            'have.text',
-            'System auditor'
-          );
-        });
-        cy.get('#select-all').click();
-        cy.clickToolbarKebabAction('delete-selected-users');
-        cy.get('#confirm').click();
-        cy.clickButton(/^Delete user/);
-        cy.clickButton('Close');
-      });
   });
 
   it('create a user of type system administrator in the ui and delete it', () => {
@@ -223,7 +185,7 @@ describe('User Types - creates users of type normal, system auditor and system a
         cy.contains('a[role="tab"]', 'Details').click();
         // verify auth type is set to local
         cy.wait('@normalUser').then(() => {
-          cy.contains('[data-cy="authentication-type"]', 'Local').should('be.visible');
+          cy.contains('[data-cy="authentication-method"]', 'Local').should('be.visible');
         });
         // logout as normal user
         cy.platformLogout();

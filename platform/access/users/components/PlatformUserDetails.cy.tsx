@@ -18,7 +18,6 @@ const mockUser = {
   last_login: '2023-11-01T20:08:07.211714Z',
   password: '$encrypted$',
   is_superuser: false,
-  is_system_auditor: true,
 };
 
 describe('Platform user details', () => {
@@ -41,6 +40,6 @@ describe('Platform user details', () => {
       .should('contain', 'Demo')
       .and('contain', 'New Org')
       .and('contain', 'Test Org');
-    cy.get('[data-cy="authentication-type"]').should('contain', 'Local');
+    cy.get('[data-cy="authentication-method"]').should('contain', 'Local');
   });
 });
