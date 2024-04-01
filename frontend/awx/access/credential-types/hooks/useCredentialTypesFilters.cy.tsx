@@ -29,6 +29,6 @@ describe('useCredentialTypesFilters', () => {
     cy.mount(<Test />);
     cy.wait('@getOptions');
     cy.waitForReact(10000, '#root');
-    cy.getReact('TestInner').getProps('filters').should('have.length', 21);
+    cy.getReact('TestInner').getProps('filters').should('have.length', 22);
   });
 });
