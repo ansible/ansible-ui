@@ -24,7 +24,7 @@ describe('Authenticators - Local CRUD UI', () => {
     const localAuthenticatorName = `Platform Local Authenticator ${randomString(4)}`;
     cy.createLocalPlatformAuthenticator(localAuthenticatorName).then(
       (createdLocalAuthenticator: Authenticator) => {
-        cy.searchAndDisplayResourceByName(createdLocalAuthenticator.name);
+        cy.searchAndDisplayResourceByFilterOption(createdLocalAuthenticator.name, 'name');
         cy.clickTableRowAction('name', createdLocalAuthenticator.name, 'delete-authentication', {
           inKebab: true,
         });
@@ -50,7 +50,7 @@ describe('Authenticators - Local CRUD UI', () => {
     cy.clickButton('Finish');
     cy.verifyPageTitle(localAuthenticator);
     cy.navigateTo('platform', 'authenticators');
-    cy.searchAndDisplayResourceByName(localAuthenticator);
+    cy.searchAndDisplayResourceByFilterOption(localAuthenticator, 'name');
     cy.clickTableRowAction('name', localAuthenticator, 'delete-authentication', {
       inKebab: true,
     });
@@ -68,7 +68,7 @@ describe('Authenticators - Local CRUD UI', () => {
     cy.createLocalPlatformAuthenticator(localAuthenticatorName).then(
       (createdLocalAuthenticator: Authenticator) => {
         cy.verifyPageTitle('Authentication');
-        cy.searchAndDisplayResourceByName(createdLocalAuthenticator.name);
+        cy.searchAndDisplayResourceByFilterOption(createdLocalAuthenticator.name, 'name');
         cy.contains('tr', createdLocalAuthenticator.name).within(() => {
           cy.get('[data-cy=toggle-switch]').click();
           cy.get('.pf-v5-c-switch__label.pf-m-on')
@@ -127,21 +127,25 @@ describe('Authenticators - Local CRUD UI', () => {
       (createdLocalAuthenticator1: Authenticator) => {
         cy.createLocalPlatformAuthenticator(localAuthenticatorName2).then(
           (createdLocalAuthenticator2: Authenticator) => {
-            cy.searchAndDisplayResourceByName(createdLocalAuthenticator1.name).then(() => {
-              cy.get('td[data-cy="name-column-cell"]')
-                .should('have.text', createdLocalAuthenticator1.name)
-                .parent('tr')
-                .find('td[data-cy="checkbox-column-cell"]')
-                .click();
-            });
+            cy.searchAndDisplayResourceByFilterOption(createdLocalAuthenticator1.name, 'name').then(
+              () => {
+                cy.get('td[data-cy="name-column-cell"]')
+                  .should('have.text', createdLocalAuthenticator1.name)
+                  .parent('tr')
+                  .find('td[data-cy="checkbox-column-cell"]')
+                  .click();
+              }
+            );
             cy.clickButton(/^Clear all filters$/);
-            cy.searchAndDisplayResourceByName(createdLocalAuthenticator2.name).then(() => {
-              cy.get('td[data-cy="name-column-cell"]')
-                .should('have.text', createdLocalAuthenticator2.name)
-                .parent('tr')
-                .find('td[data-cy="checkbox-column-cell"]')
-                .click();
-            });
+            cy.searchAndDisplayResourceByFilterOption(createdLocalAuthenticator2.name, 'name').then(
+              () => {
+                cy.get('td[data-cy="name-column-cell"]')
+                  .should('have.text', createdLocalAuthenticator2.name)
+                  .parent('tr')
+                  .find('td[data-cy="checkbox-column-cell"]')
+                  .click();
+              }
+            );
             cy.clickToolbarKebabAction('delete-selected-authentications');
             cy.getModal().within(() => {
               cy.get('#confirm').click();
