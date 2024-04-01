@@ -212,6 +212,14 @@ Cypress.Commands.add('selectAuthenticationType', (authenticationType: string) =>
     });
 });
 
+Cypress.Commands.add('selectResourceFromDropDown', (resourceName: string) => {
+  cy.get('[data-ouia-component-id="menu-select"]')
+    .click()
+    .within(() => {
+      cy.get(`[data-cy="${resourceName}"]`).click();
+    });
+});
+
 Cypress.Commands.add(
   'searchAndDisplayResourceByFilterOption',
   (resourceName: string, filterOption: string) => {

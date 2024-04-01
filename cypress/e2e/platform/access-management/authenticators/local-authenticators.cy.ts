@@ -111,7 +111,7 @@ describe('Authenticators - Local CRUD UI', () => {
     cy.createLocalPlatformAuthenticator(localAuthenticatorName).then(
       (createdLocalAuthenticator: Authenticator) => {
         cy.clickTableRowLink('name', createdLocalAuthenticator.name);
-        cy.get('[data-cy="name"]').type(' Edited');
+        cy.get('[data-cy="name"]').clear().type(`${createdLocalAuthenticator.name} Edited`);
         cy.clickButton('Save');
         cy.contains(/^Success$/).should('be.visible');
         cy.containsBy('button', /^Close$/).click();
@@ -161,7 +161,7 @@ describe('Authenticators - Local CRUD UI', () => {
   });
 
   //passes locally but not on the CI server as the manage order modal doesn't display paginated authenticators
-  //discuss with James and Laura
+  //discussed with Laura, needs some BE work, bug ticket #
   it.skip('should be able to manage the order the authenticators', () => {
     const localAuthenticatorName1 = `Platform Local Authenticator ${randomString(4)}`;
     const localAuthenticatorName2 = `Platform Local Authenticator ${randomString(4)}`;
@@ -169,7 +169,7 @@ describe('Authenticators - Local CRUD UI', () => {
       (createdLocalAuthenticator1: Authenticator) => {
         cy.createLocalPlatformAuthenticator(localAuthenticatorName2).then(
           (createdLocalAuthenticator2: Authenticator) => {
-            cy.reload(); //bug created for this
+            cy.reload(); //bug created for this #
             cy.get(
               '.pf-v5-c-toolbar__group .pf-v5-c-dropdown [data-cy="actions-dropdown"]'
             ).click();
