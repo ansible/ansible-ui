@@ -1,6 +1,6 @@
 import { Trans, useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { useSWRConfig } from 'swr';
+import useSWR, { useSWRConfig } from 'swr';
 import {
   PageFormSelect,
   PageFormSubmitHandler,
@@ -23,6 +23,8 @@ import {
 import { EdaResult } from '../interfaces/EdaResult';
 import { EdaRoute } from '../main/EdaRoutes';
 import { PageFormSelectOrganization } from '../access/organizations/components/PageFormOrganizationSelect';
+import { EdaOrganization } from '../interfaces/EdaOrganization';
+import { requestGet, swrOptions } from '../../common/crud/Data';
 
 function DecisionEnvironmentInputs() {
   const { t } = useTranslation();
@@ -95,6 +97,17 @@ export function CreateDecisionEnvironment() {
   const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
   const { cache } = useSWRConfig();
+
+  const { data: organizations } = useSWR<EdaResult<EdaOrganization>>(
+    edaAPI`/organizations/?name=Default`,
+    requestGet,
+    swrOptions
+  );
+  const defaultOrganization =
+    organizations && organizations?.results && organizations.results.length > 0
+      ? organizations.results[0]
+      : undefined;
+
   const postRequest = usePostRequest<Partial<EdaDecisionEnvironment>, EdaDecisionEnvironment>();
 
   const onSubmit: PageFormSubmitHandler<EdaDecisionEnvironment> = async (decisionEnvironment) => {
@@ -121,7 +134,7 @@ export function CreateDecisionEnvironment() {
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
         onCancel={onCancel}
-        defaultValue={{ organization_id: undefined }}
+        defaultValue={{ organization_id: defaultOrganization?.id }}
       >
         <DecisionEnvironmentInputs />
       </EdaPageForm>

@@ -1,7 +1,7 @@
 import { TextList, TextListItem, TextListItemVariants } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { useSWRConfig } from 'swr';
+import useSWR, { useSWRConfig } from 'swr';
 import {
   PageFormCheckbox,
   PageFormSelect,
@@ -26,6 +26,8 @@ import { EdaRoute } from '../main/EdaRoutes';
 import { Trans } from 'react-i18next';
 import { getDocsBaseUrl } from '../../awx/common/util/getDocsBaseUrl';
 import { PageFormSelectOrganization } from '../access/organizations/components/PageFormOrganizationSelect';
+import { EdaOrganization } from '../interfaces/EdaOrganization';
+import { requestGet, swrOptions } from '../../common/crud/Data';
 
 function ProjectCreateInputs() {
   const { t } = useTranslation();
@@ -317,14 +319,20 @@ function ProjectEditInputs() {
 }
 
 export function CreateProject() {
-  const defaultValues: Partial<EdaProject> = {
-    verify_ssl: true,
-  };
   const { t } = useTranslation();
   const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
   const { cache } = useSWRConfig();
   const postRequest = usePostRequest<EdaProjectCreate, EdaProject>();
+  const { data: organizations } = useSWR<EdaResult<EdaOrganization>>(
+    edaAPI`/organizations/?name=Default`,
+    requestGet,
+    swrOptions
+  );
+  const defaultOrganization =
+    organizations && organizations?.results && organizations.results.length > 0
+      ? organizations.results[0]
+      : undefined;
 
   const onSubmit: PageFormSubmitHandler<EdaProjectCreate> = async (project) => {
     const newProject = await postRequest(edaAPI`/projects/`, project);
@@ -349,7 +357,7 @@ export function CreateProject() {
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
         onCancel={onCancel}
-        defaultValue={{ ...defaultValues }}
+        defaultValue={{ verify_ssl: true, organization_id: defaultOrganization?.id }}
       >
         <ProjectCreateInputs />
       </EdaPageForm>
@@ -366,7 +374,6 @@ export function EditProject() {
 
   const { cache } = useSWRConfig();
   const patchRequest = usePatchRequest<EdaProjectCreate, EdaProjectCreate>();
-
   const onSubmit: PageFormSubmitHandler<EdaProjectCreate> = async (project) => {
     await patchRequest(edaAPI`/projects/${id.toString()}/`, project);
     (cache as unknown as { clear: () => void }).clear?.();

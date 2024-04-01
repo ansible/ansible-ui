@@ -27,6 +27,7 @@ export function CreateOrganization() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
+
   useInvalidateCacheOnUnmount();
 
   const postRequest = usePostRequest<{ id: number }, EdaOrganization>();

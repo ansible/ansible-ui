@@ -896,6 +896,7 @@ export interface Project {
   name: string;
   description?: string;
   eda_credential_id?: number | null;
+  orgabization_id?: number | null;
   verify_ssl?: boolean;
   id: number;
   url: string;
