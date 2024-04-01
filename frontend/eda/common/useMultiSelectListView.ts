@@ -4,6 +4,13 @@ import { IToolbarFilter, ITableColumn } from '../../../framework';
 import { usePageWizard } from '../../../framework/PageWizard/PageWizardProvider';
 import { useEdaView, QueryParams } from './useEventDrivenView';
 
+/**
+ * Hook for defining the view for a multi-select list in the context of a wizard. The selections made in the list
+ * are maintained if the user returns to the step containing the list.
+ * @param viewOptions Options for the view that defines the state of the table (URL, filters, columns etc.)
+ * @param fieldName Specific field in the wizard that represents the selected items from the list
+ * @returns The view that can be used to pass to the PageMultiSelectList component within a wizard
+ */
 export function useMultiSelectListView<T extends { id: string | number }>(
   viewOptions: {
     url: string;
