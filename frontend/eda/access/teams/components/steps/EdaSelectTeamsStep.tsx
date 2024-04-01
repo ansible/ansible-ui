@@ -7,7 +7,7 @@ import { Team } from '../../../../../awx/interfaces/Team';
 import { useMultiSelectListView } from '../../../../common/useMultiSelectListView';
 import { PageMultiSelectList } from '../../../../../../framework/PageTable/PageMultiSelectList';
 
-export function SelectEdaTeamsStep() {
+export function EdaSelectTeamsStep() {
   // const toolbarFilters = useTeamsFilters();
   const { t } = useTranslation();
 
@@ -24,7 +24,7 @@ export function SelectEdaTeamsStep() {
     ];
   }, [t]);
 
-  const view = useMultiSelectListView(
+  const view = useMultiSelectListView<Team>(
     {
       url: edaAPI`/teams/`,
       toolbarFilters: [],
