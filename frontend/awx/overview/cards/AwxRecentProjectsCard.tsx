@@ -33,7 +33,7 @@ export function AwxRecentProjectsCard() {
       subtitle={t('Recently updated projects')}
       width="md"
       height="md"
-      linkText={t('Go to Projects')}
+      linkText={t('View all Projects')}
       to={getPageUrl(AwxRoute.Projects)}
     >
       <PageTable
