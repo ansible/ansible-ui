@@ -76,8 +76,8 @@ export function SelectRolesStep<T extends object>(props: SelectRolesStepProps<T>
   );
 }
 /**
- * Header for selection of roles: Shows title, description and optional labels showing selection of
- * users/teams/resources from the previous step
+ * Header for selection of roles: Shows title, description and optional labels for
+ * users/teams/resources selected from the previous step
  */
 function SelectRolesStepHeader<
   K extends { name: string; username?: never } | { name?: never; username: string },

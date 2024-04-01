@@ -51,15 +51,6 @@ export function EdaSelectRolesStep(props: {
       tableColumns={tableColumns}
       toolbarFilters={toolbarFilters}
       fieldNameForPreviousStep={fieldNameForPreviousStep}
-      descriptionForRoleSelection={descriptionForRoleSelection}
-      // selectedItemsFromPreviousStep={users && users.length ? users : undefined}
-      // labelForSelectedItemsFromPreviousStep={
-      //   users && users.length ? t('Selected users') : undefined
-      // }
-      // descriptionForRoleSelection={descriptionForRoleSelection}
     />
   );
-  // return (
-  //   <PageMultiSelectList view={view} tableColumns={tableColumns} toolbarFilters={toolbarFilters} />
-  // );
 }
