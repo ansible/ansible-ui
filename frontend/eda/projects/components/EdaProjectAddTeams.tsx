@@ -16,7 +16,7 @@ export function EdaProjectAddTeams() {
   const steps: PageWizardStep[] = [
     {
       id: 'teams',
-      label: 'Select Teams',
+      label: t('Select team(s)'),
       inputs: <EdaSelectTeamsStep />,
       validate: (formData, _) => {
         const { teams } = formData as { teams: EdaTeam[] };
@@ -27,7 +27,7 @@ export function EdaProjectAddTeams() {
     },
     {
       id: 'roles',
-      label: 'Select Roles',
+      label: t('Select roles to apply'),
       inputs: (
         <EdaSelectRolesStep
           contentType="project"
@@ -38,7 +38,7 @@ export function EdaProjectAddTeams() {
         />
       ),
     },
-    { id: 'review', label: 'Review', element: <div>TODO</div> },
+    { id: 'review', label: t('Review'), element: <div>TODO</div> },
   ];
 
   const onSubmit = async (/* data */) => {

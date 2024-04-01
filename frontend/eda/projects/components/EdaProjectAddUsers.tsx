@@ -24,7 +24,7 @@ export function EdaProjectAddUsers() {
   const steps: PageWizardStep[] = [
     {
       id: 'users',
-      label: 'Select User',
+      label: t('Select user(s)'),
       inputs: <EdaSelectUsersStep />,
       validate: (formData, _) => {
         const { users } = formData as { users: EdaUser[] };
@@ -35,7 +35,7 @@ export function EdaProjectAddUsers() {
     },
     {
       id: 'roles',
-      label: 'Select Roles',
+      label: t('Select roles to apply'),
       inputs: (
         <EdaSelectRolesStep
           contentType="project"
@@ -46,7 +46,7 @@ export function EdaProjectAddUsers() {
         />
       ),
     },
-    { id: 'review', label: 'Review', element: <div>TODO</div> },
+    { id: 'review', label: t('Review'), element: <div>TODO</div> },
   ];
 
   const onSubmit = async (/* data */) => {
