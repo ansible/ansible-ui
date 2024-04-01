@@ -2,9 +2,9 @@ import { useMemo } from 'react';
 import { ITableColumn, TextCell } from '../../../../../framework';
 import { useTranslation } from 'react-i18next';
 import { useEdaRolesFilters } from '../hooks/useEdaRolesFilters';
-import { useEdaView } from '../../../common/useEventDrivenView';
 import { edaAPI } from '../../../common/eda-utils';
-import { SelectRolesStep } from '../../../../common/access/RolesWizard/steps/SelectRolesStep';
+import { useMultiSelectListView } from '../../../common/useMultiSelectListView';
+import { PageMultiSelectList } from '../../../../../framework/PageTable/PageMultiSelectList';
 import { EdaRbacRole } from '../../../interfaces/EdaRbacRole';
 
 export function EdaSelectRolesStep(props: { contentType: string }) {
@@ -30,16 +30,19 @@ export function EdaSelectRolesStep(props: { contentType: string }) {
     ];
   }, [t]);
 
-  const view = useEdaView<EdaRbacRole>({
-    url: edaAPI`/role_definitions/`,
-    // toolbarFilters,
-    tableColumns,
-    queryParams: {
-      content_type__model: contentType,
+  const view = useMultiSelectListView<EdaRbacRole>(
+    {
+      url: edaAPI`/role_definitions/`,
+      // toolbarFilters,
+      tableColumns,
+      queryParams: {
+        content_type__model: contentType,
+      },
     },
-  });
+    'roles'
+  );
 
   return (
-    <SelectRolesStep view={view} tableColumns={tableColumns} toolbarFilters={toolbarFilters} />
+    <PageMultiSelectList view={view} tableColumns={tableColumns} toolbarFilters={toolbarFilters} />
   );
 }

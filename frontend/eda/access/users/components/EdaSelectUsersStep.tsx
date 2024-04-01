@@ -3,9 +3,9 @@ import { useUserFilters } from '../hooks/useUserFilters';
 import { useMemo } from 'react';
 import { EdaUser } from '../../../interfaces/EdaUser';
 import { ITableColumn, TextCell } from '../../../../../framework';
-import { useEdaView } from '../../../common/useEventDrivenView';
 import { edaAPI } from '../../../common/eda-utils';
-import { SelectUsersStep } from '../../../../common/access/RolesWizard/steps/SelectUsersStep';
+import { useMultiSelectListView } from '../../../common/useMultiSelectListView';
+import { PageMultiSelectList } from '../../../../../framework/PageTable/PageMultiSelectList';
 
 export function EdaSelectUsersStep() {
   const toolbarFilters = useUserFilters();
@@ -36,13 +36,16 @@ export function EdaSelectUsersStep() {
     ];
   }, [t]);
 
-  const view = useEdaView<EdaUser>({
-    url: edaAPI`/users/`,
-    toolbarFilters,
-    tableColumns,
-  });
+  const view = useMultiSelectListView<EdaUser>(
+    {
+      url: edaAPI`/users/`,
+      toolbarFilters,
+      tableColumns,
+    },
+    'users'
+  );
 
   return (
-    <SelectUsersStep view={view} tableColumns={tableColumns} toolbarFilters={toolbarFilters} />
+    <PageMultiSelectList view={view} tableColumns={tableColumns} toolbarFilters={toolbarFilters} />
   );
 }
