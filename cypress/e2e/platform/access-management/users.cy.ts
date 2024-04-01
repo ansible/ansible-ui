@@ -128,7 +128,13 @@ describe('User Types - creates users of type normal, system auditor and system a
         cy.verifyPageTitle(createdUser.username);
         cy.navigateTo('platform', 'users');
         cy.verifyPageTitle('Users');
-        cy.filterTableBySingleText(`${createdUser.username}`);
+        //assert created user is System Auditor
+        cy.filterTableBySingleText(`${createdUser.username}`).then(() => {
+          cy.get('tbody tr td[data-cy="user-type-column-cell"]').should(
+            'have.text',
+            'System auditor'
+          );
+        });
         cy.get('#select-all').click();
         cy.clickToolbarKebabAction('delete-selected-users');
         cy.get('#confirm').click();
@@ -160,7 +166,15 @@ describe('User Types - creates users of type normal, system auditor and system a
         cy.verifyPageTitle(createdUser.username);
         cy.navigateTo('platform', 'users');
         cy.verifyPageTitle('Users');
+        //assert created user is System Administrator
         cy.filterTableBySingleText(`${createdUser.username}`);
+        // uncomment when bug # is fixed
+        //   .then(() => {
+        //   cy.get('tbody tr td[data-cy="user-type-column-cell"]').should(
+        //     'have.text',
+        //     'System administrator'
+        //   );
+        // });
         cy.get('#select-all').click();
         cy.clickToolbarKebabAction('delete-selected-users');
         cy.get('#confirm').click();
@@ -215,8 +229,13 @@ describe('User Types - creates users of type normal, system auditor and system a
         cy.platformLogout();
         // log back in as admin to delete newly created user
         cy.platformLogin();
+        cy.intercept('GET', gatewayV1API`/users/?order_by=username&page=1&page_size=10`).as(
+          'getUsers'
+        );
         cy.navigateTo('platform', 'users');
-        cy.deletePlatformUser(createdNormalUser, { failOnStatusCode: false });
+        cy.wait('@getUsers').then(() => {
+          cy.deletePlatformUser(createdNormalUser, { failOnStatusCode: false });
+        });
       });
   });
 });
