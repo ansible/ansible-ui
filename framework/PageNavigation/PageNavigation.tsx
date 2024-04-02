@@ -82,13 +82,7 @@ function PageNavigationItemComponent(props: { item: PageNavigationItem; baseRout
   const hasChildNavItems = 'children' in item && item.children?.find((child) => child.label);
 
   if (!hasChildNavItems && 'label' in item) {
-    // *getting webpack issues trying to use node path module
-    // Module build failed: Reading from "node:path" is not handled by plugins (Unhandled scheme).*
-    // const isActive = location.pathname.startsWith(
-    //   path.join(process.env?.ROUTE_PREFIX ?? '', route)
-    // );
-
-    let path = process.env?.ROUTE_PREFIX ?? '' + route;
+    let path = (process.env?.ROUTE_PREFIX ?? '') + route;
     path = path.replace('//', '/');
 
     const isActive = location.pathname.startsWith(path);
