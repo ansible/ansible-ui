@@ -357,6 +357,27 @@ describe('Create Edit Inventory Form', () => {
       });
 
       it(`Validate required fields on save (${kindLabel})`, () => {
+        cy.fixture('inventory')
+          .then((inventory: Inventory) => {
+            inventory.kind = payload.kind as '' | 'smart' | 'constructed';
+            inventory.name = payload.name;
+            inventory.description = payload.description;
+            inventory.variables = payload.variables;
+            inventory.organization = payload.organization;
+            if (kind === '') {
+              inventory.summary_fields.labels.results = (payload as RegularPayload)
+                .labels as Label[];
+              inventory.prevent_instance_group_fallback = (
+                payload as RegularPayload
+              ).prevent_instance_group_fallback;
+            }
+            if (kind === 'smart') {
+              inventory.host_filter = (payload as SmartPayload).host_filter;
+            }
+          })
+          .then((inventory: Inventory) => {
+            cy.intercept({ method: 'GET', url: '/api/v2/inventories/*/' }, { body: inventory });
+          });
         cy.mount(<EditInventory />, {
           path,
           initialEntries,

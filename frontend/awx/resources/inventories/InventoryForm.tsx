@@ -302,15 +302,6 @@ export function EditInventory() {
         <InventoryInputs inventoryKind={inventory.kind} />
       </AwxPageForm>
     </PageLayout>
-  ) : (
-    <PageLayout>
-      <PageHeader
-        breadcrumbs={[
-          { label: t('Inventories'), to: getPageUrl(AwxRoute.Inventories) },
-          { label: t('Edit Inventory') },
-        ]}
-      />
-    </PageLayout>
   );
 }
 
