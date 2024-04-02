@@ -6,6 +6,12 @@ import { ITableColumn, TextCell } from '../../../../../framework';
 import { edaAPI } from '../../../common/eda-utils';
 import { useMultiSelectListView } from '../../../common/useMultiSelectListView';
 import { PageMultiSelectList } from '../../../../../framework/PageTable/PageMultiSelectList';
+import styled from 'styled-components';
+import { Title } from '@patternfly/react-core';
+
+const StyledTitle = styled(Title)`
+  margin-bottom: 1rem;
+`;
 
 export function EdaSelectUsersStep() {
   const toolbarFilters = useUserFilters();
@@ -46,6 +52,13 @@ export function EdaSelectUsersStep() {
   );
 
   return (
-    <PageMultiSelectList view={view} tableColumns={tableColumns} toolbarFilters={toolbarFilters} />
+    <>
+      <StyledTitle headingLevel="h1">{t('Select user(s)')}</StyledTitle>
+      <PageMultiSelectList
+        view={view}
+        tableColumns={tableColumns}
+        toolbarFilters={toolbarFilters}
+      />
+    </>
   );
 }

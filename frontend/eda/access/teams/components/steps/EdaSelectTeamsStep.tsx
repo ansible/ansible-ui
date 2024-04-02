@@ -6,6 +6,12 @@ import { edaAPI } from '../../../../common/eda-utils';
 import { useMultiSelectListView } from '../../../../common/useMultiSelectListView';
 import { PageMultiSelectList } from '../../../../../../framework/PageTable/PageMultiSelectList';
 import { EdaTeam } from '../../../../interfaces/EdaTeam';
+import { Title } from '@patternfly/react-core';
+import styled from 'styled-components';
+
+const StyledTitle = styled(Title)`
+  margin-bottom: 1rem;
+`;
 
 export function EdaSelectTeamsStep() {
   // const toolbarFilters = useTeamsFilters();
@@ -33,5 +39,10 @@ export function EdaSelectTeamsStep() {
     'teams'
   );
 
-  return <PageMultiSelectList view={view} tableColumns={tableColumns} toolbarFilters={[]} />;
+  return (
+    <>
+      <StyledTitle headingLevel="h1">{t('Select team(s)')}</StyledTitle>
+      <PageMultiSelectList view={view} tableColumns={tableColumns} toolbarFilters={[]} />
+    </>
+  );
 }
