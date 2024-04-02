@@ -2,6 +2,10 @@
   "id": 1,
   "name": "Sample Project",
   "description": "Sample project description",
+  "organization": {
+    "id": 2,
+    "name": "Organization 2"
+  },
   "url": "https://github.com/ansible/ansible-ui",
   "git_hash": "a1c2b012f84de83c4a9fa5126430816bf68364b2",
   "credential": null,
