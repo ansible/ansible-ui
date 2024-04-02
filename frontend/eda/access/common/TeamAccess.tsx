@@ -8,34 +8,16 @@ import {
   PageTable,
   IToolbarFilter,
   ToolbarFilterType,
-} from '../../../framework';
-import { edaAPI } from './eda-utils';
+} from '../../../../framework';
+import { edaAPI } from '../../common/eda-utils';
 import { useCallback, useMemo } from 'react';
 import { ButtonVariant } from '@patternfly/react-core';
-import { MinusCircleIcon } from '@patternfly/react-icons';
-import { useEdaView } from './useEventDrivenView';
-import { useEdaBulkConfirmation } from './useEdaBulkConfirmation';
-import { idKeyFn } from '../../common/utils/nameKeyFn';
-import { requestDelete } from '../../common/crud/Data';
-
-export type TeamAssignment = {
-  id: number;
-  summary_fields: {
-    object_role: {
-      id: number;
-    };
-    role_definition: {
-      id: number;
-      name: string;
-      description: string;
-      managed: boolean;
-    };
-    team: {
-      id: number;
-      name: string;
-    };
-  };
-};
+import { MinusCircleIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
+import { useEdaView } from '../../common/useEventDrivenView';
+import { useEdaBulkConfirmation } from '../../common/useEdaBulkConfirmation';
+import { idKeyFn } from '../../../common/utils/nameKeyFn';
+import { requestDelete } from '../../../common/crud/Data';
+import { TeamAssignment } from '../interfaces/TeamAssignment';
 
 function useRemoveRoles(onComplete: (roles: TeamAssignment[]) => void) {
   const { t } = useTranslation();
@@ -56,11 +38,11 @@ function useRemoveRoles(onComplete: (roles: TeamAssignment[]) => void) {
   return useCallback(
     (items: TeamAssignment[]) => {
       bulkAction({
-        title: t('Remove team assignmnent'),
+        title: t('Remove team assignment'),
         confirmText: t('Yes, I confirm that I want to remove these {{count}} team assignment.', {
           count: items.length,
         }),
-        actionButtonText: t('Remove team assignmnent'),
+        actionButtonText: t('Remove team assignment'),
         items: items.sort((l, r) =>
           compareStrings(l.summary_fields.team.name, r.summary_fields.team.name)
         ),
@@ -71,7 +53,6 @@ function useRemoveRoles(onComplete: (roles: TeamAssignment[]) => void) {
         onComplete,
         actionFn: (item: TeamAssignment, signal: AbortSignal) =>
           requestDelete(edaAPI`/role_team_assignments/${item.id.toString()}/`, signal),
-        alertPrompts: [t('Note: This will not delete any running activations in these projects.')],
       });
     },
     [actionColumns, bulkAction, confirmationColumns, onComplete, t]
@@ -157,13 +138,21 @@ export function TeamAccess(id: string, type: string) {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         variant: ButtonVariant.primary,
-        icon: MinusCircleIcon,
+        icon: PlusCircleIcon,
         isPinned: true,
         label: t('Add role'),
         onClick: () => {},
       },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
+        icon: TrashIcon,
+        label: t('Delete selected projects'),
+        onClick: (items: TeamAssignment[]) => removeRoles(items),
+        isDanger: true,
+      },
     ],
-    [t]
+    [t, removeRoles]
   );
   return (
     <PageTable
