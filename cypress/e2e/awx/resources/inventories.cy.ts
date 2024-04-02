@@ -58,6 +58,7 @@ describe('Inventories Tests', () => {
       cy.get('[data-cy="prevent_instance_group_fallback"]').click();
       cy.clickButton(/^Create inventory$/);
       //Add an interception call for the newly created inventory, which will allow for the deletion at the end of the test
+      //Add assertions for the information visible on the details screen of the new inventory
       cy.verifyPageTitle(inventoryName);
       cy.hasDetail(/^Organization$/, organization.name);
       cy.hasDetail(/^Enabled options$/, 'Prevent instance group fallback');
