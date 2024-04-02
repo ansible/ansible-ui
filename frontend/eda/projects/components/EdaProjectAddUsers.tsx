@@ -14,6 +14,7 @@ import { useParams } from 'react-router-dom';
 import { useGet } from '../../../common/crud/useGet';
 import { edaAPI } from '../../common/eda-utils';
 import { EdaUser } from '../../interfaces/EdaUser';
+import { RoleAssignmentsReviewStep } from '../../../common/access/RolesWizard/steps/RoleAssignmentsReviewStep';
 
 export function EdaProjectAddUsers() {
   const { t } = useTranslation();
@@ -47,6 +48,11 @@ export function EdaProjectAddUsers() {
       ),
     },
     { id: 'review', label: t('Review'), element: <div>TODO</div> },
+    {
+      id: 'review',
+      label: t('Review'),
+      inputs: <RoleAssignmentsReviewStep />,
+    },
   ];
 
   const onSubmit = async (/* data */) => {
