@@ -56,11 +56,11 @@ function useRemoveRoles(onComplete: (roles: TeamAssignment[]) => void) {
   return useCallback(
     (items: TeamAssignment[]) => {
       bulkAction({
-        title: t('Remove team assignmnent', { count: items.length }),
+        title: t('Remove team assignmnent'),
         confirmText: t('Yes, I confirm that I want to remove these {{count}} team assignment.', {
           count: items.length,
         }),
-        actionButtonText: t('Remove team assignmnent', { count: items.length }),
+        actionButtonText: t('Remove team assignmnent'),
         items: items.sort((l, r) =>
           compareStrings(l.summary_fields.team.name, r.summary_fields.team.name)
         ),
