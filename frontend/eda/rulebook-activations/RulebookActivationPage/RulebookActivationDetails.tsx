@@ -56,6 +56,19 @@ export function RulebookActivationDetails() {
         <PageDetail label={t('Activation ID')}>{rulebookActivation?.id || ''}</PageDetail>
         <PageDetail label={t('Name')}>{rulebookActivation?.name || ''}</PageDetail>
         <PageDetail label={t('Description')}>{rulebookActivation?.description || ''}</PageDetail>
+        <PageDetail label={t('Organization')}>
+          {rulebookActivation && rulebookActivation.organization ? (
+            <Link
+              to={getPageUrl(EdaRoute.OrganizationPage, {
+                params: { id: rulebookActivation?.organization?.id },
+              })}
+            >
+              {rulebookActivation?.organization?.name}
+            </Link>
+          ) : (
+            rulebookActivation?.organization?.name || ''
+          )}
+        </PageDetail>
         <PageDetail
           label={t('Project')}
           helpText={t('Projects are a logical collection of rulebooks.')}

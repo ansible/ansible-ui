@@ -35,6 +35,7 @@ export interface ActivationCreate {
   description?: string;
   is_enabled?: boolean;
   decision_environment_id: number;
+  organization_id?: number;
   sources?: [];
   rulebook_id: number;
   extra_var_id?: number | null;
@@ -146,6 +147,7 @@ export interface ActivationRead {
   event_streams?: EventStreamRef[];
   webhooks?: WebhookRef[];
   eda_credentials?: CredentialRef[];
+  organization?: OrganizationRef;
 
   /**
    * * `starting` - starting
@@ -346,6 +348,7 @@ export interface CredentialTypeCreate {
 export interface Credential {
   name: string;
   description?: string;
+  organization?: OrganizationRef;
   key?: string | null;
   credential_type: { id?: number; name?: string };
   inputs?: object;
@@ -359,6 +362,7 @@ export interface Credential {
 export interface CredentialCreate {
   name: string;
   description?: string;
+  organization_id?: number;
   credential_type_id: number;
   username?: string | null;
   key?: string | null;
@@ -375,11 +379,42 @@ export interface CredentialRef {
   username?: string | null;
 }
 
+export interface Organization {
+  name: string;
+  description?: string;
+  key?: string | null;
+  credential_type: { id?: number; name?: string };
+  inputs?: object;
+  id: number;
+  /** @format date-time */
+  created_at: string;
+  /** @format date-time */
+  modified_at: string;
+}
+
+export interface OrganizationCreate {
+  name: string;
+  description?: string;
+  credential_type_id: number;
+  username?: string | null;
+  key?: string | null;
+  secret?: string | null;
+  inputs?: object;
+}
+
+/** Serializer for Organization reference. */
+export interface OrganizationRef {
+  id: number;
+  name: string;
+  description?: string;
+}
+
 export interface DecisionEnvironment {
   name: string;
   description?: string;
   image_url: string;
   eda_credential_id: number | null;
+  organization_id: number | null;
   id: number;
   /** @format date-time */
   created_at: string;
@@ -393,6 +428,7 @@ export interface DecisionEnvironmentCreate {
   description?: string;
   image_url: string;
   eda_credential_id?: number | null;
+  organization_id: number | null;
 }
 
 /** Serializer for reading the DecisionEnvironment with embedded objects. */
@@ -401,7 +437,8 @@ export interface DecisionEnvironmentRead {
   name: string;
   description?: string;
   image_url: string;
-  eda_credential?: { name: string; id: number };
+  eda_credential?: CredentialRef;
+  organization?: OrganizationRef;
   /** @format date-time */
   created_at: string;
   /** @format date-time */
@@ -418,6 +455,7 @@ export interface DecisionEnvironmentRef {
 
 export interface ExtraVar {
   id: number;
+  organization_id?: number;
   /** Content of the extra_var */
   extra_var: string;
 }
@@ -858,6 +896,7 @@ export interface Project {
   name: string;
   description?: string;
   eda_credential_id?: number | null;
+  orgabization_id?: number | null;
   verify_ssl?: boolean;
   id: number;
   url: string;
@@ -880,6 +919,7 @@ export interface ProjectCreateRequest {
   name: string;
   description?: string;
   eda_credential_id?: number | null;
+  organization_id?: number | null;
   signature_validation_credential_id?: number | null;
   verify_ssl?: boolean;
 }
@@ -889,6 +929,7 @@ export interface ProjectRead {
   name: string;
   description?: string;
   eda_credential?: CredentialRef | null;
+  organization?: OrganizationRef | null;
   signature_validation_credential?: CredentialRef | null;
   verify_ssl?: boolean;
   id: number;
@@ -2987,6 +3028,7 @@ export interface Webhook {
   auth_type: string;
   additional_data_headers?: string[];
   id: number;
+  organization: OrganizationRef;
   url: string;
   created_at: string;
   modified_at: string;
@@ -2998,6 +3040,7 @@ export interface Webhook {
 export interface WebhookCreate {
   type: WebhookTypeEnum;
   name: string;
+  organization_id?: number;
   hmac_algorithm?: string;
   header_key?: string;
   auth_type?: string;

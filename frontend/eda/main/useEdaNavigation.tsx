@@ -54,9 +54,11 @@ import {
   EditCredentialType,
 } from '../access/credential-types/CredentialTypeForm';
 import { EdaRoute } from './EdaRoutes';
+import { useEdaOrganizationRoutes } from './routes/useEdaOrganizationsRoutes';
 
 export function useEdaNavigation() {
   const { t } = useTranslation();
+  const edaOrganizationRoutes = useEdaOrganizationRoutes();
   const navigationItems: PageNavigationItem[] = [
     {
       id: EdaRoute.Overview,
@@ -348,6 +350,7 @@ export function useEdaNavigation() {
             },
           ],
         },
+        edaOrganizationRoutes,
         {
           id: EdaRoute.Roles,
           label: t('Roles'),

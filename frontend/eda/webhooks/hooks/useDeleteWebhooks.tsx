@@ -30,7 +30,7 @@ export function useDeleteWebhooks(onComplete?: (webhooks: EdaWebhook[]) => void)
         actionColumns,
         onComplete,
         actionFn: (webhook: EdaWebhook, signal) => {
-          const url = edaAPI`/webhooks/${webhook.id.toString()}/`;
+          const url = edaAPI`/webhooks/` + `${webhook.id.toString()}/`;
           return requestDelete(url, signal);
         },
       });

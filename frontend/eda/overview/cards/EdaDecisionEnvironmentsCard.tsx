@@ -10,11 +10,11 @@ import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashb
 import { edaAPI } from '../../common/eda-utils';
 import { useEdaView } from '../../common/useEventDrivenView';
 import { useDecisionEnvironmentColumns } from '../../decision-environments/hooks/useDecisionEnvironmentColumns';
-import { EdaDecisionEnvironment } from '../../interfaces/EdaDecisionEnvironment';
+import { EdaDecisionEnvironmentRead } from '../../interfaces/EdaDecisionEnvironment';
 import { EdaRoute } from '../../main/EdaRoutes';
 
 export function EdaDecisionEnvironmentsCard() {
-  const view = useEdaView<EdaDecisionEnvironment>({
+  const view = useEdaView<EdaDecisionEnvironmentRead>({
     url: edaAPI`/decision-environments/`,
     queryParams: { page: '1', page_size: '10' },
     disableQueryString: true,
