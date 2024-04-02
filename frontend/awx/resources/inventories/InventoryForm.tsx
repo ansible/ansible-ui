@@ -36,6 +36,7 @@ import { PageFormSingleSelect } from '../../../../framework/PageForm/Inputs/Page
 import { AwxError } from '../../common/AwxError';
 import { ConstructedInventoryHint } from './components/ConstructedInventoryHint';
 import { LabelHelp } from './components/LabelHelp';
+import { valueToObject } from '../../../../framework';
 
 export type InventoryCreate = Inventory & {
   instanceGroups: InstanceGroup[];
@@ -400,6 +401,14 @@ function InventoryInputs(props: { inventoryKind: string }) {
           format="yaml"
           isRequired={inventoryKind === 'constructed' ? true : false}
           labelHelp={<LabelHelp inventoryKind={inventoryKind} />}
+          validate={(item) => {
+            const obj = valueToObject(item) as { plugin?: unknown };
+            if (obj.plugin) {
+              return undefined;
+            } else {
+              return t(`The plugin parameter is required.`);
+            }
+          }}
         />
       </PageFormSection>
       {inventoryKind === '' && (
