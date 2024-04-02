@@ -48,11 +48,10 @@ export function EdaOverview() {
   const hasControllerToken = edaControllerTokenView.itemCount !== 0;
   const hasDecisionEnvironment = edaDecisionEnvironmentView.itemCount !== 0;
   const hasRulebookActivation = edaRulebookActivationView.itemCount !== 0;
-  const product: string = process.env.PRODUCT ?? t('EDA Server');
   return (
     <>
       <PageHeader
-        title={t(`Welcome to {{product}}`, { product })}
+        title={t('Welcome to EDA Server')}
         description={t(
           'Connect intelligence, analytics and service requests to enable more responsive and resilient automation.'
         )}
