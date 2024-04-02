@@ -1,20 +1,18 @@
-import { Spinner } from '@patternfly/react-core';
 import { useCallback } from 'react';
 import { FieldPath, FieldValues, PathValue, useFormContext, useWatch } from 'react-hook-form';
-import { useTranslation } from 'react-i18next';
 import { ITableColumn, IToolbarFilter, usePageDialog } from '../../../framework';
-import { SingleSelectDialog } from '../../../framework/PageDialogs/SingleSelectDialog';
-import { PageFormAsyncSingleSelect } from '../../../framework/PageForm/Inputs/PageFormAsyncSingleSelect';
+import { MultiSelectDialog } from '../../../framework';
 import { PageAsyncSelectOptionsFn } from '../../../framework/PageInputs/PageAsyncSelectOptions';
 import { useID } from '../../../framework/hooks/useID';
 import { requestGet } from '../../common/crud/Data';
-import { useGetItem } from '../../common/crud/useGet';
 import { AwxItemsResponse } from './AwxItemsResponse';
 import { useAwxView } from './useAwxView';
+import { AwxAsyncName } from './PageFormSingleSelectAwxResource';
+import { PageFormAsyncMultiSelect } from '../../../framework/PageForm/Inputs/PageFormAsyncMultiSelect';
 import { QueryParams } from './useAwxView';
 import { getQueryString } from './useAwxView';
 
-export function PageFormSingleSelectAwxResource<
+export function PageFormMultiSelectAwxResource<
   Resource extends { id: number; name: string; description?: string | null | undefined },
   FormData extends FieldValues = FieldValues,
   Name extends FieldPath<FormData> = FieldPath<FormData>,
@@ -42,7 +40,7 @@ export function PageFormSingleSelectAwxResource<
     async (options) => {
       try {
         let url =
-          props.url + `?page_size=10&order_by=name` + getQueryString(props.queryParams || {});
+          props.url + `?page_size=10&order_by=name&` + getQueryString(props.queryParams || {});
         if (options.next) url = url + `&name__gt=${options.next}`;
         if (options.search) url = url + `&name__icontains=${options.search}`;
         const response = await requestGet<AwxItemsResponse<Resource>>(url, options.signal);
@@ -69,9 +67,9 @@ export function PageFormSingleSelectAwxResource<
 
   const [_, setDialog] = usePageDialog();
   const { setValue } = useFormContext<FormData>();
-  const value = useWatch<FormData>({ name: props.name });
+  const value = useWatch<FormData>({ name: props.name }) as number[];
   const openSelectDialog = useCallback(
-    (onSelect: (resource: Resource) => void) => {
+    (onSelect: (resource: Resource[]) => void) => {
       setDialog(
         <SelectResource<Resource>
           title={props.label}
@@ -79,8 +77,14 @@ export function PageFormSingleSelectAwxResource<
           onSelect={onSelect}
           toolbarFilters={props.toolbarFilters}
           tableColumns={props.tableColumns}
-          defaultSelection={value ? [{ id: value }] : []}
           queryParams={props.queryParams}
+          defaultSelection={
+            value && Array.isArray(value)
+              ? value.map((item: number) => {
+                  return { id: item };
+                })
+              : []
+          }
         />
       );
     },
@@ -101,7 +105,7 @@ export function PageFormSingleSelectAwxResource<
   );
 
   return (
-    <PageFormAsyncSingleSelect<FormData, Name>
+    <PageFormAsyncMultiSelect<FormData, Name>
       id={id}
       name={props.name}
       label={props.label}
@@ -114,9 +118,11 @@ export function PageFormSingleSelectAwxResource<
       helperText={props.helperText}
       labelHelp={props.labelHelp}
       onBrowse={() =>
-        openSelectDialog((resource) =>
-          setValue(props.name, resource.id as PathValue<FormData, Name>)
-        )
+        openSelectDialog((resources: Resource[]) => {
+          if (resources) {
+            setValue(props.name, resources.map((res) => res.id) as PathValue<FormData, Name>);
+          }
+        })
       }
       queryLabel={queryLabel}
     />
@@ -128,7 +134,7 @@ function SelectResource<
 >(props: {
   title: string;
   url: string;
-  onSelect: (resource: Resource) => void;
+  onSelect: (resource: Resource[]) => void;
   defaultSelection?: { id: number }[];
   toolbarFilters?: IToolbarFilter[];
   tableColumns: ITableColumn<Resource>[];
@@ -143,7 +149,7 @@ function SelectResource<
     queryParams: props.queryParams,
   });
   return (
-    <SingleSelectDialog<Resource>
+    <MultiSelectDialog<Resource>
       title={props.title}
       onSelect={props.onSelect}
       toolbarFilters={props.toolbarFilters ?? []}
@@ -151,13 +157,4 @@ function SelectResource<
       view={view}
     />
   );
-}
-
-export function AwxAsyncName(props: { url: string; id: number; nameProp?: string }) {
-  const { t } = useTranslation();
-  const { data, isLoading, error } = useGetItem<Record<string, string>>(props.url, props.id);
-  if (isLoading) return <Spinner size="md" />;
-  if (error) return t('Not found');
-  if (!data) return t('Not found');
-  return data[props.nameProp ?? 'name'];
 }

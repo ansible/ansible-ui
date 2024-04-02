@@ -310,7 +310,10 @@ export function DataEditorActions(props: {
   );
 }
 
-function valueToObject(value: string | object | undefined | null, isArray?: boolean): object {
+export function valueToObject(
+  value: string | object | undefined | null,
+  isArray?: boolean
+): object {
   if (value === undefined || value === null) {
     return isArray ? [] : {};
   }
