@@ -3,7 +3,7 @@ import * as useOptions from '../../../common/crud/useOptions';
 import { Inventory } from '../../interfaces/Inventory';
 import { Inventories } from './Inventories';
 
-describe('Inventories.cy.ts', () => {
+describe('Inventories', () => {
   describe('Non-empty list', () => {
     beforeEach(() => {
       cy.intercept(
@@ -16,6 +16,14 @@ describe('Inventories.cy.ts', () => {
         }
       ).as('inventoriesList');
     });
+
+    //Missing test cases that need to be written:
+    it.skip('can show 404 status if user tries to view an inventory that doesn’t exist', () => {});
+    it.skip('can sort the list of inventories', () => {});
+    it.skip('can paginate through the list of inventories', () => {});
+    it.skip('can view variables in YAML and JSON format ', () => {});
+    it.skip('can verify that an inventory job templates tab will only show its associated job templates', () => {});
+    it.skip('can verify that an inventory jobs tab will only show its associated jobs', () => {});
 
     it('should render inventory list', () => {
       cy.mount(<Inventories />);
