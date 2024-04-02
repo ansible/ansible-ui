@@ -40,6 +40,20 @@ export function DecisionEnvironmentDetails() {
     <PageDetails>
       <PageDetail label={t('Name')}>{decisionEnvironment?.name || ''}</PageDetail>
       <PageDetail label={t('Description')}>{decisionEnvironment?.description || ''}</PageDetail>
+      <PageDetail label={t('Organization')}>
+        {decisionEnvironment && decisionEnvironment.organization ? (
+          <Link
+            to={getPageUrl(EdaRoute.OrganizationPage, {
+              params: { id: decisionEnvironment?.organization?.id },
+            })}
+          >
+            {decisionEnvironment?.organization?.name}
+          </Link>
+        ) : (
+          decisionEnvironment?.organization?.name || ''
+        )}
+      </PageDetail>
+
       <PageDetail label={t('Image')} helpText={imageHelpBlock}>
         {decisionEnvironment?.image_url || ''}
       </PageDetail>

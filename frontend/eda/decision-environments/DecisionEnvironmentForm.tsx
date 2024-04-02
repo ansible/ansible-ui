@@ -1,6 +1,6 @@
 import { Trans, useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { useSWRConfig } from 'swr';
+import useSWR, { useSWRConfig } from 'swr';
 import {
   PageFormSelect,
   PageFormSubmitHandler,
@@ -22,6 +22,9 @@ import {
 } from '../interfaces/EdaDecisionEnvironment';
 import { EdaResult } from '../interfaces/EdaResult';
 import { EdaRoute } from '../main/EdaRoutes';
+import { PageFormSelectOrganization } from '../access/organizations/components/PageFormOrganizationSelect';
+import { EdaOrganization } from '../interfaces/EdaOrganization';
+import { requestGet, swrOptions } from '../../common/crud/Data';
 
 function DecisionEnvironmentInputs() {
   const { t } = useTranslation();
@@ -58,6 +61,7 @@ function DecisionEnvironmentInputs() {
         placeholder={t('Enter description')}
         maxLength={150}
       />
+      <PageFormSelectOrganization<EdaDecisionEnvironment> name="organization_id" />
       <PageFormTextInput<EdaDecisionEnvironment>
         name="image_url"
         label={t('Image')}
@@ -93,6 +97,17 @@ export function CreateDecisionEnvironment() {
   const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
   const { cache } = useSWRConfig();
+
+  const { data: organizations } = useSWR<EdaResult<EdaOrganization>>(
+    edaAPI`/organizations/?name=Default`,
+    requestGet,
+    swrOptions
+  );
+  const defaultOrganization =
+    organizations && organizations?.results && organizations.results.length > 0
+      ? organizations.results[0]
+      : undefined;
+
   const postRequest = usePostRequest<Partial<EdaDecisionEnvironment>, EdaDecisionEnvironment>();
 
   const onSubmit: PageFormSubmitHandler<EdaDecisionEnvironment> = async (decisionEnvironment) => {
@@ -119,6 +134,7 @@ export function CreateDecisionEnvironment() {
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
         onCancel={onCancel}
+        defaultValue={{ organization_id: defaultOrganization?.id }}
       >
         <DecisionEnvironmentInputs />
       </EdaPageForm>
@@ -174,6 +190,7 @@ export function EditDecisionEnvironment() {
           defaultValue={{
             ...decisionEnvironment,
             eda_credential_id: decisionEnvironment?.eda_credential?.id || undefined,
+            organization_id: decisionEnvironment?.organization?.id || undefined,
           }}
         >
           <DecisionEnvironmentInputs />

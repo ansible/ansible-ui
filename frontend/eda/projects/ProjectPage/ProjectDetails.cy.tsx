@@ -21,6 +21,7 @@ describe('ProjectDetails', () => {
       cy.get('#name').should('have.text', 'Sample Project');
       cy.contains('dd#name>div', 'Sample Project').should('exist');
       cy.get('#description').should('have.text', 'Sample project description');
+      cy.get('#organization').should('have.text', 'Organization 2');
       cy.get('#source-control-type').should('have.text', 'Git');
       cy.get('#source-control-url').should('have.text', 'https://github.com/ansible/ansible-ui');
       cy.get('#import-state').should('have.text', 'completed');

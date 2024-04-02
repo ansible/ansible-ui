@@ -1,0 +1,79 @@
+{
+  "count": 12,
+  "next": "/api/eda/v1/organizations/?page=2&page_size=10",
+  "previous": null,
+  "page_size": 10,
+  "page": 1,
+  "results": [
+    {
+      "id": 1,
+      "name": "Default",
+      "description": "The default organization",
+      "created": "2024-03-28T15:00:08.079759Z",
+      "modified": "2024-03-28T15:00:08.079771Z"
+    },
+    {
+      "id": 2,
+      "name": "Organization 2",
+      "description": "This is Organization 2",
+      "created": "2024-03-28T15:00:08.079759Z",
+      "modified": "2024-03-28T15:00:08.079771Z"
+    },
+    {
+      "id": 3,
+      "name": "Organization 3",
+      "description": "This is Organization 3",
+      "created": "2024-03-28T15:00:08.079759Z",
+      "modified": "2024-03-28T15:00:08.079771Z"
+    },
+    {
+      "id": 4,
+      "name": "Organization 4",
+      "description": "This is Organization 4",
+      "created": "2024-03-28T15:00:08.079759Z",
+      "modified": "2024-03-28T15:00:08.079771Z"
+    },
+    {
+      "id": 5,
+      "name": "Organization 5",
+      "description": "This is Organization 5",
+      "created": "2024-03-28T15:00:08.079759Z",
+      "modified": "2024-03-28T15:00:08.079771Z"
+    },
+    {
+      "id": 6,
+      "name": "Organization 6",
+      "description": "This is Organization 6",
+      "created": "2024-03-28T15:00:08.079759Z",
+      "modified": "2024-03-28T15:00:08.079771Z"
+    },
+    {
+      "id": 7,
+      "name": "Organization 7",
+      "description": "This is Organization 7",
+      "created": "2024-03-28T15:00:08.079759Z",
+      "modified": "2024-03-28T15:00:08.079771Z"
+    },
+    {
+      "id": 8,
+      "name": "Organization 8",
+      "description": "This is Organization 8",
+      "created": "2024-03-28T15:00:08.079759Z",
+      "modified": "2024-03-28T15:00:08.079771Z"
+    },
+    {
+      "id": 9,
+      "name": "Organization 9",
+      "description": "This is Organization 9",
+      "created": "2024-03-28T15:00:08.079759Z",
+      "modified": "2024-03-28T15:00:08.079771Z"
+    },
+    {
+      "id": 10,
+      "name": "Organization 10",
+      "description": "This is Organization 10",
+      "created": "2024-03-28T15:00:08.079759Z",
+      "modified": "2024-03-28T15:00:08.079771Z"
+    }
+  ]
+}

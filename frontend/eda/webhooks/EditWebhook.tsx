@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useSWRConfig } from 'swr';
+import useSWR, { useSWRConfig } from 'swr';
 import {
   PageFormCheckbox,
   PageFormSelect,
@@ -23,6 +23,10 @@ import { StandardPopover } from '../../../framework/components/StandardPopover';
 import { TFunction } from 'i18next/index';
 import { WebhookTypeEnum } from '../interfaces/generated/eda-api';
 import { PageFormHidden } from '../../../framework/PageForm/Utils/PageFormHidden';
+import { PageFormSelectOrganization } from '../access/organizations/components/PageFormOrganizationSelect';
+import { EdaResult } from '../interfaces/EdaResult';
+import { EdaOrganization } from '../interfaces/EdaOrganization';
+import { requestGet, swrOptions } from '../../common/crud/Data';
 
 export function WebhookOptions(t: TFunction<'translation'>) {
   return [
@@ -71,6 +75,7 @@ function WebhookInputs(props: { editMode: boolean }) {
         isRequired
         maxLength={150}
       />
+      <PageFormSelectOrganization<EdaWebhookCreate> name="organization_id" />
       <PageFormTextInput<EdaWebhookCreate>
         name="secret"
         data-cy="secret-form-field"
@@ -143,6 +148,15 @@ export function CreateWebhook() {
 
   const { cache } = useSWRConfig();
   const postRequest = usePostRequest<EdaWebhookCreate, EdaWebhook>();
+  const { data: organizations } = useSWR<EdaResult<EdaOrganization>>(
+    edaAPI`/organizations/?name=Default`,
+    requestGet,
+    swrOptions
+  );
+  const defaultOrganization =
+    organizations && organizations?.results && organizations.results.length > 0
+      ? organizations.results[0]
+      : undefined;
 
   const onSubmit: PageFormSubmitHandler<EdaWebhookCreate> = async (webhook) => {
     if (webhook.type === WebhookTypeEnum.ServiceNow) {
@@ -182,6 +196,7 @@ export function CreateWebhook() {
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
         onCancel={onCancel}
+        defaultValue={{ organization_id: defaultOrganization?.id }}
       >
         <WebhookInputs editMode={false} />
       </EdaPageForm>

@@ -33,6 +33,12 @@ describe('Create rulebook activation ', () => {
         fixture: 'edaRulebookActivations.json',
       }
     );
+    cy.intercept(
+      { method: 'GET', url: edaAPI`/organizations/*` },
+      {
+        fixture: 'edaOrganizations.json',
+      }
+    );
   });
 
   it('Create Rulebook Activation - Displays error message on internal server error', () => {
@@ -59,12 +65,15 @@ describe('Create rulebook activation ', () => {
     cy.selectDropdownOptionByResourceName('decision-environment-id', 'EDA Decision Environment 3');
     cy.selectDropdownOptionByResourceName('project-id', 'Project 4');
     cy.selectDropdownOptionByResourceName('rulebook', 'hello_echo.yml');
+    cy.get('[data-cy="organization_id"]').click();
+    cy.get('#organization-2 > .pf-v5-c-menu__item-main > .pf-v5-c-menu__item-text').click();
     cy.clickButton('Create rulebook activation');
 
     cy.intercept('POST', edaAPI`/activations/`, (req) => {
       expect(req.body).to.contain({
         project_id: 8,
         restart_policy: 'on-failure',
+        organization_id: 2,
         decision_environment_id: 3,
         name: 'Test',
         rulebook_id: 'hello_echo.yml',

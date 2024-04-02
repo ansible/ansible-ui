@@ -17,7 +17,7 @@ import {
 import { PageFormAsyncSelect } from '../../../framework/PageForm/Inputs/PageFormAsyncSelect';
 import { PageFormMultiSelect } from '../../../framework/PageForm/Inputs/PageFormMultiSelect';
 import { PageFormSection } from '../../../framework/PageForm/Utils/PageFormSection';
-import { requestGet } from '../../common/crud/Data';
+import { requestGet, swrOptions } from '../../common/crud/Data';
 import { useGet } from '../../common/crud/useGet';
 import { usePostRequest } from '../../common/crud/usePostRequest';
 import { PageFormCredentialSelect } from '../access/credentials/components/PageFormCredentialsSelect';
@@ -37,6 +37,9 @@ import { AwxToken, LogLevelEnum, RestartPolicyEnum } from '../interfaces/generat
 import { EdaRoute } from '../main/EdaRoutes';
 import { EdaProjectCell } from '../projects/components/EdaProjectCell';
 import { EdaWebhook } from '../interfaces/EdaWebhook';
+import { PageFormSelectOrganization } from '../access/organizations/components/PageFormOrganizationSelect';
+import useSWR from 'swr';
+import { EdaOrganization } from '../interfaces/EdaOrganization';
 
 export function CreateRulebookActivation() {
   const { t } = useTranslation();
@@ -45,6 +48,15 @@ export function CreateRulebookActivation() {
 
   const postEdaExtraVars = usePostRequest<Partial<EdaExtraVars>, { id: number }>();
   const postEdaRulebookActivation = usePostRequest<object, EdaRulebookActivation>();
+  const { data: organizations } = useSWR<EdaResult<EdaOrganization>>(
+    edaAPI`/organizations/?name=Default`,
+    requestGet,
+    swrOptions
+  );
+  const defaultOrganization =
+    organizations && organizations?.results && organizations.results.length > 0
+      ? organizations.results[0]
+      : undefined;
 
   const onSubmit: PageFormSubmitHandler<IEdaRulebookActivationInputs> = async ({
     rulebook,
@@ -55,6 +67,7 @@ export function CreateRulebookActivation() {
     if (extra_var && extra_var.trim().length > 0) {
       extra_var_id = await postEdaExtraVars(edaAPI`/extra-vars/`, {
         extra_var: extra_var,
+        organization_id: rulebookActivation?.organization_id,
       });
     }
     rulebookActivation.extra_var_id = extra_var_id?.id;
@@ -87,6 +100,7 @@ export function CreateRulebookActivation() {
         cancelText={t('Cancel')}
         onCancel={onCancel}
         defaultValue={{
+          organization_id: defaultOrganization?.id,
           restart_policy: RestartPolicyEnum.OnFailure,
           log_level: LogLevelEnum.error,
           is_enabled: true,
@@ -165,6 +179,7 @@ export function RulebookActivationInputs() {
         id={'description'}
         placeholder={t('Enter description')}
       />
+      <PageFormSelectOrganization<IEdaRulebookActivationInputs> name="organization_id" />
       <PageFormSelect<IEdaRulebookActivationInputs>
         name="project_id"
         label={t('Project')}
