@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useSWRConfig } from 'swr';
+import useSWR, { useSWRConfig } from 'swr';
 import {
   PageFormSelect,
   PageFormSubmitHandler,
@@ -22,6 +22,9 @@ import { EdaCredentialType } from '../../interfaces/EdaCredentialType';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { CredentialFormInputs } from './CredentialFormTypes';
 import { useCallback, useEffect } from 'react';
+import { PageFormSelectOrganization } from '../organizations/components/PageFormOrganizationSelect';
+import { EdaOrganization } from '../../interfaces/EdaOrganization';
+import { requestGet, swrOptions } from '../../../common/crud/Data';
 
 // eslint-disable-next-line react/prop-types
 function CredentialInputs(props: { editMode: boolean }) {
@@ -75,6 +78,7 @@ function CredentialInputs(props: { editMode: boolean }) {
         placeholder={t('Enter description ')}
         maxLength={150}
       />
+      <PageFormSelectOrganization<EdaCredentialCreate> name="organization_id" />
       <PageFormSelect<EdaCredentialCreate>
         name="credential_type_id"
         data-cy="credential-type-form-field"
@@ -103,6 +107,16 @@ export function CreateCredential() {
   const pageNavigate = usePageNavigate();
 
   const { cache } = useSWRConfig();
+  const { data: organizations } = useSWR<EdaResult<EdaOrganization>>(
+    edaAPI`/organizations/?name=Default`,
+    requestGet,
+    swrOptions
+  );
+  const defaultOrganization =
+    organizations && organizations?.results && organizations.results.length > 0
+      ? organizations.results[0]
+      : undefined;
+
   const postRequest = usePostRequest<EdaCredentialCreate, EdaCredential>();
 
   const onSubmit: PageFormSubmitHandler<EdaCredentialCreate> = async (credential) => {
@@ -127,6 +141,7 @@ export function CreateCredential() {
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
         onCancel={onCancel}
+        defaultValue={{ organization_id: defaultOrganization?.id }}
       >
         <CredentialInputs editMode={false} />
       </EdaPageForm>
