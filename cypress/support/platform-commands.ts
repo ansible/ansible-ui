@@ -57,7 +57,7 @@ Cypress.Commands.add('platformLogout', () => {
 Cypress.Commands.add(
   'createLocalPlatformAuthenticator',
   (localAuthenticatorName: string, isEnabled?: boolean) => {
-    cy.requestPost('api/gateway/v1/authenticators/', {
+    cy.requestPost(gatewayV1API`/authenticators/`, {
       name: localAuthenticatorName,
       type: 'ansible_base.authentication.authenticator_plugins.local',
       configuration: {},
@@ -85,7 +85,7 @@ Cypress.Commands.add(
 command that is responsible for creating a new platform organization. Here's a breakdown of what it
 does: */
 Cypress.Commands.add('createPlatformOrganization', () => {
-  const orgName = `Platform E2E Organization-${randomString(5).toLowerCase()}`;
+  const orgName = `Platform E2E Organization-${randomString(3).toLowerCase()}`;
   cy.requestPost<PlatformOrganization>(gatewayV1API`/organizations/`, {
     name: orgName,
   });

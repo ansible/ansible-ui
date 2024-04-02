@@ -7,11 +7,8 @@ import { gatewayV1API } from '../../../../platform/api/gateway-api-utils';
 describe('Platform Teams - create, edit and delete with existing global platform organization', function () {
   let platformTeam: PlatformTeam;
 
-  before(function () {
-    cy.platformLogin();
-  });
-
   beforeEach(function () {
+    cy.platformLogin();
     cy.createPlatformTeam({
       name: `E2E Platform Team ${randomString(5)}`,
       organization: (this.globalPlatformOrganization as PlatformOrganization).id,
@@ -309,11 +306,9 @@ describe('Platform Teams - create, edit and delete with existing global platform
 
 describe('Platform Teams - tabs tests', function () {
   let platformTeam: PlatformTeam;
-  before(function () {
-    cy.platformLogin();
-  });
 
   beforeEach(function () {
+    cy.platformLogin();
     cy.createPlatformTeam({
       name: `E2E Platform Team ${randomString(5)}`,
       organization: (this.globalPlatformOrganization as PlatformOrganization).id,

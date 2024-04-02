@@ -2,7 +2,7 @@ import { randomString } from '../../../../../framework/utils/random-string';
 import { Authenticator } from '../../../../../platform/interfaces/Authenticator';
 
 describe('Authenticators - Local CRUD UI', () => {
-  before(() => {
+  beforeEach(() => {
     cy.platformLogin();
     cy.navigateTo('platform', 'authenticators');
     cy.verifyPageTitle('Authentication');
@@ -89,33 +89,36 @@ describe('Authenticators - Local CRUD UI', () => {
     );
   });
 
-  it.skip('should be able to edit the authenticator from the list page', () => {
+  it('should be able to edit the authenticator from the list page', () => {
     const localAuthenticatorName = `Platform Local Authenticator ${randomString(4)}`;
     cy.createLocalPlatformAuthenticator(localAuthenticatorName).then(
       (createdLocalAuthenticator: Authenticator) => {
-        cy.searchAndDisplayResourceInModalPlatform(createdLocalAuthenticator.name);
-        cy.clickTableRowAction('name', createdLocalAuthenticator.name, 'edit-authentication', {
+        cy.searchAndDisplayResourceByFilterOption(createdLocalAuthenticator.name, 'name');
+        cy.clickTableRowAction('name', createdLocalAuthenticator.name, 'edit-authenticator', {
           inKebab: true,
         });
-        cy.get('[data-cy="name"]').type(' Edited');
-        cy.clickButton('Save');
-        cy.contains(/^Success$/).should('be.visible');
-        cy.containsBy('button', /^Close$/).click();
-        cy.deleteLocalPlatformAuthenticator(createdLocalAuthenticator);
+        cy.get('[data-cy="name"]').clear().type(`${createdLocalAuthenticator.name} Edited`);
+        cy.clickButton('Next');
+        cy.clickButton('Next');
+        cy.clickButton('Finish');
+        cy.verifyPageTitle(`${createdLocalAuthenticator.name} Edited`);
+        cy.deleteLocalPlatformAuthenticator(createdLocalAuthenticator, { failOnStatusCode: false });
       }
     );
   });
 
-  it.skip('should be able to edit the authenticator from the details page', () => {
+  it('should be able to edit the authenticator from the details page', () => {
     const localAuthenticatorName = `Platform Local Authenticator ${randomString(4)}`;
     cy.createLocalPlatformAuthenticator(localAuthenticatorName).then(
       (createdLocalAuthenticator: Authenticator) => {
         cy.clickTableRowLink('name', createdLocalAuthenticator.name);
+        cy.get('[data-cy="edit-authenticator"]').click();
         cy.get('[data-cy="name"]').clear().type(`${createdLocalAuthenticator.name} Edited`);
-        cy.clickButton('Save');
-        cy.contains(/^Success$/).should('be.visible');
-        cy.containsBy('button', /^Close$/).click();
-        cy.deleteLocalPlatformAuthenticator(createdLocalAuthenticator);
+        cy.clickButton('Next');
+        cy.clickButton('Next');
+        cy.clickButton('Finish');
+        cy.verifyPageTitle(`${createdLocalAuthenticator.name} Edited`);
+        cy.deleteLocalPlatformAuthenticator(createdLocalAuthenticator, { failOnStatusCode: false });
       }
     );
   });
