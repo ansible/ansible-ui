@@ -402,6 +402,9 @@ function InventoryInputs(props: { inventoryKind: string }) {
           isRequired={inventoryKind === 'constructed' ? true : false}
           labelHelp={<LabelHelp inventoryKind={inventoryKind} />}
           validate={(item) => {
+            if (inventoryKind !== 'constructed') {
+              return undefined;
+            }
             const obj = valueToObject(item) as { plugin?: unknown };
             if (obj.plugin) {
               return undefined;
