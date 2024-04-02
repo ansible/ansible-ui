@@ -15,6 +15,7 @@ import { useGet } from '../../../common/crud/useGet';
 import { edaAPI } from '../../common/eda-utils';
 import { EdaUser } from '../../interfaces/EdaUser';
 import { RoleAssignmentsReviewStep } from '../../../common/access/RolesWizard/steps/RoleAssignmentsReviewStep';
+import { EdaRbacRole } from '../../interfaces/EdaRbacRole';
 
 export function EdaProjectAddUsers() {
   const { t } = useTranslation();
@@ -46,8 +47,13 @@ export function EdaProjectAddUsers() {
           })}
         />
       ),
+      validate: (formData, _) => {
+        const { roles } = formData as { roles: EdaRbacRole[] };
+        if (!roles?.length) {
+          throw new Error(t('Select at least one role.'));
+        }
+      },
     },
-    { id: 'review', label: t('Review'), element: <div>TODO</div> },
     {
       id: 'review',
       label: t('Review'),
@@ -65,8 +71,14 @@ export function EdaProjectAddUsers() {
         title={t('Add roles')}
         breadcrumbs={[
           { label: t('Projects'), to: getPageUrl(EdaRoute.Projects) },
-          { label: project?.name, to: getPageUrl(EdaRoute.ProjectDetails) },
-          { label: t('User Access'), to: getPageUrl(EdaRoute.ProjectUsers) },
+          {
+            label: project?.name,
+            to: getPageUrl(EdaRoute.ProjectDetails, { params: { id: project?.id } }),
+          },
+          {
+            label: t('User Access'),
+            to: getPageUrl(EdaRoute.ProjectUsers, { params: { id: project?.id } }),
+          },
           { label: t('Add roles') },
         ]}
       />

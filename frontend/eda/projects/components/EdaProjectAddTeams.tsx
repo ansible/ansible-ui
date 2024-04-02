@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { PageWizard, PageWizardStep } from '../../../../framework';
+import { PageHeader, PageWizard, PageWizardStep, useGetPageUrl } from '../../../../framework';
 import { EdaSelectTeamsStep } from '../../access/teams/components/steps/EdaSelectTeamsStep';
 import { EdaTeam } from '../../interfaces/EdaTeam';
 import { EdaSelectRolesStep } from '../../access/roles/components/EdaSelectRolesStep';
@@ -7,9 +7,13 @@ import { useParams } from 'react-router-dom';
 import { useGet } from '../../../common/crud/useGet';
 import { EdaProject } from '../../interfaces/EdaProject';
 import { edaAPI } from '../../common/eda-utils';
+import { RoleAssignmentsReviewStep } from '../../../common/access/RolesWizard/steps/RoleAssignmentsReviewStep';
+import { EdaRbacRole } from '../../interfaces/EdaRbacRole';
+import { EdaRoute } from '../../main/EdaRoutes';
 
 export function EdaProjectAddTeams() {
   const { t } = useTranslation();
+  const getPageUrl = useGetPageUrl();
   const params = useParams<{ id: string }>();
   const { data: project } = useGet<EdaProject>(edaAPI`/projects/${params.id ?? ''}/`);
 
@@ -37,13 +41,42 @@ export function EdaProjectAddTeams() {
           })}
         />
       ),
+      validate: (formData, _) => {
+        const { roles } = formData as { roles: EdaRbacRole[] };
+        if (!roles?.length) {
+          throw new Error(t('Select at least one role.'));
+        }
+      },
     },
-    { id: 'review', label: t('Review'), element: <div>TODO</div> },
+    {
+      id: 'review',
+      label: t('Review'),
+      inputs: <RoleAssignmentsReviewStep />,
+    },
   ];
 
   const onSubmit = async (/* data */) => {
     // console.log(data);
   };
 
-  return <PageWizard steps={steps} onSubmit={onSubmit} disableGrid />;
+  return (
+    <>
+      <PageHeader
+        title={t('Add roles')}
+        breadcrumbs={[
+          { label: t('Projects'), to: getPageUrl(EdaRoute.Projects) },
+          {
+            label: project?.name,
+            to: getPageUrl(EdaRoute.ProjectDetails, { params: { id: project?.id } }),
+          },
+          {
+            label: t('Team Access'),
+            to: getPageUrl(EdaRoute.ProjectTeams, { params: { id: project?.id } }),
+          },
+          { label: t('Add roles') },
+        ]}
+      />
+      <PageWizard steps={steps} onSubmit={onSubmit} disableGrid />
+    </>
+  );
 }

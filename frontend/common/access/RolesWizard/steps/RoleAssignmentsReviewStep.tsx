@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
-import { Badge, Divider, ExpandableSection } from '@patternfly/react-core';
+import { Badge, Divider, ExpandableSection, Title } from '@patternfly/react-core';
 import { getItemKey } from '../../../crud/Data';
 import {
   ITableColumn,
@@ -10,6 +10,7 @@ import {
   useInMemoryView,
 } from '../../../../../framework';
 import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 
 type ReviewData = {
   resourceType?: string;
@@ -26,6 +27,18 @@ interface ReviewExpandableListProps<
   label?: string;
   fieldName: string;
 }
+
+const StyledDivider = styled(Divider)`
+  margin-bottom: var(--pf-v5-global--spacer--lg);
+`;
+
+const StyledBadge = styled(Badge)`
+  margin-left: var(--pf-v5-global--spacer--sm);
+`;
+
+const StyledTitle = styled(Title)`
+  margin-bottom: 1rem;
+`;
 
 export function RoleAssignmentsReviewStep() {
   const { wizardData } = usePageWizard();
@@ -56,35 +69,33 @@ export function RoleAssignmentsReviewStep() {
 
   return (
     <>
+      <StyledTitle headingLevel="h1">{t('Review')}</StyledTitle>
       {reviewData?.resourceType ? (
         <>
           <PageDetail label={t('Resource type')}>{reviewData.resourceType}</PageDetail>
-          <Divider />
+          <StyledDivider />
         </>
       ) : null}
       {reviewData?.resources?.length ? (
         <>
           <ReviewExpandableList selectedItems={reviewData.resources} fieldName="resources" />
-          <Divider />
+          <StyledDivider />
         </>
       ) : null}
       {reviewData?.users?.length ? (
         <>
           <ReviewExpandableList selectedItems={reviewData.users} fieldName="users" />
-          <Divider />
+          <StyledDivider />
         </>
       ) : null}
       {reviewData?.teams?.length ? (
         <>
           <ReviewExpandableList selectedItems={reviewData.teams} fieldName="teams" />
-          <Divider />
+          <StyledDivider />
         </>
       ) : null}
       {reviewData?.roles?.length ? (
-        <>
-          <ReviewExpandableList selectedItems={reviewData.roles} fieldName="roles" />
-          <Divider />
-        </>
+        <ReviewExpandableList selectedItems={reviewData.roles} fieldName="roles" />
       ) : null}
     </>
   );
@@ -181,7 +192,7 @@ function ReviewExpandableList<
       toggleContent={
         <div>
           <span>{labelForSelectedItems}</span>
-          <Badge isRead={true}>{selectedItems.length}</Badge>
+          <StyledBadge isRead>{selectedItems.length}</StyledBadge>
         </div>
       }
       onToggle={onToggle}
@@ -193,6 +204,10 @@ function ReviewExpandableList<
         errorStateTitle="NEVER"
         emptyStateTitle="NEVER"
         defaultSubtitle={t('Role')}
+        disablePagination
+        disableLastRowBorder
+        compact
+        borderless
       />
     </ExpandableSection>
   );
