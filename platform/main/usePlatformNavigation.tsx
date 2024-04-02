@@ -21,15 +21,15 @@ import { useGetPlatformAuthenticatorsRoutes } from '../routes/useGetPlatformAuth
 import { useGetPlatformOrganizationsRoutes } from '../routes/useGetPlatformOrganizationsRoutes';
 import { useGetPlatformTeamsRoutes } from '../routes/useGetPlatformTeamsRoutes';
 import { useGetPlatformUsersRoutes } from '../routes/useGetPlatformUsersRoutes';
-import { useHasAwx, useHasEda, useHasHub } from './PlatformProvider';
+import { useAwxService, useEdaService, useHubService } from './GatewayServices';
 import { PlatformRoute } from './PlatformRoutes';
 
 export function usePlatformNavigation() {
   const { t } = useTranslation();
 
-  const hasAwx = useHasAwx();
-  const hasEda = useHasEda();
-  const hasHub = useHasHub();
+  const awxService = useAwxService();
+  const edaService = useEdaService();
+  const hubService = useHubService();
 
   const awxNav = useAwxNavigation();
   const edaNav = useEdaNavigation();
@@ -43,8 +43,14 @@ export function usePlatformNavigation() {
   const pageNavigationItems = useMemo<PageNavigationItem[]>(() => {
     removeNavigationItemById(awxNav, AwxRoute.Overview);
     removeNavigationItemById(awxNav, AwxRoute.Settings);
-    const credentials = removeNavigationItemById(awxNav, AwxRoute.Credentials)!;
-    const credentialTypes = removeNavigationItemById(awxNav, AwxRoute.CredentialTypes)!;
+    // const awxInfrastructure = findNavigationItemById(awxNav, AwxRoute.Infrastructure);
+    // const awxCredentials = removeNavigationItemById(awxNav, AwxRoute.Credentials)!;
+    // const awxCredentialTypes = removeNavigationItemById(awxNav, AwxRoute.CredentialTypes)!;
+    // if (awxInfrastructure && 'children' in awxInfrastructure) {
+    //   awxInfrastructure.children.push(awxCredentials);
+    //   awxInfrastructure.children.push(awxCredentialTypes);
+    // }
+
     const awxRolesRoute = removeNavigationItemById(awxNav, AwxRoute.Roles);
     if (awxRolesRoute && 'children' in awxRolesRoute) {
       const edaRoles = awxRolesRoute.children.find((r) => r.path === '');
@@ -67,14 +73,22 @@ export function usePlatformNavigation() {
       edaRolesRoute.label = undefined;
       edaRolesRoute.path = 'decisions';
     }
-    // TODO - Eda Credentials should not be needed if the Gateway service to server work goes through
-    // removeNavigationItemById(edaNav, EdaRoute.Credentials)
+    const edaCredentials = removeNavigationItemById(edaNav, EdaRoute.Credentials)!;
+    const edaCredentialTypes = removeNavigationItemById(edaNav, EdaRoute.CredentialTypes)!;
     removeNavigationItemById(edaNav, EdaRoute.Access);
+    edaNav.push({
+      id: 'eda-infrastructure',
+      label: t('Infrastructure'),
+      path: 'infrastructure',
+      children: [edaCredentials, edaCredentialTypes],
+    });
+    removeNavigationItemById(edaNav, EdaRoute.Settings);
 
     removeNavigationItemById(hubNav, HubRoute.Overview);
     removeNavigationItemById(hubNav, HubRoute.Organizations);
     removeNavigationItemById(hubNav, HubRoute.Teams);
     removeNavigationItemById(hubNav, HubRoute.Users);
+    removeNavigationItemById(hubNav, HubRoute.Settings);
     const hubRouteRoles = removeNavigationItemById(hubNav, HubRoute.Roles);
     if (hubRouteRoles && 'children' in hubRouteRoles) {
       const hubRoles = hubRouteRoles.children.find((r) => r.path === '');
@@ -103,7 +117,7 @@ export function usePlatformNavigation() {
       subtitle: t('Automation Controller'),
       path: 'execution',
       children: awxNav,
-      hidden: !hasAwx,
+      hidden: !awxService,
     });
     navigationItems.push({
       id: PlatformRoute.EDA,
@@ -111,7 +125,7 @@ export function usePlatformNavigation() {
       subtitle: t('Event-Driven Ansible'),
       path: 'decisions',
       children: edaNav,
-      hidden: !hasEda,
+      hidden: !edaService,
     });
     navigationItems.push({
       id: PlatformRoute.HUB,
@@ -119,13 +133,13 @@ export function usePlatformNavigation() {
       subtitle: t('Automation Hub'),
       path: 'content',
       children: hubNav,
-      hidden: !hasHub,
+      hidden: !hubService,
     });
 
     const analytics = removeNavigationItemById(awxNav, AwxRoute.Analytics);
     if (analytics) {
       analytics.label = t('Automation Analytics');
-      analytics.hidden = !hasAwx;
+      analytics.hidden = !awxService;
       navigationItems.push(analytics);
     }
     navigationItems.push({
@@ -152,8 +166,8 @@ export function usePlatformNavigation() {
             },
           ].filter((r) => r !== undefined) as PageNavigationItem[],
         },
-        credentials,
-        credentialTypes,
+        // awxCredentials,
+        // awxCredentialTypes,
         // hubApiTokenRoute,
       ],
     });
@@ -227,9 +241,9 @@ export function usePlatformNavigation() {
     edaNav,
     hubNav,
     t,
-    hasAwx,
-    hasEda,
-    hasHub,
+    awxService,
+    edaService,
+    hubService,
     authenticators,
     organizations,
     teams,
