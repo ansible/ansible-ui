@@ -28,8 +28,12 @@ export function useInventoriesGroupsActions() {
     adHocOptions && adHocOptions.actions && adHocOptions.actions['POST']
   );
 
-  return useMemo<IPageAction<InventoryGroup>[]>(
-    () => [
+  return useMemo<IPageAction<InventoryGroup>[]>(() => {
+    if (params.inventory_type === 'constructed_inventory') {
+      return [];
+    }
+
+    return [
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
@@ -59,7 +63,6 @@ export function useInventoriesGroupsActions() {
                 'You do not have permission to run an ad hoc command. Please contact your organization administrator if there is an issue with your access.'
               ),
       },
-    ],
-    [t, pageNavigate, canRunAdHocCommand, params.inventory_type]
-  );
+    ];
+  }, [t, pageNavigate, canRunAdHocCommand, params.inventory_type]);
 }

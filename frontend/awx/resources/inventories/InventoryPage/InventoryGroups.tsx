@@ -27,9 +27,10 @@ export function InventoryGroups() {
   const toolbarActions = useInventoriesGroupsToolbarActions(view);
   const rowActions = useInventoriesGroupsActions();
 
+  const constructed_inventory = params.inventory_type === 'constructed_inventory' ? true : false;
   const groupOptions = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/groups/`).data;
   const canCreateGroup = Boolean(
-    groupOptions && groupOptions.actions && groupOptions.actions['POST']
+    groupOptions && groupOptions.actions && groupOptions.actions['POST'] && !constructed_inventory
   );
 
   return (
@@ -43,14 +44,18 @@ export function InventoryGroups() {
       emptyStateTitle={
         canCreateGroup
           ? t('There are currently no groups added to this inventory.')
-          : t('You do not have permission to create a group')
+          : constructed_inventory
+            ? t('No Items Found')
+            : t('You do not have permission to create a group')
       }
       emptyStateDescription={
         canCreateGroup
           ? t('Please create a group by using the button below.')
-          : t(
-              'Please contact your organization administrator if there is an issue with your access.'
-            )
+          : constructed_inventory
+            ? t('Please add Items to populate this list')
+            : t(
+                'Please contact your organization administrator if there is an issue with your access.'
+              )
       }
       emptyStateIcon={canCreateGroup ? undefined : CubeIcon}
       emptyStateButtonText={canCreateGroup ? t('Create group') : undefined}
