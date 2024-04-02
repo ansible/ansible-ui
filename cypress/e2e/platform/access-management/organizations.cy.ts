@@ -10,11 +10,8 @@ describe('Organizations - create, edit and delete', () => {
   const detailsEditedOrganizationName = `edited Organization ${randomString(4)}`;
   let organization: PlatformOrganization;
 
-  before(() => {
-    cy.platformLogin();
-  });
-
   beforeEach(() => {
+    cy.platformLogin();
     cy.createPlatformOrganization().then((org) => {
       organization = org;
     });
@@ -132,11 +129,8 @@ describe('Organizations - create, edit and delete', () => {
 describe('Platform Teams - Users, Admins and Teams tabs', function () {
   let organization: PlatformOrganization;
 
-  before(() => {
-    cy.platformLogin();
-  });
-
   beforeEach(() => {
+    cy.platformLogin();
     cy.createPlatformOrganization().then((org) => {
       organization = org;
     });
