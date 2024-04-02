@@ -57,7 +57,7 @@ export function InventoryDetailsInner(props: { inventory: Inventory }) {
   const { data: inputInventories, error: inputInventoriesError } = useGet<{ results: Inventory[] }>(
     inventory.kind === 'constructed'
       ? awxAPI`/inventories/${inventory.id.toString()}/input_inventories/`
-      : undefined
+      : ''
   );
 
   const inventoryTypes: { [key: string]: string } = {
