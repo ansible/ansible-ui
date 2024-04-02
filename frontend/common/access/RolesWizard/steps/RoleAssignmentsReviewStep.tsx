@@ -15,7 +15,7 @@ import styled from 'styled-components';
 type ReviewData = {
   resourceType?: string;
   resources?: { id: number; name: string; username?: never }[];
-  roles?: { id: number; name: string; description?: string; username?: never }[];
+  edaRoles?: { id: number; name: string; description?: string; username?: never }[];
   teams?: { id: number; name: string; username?: never }[];
   users?: { id: number; name?: never; username: string }[];
 };
@@ -55,8 +55,8 @@ export function RoleAssignmentsReviewStep() {
     if ((wizardData as ReviewData)['teams'] && (wizardData as ReviewData)['teams']?.length) {
       data.teams = (wizardData as ReviewData).teams;
     }
-    if ((wizardData as ReviewData)['roles'] && (wizardData as ReviewData)['roles']?.length) {
-      data.roles = (wizardData as ReviewData).roles;
+    if ((wizardData as ReviewData)['edaRoles'] && (wizardData as ReviewData)['edaRoles']?.length) {
+      data.edaRoles = (wizardData as ReviewData).edaRoles;
     }
     if (
       (wizardData as ReviewData)['resources'] &&
@@ -94,8 +94,8 @@ export function RoleAssignmentsReviewStep() {
           <StyledDivider />
         </>
       ) : null}
-      {reviewData?.roles?.length ? (
-        <ReviewExpandableList selectedItems={reviewData.roles} fieldName="roles" />
+      {reviewData?.edaRoles?.length ? (
+        <ReviewExpandableList selectedItems={reviewData.edaRoles} fieldName="edaRoles" />
       ) : null}
     </>
   );
@@ -123,7 +123,7 @@ function ReviewExpandableList<
         return t('Teams');
       case 'resources':
         return t('Resources');
-      case 'roles':
+      case 'edaRoles':
         return t('Roles');
       default:
         return '';
@@ -143,7 +143,7 @@ function ReviewExpandableList<
             maxWidth: 200,
           },
         ];
-      case 'roles':
+      case 'edaRoles':
         return [
           {
             header: t('Name'),

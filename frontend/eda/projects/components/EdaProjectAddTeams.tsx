@@ -42,8 +42,8 @@ export function EdaProjectAddTeams() {
         />
       ),
       validate: (formData, _) => {
-        const { roles } = formData as { roles: EdaRbacRole[] };
-        if (!roles?.length) {
+        const { edaRoles } = formData as { edaRoles: EdaRbacRole[] };
+        if (!edaRoles?.length) {
           throw new Error(t('Select at least one role.'));
         }
       },
