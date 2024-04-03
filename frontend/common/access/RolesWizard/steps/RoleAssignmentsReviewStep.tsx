@@ -43,59 +43,37 @@ const StyledTitle = styled(Title)`
 export function RoleAssignmentsReviewStep() {
   const { wizardData } = usePageWizard();
   const { t } = useTranslation();
-
-  const reviewData = useMemo<ReviewData>(() => {
-    const data: ReviewData = {};
-    if ((wizardData as ReviewData)['resourceType']) {
-      data.resourceType = (wizardData as ReviewData).resourceType;
-    }
-    if ((wizardData as ReviewData)['users'] && (wizardData as ReviewData)['users']?.length) {
-      data.users = (wizardData as ReviewData).users;
-    }
-    if ((wizardData as ReviewData)['teams'] && (wizardData as ReviewData)['teams']?.length) {
-      data.teams = (wizardData as ReviewData).teams;
-    }
-    if ((wizardData as ReviewData)['edaRoles'] && (wizardData as ReviewData)['edaRoles']?.length) {
-      data.edaRoles = (wizardData as ReviewData).edaRoles;
-    }
-    if (
-      (wizardData as ReviewData)['resources'] &&
-      (wizardData as ReviewData)['resources']?.length
-    ) {
-      data.resources = (wizardData as ReviewData).resources;
-    }
-    return data;
-  }, [wizardData]);
+  const { resourceType, resources, users, teams, edaRoles } = wizardData as ReviewData;
 
   return (
     <>
       <StyledTitle headingLevel="h1">{t('Review')}</StyledTitle>
-      {reviewData?.resourceType ? (
+      {resourceType ? (
         <>
-          <PageDetail label={t('Resource type')}>{reviewData.resourceType}</PageDetail>
+          <PageDetail label={t('Resource type')}>{resourceType}</PageDetail>
           <StyledDivider />
         </>
       ) : null}
-      {reviewData?.resources?.length ? (
+      {resources && resources.length ? (
         <>
-          <ReviewExpandableList selectedItems={reviewData.resources} fieldName="resources" />
+          <ReviewExpandableList selectedItems={resources} fieldName="resources" />
           <StyledDivider />
         </>
       ) : null}
-      {reviewData?.users?.length ? (
+      {users && users.length ? (
         <>
-          <ReviewExpandableList selectedItems={reviewData.users} fieldName="users" />
+          <ReviewExpandableList selectedItems={users} fieldName="users" />
           <StyledDivider />
         </>
       ) : null}
-      {reviewData?.teams?.length ? (
+      {teams && teams.length ? (
         <>
-          <ReviewExpandableList selectedItems={reviewData.teams} fieldName="teams" />
+          <ReviewExpandableList selectedItems={teams} fieldName="teams" />
           <StyledDivider />
         </>
       ) : null}
-      {reviewData?.edaRoles?.length ? (
-        <ReviewExpandableList selectedItems={reviewData.edaRoles} fieldName="edaRoles" />
+      {edaRoles && edaRoles.length ? (
+        <ReviewExpandableList selectedItems={edaRoles} fieldName="edaRoles" />
       ) : null}
     </>
   );
