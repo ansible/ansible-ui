@@ -25,6 +25,7 @@ export enum EdaRoute {
   ProjectDetails = 'eda-project-details',
   ProjectTeamAccess = 'eda-project-project-team-access',
   ProjectUsers = 'eda-project-users',
+  ProjectTeams = 'eda-project-teams',
   ProjectAddUsers = 'eda-project-add-users',
   ProjectAddTeams = 'eda-project-add-teams',
 
