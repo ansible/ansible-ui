@@ -258,14 +258,14 @@ export function EditInventory() {
   }
 
   const title =
-    inventory?.kind === ''
+    inventory.kind === ''
       ? t('Edit Inventory')
-      : inventory?.kind === 'smart'
+      : inventory.kind === 'smart'
         ? t('Edit Smart Inventory')
         : t('Edit Constructed Inventory');
 
   const defaultValue =
-    inventory?.kind === 'smart'
+    inventory.kind === 'smart'
       ? { ...inventory, instanceGroups: originalInstanceGroups }
       : inventory.kind === 'constructed'
         ? {
@@ -276,7 +276,7 @@ export function EditInventory() {
         : {
             ...inventory,
             instanceGroups: originalInstanceGroups,
-            labels: inventory?.summary_fields?.labels?.results ?? [],
+            labels: inventory.summary_fields?.labels?.results ?? [],
           };
 
   return (
