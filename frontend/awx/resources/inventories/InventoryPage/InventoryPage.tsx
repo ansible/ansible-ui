@@ -22,7 +22,7 @@ export function InventoryPage() {
   const inventory = useGetInventory(params.id, params.inventory_type);
   const pageNavigate = usePageNavigate();
   const itemActions = useInventoryActions({
-    onInventoriesDeleted: () => pageNavigate(AwxRoute.Inventories),
+    onInventoriesDeleted: () => pageNavigate(AwxRoute.Inventories), detail : true
   });
   const getPageUrl = useGetPageUrl();
   const isSmartInventory = inventory?.kind === 'smart';
