@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import {
   LoadingPage,
   PageHeader,
+  PageLayout,
   PageWizard,
   PageWizardStep,
   useGetPageUrl,
@@ -124,7 +125,7 @@ export function EdaProjectAddTeams() {
   };
 
   return (
-    <>
+    <PageLayout>
       <PageHeader
         title={t('Add roles')}
         breadcrumbs={[
@@ -141,6 +142,6 @@ export function EdaProjectAddTeams() {
         ]}
       />
       <PageWizard<WizardFormValues> steps={steps} onSubmit={onSubmit} disableGrid />
-    </>
+    </PageLayout>
   );
 }
