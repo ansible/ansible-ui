@@ -40,11 +40,42 @@ describe('Credential Types', () => {
 
   it('navigate to the details page for a credential type', () => {
     cy.navigateTo('awx', 'credential-types');
-    cy.clickTableRow(credentialType.name);
+    cy.filterTableByMultiSelect('name', [credentialType.name]);
+    cy.clickTableRowLink('name', credentialType.name, { disableFilter: true });
     cy.url().then((currentUrl) => {
       expect(currentUrl.includes('details')).to.be.true;
       cy.verifyPageTitle(credentialType.name).should('be.visible');
     });
+  });
+
+  it('Filter credential types by name', () => {
+    cy.navigateTo('awx', 'credential-types');
+    cy.filterTableByMultiSelect('name', [credentialType.name]);
+    cy.get('tr').should('have.length.greaterThan', 0);
+    cy.contains(credentialType.name).should('be.visible');
+    cy.clearAllFilters();
+  });
+
+  it('Filter credential types by description', () => {
+    cy.navigateTo('awx', 'credential-types');
+    cy.filterTableByTextFilter('description', credentialType.description);
+    cy.get('tr').should('have.length.greaterThan', 0);
+    cy.contains(credentialType.description).should('be.visible');
+    cy.clearAllFilters();
+  });
+
+  it('Filter credential types by Created By', () => {
+    cy.navigateTo('awx', 'credential-types');
+    cy.filterTableByTextFilter('created-by', 'awx');
+    cy.get('tr').should('have.length.greaterThan', 0);
+    cy.clearAllFilters();
+  });
+
+  it('Filter credential types by Modified By', () => {
+    cy.navigateTo('awx', 'credential-types');
+    cy.filterTableByTextFilter('modified-by', 'awx');
+    cy.get('tr').should('have.length.greaterThan', 0);
+    cy.clearAllFilters();
   });
 
   it('create a new credential type with no configs', () => {
@@ -78,7 +109,8 @@ describe('Credential Types', () => {
     cy.createAwxCredentialType().then((credType: CredentialType) => {
       cy.navigateTo('awx', 'credential-types');
       const newCredentialTypeName = (credType.name ?? '') + ' edited';
-      cy.clickTableRowPinnedAction(credType.name, 'edit-credential-type');
+      cy.filterTableByMultiSelect('name', [credType.name]);
+      cy.clickTableRowPinnedAction(credType.name, 'edit-credential-type', false);
       cy.verifyPageTitle('Edit Credential Type');
       cy.url().then((currentUrl) => {
         expect(currentUrl.includes('edit')).to.be.true;
@@ -94,7 +126,8 @@ describe('Credential Types', () => {
         });
       cy.verifyPageTitle(newCredentialTypeName);
       cy.navigateTo('awx', 'credential-types');
-      cy.clickTableRowKebabAction(`${newCredentialTypeName}`, 'delete-credential-type');
+      cy.filterTableByMultiSelect('name', [newCredentialTypeName]);
+      cy.clickTableRowKebabAction(`${newCredentialTypeName}`, 'delete-credential-type', false);
       cy.get('#confirm').click();
       cy.intercept('DELETE', `api/v2/credential_types/${credType.id}/`).as('deleteCredType');
       cy.clickButton(/^Delete credential type/);
@@ -103,9 +136,7 @@ describe('Credential Types', () => {
       cy.wait('@deleteCredType').then((deleteCredType) => {
         expect(deleteCredType?.response?.statusCode).to.eql(204);
       });
-      cy.clickButton(/^Clear all filters$/);
-      cy.getTableRowByText(`${newCredentialTypeName}`).should('not.exist');
-      cy.clickButton(/^Clear all filters$/);
+      cy.containsBy('.pf-v5-c-empty-state__title-text', 'No results found');
       cy.verifyPageTitle('Credential Types');
     });
   });
@@ -114,8 +145,9 @@ describe('Credential Types', () => {
     cy.createAwxCredentialType().then((credType: CredentialType) => {
       cy.navigateTo('awx', 'credential-types');
       const newCredentialTypeName = (credType.name ?? '') + ' edited';
-      cy.getTableRowByText(credType.name).should('be.visible');
-      cy.get('[data-cy="edit-credential-type"]').click();
+      cy.filterTableByMultiSelect('name', [credType.name]);
+      cy.clickTableRowLink('name', credType.name, { disableFilter: true });
+      cy.clickButton('Edit credential type');
       cy.verifyPageTitle('Edit Credential Type');
       cy.get('[data-cy="name"]').clear().type(newCredentialTypeName);
       cy.get('[data-cy="description"]').clear().type('this is a new description after editing');
@@ -153,7 +185,8 @@ describe('Credential Types', () => {
   it('delete a credential type from the list row action', () => {
     cy.createAwxCredentialType().then((credType: CredentialType) => {
       cy.navigateTo('awx', 'credential-types');
-      cy.clickTableRowKebabAction(credType.name, 'delete-credential-type');
+      cy.filterTableByMultiSelect('name', [credType.name]);
+      cy.clickTableRowKebabAction(credType.name, 'delete-credential-type', false);
       cy.get('#confirm').click();
       cy.clickButton(/^Delete credential type/);
       cy.contains(/^Success$/);
@@ -166,8 +199,9 @@ describe('Credential Types', () => {
     cy.createAwxCredentialType().then((credType1: CredentialType) => {
       cy.createAwxCredentialType().then((credType2: CredentialType) => {
         cy.navigateTo('awx', 'credential-types');
-        cy.selectTableRow(credType1.name);
-        cy.selectTableRow(credType2.name);
+        cy.filterTableByMultiSelect('name', [credType1.name, credType2.name]);
+        cy.selectTableRow(credType1.name, false);
+        cy.selectTableRow(credType2.name, false);
         cy.clickToolbarKebabAction('delete-selected-credential-types');
         cy.intercept('DELETE', `api/v2/credential_types/${credType1.id}/`).as('deleteCredType1');
         cy.intercept('DELETE', `api/v2/credential_types/${credType2.id}/`).as('deleteCredType2');

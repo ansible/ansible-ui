@@ -16,10 +16,12 @@ import {
 import { useCredentialTypesColumns } from './hooks/useCredentialTypesColumns';
 import { useCredentialTypesFilters } from './hooks/useCredentialTypesFilters';
 import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
+import { usePersistentFilters } from '../../../common/PersistentFilters';
 
 export function CredentialTypes() {
   const { t } = useTranslation();
   const config = useAwxConfig();
+  usePersistentFilters('credential_types');
   const toolbarFilters = useCredentialTypesFilters();
   const tableColumns = useCredentialTypesColumns();
   const pageNavigate = usePageNavigate();
