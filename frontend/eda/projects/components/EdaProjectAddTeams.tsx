@@ -35,9 +35,9 @@ export function EdaProjectAddTeams() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const params = useParams<{ id: string }>();
+  const pageNavigate = usePageNavigate();
   const { data: project, isLoading } = useGet<EdaProject>(edaAPI`/projects/${params.id ?? ''}/`);
   const userProgressDialog = useEdaBulkActionDialog<TeamRolePair>();
-  const pageNavigate = usePageNavigate();
 
   if (isLoading || !project) return <LoadingPage />;
 
@@ -141,7 +141,14 @@ export function EdaProjectAddTeams() {
           { label: t('Add roles') },
         ]}
       />
-      <PageWizard<WizardFormValues> steps={steps} onSubmit={onSubmit} disableGrid />
+      <PageWizard<WizardFormValues>
+        steps={steps}
+        onSubmit={onSubmit}
+        disableGrid
+        onCancel={() => {
+          pageNavigate(EdaRoute.ProjectTeamAccess, { params: { id: project?.id } });
+        }}
+      />
     </PageLayout>
   );
 }
