@@ -129,8 +129,7 @@ export function ScheduleEditWizard() {
     },
     prompt: {
       credentials: credentials,
-      // diff_mode: schedule?.diff_mode,
-      diff_mode: true,
+      diff_mode: schedule?.diff_mode,
       execution_environment: schedule?.execution_environment,
       extra_vars: schedule?.extra_data,
       forks: schedule?.forks,
