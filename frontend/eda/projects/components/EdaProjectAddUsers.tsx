@@ -6,6 +6,7 @@ import {
   PageWizard,
   PageWizardStep,
   useGetPageUrl,
+  usePageNavigate,
 } from '../../../../framework';
 import { EdaSelectRolesStep } from '../../access/roles/components/EdaSelectRolesStep';
 import { EdaSelectUsersStep } from '../../access/users/components/EdaSelectUsersStep';
@@ -22,6 +23,7 @@ export function EdaProjectAddUsers() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const params = useParams<{ id: string }>();
+  const pageNavigate = usePageNavigate();
   const { data: project, isLoading } = useGet<EdaProject>(edaAPI`/projects/${params.id ?? ''}/`);
 
   if (isLoading) return <LoadingPage />;
@@ -94,7 +96,14 @@ export function EdaProjectAddUsers() {
           { label: t('Add roles') },
         ]}
       />
-      <PageWizard steps={steps} onSubmit={onSubmit} disableGrid />
+      <PageWizard
+        steps={steps}
+        onSubmit={onSubmit}
+        disableGrid
+        onCancel={() => {
+          pageNavigate(EdaRoute.ProjectUsers, { params: { id: project?.id } });
+        }}
+      />
     </PageLayout>
   );
 }

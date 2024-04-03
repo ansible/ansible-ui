@@ -5,6 +5,7 @@ import {
   PageWizard,
   PageWizardStep,
   useGetPageUrl,
+  usePageNavigate,
 } from '../../../../framework';
 import { EdaSelectTeamsStep } from '../../access/teams/components/steps/EdaSelectTeamsStep';
 import { EdaTeam } from '../../interfaces/EdaTeam';
@@ -21,6 +22,7 @@ export function EdaProjectAddTeams() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const params = useParams<{ id: string }>();
+  const pageNavigate = usePageNavigate();
   const { data: project, isLoading } = useGet<EdaProject>(edaAPI`/projects/${params.id ?? ''}/`);
 
   if (isLoading) return <LoadingPage />;
@@ -93,7 +95,14 @@ export function EdaProjectAddTeams() {
           { label: t('Add roles') },
         ]}
       />
-      <PageWizard steps={steps} onSubmit={onSubmit} disableGrid />
+      <PageWizard
+        steps={steps}
+        onSubmit={onSubmit}
+        disableGrid
+        onCancel={() => {
+          pageNavigate(EdaRoute.ProjectTeams, { params: { id: project?.id } });
+        }}
+      />
     </>
   );
 }
