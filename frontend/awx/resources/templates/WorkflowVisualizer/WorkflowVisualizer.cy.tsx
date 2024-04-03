@@ -218,7 +218,7 @@ describe('WorkflowVisualizer', () => {
       cy.get('button').click({ force: true });
     });
 
-    cy.selectDropdownOptionByResourceName('node-type', 'Job Template');
+    cy.selectDropdownOptionByResourceName('resource-type', 'Job Template');
     cy.selectDropdownOptionByResourceName('node-status-type', 'success');
     cy.selectDropdownOptionByResourceName('node-convergence', 'All');
     cy.get('[data-cy="node-alias"]').type('Test Node');

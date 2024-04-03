@@ -12,9 +12,9 @@ import { WizardFormValues } from '../../../resources/templates/WorkflowVisualize
 export function ScheduleSurveyStep() {
   const { t } = useTranslation();
   const { wizardData } = usePageWizard();
-  const { node_resource } = wizardData as WizardFormValues;
+  const { resource } = wizardData as WizardFormValues;
   const { data: survey_spec } = useGet<Survey>(
-    awxAPI`/job_templates/${node_resource ? node_resource.id.toString() : ''}/survey_spec/`
+    awxAPI`/job_templates/${resource ? resource.id.toString() : ''}/survey_spec/`
   );
 
   const choicesTo: PageSelectOption<string>[] = [];

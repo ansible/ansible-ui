@@ -17,11 +17,11 @@ import { RulesStep } from './RulesStep';
 import { Frequency, RRule } from 'rrule';
 import { ExceptionsStep } from './ExceptionsStep';
 import { ScheduleSurveyStep } from './ScheduleSurveyStep';
-import { NodeTypeStep } from '../../../resources/templates/WorkflowVisualizer/wizard/NodeTypeStep';
 import { NodePromptsStep } from '../../../resources/templates/WorkflowVisualizer/wizard/NodePromptsStep';
 import { WizardFormValues } from '../../../resources/templates/WorkflowVisualizer/types';
-import { shouldHideOtherStep } from '../../../resources/templates/WorkflowVisualizer/wizard/helpers';
+import { shouldHideOtherStep } from '../../../common/SharedWizard/helpers';
 import { RESOURCE_TYPE } from '../../../resources/templates/WorkflowVisualizer/constants';
+import { ResourceSelectionStep } from '../../../common/SharedWizard/ResourceSelectionStep';
 
 export function ScheduleAddWizard() {
   const { t } = useTranslation();
@@ -55,19 +55,19 @@ export function ScheduleAddWizard() {
 
   const steps: PageWizardStep[] = [
     {
-      id: 'details',
-      label: t('Details'),
-      inputs: <NodeTypeStep />,
+      id: 'resouceSelectionStep',
+      label: t('Resource details'),
+      inputs: <ResourceSelectionStep />,
     },
     {
       id: 'nodePromptsStep',
       label: t('Prompts'),
       inputs: <NodePromptsStep />,
       hidden: (wizardData: Partial<WizardFormValues>) => {
-        const { launch_config, node_resource, node_type } = wizardData;
+        const { launch_config, resource, resource_type } = wizardData;
         if (
-          (node_type === RESOURCE_TYPE.workflow_job || node_type === RESOURCE_TYPE.job) &&
-          node_resource &&
+          (resource_type === RESOURCE_TYPE.workflow_job || resource_type === RESOURCE_TYPE.job) &&
+          resource &&
           launch_config
         ) {
           return shouldHideOtherStep(launch_config);

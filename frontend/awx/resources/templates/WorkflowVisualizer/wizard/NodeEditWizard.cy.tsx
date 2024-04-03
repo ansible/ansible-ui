@@ -82,14 +82,15 @@ describe('NodeEditWizard', () => {
 
       cy.get('[data-cy="wizard-nav"]').within(() => {
         cy.get('li').should('have.length', 3);
-        ['Node details', 'Prompts', 'Review'].forEach((text, index) => {
+        ['Resource details', 'Prompts', 'Review'].forEach((text, index) => {
           cy.get('li')
             .eq(index)
             .should((el) => expect(el.text().trim()).to.equal(text));
         });
       });
+      cy.selectDropdownOptionByResourceName('resource-type', 'Job Template');
 
-      cy.get('[data-cy="node-type-form-group"]').within(() => {
+      cy.get('[data-cy="resource-type-form-group"]').within(() => {
         cy.get('span.pf-v5-c-select__toggle-text').should('have.text', 'Job Template');
       });
       cy.get('[data-cy="job-template-select-form-group"]').within(() => {

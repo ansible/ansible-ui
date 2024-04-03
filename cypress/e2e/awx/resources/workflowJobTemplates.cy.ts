@@ -1,6 +1,5 @@
 import { randomString } from '../../../../framework/utils/random-string';
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
-import { InventorySource } from '../../../../frontend/awx/interfaces/InventorySource';
 import { Label } from '../../../../frontend/awx/interfaces/Label';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
@@ -11,7 +10,6 @@ describe('Workflow Job templates form', () => {
   let organization: Organization;
   let inventory: Inventory;
   let label: Label;
-  let project: Project;
 
   before(() => {
     cy.awxLogin();
@@ -147,56 +145,36 @@ describe('Workflow Job templates form', () => {
           this.globalProject as Project
         ).then((projectNode) => {
           cy.createAwxWorkflowVisualizerJobTemplateNode(workflowJobTemplate, jobTemplate).then(
-            (jobTemplateNode) => {
-              let newOrg: Organization;
-              cy.createAwxOrganization().then((org) => {
-                newOrg = org;
-                cy.createAwxProject({ organization: organization.id }).then((p) => {
-                  project = p;
-                  let inventorySource: InventorySource;
-                  cy.createAwxInventorySource(inventory, project).then((invSrc) => {
-                    inventorySource = invSrc;
-                    cy.createAwxWorkflowVisualizerInventorySourceNode(
-                      workflowJobTemplate,
-                      inventorySource
-                    ).then((inventorySourceNode) => {
-                      cy.createAwxWorkflowVisualizerManagementNode(workflowJobTemplate, 2).then(
-                        (managementNode) => {
-                          cy.createWorkflowJTSuccessNodeLink(projectNode, jobTemplateNode);
-                          cy.createWorkflowJTSuccessNodeLink(jobTemplateNode, inventorySourceNode);
-                          cy.createWorkflowJTFailureNodeLink(inventorySourceNode, managementNode);
-                        }
-                      );
-                      cy.navigateTo('awx', 'templates');
-                      cy.intercept(
-                        'POST',
-                        `api/v2/workflow_job_templates/${workflowJobTemplate.id}/launch/`
-                      ).as('launchWJT-WithNodes');
-                      cy.filterTableByMultiSelect('name', [workflowJobTemplate.name]);
-                      cy.clickTableRowLink('name', workflowJobTemplate.name, {
-                        disableFilter: true,
-                      });
-                      cy.get('button[data-cy="launch-template"]').click();
-                      cy.wait('@launchWJT-WithNodes')
-                        .its('response.body.id')
-                        .then((jobId: string) => {
-                          /*there is a known React error, `create request error` happening due the output tab work in progress,but the test executes fine since there is no ui interaction here*/
-                          cy.waitForWorkflowJobStatus(jobId);
-                        });
-                      cy.deleteAwxWorkflowJobTemplate(workflowJobTemplate, {
-                        failOnStatusCode: false,
-                      });
-                      cy.deleteAwxJobTemplate(jobTemplate);
-                      cy.deleteAwxOrganization(newOrg);
-                      cy.deleteAwxProject(project);
-                    });
-                  });
-                });
+            function (jobTemplateNode) {
+              cy.createWorkflowJTSuccessNodeLink(projectNode, jobTemplateNode);
+              cy.navigateTo('awx', 'templates');
+              cy.intercept(
+                'POST',
+                `api/v2/workflow_job_templates/${workflowJobTemplate.id}/launch/`
+              ).as('launchWJT-WithNodes');
+              cy.filterTableByMultiSelect('name', [workflowJobTemplate.name]);
+              cy.clickTableRowLink('name', workflowJobTemplate.name, {
+                disableFilter: true,
               });
+              cy.get('button[data-cy="launch-template"]').click();
+              cy.wait('@launchWJT-WithNodes')
+                .its('response.body.id')
+                .then((jobId: string) => {
+                  /*there is a known React error, `create request error` happening due the output tab work in progress,but the test executes fine since there is no ui interaction here*/
+                  cy.waitForWorkflowJobStatus(jobId);
+                });
+              cy.deleteAwxWorkflowJobTemplate(workflowJobTemplate, {
+                failOnStatusCode: false,
+              });
+              cy.deleteAwxJobTemplate(jobTemplate);
             }
           );
         });
+        // });
+        // });
       });
     });
   });
 });
+//   });
+// });

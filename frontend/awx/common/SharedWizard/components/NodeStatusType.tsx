@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { PageFormSelect } from '../../../../framework';
+import { PageFormSelect } from '../../../../../framework';
 
 export function NodeStatusType() {
   const { t } = useTranslation();

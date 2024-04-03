@@ -1,26 +1,26 @@
 import { Dispatch, SetStateAction, useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
-import { PageWizardStep } from '../../../framework';
-import { usePageWizard } from '../../../framework/PageWizard/PageWizardProvider';
-import { requestGet } from '../../common/crud/Data';
-import { awxAPI } from '../../awx/common/api/awx-utils';
-import type { LaunchConfiguration } from '../../awx/interfaces/LaunchConfiguration';
-import { parseStringToTagArray } from '../../awx/resources/templates/JobTemplateFormHelpers';
-import { RESOURCE_TYPE } from '../../awx/resources/templates/WorkflowVisualizer/constants';
+import { PageWizardStep } from '../../../../framework';
+import { usePageWizard } from '../../../../framework/PageWizard/PageWizardProvider';
+import { requestGet } from '../../../common/crud/Data';
+import { awxAPI } from '../api/awx-utils';
+import type { LaunchConfiguration } from '../../interfaces/LaunchConfiguration';
+import { parseStringToTagArray } from '../../resources/templates/JobTemplateFormHelpers';
+import { RESOURCE_TYPE } from '../../resources/templates/WorkflowVisualizer/constants';
 import type {
   AllResources,
   PromptFormValues,
   UnifiedJobType,
   WizardFormValues,
-} from '../../awx/resources/templates/WorkflowVisualizer/types';
-import { shouldHideOtherStep } from '../../awx/resources/templates/WorkflowVisualizer/wizard/helpers';
-import { PageFormSection } from '../../../framework/PageForm/Utils/PageFormSection';
+} from '../../resources/templates/WorkflowVisualizer/types';
+import { shouldHideOtherStep } from './helpers';
+import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
 import { useLocation, useParams } from 'react-router-dom';
-import { InventorySource } from '../../awx/interfaces/InventorySource';
-import { Project } from '../../awx/interfaces/Project';
-import { JobTemplate } from '../../awx/interfaces/JobTemplate';
-import { WorkflowJobTemplate } from '../../awx/interfaces/WorkflowJobTemplate';
-import { resourceEndPoints } from '../../awx/views/schedules/hooks/scheduleHelpers';
+import { InventorySource } from '../../interfaces/InventorySource';
+import { Project } from '../../interfaces/Project';
+import { JobTemplate } from '../../interfaces/JobTemplate';
+import { WorkflowJobTemplate } from '../../interfaces/WorkflowJobTemplate';
+import { resourceEndPoints } from '../../views/schedules/hooks/scheduleHelpers';
 import {
   ResourceTypeInput,
   ResourceInput,
@@ -231,7 +231,7 @@ export function ResourceSelectionStep(props: { hasSourceNode?: boolean }) {
       <>
         <PageFormSection>
           <ResourceTypeInput />
-          {resourceType && <ResourceInput />}
+          {resourceType && <ResourceInput needsInventory />}
         </PageFormSection>
         {selectedResource && <ScheduleInputs />}
       </>

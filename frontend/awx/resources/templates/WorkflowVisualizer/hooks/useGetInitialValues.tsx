@@ -15,12 +15,13 @@ import {
   WizardFormValues,
   UnifiedJobType,
 } from '../types';
-import { getConvergenceType, getValueBasedOnJobType, shouldHideOtherStep } from '../wizard/helpers';
+import { getConvergenceType, getValueBasedOnJobType } from '../wizard/helpers';
+import { shouldHideOtherStep } from '../../../../common/SharedWizard/helpers';
 import { jsonToYaml } from '../../../../../../framework/utils/codeEditorUtils';
 import { RESOURCE_TYPE } from '../constants';
 
 interface WizardStepState {
-  nodeTypeStep?: Partial<WizardFormValues>;
+  resourceSelectionStep?: Partial<WizardFormValues>;
   nodePromptsStep?: { prompt: Partial<PromptFormValues> };
 }
 
@@ -50,8 +51,8 @@ export function useNodeTypeStepDefaults(): (node?: GraphNode) => CommonNodeValue
       node_alias: nodeIdentifier ?? defaultMapper.node_alias,
       node_convergence: nodeConvergence ?? defaultMapper.node_convergence,
       node_days_to_keep: nodeDaysToKeep ?? defaultMapper.node_days_to_keep,
-      node_resource: nodeUJT ?? defaultMapper.node_resource,
-      node_type: nodeType || defaultMapper.node_type,
+      resource: nodeUJT ?? defaultMapper.resource,
+      resource_type: nodeType || defaultMapper.resource_type,
     };
   }, []);
 }
@@ -64,8 +65,8 @@ const defaultMapper: CommonNodeValues = {
   node_alias: '',
   node_convergence: 'any',
   node_days_to_keep: 30,
-  node_resource: null,
-  node_type: RESOURCE_TYPE.job,
+  resource: null,
+  resource_type: RESOURCE_TYPE.job,
   node_status_type: EdgeStatus.info,
 };
 
@@ -73,7 +74,7 @@ export function useGetInitialValues(): (node: GraphNode) => Promise<WizardStepSt
   const nodeTypeStepDefaults = useNodeTypeStepDefaults();
   return useCallback(
     async (node: GraphNode): Promise<WizardStepState> => {
-      const nodeTypeStep = nodeTypeStepDefaults(node);
+      const resourceSelectionStep = nodeTypeStepDefaults(node);
       const nodeData = node.getData();
       const nodeId = node.getId();
       const isNewNode = nodeId.includes('unsavedNode');
@@ -82,7 +83,7 @@ export function useGetInitialValues(): (node: GraphNode) => Promise<WizardStepSt
       const hidePromptStep = launch ? shouldHideOtherStep(launch) : true;
 
       if (hidePromptStep) {
-        return { nodeTypeStep };
+        return { resourceSelectionStep };
       }
 
       const nodeCredentials =
@@ -140,7 +141,7 @@ export function useGetInitialValues(): (node: GraphNode) => Promise<WizardStepSt
         original,
       };
 
-      return { nodeTypeStep, nodePromptsStep: { prompt: nodePromptsValues } };
+      return { resourceSelectionStep, nodePromptsStep: { prompt: nodePromptsValues } };
     },
     [nodeTypeStepDefaults]
   );

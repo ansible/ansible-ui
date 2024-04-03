@@ -26,7 +26,8 @@ describe('NodeAddWizard', () => {
         <NodeAddWizard />
       </VisualizationProvider>
     );
-    cy.get('[data-cy="node-type-form-group"]').within(() => {
+    cy.selectDropdownOptionByResourceName('resource-type', 'Job Template');
+    cy.get('[data-cy="resource-type-form-group"]').within(() => {
       cy.get('span.pf-v5-c-select__toggle-text').should('have.text', 'Job Template');
     });
     cy.get('[data-cy="job-template-select-form-group"]').within(() => {
@@ -46,7 +47,8 @@ describe('NodeAddWizard', () => {
         <NodeAddWizard />
       </VisualizationProvider>
     );
-    cy.get('[data-cy="node-type-form-group"]').within(() => {
+    cy.selectDropdownOptionByResourceName('resource-type', 'Job Template');
+    cy.get('[data-cy="resource-type-form-group"]').within(() => {
       cy.get('span.pf-v5-c-select__toggle-text').should('have.text', 'Job Template');
     });
     cy.get('[data-cy="job-template-select-form-group"]').within(() => {
@@ -70,8 +72,8 @@ describe('NodeAddWizard', () => {
         <NodeAddWizard />
       </VisualizationProvider>
     );
-    cy.selectDropdownOptionByResourceName('node-type', 'Workflow Job Template');
-    cy.get('[data-cy="node-type-form-group"]').within(() => {
+    cy.selectDropdownOptionByResourceName('resource-type', 'Workflow Job Template');
+    cy.get('[data-cy="resource-type-form-group"]').within(() => {
       cy.get('span.pf-v5-c-select__toggle-text').should('have.text', 'Workflow Job Template');
     });
     cy.get('[data-cy="job-template-select-form-group"]').within(() => {
@@ -88,7 +90,7 @@ describe('NodeAddWizard', () => {
         <NodeAddWizard />
       </VisualizationProvider>
     );
-    cy.selectDropdownOptionByResourceName('node-type', 'Approval');
+    cy.selectDropdownOptionByResourceName('resource-type', 'Approval');
     cy.get('[data-cy="approval_name"]').should('have.value', '');
     cy.get('[data-cy="approval_description"]').should('have.value', '');
     cy.get('[data-cy="approval_timeout_minutes"]').should('have.value', 0);
@@ -102,8 +104,8 @@ describe('NodeAddWizard', () => {
         <NodeAddWizard />
       </VisualizationProvider>
     );
-    cy.selectDropdownOptionByResourceName('node-type', 'Project Sync');
-    cy.get('[data-cy="node-type-form-group"]').within(() => {
+    cy.selectDropdownOptionByResourceName('resource-type', 'Project Sync');
+    cy.get('[data-cy="resource-type-form-group"]').within(() => {
       cy.get('span.pf-v5-c-select__toggle-text').should('have.text', 'Project Sync');
     });
     cy.get('[data-cy="project-form-group"]').within(() => {
@@ -118,8 +120,8 @@ describe('NodeAddWizard', () => {
         <NodeAddWizard />
       </VisualizationProvider>
     );
-    cy.selectDropdownOptionByResourceName('node-type', 'Inventory Source Sync');
-    cy.get('[data-cy="node-type-form-group"]').within(() => {
+    cy.selectDropdownOptionByResourceName('resource-type', 'Inventory Source Sync');
+    cy.get('[data-cy="resource-type-form-group"]').within(() => {
       cy.get('span.pf-v5-c-select__toggle-text').should('have.text', 'Inventory Source Sync');
     });
     cy.get('[data-cy="inventory-source-select-form-group"]').within(() => {
@@ -134,8 +136,8 @@ describe('NodeAddWizard', () => {
         <NodeAddWizard />
       </VisualizationProvider>
     );
-    cy.selectDropdownOptionByResourceName('node-type', 'Management Job');
-    cy.get('[data-cy="node-type-form-group"]').within(() => {
+    cy.selectDropdownOptionByResourceName('resource-type', 'Management Job');
+    cy.get('[data-cy="resource-type-form-group"]').within(() => {
       cy.get('span.pf-v5-c-select__toggle-text').should('have.text', 'Management Job');
     });
     cy.get('[data-cy="management-job-template-select-form-group"]').within(() => {

@@ -118,7 +118,7 @@ describe('Workflow Visualizer', () => {
         force: true,
       });
       cy.get('li[data-cy="add-node-and-link"]').click();
-      cy.selectDropdownOptionByResourceName('node-type', 'Job Template');
+      cy.selectDropdownOptionByResourceName('resource-type', 'Job Template');
       cy.selectDropdownOptionByResourceName('job-template-select', `${jobTemplate.name}`);
       cy.selectDropdownOptionByResourceName('node-status-type', 'Always');
       cy.selectDropdownOptionByResourceName('node-convergence', 'All');
@@ -160,7 +160,7 @@ describe('Workflow Visualizer', () => {
         force: true,
       });
       cy.get('li[data-cy="add-node-and-link"]').click();
-      cy.selectDropdownOptionByResourceName('node-type', 'Job Template');
+      cy.selectDropdownOptionByResourceName('resource-type', 'Job Template');
       cy.selectDropdownOptionByResourceName('job-template-select', `${jobTemplate.name}`);
       cy.selectDropdownOptionByResourceName('node-status-type', 'Always');
       cy.selectDropdownOptionByResourceName('node-convergence', 'All');
@@ -198,11 +198,11 @@ describe('Workflow Visualizer', () => {
                   force: true,
                 });
                 cy.get('li[data-cy="edit-node"]').click();
-                cy.get('[data-cy*="node-type-form-group"]').should(
+                cy.get('[data-cy*="resource-type-form-group"]').should(
                   'have.text',
-                  'Node type * Project Sync'
+                  'Resource type * Project Sync'
                 );
-                cy.selectDropdownOptionByResourceName('node-type', 'Inventory Source Sync');
+                cy.selectDropdownOptionByResourceName('resource-type', 'Inventory Source Sync');
                 cy.selectDropdownOptionByResourceName(
                   'inventory-source-select',
                   `${inventorySource.name}`
@@ -256,7 +256,7 @@ describe('Workflow Visualizer', () => {
       cy.visit(`/templates/workflow_job_template/${workflowJobTemplate?.id}/visualizer`);
       cy.contains('Workflow Visualizer').should('be.visible');
       cy.clickButton('Add step');
-      cy.selectDropdownOptionByResourceName('node-type', 'Job Template');
+      cy.selectDropdownOptionByResourceName('resource-type', 'Job Template');
       cy.selectDropdownOptionByResourceName('job-template-select', `${jobTemplate.name}`);
       cy.selectDropdownOptionByResourceName('node-convergence', 'All');
       cy.get('[data-cy="node-alias"]').type('Test Node');
@@ -267,7 +267,7 @@ describe('Workflow Visualizer', () => {
         force: true,
       });
       cy.get('li[data-cy="edit-node"]').click();
-      cy.selectDropdownOptionByResourceName('node-type', 'Project Sync');
+      cy.selectDropdownOptionByResourceName('resource-type', 'Project Sync');
       cy.selectDropdownOptionByResourceName('project', `${project.name}`);
       cy.selectDropdownOptionByResourceName('node-convergence', 'All');
       cy.get('[data-cy="node-alias"]').type(`Project Node`);
@@ -312,7 +312,7 @@ describe('Workflow Visualizer', () => {
           cy.get('[data-cy="alert-toaster"]').should('be.visible');
           cy.getBy('button[id="fit-to-screen"]').click();
           cy.clickButton('Add step');
-          cy.selectDropdownOptionByResourceName('node-type', 'Job Template');
+          cy.selectDropdownOptionByResourceName('resource-type', 'Job Template');
           cy.selectDropdownOptionByResourceName('job-template-select', `${jobTemplate.name}`);
           cy.selectDropdownOptionByResourceName('node-convergence', 'All');
           cy.get('[data-cy="node-alias"]').type('Test Node');
@@ -322,7 +322,7 @@ describe('Workflow Visualizer', () => {
             force: true,
           });
           cy.get('li[data-cy="add-node-and-link"]').click();
-          cy.selectDropdownOptionByResourceName('node-type', 'Project Sync');
+          cy.selectDropdownOptionByResourceName('resource-type', 'Project Sync');
           cy.selectDropdownOptionByResourceName('project', `${project.name}`);
           cy.selectDropdownOptionByResourceName('node-convergence', 'All');
           cy.get('[data-cy="node-alias"]').type('Project Node');
@@ -358,14 +358,14 @@ describe('Workflow Visualizer', () => {
                 cy.contains('button', 'Save').should('be.visible').click();
                 cy.getBy('button[id="fit-to-screen"]').click();
                 cy.clickButton('Add step');
-                cy.selectDropdownOptionByResourceName('node-type', 'Job Template');
+                cy.selectDropdownOptionByResourceName('resource-type', 'Job Template');
                 cy.selectDropdownOptionByResourceName('job-template-select', `${jobTemplate.name}`);
                 cy.selectDropdownOptionByResourceName('node-convergence', 'All');
                 cy.get('[data-cy="node-alias"]').type('Test Node');
                 cy.clickButton('Next');
                 cy.clickButton('Finish');
                 cy.clickButton('Add step');
-                cy.selectDropdownOptionByResourceName('node-type', 'Project Sync');
+                cy.selectDropdownOptionByResourceName('resource-type', 'Project Sync');
                 cy.selectDropdownOptionByResourceName('project', `${project.name}`);
                 cy.selectDropdownOptionByResourceName('node-convergence', 'All');
                 cy.clickButton('Next');
@@ -421,7 +421,7 @@ describe('Workflow Visualizer', () => {
             force: true,
           });
           cy.get('li[data-cy="add-node-and-link"]').click();
-          cy.selectDropdownOptionByResourceName('node-type', 'Job Template');
+          cy.selectDropdownOptionByResourceName('resource-type', 'Job Template');
           cy.selectDropdownOptionByResourceName('job-template-select', `${jobTemplate.name}`);
           cy.selectDropdownOptionByResourceName('node-status-type', 'Always');
           cy.selectDropdownOptionByResourceName('node-convergence', 'All');

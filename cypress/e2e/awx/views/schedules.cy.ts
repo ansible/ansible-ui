@@ -13,28 +13,26 @@ describe('schedules', () => {
   let project: Project;
   let inventorySource: InventorySource;
 
-  before(() => {
+  before(function () {
     cy.awxLogin();
+    organization = this.globalOrganization as Organization;
+    project = this.globalProject as Project;
   });
 
   beforeEach(() => {
     cy.createAWXSchedule().then((sched: Schedule) => (schedule = sched));
-    cy.createAwxOrganization().then((o) => {
-      organization = o;
-      cy.createAwxProject({ organization: organization.id }).then((p) => {
-        project = p;
-      });
-      cy.createAwxInventory({ organization: organization.id }).then((i) => {
-        inventory = i;
-        cy.createAwxInventorySource(i, project).then((invSrc) => {
-          inventorySource = invSrc;
-        });
+    cy.createAwxInventory({ organization: organization.id }).then((i) => {
+      inventory = i;
+      cy.createAwxInventorySource(i, project).then((invSrc) => {
+        inventorySource = invSrc;
       });
     });
   });
 
   afterEach(() => {
     cy.deleteAWXSchedule(schedule, { failOnStatusCode: false });
+    cy.deleteAwxInventorySource(inventorySource, { failOnStatusCode: false });
+    cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
   });
 
   it('renders schedules list', () => {
@@ -93,7 +91,7 @@ describe('schedules', () => {
     }).then((jobTemplate) => {
       cy.navigateTo('awx', 'schedules');
       cy.getBy('[data-cy="create-schedule"]').click();
-      cy.selectDropdownOptionByResourceName('node_type', 'Job template');
+      cy.selectDropdownOptionByResourceName('resource-type', 'Job Template');
       cy.selectDropdownOptionByResourceName('job-template-select', jobTemplate.name);
       cy.get('[data-cy="wizard-nav"] li').eq(1).should('contain.text', 'Prompts');
     });
@@ -107,17 +105,17 @@ describe('schedules', () => {
     }).then((workflowJobTemplate) => {
       cy.navigateTo('awx', 'schedules');
       cy.getBy('[data-cy="create-schedule"]').click();
-      cy.selectDropdownOptionByResourceName('node_type', 'Workflow job template');
+      cy.selectDropdownOptionByResourceName('resource-type', 'Workflow Job Template');
       cy.selectDropdownOptionByResourceName('job-template-select', workflowJobTemplate.name);
       cy.get('[data-cy="wizard-nav"] li').eq(1).should('contain.text', 'Prompts');
     });
   });
 
-  it('project does not renders prompt step', () => {
+  it('project does not render prompt step', () => {
     cy.navigateTo('awx', 'schedules');
     cy.getBy('[data-cy="create-schedule"]').click();
-    cy.getBy('[data-cy="node_type-form-group"]').click();
-    cy.getBy('[data-cy="project"]').click();
+    cy.getBy('[data-cy="resource-type-form-group"]').click();
+    cy.getBy('[data-cy="project-sync"]').click();
     cy.selectDropdownOptionByResourceName('project', project.name);
     cy.get('[data-cy="wizard-nav"] li').eq(1).should('contain.text', 'Rules');
   });
@@ -125,7 +123,8 @@ describe('schedules', () => {
   it('management jobs does not renders prompt step', () => {
     cy.navigateTo('awx', 'schedules');
     cy.getBy('[data-cy="create-schedule"]').click();
-    cy.selectDropdownOptionByResourceName('node_type', 'Management job template');
+    cy.getBy('[data-cy="resource-type-form-group"]').click();
+    cy.getBy('[data-cy="management-job"]').click();
     cy.selectDropdownOptionByResourceName(
       'management-job-template-select',
       'Cleanup Activity Stream'
@@ -136,7 +135,8 @@ describe('schedules', () => {
   it('inventory source does not renders prompt step', () => {
     cy.navigateTo('awx', 'schedules');
     cy.getBy('[data-cy="create-schedule"]').click();
-    cy.selectDropdownOptionByResourceName('node_type', 'Inventory source');
+    cy.getBy('[data-cy="resource-type-form-group"]').click();
+    cy.getBy('[data-cy="inventory-source-sync"]').click();
     cy.selectDropdownOptionByResourceName('inventory', inventory.name);
     cy.selectDropdownOptionByResourceName('inventory-source-select', inventorySource.name);
     cy.get('[data-cy="wizard-nav"] li').eq(1).should('contain.text', 'Rules');

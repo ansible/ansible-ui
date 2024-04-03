@@ -1,22 +1,24 @@
 import { useTranslation } from 'react-i18next';
-import { PageFormWatch } from '../../../../framework/PageForm/Utils/PageFormWatch';
-import { RESOURCE_TYPE } from '../../../awx/resources/templates/WorkflowVisualizer/constants';
-import { WizardFormValues } from '../../../awx/resources/templates/WorkflowVisualizer/types';
-import { PageFormJobTemplateSelect } from '../../../awx/resources/templates/components/PageFormJobTemplateSelect';
-import { PageFormGrid, PageFormTextInput } from '../../../../framework';
-import { PageFormGroup } from '../../../../framework/PageForm/Inputs/PageFormGroup';
+import { PageFormWatch } from '../../../../../framework/PageForm/Utils/PageFormWatch';
+import { RESOURCE_TYPE } from '../../../resources/templates/WorkflowVisualizer/constants';
+import { WizardFormValues } from '../../../resources/templates/WorkflowVisualizer/types';
+import { PageFormJobTemplateSelect } from '../../../resources/templates/components/PageFormJobTemplateSelect';
+import { PageFormGrid, PageFormTextInput } from '../../../../../framework';
+import { PageFormGroup } from '../../../../../framework/PageForm/Inputs/PageFormGroup';
 import { InputGroup, InputGroupItem, InputGroupText, TextInput } from '@patternfly/react-core';
-import { Controller, useFormContext, FieldPath } from 'react-hook-form';
-import { PageFormProjectSelect } from '../../../awx/resources/projects/components/PageFormProjectSelect';
-import { PageFormInventorySourceSelect } from '../../../awx/resources/inventories/components/PageFormInventorySourceSelect';
-import { PageFormManagementJobsSelect } from '../../../awx/administration/management-jobs/components/PageFormManagementJobsSelect';
-import { AwxItemsResponse } from '../../../awx/common/AwxItemsResponse';
-import { SystemJobTemplate } from '../../../awx/interfaces/SystemJobTemplate';
-import { awxAPI } from '../../../awx/common/api/awx-utils';
-import { useGet } from '../../crud/useGet';
+import { Controller, useFormContext, FieldPath, useWatch } from 'react-hook-form';
+import { PageFormProjectSelect } from '../../../resources/projects/components/PageFormProjectSelect';
+import { PageFormInventorySourceSelect } from '../../../resources/inventories/components/PageFormInventorySourceSelect';
+import { PageFormManagementJobsSelect } from '../../../administration/management-jobs/components/PageFormManagementJobsSelect';
+import { AwxItemsResponse } from '../../AwxItemsResponse';
+import { SystemJobTemplate } from '../../../interfaces/SystemJobTemplate';
+import { awxAPI } from '../../api/awx-utils';
+import { useGet } from '../../../../common/crud/useGet';
+import { PageFormInventorySelect } from '../../../resources/inventories/components/PageFormInventorySelect';
 
-export function ResourceInput() {
+export function ResourceInput(props: { needsInventory?: boolean }) {
   const { t } = useTranslation();
+  const inventory = useWatch({ name: 'inventory' }) as WizardFormValues;
   return (
     <PageFormWatch watch="resource_type">
       {(nodeType) => {
@@ -57,7 +59,16 @@ export function ResourceInput() {
           case RESOURCE_TYPE.project_update:
             return <PageFormProjectSelect<WizardFormValues> name="resource" isRequired />;
           case RESOURCE_TYPE.inventory_update:
-            return <PageFormInventorySourceSelect<WizardFormValues> name="resource" isRequired />;
+            return props.needsInventory ? (
+              <>
+                <PageFormInventorySelect name="inventory" />
+                {inventory && (
+                  <PageFormInventorySourceSelect<WizardFormValues> name="resource" isRequired />
+                )}
+              </>
+            ) : (
+              <PageFormInventorySourceSelect<WizardFormValues> name="resource" isRequired />
+            );
           case RESOURCE_TYPE.system_job:
             return (
               <>

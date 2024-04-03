@@ -1,7 +1,7 @@
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { WizardFormValues } from '../../../awx/resources/templates/WorkflowVisualizer/types';
-import { PageFormTextInput } from '../../../../framework';
+import { WizardFormValues } from '../../../resources/templates/WorkflowVisualizer/types';
+import { PageFormTextInput } from '../../../../../framework';
 
 export function AliasInput() {
   const { t } = useTranslation();

@@ -80,22 +80,24 @@ describe('ScheduleAddWizard', () => {
 
       cy.get('[data-cy="wizard-nav"]').within(() => {
         cy.get('li').should('have.length', 4);
-        ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
+        ['Resource details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
           cy.get('li')
             .eq(index)
             .should((el) => expect(el.text().trim()).to.equal(text));
         });
       });
 
-      cy.selectDropdownOptionByResourceName('node_type', 'Job template');
+      cy.selectDropdownOptionByResourceName('resource-type', 'Job Template');
       cy.selectDropdownOptionByResourceName('job-template-select', 'Mock Job Template');
 
       cy.get('[data-cy="wizard-nav"]').within(() => {
-        ['Details', 'Prompts', 'Survey', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
-          cy.get('li')
-            .eq(index)
-            .should((el) => expect(el.text().trim()).to.equal(text));
-        });
+        ['Resource details', 'Prompts', 'Survey', 'Rules', 'Exceptions', 'Review'].forEach(
+          (text, index) => {
+            cy.get('li')
+              .eq(index)
+              .should((el) => expect(el.text().trim()).to.equal(text));
+          }
+        );
       });
     });
 
@@ -104,7 +106,7 @@ describe('ScheduleAddWizard', () => {
         initialEntries: ['/schedules/add'],
         path: '/schedules/add',
       });
-      cy.selectDropdownOptionByResourceName('node_type', 'Job template');
+      cy.selectDropdownOptionByResourceName('resource-type', 'Job Template');
       cy.clickButton(/^Next$/);
       cy.get('[data-cy="name-form-group"]').within(() => {
         cy.get('span.pf-v5-c-helper-text__item-text').should(
@@ -128,14 +130,14 @@ describe('ScheduleAddWizard', () => {
       });
 
       cy.get('[data-cy="wizard-nav"]').within(() => {
-        ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
+        ['Resource details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
           cy.get('li')
             .eq(index)
             .should((el) => expect(el.text().trim()).to.equal(text));
         });
       });
 
-      cy.selectDropdownOptionByResourceName('node_type', 'Job template');
+      cy.selectDropdownOptionByResourceName('resource-type', 'Job Template');
       cy.selectDropdownOptionByResourceName('job-template-select', 'Mock Job Template');
       cy.get('[data-cy="name"]').type('Test Schedule');
       cy.selectDropdownOptionByResourceName('timezone', 'Zulu');

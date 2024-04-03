@@ -1,8 +1,8 @@
 import { useTranslation } from 'react-i18next';
-import { useAwxConfig } from '../../../awx/common/useAwxConfig';
-import { PageFormSelect } from '../../../../framework';
-import { WizardFormValues } from '../../../awx/resources/templates/WorkflowVisualizer/types';
-import { getDocsBaseUrl } from '../../../awx/common/util/getDocsBaseUrl';
+import { useAwxConfig } from '../../useAwxConfig';
+import { PageFormSelect } from '../../../../../framework';
+import { WizardFormValues } from '../../../resources/templates/WorkflowVisualizer/types';
+import { getDocsBaseUrl } from '../../util/getDocsBaseUrl';
 
 export function ConvergenceInput() {
   const { t } = useTranslation();
