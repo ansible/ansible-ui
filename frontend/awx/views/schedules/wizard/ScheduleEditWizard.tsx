@@ -13,7 +13,7 @@ import { AwxRoute } from '../../../main/AwxRoutes';
 import { ScheduleFormWizard } from '../types';
 import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
 import { RulesStep } from './RulesStep';
-import { Frequency, RRule } from 'rrule';
+import { Frequency, RRule, rrulestr } from 'rrule';
 import { ExceptionsStep } from './ExceptionsStep';
 import { ScheduleSurveyStep } from './ScheduleSurveyStep';
 import { NodeTypeStep } from '../../../resources/templates/WorkflowVisualizer/wizard/NodeTypeStep';
@@ -27,7 +27,6 @@ import { awxAPI } from '../../../common/api/awx-utils';
 import { parseStringToTagArray } from '../../../resources/templates/JobTemplateFormHelpers';
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';
 import { Label } from '../../../interfaces/Label';
-import { Organization } from '../../../interfaces/Organization';
 
 export function ScheduleEditWizard() {
   const { t } = useTranslation();
@@ -44,10 +43,6 @@ export function ScheduleEditWizard() {
   const { data: credentials } = useGet<Credential>(
     awxAPI`/schedules/${params.schedule_id as string}/credentials/`
   );
-  console.log(schedule)
-  console.log(instance_groups)
-  console.log(labels)
-  console.log(credentials)
 
   const navigate = useNavigate();
 
@@ -119,6 +114,10 @@ export function ScheduleEditWizard() {
     },
     { id: 'review', label: t('Review'), inputs: <PageNotImplemented /> },
   ];
+
+  if (!schedule) return;
+  const ruleObj = schedule.rrule && rrulestr(schedule.rrule);
+
   const currentValues = {
     details: {
       name: schedule?.name,
@@ -130,7 +129,8 @@ export function ScheduleEditWizard() {
     },
     prompt: {
       credentials: credentials,
-      diff_mode: schedule?.diff_mode,
+      // diff_mode: schedule?.diff_mode,
+      diff_mode: true,
       execution_environment: schedule?.execution_environment,
       extra_vars: schedule?.extra_data,
       forks: schedule?.forks,
@@ -146,7 +146,24 @@ export function ScheduleEditWizard() {
       timeout: schedule?.timeout,
       verbosity: schedule?.verbosity,
     },
-    rules: schedule?.rrule,
+    rules: {
+      id: undefined,
+      freq: Frequency.WEEKLY,
+      interval: 1,
+      wkst: RRule.SU,
+      byweekday: null,
+      byweekno: null,
+      bymonth: null,
+      bymonthday: null,
+      byyearday: null,
+      bysetpos: null,
+      until: null,
+      count: null,
+      byminute: null,
+      byhour: null,
+      endingType: '',
+      rules: [{ id: 1, rule: ruleObj }],
+    },
     exceptions: {
       id: undefined,
       freq: null,
