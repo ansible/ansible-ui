@@ -567,3 +567,7 @@ function PageFormMultiSelectInventories() {
     />
   );
 }
+
+export const inventoryFormLabels = {
+
+};
