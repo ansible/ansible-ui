@@ -126,7 +126,7 @@ describe('host and inventory host', () => {
 <<<<<<< HEAD
 =======
     cy.searchAndDisplayResource(hostName);
-    cy.contains(hostName).click();
+    cy.get('[data-cy="actions-dropdown"]').click();
     cy.selectDetailsPageKebabAction('delete-host');
 >>>>>>> 349a32705 (review changes)
 
