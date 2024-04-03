@@ -58,13 +58,6 @@ export function GroupPage() {
           },
           { label: inventoryGroup?.name },
         ]}
-        headerActions={
-          <PageActions<InventoryGroup>
-            actions={actions}
-            position={DropdownPosition.right}
-            selectedItem={inventoryGroup}
-          />
-        }
       />
       <PageRoutedTabs
         backTab={{
