@@ -5,6 +5,6 @@ export interface PageSelectOption<ValueT> {
   value: ValueT;
   icon?: ReactNode;
   label: string;
-  description?: string | null | undefined;
+  description?: ReactNode;
   group?: string;
 }
