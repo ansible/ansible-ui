@@ -32,7 +32,7 @@ export function HubOverview() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Welcome to Galaxy NG')}
+        title={t('Welcome to Ansible Galaxy')}
         description={t(
           'Find and use content that is supported by Red Hat and our partners to deliver reassurance for the most demanding environments. Get started by exploring the options below.'
         )}

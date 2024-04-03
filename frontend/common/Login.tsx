@@ -61,8 +61,17 @@ type LoginProps = {
 
 export function Login(props: LoginProps) {
   const { t } = useTranslation();
-  const productName = process.env.PRODUCT ?? 'Ansible';
+  // const productName = process.env.PRODUCT ?? 'Ansible';
   const [translations] = useFrameworkTranslations();
+
+  const productNames: { [key: string]: string } = {
+    'Automation Hub': 'Ansible Galaxy',
+    'Event Driven Automation': 'EDA',
+    AWX: 'AWX',
+    'Ansible Automation Platform': 'Ansible Automation Platform',
+  };
+
+  const label = productNames[process.env.PRODUCT] || process.env.PRODUCTs;
   return (
     <ErrorBoundary message={translations.errorText}>
       <Wrapper>
@@ -80,7 +89,7 @@ export function Login(props: LoginProps) {
         <LeftHalf>
           <Inner>
             <Heading headingLevel="h1" size={TitleSizes['2xl']}>
-              {t('Welcome to {{productName}}', { productName })}
+              {t('Welcome to {{label}}', { label })}
             </Heading>
             <LoginForm
               apiUrl={props.apiUrl}
@@ -93,7 +102,14 @@ export function Login(props: LoginProps) {
         <RightHalf>
           <ServiceLogo src={logoString(process.env.PRODUCT)} alt="logo" />
         </RightHalf>
-        <Logo src="/static/media/ansible-mark.svg" alt="ansible mark" />
+        <Logo
+          src={
+            process.env.PRODUCT === 'Ansible Automation Platform'
+              ? '/static/media/aaa.svg'
+              : '/static/media/ansible-mark.svg'
+          }
+          alt="ansible mark"
+        />
       </Wrapper>
     </ErrorBoundary>
   );
@@ -104,6 +120,7 @@ export function logoString(name: string | undefined) {
     'Automation Hub': '/static/media/galaxy-logo-ansibull.svg',
     'Event Driven Automation': '/static/media/eda-icon.svg',
     AWX: '/static/media/awx-logo.svg',
+    'Ansible Automation Platform': '/static/media/aap-line.svg',
   };
 
   return LOGO_URL[name as string] || name;
