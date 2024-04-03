@@ -7,6 +7,7 @@ import { ManagementJobPage } from '../../administration/management-jobs/Manageme
 import { ManagementJobs } from '../../administration/management-jobs/ManagementJobs';
 import { AwxRoute } from '../AwxRoutes';
 import { ScheduleAddWizard } from '../../views/schedules/wizard/ScheduleAddWizard';
+import { ScheduleEditWizard } from '../../views/schedules/wizard/ScheduleEditWizard';
 
 export function useAwxManagementJobsRoutes() {
   const { t } = useTranslation();
@@ -19,7 +20,7 @@ export function useAwxManagementJobsRoutes() {
         {
           id: AwxRoute.ManagementJobEditSchedule,
           path: ':id/schedules/:schedule_id/edit',
-          element: <PageNotImplemented />,
+          element: <ScheduleEditWizard />,
         },
         {
           id: AwxRoute.ManagementJobScheduleCreate,

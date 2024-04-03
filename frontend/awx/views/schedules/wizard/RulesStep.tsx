@@ -14,6 +14,7 @@ export function RulesStep() {
   const { getValues } = useFormContext();
   const rules = getValues('rules') as RuleListItemType[];
   const hasRules = rules?.length > 0;
+  console.log(rules)
   return (
     <PageFormSection title={t('Rules')} singleColumn>
       {!isOpen && hasRules && (

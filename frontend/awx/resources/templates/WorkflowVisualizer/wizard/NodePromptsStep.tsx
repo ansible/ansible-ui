@@ -46,6 +46,7 @@ export function NodePromptsStep() {
   useEffect(() => {
     if (!config || !config?.defaults) return;
     const { defaults } = config;
+    console.log(wizardData)
 
     const readOnlyLabels = defaults?.labels?.map((label) => ({
       ...label,

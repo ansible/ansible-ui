@@ -77,6 +77,48 @@ export function useGetSchedulCreateUrl(sublistEndPoint?: string) {
   return createUrl;
 }
 
+export function useGetSchedulEditUrl(sublistEndPoint?: string) {
+  const getPageUrl = useGetPageUrl();
+  const params = useParams<{
+    inventory_type?: string;
+    id: string;
+    source_id: string;
+    schedule_id?: string;
+  }>();
+  const createScheduleContainerRoutes: { [key: string]: string } = {
+    inventory_sources: getPageUrl(AwxRoute.InventorySourceScheduleEdit, {
+      params: {
+        inventory_type: params.inventory_type,
+        id: params.id,
+        source_id: params.source_id,
+        schedule_id: params.schedule_id,
+      },
+    }),
+    job_templates: getPageUrl(AwxRoute.JobTemplateEditSchedule, {
+      params: { id: params.id, schedule_id: params.schedule_id },
+    }),
+    workflow_job_templates: getPageUrl(AwxRoute.WorkflowJobTemplateEditSchedule, {
+      params: { id: params.id, schedule_id: params.schedule_id },
+    }),
+    projects: getPageUrl(AwxRoute.ProjectScheduleEdit, {
+      params: { id: params.id, schedule_id: params.schedule_id },
+    }),
+    management_job: getPageUrl(AwxRoute.ManagementJobEditSchedule, {
+      params: { id: params.id, schedule_id: params.schedule_id },
+    }),
+  };
+
+  if (!sublistEndPoint) return getPageUrl(AwxRoute.EditSchedule);
+  let createUrl: string = getPageUrl(AwxRoute.EditSchedule);
+  const resource_type = Object.keys(createScheduleContainerRoutes).find((route) =>
+    sublistEndPoint?.split('/').includes(route)
+  );
+  if (resource_type) {
+    createUrl = createScheduleContainerRoutes[resource_type];
+  }
+  return createUrl;
+}
+
 export function useGetCreateRuleRoute() {
   const getPageUrl = useGetPageUrl();
   const createRuleRoutes: { [key: string]: string } = {

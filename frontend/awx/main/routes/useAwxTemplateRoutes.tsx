@@ -24,6 +24,7 @@ import { AwxRoute } from '../AwxRoutes';
 import { ResourceNotifications } from '../../resources/notifications/ResourceNotifications';
 import { TemplateJobs } from '../../resources/templates/TemplatePage/TemplateJobs';
 import { SchedulesList } from '../../views/schedules/SchedulesList';
+import { ScheduleEditWizard } from '../../views/schedules/wizard/ScheduleEditWizard';
 
 export function useAwxTemplateRoutes() {
   const { t } = useTranslation();
@@ -53,7 +54,7 @@ export function useAwxTemplateRoutes() {
             {
               id: AwxRoute.JobTemplateEditSchedule,
               path: ':id/schedules/:schedule_id/edit',
-              element: <PageNotImplemented />,
+              element: <ScheduleEditWizard />,
             },
             {
               id: AwxRoute.JobTemplateSchedulePage,
@@ -159,7 +160,7 @@ export function useAwxTemplateRoutes() {
             {
               id: AwxRoute.WorkflowJobTemplateEditSchedule,
               path: ':id/schedules/:schedule_id/edit',
-              element: <PageNotImplemented />,
+              element: <ScheduleEditWizard />,
             },
             {
               id: AwxRoute.WorkflowJobTemplateSchedulePage,
