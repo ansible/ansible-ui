@@ -4,24 +4,47 @@ import { AwxHost } from '../../../interfaces/AwxHost';
 import { InventoryHostDetailsInner as InventoryHostDetails } from './InventoryHostDetails';
 
 describe('InventoryHostDetails', () => {
-  it('Component renders and displays Application', () => {
-    cy.mount(<InventoryHostDetails host={mockAwxHost as unknown as AwxHost} />);
-  });
-  it('Render inventory host detail fields', () => {
-    cy.mount(<InventoryHostDetails host={mockAwxHost as unknown as AwxHost} />);
-    cy.get('[data-cy="name"]').should('have.text', 'test');
-    cy.get('[data-cy="code-block-value"]').should('have.text', '---\ntest: test');
-    cy.get('[data-cy="activity"] > .pf-v5-c-description-list__text').find(
-      'a[href="/jobs/command/1/output"]'
-    );
-    cy.get('[data-cy="activity"] > .pf-v5-c-description-list__text').find(
-      'a[href="/jobs/playbook/2/output"]'
-    );
-    cy.get('[data-cy="code-block-value"]');
-    cy.get('[data-cy="created"]').should('contain.text', formatDateString(mockAwxHost.created));
-    cy.get('[data-cy="last-modified"]').should(
-      'contain.text',
-      formatDateString(mockAwxHost.modified)
-    );
+  const kinds = ['constructed', 'smart', ''];
+
+  kinds.forEach((kind) => {
+    const path =
+      kind === ''
+        ? '/inventories/:inventory_type/:id/hosts/:host_id/details'
+        : kind === 'smart'
+          ? '/inventories/:inventory_type/:id/hosts/:host_id/details'
+          : '/inventories/:inventory_type/:id/hosts/:host_id/details';
+
+    const initialEntries =
+      kind === ''
+        ? ['/inventories/inventory/1/hosts/1/details']
+        : kind === 'smart'
+          ? ['/inventories/smart_inventory/1/hosts/1/details']
+          : ['/inventories/constructed_inventory/1/hosts/1/details'];
+
+    it(`Render inventory host detail fields (${kind === '' ? 'inventory' : kind})`, () => {
+      cy.mount(<InventoryHostDetails host={mockAwxHost as unknown as AwxHost} />, {
+        path,
+        initialEntries,
+      });
+      cy.get('[data-cy="name"]').should('have.text', 'test');
+      cy.get('[data-cy="code-block-value"]').should('have.text', '---\ntest: test');
+      cy.get('[data-cy="activity"] > .pf-v5-c-description-list__text').find(
+        'a[href="/jobs/command/1/output"]'
+      );
+      cy.get('[data-cy="activity"] > .pf-v5-c-description-list__text').find(
+        'a[href="/jobs/playbook/2/output"]'
+      );
+      cy.get('[data-cy="code-block-value"]');
+      cy.get('[data-cy="created"]').should('contain.text', formatDateString(mockAwxHost.created));
+      cy.get('[data-cy="last-modified"]').should(
+        'contain.text',
+        formatDateString(mockAwxHost.modified)
+      );
+      if (kind === 'constructed' || kind === 'smart') {
+        cy.get('[data-cy="enabled"]').should('exist');
+      } else {
+        cy.get('[data-cy="enabled"]').should('not.exist');
+      }
+    });
   });
 });
