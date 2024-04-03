@@ -56,16 +56,16 @@ export function MultipleChoiceField(props: IProps) {
   });
 
   const choices = fields as ChoiceOption[];
+  const updatedChoices = useWatch({ name: 'choices' }) as ChoiceOption[];
 
-  const addChoice = useWatch({ name: 'add-choice' }) as string;
+  const addChoice = (useWatch({ name: 'add-choice' }) as string) ?? '';
 
   const handleAdd = () => {
-    append({ name: addChoice });
+    append({ name: addChoice, default: false });
     setValue('add-choice', '');
   };
 
   const plainChoices = useMemo(() => choices.map((choice) => choice.name), [choices]);
-
   return (
     <PageFormGroup
       fieldId={'multiple-choice-options'}
@@ -89,9 +89,9 @@ export function MultipleChoiceField(props: IProps) {
             render={({ field, fieldState: { error } }) => (
               <Stack hasGutter>
                 <TextInput
-                  id={'add-choice-option'}
-                  data-cy={'add-choice-option'}
-                  aria-label={t('Add choice option')}
+                  id={'add-choice-input'}
+                  data-cy={'add-choice-input'}
+                  aria-label={t('Add choice input')}
                   {...field}
                   placeholder={t('Enter multiple choice option')}
                 />
@@ -111,6 +111,7 @@ export function MultipleChoiceField(props: IProps) {
             type="button"
             variant="plain"
             aria-label={t('Add choice')}
+            data-cy={'add-choice'}
             onClick={handleAdd}
             isDisabled={plainChoices.includes(addChoice) || addChoice?.length === 0}
           >
@@ -129,6 +130,9 @@ export function MultipleChoiceField(props: IProps) {
                 <Controller
                   name={`choices[${index}].name`}
                   control={control}
+                  rules={{
+                    required: t('Choice option cannot be empty.'),
+                  }}
                   render={({ field, fieldState: { error } }) => (
                     <>
                       <TextInput
@@ -157,6 +161,7 @@ export function MultipleChoiceField(props: IProps) {
                     type="button"
                     variant="plain"
                     aria-label={t('Remove choice')}
+                    data-cy={`remove-choice-${index}`}
                     onClick={() => {
                       remove(index);
                     }}
@@ -176,6 +181,7 @@ export function MultipleChoiceField(props: IProps) {
                             data-cy={`choice-radio-${index}`}
                             id={`choice-radio-${index}`}
                             label={defaultOptLabel}
+                            isDisabled={updatedChoices[index]?.name.length <= 0}
                             onChange={() => {
                               replace(choices.map((choice) => ({ ...choice, default: false })));
                               update(index, { ...choice, default: true });
@@ -194,6 +200,7 @@ export function MultipleChoiceField(props: IProps) {
                             label={defaultOptLabel}
                             isChecked={choice.default}
                             onClick={() => update(index, { ...choice, default: !choice.default })}
+                            isDisabled={updatedChoices[index]?.name.length <= 0}
                           />
                         )}
                       </>
