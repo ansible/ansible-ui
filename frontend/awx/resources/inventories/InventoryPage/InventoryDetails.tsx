@@ -33,6 +33,8 @@ import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { Tooltip } from '@patternfly/react-core';
 import { LastJobTooltip } from '../inventorySources/InventorySourceDetails';
 import { StatusLabel } from '../../../../common/Status';
+import { useInventoryFormDetailLabels } from '../InventoryForm';
+import { LabelHelp } from '../components/LabelHelp';
 
 function useInstanceGroups(inventoryId: string) {
   const { data } = useGet<{ results: InstanceGroup[] }>(
@@ -84,6 +86,7 @@ export function InventoryDetailsInner(props: { inventory: Inventory }) {
       ? awxAPI`/inventories/${params.id ?? ''}/inventory_sources/`
       : '';
 
+  const inventoryFormDetailLables = useInventoryFormDetailLabels();
   const inventorySourceRequest = useGet<AwxItemsResponse<InventorySource>>(inventorySourceUrl);
 
   const inventorySourceData = inventorySourceRequest.data?.results[0];
@@ -132,22 +135,49 @@ export function InventoryDetailsInner(props: { inventory: Inventory }) {
           <Label>{inventory.host_filter}</Label>
         </LabelGroup>
       </PageDetail>
-      <PageDetail label={t('Total hosts')}>{inventory.total_hosts}</PageDetail>
+      <PageDetail
+        label={t('Total hosts')}
+        helpText={t(
+          `This field is deprecated and will be removed in a future release. Total number of hosts in this inventory.`
+        )}
+      >
+        {inventory.total_hosts}
+      </PageDetail>
       <PageDetail label={t('Hosts with active failures')}>
         {inventory.hosts_with_active_failures}
       </PageDetail>
-      <PageDetail label={t('Total groups')}>{inventory.total_groups}</PageDetail>
-      <PageDetail label={t('Total inventory sources')}>
+      <PageDetail
+        label={t('Total groups')}
+        helpText={t(
+          `This field is deprecated and will be removed in a future release. Total number of groups in this inventory.`
+        )}
+      >
+        {inventory.total_groups}
+      </PageDetail>
+      <PageDetail
+        label={t('Total inventory sources')}
+        helpText={t(`Total number of external inventory sources configured within this inventory.`)}
+      >
         {inventory.total_inventory_sources}
       </PageDetail>
-      <PageDetail label={t('Inventory sources with active failures')}>
+      <PageDetail
+        label={t('Inventory sources with active failures')}
+        helpText={t(`Number of external inventory sources in this inventory with failures.`)}
+      >
         {inventory.inventory_sources_with_failures}
       </PageDetail>
       {inventory.kind === 'constructed' && (
         <>
-          <PageDetail label={t('Limit')}>{inventory.limit}</PageDetail>
-          <PageDetail label={t('Verbosity')}>{verbosityString}</PageDetail>
-          <PageDetail label={t('Update cache timeout')}>
+          <PageDetail label={t('Limit')} helpText={inventoryFormDetailLables.limit}>
+            {inventory.limit}
+          </PageDetail>
+          <PageDetail label={t('Verbosity')} helpText={inventoryFormDetailLables.verbosity}>
+            {verbosityString}
+          </PageDetail>
+          <PageDetail
+            label={t('Update cache timeout')}
+            helpText={inventoryFormDetailLables.cache_timeout}
+          >
             {inventory.update_cache_timeout}
           </PageDetail>
         </>
@@ -195,7 +225,11 @@ export function InventoryDetailsInner(props: { inventory: Inventory }) {
           </LabelGroup>
         )}
       </PageDetail>
-      <PageDetail label={t`Labels`} isEmpty={inventory.summary_fields.labels.results.length === 0}>
+      <PageDetail
+        label={t`Labels`}
+        isEmpty={inventory.summary_fields.labels.results.length === 0}
+        helpText={inventoryFormDetailLables.labels}
+      >
         <LabelGroup>
           {inventory.summary_fields.labels.results.map((label) => (
             <Label color="blue" key={label.id}>
@@ -234,6 +268,7 @@ export function InventoryDetailsInner(props: { inventory: Inventory }) {
         </TextList>
       </PageDetail>
       <PageDetailCodeEditor
+        helpText={<LabelHelp inventoryKind={inventory.kind} />}
         label={t('Variables')}
         showCopyToClipboard
         value={inventory.variables || '---'}

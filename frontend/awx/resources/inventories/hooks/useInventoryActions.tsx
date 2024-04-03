@@ -17,19 +17,19 @@ import { useParams } from 'react-router-dom';
 type InventoryActionOptions = {
   onInventoriesDeleted: (inventories: Inventory[]) => void;
   onInventoryCopied?: () => unknown;
-  detail : boolean;
+  detail: boolean;
 };
 
 export function useInventoryActions({
   onInventoriesDeleted,
   onInventoryCopied = () => null,
-  detail
+  detail,
 }: InventoryActionOptions) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const deleteInventories = useDeleteInventories(onInventoriesDeleted);
   const copyInventory = useCopyInventory(onInventoryCopied);
-  const params = useParams<{inventory_type : string}>();
+  const params = useParams<{ inventory_type: string }>();
 
   return useMemo<IPageAction<Inventory>[]>(() => {
     const cannotDeleteInventory = (inventory: Inventory): string =>
@@ -61,7 +61,7 @@ export function useInventoryActions({
       constructed: 'constructed_inventory',
     };
 
-    const arr : (IPageAction<Inventory> | undefined)[] = [
+    const arr: (IPageAction<Inventory> | undefined)[] = [
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
@@ -70,7 +70,7 @@ export function useInventoryActions({
         isPinned: true,
         label: t('Edit inventory'),
         isDisabled: (inventory: Inventory) => cannotEditInventory(inventory),
-        onClick: (inventory : Inventory) =>
+        onClick: (inventory: Inventory) =>
           pageNavigate(AwxRoute.EditInventory, {
             params: { inventory_type: kinds[inventory.kind], id: inventory.id },
           }),
@@ -83,13 +83,15 @@ export function useInventoryActions({
         isDisabled: (inventory: Inventory) => cannotCopyInventory(inventory),
         onClick: (inventory: Inventory) => copyInventory(inventory),
       },
-      params.inventory_type === 'constructed_inventory' ? {
-        type: PageActionType.Button,
-        selection: PageActionSelection.Single,
-        icon: SyncIcon,
-        label: t('Sync inventory'),
-        onClick: (inventory: Inventory) => {},
-      } : undefined,
+      params.inventory_type === 'constructed_inventory'
+        ? {
+            type: PageActionType.Button,
+            selection: PageActionSelection.Single,
+            icon: SyncIcon,
+            label: t('Sync inventory'),
+            onClick: (inventory: Inventory) => {},
+          }
+        : undefined,
       { type: PageActionType.Seperator },
       {
         type: PageActionType.Button,
@@ -97,11 +99,11 @@ export function useInventoryActions({
         icon: TrashIcon,
         label: t('Delete inventory'),
         isDisabled: (inventory: Inventory) => cannotDeleteInventory(inventory),
-        onClick: (inventory : Inventory) => deleteInventories([inventory]),
+        onClick: (inventory: Inventory) => deleteInventories([inventory]),
         isDanger: true,
       },
     ];
 
-    return arr.filter( (item) => item !== undefined) as IPageAction<Inventory>[];
+    return arr.filter((item) => item !== undefined) as IPageAction<Inventory>[];
   }, [deleteInventories, copyInventory, pageNavigate, t]);
 }
