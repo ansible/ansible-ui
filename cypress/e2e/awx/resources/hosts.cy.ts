@@ -27,16 +27,11 @@ describe('host and inventory host', () => {
     cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
   });
 
-<<<<<<< HEAD
   // tests
-=======
->>>>>>> 7cdea5aeb (remove comment out)
   it('can create, edit and delete a inventory host', () => {
     cy.visit(`/infrastructure/inventories/inventory/${inventory.id}/details`);
     cy.clickTab(/^Hosts$/, true);
     createAndEditAndDeleteHost(true, inventory);
-<<<<<<< HEAD
-=======
   });
 
   it('can create, edit and delete a host', () => {
@@ -59,7 +54,6 @@ describe('host and inventory host', () => {
       cy.get('[data-cy="Submit"]').click();
       cy.verifyPageTitle(group.name + '-changed name');
     });
->>>>>>> 7cdea5aeb (remove comment out)
   });
 
   it('can create, edit and delete a host', () => {
@@ -123,12 +117,6 @@ describe('host and inventory host', () => {
     } else {
       cy.visit('/infrastructure/hosts?page=1&perPage=10&sort=name');
     }
-<<<<<<< HEAD
-=======
-    cy.searchAndDisplayResource(hostName);
-    cy.get('[data-cy="actions-dropdown"]').click();
-    cy.selectDetailsPageKebabAction('delete-host');
->>>>>>> 349a32705 (review changes)
 
     cy.searchAndDisplayResource(hostName);
     cy.get(`[data-cy="actions-column-cell"] [data-cy="actions-dropdown"]`).click();
