@@ -1,5 +1,11 @@
 import { useTranslation } from 'react-i18next';
-import { PageHeader, PageWizard, PageWizardStep, useGetPageUrl } from '../../../../framework';
+import {
+  LoadingPage,
+  PageHeader,
+  PageWizard,
+  PageWizardStep,
+  useGetPageUrl,
+} from '../../../../framework';
 import { EdaSelectTeamsStep } from '../../access/teams/components/steps/EdaSelectTeamsStep';
 import { EdaTeam } from '../../interfaces/EdaTeam';
 import { EdaSelectRolesStep } from '../../access/roles/components/EdaSelectRolesStep';
@@ -15,13 +21,24 @@ export function EdaProjectAddTeams() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const params = useParams<{ id: string }>();
-  const { data: project } = useGet<EdaProject>(edaAPI`/projects/${params.id ?? ''}/`);
+  const { data: project, isLoading } = useGet<EdaProject>(edaAPI`/projects/${params.id ?? ''}/`);
+
+  if (isLoading) return <LoadingPage />;
 
   const steps: PageWizardStep[] = [
     {
       id: 'teams',
       label: t('Select team(s)'),
-      inputs: <EdaSelectTeamsStep />,
+      inputs: (
+        <EdaSelectTeamsStep
+          descriptionForTeamsSelection={t(
+            'Select the team(s) that you want to give access to {{projectName}}.',
+            {
+              projectName: project?.name,
+            }
+          )}
+        />
+      ),
       validate: (formData, _) => {
         const { teams } = formData as { teams: EdaTeam[] };
         if (!teams?.length) {

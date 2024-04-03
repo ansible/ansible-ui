@@ -13,8 +13,9 @@ const StyledTitle = styled(Title)`
   margin-bottom: 1rem;
 `;
 
-export function EdaSelectTeamsStep() {
+export function EdaSelectTeamsStep(props: { descriptionForTeamsSelection?: string }) {
   // const toolbarFilters = useTeamsFilters();
+  const { descriptionForTeamsSelection } = props;
   const { t } = useTranslation();
 
   const tableColumns: ITableColumn<EdaTeam>[] = useMemo(() => {
@@ -42,6 +43,10 @@ export function EdaSelectTeamsStep() {
   return (
     <>
       <StyledTitle headingLevel="h1">{t('Select team(s)')}</StyledTitle>
+      <h2 style={{ marginTop: '1rem', marginBottom: '1rem' }}>
+        {descriptionForTeamsSelection ??
+          t('Select the team(s) that you want to apply new roles to.')}
+      </h2>
       <PageMultiSelectList view={view} tableColumns={tableColumns} toolbarFilters={[]} />
     </>
   );

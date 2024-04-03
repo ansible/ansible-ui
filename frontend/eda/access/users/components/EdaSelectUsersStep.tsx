@@ -13,9 +13,10 @@ const StyledTitle = styled(Title)`
   margin-bottom: 1rem;
 `;
 
-export function EdaSelectUsersStep() {
+export function EdaSelectUsersStep(props: { descriptionForUsersSelection?: string }) {
   const toolbarFilters = useUserFilters();
   const { t } = useTranslation();
+  const { descriptionForUsersSelection } = props;
 
   const tableColumns: ITableColumn<EdaUser>[] = useMemo(() => {
     return [
@@ -54,6 +55,10 @@ export function EdaSelectUsersStep() {
   return (
     <>
       <StyledTitle headingLevel="h1">{t('Select user(s)')}</StyledTitle>
+      <h2 style={{ marginTop: '1rem', marginBottom: '1rem' }}>
+        {descriptionForUsersSelection ??
+          t('Select the user(s) that you want to apply new roles to.')}
+      </h2>
       <PageMultiSelectList
         view={view}
         tableColumns={tableColumns}

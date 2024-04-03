@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import {
+  LoadingPage,
   PageHeader,
   PageLayout,
   PageWizard,
@@ -21,13 +22,24 @@ export function EdaProjectAddUsers() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const params = useParams<{ id: string }>();
-  const { data: project } = useGet<EdaProject>(edaAPI`/projects/${params.id ?? ''}/`);
+  const { data: project, isLoading } = useGet<EdaProject>(edaAPI`/projects/${params.id ?? ''}/`);
+
+  if (isLoading) return <LoadingPage />;
 
   const steps: PageWizardStep[] = [
     {
       id: 'users',
       label: t('Select user(s)'),
-      inputs: <EdaSelectUsersStep />,
+      inputs: (
+        <EdaSelectUsersStep
+          descriptionForUsersSelection={t(
+            'Select the user(s) that you want to give access to {{projectName}}.',
+            {
+              projectName: project?.name,
+            }
+          )}
+        />
+      ),
       validate: (formData, _) => {
         const { users } = formData as { users: EdaUser[] };
         if (!users?.length) {
