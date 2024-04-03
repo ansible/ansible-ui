@@ -6,6 +6,7 @@ import { Project } from '../../../../frontend/awx/interfaces/Project';
 import { User } from '../../../../frontend/awx/interfaces/User';
 import { WorkflowJobTemplate } from '../../../../frontend/awx/interfaces/WorkflowJobTemplate';
 import { WorkflowNode } from '../../../../frontend/awx/interfaces/WorkflowNode';
+import { WorkflowJob } from '../../../../frontend/awx/interfaces/WorkflowJob';
 
 // describe('Workflow Approvals', () => {
 
@@ -123,9 +124,10 @@ describe('Workflow Approvals - List View', () => {
 
   it('admin can approve and then delete a workflow approval from the list row item', () => {
     cy.wait('@launchWFJT')
-      .its('response')
-      .then((response: { body: { workflow_job: number } }) => {
-        cy.getAwxWFApprovalByWorkflowJobID(response.body.workflow_job).then((wfa) => {
+      .its('response.body')
+      .then((response: WorkflowJob) => {
+        expect(response.id).to.exist;
+        cy.getAwxWFApprovalByWorkflowJobID(response.id).then((wfa) => {
           cy.visit(`/administration/workflow-approvals/`);
           cy.filterTableByTextFilter('id', wfa.id.toString());
           cy.getTableRow('id', wfa.id.toString()).within(() => {
@@ -143,9 +145,10 @@ describe('Workflow Approvals - List View', () => {
 
   it('admin can deny and then delete a workflow approval from the list row item', () => {
     cy.wait('@launchWFJT')
-      .its('response')
-      .then((response: { body: { workflow_job: number } }) => {
-        cy.getAwxWFApprovalByWorkflowJobID(response.body.workflow_job).then((wfa) => {
+      .its('response.body')
+      .then((response: WorkflowJob) => {
+        expect(response.id).to.exist;
+        cy.getAwxWFApprovalByWorkflowJobID(response.id).then((wfa) => {
           cy.visit(`/administration/workflow-approvals/`);
           cy.filterTableByTextFilter('id', wfa.id.toString());
           cy.getTableRow('id', wfa.id.toString()).within(() => {
@@ -163,9 +166,10 @@ describe('Workflow Approvals - List View', () => {
 
   it('admin can cancel and then delete a workflow approval from the list row item', () => {
     cy.wait('@launchWFJT')
-      .its('response')
-      .then((response: { body: { workflow_job: number } }) => {
-        cy.getAwxWFApprovalByWorkflowJobID(response.body.workflow_job).then((wfa) => {
+      .its('response.body')
+      .then((response: WorkflowJob) => {
+        expect(response.id).to.exist;
+        cy.getAwxWFApprovalByWorkflowJobID(response.id).then((wfa) => {
           cy.visit(`/administration/workflow-approvals/`);
           cy.filterTableByTextFilter('id', wfa.id.toString());
           cy.getTableRow('id', wfa.id.toString()).within(() => {

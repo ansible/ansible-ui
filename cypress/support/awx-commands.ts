@@ -86,6 +86,7 @@ Cypress.Commands.add(
   'actionsWFApprovalConfirmModal',
   (action: 'approve' | 'deny' | 'cancel' | 'delete') => {
     const btnText: string = `${action} workflow approvals`;
+    cy.log(btnText);
     // FIXME: header is present but the get always fails
     // cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
     //   cy.get('header').should('contain', btnText);
