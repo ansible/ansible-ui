@@ -26,7 +26,7 @@ describe('Job Page', () => {
       'true'
     );
   });
-  it.skip('Delete button is enabled on a finished job', () => {
+  it('Delete button is enabled on a finished job', () => {
     cy.intercept(
       {
         method: 'GET',
@@ -41,7 +41,7 @@ describe('Job Page', () => {
     cy.contains('[data-cy="delete-job"]', 'Delete job').should(
       'have.attr',
       'aria-disabled',
-      'true'
+      'false'
     );
   });
   it('Cancel button is disabled on a finished job', () => {

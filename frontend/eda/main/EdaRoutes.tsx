@@ -61,6 +61,12 @@ export enum EdaRoute {
   UserDetails = 'eda-user-details',
   UserTokens = 'eda-user-tokens',
 
+  Organizations = 'eda-organizations',
+  CreateOrganization = 'eda-create-organization',
+  EditOrganization = 'eda-edit-organization',
+  OrganizationPage = 'eda-organization-page',
+  OrganizationDetails = 'eda-organization-details',
+
   Roles = 'eda-roles',
   CreateRole = 'eda-create-role',
   EditRole = 'eda-edit-role',

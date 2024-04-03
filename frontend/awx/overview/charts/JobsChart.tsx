@@ -66,7 +66,7 @@ export function JobsChart(props: {
 
   return (
     <PageDashboardChart
-      yLabel={t('Job Count')}
+      yLabel={t('Job count')}
       variant="stackedAreaChart"
       groups={[
         {
