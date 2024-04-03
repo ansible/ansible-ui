@@ -207,6 +207,11 @@ export function useEdaNavigation() {
               path: 'users',
               element: <PageNotImplemented />,
             },
+            {
+              id: EdaRoute.ProjectTeams,
+              path: 'teams',
+              element: <PageNotImplemented />,
+            },
           ],
         },
         {

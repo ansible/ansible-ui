@@ -98,6 +98,7 @@ export type PageTableProps<T extends object> = {
   sortDirection?: 'asc' | 'desc';
   setSortDirection?: (sortDirection: 'asc' | 'desc') => void;
   compact?: boolean;
+  borderless?: boolean;
 
   /** Auto hide the pagination at the bottom of the table if there are less items than in a page. */
   autoHidePagination?: boolean;
@@ -528,6 +529,7 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
           variant={
             props.compact ? 'compact' : settings.tableLayout === 'compact' ? 'compact' : undefined
           }
+          borders={!props.borderless}
           gridBreakPoint=""
           isStickyHeader
           className="page-table"
