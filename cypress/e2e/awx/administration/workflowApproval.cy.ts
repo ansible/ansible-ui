@@ -8,6 +8,72 @@ import { WorkflowJobTemplate } from '../../../../frontend/awx/interfaces/Workflo
 import { WorkflowNode } from '../../../../frontend/awx/interfaces/WorkflowNode';
 import { WorkflowJob } from '../../../../frontend/awx/interfaces/WorkflowJob';
 
+/* Shared functions across test cases */
+const wfaURL = '/administration/workflow-approvals/';
+function actAssertAndDeleteWorkflowApproval(
+  selectorDataCy: 'approve' | 'deny' | 'cancel',
+  wfaID: string
+) {
+  let actionStatusCode: number;
+  let statusText: string;
+  let actionURL: string;
+
+  cy.visit(wfaURL);
+
+  switch (selectorDataCy) {
+    case 'approve':
+      actionURL = '**/approve';
+      actionStatusCode = 204;
+      statusText = 'Approved';
+      break;
+    case 'deny':
+      actionURL = '**/deny';
+      actionStatusCode = 204;
+      statusText = 'Denied';
+      break;
+    case 'cancel':
+      actionURL = '**/cancel';
+      actionStatusCode = 202;
+      statusText = 'Canceled';
+      break;
+  }
+  cy.intercept({
+    method: 'POST',
+    url: `${actionURL}`,
+  }).as('WFaction');
+  cy.getTableRow('id', wfaID)
+    .within(() => {
+      cy.getByDataCy('actions-column-cell').within(() => {
+        cy.getByDataCy(selectorDataCy).click();
+      });
+    })
+    .then(() => {
+      if (selectorDataCy !== 'cancel') {
+        cy.actionsWFApprovalConfirmModal(selectorDataCy);
+      }
+    });
+  cy.wait('@WFaction')
+    .its('response')
+    .then((response) => {
+      expect(response?.statusCode).to.eql(actionStatusCode);
+    });
+  cy.reload();
+  cy.getByDataCy('status-column-cell').should('have.text', statusText);
+  cy.intercept({
+    method: 'DELETE',
+    url: 'api/v2/workflow_approvals/*',
+  }).as('deleteWFA');
+  cy.getByDataCy('actions-column-cell').within(() => {
+    cy.clickKebabAction('actions-dropdown', 'delete-workflow-approval');
+  });
+  cy.actionsWFApprovalConfirmModal('delete');
+  cy.wait('@deleteWFA')
+    .its('response')
+    .then((response) => {
+      expect(response?.statusCode).to.eql(204);
+    });
+}
+
 // describe('Workflow Approvals', () => {
 
 // });
@@ -72,16 +138,14 @@ describe('Workflow Approvals - List View', () => {
   });
 
   beforeEach(() => {
+    // TODO: Launch template using the API
     cy.intercept(
       'POST',
       `api/v2/workflow_job_templates/${workflowJobTemplate.id.toString()}/launch`
     ).as('launchWFJT');
-
     cy.visit(`/templates/workflow_job_template/${workflowJobTemplate.id.toString()}/details`);
     cy.getByDataCy('launch-template').click();
   });
-
-  afterEach(() => {});
 
   after(() => {
     cy.deleteAwxWorkflowJobTemplate(workflowJobTemplate, { failOnStatusCode: false });
@@ -93,18 +157,6 @@ describe('Workflow Approvals - List View', () => {
     cy.deleteAwxUser(userWFCancel, { failOnStatusCode: false });
     cy.deleteAwxUser(userWFDeny, { failOnStatusCode: false });
   });
-
-  function refreshToDelete(wfaID: string) {
-    // FIXME: the page needs to be refreshed to button be available
-    cy.visit(`/administration/workflow-approvals/`);
-    cy.filterTableByTextFilter('id', wfaID);
-    cy.getTableRow('id', wfaID).within(() => {
-      cy.getByDataCy('actions-column-cell').within(() => {
-        cy.clickKebabAction('actions-dropdown', 'delete-workflow-approval');
-      });
-    });
-    cy.actionsWFApprovalConfirmModal('delete');
-  }
 
   it.skip('admin can create a WF approval and assign user with access to approve and then delete the WF from the list toolbar', () => {
     cy.giveUserWfjtAccess(workflowJobTemplate.name, userWFApprove.id, 'Approve');
@@ -128,17 +180,7 @@ describe('Workflow Approvals - List View', () => {
       .then((response: WorkflowJob) => {
         expect(response.id).to.exist;
         cy.getAwxWFApprovalByWorkflowJobID(response.id).then((wfa) => {
-          cy.visit(`/administration/workflow-approvals/`);
-          cy.filterTableByTextFilter('id', wfa.id.toString());
-          cy.getTableRow('id', wfa.id.toString()).within(() => {
-            cy.getByDataCy('actions-column-cell').within(() => {
-              cy.getByDataCy('approve').click();
-            });
-          });
-          cy.actionsWFApprovalConfirmModal('approve').then(() => {
-            // FIXME: the page needs to be refreshed to button be available
-            refreshToDelete(wfa.id.toString());
-          });
+          actAssertAndDeleteWorkflowApproval('approve', wfa.id.toString());
         });
       });
   });
@@ -149,17 +191,7 @@ describe('Workflow Approvals - List View', () => {
       .then((response: WorkflowJob) => {
         expect(response.id).to.exist;
         cy.getAwxWFApprovalByWorkflowJobID(response.id).then((wfa) => {
-          cy.visit(`/administration/workflow-approvals/`);
-          cy.filterTableByTextFilter('id', wfa.id.toString());
-          cy.getTableRow('id', wfa.id.toString()).within(() => {
-            cy.getByDataCy('actions-column-cell').within(() => {
-              cy.getByDataCy('deny').click();
-            });
-          });
-          cy.actionsWFApprovalConfirmModal('deny').then(() => {
-            // FIXME: the page needs to be refreshed to button be available
-            refreshToDelete(wfa.id.toString());
-          });
+          actAssertAndDeleteWorkflowApproval('deny', wfa.id.toString());
         });
       });
   });
@@ -170,15 +202,7 @@ describe('Workflow Approvals - List View', () => {
       .then((response: WorkflowJob) => {
         expect(response.id).to.exist;
         cy.getAwxWFApprovalByWorkflowJobID(response.id).then((wfa) => {
-          cy.visit(`/administration/workflow-approvals/`);
-          cy.filterTableByTextFilter('id', wfa.id.toString());
-          cy.getTableRow('id', wfa.id.toString()).within(() => {
-            cy.getByDataCy('actions-column-cell').within(() => {
-              cy.getByDataCy('cancel').click();
-            });
-          });
-          // FIXME: the page needs to be refreshed to button be available
-          refreshToDelete(wfa.id.toString());
+          actAssertAndDeleteWorkflowApproval('cancel', wfa.id.toString());
         });
       });
   });
