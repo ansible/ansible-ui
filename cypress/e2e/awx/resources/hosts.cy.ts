@@ -101,17 +101,14 @@ function deleteHost(inventoryID: number, inventory_host: boolean, hostName: stri
   } else {
     cy.visit('/infrastructure/hosts?page=1&perPage=10&sort=name');
   }
-  cy.contains(hostName).click();
-  cy.selectDetailsPageKebabAction('delete-host');
 
-  if (inventory_host) {
-    cy.get('[data-cy="empty-state-title"]').contains(
-      /^There are currently no hosts added to this inventory./
-    );
-  } else {
-    cy.searchAndDisplayResource(hostName);
-    cy.contains('No results found');
-  }
+  cy.searchAndDisplayResource(hostName);
+  cy.get(`[data-cy="actions-column-cell"] [data-cy="actions-dropdown"]`).click();
+  cy.get(`[data-cy="delete-host"]`).click();
+  cy.clickModalConfirmCheckbox();
+  cy.clickModalButton('Delete hosts');
+  cy.contains('button', 'Close').click();
+  cy.contains(/^No results found./);
 }
 
 function createAndEditAndDeleteHost(inventory_host: boolean, inventory: Inventory) {
