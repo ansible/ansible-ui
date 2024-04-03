@@ -350,6 +350,7 @@ describe('Inventory Groups', () => {
   });
 =======
 import { User } from '../../../../frontend/awx/interfaces/User';
+
 describe('inventory group', () => {
   let organization: Organization;
   let inventory: Inventory;
