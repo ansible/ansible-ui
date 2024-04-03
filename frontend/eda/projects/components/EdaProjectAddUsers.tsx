@@ -21,7 +21,12 @@ import { RoleAssignmentsReviewStep } from '../../../common/access/RolesWizard/st
 import { EdaRbacRole } from '../../interfaces/EdaRbacRole';
 import { useEdaBulkActionDialog } from '../../common/useEdaBulkActionDialog';
 
-interface UserRole {
+interface WizardFormValues {
+  users: EdaUser[];
+  edaRoles: EdaRbacRole[];
+}
+
+interface UserRolePair {
   user: EdaUser;
   role: EdaRbacRole;
 }
@@ -32,10 +37,10 @@ export function EdaProjectAddUsers() {
   const params = useParams<{ id: string }>();
 
   const { data: project, isLoading } = useGet<EdaProject>(edaAPI`/projects/${params.id ?? ''}/`);
-  const userProgressDialog = useEdaBulkActionDialog<UserRole>();
+  const userProgressDialog = useEdaBulkActionDialog<UserRolePair>();
   const pageNavigate = usePageNavigate();
 
-  if (isLoading) return <LoadingPage />;
+  if (isLoading || !project) return <LoadingPage />;
 
   const steps: PageWizardStep[] = [
     {
@@ -84,35 +89,39 @@ export function EdaProjectAddUsers() {
     },
   ];
 
-  const onSubmit = (data: { users: EdaUser[]; roles: EdaRbacRole[] }) => {
-    const { users, roles } = data;
-    const items: UserRole[] = [];
+  const onSubmit = (data: WizardFormValues) => {
+    const { users, edaRoles } = data;
+    const items: UserRolePair[] = [];
     for (const user of users) {
-      for (const role of roles) {
+      for (const role of edaRoles) {
         items.push({ user, role });
       }
     }
-
-    userProgressDialog({
-      title: t('Add roles'),
-      keyFn: ({ user, role }) => `${user.id}_${role.id}`,
-      items,
-      actionColumns: [
-        { header: t('User'), cell: ({ user }) => user.username },
-        { header: t('Role'), cell: ({ role }) => role.name },
-      ],
-      actionFn: ({ user, role }) =>
-        postRequest(edaAPI`/role_user_assignments/`, {
-          user: user.id,
-          role_definition: role.id,
-          content_type: 'eda.project',
-          object_id: project.id,
-        }),
-      onComplete: () => {
-        pageNavigate(EdaRoute.ProjectDetails, {
-          params: { id: project.id.toString() },
-        });
-      },
+    return new Promise<void>((resolve) => {
+      userProgressDialog({
+        title: t('Add roles'),
+        keyFn: ({ user, role }) => `${user.id}_${role.id}`,
+        items,
+        actionColumns: [
+          { header: t('User'), cell: ({ user }) => user.username },
+          { header: t('Role'), cell: ({ role }) => role.name },
+        ],
+        actionFn: ({ user, role }) =>
+          postRequest(edaAPI`/role_user_assignments/`, {
+            user: user.id,
+            role_definition: role.id,
+            content_type: 'eda.project',
+            object_id: project.id,
+          }),
+        onComplete: () => {
+          resolve();
+        },
+        onClose: () => {
+          pageNavigate(EdaRoute.ProjectDetails, {
+            params: { id: project.id.toString() },
+          });
+        },
+      });
     });
   };
 
@@ -133,7 +142,7 @@ export function EdaProjectAddUsers() {
           { label: t('Add roles') },
         ]}
       />
-      <PageWizard steps={steps} onSubmit={onSubmit} disableGrid />
+      <PageWizard<WizardFormValues> steps={steps} onSubmit={onSubmit} disableGrid />
     </PageLayout>
   );
 }

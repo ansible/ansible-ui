@@ -5,6 +5,7 @@ import {
   PageWizard,
   PageWizardStep,
   useGetPageUrl,
+  usePageNavigate,
 } from '../../../../framework';
 import { EdaSelectTeamsStep } from '../../access/teams/components/steps/EdaSelectTeamsStep';
 import { EdaTeam } from '../../interfaces/EdaTeam';
@@ -13,17 +14,31 @@ import { useParams } from 'react-router-dom';
 import { useGet } from '../../../common/crud/useGet';
 import { EdaProject } from '../../interfaces/EdaProject';
 import { edaAPI } from '../../common/eda-utils';
+import { postRequest } from '../../../common/crud/Data';
 import { RoleAssignmentsReviewStep } from '../../../common/access/RolesWizard/steps/RoleAssignmentsReviewStep';
 import { EdaRbacRole } from '../../interfaces/EdaRbacRole';
 import { EdaRoute } from '../../main/EdaRoutes';
+import { useEdaBulkActionDialog } from '../../common/useEdaBulkActionDialog';
+
+interface WizardFormValues {
+  teams: EdaTeam[];
+  edaRoles: EdaRbacRole[];
+}
+
+interface TeamRolePair {
+  team: EdaTeam;
+  role: EdaRbacRole;
+}
 
 export function EdaProjectAddTeams() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const params = useParams<{ id: string }>();
   const { data: project, isLoading } = useGet<EdaProject>(edaAPI`/projects/${params.id ?? ''}/`);
+  const userProgressDialog = useEdaBulkActionDialog<TeamRolePair>();
+  const pageNavigate = usePageNavigate();
 
-  if (isLoading) return <LoadingPage />;
+  if (isLoading || !project) return <LoadingPage />;
 
   const steps: PageWizardStep[] = [
     {
@@ -72,8 +87,40 @@ export function EdaProjectAddTeams() {
     },
   ];
 
-  const onSubmit = async (/* data */) => {
-    // console.log(data);
+  const onSubmit = async (data: WizardFormValues) => {
+    const { teams, edaRoles } = data;
+    const items: TeamRolePair[] = [];
+    for (const team of teams) {
+      for (const role of edaRoles) {
+        items.push({ team, role });
+      }
+    }
+    return new Promise<void>((resolve) => {
+      userProgressDialog({
+        title: t('Add roles'),
+        keyFn: ({ team, role }) => `${team.id}_${role.id}`,
+        items,
+        actionColumns: [
+          { header: t('Team'), cell: ({ team }) => team.name },
+          { header: t('Role'), cell: ({ role }) => role.name },
+        ],
+        actionFn: ({ team, role }) =>
+          postRequest(edaAPI`/role_team_assignments/`, {
+            team: team.id,
+            role_definition: role.id,
+            content_type: 'eda.project',
+            object_id: project.id,
+          }),
+        onComplete: () => {
+          resolve();
+        },
+        onClose: () => {
+          pageNavigate(EdaRoute.ProjectDetails, {
+            params: { id: project.id.toString() },
+          });
+        },
+      });
+    });
   };
 
   return (
@@ -93,7 +140,7 @@ export function EdaProjectAddTeams() {
           { label: t('Add roles') },
         ]}
       />
-      <PageWizard steps={steps} onSubmit={onSubmit} disableGrid />
+      <PageWizard<WizardFormValues> steps={steps} onSubmit={onSubmit} disableGrid />
     </>
   );
 }
