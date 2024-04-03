@@ -60,7 +60,7 @@ export function useInventoriesGroupsHostsActions(onToggle: (() => Promise<void>)
             params: { id: params.id, inventory_type: params.inventory_type, host_id: host.id },
           }),
         isDisabled: (host) => cannotEditResource(host, t),
-        isHidden: (host) => params.inventory_type === 'constructed_inventory',
+        isHidden: (_host) => params.inventory_type === 'constructed_inventory',
       },
     ],
     [t, handleToggleHost, pageNavigate, params.id, params.inventory_type]
