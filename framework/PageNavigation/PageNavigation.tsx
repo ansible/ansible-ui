@@ -13,7 +13,6 @@ import { useState } from 'react';
 import { usePageNavBarClick, usePageNavSideBar } from './PageNavSidebar';
 import './PageNavigation.css';
 import { PageNavigationItem } from './PageNavigationItem';
-// import path from 'node:path';
 
 /** Renders a sidebar navigation menu from an arroy of navigation items. */
 export function PageNavigation(props: { navigation: PageNavigationItem[] }) {
