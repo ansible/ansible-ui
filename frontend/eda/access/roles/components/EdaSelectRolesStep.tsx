@@ -43,7 +43,7 @@ export function EdaSelectRolesStep(props: {
         content_type__model: contentType,
       },
     },
-    'roles'
+    'edaRoles'
   );
   return (
     <SelectRolesStep
