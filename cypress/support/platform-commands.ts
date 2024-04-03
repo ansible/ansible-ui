@@ -163,7 +163,7 @@ Cypress.Commands.add(
       failOnStatusCode?: boolean;
     }
   ) => {
-    if (platformTeam.id) {
+    if (platformTeam?.id) {
       cy.requestDelete(gatewayV1API`/teams/${platformTeam.id.toString()}/`, options);
     }
   }
