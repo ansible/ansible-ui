@@ -245,6 +245,7 @@ export function PageAsyncSingleSelect<
       isLoading={loading}
       queryLabel={props.queryLabel}
       disableAutoSelect
+      isRequired={props.isRequired}
     />
   );
 }

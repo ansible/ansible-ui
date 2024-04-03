@@ -49,10 +49,10 @@ export function ToolbarDateRangeFilter(props: IToolbarDateRangeFilterProps) {
     setFilterValues(() => [defaultValue ?? props.options[0].value]);
   }
 
-  function onSelectChange(value: string) {
+  function onSelectChange(value: string | undefined) {
     const option = props.options.find((option) => option.value === value);
     if (option) {
-      setFilterValues(() => [value]);
+      setFilterValues(() => (value !== undefined ? [value] : []));
     }
   }
 

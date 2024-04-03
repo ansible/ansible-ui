@@ -128,7 +128,8 @@ export function MyImports() {
 
   const isMultipleCollections = collectionResp?.data?.length !== 1;
 
-  function setNamespaceQP(namespace: string) {
+  function setNamespaceQP(namespace: string | undefined) {
+    if (namespace === undefined) return;
     setSearchParams((params) => {
       params.set('namespace', namespace);
       return params;

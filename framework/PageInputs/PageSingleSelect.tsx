@@ -1,6 +1,9 @@
 import {
   Bullseye,
+  Button,
   Divider,
+  Flex,
+  Icon,
   MenuFooter,
   MenuSearch,
   MenuSearchInput,
@@ -14,8 +17,10 @@ import {
   Spinner,
   Tooltip,
 } from '@patternfly/react-core';
+import { TimesIcon } from '@patternfly/react-icons';
 import {
   ReactNode,
+  Ref,
   createContext,
   useCallback,
   useContext,
@@ -44,7 +49,7 @@ export interface PageSingleSelectProps<ValueT> {
   value: ValueT | undefined;
 
   /** The function to set the selected value. */
-  onSelect: (value: ValueT) => void;
+  onSelect: (value: ValueT | undefined) => void;
 
   /** The options to select from. */
   options: PageSelectOption<ValueT>[];
@@ -104,6 +109,8 @@ export interface PageSingleSelectProps<ValueT> {
   disableAutoSelect?: boolean;
 
   disableSortOptions?: boolean;
+
+  disableClear?: boolean;
 }
 
 /**
@@ -146,8 +153,17 @@ export function PageSingleSelect<
 >(props: PageSingleSelectProps<ValueT>) {
   const { t } = useTranslation();
   const { id, icon, value, onSelect, options, placeholder, queryLabel } = props;
+  const textInputRef = useRef<HTMLInputElement>();
 
   const [open, setOpen] = useOverridableState(props.open ?? false, props.setOpen);
+  useEffect(() => {
+    if (!open) {
+      textInputRef?.current?.focus();
+    } else {
+      setTimeout(() => searchRef.current?.focus(), 1);
+    }
+  }, [open]);
+
   const [searchValue, setSearchValue] = useOverridableState(
     props.searchValue ?? '',
     props.setSearchValue
@@ -168,42 +184,64 @@ export function PageSingleSelect<
     return selectedLabel;
   }, [queryLabel, selectedOption?.label, value]);
 
-  const Toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
+  const Toggle = (toggleRef: Ref<MenuToggleElement>) => (
     <Tooltip content={props.isDisabled} trigger={props.isDisabled ? undefined : 'manual'}>
-      <MenuToggle
-        id={id}
-        ref={toggleRef}
-        onClick={() => setOpen(!open)}
-        isExpanded={open}
-        onKeyDown={(event) => {
-          switch (event.key) {
-            case 'Tab':
-            case 'Enter':
-            case 'Shift':
-              break;
-            default:
-              setOpen(true);
-              setTimeout(() => {
-                if (searchRef.current) {
-                  searchRef.current.focus();
-                  searchRef.current.value = event.key;
+      <Flex flexWrap={{ default: 'nowrap' }}>
+        <MenuToggle
+          id={id}
+          ref={toggleRef}
+          onClick={() => setOpen(!open)}
+          isExpanded={open}
+          data-cy={id}
+          icon={icon ?? selectedOption?.icon}
+          isDisabled={props.isDisabled !== undefined}
+          isFullWidth
+          style={{
+            // add style to allow for tooltip to show on disabled
+            pointerEvents: props.isDisabled ? 'unset' : undefined,
+            cursor: props.isDisabled ? 'not-allowed' : undefined,
+          }}
+          onKeyDown={(event) => {
+            switch (event.key) {
+              case 'Tab':
+              case 'Shift':
+                break;
+              default:
+                event.preventDefault();
+                if (event.key.length === 1) {
+                  setSearchValue(event.key);
                 }
-              }, 1);
-              break;
-          }
-        }}
-        data-cy={id}
-        icon={icon ?? selectedOption?.icon}
-        isDisabled={props.isDisabled !== undefined}
-        isFullWidth
-        style={{
-          // add style to allow for tooltip to show on disabled
-          pointerEvents: props.isDisabled ? 'unset' : undefined,
-          cursor: props.isDisabled ? 'not-allowed' : undefined,
-        }}
-      >
-        {selectedLabel ? selectedLabel : <span style={{ opacity: 0.7 }}>{placeholder}</span>}
-      </MenuToggle>
+                setOpen(true);
+                setTimeout(() => {
+                  if (searchRef.current) {
+                    if (event.key.length === 1) {
+                      searchRef.current.value = event.key + searchRef.current.value;
+                    }
+                  }
+                }, 1);
+                break;
+            }
+          }}
+        >
+          {selectedLabel ? selectedLabel : <span style={{ opacity: 0.7 }}>{placeholder}</span>}
+        </MenuToggle>
+        {!props.isRequired && selectedOption && (
+          <Button
+            variant="control"
+            onClick={() => {
+              setOpen(false);
+              onSelect(undefined);
+              if (toggleRef !== null && 'current' in toggleRef) {
+                toggleRef.current?.focus();
+              }
+            }}
+          >
+            <Icon size="md" style={{ opacity: 0.7 }}>
+              <TimesIcon aria-hidden style={{ padding: 0, margin: 0 }} />
+            </Icon>
+          </Button>
+        )}
+      </Flex>
     </Tooltip>
   );
 
