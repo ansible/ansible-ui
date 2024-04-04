@@ -16,24 +16,28 @@ export enum EdaRoute {
   RulebookActivationHistory = 'eda-rulebook-activation-history',
   RulebookActivationInstancePage = 'eda-rulebook-activation-instance-page',
   RulebookActivationInstanceDetails = 'eda-rulebook-activation-instance-details',
+  RulebookActivationTeamAccess = 'eda-rulebook-activation-team-access',
 
   Projects = 'eda-projects',
   CreateProject = 'eda-create-project',
   EditProject = 'eda-edit-project',
   ProjectPage = 'eda-project-page',
   ProjectDetails = 'eda-project-details',
+  ProjectTeamAccess = 'eda-project-project-team-access',
 
   DecisionEnvironments = 'eda-decision-environments',
   CreateDecisionEnvironment = 'eda-create-decision-environment',
   EditDecisionEnvironment = 'eda-edit-decision-environment',
   DecisionEnvironmentPage = 'eda-decision-environment-page',
   DecisionEnvironmentDetails = 'eda-decision-environment-details',
+  DecisionEnvironmentTeamAccess = 'eda-decision-environments-team-access',
 
   Credentials = 'eda-credentials',
   CreateCredential = 'eda-create-credential',
   EditCredential = 'eda-edit-credential',
   CredentialPage = 'eda-credential-page',
   CredentialDetails = 'eda-credential-details',
+  CredentialTeamAccess = 'eda-credential-team=access',
 
   CredentialTypes = 'eda-credential-types',
   CreateCredentialType = 'eda-create-credential-type',
