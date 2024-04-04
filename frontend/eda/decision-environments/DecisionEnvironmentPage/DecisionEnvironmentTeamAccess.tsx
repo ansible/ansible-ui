@@ -3,5 +3,5 @@ import { TeamAccess } from '../../access/common/TeamAccess';
 
 export function DecisionEnvironmentTeamAccess() {
   const params = useParams<{ id: string }>();
-  return TeamAccess(params.id || '', 'decisionenvironment');
+  return <TeamAccess id={params.id || ''} type={'decisionenvironment'} />;
 }

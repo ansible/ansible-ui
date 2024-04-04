@@ -59,8 +59,9 @@ function useRemoveRoles(onComplete: (roles: TeamAssignment[]) => void) {
   );
 }
 
-export function TeamAccess(id: string, type: string) {
+export function TeamAccess(props: { id: string; type: string }) {
   const { t } = useTranslation();
+  const { id, type } = props;
   const tableColumns = useMemo<ITableColumn<TeamAssignment>[]>(
     () => [
       {
@@ -147,7 +148,7 @@ export function TeamAccess(id: string, type: string) {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
-        label: t('Delete selected projects'),
+        label: t('Delete selected roles'),
         onClick: (items: TeamAssignment[]) => removeRoles(items),
         isDanger: true,
       },
@@ -168,7 +169,7 @@ export function TeamAccess(id: string, type: string) {
       // TODO navigate to add roles
       //emptyStateButtonClick={() => console.log('TODO')}
       {...view}
-      defaultSubtitle={t('Project')}
+      defaultSubtitle={t('Team access')}
     />
   );
 }
