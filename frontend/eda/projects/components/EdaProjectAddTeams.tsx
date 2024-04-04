@@ -116,7 +116,7 @@ export function EdaProjectAddTeams() {
           resolve();
         },
         onClose: () => {
-          pageNavigate(EdaRoute.ProjectDetails, {
+          pageNavigate(EdaRoute.ProjectTeamAccess, {
             params: { id: project.id.toString() },
           });
         },
@@ -136,7 +136,7 @@ export function EdaProjectAddTeams() {
           },
           {
             label: t('Team Access'),
-            to: getPageUrl(EdaRoute.ProjectTeams, { params: { id: project?.id } }),
+            to: getPageUrl(EdaRoute.ProjectTeamAccess, { params: { id: project?.id } }),
           },
           { label: t('Add roles') },
         ]}

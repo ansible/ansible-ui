@@ -8,6 +8,7 @@ import {
   PageTable,
   IToolbarFilter,
   ToolbarFilterType,
+  useGetPageUrl,
 } from '../../../../framework';
 import { edaAPI } from '../../common/eda-utils';
 import { useCallback, useMemo } from 'react';
@@ -59,9 +60,10 @@ function useRemoveRoles(onComplete: (roles: TeamAssignment[]) => void) {
   );
 }
 
-export function TeamAccess(props: { id: string; type: string }) {
+export function TeamAccess(props: { id: string; type: string; addRolesRoute: string }) {
   const { t } = useTranslation();
-  const { id, type } = props;
+  const { id, type, addRolesRoute } = props;
+  const getPageUrl = useGetPageUrl();
   const tableColumns = useMemo<ITableColumn<TeamAssignment>[]>(
     () => [
       {
@@ -136,13 +138,13 @@ export function TeamAccess(props: { id: string; type: string }) {
   const toolbarActions = useMemo<IPageAction<TeamAssignment>[]>(
     () => [
       {
-        type: PageActionType.Button,
-        selection: PageActionSelection.Single,
+        type: PageActionType.Link,
+        selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
-        icon: PlusCircleIcon,
         isPinned: true,
-        label: t('Add role'),
-        onClick: () => {},
+        icon: PlusCircleIcon,
+        label: t('Add roles'),
+        href: getPageUrl(addRolesRoute, { params: { id: id } }),
       },
       {
         type: PageActionType.Button,
@@ -153,7 +155,7 @@ export function TeamAccess(props: { id: string; type: string }) {
         isDanger: true,
       },
     ],
-    [t, removeRoles]
+    [t, getPageUrl, addRolesRoute, id, removeRoles]
   );
   return (
     <PageTable
@@ -166,8 +168,7 @@ export function TeamAccess(props: { id: string; type: string }) {
       emptyStateTitle={t('There are currently no roles assigned to this object.')}
       emptyStateDescription={t('Please add a role by using the button below.')}
       emptyStateButtonText={t('Add role')}
-      // TODO navigate to add roles
-      //emptyStateButtonClick={() => console.log('TODO')}
+      emptyStateActions={toolbarActions.slice(0, 1)}
       {...view}
       defaultSubtitle={t('Team access')}
     />
