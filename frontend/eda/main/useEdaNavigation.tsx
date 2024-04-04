@@ -207,11 +207,6 @@ export function useEdaNavigation() {
               path: 'users',
               element: <PageNotImplemented />,
             },
-            {
-              id: EdaRoute.ProjectTeams,
-              path: 'teams',
-              element: <PageNotImplemented />,
-            },
           ],
         },
         {
@@ -221,7 +216,7 @@ export function useEdaNavigation() {
         },
         {
           id: EdaRoute.ProjectAddTeams,
-          path: ':id/teams/add-teams',
+          path: ':id/team-access/add-teams',
           element: <EdaProjectAddTeams />,
         },
         {

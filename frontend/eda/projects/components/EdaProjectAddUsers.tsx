@@ -142,7 +142,14 @@ export function EdaProjectAddUsers() {
           { label: t('Add roles') },
         ]}
       />
-      <PageWizard<WizardFormValues> steps={steps} onSubmit={onSubmit} disableGrid />
+      <PageWizard<WizardFormValues>
+        steps={steps}
+        onSubmit={onSubmit}
+        disableGrid
+        onCancel={() => {
+          pageNavigate(EdaRoute.ProjectUsers, { params: { id: project?.id } });
+        }}
+      />
     </PageLayout>
   );
 }
