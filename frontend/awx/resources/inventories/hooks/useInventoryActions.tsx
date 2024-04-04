@@ -14,7 +14,10 @@ import { useCopyInventory } from './useCopyInventory';
 import { useDeleteInventories } from './useDeleteInventories';
 import { useParams } from 'react-router-dom';
 import { InventoryWithSource } from '../InventoryPage/InventoryDetails';
-import { useSyncInventory } from './useSyncInventory';
+import { usePageAlertToaster } from '../../../../../framework';
+import { useCallback } from 'react';
+import { postRequest } from '../../../../common/crud/Data';
+import { awxAPI } from '../../../common/api/awx-utils';
 
 type InventoryActionOptions = {
   onInventoriesDeleted: (inventories: Inventory[]) => void;
@@ -31,9 +34,37 @@ export function useInventoryActions({
   const pageNavigate = usePageNavigate();
   const deleteInventories = useDeleteInventories(onInventoriesDeleted);
   const copyInventory = useCopyInventory(onInventoryCopied);
-  const syncInventory = useSyncInventory();
 
   const params = useParams<{ inventory_type: string }>();
+
+  const alertToaster = usePageAlertToaster();
+
+  const handleUpdate = useCallback(
+    async (inventory: InventoryWithSource) => {
+      try {
+        await postRequest(
+          awxAPI`/inventory_sources/${inventory.source?.id.toString() || ''}/update/`,
+          {}
+        );
+        alertToaster.addAlert({
+          variant: 'info',
+          title: t('Inventory sync started'),
+          children: t('Running sync on {{name}}. Progress shown on details tab.', {
+            name: inventory.name,
+          }),
+          timeout: 5000,
+        });
+      } catch (error) {
+        alertToaster.addAlert({
+          variant: 'danger',
+          title: t('Failed to update inventory source'),
+          children: error instanceof Error && error.message,
+          timeout: 5000,
+        });
+      }
+    },
+    [alertToaster, t]
+  );
 
   return useMemo<IPageAction<InventoryWithSource>[]>(() => {
     const cannotDeleteInventory = (inventory: Inventory): string =>
@@ -67,7 +98,7 @@ export function useInventoryActions({
       constructed: 'constructed_inventory',
     };
 
-    const arr: (IPageAction<Inventory> | undefined)[] = [
+    return [
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
@@ -89,16 +120,15 @@ export function useInventoryActions({
         isDisabled: (inventory: Inventory) => cannotCopyInventory(inventory),
         onClick: (inventory: Inventory) => copyInventory(inventory),
       },
-      params.inventory_type === 'constructed_inventory' && detail === true
-        ? {
-            type: PageActionType.Button,
-            selection: PageActionSelection.Single,
-            icon: SyncIcon,
-            label: t('Sync inventory'),
-            isDisabled: (inventory: InventoryWithSource) => cannotSyncInventory(inventory),
-            onClick: (inventory: InventoryWithSource) => syncInventory([inventory]),
-          }
-        : undefined,
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        icon: SyncIcon,
+        label: t('Sync inventory'),
+        isDisabled: (inventory: InventoryWithSource) => cannotSyncInventory(inventory),
+        onClick: (inventory: InventoryWithSource) => handleUpdate(inventory),
+        isHidden: () => !(params.inventory_type === 'constructed_inventory' && detail === true),
+      },
       { type: PageActionType.Seperator },
       {
         type: PageActionType.Button,
@@ -110,8 +140,6 @@ export function useInventoryActions({
         isDanger: true,
       },
     ];
-
-    return arr.filter((item) => item !== undefined) as IPageAction<Inventory>[];
   }, [
     deleteInventories,
     copyInventory,
@@ -119,6 +147,6 @@ export function useInventoryActions({
     t,
     params.inventory_type,
     detail,
-    syncInventory,
+    handleUpdate,
   ]);
 }
