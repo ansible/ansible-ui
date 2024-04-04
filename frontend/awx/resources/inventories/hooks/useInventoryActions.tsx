@@ -13,7 +13,10 @@ import { AwxRoute } from '../../../main/AwxRoutes';
 import { useCopyInventory } from './useCopyInventory';
 import { useDeleteInventories } from './useDeleteInventories';
 import { useParams } from 'react-router-dom';
-import { InventorySource } from '../../../interfaces/InventorySource';
+import { InventoryWithSource } from '../InventoryPage/InventoryDetails';
+import { postRequest } from '../../../../common/crud/Data';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { useSyncInventory } from './useSyncInventory';
 
 type InventoryActionOptions = {
   onInventoriesDeleted: (inventories: Inventory[]) => void;
@@ -30,9 +33,11 @@ export function useInventoryActions({
   const pageNavigate = usePageNavigate();
   const deleteInventories = useDeleteInventories(onInventoriesDeleted);
   const copyInventory = useCopyInventory(onInventoryCopied);
+  const syncInventory = useSyncInventory();
+
   const params = useParams<{ inventory_type: string }>();
 
-  return useMemo<IPageAction<Inventory>[]>(() => {
+  return useMemo<IPageAction<InventoryWithSource>[]>(() => {
     const cannotDeleteInventory = (inventory: Inventory): string =>
       inventory?.summary_fields?.user_capabilities?.delete
         ? ''
@@ -53,10 +58,10 @@ export function useInventoryActions({
       }
     };
 
-    const cannotSyncInventory = (inventory: Inventory & { source?: InventorySource }): string =>
+    const cannotSyncInventory = (inventory: InventoryWithSource): string =>
       inventory?.source?.summary_fields?.user_capabilities?.start
         ? ''
-        : t(`The inventory cannot be edited due to insufficient permission`);
+        : t(`The inventory cannot be synced due to insufficient permission`);
 
     const kinds: { [key: string]: string } = {
       '': 'inventory',
@@ -92,9 +97,10 @@ export function useInventoryActions({
             selection: PageActionSelection.Single,
             icon: SyncIcon,
             label: t('Sync inventory'),
-            isDisabled: (inventory: Inventory & { source?: InventorySource }) =>
+            isDisabled: (inventory: InventoryWithSource) =>
               cannotSyncInventory(inventory),
-            onClick: (inventory: Inventory) => {},
+            onClick: (inventory: InventoryWithSource) => 
+              syncInventory([inventory])
           }
         : undefined,
       { type: PageActionType.Seperator },

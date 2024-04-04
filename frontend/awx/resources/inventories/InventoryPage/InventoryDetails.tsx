@@ -33,6 +33,10 @@ import { LastJobTooltip } from '../inventorySources/InventorySourceDetails';
 import { StatusLabel } from '../../../../common/Status';
 import { useInventoryFormDetailLabels } from '../InventoryForm';
 import { LabelHelp } from '../components/LabelHelp';
+import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
+import { LoadingPage  } from '../../../../../framework';
+import { useCallback } from 'react';
+import { useAwxWebSocketSubscription } from '../../../common/useAwxWebSocket';
 
 function useInstanceGroups(inventoryId: string) {
   const { data } = useGet<{ results: InstanceGroup[] }>(
@@ -58,10 +62,8 @@ export function InventoryDetailsInner(props: { inventory: InventoryWithSource })
   const { t } = useTranslation();
 
   const inventory = props.inventory;
-  const inventorySourceData = inventory.source;
-
   const pageNavigate = usePageNavigate();
-  const params = useParams<{ id: string }>();
+  const params = useParams<{ id: string, inventory_type : string }>();
   const instanceGroups = useInstanceGroups(params.id || '0');
   const verbosityString = useVerbosityString(inventory.verbosity);
   const getPageUrl = useGetPageUrl();
@@ -71,6 +73,14 @@ export function InventoryDetailsInner(props: { inventory: InventoryWithSource })
       ? awxAPI`/inventories/${inventory.id.toString()}/input_inventories/`
       : ''
   );
+
+  const inventorySourceUrl =
+    inventory?.kind === 'constructed'
+      ? awxAPI`/inventories/${params.id ?? ''}/inventory_sources/`
+      : '';
+
+  const inventorySourceRequest = useGet<AwxItemsResponse<InventorySource>>(inventorySourceUrl);
+  const inventorySourceData = inventorySourceRequest.data?.results[0];
 
   const inventoryTypes: { [key: string]: string } = {
     '': t('Inventory'),
@@ -91,11 +101,43 @@ export function InventoryDetailsInner(props: { inventory: InventoryWithSource })
     inventorySourceData?.summary_fields?.last_job ||
     undefined;
 
+  const refresh = inventorySourceRequest.refresh;
+
+    const handleWebSocketMessage = useCallback(
+      (message?: { group_name?: string; type?: string }) => {
+        switch (message?.group_name) {
+          case 'jobs':
+            switch (message?.type) {
+              case 'job':
+              case 'workflow_job':
+              case 'project_update':
+              case 'inventory_update':
+                  void refresh();
+                break;
+            }
+            break;
+        }
+      },
+      [refresh]
+    );
+    useAwxWebSocketSubscription(
+      { control: ['limit_reached_1'], jobs: ['status_changed'] },
+      handleWebSocketMessage as (data: unknown) => void
+    );
+
   if (inputInventoriesError) {
     return <AwxError error={inputInventoriesError} />;
   }
 
-  inventory.source = inventorySourceData;
+  if (inventorySourceRequest.error) {
+    return <AwxError error={inventorySourceRequest.error} />;
+  }
+
+  if (
+    (!inventorySourceRequest.data && params.inventory_type === 'constructed_inventory')
+  ) {
+    return <LoadingPage></LoadingPage>;
+  }
 
   return (
     <PageDetails>
