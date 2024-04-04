@@ -886,6 +886,15 @@ declare global {
           failOnStatusCode?: boolean;
         }
       ): Chainable<void>;
+
+      deleteAwxExecutionEnvironment(
+        execution_environment: ExecutionEnvironment,
+        options?: {
+          /** Whether to fail on response codes other than 2xx and 3xx */
+          failOnStatusCode?: boolean;
+        }
+      ): Chainable<void>;
+
       deleteAwxInventory(
         inventory: Inventory,
         options?: {
@@ -987,6 +996,10 @@ declare global {
           failOnStatusCode?: boolean;
         }
       ): Chainable<void>;
+
+      createInventoryHost(
+        organization: Organization
+      ): Chainable<{ inventory: Inventory; host: Host }>;
 
       createInventoryHostGroup(
         organization: Organization
