@@ -60,7 +60,7 @@ function useRemoveRoles(onComplete: (roles: TeamAssignment[]) => void) {
   );
 }
 
-export function TeamAccess(props: { id: string; type: string; addRolesRoute: string }) {
+export function TeamAccess(props: { id: string; type: string; addRolesRoute?: string }) {
   const { t } = useTranslation();
   const { id, type, addRolesRoute } = props;
   const getPageUrl = useGetPageUrl();
@@ -144,7 +144,7 @@ export function TeamAccess(props: { id: string; type: string; addRolesRoute: str
         isPinned: true,
         icon: PlusCircleIcon,
         label: t('Add roles'),
-        href: getPageUrl(addRolesRoute, { params: { id: id } }),
+        href: getPageUrl(addRolesRoute ?? '', { params: { id: id } }),
       },
       {
         type: PageActionType.Button,
