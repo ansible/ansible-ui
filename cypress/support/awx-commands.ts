@@ -776,6 +776,21 @@ Cypress.Commands.add(
 );
 
 Cypress.Commands.add(
+  'deleteAwxExecutionEnvironment',
+  (
+    execution_environment: ExecutionEnvironment,
+    options?: {
+      /** Whether to fail on response codes other than 2xx and 3xx */
+      failOnStatusCode?: boolean;
+    }
+  ) => {
+    if (execution_environment.id) {
+      cy.awxRequestDelete(awxAPI`/teams/${execution_environment.id.toString()}/`, options);
+    }
+  }
+);
+
+Cypress.Commands.add(
   'createEdaSpecificAwxProject',
   (options?: { project?: Partial<Omit<Project, 'id'>> }) => {
     cy.createAwxProject({
@@ -1048,6 +1063,24 @@ Cypress.Commands.add(
       const templateId = typeof jobTemplate.id === 'number' ? jobTemplate.id.toString() : '';
       cy.awxRequestDelete(awxAPI`/job_templates/${templateId}/`, options);
     }
+  }
+);
+
+Cypress.Commands.add(
+  'createInventoryHost',
+  function createInventoryHost(organization: Organization) {
+    cy.awxRequestPost<Partial<Inventory>>(awxAPI`/inventories/`, {
+      name: 'E2E Inventory ' + randomString(4),
+      organization: organization.id,
+    }).then((inventory) => {
+      cy.awxRequestPost<Partial<AwxHost>, AwxHost>(awxAPI`/hosts/`, {
+        name: 'E2E Host ' + randomString(4),
+        inventory: inventory.id,
+      }).then((host) => ({
+        inventory,
+        host,
+      }));
+    });
   }
 );
 
