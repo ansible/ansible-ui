@@ -243,7 +243,7 @@ export function buildTriggers(map: AuthenticatorMapValues) {
       triggers.attributes = {
         join_condition: map.conditional || 'or',
         [map.criteria]: {
-          [key]: key === 'in' ? [map.criteria_value?.split(',')] : map.criteria_value,
+          [key]: key === 'in' ? map.criteria_value?.split(',') : map.criteria_value,
         },
       };
       break;
