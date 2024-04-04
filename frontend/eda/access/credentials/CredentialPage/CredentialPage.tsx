@@ -84,7 +84,10 @@ export function CredentialPage() {
           page: EdaRoute.Credentials,
           persistentFilterKey: 'credentials',
         }}
-        tabs={[{ label: t('Details'), page: EdaRoute.CredentialDetails }]}
+        tabs={[
+          { label: t('Details'), page: EdaRoute.CredentialDetails },
+          { label: t('Team Access'), page: EdaRoute.CredentialTeamAccess },
+        ]}
         params={{ id: credential?.id }}
       />
     </PageLayout>
