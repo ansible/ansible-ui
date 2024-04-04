@@ -184,7 +184,7 @@ export function EditInventory() {
   const originalInstanceGroups = igResponse?.results;
 
   const onSubmit: PageFormSubmitHandler<InventoryCreate> = async (data) => {
-    const { organization, labels, instanceGroups, ...editedInventory } = data;
+    const { labels, instanceGroups, ...editedInventory } = data;
 
     let inputInventories: InputInventory[] = [];
     if (params.inventory_type === 'constructed_inventory') {
