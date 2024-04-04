@@ -90,7 +90,10 @@ export function DecisionEnvironmentPage() {
           page: EdaRoute.DecisionEnvironments,
           persistentFilterKey: 'decision_environments',
         }}
-        tabs={[{ label: t('Details'), page: EdaRoute.DecisionEnvironmentDetails }]}
+        tabs={[
+          { label: t('Details'), page: EdaRoute.DecisionEnvironmentDetails },
+          { label: t('Team Access'), page: EdaRoute.DecisionEnvironmentTeamAccess },
+        ]}
         params={{ id: decisionEnvironment?.id }}
       />
     </PageLayout>
