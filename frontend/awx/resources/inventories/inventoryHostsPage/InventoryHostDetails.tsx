@@ -46,6 +46,7 @@ export function InventoryHostDetailsInner(props: { host: AwxHost }) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const getPageUrl = useGetPageUrl();
+  const params = useHostDetailParams();
 
   const host = props.host;
 
@@ -57,9 +58,11 @@ export function InventoryHostDetailsInner(props: { host: AwxHost }) {
   return (
     <PageDetails>
       <PageDetail label={t('Name')}>{host.name}</PageDetail>
-      <PageDetail label={t('Activity')}>
-        <Sparkline jobs={recentPlaybookJobs} />
-      </PageDetail>
+      {recentPlaybookJobs.length > 0 && (
+        <PageDetail label={t('Activity')}>
+          <Sparkline jobs={recentPlaybookJobs} />
+        </PageDetail>
+      )}
       <PageDetail label={t('Description')}>{host.description}</PageDetail>
       <PageDetail label={t('Inventory')} helpText={t(`The inventory that this host belongs to.`)}>
         <TextCell
@@ -69,6 +72,12 @@ export function InventoryHostDetailsInner(props: { host: AwxHost }) {
           })}
         />
       </PageDetail>
+      {(params.inventory_type === 'constructed_inventory' ||
+        params.inventory_type === 'smart_inventory') && (
+        <PageDetail label={t('Enabled')}>
+          <TextCell text={host.enabled ? 'On' : 'Off'} />
+        </PageDetail>
+      )}
       <PageDetail label={t('Created')}>
         <DateTimeCell
           value={host.created}
