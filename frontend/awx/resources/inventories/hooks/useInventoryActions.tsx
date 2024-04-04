@@ -14,8 +14,6 @@ import { useCopyInventory } from './useCopyInventory';
 import { useDeleteInventories } from './useDeleteInventories';
 import { useParams } from 'react-router-dom';
 import { InventoryWithSource } from '../InventoryPage/InventoryDetails';
-import { postRequest } from '../../../../common/crud/Data';
-import { awxAPI } from '../../../common/api/awx-utils';
 import { useSyncInventory } from './useSyncInventory';
 
 type InventoryActionOptions = {
@@ -97,10 +95,8 @@ export function useInventoryActions({
             selection: PageActionSelection.Single,
             icon: SyncIcon,
             label: t('Sync inventory'),
-            isDisabled: (inventory: InventoryWithSource) =>
-              cannotSyncInventory(inventory),
-            onClick: (inventory: InventoryWithSource) => 
-              syncInventory([inventory])
+            isDisabled: (inventory: InventoryWithSource) => cannotSyncInventory(inventory),
+            onClick: (inventory: InventoryWithSource) => syncInventory([inventory]),
           }
         : undefined,
       { type: PageActionType.Seperator },
@@ -116,5 +112,13 @@ export function useInventoryActions({
     ];
 
     return arr.filter((item) => item !== undefined) as IPageAction<Inventory>[];
-  }, [deleteInventories, copyInventory, pageNavigate, t, params.inventory_type, detail]);
+  }, [
+    deleteInventories,
+    copyInventory,
+    pageNavigate,
+    t,
+    params.inventory_type,
+    detail,
+    syncInventory,
+  ]);
 }

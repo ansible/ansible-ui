@@ -34,7 +34,7 @@ import { StatusLabel } from '../../../../common/Status';
 import { useInventoryFormDetailLabels } from '../InventoryForm';
 import { LabelHelp } from '../components/LabelHelp';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
-import { LoadingPage  } from '../../../../../framework';
+import { LoadingPage } from '../../../../../framework';
 import { useCallback } from 'react';
 import { useAwxWebSocketSubscription } from '../../../common/useAwxWebSocket';
 
@@ -63,7 +63,7 @@ export function InventoryDetailsInner(props: { inventory: InventoryWithSource })
 
   const inventory = props.inventory;
   const pageNavigate = usePageNavigate();
-  const params = useParams<{ id: string, inventory_type : string }>();
+  const params = useParams<{ id: string; inventory_type: string }>();
   const instanceGroups = useInstanceGroups(params.id || '0');
   const verbosityString = useVerbosityString(inventory.verbosity);
   const getPageUrl = useGetPageUrl();
@@ -103,27 +103,27 @@ export function InventoryDetailsInner(props: { inventory: InventoryWithSource })
 
   const refresh = inventorySourceRequest.refresh;
 
-    const handleWebSocketMessage = useCallback(
-      (message?: { group_name?: string; type?: string }) => {
-        switch (message?.group_name) {
-          case 'jobs':
-            switch (message?.type) {
-              case 'job':
-              case 'workflow_job':
-              case 'project_update':
-              case 'inventory_update':
-                  void refresh();
-                break;
-            }
-            break;
-        }
-      },
-      [refresh]
-    );
-    useAwxWebSocketSubscription(
-      { control: ['limit_reached_1'], jobs: ['status_changed'] },
-      handleWebSocketMessage as (data: unknown) => void
-    );
+  const handleWebSocketMessage = useCallback(
+    (message?: { group_name?: string; type?: string }) => {
+      switch (message?.group_name) {
+        case 'jobs':
+          switch (message?.type) {
+            case 'job':
+            case 'workflow_job':
+            case 'project_update':
+            case 'inventory_update':
+              void refresh();
+              break;
+          }
+          break;
+      }
+    },
+    [refresh]
+  );
+  useAwxWebSocketSubscription(
+    { control: ['limit_reached_1'], jobs: ['status_changed'] },
+    handleWebSocketMessage as (data: unknown) => void
+  );
 
   if (inputInventoriesError) {
     return <AwxError error={inputInventoriesError} />;
@@ -133,9 +133,7 @@ export function InventoryDetailsInner(props: { inventory: InventoryWithSource })
     return <AwxError error={inventorySourceRequest.error} />;
   }
 
-  if (
-    (!inventorySourceRequest.data && params.inventory_type === 'constructed_inventory')
-  ) {
+  if (!inventorySourceRequest.data && params.inventory_type === 'constructed_inventory') {
     return <LoadingPage></LoadingPage>;
   }
 
