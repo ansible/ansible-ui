@@ -14,10 +14,7 @@ import { AwxHost } from '../../../interfaces/AwxHost';
 import { usePatchRequest } from '../../../../common/crud/usePatchRequest';
 import { useParams } from 'react-router-dom';
 
-export function useInventoriesGroupsHostsActions(
-  onDisassociate: (host: AwxHost[]) => void,
-  onToggle: (() => Promise<void>) | (() => void)
-) {
+export function useInventoriesGroupsHostsActions(onToggle: (() => Promise<void>) | (() => void)) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
 
@@ -63,6 +60,7 @@ export function useInventoriesGroupsHostsActions(
             params: { id: params.id, inventory_type: params.inventory_type, host_id: host.id },
           }),
         isDisabled: (host) => cannotEditResource(host, t),
+        isHidden: (_host) => params.inventory_type === 'constructed_inventory',
       },
     ],
     [t, handleToggleHost, pageNavigate, params.id, params.inventory_type]

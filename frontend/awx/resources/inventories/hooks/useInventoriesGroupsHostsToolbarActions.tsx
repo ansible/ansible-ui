@@ -59,13 +59,14 @@ export function useInventoriesGroupsHostsToolbarActions(view: IAwxView<AwxHost>)
     [setDialog, params.group_id, view, alertToaster, t]
   );
 
-  return useMemo<IPageAction<AwxHost>[]>(
-    () => [
+  return useMemo<IPageAction<AwxHost>[]>(() => {
+    const toolbarActions: IPageAction<AwxHost>[] = [
       {
         type: PageActionType.Dropdown,
         selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
         isPinned: true,
+        isHidden: () => params.inventory_type === 'constructed_inventory',
         icon: PlusCircleIcon,
         label: t('Add host'),
         actions: [
@@ -111,37 +112,39 @@ export function useInventoriesGroupsHostsToolbarActions(view: IAwxView<AwxHost>)
         label: t('Run Command'),
         onClick: () => pageNavigate(AwxRoute.Inventories),
         isDisabled: () =>
-          view.selectedItems.length === 0
-            ? t('Select at least one item from the list')
-            : canRunAdHocCommand
-              ? undefined
-              : t(
-                  'You do not have permission to run an ad hoc command. Please contact your organization administrator if there is an issue with your access.'
-                ),
+          canRunAdHocCommand
+            ? undefined
+            : t(
+                'You do not have permission to run an ad hoc command. Please contact your organization administrator if there is an issue with your access.'
+              ),
       },
-      { type: PageActionType.Seperator },
-      {
-        type: PageActionType.Button,
-        selection: PageActionSelection.Multiple,
-        isPinned: true,
-        label: t('Disassociate selected hosts'),
-        onClick: disassociateHosts,
-        isDisabled:
-          view.selectedItems.length === 0 ? t('Select at least one item from the list') : undefined,
-      },
-    ],
-    [
-      t,
-      disassociateHosts,
-      view.selectedItems.length,
-      setDialog,
-      params.id,
-      params.group_id,
-      params.inventory_type,
-      onSelectedHosts,
-      pageNavigate,
-      canCreateHost,
-      canRunAdHocCommand,
-    ]
-  );
+    ];
+
+    const disassociateAction: IPageAction<AwxHost> = {
+      type: PageActionType.Button,
+      selection: PageActionSelection.Multiple,
+      isPinned: true,
+      label: t('Disassociate selected hosts'),
+      onClick: disassociateHosts,
+      isDisabled:
+        view.selectedItems.length === 0 ? t('Select at least one item from the list') : undefined,
+    };
+
+    if (params.inventory_type === 'inventory') {
+      toolbarActions.push(disassociateAction);
+    }
+    return toolbarActions;
+  }, [
+    t,
+    disassociateHosts,
+    view.selectedItems.length,
+    setDialog,
+    params.id,
+    params.group_id,
+    params.inventory_type,
+    onSelectedHosts,
+    pageNavigate,
+    canCreateHost,
+    canRunAdHocCommand,
+  ]);
 }
