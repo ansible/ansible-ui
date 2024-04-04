@@ -36,6 +36,19 @@ export function InventoryHostPage() {
 
   const getPageUrl = useGetPageUrl();
 
+  let tabs: Array<{ label: string; page: string }> = [];
+
+  if (params.inventory_type === 'inventory') {
+    tabs = [
+      { label: t('Details'), page: AwxRoute.InventoryHostDetails },
+      { label: t('Facts'), page: AwxRoute.InventoryHostFacts },
+      { label: t('Groups'), page: AwxRoute.InventoryHostGroups },
+      { label: t('Jobs'), page: AwxRoute.InventoryHostJobs },
+    ];
+  } else {
+    tabs = [{ label: t('Details'), page: AwxRoute.InventoryHostDetails }];
+  }
+
   return (
     <PageLayout>
       <PageHeader
@@ -75,12 +88,7 @@ export function InventoryHostPage() {
           page: AwxRoute.InventoryHosts,
           persistentFilterKey: 'inventories',
         }}
-        tabs={[
-          { label: t('Details'), page: AwxRoute.InventoryHostDetails },
-          { label: t('Facts'), page: AwxRoute.InventoryHostFacts },
-          { label: t('Groups'), page: AwxRoute.InventoryHostGroups },
-          { label: t('Jobs'), page: AwxRoute.InventoryHostJobs },
-        ]}
+        tabs={tabs}
         params={params}
       />
     </PageLayout>
