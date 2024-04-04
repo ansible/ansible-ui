@@ -3,18 +3,10 @@ import { useParams } from 'react-router-dom';
 import { useGetItem } from '../../../common/crud/useGet';
 import { InventoryGroup } from '../../interfaces/InventoryGroup';
 import { awxAPI } from '../../common/api/awx-utils';
-import {
-  LoadingPage,
-  PageActions,
-  PageHeader,
-  PageLayout,
-  useGetPageUrl,
-} from '../../../../framework';
+import { LoadingPage, PageHeader, PageLayout, useGetPageUrl } from '../../../../framework';
 import { AwxError } from '../../common/AwxError';
 import { AwxRoute } from '../../main/AwxRoutes';
 import { PageRoutedTabs } from '../../../../framework/PageTabs/PageRoutedTabs';
-import { DropdownPosition } from '@patternfly/react-core/deprecated';
-import { useInventoriesGroupActions } from '../inventories/hooks/useInventoriesGroupActions';
 
 export function GroupPage() {
   const { t } = useTranslation();
@@ -26,8 +18,6 @@ export function GroupPage() {
   } = useGetItem<InventoryGroup>(awxAPI`/groups/`, params.group_id);
 
   const getPageUrl = useGetPageUrl();
-
-  const actions = useInventoriesGroupActions();
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!inventoryGroup) return <LoadingPage breadcrumbs tabs />;
@@ -58,13 +48,6 @@ export function GroupPage() {
           },
           { label: inventoryGroup?.name },
         ]}
-        headerActions={
-          <PageActions<InventoryGroup>
-            actions={actions}
-            position={DropdownPosition.right}
-            selectedItem={inventoryGroup}
-          />
-        }
       />
       <PageRoutedTabs
         backTab={{
