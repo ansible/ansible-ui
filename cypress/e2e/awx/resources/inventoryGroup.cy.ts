@@ -67,7 +67,6 @@ describe('Inventory Groups', () => {
     });
   });
 
-
   it('can add and remove new related groups', () => {
     cy.createInventoryHostGroup(organization).then((result) => {
       const { inventory, group } = result;
