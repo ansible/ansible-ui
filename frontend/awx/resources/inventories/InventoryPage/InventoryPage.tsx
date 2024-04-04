@@ -3,6 +3,7 @@ import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import {
+  LoadingPage,
   PageActions,
   PageHeader,
   PageLayout,
@@ -15,11 +16,33 @@ import { awxAPI } from '../../../common/api/awx-utils';
 import { Inventory } from '../../../interfaces/Inventory';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useInventoryActions } from '../hooks/useInventoryActions';
+import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
+import { InventorySource } from '../../../interfaces/InventorySource';
+import { AwxError } from '../../../common/AwxError';
+import { InventoryWithSource } from './InventoryDetails';
 
 export function InventoryPage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string; inventory_type: string }>();
-  const inventory = useGetInventory(params.id, params.inventory_type);
+
+  const urlType =
+    params.inventory_type === 'constructed_inventory' ? 'constructed_inventories' : 'inventories';
+
+  const inventoryRequest = useGet<InventoryWithSource>(awxAPI`/${urlType}/${params.id || ''}/`);
+
+  const inventory = inventoryRequest?.data;
+  const inventorySourceUrl =
+    inventory?.kind === 'constructed'
+      ? awxAPI`/inventories/${params.id ?? ''}/inventory_sources/`
+      : '';
+
+  const inventorySourceRequest = useGet<AwxItemsResponse<InventorySource>>(inventorySourceUrl);
+  const inventorySourceData = inventorySourceRequest.data?.results[0];
+
+  if (inventory) {
+    inventory.source = inventorySourceData;
+  }
+
   const pageNavigate = usePageNavigate();
   const itemActions = useInventoryActions({
     onInventoriesDeleted: () => pageNavigate(AwxRoute.Inventories),
@@ -27,6 +50,21 @@ export function InventoryPage() {
   });
   const getPageUrl = useGetPageUrl();
   const isSmartInventory = inventory?.kind === 'smart';
+
+  if (inventorySourceRequest.error) {
+    return <AwxError error={inventorySourceRequest.error} />;
+  }
+
+  if (inventoryRequest.error) {
+    return <AwxError error={inventoryRequest.error} />;
+  }
+
+  if (
+    !inventoryRequest.data ||
+    (!inventorySourceRequest.data && params.inventory_type === 'constructed_inventory')
+  ) {
+    return <LoadingPage></LoadingPage>;
+  }
 
   return (
     <PageLayout>

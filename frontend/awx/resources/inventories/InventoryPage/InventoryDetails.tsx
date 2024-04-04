@@ -11,7 +11,6 @@ import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
 import {
   DateTimeCell,
-  LoadingPage,
   PageDetail,
   PageDetails,
   TextCell,
@@ -29,7 +28,6 @@ import { AwxRoute } from '../../../main/AwxRoutes';
 import { useGetInventory } from './InventoryPage';
 import { InventorySource } from '../../../interfaces/InventorySource';
 import { AwxError } from '../../../common/AwxError';
-import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { Tooltip } from '@patternfly/react-core';
 import { LastJobTooltip } from '../inventorySources/InventorySourceDetails';
 import { StatusLabel } from '../../../../common/Status';
@@ -54,9 +52,14 @@ export function InventoryDetails() {
   return <InventoryDetailsInner inventory={inventory} />;
 }
 
-export function InventoryDetailsInner(props: { inventory: Inventory }) {
+export type InventoryWithSource = Inventory & { source?: InventorySource };
+
+export function InventoryDetailsInner(props: { inventory: InventoryWithSource }) {
   const { t } = useTranslation();
-  const { inventory } = props;
+
+  const inventory = props.inventory;
+  const inventorySourceData = inventory.source;
+
   const pageNavigate = usePageNavigate();
   const params = useParams<{ id: string }>();
   const instanceGroups = useInstanceGroups(params.id || '0');
@@ -81,15 +84,7 @@ export function InventoryDetailsInner(props: { inventory: Inventory }) {
     constructed: 'constructed_inventory',
   };
 
-  const inventorySourceUrl =
-    inventory.kind === 'constructed'
-      ? awxAPI`/inventories/${params.id ?? ''}/inventory_sources/`
-      : '';
-
   const inventoryFormDetailLables = useInventoryFormDetailLabels();
-  const inventorySourceRequest = useGet<AwxItemsResponse<InventorySource>>(inventorySourceUrl);
-
-  const inventorySourceData = inventorySourceRequest.data?.results[0];
 
   const inventorySourceSyncJob =
     inventorySourceData?.summary_fields?.current_job ||
@@ -100,21 +95,7 @@ export function InventoryDetailsInner(props: { inventory: Inventory }) {
     return <AwxError error={inputInventoriesError} />;
   }
 
-  if (inventorySourceRequest.error) {
-    return <AwxError error={inventorySourceRequest.error} />;
-  }
-
-  if (inventory.kind === 'constructed' && !inventorySourceData && !inventorySourceRequest.data) {
-    return <AwxError error={new Error(t('Inventory source not found'))} />;
-  }
-
-  if (
-    inventory.kind === 'constructed' &&
-    ((!inventorySourceRequest.data && !inventorySourceRequest.error) ||
-      (!inputInventories && !inputInventoriesError))
-  ) {
-    return <LoadingPage />;
-  }
+  inventory.source = inventorySourceData;
 
   return (
     <PageDetails>

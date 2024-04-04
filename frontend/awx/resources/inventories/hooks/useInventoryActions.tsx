@@ -13,6 +13,7 @@ import { AwxRoute } from '../../../main/AwxRoutes';
 import { useCopyInventory } from './useCopyInventory';
 import { useDeleteInventories } from './useDeleteInventories';
 import { useParams } from 'react-router-dom';
+import { InventorySource } from '../../../interfaces/InventorySource';
 
 type InventoryActionOptions = {
   onInventoriesDeleted: (inventories: Inventory[]) => void;
@@ -36,10 +37,12 @@ export function useInventoryActions({
       inventory?.summary_fields?.user_capabilities?.delete
         ? ''
         : t(`The inventory cannot be deleted due to insufficient permission`);
+
     const cannotEditInventory = (inventory: Inventory): string =>
       inventory?.summary_fields?.user_capabilities?.edit
         ? ''
         : t(`The inventory cannot be edited due to insufficient permission`);
+
     const cannotCopyInventory = (inventory: Inventory): string => {
       if (!inventory?.summary_fields?.user_capabilities?.copy) {
         return t(`The inventory cannot be copied due to insufficient permission`);
@@ -49,11 +52,11 @@ export function useInventoryActions({
         return '';
       }
     };
-    /*const cannotSyncRepository = (inventory: Inventory): string =>
-    inventory?.summary_fields?.user_capabilities?.sync
-      ? ''
-      : t(`The inventory cannot be edited due to insufficient permission`);
-    */
+
+    const cannotSyncInventory = (inventory: Inventory & { source?: InventorySource }): string =>
+      inventory?.source?.summary_fields?.user_capabilities?.start
+        ? ''
+        : t(`The inventory cannot be edited due to insufficient permission`);
 
     const kinds: { [key: string]: string } = {
       '': 'inventory',
@@ -83,12 +86,14 @@ export function useInventoryActions({
         isDisabled: (inventory: Inventory) => cannotCopyInventory(inventory),
         onClick: (inventory: Inventory) => copyInventory(inventory),
       },
-      params.inventory_type === 'constructed_inventory'
+      params.inventory_type === 'constructed_inventory' && detail === true
         ? {
             type: PageActionType.Button,
             selection: PageActionSelection.Single,
             icon: SyncIcon,
             label: t('Sync inventory'),
+            isDisabled: (inventory: Inventory & { source?: InventorySource }) =>
+              cannotSyncInventory(inventory),
             onClick: (inventory: Inventory) => {},
           }
         : undefined,
@@ -105,5 +110,5 @@ export function useInventoryActions({
     ];
 
     return arr.filter((item) => item !== undefined) as IPageAction<Inventory>[];
-  }, [deleteInventories, copyInventory, pageNavigate, t]);
+  }, [deleteInventories, copyInventory, pageNavigate, t, params.inventory_type, detail]);
 }
