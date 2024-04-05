@@ -10,7 +10,10 @@ import { HubContextProvider } from '../common/useHubContext';
 import { HubUser } from '../interfaces/expanded/HubUser';
 
 export function HubLogin(props: { children: React.ReactNode }) {
-  const response = useSWR<HubUser>(hubAPI`/_ui/v1/me/`, requestGet);
+  const response = useSWR<HubUser>(hubAPI`/_ui/v1/me/`, requestGet, {
+    dedupingInterval: 0,
+    refreshInterval: 10 * 1000,
+  });
   const onSuccessfulLogin = useCallback(() => void response.mutate(), [response]);
 
   if (!response.data) {

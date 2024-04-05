@@ -9,7 +9,10 @@ import { EdaActiveUserContext } from '../common/useEdaActiveUser';
 import { EdaUser } from '../interfaces/EdaUser';
 
 export function EdaLogin(props: { children: React.ReactNode }) {
-  const response = useSWR<EdaUser>(edaAPI`/users/me/`, requestGet);
+  const response = useSWR<EdaUser>(edaAPI`/users/me/`, requestGet, {
+    dedupingInterval: 0,
+    refreshInterval: 10 * 1000,
+  });
   const onSuccessfulLogin = useCallback(() => void response.mutate(), [response]);
 
   if (!response.data) {
