@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { createRequestError } from './RequestError';
 import { normalizeQueryString } from './normalizeQueryString';
 import { requestCommon } from './requestCommon';
@@ -38,7 +37,6 @@ export function useOptions<T>(
  * - Supports aborting the request on unmount
  */
 function useOptionsRequest<ResponseBody>() {
-  const navigate = useNavigate();
   const abortControllerRef = useRef<{ abortController?: AbortController }>({});
   useEffect(() => {
     const ref = abortControllerRef;
