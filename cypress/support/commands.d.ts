@@ -22,7 +22,8 @@ import { Team } from '../../frontend/awx/interfaces/Team';
 import { User } from '../../frontend/awx/interfaces/User';
 import { WorkflowJobTemplate } from '../../frontend/awx/interfaces/WorkflowJobTemplate';
 import { WorkflowNode } from '../../frontend/awx/interfaces/WorkflowNode';
-import { Group, Host } from '../../frontend/awx/interfaces/generated-from-swagger/api';
+import { InventoryGroup } from '../../frontend/awx/interfaces/InventoryGroup';
+import { AwxHost } from '../../frontend/awx/interfaces/AwxHost';
 import { EdaControllerToken } from '../../frontend/eda/interfaces/EdaControllerToken';
 import { EdaCredential } from '../../frontend/eda/interfaces/EdaCredential';
 import { EdaDecisionEnvironment } from '../../frontend/eda/interfaces/EdaDecisionEnvironment';
@@ -1000,11 +1001,11 @@ declare global {
 
       createInventoryHost(
         organization: Organization
-      ): Chainable<{ inventory: Inventory; host: Host }>;
+      ): Chainable<{ inventory: Inventory; host: AwxHost }>;
 
       createInventoryHostGroup(
         organization: Organization
-      ): Chainable<{ inventory: Inventory; host: Host; group: Group }>;
+      ): Chainable<{ inventory: Inventory; host: AwxHost; group: InventoryGroup }>;
 
       createAwxWorkflowVisualizerJobTemplateNode(
         workflowJT: WorkflowJobTemplate,
