@@ -54,7 +54,8 @@ describe('Inventory Sources', () => {
   describe('Inventory Source List', () => {
     it('can navigate to the Create Source form, create new Source, and verify all expected info shows on the details page', () => {
       cy.navigateTo('awx', 'inventories');
-      cy.clickTableRow(inventory.name);
+      cy.filterTableBySingleSelect('name', inventory.name);
+      cy.clickTableRowLink('name', inventory.name, { disableFilter: true });
       cy.verifyPageTitle(inventory.name);
       cy.clickLink(/^Sources$/);
       cy.clickButton(/^Add source/);
@@ -90,7 +91,8 @@ describe('Inventory Sources', () => {
 
     it('can create an Amazon EC2 Inventory Source and edit the form', () => {
       cy.navigateTo('awx', 'inventories');
-      cy.clickTableRow(inventory.name);
+      cy.filterTableBySingleSelect('name', inventory.name);
+      cy.clickTableRowLink('name', inventory.name, { disableFilter: true });
       cy.verifyPageTitle(inventory.name);
       cy.clickLink(/^Sources$/);
       cy.getBy('#add-source').click();
