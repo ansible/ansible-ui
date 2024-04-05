@@ -4,16 +4,13 @@ import {
   InputGroupItem,
   InputGroupText,
   TextInput,
+  Grid,
+  GridItem,
 } from '@patternfly/react-core';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { Controller, FieldPath, useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import {
-  PageFormGrid,
-  PageFormSelect,
-  PageFormTextInput,
-  PageWizardStep,
-} from '../../../../../../framework';
+import { PageFormSelect, PageFormTextInput, PageWizardStep } from '../../../../../../framework';
 import { PageFormGroup } from '../../../../../../framework/PageForm/Inputs/PageFormGroup';
 import { PageFormWatch } from '../../../../../../framework/PageForm/Utils/PageFormWatch';
 import { usePageWizard } from '../../../../../../framework/PageWizard/PageWizardProvider';
@@ -433,36 +430,40 @@ function TimeoutInputs() {
         return (
           <PageFormGroup fieldId="approval_timeout" label={t('Timeout')}>
             <InputGroup>
-              <PageFormGrid>
-                <InputGroupItem isFill>
-                  <TextInput
-                    placeholder={t('Timeout in minutes')}
-                    onChange={(_event, value: string) =>
-                      onChangeHandler({ input: Number(value), unit: 'minutes' })
-                    }
-                    value={Math.floor(Number(value) / 60)}
-                    aria-describedby="approval_timeout_minutes-form-group"
-                    type="number"
-                    data-cy="approval_timeout_minutes"
-                    min={0}
-                  />
-                  <InputGroupText>{t('minutes')}</InputGroupText>
-                </InputGroupItem>
-                <InputGroupItem isFill>
-                  <TextInput
-                    placeholder={t('Timeout in seconds')}
-                    onChange={(_event, value: string) =>
-                      onChangeHandler({ input: Number(value), unit: 'seconds' })
-                    }
-                    value={Math.floor(Number(value) % 60)}
-                    aria-describedby="approval_timeout_seconds-form-group"
-                    type="number"
-                    data-cy="approval_timeout_seconds"
-                    min={0}
-                  />
-                  <InputGroupText>{t('seconds')}</InputGroupText>
-                </InputGroupItem>
-              </PageFormGrid>
+              <Grid hasGutter sm={6}>
+                <GridItem>
+                  <InputGroupItem isFill>
+                    <TextInput
+                      placeholder={t('Timeout in minutes')}
+                      onChange={(_event, value: string) =>
+                        onChangeHandler({ input: Number(value), unit: 'minutes' })
+                      }
+                      value={Math.floor(Number(value) / 60)}
+                      aria-describedby="approval_timeout_minutes-form-group"
+                      type="number"
+                      data-cy="approval_timeout_minutes"
+                      min={0}
+                    />
+                    <InputGroupText>{t('minutes')}</InputGroupText>
+                  </InputGroupItem>
+                </GridItem>
+                <GridItem>
+                  <InputGroupItem isFill>
+                    <TextInput
+                      placeholder={t('Timeout in seconds')}
+                      onChange={(_event, value: string) =>
+                        onChangeHandler({ input: Number(value), unit: 'seconds' })
+                      }
+                      value={Math.floor(Number(value) % 60)}
+                      aria-describedby="approval_timeout_seconds-form-group"
+                      type="number"
+                      data-cy="approval_timeout_seconds"
+                      min={0}
+                    />
+                    <InputGroupText>{t('seconds')}</InputGroupText>
+                  </InputGroupItem>
+                </GridItem>
+              </Grid>
             </InputGroup>
           </PageFormGroup>
         );
