@@ -31,10 +31,13 @@ export function InventoryPage() {
   const urlType =
     params.inventory_type === 'constructed_inventory' ? 'constructed_inventories' : 'inventories';
 
+  const location = useLocation();
+  const detail = location.pathname.endsWith('details');
+
   const inventoryRequest = useGet<InventoryWithSource>(awxAPI`/${urlType}/${params.id || ''}/`);
   const inventoryData = inventoryRequest?.data;
   const inventorySourceUrl =
-    inventoryData?.kind === 'constructed'
+    (inventoryData?.kind === 'constructed' && detail === true)
       ? awxAPI`/inventories/${params.id ?? ''}/inventory_sources/`
       : '';
 
@@ -72,9 +75,6 @@ export function InventoryPage() {
     { control: ['limit_reached_1'], jobs: ['status_changed'] },
     handleWebSocketMessage as (data: unknown) => void
   );
-
-  const location = useLocation();
-  const detail = location.pathname.endsWith('details');
 
   const pageNavigate = usePageNavigate();
 
