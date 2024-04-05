@@ -35,7 +35,7 @@ type LoginProps = {
   hideInputs?: boolean;
   authOptions?: AuthOption[];
   apiUrl: string;
-  onLoginUrl: string;
+  onSuccess: () => void;
 };
 
 export function Login(props: LoginProps) {
@@ -52,7 +52,7 @@ export function Login(props: LoginProps) {
           <LoginForm
             apiUrl={props.apiUrl}
             authOptions={props.authOptions}
-            onLoginUrl={props.onLoginUrl}
+            onSuccess={props.onSuccess}
             hideInputs={props.hideInputs}
           />
         </Inner>
