@@ -27,11 +27,11 @@ Cypress.Commands.add('awxLogin', () => {
         retryOnStatusCodeFailure: true,
         retryOnNetworkFailure: true,
       });
-      cy.get('[data-cy="username"]').type(Cypress.env('AWX_USERNAME') as string, {
+      cy.getBy('[data-cy="username"]').type(Cypress.env('AWX_USERNAME') as string, {
         log: false,
         delay: 0,
       });
-      cy.get('[data-cy="password"]').type(Cypress.env('AWX_PASSWORD') as string, {
+      cy.getBy('[data-cy="password"]').type(Cypress.env('AWX_PASSWORD') as string, {
         log: false,
         delay: 0,
       });
@@ -58,11 +58,11 @@ Cypress.Commands.add('edaLogin', () => {
         retryOnStatusCodeFailure: true,
         retryOnNetworkFailure: true,
       });
-      cy.get('[data-cy="username"]').type(Cypress.env('EDA_USERNAME') as string, {
+      cy.getBy('[data-cy="username"]').type(Cypress.env('EDA_USERNAME') as string, {
         log: false,
         delay: 0,
       });
-      cy.get('[data-cy="password"]').type(Cypress.env('EDA_PASSWORD') as string, {
+      cy.getBy('[data-cy="password"]').type(Cypress.env('EDA_PASSWORD') as string, {
         log: false,
         delay: 0,
       });
@@ -98,11 +98,11 @@ Cypress.Commands.add('hubLogin', () => {
         retryOnStatusCodeFailure: true,
         retryOnNetworkFailure: true,
       });
-      cy.get('[data-cy="username"]').type(Cypress.env('HUB_USERNAME') as string, {
+      cy.getBy('[data-cy="username"]').type(Cypress.env('HUB_USERNAME') as string, {
         log: false,
         delay: 0,
       });
-      cy.get('[data-cy="password"]').type(Cypress.env('HUB_PASSWORD') as string, {
+      cy.getBy('[data-cy="password"]').type(Cypress.env('HUB_PASSWORD') as string, {
         log: false,
         delay: 0,
       });
