@@ -24,11 +24,11 @@ export function PageApp(props: {
   /** The default refresh interval for the page in seconds. */
   defaultRefreshInterval: number;
 }) {
-  const { navigation, basename, masthead } = props;
+  const { navigation, masthead } = props;
   const routes = useMemo(
     () => [
       {
-        path: '/',
+        path: `/`,
         element: (
           <Page header={masthead} sidebar={<PageNavigation navigation={navigation} />}>
             <PageNotificationsDrawer>

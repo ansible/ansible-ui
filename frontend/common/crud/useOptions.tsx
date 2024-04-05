@@ -44,32 +44,29 @@ function useOptionsRequest<ResponseBody>() {
     const ref = abortControllerRef;
     return () => ref.current.abortController?.abort();
   }, []);
-  return useCallback(
-    async (url: string, signal?: AbortSignal) => {
-      const response: Response = await requestCommon({
-        url,
-        method: 'OPTIONS',
-        signal,
-      });
-      if (!response.ok) {
-        // if (response.status === 401) {
-        //   navigate('/login?navigate-back=true');
-        // }
-        throw await createRequestError(response);
-      }
-      switch (response.status) {
-        case 204:
-          return null as ResponseBody;
-        default:
-          if (response.headers.get('content-type')?.includes('application/json')) {
-            return (await response.json()) as ResponseBody;
-          } else if (response.headers.get('content-type')?.includes('text/plain')) {
-            return (await response.text()) as unknown as ResponseBody;
-          } else {
-            return (await response.blob()) as unknown as ResponseBody;
-          }
-      }
-    },
-    [navigate]
-  );
+  return useCallback(async (url: string, signal?: AbortSignal) => {
+    const response: Response = await requestCommon({
+      url,
+      method: 'OPTIONS',
+      signal,
+    });
+    if (!response.ok) {
+      // if (response.status === 401) {
+      //   navigate('/login?navigate-back=true');
+      // }
+      throw await createRequestError(response);
+    }
+    switch (response.status) {
+      case 204:
+        return null as ResponseBody;
+      default:
+        if (response.headers.get('content-type')?.includes('application/json')) {
+          return (await response.json()) as ResponseBody;
+        } else if (response.headers.get('content-type')?.includes('text/plain')) {
+          return (await response.text()) as unknown as ResponseBody;
+        } else {
+          return (await response.blob()) as unknown as ResponseBody;
+        }
+    }
+  }, []);
 }
