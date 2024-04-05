@@ -1,18 +1,13 @@
 import { Page } from '@patternfly/react-core';
 import { ReactNode, useMemo } from 'react';
-import { Outlet, RouterProvider, createBrowserRouter } from 'react-router-dom';
+import { Outlet, Route, RouteObject, Routes } from 'react-router-dom';
 import { PageNotFound } from '../PageEmptyStates/PageNotFound';
-import { PageFramework } from '../PageFramework';
 import { PageNotificationsDrawer } from '../PageNotifications/PageNotificationsProvider';
 import { PageNavigation } from './PageNavigation';
 import { PageNavigationItem } from './PageNavigationItem';
 import { PageNavigationRoutesProvider } from './PageNavigationRoutesProvider';
 
 export function PageApp(props: {
-  login: ReactNode;
-
-  root: ReactNode;
-
   /** Component for the masthead of the page. */
   masthead?: ReactNode;
 
@@ -29,45 +24,35 @@ export function PageApp(props: {
   /** The default refresh interval for the page in seconds. */
   defaultRefreshInterval: number;
 }) {
-  const { navigation, basename, masthead } = props;
+  const { navigation, masthead } = props;
   const routes = useMemo(
     () => [
       {
-        path: '',
+        path: `/`,
         element: (
-          <PageFramework defaultRefreshInterval={props.defaultRefreshInterval}>
-            <Outlet />
-          </PageFramework>
+          <Page header={masthead} sidebar={<PageNavigation navigation={navigation} />}>
+            <PageNotificationsDrawer>
+              <Outlet />
+            </PageNotificationsDrawer>
+          </Page>
         ),
-        children: [
-          { path: 'login', element: props.login },
-          {
-            path: '',
-            element: props.root,
-            children: [
-              {
-                path: '',
-                element: (
-                  <Page header={masthead} sidebar={<PageNavigation navigation={navigation} />}>
-                    <PageNotificationsDrawer>
-                      <Outlet />
-                    </PageNotificationsDrawer>
-                  </Page>
-                ),
-                children: navigation,
-              },
-            ],
-          },
-          { path: '*', element: <PageNotFound /> },
-        ],
+        children: navigation,
       },
+      { path: '*', element: <PageNotFound /> },
     ],
-    [masthead, navigation, props.defaultRefreshInterval, props.login, props.root]
+    [masthead, navigation]
   );
-  const router = useMemo(() => createBrowserRouter(routes, { basename }), [basename, routes]);
   return (
     <PageNavigationRoutesProvider navigation={navigation}>
-      <RouterProvider router={router} />
+      <Routes>{routes.map(NavigationRoute)}</Routes>
     </PageNavigationRoutesProvider>
+  );
+}
+
+function NavigationRoute(route: RouteObject) {
+  return (
+    <Route path={route.path} element={route.element}>
+      {route.children?.map(NavigationRoute)}
+    </Route>
   );
 }

@@ -110,11 +110,11 @@ describe('TemplatePage', () => {
       });
     });
   });
+
   it('Should show all tabs because user is system auditor', () => {
     cy.fixture('organizations.json').then((organizations: { count: number; results: [] }) => {
       organizations.count = 0;
       organizations.results = [];
-
       cy.intercept(
         'GET',
         '/api/v2/organizations/?role_level=notification_admin_role',
@@ -137,12 +137,13 @@ describe('TemplatePage', () => {
     cy.mount(<TemplatePage />, undefined, 'activeUserSysAuditor');
 
     cy.get('.pf-v5-c-tabs__list').within(() => {
-      cy.get('.pf-v5-c-tabs__item').should('have.length', 6);
+      cy.get('.pf-v5-c-tabs__item').should('have.length', tabNames.length);
       cy.get('.pf-v5-c-tabs__item').each((tab, index) => {
         cy.wrap(tab).should('contain', tabNames[index]);
       });
     });
   });
+
   it('Should not show notifications tab, because of RBAC', () => {
     cy.fixture('organizations.json').then((organizations: { count: number; results: [] }) => {
       organizations.count = 0;
@@ -171,7 +172,7 @@ describe('TemplatePage', () => {
     cy.wait('@getOrganizations');
 
     cy.get('.pf-v5-c-tabs__list').within(() => {
-      cy.get('.pf-v5-c-tabs__item').should('have.length', 6);
+      cy.get('.pf-v5-c-tabs__item').should('have.length', tabNames.length);
       cy.get('.pf-v5-c-tabs__item').each((tab, index) => {
         cy.wrap(tab).should('contain', tabNames[index]);
       });

@@ -1,156 +1,86 @@
 import { Page } from '@patternfly/react-core';
-import { ReactNode, createContext, useContext, useEffect, useState } from 'react';
-import { PageLayout } from '../../../framework';
+import { ReactNode, createContext, useContext, useMemo } from 'react';
+import useSWR from 'swr';
 import { LoadingState } from '../../../framework/components/LoadingState';
-import { useGet } from '../../common/crud/useGet';
+import { requestGet } from '../../common/crud/Data';
+import { HubFeatureFlags } from '../interfaces/expanded/HubFeatureFlags';
+import { HubSettings } from '../interfaces/expanded/HubSettings';
+import { HubUser } from '../interfaces/expanded/HubUser';
+import { HubError } from './HubError';
 import { hubAPI } from './api/formatPath';
-
-type HubFeatureFlags = {
-  // execution environments
-  container_signing: boolean;
-  execution_environments: boolean;
-
-  // keycloak login screen
-  external_authentication: boolean;
-
-  // community mode
-  ai_deny_index: boolean;
-  display_repositories: boolean;
-  legacy_roles: boolean;
-
-  // collection signing
-  can_create_signatures: boolean;
-  can_upload_signatures: boolean;
-  collection_auto_sign: boolean;
-  collection_signing: boolean;
-  display_signatures: boolean;
-  require_upload_signatures: boolean;
-  signatures_enabled: boolean;
-
-  // errors
-  _messages: string[];
-};
-
-type HubSettings = {
-  GALAXY_AUTO_SIGN_COLLECTIONS: boolean;
-  GALAXY_COLLECTION_SIGNING_SERVICE: string;
-  GALAXY_CONTAINER_SIGNING_SERVICE: string;
-  GALAXY_ENABLE_UNAUTHENTICATED_COLLECTION_ACCESS: boolean;
-  GALAXY_ENABLE_UNAUTHENTICATED_COLLECTION_DOWNLOAD: boolean;
-  GALAXY_MINIMUM_PASSWORD_LENGTH: number | null;
-  GALAXY_REQUIRE_CONTENT_APPROVAL: boolean;
-  GALAXY_REQUIRE_SIGNATURE_FOR_APPROVAL: boolean;
-  GALAXY_SIGNATURE_UPLOAD_ENABLED: boolean;
-  GALAXY_TOKEN_EXPIRATION: number | null;
-};
-
-type HubPermissions = {
-  [key: string]: {
-    global_description: string;
-    has_model_permission: boolean;
-    name: string;
-    object_description: string;
-    ui_category: string;
-  };
-};
-
-type HubGroup = {
-  id: number;
-  name: string;
-  object_roles?: string[];
-};
-
-export type HubUser = {
-  auth_provider: string[];
-  date_joined: string;
-  email: string;
-  first_name: string;
-  groups: HubGroup[];
-  id: number;
-  is_anonymous: boolean;
-  is_superuser: boolean;
-  last_name: string;
-  model_permissions: HubPermissions;
-  username: string;
-};
+import { useHubActiveUser } from './useHubActiveUser';
 
 export type HubContext = {
-  errors: string[];
   featureFlags: HubFeatureFlags;
-  hasPermission: (name: string) => boolean;
   settings: HubSettings;
   user: HubUser;
+  hasPermission: (name: string) => boolean;
 };
 
-export const HubContext = createContext<HubContext | null>(null);
+export const HubContext = createContext<HubContext>({} as HubContext);
 
-export const useHubContext = (): HubContext => useContext(HubContext) as HubContext;
+export function useHubContext() {
+  return useContext(HubContext);
+}
 
 export const HubContextProvider = ({ children }: { children: ReactNode }) => {
-  const getFeatureFlags = useGet<HubFeatureFlags>(hubAPI`/_ui/v1/feature-flags/`);
-  const getSettings = useGet<HubSettings>(hubAPI`/_ui/v1/settings/`);
-  const getUser = useGet<HubUser>(hubAPI`/_ui/v1/me/`);
+  const getFeatureFlags = useSWR<HubFeatureFlags>(hubAPI`/_ui/v1/feature-flags/`, requestGet);
+  const getSettings = useSWR<HubSettings>(hubAPI`/_ui/v1/settings/`, requestGet);
+  const hubUser = useHubActiveUser();
 
-  const [context, setContext] = useState<HubContext | null>(null);
-
-  useEffect(() => {
-    if (getFeatureFlags.isLoading || getSettings.isLoading || getUser.isLoading) {
-      return;
-    }
-
-    setContext({
-      errors: [
-        getFeatureFlags.error,
-        getSettings.error,
-        getUser.error,
-        ...(getFeatureFlags.data?._messages || []),
-      ].filter(Boolean) as string[],
+  const context = useMemo<HubContext>(
+    () => ({
       featureFlags: getFeatureFlags.data as HubFeatureFlags,
       settings: getSettings.data as HubSettings,
-      user: getUser.data as HubUser,
-    } as HubContext);
-  }, [
-    getFeatureFlags.isLoading,
-    getFeatureFlags.data,
-    getFeatureFlags.error,
-    getSettings.isLoading,
-    getSettings.data,
-    getSettings.error,
-    getUser.isLoading,
-    getUser.data,
-    getUser.error,
-  ]);
-
-  return context ? (
-    <HubContext.Provider
-      value={{
-        ...context,
-        hasPermission: hasPermission(context),
-      }}
-    >
-      {children}
-    </HubContext.Provider>
-  ) : (
-    <Page>
-      <PageLayout>
-        <LoadingState />
-      </PageLayout>
-    </Page>
+      user: hubUser,
+      hasPermission: (permission) => hasPermission(permission, hubUser),
+    }),
+    [getFeatureFlags, getSettings, hubUser]
   );
+
+  if (getFeatureFlags.isLoading || getSettings.isLoading) {
+    return (
+      <Page>
+        <LoadingState />
+      </Page>
+    );
+  }
+
+  if (getFeatureFlags.error) {
+    return (
+      <Page>
+        <HubError
+          error={getFeatureFlags.error as Error}
+          handleRefresh={() => void getFeatureFlags.mutate()}
+        />
+      </Page>
+    );
+  }
+
+  if (getSettings.error) {
+    return (
+      <Page>
+        <HubError
+          error={getFeatureFlags.error as Error}
+          handleRefresh={() => void getFeatureFlags.mutate()}
+        />
+      </Page>
+    );
+  }
+
+  return <HubContext.Provider value={context}>{children}</HubContext.Provider>;
 };
 
-const hasPermission =
-  ({ user }: HubContext) =>
-  (name: string) => {
-    if (!user?.model_permissions) {
-      return false;
-    }
+function hasPermission(permission: string, user: HubUser) {
+  if (!user?.model_permissions) {
+    return false;
+  }
 
-    if (!user.model_permissions[name]) {
-      // eslint-disable-next-line no-console
-      console.error(`Unknown permission ${name}`);
-      return !!user.is_superuser;
-    }
+  if (!user.model_permissions[permission]) {
+    // eslint-disable-next-line no-console
+    console.error(`Unknown permission ${permission}`);
+    return !!user.is_superuser;
+  }
 
-    return !!user.model_permissions[name].has_model_permission;
-  };
+  return !!user.model_permissions[permission].has_model_permission;
+}

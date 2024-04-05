@@ -1,6 +1,8 @@
 import { CollectionVersionSearch } from '../administration/collection-approvals/Approval';
-import { HubContextProvider, HubUser } from '../common/useHubContext';
+import { HubActiveUserContext } from '../common/useHubActiveUser';
+import { HubContextProvider } from '../common/useHubContext';
 import { HubItemsResponse } from '../common/useHubView';
+import { HubUser } from '../interfaces/expanded/HubUser';
 import { CollectionCategoryCarousel } from './CollectionCategories';
 
 describe('CollectionCategories.cy.tsx', () => {
@@ -53,49 +55,53 @@ describe('CollectionCategories.cy.tsx', () => {
   });
 
   it('renders Manage Content button for platform admin', () => {
-    cy.intercept('**/_ui/v1/me/', { fixture: 'hub_admin.json' });
     cy.intercept('**/_ui/v1/settings/', { fixture: 'hub_settings.json' });
     cy.intercept('**/_ui/v1/feature-flags/', { fixture: 'hub_feature_flags.json' });
-    cy.fixture('collection_versions_eda').then(
-      (collectionVersionsResponse: HubItemsResponse<CollectionVersionSearch>) => {
-        const collections = collectionVersionsResponse.data;
-        cy.mount(
-          <HubContextProvider>
-            <CollectionCategoryCarousel
-              collections={collections}
-              category="eda"
-              searchKey="tags"
-              searchValue="eda"
-            />
-          </HubContextProvider>
-        );
-        cy.get('.pf-v5-c-card__footer button').contains('Manage content').should('be.visible');
-      }
-    );
+    cy.fixture('hub_admin').then((user: HubUser) => {
+      cy.fixture('collection_versions_eda').then(
+        (collectionVersionsResponse: HubItemsResponse<CollectionVersionSearch>) => {
+          const collections = collectionVersionsResponse.data;
+          cy.mount(
+            <HubActiveUserContext.Provider value={{ user: user, refresh: () => null }}>
+              <HubContextProvider>
+                <CollectionCategoryCarousel
+                  collections={collections}
+                  category="eda"
+                  searchKey="tags"
+                  searchValue="eda"
+                />
+              </HubContextProvider>
+            </HubActiveUserContext.Provider>
+          );
+          cy.get('.pf-v5-c-card__footer button').contains('Manage content').should('be.visible');
+        }
+      );
+    });
   });
 
   it('Manage Content button should not be shown for non-admin user', () => {
-    cy.fixture('hub_admin').then((user: HubUser) => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      cy.intercept('**/_ui/v1/me/', { ...user, is_superuser: false });
-    });
     cy.intercept('**/_ui/v1/settings/', { fixture: 'hub_settings.json' });
     cy.intercept('**/_ui/v1/feature-flags/', { fixture: 'hub_feature_flags.json' });
-    cy.fixture('collection_versions_eda').then(
-      (collectionVersionsResponse: HubItemsResponse<CollectionVersionSearch>) => {
-        const collections = collectionVersionsResponse.data;
-        cy.mount(
-          <HubContextProvider>
-            <CollectionCategoryCarousel
-              collections={collections}
-              category="eda"
-              searchKey="tags"
-              searchValue="eda"
-            />
-          </HubContextProvider>
-        );
-        cy.contains('Manage content', 'button').should('not.exist');
-      }
-    );
+    cy.fixture('hub_admin').then((user: HubUser) => {
+      user.is_superuser = false;
+      cy.fixture('collection_versions_eda').then(
+        (collectionVersionsResponse: HubItemsResponse<CollectionVersionSearch>) => {
+          const collections = collectionVersionsResponse.data;
+          cy.mount(
+            <HubActiveUserContext.Provider value={{ user: user, refresh: () => null }}>
+              <HubContextProvider>
+                <CollectionCategoryCarousel
+                  collections={collections}
+                  category="eda"
+                  searchKey="tags"
+                  searchValue="eda"
+                />
+              </HubContextProvider>
+            </HubActiveUserContext.Provider>
+          );
+          cy.contains('Manage content', 'button').should('not.exist');
+        }
+      );
+    });
   });
 });

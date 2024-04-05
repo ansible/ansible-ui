@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { createRequestError } from './RequestError';
 import { normalizeQueryString } from './normalizeQueryString';
 import { requestCommon } from './requestCommon';
@@ -38,38 +37,34 @@ export function useOptions<T>(
  * - Supports aborting the request on unmount
  */
 function useOptionsRequest<ResponseBody>() {
-  const navigate = useNavigate();
   const abortControllerRef = useRef<{ abortController?: AbortController }>({});
   useEffect(() => {
     const ref = abortControllerRef;
     return () => ref.current.abortController?.abort();
   }, []);
-  return useCallback(
-    async (url: string, signal?: AbortSignal) => {
-      const response: Response = await requestCommon({
-        url,
-        method: 'OPTIONS',
-        signal,
-      });
-      if (!response.ok) {
-        if (response.status === 401) {
-          navigate('/login?navigate-back=true');
+  return useCallback(async (url: string, signal?: AbortSignal) => {
+    const response: Response = await requestCommon({
+      url,
+      method: 'OPTIONS',
+      signal,
+    });
+    if (!response.ok) {
+      // if (response.status === 401) {
+      //   navigate('/login?navigate-back=true');
+      // }
+      throw await createRequestError(response);
+    }
+    switch (response.status) {
+      case 204:
+        return null as ResponseBody;
+      default:
+        if (response.headers.get('content-type')?.includes('application/json')) {
+          return (await response.json()) as ResponseBody;
+        } else if (response.headers.get('content-type')?.includes('text/plain')) {
+          return (await response.text()) as unknown as ResponseBody;
+        } else {
+          return (await response.blob()) as unknown as ResponseBody;
         }
-        throw await createRequestError(response);
-      }
-      switch (response.status) {
-        case 204:
-          return null as ResponseBody;
-        default:
-          if (response.headers.get('content-type')?.includes('application/json')) {
-            return (await response.json()) as ResponseBody;
-          } else if (response.headers.get('content-type')?.includes('text/plain')) {
-            return (await response.text()) as unknown as ResponseBody;
-          } else {
-            return (await response.blob()) as unknown as ResponseBody;
-          }
-      }
-    },
-    [navigate]
-  );
+    }
+  }, []);
 }

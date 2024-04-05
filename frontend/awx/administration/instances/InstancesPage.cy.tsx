@@ -91,8 +91,7 @@ describe('Instances Page', () => {
   });
 
   it('non admin users cannot remove instance', () => {
-    cy.mount(<InstancePage />);
-    cy.intercept({ method: 'GET', url: '/api/v2/me' }, { fixture: 'normalUser.json' });
+    cy.mount(<InstancePage />, undefined, 'normalUser');
     cy.wait('@getInstance')
       .its('response.body')
       .then(() => {
@@ -202,8 +201,7 @@ describe('Instances Page', () => {
   });
 
   it('Enabled/Disabled switch is disabled if user does not have the right permissions', () => {
-    cy.mount(<InstancePage />);
-    cy.intercept({ method: 'GET', url: '/api/v2/me' }, { fixture: 'normalUser.json' });
+    cy.mount(<InstancePage />, undefined, 'normalUser');
     cy.wait('@getInstance')
       .its('response.body')
       .then(() => {
