@@ -77,6 +77,7 @@ export function InventoryPage() {
   const detail = location.pathname.endsWith('details');
 
   const pageNavigate = usePageNavigate();
+
   const itemActions = useInventoryActions({
     onInventoriesDeleted: () => pageNavigate(AwxRoute.Inventories),
     detail,

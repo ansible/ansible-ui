@@ -1,6 +1,6 @@
 import { ButtonVariant } from '@patternfly/react-core';
 import { CopyIcon, PencilAltIcon, SyncIcon, TrashIcon } from '@patternfly/react-icons';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   IPageAction,
@@ -18,6 +18,7 @@ import { usePageAlertToaster } from '../../../../../framework';
 import { useCallback } from 'react';
 import { postRequest } from '../../../../common/crud/Data';
 import { awxAPI } from '../../../common/api/awx-utils';
+import { requestCommon } from '../../../../common/crud/requestCommon';
 
 type InventoryActionOptions = {
   onInventoriesDeleted: (inventories: Inventory[]) => void;
@@ -35,25 +36,43 @@ export function useInventoryActions({
   const deleteInventories = useDeleteInventories(onInventoriesDeleted);
   const copyInventory = useCopyInventory(onInventoryCopied);
 
+  const [updateJobId, setUpdateJobId] = useState<number | undefined>(undefined);
+  // for faster UI change
+  const [hideCancelButton, setHideCancelButton] = useState<boolean | undefined>(undefined);
+
   const params = useParams<{ inventory_type: string }>();
 
   const alertToaster = usePageAlertToaster();
 
-  const handleUpdate = useCallback(
+  const cancelSync = useCallback(async () => {
+    try {
+      /* we need to use requestCommon, because 
+           requestPost throws exception on json parse, while the request in network tab not fail
+           and correctly ends the running job */
+      await requestCommon({
+        url: awxAPI`/inventory_updates/${updateJobId?.toString() || ''}/cancel/`,
+        method: 'POST',
+      });
+      setHideCancelButton(true);
+    } catch (error) {
+      alertToaster.addAlert({
+        variant: 'danger',
+        title: t('Failed to cancel inventory source'),
+        children: error instanceof Error && error.message,
+        timeout: 5000,
+      });
+    }
+  }, [alertToaster, t, updateJobId]);
+
+  const startSync = useCallback(
     async (inventory: InventoryWithSource) => {
       try {
-        await postRequest(
+        const response = await postRequest<{ inventory_update: number }>(
           awxAPI`/inventory_sources/${inventory.source?.id.toString() || ''}/update/`,
           {}
         );
-        alertToaster.addAlert({
-          variant: 'info',
-          title: t('Inventory sync started'),
-          children: t('Running sync on {{name}}. Progress shown on details tab.', {
-            name: inventory.name,
-          }),
-          timeout: 5000,
-        });
+        setUpdateJobId(response.inventory_update);
+        setHideCancelButton(false);
       } catch (error) {
         alertToaster.addAlert({
           variant: 'danger',
@@ -124,10 +143,33 @@ export function useInventoryActions({
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: SyncIcon,
+        isPinned: true,
         label: t('Sync inventory'),
         isDisabled: (inventory: InventoryWithSource) => cannotSyncInventory(inventory),
-        onClick: (inventory: InventoryWithSource) => handleUpdate(inventory),
-        isHidden: () => !(params.inventory_type === 'constructed_inventory' && detail === true),
+        onClick: (inventory: InventoryWithSource) => startSync(inventory),
+        isHidden: (inventory) =>
+          !(
+            params.inventory_type === 'constructed_inventory' &&
+            detail === true &&
+            (isSyncRunning(inventory) === false || hideCancelButton === true)
+          ),
+      },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        icon: SyncIcon,
+        isPinned: true,
+        label: t('Cancel Sync'),
+        isDisabled: (inventory: InventoryWithSource) => cannotSyncInventory(inventory),
+        onClick: () => cancelSync(),
+        isHidden: (inventory) =>
+          !(
+            params.inventory_type === 'constructed_inventory' &&
+            detail === true &&
+            isSyncRunning(inventory) === true &&
+            updateJobId !== undefined &&
+            hideCancelButton !== true
+          ),
       },
       { type: PageActionType.Seperator },
       {
@@ -147,6 +189,25 @@ export function useInventoryActions({
     t,
     params.inventory_type,
     detail,
-    handleUpdate,
+    cancelSync,
+    startSync,
+    hideCancelButton,
+    updateJobId,
   ]);
+}
+
+function isSyncRunning(inventory: InventoryWithSource) {
+  const inventorySourceSyncJob =
+    inventory?.source?.summary_fields?.current_job ||
+    inventory?.source?.summary_fields?.last_job ||
+    undefined;
+
+  let syncRunning = undefined;
+  if (inventorySourceSyncJob) {
+    const status = inventorySourceSyncJob.status;
+    syncRunning =
+      status === 'pending' || status === 'running' || status === 'waiting' ? true : false;
+  }
+
+  return syncRunning;
 }
