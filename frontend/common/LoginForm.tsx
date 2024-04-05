@@ -10,7 +10,6 @@ import {
 import { AuthOption, SocialAuthLogin } from './SocialAuthLogin';
 import { RequestError, createRequestError } from './crud/RequestError';
 import { getCookie } from './crud/cookie';
-import { useInvalidateCacheOnUnmount } from './useInvalidateCache';
 
 type LoginFormProps = {
   apiUrl: string;
@@ -22,8 +21,6 @@ type LoginFormProps = {
 export function LoginForm(props: LoginFormProps) {
   const { authOptions } = props;
   const { t } = useTranslation();
-
-  useInvalidateCacheOnUnmount();
 
   const onSubmit = useCallback<
     PageFormSubmitHandler<{ serverId: string | number; username: string; password: string }>

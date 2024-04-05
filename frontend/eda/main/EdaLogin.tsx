@@ -15,19 +15,15 @@ export function EdaLogin(props: { children: React.ReactNode }) {
   });
   const onSuccessfulLogin = useCallback(() => void response.mutate(), [response]);
 
-  if (!response.data) {
-    if (response.error) {
-      return <Login apiUrl={edaAPI`/auth/session/login/`} onSuccess={onSuccessfulLogin} />;
-    }
+  if (response.isLoading) {
+    return (
+      <Page>
+        <LoadingState />
+      </Page>
+    );
+  }
 
-    if (response.isLoading) {
-      return (
-        <Page>
-          <LoadingState />
-        </Page>
-      );
-    }
-
+  if (!response.data || response.error) {
     return <Login apiUrl={edaAPI`/auth/session/login/`} onSuccess={onSuccessfulLogin} />;
   }
 

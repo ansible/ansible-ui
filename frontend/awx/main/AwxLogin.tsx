@@ -23,8 +23,9 @@ export function AwxLogin(props: { children: React.ReactNode }) {
     dedupingInterval: 0,
     refreshInterval: 10 * 1000,
   });
-  const { data: options } = useSWR<AwxAuthOptions>(awxAPI`/auth/`, requestGet);
+  const onSuccessfulLogin = useCallback(() => void response.mutate(), [response]);
 
+  const { data: options } = useSWR<AwxAuthOptions>(awxAPI`/auth/`, requestGet);
   const authOptions: AuthOption[] = [];
   if (options) {
     Object.keys(options).forEach((key) => {
@@ -35,21 +36,15 @@ export function AwxLogin(props: { children: React.ReactNode }) {
     });
   }
 
-  const onSuccessfulLogin = useCallback(() => void response.mutate(), [response]);
+  if (response.isLoading) {
+    return (
+      <Page>
+        <LoadingState />
+      </Page>
+    );
+  }
 
-  if (!response.data || !response.data.results.length) {
-    if (response.error) {
-      return <Login authOptions={authOptions} apiUrl="/api/login/" onSuccess={onSuccessfulLogin} />;
-    }
-
-    if (response.isLoading) {
-      return (
-        <Page>
-          <LoadingState />
-        </Page>
-      );
-    }
-
+  if (!response.data || !response.data.results.length || response.error) {
     return <Login authOptions={authOptions} apiUrl="/api/login/" onSuccess={onSuccessfulLogin} />;
   }
 
