@@ -48,6 +48,49 @@ Cypress.Commands.add('awxLogin', () => {
   cy.visit(`/`, { retryOnStatusCodeFailure: true, retryOnNetworkFailure: true });
 });
 
+Cypress.Commands.add('awxLoginTestUser', (username: string, password: string) => {
+  cy.awxLogout();
+  cy.requiredVariablesAreSet(['AWX_SERVER']);
+  cy.session(
+    'AWX_TEST_USER',
+    () => {
+      window.localStorage.setItem('default-nav-expanded', 'true');
+      window.localStorage.setItem('theme', 'light');
+      window.localStorage.setItem('disclaimer', 'true');
+      window.localStorage.setItem('hide-welcome-message', 'true');
+      cy.visit(`/login`, {
+        retryOnStatusCodeFailure: true,
+        retryOnNetworkFailure: true,
+      });
+      cy.get('[data-cy="username"]').type(username, {
+        log: false,
+        delay: 0,
+      });
+      cy.get('[data-cy="password"]').type(password, {
+        log: false,
+        delay: 0,
+      });
+      cy.get('[data-cy="Submit"]').click();
+      cy.get('[data-cy="nav-toggle"]').should('exist');
+    },
+    {
+      validate: () => {
+        cy.request({ method: 'GET', url: awxAPI`/me` });
+      },
+      cacheAcrossSpecs: true,
+    }
+  );
+  cy.visit(`/`, { retryOnStatusCodeFailure: true, retryOnNetworkFailure: true });
+});
+
+Cypress.Commands.add('awxLogout', () => {
+  cy.getByDataCy('account-menu')
+    .click()
+    .then(() => {
+      cy.get('ul>li>a').contains('Logout').click();
+    });
+});
+
 Cypress.Commands.add('edaLogin', () => {
   cy.requiredVariablesAreSet(['EDA_SERVER', 'EDA_USERNAME', 'EDA_PASSWORD']);
   cy.session(

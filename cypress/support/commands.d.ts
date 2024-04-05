@@ -74,6 +74,7 @@ import {
   HubRequestOptions,
 } from './hub-commands';
 import { NotificationTemplate } from '../../frontend/awx/interfaces/NotificationTemplate';
+import { WorkflowApproval } from '../../frontend/awx/interfaces/WorkflowApproval';
 
 declare global {
   namespace Cypress {
@@ -84,6 +85,12 @@ declare global {
 
       /** Login to the AWX application */
       awxLogin(): Chainable<void>;
+
+      /** Login to the AWX application */
+      awxLogout(): Chainable<void>;
+
+      /** Login to the AWX with a user created during the test*/
+      awxLoginTestUser(username: string, password: string): Chainable<void>;
 
       /** Login to the EDA application */
       edaLogin(): Chainable<void>;
@@ -1040,6 +1047,8 @@ declare global {
         secondNode: WorkflowNode
       ): Chainable<WorkflowNode>;
 
+      getAwxWFApprovalByWorkflowJobID(workflowJobID: number): Chainable<WorkflowApproval>;
+
       waitForTemplateStatus(jobID: string): Chainable<AwxItemsResponse<JobEvent>>;
       waitForJobToProcessEvents(jobID: string, retries?: number): Chainable<Job>;
       waitForWorkflowJobStatus(jobID: string): Chainable<Job>;
@@ -1087,6 +1096,9 @@ declare global {
       ): Chainable<void>;
 
       removeAllNodesFromVisualizerToolbar(): Chainable<void>;
+      actionsWFApprovalConfirmModal(
+        action: 'approve' | 'deny' | 'cancel' | 'delete'
+      ): Chainable<void>;
       removeNodeInVisualizer(nodeName: string): Chainable<void>;
 
       inputCustomCredTypeConfig(configType: string, config: string): Chainable<void>;

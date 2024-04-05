@@ -17,11 +17,6 @@ export interface WorkflowNode {
     workflow_job_template: string;
   };
   summary_fields: {
-    workflow_job_template: {
-      id: number;
-      name: string;
-      description: string;
-    };
     job?: {
       description: string;
       elapsed: number;
@@ -30,6 +25,16 @@ export interface WorkflowNode {
       name: string;
       status: string;
       type: string;
+    };
+    workflow_job: {
+      id: number;
+      name: string;
+      description: string;
+    };
+    workflow_job_template: {
+      id: number;
+      name: string;
+      description: string;
     };
     unified_job_template?: {
       id: number;
