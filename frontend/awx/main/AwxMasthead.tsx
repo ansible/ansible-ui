@@ -13,7 +13,7 @@ import { PageRefreshIcon } from '../../common/PageRefreshIcon';
 import { useGet } from '../../common/crud/useGet';
 import { AwxItemsResponse } from '../common/AwxItemsResponse';
 import { awxAPI } from '../common/api/awx-utils';
-import { useAwxActiveUser } from '../common/useAwxActiveUser';
+import { useAwxActiveUser, useAwxRefreshUser } from '../common/useAwxActiveUser';
 import { useAwxConfig } from '../common/useAwxConfig';
 import { useAwxWebSocketSubscription } from '../common/useAwxWebSocket';
 import { getDocsBaseUrl } from '../common/util/getDocsBaseUrl';
@@ -30,6 +30,7 @@ export function AwxMasthead() {
   const pageNavigate = usePageNavigate();
   const { activeAwxUser, refreshActiveAwxUser } = useAwxActiveUser();
   useAwxNotifications();
+  const refreshUser = useAwxRefreshUser();
   const logout = useCallback(async () => {
     await fetch('/api/logout/');
 <<<<<<< HEAD
@@ -43,7 +44,13 @@ export function AwxMasthead() {
   if (activeUser) {
     userInfo = activeUser.username;
   }
+<<<<<<< HEAD
 >>>>>>> 2dc2b6177 (fix userInfo prop for awx and hub)
+=======
+    refreshUser();
+  }, [clearAllCache, refreshUser]);
+
+>>>>>>> 8269c803c (Login Flow Update (#1946))
   return (
     <PageMasthead brand={<AwxBrand style={{ height: 60 }} />}>
       <ToolbarGroup variant="icon-button-group" style={{ flexGrow: 1 }}>

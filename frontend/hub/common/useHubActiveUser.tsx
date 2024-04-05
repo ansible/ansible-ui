@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { ReactNode, createContext, useContext, useEffect, useMemo, useState } from 'react';
 import useSWR from 'swr';
 import { requestGet } from '../../common/crud/Data';
@@ -50,4 +51,20 @@ export function HubActiveUserProvider(props: { children: ReactNode }) {
   return (
     <HubActiveUserContext.Provider value={state}>{props.children}</HubActiveUserContext.Provider>
   );
+=======
+import { createContext, useContext } from 'react';
+import { HubUser } from '../interfaces/expanded/HubUser';
+
+export const HubActiveUserContext = createContext<{ user: HubUser; refresh: () => void }>({
+  user: {} as HubUser,
+  refresh: () => null,
+});
+
+export function useHubActiveUser() {
+  return useContext(HubActiveUserContext).user;
+}
+
+export function useHubRefreshUser() {
+  return useContext(HubActiveUserContext).refresh;
+>>>>>>> 8269c803c (Login Flow Update (#1946))
 }

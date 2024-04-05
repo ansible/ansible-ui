@@ -57,12 +57,20 @@ describe('CollectionCategories.cy.tsx', () => {
   it('renders Manage Content button for platform admin', () => {
     cy.intercept('**/_ui/v1/settings/', { fixture: 'hub_settings.json' });
     cy.intercept('**/_ui/v1/feature-flags/', { fixture: 'hub_feature_flags.json' });
+<<<<<<< HEAD
     cy.fixture('hub_admin').then((activeHubUser: HubUser) => {
+=======
+    cy.fixture('hub_admin').then((user: HubUser) => {
+>>>>>>> 8269c803c (Login Flow Update (#1946))
       cy.fixture('collection_versions_eda').then(
         (collectionVersionsResponse: HubItemsResponse<CollectionVersionSearch>) => {
           const collections = collectionVersionsResponse.data;
           cy.mount(
+<<<<<<< HEAD
             <HubActiveUserContext.Provider value={{ activeHubUser }}>
+=======
+            <HubActiveUserContext.Provider value={{ user: user, refresh: () => null }}>
+>>>>>>> 8269c803c (Login Flow Update (#1946))
               <HubContextProvider>
                 <CollectionCategoryCarousel
                   collections={collections}
@@ -82,13 +90,22 @@ describe('CollectionCategories.cy.tsx', () => {
   it('Manage Content button should not be shown for non-admin user', () => {
     cy.intercept('**/_ui/v1/settings/', { fixture: 'hub_settings.json' });
     cy.intercept('**/_ui/v1/feature-flags/', { fixture: 'hub_feature_flags.json' });
+<<<<<<< HEAD
     cy.fixture('hub_admin').then((activeHubUser: HubUser) => {
       activeHubUser.is_superuser = false;
+=======
+    cy.fixture('hub_admin').then((user: HubUser) => {
+      user.is_superuser = false;
+>>>>>>> 8269c803c (Login Flow Update (#1946))
       cy.fixture('collection_versions_eda').then(
         (collectionVersionsResponse: HubItemsResponse<CollectionVersionSearch>) => {
           const collections = collectionVersionsResponse.data;
           cy.mount(
+<<<<<<< HEAD
             <HubActiveUserContext.Provider value={{ activeHubUser }}>
+=======
+            <HubActiveUserContext.Provider value={{ user: user, refresh: () => null }}>
+>>>>>>> 8269c803c (Login Flow Update (#1946))
               <HubContextProvider>
                 <CollectionCategoryCarousel
                   collections={collections}

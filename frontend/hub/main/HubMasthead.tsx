@@ -14,7 +14,11 @@ import { postRequest } from '../../common/crud/Data';
 import { useGet } from '../../common/crud/useGet';
 import { CollectionVersionSearch } from '../collections/Collection';
 import { hubAPI } from '../common/api/formatPath';
+<<<<<<< HEAD
 import { useHubActiveUser } from '../common/useHubActiveUser';
+=======
+import { useHubActiveUser, useHubRefreshUser } from '../common/useHubActiveUser';
+>>>>>>> 8269c803c (Login Flow Update (#1946))
 import { useHubContext } from '../common/useHubContext';
 import { HubItemsResponse } from '../common/useHubView';
 import { HubRoute } from './HubRoutes';
@@ -25,12 +29,29 @@ export function HubMasthead() {
   const { t } = useTranslation();
   const versionInfo = useHubProductVersionInfo();
   const openAnsibleAboutModal = useAnsibleAboutModal();
+<<<<<<< HEAD
   useHubNotifications();
   const { activeHubUser, refreshActiveHubUser } = useHubActiveUser();
   const logout = useCallback(async () => {
     await postRequest(hubAPI`/_ui/v1/auth/logout/`, {});
     refreshActiveHubUser?.();
   }, [refreshActiveHubUser]);
+=======
+  const { clearAllCache } = useClearCache();
+  const hubUser = useHubActiveUser();
+  useHubNotifications();
+  const refreshUser = useHubRefreshUser();
+  const logout = useCallback(async () => {
+    await postRequest(hubAPI`/_ui/v1/auth/logout/`, {});
+    clearAllCache();
+    navigate('/login');
+  }, [clearAllCache, navigate]);
+
+  const userInfo = context.user.username;
+
+    refreshUser();
+  }, [clearAllCache, refreshUser]);
+>>>>>>> 8269c803c (Login Flow Update (#1946))
   return (
     <PageMasthead brand={<GalaxyBrand style={{ height: 48, marginTop: -8 }} />}>
       <ToolbarGroup variant="icon-button-group" style={{ flexGrow: 1 }}>
@@ -69,7 +90,11 @@ export function HubMasthead() {
           <PageMastheadDropdown
             id="account-menu"
             icon={<UserCircleIcon />}
+<<<<<<< HEAD
             label={activeHubUser?.username}
+=======
+            label={hubUser.username}
+>>>>>>> 8269c803c (Login Flow Update (#1946))
           >
             {/* <DropdownItem
               id="user-details"

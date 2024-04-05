@@ -59,13 +59,23 @@ Cypress.Commands.add('awxLogin', () => {
         retryOnStatusCodeFailure: true,
         retryOnNetworkFailure: true,
       });
+<<<<<<< HEAD
       cy.contains('Log in');
       cy.wait(1); // Seems like sometimes when the page first comes up that the login form is not ready
       cy.get('[data-cy="username"]').type(Cypress.env('AWX_USERNAME') as string, {
+=======
+      cy.getBy('[data-cy="username"]').type(Cypress.env('AWX_USERNAME') as string, {
+        log: false,
+>>>>>>> 8269c803c (Login Flow Update (#1946))
         delay: 0,
         force: true,
       });
+<<<<<<< HEAD
       cy.get('[data-cy="password"]').type(Cypress.env('AWX_PASSWORD') as string, {
+=======
+      cy.getBy('[data-cy="password"]').type(Cypress.env('AWX_PASSWORD') as string, {
+        log: false,
+>>>>>>> 8269c803c (Login Flow Update (#1946))
         delay: 0,
         force: true,
       });
@@ -131,12 +141,25 @@ Cypress.Commands.add('edaLogin', (username?: string, password?: string) => {
     `EDA-${userName}`,
     () => {
       window.localStorage.setItem('default-nav-expanded', 'true');
+<<<<<<< HEAD
       cy.visit(`/`, { retryOnStatusCodeFailure: true, retryOnNetworkFailure: true });
       cy.contains('Log in');
       cy.wait(1); // Seems like sometimes when the page first comes up that the login form is not ready
       cy.getBy('[data-cy="username"]').type(userName, { force: true, delay: 0 });
       cy.getBy('[data-cy="password"]').type(password ?? (Cypress.env('EDA_PASSWORD') as string), {
         force: true,
+=======
+      cy.visit(`/`, {
+        retryOnStatusCodeFailure: true,
+        retryOnNetworkFailure: true,
+      });
+      cy.getBy('[data-cy="username"]').type(Cypress.env('EDA_USERNAME') as string, {
+        log: false,
+        delay: 0,
+      });
+      cy.getBy('[data-cy="password"]').type(Cypress.env('EDA_PASSWORD') as string, {
+        log: false,
+>>>>>>> 8269c803c (Login Flow Update (#1946))
         delay: 0,
       });
       cy.get('[data-cy="Submit"]').click();
@@ -174,13 +197,22 @@ Cypress.Commands.add('hubLogin', () => {
         retryOnStatusCodeFailure: true,
         retryOnNetworkFailure: true,
       });
+<<<<<<< HEAD
       cy.contains('Log in');
       cy.wait(1); // Seems like sometimes when the page first comes up that the login form is not ready
       cy.getBy('[data-cy="username"]').type(Cypress.env('HUB_USERNAME') as string, {
+=======
+      cy.getBy('[data-cy="username"]').type(Cypress.env('HUB_USERNAME') as string, {
+        log: false,
+>>>>>>> 8269c803c (Login Flow Update (#1946))
         delay: 0,
         force: true,
       });
       cy.getBy('[data-cy="password"]').type(Cypress.env('HUB_PASSWORD') as string, {
+<<<<<<< HEAD
+=======
+        log: false,
+>>>>>>> 8269c803c (Login Flow Update (#1946))
         delay: 0,
         force: true,
       });

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { ReactNode, createContext, useContext, useEffect, useMemo, useState } from 'react';
 import useSWR from 'swr';
 import { requestGet } from '../../common/crud/Data';
@@ -51,4 +52,20 @@ export function AwxActiveUserProvider(props: { children: ReactNode }) {
   return (
     <AwxActiveUserContext.Provider value={state}>{props.children}</AwxActiveUserContext.Provider>
   );
+=======
+import { createContext, useContext } from 'react';
+import { User } from '../interfaces/User';
+
+export const AwxActiveUserContext = createContext<{ user: User; refresh: () => void }>({
+  user: {} as User,
+  refresh: () => null,
+});
+
+export function useAwxActiveUser() {
+  return useContext(AwxActiveUserContext).user;
+}
+
+export function useAwxRefreshUser() {
+  return useContext(AwxActiveUserContext).refresh;
+>>>>>>> 8269c803c (Login Flow Update (#1946))
 }

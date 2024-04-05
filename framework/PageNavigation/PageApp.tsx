@@ -1,5 +1,9 @@
 import { Page } from '@patternfly/react-core';
+<<<<<<< HEAD
 import { ReactNode, useEffect, useMemo } from 'react';
+=======
+import { ReactNode, useMemo } from 'react';
+>>>>>>> 8269c803c (Login Flow Update (#1946))
 import { Outlet, Route, RouteObject, Routes } from 'react-router-dom';
 import { PageNotFound } from '../PageEmptyStates/PageNotFound';
 import { PageNotificationsDrawer } from '../PageNotifications/PageNotificationsProvider';
@@ -27,6 +31,7 @@ export function PageApp(props: {
   banner?: ReactNode;
 }) {
   const { navigation, masthead } = props;
+<<<<<<< HEAD
   const navigationItems = useMemo(
     () => [
       {
@@ -69,6 +74,37 @@ export function PageApp(props: {
 function NavigationRoute(route: RouteObject) {
   return (
     <Route key={route.path} path={route.path} element={route.element}>
+      {route.children?.map(NavigationRoute)}
+    </Route>
+=======
+  const routes = useMemo(
+    () => [
+      {
+        path: `/`,
+        element: (
+          <Page header={masthead} sidebar={<PageNavigation navigation={navigation} />}>
+            <PageNotificationsDrawer>
+              <Outlet />
+            </PageNotificationsDrawer>
+          </Page>
+        ),
+        children: navigation,
+      },
+      { path: '*', element: <PageNotFound /> },
+    ],
+    [masthead, navigation]
+  );
+  return (
+    <PageNavigationRoutesProvider navigation={navigation}>
+      <Routes>{routes.map(NavigationRoute)}</Routes>
+    </PageNavigationRoutesProvider>
+>>>>>>> 8269c803c (Login Flow Update (#1946))
+  );
+}
+
+function NavigationRoute(route: RouteObject) {
+  return (
+    <Route path={route.path} element={route.element}>
       {route.children?.map(NavigationRoute)}
     </Route>
   );

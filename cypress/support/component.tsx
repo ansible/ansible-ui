@@ -28,8 +28,12 @@ import { mount } from 'cypress/react18';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { PageFramework } from '../../framework';
 import { AwxActiveUserContext } from '../../frontend/awx/common/useAwxActiveUser';
+<<<<<<< HEAD
 import { AwxUser } from '../../frontend/awx/interfaces/User';
 import { EdaUser } from '../../frontend/eda/interfaces/EdaUser';
+=======
+import { User } from '../../frontend/awx/interfaces/User';
+>>>>>>> 8269c803c (Login Flow Update (#1946))
 import '../../frontend/common/i18n';
 import './auth';
 import './awx-commands';
@@ -78,6 +82,7 @@ declare global {
 }
 
 Cypress.Commands.add('mount', (component, route, activeUserFixture) => {
+<<<<<<< HEAD
   cy.fixture(activeUserFixture || 'activeUser.json').then((activeAwxUser: AwxUser) => {
     return mount(
       <MemoryRouter initialEntries={route?.initialEntries || ['/1']}>
@@ -85,6 +90,13 @@ Cypress.Commands.add('mount', (component, route, activeUserFixture) => {
           <AwxActiveUserContext.Provider
             value={{ activeAwxUser, refreshActiveAwxUser: () => null }}
           >
+=======
+  cy.fixture(activeUserFixture || 'activeUser.json').then((activeUser: User) => {
+    return mount(
+      <MemoryRouter initialEntries={route?.initialEntries || ['/1']}>
+        <PageFramework defaultRefreshInterval={60}>
+          <AwxActiveUserContext.Provider value={{ user: activeUser, refresh: () => {} }}>
+>>>>>>> 8269c803c (Login Flow Update (#1946))
             <Page>
               <Routes>
                 <Route path={`${route?.path || '/:id/*'}`} element={component} />
@@ -93,6 +105,7 @@ Cypress.Commands.add('mount', (component, route, activeUserFixture) => {
           </AwxActiveUserContext.Provider>
         </PageFramework>
       </MemoryRouter>
+<<<<<<< HEAD
     );
   });
 });
@@ -120,6 +133,10 @@ Cypress.Commands.add('mountEda', (component, route, activeUserFixture) => {
       </PageFramework>
     </MemoryRouter>
   );
+=======
+    );
+  });
+>>>>>>> 8269c803c (Login Flow Update (#1946))
 });
 
 // Example use:

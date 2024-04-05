@@ -167,4 +167,16 @@ describe('Instances Page', () => {
     cy.getByDataCy('instances-listener-addresses-tab').should('be.visible');
     cy.getByDataCy('instances-listener-addresses-tab').should('be.enabled');
   });
+<<<<<<< HEAD
+=======
+
+  it('Enabled/Disabled switch is disabled if user does not have the right permissions', () => {
+    cy.mount(<InstancePage />, undefined, 'normalUser');
+    cy.wait('@getInstance')
+      .its('response.body')
+      .then(() => {
+        cy.get('.pf-v5-c-switch__input').should('be.disabled');
+      });
+  });
+>>>>>>> 8269c803c (Login Flow Update (#1946))
 });

@@ -24,16 +24,23 @@ export function Login(props: {
   authOptions?: AuthOption[];
   apiUrl: string;
   onSuccess: () => void;
+<<<<<<< HEAD
   loginDescription?: string;
   icon?: ReactNode;
   brand?: string;
   product?: string;
   productDescription?: string;
 }) {
+=======
+};
+
+export function Login(props: LoginProps) {
+>>>>>>> 8269c803c (Login Flow Update (#1946))
   const { t } = useTranslation();
   const [translations] = useFrameworkTranslations();
   return (
     <ErrorBoundary message={translations.errorText}>
+<<<<<<< HEAD
       <Page style={{ overflow: 'auto' }}>
         <PageSection isFilled hasOverflowScroll isCenterAligned isWidthLimited>
           <LoginPageLayout>
@@ -75,6 +82,21 @@ export function Login(props: {
           </LoginPageLayout>
         </PageSection>
       </Page>
+=======
+      <Wrapper>
+        <Inner>
+          <Heading headingLevel="h1" size={TitleSizes['2xl']}>
+            {t('Welcome to {{productName}}', { productName })}
+          </Heading>
+          <LoginForm
+            apiUrl={props.apiUrl}
+            authOptions={props.authOptions}
+            onSuccess={props.onSuccess}
+            hideInputs={props.hideInputs}
+          />
+        </Inner>
+      </Wrapper>
+>>>>>>> 8269c803c (Login Flow Update (#1946))
     </ErrorBoundary>
   );
 }
