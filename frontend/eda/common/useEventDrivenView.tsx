@@ -42,6 +42,7 @@ export function useEdaView<T extends { id: number | string }>(options: {
   disableQueryString?: boolean;
   defaultSort?: string | undefined;
   defaultSortDirection?: 'asc' | 'desc' | undefined;
+  defaultSelection?: T[];
 }): IEdaView<T> {
   let { url } = options;
   const { toolbarFilters, tableColumns, disableQueryString } = options;
@@ -119,7 +120,7 @@ export function useEdaView<T extends { id: number | string }>(options: {
     }
   }
 
-  const selection = useSelected(data?.results ?? [], getItemKey);
+  const selection = useSelected(data?.results ?? [], getItemKey, options.defaultSelection);
 
   if (data?.count !== undefined) {
     itemCountRef.current.itemCount = data?.count;
