@@ -23,7 +23,7 @@ Cypress.Commands.add('awxLogin', () => {
       window.localStorage.setItem('theme', 'light');
       window.localStorage.setItem('disclaimer', 'true');
       window.localStorage.setItem('hide-welcome-message', 'true');
-      cy.visit(`/login`, {
+      cy.visit(`/`, {
         retryOnStatusCodeFailure: true,
         retryOnNetworkFailure: true,
       });
@@ -54,7 +54,7 @@ Cypress.Commands.add('edaLogin', () => {
     'EDA',
     () => {
       window.localStorage.setItem('default-nav-expanded', 'true');
-      cy.visit(`/login`, {
+      cy.visit(`/`, {
         retryOnStatusCodeFailure: true,
         retryOnNetworkFailure: true,
       });
@@ -94,7 +94,7 @@ Cypress.Commands.add('hubLogin', () => {
     'HUB',
     () => {
       window.localStorage.setItem('default-nav-expanded', 'true');
-      cy.visit(`/login`, {
+      cy.visit(`/`, {
         retryOnStatusCodeFailure: true,
         retryOnNetworkFailure: true,
       });

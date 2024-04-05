@@ -1,5 +1,4 @@
 import { useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useClearCache } from '../useInvalidateCache';
 import { createRequestError } from './RequestError';
 import { requestCommon } from './requestCommon';
@@ -13,7 +12,7 @@ import { requestCommon } from './requestCommon';
  * - Supports aborting the request on unmount
  */
 export function useDeleteRequest<ResponseBody = unknown>() {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const { clearCacheByKey } = useClearCache();
   const abortControllerRef = useRef<{ abortController?: AbortController }>({});
   useEffect(() => {
@@ -27,9 +26,9 @@ export function useDeleteRequest<ResponseBody = unknown>() {
       signal: signal,
     });
     if (!response.ok) {
-      if (response.status === 401) {
-        navigate('/login?navigate-back=true');
-      }
+      // if (response.status === 401) {
+      //   navigate('/login?navigate-back=true');
+      // }
       throw await createRequestError(response);
     }
     clearCacheByKey(url);

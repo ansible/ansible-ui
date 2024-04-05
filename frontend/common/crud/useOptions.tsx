@@ -52,9 +52,9 @@ function useOptionsRequest<ResponseBody>() {
         signal,
       });
       if (!response.ok) {
-        if (response.status === 401) {
-          navigate('/login?navigate-back=true');
-        }
+        // if (response.status === 401) {
+        //   navigate('/login?navigate-back=true');
+        // }
         throw await createRequestError(response);
       }
       switch (response.status) {

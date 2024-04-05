@@ -1,4 +1,3 @@
-import { useNavigate } from 'react-router-dom';
 import { useClearCache } from '../useInvalidateCache';
 import { createRequestError } from './RequestError';
 import { requestCommon } from './requestCommon';
@@ -12,7 +11,7 @@ import { requestCommon } from './requestCommon';
  * - Supports aborting the request on unmount
  */
 export function usePatchRequest<RequestBody, ResponseBody>() {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const { clearCacheByKey } = useClearCache();
   return async (url: string, body: RequestBody, signal?: AbortSignal) => {
     const response: Response = await requestCommon({
@@ -22,9 +21,9 @@ export function usePatchRequest<RequestBody, ResponseBody>() {
       signal,
     });
     if (!response.ok) {
-      if (response.status === 401) {
-        navigate('/login?navigate-back=true');
-      }
+      // if (response.status === 401) {
+      //   navigate('/login?navigate-back=true');
+      // }
       throw await createRequestError(response);
     }
     clearCacheByKey(url);

@@ -1,7 +1,6 @@
 import { ActionGroup } from '@patternfly/react-core';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import {
   GenericForm,
   PageFormSubmitButton,
@@ -16,14 +15,13 @@ import { useInvalidateCacheOnUnmount } from './useInvalidateCache';
 type LoginFormProps = {
   apiUrl: string;
   authOptions?: AuthOption[];
-  onLoginUrl: string;
+  onSuccess: () => void;
   hideInputs?: boolean;
 };
 
 export function LoginForm(props: LoginFormProps) {
   const { authOptions } = props;
   const { t } = useTranslation();
-  const navigate = useNavigate();
 
   useInvalidateCacheOnUnmount();
 
@@ -76,7 +74,7 @@ export function LoginForm(props: LoginFormProps) {
           }
         }
 
-        navigate(props.onLoginUrl);
+        props.onSuccess?.();
       } catch (err) {
         if (err instanceof Error) {
           setError(err.message);
@@ -85,7 +83,7 @@ export function LoginForm(props: LoginFormProps) {
         }
       }
     },
-    [navigate, props, t]
+    [props, t]
   );
 
   if (props.hideInputs) {
