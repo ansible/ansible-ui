@@ -32,8 +32,8 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
     () => ({
       featureFlags: getFeatureFlags.data as HubFeatureFlags,
       settings: getSettings.data as HubSettings,
-      user: hubUser,
-      hasPermission: (permission) => hasPermission(permission, hubUser),
+      user: hubUser!,
+      hasPermission: (permission) => hasPermission(permission, hubUser!),
     }),
     [getFeatureFlags, getSettings, hubUser]
   );

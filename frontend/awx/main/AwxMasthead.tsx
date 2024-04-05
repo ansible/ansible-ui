@@ -14,7 +14,7 @@ import { useGet } from '../../common/crud/useGet';
 import { useClearCache } from '../../common/useInvalidateCache';
 import { AwxItemsResponse } from '../common/AwxItemsResponse';
 import { awxAPI } from '../common/api/awx-utils';
-import { useAwxActiveUser, useAwxRefreshUser } from '../common/useAwxActiveUser';
+import { useAwxActiveUser, useAwxActiveUserContext } from '../common/useAwxActiveUser';
 import { useAwxConfig } from '../common/useAwxConfig';
 import { useAwxWebSocketSubscription } from '../common/useAwxWebSocket';
 import { getDocsBaseUrl } from '../common/util/getDocsBaseUrl';
@@ -30,12 +30,12 @@ export function AwxMasthead() {
   const pageNavigate = usePageNavigate();
   const activeUser = useAwxActiveUser();
   useAwxNotifications();
-  const refreshUser = useAwxRefreshUser();
+  const activeUserContext = useAwxActiveUserContext();
   const logout = useCallback(async () => {
     await fetch('/api/logout/');
     clearAllCache();
-    refreshUser();
-  }, [clearAllCache, refreshUser]);
+    void activeUserContext.mutate();
+  }, [activeUserContext, clearAllCache]);
 
   return (
     <PageMasthead brand={<AwxBrand style={{ height: 60 }} />}>

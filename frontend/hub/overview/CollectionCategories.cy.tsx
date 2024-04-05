@@ -1,3 +1,4 @@
+import { SWRResponse } from 'swr';
 import { CollectionVersionSearch } from '../administration/collection-approvals/Approval';
 import { HubActiveUserContext } from '../common/useHubActiveUser';
 import { HubContextProvider } from '../common/useHubContext';
@@ -62,7 +63,7 @@ describe('CollectionCategories.cy.tsx', () => {
         (collectionVersionsResponse: HubItemsResponse<CollectionVersionSearch>) => {
           const collections = collectionVersionsResponse.data;
           cy.mount(
-            <HubActiveUserContext.Provider value={{ user: user, refresh: () => null }}>
+            <HubActiveUserContext.Provider value={{ data: user } as SWRResponse}>
               <HubContextProvider>
                 <CollectionCategoryCarousel
                   collections={collections}
@@ -88,7 +89,7 @@ describe('CollectionCategories.cy.tsx', () => {
         (collectionVersionsResponse: HubItemsResponse<CollectionVersionSearch>) => {
           const collections = collectionVersionsResponse.data;
           cy.mount(
-            <HubActiveUserContext.Provider value={{ user: user, refresh: () => null }}>
+            <HubActiveUserContext.Provider value={{ data: user } as SWRResponse}>
               <HubContextProvider>
                 <CollectionCategoryCarousel
                   collections={collections}
