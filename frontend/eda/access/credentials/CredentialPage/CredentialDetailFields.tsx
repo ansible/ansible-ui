@@ -1,27 +1,37 @@
-import { LoadingPage, PageDetail } from '../../../../../framework';
-import { useGet } from '../../../../common/crud/useGet';
-import { edaAPI } from '../../../common/eda-utils';
+import { PageDetail } from '../../../../../framework';
 import { EdaCredential } from '../../../interfaces/EdaCredential';
-import { EdaCredentialType } from '../../../interfaces/EdaCredentialType';
+import { useTranslation } from 'react-i18next';
+import { capitalizeFirstLetter } from '../../../../../framework/utils/strings';
 
 export function CredentialDetailFields(props: { credential: EdaCredential }) {
-  const { data: credentialType } = useGet<EdaCredentialType>(
-    edaAPI`/credential-types/` + `${props.credential.credential_type?.id ?? ''}/`
-  );
+  const { t } = useTranslation();
+  if (!props?.credential?.inputs) return <></>;
+  const enabledOptions: string[] = [];
+  Object.keys(props?.credential?.inputs).map((label, idx) => {
+    if (
+      typeof Object.values(props?.credential?.inputs || {}).at(idx) === 'boolean' &&
+      Object.values(props?.credential?.inputs || {}).at(idx) === true
+    ) {
+      enabledOptions.push(capitalizeFirstLetter(label));
+    }
+  });
 
-  if (!credentialType) {
-    return <LoadingPage />;
-  }
   return (
     <>
-      {props?.credential?.inputs &&
-        Object.keys(props?.credential?.inputs).map((value, idx) => {
-          return (
-            <PageDetail key={value} label={value}>
-              {Object.values(props?.credential?.inputs || {}).at(idx) as string}
-            </PageDetail>
-          );
-        })}
+      {Object.keys(props?.credential?.inputs).map((label, idx) => {
+        return typeof Object.values(props?.credential?.inputs || {}).at(idx) !== 'boolean' ? (
+          <PageDetail key={label} label={label}>
+            {Object.values(props?.credential?.inputs || {}).at(idx) as string}
+          </PageDetail>
+        ) : (
+          <></>
+        );
+      })}
+      {enabledOptions.length > 0 && (
+        <PageDetail key={'enabled_options'} label={t('Enabled options')}>
+          {enabledOptions.join(', ')}
+        </PageDetail>
+      )}
     </>
   );
 }
