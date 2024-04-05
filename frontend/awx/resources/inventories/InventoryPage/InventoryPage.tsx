@@ -37,7 +37,7 @@ export function InventoryPage() {
   const inventoryRequest = useGet<InventoryWithSource>(awxAPI`/${urlType}/${params.id || ''}/`);
   const inventoryData = inventoryRequest?.data;
   const inventorySourceUrl =
-    inventoryData?.kind === 'constructed' && detail === true
+    (inventoryData?.kind === 'constructed' && detail === true)
       ? awxAPI`/inventories/${params.id ?? ''}/inventory_sources/`
       : '';
 
@@ -95,9 +95,7 @@ export function InventoryPage() {
 
   if (
     !inventoryRequest.data ||
-    (!inventorySourceRequest.data &&
-      params.inventory_type === 'constructed_inventory' &&
-      detail === true)
+    (!inventorySourceRequest.data && params.inventory_type === 'constructed_inventory' && detail === true)
   ) {
     return <LoadingPage></LoadingPage>;
   }
