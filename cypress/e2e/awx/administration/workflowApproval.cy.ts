@@ -180,7 +180,7 @@ describe('Workflow Approvals - List View', () => {
       .then((response: WorkflowJob) => {
         expect(response.id).to.exist;
         cy.getAwxWFApprovalByWorkflowJobID(response.id).then((wfa) => {
-          actAssertAndDeleteWorkflowApproval('approve', wfa.id.toString());
+          actAssertAndDeleteWorkflowApproval('approve', `${wfa.id}`);
         });
       });
   });
@@ -191,7 +191,7 @@ describe('Workflow Approvals - List View', () => {
       .then((response: WorkflowJob) => {
         expect(response.id).to.exist;
         cy.getAwxWFApprovalByWorkflowJobID(response.id).then((wfa) => {
-          actAssertAndDeleteWorkflowApproval('deny', wfa.id.toString());
+          actAssertAndDeleteWorkflowApproval('deny', `${wfa.id}`);
         });
       });
   });
@@ -202,7 +202,8 @@ describe('Workflow Approvals - List View', () => {
       .then((response: WorkflowJob) => {
         expect(response.id).to.exist;
         cy.getAwxWFApprovalByWorkflowJobID(response.id).then((wfa) => {
-          actAssertAndDeleteWorkflowApproval('cancel', wfa.id.toString());
+          cy.log('WFA', wfa);
+          actAssertAndDeleteWorkflowApproval('cancel', `${wfa.id}`);
         });
       });
   });
