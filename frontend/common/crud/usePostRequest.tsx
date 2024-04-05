@@ -1,4 +1,3 @@
-import { useNavigate } from 'react-router-dom';
 import { useClearCache } from '../useInvalidateCache';
 import { createRequestError } from './RequestError';
 import { requestCommon } from './requestCommon';
@@ -8,11 +7,9 @@ import { requestCommon } from './requestCommon';
  *
  * - Returns a function that takes a url and body and returns the response body
  * - Throws an RequestError if the response is not ok
- * - Navigates to the login page if the response is a 401
  * - Supports aborting the request on unmount
  */
 export function usePostRequest<RequestBody, ResponseBody = RequestBody>() {
-  const navigate = useNavigate();
   const { clearCacheByKey } = useClearCache();
   return async (url: string, body: RequestBody, signal?: AbortSignal) => {
     const response: Response = await requestCommon({
@@ -22,9 +19,6 @@ export function usePostRequest<RequestBody, ResponseBody = RequestBody>() {
       signal,
     });
     if (!response.ok) {
-      if (response.status === 401) {
-        navigate('/login?navigate-back=true');
-      }
       throw await createRequestError(response);
     }
     clearCacheByKey(url);
