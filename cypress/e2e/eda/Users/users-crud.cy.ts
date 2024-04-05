@@ -5,8 +5,8 @@ import { edaAPI } from '../../../support/formatApiPathForEDA';
 
 describe('EDA Users- Create, Edit, Delete', () => {
   let roleNames: string[];
-  let roleIDs: string[];
-  let editorRoleID: string;
+  let roleIDs: number[];
+  let editorRoleID: number;
   let auditorRoleName: string;
   let contributorRoleName: string;
 
@@ -58,7 +58,7 @@ describe('EDA Users- Create, Edit, Delete', () => {
 
   it('can edit a User including the roles the user belongs to', () => {
     cy.createEdaUser({
-      roles: [editorRoleID],
+      roles: [editorRoleID.toString()],
     }).then((edaUser) => {
       cy.navigateTo('eda', 'users');
       cy.get('h1').should('contain', 'Users');
@@ -86,7 +86,7 @@ describe('EDA Users- Create, Edit, Delete', () => {
 
   it('can delete a User', () => {
     cy.createEdaUser({
-      roles: [editorRoleID],
+      roles: [editorRoleID.toString()],
     }).then((edaUser) => {
       cy.navigateTo('eda', 'users');
       cy.get('h1').should('contain', 'Users');

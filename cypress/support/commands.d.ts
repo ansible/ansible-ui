@@ -31,7 +31,7 @@ import { EdaCredential } from '../../frontend/eda/interfaces/EdaCredential';
 import { EdaDecisionEnvironment } from '../../frontend/eda/interfaces/EdaDecisionEnvironment';
 import { EdaProject } from '../../frontend/eda/interfaces/EdaProject';
 import { EdaResult } from '../../frontend/eda/interfaces/EdaResult';
-import { EdaRole } from '../../frontend/eda/interfaces/EdaRole';
+import { EdaRbacRole } from '../../frontend/eda/interfaces/EdaRbacRole';
 import { EdaRulebook } from '../../frontend/eda/interfaces/EdaRulebook';
 import {
   EdaRulebookActivation,
@@ -1268,7 +1268,7 @@ declare global {
        */
       deleteEdaCredential(credential: EdaCredential): Chainable<void>;
 
-      getEdaRoles(): Chainable<EdaRole[]>;
+      getEdaRoles(): Chainable<EdaRbacRole[]>;
       /**
        * Creates an EDA user and returns the same.
        *

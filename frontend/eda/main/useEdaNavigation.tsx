@@ -9,7 +9,7 @@ import { CreateCredential, EditCredential } from '../access/credentials/Credenti
 import { EdaRoleDetails } from '../access/roles/EdaRoleDetails';
 import { EdaRolePage } from '../access/roles/EdaRolePage';
 import { EdaRoles } from '../access/roles/EdaRoles';
-import { EditRole } from '../access/roles/EditRole';
+import { CreateRole, EditRole } from '../access/roles/RoleForm';
 import { CreateControllerToken } from '../access/users/CreateControllerToken';
 import { CreateUser, EditCurrentUser, EditUser } from '../access/users/EditUser';
 import { ControllerTokens } from '../access/users/UserPage/ControllerTokens';
@@ -398,7 +398,7 @@ export function useEdaNavigation() {
             {
               id: EdaRoute.CreateRole,
               path: 'create',
-              element: <EditRole />,
+              element: <CreateRole />,
             },
             {
               id: EdaRoute.EditRole,

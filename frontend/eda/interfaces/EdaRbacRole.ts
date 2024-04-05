@@ -6,7 +6,14 @@ export interface EdaRbacRole {
     user_assignments: string;
   };
   summary_fields: {
-    [key: string]: Record<string, string>[] | undefined;
+    created_by?: {
+      id: number;
+      username: string;
+    };
+    modified_by?: {
+      id: number;
+      username: string;
+    };
   };
   permissions: string[];
   content_type: string;
@@ -15,6 +22,6 @@ export interface EdaRbacRole {
   name: string;
   description: string;
   managed: boolean;
-  created_by: string | null;
-  modified_by: string | null;
+  created_by: number | null;
+  modified_by: number | null;
 }

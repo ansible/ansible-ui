@@ -29,6 +29,7 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { PageFramework } from '../../framework';
 import { AwxActiveUserContext } from '../../frontend/awx/common/useAwxActiveUser';
 import { AwxUser } from '../../frontend/awx/interfaces/User';
+import { EdaUser } from '../../frontend/eda/interfaces/EdaUser';
 import '../../frontend/common/i18n';
 import './auth';
 import './awx-commands';
@@ -39,6 +40,8 @@ import './e2e';
 import './eda-commands';
 import './hub-commands';
 import './rest-commands';
+import { edaAPI } from './formatApiPathForEDA';
+import { EdaActiveUserProvider } from '../../frontend/eda/common/useEdaActiveUser';
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
@@ -65,6 +68,7 @@ declare global {
   namespace Cypress {
     interface Chainable {
       mount: IMount;
+      mountEda: IMount;
     }
   }
   interface Window {
@@ -95,6 +99,31 @@ Cypress.Commands.add('mount', (component, route, activeUserFixture) => {
       </MemoryRouter>
     );
   });
+});
+
+Cypress.Commands.add('mountEda', (component, route, activeUserFixture) => {
+  cy.fixture(activeUserFixture || 'edaSuperUser.json').then((activeUser: EdaUser) => {
+    cy.intercept(
+      {
+        method: 'GET',
+        url: edaAPI`/users/me/`,
+      },
+      activeUser
+    );
+  });
+  return mount(
+    <MemoryRouter initialEntries={route?.initialEntries || ['/1']}>
+      <PageFramework defaultRefreshInterval={60}>
+        <EdaActiveUserProvider>
+          <Page>
+            <Routes>
+              <Route path={`${route?.path || '/:id/*'}`} element={component} />
+            </Routes>
+          </Page>
+        </EdaActiveUserProvider>
+      </PageFramework>
+    </MemoryRouter>
+  );
 });
 
 // Example use:

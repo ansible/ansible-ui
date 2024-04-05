@@ -1,35 +1,62 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ITableColumn, TextCell, useGetPageUrl } from '../../../../../framework';
-import { EdaRole } from '../../../interfaces/EdaRole';
+import {
+  ColumnModalOption,
+  DateTimeCell,
+  ITableColumn,
+  TextCell,
+  useGetPageUrl,
+} from '../../../../../framework';
+import { EdaRbacRole } from '../../../interfaces/EdaRbacRole';
 import { EdaRoute } from '../../../main/EdaRoutes';
 
-export function useRoleColumns(withLinks: boolean) {
+export function useRoleColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
-  return useMemo<ITableColumn<EdaRole>[]>(
+  return useMemo<ITableColumn<EdaRbacRole>[]>(
     () => [
       {
         header: t('Name'),
-        cell: (role) =>
-          withLinks ? (
-            <TextCell
-              text={role.name}
-              to={getPageUrl(EdaRoute.RoleDetails, { params: { id: role.id } })}
-            />
-          ) : (
-            <TextCell text={role.name} />
-          ),
+        cell: (role) => (
+          <TextCell
+            to={
+              options?.disableLinks
+                ? undefined
+                : getPageUrl(EdaRoute.RoleDetails, { params: { id: role.id } })
+            }
+            text={role.name}
+          />
+        ),
+        sort: options?.disableSort ? undefined : 'name',
         card: 'name',
         list: 'name',
       },
       {
         header: t('Description'),
-        cell: (role) => role.description && <TextCell text={role.description} />,
+        type: 'description',
+        value: (role) => role.description,
+        sort: options?.disableSort ? undefined : 'description',
         card: 'description',
         list: 'description',
       },
+      {
+        header: t('Created'),
+        cell: (role) => <DateTimeCell value={role.created} />,
+        sort: options?.disableSort ? undefined : 'created',
+        defaultSortDirection: 'desc',
+        modal: ColumnModalOption.hidden,
+      },
+      {
+        header: t('Editable'),
+        type: 'text',
+        value: (role) => (role.managed ? t('Built-in') : t('Editable')),
+        sort: options?.disableSort ? undefined : 'managed',
+        defaultSortDirection: 'asc',
+        card: 'subtitle',
+        list: 'subtitle',
+        modal: ColumnModalOption.hidden,
+      },
     ],
-    [t, withLinks, getPageUrl]
+    [t, options?.disableSort, options?.disableLinks, getPageUrl]
   );
 }

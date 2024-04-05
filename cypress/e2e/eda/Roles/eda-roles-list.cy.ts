@@ -1,6 +1,7 @@
 //Tests a user's ability to perform certain actions on the Roles list in the EDA UI.
 
-describe('EDA Roles List', () => {
+// Skip Eda role tests until the API is available in eda-server/main
+describe.skip('EDA Roles List', () => {
   before(() => {
     cy.edaLogin();
   });
