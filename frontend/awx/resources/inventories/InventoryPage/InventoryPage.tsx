@@ -95,7 +95,9 @@ export function InventoryPage() {
 
   if (
     !inventoryRequest.data ||
-    (!inventorySourceRequest.data && params.inventory_type === 'constructed_inventory'  && detail === true)
+    (!inventorySourceRequest.data &&
+      params.inventory_type === 'constructed_inventory' &&
+      detail === true)
   ) {
     return <LoadingPage></LoadingPage>;
   }
