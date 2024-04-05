@@ -8,15 +8,10 @@ export function useGetFn<T>(
   swrConfiguration: SWRConfiguration = {}
 ) {
   const abortController = useAbortController();
-  // const navigate = useNavigate();
   const response = useSWR<T>(
     key,
     (_id, signal?: AbortSignal) =>
       fetcher(signal ?? abortController.signal).catch((error) => {
-        // if (error instanceof RequestError && error.statusCode === 401) {
-        //   navigate('/login?navigate-back=true');
-        // }
-
         throw error;
       }),
     { dedupingInterval: 0, ...swrConfiguration }

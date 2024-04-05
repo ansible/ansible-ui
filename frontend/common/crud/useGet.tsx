@@ -44,7 +44,6 @@ export function useGetItem<T = unknown>(
 }
 
 export function useGetRequest<ResponseBody>() {
-  // const navigate = useNavigate();
   const abortControllerRef = useRef<{ abortController?: AbortController }>({});
   useEffect(() => {
     const ref = abortControllerRef;
@@ -61,9 +60,6 @@ export function useGetRequest<ResponseBody>() {
       signal,
     });
     if (!response.ok) {
-      // if (response.status === 401) {
-      //   navigate('/login?navigate-back=true');
-      // }
       throw await createRequestError(response);
     }
     return (await response.json()) as ResponseBody;
