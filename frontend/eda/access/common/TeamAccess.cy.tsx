@@ -40,7 +40,7 @@ describe('TeamAccess.cy.ts', () => {
   });
 
   it('Renders the correct teamAccess columns', () => {
-    cy.mount(<TeamAccess id={'1'} type={'activation'} />);
+    cy.mount(<TeamAccess id={'1'} type={'activation'} addRolesRoute="xyz" />);
     cy.get('.pf-v5-c-table__th').should('have.length', 5);
     cy.contains('Team');
     cy.contains('Role');
@@ -48,7 +48,7 @@ describe('TeamAccess.cy.ts', () => {
   });
 
   it('can remove teamAccess', () => {
-    cy.mount(<TeamAccess id={'1'} type={'activation'} />);
+    cy.mount(<TeamAccess id={'1'} type={'activation'} addRolesRoute="xyz" />);
     cy.intercept(
       { method: 'DELETE', url: edaAPI`/role_team_assignments/1/` },
       {
@@ -81,7 +81,7 @@ describe('Empty list', () => {
     ).as('emptyList');
   });
   it('Empty state is displayed correctly', () => {
-    cy.mount(<TeamAccess id={'1'} type={'activation'} />);
+    cy.mount(<TeamAccess id={'1'} type={'activation'} addRolesRoute="xyz" />);
     cy.contains(/^There are currently no roles assigned to this object.$/);
     cy.contains(/^Please add a role by using the button below.$/);
     // cy.contains('button', /^Add role$/).should('be.visible'); TODO to be added later
