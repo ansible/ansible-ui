@@ -67,6 +67,23 @@ describe('Inventory Groups', () => {
     });
   });
 
+  it('test inventory group can be edited from groups details', () => {
+    cy.createInventoryHostGroup(organization).then((result) => {
+      const { inventory, group } = result;
+      cy.navigateTo('awx', 'inventories');
+      cy.clickTableRow(inventory.name);
+      cy.verifyPageTitle(inventory.name);
+      cy.clickLink(/^Groups$/);
+      cy.clickTableRow(group.name as string);
+      cy.verifyPageTitle(group.name as string);
+      cy.get('[data-cy="edit-group"]').click();
+      cy.verifyPageTitle('Edit group');
+      cy.get('[data-cy="name-form-group"]').type('-changed');
+      cy.get('[data-cy="Submit"]').click();
+      cy.verifyPageTitle(group.name + '-changed');
+    });
+  });
+
   it('can add and remove new related groups', () => {
     cy.createInventoryHostGroup(organization).then((result) => {
       const { inventory, group } = result;
@@ -158,12 +175,10 @@ describe('Inventory Groups', () => {
       cy.hasDetail(/^Name$/, groupName);
       cy.hasDetail(/^Description$/, 'This is a description');
       cy.hasDetail(/^Variables$/, 'test: true');
-      cy.clickLink(/^Back to Groups$/);
-      cy.selectTableRow(groupName);
-      cy.clickToolbarKebabAction('delete-selected-groups');
+      cy.get('[data-cy="actions-dropdown"]').click();
+      cy.get('[data-cy="delete-group"]').click();
       cy.get('[data-cy="delete-groups-dialog-radio-delete"]').click();
       cy.get('[data-cy="delete-group-modal-delete-button"]').click();
-      cy.clickButton(/^Clear all filters$/);
       cy.get('[data-cy="empty-state-title"]').contains(
         /^There are currently no groups added to this inventory./
       );
