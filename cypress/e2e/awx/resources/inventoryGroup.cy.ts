@@ -75,7 +75,9 @@ describe('Inventory Groups', () => {
         cy.get(`[href*="/infrastructure/inventories/inventory/${inventory.id}/hosts?"]`).click();
         cy.getByDataCy('name-column-cell').should('contain', host.name);
         cy.clickLink(/^Groups$/);
-        cy.clickTableRowKebabAction(group.name.toString(), 'edit-group', true);
+        if (group) {
+          cy.clickTableRowKebabAction(group.name.toString(), 'edit-group', true);
+        }
         cy.verifyPageTitle('Edit group');
         cy.get('[data-cy="name-form-group"]').type('-changed');
         cy.get('[data-cy="Submit"]').click();
