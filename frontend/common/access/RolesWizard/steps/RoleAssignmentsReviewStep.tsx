@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
-import { Badge, Divider, ExpandableSection, Title } from '@patternfly/react-core';
+import { Badge, Divider, ExpandableSection, Title, TextContent } from '@patternfly/react-core';
 import { getItemKey } from '../../../crud/Data';
 import {
   ITableColumn,
@@ -28,16 +28,8 @@ interface ReviewExpandableListProps<
   fieldName: string;
 }
 
-const StyledDivider = styled(Divider)`
-  margin-bottom: var(--pf-v5-global--spacer--lg);
-`;
-
 const StyledBadge = styled(Badge)`
   margin-left: var(--pf-v5-global--spacer--sm);
-`;
-
-const StyledTitle = styled(Title)`
-  margin-bottom: 1rem;
 `;
 
 export function RoleAssignmentsReviewStep() {
@@ -46,36 +38,36 @@ export function RoleAssignmentsReviewStep() {
   const { resourceType, resources, users, teams, edaRoles } = wizardData as ReviewData;
 
   return (
-    <>
-      <StyledTitle headingLevel="h1">{t('Review')}</StyledTitle>
+    <TextContent>
+      <Title headingLevel="h1">{t('Review')}</Title>
       {resourceType ? (
         <>
           <PageDetail label={t('Resource type')}>{resourceType}</PageDetail>
-          <StyledDivider />
+          <Divider />
         </>
       ) : null}
       {resources && resources.length ? (
         <>
           <ReviewExpandableList selectedItems={resources} fieldName="resources" />
-          <StyledDivider />
+          <Divider />
         </>
       ) : null}
       {users && users.length ? (
         <>
           <ReviewExpandableList selectedItems={users} fieldName="users" />
-          <StyledDivider />
+          <Divider />
         </>
       ) : null}
       {teams && teams.length ? (
         <>
           <ReviewExpandableList selectedItems={teams} fieldName="teams" />
-          <StyledDivider />
+          <Divider />
         </>
       ) : null}
       {edaRoles && edaRoles.length ? (
         <ReviewExpandableList selectedItems={edaRoles} fieldName="edaRoles" />
       ) : null}
-    </>
+    </TextContent>
   );
 }
 
