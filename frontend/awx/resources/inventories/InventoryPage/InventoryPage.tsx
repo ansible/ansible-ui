@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import {
   LoadingPage,
   PageActions,
@@ -43,10 +43,13 @@ export function InventoryPage() {
     inventory.source = inventorySourceData;
   }
 
+  const location = useLocation();
+  const detail = location.pathname.endsWith('details');
+
   const pageNavigate = usePageNavigate();
   const itemActions = useInventoryActions({
     onInventoriesDeleted: () => pageNavigate(AwxRoute.Inventories),
-    detail: true,
+    detail,
   });
   const getPageUrl = useGetPageUrl();
   const isSmartInventory = inventory?.kind === 'smart';
