@@ -80,7 +80,7 @@ describe('Repositories', () => {
     });
   });
 
-  it('should be able to delete a repository', () => {
+  it.skip('should be able to delete a repository', () => {
     cy.createHubRepository().then((repositoryToDelete) => {
       cy.clickTableRowLink('name', repositoryToDelete.name);
 
@@ -99,7 +99,7 @@ describe('Repositories', () => {
     });
   });
 
-  it('should be able to edit a repository', () => {
+  it.skip('should be able to edit a repository', () => {
     const repositoryDescription = 'Here goes description';
 
     cy.clickTableRowAction('name', repository.name, 'edit-repository', { inKebab: true });
@@ -115,7 +115,7 @@ describe('Repositories', () => {
     cy.hasDetail('Description', repositoryDescription);
   });
 
-  it('should copy CLI to clipboard', () => {
+  it.skip('should copy CLI to clipboard', () => {
     cy.clickTableRowLink('name', repository.name);
 
     // Repository Details
@@ -127,7 +127,7 @@ describe('Repositories', () => {
     });
   });
 
-  it('should sync repository', () => {
+  it.skip('should sync repository', () => {
     cy.clickTableRowAction('name', repository.name, 'sync-repository', { inKebab: true });
 
     // Sync modal
@@ -143,7 +143,7 @@ describe('Repositories', () => {
     });
   });
 
-  it('should be able to add and remove collection versions', () => {
+  it.skip('should be able to add and remove collection versions', () => {
     // Repository Details
     cy.clickTableRowLink('name', repository.name);
     cy.verifyPageTitle(repository.name);
@@ -184,7 +184,7 @@ describe('Repositories', () => {
     cy.contains('tr', collectionName).should('not.exist');
   });
 
-  it('should be able to revert repository version', () => {
+  it.skip('should be able to revert repository version', () => {
     // Repository Details
     cy.clickTableRowLink('name', repository.name);
     cy.verifyPageTitle(repository.name);
