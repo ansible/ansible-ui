@@ -63,17 +63,18 @@ Cypress.Commands.add(
       cy.get('#filter-input').within(() => {
         cy.get('input').clear().type(text, { delay: 0 });
       });
+      cy.getByDataCy('apply-filter').click();
+      // FIXME: sometimes it gets filter all over again and breaks the search
       // Only click the apply filter if it is a multi text filter
-      cy.get('button').then((jqueryResult) => {
-        for (let i = 0; i < jqueryResult.length; i++) {
-          if (jqueryResult[i].getAttribute('data-cy') === 'apply-filter') {
-            jqueryResult[i].click();
-            break;
-          }
-        }
-      });
+      // cy.get('button').then((jqueryResult) => {
+      //   for (let i = 0; i < jqueryResult.length; i++) {
+      //     if (jqueryResult[i].getAttribute('data-cy') === 'apply-filter') {
+      //       jqueryResult[i].click();
+      //       break; // FIXME: it doesn't work and clicks again in the filter field
+      //     }
+      //   }
+      // });
     });
-
     // Wait for the chip to show up
     // This handles the debounce of the single text filter
     cy.contains('.pf-v5-c-chip__text', text);
@@ -96,7 +97,11 @@ Cypress.Commands.add(
     if (options?.disableFilter !== true) {
       cy.filterTableByTextFilter(columnDataCy, text);
     }
-    cy.contains(`[data-cy="${columnDataCy}-column-cell"]`, text).parents('tr');
+    if (columnDataCy === 'id') {
+      cy.contains(`[data-cy="row-id-${text}"]`, text).parents('tbody');
+    } else {
+      cy.contains(`[data-cy="${columnDataCy}-column-cell"]`, text).parents('tr');
+    }
   }
 );
 
