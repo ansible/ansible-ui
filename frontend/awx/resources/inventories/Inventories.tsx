@@ -44,6 +44,7 @@ export function Inventories() {
   const rowActions = useInventoryActions({
     onInventoriesDeleted: view.unselectItemsAndRefresh,
     onInventoryCopied: view.refresh,
+    detail: false,
   });
   usePersistentFilters('inventories');
   const config = useAwxConfig();

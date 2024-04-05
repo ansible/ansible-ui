@@ -128,23 +128,6 @@ export function InventorySourceDetails(props: {
     );
   }
 
-  const generateLastJobTooltip = (job: { id: number; status: string; finished: string }) => (
-    <>
-      <div>{t`MOST RECENT SYNC`}</div>
-      <div>
-        {t`JOB ID:`} {job.id}
-      </div>
-      <div>
-        {t`STATUS:`} {job.status.toUpperCase()}
-      </div>
-      {job.finished && (
-        <div>
-          {t`FINISHED:`} {formatDateString(job.finished)}
-        </div>
-      )}
-    </>
-  );
-
   const getSourceVarsHelpText = (source: string) => {
     let sourceType = '';
     if (source && source !== 'scm') {
@@ -206,7 +189,7 @@ export function InventorySourceDetails(props: {
         <PageDetail label={t`Last job status`}>
           <Tooltip
             position="top"
-            content={lastJob ? generateLastJobTooltip(lastJob) : undefined}
+            content={lastJob ? <LastJobTooltip job={lastJob} /> : undefined}
             key={lastJob.id}
           >
             <Link
@@ -329,5 +312,27 @@ export function InventorySourceDetails(props: {
         }
       />
     </PageDetails>
+  );
+}
+
+export function LastJobTooltip(props: { job: { id: number; status: string; finished: string } }) {
+  const job = props.job;
+  const { t } = useTranslation();
+
+  return (
+    <>
+      <div>{t`MOST RECENT SYNC`}</div>
+      <div>
+        {t`JOB ID:`} {job.id}
+      </div>
+      <div>
+        {t`STATUS:`} {job.status.toUpperCase()}
+      </div>
+      {job.finished && (
+        <div>
+          {t`FINISHED:`} {formatDateString(job.finished)}
+        </div>
+      )}
+    </>
   );
 }

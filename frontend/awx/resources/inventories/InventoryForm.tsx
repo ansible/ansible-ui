@@ -305,9 +305,30 @@ export function EditInventory() {
   );
 }
 
+export function useInventoryFormDetailLabels() {
+  const { t } = useTranslation();
+
+  return {
+    labels: t(
+      `Optional labels that describe this inventory, such as 'dev' or 'test'. Labels can be used to group and filter inventories and completed jobs.`
+    ),
+    verbosity: t(
+      'The verbosity level for the related auto-created inventory source, special to constructed inventory'
+    ),
+    cache_timeout: t(
+      `The cache timeout for the related auto-created inventory source, special to constructed inventory`
+    ),
+    limit: t(
+      `The limit to restrict the returned hosts for the related auto-created inventory source, special to constructed inventory.`
+    ),
+  };
+}
+
 function InventoryInputs(props: { inventoryKind: string }) {
   const { t } = useTranslation();
   const { inventoryKind } = props;
+
+  const inventoryFormDetailLables = useInventoryFormDetailLabels();
 
   return (
     <>
@@ -346,9 +367,7 @@ function InventoryInputs(props: { inventoryKind: string }) {
             id="update_cache_timeout"
             type="number"
             label={t(`Cache timeout (seconds)`)}
-            labelHelp={t(
-              `The cache timeout for the related auto-created inventory source, special to constructed inventory`
-            )}
+            labelHelp={inventoryFormDetailLables.cache_timeout}
             validate={(item) =>
               Number.parseFloat(item) >= 0
                 ? undefined
@@ -360,9 +379,7 @@ function InventoryInputs(props: { inventoryKind: string }) {
             id="verbosity"
             label={t(`Verbosity`)}
             placeholder={''}
-            labelHelp={t(
-              'The verbosity level for the related auto-created inventory source, special to constructed inventory'
-            )}
+            labelHelp={inventoryFormDetailLables.verbosity}
             options={[
               { value: 0, label: t('0 (Normal)') },
               { value: 1, label: t('1 (Verbose)') },
@@ -379,18 +396,14 @@ function InventoryInputs(props: { inventoryKind: string }) {
             name="limit"
             id="limit"
             label={t(`Limit`)}
-            labelHelp={t(
-              `The limit to restrict the returned hosts for the related auto-created inventory source, special to constructed inventory.`
-            )}
+            labelHelp={inventoryFormDetailLables.limit}
           />
         </>
       )}
       {inventoryKind === '' && (
         <PageFormLabelSelect<InventoryCreate>
           labelHelpTitle={t('Labels')}
-          labelHelp={t(
-            `Optional labels that describe this inventory, such as 'dev' or 'test'. Labels can be used to group and filter inventories and completed jobs.`
-          )}
+          labelHelp={inventoryFormDetailLables.labels}
           name="labels"
         />
       )}
