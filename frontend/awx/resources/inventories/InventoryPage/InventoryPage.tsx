@@ -20,6 +20,9 @@ import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { InventorySource } from '../../../interfaces/InventorySource';
 import { AwxError } from '../../../common/AwxError';
 import { InventoryWithSource } from './InventoryDetails';
+import { useCallback } from 'react';
+import { useAwxWebSocketSubscription } from '../../../common/useAwxWebSocket';
+import { useMemo } from 'react';
 
 export function InventoryPage() {
   const { t } = useTranslation();
@@ -29,19 +32,46 @@ export function InventoryPage() {
     params.inventory_type === 'constructed_inventory' ? 'constructed_inventories' : 'inventories';
 
   const inventoryRequest = useGet<InventoryWithSource>(awxAPI`/${urlType}/${params.id || ''}/`);
-
-  const inventory = inventoryRequest?.data;
+  const inventoryData = inventoryRequest?.data;
   const inventorySourceUrl =
-    inventory?.kind === 'constructed'
+    inventoryData?.kind === 'constructed'
       ? awxAPI`/inventories/${params.id ?? ''}/inventory_sources/`
       : '';
 
   const inventorySourceRequest = useGet<AwxItemsResponse<InventorySource>>(inventorySourceUrl);
   const inventorySourceData = inventorySourceRequest.data?.results[0];
 
-  if (inventory) {
-    inventory.source = inventorySourceData;
-  }
+  const inventory = useMemo<InventoryWithSource | undefined>(() => {
+    if (inventoryData) {
+      return { ...inventoryData, source: inventorySourceData };
+    } else {
+      return undefined;
+    }
+  }, [inventoryData, inventorySourceData]);
+
+  const refresh = inventorySourceRequest.refresh;
+
+  const handleWebSocketMessage = useCallback(
+    (message?: { group_name?: string; type?: string }) => {
+      switch (message?.group_name) {
+        case 'jobs':
+          switch (message?.type) {
+            case 'job':
+            case 'workflow_job':
+            case 'project_update':
+            case 'inventory_update':
+              void refresh();
+              break;
+          }
+          break;
+      }
+    },
+    [refresh]
+  );
+  useAwxWebSocketSubscription(
+    { control: ['limit_reached_1'], jobs: ['status_changed'] },
+    handleWebSocketMessage as (data: unknown) => void
+  );
 
   const location = useLocation();
   const detail = location.pathname.endsWith('details');
@@ -101,6 +131,7 @@ export function InventoryPage() {
           { label: t('Job templates'), page: AwxRoute.InventoryJobTemplates },
         ]}
         params={params}
+        componentParams={{ inventory }}
       />
     </PageLayout>
   );

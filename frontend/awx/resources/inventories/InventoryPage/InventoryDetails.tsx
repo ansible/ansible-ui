@@ -25,7 +25,6 @@ import { useVerbosityString } from '../../../common/useVerbosityString';
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';
 import { Inventory } from '../../../interfaces/Inventory';
 import { AwxRoute } from '../../../main/AwxRoutes';
-import { useGetInventory } from './InventoryPage';
 import { InventorySource } from '../../../interfaces/InventorySource';
 import { AwxError } from '../../../common/AwxError';
 import { Tooltip } from '@patternfly/react-core';
@@ -33,10 +32,7 @@ import { LastJobTooltip } from '../inventorySources/InventorySourceDetails';
 import { StatusLabel } from '../../../../common/Status';
 import { useInventoryFormDetailLabels } from '../InventoryForm';
 import { LabelHelp } from '../components/LabelHelp';
-import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
-import { LoadingPage } from '../../../../../framework';
-import { useCallback } from 'react';
-import { useAwxWebSocketSubscription } from '../../../common/useAwxWebSocket';
+import { useOutletContext } from 'react-router-dom';
 
 function useInstanceGroups(inventoryId: string) {
   const { data } = useGet<{ results: InstanceGroup[] }>(
@@ -46,8 +42,7 @@ function useInstanceGroups(inventoryId: string) {
 }
 
 export function InventoryDetails() {
-  const params = useParams<{ id: string; inventory_type: string }>();
-  const inventory = useGetInventory(params.id, params.inventory_type);
+  const { inventory } = useOutletContext<{ inventory: InventoryWithSource }>();
 
   if (!inventory) {
     return null;
@@ -74,13 +69,7 @@ export function InventoryDetailsInner(props: { inventory: InventoryWithSource })
       : ''
   );
 
-  const inventorySourceUrl =
-    inventory?.kind === 'constructed'
-      ? awxAPI`/inventories/${params.id ?? ''}/inventory_sources/`
-      : '';
-
-  const inventorySourceRequest = useGet<AwxItemsResponse<InventorySource>>(inventorySourceUrl);
-  const inventorySourceData = inventorySourceRequest.data?.results[0];
+  const inventorySourceData = inventory.source;
 
   const inventoryTypes: { [key: string]: string } = {
     '': t('Inventory'),
@@ -101,40 +90,8 @@ export function InventoryDetailsInner(props: { inventory: InventoryWithSource })
     inventorySourceData?.summary_fields?.last_job ||
     undefined;
 
-  const refresh = inventorySourceRequest.refresh;
-
-  const handleWebSocketMessage = useCallback(
-    (message?: { group_name?: string; type?: string }) => {
-      switch (message?.group_name) {
-        case 'jobs':
-          switch (message?.type) {
-            case 'job':
-            case 'workflow_job':
-            case 'project_update':
-            case 'inventory_update':
-              void refresh();
-              break;
-          }
-          break;
-      }
-    },
-    [refresh]
-  );
-  useAwxWebSocketSubscription(
-    { control: ['limit_reached_1'], jobs: ['status_changed'] },
-    handleWebSocketMessage as (data: unknown) => void
-  );
-
   if (inputInventoriesError) {
     return <AwxError error={inputInventoriesError} />;
-  }
-
-  if (inventorySourceRequest.error) {
-    return <AwxError error={inventorySourceRequest.error} />;
-  }
-
-  if (!inventorySourceRequest.data && params.inventory_type === 'constructed_inventory') {
-    return <LoadingPage></LoadingPage>;
   }
 
   return (
