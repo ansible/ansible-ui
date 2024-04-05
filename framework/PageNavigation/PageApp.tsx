@@ -1,6 +1,6 @@
 import { Page } from '@patternfly/react-core';
 import { ReactNode, useMemo } from 'react';
-import { Outlet, RouterProvider, createBrowserRouter } from 'react-router-dom';
+import { Outlet, Route, RouteObject, Routes } from 'react-router-dom';
 import { PageNotFound } from '../PageEmptyStates/PageNotFound';
 import { PageNotificationsDrawer } from '../PageNotifications/PageNotificationsProvider';
 import { PageNavigation } from './PageNavigation';
@@ -42,10 +42,17 @@ export function PageApp(props: {
     ],
     [masthead, navigation]
   );
-  const router = useMemo(() => createBrowserRouter(routes, { basename }), [basename, routes]);
   return (
     <PageNavigationRoutesProvider navigation={navigation}>
-      <RouterProvider router={router} />
+      <Routes>{routes.map(NavigationRoute)}</Routes>
     </PageNavigationRoutesProvider>
+  );
+}
+
+function NavigationRoute(route: RouteObject) {
+  return (
+    <Route path={route.path} element={route.element}>
+      {route.children?.map(NavigationRoute)}
+    </Route>
   );
 }
