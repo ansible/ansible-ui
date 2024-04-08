@@ -1,7 +1,7 @@
 import { SetStateAction } from 'react';
 import { ErrorAdapter } from '../PageForm/typesErrorAdapter';
 
-export interface PageWizardStep {
+export interface PageWizardBasicStep {
   id: string;
   label: string;
   inputs?: React.ReactNode;
@@ -14,6 +14,13 @@ export interface PageWizardStep {
   */
   validate?: (formData: object, wizardData: object) => Promise<void> | void;
 }
+
+/** Type used to define parent steps. */
+export interface PageWizardParentStep extends PageWizardBasicStep {
+  substeps: PageWizardBasicStep[];
+}
+
+export type PageWizardStep = PageWizardBasicStep | PageWizardParentStep;
 
 export interface PageWizardState {
   activeStep: PageWizardStep | null;

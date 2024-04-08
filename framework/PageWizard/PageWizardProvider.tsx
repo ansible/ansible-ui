@@ -1,6 +1,6 @@
 import { createContext, ReactNode, useState, useEffect, useContext } from 'react';
 
-import type { PageWizardStep, PageWizardState } from './types';
+import type { PageWizardStep, PageWizardState, PageWizardParentStep } from './types';
 
 export const PageWizardContext = createContext<PageWizardState>({} as PageWizardState);
 export function usePageWizard() {
@@ -9,6 +9,10 @@ export function usePageWizard() {
 
 export function isStepVisible(step: PageWizardStep, values: object) {
   return !step.hidden || !step.hidden(values) ? step : null;
+}
+
+export function isWizardParentStep(step: PageWizardStep): step is PageWizardParentStep {
+  return (step as PageWizardParentStep)?.substeps !== undefined;
 }
 
 export function PageWizardProvider<T extends object>(props: {
