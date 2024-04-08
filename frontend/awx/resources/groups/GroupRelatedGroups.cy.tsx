@@ -3,14 +3,12 @@ import { GroupRelatedGroups } from './GroupRelatedGroups';
 
 const inventories = ['inventory', 'constructed_inventory'];
 
-inventories.forEach( (inventory) => {
-
-  describe('GroupRelatedGroups', () => {
+inventories.forEach((inventory) => {
+  describe(`GroupRelatedGroups (${inventory})`, () => {
     let groupsOptions = 'groups_options.json';
 
     const path = '/inventories/:inventory_type/:id/groups/:group_id/nested_groups';
-    const initialEntries =
-        [`/inventories/${inventory}/1/groups/176/nested_groups`];
+    const initialEntries = [`/inventories/${inventory}/1/groups/176/nested_groups`];
 
     beforeEach(() => {
       cy.intercept(
@@ -45,7 +43,7 @@ inventories.forEach( (inventory) => {
       );
     });
 
-    it.skip('renders related groups table', () => {
+    it('renders related groups table', () => {
       cy.mount(<GroupRelatedGroups />, {
         path,
         initialEntries,
@@ -59,9 +57,8 @@ inventories.forEach( (inventory) => {
         });
     });
 
-    if (inventory === 'inventory')
-    {
-      it.skip('deletes group from toolbar menu', () => {
+    if (inventory === 'inventory') {
+      it('deletes group from toolbar menu', () => {
         cy.mount(<GroupRelatedGroups />, {
           path,
           initialEntries,
@@ -79,10 +76,6 @@ inventories.forEach( (inventory) => {
     }
 
     it('filter by name', () => {
-      filterBy(/^Name$/, 'name__icontains', 'Related to group 1');
-    });
-
-    it('filter by name', () => {
       cy.mount(<GroupRelatedGroups />, {
         path,
         initialEntries,
@@ -94,7 +87,7 @@ inventories.forEach( (inventory) => {
           cy.intercept(
             {
               method: 'GET',
-              url: '/api/v2/groups//children/?name__icontains=Related%20to%20group%201&**',
+              url: '/api/v2/groups/176/children/?name__icontains=Related%20to%20group%201&**',
             },
             {
               fixture: 'group.json',
@@ -118,7 +111,7 @@ inventories.forEach( (inventory) => {
           cy.intercept(
             {
               method: 'GET',
-              url: '/api/v2/groups//children/?created_by__username__icontains=test&**',
+              url: '/api/v2/groups/176/children/?created_by__username__icontains=test&**',
             },
             {
               fixture: 'group.json',
@@ -142,7 +135,7 @@ inventories.forEach( (inventory) => {
           cy.intercept(
             {
               method: 'GET',
-              url: '/api/v2/groups//children/?modified_by__username__icontains=test&**',
+              url: '/api/v2/groups/176/children/?modified_by__username__icontains=test&**',
             },
             {
               fixture: 'group.json',
@@ -154,52 +147,48 @@ inventories.forEach( (inventory) => {
         });
     });
 
-    it('disables new group button when user does not have permissions', () => {
-      groupsOptions = 'groups_options_no_post.json';
-      cy.mount(<GroupRelatedGroups />, {
-        path,
-        initialEntries,
-      });
-      cy.fixture('groups.json')
-        .its('results')
-        .should('be.an', 'array')
-        .then(() => {
-          cy.get('[data-cy="add-group"]').click();
-          cy.get('[data-cy="create-new-group"]').should('have.attr', 'aria-disabled', 'true');
+    if (inventory === 'inventory') {
+      it('disables new group button when user does not have permissions', () => {
+        groupsOptions = 'groups_options_no_post.json';
+        cy.mount(<GroupRelatedGroups />, {
+          path,
+          initialEntries,
         });
-    });
+        cy.fixture('groups.json')
+          .its('results')
+          .should('be.an', 'array')
+          .then(() => {
+            cy.get('[data-cy="add-group"]').click();
+            cy.get('[data-cy="create-new-group"]').should('have.attr', 'aria-disabled', 'true');
+          });
+      });
+    }
 
+    if (inventory === 'constructed_inventory') {
+      it('no actions beside run command', () => {
+        cy.mount(<GroupRelatedGroups />, {
+          path,
+          initialEntries,
+        });
 
-function filterBy(filter : string | RegExp, key : string, found : string)
-{
-  cy.mount(<GroupRelatedGroups />, {
-    path,
-    initialEntries,
-  });
-  cy.fixture('groups.json')
-    .its('results')
-    .should('be.an', 'array')
-    .then(() => {
-      cy.intercept(
-        {
-          method: 'GET',
-          url: `/api/v2/groups//children/?${key}=${found}&**`,
-        },
-        {
-          fixture: 'group.json',
-        }
-      ).as('createdByFilter');
-      
-      cy.filterTableByTypeAndText(filter, found);
-      //cy.get('@createdByFilter.all').should('have.length.least', 1);
-      
-      cy.contains(`[aria-label="Simple table"]`, found);
-      
-      cy.get(`[aria-label="Simple table"] tr`).should('have.length', 1);
-      cy.clearAllFilters();
-    });
-}
+        cy.get(`[data-cy="run-command"]`);
+        cy.get(`[data-cy="add-group"]`).should('not.exist');
+        cy.get(`[aria-label="Actions"]`).should('not.exist');
+      });
+    }
 
+    if (inventory === 'inventory') {
+      it('tests if there are all actions', () => {
+        cy.mount(<GroupRelatedGroups />, {
+          path,
+          initialEntries,
+        });
 
+        cy.get(`[data-cy="run-command"]`);
+        cy.get(`[data-cy="add-group"]`);
+        cy.get(`[aria-label="Actions"]`).click();
+        cy.get(`[data-cy="disassociate-selected-groups"]`);
+      });
+    }
   });
 });
