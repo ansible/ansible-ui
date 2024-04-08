@@ -1,34 +1,43 @@
-import { ReactNode, createContext, useContext } from 'react';
-import useSWR, { SWRResponse } from 'swr';
-import { User } from '../../frontend/awx/interfaces/User';
+import { ReactNode, createContext, useContext, useMemo } from 'react';
+import useSWR from 'swr';
+import { AwxItemsResponse } from '../../frontend/awx/common/AwxItemsResponse';
 import { requestGet } from '../../frontend/common/crud/Data';
 import { gatewayAPI } from '../api/gateway-api-utils';
-import { PlatformItemsResponse } from '../interfaces/PlatformItemsResponse';
+import { PlatformUser } from '../interfaces/PlatformUser';
 
-export const PlatformActiveUserContext = createContext<
-  SWRResponse<PlatformItemsResponse<User>> | undefined
->(undefined);
-
-export function usePlatformActiveUser() {
-  const context = useContext(PlatformActiveUserContext);
-  const itemsResponse = context?.data;
-  if (!itemsResponse) return undefined;
-  if (!itemsResponse.results) return undefined;
-  if (!itemsResponse.results.length) return undefined;
-  return itemsResponse.results[0];
+interface PlatformActiveUserState {
+  user?: PlatformUser;
+  refresh?: () => void;
+  isLoading?: boolean;
 }
 
-export function usePlatformActiveUserContext() {
+export const PlatformActiveUserContext = createContext<PlatformActiveUserState>({});
+
+export function usePlatformActiveUser() {
   return useContext(PlatformActiveUserContext);
 }
 
 export function PlatformActiveUserProvider(props: { children: ReactNode }) {
-  const response = useSWR<PlatformItemsResponse<User>>(gatewayAPI`/me/`, requestGet, {
+  const response = useSWR<AwxItemsResponse<PlatformUser>>(gatewayAPI`/me/`, requestGet, {
     dedupingInterval: 0,
     refreshInterval: 10 * 1000,
   });
+  const { mutate } = response;
+
+  const user = useMemo<PlatformUser | undefined>(() => {
+    return !response.error && response.data?.results && response.data.results.length > 0
+      ? response.data.results[0]
+      : undefined;
+  }, [response]);
+
+  const isLoading = useMemo<boolean>(() => !response.error && response.isLoading, [response]);
+
+  const platformActiveUserState = useMemo<PlatformActiveUserState>(() => {
+    return { user, refresh: () => void mutate(), isLoading };
+  }, [user, isLoading, mutate]);
+
   return (
-    <PlatformActiveUserContext.Provider value={response}>
+    <PlatformActiveUserContext.Provider value={platformActiveUserState}>
       {props.children}
     </PlatformActiveUserContext.Provider>
   );

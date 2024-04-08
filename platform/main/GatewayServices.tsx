@@ -1,3 +1,4 @@
+import { Page } from '@patternfly/react-core';
 import {
   Dispatch,
   ReactNode,
@@ -9,7 +10,7 @@ import {
   useState,
 } from 'react';
 import useSWR from 'swr';
-import { LoadingPage } from '../../framework';
+import { LoadingState } from '../../framework/components/LoadingState';
 import { setAwxApiPath } from '../../frontend/awx/common/api/awx-utils';
 import { requestGet } from '../../frontend/common/crud/Data';
 import { setEdaApiPath } from '../../frontend/eda/common/eda-utils';
@@ -84,7 +85,11 @@ export function GatewayServices(props: { children: ReactNode }) {
     }
   }, [result.data, setGatewayServices]);
   if (result.isLoading) {
-    return <LoadingPage />;
+    return (
+      <Page>
+        <LoadingState />
+      </Page>
+    );
   }
   return props.children;
 }

@@ -2,13 +2,12 @@ import { Page } from '@patternfly/react-core';
 import { LoadingState } from '../../framework/components/LoadingState';
 import { Login } from '../../frontend/common/Login';
 import { gatewayAPI } from '../api/gateway-api-utils';
-import { usePlatformActiveUser, usePlatformActiveUserContext } from './PlatformActiveUserProvider';
+import { usePlatformActiveUser } from './PlatformActiveUserProvider';
 
 export function PlatformLogin(props: { children: React.ReactNode }) {
-  const platformActiveUserContext = usePlatformActiveUserContext();
-  const platformActiveUser = usePlatformActiveUser();
+  const { user, refresh, isLoading } = usePlatformActiveUser();
 
-  if (platformActiveUserContext?.isLoading) {
+  if (isLoading) {
     return (
       <Page>
         <LoadingState />
@@ -16,13 +15,8 @@ export function PlatformLogin(props: { children: React.ReactNode }) {
     );
   }
 
-  if (!platformActiveUser) {
-    return (
-      <Login
-        apiUrl={gatewayAPI`/login/`}
-        onSuccess={() => void platformActiveUserContext?.mutate()}
-      />
-    );
+  if (!user) {
+    return <Login apiUrl={gatewayAPI`/login/`} onSuccess={() => void refresh?.()} />;
   }
 
   return props.children;

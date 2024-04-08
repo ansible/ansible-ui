@@ -15,8 +15,6 @@ import {
 } from '@patternfly/react-icons';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
-import { useSWRConfig } from 'swr';
 import {
   PageMasthead,
   PageNotificationsIcon,
@@ -29,34 +27,33 @@ import { PageThemeSwitcher } from '../../framework/PageMasthead/PageThemeSwitche
 import { useAwxNotifications } from '../../frontend/awx/main/AwxMasthead';
 import { PageRefreshIcon } from '../../frontend/common/PageRefreshIcon';
 import { postRequest } from '../../frontend/common/crud/Data';
+import { useClearCache } from '../../frontend/common/useInvalidateCache';
 import { useHubNotifications } from '../../frontend/hub/main/HubMasthead';
 import { gatewayAPI } from '../api/gateway-api-utils';
-import { useActivePlatformUser } from '../hooks/useActivePlatformUser';
 import { PlatformAbout } from './PlatformAbout';
+import { usePlatformActiveUser } from './PlatformActiveUserProvider';
 import { PlatformRoute } from './PlatformRoutes';
 
 export function PlatformMasthead() {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
-  const navigate = useNavigate();
-  const activeUser = useActivePlatformUser();
   useAwxNotifications();
   useHubNotifications();
   const showTitle = useBreakpoint('md');
   const [_dialog, setDialog] = usePageDialog();
+  const { clearAllCache } = useClearCache();
+  const { user, refresh } = usePlatformActiveUser();
 
-  const { cache } = useSWRConfig();
   const logout = useCallback(async () => {
     try {
       await postRequest(gatewayAPI`/logout/`, {});
     } catch (e) {
       // do nothing
     }
-    for (const key of cache.keys()) {
-      cache.delete(key);
-    }
-    navigate('/login');
-  }, [cache, navigate]);
+    clearAllCache();
+
+    void refresh?.();
+  }, [clearAllCache, refresh]);
 
   return (
     <PageMasthead
@@ -132,11 +129,7 @@ export function PlatformMasthead() {
           </PageMastheadDropdown>
         </ToolbarItem>
         <ToolbarItem>
-          <PageMastheadDropdown
-            id="account-menu"
-            icon={<UserCircleIcon />}
-            label={activeUser?.username}
-          >
+          <PageMastheadDropdown id="account-menu" icon={<UserCircleIcon />} label={user?.username}>
             {/* <DropdownItem
               id="user-details"
               label={t('User details')}
