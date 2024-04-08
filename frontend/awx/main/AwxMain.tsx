@@ -7,6 +7,7 @@ import '@patternfly/patternfly/patternfly-charts-theme-dark.css';
 import { BrowserRouter } from 'react-router-dom';
 import { PageFramework } from '../../../framework';
 import '../../common/i18n';
+import { AwxActiveUserProvider } from '../common/useAwxActiveUser';
 import { AwxApp } from './AwxApp';
 import { AwxLogin } from './AwxLogin';
 
@@ -15,9 +16,11 @@ export default function AwxMain() {
   return (
     <BrowserRouter>
       <PageFramework defaultRefreshInterval={10}>
-        <AwxLogin>
-          <AwxApp />
-        </AwxLogin>
+        <AwxActiveUserProvider>
+          <AwxLogin>
+            <AwxApp />
+          </AwxLogin>
+        </AwxActiveUserProvider>
       </PageFramework>
     </BrowserRouter>
   );
