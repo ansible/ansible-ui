@@ -5,9 +5,10 @@ import { gatewayAPI } from '../api/gateway-api-utils';
 import { usePlatformActiveUser } from './PlatformActiveUserProvider';
 
 export function PlatformLogin(props: { children: React.ReactNode }) {
-  const { user, refresh, isLoading } = usePlatformActiveUser();
+  const { activePlatformUser, refreshActivePlatformUser, activePlatformUserIsLoading } =
+    usePlatformActiveUser();
 
-  if (isLoading) {
+  if (activePlatformUserIsLoading) {
     return (
       <Page>
         <LoadingState />
@@ -15,8 +16,10 @@ export function PlatformLogin(props: { children: React.ReactNode }) {
     );
   }
 
-  if (!user) {
-    return <Login apiUrl={gatewayAPI`/login/`} onSuccess={() => void refresh?.()} />;
+  if (!activePlatformUser) {
+    return (
+      <Login apiUrl={gatewayAPI`/login/`} onSuccess={() => void refreshActivePlatformUser?.()} />
+    );
   }
 
   return props.children;

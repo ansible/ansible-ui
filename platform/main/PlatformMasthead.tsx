@@ -42,7 +42,7 @@ export function PlatformMasthead() {
   const showTitle = useBreakpoint('md');
   const [_dialog, setDialog] = usePageDialog();
   const { clearAllCache } = useClearCache();
-  const { user, refresh } = usePlatformActiveUser();
+  const { activePlatformUser, refreshActivePlatformUser } = usePlatformActiveUser();
 
   const logout = useCallback(async () => {
     try {
@@ -52,8 +52,8 @@ export function PlatformMasthead() {
     }
     clearAllCache();
 
-    void refresh?.();
-  }, [clearAllCache, refresh]);
+    void refreshActivePlatformUser?.();
+  }, [clearAllCache, refreshActivePlatformUser]);
 
   return (
     <PageMasthead
@@ -129,7 +129,11 @@ export function PlatformMasthead() {
           </PageMastheadDropdown>
         </ToolbarItem>
         <ToolbarItem>
-          <PageMastheadDropdown id="account-menu" icon={<UserCircleIcon />} label={user?.username}>
+          <PageMastheadDropdown
+            id="account-menu"
+            icon={<UserCircleIcon />}
+            label={activePlatformUser?.username}
+          >
             {/* <DropdownItem
               id="user-details"
               label={t('User details')}

@@ -5,13 +5,13 @@ import { requestGet } from '../../frontend/common/crud/Data';
 import { gatewayAPI } from '../api/gateway-api-utils';
 import { PlatformUser } from '../interfaces/PlatformUser';
 
-interface PlatformActiveUserState {
-  user?: PlatformUser;
-  refresh?: () => void;
-  isLoading?: boolean;
+interface ActiveUserState {
+  activePlatformUser?: PlatformUser;
+  refreshActivePlatformUser?: () => void;
+  activePlatformUserIsLoading?: boolean;
 }
 
-export const PlatformActiveUserContext = createContext<PlatformActiveUserState>({});
+export const PlatformActiveUserContext = createContext<ActiveUserState>({});
 
 export function usePlatformActiveUser() {
   return useContext(PlatformActiveUserContext);
@@ -23,21 +23,24 @@ export function PlatformActiveUserProvider(props: { children: ReactNode }) {
     refreshInterval: 10 * 1000,
   });
   const { mutate } = response;
-
-  const user = useMemo<PlatformUser | undefined>(() => {
+  const activePlatformUser = useMemo<PlatformUser | undefined>(() => {
     return !response.error && response.data?.results && response.data.results.length > 0
       ? response.data.results[0]
       : undefined;
   }, [response]);
-
-  const isLoading = useMemo<boolean>(() => !response.error && response.isLoading, [response]);
-
-  const platformActiveUserState = useMemo<PlatformActiveUserState>(() => {
-    return { user, refresh: () => void mutate(), isLoading };
-  }, [user, isLoading, mutate]);
-
+  const activePlatformUserIsLoading = useMemo<boolean>(
+    () => !response.error && response.isLoading,
+    [response]
+  );
+  const state = useMemo<ActiveUserState>(() => {
+    return {
+      activePlatformUser,
+      refreshActivePlatformUser: () => void mutate(),
+      activePlatformUserIsLoading,
+    };
+  }, [activePlatformUser, activePlatformUserIsLoading, mutate]);
   return (
-    <PlatformActiveUserContext.Provider value={platformActiveUserState}>
+    <PlatformActiveUserContext.Provider value={state}>
       {props.children}
     </PlatformActiveUserContext.Provider>
   );
