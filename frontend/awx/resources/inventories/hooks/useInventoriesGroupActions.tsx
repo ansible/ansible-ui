@@ -44,6 +44,7 @@ export function useInventoriesGroupActions() {
         isPinned: true,
         icon: PencilAltIcon,
         label: t('Edit group'),
+        isHidden: () => params.inventory_type === 'constructed_inventory',
         onClick: (group) =>
           pageNavigate(AwxRoute.InventoryGroupEdit, {
             params: {
@@ -75,6 +76,7 @@ export function useInventoriesGroupActions() {
         selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Delete group'),
+        isHidden: () => params.inventory_type === 'constructed_inventory',
         onClick: (group) => deleteGroups([group]),
         isDisabled: (group) => cannotDeleteResource(group, t),
       },
