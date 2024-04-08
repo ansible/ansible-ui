@@ -1,16 +1,18 @@
-import { ReactNode, createContext, useContext } from 'react';
-import useSWR, { SWRResponse } from 'swr';
+import { ReactNode, createContext, useContext, useMemo } from 'react';
+import useSWR from 'swr';
 import { requestGet } from '../../common/crud/Data';
 import { HubUser } from '../interfaces/expanded/HubUser';
 import { hubAPI } from './api/formatPath';
 
-export const HubActiveUserContext = createContext<SWRResponse<HubUser> | undefined>(undefined);
-
-export function useHubActiveUser() {
-  return useContext(HubActiveUserContext)?.data;
+interface HubActiveUserState {
+  activeHubUser?: HubUser;
+  refreshActiveHubUser?: () => void;
+  activeHubUserIsLoading?: boolean;
 }
 
-export function useHubActiveUserContext() {
+export const HubActiveUserContext = createContext<HubActiveUserState>({});
+
+export function useHubActiveUser() {
   return useContext(HubActiveUserContext);
 }
 
@@ -19,7 +21,23 @@ export function HubActiveUserProvider(props: { children: ReactNode }) {
     dedupingInterval: 0,
     refreshInterval: 10 * 1000,
   });
+  const { mutate } = response;
+  const activeHubUser = useMemo<HubUser | undefined>(
+    () => (response.error ? undefined : response.data),
+    [response]
+  );
+  const activeHubUserIsLoading = useMemo<boolean>(
+    () => !response.error && response.isLoading,
+    [response]
+  );
+  const state = useMemo<HubActiveUserState>(() => {
+    return {
+      activeHubUser,
+      refreshActiveHubUser: () => void mutate(),
+      activeHubUserIsLoading,
+    };
+  }, [activeHubUser, activeHubUserIsLoading, mutate]);
   return (
-    <HubActiveUserContext.Provider value={response}>{props.children}</HubActiveUserContext.Provider>
+    <HubActiveUserContext.Provider value={state}>{props.children}</HubActiveUserContext.Provider>
   );
 }

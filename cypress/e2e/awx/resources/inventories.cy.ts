@@ -4,14 +4,14 @@ import { InstanceGroup } from '../../../../frontend/awx/interfaces/InstanceGroup
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 import { Label } from '../../../../frontend/awx/interfaces/Label';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
-import { User } from '../../../../frontend/awx/interfaces/User';
+import { AwxUser } from '../../../../frontend/awx/interfaces/User';
 
 describe('Inventories Tests', () => {
   let organization: Organization;
   let inventory: Inventory;
   let instanceGroup: InstanceGroup;
   let label: Label;
-  let user: User;
+  let user: AwxUser;
 
   before(() => {
     cy.awxLogin();

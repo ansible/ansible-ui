@@ -4,7 +4,7 @@ import { usePageDialog } from '../../../../../framework';
 import { MultiSelectDialog } from '../../../../../framework/PageDialogs/MultiSelectDialog';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxView } from '../../../common/useAwxView';
-import { User } from '../../../interfaces/User';
+import { AwxUser } from '../../../interfaces/User';
 import { useUserAndTeamRolesLists } from '../../common/useUserAndTeamRolesLists';
 import { useUsersColumns } from './useUsersColumns';
 import { useUsersFilters } from './useUsersFilters';
@@ -12,19 +12,19 @@ import { useUsersFilters } from './useUsersFilters';
 function SelectUsers(props: {
   accessUrl?: string;
   title: string;
-  onSelect: (users: User[]) => void;
+  onSelect: (users: AwxUser[]) => void;
   confirmText?: string;
 }) {
   const { t } = useTranslation();
   const toolbarFilters = useUsersFilters();
   const tableColumns = useUsersColumns({ disableLinks: true });
-  const view = useAwxView<User>({
+  const view = useAwxView<AwxUser>({
     url: props.accessUrl ?? awxAPI`/users/`,
     toolbarFilters,
     tableColumns,
     disableQueryString: true,
   });
-  useUserAndTeamRolesLists(view.pageItems as User[]);
+  useUserAndTeamRolesLists(view.pageItems as AwxUser[]);
 
   return (
     <MultiSelectDialog
@@ -43,7 +43,7 @@ export function useSelectUsers() {
   const openSelectUsers = useCallback(
     (
       title: string,
-      onSelect: (users: User[]) => void,
+      onSelect: (users: AwxUser[]) => void,
       confirmText?: string,
       accessUrl?: string
     ) => {

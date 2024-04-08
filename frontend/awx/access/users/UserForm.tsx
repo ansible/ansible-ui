@@ -16,7 +16,7 @@ import { requestGet, requestPatch, swrOptions } from '../../../common/crud/Data'
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { AwxPageForm } from '../../common/AwxPageForm';
 import { awxAPI } from '../../common/api/awx-utils';
-import { User } from '../../interfaces/User';
+import { AwxUser } from '../../interfaces/User';
 import { AwxRoute } from '../../main/AwxRoutes';
 import { PageFormSelectOrganization } from '../organizations/components/PageFormOrganizationSelect';
 
@@ -30,7 +30,7 @@ export function CreateUser() {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const navigate = useNavigate();
-  const postRequest = usePostRequest<User, User>();
+  const postRequest = usePostRequest<AwxUser, AwxUser>();
   const onSubmit: PageFormSubmitHandler<IUserInput> = async (
     userInput,
     setError,
@@ -81,7 +81,7 @@ export function EditUser() {
   const pageNavigate = usePageNavigate();
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
-  const { data: user } = useSWR<User>(awxAPI`/users/${id.toString()}/`, requestGet, swrOptions);
+  const { data: user } = useSWR<AwxUser>(awxAPI`/users/${id.toString()}/`, requestGet, swrOptions);
 
   const onSubmit: PageFormSubmitHandler<IUserInput> = async (
     userInput: IUserInput,
@@ -97,7 +97,7 @@ export function EditUser() {
         return false;
       }
     }
-    const newUser = await requestPatch<User>(awxAPI`/users/${id.toString()}/`, user);
+    const newUser = await requestPatch<AwxUser>(awxAPI`/users/${id.toString()}/`, user);
     pageNavigate(AwxRoute.UserDetails, { params: { id: newUser.id } });
   };
 
@@ -149,7 +149,7 @@ export function EditUser() {
   );
 }
 
-type IUserInput = User & { userType: string; confirmPassword: string };
+type IUserInput = AwxUser & { userType: string; confirmPassword: string };
 
 function UserInputs(props: { mode: 'create' | 'edit' }) {
   const { mode } = props;
