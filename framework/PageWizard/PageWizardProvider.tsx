@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useState, useEffect, useContext } from 'react';
+import { createContext, ReactNode, useState, useEffect, useContext, useMemo } from 'react';
 
 import type { PageWizardStep, PageWizardState, PageWizardParentStep } from './types';
 
@@ -11,7 +11,7 @@ export function isStepVisible(step: PageWizardStep, values: object) {
   return !step.hidden || !step.hidden(values) ? step : null;
 }
 
-export function isWizardParentStep(step: PageWizardStep): step is PageWizardParentStep {
+export function isPageWizardParentStep(step: PageWizardStep): step is PageWizardParentStep {
   return (step as PageWizardParentStep)?.substeps !== undefined;
 }
 
@@ -28,10 +28,26 @@ export function PageWizardProvider<T extends object>(props: {
   const [visibleSteps, setVisibleSteps] = useState<PageWizardStep[]>(() => {
     return props.steps.filter((step) => isStepVisible(step, wizardData));
   });
+  const allSteps = useMemo(() => {
+    return props.steps.reduce((acc: PageWizardStep[], step) => {
+      acc.push(step);
+      if (isPageWizardParentStep(step)) {
+        acc.push(...step.substeps);
+      }
+      return acc;
+    }, []);
+  }, [props.steps]);
+  const [visibleStepsFlattened, setVisibleStepsFlattened] = useState<PageWizardStep[]>(() => {
+    return allSteps.filter((step) => isStepVisible(step, wizardData));
+  });
 
   useEffect(() => {
     if (!activeStep && visibleSteps.length > 0) {
-      setActiveStep(visibleSteps[0]);
+      if ((visibleSteps[0] as PageWizardParentStep).substeps) {
+        setActiveStep((visibleSteps[0] as PageWizardParentStep).substeps[0]);
+      } else {
+        setActiveStep(visibleSteps[0]);
+      }
     }
   }, [activeStep, visibleSteps]);
 
@@ -42,9 +58,11 @@ export function PageWizardProvider<T extends object>(props: {
         setWizardData: setWizardData,
         stepData,
         setStepData: setStepData,
-        allSteps: props.steps,
+        allSteps: allSteps,
         visibleSteps,
         setVisibleSteps: setVisibleSteps,
+        visibleStepsFlattened: visibleStepsFlattened,
+        setVisibleStepsFlattened: setVisibleStepsFlattened,
         activeStep,
         setActiveStep: setActiveStep,
         stepError,

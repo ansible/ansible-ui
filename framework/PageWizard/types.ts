@@ -35,6 +35,8 @@ export interface PageWizardState {
   allSteps: PageWizardStep[];
   visibleSteps: PageWizardStep[];
   setVisibleSteps: (steps: PageWizardStep[]) => void;
+  visibleStepsFlattened: PageWizardStep[];
+  setVisibleStepsFlattened: (steps: PageWizardStep[]) => void;
   wizardData: object;
 }
 
