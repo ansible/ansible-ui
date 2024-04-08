@@ -1,7 +1,11 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router-dom';
-import { PageNavigationItem, removeNavigationItemById } from '../../framework';
+import {
+  PageNavigationItem,
+  findNavigationItemById,
+  removeNavigationItemById,
+} from '../../framework';
 import { PageSettings } from '../../framework/PageSettings/PageSettings';
 import { AwxSettingsCategory } from '../../frontend/awx/administration/settings/AwxSettingsCategory';
 import { AwxRoute } from '../../frontend/awx/main/AwxRoutes';
@@ -43,13 +47,13 @@ export function usePlatformNavigation() {
   const pageNavigationItems = useMemo<PageNavigationItem[]>(() => {
     removeNavigationItemById(awxNav, AwxRoute.Overview);
     removeNavigationItemById(awxNav, AwxRoute.Settings);
-    // const awxInfrastructure = findNavigationItemById(awxNav, AwxRoute.Infrastructure);
-    // const awxCredentials = removeNavigationItemById(awxNav, AwxRoute.Credentials)!;
-    // const awxCredentialTypes = removeNavigationItemById(awxNav, AwxRoute.CredentialTypes)!;
-    // if (awxInfrastructure && 'children' in awxInfrastructure) {
-    //   awxInfrastructure.children.push(awxCredentials);
-    //   awxInfrastructure.children.push(awxCredentialTypes);
-    // }
+    const awxInfrastructure = findNavigationItemById(awxNav, AwxRoute.Infrastructure);
+    const awxCredentials = removeNavigationItemById(awxNav, AwxRoute.Credentials)!;
+    const awxCredentialTypes = removeNavigationItemById(awxNav, AwxRoute.CredentialTypes)!;
+    if (awxInfrastructure && 'children' in awxInfrastructure) {
+      awxInfrastructure.children.push(awxCredentials);
+      awxInfrastructure.children.push(awxCredentialTypes);
+    }
 
     const awxRolesRoute = removeNavigationItemById(awxNav, AwxRoute.Roles);
     if (awxRolesRoute && 'children' in awxRolesRoute) {
