@@ -58,7 +58,7 @@ export function useTemplateActions({
         label: t('Launch template'),
         onClick: (template: Template) => void launchTemplate(template),
         isDisabled: (template: Template) =>
-          !template?.summary_fields.user_capabilities.start
+          !template?.summary_fields?.user_capabilities?.start
             ? t('You do not have permission to launch this template')
             : undefined,
         ouiaId: 'job-template-detail-launch-button',
@@ -69,7 +69,7 @@ export function useTemplateActions({
         type: PageActionType.Link,
         selection: PageActionSelection.Single,
         isPinned: true,
-        isHidden: (template) => !template?.summary_fields.user_capabilities.edit,
+        isHidden: (template) => !template?.summary_fields?.user_capabilities?.edit,
         icon: PencilAltIcon,
         label: t('Edit template'),
         ouiaId: 'job-template-detail-edit-button',
