@@ -1,6 +1,6 @@
 import { EdaControllerToken } from '../../../../frontend/eda/interfaces/EdaControllerToken';
 
-describe.skip('EDA Admin User', () => {
+describe('EDA Admin User', () => {
   before(() => {
     cy.edaLogin();
   });
@@ -19,7 +19,7 @@ describe.skip('EDA Admin User', () => {
     cy.navigateTo('eda', 'users');
     cy.contains('h1', 'Users');
     cy.contains(
-      'p',
+      '[data-cy="app-description"]',
       'A user is someone who has access to EDA with associated permissions and credentials.'
     );
     cy.contains('a', 'admin').click();

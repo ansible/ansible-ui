@@ -1217,47 +1217,6 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add('createAwxToken', (awxToken?: Partial<AwxToken>) => {
-  let awxServer = Cypress.env('AWX_SERVER') as string;
-  if (awxServer.endsWith('/')) awxServer = awxServer.slice(0, -1);
-  const username = Cypress.env('AWX_USERNAME') as string;
-  const password = Cypress.env('AWX_PASSWORD') as string;
-  const tokensEndpoint = awxAPI`/tokens/`;
-  cy.exec(
-    `curl --insecure -d '${JSON.stringify({
-      description: 'E2E-' + randomString(4),
-      ...awxToken,
-    })}' -H "Content-Type: application/json" -u "${username}:${password}" -X POST '${awxServer}${tokensEndpoint}'`
-  ).then((result) => JSON.parse(result.stdout) as AwxToken);
-});
-
-Cypress.Commands.add('getGlobalAwxToken', () => {
-  if (globalAwxToken) cy.wrap(globalAwxToken);
-  else cy.createAwxToken().then((awxToken) => (globalAwxToken = awxToken));
-});
-
-Cypress.Commands.add(
-  'deleteAwxToken',
-  (
-    awxToken: AwxToken,
-    options?: {
-      /** Whether to fail on response codes other than 2xx and 3xx */
-      failOnStatusCode?: boolean;
-    }
-  ) => {
-    cy.awxRequestDelete(awxAPI`/tokens/${awxToken.id.toString()}/`, options);
-  }
-);
-
-// Global variable to store the token for AWX
-// Created on demand when a command needs it
-let globalAwxToken: AwxToken | undefined;
-
-after(() => {
-  // Delete the token if it was created
-  if (globalAwxToken) cy.deleteAwxToken(globalAwxToken, { failOnStatusCode: false });
-});
-
 Cypress.Commands.add('waitForTemplateStatus', (jobID: string) => {
   cy.requestGet<AwxItemsResponse<JobEvent>>(
     `api/v2/jobs/${jobID}/job_events/?order_by=counter&page=1&page_size=50`
