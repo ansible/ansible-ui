@@ -59,7 +59,7 @@ function createAndCheckHost(inventory_host: boolean, inventory: string) {
     cy.contains('button', 'Browse').click();
     cy.contains('Select Inventory');
     cy.get(`[aria-label="Select Inventory"]`).within(() => {
-      cy.searchAndDisplayResource(inventory);
+      cy.filterTableBySingleSelect('name', inventory);
       cy.get(`[data-cy="checkbox-column-cell"] input`).click();
       cy.contains('button', 'Confirm').click();
     });

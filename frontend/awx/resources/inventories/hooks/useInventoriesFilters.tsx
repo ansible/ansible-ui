@@ -1,38 +1,18 @@
-import { useMemo } from 'react';
-import { IToolbarFilter } from '../../../../../framework';
 import {
   useCreatedByToolbarFilter,
-  useDescriptionToolbarFilter,
-  useInventoryTypeToolbarFilter,
   useModifiedByToolbarFilter,
-  useNameToolbarFilter,
-  useOrganizationToolbarFilter,
 } from '../../../common/awx-toolbar-filters';
+import { useDynamicToolbarFilters } from '../../../common/useDynamicFilters';
 
 export function useInventoriesFilters() {
   const createdByToolbarFilter = useCreatedByToolbarFilter();
-  const descriptionToolbarFilter = useDescriptionToolbarFilter();
-  const inventoryTypeToolbarFilter = useInventoryTypeToolbarFilter();
   const modifiedByToolbarFilter = useModifiedByToolbarFilter();
-  const nameToolbarFilter = useNameToolbarFilter();
-  const organizationToolbarFilter = useOrganizationToolbarFilter();
-  const toolbarFilters = useMemo<IToolbarFilter[]>(
-    () => [
-      nameToolbarFilter,
-      createdByToolbarFilter,
-      descriptionToolbarFilter,
-      inventoryTypeToolbarFilter,
-      modifiedByToolbarFilter,
-      organizationToolbarFilter,
-    ],
-    [
-      nameToolbarFilter,
-      createdByToolbarFilter,
-      descriptionToolbarFilter,
-      inventoryTypeToolbarFilter,
-      modifiedByToolbarFilter,
-      organizationToolbarFilter,
-    ]
-  );
+
+  const toolbarFilters = useDynamicToolbarFilters({
+    optionsPath: 'inventories',
+    preSortedKeys: ['name', 'id', 'created-by', 'modified-by'],
+    preFilledValueKeys: { name: { apiPath: 'inventories' }, id: { apiPath: 'inventories' } },
+    additionalFilters: [createdByToolbarFilter, modifiedByToolbarFilter],
+  });
   return toolbarFilters;
 }

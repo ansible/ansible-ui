@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { randomString } from '../../../../framework/utils/random-string';
 import { InstanceGroup } from '../../../../frontend/awx/interfaces/InstanceGroup';
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
@@ -74,7 +73,7 @@ describe('Inventories Tests', () => {
       //Refactor this test to match the updated test case and improve the assertions
 
       cy.navigateTo('awx', 'inventories');
-      cy.searchAndDisplayResource(inventory.name);
+      cy.filterTableBySingleSelect('name', inventory.name);
       cy.get(`[data-cy="row-id-${inventory.id}"]`).within(() => {
         cy.get('[data-cy="edit-inventory"]').click();
       });
@@ -96,7 +95,8 @@ describe('Inventories Tests', () => {
       //Refactor this test to match the updated test case and improve the assertions
 
       cy.navigateTo('awx', 'inventories');
-      cy.clickTableRow(inventory.name); //Refactor this line to use the updated custom command
+      cy.filterTableBySingleSelect('name', inventory.name);
+      cy.clickTableRowLink('name', inventory.name, { disableFilter: true });
       cy.verifyPageTitle(inventory.name);
       //Add more assertions to verify that the user is now on the details screen and to assert the inventory's original info
       cy.clickButton(/^Edit inventory/);
@@ -113,7 +113,8 @@ describe('Inventories Tests', () => {
       //Refactor this test to match the updated test case and improve the assertions
 
       cy.navigateTo('awx', 'inventories');
-      cy.clickTableRow(inventory.name); //Refactor this line to use the updated custom command
+      cy.filterTableBySingleSelect('name', inventory.name);
+      cy.clickTableRowLink('name', inventory.name, { disableFilter: true });
       cy.verifyPageTitle(inventory.name); //Add more assertions to verify that the user is now on the details screen
       cy.clickPageAction('copy-inventory');
       cy.hasAlert(`${inventory.name} copied`);
@@ -124,14 +125,16 @@ describe('Inventories Tests', () => {
       //Refactor this test to match the updated test case and improve the assertions
 
       cy.navigateTo('awx', 'inventories'); //Add assertion to verify the user is on the inventories list view
-      cy.clickTableRowKebabAction(inventory.name, 'copy-inventory', true);
+      cy.filterTableBySingleSelect('name', inventory.name);
+      cy.clickTableRowKebabAction(inventory.name, 'copy-inventory', false);
       cy.hasAlert(`${inventory.name.toString()} copied`);
       //Assert the presence of the original and the copy by performing a search on the list of inventories
     });
 
     it('can delete an inventory from the inventory list row item', () => {
       cy.navigateTo('awx', 'inventories');
-      cy.clickTableRowKebabAction(inventory.name, 'delete-inventory', true);
+      cy.filterTableBySingleSelect('name', inventory.name);
+      cy.clickTableRowKebabAction(inventory.name, 'delete-inventory', false);
       //Add assertion to show the presence of the expected inventory
       cy.get('#confirm').click();
       cy.clickButton(/^Delete inventory/);
@@ -146,7 +149,8 @@ describe('Inventories Tests', () => {
       //Improve the assertions in this test
 
       cy.navigateTo('awx', 'inventories');
-      cy.selectTableRow(inventory.name, true);
+      cy.filterTableBySingleSelect('name', inventory.name);
+      cy.selectTableRowByCheckbox('name', inventory.name, { disableFilter: true });
       //Add an assertion that the expected inventory name appears where it should
       cy.clickToolbarKebabAction('delete-selected-inventories');
       cy.get('#confirm').click();
