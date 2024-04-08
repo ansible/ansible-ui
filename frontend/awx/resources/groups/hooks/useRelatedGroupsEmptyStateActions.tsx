@@ -53,8 +53,12 @@ export function useRelatedGroupsEmptyStateActions(view: IAwxView<InventoryGroup>
     [setDialog, params.group_id, alertToaster, t, view]
   );
 
-  return useMemo<IPageAction<InventoryGroup>[]>(
-    () => [
+  return useMemo<IPageAction<InventoryGroup>[]>(() => {
+    if (params.inventory_type === 'constructed_inventory') {
+      return [];
+    }
+
+    return [
       {
         type: PageActionType.Button,
         selection: PageActionSelection.None,
@@ -90,16 +94,15 @@ export function useRelatedGroupsEmptyStateActions(view: IAwxView<InventoryGroup>
                 'You do not have permission to create a group. Please contact your organization administrator if there is an issue with your access.'
               ),
       },
-    ],
-    [
-      canCreateGroup,
-      onSelectedGroups,
-      pageNavigate,
-      params.group_id,
-      params.id,
-      params.inventory_type,
-      setDialog,
-      t,
-    ]
-  );
+    ];
+  }, [
+    canCreateGroup,
+    onSelectedGroups,
+    pageNavigate,
+    params.group_id,
+    params.id,
+    params.inventory_type,
+    setDialog,
+    t,
+  ]);
 }

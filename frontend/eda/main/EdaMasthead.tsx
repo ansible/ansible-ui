@@ -3,7 +3,6 @@ import { DropdownItem } from '@patternfly/react-core/deprecated';
 import { ExternalLinkAltIcon, QuestionCircleIcon, UserCircleIcon } from '@patternfly/react-icons';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import { PageMasthead, usePageNavigate } from '../../../framework';
 import { PageMastheadDropdown } from '../../../framework/PageMasthead/PageMastheadDropdown';
 import { PageThemeSwitcher } from '../../../framework/PageMasthead/PageThemeSwitcher';
@@ -12,7 +11,7 @@ import { PageRefreshIcon } from '../../common/PageRefreshIcon';
 import { postRequest } from '../../common/crud/Data';
 import { useClearCache } from '../../common/useInvalidateCache';
 import { edaAPI } from '../common/eda-utils';
-import { useEdaActiveUser } from '../common/useEdaActiveUser';
+import { useEdaActiveUser, useEdaActiveUserContext } from '../common/useEdaActiveUser';
 import { EdaRoute } from './EdaRoutes';
 import EdaBrand from './eda-logo.svg';
 
@@ -21,13 +20,13 @@ export function EdaMasthead() {
   const openAnsibleAboutModal = useAnsibleAboutModal();
   const { clearAllCache } = useClearCache();
   const pageNavigate = usePageNavigate();
-  const navigate = useNavigate();
   const activeUser = useEdaActiveUser();
+  const userContext = useEdaActiveUserContext();
   const logout = useCallback(async () => {
     await postRequest(edaAPI`/auth/session/logout/`, {});
     clearAllCache();
-    navigate('/login');
-  }, [clearAllCache, navigate]);
+    void userContext?.mutate();
+  }, [clearAllCache, userContext]);
   return (
     <PageMasthead brand={<EdaBrand style={{ height: 45, width: 45 }} />}>
       <ToolbarGroup variant="icon-button-group" style={{ flexGrow: 1 }}>
