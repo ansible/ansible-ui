@@ -129,6 +129,7 @@ export function MultipleChoiceField(props: IProps) {
           columnGap={{ default: 'columnGapNone' }}
           alignContent={{ default: 'alignContentSpaceBetween' }}
           key={choice.id}
+          style={{ marginBottom: 'var(--pf-v5-global--spacer--sm)' }}
         >
           <FlexItem flex={{ default: 'flex_1' }}>
             <Stack>
