@@ -84,7 +84,7 @@ export function MultipleChoiceField(props: IProps) {
       isRequired={true}
     >
       <Grid hasGutter>
-        <GridItem span={7}>
+        <GridItem span={10}>
           <Controller
             name={`add-choice`}
             control={control}
@@ -108,7 +108,7 @@ export function MultipleChoiceField(props: IProps) {
             )}
           />
         </GridItem>
-        <GridItem span={5}>
+        <GridItem span={2}>
           <Button
             type="button"
             variant="plain"
@@ -124,98 +124,100 @@ export function MultipleChoiceField(props: IProps) {
 
       <DividerWithSpace />
 
-      <Grid hasGutter>
-        {choices.map((choice, index) => (
-          <React.Fragment key={choice.id}>
-            <GridItem span={7}>
-              <Stack>
-                <Controller
-                  name={`formattedChoices[${index}].name`}
-                  control={control}
-                  rules={{
-                    required: t('Choice option cannot be empty.'),
+      {choices.map((choice, index) => (
+        <Flex
+          columnGap={{ default: 'columnGapNone' }}
+          alignContent={{ default: 'alignContentSpaceBetween' }}
+          key={choice.id}
+        >
+          <FlexItem flex={{ default: 'flex_1' }}>
+            <Stack>
+              <Controller
+                name={`formattedChoices[${index}].name`}
+                control={control}
+                rules={{
+                  required: t('Choice option cannot be empty.'),
+                }}
+                render={({ field, fieldState: { error } }) => (
+                  <>
+                    <TextInput
+                      validated={error?.message ? ValidatedOptions.error : undefined}
+                      id={`choice-option-${index}`}
+                      data-cy={`choice-option-${index}`}
+                      aria-label={t('Choice option')}
+                      {...field}
+                    />
+                    {error?.message && (
+                      <FormHelperText>
+                        <HelperText>
+                          <HelperTextItem variant="error">{error.message}</HelperTextItem>
+                        </HelperText>
+                      </FormHelperText>
+                    )}
+                  </>
+                )}
+              />
+            </Stack>
+          </FlexItem>
+          <FlexItem>
+            <Flex style={{ maxWidth: '180px' }} gap={{ default: 'gapNone' }}>
+              <FlexItem>
+                <Button
+                  type="button"
+                  variant="plain"
+                  aria-label={t('Remove choice')}
+                  data-cy={`remove-choice-${index}`}
+                  onClick={() => {
+                    remove(index);
                   }}
-                  render={({ field, fieldState: { error } }) => (
+                >
+                  <TrashIcon />
+                </Button>
+              </FlexItem>
+              <FlexItem>
+                <Controller
+                  control={control}
+                  name={`formattedChoices[${index}].default`}
+                  render={({ field }) => (
                     <>
-                      <TextInput
-                        validated={error?.message ? ValidatedOptions.error : undefined}
-                        id={`choice-option-${index}`}
-                        data-cy={`choice-option-${index}`}
-                        aria-label={t('Choice option')}
-                        {...field}
-                      />
-                      {error?.message && (
-                        <FormHelperText>
-                          <HelperText>
-                            <HelperTextItem variant="error">{error.message}</HelperTextItem>
-                          </HelperText>
-                        </FormHelperText>
+                      {type === 'multiplechoice' ? (
+                        <Radio
+                          {...field}
+                          data-cy={`choice-radio-${index}`}
+                          id={`choice-radio-${index}`}
+                          label={defaultOptLabel}
+                          isDisabled={updatedChoices[index]?.name.length <= 0}
+                          onChange={() => {
+                            replace(
+                              updatedChoices.map((choice) => ({ ...choice, default: false }))
+                            );
+                            update(index, { ...choice, default: true });
+                          }}
+                          onClick={() => {
+                            if (choice.default === true)
+                              update(index, { ...choice, default: false });
+                          }}
+                          isChecked={choice.default}
+                        />
+                      ) : (
+                        <Checkbox
+                          {...field}
+                          data-cy={`choice-checkbox-${index}`}
+                          id={`choice-checkbox-${index}`}
+                          label={defaultOptLabel}
+                          isChecked={choice.default}
+                          onClick={() => update(index, { ...choice, default: !choice.default })}
+                          isDisabled={updatedChoices[index]?.name.length <= 0}
+                        />
                       )}
                     </>
                   )}
                 />
-              </Stack>
-            </GridItem>
-            <GridItem span={5}>
-              <Flex>
-                <FlexItem>
-                  <Button
-                    type="button"
-                    variant="plain"
-                    aria-label={t('Remove choice')}
-                    data-cy={`remove-choice-${index}`}
-                    onClick={() => {
-                      remove(index);
-                    }}
-                  >
-                    <TrashIcon />
-                  </Button>
-                </FlexItem>
-                <FlexItem>
-                  <Controller
-                    control={control}
-                    name={`formattedChoices[${index}].default`}
-                    render={({ field }) => (
-                      <>
-                        {type === 'multiplechoice' ? (
-                          <Radio
-                            {...field}
-                            data-cy={`choice-radio-${index}`}
-                            id={`choice-radio-${index}`}
-                            label={defaultOptLabel}
-                            isDisabled={updatedChoices[index]?.name.length <= 0}
-                            onChange={() => {
-                              replace(
-                                updatedChoices.map((choice) => ({ ...choice, default: false }))
-                              );
-                              update(index, { ...choice, default: true });
-                            }}
-                            onClick={() => {
-                              if (choice.default === true)
-                                update(index, { ...choice, default: false });
-                            }}
-                            isChecked={choice.default}
-                          />
-                        ) : (
-                          <Checkbox
-                            {...field}
-                            data-cy={`choice-checkbox-${index}`}
-                            id={`choice-checkbox-${index}`}
-                            label={defaultOptLabel}
-                            isChecked={choice.default}
-                            onClick={() => update(index, { ...choice, default: !choice.default })}
-                            isDisabled={updatedChoices[index]?.name.length <= 0}
-                          />
-                        )}
-                      </>
-                    )}
-                  />
-                </FlexItem>
-              </Flex>
-            </GridItem>
-          </React.Fragment>
-        ))}
-      </Grid>
+              </FlexItem>
+            </Flex>
+          </FlexItem>
+        </Flex>
+      ))}
     </PageFormGroup>
   );
 }
