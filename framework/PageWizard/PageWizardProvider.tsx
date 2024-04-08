@@ -51,6 +51,19 @@ export function PageWizardProvider<T extends object>(props: {
     }
   }, [activeStep, visibleSteps]);
 
+  useEffect(() => {
+    if (visibleSteps.length) {
+      const flattened = visibleSteps.reduce((acc: PageWizardStep[], step) => {
+        acc.push(step);
+        if (isPageWizardParentStep(step)) {
+          acc.push(...step.substeps);
+        }
+        return acc;
+      }, []);
+      setVisibleStepsFlattened(flattened);
+    }
+  }, [visibleSteps]);
+
   return (
     <PageWizardContext.Provider
       value={{
