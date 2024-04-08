@@ -1,10 +1,10 @@
-import './rest-commands';
 import { randomString } from '../../framework/utils/random-string';
 import { gatewayV1API } from '../../platform/api/gateway-api-utils';
-import { PlatformOrganization } from '../../platform/interfaces/PlatformOrganization';
-import { PlatformUser } from '../../platform/interfaces/PlatformUser';
-import { PlatformTeam } from '../../platform/interfaces/PlatformTeam';
 import { Authenticator } from '../../platform/interfaces/Authenticator';
+import { PlatformOrganization } from '../../platform/interfaces/PlatformOrganization';
+import { PlatformTeam } from '../../platform/interfaces/PlatformTeam';
+import { PlatformUser } from '../../platform/interfaces/PlatformUser';
+import './rest-commands';
 
 /* The `Cypress.Commands.add('platformLogin', () => { ... })` function is a custom Cypress command that
 handles the login process for a platform application. Here's a breakdown of what it does: */
@@ -17,7 +17,7 @@ Cypress.Commands.add('platformLogin', () => {
       window.localStorage.setItem('theme', 'light');
       window.localStorage.setItem('disclaimer', 'true');
       window.localStorage.setItem('hide-welcome-message', 'true');
-      cy.visit(`/login`, {
+      cy.visit(`/`, {
         retryOnStatusCodeFailure: true,
         retryOnNetworkFailure: true,
       });
