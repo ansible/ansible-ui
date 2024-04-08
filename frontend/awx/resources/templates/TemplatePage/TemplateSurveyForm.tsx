@@ -100,6 +100,14 @@ export function TemplateSurveyForm(props: IProps) {
 
   const isMultiSelect = (type: string) => type === 'multiselect' || type === 'multiplechoice';
 
+  const displayDuplicateError = (question: Spec, setError: (error: string) => void) => {
+    setError(
+      t(`Survey already contains a question with variable named "{{question}}".`, {
+        question: question.variable,
+      })
+    );
+  };
+
   let formattedChoices;
   if (question && isMultiSelect(question.type)) {
     const choices = Array.isArray(question.choices)
@@ -146,20 +154,16 @@ export function TemplateSurveyForm(props: IProps) {
       choices: newQuestion.choices,
     };
 
+    const isDuplicate = survey.spec.some((q) => q.variable === newQuestion.variable);
+
     let questions: Spec[];
 
-    if (mode === 'add') {
-      if (survey?.spec?.some((q) => q.variable === newQuestion.variable)) {
-        setError(
-          t(`Survey already contains a question with variable named {{question}}.`, {
-            question: newQuestion.variable,
-          })
-        );
-        return;
-      }
+    if (mode === 'add' && isDuplicate) {
+      displayDuplicateError(question, setError);
+      return;
     }
 
-    if (Array.isArray(newQuestion.formattedChoices) && isMultiSelect(newQuestion.type)) {
+    if (Array.isArray(newQuestion.formattedChoices) && isMultiSelect(question.type)) {
       const choices = newQuestion.formattedChoices?.map((choice) => choice.name) ?? [];
 
       const defaults =
@@ -176,9 +180,14 @@ export function TemplateSurveyForm(props: IProps) {
     } else {
       questions = [...survey.spec];
 
-      const selectedQuestionIndex = survey.spec.findIndex(
-        (question) => question.variable === newQuestion.variable
+      const selectedQuestionIndex = questions.findIndex(
+        (question) => question.variable === initialValues.variable
       );
+
+      if (initialValues.variable !== question.variable && isDuplicate) {
+        displayDuplicateError(question, setError);
+        return;
+      }
 
       if (selectedQuestionIndex === -1) {
         setError(t(`Survey question not found.`));
@@ -196,7 +205,7 @@ export function TemplateSurveyForm(props: IProps) {
       await postRequest(awxAPI`/${resourceType}/${id ?? ''}/survey_spec/`, postBody);
       pageNavigateSurveyRoute();
     } catch (err) {
-      setError(t`Failed to create new label.`);
+      setError(t`Failed to create new survey question.`);
     }
   };
 
