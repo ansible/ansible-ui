@@ -32,6 +32,8 @@ export function GroupRelatedGroups() {
     groupsOptions && groupsOptions.actions && groupsOptions.actions['POST']
   );
 
+  const isConstructed = params.inventory_type === 'constructed_inventory';
+
   return (
     <PageTable<InventoryGroup>
       id="awx-inventory-group-related-groups-table"
@@ -42,18 +44,22 @@ export function GroupRelatedGroups() {
       errorStateTitle={t('Error loading related groups')}
       emptyStateTitle={
         canCreateGroup
-          ? t('There are currently no groups related to this group.')
+          ? isConstructed
+            ? t('No Related Groups Found')
+            : t('There are currently no groups related to this group.')
           : t('You do not have permission to add related groups.')
       }
       emptyStateDescription={
         canCreateGroup
-          ? t('Please add related groups by using the buttons below.')
+          ? isConstructed
+            ? t('Please add Related Groups to populate this list')
+            : t('Please add related groups by using the buttons below.')
           : t(
               'Please contact your organization administrator if there is an issue with your access.'
             )
       }
       emptyStateIcon={canCreateGroup ? undefined : CubeIcon}
-      emptyStateButtonText={canCreateGroup ? t('Add related groups') : undefined}
+      emptyStateButtonText={canCreateGroup && !isConstructed ? t('Add related groups') : undefined}
       emptyStateActions={emptyStateActions}
       {...view}
     />
