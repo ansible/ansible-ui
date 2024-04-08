@@ -28,11 +28,13 @@ const DividerWithSpace = styled(Divider)`
   padding-bottom: var(--pf-v5-global--spacer--md);
 `;
 
+export type MultipleChoiceFieldType = 'multiplechoice' | 'multiselect';
+
 interface IProps {
-  type: 'multiplechoice' | 'multiselect';
+  type: MultipleChoiceFieldType;
 }
 
-interface ChoiceOption {
+export interface ChoiceOption {
   name: string;
   id: string;
   default: boolean;
@@ -52,11 +54,11 @@ export function MultipleChoiceField(props: IProps) {
 
   const { fields, append, remove, update, replace } = useFieldArray({
     control,
-    name: 'choices',
+    name: 'formattedChoices',
   });
 
   const choices = fields as ChoiceOption[];
-  const updatedChoices = useWatch({ name: 'choices' }) as ChoiceOption[];
+  const updatedChoices = (useWatch({ name: 'formattedChoices' }) as ChoiceOption[]) ?? [];
 
   const addChoice = (useWatch({ name: 'add-choice' }) as string) ?? '';
 
@@ -82,7 +84,7 @@ export function MultipleChoiceField(props: IProps) {
       isRequired={true}
     >
       <Grid hasGutter>
-        <GridItem span={8}>
+        <GridItem span={7}>
           <Controller
             name={`add-choice`}
             control={control}
@@ -106,7 +108,7 @@ export function MultipleChoiceField(props: IProps) {
             )}
           />
         </GridItem>
-        <GridItem span={4}>
+        <GridItem span={5}>
           <Button
             type="button"
             variant="plain"
@@ -125,10 +127,10 @@ export function MultipleChoiceField(props: IProps) {
       <Grid hasGutter>
         {choices.map((choice, index) => (
           <React.Fragment key={choice.id}>
-            <GridItem span={8}>
+            <GridItem span={7}>
               <Stack>
                 <Controller
-                  name={`choices[${index}].name`}
+                  name={`formattedChoices[${index}].name`}
                   control={control}
                   rules={{
                     required: t('Choice option cannot be empty.'),
@@ -154,7 +156,7 @@ export function MultipleChoiceField(props: IProps) {
                 />
               </Stack>
             </GridItem>
-            <GridItem span={4}>
+            <GridItem span={5}>
               <Flex>
                 <FlexItem>
                   <Button
@@ -172,7 +174,7 @@ export function MultipleChoiceField(props: IProps) {
                 <FlexItem>
                   <Controller
                     control={control}
-                    name={`choices[${index}].default`}
+                    name={`formattedChoices[${index}].default`}
                     render={({ field }) => (
                       <>
                         {type === 'multiplechoice' ? (
@@ -183,7 +185,9 @@ export function MultipleChoiceField(props: IProps) {
                             label={defaultOptLabel}
                             isDisabled={updatedChoices[index]?.name.length <= 0}
                             onChange={() => {
-                              replace(choices.map((choice) => ({ ...choice, default: false })));
+                              replace(
+                                updatedChoices.map((choice) => ({ ...choice, default: false }))
+                              );
                               update(index, { ...choice, default: true });
                             }}
                             onClick={() => {
