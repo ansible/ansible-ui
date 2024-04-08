@@ -166,7 +166,10 @@ Cypress.Commands.add(
 
 Cypress.Commands.add(
   'createAwxWorkflowVisualizerApprovalNode',
-  (workflowJobTemplate: WorkflowJobTemplate) => {
+  (workflowJobTemplate: WorkflowJobTemplate, name?: string) => {
+    if (!name) {
+      name = 'E2E WorkflowJTApprovalNode ' + randomString(4);
+    }
     cy.requestPost<WorkflowNode>(
       `/api/v2/workflow_job_templates/${workflowJobTemplate?.id}/workflow_nodes/`,
       {}
@@ -174,7 +177,7 @@ Cypress.Commands.add(
       cy.requestPost(
         `/api/v2/workflow_job_template_nodes/${approvalNode.id}/create_approval_template/`,
         {
-          name: 'E2E WorkflowJTApprovalNode ' + randomString(4),
+          name: name,
         }
       ).then(() => {
         return approvalNode;

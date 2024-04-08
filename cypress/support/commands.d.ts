@@ -540,6 +540,8 @@ declare global {
       /** Selects a table row in the active modal dialog, by clicking on the row checkbox. */
       selectTableRowInDialog(name: string | RegExp, filter?: boolean): Chainable<void>;
 
+      clickCheckBoxByDataCy(checkboxDataCy: string): Chainable<void>;
+
       // ==============================================================================================================
       // Details Commands
       // ==============================================================================================================
@@ -1018,7 +1020,8 @@ declare global {
       ): Chainable<WorkflowNode>;
 
       createAwxWorkflowVisualizerApprovalNode(
-        firstNode: WorkflowJobTemplate
+        workflowJobTemplate: WorkflowJobTemplate,
+        name?: string
       ): Chainable<WorkflowNode>;
 
       createAwxWorkflowVisualizerInventorySourceNode(
