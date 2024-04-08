@@ -6,7 +6,6 @@ import { EdaRulebookActivation } from '../../../../frontend/eda/interfaces/EdaRu
 import { LogLevelEnum } from '../../../../frontend/eda/interfaces/generated/eda-api';
 import { edaAPI } from '../../../support/formatApiPathForEDA';
 
-
 describe('EDA rulebook activations- Create, Edit, Delete', () => {
   let edaProject: EdaProject;
   let edaDecisionEnvironment: EdaDecisionEnvironment;
@@ -113,10 +112,7 @@ describe('EDA rulebook activations- Create, Edit, Delete', () => {
 
   it('can bulk delete rulebook activations from the toolbar', () => {
     cy.navigateTo('eda', 'rulebook-activations');
-    const rulebookActivations = [
-      edaRBA2.name,
-      edaRBA3.name,
-    ];
+    const rulebookActivations = [edaRBA2.name, edaRBA3.name];
     rulebookActivations.forEach((rulebookActivation) => {
       cy.contains('td[data-label="Name"]', rulebookActivation)
         .prev()
@@ -130,12 +126,10 @@ describe('EDA rulebook activations- Create, Edit, Delete', () => {
     cy.intercept('DELETE', edaAPI`/activations/${edaRBA3.id.toString()}/`).as('rba3');
     cy.clickModalConfirmCheckbox();
     cy.clickModalButton('Delete rulebook activations');
-    cy.wait(['@rba2', '@rba3']).then(
-      (activationArr) => {
-        expect(activationArr[0]?.response?.statusCode).to.eql(204);
-        expect(activationArr[1]?.response?.statusCode).to.eql(204);
-      }
-    );
+    cy.wait(['@rba2', '@rba3']).then((activationArr) => {
+      expect(activationArr[0]?.response?.statusCode).to.eql(204);
+      expect(activationArr[1]?.response?.statusCode).to.eql(204);
+    });
     cy.assertModalSuccess();
     cy.clickButton(/^Close$/);
   });

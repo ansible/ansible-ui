@@ -5,11 +5,7 @@ import { EdaControllerToken } from '../../../../frontend/eda/interfaces/EdaContr
 import { EdaDecisionEnvironment } from '../../../../frontend/eda/interfaces/EdaDecisionEnvironment';
 import { EdaProject } from '../../../../frontend/eda/interfaces/EdaProject';
 import { EdaRulebook } from '../../../../frontend/eda/interfaces/EdaRulebook';
-import { EdaRulebookActivation } from '../../../../frontend/eda/interfaces/EdaRulebookActivation';
-import {
-  ActivationRead,
-  LogLevelEnum,
-} from '../../../../frontend/eda/interfaces/generated/eda-api';
+import { ActivationRead } from '../../../../frontend/eda/interfaces/generated/eda-api';
 import { edaAPI } from '../../../support/formatApiPathForEDA';
 
 describe('EDA rulebook activations - Create', () => {

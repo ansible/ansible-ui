@@ -970,6 +970,24 @@ declare global {
       ): Chainable<void>;
 
       /**
+       * This creates a user token in AWX that can be exported as a string and used in EDA.
+       * @param awxToken
+       */
+      createAwxToken(awxToken?: Partial<AwxToken>): Chainable<AwxToken>;
+
+      /**
+       * This first searches AWX for an existing user token, and if one is not found, this command creates a new one.
+       */
+      getGlobalAwxToken(): Chainable<AwxToken>;
+      deleteAwxToken(
+        awxToken: AwxToken,
+        options?: {
+          /** Whether to fail on response codes other than 2xx and 3xx */
+          failOnStatusCode?: boolean;
+        }
+      ): Chainable<void>;
+
+      /**
        * Command for deleting resources created for testing
        * @param resources
        */

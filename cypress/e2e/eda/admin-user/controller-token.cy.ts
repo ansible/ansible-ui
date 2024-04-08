@@ -15,24 +15,26 @@ describe('EDA Admin User', () => {
   };
 
   it('checks the empty state for Controller token page and create Controller token CTA does not exist with existing token', () => {
-    cy.intercept('GET', 'api/eda/v1/users/me/awx-tokens/?page=1&page_size=10').as('checkToken');
-    cy.navigateTo('eda', 'users');
-    cy.contains('h1', 'Users');
-    cy.contains(
-      '[data-cy="app-description"]',
-      'A user is someone who has access to EDA with associated permissions and credentials.'
-    );
-    cy.contains('a', 'admin').click();
-    cy.contains('li', 'Controller Tokens').click();
-    cy.wait('@checkToken')
-      .its('response.body.results')
-      .then((results: Array<EdaControllerToken>) => {
-        if (results.length === 0) {
-          checkEmptyState();
-        } else {
-          cy.get('tbody').children('tr').should('exist');
-          cy.contains('button', 'Create controller token').should('not.exist');
-        }
-      });
+    cy.getEdaActiveUser().then((edaUser) => {
+      cy.intercept('GET', 'api/eda/v1/users/me/awx-tokens/?page=1&page_size=10').as('checkToken');
+      cy.navigateTo('eda', 'users');
+      cy.contains('h1', 'Users');
+      cy.contains(
+        '[data-cy="app-description"]',
+        'A user is someone who has access to EDA with associated permissions and credentials.'
+      );
+      cy.contains('a', edaUser.username).click();
+      cy.contains('li', 'Controller Tokens').click();
+      cy.wait('@checkToken')
+        .its('response.body.results')
+        .then((results: Array<EdaControllerToken>) => {
+          if (results.length === 0) {
+            checkEmptyState();
+          } else {
+            cy.get('tbody').children('tr').should('exist');
+            cy.contains('button', 'Create controller token').should('not.exist');
+          }
+        });
+    });
   });
 });

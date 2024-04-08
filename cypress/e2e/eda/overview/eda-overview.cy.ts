@@ -54,10 +54,7 @@ describe('EDA Overview', () => {
               cy.contains('h3', 'Rulebook Activations');
               cy.get('tbody tr').should('have.lengthOf.lessThan', 8);
               cy.get('[data-label="Name"] div > a').click();
-              cy.url().should(
-                'match',
-                new RegExp(`\\/rulebook-activations\\/[0-9]*\\/details`)
-              );
+              cy.url().should('match', new RegExp(`\\/rulebook-activations\\/[0-9]*\\/details`));
             });
         }
       });
@@ -90,10 +87,7 @@ describe('EDA Overview', () => {
               cy.contains('h3', 'Decision Environments');
               cy.get('tbody tr').should('have.lengthOf.lessThan', 8);
               cy.get('[data-label="Name"] div > a').first().click();
-              cy.url().should(
-                'match',
-                new RegExp('\\/[0-9]*\\/details')
-              );
+              cy.url().should('match', new RegExp('\\/[0-9]*\\/details'));
             });
         }
       });
