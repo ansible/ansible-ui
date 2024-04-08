@@ -375,10 +375,6 @@ function bulkActAssertAndDeleteWorkflowApproval(selectorDataCy: 'approve' | 'den
         cy.clickKebabAction('actions-dropdown', 'delete');
       });
       cy.actionsWFApprovalConfirmModal('delete');
-      cy.wait('@deleteWFApprov')
-        .its('response')
-        .then((response) => {
-          expect(response?.statusCode).to.eql(204);
-        });
+      cy.waitTimes('@deleteWFApprov', numOfBulkActions, 204);
     });
 }

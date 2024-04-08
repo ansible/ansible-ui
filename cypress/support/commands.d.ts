@@ -137,6 +137,12 @@ declare global {
         text: string | number | RegExp
       ): Chainable<JQuery<HTMLElement>>;
 
+      /**
+       * Helper method to wait for n requests to occur.
+       * ref: https://github.com/cypress-io/cypress/issues/4389#issuecomment-500296894
+       */
+      waitTimes(alias: string, count: number, statusCode: number): Chainable<void>;
+
       // ==============================================================================================================
       // Input Commands
       // ==============================================================================================================
