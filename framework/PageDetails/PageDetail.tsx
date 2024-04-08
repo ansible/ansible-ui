@@ -13,6 +13,7 @@ export function PageDetail(props: {
   children?: ReactNode;
   helpText?: string | ReactNode;
   isEmpty?: boolean;
+  fullWidth?: boolean;
 }) {
   const id = useID(props);
   const { label, children, helpText, isEmpty } = props;
@@ -23,7 +24,7 @@ export function PageDetail(props: {
     return <></>;
   }
   return (
-    <DescriptionListGroup>
+    <DescriptionListGroup style={{ gridColumn: props.fullWidth ? 'span 3' : undefined }}>
       {label && (
         <DescriptionListTerm>
           {label}
