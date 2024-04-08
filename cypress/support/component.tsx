@@ -28,6 +28,7 @@ import { mount } from 'cypress/react18';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { SWRResponse } from 'swr';
 import { PageFramework } from '../../framework';
+import { AwxItemsResponse } from '../../frontend/awx/common/AwxItemsResponse';
 import { AwxActiveUserContext } from '../../frontend/awx/common/useAwxActiveUser';
 import { User } from '../../frontend/awx/interfaces/User';
 import '../../frontend/common/i18n';
@@ -79,7 +80,17 @@ Cypress.Commands.add('mount', (component, route, activeUserFixture) => {
     return mount(
       <MemoryRouter initialEntries={route?.initialEntries || ['/1']}>
         <PageFramework defaultRefreshInterval={60}>
-          <AwxActiveUserContext.Provider value={{ data: activeUser } as SWRResponse}>
+          <AwxActiveUserContext.Provider
+            value={
+              {
+                data: { count: 1, results: [activeUser] },
+                error: undefined,
+                mutate: () => Promise.resolve(),
+                isLoading: false,
+                isValidating: false,
+              } as SWRResponse<AwxItemsResponse<User>>
+            }
+          >
             <Page>
               <Routes>
                 <Route path={`${route?.path || '/:id/*'}`} element={component} />
