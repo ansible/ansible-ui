@@ -1,4 +1,5 @@
-import { HubContextProvider, HubUser } from '../common/useHubContext';
+import { HubContextProvider } from '../common/useHubContext';
+import { HubUser } from '../interfaces/expanded/HubUser';
 import { HubOverview } from './HubOverview';
 
 describe('HubOverview', () => {
@@ -13,6 +14,7 @@ describe('HubOverview', () => {
     );
     cy.contains('button', 'Manage view').should('be.visible');
   });
+
   it('"Manage view" is displayed to non-admin users too', () => {
     cy.fixture('hub_admin').then((user: HubUser) => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument

@@ -3,7 +3,6 @@ import { DropdownItem } from '@patternfly/react-core/deprecated';
 import { QuestionCircleIcon, UserCircleIcon } from '@patternfly/react-icons';
 import { useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import { PageMasthead, useGetPageUrl } from '../../../framework';
 import { PageMastheadDropdown } from '../../../framework/PageMasthead/PageMastheadDropdown';
 import { PageNotificationsIcon } from '../../../framework/PageMasthead/PageNotificationsIcon';
@@ -16,6 +15,7 @@ import { useGet } from '../../common/crud/useGet';
 import { useClearCache } from '../../common/useInvalidateCache';
 import { CollectionVersionSearch } from '../collections/Collection';
 import { hubAPI } from '../common/api/formatPath';
+import { useHubActiveUser, useHubActiveUserContext } from '../common/useHubActiveUser';
 import { useHubContext } from '../common/useHubContext';
 import { HubItemsResponse } from '../common/useHubView';
 import { HubRoute } from './HubRoutes';
@@ -25,14 +25,14 @@ export function HubMasthead() {
   const { t } = useTranslation();
   const openAnsibleAboutModal = useAnsibleAboutModal();
   const { clearAllCache } = useClearCache();
-  const navigate = useNavigate();
-  const context = useHubContext();
+  const hubUser = useHubActiveUser();
   useHubNotifications();
+  const userContext = useHubActiveUserContext();
   const logout = useCallback(async () => {
     await postRequest(hubAPI`/_ui/v1/auth/logout/`, {});
     clearAllCache();
-    navigate('/login');
-  }, [clearAllCache, navigate]);
+    void userContext?.mutate();
+  }, [clearAllCache, userContext]);
   return (
     <PageMasthead brand={<GalaxyBrand style={{ height: 48, marginTop: -8 }} />}>
       <ToolbarGroup variant="icon-button-group" style={{ flexGrow: 1 }}>
@@ -71,7 +71,7 @@ export function HubMasthead() {
           <PageMastheadDropdown
             id="account-menu"
             icon={<UserCircleIcon />}
-            label={context?.user?.username}
+            label={hubUser?.username}
           >
             {/* <DropdownItem
               id="user-details"

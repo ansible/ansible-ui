@@ -1,25 +1,25 @@
-import { ReactNode, createContext, useContext, useEffect, useState } from 'react';
-import { useGet } from '../../common/crud/useGet';
+import { ReactNode, createContext, useContext } from 'react';
+import useSWR, { SWRResponse } from 'swr';
+import { requestGet } from '../../common/crud/Data';
 import { EdaUser } from '../interfaces/EdaUser';
 import { edaAPI } from './eda-utils';
 
-const EdaActiveUserContext = createContext<EdaUser | null | undefined>(undefined);
+export const EdaActiveUserContext = createContext<SWRResponse<EdaUser> | undefined>(undefined);
 
 export function useEdaActiveUser() {
+  return useContext(EdaActiveUserContext)?.data;
+}
+
+export function useEdaActiveUserContext() {
   return useContext(EdaActiveUserContext);
 }
 
-export function EdaActiveUserProvider(props: { children?: ReactNode }) {
-  const [activeUser, setActiveUser] = useState<EdaUser | null | undefined>(undefined);
-  const userResponse = useGet<EdaUser>(edaAPI`/users/me/`);
-  useEffect(() => {
-    if (userResponse.data) {
-      setActiveUser(userResponse.data ?? null);
-    }
-  }, [userResponse.data]);
+export function EdaActiveUserProvider(props: { children: ReactNode }) {
+  const response = useSWR<EdaUser>(edaAPI`/users/me/`, requestGet, {
+    dedupingInterval: 0,
+    refreshInterval: 10 * 1000,
+  });
   return (
-    <EdaActiveUserContext.Provider value={activeUser}>
-      {props.children}
-    </EdaActiveUserContext.Provider>
+    <EdaActiveUserContext.Provider value={response}>{props.children}</EdaActiveUserContext.Provider>
   );
 }

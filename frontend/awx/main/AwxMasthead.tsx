@@ -3,7 +3,6 @@ import { DropdownItem } from '@patternfly/react-core/deprecated';
 import { ExternalLinkAltIcon, QuestionCircleIcon, UserCircleIcon } from '@patternfly/react-icons';
 import { useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import { PageMasthead, useGetPageUrl, usePageNavigate } from '../../../framework';
 import { PageMastheadDropdown } from '../../../framework/PageMasthead/PageMastheadDropdown';
 import { PageNotificationsIcon } from '../../../framework/PageMasthead/PageNotificationsIcon';
@@ -15,7 +14,7 @@ import { useGet } from '../../common/crud/useGet';
 import { useClearCache } from '../../common/useInvalidateCache';
 import { AwxItemsResponse } from '../common/AwxItemsResponse';
 import { awxAPI } from '../common/api/awx-utils';
-import { useAwxActiveUser } from '../common/useAwxActiveUser';
+import { useAwxActiveUser, useAwxActiveUserContext } from '../common/useAwxActiveUser';
 import { useAwxConfig } from '../common/useAwxConfig';
 import { useAwxWebSocketSubscription } from '../common/useAwxWebSocket';
 import { getDocsBaseUrl } from '../common/util/getDocsBaseUrl';
@@ -28,15 +27,15 @@ export function AwxMasthead() {
   const openAnsibleAboutModal = useAnsibleAboutModal();
   const { clearAllCache } = useClearCache();
   const config = useAwxConfig();
-  const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
   const activeUser = useAwxActiveUser();
   useAwxNotifications();
+  const activeUserContext = useAwxActiveUserContext();
   const logout = useCallback(async () => {
     await fetch('/api/logout/');
     clearAllCache();
-    navigate('/login');
-  }, [clearAllCache, navigate]);
+    void activeUserContext?.mutate();
+  }, [activeUserContext, clearAllCache]);
 
   return (
     <PageMasthead brand={<AwxBrand style={{ height: 60 }} />}>

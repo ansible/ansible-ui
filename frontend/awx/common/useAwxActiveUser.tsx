@@ -1,34 +1,33 @@
-import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
-import { useGet } from '../../common/crud/useGet';
+import { ReactNode, createContext, useContext } from 'react';
+import useSWR, { SWRResponse } from 'swr';
+import { requestGet } from '../../common/crud/Data';
 import { User } from '../interfaces/User';
-import { awxAPI } from './api/awx-utils';
 import { AwxItemsResponse } from './AwxItemsResponse';
+import { awxAPI } from './api/awx-utils';
 
-const AwxActiveUserContext = createContext<User | null | undefined>(undefined);
+export const AwxActiveUserContext = createContext<SWRResponse<AwxItemsResponse<User>> | undefined>(
+  undefined
+);
 
-/**
- * Get the active logged in user
- * @returns undefined while querying, null if user not logged in, otherwise the User.
- */
 export function useAwxActiveUser() {
-  return useContext(AwxActiveUserContext) as User;
+  const context = useContext(AwxActiveUserContext);
+  const itemsResponse = context?.data;
+  if (!itemsResponse) return undefined;
+  if (!itemsResponse.results) return undefined;
+  if (!itemsResponse.results.length) return undefined;
+  return itemsResponse.results[0];
 }
 
-export function AwxActiveUserProvider(props: { children?: ReactNode }) {
-  const [activeUser, setActiveUser] = useState<User | null | undefined>(undefined);
-  const userResponse = useGet<AwxItemsResponse<User>>(awxAPI`/me/`);
-  useEffect(() => {
-    if (
-      userResponse.data &&
-      userResponse.data.count === 1 &&
-      userResponse.data.results.length === 1
-    ) {
-      setActiveUser(userResponse.data.results[0] ?? null);
-    }
-  }, [userResponse.data]);
+export function useAwxActiveUserContext() {
+  return useContext(AwxActiveUserContext);
+}
+
+export function AwxActiveUserProvider(props: { children: ReactNode }) {
+  const response = useSWR<AwxItemsResponse<User>>(awxAPI`/me/`, requestGet, {
+    dedupingInterval: 0,
+    refreshInterval: 10 * 1000,
+  });
   return (
-    <AwxActiveUserContext.Provider value={activeUser}>
-      {props.children}
-    </AwxActiveUserContext.Provider>
+    <AwxActiveUserContext.Provider value={response}>{props.children}</AwxActiveUserContext.Provider>
   );
 }

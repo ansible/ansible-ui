@@ -9,6 +9,7 @@ import { UserType } from '../components/UserType';
 export function useUsersColumns(options?: { disableLinks?: boolean; disableSort?: boolean }) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
+  const disableLinks = options?.disableLinks || false;
 
   const createdColumn = useCreatedColumn(options);
   const tableColumns = useMemo<ITableColumn<User>[]>(
@@ -18,7 +19,11 @@ export function useUsersColumns(options?: { disableLinks?: boolean; disableSort?
         cell: (user) => (
           <TextCell
             text={user.username}
-            to={getPageUrl(AwxRoute.UserDetails, { params: { id: user.id.toString() } })}
+            to={
+              disableLinks
+                ? undefined
+                : getPageUrl(AwxRoute.UserDetails, { params: { id: user.id.toString() } })
+            }
           />
         ),
         card: 'name',
@@ -55,7 +60,7 @@ export function useUsersColumns(options?: { disableLinks?: boolean; disableSort?
         sort: undefined,
       },
     ],
-    [createdColumn, getPageUrl, t]
+    [createdColumn, getPageUrl, t, disableLinks]
   );
   return tableColumns;
 }
