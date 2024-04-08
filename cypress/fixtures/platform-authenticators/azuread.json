@@ -1,0 +1,7 @@
+{
+  "name": "E2E Azure AD Authenticator",
+  "callbackUrl": "http://localhost/callback",
+  "oidcKey": "testKey",
+  "oidcSecret": "testSecret",
+  "additionalFields": "E2E Azure AD Data"
+}
