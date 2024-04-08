@@ -24,15 +24,20 @@ describe('TACACS Authentication form - create, edit, update and delete', () => {
       cy.clickButton('Finish');
       cy.verifyPageTitle(tacacsAuthenticator);
 
+      // reads/asserts created the TACACS authenticator
       cy.get('[data-cy="name"]').should('have.text', tacacsAuthenticator);
       cy.get('[data-cy="hostname-of-tacacs+-server"]').should('have.text', tacacsData.hostname);
       cy.get('[data-cy="tacacs+-authentication-protocol"]').should(
         'have.text',
         tacacsData.protocol
       );
+      cy.get('[data-cy="shared-secret-for-authenticating-to-tacacs+-server-"]').should(
+        'have.text',
+        '$encrypted$'
+      );
       cy.navigateTo('platform', 'authenticators');
 
-      // reads, edits and updates the TACACS authenticator
+      // edits and updates the TACACS authenticator
       // enables the TACACS authenticator
       cy.searchAndDisplayResourceByFilterOption(tacacsAuthenticator, 'name').then(() => {
         cy.contains('tr', tacacsAuthenticator).within(() => {
