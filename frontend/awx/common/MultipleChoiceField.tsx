@@ -128,7 +128,7 @@ export function MultipleChoiceField(props: IProps) {
         <Flex
           columnGap={{ default: 'columnGapNone' }}
           alignContent={{ default: 'alignContentSpaceBetween' }}
-          key={choice.id}
+          key={index}
           style={{ marginBottom: 'var(--pf-v5-global--spacer--sm)' }}
         >
           <FlexItem flex={{ default: 'flex_1' }}>
