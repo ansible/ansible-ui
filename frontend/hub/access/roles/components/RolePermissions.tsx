@@ -1,15 +1,15 @@
-import { useTranslation } from 'react-i18next';
-import { LabelsCell } from '../../../../../framework';
-import { ModelPermissionsType, Role } from '../Role';
 import {
   DescriptionList,
   DescriptionListDescription,
   DescriptionListGroup,
   DescriptionListTerm,
 } from '@patternfly/react-core';
-import { useHubContext } from '../../../common/useHubContext';
-import { USER_GROUP_MGMT_PERMISSIONS } from '../../../common/constants';
 import { useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { LabelsCell } from '../../../../../framework';
+import { USER_GROUP_MGMT_PERMISSIONS } from '../../../common/constants';
+import { useHubContext } from '../../../common/useHubContext';
+import { ModelPermissionsType, Role } from '../Role';
 
 export type PermissionCategory = {
   label: string;
@@ -22,7 +22,7 @@ export function RolePermissions(props: { role: Role; showCustom?: boolean; showE
   const { t } = useTranslation();
   const { role, showCustom, showEmpty } = props;
   const { user } = useHubContext();
-  const model_permissions = useMemo(() => user.model_permissions, [user.model_permissions]);
+  const model_permissions = useMemo(() => user?.model_permissions, [user?.model_permissions]);
 
   const groupsToShow = usePermissionCategories(role?.permissions, showCustom, showEmpty);
 
@@ -49,7 +49,7 @@ export function RolePermissions(props: { role: Role; showCustom?: boolean; showE
           <DescriptionListDescription>
             <LabelsCell
               labels={group.selectedPermissions.map(
-                (permission) => model_permissions[permission]?.name || permission
+                (permission) => model_permissions?.[permission]?.name || permission
               )}
               numLabels={3}
               wrapLabels
@@ -62,13 +62,13 @@ export function RolePermissions(props: { role: Role; showCustom?: boolean; showE
 }
 
 function useKnownPermissionsAndCategories(
-  model_permissions: ModelPermissionsType,
-  allPermissions: string[] = Object.keys(model_permissions)
+  model_permissions?: ModelPermissionsType,
+  allPermissions: string[] = Object.keys(model_permissions ?? {})
 ): PermissionCategory[] {
   return useMemo(() => {
     const categories: { [key: string]: PermissionCategory } = {};
 
-    Object.entries(model_permissions)
+    Object.entries(model_permissions ?? {})
       .filter(([k, _]) => allPermissions.includes(k))
       .forEach(([permission, { ui_category }]) => {
         categories[ui_category] ||= { label: ui_category, allPermissions: [] };
@@ -86,7 +86,7 @@ export function usePermissionCategories(
 ) {
   const { t } = useTranslation();
   const { user, featureFlags } = useHubContext();
-  const model_permissions = useMemo(() => user.model_permissions, [user.model_permissions]);
+  const model_permissions = useMemo(() => user?.model_permissions, [user?.model_permissions]);
 
   // show user/group permissions by default
   const userManagementFilter = useCallback(
@@ -95,7 +95,7 @@ export function usePermissionCategories(
     [featureFlags.external_authentication]
   );
   const allPermissions = useMemo(
-    () => Object.keys(model_permissions).filter(userManagementFilter),
+    () => Object.keys(model_permissions ?? {}).filter(userManagementFilter),
     [model_permissions, userManagementFilter]
   );
   const groups = useKnownPermissionsAndCategories(model_permissions, allPermissions);

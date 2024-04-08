@@ -13,7 +13,7 @@ import { useHubActiveUser } from './useHubActiveUser';
 export type HubContext = {
   featureFlags: HubFeatureFlags;
   settings: HubSettings;
-  user: HubUser;
+  user?: HubUser;
   hasPermission: (name: string) => boolean;
 };
 
@@ -33,7 +33,7 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
       featureFlags: getFeatureFlags.data as HubFeatureFlags,
       settings: getSettings.data as HubSettings,
       user: hubUser,
-      hasPermission: (permission) => hasPermission(permission, hubUser),
+      hasPermission: (permission) => hasPermission(permission, hubUser!),
     }),
     [getFeatureFlags, getSettings, hubUser]
   );

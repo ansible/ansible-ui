@@ -28,7 +28,7 @@ export function useDeleteRoles(onComplete: (roles: Role[]) => void) {
   const cannotDeleteBuiltInRole = (role: Role) =>
     role.locked ? t('Built-in roles cannot be deleted.') : '';
   const cannotDeleteRoleDueToPermissions = () =>
-    user.is_superuser
+    user?.is_superuser
       ? ''
       : t(
           'You do not have permission to edit this role. Please contact your organization administrator if there is an issue with your access.'
