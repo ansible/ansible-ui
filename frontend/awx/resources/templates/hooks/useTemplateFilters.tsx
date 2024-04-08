@@ -4,20 +4,58 @@ import {
 } from '../../../common/awx-toolbar-filters';
 import { useDynamicToolbarFilters } from '../../../common/useDynamicFilters';
 
-export function useTemplateFilters() {
+export function useTemplateFilters({
+  url,
+  projectId,
+  inventoryId,
+  credentialsId,
+  executionEnvironmentId,
+}: {
+  url?: string;
+  projectId?: string;
+  inventoryId?: string;
+  credentialsId?: string;
+  executionEnvironmentId?: string;
+} = {}) {
+  const splitUrl = url ? url.split('/') : [];
+  const optionsPath = splitUrl[splitUrl.length - 2] || 'unified_job_templates';
   const createdByToolbarFilter = useCreatedByToolbarFilter();
   const modifiedByToolbarFilter = useModifiedByToolbarFilter();
+  const getQueryParams = (
+    projectId?: string,
+    inventoryId?: string,
+    credentialsId?: string,
+    executionEnvironmentId?: string
+  ) => {
+    const templateQueryParams: { [key: string]: string } = {
+      type: 'job_template,workflow_job_template',
+    };
+    if (projectId) {
+      templateQueryParams.project__id = projectId;
+    }
+    if (inventoryId) {
+      templateQueryParams.inventory__id = inventoryId;
+    }
+    if (credentialsId) {
+      templateQueryParams.credentials__id = credentialsId;
+    }
+    if (executionEnvironmentId) {
+      templateQueryParams.execution_environment__id = executionEnvironmentId;
+    }
+    return templateQueryParams;
+  };
+  const queryParams = getQueryParams(projectId, inventoryId, credentialsId, executionEnvironmentId);
   const toolbarFilters = useDynamicToolbarFilters({
-    optionsPath: 'unified_job_templates',
+    optionsPath: optionsPath,
     preSortedKeys: ['name', 'description', 'status', 'created-by', 'modified-by'],
     preFilledValueKeys: {
       name: {
-        apiPath: 'unified_job_templates',
-        queryParams: { type: 'job_template,workflow_job_template' },
+        apiPath: optionsPath,
+        queryParams: queryParams,
       },
       id: {
-        apiPath: 'unified_job_templates',
-        queryParams: { type: 'job_template,workflow_job_template' },
+        apiPath: optionsPath,
+        queryParams: queryParams,
       },
     },
     additionalFilters: [createdByToolbarFilter, modifiedByToolbarFilter],
