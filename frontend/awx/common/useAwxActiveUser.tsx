@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import { ReactNode, createContext, useContext, useEffect, useMemo, useState } from 'react';
 import useSWR from 'swr';
 import { requestGet } from '../../common/crud/Data';
@@ -52,20 +51,39 @@ export function AwxActiveUserProvider(props: { children: ReactNode }) {
   return (
     <AwxActiveUserContext.Provider value={state}>{props.children}</AwxActiveUserContext.Provider>
   );
-=======
 import { createContext, useContext } from 'react';
+import { ReactNode, createContext, useContext } from 'react';
+import useSWR, { SWRResponse } from 'swr';
+import { requestGet } from '../../common/crud/Data';
 import { User } from '../interfaces/User';
+import { AwxItemsResponse } from './AwxItemsResponse';
+import { awxAPI } from './api/awx-utils';
 
-export const AwxActiveUserContext = createContext<{ user: User; refresh: () => void }>({
-  user: {} as User,
-  refresh: () => null,
-});
+export const AwxActiveUserContext = createContext<SWRResponse<AwxItemsResponse<User>> | undefined>(
+  undefined
+);
 
 export function useAwxActiveUser() {
-  return useContext(AwxActiveUserContext).user;
+  const context = useContext(AwxActiveUserContext);
+  const itemsResponse = context?.data;
+  if (!itemsResponse) return undefined;
+  if (!itemsResponse.results) return undefined;
+  if (!itemsResponse.results.length) return undefined;
+  return itemsResponse.results[0];
 }
 
 export function useAwxRefreshUser() {
   return useContext(AwxActiveUserContext).refresh;
->>>>>>> 8269c803c (Login Flow Update (#1946))
+export function useAwxActiveUserContext() {
+  return useContext(AwxActiveUserContext);
+}
+
+export function AwxActiveUserProvider(props: { children: ReactNode }) {
+  const response = useSWR<AwxItemsResponse<User>>(awxAPI`/me/`, requestGet, {
+    dedupingInterval: 0,
+    refreshInterval: 10 * 1000,
+  });
+  return (
+    <AwxActiveUserContext.Provider value={response}>{props.children}</AwxActiveUserContext.Provider>
+  );
 }

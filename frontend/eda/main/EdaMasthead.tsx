@@ -10,7 +10,7 @@ import { useAnsibleAboutModal } from '../../common/AboutModal';
 import { PageRefreshIcon } from '../../common/PageRefreshIcon';
 import { postRequest } from '../../common/crud/Data';
 import { edaAPI } from '../common/eda-utils';
-import { useEdaActiveUser, useEdaRefreshUser } from '../common/useEdaActiveUser';
+import { useEdaActiveUser, useEdaActiveUserContext } from '../common/useEdaActiveUser';
 import { EdaRoute } from './EdaRoutes';
 import EdaBrand from './eda-logo.svg';
 import { useEdaProductVersionInfo } from './useEdaProductVersionInfo';
@@ -21,7 +21,7 @@ export function EdaMasthead() {
   const openAnsibleAboutModal = useAnsibleAboutModal();
   const pageNavigate = usePageNavigate();
   const activeUser = useEdaActiveUser();
-  const refreshUser = useEdaRefreshUser();
+  const userContext = useEdaActiveUserContext();
   const logout = useCallback(async () => {
     await postRequest(edaAPI`/auth/session/logout/`, {});
     clearAllCache();
@@ -30,6 +30,8 @@ export function EdaMasthead() {
   const userInfo = activeUser?.username;
     refreshUser();
   }, [clearAllCache, refreshUser]);
+    void userContext?.mutate();
+  }, [clearAllCache, userContext]);
   return (
     <PageMasthead brand={<EdaBrand style={{ height: 45, width: 45 }} />}>
       <ToolbarGroup variant="icon-button-group" style={{ flexGrow: 1 }}>

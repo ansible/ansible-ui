@@ -1,13 +1,15 @@
-<<<<<<< HEAD
 import { ReactNode, createContext, useContext, useEffect, useMemo, useState } from 'react';
 import useSWR from 'swr';
 import { requestGet } from '../../common/crud/Data';
-=======
 import { createContext, useContext } from 'react';
->>>>>>> 8269c803c (Login Flow Update (#1946))
-import { EdaUser } from '../interfaces/EdaUser';
 
-<<<<<<< HEAD
+import { ReactNode, createContext, useContext } from 'react';
+import useSWR, { SWRResponse } from 'swr';
+import { requestGet } from '../../common/crud/Data';
+import { EdaUser } from '../interfaces/EdaUser';
+import { edaAPI } from './eda-utils';
+
+
 interface ActiveUserState {
   /** The currently active user, or `null` if there is no active user, or `undefined` if the active user is still being loaded. */
   activeEdaUser?: EdaUser | null | undefined;
@@ -15,18 +17,22 @@ interface ActiveUserState {
 }
 
 export const EdaActiveUserContext = createContext<ActiveUserState>({});
-=======
 export const EdaActiveUserContext = createContext<{ user: EdaUser; refresh: () => void }>({
   user: {} as EdaUser,
   refresh: () => null,
 });
->>>>>>> 8269c803c (Login Flow Update (#1946))
+
+export const EdaActiveUserContext = createContext<SWRResponse<EdaUser> | undefined>(undefined);
 
 export function useEdaActiveUser() {
-  return useContext(EdaActiveUserContext).user;
+  return useContext(EdaActiveUserContext)?.data;
 }
 
-<<<<<<< HEAD
+
+export function useEdaActiveUserContext() {
+  return useContext(EdaActiveUserContext);
+}
+
 export function EdaActiveUserProvider(props: { children: ReactNode }) {
   const response = useSWR<EdaUser>(edaAPI`/users/me/`, requestGet, {
     dedupingInterval: 0,
@@ -61,8 +67,10 @@ export function EdaActiveUserProvider(props: { children: ReactNode }) {
   return (
     <EdaActiveUserContext.Provider value={state}>{props.children}</EdaActiveUserContext.Provider>
   );
-=======
 export function useEdaRefreshUser() {
   return useContext(EdaActiveUserContext).refresh;
->>>>>>> 8269c803c (Login Flow Update (#1946))
+
+  return (
+    <EdaActiveUserContext.Provider value={response}>{props.children}</EdaActiveUserContext.Provider>
+  );
 }

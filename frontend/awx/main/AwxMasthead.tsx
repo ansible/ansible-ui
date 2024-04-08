@@ -13,7 +13,7 @@ import { PageRefreshIcon } from '../../common/PageRefreshIcon';
 import { useGet } from '../../common/crud/useGet';
 import { AwxItemsResponse } from '../common/AwxItemsResponse';
 import { awxAPI } from '../common/api/awx-utils';
-import { useAwxActiveUser, useAwxRefreshUser } from '../common/useAwxActiveUser';
+import { useAwxActiveUser, useAwxActiveUserContext } from '../common/useAwxActiveUser';
 import { useAwxConfig } from '../common/useAwxConfig';
 import { useAwxWebSocketSubscription } from '../common/useAwxWebSocket';
 import { getDocsBaseUrl } from '../common/util/getDocsBaseUrl';
@@ -30,7 +30,7 @@ export function AwxMasthead() {
   const pageNavigate = usePageNavigate();
   const { activeAwxUser, refreshActiveAwxUser } = useAwxActiveUser();
   useAwxNotifications();
-  const refreshUser = useAwxRefreshUser();
+  const activeUserContext = useAwxActiveUserContext();
   const logout = useCallback(async () => {
     await fetch('/api/logout/');
 <<<<<<< HEAD
@@ -49,6 +49,8 @@ export function AwxMasthead() {
 =======
     refreshUser();
   }, [clearAllCache, refreshUser]);
+    void activeUserContext?.mutate();
+  }, [activeUserContext, clearAllCache]);
 
 >>>>>>> 8269c803c (Login Flow Update (#1946))
   return (
