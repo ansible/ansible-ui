@@ -1,6 +1,7 @@
 import {
   useCreatedByToolbarFilter,
   useModifiedByToolbarFilter,
+  useTemplateTypeToolbarFilter,
 } from '../../../common/awx-toolbar-filters';
 import { useDynamicToolbarFilters } from '../../../common/useDynamicFilters';
 
@@ -21,6 +22,7 @@ export function useTemplateFilters({
   const optionsPath = splitUrl[splitUrl.length - 2] || 'unified_job_templates';
   const createdByToolbarFilter = useCreatedByToolbarFilter();
   const modifiedByToolbarFilter = useModifiedByToolbarFilter();
+  const typeToolbarFilter = useTemplateTypeToolbarFilter();
   const getQueryParams = (
     projectId?: string,
     inventoryId?: string,
@@ -47,7 +49,7 @@ export function useTemplateFilters({
   const queryParams = getQueryParams(projectId, inventoryId, credentialsId, executionEnvironmentId);
   const toolbarFilters = useDynamicToolbarFilters({
     optionsPath: optionsPath,
-    preSortedKeys: ['name', 'description', 'status', 'created-by', 'modified-by'],
+    preSortedKeys: ['name', 'description', 'status', 'created-by', 'modified-by', 'type-templates'],
     preFilledValueKeys: {
       name: {
         apiPath: optionsPath,
@@ -58,7 +60,8 @@ export function useTemplateFilters({
         queryParams: queryParams,
       },
     },
-    additionalFilters: [createdByToolbarFilter, modifiedByToolbarFilter],
+    additionalFilters: [createdByToolbarFilter, modifiedByToolbarFilter, typeToolbarFilter],
+    removeFilters: ['type'], // Remove the default type filter provided by API as it gives additional types that are not applicable to the Templates list view
   });
   return toolbarFilters;
 }
