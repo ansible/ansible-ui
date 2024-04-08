@@ -1,29 +1,6 @@
 import { ExclamationCircleIcon } from '@patternfly/react-icons';
 import { isPageWizardParentStep, usePageWizard } from './PageWizardProvider';
 
-/**
- *
- *
-nav
-	ol
-		li step1 (activeStep) - click goToStepByIndex
-    li step 1a -  (activeStep) - click goToStepByIndex
-    li step 1b
-		li step2
-		li step3
-
-nav
-	ol
-		li step1
-			nav
-				ol
-					li step 1a -  (activeStep) - click goToStepByIndex
-					li step 1b
-		li step2
-		li step3
-
-detect parent and set first child as active
- */
 export function PageWizardNavigation() {
   const {
     activeStep,
