@@ -25,7 +25,7 @@ export function EdaMasthead() {
   const logout = useCallback(async () => {
     await postRequest(edaAPI`/auth/session/logout/`, {});
     clearAllCache();
-    void userContext.mutate();
+    void userContext?.mutate();
   }, [clearAllCache, userContext]);
   return (
     <PageMasthead brand={<EdaBrand style={{ height: 45, width: 45 }} />}>

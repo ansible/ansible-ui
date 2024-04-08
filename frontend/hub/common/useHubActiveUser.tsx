@@ -4,12 +4,10 @@ import { requestGet } from '../../common/crud/Data';
 import { HubUser } from '../interfaces/expanded/HubUser';
 import { hubAPI } from './api/formatPath';
 
-export const HubActiveUserContext = createContext<SWRResponse<HubUser>>({
-  isLoading: true,
-} as SWRResponse<HubUser>);
+export const HubActiveUserContext = createContext<SWRResponse<HubUser> | undefined>(undefined);
 
 export function useHubActiveUser() {
-  return useContext(HubActiveUserContext).data;
+  return useContext(HubActiveUserContext)?.data;
 }
 
 export function useHubActiveUserContext() {

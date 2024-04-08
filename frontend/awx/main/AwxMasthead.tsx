@@ -34,7 +34,7 @@ export function AwxMasthead() {
   const logout = useCallback(async () => {
     await fetch('/api/logout/');
     clearAllCache();
-    void activeUserContext.mutate();
+    void activeUserContext?.mutate();
   }, [activeUserContext, clearAllCache]);
 
   return (

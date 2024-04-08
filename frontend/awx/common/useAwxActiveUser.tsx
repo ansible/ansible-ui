@@ -5,12 +5,13 @@ import { User } from '../interfaces/User';
 import { AwxItemsResponse } from './AwxItemsResponse';
 import { awxAPI } from './api/awx-utils';
 
-export const AwxActiveUserContext = createContext<SWRResponse<AwxItemsResponse<User>>>({
-  isLoading: true,
-} as SWRResponse<AwxItemsResponse<User>>);
+export const AwxActiveUserContext = createContext<SWRResponse<AwxItemsResponse<User>> | undefined>(
+  undefined
+);
 
 export function useAwxActiveUser() {
-  const itemsResponse = useContext(AwxActiveUserContext).data;
+  const context = useContext(AwxActiveUserContext);
+  const itemsResponse = context?.data;
   if (!itemsResponse) return undefined;
   if (!itemsResponse.results) return undefined;
   if (!itemsResponse.results.length) return undefined;

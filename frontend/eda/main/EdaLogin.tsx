@@ -8,7 +8,7 @@ export function EdaLogin(props: { children: React.ReactNode }) {
   const edaActiveUserContext = useEdaActiveUserContext();
   const edaActiveUser = useEdaActiveUser();
 
-  if (edaActiveUserContext.isLoading) {
+  if (edaActiveUserContext?.isLoading) {
     return (
       <Page>
         <LoadingState />
@@ -20,7 +20,7 @@ export function EdaLogin(props: { children: React.ReactNode }) {
     return (
       <Login
         apiUrl={edaAPI`/auth/session/login/`}
-        onSuccess={() => void edaActiveUserContext.mutate()}
+        onSuccess={() => void edaActiveUserContext?.mutate()}
       />
     );
   }

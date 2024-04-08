@@ -9,7 +9,7 @@ export function HubLogin(props: { children: React.ReactNode }) {
   const hubActiveUserContext = useHubActiveUserContext();
   const hubActiveUser = useHubActiveUser();
 
-  if (hubActiveUserContext.isLoading) {
+  if (hubActiveUserContext?.isLoading) {
     return (
       <Page>
         <LoadingState />
@@ -21,7 +21,7 @@ export function HubLogin(props: { children: React.ReactNode }) {
     return (
       <Login
         apiUrl={hubAPI`/_ui/v1/auth/login/`}
-        onSuccess={() => void hubActiveUserContext.mutate()}
+        onSuccess={() => void hubActiveUserContext?.mutate()}
       />
     );
   }

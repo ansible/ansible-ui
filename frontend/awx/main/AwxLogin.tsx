@@ -30,7 +30,7 @@ export function AwxLogin(props: { children: React.ReactNode }) {
   const awxActiveUserContext = useAwxActiveUserContext();
   const awxActiveUser = useAwxActiveUser();
 
-  if (awxActiveUserContext.isLoading) {
+  if (awxActiveUserContext?.isLoading) {
     return (
       <Page>
         <LoadingState />
@@ -43,7 +43,7 @@ export function AwxLogin(props: { children: React.ReactNode }) {
       <Login
         authOptions={authOptions}
         apiUrl="/api/login/"
-        onSuccess={() => void awxActiveUserContext.mutate()}
+        onSuccess={() => void awxActiveUserContext?.mutate()}
       />
     );
   }

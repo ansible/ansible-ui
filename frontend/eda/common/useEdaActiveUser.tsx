@@ -4,12 +4,10 @@ import { requestGet } from '../../common/crud/Data';
 import { EdaUser } from '../interfaces/EdaUser';
 import { edaAPI } from './eda-utils';
 
-export const EdaActiveUserContext = createContext<SWRResponse<EdaUser>>({
-  isLoading: true,
-} as SWRResponse<EdaUser>);
+export const EdaActiveUserContext = createContext<SWRResponse<EdaUser> | undefined>(undefined);
 
 export function useEdaActiveUser() {
-  return useContext(EdaActiveUserContext).data;
+  return useContext(EdaActiveUserContext)?.data;
 }
 
 export function useEdaActiveUserContext() {

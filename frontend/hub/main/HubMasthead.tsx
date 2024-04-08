@@ -31,7 +31,7 @@ export function HubMasthead() {
   const logout = useCallback(async () => {
     await postRequest(hubAPI`/_ui/v1/auth/logout/`, {});
     clearAllCache();
-    void userContext.mutate();
+    void userContext?.mutate();
   }, [clearAllCache, userContext]);
   return (
     <PageMasthead brand={<GalaxyBrand style={{ height: 48, marginTop: -8 }} />}>
