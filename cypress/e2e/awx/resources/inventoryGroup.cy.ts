@@ -70,7 +70,8 @@ describe('Inventory Groups', () => {
         const { inventory, host, group } = result;
 
         cy.navigateTo('awx', 'inventories');
-        cy.clickTableRow(inventory.name); //Refactor this line to use the updated custom command
+        cy.filterTableBySingleSelect('name', inventory.name);
+        cy.clickTableRowLink('name', inventory.name, { disableFilter: true });
         cy.verifyPageTitle(inventory.name);
         cy.get(`[href*="/infrastructure/inventories/inventory/${inventory.id}/hosts?"]`).click();
         cy.getByDataCy('name-column-cell').should('contain', host.name);
@@ -141,7 +142,8 @@ describe('Inventory Groups', () => {
         const { inventory, host, group } = result;
 
         cy.navigateTo('awx', 'inventories');
-        cy.clickTableRow(inventory.name); //Refactor this line to use the updated custom command
+        cy.filterTableBySingleSelect('name', inventory.name);
+        cy.clickTableRowLink('name', inventory.name, { disableFilter: true });
         cy.verifyPageTitle(inventory.name);
         cy.get(`[href*="/infrastructure/inventories/inventory/${inventory.id}/hosts?"]`).click();
         cy.getByDataCy('name-column-cell').should('contain', host.name);
@@ -193,7 +195,8 @@ describe('Inventory Groups', () => {
         const newRelatedGroup = 'New test group' + randomString(4);
 
         cy.navigateTo('awx', 'inventories');
-        cy.clickTableRow(inventory.name); //Refactor this line to use the updated custom command
+        cy.filterTableBySingleSelect('name', inventory.name);
+        cy.clickTableRowLink('name', inventory.name, { disableFilter: true });
         cy.verifyPageTitle(inventory.name);
         cy.get(`[href*="/infrastructure/inventories/inventory/${inventory.id}/hosts?"]`).click();
         cy.getByDataCy('name-column-cell').should('contain', host.name);
@@ -224,7 +227,8 @@ describe('Inventory Groups', () => {
         const newGroup = 'New test group' + randomString(4);
 
         cy.navigateTo('awx', 'inventories');
-        cy.clickTableRow(inventory.name); //Refactor this line to use the updated custom command
+        cy.filterTableBySingleSelect('name', inventory.name);
+        cy.clickTableRowLink('name', inventory.name, { disableFilter: true });
         cy.get(`[href*="/infrastructure/inventories/inventory/${inventory.id}/hosts?"]`).click();
         cy.getByDataCy('name-column-cell').should('contain', host.name);
         cy.clickLink(/^Groups$/);
