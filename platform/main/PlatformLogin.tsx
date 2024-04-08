@@ -1,21 +1,29 @@
-import { useGetPageUrl } from '../../framework/PageNavigation/useGetPageUrl';
+import { Page } from '@patternfly/react-core';
+import { LoadingState } from '../../framework/components/LoadingState';
 import { Login } from '../../frontend/common/Login';
-import { useGet } from '../../frontend/common/crud/useGet';
 import { gatewayAPI } from '../api/gateway-api-utils';
-import { UIAuth } from '../interfaces/UIAuth';
-import { PlatformRoute } from './PlatformRoutes';
+import { usePlatformActiveUser, usePlatformActiveUserContext } from './PlatformActiveUserProvider';
 
-export function PlatformLogin() {
-  const { data: options } = useGet<UIAuth>(gatewayAPI`/ui_auth/`);
-  const getPageUrl = useGetPageUrl();
-  const hideInputs = options ? !options.show_login_form : false;
+export function PlatformLogin(props: { children: React.ReactNode }) {
+  const platformActiveUserContext = usePlatformActiveUserContext();
+  const platformActiveUser = usePlatformActiveUser();
 
-  return (
-    <Login
-      apiUrl={gatewayAPI`/login/`}
-      onLoginUrl={getPageUrl(PlatformRoute.Overview)}
-      hideInputs={hideInputs}
-      authOptions={options?.ssos}
-    />
-  );
+  if (platformActiveUserContext?.isLoading) {
+    return (
+      <Page>
+        <LoadingState />
+      </Page>
+    );
+  }
+
+  if (!platformActiveUser) {
+    return (
+      <Login
+        apiUrl={gatewayAPI`/login/`}
+        onSuccess={() => void platformActiveUserContext?.mutate()}
+      />
+    );
+  }
+
+  return props.children;
 }
