@@ -42,6 +42,12 @@ export function InventoryHostDetails() {
   return <InventoryHostDetailsInner host={host} />;
 }
 
+function inventoryKindToType(kind: string) {
+  if (kind === 'smart') return 'smart_inventory';
+  if (kind === 'constructed') return 'constructed_inventory';
+  return 'inventory';
+}
+
 export function InventoryHostDetailsInner(props: { host: AwxHost }) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
@@ -68,7 +74,10 @@ export function InventoryHostDetailsInner(props: { host: AwxHost }) {
         <TextCell
           text={host.summary_fields?.inventory?.name}
           to={getPageUrl(AwxRoute.InventoryDetails, {
-            params: { id: host.summary_fields?.inventory?.id },
+            params: {
+              id: host.summary_fields?.inventory?.id,
+              inventory_type: inventoryKindToType(host.summary_fields?.inventory?.kind),
+            },
           })}
         />
       </PageDetail>
