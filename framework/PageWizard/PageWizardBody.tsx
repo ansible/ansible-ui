@@ -42,7 +42,7 @@ export function PageWizardBody<T>({
         return Promise.resolve();
       }
 
-      if (activeStep.validate) {
+      if (!isPageWizardParentStep(activeStep) && activeStep.validate) {
         await activeStep.validate(formData, wizardData);
       }
 
