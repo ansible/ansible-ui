@@ -60,25 +60,29 @@ export function GatewayServices(props: { children: ReactNode }) {
         (service) => service.summary_fields?.service_cluster?.service_type === 'controller'
       );
       if (awxService) {
-        setAwxApiPath(awxService.gateway_path + 'v2/');
+        let awxApiPath = awxService.gateway_path;
+        if (awxApiPath.endsWith('/')) awxApiPath = awxApiPath.slice(0, -1);
+        awxApiPath = awxApiPath + '/v2';
+        setAwxApiPath(awxApiPath);
       }
 
       const edaService = result.data.results.find(
         (service) => service.summary_fields?.service_cluster?.service_type === 'eda'
       );
       if (edaService) {
-        setEdaApiPath(edaService.gateway_path + 'v1/');
+        let edaApiPath = edaService.gateway_path;
+        if (edaApiPath.endsWith('/')) edaApiPath = edaApiPath.slice(0, -1);
+        edaApiPath = edaApiPath + '/v1';
+        setEdaApiPath(edaApiPath);
       }
 
       const hubService = result.data.results.find(
         (service) => service.summary_fields?.service_cluster?.service_type === 'hub'
       );
       if (hubService) {
-        let hub_path = hubService.gateway_path;
-        if (hub_path.endsWith('/')) {
-          hub_path = hub_path.slice(0, -1);
-        }
-        setHubApiPath(hub_path);
+        let hubApiPath = hubService.gateway_path;
+        if (hubApiPath.endsWith('/')) hubApiPath = hubApiPath.slice(0, -1);
+        setHubApiPath(hubApiPath);
       }
 
       setGatewayServices(result.data.results);
