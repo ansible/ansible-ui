@@ -24,7 +24,7 @@ import { useTemplateActions } from '../hooks/useTemplateActions';
 
 export function TemplatePage() {
   const { t } = useTranslation();
-  const currentUser = useAwxActiveUser();
+  const { activeAwxUser } = useAwxActiveUser();
   const params = useParams<{ id: string }>();
   const {
     error: templateError,
@@ -55,11 +55,11 @@ export function TemplatePage() {
       { label: t('Jobs'), page: AwxRoute.JobTemplateJobs },
       { label: t('Survey'), page: AwxRoute.JobTemplateSurvey },
     ];
-    if (currentUser?.is_system_auditor || (isNotifAdmin && isNotifAdmin.results.length > 0)) {
+    if (activeAwxUser?.is_system_auditor || (isNotifAdmin && isNotifAdmin.results.length > 0)) {
       tabs.push({ label: t('Notifications'), page: AwxRoute.JobTemplateNotifications });
     }
     return tabs;
-  }, [t, currentUser, isNotifAdmin]);
+  }, [t, activeAwxUser, isNotifAdmin]);
   if (error) return <AwxError error={error} handleRefresh={refresh || refreshNotifAdmin} />;
   if (isTemplateLoading || isNotifAdminLoading) return <LoadingPage breadcrumbs tabs />;
 

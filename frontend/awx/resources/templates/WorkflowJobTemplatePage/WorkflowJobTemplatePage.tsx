@@ -25,7 +25,7 @@ import { useTemplateActions } from '../hooks/useTemplateActions';
 export function WorkflowJobTemplatePage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const currentUser = useAwxActiveUser();
+  const { activeAwxUser } = useAwxActiveUser();
   const {
     error: templateError,
     data: template,
@@ -55,12 +55,12 @@ export function WorkflowJobTemplatePage() {
       { label: t('Schedules'), page: AwxRoute.WorkflowJobTemplateSchedules },
       { label: t('Jobs'), page: AwxRoute.WorkflowJobTemplateJobs },
       { label: t('Survey'), page: AwxRoute.WorkflowJobTemplateSurvey },
-      currentUser?.is_system_auditor || (isNotifAdmin && isNotifAdmin.results.length > 0)
+      activeAwxUser?.is_system_auditor || (isNotifAdmin && isNotifAdmin.results.length > 0)
         ? { label: t('Notifications'), page: AwxRoute.WorkflowJobTemplateNotifications }
         : false,
     ],
 
-    [t, currentUser, isNotifAdmin]
+    [t, activeAwxUser, isNotifAdmin]
   );
 
   if (error) return <AwxError error={error} handleRefresh={refresh || refreshNotifAdmin} />;

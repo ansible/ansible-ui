@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Organization } from '../../../interfaces/Organization';
-import { User } from '../../../interfaces/User';
+import { AwxUser } from '../../../interfaces/User';
 import { useRemoveOrganizationsFromUsers } from './useRemoveOrganizationsFromUsers';
 import { useSelectOrganizations } from './useSelectOrganizations';
 
@@ -12,7 +12,7 @@ export function useSelectOrganizationsRemoveUsers(
   const selectOrganizations = useSelectOrganizations();
   const removeOrganizationsFromUsers = useRemoveOrganizationsFromUsers();
   const selectOrganizationsRemoveUsers = useCallback(
-    (users: User[]) => {
+    (users: AwxUser[]) => {
       selectOrganizations(
         t('Remove users from organizations', { count: users.length }),
         (organizations: Organization[]) => {

@@ -15,7 +15,7 @@ import { useDeleteApplications } from '../hooks/useDeleteApplications';
 export function useApplicationActions(options: {
   onApplicationsDeleted: (applications: Application[]) => void;
 }) {
-  const activeUser = useAwxActiveUser();
+  const { activeAwxUser } = useAwxActiveUser();
   const { onApplicationsDeleted } = options;
   const { t } = useTranslation();
   const deleteApplications = useDeleteApplications(onApplicationsDeleted);
@@ -40,7 +40,7 @@ export function useApplicationActions(options: {
         selection: PageActionSelection.Single,
         icon: TrashIcon,
         isHidden: (application) =>
-          !application?.summary_fields.user_capabilities.delete || activeUser?.is_system_auditor
+          !application?.summary_fields.user_capabilities.delete || activeAwxUser?.is_system_auditor
             ? true
             : false,
         label: t('Delete application'),
@@ -54,5 +54,5 @@ export function useApplicationActions(options: {
       },
     ];
     return itemActions;
-  }, [t, pageNavigate, activeUser?.is_system_auditor, deleteApplications]);
+  }, [t, pageNavigate, activeAwxUser?.is_system_auditor, deleteApplications]);
 }

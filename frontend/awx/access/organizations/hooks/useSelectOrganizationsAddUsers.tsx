@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Organization } from '../../../interfaces/Organization';
-import { User } from '../../../interfaces/User';
+import { AwxUser } from '../../../interfaces/User';
 import { useAddOrganizationsToUsers } from './useAddOrganizationsToUsers';
 import { useSelectOrganizations } from './useSelectOrganizations';
 
@@ -10,7 +10,7 @@ export function useSelectOrganizationsAddUsers(onClose?: (organizations: Organiz
   const selectOrganizations = useSelectOrganizations();
   const addOrganizationsToUsers = useAddOrganizationsToUsers();
   const selectOrganizationsAddUsers = useCallback(
-    (users: User[]) => {
+    (users: AwxUser[]) => {
       selectOrganizations(
         t('Add users to organizations', { count: users.length }),
         (organizations: Organization[]) => {

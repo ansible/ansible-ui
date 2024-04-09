@@ -7,13 +7,13 @@ import { useGet, useGetItem } from '../../../../common/crud/useGet';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { Organization } from '../../../interfaces/Organization';
-import { User } from '../../../interfaces/User';
+import { AwxUser } from '../../../interfaces/User';
 import { AwxRoute } from '../../../main/AwxRoutes';
 
 export function AwxUserDetails() {
   const params = useParams<{ id: string }>();
   const getPageUrl = useGetPageUrl();
-  const { data: user } = useGetItem<User>(awxAPI`/users`, params.id);
+  const { data: user } = useGetItem<AwxUser>(awxAPI`/users`, params.id);
   const itemsResponse = useGet<AwxItemsResponse<Organization>>(
     user?.related?.organizations as string
   );

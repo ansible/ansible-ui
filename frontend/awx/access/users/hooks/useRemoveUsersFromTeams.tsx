@@ -4,22 +4,22 @@ import { usePostRequest } from '../../../../common/crud/usePostRequest';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxBulkActionDialog } from '../../../common/useAwxBulkActionDialog';
 import { Team } from '../../../interfaces/Team';
-import { User } from '../../../interfaces/User';
+import { AwxUser } from '../../../interfaces/User';
 
 export function useRemoveUsersFromTeams() {
   const { t } = useTranslation();
-  const userProgressDialog = useAwxBulkActionDialog<User>();
+  const userProgressDialog = useAwxBulkActionDialog<AwxUser>();
   const postRequest = usePostRequest();
   const removeUserToTeams = useCallback(
-    (users: User[], teams: Team[], onComplete?: (users: User[]) => void) => {
+    (users: AwxUser[], teams: Team[], onComplete?: (users: AwxUser[]) => void) => {
       userProgressDialog({
         title: t('Removing users from teams', {
           count: teams.length,
         }),
-        keyFn: (user: User) => user.id,
+        keyFn: (user: AwxUser) => user.id,
         items: users,
-        actionColumns: [{ header: t('User'), cell: (user: User) => user.username }],
-        actionFn: async (user: User, signal: AbortSignal) => {
+        actionColumns: [{ header: t('User'), cell: (user: AwxUser) => user.username }],
+        actionFn: async (user: AwxUser, signal: AbortSignal) => {
           for (const team of teams) {
             await postRequest(
               awxAPI`/users/${user.id.toString()}/roles/`,

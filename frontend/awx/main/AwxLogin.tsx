@@ -5,7 +5,7 @@ import { Login } from '../../common/Login';
 import type { AuthOption } from '../../common/SocialAuthLogin';
 import { requestGet } from '../../common/crud/Data';
 import { awxAPI } from '../common/api/awx-utils';
-import { useAwxActiveUser, useAwxActiveUserContext } from '../common/useAwxActiveUser';
+import { useAwxActiveUser } from '../common/useAwxActiveUser';
 import { AwxConfigProvider } from '../common/useAwxConfig';
 import { WebSocketProvider } from '../common/useAwxWebSocket';
 
@@ -27,10 +27,9 @@ export function AwxLogin(props: { children: React.ReactNode }) {
     });
   }
 
-  const awxActiveUserContext = useAwxActiveUserContext();
-  const awxActiveUser = useAwxActiveUser();
+  const { activeAwxUser, activeAwxUserIsLoading, refreshActiveAwxUser } = useAwxActiveUser();
 
-  if (awxActiveUserContext?.isLoading) {
+  if (activeAwxUserIsLoading) {
     return (
       <Page>
         <LoadingState />
@@ -38,12 +37,12 @@ export function AwxLogin(props: { children: React.ReactNode }) {
     );
   }
 
-  if (!awxActiveUser) {
+  if (!activeAwxUser) {
     return (
       <Login
         authOptions={authOptions}
         apiUrl="/api/login/"
-        onSuccess={() => void awxActiveUserContext?.mutate()}
+        onSuccess={() => refreshActiveAwxUser?.()}
       />
     );
   }

@@ -1,6 +1,6 @@
 import { randomString } from '../../../../framework/utils/random-string';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
-import { User } from '../../../../frontend/awx/interfaces/User';
+import { AwxUser } from '../../../../frontend/awx/interfaces/User';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 import { randomE2Ename } from '../../../support/utils';
 
@@ -43,7 +43,7 @@ describe('organizations', () => {
 
 describe('organizations edit and delete', function () {
   let organization: Organization;
-  let user: User;
+  let user: AwxUser;
 
   before(function () {
     cy.awxLogin();

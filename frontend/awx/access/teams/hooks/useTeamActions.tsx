@@ -25,7 +25,7 @@ export function useTeamActions(options: {
   const deleteTeams = useDeleteTeams(onTeamsDeleted);
   const selectUsersAddTeams = useSelectUsersAddTeams();
   const selectAndRemoveUsersFromTeam = useSelectAndRemoveUsersFromTeam();
-  const activeUser = useAwxActiveUser();
+  const { activeAwxUser } = useAwxActiveUser();
 
   return useMemo(() => {
     const cannotDeleteTeam = (team: Team) =>
@@ -37,13 +37,13 @@ export function useTeamActions(options: {
         ? ''
         : t(`The team cannot be edited due to insufficient permissions.`);
     const cannotRemoveUsers = (team: Team) =>
-      activeUser?.is_superuser || team?.summary_fields?.user_capabilities?.edit
+      activeAwxUser?.is_superuser || team?.summary_fields?.user_capabilities?.edit
         ? ''
         : t(
             `You do not have permission to remove users. Please contact your organization administrator if there is an issue with your access.`
           );
     const cannotAddUsers = (team: Team) =>
-      activeUser?.is_superuser || team?.summary_fields?.user_capabilities?.edit
+      activeAwxUser?.is_superuser || team?.summary_fields?.user_capabilities?.edit
         ? ''
         : t(
             `You do not have permission to add users. Please contact your organization administrator if there is an issue with your access.`
@@ -90,7 +90,7 @@ export function useTeamActions(options: {
     ];
     return actions;
   }, [
-    activeUser?.is_superuser,
+    activeAwxUser?.is_superuser,
     deleteTeams,
     pageNavigate,
     selectAndRemoveUsersFromTeam,

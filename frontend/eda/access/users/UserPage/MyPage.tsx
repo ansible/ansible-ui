@@ -29,12 +29,12 @@ export function MyPage() {
 
   const getPageUrl = useGetPageUrl();
 
-  const activeUser = useEdaActiveUser();
+  const { activeEdaUser } = useEdaActiveUser();
   const canEditUser =
-    !!activeUser?.is_superuser || !!activeUser?.roles.some((role) => role.name === 'Admin');
+    !!activeEdaUser?.is_superuser || !!activeEdaUser?.roles.some((role) => role.name === 'Admin');
   const canViewUsers =
-    !!activeUser?.is_superuser ||
-    !!activeUser?.roles.some((role) => role.name === 'Admin' || role.name === 'Auditor');
+    !!activeEdaUser?.is_superuser ||
+    !!activeEdaUser?.roles.some((role) => role.name === 'Admin' || role.name === 'Auditor');
 
   const isActionTab = location.pathname === `/eda/access/users/me/details`;
   const itemActions = useMemo<IPageAction<EdaUser>[]>(() => {
@@ -68,7 +68,7 @@ export function MyPage() {
       : [];
     return actions;
   }, [canEditUser, pageNavigate, isActionTab, t]);
-  if (!activeUser) return <LoadingPage breadcrumbs tabs />;
+  if (!activeEdaUser) return <LoadingPage breadcrumbs tabs />;
   return (
     <PageLayout>
       <PageHeader

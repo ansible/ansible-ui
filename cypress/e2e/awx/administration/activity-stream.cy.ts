@@ -2,18 +2,18 @@ import { AwxItemsResponse } from '../../../../frontend/awx/common/AwxItemsRespon
 import { awxAPI } from '../../../../frontend/awx/common/api/awx-utils';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Team } from '../../../../frontend/awx/interfaces/Team';
-import { User } from '../../../../frontend/awx/interfaces/User';
+import { AwxUser } from '../../../../frontend/awx/interfaces/User';
 
 describe('activity-stream', () => {
   let team: Team;
-  let activeUser: User;
+  let activeUser: AwxUser;
 
   before(function () {
     cy.awxLogin();
     cy.createAwxTeam(this.globalOrganization as Organization).then((createdTeam) => {
       team = createdTeam;
     });
-    cy.requestGet<AwxItemsResponse<User>>(awxAPI`/me/`)
+    cy.requestGet<AwxItemsResponse<AwxUser>>(awxAPI`/me/`)
       .its('results')
       .then((results) => {
         activeUser = results[0];
