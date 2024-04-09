@@ -4,14 +4,14 @@ import { usePostRequest } from '../../../../common/crud/usePostRequest';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxBulkActionDialog } from '../../../common/useAwxBulkActionDialog';
 import { Team } from '../../../interfaces/Team';
-import { User } from '../../../interfaces/User';
+import { AwxUser } from '../../../interfaces/User';
 
 export function useRemoveTeamsFromUsers(onComplete?: (team: Team[]) => void) {
   const { t } = useTranslation();
   const bulkProgressDialog = useAwxBulkActionDialog<Team>();
   const postRequest = usePostRequest();
   const removeUserToTeams = useCallback(
-    (users: User[], teams: Team[]) => {
+    (users: AwxUser[], teams: Team[]) => {
       bulkProgressDialog({
         title: t('Removing user from teams', {
           count: teams.length,

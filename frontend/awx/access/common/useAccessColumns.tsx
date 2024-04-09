@@ -9,16 +9,16 @@ import {
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ITableColumn, TextCell, useGetPageUrl } from '../../../../framework';
-import { AccessRole, User } from '../../interfaces/User';
+import { AccessRole, AwxUser } from '../../interfaces/User';
 import { AwxRoute } from '../../main/AwxRoutes';
 
 export function useAccessColumns(
   _options?: { disableLinks?: boolean; disableSort?: boolean },
-  deleteRole?: (role: AccessRole, user: User) => void
+  deleteRole?: (role: AccessRole, user: AwxUser) => void
 ) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
-  const tableColumns = useMemo<ITableColumn<User>[]>(
+  const tableColumns = useMemo<ITableColumn<AwxUser>[]>(
     () => [
       {
         header: t('Username'),

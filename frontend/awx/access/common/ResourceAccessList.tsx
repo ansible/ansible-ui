@@ -11,7 +11,7 @@ import {
 } from '../../../../framework';
 import { useAwxActiveUser } from '../../common/useAwxActiveUser';
 import { useAwxView } from '../../common/useAwxView';
-import { AccessRole, User } from '../../interfaces/User';
+import { AccessRole, AwxUser } from '../../interfaces/User';
 import { AwxRoute } from '../../main/AwxRoutes';
 import { useSelectUsersAddTeams } from '../users/hooks/useSelectUsersAddTeams';
 import { useUsersFilters } from '../users/hooks/useUsersFilters';
@@ -39,17 +39,17 @@ export function ResourceAccessList(props: { url: string; resource: ResourceType 
   const { t } = useTranslation();
   const { url, resource } = props;
 
-  const activeUser = useAwxActiveUser();
+  const { activeAwxUser } = useAwxActiveUser();
   const canAddAndRemoveUsers: boolean = useMemo(
-    () => activeUser?.is_superuser || resource?.summary_fields?.user_capabilities?.edit,
-    [activeUser?.is_superuser, resource?.summary_fields?.user_capabilities?.edit]
+    () => activeAwxUser?.is_superuser || resource?.summary_fields?.user_capabilities?.edit,
+    [activeAwxUser?.is_superuser, resource?.summary_fields?.user_capabilities?.edit]
   );
 
   const toolbarFilters = useUsersFilters();
 
   const openDeleteRoleConfirmationDialog = useDeleteRoleConfirmationDialog();
   const deleteAccessRole = useDeleteAccessRole(() => void view.refresh());
-  const deleteRole = (role: AccessRole, user: User) => {
+  const deleteRole = (role: AccessRole, user: AwxUser) => {
     openDeleteRoleConfirmationDialog({
       role,
       user: user,
@@ -59,7 +59,7 @@ export function ResourceAccessList(props: { url: string; resource: ResourceType 
 
   const tableColumns = useAccessColumns(undefined, deleteRole);
 
-  const view = useAwxView<User>({
+  const view = useAwxView<AwxUser>({
     url: url,
     queryParams: {
       order_by: 'first_name',
@@ -70,7 +70,7 @@ export function ResourceAccessList(props: { url: string; resource: ResourceType 
   });
 
   // Build the user and team roles lists for a user
-  useUserAndTeamRolesLists(view.pageItems as User[]);
+  useUserAndTeamRolesLists(view.pageItems as AwxUser[]);
 
   /**
    * TODO: Add users is currently specific to teams and does not handle role selection
@@ -81,7 +81,7 @@ export function ResourceAccessList(props: { url: string; resource: ResourceType 
 
   const removeUsersFromResource = useRemoveUsersFromResource();
 
-  const toolbarActions = useMemo<IPageAction<User>[]>(
+  const toolbarActions = useMemo<IPageAction<AwxUser>[]>(
     () => [
       {
         type: PageActionType.Button,
@@ -123,7 +123,7 @@ export function ResourceAccessList(props: { url: string; resource: ResourceType 
     ]
   );
 
-  const rowActions = useMemo<IPageAction<User>[]>(
+  const rowActions = useMemo<IPageAction<AwxUser>[]>(
     () => [
       {
         type: PageActionType.Button,
@@ -131,7 +131,7 @@ export function ResourceAccessList(props: { url: string; resource: ResourceType 
         icon: MinusCircleIcon,
         label: t('Remove user'),
         onClick: (user) => removeUsersFromResource([user], resource, view.unselectItemsAndRefresh),
-        isDisabled: (user: User) => {
+        isDisabled: (user: AwxUser) => {
           if (user.is_superuser) {
             return t('System administrators have unrestricted access to all resources.');
           }
@@ -157,7 +157,7 @@ export function ResourceAccessList(props: { url: string; resource: ResourceType 
   const pageNavigate = usePageNavigate();
 
   return (
-    <PageTable<User>
+    <PageTable<AwxUser>
       toolbarFilters={toolbarFilters}
       toolbarActions={toolbarActions}
       tableColumns={tableColumns}

@@ -3,13 +3,13 @@
 import { randomString } from '../../../../framework/utils/random-string';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Team } from '../../../../frontend/awx/interfaces/Team';
-import { User } from '../../../../frontend/awx/interfaces/User';
+import { AwxUser } from '../../../../frontend/awx/interfaces/User';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 
 describe('teams', function () {
   let team: Team;
-  let user1: User;
-  let user2: User;
+  let user1: AwxUser;
+  let user2: AwxUser;
 
   before(function () {
     cy.awxLogin();
@@ -62,10 +62,10 @@ describe('teams', function () {
   });
 
   it('can remove users from the team via the teams list row item', function () {
-    cy.requestPost<User>(awxAPI`/users/${user1.id.toString()}/roles/`, {
+    cy.requestPost<AwxUser>(awxAPI`/users/${user1.id.toString()}/roles/`, {
       id: team.summary_fields.object_roles.member_role.id,
     });
-    cy.requestPost<User>(awxAPI`/users/${user2.id.toString()}/roles/`, {
+    cy.requestPost<AwxUser>(awxAPI`/users/${user2.id.toString()}/roles/`, {
       id: team.summary_fields.object_roles.member_role.id,
     });
 
@@ -133,11 +133,11 @@ describe('teams', function () {
     });
     cy.getTableRowByText(user1.username).should('be.visible');
     cy.getTableRowByText(user2.username).should('be.visible');
-    cy.requestPost<User>(awxAPI`/users/${user1.id.toString()}/roles/`, {
+    cy.requestPost<AwxUser>(awxAPI`/users/${user1.id.toString()}/roles/`, {
       id: team.summary_fields.object_roles.member_role.id,
       disassociate: true,
     });
-    cy.requestPost<User>(awxAPI`/users/${user2.id.toString()}/roles/`, {
+    cy.requestPost<AwxUser>(awxAPI`/users/${user2.id.toString()}/roles/`, {
       id: team.summary_fields.object_roles.member_role.id,
       disassociate: true,
     });
@@ -145,10 +145,10 @@ describe('teams', function () {
   });
 
   it('can remove users from the team via the team access tab toolbar', function () {
-    cy.requestPost<User>(awxAPI`/users/${user1.id.toString()}/roles/`, {
+    cy.requestPost<AwxUser>(awxAPI`/users/${user1.id.toString()}/roles/`, {
       id: team.summary_fields.object_roles.member_role.id,
     });
-    cy.requestPost<User>(awxAPI`/users/${user2.id.toString()}/roles/`, {
+    cy.requestPost<AwxUser>(awxAPI`/users/${user2.id.toString()}/roles/`, {
       id: team.summary_fields.object_roles.member_role.id,
     });
     cy.navigateTo('awx', 'teams');
@@ -169,7 +169,7 @@ describe('teams', function () {
   });
 
   it('can remove a single user from the team via the team access tab row action', function () {
-    cy.requestPost<User>(awxAPI`/users/${user1.id.toString()}/roles/`, {
+    cy.requestPost<AwxUser>(awxAPI`/users/${user1.id.toString()}/roles/`, {
       id: team.summary_fields.object_roles.member_role.id,
     });
     cy.navigateTo('awx', 'teams');
@@ -187,10 +187,10 @@ describe('teams', function () {
   });
 
   it('can remove a role from a user via the team access tab row action', function () {
-    cy.requestPost<User>(awxAPI`/users/${user1.id.toString()}/roles/`, {
+    cy.requestPost<AwxUser>(awxAPI`/users/${user1.id.toString()}/roles/`, {
       id: team.summary_fields.object_roles.member_role.id,
     });
-    cy.requestPost<User>(awxAPI`/users/${user1.id.toString()}/roles/`, {
+    cy.requestPost<AwxUser>(awxAPI`/users/${user1.id.toString()}/roles/`, {
       id: team.summary_fields.object_roles.read_role.id,
     });
     cy.navigateTo('awx', 'teams');
@@ -211,7 +211,7 @@ describe('teams', function () {
         `div[data-ouia-component-id="Read-${team.summary_fields.object_roles.read_role.id}"]`
       ).should('not.exist');
     });
-    cy.requestPost<User>(awxAPI`/users/${user1.id.toString()}/roles/`, {
+    cy.requestPost<AwxUser>(awxAPI`/users/${user1.id.toString()}/roles/`, {
       id: team.summary_fields.object_roles.member_role.id,
       disassociate: true,
     });

@@ -1,4 +1,4 @@
-import { AccessRole, User } from '../../interfaces/User';
+import { AccessRole, AwxUser } from '../../interfaces/User';
 
 type Access = {
   descendant_roles: string[];
@@ -8,8 +8,8 @@ type Access = {
 /**
  * Contruct the user_roles and team_roles lists for a user based on their access
  */
-export function useUserAndTeamRolesLists(users: User[]) {
-  function sortRoles(access: Access, user: User) {
+export function useUserAndTeamRolesLists(users: AwxUser[]) {
+  function sortRoles(access: Access, user: AwxUser) {
     const { role } = access;
     if (role.team_id) {
       user.team_roles?.push(role);

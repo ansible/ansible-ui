@@ -3,12 +3,12 @@ import { KeyIcon, MonitoringIcon } from '@patternfly/react-icons';
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import { EmptyStateCustom } from '../../../../framework/components/EmptyStateCustom';
-import { useAwxActiveUser } from '../../common/useAwxActiveUser';
 import { EmptyStateError } from '../../../../framework/components/EmptyStateError';
+import { useAwxActiveUser } from '../../common/useAwxActiveUser';
 
 export function AnalyticsErrorState(props: { error?: string }) {
   const { t } = useTranslation();
-  const activeUser = useAwxActiveUser();
+  const { activeAwxUser } = useAwxActiveUser();
   const { error } = props;
 
   interface errorTextsType {
@@ -80,7 +80,7 @@ export function AnalyticsErrorState(props: { error?: string }) {
         <EmptyStateCustom
           title={t('Automation Analytics is currently not enabled to send data.')}
           description={
-            activeUser?.is_superuser
+            activeAwxUser?.is_superuser
               ? t(
                   'Please click the button below to visit the settings page to set your credentials.'
                 )
@@ -88,7 +88,7 @@ export function AnalyticsErrorState(props: { error?: string }) {
           }
           icon={MonitoringIcon}
           button={
-            activeUser?.is_superuser ? (
+            activeAwxUser?.is_superuser ? (
               <Button onClick={() => null}>{t('Go to settings')}</Button>
             ) : undefined
           }
@@ -100,7 +100,7 @@ export function AnalyticsErrorState(props: { error?: string }) {
     );
   }
 
-  return (activeUser?.is_superuser || activeUser?.is_system_auditor) && !!error ? (
+  return (activeAwxUser?.is_superuser || activeAwxUser?.is_system_auditor) && !!error ? (
     <ErrorState error={error} />
   ) : (
     <DisabledState />

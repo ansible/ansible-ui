@@ -4,7 +4,7 @@ import { usePostRequest } from '../../../../common/crud/usePostRequest';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxBulkActionDialog } from '../../../common/useAwxBulkActionDialog';
 import { Organization } from '../../../interfaces/Organization';
-import { User } from '../../../interfaces/User';
+import { AwxUser } from '../../../interfaces/User';
 
 export function useAddOrganizationsToUsers() {
   const { t } = useTranslation();
@@ -13,7 +13,7 @@ export function useAddOrganizationsToUsers() {
 
   const addUserToOrganizations = useCallback(
     (
-      users: User[],
+      users: AwxUser[],
       organizations: Organization[],
       onComplete?: (organizations: Organization[]) => void
     ) => {

@@ -4,7 +4,7 @@ import { Job } from '../../../../frontend/awx/interfaces/Job';
 import { JobTemplate } from '../../../../frontend/awx/interfaces/JobTemplate';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
-import { User } from '../../../../frontend/awx/interfaces/User';
+import { AwxUser } from '../../../../frontend/awx/interfaces/User';
 import { WorkflowApproval } from '../../../../frontend/awx/interfaces/WorkflowApproval';
 import { getJobsAPIUrl } from '../../../../frontend/awx/views/jobs/jobUtils';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
@@ -43,7 +43,7 @@ describe('AWX Cleanup', () => {
   });
 
   it('cleanup users', () => {
-    cy.awxRequestGet<AwxItemsResponse<User>>(
+    cy.awxRequestGet<AwxItemsResponse<AwxUser>>(
       awxAPI`/users?username__startswith=e2e-&page=1&page_size=200&created__lt=${tenMinutesAgo}`
     ).then((result) => {
       for (const resource of result.results ?? []) {

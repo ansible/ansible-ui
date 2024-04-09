@@ -17,7 +17,7 @@ import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxView } from '../../../common/useAwxView';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { Team } from '../../../interfaces/Team';
-import { User } from '../../../interfaces/User';
+import { AwxUser } from '../../../interfaces/User';
 import { useRemoveTeamsFromUsers } from '../../teams/hooks/useRemoveTeamsFromUsers';
 import { useSelectTeamsAddUsers } from '../../teams/hooks/useSelectTeamsAddUsers';
 import { useTeamsColumns } from '../../teams/hooks/useTeamsColumns';
@@ -25,7 +25,7 @@ import { useTeamsFilters } from '../../teams/hooks/useTeamsFilters';
 
 export function UserTeams() {
   const params = useParams<{ id: string }>();
-  const { data: user } = useGetItem<User>(awxAPI`/users`, params.id);
+  const { data: user } = useGetItem<AwxUser>(awxAPI`/users`, params.id);
 
   if (!user) {
     return null;
@@ -33,7 +33,7 @@ export function UserTeams() {
   return <UserTeamsInternal user={user} />;
 }
 
-function UserTeamsInternal(props: { user: User }) {
+function UserTeamsInternal(props: { user: AwxUser }) {
   const { user } = props;
   const { t } = useTranslation();
   const toolbarFilters = useTeamsFilters();

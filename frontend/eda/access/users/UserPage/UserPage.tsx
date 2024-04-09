@@ -37,13 +37,13 @@ export function UserPage() {
 
   const getPageUrl = useGetPageUrl();
 
-  const activeUser = useEdaActiveUser();
-  const isViewingSelf = Number(user?.id) === Number(activeUser?.id);
+  const { activeEdaUser } = useEdaActiveUser();
+  const isViewingSelf = Number(user?.id) === Number(activeEdaUser?.id);
   const canEditUser =
-    activeUser?.is_superuser || activeUser?.roles.some((role) => role.name === 'Admin');
+    activeEdaUser?.is_superuser || activeEdaUser?.roles.some((role) => role.name === 'Admin');
   const canViewUsers =
-    activeUser?.is_superuser ||
-    activeUser?.roles.some((role) => role.name === 'Admin' || role.name === 'Auditor');
+    activeEdaUser?.is_superuser ||
+    activeEdaUser?.roles.some((role) => role.name === 'Admin' || role.name === 'Auditor');
 
   const isActionTab =
     location.pathname === getPageUrl(EdaRoute.UserDetails, { params: { id: user?.id } });
@@ -90,7 +90,7 @@ export function UserPage() {
     return actions;
   }, [canEditUser, deleteUsers, isViewingSelf, pageNavigate, isActionTab, t]);
 
-  if (!activeUser) return <LoadingPage breadcrumbs tabs />;
+  if (!activeEdaUser) return <LoadingPage breadcrumbs tabs />;
   const tabs = isViewingSelf
     ? [
         { label: t('Details'), page: EdaRoute.UserDetails },

@@ -3,11 +3,11 @@
 
 import { randomString } from '../../../../framework/utils/random-string';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
-import { User } from '../../../../frontend/awx/interfaces/User';
+import { AwxUser } from '../../../../frontend/awx/interfaces/User';
 
 describe('Users List Actions', () => {
   let organization: Organization;
-  let user: User;
+  let user: AwxUser;
 
   before(() => {
     cy.awxLogin();
@@ -78,7 +78,7 @@ describe('Users List Actions', () => {
 
 describe('Users Delete Actions', () => {
   let organization: Organization;
-  let user: User;
+  let user: AwxUser;
 
   before(() => {
     cy.awxLogin();

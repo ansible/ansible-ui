@@ -48,7 +48,7 @@ export function CreateControllerToken() {
   const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
   const postRequest = usePostRequest<EdaControllerTokenCreate, EdaControllerToken>();
-  const user = useEdaActiveUser();
+  const { activeEdaUser } = useEdaActiveUser();
 
   const onSubmit: PageFormSubmitHandler<EdaControllerTokenCreate> = async (token) => {
     await postRequest(edaAPI`/users/me/awx-tokens/`, token);
@@ -58,22 +58,24 @@ export function CreateControllerToken() {
 
   const getPageUrl = useGetPageUrl();
 
-  const canViewUsers = user?.roles.some((role) => role.name === 'Admin' || role.name === 'Auditor');
+  const canViewUsers = activeEdaUser?.roles.some(
+    (role) => role.name === 'Admin' || role.name === 'Auditor'
+  );
   const breadcrumbs = [
     ...(canViewUsers ? [{ label: t('Users'), to: getPageUrl(EdaRoute.Users) }] : []),
     {
-      label: user?.username ?? '',
+      label: activeEdaUser?.username ?? '',
       to: canViewUsers
-        ? getPageUrl(EdaRoute.UserPage, { params: { id: user?.id } })
+        ? getPageUrl(EdaRoute.UserPage, { params: { id: activeEdaUser?.id } })
         : getPageUrl(EdaRoute.MyPage),
     },
     {
       label: t('Controller tokens'),
       to: canViewUsers
-        ? getPageUrl(EdaRoute.UserTokens, { params: { id: user?.id } })
+        ? getPageUrl(EdaRoute.UserTokens, { params: { id: activeEdaUser?.id } })
         : getPageUrl(EdaRoute.MyTokens),
     },
-    { label: user?.username ?? '' },
+    { label: activeEdaUser?.username ?? '' },
   ];
 
   return (

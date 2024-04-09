@@ -2,7 +2,7 @@ import { Button, Modal, ModalVariant } from '@patternfly/react-core';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { usePageDialog } from '../../../../framework';
-import { AccessRole, User } from '../../interfaces/User';
+import { AccessRole, AwxUser } from '../../interfaces/User';
 
 export interface DeleteRoleConfirmationProps {
   /** Title for the modal */
@@ -10,9 +10,9 @@ export interface DeleteRoleConfirmationProps {
   /** Role to be deleted */
   role: AccessRole;
   /** User initiating the deletion request */
-  user: User;
+  user: AwxUser;
   /** Callback called when the user confirms. */
-  onConfirm: (role: AccessRole, user: User) => Promise<void>;
+  onConfirm: (role: AccessRole, user: AwxUser) => Promise<void>;
 
   /** Callback called when the dialog closes. */
   onClose?: () => void;

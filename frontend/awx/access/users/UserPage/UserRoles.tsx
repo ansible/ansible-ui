@@ -6,7 +6,7 @@ import {
   EmptyStateHeader,
   EmptyStateIcon,
 } from '@patternfly/react-core';
-import { CubesIcon, PlusCircleIcon, MinusCircleIcon } from '@patternfly/react-icons';
+import { CubesIcon, MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
@@ -21,14 +21,14 @@ import { useGetItem } from '../../../../common/crud/useGet';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxView } from '../../../common/useAwxView';
 import { Role } from '../../../interfaces/Role';
-import { User } from '../../../interfaces/User';
+import { AwxUser } from '../../../interfaces/User';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useRolesColumns } from '../../roles/useRolesColumns';
 import { useRolesFilters } from '../../roles/useRolesFilters';
 
 export function UserRoles() {
   const params = useParams<{ id: string }>();
-  const { data: user } = useGetItem<User>(awxAPI`/users`, params.id);
+  const { data: user } = useGetItem<AwxUser>(awxAPI`/users`, params.id);
 
   if (!user) {
     return null;
@@ -36,7 +36,7 @@ export function UserRoles() {
   return <UserRolesInternal user={user} />;
 }
 
-function UserRolesInternal(props: { user: User }) {
+function UserRolesInternal(props: { user: AwxUser }) {
   const { user } = props;
   const { t } = useTranslation();
   const toolbarFilters = useRolesFilters();

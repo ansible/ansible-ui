@@ -26,16 +26,16 @@ export function useHubContext() {
 export const HubContextProvider = ({ children }: { children: ReactNode }) => {
   const getFeatureFlags = useSWR<HubFeatureFlags>(hubAPI`/_ui/v1/feature-flags/`, requestGet);
   const getSettings = useSWR<HubSettings>(hubAPI`/_ui/v1/settings/`, requestGet);
-  const hubUser = useHubActiveUser();
+  const { activeHubUser } = useHubActiveUser();
 
   const context = useMemo<HubContext>(
     () => ({
       featureFlags: getFeatureFlags.data as HubFeatureFlags,
       settings: getSettings.data as HubSettings,
-      user: hubUser,
-      hasPermission: (permission) => hasPermission(permission, hubUser!),
+      user: activeHubUser,
+      hasPermission: (permission) => hasPermission(permission, activeHubUser!),
     }),
-    [getFeatureFlags, getSettings, hubUser]
+    [getFeatureFlags, getSettings, activeHubUser]
   );
 
   if (getFeatureFlags.isLoading || getSettings.isLoading) {

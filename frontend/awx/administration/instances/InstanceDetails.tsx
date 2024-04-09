@@ -72,7 +72,7 @@ export function InstanceDetailsTab(props: {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const getPageUrl = useGetPageUrl();
-  const activeUser = useAwxActiveUser();
+  const { activeAwxUser } = useAwxActiveUser();
   const { instance, instanceGroups, instanceForks, handleInstanceForksSlider } = props;
   const toolTipMap: { [item: string]: string } = useNodeTypeTooltip();
   const capacityAvailable = instance.cpu_capacity !== 0 && instance.mem_capacity !== 0;
@@ -174,7 +174,7 @@ export function InstanceDetailsTab(props: {
               onChange={(_event: SliderOnChangeEvent, value: number) =>
                 void handleInstanceForksSlider(instance, value)
               }
-              isDisabled={!activeUser?.is_superuser || !instance.enabled || !capacityAvailable}
+              isDisabled={!activeAwxUser?.is_superuser || !instance.enabled || !capacityAvailable}
             />
           ) : undefined}
         </PageDetail>

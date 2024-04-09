@@ -20,12 +20,13 @@ import {
 } from '../../../../framework';
 import { usePersistentFilters } from '../../../common/PersistentFilters';
 import { useOptions } from '../../../common/crud/useOptions';
+import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
 import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxConfig } from '../../common/useAwxConfig';
 import { useAwxView } from '../../common/useAwxView';
 import { getDocsBaseUrl } from '../../common/util/getDocsBaseUrl';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
-import { User } from '../../interfaces/User';
+import { AwxUser } from '../../interfaces/User';
 import { AwxRoute } from '../../main/AwxRoutes';
 import { useSelectOrganizationsAddUsers } from '../organizations/hooks/useSelectOrganizationsAddUsers';
 import { useSelectOrganizationsRemoveUsers } from '../organizations/hooks/useSelectOrganizationsRemoveUsers';
@@ -34,7 +35,6 @@ import { useSelectTeamsRemoveUsers } from '../teams/hooks/useSelectTeamsRemoveUs
 import { useDeleteUsers } from './hooks/useDeleteUsers';
 import { useUsersColumns } from './hooks/useUsersColumns';
 import { useUsersFilters } from './hooks/useUsersFilters';
-import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
 
 export function Users() {
   const { t } = useTranslation();
@@ -48,7 +48,7 @@ export function Users() {
 
   const tableColumns = useUsersColumns();
 
-  const view = useAwxView<User>({ url: awxAPI`/users/`, toolbarFilters, tableColumns });
+  const view = useAwxView<AwxUser>({ url: awxAPI`/users/`, toolbarFilters, tableColumns });
 
   const deleteUsers = useDeleteUsers(view.unselectItemsAndRefresh);
 
@@ -60,7 +60,7 @@ export function Users() {
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/users/`);
   const canCreateUser = Boolean(data && data.actions && data.actions['POST']);
 
-  const toolbarActions = useMemo<IPageAction<User>[]>(
+  const toolbarActions = useMemo<IPageAction<AwxUser>[]>(
     () => [
       {
         type: PageActionType.Link,
@@ -129,12 +129,12 @@ export function Users() {
     ]
   );
 
-  const rowActions = useMemo<IPageAction<User>[]>(() => {
-    const cannotDeleteUser = (user: User) =>
+  const rowActions = useMemo<IPageAction<AwxUser>[]>(() => {
+    const cannotDeleteUser = (user: AwxUser) =>
       user?.summary_fields?.user_capabilities?.delete
         ? ''
         : t(`The user cannot be deleted due to insufficient permissions.`);
-    const cannotEditUser = (user: User) =>
+    const cannotEditUser = (user: AwxUser) =>
       user?.summary_fields?.user_capabilities?.edit
         ? ''
         : t(`The user cannot be edited due to insufficient permissions.`);
@@ -147,7 +147,7 @@ export function Users() {
         isPinned: true,
         icon: PencilAltIcon,
         label: t('Edit user'),
-        isDisabled: (user: User) => cannotEditUser(user),
+        isDisabled: (user: AwxUser) => cannotEditUser(user),
         onClick: (user) => pageNavigate(AwxRoute.EditUser, { params: { id: user.id } }),
       },
       { type: PageActionType.Seperator },
@@ -186,7 +186,7 @@ export function Users() {
         selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Delete user'),
-        isDisabled: (user: User) => cannotDeleteUser(user),
+        isDisabled: (user: AwxUser) => cannotDeleteUser(user),
         onClick: (user) => deleteUsers([user]),
         isDanger: true,
       },
@@ -217,7 +217,7 @@ export function Users() {
         )}
         headerActions={<ActivityStreamIcon type={'user'} />}
       />
-      <PageTable<User>
+      <PageTable<AwxUser>
         id="awx-users-table"
         toolbarFilters={toolbarFilters}
         toolbarActions={toolbarActions}
@@ -251,14 +251,14 @@ export function AccessTable(props: { url: string }) {
   const toolbarFilters = useUsersFilters();
   const tableColumns = useUsersColumns();
   const getPageUrl = useGetPageUrl();
-  const view = useAwxView<User>({
+  const view = useAwxView<AwxUser>({
     url: props.url,
     toolbarFilters,
     tableColumns,
     disableQueryString: true,
   });
 
-  const toolbarActions = useMemo<IPageAction<User>[]>(
+  const toolbarActions = useMemo<IPageAction<AwxUser>[]>(
     () => [
       {
         type: PageActionType.Link,
@@ -285,7 +285,7 @@ export function AccessTable(props: { url: string }) {
     [getPageUrl, t]
   );
 
-  const rowActions = useMemo<IPageAction<User>[]>(
+  const rowActions = useMemo<IPageAction<AwxUser>[]>(
     () => [
       {
         type: PageActionType.Button,
@@ -301,7 +301,7 @@ export function AccessTable(props: { url: string }) {
   const pageNavigate = usePageNavigate();
 
   return (
-    <PageTable<User>
+    <PageTable<AwxUser>
       id="awx-users-table"
       toolbarFilters={toolbarFilters}
       toolbarActions={toolbarActions}

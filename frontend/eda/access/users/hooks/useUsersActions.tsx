@@ -18,9 +18,9 @@ export function useUsersActions(view: IEdaView<EdaUser>) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const deleteUsers = useDeleteUsers(view.unselectItemsAndRefresh);
-  const activeUser = useEdaActiveUser();
+  const { activeEdaUser } = useEdaActiveUser();
   const isCurrentUserSelected =
-    activeUser && view.selectedItems.length > 0 && view.isSelected(activeUser);
+    activeEdaUser && view.selectedItems.length > 0 && view.isSelected(activeEdaUser);
 
   return useMemo<IPageAction<EdaUser>[]>(
     () => [
@@ -32,7 +32,8 @@ export function useUsersActions(view: IEdaView<EdaUser>) {
         icon: PlusCircleIcon,
         label: t('Create user'),
         isHidden: () =>
-          !activeUser?.is_superuser && !activeUser?.roles.find((role) => role.name === 'Admin'),
+          !activeEdaUser?.is_superuser &&
+          !activeEdaUser?.roles.find((role) => role.name === 'Admin'),
         onClick: () => pageNavigate(EdaRoute.CreateUser),
       },
       {
@@ -45,6 +46,6 @@ export function useUsersActions(view: IEdaView<EdaUser>) {
         isDanger: true,
       },
     ],
-    [deleteUsers, isCurrentUserSelected, activeUser, pageNavigate, t]
+    [deleteUsers, isCurrentUserSelected, activeEdaUser, pageNavigate, t]
   );
 }

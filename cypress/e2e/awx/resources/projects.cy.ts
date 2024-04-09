@@ -4,7 +4,7 @@
 import { randomString } from '../../../../framework/utils/random-string';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
-import { User } from '../../../../frontend/awx/interfaces/User';
+import { AwxUser } from '../../../../frontend/awx/interfaces/User';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 
 // These tests do not modify the project, thus can use the globalProject
@@ -93,7 +93,7 @@ describe('projects', () => {
 describe('project edit and delete tests', () => {
   let project: Project;
   let organization: Organization;
-  let user: User;
+  let user: AwxUser;
 
   before(function () {
     cy.awxLogin();

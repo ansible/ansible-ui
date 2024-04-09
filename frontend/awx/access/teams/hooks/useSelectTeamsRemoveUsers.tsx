@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Team } from '../../../interfaces/Team';
-import { User } from '../../../interfaces/User';
+import { AwxUser } from '../../../interfaces/User';
 import { useRemoveTeamsFromUsers } from './useRemoveTeamsFromUsers';
 import { useSelectTeams } from './useSelectTeams';
 
@@ -10,7 +10,7 @@ export function useSelectTeamsRemoveUsers(onClose?: (teams: Team[]) => void) {
   const selectTeams = useSelectTeams();
   const removeTeamsFromUsers = useRemoveTeamsFromUsers(onClose);
   const selectTeamsRemoveUsers = useCallback(
-    (users: User[]) => {
+    (users: AwxUser[]) => {
       selectTeams(t('Remove users from teams', { count: users.length }), (teams: Team[]) => {
         removeTeamsFromUsers(users, teams);
       });

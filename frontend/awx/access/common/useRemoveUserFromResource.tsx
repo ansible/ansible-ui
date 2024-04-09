@@ -5,23 +5,23 @@ import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxActiveUser } from '../../common/useAwxActiveUser';
 import { useAwxBulkConfirmation } from '../../common/useAwxBulkConfirmation';
-import { User } from '../../interfaces/User';
+import { AwxUser } from '../../interfaces/User';
 import { useUsersColumns } from '../users/hooks/useUsersColumns';
 import { ResourceType } from './ResourceAccessList';
 
 export function useRemoveUsersFromResource() {
   const { t } = useTranslation();
-  const activeUser = useAwxActiveUser();
+  const { activeAwxUser } = useAwxActiveUser();
   const confirmationColumns = useUsersColumns();
-  const removeUserConfirmationDialog = useAwxBulkConfirmation<User>();
+  const removeUserConfirmationDialog = useAwxBulkConfirmation<AwxUser>();
 
   const postRequest = usePostRequest();
 
   const removeUsersFromResource = useCallback(
-    (users: User[], resource: ResourceType, onComplete?: (users: User[]) => void) => {
+    (users: AwxUser[], resource: ResourceType, onComplete?: (users: AwxUser[]) => void) => {
       const canRemoveUsers: boolean =
-        activeUser?.is_superuser || resource?.summary_fields?.user_capabilities?.edit;
-      const cannotRemoveUser = (user: User) => {
+        activeAwxUser?.is_superuser || resource?.summary_fields?.user_capabilities?.edit;
+      const cannotRemoveUser = (user: AwxUser) => {
         if (user.is_superuser) {
           return t('System administrators have unrestricted access to all resources.');
         }
@@ -48,7 +48,7 @@ export function useRemoveUsersFromResource() {
         }),
         actionButtonText: t('Remove user', { count: users.length }),
         items: users.sort((l, r) => compareStrings(l.username, r.username)),
-        keyFn: (user: User) => user.id,
+        keyFn: (user: AwxUser) => user.id,
         alertPrompts:
           undeletableUsers.length > 0
             ? [
@@ -63,9 +63,9 @@ export function useRemoveUsersFromResource() {
         isItemNonActionable: cannotRemoveUser,
         isDanger: true,
         confirmationColumns,
-        actionColumns: [{ header: 'User', cell: (user: User) => user.username }],
+        actionColumns: [{ header: 'User', cell: (user: AwxUser) => user.username }],
         onComplete,
-        actionFn: async (user: User, signal: AbortSignal) => {
+        actionFn: async (user: AwxUser, signal: AbortSignal) => {
           if (user.user_roles) {
             for (const role of user.user_roles) {
               await postRequest(
@@ -81,7 +81,7 @@ export function useRemoveUsersFromResource() {
         },
       });
     },
-    [activeUser?.is_superuser, confirmationColumns, removeUserConfirmationDialog, postRequest, t]
+    [activeAwxUser?.is_superuser, confirmationColumns, removeUserConfirmationDialog, postRequest, t]
   );
   return removeUsersFromResource;
 }
