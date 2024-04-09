@@ -29,21 +29,17 @@ describe('InventoryDetails', () => {
         })
         .then((inventory: Inventory) => {
           cy.mount(<InventoryDetails inventory={inventory} />);
-          cy.get('#name').should('have.text', 'test inventory');
-          cy.get('#organization').should('have.text', 'Default');
-          cy.get('#total-hosts').should('have.text', '1');
-          cy.get('#labels').should('have.text', 'test label');
-          cy.get(
-            '#created > .pf-v5-c-description-list__text > .date-time > .pf-v5-c-button'
-          ).should('have.text', 'awx');
-          cy.get(
-            '#last-modified > .pf-v5-c-description-list__text > .date-time > .pf-v5-c-button'
-          ).should('have.text', 'awx');
+          cy.get('[data-cy="name"]').should('have.text', 'test inventory');
+          cy.get('[data-cy="organization"]').should('have.text', 'Default');
+          cy.get('[data-cy="total-hosts"]').should('have.text', '1');
+          cy.get('[data-cy="labels"]').should('have.text', 'test label');
+          cy.get('[data-cy="last-modified"]').should('contain.text', 'awx');
+          cy.get('[data-cy="created"]').should('contain.text', 'awx');
           cy.get('[data-cy="instance-groups"]').should('contain.text', 'controlplane');
           cy.get('[data-cy="instance-groups"]').should('contain.text', 'default');
           cy.get('[data-cy="instance-groups"]').should('contain.text', 'Container Group 01');
           if (inventory.kind === '') {
-            cy.get('#type').should('have.text', 'Inventory');
+            cy.get('[data-cy="type"]').should('have.text', 'Inventory');
             cy.get('body').should('not.have.descendants', '[data-cy="hosts-with-active-failures"]');
             cy.get('body').should('not.have.descendants', '[data-cy="total-groups"]');
             cy.get('body').should('not.have.descendants', '[data-cy="total-inventory-sources"]');
@@ -53,7 +49,7 @@ describe('InventoryDetails', () => {
             );
           }
           if (inventory.kind === 'smart') {
-            cy.get('#type').should('have.text', 'Smart inventory');
+            cy.get('[data-cy="type"]').should('have.text', 'Smart inventory');
             cy.get('body').should('not.have.descendants', '[data-cy="hosts-with-active-failures"]');
             cy.get('body').should('not.have.descendants', '[data-cy="total-groups"]');
             cy.get('body').should('not.have.descendants', '[data-cy="total-inventory-sources"]');
@@ -63,7 +59,7 @@ describe('InventoryDetails', () => {
             );
           }
           if (inventory.kind === 'constructed') {
-            cy.get('#type').should('have.text', 'Constructed inventory');
+            cy.get('[data-cy="type"]').should('have.text', 'Constructed inventory');
             cy.get('body').should('have.descendants', '[data-cy="hosts-with-active-failures"]');
             cy.get('[data-cy="hosts-with-active-failures"]').should('have.text', 1);
             cy.get('body').should('have.descendants', '[data-cy="total-groups"]');
