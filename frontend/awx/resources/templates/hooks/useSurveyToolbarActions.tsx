@@ -16,12 +16,7 @@ export function useSurveyToolbarActions(view: ISurveyView) {
   const { t } = useTranslation();
 
   const { openManageQuestionOrder } = useManageSurveyQuestions();
-  const onComplete = () => {
-    view.unselectAll();
-    void view.refresh();
-  };
-
-  const deleteQuestions = useDeleteSurveyDialog(onComplete);
+  const deleteQuestions = useDeleteSurveyDialog(view.unselectItemsAndRefresh);
 
   const jobTemplateSurvey = useMatch('/templates/job_template/:id/survey')?.params?.id?.toString();
   const workflowTemplateSurvey = useMatch(

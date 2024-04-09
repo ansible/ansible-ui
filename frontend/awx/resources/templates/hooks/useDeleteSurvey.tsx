@@ -8,7 +8,7 @@ import type { Spec, Survey } from '../../../interfaces/Survey';
 
 export function useDeleteSurvey(props: {
   onClose: () => void;
-  onComplete: () => void;
+  onComplete: (questions: Spec[]) => void;
   onError: (err: unknown) => void;
 }) {
   const { onClose, onComplete, onError } = props;
@@ -49,7 +49,7 @@ export function useDeleteSurvey(props: {
       } catch (error) {
         onError(error);
       } finally {
-        onComplete();
+        onComplete(surveyQuestions);
         onClose();
       }
     },

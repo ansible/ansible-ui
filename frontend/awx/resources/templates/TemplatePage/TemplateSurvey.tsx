@@ -17,6 +17,7 @@ import type { Spec } from '../../../interfaces/Survey';
 import type { JobTemplate } from '../../../interfaces/JobTemplate';
 import type { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 
+import { useDeleteSurveyDialog } from '../hooks/useDeleteSurveyDialog';
 import { useSurveyView } from '../hooks/useSurveyView';
 import { useSurveyColumns } from '../hooks/useSurveyColumns';
 import { useSurveyToolbarActions } from '../hooks/useSurveyToolbarActions';
@@ -80,6 +81,7 @@ export function TemplateSurveyInternal({
 
   const tableColumns = useSurveyColumns();
   const toolbarActions = useSurveyToolbarActions(view);
+  const deleteQuestions = useDeleteSurveyDialog(view.unselectItemsAndRefresh);
 
   const rowActions = useMemo<IPageAction<Spec>[]>(
     () => [
@@ -102,11 +104,11 @@ export function TemplateSurveyInternal({
         label: t('Delete question'),
         isDisabled: () =>
           canDeleteSurvey ? undefined : t('You do not have permission to delete this question.'),
-        onClick: () => alert('TODO'),
+        onClick: (question) => deleteQuestions([question]),
         isDanger: true,
       },
     ],
-    [t, canCreateSurvey, canDeleteSurvey]
+    [t, canCreateSurvey, canDeleteSurvey, deleteQuestions]
   );
 
   return (

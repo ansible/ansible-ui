@@ -1,6 +1,7 @@
+import { useState } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import { Button, Modal, ModalBoxBody, ModalVariant } from '@patternfly/react-core';
+import { Button, Checkbox, Modal, ModalBoxBody, ModalVariant } from '@patternfly/react-core';
 import { usePageDialog, PageTable, usePageAlertToaster } from '../../../../../framework';
 import { usePaged } from '../../../../../framework/PageTable/useTableItems';
 import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
@@ -15,8 +16,14 @@ const ModalBodyDiv = styled.div`
   overflow: hidden;
   border-top: thin solid var(--pf-v5-global--BorderColor--100);
 `;
+const ConfirmBoxDiv = styled.div`
+  margin-left: 32px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+`;
 
-export function useDeleteSurveyDialog(onComplete: () => void) {
+export function useDeleteSurveyDialog(onComplete: (questions: Spec[]) => void) {
   const { t } = useTranslation();
   const [_, setDialog] = usePageDialog();
   const alertToaster = usePageAlertToaster();
@@ -51,7 +58,7 @@ export function useDeleteSurveyDialog(onComplete: () => void) {
 function DeleteSurveyDialog(props: {
   questions: Spec[];
   onClose: () => void;
-  onComplete: () => void;
+  onComplete: (questions: Spec[]) => void;
   onError: (err: unknown) => void;
 }) {
   const { questions, onClose, onComplete, onError } = props;
@@ -59,17 +66,18 @@ function DeleteSurveyDialog(props: {
   const pagination = usePaged(questions);
   const modalColumns = useSurveyColumns();
   const deleteSurvey = useDeleteSurvey({ onClose, onComplete, onError });
+  const [confirmed, setConfirmed] = useState(false);
 
   return (
     <Modal
-      titleIconVariant="danger"
-      title={t('Delete survey')}
+      isOpen
+      hasNoBodyWrapper
+      titleIconVariant="warning"
+      title={t('Permanently delete survey questions')}
       aria-label={t('Delete survey')}
-      ouiaId={t('Delete survey')}
+      ouiaId="delete-survey-dialog"
       data-cy="delete-survey-dialog"
       variant={ModalVariant.medium}
-      description={t(`Are you sure you want to delete the survey questions below?`)}
-      isOpen
       onClose={props.onClose}
       actions={[
         <Button
@@ -79,6 +87,7 @@ function DeleteSurveyDialog(props: {
           variant="danger"
           onClick={() => void deleteSurvey(questions)}
           aria-label={t`Confirm delete`}
+          isAriaDisabled={!confirmed}
         >
           {t(`Delete`)}
         </Button>,
@@ -102,13 +111,24 @@ function DeleteSurveyDialog(props: {
               tableColumns={modalColumns}
               keyFn={(question) => question.variable}
               compact
-              errorStateTitle="Error"
-              emptyStateTitle="No items"
+              errorStateTitle={t`Error`}
+              emptyStateTitle={t`No items`}
               autoHidePagination={true}
               disableBodyPadding
               {...pagination}
             />
           </ModalBodyDiv>
+          <ConfirmBoxDiv>
+            <Checkbox
+              id="confirm"
+              ouiaId="confirm"
+              label={t('Yes, I confirm that I want to remove these {{count}} survey questions.', {
+                count: questions.length,
+              })}
+              isChecked={confirmed}
+              onChange={(_event, val) => setConfirmed(val)}
+            />
+          </ConfirmBoxDiv>
         </ModalBoxBody>
       )}
     </Modal>
