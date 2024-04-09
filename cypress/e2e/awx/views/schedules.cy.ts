@@ -82,6 +82,7 @@ describe('schedules', () => {
     cy.navigateTo('awx', 'schedules');
     cy.getBy('[data-cy="create-schedule"]').click();
     cy.get('.pf-v5-c-form__label-text').contains(/Resource type/);
+    cy.getBy('[data-cy="wizard-cancel"]').click();
   });
 
   it('job template renders prompt step', () => {
@@ -96,6 +97,7 @@ describe('schedules', () => {
       cy.selectDropdownOptionByResourceName('node_type', 'Job template');
       cy.selectDropdownOptionByResourceName('job-template-select', jobTemplate.name);
       cy.get('[data-cy="wizard-nav"] li').eq(1).should('contain.text', 'Prompts');
+      cy.getBy('[data-cy="wizard-cancel"]').click();
     });
   });
 
@@ -110,6 +112,7 @@ describe('schedules', () => {
       cy.selectDropdownOptionByResourceName('node_type', 'Workflow job template');
       cy.selectDropdownOptionByResourceName('job-template-select', workflowJobTemplate.name);
       cy.get('[data-cy="wizard-nav"] li').eq(1).should('contain.text', 'Prompts');
+      cy.getBy('[data-cy="wizard-cancel"]').click();
     });
   });
 
@@ -120,6 +123,7 @@ describe('schedules', () => {
     cy.getBy('[data-cy="project"]').click();
     cy.selectDropdownOptionByResourceName('project', project.name);
     cy.get('[data-cy="wizard-nav"] li').eq(1).should('contain.text', 'Rules');
+    cy.getBy('[data-cy="wizard-cancel"]').click();
   });
 
   it('management jobs does not renders prompt step', () => {
@@ -131,6 +135,7 @@ describe('schedules', () => {
       'Cleanup Activity Stream'
     );
     cy.get('[data-cy="wizard-nav"] li').eq(1).should('contain.text', 'Rules');
+    cy.getBy('[data-cy="wizard-cancel"]').click();
   });
 
   it('inventory source does not renders prompt step', () => {
@@ -140,5 +145,6 @@ describe('schedules', () => {
     cy.selectDropdownOptionByResourceName('inventory', inventory.name);
     cy.selectDropdownOptionByResourceName('inventory-source-select', inventorySource.name);
     cy.get('[data-cy="wizard-nav"] li').eq(1).should('contain.text', 'Rules');
+    cy.getBy('[data-cy="wizard-cancel"]').click();
   });
 });
