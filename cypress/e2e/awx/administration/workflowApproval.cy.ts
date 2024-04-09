@@ -3,10 +3,10 @@ import { InventorySource } from '../../../../frontend/awx/interfaces/InventorySo
 import { JobTemplate } from '../../../../frontend/awx/interfaces/JobTemplate';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
-import { User } from '../../../../frontend/awx/interfaces/User';
+import { AwxUser } from '../../../../frontend/awx/interfaces/User';
+import { WorkflowJob } from '../../../../frontend/awx/interfaces/WorkflowJob';
 import { WorkflowJobTemplate } from '../../../../frontend/awx/interfaces/WorkflowJobTemplate';
 import { WorkflowNode } from '../../../../frontend/awx/interfaces/WorkflowNode';
-import { WorkflowJob } from '../../../../frontend/awx/interfaces/WorkflowJob';
 
 /* Shared functions across test cases */
 const wfaURL = '/administration/workflow-approvals/';
@@ -80,10 +80,10 @@ function actAssertAndDeleteWorkflowApproval(
 describe('Workflow Approvals - List View', () => {
   let organization: Organization;
   let project: Project;
-  let user: User;
-  let userWFApprove: User;
-  let userWFDeny: User;
-  let userWFCancel: User;
+  let user: AwxUser;
+  let userWFApprove: AwxUser;
+  let userWFDeny: AwxUser;
+  let userWFCancel: AwxUser;
   let inventory: Inventory;
   let inventorySource: InventorySource;
   let jobTemplate: JobTemplate;

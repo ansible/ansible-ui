@@ -14,7 +14,7 @@ import { useGet } from '../../common/crud/useGet';
 import { useClearCache } from '../../common/useInvalidateCache';
 import { AwxItemsResponse } from '../common/AwxItemsResponse';
 import { awxAPI } from '../common/api/awx-utils';
-import { useAwxActiveUser, useAwxActiveUserContext } from '../common/useAwxActiveUser';
+import { useAwxActiveUser } from '../common/useAwxActiveUser';
 import { useAwxConfig } from '../common/useAwxConfig';
 import { useAwxWebSocketSubscription } from '../common/useAwxWebSocket';
 import { getDocsBaseUrl } from '../common/util/getDocsBaseUrl';
@@ -28,15 +28,13 @@ export function AwxMasthead() {
   const { clearAllCache } = useClearCache();
   const config = useAwxConfig();
   const pageNavigate = usePageNavigate();
-  const activeUser = useAwxActiveUser();
+  const { activeAwxUser, refreshActiveAwxUser } = useAwxActiveUser();
   useAwxNotifications();
-  const activeUserContext = useAwxActiveUserContext();
   const logout = useCallback(async () => {
     await fetch('/api/logout/');
     clearAllCache();
-    void activeUserContext?.mutate();
-  }, [activeUserContext, clearAllCache]);
-
+    refreshActiveAwxUser?.();
+  }, [clearAllCache, refreshActiveAwxUser]);
   return (
     <PageMasthead brand={<AwxBrand style={{ height: 60 }} />}>
       <ToolbarGroup variant="icon-button-group" style={{ flexGrow: 1 }}>
@@ -78,12 +76,12 @@ export function AwxMasthead() {
                 <UserCircleIcon />
               </Icon>
             }
-            label={activeUser?.username}
+            label={activeAwxUser?.username}
           >
             <DropdownItem
               id="user-details"
               label={t('User details')}
-              onClick={() => pageNavigate(AwxRoute.UserPage, { params: { id: activeUser?.id } })}
+              onClick={() => pageNavigate(AwxRoute.UserPage, { params: { id: activeAwxUser?.id } })}
             >
               {t('User details')}
             </DropdownItem>
