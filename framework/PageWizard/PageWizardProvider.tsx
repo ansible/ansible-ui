@@ -28,6 +28,7 @@ export function PageWizardProvider<T extends object>(props: {
   const [visibleSteps, setVisibleSteps] = useState<PageWizardStep[]>(() => {
     return props.steps.filter((step) => isStepVisible(step, wizardData));
   });
+  /** allSteps is a flattened list of all the steps (this includes parent and substeps) */
   const allSteps = useMemo(() => {
     return props.steps.reduce((acc: PageWizardStep[], step) => {
       acc.push(step);
@@ -37,6 +38,7 @@ export function PageWizardProvider<T extends object>(props: {
       return acc;
     }, []);
   }, [props.steps]);
+  /** visibleStepsFlattened is a flattened list of all the steps filtered by visibility (this includes parent and substeps) */
   const [visibleStepsFlattened, setVisibleStepsFlattened] = useState<PageWizardStep[]>(() => {
     return allSteps.filter((step) => isStepVisible(step, wizardData));
   });

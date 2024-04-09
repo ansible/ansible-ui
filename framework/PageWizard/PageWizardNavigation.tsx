@@ -46,7 +46,7 @@ export function PageWizardNavigation() {
             (isPageWizardParentStep(step) &&
               step.substeps?.some((substep) => substep.id === activeStep.id))
               ? // eslint-disable-next-line i18next/no-literal-string
-                ' pf-m-current'
+                ' pf-m-current' // If the active step is a substep, highlight its parent step as active using className pf-m-current
               : '') + // eslint-disable-line i18next/no-literal-string
             (isDisabled ? ' pf-m-disabled' : ''); // eslint-disable-line i18next/no-literal-string
 
