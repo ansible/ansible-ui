@@ -88,6 +88,8 @@ export function CredentialDetailsInner(props: { credential: Credential }) {
     }, {});
   }, [inputSources]);
 
+  console.log(inputSources, inputSourcesMap, 'inputSourcesMap');
+
   if (error)
     return (
       <AwxError
@@ -95,7 +97,9 @@ export function CredentialDetailsInner(props: { credential: Credential }) {
         handleRefresh={error ? refresh : refreshInputSources}
       />
     );
+
   if (isInputSourceLoading) return <LoadingPage breadcrumbs tabs />;
+
   return (
     <PageDetails>
       <PageDetail label={t('Name')}>{credential.name}</PageDetail>
