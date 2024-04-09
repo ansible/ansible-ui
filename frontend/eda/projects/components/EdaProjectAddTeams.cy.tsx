@@ -26,7 +26,7 @@ describe('EdaProjectAddTeams', () => {
     cy.get('table tbody').find('tr').should('have.length', 4);
   });
   it('can filter teams by name', () => {
-    cy.intercept(edaAPI`/teams/?name=Gal*`).as('nameFilterRequest');
+    cy.intercept(edaAPI`/teams/?name=Gal*`, { statusCode: 200 }).as('nameFilterRequest');
     cy.get('[data-cy="text-input"]').within(() => {
       cy.get('input').clear().type('Gal', { delay: 0 });
     });

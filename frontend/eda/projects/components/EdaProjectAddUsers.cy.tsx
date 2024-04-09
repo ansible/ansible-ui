@@ -26,7 +26,7 @@ describe('EdaProjectAddUsers', () => {
     cy.get('table tbody').find('tr').should('have.length', 6);
   });
   it('can filter users by username', () => {
-    cy.intercept(edaAPI`/users/?name=demo*`).as('nameFilterRequest');
+    cy.intercept(edaAPI`/users/?name=demo*`, { statusCode: 200 }).as('nameFilterRequest');
     cy.get('[data-cy="text-input"]').within(() => {
       cy.get('input').clear().type('demo', { delay: 0 });
     });
