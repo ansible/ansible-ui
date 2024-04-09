@@ -43,10 +43,9 @@ export function InventoryHostDetails() {
 }
 
 function inventoryKindToType(kind: string) {
-  if (kind === '') return 'inventory';
   if (kind === 'smart') return 'smart_inventory';
   if (kind === 'constructed') return 'constructed_inventory';
-  return '';
+  return 'inventory';
 }
 
 export function InventoryHostDetailsInner(props: { host: AwxHost }) {
@@ -77,7 +76,7 @@ export function InventoryHostDetailsInner(props: { host: AwxHost }) {
           to={getPageUrl(AwxRoute.InventoryDetails, {
             params: {
               id: host.summary_fields?.inventory?.id,
-              inventory_type: inventoryKindToType(host.summary_fields?.inventory.kind),
+              inventory_type: inventoryKindToType(host.summary_fields?.inventory?.kind),
             },
           })}
         />
