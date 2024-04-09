@@ -16,7 +16,7 @@ export interface PageWizardBasicStep {
 }
 
 /** Type used to define parent steps. */
-export interface PageWizardParentStep extends PageWizardBasicStep {
+export interface PageWizardParentStep extends Omit<PageWizardBasicStep, 'inputs' | 'validate'> {
   substeps: PageWizardBasicStep[];
 }
 
