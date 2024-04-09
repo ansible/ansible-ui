@@ -83,8 +83,4 @@ describe('EDA Users List', () => {
       cy.clickButton(/^Close$/);
     });
   });
-
-  it.skip('can view the groups that the user is associated with', () => {
-    // TODO: Future Scope as per Mock ups
-  });
 });

@@ -26,10 +26,6 @@ describe('EDA decision environment- Create, Edit, Delete', () => {
     });
   });
 
-  it.skip('can create an decision environment and test the connection', () => {
-    //write test here
-  });
-
   it('can verify edit functionality of a decision environment', () => {
     cy.createEdaDecisionEnvironment().then((edaDE) => {
       cy.navigateTo('eda', 'decision-environments');
@@ -49,10 +45,6 @@ describe('EDA decision environment- Create, Edit, Delete', () => {
       cy.verifyPageTitle(`${edaDE.name}edited`);
       cy.deleteEdaDecisionEnvironment(edaDE);
     });
-  });
-
-  it.skip('can sync a decision environment to Controller', () => {
-    //should this test be in this repo, or should it be moved to a private repo?
   });
 
   it('can delete a decision environment from the details page', () => {
