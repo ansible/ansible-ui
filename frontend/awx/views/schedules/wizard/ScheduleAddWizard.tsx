@@ -1,13 +1,7 @@
 import { DateTime } from 'luxon';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import {
-  PageHeader,
-  PageLayout,
-  PageNotImplemented,
-  PageWizard,
-  PageWizardStep,
-} from '../../../../../framework';
+import { PageHeader, PageLayout, PageWizard, PageWizardStep } from '../../../../../framework';
 import { useGetPageUrl } from '../../../../../framework/PageNavigation/useGetPageUrl';
 import { dateToInputDateTime } from '../../../../../framework/utils/dateTimeHelpers';
 import { AwxRoute } from '../../../main/AwxRoutes';
@@ -22,6 +16,7 @@ import { NodePromptsStep } from '../../../resources/templates/WorkflowVisualizer
 import { WizardFormValues } from '../../../resources/templates/WorkflowVisualizer/types';
 import { shouldHideOtherStep } from '../../../resources/templates/WorkflowVisualizer/wizard/helpers';
 import { RESOURCE_TYPE } from '../../../resources/templates/WorkflowVisualizer/constants';
+import { NodeReviewStep } from '../../../resources/templates/WorkflowVisualizer/wizard/NodeReviewStep';
 
 export function ScheduleAddWizard() {
   const { t } = useTranslation();
@@ -95,7 +90,7 @@ export function ScheduleAddWizard() {
       label: t('Exceptions'),
       inputs: <ExceptionsStep />,
     },
-    { id: 'review', label: t('Review'), inputs: <PageNotImplemented /> },
+    { id: 'review', label: t('Review'), inputs: <NodeReviewStep /> },
   ];
   const initialValues = {
     details: {
