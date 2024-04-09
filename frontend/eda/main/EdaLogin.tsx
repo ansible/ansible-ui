@@ -2,13 +2,12 @@ import { Page } from '@patternfly/react-core';
 import { LoadingState } from '../../../framework/components/LoadingState';
 import { Login } from '../../common/Login';
 import { edaAPI } from '../common/eda-utils';
-import { useEdaActiveUser, useEdaActiveUserContext } from '../common/useEdaActiveUser';
+import { useEdaActiveUser } from '../common/useEdaActiveUser';
 
 export function EdaLogin(props: { children: React.ReactNode }) {
-  const edaActiveUserContext = useEdaActiveUserContext();
-  const edaActiveUser = useEdaActiveUser();
+  const { activeEdaUser, activeEdaUserIsLoading, refreshActiveEdaUser } = useEdaActiveUser();
 
-  if (edaActiveUserContext?.isLoading) {
+  if (activeEdaUserIsLoading) {
     return (
       <Page>
         <LoadingState />
@@ -16,12 +15,9 @@ export function EdaLogin(props: { children: React.ReactNode }) {
     );
   }
 
-  if (!edaActiveUser) {
+  if (!activeEdaUser) {
     return (
-      <Login
-        apiUrl={edaAPI`/auth/session/login/`}
-        onSuccess={() => void edaActiveUserContext?.mutate()}
-      />
+      <Login apiUrl={edaAPI`/auth/session/login/`} onSuccess={() => refreshActiveEdaUser?.()} />
     );
   }
 

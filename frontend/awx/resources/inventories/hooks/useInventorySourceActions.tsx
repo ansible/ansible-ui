@@ -2,6 +2,7 @@ import { ButtonVariant } from '@patternfly/react-core';
 import { PencilAltIcon, RocketIcon, TrashIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import {
   IPageAction,
   PageActionSelection,
@@ -15,7 +16,6 @@ import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
 import { InventorySource } from '../../../interfaces/InventorySource';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useDeleteInventorySources } from './useDeleteInventorySources';
-import { useParams } from 'react-router-dom';
 
 type InventorySourceActionOptions = {
   onInventorySourcesDeleted: (inventorySources: InventorySource[]) => void;
@@ -29,7 +29,7 @@ export function useInventorySourceActions({
   const deleteInventorySources = useDeleteInventorySources(onInventorySourcesDeleted);
   const params = useParams<{ inventory_type: string }>();
 
-  const activeUser = useAwxActiveUser();
+  const { activeAwxUser } = useAwxActiveUser();
   const alertToaster = usePageAlertToaster();
 
   const postRequest = usePostRequest();
@@ -57,7 +57,7 @@ export function useInventorySourceActions({
 
       if (
         !inventorySource?.summary_fields?.user_capabilities?.delete &&
-        !activeUser?.is_system_auditor
+        !activeAwxUser?.is_system_auditor
       ) {
         return t(`The inventory source cannot be deleted due to insufficient permission`);
       }
@@ -65,12 +65,12 @@ export function useInventorySourceActions({
       return '';
     };
     const cannotEditInventorySource = (inventorySource: InventorySource): string =>
-      inventorySource?.summary_fields?.user_capabilities?.edit && !activeUser?.is_system_auditor
+      inventorySource?.summary_fields?.user_capabilities?.edit && !activeAwxUser?.is_system_auditor
         ? ''
         : t(`The inventory source cannot be edited due to insufficient permission`);
     const cannotLaunchInventorySourceUpdate = (inventorySource: InventorySource): string => {
       return inventorySource.summary_fields.user_capabilities.start &&
-        !activeUser?.is_system_auditor
+        !activeAwxUser?.is_system_auditor
         ? ''
         : t(`The inventory source cannot be updated due to insufficient permission`);
     };
@@ -119,5 +119,5 @@ export function useInventorySourceActions({
       },
     ];
     return itemActions;
-  }, [deleteInventorySources, pageNavigate, handleUpdate, activeUser, t, params.inventory_type]);
+  }, [deleteInventorySources, pageNavigate, handleUpdate, activeAwxUser, t, params.inventory_type]);
 }
