@@ -19,7 +19,7 @@ import { PageFormGroup } from '../../../framework/PageForm/Inputs/PageFormGroup'
 import { Controller, useFieldArray, useFormContext, useWatch } from 'react-hook-form';
 import { PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import styled from 'styled-components';
-import React, { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { getDocsBaseUrl } from './util/getDocsBaseUrl';
 import { useAwxConfig } from './useAwxConfig';
 
@@ -48,9 +48,11 @@ export function MultipleChoiceField(props: IProps) {
 
   const docsURL = `${getDocsBaseUrl(config)}/html/userguide/job_templates.html#surveys`;
 
+  const emptyChoice = t('Choice option cannot be empty.');
+
   const defaultOptLabel = t('Default option');
 
-  const { control, setValue } = useFormContext();
+  const { control, setValue, setError, clearErrors } = useFormContext();
 
   const { fields, append, remove, update, replace } = useFieldArray({
     control,
@@ -63,9 +65,22 @@ export function MultipleChoiceField(props: IProps) {
   const addChoice = (useWatch({ name: 'add-choice' }) as string) ?? '';
 
   const handleAdd = () => {
+    if (addChoice.length <= 0) {
+      setError('add-choice', { message: emptyChoice });
+      return;
+    }
+
     append({ name: addChoice, default: false });
     setValue('add-choice', '');
+    clearErrors('add-choice');
   };
+
+  useEffect(() => {
+    if (type === 'multiplechoice')
+      replace(updatedChoices.map((choice) => ({ ...choice, default: false })));
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [type]);
 
   const plainChoices = useMemo(() => choices.map((choice) => choice.name), [choices]);
   return (
@@ -96,6 +111,11 @@ export function MultipleChoiceField(props: IProps) {
                   aria-label={t('Add choice input')}
                   {...field}
                   placeholder={t('Enter multiple choice option')}
+                  onKeyUp={(e) => {
+                    if (e.key === 'Enter') {
+                      handleAdd();
+                    }
+                  }}
                 />
                 {error?.message && (
                   <FormHelperText>
@@ -128,7 +148,7 @@ export function MultipleChoiceField(props: IProps) {
         <Flex
           columnGap={{ default: 'columnGapNone' }}
           alignContent={{ default: 'alignContentSpaceBetween' }}
-          key={index}
+          key={choice.id}
           style={{ marginBottom: 'var(--pf-v5-global--spacer--sm)' }}
         >
           <FlexItem flex={{ default: 'flex_1' }}>
@@ -137,7 +157,7 @@ export function MultipleChoiceField(props: IProps) {
                 name={`formattedChoices[${index}].name`}
                 control={control}
                 rules={{
-                  required: t('Choice option cannot be empty.'),
+                  required: emptyChoice,
                 }}
                 render={({ field, fieldState: { error } }) => (
                   <>
@@ -147,6 +167,10 @@ export function MultipleChoiceField(props: IProps) {
                       data-cy={`choice-option-${index}`}
                       aria-label={t('Choice option')}
                       {...field}
+                      onKeyUp={(e) => {
+                        if (e.key === 'Enter' && updatedChoices[index].name.length <= 0)
+                          setError(`formattedChoices[${index}].name`, { message: emptyChoice });
+                      }}
                     />
                     {error?.message && (
                       <FormHelperText>
@@ -187,18 +211,20 @@ export function MultipleChoiceField(props: IProps) {
                           data-cy={`choice-radio-${index}`}
                           id={`choice-radio-${index}`}
                           label={defaultOptLabel}
-                          isDisabled={updatedChoices[index]?.name.length <= 0}
                           onChange={() => {
                             replace(
-                              updatedChoices.map((choice) => ({ ...choice, default: false }))
+                              updatedChoices.map((choice, i) => ({
+                                ...choice,
+                                default: index === i ? true : false,
+                              }))
                             );
-                            update(index, { ...choice, default: true });
                           }}
                           onClick={() => {
                             if (choice.default === true)
                               update(index, { ...choice, default: false });
                           }}
                           isChecked={choice.default}
+                          isDisabled={updatedChoices[index]?.name.length <= 0}
                         />
                       ) : (
                         <Checkbox

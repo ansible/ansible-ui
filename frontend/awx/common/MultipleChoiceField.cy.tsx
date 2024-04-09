@@ -83,7 +83,8 @@ describe('MultipleChoiceField', () => {
     });
 
     it('should display errors if component is not valid', () => {
-      cy.getByDataCy('choice-option-0').clear().type('{enter}');
+      cy.getByDataCy('choice-option-0').clear();
+      cy.getByDataCy('choice-option-0').type('{enter}');
       cy.get('[data-cy="choice-radio-0"]').should('be.disabled');
       cy.contains('Choice option cannot be empty.');
     });
