@@ -1,26 +1,36 @@
-import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
+import { createContext, ReactNode, useContext, useMemo } from 'react';
 import useSWR from 'swr';
 import { requestGet } from '../../common/crud/Data';
 import { Config } from '../interfaces/Config';
 import { awxAPI } from './api/awx-utils';
 
-const AwxConfigContext = createContext<Config | null | undefined>(undefined);
+const AwxConfigContext = createContext<{
+  awxConfig?: Config;
+  awxConfigIsLoading?: boolean;
+  awxConfigError?: Error;
+  refreshAwxConfig?: () => void;
+}>({});
 
-/**
- * Get the AWX configuration settings
- * @returns undefined while querying, null if no data was retrieved, otherwise the configuration.
- */
 export function useAwxConfig() {
+  return useContext(AwxConfigContext).awxConfig;
+}
+
+export function useAwxConfigState() {
   return useContext(AwxConfigContext);
 }
 
 export function AwxConfigProvider(props: { children?: ReactNode }) {
-  const [config, setConfig] = useState<Config | null | undefined>(undefined);
   const configResponse = useSWR<Config>(awxAPI`/config/`, requestGet);
-  useEffect(() => {
-    if (configResponse.data) {
-      setConfig(configResponse.data ?? null);
-    }
-  }, [configResponse.data]);
-  return <AwxConfigContext.Provider value={config}>{props.children}</AwxConfigContext.Provider>;
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const { isLoading, error, data, mutate } = configResponse;
+  const value = useMemo(
+    () => ({
+      awxConfig: data,
+      awxConfigIsLoadind: isLoading,
+      awxConfigError: error instanceof Error ? error : new Error('Failed to load AWX config'),
+      refreshAwxConfig: () => void mutate(undefined),
+    }),
+    [data, error, isLoading, mutate]
+  );
+  return <AwxConfigContext.Provider value={value}>{props.children}</AwxConfigContext.Provider>;
 }
