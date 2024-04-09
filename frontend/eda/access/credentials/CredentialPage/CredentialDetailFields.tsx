@@ -20,7 +20,7 @@ export function CredentialDetailFields(props: { credential: EdaCredential }) {
     <>
       {Object.keys(props?.credential?.inputs).map((label, idx) => {
         return typeof Object.values(props?.credential?.inputs || {}).at(idx) !== 'boolean' ? (
-          <PageDetail key={label} label={label}>
+          <PageDetail key={label} label={capitalizeFirstLetter(label)}>
             {Object.values(props?.credential?.inputs || {}).at(idx) as string}
           </PageDetail>
         ) : (
