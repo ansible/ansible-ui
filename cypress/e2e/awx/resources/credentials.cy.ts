@@ -3,13 +3,13 @@
 import { randomString } from '../../../../framework/utils/random-string';
 import { Credential } from '../../../../frontend/awx/interfaces/Credential';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
-import { User } from '../../../../frontend/awx/interfaces/User';
+import { AwxUser } from '../../../../frontend/awx/interfaces/User';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 
 describe('credentials', () => {
   let organization: Organization;
   let credential: Credential;
-  let user: User;
+  let user: AwxUser;
 
   before(() => {
     cy.awxLogin();

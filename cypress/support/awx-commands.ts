@@ -17,16 +17,16 @@ import { Job } from '../../frontend/awx/interfaces/Job';
 import { JobEvent } from '../../frontend/awx/interfaces/JobEvent';
 import { JobTemplate } from '../../frontend/awx/interfaces/JobTemplate';
 import { Label } from '../../frontend/awx/interfaces/Label';
+import { NotificationTemplate } from '../../frontend/awx/interfaces/NotificationTemplate';
 import { Organization } from '../../frontend/awx/interfaces/Organization';
 import { Project } from '../../frontend/awx/interfaces/Project';
 import { Schedule } from '../../frontend/awx/interfaces/Schedule';
 import { Team } from '../../frontend/awx/interfaces/Team';
-import { User } from '../../frontend/awx/interfaces/User';
+import { AwxUser } from '../../frontend/awx/interfaces/User';
+import { WorkflowApproval } from '../../frontend/awx/interfaces/WorkflowApproval';
 import { WorkflowJobTemplate } from '../../frontend/awx/interfaces/WorkflowJobTemplate';
 import { WorkflowJobNode, WorkflowNode } from '../../frontend/awx/interfaces/WorkflowNode';
 import { awxAPI } from './formatApiPathForAwx';
-import { NotificationTemplate } from '../../frontend/awx/interfaces/NotificationTemplate';
-import { WorkflowApproval } from '../../frontend/awx/interfaces/WorkflowApproval';
 
 //  AWX related custom command implementation
 
@@ -746,7 +746,7 @@ Cypress.Commands.add(
 );
 
 Cypress.Commands.add('createAwxUser', (organization: Organization) => {
-  cy.awxRequestPost<Omit<User, 'id' | 'auth' | 'summary_fields'>, User>(
+  cy.awxRequestPost<Omit<AwxUser, 'id' | 'auth' | 'summary_fields'>, AwxUser>(
     awxAPI`/organizations/${organization.id.toString()}/users/`,
     {
       username: 'e2e-user-' + randomString(4),
@@ -761,7 +761,7 @@ Cypress.Commands.add('createAwxUser', (organization: Organization) => {
 Cypress.Commands.add(
   'deleteAwxUser',
   (
-    user: User,
+    user: AwxUser,
     options?: {
       /** Whether to fail on response codes other than 2xx and 3xx */
       failOnStatusCode?: boolean;

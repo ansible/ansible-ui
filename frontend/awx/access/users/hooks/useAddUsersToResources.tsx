@@ -3,21 +3,21 @@ import { useTranslation } from 'react-i18next';
 import { usePostRequest } from '../../../../common/crud/usePostRequest';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxBulkActionDialog } from '../../../common/useAwxBulkActionDialog';
-import { User } from '../../../interfaces/User';
+import { AwxUser } from '../../../interfaces/User';
 import { ResourceType } from '../../common/ResourceAccessList';
 
 export function useAddUsersToResources() {
   const { t } = useTranslation();
-  const userProgressDialog = useAwxBulkActionDialog<User>();
+  const userProgressDialog = useAwxBulkActionDialog<AwxUser>();
   const postRequest = usePostRequest();
   const addUserToTeams = useCallback(
-    (users: User[], resources: ResourceType[], onComplete?: (users: User[]) => void) => {
+    (users: AwxUser[], resources: ResourceType[], onComplete?: (users: AwxUser[]) => void) => {
       userProgressDialog({
         title: t('Adding users', { count: resources.length }),
-        keyFn: (user: User) => user.id,
+        keyFn: (user: AwxUser) => user.id,
         items: users,
-        actionColumns: [{ header: 'User', cell: (user: User) => user.username }],
-        actionFn: async (user: User, signal: AbortSignal) => {
+        actionColumns: [{ header: 'User', cell: (user: AwxUser) => user.username }],
+        actionFn: async (user: AwxUser, signal: AbortSignal) => {
           for (const resource of resources) {
             await postRequest(
               awxAPI`/users/${user.id.toString()}/roles/`,

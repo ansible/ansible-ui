@@ -10,7 +10,7 @@ import { AwxPageForm } from '../../common/AwxPageForm';
 import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxBulkActionDialog } from '../../common/useAwxBulkActionDialog';
 import { Team } from '../../interfaces/Team';
-import { User } from '../../interfaces/User';
+import { AwxUser } from '../../interfaces/User';
 import { PageFormInventorySelect } from '../../resources/inventories/components/PageFormInventorySelect';
 import { PageFormProjectSelect } from '../../resources/projects/components/PageFormProjectSelect';
 import { PageFormJobTemplateSelect } from '../../resources/templates/components/PageFormJobTemplateSelect';
@@ -21,7 +21,7 @@ import { AwxResourceTypeRoles, useAwxRoles } from './useAwxRoles';
 
 interface UserRole {
   index: number;
-  user: User;
+  user: AwxUser;
   resource: { name: string };
   roleId: number;
   roleName: string;
@@ -37,7 +37,7 @@ interface TeamRole {
 
 type AddRole = UserRole | TeamRole;
 
-export function AddRolesForm(props: { users?: User[]; teams?: Team[]; onClose?: () => void }) {
+export function AddRolesForm(props: { users?: AwxUser[]; teams?: Team[]; onClose?: () => void }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const openBulkActionDialog = useAwxBulkActionDialog<AddRole>();

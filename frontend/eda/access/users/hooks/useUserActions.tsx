@@ -18,7 +18,7 @@ export function useUserActions(view: IEdaView<EdaUser>) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const deleteUsers = useDeleteUsers(view.unselectItemsAndRefresh);
-  const activeUser = useEdaActiveUser();
+  const { activeEdaUser } = useEdaActiveUser();
 
   return useMemo<IPageAction<EdaUser>[]>(
     () => [
@@ -41,12 +41,12 @@ export function useUserActions(view: IEdaView<EdaUser>) {
         label: t('Delete user'),
         onClick: (user: EdaUser) => deleteUsers([user]),
         isDisabled: (user) =>
-          !activeUser || Number(user.id) === Number(activeUser.id)
+          !activeEdaUser || Number(user.id) === Number(activeEdaUser.id)
             ? t('Current user cannot be deleted')
             : undefined,
         isDanger: true,
       },
     ],
-    [activeUser, deleteUsers, pageNavigate, t]
+    [activeEdaUser, deleteUsers, pageNavigate, t]
   );
 }
