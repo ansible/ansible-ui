@@ -180,7 +180,7 @@ describe('Applications', () => {
               );
               cy.get('[data-ouia-component-id="submit"]').click();
               cy.wait('@deletedApp').then((deletedApp) => {
-                expect(deletedApp.response.statusCode).to.eql(204);
+                expect(deletedApp?.response?.statusCode).to.eql(204);
               });
               cy.filterTableByTextFilter('name', response.name);
               cy.contains(
