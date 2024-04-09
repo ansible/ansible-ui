@@ -33,7 +33,7 @@ export function EdaActiveUserProvider(props: { children: ReactNode }) {
   const state = useMemo<EdaActiveUserState>(() => {
     return {
       activeEdaUser,
-      refreshActiveEdaUser: () => void mutate(),
+      refreshActiveEdaUser: () => void mutate(undefined),
       activeEdaUserIsLoading,
     };
   }, [activeEdaUser, activeEdaUserIsLoading, mutate]);

@@ -35,7 +35,7 @@ export function AwxActiveUserProvider(props: { children: ReactNode }) {
   const state = useMemo<ActiveUserState>(() => {
     return {
       activeAwxUser,
-      refreshActiveAwxUser: () => void mutate(),
+      refreshActiveAwxUser: () => void mutate(undefined),
       activeAwxUserIsLoading,
     };
   }, [activeAwxUser, activeAwxUserIsLoading, mutate]);

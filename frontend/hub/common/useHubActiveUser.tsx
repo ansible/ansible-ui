@@ -33,7 +33,7 @@ export function HubActiveUserProvider(props: { children: ReactNode }) {
   const state = useMemo<HubActiveUserState>(() => {
     return {
       activeHubUser,
-      refreshActiveHubUser: () => void mutate(),
+      refreshActiveHubUser: () => void mutate(undefined),
       activeHubUserIsLoading,
     };
   }, [activeHubUser, activeHubUserIsLoading, mutate]);
