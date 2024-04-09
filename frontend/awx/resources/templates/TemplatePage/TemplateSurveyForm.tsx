@@ -128,7 +128,7 @@ export function TemplateSurveyForm(props: IProps) {
     question_name: question?.question_name || '',
     question_description: question?.question_description || '',
     required: question ? question?.required : true,
-    type: question?.type ?? '',
+    type: question?.type ?? 'text',
     variable: question?.variable || '',
     min: question?.min || minDefault,
     max: question?.max || maxDefault,
