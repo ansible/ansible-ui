@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-/// <reference types="cypress" />
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 import { InventorySource } from '../../../../frontend/awx/interfaces/InventorySource';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
