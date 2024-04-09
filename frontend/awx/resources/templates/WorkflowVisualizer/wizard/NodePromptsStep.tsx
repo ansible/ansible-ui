@@ -27,7 +27,8 @@ export function NodePromptsStep() {
     wizardData: WizardFormValues;
     setStepData: React.Dispatch<SetStateAction<Record<string, object>>>;
   };
-  const { reset } = useFormContext<WizardFormValues>();
+  const { reset, formState } = useFormContext<WizardFormValues>();
+  console.log(formState.defaultValues?.prompt)
   const promptForm = useWatch<{ prompt: PromptFormValues }>({ name: 'prompt' });
 
   const { launch_config: config, node_resource, prompt } = wizardData;
@@ -44,8 +45,8 @@ export function NodePromptsStep() {
   }, [promptForm, setStepData]);
 
   useEffect(() => {
-    if (!config || !config?.defaults) return;
-    const { defaults } = config;
+    if (!formState || !formState.defaultValues?.prompt) return;
+    const defaults = formState.defaultValues?.prompt;
 
     const readOnlyLabels = defaults?.labels?.map((label) => ({
       ...label,
@@ -58,7 +59,7 @@ export function NodePromptsStep() {
       extra_vars: prompt?.extra_vars ?? defaults.extra_vars,
       forks: prompt?.forks ?? defaults.forks,
       instance_groups: prompt?.instance_groups ?? defaults.instance_groups,
-      inventory: prompt?.inventory ?? (defaults.inventory.id ? defaults.inventory : null),
+      inventory: prompt?.inventory ?? defaults.inventory,
       job_slice_count: prompt?.job_slice_count ?? defaults.job_slice_count,
       job_tags: prompt?.job_tags ?? parseStringToTagArray(defaults.job_tags),
       job_type: prompt?.job_type ?? defaults.job_type,
@@ -79,7 +80,7 @@ export function NodePromptsStep() {
       },
     }));
     reset({ prompt: defaultPromptValues });
-  }, [reset, organizationId, setStepData, config, prompt]);
+  }, [reset, organizationId, setStepData, config, prompt, formState]);
 
   if (!config || !template) {
     return null;
