@@ -7,7 +7,7 @@ import { Scrollable } from '../components/Scrollable';
 export function PageDetails(props: {
   children?: ReactNode;
   disablePadding?: boolean;
-  numberOfColumns?: 'multiple' | 'single';
+  numberOfColumns?: 'multiple' | 'single' | 'two';
   labelOrientation?: 'horizontal' | 'vertical';
   alertPrompts?: string[];
   isCompact?: boolean;
@@ -51,7 +51,16 @@ export function PageDetails(props: {
                 xl: '3Col',
                 '2xl': '3Col',
               }
-            : undefined
+            : numberOfColumns === 'two'
+              ? {
+                  default: '1Col',
+                  sm: '1Col',
+                  md: '2Col',
+                  lg: '2Col',
+                  xl: '3Col',
+                  '2xl': '2Col',
+                }
+              : undefined
         }
         style={{ maxWidth: 1200, padding: disablePadding ? undefined : 24 }}
         isCompact={isCompact}
