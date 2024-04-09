@@ -12,7 +12,7 @@ export interface Spec {
   variable: string;
   min: number;
   max: number;
-  default: string;
+  default: string | number;
   choices: string[] | string;
   new_question: boolean;
 }

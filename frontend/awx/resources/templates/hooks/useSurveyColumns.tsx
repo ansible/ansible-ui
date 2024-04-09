@@ -55,11 +55,14 @@ export function useSurveyColumns() {
           }
           return (
             <ChipGroup>
-              {question.default.split('\n').map((chip) => (
-                <Chip key={chip} isReadOnly ouiaId={`${question.variable}-${chip}`}>
-                  {chip}
-                </Chip>
-              ))}
+              {question.default
+                .toString()
+                .split('\n')
+                .map((chip) => (
+                  <Chip key={chip} isReadOnly ouiaId={`${question.variable}-${chip}`}>
+                    {chip}
+                  </Chip>
+                ))}
             </ChipGroup>
           );
         },

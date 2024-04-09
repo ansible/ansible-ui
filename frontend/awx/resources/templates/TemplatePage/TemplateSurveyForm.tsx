@@ -115,7 +115,7 @@ export function TemplateSurveyForm(props: IProps) {
       : question.choices.split('\n');
     const defaults = Array.isArray(question?.default)
       ? question.default
-      : question.default.split('\n');
+      : question.default.toString().split('\n');
 
     formattedChoices = choices?.map((c, i) => ({
       name: c,
@@ -141,12 +141,19 @@ export function TemplateSurveyForm(props: IProps) {
   const onSubmit: PageFormSubmitHandler<FormSpec> = async (newQuestion, setError) => {
     if (!survey) return;
 
+    const defaultValue =
+      newQuestion.type === 'integer'
+        ? Number(newQuestion.default)
+        : newQuestion.type === 'float'
+          ? parseFloat(newQuestion.default.toString())
+          : newQuestion.default;
+
     let question: Spec = {
       max: newQuestion.max,
       min: newQuestion.min,
       new_question: newQuestion.new_question,
       type: newQuestion.type,
-      default: newQuestion.default,
+      default: defaultValue,
       required: newQuestion.required,
       variable: newQuestion.variable,
       question_name: newQuestion.question_name,
@@ -259,6 +266,8 @@ function TemplateSurveyInputs() {
 
       <PageFormSelect
         name="type"
+        id="question-type"
+        data-cy="question-type"
         label={t('Answer type')}
         placeholderText={t('Enter answer type')}
         options={[
@@ -322,6 +331,15 @@ function SelectedAnswerType({ answer }: { answer: string }) {
           minLength={min}
           type={answer === 'text' ? 'text' : 'number'}
           label={t`Default answer`}
+          validate={(value: string) => {
+            if (answer === 'integer') {
+              const num = parseFloat(value);
+              if (!Number.isInteger(num) && /[^0-9]/.test(value)) {
+                return t`This field must be an integer.`;
+              }
+              return undefined;
+            }
+          }}
         />
       )}
       {answer === 'textarea' && (
