@@ -8,7 +8,6 @@ import { JobTemplate } from '../../../../frontend/awx/interfaces/JobTemplate';
 import { NotificationTemplate } from '../../../../frontend/awx/interfaces/NotificationTemplate';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
-import { Schedule } from '../../../../frontend/awx/interfaces/Schedule';
 import { AwxUser } from '../../../../frontend/awx/interfaces/User';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 import { randomE2Ename } from '../../../support/utils';
@@ -67,15 +66,34 @@ describe('Projects', () => {
     let project: Project;
     let user: AwxUser;
 
-    beforeEach(() => {
-      cy.createAwxOrganization().then((org) => {
-        organization = org;
-        cy.createAwxUser(organization).then((testUser) => {
-          user = testUser;
-          cy.createAwxProject({ organization: organization.id }).then((proj) => {
-            project = proj;
-            cy.giveUserProjectAccess(project.name, user.id, 'Read');
-          });
+  it('can navigate to project schedules tab', function () {
+    cy.navigateTo('awx', 'projects');
+    cy.filterTableByMultiSelect('name', [(this.globalProject as Project).name]);
+    cy.clickTableRowLink('name', `${(this.globalProject as Project).name}`, {
+      disableFilter: true,
+    });
+    cy.verifyPageTitle(`${(this.globalProject as Project).name}`);
+    cy.clickTab(/^Schedules$/, true);
+  });
+});
+
+describe('project edit and delete tests', () => {
+  let project: Project;
+  let organization: Organization;
+  let user: AwxUser;
+
+  before(function () {
+    cy.awxLogin();
+  });
+
+  beforeEach(() => {
+    cy.createAwxOrganization().then((org) => {
+      organization = org;
+      cy.createAwxUser(organization).then((testUser) => {
+        user = testUser;
+        cy.createAwxProject({ organization: organization.id }).then((proj) => {
+          project = proj;
+          cy.giveUserProjectAccess(project.name, user.id, 'Read');
         });
       });
     });

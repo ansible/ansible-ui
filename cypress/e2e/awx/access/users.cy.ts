@@ -9,6 +9,10 @@ describe('Users List Actions', () => {
   let organization: Organization;
   let user: AwxUser;
 
+  before(() => {
+    cy.awxLogin();
+  });
+
   beforeEach(() => {
     cy.createAwxOrganization().then((org) => {
       organization = org;
@@ -85,6 +89,13 @@ describe('Users List Actions', () => {
 describe('Users Delete Actions', () => {
   let organization: Organization;
   let user: AwxUser;
+<<<<<<< HEAD
+=======
+
+  before(() => {
+    cy.awxLogin();
+  });
+>>>>>>> 2614040b4 (ActiveUserProviders Fix and Streamline Providers and Hooks (#1961))
 
   beforeEach(() => {
     cy.createAwxOrganization().then((org) => {

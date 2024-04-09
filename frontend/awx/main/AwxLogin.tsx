@@ -15,7 +15,7 @@ import { WebSocketProvider } from '../common/useAwxWebSocket';
 import ProductIcon from './awx-logo.svg';
 import { AwxItemsResponse } from '../common/AwxItemsResponse';
 import { awxAPI } from '../common/api/awx-utils';
-import { useAwxActiveUser, useAwxActiveUserContext } from '../common/useAwxActiveUser';
+import { useAwxActiveUser } from '../common/useAwxActiveUser';
 import { AwxConfigProvider } from '../common/useAwxConfig';
 import { WebSocketProvider } from '../common/useAwxWebSocket';
 import { User } from '../interfaces/User';
@@ -42,16 +42,9 @@ export function AwxLogin(props: { children: React.ReactNode }) {
     });
   }
 
+  const { activeAwxUser, activeAwxUserIsLoading, refreshActiveAwxUser } = useAwxActiveUser();
 
-  const { activeAwxUser, refreshActiveAwxUser } = useAwxActiveUser();
-
-  if (activeAwxUser === undefined) {
-  if (response.isLoading) {
-
-  const awxActiveUserContext = useAwxActiveUserContext();
-  const awxActiveUser = useAwxActiveUser();
-
-  if (awxActiveUserContext?.isLoading) {
+  if (activeAwxUserIsLoading) {
     return (
       <Page>
         <LoadingState />
@@ -59,26 +52,12 @@ export function AwxLogin(props: { children: React.ReactNode }) {
     );
   }
 
-
   if (!activeAwxUser) {
-  if (!awxActiveUser) {
     return (
       <Login
         authOptions={authOptions}
         apiUrl="/api/login/"
-  if (!response.data || !response.data.results.length || response.error) {
-    return <Login authOptions={authOptions} apiUrl="/api/login/" onSuccess={onSuccessfulLogin} />;
-  }
-
-  return (
-    <AwxActiveUserContext.Provider
-      value={{ user: response.data.results[0], refresh: () => void response.mutate() }}
-    >
-      <WebSocketProvider>
-        <AwxConfigProvider>{props.children}</AwxConfigProvider>
-      </WebSocketProvider>
-    </AwxActiveUserContext.Provider>
-        onSuccess={() => void awxActiveUserContext?.mutate()}
+        onSuccess={() => refreshActiveAwxUser?.()}
       />
     );
   }

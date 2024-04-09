@@ -3,14 +3,13 @@ import { randomString } from '../../../../framework/utils/random-string';
 import { Credential } from '../../../../frontend/awx/interfaces/Credential';
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
-import { Project } from '../../../../frontend/awx/interfaces/Project';
-import { Team } from '../../../../frontend/awx/interfaces/Team';
 import { AwxUser } from '../../../../frontend/awx/interfaces/User';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 import { randomE2Ename } from '../../../support/utils';
 
 describe('Credentials', () => {
   let organization: Organization;
+  let credential: Credential;
   let user: AwxUser;
 
   before(() => {

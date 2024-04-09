@@ -26,11 +26,9 @@ import 'cypress-react-selector';
 import type { MountReturn } from 'cypress/react';
 import { mount } from 'cypress/react18';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { SWRResponse } from 'swr';
 import { PageFramework } from '../../framework';
-import { AwxItemsResponse } from '../../frontend/awx/common/AwxItemsResponse';
 import { AwxActiveUserContext } from '../../frontend/awx/common/useAwxActiveUser';
-import { User } from '../../frontend/awx/interfaces/User';
+import { AwxUser } from '../../frontend/awx/interfaces/User';
 import '../../frontend/common/i18n';
 import './auth';
 import './awx-commands';
@@ -79,7 +77,7 @@ declare global {
 }
 
 Cypress.Commands.add('mount', (component, route, activeUserFixture) => {
-<<<<<<< HEAD
+
   cy.fixture(activeUserFixture || 'activeUser.json').then((activeAwxUser: AwxUser) => {
     return mount(
       <MemoryRouter initialEntries={route?.initialEntries || ['/1']}>
@@ -87,25 +85,18 @@ Cypress.Commands.add('mount', (component, route, activeUserFixture) => {
           <AwxActiveUserContext.Provider
             value={{ activeAwxUser, refreshActiveAwxUser: () => null }}
           >
-=======
   cy.fixture(activeUserFixture || 'activeUser.json').then((activeUser: User) => {
+  cy.fixture(activeUserFixture || 'activeUser.json').then((activeAwxUser: AwxUser) => {
     return mount(
       <MemoryRouter initialEntries={route?.initialEntries || ['/1']}>
         <PageFramework defaultRefreshInterval={60}>
-<<<<<<< HEAD
           <AwxActiveUserContext.Provider value={{ user: activeUser, refresh: () => {} }}>
->>>>>>> 8269c803c (Login Flow Update (#1946))
-=======
           <AwxActiveUserContext.Provider
-            value={
-              {
-                data: { count: 1, results: [activeUser] },
-                error: undefined,
-                mutate: () => Promise.resolve(),
-                isLoading: false,
-                isValidating: false,
-              } as SWRResponse<AwxItemsResponse<User>>
-            }
+            value={{
+              activeAwxUser,
+              refreshActiveAwxUser: () => null,
+              activeAwxUserIsLoading: false,
+            }}
           >
 >>>>>>> 315280ce7 (Add ActiveUserProviders (#1953))
             <Page>
@@ -116,7 +107,6 @@ Cypress.Commands.add('mount', (component, route, activeUserFixture) => {
           </AwxActiveUserContext.Provider>
         </PageFramework>
       </MemoryRouter>
-<<<<<<< HEAD
     );
   });
 });
@@ -144,10 +134,8 @@ Cypress.Commands.add('mountEda', (component, route, activeUserFixture) => {
       </PageFramework>
     </MemoryRouter>
   );
-=======
     );
   });
->>>>>>> 8269c803c (Login Flow Update (#1946))
 });
 
 // Example use:

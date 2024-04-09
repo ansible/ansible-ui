@@ -1,15 +1,18 @@
-import { MinusCircleIcon } from '@patternfly/react-icons';
+import { AlertProps, ButtonVariant } from '@patternfly/react-core';
+import { HeartbeatIcon, MinusCircleIcon, PencilAltIcon } from '@patternfly/react-icons';
+import { TFunction } from 'i18next';
 import pDebounce from 'p-debounce';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import {
   IPageAction,
   PageActionSelection,
   PageActionType,
+  usePageAlertToaster,
   usePageNavigate,
 } from '../../../../../framework';
-import { requestGet, requestPatch } from '../../../../common/crud/Data';
+import { postRequest, requestGet, requestPatch } from '../../../../common/crud/Data';
 import { useGet, useGetItem } from '../../../../common/crud/useGet';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { awxAPI } from '../../../common/api/awx-utils';
@@ -17,11 +20,8 @@ import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
 import { Instance } from '../../../interfaces/Instance';
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';
 import { Settings } from '../../../interfaces/Settings';
-import { useRemoveInstances } from './useRemoveInstances';
-import { useEditInstanceRowAction, useRunHealthCheckRowAction } from './useInstanceRowActions';
 import { AwxRoute } from '../../../main/AwxRoutes';
-import { TFunction } from 'i18next';
-import { AwxUser } from '../../../interfaces/User';
+import { useRemoveInstances } from './useRemoveInstances';
 
 export function useInstanceActions(instanceId: string) {
   const { refresh, data: instanceRes } = useGetItem<Instance>(awxAPI`/instances/`, instanceId);
@@ -93,9 +93,17 @@ export function useInstanceActions(instanceId: string) {
 
 export function useInstanceDetailsActions() {
   const params = useParams<{ id: string }>();
-  const { data: instance, refresh } = useGetItem<Instance>(awxAPI`/instances`, params.id);
-  const { data } = useGet<Settings>(awxAPI`/settings/system/`);
+  const pageNavigate = usePageNavigate();
+  const { data: instance } = useGetItem<Instance>(awxAPI`/instances`, params.id);
+
+  const removeInstances = useRemoveInstances(onInstancesRemoved);
   const { activeAwxUser } = useAwxActiveUser();
+  const { data } = useGet<Settings>(awxAPI`/settings/system/`);
+  const instancesType = instance?.node_type === 'execution' || instance?.node_type === 'hop';
+  const userAccess = activeAwxUser?.is_superuser || activeAwxUser?.is_system_auditor;
+  const isK8s = data?.IS_K8S;
+  const canEditAndRemoveInstances = instancesType && isK8s && userAccess;
+  const alertToaster = usePageAlertToaster();
 
   const isK8s = data?.IS_K8S;
 

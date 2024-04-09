@@ -70,7 +70,7 @@ export function CreateCredential() {
   const pageNavigate = usePageNavigate();
   const navigate = useNavigate();
   const { activeAwxUser } = useAwxActiveUser();
-  const postRequest = usePostRequest<Credential | CredentialInputSource>();
+  const postRequest = usePostRequest<Credential>();
   const getPageUrl = useGetPageUrl();
   const [selectedCredentialTypeId, setSelectedCredentialTypeId] = useState<number>(0);
   const [watchedSubFormFields, setWatchedSubFormFields] = useState<unknown[]>([]);
@@ -223,6 +223,7 @@ export function EditCredential() {
   const navigate = useNavigate();
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
+  const { data: credential } = useGet<Credential>(awxAPI`/credentials/${id.toString()}/`);
   const { activeAwxUser } = useAwxActiveUser();
   const getPageUrl = useGetPageUrl();
   const patch = usePatchRequest();

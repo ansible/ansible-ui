@@ -58,20 +58,22 @@ export function CreateControllerToken() {
 
   const getPageUrl = useGetPageUrl();
 
-  const canViewUsers = activeEdaUser?.is_superuser;
+  const canViewUsers = activeEdaUser?.roles.some(
+    (role) => role.name === 'Admin' || role.name === 'Auditor'
+  );
   const breadcrumbs = [
     ...(canViewUsers ? [{ label: t('Users'), to: getPageUrl(EdaRoute.Users) }] : []),
     {
       label: activeEdaUser?.username ?? '',
       to: canViewUsers
         ? getPageUrl(EdaRoute.UserPage, { params: { id: activeEdaUser?.id } })
-        : getPageUrl(EdaRoute.MyPage, { params: { id: activeEdaUser?.id } }),
+        : getPageUrl(EdaRoute.MyPage),
     },
     {
       label: t('Controller tokens'),
       to: canViewUsers
         ? getPageUrl(EdaRoute.UserTokens, { params: { id: activeEdaUser?.id } })
-        : getPageUrl(EdaRoute.MyTokens, { params: { id: activeEdaUser?.id } }),
+        : getPageUrl(EdaRoute.MyTokens),
     },
     { label: activeEdaUser?.username ?? '' },
   ];

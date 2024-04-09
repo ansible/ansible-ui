@@ -16,16 +16,14 @@ import { useCallback } from 'react';
 import useSWR from 'swr';
 import { LoadingState } from '../../../framework/components/LoadingState';
 import { Login } from '../../common/Login';
-import { useHubActiveUser, useHubActiveUserContext } from '../../hub/common/useHubActiveUser';
+import { useHubActiveUser } from '../../hub/common/useHubActiveUser';
 import { hubAPI } from '../common/api/formatPath';
 import { HubContextProvider } from '../common/useHubContext';
 
 export function HubLogin(props: { children: React.ReactNode }) {
-  const hubActiveUserContext = useHubActiveUserContext();
-  const hubActiveUser = useHubActiveUser();
+  const { activeHubUser, refreshActiveHubUser, activeHubUserIsLoading } = useHubActiveUser();
 
-  if (response.isLoading) {
-  if (hubActiveUserContext?.isLoading) {
+  if (activeHubUserIsLoading) {
     return (
       <Page>
         <LoadingState />
@@ -33,24 +31,6 @@ export function HubLogin(props: { children: React.ReactNode }) {
     );
   }
 
-
-  if (!activeHubUser) {
-    return (
-      <Login
-        apiUrl={hubAPI`/_ui/v1/auth/login/`}
-        onSuccess={() => {
-          refreshActiveHubUser?.();
-          void mutate(() => true);
-        }}
-        icon={<ProductIcon style={{ maxWidth: 64, maxHeight: 64 }} />}
-        brand={process.env.BRAND}
-        product={process.env.PRODUCT}
-      />
-    );
-  }
-
-  return <HubContextProvider>{props.children}</HubContextProvider>;
-=======
   if (!response.data || response.error) {
     return <Login apiUrl={hubAPI`/_ui/v1/auth/login/`} onSuccess={onSuccessfulLogin} />;
   }
@@ -64,11 +44,9 @@ export function HubLogin(props: { children: React.ReactNode }) {
   );
 
   if (!hubActiveUser) {
+  if (!activeHubUser) {
     return (
-      <Login
-        apiUrl={hubAPI`/_ui/v1/auth/login/`}
-        onSuccess={() => void hubActiveUserContext?.mutate()}
-      />
+      <Login apiUrl={hubAPI`/_ui/v1/auth/login/`} onSuccess={() => refreshActiveHubUser?.()} />
     );
   }
 

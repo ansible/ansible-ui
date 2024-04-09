@@ -1,6 +1,10 @@
 import { ButtonVariant } from '@patternfly/react-core';
 import { HeartbeatIcon, MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
+<<<<<<< HEAD
 import { useMemo } from 'react';
+=======
+import { useCallback, useMemo } from 'react';
+>>>>>>> 2614040b4 (ActiveUserProviders Fix and Streamline Providers and Hooks (#1961))
 import { useTranslation } from 'react-i18next';
 import {
   IPageAction,
@@ -15,6 +19,7 @@ import { IAwxView } from '../../../common/useAwxView';
 import { Instance } from '../../../interfaces/Instance';
 import { Settings } from '../../../interfaces/Settings';
 import { AwxRoute } from '../../../main/AwxRoutes';
+<<<<<<< HEAD
 import {
   cannotRemoveInstances,
   cannotRunHealthCheckDueToManagedInstance,
@@ -22,17 +27,46 @@ import {
   cannotRunHealthCheckDueToPending,
   cannotRunHealthCheckDueToPermissions,
 } from './useInstanceActions';
+=======
+import { cannotRemoveInstances } from './useInstanceActions';
+>>>>>>> 2614040b4 (ActiveUserProviders Fix and Streamline Providers and Hooks (#1961))
 import { useRemoveInstances } from './useRemoveInstances';
 import { useRunHealthCheck } from './useRunHealthCheck';
 
 export function useInstanceToolbarActions(view: IAwxView<Instance>) {
+<<<<<<< HEAD
+=======
+  const { t } = useTranslation();
+  const runHealthCheck = useRunHealthCheck(view.unselectItemsAndRefresh);
+  const removeInstances = useRemoveInstances(view.unselectItemsAndRefresh);
+  const pageNavigate = usePageNavigate();
+>>>>>>> 2614040b4 (ActiveUserProviders Fix and Streamline Providers and Hooks (#1961))
   const { activeAwxUser } = useAwxActiveUser();
   const { data } = useGet<Settings>(awxAPI`/settings/system/`);
   const isK8s = data?.IS_K8S;
 
-  const healthCheckAction = useRunHealthCheckToolbarAction(view);
-  const addInstanceAction = useAddInstanceToolbarAction();
-  const removeInstanceAction = useRemoveInstanceToolbarAction(view);
+  const canAddAndEditInstances =
+    (activeAwxUser?.is_superuser || activeAwxUser?.is_system_auditor) && data?.IS_K8S;
+
+  const cannotRunHealthCheckDueToPending = useCallback(
+    (instance: Instance) => {
+      if (instance.health_check_pending)
+        return t(
+          `Instance has pending health checks. Wait for those to complete before attempting another health check.`
+        );
+      return '';
+    },
+    [t]
+  );
+
+  const cannotRunHealthCheckDueToNodeType = useCallback(
+    (instance: Instance) => {
+      if (instance.node_type !== 'execution')
+        return t(`Health checks can only be run on execution instances.`);
+      return '';
+    },
+    [t]
+  );
 
   return useMemo<IPageAction<Instance>[]>(
     () =>

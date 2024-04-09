@@ -27,7 +27,6 @@ import { AwxUser } from '../../frontend/awx/interfaces/User';
 import { WorkflowApproval } from '../../frontend/awx/interfaces/WorkflowApproval';
 import { WorkflowJobTemplate } from '../../frontend/awx/interfaces/WorkflowJobTemplate';
 import { WorkflowNode } from '../../frontend/awx/interfaces/WorkflowNode';
-import { RoleSerializerWithParentAccess } from '../../frontend/awx/interfaces/generated-from-swagger/api';
 import { EdaControllerToken } from '../../frontend/eda/interfaces/EdaControllerToken';
 import { EdaCredential } from '../../frontend/eda/interfaces/EdaCredential';
 import { EdaCredentialType } from '../../frontend/eda/interfaces/EdaCredentialType';
@@ -859,7 +858,6 @@ declare global {
       getAwxJobTemplateByName(awxJobTemplateName: string): Chainable<JobTemplate>;
       createAwxTeam(organization: Organization): Chainable<Team>;
       createAwxUser(organization: Organization): Chainable<AwxUser>;
-      getAwxRoles(): Chainable<RoleSerializerWithParentAccess>;
       createAwxInstanceGroup(
         instanceGroup?: Partial<Omit<InstanceGroup, 'id'>>
       ): Chainable<InstanceGroup>;

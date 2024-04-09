@@ -67,7 +67,8 @@ export function InstanceDetailsTab(props: {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const getPageUrl = useGetPageUrl();
-  const { instance, instanceGroups, instanceForks } = props;
+  const { activeAwxUser } = useAwxActiveUser();
+  const { instance, instanceGroups, instanceForks, handleInstanceForksSlider } = props;
   const toolTipMap: { [item: string]: string } = useNodeTypeTooltip();
 
   return (
@@ -155,22 +156,26 @@ export function InstanceDetailsTab(props: {
         {formatDateString(instance.created)}
       </PageDetail>
       <LastModifiedPageDetail value={instance.modified} data-cy="modified" />
-      <PageDetail
-        label={t('Forks')}
-        data-cy="forks"
-        isEmpty={instance.node_type === 'hop' || instanceForks <= 0}
-      >
-        <InstanceForksSlider instance={instance} />
-      </PageDetail>
-      <PageDetail label={t('Enabled')} data-cy="enabled">
-        <InstanceSwitch instance={instance} />
-      </PageDetail>
-      <PageDetailCodeEditor
-        value={instance.errors}
-        label={t('Errors')}
-        isEmpty={instance.errors === ''}
-        fullWidth={true}
-      />
+      {instance.node_type !== 'hop' ? (
+        <PageDetail label={t('Forks')} data-cy="forks">
+          <div>
+            {t('Total forks: ')}
+            {instanceForks}
+          </div>
+          {instanceForks > 0 ? (
+            <Slider
+              areCustomStepsContinuous
+              max={instance.mem_capacity}
+              min={instance.cpu_capacity}
+              value={instanceForks}
+              onChange={(_event: SliderOnChangeEvent, value: number) =>
+                void handleInstanceForksSlider(instance, value)
+              }
+              isDisabled={!activeAwxUser?.is_superuser || !instance.enabled || !capacityAvailable}
+            />
+          ) : undefined}
+        </PageDetail>
+      ) : undefined}
     </PageDetails>
   );
 }

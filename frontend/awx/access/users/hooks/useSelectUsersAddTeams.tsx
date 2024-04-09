@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AwxUser } from '../../../interfaces/User';
-import { type ResourceType } from '../../common/types';
+import { ResourceType } from '../../common/ResourceAccessList';
 import { useAddUsersToResources } from './useAddUsersToResources';
 import { useSelectUsers } from './useSelectUsers';
 

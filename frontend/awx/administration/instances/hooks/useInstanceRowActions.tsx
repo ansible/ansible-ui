@@ -6,37 +6,19 @@ import {
   usePageAlertToaster,
   usePageNavigate,
 } from '../../../../../framework';
-import { Instance } from '../../../interfaces/Instance';
-import { ButtonVariant, AlertProps } from '@patternfly/react-core';
-import { HeartbeatIcon, PencilAltIcon } from '@patternfly/react-icons';
-import { Settings } from '../../../interfaces/Settings';
-import { useTranslation } from 'react-i18next';
-import { requestPatch, postRequest } from '../../../../common/crud/Data';
+import { postRequest, requestPatch } from '../../../../common/crud/Data';
 import { useGet } from '../../../../common/crud/useGet';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
+import { Instance } from '../../../interfaces/Instance';
+import { Settings } from '../../../interfaces/Settings';
 import { AwxRoute } from '../../../main/AwxRoutes';
-import {
-  cannotRunHealthCheckDueToManagedInstance,
-  cannotRunHealthCheckDueToNodeType,
-  cannotRunHealthCheckDueToPending,
-  cannotRunHealthCheckDueToPermissions,
-} from './useInstanceActions';
 
 export function useInstanceRowActions(onComplete: (instances: Instance[]) => void) {
-  const toggleInstanceRowAction: IPageAction<Instance> = useToggleInstanceRowAction(onComplete);
-  const healthCheckRowAction: IPageAction<Instance> = useRunHealthCheckRowAction(onComplete, false);
-  const editInstanceRowAction: IPageAction<Instance> = useEditInstanceRowAction();
-
-  return useMemo<IPageAction<Instance>[]>(
-    () => [toggleInstanceRowAction, healthCheckRowAction, editInstanceRowAction],
-    [toggleInstanceRowAction, healthCheckRowAction, editInstanceRowAction]
-  );
-}
-
-export function useToggleInstanceRowAction(onComplete: (instances: Instance[]) => void) {
   const { t } = useTranslation();
+  const pageNavigate = usePageNavigate();
   const { activeAwxUser } = useAwxActiveUser();
+  const { data } = useGet<Settings>(awxAPI`/settings/system/`);
 
   const handleToggleInstance: (instance: Instance, enabled: boolean) => Promise<void> = useCallback(
     async (instance, enabled) => {
@@ -46,6 +28,7 @@ export function useToggleInstanceRowAction(onComplete: (instances: Instance[]) =
     [onComplete]
   );
   const userAccess = activeAwxUser?.is_superuser || activeAwxUser?.is_system_auditor;
+  const isK8s = data?.IS_K8S;
 
   return useMemo<IPageAction<Instance>>(
     () => ({

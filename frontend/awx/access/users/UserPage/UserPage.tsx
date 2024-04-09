@@ -19,7 +19,6 @@ import { PageRoutedTabs } from '../../../../common/PageRoutedTabs';
 import { useGetItem } from '../../../../common/crud/useGet';
 import { AwxError } from '../../../common/AwxError';
 import { awxAPI } from '../../../common/api/awx-utils';
-import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
 import { AwxUser } from '../../../interfaces/User';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useDeleteUsers } from '../hooks/useDeleteUsers';
@@ -37,10 +36,9 @@ export function UserPage() {
       pageNavigate(AwxRoute.Users);
     }
   });
-  const activityStream = useViewActivityStream();
+
   const itemActions: IPageAction<AwxUser>[] = useMemo(() => {
     const itemActions: IPageAction<AwxUser>[] = [
-      ...activityStream,
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,

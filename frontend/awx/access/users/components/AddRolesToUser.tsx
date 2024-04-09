@@ -14,21 +14,8 @@ import { postRequest } from '../../../../common/crud/Data';
 import { useGet } from '../../../../common/crud/useGet';
 import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
 import { awxAPI } from '../../../common/api/awx-utils';
-import { useAwxBulkActionDialog } from '../../../common/useAwxBulkActionDialog';
-import { AwxRbacRole } from '../../../interfaces/AwxRbacRole';
 import { AwxUser } from '../../../interfaces/User';
-import { AwxRoute } from '../../../main/AwxRoutes';
-import { AwxSelectResourceTypeStep } from '../../common/AwxRolesWizardSteps/AwxSelectResourceTypeStep';
-import {
-  AwxResourceType,
-  AwxSelectResourcesStep,
-} from '../../common/AwxRolesWizardSteps/AwxSelectResourcesStep';
-import { AwxSelectRolesStep } from '../../common/AwxRolesWizardSteps/AwxSelectRolesStep';
-interface WizardFormValues {
-  resourceType: string;
-  resources: AwxResourceType[];
-  awxRoles: AwxRbacRole[];
-}
+import { AddRolesForm } from '../../roles/AddRolesForm';
 
 interface ResourceRolePair {
   resource: AwxResourceType;
@@ -38,11 +25,16 @@ interface ResourceRolePair {
 export function AddRolesToUser(props: { id?: string; userRolesRoute?: string }) {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
+<<<<<<< HEAD
   const getPageUrl = useGetPageUrl();
   const pageNavigate = usePageNavigate();
   const progressDialog = useAwxBulkActionDialog<ResourceRolePair>();
   // Use ansible_id to retrieve user
   const { data: user, isLoading } = useGet<AwxUser>(awxAPI`/users/${props.id || params.id || ''}/`);
+=======
+  const { error, data: user, refresh } = useGetItem<AwxUser>(awxAPI`/users`, params.id);
+  const navigate = useNavigate();
+>>>>>>> 2614040b4 (ActiveUserProviders Fix and Streamline Providers and Hooks (#1961))
 
   if (isLoading || !user) return <LoadingPage />;
 

@@ -691,7 +691,7 @@ Cypress.Commands.add(
 );
 
 Cypress.Commands.add('createAwxUser', (organization: Organization) => {
-  cy.requestPost<Omit<AwxUser, 'id' | 'auth' | 'summary_fields'>, AwxUser>(
+  cy.awxRequestPost<Omit<AwxUser, 'id' | 'auth' | 'summary_fields'>, AwxUser>(
     awxAPI`/organizations/${organization.id.toString()}/users/`,
     {
       username: 'e2e-user-' + randomString(4),

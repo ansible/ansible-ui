@@ -30,7 +30,11 @@ export function MyPage() {
   const getPageUrl = useGetPageUrl();
 
   const { activeEdaUser } = useEdaActiveUser();
-  const canViewOrEditUsers = !!activeEdaUser?.is_superuser;
+  const canEditUser =
+    !!activeEdaUser?.is_superuser || !!activeEdaUser?.roles.some((role) => role.name === 'Admin');
+  const canViewUsers =
+    !!activeEdaUser?.is_superuser ||
+    !!activeEdaUser?.roles.some((role) => role.name === 'Admin' || role.name === 'Auditor');
 
   const isActionTab = location.pathname === `/eda/access/users/me/details`;
   const itemActions = useMemo<IPageAction<EdaUser>[]>(() => {
@@ -63,7 +67,11 @@ export function MyPage() {
         ]
       : [];
     return actions;
+<<<<<<< HEAD
   }, [canViewOrEditUsers, pageNavigate, isActionTab, t]);
+=======
+  }, [canEditUser, pageNavigate, isActionTab, t]);
+>>>>>>> 2614040b4 (ActiveUserProviders Fix and Streamline Providers and Hooks (#1961))
   if (!activeEdaUser) return <LoadingPage breadcrumbs tabs />;
   return (
     <PageLayout>

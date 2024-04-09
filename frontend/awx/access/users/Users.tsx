@@ -245,3 +245,75 @@ export function Users() {
     </PageLayout>
   );
 }
+
+/* deprecated (see access/organizations/OrganizationPage/OrganizationAccess.tsx) */
+export function AccessTable(props: { url: string }) {
+  const { t } = useTranslation();
+  const toolbarFilters = useUsersFilters();
+  const tableColumns = useUsersColumns();
+  const getPageUrl = useGetPageUrl();
+  const view = useAwxView<AwxUser>({
+    url: props.url,
+    toolbarFilters,
+    tableColumns,
+    disableQueryString: true,
+  });
+
+  const toolbarActions = useMemo<IPageAction<AwxUser>[]>(
+    () => [
+      {
+        type: PageActionType.Link,
+        selection: PageActionSelection.None,
+        variant: ButtonVariant.primary,
+        isPinned: true,
+        icon: PlusCircleIcon,
+        label: t('Add users'),
+        shortLabel: t('Add access'),
+        href: getPageUrl(AwxRoute.CreateUser),
+      },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
+        variant: ButtonVariant.primary,
+        isPinned: true,
+        icon: MinusCircleIcon,
+        label: t('Remove selected users'),
+        shortLabel: t('Remove access'),
+        onClick: () => null,
+        isDanger: true,
+      },
+    ],
+    [getPageUrl, t]
+  );
+
+  const rowActions = useMemo<IPageAction<AwxUser>[]>(
+    () => [
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        icon: MinusCircleIcon,
+        label: t('Remove user'),
+        onClick: () => alert('TODO'),
+      },
+    ],
+    [t]
+  );
+
+  const pageNavigate = usePageNavigate();
+
+  return (
+    <PageTable<AwxUser>
+      id="awx-users-table"
+      toolbarFilters={toolbarFilters}
+      toolbarActions={toolbarActions}
+      tableColumns={tableColumns}
+      rowActions={rowActions}
+      errorStateTitle={t('Error loading users')}
+      emptyStateTitle={t('No users yet')}
+      emptyStateDescription={t('To get started, create a user.')}
+      emptyStateButtonText={t('Create user')}
+      emptyStateButtonClick={() => pageNavigate(AwxRoute.CreateUser)}
+      {...view}
+    />
+  );
+}

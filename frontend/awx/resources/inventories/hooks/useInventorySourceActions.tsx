@@ -70,11 +70,12 @@ export function useInventorySourceActions({
       return '';
     };
     const cannotEditInventorySource = (inventorySource: InventorySource): string =>
-      inventorySource?.summary_fields?.user_capabilities?.edit && activeAwxUser?.is_superuser
+      inventorySource?.summary_fields?.user_capabilities?.edit && !activeAwxUser?.is_system_auditor
         ? ''
         : t(`The inventory source cannot be edited due to insufficient permission`);
     const cannotLaunchInventorySourceUpdate = (inventorySource: InventorySource): string => {
-      return inventorySource.summary_fields.user_capabilities.start && activeAwxUser?.is_superuser
+      return inventorySource.summary_fields.user_capabilities.start &&
+        !activeAwxUser?.is_system_auditor
         ? ''
         : t(`The inventory source cannot be updated due to insufficient permission`);
     };
@@ -161,13 +162,5 @@ export function useInventorySourceActions({
       },
     ];
     return itemActions;
-  }, [
-    deleteInventorySources,
-    pageNavigate,
-    handleUpdate,
-    cancelInventoryUpdate,
-    activeAwxUser,
-    t,
-    params.inventory_type,
-  ]);
+  }, [deleteInventorySources, pageNavigate, handleUpdate, activeAwxUser, t, params.inventory_type]);
 }

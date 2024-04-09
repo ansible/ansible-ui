@@ -4,7 +4,7 @@ import { usePostRequest } from '../../../../common/crud/usePostRequest';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxBulkActionDialog } from '../../../common/useAwxBulkActionDialog';
 import { AwxUser } from '../../../interfaces/User';
-import { type ResourceType } from '../../common/types';
+import { ResourceType } from '../../common/ResourceAccessList';
 
 export function useAddUsersToResources() {
   const { t } = useTranslation();

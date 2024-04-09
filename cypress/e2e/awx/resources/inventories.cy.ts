@@ -4,9 +4,6 @@ import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 import { Label } from '../../../../frontend/awx/interfaces/Label';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { AwxUser } from '../../../../frontend/awx/interfaces/User';
-import { awxAPI } from '../../../support/formatApiPathForAwx';
-
-//This spec file needs to have tests added for constructed and smart inventories. See below.
 
 describe('Inventories Tests', () => {
   let organization: Organization;
@@ -14,7 +11,6 @@ describe('Inventories Tests', () => {
   let instanceGroup: InstanceGroup;
   let label: Label;
   let user: AwxUser;
-  const kinds: Array<'' | 'smart'> = ['', 'smart'];
 
   kinds.forEach((kind) => {
     describe(`Inventories CRUD Tests (${kind === '' ? 'regular' : kind})`, () => {

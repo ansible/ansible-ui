@@ -43,7 +43,7 @@ describe('AWX Cleanup', () => {
   });
 
   it('cleanup users', () => {
-    cy.requestGet<AwxItemsResponse<AwxUser>>(
+    cy.awxRequestGet<AwxItemsResponse<AwxUser>>(
       awxAPI`/users?username__startswith=e2e-&page=1&page_size=200&created__lt=${tenMinutesAgo}`
     ).then((result) => {
       for (const resource of result.results ?? []) {

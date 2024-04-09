@@ -25,8 +25,6 @@ import { useViewActivityStream } from '../../../access/common/useViewActivityStr
 
 export function TemplatePage() {
   const { t } = useTranslation();
-  const activityStream = useViewActivityStream();
-
   const { activeAwxUser } = useAwxActiveUser();
   const params = useParams<{ id: string }>();
   const {

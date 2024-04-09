@@ -43,6 +43,10 @@ describe('Organizations: Edit and Delete', function () {
   let organization: Organization;
   let user: AwxUser;
 
+  before(function () {
+    cy.awxLogin();
+  });
+
   beforeEach(function () {
     const orgName = randomE2Ename();
     cy.createAwxOrganization(orgName).then((testOrganization) => {

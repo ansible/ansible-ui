@@ -16,15 +16,12 @@ import useSWR from 'swr';
 import { LoadingState } from '../../../framework/components/LoadingState';
 import { Login } from '../../common/Login';
 import { edaAPI } from '../common/eda-utils';
-import { useEdaActiveUser, useEdaActiveUserContext } from '../common/useEdaActiveUser';
+import { useEdaActiveUser } from '../common/useEdaActiveUser';
 
 export function EdaLogin(props: { children: React.ReactNode }) {
-  const edaActiveUserContext = useEdaActiveUserContext();
-  const edaActiveUser = useEdaActiveUser();
+  const { activeEdaUser, activeEdaUserIsLoading, refreshActiveEdaUser } = useEdaActiveUser();
 
-  if (response.isLoading) {
-
-  if (edaActiveUserContext?.isLoading) {
+  if (activeEdaUserIsLoading) {
     return (
       <Page>
         <LoadingState />
@@ -32,41 +29,9 @@ export function EdaLogin(props: { children: React.ReactNode }) {
     );
   }
 
-
   if (!activeEdaUser) {
     return (
-      <Login
-        apiUrl={edaAPI`/auth/session/login/`}
-        onSuccess={() => {
-          refreshActiveEdaUser?.();
-          void mutate(() => true);
-        }}
-        icon={<ProductIcon style={{ maxWidth: 64, maxHeight: 64 }} />}
-        brand={process.env.BRAND}
-        product={process.env.PRODUCT}
-      />
-    );
-  }
-
-  return props.children;
-  if (!response.data || response.error) {
-    return <Login apiUrl={edaAPI`/auth/session/login/`} onSuccess={onSuccessfulLogin} />;
-  }
-
-  return (
-    <EdaActiveUserContext.Provider
-      value={{ user: response.data, refresh: () => void response.mutate(undefined) }}
-    >
-      {props.children}
-    </EdaActiveUserContext.Provider>
-  );
-
-  if (!edaActiveUser) {
-    return (
-      <Login
-        apiUrl={edaAPI`/auth/session/login/`}
-        onSuccess={() => void edaActiveUserContext?.mutate()}
-      />
+      <Login apiUrl={edaAPI`/auth/session/login/`} onSuccess={() => refreshActiveEdaUser?.()} />
     );
   }
 
