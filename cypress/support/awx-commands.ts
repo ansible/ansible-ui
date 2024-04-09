@@ -76,11 +76,11 @@ Cypress.Commands.add('removeAllNodesFromVisualizerToolbar', () => {
   cy.clickModalButton('Close');
 });
 
-/* Custom Cypress command called `deleteWFApprovalConfirmModal`.
-This command deletes a workflow approval request.
-It verifies that the remove modal is visible, clicks the confirm checkbox,
-clicks the delete workflow approvals, asserts all workflows were removed
-successfully, and closes the modal.
+/* Custom Cypress command called `actionsWFApprovalConfirmModal`.
+This command acts (approve/delete/cancel) on a workflow approval request.
+It verifies that the modal is visible, clicks the confirm checkbox,
+confirms and click in the desired workflow approvals action,
+asserts all workflows were updated successfully, and closes the modal.
 */
 Cypress.Commands.add(
   'actionsWFApprovalConfirmModal',
@@ -89,7 +89,7 @@ Cypress.Commands.add(
     cy.log(btnText);
     cy.clickModalConfirmCheckbox();
     cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
-      // FIXME: header is present but the get always fails
+      // FIXME: header is present but the cy.get always fails
       //   cy.get('header').should('contain', btnText);
       cy.get('#submit').click(); // FIXME: contains doesn't work for buttons inside the modal
     });
