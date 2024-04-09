@@ -27,7 +27,11 @@ export function AwxConfigProvider(props: { children?: ReactNode }) {
     () => ({
       awxConfig: data,
       awxConfigIsLoadind: isLoading,
-      awxConfigError: error instanceof Error ? error : new Error('Failed to load AWX config'),
+      awxConfigError: error
+        ? error instanceof Error
+          ? error
+          : new Error('Failed to load AWX config')
+        : undefined,
       refreshAwxConfig: () => void mutate(undefined),
     }),
     [data, error, isLoading, mutate]
