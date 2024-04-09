@@ -1,12 +1,16 @@
-import React from 'react';
-import { Bullseye, PageSection, Spinner } from '@patternfly/react-core';
+import {
+  EmptyState,
+  EmptyStateHeader,
+  EmptyStateIcon,
+  EmptyStateVariant,
+  Spinner,
+} from '@patternfly/react-core';
 
-export function LoadingState() {
+export function LoadingState(props: { title?: string }) {
   return (
-    <PageSection isFilled variant="light">
-      <Bullseye>
-        <Spinner />
-      </Bullseye>
-    </PageSection>
+    <EmptyState variant={EmptyStateVariant.full} isFullHeight>
+      <EmptyStateIcon icon={() => <Spinner />} />
+      <EmptyStateHeader titleText={props.title} headingLevel="h4" data-cy="empty-state-title" />
+    </EmptyState>
   );
 }
