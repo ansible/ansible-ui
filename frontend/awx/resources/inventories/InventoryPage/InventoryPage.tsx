@@ -88,6 +88,7 @@ export function InventoryPage() {
   });
   const getPageUrl = useGetPageUrl();
   const isSmartInventory = inventory?.kind === 'smart';
+  const isConstructedInventory = inventory?.kind === 'constructed';
 
   if (inventorySourceRequest.error) {
     return <AwxError error={inventorySourceRequest.error} />;
@@ -133,7 +134,8 @@ export function InventoryPage() {
           { label: t('Access'), page: AwxRoute.InventoryAccess },
           !isSmartInventory && { label: t('Groups'), page: AwxRoute.InventoryGroups },
           { label: t('Hosts'), page: AwxRoute.InventoryHosts },
-          !isSmartInventory && { label: t('Sources'), page: AwxRoute.InventorySources },
+          !isSmartInventory &&
+            !isConstructedInventory && { label: t('Sources'), page: AwxRoute.InventorySources },
           { label: t('Jobs'), page: AwxRoute.InventoryJobs },
           { label: t('Job templates'), page: AwxRoute.InventoryJobTemplates },
         ]}
