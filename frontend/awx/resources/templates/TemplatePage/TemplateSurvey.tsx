@@ -82,7 +82,7 @@ export function TemplateSurveyInternal({
   const canCreateSurvey = template.summary_fields.user_capabilities.edit;
   const canDeleteSurvey = template.summary_fields.user_capabilities.delete;
 
-  const tableColumns = useSurveyColumns();
+  const tableColumns = useSurveyColumns(template.type, template.id.toString());
   const toolbarActions = useSurveyToolbarActions(view);
   const deleteQuestions = useDeleteSurveyDialog(view.unselectItemsAndRefreshtemplate.type);
 
