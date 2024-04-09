@@ -1,4 +1,4 @@
-import { QuickStartCatalogPage } from '@patternfly/quickstarts';
+import { QuickStartCatalogPage, useValuesForQuickStartContext } from '@patternfly/quickstarts';
 import {
   Button,
   CardHeader,
@@ -20,12 +20,17 @@ import { AwxRecentProjectsCard } from '../../frontend/awx/overview/cards/AwxRece
 import { EdaDecisionEnvironmentsCard } from '../../frontend/eda/overview/cards/EdaDecisionEnvironmentsCard';
 import { EdaRuleAuditCard } from '../../frontend/eda/overview/cards/EdaRuleAuditCard';
 import { EdaRulebookActivationsCard } from '../../frontend/eda/overview/cards/EdaRulebookActivationsCard';
+import { useAwxService, useEdaService } from '../main/GatewayServices';
 import { PlatformCountsCard } from './cards/PlatformCountsCard';
 import { useManagedPlatformOverview } from './useManagedPlatformOverview';
 
 export function PlatformOverview() {
   const { t } = useTranslation();
   const { openManageDashboard, managedResources } = useManagedPlatformOverview();
+  const awxService = useAwxService();
+  const edaService = useEdaService();
+  // const hubService = useHubService();
+  const quickStarts = useValuesForQuickStartContext();
   return (
     <PageLayout>
       <PageHeader
@@ -40,41 +45,63 @@ export function PlatformOverview() {
         }
       />
       <PageDashboard>
-        {managedResources.map((resource) => {
-          switch (resource.id) {
-            case 'quick-starts':
-              return (
-                <PageDashboardCard
-                  key={resource.id}
-                  width="xxl"
-                  title={t('Quick starts')}
-                  subtitle={t('Learn Ansible automation with hands-on quick starts.')}
-                  canCollapse
-                >
-                  <Divider />
-                  <QuickStartCatalogPage showFilter showTitle={false} />
-                </PageDashboardCard>
-              );
-            case 'counts':
-              return <PlatformCountsCard key={resource.id} />;
-            case 'job_activity':
-              return <AwxJobActivityCard key={resource.id} />;
-            case 'recent_jobs':
-              return <AwxRecentJobsCard key={resource.id} />;
-            case 'recent_projects':
-              return <AwxRecentProjectsCard key={resource.id} />;
-            case 'recent_inventories':
-              return <AwxRecentInventoriesCard key={resource.id} />;
-            case 'recent-rulebook-activations':
-              return <EdaRulebookActivationsCard key={resource.id} />;
-            case 'recent-rule-audits':
-              return <EdaRuleAuditCard key={resource.id} />;
-            case 'recent-decision-environments':
-              return <EdaDecisionEnvironmentsCard key={resource.id} />;
-            default:
-              return <></>;
-          }
-        })}
+        {managedResources
+          .filter((resource) => {
+            switch (resource.id) {
+              case 'quick-starts':
+                if (!quickStarts.allQuickStarts || quickStarts.allQuickStarts.length === 0) {
+                  return false;
+                }
+                break;
+              case 'counts':
+              case 'job_activity':
+              case 'recent_jobs':
+              case 'recent_projects':
+              case 'recent_inventories':
+                return !!awxService;
+              case 'recent-rulebook-activations':
+              case 'recent-rule-audits':
+              case 'recent-decision-environments':
+                return !!edaService;
+              default:
+                return true;
+            }
+          })
+          .map((resource) => {
+            switch (resource.id) {
+              case 'quick-starts':
+                return (
+                  <PageDashboardCard
+                    key={resource.id}
+                    width="xxl"
+                    title={t('Quick starts')}
+                    subtitle={t('Learn Ansible automation with hands-on quick starts.')}
+                    canCollapse
+                  >
+                    <Divider />
+                    <QuickStartCatalogPage showFilter showTitle={false} />
+                  </PageDashboardCard>
+                );
+              case 'counts':
+                return <PlatformCountsCard key={resource.id} />;
+              case 'job_activity':
+                return <AwxJobActivityCard key={resource.id} />;
+              case 'recent_jobs':
+                return <AwxRecentJobsCard key={resource.id} />;
+              case 'recent_projects':
+                return <AwxRecentProjectsCard key={resource.id} />;
+              case 'recent_inventories':
+                return <AwxRecentInventoriesCard key={resource.id} />;
+              case 'recent-rulebook-activations':
+                return <EdaRulebookActivationsCard key={resource.id} />;
+              case 'recent-rule-audits':
+                return <EdaRuleAuditCard key={resource.id} />;
+              case 'recent-decision-environments':
+                return <EdaDecisionEnvironmentsCard key={resource.id} />;
+              default:
+                return <></>;
+            }
+          })}
       </PageDashboard>
     </PageLayout>
   );
