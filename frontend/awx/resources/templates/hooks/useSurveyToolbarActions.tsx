@@ -4,10 +4,12 @@ import { ButtonVariant } from '@patternfly/react-core';
 import { PlusCircleIcon, TrashIcon, CogIcon } from '@patternfly/react-icons';
 import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
 import type { Spec } from '../../../interfaces/Survey';
+import { useManageSurveyQuestions } from './useManageSurveyQuestions';
 
 export function useSurveyToolbarActions() {
   const { t } = useTranslation();
 
+  const { openManageQuestionOrder } = useManageSurveyQuestions();
   return useMemo<IPageAction<Spec>[]>(
     () => [
       {
@@ -24,7 +26,7 @@ export function useSurveyToolbarActions() {
         selection: PageActionSelection.None,
         icon: CogIcon,
         label: t('Manage question order'),
-        onClick: () => alert('TODO'),
+        onClick: openManageQuestionOrder,
       },
       { type: PageActionType.Seperator },
       {
@@ -36,6 +38,6 @@ export function useSurveyToolbarActions() {
         isDanger: true,
       },
     ],
-    [t]
+    [openManageQuestionOrder, t]
   );
 }
