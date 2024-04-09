@@ -139,7 +139,11 @@ export function TemplateSurveyForm(props: IProps) {
   };
 
   const onSubmit: PageFormSubmitHandler<FormSpec> = async (newQuestion, setError) => {
-    if (!survey) return;
+    const updatedSurvey = {
+      name: survey?.name ?? '',
+      description: survey?.description ?? '',
+      spec: survey?.spec ?? [],
+    };
 
     const defaultValue =
       newQuestion.type === 'integer'
@@ -161,7 +165,7 @@ export function TemplateSurveyForm(props: IProps) {
       choices: newQuestion.choices,
     };
 
-    const isDuplicate = survey.spec.some((q) => q.variable === newQuestion.variable);
+    const isDuplicate = updatedSurvey.spec.some((q) => q.variable === newQuestion.variable);
 
     let questions: Spec[];
 
@@ -183,9 +187,9 @@ export function TemplateSurveyForm(props: IProps) {
     }
 
     if (mode === 'add') {
-      questions = [...survey.spec, question];
+      questions = [...updatedSurvey.spec, question];
     } else {
-      questions = [...survey.spec];
+      questions = [...updatedSurvey.spec];
 
       const selectedQuestionIndex = questions.findIndex(
         (question) => question.variable === initialValues.variable
@@ -204,7 +208,7 @@ export function TemplateSurveyForm(props: IProps) {
     }
 
     const postBody: Survey = {
-      ...survey,
+      ...updatedSurvey,
       spec: questions,
     };
 
@@ -220,7 +224,7 @@ export function TemplateSurveyForm(props: IProps) {
     <AwxPageForm
       onSubmit={onSubmit}
       onCancel={() => pageNavigateSurveyRoute()}
-      submitText={mode === 'add' ? t('Create question') : t('Edit question')}
+      submitText={mode === 'add' ? t('Create question') : t('Save question')}
       defaultValue={initialValues}
       disableSubmitOnEnter
     >
