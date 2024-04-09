@@ -26,11 +26,8 @@ describe('EdaProjectAddTeams', () => {
     cy.get('table tbody').find('tr').should('have.length', 4);
   });
   it('can filter teams by name', () => {
-    cy.intercept(edaAPI`/teams/?name=Gal*`, { statusCode: 200 }).as('nameFilterRequest');
-    cy.get('[data-cy="text-input"]').within(() => {
-      cy.get('input').clear().type('Gal', { delay: 0 });
-    });
-    cy.getByDataCy('apply-filter').click();
+    cy.intercept(edaAPI`/teams/?name=Gal*`, { fixtures: 'edaTeams.json' }).as('nameFilterRequest');
+    cy.filterTableByText('Gal');
     cy.wait('@nameFilterRequest');
     cy.clearAllFilters();
   });

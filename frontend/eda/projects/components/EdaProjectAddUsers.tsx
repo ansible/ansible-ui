@@ -64,7 +64,7 @@ export function EdaProjectAddUsers() {
       },
     },
     {
-      id: 'edaRoles',
+      id: 'roles',
       label: t('Select roles to apply'),
       inputs: (
         <EdaSelectRolesStep
