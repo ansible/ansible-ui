@@ -68,7 +68,7 @@ export function InventoryHostGroups(props: { page: string }) {
               )
         }
         emptyStateIcon={canCreateGroup ? undefined : CubesIcon}
-        emptyStateButtonText={canCreateGroup ? t('Add group') : undefined}
+        emptyStateButtonText={canCreateGroup ? t('Associate groups') : undefined}
         emptyStateButtonClick={
           canCreateGroup
             ? () =>
