@@ -223,7 +223,7 @@ describe('Inventory Host Groups List', () => {
         });
         cy.contains(/^There are currently no groups associated with this host$/);
         cy.contains(/^Please add a group by using the button below.$/);
-        cy.contains('button', /^Add group$/).should('be.visible');
+        cy.contains('button', /^Associate groups$/).should('be.visible');
       });
       it(`Empty state is displayed correctly for user without permission to create group  (${type})`, () => {
         cy.stub(useOptions, 'useOptions').callsFake(() => ({
