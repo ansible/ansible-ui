@@ -26,6 +26,7 @@ import { Credential } from '../../interfaces/Credential';
 import { CredentialType } from '../../interfaces/CredentialType';
 import { AwxRoute } from '../../main/AwxRoutes';
 import { PageFormSelectOrganization } from '../organizations/components/PageFormOrganizationSelect';
+import { CredentialInputSource } from '../../interfaces/CredentialInputSource';
 
 interface CredentialForm extends Credential {
   user?: number;
@@ -71,10 +72,26 @@ export function EditCredential() {
   const navigate = useNavigate();
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
-  const { data: credential } = useGet<Credential>(awxAPI`/credentials/${id.toString()}/`);
   const { activeAwxUser } = useAwxActiveUser();
   const getPageUrl = useGetPageUrl();
   const patch = usePatchRequest();
+  const { data: credential, isLoading } = useGet<Credential>(
+    awxAPI`/credentials/${id.toString()}/`
+  );
+
+  const { data: inputSource, isLoading: isInputSourceLoading } = useGet<CredentialInputSource>(
+    awxAPI`/credentials/${id.toString()}/input_sources/`
+  );
+
+  if ((isLoading && !credential) || isInputSourceLoading) {
+    return <LoadingPage />;
+  }
+
+  // const { data: credentialInputs } = useGet<Credential
+
+  console.log('credential', JSON.stringify(credential, null, 2));
+  console.log('inputSources', JSON.stringify(inputSource, null, 2));
+  debugger;
 
   const onSubmit: PageFormSubmitHandler<CredentialForm> = async (editedCredential) => {
     // can send only one of org, user, team
