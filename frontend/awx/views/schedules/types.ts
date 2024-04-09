@@ -57,4 +57,11 @@ export interface ScheduleFormWizard {
   exceptions: RuleFields | null;
   launch_config: LaunchConfiguration | null;
   prompt: PromptFormValues;
+  rules: RuleListItemType[];
+}
+
+export interface PreviewSchedule {
+  local?: string[];
+  utc?: string[];
+  rrule: string;
 }
