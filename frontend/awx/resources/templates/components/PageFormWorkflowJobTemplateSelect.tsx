@@ -47,7 +47,6 @@ export function PageFormWorkflowJobTemplateSelect<
       loadingPlaceholder={t('Loading job templates...')}
       loadingErrorText={t('Error loading job templates')}
       isRequired={props.isRequired}
-      limit={200}
       openSelectDialog={openSelectDialog}
     />
   );
