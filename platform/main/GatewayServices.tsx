@@ -31,26 +31,8 @@ function useGatewayServices() {
   return useContext(GatewayServicesContext);
 }
 
-/**
- * The GatewayServicesProvider provides a list of GatewayServices to the application.
- *
- * It sits at the top of the application because it is needed by the navigation.
- * It is then initialized by the GatewayServices component after login, which fetches the list of services from the API.
- */
 export function GatewayServicesProvider(props: { children: ReactNode }) {
-  const state = useState<GatewayService[]>([]);
-  return (
-    <GatewayServicesContext.Provider value={state}>
-      {props.children}
-    </GatewayServicesContext.Provider>
-  );
-}
-
-/**
- * The GatewayServices component fetches the list of GatewayServices from the API and stores them in the GatewayServicesProvider.
- */
-export function GatewayServices(props: { children: ReactNode }) {
-  const [_gatewayServices, setGatewayServices] = useGatewayServices();
+  const [gatewayServices, setGatewayServices] = useState<GatewayService[]>([]);
   const result = useSWR<{ results: GatewayService[] }>(gatewayAPI`/services/`, requestGet);
   useLayoutEffect(() => {
     if (!result.data) {
@@ -85,17 +67,41 @@ export function GatewayServices(props: { children: ReactNode }) {
         setHubApiPath(hubApiPath);
       }
 
-      setGatewayServices(result.data.results);
+      const services = result.data.results;
+      // Debug code to test different service being available/unavailable
+      // services = services.filter((service) => {
+      //   switch (service.summary_fields?.service_cluster?.service_type) {
+      //     case 'controller':
+      //       return true;
+      //     case 'eda':
+      //       return true;
+      //     case 'hub':
+      //       return true;
+      //     default:
+      //       return true;
+      //   }
+      // });
+      setGatewayServices(services);
     }
   }, [result.data, setGatewayServices]);
-  if (result.isLoading) {
+
+  return (
+    <GatewayServicesContext.Provider value={[gatewayServices, setGatewayServices]}>
+      {props.children}
+    </GatewayServicesContext.Provider>
+  );
+}
+
+export function GatewayServicesCheck(props: { children: ReactNode }) {
+  const [services] = useGatewayServices();
+  if (!services.length) {
     return (
       <Page>
         <LoadingState />
       </Page>
     );
   }
-  return props.children;
+  return <>{props.children}</>;
 }
 
 export function useGatewayService(serviceType?: 'controller' | 'eda' | 'hub') {

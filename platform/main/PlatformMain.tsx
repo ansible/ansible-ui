@@ -8,7 +8,15 @@ import '@patternfly/patternfly/patternfly-charts-theme-dark.css';
 
 import { BrowserRouter } from 'react-router-dom';
 import { PageFramework } from '../../framework';
+import { AwxActiveUserProvider } from '../../frontend/awx/common/useAwxActiveUser';
+import { AwxConfigProvider } from '../../frontend/awx/common/useAwxConfig';
+import { WebSocketProvider } from '../../frontend/awx/common/useAwxWebSocket';
 import '../../frontend/common/i18n';
+import { EdaActiveUserProvider } from '../../frontend/eda/common/useEdaActiveUser';
+import { HubActiveUserProvider } from '../../frontend/hub/common/useHubActiveUser';
+import { HubContextProvider } from '../../frontend/hub/common/useHubContext';
+import { QuickStartProvider } from '../overview/quickstarts/QuickStartProvider';
+import { GatewayServicesCheck, GatewayServicesProvider } from './GatewayServices';
 import { PlatformActiveUserProvider } from './PlatformActiveUserProvider';
 import { PlatformApp } from './PlatformApp';
 import { PlatformLogin } from './PlatformLogin';
@@ -19,9 +27,27 @@ export default function PlatformMain() {
     <BrowserRouter>
       <PageFramework defaultRefreshInterval={10}>
         <PlatformActiveUserProvider>
-          <PlatformLogin>
-            <PlatformApp />
-          </PlatformLogin>
+          <GatewayServicesProvider>
+            <QuickStartProvider>
+              <AwxActiveUserProvider>
+                <EdaActiveUserProvider>
+                  <HubActiveUserProvider>
+                    <WebSocketProvider>
+                      <AwxConfigProvider>
+                        <HubContextProvider>
+                          <PlatformLogin>
+                            <GatewayServicesCheck>
+                              <PlatformApp />
+                            </GatewayServicesCheck>
+                          </PlatformLogin>
+                        </HubContextProvider>
+                      </AwxConfigProvider>
+                    </WebSocketProvider>
+                  </HubActiveUserProvider>
+                </EdaActiveUserProvider>
+              </AwxActiveUserProvider>
+            </QuickStartProvider>
+          </GatewayServicesProvider>
         </PlatformActiveUserProvider>
       </PageFramework>
     </BrowserRouter>

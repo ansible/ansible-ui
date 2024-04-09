@@ -35,7 +35,7 @@ export function PlatformActiveUserProvider(props: { children: ReactNode }) {
   const state = useMemo<ActiveUserState>(() => {
     return {
       activePlatformUser,
-      refreshActivePlatformUser: () => void mutate(),
+      refreshActivePlatformUser: () => void mutate(undefined),
       activePlatformUserIsLoading,
     };
   }, [activePlatformUser, activePlatformUserIsLoading, mutate]);
