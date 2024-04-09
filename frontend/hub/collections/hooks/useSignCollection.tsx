@@ -1,13 +1,13 @@
+import { TFunction } from 'i18next';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { compareStrings } from '../../../../framework';
-import { collectionKeyFn, hubAPIPost, getRepositoryBasePath } from '../../common/api/hub-api-utils';
 import { hubAPI } from '../../common/api/formatPath';
+import { collectionKeyFn, getRepositoryBasePath, hubAPIPost } from '../../common/api/hub-api-utils';
+import { useHubBulkConfirmation } from '../../common/useHubBulkConfirmation';
+import { useHubContext } from '../../common/useHubContext';
 import { CollectionVersionSearch } from '../Collection';
 import { useCollectionColumns } from './useCollectionColumns';
-import { useHubContext } from '../../common/useHubContext';
-import { useHubBulkConfirmation } from '../../common/useHubBulkConfirmation';
-import { TFunction } from 'i18next';
 
 export function useSignCollection(
   version: boolean,
@@ -59,7 +59,7 @@ export function useSignCollection(
         actionColumns,
         onComplete,
         actionFn: (collection: CollectionVersionSearch) =>
-          signCollectionVersion(version, collection, signing_service, t),
+          signCollectionVersion(version, collection, signing_service ?? '', t),
       });
     },
     [actionColumns, bulkAction, confirmationColumns, onComplete, t, signing_service, version]
