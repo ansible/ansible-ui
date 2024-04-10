@@ -30,6 +30,10 @@ export function CredentialTypePage() {
 
   if (!credentialType) return <LoadingPage breadcrumbs tabs />;
 
+  const isActionTab = location.href.includes(
+    getPageUrl(EdaRoute.CredentialTypeDetails, { params: { id: credentialType?.id } })
+  );
+
   return (
     <PageLayout>
       <PageHeader
@@ -39,11 +43,15 @@ export function CredentialTypePage() {
           { label: credentialType?.name },
         ]}
         headerActions={
-          <PageActions<EdaCredentialType>
-            actions={actions}
-            position={DropdownPosition.right}
-            selectedItem={credentialType}
-          />
+          isActionTab ? (
+            <PageActions<EdaCredentialType>
+              actions={actions}
+              position={DropdownPosition.right}
+              selectedItem={credentialType}
+            />
+          ) : (
+            <></>
+          )
         }
       />
       <PageRoutedTabs
