@@ -7,8 +7,10 @@ import { useNavigate, useParams } from 'react-router-dom';
 import {
   ICatalogBreadcrumb,
   LoadingPage,
+  PageFormCheckbox,
   PageFormDataEditor,
   PageFormSubmitHandler,
+  PageFormTextArea,
   PageFormTextInput,
   PageHeader,
   PageLayout,
@@ -130,7 +132,7 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
         <PageFormWatch watch="notification_type">{(notification_type : string) => 
           <>
             {notification_type && optionsRequest.data && 
-              <PageFormSection singleColumn>
+              <PageFormSection>
                 <PageFormGroup
                   label={t('Type Details')}
                 >
@@ -159,7 +161,7 @@ function textType(type : string)
     return 'password';
   }
 
-  if (type === 'number')
+  if (type === 'int')
   {
     return 'number';
   }
@@ -182,33 +184,12 @@ function TypeForm(props: { mode: 'add' | 'edit', notification_type : string, opt
 
   return <>
     {Object.keys(options).map( (key) => {
-      const option = options[key];
-
-      if (!option?.label)
-      {
-        return <></>;
-      }
-
-      if (option.type === 'string' || option.type === 'number' || option.type === 'password')
-      {
-        return (
-          <>
-          <PageFormTextInput<NotificationTemplate>
-            type={textType(option.type)}
-            name={'type_data.' + key}
-            id={'type_data.' + key}
-            label={t(option.label)}
-            placeholder={''}
-            isRequired={isRequired(props.mode, props.notification_type, option.label)}
-            maxLength={150}
-          /> 
-          </>
-        );
-      }
-
-       
-
-      return <></>;
+      return <ComponentFromOptions
+        mode = {props.mode}
+        notification_type= {props.notification_type}
+        optionsData={props.optionsData}
+        field = {key}
+      ></ComponentFromOptions>;
     })}
   </>;
   }catch(error)
@@ -216,7 +197,83 @@ function TypeForm(props: { mode: 'add' | 'edit', notification_type : string, opt
     debugger;
     return <>{error}</>;
   }
-  return <></>;
+}
+
+function ComponentFromOptions(props: { mode: 'add' | 'edit', notification_type : string, field : string, optionsData :  NotificationTemplateOptions })
+{
+
+  const { t } = useTranslation();
+
+  try
+  {
+    const options = props.optionsData.actions.GET.notification_configuration[props.notification_type];
+    const field = props.field;
+    if (!options)
+    {
+      return <></>;
+    }
+
+    const option = options[field];
+
+    if (!option)
+    {
+      return <></>;
+    }
+
+    const name = 'type_data.' + field;
+        
+    const label = t(option.label);
+        
+        if (option.type === 'string' || option.type === 'number' || option.type === 'password')
+        {
+          return (
+            <>
+            <PageFormTextInput<NotificationTemplate>
+              type={textType(option.type)}
+              name={name}
+              label={label}
+              placeholder={''}
+              isRequired={isRequired(props.mode, props.notification_type, option.label)}
+            /> 
+            </>
+          );
+        }
+
+        if (option.type === 'list')
+        {
+          return (
+            <>
+            <PageFormTextArea<NotificationTemplate>
+              type={textType(option.type)}
+              name={name}
+              label={label}
+              placeholder={''}
+              isRequired={isRequired(props.mode, props.notification_type, option.label)}
+            /> 
+            </>
+          );
+        }
+
+        if (option.type === 'bool')
+        {
+          return (
+            <>
+            <PageFormCheckbox<NotificationTemplate>
+              type={textType(option.type)}
+              name={name}
+              label={label}
+              placeholder={''}
+              isRequired={isRequired(props.mode, props.notification_type, option.label)}
+            /> 
+            </>
+          );
+        }
+        return <></>;
+    }catch(error)
+    {
+      debugger;
+      return <>{t('Error loading component')}</>;
+    }
 }
 
 
