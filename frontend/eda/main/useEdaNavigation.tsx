@@ -271,6 +271,7 @@ export function useEdaNavigation() {
       id: EdaRoute.Webhooks,
       label: t('Webhooks'),
       path: 'webhooks',
+      hidden: true,
       children: [
         {
           id: EdaRoute.CreateWebhook,

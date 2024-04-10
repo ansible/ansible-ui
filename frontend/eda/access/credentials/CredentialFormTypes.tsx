@@ -32,6 +32,7 @@ interface IFieldTypeString extends IFieldTypeBase {
 interface IFieldTypeBoolean extends IFieldTypeBase {
   type: 'boolean';
   default?: boolean;
+  secret: boolean;
 }
 
 export function CredentialFormInputs(props: { credentialType: EdaCredentialType | undefined }) {
