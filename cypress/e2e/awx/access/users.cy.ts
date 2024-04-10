@@ -62,7 +62,6 @@ describe('Users List Actions', () => {
 
   it('renders the user details page', () => {
     cy.navigateTo('awx', 'users');
-    //cy.clickTableRow(user.username);
     cy.clickTableRowLink('username', user.username);
     cy.verifyPageTitle(user.username);
     cy.clickLink(/^Details$/);
@@ -72,7 +71,6 @@ describe('Users List Actions', () => {
   it('edits a user from the details page', () => {
     cy.navigateTo('awx', 'users');
     cy.clickTableRowLink('username', user.username);
-    //cy.clickTableRow(user.username);
     cy.verifyPageTitle(user.username);
     cy.clickButton(/^Edit user$/);
     cy.verifyPageTitle('Edit User');
@@ -113,7 +111,6 @@ describe('Users Delete Actions', () => {
   it('deletes a user from the details page', () => {
     cy.navigateTo('awx', 'users');
     cy.clickTableRowLink('username', user.username);
-    //cy.clickTableRow(user.username);
     cy.verifyPageTitle(user.username);
     cy.clickPageAction('delete-user');
     cy.get('#confirm').click();
