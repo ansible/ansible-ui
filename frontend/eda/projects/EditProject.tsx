@@ -180,7 +180,7 @@ function ProjectEditInputs() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const { data: credentials } = useGet<EdaResult<EdaCredential>>(
-    edaAPI`/credentials/` + `?credential_type__kind=scm&page_size=300`
+    edaAPI`/eda-credentials/` + `?credential_type__kind=scm&page_size=300`
   );
   const { data: verifyCredentials } = useGet<EdaResult<EdaCredential>>(
     edaAPI`/eda-credentials/` + `?credential_type__kind=cryptography&page_size=300`

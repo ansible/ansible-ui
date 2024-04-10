@@ -34,7 +34,9 @@ export function CredentialDetails() {
           credential?.organization?.name || ''
         )}
       </PageDetail>
-
+      <PageDetail label={t('Credential type')}>
+        {credential.credential_type?.name || credential.credential_type?.id || ''}
+      </PageDetail>
       <CredentialDetailFields credential={credential} />
       <PageDetail label={t('Created')}>
         {credential?.created_at ? formatDateString(credential.created_at) : ''}
