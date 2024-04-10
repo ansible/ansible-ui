@@ -76,7 +76,7 @@ export function MultipleChoiceField(props: IProps) {
   };
 
   useEffect(() => {
-    if (type === 'multiplechoice')
+    if (type === 'multiplechoice' && choices.filter((c) => c.default).length > 1)
       replace(updatedChoices.map((choice) => ({ ...choice, default: false })));
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
