@@ -33,16 +33,16 @@ describe('Job templates form Create, Edit, Delete', function () {
     cy.intercept('POST', awxAPI`/job_templates`).as('createJT');
     const jtName = 'E2E-JT ' + randomString(4);
     cy.navigateTo('awx', 'templates');
-    cy.get('[data-cy="create-template"]').click();
+    cy.getBy('[data-cy="create-template"]').click();
     cy.clickLink(/^Create job template$/);
-    cy.get('[data-cy="name"]').type(jtName);
-    cy.get('[data-cy="description"]').type('This is a JT description');
+    cy.getBy('[data-cy="name"]').type(jtName);
+    cy.getBy('[data-cy="description"]').type('This is a JT description');
     cy.selectDropdownOptionByResourceName('inventory', inventory.name);
     cy.selectDropdownOptionByResourceName('project', `${(this.globalProject as Project).name}`);
     cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
     cy.selectItemFromLookupModal('execution-environment-select', executionEnvironment);
     cy.selectItemFromLookupModal('credential-select', machineCredential.name);
-    cy.get('[data-cy="Submit"]').click();
+    cy.getBy('[data-cy="Submit"]').click();
     cy.wait('@createJT')
       .its('response.body.id')
       .then((id: string) => {
@@ -66,7 +66,7 @@ describe('Job templates form Create, Edit, Delete', function () {
         });
         cy.intercept('DELETE', awxAPI`/job_templates/${id}/`).as('deleteJobTemplate');
         cy.clickModalConfirmCheckbox();
-        cy.get('[data-ouia-component-id="submit"]').click();
+        cy.getBy('[data-ouia-component-id="submit"]').click();
         cy.wait('@deleteJobTemplate').then((deleteJobTemplate) => {
           expect(deleteJobTemplate?.response?.statusCode).to.eql(204);
         });
@@ -81,17 +81,17 @@ describe('Job templates form Create, Edit, Delete', function () {
     const jtName = 'E2E-POLJT ' + randomString(4);
 
     cy.navigateTo('awx', 'templates');
-    cy.get('[data-cy="create-template"]').click();
+    cy.getBy('[data-cy="create-template"]').click();
     cy.clickLink(/^Create job template$/);
-    cy.get('[data-cy="name"]').type(jtName);
-    cy.get('[data-cy="description"]').type('This is a JT with POL wizard description');
+    cy.getBy('[data-cy="name"]').type(jtName);
+    cy.getBy('[data-cy="description"]').type('This is a JT with POL wizard description');
     cy.selectPromptOnLaunch('inventory');
     cy.selectDropdownOptionByResourceName('project', `${(this.globalProject as Project).name}`);
     cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
     cy.selectPromptOnLaunch('execution_environment');
     cy.selectPromptOnLaunch('credential');
     cy.selectPromptOnLaunch('instance_groups');
-    cy.get('[data-cy="Submit"]').click();
+    cy.getBy('[data-cy="Submit"]').click();
     cy.wait('@createPOLJT')
       .its('response.body.id')
       .then((id: string) => {
@@ -124,7 +124,7 @@ describe('Job templates form Create, Edit, Delete', function () {
           disableFilter: true,
         });
         cy.clickModalConfirmCheckbox();
-        cy.get('[data-ouia-component-id="submit"]').click();
+        cy.getBy('[data-ouia-component-id="submit"]').click();
         cy.wait('@deleteJobTemplate').then((deleteJobTemplate) => {
           expect(deleteJobTemplate?.response?.statusCode).to.eql(204);
         });
@@ -139,17 +139,17 @@ describe('Job templates form Create, Edit, Delete', function () {
     const jtName = 'E2E-POLJT ' + randomString(4);
 
     cy.navigateTo('awx', 'templates');
-    cy.get('[data-cy="create-template"]').click();
+    cy.getBy('[data-cy="create-template"]').click();
     cy.clickLink(/^Create job template$/);
-    cy.get('[data-cy="name"]').type(jtName);
-    cy.get('[data-cy="description"]').type('This is a JT with POL wizard description');
+    cy.getBy('[data-cy="name"]').type(jtName);
+    cy.getBy('[data-cy="description"]').type('This is a JT with POL wizard description');
     cy.selectPromptOnLaunch('inventory');
     cy.selectDropdownOptionByResourceName('project', `${(this.globalProject as Project).name}`);
     cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
     cy.selectPromptOnLaunch('execution_environment');
     cy.selectPromptOnLaunch('credential');
     cy.selectPromptOnLaunch('instance_groups');
-    cy.get('[data-cy="Submit"]').click();
+    cy.getBy('[data-cy="Submit"]').click();
     cy.wait('@createPOLJT')
       .its('response.body.id')
       .then((id: string) => {
@@ -178,7 +178,7 @@ describe('Job templates form Create, Edit, Delete', function () {
           disableFilter: true,
         });
         cy.clickModalConfirmCheckbox();
-        cy.get('[data-ouia-component-id="submit"]').click();
+        cy.getBy('[data-ouia-component-id="submit"]').click();
         cy.wait('@deleteJobTemplate').then((deleteJobTemplate) => {
           expect(deleteJobTemplate?.response?.statusCode).to.eql(204);
         });
@@ -199,10 +199,10 @@ describe('Job templates form Create, Edit, Delete', function () {
       cy.filterTableByMultiSelect('name', [jobTemplate.name]);
       cy.getTableRow('name', jobTemplate.name, { disableFilter: true }).should('be.visible');
       cy.selectTableRow(jobTemplate.name, false);
-      cy.get('[data-cy="edit-template"]').click();
+      cy.getBy('[data-cy="edit-template"]').click();
       cy.verifyPageTitle('Edit Job Template');
-      cy.get('[data-cy="name"]').clear().type(newName);
-      cy.get('[data-cy="description"]').type('this is a new description after editing');
+      cy.getBy('[data-cy="name"]').clear().type(newName);
+      cy.getBy('[data-cy="description"]').type('this is a new description after editing');
       cy.intercept('PATCH', `api/v2/job_templates/${jobTemplate.id}/`).as('editJT');
       cy.clickButton(/^Save job template$/);
       cy.wait('@editJT')
@@ -236,8 +236,8 @@ describe('Job templates form Create, Edit, Delete', function () {
       cy.verifyPageTitle(jobTemplate.name);
       cy.clickLink(/^Edit template$/);
       cy.verifyPageTitle('Edit Job Template');
-      cy.get('[data-cy="name"]').clear().type(newName);
-      cy.get('[data-cy="description"]').type('this is a new description after editing');
+      cy.getBy('[data-cy="name"]').clear().type(newName);
+      cy.getBy('[data-cy="description"]').type('this is a new description after editing');
       cy.intercept('PATCH', `api/v2/job_templates/${jobTemplate.id}/`).as('editJT');
       cy.clickButton(/^Save job template$/);
       cy.wait('@editJT')
