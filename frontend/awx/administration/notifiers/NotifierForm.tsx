@@ -68,56 +68,51 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
         submitText={t('Save host')}
         onSubmit={() => {}}
         cancelText={t('Cancel')}
-        onCancel={ () => navigate(-1)}
+        onCancel={() => navigate(-1)}
         defaultValue={defaultValue}
       >
-          <PageFormTextInput<NotificationTemplate>
-            name="name"
-            label={t('Name')}
-            placeholder={t('Enter a name')}
-            isRequired
-            maxLength={150}
-          />
-          <PageFormTextInput<NotificationTemplate>
-            name="description"
-            label={t('Description')}
-            placeholder={t('Enter a description')}
-          />
-          <PageFormSelectOrganization<NotificationTemplate> name="organization" isRequired />
-          <PageFormSingleSelect
-            name="notification_type"
-            id="notification_type"
-            label={t(`Type`)}
-            placeholder={t('Choose a Notification Type')}
-            isRequired={true}
-            options={[
-              { value: 'email', label: t('Email') },
-              { value: 'grafana', label: t('Grafana') },
-              { value: 'irc', label: t('IRC') },
-              { value: 'mattermost', label: t('Mattermost') },
-              { value: 'pagerduty', label: t('Pagerduty') },
-              { value: 'rocketchat', label: t('Rocket.Chat') },
-              { value: 'slack', label: t('Slack') },
-              { value: 'twilio', label: t('Twilio') },
-              { value: 'webhook', label: t('Webhook') },
-            ]}
-          />
-          <PageFormWatch watch="notification_type">
-          {() =>
-            <TypeForm mode={mode}/>
-          }
-          </PageFormWatch>
+        <PageFormTextInput<NotificationTemplate>
+          name="name"
+          label={t('Name')}
+          placeholder={t('Enter a name')}
+          isRequired
+          maxLength={150}
+        />
+        <PageFormTextInput<NotificationTemplate>
+          name="description"
+          label={t('Description')}
+          placeholder={t('Enter a description')}
+        />
+        <PageFormSelectOrganization<NotificationTemplate> name="organization" isRequired />
+        <PageFormSingleSelect
+          name="notification_type"
+          id="notification_type"
+          label={t(`Type`)}
+          placeholder={t('Choose a Notification Type')}
+          isRequired={true}
+          options={[
+            { value: 'email', label: t('Email') },
+            { value: 'grafana', label: t('Grafana') },
+            { value: 'irc', label: t('IRC') },
+            { value: 'mattermost', label: t('Mattermost') },
+            { value: 'pagerduty', label: t('Pagerduty') },
+            { value: 'rocketchat', label: t('Rocket.Chat') },
+            { value: 'slack', label: t('Slack') },
+            { value: 'twilio', label: t('Twilio') },
+            { value: 'webhook', label: t('Webhook') },
+          ]}
+        />
+        <PageFormWatch watch="notification_type">{() => <TypeForm mode={mode} />}</PageFormWatch>
       </AwxPageForm>
     </PageLayout>
   );
 }
 
-function TypeForm(props : {mode : 'add' | 'edit'})
-{
+function TypeForm(props: { mode: 'add' | 'edit' }) {
   const context = useFormContext<NotificationTemplate>();
   const notification_type = context.getValues().notification_type;
- 
-  const {mode} = props;
+
+  const { mode } = props;
   switch (notification_type) {
     case 'email':
       return <EmailForm mode={mode} />;
@@ -177,4 +172,3 @@ function TwilioForm(props: { mode: 'add' | 'edit' }) {
 function WebhookForm(props: { mode: 'add' | 'edit' }) {
   return <></>;
 }
-
