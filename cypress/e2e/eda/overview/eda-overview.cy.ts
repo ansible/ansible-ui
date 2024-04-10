@@ -25,7 +25,7 @@ describe('EDA Overview', () => {
             'div.pf-v5-c-empty-state__body',
             'Create a rulebook activation by clicking the button below.'
           );
-          cy.clickButton(/^Create rulebook activation$/);
+          cy.get('[data-cy="create-rulebook-activation"]').click();
           cy.verifyPageTitle('Create Rulebook Activation');
         } else if (results.length >= 1) {
           cy.get('#rulebook-activations')

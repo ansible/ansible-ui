@@ -32,8 +32,8 @@ describe('EDA rulebook activations - Create', () => {
   });
 
   after(() => {
-    cy.deleteEdaDecisionEnvironment(edaDecisionEnvironment);
-    cy.deleteEdaProject(edaProject);
+    cy.deleteEdaDecisionEnvironment(edaDecisionEnvironment, { failOnStatusCode: false });
+    cy.deleteEdaProject(edaProject, { failOnStatusCode: false });
     cy.deleteAllEdaCurrentUserTokens();
   });
 
