@@ -23,50 +23,48 @@ import { awxAPI } from '../../common/api/awx-utils';
 import { useGet } from '../../../common/crud/useGet';
 import { AwxError } from '../../common/AwxError';
 
-export function EditNotifier()
-{
+export function EditNotifier() {
   return <NotifierForm mode={'edit'} />;
 }
 
-export function AddNotifier()
-{
+export function AddNotifier() {
   return <NotifierForm mode={'add'} />;
 }
 
-function NotifierForm(props : {mode : 'add' | 'edit'})
-{
-  const {t} = useTranslation();
+function NotifierForm(props: { mode: 'add' | 'edit' }) {
+  const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
-  const {mode } = props;
-  const params = useParams<{ id : string }>();
+  const { mode } = props;
+  const params = useParams<{ id: string }>();
   let getUrl = mode === 'add' ? '' : awxAPI`/notification_templates/${params.id || ''}/`;
   const notifierRequest = useGet<NotificationTemplate>(getUrl);
 
-  const breadcrumbs : ICatalogBreadcrumb[] = [
+  const breadcrumbs: ICatalogBreadcrumb[] = [
     { label: t('Notifications'), to: getPageUrl(AwxRoute.NotificationTemplates) },
-    { label: mode === 'add' ? t('Add') : t('Edit') }
+    { label: mode === 'add' ? t('Add') : t('Edit') },
   ];
 
-  if (notifierRequest.error)
-  {
+  if (notifierRequest.error) {
     return <AwxError error={notifierRequest.error} />;
   }
 
-  if (!notifierRequest.data && mode === 'edit')
-  {
-    return <LoadingPage />
+  if (!notifierRequest.data && mode === 'edit') {
+    return <LoadingPage />;
   }
 
   return (
-  <PageLayout>
-      <PageHeader breadcrumbs={breadcrumbs} title={ mode === 'edit' ? t('Edit notifier') : t('Add notifier')} />
+    <PageLayout>
+      <PageHeader
+        breadcrumbs={breadcrumbs}
+        title={mode === 'edit' ? t('Edit notifier') : t('Add notifier')}
+      />
       <AwxPageForm<NotificationTemplate>
         submitText={t('Save host')}
-        onSubmit={ () => {}}
+        onSubmit={() => {}}
         cancelText={t('Cancel')}
-        onCancel={ () => {}}
-        defaultValue={ {} }
-      >
-      </AwxPageForm>
-    </PageLayout>);
+        onCancel={() => {}}
+        defaultValue={{}}
+      ></AwxPageForm>
+    </PageLayout>
+  );
 }
