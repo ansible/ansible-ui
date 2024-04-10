@@ -30,7 +30,7 @@ import { PageFormWatch } from '../../../../framework/PageForm/Utils/PageFormWatc
 import { PageFormGroup } from '../../../../framework/PageForm/Inputs/PageFormGroup';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
 import { useOptions } from '../../../common/crud/useOptions';
-import { text } from 'd3';
+import { TFunction } from 'i18next';
 
 
 export function EditNotifier() {
@@ -132,11 +132,11 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
         <PageFormWatch watch="notification_type">{(notification_type : string) => 
           <>
             {notification_type && optionsRequest.data && 
-              <PageFormSection>
+              <PageFormSection singleColumn={true}>
                 <PageFormGroup
                   label={t('Type Details')}
                 >
-                  <TypeForm mode={mode} notification_type={notification_type} optionsData={optionsRequest.data} />
+                  {genericForm(t, mode, notification_type, optionsRequest.data)}
                 </PageFormGroup>
               </PageFormSection>
             }
@@ -170,13 +170,11 @@ function textType(type : string)
 }
 
 
-function TypeForm(props: { mode: 'add' | 'edit', notification_type : string, optionsData :  NotificationTemplateOptions })
+function genericForm(t : TFunction<"translation", undefined>, mode: 'add' | 'edit', notification_type : string, optionsData :  NotificationTemplateOptions)
 {
-  const {t} = useTranslation();
-
   try
   {
-  const options = props.optionsData.actions.GET.notification_configuration[props.notification_type];
+  const options = optionsData.actions.GET.notification_configuration[notification_type];
   if (!options)
   {
     return <></>;
@@ -184,12 +182,7 @@ function TypeForm(props: { mode: 'add' | 'edit', notification_type : string, opt
 
   return <>
     {Object.keys(options).map( (key) => {
-      return <ComponentFromOptions
-        mode = {props.mode}
-        notification_type= {props.notification_type}
-        optionsData={props.optionsData}
-        field = {key}
-      ></ComponentFromOptions>;
+      return componentFromOptions(t, mode, notification_type, key, optionsData);
     })}
   </>;
   }catch(error)
@@ -199,15 +192,11 @@ function TypeForm(props: { mode: 'add' | 'edit', notification_type : string, opt
   }
 }
 
-function ComponentFromOptions(props: { mode: 'add' | 'edit', notification_type : string, field : string, optionsData :  NotificationTemplateOptions })
+function componentFromOptions(t : TFunction<"translation", undefined>, mode: 'add' | 'edit', notification_type : string, field : string, optionsData :  NotificationTemplateOptions)
 {
-
-  const { t } = useTranslation();
-
   try
   {
-    const options = props.optionsData.actions.GET.notification_configuration[props.notification_type];
-    const field = props.field;
+    const options = optionsData.actions.GET.notification_configuration[notification_type];
     if (!options)
     {
       return <></>;
@@ -233,7 +222,7 @@ function ComponentFromOptions(props: { mode: 'add' | 'edit', notification_type :
               name={name}
               label={label}
               placeholder={''}
-              isRequired={isRequired(props.mode, props.notification_type, option.label)}
+              isRequired={isRequired(mode, notification_type, option.label)}
             /> 
             </>
           );
@@ -248,7 +237,7 @@ function ComponentFromOptions(props: { mode: 'add' | 'edit', notification_type :
               name={name}
               label={label}
               placeholder={''}
-              isRequired={isRequired(props.mode, props.notification_type, option.label)}
+              isRequired={isRequired(mode, notification_type, option.label)}
             /> 
             </>
           );
@@ -263,7 +252,7 @@ function ComponentFromOptions(props: { mode: 'add' | 'edit', notification_type :
               name={name}
               label={label}
               placeholder={''}
-              isRequired={isRequired(props.mode, props.notification_type, option.label)}
+              isRequired={isRequired(mode, notification_type, option.label)}
             /> 
             </>
           );
