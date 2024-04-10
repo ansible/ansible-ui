@@ -43,9 +43,9 @@ export function PageFormWorkflowJobTemplateSelect<
         }
         return (value as WorkflowJobTemplate)?.name ?? '';
       }}
-      placeholder={t('Select job template')}
-      loadingPlaceholder={t('Loading job templates...')}
-      loadingErrorText={t('Error loading job templates')}
+      placeholder={t('Select workflow job template')}
+      loadingPlaceholder={t('Loading workflow job templates...')}
+      loadingErrorText={t('Error loading workflow job templates')}
       isRequired={props.isRequired}
       limit={200}
       openSelectDialog={openSelectDialog}

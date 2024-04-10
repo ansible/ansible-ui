@@ -139,9 +139,7 @@ describe('organizations edit and delete', function () {
   it('deletes an organization from the organizations list toolbar', function () {
     cy.navigateTo('awx', 'organizations');
     cy.filterTableByMultiSelect('name', [organization.name]);
-    cy.get('[data-cy="checkbox-column-cell"]').within(() => {
-      cy.get('input').click();
-    });
+    cy.selectTableRow(organization.name, false);
     cy.clickToolbarKebabAction('delete-selected-organizations');
     cy.getModal().within(() => {
       cy.get('#confirm').click();
