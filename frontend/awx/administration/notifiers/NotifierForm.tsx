@@ -27,7 +27,9 @@ import { PageFormSingleSelect } from '../../../../framework/PageForm/Inputs/Page
 import { PageFormWatch } from '../../../../framework/PageForm/Utils/PageFormWatch';
 import { PageFormGroup } from '../../../../framework/PageForm/Inputs/PageFormGroup';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
-import { requestCommon } from '../../../common/crud/requestCommon';
+import { useOptions } from '../../../common/crud/useOptions';
+import { text } from 'd3';
+
 
 export function EditNotifier() {
   return <NotifierForm mode={'edit'} />;
@@ -37,7 +39,14 @@ export function AddNotifier() {
   return <NotifierForm mode={'add'} />;
 }
 
-type NotificationTemplateOptions = {};
+type NotificationTemplateOptions = {
+  actions : {
+    GET : {
+      notification_configuration: 
+        Record<string, Record<string, { label : string, type : string, default : unknown }>>
+    }
+  }
+};
 
 function NotifierForm(props: { mode: 'add' | 'edit' }) {
   const { t } = useTranslation();
@@ -48,7 +57,7 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
   const notifierRequest = useGet<NotificationTemplate>(getUrl);
   const navigate = useNavigate();
 
-  const optionsRequest = useGet<NotificationTemplateOptions>(awxAPI`/notification_templates/`, undefined, { });
+  const optionsRequest = useOptions<NotificationTemplateOptions>(awxAPI`/notification_templates/`);
 
   const breadcrumbs: ICatalogBreadcrumb[] = [
     { label: t('Notifications'), to: getPageUrl(AwxRoute.NotificationTemplates) },
@@ -59,7 +68,16 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
     return <AwxError error={notifierRequest.error} />;
   }
 
+  if (optionsRequest.error) {
+    return <AwxError error={optionsRequest.error} />;
+  }
+
   if (!notifierRequest.data && mode === 'edit') {
+    return <LoadingPage />;
+  }
+
+  if (!optionsRequest.data)
+  {
     return <LoadingPage />;
   }
 
@@ -111,12 +129,12 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
         />
         <PageFormWatch watch="notification_type">{(notification_type : string) => 
           <>
-            {notification_type && 
+            {notification_type && optionsRequest.data && 
               <PageFormSection singleColumn>
                 <PageFormGroup
                   label={t('Type Details')}
                 >
-                  <TypeForm mode={mode} notification_type={notification_type} />
+                  <TypeForm mode={mode} notification_type={notification_type} optionsData={optionsRequest.data} />
                 </PageFormGroup>
               </PageFormSection>
             }
@@ -127,70 +145,121 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
   );
 }
 
-function TypeForm(props: { mode: 'add' | 'edit', notification_type : string })
+
+function isRequired(mode : 'add' | 'edit', notification_type : string, label : string) : boolean
 {
-  return <></>;
+
+  return false;
 }
-/*
-function TypeForm(props: { mode: 'add' | 'edit', notification_type : string }) {
-  const context = useFormContext<NotificationTemplate>();
-  const { mode, notification_type } = props;
-  switch (notification_type) {
-    case 'email':
-      return <EmailForm mode={mode} />;
-    case 'grafana':
-      return <GrafanaForm mode={mode} />;
-    case 'irc':
-      return <IRCForm mode={mode} />;
-    case 'mattermost':
-      return <MattermostForm mode={mode} />;
-    case 'pagerduty':
-      return <PagerdutyForm mode={mode} />;
-    case 'rocketchat':
-      return <RocketChatForm mode={mode} />;
-    case 'slack':
-      return <SlackForm mode={mode} />;
-    case 'twilio':
-      return <TwilioForm mode={mode} />;
-    case 'webhook':
-      return <WebhookForm mode={mode} />;
-    default:
-      return <></>;
+
+function textType(type : string)
+{
+  if (type === 'password')
+  {
+    return 'password';
   }
+
+  if (type === 'number')
+  {
+    return 'number';
+  }
+
+  return 'text';
 }
 
-function EmailForm(props: { mode: 'add' | 'edit' }) {
+
+function TypeForm(props: { mode: 'add' | 'edit', notification_type : string, optionsData :  NotificationTemplateOptions })
+{
+  const {t} = useTranslation();
+
+  try
+  {
+  const options = props.optionsData.actions.GET.notification_configuration[props.notification_type];
+  if (!options)
+  {
+    return <></>;
+  }
+
+  return <>
+    {Object.keys(options).map( (key) => {
+      const option = options[key];
+
+      if (!option?.label)
+      {
+        return <></>;
+      }
+
+      if (option.type === 'string' || option.type === 'number' || option.type === 'password')
+      {
+        return (
+          <>
+          <PageFormTextInput<NotificationTemplate>
+            type={textType(option.type)}
+            name={'type_data.' + key}
+            id={'type_data.' + key}
+            label={t(option.label)}
+            placeholder={''}
+            isRequired={isRequired(props.mode, props.notification_type, option.label)}
+            maxLength={150}
+          /> 
+          </>
+        );
+      }
+
+       
+
+      return <></>;
+    })}
+  </>;
+  }catch(error)
+  {
+    debugger;
+    return <>{error}</>;
+  }
   return <></>;
 }
 
-function GrafanaForm(props: { mode: 'add' | 'edit' }) {
-  return <></>;
+
+// list of form elements names for translations:
+// this hook is here only for translator static string crawler, so he can find those
+function useStaticTranslations()
+{
+  const {t} = useTranslation();
+t('Notification configuration');
+t('Host');
+t('Port');
+t('Username');
+t('Password');
+t('Use TLS');
+t('Use SSL');
+t('Sender Email');
+t('Recipient List');
+t('Timeout');
+t('Token');
+t('Destination Channels');
+t('Account SID');
+t('Account Token');
+t('Source Phone Number');
+t('Destination SMS Numbers');
+t('Pagerduty subdomain');
+t('API Token');
+t('API Service/Integration Key');
+t('Client Identifier');
+t('Grafana URL');
+t('Grafana API Key');
+t('Target URL');
+t('HTTP Method');
+t('Verify SSL');
+t('Username', {'context': 'within webhook and mattermost'});
+t('Password', {'context': 'within webhook'});
+t('HTTP Headers');
+t('Target URL', {'context': 'within mattermost and rocketchat'});
+t('Verify SSL', {'context': 'within mattermost and rocketchat'});
+t('IRC Server Address');
+t('IRC Server Port');
+t('IRC Nick');
+t('IRC Server Password');
+t('SSL Connection');
+t('Destination Channels or Users');
 }
 
-function IRCForm(props: { mode: 'add' | 'edit' }) {
-  return <></>;
-}
-
-function MattermostForm(props: { mode: 'add' | 'edit' }) {
-  return <></>;
-}
-
-function PagerdutyForm(props: { mode: 'add' | 'edit' }) {
-  return <></>;
-}
-
-function RocketChatForm(props: { mode: 'add' | 'edit' }) {
-  return <></>;
-}
-
-function SlackForm(props: { mode: 'add' | 'edit' }) {
-  return <></>;
-}
-
-function TwilioForm(props: { mode: 'add' | 'edit' }) {
-  return <></>;
-}
-
-function WebhookForm(props: { mode: 'add' | 'edit' }) {
-  return <></>;
-}*/
