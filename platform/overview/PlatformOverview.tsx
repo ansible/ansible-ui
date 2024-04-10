@@ -1,4 +1,4 @@
-import { QuickStartCatalogPage, useValuesForQuickStartContext } from '@patternfly/quickstarts';
+import { QuickStartCatalogPage } from '@patternfly/quickstarts';
 import {
   Button,
   CardHeader,
@@ -20,7 +20,7 @@ import { AwxRecentProjectsCard } from '../../frontend/awx/overview/cards/AwxRece
 import { EdaDecisionEnvironmentsCard } from '../../frontend/eda/overview/cards/EdaDecisionEnvironmentsCard';
 import { EdaRuleAuditCard } from '../../frontend/eda/overview/cards/EdaRuleAuditCard';
 import { EdaRulebookActivationsCard } from '../../frontend/eda/overview/cards/EdaRulebookActivationsCard';
-import { useAwxService, useEdaService } from '../main/GatewayServices';
+import { useAwxService, useEdaService, useHubService } from '../main/GatewayServices';
 import { PlatformCountsCard } from './cards/PlatformCountsCard';
 import { useManagedPlatformOverview } from './useManagedPlatformOverview';
 
@@ -29,8 +29,7 @@ export function PlatformOverview() {
   const { openManageDashboard, managedResources } = useManagedPlatformOverview();
   const awxService = useAwxService();
   const edaService = useEdaService();
-  // const hubService = useHubService();
-  const quickStarts = useValuesForQuickStartContext();
+  const hubService = useHubService();
   return (
     <PageLayout>
       <PageHeader
@@ -49,10 +48,7 @@ export function PlatformOverview() {
           .filter((resource) => {
             switch (resource.id) {
               case 'quick-starts':
-                if (!quickStarts.allQuickStarts || quickStarts.allQuickStarts.length === 0) {
-                  return false;
-                }
-                break;
+                return !!hubService;
               case 'counts':
               case 'job_activity':
               case 'recent_jobs':
@@ -63,9 +59,8 @@ export function PlatformOverview() {
               case 'recent-rule-audits':
               case 'recent-decision-environments':
                 return !!edaService;
-              default:
-                return true;
             }
+            return true;
           })
           .map((resource) => {
             switch (resource.id) {
