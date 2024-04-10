@@ -27,6 +27,7 @@ import { PageFormSingleSelect } from '../../../../framework/PageForm/Inputs/Page
 import { PageFormWatch } from '../../../../framework/PageForm/Utils/PageFormWatch';
 import { PageFormGroup } from '../../../../framework/PageForm/Inputs/PageFormGroup';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
+import { requestCommon } from '../../../common/crud/requestCommon';
 
 export function EditNotifier() {
   return <NotifierForm mode={'edit'} />;
@@ -36,6 +37,8 @@ export function AddNotifier() {
   return <NotifierForm mode={'add'} />;
 }
 
+type NotificationTemplateOptions = {};
+
 function NotifierForm(props: { mode: 'add' | 'edit' }) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
@@ -44,6 +47,8 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
   let getUrl = mode === 'add' ? '' : awxAPI`/notification_templates/${params.id || ''}/`;
   const notifierRequest = useGet<NotificationTemplate>(getUrl);
   const navigate = useNavigate();
+
+  const optionsRequest = useGet<NotificationTemplateOptions>(awxAPI`/notification_templates/`, undefined, { });
 
   const breadcrumbs: ICatalogBreadcrumb[] = [
     { label: t('Notifications'), to: getPageUrl(AwxRoute.NotificationTemplates) },
@@ -122,6 +127,11 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
   );
 }
 
+function TypeForm(props: { mode: 'add' | 'edit', notification_type : string })
+{
+  return <></>;
+}
+/*
 function TypeForm(props: { mode: 'add' | 'edit', notification_type : string }) {
   const context = useFormContext<NotificationTemplate>();
   const { mode, notification_type } = props;
@@ -183,4 +193,4 @@ function TwilioForm(props: { mode: 'add' | 'edit' }) {
 
 function WebhookForm(props: { mode: 'add' | 'edit' }) {
   return <></>;
-}
+}*/
