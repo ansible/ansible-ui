@@ -52,9 +52,9 @@ describe('host and inventory host', () => {
       //check edit group
       cy.get('[data-cy="edit-group"]').click();
       cy.verifyPageTitle('Edit group');
-      cy.get('[data-cy="name-form-group"]').type('-changed name');
+      cy.get('[data-cy="name-form-group"]').type('-changed');
       cy.get('[data-cy="Submit"]').click();
-      cy.verifyPageTitle(group.name + '-changed name');
+      cy.verifyPageTitle(group.name + '-changed');
       cy.awxRequestPost<{ name: string; inventory: number }>(awxAPI`/hosts/${hostid}/groups/`, {
         name: 'E2E Group ' + randomString(5),
         inventory: host.inventory,
