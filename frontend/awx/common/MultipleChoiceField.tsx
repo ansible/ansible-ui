@@ -19,7 +19,7 @@ import { PageFormGroup } from '../../../framework/PageForm/Inputs/PageFormGroup'
 import { Controller, useFieldArray, useFormContext, useWatch } from 'react-hook-form';
 import { PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import styled from 'styled-components';
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
 import { getDocsBaseUrl } from './util/getDocsBaseUrl';
 import { useAwxConfig } from './useAwxConfig';
 
@@ -48,11 +48,11 @@ export function MultipleChoiceField(props: IProps) {
 
   const docsURL = `${getDocsBaseUrl(config)}/html/userguide/job_templates.html#surveys`;
 
-  const emptyChoice = t('Choice option cannot be empty.');
-
+  const emptyChoiceMsg = t('Choice option cannot be empty.');
+  const duplicateChoiceMsg = t('Choice option already exists.');
   const defaultOptLabel = t('Default option');
 
-  const { control, setValue, setError, clearErrors } = useFormContext();
+  const { control, setValue, setError, clearErrors, getFieldState } = useFormContext();
 
   const { fields, append, remove, update, replace } = useFieldArray({
     control,
@@ -64,9 +64,16 @@ export function MultipleChoiceField(props: IProps) {
 
   const addChoice = (useWatch({ name: 'add-choice' }) as string) ?? '';
 
+  const plainChoices = updatedChoices.map((choice) => choice.name);
+
   const handleAdd = () => {
     if (addChoice.length <= 0) {
-      setError('add-choice', { message: emptyChoice });
+      setError('add-choice', { message: emptyChoiceMsg });
+      return;
+    }
+
+    if (plainChoices.includes(addChoice)) {
+      setError('add-choice', { message: duplicateChoiceMsg });
       return;
     }
 
@@ -82,7 +89,6 @@ export function MultipleChoiceField(props: IProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [type]);
 
-  const plainChoices = useMemo(() => choices.map((choice) => choice.name), [choices]);
   return (
     <PageFormGroup
       fieldId={'multiple-choice-options'}
@@ -157,7 +163,16 @@ export function MultipleChoiceField(props: IProps) {
                 name={`formattedChoices[${index}].name`}
                 control={control}
                 rules={{
-                  required: emptyChoice,
+                  validate: {
+                    required: (v: string) => {
+                      const { isTouched } = getFieldState(`formattedChoices[${index}].name`);
+
+                      if (v.length <= 0) return emptyChoiceMsg;
+
+                      if (isTouched && plainChoices.filter((pc) => pc === v).length > 1)
+                        return duplicateChoiceMsg;
+                    },
+                  },
                 }}
                 render={({ field, fieldState: { error } }) => (
                   <>
@@ -167,10 +182,6 @@ export function MultipleChoiceField(props: IProps) {
                       data-cy={`choice-option-${index}`}
                       aria-label={t('Choice option')}
                       {...field}
-                      onKeyUp={(e) => {
-                        if (e.key === 'Enter' && updatedChoices[index].name.length <= 0)
-                          setError(`formattedChoices[${index}].name`, { message: emptyChoice });
-                      }}
                     />
                     {error?.message && (
                       <FormHelperText>
