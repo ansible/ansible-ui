@@ -33,7 +33,7 @@ export function ProjectPage() {
   } = useGet<Project>(awxAPI`/projects/${params.id ?? ''}/`);
   const pageNavigate = usePageNavigate();
   const itemActions = useProjectActions(() => pageNavigate(AwxRoute.Projects));
-  const currentUser = useAwxActiveUser();
+  const { activeAwxUser } = useAwxActiveUser();
   const {
     data: isNotifAdmin,
     error: isNotifAdminError,
@@ -51,11 +51,11 @@ export function ProjectPage() {
       { label: t('Schedules'), page: AwxRoute.ProjectSchedules },
       { label: t('Job templates'), page: AwxRoute.ProjectJobTemplates },
     ];
-    if (currentUser?.is_system_auditor || (isNotifAdmin && isNotifAdmin.results.length > 0)) {
+    if (activeAwxUser?.is_system_auditor || (isNotifAdmin && isNotifAdmin.results.length > 0)) {
       tabs.push({ label: t('Notifications'), page: AwxRoute.ProjectNotifications });
     }
     return tabs;
-  }, [t, currentUser, isNotifAdmin]);
+  }, [t, activeAwxUser, isNotifAdmin]);
   if (error) return <AwxError error={error} handleRefresh={projectRefresh || refreshNotifAdmin} />;
   if (!project || isProjectLoading || isNotifAdminLoading) return <LoadingPage breadcrumbs tabs />;
 

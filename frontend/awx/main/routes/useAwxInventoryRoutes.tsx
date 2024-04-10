@@ -257,6 +257,11 @@ export function useAwxInventoryRoutes() {
           element: <CreateInventory inventoryKind="smart" />,
         },
         {
+          id: AwxRoute.CreateConstructedInventory,
+          path: 'constructed_inventory/create',
+          element: <CreateInventory inventoryKind="constructed" />,
+        },
+        {
           path: '',
           element: <Inventories />,
         },

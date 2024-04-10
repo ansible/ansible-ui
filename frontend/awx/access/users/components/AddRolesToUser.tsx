@@ -5,13 +5,13 @@ import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { useGetItem } from '../../../../common/crud/useGet';
 import { AwxError } from '../../../common/AwxError';
 import { awxAPI } from '../../../common/api/awx-utils';
-import { User } from '../../../interfaces/User';
+import { AwxUser } from '../../../interfaces/User';
 import { AddRolesForm } from '../../roles/AddRolesForm';
 
 export function AddRolesToUser() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const { error, data: user, refresh } = useGetItem<User>(awxAPI`/users`, params.id);
+  const { error, data: user, refresh } = useGetItem<AwxUser>(awxAPI`/users`, params.id);
   const navigate = useNavigate();
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;

@@ -3,7 +3,7 @@ import * as useOptions from '../../../common/crud/useOptions';
 import { Inventory } from '../../interfaces/Inventory';
 import { Inventories } from './Inventories';
 
-describe('Inventories.cy.ts', () => {
+describe('Inventories', () => {
   describe('Non-empty list', () => {
     beforeEach(() => {
       cy.intercept(
@@ -17,29 +17,37 @@ describe('Inventories.cy.ts', () => {
       ).as('inventoriesList');
     });
 
+    //Missing test cases that need to be written:
+    it.skip('can show 404 status if user tries to view an inventory that doesn’t exist', () => {});
+    it.skip('can sort the list of inventories', () => {});
+    it.skip('can paginate through the list of inventories', () => {});
+    it.skip('can view variables in YAML and JSON format ', () => {});
+    it.skip('can verify that an inventory job templates tab will only show its associated job templates', () => {});
+    it.skip('can verify that an inventory jobs tab will only show its associated jobs', () => {});
+
     it('should render inventory list', () => {
       cy.mount(<Inventories />);
       cy.verifyPageTitle('Inventories');
       cy.get('table').find('tr').should('have.length', 10);
     });
 
-    it('should have filters for Name, Description, Type, Organization, Created By and Modified By', () => {
-      cy.mount(<Inventories />);
-      cy.intercept('/api/v2/inventories/?organization__name__icontains=Organization%200*').as(
-        'orgFilterRequest'
+    it('should have filters for Name, Description, Created By and Modified By', () => {
+      cy.intercept(
+        { method: 'OPTIONS', url: '/api/v2/inventories/' },
+        { fixture: 'mock_options.json' }
       );
+      cy.mount(<Inventories />);
       cy.verifyPageTitle('Inventories');
       cy.openToolbarFilterTypeSelect().within(() => {
         cy.contains(/^Name$/).should('be.visible');
         cy.contains(/^Description$/).should('be.visible');
-        cy.contains(/^Inventory type$/).should('be.visible');
-        cy.contains(/^Organization$/).should('be.visible');
         cy.contains(/^Created by$/).should('be.visible');
         cy.contains(/^Modified by$/).should('be.visible');
-        cy.contains('button', /^Organization$/).click();
+        cy.contains('button', /^Name$/).click();
       });
-      cy.filterTableByText('Organization 0');
-      cy.wait('@orgFilterRequest');
+      cy.filterTableBySingleSelect('name', 'Demo Inventory');
+      cy.get('tr').should('have.length.greaterThan', 0);
+      cy.getByDataCy('filter-input').click();
       cy.clickButton(/^Clear all filters$/);
     });
 

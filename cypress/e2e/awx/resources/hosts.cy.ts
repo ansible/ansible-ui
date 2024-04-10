@@ -1,12 +1,12 @@
 import { randomString } from '../../../../framework/utils/random-string';
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
-import { User } from '../../../../frontend/awx/interfaces/User';
+import { AwxUser } from '../../../../frontend/awx/interfaces/User';
 
 describe('host and inventory host', () => {
   let organization: Organization;
   let inventory: Inventory;
-  let user: User;
+  let user: AwxUser;
 
   before(() => {
     cy.awxLogin();
@@ -59,7 +59,7 @@ function createAndCheckHost(inventory_host: boolean, inventory: string) {
     cy.contains('button', 'Browse').click();
     cy.contains('Select Inventory');
     cy.get(`[aria-label="Select Inventory"]`).within(() => {
-      cy.searchAndDisplayResource(inventory);
+      cy.filterTableBySingleSelect('name', inventory);
       cy.get(`[data-cy="checkbox-column-cell"] input`).click();
       cy.contains('button', 'Confirm').click();
     });
@@ -101,17 +101,14 @@ function deleteHost(inventoryID: number, inventory_host: boolean, hostName: stri
   } else {
     cy.visit('/infrastructure/hosts?page=1&perPage=10&sort=name');
   }
-  cy.contains(hostName).click();
-  cy.selectDetailsPageKebabAction('delete-host');
 
-  if (inventory_host) {
-    cy.get('[data-cy="empty-state-title"]').contains(
-      /^There are currently no hosts added to this inventory./
-    );
-  } else {
-    cy.searchAndDisplayResource(hostName);
-    cy.contains('No results found');
-  }
+  cy.searchAndDisplayResource(hostName);
+  cy.get(`[data-cy="actions-column-cell"] [data-cy="actions-dropdown"]`).click();
+  cy.get(`[data-cy="delete-host"]`).click();
+  cy.clickModalConfirmCheckbox();
+  cy.clickModalButton('Delete hosts');
+  cy.contains('button', 'Close').click();
+  cy.contains(/^No results found./);
 }
 
 function createAndEditAndDeleteHost(inventory_host: boolean, inventory: Inventory) {

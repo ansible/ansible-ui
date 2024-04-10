@@ -30,6 +30,8 @@ export function useRelatedGroupsToolbarActions(view: IAwxView<InventoryGroup>) {
   const postRequest = usePostRequest();
   const alertToaster = usePageAlertToaster();
 
+  const isConstructed = params.inventory_type === 'constructed_inventory';
+
   const adhocOptions = useOptions<OptionsResponse<ActionsResponse>>(
     awxAPI`/inventories/${params.id ?? ''}/ad_hoc_commands/`
   ).data;
@@ -64,9 +66,11 @@ export function useRelatedGroupsToolbarActions(view: IAwxView<InventoryGroup>) {
     [setDialog, postRequest, params.group_id, view, alertToaster, t]
   );
 
-  return useMemo<IPageAction<InventoryGroup>[]>(
-    () => [
-      {
+  return useMemo<IPageAction<InventoryGroup>[]>(() => {
+    const items: IPageAction<InventoryGroup>[] = [];
+
+    if (isConstructed === false) {
+      items.push({
         type: PageActionType.Dropdown,
         selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
@@ -90,6 +94,7 @@ export function useRelatedGroupsToolbarActions(view: IAwxView<InventoryGroup>) {
             type: PageActionType.Button,
             selection: PageActionSelection.None,
             label: t('Create new group'),
+            isHidden: () => isConstructed,
             onClick: () =>
               pageNavigate(String(AwxRoute.InventoryGroupRelatedGroupsCreate), {
                 params: {
@@ -106,25 +111,27 @@ export function useRelatedGroupsToolbarActions(view: IAwxView<InventoryGroup>) {
                   ),
           },
         ],
-      },
-      {
-        type: PageActionType.Button,
-        selection: PageActionSelection.None,
-        variant: ButtonVariant.secondary,
-        isPinned: true,
-        label: t('Run Command'),
-        onClick: () => pageNavigate(AwxRoute.Inventories),
-        isDisabled: () =>
-          view.selectedItems.length === 0
-            ? t('Select at least one item from the list')
-            : canRunAdHocCommand
-              ? undefined
-              : t(
-                  'You do not have permission to run an ad hoc command. Please contact your organization administrator if there is an issue with your access.'
-                ),
-      },
-      { type: PageActionType.Seperator },
-      {
+      });
+    }
+
+    items.push({
+      type: PageActionType.Button,
+      selection: PageActionSelection.None,
+      variant: ButtonVariant.secondary,
+      isPinned: true,
+      label: t('Run Command'),
+      onClick: () => pageNavigate(AwxRoute.Inventories),
+      isDisabled: () =>
+        canRunAdHocCommand
+          ? undefined
+          : t(
+              'You do not have permission to run an ad hoc command. Please contact your organization administrator if there is an issue with your access.'
+            ),
+    });
+
+    if (isConstructed === false) {
+      items.push({ type: PageActionType.Seperator });
+      items.push({
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
@@ -133,20 +140,21 @@ export function useRelatedGroupsToolbarActions(view: IAwxView<InventoryGroup>) {
         isDanger: true,
         isDisabled:
           view.selectedItems.length === 0 ? t('Select at least one item from the list') : undefined,
-      },
-    ],
-    [
-      t,
-      disassociateGroups,
-      pageNavigate,
-      params.inventory_type,
-      params.id,
-      canCreateGroup,
-      canRunAdHocCommand,
-      view.selectedItems.length,
-      params.group_id,
-      onSelectedGroups,
-      setDialog,
-    ]
-  );
+      });
+    }
+    return items;
+  }, [
+    t,
+    disassociateGroups,
+    pageNavigate,
+    params.inventory_type,
+    params.id,
+    canCreateGroup,
+    canRunAdHocCommand,
+    view.selectedItems.length,
+    params.group_id,
+    onSelectedGroups,
+    setDialog,
+    isConstructed,
+  ]);
 }

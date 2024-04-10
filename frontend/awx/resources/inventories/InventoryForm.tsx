@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import {
+  LoadingPage,
   PageFormCheckbox,
   PageFormDataEditor,
   PageHeader,
@@ -26,10 +27,22 @@ import { InstanceGroup } from '../../interfaces/InstanceGroup';
 import { Inventory } from '../../interfaces/Inventory';
 import { Label } from '../../interfaces/Label';
 import { AwxRoute } from '../../main/AwxRoutes';
+import { requestGet } from '../../../common/crud/Data';
+import { PageFormMultiSelectAwxResource } from '../../common/PageFormMultiSelectAwxResource';
+import { useInventoriesColumns } from './hooks/useInventoriesColumns';
+import { useInventoriesFilters } from './hooks/useInventoriesFilters';
+import { TFunction } from 'i18next';
+import { PageFormSingleSelect } from '../../../../framework/PageForm/Inputs/PageFormSingleSelect';
+import { AwxError } from '../../common/AwxError';
+import { ConstructedInventoryHint } from './components/ConstructedInventoryHint';
+import { LabelHelp } from './components/LabelHelp';
+import { valueToObject } from '../../../../framework';
 
 export type InventoryCreate = Inventory & {
   instanceGroups: InstanceGroup[];
   labels: Label[];
+  inventories?: number[];
+  inputInventories?: InputInventory[];
 };
 
 const kinds: { [key: string]: string } = {
@@ -47,15 +60,35 @@ export function CreateInventory(props: { inventoryKind: '' | 'constructed' | 'sm
   const onSubmit: PageFormSubmitHandler<InventoryCreate> = async (data) => {
     const { instanceGroups, ...inventory } = data;
 
-    const newInventory = await postRequest(awxAPI`/inventories/`, inventory);
+    let inputInventories: InputInventory[] = [];
+    if (props.inventoryKind === 'constructed') {
+      inputInventories = await loadInputInventories(data.inventories || [], t);
+      data.inputInventories = inputInventories;
+    }
 
+    const urlType =
+      props.inventoryKind === 'constructed' ? 'constructed_inventories' : 'inventories';
+    const newInventory = await postRequest(awxAPI`/${urlType}/`, inventory);
+
+    const promises: Promise<unknown>[] = [];
     // Update new inventory with selected instance groups
     if (instanceGroups?.length > 0)
-      await submitInstanceGroups(newInventory, instanceGroups ?? [], []);
+      promises.push(submitInstanceGroups(newInventory, instanceGroups ?? [], []));
+
+    // Update new inventory with selected input inventories
+    if (
+      props.inventoryKind === 'constructed' &&
+      data?.inventories?.length &&
+      data.inventories.length > 0
+    ) {
+      promises.push(submitInputInventories(newInventory, inputInventories || [], []));
+    }
 
     // Update new inventory with selected labels
     if (newInventory.kind === '' && data.labels.length > 0)
-      await submitLabels(newInventory, data.labels);
+      promises.push(submitLabels(newInventory, data.labels));
+
+    await Promise.all(promises);
 
     pageNavigate(AwxRoute.InventoryDetails, {
       params: { inventory_type: kinds[newInventory.kind], id: newInventory.id },
@@ -82,6 +115,13 @@ export function CreateInventory(props: { inventoryKind: '' | 'constructed' | 'sm
       : inventoryKind === 'constructed'
         ? {
             kind: inventoryKind,
+            name: '',
+            description: '',
+            instanceGroups: [],
+            inputInventories: [],
+            verbosity: 0,
+            update_cache_timeout: 0,
+            limit: '',
           }
         : {
             kind: inventoryKind,
@@ -105,6 +145,7 @@ export function CreateInventory(props: { inventoryKind: '' | 'constructed' | 'sm
       <AwxPageForm
         submitText={t('Create inventory')}
         onSubmit={onSubmit}
+        disableSubmitOnEnter={true}
         onCancel={() => pageNavigate(AwxRoute.Inventories)}
         defaultValue={defaultValue}
       >
@@ -117,20 +158,43 @@ export function CreateInventory(props: { inventoryKind: '' | 'constructed' | 'sm
 export function EditInventory() {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
-  const params = useParams<{ id?: string }>();
+  const params = useParams<{ id?: string; inventory_type: string }>();
   const id = Number(params.id);
-  const { data: inventory } = useGet<Inventory>(awxAPI`/inventories/${id.toString()}/`);
-  const { data: igResponse } = useGet<AwxItemsResponse<InstanceGroup>>(
+
+  const urlType =
+    params.inventory_type === 'constructed_inventory' ? 'constructed_inventories' : 'inventories';
+
+  const inventoryRequest = useGet<Inventory>(awxAPI`/${urlType}/${id.toString()}/`);
+  const iGroupsRequest = useGet<AwxItemsResponse<InstanceGroup>>(
     awxAPI`/inventories/${id.toString()}/instance_groups/`
   );
+
+  const inventory = inventoryRequest.data;
+  const igResponse = iGroupsRequest.data;
+
+  const inputInventoriesUrl =
+    params.inventory_type === 'constructed_inventory'
+      ? awxAPI`/inventories/${id.toString()}/input_inventories/`
+      : '';
+  const inputInventoriesRequest = useGet<AwxItemsResponse<InputInventory>>(inputInventoriesUrl);
+
+  const inputInventoriesResponse = inputInventoriesRequest.data;
+
   // Fetch instance groups associated with the inventory
   const originalInstanceGroups = igResponse?.results;
+
   const onSubmit: PageFormSubmitHandler<InventoryCreate> = async (data) => {
-    const { organization, labels, instanceGroups, ...editedInventory } = data;
+    const { labels, instanceGroups, ...editedInventory } = data;
+
+    let inputInventories: InputInventory[] = [];
+    if (params.inventory_type === 'constructed_inventory') {
+      inputInventories = await loadInputInventories(data.inventories || [], t);
+      data.inputInventories = inputInventories;
+    }
 
     // Update the inventory
     const updatedInventory = await requestPatch<Inventory>(
-      awxAPI`/inventories/${id.toString()}/`,
+      awxAPI`/${urlType}/${id.toString()}/`,
       editedInventory
     );
     const promises = [];
@@ -138,16 +202,45 @@ export function EditInventory() {
     promises.push(
       submitInstanceGroups(updatedInventory, instanceGroups ?? [], originalInstanceGroups ?? [])
     );
-    promises.push(submitLabels(inventory as Inventory, labels || []));
+
+    if (params.inventory_type === 'inventory') {
+      promises.push(submitLabels(inventory as Inventory, labels || []));
+    }
+
+    // Update new inventory with selected input inventories
+    if (
+      params.inventory_type === 'constructed_inventory' &&
+      data?.inventories?.length &&
+      data.inventories.length > 0
+    ) {
+      promises.push(
+        submitInputInventories(
+          data,
+          inputInventories || [],
+          inputInventoriesResponse?.results || []
+        )
+      );
+    }
+
     await Promise.all(promises);
+
     pageNavigate(AwxRoute.InventoryDetails, {
-      params: { id: updatedInventory.id, inventory_type: updatedInventory.type },
+      params: { id: updatedInventory.id, inventory_type: params.inventory_type },
     });
   };
 
   const getPageUrl = useGetPageUrl();
 
-  if (!inventory) {
+  const isLoaded =
+    inventory &&
+    igResponse &&
+    (params.inventory_type === 'constructed_inventory' ? inputInventoriesResponse : true)
+      ? true
+      : false;
+
+  const isError = inventoryRequest.error || iGroupsRequest.error || inputInventoriesRequest.error;
+
+  if (!isLoaded || !inventory || isError) {
     return (
       <PageLayout>
         <PageHeader
@@ -156,6 +249,10 @@ export function EditInventory() {
             { label: t('Edit Inventory') },
           ]}
         />
+        {!isLoaded && !isError && <LoadingPage></LoadingPage>}
+        {inventoryRequest.error && <AwxError error={inventoryRequest.error} />}
+        {iGroupsRequest.error && <AwxError error={iGroupsRequest.error} />}
+        {inputInventoriesRequest.error && <AwxError error={inputInventoriesRequest.error} />}
       </PageLayout>
     );
   }
@@ -171,7 +268,11 @@ export function EditInventory() {
     inventory.kind === 'smart'
       ? { ...inventory, instanceGroups: originalInstanceGroups }
       : inventory.kind === 'constructed'
-        ? {}
+        ? {
+            ...inventory,
+            instanceGrous: originalInstanceGroups,
+            inventories: inputInventoriesResponse?.results?.map((item) => item.id),
+          }
         : {
             ...inventory,
             instanceGroups: originalInstanceGroups,
@@ -190,6 +291,7 @@ export function EditInventory() {
       <AwxPageForm<InventoryCreate>
         submitText={t('Save inventory')}
         onSubmit={onSubmit}
+        disableSubmitOnEnter={true}
         onCancel={() =>
           pageNavigate(AwxRoute.InventoryDetails, {
             params: { id, inventory_type: kinds[inventory.kind] },
@@ -203,9 +305,31 @@ export function EditInventory() {
   );
 }
 
+export function useInventoryFormDetailLabels() {
+  const { t } = useTranslation();
+
+  return {
+    labels: t(
+      `Optional labels that describe this inventory, such as 'dev' or 'test'. Labels can be used to group and filter inventories and completed jobs.`
+    ),
+    verbosity: t(
+      'The verbosity level for the related auto-created inventory source, special to constructed inventory'
+    ),
+    cache_timeout: t(
+      `The cache timeout for the related auto-created inventory source, special to constructed inventory`
+    ),
+    limit: t(
+      `The limit to restrict the returned hosts for the related auto-created inventory source, special to constructed inventory.`
+    ),
+  };
+}
+
 function InventoryInputs(props: { inventoryKind: string }) {
   const { t } = useTranslation();
   const { inventoryKind } = props;
+
+  const inventoryFormDetailLables = useInventoryFormDetailLabels();
+
   return (
     <>
       <PageFormTextInput<InventoryCreate>
@@ -235,20 +359,72 @@ function InventoryInputs(props: { inventoryKind: string }) {
         name="instanceGroups"
         labelHelp={t(`Select the instance groups for this inventory to run on.`)}
       />
+      {inventoryKind === 'constructed' && (
+        <>
+          <PageFormMultiSelectInventories />
+          <PageFormTextInput
+            name="update_cache_timeout"
+            id="update_cache_timeout"
+            type="number"
+            label={t(`Cache timeout (seconds)`)}
+            labelHelp={inventoryFormDetailLables.cache_timeout}
+            validate={(item) =>
+              Number.parseFloat(item) >= 0
+                ? undefined
+                : t('This field must be a number and have a value between 0 and 2147483647')
+            }
+          />
+          <PageFormSingleSelect
+            name="verbosity"
+            id="verbosity"
+            label={t(`Verbosity`)}
+            placeholder={''}
+            labelHelp={inventoryFormDetailLables.verbosity}
+            options={[
+              { value: 0, label: t('0 (Normal)') },
+              { value: 1, label: t('1 (Verbose)') },
+              { value: 2, label: t('2 (More Verbose)') },
+              { value: 3, label: t('3 (Debug)') },
+              { value: 4, label: t('4 (Connection Debug)') },
+              { value: 5, label: t('5 (WinRM Debug)') },
+            ]}
+          />
+          <PageFormSection singleColumn>
+            <ConstructedInventoryHint />
+          </PageFormSection>
+          <PageFormTextInput
+            name="limit"
+            id="limit"
+            label={t(`Limit`)}
+            labelHelp={inventoryFormDetailLables.limit}
+          />
+        </>
+      )}
       {inventoryKind === '' && (
         <PageFormLabelSelect<InventoryCreate>
           labelHelpTitle={t('Labels')}
-          labelHelp={t(
-            `Optional labels that describe this inventory, such as 'dev' or 'test'. Labels can be used to group and filter inventories and completed jobs.`
-          )}
+          labelHelp={inventoryFormDetailLables.labels}
           name="labels"
         />
       )}
       <PageFormSection singleColumn>
         <PageFormDataEditor<InventoryCreate>
           name="variables"
-          label={t('Variables')}
+          label={inventoryKind === 'constructed' ? t('Source vars') : t('Variables')}
           format="yaml"
+          isRequired={inventoryKind === 'constructed' ? true : false}
+          labelHelp={<LabelHelp inventoryKind={inventoryKind} />}
+          validate={(item) => {
+            if (inventoryKind !== 'constructed') {
+              return undefined;
+            }
+            const obj = valueToObject(item) as { plugin?: unknown };
+            if (obj.plugin) {
+              return undefined;
+            } else {
+              return t(`The plugin parameter is required.`);
+            }
+          }}
         />
       </PageFormSection>
       {inventoryKind === '' && (
@@ -319,4 +495,88 @@ async function submitInstanceGroups(
 
   const results = await Promise.all([...disassociationPromises, ...associationPromises]);
   return results;
+}
+
+async function submitInputInventories(
+  inventory: Inventory,
+  currentInputInventories: InputInventory[],
+  originalInputInventories: InputInventory[]
+) {
+  const { added, removed } = getAddedAndRemoved(
+    originalInputInventories ?? ([] as InputInventory[]),
+    currentInputInventories ?? ([] as InputInventory[])
+  );
+
+  if (added.length === 0 && removed.length === 0) {
+    return;
+  }
+
+  const disassociationPromises = removed.map((item: { id: number }) =>
+    postRequest(awxAPI`/inventories/${inventory.id.toString()}/input_inventories/`, {
+      id: item.id,
+      disassociate: true,
+    })
+  );
+  const associationPromises = added.map((item: { id: number }) =>
+    postRequest(awxAPI`/inventories/${inventory.id.toString()}/input_inventories/`, {
+      id: item.id,
+    })
+  );
+
+  const results = await Promise.all([...disassociationPromises, ...associationPromises]);
+  return results;
+}
+
+type InputInventory = { id: number; url: string; type: string; name: string };
+
+async function loadInputInventories(inventories: number[], t: TFunction<'translation', undefined>) {
+  const promises: unknown[] = [];
+  const inventoriesData: InputInventory[] = inventories.map((inv) => {
+    return { id: inv, url: '', type: '', name: '' };
+  });
+
+  inventories.forEach((id) => {
+    const promise = requestGet<AwxItemsResponse<Inventory>>(
+      awxAPI`/inventories/?id=${id.toString()}`
+    )
+      .then((result: AwxItemsResponse<Inventory>) => {
+        if (result.results.length > 0) {
+          const inv = inventoriesData.find((inv) => inv.id === id);
+          if (inv) {
+            inv.url = result.results[0].url || '';
+            inv.type = result.results[0].type || '';
+          }
+        }
+      })
+      .catch(() => {
+        throw new Error(t(`Error loading input inventory with id {{id}}.`, { id: id }));
+      });
+
+    promises.push(promise);
+  });
+
+  await Promise.all(promises);
+  return inventoriesData;
+}
+
+function PageFormMultiSelectInventories() {
+  const filters = useInventoriesFilters();
+  const columns = useInventoriesColumns();
+  const { t } = useTranslation();
+  return (
+    <PageFormMultiSelectAwxResource<Inventory>
+      name={'inventories'}
+      id={'inventories'}
+      label={t('Input Inventories')}
+      placeholder={t('Select inventories')}
+      queryPlaceholder={t('Loading inventories...')}
+      queryErrorText={t('Error loading inventories')}
+      isRequired={true}
+      labelHelp={t(`Select Input Inventories for the constructed inventory plugin.`)}
+      url={awxAPI`/inventories/`}
+      tableColumns={columns}
+      toolbarFilters={filters}
+      queryParams={{ kind: '' }}
+    />
+  );
 }

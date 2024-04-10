@@ -23,7 +23,7 @@ export interface ReportItemsResponse {
 }
 
 export function Reports() {
-  const activeUser = useAwxActiveUser();
+  const { activeAwxUser } = useAwxActiveUser();
   const { data, error } = useSWR<ReportItemsResponse, Error>(
     awxAPI`/analytics/report/automation_calculator/`,
     requestGet
@@ -77,7 +77,11 @@ export function Reports() {
           description={data?.report?.description || ''}
           controls={data ? reportTags : undefined}
         />
-        {activeUser && !activeUser?.is_superuser ? <AnalyticsErrorState /> : <ReportsInternal />}
+        {activeAwxUser && !activeAwxUser?.is_superuser ? (
+          <AnalyticsErrorState />
+        ) : (
+          <ReportsInternal />
+        )}
       </PageLayout>
     </Page>
   );

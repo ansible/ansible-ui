@@ -4,35 +4,24 @@ import '@patternfly/patternfly/patternfly-charts.css';
 
 import '@patternfly/patternfly/patternfly-charts-theme-dark.css';
 
-import { Outlet } from 'react-router-dom';
-import { PageApp } from '../../../framework/PageNavigation/PageApp';
+import { BrowserRouter } from 'react-router-dom';
+import { PageFramework } from '../../../framework';
 import '../../common/i18n';
 import { AwxActiveUserProvider } from '../common/useAwxActiveUser';
-import { AwxConfigProvider } from '../common/useAwxConfig';
-import { WebSocketProvider } from '../common/useAwxWebSocket';
+import { AwxApp } from './AwxApp';
 import { AwxLogin } from './AwxLogin';
-import { AwxMasthead } from './AwxMasthead';
-import { useAwxNavigation } from './useAwxNavigation';
 
 // eslint-disable-next-line no-restricted-exports
 export default function AwxMain() {
-  const navigation = useAwxNavigation();
   return (
-    <PageApp
-      login={<AwxLogin />}
-      root={
-        <WebSocketProvider>
-          <AwxActiveUserProvider>
-            <AwxConfigProvider>
-              <Outlet />
-            </AwxConfigProvider>
-          </AwxActiveUserProvider>
-        </WebSocketProvider>
-      }
-      masthead={<AwxMasthead />}
-      navigation={navigation}
-      basename={process.env.ROUTE_PREFIX}
-      defaultRefreshInterval={30}
-    />
+    <BrowserRouter>
+      <PageFramework defaultRefreshInterval={10}>
+        <AwxActiveUserProvider>
+          <AwxLogin>
+            <AwxApp />
+          </AwxLogin>
+        </AwxActiveUserProvider>
+      </PageFramework>
+    </BrowserRouter>
   );
 }

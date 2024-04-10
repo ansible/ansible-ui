@@ -11,6 +11,8 @@ import { requestGet } from '../../common/crud/Data';
 import { useGetItem } from '../../common/crud/useGet';
 import { AwxItemsResponse } from './AwxItemsResponse';
 import { useAwxView } from './useAwxView';
+import { QueryParams } from './useAwxView';
+import { getQueryString } from './useAwxView';
 
 export function PageFormSingleSelectAwxResource<
   Resource extends { id: number; name: string; description?: string | null | undefined },
@@ -31,13 +33,16 @@ export function PageFormSingleSelectAwxResource<
   queryPlaceholder: string;
   queryErrorText: string;
   helperText?: string;
+  labelHelp?: string;
+  queryParams?: QueryParams;
 }) {
   const id = useID(props);
 
   const queryOptions = useCallback<PageAsyncSelectOptionsFn<PathValue<FormData, Name>>>(
     async (options) => {
       try {
-        let url = props.url + `?page_size=10&order_by=name`;
+        let url =
+          props.url + `?page_size=10&order_by=name` + getQueryString(props.queryParams || {});
         if (options.next) url = url + `&name__gt=${options.next}`;
         if (options.search) url = url + `&name__icontains=${options.search}`;
         const response = await requestGet<AwxItemsResponse<Resource>>(url, options.signal);
@@ -59,7 +64,7 @@ export function PageFormSingleSelectAwxResource<
         };
       }
     },
-    [props.url]
+    [props.url, props.queryParams]
   );
 
   const [_, setDialog] = usePageDialog();
@@ -75,10 +80,19 @@ export function PageFormSingleSelectAwxResource<
           toolbarFilters={props.toolbarFilters}
           tableColumns={props.tableColumns}
           defaultSelection={value ? [{ id: value }] : []}
+          queryParams={props.queryParams}
         />
       );
     },
-    [props.label, props.tableColumns, props.toolbarFilters, props.url, setDialog, value]
+    [
+      props.label,
+      props.tableColumns,
+      props.toolbarFilters,
+      props.url,
+      setDialog,
+      value,
+      props.queryParams,
+    ]
   );
 
   const queryLabel = useCallback(
@@ -98,6 +112,7 @@ export function PageFormSingleSelectAwxResource<
       isRequired={props.isRequired}
       isDisabled={props.isDisabled}
       helperText={props.helperText}
+      labelHelp={props.labelHelp}
       onBrowse={() =>
         openSelectDialog((resource) =>
           setValue(props.name, resource.id as PathValue<FormData, Name>)
@@ -117,6 +132,7 @@ function SelectResource<
   defaultSelection?: { id: number }[];
   toolbarFilters?: IToolbarFilter[];
   tableColumns: ITableColumn<Resource>[];
+  queryParams?: QueryParams;
 }) {
   const view = useAwxView<Resource>({
     url: props.url,
@@ -124,6 +140,7 @@ function SelectResource<
     tableColumns: props.tableColumns,
     disableQueryString: true,
     defaultSelection: props.defaultSelection as Resource[],
+    queryParams: props.queryParams,
   });
   return (
     <SingleSelectDialog<Resource>
@@ -136,7 +153,7 @@ function SelectResource<
   );
 }
 
-function AwxAsyncName(props: { url: string; id: number; nameProp?: string }) {
+export function AwxAsyncName(props: { url: string; id: number; nameProp?: string }) {
   const { t } = useTranslation();
   const { data, isLoading, error } = useGetItem<Record<string, string>>(props.url, props.id);
   if (isLoading) return <Spinner size="md" />;

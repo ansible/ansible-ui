@@ -25,7 +25,7 @@ export function PageFormInstanceGroupSelect<
       placeholder={t('Add instance groups')}
       labelHelpTitle={t('Instance groups')}
       labelHelp={props.labelHelp}
-      label={t('Instance group')}
+      label={t('Instance Groups')}
       selectTitle={t('Select an instance group')}
       selectOpen={selectInstanceGroup}
       validate={(instanceGroups: InstanceGroup[]) => {

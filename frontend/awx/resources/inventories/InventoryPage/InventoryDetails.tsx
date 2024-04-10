@@ -23,9 +23,16 @@ import { useGet } from '../../../../common/crud/useGet';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useVerbosityString } from '../../../common/useVerbosityString';
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';
-import { Inventory } from '../../../interfaces/Inventory';
+import { ConstructedInventory, Inventory } from '../../../interfaces/Inventory';
 import { AwxRoute } from '../../../main/AwxRoutes';
-import { useGetInventory } from './InventoryPage';
+import { InventorySource } from '../../../interfaces/InventorySource';
+import { AwxError } from '../../../common/AwxError';
+import { Tooltip } from '@patternfly/react-core';
+import { LastJobTooltip } from '../inventorySources/InventorySourceDetails';
+import { StatusLabel } from '../../../../common/Status';
+import { useInventoryFormDetailLabels } from '../InventoryForm';
+import { LabelHelp } from '../components/LabelHelp';
+import { useOutletContext } from 'react-router-dom';
 
 function useInstanceGroups(inventoryId: string) {
   const { data } = useGet<{ results: InstanceGroup[] }>(
@@ -35,8 +42,7 @@ function useInstanceGroups(inventoryId: string) {
 }
 
 export function InventoryDetails() {
-  const params = useParams<{ id: string; inventory_type: string }>();
-  const inventory = useGetInventory(params.id, params.inventory_type);
+  const { inventory } = useOutletContext<{ inventory: InventoryWithSource }>();
 
   if (!inventory) {
     return null;
@@ -45,11 +51,14 @@ export function InventoryDetails() {
   return <InventoryDetailsInner inventory={inventory} />;
 }
 
-export function InventoryDetailsInner(props: { inventory: Inventory }) {
+export type InventoryWithSource = Inventory & { source?: InventorySource };
+
+export function InventoryDetailsInner(props: { inventory: InventoryWithSource }) {
   const { t } = useTranslation();
-  const { inventory } = props;
+
+  const inventory = props.inventory;
   const pageNavigate = usePageNavigate();
-  const params = useParams<{ id: string }>();
+  const params = useParams<{ id: string; inventory_type: string }>();
   const instanceGroups = useInstanceGroups(params.id || '0');
   const verbosityString = useVerbosityString(inventory.verbosity);
   const getPageUrl = useGetPageUrl();
@@ -57,8 +66,10 @@ export function InventoryDetailsInner(props: { inventory: Inventory }) {
   const { data: inputInventories, error: inputInventoriesError } = useGet<{ results: Inventory[] }>(
     inventory.kind === 'constructed'
       ? awxAPI`/inventories/${inventory.id.toString()}/input_inventories/`
-      : undefined
+      : ''
   );
+
+  const inventorySourceData = inventory.source;
 
   const inventoryTypes: { [key: string]: string } = {
     '': t('Inventory'),
@@ -72,9 +83,24 @@ export function InventoryDetailsInner(props: { inventory: Inventory }) {
     constructed: 'constructed_inventory',
   };
 
+  const inventoryFormDetailLables = useInventoryFormDetailLabels();
+
+  const inventorySourceSyncJob =
+    inventorySourceData?.summary_fields?.current_job ||
+    inventorySourceData?.summary_fields?.last_job ||
+    undefined;
+
+  if (inputInventoriesError) {
+    return <AwxError error={inputInventoriesError} />;
+  }
+
   return (
     <PageDetails>
       <PageDetail label={t('Name')}>{inventory.name}</PageDetail>
+      <PageDetailJobStatus
+        job={inventorySourceSyncJob}
+        isEmpty={inventory.kind !== 'constructed'}
+      />
       <PageDetail label={t('Description')}>{inventory.description}</PageDetail>
       <PageDetail label={t('Type')}>{inventoryTypes[inventory.kind]}</PageDetail>
       <PageDetail label={t('Organization')}>
@@ -90,26 +116,64 @@ export function InventoryDetailsInner(props: { inventory: Inventory }) {
           <Label>{inventory.host_filter}</Label>
         </LabelGroup>
       </PageDetail>
-      <PageDetail label={t('Total hosts')}>{inventory.total_hosts}</PageDetail>
-      <PageDetail label={t('Hosts with active failures')}>
+      <PageDetail
+        label={t('Total hosts')}
+        helpText={t(
+          `This field is deprecated and will be removed in a future release. Total number of hosts in this inventory.`
+        )}
+      >
+        {inventory.total_hosts}
+      </PageDetail>
+      <PageDetail
+        label={t('Hosts with active failures')}
+        isEmpty={inventory.kind !== 'constructed' || inventory.hosts_with_active_failures === 0}
+      >
         {inventory.hosts_with_active_failures}
       </PageDetail>
-      <PageDetail label={t('Total groups')}>{inventory.total_groups}</PageDetail>
-      <PageDetail label={t('Total inventory sources')}>
+      <PageDetail
+        label={t('Total groups')}
+        helpText={t(
+          `This field is deprecated and will be removed in a future release. Total number of groups in this inventory.`
+        )}
+        isEmpty={inventory.kind !== 'constructed'}
+      >
+        {inventory.total_groups}
+      </PageDetail>
+      <PageDetail
+        label={t('Total inventory sources')}
+        helpText={t(`Total number of external inventory sources configured within this inventory.`)}
+        isEmpty={inventory.kind !== 'constructed'}
+      >
         {inventory.total_inventory_sources}
       </PageDetail>
-      <PageDetail label={t('Inventory sources with active failures')}>
+      <PageDetail
+        label={t('Inventory sources with active failures')}
+        helpText={t(`Number of external inventory sources in this inventory with failures.`)}
+        isEmpty={inventory.kind !== 'constructed'}
+      >
         {inventory.inventory_sources_with_failures}
       </PageDetail>
-      {inventory.kind === 'constructed' && (
-        <>
-          <PageDetail label={t('Limit')}>{inventory.limit}</PageDetail>
-          <PageDetail label={t('Verbosity')}>{verbosityString}</PageDetail>
-          <PageDetail label={t('Update cache timeout')}>
-            {inventory.update_cache_timeout}
-          </PageDetail>
-        </>
-      )}
+      <PageDetail
+        label={t('Limit')}
+        helpText={inventoryFormDetailLables.limit}
+        isEmpty={inventory.kind !== 'constructed'}
+      >
+        {(inventory as ConstructedInventory).limit}
+      </PageDetail>
+      <PageDetail
+        label={t('Verbosity')}
+        helpText={inventoryFormDetailLables.verbosity}
+        isEmpty={inventory.kind !== 'constructed'}
+      >
+        {verbosityString}
+      </PageDetail>
+      <PageDetail
+        label={t('Update cache timeout')}
+        helpText={inventoryFormDetailLables.cache_timeout}
+        isEmpty={inventory.kind !== 'constructed'}
+      >
+        {(inventory as ConstructedInventory).update_cache_timeout}
+      </PageDetail>
       <PageDetail label={t`Instance groups`} isEmpty={instanceGroups.length === 0}>
         <LabelGroup>
           {instanceGroups.map((ig) => (
@@ -153,7 +217,11 @@ export function InventoryDetailsInner(props: { inventory: Inventory }) {
           </LabelGroup>
         )}
       </PageDetail>
-      <PageDetail label={t`Labels`} isEmpty={inventory.summary_fields.labels.results.length === 0}>
+      <PageDetail
+        label={t`Labels`}
+        isEmpty={inventory.summary_fields.labels.results.length === 0}
+        helpText={inventoryFormDetailLables.labels}
+      >
         <LabelGroup>
           {inventory.summary_fields.labels.results.map((label) => (
             <Label color="blue" key={label.id}>
@@ -192,10 +260,55 @@ export function InventoryDetailsInner(props: { inventory: Inventory }) {
         </TextList>
       </PageDetail>
       <PageDetailCodeEditor
-        label={t('Variables')}
+        helpText={<LabelHelp inventoryKind={inventory.kind} />}
+        label={inventory.kind === 'constructed' ? t('Source vars') : t('Variables')}
         showCopyToClipboard
-        value={inventory.variables || '---'}
+        value={
+          inventory.kind === 'constructed'
+            ? inventory.source_vars || '---'
+            : inventory.variables || '---'
+        }
       />
     </PageDetails>
+  );
+}
+
+function PageDetailJobStatus(props: {
+  job:
+    | {
+        description: string;
+        failed: boolean;
+        finished: string;
+        id: number;
+        license_error: boolean;
+        name: string;
+        status: string;
+      }
+    | undefined;
+  isEmpty?: boolean;
+}) {
+  const { t } = useTranslation();
+  const getPageUrl = useGetPageUrl();
+  const lastJob = props.job;
+  if (!lastJob) {
+    return null;
+  }
+
+  return (
+    <PageDetail label={t`Last job status`} isEmpty={props.isEmpty}>
+      <Tooltip
+        position="top"
+        content={lastJob ? <LastJobTooltip job={lastJob} /> : undefined}
+        key={lastJob.id}
+      >
+        <Link
+          to={getPageUrl(AwxRoute.JobOutput, {
+            params: { id: lastJob.id, job_type: 'inventory' },
+          })}
+        >
+          <StatusLabel status={lastJob.status} />
+        </Link>
+      </Tooltip>
+    </PageDetail>
   );
 }

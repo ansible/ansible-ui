@@ -1,4 +1,4 @@
-import { Button } from '@patternfly/react-core';
+import { Button as PFButton } from '@patternfly/react-core';
 import { AzureIcon, GithubIcon, GoogleIcon, UserCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
@@ -16,8 +16,13 @@ const Heading = styled.h2`
 
 const Grid = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 30px 50px;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 30px 0;
+`;
+
+const Button = styled(PFButton)`
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 export type AuthOption = {

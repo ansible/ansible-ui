@@ -73,8 +73,7 @@ describe('Instance Details', () => {
   });
 
   it('Instance forks disabled if user does not have the right permissions', () => {
-    cy.mount(<InstanceDetails />);
-    cy.intercept({ method: 'GET', url: '/api/v2/me' }, { fixture: 'normalUser.json' });
+    cy.mount(<InstanceDetails />, undefined, 'normalUser');
     cy.wait('@getInstance')
       .its('response.body')
       .then(() => {

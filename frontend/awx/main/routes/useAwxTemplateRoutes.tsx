@@ -23,6 +23,7 @@ import { ScheduleRules } from '../../views/schedules/SchedulePage/ScheduleRules'
 import { AwxRoute } from '../AwxRoutes';
 import { ResourceNotifications } from '../../resources/notifications/ResourceNotifications';
 import { TemplateJobs } from '../../resources/templates/TemplatePage/TemplateJobs';
+import { TemplateSurvey } from '../../resources/templates/TemplatePage/TemplateSurvey';
 import { SchedulesList } from '../../views/schedules/SchedulesList';
 import { ScheduleEditWizard } from '../../views/schedules/wizard/ScheduleEditWizard';
 
@@ -119,7 +120,7 @@ export function useAwxTemplateRoutes() {
                 {
                   id: AwxRoute.JobTemplateSurvey,
                   path: 'survey',
-                  element: <PageNotImplemented />,
+                  element: <TemplateSurvey resourceType="job_templates" />,
                 },
                 {
                   id: AwxRoute.JobTemplateSchedules,
@@ -225,7 +226,7 @@ export function useAwxTemplateRoutes() {
                 {
                   id: AwxRoute.WorkflowJobTemplateSurvey,
                   path: 'survey',
-                  element: <PageNotImplemented />,
+                  element: <TemplateSurvey resourceType="workflow_job_templates" />,
                 },
                 {
                   id: AwxRoute.WorkflowJobTemplateSchedules,

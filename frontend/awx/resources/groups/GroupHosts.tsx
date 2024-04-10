@@ -25,7 +25,7 @@ export function GroupHosts() {
     tableColumns,
   });
   const toolbarActions = useInventoriesGroupsHostsToolbarActions(view);
-  const rowActions = useInventoriesGroupsHostsActions(view.unselectItemsAndRefresh, view.refresh);
+  const rowActions = useInventoriesGroupsHostsActions(view.refresh);
   const emptyStateActions = useHostsEmptyStateActions(view);
 
   const hostOptions = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/hosts/`).data;

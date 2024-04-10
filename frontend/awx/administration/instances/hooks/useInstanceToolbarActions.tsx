@@ -1,31 +1,35 @@
 import { ButtonVariant } from '@patternfly/react-core';
-import { HeartbeatIcon, PlusCircleIcon, MinusCircleIcon } from '@patternfly/react-icons';
+import { HeartbeatIcon, MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
-import { IAwxView } from '../../../common/useAwxView';
-import { Instance } from '../../../interfaces/Instance';
-import { useRunHealthCheck } from './useRunHealthCheck';
-import { AwxRoute } from '../../../main/AwxRoutes';
-import { usePageNavigate } from '../../../../../framework';
-import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
+import {
+  IPageAction,
+  PageActionSelection,
+  PageActionType,
+  usePageNavigate,
+} from '../../../../../framework';
 import { useGet } from '../../../../common/crud/useGet';
 import { awxAPI } from '../../../common/api/awx-utils';
+import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
+import { IAwxView } from '../../../common/useAwxView';
+import { Instance } from '../../../interfaces/Instance';
 import { Settings } from '../../../interfaces/Settings';
-import { useRemoveInstances } from './useRemoveInstances';
+import { AwxRoute } from '../../../main/AwxRoutes';
 import { cannotRemoveInstances } from './useInstanceActions';
+import { useRemoveInstances } from './useRemoveInstances';
+import { useRunHealthCheck } from './useRunHealthCheck';
 
 export function useInstanceToolbarActions(view: IAwxView<Instance>) {
   const { t } = useTranslation();
   const runHealthCheck = useRunHealthCheck(view.unselectItemsAndRefresh);
   const removeInstances = useRemoveInstances(view.unselectItemsAndRefresh);
   const pageNavigate = usePageNavigate();
-  const activeUser = useAwxActiveUser();
+  const { activeAwxUser } = useAwxActiveUser();
   const { data } = useGet<Settings>(awxAPI`/settings/system/`);
   const isK8s = data?.IS_K8S;
 
   const canAddAndEditInstances =
-    (activeUser?.is_superuser || activeUser?.is_system_auditor) && data?.IS_K8S;
+    (activeAwxUser?.is_superuser || activeAwxUser?.is_system_auditor) && data?.IS_K8S;
 
   const cannotRunHealthCheckDueToPending = useCallback(
     (instance: Instance) => {

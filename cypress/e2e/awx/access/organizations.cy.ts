@@ -1,6 +1,6 @@
 import { randomString } from '../../../../framework/utils/random-string';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
-import { User } from '../../../../frontend/awx/interfaces/User';
+import { AwxUser } from '../../../../frontend/awx/interfaces/User';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 import { randomE2Ename } from '../../../support/utils';
 
@@ -43,7 +43,7 @@ describe('organizations', () => {
 
 describe('organizations edit and delete', function () {
   let organization: Organization;
-  let user: User;
+  let user: AwxUser;
 
   before(function () {
     cy.awxLogin();
@@ -139,9 +139,7 @@ describe('organizations edit and delete', function () {
   it('deletes an organization from the organizations list toolbar', function () {
     cy.navigateTo('awx', 'organizations');
     cy.filterTableByMultiSelect('name', [organization.name]);
-    cy.get('[data-cy="checkbox-column-cell"]').within(() => {
-      cy.get('input').click();
-    });
+    cy.selectTableRow(organization.name, false);
     cy.clickToolbarKebabAction('delete-selected-organizations');
     cy.getModal().within(() => {
       cy.get('#confirm').click();
