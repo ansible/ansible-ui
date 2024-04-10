@@ -20,7 +20,6 @@ import {
 } from '../../../../common/utils/RBAChelpers';
 import { postRequest } from '../../../../common/crud/Data';
 import { awxAPI } from '../../../common/api/awx-utils';
-usePageAlertToaster;
 
 export function useNotifiersRowActions(
   onComplete: (notification: NotificationTemplate[]) => void,
@@ -43,7 +42,7 @@ export function useNotifiersRowActions(
         selection: PageActionSelection.Single,
         icon: BellIcon,
         label: t(`Test notifier`),
-        onClick: () => {},
+        onClick: (notification) => { postRequest(awxAPI`/notification_templates/${notification.id.toString()}/test/`, {})},
         isDisabled: (notification) => isNotificationRunning(notification) ? t('Notification is running') : '' ,
         isDanger: false,
         isPinned: true,
