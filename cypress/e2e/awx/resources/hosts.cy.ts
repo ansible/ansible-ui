@@ -1,9 +1,7 @@
 import { randomString } from '../../../../framework/utils/random-string';
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
-//**********8
 import { AwxUser } from '../../../../frontend/awx/interfaces/User';
-//**********8
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 
 describe('host and inventory host', () => {
