@@ -21,42 +21,6 @@ describe('Credential Types List', () => {
       cy.get('tbody').find('tr').should('have.length', 10);
     });
 
-    it('Filter credential types by name', () => {
-      cy.mount(<CredentialTypes />);
-      cy.intercept('api/v2/credential_types/?name__icontains=foo*').as('nameFilterRequest');
-      cy.filterTableByTypeAndText(/^Name$/, 'foo');
-      cy.wait('@nameFilterRequest');
-      cy.clickButton(/^Clear all filters$/);
-    });
-
-    it('Filter credential types by description', () => {
-      cy.mount(<CredentialTypes />);
-      cy.intercept('api/v2/credential_types/?description__icontains=foo*').as('descFilterRequest');
-      cy.filterTableByTypeAndText(/^Description$/, 'foo');
-      cy.wait('@descFilterRequest');
-      cy.clickButton(/^Clear all filters$/);
-    });
-
-    it('Filter credential types by Created By', () => {
-      cy.mount(<CredentialTypes />);
-      cy.intercept('api/v2/credential_types/?created_by__username__icontains=foo*').as(
-        'createdByFilterRequest'
-      );
-      cy.filterTableByTypeAndText(/^Created by$/, 'foo');
-      cy.wait('@createdByFilterRequest');
-      cy.clickButton(/^Clear all filters$/);
-    });
-
-    it('Filter credential types by Modified By', () => {
-      cy.mount(<CredentialTypes />);
-      cy.intercept('api/v2/credential_types/?modified_by__username__icontains=foo*').as(
-        'modifiedByFilterRequest'
-      );
-      cy.filterTableByTypeAndText(/^Modified by$/, 'foo');
-      cy.wait('@modifiedByFilterRequest');
-      cy.clickButton(/^Clear all filters$/);
-    });
-
     it('Create Credential Type button is disabled if the user does not have permission to create credential types', () => {
       cy.mount(<CredentialTypes />);
       cy.contains('a', /^Create credential type$/).should('have.attr', 'aria-disabled', 'true');

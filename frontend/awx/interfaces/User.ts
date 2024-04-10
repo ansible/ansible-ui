@@ -17,7 +17,8 @@ export type AccessRole = {
     unattach: boolean;
   };
 };
-export interface User extends Omit<SwaggerUser, 'id' | 'username' | 'summary_fields' | 'related'> {
+export interface AwxUser
+  extends Omit<SwaggerUser, 'id' | 'username' | 'summary_fields' | 'related'> {
   id: number;
   username: string;
   user_type?: 'normal' | 'administrator' | 'auditor';

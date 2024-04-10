@@ -24,11 +24,13 @@ import {
 } from '../decision-environments/DecisionEnvironmentForm';
 import { DecisionEnvironmentDetails } from '../decision-environments/DecisionEnvironmentPage/DecisionEnvironmentDetails';
 import { DecisionEnvironmentPage } from '../decision-environments/DecisionEnvironmentPage/DecisionEnvironmentPage';
+import { DecisionEnvironmentTeamAccess } from '../decision-environments/DecisionEnvironmentPage/DecisionEnvironmentTeamAccess';
 import { DecisionEnvironments } from '../decision-environments/DecisionEnvironments';
 import { EdaOverview } from '../overview/EdaOverview';
 import { CreateProject, EditProject } from '../projects/EditProject';
 import { ProjectDetails } from '../projects/ProjectPage/ProjectDetails';
 import { ProjectPage } from '../projects/ProjectPage/ProjectPage';
+import { ProjectTeamAccess } from '../projects/ProjectPage/ProjectTeamAccess';
 import { Projects } from '../projects/Projects';
 import { RuleAudit } from '../rule-audit/RuleAudit';
 import { RuleAuditActions } from '../rule-audit/RuleAuditPage/RuleAuditActions';
@@ -41,6 +43,7 @@ import { CreateRulebookActivation } from '../rulebook-activations/RulebookActiva
 import { RulebookActivationDetails } from '../rulebook-activations/RulebookActivationPage/RulebookActivationDetails';
 import { RulebookActivationHistory } from '../rulebook-activations/RulebookActivationPage/RulebookActivationHistory';
 import { RulebookActivationPage } from '../rulebook-activations/RulebookActivationPage/RulebookActivationPage';
+import { RulebookActivationTeamAccess } from '../rulebook-activations/RulebookActivationPage/RuleBookActivationTeamAccess';
 import { RulebookActivations } from '../rulebook-activations/RulebookActivations';
 import { CreateWebhook, EditWebhook } from '../webhooks/EditWebhook';
 import { WebhookDetails } from '../webhooks/WebhookPage/WebhookDetails';
@@ -49,12 +52,16 @@ import { Webhooks } from '../webhooks/Webhooks';
 import { CredentialTypes } from '../access/credential-types/CredentialTypes';
 import { CredentialTypeDetails } from '../access/credential-types/CredentialTypePage/CredentialTypeDetails';
 import { CredentialTypePage } from '../access/credential-types/CredentialTypePage/CredentialTypePage';
+import { CredentialTeamAccess } from '../access/credentials/CredentialPage/CredentialTeamAccess';
 import {
   CreateCredentialType,
   EditCredentialType,
 } from '../access/credential-types/CredentialTypeForm';
 import { EdaRoute } from './EdaRoutes';
 import { useEdaOrganizationRoutes } from './routes/useEdaOrganizationsRoutes';
+import { EdaProjectAddUsers } from '../projects/components/EdaProjectAddUsers';
+import { EdaProjectAddTeams } from '../projects/components/EdaProjectAddTeams';
+import { PageNotImplemented } from '../../../framework';
 
 export function useEdaNavigation() {
   const { t } = useTranslation();
@@ -145,6 +152,11 @@ export function useEdaNavigation() {
               element: <RulebookActivationHistory />,
             },
             {
+              id: EdaRoute.RulebookActivationTeamAccess,
+              path: 'team-access',
+              element: <RulebookActivationTeamAccess />,
+            },
+            {
               path: '',
               element: <Navigate to="details" />,
             },
@@ -182,10 +194,30 @@ export function useEdaNavigation() {
               element: <ProjectDetails />,
             },
             {
+              id: EdaRoute.ProjectTeamAccess,
+              path: 'team-access',
+              element: <ProjectTeamAccess />,
+            },
+            {
               path: '',
               element: <Navigate to="details" />,
             },
+            {
+              id: EdaRoute.ProjectUsers,
+              path: 'users',
+              element: <PageNotImplemented />,
+            },
           ],
+        },
+        {
+          id: EdaRoute.ProjectAddUsers,
+          path: ':id/users/add-users',
+          element: <EdaProjectAddUsers />,
+        },
+        {
+          id: EdaRoute.ProjectAddTeams,
+          path: ':id/team-access/add-teams',
+          element: <EdaProjectAddTeams />,
         },
         {
           path: '',
@@ -217,6 +249,11 @@ export function useEdaNavigation() {
               id: EdaRoute.DecisionEnvironmentDetails,
               path: 'details',
               element: <DecisionEnvironmentDetails />,
+            },
+            {
+              id: EdaRoute.DecisionEnvironmentTeamAccess,
+              path: 'team-access',
+              element: <DecisionEnvironmentTeamAccess />,
             },
             {
               path: '',
@@ -412,6 +449,11 @@ export function useEdaNavigation() {
                   id: EdaRoute.CredentialDetails,
                   path: 'details',
                   element: <CredentialDetails />,
+                },
+                {
+                  id: EdaRoute.CredentialTeamAccess,
+                  path: 'team-access',
+                  element: <CredentialTeamAccess />,
                 },
                 {
                   path: '',

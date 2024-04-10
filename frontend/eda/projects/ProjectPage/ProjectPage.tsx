@@ -116,7 +116,10 @@ export function ProjectPage() {
           page: EdaRoute.Projects,
           persistentFilterKey: 'projects',
         }}
-        tabs={[{ label: t('Details'), page: EdaRoute.ProjectDetails }]}
+        tabs={[
+          { label: t('Details'), page: EdaRoute.ProjectDetails },
+          { label: t('Team Access'), page: EdaRoute.ProjectTeamAccess },
+        ]}
         params={{ id: project?.id }}
       />
     </PageLayout>

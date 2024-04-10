@@ -1,34 +1,45 @@
-import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
-import { useGet } from '../../common/crud/useGet';
-import { User } from '../interfaces/User';
-import { awxAPI } from './api/awx-utils';
+import { ReactNode, createContext, useContext, useMemo } from 'react';
+import useSWR from 'swr';
+import { requestGet } from '../../common/crud/Data';
+import { AwxUser } from '../interfaces/User';
 import { AwxItemsResponse } from './AwxItemsResponse';
+import { awxAPI } from './api/awx-utils';
 
-const AwxActiveUserContext = createContext<User | null | undefined>(undefined);
-
-/**
- * Get the active logged in user
- * @returns undefined while querying, null if user not logged in, otherwise the User.
- */
-export function useAwxActiveUser() {
-  return useContext(AwxActiveUserContext) as User;
+interface ActiveUserState {
+  activeAwxUser?: AwxUser;
+  refreshActiveAwxUser?: () => void;
+  activeAwxUserIsLoading?: boolean;
 }
 
-export function AwxActiveUserProvider(props: { children?: ReactNode }) {
-  const [activeUser, setActiveUser] = useState<User | null | undefined>(undefined);
-  const userResponse = useGet<AwxItemsResponse<User>>(awxAPI`/me/`);
-  useEffect(() => {
-    if (
-      userResponse.data &&
-      userResponse.data.count === 1 &&
-      userResponse.data.results.length === 1
-    ) {
-      setActiveUser(userResponse.data.results[0] ?? null);
-    }
-  }, [userResponse.data]);
+export const AwxActiveUserContext = createContext<ActiveUserState>({});
+
+export function useAwxActiveUser() {
+  return useContext(AwxActiveUserContext);
+}
+
+export function AwxActiveUserProvider(props: { children: ReactNode }) {
+  const response = useSWR<AwxItemsResponse<AwxUser>>(awxAPI`/me/`, requestGet, {
+    dedupingInterval: 0,
+    refreshInterval: 10 * 1000,
+  });
+  const { mutate } = response;
+  const activeAwxUser = useMemo<AwxUser | undefined>(() => {
+    return !response.error && response.data?.results && response.data.results.length > 0
+      ? response.data.results[0]
+      : undefined;
+  }, [response]);
+  const activeAwxUserIsLoading = useMemo<boolean>(
+    () => !response.error && response.isLoading,
+    [response]
+  );
+  const state = useMemo<ActiveUserState>(() => {
+    return {
+      activeAwxUser,
+      refreshActiveAwxUser: () => void mutate(),
+      activeAwxUserIsLoading,
+    };
+  }, [activeAwxUser, activeAwxUserIsLoading, mutate]);
   return (
-    <AwxActiveUserContext.Provider value={activeUser}>
-      {props.children}
-    </AwxActiveUserContext.Provider>
+    <AwxActiveUserContext.Provider value={state}>{props.children}</AwxActiveUserContext.Provider>
   );
 }

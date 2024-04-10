@@ -10,17 +10,17 @@ import {
   usePageNavigate,
 } from '../../../../../framework';
 import { postRequest, requestPatch } from '../../../../common/crud/Data';
-import { awxAPI } from '../../../common/api/awx-utils';
-import { Instance } from '../../../interfaces/Instance';
-import { AwxRoute } from '../../../main/AwxRoutes';
-import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
 import { useGet } from '../../../../common/crud/useGet';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
+import { Instance } from '../../../interfaces/Instance';
 import { Settings } from '../../../interfaces/Settings';
+import { AwxRoute } from '../../../main/AwxRoutes';
 
 export function useInstanceRowActions(onComplete: (instances: Instance[]) => void) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
-  const activeUser = useAwxActiveUser();
+  const { activeAwxUser } = useAwxActiveUser();
   const { data } = useGet<Settings>(awxAPI`/settings/system/`);
 
   const alertToaster = usePageAlertToaster();
@@ -31,7 +31,7 @@ export function useInstanceRowActions(onComplete: (instances: Instance[]) => voi
     },
     [onComplete]
   );
-  const userAccess = activeUser?.is_superuser || activeUser?.is_system_auditor;
+  const userAccess = activeAwxUser?.is_superuser || activeAwxUser?.is_system_auditor;
   const isK8s = data?.IS_K8S;
 
   return useMemo<IPageAction<Instance>[]>(

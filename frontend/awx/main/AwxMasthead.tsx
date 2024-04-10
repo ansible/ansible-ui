@@ -3,7 +3,6 @@ import { DropdownItem } from '@patternfly/react-core/deprecated';
 import { ExternalLinkAltIcon, QuestionCircleIcon, UserCircleIcon } from '@patternfly/react-icons';
 import { useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import { PageMasthead, useGetPageUrl, usePageNavigate } from '../../../framework';
 import { PageMastheadDropdown } from '../../../framework/PageMasthead/PageMastheadDropdown';
 import { PageNotificationsIcon } from '../../../framework/PageMasthead/PageNotificationsIcon';
@@ -28,16 +27,14 @@ export function AwxMasthead() {
   const openAnsibleAboutModal = useAnsibleAboutModal();
   const { clearAllCache } = useClearCache();
   const config = useAwxConfig();
-  const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
-  const activeUser = useAwxActiveUser();
+  const { activeAwxUser, refreshActiveAwxUser } = useAwxActiveUser();
   useAwxNotifications();
   const logout = useCallback(async () => {
     await fetch('/api/logout/');
     clearAllCache();
-    navigate('/login');
-  }, [clearAllCache, navigate]);
-
+    refreshActiveAwxUser?.();
+  }, [clearAllCache, refreshActiveAwxUser]);
   return (
     <PageMasthead brand={<AwxBrand style={{ height: 60 }} />}>
       <ToolbarGroup variant="icon-button-group" style={{ flexGrow: 1 }}>
@@ -79,12 +76,12 @@ export function AwxMasthead() {
                 <UserCircleIcon />
               </Icon>
             }
-            label={activeUser?.username}
+            label={activeAwxUser?.username}
           >
             <DropdownItem
               id="user-details"
               label={t('User details')}
-              onClick={() => pageNavigate(AwxRoute.UserPage, { params: { id: activeUser?.id } })}
+              onClick={() => pageNavigate(AwxRoute.UserPage, { params: { id: activeAwxUser?.id } })}
             >
               {t('User details')}
             </DropdownItem>

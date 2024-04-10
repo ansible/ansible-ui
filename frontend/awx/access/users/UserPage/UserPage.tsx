@@ -19,24 +19,24 @@ import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { useGetItem } from '../../../../common/crud/useGet';
 import { AwxError } from '../../../common/AwxError';
 import { awxAPI } from '../../../common/api/awx-utils';
-import { User } from '../../../interfaces/User';
+import { AwxUser } from '../../../interfaces/User';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useDeleteUsers } from '../hooks/useDeleteUsers';
 
 export function UserPage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const { error, data: user, refresh } = useGetItem<User>(awxAPI`/users`, params.id);
+  const { error, data: user, refresh } = useGetItem<AwxUser>(awxAPI`/users`, params.id);
   const pageNavigate = usePageNavigate();
 
-  const deleteUsers = useDeleteUsers((deleted: User[]) => {
+  const deleteUsers = useDeleteUsers((deleted: AwxUser[]) => {
     if (deleted.length > 0) {
       pageNavigate(AwxRoute.Users);
     }
   });
 
-  const itemActions: IPageAction<User>[] = useMemo(() => {
-    const itemActions: IPageAction<User>[] = [
+  const itemActions: IPageAction<AwxUser>[] = useMemo(() => {
+    const itemActions: IPageAction<AwxUser>[] = [
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
@@ -73,7 +73,7 @@ export function UserPage() {
           { label: user.username },
         ]}
         headerActions={
-          <PageActions<User>
+          <PageActions<AwxUser>
             actions={itemActions}
             position={DropdownPosition.right}
             selectedItem={user}

@@ -27,8 +27,8 @@ import type { MountReturn } from 'cypress/react';
 import { mount } from 'cypress/react18';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { PageFramework } from '../../framework';
-import { AwxActiveUserProvider } from '../../frontend/awx/common/useAwxActiveUser';
-import { User } from '../../frontend/awx/interfaces/User';
+import { AwxActiveUserContext } from '../../frontend/awx/common/useAwxActiveUser';
+import { AwxUser } from '../../frontend/awx/interfaces/User';
 import '../../frontend/common/i18n';
 import './auth';
 import './awx-commands';
@@ -37,7 +37,6 @@ import './common-commands';
 import './core-commands';
 import './e2e';
 import './eda-commands';
-import { awxAPI } from './formatApiPathForAwx';
 import './hub-commands';
 import './rest-commands';
 
@@ -75,29 +74,27 @@ declare global {
 }
 
 Cypress.Commands.add('mount', (component, route, activeUserFixture) => {
-  cy.fixture(activeUserFixture || 'activeUser.json').then((activeUser: User) => {
-    cy.intercept(
-      {
-        method: 'GET',
-        url: awxAPI`/me/`,
-        hostname: 'localhost',
-      },
-      { count: 1, results: [activeUser] }
+  cy.fixture(activeUserFixture || 'activeUser.json').then((activeAwxUser: AwxUser) => {
+    return mount(
+      <MemoryRouter initialEntries={route?.initialEntries || ['/1']}>
+        <PageFramework defaultRefreshInterval={60}>
+          <AwxActiveUserContext.Provider
+            value={{
+              activeAwxUser,
+              refreshActiveAwxUser: () => null,
+              activeAwxUserIsLoading: false,
+            }}
+          >
+            <Page>
+              <Routes>
+                <Route path={`${route?.path || '/:id/*'}`} element={component} />
+              </Routes>
+            </Page>
+          </AwxActiveUserContext.Provider>
+        </PageFramework>
+      </MemoryRouter>
     );
   });
-  return mount(
-    <MemoryRouter initialEntries={route?.initialEntries || ['/1']}>
-      <PageFramework defaultRefreshInterval={60}>
-        <AwxActiveUserProvider>
-          <Page>
-            <Routes>
-              <Route path={`${route?.path || '/:id/*'}`} element={component} />
-            </Routes>
-          </Page>
-        </AwxActiveUserProvider>
-      </PageFramework>
-    </MemoryRouter>
-  );
 });
 
 // Example use:

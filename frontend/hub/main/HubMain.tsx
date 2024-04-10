@@ -3,30 +3,24 @@ import '@patternfly/patternfly/patternfly-charts.css';
 
 import '@patternfly/patternfly/patternfly-charts-theme-dark.css';
 
-import { Outlet } from 'react-router-dom';
-import { PageApp } from '../../../framework/PageNavigation/PageApp';
-import { Login } from '../../common/Login';
+import { BrowserRouter } from 'react-router-dom';
+import { PageFramework } from '../../../framework';
 import '../../common/i18n';
-import { hubAPI } from '../common/api/formatPath';
-import { HubContextProvider } from '../common/useHubContext';
-import { HubMasthead } from './HubMasthead';
-import { useHubNavigation } from './useHubNavigation';
+import { HubActiveUserProvider } from '../common/useHubActiveUser';
+import { HubApp } from './HubApp';
+import { HubLogin } from './HubLogin';
 
 // eslint-disable-next-line no-restricted-exports
 export default function HubMain() {
-  const navigation = useHubNavigation();
   return (
-    <PageApp
-      login={<Login apiUrl={hubAPI`/_ui/v1/auth/login/`} onLoginUrl="/overview" />}
-      root={
-        <HubContextProvider>
-          <Outlet />
-        </HubContextProvider>
-      }
-      masthead={<HubMasthead />}
-      navigation={navigation}
-      basename={process.env.ROUTE_PREFIX}
-      defaultRefreshInterval={10}
-    />
+    <BrowserRouter>
+      <PageFramework defaultRefreshInterval={10}>
+        <HubActiveUserProvider>
+          <HubLogin>
+            <HubApp />
+          </HubLogin>
+        </HubActiveUserProvider>
+      </PageFramework>
+    </BrowserRouter>
   );
 }

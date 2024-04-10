@@ -35,29 +35,60 @@ describe('GroupHosts', () => {
     );
   });
 
-  it('renders group hosts', () => {
-    cy.mount(<GroupHosts />, {
-      path: '/inventories/:inventory_type/:id/groups/:group_id/nested_hosts',
-      initialEntries: ['/inventories/inventory/1/groups/176/nested_hosts'],
-    });
-    cy.fixture('hosts.json')
-      .its('results')
-      .should('be.an', 'array')
-      .then((results: AwxHost[]) => {
-        const host = results[0];
-        cy.contains(host.name);
-      });
-  });
+  const kinds = ['', 'constructed'];
 
-  it('disassociate group host from toolbar menu', () => {
-    cy.mount(<GroupHosts />);
-    cy.fixture('hosts.json')
-      .its('results')
-      .should('be.an', 'array')
-      .then(() => {
-        cy.get('[data-cy="checkbox-column-cell"] > label > input').click();
-        cy.get('[data-cy="disassociate-selected-hosts"]').click();
-        cy.contains('Disassociate host from group?');
+  kinds.forEach((kind) => {
+    const path = '/inventories/:inventory_type/:id/groups/:group_id/nested_hosts';
+    const initialEntries =
+      kind === ''
+        ? ['/inventories/inventory/1/groups/176/nested_hosts']
+        : ['/inventories/constructed_inventory/1/groups/176/nested_hosts'];
+
+    it(`renders group hosts (${kind === '' ? 'inventory' : kind})`, () => {
+      cy.mount(<GroupHosts />, {
+        path,
+        initialEntries,
       });
+      cy.fixture('hosts.json')
+        .its('results')
+        .should('be.an', 'array')
+        .then((results: AwxHost[]) => {
+          const host = results[0];
+          cy.contains(host.name);
+          if (kind === '') {
+            cy.get('[data-cy="actions-column-cell"]').should(
+              'have.descendants',
+              '[data-cy="edit-host"]'
+            );
+          } else {
+            cy.get('[data-cy="actions-column-cell"]').should(
+              'not.have.descendants',
+              '[data-cy="edit-host"]'
+            );
+          }
+        });
+    });
+
+    it(`try disassociate group host from toolbar menu (${kind === '' ? 'inventory' : kind})`, () => {
+      cy.mount(<GroupHosts />, {
+        path,
+        initialEntries,
+      });
+      cy.fixture('hosts.json')
+        .its('results')
+        .should('be.an', 'array')
+        .then(() => {
+          if (kind === '') {
+            cy.get('[data-cy="checkbox-column-cell"] > label > input').click();
+            cy.get('[data-cy="disassociate-selected-hosts"]').click();
+            cy.contains('Disassociate host from group?');
+          } else {
+            cy.get('body').should(
+              'not.have.descendants',
+              '[data-cy="disassociate-selected-hosts"]'
+            );
+          }
+        });
+    });
   });
 });

@@ -16,7 +16,7 @@ export function JobsList(props: {
   columns: ITableColumn<UnifiedJob>[];
 }) {
   const { t } = useTranslation();
-  const toolbarFilters = useJobsFilters();
+  const toolbarFilters = useJobsFilters(props.queryParams ?? {});
   const tableColumns = props.columns;
   const view = useAwxView<UnifiedJob>({
     url: awxAPI`/unified_jobs/`,
