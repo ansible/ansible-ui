@@ -73,7 +73,7 @@ export const SignatureKeys = {
 };
 
 export const Repositories = {
-  title: 'Repository Management',
+  title: 'Repositories',
   url: 'repositories',
   urlCreate: '/repositories/create',
 };
