@@ -150,7 +150,7 @@ export function TemplateSurveyForm(props: IProps) {
         ? Number(newQuestion.default)
         : newQuestion.type === 'float'
           ? parseFloat(newQuestion.default.toString())
-          : newQuestion.default;
+          : newQuestion.default.toString();
 
     let question: Spec = {
       max: newQuestion.max,
