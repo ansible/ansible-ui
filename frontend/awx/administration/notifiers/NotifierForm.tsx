@@ -38,6 +38,7 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
   const params = useParams<{ id: string }>();
   let getUrl = mode === 'add' ? '' : awxAPI`/notification_templates/${params.id || ''}/`;
   const notifierRequest = useGet<NotificationTemplate>(getUrl);
+  const navigate = useNavigate();
 
   const breadcrumbs: ICatalogBreadcrumb[] = [
     { label: t('Notifications'), to: getPageUrl(AwxRoute.NotificationTemplates) },
@@ -62,7 +63,7 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
         submitText={t('Save host')}
         onSubmit={() => {}}
         cancelText={t('Cancel')}
-        onCancel={() => {}}
+        onCancel={ () => navigate(-1)}
         defaultValue={{}}
       ></AwxPageForm>
     </PageLayout>
