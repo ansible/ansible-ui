@@ -12,6 +12,7 @@ import type { Credential } from '../../../../interfaces/Credential';
 import type { JobTemplate } from '../../../../interfaces/JobTemplate';
 import { AwxRoute } from '../../../../main/AwxRoutes';
 import type { TemplateLaunch } from '../TemplateLaunchWizard';
+import { jsonToYaml } from '../../../../../../framework/utils/codeEditorUtils';
 
 export function TemplateLaunchReviewStep(props: { template: JobTemplate }) {
   const { template } = props;
@@ -36,7 +37,30 @@ export function TemplateLaunchReviewStep(props: { template: JobTemplate }) {
     skip_tags,
     timeout,
     verbosity,
+    survey,
   } = wizardData as TemplateLaunch;
+
+  let extraVarDetails = extra_vars || '{}';
+  if (survey) {
+    const jsonObj: { [key: string]: string } = {};
+
+    if (extra_vars) {
+      const lines = extra_vars.split('\n');
+      lines.forEach((line) => {
+        const [key, value] = line.split(':').map((part) => part.trim());
+        jsonObj[key] = value;
+      });
+    }
+
+    const mergedData: { [key: string]: string } = {
+      ...jsonObj,
+      ...survey,
+    };
+
+    extraVarDetails = jsonToYaml(JSON.stringify(mergedData));
+  }
+
+  <PageDetailCodeEditor label={t('Extra vars')} value={extraVarDetails} />;
 
   const verbosityString = useVerbosityString(verbosity);
 
@@ -131,7 +155,7 @@ export function TemplateLaunchReviewStep(props: { template: JobTemplate }) {
       <PageDetail label={t('Skip tags')} isEmpty={isEmpty(skip_tags)}>
         <LabelGroup>{skip_tags?.map(({ name }) => <Label key={name}>{name}</Label>)}</LabelGroup>
       </PageDetail>
-      <PageDetailCodeEditor label={t('Extra vars')} value={extra_vars} />
+      <PageDetailCodeEditor label={t('Extra vars')} value={extraVarDetails} />
     </PageDetails>
   );
 }
