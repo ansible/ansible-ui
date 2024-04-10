@@ -23,6 +23,7 @@ import { awxAPI } from '../../common/api/awx-utils';
 import { useGet } from '../../../common/crud/useGet';
 import { AwxError } from '../../common/AwxError';
 import { PageFormSelectOrganization } from '../../access/organizations/components/PageFormOrganizationSelect';
+import { PageFormSingleSelect } from '../../../../framework/PageForm/Inputs/PageFormSingleSelect';
 
 export function EditNotifier() {
   return <NotifierForm mode={'edit'} />;
@@ -82,6 +83,24 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
             placeholder={t('Enter a description')}
           />
           <PageFormSelectOrganization<NotificationTemplate> name="organization" isRequired />
+          <PageFormSingleSelect
+            name="type"
+            id="type"
+            label={t(`Type`)}
+            placeholder={t('Choose a Notification Type')}
+            options={[
+              { value: 'email', label: t('Email') },
+              { value: 'grafana', label: t('Grafana') },
+              { value: 'irc', label: t('IRC') },
+              { value: 'mattermost', label: t('Mattermost') },
+              { value: 'pagerduty', label: t('Pagerduty') },
+              { value: 'rocketchat', label: t('Rocket.Chat') },
+              { value: 'slack', label: t('Slack') },
+              { value: 'twilio', label: t('Twilio') },
+              { value: 'webhook', label: t('Webhook') },
+            ]}
+          />
+
       </AwxPageForm>
     </PageLayout>
   );
