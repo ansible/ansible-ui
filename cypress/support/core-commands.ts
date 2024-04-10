@@ -37,17 +37,3 @@ Cypress.Commands.add('containsByDataCy', (dataCy: string, text: string | number 
   // It's a workaround when the element is found and while assertions are running, the element is replaced
   cy.contains(`[data-cy="${dataCy}"]`, text);
 });
-
-/**
- * Helper method to wait for n requests to occur.
- * ref: https://github.com/cypress-io/cypress/issues/4389#issuecomment-500296894
- */
-Cypress.Commands.add('waitTimes', (alias: string, count: number, statusCode: number) => {
-  for (; count; count--) {
-    cy.wait(alias)
-      .its('response')
-      .then((response) => {
-        expect(response?.statusCode).to.eql(statusCode);
-      });
-  }
-});

@@ -76,23 +76,23 @@ Cypress.Commands.add('removeAllNodesFromVisualizerToolbar', () => {
   cy.clickModalButton('Close');
 });
 
-/* Custom Cypress command called `actionsWFApprovalConfirmModal`.
-This command acts (approve/delete/cancel) on a workflow approval request.
-It verifies that the modal is visible, clicks the confirm checkbox,
-confirms and click in the desired workflow approvals action,
-asserts all workflows were updated successfully, and closes the modal.
+/* Custom Cypress command called `deleteWFApprovalConfirmModal`.
+This command deletes a workflow approval request.
+It verifies that the remove modal is visible, clicks the confirm checkbox,
+clicks the delete workflow approvals, asserts all workflows were removed
+successfully, and closes the modal.
 */
 Cypress.Commands.add(
   'actionsWFApprovalConfirmModal',
   (action: 'approve' | 'deny' | 'cancel' | 'delete') => {
     const btnText: string = `${action} workflow approvals`;
     cy.log(btnText);
+    // FIXME: header is present but the get always fails
+    // cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+    //   cy.get('header').should('contain', btnText);
+    // });
     cy.clickModalConfirmCheckbox();
-    cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
-      // FIXME: header is present but the cy.get always fails
-      //   cy.get('header').should('contain', btnText);
-      cy.get('#submit').click(); // FIXME: contains doesn't work for buttons inside the modal
-    });
+    cy.get('#submit').click(); // FIXME: contains doesn't work for buttons inside the modal
     cy.assertModalSuccess();
     cy.clickModalButton('Close');
   }
@@ -166,10 +166,7 @@ Cypress.Commands.add(
 
 Cypress.Commands.add(
   'createAwxWorkflowVisualizerApprovalNode',
-  (workflowJobTemplate: WorkflowJobTemplate, name?: string) => {
-    if (!name) {
-      name = 'E2E WorkflowJTApprovalNode ' + randomString(4);
-    }
+  (workflowJobTemplate: WorkflowJobTemplate) => {
     cy.requestPost<WorkflowNode>(
       `/api/v2/workflow_job_templates/${workflowJobTemplate?.id}/workflow_nodes/`,
       {}
@@ -177,7 +174,7 @@ Cypress.Commands.add(
       cy.requestPost(
         `/api/v2/workflow_job_template_nodes/${approvalNode.id}/create_approval_template/`,
         {
-          name: name,
+          name: 'E2E WorkflowJTApprovalNode ' + randomString(4),
         }
       ).then(() => {
         return approvalNode;
