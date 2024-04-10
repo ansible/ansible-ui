@@ -112,7 +112,6 @@ describe('ScheduleAddWizard', () => {
           'Schedule name is required.'
         );
       });
-      cy.pause();
       cy.get('[data-cy="wizard-nav-item-nodePromptsStep"]').within(() => {
         cy.get('button').should('be.disabled');
       });
