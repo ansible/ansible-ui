@@ -314,6 +314,7 @@ export interface CredentialType {
       id: string;
       label: string;
       type: string;
+      secret: boolean;
       help_text: string;
       ask_at_runtime?: boolean;
       default?: number | string | boolean;
