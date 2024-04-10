@@ -1,15 +1,7 @@
-export type UserAssignment = {
-  id: number;
+import { Assignment } from './Assignment';
+
+export type UserAssignment = Assignment & {
   summary_fields: {
-    object_role: {
-      id: number;
-    };
-    role_definition: {
-      id: number;
-      name: string;
-      description: string;
-      managed: boolean;
-    };
     user: {
       id: number;
       username: string;
