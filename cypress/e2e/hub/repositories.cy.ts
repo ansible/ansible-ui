@@ -29,7 +29,7 @@ describe('Repositories', () => {
 
   beforeEach(() => {
     cy.navigateTo('hub', Repositories.url);
-    cy.verifyPageTitle(Repositories.title);
+    cy.verifyPageTitle('Repositories');
 
     // Create remote and repository before each test
     // Note: Some tests like create and delete do not use this shared remote and repository
@@ -92,7 +92,7 @@ describe('Repositories', () => {
       cy.get('button').contains('Delete repositories').click();
 
       // Repositories Page
-      cy.verifyPageTitle(Repositories.title);
+      cy.verifyPageTitle('Repositories');
       cy.filterTableByTextFilter('name', repositoryToDelete.name);
       cy.get('.pf-v5-c-empty-state').should('be.visible');
       cy.get('.pf-v5-c-empty-state').contains('No results found');
