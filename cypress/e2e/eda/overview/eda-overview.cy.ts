@@ -18,17 +18,14 @@ describe('EDA Overview', () => {
       .its('response.body.results')
       .then((results: Array<EdaRulebookActivation>) => {
         if (results.length === 0) {
-          cy.get('#rulebook-activations')
-            .scrollIntoView()
-            .within(() => {
-              cy.contains('h3', 'Rulebook Activations');
-              cy.contains('There are currently no rulebook activations');
-              cy.contains(
-                'div.pf-v5-c-empty-state__body',
-                'Create a rulebook activation by clicking the button below.'
-              );
-              cy.clickButton(/^Create rulebook activation$/);
-            });
+          cy.contains('h3', 'Rulebook Activations');
+          cy.get('#rulebook-activations').scrollIntoView();
+          cy.contains('There are currently no rulebook activations');
+          cy.contains(
+            'div.pf-v5-c-empty-state__body',
+            'Create a rulebook activation by clicking the button below.'
+          );
+          cy.clickButton(/^Create rulebook activation$/);
           cy.verifyPageTitle('Create Rulebook Activation');
         } else if (results.length >= 1) {
           cy.get('#rulebook-activations')
@@ -99,7 +96,7 @@ describe('EDA Overview', () => {
               cy.contains('h3', 'Rule Audit');
               cy.get('tbody tr').should('have.lengthOf.lessThan', 8);
               cy.get('[data-label="Name"] div > a').click();
-              cy.url().should('contain', '/details/');
+              cy.url().should('contain', '/details');
               cy.url().should('match', new RegExp(`\\/rule-audits\\/[0-9]*\\/details`));
             });
         }
