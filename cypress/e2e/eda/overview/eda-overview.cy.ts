@@ -44,11 +44,14 @@ describe('EDA Overview', () => {
   });
 
   it('user can create a DE when there are none, verify working links when there are DEs', () => {
-    cy.intercept('GET', edaAPI`/decision-environments/*`).as('getDEs');
+    cy.intercept('GET', edaAPI`/decision-environments/?page=1&page_size=10&page=1&page_size=10`).as(
+      'getDEs'
+    );
     cy.verifyPageTitle('Welcome to Event Driven Automation');
     cy.wait('@getDEs')
       .its('response.body.results')
       .then((results: Array<EdaDecisionEnvironment>) => {
+        cy.log('RESULTS', results.length);
         if (results.length === 0) {
           cy.get('#decision-environments')
             .scrollIntoView()
@@ -96,7 +99,7 @@ describe('EDA Overview', () => {
               cy.contains('h3', 'Rule Audit');
               cy.get('tbody tr').should('have.lengthOf.lessThan', 8);
               cy.get('[data-label="Name"] div > a').click();
-              cy.url().should('contain', '/decisions/rule-audits/');
+              cy.url().should('contain', '/details/');
               cy.url().should('match', new RegExp(`\\/rule-audits\\/[0-9]*\\/details`));
             });
         }
