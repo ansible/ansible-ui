@@ -43,43 +43,49 @@ export function EdaProjectAddTeams() {
 
   const steps: PageWizardStep[] = [
     {
-      id: 'teams',
-      label: t('Select team(s)'),
-      inputs: (
-        <EdaSelectTeamsStep
-          descriptionForTeamsSelection={t(
-            'Select the team(s) that you want to give access to {{projectName}}.',
-            {
-              projectName: project?.name,
+      id: 'parent-step',
+      label: t('Parent step'),
+      substeps: [
+        {
+          id: 'teams',
+          label: t('Select team(s)'),
+          inputs: (
+            <EdaSelectTeamsStep
+              descriptionForTeamsSelection={t(
+                'Select the team(s) that you want to give access to {{projectName}}.',
+                {
+                  projectName: project?.name,
+                }
+              )}
+            />
+          ),
+          validate: (formData, _) => {
+            const { teams } = formData as { teams: EdaTeam[] };
+            if (!teams?.length) {
+              throw new Error(t('Select at least one team.'));
             }
-          )}
-        />
-      ),
-      validate: (formData, _) => {
-        const { teams } = formData as { teams: EdaTeam[] };
-        if (!teams?.length) {
-          throw new Error(t('Select at least one team.'));
-        }
-      },
-    },
-    {
-      id: 'roles',
-      label: t('Select roles to apply'),
-      inputs: (
-        <EdaSelectRolesStep
-          contentType="project"
-          fieldNameForPreviousStep="teams"
-          descriptionForRoleSelection={t('Choose roles to apply to {{projectName}}.', {
-            projectName: project?.name,
-          })}
-        />
-      ),
-      validate: (formData, _) => {
-        const { edaRoles } = formData as { edaRoles: EdaRbacRole[] };
-        if (!edaRoles?.length) {
-          throw new Error(t('Select at least one role.'));
-        }
-      },
+          },
+        },
+        {
+          id: 'roles',
+          label: t('Select roles to apply'),
+          inputs: (
+            <EdaSelectRolesStep
+              contentType="project"
+              fieldNameForPreviousStep="teams"
+              descriptionForRoleSelection={t('Choose roles to apply to {{projectName}}.', {
+                projectName: project?.name,
+              })}
+            />
+          ),
+          validate: (formData, _) => {
+            const { edaRoles } = formData as { edaRoles: EdaRbacRole[] };
+            if (!edaRoles?.length) {
+              throw new Error(t('Select at least one role.'));
+            }
+          },
+        },
+      ],
     },
     {
       id: 'review',
