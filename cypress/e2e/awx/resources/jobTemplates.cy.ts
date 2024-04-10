@@ -198,7 +198,7 @@ describe('Job templates form Create, Edit, Delete', function () {
       const newName = (jobTemplate.name ?? '') + ' edited';
       cy.filterTableByMultiSelect('name', [jobTemplate.name]);
       cy.getTableRow('name', jobTemplate.name, { disableFilter: true }).should('be.visible');
-      cy.selectTableRowByCheckbox('name', jobTemplate.name, { disableFilter: true });
+      cy.selectTableRow(jobTemplate.name, false);
       cy.get('[data-cy="edit-template"]').click();
       cy.verifyPageTitle('Edit Job Template');
       cy.get('[data-cy="name"]').clear().type(newName);
@@ -291,8 +291,8 @@ describe('Job templates form Create, Edit, Delete', function () {
       }).then((jobTemplate2) => {
         cy.navigateTo('awx', 'templates');
         cy.filterTableByMultiSelect('name', [jobTemplate1.name, jobTemplate2.name]);
-        cy.selectTableRowByCheckbox('name', jobTemplate1.name, { disableFilter: true });
-        cy.selectTableRowByCheckbox('name', jobTemplate2.name, { disableFilter: true });
+        cy.selectTableRow(jobTemplate1.name, false);
+        cy.selectTableRow(jobTemplate2.name, false);
         cy.clickToolbarKebabAction('delete-selected-templates');
         cy.intercept('DELETE', awxAPI`/job_templates/${jobTemplate1.id.toString()}/`).as(
           'deleteJobTemplate1'
