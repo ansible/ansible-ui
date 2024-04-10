@@ -1,7 +1,12 @@
 import { randomString } from '../../../../framework/utils/random-string';
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
+<<<<<<< HEAD
 import { AwxUser } from '../../../../frontend/awx/interfaces/User';
+=======
+import { User } from '../../../../frontend/awx/interfaces/User';
+import { awxAPI } from '../../../support/formatApiPathForAwx';
+>>>>>>> 8da6a9576 (adding asosiate and disasosiate tests)
 
 describe('host and inventory host', () => {
   let organization: Organization;
@@ -40,25 +45,54 @@ describe('host and inventory host', () => {
   });
 
   it('can work with groups tab', () => {
+    const url = '/infrastructure/hosts?page=1&perPage=10&sort=name';
     cy.createInventoryHostGroup(organization).then((result) => {
-      const { inventory, host, group } = result;
-      cy.visit('/infrastructure/hosts?page=1&perPage=10&sort=name');
-      cy.searchAndDisplayResource(host.name || '');
-      cy.contains(host.name || '').click();
+      const {inventory, host, group } = result;
+      const hostid = host.id ? host.id.toString() : '';
+      navigateToHost(url, host.name, '[data-cy="name-column-cell"] a');
       expect(host.inventory).to.eq(inventory.id);
       expect(group.inventory).to.eq(inventory.id);
       cy.clickLink(/^Groups$/);
+      //check edit group
       cy.get('[data-cy="edit-group"]').click();
       cy.verifyPageTitle('Edit group');
       cy.get('[data-cy="name-form-group"]').type('-changed name');
       cy.get('[data-cy="Submit"]').click();
       cy.verifyPageTitle(group.name + '-changed name');
+      cy.awxRequestPost<{ name: string; inventory: number }>(awxAPI`/hosts/${hostid}/groups/`, {
+        name: 'E2E Group ' + randomString(5),
+        inventory: host.inventory,
+      }).then((group) => {
+        /// check multiple assosiate and disasosiate
+        // disasosiate
+        navigateToHost(url, host.name, '[data-cy="name-column-cell"] a');
+        cy.clickLink(/^Groups$/);
+        cy.get(`[data-cy="select-all"]`).click();
+        disassociate();
+        cy.get('[data-cy="empty-state-title"]').contains(
+          /^There are currently no groups associated with this host/
+        );
+        // Add - multi groups
+        cy.clickButton(/^Add group$/);
+        cy.get('[data-cy="select-all"]').click();
+        cy.clickModalButton('Confirm');
+        cy.contains('button', 'Close').click();
+        cy.contains(group.name);
+        /// single disasosiate
+        cy.searchAndDisplayResource(group.name);
+        cy.get(`[data-cy="row-id-${group.id}"] [data-cy="checkbox-column-cell"]`).click();
+        disassociate();
+        navigateToHost(url, host.name, '[data-cy="name-column-cell"] a');
+        cy.clickLink(/^Groups$/);
+        cy.contains(group.name).should('not.exist');
+        //check single assosiate
+        cy.get('[data-cy="associate"]').click();
+        cy.get(`[data-cy="row-id-${group.id}"] [data-cy="checkbox-column-cell"]`).click();
+        cy.clickModalButton('Confirm');
+        cy.contains('button', 'Close').click();
+        cy.contains(group.name);
+      });
     });
-  });
-
-  it('can create, edit and delete a host', () => {
-    cy.visit(`/infrastructure/hosts`);
-    createAndEditAndDeleteHost(false, inventory);
   });
 
   // assisting functions
@@ -125,6 +159,20 @@ describe('host and inventory host', () => {
     cy.clickModalButton('Delete hosts');
     cy.contains('button', 'Close').click();
     cy.contains(/^No results found./);
+  }
+
+  function navigateToHost(url: string, name: string, data: string) {
+    cy.visit(url);
+    cy.searchAndDisplayResource(name || '');
+    cy.get(data).click();
+  }
+
+  function disassociate() {
+    cy.get('[data-cy="disassociate"]').click();
+    cy.clickModalConfirmCheckbox();
+    cy.clickModalButton('Disassociate groups');
+    cy.assertModalSuccess();
+    cy.clickModalButton('Close');
   }
 
   function createAndEditAndDeleteHost(inventory_host: boolean, inventory: Inventory) {
