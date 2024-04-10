@@ -53,6 +53,8 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
     return <LoadingPage />;
   }
 
+  const defaultValue = mode === 'add' ? {} : notifierRequest.data;
+
   return (
     <PageLayout>
       <PageHeader
@@ -64,8 +66,21 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
         onSubmit={() => {}}
         cancelText={t('Cancel')}
         onCancel={ () => navigate(-1)}
-        defaultValue={{}}
-      ></AwxPageForm>
+        defaultValue={defaultValue}
+      >
+          <PageFormTextInput<NotificationTemplate>
+            name="name"
+            label={t('Name')}
+            placeholder={t('Enter a name')}
+            isRequired
+            maxLength={150}
+          />
+          <PageFormTextInput<NotificationTemplate>
+            name="description"
+            label={t('Description')}
+            placeholder={t('Enter a description')}
+          />
+      </AwxPageForm>
     </PageLayout>
   );
 }
