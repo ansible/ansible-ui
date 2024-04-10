@@ -212,17 +212,24 @@ Cypress.Commands.add('getEdaProjectByName', (edaProjectName: string) => {
   });
 });
 
-Cypress.Commands.add('deleteEdaProject', (project: EdaProject) => {
-  // this is just cleanup, so we don't care if the sync fails
-  cy.requestDelete(edaAPI`/projects/${project.id.toString()}/`, {
-    failOnStatusCode: false,
-  }).then(() => {
-    Cypress.log({
-      displayName: 'EDA PROJECT DELETION :',
-      message: [`Deleted 👉  ${project.name}`],
+Cypress.Commands.add(
+  'deleteEdaProject',
+  (
+    project: EdaProject,
+    options?: {
+      /** Whether to fail on response codes other than 2xx and 3xx */
+      failOnStatusCode?: boolean;
+    }
+  ) => {
+    // this is just cleanup, so we don't care if the sync fails
+    cy.requestDelete(edaAPI`/projects/${project.id.toString()}/`, options).then(() => {
+      Cypress.log({
+        displayName: 'EDA PROJECT DELETION :',
+        message: [`Deleted 👉  ${project.name}`],
+      });
     });
-  });
-});
+  }
+);
 
 Cypress.Commands.add('pollEdaResults', (url: string) => {
   cy.requestGet<EdaResult<unknown>>(url).then((result) => {
@@ -449,12 +456,16 @@ Cypress.Commands.add('getEdaDecisionEnvironmentByName', (edaDEName: string) => {
 
 Cypress.Commands.add(
   'deleteEdaDecisionEnvironment',
-  (decisionEnvironment: EdaDecisionEnvironment) => {
+  (
+    decisionEnvironment: EdaDecisionEnvironment,
+    options?: {
+      /** Whether to fail on response codes other than 2xx and 3xx */
+      failOnStatusCode?: boolean;
+    }
+  ) => {
     cy.requestDelete(
       edaAPI`/decision-environments/${decisionEnvironment.id.toString()}/?force=true`,
-      {
-        failOnStatusCode: false,
-      }
+      options
     ).then(() => {
       Cypress.log({
         displayName: 'EDA DECISION ENVIRONMENT DELETION :',
