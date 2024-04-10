@@ -1,10 +1,10 @@
 describe('Overview - Quick Starts', () => {
-  beforeEach(() => {
-    cy.verifyPageTitle('Welcome to the Ansible Automation Platform');
-  });
-
   before(() => {
     cy.platformLogin();
+  });
+
+  beforeEach(() => {
+    cy.verifyPageTitle('Welcome to the Ansible Automation Platform');
   });
 
   it('checks the browse content titles user can see in the hands on quick starts on Automation Hub ', () => {

@@ -5,6 +5,7 @@ import { PlatformOrganization } from '../../platform/interfaces/PlatformOrganiza
 import { PlatformTeam } from '../../platform/interfaces/PlatformTeam';
 import { PlatformUser } from '../../platform/interfaces/PlatformUser';
 import './rest-commands';
+import { randomE2Ename } from './utils';
 
 /* The `Cypress.Commands.add('platformLogin', () => { ... })` function is a custom Cypress command that
 handles the login process for a platform application. Here's a breakdown of what it does: */
@@ -110,23 +111,13 @@ Cypress.Commands.add(
 /* This `Cypress.Commands.add('createPlatformUser', ...)` function is a custom Cypress command that is
 responsible for creating a new platform user. Here's a breakdown of what it does: */
 
-Cypress.Commands.add(
-  'createPlatformUser',
-  (
-    platformOrganization?: PlatformOrganization,
-    userType: 'admin' | 'auditor' | 'normal' = 'normal'
-  ) => {
-    cy.requestPost<PlatformUser>(gatewayV1API`/users/`, {
-      username: platformOrganization
-        ? `e2e-platform-user-with-org-${randomString(2).toLowerCase()}`
-        : `e2e-platform-user-${randomString(2).toLowerCase()}`,
-      password: 'password',
-      is_superuser: userType === 'admin',
-      is_system_auditor: userType === 'auditor',
-      organizations: platformOrganization ? [platformOrganization.id] : [],
-    }).then((user) => user);
-  }
-);
+Cypress.Commands.add('createPlatformUser', (user?: Partial<PlatformUser>) => {
+  cy.requestPost<PlatformUser>(gatewayV1API`/users/`, {
+    username: randomE2Ename(),
+    password: randomString(10),
+    ...user,
+  });
+});
 
 /* This `Cypress.Commands.add('deletePlatformUser', ...)` function is a custom Cypress command that is
 responsible for deleting a platform user. Here's a breakdown of what it does: */
@@ -148,6 +139,7 @@ Cypress.Commands.add(
 responsible for creating a new platform team. Here's a breakdown of what it does: */
 Cypress.Commands.add('createPlatformTeam', function (platformTeam: Partial<PlatformTeam>) {
   cy.requestPost<Partial<PlatformTeam>>(gatewayV1API`/teams/`, {
+    name: randomE2Ename(),
     ...platformTeam,
   });
 });
