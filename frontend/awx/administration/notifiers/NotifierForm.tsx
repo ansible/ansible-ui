@@ -25,6 +25,8 @@ import { AwxError } from '../../common/AwxError';
 import { PageFormSelectOrganization } from '../../access/organizations/components/PageFormOrganizationSelect';
 import { PageFormSingleSelect } from '../../../../framework/PageForm/Inputs/PageFormSingleSelect';
 import { PageFormWatch } from '../../../../framework/PageForm/Utils/PageFormWatch';
+import { PageFormGroup } from '../../../../framework/PageForm/Inputs/PageFormGroup';
+import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
 
 export function EditNotifier() {
   return <NotifierForm mode={'edit'} />;
@@ -102,17 +104,27 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
             { value: 'webhook', label: t('Webhook') },
           ]}
         />
-        <PageFormWatch watch="notification_type">{() => <TypeForm mode={mode} />}</PageFormWatch>
+        <PageFormWatch watch="notification_type">{(notification_type : string) => 
+          <>
+            {notification_type && 
+              <PageFormSection singleColumn>
+                <PageFormGroup
+                  label={t('Type Details')}
+                >
+                  <TypeForm mode={mode} notification_type={notification_type} />
+                </PageFormGroup>
+              </PageFormSection>
+            }
+          </>
+        }</PageFormWatch>
       </AwxPageForm>
     </PageLayout>
   );
 }
 
-function TypeForm(props: { mode: 'add' | 'edit' }) {
+function TypeForm(props: { mode: 'add' | 'edit', notification_type : string }) {
   const context = useFormContext<NotificationTemplate>();
-  const notification_type = context.getValues().notification_type;
-
-  const { mode } = props;
+  const { mode, notification_type } = props;
   switch (notification_type) {
     case 'email':
       return <EmailForm mode={mode} />;
