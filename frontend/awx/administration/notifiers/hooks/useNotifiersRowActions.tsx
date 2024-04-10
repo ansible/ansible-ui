@@ -1,4 +1,5 @@
-import { CopyIcon, PencilAltIcon, RocketIcon, TrashIcon } from '@patternfly/react-icons';
+
+import { BellIcon, CopyIcon, PencilAltIcon, RocketIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -37,6 +38,17 @@ export function useNotifiersRowActions(
 
   return useMemo<IPageAction<NotificationTemplate>[]>(() => {
     return [
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        icon: BellIcon,
+        label: t(`Test notifier`),
+        onClick: () => {},
+        isDisabled: (notification) => isNotificationRunning(notification) ? t('Notification is running') : '' ,
+        isDanger: false,
+        isPinned: true,
+      },
+      // Edit form not yet implemented
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
@@ -111,4 +123,18 @@ export function useNotifiersRowActions(
     alertToaster,
     testDisabled,
   ]);
+}
+
+function isNotificationRunning(notification : NotificationTemplate)
+{
+  const status = notification.summary_fields.recent_notifications.length > 0
+                ? notification.summary_fields.recent_notifications[0].status
+                : undefined;
+
+  if (status === 'running')
+  {
+    return true;
+  }
+
+  return false;
 }
