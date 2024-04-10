@@ -69,10 +69,10 @@ export function Access<T extends Assignment>(props: {
           title: props.type === 'team' ? t('Remove team assignment') : t('Remove user assignment'),
           confirmText:
             props.type === 'team'
-              ? t('Yes, I confirm that I want to remove these {{count}} team assignment.', {
+              ? t('Yes, I confirm that I want to remove these {{count}} team assignments.', {
                   count: items.length,
                 })
-              : t('Yes, I confirm that I want to remove these {{count}} user assignment.', {
+              : t('Yes, I confirm that I want to remove these {{count}} user assignments.', {
                   count: items.length,
                 }),
           actionButtonText:
@@ -87,7 +87,7 @@ export function Access<T extends Assignment>(props: {
             requestDelete(props.url + `${item.id.toString()}/`, signal),
         });
       },
-      [actionColumns, bulkAction, confirmationColumns, onComplete, t, props.type]
+      [actionColumns, bulkAction, confirmationColumns, onComplete, t]
     );
   }
   const toolbarFilters = useMemo<IToolbarFilter[]>(
@@ -163,8 +163,8 @@ export function Access<T extends Assignment>(props: {
       errorStateTitle={t('Error loading access data.')}
       emptyStateTitle={
         props.type === 'team'
-          ? t('There are currently no team assigned to this object.')
-          : t('There are currently no user assigned to this object.')
+          ? t('There are currently no teams assigned to this object.')
+          : t('There are currently no users assigned to this object.')
       }
       emptyStateDescription={
         props.type === 'team'
