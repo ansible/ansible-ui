@@ -49,6 +49,9 @@ export interface ManageItemsProps<ItemT extends object> {
 
   /** Setting to include a column of checkboxes to enable selection of rows */
   hideSelection?: boolean;
+
+  /** A function that gets called after the user clicks the apply button. */
+  onSubmit?: (items: ItemT[]) => void;
 }
 
 /**
@@ -128,8 +131,9 @@ export function useManageItems<ItemT extends object>(options: ManageItemsProps<I
       }));
       setItemsState(managedItemsState);
       localStorage.setItem(options.id, JSON.stringify(managedItemsState));
+      options.onSubmit ? options.onSubmit(orderedItems) : undefined;
     },
-    [keyFn, options.id, saveFn]
+    [keyFn, options, saveFn]
   );
 
   const openManageItems = () =>
