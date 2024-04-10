@@ -29,6 +29,7 @@ import { WorkflowApproval } from '../../frontend/awx/interfaces/WorkflowApproval
 import { WorkflowJobTemplate } from '../../frontend/awx/interfaces/WorkflowJobTemplate';
 import { WorkflowJobNode, WorkflowNode } from '../../frontend/awx/interfaces/WorkflowNode';
 import { awxAPI } from './formatApiPathForAwx';
+import { capitalizeFirstLetter } from '../../framework/utils/strings';
 
 //  AWX related custom command implementation
 
@@ -1127,21 +1128,52 @@ Cypress.Commands.add(
 
 Cypress.Commands.add(
   'createInventoryHost',
-  function createInventoryHost(organization: Organization) {
-    cy.awxRequestPost<Partial<Inventory>>(awxAPI`/inventories/`, {
-      name: 'E2E Inventory ' + randomString(4),
+  function createInventoryHost(organization: Organization, kind: '' | 'constructed' | 'smart') {
+    cy.awxRequestPost<Partial <Inventory>>(awxAPI`/inventories/`, {
+      name: `E2E Regular Inventory ${randomString(4)}`,
       organization: organization.id,
-    }).then((inventory) => {
+    })
+    .then((inventory: Inventory) => {
+
       cy.awxRequestPost<Partial<AwxHost>, AwxHost>(awxAPI`/hosts/`, {
         name: 'E2E Host ' + randomString(4),
         inventory: inventory.id,
-      }).then((host) => ({
-        inventory,
-        host,
-      }));
-    });
-  }
-);
+      })
+      .then((host) => {
+        if (kind === 'constructed'){
+          cy.awxRequestPost<Partial <Inventory & {inventories: Array<Number>}>>(awxAPI`/constructed_inventories/`, {
+            name: `E2E Constructed Inventory ${randomString(4)}`,
+            organization: organization.id,
+            kind: 'constructed',
+            inventories: [inventory.id],
+            variables: "plugin: test",
+
+          }).then((constructedInv: Inventory) => {
+            cy.awxRequestPost(awxAPI`/inventories/${String(constructedInv.id)}/input_inventories/`, {id: inventory.id}).then((_res) => {
+              cy.awxRequestPost(awxAPI`/inventories/${String(constructedInv.id)}/update_inventory_sources/`, {});
+            }).then((_res) => {
+              const inventory = constructedInv; 
+              return {inventory, host}});
+          })
+        }
+  
+        if (kind === 'smart'){
+          cy.awxRequestPost<Partial <Inventory>>(awxAPI`/inventories/`, {
+            name: `E2E Smart Inventory ${randomString(4)}`,
+            organization: organization.id,
+            kind: 'smart',
+            host_filter: `name__icontains=E2E`
+          }).then((smartInv) => { 
+            const inventory = smartInv;
+            return {inventory, host}});
+        }
+
+        if (kind === ''){
+          return new Promise((resolve, _reject) => resolve({ inventory, host }) );
+        }
+      })
+    })
+  });
 
 Cypress.Commands.add(
   'createInventoryHostGroup',
