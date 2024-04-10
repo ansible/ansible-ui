@@ -1,16 +1,13 @@
 import { randomString } from '../../../../framework/utils/random-string';
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
-//**********8
 import { AwxUser } from '../../../../frontend/awx/interfaces/User';
-//**********8
-import { User } from '../../../../frontend/awx/interfaces/User';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 
 describe('host and inventory host', () => {
   let organization: Organization;
   let inventory: Inventory;
-  let user: User;
+  let user: AwxUser;
 
   before(() => {
     cy.awxLogin();
