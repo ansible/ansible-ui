@@ -26,6 +26,6 @@ export function usePlatformOrganizationsFilter(queryKey: string = 'organization'
       queryLabel: (id: string) => <AsyncQueryLabel id={id} url={gatewayAPI`/organizations/`} />,
     };
     return filter;
-  }, [queryOptions]);
+  }, [queryKey, queryOptions]);
   return organizationFilter;
 }

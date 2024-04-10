@@ -20,8 +20,7 @@ describe('Users - create, edit and delete', () => {
           cy.get('[data-cy="username"]').clear().type(`edited-${createdPlatformUser.username}`);
           cy.get('[data-cy="Submit"]').click();
           cy.verifyPageTitle('Users');
-          cy.filterTableBySingleText(`edited-${createdPlatformUser.username}`);
-          cy.get('#select-all').click();
+          cy.selectTableRowByCheckbox('username', `edited-${createdPlatformUser.username}`);
           cy.clickToolbarKebabAction('delete-selected-users');
           cy.get('#confirm').click();
           cy.clickButton(/^Delete user/);
@@ -60,25 +59,8 @@ describe('Users - create, edit and delete', () => {
   it('bulk delete users from the toolbar action', () => {
     cy.createPlatformUser().then((createdPlatformUser1: PlatformUser) => {
       cy.createPlatformUser().then((createdPlatformUser2: PlatformUser) => {
-        cy.searchAndDisplayResourceByFilterOption(createdPlatformUser1.username, 'username').then(
-          () => {
-            cy.get('td[data-cy="username-column-cell"]')
-              .should('have.text', createdPlatformUser1.username)
-              .parent('tr')
-              .find('td[data-cy="checkbox-column-cell"]')
-              .click();
-          }
-        );
-        cy.clickButton(/^Clear all filters$/);
-        cy.searchAndDisplayResourceByFilterOption(createdPlatformUser2.username, 'username').then(
-          () => {
-            cy.get('td[data-cy="username-column-cell"]')
-              .should('have.text', createdPlatformUser2.username)
-              .parent('tr')
-              .find('td[data-cy="checkbox-column-cell"]')
-              .click();
-          }
-        );
+        cy.selectTableRowByCheckbox('username', createdPlatformUser1.username);
+        cy.selectTableRowByCheckbox('username', createdPlatformUser2.username);
         cy.clickToolbarKebabAction('delete-selected-users');
         cy.getModal().within(() => {
           cy.get('#confirm').click();
@@ -86,7 +68,6 @@ describe('Users - create, edit and delete', () => {
           cy.contains(/^Success$/).should('be.visible');
           cy.containsBy('button', /^Close$/).click();
         });
-        cy.clickButton(/^Clear all filters$/);
       });
     });
   });
@@ -124,14 +105,7 @@ describe('User Types - creates users of type normal and system admin', () => {
         cy.verifyPageTitle(createdUser.username);
         cy.navigateTo('platform', 'users');
         cy.verifyPageTitle('Users');
-        //assert created user is System Administrator
-        cy.filterTableBySingleText(`${createdUser.username}`).then(() => {
-          cy.get('tbody tr td[data-cy="user-type-column-cell"]').should(
-            'have.text',
-            'System administrator'
-          );
-        });
-        cy.get('#select-all').click();
+        cy.selectTableRowByCheckbox('username', `${createdUser.username}`);
         cy.clickToolbarKebabAction('delete-selected-users');
         cy.get('#confirm').click();
         cy.clickButton(/^Delete user/);

@@ -9,8 +9,8 @@ export function useNameToolbarFilter() {
     () => ({
       key: 'name',
       label: t('Name'),
-      type: ToolbarFilterType.SingleText,
-      query: 'name__contains',
+      type: ToolbarFilterType.MultiText,
+      query: 'name__icontains',
       comparison: 'contains',
     }),
     [t]

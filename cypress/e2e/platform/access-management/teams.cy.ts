@@ -1,8 +1,8 @@
 import { randomString } from '../../../../framework/utils/random-string';
-import { PlatformOrganization } from '../../../../platform/interfaces/PlatformOrganization';
-import { PlatformUser } from '../../../../platform/interfaces/PlatformUser';
-import { PlatformTeam } from '../../../../platform/interfaces/PlatformTeam';
 import { gatewayV1API } from '../../../../platform/api/gateway-api-utils';
+import { PlatformOrganization } from '../../../../platform/interfaces/PlatformOrganization';
+import { PlatformTeam } from '../../../../platform/interfaces/PlatformTeam';
+import { PlatformUser } from '../../../../platform/interfaces/PlatformUser';
 
 describe('Platform Teams - create, edit and delete with existing global platform organization', function () {
   let platformTeam: PlatformTeam;
@@ -355,7 +355,7 @@ describe('Platform Teams - tabs tests', function () {
             cy.searchAndDisplayResourceInModalPlatform(createdUser3.username);
             cy.intercept(
               'GET',
-              gatewayV1API`/users/?username__contains=${createdUser3.username}&order_by=username&page=1&page_size=10`
+              gatewayV1API`/users/?username__icontains=${createdUser3.username}&order_by=username&page=1&page_size=10`
             ).as('getUsersAfterSearch');
 
             cy.wait('@getUsersAfterSearch');
@@ -441,7 +441,7 @@ describe('Platform Teams - tabs tests', function () {
             cy.searchAndDisplayResourceInModalPlatform(createdUser3.username);
             cy.intercept(
               'GET',
-              gatewayV1API`/users/?username__contains=${createdUser3.username}&order_by=username&page=1&page_size=10`
+              gatewayV1API`/users/?username__icontains=${createdUser3.username}&order_by=username&page=1&page_size=10`
             ).as('getUsersAfterSearch');
 
             cy.wait('@getUsersAfterSearch');

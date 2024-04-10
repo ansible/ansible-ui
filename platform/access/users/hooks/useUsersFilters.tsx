@@ -9,7 +9,7 @@ export function useUsernameToolbarFilter() {
     () => ({
       key: 'username',
       label: t('Username'),
-      type: ToolbarFilterType.SingleText,
+      type: ToolbarFilterType.MultiText,
       query: 'username__contains',
       comparison: 'contains',
     }),
@@ -23,7 +23,7 @@ export function useFirstNameToolbarFilter() {
     () => ({
       key: 'firstname',
       label: t('First name'),
-      type: ToolbarFilterType.SingleText,
+      type: ToolbarFilterType.MultiText,
       query: 'first_name__contains',
       comparison: 'contains',
     }),
@@ -37,7 +37,7 @@ export function useLastNameToolbarFilter() {
     () => ({
       key: 'lastname',
       label: t('Last name'),
-      type: ToolbarFilterType.SingleText,
+      type: ToolbarFilterType.MultiText,
       query: 'last_name__contains',
       comparison: 'contains',
     }),
@@ -51,7 +51,7 @@ export function useEmailToolbarFilter() {
     () => ({
       key: 'email',
       label: t('Email'),
-      type: ToolbarFilterType.SingleText,
+      type: ToolbarFilterType.MultiText,
       query: 'email__contains',
       comparison: 'contains',
     }),
