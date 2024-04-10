@@ -105,7 +105,7 @@ describe('EDA Overview', () => {
 });
 
 describe('overview checks when resources before any resources are created', () => {
-  before(() => {
+  beforeEach(() => {
     cy.edaLogin();
   });
 
