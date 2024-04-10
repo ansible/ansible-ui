@@ -20,7 +20,7 @@ export function TeamAccess(props: { id: string; type: string; addRolesRoute?: st
       id={id}
       content_type_model={type}
       addRolesRoute={addRolesRoute}
-      translatedType={t('team')}
+      type={'team'}
     />
   );
 }

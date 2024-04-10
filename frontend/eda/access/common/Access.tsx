@@ -25,7 +25,7 @@ export function Access<T extends Assignment>(props: {
   id: string;
   content_type_model: string;
   addRolesRoute?: string;
-  translatedType: string;
+  type: 'user' | 'team';
 }) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
@@ -44,15 +44,11 @@ export function Access<T extends Assignment>(props: {
         type: 'description',
         value: (item: T) => item.summary_fields.role_definition.name,
         sort: 'role_definition__name',
-        card: 'description',
-        list: 'description',
       },
       {
         header: t('Role description'),
         type: 'description',
         value: (item: T) => item.summary_fields.role_definition.description,
-        card: 'description',
-        list: 'description',
       },
     ],
     [
@@ -70,15 +66,17 @@ export function Access<T extends Assignment>(props: {
     return useCallback(
       (items: T[]) => {
         bulkAction({
-          title: t('Remove {{type}} assignment', { type: props.translatedType }),
-          confirmText: t(
-            'Yes, I confirm that I want to remove these {{count}} {{type}} assignment.',
-            {
-              count: items.length,
-              type: props.translatedType,
-            }
-          ),
-          actionButtonText: t('Remove {{type}} assignment', { type: props.translatedType }),
+          title: props.type === 'team' ? t('Remove team assignment') : t('Remove user assignment'),
+          confirmText:
+            props.type === 'team'
+              ? t('Yes, I confirm that I want to remove these {{count}} team assignment.', {
+                  count: items.length,
+                })
+              : t('Yes, I confirm that I want to remove these {{count}} user assignment.', {
+                  count: items.length,
+                }),
+          actionButtonText:
+            props.type === 'team' ? t('Remove team assignment') : t('Remove user assignment'),
           items: items,
           keyFn: idKeyFn,
           isDanger: true,
@@ -89,7 +87,7 @@ export function Access<T extends Assignment>(props: {
             requestDelete(props.url + `${item.id.toString()}/`, signal),
         });
       },
-      [actionColumns, bulkAction, confirmationColumns, onComplete, t, props.translatedType]
+      [actionColumns, bulkAction, confirmationColumns, onComplete, t, props.type]
     );
   }
   const toolbarFilters = useMemo<IToolbarFilter[]>(
@@ -127,11 +125,11 @@ export function Access<T extends Assignment>(props: {
         variant: ButtonVariant.primary,
         icon: MinusCircleIcon,
         isPinned: true,
-        label: t('Remove {{type}}', { type: props.translatedType }),
+        label: props.type === 'team' ? t('Remove team') : t('Remove user'),
         onClick: (item: T) => removeRoles([item]),
       },
     ],
-    [t, removeRoles, props.translatedType]
+    [t, removeRoles, props.type]
   );
   const toolbarActions = useMemo<IPageAction<T>[]>(
     () => [
@@ -141,19 +139,19 @@ export function Access<T extends Assignment>(props: {
         variant: ButtonVariant.primary,
         isPinned: true,
         icon: PlusCircleIcon,
-        label: t('Add {{type}}', { type: props.translatedType }),
+        label: props.type === 'team' ? t('Add team') : t('Add user'),
         href: getPageUrl(props.addRolesRoute ?? '', { params: { id: props.id } }),
       },
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
-        label: t('Delete selected {{type}}', { type: props.translatedType }),
+        label: props.type === 'team' ? t('Delete selected team') : t('Delete selected user'),
         onClick: (items: T[]) => removeRoles(items),
         isDanger: true,
       },
     ],
-    [t, getPageUrl, props.addRolesRoute, props.id, removeRoles, props.translatedType]
+    [t, getPageUrl, props.addRolesRoute, props.id, removeRoles, props.type]
   );
   return (
     <PageTable
@@ -163,13 +161,17 @@ export function Access<T extends Assignment>(props: {
       toolbarFilters={toolbarFilters}
       rowActions={rowActions}
       errorStateTitle={t('Error loading access data.')}
-      emptyStateTitle={t('There are currently no {{type}} assigned to this object.', {
-        type: props.translatedType,
-      })}
-      emptyStateDescription={t('Please add a {{type}} by using the button below.', {
-        type: props.translatedType,
-      })}
-      emptyStateButtonText={t('Add {{type}}', { type: props.translatedType })}
+      emptyStateTitle={
+        props.type === 'team'
+          ? t('There are currently no team assigned to this object.')
+          : t('There are currently no user assigned to this object.')
+      }
+      emptyStateDescription={
+        props.type === 'team'
+          ? t('Please add a team by using the button below.')
+          : t('Please add an user by using the button below.')
+      }
+      emptyStateButtonText={props.type === 'team' ? t('Add team') : t('Add user')}
       emptyStateActions={toolbarActions.slice(0, 1)}
       {...view}
     />
