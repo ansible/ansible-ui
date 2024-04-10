@@ -1,17 +1,17 @@
 import { randomString } from '../../../../framework/utils/random-string';
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
-<<<<<<< HEAD
+//**********8
 import { AwxUser } from '../../../../frontend/awx/interfaces/User';
-=======
+//**********8
 import { User } from '../../../../frontend/awx/interfaces/User';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
->>>>>>> 8da6a9576 (adding asosiate and disasosiate tests)
+//**********8
 
 describe('host and inventory host', () => {
   let organization: Organization;
   let inventory: Inventory;
-  let user: AwxUser;
+  let user: User;
 
   before(() => {
     cy.awxLogin();
@@ -47,7 +47,7 @@ describe('host and inventory host', () => {
   it('can work with groups tab', () => {
     const url = '/infrastructure/hosts?page=1&perPage=10&sort=name';
     cy.createInventoryHostGroup(organization).then((result) => {
-      const {inventory, host, group } = result;
+      const { inventory, host, group } = result;
       const hostid = host.id ? host.id.toString() : '';
       navigateToHost(url, host.name, '[data-cy="name-column-cell"] a');
       expect(host.inventory).to.eq(inventory.id);
@@ -184,10 +184,10 @@ describe('host and inventory host', () => {
     deleteHost(inventory.id, inventory_host, hostName);
   }
 });
-<<<<<<< HEAD
+//////////////
 
 function createAndCheckHost(inventory_host: boolean, inventory: string) {
-  const hostName = 'E2E Inventory host ' + randomString(4);
+  const hostName = 'E2E Inventory host 1' + randomString(4);
 
   if (inventory_host) {
     cy.get('[data-cy="empty-state-title"]').contains(
@@ -267,5 +267,4 @@ function createAndEditAndDeleteHost(inventory_host: boolean, inventory: Inventor
   // delete
   deleteHost(inventory.id, inventory_host, hostName);
 }
-=======
->>>>>>> 56526465c (add tests for host groups tab)
+///////
