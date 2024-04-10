@@ -162,7 +162,3 @@ Cypress.Commands.add(
     });
   }
 );
-
-Cypress.Commands.add('clickCheckBoxByDataCy', (checkboxDataCy: string) => {
-  cy.getByDataCy(checkboxDataCy).click();
-});
