@@ -1209,7 +1209,13 @@ declare global {
        *
        * @returns {Chainable<void>}
        */
-      deleteEdaProject(project: EdaProject): Chainable<void>;
+      deleteEdaProject(
+        project: EdaProject,
+        options?: {
+          /** Whether to fail on response codes other than 2xx and 3xx */
+          failOnStatusCode?: boolean;
+        }
+      ): Chainable<void>;
 
       /**
        * `deleteEdaRulebookActivation(edaRulebookActivation: EdaRulebookActivation)`
@@ -1317,7 +1323,13 @@ declare global {
       /**
        * Deletes a DE which is provided.
        */
-      deleteEdaDecisionEnvironment(decisionEnvironment: EdaDecisionEnvironment): Chainable<void>;
+      deleteEdaDecisionEnvironment(
+        decisionEnvironment: EdaDecisionEnvironment,
+        options?: {
+          /** Whether to fail on response codes other than 2xx and 3xx */
+          failOnStatusCode?: boolean;
+        }
+      ): Chainable<void>;
       waitEdaDESync(edaDE: EdaDecisionEnvironment): Chainable<EdaDecisionEnvironment>;
 
       // ==============================================================================================================
