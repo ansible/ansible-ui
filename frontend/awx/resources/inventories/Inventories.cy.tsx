@@ -31,23 +31,23 @@ describe('Inventories', () => {
       cy.get('table').find('tr').should('have.length', 10);
     });
 
-    it('should have filters for Name, Description, Type, Organization, Created By and Modified By', () => {
-      cy.mount(<Inventories />);
-      cy.intercept('/api/v2/inventories/?organization__name__icontains=Organization%200*').as(
-        'orgFilterRequest'
+    it('should have filters for Name, Description, Created By and Modified By', () => {
+      cy.intercept(
+        { method: 'OPTIONS', url: '/api/v2/inventories/' },
+        { fixture: 'mock_options.json' }
       );
+      cy.mount(<Inventories />);
       cy.verifyPageTitle('Inventories');
       cy.openToolbarFilterTypeSelect().within(() => {
         cy.contains(/^Name$/).should('be.visible');
         cy.contains(/^Description$/).should('be.visible');
-        cy.contains(/^Inventory type$/).should('be.visible');
-        cy.contains(/^Organization$/).should('be.visible');
         cy.contains(/^Created by$/).should('be.visible');
         cy.contains(/^Modified by$/).should('be.visible');
-        cy.contains('button', /^Organization$/).click();
+        cy.contains('button', /^Name$/).click();
       });
-      cy.filterTableByText('Organization 0');
-      cy.wait('@orgFilterRequest');
+      cy.filterTableBySingleSelect('name', 'Demo Inventory');
+      cy.get('tr').should('have.length.greaterThan', 0);
+      cy.getByDataCy('filter-input').click();
       cy.clickButton(/^Clear all filters$/);
     });
 

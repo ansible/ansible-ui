@@ -15,7 +15,7 @@ import { useGetItem } from '../../../../common/crud/useGet';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxView } from '../../../common/useAwxView';
 import { Organization } from '../../../interfaces/Organization';
-import { User } from '../../../interfaces/User';
+import { AwxUser } from '../../../interfaces/User';
 import {
   useOrganizationsColumns,
   useOrganizationsFilters,
@@ -25,7 +25,7 @@ import { useSelectOrganizationsAddUsers } from '../../organizations/hooks/useSel
 
 export function UserOrganizations() {
   const params = useParams<{ id: string }>();
-  const { data: user } = useGetItem<User>(awxAPI`/users`, params.id);
+  const { data: user } = useGetItem<AwxUser>(awxAPI`/users`, params.id);
 
   if (!user) {
     return null;
@@ -33,7 +33,7 @@ export function UserOrganizations() {
   return <UserOrganizationsInternal user={user} />;
 }
 
-function UserOrganizationsInternal(props: { user: User }) {
+function UserOrganizationsInternal(props: { user: AwxUser }) {
   const { t } = useTranslation();
   const { user } = props;
   const toolbarFilters = useOrganizationsFilters();

@@ -4,7 +4,7 @@ import { usePostRequest } from '../../../../common/crud/usePostRequest';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxBulkActionDialog } from '../../../common/useAwxBulkActionDialog';
 import { Organization } from '../../../interfaces/Organization';
-import { User } from '../../../interfaces/User';
+import { AwxUser } from '../../../interfaces/User';
 
 export function useRemoveOrganizationsFromUsers() {
   const { t } = useTranslation();
@@ -12,7 +12,7 @@ export function useRemoveOrganizationsFromUsers() {
   const postRequest = usePostRequest<{ id: number; disassociate: boolean }, Organization>();
   const removeUserToOrganizations = useCallback(
     (
-      users: User[],
+      users: AwxUser[],
       organizations: Organization[],
       onComplete?: (organizations: Organization[]) => void
     ) => {

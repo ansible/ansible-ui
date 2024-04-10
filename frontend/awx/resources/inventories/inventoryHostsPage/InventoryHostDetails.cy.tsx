@@ -14,12 +14,7 @@ describe('InventoryHostDetails', () => {
   const kinds = ['constructed', 'smart', ''];
 
   kinds.forEach((kind) => {
-    const path =
-      kind === ''
-        ? '/inventories/:inventory_type/:id/hosts/:host_id/details'
-        : kind === 'smart'
-          ? '/inventories/:inventory_type/:id/hosts/:host_id/details'
-          : '/inventories/:inventory_type/:id/hosts/:host_id/details';
+    const path = '/inventories/:inventory_type/:id/hosts/:host_id/details';
 
     const initialEntries =
       kind === ''

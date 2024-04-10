@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ITableColumn, TextCell, useGetPageUrl } from '../../../../../framework';
 import { useCreatedColumn } from '../../../../common/columns';
-import { User } from '../../../interfaces/User';
+import { AwxUser } from '../../../interfaces/User';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { UserType } from '../components/UserType';
 
@@ -12,7 +12,7 @@ export function useUsersColumns(options?: { disableLinks?: boolean; disableSort?
   const disableLinks = options?.disableLinks || false;
 
   const createdColumn = useCreatedColumn(options);
-  const tableColumns = useMemo<ITableColumn<User>[]>(
+  const tableColumns = useMemo<ITableColumn<AwxUser>[]>(
     () => [
       {
         header: t('Username'),

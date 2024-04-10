@@ -57,12 +57,12 @@ describe('CollectionCategories.cy.tsx', () => {
   it('renders Manage Content button for platform admin', () => {
     cy.intercept('**/_ui/v1/settings/', { fixture: 'hub_settings.json' });
     cy.intercept('**/_ui/v1/feature-flags/', { fixture: 'hub_feature_flags.json' });
-    cy.fixture('hub_admin').then((user: HubUser) => {
+    cy.fixture('hub_admin').then((activeHubUser: HubUser) => {
       cy.fixture('collection_versions_eda').then(
         (collectionVersionsResponse: HubItemsResponse<CollectionVersionSearch>) => {
           const collections = collectionVersionsResponse.data;
           cy.mount(
-            <HubActiveUserContext.Provider value={{ user: user, refresh: () => null }}>
+            <HubActiveUserContext.Provider value={{ activeHubUser }}>
               <HubContextProvider>
                 <CollectionCategoryCarousel
                   collections={collections}
@@ -82,13 +82,13 @@ describe('CollectionCategories.cy.tsx', () => {
   it('Manage Content button should not be shown for non-admin user', () => {
     cy.intercept('**/_ui/v1/settings/', { fixture: 'hub_settings.json' });
     cy.intercept('**/_ui/v1/feature-flags/', { fixture: 'hub_feature_flags.json' });
-    cy.fixture('hub_admin').then((user: HubUser) => {
-      user.is_superuser = false;
+    cy.fixture('hub_admin').then((activeHubUser: HubUser) => {
+      activeHubUser.is_superuser = false;
       cy.fixture('collection_versions_eda').then(
         (collectionVersionsResponse: HubItemsResponse<CollectionVersionSearch>) => {
           const collections = collectionVersionsResponse.data;
           cy.mount(
-            <HubActiveUserContext.Provider value={{ user: user, refresh: () => null }}>
+            <HubActiveUserContext.Provider value={{ activeHubUser }}>
               <HubContextProvider>
                 <CollectionCategoryCarousel
                   collections={collections}

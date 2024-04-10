@@ -2,6 +2,7 @@
 import { SetOptional, SetRequired } from 'type-fest';
 import { AwxItemsResponse } from '../../frontend/awx/common/AwxItemsResponse';
 import { Application } from '../../frontend/awx/interfaces/Application';
+import { AwxHost } from '../../frontend/awx/interfaces/AwxHost';
 import { AwxToken } from '../../frontend/awx/interfaces/AwxToken';
 import { Credential } from '../../frontend/awx/interfaces/Credential';
 import { CredentialType } from '../../frontend/awx/interfaces/CredentialType';
@@ -9,21 +10,22 @@ import { ExecutionEnvironment } from '../../frontend/awx/interfaces/ExecutionEnv
 import { Instance } from '../../frontend/awx/interfaces/Instance';
 import { InstanceGroup } from '../../frontend/awx/interfaces/InstanceGroup';
 import { Inventory } from '../../frontend/awx/interfaces/Inventory';
+import { InventoryGroup } from '../../frontend/awx/interfaces/InventoryGroup';
 import { InventorySource } from '../../frontend/awx/interfaces/InventorySource';
 import { Job } from '../../frontend/awx/interfaces/Job';
 import { JobEvent } from '../../frontend/awx/interfaces/JobEvent';
 import { JobTemplate } from '../../frontend/awx/interfaces/JobTemplate';
 import { Label } from '../../frontend/awx/interfaces/Label';
+import { NotificationTemplate } from '../../frontend/awx/interfaces/NotificationTemplate';
 import { Organization } from '../../frontend/awx/interfaces/Organization';
 import { Project } from '../../frontend/awx/interfaces/Project';
 import { Role } from '../../frontend/awx/interfaces/Role';
 import { Schedule } from '../../frontend/awx/interfaces/Schedule';
 import { Team } from '../../frontend/awx/interfaces/Team';
-import { User } from '../../frontend/awx/interfaces/User';
+import { AwxUser } from '../../frontend/awx/interfaces/User';
+import { WorkflowApproval } from '../../frontend/awx/interfaces/WorkflowApproval';
 import { WorkflowJobTemplate } from '../../frontend/awx/interfaces/WorkflowJobTemplate';
 import { WorkflowNode } from '../../frontend/awx/interfaces/WorkflowNode';
-import { InventoryGroup } from '../../frontend/awx/interfaces/InventoryGroup';
-import { AwxHost } from '../../frontend/awx/interfaces/AwxHost';
 import { EdaControllerToken } from '../../frontend/eda/interfaces/EdaControllerToken';
 import { EdaCredential } from '../../frontend/eda/interfaces/EdaCredential';
 import { EdaDecisionEnvironment } from '../../frontend/eda/interfaces/EdaDecisionEnvironment';
@@ -74,8 +76,6 @@ import {
   HubQueryRolesOptions,
   HubRequestOptions,
 } from './hub-commands';
-import { NotificationTemplate } from '../../frontend/awx/interfaces/NotificationTemplate';
-import { WorkflowApproval } from '../../frontend/awx/interfaces/WorkflowApproval';
 
 declare global {
   namespace Cypress {
@@ -136,6 +136,12 @@ declare global {
         dataCy: string,
         text: string | number | RegExp
       ): Chainable<JQuery<HTMLElement>>;
+
+      /**
+       * Helper method to wait for n requests to occur.
+       * ref: https://github.com/cypress-io/cypress/issues/4389#issuecomment-500296894
+       */
+      waitTimes(alias: string, count: number, statusCode: number): Chainable<void>;
 
       // ==============================================================================================================
       // Input Commands
@@ -540,6 +546,8 @@ declare global {
       /** Selects a table row in the active modal dialog, by clicking on the row checkbox. */
       selectTableRowInDialog(name: string | RegExp, filter?: boolean): Chainable<void>;
 
+      clickCheckBoxByDataCy(checkboxDataCy: string): Chainable<void>;
+
       // ==============================================================================================================
       // Details Commands
       // ==============================================================================================================
@@ -844,7 +852,7 @@ declare global {
 
       getAwxJobTemplateByName(awxJobTemplateName: string): Chainable<JobTemplate>;
       createAwxTeam(organization: Organization): Chainable<Team>;
-      createAwxUser(organization: Organization): Chainable<User>;
+      createAwxUser(organization: Organization): Chainable<AwxUser>;
       createAwxInstanceGroup(
         instanceGroup?: Partial<Omit<InstanceGroup, 'id'>>
       ): Chainable<InstanceGroup>;
@@ -941,7 +949,7 @@ declare global {
         }
       ): Chainable<void>;
       deleteAwxUser(
-        user: User,
+        user: AwxUser,
         options?: {
           /** Whether to fail on response codes other than 2xx and 3xx */
           failOnStatusCode?: boolean;
@@ -1018,7 +1026,8 @@ declare global {
       ): Chainable<WorkflowNode>;
 
       createAwxWorkflowVisualizerApprovalNode(
-        firstNode: WorkflowJobTemplate
+        workflowJobTemplate: WorkflowJobTemplate,
+        name?: string
       ): Chainable<WorkflowNode>;
 
       createAwxWorkflowVisualizerInventorySourceNode(

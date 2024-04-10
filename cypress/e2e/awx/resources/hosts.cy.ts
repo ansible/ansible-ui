@@ -1,12 +1,12 @@
 import { randomString } from '../../../../framework/utils/random-string';
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
-import { User } from '../../../../frontend/awx/interfaces/User';
+import { AwxUser } from '../../../../frontend/awx/interfaces/User';
 
 describe('host and inventory host', () => {
   let organization: Organization;
   let inventory: Inventory;
-  let user: User;
+  let user: AwxUser;
 
   before(() => {
     cy.awxLogin();
@@ -59,7 +59,7 @@ function createAndCheckHost(inventory_host: boolean, inventory: string) {
     cy.contains('button', 'Browse').click();
     cy.contains('Select Inventory');
     cy.get(`[aria-label="Select Inventory"]`).within(() => {
-      cy.searchAndDisplayResource(inventory);
+      cy.filterTableBySingleSelect('name', inventory);
       cy.get(`[data-cy="checkbox-column-cell"] input`).click();
       cy.contains('button', 'Confirm').click();
     });
