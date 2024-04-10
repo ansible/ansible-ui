@@ -22,6 +22,7 @@ import { AwxRoute } from '../../main/AwxRoutes';
 import { awxAPI } from '../../common/api/awx-utils';
 import { useGet } from '../../../common/crud/useGet';
 import { AwxError } from '../../common/AwxError';
+import { PageFormSelectOrganization } from '../../access/organizations/components/PageFormOrganizationSelect';
 
 export function EditNotifier() {
   return <NotifierForm mode={'edit'} />;
@@ -80,6 +81,7 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
             label={t('Description')}
             placeholder={t('Enter a description')}
           />
+          <PageFormSelectOrganization<NotificationTemplate> name="organization" isRequired />
       </AwxPageForm>
     </PageLayout>
   );
