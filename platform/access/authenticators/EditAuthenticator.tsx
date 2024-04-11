@@ -1,27 +1,27 @@
 import { ReactNode } from 'react';
-import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import useSWR from 'swr';
 import { LoadingPage, usePageAlertToaster, usePageNavigate } from '../../../framework';
 import {
   postRequest,
+  requestDelete,
   requestGet,
   requestPatch,
-  requestDelete,
   swrOptions,
 } from '../../../frontend/common/crud/Data';
 import { useGet } from '../../../frontend/common/crud/useGet';
-import { PlatformRoute } from '../../main/PlatformRoutes';
 import { gatewayAPI } from '../../api/gateway-api-utils';
-import {
-  AuthenticatorForm,
-  formatConfiguration,
-  buildTriggers,
-  AuthenticatorFormValues,
-} from './components/AuthenticatorForm';
-import { AuthenticatorPlugins } from '../../interfaces/AuthenticatorPlugin';
 import { Authenticator } from '../../interfaces/Authenticator';
 import { AuthenticatorMap } from '../../interfaces/AuthenticatorMap';
+import { AuthenticatorPlugins } from '../../interfaces/AuthenticatorPlugin';
+import { PlatformRoute } from '../../main/PlatformRoutes';
+import {
+  AuthenticatorForm,
+  AuthenticatorFormValues,
+  buildTriggers,
+  formatConfiguration,
+} from './components/AuthenticatorForm';
 
 type Errors = { [key: string]: string } | undefined;
 
@@ -79,9 +79,7 @@ export function EditAuthenticator() {
           order: index + 1,
           authenticator: (authenticator as Authenticator).id,
           triggers: buildTriggers(map),
-          organization: ['organization', 'team'].includes(map.map_type)
-            ? map.organization?.name
-            : null,
+          organization: ['organization', 'team'].includes(map.map_type) ? map.organization : null,
           team: ['team'].includes(map.map_type) ? map.team?.name : null,
         };
         return postRequest(gatewayAPI`/authenticator_maps/`, data);

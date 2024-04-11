@@ -1,18 +1,18 @@
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LoadingPage, usePageAlertToaster, usePageNavigate } from '../../../framework';
-import { PlatformRoute } from '../../main/PlatformRoutes';
 import { postRequest } from '../../../frontend/common/crud/Data';
 import { useGet } from '../../../frontend/common/crud/useGet';
-import {
-  AuthenticatorForm,
-  formatConfiguration,
-  buildTriggers,
-  AuthenticatorFormValues,
-} from './components/AuthenticatorForm';
 import { gatewayAPI } from '../../api/gateway-api-utils';
 import type { Authenticator } from '../../interfaces/Authenticator';
 import type { AuthenticatorPlugins } from '../../interfaces/AuthenticatorPlugin';
+import { PlatformRoute } from '../../main/PlatformRoutes';
+import {
+  AuthenticatorForm,
+  AuthenticatorFormValues,
+  buildTriggers,
+  formatConfiguration,
+} from './components/AuthenticatorForm';
 
 type Errors = { [key: string]: string } | undefined;
 
@@ -49,9 +49,7 @@ export function CreateAuthenticator() {
           order: index + 1,
           authenticator: (authenticator as Authenticator).id,
           triggers: buildTriggers(map),
-          organization: ['organization', 'team'].includes(map.map_type)
-            ? map.organization?.name
-            : null,
+          organization: ['organization', 'team'].includes(map.map_type) ? map.organization : null,
           team: ['team'].includes(map.map_type) ? map.team?.name : null,
         };
         return postRequest(gatewayAPI`/authenticator_maps/`, data);

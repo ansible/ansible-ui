@@ -1,19 +1,19 @@
+import { Button, Text, TextVariants } from '@patternfly/react-core';
+import { AngleDownIcon, TrashIcon } from '@patternfly/react-icons';
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { Text, TextVariants, Button } from '@patternfly/react-core';
 import styled from 'styled-components';
-import { AngleDownIcon, TrashIcon } from '@patternfly/react-icons';
-import type { AuthenticatorFormValues, AuthenticatorMapValues } from '../AuthenticatorForm';
 import {
+  PageFormCheckbox,
   PageFormGrid,
   PageFormSelect,
   PageFormTextInput,
-  PageFormCheckbox,
 } from '../../../../../framework';
 import { PageFormCreatableSelect } from '../../../../../framework/PageForm/Inputs/PageFormCreatableSelect';
-import { PageFormPlatformOrganizationSelect } from '../../../organizations/components/PageFormPlatformOrganizationSelect';
-import { PageFormPlatformTeamSelect } from '../../../teams/components/PageFormPlatformTeamSelect';
 import { PageFormHidden } from '../../../../../framework/PageForm/Utils/PageFormHidden';
+import { PageFormPlatformOrganizationNameSelect } from '../../../organizations/components/PageFormPlatformOrganizationNameSelect';
+import { PageFormPlatformTeamSelect } from '../../../teams/components/PageFormPlatformTeamSelect';
+import type { AuthenticatorFormValues, AuthenticatorMapValues } from '../AuthenticatorForm';
 
 const Checkbox = styled(PageFormCheckbox)`
   margin-block-start: 2em;
@@ -207,7 +207,7 @@ export function MapFields(props: {
             watch={`mappings.${index}.map_type`}
             hidden={(value: string) => !['team', 'organization'].includes(value)}
           >
-            <PageFormPlatformOrganizationSelect
+            <PageFormPlatformOrganizationNameSelect
               name={`mappings.${index}.organization`}
               isRequired
             />
