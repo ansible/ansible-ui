@@ -62,7 +62,7 @@ jobs:
           fi        
 
   test:
-    name: ESLint + Prettier + TSC + Component
+    name: Test
     runs-on: ubuntu-latest
     # timeout-minutes: 10
     needs: packages
