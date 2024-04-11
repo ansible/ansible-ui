@@ -282,7 +282,6 @@ function TemplateSurveyInputs() {
           { value: 'multiselect', label: t('Multiple Choice (multiple select)') },
           { value: 'integer', label: t('Integer') },
           { value: 'float', label: t('Float') },
-          { value: 'json_yaml', label: t('JSON/YAML') },
         ]}
         isRequired
         labelHelp={t`Choose an answer type or format you want as the prompt for the user. Refer to the Ansible Controller Documentation for more additional information about each option.`}
