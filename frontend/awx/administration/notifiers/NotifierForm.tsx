@@ -30,8 +30,7 @@ import { PageFormWatch } from '../../../../framework/PageForm/Utils/PageFormWatc
 import { PageFormGroup } from '../../../../framework/PageForm/Inputs/PageFormGroup';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
 import { useOptions } from '../../../common/crud/useOptions';
-import { TFunction } from 'i18next';
-
+import { genericForm } from './NotifierFormGenerator';
 
 export function EditNotifier() {
   return <NotifierForm mode={'edit'} />;
@@ -41,13 +40,15 @@ export function AddNotifier() {
   return <NotifierForm mode={'add'} />;
 }
 
-type NotificationTemplateOptions = {
-  actions : {
-    GET : {
-      notification_configuration: 
-        Record<string, Record<string, { label : string, type : string, default : unknown }>>
-    }
-  }
+export type NotificationTemplateOptions = {
+  actions: {
+    GET: {
+      notification_configuration: Record<
+        string,
+        Record<string, { label: string; type: string; default: unknown }>
+      >;
+    };
+  };
 };
 
 function NotifierForm(props: { mode: 'add' | 'edit' }) {
@@ -78,8 +79,7 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
     return <LoadingPage />;
   }
 
-  if (!optionsRequest.data)
-  {
+  if (!optionsRequest.data) {
     return <LoadingPage />;
   }
 
@@ -129,183 +129,371 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
             { value: 'webhook', label: t('Webhook') },
           ]}
         />
-        <PageFormWatch watch="notification_type">{(notification_type : string) => 
-          <>
-            {notification_type && optionsRequest.data && 
-              <PageFormSection singleColumn={true}>
-                <PageFormGroup
-                  label={t('Type Details')}
-                >
-                  {genericForm(t, mode, notification_type, optionsRequest.data)}
-                </PageFormGroup>
-              </PageFormSection>
-            }
-          </>
-        }</PageFormWatch>
+        <PageFormWatch watch="notification_type">
+          {(notification_type: string) => (
+            <>
+              {optionsRequest.data && (
+                <PageFormSection singleColumn={true}>
+                  <PageFormGroup label={t('Type Details')}>
+                    <InnerForm
+                      notification_type={notification_type}
+                    />
+
+                    {genericForm(optionsRequest.data)}
+                  </PageFormGroup>
+                </PageFormSection>
+              )}
+            </>
+          )}
+        </PageFormWatch>
       </AwxPageForm>
     </PageLayout>
   );
 }
 
-
-function isRequired(mode : 'add' | 'edit', notification_type : string, label : string) : boolean
-{
-
-  return false;
-}
-
-function textType(type : string)
-{
-  if (type === 'password')
-  {
-    return 'password';
+function InnerForm(props : {notification_type: string}) {
+  const notification_type = props.notification_type;
+  if (notification_type === 'email') {
+    return <EmailForm />;
   }
 
-  if (type === 'int')
-  {
-    return 'number';
+  if (notification_type === 'slack') {
+    return <SlackForm />;
   }
 
-  return 'text';
-}
-
-
-function genericForm(t : TFunction<"translation", undefined>, mode: 'add' | 'edit', notification_type : string, optionsData :  NotificationTemplateOptions)
-{
-  try
-  {
-  const options = optionsData.actions.GET.notification_configuration[notification_type];
-  if (!options)
-  {
-    return <></>;
+  if (notification_type === 'twilio') {
+    return <TwilioForm />;
   }
 
-  return <>
-    {Object.keys(options).map( (key) => {
-      return componentFromOptions(t, mode, notification_type, key, optionsData);
-    })}
-  </>;
-  }catch(error)
-  {
-    debugger;
-    return <>{error}</>;
+  if (notification_type === 'pagerduty') {
+    return <PagerdutyForm />;
   }
+
+  if (notification_type === 'grafana') {
+    return <GrafanaForm />;
+  }
+
+  if (notification_type === 'webhook') {
+    return <WebhookForm />;
+  }
+
+  if (notification_type === 'mattermost') {
+    return <MattermostForm />;
+  }
+
+  if (notification_type === 'rocketchat') {
+    return <RocketchatForm />;
+  }
+
+  if (notification_type === 'irc') {
+    return <IrcForm />;
+  }
+
+  return <></>;
 }
 
-function componentFromOptions(t : TFunction<"translation", undefined>, mode: 'add' | 'edit', notification_type : string, field : string, optionsData :  NotificationTemplateOptions)
-{
-  try
-  {
-    const options = optionsData.actions.GET.notification_configuration[notification_type];
-    if (!options)
-    {
-      return <></>;
-    }
-
-    const option = options[field];
-
-    if (!option)
-    {
-      return <></>;
-    }
-
-    const name = 'type_data.' + field;
-        
-    const label = t(option.label);
-        
-        if (option.type === 'string' || option.type === 'number' || option.type === 'password')
-        {
-          return (
-            <>
-            <PageFormTextInput<NotificationTemplate>
-              type={textType(option.type)}
-              name={name}
-              label={label}
-              placeholder={''}
-              isRequired={isRequired(mode, notification_type, option.label)}
-            /> 
-            </>
-          );
-        }
-
-        if (option.type === 'list')
-        {
-          return (
-            <>
-            <PageFormTextArea<NotificationTemplate>
-              type={textType(option.type)}
-              name={name}
-              label={label}
-              placeholder={''}
-              isRequired={isRequired(mode, notification_type, option.label)}
-            /> 
-            </>
-          );
-        }
-
-        if (option.type === 'bool')
-        {
-          return (
-            <>
-            <PageFormCheckbox<NotificationTemplate>
-              type={textType(option.type)}
-              name={name}
-              label={label}
-              placeholder={''}
-              isRequired={isRequired(mode, notification_type, option.label)}
-            /> 
-            </>
-          );
-        }
-        return <></>;
-    }catch(error)
-    {
-      debugger;
-      return <>{t('Error loading component')}</>;
-    }
-}
-
-
-// list of form elements names for translations:
-// this hook is here only for translator static string crawler, so he can find those
-function useStaticTranslations()
-{
+function EmailForm() {
   const {t} = useTranslation();
-t('Notification configuration');
-t('Host');
-t('Port');
-t('Username');
-t('Password');
-t('Use TLS');
-t('Use SSL');
-t('Sender Email');
-t('Recipient List');
-t('Timeout');
-t('Token');
-t('Destination Channels');
-t('Account SID');
-t('Account Token');
-t('Source Phone Number');
-t('Destination SMS Numbers');
-t('Pagerduty subdomain');
-t('API Token');
-t('API Service/Integration Key');
-t('Client Identifier');
-t('Grafana URL');
-t('Grafana API Key');
-t('Target URL');
-t('HTTP Method');
-t('Verify SSL');
-t('Username', {'context': 'within webhook and mattermost'});
-t('Password', {'context': 'within webhook'});
-t('HTTP Headers');
-t('Target URL', {'context': 'within mattermost and rocketchat'});
-t('Verify SSL', {'context': 'within mattermost and rocketchat'});
-t('IRC Server Address');
-t('IRC Server Port');
-t('IRC Nick');
-t('IRC Server Password');
-t('SSL Connection');
-t('Destination Channels or Users');
+  return (
+    <>
+      <PageFormTextInput<NotificationTemplate>
+        type={'text'}
+        name={'type_data.host'}
+        label={t('Host')}
+        placeholder={''}
+      />
+
+      <PageFormTextInput<NotificationTemplate>
+        type={'number'}
+        name={'type_data.port'}
+        label={t('Port')}
+        placeholder={''}
+      />
+
+      <PageFormTextInput<NotificationTemplate>
+        type={'text'}
+        name={'type_data.username'}
+        label={t('Username')}
+        placeholder={''}
+      />
+
+      <PageFormTextInput<NotificationTemplate>
+        type={'password'}
+        name={'type_data.password'}
+        label={t('Password')}
+        placeholder={''}
+      />
+
+      <PageFormCheckbox<NotificationTemplate>
+        name={'type_data.use_tls'}
+        label={t('Use TLS')}
+        placeholder={''}
+      />
+
+      <PageFormCheckbox<NotificationTemplate>
+        name={'type_data.use_ssl'}
+        label={t('Use SSL')}
+        placeholder={''}
+      />
+
+      <PageFormTextInput<NotificationTemplate>
+        type={'text'}
+        name={'type_data.sender'}
+        label={t('Sender Email')}
+        placeholder={''}
+      />
+
+      <PageFormTextArea<NotificationTemplate>
+        name={'type_data.recipients'}
+        label={t('Recipient List')}
+        placeholder={''}
+      />
+
+      <PageFormTextInput<NotificationTemplate>
+        type={'number'}
+        name={'type_data.timeout'}
+        label={t('Timeout')}
+        placeholder={''}
+      />
+    </>
+  );
 }
 
+function SlackForm() {
+  const {t} = useTranslation();
+  return (
+    <>
+      <PageFormTextInput<NotificationTemplate>
+        name={'type_data.token'}
+        label={t('Token')}
+        placeholder={''}
+      />
+
+      <PageFormTextArea<NotificationTemplate>
+        name={'type_data.channels'}
+        label={t('Destination Channels')}
+        placeholder={''}
+      />
+    </>
+  );
+}
+
+function TwilioForm() {
+  const {t} = useTranslation();
+  return (
+    <>
+      <PageFormTextInput<NotificationTemplate>
+        type={'text'}
+        name={'type_data.account_sid'}
+        label={t('Account SID')}
+        placeholder={''}
+      />
+
+      <PageFormTextInput<NotificationTemplate>
+        name={'type_data.account_token'}
+        label={t('Account Token')}
+        placeholder={''}
+      />
+
+      <PageFormTextInput<NotificationTemplate>
+        type={'text'}
+        name={'type_data.from_number'}
+        label={t('Source Phone Number')}
+        placeholder={''}
+      />
+
+      <PageFormTextArea<NotificationTemplate>
+        name={'type_data.to_numbers'}
+        label={t('Destination SMS Numbers')}
+        placeholder={''}
+      />
+    </>
+  );
+}
+
+function PagerdutyForm() {
+  const {t} = useTranslation();
+  return (
+    <>
+      <PageFormTextInput<NotificationTemplate>
+        type={'text'}
+        name={'type_data.subdomain'}
+        label={t('Pagerduty subdomain')}
+        placeholder={''}
+      />
+
+      <PageFormTextInput<NotificationTemplate>
+        name={'type_data.token'}
+        label={t('API Token')}
+        placeholder={''}
+      />
+
+      <PageFormTextInput<NotificationTemplate>
+        type={'text'}
+        name={'type_data.service_key'}
+        label={t('API Service/Integration Key')}
+        placeholder={''}
+      />
+
+      <PageFormTextInput<NotificationTemplate>
+        type={'text'}
+        name={'type_data.client_name'}
+        label={t('Client Identifier')}
+        placeholder={''}
+      />
+    </>
+  );
+}
+
+function GrafanaForm() {
+  const {t} = useTranslation();
+  return (
+    <>
+      <PageFormTextInput<NotificationTemplate>
+        type={'text'}
+        name={'type_data.grafana_url'}
+        label={t('Grafana URL')}
+        placeholder={''}
+      />
+
+      <PageFormTextInput<NotificationTemplate>
+        name={'type_data.grafana_key'}
+        label={t('Grafana API Key')}
+        placeholder={''}
+      />
+    </>
+  );
+}
+
+function WebhookForm() {
+  const {t} = useTranslation();
+  return (
+    <>
+      <PageFormTextInput<NotificationTemplate>
+        type={'text'}
+        name={'type_data.url'}
+        label={t('Target URL')}
+        placeholder={''}
+      />
+
+      <PageFormTextInput<NotificationTemplate>
+        type={'text'}
+        name={'type_data.http_method'}
+        label={t('HTTP Method')}
+        placeholder={''}
+      />
+
+      <PageFormCheckbox<NotificationTemplate>
+        name={'type_data.disable_ssl_verification'}
+        label={t('Verify SSL')}
+        placeholder={''}
+      />
+
+      <PageFormTextInput<NotificationTemplate>
+        type={'text'}
+        name={'type_data.username'}
+        label={t('Username')}
+        placeholder={''}
+      />
+
+      <PageFormTextInput<NotificationTemplate>
+        type={'password'}
+        name={'type_data.password'}
+        label={t('Password')}
+        placeholder={''}
+      />
+
+      <PageFormTextInput<NotificationTemplate>
+        name={'type_data.headers'}
+        label={t('HTTP Headers')}
+        placeholder={''}
+      />
+    </>
+  );
+}
+
+function MattermostForm() {
+  const {t} = useTranslation();
+  return (
+    <>
+      <PageFormTextInput<NotificationTemplate>
+        type={'text'}
+        name={'type_data.mattermost_url'}
+        label={t('Target URL')}
+        placeholder={''}
+      />
+
+      <PageFormCheckbox<NotificationTemplate>
+        name={'type_data.mattermost_no_verify_ssl'}
+        label={t('Verify SSL')}
+        placeholder={''}
+      />
+    </>
+  );
+}
+
+function RocketchatForm() {
+  const {t} = useTranslation();
+  return (
+    <>
+      <PageFormTextInput<NotificationTemplate>
+        type={'text'}
+        name={'type_data.rocketchat_url'}
+        label={t('Target URL')}
+        placeholder={''}
+      />
+
+      <PageFormCheckbox<NotificationTemplate>
+        name={'type_data.rocketchat_no_verify_ssl'}
+        label={t('Verify SSL')}
+        placeholder={''}
+      />
+    </>
+  );
+}
+
+function IrcForm() {
+  const {t} = useTranslation();
+  return (
+    <>
+      <PageFormTextInput<NotificationTemplate>
+        type={'text'}
+        name={'type_data.server'}
+        label={t('IRC Server Address')}
+        placeholder={''}
+      />
+
+      <PageFormTextInput<NotificationTemplate>
+        name={'type_data.port'}
+        label={t('IRC Server Port')}
+        placeholder={''}
+      />
+
+      <PageFormTextInput<NotificationTemplate>
+        type={'text'}
+        name={'type_data.nickname'}
+        label={t('IRC Nick')}
+        placeholder={''}
+      />
+
+      <PageFormTextInput<NotificationTemplate>
+        type={'password'}
+        name={'type_data.password'}
+        label={t('IRC Server Password')}
+        placeholder={''}
+      />
+
+      <PageFormCheckbox<NotificationTemplate>
+        name={'type_data.use_ssl'}
+        label={t('SSL Connection')}
+        placeholder={''}
+      />
+
+      <PageFormTextArea<NotificationTemplate>
+        name={'type_data.targets'}
+        label={t('Destination Channels or Users')}
+        placeholder={''}
+      />
+    </>
+  );
+}
