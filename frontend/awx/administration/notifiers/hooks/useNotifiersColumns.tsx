@@ -3,9 +3,14 @@ import { useTranslation } from 'react-i18next';
 import { ITableColumn, TextCell } from '../../../../../framework';
 import { NotificationTemplate } from '../../../interfaces/NotificationTemplate';
 import { StatusCell } from '../../../../common/Status';
+import { useOrganizationNameColumn } from '../../../../common/columns';
+import { AwxRoute } from '../../../main/AwxRoutes';
 
 export function useNotifiersColumns() {
   const { t } = useTranslation();
+
+  const organizationColumn = useOrganizationNameColumn(AwxRoute.OrganizationDetails);
+
   const tableColumns = useMemo<ITableColumn<NotificationTemplate>[]>(
     () => [
       {
@@ -32,9 +37,11 @@ export function useNotifiersColumns() {
       {
         header: t('Type'),
         cell: (template: NotificationTemplate) => <TextCell text={template.notification_type} />,
+        sort: 'notification_type',
       },
+      organizationColumn,
     ],
-    [t]
+    [t, organizationColumn]
   );
   return tableColumns;
 }
