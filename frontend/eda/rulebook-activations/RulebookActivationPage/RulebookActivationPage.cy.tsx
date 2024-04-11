@@ -71,6 +71,7 @@ describe('RulebookActivationPage', () => {
       'Details',
       'History',
       'Team Access',
+      'User Access',
     ];
     cy.mount(<RulebookActivationPage />);
 

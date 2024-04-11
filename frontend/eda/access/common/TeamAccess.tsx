@@ -15,7 +15,7 @@ export function TeamAccess(props: { id: string; type: string; addRolesRoute?: st
           label: t('Team name'),
         },
       }}
-      toolbarFiltersValues={{ label: '', query: '' }}
+      toolbarFiltersValues={{ label: t('Team name'), query: 'team__name' }}
       url={edaAPI`/role_team_assignments/`}
       id={id}
       content_type_model={type}
