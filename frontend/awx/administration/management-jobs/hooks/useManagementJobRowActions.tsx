@@ -1,27 +1,29 @@
+import { ButtonVariant } from '@patternfly/react-core';
 import { RocketIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
 import { SystemJobTemplate } from '../../../interfaces/SystemJobTemplate';
-import { useLaunchManagementJob } from './useLaunchManagementJob';
+import { useManagementJobsRetainDataModal } from '../components/ManagementJobsRetainDataModal';
 
 export function useManagementJobRowActions() {
   const { t } = useTranslation();
-  const launchManagementJob = useLaunchManagementJob();
+
+  const openManagementJobsModal = useManagementJobsRetainDataModal();
 
   return useMemo<IPageAction<SystemJobTemplate>[]>(() => {
-    const rowActions: IPageAction<SystemJobTemplate>[] = [
+    const actions: IPageAction<SystemJobTemplate>[] = [
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
-        icon: RocketIcon,
-        label: t('Launch management job'),
-        onClick: (job: SystemJobTemplate) => void launchManagementJob(job),
-        ouiaId: 'management-job-launch-button',
-        isDanger: false,
+        variant: ButtonVariant.secondary,
         isPinned: true,
+        icon: RocketIcon,
+        label: t(`Launch Management Job`),
+        onClick: (managementJob: SystemJobTemplate) =>
+          openManagementJobsModal({ id: managementJob.id }),
       },
     ];
-    return rowActions;
-  }, [launchManagementJob, t]);
+    return actions;
+  }, [t, openManagementJobsModal]);
 }
