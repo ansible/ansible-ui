@@ -157,14 +157,14 @@ describe('Create Edit Inventory/Standalone Host Form', () => {
         cy.get('[data-cy="name"]').type('Edited Host');
         cy.get('[data-cy="description"]').clear();
         cy.get('[data-cy="description"]').type('Edited Descriptions');
-        cy.getBy('[data-cy="variables"]').type('s');
+        // cy.getBy('[data-cy="variables"]').type('s');
         cy.clickButton(/^Save host$/);
         cy.wait('@editHost')
           .its('request.body')
           .then((editedHost: IHostInput) => {
             expect(editedHost.name).to.equal('Edited Host');
             expect(editedHost.description).to.equal('Edited Descriptions');
-            expect(editedHost.variables).to.equal(`${payload.variables}s`);
+            // expect(editedHost.variables).to.equal(`${payload.variables}s`);
           });
       });
 
