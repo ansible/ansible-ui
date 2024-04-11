@@ -25,7 +25,7 @@ export interface NotificationTemplate
       description: string;
     };
   };
-  type_data: [string, unknown];
+  notification_configuration: [string, unknown];
   notification_type:
     | 'email'
     | 'grafana'

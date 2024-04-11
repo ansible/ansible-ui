@@ -60,7 +60,7 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
   const notifierRequest = useGet<NotificationTemplate>(getUrl);
   const navigate = useNavigate();
 
-  const optionsRequest = useOptions<NotificationTemplateOptions>(awxAPI`/notification_templates/`);
+  //const optionsRequest = useOptions<NotificationTemplateOptions>(awxAPI`/notification_templates/`);
 
   const breadcrumbs: ICatalogBreadcrumb[] = [
     { label: t('Notifications'), to: getPageUrl(AwxRoute.NotificationTemplates) },
@@ -71,19 +71,29 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
     return <AwxError error={notifierRequest.error} />;
   }
 
-  if (optionsRequest.error) {
+  /*if (optionsRequest.error) {
     return <AwxError error={optionsRequest.error} />;
-  }
+  }*/
 
   if (!notifierRequest.data && mode === 'edit') {
     return <LoadingPage />;
   }
 
-  if (!optionsRequest.data) {
+  /*if (!optionsRequest.data) {
     return <LoadingPage />;
-  }
+  }*/
 
   const defaultValue = mode === 'add' ? {} : notifierRequest.data;
+
+  if (defaultValue && mode === 'edit') {
+    arraysToString(defaultValue as NotificationTemplate);
+  }
+
+  const onSubmit: PageFormSubmitHandler<NotificationTemplate> = async (data) => {
+    stringToArrays(data);
+
+    console.log(data);
+  };
 
   return (
     <PageLayout>
@@ -93,65 +103,61 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
       />
       <AwxPageForm<NotificationTemplate>
         submitText={t('Save host')}
-        onSubmit={() => {}}
+        onSubmit={onSubmit}
         cancelText={t('Cancel')}
         onCancel={() => navigate(-1)}
         defaultValue={defaultValue}
       >
-        <PageFormTextInput<NotificationTemplate>
-          name="name"
-          label={t('Name')}
-          placeholder={t('Enter a name')}
-          isRequired
-          maxLength={150}
-        />
-        <PageFormTextInput<NotificationTemplate>
-          name="description"
-          label={t('Description')}
-          placeholder={t('Enter a description')}
-        />
-        <PageFormSelectOrganization<NotificationTemplate> name="organization" isRequired />
-        <PageFormSingleSelect
-          name="notification_type"
-          id="notification_type"
-          label={t(`Type`)}
-          placeholder={t('Choose a Notification Type')}
-          isRequired={true}
-          options={[
-            { value: 'email', label: t('Email') },
-            { value: 'grafana', label: t('Grafana') },
-            { value: 'irc', label: t('IRC') },
-            { value: 'mattermost', label: t('Mattermost') },
-            { value: 'pagerduty', label: t('Pagerduty') },
-            { value: 'rocketchat', label: t('Rocket.Chat') },
-            { value: 'slack', label: t('Slack') },
-            { value: 'twilio', label: t('Twilio') },
-            { value: 'webhook', label: t('Webhook') },
-          ]}
-        />
-        <PageFormWatch watch="notification_type">
-          {(notification_type: string) => (
-            <>
-              {optionsRequest.data && (
-                <PageFormSection singleColumn={true}>
-                  <PageFormGroup label={t('Type Details')}>
-                    <InnerForm
-                      notification_type={notification_type}
-                    />
-
-                    {genericForm(optionsRequest.data)}
-                  </PageFormGroup>
-                </PageFormSection>
-              )}
-            </>
-          )}
-        </PageFormWatch>
+        <PageFormSection>
+          <PageFormTextInput<NotificationTemplate>
+            name="name"
+            label={t('Name')}
+            placeholder={t('Enter a name')}
+            isRequired
+            maxLength={150}
+          />
+          <PageFormTextInput<NotificationTemplate>
+            name="description"
+            label={t('Description')}
+            placeholder={t('Enter a description')}
+          />
+          <PageFormSelectOrganization<NotificationTemplate> name="organization" isRequired />
+          <PageFormSingleSelect
+            name="notification_type"
+            id="notification_type"
+            label={t(`Type`)}
+            placeholder={t('Choose a Notification Type')}
+            isRequired={true}
+            options={[
+              { value: 'email', label: t('Email') },
+              { value: 'grafana', label: t('Grafana') },
+              { value: 'irc', label: t('IRC') },
+              { value: 'mattermost', label: t('Mattermost') },
+              { value: 'pagerduty', label: t('Pagerduty') },
+              { value: 'rocketchat', label: t('Rocket.Chat') },
+              { value: 'slack', label: t('Slack') },
+              { value: 'twilio', label: t('Twilio') },
+              { value: 'webhook', label: t('Webhook') },
+            ]}
+          />
+        </PageFormSection>
+        <PageFormSection>
+          <PageFormWatch watch="notification_type">
+            {(notification_type: string) => (
+              <>
+                <PageFormGroup label={t('Type Details')}>
+                  <InnerForm notification_type={notification_type} />
+                </PageFormGroup>
+              </>
+            )}
+          </PageFormWatch>
+        </PageFormSection>
       </AwxPageForm>
     </PageLayout>
   );
 }
 
-function InnerForm(props : {notification_type: string}) {
+function InnerForm(props: { notification_type: string }) {
   const notification_type = props.notification_type;
   if (notification_type === 'email') {
     return <EmailForm />;
@@ -193,74 +199,72 @@ function InnerForm(props : {notification_type: string}) {
 }
 
 function EmailForm() {
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   return (
     <>
       <PageFormTextInput<NotificationTemplate>
         type={'text'}
-        name={'type_data.host'}
-        label={t('Host')}
-        placeholder={''}
-      />
-
-      <PageFormTextInput<NotificationTemplate>
-        type={'number'}
-        name={'type_data.port'}
-        label={t('Port')}
-        placeholder={''}
-      />
-
-      <PageFormTextInput<NotificationTemplate>
-        type={'text'}
-        name={'type_data.username'}
+        name={'notification_configuration.username'}
         label={t('Username')}
-        placeholder={''}
       />
 
       <PageFormTextInput<NotificationTemplate>
         type={'password'}
-        name={'type_data.password'}
+        name={'notification_configuration.password'}
         label={t('Password')}
-        placeholder={''}
-      />
-
-      <PageFormCheckbox<NotificationTemplate>
-        name={'type_data.use_tls'}
-        label={t('Use TLS')}
-        placeholder={''}
-      />
-
-      <PageFormCheckbox<NotificationTemplate>
-        name={'type_data.use_ssl'}
-        label={t('Use SSL')}
-        placeholder={''}
       />
 
       <PageFormTextInput<NotificationTemplate>
         type={'text'}
-        name={'type_data.sender'}
-        label={t('Sender Email')}
-        placeholder={''}
+        name={'notification_configuration.host'}
+        label={t('Host')}
+        isRequired
       />
 
       <PageFormTextArea<NotificationTemplate>
-        name={'type_data.recipients'}
+        name={'notification_configuration.recipients'}
         label={t('Recipient List')}
-        placeholder={''}
+        isRequired
+      />
+
+      <PageFormTextInput<NotificationTemplate>
+        type={'text'}
+        name={'notification_configuration.sender'}
+        label={t('Sender Email')}
+        isRequired
       />
 
       <PageFormTextInput<NotificationTemplate>
         type={'number'}
-        name={'type_data.timeout'}
-        label={t('Timeout')}
-        placeholder={''}
+        name={'notification_configuration.port'}
+        label={t('Port')}
+        isRequired
       />
+
+      <PageFormTextInput<NotificationTemplate>
+        type={'number'}
+        name={'notification_configuration.timeout'}
+        label={t('Timeout')}
+        isRequired
+      />
+
+      <PageFormGroup label={t('Email Options ')}>
+        <PageFormCheckbox<NotificationTemplate>
+          name={'notification_configuration.use_tls'}
+          label={t('Use TLS')}
+        />
+
+        <PageFormCheckbox<NotificationTemplate>
+          name={'notification_configuration.use_ssl'}
+          label={t('Use SSL')}
+        />
+      </PageFormGroup>
     </>
   );
 }
 
 function SlackForm() {
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   return (
     <>
       <PageFormTextInput<NotificationTemplate>
@@ -279,7 +283,7 @@ function SlackForm() {
 }
 
 function TwilioForm() {
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   return (
     <>
       <PageFormTextInput<NotificationTemplate>
@@ -312,7 +316,7 @@ function TwilioForm() {
 }
 
 function PagerdutyForm() {
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   return (
     <>
       <PageFormTextInput<NotificationTemplate>
@@ -346,7 +350,7 @@ function PagerdutyForm() {
 }
 
 function GrafanaForm() {
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   return (
     <>
       <PageFormTextInput<NotificationTemplate>
@@ -366,7 +370,7 @@ function GrafanaForm() {
 }
 
 function WebhookForm() {
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   return (
     <>
       <PageFormTextInput<NotificationTemplate>
@@ -413,7 +417,7 @@ function WebhookForm() {
 }
 
 function MattermostForm() {
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   return (
     <>
       <PageFormTextInput<NotificationTemplate>
@@ -433,7 +437,7 @@ function MattermostForm() {
 }
 
 function RocketchatForm() {
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   return (
     <>
       <PageFormTextInput<NotificationTemplate>
@@ -453,7 +457,7 @@ function RocketchatForm() {
 }
 
 function IrcForm() {
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   return (
     <>
       <PageFormTextInput<NotificationTemplate>
@@ -496,4 +500,48 @@ function IrcForm() {
       />
     </>
   );
+}
+
+function arraysToString(data: NotificationTemplate) {
+  if (!data.notification_configuration) {
+    return;
+  }
+
+  for (const key in data.notification_configuration) {
+    if (!isList(key, data.notification_type || '')) {
+      continue;
+    }
+
+    // transform array of strings into string
+    const arr = data?.notification_configuration[key] as string[];
+    if (arr && arr.join) {
+      data.notification_configuration[key] = arr.join('\n');
+    }
+  }
+}
+
+function stringToArrays(data: NotificationTemplate) {
+  if (!data.notification_configuration) {
+    return;
+  }
+
+  for (const key in data.notification_configuration) {
+    if (!isList(key, data.notification_type || '')) {
+      continue;
+    }
+
+    // transform array of strings into string
+    const str = data?.notification_configuration[key] as string;
+    if (str && str.split) {
+      data.notification_configuration[key] = str.split('\n');
+    }
+  }
+}
+
+function isList(key: string, notification_type: string) {
+  if (key === 'recipients' && notification_type === 'email') {
+    return true;
+  }
+
+  return false;
 }
