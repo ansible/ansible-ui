@@ -399,13 +399,7 @@ function TwilioForm() {
         name={'notification_configuration.to_numbers'}
         label={t('Destination SMS Numbers')}
         validate={(value) => twilioPhoneNumber(value, t)}
-        labelHelp={
-          <Trans>
-          Use one phone number per line to specify where to route SMS messages. 
-          Phone numbers should be formatted +11231231234. 
-          For more information see Twilio <a href=''>documentation</a>
-          
-          </Trans>}
+        labelHelp={t('Use one phone number per line to specify where to route SMS messages. Phone numbers should be formatted +11231231234. For more information see Twilio documentation')}
         isRequired
       />
     </>
