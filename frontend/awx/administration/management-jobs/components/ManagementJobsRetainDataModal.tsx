@@ -14,7 +14,9 @@ export interface ManagementJobsRetainDataModalProps {
   id: number;
 }
 
-export function ManagementJobsRetainDataModal(props: { id: number; popDialog: () => void }) {
+export function ManagementJobsRetainDataModal(
+  props: ManagementJobsRetainDataModalProps & { popDialog: () => void }
+) {
   const postRequest = usePostRequest<{ extra_vars: { days: number } }, SystemJobTemplate>();
   const navigate = useNavigate();
   const getJobOutputUrl = useGetJobOutputUrl();
@@ -65,17 +67,4 @@ export function ManagementJobsRetainDataModal(props: { id: number; popDialog: ()
       </AwxPageForm>
     </Modal>
   );
-}
-
-export function useManagementJobsRetainDataModal() {
-  const { pushDialog, popDialog } = usePageDialogs();
-  const [props, setProps] = useState<ManagementJobsRetainDataModalProps>();
-  useEffect(() => {
-    if (props) {
-      pushDialog(<ManagementJobsRetainDataModal {...{ ...props, popDialog: popDialog }} />);
-    } else {
-      popDialog();
-    }
-  }, [props, pushDialog, popDialog]);
-  return setProps;
 }

@@ -4,17 +4,17 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
 import { SystemJobTemplate } from '../../../interfaces/SystemJobTemplate';
-import { useManagementJobsRetainDataModal } from '../components/ManagementJobsRetainDataModal';
 import { usePostRequest } from '../../../../common/crud/usePostRequest';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useGetJobOutputUrl } from '../../../views/jobs/useGetJobOutputUrl';
 import { useNavigate } from 'react-router-dom';
 import { UnifiedJob } from '../../../interfaces/UnifiedJob';
+import { useManagementJobPrompt } from './useManagementJobPrompt';
 
 export function useManagementJobRowActions() {
   const { t } = useTranslation();
 
-  const openManagementJobsModal = useManagementJobsRetainDataModal();
+  const openManagementJobsModal = useManagementJobPrompt();
   const postRequest = usePostRequest();
   const getJobOutputUrl = useGetJobOutputUrl();
   const navigate = useNavigate();
