@@ -1,4 +1,5 @@
 import { Page } from '@patternfly/react-core';
+import { mutate } from 'swr';
 import { LoadingState } from '../../../framework/components/LoadingState';
 import { Login } from '../../common/Login';
 import { useHubActiveUser } from '../../hub/common/useHubActiveUser';
@@ -18,7 +19,13 @@ export function HubLogin(props: { children: React.ReactNode }) {
 
   if (!activeHubUser) {
     return (
-      <Login apiUrl={hubAPI`/_ui/v1/auth/login/`} onSuccess={() => refreshActiveHubUser?.()} />
+      <Login
+        apiUrl={hubAPI`/_ui/v1/auth/login/`}
+        onSuccess={() => {
+          refreshActiveHubUser?.();
+          void mutate(() => true);
+        }}
+      />
     );
   }
 
