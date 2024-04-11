@@ -65,3 +65,8 @@ export interface PreviewSchedule {
   utc?: string[];
   rrule: string;
 }
+
+export enum RuleType {
+  Rules = 'rules',
+  Exceptions = 'exceptions',
+}

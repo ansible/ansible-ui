@@ -5,14 +5,13 @@ import { useState } from 'react';
 import { RuleForm } from '../components/RuleForm';
 import { RulesList } from '../components/RulesList';
 import { PlusCircleIcon } from '@patternfly/react-icons';
-import { useFormContext } from 'react-hook-form';
+import { useWatch } from 'react-hook-form';
 import { RuleListItemType } from '../types';
 
 export function RulesStep() {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState<boolean | number>(false);
-  const { getValues } = useFormContext();
-  const rules = getValues('rules') as RuleListItemType[];
+  const rules = useWatch({ name: 'rules' }) as RuleListItemType[];
   const hasRules = rules?.length > 0;
   return (
     <PageFormSection title={t('Rules')} singleColumn>
