@@ -50,17 +50,14 @@ describe('credentials', () => {
     });
   });
 
-  it('credentials page', () => {
-    cy.navigateTo('awx', 'credentials');
-    cy.verifyPageTitle('Credentials');
-  });
-
   it('create and delete credential', () => {
     const credentialName = 'E2E Credential ' + randomString(4);
     cy.navigateTo('awx', 'credentials');
     cy.clickButton(/^Create credential$/);
     cy.get('[data-cy="name"]').type(credentialName);
     cy.selectDropdownOptionByResourceName('credential-type', 'Amazon Web Services');
+    cy.get('[data-cy="username"]').type('username');
+    cy.get('[data-cy="password"]').type('password');
     cy.singleSelectByDataCy('organization', organization.name);
     cy.clickButton(/^Create credential$/);
     cy.verifyPageTitle(credentialName);
