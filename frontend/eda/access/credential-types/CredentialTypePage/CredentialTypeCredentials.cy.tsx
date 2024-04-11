@@ -73,7 +73,7 @@ describe('CredentialTypeCredentials.cy.ts', () => {
     cy.mount(<CredentialTypeCredentials />);
     cy.get('tbody').find('tr').should('have.length', 10);
     cy.contains('th', 'Name');
-    cy.contains('th', 'Type');
+    cy.contains('th', 'Credential type');
   });
 });
 
