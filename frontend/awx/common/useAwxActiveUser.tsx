@@ -29,8 +29,8 @@ export function AwxActiveUserProvider(props: { children: ReactNode }) {
       : undefined;
   }, [response]);
   const activeAwxUserIsLoading = useMemo<boolean>(
-    () => !response.error && response.isLoading,
-    [response]
+    () => !activeAwxUser && !response.error && response.isLoading,
+    [activeAwxUser, response.error, response.isLoading]
   );
   const state = useMemo<ActiveUserState>(() => {
     return {
