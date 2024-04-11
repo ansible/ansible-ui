@@ -80,7 +80,16 @@ export function NodePromptsStep() {
     }));
     reset({ prompt: defaultPromptValues });
     setDefaultSet(true);
-  }, [reset, organizationId, setStepData, config, prompt, formState, wizardData.prompt]);
+  }, [
+    reset,
+    organizationId,
+    setStepData,
+    config,
+    prompt,
+    formState,
+    wizardData.prompt,
+    defaultSet,
+  ]);
 
   if (!config || !template) {
     return null;
