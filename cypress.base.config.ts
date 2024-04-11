@@ -76,4 +76,10 @@ export const baseConfig: Cypress.ConfigOptions = {
     excludeSpecPattern: ['cypress/**/*.cy.{js,jsx,ts,tsx}'],
     supportFile: 'cypress/support/component.tsx',
   },
+  reporter: 'cypress-mochawesome-reporter',
+  reporterOptions: {
+    overwrite: false,
+    html: false,
+    json: true,
+  },
 };

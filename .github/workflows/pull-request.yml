@@ -61,8 +61,8 @@ jobs:
             echo "changed=true" >> "$GITHUB_OUTPUT" 
           fi        
 
-  checks:
-    name: ESLint - Prettier - TSC
+  test:
+    name: ESLint + Prettier + TSC + Component
     runs-on: ubuntu-latest
     # timeout-minutes: 10
     needs: packages
@@ -86,15 +86,7 @@ jobs:
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
-      - run: npm run checks
-
-  component-tests:
-    name: Component Tests
-    needs: packages
-    uses: ./.github/workflows/component-tests.yml
-    secrets:
-      COMPONENT_PROJECT_ID: ${{ secrets.COMPONENT_PROJECT_ID }}
-      COMPONENT_RECORD_KEY: ${{ secrets.COMPONENT_RECORD_KEY }}
+      - run: npm run test
 
   awx-e2e:
     name: AWX E2E
