@@ -36,24 +36,31 @@ export function ManagementJobsRetainDataModal(props: { id: number; popDialog: ()
   return (
     <Modal
       aria-label={t`Launch management job`}
-      variant="medium"
+      variant="small"
       position="default"
       title={t`Launch management job`}
+      titleIconVariant="info"
       hasNoBodyWrapper
       isOpen
+      onClose={() => props.popDialog()}
     >
       <AwxPageForm
         submitText={t('Launch')}
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
         onCancel={onCancel}
+        singleColumn
+        defaultValue={{ extra_vars: { days: 30 } }}
       >
+        <span>{t('Set how many days of data should be retained.')}</span>
         <PageFormTextInput
           name="extra_vars.days"
-          label={t('Set how many days of data should be retained.')}
+          label={t('Retention Days')}
           placeholder={t('Enter days')}
           isRequired
-          maxLength={150}
+          type="number"
+          min={0}
+          max={99999}
         />
       </AwxPageForm>
     </Modal>
