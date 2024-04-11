@@ -481,44 +481,44 @@ function WebhookForm() {
   const { t } = useTranslation();
   return (
     <>
-      <PageFormTextInput<NotificationTemplate>
+     <PageFormTextInput<NotificationTemplate>
         type={'text'}
-        name={'type_data.url'}
-        label={t('Target URL')}
-        placeholder={''}
-      />
-
-      <PageFormTextInput<NotificationTemplate>
-        type={'text'}
-        name={'type_data.http_method'}
-        label={t('HTTP Method')}
-        placeholder={''}
-      />
-
-      <PageFormCheckbox<NotificationTemplate>
-        name={'type_data.disable_ssl_verification'}
-        label={t('Verify SSL')}
-        placeholder={''}
-      />
-
-      <PageFormTextInput<NotificationTemplate>
-        type={'text'}
-        name={'type_data.username'}
+        name={'notification_configuration.username'}
         label={t('Username')}
-        placeholder={''}
       />
 
       <PageFormTextInput<NotificationTemplate>
         type={'password'}
-        name={'type_data.password'}
+        name={'notification_configuration.password'}
         label={t('Password')}
-        placeholder={''}
       />
 
       <PageFormTextInput<NotificationTemplate>
-        name={'type_data.headers'}
+        type={'text'}
+        name={'notification_configuration.url'}
+        label={t('Target URL')}
+        isRequired
+      />
+
+      <PageFormCheckbox<NotificationTemplate>
+        name={'notification_configuration.disable_ssl_verification'}
+        label={t('Disable SSL verification ')}
+      />
+
+      <PageFormTextInput<NotificationTemplate>
+        name={'notification_configuration.headers'}
         label={t('HTTP Headers')}
-        placeholder={''}
+      />
+
+
+      <PageFormSingleSelect<NotificationTemplate>
+        name={'notification_configuration.http_method'}
+        label={t('HTTP Method')}
+        placeholder={t('Choose an HTTP method')}
+        options={[
+          { label: 'POST', value : 'POST'},
+          { label: 'PUT', value : 'PUT'},
+        ]}
       />
     </>
   );
