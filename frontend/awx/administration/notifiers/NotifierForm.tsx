@@ -28,6 +28,7 @@ import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSe
 import { useOptions } from '../../../common/crud/useOptions';
 import { requestCommon } from '../../../common/crud/requestCommon';
 import { usePageNavigate } from '../../../../framework';
+import { TFunction, t } from 'i18next';
 
 export function EditNotifier() {
   return <NotifierForm mode={'edit'} />;
@@ -288,6 +289,7 @@ function EmailForm() {
         name={'notification_configuration.sender'}
         label={t('Sender Email')}
         isRequired
+        validate={(value) => validateEmail(value, t)}
       />
 
       <PageFormTextInput<NotificationTemplate>
@@ -295,6 +297,7 @@ function EmailForm() {
         name={'notification_configuration.port'}
         label={t('Port')}
         isRequired
+        validate={(value) => validateNumber(value, 1, 65535, t)}
       />
 
       <PageFormTextInput<NotificationTemplate>
@@ -302,6 +305,7 @@ function EmailForm() {
         name={'notification_configuration.timeout'}
         label={t('Timeout')}
         isRequired
+        validate={(value) => validateNumber(value, 1, 120, t)}
       />
 
       <PageFormGroup label={t('Email Options ')}>
@@ -600,4 +604,35 @@ function isList(key: string, notification_type: string) {
   }
 
   return false;
+}
+
+function validateEmail(value : string, t : TFunction<"translation", undefined>) {
+    // copied from old app to keep app consistent
+    // This isn't a perfect validator. It's likely to let a few
+    // invalid (though unlikely) email addresses through.
+
+    // This is ok, because the server will always do strict validation for us.
+
+    const splitVals = value.split('@');
+
+    if (splitVals.length >= 2) {
+      if (splitVals[0] && splitVals[1]) {
+        // We get here if the string has an '@' that is enclosed by
+        // non-empty substrings
+        return undefined;
+      }
+    }
+
+    return t('Invalid email address');
+}
+
+function validateNumber(str : string, min : number, max : number, t : TFunction<"translation", undefined>)
+{
+  const val = Number.parseInt(str);
+  if (val >= min && val <= max)
+  {
+    return undefined;
+  }
+
+  return t('This field must be a number and have a value between {{min}} and {{max}}', { min, max});
 }
