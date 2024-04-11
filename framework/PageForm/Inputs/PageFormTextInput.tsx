@@ -251,11 +251,11 @@ export function PageFormTextInput<
               break;
             }
             case 'number': {
-              if (max != undefined && Number(value) > Number(max)) {
+              if (max !== undefined && Number(value) > Number(max)) {
                 value = String(max);
               }
 
-              if (min != undefined && Number(value) < Number(min)) {
+              if (min !== undefined && Number(value) < Number(min)) {
                 value = String(min);
               }
               setValue(name, value as unknown as PathValue<TFieldValues, TFieldName>);
