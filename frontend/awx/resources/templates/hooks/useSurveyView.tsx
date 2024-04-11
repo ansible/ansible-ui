@@ -5,7 +5,7 @@ import { swrOptions, useFetcher } from '../../../../common/crud/Data';
 import { RequestError } from '../../../../common/crud/RequestError';
 import type { Spec } from '../../../interfaces/Survey';
 
-type ISurveyView = IView &
+export type ISurveyView = IView &
   ISelected<Spec> & {
     itemCount: number | undefined;
     pageItems: Spec[] | undefined;
