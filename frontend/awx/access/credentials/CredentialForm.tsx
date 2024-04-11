@@ -38,12 +38,45 @@ export function CreateCredential() {
   const { activeAwxUser } = useAwxActiveUser();
   const postRequest = usePostRequest<Credential>();
   const getPageUrl = useGetPageUrl();
+
+  const { data: itemsResponse, isLoading } = useGet<AwxItemsResponse<CredentialType>>(
+    awxAPI`/credential_types/?page=1&page_size=200`
+  );
+
+  if (isLoading && !itemsResponse) {
+    return <LoadingPage />;
+  }
+
+  const credentialTypes: CredentialTypes | undefined = itemsResponse?.results?.reduce(
+    (credentialTypesMap, credentialType) => {
+      credentialTypesMap[credentialType.id] = credentialType;
+      return credentialTypesMap;
+    },
+    {} as CredentialTypes
+  );
+
   const onSubmit: PageFormSubmitHandler<CredentialForm> = async (credential) => {
+    const credentialTypeInputs = credentialTypes?.[credential?.credential_type]?.inputs;
+
+    const pluginInputs: Record<string, string | number> = {};
+    const possibleFields = credentialTypeInputs?.fields || [];
+    possibleFields.forEach((field) => {
+      if (field.id && typeof field.id === 'string' && field.id in credential) {
+        const id = field.id as keyof CredentialForm;
+        if (credential[id] !== undefined) {
+          pluginInputs[id] = credential[id] as string | number;
+          delete credential[id];
+        }
+      }
+    });
     // can send only one of org, user, team
     if (!credential.organization) {
       credential.user = activeAwxUser?.id;
     }
-    const newCredential = await postRequest(awxAPI`/credentials/`, credential);
+    const newCredential = await postRequest(awxAPI`/credentials/`, {
+      ...credential,
+      inputs: { ...pluginInputs },
+    });
     pageNavigate(AwxRoute.CredentialDetails, { params: { id: newCredential.id } });
   };
   return (
