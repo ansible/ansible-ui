@@ -6,21 +6,20 @@ import {
   PageWizardStep,
   useGetPageUrl,
 } from '../../../../framework';
-import { PlatformRoute } from '../../../main/PlatformRoutes';
-import { AuthenticatorTypeStep } from './steps/AuthenticatorTypeStep';
-import { AuthenticatorDetailsStep, validateDetailsStep } from './steps/AuthenticatorDetailsStep';
-import { AuthenticatorMappingStep, validateMappingStep } from './steps/AuthenticatorMappingStep';
-import { AuthenticatorMappingOrderStep } from './steps/AuthenticatorMappingOrderStep';
-import { AuthenticatorReviewStep } from './steps/AuthenticatorReviewStep';
-import { authenticatorErrorAdapter } from './authenticatorErrorAdapter';
 import { Authenticator, AuthenticatorTypeEnum } from '../../../interfaces/Authenticator';
 import { AuthenticatorMap, AuthenticatorMapType } from '../../../interfaces/AuthenticatorMap';
 import type {
   AuthenticatorPlugin,
   AuthenticatorPlugins,
 } from '../../../interfaces/AuthenticatorPlugin';
-import type { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import type { PlatformTeam } from '../../../interfaces/PlatformTeam';
+import { PlatformRoute } from '../../../main/PlatformRoutes';
+import { authenticatorErrorAdapter } from './authenticatorErrorAdapter';
+import { AuthenticatorDetailsStep, validateDetailsStep } from './steps/AuthenticatorDetailsStep';
+import { AuthenticatorMappingOrderStep } from './steps/AuthenticatorMappingOrderStep';
+import { AuthenticatorMappingStep, validateMappingStep } from './steps/AuthenticatorMappingStep';
+import { AuthenticatorReviewStep } from './steps/AuthenticatorReviewStep';
+import { AuthenticatorTypeStep } from './steps/AuthenticatorTypeStep';
 
 export interface Configuration {
   [key: string]: string | string[] | { [k: string]: string };
@@ -31,7 +30,7 @@ interface MapBase {
   name: string;
   revoke: boolean;
   order?: number;
-  organization?: PlatformOrganization;
+  organization?: string;
   team?: PlatformTeam;
 }
 interface MapAlways extends MapBase {
