@@ -250,6 +250,18 @@ export function PageFormTextInput<
               onChange(new Date(value).toISOString());
               break;
             }
+            case 'number': {
+              if (max != undefined && Number(value) > Number(max)) {
+                value = String(max);
+              }
+
+              if (min != undefined && Number(value) < Number(min)) {
+                value = String(min);
+              }
+              setValue(name, value as unknown as PathValue<TFieldValues, TFieldName>);
+              onChange(value);
+              break;
+            }
             default:
               onChange(value.trimStart());
           }
