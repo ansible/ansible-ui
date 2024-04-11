@@ -27,13 +27,13 @@ export function HubActiveUserProvider(props: { children: ReactNode }) {
     [response]
   );
   const activeHubUserIsLoading = useMemo<boolean>(
-    () => !response.error && response.isLoading,
-    [response]
+    () => !activeHubUser && !response.error && response.isLoading,
+    [activeHubUser, response.error, response.isLoading]
   );
   const state = useMemo<HubActiveUserState>(() => {
     return {
       activeHubUser,
-      refreshActiveHubUser: () => void mutate(),
+      refreshActiveHubUser: () => void mutate(undefined),
       activeHubUserIsLoading,
     };
   }, [activeHubUser, activeHubUserIsLoading, mutate]);

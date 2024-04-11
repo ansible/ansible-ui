@@ -1,5 +1,5 @@
 import { Page } from '@patternfly/react-core';
-import useSWR from 'swr';
+import useSWR, { mutate } from 'swr';
 import { LoadingState } from '../../../framework/components/LoadingState';
 import { Login } from '../../common/Login';
 import type { AuthOption } from '../../common/SocialAuthLogin';
@@ -42,7 +42,10 @@ export function AwxLogin(props: { children: React.ReactNode }) {
       <Login
         authOptions={authOptions}
         apiUrl="/api/login/"
-        onSuccess={() => refreshActiveAwxUser?.()}
+        onSuccess={() => {
+          refreshActiveAwxUser?.();
+          void mutate(() => true);
+        }}
       />
     );
   }
