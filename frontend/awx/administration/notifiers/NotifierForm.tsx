@@ -374,28 +374,39 @@ function TwilioForm() {
     <>
       <PageFormTextInput<NotificationTemplate>
         type={'text'}
-        name={'type_data.account_sid'}
+        name={'notification_configuration.account_sid'}
         label={t('Account SID')}
-        placeholder={''}
+        isRequired
       />
 
       <PageFormTextInput<NotificationTemplate>
-        name={'type_data.account_token'}
+        type={'password'}
+        name={'notification_configuration.account_token'}
         label={t('Account Token')}
-        placeholder={''}
+        isRequired
       />
 
       <PageFormTextInput<NotificationTemplate>
         type={'text'}
-        name={'type_data.from_number'}
+        name={'notification_configuration.from_number'}
         label={t('Source Phone Number')}
-        placeholder={''}
+        validate={(value) => twilioPhoneNumber(value, t)}
+        isRequired
+        labelHelp={t('The number associated with the "Messaging Service" in Twilio with the format +18005550199.')}
       />
 
       <PageFormTextArea<NotificationTemplate>
-        name={'type_data.to_numbers'}
+        name={'notification_configuration.to_numbers'}
         label={t('Destination SMS Numbers')}
-        placeholder={''}
+        validate={(value) => twilioPhoneNumber(value, t)}
+        labelHelp={
+          <Trans>
+          Use one phone number per line to specify where to route SMS messages. 
+          Phone numbers should be formatted +11231231234. 
+          For more information see Twilio <a href=''>documentation</a>
+          
+          </Trans>}
+        isRequired
       />
     </>
   );
@@ -634,6 +645,11 @@ function isList(key: string, notification_type: string) {
     return true;
   }
 
+  if (key === 'to_numbers' && notification_type === 'twilio')
+  {
+    return true;
+  }
+
   return false;
 }
 
@@ -644,7 +660,11 @@ function validateEmail(value : string, t : TFunction<"translation", undefined>) 
 
     // This is ok, because the server will always do strict validation for us.
 
-    const splitVals = value.split('@');
+    if (value === '')
+    {
+      return undefined;
+    }
+    const splitVals = value?.split('@');
 
     if (splitVals.length >= 2) {
       if (splitVals[0] && splitVals[1]) {
@@ -666,4 +686,27 @@ function validateNumber(str : string, min : number, max : number, t : TFunction<
   }
 
   return t('This field must be a number and have a value between {{min}} and {{max}}', { min, max});
+}
+
+export function twilioPhoneNumber(value : string, t : TFunction<"translation", undefined>) {
+ 
+    if (value === '')
+    {
+      return undefined;
+    }
+
+    const phoneNumbers = value?.split('\n');
+    let error = undefined;
+
+    phoneNumbers?.forEach((v) => {
+      if (v === '')
+      {
+        return;
+      }
+
+      if (!/^\s*(?:\+?(\d{1,3}))?[. (]*(\d{7,12})$/.test(v)) {
+           error =  t('Please enter valid phone numbers.');
+      }
+    });
+    return error;
 }
