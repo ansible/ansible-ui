@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   ICatalogBreadcrumb,
@@ -282,6 +282,7 @@ function EmailForm() {
         name={'notification_configuration.recipients'}
         label={t('Recipient List')}
         isRequired
+        labelHelp={t('Use one email address per line to create a recipient list for this type of notification.')}
       />
 
       <PageFormTextInput<NotificationTemplate>
@@ -306,9 +307,16 @@ function EmailForm() {
         label={t('Timeout')}
         isRequired
         validate={(value) => validateNumber(value, 1, 120, t)}
+        labelHelp={t('The amount of time (in seconds) before the email notification stops trying to reach the host and times out. Ranges from 1 to 120 seconds.')}
       />
 
-      <PageFormGroup label={t('Email Options ')}>
+      <PageFormGroup label={t('Email Options ')}
+        labelHelp={
+          <Trans>
+            See Django <a href='https://docs.djangoproject.com/en/4.0/ref/settings/#std:setting-EMAIL_USE_TLS'>documentation</a> for more information.
+          </Trans>
+        }
+      >
         <PageFormCheckbox<NotificationTemplate>
           name={'notification_configuration.use_tls'}
           label={t('Use TLS')}
