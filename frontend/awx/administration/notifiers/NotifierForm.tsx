@@ -49,6 +49,8 @@ export type NotificationTemplateOptions = {
   };
 };
 
+type NotificationTemplatEdit = Omit<NotificationTemplate, "id">;
+
 function NotifierForm(props: { mode: 'add' | 'edit' }) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
@@ -89,7 +91,7 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
   }
 
   const onSubmit: PageFormSubmitHandler<NotificationTemplate> = async (formData) => {
-    const data: NotificationTemplate =
+    const data: NotificationTemplate | NotificationTemplatEdit =
       mode === 'add'
         ? formData
         : {
@@ -102,18 +104,7 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
           };
 
     stringToArrays(data);
-
-    // delete unused parameters
-    if (mode === 'edit') {
-      delete data.created;
-      delete data.id;
-      delete data.related;
-      delete data.summary_fields;
-      delete data.modified;
-      delete data.type;
-      delete data.url;
-    }
-
+ 
     let fieldValue;
     // fix notification data types
     const fields =
@@ -612,7 +603,7 @@ function arraysToString(data: NotificationTemplate) {
   }
 }
 
-function stringToArrays(data: NotificationTemplate) {
+function stringToArrays(data: NotificationTemplate | NotificationTemplatEdit) {
   if (!data.notification_configuration) {
     return;
   }

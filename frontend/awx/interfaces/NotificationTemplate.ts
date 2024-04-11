@@ -5,7 +5,7 @@ export interface NotificationTemplate
     SwaggerNotificationTemplate,
     'id' | 'name' | 'organization' | 'summary_fields' | 'notification_type'
   > {
-  id?: number;
+  id: number;
   name: string;
   organization: number;
   summary_fields?: {
