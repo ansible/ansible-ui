@@ -29,8 +29,9 @@ import { PageFormSingleSelect } from '../../../../framework/PageForm/Inputs/Page
 import { PageFormWatch } from '../../../../framework/PageForm/Utils/PageFormWatch';
 import { PageFormGroup } from '../../../../framework/PageForm/Inputs/PageFormGroup';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
+
 import { useOptions } from '../../../common/crud/useOptions';
-import { genericForm } from './NotifierFormGenerator';
+import { requestCommon } from '../../../common/crud/requestCommon';
 
 export function EditNotifier() {
   return <NotifierForm mode={'edit'} />;
@@ -60,7 +61,8 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
   const notifierRequest = useGet<NotificationTemplate>(getUrl);
   const navigate = useNavigate();
 
-  //const optionsRequest = useOptions<NotificationTemplateOptions>(awxAPI`/notification_templates/`);
+
+  const optionsRequest = useOptions<NotificationTemplateOptions>(awxAPI`/notification_templates/`);
 
   const breadcrumbs: ICatalogBreadcrumb[] = [
     { label: t('Notifications'), to: getPageUrl(AwxRoute.NotificationTemplates) },
@@ -71,17 +73,17 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
     return <AwxError error={notifierRequest.error} />;
   }
 
-  /*if (optionsRequest.error) {
+  if (optionsRequest.error) {
     return <AwxError error={optionsRequest.error} />;
-  }*/
+  }
 
   if (!notifierRequest.data && mode === 'edit') {
     return <LoadingPage />;
   }
 
-  /*if (!optionsRequest.data) {
+  if (!optionsRequest.data) {
     return <LoadingPage />;
-  }*/
+  }
 
   const defaultValue = mode === 'add' ? {} : notifierRequest.data;
 
@@ -91,8 +93,12 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
 
   const onSubmit: PageFormSubmitHandler<NotificationTemplate> = async (data) => {
     stringToArrays(data);
-
-    console.log(data);
+    const id = mode === 'edit' ? data.id?.toString() : '';
+    return requestCommon({
+      url : awxAPI`/notification_templates/${id}`,
+      method : mode === 'edit' ? 'PATCH' : 'POST',
+      body : data,
+    });
   };
 
   return (
