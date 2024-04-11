@@ -71,7 +71,7 @@ describe('Workflow Visualizer', () => {
     it('Should launch a workflow job template from the visualizer, and navigate to the output page.', function () {
       cy.visit(`/templates/workflow_job_template/${workflowJobTemplate?.id}/visualizer`);
       cy.contains('Workflow Visualizer').should('be.visible');
-      cy.get('[data-cy="workflow-visualizer-toolbar-kebab"]').click();
+      cy.getBy('[data-cy="workflow-visualizer-toolbar-kebab"]').click();
       cy.intercept(
         'POST',
         awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/launch/`
@@ -94,40 +94,40 @@ describe('Workflow Visualizer', () => {
       cy.getByDataCy('page-title').should('contain', jobTemplate.name);
       cy.visit(`/templates/workflow_job_template/${workflowJobTemplate?.id}/visualizer`);
       cy.contains('Workflow Visualizer').should('be.visible');
-      cy.get(`g[data-id=${jobTemplateNode.id}] .pf-topology__node__action-icon`).click({
+      cy.getBy(`g[data-id=${jobTemplateNode.id}] .pf-topology__node__action-icon`).click({
         force: true,
       });
-      cy.get('li[data-cy="edit-node"]').click();
+      cy.getBy('li[data-cy="edit-node"]').click();
       cy.contains('Edit step').should('be.visible');
       cy.getByDataCy('Submit').click();
       cy.getByDataCy('wizard-nav-item-nodePromptsStep').click();
-      cy.get('[class="view-lines monaco-mouse-cursor-text"]').type('foo: bar');
+      cy.getBy('[class="view-lines monaco-mouse-cursor-text"]').type('foo: bar');
       cy.getByDataCy('Submit').click();
-      cy.get('.scrollable-inner').scrollIntoView({ offset: { top: 150, left: 0 } });
+      cy.getBy('.scrollable-inner').scrollIntoView({ offset: { top: 150, left: 0 } });
       cy.getByDataCy('extra-vars').should('contain', 'foo: bar');
       cy.getByDataCy('wizard-next').click();
       cy.getByDataCy('workflow-visualizer-toolbar-save').click();
-      cy.get('[data-cy="alert-toaster"]').should(
+      cy.getBy('[data-cy="alert-toaster"]').should(
         'have.text',
         'Success alert:Successfully saved workflow visualizer'
       );
-      cy.get('[data-cy="alert-toaster"]').within(() => {
-        cy.get('[class="pf-v5-c-alert__action"]').click();
+      cy.getBy('[data-cy="alert-toaster"]').within(() => {
+        cy.getBy('[class="pf-v5-c-alert__action"]').click();
       });
       cy.getByDataCy('workflow-visualizer-toolbar-kebab').click();
       cy.getByDataCy('workflow-visualizer-toolbar-launch').click();
       cy.contains('Output').should('be.visible');
       cy.contains('Running').should('be.visible');
       cy.contains('Unreachable').should('be.visible');
-      cy.get(`g[class*="node-label"]`).contains(jobTemplate.name).should('be.visible');
-      cy.get(`g[class*="node-label"]`).contains(project.name).should('be.visible');
+      cy.getBy(`g[class*="node-label"]`).contains(jobTemplate.name).should('be.visible');
+      cy.getBy(`g[class*="node-label"]`).contains(project.name).should('be.visible');
       cy.contains('Success').should('be.visible');
     });
 
     it('can view the details pages of related job on a WFJT either by clicking the job nodes or by toggling the Workflow Jobs dropdown', function () {
       cy.visit(`/templates/workflow_job_template/${workflowJobTemplate?.id}/visualizer`);
       cy.contains('Workflow Visualizer').should('be.visible');
-      cy.get('[data-cy="workflow-visualizer-toolbar-kebab"]').click();
+      cy.getBy('[data-cy="workflow-visualizer-toolbar-kebab"]').click();
       cy.intercept(
         'POST',
         awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/launch/`
@@ -160,7 +160,7 @@ describe('Workflow Visualizer', () => {
               cy.contains(jobTemplate.name).should('be.visible');
               cy.getByDataCy('relaunch-job').should('be.visible');
               cy.getBy(`g[data-id="${results.id}"]`)
-                .get('[data-cy="successful-icon"]')
+                .getBy('[data-cy="successful-icon"]')
                 .should('be.visible');
               cy.getBy(`g[data-id="${results.id}"]`).within(() => {
                 cy.contains(jobTemplate.name).click({ force: true });
