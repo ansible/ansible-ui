@@ -61,7 +61,13 @@ describe('credentials', () => {
     cy.singleSelectByDataCy('organization', organization.name);
     cy.clickButton(/^Create credential$/);
     cy.verifyPageTitle(credentialName);
-    //delete created credential
+    cy.contains('Access Key').should('be.visible');
+    cy.get('[data-cy="access-key"]').contains('username');
+    cy.contains('Secret Key').should('be.visible');
+    cy.get('[data-cy="secret-key"]').contains('Encrypted');
+    cy.contains('Organization').should('be.visible');
+    cy.contains(organization.name);
+    // //delete created credential
     cy.clickPageAction('delete-credential');
     cy.get('#confirm').click();
     cy.clickButton(/^Delete credential/);
