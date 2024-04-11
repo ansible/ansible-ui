@@ -288,7 +288,12 @@ function TemplateSurveyInputs() {
       />
 
       <PageFormGroup label={t('Options')}>
-        <PageFormCheckbox label={t`Required`} name="required" />
+        <PageFormCheckbox
+          id="question-required"
+          data-cy="question-required"
+          label={t`Required`}
+          name="required"
+        />
       </PageFormGroup>
 
       {answerType && <SelectedAnswerType answer={answerType} />}
