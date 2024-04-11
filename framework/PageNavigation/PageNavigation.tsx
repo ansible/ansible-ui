@@ -43,7 +43,11 @@ function PageNavigationItems(props: { items: PageNavigationItem[]; baseRoute: st
           return true;
         })
         .map((item, index) => (
-          <PageNavigationItemComponent key={index} item={item} baseRoute={props.baseRoute} />
+          <PageNavigationItemComponent
+            key={item.id ?? item.label ?? index}
+            item={item}
+            baseRoute={props.baseRoute}
+          />
         ))}
     </>
   );
