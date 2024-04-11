@@ -1,5 +1,6 @@
 import { randomString } from '../../../../../framework/utils/random-string';
 import { AzureAD } from '../../../../../platform/interfaces/AzureAD';
+import { gatewayV1API } from '../../../../support/formatApiPathForPlatform';
 
 describe('Azure AD Authentication form - create, edit, update and delete', () => {
   it('creates an Azure AD authenticator', () => {
@@ -51,10 +52,17 @@ describe('Azure AD Authentication form - create, edit, update and delete', () =>
       cy.verifyPageTitle(`${azureAdAuthenticator} Updated`);
 
       //delete the created Azure AD authenticator
+      cy.intercept('GET', gatewayV1API`/authenticators/?order_by=order&page=1&page_size=10`).as(
+        'getAuthenticators'
+      );
       cy.navigateTo('platform', 'authenticators');
-      cy.clickTableRowAction('name', `${azureAdAuthenticator} Updated`, 'delete-authentication', {
-        inKebab: true,
-        disableFilter: true,
+      cy.verifyPageTitle('Authentication');
+      cy.wait('@getAuthenticators').then(() => {
+        cy.searchAndDisplayResourceByFilterOption(`${azureAdAuthenticator} Updated`, 'name');
+        cy.clickTableRowAction('name', `${azureAdAuthenticator} Updated`, 'delete-authentication', {
+          inKebab: true,
+          disableFilter: true,
+        });
       });
       cy.getModal().within(() => {
         cy.get('#confirm').click();
@@ -62,6 +70,7 @@ describe('Azure AD Authentication form - create, edit, update and delete', () =>
         cy.contains(/^Success$/).should('be.visible');
         cy.containsBy('button', /^Close$/).click();
       });
+      cy.clickButton(/^Clear all filters$/);
     });
   });
 });

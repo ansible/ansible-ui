@@ -220,5 +220,6 @@ Cypress.Commands.add(
     });
     cy.get(`.pf-v5-c-menu [data-cy="${filterOption}"]`).click();
     cy.get('[data-cy="text-input"]').find('input').type(resourceName);
+    cy.getBy('[data-cy="apply-filter"]').click();
   }
 );

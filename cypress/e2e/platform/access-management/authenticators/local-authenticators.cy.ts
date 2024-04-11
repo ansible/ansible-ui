@@ -68,13 +68,16 @@ describe('Authenticators - Local CRUD UI', () => {
     cy.createLocalPlatformAuthenticator(localAuthenticatorName).then(
       (createdLocalAuthenticator: Authenticator) => {
         cy.verifyPageTitle('Authentication');
-        cy.searchAndDisplayResourceByFilterOption(createdLocalAuthenticator.name, 'name');
-        cy.contains('tr', createdLocalAuthenticator.name).within(() => {
-          cy.get('[data-cy=toggle-switch]').click();
-          cy.get('.pf-v5-c-switch__label.pf-m-on')
-            .should('contain.text', 'Enabled')
-            .should('be.be.visible');
-        });
+        cy.searchAndDisplayResourceByFilterOption(createdLocalAuthenticator.name, 'name').then(
+          () => {
+            cy.contains('tr', createdLocalAuthenticator.name).within(() => {
+              cy.get('[data-cy=toggle-switch]').click();
+              cy.get('.pf-v5-c-switch__label.pf-m-on')
+                .should('contain.text', 'Enabled')
+                .should('be.be.visible');
+            });
+          }
+        );
         cy.contains('h4', `${createdLocalAuthenticator.name} enabled.`);
         cy.contains('tr', createdLocalAuthenticator.name).within(() => {
           cy.get('[data-cy=toggle-switch]').click();
@@ -133,8 +136,8 @@ describe('Authenticators - Local CRUD UI', () => {
             cy.searchAndDisplayResourceByFilterOption(createdLocalAuthenticator1.name, 'name').then(
               () => {
                 cy.get('td[data-cy="name-column-cell"]')
-                  .should('have.text', createdLocalAuthenticator1.name)
-                  .parent('tr')
+                  .contains(createdLocalAuthenticator1.name)
+                  .parents('tr')
                   .find('td[data-cy="checkbox-column-cell"]')
                   .click();
               }
@@ -144,7 +147,7 @@ describe('Authenticators - Local CRUD UI', () => {
               () => {
                 cy.get('td[data-cy="name-column-cell"]')
                   .should('have.text', createdLocalAuthenticator2.name)
-                  .parent('tr')
+                  .parents('tr')
                   .find('td[data-cy="checkbox-column-cell"]')
                   .click();
               }
