@@ -41,6 +41,7 @@ export function useRuleRowActions(
         selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Delete rule'),
+        isPinned: true,
         onClick: (rule) => deleteRule(rule),
         isDanger: true,
       },

@@ -66,6 +66,12 @@
         "help_text": "Optional description of this unified job.",
         "filterable": true
       },
+      "organization": {
+        "type": "integer",
+        "label": "Organization",
+        "help_text": "Database ID for this unified job.",
+        "filterable": true
+      },
       "unified_job_template": {
         "type": "id",
         "label": "unified job template",
