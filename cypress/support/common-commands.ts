@@ -25,9 +25,11 @@ Cypress.Commands.add('openToolbarFilterTypeSelect', () => {
 Cypress.Commands.add(
   'filterTableByText',
   (text: string, variant: 'SingleText' | 'MultiText' = 'MultiText') => {
-    cy.get('[data-cy="text-input"]').within(() => {
-      cy.get('input').clear().type(text, { delay: 0 });
-    });
+    cy.get('[data-cy="text-input"]')
+      .should('be.visible')
+      .within(() => {
+        cy.get('input').clear().type(text, { delay: 0 });
+      });
     if (variant === 'MultiText') {
       cy.getByDataCy('apply-filter').click();
     }
