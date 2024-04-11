@@ -254,20 +254,17 @@ Cypress.Commands.add('getAwxWFApprovalByWorkflowJobID', (workflowJobID: number) 
     awxAPI`/workflow_jobs/${workflowJobID.toString()}/workflow_nodes/`
   )
     .its('results')
-    .then((res: WorkflowJobNode[]) => {
-      if (res.length > 0) {
-        for (const wfjNode of res) {
+    .then((results: WorkflowJobNode[]) => {
+      if (results.length > 0) {
+        for (const wfjNode of results) {
           if (wfjNode.summary_fields.workflow_job.id === workflowJobID) {
+            const workflowId = wfjNode.summary_fields.workflow_job.id + 1;
             cy.awxRequestGet<AwxItemsResponse<WorkflowApproval>>(
-              awxAPI`/workflow_approvals/?name__startswith=E2E&page=1&page_size=200&order_by=-id`
+              awxAPI`/workflow_approvals/?id=${workflowId.toString()}`
             )
               .its('results')
               .then((res: WorkflowApproval[]) => {
-                for (const wfa of res) {
-                  if (wfa.summary_fields.workflow_job.id === workflowJobID) {
-                    return wfa;
-                  }
-                }
+                return res;
               });
           }
         }
@@ -483,7 +480,7 @@ Cypress.Commands.add('selectDetailsPageKebabAction', (dataCy: string) => {
   cy.get('[data-cy="actions-dropdown"]')
     .click()
     .then(() => {
-      cy.getByDataCy(dataCy).click();
+      cy.getByDataCy(`${dataCy}`).click();
       cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
         cy.get('[data-ouia-component-id="confirm"]').click();
         cy.get('[data-ouia-component-id="submit"]').click();

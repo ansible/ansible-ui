@@ -9,35 +9,37 @@ describe('organizations', () => {
     cy.awxLogin();
   });
 
-  it('renders the organizations list page', () => {
+  it('creates a basic organization, asserts info on the details page, and deletes it', () => {
+    const organizationName = randomE2Ename();
+    const orgDescription = 'orgDescription' + randomString(4);
     cy.navigateTo('awx', 'organizations');
     cy.verifyPageTitle('Organizations');
-  });
-
-  it('creates and then deletes a basic organization', () => {
-    const organizationName = randomE2Ename();
-    cy.navigateTo('awx', 'organizations');
     cy.clickLink(/^Create organization$/);
     cy.getByDataCy('organization-name').type(organizationName);
+    cy.getByDataCy('organization-description').type(orgDescription);
+    cy.intercept('POST', awxAPI`/organizations/`).as('newOrg');
     cy.clickButton(/^Create organization$/);
-    cy.verifyPageTitle(organizationName);
-    cy.clickPageAction('delete-organization');
-    cy.get('#confirm').click();
-    cy.intercept('DELETE', awxAPI`/organizations/*`).as('delete');
-    cy.clickButton(/^Delete organization/);
-    cy.wait('@delete');
-    cy.verifyPageTitle('Organizations');
-  });
-
-  it('renders the organization details page', function () {
-    cy.navigateTo('awx', 'organizations');
-    cy.filterTableByMultiSelect('name', [(this.globalOrganization as Organization).name]);
-    cy.get('[data-cy="name-column-cell"]').within(() => {
-      cy.get('a').click();
-    });
-    cy.verifyPageTitle(`${(this.globalOrganization as Organization).name}`);
-    cy.clickLink(/^Details$/);
-    cy.contains('#name', `${(this.globalOrganization as Organization).name}`);
+    cy.wait('@newOrg')
+      .its('response.body')
+      .then((response: Organization) => {
+        cy.intercept('GET', awxAPI`/organizations/${response.id.toString()}/`).as('createdOrg');
+        cy.wait('@createdOrg');
+        cy.getByDataCy('Details').should('be.visible');
+        cy.verifyPageTitle(response.name);
+        cy.getByDataCy('id').should('contain', response.id);
+        cy.getByDataCy('name').should('contain', response.name);
+        cy.getByDataCy('description').should('contain', response?.description);
+        cy.clickPageAction('delete-organization');
+        cy.get('#confirm').click();
+        cy.intercept('DELETE', awxAPI`/organizations/${response.id.toString()}/`).as('delete');
+        cy.clickButton(/^Delete organization/);
+        cy.wait('@delete')
+          .its('response.statusCode')
+          .then((statusCode) => {
+            expect(statusCode).to.eql(204);
+            cy.verifyPageTitle('Organizations');
+          });
+      });
   });
 });
 
@@ -93,19 +95,16 @@ describe('organizations edit and delete', function () {
       cy.get('a').click();
     });
     cy.verifyPageTitle(`${organization.name}`);
-
     cy.containsBy('button', /^Edit organization/).click();
     cy.verifyPageTitle('Edit Organization');
     cy.getByDataCy('organization-name')
       .clear()
       .type('now-edited ' + `${stringRandom}`);
     cy.containsBy('button', /^Save organization/).click();
-
     cy.verifyPageTitle('now-edited ' + `${stringRandom}`);
     cy.getByDataCy('edit-organization').click();
     cy.getByDataCy('organization-name').clear().type(`${organization.name}`);
     cy.containsBy('button', /^Save organization/).click();
-
     cy.verifyPageTitle(`${organization.name}`);
   });
 
@@ -118,10 +117,14 @@ describe('organizations edit and delete', function () {
     cy.verifyPageTitle(organization.name);
     cy.clickPageAction('delete-organization');
     cy.get('#confirm').click();
-    cy.intercept('DELETE', awxAPI`/organizations/*`).as('delete');
+    cy.intercept('DELETE', awxAPI`/organizations/${organization.id.toString()}`).as('delete');
     cy.clickButton(/^Delete organization/);
-    cy.wait('@delete');
-    cy.verifyPageTitle('Organizations');
+    cy.wait('@delete')
+      .its('response')
+      .then((response) => {
+        expect(response?.statusCode).to.eql(204);
+        cy.verifyPageTitle('Organizations');
+      });
   });
 
   it('deletes an organization from the organizations list row item', function () {
@@ -131,9 +134,16 @@ describe('organizations edit and delete', function () {
       cy.clickKebabAction('actions-dropdown', 'delete-organization');
     });
     cy.get('#confirm').click();
+    cy.intercept('DELETE', awxAPI`/organizations/${organization.id.toString()}`).as('delete');
     cy.clickButton(/^Delete organization/);
-    cy.contains(/^Success$/);
-    cy.clickButton(/^Close$/);
+    cy.wait('@delete')
+      .its('response')
+      .then((response) => {
+        expect(response?.statusCode).to.eql(204);
+        cy.contains(/^Success$/);
+        cy.clickButton(/^Close$/);
+        cy.verifyPageTitle('Organizations');
+      });
   });
 
   it('deletes an organization from the organizations list toolbar', function () {
@@ -143,9 +153,16 @@ describe('organizations edit and delete', function () {
     cy.clickToolbarKebabAction('delete-selected-organizations');
     cy.getModal().within(() => {
       cy.get('#confirm').click();
+      cy.intercept('DELETE', awxAPI`/organizations/${organization.id.toString()}`).as('delete');
       cy.clickButton(/^Delete organization/);
-      cy.contains(/^Success$/);
-      cy.clickButton(/^Close$/);
+      cy.wait('@delete')
+        .its('response')
+        .then((response) => {
+          expect(response?.statusCode).to.eql(204);
+          cy.contains(/^Success$/);
+          cy.clickButton(/^Close$/);
+        });
     });
+    cy.verifyPageTitle('Organizations');
   });
 });
