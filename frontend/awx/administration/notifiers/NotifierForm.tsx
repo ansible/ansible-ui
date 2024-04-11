@@ -438,15 +438,40 @@ function GrafanaForm() {
     <>
       <PageFormTextInput<NotificationTemplate>
         type={'text'}
-        name={'type_data.grafana_url'}
+        name={'notification_configuration.grafana_url'}
         label={t('Grafana URL')}
-        placeholder={''}
+        labelHelp={t('The base URL of the Grafana server - the /api/annotations endpoint will be added automatically to the base Grafana URL.')}
+        isRequired
       />
 
       <PageFormTextInput<NotificationTemplate>
-        name={'type_data.grafana_key'}
+        type={'password'}
+        name={'notification_configuration.grafana_key'}
         label={t('Grafana API Key')}
-        placeholder={''}
+        isRequired
+      />
+
+      <PageFormTextInput<NotificationTemplate>
+        name={'notification_configuration.dashboardId'}
+        label={t('ID of the dashboard (optional)')}
+      />
+     
+
+      <PageFormTextInput<NotificationTemplate>
+        name={'notification_configuration.panelId'}
+        label={t('ID of the panel (optional)')}
+      />
+
+      <PageFormTextArea<NotificationTemplate>
+        name={'notification_configuration.annotation_tags'}
+        label={t('Tags for the annotation (optional)')}
+        labelHelp={t('Use one Annotation Tag per line, without commas.')}
+      />
+
+         
+      <PageFormCheckbox<NotificationTemplate>
+        name={'notification_configuration.grafana_no_verify_ssl'}
+        label={t('Disable SSL verification')}
       />
     </>
   );
@@ -632,6 +657,11 @@ function isList(key: string, notification_type: string) {
   }
 
   if (key === 'to_numbers' && notification_type === 'twilio')
+  {
+    return true;
+  }
+
+  if (key === 'annotation_tags' && notification_type === 'grafana')
   {
     return true;
   }
