@@ -17,7 +17,7 @@ export function usePageNavigationRoutesContext() {
 /** Provider for the PageNavigationContext which provides route information for navigation. */
 export function PageNavigationRoutesProvider(props: { children: ReactNode }) {
   // const routes = useMemo(() => createNavigateToRoutes('', props.navigation), [props.navigation]);
-  const [routes, setRoutes] = useState<{ [key: string]: string }>([]);
+  const [routes, setRoutes] = useState<{ [key: string]: string }>({});
   const setNavigation = useCallback((navigation: PageNavigationItem[]) => {
     setRoutes(createNavigateToRoutes('', navigation));
   }, []);
