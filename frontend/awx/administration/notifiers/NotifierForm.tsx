@@ -412,29 +412,30 @@ function PagerdutyForm() {
     <>
       <PageFormTextInput<NotificationTemplate>
         type={'text'}
-        name={'type_data.subdomain'}
+        name={'notification_configuration.subdomain'}
         label={t('Pagerduty subdomain')}
-        placeholder={''}
+        isRequired
       />
 
       <PageFormTextInput<NotificationTemplate>
-        name={'type_data.token'}
+        type={'password'}
+        name={'notification_configuration.token'}
         label={t('API Token')}
-        placeholder={''}
+        isRequired
       />
 
       <PageFormTextInput<NotificationTemplate>
         type={'text'}
-        name={'type_data.service_key'}
+        name={'notification_configuration.service_key'}
         label={t('API Service/Integration Key')}
-        placeholder={''}
+        isRequired
       />
 
       <PageFormTextInput<NotificationTemplate>
         type={'text'}
-        name={'type_data.client_name'}
+        name={'notification_configuration.client_name'}
         label={t('Client Identifier')}
-        placeholder={''}
+        isRequired
       />
     </>
   );
