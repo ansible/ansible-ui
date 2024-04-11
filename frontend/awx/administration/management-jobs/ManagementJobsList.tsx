@@ -21,7 +21,6 @@ export function ManagementJobs() {
     toolbarFilters,
     tableColumns,
   });
-  const rowActions = useManagementJobRowActions();
 
   return (
     <PageLayout>
