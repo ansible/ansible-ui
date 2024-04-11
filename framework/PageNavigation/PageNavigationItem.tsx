@@ -27,7 +27,7 @@ export type PageNavigationItem = PageNavigationGroup | PageNavigationComponent;
 
 /**
  * Function to remove the leading slash from a path
- * Needed bacause routes caannot have slashes in the beginning
+ * Needed bacause routes cannot have slashes in the beginning
  */
 export function removeLeadingSlash(path: string): string {
   return path.replace(/^\//, '');

@@ -1,4 +1,5 @@
 import { Page } from '@patternfly/react-core';
+import { mutate } from 'swr';
 import { LoadingState } from '../../../framework/components/LoadingState';
 import { Login } from '../../common/Login';
 import { edaAPI } from '../common/eda-utils';
@@ -17,7 +18,13 @@ export function EdaLogin(props: { children: React.ReactNode }) {
 
   if (!activeEdaUser) {
     return (
-      <Login apiUrl={edaAPI`/auth/session/login/`} onSuccess={() => refreshActiveEdaUser?.()} />
+      <Login
+        apiUrl={edaAPI`/auth/session/login/`}
+        onSuccess={() => {
+          refreshActiveEdaUser?.();
+          void mutate(() => true);
+        }}
+      />
     );
   }
 

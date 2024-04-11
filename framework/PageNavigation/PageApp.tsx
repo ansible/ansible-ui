@@ -1,11 +1,11 @@
 import { Page } from '@patternfly/react-core';
-import { ReactNode, useMemo } from 'react';
+import { ReactNode, useEffect, useMemo } from 'react';
 import { Outlet, Route, RouteObject, Routes } from 'react-router-dom';
 import { PageNotFound } from '../PageEmptyStates/PageNotFound';
 import { PageNotificationsDrawer } from '../PageNotifications/PageNotificationsProvider';
 import { PageNavigation } from './PageNavigation';
 import { PageNavigationItem } from './PageNavigationItem';
-import { PageNavigationRoutesProvider } from './PageNavigationRoutesProvider';
+import { usePageNavigationRoutesContext } from './PageNavigationRoutesProvider';
 
 export function PageApp(props: {
   /** Component for the masthead of the page. */
@@ -25,7 +25,7 @@ export function PageApp(props: {
   defaultRefreshInterval: number;
 }) {
   const { navigation, masthead } = props;
-  const routes = useMemo(
+  const navigationItems = useMemo(
     () => [
       {
         path: `/`,
@@ -42,16 +42,17 @@ export function PageApp(props: {
     ],
     [masthead, navigation]
   );
-  return (
-    <PageNavigationRoutesProvider navigation={navigation}>
-      <Routes>{routes.map(NavigationRoute)}</Routes>
-    </PageNavigationRoutesProvider>
-  );
+  const [_, setNavigation] = usePageNavigationRoutesContext();
+  useEffect(() => {
+    setNavigation(navigation);
+  }, [navigation, setNavigation]);
+
+  return <Routes>{navigationItems.map(NavigationRoute)}</Routes>;
 }
 
 function NavigationRoute(route: RouteObject) {
   return (
-    <Route path={route.path} element={route.element}>
+    <Route key={route.path} path={route.path} element={route.element}>
       {route.children?.map(NavigationRoute)}
     </Route>
   );
