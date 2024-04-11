@@ -72,7 +72,11 @@ describe('teams', function () {
     cy.navigateTo('awx', 'teams');
 
     // Remove users
-    cy.clickTableRowAction('name', team.name, 'remove-users', { inKebab: true });
+    cy.filterTableByMultiSelect('name', [team.name]);
+    cy.clickTableRowAction('name', team.name, 'remove-users', {
+      inKebab: true,
+      disableFilter: true,
+    });
 
     // Select users
     cy.getModal().within(() => {
@@ -95,7 +99,8 @@ describe('teams', function () {
 
   it('can render the team details page', function () {
     cy.navigateTo('awx', 'teams');
-    cy.clickTableRowLink('name', team.name);
+    cy.filterTableByMultiSelect('name', [team.name]);
+    cy.clickTableRowLink('name', team.name, { disableFilter: true });
     cy.verifyPageTitle(team.name);
     cy.clickTab(/^Details$/, true);
     cy.hasDetail('Name', team.name);
@@ -103,7 +108,8 @@ describe('teams', function () {
 
   it('can edit a team from the details page', function () {
     cy.navigateTo('awx', 'teams');
-    cy.clickTableRowLink('name', team.name);
+    cy.filterTableByMultiSelect('name', [team.name]);
+    cy.clickTableRowLink('name', team.name, { disableFilter: true });
     cy.clickButton(/^Edit team$/);
     cy.verifyPageTitle('Edit Team');
     cy.get('[data-cy="name"]')
@@ -115,7 +121,8 @@ describe('teams', function () {
 
   it('can add users to the team via the team access tab toolbar', function () {
     cy.navigateTo('awx', 'teams');
-    cy.clickTableRow(team.name);
+    cy.filterTableByMultiSelect('name', [team.name]);
+    cy.clickTableRowLink('name', team.name, { disableFilter: true });
     cy.verifyPageTitle(team.name);
     cy.clickTab(/^Access$/, true);
     // Add users to team -> TODO: Replace with Wizard when it is ready
@@ -152,7 +159,8 @@ describe('teams', function () {
       id: team.summary_fields.object_roles.member_role.id,
     });
     cy.navigateTo('awx', 'teams');
-    cy.clickTableRow(team.name);
+    cy.filterTableByMultiSelect('name', [team.name]);
+    cy.clickTableRowLink('name', team.name, { disableFilter: true });
     cy.verifyPageTitle(team.name);
     cy.clickTab(/^Access$/, true);
     // Remove users
@@ -173,7 +181,8 @@ describe('teams', function () {
       id: team.summary_fields.object_roles.member_role.id,
     });
     cy.navigateTo('awx', 'teams');
-    cy.clickTableRow(team.name);
+    cy.filterTableByMultiSelect('name', [team.name]);
+    cy.clickTableRowLink('name', team.name, { disableFilter: true });
     cy.verifyPageTitle(team.name);
     cy.clickTab(/^Access$/, true);
     cy.clickTableRowKebabAction(user1.username, 'remove-user');
@@ -194,7 +203,8 @@ describe('teams', function () {
       id: team.summary_fields.object_roles.read_role.id,
     });
     cy.navigateTo('awx', 'teams');
-    cy.clickTableRow(team.name);
+    cy.filterTableByMultiSelect('name', [team.name]);
+    cy.clickTableRowLink('name', team.name, { disableFilter: true });
     cy.verifyPageTitle(team.name);
     cy.clickTab(/^Access$/, true);
     cy.filterTableByText(user1.username);
@@ -219,7 +229,8 @@ describe('teams', function () {
 
   it('can render the team roles page', function () {
     cy.navigateTo('awx', 'teams');
-    cy.clickTableRow(team.name);
+    cy.filterTableByMultiSelect('name', [team.name]);
+    cy.clickTableRowLink('name', team.name, { disableFilter: true });
     cy.verifyPageTitle(team.name);
     cy.clickTab(/^Roles$/, true);
     cy.url().should('contain', '/roles');
@@ -227,7 +238,8 @@ describe('teams', function () {
 
   it('can navigate to the edit form from the team details page', function () {
     cy.navigateTo('awx', 'teams');
-    cy.clickTableRow(team.name);
+    cy.filterTableByMultiSelect('name', [team.name]);
+    cy.clickTableRowLink('name', team.name, { disableFilter: true });
     cy.verifyPageTitle(team.name);
     cy.clickButton(/^Edit team$/);
     cy.verifyPageTitle('Edit Team');
@@ -235,7 +247,8 @@ describe('teams', function () {
 
   it('can delete a team from the details page', function () {
     cy.navigateTo('awx', 'teams');
-    cy.clickTableRow(team.name);
+    cy.filterTableByMultiSelect('name', [team.name]);
+    cy.clickTableRowLink('name', team.name, { disableFilter: true });
     cy.verifyPageTitle(team.name);
     cy.clickPageAction('delete-team');
     cy.intercept('DELETE', awxAPI`/teams/${team.id.toString()}/`).as('deleted');
@@ -251,14 +264,19 @@ describe('teams', function () {
 
   it('can navigate to the edit form from the team list row item', function () {
     cy.navigateTo('awx', 'teams');
-    cy.clickTableRowPinnedAction(team.name, 'edit-team');
+    cy.filterTableByMultiSelect('name', [team.name]);
+    cy.clickTableRowAction('name', team.name, 'edit-team', { disableFilter: true });
     cy.verifyPageTitle('Edit Team');
   });
 
   it('can delete a team from the teams list row item', function () {
     cy.createAwxTeam(this.globalOrganization as Organization).then((testTeam) => {
       cy.navigateTo('awx', 'teams');
-      cy.clickTableRowKebabAction(testTeam.name, 'delete-team');
+      cy.filterTableByMultiSelect('name', [testTeam.name]);
+      cy.clickTableRowAction('name', testTeam.name, 'delete-team', {
+        disableFilter: true,
+        inKebab: true,
+      });
       cy.get('#confirm').click();
       cy.intercept('DELETE', awxAPI`/teams/${testTeam.id.toString()}/`).as('deleted');
       cy.clickButton(/^Delete team/);
@@ -268,7 +286,7 @@ describe('teams', function () {
           expect(response?.statusCode).to.eql(204);
           cy.contains(/^Success$/);
           cy.clickButton(/^Close$/);
-          cy.clickButton(/^Clear all filters$/);
+          cy.clearAllFilters();
         });
     });
   });
@@ -276,7 +294,8 @@ describe('teams', function () {
   it('can delete a team from the teams list toolbar', function () {
     cy.createAwxTeam(this.globalOrganization as Organization).then((testTeam) => {
       cy.navigateTo('awx', 'teams');
-      cy.selectTableRow(testTeam.name);
+      cy.filterTableByMultiSelect('name', [testTeam.name]);
+      cy.selectTableRowByCheckbox('name', testTeam.name, { disableFilter: true });
       cy.clickToolbarKebabAction('delete-selected-teams');
       cy.get('#confirm').click();
       cy.intercept('DELETE', awxAPI`/teams/${testTeam.id.toString()}/`).as('deleted');
@@ -287,7 +306,7 @@ describe('teams', function () {
           expect(response?.statusCode).to.eql(204);
           cy.contains(/^Success$/);
           cy.clickButton(/^Close$/);
-          cy.clickButton(/^Clear all filters$/);
+          cy.clearAllFilters();
         });
     });
   });
