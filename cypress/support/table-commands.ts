@@ -157,12 +157,8 @@ Cypress.Commands.add(
   (columnDataCy: string, text: string, options?: { disableFilter?: boolean }) => {
     cy.getTableRow(columnDataCy, text, options).within(() => {
       cy.get('[data-cy="checkbox-column-cell"]').within(() => {
-        cy.get('input').click();
+        cy.getBy('input').click();
       });
     });
   }
 );
-
-Cypress.Commands.add('clickCheckBoxByDataCy', (checkboxDataCy: string) => {
-  cy.getByDataCy(checkboxDataCy).click();
-});

@@ -100,5 +100,7 @@
   "total_inventory_sources": 0,
   "inventory_sources_with_failures": 0,
   "pending_deletion": false,
-  "prevent_instance_group_fallback": false
+  "prevent_instance_group_fallback": false,
+  "update_cache_timeout": 0,
+  "verbosity": 0
 }

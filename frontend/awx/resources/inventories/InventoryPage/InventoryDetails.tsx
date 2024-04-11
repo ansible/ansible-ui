@@ -23,7 +23,7 @@ import { useGet } from '../../../../common/crud/useGet';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useVerbosityString } from '../../../common/useVerbosityString';
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';
-import { Inventory } from '../../../interfaces/Inventory';
+import { ConstructedInventory, Inventory } from '../../../interfaces/Inventory';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { InventorySource } from '../../../interfaces/InventorySource';
 import { AwxError } from '../../../common/AwxError';
@@ -97,7 +97,10 @@ export function InventoryDetailsInner(props: { inventory: InventoryWithSource })
   return (
     <PageDetails>
       <PageDetail label={t('Name')}>{inventory.name}</PageDetail>
-      {inventory.kind === 'constructed' && <JobStatusLabel job={inventorySourceSyncJob} />}
+      <PageDetailJobStatus
+        job={inventorySourceSyncJob}
+        isEmpty={inventory.kind !== 'constructed'}
+      />
       <PageDetail label={t('Description')}>{inventory.description}</PageDetail>
       <PageDetail label={t('Type')}>{inventoryTypes[inventory.kind]}</PageDetail>
       <PageDetail label={t('Organization')}>
@@ -121,7 +124,10 @@ export function InventoryDetailsInner(props: { inventory: InventoryWithSource })
       >
         {inventory.total_hosts}
       </PageDetail>
-      <PageDetail label={t('Hosts with active failures')}>
+      <PageDetail
+        label={t('Hosts with active failures')}
+        isEmpty={inventory.kind !== 'constructed' || inventory.hosts_with_active_failures === 0}
+      >
         {inventory.hosts_with_active_failures}
       </PageDetail>
       <PageDetail
@@ -129,37 +135,45 @@ export function InventoryDetailsInner(props: { inventory: InventoryWithSource })
         helpText={t(
           `This field is deprecated and will be removed in a future release. Total number of groups in this inventory.`
         )}
+        isEmpty={inventory.kind !== 'constructed'}
       >
         {inventory.total_groups}
       </PageDetail>
       <PageDetail
         label={t('Total inventory sources')}
         helpText={t(`Total number of external inventory sources configured within this inventory.`)}
+        isEmpty={inventory.kind !== 'constructed'}
       >
         {inventory.total_inventory_sources}
       </PageDetail>
       <PageDetail
         label={t('Inventory sources with active failures')}
         helpText={t(`Number of external inventory sources in this inventory with failures.`)}
+        isEmpty={inventory.kind !== 'constructed'}
       >
         {inventory.inventory_sources_with_failures}
       </PageDetail>
-      {inventory.kind === 'constructed' && (
-        <>
-          <PageDetail label={t('Limit')} helpText={inventoryFormDetailLables.limit}>
-            {inventory.limit}
-          </PageDetail>
-          <PageDetail label={t('Verbosity')} helpText={inventoryFormDetailLables.verbosity}>
-            {verbosityString}
-          </PageDetail>
-          <PageDetail
-            label={t('Update cache timeout')}
-            helpText={inventoryFormDetailLables.cache_timeout}
-          >
-            {inventory.update_cache_timeout}
-          </PageDetail>
-        </>
-      )}
+      <PageDetail
+        label={t('Limit')}
+        helpText={inventoryFormDetailLables.limit}
+        isEmpty={inventory.kind !== 'constructed'}
+      >
+        {(inventory as ConstructedInventory).limit}
+      </PageDetail>
+      <PageDetail
+        label={t('Verbosity')}
+        helpText={inventoryFormDetailLables.verbosity}
+        isEmpty={inventory.kind !== 'constructed'}
+      >
+        {verbosityString}
+      </PageDetail>
+      <PageDetail
+        label={t('Update cache timeout')}
+        helpText={inventoryFormDetailLables.cache_timeout}
+        isEmpty={inventory.kind !== 'constructed'}
+      >
+        {(inventory as ConstructedInventory).update_cache_timeout}
+      </PageDetail>
       <PageDetail label={t`Instance groups`} isEmpty={instanceGroups.length === 0}>
         <LabelGroup>
           {instanceGroups.map((ig) => (
@@ -247,15 +261,19 @@ export function InventoryDetailsInner(props: { inventory: InventoryWithSource })
       </PageDetail>
       <PageDetailCodeEditor
         helpText={<LabelHelp inventoryKind={inventory.kind} />}
-        label={t('Variables')}
+        label={inventory.kind === 'constructed' ? t('Source vars') : t('Variables')}
         showCopyToClipboard
-        value={inventory.variables || '---'}
+        value={
+          inventory.kind === 'constructed'
+            ? inventory.source_vars || '---'
+            : inventory.variables || '---'
+        }
       />
     </PageDetails>
   );
 }
 
-function JobStatusLabel(props: {
+function PageDetailJobStatus(props: {
   job:
     | {
         description: string;
@@ -267,6 +285,7 @@ function JobStatusLabel(props: {
         status: string;
       }
     | undefined;
+  isEmpty?: boolean;
 }) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
@@ -276,7 +295,7 @@ function JobStatusLabel(props: {
   }
 
   return (
-    <PageDetail label={t`Last job status`}>
+    <PageDetail label={t`Last job status`} isEmpty={props.isEmpty}>
       <Tooltip
         position="top"
         content={lastJob ? <LastJobTooltip job={lastJob} /> : undefined}

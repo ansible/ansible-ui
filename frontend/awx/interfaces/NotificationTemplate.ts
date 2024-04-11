@@ -19,6 +19,11 @@ export interface NotificationTemplate
       delete: boolean;
       edit: boolean;
     };
+    organization: {
+      id: number;
+      name: string;
+      description: string;
+    };
   };
   notification_type:
     | 'email'

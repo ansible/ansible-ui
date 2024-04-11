@@ -171,5 +171,45 @@ describe('ScheduleAddWizard', () => {
       cy.get('[data-cy="update-rule-button"]').click();
       cy.get('tr[data-cy="row-id-1"]').should('contain.text', 'INTERVAL=44400');
     });
+    it('Should be able to discard editing a rule without adding 1 to the list', () => {
+      cy.get('[data-cy="interval"]').clear().type('100');
+      cy.selectDropdownOptionByResourceName('freq', 'Hourly');
+      cy.get('[data-cy="count-form-group"]').type('17');
+      cy.get('[data-cy="add-rule-button"]').click();
+      cy.get('tr[data-cy="row-id-1"]').within(() => {
+        cy.get('td[data-cy="rrule-column-cell"]').should(
+          'contains.text',
+          'RRULE:FREQ=HOURLY;INTERVAL=100;WKST=SU'
+        );
+      });
+
+      cy.get('[data-cy="page-title"]').should('contain.text', 'Schedule Rules');
+      cy.get('tr[data-cy="row-id-1"]').within(() => {
+        cy.get('button[data-cy="edit-rule"]').click();
+      });
+      cy.get('[data-cy="interval"]').should('have.value', '100');
+      cy.get('[data-cy="interval"]').clear().type('44400');
+      cy.get('[data-cy="discard-rule-button"]').click();
+      cy.get('tr[data-cy="row-id-1"]').should('not.contain.text', 'INTERVAL=44400');
+      cy.get('tr[data-cy="row-id-1"]').should('contain.text', 'INTERVAL=100');
+      cy.get('tbody').within(() => {
+        cy.get('tr').should('have.length', 1);
+      });
+    });
+
+    it('Should be able to discard adding a rule without adding 1 to the list', () => {
+      cy.get('[data-cy="interval"]').clear().type('100');
+      cy.selectDropdownOptionByResourceName('freq', 'Hourly');
+      cy.get('[data-cy="count-form-group"]').type('17');
+      cy.get('[data-cy="add-rule-button"]').click();
+      cy.clickButton(/^Add rule$/);
+      cy.get('[data-cy="interval"]').clear().type('200');
+      cy.selectDropdownOptionByResourceName('freq', 'Hourly');
+      cy.get('[data-cy="discard-rule-button"]').click();
+
+      cy.get('tbody').within(() => {
+        cy.get('tr').should('have.length', 1);
+      });
+    });
   });
 });

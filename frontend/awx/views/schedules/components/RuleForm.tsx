@@ -1,7 +1,7 @@
 import { useFormContext } from 'react-hook-form';
 import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
 import { PageFormSelect, PageFormTextInput } from '../../../../../framework';
-import { RuleFields, RuleListItemType, ScheduleFormWizard } from '../types';
+import { RuleFields, RuleListItemType, RuleType, ScheduleFormWizard } from '../types';
 import { useTranslation } from 'react-i18next';
 import { RRule, datetime } from 'rrule';
 import {
@@ -34,6 +34,7 @@ export function RuleForm(props: {
     getValues,
     reset,
     formState: { defaultValues },
+    setValue,
   } = useFormContext();
   const { activeStep, wizardData } = usePageWizard();
   const ruleId = typeof props.isOpen === 'number' && props.isOpen;
@@ -125,10 +126,14 @@ export function RuleForm(props: {
         : exceptions.length + 1 || 1;
     const ruleObject = { rule, id: itemId };
     if (isRulesStep) {
-      ruleId ? rules.splice(index, 1, ruleObject) : rules.push(ruleObject);
+      ruleId
+        ? setValue('rules', rules.splice(index, 1, ruleObject))
+        : setValue('rules', rules.push(ruleObject));
     }
     if (!isRulesStep) {
-      ruleId ? exceptions.splice(index, 1, ruleObject) : exceptions.push(ruleObject);
+      ruleId
+        ? setValue('exceptions', exceptions.splice(index, 1, ruleObject))
+        : setValue('exceptions', exceptions.push(ruleObject));
     }
 
     reset({
@@ -259,7 +264,11 @@ export function RuleForm(props: {
           variant="secondary"
           isDanger
           onClick={() => {
-            reset({ keepDefaultValues: true });
+            const { rules = [], exceptions = [] } = getValues() as RuleFields;
+            const ruleType: RuleType =
+              props.title === t('Define rules') ? RuleType.Rules : RuleType.Exceptions;
+            const ruleArray = ruleType === RuleType.Rules ? [...rules] : [...exceptions];
+            reset({ ...defaultValues, [`${ruleType}`]: ruleArray });
             props.setIsOpen(false);
           }}
         >

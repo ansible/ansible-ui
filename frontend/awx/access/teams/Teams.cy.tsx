@@ -2,6 +2,18 @@ import { ToolbarFilterType } from '../../../../framework';
 import * as useOptions from '../../../common/crud/useOptions';
 import { Teams } from './Teams';
 
+beforeEach(() => {
+  cy.intercept(
+    {
+      method: 'OPTIONS',
+      url: '/api/v2/teams/',
+    },
+    {
+      fixture: 'mock_options.json',
+    }
+  ).as('getOptions');
+});
+
 describe('Teams.cy.ts', () => {
   describe('Error list', () => {
     it('Displays error if teams are not successfully loaded', () => {
@@ -21,10 +33,12 @@ describe('Teams.cy.ts', () => {
 
     it('List has filters for Name, Organization, Created By and Modified By', () => {
       cy.intercept({ method: 'GET', url: '/api/v2/teams/*' }, { fixture: 'teams.json' });
-      cy.mount(<Teams />);
-      cy.intercept('/api/v2/teams/?organization__name__icontains=Organization%201*').as(
-        'orgFilterRequest'
+      cy.intercept(
+        { method: 'GET', url: '/api/v2/organizations/*' },
+        { fixture: 'organizations.json' }
       );
+      cy.mount(<Teams />);
+      cy.intercept('/api/v2/teams/?organization=*').as('orgFilterRequest');
       cy.openToolbarFilterTypeSelect().within(() => {
         cy.contains(/^Name$/).should('be.visible');
         cy.contains(/^Organization$/).should('be.visible');
@@ -32,11 +46,11 @@ describe('Teams.cy.ts', () => {
         cy.contains(/^Modified by$/).should('be.visible');
         cy.contains('button', /^Organization$/).click();
       });
-      cy.filterTableByText('Organization 1');
+      cy.filterTableByMultiSelect('organization', ['Default']);
       // A network request is made based on the filter selected on the UI
       cy.wait('@orgFilterRequest');
       // Clear filter
-      cy.clickButton(/^Clear all filters$/);
+      cy.clearAllFilters();
     });
 
     it('Bulk deletion confirmation contains message about selected teams that cannot be deleted', () => {
