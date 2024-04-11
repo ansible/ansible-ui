@@ -1,6 +1,6 @@
 import { ButtonVariant } from '@patternfly/react-core';
 import { RocketIcon } from '@patternfly/react-icons';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
 import { SystemJobTemplate } from '../../../interfaces/SystemJobTemplate';
@@ -19,21 +19,23 @@ export function useManagementJobRowActions() {
   const getJobOutputUrl = useGetJobOutputUrl();
   const navigate = useNavigate();
 
-  const launchManagementJob = async (managementJob: SystemJobTemplate) => {
-    if (
-      managementJob.job_type === 'cleanup_activitystream' ||
-      managementJob.job_type === 'cleanup_jobs'
-    ) {
-      openManagementJobsModal({ id: managementJob.id });
-    } else {
-      const newJob = await postRequest(
-        awxAPI`/system_job_templates/${String(managementJob.id)}/launch/`,
-        {}
-      );
-      const jobUrl = getJobOutputUrl(newJob as unknown as UnifiedJob);
-      navigate(jobUrl);
-    }
-  };
+  const launchManagementJob = useCallback(
+    async (managementJob: SystemJobTemplate) => {
+      if (
+        managementJob.job_type === 'cleanup_activitystream' ||
+        managementJob.job_type === 'cleanup_jobs'
+      ) {
+        openManagementJobsModal({ id: managementJob.id });
+      } else {
+        const newJob = await postRequest(
+          awxAPI`/system_job_templates/${String(managementJob.id)}/launch/`,
+          {}
+        );
+        navigate(getJobOutputUrl(newJob as UnifiedJob));
+      }
+    },
+    [openManagementJobsModal, getJobOutputUrl, navigate, postRequest]
+  );
 
   return useMemo<IPageAction<SystemJobTemplate>[]>(() => {
     const actions: IPageAction<SystemJobTemplate>[] = [
@@ -48,5 +50,5 @@ export function useManagementJobRowActions() {
       },
     ];
     return actions;
-  }, [t, openManagementJobsModal]);
+  }, [t, launchManagementJob]);
 }

@@ -1,6 +1,5 @@
 import { t } from 'i18next';
-import { useState, useEffect } from 'react';
-import { PageFormSubmitHandler, PageFormTextInput, usePageDialogs } from '../../../../../framework';
+import { PageFormSubmitHandler, PageFormTextInput } from '../../../../../framework';
 import { Modal } from '@patternfly/react-core';
 import { AwxPageForm } from '../../../common/AwxPageForm';
 import { awxAPI } from '../../../common/api/awx-utils';
@@ -14,26 +13,34 @@ export interface ManagementJobsRetainDataModalProps {
   id: number;
 }
 
+export interface ManagementJobRetainDaysInput {
+  extra_vars: {
+    days: number;
+  };
+}
+
 export function ManagementJobsRetainDataModal(
   props: ManagementJobsRetainDataModalProps & { popDialog: () => void }
 ) {
-  const postRequest = usePostRequest<{ extra_vars: { days: number } }, SystemJobTemplate>();
+  const postRequest = usePostRequest<ManagementJobRetainDaysInput, SystemJobTemplate>();
   const navigate = useNavigate();
   const getJobOutputUrl = useGetJobOutputUrl();
 
-  const onSubmit: PageFormSubmitHandler<{ extra_vars: { days: number } }> = async (retainInput: {
-    extra_vars: { days: number };
-  }) => {
+  const onSubmit: PageFormSubmitHandler<ManagementJobRetainDaysInput> = async (
+    retainInput: ManagementJobRetainDaysInput
+  ) => {
     const newJob = await postRequest(
       awxAPI`/system_job_templates/${String(props.id)}/launch/`,
       retainInput
     );
     props.popDialog();
-    const jobUrl = getJobOutputUrl(newJob as unknown as UnifiedJob);
-    navigate(jobUrl);
+    navigate(getJobOutputUrl(newJob as unknown as UnifiedJob));
   };
 
   const onCancel = () => props.popDialog();
+
+  const MAX_RETENTION = 99999;
+  const MIN_RETENTION = 0;
 
   return (
     <Modal
@@ -61,8 +68,8 @@ export function ManagementJobsRetainDataModal(
           placeholder={t('Enter days')}
           isRequired
           type="number"
-          min={0}
-          max={99999}
+          min={MIN_RETENTION}
+          max={MAX_RETENTION}
         />
       </AwxPageForm>
     </Modal>
