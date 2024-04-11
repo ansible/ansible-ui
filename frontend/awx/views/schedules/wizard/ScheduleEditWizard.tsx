@@ -1,12 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
-import {
-  PageHeader,
-  PageLayout,
-  PageNotImplemented,
-  PageWizard,
-  PageWizardStep,
-} from '../../../../../framework';
+import { PageHeader, PageLayout, PageWizard, PageWizardStep } from '../../../../../framework';
 import { useGetPageUrl } from '../../../../../framework/PageNavigation/useGetPageUrl';
 import { dateToInputDateTime } from '../../../../../framework/utils/dateTimeHelpers';
 import { AwxRoute } from '../../../main/AwxRoutes';
@@ -24,6 +18,7 @@ import { RESOURCE_TYPE } from '../../../resources/templates/WorkflowVisualizer/c
 import { useGetItem } from '../../../../common/crud/useGet';
 import { Schedule } from '../../../interfaces/Schedule';
 import { awxAPI } from '../../../common/api/awx-utils';
+import { NodeReviewStep } from '../../../resources/templates/WorkflowVisualizer/wizard/NodeReviewStep';
 export function ScheduleEditWizard() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
@@ -99,7 +94,7 @@ export function ScheduleEditWizard() {
       label: t('Exceptions'),
       inputs: <ExceptionsStep />,
     },
-    { id: 'review', label: t('Review'), inputs: <PageNotImplemented /> },
+    { id: 'review', label: t('Review'), inputs: <NodeReviewStep /> },
   ];
 
   if (!schedule) return;
