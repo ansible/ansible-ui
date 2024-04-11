@@ -336,15 +336,33 @@ function SlackForm() {
   return (
     <>
       <PageFormTextInput<NotificationTemplate>
-        name={'type_data.token'}
+        type={'password'}
+        name={'notification_configuration.token'}
         label={t('Token')}
-        placeholder={''}
+        isRequired
       />
 
       <PageFormTextArea<NotificationTemplate>
-        name={'type_data.channels'}
+        name={'notification_configuration.channels'}
         label={t('Destination Channels')}
-        placeholder={''}
+        isRequired
+        labelHelp={
+          <Trans>
+            One Slack channel per line. The pound symbol (#) is required for channels. 
+            To respond to or start a thread to a specific message add the parent message Id 
+            to the channel where the parent message Id is 16 digits. A dot (.) 
+            must be manually inserted after the 10th digit. ie:#destination-channel, 1231257890.006423. 
+            See Slack <a href='https://api.slack.com/messaging/retrieving#individual_messages'>documentation</a> for more information.
+          </Trans>
+        }
+      />
+
+      <PageFormTextInput<NotificationTemplate>
+        name={'notification_configuration.hex_color'}
+        label={t('Notification color')}
+        labelHelp={
+          t('Specify a notification color. Acceptable colors are hex color code (example: #3af or #789abc).')
+        }
       />
     </>
   );
@@ -608,6 +626,11 @@ function stringToArrays(data: NotificationTemplate) {
 
 function isList(key: string, notification_type: string) {
   if (key === 'recipients' && notification_type === 'email') {
+    return true;
+  }
+
+  if (key === 'channels' && notification_type === 'slack')
+  {
     return true;
   }
 
