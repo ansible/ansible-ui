@@ -1,6 +1,7 @@
 import { randomString } from '../../../../framework/utils/random-string';
 import { Credential } from '../../../../frontend/awx/interfaces/Credential';
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
+import { JobTemplate } from '../../../../frontend/awx/interfaces/JobTemplate';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
@@ -241,19 +242,13 @@ describe('Job templates form Create, Edit, Delete', function () {
       cy.intercept('PATCH', `api/v2/job_templates/${jobTemplate.id}/`).as('editJT');
       cy.clickButton(/^Save job template$/);
       cy.wait('@editJT')
-        .its('response.body.name')
-        .then((name: string) => {
-          expect(newName).to.be.equal(name);
+        .its('response.body')
+        .then((response: JobTemplate) => {
+          expect(newName).to.eql(response.name);
+          cy.verifyPageTitle(response.name);
+          cy.getByDataCy('name').should('contain', response.name);
+          cy.deleteAwxJobTemplate(response);
         });
-      cy.verifyPageTitle(newName);
-      cy.intercept('DELETE', awxAPI`/job_templates/${jobTemplate.id.toString()}/`).as(
-        'deleteJobTemplate'
-      );
-      cy.selectDetailsPageKebabAction('delete-template');
-      cy.wait('@deleteJobTemplate').then((deleteJobTemplate) => {
-        expect(deleteJobTemplate?.response?.statusCode).to.eql(204);
-      });
-      cy.verifyPageTitle('Templates');
     });
   });
 
@@ -267,10 +262,12 @@ describe('Job templates form Create, Edit, Delete', function () {
       cy.filterTableByMultiSelect('name', [jobTemplate.name]);
       cy.clickTableRowLink('name', jobTemplate.name, { disableFilter: true });
       cy.verifyPageTitle(jobTemplate.name);
+      cy.intercept('OPTIONS', awxAPI`/unified_job_templates/`).as('options');
       cy.intercept('DELETE', awxAPI`/job_templates/${jobTemplate.id.toString()}/`).as(
         'deleteJobTemplate'
       );
       cy.selectDetailsPageKebabAction('delete-template');
+      cy.wait('@options');
       cy.wait('@deleteJobTemplate').then((deleteJobTemplate) => {
         expect(deleteJobTemplate?.response?.statusCode).to.eql(204);
       });
