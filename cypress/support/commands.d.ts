@@ -297,7 +297,7 @@ declare global {
       clickTableHeader(name: string | RegExp): Chainable<void>;
 
       setTableView(
-        view: 'table' | 'list' | 'cards',
+        view: 'table' | 'list' | 'card',
         options?: { ignoreNotFound?: boolean }
       ): Chainable<void>;
 
@@ -369,7 +369,7 @@ declare global {
       getTableRow(
         columnDataCy: string,
         text: string,
-        options?: { disableFilter?: boolean }
+        options?: { disableFilter?: boolean; disableFilterSelection?: boolean }
       ): Chainable<JQuery<HTMLTableRowElement>>;
 
       /**
@@ -452,7 +452,7 @@ declare global {
       selectTableRowByCheckbox(
         columnDataCy: string,
         text: string,
-        options?: { disableFilter?: boolean }
+        options?: { disableFilter?: boolean; disableFilterSelection?: boolean }
       ): Chainable<void>;
 
       /** @deprecated use cy.getTableRow instead */
