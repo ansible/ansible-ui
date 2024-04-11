@@ -38,7 +38,7 @@
     "e2e:run:awx": "cypress run --e2e --config-file=cypress.awx.config.ts",
     "e2e:run:hub": "cypress run --e2e --config-file=cypress.hub.config.ts",
     "e2e:run:eda": "cypress run --e2e --config-file=cypress.eda.config.ts",
-    "component": "rm -rf mochawesome-report && CYPRESS_INTERNAL_BROWSER_CONNECT_TIMEOUT=300000 concurrently --kill-others-on-fail npm:component:* -c auto && mochawesome-merge cypress/reports/html/.jsons/*.json -o cypress/reports/html/mochawesome.json",
+    "component": "cypress verify && rm -rf mochawesome-report && CYPRESS_INTERNAL_BROWSER_CONNECT_TIMEOUT=600000 concurrently --kill-others-on-fail npm:component:* -c auto && mochawesome-merge cypress/reports/html/.jsons/*.json -o cypress/reports/html/mochawesome.json",
     "report": "npx mochawesome-report-generator --charts --autoOpen cypress/reports/html/mochawesome.json",
     "component:awx:access": "xvfb-run -a cypress run --component -q -p 3801 --spec frontend/awx/access/**/*.cy.ts,frontend/awx/access/**/*.cy.tsx",
     "component:awx:administration": "xvfb-run -a cypress run --component -q -p 3802 --spec frontend/awx/administration/**/*.cy.ts,frontend/awx/administration/**/*.cy.tsx",
