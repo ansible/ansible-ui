@@ -39,7 +39,7 @@ export function Disclaimer(props: { children: ReactNode }) {
               <TextContent>
                 <Text component={TextVariants.p}>
                   By proceeding you acknowledge that you understand that the functionality is not
-                  complete and that the product will be chaning over time.
+                  complete and that the product will be changing over time.
                 </Text>
               </TextContent>
             </Alert>
