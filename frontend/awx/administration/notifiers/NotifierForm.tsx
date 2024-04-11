@@ -139,7 +139,7 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
       }
     }
 
-    const result = await requestCommon({
+    await requestCommon({
       url:
         mode === 'add'
           ? awxAPI`/notification_templates/`
@@ -147,8 +147,7 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
       method: mode === 'edit' ? 'PATCH' : 'POST',
       body: data,
     });
-    debugger;
-    console.log(result);
+
     pageNavigate(AwxRoute.NotificationTemplates);
   };
 
