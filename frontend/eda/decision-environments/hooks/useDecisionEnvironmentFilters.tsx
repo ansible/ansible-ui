@@ -9,7 +9,7 @@ export function useDecisionEnvironmentFilters() {
       {
         key: 'name',
         label: t('Name'),
-        type: ToolbarFilterType.MultiText,
+        type: ToolbarFilterType.SingleText,
         query: 'name',
         comparison: 'startsWith',
       },

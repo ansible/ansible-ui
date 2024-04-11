@@ -35,6 +35,7 @@ describe('EDA decision environment- Create, Edit, Delete', () => {
       cy.clickTableRow(edaDE.name);
       */
       cy.get('button[aria-label="table view"]').click();
+      cy.filterTableByTextFilter('name', edaDE.name, { disableFilterSelection: true });
       cy.contains('td', edaDE.name).within(() => {
         cy.get('a').click();
       });
@@ -52,6 +53,7 @@ describe('EDA decision environment- Create, Edit, Delete', () => {
       cy.navigateTo('eda', 'decision-environments');
       cy.verifyPageTitle('Decision Environments');
       cy.get('button[aria-label="table view"]').click();
+      cy.filterTableByTextFilter('name', edaDE.name, { disableFilterSelection: true });
       cy.contains('td', edaDE.name).within(() => {
         cy.get('a').click();
       });
