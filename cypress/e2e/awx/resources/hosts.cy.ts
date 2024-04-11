@@ -58,7 +58,7 @@ describe('host and inventory host', () => {
       cy.awxRequestPost<{ name: string; inventory: number }>(awxAPI`/hosts/${hostid}/groups/`, {
         name: 'E2E Group ' + randomString(5),
         inventory: host.inventory,
-      }).then((group) => {
+      }).then((group: { id: number; name: string }) => {
         /// check multiple assosiate and disasosiate
         // disasosiate
         navigateToHost(url, host.name, '[data-cy="name-column-cell"] a');
@@ -69,7 +69,7 @@ describe('host and inventory host', () => {
           /^There are currently no groups associated with this host/
         );
         // Add - multi groups
-        cy.clickButton(/^Add group$/);
+        cy.clickButton(/^Associate groups$/);
         cy.get('[data-cy="select-all"]').click();
         cy.clickModalButton('Confirm');
         cy.contains('button', 'Close').click();
@@ -99,11 +99,13 @@ describe('host and inventory host', () => {
         /^There are currently no hosts added to this inventory./
       );
     }
+
     // create
     cy.clickButton(/^Create host$/);
     cy.verifyPageTitle('Create Host');
     cy.get('[data-cy="name"]').type(hostName);
     cy.get('[data-cy="description"]').type('This is the description');
+
     if (!inventory_host) {
       cy.get(`[data-cy="inventory-id"]`).click();
       cy.contains('button', 'Browse').click();
@@ -115,11 +117,13 @@ describe('host and inventory host', () => {
       });
       cy.get(`[aria-label="Select Inventory"]`).should('not.exist');
     }
+
     cy.getByDataCy('variables').type('test: true');
     cy.clickButton(/^Create host/);
     cy.hasDetail(/^Name$/, hostName);
     cy.hasDetail(/^Description$/, 'This is the description');
     cy.hasDetail(/^Variables$/, 'test: true');
+
     return hostName;
   }
 
