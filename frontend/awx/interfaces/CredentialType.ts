@@ -20,11 +20,22 @@ export interface CredentialType
   inputs: {
     fields: {
       id: string;
+      choices?: string[];
+      label: string;
+      secret: boolean;
+      type: string;
+      help_text: string;
+      multiline?: boolean;
+      default?: boolean | string;
+      ask_at_runtime?: boolean;
+    }[];
+    required: string[];
+    metadata: {
+      id: string;
       label: string;
       type: string;
       help_text: string;
-      ask_at_runtime?: boolean;
-    }[];
+    };
   };
   related: {
     credentials: string;
