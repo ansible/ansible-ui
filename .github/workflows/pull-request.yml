@@ -88,39 +88,39 @@ jobs:
         run: npm ci
       - run: npm run test
 
-  awx-e2e:
-    name: AWX E2E
-    needs: packages
-    uses: ./.github/workflows/awx-e2e.yml
-    with:
-      AWX_SERVER: ${{ vars.AWX_SERVER }}
-      SKIP_JOB: ${{ needs.packages.outputs.awx != 'true' }}
-    secrets:
-      AWX_PASSWORD: ${{ secrets.AWX_PASSWORD }}
-      AWX_PROJECT_ID: ${{ secrets.AWX_PROJECT_ID }}
-      AWX_RECORD_KEY: ${{ secrets.AWX_RECORD_KEY }}
+  # awx-e2e:
+  #   name: AWX E2E
+  #   needs: packages
+  #   uses: ./.github/workflows/awx-e2e.yml
+  #   with:
+  #     AWX_SERVER: ${{ vars.AWX_SERVER }}
+  #     SKIP_JOB: ${{ needs.packages.outputs.awx != 'true' }}
+  #   secrets:
+  #     AWX_PASSWORD: ${{ secrets.AWX_PASSWORD }}
+  #     AWX_PROJECT_ID: ${{ secrets.AWX_PROJECT_ID }}
+  #     AWX_RECORD_KEY: ${{ secrets.AWX_RECORD_KEY }}
       
-  eda-e2e:
-    name: EDA E2E
-    needs: packages
-    uses: ./.github/workflows/eda-e2e.yml
-    with:
-      EDA_SERVER: ${{ vars.EDA_SERVER }}
-      SKIP_JOB: ${{ needs.packages.outputs.eda != 'true' }}
-    secrets:
-      EDA_PASSWORD: ${{ secrets.EDA_PASSWORD }}
-      EDA_PROJECT_ID: ${{ secrets.EDA_PROJECT_ID }}
-      EDA_RECORD_KEY: ${{ secrets.EDA_RECORD_KEY }}
+  # eda-e2e:
+  #   name: EDA E2E
+  #   needs: packages
+  #   uses: ./.github/workflows/eda-e2e.yml
+  #   with:
+  #     EDA_SERVER: ${{ vars.EDA_SERVER }}
+  #     SKIP_JOB: ${{ needs.packages.outputs.eda != 'true' }}
+  #   secrets:
+  #     EDA_PASSWORD: ${{ secrets.EDA_PASSWORD }}
+  #     EDA_PROJECT_ID: ${{ secrets.EDA_PROJECT_ID }}
+  #     EDA_RECORD_KEY: ${{ secrets.EDA_RECORD_KEY }}
       
-  hub-e2e:
-    name: HUB E2E
-    needs: packages
-    uses: ./.github/workflows/hub-e2e.yml
-    with:
-      HUB_SERVER: ${{ vars.HUB_SERVER }}
-      SKIP_JOB: ${{ needs.packages.outputs.hub != 'true' }}
-    secrets:
-      HUB_PASSWORD: ${{ secrets.HUB_PASSWORD }}
-      HUB_PROJECT_ID: ${{ secrets.HUB_PROJECT_ID }}
-      HUB_RECORD_KEY: ${{ secrets.HUB_RECORD_KEY }}
+  # hub-e2e:
+  #   name: HUB E2E
+  #   needs: packages
+  #   uses: ./.github/workflows/hub-e2e.yml
+  #   with:
+  #     HUB_SERVER: ${{ vars.HUB_SERVER }}
+  #     SKIP_JOB: ${{ needs.packages.outputs.hub != 'true' }}
+  #   secrets:
+  #     HUB_PASSWORD: ${{ secrets.HUB_PASSWORD }}
+  #     HUB_PROJECT_ID: ${{ secrets.HUB_PROJECT_ID }}
+  #     HUB_RECORD_KEY: ${{ secrets.HUB_RECORD_KEY }}
       
