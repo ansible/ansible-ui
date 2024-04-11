@@ -1,21 +1,16 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { Button } from '@patternfly/react-core';
-import { useCallback, useEffect, useState } from 'react';
-import { useForm, useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   ICatalogBreadcrumb,
   LoadingPage,
   PageFormCheckbox,
-  PageFormDataEditor,
   PageFormSubmitHandler,
   PageFormTextArea,
   PageFormTextInput,
   PageHeader,
   PageLayout,
   useGetPageUrl,
-  usePageNavigate,
 } from '../../../../framework';
 import { AwxPageForm } from '../../common/AwxPageForm';
 import { NotificationTemplate } from '../../interfaces/NotificationTemplate';
@@ -32,6 +27,7 @@ import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSe
 
 import { useOptions } from '../../../common/crud/useOptions';
 import { requestCommon } from '../../../common/crud/requestCommon';
+import { usePageNavigate } from '../../../../framework';
 
 export function EditNotifier() {
   return <NotifierForm mode={'edit'} />;
@@ -60,7 +56,7 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
   let getUrl = mode === 'add' ? '' : awxAPI`/notification_templates/${params.id || ''}/`;
   const notifierRequest = useGet<NotificationTemplate>(getUrl);
   const navigate = useNavigate();
-
+  const pageNavigate = usePageNavigate();
 
   const optionsRequest = useOptions<NotificationTemplateOptions>(awxAPI`/notification_templates/`);
 
@@ -91,14 +87,69 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
     arraysToString(defaultValue as NotificationTemplate);
   }
 
-  const onSubmit: PageFormSubmitHandler<NotificationTemplate> = async (data) => {
+  const onSubmit: PageFormSubmitHandler<NotificationTemplate> = async (formData) => {
+    const data: NotificationTemplate =
+      mode === 'add'
+        ? formData
+        : {
+            description: formData.description,
+            messages: formData.messages,
+            name: formData.name,
+            notification_configuration: formData.notification_configuration,
+            notification_type: formData.notification_type,
+            organization: formData.organization,
+          };
+
     stringToArrays(data);
-    const id = mode === 'edit' ? data.id?.toString() : '';
-    return requestCommon({
-      url : awxAPI`/notification_templates/${id}`,
-      method : mode === 'edit' ? 'PATCH' : 'POST',
-      body : data,
+
+    // delete unused parameters
+    if (mode === 'edit') {
+      delete data.created;
+      delete data.id;
+      delete data.related;
+      delete data.summary_fields;
+      delete data.modified;
+      delete data.type;
+      delete data.url;
+    }
+
+    let fieldValue;
+    // fix notification data types
+    const fields =
+      optionsRequest.data?.actions.GET.notification_configuration[data.notification_type || ''];
+    if (fields) {
+      const notification_configuration = data.notification_configuration;
+      for (const field in fields) {
+        if (!notification_configuration[field]) {
+          fieldValue = fields[field];
+          notification_configuration[field] = '';
+        }
+
+        // convert them
+        fieldValue = fields[field];
+        if (fieldValue.type === 'int' && typeof notification_configuration[field] === 'string') {
+          notification_configuration[field] = Number.parseInt(
+            notification_configuration[field] as string
+          );
+        }
+
+        if (fieldValue.type === 'bool' && notification_configuration[field] === '') {
+          notification_configuration[field] = false;
+        }
+      }
+    }
+
+    const result = await requestCommon({
+      url:
+        mode === 'add'
+          ? awxAPI`/notification_templates/`
+          : awxAPI`/notification_templates/${formData.id?.toString() || ''}/`,
+      method: mode === 'edit' ? 'PATCH' : 'POST',
+      body: data,
     });
+    debugger;
+    console.log(result);
+    pageNavigate(AwxRoute.NotificationTemplates);
   };
 
   return (

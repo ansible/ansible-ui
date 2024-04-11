@@ -5,10 +5,10 @@ export interface NotificationTemplate
     SwaggerNotificationTemplate,
     'id' | 'name' | 'organization' | 'summary_fields' | 'notification_type'
   > {
-  id: number;
+  id?: number;
   name: string;
   organization: number;
-  summary_fields: {
+  summary_fields?: {
     recent_notifications: [
       {
         status: string;
@@ -25,7 +25,7 @@ export interface NotificationTemplate
       description: string;
     };
   };
-  notification_configuration: [string, unknown];
+  notification_configuration: { [key: string]: unknown };
   notification_type:
     | 'email'
     | 'grafana'
