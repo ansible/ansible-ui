@@ -192,7 +192,7 @@ export function RulebookActivationInputs() {
               }))
             : []
         }
-        footer={<Link to={getPageUrl(EdaRoute.CreateProject)}>Create project</Link>}
+        footer={<Link to={getPageUrl(EdaRoute.CreateProject)}>{t('Create project')}</Link>}
         labelHelp={t('Projects are a logical collection of rulebooks.')}
         labelHelpTitle={t('Project')}
       />
