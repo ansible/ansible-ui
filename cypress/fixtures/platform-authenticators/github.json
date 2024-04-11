@@ -1,0 +1,7 @@
+{
+  "name": "E2E GitHub Authenticator",
+  "callbackUrl": "http://localhost/callback",
+  "oauth2Key": "GitHubKey",
+  "oauth2Secret": "GitHubSecret",
+  "additionalFields": "E2E Test GitHub Data"
+}

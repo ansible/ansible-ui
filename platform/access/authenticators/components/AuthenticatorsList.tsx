@@ -36,7 +36,12 @@ export function AuthenticatorsList() {
 
   return (
     <PageLayout>
-      <PageHeader title={t('Authentication')} />
+      <PageHeader
+        title={t('Authentication')}
+        description={t(
+          "Set up and manage your organization's authentication methods, which are used to simplify the login experience."
+        )}
+      />
       <PageTable<Authenticator>
         id="platform-authenticators-table"
         toolbarFilters={toolbarFilters}

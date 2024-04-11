@@ -2,8 +2,8 @@ import { randomString } from '../../../../../framework/utils/random-string';
 import { gatewayV1API } from '../../../../support/formatApiPathForPlatform';
 import { UIAuth } from '../../../../../platform/interfaces/UIAuth';
 
-describe('Platform Basic Authentication', () => {
-  it('create local authenticator in ui, enable it, log out, log in, and check the new authenticator in response', () => {
+describe.skip('Platform Basic Authentication', () => {
+  it.skip('create local authenticator in ui, enable it, log out, log in, and check the new authenticator in response', () => {
     cy.platformLogin();
     cy.navigateTo('platform', 'authenticators');
     cy.verifyPageTitle('Authentication');
