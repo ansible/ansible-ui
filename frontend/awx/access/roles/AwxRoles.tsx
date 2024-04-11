@@ -117,8 +117,8 @@ export function AwxRolesTable() {
       {...view}
       tableColumns={tableColumns}
       toolbarFilters={toolbarFilters}
-      errorStateTitle="NEVER"
-      emptyStateTitle="NEVER"
+      errorStateTitle={t('Error loading roles')}
+      emptyStateTitle={t('No roles found')}
       defaultSubtitle={t('Role')}
     />
   );
