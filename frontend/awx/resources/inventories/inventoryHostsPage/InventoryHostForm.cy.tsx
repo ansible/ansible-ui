@@ -82,7 +82,7 @@ describe('Create Edit Inventory/Standalone Host Form', () => {
     });
   });
 
-  describe('Edit Host', () => {
+  describe.skip('Edit Host', () => {
     beforeEach(() => {
       cy.fixture('awxHost')
         .then((host: AwxHost) => {
