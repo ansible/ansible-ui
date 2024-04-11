@@ -21,28 +21,15 @@ import { NodePromptsStep } from '../../../resources/templates/WorkflowVisualizer
 import { WizardFormValues } from '../../../resources/templates/WorkflowVisualizer/types';
 import { shouldHideOtherStep } from '../../../resources/templates/WorkflowVisualizer/wizard/helpers';
 import { RESOURCE_TYPE } from '../../../resources/templates/WorkflowVisualizer/constants';
-import { useGet, useGetItem } from '../../../../common/crud/useGet';
+import { useGetItem } from '../../../../common/crud/useGet';
 import { Schedule } from '../../../interfaces/Schedule';
 import { awxAPI } from '../../../common/api/awx-utils';
-import { parseStringToTagArray } from '../../../resources/templates/JobTemplateFormHelpers';
-import { InstanceGroup } from '../../../interfaces/InstanceGroup';
-import { Label } from '../../../interfaces/Label';
-
 export function ScheduleEditWizard() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const params = useParams<{ id?: string; schedule_id?: string }>();
 
   const { data: schedule } = useGetItem<Schedule>(awxAPI`/schedules/`, params.schedule_id);
-  const { data: instance_groups } = useGet<InstanceGroup>(
-    awxAPI`/schedules/${params.schedule_id as string}/instance_groups/`
-  );
-  const { data: labels } = useGet<Label>(
-    awxAPI`/schedules/${params.schedule_id as string}/labels/`
-  );
-  const { data: credentials } = useGet<Credential>(
-    awxAPI`/schedules/${params.schedule_id as string}/credentials/`
-  );
 
   const navigate = useNavigate();
 
@@ -128,24 +115,7 @@ export function ScheduleEditWizard() {
       timezone: schedule?.timezone,
     },
     nodePromptsStep: {
-      prompt: {
-        credentials: credentials,
-        diff_mode: schedule?.diff_mode,
-        execution_environment: schedule?.execution_environment,
-        extra_vars: schedule?.extra_data,
-        forks: schedule?.forks,
-        instance_groups: instance_groups,
-        inventory: schedule?.inventory,
-        job_slice_count: schedule?.job_slice_count,
-        job_tags: schedule?.job_tags && parseStringToTagArray(schedule?.job_tags),
-        job_type: schedule?.job_type,
-        labels: labels,
-        limit: schedule?.limit,
-        scm_branch: schedule?.scm_branch,
-        skip_tags: schedule?.skip_tags && parseStringToTagArray(schedule?.skip_tags),
-        timeout: schedule?.timeout,
-        verbosity: schedule?.verbosity,
-      },
+      prompt: {},
     },
     rules: {
       id: undefined,
@@ -188,10 +158,10 @@ export function ScheduleEditWizard() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Create Schedule')}
+        title={t('Edit Schedule')}
         breadcrumbs={[
           { label: t('Schedules'), to: getPageUrl(AwxRoute.Schedules) },
-          { label: t('Create Schedule') },
+          { label: t('Edit Schedule') },
         ]}
       />
       <PageWizard<ScheduleFormWizard>
