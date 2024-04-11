@@ -19,7 +19,7 @@ export function useNotifiersColumns() {
         sort: 'name',
         card: 'name',
         list: 'name',
-        defaultSortDirection: 'desc',
+        defaultSortDirection: 'asc',
         defaultSort: true,
       },
       {
