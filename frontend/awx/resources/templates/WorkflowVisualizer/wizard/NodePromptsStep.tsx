@@ -1,4 +1,4 @@
-import { useEffect, SetStateAction, useState } from 'react';
+import { useEffect, SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFormContext, useWatch } from 'react-hook-form';
 import {
@@ -27,13 +27,12 @@ export function NodePromptsStep() {
     wizardData: WizardFormValues;
     setStepData: React.Dispatch<SetStateAction<Record<string, object>>>;
   };
-  const { reset, formState } = useFormContext<WizardFormValues>();
+  const { reset } = useFormContext<WizardFormValues>();
   const promptForm = useWatch<{ prompt: PromptFormValues }>({ name: 'prompt' });
 
   const { launch_config: config, node_resource, prompt } = wizardData;
   const template = node_resource as JobTemplate | WorkflowJobTemplate;
   const organizationId = template?.organization ?? null;
-  const [defaultSet, setDefaultSet] = useState(false);
 
   useEffect(() => {
     setStepData((prev) => ({
@@ -45,8 +44,8 @@ export function NodePromptsStep() {
   }, [promptForm, setStepData]);
 
   useEffect(() => {
-    if (!formState || !formState.defaultValues?.prompt || defaultSet) return;
-    const defaults = formState.defaultValues?.prompt;
+    if (!config || !config?.defaults) return;
+    const { defaults } = config;
 
     const readOnlyLabels = defaults?.labels?.map((label) => ({
       ...label,
@@ -59,17 +58,18 @@ export function NodePromptsStep() {
       extra_vars: prompt?.extra_vars ?? defaults.extra_vars,
       forks: prompt?.forks ?? defaults.forks,
       instance_groups: prompt?.instance_groups ?? defaults.instance_groups,
-      inventory: prompt?.inventory ?? defaults.inventory,
+      inventory: prompt?.inventory ?? (defaults.inventory.id ? defaults.inventory : null),
       job_slice_count: prompt?.job_slice_count ?? defaults.job_slice_count,
-      job_tags: prompt?.job_tags ?? defaults.job_tags,
+      job_tags: prompt?.job_tags ?? parseStringToTagArray(defaults.job_tags),
       job_type: prompt?.job_type ?? defaults.job_type,
       labels: prompt?.labels ?? readOnlyLabels,
       limit: prompt?.limit ?? defaults.limit,
       organization: prompt?.organization ?? organizationId,
       scm_branch: prompt?.scm_branch ?? defaults.scm_branch,
-      skip_tags: prompt?.skip_tags ?? defaults.skip_tags,
+      skip_tags: prompt?.skip_tags ?? parseStringToTagArray(defaults.skip_tags),
       timeout: prompt?.timeout ?? defaults.timeout,
       verbosity: prompt?.verbosity ?? defaults.verbosity,
+      defaults,
     };
 
     setStepData((prev) => ({
@@ -79,17 +79,7 @@ export function NodePromptsStep() {
       },
     }));
     reset({ prompt: defaultPromptValues });
-    setDefaultSet(true);
-  }, [
-    reset,
-    organizationId,
-    setStepData,
-    config,
-    prompt,
-    formState,
-    wizardData.prompt,
-    defaultSet,
-  ]);
+  }, [reset, organizationId, setStepData, config, prompt]);
 
   if (!config || !template) {
     return null;

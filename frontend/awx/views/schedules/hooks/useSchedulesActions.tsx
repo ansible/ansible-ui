@@ -8,7 +8,7 @@ import { cannotDeleteResource, cannotEditResource } from '../../../../common/uti
 import { awxAPI } from '../../../common/api/awx-utils';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { Schedule } from '../../../interfaces/Schedule';
-import { useGetSchedulEditUrl } from './scheduleHelpers';
+import { useGetSchedulCreateUrl } from './scheduleHelpers';
 import { useDeleteSchedules } from './useDeleteSchedules';
 
 export function useSchedulesActions(options: {
@@ -26,7 +26,8 @@ export function useSchedulesActions(options: {
     },
     [options]
   );
-  const editUrl = useGetSchedulEditUrl(options.sublistEndpoint);
+
+  const editUrl = useGetSchedulCreateUrl(options.sublistEndpoint);
   const rowActions = useMemo<IPageAction<Schedule>[]>(
     () => [
       {
@@ -47,7 +48,7 @@ export function useSchedulesActions(options: {
         icon: PencilAltIcon,
         label: t(`Edit schedule`),
         isDisabled: (schedule) => cannotEditResource(schedule, t, canCreateSchedule),
-        href: (schedule) => editUrl.replace(':schedule_id', schedule.id.toString()),
+        href: (schedule) => editUrl.replace('/create', `/${schedule.id.toString()}/edit`),
         isPinned: true,
       },
       { type: PageActionType.Seperator },

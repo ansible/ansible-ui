@@ -7,7 +7,7 @@ import { AwxRoute } from '../../../main/AwxRoutes';
 import { ScheduleFormWizard } from '../types';
 import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
 import { RulesStep } from './RulesStep';
-import { Frequency, RRule, rrulestr } from 'rrule';
+import { Frequency, RRule, RRuleSet, rrulestr } from 'rrule';
 import { ExceptionsStep } from './ExceptionsStep';
 import { ScheduleSurveyStep } from './ScheduleSurveyStep';
 import { NodeTypeStep } from '../../../resources/templates/WorkflowVisualizer/wizard/NodeTypeStep';
@@ -98,7 +98,9 @@ export function ScheduleEditWizard() {
   ];
 
   if (!schedule) return;
-  const ruleObj = schedule.rrule && rrulestr(schedule.rrule);
+  const ruleSet = schedule.rrule && rrulestr(schedule.rrule);
+  const ruleList: RRule[] =
+    ruleSet instanceof RRuleSet ? ruleSet._rrule : ruleSet === '' ? [] : [ruleSet];
 
   const currentValues = {
     details: {
@@ -128,7 +130,7 @@ export function ScheduleEditWizard() {
       byminute: null,
       byhour: null,
       endingType: '',
-      rules: [{ id: 1, rule: ruleObj }],
+      rules: ruleList.map((rule, i) => ({ id: i, rule: rule })),
     },
     exceptions: {
       id: undefined,
