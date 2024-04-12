@@ -7,6 +7,7 @@
     "name": "Organization 2"
   },
   "url": "https://github.com/ansible/ansible-ui",
+  "proxy": "proxy.example.com",
   "git_hash": "a1c2b012f84de83c4a9fa5126430816bf68364b2",
   "credential": null,
   "import_state": "completed",
