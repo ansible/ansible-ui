@@ -58,7 +58,6 @@ export interface AuthenticatorFormValues {
   name: string;
   enabled: boolean;
   create_objects: boolean;
-  users_unique: boolean;
   remove_users: boolean;
   configuration: Configuration;
   type: AuthenticatorTypeEnum;

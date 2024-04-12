@@ -33,7 +33,6 @@
       },
       "enabled": true,
       "create_objects": true,
-      "users_unique": false,
       "remove_users": false,
       "configuration": {},
       "type": "ansible_base.authentication.authenticator_plugins.local",

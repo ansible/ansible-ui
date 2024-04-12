@@ -17,7 +17,6 @@
       "summary_fields": {},
       "enabled": true,
       "create_objects": true,
-      "users_unique": false,
       "remove_users": false,
       "configuration": {},
       "type": "ansible_base.authenticator_plugins.local",
@@ -53,7 +52,6 @@
       },
       "enabled": true,
       "create_objects": true,
-      "users_unique": false,
       "remove_users": true,
       "configuration": {
         "ACCESS_TOKEN_URL": "https://keycloak:8443/auth/realms/gateway/protocol/openid-connect/token",
@@ -99,7 +97,6 @@
       },
       "enabled": true,
       "create_objects": true,
-      "users_unique": false,
       "remove_users": true,
       "configuration": {
         "BIND_DN": "cn=admin,dc=example,dc=org",
