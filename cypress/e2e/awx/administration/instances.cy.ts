@@ -38,7 +38,8 @@ describe('Instances - Add/Edit', () => {
       .its('response.body')
       .then((instance: Instance) => {
         cy.navigateTo('awx', 'instances');
-        cy.clickTableRow(instanceHostname);
+        cy.filterTableBySingleSelect('hostname', instanceHostname);
+        cy.clickTableRowLink('name', instanceHostname, { disableFilter: true });
         cy.getByDataCy('name').should('contain', instanceHostname);
         cy.getByDataCy('node-type').should('contain', 'Execution');
         cy.getByDataCy('status').should('contain', 'Installed');
@@ -50,7 +51,8 @@ describe('Instances - Add/Edit', () => {
   it('user can edit an instance and navigate to details page', () => {
     cy.intercept('PATCH', '/api/v2/instances/*').as('editedInstance');
 
-    cy.clickTableRow(instance.hostname);
+    cy.filterTableBySingleSelect('hostname', instance.hostname);
+    cy.clickTableRowLink('name', instance.hostname, { disableFilter: true });
     cy.url().then((currentUrl) => {
       expect(currentUrl.includes('details')).to.be.true;
     });
@@ -94,7 +96,8 @@ describe('Instances - Remove', () => {
   it('user can remove an instance from details page', () => {
     cy.intercept('PATCH', '/api/v2/instances/*').as('removedInstance');
 
-    cy.clickTableRow(instance.hostname);
+    cy.filterTableBySingleSelect('hostname', instance.hostname);
+    cy.clickTableRowLink('name', instance.hostname, { disableFilter: true });
     cy.url().then((currentUrl) => {
       expect(currentUrl.includes('details')).to.be.true;
     });
@@ -120,7 +123,7 @@ describe('Instances - Remove', () => {
     cy.intercept('PATCH', '/api/v2/instances/*').as('removedInstance');
     cy.get('[data-cy="actions-dropdown"]').click();
     cy.get('[data-cy="remove-instance"]').should('have.attr', 'aria-disabled', 'true');
-    cy.filterTableByText(instance.hostname);
+    cy.filterTableBySingleSelect('hostname', instance.hostname);
     cy.contains('tr', instance.hostname).find('input').check();
     cy.get('[data-cy="actions-dropdown"]').click();
     cy.get('[data-cy="remove-instance"]').should('have.attr', 'aria-disabled', 'false');
@@ -149,9 +152,8 @@ describe('Instances - Remove', () => {
     cy.intercept('PATCH', '/api/v2/instances/*').as('removedInstance');
     cy.get('[data-cy="actions-dropdown"]').click();
     cy.get('[data-cy="remove-instance"]').should('have.attr', 'aria-disabled', 'true');
-    cy.filterTableByText(testSignature);
-    cy.get('tbody').find('tr').should('have.length', 5);
-    cy.get('[data-cy="select-all"]', { timeout: 30000 }).click();
+    cy.filterTableBySingleSelect('hostname', testSignature);
+    cy.selectTableRowByCheckbox('name', testSignature, { disableFilter: true });
     cy.get('[data-cy="actions-dropdown"]').click();
     cy.get('[data-cy="remove-instance"]').should('have.attr', 'aria-disabled', 'false');
     cy.get('[data-cy="remove-instance"]').click();
@@ -197,7 +199,8 @@ describe('Instances - Peers', () => {
     );
 
     cy.intercept('PATCH', '/api/v2/instances/*').as('associatePeer');
-    cy.clickTableRow(instance.hostname);
+    cy.filterTableBySingleSelect('hostname', instance.hostname);
+    cy.clickTableRowLink('name', instance.hostname, { disableFilter: true });
     cy.getByDataCy('instances-peers-tab').click();
     cy.url().then((currentUrl) => {
       expect(currentUrl.includes('peers')).to.be.true;
@@ -242,7 +245,8 @@ describe('Instances - Listener Addresses', () => {
   });
 
   it('user can navigate to the listener addresses tab in details page', () => {
-    cy.clickTableRow(instance?.hostname);
+    cy.filterTableBySingleSelect('hostname', instance.hostname);
+    cy.clickTableRowLink('name', instance.hostname, { disableFilter: true });
     cy.getByDataCy('instances-listener-addresses-tab').click();
     cy.url().then((currentUrl) => {
       expect(currentUrl.includes('listener-addresses')).to.be.true;
