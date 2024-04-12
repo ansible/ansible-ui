@@ -20,10 +20,14 @@ describe('Instance Groups List', () => {
       cy.get('tbody').find('tr').should('have.length', 3);
     });
     it('Filter instance groups by name', () => {
+      cy.intercept(
+        { method: 'OPTIONS', url: '/api/v2/instance_groups/' },
+        { fixture: 'mock_options.json' }
+      );
       cy.mount(<InstanceGroups />);
-      cy.intercept('api/v2/instance_groups/?name__icontains=foo*').as('nameFilterRequest');
-      cy.filterTableByText('foo');
-      cy.wait('@nameFilterRequest');
+      cy.filterTableBySingleSelect('name', 'default');
+      cy.get('tr').should('have.length.greaterThan', 0);
+      cy.getByDataCy('filter-input').click();
       cy.clickButton(/^Clear all filters$/);
     });
     it('Create group button is disabled if the user does not have permission to create instance groups', () => {

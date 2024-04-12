@@ -82,7 +82,9 @@ describe('Inventories Tests', () => {
       });
       const igName = instanceGroup?.name;
       if (igName) {
-        cy.selectTableRowInDialog(igName);
+        cy.selectTableRowByCheckbox('name', igName, {
+          disableFilter: true,
+        });
         cy.contains('button', 'Confirm').click();
         cy.contains('button', 'Save inventory').click(); //Add an interception call for the edited inventory
         cy.verifyPageTitle(inventory.name);
