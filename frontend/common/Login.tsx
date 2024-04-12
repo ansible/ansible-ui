@@ -61,7 +61,6 @@ type LoginProps = {
 
 export function Login(props: LoginProps) {
   const { t } = useTranslation();
-  // const productName = process.env.PRODUCT ?? 'Ansible';
   const [translations] = useFrameworkTranslations();
 
   const productNames: { [key: string]: string } = {
@@ -71,13 +70,13 @@ export function Login(props: LoginProps) {
     'Ansible Automation Platform': 'Ansible Automation Platform',
   };
 
-  const label = productNames[process.env.PRODUCT] || process.env.PRODUCTs;
+  const label = productNames[process.env.PRODUCT] || process.env.PRODUCT;
   return (
     <ErrorBoundary message={translations.errorText}>
       <Wrapper>
         <Inner>
           <Heading headingLevel="h1" size={TitleSizes['2xl']}>
-            {t('Welcome to {{productName}}', { productName })}
+            {t('Welcome to {{label}}', { label })}
           </Heading>
           <LoginForm
             apiUrl={props.apiUrl}
