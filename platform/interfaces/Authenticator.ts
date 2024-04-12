@@ -20,7 +20,6 @@ export interface Authenticator {
   };
   enabled: boolean;
   create_objects: boolean;
-  users_unique: boolean;
   remove_users: boolean;
   configuration: {
     [key: string]: string | string[] | { [k: string]: string };
