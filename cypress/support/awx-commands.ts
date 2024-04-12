@@ -1,3 +1,5 @@
+/// <reference types="cypress" />
+
 import '@cypress/code-coverage/support';
 import jsyaml from 'js-yaml';
 import { SetRequired } from 'type-fest';
@@ -249,28 +251,36 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add('getAwxWFApprovalByWorkflowJobID', (workflowJobID: number) => {
-  cy.requestGet<AwxItemsResponse<WorkflowNode>>(
-    awxAPI`/workflow_jobs/${workflowJobID.toString()}/workflow_nodes/`
-  )
-    .its('results')
-    .then((results: WorkflowJobNode[]) => {
-      if (results.length > 0) {
-        for (const wfjNode of results) {
-          if (wfjNode.summary_fields.workflow_job.id === workflowJobID) {
-            const workflowId = wfjNode.summary_fields.workflow_job.id + 1;
-            cy.awxRequestGet<AwxItemsResponse<WorkflowApproval>>(
-              awxAPI`/workflow_approvals/?id=${workflowId.toString()}`
-            )
-              .its('results')
-              .then((res: WorkflowApproval[]) => {
-                return res;
-              });
-          }
-        }
-      }
-    });
-});
+Cypress.Commands.add(
+  'getFirstPendingWorkflowApprovalsForWorkflowJobID',
+  (workflowJobID: number) => {
+    cy.requestGet<AwxItemsResponse<WorkflowNode>>(
+      awxAPI`/workflow_jobs/${workflowJobID.toString()}/workflow_nodes/`
+    )
+      .its('results')
+      .then((workflowJobNodes: WorkflowJobNode[]) => {
+        const workflowApprovalIds = workflowJobNodes
+          .filter((node) => node.summary_fields.job?.type === 'workflow_approval')
+          .filter((node) => node.summary_fields.job?.status === 'pending')
+          .map((node) => node.summary_fields.job?.id);
+        if (workflowApprovalIds.length === 0) return cy.then(() => undefined);
+        const workflowApprovalId = workflowApprovalIds[0];
+        return cy.awxRequestGet<WorkflowApproval>(
+          awxAPI`/workflow_approvals/${workflowApprovalId!.toString()}`
+        );
+      });
+  }
+);
+
+Cypress.Commands.add(
+  'pollFirstPendingWorkflowApprovalsForWorkflowJobID',
+  (workflowJobID: number) => {
+    cy.poll<WorkflowApproval>(
+      () => cy.getFirstPendingWorkflowApprovalsForWorkflowJobID(workflowJobID),
+      (approval: WorkflowApproval) => !!approval
+    );
+  }
+);
 
 /**
  * cy.inputCustomCredTypeConfig(json/yml, input/injector config)
