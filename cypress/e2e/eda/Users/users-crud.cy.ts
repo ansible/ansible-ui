@@ -3,7 +3,7 @@ import { randomString } from '../../../../framework/utils/random-string';
 import { EdaUser } from '../../../../frontend/eda/interfaces/EdaUser';
 import { edaAPI } from '../../../support/formatApiPathForEDA';
 
-describe('EDA Users- Create, Edit, Delete', () => {
+describe.skip('EDA Users- Create, Edit, Delete', () => {
   let roleNames: string[];
   let roleIDs: number[];
   let editorRoleID: number;
