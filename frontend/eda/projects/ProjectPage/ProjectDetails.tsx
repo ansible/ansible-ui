@@ -44,24 +44,24 @@ export function ProjectDetails() {
         )}
       </PageDetail>
       <PageDetail
-        label={t('SCM type')}
-        helpText={t('There is currently only one SCM type available for use.')}
+        label={t('Source control type')}
+        helpText={t('There is currently only one source control type available for use.')}
       >
         {project?.scm_type ? capitalizeFirstLetter(project?.scm_type) : t('Git')}
       </PageDetail>
       <PageDetail
-        label={t('SCM URL')}
+        label={t('Source control URL')}
         helpText={t('HTTP[S] protocol address of a repository, such as GitHub or GitLab.')}
       >
         {project?.url || ''}
       </PageDetail>
-      <PageDetail
-        label={t('Proxy')}
-        helpText={t('Proxy used to access HTTP or HTTPS git cloning.')}
-      >
+      <PageDetail label={t('Proxy')} helpText={t('Proxy used to access HTTP or HTTPS servers.')}>
         {project?.proxy || ''}
       </PageDetail>
-      <PageDetail label={t('Credential')} helpText={t('The token needed to utilize the SCM URL.')}>
+      <PageDetail
+        label={t('Source control credential')}
+        helpText={t('The token needed to utilize the source control URL.')}
+      >
         {project && project.eda_credential ? (
           <Link
             to={getPageUrl(EdaRoute.CredentialPage, {
@@ -75,7 +75,7 @@ export function ProjectDetails() {
         )}
       </PageDetail>
       <PageDetail
-        label={t('Content Signature Validation Credential')}
+        label={t('Content signature validation credential')}
         helpText={t(
           'Enable content signing to verify that the content has remained secure when a project is synced. If the content has been tampered with, the job will not run.'
         )}
@@ -98,10 +98,10 @@ export function ProjectDetails() {
       <PageDetail label={t('Status')}>
         <StatusCell status={project?.import_state || ''} />
       </PageDetail>
-      <PageDetail label={t('Source Control Branch/Tag/Commit')}>
+      <PageDetail label={t('Source control branch/tag/commit')}>
         {project?.scm_branch || ''}
       </PageDetail>
-      <PageDetail label={t('Source Control Refspec')}>{project?.scm_refspec || ''}</PageDetail>
+      <PageDetail label={t('Source control refspec')}>{project?.scm_refspec || ''}</PageDetail>
       <PageDetail label={t('Import error')}>{project?.import_error || ''}</PageDetail>
       <PageDetail label={t('Created')}>
         {project?.created_at ? formatDateString(project.created_at) : ''}
