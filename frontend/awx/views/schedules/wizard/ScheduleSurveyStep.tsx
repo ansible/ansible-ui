@@ -19,7 +19,7 @@ export function ScheduleSurveyStep() {
 
   const choicesTo: PageSelectOption<string>[] = [];
   survey_spec?.spec.map((element: Spec) => {
-    if (element.type === 'multiplechoice') {
+    if (element.type === 'multiplechoice' && Array.isArray(element.choices)) {
       element.choices?.map((choice: string) => {
         choicesTo.push({ value: choice, label: t(choice) });
       });

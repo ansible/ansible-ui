@@ -4,7 +4,7 @@ import { MultipleChoiceField } from './MultipleChoiceField';
 describe('MultipleChoiceField', () => {
   describe('Multiple Choice - single select', () => {
     const defaultValue = {
-      choices: [
+      formattedChoices: [
         { name: 'choice 1', default: true },
         { name: 'choice 2', default: false },
         { name: 'choice 3', default: false },
@@ -33,7 +33,7 @@ describe('MultipleChoiceField', () => {
     });
 
     it('should let user add, update and remove options', () => {
-      defaultValue.choices.map((choice, index) => {
+      defaultValue.formattedChoices.map((choice, index) => {
         cy.getByDataCy(`choice-option-${index}`).should('have.value', choice.name);
         cy.getByDataCy(`remove-choice-${index}`).should('exist');
       });
@@ -63,7 +63,7 @@ describe('MultipleChoiceField', () => {
     });
 
     it('should let user select only single default option', () => {
-      defaultValue.choices.map((choice, index) => {
+      defaultValue.formattedChoices.map((choice, index) => {
         cy.getByDataCy(`choice-radio-${index}`).parent().contains('Default option');
       });
 
@@ -83,7 +83,8 @@ describe('MultipleChoiceField', () => {
     });
 
     it('should display errors if component is not valid', () => {
-      cy.getByDataCy('choice-option-0').clear().type('{enter}');
+      cy.getByDataCy('choice-option-0').clear();
+      cy.getByDataCy('choice-option-0').type('{enter}');
       cy.get('[data-cy="choice-radio-0"]').should('be.disabled');
       cy.contains('Choice option cannot be empty.');
     });
@@ -91,7 +92,7 @@ describe('MultipleChoiceField', () => {
 
   describe('Multiple Choice - multiple select', () => {
     const defaultValue = {
-      choices: [
+      formattedChoices: [
         { name: 'choice 1', default: true },
         { name: 'choice 2', default: false },
         { name: 'choice 3', default: true },
@@ -112,7 +113,7 @@ describe('MultipleChoiceField', () => {
     });
 
     it('should let user add, update and remove options', () => {
-      defaultValue.choices.map((choice, index) => {
+      defaultValue.formattedChoices.map((choice, index) => {
         cy.getByDataCy(`choice-option-${index}`).should('have.value', choice.name);
         cy.getByDataCy(`remove-choice-${index}`).should('exist');
         cy.getByDataCy(`choice-checkbox-${index}`).should('have.value', String(choice.default));
@@ -120,7 +121,7 @@ describe('MultipleChoiceField', () => {
 
       cy.getByDataCy('choice-checkbox-1').check();
 
-      defaultValue.choices.map((choice, index) => {
+      defaultValue.formattedChoices.map((choice, index) => {
         cy.getByDataCy(`choice-checkbox-${index}`).should('have.attr', 'checked');
       });
 

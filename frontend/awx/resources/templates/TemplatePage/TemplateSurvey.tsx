@@ -8,6 +8,7 @@ import {
   PageActionSelection,
   PageActionType,
   PageTable,
+  usePageNavigate,
 } from '../../../../../framework';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useGetItem } from '../../../../common/crud/useGet';
@@ -22,6 +23,7 @@ import { useSurveyView } from '../hooks/useSurveyView';
 import { useSurveyColumns } from '../hooks/useSurveyColumns';
 import { useSurveyToolbarActions } from '../hooks/useSurveyToolbarActions';
 import styled from 'styled-components';
+import { AwxRoute } from '../../../main/AwxRoutes';
 
 const SurveySwitch = styled(Switch)`
   margin: 0 16px;
@@ -68,6 +70,7 @@ export function TemplateSurveyInternal({
   onToggleSurvey: (enabled: boolean) => Promise<void>;
 }) {
   const { t } = useTranslation();
+  const pageNavigate = usePageNavigate();
 
   const view = useSurveyView({
     url:
@@ -79,7 +82,10 @@ export function TemplateSurveyInternal({
   const canCreateSurvey = template.summary_fields.user_capabilities.edit;
   const canDeleteSurvey = template.summary_fields.user_capabilities.delete;
 
-  const tableColumns = useSurveyColumns();
+  const tableColumns = useSurveyColumns({
+    templateType: template.type,
+    id: template.id.toString(),
+  });
   const toolbarActions = useSurveyToolbarActions(view);
   const deleteQuestions = useDeleteSurveyDialog(view.unselectItemsAndRefresh);
 
@@ -93,8 +99,16 @@ export function TemplateSurveyInternal({
         label: t('Edit question'),
         isDisabled: () =>
           canCreateSurvey ? undefined : t('You do not have permission to edit this question.'),
-        onClick: () => {
-          alert('TODO');
+        onClick: (question) => {
+          pageNavigate(
+            template.type === 'job_template'
+              ? AwxRoute.EditJobTemplateSurvey
+              : AwxRoute.EditWorkflowJobTemplateSurvey,
+            {
+              params: { id: template.id.toString() },
+              query: { question_variable: question.variable },
+            }
+          );
         },
       },
       {
@@ -108,7 +122,7 @@ export function TemplateSurveyInternal({
         isDanger: true,
       },
     ],
-    [t, canCreateSurvey, canDeleteSurvey, deleteQuestions]
+    [t, canCreateSurvey, canDeleteSurvey, deleteQuestions, pageNavigate, template.id, template.type]
   );
 
   return (
@@ -133,7 +147,20 @@ export function TemplateSurveyInternal({
       emptyStateIcon={canCreateSurvey ? undefined : CubesIcon}
       emptyStateButtonText={canCreateSurvey ? t('Create survey question') : undefined}
       emptyStateButtonIcon={canCreateSurvey ? <PlusCircleIcon /> : undefined}
-      emptyStateButtonClick={canCreateSurvey ? () => alert('TODO') : undefined}
+      emptyStateButtonClick={
+        canCreateSurvey
+          ? () => {
+              pageNavigate(
+                template.type === 'job_template'
+                  ? AwxRoute.AddJobTemplateSurvey
+                  : AwxRoute.AddWorkflowJobTemplateSurvey,
+                {
+                  params: { id: template.id.toString() },
+                }
+              );
+            }
+          : undefined
+      }
       {...view}
       toolbarContent={
         <SurveySwitch
