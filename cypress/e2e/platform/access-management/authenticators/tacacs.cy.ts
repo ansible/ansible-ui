@@ -9,7 +9,8 @@ describe('TACACS Authentication form - create, edit, update and delete', () => {
     cy.fixture('platform-authenticators/tacacs').then((tacacsData: Tacacs) => {
       // Authentication List Page
       cy.navigateTo('platform', 'authenticators');
-      cy.verifyPageTitle('Authentication');
+      // creates a new TACACS authenticator
+      cy.verifyPageTitle('Authentication Methods');
 
       // Click on the Create Authentication button
       cy.containsBy('a', 'Create authentication').click();

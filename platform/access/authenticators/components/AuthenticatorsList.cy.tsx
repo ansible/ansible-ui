@@ -25,7 +25,7 @@ describe('Authenticators list', () => {
 
     it('Authenticators list renders', () => {
       cy.mount(<AuthenticatorsList />);
-      cy.verifyPageTitle('Authentication');
+      cy.verifyPageTitle('Authentication Methods');
       cy.get('tbody').find('tr').should('have.length', 3);
       // Toolbar actions are visible
       cy.get(`[data-cy="create-authentication"]`).should('be.visible');

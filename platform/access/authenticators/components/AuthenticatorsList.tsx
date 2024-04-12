@@ -8,6 +8,7 @@ import {
 import { useOptions } from '../../../../frontend/common/crud/useOptions';
 import { gatewayV1API } from '../../../api/gateway-api-utils';
 import { usePlatformView } from '../../../hooks/usePlatformView';
+import { useAwxConfig } from '../../../../frontend/awx/common/useAwxConfig';
 import { Authenticator } from '../../../interfaces/Authenticator';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
 import {
@@ -22,6 +23,7 @@ export function AuthenticatorsList() {
   const toolbarFilters = useAuthenticatorsFilters();
   const tableColumns = useAuthenticatorsColumns();
   const pageNavigate = usePageNavigate();
+  const config = useAwxConfig();
 
   const view = usePlatformView<Authenticator>({
     url: gatewayV1API`/authenticators/`,
@@ -37,7 +39,11 @@ export function AuthenticatorsList() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Authentication')}
+        title={t('Authentication Methods')}
+        titleHelpTitle={t('Authentication Method')}
+        titleHelp={t(
+          `Set up and manage your organization's authentication methods, which are used to simplify the login experience.`,
+        )}
         description={t(
           "Set up and manage your organization's authentication methods, which are used to simplify the login experience."
         )}
