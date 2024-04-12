@@ -87,7 +87,10 @@ Cypress.Commands.add('awxLogout', () => {
   cy.getByDataCy('account-menu')
     .click()
     .then(() => {
+      cy.intercept('GET', `/api/logout/`).as('logout');
       cy.get('ul>li>a').contains('Logout').click();
+      cy.wait('@logout');
+      cy.then(Cypress.session.clearAllSavedSessions);
     });
 });
 
@@ -127,7 +130,10 @@ Cypress.Commands.add('edaLogout', () => {
     .eq(1)
     .click()
     .then(() => {
+      cy.intercept('POST', edaAPI`/auth/session/logout/`).as('logout');
       cy.get('ul>li>a').contains('Logout').click();
+      cy.wait('@logout');
+      cy.then(Cypress.session.clearAllSavedSessions);
     });
 });
 
@@ -160,4 +166,16 @@ Cypress.Commands.add('hubLogin', () => {
     }
   );
   cy.visit(`/`, { retryOnStatusCodeFailure: true, retryOnNetworkFailure: true });
+});
+
+Cypress.Commands.add('hubLogout', () => {
+  cy.get('.pf-v5-c-dropdown__toggle')
+    .eq(1)
+    .click()
+    .then(() => {
+      cy.intercept('POST', hubAPI`/_ui/v1/auth/logout/`).as('logout');
+      cy.get('ul>li>a').contains('Logout').click();
+      cy.wait('@logout');
+      cy.then(Cypress.session.clearAllSavedSessions);
+    });
 });

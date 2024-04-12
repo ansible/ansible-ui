@@ -45,6 +45,8 @@ function escapeArgs(argsString: string, args: string[]) {
   return argsString;
 }
 
-export function randomE2Ename(): string {
-  return 'e2e_' + randomString(5, undefined, { isLowercase: true });
+export function randomE2Ename(name?: string): string {
+  let randomName = 'e2e_';
+  if (name) randomName += name + '_';
+  return randomName + randomString(5, undefined, { isLowercase: true });
 }
