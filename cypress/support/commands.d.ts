@@ -97,10 +97,13 @@ declare global {
       edaLogin(): Chainable<void>;
 
       /** Logout of the EDA application */
-      edaLogout(): Chainable<EdaUser | undefined>;
+      edaLogout(): Chainable<void>;
 
       /** Login to the HUB application */
       hubLogin(): Chainable<void>;
+
+      /** Logout of the HUB application */
+      hubLogout(): Chainable<void>;
 
       /** Check that the required environment variables are set */
       requiredVariablesAreSet(requiredVariables: string[]): Chainable<void>;
@@ -136,6 +139,11 @@ declare global {
         dataCy: string,
         text: string | number | RegExp
       ): Chainable<JQuery<HTMLElement>>;
+
+      poll<ResponseT>(
+        fn: () => Chainable<ResponseT | undefined>,
+        check: (response: ResponseT) => boolean
+      ): Chainable<ResponseT>;
 
       // ==============================================================================================================
       // Input Commands
@@ -1048,7 +1056,12 @@ declare global {
         secondNode: WorkflowNode
       ): Chainable<WorkflowNode>;
 
-      getAwxWFApprovalByWorkflowJobID(workflowJobID: number): Chainable<WorkflowApproval>;
+      getFirstPendingWorkflowApprovalsForWorkflowJobID(
+        workflowJobID: number
+      ): Chainable<WorkflowApproval | undefined>;
+      pollFirstPendingWorkflowApprovalsForWorkflowJobID(
+        workflowJobID: number
+      ): Chainable<WorkflowApproval>;
 
       waitForTemplateStatus(jobID: string): Chainable<AwxItemsResponse<JobEvent>>;
       waitForJobToProcessEvents(jobID: string, retries?: number): Chainable<Job>;
