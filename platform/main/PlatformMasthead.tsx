@@ -27,7 +27,6 @@ import { PageThemeSwitcher } from '../../framework/PageMasthead/PageThemeSwitche
 import { useAwxNotifications } from '../../frontend/awx/main/AwxMasthead';
 import { PageRefreshIcon } from '../../frontend/common/PageRefreshIcon';
 import { postRequest } from '../../frontend/common/crud/Data';
-import { useClearCache } from '../../frontend/common/useInvalidateCache';
 import { useHubNotifications } from '../../frontend/hub/main/HubMasthead';
 import { gatewayAPI } from '../api/gateway-api-utils';
 import { PlatformAbout } from './PlatformAbout';
@@ -41,7 +40,6 @@ export function PlatformMasthead() {
   useHubNotifications();
   const showTitle = useBreakpoint('md');
   const [_dialog, setDialog] = usePageDialog();
-  const { clearAllCache } = useClearCache();
   const { activePlatformUser, refreshActivePlatformUser } = usePlatformActiveUser();
 
   const logout = useCallback(async () => {
@@ -50,10 +48,8 @@ export function PlatformMasthead() {
     } catch (e) {
       // do nothing
     }
-    clearAllCache();
-
     void refreshActivePlatformUser?.();
-  }, [clearAllCache, refreshActivePlatformUser]);
+  }, [refreshActivePlatformUser]);
 
   return (
     <PageMasthead
