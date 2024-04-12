@@ -77,7 +77,7 @@ describe('Credentials.cy.ts', () => {
       /^Credentials are utilized by EDA for authentication when launching rulebooks.$/
     ).should('be.visible');
     cy.contains('th', 'Name');
-    cy.contains('th', 'Type');
+    cy.contains('th', 'Credential type');
   });
 
   it('Can delete a Credential not in use', () => {

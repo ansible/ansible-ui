@@ -4,7 +4,7 @@ import { ColumnTableOption, ITableColumn, TextCell, useGetPageUrl } from '../../
 import { EdaCredential } from '../../../interfaces/EdaCredential';
 import { EdaRoute } from '../../../main/EdaRoutes';
 
-export function useCredentialColumns() {
+export function useCredentialTypeCredentialsColumns() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   return useMemo<ITableColumn<EdaCredential>[]>(
@@ -25,7 +25,7 @@ export function useCredentialColumns() {
       {
         header: t('Description'),
         type: 'description',
-        value: (decisionEnvironment) => decisionEnvironment.description,
+        value: (credential) => credential.description,
         table: ColumnTableOption.description,
         card: 'description',
         list: 'description',
@@ -37,7 +37,7 @@ export function useCredentialColumns() {
       {
         header: t('Created'),
         type: 'datetime',
-        value: (instance) => instance.created_at,
+        value: (credential) => credential.created_at,
         table: ColumnTableOption.expanded,
         card: 'hidden',
         list: 'secondary',
