@@ -50,7 +50,7 @@ export function CreateAuthenticator() {
           authenticator: (authenticator as Authenticator).id,
           triggers: buildTriggers(map),
           organization: ['organization', 'team'].includes(map.map_type) ? map.organization : null,
-          team: ['team'].includes(map.map_type) ? map.team?.name : null,
+          team: ['team'].includes(map.map_type) ? map.team : null,
         };
         return postRequest(gatewayAPI`/authenticator_maps/`, data);
       });

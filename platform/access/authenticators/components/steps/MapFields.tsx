@@ -12,7 +12,7 @@ import {
 import { PageFormCreatableSelect } from '../../../../../framework/PageForm/Inputs/PageFormCreatableSelect';
 import { PageFormHidden } from '../../../../../framework/PageForm/Utils/PageFormHidden';
 import { PageFormPlatformOrganizationNameSelect } from '../../../organizations/components/PageFormPlatformOrganizationNameSelect';
-import { PageFormPlatformTeamSelect } from '../../../teams/components/PageFormPlatformTeamSelect';
+import { PageFormPlatformTeamNameSelect } from '../../../organizations/components/PageFormPlatformTeamNameSelect';
 import type { AuthenticatorFormValues, AuthenticatorMapValues } from '../AuthenticatorForm';
 
 const Checkbox = styled(PageFormCheckbox)`
@@ -201,7 +201,7 @@ export function MapFields(props: {
         </FormGrid>
         <FormGrid>
           <PageFormHidden watch={`mappings.${index}.map_type`} hidden={(value) => value !== 'team'}>
-            <PageFormPlatformTeamSelect name={`mappings.${index}.team`} isRequired />
+            <PageFormPlatformTeamNameSelect name={`mappings.${index}.team`} isRequired />
           </PageFormHidden>
           <PageFormHidden
             watch={`mappings.${index}.map_type`}
