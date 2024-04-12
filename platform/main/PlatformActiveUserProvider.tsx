@@ -1,8 +1,8 @@
-import { ReactNode, createContext, useContext, useMemo } from 'react';
+import { ReactNode, createContext, useContext, useEffect, useMemo, useState } from 'react';
 import useSWR from 'swr';
-import { AwxItemsResponse } from '../../frontend/awx/common/AwxItemsResponse';
 import { requestGet } from '../../frontend/common/crud/Data';
 import { gatewayAPI } from '../api/gateway-api-utils';
+import { PlatformItemsResponse } from '../interfaces/PlatformItemsResponse';
 import { PlatformUser } from '../interfaces/PlatformUser';
 
 interface ActiveUserState {
@@ -18,20 +18,33 @@ export function usePlatformActiveUser() {
 }
 
 export function PlatformActiveUserProvider(props: { children: ReactNode }) {
-  const response = useSWR<AwxItemsResponse<PlatformUser>>(gatewayAPI`/me/`, requestGet, {
+  const response = useSWR<PlatformItemsResponse<PlatformUser>>(gatewayAPI`/me/`, requestGet, {
     dedupingInterval: 0,
     refreshInterval: 10 * 1000,
   });
-  const { mutate } = response;
-  const activePlatformUser = useMemo<PlatformUser | undefined>(() => {
-    return !response.error && response.data?.results && response.data.results.length > 0
-      ? response.data.results[0]
-      : undefined;
-  }, [response]);
+
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const { error, isLoading, data, mutate } = response;
+
+  const [activePlatformUser, setActivePlatformUser] = useState<PlatformUser | undefined>(undefined);
+
+  useEffect(() => {
+    if (error) {
+      setActivePlatformUser(undefined);
+    }
+  }, [error]);
+
+  useEffect(() => {
+    if (data?.results && data.results.length > 0) {
+      setActivePlatformUser(data.results[0]);
+    }
+  }, [data]);
+
   const activePlatformUserIsLoading = useMemo<boolean>(
-    () => !activePlatformUser && !response.error && response.isLoading,
-    [activePlatformUser, response.error, response.isLoading]
+    () => !activePlatformUser && !error && isLoading,
+    [activePlatformUser, isLoading, error]
   );
+
   const state = useMemo<ActiveUserState>(() => {
     return {
       activePlatformUser,
@@ -39,6 +52,7 @@ export function PlatformActiveUserProvider(props: { children: ReactNode }) {
       activePlatformUserIsLoading,
     };
   }, [activePlatformUser, activePlatformUserIsLoading, mutate]);
+
   return (
     <PlatformActiveUserContext.Provider value={state}>
       {props.children}
