@@ -2,10 +2,13 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router-dom';
 import { PageNavigationItem } from '../../../../framework';
-import { PageNotImplemented } from '../../../../framework/PageEmptyStates/PageNotImplemented';
 import { Notifiers } from '../../administration/notifiers/Notifiers';
 import { AwxRoute } from '../AwxRoutes';
+
 import { AddNotifier, EditNotifier } from '../../administration/notifiers/NotifierForm';
+
+import { NotificationDetails } from '../../administration/notifiers/NotificationPage/NotificationDetails';
+import { NotificationPage } from '../../administration/notifiers/NotificationPage/NotificationPage';
 
 export function useAwxNotificationsRoutes() {
   const { t } = useTranslation();
@@ -18,12 +21,12 @@ export function useAwxNotificationsRoutes() {
         {
           id: AwxRoute.NotificationTemplatePage,
           path: ':id/',
-          element: <Notifiers />,
+          element: <NotificationPage />,
           children: [
             {
               id: AwxRoute.NotificationTemplateDetails,
               path: 'details',
-              element: <PageNotImplemented />,
+              element: <NotificationDetails />,
             },
             {
               path: '',

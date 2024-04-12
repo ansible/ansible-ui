@@ -41,7 +41,7 @@ export function NotificationPage() {
           persistentFilterKey: 'credential-types',
         }}
         tabs={[{ label: t('Details'), page: AwxRoute.NotificationTemplateDetails }]}
-        params={{ id: notificationTemplate.id }}
+        params={params}
       />
     </PageLayout>
   );
