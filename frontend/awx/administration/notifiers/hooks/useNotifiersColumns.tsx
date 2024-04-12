@@ -27,7 +27,8 @@ export function useNotifiersColumns() {
         cell: (template: NotificationTemplate) => (
           <StatusCell
             status={
-              template.summary_fields?.recent_notifications && template.summary_fields.recent_notifications.length > 0
+              template.summary_fields?.recent_notifications &&
+              template.summary_fields.recent_notifications.length > 0
                 ? template.summary_fields?.recent_notifications[0].status
                 : undefined
             }

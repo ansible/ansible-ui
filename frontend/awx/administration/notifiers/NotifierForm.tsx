@@ -28,7 +28,7 @@ import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSe
 import { useOptions } from '../../../common/crud/useOptions';
 import { requestCommon } from '../../../common/crud/requestCommon';
 import { usePageNavigate } from '../../../../framework';
-import { TFunction, t } from 'i18next';
+import { TFunction } from 'i18next';
 
 export function EditNotifier() {
   return <NotifierForm mode={'edit'} />;
@@ -49,14 +49,15 @@ export type NotificationTemplateOptions = {
   };
 };
 
-type NotificationTemplatEdit = Omit<NotificationTemplate, "id">;
+type NotificationTemplatEdit = Omit<NotificationTemplate, 'id'>;
 
+// TODO - finish rest of the form in the next PR
 function NotifierForm(props: { mode: 'add' | 'edit' }) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const { mode } = props;
   const params = useParams<{ id: string }>();
-  let getUrl = mode === 'add' ? '' : awxAPI`/notification_templates/${params.id || ''}/`;
+  const getUrl = mode === 'add' ? '' : awxAPI`/notification_templates/${params.id || ''}/`;
   const notifierRequest = useGet<NotificationTemplate>(getUrl);
   const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
@@ -94,17 +95,17 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
     const data: NotificationTemplate | NotificationTemplatEdit =
       mode === 'add'
         ? formData
-        : {
+        : ({
             description: formData.description,
             messages: formData.messages,
             name: formData.name,
             notification_configuration: formData.notification_configuration,
             notification_type: formData.notification_type,
             organization: formData.organization,
-          };
+          } as NotificationTemplatEdit);
 
     stringToArrays(data);
- 
+
     let fieldValue;
     // fix notification data types
     const fields =
@@ -228,19 +229,19 @@ function InnerForm(props: { notification_type: string }) {
   }
 
   if (notification_type === 'webhook') {
-    return <WebhookForm />;
+    //return <WebhookForm />;
   }
 
   if (notification_type === 'mattermost') {
-    return <MattermostForm />;
+    //return <MattermostForm />;
   }
 
   if (notification_type === 'rocketchat') {
-    return <RocketchatForm />;
+    //return <RocketchatForm />;
   }
 
   if (notification_type === 'irc') {
-    return <IrcForm />;
+    //return <IrcForm />;
   }
 
   return <></>;
@@ -273,7 +274,9 @@ function EmailForm() {
         name={'notification_configuration.recipients'}
         label={t('Recipient List')}
         isRequired
-        labelHelp={t('Use one email address per line to create a recipient list for this type of notification.')}
+        labelHelp={t(
+          'Use one email address per line to create a recipient list for this type of notification.'
+        )}
       />
 
       <PageFormTextInput<NotificationTemplate>
@@ -298,13 +301,20 @@ function EmailForm() {
         label={t('Timeout')}
         isRequired
         validate={(value) => validateNumber(value, 1, 120, t)}
-        labelHelp={t('The amount of time (in seconds) before the email notification stops trying to reach the host and times out. Ranges from 1 to 120 seconds.')}
+        labelHelp={t(
+          'The amount of time (in seconds) before the email notification stops trying to reach the host and times out. Ranges from 1 to 120 seconds.'
+        )}
       />
 
-      <PageFormGroup label={t('Email Options ')}
+      <PageFormGroup
+        label={t('Email Options ')}
         labelHelp={
           <Trans>
-            See Django <a href='https://docs.djangoproject.com/en/4.0/ref/settings/#std:setting-EMAIL_USE_TLS'>documentation</a> for more information.
+            See Django{' '}
+            <a href="https://docs.djangoproject.com/en/4.0/ref/settings/#std:setting-EMAIL_USE_TLS">
+              documentation
+            </a>{' '}
+            for more information.
           </Trans>
         }
       >
@@ -339,11 +349,14 @@ function SlackForm() {
         isRequired
         labelHelp={
           <Trans>
-            One Slack channel per line. The pound symbol (#) is required for channels. 
-            To respond to or start a thread to a specific message add the parent message Id 
-            to the channel where the parent message Id is 16 digits. A dot (.) 
-            must be manually inserted after the 10th digit. ie:#destination-channel, 1231257890.006423. 
-            See Slack <a href='https://api.slack.com/messaging/retrieving#individual_messages'>documentation</a> for more information.
+            One Slack channel per line. The pound symbol (#) is required for channels. To respond to
+            or start a thread to a specific message add the parent message Id to the channel where
+            the parent message Id is 16 digits. A dot (.) must be manually inserted after the 10th
+            digit. ie:#destination-channel, 1231257890.006423. See Slack{' '}
+            <a href="https://api.slack.com/messaging/retrieving#individual_messages">
+              documentation
+            </a>{' '}
+            for more information.
           </Trans>
         }
       />
@@ -351,9 +364,9 @@ function SlackForm() {
       <PageFormTextInput<NotificationTemplate>
         name={'notification_configuration.hex_color'}
         label={t('Notification color')}
-        labelHelp={
-          t('Specify a notification color. Acceptable colors are hex color code (example: #3af or #789abc).')
-        }
+        labelHelp={t(
+          'Specify a notification color. Acceptable colors are hex color code (example: #3af or #789abc).'
+        )}
       />
     </>
   );
@@ -383,14 +396,18 @@ function TwilioForm() {
         label={t('Source Phone Number')}
         validate={(value) => twilioPhoneNumber(value, t)}
         isRequired
-        labelHelp={t('The number associated with the "Messaging Service" in Twilio with the format +18005550199.')}
+        labelHelp={t(
+          'The number associated with the "Messaging Service" in Twilio with the format +18005550199.'
+        )}
       />
 
       <PageFormTextArea<NotificationTemplate>
         name={'notification_configuration.to_numbers'}
         label={t('Destination SMS Numbers')}
         validate={(value) => twilioPhoneNumber(value, t)}
-        labelHelp={t('Use one phone number per line to specify where to route SMS messages. Phone numbers should be formatted +11231231234. For more information see Twilio documentation')}
+        labelHelp={t(
+          'Use one phone number per line to specify where to route SMS messages. Phone numbers should be formatted +11231231234. For more information see Twilio documentation'
+        )}
         isRequired
       />
     </>
@@ -440,7 +457,9 @@ function GrafanaForm() {
         type={'text'}
         name={'notification_configuration.grafana_url'}
         label={t('Grafana URL')}
-        labelHelp={t('The base URL of the Grafana server - the /api/annotations endpoint will be added automatically to the base Grafana URL.')}
+        labelHelp={t(
+          'The base URL of the Grafana server - the /api/annotations endpoint will be added automatically to the base Grafana URL.'
+        )}
         isRequired
       />
 
@@ -455,7 +474,6 @@ function GrafanaForm() {
         name={'notification_configuration.dashboardId'}
         label={t('ID of the dashboard (optional)')}
       />
-     
 
       <PageFormTextInput<NotificationTemplate>
         name={'notification_configuration.panelId'}
@@ -468,7 +486,6 @@ function GrafanaForm() {
         labelHelp={t('Use one Annotation Tag per line, without commas.')}
       />
 
-         
       <PageFormCheckbox<NotificationTemplate>
         name={'notification_configuration.grafana_no_verify_ssl'}
         label={t('Disable SSL verification')}
@@ -477,11 +494,12 @@ function GrafanaForm() {
   );
 }
 
+/*
 function WebhookForm() {
   const { t } = useTranslation();
   return (
     <>
-     <PageFormTextInput<NotificationTemplate>
+      <PageFormTextInput<NotificationTemplate>
         type={'text'}
         name={'notification_configuration.username'}
         label={t('Username')}
@@ -510,19 +528,19 @@ function WebhookForm() {
         label={t('HTTP Headers')}
       />
 
-
       <PageFormSingleSelect<NotificationTemplate>
         name={'notification_configuration.http_method'}
         label={t('HTTP Method')}
         placeholder={t('Choose an HTTP method')}
         options={[
-          { label: 'POST', value : 'POST'},
-          { label: 'PUT', value : 'PUT'},
+          { label: 'POST', value: 'POST' },
+          { label: 'PUT', value: 'PUT' },
         ]}
       />
     </>
   );
 }
+
 
 function MattermostForm() {
   const { t } = useTranslation();
@@ -608,7 +626,7 @@ function IrcForm() {
       />
     </>
   );
-}
+}*/
 
 function arraysToString(data: NotificationTemplate) {
   if (!data.notification_configuration) {
@@ -651,78 +669,77 @@ function isList(key: string, notification_type: string) {
     return true;
   }
 
-  if (key === 'channels' && notification_type === 'slack')
-  {
+  if (key === 'channels' && notification_type === 'slack') {
     return true;
   }
 
-  if (key === 'to_numbers' && notification_type === 'twilio')
-  {
+  if (key === 'to_numbers' && notification_type === 'twilio') {
     return true;
   }
 
-  if (key === 'annotation_tags' && notification_type === 'grafana')
-  {
+  if (key === 'annotation_tags' && notification_type === 'grafana') {
     return true;
   }
 
   return false;
 }
 
-function validateEmail(value : string, t : TFunction<"translation", undefined>) {
-    // copied from old app to keep app consistent
-    // This isn't a perfect validator. It's likely to let a few
-    // invalid (though unlikely) email addresses through.
+function validateEmail(value: string, t: TFunction<'translation', undefined>) {
+  // copied from old app to keep app consistent
+  // This isn't a perfect validator. It's likely to let a few
+  // invalid (though unlikely) email addresses through.
 
-    // This is ok, because the server will always do strict validation for us.
+  // This is ok, because the server will always do strict validation for us.
 
-    if (value === '')
-    {
+  if (value === '') {
+    return undefined;
+  }
+  const splitVals = value?.split('@');
+
+  if (splitVals.length >= 2) {
+    if (splitVals[0] && splitVals[1]) {
+      // We get here if the string has an '@' that is enclosed by
+      // non-empty substrings
       return undefined;
     }
-    const splitVals = value?.split('@');
+  }
 
-    if (splitVals.length >= 2) {
-      if (splitVals[0] && splitVals[1]) {
-        // We get here if the string has an '@' that is enclosed by
-        // non-empty substrings
-        return undefined;
-      }
-    }
-
-    return t('Invalid email address');
+  return t('Invalid email address');
 }
 
-function validateNumber(str : string, min : number, max : number, t : TFunction<"translation", undefined>)
-{
+function validateNumber(
+  str: string,
+  min: number,
+  max: number,
+  t: TFunction<'translation', undefined>
+) {
   const val = Number.parseInt(str);
-  if (val >= min && val <= max)
-  {
+  if (val >= min && val <= max) {
     return undefined;
   }
 
-  return t('This field must be a number and have a value between {{min}} and {{max}}', { min, max});
+  return t('This field must be a number and have a value between {{min}} and {{max}}', {
+    min,
+    max,
+  });
 }
 
-export function twilioPhoneNumber(value : string, t : TFunction<"translation", undefined>) {
- 
-    if (value === '')
-    {
-      return undefined;
+export function twilioPhoneNumber(value: string, t: TFunction<'translation', undefined>) {
+  if (value === '') {
+    return undefined;
+  }
+
+  const phoneNumbers = value?.split('\n');
+  let error = undefined;
+
+  phoneNumbers?.forEach((v) => {
+    if (v === '') {
+      return;
     }
 
-    const phoneNumbers = value?.split('\n');
-    let error = undefined;
-
-    phoneNumbers?.forEach((v) => {
-      if (v === '')
-      {
-        return;
-      }
-
-      if (!/^\s*(?:\+?(\d{1,3}))?[. (]*(\d{7,12})$/.test(v)) {
-           error =  t('Please enter valid phone numbers.');
-      }
-    });
-    return error;
+    if (!/^\s*(?:\+?(\d{1,3}))?[. (]*(\d{7,12})$/.test(v)) {
+      error = t('Please enter valid phone numbers.');
+    }
+  });
+  return error;
 }

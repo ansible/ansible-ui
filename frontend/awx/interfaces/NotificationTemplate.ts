@@ -8,7 +8,7 @@ export interface NotificationTemplate
   id: number;
   name: string;
   organization: number;
-  summary_fields?: {
+  summary_fields: {
     recent_notifications: [
       {
         status: string;
