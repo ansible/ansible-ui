@@ -12,7 +12,6 @@ import { useAnsibleAboutModal } from '../../common/AboutModal';
 import { PageRefreshIcon } from '../../common/PageRefreshIcon';
 import { postRequest } from '../../common/crud/Data';
 import { useGet } from '../../common/crud/useGet';
-import { useClearCache } from '../../common/useInvalidateCache';
 import { CollectionVersionSearch } from '../collections/Collection';
 import { hubAPI } from '../common/api/formatPath';
 import { useHubActiveUser } from '../common/useHubActiveUser';
@@ -24,14 +23,12 @@ import GalaxyBrand from './galaxy-logo.svg';
 export function HubMasthead() {
   const { t } = useTranslation();
   const openAnsibleAboutModal = useAnsibleAboutModal();
-  const { clearAllCache } = useClearCache();
   useHubNotifications();
   const { activeHubUser, refreshActiveHubUser } = useHubActiveUser();
   const logout = useCallback(async () => {
     await postRequest(hubAPI`/_ui/v1/auth/logout/`, {});
-    clearAllCache();
     refreshActiveHubUser?.();
-  }, [clearAllCache, refreshActiveHubUser]);
+  }, [refreshActiveHubUser]);
   return (
     <PageMasthead brand={<GalaxyBrand style={{ height: 48, marginTop: -8 }} />}>
       <ToolbarGroup variant="icon-button-group" style={{ flexGrow: 1 }}>
