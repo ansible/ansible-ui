@@ -261,11 +261,12 @@ Cypress.Commands.add(
       .then((workflowJobNodes: WorkflowJobNode[]) => {
         const workflowApprovalIds = workflowJobNodes
           .filter((node) => node.summary_fields.job?.type === 'workflow_approval')
-          .filter((node) => node.summary_fields.job.status === 'pending')
-          .map((node) => node.summary_fields.job.id);
+          .filter((node) => node.summary_fields.job?.status === 'pending')
+          .map((node) => node.summary_fields.job?.id);
         if (workflowApprovalIds.length === 0) return cy.then(() => undefined);
+        const workflowApprovalId = workflowApprovalIds[0];
         return cy.awxRequestGet<WorkflowApproval>(
-          awxAPI`/workflow_approvals/${workflowApprovalIds[0].toString()}`
+          awxAPI`/workflow_approvals/${workflowApprovalId!.toString()}`
         );
       });
   }

@@ -141,7 +141,7 @@ declare global {
       ): Chainable<JQuery<HTMLElement>>;
 
       poll<ResponseT>(
-        fn: () => Chainable<ResponseT>,
+        fn: () => Chainable<ResponseT | undefined>,
         check: (response: ResponseT) => boolean
       ): Chainable<ResponseT>;
 
@@ -1061,7 +1061,7 @@ declare global {
       ): Chainable<WorkflowApproval | undefined>;
       pollFirstPendingWorkflowApprovalsForWorkflowJobID(
         workflowJobID: number
-      ): Chainable<WorkflowApproval | undefined>;
+      ): Chainable<WorkflowApproval>;
 
       waitForTemplateStatus(jobID: string): Chainable<AwxItemsResponse<JobEvent>>;
       waitForJobToProcessEvents(jobID: string, retries?: number): Chainable<Job>;

@@ -166,9 +166,9 @@ Cypress.Commands.add('getModal', () => {
 
 Cypress.Commands.add('poll', function requestPoll<
   ResponseT,
->(fn: () => Cypress.Chainable<ResponseT>, check: (response: ResponseT) => boolean) {
+>(fn: () => Cypress.Chainable<ResponseT | undefined>, check: (response: ResponseT) => boolean) {
   fn().then((response) => {
-    if (check(response)) {
+    if (response !== undefined && check(response)) {
       cy.wrap(response);
     } else {
       cy.wait(1000).then(() => cy.poll<ResponseT>(fn, check));
