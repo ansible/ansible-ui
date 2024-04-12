@@ -153,8 +153,8 @@ export function TemplateSurveyForm(props: IProps) {
           : newQuestion?.default?.toString();
 
     let question: Spec = {
-      max: newQuestion.max,
-      min: newQuestion.min,
+      max: Number(newQuestion.max),
+      min: Number(newQuestion.min),
       new_question: newQuestion.new_question,
       type: newQuestion.type,
       default: defaultValue,
