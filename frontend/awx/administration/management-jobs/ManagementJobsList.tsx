@@ -7,12 +7,14 @@ import { useManagementJobFilters } from './hooks/useManagementJobFilters';
 import { useManagementJobColumns } from './hooks/useManagementJobColumns';
 import { useAwxView } from '../../common/useAwxView';
 import { awxAPI } from '../../common/api/awx-utils';
+import { useManagementJobRowActions } from './hooks/useManagementJobRowActions';
 
 export function ManagementJobs() {
   const { t } = useTranslation();
   const config = useAwxConfig();
   const toolbarFilters = useManagementJobFilters();
   const tableColumns = useManagementJobColumns();
+  const rowActions = useManagementJobRowActions();
 
   const view = useAwxView<SystemJobTemplate>({
     url: awxAPI`/system_job_templates/`,
@@ -37,6 +39,7 @@ export function ManagementJobs() {
         id="awx-management-jobs"
         toolbarFilters={toolbarFilters}
         tableColumns={tableColumns}
+        rowActions={rowActions}
         errorStateTitle={t('Error loading management jobs')}
         emptyStateTitle="No management jobs yet"
         {...view}
