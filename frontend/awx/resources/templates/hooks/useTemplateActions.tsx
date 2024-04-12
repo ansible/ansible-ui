@@ -69,7 +69,7 @@ export function useTemplateActions({
         type: PageActionType.Link,
         selection: PageActionSelection.Single,
         isPinned: true,
-        isHidden: (template) => !template?.summary_fields.user_capabilities.edit,
+        isHidden: (template) => !template?.summary_fields?.user_capabilities?.edit,
         icon: PencilAltIcon,
         label: t('Edit template'),
         ouiaId: 'job-template-detail-edit-button',
@@ -100,7 +100,7 @@ export function useTemplateActions({
         selection: PageActionSelection.Single,
         icon: TrashIcon,
         isDisabled: (template) =>
-          !template?.summary_fields.user_capabilities.delete
+          !template?.summary_fields?.user_capabilities?.delete
             ? t('You do not have permission to delete this template')
             : undefined,
         label: t('Delete template'),
