@@ -13,7 +13,7 @@ import { awxAPI } from '../../../support/formatApiPathForAwx';
 const wfaURL = '/administration/workflow-approvals/';
 function actAssertAndDeleteWorkflowApproval(
   selectorDataCy: 'approve' | 'deny' | 'cancel',
-  wfaID: string
+  wfaID: number
 ) {
   let actionStatusCode: number;
   let statusText: string;
@@ -42,7 +42,7 @@ function actAssertAndDeleteWorkflowApproval(
     method: 'POST',
     url: `${actionURL}`,
   }).as('WFaction');
-  cy.getTableRow('id', wfaID)
+  cy.getTableRow('id', wfaID.toString())
     .within(() => {
       cy.getByDataCy('actions-column-cell').within(() => {
         cy.getByDataCy(selectorDataCy).click();
@@ -186,9 +186,8 @@ describe('Workflow Approvals - List View', () => {
       .its('response.body')
       .then((response: WorkflowJob) => {
         expect(response.id).to.exist;
-        cy.getAwxWFApprovalByWorkflowJobID(response.id).then(() => {
-          const thisWfId = response.id + 1;
-          actAssertAndDeleteWorkflowApproval('approve', `${thisWfId.toString()}`);
+        cy.pollFirstPendingWorkflowApprovalsForWorkflowJobID(response.id).then((approval) => {
+          actAssertAndDeleteWorkflowApproval('approve', approval.id);
         });
       });
   });
@@ -204,9 +203,8 @@ describe('Workflow Approvals - List View', () => {
       .its('response.body')
       .then((response: WorkflowJob) => {
         expect(response.id).to.exist;
-        cy.getAwxWFApprovalByWorkflowJobID(response.id).then(() => {
-          const thisWfId = response.id + 1;
-          actAssertAndDeleteWorkflowApproval('deny', `${thisWfId.toString()}`);
+        cy.pollFirstPendingWorkflowApprovalsForWorkflowJobID(response.id).then((approval) => {
+          actAssertAndDeleteWorkflowApproval('deny', approval.id);
         });
       });
   });
@@ -222,9 +220,8 @@ describe('Workflow Approvals - List View', () => {
       .its('response.body')
       .then((response: WorkflowJob) => {
         expect(response.id).to.exist;
-        cy.getAwxWFApprovalByWorkflowJobID(response.id).then(() => {
-          const thisWfId = response.id + 1;
-          actAssertAndDeleteWorkflowApproval('cancel', `${thisWfId.toString()}`);
+        cy.pollFirstPendingWorkflowApprovalsForWorkflowJobID(response.id).then((approval) => {
+          actAssertAndDeleteWorkflowApproval('cancel', approval.id);
         });
       });
   });
