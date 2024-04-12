@@ -52,6 +52,7 @@ Cypress.Commands.add('platformLogout', () => {
       cy.intercept('POST', gatewayV1API`/logout/`).as('logout');
       cy.contains('a', 'Logout').click();
       cy.wait('@logout');
+      cy.then(Cypress.session.clearAllSavedSessions);
     });
 });
 
