@@ -55,6 +55,12 @@ export function ProjectDetails() {
       >
         {project?.url || ''}
       </PageDetail>
+      <PageDetail
+        label={t('Proxy')}
+        helpText={t('Proxy used to access HTTP or HTTPS git cloning.')}
+      >
+        {project?.proxy || ''}
+      </PageDetail>
       <PageDetail label={t('Credential')} helpText={t('The token needed to utilize the SCM URL.')}>
         {project && project.eda_credential ? (
           <Link
