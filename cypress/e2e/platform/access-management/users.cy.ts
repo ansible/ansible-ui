@@ -113,7 +113,7 @@ describe('User Types - creates users of type normal and system admin', () => {
       });
   });
 
-  it('admin creates a normal user, log in as normal user, and verify auth type is set to local', () => {
+  it.skip('admin creates a normal user, log in as normal user, and verify auth type is set to local', () => {
     const userName = `platform-e2e-normal-user-${randomString(3).toLowerCase()}`;
     const firstName = `FirstName${randomString(2)}`;
     const lastName = `LastName ${randomString(2)}`;

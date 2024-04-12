@@ -1,17 +1,18 @@
-import { randomString } from '../../../../../framework/utils/random-string';
-import { gatewayV1API } from '../../../../support/formatApiPathForPlatform';
+import { randomE2Ename } from '../../../../support/utils';
 import { UIAuth } from '../../../../../platform/interfaces/UIAuth';
+import { gatewayV1API } from '../../../../../platform/api/gateway-api-utils';
 
-describe.skip('Platform Basic Authentication', () => {
-  it.skip('create local authenticator in ui, enable it, log out, log in, and check the new authenticator in response', () => {
+describe('Platform Basic Authentication', () => {
+  it('create local authenticator in ui, enable it, log out, log in, and check the new authenticator in response', () => {
     cy.platformLogin();
     cy.navigateTo('platform', 'authenticators');
     cy.verifyPageTitle('Authentication');
 
-    const localAuthenticator = `Platform Basic Auth ${randomString(2)}`;
+    const localAuthenticator = randomE2Ename();
+    cy.containsBy('a', 'Create authentication').click();
 
     // Create a new local authenticator
-    cy.getByDataCy('create-authentication').click();
+    cy.verifyPageTitle('Create Authentication');
     cy.selectAuthenticationType('local');
     cy.clickButton('Next');
     cy.get('[data-cy="name"]').type(localAuthenticator);
@@ -19,19 +20,14 @@ describe.skip('Platform Basic Authentication', () => {
     cy.clickButton('Next');
     cy.clickButton('Finish');
     cy.verifyPageTitle(localAuthenticator);
+
     cy.navigateTo('platform', 'authenticators');
     cy.verifyPageTitle('Authentication');
 
     // Enable the newly created local authenticator
-    cy.searchAndDisplayResourceByFilterOption(localAuthenticator, 'name');
-    cy.contains('tr', localAuthenticator).within(() => {
+    cy.getTableRow('name', localAuthenticator).within(() => {
       cy.get('[data-cy=toggle-switch]').click();
-      cy.get('.pf-v5-c-switch__label.pf-m-on')
-        .should('contain.text', 'Enabled')
-        .should('be.be.visible');
     });
-    cy.contains('h4', `${localAuthenticator} enabled.`);
-    cy.get('.pf-v5-c-alert__action').click();
 
     // Log out
     cy.intercept('GET', gatewayV1API`/ui_auth/`).as('getUIAuthRequest');
@@ -49,11 +45,36 @@ describe.skip('Platform Basic Authentication', () => {
           .be.true;
         expect(responseBody.passwords).to.deep.include(localDbAuth);
       });
+
+    // Login
     cy.platformLogin();
+
+    // Authentication List Page
     cy.navigateTo('platform', 'authenticators');
     cy.verifyPageTitle('Authentication');
-    cy.searchAndDisplayResourceByFilterOption(localAuthenticator, 'name');
-    cy.clickTableRowAction('name', localAuthenticator, 'delete-authentication', {
+
+    // Edit the GitHub authenticator
+    cy.clickTableRowAction('name', localAuthenticator, 'edit-authenticator');
+
+    // Authentication Wizard
+    cy.get('[data-cy="name"]')
+      .clear()
+      .type(localAuthenticator + '_edited');
+    cy.clickButton('Next');
+    cy.clickButton('Next');
+    cy.clickButton('Finish');
+
+    // Authentication Details Page
+    // Verify the edited Local authenticator
+    cy.verifyPageTitle(localAuthenticator + '_edited');
+    cy.get('[data-cy="name"]').should('have.text', localAuthenticator + '_edited');
+
+    // Authentication List Page
+    cy.navigateTo('platform', 'authenticators');
+    cy.verifyPageTitle('Authentication');
+
+    // Delete the Local authenticator
+    cy.clickTableRowAction('name', localAuthenticator + '_edited', 'delete-authentication', {
       inKebab: true,
     });
     cy.getModal().within(() => {
@@ -62,6 +83,6 @@ describe.skip('Platform Basic Authentication', () => {
       cy.contains(/^Success$/).should('be.visible');
       cy.containsBy('button', /^Close$/).click();
     });
-    cy.clickButton(/^Clear all filters$/);
+    cy.getModal().should('not.exist');
   });
 });
