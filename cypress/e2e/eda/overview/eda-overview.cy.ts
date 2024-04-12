@@ -94,7 +94,15 @@ describe('EDA Overview', () => {
             .scrollIntoView()
             .within(() => {
               cy.contains('h3', 'Rule Audit');
+            });
+          cy.get('#recent-rule-audits')
+            .scrollIntoView()
+            .within(() => {
               cy.get('tbody tr').should('have.lengthOf.lessThan', 8);
+            });
+          cy.get('#recent-rule-audits')
+            .scrollIntoView()
+            .within(() => {
               cy.get('[data-label="Name"] div > a').first().click();
               cy.url().should('contain', '/details');
               cy.url().should('match', new RegExp(`\\/rule-audits\\/[0-9]*\\/details`));
