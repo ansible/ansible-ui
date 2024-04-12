@@ -7,14 +7,11 @@ describe('EDA Decision Environment List', () => {
     cy.edaLogin();
   });
 
-  beforeEach(() => {
-    cy.navigateTo('eda', 'decision-environments');
-    cy.verifyPageTitle('Decision Environments');
-    cy.setTableView('table');
-  });
-
   it('can filter the Decision Environment list based on Name filter option', () => {
     cy.createEdaDecisionEnvironment().then((edaDE) => {
+      cy.navigateTo('eda', 'decision-environments');
+      cy.verifyPageTitle('Decision Environments');
+      cy.setTableView('table');
       cy.filterTableByTextFilter('name', edaDE.name, { disableFilterSelection: true });
       cy.contains('td', edaDE.name).should('be.visible');
       cy.deleteEdaDecisionEnvironment(edaDE);
@@ -24,6 +21,9 @@ describe('EDA Decision Environment List', () => {
   it('can bulk delete Decision Environments from the list', () => {
     cy.createEdaDecisionEnvironment().then((edaDE1) => {
       cy.createEdaDecisionEnvironment().then((edaDE2) => {
+        cy.navigateTo('eda', 'decision-environments');
+        cy.verifyPageTitle('Decision Environments');
+        cy.setTableView('table');
         cy.selectTableRowByCheckbox('name', edaDE1.name, { disableFilterSelection: true });
         cy.selectTableRowByCheckbox('name', edaDE2.name, { disableFilterSelection: true });
         cy.clickToolbarKebabAction('delete-selected-decision-environments');
@@ -48,6 +48,9 @@ describe('EDA Decision Environment List', () => {
 
   it('can verify the delete functionality of items in the kebab menu of the DE list view', () => {
     cy.createEdaDecisionEnvironment().then((edaDE) => {
+      cy.navigateTo('eda', 'decision-environments');
+      cy.verifyPageTitle('Decision Environments');
+      cy.setTableView('table');
       cy.filterTableByTextFilter('name', edaDE.name, { disableFilterSelection: true });
       cy.setTableView('card');
       cy.clickListCardKebabAction(edaDE.id, edaDE.name, 'delete-decision-environment');
