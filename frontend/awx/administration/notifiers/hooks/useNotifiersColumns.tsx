@@ -17,10 +17,15 @@ export function useNotifiersColumns() {
     () => [
       {
         header: t('Name'),
-        cell: (template: NotificationTemplate) => <TextCell text={template.name} to={getPageUrl(AwxRoute.NotificationTemplateDetails, {
-          params: { id: template.id },
-        })}/>,
-      
+        cell: (template: NotificationTemplate) => (
+          <TextCell
+            text={template.name}
+            to={getPageUrl(AwxRoute.NotificationTemplateDetails, {
+              params: { id: template.id },
+            })}
+          />
+        ),
+
         sort: 'name',
         card: 'name',
         list: 'name',
