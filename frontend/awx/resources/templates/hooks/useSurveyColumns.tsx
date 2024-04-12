@@ -6,11 +6,12 @@ import { ITableColumn, TextCell, useGetPageUrl } from '../../../../../framework'
 import type { Spec } from '../../../interfaces/Survey';
 import { AwxRoute } from '../../../main/AwxRoutes';
 
-export function useSurveyColumns(
-  templateType: 'job_template' | 'workflow_job_template',
-  id: string
-) {
+export function useSurveyColumns(_options?: {
+  templateType?: 'job_template' | 'workflow_job_template';
+  id?: string;
+}) {
   const { t } = useTranslation();
+  const { templateType, id } = _options ?? {};
 
   const getPageUrl = useGetPageUrl();
 

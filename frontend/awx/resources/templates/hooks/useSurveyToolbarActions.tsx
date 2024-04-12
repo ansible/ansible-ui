@@ -92,6 +92,14 @@ export function useSurveyToolbarActions(view: ISurveyView) {
             ),
       },
     ],
-    [t, openManageQuestionOrder, deleteQuestions, canModifySurvey, id, pageNavigate]
+    [
+      t,
+      openManageQuestionOrder,
+      deleteQuestions,
+      canModifySurvey,
+      id,
+      pageNavigate,
+      jobTemplateSurvey,
+    ]
   );
 }

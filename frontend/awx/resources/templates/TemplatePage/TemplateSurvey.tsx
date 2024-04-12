@@ -82,9 +82,12 @@ export function TemplateSurveyInternal({
   const canCreateSurvey = template.summary_fields.user_capabilities.edit;
   const canDeleteSurvey = template.summary_fields.user_capabilities.delete;
 
-  const tableColumns = useSurveyColumns(template.type, template.id.toString());
+  const tableColumns = useSurveyColumns({
+    templateType: template.type,
+    id: template.id.toString(),
+  });
   const toolbarActions = useSurveyToolbarActions(view);
-  const deleteQuestions = useDeleteSurveyDialog(view.unselectItemsAndRefreshtemplate.type);
+  const deleteQuestions = useDeleteSurveyDialog(view.unselectItemsAndRefresh);
 
   const rowActions = useMemo<IPageAction<Spec>[]>(
     () => [
@@ -119,7 +122,7 @@ export function TemplateSurveyInternal({
         isDanger: true,
       },
     ],
-    [t, canCreateSurvey, canDeleteSurvey]
+    [t, canCreateSurvey, canDeleteSurvey, deleteQuestions, pageNavigate, template.id, template.type]
   );
 
   return (
