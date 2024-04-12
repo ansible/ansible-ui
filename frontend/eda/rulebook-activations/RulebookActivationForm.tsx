@@ -73,7 +73,7 @@ export function CreateRulebookActivation() {
     rulebookActivation.extra_var_id = extra_var_id?.id;
     rulebookActivation.rulebook_id = rulebook?.id;
     rulebookActivation.eda_credentials = rulebookActivation.credential_refs
-      ? rulebookActivation.credential_refs.map((credential) => `${credential.id || ''}`)
+      ? rulebookActivation.credential_refs.map((credential) => credential?.id)
       : undefined;
     delete rulebookActivation.credential_refs;
     const newRulebookActivation = await postEdaRulebookActivation(
@@ -292,6 +292,12 @@ export function RulebookActivationInputs() {
         labelHelp={t('Error | Info | Debug')}
         labelHelpTitle={t('Log level')}
       />
+      <PageFormTextInput<IEdaRulebookActivationInputs>
+        name="k8s_service_name"
+        label={t('Service')}
+        id={'k8s_service_name'}
+        placeholder={t('Enter service')}
+      />
       <PageFormSwitch<IEdaRulebookActivationInputs>
         id="rulebook-activation"
         name="is_enabled"
@@ -322,6 +328,5 @@ type IEdaRulebookActivationInputs = Omit<EdaRulebookActivationCreate, 'event_str
   project_id: string;
   extra_var: string;
   awx_token_id: number;
-  eda_credentials?: string[];
-  credential_refs?: EdaCredential[];
+  credential_refs?: EdaCredential[] | null;
 };

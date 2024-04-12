@@ -66,6 +66,7 @@ describe('Create rulebook activation ', () => {
     cy.selectDropdownOptionByResourceName('project-id', 'Project 4');
     cy.selectDropdownOptionByResourceName('rulebook', 'hello_echo.yml');
     cy.get('[data-cy="organization_id"]').click();
+    cy.get('[data-cy="k8s_service_name"]').type('sample');
     cy.get('#organization-2 > .pf-v5-c-menu__item-main > .pf-v5-c-menu__item-text').click();
     cy.clickButton('Create rulebook activation');
 
@@ -75,6 +76,7 @@ describe('Create rulebook activation ', () => {
         restart_policy: 'on-failure',
         organization_id: 2,
         decision_environment_id: 3,
+        k8s_service_name: 'sample',
         name: 'Test',
         rulebook_id: 'hello_echo.yml',
         is_enabled: true,
