@@ -83,6 +83,10 @@ describe('Create Edit Inventory Form', () => {
       });
 
       it(`Create inventory using correct field values (${kindLabel})`, () => {
+        cy.intercept(
+          { method: 'OPTIONS', url: '/api/v2/instance_groups/' },
+          { fixture: 'mock_options.json' }
+        );
         cy.fixture('inventory').then((inventory: Inventory) => {
           inventory.summary_fields.labels.count = 0;
           inventory.summary_fields.labels.results = [];
@@ -115,7 +119,9 @@ describe('Create Edit Inventory Form', () => {
         });
         cy.get('.pf-v5-c-input-group > .pf-v5-c-button').click();
         cy.fixture('instance_groups').then((ig_response: AwxItemsResponse<InstanceGroup>) =>
-          cy.selectTableRowInDialog(ig_response.results[0].name)
+          cy.selectTableRowByCheckbox('name', ig_response.results[0].name, {
+            disableFilter: true,
+          })
         );
         cy.clickModalButton('Confirm');
 
@@ -253,6 +259,10 @@ describe('Create Edit Inventory Form', () => {
       });
 
       it(`Check correct request body is passed after editing inventory (${kindLabel})`, () => {
+        cy.intercept(
+          { method: 'OPTIONS', url: '/api/v2/instance_groups/' },
+          { fixture: 'mock_options.json' }
+        );
         cy.fixture('inventory')
           .then((inventory: Inventory) => {
             inventory.kind = payload.kind as '' | 'smart' | 'constructed';
@@ -288,7 +298,9 @@ describe('Create Edit Inventory Form', () => {
         });
         cy.get('.pf-v5-c-input-group > .pf-v5-c-button').click();
         cy.fixture('instance_groups').then((ig_response: AwxItemsResponse<InstanceGroup>) =>
-          cy.selectTableRowInDialog(ig_response.results[1].name)
+          cy.selectTableRowByCheckbox('name', ig_response.results[0].name, {
+            disableFilter: true,
+          })
         );
         cy.clickModalButton('Confirm');
         if (kind === 'smart') {

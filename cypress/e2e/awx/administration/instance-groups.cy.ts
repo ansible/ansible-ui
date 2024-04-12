@@ -22,7 +22,8 @@ describe('Instance Groups', () => {
 
   it('navigate to the details page for an instance group', () => {
     cy.navigateTo('awx', 'instance-groups');
-    cy.clickTableRow(instanceGroup.name);
+    cy.filterTableBySingleSelect('name', instanceGroup.name);
+    cy.clickTableRowLink('name', instanceGroup.name, { disableFilter: true });
     cy.url().then((currentUrl) => {
       expect(currentUrl.includes('details')).to.be.true;
     });
@@ -31,7 +32,8 @@ describe('Instance Groups', () => {
   it('delete an instance group from the list row action', () => {
     cy.createAwxInstanceGroup().then((instanceGroup: InstanceGroup) => {
       cy.navigateTo('awx', 'instance-groups');
-      cy.clickTableRowKebabAction(instanceGroup.name, 'delete-instance-group');
+      cy.filterTableBySingleSelect('name', instanceGroup.name);
+      cy.clickTableRowKebabAction(instanceGroup.name, 'delete-instance-group', false);
       cy.get('#confirm').click();
       cy.clickButton(/^Delete instance group/);
       cy.contains(/^Success$/);
