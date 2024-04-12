@@ -5,6 +5,7 @@ import { PageNavigationItem } from '../../../../framework';
 import { PageNotImplemented } from '../../../../framework/PageEmptyStates/PageNotImplemented';
 import { Notifiers } from '../../administration/notifiers/Notifiers';
 import { AwxRoute } from '../AwxRoutes';
+import { AddNotifier, EditNotifier } from '../../administration/notifiers/NotifierForm';
 
 export function useAwxNotificationsRoutes() {
   const { t } = useTranslation();
@@ -29,6 +30,16 @@ export function useAwxNotificationsRoutes() {
               element: <Navigate to="details" />,
             },
           ],
+        },
+        {
+          id: AwxRoute.EditNotificationTemplate,
+          path: ':id/edit',
+          element: <EditNotifier />,
+        },
+        {
+          id: AwxRoute.AddNotificationTemplate,
+          path: 'create',
+          element: <AddNotifier />,
         },
         {
           path: '',
