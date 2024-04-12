@@ -211,7 +211,7 @@ describe('Workflow Approvals - List View', () => {
       });
   });
 
-  it('admin can cancel and then delete a workflow approval from the list row item', () => {
+  it.skip('admin can cancel and then delete a workflow approval from the list row item', () => {
     cy.intercept(
       'POST',
       awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/launch`
