@@ -97,10 +97,13 @@ declare global {
       edaLogin(): Chainable<void>;
 
       /** Logout of the EDA application */
-      edaLogout(): Chainable<EdaUser | undefined>;
+      edaLogout(): Chainable<void>;
 
       /** Login to the HUB application */
       hubLogin(): Chainable<void>;
+
+      /** Logout of the HUB application */
+      hubLogout(): Chainable<void>;
 
       /** Check that the required environment variables are set */
       requiredVariablesAreSet(requiredVariables: string[]): Chainable<void>;
