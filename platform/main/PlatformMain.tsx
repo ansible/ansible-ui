@@ -27,27 +27,27 @@ export default function PlatformMain() {
     <BrowserRouter>
       <PageFramework defaultRefreshInterval={10}>
         <PlatformActiveUserProvider>
-          <GatewayServicesProvider>
-            <QuickStartProvider>
-              <AwxActiveUserProvider>
-                <EdaActiveUserProvider>
-                  <HubActiveUserProvider>
-                    <WebSocketProvider>
-                      <AwxConfigProvider>
-                        <HubContextProvider>
-                          <PlatformLogin>
+          <PlatformLogin>
+            <GatewayServicesProvider>
+              <QuickStartProvider>
+                <AwxActiveUserProvider>
+                  <EdaActiveUserProvider>
+                    <HubActiveUserProvider>
+                      <WebSocketProvider>
+                        <AwxConfigProvider>
+                          <HubContextProvider>
                             <GatewayServicesCheck>
                               <PlatformApp />
                             </GatewayServicesCheck>
-                          </PlatformLogin>
-                        </HubContextProvider>
-                      </AwxConfigProvider>
-                    </WebSocketProvider>
-                  </HubActiveUserProvider>
-                </EdaActiveUserProvider>
-              </AwxActiveUserProvider>
-            </QuickStartProvider>
-          </GatewayServicesProvider>
+                          </HubContextProvider>
+                        </AwxConfigProvider>
+                      </WebSocketProvider>
+                    </HubActiveUserProvider>
+                  </EdaActiveUserProvider>
+                </AwxActiveUserProvider>
+              </QuickStartProvider>
+            </GatewayServicesProvider>
+          </PlatformLogin>
         </PlatformActiveUserProvider>
       </PageFramework>
     </BrowserRouter>

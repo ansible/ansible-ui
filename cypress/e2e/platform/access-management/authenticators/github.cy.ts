@@ -1,108 +1,103 @@
-import { randomString } from '../../../../../framework/utils/random-string';
 import { GithubAuthenticator } from '../../../../../platform/interfaces/GithubAuthenticator';
-import { UIAuth } from '../../../../../platform/interfaces/UIAuth';
-import { gatewayV1API } from '../../../../support/formatApiPathForPlatform';
-import { AuthOption } from '../../../../../platform/interfaces/UIAuth';
+import { randomE2Ename } from '../../../../support/utils';
 
 describe('GitHub Authentication form - create, edit, update and delete', () => {
   it('creates a GitHub authenticator', () => {
-    const githubAuthenticator = `E2E-GH-Authenticator-${randomString(2)}`;
+    const name = randomE2Ename();
     cy.platformLogin();
 
-    cy.fixture('platform-authenticators/github').then((data: GithubAuthenticator) => {
-      const githubData = data;
+    cy.fixture('platform-authenticators/github').then((githubData: GithubAuthenticator) => {
+      // Authentication List Page
       cy.navigateTo('platform', 'authenticators');
       cy.verifyPageTitle('Authentication');
-      // create a new GitHub authenticator
+
+      // Click on the Create Authentication button
       cy.containsBy('a', 'Create authentication').click();
+
+      // Authentication Wizard - Authentication Type Step
       cy.verifyPageTitle('Create Authentication');
       cy.selectAuthenticationType('github');
       cy.clickButton('Next');
-      cy.get('[data-cy="name"]').type(githubAuthenticator);
+
+      // Authentication Wizard - Authentication Details Step
+      cy.get('[data-cy="name"]').type(name);
       cy.get('[data-cy="configuration-input-CALLBACK_URL"]').type(githubData.callbackUrl);
       cy.get('[data-cy="configuration-input-KEY"]').type(githubData.oauth2Key);
       cy.get('[data-cy="configuration-input-SECRET"]').type(githubData.oauth2Secret);
       cy.clickButton('Next');
+
+      // Authentication Wizard - Authentication Mapping Step
       cy.clickButton('Next');
+
+      // Authentication Wizard - Review Step
       cy.clickButton('Finish');
-      cy.verifyPageTitle(githubAuthenticator);
-      // assert that the authentication details are correct
-      cy.get('[data-cy="name"]').should('have.text', githubAuthenticator);
+
+      // Authentication Details Page
+      cy.verifyPageTitle(name);
+      cy.get('[data-cy="name"]').should('have.text', name);
       cy.get('[data-cy="github-oauth2-callback-url"]').should('have.text', githubData.callbackUrl);
       cy.get('[data-cy="github-oauth2-key"]').should('have.text', githubData.oauth2Key);
       cy.get('[data-cy="github-oauth2-secret"]').should('have.text', '$encrypted$');
-      // enable the GitHub authenticator
+
+      // Authentication List Page
       cy.navigateTo('platform', 'authenticators');
 
-      // edit and update
-      cy.searchAndDisplayResourceByFilterOption(githubAuthenticator, 'name').then(() => {
-        cy.contains('tr', githubAuthenticator).within(() => {
-          cy.get('[data-cy=toggle-switch]').click();
-          cy.getByDataCy('actions-column-cell').within(() => {
-            cy.getByDataCy('edit-authenticator').click();
-          });
-        });
+      // Enable the GitHub authenticator
+      cy.getTableRow('name', name).within(() => {
+        cy.get('[data-cy=toggle-switch]').click();
       });
-      cy.get('[data-cy="name"]').clear().type(`${githubAuthenticator}Edited`);
+
+      // Logout
+      cy.platformLogout();
+
+      // Verify the GH Authenticator is displayed in the login page
+      cy.get('form.pf-v5-c-form').within(() => {
+        cy.get('h2').should('have.text', 'Log in with').should('be.visible');
+        cy.get('a[data-cy="social-auth-ansible_base.authentication.authenticator_plugins.github"]')
+          .contains(name)
+          .should('have.attr', 'href')
+          .and(
+            'equal',
+            `/api/gateway/social/login/ansible_base-authentication-authenticator_plugins-github__${name.toLowerCase()}/`
+          );
+      });
+
+      // Login
+      cy.platformLogin();
+
+      // Authentication List Page
+      cy.navigateTo('platform', 'authenticators');
+      cy.verifyPageTitle('Authentication');
+
+      // Edit the GitHub authenticator
+      cy.clickTableRowAction('name', name, 'edit-authenticator');
+
+      // Authentication Wizard
+      cy.get('[data-cy="name"]')
+        .clear()
+        .type(name + '_edited');
       cy.clickButton('Next');
       cy.clickButton('Next');
       cy.clickButton('Finish');
 
-      cy.verifyPageTitle(`${githubAuthenticator}Edited`);
-      cy.intercept('GET', gatewayV1API`/ui_auth/`).as('getGHAuthRequest');
-      cy.platformLogout();
+      // Authentication Details Page
+      // Verify the edited GitHub authenticator
+      cy.verifyPageTitle(name + '_edited');
+      cy.get('[data-cy="name"]').should('have.text', name + '_edited');
 
-      // logout and verify the created GH Authenticator is displayed in the login page
-      const authName = `${githubAuthenticator}`;
-      cy.get('form.pf-v5-c-form').within(() => {
-        cy.get('h2').should('have.text', 'Log in with').should('be.visible');
-        cy.get('a[data-cy="social-auth-ansible_base.authentication.authenticator_plugins.github"]')
-          .contains(authName)
-          .should('have.attr', 'href')
-          .and(
-            'equal',
-            `/api/gateway/social/login/ansible_base-authentication-authenticator_plugins-github__${authName.toLowerCase()}/`
-          );
-      });
-
-      // verify in the backend that the created GH Authenticator is displayed
-      cy.wait('@getGHAuthRequest')
-        .its('response.body')
-        .then((responseBody: UIAuth) => {
-          const ghAuthenticatorCreated = responseBody?.ssos.find(
-            (sso) => sso.name === `${githubAuthenticator}Edited`
-          );
-          expect(ghAuthenticatorCreated as AuthOption).to.exist;
-          expect(ghAuthenticatorCreated as AuthOption).to.have.property(
-            'name',
-            `${githubAuthenticator}Edited`
-          );
-          expect(ghAuthenticatorCreated as AuthOption).to.have.property(
-            'type',
-            'ansible_base.authentication.authenticator_plugins.github'
-          );
-          expect(ghAuthenticatorCreated?.login_url).to.include(githubAuthenticator.toLowerCase());
-        });
-      cy.platformLogin();
-      cy.intercept('GET', gatewayV1API`/authenticators/?order_by=order&page=1&page_size=10`).as(
-        'getAuthenticators'
-      );
-
-      //delete the created GitHub authenticator
+      // Authentication List Page
       cy.navigateTo('platform', 'authenticators');
       cy.verifyPageTitle('Authentication');
-      cy.wait('@getAuthenticators').then(() => {
-        cy.clickTableRowAction('name', `${githubAuthenticator}Edited`, 'delete-authentication', {
-          inKebab: true,
-          disableFilter: true,
-        });
-      });
+
+      // Delete the GitHub authenticator
+      cy.clickTableRowAction('name', name + '_edited', 'delete-authentication', { inKebab: true });
       cy.getModal().within(() => {
         cy.get('#confirm').click();
         cy.get('#submit').click();
         cy.contains(/^Success$/).should('be.visible');
         cy.containsBy('button', /^Close$/).click();
       });
+      cy.getModal().should('not.exist');
     });
   });
 });
