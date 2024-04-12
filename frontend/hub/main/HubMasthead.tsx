@@ -29,13 +29,6 @@ export function HubMasthead() {
   const { activeHubUser, refreshActiveHubUser } = useHubActiveUser();
   const logout = useCallback(async () => {
     await postRequest(hubAPI`/_ui/v1/auth/logout/`, {});
-    refreshActiveHubUser?.();
-  }, [refreshActiveHubUser]);
-  const { clearAllCache } = useClearCache();
-  useHubNotifications();
-  const { activeHubUser, refreshActiveHubUser } = useHubActiveUser();
-  const logout = useCallback(async () => {
-    await postRequest(hubAPI`/_ui/v1/auth/logout/`, {});
     clearAllCache();
     navigate('/login');
   }, [clearAllCache, navigate]);
@@ -48,7 +41,7 @@ export function HubMasthead() {
     void userContext?.mutate();
   }, [clearAllCache, userContext]);
     refreshActiveHubUser?.();
-  }, [clearAllCache, refreshActiveHubUser]);
+  }, [refreshActiveHubUser]);
   return (
     <PageMasthead brand={<GalaxyBrand style={{ height: 48, marginTop: -8 }} />}>
       <ToolbarGroup variant="icon-button-group" style={{ flexGrow: 1 }}>

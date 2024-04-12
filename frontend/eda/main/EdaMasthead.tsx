@@ -32,7 +32,7 @@ export function EdaMasthead() {
     void userContext?.mutate();
   }, [clearAllCache, userContext]);
     refreshActiveEdaUser?.();
-  }, [clearAllCache, refreshActiveEdaUser]);
+  }, [refreshActiveEdaUser]);
   return (
     <PageMasthead brand={<EdaBrand style={{ height: 45, width: 45 }} />}>
       <ToolbarGroup variant="icon-button-group" style={{ flexGrow: 1 }}>

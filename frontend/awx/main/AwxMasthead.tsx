@@ -49,7 +49,7 @@ export function AwxMasthead() {
 
 
     refreshActiveAwxUser?.();
-  }, [clearAllCache, refreshActiveAwxUser]);
+  }, [refreshActiveAwxUser]);
   return (
     <PageMasthead brand={<AwxBrand style={{ height: 60 }} />}>
       <ToolbarGroup variant="icon-button-group" style={{ flexGrow: 1 }}>
