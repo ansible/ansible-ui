@@ -231,3 +231,21 @@ export function useAddressToolbarFilter() {
     [t]
   );
 }
+
+export function useTemplateTypeToolbarFilter() {
+  const { t } = useTranslation();
+  return useMemo<IToolbarFilter>(
+    () => ({
+      key: 'type-templates',
+      label: t('Type'),
+      type: ToolbarFilterType.MultiSelect,
+      query: 'type',
+      options: [
+        { label: t('Job template'), value: 'job_template' },
+        { label: t('Workflow job template'), value: 'workflow_job_template' },
+      ],
+      placeholder: t('Select types'),
+    }),
+    [t]
+  );
+}

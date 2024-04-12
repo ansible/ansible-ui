@@ -25,6 +25,9 @@ interface DynamicToolbarFiltersProps {
 
   /** Additional filters in addition to the dynamic filters */
   additionalFilters?: IToolbarFilter[];
+
+  /** Additional filters to remove */
+  removeFilters?: string[];
 }
 
 interface FilterableFields {
@@ -87,7 +90,8 @@ function craftRequestUrl(
 }
 
 export function useDynamicToolbarFilters(props: DynamicToolbarFiltersProps) {
-  const { optionsPath, preSortedKeys, preFilledValueKeys, additionalFilters } = props;
+  const { optionsPath, preSortedKeys, preFilledValueKeys, additionalFilters, removeFilters } =
+    props;
   const { t } = useTranslation();
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/${optionsPath}/`);
   const filterableFields = useFilters(data?.actions?.GET);
@@ -151,7 +155,8 @@ export function useDynamicToolbarFilters(props: DynamicToolbarFiltersProps) {
       filterableFields: FilterableFields[],
       preSortedKeys?: string[],
       preFilledValueKeys?: Record<string, AsyncKeyOptions>,
-      additionalFilters?: IToolbarFilter[]
+      additionalFilters?: IToolbarFilter[],
+      removeFilters?: string[]
     ): IToolbarFilter[] => {
       const toolbarFilters: IToolbarFilter[] = [];
 
@@ -246,15 +251,26 @@ export function useDynamicToolbarFilters(props: DynamicToolbarFiltersProps) {
           return indexA - indexB;
         });
       }
+      // remove filters if provided
+      if (removeFilters && toolbarFilters.length > 0) {
+        return toolbarFilters.filter((filter) => !removeFilters.includes(filter.key));
+      }
 
       return toolbarFilters;
     };
-    return getToolbars(filterableFields, preSortedKeys, preFilledValueKeys, additionalFilters);
+    return getToolbars(
+      filterableFields,
+      preSortedKeys,
+      preFilledValueKeys,
+      additionalFilters,
+      removeFilters
+    );
   }, [
     filterableFields,
     preSortedKeys,
     preFilledValueKeys,
     additionalFilters,
+    removeFilters,
     t,
     queryResource,
     queryResourceLabel,
