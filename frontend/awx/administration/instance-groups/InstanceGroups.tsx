@@ -1,9 +1,7 @@
 import { CubesIcon } from '@patternfly/react-icons';
-import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { IToolbarFilter, PageHeader, PageLayout, PageTable } from '../../../../framework';
+import { PageHeader, PageLayout, PageTable } from '../../../../framework';
 import { awxAPI } from '../../common/api/awx-utils';
-import { useNameToolbarFilter } from '../../common/awx-toolbar-filters';
 import { useAwxView } from '../../common/useAwxView';
 import { InstanceGroup } from '../../interfaces/InstanceGroup';
 import {
@@ -13,6 +11,7 @@ import {
 } from './hooks/useInstanceGroupActions';
 import { useInstanceGroupsColumns } from './hooks/useInstanceGroupColumns';
 import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
+import { useDynamicToolbarFilters } from '../../common/useDynamicFilters';
 
 export function InstanceGroups() {
   const { t } = useTranslation();
@@ -67,8 +66,13 @@ export function InstanceGroups() {
 }
 
 export function useInstanceGroupsFilters() {
-  const nameToolbarFilter = useNameToolbarFilter();
-
-  const toolbarFilters = useMemo<IToolbarFilter[]>(() => [nameToolbarFilter], [nameToolbarFilter]);
+  const toolbarFilters = useDynamicToolbarFilters({
+    optionsPath: 'instance_groups',
+    preSortedKeys: ['name', 'id'],
+    preFilledValueKeys: {
+      name: { apiPath: 'instance_groups' },
+      id: { apiPath: 'instance_groups' },
+    },
+  });
   return toolbarFilters;
 }
