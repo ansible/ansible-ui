@@ -10,7 +10,7 @@ import {
   usePageNavigate,
 } from '../../../../../framework';
 import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
-import { LoadingPage } from '../../../../../framework/components/LoadingPage';
+import { LoadingPage } from '../../../../../framework';
 import { useGetItem } from '../../../../common/crud/useGet';
 import { EdaRoute } from '../../../main/EdaRoutes';
 import { useCredentialTypeRowActions } from '../hooks/useCredentialTypeActions';
@@ -30,6 +30,10 @@ export function CredentialTypePage() {
 
   if (!credentialType) return <LoadingPage breadcrumbs tabs />;
 
+  const isActionTab = location.href.includes(
+    getPageUrl(EdaRoute.CredentialTypeDetails, { params: { id: credentialType?.id } })
+  );
+
   return (
     <PageLayout>
       <PageHeader
@@ -39,11 +43,15 @@ export function CredentialTypePage() {
           { label: credentialType?.name },
         ]}
         headerActions={
-          <PageActions<EdaCredentialType>
-            actions={actions}
-            position={DropdownPosition.right}
-            selectedItem={credentialType}
-          />
+          isActionTab ? (
+            <PageActions<EdaCredentialType>
+              actions={actions}
+              position={DropdownPosition.right}
+              selectedItem={credentialType}
+            />
+          ) : (
+            <></>
+          )
         }
       />
       <PageRoutedTabs
@@ -54,7 +62,7 @@ export function CredentialTypePage() {
         }}
         tabs={[
           { label: t('Details'), page: EdaRoute.CredentialTypeDetails },
-          { label: t('Credentials'), page: EdaRoute.CredentialTypes },
+          { label: t('Credentials'), page: EdaRoute.CredentialTypeCredentials },
         ]}
         params={{ id: credentialType.id }}
       />

@@ -62,6 +62,7 @@ import { useEdaOrganizationRoutes } from './routes/useEdaOrganizationsRoutes';
 import { EdaProjectAddUsers } from '../projects/components/EdaProjectAddUsers';
 import { EdaProjectAddTeams } from '../projects/components/EdaProjectAddTeams';
 import { PageNotImplemented } from '../../../framework';
+import { CredentialTypeCredentials } from '../access/credential-types/CredentialTypePage/CredentialTypeCredentials';
 
 export function useEdaNavigation() {
   const { t } = useTranslation();
@@ -492,6 +493,11 @@ export function useEdaNavigation() {
                   id: EdaRoute.CredentialTypeDetails,
                   path: 'details',
                   element: <CredentialTypeDetails />,
+                },
+                {
+                  id: EdaRoute.CredentialTypeCredentials,
+                  path: 'credentials',
+                  element: <CredentialTypeCredentials />,
                 },
                 {
                   path: '',
