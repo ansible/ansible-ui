@@ -122,7 +122,7 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
         fieldValue = fields[field];
         if (fieldValue.type === 'int' && typeof notification_configuration[field] === 'string') {
           notification_configuration[field] = Number.parseInt(
-            notification_configuration[field] as string
+            notification_configuration[field] as string, 10
           );
         }
 
@@ -713,7 +713,7 @@ function validateNumber(
   max: number,
   t: TFunction<'translation', undefined>
 ) {
-  const val = Number.parseInt(str);
+  const val = Number.parseInt(str, 10);
   if (val >= min && val <= max) {
     return undefined;
   }
