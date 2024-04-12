@@ -5,30 +5,30 @@ import {
   IPageAction,
   PageActionSelection,
   PageActionType,
-  useGetPageUrl,
   usePageNavigate,
 } from '../../../../../framework';
 import { useDeleteCredentialTypes } from './useDeleteCredentialTypes';
 import { EdaCredentialType } from '../../../interfaces/EdaCredentialType';
 import { EdaRoute } from '../../../main/EdaRoutes';
+import { ButtonVariant } from '@patternfly/react-core';
 
 export function useCredentialTypeToolbarActions(
   onCredentialTypesDeleted: (credentialType: EdaCredentialType[]) => void
 ) {
   const { t } = useTranslation();
-  const getPageUrl = useGetPageUrl();
   const deleteCredentialTypes = useDeleteCredentialTypes(onCredentialTypesDeleted);
+  const pageNavigate = usePageNavigate();
 
   return useMemo<IPageAction<EdaCredentialType>[]>(
     () => [
       {
-        type: PageActionType.Link,
+        type: PageActionType.Button,
         selection: PageActionSelection.None,
-        // variant: ButtonVariant.primary,
+        variant: ButtonVariant.primary,
         isPinned: true,
         icon: PlusCircleIcon,
         label: t('Create credential type'),
-        href: `${getPageUrl(EdaRoute.CreateCredentialType)}`,
+        onClick: () => pageNavigate(EdaRoute.CreateCredentialType),
       },
       { type: PageActionType.Seperator },
       {
@@ -41,7 +41,7 @@ export function useCredentialTypeToolbarActions(
         isDanger: true,
       },
     ],
-    [t, getPageUrl, deleteCredentialTypes]
+    [t, deleteCredentialTypes, pageNavigate]
   );
 }
 

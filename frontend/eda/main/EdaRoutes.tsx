@@ -50,6 +50,7 @@ export enum EdaRoute {
   EditCredentialType = 'eda-edit-credential-type',
   CredentialTypePage = 'eda-credential-type-page',
   CredentialTypeDetails = 'eda-credential-type-details',
+  CredentialTypeCredentials = 'eda-credential-type-credentials',
 
   EventStreams = 'eda-event-streams',
   CreateEventStream = 'eda-create-event-stream',
