@@ -1,7 +1,7 @@
 import { CardBody, ProgressStep, ProgressStepper, Stack, Text } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { PageHeader, useGetPageUrl } from '../../../framework';
+import { PageHeader, PageLayout, useGetPageUrl } from '../../../framework';
 import { PageDashboard } from '../../../framework/PageDashboard/PageDashboard';
 import { PageDashboardCard } from '../../../framework/PageDashboard/PageDashboardCard';
 import { edaAPI } from '../common/eda-utils';
@@ -50,7 +50,7 @@ export function EdaOverview() {
   const hasRulebookActivation = edaRulebookActivationView.itemCount !== 0;
   const product: string = process.env.PRODUCT ?? t('EDA Server');
   return (
-    <>
+    <PageLayout>
       <PageHeader
         title={t(`Welcome to {{product}}`, { product })}
         description={t(
@@ -132,6 +132,6 @@ export function EdaOverview() {
         <EdaRulebookActivationsCard />
         <EdaRuleAuditCard />
       </PageDashboard>
-    </>
+    </PageLayout>
   );
 }
