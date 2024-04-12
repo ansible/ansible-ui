@@ -35,6 +35,7 @@ import { useAwxTeamsRoutes } from './routes/useAwxTeamsRoutes';
 import { useAwxTemplateRoutes } from './routes/useAwxTemplateRoutes';
 import { useAwxUsersRoutes } from './routes/useAwxUsersRoutes';
 import { useAwxWorkflowApprovalRoutes } from './routes/useAwxWorkflowApprovalRoutes';
+import { useAwxActiveUser } from '../common/useAwxActiveUser';
 
 export function useAwxNavigation() {
   const { t } = useTranslation();
@@ -57,6 +58,7 @@ export function useAwxNavigation() {
   const awxApplicationsRoutes = useAwxApplicationsRoutes();
   const awxExecutionEnvironmentsRoutes = useAwxExecutionEnvironmentRoutes();
   const awxCredentialTypesRoutes = useAwxCredentialTypesRoutes();
+  const { activeAwxUser } = useAwxActiveUser();
   const navigationItems: PageNavigationItem[] = [
     {
       id: AwxRoute.Overview,
@@ -127,13 +129,15 @@ export function useAwxNavigation() {
       id: AwxRoute.Administration,
       label: t('Administration'),
       path: 'administration',
-      children: [
-        awxActivityStreamRoutes,
-        awxWorkflowApprovalRoutes,
-        awxNotificationsRoutes,
-        awxManagementJobsRoutes,
-        awxApplicationsRoutes,
-      ],
+      children: activeAwxUser?.is_superuser
+        ? [
+            awxActivityStreamRoutes,
+            awxWorkflowApprovalRoutes,
+            awxNotificationsRoutes,
+            awxManagementJobsRoutes,
+            awxApplicationsRoutes,
+          ]
+        : [awxActivityStreamRoutes, awxWorkflowApprovalRoutes, awxApplicationsRoutes],
     },
     {
       id: AwxRoute.Access,
