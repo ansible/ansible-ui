@@ -41,8 +41,6 @@ describe('Job templates form Create, Edit, Delete', function () {
     cy.selectDropdownOptionByResourceName('inventory', inventory.name);
     cy.selectDropdownOptionByResourceName('project', `${(this.globalProject as Project).name}`);
     cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
-    cy.selectItemFromLookupModal('execution-environment-select', executionEnvironment);
-    cy.selectItemFromLookupModal('credential-select', machineCredential.name);
     cy.getBy('[data-cy="Submit"]').click();
     cy.wait('@createJT')
       .its('response.body.id')
@@ -107,7 +105,16 @@ describe('Job templates form Create, Edit, Delete', function () {
         cy.clickButton(/^Next/);
         cy.selectItemFromLookupModal('execution-environment-select', executionEnvironment);
         cy.clickButton(/^Next/);
-        cy.selectItemFromLookupModal('instance-group-select', instanceGroup);
+        cy.get(`[data-cy*="instance-group-select-form-group"]`).within(() => {
+          cy.get('button').eq(1).click();
+        });
+        cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+          cy.filterTableBySingleSelect('name', instanceGroup);
+          cy.get('[data-ouia-component-id="simple-table"] tbody').within(() => {
+            cy.get('[data-cy="checkbox-column-cell"] input').click();
+          });
+          cy.clickButton(/^Confirm/);
+        });
         cy.clickButton(/^Next/);
         cy.intercept('POST', `api/v2/job_templates/${id}/launch/`).as('postLaunch');
         cy.clickButton(/^Finish/);
@@ -162,7 +169,16 @@ describe('Job templates form Create, Edit, Delete', function () {
         cy.clickButton(/^Next/);
         cy.selectItemFromLookupModal('execution-environment-select', executionEnvironment);
         cy.clickButton(/^Next/);
-        cy.selectItemFromLookupModal('instance-group-select', instanceGroup);
+        cy.get(`[data-cy*="instance-group-select-form-group"]`).within(() => {
+          cy.get('button').eq(1).click();
+        });
+        cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+          cy.filterTableBySingleSelect('name', instanceGroup);
+          cy.get('[data-ouia-component-id="simple-table"] tbody').within(() => {
+            cy.get('[data-cy="checkbox-column-cell"] input').click();
+          });
+          cy.clickButton(/^Confirm/);
+        });
         cy.clickButton(/^Next/);
         cy.intercept('POST', `api/v2/job_templates/${id}/launch/`).as('postLaunch');
         cy.clickButton(/^Finish/);
