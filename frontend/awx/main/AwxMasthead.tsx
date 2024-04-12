@@ -11,7 +11,6 @@ import { usePageNotifications } from '../../../framework/PageNotifications/PageN
 import { useAnsibleAboutModal } from '../../common/AboutModal';
 import { PageRefreshIcon } from '../../common/PageRefreshIcon';
 import { useGet } from '../../common/crud/useGet';
-import { useClearCache } from '../../common/useInvalidateCache';
 import { AwxItemsResponse } from '../common/AwxItemsResponse';
 import { awxAPI } from '../common/api/awx-utils';
 import { useAwxActiveUser } from '../common/useAwxActiveUser';
@@ -27,16 +26,14 @@ export function AwxMasthead() {
   const { t } = useTranslation();
   const versionInfo = useAwxProductVersionInfo();
   const openAnsibleAboutModal = useAnsibleAboutModal();
-  const { clearAllCache } = useClearCache();
   const config = useAwxConfig();
   const pageNavigate = usePageNavigate();
   const { activeAwxUser, refreshActiveAwxUser } = useAwxActiveUser();
   useAwxNotifications();
   const logout = useCallback(async () => {
     await fetch('/api/logout/');
-    clearAllCache();
     refreshActiveAwxUser?.();
-  }, [clearAllCache, refreshActiveAwxUser]);
+  }, [refreshActiveAwxUser]);
   return (
     <PageMasthead brand={<AwxBrand style={{ height: 60 }} />}>
       <ToolbarGroup variant="icon-button-group" style={{ flexGrow: 1 }}>
