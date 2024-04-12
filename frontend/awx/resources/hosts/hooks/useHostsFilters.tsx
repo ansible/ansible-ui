@@ -11,8 +11,9 @@ export function useHostsFilters() {
   const toolbarFilters = useDynamicToolbarFilters({
     optionsPath: 'hosts',
     preSortedKeys: ['name', 'description', 'created-by', 'modified-by'],
-    preFilledValueKeys: ['name', 'id'],
+    preFilledValueKeys: { name: { apiPath: 'hosts' }, id: { apiPath: 'hosts' } },
     additionalFilters: [createdByToolbarFilter, modifiedByToolbarFilter],
+    removeFilters: ['last_job_host_summary'],
   });
   return toolbarFilters;
 }

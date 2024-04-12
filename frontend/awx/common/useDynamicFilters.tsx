@@ -325,6 +325,5 @@ export const knownAwxFilterKeys: Record<string, AsyncKeyOptions> = {
     queryParams: { node_type: 'control' },
   },
   inventory: { apiPath: 'inventories' },
-  last_job: { apiPath: 'unified_jobs', labelKey: 'id' },
-  // last_job_host_summary: { apiPath: '' },
+  last_job: { apiPath: 'unified_jobs', labelKey: 'id', valueKey: 'id' },
 };

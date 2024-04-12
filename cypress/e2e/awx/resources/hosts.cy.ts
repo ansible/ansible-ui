@@ -83,7 +83,7 @@ function editHost(inventoryID: number, inventory_host: boolean, hostName: string
   } else {
     cy.visit('/infrastructure/hosts?page=1&perPage=10&sort=name');
   }
-  cy.filterTableBySingleSelect('name', hostName);
+  cy.filterTableByMultiSelect('name', [hostName]);
 
   cy.get(`[data-cy='edit-host']`).click();
   cy.verifyPageTitle('Edit host');
@@ -102,7 +102,7 @@ function deleteHost(inventoryID: number, inventory_host: boolean, hostName: stri
     cy.visit('/infrastructure/hosts?page=1&perPage=10&sort=name');
   }
 
-  cy.filterTableBySingleSelect('name', hostName);
+  cy.filterTableByMultiSelect('name', [hostName]);
   cy.get(`[data-cy="actions-column-cell"] [data-cy="actions-dropdown"]`).click();
   cy.get(`[data-cy="delete-host"]`).click();
   cy.clickModalConfirmCheckbox();
