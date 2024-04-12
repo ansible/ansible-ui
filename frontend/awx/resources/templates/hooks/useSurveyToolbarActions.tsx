@@ -3,18 +3,26 @@ import { useMatch } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ButtonVariant } from '@patternfly/react-core';
 import { PlusCircleIcon, TrashIcon, CogIcon } from '@patternfly/react-icons';
-import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
+import {
+  IPageAction,
+  PageActionSelection,
+  PageActionType,
+  usePageNavigate,
+} from '../../../../../framework';
 import { useOptions } from '../../../../common/crud/useOptions';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useDeleteSurveyDialog } from './useDeleteSurveyDialog';
 import type { ISurveyView } from './useSurveyView';
 import type { Spec } from '../../../interfaces/Survey';
+import { AwxRoute } from '../../../main/AwxRoutes';
+import { useParams } from 'react-router-dom';
 import { useManageSurveyQuestions } from './useManageSurveyQuestions';
 import type { OptionsResponse, ActionsResponse } from '../../../interfaces/OptionsResponse';
 
 export function useSurveyToolbarActions(view: ISurveyView) {
   const { t } = useTranslation();
-
+  const pageNavigate = usePageNavigate();
+  const { id } = useParams<{ id: string }>();
   const { openManageQuestionOrder } = useManageSurveyQuestions();
   const deleteQuestions = useDeleteSurveyDialog(view.unselectItemsAndRefresh);
 
@@ -41,12 +49,21 @@ export function useSurveyToolbarActions(view: ISurveyView) {
         isPinned: true,
         icon: PlusCircleIcon,
         label: t('Create question'),
-        onClick: () => alert('TODO'),
         isDisabled: canModifySurvey
           ? undefined
           : t(
               'You do not have permission to create a question. Please contact your system administrator if there is an issue with your access.'
             ),
+        onClick: () => {
+          pageNavigate(
+            jobTemplateSurvey
+              ? AwxRoute.AddJobTemplateSurvey
+              : AwxRoute.AddWorkflowJobTemplateSurvey,
+            {
+              params: { id },
+            }
+          );
+        },
       },
       {
         type: PageActionType.Button,
@@ -75,6 +92,14 @@ export function useSurveyToolbarActions(view: ISurveyView) {
             ),
       },
     ],
-    [t, openManageQuestionOrder, deleteQuestions, canModifySurvey]
+    [
+      t,
+      openManageQuestionOrder,
+      deleteQuestions,
+      canModifySurvey,
+      id,
+      pageNavigate,
+      jobTemplateSurvey,
+    ]
   );
 }
