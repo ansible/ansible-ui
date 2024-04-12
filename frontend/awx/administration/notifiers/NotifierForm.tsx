@@ -122,7 +122,8 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
         fieldValue = fields[field];
         if (fieldValue.type === 'int' && typeof notification_configuration[field] === 'string') {
           notification_configuration[field] = Number.parseInt(
-            notification_configuration[field] as string, 10
+            notification_configuration[field] as string,
+            10
           );
         }
 
