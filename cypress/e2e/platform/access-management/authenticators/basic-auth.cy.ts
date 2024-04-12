@@ -6,7 +6,7 @@ describe('Platform Basic Authentication', () => {
   it('create local authenticator in ui, enable it, log out, log in, and check the new authenticator in response', () => {
     cy.platformLogin();
     cy.navigateTo('platform', 'authenticators');
-    cy.verifyPageTitle('Authentication');
+    cy.verifyPageTitle('Authentication Methods');
 
     const localAuthenticator = randomE2Ename();
     cy.containsBy('a', 'Create authentication').click();
@@ -22,7 +22,7 @@ describe('Platform Basic Authentication', () => {
     cy.verifyPageTitle(localAuthenticator);
 
     cy.navigateTo('platform', 'authenticators');
-    cy.verifyPageTitle('Authentication');
+    cy.verifyPageTitle('Authentication Methods');
 
     // Enable the newly created local authenticator
     cy.getTableRow('name', localAuthenticator).within(() => {
@@ -51,8 +51,7 @@ describe('Platform Basic Authentication', () => {
 
     // Authentication List Page
     cy.navigateTo('platform', 'authenticators');
-    cy.verifyPageTitle('Authentication');
-
+    cy.verifyPageTitle('Authentication Methods');
     // Edit the GitHub authenticator
     cy.clickTableRowAction('name', localAuthenticator, 'edit-authenticator');
 

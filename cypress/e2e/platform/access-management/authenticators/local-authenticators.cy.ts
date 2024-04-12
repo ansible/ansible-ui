@@ -5,7 +5,7 @@ describe('Authenticators - Local CRUD UI', () => {
   beforeEach(() => {
     cy.platformLogin();
     cy.navigateTo('platform', 'authenticators');
-    cy.verifyPageTitle('Authentication');
+    cy.verifyPageTitle('Authentication Methods');
   });
 
   it('creates a local authenticator, search and delete', () => {
@@ -67,17 +67,14 @@ describe('Authenticators - Local CRUD UI', () => {
     const localAuthenticatorName = `Platform Local Authenticator ${randomString(4)}`;
     cy.createLocalPlatformAuthenticator(localAuthenticatorName).then(
       (createdLocalAuthenticator: Authenticator) => {
-        cy.verifyPageTitle('Authentication');
-        cy.searchAndDisplayResourceByFilterOption(createdLocalAuthenticator.name, 'name').then(
-          () => {
-            cy.contains('tr', createdLocalAuthenticator.name).within(() => {
-              cy.get('[data-cy=toggle-switch]').click();
-              cy.get('.pf-v5-c-switch__label.pf-m-on')
-                .should('contain.text', 'Enabled')
-                .should('be.be.visible');
-            });
-          }
-        );
+        cy.verifyPageTitle('Authentication Methods');
+        cy.searchAndDisplayResourceByFilterOption(createdLocalAuthenticator.name, 'name');
+        cy.contains('tr', createdLocalAuthenticator.name).within(() => {
+          cy.get('[data-cy=toggle-switch]').click();
+          cy.get('.pf-v5-c-switch__label.pf-m-on')
+            .should('contain.text', 'Enabled')
+            .should('be.be.visible');
+        });
         cy.contains('h4', `${createdLocalAuthenticator.name} enabled.`);
         cy.contains('tr', createdLocalAuthenticator.name).within(() => {
           cy.get('[data-cy=toggle-switch]').click();

@@ -8,8 +8,8 @@ describe('Azure AD Authentication form - create, edit, update and delete', () =>
 
     cy.fixture('platform-authenticators/azuread').then((azureADData: AzureAD) => {
       cy.navigateTo('platform', 'authenticators');
-      cy.verifyPageTitle('Authentication');
-
+      cy.verifyPageTitle('Authentication Methods');
+      // create a new Azure AD authenticator
       // Click on the Create Authentication button
       cy.containsBy('a', 'Create authentication').click();
 

@@ -13,7 +13,7 @@ export function useGetPlatformAuthenticatorsRoutes() {
   const authenticatorsRoutes = useMemo<PageNavigationItem>(
     () => ({
       id: PlatformRoute.Authenticators,
-      label: t('Authentication'),
+      label: t('Authentication Methods'),
       path: 'authenticators',
       children: [
         {
