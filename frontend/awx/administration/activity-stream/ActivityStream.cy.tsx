@@ -1,5 +1,16 @@
 import { ActivityStreams } from './ActivityStream';
 
+beforeEach(() => {
+  cy.intercept(
+    {
+      method: 'OPTIONS',
+      url: '/api/v2/activity_stream/',
+    },
+    {
+      fixture: 'mock_activity_stream_options.json',
+    }
+  );
+});
 describe('Activity Stream Tests', () => {
   describe('Error list', () => {
     it('Displays error if activity stream is not successfully loaded', () => {
