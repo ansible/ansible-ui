@@ -33,7 +33,13 @@ export function TemplatesList(props: {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const getPageUrl = useGetPageUrl();
-  const toolbarFilters = useTemplateFilters();
+  const toolbarFilters = useTemplateFilters({
+    url: props.url,
+    projectId: props.projectId,
+    inventoryId: props.inventoryId,
+    credentialsId: props.credentialsId,
+    executionEnvironmentId: props.executionEnvironmentId,
+  });
   const tableColumns = useTemplateColumns();
   const getQueryParams = (
     projectId?: string,
