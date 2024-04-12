@@ -2,11 +2,18 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Chip, ChipGroup, Icon, Flex, Tooltip } from '@patternfly/react-core';
 import { AsteriskIcon } from '@patternfly/react-icons';
-import { ITableColumn, TextCell } from '../../../../../framework';
+import { ITableColumn, TextCell, useGetPageUrl } from '../../../../../framework';
 import type { Spec } from '../../../interfaces/Survey';
+import { AwxRoute } from '../../../main/AwxRoutes';
 
-export function useSurveyColumns() {
+export function useSurveyColumns(_options?: {
+  templateType?: 'job_template' | 'workflow_job_template';
+  id?: string;
+}) {
   const { t } = useTranslation();
+  const { templateType, id } = _options ?? {};
+
+  const getPageUrl = useGetPageUrl();
 
   return useMemo<ITableColumn<Spec>[]>(
     () => [
@@ -26,6 +33,12 @@ export function useSurveyColumns() {
                   </Tooltip>
                 ) : null
               }
+              to={getPageUrl(
+                templateType === 'job_template'
+                  ? AwxRoute.EditJobTemplateSurvey
+                  : AwxRoute.EditWorkflowJobTemplateSurvey,
+                { params: { id }, query: { question_variable: question.variable } }
+              )}
             />
           </Flex>
         ),
@@ -55,16 +68,19 @@ export function useSurveyColumns() {
           }
           return (
             <ChipGroup>
-              {question.default.split('\n').map((chip) => (
-                <Chip key={chip} isReadOnly ouiaId={`${question.variable}-${chip}`}>
-                  {chip}
-                </Chip>
-              ))}
+              {question.default
+                .toString()
+                .split('\n')
+                .map((chip) => (
+                  <Chip key={chip} isReadOnly ouiaId={`${question.variable}-${chip}`}>
+                    {chip}
+                  </Chip>
+                ))}
             </ChipGroup>
           );
         },
       },
     ],
-    [t]
+    [t, getPageUrl, id, templateType]
   );
 }
