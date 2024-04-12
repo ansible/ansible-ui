@@ -42,6 +42,7 @@ export function NotificationPage() {
         }}
         tabs={[{ label: t('Details'), page: AwxRoute.NotificationTemplateDetails }]}
         params={params}
+        componentParams={ {notificationTemplate} }
       />
     </PageLayout>
   );
