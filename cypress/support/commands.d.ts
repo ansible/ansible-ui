@@ -140,6 +140,11 @@ declare global {
         text: string | number | RegExp
       ): Chainable<JQuery<HTMLElement>>;
 
+      poll<ResponseT>(
+        fn: () => Chainable<ResponseT>,
+        check: (response: ResponseT) => boolean
+      ): Chainable<ResponseT>;
+
       // ==============================================================================================================
       // Input Commands
       // ==============================================================================================================
@@ -1051,7 +1056,12 @@ declare global {
         secondNode: WorkflowNode
       ): Chainable<WorkflowNode>;
 
-      getAwxWFApprovalByWorkflowJobID(workflowJobID: number): Chainable<WorkflowApproval>;
+      getFirstPendingWorkflowApprovalsForWorkflowJobID(
+        workflowJobID: number
+      ): Chainable<WorkflowApproval | undefined>;
+      pollFirstPendingWorkflowApprovalsForWorkflowJobID(
+        workflowJobID: number
+      ): Chainable<WorkflowApproval | undefined>;
 
       waitForTemplateStatus(jobID: string): Chainable<AwxItemsResponse<JobEvent>>;
       waitForJobToProcessEvents(jobID: string, retries?: number): Chainable<Job>;
