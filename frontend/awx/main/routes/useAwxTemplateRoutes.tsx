@@ -31,7 +31,6 @@ import {
   AddTemplateSurveyForm,
 } from '../../resources/templates/TemplatePage/TemplateSurveyForm';
 
-
 export function useAwxTemplateRoutes() {
   const { t } = useTranslation();
   const templateRoutes = useMemo<PageNavigationItem>(
