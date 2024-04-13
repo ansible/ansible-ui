@@ -49,7 +49,6 @@ export function NodeTypeStep(props: { hasSourceNode?: boolean }) {
     useFormContext<WizardFormValues>();
 
   const { defaultValues } = formState;
-
   const params = useParams<{ id?: string }>();
   const { pathname } = useLocation();
 
@@ -126,22 +125,31 @@ export function NodeTypeStep(props: { hasSourceNode?: boolean }) {
   useEffect(() => {
     const getResource = async () => {
       if (!nodeResource) {
-        if (!params?.id) return;
         const pathnameSplit = pathname.split('/');
-        const resourceType = pathnameSplit[1] === 'projects' ? 'projects' : pathnameSplit[2];
-        const nodeType = resourceType.split('_template')[0];
-        setValue('node_type', nodeType as UnifiedJobType);
-        const response = await requestGet<
-          Project | JobTemplate | WorkflowJobTemplate | InventorySource
-        >(`${resourceEndPoints[resourceType]}${params?.id}/`);
-        setValue('node_resource', response);
+        if (!params?.id && pathnameSplit[1] === 'schedules') {
+          const response = await requestGet<
+            Project | JobTemplate | WorkflowJobTemplate | InventorySource
+          >(`${defaultValues?.relatedJobTypeApiUrl}`);
+          setValue('node_resource', response);
+          const nodeType = response.type.split('_template')[0];
+          setValue('node_type', nodeType as UnifiedJobType);
+        } else {
+          if (!params?.id) return;
+          const resourceType = pathnameSplit[1] === 'projects' ? 'projects' : pathnameSplit[2];
+          const nodeType = resourceType.split('_template')[0];
+          setValue('node_type', nodeType as UnifiedJobType);
+          const response = await requestGet<
+            Project | JobTemplate | WorkflowJobTemplate | InventorySource
+          >(`${resourceEndPoints[resourceType]}${params?.id}/`);
+          setValue('node_resource', response);
+        }
       }
     };
 
     if (pathname.split('/').includes('schedules')) {
       void getResource();
     }
-  }, [nodeResource, params?.id, pathname, setValue]);
+  }, [defaultValues?.relatedJobTypeApiUrl, nodeResource, params?.id, pathname, setValue]);
 
   useEffect(() => {
     const setLaunchToWizardData = async () => {
@@ -240,7 +248,7 @@ export function NodeTypeStep(props: { hasSourceNode?: boolean }) {
 
   return (
     <>
-      {pathname.split('/')[1] === 'schedules' ? (
+      {pathname.split('/')[1] === 'schedules' && pathname.split('/')[3] !== 'edit' ? (
         <>
           <ScheduleAddResource />
           {nodeResource && <ScheduleDetails />}

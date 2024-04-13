@@ -107,6 +107,7 @@ export function ScheduleEditWizard() {
       name: schedule?.name,
       description: schedule?.description,
       resource_type: schedule?.summary_fields.unified_job_template.job_type,
+      relatedJobTypeApiUrl: schedule?.related.unified_job_template,
       resourceName: schedule?.summary_fields.unified_job_template.name,
       startDateTime: { date: startDate, time: time },
       timezone: schedule?.timezone,

@@ -175,6 +175,7 @@ export interface WizardFormValues {
   launch_config: LaunchConfiguration | null;
   prompt: PromptFormValues;
   inventory?: Inventory;
+  relatedJobTypeApiUrl: string;
 }
 
 export type UnifiedJobType =
