@@ -27,11 +27,28 @@ export const authenticatorErrorAdapter = (error: unknown): ErrorOutput => {
           }
         });
       } else if (Array.isArray(messages)) {
-        const message = messages[0];
+        let message = messages[0];
         if (typeof message === 'string') {
-          const name = configurationFields.includes(key) ? `configuration.${key}` : key;
-          fieldErrors.push({ name, message });
+          // handles basic { FIELD: 'Error message' } structure
+          let name = key;
+          if (configurationFields.includes(key)) {
+            // handles { CONFIGURATION_FIELD: ['Error message'] }
+            name = `configuration.${key}`;
+          } else if (configurationFields.includes(key.split('.')[0])) {
+            // handles { CONFIGURATION_FIELD.object_key: ['Error message'] }
+            name = `configuration.${key.split('.')[0]}`;
+            message = `${key.split('.')[1]}: ${message}`;
+          }
+
+          fieldErrors.push({ name, message: message as string });
         }
+      } else if (typeof messages === 'object' && messages !== null) {
+        // handles { CONFIGURATION_FIELD: { object_key: 'Error message'} }
+        const objectErrors = Object.keys(messages).map(
+          (key) => `${key}: ${(messages as { [k: string]: string })[key]}`
+        );
+        const name = configurationFields.includes(key) ? `configuration.${key}` : key;
+        fieldErrors.push({ name, message: objectErrors.join('; ') });
       }
     }
   } else if (error instanceof Error) {
