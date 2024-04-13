@@ -1,7 +1,7 @@
 export interface Survey {
   name: string;
   description: string;
-  spec: [Spec];
+  spec: Spec[];
 }
 
 export interface Spec {
@@ -12,7 +12,7 @@ export interface Spec {
   variable: string;
   min: number;
   max: number;
-  default: string;
-  choices: string[];
+  default: string | number;
+  choices: string[] | string;
   new_question: boolean;
 }

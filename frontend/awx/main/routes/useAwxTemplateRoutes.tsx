@@ -26,6 +26,11 @@ import { TemplateJobs } from '../../resources/templates/TemplatePage/TemplateJob
 import { TemplateSurvey } from '../../resources/templates/TemplatePage/TemplateSurvey';
 import { SchedulesList } from '../../views/schedules/SchedulesList';
 import { ScheduleEditWizard } from '../../views/schedules/wizard/ScheduleEditWizard';
+import {
+  EditTemplateSurveyForm,
+  AddTemplateSurveyForm,
+} from '../../resources/templates/TemplatePage/TemplateSurveyForm';
+
 
 export function useAwxTemplateRoutes() {
   const { t } = useTranslation();
@@ -121,6 +126,16 @@ export function useAwxTemplateRoutes() {
                   id: AwxRoute.JobTemplateSurvey,
                   path: 'survey',
                   element: <TemplateSurvey resourceType="job_templates" />,
+                },
+                {
+                  id: AwxRoute.AddJobTemplateSurvey,
+                  path: 'survey/add',
+                  element: <AddTemplateSurveyForm resourceType="job_templates" />,
+                },
+                {
+                  id: AwxRoute.EditJobTemplateSurvey,
+                  path: 'survey/edit',
+                  element: <EditTemplateSurveyForm resourceType="job_templates" />,
                 },
                 {
                   id: AwxRoute.JobTemplateSchedules,
@@ -227,6 +242,16 @@ export function useAwxTemplateRoutes() {
                   id: AwxRoute.WorkflowJobTemplateSurvey,
                   path: 'survey',
                   element: <TemplateSurvey resourceType="workflow_job_templates" />,
+                },
+                {
+                  id: AwxRoute.AddWorkflowJobTemplateSurvey,
+                  path: 'survey/add',
+                  element: <AddTemplateSurveyForm resourceType="workflow_job_templates" />,
+                },
+                {
+                  id: AwxRoute.EditWorkflowJobTemplateSurvey,
+                  path: 'survey/edit',
+                  element: <EditTemplateSurveyForm resourceType="workflow_job_templates" />,
                 },
                 {
                   id: AwxRoute.WorkflowJobTemplateSchedules,

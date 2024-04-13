@@ -11,9 +11,9 @@ describe('EDA Decision Environment List', () => {
     cy.createEdaDecisionEnvironment().then((edaDE) => {
       cy.navigateTo('eda', 'decision-environments');
       cy.verifyPageTitle('Decision Environments');
-      cy.filterTableByText(edaDE.name);
-      cy.get('button[aria-label="table view"]').click();
-      cy.contains('td', edaDE.name).should('be.visible').click();
+      cy.setTableView('table');
+      cy.filterTableByTextFilter('name', edaDE.name, { disableFilterSelection: true });
+      cy.contains('td', edaDE.name).should('be.visible');
       cy.deleteEdaDecisionEnvironment(edaDE);
     });
   });
@@ -22,9 +22,10 @@ describe('EDA Decision Environment List', () => {
     cy.createEdaDecisionEnvironment().then((edaDE1) => {
       cy.createEdaDecisionEnvironment().then((edaDE2) => {
         cy.navigateTo('eda', 'decision-environments');
-        cy.get('button[aria-label="table view"]').click();
-        cy.selectTableRow(edaDE1.name);
-        cy.selectTableRow(edaDE2.name);
+        cy.verifyPageTitle('Decision Environments');
+        cy.setTableView('table');
+        cy.selectTableRowByCheckbox('name', edaDE1.name, { disableFilterSelection: true });
+        cy.selectTableRowByCheckbox('name', edaDE2.name, { disableFilterSelection: true });
         cy.clickToolbarKebabAction('delete-selected-decision-environments');
         cy.intercept('DELETE', edaAPI`/decision-environments/${edaDE1.id.toString()}/`).as(
           'edaDE1'
@@ -49,8 +50,9 @@ describe('EDA Decision Environment List', () => {
     cy.createEdaDecisionEnvironment().then((edaDE) => {
       cy.navigateTo('eda', 'decision-environments');
       cy.verifyPageTitle('Decision Environments');
-      cy.searchAndDisplayResource(edaDE.name);
-      cy.get('[data-cy="card-view"]').click();
+      cy.setTableView('table');
+      cy.filterTableByTextFilter('name', edaDE.name, { disableFilterSelection: true });
+      cy.setTableView('card');
       cy.clickListCardKebabAction(edaDE.id, edaDE.name, 'delete-decision-environment');
       cy.get('#confirm').click();
       cy.clickButton(/^Delete decision environment/);

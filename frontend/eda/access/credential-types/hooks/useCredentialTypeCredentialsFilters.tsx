@@ -1,15 +1,15 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { IToolbarFilter, ToolbarFilterType } from '../../../../framework';
+import { IToolbarFilter, ToolbarFilterType } from '../../../../../framework';
 
-export function useDecisionEnvironmentFilters() {
+export function useCredentialTypeCredentialsFilters() {
   const { t } = useTranslation();
   return useMemo<IToolbarFilter[]>(
     () => [
       {
         key: 'name',
         label: t('Name'),
-        type: ToolbarFilterType.SingleText,
+        type: ToolbarFilterType.MultiText,
         query: 'name',
         comparison: 'startsWith',
       },

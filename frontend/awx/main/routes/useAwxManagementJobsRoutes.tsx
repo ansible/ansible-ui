@@ -4,7 +4,7 @@ import { Navigate } from 'react-router-dom';
 import { PageNavigationItem } from '../../../../framework';
 import { PageNotImplemented } from '../../../../framework/PageEmptyStates/PageNotImplemented';
 import { ManagementJobPage } from '../../administration/management-jobs/ManagementJobPage/ManagementJobPage';
-import { ManagementJobs } from '../../administration/management-jobs/ManagementJobs';
+import { ManagementJobs } from '../../administration/management-jobs/ManagementJobsList';
 import { AwxRoute } from '../AwxRoutes';
 import { ScheduleAddWizard } from '../../views/schedules/wizard/ScheduleAddWizard';
 import { ScheduleEditWizard } from '../../views/schedules/wizard/ScheduleEditWizard';

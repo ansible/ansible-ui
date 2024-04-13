@@ -1,3 +1,5 @@
+/// <reference types="cypress" />
+
 import '@cypress/code-coverage/support';
 import jsyaml from 'js-yaml';
 import { SetRequired } from 'type-fest';
@@ -249,31 +251,36 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add('getAwxWFApprovalByWorkflowJobID', (workflowJobID: number) => {
-  cy.requestGet<AwxItemsResponse<WorkflowNode>>(
-    awxAPI`/workflow_jobs/${workflowJobID.toString()}/workflow_nodes/`
-  )
-    .its('results')
-    .then((res: WorkflowJobNode[]) => {
-      if (res.length > 0) {
-        for (const wfjNode of res) {
-          if (wfjNode.summary_fields.workflow_job.id === workflowJobID) {
-            cy.awxRequestGet<AwxItemsResponse<WorkflowApproval>>(
-              awxAPI`/workflow_approvals/?name__startswith=E2E&page=1&page_size=200&order_by=-id`
-            )
-              .its('results')
-              .then((res: WorkflowApproval[]) => {
-                for (const wfa of res) {
-                  if (wfa.summary_fields.workflow_job.id === workflowJobID) {
-                    return wfa;
-                  }
-                }
-              });
-          }
-        }
-      }
-    });
-});
+Cypress.Commands.add(
+  'getFirstPendingWorkflowApprovalsForWorkflowJobID',
+  (workflowJobID: number) => {
+    cy.requestGet<AwxItemsResponse<WorkflowNode>>(
+      awxAPI`/workflow_jobs/${workflowJobID.toString()}/workflow_nodes/`
+    )
+      .its('results')
+      .then((workflowJobNodes: WorkflowJobNode[]) => {
+        const workflowApprovalIds = workflowJobNodes
+          .filter((node) => node.summary_fields.job?.type === 'workflow_approval')
+          .filter((node) => node.summary_fields.job?.status === 'pending')
+          .map((node) => node.summary_fields.job?.id);
+        if (workflowApprovalIds.length === 0) return cy.then(() => undefined);
+        const workflowApprovalId = workflowApprovalIds[0];
+        return cy.awxRequestGet<WorkflowApproval>(
+          awxAPI`/workflow_approvals/${workflowApprovalId!.toString()}`
+        );
+      });
+  }
+);
+
+Cypress.Commands.add(
+  'pollFirstPendingWorkflowApprovalsForWorkflowJobID',
+  (workflowJobID: number) => {
+    cy.poll<WorkflowApproval>(
+      () => cy.getFirstPendingWorkflowApprovalsForWorkflowJobID(workflowJobID),
+      (approval: WorkflowApproval) => !!approval
+    );
+  }
+);
 
 /**
  * cy.inputCustomCredTypeConfig(json/yml, input/injector config)
@@ -483,7 +490,7 @@ Cypress.Commands.add('selectDetailsPageKebabAction', (dataCy: string) => {
   cy.get('[data-cy="actions-dropdown"]')
     .click()
     .then(() => {
-      cy.getByDataCy(dataCy).click();
+      cy.getByDataCy(`${dataCy}`).click();
       cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
         cy.get('[data-ouia-component-id="confirm"]').click();
         cy.get('[data-ouia-component-id="submit"]').click();
