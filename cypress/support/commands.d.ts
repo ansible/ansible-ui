@@ -1288,7 +1288,7 @@ declare global {
        * @returns {Chainable<EdaUser>}
        */
       createEdaUser(
-        user?: SetOptional<EdaUserCreateUpdate, 'username' | 'password' | 'roles'>
+        user?: SetOptional<EdaUserCreateUpdate, 'username' | 'password'>
       ): Chainable<EdaUser>;
 
       /**

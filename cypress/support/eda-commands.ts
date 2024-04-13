@@ -316,7 +316,7 @@ Cypress.Commands.add('getEdaRoleDetail', (roleID: string) => {
 Cypress.Commands.add(
   'createEdaUser',
   (user?: SetOptional<EdaUserCreateUpdate, 'username' | 'password'>) => {
-    cy.requestPost<EdaUser, SetOptional<EdaUserCreateUpdate, 'username' | 'password' | 'roles'>>(
+    cy.requestPost<EdaUser, SetOptional<EdaUserCreateUpdate, 'username' | 'password'>>(
       edaAPI`/users/`,
       {
         username: `E2EUser${randomString(4)}`,
