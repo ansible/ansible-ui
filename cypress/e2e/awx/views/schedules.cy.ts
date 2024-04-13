@@ -186,13 +186,135 @@ describe('Schedules - Delete', () => {
 
 describe('Schedules - Edit', () => {
   //Make sure to assert the deletion by intercepting the Patch request
+  let schedule: Schedule;
 
-  it.skip('can edit a simple schedule from details page', () => {});
-  it.skip('can edit a simple schedule from the schedules list row', () => {});
-  it.skip('can edit a schedule to add rules', () => {});
-  it.skip('can edit a schedule to exceptions', () => {});
-  it.skip('can edit a schedule to remove rules', () => {});
+  before(() => {
+    cy.awxLogin();
+  });
+
+  beforeEach(() => {
+    cy.createAWXSchedule().then((sched: Schedule) => (schedule = sched));
+    cy.navigateTo('awx', 'schedules');
+  });
+
+  it('can edit a simple schedule from details page', () => {
+    cy.getTableRow('name', schedule.name).within(() => {
+      cy.get('[data-cy="name-column-cell"]').click();
+    });
+    cy.getBy('[data-cy="edit-schedule"]').click();
+    cy.get('[data-cy="wizard-nav"]').within(() => {
+      ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
+        cy.get('li')
+          .eq(index)
+          .should((el) => expect(el.text().trim()).to.equal(text));
+      });
+    });
+    cy.get('[data-cy="description"]').type('-edited');
+    cy.clickButton(/^Next$/);
+    cy.clickButton(/^Next$/);
+    cy.clickButton(/^Next$/);
+    cy.get('[data-cy="description"]').contains('-edited');
+  });
+  it('can edit a simple schedule from the schedules list row', () => {
+    cy.getTableRow('name', schedule.name).within(() => {
+      cy.get('[data-cy="edit-schedule"]').click();
+    });
+    cy.get('[data-cy="wizard-nav"]').within(() => {
+      ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
+        cy.get('li')
+          .eq(index)
+          .should((el) => expect(el.text().trim()).to.equal(text));
+      });
+    });
+    cy.get('[data-cy="description"]').type('-edited');
+    cy.clickButton(/^Next$/);
+    cy.clickButton(/^Next$/);
+    cy.clickButton(/^Next$/);
+    cy.get('[data-cy="description"]').contains('-edited');
+  });
+  it('can edit a schedule to add rules', () => {
+    cy.getTableRow('name', schedule.name).within(() => {
+      cy.get('[data-cy="edit-schedule"]').click();
+    });
+    cy.get('[data-cy="wizard-nav"]').within(() => {
+      ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
+        cy.get('li')
+          .eq(index)
+          .should((el) => expect(el.text().trim()).to.equal(text));
+      });
+    });
+    cy.clickButton(/^Next$/);
+    cy.clickButton(/^Add rule$/);
+    cy.clickButton(/^Add$/);
+    cy.clickButton(/^Next$/);
+    cy.clickButton(/^Next$/);
+    cy.get('.pf-v5-c-page__main-body').contains('Rule 2');
+    cy.get('.pf-v5-c-page__main-body').contains('FREQ=WEEKLY');
+  });
+  //Fix when exceptions step works correctly
+  it.skip('can edit a schedule to add exceptions', () => {
+    cy.getTableRow('name', schedule.name).within(() => {
+      cy.get('[data-cy="edit-schedule"]').click();
+    });
+    cy.get('[data-cy="wizard-nav"]').within(() => {
+      ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
+        cy.get('li')
+          .eq(index)
+          .should((el) => expect(el.text().trim()).to.equal(text));
+      });
+    });
+    cy.clickButton(/^Next$/);
+    cy.clickButton(/^Next$/);
+    cy.clickButton(/^Create exception$/);
+    cy.get('[data-cy="freq-form-group"]').click();
+    cy.get('[data-cy="freq"]').within(() => {
+      cy.clickButton('Yearly');
+    });
+    cy.clickButton(/^Add$/);
+    cy.clickButton(/^Next$/);
+    cy.get('.pf-v5-c-page__main-body').contains('FREQ=YEARLY');
+  });
+  it('can edit a schedule to remove rules', () => {
+    cy.getTableRow('name', schedule.name).within(() => {
+      cy.get('[data-cy="edit-schedule"]').click();
+    });
+    cy.get('[data-cy="wizard-nav"]').within(() => {
+      ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
+        cy.get('li')
+          .eq(index)
+          .should((el) => expect(el.text().trim()).to.equal(text));
+      });
+    });
+    cy.clickButton(/^Next$/);
+    cy.clickButton(/^Add rule$/);
+    cy.getBy('[data-cy="row-id-0"]').within(() => {
+      cy.getBy('[data-cy="delete-rule"]').click();
+    });
+    cy.clickButton(/^Add$/);
+    cy.clickButton(/^Next$/);
+    cy.clickButton(/^Next$/);
+    cy.get('.pf-v5-c-page__main-body').should('not.contain', 'FREQ=DAILY');
+  });
+  //Fix when exceptions step works correctly
   it.skip('can edit a schedule remove exceptions', () => {});
-  it.skip('can enable a schedule', () => {});
-  it.skip('can disable a schedule', () => {});
+  it('can enable a schedule', () => {
+    cy.getTableRow('name', schedule.name).within(() => {
+      cy.get('[data-cy="toggle-switch"]').click();
+      cy.get('[data-cy="toggle-switch"]').within(() => {
+        cy.get('[aria-label="Click to enable schedule"]').should('exist');
+      });
+      cy.get('[data-cy="toggle-switch"]').click();
+      cy.get('[data-cy="toggle-switch"]').within(() => {
+        cy.get('[aria-label="Click to enable schedule"]').should('exist');
+      });
+    });
+  });
+  it('can disable a schedule', () => {
+    cy.getTableRow('name', schedule.name).within(() => {
+      cy.get('[data-cy="toggle-switch"]').click();
+      cy.get('[data-cy="toggle-switch"]').within(() => {
+        cy.get('[aria-label="Click to enable schedule"]').should('exist');
+      });
+    });
+  });
 });

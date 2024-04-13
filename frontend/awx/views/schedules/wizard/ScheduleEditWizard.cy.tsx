@@ -125,23 +125,23 @@ describe('ScheduleAddWizard', () => {
       });
     });
 
-    // it('Should not go to next step due to failed validation', () => {
-    //   cy.mount(<ScheduleEditWizard />, {
-    //     initialEntries: ['/schedules/1/edit'],
-    //     path: '/schedules/:schedule_id/edit',
-    //   });
-    //   cy.selectDropdownOptionByResourceName('node_type', 'Job template');
-    //   cy.clickButton(/^Next$/);
-    //   cy.get('[data-cy="name-form-group"]').within(() => {
-    //     cy.get('span.pf-v5-c-helper-text__item-text').should(
-    //       'have.text',
-    //       'Schedule name is required.'
-    //     );
-    //   });
-    //   cy.get('[data-cy="wizard-nav-item-nodePromptsStep"]').within(() => {
-    //     cy.get('button').should('be.disabled');
-    //   });
-    // });
+    it('Should not go to next step due to failed validation', () => {
+      cy.mount(<ScheduleEditWizard />, {
+        initialEntries: ['/schedules/1/edit'],
+        path: '/schedules/:schedule_id/edit',
+      });
+      cy.selectDropdownOptionByResourceName('node_type', 'Job template');
+      cy.clickButton(/^Next$/);
+      cy.get('[data-cy="name-form-group"]').within(() => {
+        cy.get('span.pf-v5-c-helper-text__item-text').should(
+          'have.text',
+          'Schedule name is required.'
+        );
+      });
+      cy.get('[data-cy="wizard-nav-item-nodePromptsStep"]').within(() => {
+        cy.get('button').should('be.disabled');
+      });
+    });
   });
   describe('Rules step', () => {
     beforeEach(() => {
