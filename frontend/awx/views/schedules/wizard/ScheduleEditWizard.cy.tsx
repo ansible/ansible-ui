@@ -50,7 +50,15 @@ describe('ScheduleAddWizard', () => {
     });
     beforeEach(() => {
       cy.intercept({ method: 'GET', url: awxAPI`/job_templates/*` }, mockTemplates);
-      cy.intercept('/api/v2/job_templates/100/', { id: 100, name: 'Mock Job Template' });
+      cy.intercept('/api/v2/job_templates/100/', {
+        id: 100,
+        name: 'Mock Job Template',
+        launch: {
+          ask_credential_on_launch: true,
+          survey_enabled: true,
+        },
+        type: 'job_template',
+      });
       cy.intercept('/api/v2/job_templates/100/launch/', {
         ask_credential_on_launch: true,
         survey_enabled: true,
@@ -95,6 +103,9 @@ describe('ScheduleAddWizard', () => {
         dtstart: '2024-04-14T15:50:01Z',
         next_run: '2024-04-14T15:50:01Z',
         timezone: 'UTC',
+        related: {
+          unified_job_template: '/api/v2/job_templates/100/',
+        },
       });
     });
 
@@ -113,9 +124,6 @@ describe('ScheduleAddWizard', () => {
         });
       });
 
-      cy.selectDropdownOptionByResourceName('node_type', 'Job template');
-      cy.selectDropdownOptionByResourceName('job-template-select', 'Mock Job Template');
-
       cy.get('[data-cy="wizard-nav"]').within(() => {
         ['Details', 'Prompts', 'Survey', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
           cy.get('li')
@@ -130,7 +138,7 @@ describe('ScheduleAddWizard', () => {
         initialEntries: ['/schedules/1/edit'],
         path: '/schedules/:schedule_id/edit',
       });
-      cy.selectDropdownOptionByResourceName('node_type', 'Job template');
+      cy.get('[data-cy="name"]').clear();
       cy.clickButton(/^Next$/);
       cy.get('[data-cy="name-form-group"]').within(() => {
         cy.get('span.pf-v5-c-helper-text__item-text').should(
@@ -161,8 +169,6 @@ describe('ScheduleAddWizard', () => {
         });
       });
 
-      cy.selectDropdownOptionByResourceName('node_type', 'Job template');
-      cy.selectDropdownOptionByResourceName('job-template-select', 'Mock Job Template');
       cy.get('[data-cy="name"]').type('Test Schedule');
       cy.selectDropdownOptionByResourceName('timezone', 'Zulu');
       cy.clickButton(/^Next$/);
