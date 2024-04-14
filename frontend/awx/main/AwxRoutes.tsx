@@ -126,6 +126,7 @@ export enum AwxRoute {
   InventorySourceScheduleDetails = 'awx-inventory-schedule-details',
   InventorySourceScheduleRules = 'awx-inventory-schedule-rules',
   InventorySourceCreateScheduleRules = 'awx-inventory-source-create-schedule-rules',
+  InventoryRunCommand = 'awx-inventory-run-command',
 
   Hosts = 'awx-hosts',
   CreateHost = 'awx-create-host',

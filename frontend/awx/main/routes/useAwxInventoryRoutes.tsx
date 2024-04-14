@@ -43,6 +43,7 @@ import { GroupRelatedGroups } from '../../resources/groups/GroupRelatedGroups';
 import { ResourceNotifications } from '../../resources/notifications/ResourceNotifications';
 import { SchedulesList } from '../../views/schedules/SchedulesList';
 import { InventoryJobs } from '../../resources/inventories/InventoryPage/InventoryJobs';
+import { InventoryRunCommand } from '../../resources/inventories/InventoryRunCommand';
 
 export function useAwxInventoryRoutes() {
   const { t } = useTranslation();
@@ -133,6 +134,11 @@ export function useAwxInventoryRoutes() {
           id: AwxRoute.InventoryGroupRelatedGroupsCreate,
           path: ':inventory_type/:id/groups/:group_id/nested_groups/add',
           element: <CreateRelatedGroup />,
+        },
+        {
+          id: AwxRoute.InventoryRunCommand,
+          path: ':inventory_type/:id/groups/:group_id/run_command',
+          element: <InventoryRunCommand />,
         },
         {
           id: AwxRoute.InventoryGroupPage,
