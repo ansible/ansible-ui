@@ -137,19 +137,19 @@ export function NodeTypeStep(props: { hasSourceNode?: boolean }) {
           if (!params?.id) return;
           const resourceType = pathnameSplit[1] === 'projects' ? 'projects' : pathnameSplit[2];
           const nodeType = resourceType.split('_template')[0];
-           if (resourceType === 'inventories' && params.source_id) {
-          const response = await requestGet<InventorySource>(
-            awxAPI`/inventory_sources/${params.source_id}/`
+          if (resourceType === 'inventories' && params.source_id) {
+            const response = await requestGet<InventorySource>(
+              awxAPI`/inventory_sources/${params.source_id}/`
+            );
+            setValue('node_type', 'inventory_update');
+            setValue('node_resource', response);
+            return;
+          }
+          setValue('node_type', nodeType as UnifiedJobType);
+          const response = await requestGet<Project | JobTemplate | WorkflowJobTemplate>(
+            `${resourceEndPoints[resourceType]}${params?.id}/`
           );
-          setValue('node_type', 'inventory_update');
           setValue('node_resource', response);
-          return;
-        }
-        setValue('node_type', nodeType as UnifiedJobType);
-        const response = await requestGet<Project | JobTemplate | WorkflowJobTemplate>(
-          `${resourceEndPoints[resourceType]}${params?.id}/`
-        );
-        setValue('node_resource', response);
         }
       }
     };
