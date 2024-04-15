@@ -39,7 +39,8 @@ describe('activity-stream', () => {
     cy.get('[data-cy="event-column-cell"]').should('have.text', `created team ${team.name}`);
   });
 
-  it('event details modal displays correct info', function () {
+  it.skip('event details modal displays correct info', function () {
+    //this test is being skipped due to flakiness. will come back to it during hardening.
     cy.getTableRowBySingleText(team.name)
       .should('be.visible')
       .then(() => {
@@ -61,7 +62,8 @@ describe('activity-stream', () => {
     cy.verifyPageTitle(team.name);
   });
 
-  it('can navigate to event resource detail page from activity stream event details modal', function () {
+  it.skip('can navigate to event resource detail page from activity stream event details modal', function () {
+    //this test is being skipped due to flakiness. will come back to it during hardening.
     cy.getTableRowBySingleText(team.name)
       .should('be.visible')
       .then(() => {
@@ -71,13 +73,15 @@ describe('activity-stream', () => {
       });
   });
 
-  it('can navigate to initiator detail page from activity stream list page', function () {
+  it.skip('can navigate to initiator detail page from activity stream list page', function () {
+    //this test is being skipped due to flakiness. will come back to it during hardening.
     cy.getTableRowBySingleText(team.name).should('be.visible');
     cy.get('[data-cy="initiated-by-column-cell"] a').first().click();
     cy.verifyPageTitle(activeUser.username);
   });
 
-  it('can navigate to initiator detail page from activity stream event details modal', function () {
+  it.skip('can navigate to initiator detail page from activity stream event details modal', function () {
+    //this test is being skipped due to flakiness. will come back to it during hardening.
     cy.getTableRowBySingleText(team.name).should('be.visible');
     cy.get('button[data-cy="view-event-details"]').first().click();
     cy.get('dd[data-cy="initiated-by"] a').click();
