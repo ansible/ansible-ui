@@ -424,13 +424,18 @@ describe('Schedules - Edit', () => {
           .should((el) => expect(el.text().trim()).to.equal(text));
       });
     });
+    cy.selectDropdownOptionByResourceName('timezone', 'Africa/Abidjan');
+    cy.getByDataCy('undefined-form-group').within(() => {
+      cy.getBy('[aria-label="Time picker"]').click().type('{selectall} 5:00 AM');
+    });
     cy.clickButton(/^Next$/);
     cy.clickButton(/^Add rule$/);
     cy.clickButton(/^Add$/);
     cy.clickButton(/^Next$/);
     cy.clickButton(/^Next$/);
-    cy.get('.pf-v5-c-page__main-body').contains('Rule 2');
-    cy.get('.pf-v5-c-page__main-body').contains('FREQ=WEEKLY');
+    cy.getByDataCy('start-date/time').contains('5:00 AM');
+    cy.getByDataCy('rule-2').should('exist');
+    cy.getByDataCy('rule-2').contains('FREQ=WEEKLY');
   });
   //Fix when exceptions step works correctly
   it.skip('can edit a schedule to add exceptions', () => {
@@ -453,7 +458,7 @@ describe('Schedules - Edit', () => {
     });
     cy.clickButton(/^Add$/);
     cy.clickButton(/^Next$/);
-    cy.get('.pf-v5-c-page__main-body').contains('FREQ=YEARLY');
+    cy.getByDataCy('rule-2').contains('FREQ=YEARLY');
   });
   it('can edit a schedule to remove rules', () => {
     cy.getTableRow('name', schedule.name).within(() => {
@@ -468,13 +473,13 @@ describe('Schedules - Edit', () => {
     });
     cy.clickButton(/^Next$/);
     cy.clickButton(/^Add rule$/);
-    cy.getBy('[data-cy="row-id-0"]').within(() => {
+    cy.getBy('[data-cy="row-id-1"]').within(() => {
       cy.getBy('[data-cy="delete-rule"]').click();
     });
     cy.clickButton(/^Add$/);
     cy.clickButton(/^Next$/);
     cy.clickButton(/^Next$/);
-    cy.get('.pf-v5-c-page__main-body').should('not.contain', 'FREQ=DAILY');
+    cy.getByDataCy('rule-1').should('not.contain', 'FREQ=DAILY');
   });
   //Fix when exceptions step works correctly
   it.skip('can edit a schedule remove exceptions', () => {});
