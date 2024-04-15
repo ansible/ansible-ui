@@ -1,0 +1,932 @@
+{
+  "count": 48,
+  "next": "/api/v2/users/?page=2",
+  "previous": null,
+  "results": [
+    {
+      "id": 1,
+      "type": "user",
+      "url": "/api/v2/users/1/",
+      "related": {
+        "teams": "/api/v2/users/1/teams/",
+        "organizations": "/api/v2/users/1/organizations/",
+        "admin_of_organizations": "/api/v2/users/1/admin_of_organizations/",
+        "projects": "/api/v2/users/1/projects/",
+        "credentials": "/api/v2/users/1/credentials/",
+        "roles": "/api/v2/users/1/roles/",
+        "activity_stream": "/api/v2/users/1/activity_stream/",
+        "access_list": "/api/v2/users/1/access_list/",
+        "tokens": "/api/v2/users/1/tokens/",
+        "authorized_tokens": "/api/v2/users/1/authorized_tokens/",
+        "personal_tokens": "/api/v2/users/1/personal_tokens/"
+      },
+      "summary_fields": {
+        "user_capabilities": {
+          "edit": true,
+          "delete": true
+        }
+      },
+      "created": "2024-04-08T12:50:59.767346Z",
+      "modified": null,
+      "username": "admin",
+      "first_name": "",
+      "last_name": "",
+      "email": "test@example.com",
+      "is_superuser": true,
+      "is_system_auditor": false,
+      "password": "$encrypted$",
+      "ldap_dn": "",
+      "last_login": null,
+      "external_account": null,
+      "auth": []
+    },
+    {
+      "id": 2,
+      "type": "user",
+      "url": "/api/v2/users/2/",
+      "related": {
+        "teams": "/api/v2/users/2/teams/",
+        "organizations": "/api/v2/users/2/organizations/",
+        "admin_of_organizations": "/api/v2/users/2/admin_of_organizations/",
+        "projects": "/api/v2/users/2/projects/",
+        "credentials": "/api/v2/users/2/credentials/",
+        "roles": "/api/v2/users/2/roles/",
+        "activity_stream": "/api/v2/users/2/activity_stream/",
+        "access_list": "/api/v2/users/2/access_list/",
+        "tokens": "/api/v2/users/2/tokens/",
+        "authorized_tokens": "/api/v2/users/2/authorized_tokens/",
+        "personal_tokens": "/api/v2/users/2/personal_tokens/"
+      },
+      "summary_fields": {
+        "user_capabilities": {
+          "edit": true,
+          "delete": true
+        }
+      },
+      "created": "2024-04-08T12:52:35.082942Z",
+      "modified": null,
+      "username": "ci-sa-user",
+      "first_name": "CI",
+      "last_name": "User",
+      "email": "ci-sa-user@tesing.ansible.com",
+      "is_superuser": true,
+      "is_system_auditor": false,
+      "password": "$encrypted$",
+      "ldap_dn": "",
+      "last_login": null,
+      "external_account": null,
+      "auth": []
+    },
+    {
+      "id": 3,
+      "type": "user",
+      "url": "/api/v2/users/3/",
+      "related": {
+        "teams": "/api/v2/users/3/teams/",
+        "organizations": "/api/v2/users/3/organizations/",
+        "admin_of_organizations": "/api/v2/users/3/admin_of_organizations/",
+        "projects": "/api/v2/users/3/projects/",
+        "credentials": "/api/v2/users/3/credentials/",
+        "roles": "/api/v2/users/3/roles/",
+        "activity_stream": "/api/v2/users/3/activity_stream/",
+        "access_list": "/api/v2/users/3/access_list/",
+        "tokens": "/api/v2/users/3/tokens/",
+        "authorized_tokens": "/api/v2/users/3/authorized_tokens/",
+        "personal_tokens": "/api/v2/users/3/personal_tokens/"
+      },
+      "summary_fields": {
+        "user_capabilities": {
+          "edit": true,
+          "delete": false
+        }
+      },
+      "created": "2024-04-08T12:52:40.044788Z",
+      "modified": "2024-04-09T20:48:20.943055Z",
+      "username": "dev",
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "is_superuser": true,
+      "is_system_auditor": false,
+      "password": "$encrypted$",
+      "ldap_dn": "",
+      "last_login": "2024-04-09T20:48:20.943055Z",
+      "external_account": null,
+      "auth": []
+    },
+    {
+      "id": 4,
+      "type": "user",
+      "url": "/api/v2/users/4/",
+      "related": {
+        "teams": "/api/v2/users/4/teams/",
+        "organizations": "/api/v2/users/4/organizations/",
+        "admin_of_organizations": "/api/v2/users/4/admin_of_organizations/",
+        "projects": "/api/v2/users/4/projects/",
+        "credentials": "/api/v2/users/4/credentials/",
+        "roles": "/api/v2/users/4/roles/",
+        "activity_stream": "/api/v2/users/4/activity_stream/",
+        "access_list": "/api/v2/users/4/access_list/",
+        "tokens": "/api/v2/users/4/tokens/",
+        "authorized_tokens": "/api/v2/users/4/authorized_tokens/",
+        "personal_tokens": "/api/v2/users/4/personal_tokens/"
+      },
+      "summary_fields": {
+        "user_capabilities": {
+          "edit": true,
+          "delete": true
+        }
+      },
+      "created": "2024-04-08T12:52:42.242505Z",
+      "modified": "2024-04-09T19:30:33.088716Z",
+      "username": "e2e",
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "is_superuser": true,
+      "is_system_auditor": false,
+      "password": "$encrypted$",
+      "ldap_dn": "",
+      "last_login": "2024-04-09T19:30:33.088716Z",
+      "external_account": null,
+      "auth": []
+    },
+    {
+      "id": 9,
+      "type": "user",
+      "url": "/api/v2/users/9/",
+      "related": {
+        "teams": "/api/v2/users/9/teams/",
+        "organizations": "/api/v2/users/9/organizations/",
+        "admin_of_organizations": "/api/v2/users/9/admin_of_organizations/",
+        "projects": "/api/v2/users/9/projects/",
+        "credentials": "/api/v2/users/9/credentials/",
+        "roles": "/api/v2/users/9/roles/",
+        "activity_stream": "/api/v2/users/9/activity_stream/",
+        "access_list": "/api/v2/users/9/access_list/",
+        "tokens": "/api/v2/users/9/tokens/",
+        "authorized_tokens": "/api/v2/users/9/authorized_tokens/",
+        "personal_tokens": "/api/v2/users/9/personal_tokens/"
+      },
+      "summary_fields": {
+        "user_capabilities": {
+          "edit": true,
+          "delete": true
+        }
+      },
+      "created": "2024-04-08T16:01:13.686873Z",
+      "modified": null,
+      "username": "e2e-user-avAE",
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "is_superuser": false,
+      "is_system_auditor": false,
+      "password": "$encrypted$",
+      "ldap_dn": "",
+      "last_login": null,
+      "external_account": null,
+      "auth": []
+    },
+    {
+      "id": 20,
+      "type": "user",
+      "url": "/api/v2/users/20/",
+      "related": {
+        "teams": "/api/v2/users/20/teams/",
+        "organizations": "/api/v2/users/20/organizations/",
+        "admin_of_organizations": "/api/v2/users/20/admin_of_organizations/",
+        "projects": "/api/v2/users/20/projects/",
+        "credentials": "/api/v2/users/20/credentials/",
+        "roles": "/api/v2/users/20/roles/",
+        "activity_stream": "/api/v2/users/20/activity_stream/",
+        "access_list": "/api/v2/users/20/access_list/",
+        "tokens": "/api/v2/users/20/tokens/",
+        "authorized_tokens": "/api/v2/users/20/authorized_tokens/",
+        "personal_tokens": "/api/v2/users/20/personal_tokens/"
+      },
+      "summary_fields": {
+        "user_capabilities": {
+          "edit": true,
+          "delete": true
+        }
+      },
+      "created": "2024-04-09T08:13:37.515778Z",
+      "modified": null,
+      "username": "e2e-user-CpgT",
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "is_superuser": false,
+      "is_system_auditor": false,
+      "password": "$encrypted$",
+      "ldap_dn": "",
+      "last_login": null,
+      "external_account": null,
+      "auth": []
+    },
+    {
+      "id": 118,
+      "type": "user",
+      "url": "/api/v2/users/118/",
+      "related": {
+        "teams": "/api/v2/users/118/teams/",
+        "organizations": "/api/v2/users/118/organizations/",
+        "admin_of_organizations": "/api/v2/users/118/admin_of_organizations/",
+        "projects": "/api/v2/users/118/projects/",
+        "credentials": "/api/v2/users/118/credentials/",
+        "roles": "/api/v2/users/118/roles/",
+        "activity_stream": "/api/v2/users/118/activity_stream/",
+        "access_list": "/api/v2/users/118/access_list/",
+        "tokens": "/api/v2/users/118/tokens/",
+        "authorized_tokens": "/api/v2/users/118/authorized_tokens/",
+        "personal_tokens": "/api/v2/users/118/personal_tokens/"
+      },
+      "summary_fields": {
+        "user_capabilities": {
+          "edit": true,
+          "delete": true
+        }
+      },
+      "created": "2024-04-09T16:11:02.412736Z",
+      "modified": null,
+      "username": "e2e-user-CqFR",
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "is_superuser": false,
+      "is_system_auditor": false,
+      "password": "$encrypted$",
+      "ldap_dn": "",
+      "last_login": null,
+      "external_account": null,
+      "auth": []
+    },
+    {
+      "id": 160,
+      "type": "user",
+      "url": "/api/v2/users/160/",
+      "related": {
+        "teams": "/api/v2/users/160/teams/",
+        "organizations": "/api/v2/users/160/organizations/",
+        "admin_of_organizations": "/api/v2/users/160/admin_of_organizations/",
+        "projects": "/api/v2/users/160/projects/",
+        "credentials": "/api/v2/users/160/credentials/",
+        "roles": "/api/v2/users/160/roles/",
+        "activity_stream": "/api/v2/users/160/activity_stream/",
+        "access_list": "/api/v2/users/160/access_list/",
+        "tokens": "/api/v2/users/160/tokens/",
+        "authorized_tokens": "/api/v2/users/160/authorized_tokens/",
+        "personal_tokens": "/api/v2/users/160/personal_tokens/"
+      },
+      "summary_fields": {
+        "user_capabilities": {
+          "edit": true,
+          "delete": true
+        }
+      },
+      "created": "2024-04-09T16:19:14.717968Z",
+      "modified": null,
+      "username": "e2e-user-Djka",
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "is_superuser": false,
+      "is_system_auditor": false,
+      "password": "$encrypted$",
+      "ldap_dn": "",
+      "last_login": null,
+      "external_account": null,
+      "auth": []
+    },
+    {
+      "id": 89,
+      "type": "user",
+      "url": "/api/v2/users/89/",
+      "related": {
+        "teams": "/api/v2/users/89/teams/",
+        "organizations": "/api/v2/users/89/organizations/",
+        "admin_of_organizations": "/api/v2/users/89/admin_of_organizations/",
+        "projects": "/api/v2/users/89/projects/",
+        "credentials": "/api/v2/users/89/credentials/",
+        "roles": "/api/v2/users/89/roles/",
+        "activity_stream": "/api/v2/users/89/activity_stream/",
+        "access_list": "/api/v2/users/89/access_list/",
+        "tokens": "/api/v2/users/89/tokens/",
+        "authorized_tokens": "/api/v2/users/89/authorized_tokens/",
+        "personal_tokens": "/api/v2/users/89/personal_tokens/"
+      },
+      "summary_fields": {
+        "user_capabilities": {
+          "edit": true,
+          "delete": true
+        }
+      },
+      "created": "2024-04-09T16:03:07.715669Z",
+      "modified": null,
+      "username": "e2e-user-dmRo",
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "is_superuser": false,
+      "is_system_auditor": false,
+      "password": "$encrypted$",
+      "ldap_dn": "",
+      "last_login": null,
+      "external_account": null,
+      "auth": []
+    },
+    {
+      "id": 26,
+      "type": "user",
+      "url": "/api/v2/users/26/",
+      "related": {
+        "teams": "/api/v2/users/26/teams/",
+        "organizations": "/api/v2/users/26/organizations/",
+        "admin_of_organizations": "/api/v2/users/26/admin_of_organizations/",
+        "projects": "/api/v2/users/26/projects/",
+        "credentials": "/api/v2/users/26/credentials/",
+        "roles": "/api/v2/users/26/roles/",
+        "activity_stream": "/api/v2/users/26/activity_stream/",
+        "access_list": "/api/v2/users/26/access_list/",
+        "tokens": "/api/v2/users/26/tokens/",
+        "authorized_tokens": "/api/v2/users/26/authorized_tokens/",
+        "personal_tokens": "/api/v2/users/26/personal_tokens/"
+      },
+      "summary_fields": {
+        "user_capabilities": {
+          "edit": true,
+          "delete": true
+        }
+      },
+      "created": "2024-04-09T08:37:55.783223Z",
+      "modified": null,
+      "username": "e2e-user-dsmg",
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "is_superuser": false,
+      "is_system_auditor": false,
+      "password": "$encrypted$",
+      "ldap_dn": "",
+      "last_login": null,
+      "external_account": null,
+      "auth": []
+    },
+    {
+      "id": 104,
+      "type": "user",
+      "url": "/api/v2/users/104/",
+      "related": {
+        "teams": "/api/v2/users/104/teams/",
+        "organizations": "/api/v2/users/104/organizations/",
+        "admin_of_organizations": "/api/v2/users/104/admin_of_organizations/",
+        "projects": "/api/v2/users/104/projects/",
+        "credentials": "/api/v2/users/104/credentials/",
+        "roles": "/api/v2/users/104/roles/",
+        "activity_stream": "/api/v2/users/104/activity_stream/",
+        "access_list": "/api/v2/users/104/access_list/",
+        "tokens": "/api/v2/users/104/tokens/",
+        "authorized_tokens": "/api/v2/users/104/authorized_tokens/",
+        "personal_tokens": "/api/v2/users/104/personal_tokens/"
+      },
+      "summary_fields": {
+        "user_capabilities": {
+          "edit": true,
+          "delete": true
+        }
+      },
+      "created": "2024-04-09T16:07:08.932763Z",
+      "modified": null,
+      "username": "e2e-user-EHei",
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "is_superuser": false,
+      "is_system_auditor": false,
+      "password": "$encrypted$",
+      "ldap_dn": "",
+      "last_login": null,
+      "external_account": null,
+      "auth": []
+    },
+    {
+      "id": 155,
+      "type": "user",
+      "url": "/api/v2/users/155/",
+      "related": {
+        "teams": "/api/v2/users/155/teams/",
+        "organizations": "/api/v2/users/155/organizations/",
+        "admin_of_organizations": "/api/v2/users/155/admin_of_organizations/",
+        "projects": "/api/v2/users/155/projects/",
+        "credentials": "/api/v2/users/155/credentials/",
+        "roles": "/api/v2/users/155/roles/",
+        "activity_stream": "/api/v2/users/155/activity_stream/",
+        "access_list": "/api/v2/users/155/access_list/",
+        "tokens": "/api/v2/users/155/tokens/",
+        "authorized_tokens": "/api/v2/users/155/authorized_tokens/",
+        "personal_tokens": "/api/v2/users/155/personal_tokens/"
+      },
+      "summary_fields": {
+        "user_capabilities": {
+          "edit": true,
+          "delete": true
+        }
+      },
+      "created": "2024-04-09T16:18:01.373999Z",
+      "modified": null,
+      "username": "e2e-user-EXds",
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "is_superuser": false,
+      "is_system_auditor": false,
+      "password": "$encrypted$",
+      "ldap_dn": "",
+      "last_login": null,
+      "external_account": null,
+      "auth": []
+    },
+    {
+      "id": 12,
+      "type": "user",
+      "url": "/api/v2/users/12/",
+      "related": {
+        "teams": "/api/v2/users/12/teams/",
+        "organizations": "/api/v2/users/12/organizations/",
+        "admin_of_organizations": "/api/v2/users/12/admin_of_organizations/",
+        "projects": "/api/v2/users/12/projects/",
+        "credentials": "/api/v2/users/12/credentials/",
+        "roles": "/api/v2/users/12/roles/",
+        "activity_stream": "/api/v2/users/12/activity_stream/",
+        "access_list": "/api/v2/users/12/access_list/",
+        "tokens": "/api/v2/users/12/tokens/",
+        "authorized_tokens": "/api/v2/users/12/authorized_tokens/",
+        "personal_tokens": "/api/v2/users/12/personal_tokens/"
+      },
+      "summary_fields": {
+        "user_capabilities": {
+          "edit": true,
+          "delete": true
+        }
+      },
+      "created": "2024-04-08T16:01:15.334961Z",
+      "modified": null,
+      "username": "e2e-user-fHGN",
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "is_superuser": false,
+      "is_system_auditor": false,
+      "password": "$encrypted$",
+      "ldap_dn": "",
+      "last_login": null,
+      "external_account": null,
+      "auth": []
+    },
+    {
+      "id": 134,
+      "type": "user",
+      "url": "/api/v2/users/134/",
+      "related": {
+        "teams": "/api/v2/users/134/teams/",
+        "organizations": "/api/v2/users/134/organizations/",
+        "admin_of_organizations": "/api/v2/users/134/admin_of_organizations/",
+        "projects": "/api/v2/users/134/projects/",
+        "credentials": "/api/v2/users/134/credentials/",
+        "roles": "/api/v2/users/134/roles/",
+        "activity_stream": "/api/v2/users/134/activity_stream/",
+        "access_list": "/api/v2/users/134/access_list/",
+        "tokens": "/api/v2/users/134/tokens/",
+        "authorized_tokens": "/api/v2/users/134/authorized_tokens/",
+        "personal_tokens": "/api/v2/users/134/personal_tokens/"
+      },
+      "summary_fields": {
+        "user_capabilities": {
+          "edit": true,
+          "delete": true
+        }
+      },
+      "created": "2024-04-09T16:14:45.315645Z",
+      "modified": null,
+      "username": "e2e-user-gWRu",
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "is_superuser": false,
+      "is_system_auditor": false,
+      "password": "$encrypted$",
+      "ldap_dn": "",
+      "last_login": null,
+      "external_account": null,
+      "auth": []
+    },
+    {
+      "id": 198,
+      "type": "user",
+      "url": "/api/v2/users/198/",
+      "related": {
+        "teams": "/api/v2/users/198/teams/",
+        "organizations": "/api/v2/users/198/organizations/",
+        "admin_of_organizations": "/api/v2/users/198/admin_of_organizations/",
+        "projects": "/api/v2/users/198/projects/",
+        "credentials": "/api/v2/users/198/credentials/",
+        "roles": "/api/v2/users/198/roles/",
+        "activity_stream": "/api/v2/users/198/activity_stream/",
+        "access_list": "/api/v2/users/198/access_list/",
+        "tokens": "/api/v2/users/198/tokens/",
+        "authorized_tokens": "/api/v2/users/198/authorized_tokens/",
+        "personal_tokens": "/api/v2/users/198/personal_tokens/"
+      },
+      "summary_fields": {
+        "user_capabilities": {
+          "edit": true,
+          "delete": true
+        }
+      },
+      "created": "2024-04-09T17:27:47.367657Z",
+      "modified": null,
+      "username": "e2e-user-hern",
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "is_superuser": false,
+      "is_system_auditor": false,
+      "password": "$encrypted$",
+      "ldap_dn": "",
+      "last_login": null,
+      "external_account": null,
+      "auth": []
+    },
+    {
+      "id": 42,
+      "type": "user",
+      "url": "/api/v2/users/42/",
+      "related": {
+        "teams": "/api/v2/users/42/teams/",
+        "organizations": "/api/v2/users/42/organizations/",
+        "admin_of_organizations": "/api/v2/users/42/admin_of_organizations/",
+        "projects": "/api/v2/users/42/projects/",
+        "credentials": "/api/v2/users/42/credentials/",
+        "roles": "/api/v2/users/42/roles/",
+        "activity_stream": "/api/v2/users/42/activity_stream/",
+        "access_list": "/api/v2/users/42/access_list/",
+        "tokens": "/api/v2/users/42/tokens/",
+        "authorized_tokens": "/api/v2/users/42/authorized_tokens/",
+        "personal_tokens": "/api/v2/users/42/personal_tokens/"
+      },
+      "summary_fields": {
+        "user_capabilities": {
+          "edit": true,
+          "delete": true
+        }
+      },
+      "created": "2024-04-09T10:29:28.117319Z",
+      "modified": null,
+      "username": "e2e-user-hpIx",
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "is_superuser": false,
+      "is_system_auditor": false,
+      "password": "$encrypted$",
+      "ldap_dn": "",
+      "last_login": null,
+      "external_account": null,
+      "auth": []
+    },
+    {
+      "id": 177,
+      "type": "user",
+      "url": "/api/v2/users/177/",
+      "related": {
+        "teams": "/api/v2/users/177/teams/",
+        "organizations": "/api/v2/users/177/organizations/",
+        "admin_of_organizations": "/api/v2/users/177/admin_of_organizations/",
+        "projects": "/api/v2/users/177/projects/",
+        "credentials": "/api/v2/users/177/credentials/",
+        "roles": "/api/v2/users/177/roles/",
+        "activity_stream": "/api/v2/users/177/activity_stream/",
+        "access_list": "/api/v2/users/177/access_list/",
+        "tokens": "/api/v2/users/177/tokens/",
+        "authorized_tokens": "/api/v2/users/177/authorized_tokens/",
+        "personal_tokens": "/api/v2/users/177/personal_tokens/"
+      },
+      "summary_fields": {
+        "user_capabilities": {
+          "edit": true,
+          "delete": true
+        }
+      },
+      "created": "2024-04-09T16:21:52.914368Z",
+      "modified": null,
+      "username": "e2e-user-hqwn",
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "is_superuser": false,
+      "is_system_auditor": false,
+      "password": "$encrypted$",
+      "ldap_dn": "",
+      "last_login": null,
+      "external_account": null,
+      "auth": []
+    },
+    {
+      "id": 197,
+      "type": "user",
+      "url": "/api/v2/users/197/",
+      "related": {
+        "teams": "/api/v2/users/197/teams/",
+        "organizations": "/api/v2/users/197/organizations/",
+        "admin_of_organizations": "/api/v2/users/197/admin_of_organizations/",
+        "projects": "/api/v2/users/197/projects/",
+        "credentials": "/api/v2/users/197/credentials/",
+        "roles": "/api/v2/users/197/roles/",
+        "activity_stream": "/api/v2/users/197/activity_stream/",
+        "access_list": "/api/v2/users/197/access_list/",
+        "tokens": "/api/v2/users/197/tokens/",
+        "authorized_tokens": "/api/v2/users/197/authorized_tokens/",
+        "personal_tokens": "/api/v2/users/197/personal_tokens/"
+      },
+      "summary_fields": {
+        "user_capabilities": {
+          "edit": true,
+          "delete": true
+        }
+      },
+      "created": "2024-04-09T16:33:23.419085Z",
+      "modified": null,
+      "username": "e2e-user-JaLQ",
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "is_superuser": false,
+      "is_system_auditor": false,
+      "password": "$encrypted$",
+      "ldap_dn": "",
+      "last_login": null,
+      "external_account": null,
+      "auth": []
+    },
+    {
+      "id": 95,
+      "type": "user",
+      "url": "/api/v2/users/95/",
+      "related": {
+        "teams": "/api/v2/users/95/teams/",
+        "organizations": "/api/v2/users/95/organizations/",
+        "admin_of_organizations": "/api/v2/users/95/admin_of_organizations/",
+        "projects": "/api/v2/users/95/projects/",
+        "credentials": "/api/v2/users/95/credentials/",
+        "roles": "/api/v2/users/95/roles/",
+        "activity_stream": "/api/v2/users/95/activity_stream/",
+        "access_list": "/api/v2/users/95/access_list/",
+        "tokens": "/api/v2/users/95/tokens/",
+        "authorized_tokens": "/api/v2/users/95/authorized_tokens/",
+        "personal_tokens": "/api/v2/users/95/personal_tokens/"
+      },
+      "summary_fields": {
+        "user_capabilities": {
+          "edit": true,
+          "delete": true
+        }
+      },
+      "created": "2024-04-09T16:04:37.459558Z",
+      "modified": null,
+      "username": "e2e-user-JYRz",
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "is_superuser": false,
+      "is_system_auditor": false,
+      "password": "$encrypted$",
+      "ldap_dn": "",
+      "last_login": null,
+      "external_account": null,
+      "auth": []
+    },
+    {
+      "id": 199,
+      "type": "user",
+      "url": "/api/v2/users/199/",
+      "related": {
+        "teams": "/api/v2/users/199/teams/",
+        "organizations": "/api/v2/users/199/organizations/",
+        "admin_of_organizations": "/api/v2/users/199/admin_of_organizations/",
+        "projects": "/api/v2/users/199/projects/",
+        "credentials": "/api/v2/users/199/credentials/",
+        "roles": "/api/v2/users/199/roles/",
+        "activity_stream": "/api/v2/users/199/activity_stream/",
+        "access_list": "/api/v2/users/199/access_list/",
+        "tokens": "/api/v2/users/199/tokens/",
+        "authorized_tokens": "/api/v2/users/199/authorized_tokens/",
+        "personal_tokens": "/api/v2/users/199/personal_tokens/"
+      },
+      "summary_fields": {
+        "user_capabilities": {
+          "edit": true,
+          "delete": true
+        }
+      },
+      "created": "2024-04-09T17:27:52.266493Z",
+      "modified": null,
+      "username": "e2e-user-Mghi",
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "is_superuser": false,
+      "is_system_auditor": false,
+      "password": "$encrypted$",
+      "ldap_dn": "",
+      "last_login": null,
+      "external_account": null,
+      "auth": []
+    },
+    {
+      "id": 11,
+      "type": "user",
+      "url": "/api/v2/users/11/",
+      "related": {
+        "teams": "/api/v2/users/11/teams/",
+        "organizations": "/api/v2/users/11/organizations/",
+        "admin_of_organizations": "/api/v2/users/11/admin_of_organizations/",
+        "projects": "/api/v2/users/11/projects/",
+        "credentials": "/api/v2/users/11/credentials/",
+        "roles": "/api/v2/users/11/roles/",
+        "activity_stream": "/api/v2/users/11/activity_stream/",
+        "access_list": "/api/v2/users/11/access_list/",
+        "tokens": "/api/v2/users/11/tokens/",
+        "authorized_tokens": "/api/v2/users/11/authorized_tokens/",
+        "personal_tokens": "/api/v2/users/11/personal_tokens/"
+      },
+      "summary_fields": {
+        "user_capabilities": {
+          "edit": true,
+          "delete": true
+        }
+      },
+      "created": "2024-04-08T16:01:14.791229Z",
+      "modified": null,
+      "username": "e2e-user-MGOu",
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "is_superuser": false,
+      "is_system_auditor": false,
+      "password": "$encrypted$",
+      "ldap_dn": "",
+      "last_login": null,
+      "external_account": null,
+      "auth": []
+    },
+    {
+      "id": 106,
+      "type": "user",
+      "url": "/api/v2/users/106/",
+      "related": {
+        "teams": "/api/v2/users/106/teams/",
+        "organizations": "/api/v2/users/106/organizations/",
+        "admin_of_organizations": "/api/v2/users/106/admin_of_organizations/",
+        "projects": "/api/v2/users/106/projects/",
+        "credentials": "/api/v2/users/106/credentials/",
+        "roles": "/api/v2/users/106/roles/",
+        "activity_stream": "/api/v2/users/106/activity_stream/",
+        "access_list": "/api/v2/users/106/access_list/",
+        "tokens": "/api/v2/users/106/tokens/",
+        "authorized_tokens": "/api/v2/users/106/authorized_tokens/",
+        "personal_tokens": "/api/v2/users/106/personal_tokens/"
+      },
+      "summary_fields": {
+        "user_capabilities": {
+          "edit": true,
+          "delete": true
+        }
+      },
+      "created": "2024-04-09T16:07:51.371423Z",
+      "modified": null,
+      "username": "e2e-user-ncrO",
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "is_superuser": false,
+      "is_system_auditor": false,
+      "password": "$encrypted$",
+      "ldap_dn": "",
+      "last_login": null,
+      "external_account": null,
+      "auth": []
+    },
+    {
+      "id": 10,
+      "type": "user",
+      "url": "/api/v2/users/10/",
+      "related": {
+        "teams": "/api/v2/users/10/teams/",
+        "organizations": "/api/v2/users/10/organizations/",
+        "admin_of_organizations": "/api/v2/users/10/admin_of_organizations/",
+        "projects": "/api/v2/users/10/projects/",
+        "credentials": "/api/v2/users/10/credentials/",
+        "roles": "/api/v2/users/10/roles/",
+        "activity_stream": "/api/v2/users/10/activity_stream/",
+        "access_list": "/api/v2/users/10/access_list/",
+        "tokens": "/api/v2/users/10/tokens/",
+        "authorized_tokens": "/api/v2/users/10/authorized_tokens/",
+        "personal_tokens": "/api/v2/users/10/personal_tokens/"
+      },
+      "summary_fields": {
+        "user_capabilities": {
+          "edit": true,
+          "delete": true
+        }
+      },
+      "created": "2024-04-08T16:01:14.239350Z",
+      "modified": null,
+      "username": "e2e-user-NHGu",
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "is_superuser": false,
+      "is_system_auditor": false,
+      "password": "$encrypted$",
+      "ldap_dn": "",
+      "last_login": null,
+      "external_account": null,
+      "auth": []
+    },
+    {
+      "id": 31,
+      "type": "user",
+      "url": "/api/v2/users/31/",
+      "related": {
+        "teams": "/api/v2/users/31/teams/",
+        "organizations": "/api/v2/users/31/organizations/",
+        "admin_of_organizations": "/api/v2/users/31/admin_of_organizations/",
+        "projects": "/api/v2/users/31/projects/",
+        "credentials": "/api/v2/users/31/credentials/",
+        "roles": "/api/v2/users/31/roles/",
+        "activity_stream": "/api/v2/users/31/activity_stream/",
+        "access_list": "/api/v2/users/31/access_list/",
+        "tokens": "/api/v2/users/31/tokens/",
+        "authorized_tokens": "/api/v2/users/31/authorized_tokens/",
+        "personal_tokens": "/api/v2/users/31/personal_tokens/"
+      },
+      "summary_fields": {
+        "user_capabilities": {
+          "edit": true,
+          "delete": true
+        }
+      },
+      "created": "2024-04-09T09:57:38.373553Z",
+      "modified": null,
+      "username": "e2e-user-NWxF",
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "is_superuser": false,
+      "is_system_auditor": false,
+      "password": "$encrypted$",
+      "ldap_dn": "",
+      "last_login": null,
+      "external_account": null,
+      "auth": []
+    },
+    {
+      "id": 57,
+      "type": "user",
+      "url": "/api/v2/users/57/",
+      "related": {
+        "teams": "/api/v2/users/57/teams/",
+        "organizations": "/api/v2/users/57/organizations/",
+        "admin_of_organizations": "/api/v2/users/57/admin_of_organizations/",
+        "projects": "/api/v2/users/57/projects/",
+        "credentials": "/api/v2/users/57/credentials/",
+        "roles": "/api/v2/users/57/roles/",
+        "activity_stream": "/api/v2/users/57/activity_stream/",
+        "access_list": "/api/v2/users/57/access_list/",
+        "tokens": "/api/v2/users/57/tokens/",
+        "authorized_tokens": "/api/v2/users/57/authorized_tokens/",
+        "personal_tokens": "/api/v2/users/57/personal_tokens/"
+      },
+      "summary_fields": {
+        "user_capabilities": {
+          "edit": true,
+          "delete": true
+        }
+      },
+      "created": "2024-04-09T15:52:27.980956Z",
+      "modified": null,
+      "username": "e2e-user-OAZw",
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "is_superuser": false,
+      "is_system_auditor": false,
+      "password": "$encrypted$",
+      "ldap_dn": "",
+      "last_login": null,
+      "external_account": null,
+      "auth": []
+    }
+  ]
+}
