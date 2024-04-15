@@ -1,10 +1,11 @@
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   ColumnModalOption,
   ColumnTableOption,
   ITableColumn,
-  usePageNavigate,
+  TextCell,
+  useGetPageUrl,
 } from '../../../../../framework';
 import {
   useCreatedColumn,
@@ -15,7 +16,6 @@ import {
   useLabelsColumn,
   useLastRanColumn,
   useModifiedColumn,
-  useNameColumn,
   useOrganizationNameColumn,
   useProjectNameColumn,
   useTypeColumn,
@@ -25,6 +25,8 @@ import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 import { SummaryFieldRecentJob } from '../../../interfaces/summary-fields/summary-fields';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { Sparkline } from '../components/Sparkline';
+import { Split, Tooltip, Icon } from '@patternfly/react-core';
+import { ExclamationTriangleIcon } from '@patternfly/react-icons';
 
 function useActivityColumn() {
   const { t } = useTranslation();
@@ -50,22 +52,7 @@ function useActivityColumn() {
 
 export function useTemplateColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const { t } = useTranslation();
-  const pageNavigate = usePageNavigate();
-  // TODO: URL should be dependant on template type
-  const nameClick = useCallback(
-    (template: JobTemplate | WorkflowJobTemplate) => {
-      if (template.type === 'job_template') {
-        pageNavigate(AwxRoute.JobTemplateDetails, { params: { id: template.id } });
-        return;
-      }
-      pageNavigate(AwxRoute.WorkflowJobTemplateDetails, { params: { id: template.id } });
-    },
-    [pageNavigate]
-  );
-  const nameColumn = useNameColumn({
-    ...options,
-    onClick: nameClick,
-  });
+  const getPageUrl = useGetPageUrl();
   const makeReadable: (template: JobTemplate | WorkflowJobTemplate) => string = (template) => {
     if (template.type === 'workflow_job_template') {
       return t('Workflow job template');
@@ -88,9 +75,40 @@ export function useTemplateColumns(options?: { disableSort?: boolean; disableLin
     ...options,
     makeReadable,
   });
+
+  const missingResources = (template: JobTemplate | WorkflowJobTemplate) =>
+    template.type === 'job_template' &&
+    (!template?.summary_fields.project ||
+      (!template?.summary_fields.inventory && !template?.ask_inventory_on_launch));
+
   const tableColumns = useMemo<ITableColumn<JobTemplate | WorkflowJobTemplate>[]>(
     () => [
-      nameColumn,
+      {
+        header: t('Name'),
+        cell: (template: JobTemplate | WorkflowJobTemplate) => (
+          <Split hasGutter>
+            <TextCell
+              text={template.name}
+              to={getPageUrl(
+                template.type === 'job_template'
+                  ? AwxRoute.JobTemplateDetails
+                  : AwxRoute.WorkflowJobTemplateDetails,
+                { params: { id: template.id } }
+              )}
+            />
+            {missingResources(template) && (
+              <Tooltip content={t`Resources are missing from this template.`} position="right">
+                <Icon status="danger" style={{ paddingTop: '6px' }}>
+                  <ExclamationTriangleIcon />
+                </Icon>
+              </Tooltip>
+            )}
+          </Split>
+        ),
+        card: 'name',
+        list: 'name',
+        sort: 'name',
+      },
       activityColumn,
       descriptionColumn,
       typeOfTemplate,
@@ -105,7 +123,8 @@ export function useTemplateColumns(options?: { disableSort?: boolean; disableLin
       lastRanColumn,
     ],
     [
-      nameColumn,
+      getPageUrl,
+      t,
       activityColumn,
       descriptionColumn,
       typeOfTemplate,
