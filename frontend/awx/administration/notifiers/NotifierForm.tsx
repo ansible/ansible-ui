@@ -25,7 +25,7 @@ import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSe
 
 import { useOptions } from '../../../common/crud/useOptions';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
-import { usePutRequest } from '../../../common/crud/usePutRequest';
+import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 import { usePageNavigate } from '../../../../framework';
 
 import { InnerForm } from './NotifierFormInner';
@@ -49,7 +49,7 @@ export type NotificationTemplateOptions = {
   };
 };
 
-type NotificationTemplatEdit = Omit<NotificationTemplate, 'id'>;
+type NotificationTemplateEdit = Omit<NotificationTemplate, 'id'>;
 
 // TODO - finish rest of the form in the next PR
 function NotifierForm(props: { mode: 'add' | 'edit' }) {
@@ -62,7 +62,7 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
   const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
 
-  const putRequest = usePutRequest();
+  const patchRequest = usePatchRequest();
   const postRequest = usePostRequest();
 
   const optionsRequest = useOptions<NotificationTemplateOptions>(awxAPI`/notification_templates/`);
@@ -95,7 +95,7 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
   }
 
   const onSubmit: PageFormSubmitHandler<NotificationTemplate> = async (formData) => {
-    const data: NotificationTemplate | NotificationTemplatEdit =
+    const data: NotificationTemplate | NotificationTemplateEdit =
       mode === 'add'
         ? formData
         : ({
@@ -105,9 +105,10 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
             notification_configuration: formData.notification_configuration,
             notification_type: formData.notification_type,
             organization: formData.organization,
-          } as NotificationTemplatEdit);
+          } as NotificationTemplateEdit);
 
     stringToArrays(data);
+    clearPasswords(data);
 
     let fieldValue;
     // fix notification data types
@@ -145,7 +146,7 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
     if (mode === 'add') {
       await postRequest(awxAPI`/notification_templates/`, data);
     } else {
-      await putRequest(awxAPI`/notification_templates/${formData.id?.toString() || ''}/`, data);
+      await patchRequest(awxAPI`/notification_templates/${formData.id?.toString() || ''}/`, data);
     }
 
     pageNavigate(AwxRoute.NotificationTemplates);
@@ -231,7 +232,7 @@ function arraysToString(data: NotificationTemplate) {
   }
 }
 
-function stringToArrays(data: NotificationTemplate | NotificationTemplatEdit) {
+function stringToArrays(data: NotificationTemplate | NotificationTemplateEdit) {
   if (!data.notification_configuration) {
     return;
   }
@@ -263,6 +264,67 @@ function isList(key: string, notification_type: string) {
   }
 
   if (key === 'annotation_tags' && notification_type === 'grafana') {
+    return true;
+  }
+
+  if (key === 'targets' && notification_type === 'irc') {
+    return true;
+  }
+
+  return false;
+}
+
+function clearPasswords(data : NotificationTemplate | NotificationTemplateEdit)
+{
+  if (data.notification_configuration)
+  {
+    Object.keys(data.notification_configuration).forEach( (key) => {
+      if (isPassword(key, data.notification_type || ''))
+      {
+        if (data.notification_configuration[key] === '$encrypted$')
+        {
+          // set it to undefined, so it does not change the backend password
+          delete data.notification_configuration[key];
+        }
+      }
+    });
+  }
+}
+
+function isPassword(key : string, notification_type : "email" | "grafana" | "irc" | "mattermost" | "pagerduty" | "rocketchat" | "slack" | "twilio" | "webhook" | "")
+{
+  if (notification_type === 'email' && key === 'password')
+  {
+    return true;
+  }
+
+  if (notification_type === 'slack' && key === 'token')
+  {
+    return true;
+  }
+
+  if (notification_type === 'twilio' && key === 'account_token')
+  {
+    return true;
+  }
+
+  if (notification_type === 'pagerduty' && key === 'token')
+  {
+    return true;
+  }
+
+  if (notification_type === 'grafana' && key === 'grafana_key')
+  {
+    return true;
+  }
+
+  if (notification_type === 'webhook' && key === 'password')
+  {
+    return true;
+  }
+
+  if (notification_type === 'irc' && key === 'password')
+  {
     return true;
   }
 

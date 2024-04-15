@@ -50,7 +50,7 @@ export function InnerForm(props: { notification_type: string }) {
   }
 
   if (notification_type === 'irc') {
-    //return <IrcForm />;
+    return <IrcForm />;
   }
 
   return <></>;
@@ -305,7 +305,10 @@ function GrafanaForm() {
 
 function WebhookForm() {
   const { t } = useTranslation();
-  const headersPath = 'notification_configuration.headers' as FieldPathByValue<NotificationTemplate, string | object | null | undefined>;
+  const headersPath = 'notification_configuration.headers' as FieldPathByValue<
+    NotificationTemplate,
+    string | object | null | undefined
+  >;
 
   return (
     <>
@@ -318,7 +321,7 @@ function WebhookForm() {
       <PageFormTextInput<NotificationTemplate>
         type={'password'}
         name={'notification_configuration.password'}
-        label={t('Password')}
+        label={t('Basic auth password')}
       />
 
       <PageFormTextInput<NotificationTemplate>
@@ -358,136 +361,128 @@ function WebhookForm() {
   );
 }
 
+function MattermostForm() {
+  const { t } = useTranslation();
 
-  function MattermostForm() {
-    const { t } = useTranslation();
+  return (
+    <>
+      <PageFormTextInput<NotificationTemplate>
+        type={'text'}
+        name={'notification_configuration.mattermost_url'}
+        label={t('Target URL')}
+        isRequired
+        validate={(item) => validateUrl(item, t)}
+      />
 
-    return (
-      <>
-        <PageFormTextInput<NotificationTemplate>
-          type={'text'}
-          name={'notification_configuration.mattermost_url'}
-          label={t('Target URL')}
-          isRequired
-          validate={ (item) => validateUrl(item, t)}
-        />
+      <PageFormTextInput<NotificationTemplate>
+        type={'text'}
+        name={'notification_configuration.mattermost_username'}
+        label={t('Username')}
+      />
 
-        <PageFormTextInput<NotificationTemplate>
-          type={'text'}
-          name={'notification_configuration.mattermost_username'}
-          label={t('Username')}
-        />
+      <PageFormTextInput<NotificationTemplate>
+        type={'text'}
+        name={'notification_configuration.mattermost_channel'}
+        label={t('Channel')}
+      />
 
-        <PageFormTextInput<NotificationTemplate>
-          type={'text'}
-          name={'notification_configuration.mattermost_channel'}
-          label={t('Channel')}
-        />
+      <PageFormTextInput<NotificationTemplate>
+        type={'text'}
+        name={'notification_configuration.mattermost_icon_url'}
+        label={t('Icon URL')}
+        validate={(item) => validateUrl(item, t)}
+      />
 
-        <PageFormTextInput<NotificationTemplate>
-          type={'text'}
-          name={'notification_configuration.mattermost_icon_url'}
-          label={t('Icon URL')}
-          validate={ (item) => validateUrl(item, t)}
-        />
-  
-        <PageFormCheckbox<NotificationTemplate>
-          name={'notification_configuration.mattermost_no_verify_ssl'}
-          label={t('Verify SSL')}
-        />
-      </>
-    );
-  }
-  
+      <PageFormCheckbox<NotificationTemplate>
+        name={'notification_configuration.mattermost_no_verify_ssl'}
+        label={t('Verify SSL')}
+      />
+    </>
+  );
+}
 
-  
-  function RocketchatForm() {
-    const { t } = useTranslation();
+function RocketchatForm() {
+  const { t } = useTranslation();
 
-    /*
-"rocketchat_url": "https://addada",
-        "rocketchat_icon_url": "https://adda",
-        "rocketchat_username": "dfdf",
-        "rocketchat_no_verify_ssl": true
-    */
+  return (
+    <>
+      <PageFormTextInput<NotificationTemplate>
+        type={'text'}
+        name={'notification_configuration.rocketchat_url'}
+        label={t('Target URL')}
+        isRequired
+        validate={(item) => validateUrl(item, t)}
+      />
 
-    return (
-      <>
-        <PageFormTextInput<NotificationTemplate>
-          type={'text'}
-          name={'notification_configuration.rocketchat_url'}
-          label={t('Target URL')}
-          isRequired
-          validate={ (item) => validateUrl(item, t)}
-        />
+      <PageFormTextInput<NotificationTemplate>
+        type={'text'}
+        name={'notification_configuration.rocketchat_username'}
+        label={t('Username')}
+      />
 
-<PageFormTextInput<NotificationTemplate>
-          type={'text'}
-          name={'notification_configuration.rocketchat_username'}
-          label={t('Username')}
-        />
+      <PageFormTextInput<NotificationTemplate>
+        type={'text'}
+        name={'notification_configuration.rocketchat_icon_url'}
+        label={t('Icon URL')}
+        validate={(item) => validateUrl(item, t)}
+      />
 
-<PageFormTextInput<NotificationTemplate>
-          type={'text'}
-          name={'notification_configuration.rocketchat_icon_url'}
-          label={t('Icon URL')}
-          validate={ (item) => validateUrl(item, t)}
-        />
-  
-        <PageFormCheckbox<NotificationTemplate>
-          name={'notification_configuration.rocketchat_no_verify_ssl'}
-          label={t('Disable SSL verification')}
-        />
-      </>
-    );
-  }
-  
-  /*
-  function IrcForm() {
-    const { t } = useTranslation();
-    return (
-      <>
-        <PageFormTextInput<NotificationTemplate>
-          type={'text'}
-          name={'type_data.server'}
-          label={t('IRC Server Address')}
-          placeholder={''}
-        />
-  
-        <PageFormTextInput<NotificationTemplate>
-          name={'type_data.port'}
-          label={t('IRC Server Port')}
-          placeholder={''}
-        />
-  
-        <PageFormTextInput<NotificationTemplate>
-          type={'text'}
-          name={'type_data.nickname'}
-          label={t('IRC Nick')}
-          placeholder={''}
-        />
-  
-        <PageFormTextInput<NotificationTemplate>
-          type={'password'}
-          name={'type_data.password'}
-          label={t('IRC Server Password')}
-          placeholder={''}
-        />
-  
-        <PageFormCheckbox<NotificationTemplate>
-          name={'type_data.use_ssl'}
-          label={t('SSL Connection')}
-          placeholder={''}
-        />
-  
-        <PageFormTextArea<NotificationTemplate>
-          name={'type_data.targets'}
-          label={t('Destination Channels or Users')}
-          placeholder={''}
-        />
-      </>
-    );
-  }*/
+      <PageFormCheckbox<NotificationTemplate>
+        name={'notification_configuration.rocketchat_no_verify_ssl'}
+        label={t('Disable SSL verification')}
+      />
+    </>
+  );
+}
+
+function IrcForm() {
+  const { t } = useTranslation();
+  return (
+    <>
+      <PageFormTextInput<NotificationTemplate>
+        type={'password'}
+        name={'notification_configuration.password'}
+        label={t('IRC Server Password')}
+      />
+
+      <PageFormTextInput<NotificationTemplate>
+        type="number"
+        name={'notification_configuration.port'}
+        label={t('IRC Server Port')}
+        isRequired
+      />
+
+      <PageFormTextInput<NotificationTemplate>
+        type={'text'}
+        name={'notification_configuration.server'}
+        label={t('IRC Server Address')}
+        isRequired
+        validate={(item) => validateUrl(item, t)}
+      />
+
+      <PageFormTextInput<NotificationTemplate>
+        type={'text'}
+        name={'notification_configuration.nickname'}
+        label={t('IRC Nick')}
+        isRequired
+      />
+
+      <PageFormTextArea<NotificationTemplate>
+        name={'notification_configuration.targets'}
+        label={t('Destination Channels or Users')}
+        isRequired
+        labelHelp={t(
+          'Use one IRC channel or username per line. The pound symbol (#) for channels, and the at (@) symbol for users, are not required.'
+        )}
+      />
+
+      <PageFormCheckbox<NotificationTemplate>
+        name={'notification_configuration.use_ssl'}
+        label={t('Disable SSL verification ')}
+      />
+    </>
+  );
+}
 
 function validateNumber(
   str: string,
