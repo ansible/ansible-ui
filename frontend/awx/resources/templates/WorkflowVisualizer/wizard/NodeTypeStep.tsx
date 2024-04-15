@@ -126,7 +126,7 @@ export function NodeTypeStep(props: { hasSourceNode?: boolean }) {
     const getResource = async () => {
       if (!nodeResource) {
         const pathnameSplit = pathname.split('/');
-        if (!params?.id && pathnameSplit[1] === 'schedules') {
+        if (pathnameSplit[1] === 'schedules') {
           const response = await requestGet<
             Project | JobTemplate | WorkflowJobTemplate | InventorySource
           >(`${defaultValues?.relatedJobTypeApiUrl}`);
