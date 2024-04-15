@@ -46,7 +46,6 @@ export function useGetSchedulCreateUrl(sublistEndPoint?: string) {
     inventory_type?: string;
     id: string;
     source_id: string;
-    schedule_id?: string;
   }>();
   const createScheduleContainerRoutes: { [key: string]: string } = {
     inventory_sources: getPageUrl(AwxRoute.InventorySourceScheduleCreate, {
