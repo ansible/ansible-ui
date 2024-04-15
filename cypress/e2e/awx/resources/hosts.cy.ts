@@ -58,7 +58,7 @@ describe('host and inventory host', () => {
       cy.awxRequestPost<{ name: string; inventory: number }>(awxAPI`/hosts/${hostid}/groups/`, {
         name: 'E2E Group ' + randomString(5),
         inventory: host.inventory,
-      }).then((group: { id: number; name: string }) => {
+      }).then((group: { name: string; id: number }) => {
         /// check multiple assosiate and disasosiate
         // disasosiate
         navigateToHost(url, host.name, '[data-cy="name-column-cell"] a');
