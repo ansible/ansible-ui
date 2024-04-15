@@ -100,7 +100,7 @@ declare global {
       awxLoginTestUser(username: string, password: string): Chainable<void>;
 
       /** Login to the EDA application */
-      edaLogin(): Chainable<void>;
+      edaLogin(username?: string, password?: string): Chainable<void>;
 
       /** Logout of the EDA application */
       edaLogout(): Chainable<void>;
