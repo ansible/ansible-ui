@@ -1,8 +1,4 @@
-import { useMemo } from 'react';
-import { IToolbarFilter } from '../../../../../framework';
 import {
-  useDescriptionToolbarFilter,
-  useNameToolbarFilter,
   useCreatedByToolbarFilter,
   useModifiedByToolbarFilter,
 } from '../../../common/awx-toolbar-filters';
