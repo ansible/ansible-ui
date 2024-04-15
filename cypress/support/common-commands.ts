@@ -41,7 +41,7 @@ Cypress.Commands.add('filterTableBySingleText', (text: string, disableWait?: boo
   cy.filterTableByText(text, 'SingleText');
   // TODO - this should be in future better sync, but for now, we need to have tests more stable
   if (disableWait !== true) {
-    cy.wait(2000);
+    cy.wait(3000);
   }
 });
 
