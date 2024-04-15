@@ -20,6 +20,16 @@ import { useVerbosityString } from '../../../common/useVerbosityString';
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
 import { AwxRoute } from '../../../main/AwxRoutes';
+import styled from 'styled-components';
+
+const DangerText = styled.span`
+  color: var(--pf-v5-global--danger-color--200);
+`;
+
+const DeletedDetail = () => {
+  const { t } = useTranslation();
+  return <DangerText>{t`Deleted`}</DangerText>;
+};
 
 function useInstanceGroups(templateId: string) {
   const { data } = useGet<{ results: InstanceGroup[] }>(
@@ -41,7 +51,7 @@ export function TemplateDetails(props: { templateId?: string; disableScroll?: bo
   const verbosity: string = useVerbosityString(template?.verbosity);
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!template) return <LoadingPage breadcrumbs tabs />;
-  const { summary_fields: summaryFields } = template;
+  const { summary_fields: summaryFields, ask_inventory_on_launch: askInventoryOnLaunch } = template;
 
   const showOptionsField =
     template.become_enabled ||
@@ -70,16 +80,20 @@ export function TemplateDetails(props: { templateId?: string; disableScroll?: bo
       </PageDetail>
       <PageDetail label={t('Description')}>{template.description}</PageDetail>
       <PageDetail label={t('Job type')}>{template.job_type}</PageDetail>
-      <PageDetail label={t('Organization')} isEmpty={!summaryFields.organization}>
-        <Link
-          to={getPageUrl(AwxRoute.OrganizationPage, {
-            params: { id: template.summary_fields?.organization?.id },
-          })}
-        >
-          {summaryFields.organization?.name}
-        </Link>
+      <PageDetail label={t('Organization')}>
+        {summaryFields.organization ? (
+          <Link
+            to={getPageUrl(AwxRoute.OrganizationPage, {
+              params: { id: template.summary_fields?.organization?.id },
+            })}
+          >
+            {summaryFields.organization?.name}
+          </Link>
+        ) : (
+          <DeletedDetail />
+        )}
       </PageDetail>
-      <PageDetail label={t('Inventory')} isEmpty={!summaryFields.inventory}>
+      <PageDetail label={t('Inventory')} isEmpty={!summaryFields.inventory && askInventoryOnLaunch}>
         {summaryFields.inventory ? (
           <Link
             to={getPageUrl(AwxRoute.InventoryPage, {
@@ -91,12 +105,20 @@ export function TemplateDetails(props: { templateId?: string; disableScroll?: bo
           >
             {summaryFields.inventory?.name}
           </Link>
-        ) : null}
+        ) : (
+          <DeletedDetail />
+        )}
       </PageDetail>
-      <PageDetail label={t`Project`} isEmpty={!summaryFields.project}>
-        <Link to={getPageUrl(AwxRoute.ProjectPage, { params: { id: summaryFields.project?.id } })}>
-          {summaryFields.project?.name}
-        </Link>
+      <PageDetail label={t`Project`}>
+        {summaryFields.project ? (
+          <Link
+            to={getPageUrl(AwxRoute.ProjectPage, { params: { id: summaryFields.project?.id } })}
+          >
+            {summaryFields.project?.name}
+          </Link>
+        ) : (
+          <DeletedDetail />
+        )}
       </PageDetail>
       {/* TODO: more flushed out ExecutionEnvironmentDetail ? */}
       <PageDetail label={t`Execution environment`} isEmpty={!summaryFields.resolved_environment}>
