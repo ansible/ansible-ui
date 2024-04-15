@@ -16,6 +16,7 @@ import { ScheduleRules } from '../../views/schedules/SchedulePage/ScheduleRules'
 import { AwxRoute } from '../AwxRoutes';
 import { ResourceNotifications } from '../../resources/notifications/ResourceNotifications';
 import { SchedulesList } from '../../views/schedules/SchedulesList';
+import { ScheduleEditWizard } from '../../views/schedules/wizard/ScheduleEditWizard';
 
 export function useAwxProjectRoutes() {
   const { t } = useTranslation();
@@ -43,7 +44,7 @@ export function useAwxProjectRoutes() {
         {
           id: AwxRoute.ProjectScheduleEdit,
           path: ':id/schedules/:schedule_id/edit',
-          element: <PageNotImplemented />,
+          element: <ScheduleEditWizard />,
         },
         {
           id: AwxRoute.ProjectSchedulePage,
