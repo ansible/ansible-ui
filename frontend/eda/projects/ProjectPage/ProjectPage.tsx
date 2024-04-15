@@ -119,6 +119,7 @@ export function ProjectPage() {
         tabs={[
           { label: t('Details'), page: EdaRoute.ProjectDetails },
           { label: t('Team Access'), page: EdaRoute.ProjectTeamAccess },
+          { label: t('User Access'), page: EdaRoute.ProjectUserAccess },
         ]}
         params={{ id: project?.id }}
       />

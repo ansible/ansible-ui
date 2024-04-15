@@ -17,9 +17,8 @@ describe('Workflow Visualizer', () => {
   let projectNode: WorkflowNode;
   let jobTemplateNode: WorkflowNode;
 
-  before(function () {
+  beforeEach(function () {
     organization = this.globalOrganization as Organization;
-    project = this.globalProject as Project;
     cy.awxLogin();
 
     cy.createAwxInventory({ organization: organization.id })
@@ -27,29 +26,31 @@ describe('Workflow Visualizer', () => {
         inventory = i;
       })
       .then(() => {
-        cy.createAwxInventorySource(inventory, project).then((invSrc) => {
-          inventorySource = invSrc;
-        });
-        cy.createAwxJobTemplate({
-          organization: organization.id,
-          project: project.id,
-          inventory: inventory.id,
-        }).then((jt) => (jobTemplate = jt));
-      });
-  });
+        cy.createAwxProject({ organization: organization.id }).then((proj) => {
+          project = proj;
 
-  beforeEach(function () {
-    cy.createAwxWorkflowJobTemplate({
-      organization: organization.id,
-      inventory: inventory.id,
-    }).then((wfjt) => (workflowJobTemplate = wfjt));
+          cy.createAwxInventorySource(inventory, project).then((invSrc) => {
+            inventorySource = invSrc;
+
+            cy.createAwxJobTemplate({
+              organization: organization.id,
+              project: project.id,
+              inventory: inventory.id,
+            }).then((jt) => {
+              jobTemplate = jt;
+
+              cy.createAwxWorkflowJobTemplate({
+                organization: organization.id,
+                inventory: inventory.id,
+              }).then((wfjt) => (workflowJobTemplate = wfjt));
+            });
+          });
+        });
+      });
   });
 
   afterEach(() => {
     cy.deleteAwxWorkflowJobTemplate(workflowJobTemplate, { failOnStatusCode: false });
-  });
-
-  after(function () {
     cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
     cy.deleteAwxInventorySource(inventorySource, { failOnStatusCode: false });
     cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
@@ -138,14 +139,14 @@ describe('Workflow Visualizer', () => {
         .then((jobId: string) => {
           cy.url().should('contain', `/jobs/workflow/${jobId}/output`);
           cy.intercept('GET', awxAPI`/project_updates/**`).as('wfJobs');
-          cy.contains('Global Project').click({ force: true });
+          cy.contains(project.name).click({ force: true });
           cy.wait('@wfJobs');
           cy.intercept('GET', awxAPI`/workflow_jobs/${jobId}/`).as('job');
           cy.intercept(
             'GET',
             awxAPI`/workflow_jobs/${jobId}/workflow_nodes/?page=1&page_size=200`
           ).as('wfNodes');
-          cy.getByDataCy('Global Project').should('be.visible');
+          cy.getByDataCy(project.name).should('be.visible');
           cy.getByDataCy('Output').should('be.visible');
           cy.visit(`/jobs/workflow/${jobId}/output`);
           cy.wait('@job', { timeout: 10000 });
@@ -159,9 +160,13 @@ describe('Workflow Visualizer', () => {
               cy.getBy('button[id="fit-to-screen"]').click();
               cy.contains(jobTemplate.name).should('be.visible');
               cy.getByDataCy('relaunch-job').should('be.visible');
+              cy.intercept('GET', awxAPI`/workflow_job_nodes/${results.id.toString()}/`).as(
+                'jtNode'
+              );
               cy.getBy(`g[data-id="${results.id}"]`)
                 .getBy('[data-cy="successful-icon"]')
                 .should('be.visible');
+              cy.wait('@jtNode');
               cy.getBy(`g[data-id="${results.id}"]`).within(() => {
                 cy.contains(jobTemplate.name).click({ force: true });
               });
@@ -170,9 +175,9 @@ describe('Workflow Visualizer', () => {
               cy.contains('button', 'Workflow Job 1/1')
                 .click()
                 .then(() => {
-                  cy.contains('Global Project').click();
+                  cy.contains(project.name).click();
                 });
-              cy.getByDataCy('page-title').should('be.visible').and('contain', 'Global Project');
+              cy.getByDataCy('page-title').should('be.visible').and('contain', project.name);
               cy.contains('button', 'Workflow Job 1/1')
                 .click()
                 .then(() => {

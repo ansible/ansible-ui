@@ -17,6 +17,9 @@ describe('Applications List', () => {
           fixture: 'applications.json',
         }
       );
+      cy.intercept('OPTIONS', '/api/v2/applications/', { fixture: 'mock_options.json' }).as(
+        'getOptions'
+      );
     });
 
     it('Applications list renders', () => {
@@ -27,10 +30,10 @@ describe('Applications List', () => {
 
     it('Filter applications by name', () => {
       cy.mount(<Applications />);
-      cy.intercept('api/v2/applications/?name__icontains=test*').as('nameFilterRequest');
-      cy.filterTableByTypeAndText(/^Name$/, 'test');
+      cy.intercept('api/v2/applications/?name=test*').as('nameFilterRequest');
+      cy.filterTableByMultiSelect('name', ['test']);
       cy.wait('@nameFilterRequest');
-      cy.clickButton(/^Clear all filters$/);
+      cy.clearAllFilters();
     });
 
     it('Filter applications by description', () => {
