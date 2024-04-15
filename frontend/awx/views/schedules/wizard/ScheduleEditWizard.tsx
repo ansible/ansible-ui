@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { PageHeader, PageLayout, PageWizard, PageWizardStep } from '../../../../../framework';
 import { useGetPageUrl } from '../../../../../framework/PageNavigation/useGetPageUrl';
 import { dateToInputDateTime } from '../../../../../framework/utils/dateTimeHelpers';
@@ -27,6 +27,7 @@ export function ScheduleEditWizard() {
   const { data: schedule } = useGetItem<Schedule>(awxAPI`/schedules/`, params.schedule_id);
 
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [startDate, time]: string[] = dateToInputDateTime(
     schedule?.dtstart as string,
@@ -47,7 +48,7 @@ export function ScheduleEditWizard() {
     await Promise.resolve();
   };
 
-  const onCancel = () => navigate(-1);
+  const onCancel = () => navigate(location.pathname.replace('edit', 'details'));
 
   const steps: PageWizardStep[] = [
     {
