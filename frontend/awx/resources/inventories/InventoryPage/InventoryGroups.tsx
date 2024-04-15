@@ -10,7 +10,7 @@ import { useInventoriesGroupsToolbarActions } from '../hooks/useInventoriesGroup
 import { useInventoriesGroupsActions } from '../hooks/useInventoriesGroupsActions';
 import { useOptions } from '../../../../common/crud/useOptions';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
-import { CubeIcon } from '@patternfly/react-icons';
+import { CubeIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { AwxRoute } from '../../../main/AwxRoutes';
 
 export function InventoryGroups() {
@@ -58,6 +58,7 @@ export function InventoryGroups() {
               )
       }
       emptyStateIcon={canCreateGroup ? undefined : CubeIcon}
+      emptyStateButtonIcon={<PlusCircleIcon />}
       emptyStateButtonText={canCreateGroup ? t('Create group') : undefined}
       emptyStateButtonClick={
         canCreateGroup
