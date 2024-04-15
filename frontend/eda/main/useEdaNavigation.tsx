@@ -25,12 +25,14 @@ import {
 import { DecisionEnvironmentDetails } from '../decision-environments/DecisionEnvironmentPage/DecisionEnvironmentDetails';
 import { DecisionEnvironmentPage } from '../decision-environments/DecisionEnvironmentPage/DecisionEnvironmentPage';
 import { DecisionEnvironmentTeamAccess } from '../decision-environments/DecisionEnvironmentPage/DecisionEnvironmentTeamAccess';
+import { DecisionEnvironmentUserAccess } from '../decision-environments/DecisionEnvironmentPage/DecisionEnvironmentUserAccess';
 import { DecisionEnvironments } from '../decision-environments/DecisionEnvironments';
 import { EdaOverview } from '../overview/EdaOverview';
 import { CreateProject, EditProject } from '../projects/EditProject';
 import { ProjectDetails } from '../projects/ProjectPage/ProjectDetails';
 import { ProjectPage } from '../projects/ProjectPage/ProjectPage';
 import { ProjectTeamAccess } from '../projects/ProjectPage/ProjectTeamAccess';
+import { ProjectUserAccess } from '../projects/ProjectPage/ProjectUserAccess';
 import { Projects } from '../projects/Projects';
 import { RuleAudit } from '../rule-audit/RuleAudit';
 import { RuleAuditActions } from '../rule-audit/RuleAuditPage/RuleAuditActions';
@@ -44,6 +46,7 @@ import { RulebookActivationDetails } from '../rulebook-activations/RulebookActiv
 import { RulebookActivationHistory } from '../rulebook-activations/RulebookActivationPage/RulebookActivationHistory';
 import { RulebookActivationPage } from '../rulebook-activations/RulebookActivationPage/RulebookActivationPage';
 import { RulebookActivationTeamAccess } from '../rulebook-activations/RulebookActivationPage/RuleBookActivationTeamAccess';
+import { RulebookActivationUserAccess } from '../rulebook-activations/RulebookActivationPage/RuleBookActivationUserAccess';
 import { RulebookActivations } from '../rulebook-activations/RulebookActivations';
 import { CreateWebhook, EditWebhook } from '../webhooks/EditWebhook';
 import { WebhookDetails } from '../webhooks/WebhookPage/WebhookDetails';
@@ -53,6 +56,7 @@ import { CredentialTypes } from '../access/credential-types/CredentialTypes';
 import { CredentialTypeDetails } from '../access/credential-types/CredentialTypePage/CredentialTypeDetails';
 import { CredentialTypePage } from '../access/credential-types/CredentialTypePage/CredentialTypePage';
 import { CredentialTeamAccess } from '../access/credentials/CredentialPage/CredentialTeamAccess';
+import { CredentialUserAccess } from '../access/credentials/CredentialPage/CredentialUserAccess';
 import {
   CreateCredentialType,
   EditCredentialType,
@@ -158,6 +162,11 @@ export function useEdaNavigation() {
               element: <RulebookActivationTeamAccess />,
             },
             {
+              id: EdaRoute.RulebookActivationUserAccess,
+              path: 'user-access',
+              element: <RulebookActivationUserAccess />,
+            },
+            {
               path: '',
               element: <Navigate to="details" />,
             },
@@ -198,6 +207,11 @@ export function useEdaNavigation() {
               id: EdaRoute.ProjectTeamAccess,
               path: 'team-access',
               element: <ProjectTeamAccess />,
+            },
+            {
+              id: EdaRoute.ProjectUserAccess,
+              path: 'user-access',
+              element: <ProjectUserAccess />,
             },
             {
               path: '',
@@ -255,6 +269,11 @@ export function useEdaNavigation() {
               id: EdaRoute.DecisionEnvironmentTeamAccess,
               path: 'team-access',
               element: <DecisionEnvironmentTeamAccess />,
+            },
+            {
+              id: EdaRoute.DecisionEnvironmentUserAccess,
+              path: 'user-access',
+              element: <DecisionEnvironmentUserAccess />,
             },
             {
               path: '',
@@ -456,6 +475,11 @@ export function useEdaNavigation() {
                   id: EdaRoute.CredentialTeamAccess,
                   path: 'team-access',
                   element: <CredentialTeamAccess />,
+                },
+                {
+                  id: EdaRoute.CredentialUserAccess,
+                  path: 'user-access',
+                  element: <CredentialUserAccess />,
                 },
                 {
                   path: '',
