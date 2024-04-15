@@ -25,41 +25,18 @@ describe('EDA Login / Logoff', () => {
   });
 
   it('can log out and login as a different user', () => {
-    const userDetails = {
-      Username: `E2EUser${randomString(4)}`,
-      FirstName: 'Firstname',
-      LastName: 'Lastname',
-      roles: [
-        {
-          id: '5399bd06-a228-4d99-b61d-ab857837ff4b',
-          name: 'Admin',
-        },
-      ],
-      Email: 'first.last@redhat.com',
-      Password: `${randomString(12)}`,
-    };
-    cy.navigateTo('eda', 'users');
-    cy.contains('h1', 'Users');
-    cy.clickButton(/^Create user$/);
-    cy.get('[data-cy="username"]').type(userDetails.Username);
-    cy.get('[data-cy="first-name"]').type(userDetails.FirstName);
-    cy.get('[data-cy="last-name"]').type(userDetails.LastName);
-    cy.get('[data-cy="email"]').type(userDetails.Email);
-    cy.get('[data-cy="password"]').type(userDetails.Password);
-    cy.get('[data-cy="confirmpassword"]').type(userDetails.Password);
-    /*Roles selection*/
-    cy.selectEdaUserRoleByName('Contributor');
-    cy.clickButton(/^Create user$/);
-    cy.hasDetail('First name', userDetails.FirstName);
-    cy.hasDetail('Last name', userDetails.LastName);
-    cy.hasDetail('Email', userDetails.Email);
-    cy.hasDetail('Username', userDetails.Username);
-    cy.intercept('POST', edaAPI`/auth/session/logout/`).as('login');
-    cy.edaLogout();
-    cy.wait('@login');
-    cy.get('[data-cy="username"]').type(userDetails.Username);
-    cy.get('[data-cy="password"]').type(userDetails.Password);
-    cy.clickButton('Log in');
-    cy.get('.pf-v5-c-dropdown__toggle').eq(1).should('contain', userDetails.Username);
+    cy.getEdaRoles().then((roles) => {
+      const password = randomString(12);
+      cy.createEdaUser({ password, roles: roles.map((role) => role.id) }).then((user) => {
+        cy.edaLogout();
+
+        cy.edaLogin(user.username, password);
+        cy.get('.pf-v5-c-dropdown__toggle').eq(1).should('contain', user.username);
+        cy.edaLogout();
+
+        cy.edaLogin();
+        cy.deleteEdaUser(user);
+      });
+    });
   });
 });

@@ -94,21 +94,17 @@ Cypress.Commands.add('awxLogout', () => {
     });
 });
 
-Cypress.Commands.add('edaLogin', () => {
+Cypress.Commands.add('edaLogin', (username?: string, password?: string) => {
   cy.requiredVariablesAreSet(['EDA_SERVER', 'EDA_USERNAME', 'EDA_PASSWORD']);
+  const userName = username ?? (Cypress.env('EDA_USERNAME') as string);
   cy.session(
-    'EDA',
+    `EDA-${userName}`,
     () => {
       window.localStorage.setItem('default-nav-expanded', 'true');
-      cy.visit(`/`, {
-        retryOnStatusCodeFailure: true,
-        retryOnNetworkFailure: true,
-      });
-      cy.getBy('[data-cy="username"]').type(Cypress.env('EDA_USERNAME') as string, {
-        log: false,
-        delay: 0,
-      });
-      cy.getBy('[data-cy="password"]').type(Cypress.env('EDA_PASSWORD') as string, {
+      cy.visit(`/`, { retryOnStatusCodeFailure: true, retryOnNetworkFailure: true });
+      cy.contains('Welcome to');
+      cy.getBy('[data-cy="username"]').type(userName, { log: false, delay: 0 });
+      cy.getBy('[data-cy="password"]').type(password ?? (Cypress.env('EDA_PASSWORD') as string), {
         log: false,
         delay: 0,
       });
