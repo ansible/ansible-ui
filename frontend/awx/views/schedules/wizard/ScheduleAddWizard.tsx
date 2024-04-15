@@ -23,7 +23,7 @@ import { shouldHideOtherStep } from '../../../resources/templates/WorkflowVisual
 import { RESOURCE_TYPE } from '../../../resources/templates/WorkflowVisualizer/constants';
 import { NodeReviewStep } from '../../../resources/templates/WorkflowVisualizer/wizard/NodeReviewStep';
 import { useProcessSchedule } from '../hooks/useProcessSchedules';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Schedule } from '../../../interfaces/Schedule';
 import { RequestError } from '../../../../common/crud/RequestError';
 import { RULES_DEFAULT_VALUES } from './constants';
@@ -41,6 +41,7 @@ export function ScheduleAddWizard() {
   const closestQuarterHour: DateTime = DateTime.fromMillis(
     Math.ceil(now.toMillis() / 900000) * 900000
   );
+  const params = useParams<{ id?: string }>();
 
   const [currentDate, time]: string[] = dateToInputDateTime(closestQuarterHour.toISO() as string);
   const handleSubmit = async (formValues: ScheduleFormWizard) => {
@@ -72,7 +73,7 @@ export function ScheduleAddWizard() {
     pageNavigate(navigationId, { params: { schedule_id: schedule.id, ...params } });
   };
 
-  const onCancel = () => navigate(-1);
+  const onCancel = () => navigate(location.pathname.replace('create', ''));
 
   const steps: PageWizardStep[] = [
     {
