@@ -44,6 +44,7 @@ import { ResourceNotifications } from '../../resources/notifications/ResourceNot
 import { SchedulesList } from '../../views/schedules/SchedulesList';
 import { InventoryJobs } from '../../resources/inventories/InventoryPage/InventoryJobs';
 import { InventoryRunCommand } from '../../resources/inventories/InventoryRunCommand';
+import { ScheduleEditWizard } from '../../views/schedules/wizard/ScheduleEditWizard';
 
 export function useAwxInventoryRoutes() {
   const { t } = useTranslation();
@@ -95,8 +96,8 @@ export function useAwxInventoryRoutes() {
         },
         {
           id: AwxRoute.InventorySourceScheduleEdit,
-          path: ':inventory_type/:id/sources/:source_id/schedules/edit',
-          element: <PageNotImplemented />,
+          path: ':inventory_type/:id/sources/:source_id/schedules/:schedule_id/edit',
+          element: <ScheduleEditWizard />,
         },
         {
           id: AwxRoute.InventorySourcePage,
