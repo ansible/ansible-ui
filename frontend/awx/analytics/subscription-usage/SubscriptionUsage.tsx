@@ -41,8 +41,8 @@ export function SubscriptionUsage() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Subscription usage')}
-        titleHelpTitle={t('Subscription usage')}
+        title={t('Subscription Usage')}
+        titleHelpTitle={t('Subscription Usage')}
         titleHelp={t(
           'A chart showing historical usage of your subscription. Subscription capacity and licenses consumed per month are displayed, with the ability to filter by the last year, two years, or three years.'
         )}
