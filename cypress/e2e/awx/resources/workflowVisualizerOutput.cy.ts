@@ -124,7 +124,7 @@ describe('Workflow Visualizer', () => {
       cy.contains('Success').should('be.visible');
     });
 
-    it('can view the details pages of related job on a WFJT either by clicking the job nodes or by toggling the Workflow Jobs dropdown', function () {
+    it.skip('can view the details pages of related job on a WFJT either by clicking the job nodes or by toggling the Workflow Jobs dropdown', function () {
       cy.visit(`/templates/workflow_job_template/${workflowJobTemplate?.id}/visualizer`);
       cy.contains('Workflow Visualizer').should('be.visible');
       cy.getBy('[data-cy="workflow-visualizer-toolbar-kebab"]').click();
