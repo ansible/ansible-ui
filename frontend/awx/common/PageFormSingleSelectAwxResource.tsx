@@ -70,6 +70,7 @@ export function PageFormSingleSelectAwxResource<
   );
 
   const [_, setDialog] = usePageDialog();
+
   const { setValue } = useFormContext<FormData>();
   const value = useWatch<FormData>({ name: props.name });
   const openSelectDialog = useCallback(
@@ -98,7 +99,9 @@ export function PageFormSingleSelectAwxResource<
   );
 
   const queryLabel = useCallback(
-    (value: Value) => <AsyncQueryLabel url={props.url} id={value as unknown as number} />,
+    (value: Value) => (
+      <AsyncQueryLabel url={props.url.split('?')[0]} id={value as unknown as number} />
+    ),
     [props.url]
   );
 
