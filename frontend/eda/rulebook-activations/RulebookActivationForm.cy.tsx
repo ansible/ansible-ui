@@ -66,8 +66,8 @@ describe('Create rulebook activation ', () => {
     cy.selectDropdownOptionByResourceName('project-id', 'Project 4');
     cy.selectDropdownOptionByResourceName('rulebook', 'hello_echo.yml');
     cy.get('[data-cy="organization_id"]').click();
-    cy.get('[data-cy="k8s_service_name"]').type('sample');
     cy.get('#organization-2 > .pf-v5-c-menu__item-main > .pf-v5-c-menu__item-text').click();
+    cy.get('[data-cy="k8s_service_name"]').type('sample');
     cy.clickButton('Create rulebook activation');
 
     cy.intercept('POST', edaAPI`/activations/`, (req) => {
