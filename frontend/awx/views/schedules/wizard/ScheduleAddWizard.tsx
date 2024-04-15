@@ -16,7 +16,7 @@ import { RulesStep } from './RulesStep';
 import { RRule, RRuleSet } from 'rrule';
 import { ExceptionsStep } from './ExceptionsStep';
 import { SurveyStep } from '../../../common/SurveyStep';
-import { NodeTypeStep } from '../../../resources/templates/WorkflowVisualizer/wizard/NodeTypeStep';
+import { ScheduleSelectStep } from './ScheduleSelectStep';
 import { NodePromptsStep } from '../../../resources/templates/WorkflowVisualizer/wizard/NodePromptsStep';
 import { WizardFormValues } from '../../../resources/templates/WorkflowVisualizer/types';
 import { shouldHideOtherStep } from '../../../resources/templates/WorkflowVisualizer/wizard/helpers';
@@ -78,17 +78,17 @@ export function ScheduleAddWizard() {
     {
       id: 'details',
       label: t('Details'),
-      inputs: <NodeTypeStep />,
+      inputs: <ScheduleSelectStep />,
     },
     {
       id: 'nodePromptsStep',
       label: t('Prompts'),
       inputs: <NodePromptsStep />,
       hidden: (wizardData: Partial<ScheduleFormWizard>) => {
-        const { node_resource, node_type, launch_config } = wizardData;
+        const { resource, schedule_type, launch_config } = wizardData;
         if (
-          (node_type === RESOURCE_TYPE.workflow_job || node_type === RESOURCE_TYPE.job) &&
-          node_resource &&
+          (schedule_type === RESOURCE_TYPE.workflow_job || schedule_type === RESOURCE_TYPE.job) &&
+          resource &&
           launch_config
         ) {
           return shouldHideOtherStep(launch_config);
@@ -135,8 +135,8 @@ export function ScheduleAddWizard() {
     details: {
       name: '',
       description: '',
-      node_type: '',
-      resourceName: '',
+      resource_type: '',
+      resource: '',
       startDateTime: { date: currentDate, time: time },
       timezone: 'America/New_York',
     },
