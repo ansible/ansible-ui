@@ -325,7 +325,6 @@ Cypress.Commands.add(
       {
         username: `E2EUser${randomString(4)}`,
         password: `${randomString(4)}`,
-        roles: [],
         ...user,
       }
     ).then((edaUser) => {
