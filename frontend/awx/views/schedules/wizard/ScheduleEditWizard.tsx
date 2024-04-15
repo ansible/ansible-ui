@@ -7,7 +7,7 @@ import { AwxRoute } from '../../../main/AwxRoutes';
 import { ScheduleFormWizard } from '../types';
 import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
 import { RulesStep } from './RulesStep';
-import { Frequency, RRule, RRuleSet, rrulestr } from 'rrule';
+import { RRuleSet, rrulestr } from 'rrule';
 import { ExceptionsStep } from './ExceptionsStep';
 import { SurveyStep } from '../../../common/SurveyStep';
 import { NodeTypeStep } from '../../../resources/templates/WorkflowVisualizer/wizard/NodeTypeStep';
@@ -19,6 +19,7 @@ import { useGetItem } from '../../../../common/crud/useGet';
 import { Schedule } from '../../../interfaces/Schedule';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { NodeReviewStep } from '../../../resources/templates/WorkflowVisualizer/wizard/NodeReviewStep';
+import { RULES_DEFAULT_VALUES } from './constants';
 export function ScheduleEditWizard() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
@@ -96,9 +97,9 @@ export function ScheduleEditWizard() {
   ];
 
   if (!schedule) return;
-  const ruleSet = schedule.rrule && rrulestr(schedule.rrule);
-  const ruleList: RRule[] =
-    ruleSet instanceof RRuleSet ? ruleSet._rrule : ruleSet === '' ? [] : [ruleSet];
+  const ruleSet = rrulestr(schedule.rrule, { forceset: true }) as RRuleSet;
+  const rules = ruleSet.rrules().map((rule, i) => ({ rule, id: i + 1 }));
+  const exceptions = ruleSet.exrules().map((rule, i) => ({ rule, id: i + 1 }));
 
   const currentValues = {
     details: {
@@ -113,42 +114,8 @@ export function ScheduleEditWizard() {
     nodePromptsStep: {
       prompt: {},
     },
-    rules: {
-      id: undefined,
-      freq: Frequency.WEEKLY,
-      interval: 1,
-      wkst: RRule.SU,
-      byweekday: null,
-      byweekno: null,
-      bymonth: null,
-      bymonthday: null,
-      byyearday: null,
-      bysetpos: null,
-      until: null,
-      count: null,
-      byminute: null,
-      byhour: null,
-      endingType: '',
-      rules: ruleList.map((rule, i) => ({ id: i + 1, rule: rule })),
-    },
-    exceptions: {
-      id: undefined,
-      freq: null,
-      interval: null,
-      wkst: null,
-      byweekday: null,
-      byweekno: null,
-      bymonth: null,
-      bymonthday: null,
-      byyearday: null,
-      bysetpos: null,
-      until: null,
-      count: null,
-      byminute: null,
-      byhour: null,
-      endingType: '',
-      exceptions: [],
-    },
+    rules: { ...RULES_DEFAULT_VALUES, rules },
+    exceptions: { ...RULES_DEFAULT_VALUES, exceptions },
   };
 
   return (
