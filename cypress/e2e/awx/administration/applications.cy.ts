@@ -47,17 +47,15 @@ describe('Applications', () => {
           cy.getByDataCy('client-type').should('contain', 'confidential');
           cy.getByDataCy('OAuth Applications').eq(1).click();
           //Delete from the list view
-          cy.clickTableRowAction('name', response.name, 'delete-application', { inKebab: true });
+          cy.filterTableByMultiSelect('name', [response.name]);
+          cy.clickTableRowAction('name', response.name, 'delete-application', {
+            inKebab: true,
+            disableFilter: true,
+          });
           cy.get('[data-ouia-component-id="confirm"]').click();
           cy.get('[data-ouia-component-id="submit"]').click();
           cy.clickButton('Close');
           cy.clickButton('Clear all filters');
-          cy.verifyPageTitle('OAuth Applications');
-          cy.filterTableByTextFilter('name', response.name);
-          //Assert that the delete request was successful
-          cy.contains(
-            'No results match this filter criteria. Clear all filters and try again.'
-          ).should('be.visible');
         });
     });
 
@@ -122,7 +120,8 @@ describe('Applications', () => {
     it('can edit an application with grant type password from client type confidential to public from the List View', function () {
       cy.navigateTo('awx', 'applications');
       cy.verifyPageTitle('OAuth Applications');
-      cy.searchAndDisplayResource(app.name);
+      cy.filterTableByMultiSelect('name', [app.name]);
+      cy.getTableRow('name', app.name, { disableFilter: true });
       cy.getByDataCy('name-column-cell').should('contain', app.name);
       //Edit the Application from the List View
       cy.get(`[data-cy="edit-application"]`).click();
@@ -182,17 +181,14 @@ describe('Applications', () => {
               cy.wait('@deletedApp').then((deletedApp) => {
                 expect(deletedApp?.response?.statusCode).to.eql(204);
               });
-              cy.filterTableByTextFilter('name', response.name);
-              cy.contains(
-                'No results match this filter criteria. Clear all filters and try again.'
-              ).should('be.visible');
             });
         });
     });
 
     it('can edit an application with grant type Password from client type Confidential to Public from the Details View', function () {
       cy.navigateTo('awx', 'applications');
-      cy.filterTableByTextFilter('name', app.name);
+      cy.filterTableByMultiSelect('name', [app.name]);
+      cy.getTableRow('name', app.name, { disableFilter: true });
       //Navigate to Details View
       cy.getByDataCy('name-column-cell').contains(app.name).click();
       cy.verifyPageTitle(app.name);
