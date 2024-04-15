@@ -157,7 +157,14 @@ export function NodeTypeStep(props: { hasSourceNode?: boolean }) {
     if (pathname.split('/').includes('schedules')) {
       void getResource();
     }
-  }, [defaultValues?.relatedJobTypeApiUrl, nodeResource, params?.id, pathname, setValue]);
+  }, [
+    defaultValues?.relatedJobTypeApiUrl,
+    nodeResource,
+    params?.id,
+    params.source_id,
+    pathname,
+    setValue,
+  ]);
 
   useEffect(() => {
     const setLaunchToWizardData = async () => {
