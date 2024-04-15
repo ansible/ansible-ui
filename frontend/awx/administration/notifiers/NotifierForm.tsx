@@ -30,7 +30,6 @@ import { usePageNavigate } from '../../../../framework';
 
 import { InnerForm } from './NotifierFormInner';
 
-
 export function EditNotifier() {
   return <NotifierForm mode={'edit'} />;
 }
@@ -137,14 +136,18 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
       }
     }
 
-    if (mode === 'add')
-    {
-      await postRequest(awxAPI`/notification_templates/`, data);
-    }else
-    {
-      await putRequest(awxAPI`/notification_templates/${formData.id?.toString() || ''}/`, data)
+    if (data.notification_type === 'webhook') {
+      if (!data.notification_configuration.headers) {
+        data.notification_configuration.headers = {};
+      }
     }
-    
+
+    if (mode === 'add') {
+      await postRequest(awxAPI`/notification_templates/`, data);
+    } else {
+      await putRequest(awxAPI`/notification_templates/${formData.id?.toString() || ''}/`, data);
+    }
+
     pageNavigate(AwxRoute.NotificationTemplates);
   };
 
@@ -210,7 +213,6 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
   );
 }
 
-
 function arraysToString(data: NotificationTemplate) {
   if (!data.notification_configuration) {
     return;
@@ -266,5 +268,3 @@ function isList(key: string, notification_type: string) {
 
   return false;
 }
-
-
