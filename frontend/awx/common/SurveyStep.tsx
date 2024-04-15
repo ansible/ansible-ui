@@ -9,16 +9,21 @@ import { PageSelectOption } from '../../../framework/PageInputs/PageSelectOption
 import { PageFormCreatableSelect } from '../../../framework/PageForm/Inputs/PageFormCreatableSelect';
 import { WizardFormValues } from '../resources/templates/WorkflowVisualizer/types';
 
-export function SurveyStep({ templateId }: { templateId?: string }) {
+export function SurveyStep({ templateId, jobType }: { templateId?: string; jobType?: string }) {
   const { t } = useTranslation();
   const { wizardData } = usePageWizard();
   const { node_resource } = wizardData as WizardFormValues;
   const id = node_resource ? node_resource.id.toString() : templateId ? templateId : '';
-  const { data: survey_spec } = useGet<Survey>(awxAPI`/job_templates/${id}/survey_spec/`);
+  const { data: survey_spec } = useGet<Survey>(
+    awxAPI`/${jobType ?? 'job_templates'}/${id}/survey_spec/`
+  );
 
   const choicesTo: PageSelectOption<string>[] = [];
   survey_spec?.spec.map((element: Spec) => {
-    if (element.type === 'multiplechoice' && Array.isArray(element.choices)) {
+    if (
+      (element.type === 'multiplechoice' || element.type === 'multiselect') &&
+      Array.isArray(element.choices)
+    ) {
       element.choices?.map((choice: string) => {
         choicesTo.push({ value: choice, label: t(choice) });
       });

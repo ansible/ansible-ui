@@ -30,6 +30,7 @@ import { parseStringToTagArray } from '../JobTemplateFormHelpers';
 import { useLabelPayload } from '../hooks/useLabelPayload';
 import { CredentialPasswordsStep, OtherPromptsStep, TemplateLaunchReviewStep } from './steps';
 import { SurveyStep } from '../../../common/SurveyStep';
+import { yamlToJson } from '../../../../../framework/utils/codeEditorUtils';
 
 const addSurveyQuestionsToExtraVars = (
   config: LaunchConfiguration,
@@ -104,7 +105,7 @@ interface LaunchPayload {
   credential_passwords: { [key: string]: string };
   diff_mode: boolean;
   execution_environment: number;
-  extra_vars: string;
+  extra_vars: string | { [key: string]: string };
   forks: number;
   instance_groups: number[];
   inventory: number;
@@ -173,7 +174,7 @@ export function TemplateLaunchWizard({ jobType }: { jobType: string }) {
       try {
         const labelPayload = await createLabelPayload(labels || [], template);
 
-        const payload: Partial<LaunchPayload> = {};
+        let payload: Partial<LaunchPayload> = {};
         const setValue = <K extends LaunchPayloadProperty>(key: K, value: LaunchPayload[K]) => {
           const isValid = typeof value !== 'undefined' && value !== null;
           if (!isValid) {
@@ -182,7 +183,8 @@ export function TemplateLaunchWizard({ jobType }: { jobType: string }) {
 
           if (jobType === 'workflow_job_templates') {
             if (
-              config[formFieldToLaunchConfig[key as keyof unknown] as keyof LaunchConfiguration]
+              config[formFieldToLaunchConfig[key as keyof unknown] as keyof LaunchConfiguration] ||
+              config.survey_enabled
             ) {
               payload[key] = value;
             }
@@ -209,15 +211,26 @@ export function TemplateLaunchWizard({ jobType }: { jobType: string }) {
         setValue('job_slice_count', job_slice_count);
         setValue('job_tags', job_tags?.map((tag) => tag.name).join(','));
         setValue('job_type', job_type);
-        setValue('labels', labelPayload);
         setValue('limit', limit);
         setValue('scm_branch', scm_branch);
         setValue('skip_tags', skip_tags?.map((tag) => tag.name).join(','));
         setValue('timeout', timeout);
         setValue('verbosity', verbosity);
 
-        if (config.survey_enabled) {
+        if (labelPayload.length > 0) {
+          setValue('labels', labelPayload);
+        }
+
+        if (config.survey_enabled && jobType === 'job_templates') {
           addSurveyQuestionsToExtraVars(config, extra_vars, formValues, setValue);
+        }
+
+        if (jobType === 'workflow_job_templates') {
+          const extraVarsObj = extra_vars ? (JSON.parse(yamlToJson(extra_vars)) as object) : {};
+          payload = {
+            ...payload,
+            extra_vars: { ...extraVarsObj, ...formValues.survey },
+          };
         }
 
         const job = await postRequest(awxAPI`/${jobType}/${resourceId}/launch/`, payload);
@@ -326,7 +339,7 @@ export function TemplateLaunchWizard({ jobType }: { jobType: string }) {
       id: 'survey',
       label: t('Survey'),
       hidden: () => !config?.survey_enabled,
-      inputs: <SurveyStep templateId={template.id.toString()} />,
+      inputs: <SurveyStep jobType={jobType} templateId={template.id.toString()} />,
     },
     {
       id: 'review',
