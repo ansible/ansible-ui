@@ -55,22 +55,25 @@ describe('Instances list', () => {
   });
 
   it('Filter instances by name', () => {
-    cy.mount(<Instances />);
-    cy.intercept('/api/v2/instances/?not__node_type=control%2Chybrid&hostname__icontains=test*').as(
-      'nameFilterRequest'
+    cy.intercept(
+      { method: 'OPTIONS', url: '/api/v2/instances/' },
+      { fixture: 'mock_options.json' }
     );
-    cy.filterTableByTypeAndText(/^Name$/, 'test');
-    cy.wait('@nameFilterRequest');
+    cy.mount(<Instances />);
+    cy.filterTableBySingleSelect('hostname', 'test');
+    cy.get('tr').should('have.length.greaterThan', 0);
+    cy.getByDataCy('filter-input').click();
     cy.clickButton(/^Clear all filters$/);
   });
 
   it('Filter instances by node', () => {
-    cy.mount(<Instances />);
-    cy.intercept('/api/v2/instances/?not__node_type=control%2Chybrid&node_type=control*').as(
-      'controlFilterRequest'
+    cy.intercept(
+      { method: 'OPTIONS', url: '/api/v2/instances/' },
+      { fixture: 'mock_options.json' }
     );
-    cy.filterByMultiSelection('Node type', 'Control');
-    cy.wait('@controlFilterRequest');
+    cy.mount(<Instances />);
+    cy.filterTableBySingleSelect('node-type', 'Control plane node');
+    cy.getByDataCy('filter-input').click();
     cy.clickButton(/^Clear all filters$/);
   });
 

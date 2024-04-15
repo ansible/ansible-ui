@@ -184,6 +184,24 @@
           ["insights", "Red Hat Insights"],
           ["archive", "Remote Archive"]
         ]
+      },
+      "hostname": {
+        "type": "string",
+        "label": "Hostname",
+        "help_text": "The name of this host.",
+        "filterable": true
+      },
+      "node_type": {
+        "type": "choice",
+        "label": "Node type",
+        "help_text": "The type of node for this instance.",
+        "filterable": true,
+        "choices": [
+          ["control", "Control plane node"],
+          ["execution", "Execution plane node"],
+          ["hybrid", "Controller and execution"],
+          ["hop", "Message-passing node, no execution capability"]
+        ]
       }
     }
   },
