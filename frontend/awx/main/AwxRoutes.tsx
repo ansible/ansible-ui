@@ -193,6 +193,7 @@ export enum AwxRoute {
   ManagementJobPage = 'awx-management-job-page',
   ManagementJobDetails = 'awx-management-job-details',
   ManagementJobSchedules = 'awx-management-job-schedules',
+  ManagementJobSchedulesDetails = 'awx-management-job-schedules-details',
   ManagementJobNotifications = 'awx-management-job-notifications',
 
   ManagementJobSchedulePage = 'awx-management-job-schedule-page',

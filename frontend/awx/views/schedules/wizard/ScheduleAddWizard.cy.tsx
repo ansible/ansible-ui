@@ -212,4 +212,30 @@ describe('ScheduleAddWizard', () => {
       });
     });
   });
+
+  describe('Saving a schedule', () => {
+    beforeEach(() => {
+      cy.intercept({ method: 'GET', url: awxAPI`/job_templates/*` }, mockTemplates);
+      cy.intercept('/api/v2/job_templates/100/', { id: 100, name: 'Mock Job Template' });
+      cy.intercept('/api/v2/job_templates/100/launch/', {});
+      cy.mount(<ScheduleAddWizard />, {
+        initialEntries: ['/schedules/add'],
+        path: '/schedules/add',
+      });
+
+      cy.get('[data-cy="wizard-nav"]').within(() => {
+        ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
+          cy.get('li')
+            .eq(index)
+            .should((el) => expect(el.text().trim()).to.equal(text));
+        });
+      });
+
+      cy.selectDropdownOptionByResourceName('node_type', 'Job template');
+      cy.selectDropdownOptionByResourceName('job-template-select', 'Mock Job Template');
+      cy.get('[data-cy="name"]').type('Test Schedule');
+      cy.selectDropdownOptionByResourceName('timezone', 'Zulu');
+      cy.clickButton(/^Next$/);
+    });
+  });
 });

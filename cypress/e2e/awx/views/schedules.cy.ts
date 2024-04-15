@@ -1,8 +1,11 @@
+import { randomString } from '../../../../framework/utils/random-string';
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 import { InventorySource } from '../../../../frontend/awx/interfaces/InventorySource';
+import { JobTemplate } from '../../../../frontend/awx/interfaces/JobTemplate';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
 import { Schedule } from '../../../../frontend/awx/interfaces/Schedule';
+import { WorkflowJobTemplate } from '../../../../frontend/awx/interfaces/WorkflowJobTemplate';
 
 describe('Schedules', () => {
   let schedule: Schedule;
@@ -15,13 +18,11 @@ describe('Schedules', () => {
     cy.awxLogin();
   });
 
-  beforeEach(() => {
+  beforeEach(function () {
+    project = this.globalProject as Project;
     cy.createAWXSchedule().then((sched: Schedule) => (schedule = sched));
     cy.createAwxOrganization().then((o) => {
       organization = o;
-      cy.createAwxProject({ organization: organization.id }).then((p) => {
-        project = p;
-      });
       cy.createAwxInventory({ organization: organization.id }).then((i) => {
         inventory = i;
         cy.createAwxInventorySource(i, project).then((invSrc) => {
@@ -85,7 +86,7 @@ describe('Schedules', () => {
   it('project does not renders prompt step', () => {
     cy.getBy('[data-cy="create-schedule"]').click();
     cy.getBy('[data-cy="node_type-form-group"]').click();
-    cy.getBy('[data-cy="project"]').click();
+    cy.getBy('[data-cy="project-sync"]').click();
     cy.selectDropdownOptionByResourceName('project', project.name);
     cy.get('[data-cy="wizard-nav"] li').eq(1).should('contain.text', 'Rules');
   });
@@ -109,34 +110,214 @@ describe('Schedules', () => {
   });
 });
 
-describe('Schedules - Create', () => {
-  it.skip('can create a simple schedule and navigate to the schedule details page', () => {
-    //Make sure to assert schedule summary, rules preview, exceptions preview
-    //Survey, prompts, rules and exceptions are not needed for this test
+describe('Schedules - Create', function () {
+  let organization: Organization;
+  let jobTemplate: JobTemplate;
+  let project: Project;
+  let inventory: Inventory;
+  let inventorySource: InventorySource;
+  before(() => {
+    cy.awxLogin();
   });
-  it.skip('can create a simple schedule of resource type Job template', () => {
-    //Make sure to assert the input data in the review step
-    //Survey, prompts, rules and exceptions are not needed for this test
+  beforeEach(function () {
+    project = this.globalProject as Project;
+    this.globalInventory;
+    cy.createAwxOrganization().then((o) => {
+      organization = o;
+      cy.createAwxInventory({ organization: organization.id }).then((i) => {
+        inventory = i;
+        cy.createAwxInventorySource(i, project).then((invSrc) => {
+          inventorySource = invSrc;
+        });
+      });
+    });
+    cy.navigateTo('awx', 'schedules');
   });
 
-  it.skip('can create a simple schedule of resource type Workflow job template', () => {
-    //Make sure to assert the input data in the review step
-    //Survey, prompts, rules and exceptions are not needed for this test
+  it('can create a simple schedule and navigate to the schedule details page', () => {
+    cy.createAwxJobTemplate({
+      name: 'E2E Credentials ' + randomString(4),
+      organization: organization.id,
+      project: project.id,
+      inventory: inventory.id,
+    }).then((jt) => {
+      jobTemplate = jt;
+      const scheduleName = 'E2E ' + randomString(4);
+      cy.getBy('[data-cy="create-schedule"]').click();
+
+      cy.selectDropdownOptionByResourceName('node_type', 'Job template');
+      cy.selectDropdownOptionByResourceName('job-template-select', `${jobTemplate.name}`);
+      cy.get('[data-cy="name"]').type(`${scheduleName}`);
+      cy.selectDropdownOptionByResourceName('timezone', 'Zulu');
+      cy.clickButton(/^Next$/);
+      cy.get('[data-cy="interval"]').clear().type('100');
+      cy.selectDropdownOptionByResourceName('freq', 'Hourly');
+      cy.get('[data-cy="count-form-group"]').type('17');
+      cy.get('[data-cy="add-rule-button"]').click();
+      cy.get('tr[data-cy="row-id-1"]').within(() => {
+        cy.get('td[data-cy="rrule-column-cell"]').should(
+          'contains.text',
+          'RRULE:FREQ=HOURLY;INTERVAL=100;WKST=SU'
+        );
+      });
+      cy.clickButton(/^Next$/);
+      cy.clickButton(/^Next$/);
+      cy.get('dl[data-cy="rule-1"]').should('be.visible');
+      cy.clickButton(/^Finish$/);
+      cy.verifyPageTitle(`${scheduleName}`);
+      cy.get('button[data-cy="actions-dropdown"]').click();
+      cy.getBy('[data-cy="delete-schedule"]').click();
+      cy.clickModalConfirmCheckbox();
+      cy.clickModalButton('Delete schedule');
+    });
   });
 
-  it.skip('can create a simple schedule of resource type Inventory source', () => {
-    //Make sure to assert the input data in the review step
-    //Survey, prompts, rules and exceptions are not needed for this test
+  it('can create a simple schedule of resource type Workflow job template', () => {
+    let wfjt: WorkflowJobTemplate;
+    cy.createAwxWorkflowJobTemplate({
+      name: 'E2E Workflow Job Template ' + randomString(4),
+      organization: organization.id,
+      inventory: inventory.id,
+    }).then((jt) => {
+      wfjt = jt;
+      const scheduleName = 'E2E ' + randomString(4);
+      cy.getBy('[data-cy="create-schedule"]').click();
+
+      cy.selectDropdownOptionByResourceName('node_type', 'Workflow job template');
+      cy.selectDropdownOptionByResourceName('workflow-job-template-select', `${wfjt.name}`);
+      cy.get('[data-cy="name"]').type(`${scheduleName}`);
+      cy.selectDropdownOptionByResourceName('timezone', 'Zulu');
+      cy.clickButton(/^Next$/);
+      cy.get('[data-cy="interval"]').clear().type('100');
+      cy.selectDropdownOptionByResourceName('freq', 'Hourly');
+      cy.get('[data-cy="count-form-group"]').type('17');
+      cy.get('[data-cy="add-rule-button"]').click();
+      cy.get('tr[data-cy="row-id-1"]').within(() => {
+        cy.get('td[data-cy="rrule-column-cell"]').should(
+          'contains.text',
+          'RRULE:FREQ=HOURLY;INTERVAL=100;WKST=SU'
+        );
+      });
+      cy.clickButton(/^Next$/);
+      cy.clickButton(/^Next$/);
+      cy.get('dl[data-cy="rule-1"]').should('be.visible');
+      cy.clickButton(/^Finish$/);
+      cy.verifyPageTitle(`${scheduleName}`);
+      cy.deleteAwxWorkflowJobTemplate(wfjt, { failOnStatusCode: false });
+      cy.get('button[data-cy="actions-dropdown"]').click();
+      cy.getBy('[data-cy="delete-schedule"]').click();
+      cy.clickModalConfirmCheckbox();
+      cy.clickModalButton('Delete schedule');
+    });
   });
 
-  it.skip('can create a simple schedule of resource type Project', () => {
-    //Make sure to assert the input data in the review step
-    //Survey, prompts, rules and exceptions are not needed for this test
+  it('can create a simple schedule of resource type Inventory source', () => {
+    let specificInventory: Inventory;
+    let specificInventorySource: InventorySource;
+    cy.createAwxInventory({ organization: organization.id }).then((i) => {
+      specificInventory = i;
+      cy.createAwxInventorySource(i, project).then((invSrc) => {
+        specificInventorySource = invSrc;
+
+        const scheduleName = 'E2E ' + randomString(4);
+        cy.getBy('[data-cy="create-schedule"]').click();
+
+        cy.selectDropdownOptionByResourceName('node_type', 'Inventory source');
+        cy.selectDropdownOptionByResourceName('inventory', `${specificInventory.name}`);
+        cy.selectDropdownOptionByResourceName(
+          'inventory-source-select',
+          `${specificInventorySource.name}`
+        );
+        cy.get('[data-cy="name"]').type(`${scheduleName}`);
+        cy.selectDropdownOptionByResourceName('timezone', 'Zulu');
+        cy.clickButton(/^Next$/);
+        cy.get('[data-cy="interval"]').clear().type('100');
+        cy.selectDropdownOptionByResourceName('freq', 'Hourly');
+        cy.get('[data-cy="count-form-group"]').type('17');
+        cy.get('[data-cy="add-rule-button"]').click();
+        cy.get('tr[data-cy="row-id-1"]').within(() => {
+          cy.get('td[data-cy="rrule-column-cell"]').should(
+            'contains.text',
+            'RRULE:FREQ=HOURLY;INTERVAL=100;WKST=SU'
+          );
+        });
+        cy.clickButton(/^Next$/);
+        cy.clickButton(/^Next$/);
+        cy.get('dl[data-cy="rule-1"]').should('be.visible');
+        cy.clickButton(/^Finish$/);
+        cy.verifyPageTitle(`${scheduleName}`);
+        cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
+        cy.deleteAwxInventorySource(inventorySource, { failOnStatusCode: false });
+        cy.get('button[data-cy="actions-dropdown"]').click();
+        cy.getBy('[data-cy="delete-schedule"]').click();
+        cy.clickModalConfirmCheckbox();
+        cy.clickModalButton('Delete schedule');
+      });
+    });
   });
 
+  it('can create a simple schedule of resource type Project', () => {
+    const scheduleName = 'E2E ' + randomString(4);
+    cy.getBy('[data-cy="create-schedule"]').click();
+    cy.selectDropdownOptionByResourceName('node_type', 'Project Sync');
+    cy.selectDropdownOptionByResourceName('project', `${project.name}`);
+    cy.get('[data-cy="name"]').type(`${scheduleName}`);
+    cy.selectDropdownOptionByResourceName('timezone', 'Zulu');
+    cy.clickButton(/^Next$/);
+    cy.get('[data-cy="interval"]').clear().type('100');
+    cy.selectDropdownOptionByResourceName('freq', 'Hourly');
+    cy.get('[data-cy="count-form-group"]').type('17');
+    cy.get('[data-cy="add-rule-button"]').click();
+    cy.get('tr[data-cy="row-id-1"]').within(() => {
+      cy.get('td[data-cy="rrule-column-cell"]').should(
+        'contains.text',
+        'RRULE:FREQ=HOURLY;INTERVAL=100;WKST=SU'
+      );
+    });
+    cy.clickButton(/^Next$/);
+    cy.clickButton(/^Next$/);
+    cy.get('dl[data-cy="rule-1"]').should('be.visible');
+    cy.clickButton(/^Finish$/);
+    cy.verifyPageTitle(`${scheduleName}`);
+    cy.get('button[data-cy="actions-dropdown"]').click();
+    cy.getBy('[data-cy="delete-schedule"]').click();
+    cy.clickModalConfirmCheckbox();
+    cy.clickModalButton('Delete schedule');
+  });
+
+  // We this test can we turned on after the routing issues, addressed by a different issue are fixed.
   it.skip('can create a simple schedule of resource type Management job template', () => {
-    //Make sure to assert the input data in the review step
-    //Survey, prompts, rules and exceptions are not needed for this test
+    const scheduleName = 'E2E ' + randomString(4);
+    cy.getBy('[data-cy="create-schedule"]').click();
+
+    cy.selectDropdownOptionByResourceName('node_type', 'Management job template');
+    cy.selectDropdownOptionByResourceName(
+      'management-job-template-select',
+      'Cleanup Activity Stream'
+    );
+    cy.get('[data-cy="name"]').type(`${scheduleName}`);
+    cy.selectDropdownOptionByResourceName('timezone', 'Zulu');
+    cy.clickButton(/^Next$/);
+    cy.get('[data-cy="interval"]').clear().type('100');
+    cy.selectDropdownOptionByResourceName('freq', 'Hourly');
+    cy.get('[data-cy="count-form-group"]').type('17');
+    cy.get('[data-cy="add-rule-button"]').click();
+    cy.get('tr[data-cy="row-id-1"]').within(() => {
+      cy.get('td[data-cy="rrule-column-cell"]').should(
+        'contains.text',
+        'RRULE:FREQ=HOURLY;INTERVAL=100;WKST=SU'
+      );
+    });
+    cy.clickButton(/^Next$/);
+    cy.clickButton(/^Next$/);
+    cy.get('dl[data-cy="rule-1"]').should('be.visible');
+    cy.clickButton(/^Finish$/);
+    cy.verifyPageTitle(`${scheduleName}`);
+    cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
+    cy.get('button[data-cy="actions-dropdown"]').click();
+    cy.getBy('[data-cy="delete-schedule"]').click();
+    cy.clickModalConfirmCheckbox();
+    cy.clickModalButton('Delete schedule');
   });
 
   it.skip('can create a complex schedule and navigate to details page', () => {
