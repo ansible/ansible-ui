@@ -55,10 +55,13 @@ describe('host and inventory host', () => {
       cy.get('[data-cy="name-form-group"]').type('-changed');
       cy.get('[data-cy="Submit"]').click();
       cy.verifyPageTitle(group.name + '-changed');
-      cy.awxRequestPost<{ name: string; inventory: number }>(awxAPI`/hosts/${hostid}/groups/`, {
-        name: 'E2E Group ' + randomString(5),
-        inventory: host.inventory,
-      }).then((group: { name: string; id: number }) => {
+      cy.requestPost<{ name: string; inventory: number; id: number }>(
+        awxAPI`/hosts/${hostid}/groups/`,
+        {
+          name: 'E2E Group ' + randomString(5),
+          inventory: host.inventory,
+        }
+      ).then((group: { name: string; id: number }) => {
         /// check multiple assosiate and disasosiate
         // disasosiate
         navigateToHost(url, host.name, '[data-cy="name-column-cell"] a');
