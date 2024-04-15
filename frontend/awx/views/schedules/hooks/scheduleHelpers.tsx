@@ -198,7 +198,7 @@ export function useGetPromptOnLaunchFields(
           <PageFormExecutionEnvironmentSelect<ScheduleFormWizard>
             key={`${fieldName}`}
             organizationId={organizationId}
-            name="inventory"
+            name="resourceInventory"
           />
         );
         break;
