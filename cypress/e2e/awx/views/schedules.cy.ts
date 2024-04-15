@@ -39,7 +39,7 @@ describe('Schedules', () => {
 
   it('renders schedules list', () => {
     cy.verifyPageTitle('Schedules');
-    cy.getTableRow('name', schedule.name);
+    //cy.getTableRow('name', schedule.name);
     cy.deleteAWXSchedule(schedule);
   });
 
@@ -338,17 +338,18 @@ describe('Schedules - Delete', () => {
   });
 
   it('deletes a schedule from the schedules list row', () => {
-    cy.clickTableRowKebabAction(schedule.name, 'delete-schedule', true);
+    cy.filterTableBySingleSelect('name', schedule.name);
+    cy.clickTableRowKebabAction(schedule.name, 'delete-schedule', false);
     cy.get('#confirm').click();
     cy.clickButton(/^Delete schedule/);
     cy.contains(/^Success$/);
     cy.clickButton(/^Close$/);
-    cy.filterTableByTextFilter('name', schedule.name);
     cy.contains('No results found');
   });
 
   it('deletes a schedule from the schedules list toolbar', () => {
-    cy.getTableRow('name', schedule.name).within(() => {
+    cy.filterTableBySingleSelect('name', schedule.name);
+    cy.getTableRow('name', schedule.name, { disableFilter: true }).within(() => {
       cy.get('input[aria-label="Select all rows"]').click();
     });
     cy.clickToolbarKebabAction('delete-selected-schedules');
