@@ -50,21 +50,24 @@ describe('credentials', () => {
     });
   });
 
-  it('credentials page', () => {
-    cy.navigateTo('awx', 'credentials');
-    cy.verifyPageTitle('Credentials');
-  });
-
   it('create and delete credential', () => {
     const credentialName = 'E2E Credential ' + randomString(4);
     cy.navigateTo('awx', 'credentials');
     cy.clickButton(/^Create credential$/);
     cy.get('[data-cy="name"]').type(credentialName);
     cy.selectDropdownOptionByResourceName('credential-type', 'Amazon Web Services');
+    cy.get('[data-cy="username"]').type('username');
+    cy.get('[data-cy="password"]').type('password');
     cy.singleSelectByDataCy('organization', organization.name);
     cy.clickButton(/^Create credential$/);
     cy.verifyPageTitle(credentialName);
-    //delete created credential
+    cy.contains('Access Key').should('be.visible');
+    cy.get('[data-cy="access-key"]').contains('username');
+    cy.contains('Secret Key').should('be.visible');
+    cy.get('[data-cy="secret-key"]').contains('Encrypted');
+    cy.contains('Organization').should('be.visible');
+    cy.contains(organization.name);
+    // //delete created credential
     cy.clickPageAction('delete-credential');
     cy.get('#confirm').click();
     cy.clickButton(/^Delete credential/);

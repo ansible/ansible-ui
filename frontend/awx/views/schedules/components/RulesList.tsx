@@ -20,7 +20,9 @@ export function RulesList(props: {
       {
         header: 'Rrule',
         type: 'text',
-        value: (item: RuleListItemType) => RRule.optionsToString(item.rule.options),
+        value: (item: RuleListItemType) => {
+          return RRule.optionsToString(item.rule.options);
+        },
       },
       {
         header: 'Description',

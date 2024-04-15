@@ -52,6 +52,10 @@ function CredentialInputs(props: { editMode: boolean }) {
     fields?.map((field) => {
       if (field?.default !== undefined) {
         setValue(`inputs.${field.id}`, field.default);
+      } else if (field.type === 'boolean') {
+        setValue(`inputs.${field.id}`, false);
+      } else if (field.type === 'string') {
+        setValue(`inputs.${field.id}`, '');
       }
     });
   }, [credentialType, setValue]);

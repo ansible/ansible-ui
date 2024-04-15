@@ -314,6 +314,7 @@ export interface CredentialType {
       id: string;
       label: string;
       type: string;
+      secret: boolean;
       help_text: string;
       ask_at_runtime?: boolean;
       default?: number | string | boolean;
@@ -900,6 +901,7 @@ export interface Project {
   verify_ssl?: boolean;
   id: number;
   url: string;
+  proxy?: string;
   git_hash: string;
   import_state: ImportStateEnum;
   scm_type?: string;
@@ -916,6 +918,7 @@ export interface Project {
 
 export interface ProjectCreateRequest {
   url: string;
+  proxy?: string;
   name: string;
   description?: string;
   eda_credential_id?: number | null;
@@ -934,6 +937,7 @@ export interface ProjectRead {
   verify_ssl?: boolean;
   id: number;
   url: string;
+  proxy?: string;
   git_hash: string;
   import_state: ImportStateEnum;
   scm_type?: string;

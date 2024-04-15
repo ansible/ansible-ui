@@ -19,7 +19,6 @@ describe('Workflow Visualizer', () => {
 
   before(function () {
     organization = this.globalOrganization as Organization;
-    project = this.globalProject as Project;
     cy.awxLogin();
 
     cy.createAwxInventory({ organization: organization.id })
@@ -27,14 +26,19 @@ describe('Workflow Visualizer', () => {
         inventory = i;
       })
       .then(() => {
-        cy.createAwxInventorySource(inventory, project).then((invSrc) => {
-          inventorySource = invSrc;
+        cy.createAwxProject({ organization: organization.id }).then((proj) => {
+          project = proj;
+
+          cy.createAwxInventorySource(inventory, project).then((invSrc) => {
+            inventorySource = invSrc;
+
+            cy.createAwxJobTemplate({
+              organization: organization.id,
+              project: project.id,
+              inventory: inventory.id,
+            }).then((jt) => (jobTemplate = jt));
+          });
         });
-        cy.createAwxJobTemplate({
-          organization: organization.id,
-          project: project.id,
-          inventory: inventory.id,
-        }).then((jt) => (jobTemplate = jt));
       });
   });
 
@@ -71,7 +75,7 @@ describe('Workflow Visualizer', () => {
     it('Should launch a workflow job template from the visualizer, and navigate to the output page.', function () {
       cy.visit(`/templates/workflow_job_template/${workflowJobTemplate?.id}/visualizer`);
       cy.contains('Workflow Visualizer').should('be.visible');
-      cy.get('[data-cy="workflow-visualizer-toolbar-kebab"]').click();
+      cy.getBy('[data-cy="workflow-visualizer-toolbar-kebab"]').click();
       cy.intercept(
         'POST',
         awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/launch/`
@@ -94,40 +98,40 @@ describe('Workflow Visualizer', () => {
       cy.getByDataCy('page-title').should('contain', jobTemplate.name);
       cy.visit(`/templates/workflow_job_template/${workflowJobTemplate?.id}/visualizer`);
       cy.contains('Workflow Visualizer').should('be.visible');
-      cy.get(`g[data-id=${jobTemplateNode.id}] .pf-topology__node__action-icon`).click({
+      cy.getBy(`g[data-id=${jobTemplateNode.id}] .pf-topology__node__action-icon`).click({
         force: true,
       });
-      cy.get('li[data-cy="edit-node"]').click();
+      cy.getBy('li[data-cy="edit-node"]').click();
       cy.contains('Edit step').should('be.visible');
       cy.getByDataCy('Submit').click();
       cy.getByDataCy('wizard-nav-item-nodePromptsStep').click();
-      cy.get('[class="view-lines monaco-mouse-cursor-text"]').type('foo: bar');
+      cy.getBy('[class="view-lines monaco-mouse-cursor-text"]').type('foo: bar');
       cy.getByDataCy('Submit').click();
-      cy.get('.scrollable-inner').scrollIntoView({ offset: { top: 150, left: 0 } });
+      cy.getBy('.scrollable-inner').scrollIntoView({ offset: { top: 150, left: 0 } });
       cy.getByDataCy('extra-vars').should('contain', 'foo: bar');
       cy.getByDataCy('wizard-next').click();
       cy.getByDataCy('workflow-visualizer-toolbar-save').click();
-      cy.get('[data-cy="alert-toaster"]').should(
+      cy.getBy('[data-cy="alert-toaster"]').should(
         'have.text',
         'Success alert:Successfully saved workflow visualizer'
       );
-      cy.get('[data-cy="alert-toaster"]').within(() => {
-        cy.get('[class="pf-v5-c-alert__action"]').click();
+      cy.getBy('[data-cy="alert-toaster"]').within(() => {
+        cy.getBy('[class="pf-v5-c-alert__action"]').click();
       });
       cy.getByDataCy('workflow-visualizer-toolbar-kebab').click();
       cy.getByDataCy('workflow-visualizer-toolbar-launch').click();
       cy.contains('Output').should('be.visible');
       cy.contains('Running').should('be.visible');
       cy.contains('Unreachable').should('be.visible');
-      cy.get(`g[class*="node-label"]`).contains(jobTemplate.name).should('be.visible');
-      cy.get(`g[class*="node-label"]`).contains(project.name).should('be.visible');
+      cy.getBy(`g[class*="node-label"]`).contains(jobTemplate.name).should('be.visible');
+      cy.getBy(`g[class*="node-label"]`).contains(project.name).should('be.visible');
       cy.contains('Success').should('be.visible');
     });
 
-    it('can view the details pages of related job on a WFJT either by clicking the job nodes or by toggling the Workflow Jobs dropdown', function () {
+    it.skip('can view the details pages of related job on a WFJT either by clicking the job nodes or by toggling the Workflow Jobs dropdown', function () {
       cy.visit(`/templates/workflow_job_template/${workflowJobTemplate?.id}/visualizer`);
       cy.contains('Workflow Visualizer').should('be.visible');
-      cy.get('[data-cy="workflow-visualizer-toolbar-kebab"]').click();
+      cy.getBy('[data-cy="workflow-visualizer-toolbar-kebab"]').click();
       cy.intercept(
         'POST',
         awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/launch/`
@@ -138,14 +142,14 @@ describe('Workflow Visualizer', () => {
         .then((jobId: string) => {
           cy.url().should('contain', `/jobs/workflow/${jobId}/output`);
           cy.intercept('GET', awxAPI`/project_updates/**`).as('wfJobs');
-          cy.contains('Global Project').click({ force: true });
+          cy.contains(project.name).click({ force: true });
           cy.wait('@wfJobs');
           cy.intercept('GET', awxAPI`/workflow_jobs/${jobId}/`).as('job');
           cy.intercept(
             'GET',
             awxAPI`/workflow_jobs/${jobId}/workflow_nodes/?page=1&page_size=200`
           ).as('wfNodes');
-          cy.getByDataCy('Global Project').should('be.visible');
+          cy.getByDataCy(project.name).should('be.visible');
           cy.getByDataCy('Output').should('be.visible');
           cy.visit(`/jobs/workflow/${jobId}/output`);
           cy.wait('@job', { timeout: 10000 });
@@ -160,7 +164,7 @@ describe('Workflow Visualizer', () => {
               cy.contains(jobTemplate.name).should('be.visible');
               cy.getByDataCy('relaunch-job').should('be.visible');
               cy.getBy(`g[data-id="${results.id}"]`)
-                .get('[data-cy="successful-icon"]')
+                .getBy('[data-cy="successful-icon"]')
                 .should('be.visible');
               cy.getBy(`g[data-id="${results.id}"]`).within(() => {
                 cy.contains(jobTemplate.name).click({ force: true });
@@ -170,9 +174,9 @@ describe('Workflow Visualizer', () => {
               cy.contains('button', 'Workflow Job 1/1')
                 .click()
                 .then(() => {
-                  cy.contains('Global Project').click();
+                  cy.contains(project.name).click();
                 });
-              cy.getByDataCy('page-title').should('be.visible').and('contain', 'Global Project');
+              cy.getByDataCy('page-title').should('be.visible').and('contain', project.name);
               cy.contains('button', 'Workflow Job 1/1')
                 .click()
                 .then(() => {

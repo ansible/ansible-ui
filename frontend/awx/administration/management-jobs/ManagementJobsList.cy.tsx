@@ -1,4 +1,4 @@
-import { ManagementJobs } from './ManagementJobs';
+import { ManagementJobs } from './ManagementJobsList';
 import * as useOptions from '../../../common/crud/useOptions';
 
 describe('ManagementJobs Empty State test', () => {

@@ -1,34 +1,24 @@
-import { useMemo } from 'react';
-import { IToolbarFilter } from '../../../../../framework';
 import {
   useCreatedByToolbarFilter,
-  useDescriptionToolbarFilter,
   useModifiedByToolbarFilter,
-  useNameToolbarFilter,
-  useOrganizationToolbarFilter,
 } from '../../../common/awx-toolbar-filters';
+import { useDynamicToolbarFilters } from '../../../common/useDynamicFilters';
 
 export function useTeamsFilters() {
-  const nameToolbarFilter = useNameToolbarFilter();
-  const descriptionToolbarFilter = useDescriptionToolbarFilter();
-  const organizationToolbarFilter = useOrganizationToolbarFilter();
   const createdByToolbarFilter = useCreatedByToolbarFilter();
   const modifiedByToolbarFilter = useModifiedByToolbarFilter();
-  const toolbarFilters = useMemo<IToolbarFilter[]>(
-    () => [
-      nameToolbarFilter,
-      descriptionToolbarFilter,
-      organizationToolbarFilter,
-      createdByToolbarFilter,
-      modifiedByToolbarFilter,
-    ],
-    [
-      nameToolbarFilter,
-      descriptionToolbarFilter,
-      organizationToolbarFilter,
-      createdByToolbarFilter,
-      modifiedByToolbarFilter,
-    ]
-  );
+  const toolbarFilters = useDynamicToolbarFilters({
+    optionsPath: 'teams',
+    preSortedKeys: ['name', 'description', 'id', 'organization', 'created-by', 'modified-by'],
+    preFilledValueKeys: {
+      name: {
+        apiPath: 'teams',
+      },
+      id: {
+        apiPath: 'teams',
+      },
+    },
+    additionalFilters: [createdByToolbarFilter, modifiedByToolbarFilter],
+  });
   return toolbarFilters;
 }

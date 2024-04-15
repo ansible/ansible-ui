@@ -1,4 +1,4 @@
-import { ReactNode, createContext, useContext, useMemo } from 'react';
+import { ReactNode, createContext, useContext, useEffect, useMemo, useState } from 'react';
 import useSWR from 'swr';
 import { requestGet } from '../../common/crud/Data';
 import { AwxUser } from '../interfaces/User';
@@ -22,23 +22,37 @@ export function AwxActiveUserProvider(props: { children: ReactNode }) {
     dedupingInterval: 0,
     refreshInterval: 10 * 1000,
   });
-  const { mutate } = response;
-  const activeAwxUser = useMemo<AwxUser | undefined>(() => {
-    return !response.error && response.data?.results && response.data.results.length > 0
-      ? response.data.results[0]
-      : undefined;
-  }, [response]);
+
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const { error, isLoading, data, mutate } = response;
+
+  const [activeAwxUser, setActiveAwxUser] = useState<AwxUser | undefined>(undefined);
+
+  useEffect(() => {
+    if (error) {
+      setActiveAwxUser(undefined);
+    }
+  }, [error]);
+
+  useEffect(() => {
+    if (data?.results && data.results.length > 0) {
+      setActiveAwxUser(data.results[0]);
+    }
+  }, [data]);
+
   const activeAwxUserIsLoading = useMemo<boolean>(
-    () => !response.error && response.isLoading,
-    [response]
+    () => !activeAwxUser && !error && isLoading,
+    [activeAwxUser, isLoading, error]
   );
+
   const state = useMemo<ActiveUserState>(() => {
     return {
       activeAwxUser,
-      refreshActiveAwxUser: () => void mutate(),
+      refreshActiveAwxUser: () => void mutate(undefined),
       activeAwxUserIsLoading,
     };
   }, [activeAwxUser, activeAwxUserIsLoading, mutate]);
+
   return (
     <AwxActiveUserContext.Provider value={state}>{props.children}</AwxActiveUserContext.Provider>
   );

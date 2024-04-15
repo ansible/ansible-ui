@@ -18,7 +18,7 @@ export function SurveyStep({ templateId }: { templateId?: string }) {
 
   const choicesTo: PageSelectOption<string>[] = [];
   survey_spec?.spec.map((element: Spec) => {
-    if (element.type === 'multiplechoice' || element.type === 'multiselect') {
+    if (element.type === 'multiplechoice' && Array.isArray(element.choices)) {
       element.choices?.map((choice: string) => {
         choicesTo.push({ value: choice, label: t(choice) });
       });

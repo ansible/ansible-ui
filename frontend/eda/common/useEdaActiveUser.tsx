@@ -1,4 +1,4 @@
-import { ReactNode, createContext, useContext, useMemo } from 'react';
+import { ReactNode, createContext, useContext, useEffect, useMemo, useState } from 'react';
 import useSWR from 'swr';
 import { requestGet } from '../../common/crud/Data';
 import { EdaUser } from '../interfaces/EdaUser';
@@ -21,22 +21,37 @@ export function EdaActiveUserProvider(props: { children: ReactNode }) {
     dedupingInterval: 0,
     refreshInterval: 10 * 1000,
   });
-  const { mutate } = response;
-  const activeEdaUser = useMemo<EdaUser | undefined>(
-    () => (response.error ? undefined : response.data),
-    [response]
-  );
+
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const { error, isLoading, data, mutate } = response;
+
+  const [activeEdaUser, setActiveEdaUser] = useState<EdaUser | undefined>(undefined);
+
+  useEffect(() => {
+    if (error) {
+      setActiveEdaUser(undefined);
+    }
+  }, [error]);
+
+  useEffect(() => {
+    if (data) {
+      setActiveEdaUser(data);
+    }
+  }, [data]);
+
   const activeEdaUserIsLoading = useMemo<boolean>(
-    () => !response.error && response.isLoading,
-    [response]
+    () => !activeEdaUser && !error && isLoading,
+    [activeEdaUser, isLoading, error]
   );
+
   const state = useMemo<EdaActiveUserState>(() => {
     return {
       activeEdaUser,
-      refreshActiveEdaUser: () => void mutate(),
+      refreshActiveEdaUser: () => void mutate(undefined),
       activeEdaUserIsLoading,
     };
   }, [activeEdaUser, activeEdaUserIsLoading, mutate]);
+
   return (
     <EdaActiveUserContext.Provider value={state}>{props.children}</EdaActiveUserContext.Provider>
   );

@@ -41,7 +41,7 @@ function Breadcrumbs(props: { breadcrumbs?: ICatalogBreadcrumb[]; style?: CSSPro
           <BreadcrumbItem
             data-cy={breadcrumb.label}
             id={breadcrumb.id}
-            key={breadcrumb.id ?? breadcrumb.label ?? index}
+            key={index}
             component={breadcrumb.component}
             isActive={breadcrumb.to === undefined}
           >

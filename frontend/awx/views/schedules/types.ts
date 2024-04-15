@@ -4,8 +4,8 @@ import { JobTemplate } from '../../interfaces/JobTemplate';
 import { LaunchConfiguration } from '../../interfaces/LaunchConfiguration';
 import { Project } from '../../interfaces/Project';
 import { WorkflowJobTemplate } from '../../interfaces/WorkflowJobTemplate';
-import { SystemJob } from '../../interfaces/generated-from-swagger/api';
 import { PromptFormValues } from '../../resources/templates/WorkflowVisualizer/types';
+import { SystemJobTemplate } from '../../interfaces/SystemJobTemplate';
 
 export enum Frequency {
   YEARLY = 0,
@@ -20,7 +20,7 @@ export enum Frequency {
 export type RuleListItemType = { id: number; rule: RRule };
 export type ScheduleResources =
   | InventorySource
-  | SystemJob
+  | SystemJobTemplate
   | JobTemplate
   | Project
   | WorkflowJobTemplate;
@@ -44,24 +44,26 @@ export interface RuleFields {
   exceptions: RuleListItemType[] | [];
 }
 export interface ScheduleFormWizard {
-  unified_job_template_object: ScheduleResources | null;
-  unified_job_template: number | undefined;
-  inventory?: number;
-  resourceName: string;
+  resourceInventory?: number;
   name: string;
   description?: string;
-  resource_type: string;
+  node_type: string;
+  node_resource: ScheduleResources;
   startDateTime: { date: string; time: string };
   timezone: string;
-  occurrences: RuleFields | null;
-  exceptions: RuleFields | null;
+  rules: RuleListItemType[];
+  exceptions: RuleListItemType[] | [];
   launch_config: LaunchConfiguration | null;
   prompt: PromptFormValues;
-  rules: RuleListItemType[];
 }
 
 export interface PreviewSchedule {
   local?: string[];
   utc?: string[];
   rrule: string;
+}
+
+export enum RuleType {
+  Rules = 'rules',
+  Exceptions = 'exceptions',
 }
