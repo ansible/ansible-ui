@@ -34,12 +34,9 @@ export function ScheduleEditWizard() {
   );
 
   const handleSubmit = async (formValues: ScheduleFormWizard) => {
-    const { unified_job_template_object = {}, launch_config, prompt } = formValues;
+    const { launch_config, prompt } = formValues;
     const promptValues = prompt;
     if (promptValues) {
-      if (unified_job_template_object && 'organization' in unified_job_template_object) {
-        promptValues.organization = unified_job_template_object.organization ?? null;
-      }
       if (launch_config) {
         promptValues.original = {
           launch_config,
