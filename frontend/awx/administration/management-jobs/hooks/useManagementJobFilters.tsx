@@ -1,25 +1,20 @@
-import { useMemo } from 'react';
-import { IToolbarFilter } from '../../../../../framework';
 import {
   useCreatedByToolbarFilter,
   useModifiedByToolbarFilter,
-  useNameToolbarFilter,
-  useDescriptionToolbarFilter,
 } from '../../../common/awx-toolbar-filters';
+import { useDynamicToolbarFilters } from '../../../common/useDynamicFilters';
 
 export function useManagementJobFilters() {
-  const nameToolbarFilter = useNameToolbarFilter();
-  const descriptionToolbarFilter = useDescriptionToolbarFilter();
   const createdByToolbarFilter = useCreatedByToolbarFilter();
   const modifiedByToolbarFilter = useModifiedByToolbarFilter();
-  const toolbarFilters = useMemo<IToolbarFilter[]>(
-    () => [
-      nameToolbarFilter,
-      descriptionToolbarFilter,
-      createdByToolbarFilter,
-      modifiedByToolbarFilter,
-    ],
-    [nameToolbarFilter, descriptionToolbarFilter, createdByToolbarFilter, modifiedByToolbarFilter]
-  );
+  const toolbarFilters = useDynamicToolbarFilters({
+    optionsPath: 'system_job_templates',
+    preFilledValueKeys: {
+      name: { apiPath: 'system_job_templates' },
+      id: { apiPath: 'system_job_templates' },
+    },
+    preSortedKeys: ['name', 'id', 'created-by', 'modified-by'],
+    additionalFilters: [createdByToolbarFilter, modifiedByToolbarFilter],
+  });
   return toolbarFilters;
 }
