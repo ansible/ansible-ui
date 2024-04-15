@@ -1,0 +1,70 @@
+<svg fill="none" height="131" viewBox="0 0 200 131" width="200" xmlns="http://www.w3.org/2000/svg"
+  xmlns:xlink="http://www.w3.org/1999/xlink">
+  <clipPath id="a">
+    <path d="m0 0h200v131h-200z" />
+  </clipPath>
+  <g clip-path="url(#a)">
+    <path d="m0 0h200v131h-200z" fill="#fff" />
+    <path d="m-.5-.5h201v151h-201z" fill="#fff" stroke="#f0f0f0" />
+    <path d="m7.75 81.75h56.5v41.5h-56.5z" fill="#fff" stroke="#f0f0f0" stroke-width=".5" />
+    <rect fill="#d9d9d9" height="2" rx="1" width="4" x="11" y="118" />
+    <rect fill="#d9d9d9" height="2" rx="1" width="4" x="16" y="118" />
+    <rect fill="#d9d9d9" height="2" rx="1" width="4" x="21" y="118" />
+    <rect fill="#d9d9d9" height="2" rx="1" width="25" x="11" y="86" />
+    <rect fill="#d9d9d9" height="16" rx="1" width="50" x="11" y="93" />
+    <path d="m71.75 81.75h56.5v41.5h-56.5z" fill="#fff" stroke="#f0f0f0" stroke-width=".5" />
+    <rect fill="#d9d9d9" height="2" rx="1" width="4" x="75" y="118" />
+    <rect fill="#d9d9d9" height="2" rx="1" width="4" x="80" y="118" />
+    <rect fill="#d9d9d9" height="2" rx="1" width="4" x="85" y="118" />
+    <rect fill="#d9d9d9" height="2" rx="1" width="25" x="75" y="86" />
+    <rect fill="#d9d9d9" height="16" rx="1" width="50" x="75" y="93" />
+    <path d="m135.75 81.75h56.5v41.5h-56.5z" fill="#fff" stroke="#f0f0f0" stroke-width=".5" />
+    <rect fill="#d9d9d9" height="2" rx="1" width="4" x="139" y="118" />
+    <rect fill="#d9d9d9" height="2" rx="1" width="4" x="144" y="118" />
+    <rect fill="#d9d9d9" height="2" rx="1" width="4" x="149" y="118" />
+    <rect fill="#d9d9d9" height="2" rx="1" width="25" x="139" y="86" />
+    <rect fill="#d9d9d9" height="16" rx="1" width="50" x="139" y="93" />
+    <path d="m7.75 7.75h184.5v66.5h-184.5z" fill="#fff" stroke="#f0f0f0" stroke-width=".5" />
+    <g fill="#d2d2d2">
+      <path clip-rule="evenodd" d="m16 64.5713h130v.6735h-130z" fill-rule="evenodd" />
+      <path d="m16 18.7751h.5v45.7959h-.5z" />
+      <path clip-rule="evenodd" d="m14 61.8774h2v.3368h-2z" fill-rule="evenodd" />
+      <path clip-rule="evenodd" d="m21 67.9387v-2.6939h.25v2.6939z" fill-rule="evenodd" />
+      <path clip-rule="evenodd" d="m37 67.9387v-2.6939h.25v2.6939z" fill-rule="evenodd" />
+      <path clip-rule="evenodd" d="m53 67.9387v-2.6939h.25v2.6939z" fill-rule="evenodd" />
+      <path clip-rule="evenodd" d="m69 67.9387v-2.6939h.25v2.6939z" fill-rule="evenodd" />
+      <path clip-rule="evenodd" d="m85 67.9387v-2.6939h.25v2.6939z" fill-rule="evenodd" />
+      <path clip-rule="evenodd" d="m101 67.9387v-2.6939h.25v2.6939z" fill-rule="evenodd" />
+      <path clip-rule="evenodd" d="m117 67.9387v-2.6939h.25v2.6939z" fill-rule="evenodd" />
+      <path clip-rule="evenodd" d="m133 67.9387v-2.6939h.25v2.6939z" fill-rule="evenodd" />
+      <path clip-rule="evenodd" d="m14 56.49h2v.3367h-2z" fill-rule="evenodd" />
+      <path clip-rule="evenodd" d="m14 51.1021h2v.3367h-2z" fill-rule="evenodd" />
+      <path clip-rule="evenodd" d="m14 45.7139h2v.3367h-2z" fill-rule="evenodd" />
+      <path clip-rule="evenodd" d="m14 40.3267h2v.3367h-2z" fill-rule="evenodd" />
+      <path clip-rule="evenodd" d="m14 34.9387h2v.3368h-2z" fill-rule="evenodd" />
+      <path clip-rule="evenodd" d="m14 29.5513h2v.3367h-2z" fill-rule="evenodd" />
+      <path clip-rule="evenodd" d="m14 24.1633h2v.3368h-2z" fill-rule="evenodd" />
+      <path clip-rule="evenodd" d="m14 18.7751h2v.3368h-2z" fill-rule="evenodd" />
+    </g>
+    <path d="m0 0h8v45.7959h-8z" fill="#06c" transform="matrix(-1 0 0 1 25 18.7751)" />
+    <path d="m0 0h8v29.6327h-8z" fill="#06c" transform="matrix(-1 0 0 1 41 34.9387)" />
+    <path d="m0 0h8v29.6327h-8z" fill="#06c" transform="matrix(-1 0 0 1 57 34.9387)" />
+    <path d="m0 0h8v13.4694h-8z" fill="#06c" transform="matrix(-1 0 0 1 73 51.1021)" />
+    <path d="m0 0h8v35.0204h-8z" fill="#06c" transform="matrix(-1 0 0 1 89 29.5513)" />
+    <path d="m0 0h8v8.08163h-8z" fill="#06c" transform="matrix(-1 0 0 1 105 56.49)" />
+    <path d="m0 0h8v18.8571h-8z" fill="#06c" transform="matrix(-1 0 0 1 121 45.7139)" />
+    <path d="m0 0h8v18.8571h-8z" fill="#06c" transform="matrix(-1 0 0 1 137 45.7139)" />
+    <rect fill="#d9d9d9" height="2.69388" rx="1" width="25" x="13" y="12.0408" />
+    <rect fill="#d9d9d9" height="2.69388" rx="1" width="4" x="40" y="12.0408" />
+    <rect fill="#d9d9d9" height="2.69388" rx="1" width="4" x="45" y="12.0408" />
+    <rect fill="#d9d9d9" height="2.69388" rx="1" width="4" x="50" y="12.0408" />
+    <rect fill="#d9d9d9" height="2.69388" rx="1" width="25" x="153" y="13.3879" />
+    <rect fill="#d9d9d9" height="2.69388" rx="1" width="35" x="153" y="20.1226" />
+    <rect fill="#d9d9d9" height="2.69388" rx="1" width="25" x="153" y="32.2449" />
+    <rect fill="#d2d2d2" height="2.69388" rx="1" width="25" x="153" y="51.1021" />
+    <rect fill="#d9d9d9" height="2.69388" rx="1" width="17" x="153" y="57.8367" />
+    <rect fill="#c9190b" height="2.69388" rx="1" width="17" x="172" y="57.8367" />
+    <rect fill="#d9d9d9" height="2.69388" rx="1" width="35" x="153" y="38.9795" />
+  </g>
+  <path d="m.25.25h199.5v130.5h-199.5z" stroke="#d2d2d2" stroke-width=".5" />
+</svg>
