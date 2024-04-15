@@ -531,13 +531,14 @@ function WebhookForm() {
       <PageFormDataEditor<NotificationTemplate>
         name={'notification_configuration.headers'}
         label={t('HTTP Headers')} 
-        format='json'
+        format='object'
       />
 
       <PageFormSingleSelect<NotificationTemplate>
         name={'notification_configuration.http_method'}
         label={t('HTTP Method')}
         placeholder={t('Choose an HTTP method')}
+        isRequired
         options={[
           { label: 'POST', value: 'POST' },
           { label: 'PUT', value: 'PUT' },
