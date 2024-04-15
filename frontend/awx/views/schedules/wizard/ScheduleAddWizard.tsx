@@ -15,7 +15,7 @@ import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
 import { RulesStep } from './RulesStep';
 import { RRule, RRuleSet } from 'rrule';
 import { ExceptionsStep } from './ExceptionsStep';
-import { ScheduleSurveyStep } from './ScheduleSurveyStep';
+import { SurveyStep } from '../../../common/SurveyStep';
 import { NodeTypeStep } from '../../../resources/templates/WorkflowVisualizer/wizard/NodeTypeStep';
 import { NodePromptsStep } from '../../../resources/templates/WorkflowVisualizer/wizard/NodePromptsStep';
 import { WizardFormValues } from '../../../resources/templates/WorkflowVisualizer/types';
@@ -99,7 +99,7 @@ export function ScheduleAddWizard() {
     {
       id: 'survey',
       label: t('Survey'),
-      inputs: <ScheduleSurveyStep />,
+      inputs: <SurveyStep />,
       hidden: (wizardData: Partial<WizardFormValues>) => {
         if (Object.keys(wizardData).length === 0) {
           return true;

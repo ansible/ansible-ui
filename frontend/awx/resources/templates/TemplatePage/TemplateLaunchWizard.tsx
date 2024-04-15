@@ -29,6 +29,35 @@ import { PageFormInventorySelect } from '../../inventories/components/PageFormIn
 import { parseStringToTagArray } from '../JobTemplateFormHelpers';
 import { useLabelPayload } from '../hooks/useLabelPayload';
 import { CredentialPasswordsStep, OtherPromptsStep, TemplateLaunchReviewStep } from './steps';
+import { SurveyStep } from '../../../common/SurveyStep';
+
+const addSurveyQuestionsToExtraVars = (
+  config: LaunchConfiguration,
+  extra_vars: string = '',
+  formValues: TemplateLaunch,
+  setValue: <K extends keyof LaunchPayload>(key: K, value: LaunchPayload[K]) => void
+) => {
+  let stringValue = '';
+  config.variables_needed_to_start.forEach((key, index) => {
+    const value = formValues.survey[key];
+    if (Array.isArray(value)) {
+      const outputString = value.reduce((acc: string, { name }) => `${acc},${name}`, '').slice(1);
+      stringValue += `${key}: [${outputString}]`;
+    } else {
+      stringValue += `${key}: ${formValues.survey[key]}`;
+    }
+
+    if (index !== config.variables_needed_to_start.length - 1) {
+      stringValue += '\n';
+    }
+  });
+
+  if (extra_vars.endsWith('\n')) {
+    setValue('extra_vars', extra_vars + stringValue);
+  } else {
+    setValue('extra_vars', extra_vars + '\n' + stringValue);
+  }
+};
 
 export const formFieldToLaunchConfig = {
   job_type: 'ask_job_type_on_launch',
@@ -67,6 +96,7 @@ export interface TemplateLaunch {
   skip_tags: { name: string }[];
   timeout: number;
   verbosity: number;
+  survey: { [key: string]: string };
 }
 
 interface LaunchPayload {
@@ -186,6 +216,10 @@ export function TemplateLaunchWizard({ jobType }: { jobType: string }) {
         setValue('timeout', timeout);
         setValue('verbosity', verbosity);
 
+        if (config.survey_enabled) {
+          addSurveyQuestionsToExtraVars(config, extra_vars, formValues, setValue);
+        }
+
         const job = await postRequest(awxAPI`/${jobType}/${resourceId}/launch/`, payload);
         if (job) {
           navigate(getJobOutputUrl(job));
@@ -287,6 +321,12 @@ export function TemplateLaunchWizard({ jobType }: { jobType: string }) {
       label: t('Other prompts'),
       hidden: () => !shouldShowOtherStep(config),
       inputs: <OtherPromptsStep config={config} template={template} />,
+    },
+    {
+      id: 'survey',
+      label: t('Survey'),
+      hidden: () => !config?.survey_enabled,
+      inputs: <SurveyStep templateId={template.id.toString()} />,
     },
     {
       id: 'review',
