@@ -50,7 +50,7 @@ export function NodeTypeStep(props: { hasSourceNode?: boolean }) {
 
   const { defaultValues } = formState;
 
-  const params = useParams<{ id?: string }>();
+  const params = useParams<{ id?: string; source_id?: string }>();
   const { pathname } = useLocation();
 
   const { setWizardData, setStepData, stepData, setVisibleSteps, allSteps } = usePageWizard() as {
@@ -130,10 +130,18 @@ export function NodeTypeStep(props: { hasSourceNode?: boolean }) {
         const pathnameSplit = pathname.split('/');
         const resourceType = pathnameSplit[1] === 'projects' ? 'projects' : pathnameSplit[2];
         const nodeType = resourceType.split('_template')[0];
+        if (resourceType === 'inventories' && params.source_id) {
+          const response = await requestGet<InventorySource>(
+            awxAPI`/inventory_sources/${params.source_id}/`
+          );
+          setValue('node_type', 'inventory_update');
+          setValue('node_resource', response);
+          return;
+        }
         setValue('node_type', nodeType as UnifiedJobType);
-        const response = await requestGet<
-          Project | JobTemplate | WorkflowJobTemplate | InventorySource
-        >(`${resourceEndPoints[resourceType]}${params?.id}/`);
+        const response = await requestGet<Project | JobTemplate | WorkflowJobTemplate>(
+          `${resourceEndPoints[resourceType]}${params?.id}/`
+        );
         setValue('node_resource', response);
       }
     };
@@ -141,7 +149,7 @@ export function NodeTypeStep(props: { hasSourceNode?: boolean }) {
     if (pathname.split('/').includes('schedules')) {
       void getResource();
     }
-  }, [nodeResource, params?.id, pathname, setValue]);
+  }, [nodeResource, params, pathname, setValue]);
 
   useEffect(() => {
     const setLaunchToWizardData = async () => {
@@ -242,13 +250,13 @@ export function NodeTypeStep(props: { hasSourceNode?: boolean }) {
     <>
       {pathname.split('/')[1] === 'schedules' ? (
         <>
-          <ScheduleAddResource />
-          {nodeResource && <ScheduleDetails />}
+          <ScheduleResourceTypeInputs />
+          {nodeResource && <ScheduleDetailsInputs />}
         </>
       ) : (
         <>
           {pathname.split('/').includes('schedules') ? (
-            <ScheduleDetails />
+            <ScheduleDetailsInputs />
           ) : (
             <>
               <NodeTypeInput />
@@ -533,11 +541,11 @@ function AliasInput() {
   );
 }
 
-function ScheduleAddResource() {
+function ScheduleResourceTypeInputs() {
   const { t } = useTranslation();
   const params: { [string: string]: string } = useParams<{ id?: string; source_id?: string }>();
 
-  const inventory = useWatch({ name: 'inventory' }) as RegularInventory;
+  const resourceInventory = useWatch({ name: 'resourceInventory' }) as RegularInventory;
   const resourceType = useWatch({
     name: 'node_type',
   }) as string;
@@ -555,7 +563,7 @@ function ScheduleAddResource() {
           { label: t('Job template'), value: RESOURCE_TYPE.job },
           { label: t('Workflow job template'), value: RESOURCE_TYPE.workflow_job },
           { label: t('Inventory source'), value: 'inventory_source' },
-          { label: t('Project'), value: 'project' },
+          { label: t('Project Sync'), value: 'project' },
           { label: t('Management job template'), value: 'management_job_template' },
         ]}
         placeholderText={t('Select job type')}
@@ -569,17 +577,17 @@ function ScheduleAddResource() {
           ),
           inventory_source: (
             <>
-              <PageFormInventorySelect<WizardFormValues>
+              <PageFormInventorySelect<ScheduleFormWizard>
                 isRequired
                 labelHelp={t(
                   'First, select the inventory to which the desired inventory source belongs.'
                 )}
-                name="inventory"
+                name="resourceInventory"
               />
-              {inventory && inventory?.id && (
+              {resourceInventory && resourceInventory?.id && (
                 <PageFormInventorySourceSelect<WizardFormValues>
                   isRequired
-                  inventoryId={inventory?.id}
+                  inventoryId={resourceInventory?.id}
                   name="node_resource"
                 />
               )}
@@ -594,7 +602,7 @@ function ScheduleAddResource() {
   );
 }
 
-function ScheduleDetails() {
+function ScheduleDetailsInputs() {
   const { t } = useTranslation();
   const [timezoneMessage, setTimezoneMessage] = useState('');
   const timeZone = useWatch({ name: 'timezone' }) as string;
@@ -633,7 +641,6 @@ function ScheduleDetails() {
         />
         <PageFormSelect<ScheduleFormWizard>
           name="timezone"
-          placeholderText={t('Select time zone')}
           label={t('Time zone')}
           options={timeZones}
           helperText={timezoneMessage}
