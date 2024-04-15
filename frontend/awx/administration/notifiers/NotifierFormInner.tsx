@@ -46,7 +46,7 @@ export function InnerForm(props: { notification_type: string }) {
   }
 
   if (notification_type === 'rocketchat') {
-    //return <RocketchatForm />;
+    return <RocketchatForm />;
   }
 
   if (notification_type === 'irc') {
@@ -400,27 +400,49 @@ function WebhookForm() {
   }
   
 
-  /*
+  
   function RocketchatForm() {
     const { t } = useTranslation();
+
+    /*
+"rocketchat_url": "https://addada",
+        "rocketchat_icon_url": "https://adda",
+        "rocketchat_username": "dfdf",
+        "rocketchat_no_verify_ssl": true
+    */
+
     return (
       <>
         <PageFormTextInput<NotificationTemplate>
           type={'text'}
-          name={'type_data.rocketchat_url'}
+          name={'notification_configuration.rocketchat_url'}
           label={t('Target URL')}
-          placeholder={''}
+          isRequired
+          validate={ (item) => validateUrl(item, t)}
+        />
+
+<PageFormTextInput<NotificationTemplate>
+          type={'text'}
+          name={'notification_configuration.rocketchat_username'}
+          label={t('Username')}
+        />
+
+<PageFormTextInput<NotificationTemplate>
+          type={'text'}
+          name={'notification_configuration.rocketchat_icon_url'}
+          label={t('Icon URL')}
+          validate={ (item) => validateUrl(item, t)}
         />
   
         <PageFormCheckbox<NotificationTemplate>
-          name={'type_data.rocketchat_no_verify_ssl'}
-          label={t('Verify SSL')}
-          placeholder={''}
+          name={'notification_configuration.rocketchat_no_verify_ssl'}
+          label={t('Disable SSL verification')}
         />
       </>
     );
   }
   
+  /*
   function IrcForm() {
     const { t } = useTranslation();
     return (
