@@ -39,7 +39,7 @@ describe('activity-stream', () => {
     cy.get('[data-cy="event-column-cell"]').should('have.text', `created team ${team.name}`);
   });
 
-  it.skip('event details modal displays correct info', function () {
+  it('event details modal displays correct info', function () {
     cy.getTableRowBySingleText(team.name)
       .should('be.visible')
       .then(() => {
@@ -61,7 +61,7 @@ describe('activity-stream', () => {
     cy.verifyPageTitle(team.name);
   });
 
-  it.skip('can navigate to event resource detail page from activity stream event details modal', function () {
+  it('can navigate to event resource detail page from activity stream event details modal', function () {
     cy.getTableRowBySingleText(team.name)
       .should('be.visible')
       .then(() => {
@@ -71,13 +71,13 @@ describe('activity-stream', () => {
       });
   });
 
-  it.skip('can navigate to initiator detail page from activity stream list page', function () {
+  it('can navigate to initiator detail page from activity stream list page', function () {
     cy.getTableRowBySingleText(team.name).should('be.visible');
     cy.get('[data-cy="initiated-by-column-cell"] a').first().click();
     cy.verifyPageTitle(activeUser.username);
   });
 
-  it.skip('can navigate to initiator detail page from activity stream event details modal', function () {
+  it('can navigate to initiator detail page from activity stream event details modal', function () {
     cy.getTableRowBySingleText(team.name).should('be.visible');
     cy.get('button[data-cy="view-event-details"]').first().click();
     cy.get('dd[data-cy="initiated-by"] a').click();
@@ -85,7 +85,7 @@ describe('activity-stream', () => {
   });
 
   it('can filter by keyword from activity stream list', function () {
-    cy.filterTableByTypeAndSingleText(/^Keyword$/, team.name);
+    cy.filterTableByTextFilter('keyword', team.name);
     cy.get('tbody').find('tr').should('have.length', 1);
   });
 
@@ -93,7 +93,7 @@ describe('activity-stream', () => {
     cy.intercept(`api/v2/activity_stream/?actor__username__icontains=${activeUser.username}*`).as(
       'initiatorFilterRequest'
     );
-    cy.filterTableByTypeAndSingleText('Initiated by (username)', activeUser.username);
+    cy.filterTableByTextFilter('initiated-by-(username)', activeUser.username);
     cy.wait('@initiatorFilterRequest')
       .its('response')
       .then((response) => {
