@@ -360,10 +360,12 @@ describe('Activity Stream Tests', () => {
       ).as('activityStreamSettingRequest');
       cy.mount(<ActivityStreams />);
       cy.wait('@activityStreamSettingRequest').then(() => {
+        cy.filterTableByTextFilter('object1', 'setting');
         cy.get('button[data-cy="view-event-details"]').first().click();
         cy.get('#setting-name').should('exist');
         cy.get('#setting-category').should('exist');
         cy.get('[aria-label="Close"]').click();
+        cy.clearAllFilters();
       });
     });
   });
