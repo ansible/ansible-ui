@@ -49,7 +49,6 @@ export function NodeTypeStep(props: { hasSourceNode?: boolean }) {
     useFormContext<WizardFormValues>();
 
   const { defaultValues } = formState;
-
   const params = useParams<{ id?: string; source_id?: string }>();
   const { pathname } = useLocation();
 
@@ -126,30 +125,46 @@ export function NodeTypeStep(props: { hasSourceNode?: boolean }) {
   useEffect(() => {
     const getResource = async () => {
       if (!nodeResource) {
-        if (!params?.id) return;
         const pathnameSplit = pathname.split('/');
-        const resourceType = pathnameSplit[1] === 'projects' ? 'projects' : pathnameSplit[2];
-        const nodeType = resourceType.split('_template')[0];
-        if (resourceType === 'inventories' && params.source_id) {
-          const response = await requestGet<InventorySource>(
-            awxAPI`/inventory_sources/${params.source_id}/`
-          );
-          setValue('node_type', 'inventory_update');
+        if (pathnameSplit[1] === 'schedules') {
+          const response = await requestGet<
+            Project | JobTemplate | WorkflowJobTemplate | InventorySource
+          >(`${defaultValues?.relatedJobTypeApiUrl}`);
           setValue('node_resource', response);
-          return;
+          const nodeType = response.type.split('_template')[0];
+          setValue('node_type', nodeType as UnifiedJobType);
+        } else {
+          if (!params?.id) return;
+          const resourceType = pathnameSplit[1] === 'projects' ? 'projects' : pathnameSplit[2];
+          const nodeType = resourceType.split('_template')[0];
+          if (resourceType === 'inventories' && params.source_id) {
+            const response = await requestGet<InventorySource>(
+              awxAPI`/inventory_sources/${params.source_id}/`
+            );
+            setValue('node_type', 'inventory_update');
+            setValue('node_resource', response);
+            return;
+          }
+          setValue('node_type', nodeType as UnifiedJobType);
+          const response = await requestGet<Project | JobTemplate | WorkflowJobTemplate>(
+            `${resourceEndPoints[resourceType]}${params?.id}/`
+          );
+          setValue('node_resource', response);
         }
-        setValue('node_type', nodeType as UnifiedJobType);
-        const response = await requestGet<Project | JobTemplate | WorkflowJobTemplate>(
-          `${resourceEndPoints[resourceType]}${params?.id}/`
-        );
-        setValue('node_resource', response);
       }
     };
 
     if (pathname.split('/').includes('schedules')) {
       void getResource();
     }
-  }, [nodeResource, params, pathname, setValue]);
+  }, [
+    defaultValues?.relatedJobTypeApiUrl,
+    nodeResource,
+    params?.id,
+    params.source_id,
+    pathname,
+    setValue,
+  ]);
 
   useEffect(() => {
     const setLaunchToWizardData = async () => {
@@ -248,7 +263,7 @@ export function NodeTypeStep(props: { hasSourceNode?: boolean }) {
 
   return (
     <>
-      {pathname.split('/')[1] === 'schedules' ? (
+      {pathname.split('/')[1] === 'schedules' && pathname.split('/')[3] !== 'edit' ? (
         <>
           <ScheduleResourceTypeInputs />
           {nodeResource && <ScheduleDetailsInputs />}
