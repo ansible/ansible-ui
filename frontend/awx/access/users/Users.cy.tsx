@@ -1,7 +1,6 @@
 import { AwxUser } from '../../interfaces/User';
 import * as useOptions from '../../../common/crud/useOptions';
 import { Users } from './Users';
-import { ToolbarFilterType } from '../../../../framework';
 
 describe('Users.cy.ts', () => {
   beforeEach(() => {
@@ -44,7 +43,7 @@ describe('Users.cy.ts', () => {
         actions: {
           POST: {
             name: {
-              type: ToolbarFilterType.MultiText,
+              //type: ToolbarFilterType.MultiText,
               required: true,
               label: 'Name',
               max_length: 512,
