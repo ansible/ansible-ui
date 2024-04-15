@@ -43,6 +43,7 @@ import { Project } from '../../../../interfaces/Project';
 import { JobTemplate } from '../../../../interfaces/JobTemplate';
 import { WorkflowJobTemplate } from '../../../../interfaces/WorkflowJobTemplate';
 import { resourceEndPoints } from '../../../../views/schedules/hooks/scheduleHelpers';
+import { PageFormSingleSelect } from '../../../../../../framework/PageForm/Inputs/PageFormSingleSelect';
 
 export function NodeTypeStep(props: { hasSourceNode?: boolean }) {
   const { reset, getValues, setValue, formState, getFieldState, register, control } =
@@ -639,8 +640,9 @@ function ScheduleDetailsInputs() {
           name={'startDateTime'}
           isRequired
         />
-        <PageFormSelect<ScheduleFormWizard>
+        <PageFormSingleSelect<ScheduleFormWizard>
           name="timezone"
+          placeholder={t('Select a time zone')}
           label={t('Time zone')}
           options={timeZones}
           helperText={timezoneMessage}

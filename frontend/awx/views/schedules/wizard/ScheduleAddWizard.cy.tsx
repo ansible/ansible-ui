@@ -138,7 +138,7 @@ describe('ScheduleAddWizard', () => {
       cy.selectDropdownOptionByResourceName('node_type', 'Job template');
       cy.selectDropdownOptionByResourceName('job-template-select', 'Mock Job Template');
       cy.get('[data-cy="name"]').type('Test Schedule');
-      cy.selectDropdownOptionByResourceName('timezone', 'Zulu');
+      cy.selectSingleSelectOption('[data-cy="timezone"]', 'Zulu');
       cy.clickButton(/^Next$/);
     });
     it('Should create a very basic rule.', () => {
@@ -234,7 +234,7 @@ describe('ScheduleAddWizard', () => {
       cy.selectDropdownOptionByResourceName('node_type', 'Job template');
       cy.selectDropdownOptionByResourceName('job-template-select', 'Mock Job Template');
       cy.get('[data-cy="name"]').type('Test Schedule');
-      cy.selectDropdownOptionByResourceName('timezone', 'Zulu');
+      cy.selectSingleSelectOption('[data-cy="timezone"]', 'Zulu');
       cy.clickButton(/^Next$/);
     });
   });
