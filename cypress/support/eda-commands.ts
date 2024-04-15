@@ -281,8 +281,12 @@ Cypress.Commands.add('getEdaCredentialByName', (edaCredentialName: string) => {
   );
 });
 
-Cypress.Commands.add('getEdaRoles', () => {
-  cy.requestGet<EdaResult<EdaRole>>(edaAPI`/roles/`).then((response) => {
+// Updated to use new /role_definitions endpoint for EDA RBAC
+Cypress.Commands.add('getEdaRoles', (content_type__model?: string) => {
+  const roleDefinitionsUrl = content_type__model
+    ? edaAPI`/role_definitions?content_type__model=${content_type__model}`
+    : edaAPI`/role_definitions/`;
+  cy.requestGet<EdaResult<EdaRole>>(roleDefinitionsUrl).then((response) => {
     const edaRoles = response.results;
     return edaRoles;
   });
