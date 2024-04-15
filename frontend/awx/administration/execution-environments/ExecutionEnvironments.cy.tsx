@@ -4,6 +4,14 @@ import { ExecutionEnvironment } from '../../interfaces/ExecutionEnvironment';
 import { ExecutionEnvironments } from './ExecutionEnvironments';
 
 describe('Execution Environments List', () => {
+  //Missing component tests:
+  it.skip('404 status appears if user tries to view an Execution environment that doesn’t exist (either a broken link or editing the URL)', () => {});
+  it.skip('Sort Execution environment list', () => {});
+  it.skip('Paginate through Execution environments list', () => {});
+  it.skip('User can toggle between views on the list of EEs', () => {});
+  it.skip('Navigating to the job templates tab of an execution environment renders a list of JTs attached to that EE', () => {});
+  it.skip('If user visits the Templates tab of an EE, and clicks the create button, the EE is automatically populated in the appropriate field for that template', () => {});
+
   describe('Non-empty list', () => {
     beforeEach(() => {
       cy.intercept(
