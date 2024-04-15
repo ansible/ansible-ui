@@ -46,10 +46,10 @@ export interface PageSingleSelectProps<ValueT> {
   placeholder: ReactNode;
 
   /** The selected value. */
-  value: ValueT | undefined;
+  value: ValueT | null | undefined;
 
   /** The function to set the selected value. */
-  onSelect: (value: ValueT | undefined) => void;
+  onSelect: (value: ValueT | null) => void;
 
   /** The options to select from. */
   options: PageSelectOption<ValueT>[];
@@ -225,12 +225,12 @@ export function PageSingleSelect<
         >
           {selectedLabel ? selectedLabel : <span style={{ opacity: 0.7 }}>{placeholder}</span>}
         </MenuToggle>
-        {!props.isRequired && selectedOption && (
+        {!props.isRequired && selectedLabel && (
           <Button
             variant="control"
             onClick={() => {
               setOpen(false);
-              onSelect(undefined);
+              onSelect(null);
               if (toggleRef !== null && 'current' in toggleRef) {
                 toggleRef.current?.focus();
               }

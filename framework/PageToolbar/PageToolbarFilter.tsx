@@ -66,7 +66,7 @@ export type PageToolbarFiltersProps = {
 function FiltersToolbarItem(props: PageToolbarFiltersProps) {
   const { toolbarFilters, filterState, setFilterState } = props;
 
-  const [selectedFilterKey, setSeletedFilterKey] = useState<string | undefined>(() =>
+  const [selectedFilterKey, setSeletedFilterKey] = useState<string | undefined | null>(() =>
     toolbarFilters ? (toolbarFilters?.length > 0 ? toolbarFilters[0].key : '') : ''
   );
 

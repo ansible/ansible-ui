@@ -167,7 +167,7 @@ export function CollectionPage() {
             {t('Version')}
             <PageAsyncSingleSelect<string>
               queryOptions={queryOptions}
-              onSelect={(item: string | undefined) => {
+              onSelect={(item: string | undefined | null) => {
                 if (item) {
                   setVersionParams(item);
                 }

@@ -29,7 +29,7 @@ function PageSingleSelectTest<T>(props: {
   footer?: ReactNode;
 }) {
   const { placeholder, defaultValue, options } = props;
-  const [value, setValue] = useState(() => defaultValue);
+  const [value, setValue] = useState<T | undefined | null>(() => defaultValue);
   return (
     <PageSection>
       <PageSingleSelect

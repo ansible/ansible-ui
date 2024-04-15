@@ -9,8 +9,8 @@ import { DashboardJobPeriod, DashboardJobType, JobsChart } from '../charts/JobsC
 
 export function AwxJobActivityCard() {
   const { t } = useTranslation();
-  const [period, setPeriod] = useState<DashboardJobPeriod | undefined>('month');
-  const [jobType, setJobType] = useState<DashboardJobType | undefined>('all');
+  const [period, setPeriod] = useState<DashboardJobPeriod | undefined | null>('month');
+  const [jobType, setJobType] = useState<DashboardJobType | undefined | null>('all');
   const getPageUrl = useGetPageUrl();
   return (
     <PageDashboardCard

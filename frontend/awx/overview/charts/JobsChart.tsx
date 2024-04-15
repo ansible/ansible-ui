@@ -24,8 +24,8 @@ export type DashboardJobType = 'all' | 'inv_sync' | 'scm_update' | 'playbook_run
 
 export function JobsChart(props: {
   height?: number;
-  period?: DashboardJobPeriod;
-  jobType?: DashboardJobType;
+  period?: DashboardJobPeriod | null;
+  jobType?: DashboardJobType | null;
 }) {
   const getPageUrl = useGetPageUrl();
 
