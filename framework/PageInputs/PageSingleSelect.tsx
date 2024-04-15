@@ -106,6 +106,8 @@ export interface PageSingleSelectProps<ValueT> {
    */
   queryLabel?: (value: ValueT) => ReactNode;
 
+  toggle?: (toggleRef: React.Ref<MenuToggleElement>) => ReactNode;
+
   disableAutoSelect?: boolean;
 
   disableSortOptions?: boolean;
@@ -313,7 +315,7 @@ export function PageSingleSelect<
         onSelect={onSelectHandler}
         isOpen={open}
         onOpenChange={setOpen}
-        toggle={Toggle}
+        toggle={props.toggle ?? Toggle}
         popperProps={{ appendTo: () => document.body }}
         shouldFocusToggleOnSelect
         innerRef={selectListRef}

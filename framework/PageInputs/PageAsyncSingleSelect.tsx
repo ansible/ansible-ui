@@ -47,6 +47,7 @@ export function PageAsyncSingleSelect<
 >(props: PageAsyncSingleSelectProps<ValueT>) {
   const { t } = useTranslation();
 
+  const { queryOptions } = props;
   const [loading, setLoading] = useState(false);
   const [allLoaded, setAllLoaded] = useState(false);
   const [loadingError, setLoadingError] = useState<Error>();
@@ -64,8 +65,6 @@ export function PageAsyncSingleSelect<
   );
 
   const onSelect = useRef(props.onSelect).current;
-
-  const queryOptions = props.queryOptions;
 
   const activeAbortController = useRef<AbortController | null>(null);
   const queryHandler = useCallback(() => {
@@ -148,6 +147,7 @@ export function PageAsyncSingleSelect<
       e.stopPropagation();
       setTotal(0);
       setOptions([]);
+      setOpen(true);
       nextRef.current = undefined;
       queryHandler();
     },
@@ -162,6 +162,12 @@ export function PageAsyncSingleSelect<
       queryHandler();
     }
   }, [open, queryHandler]);
+
+  useEffect(() => {
+    if (loadingError) {
+      setOpen(false);
+    }
+  }, [loadingError]);
 
   const footer = (
     <Stack hasGutter>
@@ -211,23 +217,6 @@ export function PageAsyncSingleSelect<
     </Stack>
   );
 
-  if (loadingError) {
-    return (
-      <ButtonFullWidth
-        id={props.id}
-        variant="secondary"
-        isDanger
-        icon={<SyncAltIcon />}
-        iconPosition="right"
-        onClick={onReset}
-      >
-        {typeof props.queryErrorText === 'function'
-          ? props.queryErrorText(loadingError)
-          : props.queryErrorText ?? t('Error loading options')}
-      </ButtonFullWidth>
-    );
-  }
-
   return (
     <PageSingleSelect
       id={props.id}
@@ -246,6 +235,24 @@ export function PageAsyncSingleSelect<
       queryLabel={props.queryLabel}
       disableAutoSelect
       isRequired={props.isRequired}
+      toggle={
+        loadingError
+          ? (toggleRef) => (
+              <ButtonFullWidth
+                ref={toggleRef}
+                id={props.id}
+                variant="secondary"
+                isDanger
+                icon={<SyncAltIcon />}
+                onClick={onReset}
+              >
+                {typeof props.queryErrorText === 'function'
+                  ? props.queryErrorText(loadingError)
+                  : props.queryErrorText ?? t('Error loading options')}
+              </ButtonFullWidth>
+            )
+          : undefined
+      }
     />
   );
 }
