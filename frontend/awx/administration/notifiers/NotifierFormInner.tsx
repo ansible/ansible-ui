@@ -42,7 +42,7 @@ export function InnerForm(props: { notification_type: string }) {
   }
 
   if (notification_type === 'mattermost') {
-    //return <MattermostForm />;
+    return <MattermostForm />;
   }
 
   if (notification_type === 'rocketchat') {
@@ -358,27 +358,49 @@ function WebhookForm() {
   );
 }
 
-/*
+
   function MattermostForm() {
     const { t } = useTranslation();
+
     return (
       <>
         <PageFormTextInput<NotificationTemplate>
           type={'text'}
-          name={'type_data.mattermost_url'}
+          name={'notification_configuration.mattermost_url'}
           label={t('Target URL')}
-          placeholder={''}
+          isRequired
+          validate={ (item) => validateUrl(item, t)}
+        />
+
+        <PageFormTextInput<NotificationTemplate>
+          type={'text'}
+          name={'notification_configuration.mattermost_username'}
+          label={t('Username')}
+        />
+
+        <PageFormTextInput<NotificationTemplate>
+          type={'text'}
+          name={'notification_configuration.mattermost_channel'}
+          label={t('Channel')}
+        />
+
+        <PageFormTextInput<NotificationTemplate>
+          type={'text'}
+          name={'notification_configuration.mattermost_icon_url'}
+          label={t('Icon URL')}
+          validate={ (item) => validateUrl(item, t)}
         />
   
         <PageFormCheckbox<NotificationTemplate>
-          name={'type_data.mattermost_no_verify_ssl'}
+          name={'notification_configuration.mattermost_no_verify_ssl'}
           label={t('Verify SSL')}
-          placeholder={''}
         />
       </>
     );
   }
   
+
+  /*
   function RocketchatForm() {
     const { t } = useTranslation();
     return (
