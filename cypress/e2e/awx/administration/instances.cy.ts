@@ -210,7 +210,10 @@ describe('Instances - Peers', () => {
       cy.get('header').contains('Select peer addresses');
       cy.get('button').contains('Associate peer(s)').should('have.attr', 'aria-disabled', 'true');
       cy.filterTableBySingleText(instanceToAssociate.hostname, true);
+      cy.intercept('GET', awxAPI`/instances/${instance.id.toString()}/`).as('instanceA');
+      cy.intercept('GET', awxAPI`/instances/${instanceToAssociate.id.toString()}/`).as('instanceB');
       cy.getByDataCy('checkbox-column-cell').find('input').click();
+      cy.wait(['@instanceA', '@instanceB']);
       cy.get('button').contains('Associate peer(s)').click();
       cy.get('button').contains('Close').click();
     });
