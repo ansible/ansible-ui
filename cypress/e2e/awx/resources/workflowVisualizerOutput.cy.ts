@@ -160,10 +160,13 @@ describe('Workflow Visualizer', () => {
               cy.getBy('button[id="fit-to-screen"]').click();
               cy.contains(jobTemplate.name).should('be.visible');
               cy.getByDataCy('relaunch-job').should('be.visible');
+              cy.intercept('GET', awxAPI`/workflow_job_nodes/${results.id.toString()}/`).as(
+                'jtNode'
+              );
               cy.getBy(`g[data-id="${results.id}"]`)
                 .getBy('[data-cy="successful-icon"]')
                 .should('be.visible');
-              cy.wait('@wfNodes');
+              cy.wait('@jtNode');
               cy.getBy(`g[data-id="${results.id}"]`).within(() => {
                 cy.contains(jobTemplate.name).click({ force: true });
               });
