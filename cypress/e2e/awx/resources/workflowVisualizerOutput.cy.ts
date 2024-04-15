@@ -17,7 +17,7 @@ describe('Workflow Visualizer', () => {
   let projectNode: WorkflowNode;
   let jobTemplateNode: WorkflowNode;
 
-  before(function () {
+  beforeEach(function () {
     organization = this.globalOrganization as Organization;
     cy.awxLogin();
 
@@ -36,24 +36,21 @@ describe('Workflow Visualizer', () => {
               organization: organization.id,
               project: project.id,
               inventory: inventory.id,
-            }).then((jt) => (jobTemplate = jt));
+            }).then((jt) => {
+              jobTemplate = jt;
+
+              cy.createAwxWorkflowJobTemplate({
+                organization: organization.id,
+                inventory: inventory.id,
+              }).then((wfjt) => (workflowJobTemplate = wfjt));
+            });
           });
         });
       });
   });
 
-  beforeEach(function () {
-    cy.createAwxWorkflowJobTemplate({
-      organization: organization.id,
-      inventory: inventory.id,
-    }).then((wfjt) => (workflowJobTemplate = wfjt));
-  });
-
   afterEach(() => {
     cy.deleteAwxWorkflowJobTemplate(workflowJobTemplate, { failOnStatusCode: false });
-  });
-
-  after(function () {
     cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
     cy.deleteAwxInventorySource(inventorySource, { failOnStatusCode: false });
     cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
@@ -166,6 +163,7 @@ describe('Workflow Visualizer', () => {
               cy.getBy(`g[data-id="${results.id}"]`)
                 .getBy('[data-cy="successful-icon"]')
                 .should('be.visible');
+              cy.wait('@wfNodes');
               cy.getBy(`g[data-id="${results.id}"]`).within(() => {
                 cy.contains(jobTemplate.name).click({ force: true });
               });
