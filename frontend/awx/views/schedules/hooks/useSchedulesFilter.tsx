@@ -12,6 +12,9 @@ export function useSchedulesFilter() {
     optionsPath: 'schedules',
     preSortedKeys: ['name', 'id', 'created_by', 'modified_by'],
     preFilledValueKeys: {
+      name: {
+        apiPath: 'schedules',
+      },
       id: {
         apiPath: 'schedules',
       },

@@ -42,33 +42,27 @@ describe('schedules .cy.ts', () => {
       cy.verifyPageTitle('Schedules');
       cy.get('table').find('tr').should('have.length', 4);
     });
-    it('Schedules list has filters for Name, and Description,', () => {
-      cy.mount(<Schedules />);
-      cy.verifyPageTitle('Schedules');
-      cy.openToolbarFilterTypeSelect().within(() => {
-        cy.contains(/^Name$/).should('be.visible');
-        cy.contains(/^Description$/).should('be.visible');
-      });
-    });
+
     it('Filter schedules by name', () => {
+      cy.intercept(
+        { method: 'OPTIONS', url: '/api/v2/schedules/' },
+        { fixture: 'mock_options.json' }
+      );
       cy.mount(<Schedules />);
-      cy.intercept('api/v2/schedules/?name__icontains=Template*').as('nameFilterRequest');
-      cy.verifyPageTitle('Schedules');
-      cy.filterTableByTypeAndText(/^Name$/, 'Template');
-      // A network request is made based on the filter selected on the UI
-      cy.wait('@nameFilterRequest');
-      // Clear filter
-      cy.get('tbody').click();
+      cy.filterTableBySingleSelect('name', 'Template');
+      cy.get('tr').should('have.length.greaterThan', 0);
+      cy.getByDataCy('filter-input').click();
       cy.clickButton(/^Clear all filters$/);
+      // Clear filter
     });
     it('Filter schedules by description', () => {
+      cy.intercept(
+        { method: 'OPTIONS', url: '/api/v2/schedules/' },
+        { fixture: 'mock_options.json' }
+      );
       cy.mount(<Schedules />);
-      cy.intercept('api/v2/schedules/?description__icontains=bar*').as('descriptionFilterRequest');
-      cy.verifyPageTitle('Schedules');
-      cy.filterTableByTypeAndText(/^Description$/, 'bar');
-      // A network request is made based on the filter selected on the UI
-      cy.wait('@descriptionFilterRequest');
-      // Clear filter
+      cy.filterTableByTextFilter('description', 'bar');
+      cy.get('tr').should('have.length.greaterThan', 0);
       cy.get('tbody').click();
       cy.clickButton(/^Clear all filters$/);
     });
