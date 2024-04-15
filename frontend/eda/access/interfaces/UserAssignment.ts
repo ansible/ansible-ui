@@ -1,10 +1,10 @@
 import { Assignment } from './Assignment';
 
-export type TeamAssignment = Assignment & {
+export type UserAssignment = Assignment & {
   summary_fields: {
-    team: {
+    user: {
       id: number;
-      name: string;
+      username: string;
     };
   };
 };

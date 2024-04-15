@@ -57,7 +57,7 @@ describe('TeamAccess.cy.ts', () => {
     );
     cy.get('input[id="select-all"]').first().click();
     cy.get('[data-cy="actions-dropdown"]').first().click();
-    cy.get('[data-cy="delete-selected-roles"]').click();
+    cy.get('[data-cy="delete-selected-team"]').click();
     cy.get('div[role="dialog"]').within(() => {
       cy.contains('Team Assignment 1');
       cy.get('input[id="confirm"]').click();
@@ -82,8 +82,8 @@ describe('Empty list', () => {
   });
   it('Empty state is displayed correctly', () => {
     cy.mount(<TeamAccess id={'1'} type={'activation'} addRolesRoute="xyz" />);
-    cy.contains(/^There are currently no roles assigned to this object.$/);
-    cy.contains(/^Please add a role by using the button below.$/);
-    // cy.contains('button', /^Add role$/).should('be.visible'); TODO to be added later
+    cy.contains(/^There are currently no teams assigned to this object.$/);
+    cy.contains(/^Please add a team by using the button below.$/);
+    //cy.contains('button', /^Add team/).should('be.visible');
   });
 });

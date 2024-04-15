@@ -162,6 +162,7 @@ export function RulebookActivationPage() {
           { label: t('Details'), page: EdaRoute.RulebookActivationDetails },
           { label: t('History'), page: EdaRoute.RulebookActivationHistory },
           { label: t('Team Access'), page: EdaRoute.RulebookActivationTeamAccess },
+          { label: t('User Access'), page: EdaRoute.RulebookActivationUserAccess },
         ]}
         params={{ id: params.id }}
       />
