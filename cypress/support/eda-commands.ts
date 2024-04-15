@@ -188,7 +188,7 @@ Cypress.Commands.add('getEdaRulebookActivations', (page: number, perPage: number
 
 Cypress.Commands.add('getEdaCredentials', (page: number, perPage: number) => {
   cy.requestGet<EdaResult<EdaCredential>>(
-    edaAPI`/credentials/?page=${page.toString()}&page_size=${perPage.toString()}`
+    edaAPI`/eda-credentials/?page=${page.toString()}&page_size=${perPage.toString()}`
   );
 });
 
