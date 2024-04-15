@@ -13,6 +13,7 @@ import { NotificationTemplate } from '../../interfaces/NotificationTemplate';
 import { PageFormSingleSelect } from '../../../../framework/PageForm/Inputs/PageFormSingleSelect';
 import { PageFormGroup } from '../../../../framework/PageForm/Inputs/PageFormGroup';
 import { TFunction } from 'i18next';
+import { FieldPathByValue } from 'react-hook-form';
 
 export function InnerForm(props: { notification_type: string }) {
   const notification_type = props.notification_type;
@@ -304,6 +305,8 @@ function GrafanaForm() {
 
 function WebhookForm() {
   const { t } = useTranslation();
+  const headersPath = 'notification_configuration.headers' as FieldPathByValue<NotificationTemplate, string | object | null | undefined>;
+
   return (
     <>
       <PageFormTextInput<NotificationTemplate>
@@ -332,7 +335,7 @@ function WebhookForm() {
       />
 
       <PageFormDataEditor<NotificationTemplate>
-        name={'notification_configuration.headers'}
+        name={headersPath}
         label={t('HTTP Headers')}
         format="object"
         labelHelp={t(
