@@ -37,7 +37,9 @@ export default function PlatformMain() {
                         <AwxConfigProvider>
                           <HubContextProvider>
                             <GatewayServicesCheck>
+                              {/* <PlatformSubscription> */}
                               <PlatformApp />
+                              {/* </PlatformSubscription> */}
                             </GatewayServicesCheck>
                           </HubContextProvider>
                         </AwxConfigProvider>

@@ -1,5 +1,6 @@
 import { QuickStartCatalogPage } from '@patternfly/quickstarts';
 import {
+  Banner,
   Button,
   CardHeader,
   CardTitle,
@@ -13,6 +14,7 @@ import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { PageDashboard, PageDashboardCard, PageHeader, PageLayout } from '../../framework';
+import { useAwxConfig } from '../../frontend/awx/common/useAwxConfig';
 import { AwxJobActivityCard } from '../../frontend/awx/overview/cards/AwxJobActivityCard';
 import { AwxRecentInventoriesCard } from '../../frontend/awx/overview/cards/AwxRecentInventoriesCard';
 import { AwxRecentJobsCard } from '../../frontend/awx/overview/cards/AwxRecentJobsCard';
@@ -27,11 +29,15 @@ import { useManagedPlatformOverview } from './useManagedPlatformOverview';
 export function PlatformOverview() {
   const { t } = useTranslation();
   const { openManageDashboard, managedResources } = useManagedPlatformOverview();
+  const awxConfig = useAwxConfig();
   const awxService = useAwxService();
   const edaService = useEdaService();
   const hubService = useHubService();
   return (
     <PageLayout>
+      {awxConfig && (!awxConfig.license_info || !awxConfig.license_info.compliant) && (
+        <Banner variant="red">{t`Your subscription is out of compliance.`}</Banner>
+      )}
       <PageHeader
         title={t(`Welcome to the Ansible Automation Platform`)}
         description={t(

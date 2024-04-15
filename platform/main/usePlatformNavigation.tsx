@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import {
   PageNavigationItem,
   findNavigationItemById,
@@ -25,6 +25,8 @@ import { useGetPlatformAuthenticatorsRoutes } from '../routes/useGetPlatformAuth
 import { useGetPlatformOrganizationsRoutes } from '../routes/useGetPlatformOrganizationsRoutes';
 import { useGetPlatformTeamsRoutes } from '../routes/useGetPlatformTeamsRoutes';
 import { useGetPlatformUsersRoutes } from '../routes/useGetPlatformUsersRoutes';
+import { SubscriptionDetails } from '../settings/SubscriptionDetails';
+import { SubscriptionWizard } from '../settings/SubscriptionWizard';
 import { useAwxService, useEdaService, useHubService } from './GatewayServices';
 import { PlatformRoute } from './PlatformRoutes';
 
@@ -43,6 +45,8 @@ export function usePlatformNavigation() {
   const teams = useGetPlatformTeamsRoutes();
   const users = useGetPlatformUsersRoutes();
   const authenticators = useGetPlatformAuthenticatorsRoutes();
+
+  const navigate = useNavigate();
 
   const pageNavigationItems = useMemo<PageNavigationItem[]>(() => {
     removeNavigationItemById(awxNav, AwxRoute.Overview);
@@ -193,6 +197,22 @@ export function usePlatformNavigation() {
       path: 'settings',
       children: [
         {
+          label: t('Subscription'),
+          path: 'subscription',
+          children: [
+            {
+              id: PlatformRoute.SubscriptionWizard,
+              path: 'wizard',
+              element: <SubscriptionWizard onSuccess={() => navigate('/settings/subscription')} />,
+            },
+            {
+              id: PlatformRoute.SubscriptionDetails,
+              path: '',
+              element: <SubscriptionDetails />,
+            },
+          ],
+        },
+        {
           id: AwxRoute.SettingsPreferences,
           label: t('User Preferences'),
           path: 'preferences',
@@ -243,8 +263,8 @@ export function usePlatformNavigation() {
   }, [
     awxNav,
     edaNav,
-    hubNav,
     t,
+    hubNav,
     awxService,
     edaService,
     hubService,
@@ -252,6 +272,7 @@ export function usePlatformNavigation() {
     organizations,
     teams,
     users,
+    navigate,
   ]);
   return pageNavigationItems;
 }
