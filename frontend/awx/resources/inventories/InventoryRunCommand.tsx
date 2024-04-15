@@ -3,8 +3,10 @@ import { PageHeader, PageLayout, PageWizard, useGetPageUrl } from '../../../../f
 import { AwxRoute } from '../../main/AwxRoutes';
 import { awxErrorAdapter } from '../../common/adapters/awxErrorAdapter';
 import { useNavigate } from 'react-router-dom';
-import { PageFormCredentialSelect } from '../../access/credentials/components/PageFormCredentialSelect';
-import { RunCommandDetailStep } from './components/RunCommandDetailStep';
+import { RunCommandCredentialStep, RunCommandDetailStep } from './components/RunCommandSteps';
+import { RunCommandWizard } from '../../interfaces/Inventory';
+import { postRequest } from '../../../common/crud/Data';
+import { awxAPI } from '../../common/api/awx-utils';
 
 export function InventoryRunCommand() {
   const { t } = useTranslation();
@@ -14,9 +16,15 @@ export function InventoryRunCommand() {
 
   const onCancel = () => navigate(-1);
 
-  const handleSubmit = async () => {
-
-  }
+  const handleSubmit = async (data: RunCommandWizard) => {
+    const runCommandObj = {
+      ...data,
+      verbosity: data.verbosity,
+      forks: data.forks,
+      credential: data.credentials,
+    };
+    await postRequest(awxAPI`/ad_hoc_commands/`, runCommandObj);
+  };
 
   const steps = [
     {
@@ -25,32 +33,26 @@ export function InventoryRunCommand() {
       inputs: <RunCommandDetailStep />,
     },
     {
-      id: 'credential',
+      id: 'credentials',
       label: t('Credential'),
-      inputs: (
-        <PageFormCredentialSelect
-          name="prompt.credentials"
-          label={t('Credentials')}
-          placeholder={t('Add credentials')}
-          labelHelpTitle={t('Credentials')}
-          labelHelp={t(
-            'Select credentials for accessing the nodes this job will be ran against. You can only select one credential of each type. For machine credentials (SSH), checking "Prompt on launch" without selecting credentials will require you to select a machine credential at run time. If you select credentials and check "Prompt on launch", the selected credential(s) become the defaults that can be updated at run time.'
-          )}
-          isMultiple
-        />
-      ),
+      inputs: <RunCommandCredentialStep />,
     },
   ];
 
   const initialValues = {
-    module: '',
-    arguments: '',
-    verbosity: 0,
-    limit: 'all',
-    fork: 0,
-    diff_mode: false,
-    become_enabled: false,
-    extra_vars: '---\n',
+    details: {
+      module: '',
+      module_args: '',
+      verbosity: 0,
+      limit: 'all',
+      forks: 0,
+      diff_mode: false,
+      become_enabled: false,
+      extra_vars: '',
+    },
+    credentials: {
+      credentials: 1,
+    },
   };
 
   return (
@@ -62,7 +64,7 @@ export function InventoryRunCommand() {
           { label: t('Run command') },
         ]}
       />
-      <PageWizard
+      <PageWizard<RunCommandWizard>
         steps={steps}
         singleColumn={false}
         onCancel={onCancel}

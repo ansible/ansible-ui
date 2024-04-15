@@ -7,6 +7,7 @@ import {
   PageFormSwitch,
   PageFormTextInput,
 } from '../../../../../framework';
+import { PageFormCredentialSelect } from '../../../access/credentials/components/PageFormCredentialSelect';
 
 export function RunCommandDetailStep() {
   const { t } = useTranslation();
@@ -43,19 +44,39 @@ export function RunCommandDetailStep() {
 
   return (
     <PageFormSection singleColumn>
-      <PageFormSelect name={'module'} isRequired label={t('Module')} options={moduleOptions} />
-      <PageFormTextInput name={'arguments'} label={t('Arguments')} />
-      <PageFormSelect name={'verbosity'} label={t('Verbosity')} options={verbosityOptions} />
-      <PageFormTextInput name={'limit'} label={t('Limit')} />
-      <PageFormTextInput name={'forks'} label={t('Fork')} type="number" min={0} />
-      <PageFormSwitch label={t('Show changes')} name="diff_mode" />
-      <PageFormCheckbox label={t('Privilege escalation')} name="become_enabled" />
+      <PageFormSelect name="module" isRequired label={t('Module')} options={moduleOptions} />
+      <PageFormTextInput name="module_args" isRequired label={t('Arguments')} />
+      <PageFormSelect name="verbosity" label={t('Verbosity')} options={verbosityOptions} />
+      <PageFormTextInput name="limit" label={t('Limit')} />
+      <PageFormTextInput name="forks" label={t('Fork')} type="number" min={0} />
+      <PageFormSwitch name="diff_mode" label={t('Show changes')} />
+      <PageFormCheckbox name="become_enabled" label={t('Privilege escalation')} />
       <PageFormDataEditor
         labelHelpTitle={t('Extra Variables')}
         labelHelp={t(`Optional extra variables to be applied to job template`)}
         format="yaml"
         label={t('Extra Variables')}
         name="extra_vars"
+      />
+    </PageFormSection>
+  );
+}
+
+export function RunCommandCredentialStep() {
+  const { t } = useTranslation();
+
+  return (
+    <PageFormSection>
+      <PageFormCredentialSelect
+        name="credentials"
+        label={t('Credentials')}
+        placeholder={t('Add credentials')}
+        labelHelpTitle={t('Credentials')}
+        labelHelp={t(
+          'Select credentials for accessing the nodes this job will be ran against. You can only select one credential of each type. For machine credentials (SSH), checking "Prompt on launch" without selecting credentials will require you to select a machine credential at run time. If you select credentials and check "Prompt on launch", the selected credential(s) become the defaults that can be updated at run time.'
+        )}
+        isMultiple
+        isRequired
       />
     </PageFormSection>
   );
