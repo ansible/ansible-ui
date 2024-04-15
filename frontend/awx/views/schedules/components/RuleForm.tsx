@@ -3,7 +3,7 @@ import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFor
 import { PageFormSelect, PageFormTextInput } from '../../../../../framework';
 import { RuleFields, RuleListItemType, RuleType, ScheduleFormWizard } from '../types';
 import { useTranslation } from 'react-i18next';
-import { RRule, datetime } from 'rrule';
+import { Frequency, RRule, datetime } from 'rrule';
 import {
   useGetFrequencyOptions,
   useGetMonthOptions,
@@ -23,6 +23,15 @@ import { DateTime } from 'luxon';
 import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
 import { useEffect } from 'react';
 import { dateToInputDateTime } from '../../../../../framework/utils/dateTimeHelpers';
+const get24Hour = (time: string): { hour: number; minute: number } => {
+  const [hour, minute] = time.split(':');
+  const isPM = time.includes('PM');
+
+  return {
+    hour: isPM ? parseInt(hour, 10) + 12 : parseInt(`${hour}`, 10),
+    minute: parseInt(minute, 10),
+  };
+};
 
 export function RuleForm(props: {
   title: string;
@@ -39,7 +48,10 @@ export function RuleForm(props: {
   const { activeStep, wizardData } = usePageWizard();
   const ruleId = typeof props.isOpen === 'number' && props.isOpen;
 
-  const { timezone = 'America/New_York' } = wizardData as ScheduleFormWizard;
+  const {
+    timezone = 'America/New_York',
+    startDateTime: { date, time },
+  } = wizardData as ScheduleFormWizard;
   const isRulesStep = activeStep && activeStep.id === 'rules';
   const weekdayOptions = useGetWeekdayOptions();
   const frequencyOptions = useGetFrequencyOptions();
@@ -69,30 +81,29 @@ export function RuleForm(props: {
       rules = [],
       exceptions = [],
       endingType,
-      until,
+      until = null,
       ...formData
     } = getValues() as RuleFields;
 
-    const index = isRulesStep
-      ? rules.findIndex((r) => r.id === ruleId)
-      : exceptions.findIndex((r) => r.id === ruleId);
-    const rule = new RRule(formData);
+    const start = DateTime.fromISO(`${date}`).set(get24Hour(time)).toUTC();
+    const { year, month, day, hour, minute } = start;
+    const rule = new RRule({
+      ...formData,
+      freq: formData.freq || Frequency.WEEKLY,
+      tzid: timezone,
+      dtstart: datetime(year, month, day, hour, minute),
+    });
     if (until !== null) {
-      const { time, date } = until;
-      const isPM = time?.includes('PM');
-      const [splithour = '', splitminute = ''] = (time || '').split(':');
+      const { time: untilTime, date: untilDate } = until;
 
-      if (time && date) {
+      if (untilDate && untilTime) {
         const utcDate = DateTime.fromISO(`${date}`, { zone: timezone })
-          .set({
-            hour: isPM ? parseInt(splithour, 10) + 12 : parseInt(splithour, 10),
-            minute: parseInt(splitminute, 10),
-          })
+          .set(get24Hour(untilTime))
           .toUTC();
         const { year, month, day, hour, minute } = utcDate;
         rule.options.until = datetime(year, month, day, hour, minute);
       } else {
-        if (date) {
+        if (untilDate) {
           // This block is used when the user enters a date, but no time.
           // We use the date given, and the current time based on the timezone given
           // in the first step, or default to America/New_York.
@@ -101,17 +112,14 @@ export function RuleForm(props: {
           const { year, day, month, hour, minute } = utcDate;
           rule.options.until = datetime(year, month, day, hour, minute);
         }
-        if (time) {
+        if (untilTime) {
           // This block is used when the user enters a time, but no date.
           // We use the time given, and the tomorrow's date based on the timezone given
           // in the first step, or default to America/New_York.
 
           const { year, day, month, hour, minute } = DateTime.now()
             .plus({ days: 1 })
-            .set({
-              hour: isPM ? parseInt(splithour, 10) + 12 : parseInt(`${splithour}`, 10),
-              minute: parseInt(splitminute, 10),
-            })
+            .set(get24Hour(untilTime))
             .toUTC();
 
           rule.options.until = datetime(year, month, day, hour, minute);
@@ -125,6 +133,10 @@ export function RuleForm(props: {
         ? rules.length + 1 || 1
         : exceptions.length + 1 || 1;
     const ruleObject = { rule, id: itemId };
+
+    const index = isRulesStep
+      ? rules.findIndex((r) => r.id === ruleId)
+      : exceptions.findIndex((r) => r.id === ruleId);
     if (isRulesStep) {
       ruleId
         ? setValue('rules', rules.splice(index, 1, ruleObject))

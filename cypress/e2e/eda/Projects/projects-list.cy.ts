@@ -33,7 +33,9 @@ describe('EDA Projects List', () => {
     });
   });
 
-  it('can bulk delete Projects from the Projects list', () => {
+  // Disabling this test as it is randomly failing because the backend randomly returns a 500
+  it.skip('can bulk delete Projects from the Projects list', () => {
+    //re-enable this test when bulk deletion in fixed in the EDA API
     cy.createEdaProject().then((edaProject) => {
       cy.createEdaProject().then((testProject) => {
         cy.navigateTo('eda', 'projects');

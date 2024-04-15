@@ -28,7 +28,7 @@ import { PageFormInventorySelect } from '../../../resources/inventories/componen
 import { ScheduleFormWizard } from '../types';
 
 export const resourceEndPoints: { [key: string]: string } = {
-  inventories: awxAPI`/inventories/`,
+  inventories: awxAPI`/inventory_sources/`,
   projects: awxAPI`/projects/`,
   job_template: awxAPI`/job_templates/`,
   workflow_job_template: awxAPI`/workflow_job_templates/`,

@@ -87,25 +87,24 @@ Cypress.Commands.add('awxLogout', () => {
   cy.getByDataCy('account-menu')
     .click()
     .then(() => {
+      cy.intercept('GET', `/api/logout/`).as('logout');
       cy.get('ul>li>a').contains('Logout').click();
+      cy.wait('@logout');
+      cy.then(Cypress.session.clearAllSavedSessions);
     });
 });
 
-Cypress.Commands.add('edaLogin', () => {
+Cypress.Commands.add('edaLogin', (username?: string, password?: string) => {
   cy.requiredVariablesAreSet(['EDA_SERVER', 'EDA_USERNAME', 'EDA_PASSWORD']);
+  const userName = username ?? (Cypress.env('EDA_USERNAME') as string);
   cy.session(
-    'EDA',
+    `EDA-${userName}`,
     () => {
       window.localStorage.setItem('default-nav-expanded', 'true');
-      cy.visit(`/`, {
-        retryOnStatusCodeFailure: true,
-        retryOnNetworkFailure: true,
-      });
-      cy.getBy('[data-cy="username"]').type(Cypress.env('EDA_USERNAME') as string, {
-        log: false,
-        delay: 0,
-      });
-      cy.getBy('[data-cy="password"]').type(Cypress.env('EDA_PASSWORD') as string, {
+      cy.visit(`/`, { retryOnStatusCodeFailure: true, retryOnNetworkFailure: true });
+      cy.contains('Welcome to');
+      cy.getBy('[data-cy="username"]').type(userName, { log: false, delay: 0 });
+      cy.getBy('[data-cy="password"]').type(password ?? (Cypress.env('EDA_PASSWORD') as string), {
         log: false,
         delay: 0,
       });
@@ -127,7 +126,10 @@ Cypress.Commands.add('edaLogout', () => {
     .eq(1)
     .click()
     .then(() => {
+      cy.intercept('POST', edaAPI`/auth/session/logout/`).as('logout');
       cy.get('ul>li>a').contains('Logout').click();
+      cy.wait('@logout');
+      cy.then(Cypress.session.clearAllSavedSessions);
     });
 });
 
@@ -160,4 +162,16 @@ Cypress.Commands.add('hubLogin', () => {
     }
   );
   cy.visit(`/`, { retryOnStatusCodeFailure: true, retryOnNetworkFailure: true });
+});
+
+Cypress.Commands.add('hubLogout', () => {
+  cy.get('.pf-v5-c-dropdown__toggle')
+    .eq(1)
+    .click()
+    .then(() => {
+      cy.intercept('POST', hubAPI`/_ui/v1/auth/logout/`).as('logout');
+      cy.get('ul>li>a').contains('Logout').click();
+      cy.wait('@logout');
+      cy.then(Cypress.session.clearAllSavedSessions);
+    });
 });

@@ -7,12 +7,13 @@ import { AwxUser } from '../../../../frontend/awx/interfaces/User';
 import { WorkflowJob } from '../../../../frontend/awx/interfaces/WorkflowJob';
 import { WorkflowJobTemplate } from '../../../../frontend/awx/interfaces/WorkflowJobTemplate';
 import { WorkflowNode } from '../../../../frontend/awx/interfaces/WorkflowNode';
+import { awxAPI } from '../../../support/formatApiPathForAwx';
 
 /* Shared functions across test cases */
 const wfaURL = '/administration/workflow-approvals/';
 function actAssertAndDeleteWorkflowApproval(
   selectorDataCy: 'approve' | 'deny' | 'cancel',
-  wfaID: string
+  wfaID: number
 ) {
   let actionStatusCode: number;
   let statusText: string;
@@ -41,7 +42,7 @@ function actAssertAndDeleteWorkflowApproval(
     method: 'POST',
     url: `${actionURL}`,
   }).as('WFaction');
-  cy.getTableRow('id', wfaID)
+  cy.getTableRow('id', wfaID.toString())
     .within(() => {
       cy.getByDataCy('actions-column-cell').within(() => {
         cy.getByDataCy(selectorDataCy).click();
@@ -137,15 +138,15 @@ describe('Workflow Approvals - List View', () => {
       });
   });
 
-  beforeEach(() => {
-    // TODO: Launch template using the API
-    cy.intercept(
-      'POST',
-      `api/v2/workflow_job_templates/${workflowJobTemplate.id.toString()}/launch`
-    ).as('launchWFJT');
-    cy.visit(`/templates/workflow_job_template/${workflowJobTemplate.id.toString()}/details`);
-    cy.getByDataCy('launch-template').click();
-  });
+  // beforeEach(() => {
+  // TODO: Launch template using the API
+  // cy.intercept(
+  //   'POST',
+  //   awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/launch`
+  // ).as('launchWFJT');
+  // cy.visit(`/templates/workflow_job_template/${workflowJobTemplate.id.toString()}/details`);
+  // cy.getByDataCy('launch-template').click();
+  // });
 
   after(() => {
     cy.deleteAwxWorkflowJobTemplate(workflowJobTemplate, { failOnStatusCode: false });
@@ -175,35 +176,52 @@ describe('Workflow Approvals - List View', () => {
   it.skip('admin can enable concurrent jobs in a WFJT with a WF approval node, launch the job multiple times, bulk deny, and then bulk delete from the list toolbar', () => {});
 
   it('admin can approve and then delete a workflow approval from the list row item', () => {
+    cy.intercept(
+      'POST',
+      awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/launch`
+    ).as('launchWFJT');
+    cy.visit(`/templates/workflow_job_template/${workflowJobTemplate.id.toString()}/details`);
+    cy.getByDataCy('launch-template').click();
     cy.wait('@launchWFJT')
       .its('response.body')
       .then((response: WorkflowJob) => {
         expect(response.id).to.exist;
-        cy.getAwxWFApprovalByWorkflowJobID(response.id).then((wfa) => {
-          actAssertAndDeleteWorkflowApproval('approve', `${wfa.id}`);
+        cy.pollFirstPendingWorkflowApprovalsForWorkflowJobID(response.id).then((approval) => {
+          actAssertAndDeleteWorkflowApproval('approve', approval.id);
         });
       });
   });
 
   it('admin can deny and then delete a workflow approval from the list row item', () => {
+    cy.intercept(
+      'POST',
+      awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/launch`
+    ).as('launchWFJT');
+    cy.visit(`/templates/workflow_job_template/${workflowJobTemplate.id.toString()}/details`);
+    cy.getByDataCy('launch-template').click();
     cy.wait('@launchWFJT')
       .its('response.body')
       .then((response: WorkflowJob) => {
         expect(response.id).to.exist;
-        cy.getAwxWFApprovalByWorkflowJobID(response.id).then((wfa) => {
-          actAssertAndDeleteWorkflowApproval('deny', `${wfa.id}`);
+        cy.pollFirstPendingWorkflowApprovalsForWorkflowJobID(response.id).then((approval) => {
+          actAssertAndDeleteWorkflowApproval('deny', approval.id);
         });
       });
   });
 
   it('admin can cancel and then delete a workflow approval from the list row item', () => {
+    cy.intercept(
+      'POST',
+      awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/launch`
+    ).as('launchWFJT');
+    cy.visit(`/templates/workflow_job_template/${workflowJobTemplate.id.toString()}/details`);
+    cy.getByDataCy('launch-template').click();
     cy.wait('@launchWFJT')
       .its('response.body')
       .then((response: WorkflowJob) => {
         expect(response.id).to.exist;
-        cy.getAwxWFApprovalByWorkflowJobID(response.id).then((wfa) => {
-          cy.log('WFA', wfa);
-          actAssertAndDeleteWorkflowApproval('cancel', `${wfa.id}`);
+        cy.pollFirstPendingWorkflowApprovalsForWorkflowJobID(response.id).then((approval) => {
+          actAssertAndDeleteWorkflowApproval('cancel', approval.id);
         });
       });
   });

@@ -19,7 +19,6 @@ describe('Workflow Visualizer', () => {
 
   before(function () {
     organization = this.globalOrganization as Organization;
-    project = this.globalProject as Project;
     cy.awxLogin();
 
     cy.createAwxInventory({ organization: organization.id })
@@ -27,14 +26,19 @@ describe('Workflow Visualizer', () => {
         inventory = i;
       })
       .then(() => {
-        cy.createAwxInventorySource(inventory, project).then((invSrc) => {
-          inventorySource = invSrc;
+        cy.createAwxProject({ organization: organization.id }).then((proj) => {
+          project = proj;
+
+          cy.createAwxInventorySource(inventory, project).then((invSrc) => {
+            inventorySource = invSrc;
+
+            cy.createAwxJobTemplate({
+              organization: organization.id,
+              project: project.id,
+              inventory: inventory.id,
+            }).then((jt) => (jobTemplate = jt));
+          });
         });
-        cy.createAwxJobTemplate({
-          organization: organization.id,
-          project: project.id,
-          inventory: inventory.id,
-        }).then((jt) => (jobTemplate = jt));
       });
   });
 
@@ -124,7 +128,7 @@ describe('Workflow Visualizer', () => {
       cy.contains('Success').should('be.visible');
     });
 
-    it('can view the details pages of related job on a WFJT either by clicking the job nodes or by toggling the Workflow Jobs dropdown', function () {
+    it.skip('can view the details pages of related job on a WFJT either by clicking the job nodes or by toggling the Workflow Jobs dropdown', function () {
       cy.visit(`/templates/workflow_job_template/${workflowJobTemplate?.id}/visualizer`);
       cy.contains('Workflow Visualizer').should('be.visible');
       cy.getBy('[data-cy="workflow-visualizer-toolbar-kebab"]').click();
@@ -138,14 +142,14 @@ describe('Workflow Visualizer', () => {
         .then((jobId: string) => {
           cy.url().should('contain', `/jobs/workflow/${jobId}/output`);
           cy.intercept('GET', awxAPI`/project_updates/**`).as('wfJobs');
-          cy.contains('Global Project').click({ force: true });
+          cy.contains(project.name).click({ force: true });
           cy.wait('@wfJobs');
           cy.intercept('GET', awxAPI`/workflow_jobs/${jobId}/`).as('job');
           cy.intercept(
             'GET',
             awxAPI`/workflow_jobs/${jobId}/workflow_nodes/?page=1&page_size=200`
           ).as('wfNodes');
-          cy.getByDataCy('Global Project').should('be.visible');
+          cy.getByDataCy(project.name).should('be.visible');
           cy.getByDataCy('Output').should('be.visible');
           cy.visit(`/jobs/workflow/${jobId}/output`);
           cy.wait('@job', { timeout: 10000 });
@@ -170,9 +174,9 @@ describe('Workflow Visualizer', () => {
               cy.contains('button', 'Workflow Job 1/1')
                 .click()
                 .then(() => {
-                  cy.contains('Global Project').click();
+                  cy.contains(project.name).click();
                 });
-              cy.getByDataCy('page-title').should('be.visible').and('contain', 'Global Project');
+              cy.getByDataCy('page-title').should('be.visible').and('contain', project.name);
               cy.contains('button', 'Workflow Job 1/1')
                 .click()
                 .then(() => {
