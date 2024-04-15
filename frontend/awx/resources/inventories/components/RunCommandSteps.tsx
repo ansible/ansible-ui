@@ -1,6 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
 import {
+  PageDetail,
+  PageDetails,
   PageFormCheckbox,
   PageFormDataEditor,
   PageFormSelect,
@@ -8,6 +10,10 @@ import {
   PageFormTextInput,
 } from '../../../../../framework';
 import { PageFormCredentialSelect } from '../../../access/credentials/components/PageFormCredentialSelect';
+import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
+import { WizardFormValues } from '../../templates/WorkflowVisualizer/types';
+import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageDetailCodeEditor';
+import { RunCommandWizard } from '../../../interfaces/Inventory';
 
 export function RunCommandDetailStep() {
   const { t } = useTranslation();
@@ -44,11 +50,22 @@ export function RunCommandDetailStep() {
 
   return (
     <PageFormSection singleColumn>
-      <PageFormSelect name="module" isRequired label={t('Module')} options={moduleOptions} />
-      <PageFormTextInput name="module_args" isRequired label={t('Arguments')} />
+      <PageFormSelect
+        name="module"
+        placeholderText={t('Select a module')}
+        isRequired
+        label={t('Module')}
+        options={moduleOptions}
+      />
+      <PageFormTextInput
+        name="module_args"
+        placeholder={t('Enter arguments')}
+        isRequired
+        label={t('Arguments')}
+      />
       <PageFormSelect name="verbosity" label={t('Verbosity')} options={verbosityOptions} />
       <PageFormTextInput name="limit" label={t('Limit')} />
-      <PageFormTextInput name="forks" label={t('Fork')} type="number" min={0} />
+      <PageFormTextInput name="forks" label={t('Forks')} type="number" min={0} />
       <PageFormSwitch name="diff_mode" label={t('Show changes')} />
       <PageFormCheckbox name="become_enabled" label={t('Privilege escalation')} />
       <PageFormDataEditor
@@ -68,7 +85,7 @@ export function RunCommandCredentialStep() {
   return (
     <PageFormSection>
       <PageFormCredentialSelect
-        name="credentials"
+        name="credential"
         label={t('Credentials')}
         placeholder={t('Add credentials')}
         labelHelpTitle={t('Credentials')}
@@ -79,5 +96,33 @@ export function RunCommandCredentialStep() {
         isRequired
       />
     </PageFormSection>
+  );
+}
+
+export function RunCommandReviewStep() {
+  const { t } = useTranslation();
+  const { wizardData } = usePageWizard() as {
+    wizardData: WizardFormValues & RunCommandWizard;
+  };
+  const { module, module_args, verbosity, limit, forks, diff_mode, become_enabled, extra_vars } =
+    wizardData;
+
+  return (
+    <>
+      <PageFormSection title={t('Review')} singleColumn>
+        <PageDetails disablePadding>
+          <PageDetail label={t('Module')}>{module}</PageDetail>
+          <PageDetail label={t('Arguments')}>{module_args}</PageDetail>
+          <PageDetail label={t('Verbosity')}>{verbosity}</PageDetail>
+          <PageDetail label={t('Limit')}>{limit}</PageDetail>
+          <PageDetail label={t('Forks')}>{forks}</PageDetail>
+          <PageDetail label={t('Show changes')}>{diff_mode ? t('On') : t('Off')}</PageDetail>
+          <PageDetail label={t('Privilege escalation')}>
+            {become_enabled ? t('On') : t('Off')}
+          </PageDetail>
+          <PageDetailCodeEditor label={t('Extra vars')} value={extra_vars} />
+        </PageDetails>
+      </PageFormSection>
+    </>
   );
 }

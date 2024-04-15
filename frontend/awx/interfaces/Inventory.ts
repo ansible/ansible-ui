@@ -73,5 +73,5 @@ export interface RunCommandWizard {
   diff_mode: boolean;
   become_enabled: boolean;
   extra_vars: string;
-  credentials: number;
+  credential: Credential[];
 }

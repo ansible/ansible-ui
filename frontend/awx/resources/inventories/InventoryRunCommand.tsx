@@ -1,9 +1,20 @@
 import { useTranslation } from 'react-i18next';
-import { PageHeader, PageLayout, PageWizard, useGetPageUrl } from '../../../../framework';
+import {
+  PageHeader,
+  PageLayout,
+  PageWizard,
+  PageWizardStep,
+  useGetPageUrl,
+  usePageNavigate,
+} from '../../../../framework';
 import { AwxRoute } from '../../main/AwxRoutes';
 import { awxErrorAdapter } from '../../common/adapters/awxErrorAdapter';
-import { useNavigate } from 'react-router-dom';
-import { RunCommandCredentialStep, RunCommandDetailStep } from './components/RunCommandSteps';
+import { useNavigate, useParams } from 'react-router-dom';
+import {
+  RunCommandCredentialStep,
+  RunCommandDetailStep,
+  RunCommandReviewStep,
+} from './components/RunCommandSteps';
 import { RunCommandWizard } from '../../interfaces/Inventory';
 import { postRequest } from '../../../common/crud/Data';
 import { awxAPI } from '../../common/api/awx-utils';
@@ -11,6 +22,8 @@ import { awxAPI } from '../../common/api/awx-utils';
 export function InventoryRunCommand() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
+  const { id } = useParams();
+  const pageNavigate = usePageNavigate();
 
   const navigate = useNavigate();
 
@@ -21,21 +34,30 @@ export function InventoryRunCommand() {
       ...data,
       verbosity: data.verbosity,
       forks: data.forks,
-      credential: data.credentials,
+      credential: data.credential[0].id,
     };
-    await postRequest(awxAPI`/ad_hoc_commands/`, runCommandObj);
+    const result: { id: string } = await postRequest(
+      awxAPI`/inventories/${id ?? ''}/ad_hoc_commands/`,
+      runCommandObj
+    );
+    pageNavigate(AwxRoute.JobOutput, { params: { id: result.id, job_type: 'command' } });
   };
 
-  const steps = [
+  const steps: PageWizardStep[] = [
     {
       id: 'details',
       label: t('Details'),
       inputs: <RunCommandDetailStep />,
     },
     {
-      id: 'credentials',
+      id: 'credential',
       label: t('Credential'),
       inputs: <RunCommandCredentialStep />,
+    },
+    {
+      id: 'review',
+      label: t('Review'),
+      inputs: <RunCommandReviewStep />,
     },
   ];
 
@@ -49,9 +71,6 @@ export function InventoryRunCommand() {
       diff_mode: false,
       become_enabled: false,
       extra_vars: '',
-    },
-    credentials: {
-      credentials: 1,
     },
   };
 
