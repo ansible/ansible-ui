@@ -43,7 +43,6 @@ describe('Users.cy.ts', () => {
         actions: {
           POST: {
             name: {
-              //type: ToolbarFilterType.MultiText,
               required: true,
               label: 'Name',
               max_length: 512,
