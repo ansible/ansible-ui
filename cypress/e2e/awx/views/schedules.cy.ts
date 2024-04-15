@@ -407,7 +407,7 @@ describe('Schedules - Edit', () => {
           .should((el) => expect(el.text().trim()).to.equal(text));
       });
     });
-    cy.get('[data-cy="description"]').type('-edited');
+    cy.getByDataCy('description').type('-edited');
     cy.clickButton(/^Next$/);
     cy.clickButton(/^Next$/);
     cy.clickButton(/^Next$/);
