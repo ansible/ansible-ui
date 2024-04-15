@@ -5,6 +5,7 @@ import {
   ICatalogBreadcrumb,
   LoadingPage,
   PageFormCheckbox,
+  PageFormDataEditor,
   PageFormSubmitHandler,
   PageFormTextArea,
   PageFormTextInput,
@@ -26,7 +27,8 @@ import { PageFormGroup } from '../../../../framework/PageForm/Inputs/PageFormGro
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
 
 import { useOptions } from '../../../common/crud/useOptions';
-import { requestCommon } from '../../../common/crud/requestCommon';
+import { usePostRequest } from '../../../common/crud/usePostRequest';
+import { usePutRequest } from '../../../common/crud/usePutRequest';
 import { usePageNavigate } from '../../../../framework';
 import { TFunction } from 'i18next';
 
@@ -61,6 +63,9 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
   const notifierRequest = useGet<NotificationTemplate>(getUrl);
   const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
+
+  const putRequest = usePutRequest();
+  const postRequest = usePostRequest();
 
   const optionsRequest = useOptions<NotificationTemplateOptions>(awxAPI`/notification_templates/`);
 
@@ -133,15 +138,14 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
       }
     }
 
-    await requestCommon({
-      url:
-        mode === 'add'
-          ? awxAPI`/notification_templates/`
-          : awxAPI`/notification_templates/${formData.id?.toString() || ''}/`,
-      method: mode === 'edit' ? 'PATCH' : 'POST',
-      body: data,
-    });
-
+    if (mode === 'add')
+    {
+      await postRequest(awxAPI`/notification_templates/`, data);
+    }else
+    {
+      await putRequest(awxAPI`/notification_templates/${formData.id?.toString() || ''}/`, data)
+    }
+    
     pageNavigate(AwxRoute.NotificationTemplates);
   };
 
@@ -230,7 +234,7 @@ function InnerForm(props: { notification_type: string }) {
   }
 
   if (notification_type === 'webhook') {
-    //return <WebhookForm />;
+    return <WebhookForm />;
   }
 
   if (notification_type === 'mattermost') {
@@ -495,7 +499,7 @@ function GrafanaForm() {
   );
 }
 
-/*
+
 function WebhookForm() {
   const { t } = useTranslation();
   return (
@@ -524,9 +528,10 @@ function WebhookForm() {
         label={t('Disable SSL verification ')}
       />
 
-      <PageFormTextInput<NotificationTemplate>
+      <PageFormDataEditor<NotificationTemplate>
         name={'notification_configuration.headers'}
-        label={t('HTTP Headers')}
+        label={t('HTTP Headers')} 
+        format='json'
       />
 
       <PageFormSingleSelect<NotificationTemplate>
@@ -542,7 +547,7 @@ function WebhookForm() {
   );
 }
 
-
+/*
 function MattermostForm() {
   const { t } = useTranslation();
   return (
