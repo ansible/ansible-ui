@@ -128,7 +128,7 @@ export function ScheduleEditWizard() {
       byminute: null,
       byhour: null,
       endingType: '',
-      rules: ruleList.map((rule, i) => ({ id: i, rule: rule })),
+      rules: ruleList.map((rule, i) => ({ id: i + 1, rule: rule })),
     },
     exceptions: {
       id: undefined,
