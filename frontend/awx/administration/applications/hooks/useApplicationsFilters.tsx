@@ -1,16 +1,17 @@
-import { useMemo } from 'react';
-import {
-  useDescriptionToolbarFilter,
-  useNameToolbarFilter,
-} from '../../../common/awx-toolbar-filters';
-import { IToolbarFilter } from '../../../../../framework';
+import { useDynamicToolbarFilters } from '../../../common/useDynamicFilters';
 
 export function useApplicationsFilters() {
-  const nameToolbarFilter = useNameToolbarFilter();
-  const descriptionToolbarFilter = useDescriptionToolbarFilter();
-  const toolbarFilters = useMemo<IToolbarFilter[]>(
-    () => [nameToolbarFilter, descriptionToolbarFilter],
-    [nameToolbarFilter, descriptionToolbarFilter]
-  );
+  const toolbarFilters = useDynamicToolbarFilters({
+    optionsPath: 'applications',
+    preFilledValueKeys: {
+      name: {
+        apiPath: 'applications',
+      },
+      id: {
+        apiPath: 'applications',
+      },
+    },
+    preSortedKeys: ['name', 'id', 'description'],
+  });
   return toolbarFilters;
 }
