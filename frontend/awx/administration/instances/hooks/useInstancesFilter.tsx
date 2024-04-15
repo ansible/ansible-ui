@@ -1,33 +1,13 @@
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import { IToolbarFilter, ToolbarFilterType } from '../../../../../framework';
+import { useDynamicToolbarFilters } from '../../../common/useDynamicFilters';
 
 export function useInstancesFilters() {
-  const { t } = useTranslation();
-  const toolbarFilters = useMemo<IToolbarFilter[]>(
-    () => [
-      {
-        key: 'name',
-        label: t('Name'),
-        type: ToolbarFilterType.MultiText,
-        query: 'hostname__icontains',
-        comparison: 'contains',
-      },
-      {
-        key: 'type',
-        label: t('Node type'),
-        type: ToolbarFilterType.MultiSelect,
-        query: 'node_type',
-        options: [
-          { label: t('Hybrid'), value: 'hybrid' },
-          { label: t('Execution'), value: 'execution' },
-          { label: t('Control'), value: 'control' },
-          { label: t('Hop'), value: 'hop' },
-        ],
-        placeholder: t('Select types'),
-      },
-    ],
-    [t]
-  );
+  const toolbarFilters = useDynamicToolbarFilters({
+    optionsPath: 'instances',
+    preSortedKeys: ['hostname', 'node_type', 'id'],
+    preFilledValueKeys: {
+      hostname: { apiPath: 'instances' },
+      id: { apiPath: 'instances' },
+    },
+  });
   return toolbarFilters;
 }
