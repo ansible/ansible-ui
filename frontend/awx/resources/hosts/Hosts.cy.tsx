@@ -36,6 +36,10 @@ describe('Hosts.cy.ts', () => {
       });
 
       it('should have filters for Name, Description, Created By and Modified By', () => {
+        cy.intercept(
+          { method: 'OPTIONS', url: '/api/v2/hosts/' },
+          { fixture: 'mock_options.json' }
+        );
         testFilters(component, params, type, dynamic);
       });
 
@@ -103,6 +107,10 @@ describe('Hosts.cy.ts', () => {
       });
 
       it('should have filters for Name, Description, Created By and Modified By', () => {
+        cy.intercept(
+          { method: 'OPTIONS', url: '/api/v2/hosts/' },
+          { fixture: 'mock_options.json' }
+        );
         testFilters(component, params, type, dynamic);
       });
 
@@ -187,7 +195,11 @@ describe('Hosts.cy.ts', () => {
         });
 
         it('should have filters for Name, Created By and Modified By', () => {
-          testFilters(component, params, type, dynamic);
+          cy.intercept(
+            { method: 'OPTIONS', url: '/api/v2/hosts/' },
+            { fixture: 'mock_options.json' }
+          );
+          testFilters(component, params, type, false);
         });
       });
 
