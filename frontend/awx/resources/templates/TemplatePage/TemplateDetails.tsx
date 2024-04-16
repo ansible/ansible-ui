@@ -8,7 +8,13 @@ import {
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { LoadingPage, PageDetail, PageDetails, useGetPageUrl } from '../../../../../framework';
+import {
+  LoadingPage,
+  PageDetail,
+  PageDetails,
+  useGetPageUrl,
+  getPatternflyColor,
+} from '../../../../../framework';
 import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageDetailCodeEditor';
 import { LastModifiedPageDetail } from '../../../../common/LastModifiedPageDetail';
 import { useGet, useGetItem } from '../../../../common/crud/useGet';
@@ -23,7 +29,7 @@ import { AwxRoute } from '../../../main/AwxRoutes';
 import styled from 'styled-components';
 
 const DangerText = styled.span`
-  color: var(--pf-v5-global--danger-color--200);
+  color: ${getPatternflyColor('danger')};
 `;
 
 const DeletedDetail = () => {
