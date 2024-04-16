@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { LoadingPage, PageFormSelect } from '../../../../../framework';
 import { useOptions } from '../../../../common/crud/useOptions';
 import { edaAPI } from '../../../common/eda-utils';
+import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
 
 interface ContentTypeOption {
   value: string;
@@ -10,6 +11,7 @@ interface ContentTypeOption {
 
 export function EdaSelectResourceTypeStep() {
   const { t } = useTranslation();
+  const { setWizardData } = usePageWizard();
   const { data, isLoading } = useOptions<{
     actions: { POST: { content_type: { choices: ContentTypeOption[] } } };
   }>(edaAPI`/role_definitions/`);
@@ -30,6 +32,7 @@ export function EdaSelectResourceTypeStep() {
           value,
           label: display_name,
         }))}
+      onChange={() => setWizardData({})}
     />
   );
 }
