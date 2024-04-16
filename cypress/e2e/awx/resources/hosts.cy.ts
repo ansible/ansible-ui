@@ -44,16 +44,17 @@ describe('host and inventory host', () => {
     const url = '/infrastructure/hosts?page=1&perPage=10&sort=name';
     cy.createInventoryHostGroup(organization).then((result) => {
       const { inventory, host, group } = result;
+      // TODO: unsafe assignment, find a better way to retrieve host id it doesn't return always
       const hostid = host.id ? host.id.toString() : '';
       navigateToHost(url, host.name, '[data-cy="name-column-cell"] a');
       expect(host.inventory).to.eq(inventory.id);
       expect(group.inventory).to.eq(inventory.id);
       cy.clickLink(/^Groups$/);
       //check edit group
-      cy.get('[data-cy="edit-group"]').click();
+      cy.getByDataCy('edit-group').click();
       cy.verifyPageTitle('Edit group');
-      cy.get('[data-cy="name-form-group"]').type('-changed');
-      cy.get('[data-cy="Submit"]').click();
+      cy.getByDataCy('name-form-group').type('-changed');
+      cy.getByDataCy('Submit').click();
       cy.verifyPageTitle(group.name + '-changed');
       cy.requestPost<{ name: string; inventory: number; id: number }>(
         awxAPI`/hosts/${hostid}/groups/`,
@@ -62,30 +63,30 @@ describe('host and inventory host', () => {
           inventory: host.inventory,
         }
       ).then((group: { name: string; id: number }) => {
-        /// check multiple assosiate and disasosiate
-        // disasosiate
+        /// check multiple associate and disassociate
+        // disassociate
         navigateToHost(url, host.name, '[data-cy="name-column-cell"] a');
         cy.clickLink(/^Groups$/);
-        cy.get(`[data-cy="select-all"]`).click();
+        cy.getByDataCy('select-all').click();
         disassociate();
-        cy.get('[data-cy="empty-state-title"]').contains(
+        cy.getByDataCy('empty-state-title').contains(
           /^There are currently no groups associated with this host/
         );
         // Add - multi groups
         cy.clickButton(/^Associate groups$/);
-        cy.get('[data-cy="select-all"]').click();
+        cy.getByDataCy('select-all').click();
         cy.clickModalButton('Confirm');
         cy.contains('button', 'Close').click();
         cy.contains(group.name);
-        /// single disasosiate
+        /// single disassociate
         cy.searchAndDisplayResource(group.name);
         cy.get(`[data-cy="row-id-${group.id}"] [data-cy="checkbox-column-cell"]`).click();
         disassociate();
         navigateToHost(url, host.name, '[data-cy="name-column-cell"] a');
         cy.clickLink(/^Groups$/);
         cy.contains(group.name).should('not.exist');
-        //check single assosiate
-        cy.get('[data-cy="associate"]').click();
+        //check single associate
+        cy.getByDataCy('associate').click();
         cy.get(`[data-cy="row-id-${group.id}"] [data-cy="checkbox-column-cell"]`).click();
         cy.clickModalButton('Confirm');
         cy.contains('button', 'Close').click();
@@ -99,7 +100,7 @@ describe('host and inventory host', () => {
     const hostName = 'E2E Inventory host ' + randomString(4);
 
     if (inventory_host) {
-      cy.get('[data-cy="empty-state-title"]').contains(
+      cy.getByDataCy('empty-state-title').contains(
         /^There are currently no hosts added to this inventory./
       );
     }
@@ -107,11 +108,11 @@ describe('host and inventory host', () => {
     // create
     cy.clickButton(/^Create host$/);
     cy.verifyPageTitle('Create Host');
-    cy.get('[data-cy="name"]').type(hostName);
-    cy.get('[data-cy="description"]').type('This is the description');
+    cy.getByDataCy('name').type(hostName);
+    cy.getByDataCy('description').type('This is the description');
 
     if (!inventory_host) {
-      cy.get(`[data-cy="inventory-id"]`).click();
+      cy.getByDataCy('inventory-id').click();
       cy.contains('button', 'Browse').click();
       cy.contains('Select Inventory');
       cy.get(`[aria-label="Select Inventory"]`).within(() => {
@@ -141,10 +142,10 @@ describe('host and inventory host', () => {
     }
     cy.filterTableByMultiSelect('name', [hostName]);
 
-    cy.get(`[data-cy='edit-host']`).click();
+    cy.getByDataCy('edit-host').click();
     cy.verifyPageTitle('Edit host');
-    cy.get('[data-cy="description"]').clear().type('This is the description edited');
-    cy.get(`[data-cy='Submit']`).click();
+    cy.getByDataCy('description').clear().type('This is the description edited');
+    cy.getByDataCy('Submit').click();
 
     cy.hasDetail(/^Description$/, 'This is the description edited');
   }
@@ -160,7 +161,7 @@ describe('host and inventory host', () => {
 
     cy.filterTableByMultiSelect('name', [hostName]);
     cy.get(`[data-cy="actions-column-cell"] [data-cy="actions-dropdown"]`).click();
-    cy.get(`[data-cy="delete-host"]`).click();
+    cy.getByDataCy('delete-host').click();
     cy.clickModalConfirmCheckbox();
     cy.clickModalButton('Delete hosts');
     cy.contains('button', 'Close').click();
@@ -174,7 +175,7 @@ describe('host and inventory host', () => {
   }
 
   function disassociate() {
-    cy.get('[data-cy="disassociate"]').click();
+    cy.getByDataCy('disassociate').click();
     cy.clickModalConfirmCheckbox();
     cy.clickModalButton('Disassociate groups');
     cy.assertModalSuccess();
