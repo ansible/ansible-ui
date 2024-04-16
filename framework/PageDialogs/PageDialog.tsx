@@ -9,7 +9,10 @@ const PageDialogContext = createContext({
 
 export function PageDialogProvider(props: { children: ReactNode }) {
   const [dialogs, setDialogs] = useState<ReactNode[]>([]);
-  const clearDialogs = useCallback(() => setDialogs([]), [setDialogs]);
+  const clearDialogs = useCallback(
+    () => setDialogs((current) => (current.length ? [] : current)),
+    [setDialogs]
+  );
   const pushDialog = useCallback(
     (dialog: ReactNode) => setDialogs((dialogs) => [...dialogs, dialog]),
     [setDialogs]
