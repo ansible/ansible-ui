@@ -1,9 +1,10 @@
 import { useMemo, useState } from 'react';
 import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
-import { Badge, Divider, ExpandableSection, Title, TextContent } from '@patternfly/react-core';
+import { Badge, Divider, ExpandableSection, Title } from '@patternfly/react-core';
 import { getItemKey } from '../../../crud/Data';
 import {
   ITableColumn,
+  PageDetails,
   PageDetail,
   PageTable,
   TextCell,
@@ -38,13 +39,13 @@ export function RoleAssignmentsReviewStep() {
   const { resourceType, resources, users, teams, edaRoles } = wizardData as ReviewData;
 
   return (
-    <TextContent>
+    <>
       <Title headingLevel="h1">{t('Review')}</Title>
       {resourceType ? (
         <>
-          <PageDetail fullWidth label={t('Resource type')}>
-            {resourceType}
-          </PageDetail>
+          <PageDetails>
+            <PageDetail label={t('Resource type')}>{resourceType}</PageDetail>
+          </PageDetails>
           <Divider />
         </>
       ) : null}
@@ -69,7 +70,7 @@ export function RoleAssignmentsReviewStep() {
       {edaRoles && edaRoles.length ? (
         <ReviewExpandableList selectedItems={edaRoles} fieldName="edaRoles" />
       ) : null}
-    </TextContent>
+    </>
   );
 }
 
