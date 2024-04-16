@@ -96,6 +96,7 @@ export function ScheduleRules() {
         errorStateTitle={t('Error loading rule')}
         emptyStateTitle={t('No rules yet')}
         emptyStateDescription={t('To get started, create a rule.')}
+        emptyStateButtonIcon={<PlusCircleIcon />}
         emptyStateButtonText={t('Create Rule')}
         emptyStateButtonClick={() => navigate(createUrl)}
         defaultSubtitle={t('Rules')}

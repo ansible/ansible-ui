@@ -13,6 +13,7 @@ import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
 import { useHostsActions } from './hooks/useHostsActions';
 import { useOptions } from '../../../common/crud/useOptions';
 import { OptionsResponse, ActionsResponse } from '../../interfaces/OptionsResponse';
+import { PlusCircleIcon } from '@patternfly/react-icons';
 
 export function Hosts() {
   const { t } = useTranslation();
@@ -70,6 +71,7 @@ export function Hosts() {
                 'Please contact your organization administrator if there is an issue with your access.'
               )
         }
+        emptyStateButtonIcon={<PlusCircleIcon />}
         emptyStateButtonText={canCreateHost ? t('Create host') : undefined}
         emptyStateButtonClick={canCreateHost ? () => pageNavigate(AwxRoute.CreateHost) : undefined}
         {...view}

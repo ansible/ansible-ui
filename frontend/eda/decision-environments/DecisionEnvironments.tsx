@@ -9,6 +9,7 @@ import { useDecisionEnvironmentActions } from './hooks/useDecisionEnvironmentAct
 import { useDecisionEnvironmentsColumns } from './hooks/useDecisionEnvironmentColumns';
 import { useDecisionEnvironmentFilters } from './hooks/useDecisionEnvironmentFilters';
 import { useDecisionEnvironmentsActions } from './hooks/useDecisionEnvironmentsActions';
+import { PlusCircleIcon } from '@patternfly/react-icons';
 
 export function DecisionEnvironments() {
   const { t } = useTranslation();
@@ -40,6 +41,7 @@ export function DecisionEnvironments() {
           'There are currently no decision environments created for your organization.'
         )}
         emptyStateDescription={t('Please create a decision environment by using the button below.')}
+        emptyStateButtonIcon={<PlusCircleIcon />}
         emptyStateButtonText={t('Create decision environment')}
         emptyStateButtonClick={() => pageNavigate(EdaRoute.CreateDecisionEnvironment)}
         {...view}

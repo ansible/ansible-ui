@@ -108,6 +108,7 @@ function UserOrganizationsInternal(props: { user: AwxUser }) {
         errorStateTitle={t('Error loading organizations')}
         emptyStateTitle={t('User is not a member of any organizations.')}
         emptyStateDescription={t('To get started, add the user to an organization.')}
+        emptyStateButtonIcon={<PlusCircleIcon />}
         emptyStateButtonText={t('Add user to organization')}
         emptyStateButtonClick={() => selectOrganizationsAddUsers([user])}
         {...view}
