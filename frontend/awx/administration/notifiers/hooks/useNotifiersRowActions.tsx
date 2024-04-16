@@ -19,7 +19,8 @@ import {
 
 export function useNotifiersRowActions(
   onComplete: (notification: NotificationTemplate[]) => void,
-  onNotifierCopied = () => null
+  onNotifierCopied = () => null,
+  detail? : 'detail' | undefined,
 ) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
@@ -40,7 +41,7 @@ export function useNotifiersRowActions(
           }),
         isDisabled: (notification) => cannotEditResource(notification, t),
         isDanger: false,
-        isPinned: true,
+        isPinned: true, 
       },
       {
         type: PageActionType.Button,
@@ -51,6 +52,7 @@ export function useNotifiersRowActions(
         isDisabled: (notification) => cannotCopyResource(notification, t),
         isDanger: false,
         isPinned: true,
+        isHidden: () => detail === 'detail',
       },
       { type: PageActionType.Seperator },
       {

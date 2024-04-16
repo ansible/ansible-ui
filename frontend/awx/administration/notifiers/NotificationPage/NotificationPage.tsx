@@ -9,6 +9,10 @@ import { AwxError } from '../../../common/AwxError';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { NotificationTemplate } from '../../../interfaces/NotificationTemplate';
 import { AwxRoute } from '../../../main/AwxRoutes';
+import { useNotifiersRowActions } from '../hooks/useNotifiersRowActions';
+import { DropdownPosition } from '@patternfly/react-core/deprecated';
+import { PageActions } from '../../../../../framework';
+import { usePageNavigate } from '../../../../../framework';
 
 export function NotificationPage() {
   const { t } = useTranslation();
@@ -19,7 +23,10 @@ export function NotificationPage() {
     refresh,
   } = useGetItem<NotificationTemplate>(awxAPI`/notification_templates`, params.id);
 
+  const pageNavigate = usePageNavigate();
+
   const getPageUrl = useGetPageUrl();
+  const pageActions = useNotifiersRowActions(() => { pageNavigate(AwxRoute.NotificationTemplates)}, undefined, 'detail');
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!notificationTemplate) return <LoadingPage breadcrumbs tabs />;
@@ -32,7 +39,11 @@ export function NotificationPage() {
           { label: t('Notifiers'), to: getPageUrl(AwxRoute.NotificationTemplates) },
           { label: notificationTemplate?.name },
         ]}
-        headerActions={[]}
+        headerActions={ <PageActions<NotificationTemplate>
+          actions={pageActions}
+          position={DropdownPosition.right}
+          selectedItem={notificationTemplate}
+        />}
       />
       <PageRoutedTabs
         backTab={{
