@@ -12,3 +12,12 @@ export interface EdaCredentialTypeInputs {
     default?: number | string | boolean;
   }[];
 }
+
+export interface EdaCredentialTypeField {
+  id: string;
+  label: string;
+  type: string;
+  help_text: string;
+  ask_at_runtime?: boolean;
+  default?: number | string | boolean;
+}

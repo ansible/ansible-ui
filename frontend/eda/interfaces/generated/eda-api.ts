@@ -33,6 +33,7 @@ export interface ActivationCreate {
    */
   log_level?: LogLevelEnum;
   eda_credentials?: number[] | null;
+  k8s_service_name?: string | null;
 }
 
 /** Serializer for the Activation Instance model. */
@@ -50,6 +51,7 @@ export interface ActivationInstance {
    * * `completed` - completed
    * * `unresponsive` - unresponsive
    * * `error` - error
+   * * `workers offline` - workers offline
    */
   status?: StatusEnum;
   git_hash?: string;
@@ -97,6 +99,7 @@ export interface ActivationList {
    * * `completed` - completed
    * * `unresponsive` - unresponsive
    * * `error` - error
+   * * `workers offline` - workers offline
    */
   status?: StatusEnum;
   decision_environment_id: number | null;
@@ -154,6 +157,7 @@ export interface ActivationRead {
    * * `completed` - completed
    * * `unresponsive` - unresponsive
    * * `error` - error
+   * * `workers offline` - workers offline
    */
   status?: StatusEnum;
   git_hash?: string;
@@ -194,6 +198,7 @@ export interface ActivationRead {
    * * `error` - error
    */
   log_level?: LogLevelEnum;
+  k8s_service_name?: string | null;
 }
 
 export interface AuditAction {
@@ -310,30 +315,30 @@ export interface AwxTokenCreate {
 }
 
 /**
- * * `eda.rulebook` - Rulebook
- * * `eda.credentialtype` - Credential Type
+ * * `eda.project` - Project
+ * * `eda.decisionenvironment` - Decision Environment
  * * `eda.activation` - Activation
- * * `shared.team` - Team
- * * `eda.auditrule` - Audit Rule
  * * `eda.extravar` - Extra Var
  * * `shared.organization` - Organization
- * * `eda.project` - Project
- * * `eda.rulebookprocess` - Rulebook Process
- * * `eda.decisionenvironment` - Decision Environment
+ * * `shared.team` - Team
  * * `eda.edacredential` - Eda Credential
+ * * `eda.auditrule` - Audit Rule
+ * * `eda.rulebook` - Rulebook
+ * * `eda.credentialtype` - Credential Type
+ * * `eda.rulebookprocess` - Rulebook Process
  */
 export enum ContentTypeEnum {
-  EdaRulebook = 'eda.rulebook',
-  EdaCredentialtype = 'eda.credentialtype',
+  EdaProject = 'eda.project',
+  EdaDecisionenvironment = 'eda.decisionenvironment',
   EdaActivation = 'eda.activation',
-  SharedTeam = 'shared.team',
-  EdaAuditrule = 'eda.auditrule',
   EdaExtravar = 'eda.extravar',
   SharedOrganization = 'shared.organization',
-  EdaProject = 'eda.project',
-  EdaRulebookprocess = 'eda.rulebookprocess',
-  EdaDecisionenvironment = 'eda.decisionenvironment',
+  SharedTeam = 'shared.team',
   EdaEdacredential = 'eda.edacredential',
+  EdaAuditrule = 'eda.auditrule',
+  EdaRulebook = 'eda.rulebook',
+  EdaCredentialtype = 'eda.credentialtype',
+  EdaRulebookprocess = 'eda.rulebookprocess',
 }
 
 export interface CredentialType {
@@ -1067,17 +1072,17 @@ export interface PatchedRoleDefinition {
   /**
    * The type of resource this applies to
    *
-   * * `eda.rulebook` - Rulebook
-   * * `eda.credentialtype` - Credential Type
+   * * `eda.project` - Project
+   * * `eda.decisionenvironment` - Decision Environment
    * * `eda.activation` - Activation
-   * * `shared.team` - Team
-   * * `eda.auditrule` - Audit Rule
    * * `eda.extravar` - Extra Var
    * * `shared.organization` - Organization
-   * * `eda.project` - Project
-   * * `eda.rulebookprocess` - Rulebook Process
-   * * `eda.decisionenvironment` - Decision Environment
+   * * `shared.team` - Team
    * * `eda.edacredential` - Eda Credential
+   * * `eda.auditrule` - Audit Rule
+   * * `eda.rulebook` - Rulebook
+   * * `eda.credentialtype` - Credential Type
+   * * `eda.rulebookprocess` - Rulebook Process
    */
   content_type?: ContentTypeEnum | NullEnum | null;
   /**
@@ -1131,80 +1136,80 @@ export interface PatchedUserCreateUpdate {
 }
 
 /**
- * * `eda.view_rulebook` - eda.view_rulebook
- * * `eda.add_credentialtype` - eda.add_credentialtype
- * * `eda.change_credentialtype` - eda.change_credentialtype
- * * `eda.delete_credentialtype` - eda.delete_credentialtype
- * * `eda.view_credentialtype` - eda.view_credentialtype
+ * * `eda.add_project` - eda.add_project
+ * * `eda.change_project` - eda.change_project
+ * * `eda.delete_project` - eda.delete_project
+ * * `eda.view_project` - eda.view_project
+ * * `eda.add_decisionenvironment` - eda.add_decisionenvironment
+ * * `eda.change_decisionenvironment` - eda.change_decisionenvironment
+ * * `eda.delete_decisionenvironment` - eda.delete_decisionenvironment
+ * * `eda.view_decisionenvironment` - eda.view_decisionenvironment
  * * `eda.add_activation` - eda.add_activation
  * * `eda.view_activation` - eda.view_activation
  * * `eda.delete_activation` - eda.delete_activation
  * * `eda.enable_activation` - eda.enable_activation
  * * `eda.disable_activation` - eda.disable_activation
  * * `eda.restart_activation` - eda.restart_activation
- * * `eda.add_team` - eda.add_team
- * * `eda.change_team` - eda.change_team
- * * `eda.delete_team` - eda.delete_team
- * * `eda.view_team` - eda.view_team
- * * `eda.member_team` - eda.member_team
- * * `eda.view_auditrule` - eda.view_auditrule
  * * `eda.add_extravar` - eda.add_extravar
  * * `eda.view_extravar` - eda.view_extravar
  * * `eda.change_organization` - eda.change_organization
  * * `eda.delete_organization` - eda.delete_organization
  * * `eda.view_organization` - eda.view_organization
  * * `eda.member_organization` - eda.member_organization
- * * `eda.add_project` - eda.add_project
- * * `eda.change_project` - eda.change_project
- * * `eda.delete_project` - eda.delete_project
- * * `eda.view_project` - eda.view_project
- * * `eda.view_rulebookprocess` - eda.view_rulebookprocess
- * * `eda.add_decisionenvironment` - eda.add_decisionenvironment
- * * `eda.change_decisionenvironment` - eda.change_decisionenvironment
- * * `eda.delete_decisionenvironment` - eda.delete_decisionenvironment
- * * `eda.view_decisionenvironment` - eda.view_decisionenvironment
+ * * `eda.add_team` - eda.add_team
+ * * `eda.change_team` - eda.change_team
+ * * `eda.delete_team` - eda.delete_team
+ * * `eda.view_team` - eda.view_team
+ * * `eda.member_team` - eda.member_team
  * * `eda.add_edacredential` - eda.add_edacredential
  * * `eda.change_edacredential` - eda.change_edacredential
  * * `eda.delete_edacredential` - eda.delete_edacredential
  * * `eda.view_edacredential` - eda.view_edacredential
+ * * `eda.view_auditrule` - eda.view_auditrule
+ * * `eda.view_rulebook` - eda.view_rulebook
+ * * `eda.add_credentialtype` - eda.add_credentialtype
+ * * `eda.change_credentialtype` - eda.change_credentialtype
+ * * `eda.delete_credentialtype` - eda.delete_credentialtype
+ * * `eda.view_credentialtype` - eda.view_credentialtype
+ * * `eda.view_rulebookprocess` - eda.view_rulebookprocess
  */
 export enum PermissionsEnum {
-  EdaViewRulebook = 'eda.view_rulebook',
-  EdaAddCredentialtype = 'eda.add_credentialtype',
-  EdaChangeCredentialtype = 'eda.change_credentialtype',
-  EdaDeleteCredentialtype = 'eda.delete_credentialtype',
-  EdaViewCredentialtype = 'eda.view_credentialtype',
+  EdaAddProject = 'eda.add_project',
+  EdaChangeProject = 'eda.change_project',
+  EdaDeleteProject = 'eda.delete_project',
+  EdaViewProject = 'eda.view_project',
+  EdaAddDecisionenvironment = 'eda.add_decisionenvironment',
+  EdaChangeDecisionenvironment = 'eda.change_decisionenvironment',
+  EdaDeleteDecisionenvironment = 'eda.delete_decisionenvironment',
+  EdaViewDecisionenvironment = 'eda.view_decisionenvironment',
   EdaAddActivation = 'eda.add_activation',
   EdaViewActivation = 'eda.view_activation',
   EdaDeleteActivation = 'eda.delete_activation',
   EdaEnableActivation = 'eda.enable_activation',
   EdaDisableActivation = 'eda.disable_activation',
   EdaRestartActivation = 'eda.restart_activation',
-  EdaAddTeam = 'eda.add_team',
-  EdaChangeTeam = 'eda.change_team',
-  EdaDeleteTeam = 'eda.delete_team',
-  EdaViewTeam = 'eda.view_team',
-  EdaMemberTeam = 'eda.member_team',
-  EdaViewAuditrule = 'eda.view_auditrule',
   EdaAddExtravar = 'eda.add_extravar',
   EdaViewExtravar = 'eda.view_extravar',
   EdaChangeOrganization = 'eda.change_organization',
   EdaDeleteOrganization = 'eda.delete_organization',
   EdaViewOrganization = 'eda.view_organization',
   EdaMemberOrganization = 'eda.member_organization',
-  EdaAddProject = 'eda.add_project',
-  EdaChangeProject = 'eda.change_project',
-  EdaDeleteProject = 'eda.delete_project',
-  EdaViewProject = 'eda.view_project',
-  EdaViewRulebookprocess = 'eda.view_rulebookprocess',
-  EdaAddDecisionenvironment = 'eda.add_decisionenvironment',
-  EdaChangeDecisionenvironment = 'eda.change_decisionenvironment',
-  EdaDeleteDecisionenvironment = 'eda.delete_decisionenvironment',
-  EdaViewDecisionenvironment = 'eda.view_decisionenvironment',
+  EdaAddTeam = 'eda.add_team',
+  EdaChangeTeam = 'eda.change_team',
+  EdaDeleteTeam = 'eda.delete_team',
+  EdaViewTeam = 'eda.view_team',
+  EdaMemberTeam = 'eda.member_team',
   EdaAddEdacredential = 'eda.add_edacredential',
   EdaChangeEdacredential = 'eda.change_edacredential',
   EdaDeleteEdacredential = 'eda.delete_edacredential',
   EdaViewEdacredential = 'eda.view_edacredential',
+  EdaViewAuditrule = 'eda.view_auditrule',
+  EdaViewRulebook = 'eda.view_rulebook',
+  EdaAddCredentialtype = 'eda.add_credentialtype',
+  EdaChangeCredentialtype = 'eda.change_credentialtype',
+  EdaDeleteCredentialtype = 'eda.delete_credentialtype',
+  EdaViewCredentialtype = 'eda.view_credentialtype',
+  EdaViewRulebookprocess = 'eda.view_rulebookprocess',
 }
 
 export interface Project {
@@ -1216,7 +1221,7 @@ export interface Project {
   scm_branch?: string;
   scm_refspec?: string;
   verify_ssl?: boolean;
-  proxy?: string;
+  proxy: string;
   id: number;
   url: string;
   scm_type: ScmTypeEnum;
@@ -1254,7 +1259,7 @@ export interface ProjectRead {
   verify_ssl?: boolean;
   scm_branch?: string;
   scm_refspec?: string;
-  proxy?: string;
+  proxy: string;
   id: number;
   url: string;
   scm_type: ScmTypeEnum;
@@ -1332,17 +1337,17 @@ export interface RoleDefinition {
   /**
    * The type of resource this applies to
    *
-   * * `eda.rulebook` - Rulebook
-   * * `eda.credentialtype` - Credential Type
+   * * `eda.project` - Project
+   * * `eda.decisionenvironment` - Decision Environment
    * * `eda.activation` - Activation
-   * * `shared.team` - Team
-   * * `eda.auditrule` - Audit Rule
    * * `eda.extravar` - Extra Var
    * * `shared.organization` - Organization
-   * * `eda.project` - Project
-   * * `eda.rulebookprocess` - Rulebook Process
-   * * `eda.decisionenvironment` - Decision Environment
+   * * `shared.team` - Team
    * * `eda.edacredential` - Eda Credential
+   * * `eda.auditrule` - Audit Rule
+   * * `eda.rulebook` - Rulebook
+   * * `eda.credentialtype` - Credential Type
+   * * `eda.rulebookprocess` - Rulebook Process
    */
   content_type?: ContentTypeEnum | NullEnum | null;
   /**
@@ -1369,17 +1374,17 @@ export interface RoleDefinitionCreate {
   /**
    * The type of resource this applies to
    *
-   * * `eda.rulebook` - Rulebook
-   * * `eda.credentialtype` - Credential Type
+   * * `eda.project` - Project
+   * * `eda.decisionenvironment` - Decision Environment
    * * `eda.activation` - Activation
-   * * `shared.team` - Team
-   * * `eda.auditrule` - Audit Rule
    * * `eda.extravar` - Extra Var
    * * `shared.organization` - Organization
-   * * `eda.project` - Project
-   * * `eda.rulebookprocess` - Rulebook Process
-   * * `eda.decisionenvironment` - Decision Environment
+   * * `shared.team` - Team
    * * `eda.edacredential` - Eda Credential
+   * * `eda.auditrule` - Audit Rule
+   * * `eda.rulebook` - Rulebook
+   * * `eda.credentialtype` - Credential Type
+   * * `eda.rulebookprocess` - Rulebook Process
    */
   content_type?: ContentTypeEnum | NullEnum | null;
   name: string;
@@ -1395,17 +1400,17 @@ export interface RoleDefinitionDetail {
   /**
    * The type of resource this applies to
    *
-   * * `eda.rulebook` - Rulebook
-   * * `eda.credentialtype` - Credential Type
+   * * `eda.project` - Project
+   * * `eda.decisionenvironment` - Decision Environment
    * * `eda.activation` - Activation
-   * * `shared.team` - Team
-   * * `eda.auditrule` - Audit Rule
    * * `eda.extravar` - Extra Var
    * * `shared.organization` - Organization
-   * * `eda.project` - Project
-   * * `eda.rulebookprocess` - Rulebook Process
-   * * `eda.decisionenvironment` - Decision Environment
+   * * `shared.team` - Team
    * * `eda.edacredential` - Eda Credential
+   * * `eda.auditrule` - Audit Rule
+   * * `eda.rulebook` - Rulebook
+   * * `eda.credentialtype` - Credential Type
+   * * `eda.rulebookprocess` - Rulebook Process
    */
   content_type: ContentTypeEnum;
   /**
@@ -1435,17 +1440,17 @@ export interface RoleTeamAssignment {
   /**
    * The type of resource this applies to
    *
-   * * `eda.rulebook` - Rulebook
-   * * `eda.credentialtype` - Credential Type
+   * * `eda.project` - Project
+   * * `eda.decisionenvironment` - Decision Environment
    * * `eda.activation` - Activation
-   * * `shared.team` - Team
-   * * `eda.auditrule` - Audit Rule
    * * `eda.extravar` - Extra Var
    * * `shared.organization` - Organization
-   * * `eda.project` - Project
-   * * `eda.rulebookprocess` - Rulebook Process
-   * * `eda.decisionenvironment` - Decision Environment
+   * * `shared.team` - Team
    * * `eda.edacredential` - Eda Credential
+   * * `eda.auditrule` - Audit Rule
+   * * `eda.rulebook` - Rulebook
+   * * `eda.credentialtype` - Credential Type
+   * * `eda.rulebookprocess` - Rulebook Process
    */
   content_type: ContentTypeEnum;
   /**
@@ -1499,17 +1504,17 @@ export interface RoleUserAssignment {
   /**
    * The type of resource this applies to
    *
-   * * `eda.rulebook` - Rulebook
-   * * `eda.credentialtype` - Credential Type
+   * * `eda.project` - Project
+   * * `eda.decisionenvironment` - Decision Environment
    * * `eda.activation` - Activation
-   * * `shared.team` - Team
-   * * `eda.auditrule` - Audit Rule
    * * `eda.extravar` - Extra Var
    * * `shared.organization` - Organization
-   * * `eda.project` - Project
-   * * `eda.rulebookprocess` - Rulebook Process
-   * * `eda.decisionenvironment` - Decision Environment
+   * * `shared.team` - Team
    * * `eda.edacredential` - Eda Credential
+   * * `eda.auditrule` - Audit Rule
+   * * `eda.rulebook` - Rulebook
+   * * `eda.credentialtype` - Credential Type
+   * * `eda.rulebookprocess` - Rulebook Process
    */
   content_type: ContentTypeEnum;
   /**
@@ -1591,6 +1596,7 @@ export enum ScmTypeEnum {
  * * `completed` - completed
  * * `unresponsive` - unresponsive
  * * `error` - error
+ * * `workers offline` - workers offline
  */
 export enum StatusEnum {
   Starting = 'starting',
@@ -1603,6 +1609,7 @@ export enum StatusEnum {
   Completed = 'completed',
   Unresponsive = 'unresponsive',
   Error = 'error',
+  WorkersOffline = 'workers offline',
 }
 
 export interface Team {
@@ -1852,8 +1859,8 @@ export class HttpClient<SecurityDataType = unknown> {
           property instanceof Blob
             ? property
             : typeof property === 'object' && property !== null
-            ? JSON.stringify(property)
-            : `${property}`
+              ? JSON.stringify(property)
+              : `${property}`
         );
         return formData;
       }, new FormData()),
@@ -2878,7 +2885,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       }),
 
     /**
-     * No description
+     * @description Delete an organization by id
      *
      * @tags organizations
      * @name OrganizationsDestroy
@@ -2886,7 +2893,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @secure
      */
     organizationsDestroy: (id: number, params: RequestParams = {}) =>
-      this.request<void, any>({
+      this.request<void, void>({
         path: `/organizations/${id}/`,
         method: 'DELETE',
         secure: true,

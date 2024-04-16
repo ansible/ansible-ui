@@ -5,7 +5,7 @@ import {
   PageFormTextInput,
 } from '../../../../framework';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
-import { EdaCredentialType } from '../../interfaces/EdaCredentialType';
+import { EdaCredentialType, EdaCredentialTypeField } from '../../interfaces/EdaCredentialType';
 
 export interface OptionsResponse {
   actions: {
@@ -36,13 +36,13 @@ interface IFieldTypeBoolean extends IFieldTypeBase {
 }
 
 export function CredentialFormInputs(props: { credentialType: EdaCredentialType | undefined }) {
-  const fields = props?.credentialType?.inputs.fields;
+  const fields = props?.credentialType?.inputs?.fields as EdaCredentialTypeField[];
   return fields?.map((field) => {
     return (
       <CredentialFormInput
         key={field.label}
         field={field as FieldType}
-        required={props.credentialType?.inputs?.required || []}
+        required={props.credentialType?.inputs?.required as string[]}
       />
     );
   });

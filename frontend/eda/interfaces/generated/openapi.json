@@ -45,9 +45,7 @@
             "description": "Filter by activation instance status."
           }
         ],
-        "tags": [
-          "activation-instances"
-        ],
+        "tags": ["activation-instances"],
         "security": [
           {
             "cookieAuth": []
@@ -117,9 +115,7 @@
             }
           }
         ],
-        "tags": [
-          "activation-instances"
-        ],
+        "tags": ["activation-instances"],
         "security": [
           {
             "cookieAuth": []
@@ -163,9 +159,7 @@
             "required": true
           }
         ],
-        "tags": [
-          "activation-instances"
-        ],
+        "tags": ["activation-instances"],
         "security": [
           {
             "cookieAuth": []
@@ -242,9 +236,7 @@
             "description": "Filter by activation status."
           }
         ],
-        "tags": [
-          "activations"
-        ],
+        "tags": ["activations"],
         "security": [
           {
             "cookieAuth": []
@@ -274,9 +266,7 @@
       },
       "post": {
         "operationId": "activations_create",
-        "tags": [
-          "activations"
-        ],
+        "tags": ["activations"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -377,9 +367,7 @@
             "description": "Filter by activation instance status."
           }
         ],
-        "tags": [
-          "activations"
-        ],
+        "tags": ["activations"],
         "security": [
           {
             "cookieAuth": []
@@ -422,9 +410,7 @@
             "required": true
           }
         ],
-        "tags": [
-          "activations"
-        ],
+        "tags": ["activations"],
         "security": [
           {
             "cookieAuth": []
@@ -466,9 +452,7 @@
             "required": true
           }
         ],
-        "tags": [
-          "activations"
-        ],
+        "tags": ["activations"],
         "security": [
           {
             "cookieAuth": []
@@ -505,9 +489,7 @@
             "required": true
           }
         ],
-        "tags": [
-          "activations"
-        ],
+        "tags": ["activations"],
         "security": [
           {
             "cookieAuth": []
@@ -544,9 +526,7 @@
             "required": true
           }
         ],
-        "tags": [
-          "activations"
-        ],
+        "tags": ["activations"],
         "security": [
           {
             "cookieAuth": []
@@ -589,9 +569,7 @@
             "required": true
           }
         ],
-        "tags": [
-          "activations"
-        ],
+        "tags": ["activations"],
         "security": [
           {
             "cookieAuth": []
@@ -657,9 +635,7 @@
             }
           }
         ],
-        "tags": [
-          "audit-rules"
-        ],
+        "tags": ["audit-rules"],
         "security": [
           {
             "cookieAuth": []
@@ -738,9 +714,7 @@
             }
           }
         ],
-        "tags": [
-          "audit-rules"
-        ],
+        "tags": ["audit-rules"],
         "security": [
           {
             "cookieAuth": []
@@ -819,9 +793,7 @@
             "description": "Filter by rule audit event source name."
           }
         ],
-        "tags": [
-          "audit-rules"
-        ],
+        "tags": ["audit-rules"],
         "security": [
           {
             "cookieAuth": []
@@ -865,9 +837,7 @@
             "required": true
           }
         ],
-        "tags": [
-          "audit-rules"
-        ],
+        "tags": ["audit-rules"],
         "security": [
           {
             "cookieAuth": []
@@ -900,9 +870,7 @@
       "get": {
         "operationId": "auth_session_preflight",
         "description": "Use this method to set a CSRF cookie.",
-        "tags": [
-          "auth"
-        ],
+        "tags": ["auth"],
         "security": [
           {
             "cookieAuth": []
@@ -926,9 +894,7 @@
       "post": {
         "operationId": "auth_session_login",
         "description": "Session cookie login",
-        "tags": [
-          "auth"
-        ],
+        "tags": ["auth"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -977,9 +943,7 @@
       "post": {
         "operationId": "auth_session_logout",
         "description": "Session logout.",
-        "tags": [
-          "auth"
-        ],
+        "tags": ["auth"],
         "security": [
           {
             "cookieAuth": []
@@ -996,9 +960,7 @@
       "post": {
         "operationId": "auth_token_refresh_create",
         "description": "Takes a refresh type JSON web token and returns an access type JSON web\ntoken if the refresh token is valid.",
-        "tags": [
-          "auth"
-        ],
+        "tags": ["auth"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -1065,9 +1027,7 @@
             }
           }
         ],
-        "tags": [
-          "credential-types"
-        ],
+        "tags": ["credential-types"],
         "security": [
           {
             "cookieAuth": []
@@ -1098,9 +1058,7 @@
       "post": {
         "operationId": "credential_types_create",
         "description": "Create a new credential type.",
-        "tags": [
-          "credential-types"
-        ],
+        "tags": ["credential-types"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -1164,9 +1122,7 @@
             "required": true
           }
         ],
-        "tags": [
-          "credential-types"
-        ],
+        "tags": ["credential-types"],
         "security": [
           {
             "cookieAuth": []
@@ -1208,9 +1164,7 @@
             "required": true
           }
         ],
-        "tags": [
-          "credential-types"
-        ],
+        "tags": ["credential-types"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -1271,9 +1225,7 @@
             "required": true
           }
         ],
-        "tags": [
-          "credential-types"
-        ],
+        "tags": ["credential-types"],
         "security": [
           {
             "cookieAuth": []
@@ -1330,9 +1282,7 @@
             }
           }
         ],
-        "tags": [
-          "decision-environments"
-        ],
+        "tags": ["decision-environments"],
         "security": [
           {
             "cookieAuth": []
@@ -1363,9 +1313,7 @@
       "post": {
         "operationId": "decision_environments_create",
         "description": "Create a new decision environment.",
-        "tags": [
-          "decision-environments"
-        ],
+        "tags": ["decision-environments"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -1429,9 +1377,7 @@
             "required": true
           }
         ],
-        "tags": [
-          "decision-environments"
-        ],
+        "tags": ["decision-environments"],
         "security": [
           {
             "cookieAuth": []
@@ -1473,9 +1419,7 @@
             "required": true
           }
         ],
-        "tags": [
-          "decision-environments"
-        ],
+        "tags": ["decision-environments"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -1544,9 +1488,7 @@
             "required": true
           }
         ],
-        "tags": [
-          "decision-environments"
-        ],
+        "tags": ["decision-environments"],
         "security": [
           {
             "cookieAuth": []
@@ -1619,9 +1561,7 @@
             }
           }
         ],
-        "tags": [
-          "eda-credentials"
-        ],
+        "tags": ["eda-credentials"],
         "security": [
           {
             "cookieAuth": []
@@ -1652,9 +1592,7 @@
       "post": {
         "operationId": "eda_credentials_create",
         "description": "Create a new EDA credential.",
-        "tags": [
-          "eda-credentials"
-        ],
+        "tags": ["eda-credentials"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -1722,17 +1660,12 @@
             "name": "refs",
             "schema": {
               "type": "string",
-              "enum": [
-                "false",
-                "true"
-              ]
+              "enum": ["false", "true"]
             },
             "description": "Query resources that have reference to the credential by its id"
           }
         ],
-        "tags": [
-          "eda-credentials"
-        ],
+        "tags": ["eda-credentials"],
         "security": [
           {
             "cookieAuth": []
@@ -1774,9 +1707,7 @@
             "required": true
           }
         ],
-        "tags": [
-          "eda-credentials"
-        ],
+        "tags": ["eda-credentials"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -1845,9 +1776,7 @@
             "required": true
           }
         ],
-        "tags": [
-          "eda-credentials"
-        ],
+        "tags": ["eda-credentials"],
         "security": [
           {
             "cookieAuth": []
@@ -1893,9 +1822,7 @@
             }
           }
         ],
-        "tags": [
-          "extra-vars"
-        ],
+        "tags": ["extra-vars"],
         "security": [
           {
             "cookieAuth": []
@@ -1926,9 +1853,7 @@
       "post": {
         "operationId": "extra_vars_create",
         "description": "Create an extra_var",
-        "tags": [
-          "extra-vars"
-        ],
+        "tags": ["extra-vars"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -1992,9 +1917,7 @@
             "required": true
           }
         ],
-        "tags": [
-          "extra-vars"
-        ],
+        "tags": ["extra-vars"],
         "security": [
           {
             "cookieAuth": []
@@ -2063,9 +1986,7 @@
             }
           }
         ],
-        "tags": [
-          "organizations"
-        ],
+        "tags": ["organizations"],
         "security": [
           {
             "cookieAuth": []
@@ -2096,9 +2017,7 @@
       "post": {
         "operationId": "organizations_create",
         "description": "Create a new organization",
-        "tags": [
-          "organizations"
-        ],
+        "tags": ["organizations"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -2161,9 +2080,7 @@
             "required": true
           }
         ],
-        "tags": [
-          "organizations"
-        ],
+        "tags": ["organizations"],
         "security": [
           {
             "cookieAuth": []
@@ -2205,9 +2122,7 @@
             "required": true
           }
         ],
-        "tags": [
-          "organizations"
-        ],
+        "tags": ["organizations"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -2256,6 +2171,7 @@
       },
       "delete": {
         "operationId": "organizations_destroy",
+        "description": "Delete an organization by id",
         "parameters": [
           {
             "in": "path",
@@ -2267,9 +2183,7 @@
             "required": true
           }
         ],
-        "tags": [
-          "organizations"
-        ],
+        "tags": ["organizations"],
         "security": [
           {
             "cookieAuth": []
@@ -2286,7 +2200,10 @@
         ],
         "responses": {
           "204": {
-            "description": "No response body"
+            "description": "Delete successful."
+          },
+          "409": {
+            "description": "Default Organization cannot be deleted."
           }
         }
       }
@@ -2340,9 +2257,7 @@
             }
           }
         ],
-        "tags": [
-          "organizations"
-        ],
+        "tags": ["organizations"],
         "security": [
           {
             "cookieAuth": []
@@ -2411,9 +2326,7 @@
             "description": "Filter by project url."
           }
         ],
-        "tags": [
-          "projects"
-        ],
+        "tags": ["projects"],
         "security": [
           {
             "cookieAuth": []
@@ -2444,9 +2357,7 @@
       "post": {
         "operationId": "projects_create",
         "description": "Import a project.",
-        "tags": [
-          "projects"
-        ],
+        "tags": ["projects"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -2510,9 +2421,7 @@
             "required": true
           }
         ],
-        "tags": [
-          "projects"
-        ],
+        "tags": ["projects"],
         "security": [
           {
             "cookieAuth": []
@@ -2554,9 +2463,7 @@
             "required": true
           }
         ],
-        "tags": [
-          "projects"
-        ],
+        "tags": ["projects"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -2623,9 +2530,7 @@
             "required": true
           }
         ],
-        "tags": [
-          "projects"
-        ],
+        "tags": ["projects"],
         "security": [
           {
             "cookieAuth": []
@@ -2662,9 +2567,7 @@
             "required": true
           }
         ],
-        "tags": [
-          "projects"
-        ],
+        "tags": ["projects"],
         "security": [
           {
             "cookieAuth": []
@@ -2726,9 +2629,7 @@
             }
           }
         ],
-        "tags": [
-          "role_definitions"
-        ],
+        "tags": ["role_definitions"],
         "security": [
           {
             "cookieAuth": []
@@ -2759,9 +2660,7 @@
       "post": {
         "operationId": "role_definitions_create",
         "description": "Create a RoleDefinition.",
-        "tags": [
-          "role_definitions"
-        ],
+        "tags": ["role_definitions"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -2825,9 +2724,7 @@
             "required": true
           }
         ],
-        "tags": [
-          "role_definitions"
-        ],
+        "tags": ["role_definitions"],
         "security": [
           {
             "cookieAuth": []
@@ -2869,9 +2766,7 @@
             "required": true
           }
         ],
-        "tags": [
-          "role_definitions"
-        ],
+        "tags": ["role_definitions"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -2933,9 +2828,7 @@
             "required": true
           }
         ],
-        "tags": [
-          "role_definitions"
-        ],
+        "tags": ["role_definitions"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -2996,9 +2889,7 @@
             "required": true
           }
         ],
-        "tags": [
-          "role_definitions"
-        ],
+        "tags": ["role_definitions"],
         "security": [
           {
             "cookieAuth": []
@@ -3062,9 +2953,7 @@
             }
           }
         ],
-        "tags": [
-          "role_definitions"
-        ],
+        "tags": ["role_definitions"],
         "security": [
           {
             "cookieAuth": []
@@ -3116,9 +3005,7 @@
             "required": true
           }
         ],
-        "tags": [
-          "role_definitions"
-        ],
+        "tags": ["role_definitions"],
         "security": [
           {
             "cookieAuth": []
@@ -3189,9 +3076,7 @@
             }
           }
         ],
-        "tags": [
-          "role_definitions"
-        ],
+        "tags": ["role_definitions"],
         "security": [
           {
             "cookieAuth": []
@@ -3243,9 +3128,7 @@
             "required": true
           }
         ],
-        "tags": [
-          "role_definitions"
-        ],
+        "tags": ["role_definitions"],
         "security": [
           {
             "cookieAuth": []
@@ -3307,9 +3190,7 @@
             }
           }
         ],
-        "tags": [
-          "role_team_assignments"
-        ],
+        "tags": ["role_team_assignments"],
         "security": [
           {
             "cookieAuth": []
@@ -3340,9 +3221,7 @@
       "post": {
         "operationId": "role_team_assignments_create",
         "description": "Create a RoleTeamAssignment.",
-        "tags": [
-          "role_team_assignments"
-        ],
+        "tags": ["role_team_assignments"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -3406,9 +3285,7 @@
             "required": true
           }
         ],
-        "tags": [
-          "role_team_assignments"
-        ],
+        "tags": ["role_team_assignments"],
         "security": [
           {
             "cookieAuth": []
@@ -3450,9 +3327,7 @@
             "required": true
           }
         ],
-        "tags": [
-          "role_team_assignments"
-        ],
+        "tags": ["role_team_assignments"],
         "security": [
           {
             "cookieAuth": []
@@ -3507,9 +3382,7 @@
             }
           }
         ],
-        "tags": [
-          "role_user_assignments"
-        ],
+        "tags": ["role_user_assignments"],
         "security": [
           {
             "cookieAuth": []
@@ -3540,9 +3413,7 @@
       "post": {
         "operationId": "role_user_assignments_create",
         "description": "Create a RoleUserAssignment.",
-        "tags": [
-          "role_user_assignments"
-        ],
+        "tags": ["role_user_assignments"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -3606,9 +3477,7 @@
             "required": true
           }
         ],
-        "tags": [
-          "role_user_assignments"
-        ],
+        "tags": ["role_user_assignments"],
         "security": [
           {
             "cookieAuth": []
@@ -3650,9 +3519,7 @@
             "required": true
           }
         ],
-        "tags": [
-          "role_user_assignments"
-        ],
+        "tags": ["role_user_assignments"],
         "security": [
           {
             "cookieAuth": []
@@ -3714,9 +3581,7 @@
             "description": "Filter by rulebook's project id."
           }
         ],
-        "tags": [
-          "rulebooks"
-        ],
+        "tags": ["rulebooks"],
         "security": [
           {
             "cookieAuth": []
@@ -3760,9 +3625,7 @@
             "required": true
           }
         ],
-        "tags": [
-          "rulebooks"
-        ],
+        "tags": ["rulebooks"],
         "security": [
           {
             "cookieAuth": []
@@ -3806,9 +3669,7 @@
             "required": true
           }
         ],
-        "tags": [
-          "rulebooks"
-        ],
+        "tags": ["rulebooks"],
         "security": [
           {
             "cookieAuth": []
@@ -3841,9 +3702,7 @@
       "get": {
         "operationId": "service_index_retrieve",
         "description": "Link other resource registry endpoints",
-        "tags": [
-          "service-index"
-        ],
+        "tags": ["service-index"],
         "security": [
           {
             "cookieAuth": []
@@ -3868,9 +3727,7 @@
     "/service-index/metadata/": {
       "get": {
         "operationId": "service_index_metadata_retrieve",
-        "tags": [
-          "service-index"
-        ],
+        "tags": ["service-index"],
         "security": [
           {
             "cookieAuth": []
@@ -3907,9 +3764,7 @@
             }
           }
         ],
-        "tags": [
-          "service-index"
-        ],
+        "tags": ["service-index"],
         "security": [
           {
             "cookieAuth": []
@@ -3953,9 +3808,7 @@
             "required": true
           }
         ],
-        "tags": [
-          "service-index"
-        ],
+        "tags": ["service-index"],
         "security": [
           {
             "cookieAuth": []
@@ -3999,9 +3852,7 @@
             "required": true
           }
         ],
-        "tags": [
-          "service-index"
-        ],
+        "tags": ["service-index"],
         "security": [
           {
             "cookieAuth": []
@@ -4045,9 +3896,7 @@
             }
           }
         ],
-        "tags": [
-          "service-index"
-        ],
+        "tags": ["service-index"],
         "security": [
           {
             "cookieAuth": []
@@ -4078,9 +3927,7 @@
       "post": {
         "operationId": "service_index_resources_create",
         "description": "Index of all the resources in the system.",
-        "tags": [
-          "service-index"
-        ],
+        "tags": ["service-index"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -4144,9 +3991,7 @@
             "required": true
           }
         ],
-        "tags": [
-          "service-index"
-        ],
+        "tags": ["service-index"],
         "security": [
           {
             "cookieAuth": []
@@ -4188,9 +4033,7 @@
             "required": true
           }
         ],
-        "tags": [
-          "service-index"
-        ],
+        "tags": ["service-index"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -4252,9 +4095,7 @@
             "required": true
           }
         ],
-        "tags": [
-          "service-index"
-        ],
+        "tags": ["service-index"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -4315,9 +4156,7 @@
             "required": true
           }
         ],
-        "tags": [
-          "service-index"
-        ],
+        "tags": ["service-index"],
         "security": [
           {
             "cookieAuth": []
@@ -4354,9 +4193,7 @@
             "required": true
           }
         ],
-        "tags": [
-          "service-index"
-        ],
+        "tags": ["service-index"],
         "security": [
           {
             "cookieAuth": []
@@ -4389,9 +4226,7 @@
       "post": {
         "operationId": "service_index_validate_local_account_create",
         "description": "Validate a user's username and password.",
-        "tags": [
-          "service-index"
-        ],
+        "tags": ["service-index"],
         "security": [
           {
             "cookieAuth": []
@@ -4461,9 +4296,7 @@
             }
           }
         ],
-        "tags": [
-          "teams"
-        ],
+        "tags": ["teams"],
         "security": [
           {
             "cookieAuth": []
@@ -4494,9 +4327,7 @@
       "post": {
         "operationId": "teams_create",
         "description": "Create a new team",
-        "tags": [
-          "teams"
-        ],
+        "tags": ["teams"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -4560,9 +4391,7 @@
             "required": true
           }
         ],
-        "tags": [
-          "teams"
-        ],
+        "tags": ["teams"],
         "security": [
           {
             "cookieAuth": []
@@ -4604,9 +4433,7 @@
             "required": true
           }
         ],
-        "tags": [
-          "teams"
-        ],
+        "tags": ["teams"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -4666,9 +4493,7 @@
             "required": true
           }
         ],
-        "tags": [
-          "teams"
-        ],
+        "tags": ["teams"],
         "security": [
           {
             "cookieAuth": []
@@ -4729,9 +4554,7 @@
             }
           }
         ],
-        "tags": [
-          "users"
-        ],
+        "tags": ["users"],
         "security": [
           {
             "cookieAuth": []
@@ -4762,9 +4585,7 @@
       "post": {
         "operationId": "users_create",
         "description": "Create a user",
-        "tags": [
-          "users"
-        ],
+        "tags": ["users"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -4828,9 +4649,7 @@
             "required": true
           }
         ],
-        "tags": [
-          "users"
-        ],
+        "tags": ["users"],
         "security": [
           {
             "cookieAuth": []
@@ -4872,9 +4691,7 @@
             "required": true
           }
         ],
-        "tags": [
-          "users"
-        ],
+        "tags": ["users"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -4935,9 +4752,7 @@
             "required": true
           }
         ],
-        "tags": [
-          "users"
-        ],
+        "tags": ["users"],
         "security": [
           {
             "cookieAuth": []
@@ -4966,9 +4781,7 @@
       "get": {
         "operationId": "get_current_user",
         "description": "Get current user.",
-        "tags": [
-          "users"
-        ],
+        "tags": ["users"],
         "security": [
           {
             "cookieAuth": []
@@ -4999,9 +4812,7 @@
       "patch": {
         "operationId": "update_current_user",
         "description": "Update current user.",
-        "tags": [
-          "users"
-        ],
+        "tags": ["users"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -5073,9 +4884,7 @@
             }
           }
         ],
-        "tags": [
-          "users"
-        ],
+        "tags": ["users"],
         "security": [
           {
             "cookieAuth": []
@@ -5106,9 +4915,7 @@
       "post": {
         "operationId": "users_me_awx_tokens_create",
         "description": "Create a AWX token for a current user.",
-        "tags": [
-          "users"
-        ],
+        "tags": ["users"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -5172,9 +4979,7 @@
             "required": true
           }
         ],
-        "tags": [
-          "users"
-        ],
+        "tags": ["users"],
         "security": [
           {
             "cookieAuth": []
@@ -5216,9 +5021,7 @@
             "required": true
           }
         ],
-        "tags": [
-          "users"
-        ],
+        "tags": ["users"],
         "security": [
           {
             "cookieAuth": []
@@ -5293,13 +5096,13 @@
               "type": "integer"
             },
             "nullable": true
+          },
+          "k8s_service_name": {
+            "type": "string",
+            "nullable": true
           }
         },
-        "required": [
-          "decision_environment_id",
-          "name",
-          "rulebook_id"
-        ]
+        "required": ["decision_environment_id", "name", "rulebook_id"]
       },
       "ActivationInstance": {
         "type": "object",
@@ -5344,13 +5147,7 @@
             "nullable": true
           }
         },
-        "required": [
-          "activation_id",
-          "ended_at",
-          "event_stream_id",
-          "id",
-          "started_at"
-        ]
+        "required": ["activation_id", "ended_at", "event_stream_id", "id", "started_at"]
       },
       "ActivationInstanceLog": {
         "type": "object",
@@ -5378,12 +5175,7 @@
             "type": "integer"
           }
         },
-        "required": [
-          "activation_instance",
-          "id",
-          "line_number",
-          "log"
-        ]
+        "required": ["activation_instance", "id", "line_number", "log"]
       },
       "ActivationList": {
         "type": "object",
@@ -5693,13 +5485,7 @@
             "description": "Message of the action"
           }
         },
-        "required": [
-          "audit_rule_id",
-          "fired_at",
-          "id",
-          "name",
-          "organization_id"
-        ]
+        "required": ["audit_rule_id", "fired_at", "id", "name", "organization_id"]
       },
       "AuditEvent": {
         "type": "object",
@@ -5801,13 +5587,7 @@
             "description": "The fired timestamp of the rule"
           }
         },
-        "required": [
-          "activation_instance",
-          "created_at",
-          "fired_at",
-          "id",
-          "name"
-        ]
+        "required": ["activation_instance", "created_at", "fired_at", "id", "name"]
       },
       "AuditRuleList": {
         "type": "object",
@@ -5847,12 +5627,7 @@
             "description": "The fired timestamp of the rule"
           }
         },
-        "required": [
-          "activation_instance",
-          "fired_at",
-          "id",
-          "name"
-        ]
+        "required": ["activation_instance", "fired_at", "id", "name"]
       },
       "AwxToken": {
         "type": "object",
@@ -5882,13 +5657,7 @@
             "readOnly": true
           }
         },
-        "required": [
-          "created_at",
-          "id",
-          "modified_at",
-          "name",
-          "user_id"
-        ]
+        "required": ["created_at", "id", "modified_at", "name", "user_id"]
       },
       "AwxTokenCreate": {
         "type": "object",
@@ -5903,27 +5672,24 @@
             "type": "string"
           }
         },
-        "required": [
-          "name",
-          "token"
-        ]
+        "required": ["name", "token"]
       },
       "ContentTypeEnum": {
         "enum": [
-          "eda.rulebook",
-          "eda.credentialtype",
+          "eda.project",
+          "eda.decisionenvironment",
           "eda.activation",
-          "shared.team",
-          "eda.auditrule",
           "eda.extravar",
           "shared.organization",
-          "eda.project",
-          "eda.rulebookprocess",
-          "eda.decisionenvironment",
-          "eda.edacredential"
+          "shared.team",
+          "eda.edacredential",
+          "eda.auditrule",
+          "eda.rulebook",
+          "eda.credentialtype",
+          "eda.rulebookprocess"
         ],
         "type": "string",
-        "description": "* `eda.rulebook` - Rulebook\n* `eda.credentialtype` - Credential Type\n* `eda.activation` - Activation\n* `shared.team` - Team\n* `eda.auditrule` - Audit Rule\n* `eda.extravar` - Extra Var\n* `shared.organization` - Organization\n* `eda.project` - Project\n* `eda.rulebookprocess` - Rulebook Process\n* `eda.decisionenvironment` - Decision Environment\n* `eda.edacredential` - Eda Credential"
+        "description": "* `eda.project` - Project\n* `eda.decisionenvironment` - Decision Environment\n* `eda.activation` - Activation\n* `eda.extravar` - Extra Var\n* `shared.organization` - Organization\n* `shared.team` - Team\n* `eda.edacredential` - Eda Credential\n* `eda.auditrule` - Audit Rule\n* `eda.rulebook` - Rulebook\n* `eda.credentialtype` - Credential Type\n* `eda.rulebookprocess` - Rulebook Process"
       },
       "CredentialType": {
         "type": "object",
@@ -5973,14 +5739,7 @@
             "readOnly": true
           }
         },
-        "required": [
-          "created_at",
-          "id",
-          "managed",
-          "modified_at",
-          "name",
-          "organization_id"
-        ]
+        "required": ["created_at", "id", "managed", "modified_at", "name", "organization_id"]
       },
       "CredentialTypeCreate": {
         "type": "object",
@@ -6005,10 +5764,7 @@
             "nullable": true
           }
         },
-        "required": [
-          "inputs",
-          "name"
-        ]
+        "required": ["inputs", "name"]
       },
       "CredentialTypeRef": {
         "type": "object",
@@ -6033,11 +5789,7 @@
             "readOnly": true
           }
         },
-        "required": [
-          "id",
-          "name",
-          "organization_id"
-        ]
+        "required": ["id", "name", "organization_id"]
       },
       "DecisionEnvironment": {
         "type": "object",
@@ -6108,10 +5860,7 @@
             "nullable": true
           }
         },
-        "required": [
-          "image_url",
-          "name"
-        ]
+        "required": ["image_url", "name"]
       },
       "DecisionEnvironmentRead": {
         "type": "object",
@@ -6152,14 +5901,7 @@
             "readOnly": true
           }
         },
-        "required": [
-          "created_at",
-          "id",
-          "image_url",
-          "modified_at",
-          "name",
-          "organization"
-        ]
+        "required": ["created_at", "id", "image_url", "modified_at", "name", "organization"]
       },
       "DecisionEnvironmentRef": {
         "type": "object",
@@ -6184,12 +5926,7 @@
             "readOnly": true
           }
         },
-        "required": [
-          "id",
-          "image_url",
-          "name",
-          "organization_id"
-        ]
+        "required": ["id", "image_url", "name", "organization_id"]
       },
       "EdaCredential": {
         "type": "object",
@@ -6242,15 +5979,7 @@
             "$ref": "#/components/schemas/OrganizationRef"
           }
         },
-        "required": [
-          "created_at",
-          "id",
-          "inputs",
-          "managed",
-          "modified_at",
-          "name",
-          "organization"
-        ]
+        "required": ["created_at", "id", "inputs", "managed", "modified_at", "name", "organization"]
       },
       "EdaCredentialCreate": {
         "type": "object",
@@ -6274,11 +6003,7 @@
             "nullable": true
           }
         },
-        "required": [
-          "credential_type_id",
-          "inputs",
-          "name"
-        ]
+        "required": ["credential_type_id", "inputs", "name"]
       },
       "EdaCredentialRef": {
         "type": "object",
@@ -6313,13 +6038,7 @@
             "readOnly": true
           }
         },
-        "required": [
-          "credential_type_id",
-          "id",
-          "inputs",
-          "name",
-          "organization_id"
-        ]
+        "required": ["credential_type_id", "id", "inputs", "name", "organization_id"]
       },
       "EdaCredentialReference": {
         "type": "object",
@@ -6342,12 +6061,7 @@
             "description": "URL of the related resource"
           }
         },
-        "required": [
-          "id",
-          "name",
-          "type",
-          "url"
-        ]
+        "required": ["id", "name", "type", "url"]
       },
       "EventStreamOut": {
         "type": "object",
@@ -6361,10 +6075,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "id",
-          "name"
-        ]
+        "required": ["id", "name"]
       },
       "ExtraVar": {
         "type": "object",
@@ -6383,11 +6094,7 @@
             "readOnly": true
           }
         },
-        "required": [
-          "extra_var",
-          "id",
-          "organization_id"
-        ]
+        "required": ["extra_var", "id", "organization_id"]
       },
       "ExtraVarCreate": {
         "type": "object",
@@ -6401,9 +6108,7 @@
             "nullable": true
           }
         },
-        "required": [
-          "extra_var"
-        ]
+        "required": ["extra_var"]
       },
       "ExtraVarRef": {
         "type": "object",
@@ -6414,26 +6119,15 @@
             "readOnly": true
           }
         },
-        "required": [
-          "id"
-        ]
+        "required": ["id"]
       },
       "ImportStateEnum": {
-        "enum": [
-          "pending",
-          "running",
-          "failed",
-          "completed"
-        ],
+        "enum": ["pending", "running", "failed", "completed"],
         "type": "string",
         "description": "* `pending` - Pending\n* `running` - Running\n* `failed` - Failed\n* `completed` - Completed"
       },
       "LogLevelEnum": {
-        "enum": [
-          "debug",
-          "info",
-          "error"
-        ],
+        "enum": ["debug", "info", "error"],
         "type": "string",
         "description": "* `debug` - debug\n* `info` - info\n* `error` - error"
       },
@@ -6447,15 +6141,10 @@
             "type": "string"
           }
         },
-        "required": [
-          "password",
-          "username"
-        ]
+        "required": ["password", "username"]
       },
       "NullEnum": {
-        "enum": [
-          null
-        ]
+        "enum": [null]
       },
       "Organization": {
         "type": "object",
@@ -6503,15 +6192,7 @@
             "description": "The user who last modified this resource"
           }
         },
-        "required": [
-          "created",
-          "created_by",
-          "id",
-          "modified",
-          "modified_by",
-          "name",
-          "resource"
-        ]
+        "required": ["created", "created_by", "id", "modified", "modified_by", "name", "resource"]
       },
       "OrganizationCreate": {
         "type": "object",
@@ -6526,9 +6207,7 @@
             "description": "The organization description."
           }
         },
-        "required": [
-          "name"
-        ]
+        "required": ["name"]
       },
       "OrganizationRef": {
         "type": "object",
@@ -6547,10 +6226,7 @@
             "description": "The organization description."
           }
         },
-        "required": [
-          "id",
-          "name"
-        ]
+        "required": ["id", "name"]
       },
       "PaginatedActivationInstanceList": {
         "type": "object",
@@ -7530,7 +7206,7 @@
           },
           "content_type": {
             "nullable": true,
-            "description": "The type of resource this applies to\n\n* `eda.rulebook` - Rulebook\n* `eda.credentialtype` - Credential Type\n* `eda.activation` - Activation\n* `shared.team` - Team\n* `eda.auditrule` - Audit Rule\n* `eda.extravar` - Extra Var\n* `shared.organization` - Organization\n* `eda.project` - Project\n* `eda.rulebookprocess` - Rulebook Process\n* `eda.decisionenvironment` - Decision Environment\n* `eda.edacredential` - Eda Credential",
+            "description": "The type of resource this applies to\n\n* `eda.project` - Project\n* `eda.decisionenvironment` - Decision Environment\n* `eda.activation` - Activation\n* `eda.extravar` - Extra Var\n* `shared.organization` - Organization\n* `shared.team` - Team\n* `eda.edacredential` - Eda Credential\n* `eda.auditrule` - Audit Rule\n* `eda.rulebook` - Rulebook\n* `eda.credentialtype` - Credential Type\n* `eda.rulebookprocess` - Rulebook Process",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/ContentTypeEnum"
@@ -7624,45 +7300,45 @@
       },
       "PermissionsEnum": {
         "enum": [
-          "eda.view_rulebook",
-          "eda.add_credentialtype",
-          "eda.change_credentialtype",
-          "eda.delete_credentialtype",
-          "eda.view_credentialtype",
+          "eda.add_project",
+          "eda.change_project",
+          "eda.delete_project",
+          "eda.view_project",
+          "eda.add_decisionenvironment",
+          "eda.change_decisionenvironment",
+          "eda.delete_decisionenvironment",
+          "eda.view_decisionenvironment",
           "eda.add_activation",
           "eda.view_activation",
           "eda.delete_activation",
           "eda.enable_activation",
           "eda.disable_activation",
           "eda.restart_activation",
-          "eda.add_team",
-          "eda.change_team",
-          "eda.delete_team",
-          "eda.view_team",
-          "eda.member_team",
-          "eda.view_auditrule",
           "eda.add_extravar",
           "eda.view_extravar",
           "eda.change_organization",
           "eda.delete_organization",
           "eda.view_organization",
           "eda.member_organization",
-          "eda.add_project",
-          "eda.change_project",
-          "eda.delete_project",
-          "eda.view_project",
-          "eda.view_rulebookprocess",
-          "eda.add_decisionenvironment",
-          "eda.change_decisionenvironment",
-          "eda.delete_decisionenvironment",
-          "eda.view_decisionenvironment",
+          "eda.add_team",
+          "eda.change_team",
+          "eda.delete_team",
+          "eda.view_team",
+          "eda.member_team",
           "eda.add_edacredential",
           "eda.change_edacredential",
           "eda.delete_edacredential",
-          "eda.view_edacredential"
+          "eda.view_edacredential",
+          "eda.view_auditrule",
+          "eda.view_rulebook",
+          "eda.add_credentialtype",
+          "eda.change_credentialtype",
+          "eda.delete_credentialtype",
+          "eda.view_credentialtype",
+          "eda.view_rulebookprocess"
         ],
         "type": "string",
-        "description": "* `eda.view_rulebook` - eda.view_rulebook\n* `eda.add_credentialtype` - eda.add_credentialtype\n* `eda.change_credentialtype` - eda.change_credentialtype\n* `eda.delete_credentialtype` - eda.delete_credentialtype\n* `eda.view_credentialtype` - eda.view_credentialtype\n* `eda.add_activation` - eda.add_activation\n* `eda.view_activation` - eda.view_activation\n* `eda.delete_activation` - eda.delete_activation\n* `eda.enable_activation` - eda.enable_activation\n* `eda.disable_activation` - eda.disable_activation\n* `eda.restart_activation` - eda.restart_activation\n* `eda.add_team` - eda.add_team\n* `eda.change_team` - eda.change_team\n* `eda.delete_team` - eda.delete_team\n* `eda.view_team` - eda.view_team\n* `eda.member_team` - eda.member_team\n* `eda.view_auditrule` - eda.view_auditrule\n* `eda.add_extravar` - eda.add_extravar\n* `eda.view_extravar` - eda.view_extravar\n* `eda.change_organization` - eda.change_organization\n* `eda.delete_organization` - eda.delete_organization\n* `eda.view_organization` - eda.view_organization\n* `eda.member_organization` - eda.member_organization\n* `eda.add_project` - eda.add_project\n* `eda.change_project` - eda.change_project\n* `eda.delete_project` - eda.delete_project\n* `eda.view_project` - eda.view_project\n* `eda.view_rulebookprocess` - eda.view_rulebookprocess\n* `eda.add_decisionenvironment` - eda.add_decisionenvironment\n* `eda.change_decisionenvironment` - eda.change_decisionenvironment\n* `eda.delete_decisionenvironment` - eda.delete_decisionenvironment\n* `eda.view_decisionenvironment` - eda.view_decisionenvironment\n* `eda.add_edacredential` - eda.add_edacredential\n* `eda.change_edacredential` - eda.change_edacredential\n* `eda.delete_edacredential` - eda.delete_edacredential\n* `eda.view_edacredential` - eda.view_edacredential"
+        "description": "* `eda.add_project` - eda.add_project\n* `eda.change_project` - eda.change_project\n* `eda.delete_project` - eda.delete_project\n* `eda.view_project` - eda.view_project\n* `eda.add_decisionenvironment` - eda.add_decisionenvironment\n* `eda.change_decisionenvironment` - eda.change_decisionenvironment\n* `eda.delete_decisionenvironment` - eda.delete_decisionenvironment\n* `eda.view_decisionenvironment` - eda.view_decisionenvironment\n* `eda.add_activation` - eda.add_activation\n* `eda.view_activation` - eda.view_activation\n* `eda.delete_activation` - eda.delete_activation\n* `eda.enable_activation` - eda.enable_activation\n* `eda.disable_activation` - eda.disable_activation\n* `eda.restart_activation` - eda.restart_activation\n* `eda.add_extravar` - eda.add_extravar\n* `eda.view_extravar` - eda.view_extravar\n* `eda.change_organization` - eda.change_organization\n* `eda.delete_organization` - eda.delete_organization\n* `eda.view_organization` - eda.view_organization\n* `eda.member_organization` - eda.member_organization\n* `eda.add_team` - eda.add_team\n* `eda.change_team` - eda.change_team\n* `eda.delete_team` - eda.delete_team\n* `eda.view_team` - eda.view_team\n* `eda.member_team` - eda.member_team\n* `eda.add_edacredential` - eda.add_edacredential\n* `eda.change_edacredential` - eda.change_edacredential\n* `eda.delete_edacredential` - eda.delete_edacredential\n* `eda.view_edacredential` - eda.view_edacredential\n* `eda.view_auditrule` - eda.view_auditrule\n* `eda.view_rulebook` - eda.view_rulebook\n* `eda.add_credentialtype` - eda.add_credentialtype\n* `eda.change_credentialtype` - eda.change_credentialtype\n* `eda.delete_credentialtype` - eda.delete_credentialtype\n* `eda.view_credentialtype` - eda.view_credentialtype\n* `eda.view_rulebookprocess` - eda.view_rulebookprocess"
       },
       "Project": {
         "type": "object",
@@ -7697,7 +7373,8 @@
             "type": "boolean"
           },
           "proxy": {
-            "type": "string"
+            "type": "string",
+            "readOnly": true
           },
           "id": {
             "type": "integer",
@@ -7752,6 +7429,7 @@
           "modified_at",
           "name",
           "organization_id",
+          "proxy",
           "scm_type",
           "signature_validation_credential_id",
           "url"
@@ -7797,10 +7475,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "name",
-          "url"
-        ]
+        "required": ["name", "url"]
       },
       "ProjectRead": {
         "type": "object",
@@ -7841,7 +7516,8 @@
             "type": "string"
           },
           "proxy": {
-            "type": "string"
+            "type": "string",
+            "readOnly": true
           },
           "id": {
             "type": "integer",
@@ -7896,6 +7572,7 @@
           "modified_at",
           "name",
           "organization",
+          "proxy",
           "scm_type",
           "url"
         ]
@@ -7928,13 +7605,7 @@
             "readOnly": true
           }
         },
-        "required": [
-          "git_hash",
-          "id",
-          "name",
-          "organization_id",
-          "url"
-        ]
+        "required": ["git_hash", "id", "name", "organization_id", "url"]
       },
       "Resource": {
         "type": "object",
@@ -7972,13 +7643,7 @@
             "readOnly": true
           }
         },
-        "required": [
-          "has_serializer",
-          "name",
-          "object_id",
-          "resource_data",
-          "url"
-        ]
+        "required": ["has_serializer", "name", "object_id", "resource_data", "url"]
       },
       "ResourceList": {
         "type": "object",
@@ -8017,13 +7682,7 @@
             "readOnly": true
           }
         },
-        "required": [
-          "has_serializer",
-          "name",
-          "object_id",
-          "resource_data",
-          "url"
-        ]
+        "required": ["has_serializer", "name", "object_id", "resource_data", "url"]
       },
       "ResourceType": {
         "type": "object",
@@ -8049,20 +7708,10 @@
             "readOnly": true
           }
         },
-        "required": [
-          "externally_managed",
-          "id",
-          "name",
-          "shared_resource_type",
-          "url"
-        ]
+        "required": ["externally_managed", "id", "name", "shared_resource_type", "url"]
       },
       "RestartPolicyEnum": {
-        "enum": [
-          "always",
-          "on-failure",
-          "never"
-        ],
+        "enum": ["always", "on-failure", "never"],
         "type": "string",
         "description": "* `always` - always\n* `on-failure` - on-failure\n* `never` - never"
       },
@@ -8100,7 +7749,7 @@
           },
           "content_type": {
             "nullable": true,
-            "description": "The type of resource this applies to\n\n* `eda.rulebook` - Rulebook\n* `eda.credentialtype` - Credential Type\n* `eda.activation` - Activation\n* `shared.team` - Team\n* `eda.auditrule` - Audit Rule\n* `eda.extravar` - Extra Var\n* `shared.organization` - Organization\n* `eda.project` - Project\n* `eda.rulebookprocess` - Rulebook Process\n* `eda.decisionenvironment` - Decision Environment\n* `eda.edacredential` - Eda Credential",
+            "description": "The type of resource this applies to\n\n* `eda.project` - Project\n* `eda.decisionenvironment` - Decision Environment\n* `eda.activation` - Activation\n* `eda.extravar` - Extra Var\n* `shared.organization` - Organization\n* `shared.team` - Team\n* `eda.edacredential` - Eda Credential\n* `eda.auditrule` - Audit Rule\n* `eda.rulebook` - Rulebook\n* `eda.credentialtype` - Credential Type\n* `eda.rulebookprocess` - Rulebook Process",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/ContentTypeEnum"
@@ -8170,7 +7819,7 @@
           },
           "content_type": {
             "nullable": true,
-            "description": "The type of resource this applies to\n\n* `eda.rulebook` - Rulebook\n* `eda.credentialtype` - Credential Type\n* `eda.activation` - Activation\n* `shared.team` - Team\n* `eda.auditrule` - Audit Rule\n* `eda.extravar` - Extra Var\n* `shared.organization` - Organization\n* `eda.project` - Project\n* `eda.rulebookprocess` - Rulebook Process\n* `eda.decisionenvironment` - Decision Environment\n* `eda.edacredential` - Eda Credential",
+            "description": "The type of resource this applies to\n\n* `eda.project` - Project\n* `eda.decisionenvironment` - Decision Environment\n* `eda.activation` - Activation\n* `eda.extravar` - Extra Var\n* `shared.organization` - Organization\n* `shared.team` - Team\n* `eda.edacredential` - Eda Credential\n* `eda.auditrule` - Audit Rule\n* `eda.rulebook` - Rulebook\n* `eda.credentialtype` - Credential Type\n* `eda.rulebookprocess` - Rulebook Process",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/ContentTypeEnum"
@@ -8187,10 +7836,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "name",
-          "permissions"
-        ]
+        "required": ["name", "permissions"]
       },
       "RoleDefinitionDetail": {
         "type": "object",
@@ -8231,7 +7877,7 @@
               }
             ],
             "readOnly": true,
-            "description": "The type of resource this applies to\n\n* `eda.rulebook` - Rulebook\n* `eda.credentialtype` - Credential Type\n* `eda.activation` - Activation\n* `shared.team` - Team\n* `eda.auditrule` - Audit Rule\n* `eda.extravar` - Extra Var\n* `shared.organization` - Organization\n* `eda.project` - Project\n* `eda.rulebookprocess` - Rulebook Process\n* `eda.decisionenvironment` - Decision Environment\n* `eda.edacredential` - Eda Credential"
+            "description": "The type of resource this applies to\n\n* `eda.project` - Project\n* `eda.decisionenvironment` - Decision Environment\n* `eda.activation` - Activation\n* `eda.extravar` - Extra Var\n* `shared.organization` - Organization\n* `shared.team` - Team\n* `eda.edacredential` - Eda Credential\n* `eda.auditrule` - Audit Rule\n* `eda.rulebook` - Rulebook\n* `eda.credentialtype` - Credential Type\n* `eda.rulebookprocess` - Rulebook Process"
           },
           "modified": {
             "type": "string",
@@ -8316,7 +7962,7 @@
               }
             ],
             "readOnly": true,
-            "description": "The type of resource this applies to\n\n* `eda.rulebook` - Rulebook\n* `eda.credentialtype` - Credential Type\n* `eda.activation` - Activation\n* `shared.team` - Team\n* `eda.auditrule` - Audit Rule\n* `eda.extravar` - Extra Var\n* `shared.organization` - Organization\n* `eda.project` - Project\n* `eda.rulebookprocess` - Rulebook Process\n* `eda.decisionenvironment` - Decision Environment\n* `eda.edacredential` - Eda Credential"
+            "description": "The type of resource this applies to\n\n* `eda.project` - Project\n* `eda.decisionenvironment` - Decision Environment\n* `eda.activation` - Activation\n* `eda.extravar` - Extra Var\n* `shared.organization` - Organization\n* `shared.team` - Team\n* `eda.edacredential` - Eda Credential\n* `eda.auditrule` - Audit Rule\n* `eda.rulebook` - Rulebook\n* `eda.credentialtype` - Credential Type\n* `eda.rulebookprocess` - Rulebook Process"
           },
           "object_ansible_id": {
             "type": "string",
@@ -8396,9 +8042,7 @@
             "type": "integer"
           }
         },
-        "required": [
-          "role_definition"
-        ]
+        "required": ["role_definition"]
       },
       "RoleUserAssignment": {
         "type": "object",
@@ -8433,7 +8077,7 @@
               }
             ],
             "readOnly": true,
-            "description": "The type of resource this applies to\n\n* `eda.rulebook` - Rulebook\n* `eda.credentialtype` - Credential Type\n* `eda.activation` - Activation\n* `shared.team` - Team\n* `eda.auditrule` - Audit Rule\n* `eda.extravar` - Extra Var\n* `shared.organization` - Organization\n* `eda.project` - Project\n* `eda.rulebookprocess` - Rulebook Process\n* `eda.decisionenvironment` - Decision Environment\n* `eda.edacredential` - Eda Credential"
+            "description": "The type of resource this applies to\n\n* `eda.project` - Project\n* `eda.decisionenvironment` - Decision Environment\n* `eda.activation` - Activation\n* `eda.extravar` - Extra Var\n* `shared.organization` - Organization\n* `shared.team` - Team\n* `eda.edacredential` - Eda Credential\n* `eda.auditrule` - Audit Rule\n* `eda.rulebook` - Rulebook\n* `eda.credentialtype` - Credential Type\n* `eda.rulebookprocess` - Rulebook Process"
           },
           "object_ansible_id": {
             "type": "string",
@@ -8513,9 +8157,7 @@
             "type": "integer"
           }
         },
-        "required": [
-          "role_definition"
-        ]
+        "required": ["role_definition"]
       },
       "Rulebook": {
         "type": "object",
@@ -8550,12 +8192,7 @@
             "readOnly": true
           }
         },
-        "required": [
-          "created_at",
-          "id",
-          "modified_at",
-          "name"
-        ]
+        "required": ["created_at", "id", "modified_at", "name"]
       },
       "RulebookRef": {
         "type": "object",
@@ -8573,15 +8210,10 @@
             "nullable": true
           }
         },
-        "required": [
-          "id",
-          "name"
-        ]
+        "required": ["id", "name"]
       },
       "ScmTypeEnum": {
-        "enum": [
-          "git"
-        ],
+        "enum": ["git"],
         "type": "string",
         "description": "* `git` - Git"
       },
@@ -8596,10 +8228,11 @@
           "deleting",
           "completed",
           "unresponsive",
-          "error"
+          "error",
+          "workers offline"
         ],
         "type": "string",
-        "description": "* `starting` - starting\n* `running` - running\n* `pending` - pending\n* `failed` - failed\n* `stopping` - stopping\n* `stopped` - stopped\n* `deleting` - deleting\n* `completed` - completed\n* `unresponsive` - unresponsive\n* `error` - error"
+        "description": "* `starting` - starting\n* `running` - running\n* `pending` - pending\n* `failed` - failed\n* `stopping` - stopping\n* `stopped` - stopped\n* `deleting` - deleting\n* `completed` - completed\n* `unresponsive` - unresponsive\n* `error` - error\n* `workers offline` - workers offline"
       },
       "Team": {
         "type": "object",
@@ -8679,10 +8312,7 @@
             "type": "integer"
           }
         },
-        "required": [
-          "name",
-          "organization_id"
-        ]
+        "required": ["name", "organization_id"]
       },
       "TeamDetail": {
         "type": "object",
@@ -8756,10 +8386,7 @@
             "writeOnly": true
           }
         },
-        "required": [
-          "access",
-          "refresh"
-        ]
+        "required": ["access", "refresh"]
       },
       "UserCreateUpdate": {
         "type": "object",
@@ -8792,10 +8419,7 @@
             "description": "Designates that this user has all permissions without explicitly assigning them."
           }
         },
-        "required": [
-          "password",
-          "username"
-        ]
+        "required": ["password", "username"]
       },
       "UserDetail": {
         "type": "object",
@@ -8842,13 +8466,7 @@
             "readOnly": true
           }
         },
-        "required": [
-          "created_at",
-          "id",
-          "modified_at",
-          "resource",
-          "username"
-        ]
+        "required": ["created_at", "id", "modified_at", "resource", "username"]
       },
       "UserList": {
         "type": "object",
@@ -8879,14 +8497,7 @@
             "readOnly": true
           }
         },
-        "required": [
-          "first_name",
-          "id",
-          "is_superuser",
-          "last_name",
-          "resource",
-          "username"
-        ]
+        "required": ["first_name", "id", "is_superuser", "last_name", "resource", "username"]
       }
     },
     "securitySchemes": {

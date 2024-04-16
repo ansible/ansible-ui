@@ -6,7 +6,7 @@ import { useCredentialTypeCredentialsColumns } from '../hooks/useCredentialTypeC
 import { useCredentialTypeCredentialsFilters } from '../hooks/useCredentialTypeCredentialsFilters';
 import { useEdaView } from '../../../common/useEventDrivenView';
 import { edaAPI } from '../../../common/eda-utils';
-import { EdaCredential } from '../../../interfaces/EdaCredential';
+import { EdaCredential } from '../../../interfaces/generated/eda-api';
 import { PageLayout, PageTable } from '../../../../../framework';
 import { useCredentialsActions } from '../../credentials/hooks/useCredentialsActions';
 import { useCredentialActions } from '../../credentials/hooks/useCredentialActions';

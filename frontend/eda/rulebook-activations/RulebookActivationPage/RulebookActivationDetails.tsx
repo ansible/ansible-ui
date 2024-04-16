@@ -141,7 +141,7 @@ export function RulebookActivationDetails() {
             </PageDetail>
           )}
         <PageDetail label={t('Log level')} helpText={t('Error | Info | Debug')}>
-          {logLevelName(rulebookActivation?.log_level || LogLevelEnum.error, t)}
+          {logLevelName(rulebookActivation?.log_level || LogLevelEnum.Error, t)}
         </PageDetail>
         <PageDetail label={t('Service')}>{rulebookActivation?.k8s_service_name}</PageDetail>
         <PageDetail label={t('Project git hash')}>
@@ -193,11 +193,11 @@ function restartPolicyName(policy: RestartPolicyEnum, t: (str: string) => string
 }
 export function logLevelName(logLevel: LogLevelEnum, t: (str: string) => string) {
   switch (logLevel) {
-    case LogLevelEnum.error:
+    case LogLevelEnum.Error:
       return t('Error');
-    case LogLevelEnum.info:
+    case LogLevelEnum.Info:
       return t('Info');
-    case LogLevelEnum.debug:
+    case LogLevelEnum.Debug:
       return t('Debug');
     default:
       return capitalizeFirstLetter(logLevel);
