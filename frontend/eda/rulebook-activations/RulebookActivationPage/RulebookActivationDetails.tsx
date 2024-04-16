@@ -141,8 +141,9 @@ export function RulebookActivationDetails() {
             </PageDetail>
           )}
         <PageDetail label={t('Log level')} helpText={t('Error | Info | Debug')}>
-          {logLevelName(rulebookActivation?.log_level, t)}
+          {logLevelName(rulebookActivation?.log_level || LogLevelEnum.error, t)}
         </PageDetail>
+        <PageDetail label={t('Service')}>{rulebookActivation?.k8s_service_name}</PageDetail>
         <PageDetail label={t('Project git hash')}>
           <CopyCell text={rulebookActivation?.git_hash ?? ''} />
         </PageDetail>
