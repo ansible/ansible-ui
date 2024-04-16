@@ -177,6 +177,7 @@ export function Organizations() {
         errorStateTitle={t('Error loading organizations')}
         emptyStateTitle={t('No organizations yet')}
         emptyStateDescription={t('To get started, create an organization.')}
+        emptyStateButtonIcon={<PlusCircleIcon />}
         emptyStateButtonText={t('Create organization')}
         emptyStateButtonClick={() => pageNavigate(AwxRoute.CreateOrganization)}
         {...view}

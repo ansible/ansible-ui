@@ -8,6 +8,7 @@ import { AwxRoute } from '../../../main/AwxRoutes';
 import { useManagementJobFilters } from '../hooks/useManagementJobFilters';
 import { useManagementJobColumns } from '../hooks/useManagementJobColumns';
 import { SystemJobTemplate } from '../../../interfaces/SystemJobTemplate';
+import { PlusCircleIcon } from '@patternfly/react-icons';
 
 export function ManagementJobSchedules() {
   const params = useParams<{ id: string }>();
@@ -28,7 +29,8 @@ export function ManagementJobSchedules() {
       tableColumns={tableColumns}
       errorStateTitle={t('Error loading schedules')}
       emptyStateTitle={t('No schedules yet')}
-      emptyStateDescription={t('To get started, create a schedules.')}
+      emptyStateDescription={t('To get started, create a schedule.')}
+      emptyStateButtonIcon={<PlusCircleIcon />}
       emptyStateButtonText={t('Create schedule')}
       emptyStateButtonClick={() => pageHistory(AwxRoute.CreateSchedule)}
       {...view}

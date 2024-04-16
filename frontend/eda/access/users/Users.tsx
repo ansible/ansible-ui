@@ -7,6 +7,7 @@ import { EdaRoute } from '../../main/EdaRoutes';
 import { useUserActions } from './hooks/useUserActions';
 import { useUserColumns } from './hooks/useUserColumns';
 import { useUsersActions } from './hooks/useUsersActions';
+import { PlusCircleIcon } from '@patternfly/react-icons';
 
 export function Users() {
   const { t } = useTranslation();
@@ -34,6 +35,7 @@ export function Users() {
         errorStateTitle={t('Error loading users')}
         emptyStateTitle={t('There are currently no users created for your organization.')}
         emptyStateDescription={t('Please create a user by using the button below.')}
+        emptyStateButtonIcon={<PlusCircleIcon />}
         emptyStateButtonText={t('Create user')}
         emptyStateButtonClick={() => pageNavigate(EdaRoute.CreateUser)}
         {...view}

@@ -8,6 +8,7 @@ import { useCredentialToolbarActions } from './hooks/useCredentialToolbarActions
 import { useCredentialsColumns } from './hooks/useCredentialsColumns';
 import { useCredentialsFilters } from './hooks/useCredentialsFilters';
 import { usePersistentFilters } from '../../../common/PersistentFilters';
+import { PlusCircleIcon } from '@patternfly/react-icons';
 
 export function CredentialsList(props: { url: string }) {
   const { t } = useTranslation();
@@ -35,6 +36,7 @@ export function CredentialsList(props: { url: string }) {
       errorStateTitle={t('Error loading credentials')}
       emptyStateTitle={t('No credentials yet')}
       emptyStateDescription={t('To get started, create an credential.')}
+      emptyStateButtonIcon={<PlusCircleIcon />}
       emptyStateButtonText={t('Create credential')}
       emptyStateButtonClick={() => pageNavigate(AwxRoute.CreateCredential)}
       {...view}

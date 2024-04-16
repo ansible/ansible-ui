@@ -8,6 +8,7 @@ import { Team } from '../../../interfaces/Team';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useTeamsColumns } from '../../teams/hooks/useTeamsColumns';
 import { useTeamsFilters } from '../../teams/hooks/useTeamsFilters';
+import { PlusCircleIcon } from '@patternfly/react-icons';
 
 export function OrganizationTeams() {
   const params = useParams<{ id: string }>();
@@ -29,6 +30,7 @@ export function OrganizationTeams() {
       errorStateTitle={t('Error loading teams')}
       emptyStateTitle={t('No teams yet')}
       emptyStateDescription={t('To get started, create a team.')}
+      emptyStateButtonIcon={<PlusCircleIcon />}
       emptyStateButtonText={t('Create team')}
       emptyStateButtonClick={() => pageHistory(AwxRoute.CreateTeam)}
       {...view}

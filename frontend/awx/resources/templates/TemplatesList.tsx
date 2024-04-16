@@ -169,6 +169,7 @@ export function TemplatesList(props: {
               'Please contact your organization administrator if there is an issue with your access.'
             )
       }
+      emptyStateButtonIcon={<PlusCircleIcon />}
       emptyStateButtonText={
         canCreateJobTemplate || canCreateWFJobTemplate ? t('Create template') : undefined
       }

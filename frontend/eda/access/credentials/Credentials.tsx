@@ -8,6 +8,7 @@ import { useCredentialActions } from './hooks/useCredentialActions';
 import { useCredentialColumns } from './hooks/useCredentialColumns';
 import { useCredentialFilters } from './hooks/useCredentialFilters';
 import { useCredentialsActions } from './hooks/useCredentialsActions';
+import { PlusCircleIcon } from '@patternfly/react-icons';
 
 export function Credentials() {
   const { t } = useTranslation();
@@ -38,6 +39,7 @@ export function Credentials() {
         errorStateTitle={t('Error loading credentials')}
         emptyStateTitle={t('There are currently no credentials created for your organization.')}
         emptyStateDescription={t('Please create a credential by using the button below.')}
+        emptyStateButtonIcon={<PlusCircleIcon />}
         emptyStateButtonText={t('Create credential')}
         emptyStateButtonClick={() => pageNavigate(EdaRoute.CreateCredential)}
         {...view}

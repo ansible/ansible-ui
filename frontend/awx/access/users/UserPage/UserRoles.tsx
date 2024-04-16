@@ -117,6 +117,7 @@ function UserRolesInternal(props: { user: AwxUser }) {
         errorStateTitle={t('Error loading roles')}
         emptyStateTitle={t('User does not have any roles.')}
         emptyStateDescription={t('To get started, add roles to the user.')}
+        emptyStateButtonIcon={<PlusCircleIcon />}
         emptyStateButtonText={t('Add role to user')}
         // emptyStateButtonClick={() => history(RouteObj.CreateUser)}
         {...view}

@@ -1,4 +1,4 @@
-import { CubesIcon } from '@patternfly/react-icons';
+import { CubesIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageHeader, PageLayout, PageTable, usePageNavigate } from '../../../../framework';
@@ -99,6 +99,7 @@ export function Projects() {
               )
         }
         emptyStateIcon={canCreateProject ? undefined : CubesIcon}
+        emptyStateButtonIcon={<PlusCircleIcon />}
         emptyStateButtonText={canCreateProject ? t('Create project') : undefined}
         emptyStateButtonClick={
           canCreateProject ? () => pageNavigate(AwxRoute.CreateProject) : undefined

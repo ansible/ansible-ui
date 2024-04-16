@@ -112,6 +112,7 @@ export function Organizations() {
         errorStateTitle={t('Error loading organizations')}
         emptyStateTitle={t('There are currently no organizations created.')}
         emptyStateDescription={t('Please create an organization by using the button below.')}
+        emptyStateButtonIcon={<PlusCircleIcon />}
         emptyStateButtonText={t('Create organization')}
         emptyStateButtonClick={() => pageNavigate(EdaRoute.CreateOrganization)}
         {...view}

@@ -237,6 +237,7 @@ export function Users() {
               )
         }
         emptyStateIcon={canCreateUser ? undefined : CubesIcon}
+        emptyStateButtonIcon={<PlusCircleIcon />}
         emptyStateButtonText={canCreateUser ? t('Create user') : undefined}
         emptyStateButtonClick={canCreateUser ? () => pageNavigate(AwxRoute.CreateUser) : undefined}
         {...view}
@@ -310,6 +311,7 @@ export function AccessTable(props: { url: string }) {
       errorStateTitle={t('Error loading users')}
       emptyStateTitle={t('No users yet')}
       emptyStateDescription={t('To get started, create a user.')}
+      emptyStateButtonIcon={<PlusCircleIcon />}
       emptyStateButtonText={t('Create user')}
       emptyStateButtonClick={() => pageNavigate(AwxRoute.CreateUser)}
       {...view}

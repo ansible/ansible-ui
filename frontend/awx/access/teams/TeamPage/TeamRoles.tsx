@@ -88,6 +88,7 @@ export function TeamRolesInner(props: { team: Team }) {
       errorStateTitle={t('Error loading roles')}
       emptyStateTitle={t('Team does not have any roles.')}
       emptyStateDescription={t('To get started, add roles to the team.')}
+      emptyStateButtonIcon={<PlusCircleIcon />}
       emptyStateButtonText={t('Add role to team')}
       emptyStateButtonClick={() =>
         pageNavigate(AwxRoute.AddRolesToTeam, { params: { id: team.id } })

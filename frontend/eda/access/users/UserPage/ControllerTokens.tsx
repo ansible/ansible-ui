@@ -7,6 +7,7 @@ import { EdaRoute } from '../../../main/EdaRoutes';
 import { useControllerTokenActions } from '../hooks/useControllerTokenActions';
 import { useControllerTokensActions } from '../hooks/useControllerTokensActions';
 import { useControllerTokensColumns } from '../hooks/useControllerTokensColumns';
+import { PlusCircleIcon } from '@patternfly/react-icons';
 
 export function ControllerTokens() {
   const { t } = useTranslation();
@@ -31,6 +32,7 @@ export function ControllerTokens() {
         emptyStateDescription={t(
           'Please create a token from Automation Controller by using the button below.'
         )}
+        emptyStateButtonIcon={<PlusCircleIcon />}
         emptyStateButtonText={t('Create controller token')}
         emptyStateButtonClick={() => pageNavigate(EdaRoute.CreateControllerToken)}
         {...view}

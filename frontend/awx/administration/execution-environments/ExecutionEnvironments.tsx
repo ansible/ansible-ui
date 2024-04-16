@@ -14,6 +14,7 @@ import { useExecutionEnvironmentsFilters } from './hooks/useExecutionEnvironment
 import { useOptions } from '../../../common/crud/useOptions';
 import { OptionsResponse, ActionsResponse } from '../../interfaces/OptionsResponse';
 import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
+import { PlusCircleIcon } from '@patternfly/react-icons';
 
 export function ExecutionEnvironments() {
   const { t } = useTranslation();
@@ -66,6 +67,7 @@ export function ExecutionEnvironments() {
                 'Please contact your organization administrator if there is an issue with your access.'
               )
         }
+        emptyStateButtonIcon={<PlusCircleIcon />}
         emptyStateButtonText={
           canCreateExecutionEnvironment ? t('Create execution environment') : undefined
         }

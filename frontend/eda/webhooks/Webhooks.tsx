@@ -8,6 +8,7 @@ import { useWebhookActions } from './hooks/useWebhookActions';
 import { useWebhookColumns } from './hooks/useWebhookColumns';
 import { useWebhookFilters } from './hooks/useWebhookFilters';
 import { useWebhooksActions } from './hooks/useWebhooksActions';
+import { PlusCircleIcon } from '@patternfly/react-icons';
 
 export function Webhooks() {
   const { t } = useTranslation();
@@ -33,6 +34,7 @@ export function Webhooks() {
         errorStateTitle={t('Error loading webhooks')}
         emptyStateTitle={t('There are currently no webhooks created for your organization.')}
         emptyStateDescription={t('Please create a webhook by using the button below.')}
+        emptyStateButtonIcon={<PlusCircleIcon />}
         emptyStateButtonText={t('Create webhook')}
         emptyStateButtonClick={() => pageNavigate(EdaRoute.CreateWebhook)}
         {...view}
