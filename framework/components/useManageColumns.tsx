@@ -61,6 +61,7 @@ export function useManageColumns<T extends object>(
                 description: t('Hide the column.'),
               },
             ]}
+            isRequired
           />
         ),
       });
@@ -120,6 +121,7 @@ export function useManageColumns<T extends object>(
               },
             ]}
             placeholder={t('Left side')}
+            isRequired
           />
         ),
       });
@@ -172,6 +174,7 @@ export function useManageColumns<T extends object>(
                 description: t('Hide the column on the card.'),
               },
             ]}
+            isRequired
           />
         ),
       });
