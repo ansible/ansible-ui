@@ -1,16 +1,14 @@
-import { Spinner } from '@patternfly/react-core';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { FieldPath, FieldValues, PathValue, useFormContext, useWatch } from 'react-hook-form';
-import { useTranslation } from 'react-i18next';
 import { ITableColumn, IToolbarFilter, usePageDialog } from '../../../framework';
 import { SingleSelectDialog } from '../../../framework/PageDialogs/SingleSelectDialog';
 import { PageFormAsyncSingleSelect } from '../../../framework/PageForm/Inputs/PageFormAsyncSingleSelect';
 import { PageAsyncSelectOptionsFn } from '../../../framework/PageInputs/PageAsyncSelectOptions';
+import { AsyncQueryLabel } from '../../../framework/components/AsyncQueryLabel';
 import { useID } from '../../../framework/hooks/useID';
 import { requestGet } from '../../common/crud/Data';
-import { useGetItem } from '../../common/crud/useGet';
 import { AwxItemsResponse } from './AwxItemsResponse';
-import { QueryParams, getQueryString, useAwxView } from './useAwxView';
+import { QueryParams, useAwxView } from './useAwxView';
 
 export function PageFormSingleSelectAwxResource<
   Resource extends { id: number; name: string; description?: string | null | undefined },
@@ -31,6 +29,7 @@ export function PageFormSingleSelectAwxResource<
   queryPlaceholder: string;
   queryErrorText: string;
   helperText?: string;
+  additionalControls?: React.ReactNode;
   labelHelp?: string;
   queryParams?: QueryParams;
 }) {
@@ -39,11 +38,20 @@ export function PageFormSingleSelectAwxResource<
   const queryOptions = useCallback<PageAsyncSelectOptionsFn<PathValue<FormData, Name>>>(
     async (options) => {
       try {
-        let url =
-          props.url + `?page_size=10&order_by=name` + getQueryString(props.queryParams || {});
-        if (options.next) url = url + `&name__gt=${options.next}`;
-        if (options.search) url = url + `&name__icontains=${options.search}`;
-        const response = await requestGet<AwxItemsResponse<Resource>>(url, options.signal);
+        const urlSearchParams = new URLSearchParams(props.url);
+        urlSearchParams.set('page_size', '10');
+        urlSearchParams.set('order_by', 'name');
+        if (props.queryParams) {
+          for (const [key, value] of Object.entries(props.queryParams)) {
+            urlSearchParams.set(key, value);
+          }
+        }
+        if (options.next) urlSearchParams.set('name__gt', options.next.toString());
+        if (options.search) urlSearchParams.set('name__icontains', options.search);
+        const response = await requestGet<AwxItemsResponse<Resource>>(
+          decodeURIComponent(urlSearchParams.toString()),
+          options.signal
+        );
         return {
           remaining: response.count - response.results.length,
           options:
@@ -66,6 +74,7 @@ export function PageFormSingleSelectAwxResource<
   );
 
   const [_, setDialog] = usePageDialog();
+
   const { setValue } = useFormContext<FormData>();
   const value = useWatch<FormData>({ name: props.name });
   const openSelectDialog = useCallback(
@@ -94,7 +103,9 @@ export function PageFormSingleSelectAwxResource<
   );
 
   const queryLabel = useCallback(
-    (value: Value) => <AwxAsyncName url={props.url} id={value as unknown as number} />,
+    (value: Value) => (
+      <AsyncQueryLabel url={props.url.split('?')[0]} id={value as unknown as number} />
+    ),
     [props.url]
   );
 
@@ -117,6 +128,7 @@ export function PageFormSingleSelectAwxResource<
         )
       }
       queryLabel={queryLabel}
+      additionalControls={props.additionalControls}
     />
   );
 }
@@ -132,13 +144,21 @@ function SelectResource<
   tableColumns: ITableColumn<Resource>[];
   queryParams?: QueryParams;
 }) {
+  const urlSearchParams = useMemo(() => new URLSearchParams(props.url.split('?')[1]), [props.url]);
+
+  const queryParams = useMemo(() => {
+    const query: QueryParams = {};
+    urlSearchParams.forEach((value, key) => (query[key] = value));
+    return query;
+  }, [urlSearchParams]);
+
   const view = useAwxView<Resource>({
-    url: props.url,
+    url: props.url.split('?')[0],
     toolbarFilters: props.toolbarFilters,
     tableColumns: props.tableColumns,
     disableQueryString: true,
     defaultSelection: props.defaultSelection as Resource[],
-    queryParams: props.queryParams,
+    queryParams,
   });
   return (
     <SingleSelectDialog<Resource>
@@ -149,13 +169,4 @@ function SelectResource<
       view={view}
     />
   );
-}
-
-export function AwxAsyncName(props: { url: string; id: number; nameProp?: string }) {
-  const { t } = useTranslation();
-  const { data, isLoading, error } = useGetItem<Record<string, string>>(props.url, props.id);
-  if (isLoading) return <Spinner size="md" />;
-  if (error) return t('Not found');
-  if (!data) return t('Not found');
-  return data[props.nameProp ?? 'name'];
 }
