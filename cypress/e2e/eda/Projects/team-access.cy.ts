@@ -1,7 +1,7 @@
 //Tests a user's ability to perform certain actions on the Resources toolbar in the EDA UI.
-import { EdaProject } from '../../../frontend/eda/interfaces/EdaProject';
-import { EdaTeam } from '../../../frontend/eda/interfaces/EdaTeam';
-import { edaAPI } from '../../support/formatApiPathForEDA';
+import { EdaProject } from '../../../../frontend/eda/interfaces/EdaProject';
+import { EdaTeam } from '../../../../frontend/eda/interfaces/EdaTeam';
+import { edaAPI } from '../../../support/formatApiPathForEDA';
 
 describe('Team Access Tab - Add team', () => {
   let edaProject: EdaProject;
@@ -28,7 +28,7 @@ describe('Team Access Tab - Add team', () => {
     cy.contains('h1', edaProject.name).should('be.visible');
     cy.contains('li', 'Team Access').click();
     cy.get('a[data-cy="add-team"]').click();
-    cy.selectTableRow(edaTeam.name, false);
+    cy.selectTableRow(edaTeam.name, true);
     cy.clickButton(/^Next$/);
     cy.selectTableRow('Project Admin', false);
     cy.clickButton(/^Next$/);
@@ -44,7 +44,7 @@ describe('Team Access Tab - Add team', () => {
   });
 });
 
-describe('Team Access Tab - post actions', () => {
+describe('Team Access Tab - actions', () => {
   let roleIDs: { [key: string]: string };
   let ProjectRoleID: string;
   let edaProject: EdaProject;
@@ -68,21 +68,21 @@ describe('Team Access Tab - post actions', () => {
                 return { ...acc, [name]: id };
               }, {});
               ProjectRoleID = roleIDs['Project Admin'];
-              cy.requestPost(edaAPI`/role_team_assignments/`, {
-                object_id: project.id,
-                role_definition: ProjectRoleID,
-                team: team1.id,
-              });
-              cy.requestPost(edaAPI`/role_team_assignments/`, {
-                object_id: project.id,
-                role_definition: ProjectRoleID,
-                team: team2.id,
-              });
-              cy.requestPost(edaAPI`/role_team_assignments/`, {
-                object_id: project.id,
-                role_definition: ProjectRoleID,
-                team: team3.id,
-              });
+              cy.createRoleTeamAssignments(
+                project.id.toString(),
+                ProjectRoleID,
+                team1.id.toString()
+              );
+              cy.createRoleTeamAssignments(
+                project.id.toString(),
+                ProjectRoleID,
+                team2.id.toString()
+              );
+              cy.createRoleTeamAssignments(
+                project.id.toString(),
+                ProjectRoleID,
+                team3.id.toString()
+              );
             });
           });
         });
@@ -123,6 +123,6 @@ describe('Team Access Tab - post actions', () => {
     cy.clickModalButton('Remove team assignment');
     cy.clickButton(/^Close$/);
     cy.contains(edaTeam2.name).should('not.exist');
-    cy.contains(edaTeam2.name).should('not.exist');
+    cy.contains(edaTeam3.name).should('not.exist');
   });
 });

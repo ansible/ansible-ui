@@ -16,6 +16,9 @@ import {
 } from '../../frontend/eda/interfaces/EdaRulebookActivation';
 import { EdaUser, EdaUserCreateUpdate } from '../../frontend/eda/interfaces/EdaUser';
 import { EdaTeam } from '../../frontend/eda/interfaces/EdaTeam';
+import { TeamAssignment } from '../../frontend/eda/access/interfaces/TeamAssignment';
+import { UserAssignment } from '../../frontend/eda/access/interfaces/UserAssignment';
+
 import {
   ImportStateEnum,
   RestartPolicyEnum,
@@ -328,20 +331,6 @@ Cypress.Commands.add('createEdaTeam', () => {
   });
 });
 
-// Cypress.Commands.add('createRoleTeamAssignments', (object_id, role_definition, team) => {
-//   cy.requestPost(edaAPI`/role_team_assignments/`, {
-//     object_id: object_id,
-//     role_definition: role_definition,
-//     team: team,
-//   }).then((RoleTeamAssignments) => {
-//     Cypress.log({
-//       displayName: 'Role Team Assignment :',
-//       message: [`Response 👉  ${RoleTeamAssignments}`],
-//     });
-//     return RoleTeamAssignments;
-//   });
-// });
-
 Cypress.Commands.add('deleteEdaTeam', (team: EdaTeam) => {
   cy.wrap(team).should('not.be.undefined');
   cy.wrap(team.id).should('not.equal', 1);
@@ -401,6 +390,30 @@ Cypress.Commands.add('getEdaActiveUser', () => {
     } else {
       return undefined;
     }
+  });
+});
+
+Cypress.Commands.add('createRoleTeamAssignments', (object_id, role_definition, team) => {
+  cy.requestPost<TeamAssignment>(edaAPI`/role_team_assignments/`, {
+    object_id: object_id,
+    role_definition: role_definition,
+    team: team,
+  }).then(() => {
+    Cypress.log({
+      displayName: 'Role Team Assignment completed',
+    });
+  });
+});
+
+Cypress.Commands.add('createRoleUserAssignments', (object_id, role_definition, user) => {
+  cy.requestPost<UserAssignment>(edaAPI`/role_user_assignments/`, {
+    object_id: object_id,
+    role_definition: role_definition,
+    user: user,
+  }).then(() => {
+    Cypress.log({
+      displayName: 'Role User Assignment :',
+    });
   });
 });
 
