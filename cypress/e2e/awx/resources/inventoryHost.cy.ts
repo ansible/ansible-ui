@@ -21,8 +21,8 @@ describe('Inventory Host Tab Tests', () => {
     cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
   });
 
-  describe('Inventory Host List Tests', () => {
-    kinds.forEach((kind) => {
+  kinds.forEach((kind) => {
+    describe(`Inventory Host List Tests (${kind === '' ? 'regular' : kind})`, () => {
       beforeEach(() => {
         cy.createAwxOrganization().then((org) => {
           organization = org;
@@ -79,7 +79,7 @@ describe('Inventory Host Tab Tests', () => {
         });
       }
 
-      it.skip(`can run an ad-hoc command against a host on the inventory hosts tab (${kind === '' ? 'regular' : kind})`, () => {
+      it.skip(`can run an ad-hoc command against a host on the inventory hosts tab`, () => {
         //1) Use the inventory created in beforeEach block, access the host tab of that inventory
         //2) Use the host, EE, and credential created in the beforeEach block- these resources are needed to run a command against a host
         //3) Assert redirect to the job output screen
@@ -89,8 +89,8 @@ describe('Inventory Host Tab Tests', () => {
     });
   });
 
-  describe('Inventory Host Details Page Tests', () => {
-    kinds.forEach((kind) => {
+  kinds.forEach((kind) => {
+    describe(`Inventory Host Details Page Tests (${kind === '' ? 'regular' : kind})`, () => {
       beforeEach(() => {
         cy.createAwxOrganization().then((org) => {
           organization = org;
