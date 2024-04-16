@@ -1336,9 +1336,16 @@ declare global {
       createEdaTeam(team?: SetOptional<EdaTeam, 'name' | 'organization_id'>): Chainable<EdaTeam>;
 
       /**
-       * Creates an object to team role assignment.
+       * Deletes an EDA team which is provided.
        *
        * @returns {Chainable<EdaTeam>}
+       */
+      deleteEdaTeam(edaTeamName: EdaTeam): Chainable<void>;
+
+      /**
+       * Creates an object to team role assignment.
+       *
+       * @returns {Chainable<TeamAssignment>}
        */
       createRoleTeamAssignments(
         object_id: string,
@@ -1347,11 +1354,15 @@ declare global {
       ): Chainable<void>;
 
       /**
-       * Deletes an EDA team which is provided.
+       * Creates an object to user role assignment.
        *
-       * @returns {Chainable<EdaTeam>}
+       * @returns {Chainable<UserAssignment>}
        */
-      deleteEdaTeam(edaTeamName: EdaTeam): Chainable<void>;
+      createRoleUserAssignments(
+        object_id: string,
+        role_definition: string,
+        user: string
+      ): Chainable<void>;
 
       /**
        * Retrieves an EDA active user which is admin.
