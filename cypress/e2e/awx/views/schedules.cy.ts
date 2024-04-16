@@ -424,7 +424,7 @@ describe('Schedules - Edit', () => {
           .should((el) => expect(el.text().trim()).to.equal(text));
       });
     });
-    cy.selectDropdownOptionByResourceName('timezone', 'Africa/Abidjan');
+    cy.selectSingleSelectOption('[data-cy="timezone"]', 'Africa/Abidjan');
     cy.getByDataCy('undefined-form-group').within(() => {
       cy.getBy('[aria-label="Time picker"]').click().type('{selectall} 5:00 AM');
     });
