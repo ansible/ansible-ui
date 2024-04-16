@@ -16,7 +16,7 @@ import { StatusCell } from '../../../common/Status';
 import { useGetItem } from '../../../common/crud/useGet';
 import { edaAPI } from '../../common/eda-utils';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
-import { LogLevelEnum, RestartPolicyEnum, Status906Enum } from '../../interfaces/generated/eda-api';
+import { LogLevelEnum, RestartPolicyEnum, StatusEnum } from '../../interfaces/generated/eda-api';
 import { EdaRoute } from '../../main/EdaRoutes';
 import { EdaExtraVarsCell } from '../components/EdaExtraVarCell';
 import { SelectVariant } from '@patternfly/react-core/deprecated';
@@ -47,8 +47,8 @@ export function RulebookActivationDetails() {
       <PageDetails
         disableScroll={true}
         alertPrompts={
-          rulebookActivation.status === Status906Enum.Error ||
-          rulebookActivation.status === Status906Enum.Failed
+          rulebookActivation.status === StatusEnum.Error ||
+          rulebookActivation.status === StatusEnum.Failed
             ? [`${t('Rulebook Activation error: ')}${rulebookActivation?.status_message || ''}`]
             : []
         }
@@ -133,8 +133,8 @@ export function RulebookActivationDetails() {
         <PageDetail label={t('Activation status')}>
           <StatusCell status={rulebookActivation?.status || ''} />
         </PageDetail>
-        {rulebookActivation.status !== Status906Enum.Error &&
-          rulebookActivation.status !== Status906Enum.Failed &&
+        {rulebookActivation.status !== StatusEnum.Error &&
+          rulebookActivation.status !== StatusEnum.Failed &&
           !!rulebookActivation?.status_message && (
             <PageDetail label={t('Status message')}>
               {rulebookActivation?.status_message}

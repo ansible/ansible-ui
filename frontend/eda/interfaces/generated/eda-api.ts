@@ -1,5 +1,4 @@
 /* eslint-disable */
-/* eslint-disable */
 /* tslint:disable */
 /*
  * ---------------------------------------------------------------
@@ -10,25 +9,6 @@
  * ---------------------------------------------------------------
  */
 
-/**
- * * `create` - create
- * * `read` - read
- * * `update` - update
- * * `delete` - delete
- * * `enable` - enable
- * * `disable` - disable
- * * `restart` - restart
- */
-export enum ActionEnum {
-  Create = 'create',
-  Read = 'read',
-  Update = 'update',
-  Delete = 'delete',
-  Enable = 'enable',
-  Disable = 'disable',
-  Restart = 'restart',
-}
-
 /** Serializer for creating the Activation. */
 export interface ActivationCreate {
   name: string;
@@ -37,6 +17,7 @@ export interface ActivationCreate {
   decision_environment_id: number;
   rulebook_id: number;
   extra_var_id?: number | null;
+  organization_id?: number | null;
   /**
    * * `always` - always
    * * `on-failure` - on-failure
@@ -52,8 +33,6 @@ export interface ActivationCreate {
    */
   log_level?: LogLevelEnum;
   eda_credentials?: number[] | null;
-  k8s_service_name?: string | null;
-  organization_id?: number | null;
 }
 
 /** Serializer for the Activation Instance model. */
@@ -72,10 +51,11 @@ export interface ActivationInstance {
    * * `unresponsive` - unresponsive
    * * `error` - error
    */
-  status?: Status906Enum;
+  status?: StatusEnum;
   git_hash?: string;
   status_message?: string | null;
-  activation_id: number;
+  activation_id: number | null;
+  event_stream_id: number | null;
   /** @format date-time */
   started_at: string;
   /** @format date-time */
@@ -118,11 +98,12 @@ export interface ActivationList {
    * * `unresponsive` - unresponsive
    * * `error` - error
    */
-  status?: Status906Enum;
+  status?: StatusEnum;
   decision_environment_id: number | null;
   project_id: number | null;
   rulebook_id: number | null;
   extra_var_id: number | null;
+  organization_id: number | null;
   /**
    * * `always` - always
    * * `on-failure` - on-failure
@@ -145,18 +126,14 @@ export interface ActivationList {
   modified_at: string;
   status_message?: string | null;
   awx_token_id: number | null;
+  event_streams?: EventStreamOut[] | null;
   /**
    * * `debug` - debug
    * * `info` - info
    * * `error` - error
    */
   log_level?: LogLevelEnum;
-  eda_credentials?: Credential[] | null;
-}
-
-export interface SourceRef {
-  id: string;
-  name: string;
+  eda_credentials?: EdaCredential[] | null;
 }
 
 /** Serializer for reading the Activation with related objects info. */
@@ -178,11 +155,12 @@ export interface ActivationRead {
    * * `unresponsive` - unresponsive
    * * `error` - error
    */
-  status?: Status906Enum;
+  status?: StatusEnum;
   git_hash?: string;
   project?: ProjectRef | null;
   rulebook?: RulebookRef | null;
   extra_var?: ExtraVarRef | null;
+  organization: OrganizationRef;
   instances: ActivationInstance[];
   /**
    * * `always` - always
@@ -208,11 +186,8 @@ export interface ActivationRead {
   restarted_at?: string | null;
   status_message?: string | null;
   awx_token_id: number | null;
-  eda_credentials?: Credential[] | null;
-  event_streams?: EventStreamRead[] | null;
-  webhooks?: WebhookRef[];
-  organization?: OrganizationRef;
-  k8s_service_name?: string;
+  eda_credentials?: EdaCredential[] | null;
+  event_streams?: EventStreamOut[] | null;
   /**
    * * `debug` - debug
    * * `info` - info
@@ -241,9 +216,12 @@ export interface AuditAction {
    * @format date-time
    */
   fired_at: string;
+  organization_id: number | null;
   /** @format date-time */
   rule_fired_at?: string | null;
   audit_rule_id: number | null;
+  /** Message of the action */
+  status_message?: string | null;
 }
 
 export interface AuditEvent {
@@ -256,16 +234,17 @@ export interface AuditEvent {
   source_name: string;
   /** Type of the source */
   source_type: string;
+  /** The payload in the event */
+  payload?: string | null;
+  organization_id: number | null;
+  audit_actions: string[];
   /**
    * The received timestamp of the event
    * @format date-time
    */
   received_at: string;
-  /** The payload in the event */
-  payload?: Record<string, any>;
   /** @format date-time */
   rule_fired_at?: string | null;
-  audit_actions: string[];
 }
 
 export interface AuditRuleDetail {
@@ -330,120 +309,72 @@ export interface AwxTokenCreate {
   token: string;
 }
 
+/**
+ * * `eda.rulebook` - Rulebook
+ * * `eda.credentialtype` - Credential Type
+ * * `eda.activation` - Activation
+ * * `shared.team` - Team
+ * * `eda.auditrule` - Audit Rule
+ * * `eda.extravar` - Extra Var
+ * * `shared.organization` - Organization
+ * * `eda.project` - Project
+ * * `eda.rulebookprocess` - Rulebook Process
+ * * `eda.decisionenvironment` - Decision Environment
+ * * `eda.edacredential` - Eda Credential
+ */
+export enum ContentTypeEnum {
+  EdaRulebook = 'eda.rulebook',
+  EdaCredentialtype = 'eda.credentialtype',
+  EdaActivation = 'eda.activation',
+  SharedTeam = 'shared.team',
+  EdaAuditrule = 'eda.auditrule',
+  EdaExtravar = 'eda.extravar',
+  SharedOrganization = 'shared.organization',
+  EdaProject = 'eda.project',
+  EdaRulebookprocess = 'eda.rulebookprocess',
+  EdaDecisionenvironment = 'eda.decisionenvironment',
+  EdaEdacredential = 'eda.edacredential',
+}
+
 export interface CredentialType {
-  id: number;
   name: string;
+  namespace?: string | null;
+  kind?: string;
   description?: string;
-  namespace?: string;
+  inputs?: Record<string, any>;
+  injectors?: Record<string, any>;
+  id: number;
+  /** @format date-time */
+  created_at: string;
+  /** @format date-time */
+  modified_at: string;
   managed: boolean;
-  injectors?: { [key: string]: string };
-  inputs: {
-    fields: {
-      id: string;
-      label: string;
-      type: string;
-      secret: boolean;
-      help_text: string;
-      ask_at_runtime?: boolean;
-      default?: number | string | boolean;
-    }[];
-    required: string[];
-  };
-  related: {
-    credentials: string;
-    activity_stream: string;
-  };
+  organization_id: number | null;
 }
 
 export interface CredentialTypeCreate {
-  id: string;
   name: string;
   description?: string;
-  namespace?: string;
-  managed?: boolean;
-  injectors?: { [key: string]: string };
-  inputs?: {
-    fields: {
-      id: string;
-      label: string;
-      type: string;
-      help_text: string;
-      ask_at_runtime?: boolean;
-      default?: number | string | boolean;
-    }[];
-  };
-}
-
-export interface Credential {
-  name: string;
-  description?: string;
-  organization?: OrganizationRef;
-  key?: string | null;
-  credential_type: { id?: number; name?: string };
-  inputs?: object;
-  id: number;
-  /** @format date-time */
-  created_at: string;
-  /** @format date-time */
-  modified_at: string;
-}
-
-export interface CredentialCreate {
-  name: string;
-  description?: string;
+  /** Name of the credential type */
+  inputs: Record<string, any>;
+  injectors?: Record<string, any>;
   organization_id?: number | null;
-  credential_type_id: number;
-  username?: string | null;
-  key?: string | null;
-  secret?: string | null;
-  inputs?: object;
 }
 
-/** Serializer for Credential reference. */
-export interface CredentialRef {
+export interface CredentialTypeRef {
   id: number;
   name: string;
-  description?: string;
-  credential_type?: number;
-  username?: string | null;
-}
-
-export interface Organization {
-  name: string;
-  description?: string;
-  key?: string | null;
-  credential_type: { id?: number; name?: string };
-  inputs?: object;
-  id: number;
-  /** @format date-time */
-  created_at: string;
-  /** @format date-time */
-  modified_at: string;
-}
-
-export interface OrganizationCreate {
-  name: string;
-  description?: string;
-  credential_type_id: number;
-  username?: string | null;
-  key?: string | null;
-  secret?: string | null;
-  inputs?: object;
-}
-
-/** Serializer for Organization reference. */
-export interface OrganizationRef {
-  id: number;
-  name: string;
-  description?: string;
+  namespace?: string | null;
+  kind?: string;
+  organization_id: number | null;
 }
 
 export interface DecisionEnvironment {
   name: string;
   description?: string;
   image_url: string;
-  eda_credential_id: number | null;
   organization_id: number | null;
+  eda_credential_id: number | null;
   id: number;
   /** @format date-time */
   created_at: string;
@@ -456,8 +387,8 @@ export interface DecisionEnvironmentCreate {
   name: string;
   description?: string;
   image_url: string;
+  organization_id?: number | null;
   eda_credential_id?: number | null;
-  organization_id: number | null;
 }
 
 /** Serializer for reading the DecisionEnvironment with embedded objects. */
@@ -466,8 +397,8 @@ export interface DecisionEnvironmentRead {
   name: string;
   description?: string;
   image_url: string;
-  eda_credential?: CredentialRef;
-  organization?: OrganizationRef;
+  organization: OrganizationRef;
+  eda_credential?: EdaCredentialRef | null;
   /** @format date-time */
   created_at: string;
   /** @format date-time */
@@ -480,18 +411,74 @@ export interface DecisionEnvironmentRef {
   name: string;
   description?: string;
   image_url: string;
+  organization_id: number | null;
+}
+
+export interface EdaCredential {
+  name: string;
+  description?: string;
+  inputs: Record<string, any>;
+  credential_type?: CredentialTypeRef | null;
+  references?: EdaCredentialReference[] | null;
+  id: number;
+  /** @format date-time */
+  created_at: string;
+  /** @format date-time */
+  modified_at: string;
+  managed: boolean;
+  organization: OrganizationRef;
+}
+
+export interface EdaCredentialCreate {
+  name: string;
+  description?: string;
+  inputs: Record<string, any>;
+  credential_type_id: number | null;
+  organization_id?: number | null;
+}
+
+/** Serializer for EdaCredential reference. */
+export interface EdaCredentialRef {
+  id: number;
+  name: string;
+  description?: string;
+  inputs: Record<string, any>;
+  managed?: boolean;
+  credential_type_id: number | null;
+  organization_id: number | null;
+}
+
+export interface EdaCredentialReference {
+  /** Type of the related resource */
+  type: string;
+  /** ID of the related resource */
+  id: number;
+  /** Name of the related resource */
+  name: string;
+  /**
+   * URL of the related resource
+   * @format uri
+   */
+  url: string;
+}
+
+/** Serializer for UI to show EventStream. */
+export interface EventStreamOut {
+  id: number;
+  name: string;
 }
 
 export interface ExtraVar {
   id: number;
-  organization_id?: number | null;
   /** Content of the extra_var */
   extra_var: string;
+  organization_id: number | null;
 }
 
 export interface ExtraVarCreate {
   /** Content of the extra_var */
   extra_var: string;
+  organization_id?: number | null;
 }
 
 /** Serializer for Extra Var reference. */
@@ -512,9 +499,69 @@ export enum ImportStateEnum {
   Completed = 'completed',
 }
 
+/**
+ * * `debug` - debug
+ * * `info` - info
+ * * `error` - error
+ */
+export enum LogLevelEnum {
+  Debug = 'debug',
+  Info = 'info',
+  Error = 'error',
+}
+
 export interface Login {
   username: string;
   password: string;
+}
+
+export type NullEnum = null;
+
+export interface Organization {
+  id: number;
+  /**
+   * The name of this resource
+   * @maxLength 512
+   */
+  name: string;
+  /** The organization description. */
+  description?: string;
+  resource: Record<string, any>;
+  /**
+   * The date/time this resource was created
+   * @format date-time
+   */
+  created: string;
+  /** The user who created this resource */
+  created_by: number | null;
+  /**
+   * The date/time this resource was created
+   * @format date-time
+   */
+  modified: string;
+  /** The user who last modified this resource */
+  modified_by: number | null;
+}
+
+export interface OrganizationCreate {
+  /**
+   * The name of this resource
+   * @maxLength 512
+   */
+  name: string;
+  /** The organization description. */
+  description?: string;
+}
+
+export interface OrganizationRef {
+  id: number;
+  /**
+   * The name of this resource
+   * @maxLength 512
+   */
+  name: string;
+  /** The organization description. */
+  description?: string;
 }
 
 export interface PaginatedActivationInstanceList {
@@ -657,7 +704,7 @@ export interface PaginatedAwxTokenList {
   results?: AwxToken[];
 }
 
-export interface PaginatedCredentialList {
+export interface PaginatedCredentialTypeList {
   /** @example 123 */
   count?: number;
   /**
@@ -674,7 +721,7 @@ export interface PaginatedCredentialList {
   page_size?: number | null;
   /** @example 50 */
   page?: number | null;
-  results?: Credential[];
+  results?: CredentialType[];
 }
 
 export interface PaginatedDecisionEnvironmentList {
@@ -697,6 +744,26 @@ export interface PaginatedDecisionEnvironmentList {
   results?: DecisionEnvironment[];
 }
 
+export interface PaginatedEdaCredentialList {
+  /** @example 123 */
+  count?: number;
+  /**
+   * @format uri
+   * @example "/eda/api/v1/example/?page=51&page_size=100"
+   */
+  next?: string | null;
+  /**
+   * @format uri
+   * @example "/eda/api/v1/example/?page=49&page_size=100"
+   */
+  previous?: string | null;
+  /** @example 100 */
+  page_size?: number | null;
+  /** @example 50 */
+  page?: number | null;
+  results?: EdaCredential[];
+}
+
 export interface PaginatedExtraVarList {
   /** @example 123 */
   count?: number;
@@ -715,6 +782,26 @@ export interface PaginatedExtraVarList {
   /** @example 50 */
   page?: number | null;
   results?: ExtraVar[];
+}
+
+export interface PaginatedOrganizationList {
+  /** @example 123 */
+  count?: number;
+  /**
+   * @format uri
+   * @example "/eda/api/v1/example/?page=51&page_size=100"
+   */
+  next?: string | null;
+  /**
+   * @format uri
+   * @example "/eda/api/v1/example/?page=49&page_size=100"
+   */
+  previous?: string | null;
+  /** @example 100 */
+  page_size?: number | null;
+  /** @example 50 */
+  page?: number | null;
+  results?: Organization[];
 }
 
 export interface PaginatedProjectList {
@@ -737,47 +824,39 @@ export interface PaginatedProjectList {
   results?: Project[];
 }
 
-export interface PaginatedRoleListList {
+export interface PaginatedResourceListList {
   /** @example 123 */
   count?: number;
   /**
    * @format uri
-   * @example "/eda/api/v1/example/?page=51&page_size=100"
+   * @example "http://api.example.org/accounts/?page=4"
    */
   next?: string | null;
   /**
    * @format uri
-   * @example "/eda/api/v1/example/?page=49&page_size=100"
+   * @example "http://api.example.org/accounts/?page=2"
    */
   previous?: string | null;
-  /** @example 100 */
-  page_size?: number | null;
-  /** @example 50 */
-  page?: number | null;
-  results?: RoleList[];
+  results?: ResourceList[];
 }
 
-export interface PaginatedRuleList {
+export interface PaginatedResourceTypeList {
   /** @example 123 */
   count?: number;
   /**
    * @format uri
-   * @example "/eda/api/v1/example/?page=51&page_size=100"
+   * @example "http://api.example.org/accounts/?page=4"
    */
   next?: string | null;
   /**
    * @format uri
-   * @example "/eda/api/v1/example/?page=49&page_size=100"
+   * @example "http://api.example.org/accounts/?page=2"
    */
   previous?: string | null;
-  /** @example 100 */
-  page_size?: number | null;
-  /** @example 50 */
-  page?: number | null;
-  results?: Rule[];
+  results?: ResourceType[];
 }
 
-export interface PaginatedRuleOutList {
+export interface PaginatedRoleDefinitionList {
   /** @example 123 */
   count?: number;
   /**
@@ -794,7 +873,47 @@ export interface PaginatedRuleOutList {
   page_size?: number | null;
   /** @example 50 */
   page?: number | null;
-  results?: RuleOut[];
+  results?: RoleDefinition[];
+}
+
+export interface PaginatedRoleTeamAssignmentList {
+  /** @example 123 */
+  count?: number;
+  /**
+   * @format uri
+   * @example "/eda/api/v1/example/?page=51&page_size=100"
+   */
+  next?: string | null;
+  /**
+   * @format uri
+   * @example "/eda/api/v1/example/?page=49&page_size=100"
+   */
+  previous?: string | null;
+  /** @example 100 */
+  page_size?: number | null;
+  /** @example 50 */
+  page?: number | null;
+  results?: RoleTeamAssignment[];
+}
+
+export interface PaginatedRoleUserAssignmentList {
+  /** @example 123 */
+  count?: number;
+  /**
+   * @format uri
+   * @example "/eda/api/v1/example/?page=51&page_size=100"
+   */
+  next?: string | null;
+  /**
+   * @format uri
+   * @example "/eda/api/v1/example/?page=49&page_size=100"
+   */
+  previous?: string | null;
+  /** @example 100 */
+  page_size?: number | null;
+  /** @example 50 */
+  page?: number | null;
+  results?: RoleUserAssignment[];
 }
 
 export interface PaginatedRulebookList {
@@ -817,7 +936,7 @@ export interface PaginatedRulebookList {
   results?: Rulebook[];
 }
 
-export interface PaginatedRulesetOutList {
+export interface PaginatedTeamList {
   /** @example 123 */
   count?: number;
   /**
@@ -834,7 +953,7 @@ export interface PaginatedRulesetOutList {
   page_size?: number | null;
   /** @example 50 */
   page?: number | null;
-  results?: RulesetOut[];
+  results?: Team[];
 }
 
 export interface PaginatedUserListList {
@@ -857,13 +976,13 @@ export interface PaginatedUserListList {
   results?: UserList[];
 }
 
-export interface PatchedCredentialCreate {
+export interface PatchedCredentialTypeCreate {
   name?: string;
   description?: string;
-  credential_type?: number;
-  username?: string | null;
-  secret?: string | null;
-  inputs?: object;
+  /** Name of the credential type */
+  inputs?: Record<string, any>;
+  injectors?: Record<string, any>;
+  organization_id?: number | null;
 }
 
 export interface PatchedCurrentUserUpdate {
@@ -885,7 +1004,26 @@ export interface PatchedDecisionEnvironmentCreate {
   name?: string;
   description?: string;
   image_url?: string;
+  organization_id?: number | null;
   eda_credential_id?: number | null;
+}
+
+export interface PatchedEdaCredentialCreate {
+  name?: string;
+  description?: string;
+  inputs?: Record<string, any>;
+  credential_type_id?: number | null;
+  organization_id?: number | null;
+}
+
+export interface PatchedOrganizationCreate {
+  /**
+   * The name of this resource
+   * @maxLength 512
+   */
+  name?: string;
+  /** The organization description. */
+  description?: string;
 }
 
 export interface PatchedProjectUpdateRequest {
@@ -893,52 +1031,198 @@ export interface PatchedProjectUpdateRequest {
   name?: string;
   /** Description of the project */
   description?: string | null;
-  /** Credential id of the project */
+  /** EdaCredential id of the project */
   eda_credential_id?: number | null;
+  /** ID of an optional credential used for validating files in the project against unexpected changes */
+  signature_validation_credential_id?: number | null;
+  /** Specific branch, tag or commit to checkout. */
+  scm_branch?: string | null;
+  /** For git projects, an additional refspec to fetch. */
+  scm_refspec?: string | null;
   /** Indicates if SSL verification is enabled */
   verify_ssl?: boolean;
+  /** Proxy server for http or https connection */
+  proxy?: string | null;
+}
+
+export interface PatchedResource {
+  object_id?: string;
+  name?: string | null;
+  /** @format uuid */
+  ansible_id?: string;
+  /** @format uuid */
+  service_id?: string;
+  resource_type?: string;
+  has_serializer?: boolean;
+  resource_data?: Record<string, any>;
+  url?: string;
+}
+
+export interface PatchedRoleDefinition {
+  id?: number;
+  url?: string;
+  related?: Record<string, string>;
+  summary_fields?: Record<string, Record<string, any>>;
+  permissions?: PermissionsEnum[];
+  /**
+   * The type of resource this applies to
+   *
+   * * `eda.rulebook` - Rulebook
+   * * `eda.credentialtype` - Credential Type
+   * * `eda.activation` - Activation
+   * * `shared.team` - Team
+   * * `eda.auditrule` - Audit Rule
+   * * `eda.extravar` - Extra Var
+   * * `shared.organization` - Organization
+   * * `eda.project` - Project
+   * * `eda.rulebookprocess` - Rulebook Process
+   * * `eda.decisionenvironment` - Decision Environment
+   * * `eda.edacredential` - Eda Credential
+   */
+  content_type?: ContentTypeEnum | NullEnum | null;
+  /**
+   * The date/time this resource was created
+   * @format date-time
+   */
+  modified?: string;
+  /**
+   * The date/time this resource was created
+   * @format date-time
+   */
+  created?: string;
+  name?: string;
+  description?: string;
+  managed?: boolean;
+  /** The user who last modified this resource */
+  modified_by?: number | null;
+  /** The user who created this resource */
+  created_by?: number | null;
+}
+
+export interface PatchedTeamUpdate {
+  /**
+   * The name of this resource
+   * @maxLength 512
+   */
+  name?: string;
+  /** The team description. */
+  description?: string;
 }
 
 export interface PatchedUserCreateUpdate {
-  /** @description The user's log in name. */
+  /** The user's log in name. */
   username?: string;
+  /** @maxLength 150 */
   first_name?: string;
+  /** @maxLength 150 */
   last_name?: string;
   /**
    * Email address
-   * Format: email
+   * @format email
+   * @maxLength 254
    */
   email?: string;
   password?: string;
   /**
    * Superuser status
-   * @description Designates that this user has all permissions without explicitly assigning them.
+   * Designates that this user has all permissions without explicitly assigning them.
    */
   is_superuser?: boolean;
 }
 
-export interface PermissionRef {
-  resource_type: ResourceTypeEnum;
-  action: ActionEnum;
+/**
+ * * `eda.view_rulebook` - eda.view_rulebook
+ * * `eda.add_credentialtype` - eda.add_credentialtype
+ * * `eda.change_credentialtype` - eda.change_credentialtype
+ * * `eda.delete_credentialtype` - eda.delete_credentialtype
+ * * `eda.view_credentialtype` - eda.view_credentialtype
+ * * `eda.add_activation` - eda.add_activation
+ * * `eda.view_activation` - eda.view_activation
+ * * `eda.delete_activation` - eda.delete_activation
+ * * `eda.enable_activation` - eda.enable_activation
+ * * `eda.disable_activation` - eda.disable_activation
+ * * `eda.restart_activation` - eda.restart_activation
+ * * `eda.add_team` - eda.add_team
+ * * `eda.change_team` - eda.change_team
+ * * `eda.delete_team` - eda.delete_team
+ * * `eda.view_team` - eda.view_team
+ * * `eda.member_team` - eda.member_team
+ * * `eda.view_auditrule` - eda.view_auditrule
+ * * `eda.add_extravar` - eda.add_extravar
+ * * `eda.view_extravar` - eda.view_extravar
+ * * `eda.change_organization` - eda.change_organization
+ * * `eda.delete_organization` - eda.delete_organization
+ * * `eda.view_organization` - eda.view_organization
+ * * `eda.member_organization` - eda.member_organization
+ * * `eda.add_project` - eda.add_project
+ * * `eda.change_project` - eda.change_project
+ * * `eda.delete_project` - eda.delete_project
+ * * `eda.view_project` - eda.view_project
+ * * `eda.view_rulebookprocess` - eda.view_rulebookprocess
+ * * `eda.add_decisionenvironment` - eda.add_decisionenvironment
+ * * `eda.change_decisionenvironment` - eda.change_decisionenvironment
+ * * `eda.delete_decisionenvironment` - eda.delete_decisionenvironment
+ * * `eda.view_decisionenvironment` - eda.view_decisionenvironment
+ * * `eda.add_edacredential` - eda.add_edacredential
+ * * `eda.change_edacredential` - eda.change_edacredential
+ * * `eda.delete_edacredential` - eda.delete_edacredential
+ * * `eda.view_edacredential` - eda.view_edacredential
+ */
+export enum PermissionsEnum {
+  EdaViewRulebook = 'eda.view_rulebook',
+  EdaAddCredentialtype = 'eda.add_credentialtype',
+  EdaChangeCredentialtype = 'eda.change_credentialtype',
+  EdaDeleteCredentialtype = 'eda.delete_credentialtype',
+  EdaViewCredentialtype = 'eda.view_credentialtype',
+  EdaAddActivation = 'eda.add_activation',
+  EdaViewActivation = 'eda.view_activation',
+  EdaDeleteActivation = 'eda.delete_activation',
+  EdaEnableActivation = 'eda.enable_activation',
+  EdaDisableActivation = 'eda.disable_activation',
+  EdaRestartActivation = 'eda.restart_activation',
+  EdaAddTeam = 'eda.add_team',
+  EdaChangeTeam = 'eda.change_team',
+  EdaDeleteTeam = 'eda.delete_team',
+  EdaViewTeam = 'eda.view_team',
+  EdaMemberTeam = 'eda.member_team',
+  EdaViewAuditrule = 'eda.view_auditrule',
+  EdaAddExtravar = 'eda.add_extravar',
+  EdaViewExtravar = 'eda.view_extravar',
+  EdaChangeOrganization = 'eda.change_organization',
+  EdaDeleteOrganization = 'eda.delete_organization',
+  EdaViewOrganization = 'eda.view_organization',
+  EdaMemberOrganization = 'eda.member_organization',
+  EdaAddProject = 'eda.add_project',
+  EdaChangeProject = 'eda.change_project',
+  EdaDeleteProject = 'eda.delete_project',
+  EdaViewProject = 'eda.view_project',
+  EdaViewRulebookprocess = 'eda.view_rulebookprocess',
+  EdaAddDecisionenvironment = 'eda.add_decisionenvironment',
+  EdaChangeDecisionenvironment = 'eda.change_decisionenvironment',
+  EdaDeleteDecisionenvironment = 'eda.delete_decisionenvironment',
+  EdaViewDecisionenvironment = 'eda.view_decisionenvironment',
+  EdaAddEdacredential = 'eda.add_edacredential',
+  EdaChangeEdacredential = 'eda.change_edacredential',
+  EdaDeleteEdacredential = 'eda.delete_edacredential',
+  EdaViewEdacredential = 'eda.view_edacredential',
 }
 
 export interface Project {
   name: string;
   description?: string;
+  organization_id: number | null;
   eda_credential_id?: number | null;
-  orgabization_id?: number | null;
-  verify_ssl?: boolean;
-  id: number;
-  url: string;
-  proxy?: string;
-  git_hash: string;
-  import_state: ImportStateEnum;
-  scm_type?: string;
+  signature_validation_credential_id: number | null;
   scm_branch?: string;
   scm_refspec?: string;
+  verify_ssl?: boolean;
+  proxy?: string;
+  id: number;
+  url: string;
+  scm_type: ScmTypeEnum;
+  git_hash: string;
+  import_state: ImportStateEnum;
   import_error: string | null;
-  /** @format uuid */
-  import_task_id: string | null;
   /** @format date-time */
   created_at: string;
   /** @format date-time */
@@ -950,31 +1234,33 @@ export interface ProjectCreateRequest {
   proxy?: string;
   name: string;
   description?: string;
-  eda_credential_id?: number | null;
   organization_id?: number | null;
+  eda_credential_id?: number | null;
   signature_validation_credential_id?: number | null;
   verify_ssl?: boolean;
+  /** * `git` - Git */
+  scm_type?: ScmTypeEnum;
+  scm_branch?: string;
+  scm_refspec?: string;
 }
 
 /** Serializer for reading the Project with embedded objects. */
 export interface ProjectRead {
   name: string;
   description?: string;
-  eda_credential?: CredentialRef | null;
-  organization?: OrganizationRef | null;
-  signature_validation_credential?: CredentialRef | null;
+  organization: OrganizationRef;
+  eda_credential?: EdaCredentialRef | null;
+  signature_validation_credential?: EdaCredentialRef | null;
   verify_ssl?: boolean;
-  id: number;
-  url: string;
-  proxy?: string;
-  git_hash: string;
-  import_state: ImportStateEnum;
-  scm_type?: string;
   scm_branch?: string;
   scm_refspec?: string;
+  proxy?: string;
+  id: number;
+  url: string;
+  scm_type: ScmTypeEnum;
+  git_hash: string;
+  import_state: ImportStateEnum;
   import_error: string | null;
-  /** @format uuid */
-  import_task_id: string | null;
   /** @format date-time */
   created_at: string;
   /** @format date-time */
@@ -985,39 +1271,45 @@ export interface ProjectRef {
   id: number;
   git_hash: string;
   url: string;
+  /** * `git` - Git */
+  scm_type?: ScmTypeEnum;
   name: string;
   description?: string;
+  organization_id: number | null;
 }
 
-/**
- * * `activation` - activation
- * * `activation_instance` - activation_instance
- * * `audit_rule` - audit_rule
- * * `audit_event` - audit_event
- * * `task` - task
- * * `user` - user
- * * `project` - project
- * * `inventory` - inventory
- * * `extra_var` - extra_var
- * * `rulebook` - rulebook
- * * `role` - role
- * * `decision_environment` - decision_environment
- * * `credential` - credential
- */
-export enum ResourceTypeEnum {
-  Activation = 'activation',
-  ActivationInstance = 'activation_instance',
-  AuditRule = 'audit_rule',
-  AuditEvent = 'audit_event',
-  Task = 'task',
-  User = 'user',
-  Project = 'project',
-  Inventory = 'inventory',
-  ExtraVar = 'extra_var',
-  Rulebook = 'rulebook',
-  Role = 'role',
-  DecisionEnvironment = 'decision_environment',
-  Credential = 'credential',
+export interface Resource {
+  object_id: string;
+  name: string | null;
+  /** @format uuid */
+  ansible_id?: string;
+  /** @format uuid */
+  service_id?: string;
+  resource_type?: string;
+  has_serializer: boolean;
+  resource_data: Record<string, any>;
+  url: string;
+}
+
+export interface ResourceList {
+  object_id: string;
+  name: string | null;
+  /** @format uuid */
+  ansible_id?: string;
+  /** @format uuid */
+  service_id?: string;
+  resource_type?: string;
+  has_serializer: boolean;
+  resource_data: Record<string, any>;
+  url: string;
+}
+
+export interface ResourceType {
+  id: number;
+  name: string;
+  externally_managed: boolean;
+  shared_resource_type: string | null;
+  url: string;
 }
 
 /**
@@ -1030,82 +1322,237 @@ export enum RestartPolicyEnum {
   OnFailure = 'on-failure',
   Never = 'never',
 }
-export enum LogLevelEnum {
-  error = 'error',
-  info = 'info',
-  debug = 'debug',
-}
-export interface RoleDetail {
+
+export interface RoleDefinition {
+  id: number;
+  url: string;
+  related: Record<string, string>;
+  summary_fields: Record<string, Record<string, any>>;
+  permissions: PermissionsEnum[];
   /**
-   * Unique UUID of the role
-   * @format uuid
+   * The type of resource this applies to
+   *
+   * * `eda.rulebook` - Rulebook
+   * * `eda.credentialtype` - Credential Type
+   * * `eda.activation` - Activation
+   * * `shared.team` - Team
+   * * `eda.auditrule` - Audit Rule
+   * * `eda.extravar` - Extra Var
+   * * `shared.organization` - Organization
+   * * `eda.project` - Project
+   * * `eda.rulebookprocess` - Rulebook Process
+   * * `eda.decisionenvironment` - Decision Environment
+   * * `eda.edacredential` - Eda Credential
    */
-  id: string;
-  /** Name of the rulebook */
-  name: string;
+  content_type?: ContentTypeEnum | NullEnum | null;
   /**
-   * Description of the rulebook
-   * @default ""
-   */
-  description?: string | null;
-  permissions: PermissionRef[];
-  /**
-   * The created_at timestamp of the ruleset
+   * The date/time this resource was created
    * @format date-time
    */
-  created_at: string;
+  modified: string;
   /**
-   * The modified_at timestamp of the ruleset
+   * The date/time this resource was created
    * @format date-time
    */
-  modified_at: string;
+  created: string;
+  name: string;
+  description?: string;
+  managed: boolean;
+  /** The user who last modified this resource */
+  modified_by: number | null;
+  /** The user who created this resource */
+  created_by: number | null;
 }
 
-export interface RoleList {
+export interface RoleDefinitionCreate {
+  permissions: PermissionsEnum[];
   /**
-   * Unique UUID of the role
+   * The type of resource this applies to
+   *
+   * * `eda.rulebook` - Rulebook
+   * * `eda.credentialtype` - Credential Type
+   * * `eda.activation` - Activation
+   * * `shared.team` - Team
+   * * `eda.auditrule` - Audit Rule
+   * * `eda.extravar` - Extra Var
+   * * `shared.organization` - Organization
+   * * `eda.project` - Project
+   * * `eda.rulebookprocess` - Rulebook Process
+   * * `eda.decisionenvironment` - Decision Environment
+   * * `eda.edacredential` - Eda Credential
+   */
+  content_type?: ContentTypeEnum | NullEnum | null;
+  name: string;
+  description?: string;
+}
+
+export interface RoleDefinitionDetail {
+  id: number;
+  url: string;
+  related: Record<string, string>;
+  summary_fields: Record<string, Record<string, any>>;
+  permissions: PermissionsEnum[];
+  /**
+   * The type of resource this applies to
+   *
+   * * `eda.rulebook` - Rulebook
+   * * `eda.credentialtype` - Credential Type
+   * * `eda.activation` - Activation
+   * * `shared.team` - Team
+   * * `eda.auditrule` - Audit Rule
+   * * `eda.extravar` - Extra Var
+   * * `shared.organization` - Organization
+   * * `eda.project` - Project
+   * * `eda.rulebookprocess` - Rulebook Process
+   * * `eda.decisionenvironment` - Decision Environment
+   * * `eda.edacredential` - Eda Credential
+   */
+  content_type: ContentTypeEnum;
+  /**
+   * The date/time this resource was created
+   * @format date-time
+   */
+  modified: string;
+  /**
+   * The date/time this resource was created
+   * @format date-time
+   */
+  created: string;
+  name: string;
+  description?: string;
+  managed: boolean;
+  /** The user who last modified this resource */
+  modified_by: number | null;
+  /** The user who created this resource */
+  created_by: number | null;
+}
+
+export interface RoleTeamAssignment {
+  id: number;
+  url: string;
+  related: Record<string, string>;
+  summary_fields: Record<string, Record<string, any>>;
+  /**
+   * The type of resource this applies to
+   *
+   * * `eda.rulebook` - Rulebook
+   * * `eda.credentialtype` - Credential Type
+   * * `eda.activation` - Activation
+   * * `shared.team` - Team
+   * * `eda.auditrule` - Audit Rule
+   * * `eda.extravar` - Extra Var
+   * * `shared.organization` - Organization
+   * * `eda.project` - Project
+   * * `eda.rulebookprocess` - Rulebook Process
+   * * `eda.decisionenvironment` - Decision Environment
+   * * `eda.edacredential` - Eda Credential
+   */
+  content_type: ContentTypeEnum;
+  /**
+   * Resource id of the object this role applies to. Alternative to the object_id field.
    * @format uuid
    */
-  id: string;
-  /** Name of the rulebook */
-  name: string;
+  object_ansible_id?: string;
   /**
-   * Description of the rulebook
-   * @default ""
+   * Resource id of the team who will receive permissions from this assignment. Alternative to team field.
+   * @format uuid
    */
-  description?: string | null;
+  team_ansible_id?: string;
+  /**
+   * The date/time this resource was created
+   * @format date-time
+   */
+  created: string;
+  /** Primary key of the object this assignment applies to, null value indicates system-wide assignment */
+  object_id?: string | null;
+  /** The user who created this resource */
+  created_by: number | null;
+  object_role: number | null;
+  /** The role definition which defines permissions conveyed by this assignment */
+  role_definition: number;
+  team?: number;
 }
 
-export interface RoleRef {
-  /** @format uuid */
-  id: string;
-  name: string;
+export interface RoleTeamAssignmentCreate {
+  /**
+   * Resource id of the object this role applies to. Alternative to the object_id field.
+   * @format uuid
+   */
+  object_ansible_id?: string;
+  /**
+   * Resource id of the team who will receive permissions from this assignment. Alternative to team field.
+   * @format uuid
+   */
+  team_ansible_id?: string;
+  /** Primary key of the object this assignment applies to, null value indicates system-wide assignment */
+  object_id?: string | null;
+  /** The role definition which defines permissions conveyed by this assignment */
+  role_definition: number;
+  team?: number;
 }
 
-export interface Rule {
+export interface RoleUserAssignment {
   id: number;
-  /** Name of the rule */
-  name: string;
-  /** The action in the rule */
-  action: Record<string, any>;
-  ruleset_id: number | null;
+  url: string;
+  related: Record<string, string>;
+  summary_fields: Record<string, Record<string, any>>;
+  /**
+   * The type of resource this applies to
+   *
+   * * `eda.rulebook` - Rulebook
+   * * `eda.credentialtype` - Credential Type
+   * * `eda.activation` - Activation
+   * * `shared.team` - Team
+   * * `eda.auditrule` - Audit Rule
+   * * `eda.extravar` - Extra Var
+   * * `shared.organization` - Organization
+   * * `eda.project` - Project
+   * * `eda.rulebookprocess` - Rulebook Process
+   * * `eda.decisionenvironment` - Decision Environment
+   * * `eda.edacredential` - Eda Credential
+   */
+  content_type: ContentTypeEnum;
+  /**
+   * Resource id of the object this role applies to. Alternative to the object_id field.
+   * @format uuid
+   */
+  object_ansible_id?: string;
+  /**
+   * Resource id of the user who will receive permissions from this assignment. Alternative to user field.
+   * @format uuid
+   */
+  user_ansible_id?: string;
+  /**
+   * The date/time this resource was created
+   * @format date-time
+   */
+  created: string;
+  /** Primary key of the object this assignment applies to, null value indicates system-wide assignment */
+  object_id?: string | null;
+  /** The user who created this resource */
+  created_by: number | null;
+  object_role: number | null;
+  /** The role definition which defines permissions conveyed by this assignment */
+  role_definition: number;
+  user?: number;
 }
 
-export interface RuleOut {
-  /** ID of the ruleset */
-  id: number;
-  /** Name of the rule */
-  name: string;
-  /** The action in the rule */
-  action?: Record<string, any>;
-  /** List of stats */
-  fired_stats: Record<string, any>[];
-  /** ID of the rulebook */
-  rulebook_id?: number | null;
-  /** ID of the ruleset */
-  ruleset_id?: number | null;
-  /** ID of the project */
-  project_id?: number | null;
+export interface RoleUserAssignmentCreate {
+  /**
+   * Resource id of the object this role applies to. Alternative to the object_id field.
+   * @format uuid
+   */
+  object_ansible_id?: string;
+  /**
+   * Resource id of the user who will receive permissions from this assignment. Alternative to user field.
+   * @format uuid
+   */
+  user_ansible_id?: string;
+  /** Primary key of the object this assignment applies to, null value indicates system-wide assignment */
+  object_id?: string | null;
+  /** The role definition which defines permissions conveyed by this assignment */
+  role_definition: number;
+  user?: number;
 }
 
 export interface Rulebook {
@@ -1128,27 +1575,9 @@ export interface RulebookRef {
   description?: string | null;
 }
 
-export interface RulesetOut {
-  /** ID of the ruleset */
-  id: number;
-  /** Name of the ruleset */
-  name: string;
-  /** Number of rules the ruleset contains */
-  rule_count: number;
-  /** List of source types */
-  source_types: string[];
-  /** List of stats */
-  fired_stats: Record<string, any>[];
-  /**
-   * The created_at timestamp of the ruleset
-   * @format date-time
-   */
-  created_at: string;
-  /**
-   * The modified_at timestamp of the ruleset
-   * @format date-time
-   */
-  modified_at: string;
+/** * `git` - Git */
+export enum ScmTypeEnum {
+  Git = 'git',
 }
 
 /**
@@ -1163,7 +1592,7 @@ export interface RulesetOut {
  * * `unresponsive` - unresponsive
  * * `error` - error
  */
-export enum Status906Enum {
+export enum StatusEnum {
   Starting = 'starting',
   Running = 'running',
   Pending = 'pending',
@@ -1176,56 +1605,94 @@ export enum Status906Enum {
   Error = 'error',
 }
 
-export interface Task {
-  /** @format uuid */
-  id: string;
-  status: TaskStatusEnum;
-  /** @format date-time */
-  created_at: string | null;
-  /** @format date-time */
-  enqueued_at: string | null;
-  /** @format date-time */
-  started_at: string | null;
-  /** @format date-time */
-  finished_at: string | null;
-  result: Record<string, any>;
+export interface Team {
+  id: number;
+  /**
+   * The name of this resource
+   * @maxLength 512
+   */
+  name: string;
+  /** The team description. */
+  description?: string;
+  /** The organization of this team. */
+  organization_id: number;
+  resource: Record<string, any>;
+  /**
+   * The date/time this resource was created
+   * @format date-time
+   */
+  created: string;
+  /** The user who created this resource */
+  created_by: number | null;
+  /**
+   * The date/time this resource was created
+   * @format date-time
+   */
+  modified: string;
+  /** The user who last modified this resource */
+  modified_by: number | null;
 }
 
-/**
- * * `queued` - queued
- * * `finished` - finished
- * * `failed` - failed
- * * `started` - started
- * * `deferred` - deferred
- * * `scheduled` - scheduled
- * * `stopped` - stopped
- * * `canceled` - canceled
- */
-export enum TaskStatusEnum {
-  Queued = 'queued',
-  Finished = 'finished',
-  Failed = 'failed',
-  Started = 'started',
-  Deferred = 'deferred',
-  Scheduled = 'scheduled',
-  Stopped = 'stopped',
-  Canceled = 'canceled',
+export interface TeamCreate {
+  /**
+   * The name of this resource
+   * @maxLength 512
+   */
+  name: string;
+  /** The team description. */
+  description?: string;
+  organization_id: number;
+}
+
+export interface TeamDetail {
+  id: number;
+  /**
+   * The name of this resource
+   * @maxLength 512
+   */
+  name: string;
+  /** The team description. */
+  description?: string;
+  organization: OrganizationRef;
+  resource: Record<string, any>;
+  /**
+   * The date/time this resource was created
+   * @format date-time
+   */
+  created: string;
+  /** The user who created this resource */
+  created_by: number | null;
+  /**
+   * The date/time this resource was created
+   * @format date-time
+   */
+  modified: string;
+  /** The user who last modified this resource */
+  modified_by: number | null;
+}
+
+export interface TokenRefresh {
+  access: string;
+  refresh: string;
 }
 
 export interface UserCreateUpdate {
-  /** @description The user's log in name. */
+  /** The user's log in name. */
   username: string;
+  /** @maxLength 150 */
   first_name?: string;
+  /** @maxLength 150 */
   last_name?: string;
   /**
    * Email address
-   * Format: email
+   * @format email
+   * @maxLength 254
    */
   email?: string;
   password: string;
   /**
    * Superuser status
-   * @description Designates that this user has all permissions without explicitly assigning them.
+   * Designates that this user has all permissions without explicitly assigning them.
    */
   is_superuser?: boolean;
 }
@@ -1249,7 +1716,7 @@ export interface UserDetail {
    * Designates that this user has all permissions without explicitly assigning them.
    */
   is_superuser?: boolean;
-  roles: RoleRef[];
+  resource: Record<string, any>;
   /** @format date-time */
   created_at: string;
   /** @format date-time */
@@ -1267,7 +1734,7 @@ export interface UserList {
   last_name: string;
   /** The user is a superuser. */
   is_superuser: boolean;
-  roles: RoleRef[];
+  resource: Record<string, any>;
 }
 
 export type QueryParamsType = Record<string | number, any>;
@@ -1385,8 +1852,8 @@ export class HttpClient<SecurityDataType = unknown> {
           property instanceof Blob
             ? property
             : typeof property === 'object' && property !== null
-              ? JSON.stringify(property)
-              : `${property}`
+            ? JSON.stringify(property)
+            : `${property}`
         );
         return formData;
       }, new FormData()),
@@ -1574,22 +2041,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         format: 'json',
         ...params,
       }),
-
-    /**
-     * @description Delete an existing Activation Instance
-     *
-     * @tags activation-instances
-     * @name ActivationInstancesDestroy
-     * @request DELETE:/activation-instances/{id}/
-     * @secure
-     */
-    activationInstancesDestroy: (id: number, params: RequestParams = {}) =>
-      this.request<void, any>({
-        path: `/activation-instances/${id}/`,
-        method: 'DELETE',
-        secure: true,
-        ...params,
-      }),
   };
   activations = {
     /**
@@ -1602,8 +2053,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      */
     activationsList: (
       query?: {
-        /** Filter by Credential ID. */
-        eda_credential_id?: number;
         /** Filter by Decision Environment ID. */
         decision_environment_id?: number;
         /** Filter by activation name. */
@@ -1635,7 +2084,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @secure
      */
     activationsCreate: (data: ActivationCreate, params: RequestParams = {}) =>
-      this.request<ActivationRead, any>({
+      this.request<ActivationRead, void>({
         path: `/activations/`,
         method: 'POST',
         body: data,
@@ -1750,56 +2199,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @secure
      */
     activationsRestartCreate: (id: number, params: RequestParams = {}) =>
-      this.request<void, any>({
+      this.request<void, void>({
         path: `/activations/${id}/restart/`,
         method: 'POST',
         secure: true,
-        ...params,
-      }),
-  };
-  auditEvents = {
-    /**
-     * @description List all audit events
-     *
-     * @tags audit-events
-     * @name AuditEventsList
-     * @request GET:/audit-events/
-     * @secure
-     */
-    auditEventsList: (
-      query?: {
-        /** A page number within the paginated result set. */
-        page?: number;
-        /** Number of results to return per page. */
-        page_size?: number;
-        /** Filter by rule audit event source name. */
-        source_name?: string;
-      },
-      params: RequestParams = {}
-    ) =>
-      this.request<PaginatedAuditEventList, any>({
-        path: `/audit-events/`,
-        method: 'GET',
-        query: query,
-        secure: true,
-        format: 'json',
-        ...params,
-      }),
-
-    /**
-     * @description Get the audit event by its id
-     *
-     * @tags audit-events
-     * @name AuditEventsRetrieve
-     * @request GET:/audit-events/{id}/
-     * @secure
-     */
-    auditEventsRetrieve: (id: string, params: RequestParams = {}) =>
-      this.request<AuditEvent, any>({
-        path: `/audit-events/${id}/`,
-        method: 'GET',
-        secure: true,
-        format: 'json',
         ...params,
       }),
   };
@@ -1816,6 +2219,8 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       query?: {
         /** Filter by rule audit name. */
         name?: string;
+        /** Which field to use when ordering the results. */
+        ordering?: string;
         /** A page number within the paginated result set. */
         page?: number;
         /** Number of results to return per page. */
@@ -1845,6 +2250,8 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       query?: {
         /** Filter by rule audit action name. */
         name?: string;
+        /** Which field to use when ordering the results. */
+        ordering?: string;
         /** A page number within the paginated result set. */
         page?: number;
         /** Number of results to return per page. */
@@ -1872,6 +2279,8 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     auditRulesEventsList: (
       id: number,
       query?: {
+        /** Which field to use when ordering the results. */
+        ordering?: string;
         /** A page number within the paginated result set. */
         page?: number;
         /** Number of results to return per page. */
@@ -1957,19 +2366,36 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         secure: true,
         ...params,
       }),
-  };
-  credentials = {
+
     /**
-     * @description List all credentials
+     * @description Takes a refresh type JSON web token and returns an access type JSON web token if the refresh token is valid.
      *
-     * @tags credentials
-     * @name CredentialsList
-     * @request GET:/credentials/
+     * @tags auth
+     * @name AuthTokenRefreshCreate
+     * @request POST:/auth/token/refresh/
+     */
+    authTokenRefreshCreate: (data: TokenRefresh, params: RequestParams = {}) =>
+      this.request<TokenRefresh, any>({
+        path: `/auth/token/refresh/`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+  };
+  credentialTypes = {
+    /**
+     * @description List all credential types
+     *
+     * @tags credential-types
+     * @name CredentialTypesList
+     * @request GET:/credential-types/
      * @secure
      */
-    credentialsList: (
+    credentialTypesList: (
       query?: {
-        /** Filter by credential name. */
+        /** Filter by credential type name. */
         name?: string;
         /** A page number within the paginated result set. */
         page?: number;
@@ -1978,8 +2404,8 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       },
       params: RequestParams = {}
     ) =>
-      this.request<PaginatedCredentialList, any>({
-        path: `/credentials/`,
+      this.request<PaginatedCredentialTypeList, any>({
+        path: `/credential-types/`,
         method: 'GET',
         query: query,
         secure: true,
@@ -1988,16 +2414,16 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       }),
 
     /**
-     * @description Create a new credential.
+     * @description Create a new credential type.
      *
-     * @tags credentials
-     * @name CredentialsCreate
-     * @request POST:/credentials/
+     * @tags credential-types
+     * @name CredentialTypesCreate
+     * @request POST:/credential-types/
      * @secure
      */
-    credentialsCreate: (data: CredentialCreate, params: RequestParams = {}) =>
-      this.request<Credential, any>({
-        path: `/credentials/`,
+    credentialTypesCreate: (data: CredentialTypeCreate, params: RequestParams = {}) =>
+      this.request<CredentialType, any>({
+        path: `/credential-types/`,
         method: 'POST',
         body: data,
         secure: true,
@@ -2007,16 +2433,16 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       }),
 
     /**
-     * @description Get credential by id
+     * @description Get credential type by id
      *
-     * @tags credentials
-     * @name CredentialsRetrieve
-     * @request GET:/credentials/{id}/
+     * @tags credential-types
+     * @name CredentialTypesRetrieve
+     * @request GET:/credential-types/{id}/
      * @secure
      */
-    credentialsRetrieve: (id: number, params: RequestParams = {}) =>
-      this.request<Credential, any>({
-        path: `/credentials/${id}/`,
+    credentialTypesRetrieve: (id: number, params: RequestParams = {}) =>
+      this.request<CredentialType, any>({
+        path: `/credential-types/${id}/`,
         method: 'GET',
         secure: true,
         format: 'json',
@@ -2024,20 +2450,20 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       }),
 
     /**
-     * @description Partial update of a credential
+     * @description Partial update of a credential type
      *
-     * @tags credentials
-     * @name CredentialsPartialUpdate
-     * @request PATCH:/credentials/{id}/
+     * @tags credential-types
+     * @name CredentialTypesPartialUpdate
+     * @request PATCH:/credential-types/{id}/
      * @secure
      */
-    credentialsPartialUpdate: (
+    credentialTypesPartialUpdate: (
       id: number,
-      data: PatchedCredentialCreate,
+      data: PatchedCredentialTypeCreate,
       params: RequestParams = {}
     ) =>
-      this.request<Credential, any>({
-        path: `/credentials/${id}/`,
+      this.request<CredentialType, any>({
+        path: `/credential-types/${id}/`,
         method: 'PATCH',
         body: data,
         secure: true,
@@ -2047,25 +2473,17 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       }),
 
     /**
-     * @description Delete a credential by id
+     * @description Delete a credential type by id
      *
-     * @tags credentials
-     * @name CredentialsDestroy
-     * @request DELETE:/credentials/{id}/
+     * @tags credential-types
+     * @name CredentialTypesDestroy
+     * @request DELETE:/credential-types/{id}/
      * @secure
      */
-    credentialsDestroy: (
-      id: number,
-      query?: {
-        /** Force deletion if there are dependent objects */
-        force?: boolean;
-      },
-      params: RequestParams = {}
-    ) =>
-      this.request<void, any>({
-        path: `/credentials/${id}/`,
+    credentialTypesDestroy: (id: number, params: RequestParams = {}) =>
+      this.request<void, void>({
+        path: `/credential-types/${id}/`,
         method: 'DELETE',
-        query: query,
         secure: true,
         ...params,
       }),
@@ -2182,6 +2600,130 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         ...params,
       }),
   };
+  edaCredentials = {
+    /**
+     * @description List all EDA credentials
+     *
+     * @tags eda-credentials
+     * @name EdaCredentialsList
+     * @request GET:/eda-credentials/
+     * @secure
+     */
+    edaCredentialsList: (
+      query?: {
+        /** Kind of CredentialType */
+        credential_type__kind?: string;
+        /** Filter by Credential Type ID. */
+        credential_type_id?: number;
+        /** Filter by EDA credential name. */
+        name?: string;
+        /** A page number within the paginated result set. */
+        page?: number;
+        /** Number of results to return per page. */
+        page_size?: number;
+      },
+      params: RequestParams = {}
+    ) =>
+      this.request<PaginatedEdaCredentialList, any>({
+        path: `/eda-credentials/`,
+        method: 'GET',
+        query: query,
+        secure: true,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description Create a new EDA credential.
+     *
+     * @tags eda-credentials
+     * @name EdaCredentialsCreate
+     * @request POST:/eda-credentials/
+     * @secure
+     */
+    edaCredentialsCreate: (data: EdaCredentialCreate, params: RequestParams = {}) =>
+      this.request<EdaCredential, any>({
+        path: `/eda-credentials/`,
+        method: 'POST',
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description Get EDA credential by id
+     *
+     * @tags eda-credentials
+     * @name EdaCredentialsRetrieve
+     * @request GET:/eda-credentials/{id}/
+     * @secure
+     */
+    edaCredentialsRetrieve: (
+      id: number,
+      query?: {
+        /** Query resources that have reference to the credential by its id */
+        refs?: 'false' | 'true';
+      },
+      params: RequestParams = {}
+    ) =>
+      this.request<EdaCredential, any>({
+        path: `/eda-credentials/${id}/`,
+        method: 'GET',
+        query: query,
+        secure: true,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description Partial update of an EDA credential
+     *
+     * @tags eda-credentials
+     * @name EdaCredentialsPartialUpdate
+     * @request PATCH:/eda-credentials/{id}/
+     * @secure
+     */
+    edaCredentialsPartialUpdate: (
+      id: number,
+      data: PatchedEdaCredentialCreate,
+      params: RequestParams = {}
+    ) =>
+      this.request<EdaCredential, any>({
+        path: `/eda-credentials/${id}/`,
+        method: 'PATCH',
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description Delete an eda credential by id
+     *
+     * @tags eda-credentials
+     * @name EdaCredentialsDestroy
+     * @request DELETE:/eda-credentials/{id}/
+     * @secure
+     */
+    edaCredentialsDestroy: (
+      id: number,
+      query?: {
+        /** Force deletion if there are dependent objects */
+        force?: boolean;
+      },
+      params: RequestParams = {}
+    ) =>
+      this.request<void, any>({
+        path: `/eda-credentials/${id}/`,
+        method: 'DELETE',
+        query: query,
+        secure: true,
+        ...params,
+      }),
+  };
   extraVars = {
     /**
      * @description List all extra_vars
@@ -2240,6 +2782,143 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       this.request<ExtraVar, any>({
         path: `/extra-vars/${id}/`,
         method: 'GET',
+        secure: true,
+        format: 'json',
+        ...params,
+      }),
+  };
+  organizations = {
+    /**
+     * @description List all organizations.
+     *
+     * @tags organizations
+     * @name OrganizationsList
+     * @request GET:/organizations/
+     * @secure
+     */
+    organizationsList: (
+      query?: {
+        /** Filter by organization description. */
+        description?: string;
+        /** Filter by organization name. */
+        name?: string;
+        /** A page number within the paginated result set. */
+        page?: number;
+        /** Number of results to return per page. */
+        page_size?: number;
+      },
+      params: RequestParams = {}
+    ) =>
+      this.request<PaginatedOrganizationList, any>({
+        path: `/organizations/`,
+        method: 'GET',
+        query: query,
+        secure: true,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description Create a new organization
+     *
+     * @tags organizations
+     * @name OrganizationsCreate
+     * @request POST:/organizations/
+     * @secure
+     */
+    organizationsCreate: (data: OrganizationCreate, params: RequestParams = {}) =>
+      this.request<Organization, any>({
+        path: `/organizations/`,
+        method: 'POST',
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags organizations
+     * @name OrganizationsRetrieve
+     * @request GET:/organizations/{id}/
+     * @secure
+     */
+    organizationsRetrieve: (id: number, params: RequestParams = {}) =>
+      this.request<Organization, any>({
+        path: `/organizations/${id}/`,
+        method: 'GET',
+        secure: true,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description Partially update an organization
+     *
+     * @tags organizations
+     * @name OrganizationsPartialUpdate
+     * @request PATCH:/organizations/{id}/
+     * @secure
+     */
+    organizationsPartialUpdate: (
+      id: number,
+      data: PatchedOrganizationCreate,
+      params: RequestParams = {}
+    ) =>
+      this.request<Organization, any>({
+        path: `/organizations/${id}/`,
+        method: 'PATCH',
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags organizations
+     * @name OrganizationsDestroy
+     * @request DELETE:/organizations/{id}/
+     * @secure
+     */
+    organizationsDestroy: (id: number, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/organizations/${id}/`,
+        method: 'DELETE',
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * @description List all teams of the organization
+     *
+     * @tags organizations
+     * @name OrganizationsTeamsList
+     * @request GET:/organizations/{id}/teams/
+     * @secure
+     */
+    organizationsTeamsList: (
+      id: number,
+      query?: {
+        /** Filter by team description. */
+        description?: string;
+        /** Filter by team name. */
+        name?: string;
+        /** A page number within the paginated result set. */
+        page?: number;
+        /** Number of results to return per page. */
+        page_size?: number;
+      },
+      params: RequestParams = {}
+    ) =>
+      this.request<PaginatedTeamList, any>({
+        path: `/organizations/${id}/teams/`,
+        method: 'GET',
+        query: query,
         secure: true,
         format: 'json',
         ...params,
@@ -2368,28 +3047,28 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         ...params,
       }),
   };
-  roles = {
+  roleDefinitions = {
     /**
-     * @description List all roles
+     * @description Role Definitions (roles) contain a list of permissions and can be used to assign those permissions to a user or team through the respective assignment endpoints. Custom roles can be created, modified, and deleted through this endpoint. System-managed roles are shown here, which cannot be edited or deleted, but can be assigned to users.
      *
-     * @tags roles
-     * @name RolesList
-     * @request GET:/roles/
+     * @tags role_definitions
+     * @name RoleDefinitionsList
+     * @request GET:/role_definitions/
      * @secure
      */
-    rolesList: (
+    roleDefinitionsList: (
       query?: {
-        /** Filter roles by name. */
-        name?: string;
         /** A page number within the paginated result set. */
         page?: number;
         /** Number of results to return per page. */
         page_size?: number;
+        /** A search term. */
+        search?: string;
       },
       params: RequestParams = {}
     ) =>
-      this.request<PaginatedRoleListList, any>({
-        path: `/roles/`,
+      this.request<PaginatedRoleDefinitionList, any>({
+        path: `/role_definitions/`,
         method: 'GET',
         query: query,
         secure: true,
@@ -2398,19 +3077,358 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       }),
 
     /**
-     * @description Retrieve a role by id
+     * @description Create a RoleDefinition.
      *
-     * @tags roles
-     * @name RolesRetrieve
-     * @request GET:/roles/{id}/
+     * @tags role_definitions
+     * @name RoleDefinitionsCreate
+     * @request POST:/role_definitions/
      * @secure
      */
-    rolesRetrieve: (id: string, params: RequestParams = {}) =>
-      this.request<RoleDetail, any>({
-        path: `/roles/${id}/`,
+    roleDefinitionsCreate: (data: RoleDefinitionCreate, params: RequestParams = {}) =>
+      this.request<RoleDefinition, any>({
+        path: `/role_definitions/`,
+        method: 'POST',
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description Role Definitions (roles) contain a list of permissions and can be used to assign those permissions to a user or team through the respective assignment endpoints. Custom roles can be created, modified, and deleted through this endpoint. System-managed roles are shown here, which cannot be edited or deleted, but can be assigned to users.
+     *
+     * @tags role_definitions
+     * @name RoleDefinitionsRetrieve
+     * @request GET:/role_definitions/{id}/
+     * @secure
+     */
+    roleDefinitionsRetrieve: (id: number, params: RequestParams = {}) =>
+      this.request<RoleDefinition, any>({
+        path: `/role_definitions/${id}/`,
         method: 'GET',
         secure: true,
         format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description Role Definitions (roles) contain a list of permissions and can be used to assign those permissions to a user or team through the respective assignment endpoints. Custom roles can be created, modified, and deleted through this endpoint. System-managed roles are shown here, which cannot be edited or deleted, but can be assigned to users.
+     *
+     * @tags role_definitions
+     * @name RoleDefinitionsUpdate
+     * @request PUT:/role_definitions/{id}/
+     * @secure
+     */
+    roleDefinitionsUpdate: (id: number, data: RoleDefinitionDetail, params: RequestParams = {}) =>
+      this.request<RoleDefinitionDetail, any>({
+        path: `/role_definitions/${id}/`,
+        method: 'PUT',
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description Role Definitions (roles) contain a list of permissions and can be used to assign those permissions to a user or team through the respective assignment endpoints. Custom roles can be created, modified, and deleted through this endpoint. System-managed roles are shown here, which cannot be edited or deleted, but can be assigned to users.
+     *
+     * @tags role_definitions
+     * @name RoleDefinitionsPartialUpdate
+     * @request PATCH:/role_definitions/{id}/
+     * @secure
+     */
+    roleDefinitionsPartialUpdate: (
+      id: number,
+      data: PatchedRoleDefinition,
+      params: RequestParams = {}
+    ) =>
+      this.request<RoleDefinition, any>({
+        path: `/role_definitions/${id}/`,
+        method: 'PATCH',
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description Role Definitions (roles) contain a list of permissions and can be used to assign those permissions to a user or team through the respective assignment endpoints. Custom roles can be created, modified, and deleted through this endpoint. System-managed roles are shown here, which cannot be edited or deleted, but can be assigned to users.
+     *
+     * @tags role_definitions
+     * @name RoleDefinitionsDestroy
+     * @request DELETE:/role_definitions/{id}/
+     * @secure
+     */
+    roleDefinitionsDestroy: (id: number, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/role_definitions/${id}/`,
+        method: 'DELETE',
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * @description Use this endpoint to give a team permission to a resource or an organization. The needed data is the user, the role definition, and the object id. The object must be of the type specified in the role definition. The type given in the role definition and the provided object_id are used to look up the resource. After creation, the assignment cannot be edited, but can be deleted to remove those permissions.
+     *
+     * @tags role_definitions
+     * @name RoleDefinitionsTeamAssignmentsList
+     * @request GET:/role_definitions/{id}/team_assignments/
+     * @secure
+     */
+    roleDefinitionsTeamAssignmentsList: (
+      id: string,
+      query?: {
+        /** A page number within the paginated result set. */
+        page?: number;
+        /** Number of results to return per page. */
+        page_size?: number;
+        /** A search term. */
+        search?: string;
+      },
+      params: RequestParams = {}
+    ) =>
+      this.request<PaginatedRoleTeamAssignmentList, any>({
+        path: `/role_definitions/${id}/team_assignments/`,
+        method: 'GET',
+        query: query,
+        secure: true,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description Use this endpoint to give a team permission to a resource or an organization. The needed data is the user, the role definition, and the object id. The object must be of the type specified in the role definition. The type given in the role definition and the provided object_id are used to look up the resource. After creation, the assignment cannot be edited, but can be deleted to remove those permissions.
+     *
+     * @tags role_definitions
+     * @name RoleDefinitionsTeamAssignmentsRetrieve
+     * @request GET:/role_definitions/{id}/team_assignments/{team_assignments}/
+     * @secure
+     */
+    roleDefinitionsTeamAssignmentsRetrieve: (
+      id: string,
+      teamAssignments: string,
+      params: RequestParams = {}
+    ) =>
+      this.request<RoleTeamAssignment, any>({
+        path: `/role_definitions/${id}/team_assignments/${teamAssignments}/`,
+        method: 'GET',
+        secure: true,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description Use this endpoint to give a user permission to a resource or an organization. The needed data is the team, the role definition, and the object id. The object must be of the type specified in the role definition. The type given in the role definition and the provided object_id are used to look up the resource. After creation, the assignment cannot be edited, but can be deleted to remove those permissions.
+     *
+     * @tags role_definitions
+     * @name RoleDefinitionsUserAssignmentsList
+     * @request GET:/role_definitions/{id}/user_assignments/
+     * @secure
+     */
+    roleDefinitionsUserAssignmentsList: (
+      id: string,
+      query?: {
+        /** A page number within the paginated result set. */
+        page?: number;
+        /** Number of results to return per page. */
+        page_size?: number;
+        /** A search term. */
+        search?: string;
+      },
+      params: RequestParams = {}
+    ) =>
+      this.request<PaginatedRoleUserAssignmentList, any>({
+        path: `/role_definitions/${id}/user_assignments/`,
+        method: 'GET',
+        query: query,
+        secure: true,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description Use this endpoint to give a user permission to a resource or an organization. The needed data is the team, the role definition, and the object id. The object must be of the type specified in the role definition. The type given in the role definition and the provided object_id are used to look up the resource. After creation, the assignment cannot be edited, but can be deleted to remove those permissions.
+     *
+     * @tags role_definitions
+     * @name RoleDefinitionsUserAssignmentsRetrieve
+     * @request GET:/role_definitions/{id}/user_assignments/{user_assignments}/
+     * @secure
+     */
+    roleDefinitionsUserAssignmentsRetrieve: (
+      id: string,
+      userAssignments: string,
+      params: RequestParams = {}
+    ) =>
+      this.request<RoleUserAssignment, any>({
+        path: `/role_definitions/${id}/user_assignments/${userAssignments}/`,
+        method: 'GET',
+        secure: true,
+        format: 'json',
+        ...params,
+      }),
+  };
+  roleTeamAssignments = {
+    /**
+     * @description Use this endpoint to give a team permission to a resource or an organization. The needed data is the user, the role definition, and the object id. The object must be of the type specified in the role definition. The type given in the role definition and the provided object_id are used to look up the resource. After creation, the assignment cannot be edited, but can be deleted to remove those permissions.
+     *
+     * @tags role_team_assignments
+     * @name RoleTeamAssignmentsList
+     * @request GET:/role_team_assignments/
+     * @secure
+     */
+    roleTeamAssignmentsList: (
+      query?: {
+        /** A page number within the paginated result set. */
+        page?: number;
+        /** Number of results to return per page. */
+        page_size?: number;
+        /** A search term. */
+        search?: string;
+      },
+      params: RequestParams = {}
+    ) =>
+      this.request<PaginatedRoleTeamAssignmentList, any>({
+        path: `/role_team_assignments/`,
+        method: 'GET',
+        query: query,
+        secure: true,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description Create a RoleTeamAssignment.
+     *
+     * @tags role_team_assignments
+     * @name RoleTeamAssignmentsCreate
+     * @request POST:/role_team_assignments/
+     * @secure
+     */
+    roleTeamAssignmentsCreate: (data: RoleTeamAssignmentCreate, params: RequestParams = {}) =>
+      this.request<RoleTeamAssignment, any>({
+        path: `/role_team_assignments/`,
+        method: 'POST',
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description Use this endpoint to give a team permission to a resource or an organization. The needed data is the user, the role definition, and the object id. The object must be of the type specified in the role definition. The type given in the role definition and the provided object_id are used to look up the resource. After creation, the assignment cannot be edited, but can be deleted to remove those permissions.
+     *
+     * @tags role_team_assignments
+     * @name RoleTeamAssignmentsRetrieve
+     * @request GET:/role_team_assignments/{id}/
+     * @secure
+     */
+    roleTeamAssignmentsRetrieve: (id: number, params: RequestParams = {}) =>
+      this.request<RoleTeamAssignment, any>({
+        path: `/role_team_assignments/${id}/`,
+        method: 'GET',
+        secure: true,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description Use this endpoint to give a team permission to a resource or an organization. The needed data is the user, the role definition, and the object id. The object must be of the type specified in the role definition. The type given in the role definition and the provided object_id are used to look up the resource. After creation, the assignment cannot be edited, but can be deleted to remove those permissions.
+     *
+     * @tags role_team_assignments
+     * @name RoleTeamAssignmentsDestroy
+     * @request DELETE:/role_team_assignments/{id}/
+     * @secure
+     */
+    roleTeamAssignmentsDestroy: (id: number, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/role_team_assignments/${id}/`,
+        method: 'DELETE',
+        secure: true,
+        ...params,
+      }),
+  };
+  roleUserAssignments = {
+    /**
+     * @description Use this endpoint to give a user permission to a resource or an organization. The needed data is the team, the role definition, and the object id. The object must be of the type specified in the role definition. The type given in the role definition and the provided object_id are used to look up the resource. After creation, the assignment cannot be edited, but can be deleted to remove those permissions.
+     *
+     * @tags role_user_assignments
+     * @name RoleUserAssignmentsList
+     * @request GET:/role_user_assignments/
+     * @secure
+     */
+    roleUserAssignmentsList: (
+      query?: {
+        /** A page number within the paginated result set. */
+        page?: number;
+        /** Number of results to return per page. */
+        page_size?: number;
+        /** A search term. */
+        search?: string;
+      },
+      params: RequestParams = {}
+    ) =>
+      this.request<PaginatedRoleUserAssignmentList, any>({
+        path: `/role_user_assignments/`,
+        method: 'GET',
+        query: query,
+        secure: true,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description Create a RoleUserAssignment.
+     *
+     * @tags role_user_assignments
+     * @name RoleUserAssignmentsCreate
+     * @request POST:/role_user_assignments/
+     * @secure
+     */
+    roleUserAssignmentsCreate: (data: RoleUserAssignmentCreate, params: RequestParams = {}) =>
+      this.request<RoleUserAssignment, any>({
+        path: `/role_user_assignments/`,
+        method: 'POST',
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description Use this endpoint to give a user permission to a resource or an organization. The needed data is the team, the role definition, and the object id. The object must be of the type specified in the role definition. The type given in the role definition and the provided object_id are used to look up the resource. After creation, the assignment cannot be edited, but can be deleted to remove those permissions.
+     *
+     * @tags role_user_assignments
+     * @name RoleUserAssignmentsRetrieve
+     * @request GET:/role_user_assignments/{id}/
+     * @secure
+     */
+    roleUserAssignmentsRetrieve: (id: number, params: RequestParams = {}) =>
+      this.request<RoleUserAssignment, any>({
+        path: `/role_user_assignments/${id}/`,
+        method: 'GET',
+        secure: true,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description Use this endpoint to give a user permission to a resource or an organization. The needed data is the team, the role definition, and the object id. The object must be of the type specified in the role definition. The type given in the role definition and the provided object_id are used to look up the resource. After creation, the assignment cannot be edited, but can be deleted to remove those permissions.
+     *
+     * @tags role_user_assignments
+     * @name RoleUserAssignmentsDestroy
+     * @request DELETE:/role_user_assignments/{id}/
+     * @secure
+     */
+    roleUserAssignmentsDestroy: (id: number, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/role_user_assignments/${id}/`,
+        method: 'DELETE',
+        secure: true,
         ...params,
       }),
   };
@@ -2438,35 +3456,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     ) =>
       this.request<PaginatedRulebookList, any>({
         path: `/rulebooks/`,
-        method: 'GET',
-        query: query,
-        secure: true,
-        format: 'json',
-        ...params,
-      }),
-
-    /**
-     * @description Ruleset list of a rulebook by its id
-     *
-     * @tags rulebooks
-     * @name RulebooksRulesetsList
-     * @request GET:/rulebooks/{id}/rulesets/
-     * @secure
-     */
-    rulebooksRulesetsList: (
-      id: number,
-      query?: {
-        /** Filter by ruleset name. */
-        name?: string;
-        /** A page number within the paginated result set. */
-        page?: number;
-        /** Number of results to return per page. */
-        page_size?: number;
-      },
-      params: RequestParams = {}
-    ) =>
-      this.request<PaginatedRulesetOutList, any>({
-        path: `/rulebooks/${id}/rulesets/`,
         method: 'GET',
         query: query,
         secure: true,
@@ -2508,157 +3497,349 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         ...params,
       }),
   };
-  rules = {
+  serviceIndex = {
     /**
-     * @description List all rules
+     * @description Link other resource registry endpoints
      *
-     * @tags rules
-     * @name RulesList
-     * @request GET:/rules/
+     * @tags service-index
+     * @name ServiceIndexRetrieve
+     * @request GET:/service-index/
      * @secure
      */
-    rulesList: (
-      query?: {
-        /** A page number within the paginated result set. */
-        page?: number;
-        /** Number of results to return per page. */
-        page_size?: number;
-      },
-      params: RequestParams = {}
-    ) =>
-      this.request<PaginatedRuleOutList, any>({
-        path: `/rules/`,
-        method: 'GET',
-        query: query,
-        secure: true,
-        format: 'json',
-        ...params,
-      }),
-
-    /**
-     * @description Get the rule by its id
-     *
-     * @tags rules
-     * @name RulesRetrieve
-     * @request GET:/rules/{id}/
-     * @secure
-     */
-    rulesRetrieve: (id: number, params: RequestParams = {}) =>
-      this.request<RuleOut, any>({
-        path: `/rules/${id}/`,
+    serviceIndexRetrieve: (params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/service-index/`,
         method: 'GET',
         secure: true,
-        format: 'json',
-        ...params,
-      }),
-  };
-  rulesets = {
-    /**
-     * @description List all rulesets
-     *
-     * @tags rulesets
-     * @name RulesetsList
-     * @request GET:/rulesets/
-     * @secure
-     */
-    rulesetsList: (
-      query?: {
-        /** Filter by ruleset name. */
-        name?: string;
-        /** A page number within the paginated result set. */
-        page?: number;
-        /** Number of results to return per page. */
-        page_size?: number;
-      },
-      params: RequestParams = {}
-    ) =>
-      this.request<PaginatedRulesetOutList, any>({
-        path: `/rulesets/`,
-        method: 'GET',
-        query: query,
-        secure: true,
-        format: 'json',
-        ...params,
-      }),
-
-    /**
-     * @description Get the ruleset by its id
-     *
-     * @tags rulesets
-     * @name RulesetsRetrieve
-     * @request GET:/rulesets/{id}/
-     * @secure
-     */
-    rulesetsRetrieve: (id: number, params: RequestParams = {}) =>
-      this.request<RulesetOut, any>({
-        path: `/rulesets/${id}/`,
-        method: 'GET',
-        secure: true,
-        format: 'json',
-        ...params,
-      }),
-
-    /**
-     * @description Rule list of a ruleset by its id
-     *
-     * @tags rulesets
-     * @name RulesetsRulesList
-     * @request GET:/rulesets/{id}/rules/
-     * @secure
-     */
-    rulesetsRulesList: (
-      id: number,
-      query?: {
-        /** Filter by ruleset name. */
-        name?: string;
-        /** A page number within the paginated result set. */
-        page?: number;
-        /** Number of results to return per page. */
-        page_size?: number;
-      },
-      params: RequestParams = {}
-    ) =>
-      this.request<PaginatedRuleList, any>({
-        path: `/rulesets/${id}/rules/`,
-        method: 'GET',
-        query: query,
-        secure: true,
-        format: 'json',
-        ...params,
-      }),
-  };
-  tasks = {
-    /**
-     * No description
-     *
-     * @tags tasks
-     * @name TasksList
-     * @request GET:/tasks/
-     * @secure
-     */
-    tasksList: (params: RequestParams = {}) =>
-      this.request<Task[], any>({
-        path: `/tasks/`,
-        method: 'GET',
-        secure: true,
-        format: 'json',
         ...params,
       }),
 
     /**
      * No description
      *
-     * @tags tasks
-     * @name TasksRetrieve
-     * @request GET:/tasks/{id}/
+     * @tags service-index
+     * @name ServiceIndexMetadataRetrieve
+     * @request GET:/service-index/metadata/
      * @secure
      */
-    tasksRetrieve: (id: string, params: RequestParams = {}) =>
-      this.request<Task, any>({
-        path: `/tasks/${id}/`,
+    serviceIndexMetadataRetrieve: (params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/service-index/metadata/`,
+        method: 'GET',
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * @description Index of the resource types that are configured in the system.
+     *
+     * @tags service-index
+     * @name ServiceIndexResourceTypesList
+     * @request GET:/service-index/resource-types/
+     * @secure
+     */
+    serviceIndexResourceTypesList: (
+      query?: {
+        /** A page number within the paginated result set. */
+        page?: number;
+      },
+      params: RequestParams = {}
+    ) =>
+      this.request<PaginatedResourceTypeList, any>({
+        path: `/service-index/resource-types/`,
+        method: 'GET',
+        query: query,
+        secure: true,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description Index of the resource types that are configured in the system.
+     *
+     * @tags service-index
+     * @name ServiceIndexResourceTypesRetrieve
+     * @request GET:/service-index/resource-types/{name}/
+     * @secure
+     */
+    serviceIndexResourceTypesRetrieve: (name: string, params: RequestParams = {}) =>
+      this.request<ResourceType, any>({
+        path: `/service-index/resource-types/${name}/`,
         method: 'GET',
         secure: true,
         format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description Returns the as a stream the csv of resource_id,hash for a given resource type.
+     *
+     * @tags service-index
+     * @name ServiceIndexResourceTypesManifestRetrieve
+     * @request GET:/service-index/resource-types/{name}/manifest/
+     * @secure
+     */
+    serviceIndexResourceTypesManifestRetrieve: (name: string, params: RequestParams = {}) =>
+      this.request<ResourceType, any>({
+        path: `/service-index/resource-types/${name}/manifest/`,
+        method: 'GET',
+        secure: true,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description Index of all the resources in the system.
+     *
+     * @tags service-index
+     * @name ServiceIndexResourcesList
+     * @request GET:/service-index/resources/
+     * @secure
+     */
+    serviceIndexResourcesList: (
+      query?: {
+        /** A page number within the paginated result set. */
+        page?: number;
+      },
+      params: RequestParams = {}
+    ) =>
+      this.request<PaginatedResourceListList, any>({
+        path: `/service-index/resources/`,
+        method: 'GET',
+        query: query,
+        secure: true,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description Index of all the resources in the system.
+     *
+     * @tags service-index
+     * @name ServiceIndexResourcesCreate
+     * @request POST:/service-index/resources/
+     * @secure
+     */
+    serviceIndexResourcesCreate: (data: Resource, params: RequestParams = {}) =>
+      this.request<Resource, any>({
+        path: `/service-index/resources/`,
+        method: 'POST',
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description Index of all the resources in the system.
+     *
+     * @tags service-index
+     * @name ServiceIndexResourcesRetrieve
+     * @request GET:/service-index/resources/{ansible_id}/
+     * @secure
+     */
+    serviceIndexResourcesRetrieve: (ansibleId: string, params: RequestParams = {}) =>
+      this.request<Resource, any>({
+        path: `/service-index/resources/${ansibleId}/`,
+        method: 'GET',
+        secure: true,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description Index of all the resources in the system.
+     *
+     * @tags service-index
+     * @name ServiceIndexResourcesUpdate
+     * @request PUT:/service-index/resources/{ansible_id}/
+     * @secure
+     */
+    serviceIndexResourcesUpdate: (ansibleId: string, data: Resource, params: RequestParams = {}) =>
+      this.request<Resource, any>({
+        path: `/service-index/resources/${ansibleId}/`,
+        method: 'PUT',
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description Index of all the resources in the system.
+     *
+     * @tags service-index
+     * @name ServiceIndexResourcesPartialUpdate
+     * @request PATCH:/service-index/resources/{ansible_id}/
+     * @secure
+     */
+    serviceIndexResourcesPartialUpdate: (
+      ansibleId: string,
+      data: PatchedResource,
+      params: RequestParams = {}
+    ) =>
+      this.request<Resource, any>({
+        path: `/service-index/resources/${ansibleId}/`,
+        method: 'PATCH',
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description Index of all the resources in the system.
+     *
+     * @tags service-index
+     * @name ServiceIndexResourcesDestroy
+     * @request DELETE:/service-index/resources/{ansible_id}/
+     * @secure
+     */
+    serviceIndexResourcesDestroy: (ansibleId: string, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/service-index/resources/${ansibleId}/`,
+        method: 'DELETE',
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * @description Index of all the resources in the system.
+     *
+     * @tags service-index
+     * @name ServiceIndexResourcesAdditionalDataRetrieve
+     * @request GET:/service-index/resources/{ansible_id}/additional_data/
+     * @secure
+     */
+    serviceIndexResourcesAdditionalDataRetrieve: (ansibleId: string, params: RequestParams = {}) =>
+      this.request<Resource, any>({
+        path: `/service-index/resources/${ansibleId}/additional_data/`,
+        method: 'GET',
+        secure: true,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description Validate a user's username and password.
+     *
+     * @tags service-index
+     * @name ServiceIndexValidateLocalAccountCreate
+     * @request POST:/service-index/validate-local-account/
+     * @secure
+     */
+    serviceIndexValidateLocalAccountCreate: (params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/service-index/validate-local-account/`,
+        method: 'POST',
+        secure: true,
+        ...params,
+      }),
+  };
+  teams = {
+    /**
+     * @description List all teams.
+     *
+     * @tags teams
+     * @name TeamsList
+     * @request GET:/teams/
+     * @secure
+     */
+    teamsList: (
+      query?: {
+        /** Filter by team description. */
+        description?: string;
+        /** Filter by team name. */
+        name?: string;
+        /** Filter by organization ID. */
+        organization_id?: number;
+        /** A page number within the paginated result set. */
+        page?: number;
+        /** Number of results to return per page. */
+        page_size?: number;
+      },
+      params: RequestParams = {}
+    ) =>
+      this.request<PaginatedTeamList, any>({
+        path: `/teams/`,
+        method: 'GET',
+        query: query,
+        secure: true,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description Create a new team
+     *
+     * @tags teams
+     * @name TeamsCreate
+     * @request POST:/teams/
+     * @secure
+     */
+    teamsCreate: (data: TeamCreate, params: RequestParams = {}) =>
+      this.request<Team, any>({
+        path: `/teams/`,
+        method: 'POST',
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description Get team by its id
+     *
+     * @tags teams
+     * @name TeamsRetrieve
+     * @request GET:/teams/{id}/
+     * @secure
+     */
+    teamsRetrieve: (id: number, params: RequestParams = {}) =>
+      this.request<TeamDetail, any>({
+        path: `/teams/${id}/`,
+        method: 'GET',
+        secure: true,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description Partially update a team
+     *
+     * @tags teams
+     * @name TeamsPartialUpdate
+     * @request PATCH:/teams/{id}/
+     * @secure
+     */
+    teamsPartialUpdate: (id: number, data: PatchedTeamUpdate, params: RequestParams = {}) =>
+      this.request<Team, any>({
+        path: `/teams/${id}/`,
+        method: 'PATCH',
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags teams
+     * @name TeamsDestroy
+     * @request DELETE:/teams/{id}/
+     * @secure
+     */
+    teamsDestroy: (id: number, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/teams/${id}/`,
+        method: 'DELETE',
+        secure: true,
         ...params,
       }),
   };
@@ -2877,218 +4058,4 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         ...params,
       }),
   };
-}
-
-/** Serializer for creating the Event stream. */
-export interface EventStreamCreate {
-  name: string;
-  description: string;
-  source_args?: string;
-  source_type?: string;
-  decision_environment_id: number;
-  user?: string;
-  uuid?: string;
-  /**
-   * * `always` - always
-   * * `on-failure` - on-failure
-   * * `never` - never
-   */
-  restart_policy?: RestartPolicyEnum;
-  log_level: LogLevelEnum;
-}
-
-/** Serializer for the Activation Instance model. */
-export interface EventStreamInstance {
-  id: number;
-  name?: string;
-  /**
-   * * `starting` - starting
-   * * `running` - running
-   * * `pending` - pending
-   * * `failed` - failed
-   * * `stopping` - stopping
-   * * `stopped` - stopped
-   * * `deleting` - deleting
-   * * `completed` - completed
-   * * `unresponsive` - unresponsive
-   * * `error` - error
-   */
-  status?: Status906Enum;
-  git_hash?: string;
-  status_message?: string | null;
-  event_stream_id?: string;
-  /** @format date-time */
-  started_at: string;
-  /** @format date-time */
-  ended_at: string | null;
-}
-
-/** Serializer for the Activation Instance Log model. */
-export interface EventStreamInstanceLog {
-  id: number;
-  /**
-   * @min -2147483648
-   * @max 2147483647
-   */
-  line_number: number;
-  log: string;
-  event_stream_instance: number;
-}
-
-/** Serializer for listing the Activation model objects. */
-export interface EventStreamList {
-  id: number;
-  name: string;
-  description?: string;
-  is_enabled?: boolean;
-  /**
-   * * `starting` - starting
-   * * `running` - running
-   * * `pending` - pending
-   * * `failed` - failed
-   * * `stopping` - stopping
-   * * `stopped` - stopped
-   * * `deleting` - deleting
-   * * `completed` - completed
-   * * `unresponsive` - unresponsive
-   * * `error` - error
-   */
-  status?: Status906Enum;
-  decision_environment_id: number | null;
-  project_id: number | null;
-  rulebook_id: number | null;
-  extra_var_id: number | null;
-  /**
-   * * `always` - always
-   * * `on-failure` - on-failure
-   * * `never` - never
-   */
-  restart_policy?: RestartPolicyEnum;
-  log_level: LogLevelEnum;
-  /**
-   * @min -2147483648
-   * @max 2147483647
-   */
-  restart_count?: number;
-  /** Name of the referenced rulebook */
-  rulebook_name: string;
-  current_job_id?: string | null;
-  rules_count: number;
-  rules_fired_count: number;
-  /** @format date-time */
-  created_at: string;
-  /** @format date-time */
-  modified_at: string;
-  status_message?: string | null;
-}
-
-export interface EventStreamRef {
-  id: string;
-  name: string;
-}
-
-/** Serializer for reading the Activation with related objects info. */
-export interface EventStreamRead {
-  id: number;
-  name: string;
-  source_args?: string;
-  source_type?: string;
-  description?: string;
-  is_enabled?: boolean;
-  decision_environment?: DecisionEnvironmentRef | null;
-  credentials?: CredentialRef[];
-  user?: string;
-  uuid?: string;
-  /**
-   * * `starting` - starting
-   * * `running` - running
-   * * `pending` - pending
-   * * `failed` - failed
-   * * `stopping` - stopping
-   * * `stopped` - stopped
-   * * `deleting` - deleting
-   * * `completed` - completed
-   * * `unresponsive` - unresponsive
-   * * `error` - error
-   */
-  status?: Status906Enum;
-  git_hash?: string;
-  project?: ProjectRef | null;
-  rulebook?: RulebookRef | null;
-  extra_var?: ExtraVarRef | null;
-  instances: EventStreamInstance[];
-  /**
-   * * `always` - always
-   * * `on-failure` - on-failure
-   * * `never` - never
-   */
-  restart_policy?: RestartPolicyEnum;
-  log_level: LogLevelEnum;
-  /**
-   * @min -2147483648
-   * @max 2147483647
-   */
-  restart_count?: number;
-  /** Name of the referenced rulebook */
-  rulebook_name: string;
-  current_job_id?: string | null;
-  rules_count: number;
-  rules_fired_count: number;
-  /** @format date-time */
-  created_at: string;
-  /** @format date-time */
-  modified_at: string;
-  /** @format date-time */
-  restarted_at?: string | null;
-  status_message?: string | null;
-}
-
-/**
- */
-export enum WebhookTypeEnum {
-  GitHub = 'GitHub',
-  GitLab = 'GitLab',
-  ServiceNow = 'Service Now',
-  Generic = 'Generic',
-}
-export interface Webhook {
-  name: string;
-  test_mode?: boolean;
-  user: string;
-  hmac_algorithm?: string;
-  header_key?: string;
-  hmac_signature_prefix: string;
-  hmac_format?: string;
-  auth_type: string;
-  additional_data_headers?: string[];
-  id: number;
-  organization: OrganizationRef;
-  url: string;
-  created_at: string;
-  modified_at: string;
-  test_content_type?: string;
-  test_content?: string;
-  test_error_message?: string;
-}
-
-export interface WebhookCreate {
-  type: WebhookTypeEnum;
-  name: string;
-  organization_id?: number | null;
-  hmac_algorithm?: string;
-  header_key?: string;
-  auth_type?: string;
-  hmac_signature_prefix?: string;
-  hmac_format?: string;
-  secret: string;
-  test_mode?: boolean;
-  additional_data_headers?: string[];
-}
-
-/** Serializer for Webhook reference. */
-export interface WebhookRef {
-  id: number;
-  name: string;
-  description?: string;
-  webhook_type?: WebhookTypeEnum;
 }
