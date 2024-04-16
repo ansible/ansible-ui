@@ -4,7 +4,7 @@ import {
   useAsyncSingleSelectFilterBuilder,
 } from '../../../../../../framework/PageToolbar/PageToolbarFilters/ToolbarAsyncSelectFilterBuilder';
 
-import { useAwxView } from '../../../../common/useAwxView';
+import { QueryParams, useAwxView } from '../../../../common/useAwxView';
 
 import { useInventoriesColumns } from '../../hooks/useInventoriesColumns';
 import { useInventoriesFilters } from '../../hooks/useInventoriesFilters';
@@ -15,7 +15,7 @@ import { useMemo } from 'react';
 import { ITableColumn } from '../../../../../../framework';
 import { TextCell } from '../../../../../../framework';
 
-function useParameters(): AsyncSelectFilterBuilderProps<Inventory> {
+function useParameters(queryParams : QueryParams): AsyncSelectFilterBuilderProps<Inventory> {
   const tableColumns = useInventoriesColumns();
   const toolbarFilters = useInventoriesFilters();
 
@@ -31,12 +31,14 @@ function useParameters(): AsyncSelectFilterBuilderProps<Inventory> {
       toolbarFilters,
       tableColumns,
       keyFn: (item) => item?.name,
+      queryParams,
     },
+    
   };
 }
 
-export function useSelectInventorySingle() {
-  const params = useParameters();
+export function useSelectInventorySingle(queryParams : QueryParams) {
+  const params = useParameters(queryParams);
 
   return useAsyncSingleSelectFilterBuilder<Inventory>(params);
 }
