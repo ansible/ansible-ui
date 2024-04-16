@@ -39,7 +39,7 @@ export function NodeReviewStep() {
     approval_name,
     approval_description,
     node_type,
-    node_resource,
+    resource,
     approval_timeout,
     node_alias,
     node_convergence,
@@ -52,33 +52,33 @@ export function NodeReviewStep() {
 
   const hasPromptDetails = Boolean(visibleSteps.find((step) => step.id === 'nodePromptsStep'));
   const nodeTypeDetail = useGetNodeTypeDetail(node_type);
-  const nameDetail = getValueBasedOnJobType(node_type, node_resource?.name || '', approval_name);
+  const nameDetail = getValueBasedOnJobType(node_type, resource?.name || '', approval_name);
   const descriptionDetail = getValueBasedOnJobType(
     node_type,
-    node_resource?.description || '',
+    resource?.description || '',
     approval_description
   );
   const convergenceDetail = node_convergence === 'all' ? t('All') : t('Any');
   const timeoutString = useGetTimeoutString(approval_timeout);
   const timeoutDetail = getValueBasedOnJobType(node_type, '', timeoutString);
-  const showDaysToKeep = node_type === RESOURCE_TYPE.system_job && hasDaysToKeep(node_resource);
+  const showDaysToKeep = node_type === RESOURCE_TYPE.system_job && hasDaysToKeep(resource);
   const extraVarsDetail = showDaysToKeep
     ? jsonToYaml(JSON.stringify({ days: node_days_to_keep }))
     : '';
 
   let resourceDetailsLink = getPageUrl(ResourceLink[node_type], {
-    params: { id: node_resource?.id },
+    params: { id: resource?.id },
   });
 
-  if (node_resource && 'type' in node_resource && node_resource.type === 'inventory_source') {
+  if (resource && 'type' in resource && resource.type === 'inventory_source') {
     resourceDetailsLink = getPageUrl(AwxRoute.InventorySourceDetail, {
       params: {
-        source_id: node_resource?.id,
-        id: node_resource?.inventory,
+        source_id: resource?.id,
+        id: resource?.inventory,
         inventory_type:
-          node_resource?.summary_fields?.inventory.kind === ''
+          resource?.summary_fields?.inventory.kind === ''
             ? 'inventory'
-            : node_resource?.summary_fields?.inventory.kind,
+            : resource?.summary_fields?.inventory.kind,
       },
     });
   }

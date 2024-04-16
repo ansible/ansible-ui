@@ -47,8 +47,8 @@ export interface ScheduleFormWizard {
   resourceInventory?: number;
   name: string;
   description?: string;
-  node_type: string;
-  node_resource: ScheduleResources;
+  schedule_type: string;
+  resource: ScheduleResources;
   startDateTime: { date: string; time: string };
   timezone: string;
   rules: RuleListItemType[];
@@ -56,6 +56,13 @@ export interface ScheduleFormWizard {
   launch_config: LaunchConfiguration | null;
   prompt: PromptFormValues;
 }
+
+export type ScheduleResourceType =
+  | 'job'
+  | 'workflow_job'
+  | 'project_update'
+  | 'inventory_update'
+  | 'system_job';
 
 export interface PreviewSchedule {
   local?: string[];

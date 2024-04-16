@@ -50,7 +50,7 @@ export function useNodeTypeStepDefaults(): (node?: GraphNode) => CommonNodeValue
       node_alias: nodeIdentifier ?? defaultMapper.node_alias,
       node_convergence: nodeConvergence ?? defaultMapper.node_convergence,
       node_days_to_keep: nodeDaysToKeep ?? defaultMapper.node_days_to_keep,
-      node_resource: nodeUJT ?? defaultMapper.node_resource,
+      resource: nodeUJT ?? defaultMapper.resource,
       node_type: nodeType || defaultMapper.node_type,
     };
   }, []);
@@ -64,7 +64,7 @@ const defaultMapper: CommonNodeValues = {
   node_alias: '',
   node_convergence: 'any',
   node_days_to_keep: 30,
-  node_resource: null,
+  resource: null,
   node_type: RESOURCE_TYPE.job,
   node_status_type: EdgeStatus.info,
 };

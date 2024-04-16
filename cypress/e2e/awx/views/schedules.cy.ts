@@ -64,7 +64,7 @@ describe('Schedules', () => {
       ask_variables_on_launch: true,
     }).then((jobTemplate) => {
       cy.getBy('[data-cy="create-schedule"]').click();
-      cy.selectDropdownOptionByResourceName('node_type', 'Job template');
+      cy.selectDropdownOptionByResourceName('schedule_type', 'Job template');
       cy.selectDropdownOptionByResourceName('job-template-select', jobTemplate.name);
       cy.get('[data-cy="wizard-nav"] li').eq(1).should('contain.text', 'Prompts');
     });
@@ -77,7 +77,7 @@ describe('Schedules', () => {
       ask_variables_on_launch: true,
     }).then((workflowJobTemplate) => {
       cy.getBy('[data-cy="create-schedule"]').click();
-      cy.selectDropdownOptionByResourceName('node_type', 'Workflow job template');
+      cy.selectDropdownOptionByResourceName('schedule_type', 'Workflow job template');
       cy.selectDropdownOptionByResourceName('job-template-select', workflowJobTemplate.name);
       cy.get('[data-cy="wizard-nav"] li').eq(1).should('contain.text', 'Prompts');
     });
@@ -85,7 +85,7 @@ describe('Schedules', () => {
 
   it('project does not renders prompt step', () => {
     cy.getBy('[data-cy="create-schedule"]').click();
-    cy.getBy('[data-cy="node_type-form-group"]').click();
+    cy.getBy('[data-cy="schedule_type-form-group"]').click();
     cy.getBy('[data-cy="project-sync"]').click();
     cy.selectDropdownOptionByResourceName('project', project.name);
     cy.get('[data-cy="wizard-nav"] li').eq(1).should('contain.text', 'Rules');
@@ -93,7 +93,7 @@ describe('Schedules', () => {
 
   it('management jobs does not renders prompt step', () => {
     cy.getBy('[data-cy="create-schedule"]').click();
-    cy.selectDropdownOptionByResourceName('node_type', 'Management job template');
+    cy.selectDropdownOptionByResourceName('schedule_type', 'Management job template');
     cy.selectDropdownOptionByResourceName(
       'management-job-template-select',
       'Cleanup Activity Stream'
@@ -103,7 +103,7 @@ describe('Schedules', () => {
 
   it('inventory source does not renders prompt step', () => {
     cy.getBy('[data-cy="create-schedule"]').click();
-    cy.selectDropdownOptionByResourceName('node_type', 'Inventory source');
+    cy.selectDropdownOptionByResourceName('schedule_type', 'Inventory source');
     cy.selectDropdownOptionByResourceName('inventory', inventory.name);
     cy.selectDropdownOptionByResourceName('inventory-source-select', inventorySource.name);
     cy.get('[data-cy="wizard-nav"] li').eq(1).should('contain.text', 'Rules');
@@ -145,7 +145,7 @@ describe('Schedules - Create', function () {
       const scheduleName = 'E2E ' + randomString(4);
       cy.getBy('[data-cy="create-schedule"]').click();
 
-      cy.selectDropdownOptionByResourceName('node_type', 'Job template');
+      cy.selectDropdownOptionByResourceName('schedule_type', 'Job template');
       cy.selectDropdownOptionByResourceName('job-template-select', `${jobTemplate.name}`);
       cy.get('[data-cy="name"]').type(`${scheduleName}`);
       cy.selectSingleSelectOption('[data-cy="timezone"]', 'Zulu');
@@ -183,7 +183,7 @@ describe('Schedules - Create', function () {
       const scheduleName = 'E2E ' + randomString(4);
       cy.getBy('[data-cy="create-schedule"]').click();
 
-      cy.selectDropdownOptionByResourceName('node_type', 'Workflow job template');
+      cy.selectDropdownOptionByResourceName('schedule_type', 'Workflow job template');
       cy.selectDropdownOptionByResourceName('workflow-job-template-select', `${wfjt.name}`);
       cy.get('[data-cy="name"]').type(`${scheduleName}`);
       cy.selectSingleSelectOption('[data-cy="timezone"]', 'Zulu');
@@ -222,7 +222,7 @@ describe('Schedules - Create', function () {
         const scheduleName = 'E2E ' + randomString(4);
         cy.getBy('[data-cy="create-schedule"]').click();
 
-        cy.selectDropdownOptionByResourceName('node_type', 'Inventory source');
+        cy.selectDropdownOptionByResourceName('schedule_type', 'Inventory source');
         cy.selectDropdownOptionByResourceName('inventory', `${specificInventory.name}`);
         cy.selectDropdownOptionByResourceName(
           'inventory-source-select',
@@ -259,7 +259,7 @@ describe('Schedules - Create', function () {
   it('can create a simple schedule of resource type Project', () => {
     const scheduleName = 'E2E ' + randomString(4);
     cy.getBy('[data-cy="create-schedule"]').click();
-    cy.selectDropdownOptionByResourceName('node_type', 'Project Sync');
+    cy.selectDropdownOptionByResourceName('schedule_type', 'Project Sync');
     cy.selectDropdownOptionByResourceName('project', `${project.name}`);
     cy.get('[data-cy="name"]').type(`${scheduleName}`);
     cy.selectSingleSelectOption('[data-cy="timezone"]', 'Zulu');
@@ -290,7 +290,7 @@ describe('Schedules - Create', function () {
     const scheduleName = 'E2E ' + randomString(4);
     cy.getBy('[data-cy="create-schedule"]').click();
 
-    cy.selectDropdownOptionByResourceName('node_type', 'Management job template');
+    cy.selectDropdownOptionByResourceName('schedule_type', 'Management job template');
     cy.selectDropdownOptionByResourceName(
       'management-job-template-select',
       'Cleanup Activity Stream'
