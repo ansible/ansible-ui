@@ -170,7 +170,7 @@ describe('ScheduleAddWizard', () => {
       });
 
       cy.get('[data-cy="name"]').type('Test Schedule');
-      cy.selectDropdownOptionByResourceName('timezone', 'Zulu');
+      cy.selectSingleSelectOption('[data-cy="timezone"]', 'Zulu');
       cy.clickButton(/^Next$/);
     });
     it('Should update a basic rule.', () => {
