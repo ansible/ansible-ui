@@ -28,9 +28,9 @@ export function EdaDecisionEnvironmentsCard() {
   return (
     <PageDashboardCard
       title={t('Decision Environments')}
-      subtitle={t('Recently updated environments')}
+      subtitle={t('Recently updated decision environments')}
       height="md"
-      linkText={t('Go to Decision Environments')}
+      linkText={t('View all Decision Environments')}
       to={getPageUrl(EdaRoute.DecisionEnvironments)}
       helpTitle={t('Decision environments')}
       help={t('Decision environments are a container image to run Ansible rulebooks.')}

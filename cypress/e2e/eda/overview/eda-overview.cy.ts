@@ -150,8 +150,8 @@ describe('overview checks when resources before any resources are created', () =
     resources.forEach((resource) => {
       cy.navigateTo('eda', 'overview');
       cy.verifyPageTitle('Welcome to Event Driven Automation');
-      cy.checkAnchorLinks('Go to ' + resource);
-      cy.contains('a', 'Go to ' + resource).click();
+      cy.checkAnchorLinks('View all ' + resource);
+      cy.contains('a', 'View all ' + resource).click();
       cy.verifyPageTitle(resource);
     });
   });
