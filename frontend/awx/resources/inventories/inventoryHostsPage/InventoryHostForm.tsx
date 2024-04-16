@@ -305,7 +305,7 @@ function HostInputs(props: { edit_mode?: boolean; inventory_host?: boolean }) {
 
   const queryOptions = useCallback(async () => {
     const response = await requestGet<AwxItemsResponse<Inventory>>(
-      awxAPI`/inventories/?order_by=name`
+      awxAPI`/inventories/?order_by=name&kind=`
     );
     return {
       remaining: response.count - response.results?.length,
@@ -319,7 +319,7 @@ function HostInputs(props: { edit_mode?: boolean; inventory_host?: boolean }) {
     };
   }, []);
 
-  const selectInventorySingle = useSelectInventorySingle();
+  const selectInventorySingle = useSelectInventorySingle({ kind: '' });
   const registrySelector = selectInventorySingle.openBrowse;
 
   const { setValue } = useFormContext<IHostInput>();
