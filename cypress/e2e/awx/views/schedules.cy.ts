@@ -148,7 +148,7 @@ describe('Schedules - Create', function () {
       cy.selectDropdownOptionByResourceName('node_type', 'Job template');
       cy.selectDropdownOptionByResourceName('job-template-select', `${jobTemplate.name}`);
       cy.get('[data-cy="name"]').type(`${scheduleName}`);
-      cy.selectDropdownOptionByResourceName('timezone', 'Zulu');
+      cy.selectSingleSelectOption('[data-cy="timezone"]', 'Zulu');
       cy.clickButton(/^Next$/);
       cy.get('[data-cy="interval"]').clear().type('100');
       cy.selectDropdownOptionByResourceName('freq', 'Hourly');
@@ -186,7 +186,7 @@ describe('Schedules - Create', function () {
       cy.selectDropdownOptionByResourceName('node_type', 'Workflow job template');
       cy.selectDropdownOptionByResourceName('workflow-job-template-select', `${wfjt.name}`);
       cy.get('[data-cy="name"]').type(`${scheduleName}`);
-      cy.selectDropdownOptionByResourceName('timezone', 'Zulu');
+      cy.selectSingleSelectOption('[data-cy="timezone"]', 'Zulu');
       cy.clickButton(/^Next$/);
       cy.get('[data-cy="interval"]').clear().type('100');
       cy.selectDropdownOptionByResourceName('freq', 'Hourly');
@@ -229,7 +229,7 @@ describe('Schedules - Create', function () {
           `${specificInventorySource.name}`
         );
         cy.get('[data-cy="name"]').type(`${scheduleName}`);
-        cy.selectDropdownOptionByResourceName('timezone', 'Zulu');
+        cy.selectSingleSelectOption('[data-cy="timezone"]', 'Zulu');
         cy.clickButton(/^Next$/);
         cy.get('[data-cy="interval"]').clear().type('100');
         cy.selectDropdownOptionByResourceName('freq', 'Hourly');
@@ -262,7 +262,7 @@ describe('Schedules - Create', function () {
     cy.selectDropdownOptionByResourceName('node_type', 'Project Sync');
     cy.selectDropdownOptionByResourceName('project', `${project.name}`);
     cy.get('[data-cy="name"]').type(`${scheduleName}`);
-    cy.selectDropdownOptionByResourceName('timezone', 'Zulu');
+    cy.selectSingleSelectOption('[data-cy="timezone"]', 'Zulu');
     cy.clickButton(/^Next$/);
     cy.get('[data-cy="interval"]').clear().type('100');
     cy.selectDropdownOptionByResourceName('freq', 'Hourly');
@@ -296,7 +296,7 @@ describe('Schedules - Create', function () {
       'Cleanup Activity Stream'
     );
     cy.get('[data-cy="name"]').type(`${scheduleName}`);
-    cy.selectDropdownOptionByResourceName('timezone', 'Zulu');
+    cy.selectSingleSelectOption('[data-cy="timezone"]', 'Zulu');
     cy.clickButton(/^Next$/);
     cy.get('[data-cy="interval"]').clear().type('100');
     cy.selectDropdownOptionByResourceName('freq', 'Hourly');
