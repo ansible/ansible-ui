@@ -380,9 +380,8 @@ describe('Schedules - Edit', () => {
   });
 
   it('can edit a simple schedule from details page', () => {
-    cy.getTableRow('name', schedule.name).within(() => {
-      cy.get('[data-cy="name-column-cell"]').click();
-    });
+    cy.filterTableBySingleSelect('name', schedule.name);
+    cy.clickTableRowLink('name', schedule.name, { disableFilter: true });
     cy.getBy('[data-cy="edit-schedule"]').click();
     cy.getByDataCy('wizard-nav').within(() => {
       ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
@@ -398,9 +397,8 @@ describe('Schedules - Edit', () => {
     cy.get('[data-cy="description"]').contains('-edited');
   });
   it('can edit a simple schedule from the schedules list row', () => {
-    cy.getTableRow('name', schedule.name).within(() => {
-      cy.get('[data-cy="edit-schedule"]').click();
-    });
+    cy.filterTableBySingleSelect('name', schedule.name);
+    cy.clickTableRowAction('name', schedule.name, 'edit-schedule', { disableFilter: true });
     cy.get('[data-cy="wizard-nav"]').within(() => {
       ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
         cy.get('li')
@@ -415,9 +413,9 @@ describe('Schedules - Edit', () => {
     cy.get('[data-cy="description"]').contains('-edited');
   });
   it('can edit a schedule to add rules', () => {
-    cy.getTableRow('name', schedule.name).within(() => {
-      cy.get('[data-cy="edit-schedule"]').click();
-    });
+    cy.filterTableBySingleSelect('name', schedule.name);
+    cy.clickTableRowLink('name', schedule.name, { disableFilter: true });
+    cy.getBy('[data-cy="edit-schedule"]').click();
     cy.get('[data-cy="wizard-nav"]').within(() => {
       ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
         cy.get('li')
@@ -462,9 +460,9 @@ describe('Schedules - Edit', () => {
     cy.getByDataCy('rule-2').contains('FREQ=YEARLY');
   });
   it('can edit a schedule to remove rules', () => {
-    cy.getTableRow('name', schedule.name).within(() => {
-      cy.get('[data-cy="edit-schedule"]').click();
-    });
+    cy.filterTableBySingleSelect('name', schedule.name);
+    cy.clickTableRowLink('name', schedule.name, { disableFilter: true });
+    cy.getBy('[data-cy="edit-schedule"]').click();
     cy.get('[data-cy="wizard-nav"]').within(() => {
       ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
         cy.get('li')
@@ -485,7 +483,8 @@ describe('Schedules - Edit', () => {
   //Fix when exceptions step works correctly
   it.skip('can edit a schedule remove exceptions', () => {});
   it('can enable a schedule', () => {
-    cy.getTableRow('name', schedule.name).within(() => {
+    cy.filterTableBySingleSelect('name', schedule.name);
+    cy.getTableRow('name', schedule.name, { disableFilter: true }).within(() => {
       cy.get('[data-cy="toggle-switch"]').click();
       cy.get('[data-cy="toggle-switch"]').within(() => {
         cy.get('[aria-label="Click to enable schedule"]').should('exist');
@@ -497,7 +496,8 @@ describe('Schedules - Edit', () => {
     });
   });
   it('can disable a schedule', () => {
-    cy.getTableRow('name', schedule.name).within(() => {
+    cy.filterTableBySingleSelect('name', schedule.name);
+    cy.getTableRow('name', schedule.name, { disableFilter: true }).within(() => {
       cy.get('[data-cy="toggle-switch"]').click();
       cy.get('[data-cy="toggle-switch"]').within(() => {
         cy.get('[aria-label="Click to enable schedule"]').should('exist');
