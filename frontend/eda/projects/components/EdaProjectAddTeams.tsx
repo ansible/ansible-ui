@@ -37,7 +37,7 @@ export function EdaProjectAddTeams() {
   const params = useParams<{ id: string }>();
   const pageNavigate = usePageNavigate();
   const { data: project, isLoading } = useGet<EdaProject>(edaAPI`/projects/${params.id ?? ''}/`);
-  const userProgressDialog = useEdaBulkActionDialog<TeamRolePair>();
+  const teamRoleProgressDialog = useEdaBulkActionDialog<TeamRolePair>();
 
   if (isLoading || !project) return <LoadingPage />;
 
@@ -97,7 +97,7 @@ export function EdaProjectAddTeams() {
       }
     }
     return new Promise<void>((resolve) => {
-      userProgressDialog({
+      teamRoleProgressDialog({
         title: t('Add roles'),
         keyFn: ({ team, role }) => `${team.id}_${role.id}`,
         items,
