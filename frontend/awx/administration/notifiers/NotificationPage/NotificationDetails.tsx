@@ -7,6 +7,8 @@ import { Link } from 'react-router-dom';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { t } from 'i18next';
 import { TextArea } from '@patternfly/react-core';
+import { DateTimeCell } from '../../../../../framework';
+import { usePageNavigate } from '../../../../../framework';
 
 export function NotificationDetails() {
   const { t } = useTranslation();
@@ -14,13 +16,35 @@ export function NotificationDetails() {
     notificationTemplate: NotificationTemplate;
   }>();
   const getPageUrl = useGetPageUrl();
+  const pageNavigate = usePageNavigate();
   return (
     <>
       <PageDetails>
         <PageDetail label={t('Name')}>{notificationTemplate.name}</PageDetail>
         <PageDetail label={t('Description')}>{notificationTemplate.description}</PageDetail>
-        <PageDetail label={t('Created')}>{notificationTemplate.created}</PageDetail>
-        <PageDetail label={t('Modified')}>{notificationTemplate.modified}</PageDetail>
+        <PageDetail label={t('Created')}>
+        <DateTimeCell
+          value={notificationTemplate.created}
+          author={notificationTemplate.summary_fields?.created_by?.username}
+          onClick={() =>
+            pageNavigate(AwxRoute.UserDetails, {
+              params: { id: notificationTemplate.summary_fields?.created_by?.id },
+            })
+          }
+        />
+        </PageDetail>
+        <PageDetail label={t('Last Modified')}>
+         <DateTimeCell
+          value={notificationTemplate.modified}
+          author={notificationTemplate.summary_fields?.modified_by?.username}
+          onClick={() =>
+            pageNavigate(AwxRoute.UserDetails, {
+              params: { id: notificationTemplate.summary_fields?.modified_by?.id },
+            })
+          }
+        />
+      </PageDetail>
+     
         <PageDetail label={t('Organization')}>
           <Link
             to={getPageUrl(AwxRoute.OrganizationDetails, {

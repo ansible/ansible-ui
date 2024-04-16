@@ -29,6 +29,8 @@ export interface NotificationTemplate
       name: string;
       description: string;
     };
+    created_by : { id : number; username : string};
+    modified_by : { id : number; username : string};
   };
   notification_configuration: {
     [key: string]: number | string | boolean | string[] | { [key: string]: unknown };
