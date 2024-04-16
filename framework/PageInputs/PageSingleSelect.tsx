@@ -150,6 +150,12 @@ export function PageSingleSelect<
   const { id, icon, value, onSelect, options, placeholder, queryLabel } = props;
 
   const [open, setOpen] = useOverridableState(props.open ?? false, props.setOpen);
+  useEffect(() => {
+    if (open) {
+      setTimeout(() => searchRef.current?.focus(), 1);
+    }
+  }, [open]);
+
   const [searchValue, setSearchValue] = useOverridableState(
     props.searchValue ?? '',
     props.setSearchValue
