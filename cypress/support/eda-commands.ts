@@ -15,6 +15,7 @@ import {
   EdaRulebookActivationCreate,
 } from '../../frontend/eda/interfaces/EdaRulebookActivation';
 import { EdaUser, EdaUserCreateUpdate } from '../../frontend/eda/interfaces/EdaUser';
+import { EdaTeam } from '../../frontend/eda/interfaces/EdaTeam';
 import {
   ImportStateEnum,
   RestartPolicyEnum,
@@ -282,7 +283,7 @@ Cypress.Commands.add('getEdaCredentialByName', (edaCredentialName: string) => {
 });
 
 Cypress.Commands.add('getEdaRoles', () => {
-  cy.requestGet<EdaResult<EdaRole>>(edaAPI`/roles/`).then((response) => {
+  cy.requestGet<EdaResult<EdaRole>>(edaAPI`/role_definitions/`).then((response) => {
     const edaRoles = response.results;
     return edaRoles;
   });
@@ -311,6 +312,47 @@ Cypress.Commands.add('checkResourceNameAndAction', (resourceTypes: string[], act
 
 Cypress.Commands.add('getEdaRoleDetail', (roleID: string) => {
   cy.requestGet<RoleDetail>(edaAPI`/roles/${roleID}`);
+});
+
+Cypress.Commands.add('createEdaTeam', () => {
+  cy.requestPost<EdaTeam>(edaAPI`/teams/`, {
+    name: 'E2E Team ' + randomString(4),
+    organization_id: 1,
+    description: 'This is a team',
+  }).then((edaTeam) => {
+    Cypress.log({
+      displayName: 'EDA Team CREATION :',
+      message: [`Created 👉  ${edaTeam.name}`],
+    });
+    return edaTeam;
+  });
+});
+
+// Cypress.Commands.add('createRoleTeamAssignments', (object_id, role_definition, team) => {
+//   cy.requestPost(edaAPI`/role_team_assignments/`, {
+//     object_id: object_id,
+//     role_definition: role_definition,
+//     team: team,
+//   }).then((RoleTeamAssignments) => {
+//     Cypress.log({
+//       displayName: 'Role Team Assignment :',
+//       message: [`Response 👉  ${RoleTeamAssignments}`],
+//     });
+//     return RoleTeamAssignments;
+//   });
+// });
+
+Cypress.Commands.add('deleteEdaTeam', (team: EdaTeam) => {
+  cy.wrap(team).should('not.be.undefined');
+  cy.wrap(team.id).should('not.equal', 1);
+  cy.requestDelete(edaAPI`/teams/${team.id.toString()}/`, {
+    failOnStatusCode: false,
+  }).then(() => {
+    Cypress.log({
+      displayName: 'EDA TEAM DELETION :',
+      message: [`Deleted 👉  ${team.name}`],
+    });
+  });
 });
 
 Cypress.Commands.add(

@@ -38,6 +38,7 @@ import {
   EdaRulebookActivationCreate,
 } from '../../frontend/eda/interfaces/EdaRulebookActivation';
 import { EdaUser, EdaUserCreateUpdate } from '../../frontend/eda/interfaces/EdaUser';
+import { EdaTeam } from '../../frontend/eda/interfaces/EdaTeam';
 import { RoleDetail } from '../../frontend/eda/interfaces/generated/eda-api';
 import { Role as HubRole } from '../../frontend/hub/access/roles/Role';
 import { RemoteRegistry } from '../../frontend/hub/administration/remote-registries/RemoteRegistry';
@@ -1297,6 +1298,31 @@ declare global {
        * @returns {Chainable<EdaUser>}
        */
       deleteEdaUser(edaUserName: EdaUser): Chainable<void>;
+
+      /**
+       * Creates an EDA team and returns the same.
+       *
+       * @returns {Chainable<EdaTeam>}
+       */
+      createEdaTeam(team?: SetOptional<EdaTeam, 'name' | 'organization_id'>): Chainable<EdaTeam>;
+
+      /**
+       * Creates an object to team role assignment.
+       *
+       * @returns {Chainable<EdaTeam>}
+       */
+      createRoleTeamAssignments(
+        object_id: string,
+        role_definition: string,
+        team: string
+      ): Chainable<void>;
+
+      /**
+       * Deletes an EDA team which is provided.
+       *
+       * @returns {Chainable<EdaTeam>}
+       */
+      deleteEdaTeam(edaTeamName: EdaTeam): Chainable<void>;
 
       /**
        * Retrieves an EDA active user which is admin.
