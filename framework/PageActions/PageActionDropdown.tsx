@@ -115,13 +115,7 @@ export function PageActionDropdown<T extends object>(props: PageActionDropdownPr
         toggleVariant={isSecondary ? 'secondary' : isPrimary ? 'primary' : undefined}
         toggleIndicator={Icon && iconOnly ? null : undefined}
         style={isPrimary && !label ? { color: 'var(--pf-v5-global--Color--light-100)' } : {}}
-        icon={
-          Icon ? (
-            <div>
-              <Icon />
-            </div>
-          ) : undefined
-        }
+        icon={Icon ? <Icon /> : undefined}
         data-cy={id}
       >
         {iconOnly ? undefined : label}
