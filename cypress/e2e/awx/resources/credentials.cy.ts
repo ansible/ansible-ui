@@ -70,7 +70,7 @@ describe('Credentials', () => {
           cy.wait('@deleted')
             .its('response')
             .then((deleted) => {
-              expect(deleted.statusCode).to.eql(204);
+              expect(deleted?.statusCode).to.eql(204);
               cy.verifyPageTitle('Credentials');
             });
         });
@@ -112,7 +112,7 @@ describe('Credentials', () => {
       cy.wait('@deleted')
         .its('response')
         .then((deleted) => {
-          expect(deleted.statusCode).to.eql(204);
+          expect(deleted?.statusCode).to.eql(204);
           cy.contains(/^Success$/);
           cy.clickButton(/^Close$/);
           cy.clickButton(/^Clear all filters$/);
@@ -131,7 +131,7 @@ describe('Credentials', () => {
       cy.wait('@deleted')
         .its('response')
         .then((deleted) => {
-          expect(deleted.statusCode).to.eql(204);
+          expect(deleted?.statusCode).to.eql(204);
           cy.contains(/^Success$/);
           cy.clickButton(/^Close$/);
           cy.clickButton(/^Clear all filters$/);
@@ -177,7 +177,7 @@ describe('Credentials', () => {
       cy.wait('@deleted')
         .its('response')
         .then((deleted) => {
-          expect(deleted.statusCode).to.eql(204);
+          expect(deleted?.statusCode).to.eql(204);
           cy.verifyPageTitle('Credentials');
         });
     });
