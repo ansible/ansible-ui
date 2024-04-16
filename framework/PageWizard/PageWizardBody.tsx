@@ -4,7 +4,7 @@ import { useFormState } from 'react-hook-form';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { PageForm } from '../PageForm/PageForm';
 import { PageWizardFooter } from './PageWizardFooter';
-import { usePageWizard, isStepVisible } from './PageWizardProvider';
+import { usePageWizard, isPageWizardParentStep } from './PageWizardProvider';
 import type { PageWizardBody } from './types';
 import { t } from 'i18next';
 
@@ -19,13 +19,11 @@ export function PageWizardBody<T>({
   const navigate = useNavigate();
   const {
     activeStep,
-    allSteps,
     setActiveStep,
     setStepData,
-    setVisibleSteps,
     setWizardData,
     stepData,
-    visibleSteps,
+    visibleStepsFlattened,
     wizardData,
   } = usePageWizard();
   const [_, setSearchParams] = useSearchParams();
@@ -40,54 +38,55 @@ export function PageWizardBody<T>({
 
   const onNext = useCallback(
     async (formData: object) => {
-      const filteredSteps = allSteps.filter((step) =>
-        isStepVisible(step, { ...wizardData, ...formData })
-      );
-
       if (activeStep === null) {
         return Promise.resolve();
       }
 
-      if (activeStep.validate) {
+      if (!isPageWizardParentStep(activeStep) && activeStep.validate) {
         await activeStep.validate(formData, wizardData);
       }
 
-      const isLastStep = activeStep?.id === filteredSteps[filteredSteps.length - 1]?.id;
+      const isLastStep =
+        activeStep?.id === visibleStepsFlattened[visibleStepsFlattened.length - 1]?.id;
       if (isLastStep) {
         return onSubmit(wizardData as T);
       }
 
-      const activeStepIndex = filteredSteps.findIndex((step) => step.id === activeStep?.id);
-      const nextStep = filteredSteps[activeStepIndex + 1];
+      const activeStepIndex = visibleStepsFlattened.findIndex((step) => step.id === activeStep?.id);
+      // If the next step is a parent step, mark its first substep as the next active step
+      const nextStep = isPageWizardParentStep(visibleStepsFlattened[activeStepIndex + 1])
+        ? visibleStepsFlattened[activeStepIndex + 2]
+        : visibleStepsFlattened[activeStepIndex + 1];
 
       // Clear search params
       setSearchParams(new URLSearchParams(''));
       setWizardData((prev: object) => ({ ...prev, ...formData }));
       setStepData((prev) => ({ ...prev, [activeStep?.id]: formData }));
-      setVisibleSteps(filteredSteps);
       setActiveStep(nextStep);
       return Promise.resolve();
     },
     [
       activeStep,
-      allSteps,
       onSubmit,
       setActiveStep,
       setSearchParams,
       setStepData,
-      setVisibleSteps,
       setWizardData,
+      visibleStepsFlattened,
       wizardData,
     ]
   );
 
   const onBack = useCallback(() => {
-    const activeStepIndex = visibleSteps.findIndex((step) => step.id === activeStep?.id);
-    const previousStep = visibleSteps[activeStepIndex - 1];
+    const activeStepIndex = visibleStepsFlattened.findIndex((step) => step.id === activeStep?.id);
+    // If the previous step is a parent step, mark its first substep as the next active step
+    const previousStep = isPageWizardParentStep(visibleStepsFlattened[activeStepIndex - 1])
+      ? visibleStepsFlattened[activeStepIndex - 2]
+      : visibleStepsFlattened[activeStepIndex - 1];
     // Clear search params
     setSearchParams(new URLSearchParams(''));
     setActiveStep(previousStep);
-  }, [visibleSteps, setSearchParams, setActiveStep, activeStep?.id]);
+  }, [visibleStepsFlattened, setSearchParams, setActiveStep, activeStep?.id]);
 
   return (
     <>

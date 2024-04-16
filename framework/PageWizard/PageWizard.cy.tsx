@@ -129,4 +129,77 @@ describe('PageWizard', () => {
     cy.get('[data-cy="wizard-next"]').click();
     cy.get('@submit').should('have.been.calledOnce');
   });
+
+  describe('Substeps', () => {
+    const stepsWithSubsteps = [
+      {
+        id: 'welcome',
+        label: 'Welcome',
+        element: <h1>Welcome</h1>,
+      },
+      {
+        id: 'parentStep',
+        label: 'Parent step',
+        substeps: [
+          {
+            id: 'substepA',
+            label: 'Substep A',
+            element: <h1>Substep A</h1>,
+          },
+          {
+            id: 'substepB',
+            label: 'Substep B',
+            element: <h1>Substep B</h1>,
+          },
+        ],
+      },
+    ];
+    beforeEach(() => {
+      const onCancel = cy.stub().as('cancel');
+      const onSubmit = cy.stub().as('submit');
+      cy.mount(
+        <PageWizard
+          steps={stepsWithSubsteps}
+          onCancel={onCancel}
+          onSubmit={onSubmit}
+          defaultValue={{
+            inputs: {
+              input_1: 'value 1',
+              input_2: 'value 2',
+            },
+          }}
+        />
+      );
+    });
+
+    it('should navigate to next step when clicking next in the footer', () => {
+      cy.get('[data-cy="wizard-nav-item-welcome"] button').should('have.class', 'pf-m-current');
+      cy.get('[data-cy="wizard-nav-item-substepA"] button').should('be.disabled');
+      cy.get('[data-cy="wizard-nav-item-substepB"] button').should('be.disabled');
+      cy.get('[data-cy="wizard-next"]').click();
+
+      cy.get('[data-cy="wizard-nav-item-welcome"] button').should('not.have.class', 'pf-m-current');
+      cy.get('[data-cy="wizard-nav-item-substepA"] button').should('have.class', 'pf-m-current');
+      cy.get('[data-cy="wizard-section-substepA"]').should('contain.text', 'Substep A');
+      cy.get('[data-cy="wizard-nav-item-substepB"] button').should('be.disabled');
+      cy.get('[data-cy="wizard-next"]').click();
+
+      cy.get('[data-cy="wizard-nav-item-welcome"] button').should('not.have.class', 'pf-m-current');
+      cy.get('[data-cy="wizard-nav-item-substepA"] button').should(
+        'not.have.class',
+        'pf-m-current'
+      );
+      cy.get('[data-cy="wizard-nav-item-substepB"] button').should('have.class', 'pf-m-current');
+      cy.get('[data-cy="wizard-section-substepB"]').should('contain.text', 'Substep B');
+      cy.get('[data-cy="wizard-next"]').should('contain.text', 'Finish');
+    });
+
+    it('should navigate to previous step when clicking back in the footer', () => {
+      cy.get('[data-cy="wizard-next"]').click();
+      cy.get('[data-cy="wizard-nav-item-substepA"] button').should('have.class', 'pf-m-current');
+      cy.get('[data-cy="wizard-section-substepA"]').should('contain.text', 'Substep A');
+      cy.get('[data-cy="wizard-back"]').click();
+      cy.get('[data-cy="wizard-section-welcome"]').should('contain.text', 'Welcome');
+    });
+  });
 });
