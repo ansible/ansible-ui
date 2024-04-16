@@ -18,6 +18,7 @@ import { EdaUserDetails } from '../access/users/UserPage/EdaUserDetails';
 import { MyPage } from '../access/users/UserPage/MyPage';
 import { UserPage } from '../access/users/UserPage/UserPage';
 import { Users } from '../access/users/Users';
+import { EdaAddUserRoles } from '../access/users/EdaAddUserRoles';
 import {
   CreateDecisionEnvironment,
   EditDecisionEnvironment,
@@ -401,6 +402,11 @@ export function useEdaNavigation() {
                 {
                   path: '',
                   element: <Navigate to="details" />,
+                },
+                {
+                  id: EdaRoute.UserAddRoles,
+                  path: 'roles/add-roles',
+                  element: <EdaAddUserRoles />,
                 },
               ],
             },
