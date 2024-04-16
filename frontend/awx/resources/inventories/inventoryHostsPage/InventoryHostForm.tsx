@@ -319,7 +319,7 @@ function HostInputs(props: { edit_mode?: boolean; inventory_host?: boolean }) {
     };
   }, []);
 
-  const selectInventorySingle = useSelectInventorySingle({ kind : ''});
+  const selectInventorySingle = useSelectInventorySingle({ kind: '' });
   const registrySelector = selectInventorySingle.openBrowse;
 
   const { setValue } = useFormContext<IHostInput>();

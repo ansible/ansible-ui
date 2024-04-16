@@ -15,7 +15,7 @@ import { useMemo } from 'react';
 import { ITableColumn } from '../../../../../../framework';
 import { TextCell } from '../../../../../../framework';
 
-function useParameters(queryParams : QueryParams): AsyncSelectFilterBuilderProps<Inventory> {
+function useParameters(queryParams: QueryParams): AsyncSelectFilterBuilderProps<Inventory> {
   const tableColumns = useInventoriesColumns();
   const toolbarFilters = useInventoriesFilters();
 
@@ -33,11 +33,10 @@ function useParameters(queryParams : QueryParams): AsyncSelectFilterBuilderProps
       keyFn: (item) => item?.name,
       queryParams,
     },
-    
   };
 }
 
-export function useSelectInventorySingle(queryParams : QueryParams) {
+export function useSelectInventorySingle(queryParams: QueryParams) {
   const params = useParameters(queryParams);
 
   return useAsyncSingleSelectFilterBuilder<Inventory>(params);
