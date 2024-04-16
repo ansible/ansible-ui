@@ -1,5 +1,5 @@
 import { RequestError } from '../../../common/crud/RequestError';
-import { hubErrorAdapter } from './hubErrorAdapter';
+import { hubErrorAdapter, useHubErrorMessageParser } from './hubErrorAdapter';
 
 describe('hubErrorAdapter Unit Tests', () => {
   it('should handle non_field_errors correctly', () => {
@@ -91,5 +91,21 @@ describe('hubErrorAdapter Unit Tests', () => {
     };
 
     expect(hubErrorAdapter(error)).to.deep.equal(expectedOutput);
+  });
+});
+
+describe('useHubErrorMessageParser', () => {
+  it('should return a message and parsedErrors', () => {
+    const error = new RequestError(
+      'Validation failed',
+      undefined,
+      400,
+      {},
+      { name: ['Name is required'] }
+    );
+    const parseError = useHubErrorMessageParser();
+    const result = parseError(error);
+    expect(result.message).equal('Name is required');
+    expect(result.parsedErrors).to.deep.equal([{ message: 'Name is required' }]);
   });
 });

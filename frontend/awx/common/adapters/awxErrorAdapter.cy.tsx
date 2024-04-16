@@ -1,5 +1,5 @@
 import { RequestError } from '../../../common/crud/RequestError';
-import { awxErrorAdapter } from './awxErrorAdapter';
+import { awxErrorAdapter, useAwxErrorMessageParser } from './awxErrorAdapter';
 
 describe('awxErrorAdapter', () => {
   it('should return empty arrays when passed an empty object', () => {
@@ -78,5 +78,21 @@ describe('awxErrorAdapter', () => {
     expect(result.genericErrors.length).equal(1);
     expect(result.fieldErrors.length).equal(0);
     expect(result.genericErrors).to.deep.equal([{ message: 'Cannot assign type of galaxy' }]);
+  });
+});
+
+describe('useAwxErrorMessageParser', () => {
+  it('should return a message and parsedErrors', () => {
+    const error = new RequestError(
+      'Validation failed',
+      undefined,
+      400,
+      {},
+      { name: ['Name is required'] }
+    );
+    const parseError = useAwxErrorMessageParser();
+    const result = parseError(error);
+    expect(result.message).equal('Name is required');
+    expect(result.parsedErrors).to.deep.equal([{ message: 'Name is required' }]);
   });
 });
