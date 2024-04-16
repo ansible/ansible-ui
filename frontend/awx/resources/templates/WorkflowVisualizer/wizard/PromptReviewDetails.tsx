@@ -15,15 +15,15 @@ import type { WorkflowJobTemplate } from '../../../../interfaces/WorkflowJobTemp
 import type { WizardFormValues } from '../types';
 import { parseStringToTagArray } from '../../JobTemplateFormHelpers';
 
-interface PromptWizardFormValues extends Omit<WizardFormValues, 'node_resource'> {
-  node_resource: JobTemplate | WorkflowJobTemplate;
+interface PromptWizardFormValues extends Omit<WizardFormValues, 'resource'> {
+  resource: JobTemplate | WorkflowJobTemplate;
 }
 
 export function PromptReviewDetails() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const {
-    wizardData: { prompt, node_resource: template },
+    wizardData: { prompt, resource: template },
   } = usePageWizard() as {
     wizardData: PromptWizardFormValues;
   };

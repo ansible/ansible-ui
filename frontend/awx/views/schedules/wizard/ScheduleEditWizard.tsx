@@ -10,7 +10,6 @@ import { RulesStep } from './RulesStep';
 import { RRuleSet, rrulestr } from 'rrule';
 import { ExceptionsStep } from './ExceptionsStep';
 import { SurveyStep } from '../../../common/SurveyStep';
-import { NodeTypeStep } from '../../../resources/templates/WorkflowVisualizer/wizard/NodeTypeStep';
 import { NodePromptsStep } from '../../../resources/templates/WorkflowVisualizer/wizard/NodePromptsStep';
 import { WizardFormValues } from '../../../resources/templates/WorkflowVisualizer/types';
 import { shouldHideOtherStep } from '../../../resources/templates/WorkflowVisualizer/wizard/helpers';
@@ -20,6 +19,7 @@ import { Schedule } from '../../../interfaces/Schedule';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { NodeReviewStep } from '../../../resources/templates/WorkflowVisualizer/wizard/NodeReviewStep';
 import { RULES_DEFAULT_VALUES } from './constants';
+import { ScheduleSelectStep } from './ScheduleSelectStep';
 export function ScheduleEditWizard() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
@@ -55,17 +55,17 @@ export function ScheduleEditWizard() {
     {
       id: 'details',
       label: t('Details'),
-      inputs: <NodeTypeStep />,
+      inputs: <ScheduleSelectStep />,
     },
     {
       id: 'nodePromptsStep',
       label: t('Prompts'),
       inputs: <NodePromptsStep />,
-      hidden: (wizardData: Partial<WizardFormValues>) => {
-        const { launch_config, node_resource, node_type } = wizardData;
+      hidden: (wizardData: Partial<ScheduleFormWizard>) => {
+        const { launch_config, resource, schedule_type } = wizardData;
         if (
-          (node_type === RESOURCE_TYPE.workflow_job || node_type === RESOURCE_TYPE.job) &&
-          node_resource &&
+          (schedule_type === RESOURCE_TYPE.workflow_job || schedule_type === RESOURCE_TYPE.job) &&
+          resource &&
           launch_config
         ) {
           return shouldHideOtherStep(launch_config);
@@ -105,9 +105,8 @@ export function ScheduleEditWizard() {
     details: {
       name: schedule?.name,
       description: schedule?.description,
-      resource_type: schedule?.summary_fields.unified_job_template.job_type,
-      relatedJobTypeApiUrl: schedule?.related.unified_job_template,
-      resourceName: schedule?.summary_fields.unified_job_template.name,
+      schedule_type: schedule?.summary_fields.unified_job_template.unified_job_type,
+      resource: schedule?.summary_fields.unified_job_template,
       startDateTime: { date: startDate, time: time },
       timezone: schedule?.timezone,
     },
