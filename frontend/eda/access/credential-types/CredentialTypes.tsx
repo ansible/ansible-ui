@@ -1,4 +1,4 @@
-import { CubesIcon } from '@patternfly/react-icons';
+import { CubesIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { PageHeader, PageLayout, PageTable, usePageNavigate } from '../../../../framework';
 import { EdaCredentialType } from '../../interfaces/EdaCredentialType';
@@ -44,6 +44,7 @@ export function CredentialTypes() {
         emptyStateTitle={t('There are currently no credential types added.')}
         emptyStateDescription={t('Please create a credential type by using the button below.')}
         emptyStateIcon={CubesIcon}
+        emptyStateButtonIcon={<PlusCircleIcon />}
         emptyStateButtonText={t('Create credential type')}
         emptyStateButtonClick={() => pageNavigate(EdaRoute.CreateCredentialType)}
         {...view}

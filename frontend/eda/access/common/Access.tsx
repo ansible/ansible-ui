@@ -171,6 +171,7 @@ export function Access<T extends Assignment>(props: {
           ? t('Please add a team by using the button below.')
           : t('Please add an user by using the button below.')
       }
+      emptyStateButtonIcon={<PlusCircleIcon />}
       emptyStateButtonText={props.type === 'team' ? t('Add team') : t('Add user')}
       emptyStateActions={toolbarActions.slice(0, 1)}
       {...view}

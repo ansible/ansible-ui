@@ -8,6 +8,7 @@ import { useProjectActions } from './hooks/useProjectActions';
 import { useProjectColumns } from './hooks/useProjectColumns';
 import { useProjectFilters } from './hooks/useProjectFilters';
 import { useProjectsActions } from './hooks/useProjectsActions';
+import { PlusCircleIcon } from '@patternfly/react-icons';
 
 export function Projects() {
   const { t } = useTranslation();
@@ -36,6 +37,7 @@ export function Projects() {
         errorStateTitle={t('Error loading projects')}
         emptyStateTitle={t('There are currently no projects created for your organization.')}
         emptyStateDescription={t('Please create a project by using the button below.')}
+        emptyStateButtonIcon={<PlusCircleIcon />}
         emptyStateButtonText={t('Create project')}
         emptyStateButtonClick={() => pageNavigate(EdaRoute.CreateProject)}
         {...view}
