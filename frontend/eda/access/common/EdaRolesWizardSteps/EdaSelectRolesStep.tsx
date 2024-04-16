@@ -6,15 +6,53 @@ import { edaAPI } from '../../../common/eda-utils';
 import { useMultiSelectListView } from '../../../common/useMultiSelectListView';
 import { EdaRbacRole } from '../../../interfaces/EdaRbacRole';
 import { SelectRolesStep } from '../../../../common/access/RolesWizard/steps/SelectRolesStep';
+import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
 
 export function EdaSelectRolesStep(props: {
-  contentType: string;
+  contentType?: string;
   fieldNameForPreviousStep?: string;
   descriptionForRoleSelection?: string;
 }) {
   const toolbarFilters = useEdaRolesFilters();
   const { t } = useTranslation();
-  const { contentType, fieldNameForPreviousStep, descriptionForRoleSelection } = props;
+  const { wizardData } = usePageWizard();
+  const { resourceType } = wizardData as { [key: string]: unknown };
+
+  const contentType = useMemo(() => {
+    return props.contentType ? props.contentType : (resourceType as string)?.split('.').pop() ?? '';
+  }, [props.contentType, resourceType]);
+
+  const fieldNameForPreviousStep = useMemo(() => {
+    return props.fieldNameForPreviousStep
+      ? props.fieldNameForPreviousStep
+      : (resourceType as string)?.split('.').pop() ?? '';
+  }, [props.fieldNameForPreviousStep, resourceType]);
+
+  const descriptionForRoleSelection = useMemo(() => {
+    if (props.descriptionForRoleSelection) {
+      return props.descriptionForRoleSelection;
+    }
+    switch (resourceType as string) {
+      case 'eda.edacredential':
+        return t('Select roles to apply to all of your selected credentials');
+      case 'eda.project':
+        return t('Select roles to apply to all of your selected projects');
+      case 'eda.activation':
+        return t('Select roles to apply to all of your selected rulebook activations');
+      case 'eda.rulebook':
+        return t('Select roles to apply to all of your selected rulebooks');
+      case 'eda.rulebookprocess':
+        return t('Select roles to apply to all of your selected rulebook processes');
+      case 'eda.credentialtype':
+        return t('Select roles to apply to all of your selected credential types');
+      case 'eda.decisionenvironment':
+        return t('Select roles to apply to all of your selected decision environments');
+      case 'eda.auditrule':
+        return t('Select roles to apply to all of your selected audit rules');
+      default:
+        return '';
+    }
+  }, [props.descriptionForRoleSelection, resourceType, t]);
 
   const tableColumns: ITableColumn<EdaRbacRole>[] = useMemo(() => {
     return [

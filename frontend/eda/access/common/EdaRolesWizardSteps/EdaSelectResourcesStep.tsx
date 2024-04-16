@@ -16,7 +16,7 @@ import { useMultiSelectListView } from '../../../common/useMultiSelectListView';
 import { edaAPI } from '../../../common/eda-utils';
 import styled from 'styled-components';
 
-type ResourceType =
+export type EdaResourceType =
   | EdaActivationInstance
   | EdaCredential
   | EdaDecisionEnvironment
@@ -59,12 +59,12 @@ export function EdaSelectResourcesStep() {
       'eda.auditrule': t('Select audit rules'),
     };
   }, [t]);
-  const tableColumns = useMemo<ITableColumn<ResourceType>[]>(
+  const tableColumns = useMemo<ITableColumn<EdaResourceType>[]>(
     () => [
       {
         header: t('Name'),
         type: 'text',
-        value: (item: ResourceType) => item.name,
+        value: (item: EdaResourceType) => item.name,
         sort: 'name',
       },
     ],
@@ -83,13 +83,13 @@ export function EdaSelectResourcesStep() {
     [t]
   );
 
-  const view = useMultiSelectListView<ResourceType>(
+  const view = useMultiSelectListView<EdaResourceType>(
     {
       url: resourceToEndpointMapping[resourceType as string],
       toolbarFilters,
       tableColumns,
     },
-    `${resourceType as string}`
+    'resources'
   );
 
   return (

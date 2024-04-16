@@ -51,7 +51,22 @@ export function SelectRolesStep<T extends object>(props: SelectRolesStepProps<T>
           return t('Selected users');
         case 'teams':
           return t('Selected teams');
-        // TODO: Add additional resource types
+        case 'eda.edacredential':
+          return t('Selected credentials');
+        case 'eda.project':
+          return t('Selected projects');
+        case 'eda.activation':
+          return t('Selected rulebook activations');
+        case 'eda.rulebook':
+          return t('Selected rulebooks');
+        case 'eda.rulebookprocess':
+          return t('Selected rulebook processes');
+        case 'eda.credentialtype':
+          return t('Selected credential types');
+        case 'eda.decisionenvironment':
+          return t('Selected decision environments');
+        case 'eda.auditrule':
+          return t('Selected audit rules');
         default:
           return undefined;
       }

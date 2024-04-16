@@ -42,7 +42,9 @@ export function RoleAssignmentsReviewStep() {
       <Title headingLevel="h1">{t('Review')}</Title>
       {resourceType ? (
         <>
-          <PageDetail label={t('Resource type')}>{resourceType}</PageDetail>
+          <PageDetail fullWidth label={t('Resource type')}>
+            {resourceType}
+          </PageDetail>
           <Divider />
         </>
       ) : null}
