@@ -99,3 +99,13 @@ tr.selected:hover {
 .pf-v5-c-form__group-label-info {
   margin-inline-start: 0 !important;
 }
+
+/** PF Button Icons are too close to the button text */
+.pf-v5-c-button__icon.pf-m-start {
+  margin-inline-end: 8px;
+}
+
+/** PF Button Icons are not spaced correctly in the dropdown text */
+.pf-v5-c-dropdown__toggle-image {
+  margin-inline-start: 8px;
+}
