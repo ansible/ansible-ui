@@ -35,8 +35,6 @@ export interface ActivationCreate {
   description?: string;
   is_enabled?: boolean;
   decision_environment_id: number;
-  organization_id?: number;
-  sources?: [];
   rulebook_id: number;
   extra_var_id?: number | null;
   /**
@@ -45,7 +43,17 @@ export interface ActivationCreate {
    * * `never` - never
    */
   restart_policy?: RestartPolicyEnum;
-  log_level: LogLevelEnum;
+  awx_token_id?: number | null;
+  event_streams?: number[] | null;
+  /**
+   * * `debug` - debug
+   * * `info` - info
+   * * `error` - error
+   */
+  log_level?: LogLevelEnum;
+  eda_credentials?: number[] | null;
+  k8s_service_name?: string | null;
+  organization_id?: number | null;
 }
 
 /** Serializer for the Activation Instance model. */
@@ -83,6 +91,12 @@ export interface ActivationInstanceLog {
    */
   line_number: number;
   log: string;
+  /**
+   * @format int64
+   * @min -9223372036854776000
+   * @max 9223372036854776000
+   */
+  log_timestamp?: number;
   activation_instance: number;
 }
 
@@ -130,6 +144,14 @@ export interface ActivationList {
   /** @format date-time */
   modified_at: string;
   status_message?: string | null;
+  awx_token_id: number | null;
+  /**
+   * * `debug` - debug
+   * * `info` - info
+   * * `error` - error
+   */
+  log_level?: LogLevelEnum;
+  eda_credentials?: Credential[] | null;
 }
 
 export interface SourceRef {
@@ -144,11 +166,6 @@ export interface ActivationRead {
   description?: string;
   is_enabled?: boolean;
   decision_environment?: DecisionEnvironmentRef | null;
-  event_streams?: EventStreamRef[];
-  webhooks?: WebhookRef[];
-  eda_credentials?: CredentialRef[];
-  organization?: OrganizationRef;
-
   /**
    * * `starting` - starting
    * * `running` - running
@@ -177,7 +194,6 @@ export interface ActivationRead {
    * @min -2147483648
    * @max 2147483647
    */
-  log_level: LogLevelEnum;
   restart_count?: number;
   /** Name of the referenced rulebook */
   rulebook_name: string;
@@ -191,6 +207,18 @@ export interface ActivationRead {
   /** @format date-time */
   restarted_at?: string | null;
   status_message?: string | null;
+  awx_token_id: number | null;
+  eda_credentials?: Credential[] | null;
+  event_streams?: EventStreamRead[] | null;
+  webhooks?: WebhookRef[];
+  organization?: OrganizationRef;
+  k8s_service_name?: string;
+  /**
+   * * `debug` - debug
+   * * `info` - info
+   * * `error` - error
+   */
+  log_level?: LogLevelEnum;
 }
 
 export interface AuditAction {
@@ -363,7 +391,7 @@ export interface Credential {
 export interface CredentialCreate {
   name: string;
   description?: string;
-  organization_id?: number;
+  organization_id?: number | null;
   credential_type_id: number;
   username?: string | null;
   key?: string | null;
@@ -456,7 +484,7 @@ export interface DecisionEnvironmentRef {
 
 export interface ExtraVar {
   id: number;
-  organization_id?: number;
+  organization_id?: number | null;
   /** Content of the extra_var */
   extra_var: string;
 }
@@ -3044,7 +3072,7 @@ export interface Webhook {
 export interface WebhookCreate {
   type: WebhookTypeEnum;
   name: string;
-  organization_id?: number;
+  organization_id?: number | null;
   hmac_algorithm?: string;
   header_key?: string;
   auth_type?: string;
