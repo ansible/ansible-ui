@@ -39,6 +39,7 @@ export enum EdaRoute {
   DecisionEnvironmentTeamAccess = 'eda-decision-environments-team-access',
   DecisionEnvironmentUserAccess = 'eda-decision-environments-user-access',
   DecisionEnvironmentAddTeams = 'eda-decision-environments-add-teams',
+  DecisionEnvironmentAddUsers = 'eda-decision-environments-add-users',
 
   Credentials = 'eda-credentials',
   CreateCredential = 'eda-create-credential',
