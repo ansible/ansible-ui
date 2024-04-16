@@ -1,0 +1,57 @@
+{
+  "count": 6,
+  "next": null,
+  "previous": null,
+  "page_size": 10,
+  "page": 1,
+  "results": [
+    {
+      "id": 1,
+      "username": "admin",
+      "first_name": "",
+      "last_name": "",
+      "is_superuser": true,
+      "roles": []
+    },
+    {
+      "id": 2,
+      "username": "ci-sa-user",
+      "first_name": "",
+      "last_name": "",
+      "is_superuser": true,
+      "roles": []
+    },
+    {
+      "id": 3,
+      "username": "dev",
+      "first_name": "",
+      "last_name": "",
+      "is_superuser": true,
+      "roles": []
+    },
+    {
+      "id": 4,
+      "username": "e2e",
+      "first_name": "",
+      "last_name": "",
+      "is_superuser": true,
+      "roles": []
+    },
+    {
+      "id": 5,
+      "username": "demo-user",
+      "first_name": "Demo",
+      "last_name": "User",
+      "is_superuser": false,
+      "roles": []
+    },
+    {
+      "id": 6,
+      "username": "demo-user2",
+      "first_name": "Demo",
+      "last_name": "User2",
+      "is_superuser": false,
+      "roles": []
+    }
+  ]
+}

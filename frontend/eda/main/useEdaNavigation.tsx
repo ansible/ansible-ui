@@ -218,15 +218,15 @@ export function useEdaNavigation() {
               element: <Navigate to="details" />,
             },
             {
-              id: EdaRoute.ProjectUsers,
-              path: 'users',
+              id: EdaRoute.ProjectUserAccess,
+              path: 'user-access',
               element: <PageNotImplemented />,
             },
           ],
         },
         {
           id: EdaRoute.ProjectAddUsers,
-          path: ':id/users/add-users',
+          path: ':id/user-access/add-users',
           element: <EdaProjectAddUsers />,
         },
         {
