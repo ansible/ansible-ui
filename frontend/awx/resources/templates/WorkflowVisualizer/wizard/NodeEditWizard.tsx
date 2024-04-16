@@ -65,18 +65,18 @@ export function NodeEditWizard({ node }: { node: GraphNode }) {
       label: t('Node details'),
       inputs: <NodeTypeStep />,
       validate: (wizardData: Partial<WizardFormValues>) => {
-        const { node_resource } = wizardData;
-        if (node_resource?.type === 'job_template') {
+        const { resource } = wizardData;
+        if (resource?.type === 'job_template') {
           if (
-            'project' in node_resource &&
-            'inventory' in node_resource &&
-            'ask_inventory_on_launch' in node_resource
+            'project' in resource &&
+            'inventory' in resource &&
+            'ask_inventory_on_launch' in resource
           ) {
             if (
-              !node_resource?.project ||
-              node_resource?.project === null ||
-              ((!node_resource?.inventory || node_resource?.inventory === null) &&
-                !node_resource?.ask_inventory_on_launch)
+              !resource?.project ||
+              resource?.project === null ||
+              ((!resource?.inventory || resource?.inventory === null) &&
+                !resource?.ask_inventory_on_launch)
             ) {
               const errors = {
                 __all__: [
@@ -97,7 +97,7 @@ export function NodeEditWizard({ node }: { node: GraphNode }) {
       label: t('Prompts'),
       inputs: <NodePromptsStep />,
       hidden: (wizardData: Partial<WizardFormValues>) => {
-        const { launch_config, node_resource, node_type } = wizardData;
+        const { launch_config, resource, node_type } = wizardData;
         const unmodifiedWizard = Object.keys(wizardData).length === 0;
         if ('nodePromptsStep' in initialValues && unmodifiedWizard) {
           return false;
@@ -105,7 +105,7 @@ export function NodeEditWizard({ node }: { node: GraphNode }) {
 
         if (
           (node_type === RESOURCE_TYPE.workflow_job || node_type === RESOURCE_TYPE.job) &&
-          node_resource &&
+          resource &&
           launch_config
         ) {
           return shouldHideOtherStep(launch_config);
@@ -124,7 +124,7 @@ export function NodeEditWizard({ node }: { node: GraphNode }) {
       approval_name,
       approval_description,
       node_type,
-      node_resource,
+      resource,
       approval_timeout,
       node_alias,
       node_convergence,
@@ -135,8 +135,8 @@ export function NodeEditWizard({ node }: { node: GraphNode }) {
     const promptValues = prompt;
 
     if (promptValues) {
-      if (node_resource && 'organization' in node_resource) {
-        promptValues.organization = node_resource.organization ?? null;
+      if (resource && 'organization' in resource) {
+        promptValues.organization = resource.organization ?? null;
       }
       if (launch_config) {
         promptValues.original = {
@@ -151,7 +151,7 @@ export function NodeEditWizard({ node }: { node: GraphNode }) {
       }
     }
 
-    const nodeName = getValueBasedOnJobType(node_type, node_resource?.name || '', approval_name);
+    const nodeName = getValueBasedOnJobType(node_type, resource?.name || '', approval_name);
     const nodeIdentifier = replaceIdentifier(nodeData.resource.identifier, node_alias);
     const nodeToEdit: GraphNodeData = {
       ...nodeData,
@@ -165,11 +165,11 @@ export function NodeEditWizard({ node }: { node: GraphNode }) {
         summary_fields: {
           ...nodeData.resource.summary_fields,
           unified_job_template: {
-            id: Number(node_resource?.id || 0),
+            id: Number(resource?.id || 0),
             name: nodeName,
             description: getValueBasedOnJobType(
               node_type,
-              node_resource?.description || '',
+              resource?.description || '',
               approval_description
             ),
             unified_job_type: node_type,
@@ -183,7 +183,7 @@ export function NodeEditWizard({ node }: { node: GraphNode }) {
     if (node_type !== RESOURCE_TYPE.workflow_approval) {
       delete nodeToEdit.resource.summary_fields?.unified_job_template?.timeout;
     }
-    if (!hasDaysToKeep(node_resource)) {
+    if (!hasDaysToKeep(resource)) {
       nodeToEdit.resource.extra_data = {};
     }
 

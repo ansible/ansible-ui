@@ -46,7 +46,7 @@ export const useProcessSchedule = () => {
   const postAccessories = usePostAccessories();
   return useCallback(
     async (payloadData: StandardizedFormData) => {
-      const { node_resource, prompt, ...rest } = payloadData;
+      const { resource, prompt, ...rest } = payloadData;
       const {
         execution_environment,
         credentials,
@@ -55,7 +55,7 @@ export const useProcessSchedule = () => {
         inventory,
         ...restOfPrompt
       } = prompt || { execution_environment: null, job_tags: '', skip_tags: '' };
-      const { type, id } = node_resource;
+      const { type, id } = resource;
 
       let schedule: Schedule;
       let navigationId: string;
@@ -79,7 +79,7 @@ export const useProcessSchedule = () => {
             ),
             navigationId: AwxRoute.InventorySourceScheduleDetails,
             params: {
-              id: node_resource.inventory.toString(),
+              id: resource.inventory.toString(),
               inventory_type: 'inventory',
               source_id: id.toString(),
             },
