@@ -24,10 +24,12 @@ export function EdaSelectResourceTypeStep() {
     <PageFormSelect
       label={t('Resource type')}
       name="resourceType"
-      options={options.map(({ value, display_name }) => ({
-        value,
-        label: display_name,
-      }))}
+      options={options
+        .filter((option) => option.value.startsWith('eda.'))
+        .map(({ value, display_name }) => ({
+          value,
+          label: display_name,
+        }))}
     />
   );
 }
