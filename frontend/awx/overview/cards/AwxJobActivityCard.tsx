@@ -32,6 +32,7 @@ export function AwxJobActivityCard() {
                 { label: t('Past week'), value: 'week' },
                 // { label: t('Past 24 hours'), value: 'day' },
               ]}
+              isRequired
             />
           </FlexItem>
           <FlexItem>
@@ -45,6 +46,7 @@ export function AwxJobActivityCard() {
                 { label: t('Scm update'), value: 'scm_update' },
                 { label: t('Playbook run'), value: 'playbook_run' },
               ]}
+              isRequired
             />
           </FlexItem>
         </Flex>
