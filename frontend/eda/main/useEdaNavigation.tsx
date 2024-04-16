@@ -395,6 +395,11 @@ export function useEdaNavigation() {
                   element: <EdaUserDetails />,
                 },
                 {
+                  id: EdaRoute.UserRoles,
+                  path: 'roles',
+                  element: <PageNotImplemented />,
+                },
+                {
                   id: EdaRoute.UserTokens,
                   path: 'tokens',
                   element: <ControllerTokens />,
@@ -403,12 +408,12 @@ export function useEdaNavigation() {
                   path: '',
                   element: <Navigate to="details" />,
                 },
-                {
-                  id: EdaRoute.UserAddRoles,
-                  path: 'roles/add-roles',
-                  element: <EdaAddUserRoles />,
-                },
               ],
+            },
+            {
+              id: EdaRoute.UserAddRoles,
+              path: ':id/roles/add-roles',
+              element: <EdaAddUserRoles />,
             },
             {
               path: 'tokens',

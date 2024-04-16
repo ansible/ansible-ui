@@ -25,7 +25,7 @@ export function EdaSelectResourceTypeStep() {
       label={t('Resource type')}
       name="resourceType"
       options={options
-        .filter((option) => option.value.startsWith('eda.'))
+        .filter((option) => option.value.startsWith('eda.') && !option.value.endsWith('extravar')) // TODO: Add extravar back if needed
         .map(({ value, display_name }) => ({
           value,
           label: display_name,

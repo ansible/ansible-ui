@@ -8,9 +8,9 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../framework';
-import { EdaSelectTeamsStep } from '../../access/teams/components/steps/EdaSelectTeamsStep';
+import { EdaSelectTeamsStep } from '../../access/common/EdaRolesWizardSteps/EdaSelectTeamsStep';
 import { EdaTeam } from '../../interfaces/EdaTeam';
-import { EdaSelectRolesStep } from '../../access/roles/components/EdaSelectRolesStep';
+import { EdaSelectRolesStep } from '../../access/common/EdaRolesWizardSteps/EdaSelectRolesStep';
 import { useParams } from 'react-router-dom';
 import { useGet } from '../../../common/crud/useGet';
 import { EdaProject } from '../../interfaces/EdaProject';
