@@ -1,7 +1,6 @@
 import { Button, ButtonVariant, Tooltip } from '@patternfly/react-core';
 import { ComponentClass, Fragment, FunctionComponent } from 'react';
 import { Link } from 'react-router-dom';
-import styled from 'styled-components';
 import { useID } from '../hooks/useID';
 import {
   IPageActionButton,
@@ -13,10 +12,6 @@ import {
   PageActionType,
 } from './PageAction';
 import { usePageActionDisabled } from './PageActionUtils';
-
-const IconSpan = styled.span`
-  padding-right: 4px;
-`;
 
 export function PageActionButton<T extends object>(props: {
   action:
@@ -97,13 +92,7 @@ export function PageActionButton<T extends object>(props: {
           data-cy={id}
           variant={variant}
           isDanger={action.isDanger}
-          icon={
-            Icon ? (
-              <IconSpan>
-                <Icon />
-              </IconSpan>
-            ) : undefined
-          }
+          icon={Icon ? <Icon /> : undefined}
           isAriaDisabled={!!isDisabled}
           onClick={() => {
             if (action.type !== PageActionType.Link) {
