@@ -12,8 +12,8 @@ import { WizardFormValues } from '../resources/templates/WorkflowVisualizer/type
 export function SurveyStep({ templateId }: { templateId?: string }) {
   const { t } = useTranslation();
   const { wizardData } = usePageWizard();
-  const { node_resource } = wizardData as WizardFormValues;
-  const id = node_resource ? node_resource.id.toString() : templateId ? templateId : '';
+  const { resource } = wizardData as WizardFormValues;
+  const id = resource ? resource.id.toString() : templateId ? templateId : '';
   const { data: survey_spec } = useGet<Survey>(awxAPI`/job_templates/${id}/survey_spec/`);
 
   const choicesTo: PageSelectOption<string>[] = [];

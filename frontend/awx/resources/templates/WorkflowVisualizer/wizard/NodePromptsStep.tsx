@@ -30,8 +30,8 @@ export function NodePromptsStep() {
   const { reset } = useFormContext<WizardFormValues>();
   const promptForm = useWatch<{ prompt: PromptFormValues }>({ name: 'prompt' });
 
-  const { launch_config: config, node_resource, prompt } = wizardData;
-  const template = node_resource as JobTemplate | WorkflowJobTemplate;
+  const { launch_config: config, resource, prompt } = wizardData;
+  const template = resource as JobTemplate | WorkflowJobTemplate;
   const organizationId = template?.organization ?? null;
 
   useEffect(() => {
