@@ -52,7 +52,7 @@ export function useNotifiersColumns() {
       },
       organizationColumn,
     ],
-    [t, organizationColumn]
+    [t, organizationColumn, getPageUrl]
   );
   return tableColumns;
 }
