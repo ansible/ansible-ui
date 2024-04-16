@@ -83,6 +83,7 @@ export function PageFormAsyncMultiSelect<
             helperText={props.helperText}
             helperTextInvalid={helperTextInvalid}
             isRequired={props.isRequired}
+            additionalControls={props.additionalControls}
           >
             <PageAsyncMultiSelect
               id={id}

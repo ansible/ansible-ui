@@ -82,6 +82,7 @@ export function PageFormAsyncSingleSelect<
             helperText={props.helperText}
             helperTextInvalid={helperTextInvalid}
             isRequired={props.isRequired}
+            additionalControls={props.additionalControls}
           >
             <PageAsyncSingleSelect
               id={id}

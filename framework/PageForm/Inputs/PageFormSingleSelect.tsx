@@ -70,6 +70,7 @@ export function PageFormSingleSelect<
             helperText={props.helperText}
             helperTextInvalid={helperTextInvalid}
             isRequired={props.isRequired}
+            additionalControls={props.additionalControls}
           >
             <PageSingleSelect
               id={id}
