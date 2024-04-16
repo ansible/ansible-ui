@@ -97,7 +97,7 @@ export interface TemplateLaunch {
   skip_tags: { name: string }[];
   timeout: number;
   verbosity: number;
-  survey: { [key: string]: string };
+  survey: { [key: string]: string | string[] };
 }
 
 interface LaunchPayload {
@@ -227,6 +227,14 @@ export function TemplateLaunchWizard({ jobType }: { jobType: string }) {
 
         if (jobType === 'workflow_job_templates') {
           const extraVarsObj = extra_vars ? (JSON.parse(yamlToJson(extra_vars)) as object) : {};
+
+          Object.keys(formValues.survey).forEach((key) => {
+            const value: string[] | { [key: string]: string }[] = formValues.survey[key];
+            if (Array.isArray(value)) {
+              formValues.survey[key] = value.map((k: { name: string }) => k.name);
+            }
+          });
+
           payload = {
             ...payload,
             extra_vars: { ...extraVarsObj, ...formValues.survey },
@@ -349,6 +357,7 @@ export function TemplateLaunchWizard({ jobType }: { jobType: string }) {
   ];
 
   const { defaults } = config;
+  console.log(config);
 
   const readOnlyLabels = defaults?.labels?.map((label) => ({
     ...label,
