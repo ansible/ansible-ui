@@ -117,7 +117,7 @@ export function EdaProjectAddUsers() {
           resolve();
         },
         onClose: () => {
-          pageNavigate(EdaRoute.ProjectDetails, {
+          pageNavigate(EdaRoute.ProjectUserAccess, {
             params: { id: project.id.toString() },
           });
         },
