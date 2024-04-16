@@ -19,7 +19,7 @@ export function ScheduleTypeInputs() {
   const params: { [string: string]: string } = useParams<{ id?: string; source_id?: string }>();
 
   const resourceInventory = useWatch({ name: 'resourceInventory' }) as RegularInventory;
-  const resourceType = useWatch({
+  const scheduleType = useWatch({
     name: 'schedule_type',
   }) as string;
   return (
@@ -31,7 +31,7 @@ export function ScheduleTypeInputs() {
           labelHelp={t('Select a resource type onto which this schedule will be applied.')}
           name="schedule_type"
           id="schedule_type"
-          data-cy="resource-type"
+          data-cy="schedule-type"
           label={t('Resource type')}
           options={[
             { label: t('Job template'), value: RESOURCE_TYPE.job },
@@ -43,7 +43,7 @@ export function ScheduleTypeInputs() {
           placeholderText={t('Select job type')}
         />
 
-        {resourceType &&
+        {scheduleType &&
           {
             job: <PageFormJobTemplateSelect<ScheduleFormWizard> isRequired name="resource" />,
             workflow_job: (
@@ -71,7 +71,7 @@ export function ScheduleTypeInputs() {
             management_job_template: (
               <PageFormManagementJobsSelect<ScheduleFormWizard> isRequired name="resource" />
             ),
-          }[resourceType]}
+          }[scheduleType]}
       </PageFormSection>
       <PageFormSection singleColumn>
         <Divider />

@@ -3,14 +3,11 @@ import { ScheduleTypeInputs } from '../components/ScheduleTypeInputs';
 import { ScheduleResourceInputs } from '../components/ScheduleResourceInputs';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { ScheduleFormWizard, ScheduleResourceType, ScheduleResources } from '../types';
-import { Dispatch, SetStateAction, useEffect } from 'react';
+import { Dispatch, SetStateAction, useEffect, useMemo } from 'react';
 import { requestGet } from '../../../../common/crud/Data';
 import { InventorySource } from '../../../interfaces/InventorySource';
 import { awxAPI } from '../../../common/api/awx-utils';
-import {
-  PromptFormValues,
-  UnifiedJobType,
-} from '../../../resources/templates/WorkflowVisualizer/types';
+import { PromptFormValues } from '../../../resources/templates/WorkflowVisualizer/types';
 import { Project } from '../../../interfaces/Project';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
@@ -21,15 +18,18 @@ import { shouldHideOtherStep } from '../../../resources/templates/WorkflowVisual
 import { parseStringToTagArray } from '../../../resources/templates/JobTemplateFormHelpers';
 import { LaunchConfiguration } from '../../../interfaces/LaunchConfiguration';
 import { RESOURCE_TYPE } from './constants';
+import { SystemJobTemplate } from '../../../interfaces/SystemJobTemplate';
 
 export function ScheduleSelectStep() {
   const { pathname } = useLocation();
+  const urlFragments = useMemo(() => pathname.split('/'), [pathname]);
+  const isTopLevelScheduleForm = pathname.split('/')[1] === 'schedules';
+  const isScheduleForm = pathname.includes('schedule');
   const params = useParams();
-  const resource = useWatch({ name: 'resource' }) as ScheduleResources;
   const { reset, getValues, setValue, formState, getFieldState, register, control } =
     useFormContext<ScheduleFormWizard>();
   const { defaultValues } = formState;
-
+  const resource = useWatch({ name: 'resource' }) as ScheduleResources;
   const { setWizardData, setStepData, stepData, setVisibleSteps, allSteps } = usePageWizard() as {
     setWizardData: Dispatch<SetStateAction<ScheduleFormWizard>>;
     setStepData: (
@@ -52,34 +52,38 @@ export function ScheduleSelectStep() {
   register('resource');
   register('prompt');
   useEffect(() => {
+    if (resource) return;
     const getResource = async () => {
-      if (!resource) {
-        if (!params?.id) return;
-        const pathnameSplit = pathname.split('/');
-        const resourceType = pathnameSplit[1] === 'projects' ? 'projects' : pathnameSplit[2];
-        const nodeType = resourceType.split('_template')[0];
-        if (resourceType === 'inventories' && params.source_id) {
-          const response = await requestGet<InventorySource>(
-            awxAPI`/inventory_sources/${params.source_id}/`
-          );
-          setValue('schedule_type', 'inventory_update');
-          setValue('resource', response);
-          return;
-        }
-        setValue('schedule_type', nodeType as UnifiedJobType);
-        const response = await requestGet<Project | JobTemplate | WorkflowJobTemplate>(
-          `${resourceEndPoints[resourceType]}${params?.id}/`
+      if (!params?.id) return;
+      const isProject = pathname.includes('projects');
+      const resourceType = isProject ? 'projects' : urlFragments[2];
+      const scheduleType = resourceType.split('_template')[0];
+      let scheduleResource: ScheduleResources;
+      if (resourceType === 'inventories' && params.source_id) {
+        scheduleResource = await requestGet<InventorySource>(
+          awxAPI`/inventory_sources/${params.source_id}/`
         );
-        setValue('resource', response);
+      } else {
+        scheduleResource = await requestGet<
+          Project | JobTemplate | WorkflowJobTemplate | SystemJobTemplate
+        >(`${resourceEndPoints[resourceType]}${params?.id}/`);
       }
+      reset(
+        {
+          ...defaultValues,
+          schedule_type: resourceType === 'inventories' ? 'inventory_update' : scheduleType,
+          resource: scheduleResource,
+        },
+        { keepDefaultValues: false }
+      );
     };
 
-    if (pathname.split('/').includes('schedules')) {
+    if (isScheduleForm && !resource) {
       void getResource();
     }
-  }, [params, resource, pathname, setValue]);
+  }, [params, pathname, resource, isScheduleForm, urlFragments, defaultValues, reset, setValue]);
 
-  const nodeType = useWatch<ScheduleFormWizard>({
+  const scheduleType = useWatch<ScheduleFormWizard>({
     name: 'schedule_type',
     control,
     defaultValue: defaultValues?.schedule_type,
@@ -89,7 +93,7 @@ export function ScheduleSelectStep() {
     const { isDirty, isTouched } = getFieldState('schedule_type');
     const currentFormValues = getValues();
 
-    setValue('schedule_type', nodeType, { shouldTouch: true });
+    setValue('schedule_type', scheduleType, { shouldTouch: true });
 
     if (isDirty) {
       const steps = allSteps.filter(
@@ -110,7 +114,7 @@ export function ScheduleSelectStep() {
       setVisibleSteps(steps);
     }
   }, [
-    nodeType,
+    scheduleType,
     getFieldState,
     setValue,
     reset,
@@ -124,29 +128,25 @@ export function ScheduleSelectStep() {
   useEffect(() => {
     const setLaunchToWizardData = async () => {
       let launchConfigValue = {} as PromptFormValues;
-      let template = getValues('resource');
 
-      if (!template && resource) {
-        template = resource;
-      }
+      const template = isTopLevelScheduleForm
+        ? resource?.type
+        : urlFragments.find((item) => item === 'workflow_job_template' || item === 'job_template');
+      const isTemplate = template === 'job_template' || template === 'workflow_job_template';
 
-      if (!template) return;
-      let templateType;
-      if ('type' in template) {
-        templateType = template.type;
-      }
+      if (!isTemplate) return;
 
-      let launchConfigResults = {} as LaunchConfiguration;
-      if (templateType === 'job_template') {
-        launchConfigResults = await requestGet<LaunchConfiguration>(
-          awxAPI`/job_templates/${template.id.toString()}/launch/`
-        );
-      } else if (templateType === 'workflow_job_template') {
-        launchConfigResults = await requestGet<LaunchConfiguration>(
-          awxAPI`/workflow_job_templates/${template.id.toString()}/launch/`
-        );
-      }
-      const { job_tags, skip_tags, inventory, ...defaults } = launchConfigResults.defaults;
+      const launchConfigResults = await requestGet<LaunchConfiguration>(
+        awxAPI`/${template}s/${resource.id.toString()}/launch/`
+      );
+
+      const {
+        job_tags = '',
+        skip_tags = '',
+        inventory,
+        ...defaults
+      } = launchConfigResults.defaults;
+
       launchConfigValue = {
         ...defaults,
         inventory: inventory?.id ? inventory : null,
@@ -180,9 +180,6 @@ export function ScheduleSelectStep() {
             // and the wizard data is not the same as the default value, then reset the prompt to the default value
             // else, set the prompt data to the current data.
             setValue('prompt', launchConfigValue);
-            if ('type' in resource && resource.type !== templateType) {
-              setValue('resource', template);
-            }
           }
         }
       } else {
@@ -194,7 +191,7 @@ export function ScheduleSelectStep() {
       }
     };
 
-    if (nodeType === RESOURCE_TYPE.job || nodeType === RESOURCE_TYPE.workflow_job) {
+    if (scheduleType === RESOURCE_TYPE.job || scheduleType === RESOURCE_TYPE.workflow_job) {
       void setLaunchToWizardData();
     }
   }, [
@@ -203,21 +200,23 @@ export function ScheduleSelectStep() {
     getFieldState,
     getValues,
     resource,
-    nodeType,
+    scheduleType,
     setValue,
     setVisibleSteps,
     setWizardData,
     stepData,
+    isTopLevelScheduleForm,
+    urlFragments,
   ]);
   return (
     <>
-      {pathname.split('/')[1] === 'schedules' && pathname.split('/')[3] !== 'edit' ? (
+      {isTopLevelScheduleForm ? (
         <>
           <ScheduleTypeInputs />
           {resource && <ScheduleResourceInputs />}
         </>
       ) : (
-        <>{pathname.split('/').includes('schedules') && <ScheduleResourceInputs />}</>
+        <ScheduleResourceInputs />
       )}
     </>
   );

@@ -135,7 +135,7 @@ export function ScheduleAddWizard() {
     details: {
       name: '',
       description: '',
-      resource_type: '',
+      schedule_type: '',
       resource: '',
       startDateTime: { date: currentDate, time: time },
       timezone: 'America/New_York',
