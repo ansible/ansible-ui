@@ -54,18 +54,18 @@ export function NodeAddWizard() {
       label: t('Node details'),
       inputs: <NodeTypeStep hasSourceNode={Boolean(state.sourceNode)} />,
       validate: (wizardData: Partial<WizardFormValues>) => {
-        const { node_resource } = wizardData;
-        if (node_resource?.type === 'job_template') {
+        const { resource } = wizardData;
+        if (resource?.type === 'job_template') {
           if (
-            'project' in node_resource &&
-            'inventory' in node_resource &&
-            'ask_inventory_on_launch' in node_resource
+            'project' in resource &&
+            'inventory' in resource &&
+            'ask_inventory_on_launch' in resource
           ) {
             if (
-              !node_resource?.project ||
-              node_resource?.project === null ||
-              ((!node_resource?.inventory || node_resource?.inventory === null) &&
-                !node_resource?.ask_inventory_on_launch)
+              !resource?.project ||
+              resource?.project === null ||
+              ((!resource?.inventory || resource?.inventory === null) &&
+                !resource?.ask_inventory_on_launch)
             ) {
               const errors = {
                 __all__: [
@@ -86,10 +86,10 @@ export function NodeAddWizard() {
       label: t('Prompts'),
       inputs: <NodePromptsStep />,
       hidden: (wizardData: Partial<WizardFormValues>) => {
-        const { launch_config, node_resource, node_type } = wizardData;
+        const { launch_config, resource, node_type } = wizardData;
         if (
           (node_type === RESOURCE_TYPE.workflow_job || node_type === RESOURCE_TYPE.job) &&
-          node_resource &&
+          resource &&
           launch_config
         ) {
           return shouldHideOtherStep(launch_config);
@@ -112,7 +112,7 @@ export function NodeAddWizard() {
       approval_description,
       launch_config,
       node_type,
-      node_resource,
+      resource,
       approval_timeout,
       node_alias,
       node_convergence,
@@ -123,8 +123,8 @@ export function NodeAddWizard() {
     const promptValues = prompt;
 
     if (promptValues) {
-      if (node_resource && 'organization' in node_resource) {
-        promptValues.organization = node_resource.organization ?? null;
+      if (resource && 'organization' in resource) {
+        promptValues.organization = resource.organization ?? null;
       }
       if (launch_config) {
         promptValues.original = {
@@ -133,7 +133,7 @@ export function NodeAddWizard() {
       }
     }
 
-    const nodeName = getValueBasedOnJobType(node_type, node_resource?.name || '', approval_name);
+    const nodeName = getValueBasedOnJobType(node_type, resource?.name || '', approval_name);
     const nodeLabel = node_alias === '' ? nodeName : node_alias;
     let nodeToCreate: NewGraphNode = {
       id: `${nodes.length + 1}-unsavedNode`,
@@ -154,11 +154,11 @@ export function NodeAddWizard() {
           },
           summary_fields: {
             unified_job_template: {
-              id: Number(node_resource?.id || 0),
+              id: Number(resource?.id || 0),
               name: nodeName,
               description: getValueBasedOnJobType(
                 node_type,
-                node_resource?.description || '',
+                resource?.description || '',
                 approval_description
               ),
               unified_job_type: node_type,
@@ -193,7 +193,7 @@ export function NodeAddWizard() {
     if (node_type !== RESOURCE_TYPE.workflow_approval) {
       delete nodeToCreate.data.resource.summary_fields.unified_job_template.timeout;
     }
-    if (node_resource && !hasDaysToKeep(node_resource)) {
+    if (resource && !hasDaysToKeep(resource)) {
       delete nodeToCreate.data.resource.extra_data;
     }
     if (node_alias === '') {
