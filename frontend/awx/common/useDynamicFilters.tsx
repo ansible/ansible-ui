@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IToolbarFilter, ToolbarFilterType } from '../../../framework';
 import {
@@ -90,8 +90,11 @@ function craftRequestUrl(
 }
 
 export function useDynamicToolbarFilters(props: DynamicToolbarFiltersProps) {
+  // useRef to keep the initial props since thay should not change
+  // this is used to prevent the filters from being re-calculated
+  // which would cause the filters to be re-rendered
   const { optionsPath, preSortedKeys, preFilledValueKeys, additionalFilters, removeFilters } =
-    props;
+    useRef(props).current;
   const { t } = useTranslation();
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/${optionsPath}/`);
   const filterableFields = useFilters(data?.actions?.GET);
