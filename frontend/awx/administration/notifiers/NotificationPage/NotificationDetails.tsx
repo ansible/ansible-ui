@@ -23,28 +23,28 @@ export function NotificationDetails() {
         <PageDetail label={t('Name')}>{notificationTemplate.name}</PageDetail>
         <PageDetail label={t('Description')}>{notificationTemplate.description}</PageDetail>
         <PageDetail label={t('Created')}>
-        <DateTimeCell
-          value={notificationTemplate.created}
-          author={notificationTemplate.summary_fields?.created_by?.username}
-          onClick={() =>
-            pageNavigate(AwxRoute.UserDetails, {
-              params: { id: notificationTemplate.summary_fields?.created_by?.id },
-            })
-          }
-        />
+          <DateTimeCell
+            value={notificationTemplate.created}
+            author={notificationTemplate.summary_fields?.created_by?.username}
+            onClick={() =>
+              pageNavigate(AwxRoute.UserDetails, {
+                params: { id: notificationTemplate.summary_fields?.created_by?.id },
+              })
+            }
+          />
         </PageDetail>
         <PageDetail label={t('Last Modified')}>
-         <DateTimeCell
-          value={notificationTemplate.modified}
-          author={notificationTemplate.summary_fields?.modified_by?.username}
-          onClick={() =>
-            pageNavigate(AwxRoute.UserDetails, {
-              params: { id: notificationTemplate.summary_fields?.modified_by?.id },
-            })
-          }
-        />
-      </PageDetail>
-     
+          <DateTimeCell
+            value={notificationTemplate.modified}
+            author={notificationTemplate.summary_fields?.modified_by?.username}
+            onClick={() =>
+              pageNavigate(AwxRoute.UserDetails, {
+                params: { id: notificationTemplate.summary_fields?.modified_by?.id },
+              })
+            }
+          />
+        </PageDetail>
+
         <PageDetail label={t('Organization')}>
           <Link
             to={getPageUrl(AwxRoute.OrganizationDetails, {
@@ -89,7 +89,11 @@ function RenderInnerDetail(props: { notificationTemplate: NotificationTemplate }
         const caption = returnCaption(notificationTemplate.notification_type, key);
 
         if (!list) {
-          return <PageDetail key={key} label={caption}>{value.toString()}</PageDetail>;
+          return (
+            <PageDetail key={key} label={caption}>
+              {value.toString()}
+            </PageDetail>
+          );
         } else {
           return (
             <PageDetail key={key} label={caption}>
