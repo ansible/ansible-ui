@@ -1,16 +1,13 @@
 import { useCallback } from 'react';
 import { FieldPath, FieldValues, PathValue, useFormContext, useWatch } from 'react-hook-form';
-import { ITableColumn, IToolbarFilter, usePageDialog } from '../../../framework';
-import { MultiSelectDialog } from '../../../framework';
+import { ITableColumn, IToolbarFilter, MultiSelectDialog, usePageDialog } from '../../../framework';
+import { PageFormAsyncMultiSelect } from '../../../framework/PageForm/Inputs/PageFormAsyncMultiSelect';
 import { PageAsyncSelectOptionsFn } from '../../../framework/PageInputs/PageAsyncSelectOptions';
 import { useID } from '../../../framework/hooks/useID';
 import { requestGet } from '../../common/crud/Data';
 import { AwxItemsResponse } from './AwxItemsResponse';
-import { useAwxView } from './useAwxView';
 import { AwxAsyncName } from './PageFormSingleSelectAwxResource';
-import { PageFormAsyncMultiSelect } from '../../../framework/PageForm/Inputs/PageFormAsyncMultiSelect';
-import { QueryParams } from './useAwxView';
-import { getQueryString } from './useAwxView';
+import { QueryParams, getQueryString, useAwxView } from './useAwxView';
 
 export function PageFormMultiSelectAwxResource<
   Resource extends { id: number; name: string; description?: string | null | undefined },
@@ -22,7 +19,7 @@ export function PageFormMultiSelectAwxResource<
   name: Name;
   label: string;
   isRequired?: boolean;
-  isDisabled?: boolean;
+  isDisabled?: string;
   url: string;
   toolbarFilters?: IToolbarFilter[];
   tableColumns: ITableColumn<Resource>[];

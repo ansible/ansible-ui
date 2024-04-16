@@ -10,9 +10,7 @@ import { useID } from '../../../framework/hooks/useID';
 import { requestGet } from '../../common/crud/Data';
 import { useGetItem } from '../../common/crud/useGet';
 import { AwxItemsResponse } from './AwxItemsResponse';
-import { useAwxView } from './useAwxView';
-import { QueryParams } from './useAwxView';
-import { getQueryString } from './useAwxView';
+import { QueryParams, getQueryString, useAwxView } from './useAwxView';
 
 export function PageFormSingleSelectAwxResource<
   Resource extends { id: number; name: string; description?: string | null | undefined },
@@ -24,7 +22,7 @@ export function PageFormSingleSelectAwxResource<
   name: Name;
   label: string;
   isRequired?: boolean;
-  isDisabled?: boolean;
+  isDisabled?: string;
   url: string;
   toolbarFilters?: IToolbarFilter[];
   tableColumns: ITableColumn<Resource>[];

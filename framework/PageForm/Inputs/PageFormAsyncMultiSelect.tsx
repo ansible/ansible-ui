@@ -1,3 +1,4 @@
+import { t } from 'i18next';
 import {
   Controller,
   FieldPath,
@@ -66,7 +67,13 @@ export function PageFormAsyncMultiSelect<
             ? translations.validating
             : error?.message
           : undefined;
-
+        let isDisabled = props.isDisabled;
+        if (!isDisabled && props.isReadOnly) {
+          isDisabled = t('Readonly');
+        }
+        if (isSubmitting) {
+          isDisabled = t('Submitting');
+        }
         return (
           <PageFormGroup
             fieldId={id}
@@ -87,7 +94,7 @@ export function PageFormAsyncMultiSelect<
               aria-describedby={id ? `${id}-form-group` : undefined}
               values={value}
               onSelect={(getNewValues) => onChange(getNewValues(value))}
-              isDisabled={props.isDisabled || props.isReadOnly || isSubmitting}
+              isDisabled={isDisabled}
               footer={props.footer}
               disableClearChips={props.disableClearChips}
               disableClearSelection={props.disableClearSelection}
