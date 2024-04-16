@@ -132,6 +132,7 @@ export function Applications() {
                 'Please contact your organization administrator if there is an issue with your access.'
               )
         }
+        emptyStateButtonIcon={<PlusCircleIcon />}
         emptyStateButtonText={canCreateApplication ? t('Create application') : undefined}
         emptyStateButtonClick={
           canCreateApplication ? () => pageNavigate(AwxRoute.CreateApplication) : undefined

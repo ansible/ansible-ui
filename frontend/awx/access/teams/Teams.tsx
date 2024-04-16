@@ -1,4 +1,4 @@
-import { CubesIcon } from '@patternfly/react-icons';
+import { CubesIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { PageHeader, PageLayout, PageTable, usePageNavigate } from '../../../../framework';
 import { usePersistentFilters } from '../../../common/PersistentFilters';
@@ -71,6 +71,7 @@ export function Teams() {
               )
         }
         emptyStateIcon={canCreateTeam ? undefined : CubesIcon}
+        emptyStateButtonIcon={<PlusCircleIcon />}
         emptyStateButtonText={canCreateTeam ? t('Create team') : undefined}
         emptyStateButtonClick={canCreateTeam ? () => pageNavigate(AwxRoute.CreateTeam) : undefined}
         {...view}

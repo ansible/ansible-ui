@@ -13,6 +13,7 @@ import { useNotifiersRowActions } from './hooks/useNotifiersRowActions';
 import { useOptions } from '../../../common/crud/useOptions';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { AwxRoute } from '../../main/AwxRoutes';
+import { PlusCircleIcon } from '@patternfly/react-icons';
 
 export function Notifiers() {
   const { t } = useTranslation();
@@ -65,6 +66,7 @@ export function Notifiers() {
                 'Please contact your organization administrator if there is an issue with your access.'
               )
         }
+        emptyStateButtonIcon={<PlusCircleIcon />}
         emptyStateButtonText={canAddNotificationTemplate ? t('Add notifier') : undefined}
         emptyStateButtonClick={
           canAddNotificationTemplate
