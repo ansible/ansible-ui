@@ -167,7 +167,7 @@ function RequestErrorAlert(props: { error?: unknown }) {
     return <Alert variant="danger" title={props.error.message} />;
   }
   return (
-    <Alert variant="danger" title={props.error.message}>
+    <Alert variant="danger" title={props.error.message} isInline>
       {Object.values(props.error.json ?? {}).map((value, index) => (
         <div key={index}>{value}</div>
       ))}
