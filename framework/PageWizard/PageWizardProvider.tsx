@@ -1,6 +1,6 @@
-import { createContext, ReactNode, useState, useEffect, useContext, useMemo } from 'react';
+import { ReactNode, createContext, useContext, useEffect, useMemo, useState } from 'react';
 
-import type { PageWizardStep, PageWizardState, PageWizardParentStep } from './types';
+import type { PageWizardParentStep, PageWizardState, PageWizardStep } from './types';
 
 export const PageWizardContext = createContext<PageWizardState>({} as PageWizardState);
 export function usePageWizard() {
@@ -25,6 +25,7 @@ export function PageWizardProvider<T extends object>(props: {
   const [wizardData, setWizardData] = useState<Partial<T>>({});
   const [stepData, setStepData] = useState<Record<string, object>>(props.defaultValue ?? {});
   const [stepError, setStepError] = useState<Record<string, object>>({});
+  const [submitError, setSubmitError] = useState<Error>();
   const [visibleSteps, setVisibleSteps] = useState<PageWizardStep[]>(() => {
     return props.steps.filter((step) => isStepVisible(step, wizardData));
   });
@@ -82,6 +83,8 @@ export function PageWizardProvider<T extends object>(props: {
         setActiveStep: setActiveStep,
         stepError,
         setStepError: setStepError,
+        submitError,
+        setSubmitError: setSubmitError,
         isToggleExpanded: isToggleExpanded,
         setToggleExpanded: setToggleExpanded,
       }}
