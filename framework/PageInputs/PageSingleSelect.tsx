@@ -41,10 +41,10 @@ export interface PageSingleSelectProps<ValueT> {
   placeholder: ReactNode;
 
   /** The selected value. */
-  value: ValueT | undefined;
+  value: ValueT | undefined | null;
 
   /** The function to set the selected value. */
-  onSelect: (value: ValueT) => void;
+  onSelect: (value: ValueT | null) => void;
 
   /** The options to select from. */
   options: PageSelectOption<ValueT>[];

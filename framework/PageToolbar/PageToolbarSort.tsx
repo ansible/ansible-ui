@@ -103,7 +103,7 @@ function ToolbarSortSelect(props: {
 }) {
   const { sortOptions, sort, setSort, setSortDirection } = props;
   const onSelect = useCallback(
-    (value: string | undefined) => {
+    (value: string | undefined | null) => {
       if (value) {
         const sortOption = sortOptions.find((option) => option.value === value);
         if (sortOption && sort !== value && sortOption.defaultDirection) {

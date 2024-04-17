@@ -78,7 +78,10 @@ export function CollectionPage() {
 
   const itemActions = useCollectionActions(() => void collectionRequest.refresh(), true);
 
-  function setVersionParams(version: string) {
+  function setVersionParams(version: string | null) {
+    if (version === null) {
+      return;
+    }
     setTimeout(() => {
       setSearchParams((params) => {
         params.set('version', version);
@@ -167,9 +170,7 @@ export function CollectionPage() {
             {t('Version')}
             <PageAsyncSingleSelect<string>
               queryOptions={queryOptions}
-              onSelect={(item: string) => {
-                setVersionParams(item);
-              }}
+              onSelect={setVersionParams}
               placeholder={t('Select version')}
               value={collection?.collection_version?.version || version || ''}
               footer={
