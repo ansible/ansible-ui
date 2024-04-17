@@ -5,7 +5,13 @@ import {
 } from '../../../common/awx-toolbar-filters';
 import { useDynamicToolbarFilters } from '../../../common/useDynamicFilters';
 
-export function useGroupsFilters(url?: string) {
+export function useGroupsFilters({
+  url,
+  queryParams,
+}: {
+  url?: string;
+  queryParams?: Record<string, string>;
+}) {
   const createdByToolbarFilter = useCreatedByToolbarFilter();
   const modifiedByToolbarFilter = useModifiedByToolbarFilter();
   const groupTypeToolbarFilter = useGroupTypeToolbarFilter();
@@ -14,9 +20,11 @@ export function useGroupsFilters(url?: string) {
     preFilledValueKeys: {
       name: {
         apiPath: url ? url : 'groups',
+        queryParams: queryParams ? queryParams : {},
       },
       id: {
         apiPath: url ? url : 'groups',
+        queryParams: queryParams ? queryParams : {},
       },
     },
     preSortedKeys: ['name', 'id', 'description', 'created-by', 'modified-by', 'group'],
