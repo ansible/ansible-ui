@@ -40,7 +40,14 @@ describe('host and inventory host', () => {
     createAndEditAndDeleteHost(false, inventory);
   });
 
-  it('can work with groups tab', () => {
+  it('can create, edit, assosiat and disassosiate groups at inventory -> hosts -> groups tab', () => {
+    // create host and groups at inventory
+    // test edit group from inventory -> hosts -> groups tab
+    // test dissasositate and assosiate of singal group or multipale groups at
+    // invenotry -> hosts -> groups tab
+  });
+
+  it('can create, edit, assosiat and disassosiate groups at stand alone host groups tab', () => {
     const url = '/infrastructure/hosts?page=1&perPage=10&sort=name';
     cy.createInventoryHostGroup(organization).then((result) => {
       const { inventory, host, group } = result;
@@ -95,6 +102,25 @@ describe('host and inventory host', () => {
         cy.contains(group.name);
       });
     });
+  });
+
+  it.skip('can see, launch and cancel jobs from inventory -> hosts -> jobs tab', () => {
+    // create new host at inventory
+    // create job template with the current inventory
+    // job type must be run.
+    // TODO: check if there is a function for that
+    // launch job
+    // got to inventory hosts tab - make sure job is visible in jobs tab
+    // launch it for all hosts
+    // verify
+    // lanuch it for all failed hosts
+    // cancel launch
+  });
+
+  it.skip('can view host facts in inventory host tab', () => {
+    // create host at invenotry create facts for host
+    // TODO: check if there is some function that creating facts
+    // make sure facts are visibule to the user at inventory -> hosts -> facts tab
   });
 
   it.skip('can see, launch and cancel jobs from host jobs tab', () => {
