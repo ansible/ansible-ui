@@ -86,7 +86,8 @@ function craftRequestUrl(
       url += `&${key}=${value}`;
     });
   }
-  return url;
+  const decodedUrl = url.split('%2F').join('/');
+  return decodedUrl;
 }
 
 export function useDynamicToolbarFilters(props: DynamicToolbarFiltersProps) {
@@ -96,7 +97,9 @@ export function useDynamicToolbarFilters(props: DynamicToolbarFiltersProps) {
   const { optionsPath, preSortedKeys, preFilledValueKeys, additionalFilters, removeFilters } =
     useRef(props).current;
   const { t } = useTranslation();
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/${optionsPath}/`);
+  const url = awxAPI`/${optionsPath}/`;
+  const decodedUrl = url.split('%2F').join('/');
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(decodedUrl);
   const filterableFields = useFilters(data?.actions?.GET);
   const queryResource = useCallback<
     (
