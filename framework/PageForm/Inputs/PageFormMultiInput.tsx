@@ -7,6 +7,7 @@ import {
   TextInput,
 } from '@patternfly/react-core';
 import { SearchIcon } from '@patternfly/react-icons';
+import { useCallback } from 'react';
 import {
   Controller,
   FieldPath,
@@ -72,6 +73,15 @@ export function PageFormMultiInput<
 
   const id = useID(props);
 
+  const selectOpenCb = useCallback(
+    (items: T[]) => {
+      setValue(name, items as unknown as PathValue<TFieldValues, TFieldName>, {
+        shouldValidate: true,
+      });
+    },
+    [setValue, name]
+  );
+
   return (
     <Controller<TFieldValues, TFieldName>
       name={name}
@@ -115,13 +125,7 @@ export function PageFormMultiInput<
               {selectTitle && (
                 <Button
                   variant="control"
-                  onClick={() =>
-                    selectOpen?.((items: T[]) => {
-                      setValue(name, items as unknown as PathValue<TFieldValues, TFieldName>, {
-                        shouldValidate: true,
-                      });
-                    }, props.selectTitle as string)
-                  }
+                  onClick={() => selectOpen?.(selectOpenCb, props.selectTitle as string)}
                   aria-label="Options menu"
                   isDisabled={isSubmitting || isDisabled}
                 >
