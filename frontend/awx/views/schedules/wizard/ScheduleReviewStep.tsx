@@ -1,19 +1,24 @@
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { AwxRoute } from '../../../../main/AwxRoutes';
+import { AwxRoute } from '../../../main/AwxRoutes';
+import { PageDetail, PageDetails, PageWizardStep, useGetPageUrl } from '../../../../../framework';
+import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageDetailCodeEditor';
+import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
+import { jsonToYaml } from '../../../../../framework/utils/codeEditorUtils';
 import {
-  PageDetail,
-  PageDetails,
-  PageWizardStep,
-  useGetPageUrl,
-} from '../../../../../../framework';
-import { PageDetailCodeEditor } from '../../../../../../framework/PageDetails/PageDetailCodeEditor';
-import { usePageWizard } from '../../../../../../framework/PageWizard/PageWizardProvider';
-import { jsonToYaml } from '../../../../../../framework/utils/codeEditorUtils';
-import { WizardFormValues, UnifiedJobType } from '../types';
-import { hasDaysToKeep, getValueBasedOnJobType } from './helpers';
-import { PromptReviewDetails } from './PromptReviewDetails';
-import { RESOURCE_TYPE } from '../constants';
+  WizardFormValues,
+  UnifiedJobType,
+} from '../../../resources/templates/WorkflowVisualizer/types';
+import {
+  hasDaysToKeep,
+  getValueBasedOnJobType,
+} from '../../../resources/templates/WorkflowVisualizer/wizard/helpers';
+import { PromptReviewDetails } from '../../../resources/templates/WorkflowVisualizer/wizard/PromptReviewDetails';
+import { RESOURCE_TYPE } from './constants';
+import { ScheduleFormWizard } from '../types';
+import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
+import { RulesPreview } from '../components/RulesPreview';
+import { ExceptionsPreview } from '../components/ExceptionsPreview';
 
 const ResourceLink: Record<UnifiedJobType, AwxRoute> = {
   inventory_update: AwxRoute.InventorySourceDetail,
@@ -24,12 +29,12 @@ const ResourceLink: Record<UnifiedJobType, AwxRoute> = {
   workflow_job: AwxRoute.WorkflowJobTemplateDetails,
 };
 
-export function NodeReviewStep() {
+export function ScheduleReviewStep() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
 
   const { wizardData, visibleSteps } = usePageWizard() as {
-    wizardData: WizardFormValues;
+    wizardData: WizardFormValues & ScheduleFormWizard;
     visibleSteps: PageWizardStep[];
   };
   const {
@@ -41,6 +46,11 @@ export function NodeReviewStep() {
     node_alias,
     node_convergence,
     node_days_to_keep,
+    name,
+    description,
+    startDateTime,
+    timezone,
+    exceptions,
   } = wizardData;
 
   const hasPromptDetails = Boolean(visibleSteps.find((step) => step.id === 'nodePromptsStep'));
@@ -77,20 +87,32 @@ export function NodeReviewStep() {
   }
   return (
     <>
-      <PageDetails numberOfColumns="single">
-        <PageDetail label={t('Type')}>{nodeTypeDetail}</PageDetail>
-        <PageDetail label={t('Name')}>
-          <Link to={resourceDetailsLink}>{nameDetail}</Link>
-        </PageDetail>
-        <PageDetail label={t('Description')}>{descriptionDetail}</PageDetail>
-        <PageDetail label={t('Timeout')}>{timeoutDetail}</PageDetail>
-        <PageDetail label={t('Convergence')}>{convergenceDetail}</PageDetail>
-        <PageDetail label={t('Alias')}>{node_alias}</PageDetail>
-        {showDaysToKeep ? (
-          <PageDetailCodeEditor label={t('Extra vars')} value={extraVarsDetail} />
-        ) : null}
-        {hasPromptDetails ? <PromptReviewDetails /> : null}
-      </PageDetails>
+      <PageFormSection title={t('Review')} singleColumn>
+        <PageDetails numberOfColumns={name ? 'two' : 'single'} disablePadding>
+          <PageDetail label={t('Resource type')}>{nodeTypeDetail}</PageDetail>
+          <PageDetail label={t('Resource')}>
+            <Link to={resourceDetailsLink}>{nameDetail}</Link>
+          </PageDetail>
+          <PageDetail label={t('Name')}>{name}</PageDetail>
+          <PageDetail label={t('Description')}>{description ?? descriptionDetail}</PageDetail>
+          {startDateTime && (
+            <PageDetail label={t('Start date/time')}>
+              {startDateTime.date + ', ' + startDateTime.time}
+            </PageDetail>
+          )}
+
+          <PageDetail label={t('Local time zone')}>{timezone}</PageDetail>
+          <PageDetail label={t('Timeout')}>{timeoutDetail}</PageDetail>
+          <PageDetail label={t('Convergence')}>{convergenceDetail}</PageDetail>
+          <PageDetail label={t('Alias')}>{node_alias}</PageDetail>
+          {showDaysToKeep ? (
+            <PageDetailCodeEditor label={t('Extra vars')} value={extraVarsDetail} />
+          ) : null}
+          {hasPromptDetails ? <PromptReviewDetails /> : null}
+        </PageDetails>
+        {name && <RulesPreview />}
+        {exceptions.length > 0 && <ExceptionsPreview />}
+      </PageFormSection>
     </>
   );
 }

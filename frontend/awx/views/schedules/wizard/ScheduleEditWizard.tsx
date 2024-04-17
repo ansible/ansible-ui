@@ -17,9 +17,10 @@ import { RESOURCE_TYPE } from '../../../resources/templates/WorkflowVisualizer/c
 import { useGetItem } from '../../../../common/crud/useGet';
 import { Schedule } from '../../../interfaces/Schedule';
 import { awxAPI } from '../../../common/api/awx-utils';
-import { NodeReviewStep } from '../../../resources/templates/WorkflowVisualizer/wizard/NodeReviewStep';
 import { RULES_DEFAULT_VALUES } from './constants';
 import { ScheduleSelectStep } from './ScheduleSelectStep';
+import { ScheduleReviewStep } from './ScheduleReviewStep';
+
 export function ScheduleEditWizard() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
@@ -93,7 +94,7 @@ export function ScheduleEditWizard() {
       label: t('Exceptions'),
       inputs: <ExceptionsStep />,
     },
-    { id: 'review', label: t('Review'), inputs: <NodeReviewStep /> },
+    { id: 'review', label: t('Review'), inputs: <ScheduleReviewStep /> },
   ];
 
   if (!schedule) return;

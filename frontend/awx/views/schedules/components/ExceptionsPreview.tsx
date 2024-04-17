@@ -18,7 +18,7 @@ import { RRule, RRuleSet, rrulestr } from 'rrule';
 import { formatDateString } from '../../../../../framework/utils/formatDateString';
 import { Options } from 'rrule';
 
-export function RulesPreview(props: { rrule?: string }) {
+export function ExceptionsPreview(props: { rrule?: string }) {
   const { t } = useTranslation();
   const { wizardData } = usePageWizard() as {
     wizardData: WizardFormValues & ScheduleFormWizard;
@@ -26,63 +26,61 @@ export function RulesPreview(props: { rrule?: string }) {
   };
 
   return (
-    <PageFormSection singleColumn title={t('Preview of the first 10 rules')} canCollapse>
+    <PageFormSection singleColumn title={t('Preview of the first 10 exceptions')} canCollapse>
       {!props.rrule ? (
-        wizardData.rules?.map((element, index) => {
-          return <RulesPreviewBody ruleObject={element.rule.options} key={index} index={index} />;
+        wizardData.exceptions?.map((element, index) => {
+          return (
+            <ExceptionsPreviewBody key={index} ruleObject={element.rule.options} index={index} />
+          );
         })
       ) : (
-        <RulesPreviewBody ruleString={props.rrule} />
+        <ExceptionsPreviewBody ruleString={props.rrule} />
       )}
     </PageFormSection>
   );
 }
 
-export function RulesPreviewBody(props: {
+export function ExceptionsPreviewBody(props: {
   ruleString?: string;
   ruleObject?: Options;
   index?: number;
 }) {
   const { t } = useTranslation();
-  let newRule;
-  const rRuleArray = [] as RRule[];
-
+  let newExRule;
+  const exRuleArray = [] as RRule[];
   if (props.ruleString) {
-    const rRruleString = rrulestr(props.ruleString, { forceset: true }) as RRuleSet;
-    rRruleString._rrule.map((value: RRule) => {
-      const rRule = value.options as Options;
-      newRule = new RRule(rRule);
-      rRuleArray.push(newRule);
+    const exRruleString = rrulestr(props.ruleString) as RRuleSet;
+    exRruleString._exrule.map((value: RRule) => {
+      const exRule = value.options as Options;
+      newExRule = new RRule(exRule);
+      exRuleArray.push(newExRule);
     });
   } else {
-    newRule = new RRule(props.ruleObject);
-    rRuleArray.push(newRule);
+    newExRule = new RRule(props.ruleObject);
+    exRuleArray.push(newExRule);
   }
 
   return (
     <>
-      {rRuleArray.map((rule, index) => {
+      {exRuleArray.map((exrule, index) => {
         return (
           <>
             <Title headingLevel={'h4'}>
-              {props.index ? t(`Rule ${props.index + 1}`) : t(`Rule ${index + 1}`)}
+              {props.index ? t(`Exception ${props.index + 1}`) : t(`Exception ${index + 1}`)}
             </Title>
-            <DescriptionList
-              data-cy={props.index ? `rule-${props.index + 1}` : `rule-${index + 1}`}
-              isCompact
-            >
+            <DescriptionList data-cy={`exception-${index + 1}`} isCompact>
               <DescriptionListGroup>
-                <DescriptionListTerm>{t('Rule preview')}</DescriptionListTerm>
+                <DescriptionListTerm>{t('Exception preview')}</DescriptionListTerm>
                 <LabelGroup numLabels={5}>
-                  {rule
+                  {exrule
                     .all((_rule, i) => i < 10)
                     ?.map((value, i) => {
                       return <Label key={i}>{formatDateString(value)}</Label>;
                     })}
                 </LabelGroup>
-                <DescriptionListTerm>{t('Rrule')}</DescriptionListTerm>
+                <DescriptionListTerm>{t('Exrule')}</DescriptionListTerm>
                 <DescriptionListDescription>
-                  {RRule.optionsToString(rule.options)}
+                  {RRule.optionsToString(exrule.options)}
                 </DescriptionListDescription>
                 <Divider />
               </DescriptionListGroup>
