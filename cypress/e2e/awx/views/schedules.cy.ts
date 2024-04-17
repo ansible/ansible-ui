@@ -373,15 +373,24 @@ describe('Schedules - Edit', () => {
     cy.awxLogin();
   });
 
-  beforeEach(() => {
-    cy.createAWXSchedule().then((sched: Schedule) => (schedule = sched));
-    cy.navigateTo('awx', 'schedules');
+  beforeEach(function () {
+    const name = 'E2E' + randomString(4);
+    cy.createAWXSchedule({
+      name,
+      unified_job_template: (this.globalProject as Project).id,
+      rrule: 'DTSTART:20240415T124133Z RRULE:FREQ=WEEKLY;INTERVAL=1;BYDAY=SU',
+    }).then((sched: Schedule) => (schedule = sched));
+    cy.navigateTo('awx', 'projects');
+    cy.filterTableBySingleSelect('name', (this.globalProject as Project).name);
+    cy.get('[data-cy="name-column-cell"]').click();
+    cy.get('a[href="/projects/14/schedules?"]').click();
+  });
+  afterEach(() => {
+    cy.deleteAWXSchedule(schedule);
   });
 
   it('can edit a simple schedule from details page', () => {
-    cy.filterTableBySingleSelect('name', schedule.name);
-    cy.clickTableRowLink('name', schedule.name, { disableFilter: true });
-    cy.getBy('[data-cy="edit-schedule"]').click();
+    cy.clickTableRowAction('name', schedule.name, 'edit-schedule');
     cy.getByDataCy('wizard-nav').within(() => {
       ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
         cy.get('li')
@@ -394,11 +403,12 @@ describe('Schedules - Edit', () => {
     cy.clickButton(/^Next$/);
     cy.clickButton(/^Next$/);
     cy.get('[data-cy="description"]').contains('-edited');
+    cy.clickButton(/^Finish$/);
+    cy.verifyPageTitle(schedule.name);
   });
 
   it('can edit a simple schedule from the schedules list row', () => {
-    cy.filterTableBySingleSelect('name', schedule.name);
-    cy.clickTableRowAction('name', schedule.name, 'edit-schedule', { disableFilter: true });
+    cy.clickTableRowAction('name', schedule.name, 'edit-schedule');
     cy.get('[data-cy="wizard-nav"]').within(() => {
       ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
         cy.get('li')
@@ -411,12 +421,12 @@ describe('Schedules - Edit', () => {
     cy.clickButton(/^Next$/);
     cy.clickButton(/^Next$/);
     cy.get('[data-cy="description"]').contains('-edited');
+    cy.clickButton(/^Finish$/);
+    cy.verifyPageTitle(schedule.name);
   });
 
   it('can edit a schedule to add rules', () => {
-    cy.filterTableBySingleSelect('name', schedule.name);
-    cy.clickTableRowLink('name', schedule.name, { disableFilter: true });
-    cy.getBy('[data-cy="edit-schedule"]').click();
+    cy.clickTableRowAction('name', schedule.name, 'edit-schedule');
     cy.get('[data-cy="wizard-nav"]').within(() => {
       ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
         cy.get('li')
@@ -436,6 +446,8 @@ describe('Schedules - Edit', () => {
     cy.getByDataCy('start-date/time').contains('5:00 AM');
     cy.getByDataCy('rule-2').should('exist');
     cy.getByDataCy('rule-2').contains('FREQ=YEARLY');
+    cy.clickButton(/^Finish$/);
+    cy.verifyPageTitle(schedule.name);
   });
 
   it('can edit a schedule to add exceptions', () => {
@@ -459,12 +471,12 @@ describe('Schedules - Edit', () => {
     cy.clickButton(/^Add$/);
     cy.clickButton(/^Next$/);
     cy.getByDataCy('exception-1').contains('FREQ=YEARLY');
+    cy.clickButton(/^Finish$/);
+    cy.verifyPageTitle(schedule.name);
   });
 
   it('can edit a schedule to remove rules', () => {
-    cy.filterTableBySingleSelect('name', schedule.name);
-    cy.clickTableRowLink('name', schedule.name, { disableFilter: true });
-    cy.getBy('[data-cy="edit-schedule"]').click();
+    cy.clickTableRowAction('name', schedule.name, 'edit-schedule');
     cy.get('[data-cy="wizard-nav"]').within(() => {
       ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
         cy.get('li')
@@ -481,6 +493,8 @@ describe('Schedules - Edit', () => {
     cy.clickButton(/^Next$/);
     cy.clickButton(/^Next$/);
     cy.getByDataCy('rule-1').should('not.contain', 'FREQ=DAILY');
+    cy.clickButton(/^Finish$/);
+    cy.verifyPageTitle(schedule.name);
   });
 
   it.skip('can edit a schedule remove exceptions', () => {
