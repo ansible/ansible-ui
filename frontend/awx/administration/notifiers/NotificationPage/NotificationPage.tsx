@@ -26,7 +26,13 @@ export function NotificationPage() {
   const pageNavigate = usePageNavigate();
 
   const getPageUrl = useGetPageUrl();
-  const pageActions = useNotifiersRowActions(() => { pageNavigate(AwxRoute.NotificationTemplates)}, undefined, 'detail');
+  const pageActions = useNotifiersRowActions(
+    () => {
+      pageNavigate(AwxRoute.NotificationTemplates);
+    },
+    undefined,
+    'detail'
+  );
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!notificationTemplate) return <LoadingPage breadcrumbs tabs />;
@@ -39,11 +45,13 @@ export function NotificationPage() {
           { label: t('Notifiers'), to: getPageUrl(AwxRoute.NotificationTemplates) },
           { label: notificationTemplate?.name },
         ]}
-        headerActions={ <PageActions<NotificationTemplate>
-          actions={pageActions}
-          position={DropdownPosition.right}
-          selectedItem={notificationTemplate}
-        />}
+        headerActions={
+          <PageActions<NotificationTemplate>
+            actions={pageActions}
+            position={DropdownPosition.right}
+            selectedItem={notificationTemplate}
+          />
+        }
       />
       <PageRoutedTabs
         backTab={{

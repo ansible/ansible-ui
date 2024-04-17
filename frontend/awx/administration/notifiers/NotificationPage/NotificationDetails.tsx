@@ -69,35 +69,43 @@ function RenderInnerDetail(props: { notificationTemplate: NotificationTemplate }
   return (
     <>
       {Object.keys(notificationTemplate.notification_configuration || {}).map((key) => {
-        let value = notificationTemplate.notification_configuration[key] as string | string[];
+        try {
+          let value = notificationTemplate.notification_configuration[key] as string | string[];
 
-        let list = false;
-        if (Array.isArray(value)) {
-          list = true;
-          value = value.join('\n');
-        }
+          let list = false;
+          if (Array.isArray(value)) {
+            list = true;
+            value = value.join('\n');
+          }
 
-        if (value === undefined) {
-          return <></>;
-        }
+          if (value === undefined) {
+            return <></>;
+          }
 
-        // this is password field which should be hidden
-        if (value === '$encrypted$') {
-          return <></>;
-        }
+          // this is password field which should be hidden
+          if (value === '$encrypted$') {
+            return <></>;
+          }
 
-        const caption = returnCaption(notificationTemplate.notification_type, key);
+          const caption = returnCaption(notificationTemplate.notification_type, key);
 
-        if (!list) {
+          if (!list) {
+            return (
+              <PageDetail key={key} label={caption}>
+                {value.toString()}
+              </PageDetail>
+            );
+          } else {
+            return (
+              <PageDetail key={key} label={caption}>
+                <TextArea value={value} contentEditable={false} rows={3} />
+              </PageDetail>
+            );
+          }
+        } catch (err) {
           return (
-            <PageDetail key={key} label={caption}>
-              {value.toString()}
-            </PageDetail>
-          );
-        } else {
-          return (
-            <PageDetail key={key} label={caption}>
-              <TextArea value={value} contentEditable={false} rows={3} />
+            <PageDetail key={key} label={key}>
+              {t('Error displaying field')}
             </PageDetail>
           );
         }

@@ -20,7 +20,7 @@ import {
 export function useNotifiersRowActions(
   onComplete: (notification: NotificationTemplate[]) => void,
   onNotifierCopied = () => null,
-  detail? : 'detail' | undefined,
+  detail?: 'detail' | undefined
 ) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
@@ -29,7 +29,6 @@ export function useNotifiersRowActions(
 
   return useMemo<IPageAction<NotificationTemplate>[]>(() => {
     return [
-      // Edit form not yet implemented
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
@@ -41,7 +40,7 @@ export function useNotifiersRowActions(
           }),
         isDisabled: (notification) => cannotEditResource(notification, t),
         isDanger: false,
-        isPinned: true, 
+        isPinned: true,
       },
       {
         type: PageActionType.Button,
@@ -65,5 +64,5 @@ export function useNotifiersRowActions(
         isDanger: true,
       },
     ];
-  }, [pageNavigate, copyNotifier, deleteNotifiers, t]);
+  }, [pageNavigate, copyNotifier, deleteNotifiers, detail, t]);
 }
