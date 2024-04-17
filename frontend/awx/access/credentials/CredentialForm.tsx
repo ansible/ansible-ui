@@ -31,6 +31,14 @@ interface CredentialForm extends Credential {
   user?: number;
 }
 
+interface initialValues {
+  name: string;
+  description: string;
+  credential_type: number;
+  organization: number | null;
+  [key: string]: string | number | null;
+}
+
 export function CreateCredential() {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
@@ -57,7 +65,6 @@ export function CreateCredential() {
 
   const onSubmit: PageFormSubmitHandler<CredentialForm> = async (credential) => {
     const credentialTypeInputs = credentialTypes?.[credential?.credential_type]?.inputs;
-
     const pluginInputs: Record<string, string | number> = {};
     const possibleFields = credentialTypeInputs?.fields || [];
     possibleFields.forEach((field) => {
@@ -104,17 +111,57 @@ export function EditCredential() {
   const navigate = useNavigate();
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
-  const { data: credential } = useGet<Credential>(awxAPI`/credentials/${id.toString()}/`);
   const { activeAwxUser } = useAwxActiveUser();
   const getPageUrl = useGetPageUrl();
   const patch = usePatchRequest();
 
+  const { data: credential, isLoading: isLoadingCredential } = useGet<Credential>(
+    awxAPI`/credentials/${id.toString()}/`
+  );
+  const { data: itemsResponse, isLoading: isLoadingCredentialType } = useGet<
+    AwxItemsResponse<CredentialType>
+  >(awxAPI`/credential_types/?page=1&page_size=200`);
+
+  if ((isLoadingCredential && !credential) || (isLoadingCredentialType && !itemsResponse)) {
+    return <LoadingPage />;
+  }
+
+  const credentialTypes: CredentialTypes | undefined = itemsResponse?.results?.reduce(
+    (credentialTypesMap, credentialType) => {
+      credentialTypesMap[credentialType.id] = credentialType;
+      return credentialTypesMap;
+    },
+    {} as CredentialTypes
+  );
+
+  const initialValues: initialValues = {
+    name: credential?.name ?? '',
+    description: credential?.description ?? '',
+    credential_type: credential?.credential_type ?? 0,
+    organization: credential?.organization ?? null,
+    ...(credential?.inputs ?? {}),
+  };
+
   const onSubmit: PageFormSubmitHandler<CredentialForm> = async (editedCredential) => {
+    const credentialTypeInputs = credentialTypes?.[editedCredential?.credential_type]?.inputs;
     // can send only one of org, user, team
     if (!editedCredential.organization) {
       editedCredential.user = activeAwxUser?.id;
     }
-    await patch(awxAPI`/credentials/${id.toString()}/`, editedCredential);
+
+    const pluginInputs: Record<string, string | number> = {};
+    const possibleFields = credentialTypeInputs?.fields || [];
+    possibleFields.forEach((field) => {
+      if (field.id && typeof field.id === 'string' && field.id in editedCredential) {
+        const id = field.id as keyof CredentialForm;
+        if (editedCredential[id] !== undefined) {
+          pluginInputs[id] = editedCredential[id] as string | number;
+          delete editedCredential[id];
+        }
+      }
+    });
+    const modifiedCredential = { ...editedCredential, inputs: pluginInputs };
+    await patch(awxAPI`/credentials/${id.toString()}/`, modifiedCredential);
     navigate(-1);
   };
   if (!credential) {
@@ -142,7 +189,7 @@ export function EditCredential() {
         submitText={t('Save credential')}
         onSubmit={onSubmit}
         onCancel={() => navigate(-1)}
-        defaultValue={credential}
+        defaultValue={initialValues}
       >
         <CredentialInputs />
       </AwxPageForm>
@@ -154,7 +201,7 @@ type CredentialTypes = {
   [key: number]: CredentialType;
 };
 
-function CredentialInputs() {
+function CredentialInputs({ isEditMode = false }: { isEditMode?: boolean }) {
   const { t } = useTranslation();
   const { data: itemsResponse, isLoading } = useGet<AwxItemsResponse<CredentialType>>(
     awxAPI`/credential_types/?page=1&page_size=200`
@@ -190,6 +237,7 @@ function CredentialInputs() {
       <>
         <PageFormSelect<Credential>
           label={t('Credential type')}
+          isDisabled={isEditMode}
           placeholderText={t('Select credential type')}
           name="credential_type"
           options={
@@ -220,20 +268,23 @@ function CredentialInputs() {
 
 function CredentialSubForm({ credentialType }: { credentialType: CredentialType | undefined }) {
   const { t } = useTranslation();
-  if (!credentialType) {
+  if (!credentialType || !credentialType.inputs?.fields) {
     return null;
   }
 
-  const stringFields = credentialType?.inputs?.fields.filter(
-    (field) => field.type === 'string' && !field?.choices?.length
-  );
-  const choiceFields = credentialType?.inputs?.fields.filter(
-    (field) => (field?.choices?.length ?? 0) > 0
-  );
-  const booleanFields = credentialType?.inputs?.fields.filter((field) => field.type === 'boolean');
+  const stringFields =
+    credentialType?.inputs?.fields.filter(
+      (field) => field.type === 'string' && !field?.choices?.length
+    ) || [];
+  const choiceFields =
+    credentialType?.inputs?.fields.filter((field) => (field?.choices?.length ?? 0) > 0) || [];
+  const booleanFields =
+    credentialType?.inputs?.fields.filter((field) => field.type === 'boolean') || [];
   const requiredFields = credentialType?.inputs?.required || [];
 
-  return (
+  const hasFields = stringFields.length > 0 || choiceFields.length > 0 || booleanFields.length > 0;
+
+  return hasFields ? (
     <PageFormSection title={t('Type Details')}>
       {stringFields.length > 0 &&
         stringFields.map((field) => {
@@ -285,5 +336,5 @@ function CredentialSubForm({ credentialType }: { credentialType: CredentialType 
           />
         ))}
     </PageFormSection>
-  );
+  ) : null;
 }

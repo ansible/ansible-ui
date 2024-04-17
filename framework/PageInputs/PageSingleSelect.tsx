@@ -12,6 +12,7 @@ import {
   SelectList,
   SelectOption,
   Spinner,
+  Tooltip,
 } from '@patternfly/react-core';
 import {
   ReactNode,
@@ -59,9 +60,8 @@ export interface PageSingleSelectProps<ValueT> {
    */
   isRequired?: boolean;
 
-  // TODO isDisabled should be a string
   /** Indicates if the select is disabled */
-  isDisabled?: boolean;
+  isDisabled?: string;
 
   /**
    * Indicates if the select is open.
@@ -150,6 +150,12 @@ export function PageSingleSelect<
   const { id, icon, value, onSelect, options, placeholder, queryLabel } = props;
 
   const [open, setOpen] = useOverridableState(props.open ?? false, props.setOpen);
+  useEffect(() => {
+    if (open) {
+      setTimeout(() => searchRef.current?.focus(), 1);
+    }
+  }, [open]);
+
   const [searchValue, setSearchValue] = useOverridableState(
     props.searchValue ?? '',
     props.setSearchValue
@@ -164,42 +170,44 @@ export function PageSingleSelect<
 
   const selectedLabel = useMemo(() => {
     let selectedLabel: ReactNode = selectedOption?.label;
-    if (!selectedLabel && value !== undefined && value !== '') {
+    if (!selectedLabel && value !== undefined && value !== '' && value !== null) {
       selectedLabel = queryLabel?.(value);
     }
     return selectedLabel;
   }, [queryLabel, selectedOption?.label, value]);
 
   const Toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
-    <MenuToggle
-      id={id}
-      ref={toggleRef}
-      onClick={() => setOpen(!open)}
-      isExpanded={open}
-      onKeyDown={(event) => {
-        switch (event.key) {
-          case 'Tab':
-          case 'Enter':
-          case 'Shift':
-            break;
-          default:
-            setOpen(true);
-            setTimeout(() => {
-              if (searchRef.current) {
-                searchRef.current.focus();
-                searchRef.current.value = event.key;
-              }
-            }, 1);
-            break;
-        }
-      }}
-      data-cy={id}
-      icon={icon ?? selectedOption?.icon}
-      isDisabled={props.isDisabled}
-      isFullWidth
-    >
-      {selectedLabel ? selectedLabel : <span style={{ opacity: 0.7 }}>{placeholder}</span>}
-    </MenuToggle>
+    <Tooltip content={props.isDisabled} trigger={props.isDisabled ? undefined : 'manual'}>
+      <MenuToggle
+        id={id}
+        ref={toggleRef}
+        onClick={() => setOpen(!open)}
+        isExpanded={open}
+        onKeyDown={(event) => {
+          switch (event.key) {
+            case 'Tab':
+            case 'Enter':
+            case 'Shift':
+              break;
+            default:
+              setOpen(true);
+              setTimeout(() => {
+                if (searchRef.current) {
+                  searchRef.current.focus();
+                  searchRef.current.value = event.key;
+                }
+              }, 1);
+              break;
+          }
+        }}
+        data-cy={id}
+        icon={icon ?? selectedOption?.icon}
+        isDisabled={!!props.isDisabled}
+        isFullWidth
+      >
+        {selectedLabel ? selectedLabel : <span style={{ opacity: 0.7 }}>{placeholder}</span>}
+      </MenuToggle>
+    </Tooltip>
   );
 
   const onSelectHandler = useCallback(
