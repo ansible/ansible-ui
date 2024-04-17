@@ -28,6 +28,9 @@ describe('ScheduleAddWizard', () => {
     count: 1,
     results: [mockTemplate],
   };
+  before(() => {
+    cy.intercept({ method: 'GET', url: awxAPI`/schedules/zoneinfo` }, zones);
+  });
   describe('Prompted schedule', () => {
     const mockTemplate = {
       id: 100,
@@ -45,9 +48,7 @@ describe('ScheduleAddWizard', () => {
       name: 'Template Mock Credential',
       credential_type: 2,
     };
-    before(() => {
-      cy.intercept({ method: 'GET', url: awxAPI`/schedules/zoneinfo` }, zones);
-    });
+
     beforeEach(() => {
       cy.intercept({ method: 'GET', url: awxAPI`/job_templates/*` }, mockTemplates);
       cy.intercept('/api/v2/job_templates/100/', { id: 100, name: 'Mock Job Template' });
@@ -209,6 +210,22 @@ describe('ScheduleAddWizard', () => {
 
       cy.get('tbody').within(() => {
         cy.get('tr').should('have.length', 1);
+      });
+    });
+    it('Should be able to remove an existing rule from the list', () => {
+      cy.get('[data-cy="interval"]').clear().type('100');
+      cy.selectDropdownOptionByResourceName('freq', 'Hourly');
+      cy.get('[data-cy="count-form-group"]').type('17');
+      cy.get('[data-cy="add-rule-button"]').click();
+      cy.getByDataCy('add-rule-toolbar-button').click();
+      cy.get('[data-cy="interval"]').clear().type('100');
+      cy.selectDropdownOptionByResourceName('freq', 'Hourly');
+      cy.get('[data-cy="count-form-group"]').type('27');
+      cy.get('[data-cy="add-rule-button"]').click();
+
+      cy.getByDataCy('row-id-2').within(() => {
+        cy.get('button[data-cy="delete-rule"]').click();
+        cy.get('tr[data-cy="row-id-2"]').should('not.exist');
       });
     });
   });
