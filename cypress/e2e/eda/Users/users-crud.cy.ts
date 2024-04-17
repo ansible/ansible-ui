@@ -6,13 +6,6 @@ import { edaAPI } from '../../../support/formatApiPathForEDA';
 describe('EDA Users- Create, Edit, Delete', () => {
   before(() => {
     cy.edaLogin();
-    cy.getEdaRoles().then((rolesArray) => {
-      roleNames = rolesArray.map((role) => role.name);
-      roleIDs = [rolesArray.map((role) => role.id).toString()];
-      editorRoleID = roleIDs[2];
-      auditorRoleName = roleNames[4];
-      contributorRoleName = roleNames[0];
-    });
   });
 
   it('can create a User, select user type, and assert the information showing on the details page', () => {

@@ -12,7 +12,7 @@ import {
 import { EdaDecisionEnvironment } from '../../frontend/eda/interfaces/EdaDecisionEnvironment';
 import { EdaProject } from '../../frontend/eda/interfaces/EdaProject';
 import { EdaResult } from '../../frontend/eda/interfaces/EdaResult';
-import { EdaRbacRole, RoleDetail } from '../../frontend/eda/interfaces/EdaRbacRole';
+import { EdaRole, RoleDetail } from '../../frontend/eda/interfaces/EdaRole';
 import { EdaRulebook } from '../../frontend/eda/interfaces/EdaRulebook';
 import {
   EdaRulebookActivation,
@@ -249,6 +249,41 @@ Cypress.Commands.add('pollEdaResults', (url: string) => {
   });
 });
 
+Cypress.Commands.add('createEdaCredentialType', () => {
+  cy.requestPost<EdaCredentialTypeCreate>(edaAPI`/credential-types/`, {
+    name: 'E2E Credential Type' + randomString(4),
+    // inputs: ["abc", "amxmx"],
+    // inputs: [: "dhdn"],
+    inputs: {
+      fields: [
+        {
+          id: 'username', // Unique identifier for the field
+          label: 'Username', // User-friendly label
+          type: 'string', // Data type expected (string, password, etc.)
+        },
+      ],
+    },
+    description: 'This is a credential type',
+  }).then((edaCredentialType) => {
+    Cypress.log({
+      displayName: 'EDA CREDENTIAL CREATION :',
+      message: [`Created 👉  ${edaCredentialType.name}`],
+    });
+    return edaCredentialType;
+  });
+});
+
+Cypress.Commands.add('deleteEdaCredentialType', (credential_type: EdaCredentialType) => {
+  cy.requestDelete(edaAPI`/credential-types/${credential_type.id.toString()}/?force=true`, {
+    failOnStatusCode: false,
+  }).then(() => {
+    Cypress.log({
+      displayName: 'EDA CREDENTIAL DELETION :',
+      message: [`Deleted 👉  ${credential_type.name}`],
+    });
+  });
+});
+
 Cypress.Commands.add('createEdaCredential', () => {
   cy.requestPost<EdaCredentialCreate>(edaAPI`/eda-credentials/`, {
     name: 'E2E Credential ' + randomString(4),
@@ -446,29 +481,37 @@ Cypress.Commands.add('getEdaActiveUser', () => {
   });
 });
 
-Cypress.Commands.add('createRoleTeamAssignments', (object_id, role_definition, team) => {
-  cy.requestPost<TeamAssignment>(edaAPI`/role_team_assignments/`, {
-    object_id: object_id,
-    role_definition: role_definition,
-    team: team,
-  }).then(() => {
-    Cypress.log({
-      displayName: 'Role Team Assignment completed',
+Cypress.Commands.add(
+  'createRoleTeamAssignments',
+  (object_id, role_definition, team, content_type) => {
+    cy.requestPost<TeamAssignment>(edaAPI`/role_team_assignments/`, {
+      object_id: object_id,
+      content_type: content_type,
+      role_definition: role_definition,
+      team: team,
+    }).then(() => {
+      Cypress.log({
+        displayName: 'Role Team Assignment completed',
+      });
     });
-  });
-});
+  }
+);
 
-Cypress.Commands.add('createRoleUserAssignments', (object_id, role_definition, user) => {
-  cy.requestPost<UserAssignment>(edaAPI`/role_user_assignments/`, {
-    object_id: object_id,
-    role_definition: role_definition,
-    user: user,
-  }).then(() => {
-    Cypress.log({
-      displayName: 'Role User Assignment :',
+Cypress.Commands.add(
+  'createRoleUserAssignments',
+  (object_id, role_definition, user, content_type) => {
+    cy.requestPost<UserAssignment>(edaAPI`/role_user_assignments/`, {
+      object_id: object_id,
+      content_type: content_type,
+      role_definition: role_definition,
+      user: user,
+    }).then(() => {
+      Cypress.log({
+        displayName: 'Role User Assignment :',
+      });
     });
-  });
-});
+  }
+);
 
 Cypress.Commands.add('getEdaCurrentUserAwxTokens', () => {
   cy.requestGet<EdaResult<EdaControllerToken>>(edaAPI`/users/me/awx-tokens/`);

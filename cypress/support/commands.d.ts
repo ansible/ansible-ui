@@ -78,7 +78,6 @@ import {
   HubQueryRolesOptions,
   HubRequestOptions,
 } from './hub-commands';
-import { EdaRbacRole } from '../../frontend/eda/interfaces/EdaRbacRole';
 
 declare global {
   namespace Cypress {
@@ -1270,6 +1269,13 @@ declare global {
       createEdaCredential(): Chainable<EdaCredential>;
 
       /**
+       * Creates an EDA credential and returns the same.
+       *
+       * @returns {Chainable<EdaCredentialType>}
+       */
+      createEdaCredentialType(): Chainable<EdaCredentialType>;
+
+      /**
        * Some of the Eda roles (Admin, Contributor etc) have resources
        * with more than 5 set of actions. this command helps in asserting
        * the actions by chaining of the command.
@@ -1351,7 +1357,8 @@ declare global {
       createRoleTeamAssignments(
         object_id: string,
         role_definition: number,
-        team: number
+        team: number,
+        content_type: string
       ): Chainable<void>;
 
       /**
@@ -1362,7 +1369,8 @@ declare global {
       createRoleUserAssignments(
         object_id: string,
         role_definition: number,
-        user: number
+        user: number,
+        content_type: string
       ): Chainable<void>;
 
       /**
