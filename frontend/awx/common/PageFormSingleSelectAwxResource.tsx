@@ -38,8 +38,12 @@ export function PageFormSingleSelectAwxResource<
   const queryOptions = useCallback<PageAsyncSelectOptionsFn<PathValue<FormData, Name>>>(
     async (options) => {
       try {
-        const urlSearchParams = new URLSearchParams(props.url);
+        const baseUrl = props.url.split('?')[0];
+        const queryString = props.url.split('?')[1];
+        const urlSearchParams = new URLSearchParams(queryString);
+        urlSearchParams.delete('page_size');
         urlSearchParams.set('page_size', '10');
+        urlSearchParams.delete('order_by');
         urlSearchParams.set('order_by', 'name');
         if (props.queryParams) {
           for (const [key, value] of Object.entries(props.queryParams)) {
@@ -49,7 +53,7 @@ export function PageFormSingleSelectAwxResource<
         if (options.next) urlSearchParams.set('name__gt', options.next.toString());
         if (options.search) urlSearchParams.set('name__icontains', options.search);
         const response = await requestGet<AwxItemsResponse<Resource>>(
-          decodeURIComponent(urlSearchParams.toString()),
+          baseUrl + '?' + decodeURIComponent(urlSearchParams.toString()),
           options.signal
         );
         return {
