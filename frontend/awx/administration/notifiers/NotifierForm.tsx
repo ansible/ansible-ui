@@ -1,12 +1,10 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { Trans, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   ICatalogBreadcrumb,
   LoadingPage,
-  PageFormCheckbox,
   PageFormSubmitHandler,
-  PageFormTextArea,
   PageFormTextInput,
   PageHeader,
   PageLayout,
@@ -26,9 +24,11 @@ import { PageFormGroup } from '../../../../framework/PageForm/Inputs/PageFormGro
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
 
 import { useOptions } from '../../../common/crud/useOptions';
-import { requestCommon } from '../../../common/crud/requestCommon';
+import { usePostRequest } from '../../../common/crud/usePostRequest';
+import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 import { usePageNavigate } from '../../../../framework';
-import { TFunction } from 'i18next';
+
+import { InnerForm } from './NotifierFormInner';
 
 export function EditNotifier() {
   return <NotifierForm mode={'edit'} />;
@@ -49,7 +49,7 @@ export type NotificationTemplateOptions = {
   };
 };
 
-type NotificationTemplatEdit = Omit<NotificationTemplate, 'id'>;
+type NotificationTemplateEdit = Omit<NotificationTemplate, 'id'>;
 
 // TODO - finish rest of the form in the next PR
 function NotifierForm(props: { mode: 'add' | 'edit' }) {
@@ -61,6 +61,9 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
   const notifierRequest = useGet<NotificationTemplate>(getUrl);
   const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
+
+  const patchRequest = usePatchRequest();
+  const postRequest = usePostRequest();
 
   const optionsRequest = useOptions<NotificationTemplateOptions>(awxAPI`/notification_templates/`);
 
@@ -92,7 +95,7 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
   }
 
   const onSubmit: PageFormSubmitHandler<NotificationTemplate> = async (formData) => {
-    const data: NotificationTemplate | NotificationTemplatEdit =
+    const data: NotificationTemplate | NotificationTemplateEdit =
       mode === 'add'
         ? formData
         : ({
@@ -102,9 +105,10 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
             notification_configuration: formData.notification_configuration,
             notification_type: formData.notification_type,
             organization: formData.organization,
-          } as NotificationTemplatEdit);
+          } as NotificationTemplateEdit);
 
     stringToArrays(data);
+    clearPasswords(data);
 
     let fieldValue;
     // fix notification data types
@@ -133,14 +137,17 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
       }
     }
 
-    await requestCommon({
-      url:
-        mode === 'add'
-          ? awxAPI`/notification_templates/`
-          : awxAPI`/notification_templates/${formData.id?.toString() || ''}/`,
-      method: mode === 'edit' ? 'PATCH' : 'POST',
-      body: data,
-    });
+    if (data.notification_type === 'webhook') {
+      if (!data.notification_configuration.headers) {
+        data.notification_configuration.headers = {};
+      }
+    }
+
+    if (mode === 'add') {
+      await postRequest(awxAPI`/notification_templates/`, data);
+    } else {
+      await patchRequest(awxAPI`/notification_templates/${formData.id?.toString() || ''}/`, data);
+    }
 
     pageNavigate(AwxRoute.NotificationTemplates);
   };
@@ -207,428 +214,6 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
   );
 }
 
-function InnerForm(props: { notification_type: string }) {
-  const notification_type = props.notification_type;
-  if (notification_type === 'email') {
-    return <EmailForm />;
-  }
-
-  if (notification_type === 'slack') {
-    return <SlackForm />;
-  }
-
-  if (notification_type === 'twilio') {
-    return <TwilioForm />;
-  }
-
-  if (notification_type === 'pagerduty') {
-    return <PagerdutyForm />;
-  }
-
-  if (notification_type === 'grafana') {
-    return <GrafanaForm />;
-  }
-
-  if (notification_type === 'webhook') {
-    //return <WebhookForm />;
-  }
-
-  if (notification_type === 'mattermost') {
-    //return <MattermostForm />;
-  }
-
-  if (notification_type === 'rocketchat') {
-    //return <RocketchatForm />;
-  }
-
-  if (notification_type === 'irc') {
-    //return <IrcForm />;
-  }
-
-  return <></>;
-}
-
-function EmailForm() {
-  const { t } = useTranslation();
-  return (
-    <>
-      <PageFormTextInput<NotificationTemplate>
-        type={'text'}
-        name={'notification_configuration.username'}
-        label={t('Username')}
-      />
-
-      <PageFormTextInput<NotificationTemplate>
-        type={'password'}
-        name={'notification_configuration.password'}
-        label={t('Password')}
-      />
-
-      <PageFormTextInput<NotificationTemplate>
-        type={'text'}
-        name={'notification_configuration.host'}
-        label={t('Host')}
-        isRequired
-      />
-
-      <PageFormTextArea<NotificationTemplate>
-        name={'notification_configuration.recipients'}
-        label={t('Recipient List')}
-        isRequired
-        labelHelp={t(
-          'Use one email address per line to create a recipient list for this type of notification.'
-        )}
-      />
-
-      <PageFormTextInput<NotificationTemplate>
-        type={'text'}
-        name={'notification_configuration.sender'}
-        label={t('Sender Email')}
-        isRequired
-        validate={(value) => validateEmail(value, t)}
-      />
-
-      <PageFormTextInput<NotificationTemplate>
-        type={'number'}
-        name={'notification_configuration.port'}
-        label={t('Port')}
-        isRequired
-        validate={(value) => validateNumber(value, 1, 65535, t)}
-      />
-
-      <PageFormTextInput<NotificationTemplate>
-        type={'number'}
-        name={'notification_configuration.timeout'}
-        label={t('Timeout')}
-        isRequired
-        validate={(value) => validateNumber(value, 1, 120, t)}
-        labelHelp={t(
-          'The amount of time (in seconds) before the email notification stops trying to reach the host and times out. Ranges from 1 to 120 seconds.'
-        )}
-      />
-
-      <PageFormGroup
-        label={t('Email Options ')}
-        labelHelp={
-          <Trans>
-            See Django{' '}
-            <a href="https://docs.djangoproject.com/en/4.0/ref/settings/#std:setting-EMAIL_USE_TLS">
-              documentation
-            </a>{' '}
-            for more information.
-          </Trans>
-        }
-      >
-        <PageFormCheckbox<NotificationTemplate>
-          name={'notification_configuration.use_tls'}
-          label={t('Use TLS')}
-        />
-
-        <PageFormCheckbox<NotificationTemplate>
-          name={'notification_configuration.use_ssl'}
-          label={t('Use SSL')}
-        />
-      </PageFormGroup>
-    </>
-  );
-}
-
-function SlackForm() {
-  const { t } = useTranslation();
-  return (
-    <>
-      <PageFormTextInput<NotificationTemplate>
-        type={'password'}
-        name={'notification_configuration.token'}
-        label={t('Token')}
-        isRequired
-      />
-
-      <PageFormTextArea<NotificationTemplate>
-        name={'notification_configuration.channels'}
-        label={t('Destination Channels')}
-        isRequired
-        labelHelp={
-          <Trans>
-            One Slack channel per line. The pound symbol (#) is required for channels. To respond to
-            or start a thread to a specific message add the parent message Id to the channel where
-            the parent message Id is 16 digits. A dot (.) must be manually inserted after the 10th
-            digit. ie:#destination-channel, 1231257890.006423. See Slack{' '}
-            <a href="https://api.slack.com/messaging/retrieving#individual_messages">
-              documentation
-            </a>{' '}
-            for more information.
-          </Trans>
-        }
-      />
-
-      <PageFormTextInput<NotificationTemplate>
-        name={'notification_configuration.hex_color'}
-        label={t('Notification color')}
-        labelHelp={t(
-          'Specify a notification color. Acceptable colors are hex color code (example: #3af or #789abc).'
-        )}
-      />
-    </>
-  );
-}
-
-function TwilioForm() {
-  const { t } = useTranslation();
-  return (
-    <>
-      <PageFormTextInput<NotificationTemplate>
-        type={'text'}
-        name={'notification_configuration.account_sid'}
-        label={t('Account SID')}
-        isRequired
-      />
-
-      <PageFormTextInput<NotificationTemplate>
-        type={'password'}
-        name={'notification_configuration.account_token'}
-        label={t('Account Token')}
-        isRequired
-      />
-
-      <PageFormTextInput<NotificationTemplate>
-        type={'text'}
-        name={'notification_configuration.from_number'}
-        label={t('Source Phone Number')}
-        validate={(value) => twilioPhoneNumber(value, t)}
-        isRequired
-        labelHelp={t(
-          'The number associated with the "Messaging Service" in Twilio with the format +18005550199.'
-        )}
-      />
-
-      <PageFormTextArea<NotificationTemplate>
-        name={'notification_configuration.to_numbers'}
-        label={t('Destination SMS Numbers')}
-        validate={(value) => twilioPhoneNumber(value, t)}
-        labelHelp={t(
-          'Use one phone number per line to specify where to route SMS messages. Phone numbers should be formatted +11231231234. For more information see Twilio documentation'
-        )}
-        isRequired
-      />
-    </>
-  );
-}
-
-function PagerdutyForm() {
-  const { t } = useTranslation();
-  return (
-    <>
-      <PageFormTextInput<NotificationTemplate>
-        type={'text'}
-        name={'notification_configuration.subdomain'}
-        label={t('Pagerduty subdomain')}
-        isRequired
-      />
-
-      <PageFormTextInput<NotificationTemplate>
-        type={'password'}
-        name={'notification_configuration.token'}
-        label={t('API Token')}
-        isRequired
-      />
-
-      <PageFormTextInput<NotificationTemplate>
-        type={'text'}
-        name={'notification_configuration.service_key'}
-        label={t('API Service/Integration Key')}
-        isRequired
-      />
-
-      <PageFormTextInput<NotificationTemplate>
-        type={'text'}
-        name={'notification_configuration.client_name'}
-        label={t('Client Identifier')}
-        isRequired
-      />
-    </>
-  );
-}
-
-function GrafanaForm() {
-  const { t } = useTranslation();
-  return (
-    <>
-      <PageFormTextInput<NotificationTemplate>
-        type={'text'}
-        name={'notification_configuration.grafana_url'}
-        label={t('Grafana URL')}
-        labelHelp={t(
-          'The base URL of the Grafana server - the /api/annotations endpoint will be added automatically to the base Grafana URL.'
-        )}
-        isRequired
-      />
-
-      <PageFormTextInput<NotificationTemplate>
-        type={'password'}
-        name={'notification_configuration.grafana_key'}
-        label={t('Grafana API Key')}
-        isRequired
-      />
-
-      <PageFormTextInput<NotificationTemplate>
-        name={'notification_configuration.dashboardId'}
-        label={t('ID of the dashboard (optional)')}
-      />
-
-      <PageFormTextInput<NotificationTemplate>
-        name={'notification_configuration.panelId'}
-        label={t('ID of the panel (optional)')}
-      />
-
-      <PageFormTextArea<NotificationTemplate>
-        name={'notification_configuration.annotation_tags'}
-        label={t('Tags for the annotation (optional)')}
-        labelHelp={t('Use one Annotation Tag per line, without commas.')}
-      />
-
-      <PageFormCheckbox<NotificationTemplate>
-        name={'notification_configuration.grafana_no_verify_ssl'}
-        label={t('Disable SSL verification')}
-      />
-    </>
-  );
-}
-
-/*
-function WebhookForm() {
-  const { t } = useTranslation();
-  return (
-    <>
-      <PageFormTextInput<NotificationTemplate>
-        type={'text'}
-        name={'notification_configuration.username'}
-        label={t('Username')}
-      />
-
-      <PageFormTextInput<NotificationTemplate>
-        type={'password'}
-        name={'notification_configuration.password'}
-        label={t('Password')}
-      />
-
-      <PageFormTextInput<NotificationTemplate>
-        type={'text'}
-        name={'notification_configuration.url'}
-        label={t('Target URL')}
-        isRequired
-      />
-
-      <PageFormCheckbox<NotificationTemplate>
-        name={'notification_configuration.disable_ssl_verification'}
-        label={t('Disable SSL verification ')}
-      />
-
-      <PageFormTextInput<NotificationTemplate>
-        name={'notification_configuration.headers'}
-        label={t('HTTP Headers')}
-      />
-
-      <PageFormSingleSelect<NotificationTemplate>
-        name={'notification_configuration.http_method'}
-        label={t('HTTP Method')}
-        placeholder={t('Choose an HTTP method')}
-        options={[
-          { label: 'POST', value: 'POST' },
-          { label: 'PUT', value: 'PUT' },
-        ]}
-      />
-    </>
-  );
-}
-
-
-function MattermostForm() {
-  const { t } = useTranslation();
-  return (
-    <>
-      <PageFormTextInput<NotificationTemplate>
-        type={'text'}
-        name={'type_data.mattermost_url'}
-        label={t('Target URL')}
-        placeholder={''}
-      />
-
-      <PageFormCheckbox<NotificationTemplate>
-        name={'type_data.mattermost_no_verify_ssl'}
-        label={t('Verify SSL')}
-        placeholder={''}
-      />
-    </>
-  );
-}
-
-function RocketchatForm() {
-  const { t } = useTranslation();
-  return (
-    <>
-      <PageFormTextInput<NotificationTemplate>
-        type={'text'}
-        name={'type_data.rocketchat_url'}
-        label={t('Target URL')}
-        placeholder={''}
-      />
-
-      <PageFormCheckbox<NotificationTemplate>
-        name={'type_data.rocketchat_no_verify_ssl'}
-        label={t('Verify SSL')}
-        placeholder={''}
-      />
-    </>
-  );
-}
-
-function IrcForm() {
-  const { t } = useTranslation();
-  return (
-    <>
-      <PageFormTextInput<NotificationTemplate>
-        type={'text'}
-        name={'type_data.server'}
-        label={t('IRC Server Address')}
-        placeholder={''}
-      />
-
-      <PageFormTextInput<NotificationTemplate>
-        name={'type_data.port'}
-        label={t('IRC Server Port')}
-        placeholder={''}
-      />
-
-      <PageFormTextInput<NotificationTemplate>
-        type={'text'}
-        name={'type_data.nickname'}
-        label={t('IRC Nick')}
-        placeholder={''}
-      />
-
-      <PageFormTextInput<NotificationTemplate>
-        type={'password'}
-        name={'type_data.password'}
-        label={t('IRC Server Password')}
-        placeholder={''}
-      />
-
-      <PageFormCheckbox<NotificationTemplate>
-        name={'type_data.use_ssl'}
-        label={t('SSL Connection')}
-        placeholder={''}
-      />
-
-      <PageFormTextArea<NotificationTemplate>
-        name={'type_data.targets'}
-        label={t('Destination Channels or Users')}
-        placeholder={''}
-      />
-    </>
-  );
-}*/
-
 function arraysToString(data: NotificationTemplate) {
   if (!data.notification_configuration) {
     return;
@@ -647,7 +232,7 @@ function arraysToString(data: NotificationTemplate) {
   }
 }
 
-function stringToArrays(data: NotificationTemplate | NotificationTemplatEdit) {
+function stringToArrays(data: NotificationTemplate | NotificationTemplateEdit) {
   if (!data.notification_configuration) {
     return;
   }
@@ -682,65 +267,67 @@ function isList(key: string, notification_type: string) {
     return true;
   }
 
+  if (key === 'targets' && notification_type === 'irc') {
+    return true;
+  }
+
   return false;
 }
 
-function validateEmail(value: string, t: TFunction<'translation', undefined>) {
-  // copied from old app to keep app consistent
-  // This isn't a perfect validator. It's likely to let a few
-  // invalid (though unlikely) email addresses through.
-
-  // This is ok, because the server will always do strict validation for us.
-
-  if (value === '') {
-    return undefined;
+function clearPasswords(data: NotificationTemplate | NotificationTemplateEdit) {
+  if (data.notification_configuration) {
+    Object.keys(data.notification_configuration).forEach((key) => {
+      if (isPassword(key, data.notification_type || '')) {
+        if (data.notification_configuration[key] === '$encrypted$') {
+          // set it to undefined, so it does not change the backend password
+          delete data.notification_configuration[key];
+        }
+      }
+    });
   }
-  const splitVals = value?.split('@');
-
-  if (splitVals.length >= 2) {
-    if (splitVals[0] && splitVals[1]) {
-      // We get here if the string has an '@' that is enclosed by
-      // non-empty substrings
-      return undefined;
-    }
-  }
-
-  return t('Invalid email address');
 }
 
-function validateNumber(
-  str: string,
-  min: number,
-  max: number,
-  t: TFunction<'translation', undefined>
+function isPassword(
+  key: string,
+  notification_type:
+    | 'email'
+    | 'grafana'
+    | 'irc'
+    | 'mattermost'
+    | 'pagerduty'
+    | 'rocketchat'
+    | 'slack'
+    | 'twilio'
+    | 'webhook'
+    | ''
 ) {
-  const val = Number.parseInt(str, 10);
-  if (val >= min && val <= max) {
-    return undefined;
+  if (notification_type === 'email' && key === 'password') {
+    return true;
   }
 
-  return t('This field must be a number and have a value between {{min}} and {{max}}', {
-    min,
-    max,
-  });
-}
-
-export function twilioPhoneNumber(value: string, t: TFunction<'translation', undefined>) {
-  if (value === '') {
-    return undefined;
+  if (notification_type === 'slack' && key === 'token') {
+    return true;
   }
 
-  const phoneNumbers = value?.split('\n');
-  let error = undefined;
+  if (notification_type === 'twilio' && key === 'account_token') {
+    return true;
+  }
 
-  phoneNumbers?.forEach((v) => {
-    if (v === '') {
-      return;
-    }
+  if (notification_type === 'pagerduty' && key === 'token') {
+    return true;
+  }
 
-    if (!/^\s*(?:\+?(\d{1,3}))?[. (]*(\d{7,12})$/.test(v)) {
-      error = t('Please enter valid phone numbers.');
-    }
-  });
-  return error;
+  if (notification_type === 'grafana' && key === 'grafana_key') {
+    return true;
+  }
+
+  if (notification_type === 'webhook' && key === 'password') {
+    return true;
+  }
+
+  if (notification_type === 'irc' && key === 'password') {
+    return true;
+  }
+
+  return false;
 }
