@@ -32,6 +32,9 @@ interface ReviewExpandableListProps<
 const StyledBadge = styled(Badge)`
   margin-left: var(--pf-v5-global--spacer--sm);
 `;
+const StyledDivider = styled(Divider)`
+  margin: var(--pf-v5-global--spacer--md) 0 var(--pf-v5-global--spacer--md) 0;
+`;
 
 export function RoleAssignmentsReviewStep() {
   const { wizardData } = usePageWizard();
@@ -43,28 +46,34 @@ export function RoleAssignmentsReviewStep() {
       <Title headingLevel="h1">{t('Review')}</Title>
       {resourceType ? (
         <>
-          <PageDetails>
-            <PageDetail label={t('Resource type')}>{resourceType}</PageDetail>
-          </PageDetails>
-          <Divider />
+          <div
+            style={{
+              marginTop: 'var(--pf-v5-global--spacer--lg)',
+            }}
+          >
+            <PageDetails disablePadding>
+              <PageDetail label={t('Resource type')}>{resourceType}</PageDetail>
+            </PageDetails>
+          </div>
+          <StyledDivider className="pf-v5-u-mb-xl" />
         </>
       ) : null}
       {resources && resources.length ? (
         <>
           <ReviewExpandableList selectedItems={resources} fieldName="resources" />
-          <Divider />
+          <StyledDivider />
         </>
       ) : null}
       {users && users.length ? (
         <>
           <ReviewExpandableList selectedItems={users} fieldName="users" />
-          <Divider />
+          <StyledDivider />
         </>
       ) : null}
       {teams && teams.length ? (
         <>
           <ReviewExpandableList selectedItems={teams} fieldName="teams" />
-          <Divider />
+          <StyledDivider />
         </>
       ) : null}
       {edaRoles && edaRoles.length ? (
