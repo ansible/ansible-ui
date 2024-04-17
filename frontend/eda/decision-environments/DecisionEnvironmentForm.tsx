@@ -15,7 +15,7 @@ import { usePatchRequest } from '../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../common/crud/usePostRequest';
 import { EdaPageForm } from '../common/EdaPageForm';
 import { edaAPI } from '../common/eda-utils';
-import { EdaCredential } from '../interfaces/generated/eda-api';
+import { EdaCredential } from '../interfaces/EdaCredential';
 import {
   EdaDecisionEnvironment,
   EdaDecisionEnvironmentRead,

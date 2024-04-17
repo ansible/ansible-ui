@@ -16,7 +16,7 @@ import { usePostRequest } from '../../common/crud/usePostRequest';
 import { PageFormCredentialSelect } from '../access/credentials/components/PageFormCredentialsSelect';
 import { EdaPageForm } from '../common/EdaPageForm';
 import { edaAPI } from '../common/eda-utils';
-import { EdaCredential } from '../interfaces/generated/eda-api';
+import { EdaCredential } from '../interfaces/EdaCredential';
 import { EdaDecisionEnvironment } from '../interfaces/EdaDecisionEnvironment';
 import { EdaEventStream, EdaEventStreamCreate } from '../interfaces/EdaEventStream';
 import { EdaResult } from '../interfaces/EdaResult';

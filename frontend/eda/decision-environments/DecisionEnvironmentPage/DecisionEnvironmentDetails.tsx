@@ -4,7 +4,7 @@ import { DateTimeCell, PageDetail, PageDetails, useGetPageUrl } from '../../../.
 import { LastModifiedPageDetail } from '../../../common/LastModifiedPageDetail';
 import { useGet } from '../../../common/crud/useGet';
 import { edaAPI } from '../../common/eda-utils';
-import { EdaCredential } from '../../interfaces/generated/eda-api';
+import { EdaCredential } from '../../interfaces/EdaCredential';
 import { EdaDecisionEnvironmentRead } from '../../interfaces/EdaDecisionEnvironment';
 import { EdaRoute } from '../../main/EdaRoutes';
 
