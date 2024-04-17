@@ -86,7 +86,8 @@ function craftRequestUrl(
       url += `&${key}=${value}`;
     });
   }
-  const decodedUrl = url.split('%2F').join('/');
+  // decode the returned url
+  const decodedUrl = decodeURIComponent(url);
   return decodedUrl;
 }
 
@@ -98,7 +99,8 @@ export function useDynamicToolbarFilters(props: DynamicToolbarFiltersProps) {
     useRef(props).current;
   const { t } = useTranslation();
   const url = awxAPI`/${optionsPath}/`;
-  const decodedUrl = url.split('%2F').join('/');
+  // decode the returned url
+  const decodedUrl = decodeURIComponent(url);
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(decodedUrl);
   const filterableFields = useFilters(data?.actions?.GET);
   const queryResource = useCallback<
