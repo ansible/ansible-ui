@@ -16,9 +16,9 @@ import { AwxRoute } from '../../../main/AwxRoutes';
 export function InventoryGroups() {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
-  const toolbarFilters = useGroupsFilters();
   const tableColumns = useInventoriesGroupsColumns();
   const params = useParams<{ id: string; inventory_type: string }>();
+  const toolbarFilters = useGroupsFilters(`inventories/${params.id ?? ''}/groups/`);
   const view = useAwxView<InventoryGroup>({
     url: awxAPI`/inventories/${params.id ?? ''}/groups/`,
     toolbarFilters,

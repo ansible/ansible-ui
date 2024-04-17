@@ -18,7 +18,6 @@ import { useGetHost } from '../../hosts/hooks/useGetHost';
 
 export function InventoryHostGroups(props: { page: string }) {
   const { t } = useTranslation();
-  const toolbarFilters = useHostsGroupsFilters();
   const tableColumns = useHostsGroupsColumns();
   const isHostPage: boolean = props.page === 'host';
   const params = useParams<{ id: string; inventory_type: string; host_id: string }>();
@@ -27,6 +26,7 @@ export function InventoryHostGroups(props: { page: string }) {
   const inventoryId = String(host?.inventory) ?? '';
   const hostId = isHostPage ? params.id ?? '' : params.host_id ?? '';
 
+  const toolbarFilters = useHostsGroupsFilters(`hosts/${hostId ?? ''}/all_groups/`);
   const view = useAwxView<InventoryGroup>({
     url: awxAPI`/hosts/${hostId ?? ''}/all_groups/`,
     toolbarFilters,

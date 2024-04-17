@@ -15,9 +15,9 @@ import { useRelatedGroupsEmptyStateActions } from './hooks/useRelatedGroupsEmpty
 
 export function GroupRelatedGroups() {
   const { t } = useTranslation();
-  const toolbarFilters = useGroupsFilters();
   const tableColumns = useRelatedGroupsColumns();
   const params = useParams<{ id: string; inventory_type: string; group_id: string }>();
+  const toolbarFilters = useGroupsFilters(`groups/${params.group_id ?? ''}/children/`);
   const view = useAwxView<InventoryGroup>({
     url: awxAPI`/groups/${params.group_id ?? ''}/children/`,
     toolbarFilters,

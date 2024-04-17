@@ -18,7 +18,7 @@ export function InventoryHostGroupsAddModal(props: {
   inventoryId: string;
   hostId: string;
 }) {
-  const toolbarFilters = useHostsGroupsFilters();
+  const toolbarFilters = useHostsGroupsFilters(`inventories/${props.inventoryId ?? ''}/groups/`);
   const tableColumns = useHostsGroupsColumns({ disableLinks: true });
 
   const view = useAwxView<InventoryGroup>({

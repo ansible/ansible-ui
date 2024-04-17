@@ -14,7 +14,9 @@ export interface GroupSelectModalProps {
 
 export function GroupSelectDialog({ onSelectedGroups, groupId }: GroupSelectModalProps) {
   const { t } = useTranslation();
-  const toolbarFilters = useGroupsFilters();
+  const toolbarFilters = useGroupsFilters(
+    `groups/${groupId}/potential_children/?not__id=${groupId}&not__parents=${groupId}`
+  );
   const nameColumn = useNameColumn();
   const createdColumn = useCreatedColumn();
   const modifiedColumn = useModifiedColumn();

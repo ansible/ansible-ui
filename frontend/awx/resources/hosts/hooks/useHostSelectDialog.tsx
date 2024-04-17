@@ -15,13 +15,15 @@ export interface HostSelectModalProps {
 
 export function HostSelectDialog({ onSelectedHosts, groupId, inventoryId }: HostSelectModalProps) {
   const { t } = useTranslation();
-  const toolbarFilters = useGroupsFilters();
   const nameColumn = useNameColumn();
   const createdColumn = useCreatedColumn();
   const modifiedColumn = useModifiedColumn();
   const tableColumns = useMemo<ITableColumn<AwxHost>[]>(
     () => [nameColumn, createdColumn, modifiedColumn],
     [nameColumn, createdColumn, modifiedColumn]
+  );
+  const toolbarFilters = useGroupsFilters(
+    `inventories/${inventoryId}/hosts/?not__groups=${groupId}&order_by=name&page=1&page_size=5`
   );
   const view = useAwxView<AwxHost>({
     url: awxAPI`/inventories/${inventoryId}/hosts/?not__groups=${groupId}&order_by=name&page=1&page_size=5`,
