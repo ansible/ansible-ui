@@ -87,7 +87,12 @@ function RenderInnerDetail(props: { notificationTemplate: NotificationTemplate }
             return <></>;
           }
 
-          const caption = returnCaption(notificationTemplate.notification_type, key);
+          let caption = returnCaption(notificationTemplate.notification_type, key);
+
+          if (!caption)
+          {
+            caption = key;
+          }
 
           if (!list) {
             return (
@@ -164,18 +169,18 @@ function returnCaption(notification_type: string | null, key: string) {
   }
 
   if (notification_type === 'mattermost') {
-    if (key === 'url') return t('Target URL');
-    if (key === 'username') return t('Username');
-    if (key === 'channel') return t('Channel');
-    if (key === 'icon_url') return t('Icon URL');
-    if (key === 'no_verify_ssl') return t('Verify SSL');
+    if (key === 'mattermost_url') return t('Target URL');
+    if (key === 'mattermost_username') return t('Username');
+    if (key === 'mattermost_channel') return t('Channel');
+    if (key === 'mattermost_icon_url') return t('Icon URL');
+    if (key === 'mattermost_no_verify_ssl') return t('Verify SSL');
   }
 
   if (notification_type === 'rocketchat') {
-    if (key === 'url') return t('Target URL');
-    if (key === 'username') return t('Username');
-    if (key === 'icon_url') return t('Icon URL');
-    if (key === 'no_verify_ssl') return t('Disable SSL verification');
+    if (key === 'rocketchat_url') return t('Target URL');
+    if (key === 'rocketchat_username') return t('Username');
+    if (key === 'rocketchat_icon_url') return t('Icon URL');
+    if (key === 'rocketchat_no_verify_ssl') return t('Disable SSL verification');
   }
 
   if (notification_type === 'irc') {
