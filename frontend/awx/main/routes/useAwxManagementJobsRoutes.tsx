@@ -18,7 +18,7 @@ export function useAwxManagementJobsRoutes() {
       path: 'management-jobs',
       children: [
         {
-          id: AwxRoute.ManagementJobEditSchedule,
+          id: AwxRoute.ManagementJobScheduleEdit,
           path: ':id/schedules/:schedule_id/edit',
           element: <ScheduleEditWizard />,
         },

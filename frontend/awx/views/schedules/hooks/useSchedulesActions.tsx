@@ -8,8 +8,10 @@ import { cannotDeleteResource, cannotEditResource } from '../../../../common/uti
 import { awxAPI } from '../../../common/api/awx-utils';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { Schedule } from '../../../interfaces/Schedule';
-import { useGetSchedulCreateUrl } from './scheduleHelpers';
+import { useGetScheduleUrl } from './scheduleHelpers';
 import { useDeleteSchedules } from './useDeleteSchedules';
+import { JobTypeLabel, ScheduleRoutes } from '../types';
+import { UnifiedJobType } from '../../../resources/templates/WorkflowVisualizer/types';
 
 export function useSchedulesActions(options: {
   onScheduleToggleorDeleteCompleted: () => void;
@@ -27,7 +29,27 @@ export function useSchedulesActions(options: {
     [options]
   );
 
-  const editUrl = useGetSchedulCreateUrl(options.sublistEndpoint);
+  const jobTypeLabels: JobTypeLabel = useGetScheduleUrl({
+    scheduleEditRoute: true,
+  } as ScheduleRoutes);
+  const editUrl = useCallback(
+    (schedule: Schedule) => {
+      const unified_job_type = schedule.summary_fields.unified_job_template
+        .unified_job_type as UnifiedJobType;
+      const editRoute = jobTypeLabels[unified_job_type]?.scheduleEditRoute as string;
+      const isInventoryUpdate = unified_job_type === 'inventory_update';
+      if (editRoute === undefined) return '';
+      return isInventoryUpdate && schedule.summary_fields.inventory
+        ? editRoute
+            .replace(':id', schedule.summary_fields.inventory?.id.toString())
+            .replace(':source_id', schedule.summary_fields.unified_job_template.id.toString())
+            .replace(':schedule_id', schedule.id.toString())
+        : editRoute
+            .replace(':id', schedule.summary_fields.unified_job_template.id.toString())
+            .replace(':schedule_id', schedule.id.toString());
+    },
+    [jobTypeLabels]
+  );
   const rowActions = useMemo<IPageAction<Schedule>[]>(
     () => [
       {
@@ -48,7 +70,7 @@ export function useSchedulesActions(options: {
         icon: PencilAltIcon,
         label: t(`Edit schedule`),
         isDisabled: (schedule) => cannotEditResource(schedule, t, canCreateSchedule),
-        href: (schedule) => editUrl.replace('/create', `/${schedule.id.toString()}/edit`),
+        href: (schedule) => editUrl(schedule),
         isPinned: true,
       },
       { type: PageActionType.Seperator },

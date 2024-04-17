@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon';
-import { ReactElement } from 'react';
+import { ReactElement, useMemo } from 'react';
 import { useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useParams } from 'react-router-dom';
@@ -22,7 +22,7 @@ import { InventorySource } from '../../../interfaces/InventorySource';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
 import { LaunchConfiguration } from '../../../interfaces/LaunchConfiguration';
 import { Project } from '../../../interfaces/Project';
-import { ScheduleFormWizard } from '../types';
+import { ScheduleFormWizard, ScheduleRoutes } from '../types';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { PageFormInventorySelect } from '../../../resources/inventories/components/PageFormInventorySelect';
@@ -39,6 +39,98 @@ export const scheduleResourceTypeOptions: string[] = [
   'inventory',
   'projects',
 ];
+
+export function useGetScheduleUrl(routes: ScheduleRoutes) {
+  const { t } = useTranslation();
+  const getPageUrl = useGetPageUrl();
+  return useMemo(
+    () => ({
+      inventory_update: {
+        name: t('Inventory sync'),
+        scheduleDetailsRoute: routes?.scheduleDetailsRoute
+          ? getPageUrl(AwxRoute.InventorySourceScheduleDetails)
+          : undefined,
+        scheduleCreateRoute: routes?.scheduleCreateRoute
+          ? getPageUrl(AwxRoute.InventorySourceScheduleCreate)
+          : undefined,
+        scheduleEditRoute: routes?.scheduleEditRoute
+          ? getPageUrl(AwxRoute.InventorySourceScheduleEdit)
+          : undefined,
+        resourceDetailsRoute: routes?.resourceDetailsRoute
+          ? getPageUrl(AwxRoute.InventorySourceDetail)
+          : undefined,
+      },
+      job: {
+        name: t('Playbook run'),
+        scheduleDetailsRoute: routes?.scheduleDetailsRoute
+          ? getPageUrl(AwxRoute.JobTemplateScheduleDetails)
+          : undefined,
+        scheduleCreateRoute: routes?.scheduleCreateRoute
+          ? getPageUrl(AwxRoute.JobTemplateScheduleCreate)
+          : undefined,
+        scheduleEditRoute: routes?.scheduleEditRoute
+          ? getPageUrl(AwxRoute.JobTemplateScheduleEdit)
+          : undefined,
+        resourceDetailsRoute: routes?.resourceDetailsRoute
+          ? getPageUrl(AwxRoute.JobTemplateDetails)
+          : undefined,
+      },
+      project_update: {
+        name: t('Source control update'),
+        scheduleDetailsRoute: routes?.scheduleDetailsRoute
+          ? getPageUrl(AwxRoute.ProjectScheduleDetails)
+          : undefined,
+        scheduleDetailsCreate: routes?.scheduleCreateRoute
+          ? getPageUrl(AwxRoute.ProjectScheduleCreate)
+          : undefined,
+        scheduleDetailsEdit: routes?.scheduleEditRoute
+          ? getPageUrl(AwxRoute.ProjectScheduleEdit)
+          : undefined,
+        resourceDetailsRoute: routes?.resourceDetailsRoute
+          ? getPageUrl(AwxRoute.ProjectDetails)
+          : undefined,
+      },
+      system_job: {
+        name: t('Management job'),
+        scheduleDetailsRoute: routes?.scheduleDetailsRoute
+          ? getPageUrl(AwxRoute.ManagementJobScheduleDetails)
+          : undefined,
+        scheduleDetailsCreate: routes?.scheduleCreateRoute
+          ? getPageUrl(AwxRoute.ManagementJobScheduleCreate)
+          : undefined,
+        scheduleDetailsEdit: routes?.scheduleEditRoute
+          ? getPageUrl(AwxRoute.ManagementJobScheduleEdit)
+          : undefined,
+        resourceDetailsRoute: routes?.resourceDetailsRoute
+          ? getPageUrl(AwxRoute.ManagementJobDetails)
+          : undefined,
+      },
+      workflow_job: {
+        name: t('Workflow job'),
+        scheduleDetailsRoute: routes?.scheduleDetailsRoute
+          ? getPageUrl(AwxRoute.WorkflowJobTemplateScheduleDetails)
+          : undefined,
+        scheduleDetailsCreate: routes?.scheduleCreateRoute
+          ? getPageUrl(AwxRoute.WorkflowJobTemplateScheduleCreate)
+          : undefined,
+        scheduleDetailsEdit: routes?.scheduleEditRoute
+          ? getPageUrl(AwxRoute.WorkflowJobTemplateScheduleEdit)
+          : undefined,
+        resourceDetailsRoute: routes?.resourceDetailsRoute
+          ? getPageUrl(AwxRoute.WorkflowJobTemplateDetails)
+          : undefined,
+      },
+    }),
+    [
+      getPageUrl,
+      routes?.resourceDetailsRoute,
+      routes?.scheduleCreateRoute,
+      routes?.scheduleDetailsRoute,
+      routes?.scheduleEditRoute,
+      t,
+    ]
+  );
+}
 
 export function useGetSchedulCreateUrl(sublistEndPoint?: string) {
   const getPageUrl = useGetPageUrl();

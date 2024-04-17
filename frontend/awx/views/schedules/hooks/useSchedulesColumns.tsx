@@ -1,65 +1,36 @@
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { DateTimeCell, ITableColumn, TextCell, useGetPageUrl } from '../../../../../framework';
+import { DateTimeCell, ITableColumn, TextCell } from '../../../../../framework';
 import { useDescriptionColumn, useNameColumn, useTypeColumn } from '../../../../common/columns';
 import { Schedule } from '../../../interfaces/Schedule';
-import { AwxRoute } from '../../../main/AwxRoutes';
+import { useGetScheduleUrl } from './scheduleHelpers';
+import { JobTypeLabel, ScheduleRoutes } from '../types';
+import { UnifiedJobType } from '../../../resources/templates/WorkflowVisualizer/types';
 
 export function useSchedulesColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const getPageUrl = useGetPageUrl();
 
-  type JobTypeLabel = {
-    [key: string]: { [key: string]: string };
-  };
-  const jobTypeLabels: JobTypeLabel = useMemo(
-    () => ({
-      inventory_update: {
-        name: t('Inventory sync'),
-        scheduleDetailsRoute: getPageUrl(AwxRoute.InventorySourceScheduleDetails),
-        resourceDetailsRoute: getPageUrl(AwxRoute.InventorySourceDetail),
-      },
-      job: {
-        name: t('Playbook run'),
-        scheduleDetailsRoute: getPageUrl(AwxRoute.JobTemplateScheduleDetails),
-        resourceDetailsRoute: getPageUrl(AwxRoute.JobTemplateDetails),
-      },
-      project_update: {
-        name: t('Source control update'),
-        scheduleDetailsRoute: getPageUrl(AwxRoute.ProjectScheduleDetails),
-        resourceDetailsRoute: getPageUrl(AwxRoute.ProjectDetails),
-      },
-      system_job: {
-        name: t('Management job'),
-        scheduleDetailsRoute: getPageUrl(AwxRoute.ManagementJobScheduleDetails),
-        resourceDetailsRoute: getPageUrl(AwxRoute.ManagementJobs),
-      },
-      workflow_job: {
-        name: t('Workflow job'),
-        scheduleDetailsRoute: getPageUrl(AwxRoute.WorkflowJobTemplateScheduleDetails),
-        resourceDetailsRoute: getPageUrl(AwxRoute.WorkflowJobTemplateDetails),
-      },
-    }),
-    [getPageUrl, t]
-  );
+  const jobTypeLabels: JobTypeLabel = useGetScheduleUrl({
+    scheduleDetails: true,
+    resourceDetails: true,
+  } as ScheduleRoutes);
 
   const nameClick = useCallback(
     (schedule: Schedule) => {
-      const isInventoryUpdate =
-        schedule.summary_fields.unified_job_template.unified_job_type === 'inventory_update';
+      const unified_job_type = schedule.summary_fields.unified_job_template
+        .unified_job_type as UnifiedJobType;
+      const isInventoryUpdate = unified_job_type === 'inventory_update';
+      const detailRoute = jobTypeLabels[unified_job_type]?.scheduleDetailsRoute as string;
+      if (detailRoute === undefined) return '';
       return navigate(
         isInventoryUpdate && schedule.summary_fields.inventory
-          ? jobTypeLabels[
-              schedule.summary_fields.unified_job_template.unified_job_type
-            ].scheduleDetailsRoute
+          ? detailRoute
               .replace(':id', schedule.summary_fields.inventory?.id.toString())
               .replace(':source_id', schedule.summary_fields.unified_job_template.id.toString())
               .replace(':schedule_id', schedule.id.toString())
-          : jobTypeLabels[
-              schedule.summary_fields.unified_job_template.unified_job_type
-            ].scheduleDetailsRoute
+          : detailRoute
               .replace(':id', schedule.summary_fields.unified_job_template.id.toString())
               .replace(':schedule_id', schedule.id.toString())
       );
@@ -95,7 +66,7 @@ export function useSchedulesColumns(options?: { disableSort?: boolean; disableLi
               navigate(
                 jobTypeLabels[
                   schedule.summary_fields.unified_job_template.unified_job_type
-                ].resourceDetailsRoute.replace(
+                ]?.resourceDetailsRoute.replace(
                   ':id',
                   schedule.summary_fields.unified_job_template.id.toString()
                 )

@@ -57,7 +57,7 @@ export function useAwxTemplateRoutes() {
               element: <ScheduleAddWizard />,
             },
             {
-              id: AwxRoute.JobTemplateEditSchedule,
+              id: AwxRoute.JobTemplateScheduleEdit,
               path: ':id/schedules/:schedule_id/edit',
               element: <ScheduleEditWizard />,
             },
@@ -173,7 +173,7 @@ export function useAwxTemplateRoutes() {
               element: <ScheduleAddWizard />,
             },
             {
-              id: AwxRoute.WorkflowJobTemplateEditSchedule,
+              id: AwxRoute.WorkflowJobTemplateScheduleEdit,
               path: ':id/schedules/:schedule_id/edit',
               element: <ScheduleEditWizard />,
             },

@@ -67,3 +67,22 @@ export enum RuleType {
   Rules = 'rules',
   Exceptions = 'exceptions',
 }
+
+export interface ScheduleRoutes {
+  scheduleDetailsRoute?: boolean;
+  scheduleCreateRoute?: boolean;
+  scheduleEditRoute?: boolean;
+  resourceDetailsRoute?: boolean;
+}
+
+export type JobTypeLabel = {
+  [key: string]: scheduleResourceRoute;
+};
+
+export interface scheduleResourceRoute {
+  name: string;
+  scheduleDetailsRoute?: string;
+  scheduleCreateRoute?: string;
+  scheduleEditRoute?: string;
+  resourceDetailsRoute?: string;
+}
