@@ -12,6 +12,7 @@ import {
   PageActionType,
 } from './PageAction';
 import { usePageActionDisabled } from './PageActionUtils';
+import { useTranslation } from 'react-i18next';
 
 export function PageActionButton<T extends object>(props: {
   action:
@@ -42,6 +43,7 @@ export function PageActionButton<T extends object>(props: {
   const Icon = action.icon;
 
   let tooltip;
+  const { t } = useTranslation();
 
   if (isDisabled) {
     tooltip = isDisabled;
@@ -51,6 +53,15 @@ export function PageActionButton<T extends object>(props: {
     tooltip = action.label;
   } else {
     tooltip = undefined;
+  }
+
+  let isButtonDisabled = !!isDisabled;
+  if (
+    action.selection === PageActionSelection.Multiple &&
+    (!selectedItems || !selectedItems.length)
+  ) {
+    tooltip = t(`Select at least one item from the list`);
+    isButtonDisabled = true;
   }
 
   let variant = action.variant ?? ButtonVariant.secondary;
@@ -93,7 +104,7 @@ export function PageActionButton<T extends object>(props: {
           variant={variant}
           isDanger={action.isDanger}
           icon={Icon ? <Icon /> : undefined}
-          isAriaDisabled={!!isDisabled}
+          isAriaDisabled={isButtonDisabled}
           onClick={() => {
             if (action.type !== PageActionType.Link) {
               switch (action.selection) {
