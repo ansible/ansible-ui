@@ -39,7 +39,6 @@ describe('Schedules', () => {
 
   it('renders schedules list', () => {
     cy.verifyPageTitle('Schedules');
-    //cy.getTableRow('name', schedule.name);
     cy.deleteAWXSchedule(schedule);
   });
 

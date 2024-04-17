@@ -53,7 +53,6 @@ describe('schedules .cy.ts', () => {
       cy.get('tr').should('have.length.greaterThan', 0);
       cy.getByDataCy('filter-input').click();
       cy.clickButton(/^Clear all filters$/);
-      // Clear filter
     });
     it('Filter schedules by description', () => {
       cy.intercept(
