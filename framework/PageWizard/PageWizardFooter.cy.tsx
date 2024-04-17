@@ -23,6 +23,7 @@ describe('PageWizardFooter', () => {
     stepData: {},
     stepError: {},
     wizardData: {},
+    setSubmitError: () => {},
   };
 
   it('should show "Finish" instead of "Next" if active step is the last step', () => {
