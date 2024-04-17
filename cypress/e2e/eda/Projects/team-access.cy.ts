@@ -211,8 +211,8 @@ describe('Team Access Tab - Add team', () => {
 });
 
 describe('Team Access Tab - actions', () => {
-  let roleIDs: { [key: string]: string };
-  let ProjectRoleID: string;
+  let roleIDs: { [key: string]: number };
+  let ProjectRoleID: number;
   let edaProject: EdaProject;
   let edaTeam1: EdaTeam;
   let edaTeam2: EdaTeam;
@@ -241,6 +241,7 @@ describe('Team Access Tab - actions', () => {
               cy.createRoleTeamAssignments(resource_object.id.toString(), RoleID, team3.id);
 =======
               ProjectRoleID = roleIDs['Project Admin'];
+<<<<<<< HEAD
               cy.createRoleTeamAssignments(
                 project.id.toString(),
                 ProjectRoleID,
@@ -257,6 +258,11 @@ describe('Team Access Tab - actions', () => {
                 team3.id.toString()
               );
 >>>>>>> 736af524 (add custom commands and user access tab tests)
+=======
+              cy.createRoleTeamAssignments(project.id.toString(), ProjectRoleID, team1.id);
+              cy.createRoleTeamAssignments(project.id.toString(), ProjectRoleID, team2.id);
+              cy.createRoleTeamAssignments(project.id.toString(), ProjectRoleID, team3.id);
+>>>>>>> 067459c2 (eslint/tsc fixes)
             });
           });
         });

@@ -12,7 +12,7 @@ import {
 import { EdaDecisionEnvironment } from '../../frontend/eda/interfaces/EdaDecisionEnvironment';
 import { EdaProject } from '../../frontend/eda/interfaces/EdaProject';
 import { EdaResult } from '../../frontend/eda/interfaces/EdaResult';
-import { EdaRole, RoleDetail } from '../../frontend/eda/interfaces/EdaRole';
+import { EdaRbacRole, RoleDetail } from '../../frontend/eda/interfaces/EdaRbacRole';
 import { EdaRulebook } from '../../frontend/eda/interfaces/EdaRulebook';
 import {
   EdaRulebookActivation,
