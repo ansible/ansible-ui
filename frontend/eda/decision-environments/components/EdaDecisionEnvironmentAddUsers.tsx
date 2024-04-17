@@ -9,17 +9,17 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../framework';
+import { RoleAssignmentsReviewStep } from '../../../common/access/RolesWizard/steps/RoleAssignmentsReviewStep';
+import { postRequest } from '../../../common/crud/Data';
+import { useGet } from '../../../common/crud/useGet';
 import { EdaSelectRolesStep } from '../../access/roles/components/EdaSelectRolesStep';
 import { EdaSelectUsersStep } from '../../access/users/components/EdaSelectUsersStep';
-import { EdaRoute } from '../../main/EdaRoutes';
-import { useGet } from '../../../common/crud/useGet';
 import { edaAPI } from '../../common/eda-utils';
-import { postRequest } from '../../../common/crud/Data';
-import { EdaUser } from '../../interfaces/EdaUser';
-import { RoleAssignmentsReviewStep } from '../../../common/access/RolesWizard/steps/RoleAssignmentsReviewStep';
-import { EdaRbacRole } from '../../interfaces/EdaRbacRole';
 import { useEdaBulkActionDialog } from '../../common/useEdaBulkActionDialog';
 import { EdaDecisionEnvironment } from '../../interfaces/EdaDecisionEnvironment';
+import { EdaRbacRole } from '../../interfaces/EdaRbacRole';
+import { EdaUser } from '../../interfaces/EdaUser';
+import { EdaRoute } from '../../main/EdaRoutes';
 
 interface WizardFormValues {
   users: EdaUser[];
@@ -135,11 +135,15 @@ export function EdaDecisionEnvironmentAddUsers() {
           { label: t('Decision Environments'), to: getPageUrl(EdaRoute.DecisionEnvironments) },
           {
             label: decisionEnvironment?.name,
-            to: getPageUrl(EdaRoute.ProjectDetails, { params: { id: decisionEnvironment?.id } }),
+            to: getPageUrl(EdaRoute.DecisionEnvironmentDetails, {
+              params: { id: decisionEnvironment?.id },
+            }),
           },
           {
             label: t('User Access'),
-            to: getPageUrl(EdaRoute.ProjectUsers, { params: { id: decisionEnvironment?.id } }),
+            to: getPageUrl(EdaRoute.DecisionEnvironmentUserAccess, {
+              params: { id: decisionEnvironment?.id },
+            }),
           },
           { label: t('Add roles') },
         ]}
@@ -149,7 +153,9 @@ export function EdaDecisionEnvironmentAddUsers() {
         onSubmit={onSubmit}
         disableGrid
         onCancel={() => {
-          pageNavigate(EdaRoute.ProjectUsers, { params: { id: decisionEnvironment?.id } });
+          pageNavigate(EdaRoute.DecisionEnvironmentUserAccess, {
+            params: { id: decisionEnvironment?.id },
+          });
         }}
       />
     </PageLayout>
