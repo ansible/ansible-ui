@@ -36,6 +36,7 @@ export function SelectRolesStep<T extends object>(props: SelectRolesStepProps<T>
     descriptionForRoleSelection,
   } = props;
   const { wizardData } = usePageWizard();
+  const { resourceType } = wizardData as { [key: string]: unknown };
 
   const selectedItemsFromPreviousStep = useMemo(() => {
     if (wizardData && fieldNameForPreviousStep) {
@@ -46,7 +47,9 @@ export function SelectRolesStep<T extends object>(props: SelectRolesStepProps<T>
 
   const labelForSelectedItemsFromPreviousStep = useMemo(() => {
     if (selectedItemsFromPreviousStep?.length && fieldNameForPreviousStep) {
-      switch (fieldNameForPreviousStep) {
+      const previousStepKey =
+        fieldNameForPreviousStep === 'resources' ? resourceType : fieldNameForPreviousStep;
+      switch (previousStepKey) {
         case 'users':
           return t('Selected users');
         case 'teams':
@@ -72,7 +75,7 @@ export function SelectRolesStep<T extends object>(props: SelectRolesStepProps<T>
       }
     }
     return undefined;
-  }, [fieldNameForPreviousStep, selectedItemsFromPreviousStep?.length, t]);
+  }, [fieldNameForPreviousStep, resourceType, selectedItemsFromPreviousStep?.length, t]);
 
   return (
     <>

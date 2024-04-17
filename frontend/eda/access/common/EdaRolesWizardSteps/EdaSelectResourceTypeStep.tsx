@@ -27,12 +27,20 @@ export function EdaSelectResourceTypeStep() {
       label={t('Resource type')}
       name="resourceType"
       options={options
-        .filter((option) => option.value.startsWith('eda.') && !option.value.endsWith('extravar')) // TODO: Add extravar back if needed
+        .filter(
+          (option) =>
+            option.value.startsWith('eda.') &&
+            !['extravar', 'auditrule', 'rulebookprocess'].some(function (v) {
+              return option.value.endsWith(v);
+            })
+        )
         .map(({ value, display_name }) => ({
           value,
           label: display_name,
         }))}
       onChange={() => setWizardData({})}
+      placeholderText={t('Select a resource type')}
+      isRequired
     />
   );
 }

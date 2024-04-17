@@ -57,7 +57,7 @@ export function EdaAddUserRoles() {
     {
       id: 'roles',
       label: t('Select roles to apply'),
-      inputs: <EdaSelectRolesStep />,
+      inputs: <EdaSelectRolesStep fieldNameForPreviousStep="resources" />,
       validate: (formData, _) => {
         const { edaRoles } = formData as { edaRoles: EdaRbacRole[] };
         if (!edaRoles?.length) {
