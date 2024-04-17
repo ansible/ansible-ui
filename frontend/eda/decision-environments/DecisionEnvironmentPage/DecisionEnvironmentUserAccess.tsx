@@ -8,7 +8,7 @@ export function DecisionEnvironmentUserAccess() {
     <UserAccess
       id={params.id || ''}
       type={'decisionenvironment'}
-      addRolesRoute={EdaRoute.DecisionEnvironmentAddTeams}
+      addRolesRoute={EdaRoute.DecisionEnvironmentAddUsers}
     />
   );
 }
