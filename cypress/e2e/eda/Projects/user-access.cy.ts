@@ -45,8 +45,8 @@ describe('User Access Tab - Add User', () => {
 });
 
 describe('User Access Tab - actions', () => {
-  let roleIDs: { [key: string]: string };
-  let ProjectRoleID: string;
+  let roleIDs: { [key: string]: number };
+  let ProjectRoleID: number;
   let edaProject: EdaProject;
   let edaUser1: EdaUser;
   let edaUser2: EdaUser;
@@ -68,21 +68,9 @@ describe('User Access Tab - actions', () => {
                 return { ...acc, [name]: id };
               }, {});
               ProjectRoleID = roleIDs['Project Admin'];
-              cy.createRoleUserAssignments(
-                project.id.toString(),
-                ProjectRoleID,
-                user1.id.toString()
-              );
-              cy.createRoleUserAssignments(
-                project.id.toString(),
-                ProjectRoleID,
-                user2.id.toString()
-              );
-              cy.createRoleUserAssignments(
-                project.id.toString(),
-                ProjectRoleID,
-                user3.id.toString()
-              );
+              cy.createRoleUserAssignments(project.id.toString(), ProjectRoleID, user1.id);
+              cy.createRoleUserAssignments(project.id.toString(), ProjectRoleID, user2.id);
+              cy.createRoleUserAssignments(project.id.toString(), ProjectRoleID, user3.id);
             });
           });
         });

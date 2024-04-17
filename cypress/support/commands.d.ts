@@ -79,6 +79,7 @@ import {
   HubQueryRolesOptions,
   HubRequestOptions,
 } from './hub-commands';
+import { EdaRbacRole } from '../../frontend/eda/interfaces/EdaRbacRole';
 
 declare global {
   namespace Cypress {
@@ -1363,8 +1364,8 @@ declare global {
        */
       createRoleTeamAssignments(
         object_id: string,
-        role_definition: string,
-        team: string
+        role_definition: number,
+        team: number
       ): Chainable<void>;
 
       /**
@@ -1374,8 +1375,8 @@ declare global {
        */
       createRoleUserAssignments(
         object_id: string,
-        role_definition: string,
-        user: string
+        role_definition: number,
+        user: number
       ): Chainable<void>;
 
       /**
