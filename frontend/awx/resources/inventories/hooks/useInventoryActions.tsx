@@ -18,7 +18,6 @@ import { usePageAlertToaster } from '../../../../../framework';
 import { useCallback } from 'react';
 import { postRequest } from '../../../../common/crud/Data';
 import { awxAPI } from '../../../common/api/awx-utils';
-import { requestCommon } from '../../../../common/crud/requestCommon';
 
 type InventoryActionOptions = {
   onInventoriesDeleted: (inventories: Inventory[]) => void;
@@ -46,15 +45,16 @@ export function useInventoryActions({
 
   const cancelSync = useCallback(async () => {
     try {
-      /* we need to use requestCommon, because 
-           requestPost throws exception on json parse, while the request in network tab not fail
-           and correctly ends the running job */
-      await requestCommon({
-        url: awxAPI`/inventory_updates/${updateJobId?.toString() || ''}/cancel/`,
-        method: 'POST',
-      });
+      await postRequest(
+        awxAPI`/inventory_updates/${updateJobId?.toString() || ''}/cancel/`,
+        undefined
+      );
       setHideCancelButton(true);
     } catch (error) {
+      if (error?.toString() === 'SyntaxError: Unexpected end of JSON input') {
+        return;
+      }
+
       alertToaster.addAlert({
         variant: 'danger',
         title: t('Failed to cancel inventory source'),
