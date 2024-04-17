@@ -41,7 +41,7 @@ describe('Credentials', () => {
   });
 
   describe('Credentials: List View', () => {
-    it('can create and delete a machine credential', () => {
+    it('can create and delete a credential that renders a sub form', () => {
       const credentialName = 'E2E Credential ' + randomString(4);
       cy.navigateTo('awx', 'credentials');
       cy.clickButton(/^Create credential$/);
@@ -74,6 +74,47 @@ describe('Credentials', () => {
               cy.verifyPageTitle('Credentials');
             });
         });
+    });
+
+    it('edit credential type that renders a sub form', () => {
+      const credentialName = 'E2E Credential ' + randomString(4);
+      cy.navigateTo('awx', 'credentials');
+      cy.clickButton(/^Create credential$/);
+      cy.get('[data-cy="name"]').type(credentialName);
+      cy.selectDropdownOptionByResourceName('credential-type', 'Amazon Web Services');
+      cy.get('[data-cy="username"]').type('username');
+      cy.get('[data-cy="password"]').type('password');
+      cy.singleSelectByDataCy('organization', organization.name);
+      cy.clickButton(/^Create credential$/);
+      cy.verifyPageTitle(credentialName);
+      cy.get('[data-cy="name"]').contains(credentialName);
+      cy.contains('Access Key').should('be.visible');
+      cy.get('[data-cy="access-key"]').contains('username');
+      cy.contains('Secret Key').should('be.visible');
+      cy.get('[data-cy="secret-key"]').contains('Encrypted');
+      cy.contains('Organization').should('be.visible');
+      cy.contains(organization.name);
+      cy.get('[data-cy="edit-credential"]').click();
+      cy.verifyPageTitle('Edit Credential');
+      const ModifiedCredentialName = credentialName + ' - edited';
+      cy.get('[data-cy="name"]').type(ModifiedCredentialName);
+      cy.get('[data-cy="username"]').clear().type('username');
+      cy.get('[data-cy="password"]').clear().type('password');
+      cy.get('[data-cy="security-token"]').type('security-token');
+      cy.clickButton(/^Save credential$/);
+      cy.get('[data-cy="name"]').contains(ModifiedCredentialName);
+      cy.contains(ModifiedCredentialName).should('be.visible');
+      cy.contains('Access Key').should('be.visible');
+      cy.get('[data-cy="access-key"]').contains('username');
+      cy.contains('Secret Key').should('be.visible');
+      cy.get('[data-cy="secret-key"]').contains('Encrypted');
+      cy.get('[data-cy="sts-token"]').contains('Encrypted');
+      cy.contains('Organization').should('be.visible');
+      // //delete created credential
+      cy.clickPageAction('delete-credential');
+      cy.get('#confirm').click();
+      cy.clickButton(/^Delete credential/);
+      cy.verifyPageTitle('Credentials');
     });
 
     it.skip('can create and delete one of each kind of credential', () => {
