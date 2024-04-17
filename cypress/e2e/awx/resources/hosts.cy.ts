@@ -97,6 +97,19 @@ describe('host and inventory host', () => {
     });
   });
 
+  it.skip('can see, launch and cancel jobs from host jobs tab', () => {
+    // create new host
+    // create job template with the current inventory
+    // job type must be run.
+    // TODO: check if there is a function for that
+    // launch job
+    // got to host - make sure job is visible
+    // launch it for all hosts
+    // verify
+    // lanuch it for all failed hosts
+    // cancel launch
+  });
+
   // assisting functions
   function createAndCheckHost(inventory_host: boolean, inventory: string) {
     const hostName = 'E2E Inventory host ' + randomString(4);
