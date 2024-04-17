@@ -1,6 +1,18 @@
 import { CredentialType as SwaggerCredentialType } from './generated-from-swagger/api';
 import { SummaryFieldsByUser } from './summary-fields/summary-fields';
 
+export interface CredentialInputField {
+  id: string;
+  choices?: string[];
+  label: string;
+  secret: boolean;
+  type: string;
+  help_text: string;
+  multiline?: boolean;
+  default?: boolean | string;
+  ask_at_runtime?: boolean;
+}
+
 export interface CredentialType
   extends Omit<SwaggerCredentialType, 'id' | 'name' | 'managed' | 'related' | 'summary_fields'> {
   id: number;
@@ -18,17 +30,7 @@ export interface CredentialType
     };
   };
   inputs: {
-    fields: {
-      id: string;
-      choices?: string[];
-      label: string;
-      secret: boolean;
-      type: string;
-      help_text: string;
-      multiline?: boolean;
-      default?: boolean | string;
-      ask_at_runtime?: boolean;
-    }[];
+    fields: CredentialInputField[];
     required: string[];
     metadata: {
       id: string;
