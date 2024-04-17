@@ -8,6 +8,7 @@ import { useRulebookActivationActions } from './hooks/useRulebookActivationActio
 import { useRulebookActivationColumns } from './hooks/useRulebookActivationColumns';
 import { useRulebookActivationFilters } from './hooks/useRulebookActivationFilters';
 import { useRulebookActivationsActions } from './hooks/useRulebookActivationsActions';
+import { PlusCircleIcon } from '@patternfly/react-icons';
 
 export function RulebookActivations() {
   const { t } = useTranslation();
@@ -38,6 +39,7 @@ export function RulebookActivations() {
           'There are currently no rulebook activations created for your organization.'
         )}
         emptyStateDescription={t('Please create a rulebook activation by using the button below.')}
+        emptyStateButtonIcon={<PlusCircleIcon />}
         emptyStateButtonText={t('Create rulebook activation')}
         emptyStateButtonClick={() => pageNavigate(EdaRoute.CreateRulebookActivation)}
         {...view}

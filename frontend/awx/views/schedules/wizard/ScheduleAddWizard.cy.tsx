@@ -33,7 +33,7 @@ describe('ScheduleAddWizard', () => {
       id: 100,
       name: 'Mock Job Template',
       description: 'Job Template Description',
-      unified_job_type: 'job',
+      type: 'job_template',
       _enabled: true,
     };
     const mockTemplates = {
@@ -87,7 +87,7 @@ describe('ScheduleAddWizard', () => {
         });
       });
 
-      cy.selectDropdownOptionByResourceName('node_type', 'Job template');
+      cy.selectDropdownOptionByResourceName('schedule_type', 'Job template');
       cy.selectDropdownOptionByResourceName('job-template-select', 'Mock Job Template');
 
       cy.get('[data-cy="wizard-nav"]').within(() => {
@@ -104,7 +104,7 @@ describe('ScheduleAddWizard', () => {
         initialEntries: ['/schedules/add'],
         path: '/schedules/add',
       });
-      cy.selectDropdownOptionByResourceName('node_type', 'Job template');
+      cy.selectDropdownOptionByResourceName('schedule_type', 'Job template');
       cy.clickButton(/^Next$/);
       cy.get('[data-cy="name-form-group"]').within(() => {
         cy.get('span.pf-v5-c-helper-text__item-text').should(
@@ -135,10 +135,10 @@ describe('ScheduleAddWizard', () => {
         });
       });
 
-      cy.selectDropdownOptionByResourceName('node_type', 'Job template');
+      cy.selectDropdownOptionByResourceName('schedule_type', 'Job template');
       cy.selectDropdownOptionByResourceName('job-template-select', 'Mock Job Template');
       cy.get('[data-cy="name"]').type('Test Schedule');
-      cy.selectDropdownOptionByResourceName('timezone', 'Zulu');
+      cy.selectSingleSelectOption('[data-cy="timezone"]', 'Zulu');
       cy.clickButton(/^Next$/);
     });
     it('Should create a very basic rule.', () => {
@@ -210,6 +210,32 @@ describe('ScheduleAddWizard', () => {
       cy.get('tbody').within(() => {
         cy.get('tr').should('have.length', 1);
       });
+    });
+  });
+
+  describe('Saving a schedule', () => {
+    beforeEach(() => {
+      cy.intercept({ method: 'GET', url: awxAPI`/job_templates/*` }, mockTemplates);
+      cy.intercept('/api/v2/job_templates/100/', { id: 100, name: 'Mock Job Template' });
+      cy.intercept('/api/v2/job_templates/100/launch/', {});
+      cy.mount(<ScheduleAddWizard />, {
+        initialEntries: ['/schedules/add'],
+        path: '/schedules/add',
+      });
+
+      cy.get('[data-cy="wizard-nav"]').within(() => {
+        ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
+          cy.get('li')
+            .eq(index)
+            .should((el) => expect(el.text().trim()).to.equal(text));
+        });
+      });
+
+      cy.selectDropdownOptionByResourceName('schedule_type', 'Job template');
+      cy.selectDropdownOptionByResourceName('job-template-select', 'Mock Job Template');
+      cy.get('[data-cy="name"]').type('Test Schedule');
+      cy.selectSingleSelectOption('[data-cy="timezone"]', 'Zulu');
+      cy.clickButton(/^Next$/);
     });
   });
 });

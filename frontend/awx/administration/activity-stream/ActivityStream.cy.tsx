@@ -1,5 +1,16 @@
 import { ActivityStreams } from './ActivityStream';
 
+beforeEach(() => {
+  cy.intercept(
+    {
+      method: 'OPTIONS',
+      url: '/api/v2/activity_stream/',
+    },
+    {
+      fixture: 'mock_activity_stream_options.json',
+    }
+  );
+});
 describe('Activity Stream Tests', () => {
   describe('Error list', () => {
     it('Displays error if activity stream is not successfully loaded', () => {
@@ -349,10 +360,12 @@ describe('Activity Stream Tests', () => {
       ).as('activityStreamSettingRequest');
       cy.mount(<ActivityStreams />);
       cy.wait('@activityStreamSettingRequest').then(() => {
+        cy.filterTableByTextFilter('object1', 'setting');
         cy.get('button[data-cy="view-event-details"]').first().click();
         cy.get('#setting-name').should('exist');
         cy.get('#setting-category').should('exist');
         cy.get('[aria-label="Close"]').click();
+        cy.clearAllFilters();
       });
     });
   });

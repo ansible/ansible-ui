@@ -1,5 +1,5 @@
 import { ButtonVariant } from '@patternfly/react-core';
-import { MinusCircleIcon, PlusIcon } from '@patternfly/react-icons';
+import { MinusCircleIcon, PlusCircleIcon, PlusIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { IPageAction, PageActionSelection, PageActionType, PageTable } from '../../../../framework';
@@ -80,6 +80,7 @@ export function ResourcePeersList(props: { url: string }) {
       errorStateTitle={t('Error loading peers')}
       emptyStateTitle={t('No peers found')}
       emptyStateDescription={t('Please add Peers to populate this list.')}
+      emptyStateButtonIcon={<PlusCircleIcon />}
       emptyStateButtonText={t('Associate peer')}
       emptyStateButtonClick={multiSelectelectPeer}
       {...view}

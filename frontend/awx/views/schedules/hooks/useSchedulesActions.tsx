@@ -26,6 +26,7 @@ export function useSchedulesActions(options: {
     },
     [options]
   );
+
   const editUrl = useGetSchedulCreateUrl(options.sublistEndpoint);
   const rowActions = useMemo<IPageAction<Schedule>[]>(
     () => [
@@ -47,7 +48,7 @@ export function useSchedulesActions(options: {
         icon: PencilAltIcon,
         label: t(`Edit schedule`),
         isDisabled: (schedule) => cannotEditResource(schedule, t, canCreateSchedule),
-        href: () => editUrl,
+        href: (schedule) => editUrl.replace('/create', `/${schedule.id.toString()}/edit`),
         isPinned: true,
       },
       { type: PageActionType.Seperator },

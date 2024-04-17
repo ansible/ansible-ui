@@ -32,6 +32,16 @@ describe('Users List Actions', () => {
     cy.verifyPageTitle('Users');
   });
 
+  it('filters users by id', () => {
+    cy.navigateTo('awx', 'users');
+    cy.filterTableByMultiSelect('id', [user.id.toString()]);
+    cy.get('tr').should('have.length.greaterThan', 0);
+    if (user.id) {
+      cy.contains(user.id).should('be.visible');
+    }
+    cy.clearAllFilters();
+  });
+
   it('creates and then deletes a basic user', () => {
     const userName = 'E2E_User_' + randomString(4);
     const password = randomString(12);
@@ -52,7 +62,7 @@ describe('Users List Actions', () => {
 
   it('renders the user details page', () => {
     cy.navigateTo('awx', 'users');
-    cy.clickTableRow(user.username);
+    cy.clickTableRowLink('username', user.username);
     cy.verifyPageTitle(user.username);
     cy.clickLink(/^Details$/);
     cy.contains('#username', user.username);
@@ -60,7 +70,7 @@ describe('Users List Actions', () => {
 
   it('edits a user from the details page', () => {
     cy.navigateTo('awx', 'users');
-    cy.clickTableRow(user.username);
+    cy.clickTableRowLink('username', user.username);
     cy.verifyPageTitle(user.username);
     cy.clickButton(/^Edit user$/);
     cy.verifyPageTitle('Edit User');
@@ -100,7 +110,7 @@ describe('Users Delete Actions', () => {
 
   it('deletes a user from the details page', () => {
     cy.navigateTo('awx', 'users');
-    cy.clickTableRow(user.username);
+    cy.clickTableRowLink('username', user.username);
     cy.verifyPageTitle(user.username);
     cy.clickPageAction('delete-user');
     cy.get('#confirm').click();

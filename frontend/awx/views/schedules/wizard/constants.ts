@@ -1,6 +1,7 @@
 import { Frequency, RRule } from 'rrule';
+import { ScheduleResourceType } from '../types';
 
-export const OCCURRENCES_DEFAULT_VALUES = {
+export const RULES_DEFAULT_VALUES = {
   freq: Frequency.WEEKLY,
   interval: 1,
   wkst: RRule.SU,
@@ -10,14 +11,10 @@ export const OCCURRENCES_DEFAULT_VALUES = {
   bymonthday: null,
   byyearday: null,
   bysetpos: null,
-  until: null,
-  endDate: '',
-  endTime: '',
+  until: { endDate: '', endTime: '' },
   count: null,
   byminute: null,
   byhour: null,
-  endingType: '',
-  rules: [],
 };
 
 export const WEEKS_OF_YEAR = Array.from({ length: 52 }, (_, i) => i + 1).map((week) => ({
@@ -42,3 +39,11 @@ export const HOURS_OF_DAY = Array.from(Array(24), (_, i) => i).map((hour) => ({
   value: hour,
   label: `${hour}`,
 }));
+
+export const RESOURCE_TYPE: Record<ScheduleResourceType, ScheduleResourceType> = {
+  job: 'job',
+  workflow_job: 'workflow_job',
+  project_update: 'project_update',
+  inventory_update: 'inventory_update',
+  system_job: 'system_job',
+};

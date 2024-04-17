@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 import { RRule } from 'rrule';
 import { useRuleRowActions } from '../hooks/useRuleRowActions';
 import { RuleListItemType } from '../types';
+import { PlusCircleIcon } from '@patternfly/react-icons';
 
 export function RulesList(props: {
   setIsOpen: (isOpen: boolean | number) => void;
@@ -20,7 +21,9 @@ export function RulesList(props: {
       {
         header: 'Rrule',
         type: 'text',
-        value: (item: RuleListItemType) => RRule.optionsToString(item.rule.options),
+        value: (item: RuleListItemType) => {
+          return RRule.optionsToString(item.rule.options);
+        },
       },
       {
         header: 'Description',
@@ -74,6 +77,7 @@ export function RulesList(props: {
             ? t('To get started, create an exception.')
             : t('To get started, create an rule.')
         }
+        emptyStateButtonIcon={<PlusCircleIcon />}
         emptyStateButtonText={isExceptions ? t('Create exception') : t('Create Rule')}
         emptyStateButtonClick={() => props.setIsOpen(true)}
         defaultSubtitle={isExceptions ? t('Exceptions') : t('Rules')}

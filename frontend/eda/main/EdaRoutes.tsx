@@ -17,6 +17,7 @@ export enum EdaRoute {
   RulebookActivationInstancePage = 'eda-rulebook-activation-instance-page',
   RulebookActivationInstanceDetails = 'eda-rulebook-activation-instance-details',
   RulebookActivationTeamAccess = 'eda-rulebook-activation-team-access',
+  RulebookActivationUserAccess = 'eda-rulebook-activation-user-access',
   RulebookActivationAddTeams = 'eda-rulebook-activation-add-teams',
 
   Projects = 'eda-projects',
@@ -25,7 +26,7 @@ export enum EdaRoute {
   ProjectPage = 'eda-project-page',
   ProjectDetails = 'eda-project-details',
   ProjectTeamAccess = 'eda-project-project-team-access',
-  ProjectUsers = 'eda-project-users',
+  ProjectUserAccess = 'eda-project-project-user-access',
   ProjectAddUsers = 'eda-project-add-users',
   ProjectAddTeams = 'eda-project-add-teams',
 
@@ -35,6 +36,7 @@ export enum EdaRoute {
   DecisionEnvironmentPage = 'eda-decision-environment-page',
   DecisionEnvironmentDetails = 'eda-decision-environment-details',
   DecisionEnvironmentTeamAccess = 'eda-decision-environments-team-access',
+  DecisionEnvironmentUserAccess = 'eda-decision-environments-user-access',
   DecisionEnvironmentAddTeams = 'eda-decision-environments-add-teams',
 
   Credentials = 'eda-credentials',
@@ -42,7 +44,8 @@ export enum EdaRoute {
   EditCredential = 'eda-edit-credential',
   CredentialPage = 'eda-credential-page',
   CredentialDetails = 'eda-credential-details',
-  CredentialTeamAccess = 'eda-credential-team=access',
+  CredentialTeamAccess = 'eda-credential-team-access',
+  CredentialUserAccess = 'eda-credential-user-access',
   CredentialAddTeams = 'eda-credential-add-teams',
 
   CredentialTypes = 'eda-credential-types',

@@ -1,0 +1,49 @@
+{
+  "count": 4,
+  "next": null,
+  "previous": null,
+  "page_size": 10,
+  "page": 1,
+  "results": [
+    {
+      "id": 2,
+      "name": "Test",
+      "description": "",
+      "organization_id": 1,
+      "created": "2024-04-04T19:07:59.894304Z",
+      "created_by": 1,
+      "modified": "2024-04-04T19:07:59.894269Z",
+      "modified_by": 1
+    },
+    {
+      "id": 3,
+      "name": "Demo",
+      "description": "",
+      "organization_id": 1,
+      "created": "2024-04-04T19:08:08.928387Z",
+      "created_by": 1,
+      "modified": "2024-04-04T19:08:08.928338Z",
+      "modified_by": 1
+    },
+    {
+      "id": 4,
+      "name": "Platform",
+      "description": "",
+      "organization_id": 1,
+      "created": "2024-04-04T19:08:21.825944Z",
+      "created_by": 1,
+      "modified": "2024-04-04T19:08:21.825887Z",
+      "modified_by": 1
+    },
+    {
+      "id": 5,
+      "name": "Galaxy",
+      "description": "",
+      "organization_id": 1,
+      "created": "2024-04-04T19:08:27.308818Z",
+      "created_by": 1,
+      "modified": "2024-04-04T19:08:27.308767Z",
+      "modified_by": 1
+    }
+  ]
+}

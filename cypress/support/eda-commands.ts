@@ -83,7 +83,7 @@ Cypress.Commands.add('getEdaRulebooks', (edaProject, rulebookName?: string) => {
 Cypress.Commands.add(
   'createEdaRulebookActivation',
   (edaRulebookActivation: SetOptional<EdaRulebookActivationCreate, 'name'>) => {
-    cy.requestPost<EdaRulebookActivation>(edaAPI`/activations/`, {
+    cy.requestPost<EdaRulebookActivationCreate>(edaAPI`/activations/`, {
       name: 'E2E Rulebook Activation ' + randomString(5),
       restart_policy: RestartPolicyEnum.OnFailure,
       ...edaRulebookActivation,
@@ -321,6 +321,7 @@ Cypress.Commands.add(
       {
         username: `E2EUser${randomString(4)}`,
         password: `${randomString(4)}`,
+        roles: [],
         ...user,
       }
     ).then((edaUser) => {
