@@ -24,7 +24,7 @@ const placeholderText = 'Placeholder';
 
 function PageSingleSelectTest<T>(props: {
   placeholder: string;
-  defaultValue?: T;
+  defaultValue?: T | null;
   options: PageSelectOption<T>[];
   footer?: ReactNode;
 }) {

@@ -42,7 +42,7 @@ function PageAsyncSingleSelectTest(
   }
 ) {
   const { defaultValue, ...rest } = props;
-  const [value, setValue] = useState<number | undefined>(() => defaultValue);
+  const [value, setValue] = useState<number | undefined | null>(() => defaultValue);
   return (
     <PageSection>
       <PageAsyncSingleSelect<number>

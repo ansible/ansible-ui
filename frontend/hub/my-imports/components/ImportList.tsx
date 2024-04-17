@@ -56,7 +56,7 @@ interface IProps {
   collectionImports: CollectionImport[];
   selectedImport: string;
   setSelectedImport: (collectionImport: string) => void;
-  setSelectedNamespace: (namespace: string) => void;
+  setSelectedNamespace: (namespace: string | null) => void;
   setDrawerExpanded: () => void;
   collectionFilter: IFilterState;
   setCollectionFilter: Dispatch<SetStateAction<IFilterState>>;
@@ -165,7 +165,7 @@ export function ImportList({
           <PageAsyncSingleSelect<string>
             id="namespace-selector"
             queryOptions={queryOptions}
-            onSelect={(namespace: string) => setSelectedNamespace(namespace)}
+            onSelect={(namespace: string | null) => setSelectedNamespace(namespace)}
             placeholder={t('Select namespace')}
             value={namespace || ''}
             footer={
