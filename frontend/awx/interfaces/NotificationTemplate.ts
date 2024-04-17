@@ -3,7 +3,12 @@ import { NotificationTemplate as SwaggerNotificationTemplate } from './generated
 export interface NotificationTemplate
   extends Omit<
     SwaggerNotificationTemplate,
-    'id' | 'name' | 'organization' | 'summary_fields' | 'notification_type'
+    | 'id'
+    | 'name'
+    | 'organization'
+    | 'summary_fields'
+    | 'notification_type'
+    | 'notification_configuration'
   > {
   id: number;
   name: string;
@@ -25,7 +30,9 @@ export interface NotificationTemplate
       description: string;
     };
   };
-  notification_configuration: { [key: string]: number | string | boolean | string[] };
+  notification_configuration: {
+    [key: string]: number | string | boolean | string[] | { [key: string]: unknown };
+  };
   notification_type:
     | 'email'
     | 'grafana'

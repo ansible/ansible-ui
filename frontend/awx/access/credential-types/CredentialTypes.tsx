@@ -1,4 +1,4 @@
-import { CubesIcon } from '@patternfly/react-icons';
+import { CubesIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { PageHeader, PageLayout, PageTable, usePageNavigate } from '../../../../framework';
 import { useOptions } from '../../../common/crud/useOptions';
@@ -72,6 +72,7 @@ export function CredentialTypes() {
               )
         }
         emptyStateIcon={canCreateCredentialType ? undefined : CubesIcon}
+        emptyStateButtonIcon={<PlusCircleIcon />}
         emptyStateButtonText={canCreateCredentialType ? t('Create credential type') : undefined}
         emptyStateButtonClick={
           canCreateCredentialType ? () => pageNavigate(AwxRoute.CreateCredentialType) : undefined
