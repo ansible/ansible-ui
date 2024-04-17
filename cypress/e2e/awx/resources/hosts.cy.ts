@@ -97,7 +97,7 @@ describe('host and inventory host', () => {
     });
   });
 
-  it.skip('can work with host job tab', () => {
+  it.skip('can see, launch and cancel jobs from host jobs tab', () => {
     // create new host
     // create job template with the current inventory
     // job type must be run.
@@ -107,7 +107,7 @@ describe('host and inventory host', () => {
     // launch it for all hosts
     // verify
     // lanuch it for all failed hosts
-    //cencal launch
+    // cancel launch
   });
 
   // assisting functions
