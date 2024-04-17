@@ -45,8 +45,8 @@ describe('Team Access Tab - Add team', () => {
 });
 
 describe('Team Access Tab - actions', () => {
-  let roleIDs: { [key: string]: string };
-  let ProjectRoleID: string;
+  let roleIDs: { [key: string]: number };
+  let ProjectRoleID: number;
   let edaProject: EdaProject;
   let edaTeam1: EdaTeam;
   let edaTeam2: EdaTeam;
@@ -68,21 +68,9 @@ describe('Team Access Tab - actions', () => {
                 return { ...acc, [name]: id };
               }, {});
               ProjectRoleID = roleIDs['Project Admin'];
-              cy.createRoleTeamAssignments(
-                project.id.toString(),
-                ProjectRoleID,
-                team1.id.toString()
-              );
-              cy.createRoleTeamAssignments(
-                project.id.toString(),
-                ProjectRoleID,
-                team2.id.toString()
-              );
-              cy.createRoleTeamAssignments(
-                project.id.toString(),
-                ProjectRoleID,
-                team3.id.toString()
-              );
+              cy.createRoleTeamAssignments(project.id.toString(), ProjectRoleID, team1.id);
+              cy.createRoleTeamAssignments(project.id.toString(), ProjectRoleID, team2.id);
+              cy.createRoleTeamAssignments(project.id.toString(), ProjectRoleID, team3.id);
             });
           });
         });

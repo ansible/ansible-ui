@@ -8,7 +8,7 @@ import { EdaCredential, EdaCredentialCreate } from '../../frontend/eda/interface
 import { EdaDecisionEnvironment } from '../../frontend/eda/interfaces/EdaDecisionEnvironment';
 import { EdaProject } from '../../frontend/eda/interfaces/EdaProject';
 import { EdaResult } from '../../frontend/eda/interfaces/EdaResult';
-import { EdaRole } from '../../frontend/eda/interfaces/EdaRole';
+import { EdaRbacRole } from '../../frontend/eda/interfaces/EdaRbacRole';
 import { EdaRulebook } from '../../frontend/eda/interfaces/EdaRulebook';
 import {
   EdaRulebookActivation,
@@ -286,7 +286,7 @@ Cypress.Commands.add('getEdaCredentialByName', (edaCredentialName: string) => {
 });
 
 Cypress.Commands.add('getEdaRoles', () => {
-  cy.requestGet<EdaResult<EdaRole>>(edaAPI`/role_definitions/`).then((response) => {
+  cy.requestGet<EdaResult<EdaRbacRole>>(edaAPI`/role_definitions/`).then((response) => {
     const edaRoles = response.results;
     return edaRoles;
   });

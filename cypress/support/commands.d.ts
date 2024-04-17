@@ -31,7 +31,6 @@ import { EdaCredential } from '../../frontend/eda/interfaces/EdaCredential';
 import { EdaDecisionEnvironment } from '../../frontend/eda/interfaces/EdaDecisionEnvironment';
 import { EdaProject } from '../../frontend/eda/interfaces/EdaProject';
 import { EdaResult } from '../../frontend/eda/interfaces/EdaResult';
-import { EdaRole } from '../../frontend/eda/interfaces/EdaRole';
 import { EdaRulebook } from '../../frontend/eda/interfaces/EdaRulebook';
 import {
   EdaRulebookActivation,
@@ -77,6 +76,7 @@ import {
   HubQueryRolesOptions,
   HubRequestOptions,
 } from './hub-commands';
+import { EdaRbacRole } from '../../frontend/eda/interfaces/EdaRbacRole';
 
 declare global {
   namespace Cypress {
@@ -1282,7 +1282,7 @@ declare global {
        */
       deleteEdaCredential(credential: EdaCredential): Chainable<void>;
 
-      getEdaRoles(): Chainable<EdaRole[]>;
+      getEdaRoles(): Chainable<EdaRbacRole[]>;
       /**
        * Creates an EDA user and returns the same.
        *
@@ -1320,8 +1320,8 @@ declare global {
        */
       createRoleTeamAssignments(
         object_id: string,
-        role_definition: string,
-        team: string
+        role_definition: number,
+        team: number
       ): Chainable<void>;
 
       /**
@@ -1331,8 +1331,8 @@ declare global {
        */
       createRoleUserAssignments(
         object_id: string,
-        role_definition: string,
-        user: string
+        role_definition: number,
+        user: number
       ): Chainable<void>;
 
       /**
