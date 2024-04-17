@@ -1,16 +1,13 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { FieldPath, FieldValues, PathValue, useFormContext, useWatch } from 'react-hook-form';
-import { ITableColumn, IToolbarFilter, usePageDialog } from '../../../framework';
-import { MultiSelectDialog } from '../../../framework';
+import { ITableColumn, IToolbarFilter, MultiSelectDialog, usePageDialog } from '../../../framework';
+import { PageFormAsyncMultiSelect } from '../../../framework/PageForm/Inputs/PageFormAsyncMultiSelect';
 import { PageAsyncSelectOptionsFn } from '../../../framework/PageInputs/PageAsyncSelectOptions';
+import { AsyncQueryLabel } from '../../../framework/components/AsyncQueryLabel';
 import { useID } from '../../../framework/hooks/useID';
 import { requestGet } from '../../common/crud/Data';
 import { AwxItemsResponse } from './AwxItemsResponse';
-import { useAwxView } from './useAwxView';
-import { AwxAsyncName } from './PageFormSingleSelectAwxResource';
-import { PageFormAsyncMultiSelect } from '../../../framework/PageForm/Inputs/PageFormAsyncMultiSelect';
-import { QueryParams } from './useAwxView';
-import { getQueryString } from './useAwxView';
+import { QueryParams, useAwxView } from './useAwxView';
 
 export function PageFormMultiSelectAwxResource<
   Resource extends { id: number; name: string; description?: string | null | undefined },
@@ -22,7 +19,7 @@ export function PageFormMultiSelectAwxResource<
   name: Name;
   label: string;
   isRequired?: boolean;
-  isDisabled?: boolean;
+  isDisabled?: string;
   url: string;
   toolbarFilters?: IToolbarFilter[];
   tableColumns: ITableColumn<Resource>[];
@@ -31,6 +28,7 @@ export function PageFormMultiSelectAwxResource<
   queryPlaceholder: string;
   queryErrorText: string;
   helperText?: string;
+  additionalControls?: React.ReactNode;
   labelHelp?: string;
   queryParams?: QueryParams;
 }) {
@@ -39,11 +37,24 @@ export function PageFormMultiSelectAwxResource<
   const queryOptions = useCallback<PageAsyncSelectOptionsFn<PathValue<FormData, Name>>>(
     async (options) => {
       try {
-        let url =
-          props.url + `?page_size=10&order_by=name&` + getQueryString(props.queryParams || {});
-        if (options.next) url = url + `&name__gt=${options.next}`;
-        if (options.search) url = url + `&name__icontains=${options.search}`;
-        const response = await requestGet<AwxItemsResponse<Resource>>(url, options.signal);
+        const baseUrl = props.url.split('?')[0];
+        const queryString = props.url.split('?')[1];
+        const urlSearchParams = new URLSearchParams(queryString);
+        urlSearchParams.delete('page_size');
+        urlSearchParams.set('page_size', '10');
+        urlSearchParams.delete('order_by');
+        urlSearchParams.set('order_by', 'name');
+        if (props.queryParams) {
+          for (const [key, value] of Object.entries(props.queryParams)) {
+            urlSearchParams.set(key, value);
+          }
+        }
+        if (options.next) urlSearchParams.set('name__gt', options.next.toString());
+        if (options.search) urlSearchParams.set('name__icontains', options.search);
+        const response = await requestGet<AwxItemsResponse<Resource>>(
+          baseUrl + '?' + decodeURIComponent(urlSearchParams.toString()),
+          options.signal
+        );
         return {
           remaining: response.count - response.results.length,
           options:
@@ -66,10 +77,11 @@ export function PageFormMultiSelectAwxResource<
   );
 
   const [_, setDialog] = usePageDialog();
+
   const { setValue } = useFormContext<FormData>();
-  const value = useWatch<FormData>({ name: props.name }) as number[];
+  const value = useWatch<FormData>({ name: props.name }) as Value[];
   const openSelectDialog = useCallback(
-    (onSelect: (resource: Resource[]) => void) => {
+    (onSelect: (resources: Resource[]) => void) => {
       setDialog(
         <SelectResource<Resource>
           title={props.label}
@@ -100,7 +112,9 @@ export function PageFormMultiSelectAwxResource<
   );
 
   const queryLabel = useCallback(
-    (value: Value) => <AwxAsyncName url={props.url} id={value as unknown as number} />,
+    (value: Value) => (
+      <AsyncQueryLabel url={props.url.split('?')[0]} id={value as unknown as number} />
+    ),
     [props.url]
   );
 
@@ -125,6 +139,7 @@ export function PageFormMultiSelectAwxResource<
         })
       }
       queryLabel={queryLabel}
+      additionalControls={props.additionalControls}
     />
   );
 }
@@ -140,13 +155,21 @@ function SelectResource<
   tableColumns: ITableColumn<Resource>[];
   queryParams?: QueryParams;
 }) {
+  const urlSearchParams = useMemo(() => new URLSearchParams(props.url.split('?')[1]), [props.url]);
+
+  const queryParams = useMemo(() => {
+    const query: QueryParams = {};
+    urlSearchParams.forEach((value, key) => (query[key] = value));
+    return query;
+  }, [urlSearchParams]);
+
   const view = useAwxView<Resource>({
-    url: props.url,
+    url: props.url.split('?')[0],
     toolbarFilters: props.toolbarFilters,
     tableColumns: props.tableColumns,
     disableQueryString: true,
     defaultSelection: props.defaultSelection as Resource[],
-    queryParams: props.queryParams,
+    queryParams,
   });
   return (
     <MultiSelectDialog<Resource>

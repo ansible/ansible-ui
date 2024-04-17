@@ -1,3 +1,4 @@
+import { t } from 'i18next';
 import {
   Controller,
   FieldPath,
@@ -53,7 +54,13 @@ export function PageFormSingleSelect<
             ? translations.validating
             : error?.message
           : undefined;
-
+        let isDisabled = props.isDisabled;
+        if (!isDisabled && props.isReadOnly) {
+          isDisabled = t('Readonly');
+        }
+        if (isSubmitting) {
+          isDisabled = t('Submitting');
+        }
         return (
           <PageFormGroup
             fieldId={id}
@@ -63,6 +70,7 @@ export function PageFormSingleSelect<
             helperText={props.helperText}
             helperTextInvalid={helperTextInvalid}
             isRequired={props.isRequired}
+            additionalControls={props.additionalControls}
           >
             <PageSingleSelect
               id={id}
@@ -72,7 +80,7 @@ export function PageFormSingleSelect<
               aria-describedby={id ? `${id}-form-group` : undefined}
               value={value}
               onSelect={onChange}
-              isDisabled={props.isDisabled || props.isReadOnly || isSubmitting}
+              isDisabled={isDisabled}
               footer={props.footer}
             />
           </PageFormGroup>
