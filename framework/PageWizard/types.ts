@@ -40,7 +40,7 @@ export interface PageWizardState {
   visibleStepsFlattened: PageWizardStep[];
   setVisibleStepsFlattened: (steps: PageWizardStep[]) => void;
   wizardData: object;
-  submitError: Error | undefined;
+  submitError?: Error | undefined;
   setSubmitError: React.Dispatch<SetStateAction<Error | undefined>>;
 }
 
