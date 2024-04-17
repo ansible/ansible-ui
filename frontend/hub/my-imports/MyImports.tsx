@@ -128,7 +128,10 @@ export function MyImports() {
 
   const isMultipleCollections = collectionResp?.data?.length !== 1;
 
-  function setNamespaceQP(namespace: string) {
+  function setNamespaceQP(namespace: string | null) {
+    if (namespace === null) {
+      return;
+    }
     setSearchParams((params) => {
       params.set('namespace', namespace);
       return params;
@@ -199,12 +202,8 @@ export function MyImports() {
                   error={collectionImportsError}
                   collectionImports={collectionImports}
                   selectedImport={selectedImport}
-                  setSelectedImport={(collectionImport) => {
-                    setSelectedImport(collectionImport);
-                  }}
-                  setSelectedNamespace={(namespace) => {
-                    setNamespaceQP(namespace);
-                  }}
+                  setSelectedImport={setSelectedImport}
+                  setSelectedNamespace={setNamespaceQP}
                   queryParams={{
                     status: statusQP,
                     name: nameQP,
@@ -215,13 +214,9 @@ export function MyImports() {
                   setPage={setPage}
                   setPerPage={setPerPage}
                   itemCount={collectionImportsCount}
-                  setDrawerExpanded={() => {
-                    setIsDrawerExpanded(true);
-                  }}
+                  setDrawerExpanded={() => setIsDrawerExpanded(true)}
                   collectionFilter={collectionFilter}
-                  setCollectionFilter={(options) => {
-                    setCollectionFilter(options);
-                  }}
+                  setCollectionFilter={setCollectionFilter}
                 />
               </DrawerContentBody>
             </DrawerContent>
