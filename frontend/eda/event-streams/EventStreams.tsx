@@ -8,6 +8,7 @@ import { useEventStreamActions } from './hooks/useEventStreamActions';
 import { useEventStreamColumns } from './hooks/useEventStreamColumns';
 import { useEventStreamFilters } from './hooks/useEventStreamFilters';
 import { useEventStreamsActions } from './hooks/useEventStreamsActions';
+import { PlusCircleIcon } from '@patternfly/react-icons';
 
 export function EventStreams() {
   const { t } = useTranslation();
@@ -33,6 +34,7 @@ export function EventStreams() {
         errorStateTitle={t('Error loading event streams')}
         emptyStateTitle={t('There are currently no event streams created for your organization.')}
         emptyStateDescription={t('Please create a event stream by using the button below.')}
+        emptyStateButtonIcon={<PlusCircleIcon />}
         emptyStateButtonText={t('Create event stream')}
         emptyStateButtonClick={() => pageNavigate(EdaRoute.CreateEventStream)}
         {...view}
