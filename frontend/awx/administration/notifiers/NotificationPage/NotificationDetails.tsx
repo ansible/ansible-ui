@@ -9,6 +9,7 @@ import { t } from 'i18next';
 import { TextArea } from '@patternfly/react-core';
 import { DateTimeCell } from '../../../../../framework';
 import { usePageNavigate } from '../../../../../framework';
+import { StatusLabel } from '../../../../common/Status';
 
 export function NotificationDetails() {
   const { t } = useTranslation();
@@ -17,11 +18,21 @@ export function NotificationDetails() {
   }>();
   const getPageUrl = useGetPageUrl();
   const pageNavigate = usePageNavigate();
+
+  const status =
+    notificationTemplate.summary_fields.recent_notifications.length > 0
+      ? notificationTemplate.summary_fields.recent_notifications[0].status
+      : '';
   return (
     <>
       <PageDetails>
         <PageDetail label={t('Name')}>{notificationTemplate.name}</PageDetail>
         <PageDetail label={t('Description')}>{notificationTemplate.description}</PageDetail>
+        {status && (
+          <PageDetail label={t('Status')}>
+            <StatusLabel status={status} />
+          </PageDetail>
+        )}
         <PageDetail label={t('Created')}>
           <DateTimeCell
             value={notificationTemplate.created}
