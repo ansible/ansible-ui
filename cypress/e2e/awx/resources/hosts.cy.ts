@@ -170,7 +170,7 @@ describe('host and inventory host', () => {
 
   function navigateToHost(url: string, name: string, data: string) {
     cy.visit(url);
-    cy.searchAndDisplayResource(name || '');
+    cy.filterTableBySingleSelect('name', name || '');
     cy.get(data).click();
   }
 
