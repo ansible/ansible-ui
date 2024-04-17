@@ -42,7 +42,8 @@ function actAssertAndDeleteWorkflowApproval(
     method: 'POST',
     url: `${actionURL}`,
   }).as('WFaction');
-  cy.getTableRow('id', wfaID.toString())
+  cy.filterTableByMultiSelect('id', [wfaID.toString()]);
+  cy.getTableRow('id', wfaID.toString(), { disableFilter: true })
     .within(() => {
       cy.getByDataCy('actions-column-cell').within(() => {
         cy.getByDataCy(selectorDataCy).click();
