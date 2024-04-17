@@ -22,7 +22,7 @@ export function PageFormSingleSelectEdaResource<
   name: Name;
   label: string;
   isRequired?: boolean;
-  isDisabled?: boolean;
+  isDisabled?: string;
   url: string;
   toolbarFilters?: IToolbarFilter[];
   tableColumns: ITableColumn<Resource>[];
