@@ -8,6 +8,7 @@ import { PageFormGroup, PageFormGroupProps } from './PageFormGroup';
 export type PageFormFileUploadProps = {
   name: string;
   placeholder?: string;
+  validate?: (value: File) => string | undefined;
 } & PageFormGroupProps &
   Omit<FileUploadProps, 'id'>;
 
@@ -87,6 +88,7 @@ export function PageFormFileUpload(props: PageFormFileUploadProps) {
                 message: `${capitalizeFirstLetter(label.toLocaleLowerCase())} is required.`,
               }
             : undefined,
+        validate: props.validate,
       }}
     />
   );
