@@ -8,7 +8,7 @@ export function PageWizardFooter(props: {
   onCancel: () => void;
 }) {
   const { t } = useTranslation();
-  const { activeStep, visibleStepsFlattened } = usePageWizard();
+  const { activeStep, visibleStepsFlattened, setSubmitError } = usePageWizard();
 
   const isLastStep = activeStep?.id === visibleStepsFlattened[visibleStepsFlattened.length - 1].id;
   const nextButtonLabel = isLastStep ? t('Finish') : t('Next');
@@ -29,7 +29,10 @@ export function PageWizardFooter(props: {
           data-cy="wizard-next"
           className="pf-v5-c-button pf-m-primary"
           type="submit"
-          onClick={props.onNext}
+          onClick={() => {
+            setSubmitError(undefined);
+            props.onNext?.();
+          }}
         >
           {nextButtonLabel}
         </button>
@@ -39,7 +42,10 @@ export function PageWizardFooter(props: {
         data-cy="wizard-back"
         className={backClassName}
         disabled={isFirstStep}
-        onClick={props.onBack}
+        onClick={() => {
+          setSubmitError(undefined);
+          props.onBack?.();
+        }}
       >
         {t('Back')}
       </button>
