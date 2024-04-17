@@ -1,22 +1,5 @@
-import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Frequency, RRule } from 'rrule';
-import { useGetPageUrl } from '../../../../../framework';
-import { AwxRoute } from '../../../main/AwxRoutes';
-
-export function useScheuleRulesRoutes() {
-  const getPageUrl = useGetPageUrl();
-  const scheduleRulesRoutes = useMemo<Record<string, string | undefined>>(
-    () => ({
-      inventory: getPageUrl(AwxRoute.InventorySourceScheduleRules),
-      job_template: getPageUrl(AwxRoute.JobTemplateScheduleRules),
-      workflow_job_template: getPageUrl(AwxRoute.WorkflowJobTemplateScheduleRules),
-      projects: getPageUrl(AwxRoute.ProjectScheduleRules),
-    }),
-    [getPageUrl]
-  );
-  return scheduleRulesRoutes;
-}
 
 export function useGetFrequencyOptions() {
   const { t } = useTranslation();
