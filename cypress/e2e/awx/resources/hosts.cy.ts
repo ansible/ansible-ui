@@ -79,6 +79,8 @@ describe('host and inventory host', () => {
         cy.contains('button', 'Close').click();
         cy.contains(group.name);
         /// single disassociate
+        // TODO: need to change this when https://issues.redhat.com/browse/AAP-22914 
+        // change will applyed
         cy.searchAndDisplayResource(group.name);
         cy.get(`[data-cy="row-id-${group.id}"] [data-cy="checkbox-column-cell"]`).click();
         disassociate();
