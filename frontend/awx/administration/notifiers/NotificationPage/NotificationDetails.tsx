@@ -70,16 +70,25 @@ function RenderInnerDetail(props: { notificationTemplate: NotificationTemplate }
     <>
       {Object.keys(notificationTemplate.notification_configuration || {}).map((key) => {
         try {
-          let value = notificationTemplate.notification_configuration[key] as string | string[];
+          let value = notificationTemplate.notification_configuration[key] as
+            | string
+            | string[]
+            | { [key: string]: unknown };
 
+          let object = false;
           let list = false;
           if (Array.isArray(value)) {
             list = true;
             value = value.join('\n');
+          } else {
+            if (typeof value === 'object') {
+              value = JSON.stringify(value, undefined, 2);
+              object = true;
+            }
           }
 
           if (value === undefined) {
-            return <></>;
+            value = '';
           }
 
           // this is password field which should be hidden
@@ -89,12 +98,11 @@ function RenderInnerDetail(props: { notificationTemplate: NotificationTemplate }
 
           let caption = returnCaption(notificationTemplate.notification_type, key);
 
-          if (!caption)
-          {
+          if (!caption) {
             caption = key;
           }
 
-          if (!list) {
+          if (!list && !object) {
             return (
               <PageDetail key={key} label={caption}>
                 {value.toString()}
@@ -103,7 +111,7 @@ function RenderInnerDetail(props: { notificationTemplate: NotificationTemplate }
           } else {
             return (
               <PageDetail key={key} label={caption}>
-                <TextArea value={value} contentEditable={false} rows={3} />
+                <TextArea value={value.toString()} contentEditable={false} rows={3} />
               </PageDetail>
             );
           }
@@ -166,6 +174,7 @@ function returnCaption(notification_type: string | null, key: string) {
     if (key === 'url') return t('Target URL');
     if (key === 'disable_ssl_verification') return t('Disable SSL verification ');
     if (key === 'http_method') return t('HTTP Method');
+    if (key === 'headers') return t('Headers');
   }
 
   if (notification_type === 'mattermost') {
