@@ -110,6 +110,12 @@ describe('host and inventory host', () => {
     // cancel launch
   });
 
+  it.skip('can view host facts in stand alone host', () => {
+    // create stand alone host with facts
+    // TODO: check if there is some function that creates facts
+    // make sure facts are visible to the user
+  });
+
   // assisting functions
   function createAndCheckHost(inventory_host: boolean, inventory: string) {
     const hostName = 'E2E Inventory host ' + randomString(4);
