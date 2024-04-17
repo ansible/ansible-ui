@@ -26,7 +26,7 @@ export function InventoryHostGroups(props: { page: string }) {
   const inventoryId = String(host?.inventory) ?? '';
   const hostId = isHostPage ? params.id ?? '' : params.host_id ?? '';
 
-  const toolbarFilters = useHostsGroupsFilters(`hosts/${hostId ?? ''}/all_groups/`);
+  const toolbarFilters = useHostsGroupsFilters(`hosts/${hostId ?? ''}/all_groups`);
   const view = useAwxView<InventoryGroup>({
     url: awxAPI`/hosts/${hostId ?? ''}/all_groups/`,
     toolbarFilters,

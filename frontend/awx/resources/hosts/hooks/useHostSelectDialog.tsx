@@ -23,7 +23,7 @@ export function HostSelectDialog({ onSelectedHosts, groupId, inventoryId }: Host
     [nameColumn, createdColumn, modifiedColumn]
   );
   const toolbarFilters = useGroupsFilters(
-    `inventories/${inventoryId}/hosts/?not__groups=${groupId}&order_by=name&page=1&page_size=5`
+    `inventories/${inventoryId}/hosts/?not__groups=${groupId}`
   );
   const view = useAwxView<AwxHost>({
     url: awxAPI`/inventories/${inventoryId}/hosts/?not__groups=${groupId}&order_by=name&page=1&page_size=5`,

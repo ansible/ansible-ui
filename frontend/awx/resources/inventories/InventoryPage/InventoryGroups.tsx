@@ -18,7 +18,7 @@ export function InventoryGroups() {
   const pageNavigate = usePageNavigate();
   const tableColumns = useInventoriesGroupsColumns();
   const params = useParams<{ id: string; inventory_type: string }>();
-  const toolbarFilters = useGroupsFilters(`inventories/${params.id ?? ''}/groups/`);
+  const toolbarFilters = useGroupsFilters(`inventories/${params.id ?? ''}/groups`);
   const view = useAwxView<InventoryGroup>({
     url: awxAPI`/inventories/${params.id ?? ''}/groups/`,
     toolbarFilters,
