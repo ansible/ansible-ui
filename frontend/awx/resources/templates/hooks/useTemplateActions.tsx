@@ -20,6 +20,7 @@ import { AwxRoute } from '../../../main/AwxRoutes';
 import { useDeleteTemplates } from '../hooks/useDeleteTemplates';
 import { useLaunchTemplate } from './useLaunchTemplate';
 import { useCopyTemplate } from './useCopyTemplate';
+import { missingResources } from './useTemplateColumns';
 
 type Template = JobTemplate | WorkflowJobTemplate;
 type TemplateActionOptions = {
@@ -58,9 +59,11 @@ export function useTemplateActions({
         label: t('Launch template'),
         onClick: (template: Template) => void launchTemplate(template),
         isDisabled: (template: Template) =>
-          !template?.summary_fields.user_capabilities.start
-            ? t('You do not have permission to launch this template')
-            : undefined,
+          missingResources(template)
+            ? t('Resources are missing from this template.')
+            : !template?.summary_fields.user_capabilities.start
+              ? t('You do not have permission to launch this template')
+              : undefined,
         ouiaId: 'job-template-detail-launch-button',
         isDanger: false,
         isPinned: true,
