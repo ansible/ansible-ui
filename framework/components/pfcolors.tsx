@@ -56,7 +56,7 @@ export const pfWarning = 'var(--pf-v5-global--warning-color--100)';
 export const pfInfo = 'var(--pf-v5-global--info-color--100)';
 export const pfDisabled = 'var(--pf-v5-global--disabled-color--100)';
 export const pfLink = 'var(--pf-v5-global--link--Color)';
-export const pfUnreachable = 'var(--pf-v5-global--danger-color--300)';
+export const pfUnreachable = 'var(--pf-v5-global--danger-color--100)';
 
 export enum LabelColorE {
   blue = 'blue',
