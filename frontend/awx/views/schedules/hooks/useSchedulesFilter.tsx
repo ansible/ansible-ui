@@ -10,7 +10,7 @@ export function useSchedulesFilter() {
 
   const toolbarFilters = useDynamicToolbarFilters({
     optionsPath: 'schedules',
-    preSortedKeys: ['name', 'id', 'created_by', 'modified_by'],
+    preSortedKeys: ['name', 'id', 'created-by', 'modified-by'],
     preFilledValueKeys: {
       name: {
         apiPath: 'schedules',
