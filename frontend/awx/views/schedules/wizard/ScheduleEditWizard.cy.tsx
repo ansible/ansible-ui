@@ -28,7 +28,7 @@ const mockTemplates = {
   count: 1,
   results: [mockTemplate],
 };
-describe('ScheduleAddWizard', () => {
+describe('ScheduleEditWizard', () => {
   before(() => {
     cy.intercept({ method: 'GET', url: awxAPI`/schedules/zoneinfo` }, zones);
   });
@@ -36,7 +36,7 @@ describe('ScheduleAddWizard', () => {
     cy.intercept({ method: 'GET', url: awxAPI`/job_templates/*` }, mockTemplates);
     cy.intercept('/api/v2/schedules/1/', {
       rrule:
-        'DTSTART;TZID=America/Los_Angeles:20240411T104500 RRULE:INTERVAL=1;FREQ=HOURLY RRULE:INTERVAL=1;FREQ=DAILY',
+        'DTSTART;TZID=America/Los_Angeles:20240411T104500 RRULE:INTERVAL=1;FREQ=HOURLY RRULE:INTERVAL=1;FREQ=DAILY;COUNT=225',
       id: 1,
       type: 'schedule',
       summary_fields: {
@@ -217,6 +217,12 @@ describe('ScheduleAddWizard', () => {
       cy.get('tr[data-cy="row-id-1"]').should('contain.text', 'INTERVAL=100');
       cy.get('tbody').within(() => {
         cy.get('tr').should('have.length', 2);
+      });
+    });
+    it('Should be able to remove an existing rule from the list', () => {
+      cy.getByDataCy('row-id-2').within(() => {
+        cy.get('button[data-cy="delete-rule"]').click();
+        cy.get('tr[data-cy="row-id-2"]').should('not.exist');
       });
     });
   });

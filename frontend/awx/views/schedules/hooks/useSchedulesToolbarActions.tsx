@@ -9,6 +9,7 @@ import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsRes
 import { Schedule } from '../../../interfaces/Schedule';
 import { useGetSchedulCreateUrl } from './scheduleHelpers';
 import { useDeleteSchedules } from './useDeleteSchedules';
+import { cannotDeleteResources } from '../../../../common/utils/RBAChelpers';
 
 export function useScheduleToolbarActions(
   onComplete: (schedules: Schedule[]) => void,
@@ -46,6 +47,8 @@ export function useScheduleToolbarActions(
         icon: TrashIcon,
         label: t('Delete selected schedules'),
         onClick: deleteSchedules,
+        isDisabled: (schedules) => cannotDeleteResources(schedules, t),
+
         isDanger: true,
       },
     ],
