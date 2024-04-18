@@ -21,6 +21,7 @@ export function SchedulesList(props: { sublistEndpoint?: string }) {
   const location = useLocation();
   const toolbarFilters = useSchedulesFilter();
   const tableColumns = useSchedulesColumns();
+
   const resourceId = params.source_id ?? params.id;
   const apiEndPoint: string | undefined = props.sublistEndpoint
     ? `${props.sublistEndpoint}/${resourceId}/schedules/`

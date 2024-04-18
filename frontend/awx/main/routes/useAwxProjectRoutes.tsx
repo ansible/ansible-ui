@@ -12,7 +12,6 @@ import { Projects } from '../../resources/projects/Projects';
 import { ScheduleAddWizard } from '../../views/schedules/wizard/ScheduleAddWizard';
 import { ScheduleDetails } from '../../views/schedules/SchedulePage/ScheduleDetails';
 import { SchedulePage } from '../../views/schedules/SchedulePage/SchedulePage';
-import { ScheduleRules } from '../../views/schedules/SchedulePage/ScheduleRules';
 import { AwxRoute } from '../AwxRoutes';
 import { ResourceNotifications } from '../../resources/notifications/ResourceNotifications';
 import { SchedulesList } from '../../views/schedules/SchedulesList';
@@ -51,6 +50,10 @@ export function useAwxProjectRoutes() {
           path: ':id/schedules/:schedule_id',
           element: (
             <SchedulePage
+              initialBreadCrumbs={[
+                { label: t('Projects'), to: AwxRoute.Projects },
+                { label: 'data', to: AwxRoute.ProjectPage },
+              ]}
               backTab={{
                 label: t('Back to Schedules'),
                 page: AwxRoute.ProjectSchedules,
@@ -61,10 +64,6 @@ export function useAwxProjectRoutes() {
                   label: t('Details'),
                   page: AwxRoute.ProjectScheduleDetails,
                 },
-                {
-                  label: t('Rules'),
-                  page: AwxRoute.ProjectScheduleRules,
-                },
               ]}
             />
           ),
@@ -73,11 +72,6 @@ export function useAwxProjectRoutes() {
               id: AwxRoute.ProjectScheduleDetails,
               path: 'details',
               element: <ScheduleDetails />,
-            },
-            {
-              id: AwxRoute.ProjectScheduleRules,
-              path: 'rrules',
-              element: <ScheduleRules />,
             },
           ],
         },
