@@ -17,9 +17,11 @@ import { useInventorySourceColumns } from '../hooks/useInventorySourceColumns';
 export function InventorySources() {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
-  const toolbarFilters = useInventorySourceFilters();
   const tableColumns = useInventorySourceColumns();
   const params = useParams<{ id: string; inventory_type: string }>();
+  const toolbarFilters = useInventorySourceFilters(
+    `inventories/${params.id ?? ''}/inventory_sources/`
+  );
   const view = useAwxView<InventorySource>({
     url: awxAPI`/inventories/${params.id ?? ''}/inventory_sources/`,
     toolbarFilters,

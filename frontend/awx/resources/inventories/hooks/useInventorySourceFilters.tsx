@@ -1,9 +1,17 @@
-import { useMemo } from 'react';
-import { IToolbarFilter } from '../../../../../framework';
-import { useNameToolbarFilter } from '../../../common/awx-toolbar-filters';
+import { useDynamicToolbarFilters } from '../../../common/useDynamicFilters';
 
-export function useInventorySourceFilters() {
-  const nameToolbarFilter = useNameToolbarFilter();
-  const toolbarFilters = useMemo<IToolbarFilter[]>(() => [nameToolbarFilter], [nameToolbarFilter]);
+export function useInventorySourceFilters(url?: string) {
+  const toolbarFilters = useDynamicToolbarFilters({
+    optionsPath: url ? url : 'inventory_sources',
+    preFilledValueKeys: {
+      name: {
+        apiPath: url ? url : 'inventory_sources',
+      },
+      id: {
+        apiPath: url ? url : 'inventory_sources',
+      },
+    },
+    preSortedKeys: ['name', 'id', 'description'],
+  });
   return toolbarFilters;
 }
