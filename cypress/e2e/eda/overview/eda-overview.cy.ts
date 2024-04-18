@@ -129,7 +129,10 @@ describe('overview checks when resources before any resources are created', () =
     cy.get('[data-cy="rulebook-activations"]')
       .should('contain', 'Rulebook Activations')
       .within(() => {
-        cy.get('[data-cy="card-subtitle"]').should('contain', 'Recently updated activations');
+        cy.get('[data-cy="card-subtitle"]').should(
+          'contain',
+          'Recently updated rulebook activations'
+        );
       });
 
     cy.get('[data-cy="recent-rule-audits"]')
