@@ -136,7 +136,7 @@ describe('Create Edit Execution Environment Form', () => {
       cy.get('[data-cy="description"]').clear();
       cy.get('[data-cy="description"]').type('Edited desc');
       cy.get('[data-cy="credential-select"]').clear();
-      cy.clickButton(/^Save$/);
+      cy.clickButton(/^Save execution environment$/);
       cy.wait('@editEE')
         .its('request.body')
         .then((editedEE: ExecutionEnvironment) => {
