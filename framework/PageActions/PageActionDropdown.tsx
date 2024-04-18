@@ -12,6 +12,7 @@ import { ComponentClass, FunctionComponent, useEffect, useMemo, useState } from 
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+import { PFColorE, getPatternflyColor } from '../components/pfcolors';
 import { getID } from '../hooks/useID';
 import { IPageAction, PageActionSelection, PageActionType } from './PageAction';
 import { PageActionSwitch } from './PageActionSwitch';
@@ -262,9 +263,7 @@ function PageDropdownActionItem<T extends object>(props: {
             component={<Link to={to}>{action.label}</Link>}
             style={{
               color:
-                action.isDanger && !isDisabled
-                  ? 'var(--pf-v5-global--danger-color--100)'
-                  : undefined,
+                action.isDanger && !isDisabled ? getPatternflyColor(PFColorE.Danger) : undefined,
             }}
           />
         </Tooltip>
