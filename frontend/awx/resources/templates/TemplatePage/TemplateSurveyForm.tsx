@@ -1,31 +1,31 @@
 import { useEffect } from 'react';
+import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { useFormContext, useWatch } from 'react-hook-form';
 import {
   LoadingPage,
-  PageFormTextInput,
-  PageFormSelect,
   PageFormCheckbox,
-  PageFormTextArea,
-  usePageNavigate,
+  PageFormSelect,
   PageFormSubmitHandler,
+  PageFormTextArea,
+  PageFormTextInput,
+  usePageNavigate,
 } from '../../../../../framework';
-import { useGet } from '../../../../common/crud/useGet';
-import { AwxError } from '../../../common/AwxError';
-import { awxAPI } from '../../../common/api/awx-utils';
-import { AwxRoute } from '../../../main/AwxRoutes';
-import { AwxPageForm } from '../../../common/AwxPageForm';
-import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
 import { PageFormGroup } from '../../../../../framework/PageForm/Inputs/PageFormGroup';
-import { Spec, Survey } from '../../../interfaces/Survey';
+import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
+import { useURLSearchParams } from '../../../../../framework/components/useURLSearchParams';
+import { useGet } from '../../../../common/crud/useGet';
 import { usePostRequest } from '../../../../common/crud/usePostRequest';
-import { useSearchParams } from '../../../../../framework/components/useSearchParams';
+import { AwxError } from '../../../common/AwxError';
+import { AwxPageForm } from '../../../common/AwxPageForm';
 import {
+  ChoiceOption,
   MultipleChoiceField,
   MultipleChoiceFieldType,
-  ChoiceOption,
 } from '../../../common/MultipleChoiceField';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { Spec, Survey } from '../../../interfaces/Survey';
+import { AwxRoute } from '../../../main/AwxRoutes';
 
 type ResourceType = 'job_templates' | 'workflow_job_templates';
 
@@ -33,7 +33,7 @@ const minDefault = 0;
 const maxDefault = 1024;
 
 export function EditTemplateSurveyForm({ resourceType }: { resourceType: ResourceType }) {
-  const [searchParams] = useSearchParams();
+  const [searchParams] = useURLSearchParams();
 
   const questionVariable = searchParams.get('question_variable');
 

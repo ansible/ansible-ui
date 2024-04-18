@@ -25,7 +25,7 @@ import {
 import { PageTableSortOption } from '../../../../framework/PageToolbar/PageToolbarSort';
 import { EmptyStateFilter } from '../../../../framework/components/EmptyStateFilter';
 import { LoadingState } from '../../../../framework/components/LoadingState';
-import { useSearchParams } from '../../../../framework/components/useSearchParams';
+import { useURLSearchParams } from '../../../../framework/components/useURLSearchParams';
 import { postRequest as requestPost } from '../../../common/crud/Data';
 import { awxAPI } from '../../common/api/awx-utils';
 import { Chart } from '../components/Chart';
@@ -74,7 +74,7 @@ export interface ParamsType {
 
 export function AutomationCalculator(props: { schema: ChartSchemaElement[] }) {
   const { t } = useTranslation();
-  const [searchParams] = useSearchParams();
+  const [searchParams] = useURLSearchParams();
 
   const { schema } = props;
 
@@ -270,7 +270,7 @@ export function AutomationCalculatorInternal(props: {
     setSortDirection: setSortOrder,
   } = props;
 
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useURLSearchParams();
 
   const [page, setPage] = useState<number>(() =>
     searchParams.get('page') ? parseInt(searchParams.get('page') as string) : 1
