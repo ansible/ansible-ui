@@ -125,8 +125,8 @@ describe.skip('Collections', () => {
         cy.get(`[data-cy="${collectionName}"]`).should('contain', `${collectionName}`);
         // Upload new version
         cy.clickPageAction('upload-new-version');
-        cy.get('#file-upload-file-browse-button').click();
-        cy.get('input[id="file-upload-file-filename"]').selectFile(result.filename, {
+        cy.get('#file-browse-button').click();
+        cy.get('input[id="file-filename"]').selectFile(result.filename, {
           action: 'drag-drop',
         });
         // Upload page
@@ -397,8 +397,8 @@ describe.skip('Collections', () => {
           cy.get(`[data-cy="${collectionName}"]`).should('contain', `${collectionName}`);
           //Upload new version to the collection
           cy.clickPageAction('upload-new-version');
-          cy.get('#file-upload-file-browse-button').click();
-          cy.get('input[id="file-upload-file-filename"]').selectFile(result.filename, {
+          cy.get('#file-browse-button').click();
+          cy.get('input[id="file-filename"]').selectFile(result.filename, {
             action: 'drag-drop',
           });
           cy.verifyPageTitle('Upload Collection');
