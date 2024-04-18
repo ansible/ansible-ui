@@ -2,10 +2,10 @@ import { useMemo } from 'react';
 import { IPageAction } from '../../../../../../framework';
 import { IAwxView } from '../../../../common/useAwxView';
 import { Instance } from '../../../../interfaces/Instance';
-import { useRunHealthCheckAction } from '../../../instances/hooks/useRunHealthCheckAction';
+import { useRunHealthCheckToolbarAction } from '../../../instances/hooks/useRunHealthCheckToolbarAction';
 
 export function useIGInstanceToolbarActions(view: IAwxView<Instance>) {
-  const healthCheckAction = useRunHealthCheckAction(view, true);
+  const healthCheckAction = useRunHealthCheckToolbarAction(view, true);
 
   return useMemo<IPageAction<Instance>[]>(() => {
     return healthCheckAction;

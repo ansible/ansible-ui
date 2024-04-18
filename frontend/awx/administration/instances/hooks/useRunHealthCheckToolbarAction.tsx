@@ -7,7 +7,7 @@ import { IAwxView } from '../../../common/useAwxView';
 import { Instance } from '../../../interfaces/Instance';
 import { useRunHealthCheck } from './useRunHealthCheck';
 
-export function useRunHealthCheckAction(view: IAwxView<Instance>, isPinned?: boolean) {
+export function useRunHealthCheckToolbarAction(view: IAwxView<Instance>, isPinned?: boolean) {
   const { t } = useTranslation();
   const runHealthCheck = useRunHealthCheck(view.unselectItemsAndRefresh);
 

@@ -17,7 +17,7 @@ import { Settings } from '../../../interfaces/Settings';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { cannotRemoveInstances } from './useInstanceActions';
 import { useRemoveInstances } from './useRemoveInstances';
-import { useRunHealthCheckAction } from './useRunHealthCheckAction';
+import { useRunHealthCheckToolbarAction } from './useRunHealthCheckToolbarAction';
 
 export function useInstanceToolbarActions(view: IAwxView<Instance>) {
   const { t } = useTranslation();
@@ -30,7 +30,7 @@ export function useInstanceToolbarActions(view: IAwxView<Instance>) {
   const canAddAndEditInstances =
     (activeAwxUser?.is_superuser || activeAwxUser?.is_system_auditor) && data?.IS_K8S;
 
-  const healthCheckAction = useRunHealthCheckAction(view);
+  const healthCheckAction = useRunHealthCheckToolbarAction(view);
 
   return useMemo<IPageAction<Instance>[]>(() => {
     let actions: IPageAction<Instance>[] = [
