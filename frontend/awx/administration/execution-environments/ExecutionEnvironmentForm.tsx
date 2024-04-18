@@ -133,7 +133,7 @@ export function EditExecutionEnvironment() {
         ]}
       />
       <AwxPageForm<ExecutionEnvironment>
-        submitText={t('Save')}
+        submitText={t('Save execution environment')}
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
         onCancel={onCancel}
