@@ -1,4 +1,4 @@
-import { CopyIcon, PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
+import { CopyIcon, PencilAltIcon, RocketIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -20,6 +20,7 @@ import {
 export function useNotifiersRowActions(
   onComplete: (notification: NotificationTemplate[]) => void,
   onNotifierCopied = () => null,
+  onNotifierStartTest?: () => void,
   detail?: 'detail' | undefined
 ) {
   const { t } = useTranslation();
@@ -39,6 +40,16 @@ export function useNotifiersRowActions(
             params: { id: notification.id },
           }),
         isDisabled: (notification) => cannotEditResource(notification, t),
+        isDanger: false,
+        isPinned: true,
+      },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        icon: RocketIcon,
+        label: t(`Test notifier`),
+        onClick: (notification) =>
+          {},
         isDanger: false,
         isPinned: true,
       },

@@ -31,6 +31,7 @@ export function NotificationPage() {
       pageNavigate(AwxRoute.NotificationTemplates);
     },
     undefined,
+    () => {},
     'detail'
   );
 
