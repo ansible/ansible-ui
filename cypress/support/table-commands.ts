@@ -39,6 +39,7 @@ Cypress.Commands.add('selectTableFilter', (dataCy: string) => {
   // We need to use document() to get the body of the page
   // and then find the filter-select within that body
   // This fixes the issue where this command would fail inside a within() block
+  cy.document().its('body').find('#filter-search').type(dataCy.replaceAll('-', ' '));
   cy.document()
     .its('body')
     .find('#filter-select')
