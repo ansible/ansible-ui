@@ -88,6 +88,7 @@ export type PageFormSelectProps<
    */
   isRequired?: boolean;
   fieldNameToResetOnFieldChange?: TFieldName;
+  onChange?: (option?: TSelection) => void;
 
   validate?:
     | Validate<FieldPathValue<TFieldValues, TFieldName>, TFieldValues>
@@ -144,8 +145,12 @@ export function PageFormSelect<
           _event: React.MouseEvent<Element, MouseEvent> | ChangeEvent<Element>,
           label: string | SelectOptionObject
         ) => {
-          onChange(options.find((option) => option.label === label.toString())?.value);
+          const option = options.find((option) => option.label === label.toString())?.value;
+          onChange(option);
           fieldNameToResetOnFieldChange ? resetField(fieldNameToResetOnFieldChange) : undefined;
+          if (props.onChange) {
+            props.onChange(option);
+          }
           setOpen(false);
         };
 
