@@ -42,6 +42,11 @@ export function useAwxInstanceGroupsRoutes() {
               path: 'instances',
               element: <InstanceGroupInstances />,
             },
+            {
+              id: AwxRoute.InstanceGroupJobs,
+              path: 'jobs',
+              element: <PageNotImplemented />,
+            },
           ],
         },
         {
