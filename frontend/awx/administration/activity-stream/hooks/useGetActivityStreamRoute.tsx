@@ -6,7 +6,8 @@ export function useGetActivityStreamRoute(resource?: string | null): AwxRoute | 
   }
   switch (resource) {
     case 'job':
-      return AwxRoute.JobDetails;
+    case 'workflow_job':
+      return AwxRoute.JobOutput;
     case 'job_template':
       return AwxRoute.JobTemplateDetails;
     case 'workflow_job_template':
