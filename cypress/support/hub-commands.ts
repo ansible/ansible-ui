@@ -194,8 +194,8 @@ Cypress.Commands.add(
 
 Cypress.Commands.add('uploadHubCollectionFile', (hubFilePath: string) => {
   cy.get('[data-cy="upload-collection"]').click();
-  cy.get('#file-upload-file-browse-button').click();
-  cy.get('input[id="file-upload-file-filename"]').selectFile(hubFilePath, {
+  cy.get('#file-browse-button').click();
+  cy.get('input[id="file-filename"]').selectFile(hubFilePath, {
     action: 'drag-drop',
   });
 });
