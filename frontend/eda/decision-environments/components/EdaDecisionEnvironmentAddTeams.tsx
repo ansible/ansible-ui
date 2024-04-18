@@ -8,9 +8,7 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../framework';
-import { EdaSelectTeamsStep } from '../../access/teams/components/steps/EdaSelectTeamsStep';
 import { EdaTeam } from '../../interfaces/EdaTeam';
-import { EdaSelectRolesStep } from '../../access/roles/components/EdaSelectRolesStep';
 import { useParams } from 'react-router-dom';
 import { useGet } from '../../../common/crud/useGet';
 import { EdaDecisionEnvironment } from '../../interfaces/EdaDecisionEnvironment';
@@ -20,6 +18,8 @@ import { RoleAssignmentsReviewStep } from '../../../common/access/RolesWizard/st
 import { EdaRbacRole } from '../../interfaces/EdaRbacRole';
 import { EdaRoute } from '../../main/EdaRoutes';
 import { useEdaBulkActionDialog } from '../../common/useEdaBulkActionDialog';
+import { EdaSelectRolesStep } from '../../access/common/EdaRolesWizardSteps/EdaSelectRolesStep';
+import { EdaSelectTeamsStep } from '../../access/common/EdaRolesWizardSteps/EdaSelectTeamsStep';
 
 interface WizardFormValues {
   teams: EdaTeam[];
