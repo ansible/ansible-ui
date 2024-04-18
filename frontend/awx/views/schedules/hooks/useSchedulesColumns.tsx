@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { DateTimeCell, ITableColumn, TextCell, usePageNavigate } from '../../../../../framework';
 import { useDescriptionColumn, useNameColumn, useTypeColumn } from '../../../../common/columns';
 import { Schedule } from '../../../interfaces/Schedule';
-import { useGetScheduleUrl } from './scheduleHelpers';
+import { useGetScheduleUrl } from './useGetScheduleUrl';
 import { schedulePageUrl } from '../types';
 
 export function useSchedulesColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {

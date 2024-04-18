@@ -13,7 +13,7 @@ import { cannotDeleteResource, cannotEditResource } from '../../../../common/uti
 import { awxAPI } from '../../../common/api/awx-utils';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { Schedule } from '../../../interfaces/Schedule';
-import { useGetScheduleUrl } from './scheduleHelpers';
+import { useGetScheduleUrl } from './useGetScheduleUrl';
 import { useDeleteSchedules } from './useDeleteSchedules';
 import { schedulePageUrl } from '../types';
 

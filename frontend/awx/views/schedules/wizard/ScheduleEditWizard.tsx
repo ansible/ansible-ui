@@ -49,12 +49,7 @@ export function ScheduleEditWizard() {
     await Promise.resolve();
   };
 
-  const onCancel = () =>
-    navigate(
-      params?.id
-        ? location.pathname.replace('edit', 'details')
-        : `/templates/job_template/${schedule?.unified_job_template}/schedules/${schedule?.id}/details`
-    );
+  const onCancel = () => navigate(location.pathname.replace('edit', 'details'));
 
   const steps: PageWizardStep[] = [
     {
