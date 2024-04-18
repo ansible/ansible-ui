@@ -12,7 +12,6 @@ import { InventorySourcePage } from '../../resources/inventories/inventorySource
 import { ScheduleAddWizard } from '../../views/schedules/wizard/ScheduleAddWizard';
 import { ScheduleDetails } from '../../views/schedules/SchedulePage/ScheduleDetails';
 import { SchedulePage } from '../../views/schedules/SchedulePage/SchedulePage';
-import { ScheduleRules } from '../../views/schedules/SchedulePage/ScheduleRules';
 import { AwxRoute } from '../AwxRoutes';
 import { InventoryJobTemplates } from '../../resources/inventories/InventoryPage/InventoryJobTemplates';
 import { InventoryHosts } from '../../resources/inventories/InventoryPage/InventoryHosts';
@@ -58,6 +57,12 @@ export function useAwxInventoryRoutes() {
           path: ':inventory_type/:id/sources/:source_id/schedules/:schedule_id/',
           element: (
             <SchedulePage
+              initialBreadCrumbs={[
+                { label: t('Inventories'), to: AwxRoute.Inventories },
+                { label: 'inventory', to: AwxRoute.InventoryPage },
+                { label: t('Inventory Sources'), to: AwxRoute.InventorySources },
+                { label: 'data', to: AwxRoute.InventorySourcePage },
+              ]}
               backTab={{
                 label: t('Back to Schedules'),
                 page: AwxRoute.InventorySourceSchedules,
@@ -68,10 +73,6 @@ export function useAwxInventoryRoutes() {
                   label: t('Details'),
                   page: AwxRoute.InventorySourceScheduleDetails,
                 },
-                {
-                  label: t('Rules'),
-                  page: AwxRoute.InventorySourceScheduleRules,
-                },
               ]}
             />
           ),
@@ -80,11 +81,6 @@ export function useAwxInventoryRoutes() {
               id: AwxRoute.InventorySourceScheduleDetails,
               path: 'details',
               element: <ScheduleDetails />,
-            },
-            {
-              id: AwxRoute.InventorySourceScheduleRules,
-              path: 'rrules',
-              element: <ScheduleRules />,
             },
           ],
         },

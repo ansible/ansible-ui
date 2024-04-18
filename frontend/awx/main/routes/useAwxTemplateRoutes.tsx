@@ -19,7 +19,6 @@ import { WorkflowVisualizer } from '../../resources/templates/WorkflowVisualizer
 import { ScheduleAddWizard } from '../../views/schedules/wizard/ScheduleAddWizard';
 import { ScheduleDetails } from '../../views/schedules/SchedulePage/ScheduleDetails';
 import { SchedulePage } from '../../views/schedules/SchedulePage/SchedulePage';
-import { ScheduleRules } from '../../views/schedules/SchedulePage/ScheduleRules';
 import { AwxRoute } from '../AwxRoutes';
 import { ResourceNotifications } from '../../resources/notifications/ResourceNotifications';
 import { TemplateJobs } from '../../resources/templates/TemplatePage/TemplateJobs';
@@ -57,7 +56,7 @@ export function useAwxTemplateRoutes() {
               element: <ScheduleAddWizard />,
             },
             {
-              id: AwxRoute.JobTemplateEditSchedule,
+              id: AwxRoute.JobTemplateScheduleEdit,
               path: ':id/schedules/:schedule_id/edit',
               element: <ScheduleEditWizard />,
             },
@@ -66,19 +65,19 @@ export function useAwxTemplateRoutes() {
               path: ':id/schedules/:schedule_id',
               element: (
                 <SchedulePage
+                  initialBreadCrumbs={[
+                    { label: t('Templates'), to: AwxRoute.Templates },
+                    { label: 'data', to: AwxRoute.JobTemplatePage },
+                  ]}
                   backTab={{
-                    label: t('Back to Templates'),
-                    page: AwxRoute.Templates,
+                    label: t('Back to Schedules'),
+                    page: AwxRoute.JobTemplateSchedules,
                     persistentFilterKey: 'job_template-schedules',
                   }}
                   tabs={[
                     {
                       label: t('Details'),
                       page: AwxRoute.JobTemplateScheduleDetails,
-                    },
-                    {
-                      label: t('Rules'),
-                      page: AwxRoute.JobTemplateScheduleRules,
                     },
                   ]}
                 />
@@ -88,11 +87,6 @@ export function useAwxTemplateRoutes() {
                   id: AwxRoute.JobTemplateScheduleDetails,
                   path: 'details',
                   element: <ScheduleDetails />,
-                },
-                {
-                  id: AwxRoute.JobTemplateScheduleRules,
-                  path: 'rrules',
-                  element: <ScheduleRules />,
                 },
               ],
             },
@@ -173,7 +167,7 @@ export function useAwxTemplateRoutes() {
               element: <ScheduleAddWizard />,
             },
             {
-              id: AwxRoute.WorkflowJobTemplateEditSchedule,
+              id: AwxRoute.WorkflowJobTemplateScheduleEdit,
               path: ':id/schedules/:schedule_id/edit',
               element: <ScheduleEditWizard />,
             },
@@ -182,6 +176,10 @@ export function useAwxTemplateRoutes() {
               path: ':id/schedules/:schedule_id',
               element: (
                 <SchedulePage
+                  initialBreadCrumbs={[
+                    { label: t('Templates'), to: AwxRoute.Templates },
+                    { label: 'data', to: AwxRoute.WorkflowJobTemplatePage },
+                  ]}
                   backTab={{
                     label: t('Back to Schedules'),
                     page: AwxRoute.WorkflowJobTemplateSchedules,
@@ -192,10 +190,6 @@ export function useAwxTemplateRoutes() {
                       label: t('Details'),
                       page: AwxRoute.WorkflowJobTemplateScheduleDetails,
                     },
-                    {
-                      label: t('Rules'),
-                      page: AwxRoute.WorkflowJobTemplateScheduleRules,
-                    },
                   ]}
                 />
               ),
@@ -204,11 +198,6 @@ export function useAwxTemplateRoutes() {
                   id: AwxRoute.WorkflowJobTemplateScheduleDetails,
                   path: 'details',
                   element: <ScheduleDetails />,
-                },
-                {
-                  id: AwxRoute.WorkflowJobTemplateScheduleRules,
-                  path: 'rrules',
-                  element: <ScheduleRules />,
                 },
               ],
             },
