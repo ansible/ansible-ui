@@ -25,7 +25,8 @@ export function useNotifiersRowActions(
   onComplete: (notification: NotificationTemplate[]) => void,
   onNotifierCopied = () => null,
   onNotifierStartTest?: (notificationId: number) => void,
-  detail?: 'detail' | undefined
+  detail?: 'detail' | undefined,
+  testDisabled? : boolean,
 ) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
@@ -53,6 +54,7 @@ export function useNotifiersRowActions(
         selection: PageActionSelection.Single,
         icon: RocketIcon,
         label: t(`Test notifier`),
+        isDisabled: () => testDisabled === true ? t(`Disabled while test is running.`) : undefined,
         onClick: (notification: NotificationTemplate) => {
           void (async () => {
             try {
@@ -95,5 +97,5 @@ export function useNotifiersRowActions(
         isDanger: true,
       },
     ];
-  }, [pageNavigate, copyNotifier, deleteNotifiers, detail, t, onNotifierStartTest, alertToaster]);
+  }, [pageNavigate, copyNotifier, deleteNotifiers, detail, t, onNotifierStartTest, alertToaster, testDisabled]);
 }
