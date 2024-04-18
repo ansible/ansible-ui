@@ -41,7 +41,7 @@ export function AwxActiveUserProvider(props: { children: ReactNode }) {
   }, [data]);
 
   const activeAwxUserIsLoading = useMemo<boolean>(
-    () => !activeAwxUser && !error && isLoading,
+    () => (!activeAwxUser && !error) || isLoading,
     [activeAwxUser, isLoading, error]
   );
 
