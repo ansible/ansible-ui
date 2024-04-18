@@ -19,7 +19,7 @@ export function useSchedulesColumns(options?: { disableSort?: boolean; disableLi
   });
   const nameClick = useCallback(
     (schedule: Schedule) => {
-      const pageUrl = getScheduleUrl('resource', schedule) as schedulePageUrl;
+      const pageUrl = getScheduleUrl('details', schedule) as schedulePageUrl;
       return pageNavigate(pageUrl.pageId, { params: pageUrl.params });
     },
     [getScheduleUrl, pageNavigate]
