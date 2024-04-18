@@ -260,7 +260,7 @@ export function useAwxTemplateRoutes() {
                 {
                   id: AwxRoute.WorkflowJobTemplateNotifications,
                   path: 'notifications',
-                  element: <PageNotImplemented />,
+                  element: <ResourceNotifications resourceType="workflow_job_templates" />,
                 },
                 {
                   path: '',
