@@ -29,9 +29,14 @@ import { InstanceForksSlider } from './components/InstanceForksSlider';
 import { PageDetailCodeEditor } from '../../../../framework/PageDetails/PageDetailCodeEditor';
 
 export function InstanceDetails() {
-  const params = useParams<{ id: string }>();
-  const { error, data: instance, refresh } = useGetItem<Instance>(awxAPI`/instances`, params.id);
-  const { instanceGroups, instanceForks } = useInstanceActions(params.id as string);
+  const params = useParams<{ id?: string; instance_id?: string }>();
+  const { id, instance_id } = params;
+  const {
+    error,
+    data: instance,
+    refresh,
+  } = useGetItem<Instance>(awxAPI`/instances`, instance_id ?? id);
+  const { instanceGroups, instanceForks } = useInstanceActions(instance_id ?? (id as string));
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!instance) return <LoadingPage breadcrumbs tabs />;
   return (

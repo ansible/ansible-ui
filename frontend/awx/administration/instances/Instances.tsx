@@ -8,9 +8,12 @@ import {
 } from '../../common/awx-toolbar-filters';
 import { InstancesList } from './components/InstancesList';
 import { useInstanceToolbarActions } from './hooks/useInstanceToolbarActions';
+import { useInstanceRowActions } from './hooks/useInstanceRowActions';
+import { useInstancesColumns } from './hooks/useInstancesColumns';
 
 export function Instances() {
   const { t } = useTranslation();
+  const tableColumns = useInstancesColumns();
 
   return (
     <PageLayout>
@@ -21,7 +24,11 @@ export function Instances() {
         )}
         headerActions={<ActivityStreamIcon type={'instance'} />}
       />
-      <InstancesList useToolbarActions={useInstanceToolbarActions} />
+      <InstancesList
+        useToolbarActions={useInstanceToolbarActions}
+        useRowActions={useInstanceRowActions}
+        tableColumns={tableColumns}
+      />
     </PageLayout>
   );
 }

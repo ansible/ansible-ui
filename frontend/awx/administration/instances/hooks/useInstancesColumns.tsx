@@ -19,7 +19,10 @@ import { StatusCell } from '../../../../common/Status';
 import { Unavailable } from '../../../../../framework/components/Unavailable';
 import { computeForks } from './useInstanceActions';
 
-export function useInstancesColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
+export function useInstancesColumns(
+  options?: { disableSort?: boolean; disableLinks?: boolean },
+  onNameClick?: (instance: Instance) => void
+) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
 
@@ -28,7 +31,10 @@ export function useInstancesColumns(options?: { disableSort?: boolean; disableLi
   } = useNodeTypeTooltip();
 
   const nameClick = useCallback(
-    (instance: Instance) => pageNavigate(AwxRoute.InstanceDetails, { params: { id: instance.id } }),
+    (instance: Instance) =>
+      pageNavigate(AwxRoute.InstanceDetails, {
+        params: { id: instance.id },
+      }),
     [pageNavigate]
   );
 
@@ -45,7 +51,7 @@ export function useInstancesColumns(options?: { disableSort?: boolean; disableLi
 
   const nameColumn = useNameColumn<Instance>({
     ...options,
-    onClick: nameClick,
+    onClick: onNameClick ?? nameClick,
     header: t('Name'),
     sort: 'hostname',
   });
