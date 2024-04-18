@@ -10,7 +10,7 @@ import {
   usePageNavigate,
 } from '../../../../framework';
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
-import { useSearchParams } from '../../../../framework/components/useSearchParams';
+import { useURLSearchParams } from '../../../../framework/components/useURLSearchParams';
 import { requestGet, requestPatch, swrOptions } from '../../../common/crud/Data';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { PageFormCredentialSelect } from '../../access/credentials/components/PageFormCredentialSelect';
@@ -32,7 +32,7 @@ export function CreateExecutionEnvironment() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
-  const [searchParams] = useSearchParams();
+  const [searchParams] = useURLSearchParams();
   const postRequest = usePostRequest<ExecutionEnvironment, ExecutionEnvironment>();
   const onSubmit: PageFormSubmitHandler<ExecutionEnvironment> = async (
     executionEnvInput: ExecutionEnvironment

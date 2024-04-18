@@ -63,7 +63,7 @@ import {
   ToolbarFilterType,
 } from '../../../../framework/PageToolbar/PageToolbarFilter';
 import { IToolbarMultiSelectFilter } from '../../../../framework/PageToolbar/PageToolbarFilters/ToolbarMultiSelectFilter';
-import { useSearchParams } from '../../../../framework/components/useSearchParams';
+import { useURLSearchParams } from '../../../../framework/components/useURLSearchParams';
 import { useGetRequest } from '../../../common/crud/useGet';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { AnalyticsErrorState } from '../Reports/ErrorStates';
@@ -239,7 +239,7 @@ export function AnalyticsReportBuilder(props: AnalyticsReportBuilderProps) {
   const navigate = usePageNavigate();
   parameters.navigate = navigate;
 
-  const [searchParams] = useSearchParams();
+  const [searchParams] = useURLSearchParams();
   const granularityParam =
     searchParams.get('granularity') || parameters.defaultDataParams?.granularity || '';
 

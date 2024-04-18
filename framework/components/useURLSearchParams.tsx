@@ -1,7 +1,12 @@
 import { useCallback, useMemo } from 'react';
 import { useWindowLocation } from './useWindowLocation';
 
-export function useSearchParams(): [URLSearchParams, (setSearchParams: URLSearchParams) => void] {
+// This hook is used to get and set URLSearchParams in the URL.
+// It does not create a new navigation in navigation history when updating the URLSearchParams.
+export function useURLSearchParams(): [
+  URLSearchParams,
+  (setSearchParams: URLSearchParams) => void,
+] {
   const location = useWindowLocation();
   const pathname = location.location?.pathname || '/';
   const searchParams = useMemo<URLSearchParams>(() => {

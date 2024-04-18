@@ -3,10 +3,11 @@ import { t } from 'i18next';
 import { useCallback, useEffect } from 'react';
 import { useFormState } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { RequestError } from '../../frontend/common/crud/RequestError';
 import { PageForm } from '../PageForm/PageForm';
 import { PageLayout } from '../PageLayout';
+import { useURLSearchParams } from '../components/useURLSearchParams';
 import { PageWizardFooter } from './PageWizardFooter';
 import { isPageWizardParentStep, usePageWizard } from './PageWizardProvider';
 import type { PageWizardBody } from './types';
@@ -31,7 +32,7 @@ export function PageWizardBody<T>({
     submitError,
     setSubmitError,
   } = usePageWizard();
-  const [_, setSearchParams] = useSearchParams();
+  const [_, setSearchParams] = useURLSearchParams();
 
   const onClose = useCallback((): void => {
     if (onCancel) {
