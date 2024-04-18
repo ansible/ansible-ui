@@ -9,10 +9,12 @@ import { PageSelectOption } from '../../../framework/PageInputs/PageSelectOption
 import { PageFormCreatableSelect } from '../../../framework/PageForm/Inputs/PageFormCreatableSelect';
 import { WizardFormValues } from '../resources/templates/WorkflowVisualizer/types';
 import { useEffect } from 'react';
+import { useFormContext } from 'react-hook-form';
 
 export function SurveyStep({ templateId, jobType }: { templateId?: string; jobType?: string }) {
   const { t } = useTranslation();
   const { wizardData, setStepData } = usePageWizard();
+  const { reset } = useFormContext();
   const { node_resource } = wizardData as WizardFormValues;
   const id = node_resource ? node_resource.id.toString() : templateId ? templateId : '';
   const { data: survey_spec } = useGet<Survey>(
@@ -20,27 +22,22 @@ export function SurveyStep({ templateId, jobType }: { templateId?: string; jobTy
   );
 
   useEffect(() => {
-    setStepData((prev) => {
-      const survey: { [key: string]: string | number } = {};
-      survey_spec?.spec?.forEach((obj) => {
-        survey[obj.variable] = obj.default;
-      });
-
-      console.log(prev);
-      const data = {
-        ...prev,
-        survey,
-        // 'other-prompts': {
-        //   ...prev['other-prompts'],
-        //   survey,
-        // },
-      };
-      console.log(data);
-      return data;
+    const survey: { [key: string]: string | number | { name: string | number }[] } = {};
+    survey_spec?.spec?.forEach((obj) => {
+      if (obj.type === 'multiselect') {
+        survey[obj.variable] = [{ name: obj.default }];
+        return;
+      }
+      survey[obj.variable] = obj.default;
     });
-  }, [setStepData, survey_spec]);
+    setStepData((prev) => ({
+      ...prev,
+      survey,
+    }));
+    reset({ survey });
+  }, [reset, setStepData, survey_spec, wizardData]);
 
-  const getChoices = (variableName: string): PageSelectOption<string>[] => {
+  const getChoices = (name: string): PageSelectOption<string>[] => {
     const choices: PageSelectOption<string>[] = [];
 
     survey_spec?.spec.forEach((element: Spec) => {
@@ -48,7 +45,7 @@ export function SurveyStep({ templateId, jobType }: { templateId?: string; jobTy
         (element.type === 'multiplechoice' || element.type === 'multiselect') &&
         Array.isArray(element.choices)
       ) {
-        if (element.variable === variableName) {
+        if (element.question_name === name) {
           element.choices?.forEach((choice: string) => {
             choices.push({ value: choice, label: t(choice) });
           });
@@ -66,6 +63,8 @@ export function SurveyStep({ templateId, jobType }: { templateId?: string; jobTy
             key={index}
             name={`survey.${element.variable}`}
             label={t(element.question_name)}
+            labelHelp={element.question_description}
+            labelHelpTitle=""
             isRequired={element.required}
             type="text"
             maxLength={element.max}
@@ -76,6 +75,8 @@ export function SurveyStep({ templateId, jobType }: { templateId?: string; jobTy
             key={index}
             name={`survey.${element.variable}`}
             label={t(element.question_name)}
+            labelHelp={element.question_description}
+            labelHelpTitle=""
             isRequired={element.required}
             type="number"
             max={element.max}
@@ -86,6 +87,8 @@ export function SurveyStep({ templateId, jobType }: { templateId?: string; jobTy
             key={index}
             name={`survey.${element.variable}`}
             label={t(element.question_name)}
+            labelHelp={element.question_description}
+            labelHelpTitle=""
             isRequired={element.required}
             type="number"
             max={element.max}
@@ -96,6 +99,8 @@ export function SurveyStep({ templateId, jobType }: { templateId?: string; jobTy
             key={index}
             name={`survey.${element.variable}`}
             label={t(element.question_name)}
+            labelHelp={element.question_description}
+            labelHelpTitle=""
             isRequired={element.required}
             type="password"
             maxLength={element.max}
@@ -106,6 +111,8 @@ export function SurveyStep({ templateId, jobType }: { templateId?: string; jobTy
             key={index}
             name={`survey.${element.variable}`}
             label={t(element.question_name)}
+            labelHelp={element.question_description}
+            labelHelpTitle=""
             isRequired={element.required}
             maxLength={element.max}
             minLength={element.min}
@@ -115,7 +122,9 @@ export function SurveyStep({ templateId, jobType }: { templateId?: string; jobTy
             name={`survey.${element.variable}`}
             placeholderText={t('Select option')}
             label={t(element.question_name)}
-            options={getChoices(element.variable)}
+            labelHelp={element.question_description}
+            labelHelpTitle=""
+            options={getChoices(element.question_name)}
             isRequired={element.required}
           ></PageFormSelect>
         ) : element.type === 'multiselect' ? (
@@ -123,7 +132,9 @@ export function SurveyStep({ templateId, jobType }: { templateId?: string; jobTy
             name={`survey.${element.variable}`}
             placeholderText={t('Select option(s)')}
             label={t(element.question_name)}
-            options={getChoices(element.variable)}
+            labelHelp={element.question_description}
+            labelHelpTitle=""
+            options={getChoices(element.question_name)}
             isRequired={element.required}
           />
         ) : undefined

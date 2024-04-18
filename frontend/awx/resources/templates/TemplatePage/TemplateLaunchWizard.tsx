@@ -42,10 +42,10 @@ const addSurveyQuestionsToExtraVars = (
   config.variables_needed_to_start.forEach((key, index) => {
     const value = formValues.survey[key];
     if (Array.isArray(value)) {
-      const outputString = value.reduce((acc: string, { name }) => `${acc},${name}`, '').slice(1);
+      const outputString = value.reduce((acc, { name }) => `${acc},${name}`, '').slice(1);
       stringValue += `${key}: [${outputString}]`;
     } else {
-      stringValue += `${key}: ${formValues.survey[key]}`;
+      stringValue += `${key}: ${formValues.survey[key] as string}`;
     }
 
     if (index !== config.variables_needed_to_start.length - 1) {
@@ -97,7 +97,7 @@ export interface TemplateLaunch {
   skip_tags: { name: string }[];
   timeout: number;
   verbosity: number;
-  survey: { [key: string]: string | string[] };
+  survey: { [key: string]: string | string[] | { name: string } };
 }
 
 interface LaunchPayload {
@@ -142,6 +142,7 @@ export function TemplateLaunchWizard({ jobType }: { jobType: string }) {
     error: getLaunchError,
     refresh: getLaunchRefresh,
   } = useGet<LaunchConfiguration>(awxAPI`/${jobType}/${resourceId}/launch/`);
+
   const error = getTemplateError || getLaunchError;
   const refresh = getTemplateRefresh || getLaunchRefresh;
   const getJobOutputUrl = useGetJobOutputUrl();
@@ -229,9 +230,9 @@ export function TemplateLaunchWizard({ jobType }: { jobType: string }) {
           const extraVarsObj = extra_vars ? (JSON.parse(yamlToJson(extra_vars)) as object) : {};
 
           Object.keys(formValues.survey).forEach((key) => {
-            const value: string[] | { [key: string]: string }[] = formValues.survey[key];
+            const value = formValues.survey[key];
             if (Array.isArray(value)) {
-              formValues.survey[key] = value.map((k: { name: string }) => k.name);
+              formValues.survey[key] = value.map((k) => k.name);
             }
           });
 
@@ -357,7 +358,6 @@ export function TemplateLaunchWizard({ jobType }: { jobType: string }) {
   ];
 
   const { defaults } = config;
-  console.log(config);
 
   const readOnlyLabels = defaults?.labels?.map((label) => ({
     ...label,
@@ -392,6 +392,7 @@ export function TemplateLaunchWizard({ jobType }: { jobType: string }) {
       timeout: defaults.timeout,
       verbosity: defaults.verbosity,
     },
+    survey: {},
   };
 
   return (
