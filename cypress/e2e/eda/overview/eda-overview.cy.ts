@@ -144,7 +144,10 @@ describe('overview checks when resources before any resources are created', () =
     cy.get('[data-cy="decision-environments"]')
       .should('contain', 'Decision Environments')
       .within(() => {
-        cy.get('[data-cy="card-subtitle"]').should('contain', 'Recently updated environments');
+        cy.get('[data-cy="card-subtitle"]').should(
+          'contain',
+          'Recently updated decision environments'
+        );
       });
   });
 
