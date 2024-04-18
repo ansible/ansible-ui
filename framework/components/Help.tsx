@@ -44,12 +44,6 @@ export function Help(props: {
           <OutlinedQuestionCircleIcon />
         </Icon>
       </IconButtonStyled>
-      {/* <Button
-        variant="plain"
-        style={{ padding: 0, marginLeft: marginLeft || '8px', verticalAlign: 'middle' }}
-      >
-        <OutlinedQuestionCircleIcon />
-      </Button> */}
     </Popover>
   );
 }
