@@ -8,7 +8,7 @@ export function useUserFilters() {
     () => [
       {
         key: 'name',
-        label: t('Name'),
+        label: t('Username'),
         type: ToolbarFilterType.MultiText,
         query: 'name',
         comparison: 'startsWith',

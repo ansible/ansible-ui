@@ -1,7 +1,7 @@
 import { SetStateAction } from 'react';
 import { ErrorAdapter } from '../PageForm/typesErrorAdapter';
 
-export interface PageWizardStep {
+export interface PageWizardBasicStep {
   id: string;
   label: string;
   inputs?: React.ReactNode;
@@ -15,6 +15,13 @@ export interface PageWizardStep {
   validate?: (formData: object, wizardData: object) => Promise<void> | void;
 }
 
+/** Type used to define parent steps. */
+export interface PageWizardParentStep extends Omit<PageWizardBasicStep, 'inputs' | 'validate'> {
+  substeps: [PageWizardBasicStep, ...PageWizardBasicStep[]];
+}
+
+export type PageWizardStep = PageWizardBasicStep | PageWizardParentStep;
+
 export interface PageWizardState {
   activeStep: PageWizardStep | null;
   isToggleExpanded: boolean;
@@ -26,9 +33,15 @@ export interface PageWizardState {
   stepData: Record<string, object>;
   stepError: Record<string, object>;
   allSteps: PageWizardStep[];
+  // Top-level visible steps (including parent steps of substeps)
   visibleSteps: PageWizardStep[];
   setVisibleSteps: (steps: PageWizardStep[]) => void;
+  // Flattened list containing all visible steps including substeps
+  visibleStepsFlattened: PageWizardStep[];
+  setVisibleStepsFlattened: (steps: PageWizardStep[]) => void;
   wizardData: object;
+  submitError?: Error | undefined;
+  setSubmitError: React.Dispatch<SetStateAction<Error | undefined>>;
 }
 
 export interface PageWizardBody<T> {

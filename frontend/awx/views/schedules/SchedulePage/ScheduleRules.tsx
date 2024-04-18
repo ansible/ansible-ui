@@ -18,9 +18,12 @@ import { AwxError } from '../../../common/AwxError';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { Schedule } from '../../../interfaces/Schedule';
 import { useGetCreateRuleRoute } from '../hooks/scheduleHelpers';
+import { getDocsBaseUrl } from '../../../common/util/getDocsBaseUrl';
+import { useAwxConfig } from '../../../common/useAwxConfig';
 
 export function ScheduleRules() {
   const { t } = useTranslation();
+  const config = useAwxConfig();
   const navigate = useNavigate();
   const params = useParams<{ id: string; schedule_id: string; source_id?: string }>();
   const {
@@ -84,7 +87,7 @@ export function ScheduleRules() {
         title={t('Schedule Rules')}
         titleHelpTitle={t('Schedule Rules')}
         titleHelp={t('Create as many schedule rules as you need.')}
-        titleDocLink="https://docs.ansible.com/automation-controller/latest/html/userguide/scheduling.html"
+        titleDocLink={`${getDocsBaseUrl(config)}/html/userguide/scheduling.html`}
         description={t(
           'Schedule rules are a component of an overall schedule.  A schedule rule is used to determine when a schedule will run.  A schedule can have multiple rules.'
         )}
@@ -96,6 +99,7 @@ export function ScheduleRules() {
         errorStateTitle={t('Error loading rule')}
         emptyStateTitle={t('No rules yet')}
         emptyStateDescription={t('To get started, create a rule.')}
+        emptyStateButtonIcon={<PlusCircleIcon />}
         emptyStateButtonText={t('Create Rule')}
         emptyStateButtonClick={() => navigate(createUrl)}
         defaultSubtitle={t('Rules')}

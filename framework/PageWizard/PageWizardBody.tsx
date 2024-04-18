@@ -1,12 +1,15 @@
-import { PageSection } from '@patternfly/react-core';
+import { Alert, PageSection } from '@patternfly/react-core';
+import { t } from 'i18next';
 import { useCallback, useEffect } from 'react';
 import { useFormState } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { RequestError } from '../../frontend/common/crud/RequestError';
 import { PageForm } from '../PageForm/PageForm';
+import { PageLayout } from '../PageLayout';
 import { PageWizardFooter } from './PageWizardFooter';
-import { usePageWizard, isStepVisible } from './PageWizardProvider';
+import { isPageWizardParentStep, usePageWizard } from './PageWizardProvider';
 import type { PageWizardBody } from './types';
-import { t } from 'i18next';
 
 export function PageWizardBody<T>({
   onCancel,
@@ -19,14 +22,14 @@ export function PageWizardBody<T>({
   const navigate = useNavigate();
   const {
     activeStep,
-    allSteps,
     setActiveStep,
     setStepData,
-    setVisibleSteps,
     setWizardData,
     stepData,
-    visibleSteps,
+    visibleStepsFlattened,
     wizardData,
+    submitError,
+    setSubmitError,
   } = usePageWizard();
   const [_, setSearchParams] = useSearchParams();
 
@@ -40,57 +43,65 @@ export function PageWizardBody<T>({
 
   const onNext = useCallback(
     async (formData: object) => {
-      const filteredSteps = allSteps.filter((step) =>
-        isStepVisible(step, { ...wizardData, ...formData })
-      );
-
       if (activeStep === null) {
         return Promise.resolve();
       }
 
-      if (activeStep.validate) {
+      if (!isPageWizardParentStep(activeStep) && activeStep.validate) {
         await activeStep.validate(formData, wizardData);
       }
 
-      const isLastStep = activeStep?.id === filteredSteps[filteredSteps.length - 1]?.id;
+      const isLastStep =
+        activeStep?.id === visibleStepsFlattened[visibleStepsFlattened.length - 1]?.id;
       if (isLastStep) {
-        return onSubmit(wizardData as T);
+        try {
+          await onSubmit(wizardData as T);
+        } catch (e) {
+          setSubmitError(e instanceof Error ? e : new Error(t('An error occurred.')));
+        }
+        return;
       }
 
-      const activeStepIndex = filteredSteps.findIndex((step) => step.id === activeStep?.id);
-      const nextStep = filteredSteps[activeStepIndex + 1];
+      const activeStepIndex = visibleStepsFlattened.findIndex((step) => step.id === activeStep?.id);
+      // If the next step is a parent step, mark its first substep as the next active step
+      const nextStep = isPageWizardParentStep(visibleStepsFlattened[activeStepIndex + 1])
+        ? visibleStepsFlattened[activeStepIndex + 2]
+        : visibleStepsFlattened[activeStepIndex + 1];
 
       // Clear search params
       setSearchParams(new URLSearchParams(''));
       setWizardData((prev: object) => ({ ...prev, ...formData }));
       setStepData((prev) => ({ ...prev, [activeStep?.id]: formData }));
-      setVisibleSteps(filteredSteps);
       setActiveStep(nextStep);
       return Promise.resolve();
     },
     [
       activeStep,
-      allSteps,
       onSubmit,
       setActiveStep,
       setSearchParams,
       setStepData,
-      setVisibleSteps,
+      setSubmitError,
       setWizardData,
+      visibleStepsFlattened,
       wizardData,
     ]
   );
 
   const onBack = useCallback(() => {
-    const activeStepIndex = visibleSteps.findIndex((step) => step.id === activeStep?.id);
-    const previousStep = visibleSteps[activeStepIndex - 1];
+    const activeStepIndex = visibleStepsFlattened.findIndex((step) => step.id === activeStep?.id);
+    // If the previous step is a parent step, mark its first substep as the next active step
+    const previousStep = isPageWizardParentStep(visibleStepsFlattened[activeStepIndex - 1])
+      ? visibleStepsFlattened[activeStepIndex - 2]
+      : visibleStepsFlattened[activeStepIndex - 1];
     // Clear search params
     setSearchParams(new URLSearchParams(''));
     setActiveStep(previousStep);
-  }, [visibleSteps, setSearchParams, setActiveStep, activeStep?.id]);
+  }, [visibleStepsFlattened, setSearchParams, setActiveStep, activeStep?.id]);
 
   return (
-    <>
+    <PageLayout>
+      <RequestErrorAlert error={submitError} />
       {activeStep !== null &&
         ('inputs' in activeStep ? (
           <PageForm
@@ -110,7 +121,7 @@ export function PageWizardBody<T>({
         ) : (
           <div
             data-cy={`wizard-section-${activeStep.id}`}
-            style={{ display: 'flex', flexDirection: 'column', height: '100%' }}
+            style={{ display: 'flex', flexDirection: 'column', flexGrow: 1, overflow: 'hidden' }}
           >
             <PageSection
               aria-label={t('Wizard step content')}
@@ -123,7 +134,7 @@ export function PageWizardBody<T>({
             <PageWizardFooter onNext={() => void onNext({})} onBack={onBack} onCancel={onClose} />
           </div>
         ))}
-    </>
+    </PageLayout>
   );
 }
 
@@ -141,4 +152,25 @@ function StepErrors() {
   }, [errors, activeStep, setStepError, formErrors]);
 
   return null;
+}
+
+function RequestErrorAlert(props: { error?: unknown }) {
+  const { t } = useTranslation();
+  if (!props.error) return null;
+  if (!(props.error instanceof Error)) {
+    if (typeof props.error === 'string') {
+      return <Alert variant="danger" title={props.error} />;
+    }
+    return <Alert variant="danger" title={t('An error occurred.')} />;
+  }
+  if (!(props.error instanceof RequestError)) {
+    return <Alert variant="danger" title={props.error.message} />;
+  }
+  return (
+    <Alert variant="danger" title={props.error.message} isInline>
+      {Object.values(props.error.json ?? {}).map((value, index) => (
+        <div key={index}>{value}</div>
+      ))}
+    </Alert>
+  );
 }

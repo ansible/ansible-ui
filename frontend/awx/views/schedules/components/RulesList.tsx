@@ -1,9 +1,12 @@
-import { useTranslation } from 'react-i18next';
-import { ITableColumn, PageHeader, PageTable } from '../../../../../framework';
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { RRule } from 'rrule';
+import { ITableColumn, PageHeader, PageTable } from '../../../../../framework';
+import { useAwxConfig } from '../../../common/useAwxConfig';
+import { getDocsBaseUrl } from '../../../common/util/getDocsBaseUrl';
 import { useRuleRowActions } from '../hooks/useRuleRowActions';
 import { RuleListItemType } from '../types';
+import { PlusCircleIcon } from '@patternfly/react-icons';
 
 export function RulesList(props: {
   setIsOpen: (isOpen: boolean | number) => void;
@@ -11,6 +14,7 @@ export function RulesList(props: {
   rules: RuleListItemType[];
 }) {
   const { t } = useTranslation();
+  const config = useAwxConfig();
 
   const isExceptions = props.ruleType === 'exception';
 
@@ -63,7 +67,7 @@ export function RulesList(props: {
         title={isExceptions ? t('Schedule Exceptions') : t('Schedule Rules')}
         titleHelpTitle={isExceptions ? t('Schedule Exceptions') : t('Schedule Rules')}
         titleHelp={t('Create as many schedule rules as you need.')}
-        titleDocLink="https://docs.ansible.com/automation-controller/latest/html/userguide/scheduling.html"
+        titleDocLink={`${getDocsBaseUrl(config)}/html/userguide/scheduling.html`}
         description={description}
       />
       <PageTable<RuleListItemType>
@@ -76,6 +80,7 @@ export function RulesList(props: {
             ? t('To get started, create an exception.')
             : t('To get started, create an rule.')
         }
+        emptyStateButtonIcon={<PlusCircleIcon />}
         emptyStateButtonText={isExceptions ? t('Create exception') : t('Create Rule')}
         emptyStateButtonClick={() => props.setIsOpen(true)}
         defaultSubtitle={isExceptions ? t('Exceptions') : t('Rules')}
