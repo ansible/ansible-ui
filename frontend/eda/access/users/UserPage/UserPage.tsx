@@ -94,9 +94,13 @@ export function UserPage() {
   const tabs = isViewingSelf
     ? [
         { label: t('Details'), page: EdaRoute.UserDetails },
+        { label: t('Roles'), page: EdaRoute.UserRoles },
         { label: t('Controller Tokens'), page: EdaRoute.UserTokens },
       ]
-    : [{ label: t('Details'), page: EdaRoute.UserDetails }];
+    : [
+        { label: t('Details'), page: EdaRoute.UserDetails },
+        { label: t('Roles'), page: EdaRoute.UserRoles },
+      ];
   return (
     <PageLayout>
       <PageHeader

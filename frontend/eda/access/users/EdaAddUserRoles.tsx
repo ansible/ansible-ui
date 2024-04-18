@@ -21,11 +21,18 @@ import {
 import { EdaSelectRolesStep } from '../common/EdaRolesWizardSteps/EdaSelectRolesStep';
 import { EdaRbacRole } from '../../interfaces/EdaRbacRole';
 import { RoleAssignmentsReviewStep } from '../../../common/access/RolesWizard/steps/RoleAssignmentsReviewStep';
+import { useEdaBulkActionDialog } from '../../common/useEdaBulkActionDialog';
+import { postRequest } from '../../../common/crud/Data';
 
 interface WizardFormValues {
   resourceType: string;
   resources: EdaResourceType[];
-  roles: EdaRbacRole[];
+  edaRoles: EdaRbacRole[];
+}
+
+interface ResourceRolePair {
+  resource: EdaResourceType;
+  role: EdaRbacRole;
 }
 
 export function EdaAddUserRoles() {
@@ -33,6 +40,8 @@ export function EdaAddUserRoles() {
   const params = useParams<{ id: string }>();
   const getPageUrl = useGetPageUrl();
   const pageNavigate = usePageNavigate();
+  const progressDialog = useEdaBulkActionDialog<ResourceRolePair>();
+  // Use ansible_id to retrieve user
   const { data: user, isLoading } = useGet<EdaUser>(edaAPI`/users/${params.id ?? ''}/`);
 
   if (isLoading || !user) return <LoadingPage />;
@@ -68,9 +77,40 @@ export function EdaAddUserRoles() {
     { id: 'review', label: t('Review'), element: <RoleAssignmentsReviewStep /> },
   ];
 
-  const onSubmit = (/*data: WizardFormValues*/) => {
-    // TODO
-    return Promise.resolve();
+  const onSubmit = (data: WizardFormValues) => {
+    const { resources, edaRoles, resourceType } = data;
+    const items: ResourceRolePair[] = [];
+    for (const resource of resources) {
+      for (const role of edaRoles) {
+        items.push({ resource, role });
+      }
+    }
+    return new Promise<void>((resolve) => {
+      progressDialog({
+        title: t('Add roles'),
+        keyFn: ({ resource, role }) => `${resource.id}_${role.id}`,
+        items,
+        actionColumns: [
+          { header: t('Resource name'), cell: ({ resource }) => resource.name },
+          { header: t('Role'), cell: ({ role }) => role.name },
+        ],
+        actionFn: ({ resource, role }) =>
+          postRequest(edaAPI`/role_user_assignments/`, {
+            user: user.id,
+            role_definition: role.id,
+            content_type: resourceType,
+            object_id: resource.id,
+          }),
+        onComplete: () => {
+          resolve();
+        },
+        onClose: () => {
+          pageNavigate(EdaRoute.UserRoles, {
+            params: { id: user.id.toString() },
+          });
+        },
+      });
+    });
   };
 
   return (
@@ -94,7 +134,7 @@ export function EdaAddUserRoles() {
         steps={steps}
         onSubmit={onSubmit}
         onCancel={() => {
-          pageNavigate(EdaRoute.UserDetails, { params: { id: user?.id } });
+          pageNavigate(EdaRoute.UserRoles, { params: { id: user?.id } });
         }}
         disableGrid
       />
