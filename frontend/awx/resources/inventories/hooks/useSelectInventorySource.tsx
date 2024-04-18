@@ -14,11 +14,11 @@ function SelectInventorySource(props: {
   inventoryId?: number;
 }) {
   const { title, inventoryId, onSelect } = props;
-  const toolbarFilters = useInventorySourceFilters();
   const tableColumns = useInventorySourceColumns({ disableLinks: true });
   const url = inventoryId
     ? awxAPI`/inventories/${inventoryId.toString()}/inventory_sources/`
     : awxAPI`/inventory_sources/`;
+  const toolbarFilters = useInventorySourceFilters(url);
   const view = useAwxView<InventorySource>({
     url,
     toolbarFilters,
