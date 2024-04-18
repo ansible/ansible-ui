@@ -1,6 +1,6 @@
 import { ButtonVariant } from '@patternfly/react-core';
-import { HeartbeatIcon, MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
-import { useCallback, useMemo } from 'react';
+import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   IPageAction,
@@ -17,11 +17,10 @@ import { Settings } from '../../../interfaces/Settings';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { cannotRemoveInstances } from './useInstanceActions';
 import { useRemoveInstances } from './useRemoveInstances';
-import { useRunHealthCheck } from './useRunHealthCheck';
+import { useRunHealthCheckAction } from './useRunHealthCheckAction';
 
 export function useInstanceToolbarActions(view: IAwxView<Instance>) {
   const { t } = useTranslation();
-  const runHealthCheck = useRunHealthCheck(view.unselectItemsAndRefresh);
   const removeInstances = useRemoveInstances(view.unselectItemsAndRefresh);
   const pageNavigate = usePageNavigate();
   const { activeAwxUser } = useAwxActiveUser();
@@ -31,28 +30,10 @@ export function useInstanceToolbarActions(view: IAwxView<Instance>) {
   const canAddAndEditInstances =
     (activeAwxUser?.is_superuser || activeAwxUser?.is_system_auditor) && data?.IS_K8S;
 
-  const cannotRunHealthCheckDueToPending = useCallback(
-    (instance: Instance) => {
-      if (instance.health_check_pending)
-        return t(
-          `Instance has pending health checks. Wait for those to complete before attempting another health check.`
-        );
-      return '';
-    },
-    [t]
-  );
+  const healthCheckAction = useRunHealthCheckAction(view);
 
-  const cannotRunHealthCheckDueToNodeType = useCallback(
-    (instance: Instance) => {
-      if (instance.node_type !== 'execution')
-        return t(`Health checks can only be run on execution instances.`);
-      return '';
-    },
-    [t]
-  );
-
-  return useMemo<IPageAction<Instance>[]>(
-    () => [
+  return useMemo<IPageAction<Instance>[]>(() => {
+    let actions: IPageAction<Instance>[] = [
       {
         type: PageActionType.Button,
         isHidden: () => isK8s === false,
@@ -68,42 +49,21 @@ export function useInstanceToolbarActions(view: IAwxView<Instance>) {
               'You do not have permission to add instances. Please contact your organization administrator if there is an issue with your access.'
             ),
       },
-      {
+    ];
+    if (isK8s) {
+      const removeInstanceAction: IPageAction<Instance> = {
         type: PageActionType.Button,
-        isHidden: () => isK8s === false,
         selection: PageActionSelection.Multiple,
         icon: MinusCircleIcon,
         label: t('Remove instance'),
         onClick: (instance: Instance[]) => removeInstances(instance),
         isDisabled: (instances: Instance[]) => cannotRemoveInstances(instances, t),
         isDanger: true,
-      },
-      {
-        type: PageActionType.Button,
-        selection: PageActionSelection.Multiple,
-        variant: ButtonVariant.primary,
-        icon: HeartbeatIcon,
-        label: t('Run health check'),
-        onClick: (instances) => runHealthCheck(instances),
-        isDisabled: (instances) =>
-          instances.some(
-            (instance) =>
-              cannotRunHealthCheckDueToNodeType(instance) ||
-              cannotRunHealthCheckDueToPending(instance)
-          )
-            ? 'Cannot run health checks on one or more of the selected instances'
-            : '',
-      },
-    ],
-    [
-      t,
-      canAddAndEditInstances,
-      pageNavigate,
-      isK8s,
-      removeInstances,
-      runHealthCheck,
-      cannotRunHealthCheckDueToNodeType,
-      cannotRunHealthCheckDueToPending,
-    ]
-  );
+      };
+      actions.push(removeInstanceAction);
+    }
+    actions = actions.concat(healthCheckAction);
+
+    return actions;
+  }, [t, canAddAndEditInstances, pageNavigate, isK8s, removeInstances, healthCheckAction]);
 }
