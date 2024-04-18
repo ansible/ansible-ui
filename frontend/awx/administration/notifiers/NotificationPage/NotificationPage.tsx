@@ -40,7 +40,7 @@ export function NotificationPage() {
       setTestedNotificationId(notificationId);
     },
     'detail',
-    testedNotificationId === undefined ? false : true,
+    testedNotificationId === undefined ? false : true
   );
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
