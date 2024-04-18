@@ -1,18 +1,17 @@
-import { useMemo } from 'react';
-import { IToolbarFilter } from '../../../../../framework';
-import {
-  useNameToolbarFilter,
-  useOrganizationToolbarFilter,
-  useImageToolbarFilter,
-} from '../../../common/awx-toolbar-filters';
+import { useDynamicToolbarFilters } from '../../../common/useDynamicFilters';
 
 export function useExecutionEnvironmentsFilters() {
-  const nameToolbarFilter = useNameToolbarFilter();
-  const organizationToolbarFilter = useOrganizationToolbarFilter();
-  const imageToolbarFilter = useImageToolbarFilter();
-  const toolbarFilters = useMemo<IToolbarFilter[]>(
-    () => [nameToolbarFilter, organizationToolbarFilter, imageToolbarFilter],
-    [nameToolbarFilter, organizationToolbarFilter, imageToolbarFilter]
-  );
+  const toolbarFilters = useDynamicToolbarFilters({
+    optionsPath: 'execution_environments',
+    preSortedKeys: ['name', 'id'],
+    preFilledValueKeys: {
+      name: {
+        apiPath: 'execution_environments',
+      },
+      id: {
+        apiPath: 'execution_environments',
+      },
+    },
+  });
   return toolbarFilters;
 }
