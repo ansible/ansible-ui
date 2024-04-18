@@ -22,7 +22,7 @@ describe('Inventory Host Groups List', () => {
         {
           fixture: 'groups.json',
         }
-      );
+      ).as('getGroupResults');
       cy.intercept(
         { method: 'OPTIONS', url: '/api/v2/groups' },
         { fixture: 'groups_options.json' }
@@ -44,7 +44,12 @@ describe('Inventory Host Groups List', () => {
         path: '/inventories/:inventory_type/:id/hosts/:host_id/*',
         initialEntries: ['/inventories/inventory/1/hosts/1/groups'],
       });
-      cy.get('tbody').find('tr').should('have.length', 4);
+      cy.wait('@getGroupResults')
+        .its('response.body.results')
+        .then((groups: InventoryGroup[]) => {
+          const fixtureCount = groups.length;
+          cy.get('tbody').find('tr').should('have.length', fixtureCount);
+        });
     });
 
     it('Filter Host Groups by name', () => {
