@@ -16,6 +16,7 @@ interface ResourceTypeMapper {
   inventory_sources?: string;
   projects?: string;
   job_templates?: string;
+  workflow_job_templates?: string;
   organizations?: string;
 }
 
@@ -27,6 +28,7 @@ export function ResourceNotifications({ resourceType }: { resourceType: string }
     inventory_sources: 'source_id',
     projects: 'id',
     job_templates: 'id',
+    workflow_job_templates: 'id',
     organizations: 'id',
   };
 
@@ -34,6 +36,7 @@ export function ResourceNotifications({ resourceType }: { resourceType: string }
     inventory_sources: 'inventory source',
     projects: 'project',
     job_templates: 'job template',
+    workflow_job_templates: 'workflow job template',
     organizations: 'organization',
   };
 
