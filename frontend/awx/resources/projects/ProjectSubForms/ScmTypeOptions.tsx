@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { Help, PageFormCheckbox, PageFormTextInput } from '../../../../../framework';
+import { PageFormCheckbox, PageFormTextInput } from '../../../../../framework';
 import { PageFormHidden } from '../../../../../framework/PageForm/Utils/PageFormHidden';
 import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
 import { Project } from '../../../interfaces/Project';
@@ -10,76 +10,43 @@ export function ScmTypeOptions(props: { hideAllowOverride?: boolean }) {
     <PageFormSection title={t('Options')}>
       <PageFormCheckbox<Project>
         id="option-scm-clean"
-        label={
-          <span>
-            {t('Clean')}
-            &nbsp;
-            <Help help={t('Remove any local modifications prior to performing an update.')} />
-          </span>
-        }
+        label={t('Clean')}
+        labelHelp={t('Remove any local modifications prior to performing an update.')}
         name="scm_clean"
       />
       <PageFormCheckbox<Project>
         id="option-scm-delete-on-update"
-        label={
-          <span>
-            {t('Delete')}
-            &nbsp;
-            <Help
-              help={t(
-                'Delete the local repository in its entirety prior to performing an update. Depending on the size of the repository this may significantly increase the amount of time required to complete an update.'
-              )}
-            />
-          </span>
-        }
+        label={t('Delete')}
+        labelHelp={t(
+          'Delete the local repository in its entirety prior to performing an update. Depending on the size of the repository this may significantly increase the amount of time required to complete an update.'
+        )}
         name="scm_delete_on_update"
       />
       <PageFormHidden watch="scm_type" hidden={(type: string) => type !== 'git'}>
         <PageFormCheckbox<Project>
           id="option-scm-track-submodules"
-          label={
-            <span>
-              {t('Track submodules')}
-              &nbsp;
-              <Help
-                help={t(
-                  'Submodules will track the latest commit on their master branch (or other branch specified in .gitmodules). If no, submodules will be kept at the revision specified by the main project. This is equivalent to specifying the --remote flag to git submodule update.'
-                )}
-              />
-            </span>
-          }
+          label={t('Track submodules')}
+          labelHelp={t(
+            'Submodules will track the latest commit on their master branch (or other branch specified in .gitmodules). If no, submodules will be kept at the revision specified by the main project. This is equivalent to specifying the --remote flag to git submodule update.'
+          )}
           name="scm_track_submodules"
         />
       </PageFormHidden>
       <PageFormCheckbox<Project>
         id="option-scm-update-on-launch"
-        label={
-          <span>
-            {t('Update Revision on Launch')}
-            &nbsp;
-            <Help
-              help={t(
-                'Each time a job runs using this project, update the revision of the project prior to starting the job.'
-              )}
-            />
-          </span>
-        }
+        label={t('Update Revision on Launch')}
+        labelHelp={t(
+          'Each time a job runs using this project, update the revision of the project prior to starting the job.'
+        )}
         name="scm_update_on_launch"
       />
       {!props.hideAllowOverride && (
         <PageFormCheckbox<Project>
           id="option-allow-override"
-          label={
-            <span>
-              {t('Allow Branch Override')}
-              &nbsp;
-              <Help
-                help={t(
-                  'Allow changing the Source Control branch or revision in a job template that uses this project.'
-                )}
-              />
-            </span>
-          }
+          label={t('Allow Branch Override')}
+          labelHelp={t(
+            'Allow changing the Source Control branch or revision in a job template that uses this project.'
+          )}
           name="allow_override"
         />
       )}
