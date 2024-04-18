@@ -1,7 +1,12 @@
 import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
+import {
+  IPageAction,
+  PageActionSelection,
+  PageActionType,
+  useGetPageUrl,
+} from '../../../../../framework';
 import { requestPatch } from '../../../../common/crud/Data';
 import { useOptions } from '../../../../common/crud/useOptions';
 import { cannotDeleteResource, cannotEditResource } from '../../../../common/utils/RBAChelpers';
@@ -10,6 +15,7 @@ import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsRes
 import { Schedule } from '../../../interfaces/Schedule';
 import { useGetScheduleUrl } from './scheduleHelpers';
 import { useDeleteSchedules } from './useDeleteSchedules';
+import { schedulePageUrl } from '../types';
 
 export function useSchedulesActions(options: {
   onScheduleToggleorDeleteCompleted: () => void;
@@ -27,7 +33,18 @@ export function useSchedulesActions(options: {
     [options]
   );
 
+  const getPageUrl = useGetPageUrl();
+
   const getScheduleUrl = useGetScheduleUrl();
+
+  const editHref = useCallback(
+    (schedule: Schedule) => {
+      const pageUrl = getScheduleUrl('edit', schedule) as schedulePageUrl;
+      return getPageUrl(pageUrl.pageId, { params: pageUrl.params });
+    },
+    [getPageUrl, getScheduleUrl]
+  );
+
   const rowActions = useMemo<IPageAction<Schedule>[]>(
     () => [
       {
@@ -48,7 +65,7 @@ export function useSchedulesActions(options: {
         icon: PencilAltIcon,
         label: t(`Edit schedule`),
         isDisabled: (schedule) => cannotEditResource(schedule, t, canCreateSchedule),
-        href: (schedule) => getScheduleUrl('edit', schedule),
+        href: (schedule) => editHref(schedule),
         isPinned: true,
       },
       { type: PageActionType.Seperator },

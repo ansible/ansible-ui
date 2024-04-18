@@ -1,26 +1,40 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
-import { DateTimeCell, ITableColumn, TextCell } from '../../../../../framework';
+import { DateTimeCell, ITableColumn, TextCell, usePageNavigate } from '../../../../../framework';
 import { useDescriptionColumn, useNameColumn, useTypeColumn } from '../../../../common/columns';
 import { Schedule } from '../../../interfaces/Schedule';
 import { useGetScheduleUrl } from './scheduleHelpers';
+import { schedulePageUrl } from '../types';
 
 export function useSchedulesColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const { t } = useTranslation();
-  const navigate = useNavigate();
 
   const getScheduleUrl = useGetScheduleUrl();
+  const pageNavigate = usePageNavigate();
 
   const typeColumn = useTypeColumn<Schedule>({
     ...options,
-    makeReadable: (schedule: Schedule) => getScheduleUrl('name', schedule),
+    makeReadable: (schedule: Schedule) => getScheduleUrl('name', schedule) as string,
     sort: 'unified_job_template__polymorphic_ctype__model',
   });
+  const nameClick = useCallback(
+    (schedule: Schedule) => {
+      const pageUrl = getScheduleUrl('resource', schedule) as schedulePageUrl;
+      return pageNavigate(pageUrl.pageId, { params: pageUrl.params });
+    },
+    [getScheduleUrl, pageNavigate]
+  );
   const nameColumn = useNameColumn({
     ...options,
-    onClick: (schedule: Schedule) => navigate(getScheduleUrl('details', schedule)),
+    onClick: nameClick,
   });
+  const relatedNameClick = useCallback(
+    (schedule: Schedule) => {
+      const pageUrl = getScheduleUrl('resource', schedule) as schedulePageUrl;
+      return pageNavigate(pageUrl.pageId, { params: pageUrl.params });
+    },
+    [getScheduleUrl, pageNavigate]
+  );
   const descriptionColumn = useDescriptionColumn();
   const tableColumns = useMemo<ITableColumn<Schedule>[]>(
     () => [
@@ -32,7 +46,7 @@ export function useSchedulesColumns(options?: { disableSort?: boolean; disableLi
         cell: (schedule) => (
           <TextCell
             text={schedule.summary_fields.unified_job_template.name}
-            onClick={() => navigate(getScheduleUrl('resource', schedule))}
+            onClick={() => relatedNameClick(schedule)}
           />
         ),
       },
@@ -43,7 +57,7 @@ export function useSchedulesColumns(options?: { disableSort?: boolean; disableLi
         cell: (sched) => <DateTimeCell value={sched.next_run} />,
       },
     ],
-    [nameColumn, descriptionColumn, t, typeColumn, navigate, getScheduleUrl]
+    [nameColumn, descriptionColumn, t, typeColumn, relatedNameClick]
   );
   return tableColumns;
 }

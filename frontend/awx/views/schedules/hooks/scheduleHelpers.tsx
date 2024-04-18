@@ -22,7 +22,7 @@ import { InventorySource } from '../../../interfaces/InventorySource';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
 import { LaunchConfiguration } from '../../../interfaces/LaunchConfiguration';
 import { Project } from '../../../interfaces/Project';
-import { ScheduleFormWizard } from '../types';
+import { ScheduleFormWizard, schedulePageUrl } from '../types';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { PageFormInventorySelect } from '../../../resources/inventories/components/PageFormInventorySelect';
@@ -43,7 +43,6 @@ export const scheduleResourceTypeOptions: string[] = [
 
 export function useGetScheduleUrl() {
   const { t } = useTranslation();
-  const getPageUrl = useGetPageUrl();
   return useCallback(
     (route: string, schedule: Schedule) => {
       const unified_job_type = schedule.summary_fields.unified_job_template.unified_job_type;
@@ -60,59 +59,63 @@ export function useGetScheduleUrl() {
         };
         return {
           name: t('Inventory sync'),
-          details: getPageUrl(AwxRoute.InventorySourceScheduleDetails, {
+          details: {
+            pageId: AwxRoute.InventorySourceScheduleDetails,
             params: inventory_update_params,
-          }),
-          create: getPageUrl(AwxRoute.InventorySourceScheduleCreate, {
+          },
+          create: {
+            pageId: AwxRoute.InventorySourceScheduleCreate,
             params: inventory_update_params,
-          }),
-          edit: getPageUrl(AwxRoute.InventorySourceScheduleEdit, {
+          },
+          edit: {
+            pageId: AwxRoute.InventorySourceScheduleEdit,
             params: inventory_update_params,
-          }),
-          resource: getPageUrl(AwxRoute.InventorySourceDetail, {
+          },
+          resource: {
+            pageId: AwxRoute.InventorySourceDetail,
             params: inventory_update_params,
-          }),
-        }[route] as string;
+          },
+        }[route] as string | schedulePageUrl;
       }
       if (unified_job_type === 'job') {
         return {
           name: t('Playbook run'),
-          details: getPageUrl(AwxRoute.JobTemplateScheduleDetails, { params }),
-          create: getPageUrl(AwxRoute.JobTemplateScheduleCreate, { params }),
-          edit: getPageUrl(AwxRoute.JobTemplateScheduleEdit, { params }),
-          resource: getPageUrl(AwxRoute.JobTemplateDetails, { params }),
-        }[route] as string;
+          details: { pageId: AwxRoute.JobTemplateScheduleDetails, params },
+          create: { pageId: AwxRoute.JobTemplateScheduleCreate, params },
+          edit: { pageId: AwxRoute.JobTemplateScheduleEdit, params },
+          resource: { pageId: AwxRoute.JobTemplateDetails, params },
+        }[route] as string | schedulePageUrl;
       }
       if (unified_job_type === 'project_update') {
         return {
           name: t('Source control update'),
-          details: getPageUrl(AwxRoute.ProjectScheduleDetails, { params }),
-          create: getPageUrl(AwxRoute.ProjectScheduleCreate, { params }),
-          edit: getPageUrl(AwxRoute.ProjectScheduleEdit, { params }),
-          resource: getPageUrl(AwxRoute.ProjectDetails, { params }),
-        }[route] as string;
+          details: { pageId: AwxRoute.ProjectScheduleDetails, params },
+          create: { pageId: AwxRoute.ProjectScheduleCreate, params },
+          edit: { pageId: AwxRoute.ProjectScheduleEdit, params },
+          resource: { pageId: AwxRoute.ProjectDetails, params },
+        }[route] as string | schedulePageUrl;
       }
       if (unified_job_type === 'system_job') {
         return {
           name: t('Management job'),
-          details: getPageUrl(AwxRoute.ManagementJobScheduleDetails, { params }),
-          create: getPageUrl(AwxRoute.ManagementJobScheduleCreate, { params }),
-          edit: getPageUrl(AwxRoute.ManagementJobScheduleEdit, { params }),
-          resource: getPageUrl(AwxRoute.ManagementJobDetails, { params }),
-        }[route] as string;
+          details: { pageId: AwxRoute.ManagementJobScheduleDetails, params },
+          create: { pageId: AwxRoute.ManagementJobScheduleCreate, params },
+          edit: { pageId: AwxRoute.ManagementJobScheduleEdit, params },
+          resource: { pageId: AwxRoute.ManagementJobDetails, params },
+        }[route] as string | schedulePageUrl;
       }
       if (unified_job_type === 'workflow_job') {
         return {
           name: t('Workflow job'),
-          details: getPageUrl(AwxRoute.WorkflowJobTemplateScheduleDetails, { params }),
-          create: getPageUrl(AwxRoute.WorkflowJobTemplateScheduleCreate, { params }),
-          edit: getPageUrl(AwxRoute.WorkflowJobTemplateScheduleEdit, { params }),
-          resource: getPageUrl(AwxRoute.WorkflowJobTemplateDetails, { params }),
-        }[route] as string;
+          details: { pageId: AwxRoute.WorkflowJobTemplateScheduleDetails, params },
+          create: { pageId: AwxRoute.WorkflowJobTemplateScheduleCreate, params },
+          edit: { pageId: AwxRoute.WorkflowJobTemplateScheduleEdit, params },
+          resource: { pageId: AwxRoute.WorkflowJobTemplateDetails, params },
+        }[route] as string | schedulePageUrl;
       }
       return '';
     },
-    [getPageUrl, t]
+    [t]
   );
 }
 
