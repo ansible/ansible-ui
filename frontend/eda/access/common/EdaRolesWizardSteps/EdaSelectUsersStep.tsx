@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { useUserFilters } from '../hooks/useUserFilters';
+import { useUserFilters } from '../../users/hooks/useUserFilters';
 import { useMemo } from 'react';
 import { EdaUser } from '../../../interfaces/EdaUser';
 import { ITableColumn, TextCell } from '../../../../../framework';
