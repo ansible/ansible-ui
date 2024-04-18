@@ -72,7 +72,7 @@ export function ScheduleAddWizard() {
     pageNavigate(navigationId, { params: { schedule_id: schedule.id, ...params } });
   };
 
-  const onCancel = () => navigate(-1);
+  const onCancel = () => navigate(location.pathname.replace('create', ''));
 
   const steps: PageWizardStep[] = [
     {

@@ -52,7 +52,7 @@ export function useAwxManagementJobsRoutes() {
           ],
         },
         {
-          id: AwxRoute.ManagementJobEditSchedule,
+          id: AwxRoute.ManagementJobScheduleEdit,
           path: ':id/schedules/:schedule_id/edit',
           element: <ScheduleEditWizard />,
         },

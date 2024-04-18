@@ -74,3 +74,12 @@ export enum RuleType {
   Rules = 'rules',
   Exceptions = 'exceptions',
 }
+
+export interface schedulePageUrl {
+  pageId: string;
+  params: {
+    id: string;
+    schedule_id: string;
+    source_id?: string;
+  };
+}
