@@ -66,7 +66,7 @@ export type PageToolbarFiltersProps = {
 function FiltersToolbarItem(props: PageToolbarFiltersProps) {
   const { toolbarFilters, filterState, setFilterState } = props;
 
-  const [selectedFilterKey, setSeletedFilterKey] = useState(() =>
+  const [selectedFilterKey, setSeletedFilterKey] = useState<string | null>(() =>
     toolbarFilters ? (toolbarFilters?.length > 0 ? toolbarFilters[0].key : '') : ''
   );
 
@@ -121,6 +121,7 @@ function FiltersToolbarItem(props: PageToolbarFiltersProps) {
             placeholder=""
             data-cy={selectedFilter}
             disableSortOptions
+            isRequired
           />
           <ToolbarFilterComponent
             id="filter-input"
@@ -184,8 +185,8 @@ export function PageToolbarFilters(props: PageToolbarFiltersProps) {
 
           // If the filter is pinned and is a single select filter, don't render the chip
           // this is because the value of the single select filter is already shown in the filter component
-          if (filter.isPinned && filter.type === ToolbarFilterType.SingleSelect) return <></>;
-          if (filter.isPinned && filter.type === ToolbarFilterType.DateRange) return <></>;
+          if (filter.isPinned && filter.type === ToolbarFilterType.SingleSelect) return null;
+          if (filter.isPinned && filter.type === ToolbarFilterType.DateRange) return null;
 
           return (
             <ToolbarFilter
@@ -346,7 +347,7 @@ function ToolbarFilterComponent(props: {
           id={props.id ?? filter.key}
           placeholder={filter.placeholder}
           value={filterValues && filterValues?.length > 0 ? filterValues[0] : ''}
-          onSelect={(item) => setFilterValues(() => [item])}
+          onSelect={(item) => setFilterValues(() => [item!])}
           options={filter.options}
           isRequired={filter.isRequired}
           disableSortOptions={filter.disableSortOptions}
@@ -359,7 +360,7 @@ function ToolbarFilterComponent(props: {
           key={filter.key}
           id={props.id ?? filter.key}
           value={filterValues && filterValues?.length > 0 ? filterValues[0] : ''}
-          onSelect={(item) => setFilterValues(() => [item])}
+          onSelect={(item) => setFilterValues(() => [item!])}
           placeholder={filter.placeholder || ''}
           queryOptions={filter.queryOptions}
           queryErrorText={filter.queryErrorText}
@@ -398,7 +399,7 @@ function ToolbarFilterComponent(props: {
             key={filter.key}
             id={props.id ?? filter.key}
             value={filterValues && filterValues?.length > 0 ? filterValues[0] : ''}
-            onSelect={(item) => setFilterValues(() => [item])}
+            onSelect={(item) => setFilterValues(() => [item!])}
             placeholder={filter.placeholder || ''}
             queryOptions={filter.queryOptions}
             queryErrorText={filter.queryErrorText}
@@ -464,7 +465,7 @@ function ToolbarFilterComponent(props: {
             id={props.id ?? filter.key}
             placeholder={filter.placeholder}
             value={filterValues && filterValues?.length > 0 ? filterValues[0] : ''}
-            onSelect={(item) => setFilterValues(() => [item])}
+            onSelect={(item) => setFilterValues(() => [item!])}
             options={filter.options}
             disableSortOptions={filter.disableSortOptions}
           />

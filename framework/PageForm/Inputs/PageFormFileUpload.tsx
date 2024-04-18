@@ -1,30 +1,41 @@
 import { FileUpload, FileUploadProps } from '@patternfly/react-core';
 import { useCallback, useState } from 'react';
-import { Controller, useFormContext } from 'react-hook-form';
+import { Controller, FieldPathByValue, FieldValues, useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
+import { useID } from '../../hooks/useID';
 import { capitalizeFirstLetter } from '../../utils/strings';
 import { PageFormGroup, PageFormGroupProps } from './PageFormGroup';
 
-export type PageFormFileUploadProps = {
-  name: string;
+export type PageFormFileUploadProps<
+  TFieldValues extends FieldValues = FieldValues,
+  TFieldName extends FieldPathByValue<TFieldValues, File> = FieldPathByValue<TFieldValues, File>,
+> = {
+  name: TFieldName;
   placeholder?: string;
+  validate?: (value: File) => string | undefined;
 } & PageFormGroupProps &
   Omit<FileUploadProps, 'id'>;
 
 /** PatternFly Select wrapper for use with react-hook-form */
-export function PageFormFileUpload(props: PageFormFileUploadProps) {
-  const { label, isRequired } = props;
+export function PageFormFileUpload<
+  TFieldValues extends FieldValues = FieldValues,
+  TFieldName extends FieldPathByValue<TFieldValues, File> = FieldPathByValue<TFieldValues, File>,
+>(props: PageFormFileUploadProps<TFieldValues, TFieldName>) {
+  const { label, labelHelpTitle, labelHelp, additionalControls, helperText, isRequired, validate } =
+    props;
   const { t } = useTranslation();
   const {
     control,
-    formState: { isSubmitting },
-  } = useFormContext();
+    formState: { isSubmitting, isValidating },
+  } = useFormContext<TFieldValues>();
   const [filename, setFilename] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
   const handleFileInputChange = useCallback((_: unknown, file: File) => setFilename(file.name), []);
   const handleFileReadStarted = (_fileHandle: File) => {
     setIsLoading(true);
   };
+  const id = useID(props);
 
   return (
     <Controller
@@ -32,6 +43,11 @@ export function PageFormFileUpload(props: PageFormFileUploadProps) {
       control={control}
       shouldUnregister
       render={({ field: { onChange, value }, fieldState: { error } }) => {
+        const helperTextInvalid = error?.message
+          ? validate && isValidating
+            ? t('Validating...')
+            : error?.message
+          : undefined;
         const handleClear = (_event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
           setFilename('');
           onChange(undefined);
@@ -47,18 +63,18 @@ export function PageFormFileUpload(props: PageFormFileUploadProps) {
         };
         return (
           <PageFormGroup
-            {...props}
-            helperTextInvalid={
-              error?.type === 'required'
-                ? typeof props.label === 'string'
-                  ? t(`${props.label} is required`)
-                  : t('Required')
-                : error?.message
-            }
+            fieldId={id}
+            label={label}
+            labelHelpTitle={labelHelpTitle ?? label}
+            labelHelp={labelHelp}
+            additionalControls={additionalControls}
+            helperText={helperText}
+            helperTextInvalid={helperTextInvalid}
+            isRequired={isRequired}
           >
             <FileUpload
-              id={`file-upload-${props.name}`}
-              data-cy={`file-upload-${props.name}`}
+              id={id}
+              data-cy={id}
               type={props.type || 'dataURL'}
               value={value as string}
               hideDefaultPreview={props.hideDefaultPreview}
@@ -87,6 +103,7 @@ export function PageFormFileUpload(props: PageFormFileUploadProps) {
                 message: `${capitalizeFirstLetter(label.toLocaleLowerCase())} is required.`,
               }
             : undefined,
+        validate: props.validate,
       }}
     />
   );

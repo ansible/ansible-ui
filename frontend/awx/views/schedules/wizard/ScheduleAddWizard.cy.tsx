@@ -28,12 +28,15 @@ describe('ScheduleAddWizard', () => {
     count: 1,
     results: [mockTemplate],
   };
+  before(() => {
+    cy.intercept({ method: 'GET', url: awxAPI`/schedules/zoneinfo` }, zones);
+  });
   describe('Prompted schedule', () => {
     const mockTemplate = {
       id: 100,
       name: 'Mock Job Template',
       description: 'Job Template Description',
-      unified_job_type: 'job',
+      type: 'job_template',
       _enabled: true,
     };
     const mockTemplates = {
@@ -45,9 +48,7 @@ describe('ScheduleAddWizard', () => {
       name: 'Template Mock Credential',
       credential_type: 2,
     };
-    before(() => {
-      cy.intercept({ method: 'GET', url: awxAPI`/schedules/zoneinfo` }, zones);
-    });
+
     beforeEach(() => {
       cy.intercept({ method: 'GET', url: awxAPI`/job_templates/*` }, mockTemplates);
       cy.intercept('/api/v2/job_templates/100/', { id: 100, name: 'Mock Job Template' });
@@ -87,7 +88,7 @@ describe('ScheduleAddWizard', () => {
         });
       });
 
-      cy.selectDropdownOptionByResourceName('node_type', 'Job template');
+      cy.selectDropdownOptionByResourceName('schedule_type', 'Job template');
       cy.selectDropdownOptionByResourceName('job-template-select', 'Mock Job Template');
 
       cy.get('[data-cy="wizard-nav"]').within(() => {
@@ -104,7 +105,7 @@ describe('ScheduleAddWizard', () => {
         initialEntries: ['/schedules/add'],
         path: '/schedules/add',
       });
-      cy.selectDropdownOptionByResourceName('node_type', 'Job template');
+      cy.selectDropdownOptionByResourceName('schedule_type', 'Job template');
       cy.clickButton(/^Next$/);
       cy.get('[data-cy="name-form-group"]').within(() => {
         cy.get('span.pf-v5-c-helper-text__item-text').should(
@@ -135,10 +136,10 @@ describe('ScheduleAddWizard', () => {
         });
       });
 
-      cy.selectDropdownOptionByResourceName('node_type', 'Job template');
+      cy.selectDropdownOptionByResourceName('schedule_type', 'Job template');
       cy.selectDropdownOptionByResourceName('job-template-select', 'Mock Job Template');
       cy.get('[data-cy="name"]').type('Test Schedule');
-      cy.selectDropdownOptionByResourceName('timezone', 'Zulu');
+      cy.selectSingleSelectOption('[data-cy="timezone"]', 'Zulu');
       cy.clickButton(/^Next$/);
     });
     it('Should create a very basic rule.', () => {
@@ -211,6 +212,22 @@ describe('ScheduleAddWizard', () => {
         cy.get('tr').should('have.length', 1);
       });
     });
+    it('Should be able to remove an existing rule from the list', () => {
+      cy.get('[data-cy="interval"]').clear().type('100');
+      cy.selectDropdownOptionByResourceName('freq', 'Hourly');
+      cy.get('[data-cy="count-form-group"]').type('17');
+      cy.get('[data-cy="add-rule-button"]').click();
+      cy.getByDataCy('add-rule-toolbar-button').click();
+      cy.get('[data-cy="interval"]').clear().type('100');
+      cy.selectDropdownOptionByResourceName('freq', 'Hourly');
+      cy.get('[data-cy="count-form-group"]').type('27');
+      cy.get('[data-cy="add-rule-button"]').click();
+
+      cy.getByDataCy('row-id-2').within(() => {
+        cy.get('button[data-cy="delete-rule"]').click();
+        cy.get('tr[data-cy="row-id-2"]').should('not.exist');
+      });
+    });
   });
 
   describe('Saving a schedule', () => {
@@ -231,10 +248,10 @@ describe('ScheduleAddWizard', () => {
         });
       });
 
-      cy.selectDropdownOptionByResourceName('node_type', 'Job template');
+      cy.selectDropdownOptionByResourceName('schedule_type', 'Job template');
       cy.selectDropdownOptionByResourceName('job-template-select', 'Mock Job Template');
       cy.get('[data-cy="name"]').type('Test Schedule');
-      cy.selectDropdownOptionByResourceName('timezone', 'Zulu');
+      cy.selectSingleSelectOption('[data-cy="timezone"]', 'Zulu');
       cy.clickButton(/^Next$/);
     });
   });

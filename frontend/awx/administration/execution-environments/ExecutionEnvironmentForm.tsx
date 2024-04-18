@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
+import useSWR from 'swr';
 import {
   PageFormSelect,
   PageFormSubmitHandler,
@@ -9,17 +10,16 @@ import {
   usePageNavigate,
 } from '../../../../framework';
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
+import { useURLSearchParams } from '../../../../framework/components/useURLSearchParams';
+import { requestGet, requestPatch, swrOptions } from '../../../common/crud/Data';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
+import { PageFormCredentialSelect } from '../../access/credentials/components/PageFormCredentialSelect';
+import { getCredentialByName } from '../../access/credentials/utils/getCredentialByName';
 import { PageFormSelectOrganization } from '../../access/organizations/components/PageFormOrganizationSelect';
 import { AwxPageForm } from '../../common/AwxPageForm';
 import { awxAPI } from '../../common/api/awx-utils';
-import { AwxRoute } from '../../main/AwxRoutes';
 import { ExecutionEnvironment } from '../../interfaces/ExecutionEnvironment';
-import { PageFormCredentialSelect } from '../../access/credentials/components/PageFormCredentialSelect';
-import { getCredentialByName } from '../../access/credentials/utils/getCredentialByName';
-import useSWR from 'swr';
-import { requestGet, requestPatch, swrOptions } from '../../../common/crud/Data';
-import { useSearchParams } from '../../../../framework/components/useSearchParams';
+import { AwxRoute } from '../../main/AwxRoutes';
 import { useGetCredentialTypeIDs } from '../../resources/projects/hooks/useGetCredentialTypeIDs';
 
 const PullOption = {
@@ -32,7 +32,7 @@ export function CreateExecutionEnvironment() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
-  const [searchParams] = useSearchParams();
+  const [searchParams] = useURLSearchParams();
   const postRequest = usePostRequest<ExecutionEnvironment, ExecutionEnvironment>();
   const onSubmit: PageFormSubmitHandler<ExecutionEnvironment> = async (
     executionEnvInput: ExecutionEnvironment
@@ -133,7 +133,7 @@ export function EditExecutionEnvironment() {
         ]}
       />
       <AwxPageForm<ExecutionEnvironment>
-        submitText={t('Save')}
+        submitText={t('Save execution environment')}
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
         onCancel={onCancel}
@@ -219,7 +219,10 @@ function ExecutionEnvironmentInputs(props: {
         isDisabled={props?.executionEnv?.managed || false}
       />
       {props.mode === 'edit' && isOrgGloballyAvailable ? (
-        <PageFormSelectOrganization<ExecutionEnvironment> name="organization" isDisabled={true} />
+        <PageFormSelectOrganization<ExecutionEnvironment>
+          name="organization"
+          isDisabled={t('Disabled')}
+        />
       ) : undefined}
       {props.mode === 'edit' && !isOrgGloballyAvailable ? (
         <PageFormSelectOrganization<ExecutionEnvironment>

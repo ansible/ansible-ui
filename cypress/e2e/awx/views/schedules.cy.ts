@@ -39,7 +39,6 @@ describe('Schedules', () => {
 
   it('renders schedules list', () => {
     cy.verifyPageTitle('Schedules');
-    cy.getTableRow('name', schedule.name);
     cy.deleteAWXSchedule(schedule);
   });
 
@@ -64,7 +63,7 @@ describe('Schedules', () => {
       ask_variables_on_launch: true,
     }).then((jobTemplate) => {
       cy.getBy('[data-cy="create-schedule"]').click();
-      cy.selectDropdownOptionByResourceName('node_type', 'Job template');
+      cy.selectDropdownOptionByResourceName('schedule_type', 'Job template');
       cy.selectDropdownOptionByResourceName('job-template-select', jobTemplate.name);
       cy.get('[data-cy="wizard-nav"] li').eq(1).should('contain.text', 'Prompts');
     });
@@ -77,7 +76,7 @@ describe('Schedules', () => {
       ask_variables_on_launch: true,
     }).then((workflowJobTemplate) => {
       cy.getBy('[data-cy="create-schedule"]').click();
-      cy.selectDropdownOptionByResourceName('node_type', 'Workflow job template');
+      cy.selectDropdownOptionByResourceName('schedule_type', 'Workflow job template');
       cy.selectDropdownOptionByResourceName('job-template-select', workflowJobTemplate.name);
       cy.get('[data-cy="wizard-nav"] li').eq(1).should('contain.text', 'Prompts');
     });
@@ -85,7 +84,7 @@ describe('Schedules', () => {
 
   it('project does not renders prompt step', () => {
     cy.getBy('[data-cy="create-schedule"]').click();
-    cy.getBy('[data-cy="node_type-form-group"]').click();
+    cy.getBy('[data-cy="schedule_type-form-group"]').click();
     cy.getBy('[data-cy="project-sync"]').click();
     cy.selectDropdownOptionByResourceName('project', project.name);
     cy.get('[data-cy="wizard-nav"] li').eq(1).should('contain.text', 'Rules');
@@ -93,7 +92,7 @@ describe('Schedules', () => {
 
   it('management jobs does not renders prompt step', () => {
     cy.getBy('[data-cy="create-schedule"]').click();
-    cy.selectDropdownOptionByResourceName('node_type', 'Management job template');
+    cy.selectDropdownOptionByResourceName('schedule_type', 'Management job template');
     cy.selectDropdownOptionByResourceName(
       'management-job-template-select',
       'Cleanup Activity Stream'
@@ -103,7 +102,7 @@ describe('Schedules', () => {
 
   it('inventory source does not renders prompt step', () => {
     cy.getBy('[data-cy="create-schedule"]').click();
-    cy.selectDropdownOptionByResourceName('node_type', 'Inventory source');
+    cy.selectDropdownOptionByResourceName('schedule_type', 'Inventory source');
     cy.selectDropdownOptionByResourceName('inventory', inventory.name);
     cy.selectDropdownOptionByResourceName('inventory-source-select', inventorySource.name);
     cy.get('[data-cy="wizard-nav"] li').eq(1).should('contain.text', 'Rules');
@@ -145,10 +144,10 @@ describe('Schedules - Create', function () {
       const scheduleName = 'E2E ' + randomString(4);
       cy.getBy('[data-cy="create-schedule"]').click();
 
-      cy.selectDropdownOptionByResourceName('node_type', 'Job template');
+      cy.selectDropdownOptionByResourceName('schedule_type', 'Job template');
       cy.selectDropdownOptionByResourceName('job-template-select', `${jobTemplate.name}`);
       cy.get('[data-cy="name"]').type(`${scheduleName}`);
-      cy.selectDropdownOptionByResourceName('timezone', 'Zulu');
+      cy.selectSingleSelectOption('[data-cy="timezone"]', 'Zulu');
       cy.clickButton(/^Next$/);
       cy.get('[data-cy="interval"]').clear().type('100');
       cy.selectDropdownOptionByResourceName('freq', 'Hourly');
@@ -183,10 +182,10 @@ describe('Schedules - Create', function () {
       const scheduleName = 'E2E ' + randomString(4);
       cy.getBy('[data-cy="create-schedule"]').click();
 
-      cy.selectDropdownOptionByResourceName('node_type', 'Workflow job template');
+      cy.selectDropdownOptionByResourceName('schedule_type', 'Workflow job template');
       cy.selectDropdownOptionByResourceName('workflow-job-template-select', `${wfjt.name}`);
       cy.get('[data-cy="name"]').type(`${scheduleName}`);
-      cy.selectDropdownOptionByResourceName('timezone', 'Zulu');
+      cy.selectSingleSelectOption('[data-cy="timezone"]', 'Zulu');
       cy.clickButton(/^Next$/);
       cy.get('[data-cy="interval"]').clear().type('100');
       cy.selectDropdownOptionByResourceName('freq', 'Hourly');
@@ -222,14 +221,14 @@ describe('Schedules - Create', function () {
         const scheduleName = 'E2E ' + randomString(4);
         cy.getBy('[data-cy="create-schedule"]').click();
 
-        cy.selectDropdownOptionByResourceName('node_type', 'Inventory source');
+        cy.selectDropdownOptionByResourceName('schedule_type', 'Inventory source');
         cy.selectDropdownOptionByResourceName('inventory', `${specificInventory.name}`);
         cy.selectDropdownOptionByResourceName(
           'inventory-source-select',
           `${specificInventorySource.name}`
         );
         cy.get('[data-cy="name"]').type(`${scheduleName}`);
-        cy.selectDropdownOptionByResourceName('timezone', 'Zulu');
+        cy.selectSingleSelectOption('[data-cy="timezone"]', 'Zulu');
         cy.clickButton(/^Next$/);
         cy.get('[data-cy="interval"]').clear().type('100');
         cy.selectDropdownOptionByResourceName('freq', 'Hourly');
@@ -259,10 +258,10 @@ describe('Schedules - Create', function () {
   it('can create a simple schedule of resource type Project', () => {
     const scheduleName = 'E2E ' + randomString(4);
     cy.getBy('[data-cy="create-schedule"]').click();
-    cy.selectDropdownOptionByResourceName('node_type', 'Project Sync');
+    cy.selectDropdownOptionByResourceName('schedule_type', 'Project Sync');
     cy.selectDropdownOptionByResourceName('project', `${project.name}`);
     cy.get('[data-cy="name"]').type(`${scheduleName}`);
-    cy.selectDropdownOptionByResourceName('timezone', 'Zulu');
+    cy.selectSingleSelectOption('[data-cy="timezone"]', 'Zulu');
     cy.clickButton(/^Next$/);
     cy.get('[data-cy="interval"]').clear().type('100');
     cy.selectDropdownOptionByResourceName('freq', 'Hourly');
@@ -290,13 +289,13 @@ describe('Schedules - Create', function () {
     const scheduleName = 'E2E ' + randomString(4);
     cy.getBy('[data-cy="create-schedule"]').click();
 
-    cy.selectDropdownOptionByResourceName('node_type', 'Management job template');
+    cy.selectDropdownOptionByResourceName('schedule_type', 'Management job template');
     cy.selectDropdownOptionByResourceName(
       'management-job-template-select',
       'Cleanup Activity Stream'
     );
     cy.get('[data-cy="name"]').type(`${scheduleName}`);
-    cy.selectDropdownOptionByResourceName('timezone', 'Zulu');
+    cy.selectSingleSelectOption('[data-cy="timezone"]', 'Zulu');
     cy.clickButton(/^Next$/);
     cy.get('[data-cy="interval"]').clear().type('100');
     cy.selectDropdownOptionByResourceName('freq', 'Hourly');
@@ -338,17 +337,18 @@ describe('Schedules - Delete', () => {
   });
 
   it('deletes a schedule from the schedules list row', () => {
-    cy.clickTableRowKebabAction(schedule.name, 'delete-schedule', true);
+    cy.filterTableBySingleSelect('name', schedule.name);
+    cy.clickTableRowKebabAction(schedule.name, 'delete-schedule', false);
     cy.get('#confirm').click();
     cy.clickButton(/^Delete schedule/);
     cy.contains(/^Success$/);
     cy.clickButton(/^Close$/);
-    cy.filterTableByTextFilter('name', schedule.name);
     cy.contains('No results found');
   });
 
   it('deletes a schedule from the schedules list toolbar', () => {
-    cy.getTableRow('name', schedule.name).within(() => {
+    cy.filterTableBySingleSelect('name', schedule.name);
+    cy.getTableRow('name', schedule.name, { disableFilter: true }).within(() => {
       cy.get('input[aria-label="Select all rows"]').click();
     });
     cy.clickToolbarKebabAction('delete-selected-schedules');
@@ -379,9 +379,8 @@ describe('Schedules - Edit', () => {
   });
 
   it('can edit a simple schedule from details page', () => {
-    cy.getTableRow('name', schedule.name).within(() => {
-      cy.get('[data-cy="name-column-cell"]').click();
-    });
+    cy.filterTableBySingleSelect('name', schedule.name);
+    cy.clickTableRowLink('name', schedule.name, { disableFilter: true });
     cy.getBy('[data-cy="edit-schedule"]').click();
     cy.getByDataCy('wizard-nav').within(() => {
       ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
@@ -397,9 +396,8 @@ describe('Schedules - Edit', () => {
     cy.get('[data-cy="description"]').contains('-edited');
   });
   it('can edit a simple schedule from the schedules list row', () => {
-    cy.getTableRow('name', schedule.name).within(() => {
-      cy.get('[data-cy="edit-schedule"]').click();
-    });
+    cy.filterTableBySingleSelect('name', schedule.name);
+    cy.clickTableRowAction('name', schedule.name, 'edit-schedule', { disableFilter: true });
     cy.get('[data-cy="wizard-nav"]').within(() => {
       ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
         cy.get('li')
@@ -414,9 +412,9 @@ describe('Schedules - Edit', () => {
     cy.get('[data-cy="description"]').contains('-edited');
   });
   it('can edit a schedule to add rules', () => {
-    cy.getTableRow('name', schedule.name).within(() => {
-      cy.get('[data-cy="edit-schedule"]').click();
-    });
+    cy.filterTableBySingleSelect('name', schedule.name);
+    cy.clickTableRowLink('name', schedule.name, { disableFilter: true });
+    cy.getBy('[data-cy="edit-schedule"]').click();
     cy.get('[data-cy="wizard-nav"]').within(() => {
       ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
         cy.get('li')
@@ -424,7 +422,7 @@ describe('Schedules - Edit', () => {
           .should((el) => expect(el.text().trim()).to.equal(text));
       });
     });
-    cy.selectDropdownOptionByResourceName('timezone', 'Africa/Abidjan');
+    cy.selectSingleSelectOption('[data-cy="timezone"]', 'Africa/Abidjan');
     cy.getByDataCy('undefined-form-group').within(() => {
       cy.getBy('[aria-label="Time picker"]').click().type('{selectall} 5:00 AM');
     });
@@ -461,9 +459,9 @@ describe('Schedules - Edit', () => {
     cy.getByDataCy('rule-2').contains('FREQ=YEARLY');
   });
   it('can edit a schedule to remove rules', () => {
-    cy.getTableRow('name', schedule.name).within(() => {
-      cy.get('[data-cy="edit-schedule"]').click();
-    });
+    cy.filterTableBySingleSelect('name', schedule.name);
+    cy.clickTableRowLink('name', schedule.name, { disableFilter: true });
+    cy.getBy('[data-cy="edit-schedule"]').click();
     cy.get('[data-cy="wizard-nav"]').within(() => {
       ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
         cy.get('li')
@@ -484,7 +482,8 @@ describe('Schedules - Edit', () => {
   //Fix when exceptions step works correctly
   it.skip('can edit a schedule remove exceptions', () => {});
   it('can enable a schedule', () => {
-    cy.getTableRow('name', schedule.name).within(() => {
+    cy.filterTableBySingleSelect('name', schedule.name);
+    cy.getTableRow('name', schedule.name, { disableFilter: true }).within(() => {
       cy.get('[data-cy="toggle-switch"]').click();
       cy.get('[data-cy="toggle-switch"]').within(() => {
         cy.get('[aria-label="Click to enable schedule"]').should('exist');
@@ -496,7 +495,8 @@ describe('Schedules - Edit', () => {
     });
   });
   it('can disable a schedule', () => {
-    cy.getTableRow('name', schedule.name).within(() => {
+    cy.filterTableBySingleSelect('name', schedule.name);
+    cy.getTableRow('name', schedule.name, { disableFilter: true }).within(() => {
       cy.get('[data-cy="toggle-switch"]').click();
       cy.get('[data-cy="toggle-switch"]').within(() => {
         cy.get('[aria-label="Click to enable schedule"]').should('exist');

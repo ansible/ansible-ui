@@ -14,6 +14,7 @@ import {
   SelectList,
   SelectOption,
   Spinner,
+  Tooltip,
 } from '@patternfly/react-core';
 import { TimesIcon } from '@patternfly/react-icons';
 import { ReactNode, Ref, useCallback, useEffect, useMemo, useRef } from 'react';
@@ -36,7 +37,7 @@ export interface PageMultiSelectProps<ValueT> {
 
   // TODO isDisabled should be a string
   /** Disables the toggle to open and close the menu */
-  isDisabled?: boolean;
+  isDisabled?: string;
 
   /** The selected values. */
   values: ValueT[] | undefined | null;
@@ -176,78 +177,80 @@ export function PageMultiSelect<
 
   const Toggle = (toggleRef: Ref<MenuToggleElement>) => {
     return (
-      <MenuToggle
-        id={id}
-        ref={toggleRef}
-        onClick={() => setOpen(!open)}
-        isExpanded={open}
-        onKeyDown={(event) => {
-          switch (event.key) {
-            case 'Tab':
-            case 'Enter':
-            case 'Shift':
-              break;
-            default:
-              setOpen(true);
-              setTimeout(() => {
-                if (searchRef.current) {
-                  searchRef.current.focus();
-                  searchRef.current.value = event.key;
-                }
-              }, 1);
-              break;
-          }
-        }}
-        data-cy={id}
-        icon={icon}
-        isDisabled={props.isDisabled}
-        isFullWidth
-        style={{ paddingTop: 2, paddingBottom: 4, minHeight: 36 }}
-      >
-        {selectedOptions.length > 0 ? (
-          <>
-            {variant === 'count' ? (
-              <Chip
-                isReadOnly={disableClearSelection}
-                onClick={() => onSelect(() => [])}
-                style={{ marginTop: -4, marginBottom: -4 }}
-              >
-                {selectedOptions.length}
-              </Chip>
-            ) : (
-              <>
-                <ChipGroup numChips={99}>
-                  {selectedOptions.map((option) => (
-                    <Chip
-                      key={option.label}
-                      isReadOnly={props.disableClearChips}
-                      textMaxWidth={maxChipSize}
-                      style={{ marginTop: -2, marginBottom: -2 }}
-                      onClick={() =>
-                        onSelect((previousValues) =>
-                          previousValues?.filter((v) => v !== option.value)
-                        )
-                      }
-                    >
-                      {option.label}
-                    </Chip>
-                  ))}
-                </ChipGroup>
-                {!disableClearSelection && (
-                  <TimesIcon
-                    role="button"
-                    aria-hidden
-                    onClick={() => onSelect(() => [])}
-                    style={{ verticalAlign: 'middle', marginLeft: 8 }}
-                  />
-                )}
-              </>
-            )}
-          </>
-        ) : (
-          <span style={{ opacity: 0.7 }}>{placeholder}</span>
-        )}
-      </MenuToggle>
+      <Tooltip content={props.isDisabled} trigger={props.isDisabled ? undefined : 'manual'}>
+        <MenuToggle
+          id={id}
+          ref={toggleRef}
+          onClick={() => setOpen(!open)}
+          isExpanded={open}
+          onKeyDown={(event) => {
+            switch (event.key) {
+              case 'Tab':
+              case 'Enter':
+              case 'Shift':
+                break;
+              default:
+                setOpen(true);
+                setTimeout(() => {
+                  if (searchRef.current) {
+                    searchRef.current.focus();
+                    searchRef.current.value = event.key;
+                  }
+                }, 1);
+                break;
+            }
+          }}
+          data-cy={id}
+          icon={icon}
+          isDisabled={!!props.isDisabled}
+          isFullWidth
+          style={{ paddingTop: 2, paddingBottom: 4, minHeight: 36 }}
+        >
+          {selectedOptions.length > 0 ? (
+            <>
+              {variant === 'count' ? (
+                <Chip
+                  isReadOnly={disableClearSelection}
+                  onClick={() => onSelect(() => [])}
+                  style={{ marginTop: -4, marginBottom: -4 }}
+                >
+                  {selectedOptions.length}
+                </Chip>
+              ) : (
+                <>
+                  <ChipGroup numChips={99}>
+                    {selectedOptions.map((option) => (
+                      <Chip
+                        key={option.label}
+                        isReadOnly={props.disableClearChips}
+                        textMaxWidth={maxChipSize}
+                        style={{ marginTop: -2, marginBottom: -2 }}
+                        onClick={() =>
+                          onSelect((previousValues) =>
+                            previousValues?.filter((v) => v !== option.value)
+                          )
+                        }
+                      >
+                        {option.label}
+                      </Chip>
+                    ))}
+                  </ChipGroup>
+                  {!disableClearSelection && (
+                    <TimesIcon
+                      role="button"
+                      aria-hidden
+                      onClick={() => onSelect(() => [])}
+                      style={{ verticalAlign: 'middle', marginLeft: 8 }}
+                    />
+                  )}
+                </>
+              )}
+            </>
+          ) : (
+            <span style={{ opacity: 0.7 }}>{placeholder}</span>
+          )}
+        </MenuToggle>
+      </Tooltip>
     );
   };
 

@@ -16,7 +16,7 @@ import { useOrganizationsColumns, useOrganizationsFilters } from '../Organizatio
 export function PageFormSelectOrganization<
   TFieldValues extends FieldValues = FieldValues,
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
->(props: { name: TFieldName; isRequired?: boolean; isDisabled?: boolean; helperText?: string }) {
+>(props: { name: TFieldName; isRequired?: boolean; isDisabled?: string; helperText?: string }) {
   const { t } = useTranslation();
   const organizationColumns = useOrganizationsColumns({ disableLinks: true });
   const organizationFilters = useOrganizationsFilters();

@@ -18,6 +18,7 @@ import { EdaUserDetails } from '../access/users/UserPage/EdaUserDetails';
 import { MyPage } from '../access/users/UserPage/MyPage';
 import { UserPage } from '../access/users/UserPage/UserPage';
 import { Users } from '../access/users/Users';
+import { EdaAddUserRoles } from '../access/users/EdaAddUserRoles';
 import {
   CreateDecisionEnvironment,
   EditDecisionEnvironment,
@@ -65,6 +66,8 @@ import { EdaRoute } from './EdaRoutes';
 import { useEdaOrganizationRoutes } from './routes/useEdaOrganizationsRoutes';
 import { EdaProjectAddUsers } from '../projects/components/EdaProjectAddUsers';
 import { EdaProjectAddTeams } from '../projects/components/EdaProjectAddTeams';
+import { EdaDecisionEnvironmentAddTeams } from '../decision-environments/components/EdaDecisionEnvironmentAddTeams';
+import { EdaDecisionEnvironmentAddUsers } from '../decision-environments/components/EdaDecisionEnvironmentAddUsers';
 import { PageNotImplemented } from '../../../framework';
 import { CredentialTypeCredentials } from '../access/credential-types/CredentialTypePage/CredentialTypeCredentials';
 
@@ -218,15 +221,15 @@ export function useEdaNavigation() {
               element: <Navigate to="details" />,
             },
             {
-              id: EdaRoute.ProjectUsers,
-              path: 'users',
+              id: EdaRoute.ProjectUserAccess,
+              path: 'user-access',
               element: <PageNotImplemented />,
             },
           ],
         },
         {
           id: EdaRoute.ProjectAddUsers,
-          path: ':id/users/add-users',
+          path: ':id/user-access/add-users',
           element: <EdaProjectAddUsers />,
         },
         {
@@ -280,6 +283,16 @@ export function useEdaNavigation() {
               element: <Navigate to="details" />,
             },
           ],
+        },
+        {
+          id: EdaRoute.DecisionEnvironmentAddUsers,
+          path: ':id/users/add-users',
+          element: <EdaDecisionEnvironmentAddUsers />,
+        },
+        {
+          id: EdaRoute.DecisionEnvironmentAddTeams,
+          path: ':id/team-access/add-teams',
+          element: <EdaDecisionEnvironmentAddTeams />,
         },
         {
           path: '',
@@ -382,6 +395,11 @@ export function useEdaNavigation() {
                   element: <EdaUserDetails />,
                 },
                 {
+                  id: EdaRoute.UserRoles,
+                  path: 'roles',
+                  element: <PageNotImplemented />,
+                },
+                {
                   id: EdaRoute.UserTokens,
                   path: 'tokens',
                   element: <ControllerTokens />,
@@ -391,6 +409,11 @@ export function useEdaNavigation() {
                   element: <Navigate to="details" />,
                 },
               ],
+            },
+            {
+              id: EdaRoute.UserAddRoles,
+              path: ':id/roles/add-roles',
+              element: <EdaAddUserRoles />,
             },
             {
               path: 'tokens',

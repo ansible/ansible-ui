@@ -1,55 +1,77 @@
 import { awxAPI } from '../../../common/api/awx-utils';
 import { ScheduleEditWizard } from './ScheduleEditWizard';
 
-describe('ScheduleAddWizard', () => {
-  const zones = {
-    zones: [
-      'America/Argentina/Buenos_Aires',
-      'America/Argentina/Catamarca',
-      'Etc/GMT+0',
-      'Etc/GMT+2',
-      'WET',
-      'Zulu',
-    ],
-    links: {
-      'America/Buenos_Aires': 'America/Argentina/Buenos_Aires',
-      'America/Argentina/ComodRivadavia': 'America/Argentina/Catamarca',
-      'America/Catamarca': 'America/Argentina/Catamarca',
-      'Etc/GMT+0': 'GMT-0',
-    },
-  };
-  const mockTemplate = {
-    id: 100,
-    name: 'Mock Job Template',
-    description: 'Job Template Description',
-    unified_job_type: 'job',
-  };
-  const mockTemplates = {
-    count: 1,
-    results: [mockTemplate],
-  };
+const zones = {
+  zones: [
+    'America/Argentina/Buenos_Aires',
+    'America/Argentina/Catamarca',
+    'Etc/GMT+0',
+    'Etc/GMT+2',
+    'WET',
+    'Zulu',
+  ],
+  links: {
+    'America/Buenos_Aires': 'America/Argentina/Buenos_Aires',
+    'America/Argentina/ComodRivadavia': 'America/Argentina/Catamarca',
+    'America/Catamarca': 'America/Argentina/Catamarca',
+    'Etc/GMT+0': 'GMT-0',
+  },
+};
+const mockTemplate = {
+  id: 100,
+  name: 'Mock Job Template',
+  description: 'Job Template Description',
+  unified_job_type: 'job',
+  _enabled: true,
+};
+const mockTemplates = {
+  count: 1,
+  results: [mockTemplate],
+};
+describe('ScheduleEditWizard', () => {
+  before(() => {
+    cy.intercept({ method: 'GET', url: awxAPI`/schedules/zoneinfo` }, zones);
+  });
+  beforeEach(() => {
+    cy.intercept({ method: 'GET', url: awxAPI`/job_templates/*` }, mockTemplates);
+    cy.intercept('/api/v2/schedules/1/', {
+      rrule:
+        'DTSTART;TZID=America/Los_Angeles:20240411T104500 RRULE:INTERVAL=1;FREQ=HOURLY RRULE:INTERVAL=1;FREQ=DAILY;COUNT=225',
+      id: 1,
+      type: 'schedule',
+      summary_fields: {
+        unified_job_template: {
+          id: 100,
+          name: 'Mock Job Template',
+        },
+        user_capabilities: {
+          edit: true,
+          delete: true,
+        },
+      },
+      name: 'Test Schedule',
+      description: 'Automatically Generated Schedule',
+      extra_data: {
+        days: '120',
+      },
+      unified_job_template: 100,
+      enabled: true,
+      dtstart: '2024-04-14T15:50:01Z',
+      next_run: '2024-04-14T15:50:01Z',
+      timezone: 'UTC',
+      related: {
+        unified_job_template: '/api/v2/job_templates/100/',
+      },
+    });
+  });
   describe('Prompted schedule', () => {
-    const mockTemplate = {
-      id: 100,
-      name: 'Mock Job Template',
-      description: 'Job Template Description',
-      unified_job_type: 'job',
-      _enabled: true,
-    };
-    const mockTemplates = {
-      count: 1,
-      results: [mockTemplate],
-    };
     const mockTemplateCredential = {
       id: 200,
       name: 'Template Mock Credential',
       credential_type: 2,
     };
-    before(() => {
-      cy.intercept({ method: 'GET', url: awxAPI`/schedules/zoneinfo` }, zones);
-    });
+
     beforeEach(() => {
-      cy.intercept({ method: 'GET', url: awxAPI`/job_templates/*` }, mockTemplates);
       cy.intercept('/api/v2/job_templates/100/', {
         id: 100,
         name: 'Mock Job Template',
@@ -78,41 +100,12 @@ describe('ScheduleAddWizard', () => {
         count: 1,
         results: [mockTemplateCredential],
       });
-      cy.intercept('/api/v2/schedules/1/', {
-        rrule:
-          'DTSTART;TZID=America/Los_Angeles:20240411T104500 RRULE:INTERVAL=1;FREQ=HOURLY RRULE:INTERVAL=1;FREQ=DAILY',
-        id: 1,
-        type: 'schedule',
-        summary_fields: {
-          unified_job_template: {
-            id: 100,
-            name: 'Mock Job Template',
-          },
-          user_capabilities: {
-            edit: true,
-            delete: true,
-          },
-        },
-        name: 'Test Schedule',
-        description: 'Automatically Generated Schedule',
-        extra_data: {
-          days: '120',
-        },
-        unified_job_template: 100,
-        enabled: true,
-        dtstart: '2024-04-14T15:50:01Z',
-        next_run: '2024-04-14T15:50:01Z',
-        timezone: 'UTC',
-        related: {
-          unified_job_template: '/api/v2/job_templates/100/',
-        },
-      });
     });
 
     it('Should render the correct steps on initial ', () => {
       cy.mount(<ScheduleEditWizard />, {
-        initialEntries: ['/schedules/1/edit'],
-        path: '/schedules/:schedule_id/edit',
+        initialEntries: ['/templates/job_template/7/schedules/1/edit'],
+        path: '/templates/job_template/:id/schedules/:schedule_id/edit',
       });
 
       cy.get('[data-cy="wizard-nav"]').within(() => {
@@ -123,21 +116,14 @@ describe('ScheduleAddWizard', () => {
             .should((el) => expect(el.text().trim()).to.equal(text));
         });
       });
-
-      cy.get('[data-cy="wizard-nav"]').within(() => {
-        ['Details', 'Prompts', 'Survey', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
-          cy.get('li')
-            .eq(index)
-            .should((el) => expect(el.text().trim()).to.equal(text));
-        });
-      });
     });
 
     it('Should not go to next step due to failed validation', () => {
       cy.mount(<ScheduleEditWizard />, {
-        initialEntries: ['/schedules/1/edit'],
-        path: '/schedules/:schedule_id/edit',
+        initialEntries: ['/templates/job_template/7/schedules/1/edit'],
+        path: '/templates/job_template/:id/schedules/:schedule_id/edit',
       });
+
       cy.get('[data-cy="name"]').clear();
       cy.clickButton(/^Next$/);
       cy.get('[data-cy="name-form-group"]').within(() => {
@@ -146,19 +132,15 @@ describe('ScheduleAddWizard', () => {
           'Schedule name is required.'
         );
       });
-      cy.get('[data-cy="wizard-nav-item-nodePromptsStep"]').within(() => {
-        cy.get('button').should('be.disabled');
-      });
     });
   });
   describe('Rules step', () => {
     beforeEach(() => {
-      cy.intercept({ method: 'GET', url: awxAPI`/job_templates/*` }, mockTemplates);
       cy.intercept('/api/v2/job_templates/100/', { id: 100, name: 'Mock Job Template' });
       cy.intercept('/api/v2/job_templates/100/launch/', {});
       cy.mount(<ScheduleEditWizard />, {
-        initialEntries: ['/schedules/1/edit'],
-        path: '/schedules/:schedule_id/edit',
+        initialEntries: ['/templates/job_template/7/schedules/1/edit'],
+        path: '/templates/job_template/:id/schedules/:schedule_id/edit',
       });
 
       cy.get('[data-cy="wizard-nav"]').within(() => {
@@ -170,7 +152,7 @@ describe('ScheduleAddWizard', () => {
       });
 
       cy.get('[data-cy="name"]').type('Test Schedule');
-      cy.selectDropdownOptionByResourceName('timezone', 'Zulu');
+      cy.selectSingleSelectOption('[data-cy="timezone"]', 'Zulu');
       cy.clickButton(/^Next$/);
     });
     it('Should update a basic rule.', () => {
@@ -237,22 +219,10 @@ describe('ScheduleAddWizard', () => {
         cy.get('tr').should('have.length', 2);
       });
     });
-
-    it('Should be able to discard adding a rule without adding 1 to the list', () => {
-      cy.get('[data-cy="add-rule-toolbar-button"]').click();
-      cy.get('[data-cy="interval"]').clear().type('100');
-      cy.selectDropdownOptionByResourceName('freq', 'Hourly');
-      cy.get('[data-cy="count-form-group"]').type('17');
-      cy.get('[data-cy="add-rule-button"]').click();
-      cy.get('tr[data-cy="row-id-3"]').within(() => {
-        cy.get('button[data-cy="edit-rule"]').click();
-      });
-      cy.get('[data-cy="interval"]').clear().type('200');
-      cy.selectDropdownOptionByResourceName('freq', 'Hourly');
-      cy.get('[data-cy="discard-rule-button"]').click();
-
-      cy.get('tbody').within(() => {
-        cy.get('tr').should('have.length', 3);
+    it('Should be able to remove an existing rule from the list', () => {
+      cy.getByDataCy('row-id-2').within(() => {
+        cy.get('button[data-cy="delete-rule"]').click();
+        cy.get('tr[data-cy="row-id-2"]').should('not.exist');
       });
     });
   });

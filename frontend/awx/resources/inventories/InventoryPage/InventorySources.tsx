@@ -1,4 +1,4 @@
-import { CubesIcon } from '@patternfly/react-icons';
+import { CubesIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { PageLayout, PageTable, usePageNavigate } from '../../../../../framework';
@@ -17,9 +17,11 @@ import { useInventorySourceColumns } from '../hooks/useInventorySourceColumns';
 export function InventorySources() {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
-  const toolbarFilters = useInventorySourceFilters();
   const tableColumns = useInventorySourceColumns();
   const params = useParams<{ id: string; inventory_type: string }>();
+  const toolbarFilters = useInventorySourceFilters(
+    `inventories/${params.id ?? ''}/inventory_sources/`
+  );
   const view = useAwxView<InventorySource>({
     url: awxAPI`/inventories/${params.id ?? ''}/inventory_sources/`,
     toolbarFilters,
@@ -62,6 +64,7 @@ export function InventorySources() {
               )
         }
         emptyStateIcon={canCreateSource ? undefined : CubesIcon}
+        emptyStateButtonIcon={<PlusCircleIcon />}
         emptyStateButtonText={canCreateSource ? t('Add source') : undefined}
         emptyStateButtonClick={
           canCreateSource

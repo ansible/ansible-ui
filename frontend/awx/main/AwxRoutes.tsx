@@ -37,7 +37,7 @@ export enum AwxRoute {
   JobTemplateSchedules = 'awx-job-template-schedules',
   JobTemplateSchedulePage = 'awx-template-schedule-page',
   JobTemplateScheduleCreate = 'awx-template-schedule-create',
-  JobTemplateEditSchedule = 'awx-job-template-edit-schedule',
+  JobTemplateScheduleEdit = 'awx-template-schedule-edit',
   JobTemplateScheduleRules = 'awx-template-schedule-rules',
   JobTemplateCreateScheduleRules = 'awx-job-template-create-schedule-rules',
   TemplateLaunchWizard = 'awx-template-launch-wizard',
@@ -48,10 +48,9 @@ export enum AwxRoute {
   WorkflowJobTemplateSchedules = 'awx-workflow-job-template-schedules',
   WorkflowJobTemplateSchedulePage = 'awx-workflow-job-template-schedule-page',
   WorkflowJobTemplateScheduleDetails = 'awx-workflow-job-template-schedule-details',
-  WorkflowJobTemplateScheduleRules = 'awx-workflow-job-template-schedule-rules',
   WorkflowJobTemplateScheduleCreate = 'awx-workflow-job-template-schedule-create',
+  WorkflowJobTemplateScheduleEdit = 'awx-workflow-job-template-schedule-edit',
   WorkflowJobTemplateCreateScheduleRules = 'awx-workflow-job-template-create-schedule-rules',
-  WorkflowJobTemplateEditSchedule = 'awx-workflow-job-template-edit-schedule',
   WorkflowJobTemplateJobs = 'awx-workflow-job-template-jobs',
   WorkflowJobTemplateSurvey = 'awx-workflow-job-template-survey',
   AddWorkflowJobTemplateSurvey = 'awx-add-workflow-job-template-survey',
@@ -83,8 +82,6 @@ export enum AwxRoute {
 
   ProjectSchedulePage = 'awx-project-schedule-page',
   ProjectScheduleDetails = 'awx-project-schedule-details',
-  ProjectScheduleRules = 'awx-project-schedule-rules',
-  ProjectCreateScheduleRules = 'awx-project-create-schedule-rules',
 
   Inventories = 'awx-inventories',
   CreateInventory = 'awx-create-inventory',
@@ -124,8 +121,6 @@ export enum AwxRoute {
   InventorySourceScheduleEdit = 'awx-inventory-schedule-edit',
   InventorySourceSchedulePage = 'awx-inventory-schedule-page',
   InventorySourceScheduleDetails = 'awx-inventory-schedule-details',
-  InventorySourceScheduleRules = 'awx-inventory-schedule-rules',
-  InventorySourceCreateScheduleRules = 'awx-inventory-source-create-schedule-rules',
   InventoryRunCommand = 'awx-inventory-run-command',
 
   Hosts = 'awx-hosts',
@@ -200,7 +195,7 @@ export enum AwxRoute {
   ManagementJobSchedulePage = 'awx-management-job-schedule-page',
   ManagementJobScheduleDetails = 'awx-management-job-schedule-details',
   ManagementJobScheduleRules = 'awx-management-job-schedule-rules',
-  ManagementJobEditSchedule = 'awx-management-job-edit-schedule',
+  ManagementJobScheduleEdit = 'awx-management-job-schedule-edit',
   ManagementJobScheduleCreate = 'awx-management-job-schedule-create',
 
   CreateInstanceGroup = 'awx-create-instance-group',

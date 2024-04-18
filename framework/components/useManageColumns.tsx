@@ -24,7 +24,7 @@ export function useManageColumns<T extends object>(
         cell: (column: ITableColumn<T>, setColumn: (column: ITableColumn<T>) => void) => (
           <PageSingleSelect<keyof typeof ColumnTableOption | ''>
             value={column.table ?? ''}
-            onSelect={(value: keyof typeof ColumnTableOption | '') => {
+            onSelect={(value: keyof typeof ColumnTableOption | '' | null) => {
               switch (value) {
                 case '':
                   setColumn({ ...column, table: undefined });
@@ -61,6 +61,7 @@ export function useManageColumns<T extends object>(
                 description: t('Hide the column.'),
               },
             ]}
+            isRequired
           />
         ),
       });
@@ -120,6 +121,7 @@ export function useManageColumns<T extends object>(
               },
             ]}
             placeholder={t('Left side')}
+            isRequired
           />
         ),
       });
@@ -172,6 +174,7 @@ export function useManageColumns<T extends object>(
                 description: t('Hide the column on the card.'),
               },
             ]}
+            isRequired
           />
         ),
       });

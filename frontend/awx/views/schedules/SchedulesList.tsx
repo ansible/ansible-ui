@@ -1,4 +1,4 @@
-import { CubesIcon } from '@patternfly/react-icons';
+import { CubesIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { PageTable } from '../../../../framework';
@@ -21,6 +21,7 @@ export function SchedulesList(props: { sublistEndpoint?: string }) {
   const location = useLocation();
   const toolbarFilters = useSchedulesFilter();
   const tableColumns = useSchedulesColumns();
+
   const resourceId = params.source_id ?? params.id;
   const apiEndPoint: string | undefined = props.sublistEndpoint
     ? `${props.sublistEndpoint}/${resourceId}/schedules/`
@@ -66,6 +67,7 @@ export function SchedulesList(props: { sublistEndpoint?: string }) {
             )
       }
       emptyStateIcon={canCreateSchedule ? undefined : CubesIcon}
+      emptyStateButtonIcon={<PlusCircleIcon />}
       emptyStateButtonText={canCreateSchedule ? t('Create schedule') : undefined}
       emptyStateButtonClick={canCreateSchedule ? () => navigate(createUrl) : undefined}
       {...view}

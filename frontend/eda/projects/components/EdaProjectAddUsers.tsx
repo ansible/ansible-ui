@@ -9,8 +9,8 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../framework';
-import { EdaSelectRolesStep } from '../../access/roles/components/EdaSelectRolesStep';
-import { EdaSelectUsersStep } from '../../access/users/components/EdaSelectUsersStep';
+import { EdaSelectRolesStep } from '../../access/common/EdaRolesWizardSteps/EdaSelectRolesStep';
+import { EdaSelectUsersStep } from '../../access/common/EdaRolesWizardSteps/EdaSelectUsersStep';
 import { EdaRoute } from '../../main/EdaRoutes';
 import { EdaProject } from '../../interfaces/EdaProject';
 import { useGet } from '../../../common/crud/useGet';
@@ -64,7 +64,7 @@ export function EdaProjectAddUsers() {
       },
     },
     {
-      id: 'edaRoles',
+      id: 'roles',
       label: t('Select roles to apply'),
       inputs: (
         <EdaSelectRolesStep
@@ -117,7 +117,7 @@ export function EdaProjectAddUsers() {
           resolve();
         },
         onClose: () => {
-          pageNavigate(EdaRoute.ProjectDetails, {
+          pageNavigate(EdaRoute.ProjectUserAccess, {
             params: { id: project.id.toString() },
           });
         },
@@ -137,7 +137,7 @@ export function EdaProjectAddUsers() {
           },
           {
             label: t('User Access'),
-            to: getPageUrl(EdaRoute.ProjectUsers, { params: { id: project?.id } }),
+            to: getPageUrl(EdaRoute.ProjectUserAccess, { params: { id: project?.id } }),
           },
           { label: t('Add roles') },
         ]}
@@ -147,7 +147,7 @@ export function EdaProjectAddUsers() {
         onSubmit={onSubmit}
         disableGrid
         onCancel={() => {
-          pageNavigate(EdaRoute.ProjectUsers, { params: { id: project?.id } });
+          pageNavigate(EdaRoute.ProjectUserAccess, { params: { id: project?.id } });
         }}
       />
     </PageLayout>

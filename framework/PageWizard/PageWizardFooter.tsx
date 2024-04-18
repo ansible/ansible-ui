@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { PageFormSubmitButton } from '../PageForm/PageFormButtons';
-import { usePageWizard } from './PageWizardProvider';
+import { isPageWizardParentStep, usePageWizard } from './PageWizardProvider';
 
 export function PageWizardFooter(props: {
   onNext?: () => void;
@@ -8,12 +8,14 @@ export function PageWizardFooter(props: {
   onCancel: () => void;
 }) {
   const { t } = useTranslation();
-  const { activeStep, visibleSteps } = usePageWizard();
+  const { activeStep, visibleStepsFlattened, setSubmitError } = usePageWizard();
 
-  const isLastStep = activeStep?.id === visibleSteps[visibleSteps.length - 1].id;
+  const isLastStep = activeStep?.id === visibleStepsFlattened[visibleStepsFlattened.length - 1].id;
   const nextButtonLabel = isLastStep ? t('Finish') : t('Next');
 
-  const isFirstStep = activeStep?.id === visibleSteps[0].id;
+  const isFirstStep = isPageWizardParentStep(visibleStepsFlattened[0])
+    ? activeStep?.id === visibleStepsFlattened[1].id
+    : activeStep?.id === visibleStepsFlattened[0].id;
   const backClassName = isFirstStep
     ? 'pf-v5-c-button pf-m-disabled'
     : 'pf-v5-c-button pf-m-secondary';
@@ -27,7 +29,10 @@ export function PageWizardFooter(props: {
           data-cy="wizard-next"
           className="pf-v5-c-button pf-m-primary"
           type="submit"
-          onClick={props.onNext}
+          onClick={() => {
+            setSubmitError(undefined);
+            props.onNext?.();
+          }}
         >
           {nextButtonLabel}
         </button>
@@ -37,7 +42,10 @@ export function PageWizardFooter(props: {
         data-cy="wizard-back"
         className={backClassName}
         disabled={isFirstStep}
-        onClick={props.onBack}
+        onClick={() => {
+          setSubmitError(undefined);
+          props.onBack?.();
+        }}
       >
         {t('Back')}
       </button>
