@@ -47,7 +47,7 @@ export function PageWizard<T extends object>(props: {
           }}
         >
           <PageWizardNavigation />
-          <PageWizardBody<T>
+          <PageWizardBody
             errorAdapter={props.errorAdapter}
             onCancel={props.onCancel}
             disableGrid={props.disableGrid}

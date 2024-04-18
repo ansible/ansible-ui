@@ -40,15 +40,14 @@ export interface PageWizardState {
   visibleStepsFlattened: PageWizardStep[];
   // setVisibleStepsFlattened: (steps: PageWizardStep[]) => void;
   wizardData: object;
-  onNext: () => Promise<void>;
+  onNext: (formState: object) => Promise<void>;
   onBack: () => void;
   submitError?: Error | undefined;
   setSubmitError: React.Dispatch<SetStateAction<Error | undefined>>;
 }
 
-export interface PageWizardBody<T> {
+export interface PageWizardBody {
   onCancel?: () => void;
-  onSubmit: (wizardData: T) => Promise<void>;
   errorAdapter?: ErrorAdapter;
   disableGrid?: boolean;
   isVertical?: boolean;

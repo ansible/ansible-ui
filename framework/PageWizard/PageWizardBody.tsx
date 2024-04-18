@@ -7,37 +7,19 @@ import { useNavigate } from 'react-router-dom';
 import { RequestError } from '../../frontend/common/crud/RequestError';
 import { PageForm } from '../PageForm/PageForm';
 import { PageLayout } from '../PageLayout';
-import { useURLSearchParams } from '../components/useURLSearchParams';
 import { PageWizardFooter } from './PageWizardFooter';
-import { usePageWizard, isPageWizardParentStep, isStepVisible } from './PageWizardProvider';
+import { usePageWizard } from './PageWizardProvider';
 import type { PageWizardBody } from './types';
 
-export function PageWizardBody<T>({
+export function PageWizardBody({
   onCancel,
-  // onSubmit,
   disableGrid,
   errorAdapter,
   isVertical,
   singleColumn,
-}: PageWizardBody<T>) {
+}: PageWizardBody) {
   const navigate = useNavigate();
-  const {
-    activeStep,
-    steps,
-    setActiveStep,
-    setStepData,
-    setVisibleSteps,
-    setWizardData,
-    stepData,
-    // visibleSteps,
-    // visibleStepsFlattened,
-    wizardData,
-    onNext,
-    onBack,
-    submitError,
-    setSubmitError,
-  } = usePageWizard();
-  const [_, setSearchParams] = useURLSearchParams();
+  const { activeStep, stepData, onNext, onBack, submitError } = usePageWizard();
 
   const onClose = useCallback((): void => {
     if (onCancel) {
