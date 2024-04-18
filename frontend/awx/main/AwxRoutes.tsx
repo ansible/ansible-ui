@@ -48,7 +48,6 @@ export enum AwxRoute {
   WorkflowJobTemplateSchedules = 'awx-workflow-job-template-schedules',
   WorkflowJobTemplateSchedulePage = 'awx-workflow-job-template-schedule-page',
   WorkflowJobTemplateScheduleDetails = 'awx-workflow-job-template-schedule-details',
-  WorkflowJobTemplateScheduleRules = 'awx-workflow-job-template-schedule-rules',
   WorkflowJobTemplateScheduleCreate = 'awx-workflow-job-template-schedule-create',
   WorkflowJobTemplateScheduleEdit = 'awx-workflow-job-template-schedule-edit',
   WorkflowJobTemplateCreateScheduleRules = 'awx-workflow-job-template-create-schedule-rules',
@@ -83,8 +82,6 @@ export enum AwxRoute {
 
   ProjectSchedulePage = 'awx-project-schedule-page',
   ProjectScheduleDetails = 'awx-project-schedule-details',
-  ProjectScheduleRules = 'awx-project-schedule-rules',
-  ProjectCreateScheduleRules = 'awx-project-create-schedule-rules',
 
   Inventories = 'awx-inventories',
   CreateInventory = 'awx-create-inventory',
@@ -124,8 +121,6 @@ export enum AwxRoute {
   InventorySourceScheduleEdit = 'awx-inventory-schedule-edit',
   InventorySourceSchedulePage = 'awx-inventory-schedule-page',
   InventorySourceScheduleDetails = 'awx-inventory-schedule-details',
-  InventorySourceScheduleRules = 'awx-inventory-schedule-rules',
-  InventorySourceCreateScheduleRules = 'awx-inventory-source-create-schedule-rules',
 
   Hosts = 'awx-hosts',
   CreateHost = 'awx-create-host',
