@@ -1008,7 +1008,8 @@ declare global {
       ): Chainable<void>;
 
       createInventoryHost(
-        organization: Organization
+        organization: Organization,
+        kind: '' | 'constructed' | 'smart'
       ): Chainable<{ inventory: Inventory; host: AwxHost }>;
 
       createInventoryHostGroup(

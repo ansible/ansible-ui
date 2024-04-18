@@ -151,7 +151,7 @@ export function useInventoryActions({
           !(
             params.inventory_type === 'constructed_inventory' &&
             detail === true &&
-            (isSyncRunning(inventory) === false || hideCancelButton === true)
+            (isSyncRunning(inventory) !== true || hideCancelButton === true)
           ),
       },
       {
