@@ -169,12 +169,14 @@ export interface WizardFormValues {
   node_alias: string;
   node_convergence: 'any' | 'all';
   node_days_to_keep: number;
-  node_resource: AllResources | NodeResource | null;
+  resource: AllResources | NodeResource | null;
   node_type: UnifiedJobType;
   node_status_type?: EdgeStatus;
   launch_config: LaunchConfiguration | null;
   prompt: PromptFormValues;
   inventory?: Inventory;
+  relatedJobTypeApiUrl?: string;
+  node_resource?: { id: string };
 }
 
 export type UnifiedJobType =

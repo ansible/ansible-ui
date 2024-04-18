@@ -25,6 +25,7 @@ import { ResourceNotifications } from '../../resources/notifications/ResourceNot
 import { TemplateJobs } from '../../resources/templates/TemplatePage/TemplateJobs';
 import { TemplateSurvey } from '../../resources/templates/TemplatePage/TemplateSurvey';
 import { SchedulesList } from '../../views/schedules/SchedulesList';
+import { ScheduleEditWizard } from '../../views/schedules/wizard/ScheduleEditWizard';
 import {
   EditTemplateSurveyForm,
   AddTemplateSurveyForm,
@@ -58,7 +59,7 @@ export function useAwxTemplateRoutes() {
             {
               id: AwxRoute.JobTemplateEditSchedule,
               path: ':id/schedules/:schedule_id/edit',
-              element: <PageNotImplemented />,
+              element: <ScheduleEditWizard />,
             },
             {
               id: AwxRoute.JobTemplateSchedulePage,
@@ -174,7 +175,7 @@ export function useAwxTemplateRoutes() {
             {
               id: AwxRoute.WorkflowJobTemplateEditSchedule,
               path: ':id/schedules/:schedule_id/edit',
-              element: <PageNotImplemented />,
+              element: <ScheduleEditWizard />,
             },
             {
               id: AwxRoute.WorkflowJobTemplateSchedulePage,
@@ -259,7 +260,7 @@ export function useAwxTemplateRoutes() {
                 {
                   id: AwxRoute.WorkflowJobTemplateNotifications,
                   path: 'notifications',
-                  element: <PageNotImplemented />,
+                  element: <ResourceNotifications resourceType="workflow_job_templates" />,
                 },
                 {
                   path: '',

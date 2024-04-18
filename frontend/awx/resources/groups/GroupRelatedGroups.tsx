@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { InventoryGroup } from '../../interfaces/InventoryGroup';
 import { PageTable } from '../../../../framework';
-import { CubeIcon } from '@patternfly/react-icons';
+import { CubeIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useGroupsFilters } from './hooks/useGroupsFilters';
 import { useParams } from 'react-router-dom';
 import { useRelatedGroupsToolbarActions } from './hooks/useRelatedGroupsToolbarActions';
@@ -59,6 +59,7 @@ export function GroupRelatedGroups() {
             )
       }
       emptyStateIcon={canCreateGroup ? undefined : CubeIcon}
+      emptyStateButtonIcon={<PlusCircleIcon />}
       emptyStateButtonText={canCreateGroup && !isConstructed ? t('Add related groups') : undefined}
       emptyStateActions={emptyStateActions}
       {...view}

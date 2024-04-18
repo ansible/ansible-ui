@@ -22,10 +22,16 @@ export function SurveyStep({ templateId, jobType }: { templateId?: string; jobTy
   );
 
   useEffect(() => {
-    const survey: { [key: string]: string | number | { name: string | number }[] } = {};
-    survey_spec?.spec?.forEach((obj) => {
+    const survey: { [key: string]: string | number | { name: string }[] } = {};
+    survey_spec?.spec?.forEach((obj: Spec) => {
+      if (obj.default === '') {
+        return;
+      }
       if (obj.type === 'multiselect') {
-        survey[obj.variable] = [{ name: obj.default }];
+        const specDefault = obj.default as string;
+        survey[obj.variable] = specDefault.split('\n').map((val: string) => ({
+          name: val,
+        }));
         return;
       }
       survey[obj.variable] = obj.default;
@@ -39,7 +45,6 @@ export function SurveyStep({ templateId, jobType }: { templateId?: string; jobTy
 
   const getChoices = (name: string): PageSelectOption<string>[] => {
     const choices: PageSelectOption<string>[] = [];
-
     survey_spec?.spec.forEach((element: Spec) => {
       if (
         (element.type === 'multiplechoice' || element.type === 'multiselect') &&

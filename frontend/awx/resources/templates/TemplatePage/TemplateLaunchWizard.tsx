@@ -42,7 +42,8 @@ const addSurveyQuestionsToExtraVars = (
   config.variables_needed_to_start.forEach((key, index) => {
     const value = formValues.survey[key];
     if (Array.isArray(value)) {
-      const outputString = value.reduce((acc, { name }) => `${acc},${name}`, '').slice(1);
+      const variableNames: { name: string }[] = value as { name: string }[];
+      const outputString = variableNames.reduce((acc, { name }) => `${acc},'${name}'`, '').slice(1);
       stringValue += `${key}: [${outputString}]`;
     } else {
       stringValue += `${key}: ${formValues.survey[key] as string}`;
@@ -97,7 +98,7 @@ export interface TemplateLaunch {
   skip_tags: { name: string }[];
   timeout: number;
   verbosity: number;
-  survey: { [key: string]: string | string[] | { name: string } };
+  survey: { [key: string]: string | string[] | { name: string }[] };
 }
 
 interface LaunchPayload {
@@ -105,7 +106,7 @@ interface LaunchPayload {
   credential_passwords: { [key: string]: string };
   diff_mode: boolean;
   execution_environment: number;
-  extra_vars: string | { [key: string]: string };
+  extra_vars: string | { [key: string]: string | string[] | { name: string }[] };
   forks: number;
   instance_groups: number[];
   inventory: number;
@@ -232,7 +233,8 @@ export function TemplateLaunchWizard({ jobType }: { jobType: string }) {
           Object.keys(formValues.survey).forEach((key) => {
             const value = formValues.survey[key];
             if (Array.isArray(value)) {
-              formValues.survey[key] = value.map((k) => k.name);
+              const variableNames: { name: string }[] = value as { name: string }[];
+              formValues.survey[key] = variableNames.map((k) => k.name);
             }
           });
 

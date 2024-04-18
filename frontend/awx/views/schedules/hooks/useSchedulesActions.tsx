@@ -26,6 +26,7 @@ export function useSchedulesActions(options: {
     },
     [options]
   );
+
   const editUrl = useGetSchedulCreateUrl(options.sublistEndpoint);
   const rowActions = useMemo<IPageAction<Schedule>[]>(
     () => [
@@ -35,8 +36,8 @@ export function useSchedulesActions(options: {
           isEnabled ? t('Click to disable schedule') : t('Click to enable schedule'),
         type: PageActionType.Switch,
         selection: PageActionSelection.Single,
-        labelOff: t('Disabled'),
-        label: t('Enabled'),
+        labelOff: t('Schedule disabled'),
+        label: t('Schedule enabled'),
         isDisabled: (schedule) => cannotEditResource(schedule, t, canCreateSchedule),
         onToggle: (schedule, enabled) => handleToggleSchedule(schedule, enabled),
         isSwitchOn: (schedule) => schedule.enabled,
@@ -47,7 +48,7 @@ export function useSchedulesActions(options: {
         icon: PencilAltIcon,
         label: t(`Edit schedule`),
         isDisabled: (schedule) => cannotEditResource(schedule, t, canCreateSchedule),
-        href: () => editUrl,
+        href: (schedule) => editUrl.replace('/create', `/${schedule.id.toString()}/edit`),
         isPinned: true,
       },
       { type: PageActionType.Seperator },

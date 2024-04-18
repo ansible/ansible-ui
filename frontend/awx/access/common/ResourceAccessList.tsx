@@ -165,6 +165,7 @@ export function ResourceAccessList(props: { url: string; resource: ResourceType 
       errorStateTitle={t('Error loading users')}
       emptyStateTitle={t('No users yet')}
       emptyStateDescription={t('To get started, create a user.')}
+      emptyStateButtonIcon={<PlusCircleIcon />}
       emptyStateButtonText={t('Create user')}
       emptyStateButtonClick={() => pageNavigate(AwxRoute.CreateUser)}
       {...view}

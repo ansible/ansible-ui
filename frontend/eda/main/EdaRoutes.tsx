@@ -27,7 +27,6 @@ export enum EdaRoute {
   ProjectDetails = 'eda-project-details',
   ProjectTeamAccess = 'eda-project-project-team-access',
   ProjectUserAccess = 'eda-project-project-user-access',
-  ProjectUsers = 'eda-project-users',
   ProjectAddUsers = 'eda-project-add-users',
   ProjectAddTeams = 'eda-project-add-teams',
 
@@ -39,6 +38,7 @@ export enum EdaRoute {
   DecisionEnvironmentTeamAccess = 'eda-decision-environments-team-access',
   DecisionEnvironmentUserAccess = 'eda-decision-environments-user-access',
   DecisionEnvironmentAddTeams = 'eda-decision-environments-add-teams',
+  DecisionEnvironmentAddUsers = 'eda-decision-environments-add-users',
 
   Credentials = 'eda-credentials',
   CreateCredential = 'eda-create-credential',

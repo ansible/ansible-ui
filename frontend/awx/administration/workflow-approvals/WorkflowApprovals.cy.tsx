@@ -1,5 +1,3 @@
-// import * as useOptions from '../../../common/crud/useOptions';
-
 import { WorkflowApprovals } from './WorkflowApprovals';
 
 describe('Workflow Approvals List', () => {
@@ -43,6 +41,10 @@ describe('Workflow Approvals List', () => {
     });
 
     it('Workflow approvals list has filters for Name and ID', () => {
+      cy.intercept(
+        { method: 'OPTIONS', url: '/api/v2/workflow_approvals/' },
+        { fixture: 'mock_options.json' }
+      );
       cy.mount(<WorkflowApprovals />);
       cy.openToolbarFilterTypeSelect().within(() => {
         cy.contains(/^Name$/).should('be.visible');
@@ -51,18 +53,26 @@ describe('Workflow Approvals List', () => {
     });
 
     it('Filter workflow approvals by name', () => {
+      cy.intercept(
+        { method: 'OPTIONS', url: '/api/v2/workflow_approvals/' },
+        { fixture: 'mock_options.json' }
+      );
       cy.mount(<WorkflowApprovals />);
-      cy.intercept('api/v2/workflow_approvals/?name__icontains=foo*').as('nameFilterRequest');
-      cy.filterTableByTypeAndText(/^Name$/, 'foo');
-      cy.wait('@nameFilterRequest');
+      cy.filterTableByMultiSelect('name', ['read only approval']);
+      cy.getByDataCy('filter-input').click();
+      cy.get('tr').should('have.length.greaterThan', 0);
       cy.clickButton(/^Clear all filters$/);
     });
 
     it('Filter workflow approvals by id', () => {
+      cy.intercept(
+        { method: 'OPTIONS', url: '/api/v2/workflow_approvals/' },
+        { fixture: 'mock_options.json' }
+      );
       cy.mount(<WorkflowApprovals />);
-      cy.intercept('api/v2/workflow_approvals/?id=1*').as('idFilterRequest');
-      cy.filterTableByTypeAndText(/^ID$/, '1');
-      cy.wait('@idFilterRequest');
+      cy.filterTableByMultiSelect('id', ['130']);
+      cy.getByDataCy('filter-input').click();
+      cy.get('tr').should('have.length.greaterThan', 0);
       cy.clickButton(/^Clear all filters$/);
     });
 
@@ -163,37 +173,56 @@ describe('Workflow Approvals List', () => {
     });
 
     it('Approve row action calls correct API endpoint', () => {
+      cy.intercept(
+        { method: 'OPTIONS', url: '/api/v2/workflow_approvals/' },
+        { fixture: 'mock_options.json' }
+      );
       cy.mount(<WorkflowApprovals />);
       cy.intercept('api/v2/workflow_approvals/141/approve/', {
         statusCode: 200,
       }).as('approveRequest');
-      cy.clickTableRowPinnedAction('can approve or deny', 'approve');
+      cy.getTableRow('name', 'can approve or deny', { disableFilter: true }).within(() => {
+        cy.getByDataCy('actions-column-cell').within(() => {
+          cy.getByDataCy('approve').click();
+        });
+      });
       cy.get('#confirm').click();
       cy.clickButton(/^Approve workflow approvals/);
       cy.wait('@approveRequest');
       cy.clickButton(/^Close/);
-      cy.clickButton(/^Clear all filters$/);
     });
 
     it('Deny row action calls correct API endpoint', () => {
+      cy.intercept(
+        { method: 'OPTIONS', url: '/api/v2/workflow_approvals/' },
+        { fixture: 'mock_options.json' }
+      );
       cy.mount(<WorkflowApprovals />);
       cy.intercept('api/v2/workflow_approvals/141/deny/', {
         statusCode: 200,
       }).as('denyRequest');
-      cy.clickTableRowPinnedAction('can approve or deny', 'deny');
+      cy.getTableRow('name', 'can approve or deny', { disableFilter: true }).within(() => {
+        cy.getByDataCy('actions-column-cell').within(() => {
+          cy.getByDataCy('deny').click();
+        });
+      });
       cy.get('#confirm').click();
       cy.clickButton(/^Deny workflow approvals/);
       cy.wait('@denyRequest');
       cy.clickButton(/^Close/);
-      cy.clickButton(/^Clear all filters$/);
     });
 
     it('Delete row action calls correct API endpoint', () => {
+      cy.intercept(
+        { method: 'OPTIONS', url: '/api/v2/workflow_approvals/' },
+        { fixture: 'mock_options.json' }
+      );
       cy.mount(<WorkflowApprovals />);
       cy.intercept('api/v2/workflow_approvals/131/', {
         statusCode: 204,
       }).as('deleteRequest');
-      cy.clickTableRowKebabAction('can delete approval', 'delete-workflow-approval');
+      cy.filterTableByMultiSelect('name', ['can delete approval']);
+      cy.clickTableRowKebabAction('can delete approval', 'delete-workflow-approval', false);
       cy.get('#confirm').click();
       cy.clickButton(/^Delete workflow approvals/);
       cy.wait('@deleteRequest');

@@ -11,6 +11,7 @@ describe('PageWizardFooter', () => {
     activeStep: step1,
     allSteps: [step1, step2, step3],
     visibleSteps: [step1, step2, step3],
+    visibleStepsFlattened: [step1, step2, step3],
     isToggleExpanded: false,
     setActiveStep: () => {},
     setStepData: () => {},
@@ -18,9 +19,11 @@ describe('PageWizardFooter', () => {
     setToggleExpanded: () => {},
     setWizardData: () => {},
     setVisibleSteps: () => {},
+    setVisibleStepsFlattened: () => {},
     stepData: {},
     stepError: {},
     wizardData: {},
+    setSubmitError: () => {},
   };
 
   it('should show "Finish" instead of "Next" if active step is the last step', () => {
