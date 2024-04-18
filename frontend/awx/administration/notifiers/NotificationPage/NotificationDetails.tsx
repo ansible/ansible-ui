@@ -13,8 +13,9 @@ import { StatusLabel } from '../../../../common/Status';
 
 export function NotificationDetails() {
   const { t } = useTranslation();
-  const { notificationTemplate } = useOutletContext<{
+  const { notificationTemplate, runningTest } = useOutletContext<{
     notificationTemplate: NotificationTemplate;
+    runningTest: boolean;
   }>();
   const getPageUrl = useGetPageUrl();
   const pageNavigate = usePageNavigate();
@@ -30,7 +31,8 @@ export function NotificationDetails() {
         <PageDetail label={t('Description')}>{notificationTemplate.description}</PageDetail>
         {status && (
           <PageDetail label={t('Status')}>
-            <StatusLabel status={status} />
+            {runningTest === false && <StatusLabel status={status} />}
+            {runningTest === true && <StatusLabel status={'running'} />}
           </PageDetail>
         )}
         <PageDetail label={t('Created')}>

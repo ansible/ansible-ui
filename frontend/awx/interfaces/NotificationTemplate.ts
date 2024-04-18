@@ -16,6 +16,7 @@ export interface NotificationTemplate
   summary_fields: {
     recent_notifications: [
       {
+        id: number;
         status: string;
       },
     ];

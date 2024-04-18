@@ -13,6 +13,9 @@ import { useNotifiersRowActions } from '../hooks/useNotifiersRowActions';
 import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { PageActions } from '../../../../../framework';
 import { usePageNavigate } from '../../../../../framework';
+import { useState } from 'react';
+import { usePageAlertToaster } from '../../../../../framework';
+import { StatusLabel } from '../../../../common/Status';
 
 export function NotificationPage() {
   const { t } = useTranslation();
@@ -24,6 +27,8 @@ export function NotificationPage() {
   } = useGetItem<NotificationTemplate>(awxAPI`/notification_templates`, params.id);
 
   const pageNavigate = usePageNavigate();
+  const [testedNotificationId, setTestedNotificationId] = useState<number | undefined>(undefined);
+  const alertToaster = usePageAlertToaster();
 
   const getPageUrl = useGetPageUrl();
   const pageActions = useNotifiersRowActions(
@@ -31,12 +36,30 @@ export function NotificationPage() {
       pageNavigate(AwxRoute.NotificationTemplates);
     },
     undefined,
-    () => {},
+    (notificationId: number) => {
+      setTestedNotificationId(notificationId);
+    },
     'detail'
   );
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!notificationTemplate) return <LoadingPage breadcrumbs tabs />;
+
+  // search for notification id
+  if (setTestedNotificationId !== undefined) {
+    const notifications = notificationTemplate.summary_fields?.recent_notifications;
+    const notification = notifications.find(
+      (notification) => notification.id === testedNotificationId
+    );
+    if (notification) {
+      alertToaster.addAlert({
+        variant: 'info',
+        title: t('Notifier test result'),
+        children: <StatusLabel status={notification.status} />,
+      });
+      setTestedNotificationId(undefined);
+    }
+  }
 
   return (
     <PageLayout>
@@ -62,7 +85,10 @@ export function NotificationPage() {
         }}
         tabs={[{ label: t('Details'), page: AwxRoute.NotificationTemplateDetails }]}
         params={params}
-        componentParams={{ notificationTemplate }}
+        componentParams={{
+          notificationTemplate,
+          runningTest: testedNotificationId === undefined ? false : true,
+        }}
       />
     </PageLayout>
   );

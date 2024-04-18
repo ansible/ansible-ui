@@ -5,6 +5,7 @@ import {
   IPageAction,
   PageActionSelection,
   PageActionType,
+  usePageAlertToaster,
   usePageNavigate,
 } from '../../../../../framework';
 import { NotificationTemplate } from '../../../interfaces/NotificationTemplate';
@@ -16,17 +17,21 @@ import {
   cannotDeleteResource,
   cannotEditResource,
 } from '../../../../common/utils/RBAChelpers';
+import { postRequest } from '../../../../common/crud/Data';
+import { awxAPI } from '../../../common/api/awx-utils';
+usePageAlertToaster;
 
 export function useNotifiersRowActions(
   onComplete: (notification: NotificationTemplate[]) => void,
   onNotifierCopied = () => null,
-  onNotifierStartTest?: () => void,
+  onNotifierStartTest?: (notificationId: number) => void,
   detail?: 'detail' | undefined
 ) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const deleteNotifiers = useDeleteNotifiers(onComplete);
   const copyNotifier = useCopyNotifier(onNotifierCopied);
+  const alertToaster = usePageAlertToaster();
 
   return useMemo<IPageAction<NotificationTemplate>[]>(() => {
     return [
@@ -48,8 +53,23 @@ export function useNotifiersRowActions(
         selection: PageActionSelection.Single,
         icon: RocketIcon,
         label: t(`Test notifier`),
-        onClick: (notification) =>
-          {},
+        onClick: (notification: NotificationTemplate) => {
+          void (async () => {
+            try {
+              const result = await postRequest<{ id: number }>(
+                awxAPI`/notification_templates/${notification.id.toString()}/test/`,
+                {}
+              );
+              onNotifierStartTest?.(result?.id);
+            } catch (error) {
+              alertToaster.addAlert({
+                variant: 'danger',
+                title: t('Failed to test notifier'),
+                children: error instanceof Error && error.message,
+              });
+            }
+          })();
+        },
         isDanger: false,
         isPinned: true,
       },
@@ -75,5 +95,5 @@ export function useNotifiersRowActions(
         isDanger: true,
       },
     ];
-  }, [pageNavigate, copyNotifier, deleteNotifiers, detail, t]);
+  }, [pageNavigate, copyNotifier, deleteNotifiers, detail, t, onNotifierStartTest, alertToaster]);
 }
