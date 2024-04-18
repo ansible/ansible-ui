@@ -202,6 +202,12 @@
           ["hybrid", "Controller and execution"],
           ["hop", "Message-passing node, no execution capability"]
         ]
+      },
+      "image_location": {
+        "type": "string",
+        "label": "Image location",
+        "help_text": "The location of the image being used in the execution environment.",
+        "filterable": true
       }
     }
   },

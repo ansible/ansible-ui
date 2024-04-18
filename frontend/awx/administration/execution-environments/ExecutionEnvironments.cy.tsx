@@ -32,22 +32,25 @@ describe('Execution Environments List', () => {
     });
 
     it('Filter execution environments by name', () => {
-      cy.mount(<ExecutionEnvironments />);
       cy.intercept(
-        'api/v2/execution_environments/?name__icontains=Control%20Plane%20Execution%20Environment*'
-      ).as('nameFilterRequest');
-      cy.filterTableByTypeAndText(/^Name$/, 'Control Plane Execution Environment');
-      cy.wait('@nameFilterRequest');
+        { method: 'OPTIONS', url: '/api/v2/execution_environments/' },
+        { fixture: 'mock_options.json' }
+      );
+      cy.mount(<ExecutionEnvironments />);
+      cy.filterTableByMultiSelect('name', ['Control Plane Execution Environment']);
+      cy.getByDataCy('filter-input').click();
+      cy.get('tr').should('have.length.greaterThan', 0);
       cy.clickButton(/^Clear all filters$/);
     });
 
     it('Filter execution environments by image', () => {
-      cy.mount(<ExecutionEnvironments />);
-      cy.intercept('api/v2/execution_environments/?image__icontains=quay*').as(
-        'imageFilterRequest'
+      cy.intercept(
+        { method: 'OPTIONS', url: '/api/v2/execution_environments/' },
+        { fixture: 'mock_options.json' }
       );
-      cy.filterTableByTypeAndText(/^Image$/, 'quay');
-      cy.wait('@imageFilterRequest');
+      cy.mount(<ExecutionEnvironments />);
+      cy.filterTableByTextFilter('image-location', 'quay', { disableFilterSelection: false });
+      cy.get('tr').should('have.length.greaterThan', 0);
       cy.clickButton(/^Clear all filters$/);
     });
 
