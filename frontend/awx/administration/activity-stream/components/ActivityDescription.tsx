@@ -82,6 +82,37 @@ export const ActivityDescription: React.FC<ActivityStreamDescriptionProps> = ({
       case 'update':
       case 'delete': {
         if (sourceResourceRoute && sourceResourceObj) {
+          // handle 'job' and 'workflow_job' and redirect to job output page
+          switch (object1) {
+            case 'job':
+              return (
+                <span>
+                  {`${operationText} ${object1} `}
+                  <Link
+                    to={getPageUrl(sourceResourceRoute, {
+                      params: { id: sourceResourceObj.id, job_type: 'playbook' },
+                    })}
+                    data-cy="source-resource-detail"
+                  >
+                    {sourceResourceName}
+                  </Link>
+                </span>
+              );
+            case 'workflow_job':
+              return (
+                <span>
+                  {`${operationText} ${object1} `}
+                  <Link
+                    to={getPageUrl(sourceResourceRoute, {
+                      params: { id: sourceResourceObj.id, job_type: 'workflow' },
+                    })}
+                    data-cy="source-resource-detail"
+                  >
+                    {sourceResourceName}
+                  </Link>
+                </span>
+              );
+          }
           return (
             <span>
               {`${operationText} ${object1} `}
