@@ -55,6 +55,7 @@ export function useSchedulesColumns(options?: { disableSort?: boolean; disableLi
               schedule.summary_fields.unified_job_template.unified_job_type
             ].scheduleDetailsRoute
               .replace(':id', schedule.summary_fields.inventory?.id.toString())
+              .replace(':inventory_type', 'inventory')
               .replace(':source_id', schedule.summary_fields.unified_job_template.id.toString())
               .replace(':schedule_id', schedule.id.toString())
           : jobTypeLabels[
