@@ -9,12 +9,12 @@ import { PageForm } from '../PageForm/PageForm';
 import { PageLayout } from '../PageLayout';
 import { useURLSearchParams } from '../components/useURLSearchParams';
 import { PageWizardFooter } from './PageWizardFooter';
-import { isPageWizardParentStep, usePageWizard } from './PageWizardProvider';
+import { usePageWizard, isPageWizardParentStep, isStepVisible } from './PageWizardProvider';
 import type { PageWizardBody } from './types';
 
 export function PageWizardBody<T>({
   onCancel,
-  onSubmit,
+  // onSubmit,
   disableGrid,
   errorAdapter,
   isVertical,
@@ -23,12 +23,17 @@ export function PageWizardBody<T>({
   const navigate = useNavigate();
   const {
     activeStep,
+    steps,
     setActiveStep,
     setStepData,
+    setVisibleSteps,
     setWizardData,
     stepData,
-    visibleStepsFlattened,
+    // visibleSteps,
+    // visibleStepsFlattened,
     wizardData,
+    onNext,
+    onBack,
     submitError,
     setSubmitError,
   } = usePageWizard();
@@ -41,64 +46,6 @@ export function PageWizardBody<T>({
       navigate(-1);
     }
   }, [navigate, onCancel]);
-
-  const onNext = useCallback(
-    async (formData: object) => {
-      if (activeStep === null) {
-        return Promise.resolve();
-      }
-
-      if (!isPageWizardParentStep(activeStep) && activeStep.validate) {
-        await activeStep.validate(formData, wizardData);
-      }
-
-      const isLastStep =
-        activeStep?.id === visibleStepsFlattened[visibleStepsFlattened.length - 1]?.id;
-      if (isLastStep) {
-        try {
-          await onSubmit(wizardData as T);
-        } catch (e) {
-          setSubmitError(e instanceof Error ? e : new Error(t('An error occurred.')));
-        }
-        return;
-      }
-
-      const activeStepIndex = visibleStepsFlattened.findIndex((step) => step.id === activeStep?.id);
-      // If the next step is a parent step, mark its first substep as the next active step
-      const nextStep = isPageWizardParentStep(visibleStepsFlattened[activeStepIndex + 1])
-        ? visibleStepsFlattened[activeStepIndex + 2]
-        : visibleStepsFlattened[activeStepIndex + 1];
-
-      // Clear search params
-      setSearchParams(new URLSearchParams(''));
-      setWizardData((prev: object) => ({ ...prev, ...formData }));
-      setStepData((prev) => ({ ...prev, [activeStep?.id]: formData }));
-      setActiveStep(nextStep);
-      return Promise.resolve();
-    },
-    [
-      activeStep,
-      onSubmit,
-      setActiveStep,
-      setSearchParams,
-      setStepData,
-      setSubmitError,
-      setWizardData,
-      visibleStepsFlattened,
-      wizardData,
-    ]
-  );
-
-  const onBack = useCallback(() => {
-    const activeStepIndex = visibleStepsFlattened.findIndex((step) => step.id === activeStep?.id);
-    // If the previous step is a parent step, mark its first substep as the next active step
-    const previousStep = isPageWizardParentStep(visibleStepsFlattened[activeStepIndex - 1])
-      ? visibleStepsFlattened[activeStepIndex - 2]
-      : visibleStepsFlattened[activeStepIndex - 1];
-    // Clear search params
-    setSearchParams(new URLSearchParams(''));
-    setActiveStep(previousStep);
-  }, [visibleStepsFlattened, setSearchParams, setActiveStep, activeStep?.id]);
 
   return (
     <PageLayout>

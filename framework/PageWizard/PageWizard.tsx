@@ -19,7 +19,11 @@ export function PageWizard<T extends object>(props: {
   singleColumn?: boolean;
 }) {
   return (
-    <PageWizardProvider<T> steps={props.steps} defaultValue={props.defaultValue}>
+    <PageWizardProvider<T>
+      steps={props.steps}
+      defaultValue={props.defaultValue}
+      onSubmit={props.onSubmit}
+    >
       <div
         className="pf-v5-c-wizard"
         data-cy="wizard"
@@ -46,7 +50,6 @@ export function PageWizard<T extends object>(props: {
           <PageWizardBody<T>
             errorAdapter={props.errorAdapter}
             onCancel={props.onCancel}
-            onSubmit={props.onSubmit}
             disableGrid={props.disableGrid}
             isVertical={props.isVertical}
             singleColumn={props.singleColumn}
