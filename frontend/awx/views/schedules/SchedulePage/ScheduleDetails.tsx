@@ -25,8 +25,9 @@ import { parseStringToTagArray } from '../../../resources/templates/JobTemplateF
 import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageDetailCodeEditor';
 import { RulesPreview } from '../components/RulesPreview';
 import { ExceptionsPreview } from '../components/ExceptionsPreview';
-import { RRule, rrulestr, Options, RRuleSet } from 'rrule';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { postRequest } from '../../../../common/crud/Data';
+import { DateTime } from 'luxon';
 
 export function ScheduleDetails() {
   const { t } = useTranslation();
@@ -104,15 +105,13 @@ export function ScheduleDetails() {
             value={JSON.stringify(schedule.extra_data)}
           />
         </PageDetail>
-        {schedule && <ScheduleSummary rrule={schedule.rrule}></ScheduleSummary>}
+        {schedule && <ScheduleSummary rrule={schedule.rrule} />}
         <PageDetail fullWidth>
           <Divider />
         </PageDetail>
         <PageDetail fullWidth>
-          <RulesPreview rrule={schedule.rrule}></RulesPreview>
-          {schedule.rrule.includes('EXRULE') && (
-            <ExceptionsPreview rrule={schedule.rrule}></ExceptionsPreview>
-          )}
+          <RulesPreview rrule={schedule.rrule} />
+          {schedule.rrule.includes('EXRULE') && <ExceptionsPreview rrule={schedule.rrule} />}
         </PageDetail>
       </PageDetails>
     </>
@@ -122,9 +121,22 @@ export function ScheduleDetails() {
 export function ScheduleSummary(props: { rrule: string }) {
   const { t } = useTranslation();
   const [mode, setMode] = useState('local');
-  const rRruleString = rrulestr(props.rrule, { forceset: true }) as RRuleSet;
-  const rRule = rRruleString._rrule[0].options as Options;
-  const newRule = new RRule(rRule);
+  const [preview, setPreview] = useState<{ local: string[]; utc: string[] }>();
+  useEffect(() => {
+    async function fetchPreview() {
+      const { local, utc } = await postRequest<{ local: string[]; utc: string[] }>(
+        awxAPI`/schedules/preview/`,
+        {
+          rrule: props.rrule,
+        }
+      );
+      setPreview({ local, utc });
+    }
+    if (props.rrule) {
+      void fetchPreview();
+    }
+  }, [props.rrule]);
+  const timesArray = mode === 'utc' ? preview?.utc : preview?.local;
 
   return (
     <DescriptionListGroup>
@@ -155,16 +167,15 @@ export function ScheduleSummary(props: { rrule: string }) {
           </FlexItem>
         </Flex>
       </DescriptionListTerm>
-      {newRule
-        .all((_rule, i) => i < 12)
-        .slice(2, 12)
-        ?.map((value, i) => {
-          return (
-            <DescriptionListDescription key={i}>
-              {mode === 'utc' ? formatDateString(value.toISOString()) : value.toDateString()}
-            </DescriptionListDescription>
-          );
-        })}
+      {timesArray?.map((value, i) => {
+        return (
+          <DescriptionListDescription key={i}>
+            {DateTime.fromISO(value, { setZone: true }).toLocaleString(
+              DateTime.DATETIME_SHORT_WITH_SECONDS
+            )}
+          </DescriptionListDescription>
+        );
+      })}
     </DescriptionListGroup>
   );
 }

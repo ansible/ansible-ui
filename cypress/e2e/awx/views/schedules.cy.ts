@@ -435,7 +435,7 @@ describe('Schedules - Edit', () => {
     cy.clickButton(/^Next$/);
     cy.getByDataCy('start-date/time').contains('5:00 AM');
     cy.getByDataCy('rule-2').should('exist');
-    cy.getByDataCy('rule-2').contains('FREQ=WEEKLY');
+    cy.getByDataCy('rule-2').contains('FREQ=YEARLY');
   });
 
   it('can edit a schedule to add exceptions', () => {
