@@ -124,6 +124,7 @@ function ToolbarSortSelect(props: {
         label: option.label,
         value: option.value,
       }))}
+      isRequired
     />
   );
 }

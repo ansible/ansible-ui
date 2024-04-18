@@ -12,7 +12,7 @@ describe('EdaProjectAddUsers', () => {
 
   beforeEach(() => {
     cy.intercept('GET', edaAPI`/projects/*`, { fixture: 'edaProject.json' });
-    cy.intercept('GET', edaAPI`/users/?order_by=username*`, { fixture: 'edaUsers.json' });
+    cy.intercept('GET', edaAPI`/users/*`, { fixture: 'edaUsers.json' });
     cy.intercept('GET', edaAPI`/role_definitions/?content_type__model=project*`, {
       fixture: 'edaProjectRoles.json',
     });
