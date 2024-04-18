@@ -214,7 +214,7 @@ export const TopologyViewLayer = (props: { mesh: MeshVisualizer }) => {
       return;
     }
     controller.fromModel(model, true); // Merge in the changes
-    controller.getGraph().fit(80);
+    action(() => controller.getGraph().fit(80))();
   }, [meshLayout, controller]);
 
   if (!controller) {
