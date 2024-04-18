@@ -99,6 +99,7 @@ export function PageFormAsyncSingleSelect<
               onBrowse={props.onBrowse}
               queryLabel={props.queryLabel}
               disableAutoSelect
+              isRequired={props.isRequired}
             />
           </PageFormGroup>
         );
