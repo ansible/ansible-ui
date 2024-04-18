@@ -9,8 +9,8 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../framework';
-import { EdaSelectRolesStep } from '../../access/roles/components/EdaSelectRolesStep';
-import { EdaSelectUsersStep } from '../../access/users/components/EdaSelectUsersStep';
+import { EdaSelectRolesStep } from '../../access/common/EdaRolesWizardSteps/EdaSelectRolesStep';
+import { EdaSelectUsersStep } from '../../access/common/EdaRolesWizardSteps/EdaSelectUsersStep';
 import { EdaRoute } from '../../main/EdaRoutes';
 import { EdaProject } from '../../interfaces/EdaProject';
 import { useGet } from '../../../common/crud/useGet';

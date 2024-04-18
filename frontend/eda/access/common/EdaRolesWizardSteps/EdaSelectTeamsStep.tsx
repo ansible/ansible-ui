@@ -1,13 +1,13 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ITableColumn, TextCell } from '../../../../../../framework';
-import { edaAPI } from '../../../../common/eda-utils';
-import { useMultiSelectListView } from '../../../../common/useMultiSelectListView';
-import { PageMultiSelectList } from '../../../../../../framework/PageTable/PageMultiSelectList';
-import { EdaTeam } from '../../../../interfaces/EdaTeam';
+import { ITableColumn, TextCell } from '../../../../../framework';
+import { edaAPI } from '../../../common/eda-utils';
+import { useMultiSelectListView } from '../../../common/useMultiSelectListView';
+import { PageMultiSelectList } from '../../../../../framework/PageTable/PageMultiSelectList';
+import { EdaTeam } from '../../../interfaces/EdaTeam';
 import { Title } from '@patternfly/react-core';
 import styled from 'styled-components';
-import { useEdaTeamFilters } from '../../hooks/useEdaTeamFilters';
+import { useEdaTeamFilters } from '../../teams/hooks/useEdaTeamFilters';
 
 const StyledTitle = styled(Title)`
   margin-bottom: 1rem;

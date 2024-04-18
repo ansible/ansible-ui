@@ -12,14 +12,14 @@ import {
 import { RoleAssignmentsReviewStep } from '../../../common/access/RolesWizard/steps/RoleAssignmentsReviewStep';
 import { postRequest } from '../../../common/crud/Data';
 import { useGet } from '../../../common/crud/useGet';
-import { EdaSelectRolesStep } from '../../access/roles/components/EdaSelectRolesStep';
-import { EdaSelectUsersStep } from '../../access/users/components/EdaSelectUsersStep';
 import { edaAPI } from '../../common/eda-utils';
 import { useEdaBulkActionDialog } from '../../common/useEdaBulkActionDialog';
 import { EdaDecisionEnvironment } from '../../interfaces/EdaDecisionEnvironment';
 import { EdaRbacRole } from '../../interfaces/EdaRbacRole';
 import { EdaUser } from '../../interfaces/EdaUser';
 import { EdaRoute } from '../../main/EdaRoutes';
+import { EdaSelectUsersStep } from '../../access/common/EdaRolesWizardSteps/EdaSelectUsersStep';
+import { EdaSelectRolesStep } from '../../access/common/EdaRolesWizardSteps/EdaSelectRolesStep';
 
 interface WizardFormValues {
   users: EdaUser[];

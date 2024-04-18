@@ -36,6 +36,7 @@ export function SelectRolesStep<T extends object>(props: SelectRolesStepProps<T>
     descriptionForRoleSelection,
   } = props;
   const { wizardData } = usePageWizard();
+  const { resourceType } = wizardData as { [key: string]: unknown };
 
   const selectedItemsFromPreviousStep = useMemo(() => {
     if (wizardData && fieldNameForPreviousStep) {
@@ -46,18 +47,35 @@ export function SelectRolesStep<T extends object>(props: SelectRolesStepProps<T>
 
   const labelForSelectedItemsFromPreviousStep = useMemo(() => {
     if (selectedItemsFromPreviousStep?.length && fieldNameForPreviousStep) {
-      switch (fieldNameForPreviousStep) {
+      const previousStepKey =
+        fieldNameForPreviousStep === 'resources' ? resourceType : fieldNameForPreviousStep;
+      switch (previousStepKey) {
         case 'users':
           return t('Selected users');
         case 'teams':
           return t('Selected teams');
-        // TODO: Add additional resource types
+        case 'eda.edacredential':
+          return t('Selected credentials');
+        case 'eda.project':
+          return t('Selected projects');
+        case 'eda.activation':
+          return t('Selected rulebook activations');
+        case 'eda.rulebook':
+          return t('Selected rulebooks');
+        case 'eda.rulebookprocess':
+          return t('Selected rulebook processes');
+        case 'eda.credentialtype':
+          return t('Selected credential types');
+        case 'eda.decisionenvironment':
+          return t('Selected decision environments');
+        case 'eda.auditrule':
+          return t('Selected audit rules');
         default:
           return undefined;
       }
     }
     return undefined;
-  }, [fieldNameForPreviousStep, selectedItemsFromPreviousStep?.length, t]);
+  }, [fieldNameForPreviousStep, resourceType, selectedItemsFromPreviousStep?.length, t]);
 
   return (
     <>
