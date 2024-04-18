@@ -18,12 +18,9 @@ type AwxAuthOptions = {
 export function AwxLogin(props: { children: React.ReactNode }) {
   const { data: options } = useSWR<AwxAuthOptions>(awxAPI`/auth/`, requestGet);
   const authOptions: AuthOption[] = [];
-  if (options) {
+  if (options && typeof options === 'object') {
     Object.keys(options).forEach((key) => {
-      authOptions.push({
-        login_url: options[key].login_url,
-        type: key,
-      });
+      authOptions.push({ login_url: options[key].login_url, type: key });
     });
   }
 
