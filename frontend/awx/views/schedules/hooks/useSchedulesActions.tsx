@@ -79,7 +79,7 @@ export function useSchedulesActions(options: {
         isDanger: true,
       },
     ],
-    [t, canCreateSchedule, handleToggleSchedule, getScheduleUrl, deleteSchedule]
+    [t, canCreateSchedule, handleToggleSchedule, editHref, deleteSchedule]
   );
   return rowActions;
 }
