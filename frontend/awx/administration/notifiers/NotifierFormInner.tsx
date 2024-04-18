@@ -457,7 +457,7 @@ function IrcForm() {
   );
 }
 
-function getLabelHelp(notification_type: string, key: string, t: TFunction<'translation', undefined>) {
+export function getLabelHelp(notification_type: string, key: string, t: TFunction<'translation', undefined>) {
   if (notification_type === 'email' && key === 'recipients') {
     return t(
       'Use one email address per line to create a recipient list for this type of notification.'

@@ -10,6 +10,7 @@ import { TextArea } from '@patternfly/react-core';
 import { DateTimeCell } from '../../../../../framework';
 import { usePageNavigate } from '../../../../../framework';
 import { StatusLabel } from '../../../../common/Status';
+import { getLabelHelp } from '../NotifierFormInner';
 
 export function NotificationDetails() {
   const { t } = useTranslation();
@@ -115,15 +116,18 @@ function RenderInnerDetail(props: { notificationTemplate: NotificationTemplate }
             caption = key;
           }
 
+          // label help
+          const labelHelp = getLabelHelp(notificationTemplate.notification_type || '', key, t);
+
           if (!list && !object) {
             return (
-              <PageDetail key={key} label={caption}>
+              <PageDetail key={key} label={caption} helpText={labelHelp}>
                 {value.toString()}
               </PageDetail>
             );
           } else {
             return (
-              <PageDetail key={key} label={caption}>
+              <PageDetail key={key} label={caption} helpText={labelHelp}>
                 <TextArea value={value.toString()} contentEditable={false} rows={3} />
               </PageDetail>
             );
