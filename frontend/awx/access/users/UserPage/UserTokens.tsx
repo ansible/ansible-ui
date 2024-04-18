@@ -14,7 +14,8 @@ export function UserTokens() {
   useEffect(() => {
     if (activeAwxUser?.id === undefined || activeAwxUser?.id.toString() !== params.id) {
       setShowTokens(false);
-      pageNavigate(AwxRoute.Users);
+      // redirect to user details for the active/logged-in user
+      pageNavigate(AwxRoute.UserDetails, { params: { id: activeAwxUser?.id } });
     }
   }, [activeAwxUser?.id, params.id, setShowTokens, pageNavigate]);
 
