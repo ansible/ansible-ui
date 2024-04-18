@@ -1,5 +1,5 @@
 import { Radio } from '@patternfly/react-core';
-import React, { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -15,7 +15,8 @@ import {
 import { PageFormFileUpload } from '../../../framework/PageForm/Inputs/PageFormFileUpload';
 import { ToolbarFilterType } from '../../../framework/PageToolbar/PageToolbarFilter';
 import { LoadingPage } from '../../../framework/components/LoadingPage';
-import { useSearchParams } from '../../../framework/components/useSearchParams';
+import { useURLSearchParams } from '../../../framework/components/useURLSearchParams';
+import { requestGet } from '../../common/crud/Data';
 import { useGetRequest } from '../../common/crud/useGet';
 import { nameKeyFn } from '../../common/utils/nameKeyFn';
 import { useRepositories } from '../administration/repositories/hooks/useRepositories';
@@ -23,10 +24,8 @@ import { HubError } from '../common/HubError';
 import { HubPageForm } from '../common/HubPageForm';
 import { hubAPI, pulpAPI } from '../common/api/formatPath';
 import { hubPostRequestFile } from '../common/api/request';
-import { PulpItemsResponse, useHubView } from '../common/useHubView';
+import { HubItemsResponse, PulpItemsResponse, useHubView } from '../common/useHubView';
 import { HubRoute } from '../main/HubRoutes';
-import { requestGet } from '../../common/crud/Data';
-import { HubItemsResponse } from '../common/useHubView';
 import { HubNamespace } from '../namespaces/HubNamespace';
 
 interface UploadData {
@@ -67,7 +66,7 @@ export function UploadCollection() {
 export function UploadCollectionByFile() {
   const { t } = useTranslation();
 
-  const [searchParams] = useSearchParams();
+  const [searchParams] = useURLSearchParams();
   const namespaceParams = searchParams.get('namespace');
   const repositories = useRepositories();
   const navigate = useNavigate();
