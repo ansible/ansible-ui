@@ -103,7 +103,16 @@ describe('Job templates form Create, Edit, Delete', function () {
         cy.clickButton(/^Next/);
         cy.selectItemFromLookupModal('credential-select', machineCredential.name);
         cy.clickButton(/^Next/);
-        cy.selectItemFromLookupModal('execution-environment-select', executionEnvironment);
+        cy.get(`[data-cy*="execution-environment-select-form-group"]`).within(() => {
+          cy.get('button').eq(1).click();
+        });
+        cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+          cy.filterTableBySingleSelect('name', executionEnvironment);
+          cy.get('[data-ouia-component-id="simple-table"] tbody').within(() => {
+            cy.get('[data-cy="checkbox-column-cell"] input').click();
+          });
+          cy.clickButton(/^Confirm/);
+        });
         cy.clickButton(/^Next/);
         cy.get(`[data-cy*="instance-group-select-form-group"]`).within(() => {
           cy.get('button').eq(1).click();
@@ -167,7 +176,16 @@ describe('Job templates form Create, Edit, Delete', function () {
         cy.clickButton(/^Next/);
         cy.selectItemFromLookupModal('credential-select', machineCredential.name);
         cy.clickButton(/^Next/);
-        cy.selectItemFromLookupModal('execution-environment-select', executionEnvironment);
+        cy.get(`[data-cy*="execution-environment-select-form-group"]`).within(() => {
+          cy.get('button').eq(1).click();
+        });
+        cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+          cy.filterTableBySingleSelect('name', executionEnvironment);
+          cy.get('[data-ouia-component-id="simple-table"] tbody').within(() => {
+            cy.get('[data-cy="checkbox-column-cell"] input').click();
+          });
+          cy.clickButton(/^Confirm/);
+        });
         cy.clickButton(/^Next/);
         cy.get(`[data-cy*="instance-group-select-form-group"]`).within(() => {
           cy.get('button').eq(1).click();

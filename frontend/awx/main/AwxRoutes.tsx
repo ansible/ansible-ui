@@ -37,7 +37,9 @@ export enum AwxRoute {
   JobTemplateSchedules = 'awx-job-template-schedules',
   JobTemplateSchedulePage = 'awx-template-schedule-page',
   JobTemplateScheduleCreate = 'awx-template-schedule-create',
-  JobTemplateEditSchedule = 'awx-job-template-edit-schedule',
+  JobTemplateScheduleEdit = 'awx-template-schedule-edit',
+  JobTemplateScheduleRules = 'awx-template-schedule-rules',
+  JobTemplateCreateScheduleRules = 'awx-job-template-create-schedule-rules',
   TemplateLaunchWizard = 'awx-template-launch-wizard',
 
   WorkflowJobTemplatePage = 'awx-workflow-job-template-page',
@@ -47,7 +49,8 @@ export enum AwxRoute {
   WorkflowJobTemplateSchedulePage = 'awx-workflow-job-template-schedule-page',
   WorkflowJobTemplateScheduleDetails = 'awx-workflow-job-template-schedule-details',
   WorkflowJobTemplateScheduleCreate = 'awx-workflow-job-template-schedule-create',
-  WorkflowJobTemplateEditSchedule = 'awx-workflow-job-template-edit-schedule',
+  WorkflowJobTemplateScheduleEdit = 'awx-workflow-job-template-schedule-edit',
+  WorkflowJobTemplateCreateScheduleRules = 'awx-workflow-job-template-create-schedule-rules',
   WorkflowJobTemplateJobs = 'awx-workflow-job-template-jobs',
   WorkflowJobTemplateSurvey = 'awx-workflow-job-template-survey',
   AddWorkflowJobTemplateSurvey = 'awx-add-workflow-job-template-survey',
@@ -190,7 +193,8 @@ export enum AwxRoute {
 
   ManagementJobSchedulePage = 'awx-management-job-schedule-page',
   ManagementJobScheduleDetails = 'awx-management-job-schedule-details',
-  ManagementJobEditSchedule = 'awx-management-job-edit-schedule',
+  ManagementJobScheduleRules = 'awx-management-job-schedule-rules',
+  ManagementJobScheduleEdit = 'awx-management-job-schedule-edit',
   ManagementJobScheduleCreate = 'awx-management-job-schedule-create',
 
   CreateInstanceGroup = 'awx-create-instance-group',
