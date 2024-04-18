@@ -85,7 +85,10 @@ function PageNavigationItemComponent(props: { item: PageNavigationItem; baseRout
   const hasChildNavItems = 'children' in item && item.children?.find((child) => child.label);
 
   if (!hasChildNavItems && 'label' in item) {
-    const isActive = location.pathname.endsWith(route);
+    let path = (process.env?.ROUTE_PREFIX ?? '') + route;
+    path = path.replace('//', '/');
+
+    const isActive = location.pathname.startsWith(path);
     return (
       <NavItem
         id={id}
