@@ -8,13 +8,7 @@ import type { Credential } from '../../../../interfaces/Credential';
 import type { InstanceGroup } from '../../../../interfaces/InstanceGroup';
 import type { Label } from '../../../../interfaces/Label';
 import type { LaunchConfiguration } from '../../../../interfaces/LaunchConfiguration';
-import {
-  EdgeStatus,
-  GraphNode,
-  PromptFormValues,
-  WizardFormValues,
-  UnifiedJobType,
-} from '../types';
+import { EdgeStatus, GraphNode, PromptFormValues, WizardFormValues } from '../types';
 import { getConvergenceType, getValueBasedOnJobType, shouldHideOtherStep } from '../wizard/helpers';
 import { jsonToYaml } from '../../../../../../framework/utils/codeEditorUtils';
 import { RESOURCE_TYPE } from '../constants';
@@ -105,11 +99,8 @@ export function useGetInitialValues(): (node: GraphNode) => Promise<WizardStepSt
       let aggregateCredentials;
 
       const UJT = defaults?.summary_fields?.unified_job_template;
-      if (UJT?.id && UJT?.unified_job_type) {
-        const templateCredentials = await getTemplateCredentialData(
-          UJT.id.toString(),
-          UJT.unified_job_type
-        );
+      if (UJT?.id && UJT?.unified_job_type === RESOURCE_TYPE.job) {
+        const templateCredentials = await getTemplateCredentialData(UJT.id.toString());
 
         aggregateCredentials = getAggregateCredentials(
           nodeCredentials,
@@ -177,14 +168,8 @@ async function getLabelData(nodeId: string) {
 async function getInstanceGroupData(nodeId: string) {
   return getRelated<InstanceGroup>(awxAPI`/workflow_job_template_nodes/${nodeId}/instance_groups/`);
 }
-async function getTemplateCredentialData(templateId: string, templateType: UnifiedJobType) {
-  const endpoint =
-    templateType === RESOURCE_TYPE.workflow_job
-      ? awxAPI`/workflow_job_templates/${templateId}/credentials/`
-      : templateType === RESOURCE_TYPE.job
-        ? awxAPI`/job_templates/${templateId}/credentials/`
-        : '';
-  return endpoint ? getRelated<Credential>(endpoint) : [];
+async function getTemplateCredentialData(templateId: string) {
+  return getRelated<Credential>(awxAPI`/job_templates/${templateId}/credentials/`);
 }
 
 type AggregateCredential =
