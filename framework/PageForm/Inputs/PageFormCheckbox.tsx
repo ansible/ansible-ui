@@ -2,6 +2,8 @@ import { Checkbox, CheckboxProps } from '@patternfly/react-core';
 import { ReactNode } from 'react';
 import { Controller, FieldPath, FieldValues, Validate, useFormContext } from 'react-hook-form';
 import { Help } from '../../components/Help';
+import { PFColorE, getPatternflyColor } from '../../components/pfcolors';
+import { useRequiredValidationRule } from './validation-hooks';
 
 export type PageFormCheckboxProps<
   TFieldValues extends FieldValues = FieldValues,
@@ -12,7 +14,8 @@ export type PageFormCheckboxProps<
   validate?: Validate<boolean, TFieldValues> | Record<string, Validate<boolean, TFieldValues>>;
   labelHelpTitle?: string;
   labelHelp?: string | string[] | ReactNode;
-} & Pick<CheckboxProps, 'label' | 'description' | 'readOnly' | 'isDisabled' | 'isRequired'>;
+  label: string;
+} & Pick<CheckboxProps, 'description' | 'readOnly' | 'isDisabled' | 'isRequired'>;
 
 /** PatternFly Checkbox wrapper for use with react-hook-form */
 export function PageFormCheckbox<
@@ -24,14 +27,15 @@ export function PageFormCheckbox<
     control,
     formState: { isSubmitting },
   } = useFormContext<TFieldValues>();
-  props.label;
+  const required = useRequiredValidationRule(props.label, props.isRequired);
 
   return (
     <Controller<TFieldValues, TFieldName>
       name={name}
       control={control}
       shouldUnregister
-      render={({ field: { onChange, value } }) => {
+      render={({ field: { onChange, value }, fieldState: { error } }) => {
+        const helperTextInvalid = error?.message;
         return (
           <Checkbox
             name={name}
@@ -43,16 +47,24 @@ export function PageFormCheckbox<
                 {props.labelHelp && <Help title={props.labelHelpTitle} help={props.labelHelp} />}
               </>
             }
-            description={props.description}
             isChecked={!!value}
             onChange={onChange}
             readOnly={readOnly || isSubmitting}
             isDisabled={props.isDisabled}
             isRequired={props.isRequired}
+            description={
+              helperTextInvalid ? (
+                <span style={{ color: getPatternflyColor(PFColorE.Danger) }}>
+                  {helperTextInvalid}
+                </span>
+              ) : (
+                props.description
+              )
+            }
           />
         );
       }}
-      rules={{ validate }}
+      rules={{ required, validate }}
     />
   );
 }
