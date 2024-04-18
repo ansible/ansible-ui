@@ -17,9 +17,6 @@ import { IPageAction, PageActionSelection, PageActionType } from './PageAction';
 import { PageActionSwitch } from './PageActionSwitch';
 import { isPageActionHidden, usePageActionDisabled } from './PageActionUtils';
 
-const IconSpan = styled.span`
-  padding-right: 4px;
-`;
 const StyledDropdownItem = styled.div<{ $hasSwitches: boolean; $isDanger: boolean }>`
   --pf-v5-c-dropdown__menu-item-icon--Width: ${({ $hasSwitches }) =>
     $hasSwitches ? '40px' : undefined};
@@ -212,13 +209,7 @@ function PageDropdownActionItem<T extends object>(props: {
         <Tooltip key={action.label} content={tooltip} trigger={tooltip ? undefined : 'manual'}>
           <StyledDropdownItem $hasSwitches={hasSwitches} $isDanger={Boolean(action.isDanger)}>
             <DropdownItem
-              icon={
-                Icon ? (
-                  <IconSpan>
-                    <Icon />
-                  </IconSpan>
-                ) : undefined
-              }
+              icon={Icon ? <Icon /> : undefined}
               onClick={() => {
                 switch (action.selection) {
                   case PageActionSelection.None:
@@ -265,26 +256,17 @@ function PageDropdownActionItem<T extends object>(props: {
 
       return (
         <Tooltip key={action.label} content={tooltip} trigger={tooltip ? undefined : 'manual'}>
-          <Link {...props} to={to}>
-            <DropdownItem
-              isAriaDisabled={Boolean(isDisabled)}
-              icon={
-                Icon ? (
-                  <span style={{ paddingRight: 4 }}>
-                    <Icon />
-                  </span>
-                ) : undefined
-              }
-              style={{
-                color:
-                  action.isDanger && !isDisabled
-                    ? 'var(--pf-v5-global--danger-color--100)'
-                    : undefined,
-              }}
-            >
-              {action.label}
-            </DropdownItem>
-          </Link>
+          <DropdownItem
+            isAriaDisabled={Boolean(isDisabled)}
+            icon={Icon ? <Icon /> : undefined}
+            component={<Link to={to}>{action.label}</Link>}
+            style={{
+              color:
+                action.isDanger && !isDisabled
+                  ? 'var(--pf-v5-global--danger-color--100)'
+                  : undefined,
+            }}
+          />
         </Tooltip>
       );
     }
