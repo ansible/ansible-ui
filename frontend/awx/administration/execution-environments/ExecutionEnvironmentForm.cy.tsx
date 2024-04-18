@@ -136,7 +136,7 @@ describe('Create Edit Execution Environment Form', () => {
       cy.get('[data-cy="description"]').clear();
       cy.get('[data-cy="description"]').type('Edited desc');
       cy.get('[data-cy="credential-select"]').clear();
-      cy.clickButton(/^Save$/);
+      cy.clickButton(/^Save execution environment$/);
       cy.wait('@editEE')
         .its('request.body')
         .then((editedEE: ExecutionEnvironment) => {
@@ -155,7 +155,7 @@ describe('Create Edit Execution Environment Form', () => {
       });
       cy.get('[data-cy="name"]').clear();
       cy.get('[data-cy="image"]').clear();
-      cy.clickButton(/^Save$/);
+      cy.clickButton(/^Save execution environment$/);
       cy.get(
         '[data-cy="name-form-group"] > .pf-v5-c-form__group-control > .pf-v5-c-form__helper-text > .pf-v5-c-helper-text > .pf-v5-c-helper-text__item'
       ).should('have.text', 'Name is required.');
