@@ -26,7 +26,7 @@ export function AwxConfigProvider(props: { children?: ReactNode }) {
   const value = useMemo(
     () => ({
       awxConfig: data,
-      awxConfigIsLoadind: isLoading,
+      awxConfigIsLoading: isLoading || (!data && !error),
       awxConfigError: error
         ? error instanceof Error
           ? error

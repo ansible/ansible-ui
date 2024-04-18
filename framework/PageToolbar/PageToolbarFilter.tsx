@@ -121,6 +121,7 @@ function FiltersToolbarItem(props: PageToolbarFiltersProps) {
             placeholder=""
             data-cy={selectedFilter}
             disableSortOptions
+            isRequired
           />
           <ToolbarFilterComponent
             id="filter-input"

@@ -82,6 +82,7 @@ export function PageFormSingleSelect<
               onSelect={onChange}
               isDisabled={isDisabled}
               footer={props.footer}
+              isRequired={props.isRequired}
             />
           </PageFormGroup>
         );
