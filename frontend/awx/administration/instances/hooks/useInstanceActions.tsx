@@ -27,15 +27,6 @@ export function useInstanceActions(instanceId: string) {
   const [instance, setInstance] = useState<Instance>();
   const [instanceGroups, setInstanceGroups] = useState<AwxItemsResponse<InstanceGroup>>();
   const [instanceForks, setInstanceForks] = useState(0);
-  function computeForks(
-    memCapacity: number,
-    cpuCapacity: number,
-    selectedCapacityAdjustment: number
-  ) {
-    const minCapacity = Math.min(memCapacity, cpuCapacity);
-    const maxCapacity = Math.max(memCapacity, cpuCapacity);
-    return Math.floor(minCapacity + (maxCapacity - minCapacity) * selectedCapacityAdjustment);
-  }
 
   useEffect(() => {
     const fetchInstanceDetails = async () => {
@@ -145,7 +136,7 @@ export function useInstanceDetailsActions(options: {
         isDisabled: canEditAndRemoveInstances
           ? undefined
           : t(
-              'You do not have permission to edit instances. Please contact your organization administrator if there is an issue with your access.'
+              'You do not have permission to edit this instance. Please contact your organization administrator if there is an issue with your access.'
             ),
       },
       {
@@ -245,4 +236,14 @@ export function cannotRemoveInstances(
     return t(`Cannot delete due to insufficient permissions with one or many items.`);
   }
   return '';
+}
+
+export function computeForks(
+  memCapacity: number,
+  cpuCapacity: number,
+  selectedCapacityAdjustment: number
+) {
+  const minCapacity = Math.min(memCapacity, cpuCapacity);
+  const maxCapacity = Math.max(memCapacity, cpuCapacity);
+  return Math.floor(minCapacity + (maxCapacity - minCapacity) * selectedCapacityAdjustment);
 }

@@ -17,6 +17,7 @@ import { useNodeTypeTooltip } from './useNodeTypeTooltip';
 import { InstanceForksSlider } from '../components/InstanceForksSlider';
 import { StatusCell } from '../../../../common/Status';
 import { Unavailable } from '../../../../../framework/components/Unavailable';
+import { computeForks } from './useInstanceActions';
 
 export function useInstancesColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const { t } = useTranslation();
@@ -71,18 +72,30 @@ export function useInstancesColumns(options?: { disableSort?: boolean; disableLi
       },
       {
         header: t('Capacity Adjustment'),
-        cell: (instance: Instance) => <InstanceForksSlider instance={instance} />,
+        cell: (instance: Instance) => {
+          const instanceForks = computeForks(
+            instance.mem_capacity,
+            instance.cpu_capacity,
+            parseFloat(instance.capacity_adjustment)
+          );
+          if (instanceForks > 0) {
+            return <InstanceForksSlider instance={instance} />;
+          } else {
+            return instance.node_type === 'hop' ? (
+              <Tooltip
+                isContentLeftAligned={true}
+                content={t('Cannot adjust capacity for hop nodes.')}
+              >
+                <Dotted>{t('Unavailable')}</Dotted>
+              </Tooltip>
+            ) : (
+              <Tooltip isContentLeftAligned={true} content={t('0 forks. Cannot adjust capacity.')}>
+                <Dotted>{t('Unavailable')}</Dotted>
+              </Tooltip>
+            );
+          }
+        },
         modal: ColumnModalOption.hidden,
-      },
-      {
-        header: t('Running jobs'),
-        cell: (instance) => instance.jobs_running,
-        table: ColumnTableOption.expanded,
-      },
-      {
-        header: t('Total jobs'),
-        cell: (instance) => instance.jobs_total,
-        table: ColumnTableOption.expanded,
       },
       {
         header: t('Used capacity'),
@@ -93,6 +106,16 @@ export function useInstancesColumns(options?: { disableSort?: boolean; disableLi
             <Unavailable>{t(`Unavailable`)}</Unavailable>
           ),
         list: 'secondary',
+      },
+      {
+        header: t('Running jobs'),
+        cell: (instance) => instance.jobs_running,
+        table: ColumnTableOption.expanded,
+      },
+      {
+        header: t('Total jobs'),
+        cell: (instance) => instance.jobs_total,
+        table: ColumnTableOption.expanded,
       },
       {
         header: t('Memory'),
