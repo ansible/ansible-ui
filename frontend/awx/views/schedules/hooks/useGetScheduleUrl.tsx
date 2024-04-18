@@ -19,6 +19,7 @@ export function useGetScheduleUrl() {
           id: schedule.summary_fields.inventory?.id.toString(),
           source_id: schedule.summary_fields.unified_job_template.id.toString(),
           schedule_id: schedule.id.toString(),
+          inventory_type: 'inventory',
         };
         return {
           name: t('Inventory sync'),
