@@ -98,17 +98,18 @@ export function NodeEditWizard({ node }: { node: GraphNode }) {
       inputs: <NodePromptsStep />,
       hidden: (wizardData: Partial<WizardFormValues>) => {
         const { launch_config, resource, node_type } = wizardData;
-        const unmodifiedWizard = Object.keys(wizardData).length === 0;
-        if ('nodePromptsStep' in initialValues && unmodifiedWizard) {
-          return false;
+        if (!launch_config) {
+          return true;
         }
 
         if (
           (node_type === RESOURCE_TYPE.workflow_job || node_type === RESOURCE_TYPE.job) &&
-          resource &&
-          launch_config
+          resource
         ) {
           return shouldHideOtherStep(launch_config);
+        }
+        if ('nodePromptsStep' in initialValues) {
+          return false;
         }
         return true;
       },
