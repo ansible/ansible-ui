@@ -55,6 +55,7 @@ export interface ScheduleFormWizard {
   exceptions: RuleListItemType[] | [];
   launch_config: LaunchConfiguration | null;
   prompt: PromptFormValues;
+  schedule_days_to_keep: number;
 }
 
 export type ScheduleResourceType =
