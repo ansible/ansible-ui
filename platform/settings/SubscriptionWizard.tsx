@@ -206,7 +206,11 @@ function SubscriptionStep() {
           placeholder={t('Select your subscription')}
           queryLabel={(pool_id) => pool_id?.toString()}
           isRequired
-          isDisabled={!username || !password}
+          isDisabled={
+            !username || !password
+              ? t('Enter your Red Hat credentials to load subscriptions.')
+              : undefined
+          }
         />
       </PageFormHidden>
     </>
