@@ -3,8 +3,8 @@ import { useCallback, useState } from 'react';
 import { Controller, FieldPathByValue, FieldValues, useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useID } from '../../hooks/useID';
-import { capitalizeFirstLetter } from '../../utils/strings';
 import { PageFormGroup, PageFormGroupProps } from './PageFormGroup';
+import { useRequiredValidationRule } from './validation-hooks';
 
 export type PageFormFileUploadProps<
   TFieldValues extends FieldValues = FieldValues,
@@ -36,6 +36,7 @@ export function PageFormFileUpload<
     setIsLoading(true);
   };
   const id = useID(props);
+  const required = useRequiredValidationRule(props.label, props.isRequired);
 
   return (
     <Controller
@@ -95,16 +96,7 @@ export function PageFormFileUpload<
           </PageFormGroup>
         );
       }}
-      rules={{
-        required:
-          typeof label === 'string' && isRequired === true
-            ? {
-                value: true,
-                message: `${capitalizeFirstLetter(label.toLocaleLowerCase())} is required.`,
-              }
-            : undefined,
-        validate: props.validate,
-      }}
+      rules={{ required, validate: props.validate }}
     />
   );
 }
