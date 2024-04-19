@@ -17,12 +17,14 @@ import {
 } from '../../framework';
 import { useAwxConfig } from '../../frontend/awx/common/useAwxConfig';
 import { CredentialType } from '../../frontend/awx/interfaces/CredentialType';
+import { usePlatformActiveUser } from '../main/PlatformActiveUserProvider';
 import { PlatformRoute } from '../main/PlatformRoutes';
 
 export function SubscriptionDetails() {
   const { t } = useTranslation();
   const awxConfig = useAwxConfig();
   const pageNavigate = usePageNavigate();
+  const { activePlatformUser } = usePlatformActiveUser();
 
   const actions = useMemo<IPageAction<object>[]>(
     () => [
@@ -32,9 +34,12 @@ export function SubscriptionDetails() {
         label: t('Edit subscription'),
         onClick: () => pageNavigate(PlatformRoute.SubscriptionWizard),
         isPinned: true,
+        isDisabled: !activePlatformUser?.is_superuser
+          ? t('Only system admins can edit subscription')
+          : undefined,
       },
     ],
-    [pageNavigate, t]
+    [activePlatformUser?.is_superuser, pageNavigate, t]
   );
 
   if (!awxConfig) {

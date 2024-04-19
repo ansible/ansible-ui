@@ -41,7 +41,7 @@ export function PlatformActiveUserProvider(props: { children: ReactNode }) {
   }, [data]);
 
   const activePlatformUserIsLoading = useMemo<boolean>(
-    () => !activePlatformUser && !error && isLoading,
+    () => (!activePlatformUser && !error) || isLoading,
     [activePlatformUser, isLoading, error]
   );
 
