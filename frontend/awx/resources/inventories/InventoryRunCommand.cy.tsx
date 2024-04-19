@@ -62,9 +62,6 @@ describe('Run command wizard', () => {
     cy.getByDataCy('credential-select-form-group').within(() => {
       cy.getBy('[aria-label="Options menu"]').click();
     });
-    cy.getByDataCy('credential-select-form-group').within(() => {
-      cy.getBy('[aria-label="Options menu"]').click();
-    });
     cy.selectTableRowByCheckbox('name', 'Demo Credential');
     cy.clickButton(/^Confirm$/);
     cy.clickButton(/^Next$/);
