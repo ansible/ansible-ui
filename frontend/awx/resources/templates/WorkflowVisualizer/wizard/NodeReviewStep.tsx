@@ -14,6 +14,7 @@ import { WizardFormValues, UnifiedJobType } from '../types';
 import { hasDaysToKeep, getValueBasedOnJobType } from './helpers';
 import { PromptReviewDetails } from './PromptReviewDetails';
 import { RESOURCE_TYPE } from '../constants';
+import { useGetNodeTypeDetail, useGetTimeoutString } from '../hooks';
 
 const ResourceLink: Record<UnifiedJobType, AwxRoute> = {
   inventory_update: AwxRoute.InventorySourceDetail,
@@ -93,28 +94,4 @@ export function NodeReviewStep() {
       </PageDetails>
     </>
   );
-}
-
-function useGetNodeTypeDetail(type: UnifiedJobType) {
-  const { t } = useTranslation();
-  const typeMapping = {
-    job: t('Job Template'),
-    workflow_job: t('Workflow Job Template'),
-    project_update: t('Project Update'),
-    inventory_update: t('Inventory Update'),
-    workflow_approval: t('Workflow Approval'),
-    system_job: t('Management Job'),
-  };
-  return typeMapping[type];
-}
-
-function useGetTimeoutString(value: number) {
-  const { t } = useTranslation();
-  const timeout = value || 0;
-  const minutes = Math.floor(timeout / 60);
-  const seconds = Math.floor(timeout % 60);
-  return t('{{minutes}} min {{seconds}} sec ', {
-    minutes: minutes.toString(),
-    seconds: seconds.toString(),
-  });
 }
