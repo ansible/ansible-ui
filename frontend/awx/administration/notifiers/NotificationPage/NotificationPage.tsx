@@ -20,14 +20,16 @@ import { StatusLabel } from '../../../../common/Status';
 export function NotificationPage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
+  const [testedNotificationId, setTestedNotificationId] = useState<number | undefined>(undefined);
+  // set refresh interval to be faster when test is running
   const {
     error,
     data: notificationTemplate,
     refresh,
-  } = useGetItem<NotificationTemplate>(awxAPI`/notification_templates`, params.id);
+  } = useGetItem<NotificationTemplate>(awxAPI`/notification_templates`, params.id, { refreshInterval : testedNotificationId === undefined ? 5000 : 2000});
 
   const pageNavigate = usePageNavigate();
-  const [testedNotificationId, setTestedNotificationId] = useState<number | undefined>(undefined);
+
   const alertToaster = usePageAlertToaster();
 
   const getPageUrl = useGetPageUrl();
@@ -64,6 +66,7 @@ export function NotificationPage() {
 
   return (
     <PageLayout>
+      {testedNotificationId}
       <PageHeader
         title={notificationTemplate?.name}
         breadcrumbs={[
