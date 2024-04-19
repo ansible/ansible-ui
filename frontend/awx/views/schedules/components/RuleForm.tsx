@@ -3,7 +3,7 @@ import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFor
 import { PageFormSelect, PageFormTextInput } from '../../../../../framework';
 import { RuleFields, RuleListItemType, RuleType, ScheduleFormWizard } from '../types';
 import { useTranslation } from 'react-i18next';
-import { Frequency, RRule, datetime } from 'rrule';
+import { RRule, datetime } from 'rrule';
 import {
   useGetFrequencyOptions,
   useGetMonthOptions,
@@ -89,7 +89,7 @@ export function RuleForm(props: {
     const { year, month, day, hour, minute } = start;
     const rule = new RRule({
       ...formData,
-      freq: formData.freq || Frequency.WEEKLY,
+      freq: formData.freq,
       tzid: timezone,
       dtstart: datetime(year, month, day, hour, minute),
     });
@@ -151,6 +151,7 @@ export function RuleForm(props: {
     reset({
       ...defaultValues,
       rules,
+      exceptions,
     });
     props.setIsOpen(false);
   };

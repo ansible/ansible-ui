@@ -21,12 +21,12 @@ import { NodePromptsStep } from '../../../resources/templates/WorkflowVisualizer
 import { WizardFormValues } from '../../../resources/templates/WorkflowVisualizer/types';
 import { shouldHideOtherStep } from '../../../resources/templates/WorkflowVisualizer/wizard/helpers';
 import { RESOURCE_TYPE } from '../../../resources/templates/WorkflowVisualizer/constants';
-import { NodeReviewStep } from '../../../resources/templates/WorkflowVisualizer/wizard/NodeReviewStep';
 import { useProcessSchedule } from '../hooks/useProcessSchedules';
 import { useNavigate } from 'react-router-dom';
 import { Schedule } from '../../../interfaces/Schedule';
 import { RequestError } from '../../../../common/crud/RequestError';
 import { RULES_DEFAULT_VALUES } from './constants';
+import { ScheduleReviewStep } from './ScheduleReviewStep';
 
 export type StandardizedFormData = Omit<ScheduleFormWizard, 'rules' | 'exceptions'> & {
   rrule: string;
@@ -129,7 +129,7 @@ export function ScheduleAddWizard() {
       label: t('Exceptions'),
       inputs: <ExceptionsStep />,
     },
-    { id: 'review', label: t('Review'), inputs: <NodeReviewStep /> },
+    { id: 'review', label: t('Review'), inputs: <ScheduleReviewStep /> },
   ];
   const initialValues = {
     details: {
