@@ -6,7 +6,6 @@ import { useInstanceActions } from '../hooks/useInstanceActions';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { Settings } from '../../../interfaces/Settings';
 import { useGet } from '../../../../common/crud/useGet';
-import { active } from 'd3';
 
 export function InstanceForksSlider(props: { instance: Instance }) {
   const { instance } = props;
