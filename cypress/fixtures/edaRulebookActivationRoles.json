@@ -1,0 +1,35 @@
+{
+  "count": 1,
+  "next": null,
+  "previous": null,
+  "page_size": 10,
+  "page": 1,
+  "results": [
+    {
+      "id": 11,
+      "url": "/api/eda/v1/role_definitions/11/",
+      "related": {
+        "team_assignments": "/api/eda/v1/role_definitions/11/team_assignments/",
+        "user_assignments": "/api/eda/v1/role_definitions/11/user_assignments/"
+      },
+      "summary_fields": {},
+      "permissions": [
+        "eda.delete_activation",
+        "eda.disable_activation",
+        "eda.enable_activation",
+        "eda.restart_activation",
+        "eda.view_activation",
+        "eda.view_auditrule",
+        "eda.view_rulebookprocess"
+      ],
+      "content_type": "eda.activation",
+      "modified": "2024-04-16T22:29:49.646111Z",
+      "created": "2024-04-16T22:29:49.646122Z",
+      "name": "Activation Admin",
+      "description": "Has all permissions to a single activation and its child resources - rulebook process, audit rule",
+      "managed": true,
+      "modified_by": null,
+      "created_by": null
+    }
+  ]
+}
