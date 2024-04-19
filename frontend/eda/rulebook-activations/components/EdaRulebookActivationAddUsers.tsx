@@ -9,8 +9,6 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../framework';
-import { EdaSelectRolesStep } from '../../access/roles/components/EdaSelectRolesStep';
-import { EdaSelectUsersStep } from '../../access/users/components/EdaSelectUsersStep';
 import { EdaRoute } from '../../main/EdaRoutes';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
 import { useGet } from '../../../common/crud/useGet';
@@ -20,6 +18,8 @@ import { EdaUser } from '../../interfaces/EdaUser';
 import { RoleAssignmentsReviewStep } from '../../../common/access/RolesWizard/steps/RoleAssignmentsReviewStep';
 import { EdaRbacRole } from '../../interfaces/EdaRbacRole';
 import { useEdaBulkActionDialog } from '../../common/useEdaBulkActionDialog';
+import { EdaSelectUsersStep } from '../../access/common/EdaRolesWizardSteps/EdaSelectUsersStep';
+import { EdaSelectRolesStep } from '../../access/common/EdaRolesWizardSteps/EdaSelectRolesStep';
 
 interface WizardFormValues {
   users: EdaUser[];
