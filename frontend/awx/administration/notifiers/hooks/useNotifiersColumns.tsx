@@ -5,17 +5,27 @@ import { NotificationTemplate } from '../../../interfaces/NotificationTemplate';
 import { StatusCell } from '../../../../common/Status';
 import { useOrganizationNameColumn } from '../../../../common/columns';
 import { AwxRoute } from '../../../main/AwxRoutes';
+import { useGetPageUrl } from '../../../../../framework';
 
 export function useNotifiersColumns() {
   const { t } = useTranslation();
 
   const organizationColumn = useOrganizationNameColumn(AwxRoute.OrganizationDetails);
+  const getPageUrl = useGetPageUrl();
 
   const tableColumns = useMemo<ITableColumn<NotificationTemplate>[]>(
     () => [
       {
         header: t('Name'),
-        cell: (template: NotificationTemplate) => <TextCell text={template.name} />,
+        cell: (template: NotificationTemplate) => (
+          <TextCell
+            text={template.name}
+            to={getPageUrl(AwxRoute.NotificationTemplateDetails, {
+              params: { id: template.id },
+            })}
+          />
+        ),
+
         sort: 'name',
         card: 'name',
         list: 'name',
@@ -42,7 +52,7 @@ export function useNotifiersColumns() {
       },
       organizationColumn,
     ],
-    [t, organizationColumn]
+    [t, organizationColumn, getPageUrl]
   );
   return tableColumns;
 }
