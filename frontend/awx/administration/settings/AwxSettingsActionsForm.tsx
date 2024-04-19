@@ -195,7 +195,6 @@ export function OptionActionsFormInput(props: { name: string; option: AwxSetting
             name={props.name}
             labelHelpTitle={option.label}
             labelHelp={option.help_text}
-            isRequired
           />
         </PageFormSection>
       );
