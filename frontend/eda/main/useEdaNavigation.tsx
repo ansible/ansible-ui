@@ -68,6 +68,8 @@ import { EdaProjectAddUsers } from '../projects/components/EdaProjectAddUsers';
 import { EdaProjectAddTeams } from '../projects/components/EdaProjectAddTeams';
 import { EdaDecisionEnvironmentAddTeams } from '../decision-environments/components/EdaDecisionEnvironmentAddTeams';
 import { EdaDecisionEnvironmentAddUsers } from '../decision-environments/components/EdaDecisionEnvironmentAddUsers';
+import { EdaCredentialAddUsers } from '../access/credentials/components/EdaCredentialAddUsers';
+import { EdaCredentialAddTeams } from '../access/credentials/components/EdaCredentialAddTeams';
 import { PageNotImplemented } from '../../../framework';
 import { CredentialTypeCredentials } from '../access/credential-types/CredentialTypePage/CredentialTypeCredentials';
 
@@ -509,6 +511,16 @@ export function useEdaNavigation() {
                   element: <Navigate to="details" />,
                 },
               ],
+            },
+            {
+              id: EdaRoute.CredentialAddUsers,
+              path: ':id/users/add-users',
+              element: <EdaCredentialAddUsers />,
+            },
+            {
+              id: EdaRoute.CredentialAddTeams,
+              path: ':id/team-access/add-teams',
+              element: <EdaCredentialAddTeams />,
             },
             {
               path: '',
