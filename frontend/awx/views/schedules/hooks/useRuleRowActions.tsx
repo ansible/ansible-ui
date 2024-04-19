@@ -5,6 +5,7 @@ import { RuleListItemType } from '../types';
 import { useMemo } from 'react';
 import { IPageAction } from '../../../../../framework';
 import { useFormContext } from 'react-hook-form';
+import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
 
 export function useRuleRowActions(
   rules: RuleListItemType[],
@@ -12,11 +13,17 @@ export function useRuleRowActions(
 ) {
   const { t } = useTranslation();
   const { setValue, reset, getValues } = useFormContext();
+  const { setStepData, activeStep } = usePageWizard();
+  const isExceptionStep = activeStep && activeStep.id === 'exceptions';
   const existingRules = getValues('rules') as RuleListItemType[];
   return useMemo<IPageAction<RuleListItemType>[]>(() => {
     const deleteRule = (rule: RuleListItemType) => {
       const filteredRules = rules.filter((item) => item.id !== rule.id);
-      setValue('rules', filteredRules);
+      isExceptionStep ? setValue('exceptions', filteredRules) : setValue('rules', filteredRules);
+      setStepData((prev) => ({
+        ...prev,
+        rules: filteredRules,
+      }));
     };
 
     return [
@@ -25,7 +32,7 @@ export function useRuleRowActions(
         selection: PageActionSelection.Single,
         isPinned: true,
         icon: PencilAltIcon,
-        label: t('Edit rule'),
+        label: isExceptionStep ? t('Edit exception') : t('Edit rule'),
         onClick: (r) => {
           setIsOpen(r.id);
           const rule = rules.find((item) => item.id === r.id);
@@ -40,11 +47,13 @@ export function useRuleRowActions(
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: TrashIcon,
-        label: t('Delete rule'),
+        label: isExceptionStep ? t('Delete exception') : t('Delete rule'),
         isPinned: true,
-        onClick: (rule) => deleteRule(rule),
+        onClick: (rule) => {
+          deleteRule(rule);
+        },
         isDanger: true,
       },
     ];
-  }, [t, setValue, rules, existingRules, reset, setIsOpen]);
+  }, [t, rules, isExceptionStep, setValue, setStepData, setIsOpen, reset, existingRules]);
 }
