@@ -144,7 +144,6 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
           } as NotificationTemplateEdit);
 
     stringToArrays(data);
-    clearPasswords(data);
 
     let fieldValue;
     // fix notification data types
@@ -380,64 +379,6 @@ function isList(key: string, notification_type: string) {
   }
 
   if (key === 'targets' && notification_type === 'irc') {
-    return true;
-  }
-
-  return false;
-}
-
-function clearPasswords(data: NotificationTemplate | NotificationTemplateEdit) {
-  if (data.notification_configuration) {
-    Object.keys(data.notification_configuration).forEach((key) => {
-      if (isPassword(key, data.notification_type || '')) {
-        if (data.notification_configuration[key] === '$encrypted$') {
-          // set it to undefined, so it does not change the backend password
-          delete data.notification_configuration[key];
-        }
-      }
-    });
-  }
-}
-
-function isPassword(
-  key: string,
-  notification_type:
-    | 'email'
-    | 'grafana'
-    | 'irc'
-    | 'mattermost'
-    | 'pagerduty'
-    | 'rocketchat'
-    | 'slack'
-    | 'twilio'
-    | 'webhook'
-    | ''
-) {
-  if (notification_type === 'email' && key === 'password') {
-    return true;
-  }
-
-  if (notification_type === 'slack' && key === 'token') {
-    return true;
-  }
-
-  if (notification_type === 'twilio' && key === 'account_token') {
-    return true;
-  }
-
-  if (notification_type === 'pagerduty' && key === 'token') {
-    return true;
-  }
-
-  if (notification_type === 'grafana' && key === 'grafana_key') {
-    return true;
-  }
-
-  if (notification_type === 'webhook' && key === 'password') {
-    return true;
-  }
-
-  if (notification_type === 'irc' && key === 'password') {
     return true;
   }
 
