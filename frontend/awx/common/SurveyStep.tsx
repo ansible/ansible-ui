@@ -8,22 +8,57 @@ import { Spec, Survey } from '../interfaces/Survey';
 import { PageSelectOption } from '../../../framework/PageInputs/PageSelectOption';
 import { PageFormCreatableSelect } from '../../../framework/PageForm/Inputs/PageFormCreatableSelect';
 import { WizardFormValues } from '../resources/templates/WorkflowVisualizer/types';
+import { useEffect } from 'react';
+import { useFormContext } from 'react-hook-form';
 
-export function SurveyStep({ templateId }: { templateId?: string }) {
+export function SurveyStep({ templateId, jobType }: { templateId?: string; jobType?: string }) {
   const { t } = useTranslation();
-  const { wizardData } = usePageWizard();
-  const { resource } = wizardData as WizardFormValues;
-  const id = resource ? resource.id.toString() : templateId ? templateId : '';
-  const { data: survey_spec } = useGet<Survey>(awxAPI`/job_templates/${id}/survey_spec/`);
+  const { wizardData, setStepData } = usePageWizard();
+  const { reset } = useFormContext();
+  const { node_resource } = wizardData as WizardFormValues;
+  const id = node_resource ? node_resource.id.toString() : templateId ? templateId : '';
+  const { data: survey_spec } = useGet<Survey>(
+    awxAPI`/${jobType ?? 'job_templates'}/${id}/survey_spec/`
+  );
 
-  const choicesTo: PageSelectOption<string>[] = [];
-  survey_spec?.spec.map((element: Spec) => {
-    if (element.type === 'multiplechoice' && Array.isArray(element.choices)) {
-      element.choices?.map((choice: string) => {
-        choicesTo.push({ value: choice, label: t(choice) });
-      });
-    }
-  });
+  useEffect(() => {
+    const survey: { [key: string]: string | number | { name: string }[] } = {};
+    survey_spec?.spec?.forEach((obj: Spec) => {
+      if (obj.default === '') {
+        return;
+      }
+      if (obj.type === 'multiselect') {
+        const specDefault = obj.default as string;
+        survey[obj.variable] = specDefault.split('\n').map((val: string) => ({
+          name: val,
+        }));
+        return;
+      }
+      survey[obj.variable] = obj.default;
+    });
+    setStepData((prev) => ({
+      ...prev,
+      survey,
+    }));
+    reset({ survey });
+  }, [reset, setStepData, survey_spec, wizardData]);
+
+  const getChoices = (name: string): PageSelectOption<string>[] => {
+    const choices: PageSelectOption<string>[] = [];
+    survey_spec?.spec.forEach((element: Spec) => {
+      if (
+        (element.type === 'multiplechoice' || element.type === 'multiselect') &&
+        Array.isArray(element.choices)
+      ) {
+        if (element.question_name === name) {
+          element.choices?.forEach((choice: string) => {
+            choices.push({ value: choice, label: t(choice) });
+          });
+        }
+      }
+    });
+    return choices;
+  };
 
   return (
     <PageFormSection>
@@ -31,8 +66,10 @@ export function SurveyStep({ templateId }: { templateId?: string }) {
         element.type === 'text' ? (
           <PageFormTextInput
             key={index}
-            name={`survey.${element.question_name}`}
+            name={`survey.${element.variable}`}
             label={t(element.question_name)}
+            labelHelp={element.question_description}
+            labelHelpTitle=""
             isRequired={element.required}
             type="text"
             maxLength={element.max}
@@ -41,8 +78,10 @@ export function SurveyStep({ templateId }: { templateId?: string }) {
         ) : element.type === 'integer' ? (
           <PageFormTextInput
             key={index}
-            name={`survey.${element.question_name}`}
+            name={`survey.${element.variable}`}
             label={t(element.question_name)}
+            labelHelp={element.question_description}
+            labelHelpTitle=""
             isRequired={element.required}
             type="number"
             max={element.max}
@@ -51,8 +90,10 @@ export function SurveyStep({ templateId }: { templateId?: string }) {
         ) : element.type === 'float' ? (
           <PageFormTextInput
             key={index}
-            name={`survey.${element.question_name}`}
+            name={`survey.${element.variable}`}
             label={t(element.question_name)}
+            labelHelp={element.question_description}
+            labelHelpTitle=""
             isRequired={element.required}
             type="number"
             max={element.max}
@@ -61,8 +102,10 @@ export function SurveyStep({ templateId }: { templateId?: string }) {
         ) : element.type === 'password' ? (
           <PageFormTextInput
             key={index}
-            name={`survey.${element.question_name}`}
+            name={`survey.${element.variable}`}
             label={t(element.question_name)}
+            labelHelp={element.question_description}
+            labelHelpTitle=""
             isRequired={element.required}
             type="password"
             maxLength={element.max}
@@ -71,18 +114,22 @@ export function SurveyStep({ templateId }: { templateId?: string }) {
         ) : element.type === 'textarea' ? (
           <PageFormTextArea
             key={index}
-            name={`survey.${element.question_name}`}
+            name={`survey.${element.variable}`}
             label={t(element.question_name)}
+            labelHelp={element.question_description}
+            labelHelpTitle=""
             isRequired={element.required}
             maxLength={element.max}
             minLength={element.min}
           ></PageFormTextArea>
         ) : element.type === 'multiplechoice' ? (
           <PageFormSelect
-            name={`survey.${element.question_name}`}
+            name={`survey.${element.variable}`}
             placeholderText={t('Select option')}
             label={t(element.question_name)}
-            options={choicesTo}
+            labelHelp={element.question_description}
+            labelHelpTitle=""
+            options={getChoices(element.question_name)}
             isRequired={element.required}
           ></PageFormSelect>
         ) : element.type === 'multiselect' ? (
@@ -90,7 +137,9 @@ export function SurveyStep({ templateId }: { templateId?: string }) {
             name={`survey.${element.variable}`}
             placeholderText={t('Select option(s)')}
             label={t(element.question_name)}
-            options={choicesTo}
+            labelHelp={element.question_description}
+            labelHelpTitle=""
+            options={getChoices(element.question_name)}
             isRequired={element.required}
           />
         ) : undefined
