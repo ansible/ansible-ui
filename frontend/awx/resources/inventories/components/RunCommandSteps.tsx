@@ -86,7 +86,7 @@ export function RunCommandCredentialStep() {
   return (
     <PageFormSection>
       <PageFormCredentialSelect
-        name="credential"
+        name="credentials"
         label={t('Credentials')}
         placeholder={t('Add credentials')}
         labelHelpTitle={t('Credentials')}
