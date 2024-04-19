@@ -96,43 +96,46 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
     arraysToString(defaultValue as NotificationTemplate);
   }
 
-  const defaultValueMessages =  defaultValue as NotificationTemplate;
+  const defaultValueMessages = defaultValue as NotificationTemplate;
   const messagesEmpty = areMessagesEmpty(defaultValueMessages);
 
   if (defaultValue && messagesEmpty) {
-    (defaultValue as {customize_messages : boolean}).customize_messages = false;
+    (defaultValue as { customize_messages: boolean }).customize_messages = false;
   }
 
-  if (defaultValue && !messagesEmpty)
-  {
-    (defaultValue as {customize_messages : boolean}).customize_messages = true;
+  if (defaultValue && !messagesEmpty) {
+    (defaultValue as { customize_messages: boolean }).customize_messages = true;
   }
 
   // fill customize messages
-  
 
   if (messagesEmpty)
-  defaultValueMessages.messages = {
-    started : { message : `{{ job_friendly_name }} #{{ job.id }} '{{ job.name }}' {{ job.status }}: {{ url }}`},
-    success : { message : `{{ job_friendly_name }} #{{ job.id }} '{{ job.name }}' {{ job.status }}: {{ url }}`},
-    error : { message : `{{ job_friendly_name }} #{{ job.id }} '{{ job.name }}' {{ job.status }}: {{ url }}`},
+    defaultValueMessages.messages = {
+      started: {
+        message: `{{ job_friendly_name }} #{{ job.id }} '{{ job.name }}' {{ job.status }}: {{ url }}`,
+      },
+      success: {
+        message: `{{ job_friendly_name }} #{{ job.id }} '{{ job.name }}' {{ job.status }}: {{ url }}`,
+      },
+      error: {
+        message: `{{ job_friendly_name }} #{{ job.id }} '{{ job.name }}' {{ job.status }}: {{ url }}`,
+      },
 
-    workflow_approval: {
-      denied: {
+      workflow_approval: {
+        denied: {
           message: `The approval node "{{ approval_node_name }}" was denied. {{ workflow_url }}`,
-      },
-      running: {
+        },
+        running: {
           message: `The approval node "{{ approval_node_name }}" needs review. This node can be viewed at: {{ workflow_url }}`,
-      },
-      approved: {
+        },
+        approved: {
           message: `The approval node "{{ approval_node_name }}" was approved. {{ workflow_url }}`,
-      },
-      timed_out: {
+        },
+        timed_out: {
           message: `The approval node "{{ approval_node_name }}" has timed out. {{ workflow_url }}`,
-      }
-  },
-}
-
+        },
+      },
+    };
 
   const onSubmit: PageFormSubmitHandler<NotificationTemplate> = async (formData) => {
     const data: NotificationTemplate | NotificationTemplateEdit =
@@ -191,9 +194,9 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
     pageNavigate(AwxRoute.NotificationTemplates);
   };
 
-  const job_friendly_name = "{{job_friendly_name}}";
-  const url="{{url}}";
-  const status="{{status}}";
+  const job_friendly_name = '{{job_friendly_name}}';
+  const url = '{{url}}';
+  const status = '{{status}}';
 
   return (
     <PageLayout>
@@ -254,28 +257,28 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
         </PageFormSection>
         <PageFormSection>
           <PageFormSwitch
-            labelHelp={ <Trans>
-              Use custom messages to change the content of notifications sent 
-              when a job starts, succeeds, or fails. Use curly braces to access 
-              information about the job: <br/><br/>{{job_friendly_name}}, {{url}}, {{status}}.<br/><br/>
-              
-               You may apply a number of possible variables in the message. For more information, refer to the 
-               <a href="https://docs.ansible.com/automation-controller/latest/html/userguide/notifications.html#create-custom-notifications"
-               >
-               Ansible Controller Documentation.
-               </a>
-        
-            </Trans>}
+            labelHelp={
+              <Trans>
+                Use custom messages to change the content of notifications sent when a job starts,
+                succeeds, or fails. Use curly braces to access information about the job: <br />
+                <br />
+                {{ job_friendly_name }}, {{ url }}, {{ status }}.<br />
+                <br />
+                You may apply a number of possible variables in the message. For more information,
+                refer to the
+                <a href="https://docs.ansible.com/automation-controller/latest/html/userguide/notifications.html#create-custom-notifications">
+                  Ansible Controller Documentation.
+                </a>
+              </Trans>
+            }
             name={'customize_messages'}
             label={t('Customize messages...')}
           />
         </PageFormSection>
         <PageFormSection singleColumn>
-        <PageFormWatch watch="customize_messages">
+          <PageFormWatch watch="customize_messages">
             {(customize_messages: boolean) => (
-              <>
-               { customize_messages && <CustomizeMessagesForm/>}
-              </>
+              <>{customize_messages && <CustomizeMessagesForm />}</>
             )}
           </PageFormWatch>
         </PageFormSection>
@@ -284,53 +287,50 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
   );
 }
 
-function CustomizeMessagesForm(props : {})
-{
-  const {t} = useTranslation();
+function CustomizeMessagesForm() {
+  const { t } = useTranslation();
 
-  return <>
-     <PageFormTextInput<NotificationTemplate>
+  return (
+    <>
+      <PageFormTextInput<NotificationTemplate>
         name="messages.started.message"
         label={t('Start message')}
-    />
+      />
 
-    <PageFormTextInput<NotificationTemplate>
+      <PageFormTextInput<NotificationTemplate>
         name="messages.success.message"
         label={t('success message')}
-    />
+      />
 
-    <PageFormTextInput<NotificationTemplate>
+      <PageFormTextInput<NotificationTemplate>
         name="messages.error.message"
         label={t('Error message')}
-    />
+      />
 
-
-    <PageFormTextInput<NotificationTemplate>
+      <PageFormTextInput<NotificationTemplate>
         name="messages.workflow_approval.approved.message"
         label={t('Workflow approved message')}
-    />
+      />
 
-    <PageFormTextInput<NotificationTemplate>
+      <PageFormTextInput<NotificationTemplate>
         name="messages.workflow_approval.denied.message"
         label={t('Workflow denied message')}
-    />
+      />
 
-    <PageFormTextInput<NotificationTemplate>
+      <PageFormTextInput<NotificationTemplate>
         name="messages.workflow_approval.running.message"
         label={t('Workflow pending message')}
-    />
+      />
 
-    <PageFormTextInput<NotificationTemplate>
+      <PageFormTextInput<NotificationTemplate>
         name="messages.workflow_approval.timed_out.message"
         label={t('Workflow timed out message')}
-    />
-
-  
-  </>;
+      />
+    </>
+  );
 }
 
-function areMessagesEmpty(data: NotificationTemplate)
-{
+function areMessagesEmpty(data: NotificationTemplate) {
   if (data?.messages?.error?.message) return false;
   if (data?.messages?.started?.message) return false;
   if (data?.messages?.success?.message) return false;
