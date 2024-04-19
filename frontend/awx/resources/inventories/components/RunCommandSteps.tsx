@@ -1,4 +1,4 @@
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
 import {
   PageDetail,
@@ -8,6 +8,7 @@ import {
   PageFormSelect,
   PageFormSwitch,
   PageFormTextInput,
+  useGetPageUrl,
 } from '../../../../../framework';
 import { PageFormCredentialSelect } from '../../../access/credentials/components/PageFormCredentialSelect';
 import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
@@ -15,9 +16,16 @@ import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageD
 import { RunCommandWizard } from '../../../interfaces/Inventory';
 import { LabelGroup } from '@patternfly/react-core';
 import { CredentialLabel } from '../../../common/CredentialLabel';
+import { Link } from 'react-router-dom';
+import { PageFormExecutionEnvironmentSelect } from '../../../administration/execution-environments/components/PageFormExecutionEnvironmentSelect';
+import { AwxRoute } from '../../../main/AwxRoutes';
+import { useWatch } from 'react-hook-form';
 
 export function RunCommandDetailStep() {
   const { t } = useTranslation();
+  const module = useWatch<RunCommandWizard>({
+    name: 'module',
+  });
   const moduleOptions = [
     { label: t('command'), value: 'command' },
     { label: t('shell'), value: 'shell' },
@@ -57,24 +65,110 @@ export function RunCommandDetailStep() {
         isRequired
         label={t('Module')}
         options={moduleOptions}
+        labelHelpTitle={t('Module')}
+        labelHelp={t(`These are the modules that AWX supports running commands against.`)}
       />
       <PageFormTextInput
         name="module_args"
         placeholder={t('Enter arguments')}
-        isRequired
+        isRequired={module === 'command' || module === 'shell'}
         label={t('Arguments')}
+        labelHelpTitle={t('Arguments')}
+        labelHelp={t(`These arguments are used with the specified module.`)}
       />
-      <PageFormSelect name="verbosity" label={t('Verbosity')} options={verbosityOptions} />
-      <PageFormTextInput name="limit" label={t('Limit')} />
-      <PageFormTextInput name="forks" label={t('Forks')} type="number" min={0} />
-      <PageFormSwitch name="diff_mode" label={t('Show changes')} />
-      <PageFormCheckbox name="become_enabled" label={t('Privilege escalation')} />
+      <PageFormSelect
+        name="verbosity"
+        label={t('Verbosity')}
+        options={verbosityOptions}
+        labelHelpTitle={t('Verbosity')}
+        labelHelp={t(
+          `These are the verbosity levels for standard out of the command run that are supported.`
+        )}
+      />
+      <PageFormTextInput
+        name="limit"
+        label={t('Limit')}
+        labelHelpTitle={t('Limit')}
+        labelHelp={
+          <>
+            <Trans>
+              The pattern used to target hosts in the inventory. Leaving the field blank, all, and *
+              will all target all hosts in the inventory. You can find more information about
+              Ansible&aposs host patterns{' '}
+            </Trans>
+            <Trans>
+              <Link
+                to="https://docs.ansible.com/ansible/latest/user_guide/intro_patterns.html"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                here
+              </Link>
+            </Trans>
+          </>
+        }
+      />
+      <PageFormTextInput
+        name="forks"
+        label={t('Forks')}
+        type="number"
+        min={0}
+        labelHelpTitle={t('Forks')}
+        labelHelp={
+          <>
+            <Trans>
+              The number of parallel or simultaneous processes to use while executing the playbook.
+              Inputting no value will use the default value from the ansible configuration file. You
+              can find more information{' '}
+            </Trans>
+            <Trans>
+              <Link
+                to="https://docs.ansible.com/ansible/latest/installation_guide/intro_configuration.html#the-ansible-configuration-file"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                here
+              </Link>
+            </Trans>
+          </>
+        }
+      />
+      <PageFormSwitch
+        name="diff_mode"
+        label={t('Show changes')}
+        labelHelpTitle={t('Show changes')}
+        labelHelp={t(
+          `If enabled, show the changes made by Ansible tasks, where supported. This is equivalent to Ansible’s --diff mode.`
+        )}
+      />
+      <PageFormCheckbox
+        name="become_enabled"
+        label={t('Privilege escalation')}
+        labelHelpTitle={t('Privilege escalation')}
+        labelHelp={t(
+          `Enables creation of a provisioning callback URL. Using the URL a host can contact AWX and request a configuration update using this job template --become option to the  ansible command`
+        )}
+      />
       <PageFormDataEditor
         labelHelpTitle={t('Extra Variables')}
-        labelHelp={t(`Optional extra variables to be applied to job template`)}
+        labelHelp={t(`Optional extra variables to be applied to run command`)}
         format="yaml"
         label={t('Extra Variables')}
         name="extra_vars"
+      />
+    </PageFormSection>
+  );
+}
+
+export function RunCommandExecutionEnvionment(props: { orgId: string }) {
+  const { t } = useTranslation();
+  return (
+    <PageFormSection>
+      <PageFormExecutionEnvironmentSelect
+        name="execution_environment.name"
+        executionEnvironmentIdPath="execution_environment.id"
+        label={t('Execution Environment')}
+        organizationId={props.orgId ?? ''}
       />
     </PageFormSection>
   );
@@ -86,15 +180,16 @@ export function RunCommandCredentialStep() {
   return (
     <PageFormSection>
       <PageFormCredentialSelect
-        name="credentials"
-        label={t('Credentials')}
-        placeholder={t('Add credentials')}
-        labelHelpTitle={t('Credentials')}
+        name="credential.name"
+        label={t('Credential')}
+        placeholder={t('Add credential')}
+        labelHelpTitle={t('Credential')}
         labelHelp={t(
-          'Select credentials for accessing the nodes this job will be ran against. You can only select one credential of each type. For machine credentials (SSH), checking "Prompt on launch" without selecting credentials will require you to select a machine credential at run time. If you select credentials and check "Prompt on launch", the selected credential(s) become the defaults that can be updated at run time.'
+          'Select the credential you want to use when accessing the remote hosts to run the command. Choose the credential containing the username and SSH key or password that Ansible will need to log into the remote hosts.'
         )}
-        isMultiple
         isRequired
+        credentialIdPath="credentialIdPath"
+        sourceType="ssh"
       />
     </PageFormSection>
   );
@@ -105,6 +200,7 @@ export function RunCommandReviewStep() {
   const { wizardData } = usePageWizard() as {
     wizardData: RunCommandWizard;
   };
+  const getPageUrl = useGetPageUrl();
   const {
     module,
     module_args,
@@ -114,7 +210,9 @@ export function RunCommandReviewStep() {
     diff_mode,
     become_enabled,
     extra_vars,
-    credentials,
+    execution_environment,
+    credential,
+    credentialIdPath,
   } = wizardData;
 
   return (
@@ -131,12 +229,28 @@ export function RunCommandReviewStep() {
             {become_enabled ? t('On') : t('Off')}
           </PageDetail>
           <PageDetailCodeEditor label={t('Extra vars')} value={extra_vars} />
-          <PageDetail label={t('Credentials')} isEmpty={!credentials?.length}>
+          <PageDetail label={t('Credentials')} isEmpty={!credential}>
             <LabelGroup>
-              {credentials?.map((credential) => (
-                <CredentialLabel credential={credential} key={credential.id} />
-              ))}
+              <CredentialLabel
+                credential={{
+                  name: credential.name,
+                  id: parseInt(credentialIdPath),
+                  kind: 'ssh',
+                  cloud: false,
+                  description: credential.name,
+                }}
+                key={credentialIdPath}
+              />
             </LabelGroup>
+          </PageDetail>
+          <PageDetail label={t('Execution environment')}>
+            <Link
+              to={getPageUrl(AwxRoute.ExecutionEnvironmentDetails, {
+                params: { id: execution_environment.id },
+              })}
+            >
+              {execution_environment.name}
+            </Link>
           </PageDetail>
         </PageDetails>
       </PageFormSection>

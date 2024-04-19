@@ -113,6 +113,17 @@ describe('Inventory Groups', () => {
         cy.getByDataCy('become_enabled').click();
         cy.getByDataCy('extra-vars-form-group').type('test: "test"');
         cy.clickButton(/^Next$/);
+        cy.getByDataCy('execution-environment-select-form-group').within(() => {
+          cy.getBy('[aria-label="Options menu"]').click();
+        });
+        cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+          cy.filterTableBySingleSelect('name', executionEnvironment.name);
+          cy.get('[data-ouia-component-id="simple-table"] tbody').within(() => {
+            cy.get('[data-cy="checkbox-column-cell"] input').click();
+          });
+          cy.clickButton(/^Confirm/);
+        });
+        cy.clickButton(/^Next$/);
         cy.getByDataCy('credential-select-form-group').within(() => {
           cy.getBy('[aria-label="Options menu"]').click();
         });
@@ -128,6 +139,7 @@ describe('Inventory Groups', () => {
         cy.getByDataCy('privilege-escalation').should('contain', 'On');
         cy.getByDataCy('code-block-value').should('contain', 'test: test');
         cy.getByDataCy('credentials').should('contain', machineCredential.name);
+        cy.getByDataCy('execution-environment').should('contain', executionEnvironment.name);
         cy.get('[data-cy="Submit"]').click();
         //3) Assert redirect to the job output screen
         cy.verifyPageTitle('command');

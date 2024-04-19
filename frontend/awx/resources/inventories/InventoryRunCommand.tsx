@@ -13,17 +13,20 @@ import { useNavigate, useParams } from 'react-router-dom';
 import {
   RunCommandCredentialStep,
   RunCommandDetailStep,
+  RunCommandExecutionEnvionment,
   RunCommandReviewStep,
 } from './components/RunCommandSteps';
-import { RunCommandWizard } from '../../interfaces/Inventory';
+import { Inventory, RunCommandWizard } from '../../interfaces/Inventory';
 import { postRequest } from '../../../common/crud/Data';
 import { awxAPI } from '../../common/api/awx-utils';
+import { useGet } from '../../../common/crud/useGet';
 
 export function InventoryRunCommand() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const { id } = useParams();
   const pageNavigate = usePageNavigate();
+  const { data: inventory } = useGet<Inventory>(awxAPI`/inventories/${id as string}/`);
 
   const navigate = useNavigate();
 
@@ -34,7 +37,7 @@ export function InventoryRunCommand() {
       ...data,
       verbosity: data.verbosity,
       forks: data.forks,
-      credential: data.credentials[0].id,
+      credential: data.credentialIdPath,
     };
     const result: { id: string } = await postRequest(
       awxAPI`/inventories/${id ?? ''}/ad_hoc_commands/`,
@@ -48,6 +51,15 @@ export function InventoryRunCommand() {
       id: 'details',
       label: t('Details'),
       inputs: <RunCommandDetailStep />,
+    },
+    {
+      id: 'execution_environment',
+      label: t('Execution Environment'),
+      inputs: (
+        <RunCommandExecutionEnvionment
+          orgId={inventory?.summary_fields.organization.id.toString() ?? ''}
+        />
+      ),
     },
     {
       id: 'credential',

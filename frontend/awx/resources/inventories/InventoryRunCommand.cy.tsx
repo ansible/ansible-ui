@@ -10,7 +10,7 @@ describe('Run command wizard', () => {
       {
         fixture: 'machine_credential_type.json',
       }
-    ).as('credentials');
+    ).as('credential-types');
     cy.intercept(
       {
         method: 'GET',
@@ -19,6 +19,16 @@ describe('Run command wizard', () => {
       },
       {
         fixture: 'credentials.json',
+      }
+    ).as('credentials');
+    cy.intercept(
+      {
+        method: 'GET',
+        url: '/api/v2/execution_environments/*',
+        hostname: 'localhost',
+      },
+      {
+        fixture: 'execution_environments.json',
       }
     );
   });
@@ -39,6 +49,19 @@ describe('Run command wizard', () => {
     cy.getByDataCy('become_enabled').click();
     cy.getByDataCy('extra-vars-form-group').type('test: "test"');
     cy.clickButton(/^Next$/);
+    cy.getByDataCy('execution-environment-select-form-group').within(() => {
+      cy.getBy('[aria-label="Options menu"]').click();
+    });
+    cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+      cy.getByDataCy('row-id-1').within(() => {
+        cy.get('[data-cy="checkbox-column-cell"] input').click();
+      });
+      cy.clickButton(/^Confirm/);
+    });
+    cy.clickButton(/^Next$/);
+    cy.getByDataCy('credential-select-form-group').within(() => {
+      cy.getBy('[aria-label="Options menu"]').click();
+    });
     cy.getByDataCy('credential-select-form-group').within(() => {
       cy.getBy('[aria-label="Options menu"]').click();
     });
@@ -54,5 +77,6 @@ describe('Run command wizard', () => {
     cy.getByDataCy('privilege-escalation').should('contain', 'On');
     cy.getByDataCy('code-block-value').should('contain', 'test: test');
     cy.getByDataCy('credentials').should('contain', 'Demo Credential');
+    cy.getByDataCy('execution-environment').should('contain', 'AWX EE (latest)');
   });
 });
