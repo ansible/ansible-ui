@@ -56,7 +56,7 @@ describe('EdaDecisionEnvironmentsCard.cy.ts', () => {
     cy.mount(<EdaOverview />);
   });
   it('Dashboard renders the correct decision environment columns', () => {
-    cy.contains(/^Recently updated environments$/).should('be.visible');
+    cy.contains(/^Recently updated decision environments$/).should('be.visible');
     cy.contains('th', 'Name');
   });
 });

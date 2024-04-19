@@ -24,7 +24,7 @@ export function EdaRuleAuditCard() {
       title={t('Rule Audit')}
       subtitle={t('Recently fired rules')}
       height="md"
-      linkText={t('Go to Rule Audit')}
+      linkText={t('View all Rule Audit')}
       to={getPageUrl(EdaRoute.RuleAudits)}
       helpTitle={t('Rule audit')}
       help={t('Rule audit allows auditing of rules which have been triggered by incoming events.')}

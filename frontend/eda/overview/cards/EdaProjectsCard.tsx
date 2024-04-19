@@ -27,7 +27,7 @@ export function EdaRecentProjectsCard(props: { view: IEdaView<EdaProject> }) {
       subtitle={t('Recently updated projects')}
       height="md"
       width="md"
-      linkText={t('Go to Projects')}
+      linkText={t('View all Projects')}
       to={getPageUrl(EdaRoute.Projects)}
       helpTitle={t('Projects')}
       help={t('Projects are a logical collection of rulebooks.')}
