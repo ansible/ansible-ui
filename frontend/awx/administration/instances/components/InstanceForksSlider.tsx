@@ -6,6 +6,7 @@ import { useInstanceActions } from '../hooks/useInstanceActions';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { Settings } from '../../../interfaces/Settings';
 import { useGet } from '../../../../common/crud/useGet';
+import { active } from 'd3';
 
 export function InstanceForksSlider(props: { instance: Instance }) {
   const { instance } = props;
@@ -28,10 +29,9 @@ export function InstanceForksSlider(props: { instance: Instance }) {
         }
         isDisabled={
           !(
-            activeAwxUser?.is_superuser ||
-            activeAwxUser?.is_system_auditor ||
-            isK8s ||
-            instance.enabled ||
+            (activeAwxUser?.is_superuser || activeAwxUser?.is_system_auditor) &&
+            isK8s &&
+            instance.enabled &&
             capacityAvailable
           )
         }
