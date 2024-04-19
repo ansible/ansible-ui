@@ -7,7 +7,7 @@ export function CredentialTeamAccess() {
   return (
     <TeamAccess
       id={params.id || ''}
-      type={'credential'}
+      type={'edacredential'}
       addRolesRoute={EdaRoute.CredentialAddTeams}
     />
   );

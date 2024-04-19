@@ -7,8 +7,8 @@ export function CredentialUserAccess() {
   return (
     <UserAccess
       id={params.id || ''}
-      type={'credential'}
-      addRolesRoute={EdaRoute.CredentialAddTeams}
+      type={'edacredential'}
+      addRolesRoute={EdaRoute.CredentialAddUsers}
     />
   );
 }

@@ -48,6 +48,7 @@ export enum EdaRoute {
   CredentialTeamAccess = 'eda-credential-team-access',
   CredentialUserAccess = 'eda-credential-user-access',
   CredentialAddTeams = 'eda-credential-add-teams',
+  CredentialAddUsers = 'eda-credential-add-users',
 
   CredentialTypes = 'eda-credential-types',
   CreateCredentialType = 'eda-create-credential-type',
