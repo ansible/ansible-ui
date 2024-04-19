@@ -1,4 +1,3 @@
-import { useSearchParams } from 'react-router-dom';
 import {
   createContext,
   ReactNode,
@@ -8,6 +7,7 @@ import {
   useMemo,
   useCallback,
 } from 'react';
+import { useURLSearchParams } from '../components/useURLSearchParams';
 import type { PageWizardStep, PageWizardState, PageWizardParentStep } from './types';
 
 export const PageWizardContext = createContext<PageWizardState>({} as PageWizardState);
@@ -37,7 +37,7 @@ export function PageWizardProvider<T extends object>(props: {
   const [stepError, setStepError] = useState<Record<string, object>>({});
   const [submitError, setSubmitError] = useState<Error>();
 
-  const [_, setSearchParams] = useSearchParams();
+  const [_, setSearchParams] = useURLSearchParams();
   const flattenedSteps = useMemo(() => getFlattenedSteps(steps), [steps]);
 
   // set initial activeStep
@@ -111,9 +111,7 @@ export function PageWizardProvider<T extends object>(props: {
         setStepData: setStepData,
         steps: props.steps,
         visibleSteps: getVisibleSteps(steps, wizardData),
-        // setVisibleSteps: setVisibleSteps,
         visibleStepsFlattened: getVisibleStepsFlattened(steps, wizardData),
-        // setVisibleStepsFlattened: setVisibleStepsFlattened,
         activeStep,
         setActiveStep: setActiveStep,
         stepError,

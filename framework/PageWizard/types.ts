@@ -35,10 +35,8 @@ export interface PageWizardState {
   steps: PageWizardStep[];
   // Top-level visible steps (including parent steps of substeps)
   visibleSteps: PageWizardStep[];
-  // setVisibleSteps: (steps: PageWizardStep[]) => void;
   // Flattened list containing all visible steps including substeps
   visibleStepsFlattened: PageWizardStep[];
-  // setVisibleStepsFlattened: (steps: PageWizardStep[]) => void;
   wizardData: object;
   onNext: (formState: object) => Promise<void>;
   onBack: () => void;
