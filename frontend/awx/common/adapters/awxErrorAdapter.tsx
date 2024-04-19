@@ -42,3 +42,29 @@ export const awxErrorAdapter = (error: unknown): ErrorOutput => {
   }
   return { genericErrors, fieldErrors };
 };
+
+/**
+ * Parses the error message and returns a formatted message along with parsed errors.
+ * @param {Error} error - The error object to parse.
+ * @param {string} [unknownErrorMessage] - Optional. The translated string for unknown errors.
+ * @returns {{ message: string; parsedErrors: (GenericErrorDetail | FieldErrorDetail)[] }} An object containing the formatted error message and parsed errors.
+ */
+export function useAwxErrorMessageParser() {
+  return (
+    error: Error,
+    unknownErrorMessage?: string
+  ): { message: string; parsedErrors: (GenericErrorDetail | FieldErrorDetail)[] } => {
+    const { genericErrors, fieldErrors } = awxErrorAdapter(error);
+    const parsedErrors = [
+      ...genericErrors,
+      ...fieldErrors.filter((e) => e.message).map(({ message }) => ({ message })),
+    ];
+    const message =
+      typeof parsedErrors[0]?.message === 'string' && parsedErrors.length === 1
+        ? parsedErrors[0].message
+        : unknownErrorMessage
+          ? unknownErrorMessage
+          : `Unknown error`;
+    return { message, parsedErrors };
+  };
+}
