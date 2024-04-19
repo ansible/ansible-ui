@@ -35,7 +35,7 @@ describe('Tasks', () => {
     });
   });
 
-  tag(['!flaky'], () => {
+  tag(['flaky'], () => {
     it('should disable stop task button if task is not running/waiting', () => {
       cy.createHubRemote().then((remote) => {
         cy.createHubRepository({
