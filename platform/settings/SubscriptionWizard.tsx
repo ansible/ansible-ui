@@ -1,10 +1,19 @@
-import { Button, Divider, Split, Stack, Text, TextContent } from '@patternfly/react-core';
+import {
+  Button,
+  Divider,
+  ProgressStep,
+  ProgressStepper,
+  Split,
+  Stack,
+  Text,
+  TextContent,
+  Title,
+} from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { t } from 'i18next';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { Trans } from 'react-i18next';
-import { Link } from 'react-router-dom';
 import { PageFormCheckbox, PageFormTextInput, PageWizard, PageWizardStep } from '../../framework';
 import { PageFormAsyncSingleSelect } from '../../framework/PageForm/Inputs/PageFormAsyncSingleSelect';
 import { PageFormFileUpload } from '../../framework/PageForm/Inputs/PageFormFileUpload';
@@ -12,7 +21,7 @@ import { PageFormToggleGroup } from '../../framework/PageForm/Inputs/PageFormTog
 import { PageFormHidden } from '../../framework/PageForm/Utils/PageFormHidden';
 import { awxErrorAdapter } from '../../frontend/awx/common/adapters/awxErrorAdapter';
 import { awxAPI } from '../../frontend/awx/common/api/awx-utils';
-import { useAwxConfig } from '../../frontend/awx/common/useAwxConfig';
+import { useAwxConfig, useAwxConfigState } from '../../frontend/awx/common/useAwxConfig';
 import { ILicenseInfo } from '../../frontend/awx/interfaces/Config';
 import { postRequest, requestPatch } from '../../frontend/common/crud/Data';
 import Analytics from './Analytics.svg';
@@ -24,9 +33,12 @@ interface SubscriptionWizardData {
   password: string;
   analyticsEnabled: boolean;
   pool_id?: string;
+  agree: boolean;
 }
 
 export function SubscriptionWizard(props: { onSuccess: () => void }) {
+  const { refreshAwxConfig } = useAwxConfigState();
+
   const steps = useMemo(() => {
     const steps: PageWizardStep[] = [
       {
@@ -42,7 +54,12 @@ export function SubscriptionWizard(props: { onSuccess: () => void }) {
       {
         id: 'license-agreement',
         label: t('End User License Agreement'),
-        element: <LicenseAgreementStep />,
+        inputs: <LicenseAgreementStep />,
+      },
+      {
+        id: 'review',
+        label: t('Review'),
+        element: <LicenseReviewStep />,
       },
     ];
     return steps;
@@ -68,12 +85,13 @@ export function SubscriptionWizard(props: { onSuccess: () => void }) {
           await postRequest(awxAPI`/config/attach/`, { pool_id: data.pool_id });
           break;
       }
+      refreshAwxConfig?.();
       await requestPatch(awxAPI`/settings/system/`, {
         INSIGHTS_TRACKING_STATE: data.analyticsEnabled,
       });
       props.onSuccess();
     },
-    [props]
+    [props, refreshAwxConfig]
   );
 
   return (
@@ -136,7 +154,10 @@ function SubscriptionStep() {
         </Text>
         <Text component="p">
           {t('If you do not have a subscription, you can visit Red Hat to obtain a ')}
-          <a href="https://www.ansible.com/license">{t('trial subscription')}</a>.
+          <a href="https://www.ansible.com/license" target="_blank" rel="noreferrer">
+            {t('trial subscription')}
+          </a>
+          .
         </Text>
       </TextContent>
       <Divider />
@@ -161,7 +182,11 @@ function SubscriptionStep() {
             {t(
               'Upload a Red Hat Subscription Manifest containing your subscription. To generate your subscription manifest, go to '
             )}
-            <a href="https://access.redhat.com/management/subscription_allocations">
+            <a
+              href="https://access.redhat.com/management/subscription_allocations"
+              target="_blank"
+              rel="noreferrer"
+            >
               {t('subscription allocations')}
             </a>
             {t(' on the Red Hat Customer Portal.')}
@@ -170,8 +195,10 @@ function SubscriptionStep() {
         <PageFormFileUpload
           name="subscriptionFile"
           label={t('Red Hat subscription manifest')}
-          accept=".zip"
           isRequired
+          validate={(file: File) => {
+            if (!file.name.endsWith('.zip')) return t('File must be a .zip file');
+          }}
         />
       </PageFormHidden>
       <PageFormHidden
@@ -226,12 +253,13 @@ function AnalyticsStep() {
           <Trans>
             By default, Ansible Automation Platform collects and transmits data on usage to Red Hat.
             For more information, see this{' '}
-            <Link
-              to="https://docs.ansible.com/automation-controller/latest/html/administration/usability_data_collection.html#automation-analytics"
+            <a
+              href="https://docs.ansible.com/automation-controller/latest/html/administration/usability_data_collection.html#automation-analytics"
               target="_blank"
+              rel="noreferrer"
             >
               Ansible Automation Platform documentation page
-            </Link>
+            </a>
             . Uncheck the following box to disable this feature.
           </Trans>
         </Text>
@@ -277,16 +305,39 @@ function AnalyticsStep() {
 function LicenseAgreementStep() {
   const config = useAwxConfig();
   return (
-    <TextContent>
-      {config?.eula.split('\n').map((line, index) => (
-        <Text key={index} component="p">
-          {line}
-        </Text>
-      ))}
-    </TextContent>
+    <>
+      <TextContent>
+        {config?.eula.split('\n').map((line, index) => (
+          <Text key={index} component="p">
+            {line}
+          </Text>
+        ))}
+      </TextContent>
+      <PageFormCheckbox<SubscriptionWizardData>
+        name="agree"
+        label={t('I agree to the terms of the license agreement')}
+        isRequired
+      />
+    </>
   );
 }
 
+function LicenseReviewStep() {
+  return (
+    <Stack hasGutter>
+      <TextContent>
+        <Title headingLevel="h1" size="2xl">
+          {t('Review')}
+        </Title>
+      </TextContent>
+      <ProgressStepper isVertical>
+        <ProgressStep variant="success">{t('Subscription')}</ProgressStep>
+        <ProgressStep variant="success">{t('Analytics')}</ProgressStep>
+        <ProgressStep variant="success">{t('Agreement')}</ProgressStep>
+      </ProgressStepper>
+    </Stack>
+  );
+}
 function arrayBufferToBase64(buffer: ArrayBuffer) {
   let binary = '';
   const bytes = new Uint8Array(buffer);
