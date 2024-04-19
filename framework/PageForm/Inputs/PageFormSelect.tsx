@@ -11,8 +11,8 @@ import {
 import { PageSelectOption } from '../../PageInputs/PageSelectOption';
 import { getID, useID } from '../../hooks/useID';
 import { useFrameworkTranslations } from '../../useFrameworkTranslations';
-import { capitalizeFirstLetter } from '../../utils/strings';
 import { PageFormGroup } from './PageFormGroup';
+import { useRequiredValidationRule } from './validation-hooks';
 
 export type PageFormSelectProps<
   TFieldValues extends FieldValues = FieldValues,
@@ -129,6 +129,7 @@ export function PageFormSelect<
   const onToggle = useCallback(() => setOpen(!open), [open]);
 
   const [translations] = useFrameworkTranslations();
+  const required = useRequiredValidationRule(props.label, props.isRequired);
 
   return (
     <Controller<TFieldValues, TFieldName>
@@ -218,13 +219,7 @@ export function PageFormSelect<
         );
       }}
       rules={{
-        required:
-          typeof label === 'string' && isRequired === true
-            ? {
-                value: true,
-                message: `${capitalizeFirstLetter(label.toLocaleLowerCase())} is required.`,
-              }
-            : undefined,
+        required,
         validate,
       }}
     />

@@ -22,6 +22,7 @@ import { useID } from '../../hooks/useID';
 import { useFrameworkTranslations } from '../../useFrameworkTranslations';
 import { capitalizeFirstLetter } from '../../utils/strings';
 import { PageFormGroup, PageFormGroupProps } from './PageFormGroup';
+import { useRequiredValidationRule } from './validation-hooks';
 
 interface ChipHolderProps {
   readonly $isDisabled: boolean;
@@ -63,7 +64,7 @@ export function PageFormMultiInput<
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >(props: PageFormMultiInputProps<T, TFieldValues, TFieldName>) {
   const { validate, selectTitle, selectOpen, placeholder, ...formGroupInputProps } = props;
-  const { label, name, isRequired, minLength, maxLength, pattern, isDisabled } = props;
+  const { label, name, minLength, maxLength, pattern, isDisabled } = props;
   const {
     control,
     setValue,
@@ -81,6 +82,8 @@ export function PageFormMultiInput<
     },
     [setValue, name]
   );
+
+  const required = useRequiredValidationRule(props.label, props.isRequired);
 
   return (
     <Controller<TFieldValues, TFieldName>
@@ -137,13 +140,7 @@ export function PageFormMultiInput<
         );
       }}
       rules={{
-        required:
-          typeof label === 'string' && isRequired === true
-            ? {
-                value: true,
-                message: `${capitalizeFirstLetter(label.toLocaleLowerCase())} is required.`,
-              }
-            : undefined,
+        required,
 
         minLength:
           typeof label === 'string' && typeof minLength === 'number'
@@ -166,7 +163,7 @@ export function PageFormMultiInput<
             : maxLength,
 
         pattern: pattern,
-        validate: validate,
+        validate,
       }}
     />
   );

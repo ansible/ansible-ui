@@ -7,8 +7,8 @@ import {
   Validate,
   useFormContext,
 } from 'react-hook-form';
-import { capitalizeFirstLetter } from '../../utils/strings';
 import { FormGroupTypeAheadMultiSelect } from './FormGroupTypeAheadMultiSelect';
+import { useRequiredValidationRule } from './validation-hooks';
 
 export type PageFormCreatableSelectProps<
   TFieldValues extends FieldValues = FieldValues,
@@ -51,6 +51,7 @@ export function PageFormCreatableSelect<
     formState: { isSubmitting },
     getValues,
   } = useFormContext<TFieldValues>();
+  const required = useRequiredValidationRule(props.label, props.isRequired);
   return (
     <Controller<TFieldValues, TFieldName>
       name={props.name}
@@ -88,16 +89,7 @@ export function PageFormCreatableSelect<
           }}
         />
       )}
-      rules={{
-        required:
-          typeof props.label === 'string' && typeof isRequired === 'boolean'
-            ? {
-                value: true,
-                message: `${capitalizeFirstLetter(props.label.toLocaleLowerCase())} is required.`,
-              }
-            : isRequired,
-        validate: validate,
-      }}
+      rules={{ required, validate: validate }}
     />
   );
 }
