@@ -36,6 +36,9 @@ export interface NotificationTemplate
   notification_configuration: {
     [key: string]: number | string | boolean | string[] | { [key: string]: unknown };
   };
+  messages : {
+    [key : string]: { message : string} | { [key : string]: { message : string}} ,
+  }
   notification_type:
     | 'email'
     | 'grafana'
