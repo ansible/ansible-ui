@@ -1,5 +1,23 @@
 import { NotificationTemplate as SwaggerNotificationTemplate } from './generated-from-swagger/api';
 
+type NotificationType = {
+  message: string | undefined;
+};
+
+type WorkflowApprovalMessages = {
+  denied?: NotificationType;
+  running?: NotificationType;
+  approved?: NotificationType;
+  timed_out?: NotificationType;
+};
+
+type MessagesType = {
+  error?: NotificationType;
+  started?: NotificationType;
+  success?: NotificationType;
+  workflow_approval?: WorkflowApprovalMessages;
+};
+
 export interface NotificationTemplate
   extends Omit<
     SwaggerNotificationTemplate,
@@ -36,9 +54,7 @@ export interface NotificationTemplate
   notification_configuration: {
     [key: string]: number | string | boolean | string[] | { [key: string]: unknown };
   };
-  messages : {
-    [key : string]: { message : string} | { [key : string]: { message : string}} ,
-  }
+  messages : MessagesType;
   notification_type:
     | 'email'
     | 'grafana'

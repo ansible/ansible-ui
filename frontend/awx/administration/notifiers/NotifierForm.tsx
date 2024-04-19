@@ -97,17 +97,21 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
   }
 
   const defaultValueMessages =  defaultValue as NotificationTemplate;
-  if (defaultValue && defaultValueMessages.messages === undefined) {
+  const messagesEmpty = areMessagesEmpty(defaultValueMessages);
+
+  if (defaultValue && messagesEmpty) {
     (defaultValue as {customize_messages : boolean}).customize_messages = false;
   }
 
-  if (defaultValue && defaultValueMessages.messages !== undefined)
+  if (defaultValue && !messagesEmpty)
   {
     (defaultValue as {customize_messages : boolean}).customize_messages = true;
   }
 
   // fill customize messages
-  if (defaultValueMessages.messages === undefined)
+  
+
+  if (messagesEmpty)
   defaultValueMessages.messages = {
     started : { message : `{{ job_friendly_name }} #{{ job.id }} '{{ job.name }}' {{ job.status }}: {{ url }}`},
     success : { message : `{{ job_friendly_name }} #{{ job.id }} '{{ job.name }}' {{ job.status }}: {{ url }}`},
@@ -323,6 +327,19 @@ function CustomizeMessagesForm(props : {})
 
   
   </>;
+}
+
+function areMessagesEmpty(data: NotificationTemplate)
+{
+  if (data?.messages?.error?.message) return false;
+  if (data?.messages?.started?.message) return false;
+  if (data?.messages?.success?.message) return false;
+  if (data?.messages?.workflow_approval?.approved?.message) return false;
+  if (data?.messages?.workflow_approval?.denied?.message) return false;
+  if (data?.messages?.workflow_approval?.running?.message) return false;
+  if (data?.messages?.workflow_approval?.timed_out?.message) return false;
+
+  return true;
 }
 
 function arraysToString(data: NotificationTemplate) {
