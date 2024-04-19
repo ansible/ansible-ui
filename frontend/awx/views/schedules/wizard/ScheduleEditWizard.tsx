@@ -10,7 +10,7 @@ import {
 import { useGetPageUrl } from '../../../../../framework/PageNavigation/useGetPageUrl';
 import { dateToInputDateTime } from '../../../../../framework/utils/dateTimeHelpers';
 import { AwxRoute } from '../../../main/AwxRoutes';
-import { ScheduleFormWizard } from '../types';
+import { ScheduleFormWizard, schedulePageUrl } from '../types';
 import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
 import { RulesStep } from './RulesStep';
 import { RRule, RRuleSet, rrulestr } from 'rrule';
@@ -28,6 +28,7 @@ import { ScheduleSelectStep } from './ScheduleSelectStep';
 import { ScheduleReviewStep } from './ScheduleReviewStep';
 import { StandardizedFormData } from './ScheduleAddWizard';
 import { useProcessSchedule } from '../hooks/useProcessSchedules';
+import { useGetScheduleUrl } from '../hooks/useGetScheduleUrl';
 
 export function ScheduleEditWizard() {
   const { t } = useTranslation();
@@ -35,6 +36,8 @@ export function ScheduleEditWizard() {
   const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
   const processSchedules = useProcessSchedule();
+  const getScheduleUrl = useGetScheduleUrl();
+
   const params = useParams<{ id?: string; schedule_id?: string }>();
 
   const { data: schedule } = useGetItem<Schedule>(awxAPI`/schedules/`, params.schedule_id);
@@ -77,14 +80,11 @@ export function ScheduleEditWizard() {
 
     const {
       schedule,
-      navigationId,
-      params,
     }: {
       schedule: Schedule;
-      navigationId: string;
-      params: { id: string; source_id?: string; inventory_type?: string };
     } = await processSchedules(data);
-    pageNavigate(navigationId, { params: { schedule_id: schedule.id, ...params } });
+    const pageUrl = getScheduleUrl('details', schedule) as schedulePageUrl;
+    return pageNavigate(pageUrl.pageId, { params: pageUrl.params });
   };
 
   const onCancel = () => navigate(-1);

@@ -2,7 +2,6 @@ import { useCallback } from 'react';
 import { usePostRequest } from '../../../../common/crud/usePostRequest';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { Schedule } from '../../../interfaces/Schedule';
-import { AwxRoute } from '../../../main/AwxRoutes';
 import { useProcessCredentials } from './useProcessCredentials';
 import { useProcessInstanceGroups } from './useProcessInstanceGroups';
 import { useProcessLabels } from './useProcessLabels';
@@ -73,7 +72,6 @@ export const useProcessSchedule = () => {
       const { type, id } = resource;
 
       let schedule: Schedule;
-      let navigationId: string;
       const hasJobTags = job_tags && job_tags?.length > 0;
       const hasSkipTags = prompt && prompt?.skip_tags && prompt?.skip_tags?.length > 0;
       const payload = {
@@ -92,18 +90,10 @@ export const useProcessSchedule = () => {
               awxAPI`/inventory_sources/${id.toString()}/schedules/`,
               payload
             ),
-            navigationId: AwxRoute.InventorySourceScheduleDetails,
-            params: {
-              id: resource.inventory.toString(),
-              inventory_type: 'inventory',
-              source_id: id.toString(),
-            },
           };
         case 'project':
           return {
             schedule: await request(awxAPI`/projects/${id.toString()}/schedules/`, payload),
-            navigationId: AwxRoute.ProjectScheduleDetails,
-            params: { id: id.toString() },
           };
         case 'system_job_template':
           return {
@@ -111,13 +101,8 @@ export const useProcessSchedule = () => {
               awxAPI`/system_job_templates/${id.toString()}/schedules/`,
               payload
             ),
-            navigationId: AwxRoute.ManagementJobScheduleDetails,
-            params: {
-              id: id.toString(),
-            },
           };
         case 'workflow_job_template':
-          navigationId = AwxRoute.WorkflowJobTemplateScheduleDetails;
           schedule = await request(
             awxAPI`/workflow_job_templates/${id.toString()}/schedules/`,
             payload
@@ -125,22 +110,13 @@ export const useProcessSchedule = () => {
           await postAccessories(schedule, payload);
           return {
             schedule,
-            navigationId,
-            params: {
-              id: id.toString(),
-            },
           };
         default:
-          navigationId = AwxRoute.JobTemplateScheduleDetails;
           schedule = await request(awxAPI`/job_templates/${id.toString()}/schedules/`, payload);
           await postAccessories(schedule, payload);
 
           return {
             schedule,
-            navigationId,
-            params: {
-              id: id.toString(),
-            },
           };
       }
     },
