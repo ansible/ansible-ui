@@ -9,17 +9,17 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../framework';
-import { EdaSelectRolesStep } from '../../access/roles/components/EdaSelectRolesStep';
-import { EdaSelectUsersStep } from '../../access/users/components/EdaSelectUsersStep';
-import { EdaRoute } from '../../main/EdaRoutes';
-import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
-import { useGet } from '../../../common/crud/useGet';
-import { edaAPI } from '../../common/eda-utils';
-import { postRequest } from '../../../common/crud/Data';
-import { EdaUser } from '../../interfaces/EdaUser';
 import { RoleAssignmentsReviewStep } from '../../../common/access/RolesWizard/steps/RoleAssignmentsReviewStep';
-import { EdaRbacRole } from '../../interfaces/EdaRbacRole';
+import { postRequest } from '../../../common/crud/Data';
+import { useGet } from '../../../common/crud/useGet';
+import { EdaSelectRolesStep } from '../../access/common/EdaRolesWizardSteps/EdaSelectRolesStep';
+import { EdaSelectUsersStep } from '../../access/common/EdaRolesWizardSteps/EdaSelectUsersStep';
+import { edaAPI } from '../../common/eda-utils';
 import { useEdaBulkActionDialog } from '../../common/useEdaBulkActionDialog';
+import { EdaRbacRole } from '../../interfaces/EdaRbacRole';
+import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
+import { EdaUser } from '../../interfaces/EdaUser';
+import { EdaRoute } from '../../main/EdaRoutes';
 
 interface WizardFormValues {
   users: EdaUser[];
