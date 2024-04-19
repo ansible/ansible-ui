@@ -9,30 +9,83 @@ import { AwxError } from '../../../common/AwxError';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { NotificationTemplate } from '../../../interfaces/NotificationTemplate';
 import { AwxRoute } from '../../../main/AwxRoutes';
+import { useNotifiersRowActions } from '../hooks/useNotifiersRowActions';
+import { DropdownPosition } from '@patternfly/react-core/deprecated';
+import { PageActions } from '../../../../../framework';
+import { usePageNavigate } from '../../../../../framework';
+import { useState } from 'react';
+import { usePageAlertToaster } from '../../../../../framework';
+import { StatusLabel } from '../../../../common/Status';
 
 export function NotificationPage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
+  const [testedNotificationId, setTestedNotificationId] = useState<number | undefined>(undefined);
+  // set refresh interval to be faster when test is running
   const {
     error,
     data: notificationTemplate,
     refresh,
-  } = useGetItem<NotificationTemplate>(awxAPI`/notification_templates`, params.id);
+  } = useGetItem<NotificationTemplate>(awxAPI`/notification_templates`, params.id, {
+    refreshInterval: testedNotificationId === undefined ? 5000 : 2000,
+  });
+
+  const pageNavigate = usePageNavigate();
+
+  const alertToaster = usePageAlertToaster();
 
   const getPageUrl = useGetPageUrl();
+  const pageActions = useNotifiersRowActions(
+    () => {
+      pageNavigate(AwxRoute.NotificationTemplates);
+    },
+    undefined,
+    (notificationId: number) => {
+      setTestedNotificationId(notificationId);
+    },
+    'detail',
+    testedNotificationId === undefined
+      ? []
+      : notificationTemplate === undefined
+        ? []
+        : [{ id: notificationTemplate.id }]
+  );
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!notificationTemplate) return <LoadingPage breadcrumbs tabs />;
 
+  // search for notification id
+  if (setTestedNotificationId !== undefined) {
+    const notifications = notificationTemplate.summary_fields?.recent_notifications;
+    const notification = notifications.find(
+      (notification) => notification.id === testedNotificationId
+    );
+    if (notification) {
+      alertToaster.addAlert({
+        variant: 'info',
+        title: t('Notifier test result'),
+        children: <StatusLabel status={notification.status} />,
+      });
+      setTestedNotificationId(undefined);
+    }
+  }
+
   return (
     <PageLayout>
+      {testedNotificationId}
       <PageHeader
         title={notificationTemplate?.name}
         breadcrumbs={[
           { label: t('Notifiers'), to: getPageUrl(AwxRoute.NotificationTemplates) },
           { label: notificationTemplate?.name },
         ]}
-        headerActions={[]}
+        headerActions={
+          <PageActions<NotificationTemplate>
+            actions={pageActions}
+            position={DropdownPosition.right}
+            selectedItem={notificationTemplate}
+          />
+        }
       />
       <PageRoutedTabs
         backTab={{
@@ -41,7 +94,11 @@ export function NotificationPage() {
           persistentFilterKey: 'credential-types',
         }}
         tabs={[{ label: t('Details'), page: AwxRoute.NotificationTemplateDetails }]}
-        params={{ id: notificationTemplate.id }}
+        params={params}
+        componentParams={{
+          notificationTemplate,
+          runningTest: testedNotificationId === undefined ? false : true,
+        }}
       />
     </PageLayout>
   );
