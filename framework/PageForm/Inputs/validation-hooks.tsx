@@ -6,8 +6,16 @@ export function useRequiredValidationRule(label?: string, isRequired?: boolean) 
     ? {
         value: true,
         message: t('{{label}} is required.', {
-          label: capitalizeFirstLetter(label.toLocaleLowerCase()),
+          label: fixSpecialCases(capitalizeFirstLetter(label.toLocaleLowerCase())),
         }),
       }
     : undefined;
+}
+
+function fixSpecialCases(label: string) {
+  const names = ['Red Hat'];
+  for (const name of names) {
+    label = label.replace(capitalizeFirstLetter(name.toLocaleLowerCase()), name);
+  }
+  return label;
 }
