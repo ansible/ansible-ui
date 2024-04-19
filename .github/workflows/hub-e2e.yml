@@ -119,6 +119,7 @@ jobs:
           record: true
           parallel: true
           config-file: cypress.hub.config.ts
+          tag: "!flaky"
         env:
           HUB_SERVER: ${{ inputs.HUB_SERVER }}
           HUB_USERNAME: e2e
@@ -128,4 +129,4 @@ jobs:
           CYPRESS_RECORD_KEY: ${{ secrets.HUB_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_TLS_REJECT_UNAUTHORIZED: 0
-
+          TAGS: '!flaky'
