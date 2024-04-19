@@ -19,6 +19,7 @@ import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { useGetItem } from '../../../../common/crud/useGet';
 import { AwxError } from '../../../common/AwxError';
 import { awxAPI } from '../../../common/api/awx-utils';
+import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
 import { AwxUser } from '../../../interfaces/User';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useDeleteUsers } from '../hooks/useDeleteUsers';
@@ -28,6 +29,7 @@ export function UserPage() {
   const params = useParams<{ id: string }>();
   const { error, data: user, refresh } = useGetItem<AwxUser>(awxAPI`/users`, params.id);
   const pageNavigate = usePageNavigate();
+  const { activeAwxUser } = useAwxActiveUser();
 
   const deleteUsers = useDeleteUsers((deleted: AwxUser[]) => {
     if (deleted.length > 0) {
@@ -61,6 +63,18 @@ export function UserPage() {
 
   const getPageUrl = useGetPageUrl();
 
+  const pageTabs = [
+    { label: t('Details'), page: AwxRoute.UserDetails },
+    { label: t('Organizations'), page: AwxRoute.UserOrganizations },
+    { label: t('Teams'), page: AwxRoute.UserTeams },
+    { label: t('Roles'), page: AwxRoute.UserRoles },
+  ];
+
+  // add tokens tab if the user from params(URL path) matches active user
+  if (activeAwxUser?.id !== undefined && activeAwxUser?.id.toString() === params.id) {
+    pageTabs.push({ label: t('Tokens'), page: AwxRoute.UserTokens });
+  }
+
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!user) return <LoadingPage breadcrumbs tabs />;
 
@@ -86,12 +100,7 @@ export function UserPage() {
           page: AwxRoute.Users,
           persistentFilterKey: 'users',
         }}
-        tabs={[
-          { label: t('Details'), page: AwxRoute.UserDetails },
-          { label: t('Organizations'), page: AwxRoute.UserOrganizations },
-          { label: t('Teams'), page: AwxRoute.UserTeams },
-          { label: t('Roles'), page: AwxRoute.UserRoles },
-        ]}
+        tabs={pageTabs}
         params={{ id: user.id }}
       />
     </PageLayout>
