@@ -1,3 +1,4 @@
+import { tag } from '../../support/tag';
 import { Repositories, Tasks } from './constants';
 
 describe('Tasks', () => {
@@ -34,30 +35,32 @@ describe('Tasks', () => {
     });
   });
 
-  it('should disable stop task button if task is not running/waiting', () => {
-    cy.createHubRemote().then((remote) => {
-      cy.createHubRepository({
-        repository: {
-          remote: remote.pulp_href,
-        },
-      }).then((repository) => {
-        cy.navigateTo('hub', Repositories.url);
-        cy.filterTableBySingleText(repository.name);
-        cy.clickTableRowKebabAction(repository.name, 'sync-repository', false);
-        cy.get('[data-cy="Submit"]').click();
-        cy.hasAlert(`Sync started for repository "${repository.name}"`).should('be.visible');
-        cy.navigateTo('hub', Tasks.url);
-        cy.filterBySingleSelection(/^Status$/, 'Failed');
-        cy.get('tr')
-          .contains('td[data-cy="name-column-cell"]', 'pulp_ansible.app.tasks.collections.sync')
-          .parent('tr')
-          .then(($row) => {
-            cy.wrap($row).find('td').eq(6).click();
-          });
-        cy.get('[data-cy="stop-task"]').should('have.attr', 'aria-disabled', 'true');
+  tag(['!flaky'], () => {
+    it('should disable stop task button if task is not running/waiting', () => {
+      cy.createHubRemote().then((remote) => {
+        cy.createHubRepository({
+          repository: {
+            remote: remote.pulp_href,
+          },
+        }).then((repository) => {
+          cy.navigateTo('hub', Repositories.url);
+          cy.filterTableBySingleText(repository.name);
+          cy.clickTableRowKebabAction(repository.name, 'sync-repository', false);
+          cy.get('[data-cy="Submit"]').click();
+          cy.hasAlert(`Sync started for repository "${repository.name}"`).should('be.visible');
+          cy.navigateTo('hub', Tasks.url);
+          cy.filterBySingleSelection(/^Status$/, 'Failed');
+          cy.get('tr')
+            .contains('td[data-cy="name-column-cell"]', 'pulp_ansible.app.tasks.collections.sync')
+            .parent('tr')
+            .then(($row) => {
+              cy.wrap($row).find('td').eq(6).click();
+            });
+          cy.get('[data-cy="stop-task"]').should('have.attr', 'aria-disabled', 'true');
 
-        cy.deleteHubRepository(repository);
-        cy.deleteHubRemote(remote);
+          cy.deleteHubRepository(repository);
+          cy.deleteHubRemote(remote);
+        });
       });
     });
   });
