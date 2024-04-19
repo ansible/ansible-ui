@@ -14,7 +14,7 @@ export type PageFormCheckboxProps<
   validate?: Validate<boolean, TFieldValues> | Record<string, Validate<boolean, TFieldValues>>;
   labelHelpTitle?: string;
   labelHelp?: string | string[] | ReactNode;
-  label: string;
+  label?: string;
 } & Pick<CheckboxProps, 'description' | 'readOnly' | 'isDisabled' | 'isRequired'>;
 
 /** PatternFly Checkbox wrapper for use with react-hook-form */

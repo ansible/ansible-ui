@@ -1,3 +1,4 @@
+import { TFunction } from 'i18next/index';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import useSWR, { useSWRConfig } from 'swr';
@@ -11,22 +12,19 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../framework';
+import { PageFormHidden } from '../../../framework/PageForm/Utils/PageFormHidden';
+import { requestGet, swrOptions } from '../../common/crud/Data';
 import { useGet } from '../../common/crud/useGet';
 import { usePatchRequest } from '../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../common/crud/usePostRequest';
+import { PageFormSelectOrganization } from '../access/organizations/components/PageFormOrganizationSelect';
 import { EdaPageForm } from '../common/EdaPageForm';
 import { edaAPI } from '../common/eda-utils';
-import { EdaWebhook, EdaWebhookCreate } from '../interfaces/EdaWebhook';
-import { EdaRoute } from '../main/EdaRoutes';
-import { TextList, TextListItem, TextListItemVariants } from '@patternfly/react-core';
-import { StandardPopover } from '../../../framework/components/StandardPopover';
-import { TFunction } from 'i18next/index';
-import { WebhookTypeEnum } from '../interfaces/generated/eda-api';
-import { PageFormHidden } from '../../../framework/PageForm/Utils/PageFormHidden';
-import { PageFormSelectOrganization } from '../access/organizations/components/PageFormOrganizationSelect';
-import { EdaResult } from '../interfaces/EdaResult';
 import { EdaOrganization } from '../interfaces/EdaOrganization';
-import { requestGet, swrOptions } from '../../common/crud/Data';
+import { EdaResult } from '../interfaces/EdaResult';
+import { EdaWebhook, EdaWebhookCreate } from '../interfaces/EdaWebhook';
+import { WebhookTypeEnum } from '../interfaces/generated/eda-api';
+import { EdaRoute } from '../main/EdaRoutes';
 
 export function WebhookOptions(t: TFunction<'translation'>) {
   return [
@@ -127,14 +125,8 @@ function WebhookInputs(props: { editMode: boolean }) {
         />
       </PageFormHidden>
       <PageFormCheckbox<EdaWebhookCreate>
-        label={
-          <TextList>
-            <TextListItem component={TextListItemVariants.li}>
-              {t`Test mode`}
-              <StandardPopover header="" content={t('Test mode.')} />
-            </TextListItem>
-          </TextList>
-        }
+        label={t`Test mode`}
+        labelHelp={t('Test mode.')}
         name="test_mode"
       />
     </>

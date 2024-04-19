@@ -5,7 +5,6 @@ import { PageFormCheckbox } from '../../../../framework/PageForm/Inputs/PageForm
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { PageFormHidden } from '../../../../framework/PageForm/Utils/PageFormHidden';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
-import { Help } from '../../../../framework/components/Help';
 import { PageFormCredentialSelect } from '../../access/credentials/components/PageFormCredentialSelect';
 import { InventorySourceForm } from '../../interfaces/InventorySource';
 import { PageFormProjectSelect } from '../projects/components/PageFormProjectSelect';
@@ -92,45 +91,24 @@ export function InventorySourceSubForm() {
           />
           <PageFormSection title={t('Update options')}>
             <PageFormCheckbox<InventorySourceForm>
-              label={
-                <span>
-                  {t('Overwrite')}
-                  &nbsp;
-                  <Help
-                    help={t(
-                      'If checked, any hosts and groups that were previously present on the external source but are now removed will be removed from the inventory. Hosts and groups that were not managed by the inventory source will be promoted to the next manually created group or if there is no manually created group to promote them into, they will be left in the "all" default group for the inventory. \nWhen not checked, local child hosts and groups not found on the external source will remain untouched by the inventory update process.'
-                    )}
-                  />
-                </span>
-              }
+              label={t('Overwrite')}
+              labelHelp={t(
+                'If checked, any hosts and groups that were previously present on the external source but are now removed will be removed from the inventory. Hosts and groups that were not managed by the inventory source will be promoted to the next manually created group or if there is no manually created group to promote them into, they will be left in the "all" default group for the inventory. \nWhen not checked, local child hosts and groups not found on the external source will remain untouched by the inventory update process.'
+              )}
               name="overwrite"
             />
             <PageFormCheckbox<InventorySourceForm>
-              label={
-                <span>
-                  {t('Overwrite variables')}
-                  &nbsp;
-                  <Help
-                    help={t(
-                      'If checked, all variables for child groups and hosts will be removed and replaced by those found on the external source.\nWhen not checked, a merge will be performed, combining local variables with those found on the external source.'
-                    )}
-                  />
-                </span>
-              }
+              label={t('Overwrite variables')}
+              labelHelp={t(
+                'If checked, all variables for child groups and hosts will be removed and replaced by those found on the external source.\nWhen not checked, a merge will be performed, combining local variables with those found on the external source.'
+              )}
               name="overwrite_vars"
             />
             <PageFormCheckbox<InventorySourceForm>
-              label={
-                <span>
-                  {t('Update on Launch')}
-                  &nbsp;
-                  <Help
-                    help={t(
-                      'Each time a job runs using this inventory, refresh the inventory from the selected source before executing job tasks.'
-                    )}
-                  />
-                </span>
-              }
+              label={t('Update on Launch')}
+              labelHelp={t(
+                'Each time a job runs using this inventory, refresh the inventory from the selected source before executing job tasks.'
+              )}
               name="update_on_launch"
             />
             {isUpdateOnLaunchEnabled ? (
