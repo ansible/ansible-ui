@@ -129,7 +129,10 @@ describe('overview checks when resources before any resources are created', () =
     cy.get('[data-cy="rulebook-activations"]')
       .should('contain', 'Rulebook Activations')
       .within(() => {
-        cy.get('[data-cy="card-subtitle"]').should('contain', 'Recently updated activations');
+        cy.get('[data-cy="card-subtitle"]').should(
+          'contain',
+          'Recently updated rulebook activations'
+        );
       });
 
     cy.get('[data-cy="recent-rule-audits"]')
@@ -141,7 +144,10 @@ describe('overview checks when resources before any resources are created', () =
     cy.get('[data-cy="decision-environments"]')
       .should('contain', 'Decision Environments')
       .within(() => {
-        cy.get('[data-cy="card-subtitle"]').should('contain', 'Recently updated environments');
+        cy.get('[data-cy="card-subtitle"]').should(
+          'contain',
+          'Recently updated decision environments'
+        );
       });
   });
 
@@ -150,8 +156,8 @@ describe('overview checks when resources before any resources are created', () =
     resources.forEach((resource) => {
       cy.navigateTo('eda', 'overview');
       cy.verifyPageTitle('Welcome to Event Driven Automation');
-      cy.checkAnchorLinks('Go to ' + resource);
-      cy.contains('a', 'Go to ' + resource).click();
+      cy.checkAnchorLinks('View all ' + resource);
+      cy.contains('a', 'View all ' + resource).click();
       cy.verifyPageTitle(resource);
     });
   });
