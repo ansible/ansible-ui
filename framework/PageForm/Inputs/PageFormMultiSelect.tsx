@@ -10,8 +10,8 @@ import {
 import { PageMultiSelect, PageMultiSelectProps } from '../../PageInputs/PageMultiSelect';
 import { useID } from '../../hooks/useID';
 import { useFrameworkTranslations } from '../../useFrameworkTranslations';
-import { capitalizeFirstLetter } from '../../utils/strings';
 import { PageFormGroup, PageFormGroupProps } from './PageFormGroup';
+import { useRequiredValidationRule } from './validation-hooks';
 
 export type PageFormMultiSelectProps<
   TFieldValues extends FieldValues = FieldValues,
@@ -39,6 +39,7 @@ export function PageFormMultiSelect<
   const { isSubmitting, isValidating } = formState;
 
   const [translations] = useFrameworkTranslations();
+  const required = useRequiredValidationRule(props.label, props.isRequired);
 
   return (
     <Controller<TFieldValues, TFieldName>
@@ -83,16 +84,7 @@ export function PageFormMultiSelect<
           </PageFormGroup>
         );
       }}
-      rules={{
-        required:
-          typeof props.label === 'string' && props.isRequired === true
-            ? {
-                value: true,
-                message: `${capitalizeFirstLetter(props.label.toLocaleLowerCase())} is required.`,
-              }
-            : undefined,
-        validate: props.validate,
-      }}
+      rules={{ required, validate: props.validate }}
     />
   );
 }

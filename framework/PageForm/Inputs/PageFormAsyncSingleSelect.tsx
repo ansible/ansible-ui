@@ -13,8 +13,8 @@ import {
 } from '../../PageInputs/PageAsyncSingleSelect';
 import { useID } from '../../hooks/useID';
 import { useFrameworkTranslations } from '../../useFrameworkTranslations';
-import { capitalizeFirstLetter } from '../../utils/strings';
 import { PageFormGroup, PageFormGroupProps } from './PageFormGroup';
+import { useRequiredValidationRule } from './validation-hooks';
 
 export type PageFormAsyncSingleSelectProps<
   TFieldValues extends FieldValues = FieldValues,
@@ -54,6 +54,7 @@ export function PageFormAsyncSingleSelect<
   const { isSubmitting, isValidating } = formState;
 
   const [translations] = useFrameworkTranslations();
+  const required = useRequiredValidationRule(props.label, props.isRequired);
 
   return (
     <Controller<TFieldValues, TFieldName>
@@ -105,13 +106,7 @@ export function PageFormAsyncSingleSelect<
         );
       }}
       rules={{
-        required:
-          typeof props.label === 'string' && props.isRequired === true
-            ? {
-                value: true,
-                message: `${capitalizeFirstLetter(props.label.toLocaleLowerCase())} is required.`,
-              }
-            : undefined,
+        required,
         validate: props.validate,
       }}
     />

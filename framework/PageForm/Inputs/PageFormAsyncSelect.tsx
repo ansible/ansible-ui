@@ -11,8 +11,8 @@ import { ReactElement, ReactNode, useCallback, useEffect, useMemo, useState } fr
 import { Controller, FieldPath, FieldValues, PathValue, useFormContext } from 'react-hook-form';
 import { getID, useID } from '../../hooks/useID';
 import { useFrameworkTranslations } from '../../useFrameworkTranslations';
-import { capitalizeFirstLetter } from '../../utils/strings';
 import { PageFormGroup } from './PageFormGroup';
+import { useRequiredValidationRule } from './validation-hooks';
 
 export interface PageFormAsyncSelectProps<
   TFieldValues extends FieldValues = FieldValues,
@@ -94,6 +94,7 @@ export function PageFormAsyncSelect<
     },
     [frameworkTranslations.unknownError, name, query, setValue]
   );
+  const required = useRequiredValidationRule(props.label, props.isRequired);
 
   return (
     <Controller<TFieldValues, TFieldName>
@@ -132,15 +133,7 @@ export function PageFormAsyncSelect<
           </PageFormGroup>
         );
       }}
-      rules={{
-        required:
-          typeof label === 'string' && isRequired === true
-            ? {
-                value: true,
-                message: `${capitalizeFirstLetter(label.toLocaleLowerCase())} is required.`,
-              }
-            : undefined,
-      }}
+      rules={{ required }}
     />
   );
 }
