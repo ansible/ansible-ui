@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { LoadingPage, PageDetail, PageDetails, useGetPageUrl } from '../../../../../framework';
+import { useLocation, useParams } from 'react-router-dom';
+import { LoadingPage, PageDetail, PageDetails, usePageNavigate } from '../../../../../framework';
 import { formatDateString } from '../../../../../framework/utils/formatDateString';
 import { LastModifiedPageDetail } from '../../../../common/LastModifiedPageDetail';
 import { useGetItem } from '../../../../common/crud/useGet';
@@ -33,8 +33,7 @@ export function ScheduleDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string; schedule_id: string }>();
   const { pathname } = useLocation();
-  const getPageUrl = useGetPageUrl();
-  const history = useNavigate();
+  const pageNavigate = usePageNavigate();
   const {
     data: schedule,
     error,
@@ -76,11 +75,9 @@ export function ScheduleDetails() {
               value={schedule.modified}
               author={schedule.summary_fields.modified_by?.username}
               onClick={() =>
-                history(
-                  getPageUrl(AwxRoute.UserDetails, {
-                    params: { id: (schedule.summary_fields?.modified_by?.id ?? 0).toString() },
-                  })
-                )
+                pageNavigate(AwxRoute.UserDetails, {
+                  params: { id: schedule.summary_fields.modified_by?.id },
+                })
               }
             />
           </>

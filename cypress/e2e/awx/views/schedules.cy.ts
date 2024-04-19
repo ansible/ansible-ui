@@ -483,8 +483,7 @@ describe('Schedules - Edit', () => {
     cy.getByDataCy('rule-1').should('not.contain', 'FREQ=DAILY');
   });
 
-  //Fix when exceptions step works correctly
-  it.skip('can edit a schedule remove exceptions', () => {
+  it('can edit a schedule remove exceptions', () => {
     cy.filterTableBySingleSelect('name', schedule.name);
     cy.clickTableRowLink('name', schedule.name, { disableFilter: true });
     cy.getBy('[data-cy="edit-schedule"]').click();
@@ -496,14 +495,14 @@ describe('Schedules - Edit', () => {
       });
     });
     cy.clickButton(/^Next$/);
-    cy.clickButton(/^Add rule$/);
-    cy.getBy('[data-cy="row-id-1"]').within(() => {
-      cy.getBy('[data-cy="delete-rule"]').click();
-    });
+    cy.clickButton(/^Next$/);
+    cy.clickButton(/^Add exception$/);
     cy.clickButton(/^Add$/);
+    cy.getBy('[data-cy="row-id-1"]').within(() => {
+      cy.getBy('[data-cy="delete-exception"]').click();
+    });
     cy.clickButton(/^Next$/);
-    cy.clickButton(/^Next$/);
-    cy.getByDataCy('rule-1').should('not.contain', 'FREQ=DAILY');
+    cy.getByDataCy('exception-1').should('not.contain', 'FREQ=DAILY');
   });
 
   it('can enable a schedule', () => {
