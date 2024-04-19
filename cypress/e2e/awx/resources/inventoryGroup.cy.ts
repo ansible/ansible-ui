@@ -76,7 +76,8 @@ describe('Inventory Groups', () => {
         cy.get(`[href*="/infrastructure/inventories/inventory/${inventory.id}/hosts?"]`).click();
         cy.getByDataCy('name-column-cell').should('contain', host.name);
         cy.clickLink(/^Groups$/);
-        cy.clickTableRowKebabAction(group.name, 'edit-group', true);
+        cy.filterTableByMultiSelect('name', [group.name]);
+        cy.clickTableRowKebabAction(group.name, 'edit-group', false);
         cy.verifyPageTitle('Edit group');
         cy.get('[data-cy="name-form-group"]').type('-changed');
         cy.get('[data-cy="Submit"]').click();
@@ -148,7 +149,8 @@ describe('Inventory Groups', () => {
         cy.get(`[href*="/infrastructure/inventories/inventory/${inventory.id}/hosts?"]`).click();
         cy.getByDataCy('name-column-cell').should('contain', host.name);
         cy.clickLink(/^Groups$/);
-        cy.clickTableRow(group.name); //Refactor this line to use the updated custom command
+        cy.filterTableByMultiSelect('name', [group.name]);
+        cy.clickTableRowLink('name', group.name, { disableFilter: true });
         cy.verifyPageTitle(group.name);
         cy.get('[data-cy="edit-group"]').click();
         cy.verifyPageTitle('Edit group');
@@ -201,7 +203,8 @@ describe('Inventory Groups', () => {
         cy.get(`[href*="/infrastructure/inventories/inventory/${inventory.id}/hosts?"]`).click();
         cy.getByDataCy('name-column-cell').should('contain', host.name);
         cy.clickLink(/^Groups$/);
-        cy.clickTableRow(group.name); //Refactor this line to use the updated custom command
+        cy.filterTableByMultiSelect('name', [group.name]);
+        cy.clickTableRowLink('name', group.name, { disableFilter: true });
         cy.verifyPageTitle(group.name);
         cy.clickLink(/^Related Groups/);
         cy.clickButton(/^New group/);
@@ -209,7 +212,8 @@ describe('Inventory Groups', () => {
         cy.get('[data-cy="name-form-group"]').type(newRelatedGroup);
         cy.get('[data-cy="Submit"]').click();
         cy.contains(newRelatedGroup);
-        cy.selectTableRow(newRelatedGroup, true);
+        cy.filterTableByMultiSelect('name', [newRelatedGroup]);
+        cy.selectTableRow(newRelatedGroup, false);
         cy.clickToolbarKebabAction('disassociate-selected-groups');
         cy.get('#confirm').click();
         cy.clickButton(/^Disassociate groups/);
@@ -236,14 +240,17 @@ describe('Inventory Groups', () => {
         cy.get('[data-cy="name-form-group"]').type(newGroup);
         cy.get('[data-cy="Submit"]').click();
         cy.clickLink(/^Back to Groups/);
-        cy.clickTableRow(group.name); //Refactor this line to use the updated custom command
+        cy.filterTableByMultiSelect('name', [group.name]);
+        cy.clickTableRowLink('name', group.name, { disableFilter: true });
         cy.verifyPageTitle(group.name);
         cy.clickLink(/^Related Groups/);
         cy.clickButton(/^Existing group/);
-        cy.selectTableRow(newGroup);
+        cy.filterTableByMultiSelect('name', [newGroup]);
+        cy.selectTableRow(newGroup, false);
         cy.clickButton(/^Add groups/);
         cy.contains(newGroup);
-        cy.selectTableRow(newGroup, true);
+        cy.filterTableByMultiSelect('name', [newGroup]);
+        cy.selectTableRow(newGroup, false);
         cy.clickToolbarKebabAction('disassociate-selected-groups');
         cy.get('#confirm').click();
         cy.clickButton(/^Disassociate groups/);

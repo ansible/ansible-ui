@@ -5,8 +5,6 @@ const inventories = ['inventory', 'constructed_inventory'];
 
 inventories.forEach((inventory) => {
   describe(`GroupRelatedGroups (${inventory})`, () => {
-    let groupsOptions = 'groups_options.json';
-
     const path = '/inventories/:inventory_type/:id/groups/:group_id/nested_groups';
     const initialEntries = [`/inventories/${inventory}/1/groups/176/nested_groups`];
 
@@ -29,16 +27,6 @@ inventories.forEach((inventory) => {
         },
         {
           fixture: 'ad_hoc_commands.json',
-        }
-      );
-      cy.intercept(
-        {
-          method: 'OPTIONS',
-          url: '/api/v2/inventories/1/groups**',
-          hostname: 'localhost',
-        },
-        (req) => {
-          req.reply({ fixture: groupsOptions });
         }
       );
     });
@@ -76,80 +64,84 @@ inventories.forEach((inventory) => {
     }
 
     it('filter by name', () => {
+      cy.intercept(
+        {
+          method: 'OPTIONS',
+          url: '/api/v2/groups/176/children/',
+          hostname: 'localhost',
+        },
+        {
+          fixture: 'mock_options.json',
+        }
+      ).as('getFilterOptions');
+      cy.intercept(
+        {
+          method: 'GET',
+          url: '/api/v2/groups/176/children/*',
+          hostname: 'localhost',
+        },
+        {
+          fixture: 'groups.json',
+        }
+      ).as('getGroups');
+      cy.intercept('/api/v2/groups/176/children/?name=*').as('nameFilterRequest');
       cy.mount(<GroupRelatedGroups />, {
         path,
         initialEntries,
       });
-      cy.fixture('groups.json')
-        .its('results')
-        .should('be.an', 'array')
-        .then(() => {
-          cy.intercept(
-            {
-              method: 'GET',
-              url: '/api/v2/groups/176/children/?name__icontains=Related%20to%20group%201&**',
-            },
-            {
-              fixture: 'group.json',
-            }
-          ).as('nameFilter');
-          cy.filterTableByTypeAndText(/^Name$/, 'Related to group 1');
-          cy.get('@nameFilter.all').should('have.length.least', 1);
-          cy.clearAllFilters();
-        });
+      cy.filterTableByMultiSelect('name', ['Related to group 1']);
+      cy.wait('@nameFilterRequest');
+      cy.clearAllFilters();
     });
 
     it('filter by created by', () => {
+      cy.intercept(
+        {
+          method: 'OPTIONS',
+          url: '/api/v2/groups/176/children/',
+          hostname: 'localhost',
+        },
+        {
+          fixture: 'mock_options.json',
+        }
+      ).as('getFilterOptions');
+      cy.intercept('/api/v2/groups/176/children/?created_by__username__icontains=*').as(
+        'createdByFilterRequest'
+      );
       cy.mount(<GroupRelatedGroups />, {
         path,
         initialEntries,
       });
-      cy.fixture('groups.json')
-        .its('results')
-        .should('be.an', 'array')
-        .then(() => {
-          cy.intercept(
-            {
-              method: 'GET',
-              url: '/api/v2/groups/176/children/?created_by__username__icontains=test&**',
-            },
-            {
-              fixture: 'group.json',
-            }
-          ).as('createdByFilter');
-          cy.filterTableByTypeAndText(/^Created by$/, 'test');
-          cy.get('@createdByFilter.all').should('have.length.least', 1);
-          cy.clearAllFilters();
-        });
+      cy.filterTableByTextFilter('created-by', 'test');
+      cy.wait('@createdByFilterRequest');
+      cy.clearAllFilters();
     });
 
     it('filter by modified by', () => {
+      cy.intercept(
+        {
+          method: 'OPTIONS',
+          url: '/api/v2/groups/176/children/',
+          hostname: 'localhost',
+        },
+        {
+          fixture: 'mock_options.json',
+        }
+      ).as('getFilterOptions');
+      cy.intercept('/api/v2/groups/176/children/?modified_by__username__icontains=*').as(
+        'modifiedByFilterRequest'
+      );
       cy.mount(<GroupRelatedGroups />, {
         path,
         initialEntries,
       });
-      cy.fixture('groups.json')
-        .its('results')
-        .should('be.an', 'array')
-        .then(() => {
-          cy.intercept(
-            {
-              method: 'GET',
-              url: '/api/v2/groups/176/children/?modified_by__username__icontains=test&**',
-            },
-            {
-              fixture: 'group.json',
-            }
-          ).as('modifiedByFilter');
-          cy.filterTableByTypeAndText(/^Modified by$/, 'test');
-          cy.get('@modifiedByFilter.all').should('have.length.least', 1);
-          cy.clearAllFilters();
-        });
+      cy.filterTableByTextFilter('modified-by', 'test');
+      cy.wait('@modifiedByFilterRequest');
+      cy.clearAllFilters();
     });
 
     if (inventory === 'inventory') {
       it('disables new group button when user does not have permissions', () => {
-        groupsOptions = 'groups_options_no_post.json';
         cy.mount(<GroupRelatedGroups />, {
           path,
           initialEntries,

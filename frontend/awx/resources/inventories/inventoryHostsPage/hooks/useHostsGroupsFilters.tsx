@@ -1,18 +1,24 @@
-import { useMemo } from 'react';
-import { IToolbarFilter } from '../../../../../../framework';
 import {
   useCreatedByToolbarFilter,
   useModifiedByToolbarFilter,
-  useNameToolbarFilter,
 } from '../../../../common/awx-toolbar-filters';
+import { useDynamicToolbarFilters } from '../../../../common/useDynamicFilters';
 
-export function useHostsGroupsFilters() {
+export function useHostsGroupsFilters(url?: string) {
   const createdByToolbarFilter = useCreatedByToolbarFilter();
   const modifiedByToolbarFilter = useModifiedByToolbarFilter();
-  const nameToolbarFilter = useNameToolbarFilter();
-  const toolbarFilters = useMemo<IToolbarFilter[]>(
-    () => [nameToolbarFilter, createdByToolbarFilter, modifiedByToolbarFilter],
-    [nameToolbarFilter, createdByToolbarFilter, modifiedByToolbarFilter]
-  );
+  const toolbarFilters = useDynamicToolbarFilters({
+    optionsPath: url ? url : 'groups',
+    preFilledValueKeys: {
+      name: {
+        apiPath: url ? url : 'groups',
+      },
+      id: {
+        apiPath: url ? url : 'groups',
+      },
+    },
+    preSortedKeys: ['name', 'id', 'description', 'created-by', 'modified-by'],
+    additionalFilters: [createdByToolbarFilter, modifiedByToolbarFilter],
+  });
   return toolbarFilters;
 }

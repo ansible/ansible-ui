@@ -81,7 +81,7 @@ describe('host and inventory host', () => {
         /// single disassociate
         // TODO: need to change this when
         // https://issues.redhat.com/browse/AAP-22914 change will applyed
-        cy.searchAndDisplayResource(group.name);
+        cy.filterTableByMultiSelect('name', [group.name]);
         cy.get(`[data-cy="row-id-${group.id}"] [data-cy="checkbox-column-cell"]`).click();
         disassociate();
         navigateToHost(url, host.name, '[data-cy="name-column-cell"] a');
