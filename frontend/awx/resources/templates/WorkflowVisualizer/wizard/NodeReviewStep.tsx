@@ -14,9 +14,6 @@ import { WizardFormValues, UnifiedJobType } from '../types';
 import { hasDaysToKeep, getValueBasedOnJobType } from './helpers';
 import { PromptReviewDetails } from './PromptReviewDetails';
 import { RESOURCE_TYPE } from '../constants';
-import { ScheduleFormWizard } from '../../../../views/schedules/types';
-import { PageFormSection } from '../../../../../../framework/PageForm/Utils/PageFormSection';
-import { RulesPreview } from '../../../../views/schedules/components/RulesPreview';
 
 const ResourceLink: Record<UnifiedJobType, AwxRoute> = {
   inventory_update: AwxRoute.InventorySourceDetail,
@@ -32,7 +29,7 @@ export function NodeReviewStep() {
   const getPageUrl = useGetPageUrl();
 
   const { wizardData, visibleSteps } = usePageWizard() as {
-    wizardData: WizardFormValues & ScheduleFormWizard;
+    wizardData: WizardFormValues;
     visibleSteps: PageWizardStep[];
   };
   const {
@@ -44,10 +41,6 @@ export function NodeReviewStep() {
     node_alias,
     node_convergence,
     node_days_to_keep,
-    name,
-    description,
-    startDateTime,
-    timezone,
   } = wizardData;
 
   const hasPromptDetails = Boolean(visibleSteps.find((step) => step.id === 'nodePromptsStep'));
@@ -84,31 +77,20 @@ export function NodeReviewStep() {
   }
   return (
     <>
-      <PageFormSection title={t('Review')} singleColumn>
-        <PageDetails numberOfColumns={name ? 'two' : 'single'} disablePadding>
-          <PageDetail label={t('Resource type')}>{nodeTypeDetail}</PageDetail>
-          <PageDetail label={t('Resource')}>
-            <Link to={resourceDetailsLink}>{nameDetail}</Link>
-          </PageDetail>
-          <PageDetail label={t('Name')}>{name}</PageDetail>
-          <PageDetail label={t('Description')}>{description ?? descriptionDetail}</PageDetail>
-          {startDateTime && (
-            <PageDetail label={t('Start date/time')}>
-              {startDateTime.date + ', ' + startDateTime.time}
-            </PageDetail>
-          )}
-
-          <PageDetail label={t('Local time zone')}>{timezone}</PageDetail>
-          <PageDetail label={t('Timeout')}>{timeoutDetail}</PageDetail>
-          <PageDetail label={t('Convergence')}>{convergenceDetail}</PageDetail>
-          <PageDetail label={t('Alias')}>{node_alias}</PageDetail>
-          {showDaysToKeep ? (
-            <PageDetailCodeEditor label={t('Extra vars')} value={extraVarsDetail} />
-          ) : null}
-          {hasPromptDetails ? <PromptReviewDetails /> : null}
-        </PageDetails>
-        {name && <RulesPreview />}
-      </PageFormSection>
+      <PageDetails numberOfColumns="single">
+        <PageDetail label={t('Type')}>{nodeTypeDetail}</PageDetail>
+        <PageDetail label={t('Name')}>
+          <Link to={resourceDetailsLink}>{nameDetail}</Link>
+        </PageDetail>
+        <PageDetail label={t('Description')}>{descriptionDetail}</PageDetail>
+        <PageDetail label={t('Timeout')}>{timeoutDetail}</PageDetail>
+        <PageDetail label={t('Convergence')}>{convergenceDetail}</PageDetail>
+        <PageDetail label={t('Alias')}>{node_alias}</PageDetail>
+        {showDaysToKeep ? (
+          <PageDetailCodeEditor label={t('Extra vars')} value={extraVarsDetail} />
+        ) : null}
+        {hasPromptDetails ? <PromptReviewDetails /> : null}
+      </PageDetails>
     </>
   );
 }
