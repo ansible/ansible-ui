@@ -127,6 +127,13 @@ describe('Inventory Groups', () => {
         cy.getByDataCy('credential-select-form-group').within(() => {
           cy.getBy('[aria-label="Options menu"]').click();
         });
+        cy.get('body').then(($body) => {
+          if ($body.find('[id="pf-modal-part-4"]').length === 0) {
+            cy.getByDataCy('credential-select-form-group').within(() => {
+              cy.getBy('[aria-label="Options menu"]').click();
+            });
+          }
+        });
         cy.selectTableRowByCheckbox('name', machineCredential.name);
         cy.clickButton(/^Confirm$/);
         cy.clickButton(/^Next$/);
