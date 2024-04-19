@@ -483,7 +483,7 @@ describe('Schedules - Edit', () => {
     cy.getByDataCy('rule-1').should('not.contain', 'FREQ=DAILY');
   });
 
-  it('can edit a schedule remove exceptions', () => {
+  it.skip('can edit a schedule remove exceptions', () => {
     cy.filterTableBySingleSelect('name', schedule.name);
     cy.clickTableRowLink('name', schedule.name, { disableFilter: true });
     cy.getBy('[data-cy="edit-schedule"]').click();

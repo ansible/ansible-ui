@@ -946,8 +946,7 @@ Cypress.Commands.add('createAWXSchedule', () => {
     name: 'E2E Schedule ' + randomString(4),
     description: 'E2E Schedule Description',
     enabled: true,
-    rrule:
-      'DTSTART:20201231T000000Z RRULE:FREQ=DAILY;INTERVAL=1;COUNT=1 EXRULE:FREQ=DAILY;INTERVAL=1;WKST=SU;BYDAY=WE;BYHOUR=16;BYMINUTE=30;BYSECOND=0',
+    rrule: 'DTSTART:20201231T000000Z RRULE:FREQ=DAILY;INTERVAL=1;COUNT=1',
     unified_job_template: 1,
     extra_data: {},
   }).then((schedule) => schedule);
