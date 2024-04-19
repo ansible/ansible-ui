@@ -7,19 +7,19 @@ import {
   PageWizardStep,
   useGetPageUrl,
   usePageNavigate,
-} from '../../../../framework';
-import { EdaSelectTeamsStep } from '../../access/common/EdaRolesWizardSteps/EdaSelectTeamsStep';
-import { EdaTeam } from '../../interfaces/EdaTeam';
-import { EdaSelectRolesStep } from '../../access/common/EdaRolesWizardSteps/EdaSelectRolesStep';
+} from '../../../../../framework';
+import { EdaSelectTeamsStep } from '../../../access/common/EdaRolesWizardSteps/EdaSelectTeamsStep';
+import { EdaTeam } from '../../../interfaces/EdaTeam';
+import { EdaSelectRolesStep } from '../../../access/common/EdaRolesWizardSteps/EdaSelectRolesStep';
 import { useParams } from 'react-router-dom';
-import { useGet } from '../../../common/crud/useGet';
-import { EdaProject } from '../../interfaces/EdaProject';
-import { edaAPI } from '../../common/eda-utils';
-import { postRequest } from '../../../common/crud/Data';
-import { RoleAssignmentsReviewStep } from '../../../common/access/RolesWizard/steps/RoleAssignmentsReviewStep';
-import { EdaRbacRole } from '../../interfaces/EdaRbacRole';
-import { EdaRoute } from '../../main/EdaRoutes';
-import { useEdaBulkActionDialog } from '../../common/useEdaBulkActionDialog';
+import { useGet } from '../../../../common/crud/useGet';
+import { EdaCredential } from '../../../interfaces/EdaCredential';
+import { edaAPI } from '../../../common/eda-utils';
+import { postRequest } from '../../../../common/crud/Data';
+import { RoleAssignmentsReviewStep } from '../../../../common/access/RolesWizard/steps/RoleAssignmentsReviewStep';
+import { EdaRbacRole } from '../../../interfaces/EdaRbacRole';
+import { EdaRoute } from '../../../main/EdaRoutes';
+import { useEdaBulkActionDialog } from '../../../common/useEdaBulkActionDialog';
 
 interface WizardFormValues {
   teams: EdaTeam[];
@@ -31,15 +31,17 @@ interface TeamRolePair {
   role: EdaRbacRole;
 }
 
-export function EdaProjectAddTeams() {
+export function EdaCredentialAddTeams() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const params = useParams<{ id: string }>();
   const pageNavigate = usePageNavigate();
-  const { data: project, isLoading } = useGet<EdaProject>(edaAPI`/projects/${params.id ?? ''}/`);
-  const teamRoleProgressDialog = useEdaBulkActionDialog<TeamRolePair>();
+  const { data: credential, isLoading } = useGet<EdaCredential>(
+    edaAPI`/eda-credentials/${params.id ?? ''}/`
+  );
+  const userProgressDialog = useEdaBulkActionDialog<TeamRolePair>();
 
-  if (isLoading || !project) return <LoadingPage />;
+  if (isLoading || !credential) return <LoadingPage />;
 
   const steps: PageWizardStep[] = [
     {
@@ -48,9 +50,9 @@ export function EdaProjectAddTeams() {
       inputs: (
         <EdaSelectTeamsStep
           descriptionForTeamsSelection={t(
-            'Select the team(s) that you want to give access to {{projectName}}.',
+            'Select the team(s) that you want to give access to {{credentialName}}.',
             {
-              projectName: project?.name,
+              credentialName: credential?.name,
             }
           )}
         />
@@ -67,10 +69,10 @@ export function EdaProjectAddTeams() {
       label: t('Select roles to apply'),
       inputs: (
         <EdaSelectRolesStep
-          contentType="project"
+          contentType="edacredential"
           fieldNameForPreviousStep="teams"
-          descriptionForRoleSelection={t('Choose roles to apply to {{projectName}}.', {
-            projectName: project?.name,
+          descriptionForRoleSelection={t('Choose roles to apply to {{credentialName}}.', {
+            credentialName: credential?.name,
           })}
         />
       ),
@@ -97,7 +99,7 @@ export function EdaProjectAddTeams() {
       }
     }
     return new Promise<void>((resolve) => {
-      teamRoleProgressDialog({
+      userProgressDialog({
         title: t('Add roles'),
         keyFn: ({ team, role }) => `${team.id}_${role.id}`,
         items,
@@ -109,15 +111,15 @@ export function EdaProjectAddTeams() {
           postRequest(edaAPI`/role_team_assignments/`, {
             team: team.id,
             role_definition: role.id,
-            content_type: 'eda.project',
-            object_id: project.id,
+            content_type: 'eda.edacredential',
+            object_id: credential.id,
           }),
         onComplete: () => {
           resolve();
         },
         onClose: () => {
-          pageNavigate(EdaRoute.ProjectTeamAccess, {
-            params: { id: project.id.toString() },
+          pageNavigate(EdaRoute.CredentialTeamAccess, {
+            params: { id: credential.id.toString() },
           });
         },
       });
@@ -129,14 +131,14 @@ export function EdaProjectAddTeams() {
       <PageHeader
         title={t('Add roles')}
         breadcrumbs={[
-          { label: t('Projects'), to: getPageUrl(EdaRoute.Projects) },
+          { label: t('Credentials'), to: getPageUrl(EdaRoute.Credentials) },
           {
-            label: project?.name,
-            to: getPageUrl(EdaRoute.ProjectDetails, { params: { id: project?.id } }),
+            label: credential?.name,
+            to: getPageUrl(EdaRoute.CredentialDetails, { params: { id: credential?.id } }),
           },
           {
             label: t('Team Access'),
-            to: getPageUrl(EdaRoute.ProjectTeamAccess, { params: { id: project?.id } }),
+            to: getPageUrl(EdaRoute.CredentialTeamAccess, { params: { id: credential?.id } }),
           },
           { label: t('Add roles') },
         ]}
@@ -146,7 +148,7 @@ export function EdaProjectAddTeams() {
         onSubmit={onSubmit}
         disableGrid
         onCancel={() => {
-          pageNavigate(EdaRoute.ProjectTeamAccess, { params: { id: project?.id } });
+          pageNavigate(EdaRoute.CredentialTeamAccess, { params: { id: credential?.id } });
         }}
       />
     </PageLayout>

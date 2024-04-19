@@ -8,18 +8,18 @@ import {
   PageWizardStep,
   useGetPageUrl,
   usePageNavigate,
-} from '../../../../framework';
-import { RoleAssignmentsReviewStep } from '../../../common/access/RolesWizard/steps/RoleAssignmentsReviewStep';
-import { postRequest } from '../../../common/crud/Data';
-import { useGet } from '../../../common/crud/useGet';
-import { edaAPI } from '../../common/eda-utils';
-import { useEdaBulkActionDialog } from '../../common/useEdaBulkActionDialog';
-import { EdaDecisionEnvironment } from '../../interfaces/EdaDecisionEnvironment';
-import { EdaRbacRole } from '../../interfaces/EdaRbacRole';
-import { EdaUser } from '../../interfaces/EdaUser';
-import { EdaRoute } from '../../main/EdaRoutes';
-import { EdaSelectUsersStep } from '../../access/common/EdaRolesWizardSteps/EdaSelectUsersStep';
-import { EdaSelectRolesStep } from '../../access/common/EdaRolesWizardSteps/EdaSelectRolesStep';
+} from '../../../../../framework';
+import { EdaSelectUsersStep } from '../../../access/common/EdaRolesWizardSteps/EdaSelectUsersStep';
+import { EdaSelectRolesStep } from '../../../access/common/EdaRolesWizardSteps/EdaSelectRolesStep';
+import { EdaRoute } from '../../../main/EdaRoutes';
+import { EdaCredential } from '../../../interfaces/EdaCredential';
+import { useGet } from '../../../../common/crud/useGet';
+import { edaAPI } from '../../../common/eda-utils';
+import { postRequest } from '../../../../common/crud/Data';
+import { EdaUser } from '../../../interfaces/EdaUser';
+import { RoleAssignmentsReviewStep } from '../../../../common/access/RolesWizard/steps/RoleAssignmentsReviewStep';
+import { EdaRbacRole } from '../../../interfaces/EdaRbacRole';
+import { useEdaBulkActionDialog } from '../../../common/useEdaBulkActionDialog';
 
 interface WizardFormValues {
   users: EdaUser[];
@@ -31,18 +31,18 @@ interface UserRolePair {
   role: EdaRbacRole;
 }
 
-export function EdaDecisionEnvironmentAddUsers() {
+export function EdaCredentialAddUsers() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const params = useParams<{ id: string }>();
 
-  const { data: decisionEnvironment, isLoading } = useGet<EdaDecisionEnvironment>(
-    edaAPI`/decision-environments/${params.id ?? ''}/`
+  const { data: credential, isLoading } = useGet<EdaCredential>(
+    edaAPI`/eda-credentials/${params.id ?? ''}/`
   );
   const userProgressDialog = useEdaBulkActionDialog<UserRolePair>();
   const pageNavigate = usePageNavigate();
 
-  if (isLoading || !decisionEnvironment) return <LoadingPage />;
+  if (isLoading || !credential) return <LoadingPage />;
 
   const steps: PageWizardStep[] = [
     {
@@ -51,9 +51,9 @@ export function EdaDecisionEnvironmentAddUsers() {
       inputs: (
         <EdaSelectUsersStep
           descriptionForUsersSelection={t(
-            'Select the user(s) that you want to give access to {{decisionEnvironmentName}}.',
+            'Select the user(s) that you want to give access to {{credentialName}}.',
             {
-              decisionEnvironmentName: decisionEnvironment?.name,
+              credentialName: credential?.name,
             }
           )}
         />
@@ -70,10 +70,10 @@ export function EdaDecisionEnvironmentAddUsers() {
       label: t('Select roles to apply'),
       inputs: (
         <EdaSelectRolesStep
-          contentType="decisionenvironment"
+          contentType="edacredential"
           fieldNameForPreviousStep="users"
-          descriptionForRoleSelection={t('Choose roles to apply to {{decisionEnvironmentName}}.', {
-            decisionEnvironmentName: decisionEnvironment?.name,
+          descriptionForRoleSelection={t('Choose roles to apply to {{credentialName}}.', {
+            credentialName: credential?.name,
           })}
         />
       ),
@@ -112,15 +112,15 @@ export function EdaDecisionEnvironmentAddUsers() {
           postRequest(edaAPI`/role_user_assignments/`, {
             user: user.id,
             role_definition: role.id,
-            content_type: 'eda.decision-environment',
-            object_id: decisionEnvironment.id,
+            content_type: 'eda.edacredential',
+            object_id: credential.id,
           }),
         onComplete: () => {
           resolve();
         },
         onClose: () => {
-          pageNavigate(EdaRoute.DecisionEnvironmentUserAccess, {
-            params: { id: decisionEnvironment.id.toString() },
+          pageNavigate(EdaRoute.CredentialUserAccess, {
+            params: { id: credential.id.toString() },
           });
         },
       });
@@ -132,18 +132,14 @@ export function EdaDecisionEnvironmentAddUsers() {
       <PageHeader
         title={t('Add roles')}
         breadcrumbs={[
-          { label: t('Decision Environments'), to: getPageUrl(EdaRoute.DecisionEnvironments) },
+          { label: t('Credentials'), to: getPageUrl(EdaRoute.Credentials) },
           {
-            label: decisionEnvironment?.name,
-            to: getPageUrl(EdaRoute.DecisionEnvironmentDetails, {
-              params: { id: decisionEnvironment?.id },
-            }),
+            label: credential?.name,
+            to: getPageUrl(EdaRoute.CredentialDetails, { params: { id: credential?.id } }),
           },
           {
             label: t('User Access'),
-            to: getPageUrl(EdaRoute.DecisionEnvironmentUserAccess, {
-              params: { id: decisionEnvironment?.id },
-            }),
+            to: getPageUrl(EdaRoute.CredentialUserAccess, { params: { id: credential?.id } }),
           },
           { label: t('Add roles') },
         ]}
@@ -153,9 +149,7 @@ export function EdaDecisionEnvironmentAddUsers() {
         onSubmit={onSubmit}
         disableGrid
         onCancel={() => {
-          pageNavigate(EdaRoute.DecisionEnvironmentUserAccess, {
-            params: { id: decisionEnvironment?.id },
-          });
+          pageNavigate(EdaRoute.CredentialUserAccess, { params: { id: credential?.id } });
         }}
       />
     </PageLayout>

@@ -18,6 +18,7 @@ import { EdaUserDetails } from '../access/users/UserPage/EdaUserDetails';
 import { MyPage } from '../access/users/UserPage/MyPage';
 import { UserPage } from '../access/users/UserPage/UserPage';
 import { Users } from '../access/users/Users';
+import { EdaAddUserRoles } from '../access/users/EdaAddUserRoles';
 import {
   CreateDecisionEnvironment,
   EditDecisionEnvironment,
@@ -67,6 +68,8 @@ import { EdaProjectAddUsers } from '../projects/components/EdaProjectAddUsers';
 import { EdaProjectAddTeams } from '../projects/components/EdaProjectAddTeams';
 import { EdaDecisionEnvironmentAddTeams } from '../decision-environments/components/EdaDecisionEnvironmentAddTeams';
 import { EdaDecisionEnvironmentAddUsers } from '../decision-environments/components/EdaDecisionEnvironmentAddUsers';
+import { EdaCredentialAddUsers } from '../access/credentials/components/EdaCredentialAddUsers';
+import { EdaCredentialAddTeams } from '../access/credentials/components/EdaCredentialAddTeams';
 import { PageNotImplemented } from '../../../framework';
 import { CredentialTypeCredentials } from '../access/credential-types/CredentialTypePage/CredentialTypeCredentials';
 
@@ -394,6 +397,11 @@ export function useEdaNavigation() {
                   element: <EdaUserDetails />,
                 },
                 {
+                  id: EdaRoute.UserRoles,
+                  path: 'roles',
+                  element: <PageNotImplemented />,
+                },
+                {
                   id: EdaRoute.UserTokens,
                   path: 'tokens',
                   element: <ControllerTokens />,
@@ -403,6 +411,11 @@ export function useEdaNavigation() {
                   element: <Navigate to="details" />,
                 },
               ],
+            },
+            {
+              id: EdaRoute.UserAddRoles,
+              path: ':id/roles/add-roles',
+              element: <EdaAddUserRoles />,
             },
             {
               path: 'tokens',
@@ -498,6 +511,16 @@ export function useEdaNavigation() {
                   element: <Navigate to="details" />,
                 },
               ],
+            },
+            {
+              id: EdaRoute.CredentialAddUsers,
+              path: ':id/users/add-users',
+              element: <EdaCredentialAddUsers />,
+            },
+            {
+              id: EdaRoute.CredentialAddTeams,
+              path: ':id/team-access/add-teams',
+              element: <EdaCredentialAddTeams />,
             },
             {
               path: '',

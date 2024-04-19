@@ -1,9 +1,10 @@
 import { useMemo, useState } from 'react';
 import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
-import { Badge, Divider, ExpandableSection, Title, TextContent } from '@patternfly/react-core';
+import { Badge, Divider, ExpandableSection, Title } from '@patternfly/react-core';
 import { getItemKey } from '../../../crud/Data';
 import {
   ITableColumn,
+  PageDetails,
   PageDetail,
   PageTable,
   TextCell,
@@ -31,6 +32,9 @@ interface ReviewExpandableListProps<
 const StyledBadge = styled(Badge)`
   margin-left: var(--pf-v5-global--spacer--sm);
 `;
+const StyledDivider = styled(Divider)`
+  margin: var(--pf-v5-global--spacer--md) 0 var(--pf-v5-global--spacer--md) 0;
+`;
 
 export function RoleAssignmentsReviewStep() {
   const { wizardData } = usePageWizard();
@@ -38,36 +42,44 @@ export function RoleAssignmentsReviewStep() {
   const { resourceType, resources, users, teams, edaRoles } = wizardData as ReviewData;
 
   return (
-    <TextContent>
+    <>
       <Title headingLevel="h1">{t('Review')}</Title>
       {resourceType ? (
         <>
-          <PageDetail label={t('Resource type')}>{resourceType}</PageDetail>
-          <Divider />
+          <div
+            style={{
+              marginTop: 'var(--pf-v5-global--spacer--lg)',
+            }}
+          >
+            <PageDetails disablePadding>
+              <PageDetail label={t('Resource type')}>{resourceType}</PageDetail>
+            </PageDetails>
+          </div>
+          <StyledDivider className="pf-v5-u-mb-xl" />
         </>
       ) : null}
       {resources && resources.length ? (
         <>
           <ReviewExpandableList selectedItems={resources} fieldName="resources" />
-          <Divider />
+          <StyledDivider />
         </>
       ) : null}
       {users && users.length ? (
         <>
           <ReviewExpandableList selectedItems={users} fieldName="users" />
-          <Divider />
+          <StyledDivider />
         </>
       ) : null}
       {teams && teams.length ? (
         <>
           <ReviewExpandableList selectedItems={teams} fieldName="teams" />
-          <Divider />
+          <StyledDivider />
         </>
       ) : null}
       {edaRoles && edaRoles.length ? (
         <ReviewExpandableList selectedItems={edaRoles} fieldName="edaRoles" />
       ) : null}
-    </TextContent>
+    </>
   );
 }
 

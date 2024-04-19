@@ -40,7 +40,7 @@ export function HubActiveUserProvider(props: { children: ReactNode }) {
   }, [data]);
 
   const activeHubUserIsLoading = useMemo<boolean>(
-    () => !activeHubUser && !error && isLoading,
+    () => (!activeHubUser && !error) || isLoading,
     [activeHubUser, isLoading, error]
   );
 

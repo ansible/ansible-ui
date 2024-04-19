@@ -40,7 +40,7 @@ export function EdaActiveUserProvider(props: { children: ReactNode }) {
   }, [data]);
 
   const activeEdaUserIsLoading = useMemo<boolean>(
-    () => !activeEdaUser && !error && isLoading,
+    () => (!activeEdaUser && !error) || isLoading,
     [activeEdaUser, isLoading, error]
   );
 
