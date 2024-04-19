@@ -52,7 +52,7 @@ export function TemplateLaunchReviewStep(props: { template: JobTemplate }) {
       });
     }
 
-    const mergedData: { [key: string]: string } = {
+    const mergedData: { [key: string]: string | string[] | { name: string }[] } = {
       ...jsonObj,
       ...survey,
     };
