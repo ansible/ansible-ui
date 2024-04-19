@@ -14,6 +14,8 @@ import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardPro
 import { WizardFormValues } from '../../templates/WorkflowVisualizer/types';
 import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageDetailCodeEditor';
 import { RunCommandWizard } from '../../../interfaces/Inventory';
+import { LabelGroup } from '@patternfly/react-core';
+import { CredentialLabel } from '../../../common/CredentialLabel';
 
 export function RunCommandDetailStep() {
   const { t } = useTranslation();
@@ -104,8 +106,17 @@ export function RunCommandReviewStep() {
   const { wizardData } = usePageWizard() as {
     wizardData: WizardFormValues & RunCommandWizard;
   };
-  const { module, module_args, verbosity, limit, forks, diff_mode, become_enabled, extra_vars } =
-    wizardData;
+  const {
+    module,
+    module_args,
+    verbosity,
+    limit,
+    forks,
+    diff_mode,
+    become_enabled,
+    extra_vars,
+    credential: credentials,
+  } = wizardData;
 
   return (
     <>
@@ -121,6 +132,13 @@ export function RunCommandReviewStep() {
             {become_enabled ? t('On') : t('Off')}
           </PageDetail>
           <PageDetailCodeEditor label={t('Extra vars')} value={extra_vars} />
+          <PageDetail label={t('Credentials')} isEmpty={!credentials?.length}>
+            <LabelGroup>
+              {credentials?.map((credential) => (
+                <CredentialLabel credential={credential} key={credential.id} />
+              ))}
+            </LabelGroup>
+          </PageDetail>
         </PageDetails>
       </PageFormSection>
     </>

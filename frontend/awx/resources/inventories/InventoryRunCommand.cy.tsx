@@ -53,5 +53,6 @@ describe('Run command wizard', () => {
     cy.getByDataCy('show-changes').should('contain', 'On');
     cy.getByDataCy('privilege-escalation').should('contain', 'On');
     cy.getByDataCy('code-block-value').should('contain', 'test: test');
+    cy.getByDataCy('credentials').should('contain', 'Demo Credential');
   });
 });
