@@ -113,6 +113,7 @@ jobs:
           parallel: true
           # auto-cancel-after-failures: 1
           config-file: cypress.eda.config.ts
+          tag: "!flaky"
         env:
           EDA_SERVER: ${{ inputs.EDA_SERVER }}
           EDA_USERNAME: e2e

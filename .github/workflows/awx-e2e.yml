@@ -115,6 +115,7 @@ jobs:
           parallel: true
           # auto-cancel-after-failures: 1
           config-file: cypress.awx.config.ts
+          tag: "!flaky"
         env:
           AWX_SERVER: ${{ inputs.AWX_SERVER }}
           AWX_USERNAME: e2e

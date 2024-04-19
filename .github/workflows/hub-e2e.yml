@@ -119,6 +119,7 @@ jobs:
           record: true
           parallel: true
           config-file: cypress.hub.config.ts
+          tag: "!flaky"
         env:
           HUB_SERVER: ${{ inputs.HUB_SERVER }}
           HUB_USERNAME: e2e
