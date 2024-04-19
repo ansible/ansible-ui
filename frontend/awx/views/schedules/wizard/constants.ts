@@ -2,7 +2,7 @@ import { Frequency, RRule } from 'rrule';
 import { ScheduleResourceType } from '../types';
 
 export const RULES_DEFAULT_VALUES = {
-  freq: Frequency.WEEKLY,
+  freq: Frequency.YEARLY,
   interval: 1,
   wkst: RRule.SU,
   byweekday: null,
