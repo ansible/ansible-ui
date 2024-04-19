@@ -19,6 +19,7 @@ export enum EdaRoute {
   RulebookActivationTeamAccess = 'eda-rulebook-activation-team-access',
   RulebookActivationUserAccess = 'eda-rulebook-activation-user-access',
   RulebookActivationAddTeams = 'eda-rulebook-activation-add-teams',
+  RulebookActivationAddUsers = 'eda-rulebook-activation-add-users',
 
   Projects = 'eda-projects',
   CreateProject = 'eda-create-project',

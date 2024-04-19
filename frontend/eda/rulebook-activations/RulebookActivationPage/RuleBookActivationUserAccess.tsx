@@ -8,7 +8,7 @@ export function RulebookActivationUserAccess() {
     <UserAccess
       id={params.id || ''}
       type={'activation'}
-      addRolesRoute={EdaRoute.RulebookActivationAddTeams}
+      addRolesRoute={EdaRoute.RulebookActivationAddUsers}
     />
   );
 }
