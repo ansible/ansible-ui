@@ -65,7 +65,7 @@ describe('EdaRulebookActivationsCard.cy.ts', () => {
     cy.mount(<EdaOverview />);
   });
   it('Dashboard renders the correct rulebook activations columns', () => {
-    cy.contains(/^Recently updated activations$/).should('be.visible');
+    cy.contains(/^Recently updated rulebook activations$/).should('be.visible');
     cy.contains('th', 'Name');
     cy.contains('th', 'Status');
   });

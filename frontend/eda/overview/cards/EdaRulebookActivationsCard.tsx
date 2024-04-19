@@ -28,9 +28,9 @@ export function EdaRulebookActivationsCard() {
   return (
     <PageDashboardCard
       title={t('Rulebook Activations')}
-      subtitle={t('Recently updated activations')}
+      subtitle={t('Recently updated rulebook activations')}
       height="md"
-      linkText={t('Go to Rulebook Activations')}
+      linkText={t('View all Rulebook Activations')}
       to={getPageUrl(EdaRoute.RulebookActivations)}
       helpTitle={t('Rulebook activations')}
       help={t('Rulebook activations are rulebooks that have been activated to run.')}
