@@ -80,7 +80,7 @@ export function RulesPreviewBody(props: {
                       return <Label key={i}>{formatDateString(value)}</Label>;
                     })}
                 </LabelGroup>
-                <DescriptionListTerm>{t('Rrule')}</DescriptionListTerm>
+                <DescriptionListTerm>{t('RRuleSet')}</DescriptionListTerm>
                 <DescriptionListDescription>
                   {RRule.optionsToString(rule.options)}
                 </DescriptionListDescription>
