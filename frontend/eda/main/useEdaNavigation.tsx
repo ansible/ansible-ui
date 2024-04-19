@@ -72,6 +72,8 @@ import { EdaCredentialAddUsers } from '../access/credentials/components/EdaCrede
 import { EdaCredentialAddTeams } from '../access/credentials/components/EdaCredentialAddTeams';
 import { PageNotImplemented } from '../../../framework';
 import { CredentialTypeCredentials } from '../access/credential-types/CredentialTypePage/CredentialTypeCredentials';
+import { EdaRulebookActivationAddTeams } from '../rulebook-activations/components/EdaRulebookActivationAddTeams';
+import { EdaRulebookActivationAddUsers } from '../rulebook-activations/components/EdaRulebookActivationAddUsers';
 
 export function useEdaNavigation() {
   const { t } = useTranslation();
@@ -176,6 +178,16 @@ export function useEdaNavigation() {
               element: <Navigate to="details" />,
             },
           ],
+        },
+        {
+          id: EdaRoute.RulebookActivationAddUsers,
+          path: ':id/user-access/add-users',
+          element: <EdaRulebookActivationAddUsers />,
+        },
+        {
+          id: EdaRoute.RulebookActivationAddTeams,
+          path: ':id/team-access/add-teams',
+          element: <EdaRulebookActivationAddTeams />,
         },
         {
           path: '',
