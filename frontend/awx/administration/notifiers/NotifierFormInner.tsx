@@ -83,9 +83,7 @@ function EmailForm() {
         name={'notification_configuration.recipients'}
         label={t('Recipient List')}
         isRequired
-        labelHelp={t(
-          'Use one email address per line to create a recipient list for this type of notification.'
-        )}
+        labelHelp={getLabelHelp('email', 'recipients', t)}
       />
 
       <PageFormTextInput<NotificationTemplate>
@@ -110,9 +108,7 @@ function EmailForm() {
         label={t('Timeout')}
         isRequired
         validate={(value) => validateNumber(value, 1, 120, t)}
-        labelHelp={t(
-          'The amount of time (in seconds) before the email notification stops trying to reach the host and times out. Ranges from 1 to 120 seconds.'
-        )}
+        labelHelp={getLabelHelp('email', 'timeout', t)}
       />
 
       <PageFormGroup
@@ -156,26 +152,13 @@ function SlackForm() {
         name={'notification_configuration.channels'}
         label={t('Destination Channels')}
         isRequired
-        labelHelp={
-          <Trans>
-            One Slack channel per line. The pound symbol (#) is required for channels. To respond to
-            or start a thread to a specific message add the parent message Id to the channel where
-            the parent message Id is 16 digits. A dot (.) must be manually inserted after the 10th
-            digit. ie:#destination-channel, 1231257890.006423. See Slack{' '}
-            <a href="https://api.slack.com/messaging/retrieving#individual_messages">
-              documentation
-            </a>{' '}
-            for more information.
-          </Trans>
-        }
+        labelHelp={getLabelHelp('slack', 'channels', t)}
       />
 
       <PageFormTextInput<NotificationTemplate>
         name={'notification_configuration.hex_color'}
         label={t('Notification color')}
-        labelHelp={t(
-          'Specify a notification color. Acceptable colors are hex color code (example: #3af or #789abc).'
-        )}
+        labelHelp={getLabelHelp('slack', 'hex_color', t)}
       />
     </>
   );
@@ -205,18 +188,14 @@ function TwilioForm() {
         label={t('Source Phone Number')}
         validate={(value) => twilioPhoneNumber(value, t)}
         isRequired
-        labelHelp={t(
-          'The number associated with the "Messaging Service" in Twilio with the format +18005550199.'
-        )}
+        labelHelp={getLabelHelp('twilio', 'from_number', t)}
       />
 
       <PageFormTextArea<NotificationTemplate>
         name={'notification_configuration.to_numbers'}
         label={t('Destination SMS Numbers')}
         validate={(value) => twilioPhoneNumber(value, t)}
-        labelHelp={t(
-          'Use one phone number per line to specify where to route SMS messages. Phone numbers should be formatted +11231231234. For more information see Twilio documentation'
-        )}
+        labelHelp={getLabelHelp('twilio', 'to_numbers', t)}
         isRequired
       />
     </>
@@ -266,9 +245,7 @@ function GrafanaForm() {
         type={'text'}
         name={'notification_configuration.grafana_url'}
         label={t('Grafana URL')}
-        labelHelp={t(
-          'The base URL of the Grafana server - the /api/annotations endpoint will be added automatically to the base Grafana URL.'
-        )}
+        labelHelp={getLabelHelp('grafana', 'grafana_url', t)}
         isRequired
       />
 
@@ -292,7 +269,7 @@ function GrafanaForm() {
       <PageFormTextArea<NotificationTemplate>
         name={'notification_configuration.annotation_tags'}
         label={t('Tags for the annotation (optional)')}
-        labelHelp={t('Use one Annotation Tag per line, without commas.')}
+        labelHelp={getLabelHelp('grafana', 'annotation_tags', t)}
       />
 
       <PageFormCheckbox<NotificationTemplate>
@@ -341,9 +318,7 @@ function WebhookForm() {
         name={headersPath}
         label={t('HTTP Headers')}
         format="object"
-        labelHelp={t(
-          'Specify HTTP Headers in JSON or YAML format. Refer to the Ansible Controller documentation for example syntax.'
-        )}
+        labelHelp={getLabelHelp('webhook', 'headers', t)}
         labelHelpTitle={t('HTTP Headers')}
       />
 
@@ -471,9 +446,7 @@ function IrcForm() {
         name={'notification_configuration.targets'}
         label={t('Destination Channels or Users')}
         isRequired
-        labelHelp={t(
-          'Use one IRC channel or username per line. The pound symbol (#) for channels, and the at (@) symbol for users, are not required.'
-        )}
+        labelHelp={getLabelHelp('irc', 'targets', t)}
       />
 
       <PageFormCheckbox<NotificationTemplate>
@@ -482,6 +455,79 @@ function IrcForm() {
       />
     </>
   );
+}
+
+export function getLabelHelp(
+  notification_type: string,
+  key: string,
+  t: TFunction<'translation', undefined>
+) {
+  if (notification_type === 'email' && key === 'recipients') {
+    return t(
+      'Use one email address per line to create a recipient list for this type of notification.'
+    );
+  }
+
+  if (notification_type === 'email' && key === 'timeout') {
+    return t(
+      'The amount of time (in seconds) before the email notification stops trying to reach the host and times out. Ranges from 1 to 120 seconds.'
+    );
+  }
+
+  if (notification_type === 'slack' && key === 'channels') {
+    return (
+      <Trans>
+        One Slack channel per line. The pound symbol (#) is required for channels. To respond to or
+        start a thread to a specific message add the parent message Id to the channel where the
+        parent message Id is 16 digits. A dot (.) must be manually inserted after the 10th digit.
+        ie:#destination-channel, 1231257890.006423. See Slack{' '}
+        <a href="https://api.slack.com/messaging/retrieving#individual_messages">documentation</a>{' '}
+        for more information.
+      </Trans>
+    );
+  }
+
+  if (notification_type === 'slack' && key === 'hex_color') {
+    return t(
+      'Specify a notification color. Acceptable colors are hex color code (example: #3af or #789abc).'
+    );
+  }
+
+  if (notification_type === 'twilio' && key === 'from_number') {
+    return t(
+      'The number associated with the "Messaging Service" in Twilio with the format +18005550199.'
+    );
+  }
+
+  if (notification_type === 'twilio' && key === 'to_numbers') {
+    return t(
+      'Use one phone number per line to specify where to route SMS messages. Phone numbers should be formatted +11231231234.'
+    );
+  }
+
+  if (notification_type === 'grafana' && key === 'grafana_url') {
+    return t(
+      'The base URL of the Grafana server - the /api/annotations endpoint will be added automatically to the base Grafana URL.'
+    );
+  }
+
+  if (notification_type === 'grafana' && key === 'annotation_tags') {
+    return t('Use one Annotation Tag per line, without commas.');
+  }
+
+  if (notification_type === 'webhook' && key === 'headers') {
+    return t(
+      'Specify HTTP Headers in JSON or YAML format. Refer to the Ansible Controller documentation for example syntax.'
+    );
+  }
+
+  if (notification_type === 'irc' && key === 'targets') {
+    return t(
+      'Use one IRC channel or username per line. The pound symbol (#) for channels, and the at (@) symbol for users, are not required.'
+    );
+  }
+
+  return null;
 }
 
 function validateNumber(
