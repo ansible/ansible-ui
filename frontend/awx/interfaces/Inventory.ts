@@ -5,6 +5,7 @@ import {
   SummaryFieldObjectRole,
 } from './summary-fields/summary-fields';
 import { Label } from './Label';
+import { Credential } from './Credential';
 
 export interface CommonInventory
   extends Omit<
@@ -73,5 +74,5 @@ export interface RunCommandWizard {
   diff_mode: boolean;
   become_enabled: boolean;
   extra_vars: string;
-  credential: Credential[];
+  credentials: Credential[];
 }

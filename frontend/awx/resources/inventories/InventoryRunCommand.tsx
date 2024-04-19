@@ -34,7 +34,7 @@ export function InventoryRunCommand() {
       ...data,
       verbosity: data.verbosity,
       forks: data.forks,
-      credential: data.credential[0].id,
+      credential: data.credentials[0].id,
     };
     const result: { id: string } = await postRequest(
       awxAPI`/inventories/${id ?? ''}/ad_hoc_commands/`,

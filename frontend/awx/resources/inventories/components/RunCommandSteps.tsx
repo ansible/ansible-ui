@@ -11,7 +11,6 @@ import {
 } from '../../../../../framework';
 import { PageFormCredentialSelect } from '../../../access/credentials/components/PageFormCredentialSelect';
 import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
-import { WizardFormValues } from '../../templates/WorkflowVisualizer/types';
 import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageDetailCodeEditor';
 import { RunCommandWizard } from '../../../interfaces/Inventory';
 import { LabelGroup } from '@patternfly/react-core';
@@ -104,7 +103,7 @@ export function RunCommandCredentialStep() {
 export function RunCommandReviewStep() {
   const { t } = useTranslation();
   const { wizardData } = usePageWizard() as {
-    wizardData: WizardFormValues & RunCommandWizard;
+    wizardData: RunCommandWizard;
   };
   const {
     module,
@@ -115,7 +114,7 @@ export function RunCommandReviewStep() {
     diff_mode,
     become_enabled,
     extra_vars,
-    credential: credentials,
+    credentials,
   } = wizardData;
 
   return (
