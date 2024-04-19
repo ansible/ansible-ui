@@ -42,59 +42,79 @@ describe('Inventory Host Groups List', () => {
       });
 
       it(`Filter Host Groups by name (${type})`, () => {
+        cy.intercept(
+          {
+            method: 'OPTIONS',
+            url: '/api/v2/hosts/1/all_groups/',
+            hostname: 'localhost',
+          },
+          {
+            fixture: 'mock_options.json',
+          }
+        ).as('getFilterOptions');
+        cy.intercept(
+          {
+            method: 'GET',
+            url: '/api/v2/hosts/1/all_groups/*',
+            hostname: 'localhost',
+          },
+          {
+            fixture: 'groups.json',
+          }
+        ).as('getGroups');
+        cy.intercept('/api/v2/hosts/1/all_groups/?name=*').as('nameFilterRequest');
         cy.mount(<InventoryHostGroups page={type} />, {
           path: path,
           initialEntries: initialEntries,
         });
-        cy.intercept(
-          {
-            method: 'GET',
-            url: '/api/v2/hosts/*/all_groups/?name__icontains=Related%20to%20group%201*',
-          },
-          {
-            fixture: 'group.json',
-          }
-        ).as('nameFilter');
-        cy.filterTableByTypeAndText(/^Name$/, 'Related to group 1');
-        cy.get('@nameFilter.all').should('have.length.least', 1);
+        cy.filterTableByMultiSelect('name', ['Related to group 1']);
+        cy.wait('@nameFilterRequest');
         cy.clearAllFilters();
       });
 
       it(`Filter Host Groups by created by (${type})`, () => {
+        cy.intercept(
+          {
+            method: 'OPTIONS',
+            url: '/api/v2/hosts/1/all_groups/',
+            hostname: 'localhost',
+          },
+          {
+            fixture: 'mock_options.json',
+          }
+        ).as('getFilterOptions');
+        cy.intercept('/api/v2/hosts/1/all_groups/?created_by__username__icontains=*').as(
+          'createdByFilterRequest'
+        );
         cy.mount(<InventoryHostGroups page={type} />, {
           path: path,
           initialEntries: initialEntries,
         });
-        cy.intercept(
-          {
-            method: 'GET',
-            url: '/api/v2/hosts/*/all_groups/?created_by__username__icontains=test*',
-          },
-          {
-            fixture: 'group.json',
-          }
-        ).as('createdByFilter');
-        cy.filterTableByTypeAndText(/^Created by$/, 'test');
-        cy.get('@createdByFilter.all').should('have.length.least', 1);
+        cy.filterTableByTextFilter('created-by', 'test');
+        cy.wait('@createdByFilterRequest');
         cy.clearAllFilters();
       });
 
       it(`Filter Host Groups by modified by  (${type})`, () => {
+        cy.intercept(
+          {
+            method: 'OPTIONS',
+            url: '/api/v2/hosts/1/all_groups/',
+            hostname: 'localhost',
+          },
+          {
+            fixture: 'mock_options.json',
+          }
+        ).as('getFilterOptions');
+        cy.intercept('/api/v2/hosts/1/all_groups/?modified_by__username__icontains=*').as(
+          'modifiedByFilterRequest'
+        );
         cy.mount(<InventoryHostGroups page={type} />, {
           path: path,
           initialEntries: initialEntries,
         });
-        cy.intercept(
-          {
-            method: 'GET',
-            url: '/api/v2/hosts/*/all_groups/?modified_by__username__icontains=test*',
-          },
-          {
-            fixture: 'group.json',
-          }
-        ).as('modifiedByFilter');
-        cy.filterTableByTypeAndText(/^Modified by$/, 'test');
-        cy.get('@modifiedByFilter.all').should('have.length.least', 1);
+        cy.filterTableByTextFilter('modified-by', 'test');
+        cy.wait('@modifiedByFilterRequest');
         cy.clearAllFilters();
       });
 
