@@ -82,3 +82,22 @@ export const hubErrorAdapter: ErrorAdapter = (
 
   return { genericErrors, fieldErrors };
 };
+export function useHubErrorMessageParser() {
+  return (
+    error: Error,
+    unknownErrorMessage?: string
+  ): { message: string; parsedErrors: (GenericErrorDetail | FieldErrorDetail)[] } => {
+    const { genericErrors, fieldErrors } = hubErrorAdapter(error);
+    const parsedErrors = [
+      ...genericErrors,
+      ...fieldErrors.filter((e) => e.message).map(({ message }) => ({ message })),
+    ];
+    const message =
+      typeof parsedErrors[0]?.message === 'string' && parsedErrors.length === 1
+        ? parsedErrors[0].message
+        : unknownErrorMessage
+          ? unknownErrorMessage
+          : `Unknown error`;
+    return { message, parsedErrors };
+  };
+}

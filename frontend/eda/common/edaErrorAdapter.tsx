@@ -34,3 +34,23 @@ export const edaErrorAdapter = (error: unknown): ErrorOutput => {
 
   return { genericErrors, fieldErrors };
 };
+
+export function useEdaErrorMessageParser() {
+  return (
+    error: Error,
+    unknownErrorMessage?: string
+  ): { message: string; parsedErrors: (GenericErrorDetail | FieldErrorDetail)[] } => {
+    const { genericErrors, fieldErrors } = edaErrorAdapter(error);
+    const parsedErrors = [
+      ...genericErrors,
+      ...fieldErrors.filter((e) => e.message).map(({ message }) => ({ message })),
+    ];
+    const message =
+      typeof parsedErrors[0]?.message === 'string' && parsedErrors.length === 1
+        ? parsedErrors[0].message
+        : unknownErrorMessage
+          ? unknownErrorMessage
+          : `Unknown error`;
+    return { message, parsedErrors };
+  };
+}
