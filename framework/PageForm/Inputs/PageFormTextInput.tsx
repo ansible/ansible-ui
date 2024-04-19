@@ -15,6 +15,7 @@ import { useID } from '../../hooks/useID';
 import { useFrameworkTranslations } from '../../useFrameworkTranslations';
 import { capitalizeFirstLetter } from '../../utils/strings';
 import { PageFormGroup } from './PageFormGroup';
+import { useRequiredValidationRule } from './validation-hooks';
 
 export type PageFormTextInputProps<
   TFieldValues extends FieldValues = FieldValues,
@@ -220,6 +221,7 @@ export function PageFormTextInput<
   const [showSecret, setShowSecret] = useState(false);
 
   const [translations] = useFrameworkTranslations();
+  const required = useRequiredValidationRule(props.label, props.isRequired);
 
   return (
     <Controller<TFieldValues, TFieldName>
@@ -266,6 +268,7 @@ export function PageFormTextInput<
               onChange(value.trimStart());
           }
         }
+
         return (
           <PageFormGroup
             fieldId={id}
@@ -329,13 +332,7 @@ export function PageFormTextInput<
         );
       }}
       rules={{
-        required:
-          typeof label === 'string' && isRequired === true
-            ? {
-                value: true,
-                message: `${capitalizeFirstLetter(label.toLocaleLowerCase())} is required.`,
-              }
-            : undefined,
+        required,
 
         validate,
 
