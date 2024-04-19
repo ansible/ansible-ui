@@ -26,7 +26,9 @@ export function NotificationPage() {
     error,
     data: notificationTemplate,
     refresh,
-  } = useGetItem<NotificationTemplate>(awxAPI`/notification_templates`, params.id, { refreshInterval : testedNotificationId === undefined ? 5000 : 2000});
+  } = useGetItem<NotificationTemplate>(awxAPI`/notification_templates`, params.id, {
+    refreshInterval: testedNotificationId === undefined ? 5000 : 2000,
+  });
 
   const pageNavigate = usePageNavigate();
 
@@ -42,7 +44,11 @@ export function NotificationPage() {
       setTestedNotificationId(notificationId);
     },
     'detail',
-    testedNotificationId === undefined ? false : true
+    testedNotificationId === undefined
+      ? []
+      : notificationTemplate === undefined
+        ? []
+        : [{ id: notificationTemplate.id }]
   );
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;

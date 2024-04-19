@@ -26,7 +26,8 @@ export function useNotifiersRowActions(
   onNotifierCopied = () => null,
   onNotifierStartTest?: (notificationId: number) => void,
   detail?: 'detail' | undefined,
-  testDisabled?: boolean
+  // sets which notifiers are running, thus test action will be disabled
+  testDisabled?: { id: number }[]
 ) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
@@ -54,8 +55,10 @@ export function useNotifiersRowActions(
         selection: PageActionSelection.Single,
         icon: RocketIcon,
         label: t(`Test notifier`),
-        isDisabled: () =>
-          testDisabled === true ? t(`Disabled while test is running.`) : undefined,
+        isDisabled: (notification) => {
+          const found = testDisabled?.find((test) => test.id === notification.id);
+          return found !== undefined ? t(`Disabled while test is running.`) : undefined;
+        },
         onClick: (notification: NotificationTemplate) => {
           void (async () => {
             try {
