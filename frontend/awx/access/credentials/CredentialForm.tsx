@@ -1,4 +1,5 @@
-import { useWatch } from 'react-hook-form';
+import { useEffect, useMemo } from 'react';
+import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
@@ -23,7 +24,7 @@ import { AwxPageForm } from '../../common/AwxPageForm';
 import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxActiveUser } from '../../common/useAwxActiveUser';
 import { Credential } from '../../interfaces/Credential';
-import { CredentialType } from '../../interfaces/CredentialType';
+import { CredentialInputField, CredentialType } from '../../interfaces/CredentialType';
 import { AwxRoute } from '../../main/AwxRoutes';
 import { PageFormSelectOrganization } from '../organizations/components/PageFormOrganizationSelect';
 
@@ -38,6 +39,14 @@ interface initialValues {
   organization: number | null;
   [key: string]: string | number | null;
 }
+
+interface Prompts {
+  [key: string]: boolean;
+}
+
+type CredentialTypes = {
+  [key: number]: CredentialType;
+};
 
 export function CreateCredential() {
   const { t } = useTranslation();
@@ -122,10 +131,6 @@ export function EditCredential() {
     AwxItemsResponse<CredentialType>
   >(awxAPI`/credential_types/?page=1&page_size=200`);
 
-  if ((isLoadingCredential && !credential) || (isLoadingCredentialType && !itemsResponse)) {
-    return <LoadingPage />;
-  }
-
   const credentialTypes: CredentialTypes | undefined = itemsResponse?.results?.reduce(
     (credentialTypesMap, credentialType) => {
       credentialTypesMap[credentialType.id] = credentialType;
@@ -134,13 +139,33 @@ export function EditCredential() {
     {} as CredentialTypes
   );
 
-  const initialValues: initialValues = {
-    name: credential?.name ?? '',
-    description: credential?.description ?? '',
-    credential_type: credential?.credential_type ?? 0,
-    organization: credential?.organization ?? null,
-    ...(credential?.inputs ?? {}),
-  };
+  const promptPassword = useMemo(() => {
+    const prompts: Prompts = {};
+    if (credential?.inputs) {
+      Object.entries(credential.inputs).forEach(([key, value]) => {
+        if (typeof value === 'string' && value === 'ASK') {
+          prompts[`ask_${key}`] = true;
+        }
+      });
+    }
+    return prompts;
+  }, [credential]);
+
+  const initialValues: initialValues = useMemo(
+    () => ({
+      name: credential?.name ?? '',
+      description: credential?.description ?? '',
+      credential_type: credential?.credential_type ?? 0,
+      organization: credential?.organization ?? null,
+      ...(credential?.inputs ?? {}),
+      ...promptPassword,
+    }),
+    [credential, promptPassword]
+  );
+
+  if ((isLoadingCredential && !credential) || (isLoadingCredentialType && !itemsResponse)) {
+    return <LoadingPage />;
+  }
 
   const onSubmit: PageFormSubmitHandler<CredentialForm> = async (editedCredential) => {
     const credentialTypeInputs = credentialTypes?.[editedCredential?.credential_type]?.inputs;
@@ -196,10 +221,6 @@ export function EditCredential() {
     </PageLayout>
   );
 }
-
-type CredentialTypes = {
-  [key: number]: CredentialType;
-};
 
 function CredentialInputs({ isEditMode = false }: { isEditMode?: boolean }) {
   const { t } = useTranslation();
@@ -265,24 +286,27 @@ function CredentialInputs({ isEditMode = false }: { isEditMode?: boolean }) {
     </>
   );
 }
-
 function CredentialSubForm({ credentialType }: { credentialType: CredentialType | undefined }) {
   const { t } = useTranslation();
-  if (!credentialType || !credentialType.inputs?.fields) {
-    return null;
-  }
 
   const stringFields =
     credentialType?.inputs?.fields.filter(
       (field) => field.type === 'string' && !field?.choices?.length
     ) || [];
+
   const choiceFields =
     credentialType?.inputs?.fields.filter((field) => (field?.choices?.length ?? 0) > 0) || [];
+
   const booleanFields =
     credentialType?.inputs?.fields.filter((field) => field.type === 'boolean') || [];
+
   const requiredFields = credentialType?.inputs?.required || [];
 
   const hasFields = stringFields.length > 0 || choiceFields.length > 0 || booleanFields.length > 0;
+
+  if (!credentialType || !credentialType.inputs?.fields) {
+    return null;
+  }
 
   return hasFields ? (
     <PageFormSection title={t('Type Details')}>
@@ -299,19 +323,14 @@ function CredentialSubForm({ credentialType }: { credentialType: CredentialType 
                 labelHelp={field.help_text}
               />
             );
-          } else {
+          } else
             return (
-              <PageFormTextInput<CredentialType>
+              <CredentialTextInput
                 key={field.id}
-                name={field.id as keyof CredentialType}
-                label={field.label}
-                type={field.secret ? 'password' : 'text'}
-                placeholder={field.default ? String(field.default) : ''}
+                field={field}
                 isRequired={requiredFields.includes(field.id)}
-                labelHelp={field.help_text}
               />
             );
-          }
         })}
       {choiceFields.length > 0 &&
         choiceFields.map((field) => (
@@ -337,4 +356,55 @@ function CredentialSubForm({ credentialType }: { credentialType: CredentialType 
         ))}
     </PageFormSection>
   ) : null;
+}
+
+function CredentialTextInput({
+  field,
+  isRequired = false,
+}: {
+  field: CredentialInputField;
+  isRequired?: boolean;
+}) {
+  const { t } = useTranslation();
+  const { setValue, clearErrors } = useFormContext();
+  const isPromptOnLaunchChecked = useWatch({ name: `ask_${field.id}` }) as boolean;
+
+  useEffect(() => {
+    setValue(field.id, isPromptOnLaunchChecked ? 'ASK' : field?.default || '', {
+      shouldDirty: true,
+    });
+    if (isPromptOnLaunchChecked) {
+      clearErrors(field.id);
+    }
+  }, [isPromptOnLaunchChecked, field.id, field.default, setValue, clearErrors]);
+
+  const handleIsRequired = (): boolean => {
+    if (isPromptOnLaunchChecked) {
+      return false;
+    }
+    if (isRequired) {
+      return true;
+    }
+    return false;
+  };
+
+  return (
+    <>
+      <PageFormTextInput
+        key={field.id}
+        name={field.id}
+        label={field.label}
+        placeholder={(field?.default || t('Enter value')).toString()}
+        type={field.secret ? 'password' : 'text'}
+        isRequired={handleIsRequired()}
+        isDisabled={!!isPromptOnLaunchChecked}
+        labelHelp={field.help_text}
+        additionalControls={
+          field?.ask_at_runtime && (
+            <PageFormCheckbox name={`ask_${field.id}`} label={t('Prompt on launch')} />
+          )
+        }
+      />
+    </>
+  );
 }
