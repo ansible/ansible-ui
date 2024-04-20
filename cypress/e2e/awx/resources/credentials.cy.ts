@@ -76,6 +76,37 @@ describe('Credentials', () => {
         });
     });
 
+    it('create/edit a credential using prompt on launch', () => {
+      const credentialName = 'E2E Credential ' + randomString(4);
+      cy.navigateTo('awx', 'credentials');
+      cy.clickButton(/^Create credential$/);
+      cy.get('[data-cy="name"]').type(credentialName);
+      cy.selectDropdownOptionByResourceName('credential-type', 'Machine');
+      cy.get('[data-cy="ask_password"]').check();
+      cy.get('[data-cy="ask_ssh_key_unlock"]').check();
+      cy.clickButton(/^Create credential$/);
+      cy.verifyPageTitle(credentialName);
+      cy.get('[data-cy="name"]').contains(credentialName);
+      cy.contains('Private Key Passphrase').should('be.visible');
+      cy.get('[data-cy="private-key-passphrase"]').contains('Prompt on launch');
+      cy.contains('Password').should('be.visible');
+      cy.get('[data-cy="password"]').contains('Prompt on launch');
+      cy.get('[data-cy="edit-credential"]').click();
+      cy.verifyPageTitle('Edit Credential');
+      cy.get('[data-cy="ask_password"]').uncheck();
+      cy.get('[data-cy="password"]').type('password');
+      cy.clickButton(/^Save credential$/);
+      cy.contains('Password').should('be.visible');
+      cy.get('[data-cy="password"]').contains('Encrypted');
+      cy.contains('Private Key Passphrase').should('be.visible');
+      cy.get('[data-cy="private-key-passphrase"]').contains('Prompt on launch');
+      //delete created credential
+      cy.clickPageAction('delete-credential');
+      cy.get('#confirm').click();
+      cy.clickButton(/^Delete credential/);
+      cy.verifyPageTitle('Credentials');
+    });
+
     it('edit credential type that renders a sub form', () => {
       const credentialName = 'E2E Credential ' + randomString(4);
       cy.navigateTo('awx', 'credentials');
