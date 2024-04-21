@@ -1,6 +1,7 @@
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Credential } from '../../../../frontend/awx/interfaces/Credential';
+import { AwxUser } from '../../../../frontend/awx/interfaces/User';
 import { ExecutionEnvironment } from '../../../../frontend/awx/interfaces/ExecutionEnvironment';
 
 describe('Inventory Host Tab Tests', () => {
@@ -8,14 +9,25 @@ describe('Inventory Host Tab Tests', () => {
   let inventory: Inventory;
   let machineCredential: Credential;
   let executionEnvironment: ExecutionEnvironment;
+  let user: AwxUser;
   const kinds: Array<'' | 'smart' | 'constructed'> = ['', 'smart', 'constructed'];
 
   before(() => {
     cy.awxLogin();
+    cy.createAwxOrganization().then((org) => {
+      organization = org;
+      cy.createAwxInventory({ organization: organization.id }).then((inv) => {
+        inventory = inv;
+      });
+      cy.createAwxUser(organization).then((testUser) => {
+        user = testUser;
+      });
+    });
   });
 
   after(() => {
     cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
+    cy.deleteAwxUser(user, { failOnStatusCode: false });
     cy.deleteAwxCredential(machineCredential, { failOnStatusCode: false });
     cy.deleteAwxExecutionEnvironment(executionEnvironment, { failOnStatusCode: false });
     cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
@@ -77,6 +89,9 @@ describe('Inventory Host Tab Tests', () => {
         });
 
         it.skip('can bulk delete multiple hosts from the hosts tab of an inventory', () => {
+          // DO NEED! - this one need to be verified //
+          //
+          //
           //1) Use the inventory created in beforeEach block, access the host tab of that inventory
           //2) Create 2 hosts in this test for the purpose of delete
           //3) Assert the existence of the hosts
@@ -239,7 +254,7 @@ describe('Inventory Host Tab Tests', () => {
     });
 
     it.skip('can run an ad-hoc command against the host on the groups tab of a host-inventory from the host details page', () => {
-      // NO Need! this will be covered in Host.cy.ts file
+      // NO Need! this is covered in Host.cy.ts file
       //
       //1) Use the inventory created in beforeEach block, access the host tab of that inventory, visit the host details page
       //2) Use the host, EE, and credential created in the beforeEach block- these resources are needed to run a command against a host
