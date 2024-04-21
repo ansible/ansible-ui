@@ -12,20 +12,12 @@ describe('Inventory Host Tab Tests', () => {
 
   before(() => {
     cy.awxLogin();
-    cy.createAwxOrganization().then((org) => {
-      organization = org;
-      cy.createAwxInventory({ organization: organization.id }).then((inv) => {
-        inventory = inv;
-      });
-      cy.createAwxUser(organization).then((testUser) => {
-        user = testUser;
-      });
-    });
   });
 
   after(() => {
     cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
-    cy.deleteAwxUser(user, { failOnStatusCode: false });
+    cy.deleteAwxCredential(machineCredential, { failOnStatusCode: false });
+    cy.deleteAwxExecutionEnvironment(executionEnvironment, { failOnStatusCode: false });
     cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
   });
 
