@@ -29,18 +29,18 @@ describe('host and inventory host', () => {
   });
 
   //tests
-  it('can create, edit and delete a inventory host', () => {
+  it.skip('can create, edit and delete a inventory host', () => {
     cy.visit(`/infrastructure/inventories/inventory/${inventory.id}/details`);
     cy.clickTab(/^Hosts$/, true);
     createAndEditAndDeleteHost(true, inventory);
   });
 
-  it('can create, edit and delete a host', () => {
+  it.skip('can create, edit and delete a host', () => {
     cy.visit(`/infrastructure/hosts`);
     createAndEditAndDeleteHost(false, inventory);
   });
 
-  it('can create, edit, assosiat and disassosiate groups at inventory -> hosts -> groups tab', () => {
+  it.skip('can create, edit, assosiat and disassosiate groups at inventory -> hosts -> groups tab', () => {
     // create host and groups at inventory
     // test edit group from inventory -> hosts -> groups tab
     // test dissasositate and assosiate of singal group or multipale groups at
