@@ -12,12 +12,20 @@ describe('Inventory Host Tab Tests', () => {
 
   before(() => {
     cy.awxLogin();
+    cy.createAwxOrganization().then((org) => {
+      organization = org;
+      cy.createAwxInventory({ organization: organization.id }).then((inv) => {
+        inventory = inv;
+      });
+      cy.createAwxUser(organization).then((testUser) => {
+        user = testUser;
+      });
+    });
   });
 
-  afterEach(() => {
+  after(() => {
     cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
-    cy.deleteAwxCredential(machineCredential, { failOnStatusCode: false });
-    cy.deleteAwxExecutionEnvironment(executionEnvironment, { failOnStatusCode: false });
+    cy.deleteAwxUser(user, { failOnStatusCode: false });
     cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
   });
 
@@ -53,6 +61,8 @@ describe('Inventory Host Tab Tests', () => {
           //2) Use the host created in the beforeEach block
           //3) When redirected to the details page after creation, assert the info displayed there matches what was entered in the form
           //4) Specifically assert that the original inventory is displayed for the newly created host
+
+          // NO Need! this is covered in Host.cy.ts file
         });
         it.skip('can edit a host in the hosts tab list of an inventory', () => {
           //1) Use the inventory created in beforeEach block, navigate to the host tab of that inventory
@@ -60,6 +70,8 @@ describe('Inventory Host Tab Tests', () => {
           //2) On the host list, assert the original values the host shows on its details page. Edit the host.
           //3) Intercept the edit call
           //4) Use the interception to assert the edited values
+
+          // NO Need! this is covered in Host.cy.ts file
         });
 
         it.skip('can delete a single host from the hosts list tab of an inventory', () => {
@@ -68,6 +80,8 @@ describe('Inventory Host Tab Tests', () => {
           //3) Assert the existence of the host
           //4) Delete the host, intercept the Delete call
           //5) Assert that the host is not found in a search; assert the statusCode of the Delete call
+
+          // NO Need! this is covered in Host.cy.ts file
         });
 
         it.skip('can bulk delete multiple hosts from the hosts tab of an inventory', () => {
@@ -85,6 +99,8 @@ describe('Inventory Host Tab Tests', () => {
         //3) Assert redirect to the job output screen
         //4) Navigate to the details page of the job and assert the values there match what was entered in the Run Command Wizard
         //5) Navigate back to the Inventory -> Jobs Tab to assert that the Run Command job shows up there
+
+        // NO Need! this will be covered in Host.cy.ts file
       });
     });
   });
@@ -123,6 +139,8 @@ describe('Inventory Host Tab Tests', () => {
           //3) On the host details page, assert the original values the host shows on its details page. Edit the host.
           //4) Intercept the edit call
           //5) Use the interception to assert the edited values
+
+          // NO Need! this is covered in Host.cy.ts file
         });
 
         it.skip('can delete a host from the details screen by navigating from the host tab list of an inventory', () => {
@@ -132,6 +150,8 @@ describe('Inventory Host Tab Tests', () => {
           //4) Assert the details on the host details page
           //5) Delete the host, intercept the Delete call
           //6) Assert that the host is not found in a search; assert the statusCode of the Delete call
+
+          // NO Need! this is covered in Host.cy.ts file
         });
 
         it.skip("can view a host's facts on the facts tab of a host inside an inventory", () => {
@@ -141,6 +161,8 @@ describe('Inventory Host Tab Tests', () => {
           //3) Assert that no facts are showing
           //4) Create a JT designed to populate the facts for the host, launch the job template
           //5) Navigate back to the facts tab of that host and assert that the facts exist
+
+          // NO Need! this will be covered in Host.cy.ts file
         });
       }
 
@@ -191,6 +213,8 @@ describe('Inventory Host Tab Tests', () => {
       //1) Utilize the inventory, host, and group that were created in the beforeEach block- they are linked together
       //2) Navigate to the host details page, then navigate to the Groups tab of that host
       //3) Assert the presence of the expected group in the list
+
+      // NO Need! this is covered in Host.cy.ts file
     });
 
     it.skip('can associate a group to the host on the host tab of an inventory', () => {
@@ -199,6 +223,8 @@ describe('Inventory Host Tab Tests', () => {
       //3) Inside the inventory, create an additional group
       //4) Associate the host and new group with each other
       //5) Assert the presence of that new group on the Groups tab inside of the Host, assert that 2 groups are now showing
+
+      // NO Need! this is covered in Host.cy.ts file
     });
 
     it.skip('can disassociate a single group from the host on the host tab of an inventory', () => {
@@ -206,6 +232,8 @@ describe('Inventory Host Tab Tests', () => {
       //2) Navigate to the host details tab, then the groups tab. Assert the one group showing there
       //3) Disassociate that group from the host
       //4) Assert that the groups tab inside the host now shows an empty list
+
+      // NO Need! this is covered in Host.cy.ts file
     });
 
     it.skip('can bulk disassociate multiple groups from the host on the host tab of an inventory', () => {
@@ -214,6 +242,8 @@ describe('Inventory Host Tab Tests', () => {
       //3) Navigate to the host details tab, then the groups tab. Assert the three groups showing there
       //4) Disassociate all groups from the host
       //5) Assert that the groups tab inside the host now shows an empty list
+
+      // NO Need! this is covered in Host.cy.ts file
     });
 
     it.skip('can run an ad-hoc command against the host on the groups tab of a host-inventory from the host details page', () => {
@@ -222,6 +252,9 @@ describe('Inventory Host Tab Tests', () => {
       //3) Assert redirect to the job output screen
       //4) Navigate to the details page of the job and assert the values there match what was entered in the Run Command Wizard
       //5) Navigate back to the Inventory -> Jobs Tab to assert that the Run Command job shows up there
+
+      // NO Need! this will be covered in Host.cy.ts file
+
     });
   });
 
@@ -254,6 +287,8 @@ describe('Inventory Host Tab Tests', () => {
       //1) Use the inventory and host created in beforeEach block
       //2) Have the test create a job template that uses that inventory, launch the job template, wait for job to finish
       //3) Navigate back to inventory -> host tab -> jobs tab -> assert presence of job in that list
+
+      // NO Need! this is covered in Host.cy.ts file
     });
 
     it.skip('can cancel a currently running job from the host jobs tab inside an inventory', () => {
@@ -262,6 +297,8 @@ describe('Inventory Host Tab Tests', () => {
       //3) Launch the job template
       //4) Navigate back to inventory -> host tab -> jobs tab -> assert presence of job in that list
       //5) Cancel the job and assert that it has been canceled
+
+      // NO Need! this is covered in Host.cy.ts file
     });
   });
 });
