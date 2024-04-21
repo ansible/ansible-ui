@@ -1,7 +1,6 @@
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Credential } from '../../../../frontend/awx/interfaces/Credential';
-import { AwxUser } from '../../../../frontend/awx/interfaces/User';
 import { ExecutionEnvironment } from '../../../../frontend/awx/interfaces/ExecutionEnvironment';
 
 describe('Inventory Host Tab Tests', () => {
@@ -9,30 +8,18 @@ describe('Inventory Host Tab Tests', () => {
   let inventory: Inventory;
   let machineCredential: Credential;
   let executionEnvironment: ExecutionEnvironment;
-  let user: AwxUser;
   const kinds: Array<'' | 'smart' | 'constructed'> = ['', 'smart', 'constructed'];
 
   before(() => {
     cy.awxLogin();
-    cy.createAwxOrganization().then((org) => {
-      organization = org;
-      cy.createAwxInventory({ organization: organization.id }).then((inv) => {
-        inventory = inv;
-      });
-      cy.createAwxUser(organization).then((testUser) => {
-        user = testUser;
-      });
-    });
   });
 
-  after(() => {
+  afterEach(() => {
     cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
-    cy.deleteAwxUser(user, { failOnStatusCode: false });
     cy.deleteAwxCredential(machineCredential, { failOnStatusCode: false });
     cy.deleteAwxExecutionEnvironment(executionEnvironment, { failOnStatusCode: false });
     cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
   });
-
   kinds.forEach((kind) => {
     describe(`Inventory Host List Tests (${kind === '' ? 'regular' : kind})`, () => {
       beforeEach(() => {
