@@ -20,7 +20,10 @@ describe('Overview - EDA Cards', () => {
     cy.get('[data-cy="rulebook-activations"]')
       .should('contain', 'Rulebook Activations')
       .within(() => {
-        cy.get('[data-cy="card-subtitle"]').should('contain', 'Recently updated activations');
+        cy.get('[data-cy="card-subtitle"]').should(
+          'contain',
+          'Recently updated rulebook activations'
+        );
       });
     cy.get('[data-cy="rulebook-activations"] .ans__sc-t3yesn-0').click();
 
@@ -34,7 +37,10 @@ describe('Overview - EDA Cards', () => {
     cy.get('[data-cy="decision-environments"]')
       .should('contain', 'Decision Environments')
       .within(() => {
-        cy.get('[data-cy="card-subtitle"]').should('contain', 'Recently updated environments');
+        cy.get('[data-cy="card-subtitle"]').should(
+          'contain',
+          'Recently updated decision environments'
+        );
       });
     cy.get('[data-cy="decision-environments"] .ans__sc-t3yesn-0').click();
     cy.get('*[id^="popover-pf"]').should('contain', 'Decision environments');
@@ -44,13 +50,13 @@ describe('Overview - EDA Cards', () => {
     );
   });
 
-  it('user can navigate to the resource page using the Go to link from the Dashboard', () => {
+  it('user can navigate to the resource page using the View all link from the Dashboard', () => {
     const resources = ['Decision Environments', 'Rulebook Activations'];
     resources.forEach((resource) => {
       cy.navigateTo('platform', 'overview');
       cy.verifyPageTitle('Welcome to the Ansible Automation Platform');
-      cy.checkAnchorLinks('Go to ' + resource);
-      cy.contains('a', 'Go to ' + resource).click();
+      cy.checkAnchorLinks('View all ' + resource);
+      cy.contains('a', 'View all ' + resource).click();
       cy.verifyPageTitle(resource);
     });
   });
