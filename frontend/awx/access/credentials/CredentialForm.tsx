@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -139,29 +139,23 @@ export function EditCredential() {
     {} as CredentialTypes
   );
 
-  const promptPassword = useMemo(() => {
-    const prompts: Prompts = {};
-    if (credential?.inputs) {
-      Object.entries(credential.inputs).forEach(([key, value]) => {
-        if (typeof value === 'string' && value === 'ASK') {
-          prompts[`ask_${key}`] = true;
-        }
-      });
-    }
-    return prompts;
-  }, [credential]);
+  const promptPassword: Prompts = {};
+  if (credential?.inputs) {
+    Object.entries(credential.inputs).forEach(([key, value]) => {
+      if (typeof value === 'string' && value === 'ASK') {
+        promptPassword[`ask_${key}`] = true;
+      }
+    });
+  }
 
-  const initialValues: initialValues = useMemo(
-    () => ({
-      name: credential?.name ?? '',
-      description: credential?.description ?? '',
-      credential_type: credential?.credential_type ?? 0,
-      organization: credential?.organization ?? null,
-      ...(credential?.inputs ?? {}),
-      ...promptPassword,
-    }),
-    [credential, promptPassword]
-  );
+  const initialValues: initialValues = {
+    name: credential?.name ?? '',
+    description: credential?.description ?? '',
+    credential_type: credential?.credential_type ?? 0,
+    organization: credential?.organization ?? null,
+    ...(credential?.inputs ?? {}),
+    ...(promptPassword ?? {}),
+  };
 
   if ((isLoadingCredential && !credential) || (isLoadingCredentialType && !itemsResponse)) {
     return <LoadingPage />;
@@ -370,13 +364,22 @@ function CredentialTextInput({
   const isPromptOnLaunchChecked = useWatch({ name: `ask_${field.id}` }) as boolean;
 
   useEffect(() => {
-    setValue(field.id, isPromptOnLaunchChecked ? 'ASK' : field?.default || '', {
-      shouldDirty: true,
-    });
-    if (isPromptOnLaunchChecked) {
-      clearErrors(field.id);
+    if (field?.ask_at_runtime) {
+      setValue(field?.id, isPromptOnLaunchChecked ? 'ASK' : field?.default || '', {
+        shouldDirty: true,
+      });
+      if (isPromptOnLaunchChecked) {
+        clearErrors(field?.id);
+      }
     }
-  }, [isPromptOnLaunchChecked, field.id, field.default, setValue, clearErrors]);
+  }, [
+    isPromptOnLaunchChecked,
+    field?.ask_at_runtime,
+    field.id,
+    field.default,
+    setValue,
+    clearErrors,
+  ]);
 
   const handleIsRequired = (): boolean => {
     if (isPromptOnLaunchChecked) {
