@@ -20,7 +20,7 @@ export function DecisionEnvironmentDetails() {
         )}
       </p>
       <br />
-      <p>{t('Examples:')}</p>
+      <p>{t('Examples: ')}</p>
       <Trans>
         <code>quay.io/ansible/awx-latest repo/project/image-name:tag</code>
       </Trans>
