@@ -88,7 +88,7 @@ export function PageFormMultiInput<
       shouldUnregister
       render={({ field: { onChange, value }, fieldState: { error } }) => {
         const removeItem = (item: T) => {
-          onChange(value.filter((i: T) => i.id !== item.id));
+          onChange((value as T[]).filter((i: T) => i.id !== item.id));
         };
 
         return (
@@ -111,7 +111,7 @@ export function PageFormMultiInput<
                       `${value?.length - 5}`
                     )}
                   >
-                    {value?.map((item: T) => (
+                    {(value as T[])?.map((item: T) => (
                       <Chip key={item.id} onClick={() => removeItem(item)}>
                         {item.hostname ?? item.name}
                       </Chip>
