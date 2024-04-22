@@ -76,7 +76,7 @@ export function TemplateSurveyForm(props: IProps) {
       { params: { id } }
     );
 
-  if (!questionVariable) pageNavigateSurveyRoute();
+  if (!questionVariable && mode !== 'add') pageNavigateSurveyRoute();
 
   const {
     error,
