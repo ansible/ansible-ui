@@ -283,24 +283,24 @@ function CredentialInputs({ isEditMode = false }: { isEditMode?: boolean }) {
 function CredentialSubForm({ credentialType }: { credentialType: CredentialType | undefined }) {
   const { t } = useTranslation();
 
+  if (!credentialType || !credentialType?.inputs?.fields) {
+    return null;
+  }
+
   const stringFields =
-    credentialType?.inputs?.fields.filter(
+    credentialType?.inputs?.fields?.filter(
       (field) => field.type === 'string' && !field?.choices?.length
     ) || [];
 
   const choiceFields =
-    credentialType?.inputs?.fields.filter((field) => (field?.choices?.length ?? 0) > 0) || [];
+    credentialType?.inputs?.fields?.filter((field) => (field?.choices?.length ?? 0) > 0) || [];
 
   const booleanFields =
-    credentialType?.inputs?.fields.filter((field) => field.type === 'boolean') || [];
+    credentialType?.inputs?.fields?.filter((field) => field.type === 'boolean') || [];
 
   const requiredFields = credentialType?.inputs?.required || [];
 
   const hasFields = stringFields.length > 0 || choiceFields.length > 0 || booleanFields.length > 0;
-
-  if (!credentialType || !credentialType.inputs?.fields) {
-    return null;
-  }
 
   return hasFields ? (
     <PageFormSection title={t('Type Details')}>
