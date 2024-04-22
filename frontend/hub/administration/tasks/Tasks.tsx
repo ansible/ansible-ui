@@ -25,7 +25,7 @@ export function Tasks() {
 
   return (
     <PageLayout>
-      <PageHeader title={t('Tasks')} />
+      <PageHeader title={t('Task Management')} />
       <PageTable<Task>
         id="hub-tasks-table"
         toolbarFilters={toolbarFilters}
