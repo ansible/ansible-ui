@@ -108,9 +108,9 @@ export function useAwxWebSocketSubscription(
                 delete subscriptionsEvents[event];
               }
             }
-          }
-          if (Object.keys(subscriptionsEvents).length === 0) {
-            delete subscriptions[group];
+            if (Object.keys(subscriptionsEvents).length === 0) {
+              delete subscriptions[group];
+            }
           }
         }
         return subscriptions;
