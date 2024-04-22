@@ -1,8 +1,8 @@
 import { FieldPath, FieldValues } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { PageFormMultiInput } from '../../../../../framework/PageForm/Inputs/PageFormMultiInput';
-import { useSelectCredentials } from '../hooks/useSelectCredentials';
 import { EdaCredential } from '../../../../eda/interfaces/EdaCredential';
+import { useSelectCredentials } from '../hooks/useSelectCredentials';
 
 export function PageFormCredentialSelect<
   TFieldValues extends FieldValues = FieldValues,
@@ -12,7 +12,7 @@ export function PageFormCredentialSelect<
   const selectCredential = useSelectCredentials(props.credentialKind);
 
   return (
-    <PageFormMultiInput<EdaCredential, TFieldValues, TFieldName>
+    <PageFormMultiInput<EdaCredential>
       {...props}
       name={props.name}
       id="credential-select"

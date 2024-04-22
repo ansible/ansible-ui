@@ -4,24 +4,11 @@ import { EdaUser } from '../../../../frontend/eda/interfaces/EdaUser';
 import { edaAPI } from '../../../support/formatApiPathForEDA';
 
 describe('EDA Users- Create, Edit, Delete', () => {
-  let roleNames: string[];
-  let roleIDs: string[];
-  let editorRoleID: string;
-  let auditorRoleName: string;
-  let contributorRoleName: string;
-
   before(() => {
     cy.edaLogin();
-    cy.getEdaRoles().then((rolesArray) => {
-      roleNames = rolesArray.map((role) => role.name);
-      roleIDs = rolesArray.map((role) => role.id);
-      editorRoleID = roleIDs[2];
-      auditorRoleName = roleNames[4];
-      contributorRoleName = roleNames[0];
-    });
   });
 
-  it('can create a User, select role(s) to add the user to, and assert the information showing on the details page', () => {
+  it('can create a User, select user type, and assert the information showing on the details page', () => {
     const userInfo = {
       username: `E2EUser${randomString(4)}`,
       FirstName: 'Firstname',
@@ -44,22 +31,20 @@ describe('EDA Users- Create, Edit, Delete', () => {
     cy.get('[data-cy="email"]').type(userInfo.Email);
     cy.get('[data-cy="password"]').type(userInfo.Password);
     cy.get('[data-cy="confirmpassword"]').type(userInfo.Password);
-    cy.selectEdaUserRoleByName(contributorRoleName);
     cy.intercept('POST', edaAPI`/users/`).as('createUser');
     cy.clickButton(/^Create user$/);
     cy.hasDetail('First name', userInfo.FirstName);
     cy.hasDetail('Last name', userInfo.LastName);
     cy.hasDetail('Email', userInfo.Email);
     cy.hasDetail('Username', userInfo.username);
+    cy.hasDetail('User type', 'Normal user');
     cy.wait('@createUser')
       .its('response.body')
       .then((user: EdaUser) => cy.deleteEdaUser(user));
   });
 
-  it('can edit a User including the roles the user belongs to', () => {
-    cy.createEdaUser({
-      roles: [editorRoleID],
-    }).then((edaUser) => {
+  it('can edit a User', () => {
+    cy.createEdaUser().then((edaUser) => {
       cy.navigateTo('eda', 'users');
       cy.get('h1').should('contain', 'Users');
       cy.setTablePageSize('100');
@@ -72,22 +57,20 @@ describe('EDA Users- Create, Edit, Delete', () => {
       cy.get('[data-cy="email"]').type('edited@redhat.com');
       cy.get('[data-cy="password"]').type('newpass');
       cy.get('[data-cy="confirmpassword"]').type('newpass');
-      cy.selectEdaUserRoleByName(auditorRoleName);
+      cy.singleSelectByDataCy('usertype', 'System administrator');
       cy.clickButton(/^Save user$/);
       cy.hasDetail('Username', `${edaUser.username}edited`);
       cy.hasDetail('First name', 'firstname-edited');
       cy.hasDetail('Last name', 'lastname-edited');
       cy.hasDetail('Email', 'edited@redhat.com');
-      cy.get('dd[id="role(s)"] span').should('include.text', auditorRoleName).should('be.visible');
+      cy.hasDetail('User type', 'System administrator');
       cy.navigateTo('eda', 'users');
       cy.deleteEdaUser(edaUser);
     });
   });
 
   it('can delete a User', () => {
-    cy.createEdaUser({
-      roles: [editorRoleID],
-    }).then((edaUser) => {
+    cy.createEdaUser().then((edaUser) => {
       cy.navigateTo('eda', 'users');
       cy.get('h1').should('contain', 'Users');
       cy.setTablePageSize('100');
@@ -100,20 +83,6 @@ describe('EDA Users- Create, Edit, Delete', () => {
       cy.wait('@deleteUser').then((deleteuser) => {
         expect(deleteuser?.response?.statusCode).to.eql(204);
         cy.verifyPageTitle('Users');
-      });
-    });
-  });
-
-  it('can view and select from the list of available roles in the Users create form', () => {
-    const userRoles = ['Admin', 'Viewer', 'Operator', 'Contributor', 'Editor', 'Auditor'];
-    cy.navigateTo('eda', 'users');
-    cy.contains('h1', 'Users');
-    cy.setTablePageSize('100');
-    cy.clickButton(/^Create user$/);
-    cy.get('button#roles:not(:disabled):not(:hidden)').click();
-    cy.get('#roles-select').within(() => {
-      userRoles.forEach((role) => {
-        cy.get(`[data-cy="${role.toLowerCase()}"]`).should('be.visible');
       });
     });
   });
