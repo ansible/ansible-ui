@@ -1,5 +1,5 @@
 import { useOutletContext } from 'react-router-dom';
-import { PageDetail, useGetPageUrl } from '../../../../../framework';
+import { PageDetail, Scrollable, useGetPageUrl } from '../../../../../framework';
 import { PageDetails } from '../../../../../framework';
 import { NotificationTemplate } from '../../../interfaces/NotificationTemplate';
 import { useTranslation } from 'react-i18next';
@@ -11,6 +11,7 @@ import { DateTimeCell } from '../../../../../framework';
 import { usePageNavigate } from '../../../../../framework';
 import { StatusLabel } from '../../../../common/Status';
 import { getLabelHelp } from '../NotifierFormInner';
+import { PageDetailsSection } from '../../../../eda/common/PageDetailsSection';
 
 export function NotificationDetails() {
   const { t } = useTranslation();
@@ -27,7 +28,8 @@ export function NotificationDetails() {
       : '';
   return (
     <>
-      <PageDetails>
+    <Scrollable>
+      <PageDetails disableScroll={true}>
         <PageDetail label={t('Name')}>{notificationTemplate.name}</PageDetail>
         <PageDetail label={t('Description')}>{notificationTemplate.description}</PageDetail>
         {status && (
@@ -74,8 +76,48 @@ export function NotificationDetails() {
 
         <RenderInnerDetail notificationTemplate={notificationTemplate} />
       </PageDetails>
+      {notificationTemplate.messages && <RenderMessages notificationTemplate={notificationTemplate}/>}
+      </Scrollable>
     </>
   );
+}
+
+function RenderMessages(props: { notificationTemplate: NotificationTemplate }) {
+  const messages = props.notificationTemplate.messages;
+  return (
+      <>
+        <PageDetails numberOfColumns='single' disableScroll={true}>
+          <PageDetail label={t('Start message')}>
+            {messages?.started?.message}
+          </PageDetail>
+
+          <PageDetail label={t('Success message')}>
+            {messages?.success?.message}
+          </PageDetail>
+
+          <PageDetail label={t('Error message')}>
+            {messages?.error?.message}
+          </PageDetail>
+
+          <PageDetail label={t('Workflow approved message')}>
+            {messages?.workflow_approval?.approved?.message}
+          </PageDetail>
+
+          <PageDetail label={t('Workflow denied message')}>
+            {messages?.workflow_approval?.denied?.message}
+          </PageDetail>
+
+          <PageDetail label={t('Workflow pending message')}>
+            {messages?.workflow_approval?.running?.message}
+          </PageDetail>
+
+          <PageDetail label={t('Workflow timed out message')}>
+            {messages?.workflow_approval?.timed_out?.message}
+          </PageDetail>
+        </PageDetails>
+      </>
+    );
+
 }
 
 function RenderInnerDetail(props: { notificationTemplate: NotificationTemplate }) {
