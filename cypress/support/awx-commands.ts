@@ -2,7 +2,7 @@
 
 import '@cypress/code-coverage/support';
 import jsyaml from 'js-yaml';
-import { SetRequired } from 'type-fest';
+import { SetOptional, SetRequired } from 'type-fest';
 import { randomString } from '../../framework/utils/random-string';
 import { AwxItemsResponse } from '../../frontend/awx/common/AwxItemsResponse';
 import { Application } from '../../frontend/awx/interfaces/Application';
@@ -28,6 +28,7 @@ import { AwxUser } from '../../frontend/awx/interfaces/User';
 import { WorkflowApproval } from '../../frontend/awx/interfaces/WorkflowApproval';
 import { WorkflowJobTemplate } from '../../frontend/awx/interfaces/WorkflowJobTemplate';
 import { WorkflowJobNode, WorkflowNode } from '../../frontend/awx/interfaces/WorkflowNode';
+import { Spec } from '../../frontend/awx/interfaces/Survey';
 import { awxAPI } from './formatApiPathForAwx';
 
 //  AWX related custom command implementation
@@ -1719,5 +1720,58 @@ Cypress.Commands.add(
     }
   ) => {
     cy.awxRequestDelete(awxAPI`/notification_templates/${notification.id.toString()}/`, options);
+  }
+);
+
+Cypress.Commands.add(
+  'createTemplateSurvey',
+  (
+    template: JobTemplate | WorkflowJobTemplate,
+    spec: SetOptional<Spec, 'required' | 'min' | 'max' | 'new_question' | 'choices'>
+    // spec: SetOptional<Spec, 'question_name' | 'question_description' | 'type' | 'default'>
+  ) => {
+    cy.visit(`/templates/${template.type}/${template.id}/survey/add`);
+
+    cy.getByDataCy('question-name').type(spec.question_name ?? '');
+    cy.getByDataCy('question-description').type(spec?.question_description ?? '');
+    cy.getByDataCy('question-variable').type(spec?.variable ?? '');
+
+    spec?.required === false && cy.getByDataCy('question-required').uncheck();
+    spec?.min && cy.getByDataCy('question-min').clear().type(spec.min.toString());
+    spec?.max && cy.getByDataCy('question-max').clear().type(spec.max.toString());
+
+    spec.type !== 'text' && cy.selectDropdownOptionByResourceName('type', spec.type);
+
+    if (['text', 'textarea', 'password', 'integer', 'float'].includes(spec.type))
+      cy.getByDataCy('question-default').type(spec.default.toString());
+    else if (
+      ['Multiple Choice (single select)', 'Multiple Choice (multiple select)'].includes(
+        spec.type
+      ) &&
+      Array.isArray(spec.choices)
+    ) {
+      const specType =
+        spec.type === 'Multiple Choice (single select)' ? 'multiplechoice' : 'multiselect';
+      spec.choices.forEach((choice) => {
+        cy.getByDataCy('add-choice-input').type(`${choice}{enter}`);
+      });
+
+      const defaults = Array.isArray(spec?.default)
+        ? spec.default
+        : spec.default.toString().split('\n');
+
+      cy.log('defaults', defaults);
+      cy.log('spec choices', spec.choices);
+
+      const choiceBtn = specType === 'multiplechoice' ? 'radio' : 'checkbox';
+      spec.choices.forEach((choice, index) => {
+        cy.log('loop', defaults, choice);
+        if (defaults.includes(choice)) {
+          cy.getByDataCy(`choice-${choiceBtn}-${index}`).click();
+        }
+      });
+    }
+
+    cy.clickButton('Create question');
   }
 );
