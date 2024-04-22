@@ -37,7 +37,7 @@ export function PageFormCredentialSelect<
   );
   const { setValue } = useFormContext();
   return props.isMultiple ? (
-    <PageFormMultiInput<Credential, TFieldValues, TFieldName>
+    <PageFormMultiInput<Credential>
       {...props}
       placeholder={props.placeholder ? props.placeholder : t('Add credentials')}
       name={props.name}

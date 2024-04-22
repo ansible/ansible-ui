@@ -15,7 +15,7 @@ The changes are being developed in the `feature/rbac` branch of [eda-server](htt
 ### Developing UIs against EDA's RBAC backend server:
 
 1. Check out feature branches in `ansible-ui` as per the normal development process.
-2. Implement RBAC relevant UIs using the EDA `feature/rbac` server https://eda.dev-ui-feature-rbac.gcp.testing.ansible.com/ for development and testing. (check #aap-ci-bots-eda for credentials)
+2. Implement RBAC relevant UIs using the EDA `feature/rbac` server https://eda.dev-feature-rbac.gcp.testing.ansible.com/ for development and testing. (check #aap-ci-bots-eda for credentials)
 3. Open PRs against `ansible-ui`'s main branch.
 4. Testing checklist for creating and reviewing PRs:
    - Add relevant component tests alongside UI updates.

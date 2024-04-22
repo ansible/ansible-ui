@@ -17,7 +17,26 @@ export const awxErrorAdapter = (error: unknown): ErrorOutput => {
       } else {
         genericErrors.push({ message: data['__all__'] as string });
       }
+    } else if ('inputs' in data) {
+      // handle credential inputs errors
+      const inputs = data['inputs'];
+      if (Array.isArray(inputs)) {
+        inputs.forEach((input) => {
+          if (typeof input === 'string') {
+            genericErrors.push({ message: input });
+          }
+        });
+      } else if (typeof inputs === 'object' && inputs !== null) {
+        Object.entries(inputs).forEach(([key, value]) => {
+          if (typeof value === 'string') {
+            fieldErrors.push({ name: key, message: value });
+          } else if (Array.isArray(value) && value.length > 0) {
+            fieldErrors.push({ name: key, message: value[0] as string });
+          }
+        });
+      }
     }
+
     // handle API responses {error: 'Cannot assign a Credential of kind `galaxy`.'}
     else if ('error' in data) {
       if (Array.isArray(data['error'])) {

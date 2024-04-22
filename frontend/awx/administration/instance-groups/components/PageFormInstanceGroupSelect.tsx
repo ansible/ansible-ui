@@ -18,7 +18,7 @@ export function PageFormInstanceGroupSelect<
   const selectInstanceGroup = useSelectInstanceGroups(true);
 
   return (
-    <PageFormMultiInput<InstanceGroup, TFieldValues, TFieldName>
+    <PageFormMultiInput<InstanceGroup>
       {...props}
       name={props.name}
       id="instance-group-select"

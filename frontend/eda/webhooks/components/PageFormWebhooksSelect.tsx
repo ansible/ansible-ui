@@ -1,8 +1,8 @@
 import { FieldPath, FieldValues } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { PageFormMultiInput } from '../../../../framework/PageForm/Inputs/PageFormMultiInput';
-import { useSelectWebhooks } from '../hooks/useSelectWebhooks';
 import { EdaWebhook } from '../../interfaces/EdaWebhook';
+import { useSelectWebhooks } from '../hooks/useSelectWebhooks';
 
 export function PageFormWebhookSelect<
   TFieldValues extends FieldValues = FieldValues,
@@ -12,7 +12,7 @@ export function PageFormWebhookSelect<
   const selectWebhook = useSelectWebhooks();
 
   return (
-    <PageFormMultiInput<EdaWebhook, TFieldValues, TFieldName>
+    <PageFormMultiInput<EdaWebhook>
       {...props}
       name={props.name}
       id="webhook-select"
