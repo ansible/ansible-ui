@@ -51,8 +51,8 @@ export type NotificationTemplateOptions = {
   };
 };
 
-type NotificationTemplateEdit = Omit<NotificationTemplate, 'id'> & { customize_messages? : boolean};
-type CustomizeMessageType = NotificationTemplate & { customize_messages? : boolean};
+type NotificationTemplateEdit = Omit<NotificationTemplate, 'id'> & { customize_messages?: boolean };
+type CustomizeMessageType = NotificationTemplate & { customize_messages?: boolean };
 
 // TODO - finish rest of the form in the next PR
 function NotifierForm(props: { mode: 'add' | 'edit' }) {
@@ -149,16 +149,15 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
             notification_configuration: formData.notification_configuration,
             notification_type: formData.notification_type,
             organization: formData.organization,
-            customize_messages : (formData as CustomizeMessageType).customize_messages,
+            customize_messages: (formData as CustomizeMessageType).customize_messages,
           } as NotificationTemplateEdit);
 
     stringToArrays(data);
 
-    if ( (data as CustomizeMessageType).customize_messages === false)
-    {
-     data.messages = null;
+    if ((data as CustomizeMessageType).customize_messages === false) {
+      data.messages = null;
     }
-    delete ((data as CustomizeMessageType).customize_messages);
+    delete (data as CustomizeMessageType).customize_messages;
 
     let fieldValue;
     // fix notification data types
@@ -193,16 +192,16 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
       }
     }
 
-    let result : { id? : number} = { };
+    let result: { id?: number } = {};
     if (mode === 'add') {
-      result = await postRequest(awxAPI`/notification_templates/`, data) as { id : number};
+      result = (await postRequest(awxAPI`/notification_templates/`, data)) as { id: number };
     } else {
       await patchRequest(awxAPI`/notification_templates/${formData.id?.toString() || ''}/`, data);
     }
 
-    const id = (mode === 'add') ? result?.id : formData.id;
+    const id = mode === 'add' ? result?.id : formData.id;
 
-    pageNavigate(AwxRoute.NotificationTemplateDetails, { params : { id }});
+    pageNavigate(AwxRoute.NotificationTemplateDetails, { params: { id } });
   };
 
   const job_friendly_name = '{{job_friendly_name}}';
