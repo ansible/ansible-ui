@@ -178,7 +178,7 @@ export function AuthenticatorForm(props: AuthenticatorFormProps) {
         defaultValue={initialValues}
         onSubmit={props.handleSubmit}
         errorAdapter={authenticatorErrorAdapter}
-        disableGrid
+        // disableGrid
       />
     </PageLayout>
   );

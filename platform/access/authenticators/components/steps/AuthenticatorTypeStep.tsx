@@ -1,8 +1,9 @@
+import { Text, TextContent, TextVariants } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { TextContent, Text, TextVariants } from '@patternfly/react-core';
-import { PageFormGrid, PageFormSelect } from '../../../../../framework';
-import { getAuthenticatorTypeLabel } from '../../getAuthenticatorTypeLabel';
+import { PageFormSelect } from '../../../../../framework';
+import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
 import type { AuthenticatorPlugins } from '../../../../interfaces/AuthenticatorPlugin';
+import { getAuthenticatorTypeLabel } from '../../getAuthenticatorTypeLabel';
 
 export function AuthenticatorTypeStep(props: { plugins: AuthenticatorPlugins }) {
   const { t } = useTranslation();
@@ -16,18 +17,18 @@ export function AuthenticatorTypeStep(props: { plugins: AuthenticatorPlugins }) 
 
   return (
     <>
-      <TextContent style={{ marginBottom: 25 }}>
-        <Text component={TextVariants.h2}>{t('Authentication details')}</Text>
+      <TextContent>
+        <Text component={TextVariants.h2}>{t('Authentication type')}</Text>
       </TextContent>
-      <PageFormGrid isVertical>
+      <PageFormSection>
         <PageFormSelect
           id="authentication-type-select"
           name="type"
-          label={t('Authentication setting')}
+          label={t('Authentication type')}
           options={options}
           isRequired
         />
-      </PageFormGrid>
+      </PageFormSection>
     </>
   );
 }

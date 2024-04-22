@@ -1,22 +1,22 @@
 import { Text, TextContent, TextVariants } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import {
+  PageFormCheckbox,
   PageFormDataEditor,
-  PageFormGrid,
   PageFormSelect,
-  PageFormSwitch,
   PageFormTextInput,
 } from '../../../../../framework';
-import { postRequest, requestPatch } from '../../../../../frontend/common/crud/Data';
+import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
 import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
-import { Authenticator } from '../../../../interfaces/Authenticator';
+import { postRequest, requestPatch } from '../../../../../frontend/common/crud/Data';
 import { gatewayAPI } from '../../../../api/gateway-api-utils';
+import { Authenticator } from '../../../../interfaces/Authenticator';
 import {
-  AuthenticatorPlugins,
   AuthenticatorPlugin,
+  AuthenticatorPlugins,
   PluginConfiguration,
 } from '../../../../interfaces/AuthenticatorPlugin';
-import { AuthenticatorFormValues, formatConfiguration, Configuration } from '../AuthenticatorForm';
+import { AuthenticatorFormValues, Configuration, formatConfiguration } from '../AuthenticatorForm';
 
 /* TODO: more intelligent categorization of field type to input type
     pending updates to the API */
@@ -68,11 +68,11 @@ export function AuthenticatorDetailsStep(props: {
 
   return (
     <>
-      <TextContent style={{ marginBottom: 25 }}>
+      <TextContent>
         <Text component={TextVariants.h2}>{t('Authentication details')}</Text>
       </TextContent>
-      <PageFormGrid isVertical>
-        <PageFormTextInput name="name" label={t('Name')} isRequired />
+      <PageFormSection>
+        <PageFormTextInput name="name" label={t('Name')} isRequired placeholder={t('Enter name')} />
         {textFields.map((field) =>
           field.type === 'ChoiceField' ? (
             <PageFormSelect
@@ -98,22 +98,27 @@ export function AuthenticatorDetailsStep(props: {
               labelHelpTitle={field.ui_field_label || field.name}
               labelHelp={field.help_text}
               isRequired={field.required}
+              placeholder={`Enter ${field.ui_field_label || field.name}`}
             />
           )
         )}
-        {boolFields.map((field) => (
-          <PageFormSwitch
-            id={`configuration-input-${field.name}`}
-            name={`configuration.${field.name}`}
-            key={field.name}
-            label={field.ui_field_label || field.name}
-            isRequired={field.required}
-            labelHelpTitle={field.ui_field_label || field.name}
-            labelHelp={field.help_text}
-          />
-        ))}
-      </PageFormGrid>
-      <PageFormGrid isVertical singleColumn>
+        {boolFields.length > 0 && (
+          <PageFormSection singleColumn>
+            {boolFields.map((field) => (
+              <PageFormCheckbox
+                id={`configuration-input-${field.name}`}
+                name={`configuration.${field.name}`}
+                key={field.name}
+                label={field.ui_field_label || field.name}
+                isRequired={field.required}
+                labelHelpTitle={field.ui_field_label || field.name}
+                labelHelp={field.help_text}
+              />
+            ))}
+          </PageFormSection>
+        )}
+      </PageFormSection>
+      <PageFormSection singleColumn>
         {dataFields.map((field) => {
           const fieldType = schema.find((fieldDef) => fieldDef.name === field.name)?.type;
           return (
@@ -130,7 +135,7 @@ export function AuthenticatorDetailsStep(props: {
             />
           );
         })}
-      </PageFormGrid>
+      </PageFormSection>
     </>
   );
 }
