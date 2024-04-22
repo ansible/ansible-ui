@@ -8,7 +8,7 @@ describe('Tasks', () => {
   });
 
   it('should render the tasks page', () => {
-    cy.verifyPageTitle(Tasks.title);
+    cy.verifyPageTitle('Task Management');
   });
 
   it('should click on list item and find all card headers on details page', () => {
