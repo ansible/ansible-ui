@@ -100,8 +100,8 @@ describe('Credential Types', () => {
       cy.wait('@patchRequest')
         .its('response')
         .then((editedCredType) => {
-          expect(editedCredType.statusCode).to.eql(403);
-          const stringAssertion = JSON.stringify(editedCredType.body);
+          expect(editedCredType?.statusCode).to.eql(403);
+          const stringAssertion = JSON.stringify(editedCredType?.body);
           expect(stringAssertion).to.eql(
             '{"detail":"Modifications to inputs are not allowed for credential types that are in use"}'
           );
