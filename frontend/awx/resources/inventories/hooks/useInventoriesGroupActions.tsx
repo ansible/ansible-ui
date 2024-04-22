@@ -61,8 +61,12 @@ export function useInventoriesGroupActions() {
         icon: CodeIcon,
         label: t('Run command'),
         onClick: (group) =>
-          pageNavigate(AwxRoute.InventoryGroups, {
-            params: { inventory_type: params.inventory_type, id: group.inventory },
+          pageNavigate(AwxRoute.InventoryRunCommand, {
+            params: {
+              inventory_type: params.inventory_type,
+              id: group.inventory,
+              group_id: group.id,
+            },
           }),
         isDisabled: () =>
           canRunAdHocCommand
