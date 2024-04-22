@@ -51,7 +51,8 @@ export type NotificationTemplateOptions = {
   };
 };
 
-type NotificationTemplateEdit = Omit<NotificationTemplate, 'id'>;
+type NotificationTemplateEdit = Omit<NotificationTemplate, 'id'> & { customize_messages? : boolean};
+type CustomizeMessageType = NotificationTemplate & { customize_messages? : boolean};
 
 // TODO - finish rest of the form in the next PR
 function NotifierForm(props: { mode: 'add' | 'edit' }) {
@@ -100,11 +101,11 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
   const messagesEmpty = areMessagesEmpty(defaultValueMessages);
 
   if (defaultValue && messagesEmpty) {
-    (defaultValue as { customize_messages: boolean }).customize_messages = false;
+    (defaultValue as CustomizeMessageType).customize_messages = false;
   }
 
   if (defaultValue && !messagesEmpty) {
-    (defaultValue as { customize_messages: boolean }).customize_messages = true;
+    (defaultValue as CustomizeMessageType).customize_messages = true;
   }
 
   // fill customize messages
@@ -148,9 +149,16 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
             notification_configuration: formData.notification_configuration,
             notification_type: formData.notification_type,
             organization: formData.organization,
+            customize_messages : (formData as CustomizeMessageType).customize_messages,
           } as NotificationTemplateEdit);
 
     stringToArrays(data);
+
+    if ( (data as CustomizeMessageType).customize_messages === false)
+    {
+     data.messages = null;
+    }
+    delete ((data as CustomizeMessageType).customize_messages);
 
     let fieldValue;
     // fix notification data types
