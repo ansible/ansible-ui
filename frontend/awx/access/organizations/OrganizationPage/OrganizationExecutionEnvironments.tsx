@@ -5,8 +5,7 @@ import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxView } from '../../../common/useAwxView';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { PlusCircleIcon } from '@patternfly/react-icons';
-import { ExecutionEnvironment } from '../../../interfaces/generated-from-swagger/api';
-import { useExecutionEnvironmentFilters } from '../../../../hub/execution-environments/hooks/useExecutionEnvironmentFilters';
+import { ExecutionEnvironment } from '../../../interfaces/ExecutionEnvironment';
 import { useExecutionEnvironmentsColumns } from '../../../administration/execution-environments/hooks/useExecutionEnvironmentsColumns';
 import { useExecutionEnvironmentsFilters } from '../../../administration/execution-environments/hooks/useExecutionEnvironmentsFilters';
 
