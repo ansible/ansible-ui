@@ -23,7 +23,7 @@ describe('Credential Types', () => {
 
         cy.createAWXCredential({
           name: credentialName,
-          kind: 'gce',
+          kind: 'cloud',
           organization: (this.globalOrganization as Organization).id,
           credential_type: credType1.id,
         }).then((cred) => {
