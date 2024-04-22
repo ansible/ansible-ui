@@ -31,9 +31,7 @@ export function useUsersActions(view: IEdaView<EdaUser>) {
         isPinned: true,
         icon: PlusCircleIcon,
         label: t('Create user'),
-        isHidden: () =>
-          !activeEdaUser?.is_superuser &&
-          !activeEdaUser?.roles.find((role) => role.name === 'Admin'),
+        isHidden: () => !activeEdaUser?.is_superuser,
         onClick: () => pageNavigate(EdaRoute.CreateUser),
       },
       {
