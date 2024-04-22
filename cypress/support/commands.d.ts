@@ -1288,7 +1288,7 @@ declare global {
        */
       deleteEdaCredential(credential: EdaCredential): Chainable<void>;
 
-      getEdaRoles(): Chainable<EdaRole[]>;
+      getEdaRoles(content_type__model?: string): Chainable<EdaRole[]>;
       /**
        * Creates an EDA user and returns the same.
        *
