@@ -10,7 +10,7 @@ import { SearchIcon } from '@patternfly/react-icons';
 import { useCallback } from 'react';
 import {
   Controller,
-  FieldPath,
+  FieldPathByValue,
   FieldValues,
   PathValue,
   Validate,
@@ -36,7 +36,7 @@ const ChipHolder = styled.div<ChipHolderProps>`
 export type PageFormMultiInputProps<
   T,
   TFieldValues extends FieldValues = FieldValues,
-  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
+  TFieldName extends FieldPathByValue<TFieldValues, T[]> = FieldPathByValue<TFieldValues, T[]>,
 > = {
   name: TFieldName;
   placeholder?: string;
@@ -50,18 +50,14 @@ export type PageFormMultiInputProps<
 } & Omit<PageFormGroupProps, 'onChange' | 'value'> &
   ChipGroupProps;
 
-interface FieldValuesWithArray<T> extends FieldValues {
-  [key: string]: T[];
-}
-
 export function PageFormMultiInput<
   T extends {
     hostname?: string;
     id: number | string;
     name: string;
   },
-  TFieldValues extends FieldValuesWithArray<T> = FieldValuesWithArray<T>,
-  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
+  TFieldValues extends FieldValues = FieldValues,
+  TFieldName extends FieldPathByValue<TFieldValues, T[]> = FieldPathByValue<TFieldValues, T[]>,
 >(props: PageFormMultiInputProps<T, TFieldValues, TFieldName>) {
   const { validate, selectTitle, selectOpen, placeholder, ...formGroupInputProps } = props;
   const { label, name, minLength, maxLength, pattern, isDisabled } = props;
@@ -92,7 +88,7 @@ export function PageFormMultiInput<
       shouldUnregister
       render={({ field: { onChange, value }, fieldState: { error } }) => {
         const removeItem = (item: T) => {
-          onChange(value.filter((i) => i.id !== item.id));
+          onChange(value.filter((i: T) => i.id !== item.id));
         };
 
         return (
@@ -115,7 +111,7 @@ export function PageFormMultiInput<
                       `${value?.length - 5}`
                     )}
                   >
-                    {value?.map((item) => (
+                    {value?.map((item: T) => (
                       <Chip key={item.id} onClick={() => removeItem(item)}>
                         {item.hostname ?? item.name}
                       </Chip>
