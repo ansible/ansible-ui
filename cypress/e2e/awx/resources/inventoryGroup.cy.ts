@@ -87,15 +87,90 @@ describe('Inventory Groups', () => {
       });
     });
 
-    it.skip('can run an ad-hoc command against a group', () => {
-      // cy.createInventoryHostGroup(organization).then((result) => {
-      // const { inventory, host, group } = result;
-      //1) Use the inventory created in beforeEach block, access the groups tab of that inventory
-      //2) Use the group, EE, and credential created in the beforeEach block- these resources are needed to run a command against a group
-      //3) Assert redirect to the job output screen
-      //4) Navigate to the details page of the job and assert the values there match what was entered in the Run Command Wizard
-      //5) Navigate back to the Inventory -> Jobs Tab to assert that the Run Command job shows up there
-      //});
+    it('can run an ad-hoc command against a group', () => {
+      cy.createInventoryHostGroup(organization).then((result) => {
+        const { inventory, group } = result;
+        //1) Use the inventory created in beforeEach block, access the groups tab of that inventory
+        cy.navigateTo('awx', 'inventories');
+        cy.filterTableBySingleSelect('name', inventory.name);
+        cy.clickTableRowLink('name', inventory.name, { disableFilter: true });
+        cy.verifyPageTitle(inventory.name);
+        cy.clickLink(/^Groups$/);
+        //2) Use the group, EE, and credential created in the beforeEach block- these resources are needed to run a command against a group
+        cy.clickTableRowLink('name', group.name, { disableFilter: true });
+        cy.clickKebabAction('actions-dropdown', 'run-command');
+        cy.selectDropdownOptionByResourceName('module', 'shell');
+        cy.getByDataCy('module-args-form-group').type('argument');
+        cy.selectDropdownOptionByResourceName('verbosity', '1 (Verbose)');
+        cy.getByDataCy('limit-form-group').within(() => {
+          cy.get('input').clear().type('limit');
+        });
+        cy.getByDataCy('forks-form-group').within(() => {
+          cy.get('input').clear().type('1');
+        });
+        cy.getByDataCy('diff-mode-form-group').within(() => {
+          cy.get('.pf-v5-c-form__group-control > label').click();
+        });
+        cy.getByDataCy('become_enabled').click();
+        cy.getByDataCy('extra-vars-form-group').type('test: "test"');
+        cy.clickButton(/^Next$/);
+        cy.getByDataCy('execution-environment-select-form-group').within(() => {
+          cy.getBy('[aria-label="Options menu"]').click();
+        });
+        cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+          cy.filterTableBySingleSelect('name', executionEnvironment.name);
+          cy.get('[data-ouia-component-id="simple-table"] tbody').within(() => {
+            cy.get('[data-cy="checkbox-column-cell"] input').click();
+          });
+          cy.clickButton(/^Confirm/);
+        });
+        cy.clickButton(/^Next$/);
+        cy.getByDataCy('credential-select-form-group').within(() => {
+          cy.getBy('[aria-label="Options menu"]').click();
+        });
+        cy.get('body').then(($body) => {
+          if ($body.find('[id="pf-modal-part-4"]').length === 0) {
+            cy.getByDataCy('credential-select-form-group').within(() => {
+              cy.getBy('[aria-label="Options menu"]').click();
+            });
+          }
+        });
+        cy.selectTableRowByCheckbox('name', machineCredential.name);
+        cy.clickButton(/^Confirm$/);
+        cy.clickButton(/^Next$/);
+        cy.getByDataCy('module').should('contain', 'shell');
+        cy.getByDataCy('arguments').should('contain', 'argument');
+        cy.getByDataCy('verbosity').should('contain', '1');
+        cy.getByDataCy('limit').should('contain', 'limit');
+        cy.getByDataCy('forks').should('contain', '1');
+        cy.getByDataCy('show-changes').should('contain', 'On');
+        cy.getByDataCy('privilege-escalation').should('contain', 'On');
+        cy.getByDataCy('code-block-value').should('contain', 'test: test');
+        cy.getByDataCy('credentials').should('contain', machineCredential.name);
+        cy.getByDataCy('execution-environment').should('contain', executionEnvironment.name);
+        cy.get('[data-cy="Submit"]').click();
+        //3) Assert redirect to the job output screen
+        cy.verifyPageTitle('command');
+        cy.getByDataCy('Output').should('exist');
+        cy.url().as('adHocId');
+        //4) Navigate to the details page of the job and assert the values there match what was entered in the Run Command Wizard
+        cy.clickLink('Details');
+        cy.getByDataCy('type').should('contain', 'Command');
+        cy.getByDataCy('inventory').should('contain', inventory.name);
+        cy.getByDataCy('code-block-value').should('contain', 'test: test');
+        //5) Navigate back to the Inventory -> Jobs Tab to assert that the Run Command job shows up there
+        cy.navigateTo('awx', 'inventories');
+        cy.filterTableBySingleSelect('name', inventory.name);
+        cy.clickTableRowLink('name', inventory.name, { disableFilter: true });
+        cy.verifyPageTitle(inventory.name);
+        cy.getBy('[role="tablist"]').within(() => {
+          cy.clickLink(/^Jobs$/);
+        });
+        cy.clickTableRowLink('name', 'command', { disableFilter: true });
+        cy.get('@adHocId').then((url) => {
+          cy.url().should('equal', url);
+        });
+      });
     });
 
     it.skip('can delete a group from the group list view', () => {
