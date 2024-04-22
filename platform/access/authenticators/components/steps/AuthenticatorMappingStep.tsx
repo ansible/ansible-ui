@@ -1,17 +1,18 @@
-import { useState, MouseEvent } from 'react';
-import { useFormContext, useFieldArray } from 'react-hook-form';
 import {
   Dropdown,
-  DropdownList,
   DropdownItem,
+  DropdownList,
   MenuToggle,
-  TextContent,
   Text,
+  TextContent,
   TextVariants,
 } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons';
+import { MouseEvent, useState } from 'react';
+import { useFieldArray, useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
+import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
 import { RequestError } from '../../../../../frontend/common/crud/RequestError';
 import { AuthenticatorMapType } from '../../../../interfaces/AuthenticatorMap';
 import type { AuthenticatorMapValues } from '../AuthenticatorForm';
@@ -41,23 +42,19 @@ export function AuthenticatorMappingStep() {
 
   return (
     <>
-      <TextContent
-        style={{
-          paddingBottom: 15,
-          marginBottom: 15,
-          borderBottom: '1px solid var(--pf-v5-global--palette--black-400)',
-        }}
-      >
+      <TextContent>
         <Text component={TextVariants.h2}>{t('Authentication mapping')}</Text>
       </TextContent>
-      {mappings.map((map, i) => (
-        <MapFields
-          key={map.id}
-          index={i}
-          map={map as unknown as AuthenticatorMapValues}
-          onDelete={removeMap}
-        />
-      ))}
+      <PageFormSection singleColumn>
+        {mappings.map((map, i) => (
+          <MapFields
+            key={map.id}
+            index={i}
+            map={map as unknown as AuthenticatorMapValues}
+            onDelete={removeMap}
+          />
+        ))}
+      </PageFormSection>
       <AddMappingDropdown onSelect={addMapping} />
     </>
   );
@@ -92,8 +89,13 @@ function AddMappingDropdown(props: { onSelect: (value: AuthenticatorMapType) => 
       onSelect={onSelect}
       onOpenChange={(isOpen: boolean) => setIsOpen(isOpen)}
       toggle={(ref) => (
-        <Toggle ref={ref} onClick={() => setIsOpen(!isOpen)} id="add-mapping">
-          <PlusCircleIcon style={{ marginRight: 5 }} /> {t('Add authentication mapping')}
+        <Toggle
+          ref={ref}
+          onClick={() => setIsOpen(!isOpen)}
+          id="add-mapping"
+          icon={<PlusCircleIcon />}
+        >
+          {t('Add authentication mapping')}
         </Toggle>
       )}
     >
