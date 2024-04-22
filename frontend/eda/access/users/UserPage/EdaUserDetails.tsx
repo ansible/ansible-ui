@@ -13,7 +13,7 @@ export function EdaUserDetails() {
 
   return (
     <>
-      <UserDetails user={user as UserDetailsType} />
+      <UserDetails user={user as UserDetailsType} options={{ showUserType: true }} />
     </>
   );
 }

@@ -10,24 +10,28 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../framework';
-import { PageFormMultiSelect } from '../../../../framework/PageForm/Inputs/PageFormMultiSelect';
 import { useGet } from '../../../common/crud/useGet';
 import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { EdaPageForm } from '../../common/EdaPageForm';
 import { edaAPI } from '../../common/eda-utils';
-import { EdaResult } from '../../interfaces/EdaResult';
-import { EdaRole } from '../../interfaces/EdaRole';
 import { EdaCurrentUserUpdate, EdaUser, EdaUserCreateUpdate } from '../../interfaces/EdaUser';
 import { EdaRoute } from '../../main/EdaRoutes';
+import { PageFormSingleSelect } from '../../../../framework/PageForm/Inputs/PageFormSingleSelect';
 
-type UserInput = Omit<EdaUserCreateUpdate, 'roles'> & {
-  roles?: string[];
+type UserInput = EdaUserCreateUpdate & {
+  userType: string;
   confirmPassword: string;
 };
 
 type CurrentUserInput = EdaCurrentUserUpdate & {
+  userType: string;
   confirmPassword: string;
+};
+
+const UserType = {
+  SystemAdministrator: 'System administrator',
+  NormalUser: 'Normal user',
 };
 
 export function CreateUser() {
@@ -36,14 +40,14 @@ export function CreateUser() {
   const pageNavigate = usePageNavigate();
   const postRequest = usePostRequest<EdaUserCreateUpdate, EdaUser>();
   const onSubmit: PageFormSubmitHandler<UserInput> = async (userInput, _, setFieldError) => {
-    const { roles, confirmPassword, ...user } = userInput;
+    const { confirmPassword, userType, ...user } = userInput;
+    user.is_superuser = userType === UserType.SystemAdministrator;
     if (confirmPassword !== user.password) {
       setFieldError('confirmPassword', { message: t('Password does not match.') });
       return false;
     }
     const createUser: EdaUserCreateUpdate = {
       ...user,
-      roles: roles ?? [],
     };
     const newUser = await postRequest(edaAPI`/users/`, createUser);
     pageNavigate(EdaRoute.UserPage, { params: { id: newUser.id } });
@@ -66,6 +70,7 @@ export function CreateUser() {
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
         onCancel={onCancel}
+        defaultValue={{ userType: UserType.NormalUser }}
       >
         <UserInputs mode="create" />
       </EdaPageForm>
@@ -131,21 +136,21 @@ export function EditUser() {
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
   const { data: user } = useGet<EdaUser>(edaAPI`/users/${id.toString()}/`);
-  const { data: rolesResult } = useGet<EdaResult<EdaRole>>(edaAPI`/roles/`);
   const patchRequest = usePatchRequest<EdaUserCreateUpdate, EdaUser>();
   const onSubmit: PageFormSubmitHandler<UserInput> = async (
     userInput: UserInput,
     _setError,
     setFieldError
   ) => {
-    const { roles, confirmPassword, ...user } = userInput;
+    const { confirmPassword, userType, ...user } = userInput;
+    user.is_superuser = userType === UserType.SystemAdministrator;
     if (user.password) {
       if (confirmPassword !== user.password) {
         setFieldError('confirmPassword', { message: t('Password does not match.') });
         return false;
       }
     }
-    const editUser: EdaUserCreateUpdate = { ...user, roles: roles ?? [] };
+    const editUser: EdaUserCreateUpdate = { ...user };
     const updatedUser = await patchRequest(edaAPI`/users/${id.toString()}/`, editUser);
     pageNavigate(EdaRoute.UserPage, { params: { id: updatedUser.id } });
   };
@@ -153,7 +158,7 @@ export function EditUser() {
   const onCancel = () => navigate(-1);
   const getPageUrl = useGetPageUrl();
 
-  if (!user || !rolesResult) {
+  if (!user) {
     return (
       <PageLayout>
         <PageHeader
@@ -167,7 +172,7 @@ export function EditUser() {
   }
   const defaultValue: Partial<UserInput> = {
     ...user,
-    roles: user.roles.map((role) => role.id),
+    userType: user.is_superuser ? UserType.SystemAdministrator : UserType.NormalUser,
   };
   return (
     <PageLayout>
@@ -230,7 +235,6 @@ function CurrentUserInputs() {
 function UserInputs(props: { mode: 'create' | 'edit' }) {
   const { mode } = props;
   const { t } = useTranslation();
-  const { data: userRoles } = useGet<EdaResult<EdaRole>>(edaAPI`/roles/?page=1&page_size=200`);
   return (
     <Fragment>
       <PageFormTextInput<UserInput>
@@ -248,6 +252,26 @@ function UserInputs(props: { mode: 'create' | 'edit' }) {
             }
           }
         }}
+      />
+      <PageFormSingleSelect<UserInput>
+        name="userType"
+        label={t('User type')}
+        placeholder={t('Select user type')}
+        options={[
+          {
+            label: t('System administrator'),
+            description: t('can edit, change, and update any inventory or automation definition'),
+            value: UserType.SystemAdministrator,
+          },
+          {
+            label: t('Normal user'),
+            description: t(
+              'has read and write access limited to the resources (such as inventory, projects, and job templates) for which that user has been granted the appropriate roles and privileges'
+            ),
+            value: UserType.NormalUser,
+          },
+        ]}
+        isRequired
       />
       <PageFormTextInput<UserInput>
         name="first_name"
@@ -279,21 +303,6 @@ function UserInputs(props: { mode: 'create' | 'edit' }) {
         placeholder={t('Enter password')}
         type="password"
         isRequired={mode === 'create'}
-      />
-      <PageFormMultiSelect<UserInput>
-        name="roles"
-        label={t('Role(s)')}
-        options={
-          userRoles?.results
-            ? userRoles.results.map((item) => ({
-                label: item.name,
-                value: item.id,
-                description: item?.description || '',
-              }))
-            : []
-        }
-        isRequired
-        placeholder={t('Select role(s)')}
       />
     </Fragment>
   );

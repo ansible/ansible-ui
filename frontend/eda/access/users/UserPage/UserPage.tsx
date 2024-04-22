@@ -39,11 +39,7 @@ export function UserPage() {
 
   const { activeEdaUser } = useEdaActiveUser();
   const isViewingSelf = Number(user?.id) === Number(activeEdaUser?.id);
-  const canEditUser =
-    activeEdaUser?.is_superuser || activeEdaUser?.roles.some((role) => role.name === 'Admin');
-  const canViewUsers =
-    activeEdaUser?.is_superuser ||
-    activeEdaUser?.roles.some((role) => role.name === 'Admin' || role.name === 'Auditor');
+  const canViewOrEditUsers = activeEdaUser?.is_superuser;
 
   const isActionTab =
     location.pathname === getPageUrl(EdaRoute.UserDetails, { params: { id: user?.id } });
@@ -58,7 +54,7 @@ export function UserPage() {
             icon: PencilAltIcon,
             isPinned: true,
             label: t('Edit user'),
-            // isHidden: (_user: EdaUser) => !canEditUser,
+            // isHidden: (_user: EdaUser) => !canViewOrEditUsers,
             onClick: (user: EdaUser) =>
               pageNavigate(EdaRoute.EditUser, { params: { id: user.id } }),
           },
@@ -68,7 +64,7 @@ export function UserPage() {
             selection: PageActionSelection.Single,
             icon: PencilAltIcon,
             isPinned: true,
-            isHidden: (_user: EdaUser) => canEditUser || !isViewingSelf,
+            isHidden: (_user: EdaUser) => canViewOrEditUsers || !isViewingSelf,
             label: t('Edit user'),
             onClick: () => pageNavigate(EdaRoute.EditCurrentUser),
           },
@@ -88,7 +84,7 @@ export function UserPage() {
         ]
       : [];
     return actions;
-  }, [canEditUser, deleteUsers, isViewingSelf, pageNavigate, isActionTab, t]);
+  }, [canViewOrEditUsers, deleteUsers, isViewingSelf, pageNavigate, isActionTab, t]);
 
   if (!activeEdaUser) return <LoadingPage breadcrumbs tabs />;
   const tabs = isViewingSelf
@@ -106,7 +102,7 @@ export function UserPage() {
       <PageHeader
         title={user?.username}
         breadcrumbs={
-          canViewUsers
+          canViewOrEditUsers
             ? [{ label: t('Users'), to: getPageUrl(EdaRoute.Users) }, { label: user?.username }]
             : undefined
         }
