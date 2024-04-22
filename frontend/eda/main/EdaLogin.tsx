@@ -6,9 +6,9 @@ import { edaAPI } from '../common/eda-utils';
 import { useEdaActiveUser } from '../common/useEdaActiveUser';
 
 export function EdaLogin(props: { children: React.ReactNode }) {
-  const { activeEdaUser, activeEdaUserIsLoading, refreshActiveEdaUser } = useEdaActiveUser();
+  const { activeEdaUser, refreshActiveEdaUser } = useEdaActiveUser();
 
-  if (activeEdaUserIsLoading) {
+  if (activeEdaUser === undefined) {
     return (
       <Page>
         <LoadingState />

@@ -7,9 +7,9 @@ import { hubAPI } from '../common/api/formatPath';
 import { HubContextProvider } from '../common/useHubContext';
 
 export function HubLogin(props: { children: React.ReactNode }) {
-  const { activeHubUser, refreshActiveHubUser, activeHubUserIsLoading } = useHubActiveUser();
+  const { activeHubUser, refreshActiveHubUser } = useHubActiveUser();
 
-  if (activeHubUserIsLoading) {
+  if (activeHubUser === undefined) {
     return (
       <Page>
         <LoadingState />
