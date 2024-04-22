@@ -19,7 +19,7 @@ describe('Tasks List', () => {
   });
   it('Tasks list renders', () => {
     cy.mount(<Tasks />);
-    cy.verifyPageTitle('Tasks');
+    cy.verifyPageTitle('Task Management');
     cy.get('table').find('tr').should('have.length', 10);
   });
   it('Filter tasks by status = running', () => {

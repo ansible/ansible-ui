@@ -372,7 +372,7 @@ export function useHubNavigation() {
         },
         {
           id: HubRoute.Tasks,
-          label: t('Tasks'),
+          label: t('Task Management'),
           path: 'tasks',
           children: [
             {
