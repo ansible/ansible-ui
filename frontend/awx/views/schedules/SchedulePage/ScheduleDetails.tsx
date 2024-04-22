@@ -30,10 +30,10 @@ import {
 import { parseStringToTagArray } from '../../../resources/templates/JobTemplateFormHelpers';
 import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageDetailCodeEditor';
 import { RulesPreview } from '../components/RulesPreview';
-import { ExceptionsPreview } from '../components/ExceptionsPreview';
 import { useEffect, useState } from 'react';
 import { postRequest } from '../../../../common/crud/Data';
 import { DateTime } from 'luxon';
+import { RRuleSet, rrulestr } from 'rrule';
 
 export function ScheduleDetails() {
   const { t } = useTranslation();
@@ -125,8 +125,7 @@ export function ScheduleDetails() {
           <Divider />
         </PageDetail>
         <PageDetail fullWidth>
-          <RulesPreview rrule={schedule.rrule} />
-          {schedule.rrule.includes('EXRULE') && <ExceptionsPreview rrule={schedule.rrule} />}
+          <RulesPreview ruleSet={rrulestr(schedule.rrule, { forceset: true }) as RRuleSet} />
         </PageDetail>
       </PageDetails>
     </>

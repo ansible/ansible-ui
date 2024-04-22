@@ -529,7 +529,7 @@ describe('Schedules - Edit', () => {
     });
     cy.clickButton(/^Save exception$/);
     cy.clickButton(/^Next$/);
-    cy.getByDataCy('exception-1').contains('FREQ=YEARLY');
+    cy.getByDataCy('exrule-1').contains('FREQ=YEARLY');
     cy.clickButton(/^Finish$/);
     cy.verifyPageTitle(schedule.name);
   });
@@ -581,7 +581,7 @@ describe('Schedules - Edit', () => {
       cy.getBy('[data-cy="delete-exception"]').click();
     });
     cy.clickButton(/^Next$/);
-    cy.getByDataCy('exception-1').should('not.contain', 'FREQ=DAILY');
+    cy.getByDataCy('exrule-1').should('not.contain', 'FREQ=DAILY');
   });
 
   it.skip('can edit a simple schedule to remove a rule and an exception', () => {

@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { RuleForm } from '../components/RuleForm';
 import { RulesList } from '../components/RulesList';
 import { PlusCircleIcon } from '@patternfly/react-icons';
-import { useFormContext, useWatch } from 'react-hook-form';
+import { useFormContext } from 'react-hook-form';
 import { RuleListItemType, ScheduleFormWizard } from '../types';
 import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
 import { DateTime } from 'luxon';
@@ -14,17 +14,17 @@ import { RRule, datetime } from 'rrule';
 export function RulesStep() {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState<boolean | number>(false);
-  const { setValue } = useFormContext();
+  const { setValue, getValues } = useFormContext();
   const { wizardData } = usePageWizard();
 
-  const {
-    timezone,
-    startDateTime: { date, time },
-  } = wizardData as ScheduleFormWizard;
-  const rules = useWatch({ name: 'rules' }) as RuleListItemType[];
+  const rules = getValues('rules') as RuleListItemType[];
   const hasRules = rules?.length > 0;
-
   useEffect(() => {
+    const {
+      timezone,
+      startDateTime: { date, time },
+    } = wizardData as ScheduleFormWizard;
+
     const [startHour, startMinute] = time.split(':');
     const isStartPM = time.includes('PM');
     const start = DateTime.fromISO(`${date}`)
@@ -34,7 +34,7 @@ export function RulesStep() {
       })
       .toUTC();
     const { year, month, day, hour, minute } = start;
-    const updatedRules = rules.map(({ rule, id }) => {
+    const updatedRules = (rules || []).map(({ rule, id }) => {
       const newRule = new RRule({
         ...rule.options,
         tzid: timezone,
@@ -43,7 +43,7 @@ export function RulesStep() {
       return { rule: newRule, id };
     });
     setValue('rules', updatedRules);
-  }, [date, time, rules, setValue, timezone]);
+  }, [rules, wizardData, setValue]);
   return (
     <PageFormSection title={t('Rules')} singleColumn>
       {!isOpen && hasRules && (

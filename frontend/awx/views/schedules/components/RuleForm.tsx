@@ -78,7 +78,7 @@ export function RuleForm(props: {
       ...formData
     } = getValues() as RuleFields;
 
-    const start = DateTime.fromISO(`${date}`).set(get24Hour(time)).toUTC();
+    const start = DateTime.fromISO(`${date}`).set(get24Hour(time));
     const { year, month, day, hour, minute } = start;
     const rule = new RRule({
       ...formData,
@@ -179,7 +179,7 @@ export function RuleForm(props: {
           labelHelp={t(
             'This is the bymonth field. This field is used to declare which months of the year the schedule should run.'
           )}
-          placeholder={t('Select days of the week on which to run the schedule')}
+          placeholder={t('Select days of the month on which to run the schedule')}
           disableSortOptions
         />
         <PageFormMultiSelect<RuleFields>
