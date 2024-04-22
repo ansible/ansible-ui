@@ -18,7 +18,7 @@ export function PageFormRolesSelect<TFieldValues extends FieldValues = FieldValu
   const { t } = useTranslation();
   const selectRoles = useSelectRoles();
   return (
-    <PageFormMultiInput<EdaRole, TFieldValues>
+    <PageFormMultiInput<EdaRole>
       name={props.name}
       id="roles-select"
       label={props.label || t('Roles')}

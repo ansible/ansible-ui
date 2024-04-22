@@ -1,10 +1,10 @@
+import { TFunction } from 'i18next';
 import { ReactNode } from 'react';
 import { FieldPath, FieldValues } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { useMultiSelectPeer } from '../hooks/useSelectPeers';
-import { Instance } from '../../../interfaces/Instance';
 import { PageFormMultiInput } from '../../../../../framework/PageForm/Inputs/PageFormMultiInput';
-import { TFunction } from 'i18next';
+import { Instance } from '../../../interfaces/Instance';
+import { useMultiSelectPeer } from '../hooks/useSelectPeers';
 
 export function PageFormPeersSelect<
   TFieldValues extends FieldValues = FieldValues,
@@ -18,7 +18,7 @@ export function PageFormPeersSelect<
   const multiSelectelectPeer = useMultiSelectPeer();
   const { t } = useTranslation();
   return (
-    <PageFormMultiInput<Instance, TFieldValues, TFieldName>
+    <PageFormMultiInput<Instance>
       {...props}
       name={props.name}
       id="peer-select"
