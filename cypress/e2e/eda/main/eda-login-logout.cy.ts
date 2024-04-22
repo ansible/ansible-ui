@@ -25,18 +25,16 @@ describe('EDA Login / Logoff', () => {
   });
 
   it('can log out and login as a different user', () => {
-    cy.getEdaRoles().then((roles) => {
-      const password = randomString(12);
-      cy.createEdaUser({ password, roles: roles.map((role) => role.id) }).then((user) => {
-        cy.edaLogout();
+    const password = randomString(12);
+    cy.createEdaUser({ password }).then((user) => {
+      cy.edaLogout();
 
-        cy.edaLogin(user.username, password);
-        cy.get('.pf-v5-c-dropdown__toggle').eq(1).should('contain', user.username);
-        cy.edaLogout();
+      cy.edaLogin(user.username, password);
+      cy.get('.pf-v5-c-dropdown__toggle').eq(1).should('contain', user.username);
+      cy.edaLogout();
 
-        cy.edaLogin();
-        cy.deleteEdaUser(user);
-      });
+      cy.edaLogin();
+      cy.deleteEdaUser(user);
     });
   });
 });

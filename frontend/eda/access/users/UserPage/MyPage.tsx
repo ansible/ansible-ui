@@ -30,11 +30,7 @@ export function MyPage() {
   const getPageUrl = useGetPageUrl();
 
   const { activeEdaUser } = useEdaActiveUser();
-  const canEditUser =
-    !!activeEdaUser?.is_superuser || !!activeEdaUser?.roles.some((role) => role.name === 'Admin');
-  const canViewUsers =
-    !!activeEdaUser?.is_superuser ||
-    !!activeEdaUser?.roles.some((role) => role.name === 'Admin' || role.name === 'Auditor');
+  const canViewOrEditUsers = !!activeEdaUser?.is_superuser;
 
   const isActionTab = location.pathname === `/eda/access/users/me/details`;
   const itemActions = useMemo<IPageAction<EdaUser>[]>(() => {
@@ -47,7 +43,7 @@ export function MyPage() {
             icon: PencilAltIcon,
             isPinned: true,
             label: t('Edit user'),
-            isHidden: (_user: EdaUser) => !canEditUser,
+            isHidden: (_user: EdaUser) => !canViewOrEditUsers,
             onClick: (user: EdaUser) =>
               pageNavigate(EdaRoute.EditUser, { params: { id: user?.id } }),
           },
@@ -57,7 +53,7 @@ export function MyPage() {
             selection: PageActionSelection.Single,
             icon: PencilAltIcon,
             isPinned: true,
-            isHidden: (_user: EdaUser) => canEditUser,
+            isHidden: (_user: EdaUser) => canViewOrEditUsers,
             label: t('Edit user'),
             onClick: () => pageNavigate(EdaRoute.EditCurrentUser),
           },
@@ -67,14 +63,14 @@ export function MyPage() {
         ]
       : [];
     return actions;
-  }, [canEditUser, pageNavigate, isActionTab, t]);
+  }, [canViewOrEditUsers, pageNavigate, isActionTab, t]);
   if (!activeEdaUser) return <LoadingPage breadcrumbs tabs />;
   return (
     <PageLayout>
       <PageHeader
         title={user?.username}
         breadcrumbs={
-          canViewUsers
+          canViewOrEditUsers
             ? [{ label: t('Users'), to: getPageUrl(EdaRoute.Users) }, { label: user?.username }]
             : undefined
         }

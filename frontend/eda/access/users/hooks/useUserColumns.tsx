@@ -1,13 +1,6 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  ColumnModalOption,
-  ColumnTableOption,
-  ITableColumn,
-  LabelsCell,
-  TextCell,
-  useGetPageUrl,
-} from '../../../../../framework';
+import { ITableColumn, TextCell, useGetPageUrl } from '../../../../../framework';
 import { EdaUser } from '../../../interfaces/EdaUser';
 import { EdaRoute } from '../../../main/EdaRoutes';
 
@@ -24,8 +17,19 @@ export function useUserColumns() {
             to={getPageUrl(EdaRoute.UserPage, { params: { id: user.id } })}
           />
         ),
+        sort: 'username',
         card: 'name',
         list: 'name',
+      },
+      {
+        header: t('User type'),
+        type: 'text',
+        value: (user) => {
+          if (user.is_superuser) return t('System adminsitrator');
+          return t('Normal user');
+        },
+        card: 'subtitle',
+        list: 'subtitle',
       },
       {
         header: t('First name'),
@@ -34,16 +38,6 @@ export function useUserColumns() {
       {
         header: t('Last name'),
         cell: (user) => user.last_name && <TextCell text={user.last_name} />,
-      },
-      {
-        header: t('Role(s)'),
-        cell: (user) =>
-          user.roles &&
-          user.roles.length > 0 && <LabelsCell labels={user.roles.map((role) => role?.name)} />,
-        table: ColumnTableOption.expanded,
-        card: 'hidden',
-        list: 'secondary',
-        modal: ColumnModalOption.hidden,
       },
     ],
     [getPageUrl, t]

@@ -8,14 +8,17 @@ import { useUserActions } from './hooks/useUserActions';
 import { useUserColumns } from './hooks/useUserColumns';
 import { useUsersActions } from './hooks/useUsersActions';
 import { PlusCircleIcon } from '@patternfly/react-icons';
+import { useUserFilters } from './hooks/useUserFilters';
 
 export function Users() {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
+  const toolbarFilters = useUserFilters();
   const tableColumns = useUserColumns();
   const view = useEdaView<EdaUser>({
     url: edaAPI`/users/`,
     tableColumns,
+    toolbarFilters,
   });
   const toolbarActions = useUsersActions(view);
   const rowActions = useUserActions(view);
@@ -31,6 +34,7 @@ export function Users() {
         id="eda-users-table"
         tableColumns={tableColumns}
         toolbarActions={toolbarActions}
+        toolbarFilters={toolbarFilters}
         rowActions={rowActions}
         errorStateTitle={t('Error loading users')}
         emptyStateTitle={t('There are currently no users created for your organization.')}

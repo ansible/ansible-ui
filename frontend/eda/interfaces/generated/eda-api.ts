@@ -900,20 +900,21 @@ export interface PatchedProjectUpdateRequest {
 }
 
 export interface PatchedUserCreateUpdate {
-  /** The user's log in name. */
+  /** @description The user's log in name. */
   username?: string;
-  /** @maxLength 150 */
   first_name?: string;
-  /** @maxLength 150 */
   last_name?: string;
   /**
    * Email address
-   * @format email
-   * @maxLength 254
+   * Format: email
    */
   email?: string;
   password?: string;
-  roles?: string[];
+  /**
+   * Superuser status
+   * @description Designates that this user has all permissions without explicitly assigning them.
+   */
+  is_superuser?: boolean;
 }
 
 export interface PermissionRef {
@@ -1212,20 +1213,21 @@ export enum TaskStatusEnum {
 }
 
 export interface UserCreateUpdate {
-  /** The user's log in name. */
+  /** @description The user's log in name. */
   username: string;
-  /** @maxLength 150 */
   first_name?: string;
-  /** @maxLength 150 */
   last_name?: string;
   /**
    * Email address
-   * @format email
-   * @maxLength 254
+   * Format: email
    */
   email?: string;
   password: string;
-  roles: string[];
+  /**
+   * Superuser status
+   * @description Designates that this user has all permissions without explicitly assigning them.
+   */
+  is_superuser?: boolean;
 }
 
 export interface UserDetail {
