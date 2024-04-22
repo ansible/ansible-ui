@@ -193,13 +193,16 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
       }
     }
 
+    let result : { id? : number} = { };
     if (mode === 'add') {
-      await postRequest(awxAPI`/notification_templates/`, data);
+      result = await postRequest(awxAPI`/notification_templates/`, data) as { id : number};
     } else {
       await patchRequest(awxAPI`/notification_templates/${formData.id?.toString() || ''}/`, data);
     }
 
-    pageNavigate(AwxRoute.NotificationTemplates);
+    const id = (mode === 'add') ? result?.id : formData.id;
+
+    pageNavigate(AwxRoute.NotificationTemplateDetails, { params : { id }});
   };
 
   const job_friendly_name = '{{job_friendly_name}}';
