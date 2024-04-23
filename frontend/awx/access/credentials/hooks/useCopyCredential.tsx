@@ -5,7 +5,7 @@ import { usePostRequest } from '../../../../common/crud/usePostRequest';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { Credential } from '../../../interfaces/Credential';
 
-export function useCopyCredential(onComplete: () => void) {
+export function useCopyCredential(onComplete?: () => void) {
   const { t } = useTranslation();
   const postRequest = usePostRequest();
   const alertToaster = usePageAlertToaster();

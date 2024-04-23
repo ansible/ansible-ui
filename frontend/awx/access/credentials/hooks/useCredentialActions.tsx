@@ -18,14 +18,14 @@ import { AwxRoute } from '../../../main/AwxRoutes';
 import { useDeleteCredentials } from './useDeleteCredentials';
 import { useCopyCredential } from './useCopyCredential';
 
-export function useCredentialActions(
-  options?: { onDeleted: (credentials: Credential[]) => void },
-  onCredentialCopied = () => null
-) {
+export function useCredentialActions(options?: {
+  onDeleted: (credentials: Credential[]) => void;
+  onCredentialCopied?: () => void;
+}) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const deleteCredentials = useDeleteCredentials(options?.onDeleted);
-  const copyCredential = useCopyCredential(onCredentialCopied);
+  const copyCredential = useCopyCredential(options?.onCredentialCopied);
   const rowActions = useMemo<IPageAction<Credential>[]>(
     () => [
       {
