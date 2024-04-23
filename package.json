@@ -40,6 +40,7 @@
     "e2e:run:eda": "TAGS='!flaky' cypress run --e2e --config-file=cypress.eda.config.ts",
     "component": "cypress open --browser chrome --component",
     "component:run": "cypress run --component",
+    "component:run:spec": "cypress run --component --spec",
     "coverage": "open coverage/lcov-report/index.html",
     "coverage:check": "npx nyc report --check-coverage --statements 20 --branches 20 --functions 19 --lines 20 --report-dir ./coverage --temp-dir .nyc_output --reporter=text-summary --exclude-after-remap false",
     "prepare": "husky install",
