@@ -4,6 +4,7 @@
 import { randomString } from '../../../../framework/utils/random-string';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
+import { Schedule } from '../../../../frontend/awx/interfaces/Schedule';
 import { AwxUser } from '../../../../frontend/awx/interfaces/User';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 
@@ -316,3 +317,246 @@ describe('project edit and delete tests', () => {
     cy.verifyPageTitle('Projects');
   });
 });
+
+describe.skip('project schedule edit and delete', () => {
+  let schedule: Schedule;
+
+  before(() => {
+    cy.awxLogin();
+  });
+
+  beforeEach(function () {
+    const name = 'E2E' + randomString(4);
+    cy.createAWXSchedule({
+      name,
+      unified_job_template: (this.globalProject as Project).id,
+      rrule: 'DTSTART:20240415T124133Z RRULE:FREQ=WEEKLY;INTERVAL=1;BYDAY=SU',
+    }).then((sched: Schedule) => {
+      schedule = sched;
+      cy.navigateTo('awx', 'projects');
+      cy.filterTableBySingleSelect('name', (this.globalProject as Project).name);
+      cy.get('[data-cy="name-column-cell"]').click();
+      cy.clickTab('Schedules', true);
+    });
+  });
+
+  afterEach(() => {
+    cy.deleteAWXSchedule(schedule, { failOnStatusCode: false });
+  });
+
+  it('can edit a simple schedule from details page', () => {
+    cy.filterTableBySingleSelect('name', schedule.name);
+    cy.clickTableRowPinnedAction(schedule.name, 'edit-schedule', false);
+    cy.getByDataCy('wizard-nav').within(() => {
+      ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
+        cy.get('li')
+          .eq(index)
+          .should((el) => expect(el.text().trim()).to.equal(text));
+      });
+    });
+    cy.get('[data-cy="description"]').type('-edited');
+    cy.clickButton(/^Next$/);
+    cy.clickButton(/^Next$/);
+    cy.clickButton(/^Next$/);
+    cy.get('[data-cy="description"]').contains('-edited');
+    cy.clickButton(/^Finish$/);
+    cy.verifyPageTitle(schedule.name);
+  });
+  it('can edit a simple schedule from the schedules list row', () => {
+    cy.filterTableBySingleSelect('name', schedule.name);
+    cy.clickTableRowPinnedAction(schedule.name, 'edit-schedule', false);
+    cy.get('[data-cy="wizard-nav"]').within(() => {
+      ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
+        cy.get('li')
+          .eq(index)
+          .should((el) => expect(el.text().trim()).to.equal(text));
+      });
+    });
+    cy.getByDataCy('description').type('-edited');
+    cy.clickButton(/^Next$/);
+    cy.clickButton(/^Next$/);
+    cy.clickButton(/^Next$/);
+    cy.get('[data-cy="description"]').contains('-edited');
+    cy.clickButton(/^Finish$/);
+    cy.verifyPageTitle(schedule.name);
+  });
+
+  it('can edit a schedule to add rules', () => {
+    cy.filterTableBySingleSelect('name', schedule.name);
+    cy.clickTableRowPinnedAction(schedule.name, 'edit-schedule', false);
+    cy.get('[data-cy="wizard-nav"]').within(() => {
+      ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
+        cy.get('li')
+          .eq(index)
+          .should((el) => expect(el.text().trim()).to.equal(text));
+      });
+    });
+    cy.selectSingleSelectOption('[data-cy="timezone"]', 'Africa/Abidjan');
+    cy.getByDataCy('undefined-form-group').within(() => {
+      cy.getBy('[aria-label="Time picker"]').click().type('{selectall} 5:00 AM');
+    });
+    cy.clickButton(/^Next$/);
+    cy.clickButton(/^Add rule$/);
+    cy.clickButton(/^Add$/);
+    cy.clickButton(/^Next$/);
+    cy.clickButton(/^Next$/);
+    cy.getByDataCy('start-date/time').contains('5:00 AM');
+    cy.getByDataCy('rule-2').should('exist');
+    cy.getByDataCy('rule-2').contains('FREQ=YEARLY');
+    cy.clickButton(/^Finish$/);
+    cy.verifyPageTitle(schedule.name);
+  });
+
+  it('can edit a schedule to add exceptions', () => {
+    cy.filterTableBySingleSelect('name', schedule.name);
+    cy.clickTableRowPinnedAction(schedule.name, 'edit-schedule', false);
+
+    cy.get('[data-cy="wizard-nav"]').within(() => {
+      ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
+        cy.get('li')
+          .eq(index)
+          .should((el) => expect(el.text().trim()).to.equal(text));
+      });
+    });
+    cy.clickButton(/^Next$/);
+    cy.clickButton(/^Next$/);
+    cy.clickButton(/^Create exception$/);
+    cy.get('[data-cy="freq-form-group"]').click();
+    cy.get('[data-cy="freq"]').within(() => {
+      cy.clickButton('Yearly');
+    });
+    cy.clickButton(/^Add$/);
+    cy.clickButton(/^Next$/);
+    cy.getByDataCy('exception-1').contains('FREQ=YEARLY');
+    cy.clickButton(/^Finish$/);
+    cy.verifyPageTitle(schedule.name);
+  });
+
+  it('can edit a schedule to remove rules', () => {
+    cy.filterTableBySingleSelect('name', schedule.name);
+    cy.clickTableRowPinnedAction(schedule.name, 'edit-schedule', false);
+    cy.get('[data-cy="wizard-nav"]').within(() => {
+      ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
+        cy.get('li')
+          .eq(index)
+          .should((el) => expect(el.text().trim()).to.equal(text));
+      });
+    });
+    cy.clickButton(/^Next$/);
+    cy.clickButton(/^Add rule$/);
+    cy.getBy('[data-cy="row-id-1"]').within(() => {
+      cy.getBy('[data-cy="delete-rule"]').click();
+    });
+    cy.clickButton(/^Add$/);
+    cy.clickButton(/^Next$/);
+    cy.clickButton(/^Next$/);
+    cy.getByDataCy('rule-1').should('not.contain', 'FREQ=DAILY');
+    cy.clickButton(/^Finish$/);
+    cy.verifyPageTitle(schedule.name);
+  });
+
+  it('can edit a schedule remove exceptions', () => {
+    cy.filterTableBySingleSelect('name', schedule.name);
+    cy.clickTableRowLink('name', schedule.name, { disableFilter: true });
+    cy.getBy('[data-cy="edit-schedule"]').click();
+    cy.get('[data-cy="wizard-nav"]').within(() => {
+      ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
+        cy.get('li')
+          .eq(index)
+          .should((el) => expect(el.text().trim()).to.equal(text));
+      });
+    });
+    cy.clickButton(/^Next$/);
+    cy.clickButton(/^Next$/);
+    cy.clickButton(/^Create exception$/);
+    cy.clickButton(/^Add$/);
+    cy.getBy('[data-cy="row-id-1"]').within(() => {
+      cy.getBy('[data-cy="delete-exception"]').click();
+    });
+    cy.clickButton(/^Next$/);
+    cy.getByDataCy('exception-1').should('not.contain', 'FREQ=DAILY');
+  });
+
+  it('can toggle a schedule', () => {
+    cy.filterTableBySingleSelect('name', schedule.name);
+    cy.get(`tr[data-cy="row-id-${schedule.id}"]`).within(() => {
+      cy.get('[data-cy="toggle-switch"]').click();
+    });
+
+    cy.get('input[aria-label="Click to enable schedule"]').should('exist');
+    cy.get(`tr[data-cy="row-id-${schedule.id}"]`).within(() => {
+      cy.get('[data-cy="toggle-switch"]').click();
+    });
+    cy.get('input[aria-label="Click to disable schedule"]').should('exist');
+  });
+  it('deletes a schedule from the schedules list row', () => {
+    cy.filterTableBySingleSelect('name', schedule.name);
+    cy.clickTableRowKebabAction(schedule.name, 'delete-schedule', false);
+    cy.get('#confirm').click();
+    cy.clickButton(/^Delete schedule/);
+    cy.contains(/^Success$/);
+    cy.clickButton(/^Close$/);
+    cy.contains('No results found');
+  });
+
+  it('deletes a schedule from the schedules list toolbar', () => {
+    cy.filterTableBySingleSelect('name', schedule.name);
+    cy.getTableRow('name', schedule.name, { disableFilter: true }).within(() => {
+      cy.get('input[aria-label="Select all rows"]').click();
+    });
+    cy.clickToolbarKebabAction('delete-selected-schedules');
+    cy.get('#confirm').click();
+    cy.clickButton(/^Delete schedule/);
+    cy.contains(/^Success$/);
+    cy.clickButton(/^Close$/);
+    cy.contains('tr', schedule.name).should('not.exist');
+    cy.clickButton(/^Clear all filters$/);
+  });
+});
+
+// TODO - Move this to a unit test as on an e2e server the project might sync too fast and cancel will not be avail/enabled
+// it('can cancel project sync from projects list table row kebab menu', () => {
+//   cy.requestPost<Project>(awxAPI`/projects/`, {
+//     name: 'E2E Project ' + randomString(4),
+//     organization: organization.id,
+//     scm_type: 'git', // Only projects with scm_type and scm_url can be synced
+//     scm_url: 'https://github.com/ansible/ansible-ui',
+//   }).then((testProject) => {
+//     cy.navigateTo('awx', 'projects');
+//     cy.filterTableByText(testProject.name);
+//     cy.contains('td', testProject.name)
+//       .parent()
+//       .within(() => {
+//         cy.get('#cancel-sync').click();
+//       });
+//     cy.get('#confirm').click();
+//     cy.clickButton(/^Cancel project sync/);
+//     cy.contains(/^Success$/);
+//     cy.clickButton(/^Close$/);
+//     cy.filterTableByText(testProject.name);
+//     cy.get('td[data-label="Status"]').should('contain', 'Canceled');
+//     cy.clickButton(/^Clear all filters$/);
+//     cy.deleteAwxProject(testProject);
+//   });
+// });
+
+// TODO - Move this to a unit test as on an e2e server the project might sync too fast and cancel will not be avail/enabled
+// it('can cancel project sync from projects list toolbar ', () => {
+//   cy.requestPost<Project>(awxAPI`/projects/`, {
+//     name: 'E2E Project ' + randomString(4),
+//     organization: organization.id,
+//     scm_type: 'git', // Only projects with scm_type and scm_url can be synced
+//     scm_url: 'https://github.com/ansible/ansible-ui',
+//   }).then((testProject) => {
+//     cy.navigateTo('awx', 'projects');
+//     cy.selectTableRow(testProject.name);
+//     cy.clickToolbarKebabAction('cancel-selected-projects');
+//     cy.get('#confirm').click();
+//     cy.clickButton(/^Cancel project sync/);
+//     cy.contains(/^Success$/);
+//     cy.clickButton(/^Close$/);
+//     cy.filterTableByText(testProject.name);
+//     cy.get('td[data-label="Status"]').should('contain', 'Canceled');
+//     cy.clickButton(/^Clear all filters$/);
+//   });
+// });

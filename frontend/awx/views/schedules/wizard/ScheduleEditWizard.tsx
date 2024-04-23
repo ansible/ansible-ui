@@ -1,13 +1,19 @@
 import { useTranslation } from 'react-i18next';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { PageHeader, PageLayout, PageWizard, PageWizardStep } from '../../../../../framework';
+import { useNavigate, useParams } from 'react-router-dom';
+import {
+  PageHeader,
+  PageLayout,
+  PageWizard,
+  PageWizardStep,
+  usePageNavigate,
+} from '../../../../../framework';
 import { useGetPageUrl } from '../../../../../framework/PageNavigation/useGetPageUrl';
 import { dateToInputDateTime } from '../../../../../framework/utils/dateTimeHelpers';
 import { AwxRoute } from '../../../main/AwxRoutes';
-import { ScheduleFormWizard } from '../types';
+import { ScheduleFormWizard, schedulePageUrl } from '../types';
 import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
 import { RulesStep } from './RulesStep';
-import { RRuleSet, rrulestr } from 'rrule';
+import { RRule, RRuleSet, rrulestr } from 'rrule';
 import { ExceptionsStep } from './ExceptionsStep';
 import { SurveyStep } from '../../../common/SurveyStep';
 import { NodePromptsStep } from '../../../resources/templates/WorkflowVisualizer/wizard/NodePromptsStep';
@@ -20,37 +26,68 @@ import { awxAPI } from '../../../common/api/awx-utils';
 import { RULES_DEFAULT_VALUES } from './constants';
 import { ScheduleSelectStep } from './ScheduleSelectStep';
 import { ScheduleReviewStep } from './ScheduleReviewStep';
+import { StandardizedFormData } from './ScheduleAddWizard';
+import { useProcessSchedule } from '../hooks/useProcessSchedules';
+import { useGetScheduleUrl } from '../hooks/useGetScheduleUrl';
 
 export function ScheduleEditWizard() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
+  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
+  const processSchedules = useProcessSchedule();
+  const getScheduleUrl = useGetScheduleUrl();
+
   const params = useParams<{ id?: string; schedule_id?: string }>();
 
   const { data: schedule } = useGetItem<Schedule>(awxAPI`/schedules/`, params.schedule_id);
-
-  const navigate = useNavigate();
-  const location = useLocation();
-
   const [startDate, time]: string[] = dateToInputDateTime(
     schedule?.dtstart as string,
     schedule?.timezone
   );
 
   const handleSubmit = async (formValues: ScheduleFormWizard) => {
-    const { launch_config, prompt } = formValues;
-    const promptValues = prompt;
-    if (promptValues) {
-      if (launch_config) {
-        promptValues.original = {
-          launch_config,
-        };
+    const { rules, exceptions, ...rest } = formValues;
+    const ruleset = new RRuleSet();
+
+    rules.forEach((r, i) => {
+      const {
+        rule: {
+          options: { dtstart, tzid, ...rest },
+        },
+      } = r;
+      if (i === 0) {
+        ruleset.rrule(new RRule({ ...rest, dtstart, tzid }));
+      } else {
+        ruleset.rrule(new RRule({ ...rest }));
       }
+    });
+    if (exceptions.length) {
+      exceptions?.forEach((r) => {
+        const {
+          rule: {
+            options: { dtstart, tzid, ...rest },
+          },
+        } = r;
+        ruleset.exrule(new RRule({ ...rest }));
+      });
     }
 
-    await Promise.resolve();
+    const data: StandardizedFormData = {
+      rrule: ruleset.toString(),
+      ...rest,
+    };
+
+    const {
+      schedule,
+    }: {
+      schedule: Schedule;
+    } = await processSchedules(data);
+    const pageUrl = getScheduleUrl('details', schedule) as schedulePageUrl;
+    return pageNavigate(pageUrl.pageId, { params: pageUrl.params });
   };
 
-  const onCancel = () => navigate(location.pathname.replace('edit', 'details'));
+  const onCancel = () => navigate(-1);
 
   const steps: PageWizardStep[] = [
     {
