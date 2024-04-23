@@ -341,13 +341,16 @@ function CustomizeMessagesForm() {
 }
 
 function areMessagesEmpty(data: NotificationTemplate) {
-  if (data?.messages?.error?.message) return false;
-  if (data?.messages?.started?.message) return false;
-  if (data?.messages?.success?.message) return false;
-  if (data?.messages?.workflow_approval?.approved?.message) return false;
-  if (data?.messages?.workflow_approval?.denied?.message) return false;
-  if (data?.messages?.workflow_approval?.running?.message) return false;
-  if (data?.messages?.workflow_approval?.timed_out?.message) return false;
+  if (data?.messages?.error?.message ||
+    data?.messages?.started?.message ||
+    data?.messages?.success?.message ||
+    data?.messages?.workflow_approval?.approved?.message ||
+    data?.messages?.workflow_approval?.denied?.message ||
+    data?.messages?.workflow_approval?.running?.message ||
+    data?.messages?.workflow_approval?.timed_out?.message) {
+  return false;
+}
+
 
   return true;
 }
