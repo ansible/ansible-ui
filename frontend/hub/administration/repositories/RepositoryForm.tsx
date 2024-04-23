@@ -205,7 +205,7 @@ export function RepositoryForm() {
         ]}
       />
       <HubPageForm<RepositoryFormProps>
-        submitText={isEdit ? t('Edit Repository') : t('Create Repository')}
+        submitText={isEdit ? t('Save repository') : t('Create repository')}
         onSubmit={onSubmit}
         onCancel={() => navigate(-1)}
         defaultValue={repositoryFormValues}
