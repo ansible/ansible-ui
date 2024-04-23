@@ -53,6 +53,7 @@ export function useAwxProjectRoutes() {
               initialBreadCrumbs={[
                 { label: t('Projects'), to: AwxRoute.Projects },
                 { label: 'data', to: AwxRoute.ProjectPage },
+                { label: t('Schedules'), to: AwxRoute.ProjectSchedules },
               ]}
               backTab={{
                 label: t('Back to Schedules'),

@@ -29,6 +29,7 @@ export function useAwxManagementJobsRoutes() {
               initialBreadCrumbs={[
                 { label: t('Management Jobs'), to: AwxRoute.ManagementJobs },
                 { label: 'data', to: AwxRoute.ManagementJobPage },
+                { label: t('Schedules'), to: AwxRoute.ManagementJobSchedules },
               ]}
               backTab={{
                 label: t('Back to Schedules'),
