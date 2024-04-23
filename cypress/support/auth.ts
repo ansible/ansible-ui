@@ -27,6 +27,7 @@ Cypress.Commands.add('awxLogin', () => {
         retryOnStatusCodeFailure: true,
         retryOnNetworkFailure: true,
       });
+      cy.contains('Log in');
       cy.getBy('[data-cy="username"]').type(Cypress.env('AWX_USERNAME') as string, {
         log: false,
         delay: 0,
@@ -102,7 +103,7 @@ Cypress.Commands.add('edaLogin', (username?: string, password?: string) => {
     () => {
       window.localStorage.setItem('default-nav-expanded', 'true');
       cy.visit(`/`, { retryOnStatusCodeFailure: true, retryOnNetworkFailure: true });
-      cy.contains('Welcome to');
+      cy.contains('Log in');
       cy.getBy('[data-cy="username"]').type(userName, { log: false, delay: 0 });
       cy.getBy('[data-cy="password"]').type(password ?? (Cypress.env('EDA_PASSWORD') as string), {
         log: false,
@@ -143,6 +144,7 @@ Cypress.Commands.add('hubLogin', () => {
         retryOnStatusCodeFailure: true,
         retryOnNetworkFailure: true,
       });
+      cy.contains('Log in');
       cy.getBy('[data-cy="username"]').type(Cypress.env('HUB_USERNAME') as string, {
         log: false,
         delay: 0,
