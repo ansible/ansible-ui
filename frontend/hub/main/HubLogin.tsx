@@ -5,6 +5,7 @@ import { Login } from '../../common/Login';
 import { useHubActiveUser } from '../../hub/common/useHubActiveUser';
 import { hubAPI } from '../common/api/formatPath';
 import { HubContextProvider } from '../common/useHubContext';
+import ProductIcon from './galaxy-logo.svg';
 
 export function HubLogin(props: { children: React.ReactNode }) {
   const { activeHubUser, refreshActiveHubUser, activeHubUserIsLoading } = useHubActiveUser();
@@ -25,6 +26,9 @@ export function HubLogin(props: { children: React.ReactNode }) {
           refreshActiveHubUser?.();
           void mutate(() => true);
         }}
+        icon={<ProductIcon style={{ maxWidth: 64, maxHeight: 64 }} />}
+        brand={process.env.BRAND}
+        product={process.env.PRODUCT}
       />
     );
   }
