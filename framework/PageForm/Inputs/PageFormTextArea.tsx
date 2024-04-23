@@ -13,7 +13,7 @@ export function PageFormTextArea<
   TFieldValues extends FieldValues = FieldValues,
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
   TSelection extends FieldValues = FieldValues,
->(props: PageFormTextInputProps<TFieldValues, TFieldName, TSelection> & { autoResize?: boolean }) {
+>(props: PageFormTextInputProps<TFieldValues, TFieldName, TSelection> & { disableAutoResize?: boolean }) {
   const {
     type,
     name,
@@ -38,7 +38,7 @@ export function PageFormTextArea<
     selectValue,
     autoFocus,
     autoComplete,
-    autoResize,
+    disableAutoResize,
   } = props;
 
   const id = useID(props);
@@ -95,7 +95,7 @@ export function PageFormTextArea<
                   autoFocus={autoFocus}
                   autoComplete={autoComplete || 'off'}
                   data-cy={id}
-                  autoResize={autoResize === undefined ? true : autoResize}
+                  autoResize={disableAutoResize === undefined ? true : !disableAutoResize}
                 />
               </InputGroupItem>
               {type === 'password' && (
