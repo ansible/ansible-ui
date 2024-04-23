@@ -4,6 +4,7 @@ import { LoadingState } from '../../../framework/components/LoadingState';
 import { Login } from '../../common/Login';
 import { edaAPI } from '../common/eda-utils';
 import { useEdaActiveUser } from '../common/useEdaActiveUser';
+import ProductIcon from './eda-logo.svg';
 
 export function EdaLogin(props: { children: React.ReactNode }) {
   const { activeEdaUser, activeEdaUserIsLoading, refreshActiveEdaUser } = useEdaActiveUser();
@@ -24,6 +25,9 @@ export function EdaLogin(props: { children: React.ReactNode }) {
           refreshActiveEdaUser?.();
           void mutate(() => true);
         }}
+        icon={<ProductIcon style={{ maxWidth: 64, maxHeight: 64 }} />}
+        brand={process.env.BRAND}
+        product={process.env.PRODUCT}
       />
     );
   }
