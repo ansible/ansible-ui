@@ -58,6 +58,9 @@ export function ScheduleDetails() {
   if (!schedule) return <LoadingPage breadcrumbs tabs />;
   const isSystemJobTemplateSchedule: boolean = pathname.includes('management-jobs');
 
+  const isDays: boolean = JSON.stringify(schedule?.extra_data).includes('days');
+  const extraData = schedule?.extra_data as string | object;
+
   return (
     <>
       <PageDetails numberOfColumns="multiple">
@@ -102,12 +105,21 @@ export function ScheduleDetails() {
         <PageDetail label={t('Skip tags')} isEmpty={!schedule.skip_tags}>
           <LabelGroup>{skipTags?.map(({ name }) => <Label key={name}>{name}</Label>)}</LabelGroup>
         </PageDetail>
-        <PageDetail fullWidth>
-          <PageDetailCodeEditor
-            label={t('Variables')}
-            value={JSON.stringify(schedule.extra_data)}
-          />
-        </PageDetail>
+        {!isDays && (
+          <PageDetail fullWidth>
+            <PageDetailCodeEditor
+              label={t('Variables')}
+              value={JSON.stringify(schedule.extra_data)}
+            />
+          </PageDetail>
+        )}
+        {isDays && (
+          <PageDetail fullWidth label={t('Days of data to keep')}>
+            {typeof extraData === 'string'
+              ? extraData.toString().replace('}', '').split(':')[1]
+              : schedule.extra_data.days?.toString()}
+          </PageDetail>
+        )}
         {schedule && <ScheduleSummary rrule={schedule.rrule} />}
         <PageDetail fullWidth>
           <Divider />
