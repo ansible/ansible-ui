@@ -111,32 +111,7 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
   // fill customize messages
 
   if (messagesEmpty)
-    defaultValueMessages.messages = {
-      started: {
-        message: `{{ job_friendly_name }} #{{ job.id }} '{{ job.name }}' {{ job.status }}: {{ url }}`,
-      },
-      success: {
-        message: `{{ job_friendly_name }} #{{ job.id }} '{{ job.name }}' {{ job.status }}: {{ url }}`,
-      },
-      error: {
-        message: `{{ job_friendly_name }} #{{ job.id }} '{{ job.name }}' {{ job.status }}: {{ url }}`,
-      },
-
-      workflow_approval: {
-        denied: {
-          message: `The approval node "{{ approval_node_name }}" was denied. {{ workflow_url }}`,
-        },
-        running: {
-          message: `The approval node "{{ approval_node_name }}" needs review. This node can be viewed at: {{ workflow_url }}`,
-        },
-        approved: {
-          message: `The approval node "{{ approval_node_name }}" was approved. {{ workflow_url }}`,
-        },
-        timed_out: {
-          message: `The approval node "{{ approval_node_name }}" has timed out. {{ workflow_url }}`,
-        },
-      },
-    };
+    defaultValueMessages.messages = getDefaultMessages();
 
   const onSubmit: PageFormSubmitHandler<NotificationTemplate> = async (formData) => {
     const data: NotificationTemplate | NotificationTemplateEdit =
@@ -338,6 +313,36 @@ function CustomizeMessagesForm() {
       />
     </>
   );
+}
+
+function getDefaultMessages()
+{
+  return {
+    started: {
+      message: `{{ job_friendly_name }} #{{ job.id }} '{{ job.name }}' {{ job.status }}: {{ url }}`,
+    },
+    success: {
+      message: `{{ job_friendly_name }} #{{ job.id }} '{{ job.name }}' {{ job.status }}: {{ url }}`,
+    },
+    error: {
+      message: `{{ job_friendly_name }} #{{ job.id }} '{{ job.name }}' {{ job.status }}: {{ url }}`,
+    },
+
+    workflow_approval: {
+      denied: {
+        message: `The approval node "{{ approval_node_name }}" was denied. {{ workflow_url }}`,
+      },
+      running: {
+        message: `The approval node "{{ approval_node_name }}" needs review. This node can be viewed at: {{ workflow_url }}`,
+      },
+      approved: {
+        message: `The approval node "{{ approval_node_name }}" was approved. {{ workflow_url }}`,
+      },
+      timed_out: {
+        message: `The approval node "{{ approval_node_name }}" has timed out. {{ workflow_url }}`,
+      },
+    },
+  };
 }
 
 function areMessagesEmpty(data: NotificationTemplate) {
