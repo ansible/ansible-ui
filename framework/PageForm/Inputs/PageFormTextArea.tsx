@@ -13,7 +13,11 @@ export function PageFormTextArea<
   TFieldValues extends FieldValues = FieldValues,
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
   TSelection extends FieldValues = FieldValues,
->(props: PageFormTextInputProps<TFieldValues, TFieldName, TSelection> & { disableAutoResize?: boolean }) {
+>(
+  props: PageFormTextInputProps<TFieldValues, TFieldName, TSelection> & {
+    disableAutoResize?: boolean;
+  }
+) {
   const {
     type,
     name,
