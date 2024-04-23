@@ -2,6 +2,7 @@ import { NotificationTemplate as SwaggerNotificationTemplate } from './generated
 
 type NotificationType = {
   message: string | undefined;
+  body : string | undefined;
 };
 
 type WorkflowApprovalMessages = {

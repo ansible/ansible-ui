@@ -32,6 +32,7 @@ import { usePageNavigate } from '../../../../framework';
 import { InnerForm } from './NotifierFormInner';
 import { Trans } from 'react-i18next';
 import { useFormContext } from 'react-hook-form';
+import { PageFormTextArea } from '../../../../framework';
 
 export function EditNotifier() {
   return <NotifierForm mode={'edit'} />;
@@ -290,6 +291,20 @@ function CustomizeMessagesForm(props: {
   const formContext = useFormContext<NotificationTemplate>();
   const notification_type = formContext.getValues('notification_type');
 
+  let hasMessages = true;
+  let hasBody = false;
+
+  if (notification_type === 'email' || notification_type === 'pagerduty')
+  {
+    hasBody = true;
+  }
+
+  if (notification_type === 'webhook')
+  {
+    hasBody = true;
+    hasMessages = false;
+  }
+
   const { data, customize_messages } = props;
   const setValue = formContext.setValue;
   const defaultMessages = getDefaultMessages();
@@ -368,40 +383,102 @@ function CustomizeMessagesForm(props: {
   return (
     <>
     {notification_type}
-      <PageFormTextInput<NotificationTemplate>
-        name="messages.started.message"
-        label={t('Start message')}
-      />
+      {hasMessages &&
+        <PageFormTextInput<NotificationTemplate>
+          name="messages.started.message"
+          label={t('Start message')}
+        />
+      }
+      {hasBody &&
+        <PageFormTextArea<NotificationTemplate>
+          name="messages.started.body"
+          label={t('Start message body')}
+        />
+      }
 
-      <PageFormTextInput<NotificationTemplate>
-        name="messages.success.message"
-        label={t('success message')}
-      />
+      {hasMessages &&
+        <PageFormTextInput<NotificationTemplate>
+          name="messages.success.message"
+          label={t('success message')}
+        />
+      }
 
-      <PageFormTextInput<NotificationTemplate>
-        name="messages.error.message"
-        label={t('Error message')}
-      />
+      {hasBody &&
+        <PageFormTextArea<NotificationTemplate>
+          name="messages.success.body"
+          label={t('success message body')}
+        />
+      }
 
-      <PageFormTextInput<NotificationTemplate>
-        name="messages.workflow_approval.approved.message"
-        label={t('Workflow approved message')}
-      />
+      {hasMessages &&
+        <PageFormTextInput<NotificationTemplate>
+          name="messages.error.message"
+          label={t('Error message')}
+        />
+      }
 
-      <PageFormTextInput<NotificationTemplate>
-        name="messages.workflow_approval.denied.message"
-        label={t('Workflow denied message')}
-      />
+      {hasBody &&
+        <PageFormTextArea<NotificationTemplate>
+          name="messages.error.body"
+          label={t('Error message body')}
+        />
+      }
 
+      {hasMessages &&
+        <PageFormTextInput<NotificationTemplate>
+          name="messages.workflow_approval.approved.message"
+          label={t('Workflow approved message')}
+        />
+      }
+
+      {hasBody &&
+        <PageFormTextArea<NotificationTemplate>
+          name="messages.workflow_approval.approved.body"
+          label={t('Workflow approved body')}
+        />
+      }
+
+      {hasMessages &&
+        <PageFormTextInput<NotificationTemplate>
+          name="messages.workflow_approval.denied.message"
+          label={t('Workflow denied message')}
+        />
+      }
+
+      {hasBody &&
+        <PageFormTextArea<NotificationTemplate>
+          name="messages.workflow_approval.denied.body"
+          label={t('Workflow denied message body')}
+        />
+      }
+
+{hasMessages &&
       <PageFormTextInput<NotificationTemplate>
         name="messages.workflow_approval.running.message"
         label={t('Workflow pending message')}
       />
+}
 
+{hasBody &&
+      <PageFormTextArea<NotificationTemplate>
+        name="messages.workflow_approval.running.body"
+        label={t('Workflow pending message body')}
+      />
+}
+
+{hasMessages &&
       <PageFormTextInput<NotificationTemplate>
         name="messages.workflow_approval.timed_out.message"
         label={t('Workflow timed out message')}
       />
+}
+
+{hasBody &&
+      <PageFormTextArea<NotificationTemplate>
+        name="messages.workflow_approval.timed_out.body"
+        label={t('Workflow timed out message body')}
+      />
+}
     </>
   );
 }
