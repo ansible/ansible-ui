@@ -152,7 +152,7 @@ export function useAwxNavigation() {
           children: [
             {
               id: AwxRoute.SettingsCategory,
-              path: ':category',
+              path: ':category/edit',
               element: <AwxSettingsCategoryFormRoute />,
             },
             {
@@ -212,7 +212,6 @@ export function useAwxNavigation() {
           path: 'system',
           children: [
             {
-              id: AwxRoute.SettingsCategory,
               path: 'edit',
               element: <AwxSettingsCategoryForm categoryId="system" key="system" />,
             },
@@ -228,7 +227,6 @@ export function useAwxNavigation() {
           path: 'job-settings',
           children: [
             {
-              id: AwxRoute.SettingsCategory,
               path: 'edit',
               element: <AwxSettingsCategoryForm categoryId="jobs" key="jobs" />,
             },
@@ -244,7 +242,6 @@ export function useAwxNavigation() {
           path: 'logging',
           children: [
             {
-              id: AwxRoute.SettingsCategory,
               path: 'edit',
               element: <AwxSettingsCategoryForm categoryId="logging" key="logging" />,
             },
@@ -260,7 +257,6 @@ export function useAwxNavigation() {
           path: 'troubleshooting',
           children: [
             {
-              id: AwxRoute.SettingsCategory,
               path: 'edit',
               element: <AwxSettingsCategoryForm categoryId="debug" key="debug" />,
             },
