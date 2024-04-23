@@ -7,9 +7,9 @@ import { useEdaActiveUser } from '../common/useEdaActiveUser';
 import ProductIcon from './eda-logo.svg';
 
 export function EdaLogin(props: { children: React.ReactNode }) {
-  const { activeEdaUser, activeEdaUserIsLoading, refreshActiveEdaUser } = useEdaActiveUser();
+  const { activeEdaUser, refreshActiveEdaUser } = useEdaActiveUser();
 
-  if (activeEdaUserIsLoading) {
+  if (activeEdaUser === undefined) {
     return (
       <Page>
         <LoadingState />

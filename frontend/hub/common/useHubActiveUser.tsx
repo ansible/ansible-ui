@@ -4,13 +4,13 @@ import { requestGet } from '../../common/crud/Data';
 import { HubUser } from '../interfaces/expanded/HubUser';
 import { hubAPI } from './api/formatPath';
 
-interface HubActiveUserState {
-  activeHubUser?: HubUser;
+interface ActiveUserState {
+  /** The currently active user, or `null` if there is no active user, or `undefined` if the active user is still being loaded. */
+  activeHubUser?: HubUser | null | undefined;
   refreshActiveHubUser?: () => void;
-  activeHubUserIsLoading?: boolean;
 }
 
-export const HubActiveUserContext = createContext<HubActiveUserState>({});
+export const HubActiveUserContext = createContext<ActiveUserState>({});
 
 export function useHubActiveUser() {
   return useContext(HubActiveUserContext);
@@ -22,35 +22,30 @@ export function HubActiveUserProvider(props: { children: ReactNode }) {
     refreshInterval: 10 * 1000,
   });
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const { error, isLoading, data, mutate } = response;
-
-  const [activeHubUser, setActiveHubUser] = useState<HubUser | undefined>(undefined);
+  const [activeHubUser, setActiveHubUser] = useState<HubUser | undefined | null>(undefined);
 
   useEffect(() => {
-    if (error) {
-      setActiveHubUser(undefined);
-    }
-  }, [error]);
+    setActiveHubUser((activeUser) => {
+      if (response.error) {
+        return null;
+      }
 
-  useEffect(() => {
-    if (data) {
-      setActiveHubUser(data);
-    }
-  }, [data]);
+      if (response.data) {
+        return response.data;
+      }
 
-  const activeHubUserIsLoading = useMemo<boolean>(
-    () => (!activeHubUser && !error) || isLoading,
-    [activeHubUser, isLoading, error]
-  );
+      if (response.isLoading && activeUser === undefined) {
+        return undefined;
+      }
 
-  const state = useMemo<HubActiveUserState>(() => {
-    return {
-      activeHubUser,
-      refreshActiveHubUser: () => void mutate(undefined),
-      activeHubUserIsLoading,
-    };
-  }, [activeHubUser, activeHubUserIsLoading, mutate]);
+      return null;
+    });
+  }, [response]);
+
+  const mutate = response.mutate;
+  const state = useMemo<ActiveUserState>(() => {
+    return { activeHubUser, refreshActiveHubUser: () => void mutate(undefined) };
+  }, [activeHubUser, mutate]);
 
   return (
     <HubActiveUserContext.Provider value={state}>{props.children}</HubActiveUserContext.Provider>

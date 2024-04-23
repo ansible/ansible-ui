@@ -4,13 +4,13 @@ import { requestGet } from '../../common/crud/Data';
 import { EdaUser } from '../interfaces/EdaUser';
 import { edaAPI } from './eda-utils';
 
-interface EdaActiveUserState {
-  activeEdaUser?: EdaUser;
+interface ActiveUserState {
+  /** The currently active user, or `null` if there is no active user, or `undefined` if the active user is still being loaded. */
+  activeEdaUser?: EdaUser | null | undefined;
   refreshActiveEdaUser?: () => void;
-  activeEdaUserIsLoading?: boolean;
 }
 
-export const EdaActiveUserContext = createContext<EdaActiveUserState>({});
+export const EdaActiveUserContext = createContext<ActiveUserState>({});
 
 export function useEdaActiveUser() {
   return useContext(EdaActiveUserContext);
@@ -22,35 +22,30 @@ export function EdaActiveUserProvider(props: { children: ReactNode }) {
     refreshInterval: 10 * 1000,
   });
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const { error, isLoading, data, mutate } = response;
-
-  const [activeEdaUser, setActiveEdaUser] = useState<EdaUser | undefined>(undefined);
+  const [activeEdaUser, setActiveEdaUser] = useState<EdaUser | undefined | null>(undefined);
 
   useEffect(() => {
-    if (error) {
-      setActiveEdaUser(undefined);
-    }
-  }, [error]);
+    setActiveEdaUser((activeUser) => {
+      if (response.error) {
+        return null;
+      }
 
-  useEffect(() => {
-    if (data) {
-      setActiveEdaUser(data);
-    }
-  }, [data]);
+      if (response.data) {
+        return response.data;
+      }
 
-  const activeEdaUserIsLoading = useMemo<boolean>(
-    () => (!activeEdaUser && !error) || isLoading,
-    [activeEdaUser, isLoading, error]
-  );
+      if (response.isLoading && activeUser === undefined) {
+        return undefined;
+      }
 
-  const state = useMemo<EdaActiveUserState>(() => {
-    return {
-      activeEdaUser,
-      refreshActiveEdaUser: () => void mutate(undefined),
-      activeEdaUserIsLoading,
-    };
-  }, [activeEdaUser, activeEdaUserIsLoading, mutate]);
+      return null;
+    });
+  }, [response]);
+
+  const mutate = response.mutate;
+  const state = useMemo<ActiveUserState>(() => {
+    return { activeEdaUser, refreshActiveEdaUser: () => void mutate(undefined) };
+  }, [activeEdaUser, mutate]);
 
   return (
     <EdaActiveUserContext.Provider value={state}>{props.children}</EdaActiveUserContext.Provider>
