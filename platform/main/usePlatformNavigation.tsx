@@ -7,7 +7,8 @@ import {
   removeNavigationItemById,
 } from '../../framework';
 import { PageSettings } from '../../framework/PageSettings/PageSettings';
-import { AwxSettingsCategory } from '../../frontend/awx/administration/settings/AwxSettingsCategory';
+import { AwxSettingsCategoryDetailsPage } from '../../frontend/awx/administration/settings/AwxSettingsCategoryDetails';
+import { AwxSettingsCategoryForm } from '../../frontend/awx/administration/settings/AwxSettingsCategoryForm';
 import { AwxRoute } from '../../frontend/awx/main/AwxRoutes';
 import { useAwxNavigation } from '../../frontend/awx/main/useAwxNavigation';
 import { EdaRoute } from '../../frontend/eda/main/EdaRoutes';
@@ -29,6 +30,7 @@ import { SubscriptionDetails } from '../settings/SubscriptionDetails';
 import { SubscriptionWizard } from '../settings/SubscriptionWizard';
 import { useAwxService, useEdaService, useHubService } from './GatewayServices';
 import { PlatformRoute } from './PlatformRoutes';
+import { Redirect } from './Redirect';
 
 export function usePlatformNavigation() {
   const { t } = useTranslation();
@@ -220,39 +222,79 @@ export function usePlatformNavigation() {
         },
         {
           id: AwxRoute.SettingsSystem,
-          label: t('System Settings'),
+          label: t('System'),
           path: 'system',
-          element: <AwxSettingsCategory categoryId="system" key="system" />,
+          children: [
+            {
+              path: 'edit',
+              element: <AwxSettingsCategoryForm categoryId="system" key="system" />,
+            },
+            {
+              path: '',
+              element: <AwxSettingsCategoryDetailsPage categoryId="system" key="system" />,
+            },
+          ],
         },
         {
           id: AwxRoute.SettingsJobs,
-          label: t('Job Settings'),
+          label: t('Job'),
           path: 'job-settings',
-          element: <AwxSettingsCategory categoryId="jobs" key="jobs" />,
+          children: [
+            {
+              path: 'edit',
+              element: <AwxSettingsCategoryForm categoryId="jobs" key="jobs" />,
+            },
+            {
+              path: '',
+              element: <AwxSettingsCategoryDetailsPage categoryId="jobs" key="jobs" />,
+            },
+          ],
         },
         {
           id: AwxRoute.SettingsLogging,
-          label: t('Logging Settings'),
+          label: t('Logging'),
           path: 'logging',
-          element: <AwxSettingsCategory categoryId="logging" key="logging" />,
+          children: [
+            {
+              path: 'edit',
+              element: <AwxSettingsCategoryForm categoryId="logging" key="logging" />,
+            },
+            {
+              path: '',
+              element: <AwxSettingsCategoryDetailsPage categoryId="logging" key="logging" />,
+            },
+          ],
         },
-        {
-          id: AwxRoute.SettingsCustomizeLogin,
-          label: t('Customize Login'),
-          path: 'customize-login',
-          element: <AwxSettingsCategory categoryId="ui" key="ui" />,
-        },
+        // {
+        //   id: AwxRoute.SettingsCustomizeLogin,
+        //   label: t('Customize Login'),
+        //   path: 'customize-login',
+        //   element: <AwxSettingsCategory categoryId="ui" key="ui" />,
+        // },
         {
           id: AwxRoute.SettingsTroubleshooting,
           label: t('Troubleshooting'),
           path: 'troubleshooting',
-          element: <AwxSettingsCategory categoryId="debug" key="debug" />,
+          children: [
+            {
+              path: 'edit',
+              element: <AwxSettingsCategoryForm categoryId="debug" key="debug" />,
+            },
+            {
+              path: '',
+              element: <AwxSettingsCategoryDetailsPage categoryId="debug" key="debug" />,
+            },
+          ],
         },
         {
           path: '',
           element: <Navigate to=".." />,
         },
       ],
+    });
+    navigationItems.push({
+      path: 'redirect',
+      element: <Redirect />,
     });
     navigationItems.push({
       id: PlatformRoute.Root,
