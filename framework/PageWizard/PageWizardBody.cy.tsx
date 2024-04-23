@@ -5,8 +5,11 @@ import { PageWizardProvider } from './PageWizardProvider';
 describe('PageWizardBody', () => {
   it('should render the provided element within a page section', () => {
     cy.mount(
-      <PageWizardProvider steps={[{ id: 'step1', label: 'Step 1', element: <p>Step 1</p> }]}>
-        <PageWizardBody onCancel={() => {}} onSubmit={() => Promise.resolve()} />
+      <PageWizardProvider
+        steps={[{ id: 'step1', label: 'Step 1', element: <p>Step 1</p> }]}
+        onSubmit={() => Promise.resolve()}
+      >
+        <PageWizardBody onCancel={() => {}} />
       </PageWizardProvider>
     );
     cy.get('[data-cy="wizard-section-step1"]').should('exist');
@@ -18,8 +21,9 @@ describe('PageWizardBody', () => {
     cy.mount(
       <PageWizardProvider
         steps={[{ id: 'step1', label: 'Step 1', inputs: <input data-cy="mocked-input" /> }]}
+        onSubmit={() => Promise.resolve()}
       >
-        <PageWizardBody onCancel={() => {}} onSubmit={() => Promise.resolve()} />
+        <PageWizardBody onCancel={() => {}} />
       </PageWizardProvider>
     );
     cy.get('form').should('exist');
