@@ -25,7 +25,7 @@ export type PageFormSingleSelectProps<
   isReadOnly?: boolean;
 } & Pick<
   PageSingleSelectProps<ValueT>,
-  'id' | 'placeholder' | 'options' | 'footer' | 'isDisabled' | 'isRequired'
+  'id' | 'placeholder' | 'options' | 'footer' | 'isDisabled' | 'isRequired' | 'disableSortOptions'
 > &
   Pick<
     PageFormGroupProps,
@@ -84,6 +84,7 @@ export function PageFormSingleSelect<
               isDisabled={isDisabled}
               footer={props.footer}
               isRequired={props.isRequired}
+              disableSortOptions={props.disableSortOptions}
             />
           </PageFormGroup>
         );
