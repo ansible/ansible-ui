@@ -28,13 +28,14 @@ Cypress.Commands.add('awxLogin', () => {
         retryOnNetworkFailure: true,
       });
       cy.contains('Log in');
-      cy.getBy('[data-cy="username"]').type(Cypress.env('AWX_USERNAME') as string, {
-        log: false,
+      cy.wait(1); // Seems like sometimes when the page first comes up that the login form is not ready
+      cy.get('[data-cy="username"]').type(Cypress.env('AWX_USERNAME') as string, {
         delay: 0,
+        force: true,
       });
-      cy.getBy('[data-cy="password"]').type(Cypress.env('AWX_PASSWORD') as string, {
-        log: false,
+      cy.get('[data-cy="password"]').type(Cypress.env('AWX_PASSWORD') as string, {
         delay: 0,
+        force: true,
       });
       cy.get('[data-cy="Submit"]').click();
       cy.get('[data-cy="nav-toggle"]').should('exist');
@@ -63,14 +64,9 @@ Cypress.Commands.add('awxLoginTestUser', (username: string, password: string) =>
         retryOnStatusCodeFailure: true,
         retryOnNetworkFailure: true,
       });
-      cy.get('[data-cy="username"]').type(username, {
-        log: false,
-        delay: 0,
-      });
-      cy.get('[data-cy="password"]').type(password, {
-        log: false,
-        delay: 0,
-      });
+      cy.wait(1); // Seems like sometimes when the page first comes up that the login form is not ready
+      cy.get('[data-cy="username"]').type(username, { force: true, delay: 0 });
+      cy.get('[data-cy="password"]').type(password, { force: true, delay: 0 });
       cy.get('[data-cy="Submit"]').click();
       cy.get('[data-cy="nav-toggle"]').should('exist');
     },
@@ -104,9 +100,10 @@ Cypress.Commands.add('edaLogin', (username?: string, password?: string) => {
       window.localStorage.setItem('default-nav-expanded', 'true');
       cy.visit(`/`, { retryOnStatusCodeFailure: true, retryOnNetworkFailure: true });
       cy.contains('Log in');
-      cy.getBy('[data-cy="username"]').type(userName, { log: false, delay: 0 });
+      cy.wait(1); // Seems like sometimes when the page first comes up that the login form is not ready
+      cy.getBy('[data-cy="username"]').type(userName, { force: true, delay: 0 });
       cy.getBy('[data-cy="password"]').type(password ?? (Cypress.env('EDA_PASSWORD') as string), {
-        log: false,
+        force: true,
         delay: 0,
       });
       cy.get('[data-cy="Submit"]').click();
@@ -145,13 +142,14 @@ Cypress.Commands.add('hubLogin', () => {
         retryOnNetworkFailure: true,
       });
       cy.contains('Log in');
+      cy.wait(1); // Seems like sometimes when the page first comes up that the login form is not ready
       cy.getBy('[data-cy="username"]').type(Cypress.env('HUB_USERNAME') as string, {
-        log: false,
         delay: 0,
+        force: true,
       });
       cy.getBy('[data-cy="password"]').type(Cypress.env('HUB_PASSWORD') as string, {
-        log: false,
         delay: 0,
+        force: true,
       });
       cy.get('[data-cy="Submit"]').click();
       cy.verifyPageTitle('Welcome to');
