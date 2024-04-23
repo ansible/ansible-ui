@@ -102,7 +102,7 @@ describe('Inventory Groups', () => {
         cy.clickTableRowLink('name', inventory.name, { disableFilter: true });
         cy.verifyPageTitle(inventory.name);
         cy.clickLink(/^Groups$/);
-        //2) Use the group, EE, and credential created in the beforeEach block- these resources are needed to run a command against a group
+        // //2) Use the group, EE, and credential created in the beforeEach block- these resources are needed to run a command against a group
         cy.clickTableRowLink('name', group.name, { disableFilter: true });
         cy.clickKebabAction('actions-dropdown', 'run-command');
         cy.selectDropdownOptionByResourceName('module', 'shell');

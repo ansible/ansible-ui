@@ -58,7 +58,7 @@ export function RulesList(props: {
   const columns = useMemo<ITableColumn<RuleListItemType>[]>(
     () => [
       {
-        header: props.ruleType === 'rules' ? t('Rules') : t('Exclusions'),
+        header: props.ruleType === 'rules' ? t('Rules') : t('Exceptions'),
         cell: (item: RuleListItemType) => {
           let labels;
           occurrences.map(({ id, local }) => {
