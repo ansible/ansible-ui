@@ -39,10 +39,10 @@ describe('Job Templates Surveys', function () {
       );
     });
 
-    after(function () {
-      cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
-      cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
-    });
+    // after(function () {
+    //   cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
+    //   cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
+    // });
 
     it('can create a required survey from surveys tab list of a JT, toggle survey on, and assert info on surveys list view', function () {
       //Use the JT created in the beforeEach block
