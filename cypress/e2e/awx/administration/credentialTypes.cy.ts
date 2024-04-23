@@ -40,9 +40,10 @@ describe('Credential Types', () => {
       });
     });
 
-    // after(() => {
-    //   cy.deleteAwxCredentialType(credType1, { failOnStatusCode: false });
-    // });
+    after(() => {
+      cy.deleteAwxCredential(credential, { failOnStatusCode: false });
+      cy.deleteAwxCredentialType(credType1, { failOnStatusCode: false });
+    });
 
     it('can navigate to the details page, then to the credentials tab and view a related credential', function () {
       cy.navigateTo('awx', 'credential-types');
@@ -110,7 +111,7 @@ describe('Credential Types', () => {
       cy.clearAllFilters();
     });
 
-    it.only('checks that editing a custom credential type which is being used by a credential and trying to add input/injector configs is not allowed ', () => {
+    it('checks that editing a custom credential type which is being used by a credential and trying to add input/injector configs is not allowed ', () => {
       cy.navigateTo('awx', 'credential-types');
       cy.filterTableByMultiSelect('name', [credType1.name]);
       cy.getByDataCy('edit-credential-type').click();
