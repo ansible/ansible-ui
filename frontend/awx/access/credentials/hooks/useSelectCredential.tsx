@@ -37,7 +37,7 @@ export function useMultiSelectCredential(isLookup: boolean, credentialType?: num
   const columns = useMemo(
     () =>
       isLookup
-        ? tableColumns.filter((item) => ['Name', 'Credential type'].includes(item.header))
+        ? tableColumns.filter((item) => item?.id && ['name', 'credential_type'].includes(item?.id))
         : tableColumns,
     [isLookup, tableColumns]
   );
