@@ -111,8 +111,7 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
 
   // fill customize messages
 
-  if (messagesEmpty)
-    defaultValueMessages.messages = getDefaultMessages();
+  if (messagesEmpty) defaultValueMessages.messages = getDefaultMessages();
 
   const onSubmit: PageFormSubmitHandler<NotificationTemplate> = async (formData) => {
     const data: NotificationTemplate | NotificationTemplateEdit =
@@ -263,10 +262,18 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
         </PageFormSection>
         <PageFormSection singleColumn>
           <PageFormWatch watch="customize_messages">
-            {(customize_messages: boolean) => { 
+            {(customize_messages: boolean) => {
               return (
-              <>{<CustomizeMessagesForm customize_messages={customize_messages} data={notifierRequest.data}/>}</>
-            )}}
+                <>
+                  {
+                    <CustomizeMessagesForm
+                      customize_messages={customize_messages}
+                      data={notifierRequest.data}
+                    />
+                  }
+                </>
+              );
+            }}
           </PageFormWatch>
         </PageFormSection>
       </AwxPageForm>
@@ -274,63 +281,86 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
   );
 }
 
-function CustomizeMessagesForm(props : {customize_messages : boolean, data : NotificationTemplate | NotificationTemplateEdit | undefined}) {
+function CustomizeMessagesForm(props: {
+  customize_messages: boolean;
+  data: NotificationTemplate | NotificationTemplateEdit | undefined;
+}) {
   const { t } = useTranslation();
 
   const formContext = useFormContext<NotificationTemplate>();
 
-  console.log(formContext);
-
   const { data, customize_messages } = props;
   const setValue = formContext.setValue;
   const defaultMessages = getDefaultMessages();
-  if (customize_messages === true)
-  {
+  if (customize_messages === true) {
     if (!data?.messages?.error?.message) {
       setValue('messages.error.message', defaultMessages.error.message);
     } else {
       setValue('messages.error.message', data.messages.error.message);
     }
-    
+
     if (!data?.messages?.started?.message) {
       setValue('messages.started.message', defaultMessages.started.message);
     } else {
       setValue('messages.started.message', data.messages.started.message);
     }
-    
+
     if (!data?.messages?.success?.message) {
       setValue('messages.success.message', defaultMessages.success.message);
     } else {
       setValue('messages.success.message', data.messages.success.message);
     }
-    
+
     if (!data?.messages?.workflow_approval?.approved?.message) {
-      setValue('messages.workflow_approval.approved.message', defaultMessages.workflow_approval.approved.message);
+      setValue(
+        'messages.workflow_approval.approved.message',
+        defaultMessages.workflow_approval.approved.message
+      );
     } else {
-      setValue('messages.workflow_approval.approved.message', data.messages.workflow_approval.approved.message);
+      setValue(
+        'messages.workflow_approval.approved.message',
+        data.messages.workflow_approval.approved.message
+      );
     }
-    
+
     if (!data?.messages?.workflow_approval?.denied?.message) {
-      setValue('messages.workflow_approval.denied.message', defaultMessages.workflow_approval.denied.message);
+      setValue(
+        'messages.workflow_approval.denied.message',
+        defaultMessages.workflow_approval.denied.message
+      );
     } else {
-      setValue('messages.workflow_approval.denied.message', data.messages.workflow_approval.denied.message);
+      setValue(
+        'messages.workflow_approval.denied.message',
+        data.messages.workflow_approval.denied.message
+      );
     }
-    
+
     if (!data?.messages?.workflow_approval?.running?.message) {
-      setValue('messages.workflow_approval.running.message', defaultMessages.workflow_approval.running.message);
+      setValue(
+        'messages.workflow_approval.running.message',
+        defaultMessages.workflow_approval.running.message
+      );
     } else {
-      setValue('messages.workflow_approval.running.message', data.messages.workflow_approval.running.message);
+      setValue(
+        'messages.workflow_approval.running.message',
+        data.messages.workflow_approval.running.message
+      );
     }
-    
+
     if (!data?.messages?.workflow_approval?.timed_out?.message) {
-      setValue('messages.workflow_approval.timed_out.message', defaultMessages.workflow_approval.timed_out.message);
+      setValue(
+        'messages.workflow_approval.timed_out.message',
+        defaultMessages.workflow_approval.timed_out.message
+      );
     } else {
-      setValue('messages.workflow_approval.timed_out.message', data.messages.workflow_approval.timed_out.message);
+      setValue(
+        'messages.workflow_approval.timed_out.message',
+        data.messages.workflow_approval.timed_out.message
+      );
     }
   }
 
-  if (customize_messages !== true)
-  {
+  if (customize_messages !== true) {
     return <></>;
   }
 
@@ -374,8 +404,7 @@ function CustomizeMessagesForm(props : {customize_messages : boolean, data : Not
   );
 }
 
-function getDefaultMessages()
-{
+function getDefaultMessages() {
   return {
     started: {
       message: `{{ job_friendly_name }} #{{ job.id }} '{{ job.name }}' {{ job.status }}: {{ url }}`,
@@ -405,16 +434,17 @@ function getDefaultMessages()
 }
 
 function areMessagesEmpty(data: NotificationTemplate) {
-  if (data?.messages?.error?.message ||
+  if (
+    data?.messages?.error?.message ||
     data?.messages?.started?.message ||
     data?.messages?.success?.message ||
     data?.messages?.workflow_approval?.approved?.message ||
     data?.messages?.workflow_approval?.denied?.message ||
     data?.messages?.workflow_approval?.running?.message ||
-    data?.messages?.workflow_approval?.timed_out?.message) {
-  return false;
-}
-
+    data?.messages?.workflow_approval?.timed_out?.message
+  ) {
+    return false;
+  }
 
   return true;
 }
