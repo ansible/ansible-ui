@@ -1,6 +1,12 @@
 import { useTranslation } from 'react-i18next';
 import { useLocation, useParams } from 'react-router-dom';
-import { LoadingPage, PageDetail, PageDetails, usePageNavigate } from '../../../../../framework';
+import {
+  CopyCell,
+  LoadingPage,
+  PageDetail,
+  PageDetails,
+  usePageNavigate,
+} from '../../../../../framework';
 import { formatDateString } from '../../../../../framework/utils/formatDateString';
 import { LastModifiedPageDetail } from '../../../../common/LastModifiedPageDetail';
 import { useGetItem } from '../../../../common/crud/useGet';
@@ -61,8 +67,8 @@ export function ScheduleDetails() {
         <PageDetail label={t('Next run')}>{formatDateString(schedule?.next_run)}</PageDetail>
         <PageDetail label={t('Last run')}>{formatDateString(schedule?.dtend)}</PageDetail>
         <PageDetail label={t('Time zone')}>{schedule?.timezone}</PageDetail>
-        <PageDetail label={t('Rrule')} fullWidth>
-          {schedule?.rrule}
+        <PageDetail label={t('RruleSet')} fullWidth>
+          <CopyCell text={schedule?.rrule ? schedule.rrule : ''} />
         </PageDetail>
         {!isSystemJobTemplateSchedule && (
           <>
