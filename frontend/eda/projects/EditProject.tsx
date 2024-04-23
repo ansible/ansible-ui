@@ -1,4 +1,3 @@
-import { TextList, TextListItem, TextListItemVariants } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import useSWR, { useSWRConfig } from 'swr';
@@ -13,20 +12,19 @@ import {
   usePageNavigate,
 } from '../../../framework';
 import { PageFormGroup } from '../../../framework/PageForm/Inputs/PageFormGroup';
-import { StandardPopover } from '../../../framework/components/StandardPopover';
+import { PageFormSection } from '../../../framework/PageForm/Utils/PageFormSection';
+import { requestGet, swrOptions } from '../../common/crud/Data';
 import { useGet } from '../../common/crud/useGet';
 import { usePatchRequest } from '../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../common/crud/usePostRequest';
+import { PageFormSelectOrganization } from '../access/organizations/components/PageFormOrganizationSelect';
 import { EdaPageForm } from '../common/EdaPageForm';
 import { edaAPI } from '../common/eda-utils';
 import { EdaCredential } from '../interfaces/EdaCredential';
+import { EdaOrganization } from '../interfaces/EdaOrganization';
 import { EdaProject, EdaProjectCreate, EdaProjectRead } from '../interfaces/EdaProject';
 import { EdaResult } from '../interfaces/EdaResult';
 import { EdaRoute } from '../main/EdaRoutes';
-import { PageFormSelectOrganization } from '../access/organizations/components/PageFormOrganizationSelect';
-import { EdaOrganization } from '../interfaces/EdaOrganization';
-import { requestGet, swrOptions } from '../../common/crud/Data';
-import { PageFormSection } from '../../../framework/PageForm/Utils/PageFormSection';
 
 function ProjectCreateInputs() {
   const { t } = useTranslation();
@@ -132,19 +130,10 @@ function ProjectCreateInputs() {
       <PageFormSection singleColumn>
         <PageFormGroup label={t('Options')}>
           <PageFormCheckbox<EdaProjectCreate>
-            label={
-              <TextList>
-                <TextListItem component={TextListItemVariants.li}>
-                  {t`Verify SSL`}
-                  <StandardPopover
-                    header={t('Verify SSL')}
-                    content={t(
-                      'Enabling this option verifies the SSL with HTTPS when the project is imported.'
-                    )}
-                  />
-                </TextListItem>
-              </TextList>
-            }
+            label={t`Verify SSL`}
+            labelHelp={t(
+              'Enabling this option verifies the SSL with HTTPS when the project is imported.'
+            )}
             name="verify_ssl"
           />
         </PageFormGroup>
@@ -252,19 +241,10 @@ function ProjectEditInputs() {
       <PageFormSection singleColumn>
         <PageFormGroup label={t('Options')}>
           <PageFormCheckbox
-            label={
-              <TextList>
-                <TextListItem component={TextListItemVariants.li}>
-                  {t`Verify SSL`}
-                  <StandardPopover
-                    header={t('Verify SSL')}
-                    content={t(
-                      'Enabling this option verifies the SSL with HTTPS when the project is imported.'
-                    )}
-                  />
-                </TextListItem>
-              </TextList>
-            }
+            label={t`Verify SSL`}
+            labelHelp={t(
+              'Enabling this option verifies the SSL with HTTPS when the project is imported.'
+            )}
             name="verify_ssl"
           />
         </PageFormGroup>
