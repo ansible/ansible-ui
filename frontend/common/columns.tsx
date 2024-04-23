@@ -59,6 +59,7 @@ export function useNameColumn<
   const { t } = useTranslation();
   const column = useMemo<ITableColumn<T>>(
     () => ({
+      id: 'name',
       header: options?.header ?? t('Name'),
       cell: (item: T) => (
         <TextCell
@@ -97,6 +98,7 @@ export function useDescriptionColumn<
   const { t } = useTranslation();
   const column = useMemo<ITableColumn<T>>(
     () => ({
+      id: 'description',
       header: t('Description'),
       type: 'description',
       value: (item) => item.description,
@@ -212,6 +214,7 @@ export function useCreatedColumn(options?: {
       }
   > = useMemo(
     () => ({
+      id: 'created',
       header: t('Created'),
       cell: (item) => {
         if (!item.created && !item.created_on && !item.date_joined && !item.pulp_created)
@@ -263,6 +266,7 @@ export function useModifiedColumn(options?: {
       }
   > = useMemo(
     () => ({
+      id: 'modified',
       header: t('Modified'),
       cell: (item) => {
         if (!item.modified && !item.modified_on) return <></>;
