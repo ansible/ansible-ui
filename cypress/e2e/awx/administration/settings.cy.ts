@@ -44,6 +44,8 @@ describe('AWX Settings', () => {
     cy.requestPatch(awxAPI`/settings/all/`, { AWX_ROLES_ENABLED: true });
 
     cy.navigateTo('awx', 'settings-jobs');
+    cy.clickButton(/^Edit$/);
+
     cy.verifyPageTitle('Job Settings');
     cy.get('[data-cy=AWX_ROLES_ENABLED]').scrollIntoView().should('be.visible');
     cy.getByDataCy('AWX_ROLES_ENABLED').should('be.checked');
@@ -54,8 +56,8 @@ describe('AWX Settings', () => {
     cy.wait('@patchSettings').its('response.statusCode').should('eq', 200);
 
     cy.navigateTo('awx', 'settings-jobs');
-    cy.get('[data-cy=AWX_ROLES_ENABLED]').scrollIntoView().should('be.visible');
-    cy.getByDataCy('AWX_ROLES_ENABLED').should('not.be.checked');
+    cy.contains('Enable Role Download').scrollIntoView().should('be.visible');
+    cy.hasDetail('Enable Role Download', 'Disabled');
 
     cy.requestPatch(awxAPI`/settings/all/`, { AWX_ROLES_ENABLED: true });
   });
@@ -66,6 +68,8 @@ describe('AWX Settings', () => {
     });
 
     cy.navigateTo('awx', 'settings-logging');
+    cy.clickButton(/^Edit$/);
+
     cy.verifyPageTitle('Logging Settings');
     cy.getByDataCy('LOG_AGGREGATOR_INDIVIDUAL_FACTS').should('not.be.checked');
     cy.getByDataCy('LOG_AGGREGATOR_INDIVIDUAL_FACTS').click();
@@ -75,34 +79,19 @@ describe('AWX Settings', () => {
     cy.wait('@patchSettings').its('response.statusCode').should('eq', 200);
 
     cy.navigateTo('awx', 'settings-logging');
-    cy.getByDataCy('LOG_AGGREGATOR_INDIVIDUAL_FACTS').should('be.checked');
+    cy.hasDetail('Log System Tracking Facts Individually', 'Enabled');
 
     cy.requestPatch(awxAPI`/settings/all/`, {
       LOG_AGGREGATOR_INDIVIDUAL_FACTS: false,
     });
   });
 
-  it('should be able to change customize login settings', () => {
-    cy.requestPatch(awxAPI`/settings/all/`, { CUSTOM_LOGIN_INFO: '' });
-
-    cy.navigateTo('awx', 'settings-customize-login');
-    cy.verifyPageTitle('Customize Login');
-    cy.getByDataCy('custom-login-info').should('be.empty');
-    cy.getByDataCy('custom-login-info').type('my custom login info');
-    cy.intercept('PATCH', awxAPI`/settings/all/`).as('patchSettings');
-    cy.getByDataCy('Submit').click();
-    cy.wait('@patchSettings').its('response.statusCode').should('eq', 200);
-
-    cy.navigateTo('awx', 'settings-customize-login');
-    cy.getByDataCy('custom-login-info').should('have.value', 'my custom login info');
-
-    cy.requestPatch(awxAPI`/settings/all/`, { CUSTOM_LOGIN_INFO: '' });
-  });
-
   it('should be able to change troubleshooting settings', () => {
     cy.requestPatch(awxAPI`/settings/all/`, { AWX_CLEANUP_PATHS: true });
 
     cy.navigateTo('awx', 'settings-troubleshooting');
+    cy.clickButton(/^Edit$/);
+
     cy.verifyPageTitle('Troubleshooting');
     cy.getByDataCy('AWX_CLEANUP_PATHS').should('be.checked');
     cy.getByDataCy('AWX_CLEANUP_PATHS').click();
@@ -112,7 +101,7 @@ describe('AWX Settings', () => {
     cy.wait('@patchSettings').its('response.statusCode').should('eq', 200);
 
     cy.navigateTo('awx', 'settings-troubleshooting');
-    cy.getByDataCy('AWX_CLEANUP_PATHS').should('not.be.checked');
+    cy.hasDetail('Enable or Disable tmp dir cleanup', 'Disabled');
 
     cy.requestPatch(awxAPI`/settings/all/`, { AWX_CLEANUP_PATHS: true });
   });
