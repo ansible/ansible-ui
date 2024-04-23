@@ -95,7 +95,7 @@ export function PageFormTextArea<
                   autoFocus={autoFocus}
                   autoComplete={autoComplete || 'off'}
                   data-cy={id}
-                  autoResize={autoResize}
+                  autoResize={autoResize === undefined ? true : autoResize}
                 />
               </InputGroupItem>
               {type === 'password' && (
