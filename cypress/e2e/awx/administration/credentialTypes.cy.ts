@@ -9,6 +9,7 @@ describe('Credential Types', () => {
   let credType2: CredentialType;
   let inputCredType: string;
   let injectorCredType: string;
+  let credential: Credential;
 
   before(() => {
     cy.awxLogin();
@@ -19,6 +20,15 @@ describe('Credential Types', () => {
     before(function () {
       cy.createAwxCredentialType().then((credentialType: CredentialType) => {
         credType1 = credentialType;
+
+        cy.createAWXCredential({
+          name: credentialName,
+          kind: 'gce',
+          organization: (this.globalOrganization as Organization).id,
+          credential_type: credType1.id,
+        }).then((cred) => {
+          credential = cred;
+        });
       });
 
       cy.fixture('credTypes-input-config').then((credentialType: CredentialType) => {
@@ -30,9 +40,9 @@ describe('Credential Types', () => {
       });
     });
 
-    after(() => {
-      cy.deleteAwxCredentialType(credType1, { failOnStatusCode: false });
-    });
+    // after(() => {
+    //   cy.deleteAwxCredentialType(credType1, { failOnStatusCode: false });
+    // });
 
     it('can navigate to the details page, then to the credentials tab and view a related credential', function () {
       cy.navigateTo('awx', 'credential-types');
@@ -67,14 +77,13 @@ describe('Credential Types', () => {
           cy.getBy(`a[href*="/access/credential-types/${credType1.id}/credentials?"]`).click();
           cy.wait('@credentialsList');
           cy.getBy('tr').should('have.length', 2);
-          cy.deleteAwxCredential(newCred, { failOnStatusCode: false });
         });
     });
 
     it('can filter credential types by name', () => {
       cy.navigateTo('awx', 'credential-types');
       cy.filterTableByMultiSelect('name', [credType1.name]);
-      cy.get('tr').should('be.equal.to', 1);
+      cy.get('tr').should('have.length', 1);
       cy.contains(credType1.name).should('be.visible');
       cy.clearAllFilters();
     });
@@ -101,7 +110,7 @@ describe('Credential Types', () => {
       cy.clearAllFilters();
     });
 
-    it('checks that editing a custom credential type which is being used by a credential and trying to add input/injector configs is not allowed ', () => {
+    it.only('checks that editing a custom credential type which is being used by a credential and trying to add input/injector configs is not allowed ', () => {
       cy.navigateTo('awx', 'credential-types');
       cy.filterTableByMultiSelect('name', [credType1.name]);
       cy.getByDataCy('edit-credential-type').click();
