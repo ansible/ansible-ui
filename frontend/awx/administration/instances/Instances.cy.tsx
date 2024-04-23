@@ -83,60 +83,64 @@ describe('Instances list', () => {
     cy.intercept(
       { method: 'GET', url: awxAPI`/instances/*` },
       { fixture: 'instance_list_control.json' }
-    ).as('getControlInstance');
+    ).as('getInstance');
     cy.mount(<Instances />);
-    cy.wait('@getControlInstance').then(() => {
-      cy.get('[data-cy="checkbox-column-cell"]').first().click();
-      cy.get('[data-cy="actions-dropdown"]').click();
-      cy.get('[data-cy="remove-instance"]').should('be.visible');
-      cy.get('[data-cy="remove-instance"]').should('have.attr', 'aria-disabled', 'true');
-    });
+    cy.wait('@getInstance')
+      .its('response.body')
+      .then(() => {
+        cy.get('[data-cy="checkbox-column-cell"]').first().click();
+        cy.get('[data-cy="actions-dropdown"]').click();
+        cy.get('[data-cy="remove-instance"]').should('be.visible');
+        cy.get('[data-cy="remove-instance"]').should('have.attr', 'aria-disabled', 'true');
+      });
   });
 
   it('remove instance button should be enabled if instance with node type hop is selected', () => {
     cy.intercept(
       { method: 'GET', url: awxAPI`/instances/*` },
       { fixture: 'instance_list_hop.json' }
-    ).as('getHopInstance');
-
+    ).as('getInstance');
     cy.mount(<Instances />);
-    cy.wait('@getHopInstance').then(() => {
-      cy.get('.pf-v5-c-switch__toggle').click();
-      cy.get('[data-cy="checkbox-column-cell"]').first().click();
-      cy.get('[data-cy="actions-dropdown"]').click();
-      cy.get('[data-cy="remove-instance"]').should('be.visible');
-      cy.get('[data-cy="remove-instance"]').should('have.attr', 'aria-disabled', 'false');
-    });
+    cy.wait('@getInstance')
+      .its('response.body')
+      .then(() => {
+        cy.get('[data-cy="checkbox-column-cell"]').first().click();
+        cy.get('[data-cy="actions-dropdown"]').click();
+        cy.get('[data-cy="remove-instance"]').should('be.visible');
+        cy.get('[data-cy="remove-instance"]').should('have.attr', 'aria-disabled', 'false');
+      });
   });
 
   it('remove instance button should be enabled if instance with node type execution is selected', () => {
     cy.intercept(
       { method: 'GET', url: awxAPI`/instances/*` },
       { fixture: 'instance_execution.json' }
-    ).as('getExecInstance');
+    ).as('getInstance');
     cy.mount(<Instances />);
-    cy.wait('@getExecInstance').then(() => {
-      cy.get('.pf-v5-c-switch__toggle').click();
-      cy.get('[data-cy="checkbox-column-cell"]').first().click();
-      cy.get('[data-cy="actions-dropdown"]').click();
-      cy.get('[data-cy="remove-instance"]').should('be.visible');
-      cy.get('[data-cy="remove-instance"]').should('have.attr', 'aria-disabled', 'false');
-    });
+    cy.wait('@getInstance')
+      .its('response.body')
+      .then(() => {
+        cy.get('[data-cy="checkbox-column-cell"]').first().click();
+        cy.get('[data-cy="actions-dropdown"]').click();
+        cy.get('[data-cy="remove-instance"]').should('be.visible');
+        cy.get('[data-cy="remove-instance"]').should('have.attr', 'aria-disabled', 'false');
+      });
   });
 
   it('remove instance button should be disabled if instance with node type hybrid is selected', () => {
     cy.intercept(
       { method: 'GET', url: awxAPI`/instances/*` },
       { fixture: 'instance_list_hybrid.json' }
-    ).as('getHybridInstance');
+    ).as('getInstance');
     cy.mount(<Instances />);
-    cy.wait('@getHybridInstance').then(() => {
-      cy.get('.pf-v5-c-switch__toggle').click();
-      cy.get('[data-cy="checkbox-column-cell"]').first().click();
-      cy.get('[data-cy="actions-dropdown"]').click();
-      cy.get('[data-cy="remove-instance"]').should('be.visible');
-      cy.get('[data-cy="remove-instance"]').should('have.attr', 'aria-disabled', 'true');
-    });
+    cy.wait('@getInstance')
+      .its('response.body')
+      .then(() => {
+        cy.get('[data-cy="checkbox-column-cell"]').first().click();
+        cy.get('[data-cy="actions-dropdown"]').click();
+        cy.get('[data-cy="remove-instance"]').should('be.visible');
+        cy.get('[data-cy="remove-instance"]').should('have.attr', 'aria-disabled', 'true');
+      });
   });
 });
 
