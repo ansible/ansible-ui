@@ -6,9 +6,9 @@ import { AwxItemsResponse } from './AwxItemsResponse';
 import { awxAPI } from './api/awx-utils';
 
 interface ActiveUserState {
-  activeAwxUser?: AwxUser;
+  /** The currently active user, or `null` if there is no active user, or `undefined` if the active user is still being loaded. */
+  activeAwxUser?: AwxUser | null | undefined;
   refreshActiveAwxUser?: () => void;
-  activeAwxUserIsLoading?: boolean;
 }
 
 export const AwxActiveUserContext = createContext<ActiveUserState>({});
@@ -23,35 +23,30 @@ export function AwxActiveUserProvider(props: { children: ReactNode }) {
     refreshInterval: 10 * 1000,
   });
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const { error, isLoading, data, mutate } = response;
-
-  const [activeAwxUser, setActiveAwxUser] = useState<AwxUser | undefined>(undefined);
+  const [activeAwxUser, setActiveAwxUser] = useState<AwxUser | undefined | null>(undefined);
 
   useEffect(() => {
-    if (error) {
-      setActiveAwxUser(undefined);
-    }
-  }, [error]);
+    setActiveAwxUser((activeUser) => {
+      if (response.error) {
+        return null;
+      }
 
-  useEffect(() => {
-    if (data?.results && data.results.length > 0) {
-      setActiveAwxUser(data.results[0]);
-    }
-  }, [data]);
+      if (response.data && response.data.results.length > 0) {
+        return response.data.results[0];
+      }
 
-  const activeAwxUserIsLoading = useMemo<boolean>(
-    () => (!activeAwxUser && !error) || isLoading,
-    [activeAwxUser, isLoading, error]
-  );
+      if (response.isLoading && activeUser === undefined) {
+        return undefined;
+      }
 
+      return null;
+    });
+  }, [response]);
+
+  const mutate = response.mutate;
   const state = useMemo<ActiveUserState>(() => {
-    return {
-      activeAwxUser,
-      refreshActiveAwxUser: () => void mutate(undefined),
-      activeAwxUserIsLoading,
-    };
-  }, [activeAwxUser, activeAwxUserIsLoading, mutate]);
+    return { activeAwxUser, refreshActiveAwxUser: () => void mutate(undefined) };
+  }, [activeAwxUser, mutate]);
 
   return (
     <AwxActiveUserContext.Provider value={state}>{props.children}</AwxActiveUserContext.Provider>

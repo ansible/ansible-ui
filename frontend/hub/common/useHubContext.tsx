@@ -10,7 +10,7 @@ import { useHubActiveUser } from './useHubActiveUser';
 export type HubContext = {
   featureFlags: Partial<HubFeatureFlags>;
   settings: Partial<HubSettings>;
-  user?: HubUser;
+  user?: HubUser | null | undefined;
   hasPermission: (permission: string) => boolean;
 };
 
@@ -43,7 +43,7 @@ export function HubContextProvider(props: { children: ReactNode }) {
   return <HubContext.Provider value={context}>{props.children}</HubContext.Provider>;
 }
 
-function hasPermission(permission: string, user?: HubUser) {
+function hasPermission(permission: string, user?: HubUser | null | undefined) {
   if (!user?.model_permissions) {
     return false;
   }
