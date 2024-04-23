@@ -23,15 +23,7 @@ import { DateTime } from 'luxon';
 import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
 import { useEffect } from 'react';
 import { dateToInputDateTime } from '../../../../../framework/utils/dateTimeHelpers';
-const get24Hour = (time: string): { hour: number; minute: number } => {
-  const [hour, minute] = time.split(':');
-  const isPM = time.includes('PM');
-
-  return {
-    hour: isPM ? parseInt(hour, 10) + 12 : parseInt(`${hour}`, 10),
-    minute: parseInt(minute, 10),
-  };
-};
+import { useGet24HourTime } from '../hooks/useGet24HourTime';
 
 export function RuleForm(props: {
   title: string;
@@ -39,6 +31,7 @@ export function RuleForm(props: {
   setIsOpen: (isOpen: boolean) => void;
 }) {
   const { t } = useTranslation();
+  const get24Hour = useGet24HourTime();
   const {
     getValues,
     reset,
@@ -93,6 +86,7 @@ export function RuleForm(props: {
       tzid: timezone,
       dtstart: datetime(year, month, day, hour, minute),
     });
+
     if (until !== null) {
       const { time: untilTime, date: untilDate } = until;
 

@@ -2,12 +2,13 @@ import { useCallback } from 'react';
 import { usePostRequest } from '../../../../common/crud/usePostRequest';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { Schedule } from '../../../interfaces/Schedule';
-import { AwxRoute } from '../../../main/AwxRoutes';
 import { useProcessCredentials } from './useProcessCredentials';
 import { useProcessInstanceGroups } from './useProcessInstanceGroups';
 import { useProcessLabels } from './useProcessLabels';
 import { StandardizedFormData } from '../wizard/ScheduleAddWizard';
 import { stringifyTags } from '../../../resources/templates/JobTemplateFormHelpers';
+import { useParams } from 'react-router-dom';
+import { usePatchRequest } from '../../../../common/crud/usePatchRequest';
 
 export type CreateSchedulePayload = {
   name: string;
@@ -39,14 +40,27 @@ export type CreateSchedulePayload = {
       }[];
   labels?: { name: string; id: number }[];
   instance_groups?: { id: number; name: string }[];
+  unified_job_template?: number;
 };
 
 export const useProcessSchedule = () => {
-  const postSchedule = usePostRequest<CreateSchedulePayload, Schedule>();
+  const params = useParams<{ id?: string; schedule_id: string }>();
   const postAccessories = usePostAccessories();
+  const postSchedule = usePostRequest<CreateSchedulePayload, Schedule>();
+  const updateSchedule = usePatchRequest<CreateSchedulePayload, Schedule>();
   return useCallback(
     async (payloadData: StandardizedFormData) => {
       const { resource, prompt, ...rest } = payloadData;
+      const request = (endPoint: string, payload: CreateSchedulePayload) => {
+        if (params.schedule_id && params.id) {
+          return updateSchedule(awxAPI`/schedules/${params.schedule_id.toString()}/`, {
+            ...payload,
+            unified_job_template: parseInt(params?.id, 10),
+          });
+        }
+        return postSchedule(endPoint, payload);
+      };
+
       const {
         execution_environment,
         credentials,
@@ -58,7 +72,6 @@ export const useProcessSchedule = () => {
       const { type, id } = resource;
 
       let schedule: Schedule;
-      let navigationId: string;
       const hasJobTags = job_tags && job_tags?.length > 0;
       const hasSkipTags = prompt && prompt?.skip_tags && prompt?.skip_tags?.length > 0;
       const payload = {
@@ -73,66 +86,41 @@ export const useProcessSchedule = () => {
       switch (type) {
         case 'inventory_source':
           return {
-            schedule: await postSchedule(
+            schedule: await request(
               awxAPI`/inventory_sources/${id.toString()}/schedules/`,
               payload
             ),
-            navigationId: AwxRoute.InventorySourceScheduleDetails,
-            params: {
-              id: resource.inventory.toString(),
-              inventory_type: 'inventory',
-              source_id: id.toString(),
-            },
           };
         case 'project':
           return {
-            schedule: await postSchedule(awxAPI`/projects/${id.toString()}/schedules/`, payload),
-            navigationId: AwxRoute.ProjectScheduleDetails,
-            params: { id: id.toString() },
+            schedule: await request(awxAPI`/projects/${id.toString()}/schedules/`, payload),
           };
         case 'system_job_template':
           return {
-            schedule: await postSchedule(
+            schedule: await request(
               awxAPI`/system_job_templates/${id.toString()}/schedules/`,
               payload
             ),
-            navigationId: AwxRoute.ManagementJobScheduleDetails,
-            params: {
-              id: id.toString(),
-            },
           };
         case 'workflow_job_template':
-          navigationId = AwxRoute.WorkflowJobTemplateScheduleDetails;
-          schedule = await postSchedule(
+          schedule = await request(
             awxAPI`/workflow_job_templates/${id.toString()}/schedules/`,
             payload
           );
           await postAccessories(schedule, payload);
           return {
             schedule,
-            navigationId,
-            params: {
-              id: id.toString(),
-            },
           };
         default:
-          navigationId = AwxRoute.JobTemplateScheduleDetails;
-          schedule = await postSchedule(
-            awxAPI`/job_templates/${id.toString()}/schedules/`,
-            payload
-          );
+          schedule = await request(awxAPI`/job_templates/${id.toString()}/schedules/`, payload);
           await postAccessories(schedule, payload);
 
           return {
             schedule,
-            navigationId,
-            params: {
-              id: id.toString(),
-            },
           };
       }
     },
-    [postSchedule, postAccessories]
+    [params.schedule_id, updateSchedule, postSchedule, params.id, postAccessories]
   );
 };
 

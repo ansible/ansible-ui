@@ -734,7 +734,7 @@ declare global {
         jobTemplate: JobTemplate;
         organization: Organization;
       }>;
-      createAWXSchedule(): Chainable<Schedule>;
+      createAWXSchedule(schedule?: Partial<Schedule>): Chainable<Schedule>;
 
       createAwxJobTemplate(
         jobTemplate: SetRequired<

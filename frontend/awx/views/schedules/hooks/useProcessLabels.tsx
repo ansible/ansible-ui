@@ -17,7 +17,9 @@ async function getDefaultOrganization(): Promise<number> {
 export const useProcessLabels = () => {
   const abortController = useAbortController();
   const postDisassociate = usePostRequest<{ id: number; disassociate: boolean }>();
-  const postAssociateLabel = usePostRequest<{ name: string; organization: number }>();
+  const postAssociateLabel = usePostRequest<
+    { name: string; organization: number } | { id: number }
+  >();
 
   return useCallback(
     async (
@@ -52,10 +54,12 @@ export const useProcessLabels = () => {
           (label: { name: string; id?: number; organization?: number }) =>
             postAssociateLabel(
               awxAPI`/schedules/${scheduleId.toString()}/labels/`,
-              {
-                name: label.name,
-                organization: label?.organization ?? defaultOrganization,
-              },
+              label.id
+                ? { id: label.id }
+                : {
+                    name: label.name,
+                    organization: label?.organization ?? defaultOrganization,
+                  },
               abortController.signal
             )
         );
