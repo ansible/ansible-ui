@@ -25,9 +25,9 @@ export function AwxLogin(props: { children: React.ReactNode }) {
     });
   }
 
-  const { activeAwxUser, activeAwxUserIsLoading, refreshActiveAwxUser } = useAwxActiveUser();
+  const { activeAwxUser, refreshActiveAwxUser } = useAwxActiveUser();
 
-  if (activeAwxUserIsLoading) {
+  if (activeAwxUser === undefined) {
     return (
       <Page>
         <LoadingState />
