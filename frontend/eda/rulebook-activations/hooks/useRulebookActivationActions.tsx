@@ -12,7 +12,7 @@ import { postRequest } from '../../../common/crud/Data';
 import { edaAPI } from '../../common/eda-utils';
 import { IEdaView } from '../../common/useEventDrivenView';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
-import { Status906Enum } from '../../interfaces/generated/eda-api';
+import { StatusEnum } from '../../interfaces/generated/eda-api';
 import {
   useDisableRulebookActivations,
   useRestartRulebookActivations,
@@ -61,10 +61,9 @@ export function useRulebookActivationActions(view: IEdaView<EdaRulebookActivatio
           else void disableActivations([activation]);
         },
         isSwitchOn: (activation: EdaRulebookActivation) => activation.is_enabled ?? false,
-        isHidden: (activation: EdaRulebookActivation) =>
-          activation?.status === Status906Enum.Deleting,
+        isHidden: (activation: EdaRulebookActivation) => activation?.status === StatusEnum.Deleting,
         isDisabled: (activation: EdaRulebookActivation) =>
-          activation.status === Status906Enum.Stopping
+          activation.status === StatusEnum.Stopping
             ? t('Cannot change activation status while stopping')
             : undefined,
       },
@@ -74,7 +73,7 @@ export function useRulebookActivationActions(view: IEdaView<EdaRulebookActivatio
         icon: RedoIcon,
         label: t('Restart rulebook activation'),
         isHidden: (activation: EdaRulebookActivation) =>
-          !activation.is_enabled || activation?.status === Status906Enum.Deleting,
+          !activation.is_enabled || activation?.status === StatusEnum.Deleting,
         onClick: (activation: EdaRulebookActivation) => restartActivations([activation]),
       },
       {
@@ -85,8 +84,7 @@ export function useRulebookActivationActions(view: IEdaView<EdaRulebookActivatio
         selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Delete rulebook activation'),
-        isHidden: (activation: EdaRulebookActivation) =>
-          activation?.status === Status906Enum.Deleting,
+        isHidden: (activation: EdaRulebookActivation) => activation?.status === StatusEnum.Deleting,
         onClick: (rulebookActivation: EdaRulebookActivation) =>
           deleteRulebookActivations([rulebookActivation]),
         isDanger: true,
