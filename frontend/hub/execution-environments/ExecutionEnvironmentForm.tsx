@@ -165,7 +165,9 @@ function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
     <PageLayout>
       <PageHeader
         title={
-          props.mode === 'edit' ? t('Edit Execution Environment') : t('Add Execution Environment')
+          props.mode === 'edit'
+            ? t('Edit Execution Environment')
+            : t('Create Execution Environment')
         }
         breadcrumbs={[
           { label: t('Execution Environments'), to: getPageUrl(HubRoute.ExecutionEnvironments) },
@@ -176,7 +178,9 @@ function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
       {!isLoading && (
         <HubPageForm<ExecutionEnvironmentFormProps>
           submitText={
-            props.mode === 'edit' ? t('Edit Execution Environment') : t('Add Execution Environment')
+            props.mode === 'edit'
+              ? t('Edit Execution Environment')
+              : t('Create execution environment')
           }
           onCancel={() => navigate(HubRoute.ExecutionEnvironments)}
           onSubmit={onSubmit}
