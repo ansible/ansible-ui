@@ -1,7 +1,7 @@
+import { ActionGroup, Button } from '@patternfly/react-core';
+import { DateTime } from 'luxon';
+import { useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
-import { PageFormSelect, PageFormTextInput } from '../../../../../framework';
-import { RuleFields, RuleListItemType, RuleType, ScheduleFormWizard } from '../types';
 import { useTranslation } from 'react-i18next';
 import { RRule, datetime } from 'rrule';
 import {
@@ -9,21 +9,21 @@ import {
   useGetMonthOptions,
   useGetWeekdayOptions,
 } from '../hooks/ruleHelpers';
-import { PageFormMultiSelect } from '../../../../../framework/PageForm/Inputs/PageFormMultiSelect';
+import { RuleFields, RuleListItemType, RuleType, ScheduleFormWizard } from '../types';
 import {
-  WEEKS_OF_YEAR,
   DAYS_OF_MONTH,
   DAYS_OF_YEAR,
   HOURS_OF_DAY,
   MINUTES_OF_HOUR,
+  WEEKS_OF_YEAR,
 } from '../wizard/constants';
 import { PageFormDateTimePicker } from '../../../../../framework/PageForm/Inputs/PageFormDateTimePicker';
-import { ActionGroup, Button } from '@patternfly/react-core';
-import { DateTime } from 'luxon';
 import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
-import { useEffect } from 'react';
 import { dateToInputDateTime } from '../../../../../framework/utils/dateTimeHelpers';
 import { useGet24HourTime } from '../hooks/useGet24HourTime';
+import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
+import { PageFormSelect, PageFormTextInput } from '../../../../../framework';
+import { PageFormMultiSelect } from '../../../../../framework/PageForm/Inputs/PageFormMultiSelect';
 
 export function RuleForm(props: {
   title: string;
@@ -169,6 +169,7 @@ export function RuleForm(props: {
           name={`byweekday`}
           options={weekdayOptions}
           placeholder={t('Select days of the week on which to run the schedule')}
+          disableSortOptions
         />
         <PageFormMultiSelect<RuleFields>
           name={`bymonth`}
@@ -179,6 +180,7 @@ export function RuleForm(props: {
             'This is the bymonth field. This field is used to declare which months of the year the schedule should run.'
           )}
           placeholder={t('Select days of the week on which to run the schedule')}
+          disableSortOptions
         />
         <PageFormMultiSelect<RuleFields>
           name={`byweekno`}
@@ -189,6 +191,7 @@ export function RuleForm(props: {
             'This is the byweekno field. This field is used to declare numbered weeks of the year the schedule should run.'
           )}
           labelHelpTitle={t('Annual weeks(s) number')}
+          disableSortOptions
         />
         <PageFormMultiSelect<RuleFields>
           name={`byminute`}
@@ -199,6 +202,7 @@ export function RuleForm(props: {
             'This is the byhour field. This field is used to declare minute(s) of the hour the schedule should run.'
           )}
           labelHelpTitle={t('Minute(s) of hour')}
+          disableSortOptions
         />
         <PageFormMultiSelect<RuleFields>
           name={`byhour`}
@@ -209,6 +213,7 @@ export function RuleForm(props: {
             'This is the byhour field. This field is used to declare hours of day the schedule should run.'
           )}
           labelHelpTitle={t('Hour of day')}
+          disableSortOptions
         />
         <PageFormMultiSelect<RuleFields>
           name={`bymonthday`}
@@ -219,6 +224,7 @@ export function RuleForm(props: {
             'This is the bymonthday field. This field is used to declare numbered days of the month the schedule should run.'
           )}
           labelHelpTitle={t('Monthly day(s) number')}
+          disableSortOptions
         />
         <PageFormMultiSelect<RuleFields>
           name={`byyearday`}
@@ -229,6 +235,7 @@ export function RuleForm(props: {
             'This is the byyearday field. This field is used to declare numbered days of the year the schedule should run.'
           )}
           labelHelpTitle={t('Annual day(s) number')}
+          disableSortOptions
         />
         <PageFormMultiSelect<RuleFields>
           placeholder={t('Select days')}
@@ -239,6 +246,7 @@ export function RuleForm(props: {
           )}
           labelHelpTitle={t('Occurance position')}
           label={t('Occurances')}
+          disableSortOptions
         />
 
         <PageFormTextInput<RuleFields>
