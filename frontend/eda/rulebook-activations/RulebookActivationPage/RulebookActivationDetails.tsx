@@ -16,7 +16,7 @@ import { StatusCell } from '../../../common/Status';
 import { useGetItem } from '../../../common/crud/useGet';
 import { edaAPI } from '../../common/eda-utils';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
-import { LogLevelEnum, RestartPolicyEnum, Status906Enum } from '../../interfaces/generated/eda-api';
+import { LogLevelEnum, RestartPolicyEnum, StatusEnum } from '../../interfaces/generated/eda-api';
 import { EdaRoute } from '../../main/EdaRoutes';
 import { EdaExtraVarsCell } from '../components/EdaExtraVarCell';
 import { SelectVariant } from '@patternfly/react-core/deprecated';
@@ -47,8 +47,8 @@ export function RulebookActivationDetails() {
       <PageDetails
         disableScroll={true}
         alertPrompts={
-          rulebookActivation.status === Status906Enum.Error ||
-          rulebookActivation.status === Status906Enum.Failed
+          rulebookActivation.status === StatusEnum.Error ||
+          rulebookActivation.status === StatusEnum.Failed
             ? [`${t('Rulebook Activation error: ')}${rulebookActivation?.status_message || ''}`]
             : []
         }
@@ -133,15 +133,15 @@ export function RulebookActivationDetails() {
         <PageDetail label={t('Activation status')}>
           <StatusCell status={rulebookActivation?.status || ''} />
         </PageDetail>
-        {rulebookActivation.status !== Status906Enum.Error &&
-          rulebookActivation.status !== Status906Enum.Failed &&
+        {rulebookActivation.status !== StatusEnum.Error &&
+          rulebookActivation.status !== StatusEnum.Failed &&
           !!rulebookActivation?.status_message && (
             <PageDetail label={t('Status message')}>
               {rulebookActivation?.status_message}
             </PageDetail>
           )}
         <PageDetail label={t('Log level')} helpText={t('Error | Info | Debug')}>
-          {logLevelName(rulebookActivation?.log_level || LogLevelEnum.error, t)}
+          {logLevelName(rulebookActivation?.log_level || LogLevelEnum.Error, t)}
         </PageDetail>
         <PageDetail label={t('Service')}>{rulebookActivation?.k8s_service_name}</PageDetail>
         <PageDetail label={t('Project git hash')}>
@@ -193,11 +193,11 @@ function restartPolicyName(policy: RestartPolicyEnum, t: (str: string) => string
 }
 export function logLevelName(logLevel: LogLevelEnum, t: (str: string) => string) {
   switch (logLevel) {
-    case LogLevelEnum.error:
+    case LogLevelEnum.Error:
       return t('Error');
-    case LogLevelEnum.info:
+    case LogLevelEnum.Info:
       return t('Info');
-    case LogLevelEnum.debug:
+    case LogLevelEnum.Debug:
       return t('Debug');
     default:
       return capitalizeFirstLetter(logLevel);

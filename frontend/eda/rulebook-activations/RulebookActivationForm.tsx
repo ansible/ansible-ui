@@ -100,7 +100,7 @@ export function CreateRulebookActivation() {
         defaultValue={{
           organization_id: defaultOrganization?.id,
           restart_policy: RestartPolicyEnum.OnFailure,
-          log_level: LogLevelEnum.error,
+          log_level: LogLevelEnum.Error,
           is_enabled: true,
           extra_var: '',
         }}

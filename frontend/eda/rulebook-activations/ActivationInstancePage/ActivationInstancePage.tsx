@@ -15,7 +15,7 @@ export function ActivationInstancePage() {
     edaAPI`/activation-instances/${params.instanceId ?? ''}/`
   );
   const { data: activation } = useGet<EdaRulebookActivation>(
-    edaAPI`/activations/${activationInstance?.activation_id.toString() ?? ''}/`
+    edaAPI`/activations/`.concat(`${activationInstance?.activation_id ?? ''}/`)
   );
 
   const getPageUrl = useGetPageUrl();
@@ -41,7 +41,10 @@ export function ActivationInstancePage() {
       />
       <PageRoutedTabs
         tabs={[{ label: t('Details'), page: EdaRoute.RulebookActivationInstanceDetails }]}
-        params={{ id: activationInstance?.activation_id, instanceId: params.instanceId }}
+        params={{
+          id: activationInstance?.activation_id || undefined,
+          instanceId: params.instanceId,
+        }}
       />
     </PageLayout>
   );
