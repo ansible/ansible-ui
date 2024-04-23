@@ -42,7 +42,7 @@ export function ExecutionEnvironments() {
         rowActions={rowActions}
         errorStateTitle={t('Error loading execution environments')}
         emptyStateTitle={t('No execution environments yet')}
-        emptyStateButtonText={t('Add Execution Environment')}
+        emptyStateButtonText={t('Create execution environment')}
         emptyStateButtonIcon={
           <Icon>
             <PlusCircleIcon />

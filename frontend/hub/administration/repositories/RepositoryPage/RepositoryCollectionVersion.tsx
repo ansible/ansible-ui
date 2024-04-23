@@ -17,6 +17,7 @@ import { useHubBulkConfirmation } from '../../../common/useHubBulkConfirmation';
 import { useCallback } from 'react';
 import { ITableColumn } from '../../../../../framework';
 import { useAddCollections } from '../hooks/useAddCollections';
+import { PlusCircleIcon } from '@patternfly/react-icons';
 
 export function RepositoryCollectionVersion() {
   const { t } = useTranslation();
@@ -76,6 +77,7 @@ export function RepositoryCollectionVersion() {
       rowActions={rowActions}
       errorStateTitle={t('Error loading collection versions')}
       emptyStateTitle={t('No collection versions yet')}
+      emptyStateButtonIcon={<PlusCircleIcon />}
       emptyStateButtonText={t('Add collections')}
       emptyStateButtonClick={() => runAddModal()}
       emptyStateDescription={t('Collection versions will appear once the repository is modified.')}

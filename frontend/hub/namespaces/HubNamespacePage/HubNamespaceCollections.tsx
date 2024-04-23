@@ -10,6 +10,7 @@ import { hubAPI } from '../../common/api/formatPath';
 import { collectionKeyFn } from '../../common/api/hub-api-utils';
 import { useHubView } from '../../common/useHubView';
 import { HubRoute } from '../../main/HubRoutes';
+import { PlusCircleIcon } from '@patternfly/react-icons';
 
 export function HubNamespaceCollections() {
   const { t } = useTranslation();
@@ -43,6 +44,7 @@ export function HubNamespaceCollections() {
         errorStateTitle={t('Error loading collections')}
         emptyStateTitle={t('No collections yet')}
         emptyStateDescription={t('To get started, upload a collection.')}
+        emptyStateButtonIcon={<PlusCircleIcon />}
         emptyStateButtonText={t('Upload collection')}
         emptyStateButtonClick={() => pageNavigate(HubRoute.UploadCollection)}
         {...view}
