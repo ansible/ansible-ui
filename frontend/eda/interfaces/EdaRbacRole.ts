@@ -1,4 +1,7 @@
-export interface EdaRbacRole {
+import { RoleDefinition } from './generated/eda-api';
+export type EdaRbacRole = RoleDefinition;
+
+/*export interface EdaRbacRole {
   id: number;
   url: string;
   related: {
@@ -17,4 +20,4 @@ export interface EdaRbacRole {
   managed: boolean;
   created_by: string | null;
   modified_by: string | null;
-}
+}*/

@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { ColumnTableOption, ITableColumn, TextCell, useGetPageUrl } from '../../../../framework';
 import { StatusCell } from '../../../common/Status';
 import { EdaEventStream } from '../../interfaces/EdaEventStream';
-import { Status906Enum } from '../../interfaces/generated/eda-api';
+import { StatusEnum } from '../../interfaces/generated/eda-api';
 import { EdaRoute } from '../../main/EdaRoutes';
 import { Label } from '@patternfly/react-core';
 import { InfoCircleIcon } from '@patternfly/react-icons';
@@ -23,7 +23,7 @@ export function useEventStreamColumns() {
       {
         header: t('Name'),
         cell: (eventStream) =>
-          eventStream?.status !== Status906Enum.Deleting ? (
+          eventStream?.status !== StatusEnum.Deleting ? (
             <TextCell
               text={eventStream.name}
               to={getPageUrl(EdaRoute.EventStreamPage, {
@@ -56,7 +56,7 @@ export function useEventStreamColumns() {
       {
         header: t('Status'),
         cell: (eventStream) =>
-          eventStream?.status === Status906Enum.Deleting ? (
+          eventStream?.status === StatusEnum.Deleting ? (
             <Label color="red" icon={<InfoCircleIcon />}>
               {t('Pending delete')}
             </Label>
