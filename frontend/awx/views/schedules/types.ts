@@ -56,7 +56,6 @@ export interface ScheduleFormWizard {
   launch_config: LaunchConfiguration | null;
   prompt: PromptFormValues;
   schedule_days_to_keep: number;
-  daysToKeepData: number;
 }
 
 export type ScheduleResourceType =

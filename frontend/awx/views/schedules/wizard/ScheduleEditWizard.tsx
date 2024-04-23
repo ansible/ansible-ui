@@ -147,7 +147,7 @@ export function ScheduleEditWizard() {
       resource: schedule?.summary_fields.unified_job_template,
       startDateTime: { date: startDate, time: time },
       timezone: schedule?.timezone,
-      daysToKeepData: schedule.extra_data.days,
+      schedule_days_to_keep: schedule.extra_data.days,
     },
     nodePromptsStep: {
       prompt: {},

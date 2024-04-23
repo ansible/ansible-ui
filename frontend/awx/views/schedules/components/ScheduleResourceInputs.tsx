@@ -59,7 +59,7 @@ export function ScheduleResourceInputs() {
         />
         {hasDaysToKeepField && (
           <PageFormTextInput<ScheduleFormWizard>
-            name={'daysToKeepData'}
+            name={'schedule_days_to_keep'}
             isRequired
             label={t('Days of data to keep')}
             type="number"

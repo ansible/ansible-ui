@@ -58,7 +58,7 @@ export function ScheduleDetails() {
   if (!schedule) return <LoadingPage breadcrumbs tabs />;
   const isSystemJobTemplateSchedule: boolean = pathname.includes('management-jobs');
 
-  const isDays: boolean = JSON.stringify(schedule?.extra_data).includes('days');
+  const hasDaysToKeep: boolean = JSON.stringify(schedule?.extra_data).includes('days');
   const extraData = schedule?.extra_data as string | object;
 
   return (
@@ -105,15 +105,13 @@ export function ScheduleDetails() {
         <PageDetail label={t('Skip tags')} isEmpty={!schedule.skip_tags}>
           <LabelGroup>{skipTags?.map(({ name }) => <Label key={name}>{name}</Label>)}</LabelGroup>
         </PageDetail>
-        {!isDays && (
-          <PageDetail fullWidth>
-            <PageDetailCodeEditor
-              label={t('Variables')}
-              value={JSON.stringify(schedule.extra_data)}
-            />
-          </PageDetail>
-        )}
-        {isDays && (
+        <PageDetail fullWidth>
+          <PageDetailCodeEditor
+            label={t('Variables')}
+            value={JSON.stringify(schedule.extra_data)}
+          />
+        </PageDetail>
+        {hasDaysToKeep && (
           <PageDetail fullWidth label={t('Days of data to keep')}>
             {typeof extraData === 'string'
               ? extraData.toString().replace('}', '').split(':')[1]
