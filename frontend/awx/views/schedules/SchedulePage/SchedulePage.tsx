@@ -1,5 +1,4 @@
 import { DropdownPosition } from '@patternfly/react-core/deprecated';
-import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { PageActions, PageHeader, PageLayout } from '../../../../../framework';
 import { useGetPageUrl } from '../../../../../framework/PageNavigation/useGetPageUrl';
@@ -30,7 +29,6 @@ export function SchedulePage(props: {
   const resourceType =
     Object.keys(resourceEndPoints).find((route) => urlsplit.includes(route)) || '';
   const isInventorySource = urlsplit.includes('sources');
-  const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const params = useParams<{ id: string; source_id?: string; schedule_id: string }>();
   const {
@@ -76,14 +74,13 @@ export function SchedulePage(props: {
           to: getPageUrl(route.to, { params: { id: inventory?.id } }),
         };
       }
+      if (route.label === 'Schedules') {
+        return { label: route.label, to: getPageUrl(route.to, { params: { id: resource?.id } }) };
+      }
       return route;
     });
 
-    return [
-      ...completedBreadcrumbs,
-      { label: t('Schedules'), to: getPageUrl(AwxRoute.Templates) },
-      { label: schedule?.name },
-    ];
+    return [...completedBreadcrumbs, { label: schedule?.name }];
   }, [
     getPageUrl,
     resource?.id,
@@ -92,7 +89,6 @@ export function SchedulePage(props: {
     inventory?.name,
     isInventorySource,
     props.initialBreadCrumbs,
-    t,
     schedule?.name,
   ]);
 
