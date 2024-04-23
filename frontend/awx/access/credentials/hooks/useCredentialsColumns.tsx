@@ -31,11 +31,15 @@ export function useCredentialsColumns(options?: { disableSort?: boolean; disable
   const { results: allCredTypes } = useAwxGetAllPages<CredentialType>(awxAPI`/credential_types/`);
 
   const credentialTypesMap: { [id: number]: string } = useMemo(() => {
+    const credTypes: { [id: number]: string } = {};
     if (allCredTypes) {
-      return allCredTypes.reduce((acc, credentialType) => {
+      for (const credentialType of allCredTypes) {
         const { id, name } = credentialType;
-        return { ...acc, [id]: name };
-      });
+        if (id && name) {
+          credTypes[id] = name;
+        }
+      }
+      return credTypes;
     } else {
       return {};
     }
