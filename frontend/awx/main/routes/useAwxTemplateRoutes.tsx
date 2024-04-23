@@ -108,7 +108,7 @@ export function useAwxTemplateRoutes() {
                 {
                   id: AwxRoute.JobTemplateJobs,
                   path: 'job',
-                  element: <TemplateJobs />,
+                  element: <TemplateJobs resourceType="job_templates" />,
                 },
                 {
                   id: AwxRoute.JobTemplateNotifications,
@@ -224,7 +224,7 @@ export function useAwxTemplateRoutes() {
                 {
                   id: AwxRoute.WorkflowJobTemplateJobs,
                   path: 'workflow_jobs',
-                  element: <PageNotImplemented />,
+                  element: <TemplateJobs resourceType="workflow_job_templates" />,
                 },
                 {
                   id: AwxRoute.WorkflowJobTemplateSurvey,

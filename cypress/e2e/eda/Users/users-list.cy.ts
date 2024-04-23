@@ -3,26 +3,8 @@
 import { edaAPI } from '../../../support/formatApiPathForEDA';
 
 describe('EDA Users List', () => {
-  let roleIDs: { [key: string]: string };
-  let editorRoleID: string;
-  let _contributorRoleID: string;
-  let auditorRoleID: string;
-  let viewerRoleID: string;
-  let operatorRoleID: string;
   before(() => {
     cy.edaLogin();
-    cy.getEdaRoles().then((rolesArray) => {
-      roleIDs = rolesArray.reduce((acc, role) => {
-        const { name, id } = role;
-        return { ...acc, [name]: id };
-      }, {});
-
-      _contributorRoleID = roleIDs.Contributor;
-      viewerRoleID = roleIDs.Viewer;
-      editorRoleID = roleIDs.Editor;
-      auditorRoleID = roleIDs.Auditor;
-      operatorRoleID = roleIDs.Operator;
-    });
   });
 
   it('renders the Users list page', () => {
@@ -32,7 +14,7 @@ describe('EDA Users List', () => {
 
   it('renders the Users details page and shows expected information', () => {
     cy.createEdaUser({
-      roles: [editorRoleID],
+      is_superuser: true,
     }).then((edaUser) => {
       cy.navigateTo('eda', 'users');
       cy.setTablePageSize('100');
@@ -41,26 +23,25 @@ describe('EDA Users List', () => {
       cy.verifyPageTitle(edaUser.username);
       cy.clickLink(/^Details$/);
       cy.get('dd#username').should('contain', edaUser.username);
+      cy.get('dd#user-type').should('contain', 'System administrator');
       cy.deleteEdaUser(edaUser);
     });
   });
 
   it('can bulk delete Users from the list', () => {
-    cy.createEdaUser({
-      roles: [auditorRoleID],
-    }).then((auditor) => {
+    cy.createEdaUser().then((userA) => {
       cy.createEdaUser({
-        roles: [viewerRoleID],
-      }).then((viewer) => {
+        is_superuser: true,
+      }).then((userB) => {
         cy.navigateTo('eda', 'users');
-        cy.selectTableRow(auditor.username, false);
-        cy.selectTableRow(viewer.username, false);
+        cy.selectTableRow(userA.username, false);
+        cy.selectTableRow(userB.username, false);
         cy.clickToolbarKebabAction('delete-selected-users');
-        cy.intercept('DELETE', edaAPI`/users/${auditor.id.toString()}/`).as('auditor');
-        cy.intercept('DELETE', edaAPI`/users/${viewer.id.toString()}/`).as('viewer');
+        cy.intercept('DELETE', edaAPI`/users/${userA.id.toString()}/`).as('userA');
+        cy.intercept('DELETE', edaAPI`/users/${userB.id.toString()}/`).as('userB');
         cy.clickModalConfirmCheckbox();
         cy.clickModalButton('Delete users');
-        cy.wait(['@auditor', '@viewer']).then((activationArr) => {
+        cy.wait(['@userA', '@userB']).then((activationArr) => {
           expect(activationArr[0]?.response?.statusCode).to.eql(204);
           expect(activationArr[1]?.response?.statusCode).to.eql(204);
         });
@@ -71,9 +52,7 @@ describe('EDA Users List', () => {
   });
 
   it('deletes a User from kebab menu from the project details page', () => {
-    cy.createEdaUser({
-      roles: [operatorRoleID],
-    }).then((edaUser) => {
+    cy.createEdaUser().then((edaUser) => {
       cy.navigateTo('eda', 'users');
       cy.selectTableRow(edaUser.username, false);
       cy.clickToolbarKebabAction('delete-selected-users');

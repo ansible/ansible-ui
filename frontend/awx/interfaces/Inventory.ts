@@ -63,3 +63,17 @@ export interface SmartInventory extends CommonInventory {
 }
 
 export type Inventory = RegularInventory | ConstructedInventory | SmartInventory;
+
+export interface RunCommandWizard {
+  module: string;
+  module_args: string;
+  verbosity: number;
+  limit: string;
+  forks: boolean;
+  diff_mode: boolean;
+  become_enabled: boolean;
+  extra_vars: string;
+  credential: { name: string };
+  credentialIdPath: string;
+  execution_environment: { name: string; id: string };
+}

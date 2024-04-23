@@ -1,5 +1,13 @@
 /* eslint-disable i18next/no-literal-string */
-import { ReactNode, createContext, useCallback, useContext, useEffect, useState } from 'react';
+import {
+  ReactNode,
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import { SWRConfig } from 'swr';
 
 export interface IPageSettings {
@@ -51,30 +59,29 @@ export function PageSettingsProvider(props: {
   });
 
   const setSettings = useCallback((settings: IPageSettings) => {
-    const activeTheme =
-      settings.theme !== 'light' && settings.theme !== 'dark'
-        ? window.matchMedia('(prefers-color-scheme: dark)').matches
-          ? 'dark'
-          : 'light'
-        : settings.theme;
-    settings.activeTheme = activeTheme;
     localStorage.setItem('user-preferences', JSON.stringify(settings));
     setSettingsState(settings);
   }, []);
 
+  const activeTheme = useMemo(() => {
+    return settings.theme !== 'light' && settings.theme !== 'dark'
+      ? window.matchMedia('(prefers-color-scheme: dark)').matches
+        ? 'dark'
+        : 'light'
+      : settings.theme;
+  }, [settings.theme]);
+
   useEffect(() => {
-    const activeTheme =
-      settings.theme !== 'light' && settings.theme !== 'dark'
-        ? window.matchMedia('(prefers-color-scheme: dark)').matches
-          ? 'dark'
-          : 'light'
-        : settings.theme;
+    setSettingsState((settings) => {
+      if (settings.activeTheme === activeTheme) return settings;
+      return { ...settings, activeTheme };
+    });
     if (activeTheme === 'dark') {
       document.documentElement.classList.add('pf-v5-theme-dark');
     } else {
       document.documentElement.classList.remove('pf-v5-theme-dark');
     }
-  }, [settings]);
+  }, [activeTheme]);
 
   return (
     <SWRConfig

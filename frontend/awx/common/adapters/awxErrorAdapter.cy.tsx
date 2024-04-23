@@ -79,6 +79,42 @@ describe('awxErrorAdapter', () => {
     expect(result.fieldErrors.length).equal(0);
     expect(result.genericErrors).to.deep.equal([{ message: 'Cannot assign type of galaxy' }]);
   });
+
+  it('should handle inputs as generic errors when it is an array of strings', () => {
+    const error = new RequestError('Input error', undefined, 400, {}, { inputs: ['Error'] });
+    const result = awxErrorAdapter(error);
+    expect(result.genericErrors.length).equal(1);
+    expect(result.fieldErrors.length).equal(0);
+    expect(result.genericErrors).to.deep.equal([{ message: 'Error' }]);
+  });
+
+  it('should handle inputs as field errors when it is an object with an array', () => {
+    const error = new RequestError(
+      'Input error',
+      undefined,
+      400,
+      {},
+      { inputs: { name: ['Name is required'] } }
+    );
+    const result = awxErrorAdapter(error);
+    expect(result.genericErrors.length).equal(0);
+    expect(result.fieldErrors.length).equal(1);
+    expect(result.fieldErrors).to.deep.equal([{ name: 'name', message: 'Name is required' }]);
+  });
+
+  it('should handle inputs as field errors when it is an object with a string', () => {
+    const error = new RequestError(
+      'Input error',
+      undefined,
+      400,
+      {},
+      { inputs: { name: 'Name is required' } }
+    );
+    const result = awxErrorAdapter(error);
+    expect(result.genericErrors.length).equal(0);
+    expect(result.fieldErrors.length).equal(1);
+    expect(result.fieldErrors).to.deep.equal([{ name: 'name', message: 'Name is required' }]);
+  });
 });
 
 describe('useAwxErrorMessageParser', () => {

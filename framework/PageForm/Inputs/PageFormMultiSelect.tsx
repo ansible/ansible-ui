@@ -23,7 +23,10 @@ export type PageFormMultiSelectProps<
     | Validate<FieldPathValue<TFieldValues, TFieldName>, TFieldValues>
     | Record<string, Validate<FieldPathValue<TFieldValues, TFieldName>, TFieldValues>>;
   isReadOnly?: boolean;
-} & Pick<PageMultiSelectProps<ValueT>, 'id' | 'placeholder' | 'options' | 'footer' | 'isDisabled'> &
+} & Pick<
+  PageMultiSelectProps<ValueT>,
+  'id' | 'placeholder' | 'options' | 'footer' | 'isDisabled' | 'disableSortOptions'
+> &
   Pick<
     PageFormGroupProps,
     'label' | 'labelHelp' | 'labelHelpTitle' | 'additionalControls' | 'isRequired' | 'helperText'
@@ -80,6 +83,7 @@ export function PageFormMultiSelect<
               onSelect={(getNewValues) => onChange(getNewValues(value))}
               isDisabled={isDisabled}
               footer={props.footer}
+              disableSortOptions={props.disableSortOptions}
             />
           </PageFormGroup>
         );
