@@ -941,15 +941,18 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add('createAWXSchedule', () => {
-  cy.requestPost<Schedule>(awxAPI`/schedules/`, {
-    name: 'E2E Schedule ' + randomString(4),
-    description: 'E2E Schedule Description',
-    enabled: true,
-    rrule: 'DTSTART:20201231T000000Z RRULE:FREQ=DAILY;INTERVAL=1;COUNT=1',
-    unified_job_template: 1,
-    extra_data: {},
-  }).then((schedule) => schedule);
+Cypress.Commands.add('createAWXSchedule', (schedule?: Partial<Schedule>) => {
+  cy.requestPost<Schedule>(
+    awxAPI`/schedules/`,
+    schedule ?? {
+      name: 'E2E Schedule ' + randomString(4),
+      description: 'E2E Schedule Description',
+      enabled: true,
+      rrule: 'DTSTART:20201231T000000Z RRULE:FREQ=DAILY;INTERVAL=1;COUNT=1',
+      unified_job_template: 1,
+      extra_data: {},
+    }
+  ).then((schedule) => schedule);
 });
 
 Cypress.Commands.add(
