@@ -288,6 +288,7 @@ function CustomizeMessagesForm(props: {
   const { t } = useTranslation();
 
   const formContext = useFormContext<NotificationTemplate>();
+  const notification_type = formContext.getValues('notification_type');
 
   const { data, customize_messages } = props;
   const setValue = formContext.setValue;
@@ -366,6 +367,7 @@ function CustomizeMessagesForm(props: {
 
   return (
     <>
+    {notification_type}
       <PageFormTextInput<NotificationTemplate>
         name="messages.started.message"
         label={t('Start message')}
