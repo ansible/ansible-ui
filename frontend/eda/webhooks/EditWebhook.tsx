@@ -22,8 +22,7 @@ import { EdaPageForm } from '../common/EdaPageForm';
 import { edaAPI } from '../common/eda-utils';
 import { EdaOrganization } from '../interfaces/EdaOrganization';
 import { EdaResult } from '../interfaces/EdaResult';
-import { EdaWebhook, EdaWebhookCreate } from '../interfaces/EdaWebhook';
-import { WebhookTypeEnum } from '../interfaces/generated/eda-api';
+import { EdaWebhook, EdaWebhookCreate, WebhookTypeEnum } from '../interfaces/EdaWebhook';
 import { EdaRoute } from '../main/EdaRoutes';
 
 export function WebhookOptions(t: TFunction<'translation'>) {

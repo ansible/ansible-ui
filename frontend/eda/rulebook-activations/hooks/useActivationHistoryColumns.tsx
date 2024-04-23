@@ -16,7 +16,7 @@ export function useActivationHistoryColumns() {
           <TextCell
             text={`${instance?.id || ''} - ${instance?.name || ''}`}
             to={getPageUrl(EdaRoute.RulebookActivationInstancePage, {
-              params: { id: instance.activation_id, instanceId: instance.id },
+              params: { id: instance.activation_id || undefined, instanceId: instance.id },
             })}
           />
         ),

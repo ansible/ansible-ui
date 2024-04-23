@@ -5,7 +5,7 @@ import {
   PageFormTextInput,
 } from '../../../../framework';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
-import { EdaCredentialType } from '../../interfaces/EdaCredentialType';
+import { EdaCredentialType, EdaCredentialTypeField } from '../../interfaces/EdaCredentialType';
 
 export interface OptionsResponse {
   actions: {
@@ -36,13 +36,13 @@ interface IFieldTypeBoolean extends IFieldTypeBase {
 }
 
 export function CredentialFormInputs(props: { credentialType: EdaCredentialType | undefined }) {
-  const fields = props?.credentialType?.inputs.fields;
+  const fields = props?.credentialType?.inputs?.fields as EdaCredentialTypeField[];
   return fields?.map((field) => {
     return (
       <CredentialFormInput
         key={field.label}
         field={field as FieldType}
-        required={props.credentialType?.inputs?.required || []}
+        required={props.credentialType?.inputs?.required as string[]}
       />
     );
   });
@@ -60,7 +60,7 @@ export function CredentialFormInput(props: { field: FieldType | undefined; requi
           type={props.field.secret ? 'password' : undefined}
           labelHelpTitle={props.field.label}
           labelHelp={props.field.help_text}
-          isRequired={props.required.includes(props.field.id)}
+          isRequired={!!props?.required && props.required.includes(props.field.id)}
         />
       );
       /*<PageFormSection singleColumn>
@@ -85,7 +85,7 @@ export function CredentialFormInput(props: { field: FieldType | undefined; requi
             labelHelpTitle={props.field.label}
             labelHelp={props.field.help_text}
             options={props.field.choices.map((choice) => ({ value: choice, label: choice }))}
-            isRequired={props.required.includes(props.field.id)}
+            isRequired={!!props?.required && props.required.includes(props.field.id)}
           />
         );
       } else {
@@ -96,7 +96,7 @@ export function CredentialFormInput(props: { field: FieldType | undefined; requi
             type={props.field.secret ? 'password' : undefined}
             labelHelpTitle={props.field.label}
             labelHelp={props.field.help_text}
-            isRequired={props.required.includes(props.field.id)}
+            isRequired={!!props?.required && props.required.includes(props.field.id)}
           />
         );
       }
@@ -110,7 +110,7 @@ export function CredentialFormInput(props: { field: FieldType | undefined; requi
           name={`inputs.${props.field.id}`}
           labelHelpTitle={props.field.label}
           labelHelp={props.field.help_text}
-          isRequired={props.required.includes(props.field.id)}
+          isRequired={!!props?.required && props.required.includes(props.field.id)}
         />
       </PageFormSection>
     );

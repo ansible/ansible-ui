@@ -12,7 +12,7 @@ import { postRequest } from '../../../common/crud/Data';
 import { edaAPI } from '../../common/eda-utils';
 import { IEdaView } from '../../common/useEventDrivenView';
 import { EdaEventStream } from '../../interfaces/EdaEventStream';
-import { Status906Enum } from '../../interfaces/generated/eda-api';
+import { StatusEnum } from '../../interfaces/generated/eda-api';
 import { useDisableEventStreams, useRestartEventStreams } from './useControlEventStreams';
 import { useDeleteEventStreams } from './useDeleteEventStreams';
 
@@ -58,9 +58,9 @@ export function useEventStreamActions(view: IEdaView<EdaEventStream>) {
           else void disableEventStreams([eventStream]);
         },
         isSwitchOn: (eventStream: EdaEventStream) => eventStream.is_enabled ?? false,
-        isHidden: (eventStream: EdaEventStream) => eventStream?.status === Status906Enum.Deleting,
+        isHidden: (eventStream: EdaEventStream) => eventStream?.status === StatusEnum.Deleting,
         isDisabled: (eventStream: EdaEventStream) =>
-          eventStream.status === Status906Enum.Stopping
+          eventStream.status === StatusEnum.Stopping
             ? t('Cannot change the event stream status while stopping')
             : undefined,
       },
@@ -70,7 +70,7 @@ export function useEventStreamActions(view: IEdaView<EdaEventStream>) {
         icon: RedoIcon,
         label: t('Restart event stream'),
         isHidden: (eventStream: EdaEventStream) =>
-          !eventStream.is_enabled || eventStream?.status === Status906Enum.Deleting,
+          !eventStream.is_enabled || eventStream?.status === StatusEnum.Deleting,
         onClick: (eventStream: EdaEventStream) => restartEventStreams([eventStream]),
       },
       {
@@ -81,7 +81,7 @@ export function useEventStreamActions(view: IEdaView<EdaEventStream>) {
         selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Delete event stream'),
-        isHidden: (eventStream: EdaEventStream) => eventStream?.status === Status906Enum.Deleting,
+        isHidden: (eventStream: EdaEventStream) => eventStream?.status === StatusEnum.Deleting,
         onClick: (eventStream: EdaEventStream) => deleteEventStreams([eventStream]),
         isDanger: true,
       },

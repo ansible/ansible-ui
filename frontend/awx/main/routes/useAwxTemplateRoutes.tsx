@@ -68,6 +68,7 @@ export function useAwxTemplateRoutes() {
                   initialBreadCrumbs={[
                     { label: t('Templates'), to: AwxRoute.Templates },
                     { label: 'data', to: AwxRoute.JobTemplatePage },
+                    { label: t('Schedules'), to: AwxRoute.JobTemplateSchedules },
                   ]}
                   backTab={{
                     label: t('Back to Schedules'),
@@ -179,6 +180,7 @@ export function useAwxTemplateRoutes() {
                   initialBreadCrumbs={[
                     { label: t('Templates'), to: AwxRoute.Templates },
                     { label: 'data', to: AwxRoute.WorkflowJobTemplatePage },
+                    { label: t('Schedules'), to: AwxRoute.WorkflowJobTemplateSchedules },
                   ]}
                   backTab={{
                     label: t('Back to Schedules'),

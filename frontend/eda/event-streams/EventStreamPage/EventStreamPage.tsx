@@ -20,7 +20,7 @@ import { postRequest } from '../../../common/crud/Data';
 import { useGet } from '../../../common/crud/useGet';
 import { edaAPI } from '../../common/eda-utils';
 import { EdaEventStream } from '../../interfaces/EdaEventStream';
-import { Status906Enum } from '../../interfaces/generated/eda-api';
+import { StatusEnum } from '../../interfaces/generated/eda-api';
 import { EdaRoute } from '../../main/EdaRoutes';
 import { useDisableEventStreams, useRestartEventStreams } from '../hooks/useControlEventStreams';
 import { useDeleteEventStreams } from '../hooks/useDeleteEventStreams';
@@ -95,7 +95,7 @@ export function EventStreamPage() {
             },
             isSwitchOn: (eventStream: EdaEventStream) => eventStream.is_enabled ?? false,
             isDisabled: (eventStream: EdaEventStream) =>
-              eventStream.status === Status906Enum.Stopping
+              eventStream.status === StatusEnum.Stopping
                 ? t('Cannot change the event stream status while stopping')
                 : undefined,
           },
