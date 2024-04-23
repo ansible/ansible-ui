@@ -147,7 +147,7 @@ collections:
       .invoke('select')
       .clear()
       .type(communityCollection);
-    cy.clickButton(/^Edit remote$/);
+    cy.clickButton(/^Save remote$/);
     cy.clickButton(/^Clear all filters$/);
     cy.contains(remoteName).click();
     cy.get('[data-cy="yaml-requirements"]').should('be.visible');
