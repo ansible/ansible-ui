@@ -12,7 +12,7 @@ describe('Instances Page', () => {
       IS_K8S: true,
     }).as('isK8s');
     cy.mount(<InstancePage />);
-    cy.get('[data-cy="page-title"]').should('have.text', 'receptor-1');
+    cy.getByDataCy('page-title').should('have.text', 'receptor-1');
     cy.contains('nav[aria-label="Breadcrumb"]', 'receptor-1').should('exist');
     cy.getByDataCy('back-to instances').should('be.visible');
     cy.getByDataCy('back-to instances').should('be.enabled');

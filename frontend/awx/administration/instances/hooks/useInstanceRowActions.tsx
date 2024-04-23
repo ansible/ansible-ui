@@ -56,10 +56,8 @@ export function useToggleInstanceRowAction(onComplete: (instances: Instance[]) =
       labelOff: t('Disabled'),
       showPinnedLabel: false,
       isHidden: (instance) => instance.node_type === 'hop',
-      isDisabled: (instance) =>
-        !userAccess ||
-        !isK8s ||
-        (instance?.node_type !== 'execution' && instance?.node_type !== 'hop')
+      isDisabled: (_instance) =>
+        !userAccess || !isK8s
           ? t(
               'You do not have permission to edit instances. Please contact your organization administrator if there is an issue with your access.'
             )
@@ -112,7 +110,7 @@ export function useRunHealthCheckRowAction(onComplete: (instances: Instance[]) =
   );
 }
 
-export function useEditInstanceRowAction() {
+export function useEditInstanceRowAction(options?: { isHidden?: boolean; isPinned?: boolean }) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const { activeAwxUser } = useAwxActiveUser();
@@ -125,18 +123,17 @@ export function useEditInstanceRowAction() {
       type: PageActionType.Button,
       selection: PageActionSelection.Single,
       icon: PencilAltIcon,
-      isPinned: true,
+      isPinned: options?.isPinned ?? true,
+      isHidden: () => options?.isHidden ?? false,
       label: t('Edit instance'),
       onClick: (instance) => pageNavigate(AwxRoute.EditInstance, { params: { id: instance.id } }),
-      isDisabled: (instance) =>
-        !userAccess ||
-        !isK8s ||
-        (instance?.node_type !== 'execution' && instance?.node_type !== 'hop')
+      isDisabled: (_instance) =>
+        !userAccess || !isK8s
           ? t(
               'You do not have permission to edit instances. Please contact your organization administrator if there is an issue with your access.'
             )
           : undefined,
     }),
-    [t, pageNavigate, isK8s, userAccess]
+    [t, pageNavigate, isK8s, userAccess, options?.isHidden, options?.isPinned]
   );
 }

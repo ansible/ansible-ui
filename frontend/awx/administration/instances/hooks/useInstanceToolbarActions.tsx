@@ -20,55 +20,27 @@ import { useRemoveInstances } from './useRemoveInstances';
 import { useRunHealthCheck } from './useRunHealthCheck';
 
 export function useInstanceToolbarActions(view: IAwxView<Instance>) {
-  const { t } = useTranslation();
-  const removeInstances = useRemoveInstances(view.unselectItemsAndRefresh);
-  const pageNavigate = usePageNavigate();
-  const { activeAwxUser } = useAwxActiveUser();
   const { data } = useGet<Settings>(awxAPI`/settings/system/`);
   const isK8s = data?.IS_K8S;
 
-  const canAddAndEditInstances =
-    (activeAwxUser?.is_superuser || activeAwxUser?.is_system_auditor) && data?.IS_K8S;
-
   const healthCheckAction = useRunHealthCheckToolbarAction(view);
+  const addInstanceAction = useAddInstanceToolbarAction();
+  const removeInstanceAction = useRemoveInstanceToolbarAction(view);
 
-  return useMemo<IPageAction<Instance>[]>(() => {
-    let actions: IPageAction<Instance>[] = [
-      {
-        type: PageActionType.Button,
-        isHidden: () => isK8s === false,
-        selection: PageActionSelection.None,
-        variant: ButtonVariant.primary,
-        isPinned: true,
-        icon: PlusCircleIcon,
-        label: t('Add instance'),
-        onClick: () => pageNavigate(AwxRoute.AddInstance),
-        isDisabled: canAddAndEditInstances
-          ? undefined
-          : t(
-              'You do not have permission to add instances. Please contact your organization administrator if there is an issue with your access.'
-            ),
-      },
-    ];
-    if (isK8s) {
-      const removeInstanceAction: IPageAction<Instance> = {
-        type: PageActionType.Button,
-        selection: PageActionSelection.Multiple,
-        icon: MinusCircleIcon,
-        label: t('Remove instance'),
-        onClick: (instance: Instance[]) => removeInstances(instance),
-        isDisabled: (instances: Instance[]) => cannotRemoveInstances(instances, t),
-        isDanger: true,
-      };
-      actions.push(removeInstanceAction);
-    }
-    actions = actions.concat(healthCheckAction);
-
-    return actions;
-  }, [t, canAddAndEditInstances, pageNavigate, isK8s, removeInstances, healthCheckAction]);
+  return useMemo<IPageAction<Instance>[]>(
+    () =>
+      isK8s
+        ? [addInstanceAction, removeInstanceAction, healthCheckAction]
+        : [addInstanceAction, healthCheckAction],
+    [addInstanceAction, removeInstanceAction, healthCheckAction, isK8s]
+  );
 }
 
-export function useRunHealthCheckToolbarAction(view: IAwxView<Instance>, isPinned?: boolean) {
+export function useRunHealthCheckToolbarAction(
+  view: IAwxView<Instance>,
+  isPinned?: boolean,
+  isHidden?: boolean
+) {
   const { t } = useTranslation();
   const runHealthCheck = useRunHealthCheck(view.unselectItemsAndRefresh);
 
@@ -92,32 +64,83 @@ export function useRunHealthCheckToolbarAction(view: IAwxView<Instance>, isPinne
     [t]
   );
 
-  return useMemo<IPageAction<Instance>[]>(
-    () => [
-      {
-        type: PageActionType.Button,
-        selection: PageActionSelection.Multiple,
-        variant: ButtonVariant.primary,
-        icon: HeartbeatIcon,
-        label: t('Run health check'),
-        isPinned: isPinned ?? false,
-        onClick: (instances) => runHealthCheck(instances),
-        isDisabled: (instances) =>
-          instances.some(
-            (instance) =>
-              cannotRunHealthCheckDueToNodeType(instance) ||
-              cannotRunHealthCheckDueToPending(instance)
-          )
-            ? 'Cannot run health checks on one or more of the selected instances'
-            : '',
-      },
-    ],
+  return useMemo<IPageAction<Instance>>(
+    () => ({
+      type: PageActionType.Button,
+      selection: PageActionSelection.Multiple,
+      variant: ButtonVariant.primary,
+      icon: HeartbeatIcon,
+      label: t('Run health check'),
+      isPinned: isPinned ?? false,
+      isHidden: isHidden ?? false,
+      onClick: (instances) => runHealthCheck(instances),
+      isDisabled: (instances) =>
+        instances.some(
+          (instance) =>
+            cannotRunHealthCheckDueToNodeType(instance) ||
+            cannotRunHealthCheckDueToPending(instance)
+        )
+          ? 'Cannot run health checks on one or more of the selected instances'
+          : '',
+    }),
     [
       t,
       runHealthCheck,
       cannotRunHealthCheckDueToNodeType,
       cannotRunHealthCheckDueToPending,
       isPinned,
+      isHidden,
     ]
+  );
+}
+
+export function useRemoveInstanceToolbarAction(view: IAwxView<Instance>) {
+  const removeInstances = useRemoveInstances(view.unselectItemsAndRefresh);
+  const { t } = useTranslation();
+  const { data } = useGet<Settings>(awxAPI`/settings/system/`);
+  const isK8s = data?.IS_K8S;
+  const { activeAwxUser } = useAwxActiveUser();
+
+  return useMemo<IPageAction<Instance>>(
+    () => ({
+      type: PageActionType.Button,
+      selection: PageActionSelection.Multiple,
+      icon: MinusCircleIcon,
+      label: t('Remove instance'),
+      onClick: (instance: Instance[]) => removeInstances(instance),
+      isDisabled: (instances: Instance[]) =>
+        cannotRemoveInstances(instances, t, activeAwxUser, isK8s ?? false),
+      isDanger: true,
+    }),
+    [t, removeInstances, isK8s, activeAwxUser]
+  );
+}
+
+export function useAddInstanceToolbarAction() {
+  const pageNavigate = usePageNavigate();
+  const { activeAwxUser } = useAwxActiveUser();
+  const { data } = useGet<Settings>(awxAPI`/settings/system/`);
+  const isK8s = data?.IS_K8S;
+  const { t } = useTranslation();
+
+  const canAddAndEditInstances =
+    (activeAwxUser?.is_superuser || activeAwxUser?.is_system_auditor) && data?.IS_K8S;
+  return useMemo<IPageAction<Instance>>(
+    () => ({
+      type: PageActionType.Button,
+      isHidden: () => isK8s === false,
+      selection: PageActionSelection.None,
+      variant: ButtonVariant.primary,
+      isPinned: true,
+      icon: PlusCircleIcon,
+      label: t('Add instance'),
+      onClick: () => pageNavigate(AwxRoute.AddInstance),
+      isDisabled: canAddAndEditInstances
+        ? undefined
+        : t(
+            'You do not have permission to add instances. Please contact your organization administrator if there is an issue with your access.'
+          ),
+    }),
+    [t, canAddAndEditInstances, pageNavigate, isK8s]
   );
 }
