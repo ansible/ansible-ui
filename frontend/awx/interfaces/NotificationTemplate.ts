@@ -1,8 +1,8 @@
 import { NotificationTemplate as SwaggerNotificationTemplate } from './generated-from-swagger/api';
 
 type NotificationType = {
-  message: string | undefined;
-  body: string | undefined;
+  message?: string | undefined;
+  body?: string | undefined;
 };
 
 type WorkflowApprovalMessages = {
@@ -12,7 +12,7 @@ type WorkflowApprovalMessages = {
   timed_out?: NotificationType;
 };
 
-type MessagesType = {
+export type MessagesType = {
   error?: NotificationType;
   started?: NotificationType;
   success?: NotificationType;
