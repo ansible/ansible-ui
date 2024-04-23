@@ -36,7 +36,12 @@ export function NodeTypeStep(props: { hasSourceNode?: boolean }) {
 
   const { defaultValues } = formState;
 
-  const { setWizardData, setStepData, stepData, setVisibleSteps, allSteps } = usePageWizard() as {
+  const {
+    setWizardData,
+    setStepData,
+    stepData,
+    steps: allSteps,
+  } = usePageWizard() as {
     setWizardData: Dispatch<SetStateAction<WizardFormValues>>;
     setStepData: (
       data:
@@ -49,8 +54,7 @@ export function NodeTypeStep(props: { hasSourceNode?: boolean }) {
     };
     wizardData: Partial<WizardFormValues>;
     visibleSteps: PageWizardStep[];
-    setVisibleSteps: (steps: PageWizardStep[]) => void;
-    allSteps: PageWizardStep[];
+    steps: PageWizardStep[];
   };
 
   // Register form fields
@@ -77,34 +81,16 @@ export function NodeTypeStep(props: { hasSourceNode?: boolean }) {
 
     if (isDirty) {
       setValue('resource', null);
-      const steps = allSteps.filter(
-        (step) => step.id !== 'nodePromptsStep' && step.id !== 'survey'
-      );
-      setVisibleSteps(steps);
     }
 
     if (isTouched && !isDirty && isApprovalType) {
       reset(undefined, {
         keepDefaultValues: true,
       });
-      const steps = allSteps.filter(
-        (step) => step.id !== 'nodePromptsStep' && step.id !== 'survey'
-      );
       setWizardData({ ...currentFormValues, launch_config: null });
       setStepData({ nodeTypeStep: currentFormValues });
-      setVisibleSteps(steps);
     }
-  }, [
-    nodeType,
-    getFieldState,
-    setValue,
-    reset,
-    allSteps,
-    setWizardData,
-    setStepData,
-    setVisibleSteps,
-    getValues,
-  ]);
+  }, [nodeType, getFieldState, setValue, reset, allSteps, setWizardData, setStepData, getValues]);
 
   useEffect(() => {
     const setLaunchToWizardData = async () => {
@@ -152,15 +138,6 @@ export function NodeTypeStep(props: { hasSourceNode?: boolean }) {
           ...prev,
           launch_config: launchConfigResults,
         }));
-        if (shouldShowPromptStep && shouldShowSurveyStep) {
-          setVisibleSteps(allSteps);
-        } else if (shouldShowPromptStep) {
-          const filteredSteps = allSteps.filter((step) => step.id !== 'survey');
-          setVisibleSteps(filteredSteps);
-        } else {
-          const filteredSteps = allSteps.filter((step) => step.id !== 'nodePromptsStep');
-          setVisibleSteps(filteredSteps);
-        }
 
         if (stepData.nodePromptsStep && nodeResource) {
           const { isDirty: isNodeTypeDirty } = getFieldState('node_type');
@@ -177,10 +154,6 @@ export function NodeTypeStep(props: { hasSourceNode?: boolean }) {
           }
         }
       } else {
-        const filteredSteps = allSteps.filter(
-          (step) => step.id !== 'nodePromptsStep' && step.id !== 'survey'
-        );
-        setVisibleSteps(filteredSteps);
         setWizardData((prev) => ({ ...prev, launch_config: null }));
       }
     };
@@ -196,7 +169,6 @@ export function NodeTypeStep(props: { hasSourceNode?: boolean }) {
     nodeResource,
     nodeType,
     setValue,
-    setVisibleSteps,
     setWizardData,
     stepData,
   ]);

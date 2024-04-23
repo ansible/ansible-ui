@@ -65,6 +65,9 @@ describe('Schedules', () => {
       cy.getBy('[data-cy="create-schedule"]').click();
       cy.selectDropdownOptionByResourceName('schedule_type', 'Job template');
       cy.selectDropdownOptionByResourceName('job-template-select', jobTemplate.name);
+      cy.get('[data-cy="name"]').type('Test Schedule');
+      cy.clickButton(/^Next$/);
+
       cy.get('[data-cy="wizard-nav"] li').eq(1).should('contain.text', 'Prompts');
     });
   });
@@ -78,33 +81,45 @@ describe('Schedules', () => {
       cy.getBy('[data-cy="create-schedule"]').click();
       cy.selectDropdownOptionByResourceName('schedule_type', 'Workflow job template');
       cy.selectDropdownOptionByResourceName('job-template-select', workflowJobTemplate.name);
+      cy.get('[data-cy="name"]').type('Test Schedule');
+      cy.clickButton(/^Next$/);
+
       cy.get('[data-cy="wizard-nav"] li').eq(1).should('contain.text', 'Prompts');
     });
   });
 
-  it('project does not renders prompt step', () => {
+  it('project does not render prompt step', () => {
     cy.getBy('[data-cy="create-schedule"]').click();
     cy.getBy('[data-cy="schedule_type-form-group"]').click();
     cy.getBy('[data-cy="project-sync"]').click();
     cy.selectDropdownOptionByResourceName('project', project.name);
+    cy.get('[data-cy="name"]').type('Test Schedule');
+    cy.clickButton(/^Next$/);
+
     cy.get('[data-cy="wizard-nav"] li').eq(1).should('contain.text', 'Rules');
   });
 
-  it('management jobs does not renders prompt step', () => {
+  it('management jobs does not render prompt step', () => {
     cy.getBy('[data-cy="create-schedule"]').click();
     cy.selectDropdownOptionByResourceName('schedule_type', 'Management job template');
     cy.selectDropdownOptionByResourceName(
       'management-job-template-select',
       'Cleanup Activity Stream'
     );
+    cy.get('[data-cy="name"]').type('Test Schedule');
+    cy.clickButton(/^Next$/);
+
     cy.get('[data-cy="wizard-nav"] li').eq(1).should('contain.text', 'Rules');
   });
 
-  it('inventory source does not renders prompt step', () => {
+  it('inventory source does not render prompt step', () => {
     cy.getBy('[data-cy="create-schedule"]').click();
     cy.selectDropdownOptionByResourceName('schedule_type', 'Inventory source');
     cy.selectDropdownOptionByResourceName('inventory', inventory.name);
     cy.selectDropdownOptionByResourceName('inventory-source-select', inventorySource.name);
+    cy.get('[data-cy="name"]').type('Test Schedule');
+    cy.clickButton(/^Next$/);
+
     cy.get('[data-cy="wizard-nav"] li').eq(1).should('contain.text', 'Rules');
   });
 });
