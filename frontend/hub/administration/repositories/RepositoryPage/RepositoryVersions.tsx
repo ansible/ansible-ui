@@ -15,6 +15,7 @@ import { IPageAction } from '../../../../../framework';
 import { waitForTask } from '../../../common/api/hub-api-utils';
 import { postRequest } from '../../../../common/crud/Data';
 import { Repository } from '../Repository';
+import { PlusCircleIcon } from '@patternfly/react-icons';
 
 export function RepositoryVersions() {
   const { t } = useTranslation();
@@ -41,6 +42,7 @@ export function RepositoryVersions() {
       errorStateTitle={t('Error loading collection versions')}
       emptyStateTitle={t('No collection versions yet')}
       emptyStateDescription={t('Collection versions will appear once the collection is modified.')}
+      emptyStateButtonIcon={<PlusCircleIcon />}
       emptyStateButtonText={t('Add collection')}
       emptyStateButtonClick={() => {}}
       {...view}
