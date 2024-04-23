@@ -32,7 +32,7 @@ import { usePageNavigate } from '../../../../framework';
 import { InnerForm } from './NotifierFormInner';
 import { Trans } from 'react-i18next';
 import { NotifierFormMessages } from './NotifierFormMessages';
-
+import { areMessagesEmpty } from './NotifierFormMessages';
 
 export function EditNotifier() {
   return <NotifierForm mode={'edit'} />;
@@ -109,10 +109,6 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
   if (defaultValue && !messagesEmpty) {
     (defaultValue as CustomizeMessageType).customize_messages = true;
   }
-
-  // fill customize messages
-
-  if (messagesEmpty) defaultValueMessages.messages = getDefaultMessages();
 
   const onSubmit: PageFormSubmitHandler<NotificationTemplate> = async (formData) => {
     const data: NotificationTemplate | NotificationTemplateEdit =
@@ -261,13 +257,14 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
             label={t('Customize messages...')}
           />
         </PageFormSection>
+
         <PageFormSection singleColumn>
           <PageFormWatch watch="customize_messages">
             {(customize_messages: boolean) => {
               return (
                 <>
                   {
-                    <CustomizeMessagesForm
+                    <NotifierFormMessages
                       customize_messages={customize_messages}
                       data={notifierRequest.data}
                     />
