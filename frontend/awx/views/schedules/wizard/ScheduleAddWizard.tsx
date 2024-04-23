@@ -10,7 +10,7 @@ import {
 import { useGetPageUrl } from '../../../../../framework/PageNavigation/useGetPageUrl';
 import { dateToInputDateTime } from '../../../../../framework/utils/dateTimeHelpers';
 import { AwxRoute } from '../../../main/AwxRoutes';
-import { RuleFields, ScheduleFormWizard } from '../types';
+import { RuleFields, ScheduleFormWizard, schedulePageUrl } from '../types';
 import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
 import { RulesStep } from './RulesStep';
 import { RRule, RRuleSet } from 'rrule';
@@ -27,6 +27,7 @@ import { Schedule } from '../../../interfaces/Schedule';
 import { RequestError } from '../../../../common/crud/RequestError';
 import { RULES_DEFAULT_VALUES } from './constants';
 import { ScheduleReviewStep } from './ScheduleReviewStep';
+import { useGetScheduleUrl } from '../hooks/useGetScheduleUrl';
 
 export type StandardizedFormData = Omit<ScheduleFormWizard, 'rules' | 'exceptions'> & {
   rrule: string;
@@ -37,6 +38,7 @@ export function ScheduleAddWizard() {
   const pageNavigate = usePageNavigate();
   const navigate = useNavigate();
   const processSchedules = useProcessSchedule();
+  const getScheduleUrl = useGetScheduleUrl();
   const now = DateTime.now();
   const closestQuarterHour: DateTime = DateTime.fromMillis(
     Math.ceil(now.toMillis() / 900000) * 900000
@@ -47,12 +49,26 @@ export function ScheduleAddWizard() {
     const { rules, exceptions, ...rest } = formValues;
 
     const ruleset = new RRuleSet();
-    rules.forEach((r) => {
-      ruleset.rrule(new RRule({ ...r.rule.options }));
+    rules.forEach((r, i) => {
+      const {
+        rule: {
+          options: { dtstart, tzid, ...rest },
+        },
+      } = r;
+      if (i === 0) {
+        ruleset.rrule(new RRule({ ...rest, dtstart, tzid }));
+      } else {
+        ruleset.rrule(new RRule({ ...rest }));
+      }
     });
     if (exceptions.length) {
       exceptions?.forEach((r) => {
-        ruleset.exrule(new RRule({ ...r.rule.options }));
+        const {
+          rule: {
+            options: { dtstart, tzid, ...rest },
+          },
+        } = r;
+        ruleset.exrule(new RRule({ ...rest }));
       });
     }
     const data: StandardizedFormData = {
@@ -62,14 +78,11 @@ export function ScheduleAddWizard() {
 
     const {
       schedule,
-      navigationId,
-      params,
     }: {
       schedule: Schedule;
-      navigationId: string;
-      params: { id: string; source_id?: string; inventory_type?: string };
     } = await processSchedules(data);
-    pageNavigate(navigationId, { params: { schedule_id: schedule.id, ...params } });
+    const pageUrl = getScheduleUrl('details', schedule) as schedulePageUrl;
+    pageNavigate(pageUrl.pageId, { params: pageUrl.params });
   };
 
   const onCancel = () => navigate(location.pathname.replace('create', ''));

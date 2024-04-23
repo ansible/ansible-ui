@@ -29,7 +29,7 @@ export function ScheduleReviewStep() {
   const {
     schedule_type,
     resource,
-
+    rules,
     schedule_days_to_keep,
     name,
     description,
@@ -60,7 +60,7 @@ export function ScheduleReviewStep() {
   return (
     <>
       <PageFormSection title={t('Review')} singleColumn>
-        <PageDetails numberOfColumns={name ? 'two' : 'single'} disablePadding>
+        <PageDetails numberOfColumns={'two'} disablePadding>
           <PageDetail label={t('Resource type')}>{resourceTypeDetail}</PageDetail>
           <PageDetail label={t('Resource')}>
             <Link to={resourceDetailsLink}>{name}</Link>
@@ -77,7 +77,7 @@ export function ScheduleReviewStep() {
           <PageDetail label={t('Days of data to keep')}>{schedule_days_to_keep}</PageDetail>
           {hasPromptDetails ? <PromptReviewDetails /> : null}
         </PageDetails>
-        {name && <RulesPreview />}
+        {rules.length && <RulesPreview />}
         {exceptions.length > 0 && <ExceptionsPreview />}
       </PageFormSection>
     </>
