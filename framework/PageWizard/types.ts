@@ -32,21 +32,20 @@ export interface PageWizardState {
   setWizardData: (data: object) => void;
   stepData: Record<string, object>;
   stepError: Record<string, object>;
-  allSteps: PageWizardStep[];
+  steps: PageWizardStep[];
   // Top-level visible steps (including parent steps of substeps)
   visibleSteps: PageWizardStep[];
-  setVisibleSteps: (steps: PageWizardStep[]) => void;
   // Flattened list containing all visible steps including substeps
   visibleStepsFlattened: PageWizardStep[];
-  setVisibleStepsFlattened: (steps: PageWizardStep[]) => void;
   wizardData: object;
+  onNext: (formState: object) => Promise<void>;
+  onBack: () => void;
   submitError?: Error | undefined;
   setSubmitError: React.Dispatch<SetStateAction<Error | undefined>>;
 }
 
-export interface PageWizardBody<T> {
+export interface PageWizardBody {
   onCancel?: () => void;
-  onSubmit: (wizardData: T) => Promise<void>;
   errorAdapter?: ErrorAdapter;
   disableGrid?: boolean;
   isVertical?: boolean;

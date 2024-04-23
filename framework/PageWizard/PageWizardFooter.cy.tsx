@@ -9,7 +9,7 @@ describe('PageWizardFooter', () => {
 
   const wizardContext = {
     activeStep: step1,
-    allSteps: [step1, step2, step3],
+    steps: [step1, step2, step3],
     visibleSteps: [step1, step2, step3],
     visibleStepsFlattened: [step1, step2, step3],
     isToggleExpanded: false,
@@ -18,11 +18,11 @@ describe('PageWizardFooter', () => {
     setStepError: () => {},
     setToggleExpanded: () => {},
     setWizardData: () => {},
-    setVisibleSteps: () => {},
-    setVisibleStepsFlattened: () => {},
     stepData: {},
     stepError: {},
     wizardData: {},
+    onNext: () => Promise.resolve(),
+    onBack: () => {},
     setSubmitError: () => {},
   };
 

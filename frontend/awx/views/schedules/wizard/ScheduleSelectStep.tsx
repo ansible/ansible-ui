@@ -30,7 +30,12 @@ export function ScheduleSelectStep() {
     useFormContext<ScheduleFormWizard>();
   const { defaultValues } = formState;
   const resource = useWatch({ name: 'resource' }) as ScheduleResources;
-  const { setWizardData, setStepData, stepData, setVisibleSteps, allSteps } = usePageWizard() as {
+  const {
+    setWizardData,
+    setStepData,
+    stepData,
+    steps: allSteps,
+  } = usePageWizard() as {
     setWizardData: Dispatch<SetStateAction<ScheduleFormWizard>>;
     setStepData: (
       data:
@@ -43,8 +48,7 @@ export function ScheduleSelectStep() {
     };
     wizardData: Partial<ScheduleFormWizard>;
     visibleSteps: PageWizardStep[];
-    setVisibleSteps: (steps: PageWizardStep[]) => void;
-    allSteps: PageWizardStep[];
+    steps: PageWizardStep[];
   };
 
   // Register form fields
@@ -95,23 +99,12 @@ export function ScheduleSelectStep() {
 
     setValue('schedule_type', scheduleType, { shouldTouch: true });
 
-    if (isDirty) {
-      const steps = allSteps.filter(
-        (step) => step.id !== 'nodePromptsStep' && step.id !== 'survey'
-      );
-      setVisibleSteps(steps);
-    }
-
     if (isTouched && !isDirty) {
       reset(undefined, {
         keepDefaultValues: true,
       });
-      const steps = allSteps.filter(
-        (step) => step.id !== 'nodePromptsStep' && step.id !== 'survey'
-      );
       setWizardData({ ...currentFormValues, launch_config: null });
       setStepData({ details: currentFormValues });
-      setVisibleSteps(steps);
     }
   }, [
     scheduleType,
@@ -121,7 +114,6 @@ export function ScheduleSelectStep() {
     allSteps,
     setWizardData,
     setStepData,
-    setVisibleSteps,
     getValues,
   ]);
 
@@ -161,15 +153,6 @@ export function ScheduleSelectStep() {
           ...prev,
           launch_config: launchConfigResults,
         }));
-        if (shouldShowPromptStep && shouldShowSurveyStep) {
-          setVisibleSteps(allSteps);
-        } else if (shouldShowPromptStep) {
-          const filteredSteps = allSteps.filter((step) => step.id !== 'survey');
-          setVisibleSteps(filteredSteps);
-        } else {
-          const filteredSteps = allSteps.filter((step) => step.id !== 'nodePromptsStep');
-          setVisibleSteps(filteredSteps);
-        }
 
         if (stepData.nodePromptsStep && resource) {
           const { isDirty: isNodeTypeDirty } = getFieldState('schedule_type');
@@ -183,10 +166,6 @@ export function ScheduleSelectStep() {
           }
         }
       } else {
-        const filteredSteps = allSteps.filter(
-          (step) => step.id !== 'nodePromptsStep' && step.id !== 'survey'
-        );
-        setVisibleSteps(filteredSteps);
         setWizardData((prev) => ({ ...prev, launch_config: null }));
       }
     };
@@ -202,7 +181,6 @@ export function ScheduleSelectStep() {
     resource,
     scheduleType,
     setValue,
-    setVisibleSteps,
     setWizardData,
     stepData,
     isTopLevelScheduleForm,
