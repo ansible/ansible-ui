@@ -30,7 +30,7 @@ describe('EDA rulebook activations- Create, Edit, Delete', () => {
             rulebook_id: edaRuleBook1.id,
             decision_environment_id: decisionEnvironment.id,
             k8s_service_name: 'sample',
-            log_level: LogLevelEnum.error,
+            log_level: LogLevelEnum.Error,
           }).then((edaRulebookActivation) => {
             edaRBA1 = edaRulebookActivation;
           });
@@ -44,7 +44,7 @@ describe('EDA rulebook activations- Create, Edit, Delete', () => {
             rulebook_id: edaRuleBook2.id,
             decision_environment_id: decisionEnvironment.id,
             k8s_service_name: 'sample',
-            log_level: LogLevelEnum.error,
+            log_level: LogLevelEnum.Error,
           }).then((edaRulebookActivation) => {
             edaRBA2 = edaRulebookActivation;
           });
@@ -58,7 +58,7 @@ describe('EDA rulebook activations- Create, Edit, Delete', () => {
             rulebook_id: edaRuleBook3.id,
             decision_environment_id: decisionEnvironment.id,
             k8s_service_name: 'sample',
-            log_level: LogLevelEnum.error,
+            log_level: LogLevelEnum.Error,
           }).then((edaRulebookActivation) => {
             edaRBA3 = edaRulebookActivation;
           });

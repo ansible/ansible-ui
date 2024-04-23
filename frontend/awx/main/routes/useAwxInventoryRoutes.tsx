@@ -63,6 +63,7 @@ export function useAwxInventoryRoutes() {
                 { label: 'inventory', to: AwxRoute.InventoryPage },
                 { label: t('Inventory Sources'), to: AwxRoute.InventorySources },
                 { label: 'data', to: AwxRoute.InventorySourcePage },
+                { label: t('Schedules'), to: AwxRoute.InventorySourceSchedules },
               ]}
               backTab={{
                 label: t('Back to Schedules'),
