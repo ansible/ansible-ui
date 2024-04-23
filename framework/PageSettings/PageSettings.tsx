@@ -67,6 +67,7 @@ export function PageSettingsForm() {
           t('This refreshes the data on the page at the selected interval.'),
           t('The refresh happens in the background and does not reload the page.'),
         ]}
+        isRequired
       />
       <PageFormSingleSelect<IPageSettings>
         name="theme"
@@ -77,6 +78,7 @@ export function PageSettingsForm() {
           { label: t('Dark theme'), value: 'dark' },
         ]}
         placeholder={t('Select theme')}
+        isRequired
       />
       <PageFormSingleSelect<IPageSettings>
         name="tableLayout"
@@ -90,6 +92,7 @@ export function PageSettingsForm() {
           { label: t('Compact'), description: t('Less space between rows'), value: 'compact' },
         ]}
         placeholder={t('Select table layout')}
+        isRequired
       />
       <PageFormSingleSelect<IPageSettings>
         name="formColumns"
@@ -99,6 +102,7 @@ export function PageSettingsForm() {
           { label: t('Single column of inputs'), value: 'single' },
         ]}
         placeholder={t('Select form columns')}
+        isRequired
       />
       <PageFormSingleSelect<IPageSettings>
         name="formLayout"
@@ -108,6 +112,7 @@ export function PageSettingsForm() {
           { label: t('Labels beside inputs'), value: 'horizontal' },
         ]}
         placeholder={t('Select form layout')}
+        isRequired
       />
       <PageFormSingleSelect<IPageSettings>
         name="dateFormat"
@@ -117,6 +122,7 @@ export function PageSettingsForm() {
           { label: t('Show dates as date and time'), value: 'date-time' },
         ]}
         placeholder={t('Select date format')}
+        isRequired
       />
       <PageFormSingleSelect<IPageSettings>
         name="dataEditorFormat"
@@ -127,6 +133,7 @@ export function PageSettingsForm() {
         ]}
         placeholder={t('Select date format')}
         labelHelp={t('Sets the default format for when editing data fields.')}
+        isRequired
       />
     </PageForm>
   );

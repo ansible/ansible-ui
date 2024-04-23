@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useOptions } from '../../../common/crud/useOptions';
 import { awxAPI } from '../../common/api/awx-utils';
-import { AwxSettingsOptionsResponse } from './AwxSettingsActionsForm';
+import { AwxSettingsOptionsAction, AwxSettingsOptionsResponse } from './AwxSettingsForm';
 
 export interface IAwxSettingsGroup {
   id: string;
@@ -23,6 +23,8 @@ export const awxSettingsExcludeKeys: string[] = [
   'BULK_JOB_MAX_LAUNCH',
   'BULK_HOST_MAX_CREATE',
   'BULK_HOST_MAX_DELETE',
+  'CUSTOM_LOGIN_INFO',
+  'CUSTOM_LOGO',
 ];
 
 export function useAwxSettingsGroupsBase() {
@@ -48,13 +50,6 @@ export function useAwxSettingsGroupsBase() {
         name: t('Logging Settings'),
         description: t('Controller logging settings.'),
         defaultSlugs: ['logging'],
-        categories: [],
-      },
-      {
-        id: 'ui',
-        name: t('Customize Login'),
-        description: t('Customize the login page and logo.'),
-        defaultSlugs: ['ui'],
         categories: [],
       },
       {
@@ -99,16 +94,26 @@ export function useAwxSettingsGroupsBase() {
 export function useAwxSettingsGroups() {
   const groupsBase = useAwxSettingsGroupsBase();
 
-  const options = useOptions<AwxSettingsOptionsResponse>(awxAPI`/settings/all/`);
+  const optionsResponse = useOptions<AwxSettingsOptionsResponse>(awxAPI`/settings/all/`);
+
+  const options = useMemo(() => {
+    if (!optionsResponse.data?.actions.PUT) return undefined;
+    return Object.keys(optionsResponse.data.actions.PUT).reduce<
+      Record<string, AwxSettingsOptionsAction>
+    >((acc, key) => {
+      if (awxSettingsExcludeKeys.includes(key)) return acc;
+      const value = optionsResponse.data!.actions.PUT[key];
+      acc[key] = value;
+      return acc;
+    }, {});
+  }, [optionsResponse.data]);
 
   const groups = useMemo(() => {
     let groups: IAwxSettingsGroup[] = JSON.parse(JSON.stringify(groupsBase)) as IAwxSettingsGroup[];
-    if (options.isLoading) return groupsBase;
-    if (options.error) return groupsBase;
-    if (!options.data) return groupsBase;
-    for (const [key, value] of Object.entries(options.data.actions.PUT)) {
-      if (awxSettingsExcludeKeys.includes(key)) continue;
-
+    if (optionsResponse.isLoading) return groupsBase;
+    if (optionsResponse.error) return groupsBase;
+    if (!options) return groupsBase;
+    for (const value of Object.values(options)) {
       const categoryName = value.category;
       const slug = value.category_slug;
 
@@ -141,15 +146,15 @@ export function useAwxSettingsGroups() {
       })
     );
     return groups;
-  }, [groupsBase, options.data, options.error, options.isLoading]);
+  }, [groupsBase, options, optionsResponse.error, optionsResponse.isLoading]);
 
   return useMemo(
     () => ({
-      isLoading: options.isLoading,
-      error: options.error,
+      isLoading: optionsResponse.isLoading,
+      error: optionsResponse.error,
       groups,
-      options: options.data?.actions.PUT,
+      options: options,
     }),
-    [groups, options.data?.actions.PUT, options.error, options.isLoading]
+    [groups, optionsResponse.error, optionsResponse.isLoading, options]
   );
 }

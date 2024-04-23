@@ -72,14 +72,14 @@ interface IOptionCertificateAction extends IOptionActionBase {
 interface IOptionChoiceAction extends IOptionActionBase {
   type: 'choice';
   default: string;
-  choices: [value: string, display_name: string];
+  choices: [value: string, display_name: string][];
 }
 
 interface IOptionDateTimeAction extends IOptionActionBase {
   type: 'datetime';
 }
 
-export function AwxSettingsActionsForm(props: {
+export function AwxSettingsForm(props: {
   options: Record<string, AwxSettingsOptionsAction>;
   data: object;
 }) {

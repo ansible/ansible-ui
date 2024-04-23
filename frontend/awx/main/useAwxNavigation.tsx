@@ -6,13 +6,15 @@ import { AwxRoleDetails } from '../access/roles/AwxRoleDetails';
 import { AwxRolePage } from '../access/roles/AwxRolePage';
 import { AwxRoles } from '../access/roles/AwxRoles';
 import { AwxSettings } from '../administration/settings/AwxSettings';
+import { AwxSettingsCategoryDetailsPage } from '../administration/settings/AwxSettingsCategoryDetails';
 import {
-  AwxSettingsCategory,
-  AwxSettingsCategoryRoute,
-} from '../administration/settings/AwxSettingsCategory';
+  AwxSettingsCategoryForm,
+  AwxSettingsCategoryFormRoute,
+} from '../administration/settings/AwxSettingsCategoryForm';
 import { Topology } from '../administration/topology/Topology';
 import { Reports } from '../analytics/Reports/Reports';
 import { SubscriptionUsage } from '../analytics/subscription-usage/SubscriptionUsage';
+import { useAwxActiveUser } from '../common/useAwxActiveUser';
 import { AwxOverview } from '../overview/AwxOverview';
 import { HostMetrics } from '../views/jobs/HostMetrics';
 import { AwxRoute } from './AwxRoutes';
@@ -35,7 +37,6 @@ import { useAwxTeamsRoutes } from './routes/useAwxTeamsRoutes';
 import { useAwxTemplateRoutes } from './routes/useAwxTemplateRoutes';
 import { useAwxUsersRoutes } from './routes/useAwxUsersRoutes';
 import { useAwxWorkflowApprovalRoutes } from './routes/useAwxWorkflowApprovalRoutes';
-import { useAwxActiveUser } from '../common/useAwxActiveUser';
 
 export function useAwxNavigation() {
   const { t } = useTranslation();
@@ -152,7 +153,7 @@ export function useAwxNavigation() {
             {
               id: AwxRoute.SettingsCategory,
               path: ':category',
-              element: <AwxSettingsCategoryRoute />,
+              element: <AwxSettingsCategoryFormRoute />,
             },
             {
               path: '',
@@ -209,31 +210,65 @@ export function useAwxNavigation() {
           id: AwxRoute.SettingsSystem,
           label: t('System'),
           path: 'system',
-          element: <AwxSettingsCategory categoryId="system" key="system" />,
+          children: [
+            {
+              id: AwxRoute.SettingsCategory,
+              path: 'edit',
+              element: <AwxSettingsCategoryForm categoryId="system" key="system" />,
+            },
+            {
+              path: '',
+              element: <AwxSettingsCategoryDetailsPage categoryId="system" key="system" />,
+            },
+          ],
         },
         {
           id: AwxRoute.SettingsJobs,
           label: t('Job'),
           path: 'job-settings',
-          element: <AwxSettingsCategory categoryId="jobs" key="jobs" />,
+          children: [
+            {
+              id: AwxRoute.SettingsCategory,
+              path: 'edit',
+              element: <AwxSettingsCategoryForm categoryId="jobs" key="jobs" />,
+            },
+            {
+              path: '',
+              element: <AwxSettingsCategoryDetailsPage categoryId="jobs" key="jobs" />,
+            },
+          ],
         },
         {
           id: AwxRoute.SettingsLogging,
           label: t('Logging'),
           path: 'logging',
-          element: <AwxSettingsCategory categoryId="logging" key="logging" />,
-        },
-        {
-          id: AwxRoute.SettingsCustomizeLogin,
-          label: t('Customize Login'),
-          path: 'customize-login',
-          element: <AwxSettingsCategory categoryId="ui" key="ui" />,
+          children: [
+            {
+              id: AwxRoute.SettingsCategory,
+              path: 'edit',
+              element: <AwxSettingsCategoryForm categoryId="logging" key="logging" />,
+            },
+            {
+              path: '',
+              element: <AwxSettingsCategoryDetailsPage categoryId="logging" key="logging" />,
+            },
+          ],
         },
         {
           id: AwxRoute.SettingsTroubleshooting,
           label: t('Troubleshooting'),
           path: 'troubleshooting',
-          element: <AwxSettingsCategory categoryId="debug" key="debug" />,
+          children: [
+            {
+              id: AwxRoute.SettingsCategory,
+              path: 'edit',
+              element: <AwxSettingsCategoryForm categoryId="debug" key="debug" />,
+            },
+            {
+              path: '',
+              element: <AwxSettingsCategoryDetailsPage categoryId="debug" key="debug" />,
+            },
+          ],
         },
         {
           path: '',
