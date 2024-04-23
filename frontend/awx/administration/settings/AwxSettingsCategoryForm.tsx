@@ -4,19 +4,19 @@ import { LoadingPage, PageHeader, PageLayout } from '../../../../framework';
 import { useGet } from '../../../common/crud/useGet';
 import { AwxError } from '../../common/AwxError';
 import { awxAPI } from '../../common/api/awx-utils';
-import { AwxSettingsActionsForm, AwxSettingsOptionsAction } from './AwxSettingsActionsForm';
+import { AwxSettingsForm, AwxSettingsOptionsAction } from './AwxSettingsForm';
 import {
   awxSettingsExcludeKeys,
   useAwxSettingsGroups,
   useAwxSettingsGroupsBase,
 } from './useAwxSettingsGroups';
 
-export function AwxSettingsCategoryRoute() {
+export function AwxSettingsCategoryFormRoute() {
   const { category: categoryId } = useParams<{ category: string }>();
-  return <AwxSettingsCategory categoryId={categoryId ?? ''} />;
+  return <AwxSettingsCategoryForm categoryId={categoryId ?? ''} />;
 }
 
-export function AwxSettingsCategory(props: { categoryId: string }) {
+export function AwxSettingsCategoryForm(props: { categoryId: string }) {
   const { isLoading, error, groups, options } = useAwxSettingsGroups();
   const { categoryId } = props;
   const group = groups.find((group) =>
@@ -52,7 +52,7 @@ export function AwxSettingsCategory(props: { categoryId: string }) {
   return (
     <PageLayout>
       <PageHeader title={title ?? category.name} />
-      <AwxSettingsActionsForm options={categoryOptions} data={all.data} />
+      <AwxSettingsForm options={categoryOptions} data={all.data} />
     </PageLayout>
   );
 }
