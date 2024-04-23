@@ -22,12 +22,14 @@ Cypress.Commands.add('platformLogin', () => {
         retryOnStatusCodeFailure: true,
         retryOnNetworkFailure: true,
       });
+      cy.contains('Log in');
+      cy.wait(1); // Seems like sometimes when the page first comes up that the login form is not ready
       cy.getByDataCy('username').type(Cypress.env('PLATFORM_USERNAME') as string, {
-        log: false,
+        force: true,
         delay: 0,
       });
       cy.getByDataCy('password').type(Cypress.env('PLATFORM_PASSWORD') as string, {
-        log: false,
+        force: true,
         delay: 0,
       });
       cy.getByDataCy('Submit').click();
