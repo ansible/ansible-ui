@@ -1728,7 +1728,6 @@ Cypress.Commands.add(
   (
     template: JobTemplate | WorkflowJobTemplate,
     spec: SetOptional<Spec, 'required' | 'min' | 'max' | 'new_question' | 'choices'>
-    // spec: SetOptional<Spec, 'question_name' | 'question_description' | 'type' | 'default'>
   ) => {
     cy.visit(`/templates/${template.type}/${template.id}/survey/add`);
 
@@ -1772,6 +1771,8 @@ Cypress.Commands.add(
       });
     }
 
+    cy.intercept('POST', awxAPI`/${template.type}s/*/survey_spec/`).as('createSurveySpec');
     cy.clickButton('Create question');
+    cy.wait('@createSurveySpec');
   }
 );
