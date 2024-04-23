@@ -9,7 +9,6 @@ describe('Credential Types', () => {
   let credType2: CredentialType;
   let inputCredType: string;
   let injectorCredType: string;
-  let credential: Credential;
 
   before(() => {
     cy.awxLogin();
@@ -32,7 +31,6 @@ describe('Credential Types', () => {
     });
 
     after(() => {
-      cy.deleteAwxCredential(credential, { failOnStatusCode: false });
       cy.deleteAwxCredentialType(credType1, { failOnStatusCode: false });
     });
 
@@ -69,6 +67,7 @@ describe('Credential Types', () => {
           cy.getBy(`a[href*="/access/credential-types/${credType1.id}/credentials?"]`).click();
           cy.wait('@credentialsList');
           cy.getBy('tr').should('have.length', 2);
+          cy.deleteAwxCredential(newCred, { failOnStatusCode: false });
         });
     });
 
