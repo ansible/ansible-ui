@@ -1,6 +1,7 @@
 import { Button, Icon, Popover, Stack, StackItem } from '@patternfly/react-core';
 import { ExternalLinkAltIcon, OutlinedQuestionCircleIcon } from '@patternfly/react-icons';
 import { ReactNode } from 'react';
+import styled from 'styled-components';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
 import { IconButton } from './IconButton';
 
@@ -38,17 +39,15 @@ export function Help(props: {
         </Stack>
       }
     >
-      <IconButton type="button">
+      <IconButtonStyled type="button">
         <Icon size="sm">
           <OutlinedQuestionCircleIcon />
         </Icon>
-      </IconButton>
-      {/* <Button
-        variant="plain"
-        style={{ padding: 0, marginLeft: marginLeft || '8px', verticalAlign: 'middle' }}
-      >
-        <OutlinedQuestionCircleIcon />
-      </Button> */}
+      </IconButtonStyled>
     </Popover>
   );
 }
+
+const IconButtonStyled = styled(IconButton)`
+  margin-left: 4px;
+`;
