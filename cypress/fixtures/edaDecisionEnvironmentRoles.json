@@ -1,0 +1,69 @@
+{
+  "count": 2,
+  "next": null,
+  "previous": null,
+  "page_size": 10,
+  "page": 1,
+  "results": [
+    {
+      "id": 14,
+      "url": "/api/eda/v1/role_definitions/14/",
+      "related": {
+        "team_assignments": "/api/eda/v1/role_definitions/14/team_assignments/",
+        "user_assignments": "/api/eda/v1/role_definitions/14/user_assignments/"
+      },
+      "summary_fields": {},
+      "permissions": [
+        "eda.change_decisionenvironment",
+        "eda.delete_decisionenvironment",
+        "eda.view_decisionenvironment",
+        "eda.view_rulebook"
+      ],
+      "content_type": "eda.decisionenvironment",
+      "modified": "2024-04-04T16:38:50.059713Z",
+      "created": "2024-04-04T16:38:50.059752Z",
+      "name": "Admin",
+      "description": "Has all permissions to a single decisionenvironment and its child resources - rulebook",
+      "managed": true,
+      "modified_by": null,
+      "created_by": null
+    },
+    {
+      "id": 16,
+      "url": "/api/eda/v1/role_definitions/16/",
+      "related": {
+        "created_by": "/api/eda/v1/users/1/",
+        "modified_by": "/api/eda/v1/users/1/",
+        "team_assignments": "/api/eda/v1/role_definitions/16/team_assignments/",
+        "user_assignments": "/api/eda/v1/role_definitions/16/user_assignments/"
+      },
+      "summary_fields": {
+        "modified_by": {
+          "id": 1,
+          "username": "admin",
+          "email": "test@example.com",
+          "first_name": "",
+          "last_name": "",
+          "is_superuser": true
+        },
+        "created_by": {
+          "id": 1,
+          "username": "admin",
+          "email": "test@example.com",
+          "first_name": "",
+          "last_name": "",
+          "is_superuser": true
+        }
+      },
+      "permissions": ["eda.view_decisionenvironment"],
+      "content_type": "eda.decisionenvironment",
+      "modified": "2024-04-05T13:42:27.344054Z",
+      "created": "2024-04-05T13:19:30.781599Z",
+      "name": "View decisionenvironment",
+      "description": "Has permissions to view decisionenvironment",
+      "managed": false,
+      "modified_by": 1,
+      "created_by": 1
+    }
+  ]
+}

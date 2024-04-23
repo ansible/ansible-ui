@@ -1,0 +1,13 @@
+{
+  "name": "EDA Decision Environment 1",
+  "description": "This is decision environment 1",
+  "image_url": "quay.io/ansible/ansible-rulebook:main",
+  "credential_id": null,
+  "id": 1,
+  "organization": {
+    "id": 2,
+    "name": "Organization 2"
+  },
+  "created_at": "2023-09-22T14:47:22.653364Z",
+  "modified_at": "2023-09-22T14:47:22.653377Z"
+}
