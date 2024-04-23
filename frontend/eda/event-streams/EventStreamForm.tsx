@@ -55,7 +55,7 @@ export function CreateEventStream() {
         onCancel={onCancel}
         defaultValue={{
           restart_policy: RestartPolicyEnum.OnFailure,
-          log_level: LogLevelEnum.error,
+          log_level: LogLevelEnum.Error,
           is_enabled: true,
           source_args: '',
         }}

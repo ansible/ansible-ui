@@ -33,7 +33,7 @@ export function useOrganizationColumns() {
       {
         header: t('Created'),
         type: 'datetime',
-        value: (organization) => organization.created_at,
+        value: (organization) => organization.created,
         table: ColumnTableOption.expanded,
         card: 'hidden',
         list: 'secondary',
@@ -41,7 +41,7 @@ export function useOrganizationColumns() {
       {
         header: t('Last modified'),
         type: 'datetime',
-        value: (organization) => organization.modified_at,
+        value: (organization) => organization.modified,
         table: ColumnTableOption.expanded,
         card: 'hidden',
         list: 'secondary',

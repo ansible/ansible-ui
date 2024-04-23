@@ -113,7 +113,7 @@ function CredentialTypeInputs() {
   const credentialInjectors = useWatch<EdaCredentialTypeCreate>({
     name: 'injectors',
     defaultValue: undefined,
-  });
+  }) as EdaCredentialTypeCreate;
 
   const setInjectorsExtraVars = useCallback(() => {
     const fields = credentialInputs?.fields;

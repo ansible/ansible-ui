@@ -1,9 +1,7 @@
-import { Label, LabelGroup } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { DateTimeCell, LabelsCell, PageDetail, PageDetails } from '../../../framework';
 import { AuthenticationType } from '../../awx/access/users/components/AuthenticationType';
 import { UserType } from '../../awx/access/users/components/UserType';
-import { RoleRef } from '../../eda/interfaces/generated/eda-api';
 import { LastModifiedPageDetail } from '../LastModifiedPageDetail';
 
 export type UserDetailsType = {
@@ -24,7 +22,6 @@ export type UserDetailsType = {
   modified_on: string;
   modified: string;
   last_login: string;
-  roles: RoleRef[];
 }>;
 
 export function UserDetails<T extends UserDetailsType>(props: {
@@ -81,15 +78,6 @@ export function UserDetails<T extends UserDetailsType>(props: {
           data-cy="modified"
           value={user.modified ?? user.modified_at ?? user.modified_on}
         />
-      )}
-      {user.roles && user.roles.length > 0 && (
-        <PageDetail label={t('Role(s)')}>
-          <LabelGroup>
-            {user.roles.map((role) => (
-              <Label key={role?.id}>{role?.name}</Label>
-            ))}
-          </LabelGroup>
-        </PageDetail>
       )}
     </PageDetails>
   );

@@ -52,6 +52,12 @@
           },
           {
             "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
           }
         ],
         "responses": {
@@ -116,6 +122,12 @@
           },
           {
             "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
           }
         ],
         "responses": {
@@ -143,7 +155,7 @@
             "schema": {
               "type": "integer"
             },
-            "description": "A unique integer value identifying this activation instance.",
+            "description": "A unique integer value identifying this rulebook process.",
             "required": true
           }
         ],
@@ -154,6 +166,12 @@
           },
           {
             "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
           }
         ],
         "responses": {
@@ -168,35 +186,6 @@
             "description": ""
           }
         }
-      },
-      "delete": {
-        "operationId": "activation_instances_destroy",
-        "description": "Delete an existing Activation Instance",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "id",
-            "schema": {
-              "type": "integer"
-            },
-            "description": "A unique integer value identifying this activation instance.",
-            "required": true
-          }
-        ],
-        "tags": ["activation-instances"],
-        "security": [
-          {
-            "cookieAuth": []
-          },
-          {
-            "basicAuth": []
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "The Activation Instance has been deleted."
-          }
-        }
       }
     },
     "/activations/": {
@@ -204,14 +193,6 @@
         "operationId": "activations_list",
         "description": "List all Activations",
         "parameters": [
-          {
-            "in": "query",
-            "name": "credential_id",
-            "schema": {
-              "type": "number"
-            },
-            "description": "Filter by Credential ID."
-          },
           {
             "in": "query",
             "name": "decision_environment_id",
@@ -262,6 +243,12 @@
           },
           {
             "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
           }
         ],
         "responses": {
@@ -306,6 +293,12 @@
           },
           {
             "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
           }
         ],
         "responses": {
@@ -318,6 +311,9 @@
               }
             },
             "description": ""
+          },
+          "400": {
+            "description": "Invalid data to create activation."
           }
         }
       }
@@ -378,6 +374,12 @@
           },
           {
             "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
           }
         ],
         "responses": {
@@ -415,6 +417,12 @@
           },
           {
             "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
           }
         ],
         "responses": {
@@ -451,6 +459,12 @@
           },
           {
             "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
           }
         ],
         "responses": {
@@ -482,6 +496,12 @@
           },
           {
             "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
           }
         ],
         "responses": {
@@ -513,11 +533,20 @@
           },
           {
             "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
           }
         ],
         "responses": {
           "204": {
             "description": "Activation has been enabled."
+          },
+          "400": {
+            "description": "Activation not enabled."
           },
           "409": {
             "description": "Activation not enabled do to current activation status"
@@ -547,105 +576,20 @@
           },
           {
             "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
           }
         ],
         "responses": {
           "204": {
             "description": "Activation restart was successful."
-          }
-        }
-      }
-    },
-    "/audit-events/": {
-      "get": {
-        "operationId": "audit_events_list",
-        "description": "List all audit events",
-        "parameters": [
-          {
-            "name": "page",
-            "required": false,
-            "in": "query",
-            "description": "A page number within the paginated result set.",
-            "schema": {
-              "type": "integer"
-            }
           },
-          {
-            "name": "page_size",
-            "required": false,
-            "in": "query",
-            "description": "Number of results to return per page.",
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "in": "query",
-            "name": "source_name",
-            "schema": {
-              "type": "string"
-            },
-            "description": "Filter by rule audit event source name."
-          }
-        ],
-        "tags": ["audit-events"],
-        "security": [
-          {
-            "cookieAuth": []
-          },
-          {
-            "basicAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PaginatedAuditEventList"
-                }
-              }
-            },
-            "description": "Return a list of audit events."
-          }
-        }
-      }
-    },
-    "/audit-events/{id}/": {
-      "get": {
-        "operationId": "audit_events_retrieve",
-        "description": "Get the audit event by its id",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "id",
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "description": "A UUID string identifying this audit event.",
-            "required": true
-          }
-        ],
-        "tags": ["audit-events"],
-        "security": [
-          {
-            "cookieAuth": []
-          },
-          {
-            "basicAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuditEvent"
-                }
-              }
-            },
-            "description": "Return the audit event by its id."
+          "400": {
+            "description": "Activation not enabled."
           }
         }
       }
@@ -662,6 +606,15 @@
               "type": "string"
             },
             "description": "Filter by rule audit name."
+          },
+          {
+            "name": "ordering",
+            "required": false,
+            "in": "query",
+            "description": "Which field to use when ordering the results.",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "name": "page",
@@ -689,6 +642,12 @@
           },
           {
             "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
           }
         ],
         "responses": {
@@ -728,6 +687,15 @@
             "description": "Filter by rule audit action name."
           },
           {
+            "name": "ordering",
+            "required": false,
+            "in": "query",
+            "description": "Which field to use when ordering the results.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
             "name": "page",
             "required": false,
             "in": "query",
@@ -753,6 +721,12 @@
           },
           {
             "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
           }
         ],
         "responses": {
@@ -782,6 +756,15 @@
             },
             "description": "A unique integer value identifying this Audit Rule.",
             "required": true
+          },
+          {
+            "name": "ordering",
+            "required": false,
+            "in": "query",
+            "description": "Which field to use when ordering the results.",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "name": "page",
@@ -817,6 +800,12 @@
           },
           {
             "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
           }
         ],
         "responses": {
@@ -855,6 +844,12 @@
           },
           {
             "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
           }
         ],
         "responses": {
@@ -882,6 +877,12 @@
           },
           {
             "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
           }
         ],
         "responses": {
@@ -920,6 +921,12 @@
           },
           {
             "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
           }
         ],
         "responses": {
@@ -949,10 +956,49 @@
         }
       }
     },
-    "/credentials/": {
+    "/auth/token/refresh/": {
+      "post": {
+        "operationId": "auth_token_refresh_create",
+        "description": "Takes a refresh type JSON web token and returns an access type JSON web\ntoken if the refresh token is valid.",
+        "tags": ["auth"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TokenRefresh"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/TokenRefresh"
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/TokenRefresh"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenRefresh"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/credential-types/": {
       "get": {
-        "operationId": "credentials_list",
-        "description": "List all credentials",
+        "operationId": "credential_types_list",
+        "description": "List all credential types",
         "parameters": [
           {
             "in": "query",
@@ -960,7 +1006,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "Filter by credential name."
+            "description": "Filter by credential type name."
           },
           {
             "name": "page",
@@ -981,13 +1027,19 @@
             }
           }
         ],
-        "tags": ["credentials"],
+        "tags": ["credential-types"],
         "security": [
           {
             "cookieAuth": []
           },
           {
             "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
           }
         ],
         "responses": {
@@ -995,33 +1047,33 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PaginatedCredentialList"
+                  "$ref": "#/components/schemas/PaginatedCredentialTypeList"
                 }
               }
             },
-            "description": "Return a list of credential."
+            "description": "Return a list of credential types."
           }
         }
       },
       "post": {
-        "operationId": "credentials_create",
-        "description": "Create a new credential.",
-        "tags": ["credentials"],
+        "operationId": "credential_types_create",
+        "description": "Create a new credential type.",
+        "tags": ["credential-types"],
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CredentialCreate"
+                "$ref": "#/components/schemas/CredentialTypeCreate"
               }
             },
             "application/x-www-form-urlencoded": {
               "schema": {
-                "$ref": "#/components/schemas/CredentialCreate"
+                "$ref": "#/components/schemas/CredentialTypeCreate"
               }
             },
             "multipart/form-data": {
               "schema": {
-                "$ref": "#/components/schemas/CredentialCreate"
+                "$ref": "#/components/schemas/CredentialTypeCreate"
               }
             }
           },
@@ -1033,6 +1085,12 @@
           },
           {
             "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
           }
         ],
         "responses": {
@@ -1040,19 +1098,19 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Credential"
+                  "$ref": "#/components/schemas/CredentialType"
                 }
               }
             },
-            "description": "Return the new credential."
+            "description": "Return the new credential type."
           }
         }
       }
     },
-    "/credentials/{id}/": {
+    "/credential-types/{id}/": {
       "get": {
-        "operationId": "credentials_retrieve",
-        "description": "Get credential by id",
+        "operationId": "credential_types_retrieve",
+        "description": "Get credential type by id",
         "parameters": [
           {
             "in": "path",
@@ -1060,17 +1118,23 @@
             "schema": {
               "type": "integer"
             },
-            "description": "A unique integer value identifying this credential.",
+            "description": "A unique integer value identifying this credential type.",
             "required": true
           }
         ],
-        "tags": ["credentials"],
+        "tags": ["credential-types"],
         "security": [
           {
             "cookieAuth": []
           },
           {
             "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
           }
         ],
         "responses": {
@@ -1078,17 +1142,17 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Credential"
+                  "$ref": "#/components/schemas/CredentialType"
                 }
               }
             },
-            "description": "Return a credential by id."
+            "description": "Return a credential type by id."
           }
         }
       },
       "patch": {
-        "operationId": "credentials_partial_update",
-        "description": "Partial update of a credential",
+        "operationId": "credential_types_partial_update",
+        "description": "Partial update of a credential type",
         "parameters": [
           {
             "in": "path",
@@ -1096,26 +1160,26 @@
             "schema": {
               "type": "integer"
             },
-            "description": "A unique integer value identifying this credential.",
+            "description": "A unique integer value identifying this credential type.",
             "required": true
           }
         ],
-        "tags": ["credentials"],
+        "tags": ["credential-types"],
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/PatchedCredentialCreate"
+                "$ref": "#/components/schemas/PatchedCredentialTypeCreate"
               }
             },
             "application/x-www-form-urlencoded": {
               "schema": {
-                "$ref": "#/components/schemas/PatchedCredentialCreate"
+                "$ref": "#/components/schemas/PatchedCredentialTypeCreate"
               }
             },
             "multipart/form-data": {
               "schema": {
-                "$ref": "#/components/schemas/PatchedCredentialCreate"
+                "$ref": "#/components/schemas/PatchedCredentialTypeCreate"
               }
             }
           }
@@ -1126,6 +1190,12 @@
           },
           {
             "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
           }
         ],
         "responses": {
@@ -1133,48 +1203,49 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Credential"
+                  "$ref": "#/components/schemas/CredentialType"
                 }
               }
             },
-            "description": "Update successful. Return an updated credential."
+            "description": "Update successful. Return an updated credential type."
           }
         }
       },
       "delete": {
-        "operationId": "credentials_destroy",
-        "description": "Delete a credential by id",
+        "operationId": "credential_types_destroy",
+        "description": "Delete a credential type by id",
         "parameters": [
-          {
-            "in": "query",
-            "name": "force",
-            "schema": {
-              "type": "boolean"
-            },
-            "description": "Force deletion if there are dependent objects"
-          },
           {
             "in": "path",
             "name": "id",
             "schema": {
               "type": "integer"
             },
-            "description": "A unique integer value identifying this credential.",
+            "description": "A unique integer value identifying this credential type.",
             "required": true
           }
         ],
-        "tags": ["credentials"],
+        "tags": ["credential-types"],
         "security": [
           {
             "cookieAuth": []
           },
           {
             "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
           }
         ],
         "responses": {
           "204": {
             "description": "Delete successful."
+          },
+          "409": {
+            "description": "CredentialType in use by Credentials."
           }
         }
       }
@@ -1218,6 +1289,12 @@
           },
           {
             "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
           }
         ],
         "responses": {
@@ -1263,6 +1340,12 @@
           },
           {
             "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
           }
         ],
         "responses": {
@@ -1301,6 +1384,12 @@
           },
           {
             "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
           }
         ],
         "responses": {
@@ -1356,6 +1445,12 @@
           },
           {
             "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
           }
         ],
         "responses": {
@@ -1400,14 +1495,305 @@
           },
           {
             "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
           }
         ],
         "responses": {
           "204": {
             "description": "Delete successful."
           },
-          "403": {
+          "409": {
             "description": "Decision Environment in use by Activations."
+          }
+        }
+      }
+    },
+    "/eda-credentials/": {
+      "get": {
+        "operationId": "eda_credentials_list",
+        "description": "List all EDA credentials",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "credential_type__kind",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Kind of CredentialType"
+          },
+          {
+            "in": "query",
+            "name": "credential_type_id",
+            "schema": {
+              "type": "number"
+            },
+            "description": "Filter by Credential Type ID."
+          },
+          {
+            "in": "query",
+            "name": "name",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by EDA credential name."
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "A page number within the paginated result set.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "page_size",
+            "required": false,
+            "in": "query",
+            "description": "Number of results to return per page.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "tags": ["eda-credentials"],
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedEdaCredentialList"
+                }
+              }
+            },
+            "description": "Return a list of EDA credentials."
+          }
+        }
+      },
+      "post": {
+        "operationId": "eda_credentials_create",
+        "description": "Create a new EDA credential.",
+        "tags": ["eda-credentials"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EdaCredentialCreate"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/EdaCredentialCreate"
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/EdaCredentialCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EdaCredential"
+                }
+              }
+            },
+            "description": "Return the new EDA credential."
+          }
+        }
+      }
+    },
+    "/eda-credentials/{id}/": {
+      "get": {
+        "operationId": "eda_credentials_retrieve",
+        "description": "Get EDA credential by id",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "A unique integer value identifying this eda credential.",
+            "required": true
+          },
+          {
+            "in": "query",
+            "name": "refs",
+            "schema": {
+              "type": "string",
+              "enum": ["false", "true"]
+            },
+            "description": "Query resources that have reference to the credential by its id"
+          }
+        ],
+        "tags": ["eda-credentials"],
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EdaCredential"
+                }
+              }
+            },
+            "description": "Return an EDA credential by id."
+          }
+        }
+      },
+      "patch": {
+        "operationId": "eda_credentials_partial_update",
+        "description": "Partial update of an EDA credential",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "A unique integer value identifying this eda credential.",
+            "required": true
+          }
+        ],
+        "tags": ["eda-credentials"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchedEdaCredentialCreate"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchedEdaCredentialCreate"
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchedEdaCredentialCreate"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EdaCredential"
+                }
+              }
+            },
+            "description": "Update successful. Return an updated EDA credential."
+          }
+        }
+      },
+      "delete": {
+        "operationId": "eda_credentials_destroy",
+        "description": "Delete an eda credential by id",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "force",
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Force deletion if there are dependent objects"
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "A unique integer value identifying this eda credential.",
+            "required": true
+          }
+        ],
+        "tags": ["eda-credentials"],
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Delete successful."
           }
         }
       }
@@ -1443,6 +1829,12 @@
           },
           {
             "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
           }
         ],
         "responses": {
@@ -1488,6 +1880,12 @@
           },
           {
             "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
           }
         ],
         "responses": {
@@ -1526,6 +1924,12 @@
           },
           {
             "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
           }
         ],
         "responses": {
@@ -1538,6 +1942,346 @@
               }
             },
             "description": "Return the extra_var by its id."
+          }
+        }
+      }
+    },
+    "/organizations/": {
+      "get": {
+        "operationId": "organizations_list",
+        "description": "List all organizations.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "description",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by organization description."
+          },
+          {
+            "in": "query",
+            "name": "name",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by organization name."
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "A page number within the paginated result set.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "page_size",
+            "required": false,
+            "in": "query",
+            "description": "Number of results to return per page.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "tags": ["organizations"],
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedOrganizationList"
+                }
+              }
+            },
+            "description": "Return a list of organizations."
+          }
+        }
+      },
+      "post": {
+        "operationId": "organizations_create",
+        "description": "Create a new organization",
+        "tags": ["organizations"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OrganizationCreate"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/OrganizationCreate"
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/OrganizationCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Organization"
+                }
+              }
+            },
+            "description": "Return the new organization."
+          }
+        }
+      }
+    },
+    "/organizations/{id}/": {
+      "get": {
+        "operationId": "organizations_retrieve",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "A unique integer value identifying this organization.",
+            "required": true
+          }
+        ],
+        "tags": ["organizations"],
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Organization"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      },
+      "patch": {
+        "operationId": "organizations_partial_update",
+        "description": "Partially update an organization",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "A unique integer value identifying this organization.",
+            "required": true
+          }
+        ],
+        "tags": ["organizations"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchedOrganizationCreate"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchedOrganizationCreate"
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchedOrganizationCreate"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Organization"
+                }
+              }
+            },
+            "description": "Update successful. Return an updated organization."
+          }
+        }
+      },
+      "delete": {
+        "operationId": "organizations_destroy",
+        "description": "Delete an organization by id",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "A unique integer value identifying this organization.",
+            "required": true
+          }
+        ],
+        "tags": ["organizations"],
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Delete successful."
+          },
+          "409": {
+            "description": "Default Organization cannot be deleted."
+          }
+        }
+      }
+    },
+    "/organizations/{id}/teams/": {
+      "get": {
+        "operationId": "organizations_teams_list",
+        "description": "List all teams of the organization",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "description",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by team description."
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "A unique integer value identifying this organization.",
+            "required": true
+          },
+          {
+            "in": "query",
+            "name": "name",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by team name."
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "A page number within the paginated result set.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "page_size",
+            "required": false,
+            "in": "query",
+            "description": "Number of results to return per page.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "tags": ["organizations"],
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedTeamList"
+                }
+              }
+            },
+            "description": ""
           }
         }
       }
@@ -1589,6 +2333,12 @@
           },
           {
             "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
           }
         ],
         "responses": {
@@ -1634,6 +2384,12 @@
           },
           {
             "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
           }
         ],
         "responses": {
@@ -1672,6 +2428,12 @@
           },
           {
             "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
           }
         ],
         "responses": {
@@ -1727,6 +2489,12 @@
           },
           {
             "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
           }
         ],
         "responses": {
@@ -1769,6 +2537,12 @@
           },
           {
             "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
           }
         ],
         "responses": {
@@ -1800,6 +2574,12 @@
           },
           {
             "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
           }
         ],
         "responses": {
@@ -1816,18 +2596,334 @@
         }
       }
     },
-    "/roles/": {
+    "/role_definitions/": {
       "get": {
-        "operationId": "roles_list",
-        "description": "List all roles",
+        "operationId": "role_definitions_list",
+        "description": "Role Definitions (roles) contain a list of permissions and can be used to\nassign those permissions to a user or team through the respective\nassignment endpoints.\n\nCustom roles can be created, modified, and deleted through this endpoint.\nSystem-managed roles are shown here, which cannot be edited or deleted,\nbut can be assigned to users.",
         "parameters": [
           {
+            "name": "page",
+            "required": false,
             "in": "query",
-            "name": "name",
+            "description": "A page number within the paginated result set.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "page_size",
+            "required": false,
+            "in": "query",
+            "description": "Number of results to return per page.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "A search term.",
             "schema": {
               "type": "string"
+            }
+          }
+        ],
+        "tags": ["role_definitions"],
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedRoleDefinitionList"
+                }
+              }
             },
-            "description": "Filter roles by name."
+            "description": ""
+          }
+        }
+      },
+      "post": {
+        "operationId": "role_definitions_create",
+        "description": "Create a RoleDefinition.",
+        "tags": ["role_definitions"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RoleDefinitionCreate"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/RoleDefinitionCreate"
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/RoleDefinitionCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RoleDefinition"
+                }
+              }
+            },
+            "description": "Return a created RoleDefinition."
+          }
+        }
+      }
+    },
+    "/role_definitions/{id}/": {
+      "get": {
+        "operationId": "role_definitions_retrieve",
+        "description": "Role Definitions (roles) contain a list of permissions and can be used to\nassign those permissions to a user or team through the respective\nassignment endpoints.\n\nCustom roles can be created, modified, and deleted through this endpoint.\nSystem-managed roles are shown here, which cannot be edited or deleted,\nbut can be assigned to users.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "A unique integer value identifying this role definition.",
+            "required": true
+          }
+        ],
+        "tags": ["role_definitions"],
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RoleDefinition"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      },
+      "put": {
+        "operationId": "role_definitions_update",
+        "description": "Role Definitions (roles) contain a list of permissions and can be used to\nassign those permissions to a user or team through the respective\nassignment endpoints.\n\nCustom roles can be created, modified, and deleted through this endpoint.\nSystem-managed roles are shown here, which cannot be edited or deleted,\nbut can be assigned to users.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "A unique integer value identifying this role definition.",
+            "required": true
+          }
+        ],
+        "tags": ["role_definitions"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RoleDefinitionDetail"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/RoleDefinitionDetail"
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/RoleDefinitionDetail"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RoleDefinitionDetail"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      },
+      "patch": {
+        "operationId": "role_definitions_partial_update",
+        "description": "Role Definitions (roles) contain a list of permissions and can be used to\nassign those permissions to a user or team through the respective\nassignment endpoints.\n\nCustom roles can be created, modified, and deleted through this endpoint.\nSystem-managed roles are shown here, which cannot be edited or deleted,\nbut can be assigned to users.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "A unique integer value identifying this role definition.",
+            "required": true
+          }
+        ],
+        "tags": ["role_definitions"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchedRoleDefinition"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchedRoleDefinition"
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchedRoleDefinition"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RoleDefinition"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      },
+      "delete": {
+        "operationId": "role_definitions_destroy",
+        "description": "Role Definitions (roles) contain a list of permissions and can be used to\nassign those permissions to a user or team through the respective\nassignment endpoints.\n\nCustom roles can be created, modified, and deleted through this endpoint.\nSystem-managed roles are shown here, which cannot be edited or deleted,\nbut can be assigned to users.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "A unique integer value identifying this role definition.",
+            "required": true
+          }
+        ],
+        "tags": ["role_definitions"],
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No response body"
+          }
+        }
+      }
+    },
+    "/role_definitions/{id}/team_assignments/": {
+      "get": {
+        "operationId": "role_definitions_team_assignments_list",
+        "description": "Use this endpoint to give a team permission to a resource or an organization.\nThe needed data is the user, the role definition, and the object id.\nThe object must be of the type specified in the role definition.\nThe type given in the role definition and the provided object_id are used\nto look up the resource.\n\nAfter creation, the assignment cannot be edited, but can be deleted to\nremove those permissions.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9]+$"
+            },
+            "required": true
           },
           {
             "name": "page",
@@ -1846,15 +2942,30 @@
             "schema": {
               "type": "integer"
             }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "A search term.",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
-        "tags": ["roles"],
+        "tags": ["role_definitions"],
         "security": [
           {
             "cookieAuth": []
           },
           {
             "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
           }
         ],
         "responses": {
@@ -1862,38 +2973,51 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PaginatedRoleListList"
+                  "$ref": "#/components/schemas/PaginatedRoleTeamAssignmentList"
                 }
               }
             },
-            "description": "Return a list of roles."
+            "description": ""
           }
         }
       }
     },
-    "/roles/{id}/": {
+    "/role_definitions/{id}/team_assignments/{team_assignments}/": {
       "get": {
-        "operationId": "roles_retrieve",
-        "description": "Retrieve a role by id",
+        "operationId": "role_definitions_team_assignments_retrieve",
+        "description": "Use this endpoint to give a team permission to a resource or an organization.\nThe needed data is the user, the role definition, and the object id.\nThe object must be of the type specified in the role definition.\nThe type given in the role definition and the provided object_id are used\nto look up the resource.\n\nAfter creation, the assignment cannot be edited, but can be deleted to\nremove those permissions.",
         "parameters": [
           {
             "in": "path",
             "name": "id",
             "schema": {
               "type": "string",
-              "format": "uuid"
+              "pattern": "^[0-9]+$"
             },
-            "description": "A UUID string identifying this role.",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "team_assignments",
+            "schema": {
+              "type": "string"
+            },
             "required": true
           }
         ],
-        "tags": ["roles"],
+        "tags": ["role_definitions"],
         "security": [
           {
             "cookieAuth": []
           },
           {
             "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
           }
         ],
         "responses": {
@@ -1901,11 +3025,518 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RoleDetail"
+                  "$ref": "#/components/schemas/RoleTeamAssignment"
                 }
               }
             },
-            "description": "Return a role."
+            "description": ""
+          }
+        }
+      }
+    },
+    "/role_definitions/{id}/user_assignments/": {
+      "get": {
+        "operationId": "role_definitions_user_assignments_list",
+        "description": "Use this endpoint to give a user permission to a resource or an organization.\nThe needed data is the team, the role definition, and the object id.\nThe object must be of the type specified in the role definition.\nThe type given in the role definition and the provided object_id are used\nto look up the resource.\n\nAfter creation, the assignment cannot be edited, but can be deleted to\nremove those permissions.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9]+$"
+            },
+            "required": true
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "A page number within the paginated result set.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "page_size",
+            "required": false,
+            "in": "query",
+            "description": "Number of results to return per page.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "A search term.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": ["role_definitions"],
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedRoleUserAssignmentList"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/role_definitions/{id}/user_assignments/{user_assignments}/": {
+      "get": {
+        "operationId": "role_definitions_user_assignments_retrieve",
+        "description": "Use this endpoint to give a user permission to a resource or an organization.\nThe needed data is the team, the role definition, and the object id.\nThe object must be of the type specified in the role definition.\nThe type given in the role definition and the provided object_id are used\nto look up the resource.\n\nAfter creation, the assignment cannot be edited, but can be deleted to\nremove those permissions.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9]+$"
+            },
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "user_assignments",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "tags": ["role_definitions"],
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RoleUserAssignment"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/role_team_assignments/": {
+      "get": {
+        "operationId": "role_team_assignments_list",
+        "description": "Use this endpoint to give a team permission to a resource or an organization.\nThe needed data is the user, the role definition, and the object id.\nThe object must be of the type specified in the role definition.\nThe type given in the role definition and the provided object_id are used\nto look up the resource.\n\nAfter creation, the assignment cannot be edited, but can be deleted to\nremove those permissions.",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "A page number within the paginated result set.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "page_size",
+            "required": false,
+            "in": "query",
+            "description": "Number of results to return per page.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "A search term.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": ["role_team_assignments"],
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedRoleTeamAssignmentList"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      },
+      "post": {
+        "operationId": "role_team_assignments_create",
+        "description": "Create a RoleTeamAssignment.",
+        "tags": ["role_team_assignments"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RoleTeamAssignmentCreate"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/RoleTeamAssignmentCreate"
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/RoleTeamAssignmentCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RoleTeamAssignment"
+                }
+              }
+            },
+            "description": "Return a created RoleTeamAssignment."
+          }
+        }
+      }
+    },
+    "/role_team_assignments/{id}/": {
+      "get": {
+        "operationId": "role_team_assignments_retrieve",
+        "description": "Use this endpoint to give a team permission to a resource or an organization.\nThe needed data is the user, the role definition, and the object id.\nThe object must be of the type specified in the role definition.\nThe type given in the role definition and the provided object_id are used\nto look up the resource.\n\nAfter creation, the assignment cannot be edited, but can be deleted to\nremove those permissions.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "A unique integer value identifying this role team assignment.",
+            "required": true
+          }
+        ],
+        "tags": ["role_team_assignments"],
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RoleTeamAssignment"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      },
+      "delete": {
+        "operationId": "role_team_assignments_destroy",
+        "description": "Use this endpoint to give a team permission to a resource or an organization.\nThe needed data is the user, the role definition, and the object id.\nThe object must be of the type specified in the role definition.\nThe type given in the role definition and the provided object_id are used\nto look up the resource.\n\nAfter creation, the assignment cannot be edited, but can be deleted to\nremove those permissions.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "A unique integer value identifying this role team assignment.",
+            "required": true
+          }
+        ],
+        "tags": ["role_team_assignments"],
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No response body"
+          }
+        }
+      }
+    },
+    "/role_user_assignments/": {
+      "get": {
+        "operationId": "role_user_assignments_list",
+        "description": "Use this endpoint to give a user permission to a resource or an organization.\nThe needed data is the team, the role definition, and the object id.\nThe object must be of the type specified in the role definition.\nThe type given in the role definition and the provided object_id are used\nto look up the resource.\n\nAfter creation, the assignment cannot be edited, but can be deleted to\nremove those permissions.",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "A page number within the paginated result set.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "page_size",
+            "required": false,
+            "in": "query",
+            "description": "Number of results to return per page.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "A search term.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": ["role_user_assignments"],
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedRoleUserAssignmentList"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      },
+      "post": {
+        "operationId": "role_user_assignments_create",
+        "description": "Create a RoleUserAssignment.",
+        "tags": ["role_user_assignments"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RoleUserAssignmentCreate"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/RoleUserAssignmentCreate"
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/RoleUserAssignmentCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RoleUserAssignment"
+                }
+              }
+            },
+            "description": "Return a created RoleUserAssignment."
+          }
+        }
+      }
+    },
+    "/role_user_assignments/{id}/": {
+      "get": {
+        "operationId": "role_user_assignments_retrieve",
+        "description": "Use this endpoint to give a user permission to a resource or an organization.\nThe needed data is the team, the role definition, and the object id.\nThe object must be of the type specified in the role definition.\nThe type given in the role definition and the provided object_id are used\nto look up the resource.\n\nAfter creation, the assignment cannot be edited, but can be deleted to\nremove those permissions.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "A unique integer value identifying this role user assignment.",
+            "required": true
+          }
+        ],
+        "tags": ["role_user_assignments"],
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RoleUserAssignment"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      },
+      "delete": {
+        "operationId": "role_user_assignments_destroy",
+        "description": "Use this endpoint to give a user permission to a resource or an organization.\nThe needed data is the team, the role definition, and the object id.\nThe object must be of the type specified in the role definition.\nThe type given in the role definition and the provided object_id are used\nto look up the resource.\n\nAfter creation, the assignment cannot be edited, but can be deleted to\nremove those permissions.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "A unique integer value identifying this role user assignment.",
+            "required": true
+          }
+        ],
+        "tags": ["role_user_assignments"],
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No response body"
           }
         }
       }
@@ -1957,6 +3588,12 @@
           },
           {
             "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
           }
         ],
         "responses": {
@@ -1969,70 +3606,6 @@
               }
             },
             "description": "Return a list of rulebooks."
-          }
-        }
-      }
-    },
-    "/rulebooks/{id}/rulesets/": {
-      "get": {
-        "operationId": "rulebooks_rulesets_list",
-        "description": "Ruleset list of a rulebook by its id",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "id",
-            "schema": {
-              "type": "integer"
-            },
-            "description": "A unique integer value identifying this rulebook.",
-            "required": true
-          },
-          {
-            "in": "query",
-            "name": "name",
-            "schema": {
-              "type": "string"
-            },
-            "description": "Filter by ruleset name."
-          },
-          {
-            "name": "page",
-            "required": false,
-            "in": "query",
-            "description": "A page number within the paginated result set.",
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "name": "page_size",
-            "required": false,
-            "in": "query",
-            "description": "Number of results to return per page.",
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "tags": ["rulebooks"],
-        "security": [
-          {
-            "cookieAuth": []
-          },
-          {
-            "basicAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PaginatedRulesetOutList"
-                }
-              }
-            },
-            "description": ""
           }
         }
       }
@@ -2059,6 +3632,12 @@
           },
           {
             "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
           }
         ],
         "responses": {
@@ -2097,6 +3676,12 @@
           },
           {
             "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
           }
         ],
         "responses": {
@@ -2113,10 +3698,61 @@
         }
       }
     },
-    "/rules/": {
+    "/service-index/": {
       "get": {
-        "operationId": "rules_list",
-        "description": "List all rules",
+        "operationId": "service_index_retrieve",
+        "description": "Link other resource registry endpoints",
+        "tags": ["service-index"],
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "No response body"
+          }
+        }
+      }
+    },
+    "/service-index/metadata/": {
+      "get": {
+        "operationId": "service_index_metadata_retrieve",
+        "tags": ["service-index"],
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "No response body"
+          }
+        }
+      }
+    },
+    "/service-index/resource-types/": {
+      "get": {
+        "operationId": "service_index_resource_types_list",
+        "description": "Index of the resource types that are configured in the system.",
         "parameters": [
           {
             "name": "page",
@@ -2126,24 +3762,21 @@
             "schema": {
               "type": "integer"
             }
-          },
-          {
-            "name": "page_size",
-            "required": false,
-            "in": "query",
-            "description": "Number of results to return per page.",
-            "schema": {
-              "type": "integer"
-            }
           }
         ],
-        "tags": ["rules"],
+        "tags": ["service-index"],
         "security": [
           {
             "cookieAuth": []
           },
           {
             "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
           }
         ],
         "responses": {
@@ -2151,202 +3784,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PaginatedRuleOutList"
-                }
-              }
-            },
-            "description": "Return a list of rules."
-          }
-        }
-      }
-    },
-    "/rules/{id}/": {
-      "get": {
-        "operationId": "rules_retrieve",
-        "description": "Get the rule by its id",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "id",
-            "schema": {
-              "type": "integer"
-            },
-            "description": "A unique integer value identifying this rule.",
-            "required": true
-          }
-        ],
-        "tags": ["rules"],
-        "security": [
-          {
-            "cookieAuth": []
-          },
-          {
-            "basicAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RuleOut"
-                }
-              }
-            },
-            "description": "Return the rule by its id."
-          }
-        }
-      }
-    },
-    "/rulesets/": {
-      "get": {
-        "operationId": "rulesets_list",
-        "description": "List all rulesets",
-        "parameters": [
-          {
-            "in": "query",
-            "name": "name",
-            "schema": {
-              "type": "string"
-            },
-            "description": "Filter by ruleset name."
-          },
-          {
-            "name": "page",
-            "required": false,
-            "in": "query",
-            "description": "A page number within the paginated result set.",
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "name": "page_size",
-            "required": false,
-            "in": "query",
-            "description": "Number of results to return per page.",
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "tags": ["rulesets"],
-        "security": [
-          {
-            "cookieAuth": []
-          },
-          {
-            "basicAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PaginatedRulesetOutList"
-                }
-              }
-            },
-            "description": "Return a list of rulesets."
-          }
-        }
-      }
-    },
-    "/rulesets/{id}/": {
-      "get": {
-        "operationId": "rulesets_retrieve",
-        "description": "Get the ruleset by its id",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "id",
-            "schema": {
-              "type": "integer"
-            },
-            "description": "A unique integer value identifying this ruleset.",
-            "required": true
-          }
-        ],
-        "tags": ["rulesets"],
-        "security": [
-          {
-            "cookieAuth": []
-          },
-          {
-            "basicAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RulesetOut"
-                }
-              }
-            },
-            "description": "Return the ruleset by its id."
-          }
-        }
-      }
-    },
-    "/rulesets/{id}/rules/": {
-      "get": {
-        "operationId": "rulesets_rules_list",
-        "description": "Rule list of a ruleset by its id",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "id",
-            "schema": {
-              "type": "integer"
-            },
-            "description": "A unique integer value identifying this ruleset.",
-            "required": true
-          },
-          {
-            "in": "query",
-            "name": "name",
-            "schema": {
-              "type": "string"
-            },
-            "description": "Filter by ruleset name."
-          },
-          {
-            "name": "page",
-            "required": false,
-            "in": "query",
-            "description": "A page number within the paginated result set.",
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "name": "page_size",
-            "required": false,
-            "in": "query",
-            "description": "Number of results to return per page.",
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "tags": ["rulesets"],
-        "security": [
-          {
-            "cookieAuth": []
-          },
-          {
-            "basicAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PaginatedRuleList"
+                  "$ref": "#/components/schemas/PaginatedResourceTypeList"
                 }
               }
             },
@@ -2355,16 +3793,34 @@
         }
       }
     },
-    "/tasks/": {
+    "/service-index/resource-types/{name}/": {
       "get": {
-        "operationId": "tasks_list",
-        "tags": ["tasks"],
+        "operationId": "service_index_resource_types_retrieve",
+        "description": "Index of the resource types that are configured in the system.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "name",
+            "schema": {
+              "type": "string",
+              "pattern": "^[^/]+$"
+            },
+            "required": true
+          }
+        ],
+        "tags": ["service-index"],
         "security": [
           {
             "cookieAuth": []
           },
           {
             "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
           }
         ],
         "responses": {
@@ -2372,10 +3828,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Task"
-                  }
+                  "$ref": "#/components/schemas/ResourceType"
                 }
               }
             },
@@ -2384,13 +3837,153 @@
         }
       }
     },
-    "/tasks/{id}/": {
+    "/service-index/resource-types/{name}/manifest/": {
       "get": {
-        "operationId": "tasks_retrieve",
+        "operationId": "service_index_resource_types_manifest_retrieve",
+        "description": "Returns the as a stream the csv of resource_id,hash for a given resource type.",
         "parameters": [
           {
             "in": "path",
-            "name": "id",
+            "name": "name",
+            "schema": {
+              "type": "string",
+              "pattern": "^[^/]+$"
+            },
+            "required": true
+          }
+        ],
+        "tags": ["service-index"],
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResourceType"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/service-index/resources/": {
+      "get": {
+        "operationId": "service_index_resources_list",
+        "description": "Index of all the resources in the system.",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "A page number within the paginated result set.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "tags": ["service-index"],
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedResourceListList"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      },
+      "post": {
+        "operationId": "service_index_resources_create",
+        "description": "Index of all the resources in the system.",
+        "tags": ["service-index"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Resource"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/Resource"
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Resource"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/service-index/resources/{ansible_id}/": {
+      "get": {
+        "operationId": "service_index_resources_retrieve",
+        "description": "Index of all the resources in the system.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "ansible_id",
             "schema": {
               "type": "string",
               "format": "uuid"
@@ -2398,13 +3991,19 @@
             "required": true
           }
         ],
-        "tags": ["tasks"],
+        "tags": ["service-index"],
         "security": [
           {
             "cookieAuth": []
           },
           {
             "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
           }
         ],
         "responses": {
@@ -2412,11 +4011,532 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Task"
+                  "$ref": "#/components/schemas/Resource"
                 }
               }
             },
             "description": ""
+          }
+        }
+      },
+      "put": {
+        "operationId": "service_index_resources_update",
+        "description": "Index of all the resources in the system.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "ansible_id",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true
+          }
+        ],
+        "tags": ["service-index"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Resource"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/Resource"
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Resource"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      },
+      "patch": {
+        "operationId": "service_index_resources_partial_update",
+        "description": "Index of all the resources in the system.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "ansible_id",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true
+          }
+        ],
+        "tags": ["service-index"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchedResource"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchedResource"
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchedResource"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      },
+      "delete": {
+        "operationId": "service_index_resources_destroy",
+        "description": "Index of all the resources in the system.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "ansible_id",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true
+          }
+        ],
+        "tags": ["service-index"],
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No response body"
+          }
+        }
+      }
+    },
+    "/service-index/resources/{ansible_id}/additional_data/": {
+      "get": {
+        "operationId": "service_index_resources_additional_data_retrieve",
+        "description": "Index of all the resources in the system.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "ansible_id",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true
+          }
+        ],
+        "tags": ["service-index"],
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/service-index/validate-local-account/": {
+      "post": {
+        "operationId": "service_index_validate_local_account_create",
+        "description": "Validate a user's username and password.",
+        "tags": ["service-index"],
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "No response body"
+          }
+        }
+      }
+    },
+    "/status/": {
+      "get": {
+        "operationId": "status_retrieve",
+        "tags": ["status"],
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
+          },
+          {}
+        ],
+        "responses": {
+          "200": {
+            "description": "No response body"
+          }
+        }
+      }
+    },
+    "/teams/": {
+      "get": {
+        "operationId": "teams_list",
+        "description": "List all teams.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "description",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by team description."
+          },
+          {
+            "in": "query",
+            "name": "name",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by team name."
+          },
+          {
+            "in": "query",
+            "name": "organization_id",
+            "schema": {
+              "type": "number"
+            },
+            "description": "Filter by organization ID."
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "A page number within the paginated result set.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "page_size",
+            "required": false,
+            "in": "query",
+            "description": "Number of results to return per page.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "tags": ["teams"],
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedTeamList"
+                }
+              }
+            },
+            "description": "Return a list of teams."
+          }
+        }
+      },
+      "post": {
+        "operationId": "teams_create",
+        "description": "Create a new team",
+        "tags": ["teams"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TeamCreate"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/TeamCreate"
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/TeamCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Team"
+                }
+              }
+            },
+            "description": "Return the new team."
+          }
+        }
+      }
+    },
+    "/teams/{id}/": {
+      "get": {
+        "operationId": "teams_retrieve",
+        "description": "Get team by its id",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "A unique integer value identifying this team.",
+            "required": true
+          }
+        ],
+        "tags": ["teams"],
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TeamDetail"
+                }
+              }
+            },
+            "description": "Return a team by its id."
+          }
+        }
+      },
+      "patch": {
+        "operationId": "teams_partial_update",
+        "description": "Partially update a team",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "A unique integer value identifying this team.",
+            "required": true
+          }
+        ],
+        "tags": ["teams"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchedTeamUpdate"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchedTeamUpdate"
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchedTeamUpdate"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Team"
+                }
+              }
+            },
+            "description": "Update successful. Return an updated team."
+          }
+        }
+      },
+      "delete": {
+        "operationId": "teams_destroy",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "A unique integer value identifying this team.",
+            "required": true
+          }
+        ],
+        "tags": ["teams"],
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No response body"
           }
         }
       }
@@ -2467,6 +4587,12 @@
           },
           {
             "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
           }
         ],
         "responses": {
@@ -2512,6 +4638,12 @@
           },
           {
             "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
           }
         ],
         "responses": {
@@ -2550,6 +4682,12 @@
           },
           {
             "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
           }
         ],
         "responses": {
@@ -2605,6 +4743,12 @@
           },
           {
             "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
           }
         ],
         "responses": {
@@ -2641,6 +4785,12 @@
           },
           {
             "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
           }
         ],
         "responses": {
@@ -2664,6 +4814,12 @@
           },
           {
             "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
           }
         ],
         "responses": {
@@ -2708,6 +4864,12 @@
           },
           {
             "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
           }
         ],
         "responses": {
@@ -2755,6 +4917,12 @@
           },
           {
             "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
           }
         ],
         "responses": {
@@ -2800,6 +4968,12 @@
           },
           {
             "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
           }
         ],
         "responses": {
@@ -2838,6 +5012,12 @@
           },
           {
             "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
           }
         ],
         "responses": {
@@ -2874,6 +5054,12 @@
           },
           {
             "basicAuth": []
+          },
+          {
+            "jwtAuth": []
+          },
+          {
+            "EDAJWTAuthentication": []
           }
         ],
         "responses": {
@@ -2886,11 +5072,6 @@
   },
   "components": {
     "schemas": {
-      "ActionEnum": {
-        "enum": ["create", "read", "update", "delete", "enable", "disable", "restart"],
-        "type": "string",
-        "description": "* `create` - create\n* `read` - read\n* `update` - update\n* `delete` - delete\n* `enable` - enable\n* `disable` - disable\n* `restart` - restart"
-      },
       "ActivationCreate": {
         "type": "object",
         "description": "Serializer for creating the Activation.",
@@ -2914,8 +5095,37 @@
             "type": "integer",
             "nullable": true
           },
+          "organization_id": {
+            "type": "integer",
+            "nullable": true
+          },
           "restart_policy": {
             "$ref": "#/components/schemas/RestartPolicyEnum"
+          },
+          "awx_token_id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "event_streams": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "nullable": true
+          },
+          "log_level": {
+            "$ref": "#/components/schemas/LogLevelEnum"
+          },
+          "eda_credentials": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "nullable": true
+          },
+          "k8s_service_name": {
+            "type": "string",
+            "nullable": true
           }
         },
         "required": ["decision_environment_id", "name", "rulebook_id"]
@@ -2932,7 +5142,7 @@
             "type": "string"
           },
           "status": {
-            "$ref": "#/components/schemas/Status906Enum"
+            "$ref": "#/components/schemas/StatusEnum"
           },
           "git_hash": {
             "type": "string"
@@ -2943,6 +5153,17 @@
           },
           "activation_id": {
             "type": "integer",
+            "nullable": true,
+            "readOnly": true
+          },
+          "event_stream_id": {
+            "type": "integer",
+            "nullable": true,
+            "readOnly": true
+          },
+          "organization_id": {
+            "type": "integer",
+            "nullable": true,
             "readOnly": true
           },
           "started_at": {
@@ -2957,7 +5178,14 @@
             "nullable": true
           }
         },
-        "required": ["activation_id", "ended_at", "id", "started_at"]
+        "required": [
+          "activation_id",
+          "ended_at",
+          "event_stream_id",
+          "id",
+          "organization_id",
+          "started_at"
+        ]
       },
       "ActivationInstanceLog": {
         "type": "object",
@@ -2974,6 +5202,12 @@
           },
           "log": {
             "type": "string"
+          },
+          "log_timestamp": {
+            "type": "integer",
+            "maximum": 9223372036854775807,
+            "minimum": -9223372036854775808,
+            "format": "int64"
           },
           "activation_instance": {
             "type": "integer"
@@ -2999,7 +5233,7 @@
             "type": "boolean"
           },
           "status": {
-            "$ref": "#/components/schemas/Status906Enum"
+            "$ref": "#/components/schemas/StatusEnum"
           },
           "decision_environment_id": {
             "type": "integer",
@@ -3017,6 +5251,11 @@
             "readOnly": true
           },
           "extra_var_id": {
+            "type": "integer",
+            "nullable": true,
+            "readOnly": true
+          },
+          "organization_id": {
             "type": "integer",
             "nullable": true,
             "readOnly": true
@@ -3056,15 +5295,44 @@
           "status_message": {
             "type": "string",
             "nullable": true
+          },
+          "awx_token_id": {
+            "type": "integer",
+            "nullable": true,
+            "readOnly": true
+          },
+          "event_streams": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EventStreamOut"
+            },
+            "nullable": true
+          },
+          "log_level": {
+            "$ref": "#/components/schemas/LogLevelEnum"
+          },
+          "eda_credentials": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EdaCredential"
+            },
+            "nullable": true
+          },
+          "k8s_service_name": {
+            "type": "string",
+            "nullable": true,
+            "description": "Service name of the activation"
           }
         },
         "required": [
+          "awx_token_id",
           "created_at",
           "decision_environment_id",
           "extra_var_id",
           "id",
           "modified_at",
           "name",
+          "organization_id",
           "project_id",
           "rulebook_id",
           "rulebook_name",
@@ -3098,7 +5366,7 @@
             "nullable": true
           },
           "status": {
-            "$ref": "#/components/schemas/Status906Enum"
+            "$ref": "#/components/schemas/StatusEnum"
           },
           "git_hash": {
             "type": "string"
@@ -3126,6 +5394,9 @@
               }
             ],
             "nullable": true
+          },
+          "organization": {
+            "$ref": "#/components/schemas/OrganizationRef"
           },
           "instances": {
             "type": "array",
@@ -3173,14 +5444,43 @@
           "status_message": {
             "type": "string",
             "nullable": true
+          },
+          "awx_token_id": {
+            "type": "integer",
+            "nullable": true,
+            "readOnly": true
+          },
+          "eda_credentials": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EdaCredential"
+            },
+            "nullable": true
+          },
+          "event_streams": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EventStreamOut"
+            },
+            "nullable": true
+          },
+          "log_level": {
+            "$ref": "#/components/schemas/LogLevelEnum"
+          },
+          "k8s_service_name": {
+            "type": "string",
+            "nullable": true,
+            "description": "Service name of the activation"
           }
         },
         "required": [
+          "awx_token_id",
           "created_at",
           "id",
           "instances",
           "modified_at",
           "name",
+          "organization",
           "rulebook_name",
           "rules_count",
           "rules_fired_count"
@@ -3221,6 +5521,11 @@
             "type": "integer",
             "nullable": true,
             "readOnly": true
+          },
+          "status_message": {
+            "type": "string",
+            "nullable": true,
+            "description": "Message of the action"
           }
         },
         "required": ["audit_rule_id", "fired_at", "id", "name"]
@@ -3241,20 +5546,10 @@
             "type": "string",
             "description": "Type of the source"
           },
-          "received_at": {
-            "type": "string",
-            "format": "date-time",
-            "description": "The received timestamp of the event"
-          },
           "payload": {
-            "type": "object",
-            "additionalProperties": {},
-            "description": "The payload in the event"
-          },
-          "rule_fired_at": {
             "type": "string",
-            "format": "date-time",
-            "nullable": true
+            "nullable": true,
+            "description": "The payload in the event"
           },
           "audit_actions": {
             "type": "array",
@@ -3262,6 +5557,16 @@
               "type": "string",
               "format": "uuid"
             }
+          },
+          "received_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The received timestamp of the event"
+          },
+          "rule_fired_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
           }
         },
         "required": ["audit_actions", "id", "received_at", "source_name", "source_type"]
@@ -3298,6 +5603,27 @@
             },
             "readOnly": true
           },
+          "organization": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "nullable": false
+              },
+              "name": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              }
+            },
+            "example": {
+              "id": 0,
+              "name": "string",
+              "description": "string"
+            },
+            "readOnly": true
+          },
           "ruleset_name": {
             "type": "string",
             "description": "Name of the related ruleset"
@@ -3313,7 +5639,7 @@
             "description": "The fired timestamp of the rule"
           }
         },
-        "required": ["activation_instance", "created_at", "fired_at", "id", "name"]
+        "required": ["activation_instance", "created_at", "fired_at", "id", "name", "organization"]
       },
       "AuditRuleList": {
         "type": "object",
@@ -3347,13 +5673,34 @@
             },
             "readOnly": true
           },
+          "organization": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "nullable": false
+              },
+              "name": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              }
+            },
+            "example": {
+              "id": 0,
+              "name": "string",
+              "description": "string"
+            },
+            "readOnly": true
+          },
           "fired_at": {
             "type": "string",
             "format": "date-time",
             "description": "The fired timestamp of the rule"
           }
         },
-        "required": ["activation_instance", "fired_at", "id", "name"]
+        "required": ["activation_instance", "fired_at", "id", "name", "organization"]
       },
       "AwxToken": {
         "type": "object",
@@ -3400,21 +5747,46 @@
         },
         "required": ["name", "token"]
       },
-      "Credential": {
+      "ContentTypeEnum": {
+        "enum": [
+          "eda.activation",
+          "eda.auditrule",
+          "eda.credentialtype",
+          "eda.decisionenvironment",
+          "eda.edacredential",
+          "eda.extravar",
+          "eda.project",
+          "eda.rulebook",
+          "eda.rulebookprocess",
+          "shared.organization",
+          "shared.team"
+        ],
+        "type": "string",
+        "description": "* `eda.activation` - Activation\n* `eda.auditrule` - Audit Rule\n* `eda.credentialtype` - Credential Type\n* `eda.decisionenvironment` - Decision Environment\n* `eda.edacredential` - Eda Credential\n* `eda.extravar` - Extra Var\n* `eda.project` - Project\n* `eda.rulebook` - Rulebook\n* `eda.rulebookprocess` - Rulebook Process\n* `shared.organization` - Organization\n* `shared.team` - Team"
+      },
+      "CredentialType": {
         "type": "object",
         "properties": {
           "name": {
             "type": "string"
           },
-          "description": {
-            "type": "string"
-          },
-          "username": {
+          "namespace": {
             "type": "string",
             "nullable": true
           },
-          "credential_type": {
-            "$ref": "#/components/schemas/CredentialTypeEnum"
+          "kind": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "inputs": {
+            "type": "object",
+            "additionalProperties": {}
+          },
+          "injectors": {
+            "type": "object",
+            "additionalProperties": {}
           },
           "id": {
             "type": "integer",
@@ -3429,11 +5801,20 @@
             "type": "string",
             "format": "date-time",
             "readOnly": true
+          },
+          "managed": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "organization_id": {
+            "type": "integer",
+            "nullable": true,
+            "readOnly": true
           }
         },
-        "required": ["created_at", "id", "modified_at", "name"]
+        "required": ["created_at", "id", "managed", "modified_at", "name", "organization_id"]
       },
-      "CredentialCreate": {
+      "CredentialTypeCreate": {
         "type": "object",
         "properties": {
           "name": {
@@ -3442,23 +5823,24 @@
           "description": {
             "type": "string"
           },
-          "credential_type": {
-            "$ref": "#/components/schemas/CredentialTypeEnum"
+          "inputs": {
+            "type": "object",
+            "additionalProperties": {},
+            "description": "Name of the credential type"
           },
-          "username": {
-            "type": "string",
-            "nullable": true
+          "injectors": {
+            "type": "object",
+            "additionalProperties": {}
           },
-          "secret": {
-            "type": "string",
+          "organization_id": {
+            "type": "integer",
             "nullable": true
           }
         },
-        "required": ["name"]
+        "required": ["inputs", "name"]
       },
-      "CredentialRef": {
+      "CredentialTypeRef": {
         "type": "object",
-        "description": "Serializer for Credential reference.",
         "properties": {
           "id": {
             "type": "integer",
@@ -3467,27 +5849,20 @@
           "name": {
             "type": "string"
           },
-          "description": {
-            "type": "string"
-          },
-          "credential_type": {
-            "$ref": "#/components/schemas/CredentialTypeEnum"
-          },
-          "username": {
+          "namespace": {
             "type": "string",
             "nullable": true
+          },
+          "kind": {
+            "type": "string"
+          },
+          "organization_id": {
+            "type": "integer",
+            "nullable": true,
+            "readOnly": true
           }
         },
-        "required": ["id", "name"]
-      },
-      "CredentialTypeEnum": {
-        "enum": [
-          "Container Registry",
-          "GitHub Personal Access Token",
-          "GitLab Personal Access Token"
-        ],
-        "type": "string",
-        "description": "* `Container Registry` - Container Registry\n* `GitHub Personal Access Token` - GitHub Personal Access Token\n* `GitLab Personal Access Token` - GitLab Personal Access Token"
+        "required": ["id", "name", "organization_id"]
       },
       "DecisionEnvironment": {
         "type": "object",
@@ -3501,7 +5876,12 @@
           "image_url": {
             "type": "string"
           },
-          "credential_id": {
+          "organization_id": {
+            "type": "integer",
+            "nullable": true,
+            "readOnly": true
+          },
+          "eda_credential_id": {
             "type": "integer",
             "nullable": true,
             "readOnly": true
@@ -3521,7 +5901,15 @@
             "readOnly": true
           }
         },
-        "required": ["created_at", "credential_id", "id", "image_url", "modified_at", "name"]
+        "required": [
+          "created_at",
+          "eda_credential_id",
+          "id",
+          "image_url",
+          "modified_at",
+          "name",
+          "organization_id"
+        ]
       },
       "DecisionEnvironmentCreate": {
         "type": "object",
@@ -3536,7 +5924,11 @@
           "image_url": {
             "type": "string"
           },
-          "credential_id": {
+          "organization_id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "eda_credential_id": {
             "type": "integer",
             "nullable": true
           }
@@ -3560,10 +5952,13 @@
           "image_url": {
             "type": "string"
           },
-          "credential": {
+          "organization": {
+            "$ref": "#/components/schemas/OrganizationRef"
+          },
+          "eda_credential": {
             "allOf": [
               {
-                "$ref": "#/components/schemas/CredentialRef"
+                "$ref": "#/components/schemas/EdaCredentialRef"
               }
             ],
             "nullable": true
@@ -3579,7 +5974,7 @@
             "readOnly": true
           }
         },
-        "required": ["created_at", "id", "image_url", "modified_at", "name"]
+        "required": ["created_at", "id", "image_url", "modified_at", "name", "organization"]
       },
       "DecisionEnvironmentRef": {
         "type": "object",
@@ -3597,9 +5992,163 @@
           },
           "image_url": {
             "type": "string"
+          },
+          "organization_id": {
+            "type": "integer",
+            "nullable": true,
+            "readOnly": true
           }
         },
-        "required": ["id", "image_url", "name"]
+        "required": ["id", "image_url", "name", "organization_id"]
+      },
+      "EdaCredential": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "inputs": {
+            "type": "object",
+            "additionalProperties": {},
+            "readOnly": true
+          },
+          "credential_type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CredentialTypeRef"
+              }
+            ],
+            "nullable": true
+          },
+          "references": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EdaCredentialReference"
+            },
+            "nullable": true
+          },
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "modified_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "managed": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "organization": {
+            "$ref": "#/components/schemas/OrganizationRef"
+          }
+        },
+        "required": ["created_at", "id", "inputs", "managed", "modified_at", "name", "organization"]
+      },
+      "EdaCredentialCreate": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "inputs": {
+            "type": "object",
+            "additionalProperties": {}
+          },
+          "credential_type_id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "organization_id": {
+            "type": "integer",
+            "nullable": true
+          }
+        },
+        "required": ["credential_type_id", "inputs", "name"]
+      },
+      "EdaCredentialRef": {
+        "type": "object",
+        "description": "Serializer for EdaCredential reference.",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "inputs": {
+            "type": "object",
+            "additionalProperties": {},
+            "readOnly": true
+          },
+          "managed": {
+            "type": "boolean"
+          },
+          "credential_type_id": {
+            "type": "integer",
+            "nullable": true,
+            "readOnly": true
+          },
+          "organization_id": {
+            "type": "integer",
+            "nullable": true,
+            "readOnly": true
+          }
+        },
+        "required": ["credential_type_id", "id", "inputs", "name", "organization_id"]
+      },
+      "EdaCredentialReference": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "Type of the related resource"
+          },
+          "id": {
+            "type": "integer",
+            "description": "ID of the related resource"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the related resource"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL of the related resource"
+          }
+        },
+        "required": ["id", "name", "type", "url"]
+      },
+      "EventStreamOut": {
+        "type": "object",
+        "description": "Serializer for UI to show EventStream.",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": ["id", "name"]
       },
       "ExtraVar": {
         "type": "object",
@@ -3611,9 +6160,14 @@
           "extra_var": {
             "type": "string",
             "description": "Content of the extra_var"
+          },
+          "organization_id": {
+            "type": "integer",
+            "nullable": true,
+            "readOnly": true
           }
         },
-        "required": ["extra_var", "id"]
+        "required": ["extra_var", "id", "organization_id"]
       },
       "ExtraVarCreate": {
         "type": "object",
@@ -3621,6 +6175,10 @@
           "extra_var": {
             "type": "string",
             "description": "Content of the extra_var"
+          },
+          "organization_id": {
+            "type": "integer",
+            "nullable": true
           }
         },
         "required": ["extra_var"]
@@ -3641,6 +6199,11 @@
         "type": "string",
         "description": "* `pending` - Pending\n* `running` - Running\n* `failed` - Failed\n* `completed` - Completed"
       },
+      "LogLevelEnum": {
+        "enum": ["debug", "info", "error"],
+        "type": "string",
+        "description": "* `debug` - debug\n* `info` - info\n* `error` - error"
+      },
       "Login": {
         "type": "object",
         "properties": {
@@ -3652,6 +6215,91 @@
           }
         },
         "required": ["password", "username"]
+      },
+      "NullEnum": {
+        "enum": [null]
+      },
+      "Organization": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of this resource",
+            "maxLength": 512
+          },
+          "description": {
+            "type": "string",
+            "description": "The organization description."
+          },
+          "resource": {
+            "type": "object",
+            "additionalProperties": {},
+            "readOnly": true
+          },
+          "created": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true,
+            "description": "The date/time this resource was created"
+          },
+          "created_by": {
+            "type": "integer",
+            "readOnly": true,
+            "nullable": true,
+            "description": "The user who created this resource"
+          },
+          "modified": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true,
+            "description": "The date/time this resource was created"
+          },
+          "modified_by": {
+            "type": "integer",
+            "readOnly": true,
+            "nullable": true,
+            "description": "The user who last modified this resource"
+          }
+        },
+        "required": ["created", "created_by", "id", "modified", "modified_by", "name", "resource"]
+      },
+      "OrganizationCreate": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of this resource",
+            "maxLength": 512
+          },
+          "description": {
+            "type": "string",
+            "description": "The organization description."
+          }
+        },
+        "required": ["name"]
+      },
+      "OrganizationRef": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of this resource",
+            "maxLength": 512
+          },
+          "description": {
+            "type": "string",
+            "description": "The organization description."
+          }
+        },
+        "required": ["id", "name"]
       },
       "PaginatedActivationInstanceList": {
         "type": "object",
@@ -3912,7 +6560,7 @@
           }
         }
       },
-      "PaginatedCredentialList": {
+      "PaginatedCredentialTypeList": {
         "type": "object",
         "properties": {
           "count": {
@@ -3944,7 +6592,7 @@
           "results": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Credential"
+              "$ref": "#/components/schemas/CredentialType"
             }
           }
         }
@@ -3986,6 +6634,43 @@
           }
         }
       },
+      "PaginatedEdaCredentialList": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "integer",
+            "example": 123
+          },
+          "next": {
+            "type": "string",
+            "nullable": true,
+            "format": "uri",
+            "example": "/eda/api/v1/example/?page=51&page_size=100"
+          },
+          "previous": {
+            "type": "string",
+            "nullable": true,
+            "format": "uri",
+            "example": "/eda/api/v1/example/?page=49&page_size=100"
+          },
+          "page_size": {
+            "type": "integer",
+            "nullable": true,
+            "example": 100
+          },
+          "page": {
+            "type": "integer",
+            "nullable": true,
+            "example": 50
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EdaCredential"
+            }
+          }
+        }
+      },
       "PaginatedExtraVarList": {
         "type": "object",
         "properties": {
@@ -4019,6 +6704,43 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/ExtraVar"
+            }
+          }
+        }
+      },
+      "PaginatedOrganizationList": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "integer",
+            "example": 123
+          },
+          "next": {
+            "type": "string",
+            "nullable": true,
+            "format": "uri",
+            "example": "/eda/api/v1/example/?page=51&page_size=100"
+          },
+          "previous": {
+            "type": "string",
+            "nullable": true,
+            "format": "uri",
+            "example": "/eda/api/v1/example/?page=49&page_size=100"
+          },
+          "page_size": {
+            "type": "integer",
+            "nullable": true,
+            "example": 100
+          },
+          "page": {
+            "type": "integer",
+            "nullable": true,
+            "example": 50
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Organization"
             }
           }
         }
@@ -4060,7 +6782,7 @@
           }
         }
       },
-      "PaginatedRoleListList": {
+      "PaginatedResourceListList": {
         "type": "object",
         "properties": {
           "count": {
@@ -4071,33 +6793,23 @@
             "type": "string",
             "nullable": true,
             "format": "uri",
-            "example": "/eda/api/v1/example/?page=51&page_size=100"
+            "example": "http://api.example.org/accounts/?page=4"
           },
           "previous": {
             "type": "string",
             "nullable": true,
             "format": "uri",
-            "example": "/eda/api/v1/example/?page=49&page_size=100"
-          },
-          "page_size": {
-            "type": "integer",
-            "nullable": true,
-            "example": 100
-          },
-          "page": {
-            "type": "integer",
-            "nullable": true,
-            "example": 50
+            "example": "http://api.example.org/accounts/?page=2"
           },
           "results": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/RoleList"
+              "$ref": "#/components/schemas/ResourceList"
             }
           }
         }
       },
-      "PaginatedRuleList": {
+      "PaginatedResourceTypeList": {
         "type": "object",
         "properties": {
           "count": {
@@ -4108,33 +6820,23 @@
             "type": "string",
             "nullable": true,
             "format": "uri",
-            "example": "/eda/api/v1/example/?page=51&page_size=100"
+            "example": "http://api.example.org/accounts/?page=4"
           },
           "previous": {
             "type": "string",
             "nullable": true,
             "format": "uri",
-            "example": "/eda/api/v1/example/?page=49&page_size=100"
-          },
-          "page_size": {
-            "type": "integer",
-            "nullable": true,
-            "example": 100
-          },
-          "page": {
-            "type": "integer",
-            "nullable": true,
-            "example": 50
+            "example": "http://api.example.org/accounts/?page=2"
           },
           "results": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Rule"
+              "$ref": "#/components/schemas/ResourceType"
             }
           }
         }
       },
-      "PaginatedRuleOutList": {
+      "PaginatedRoleDefinitionList": {
         "type": "object",
         "properties": {
           "count": {
@@ -4166,7 +6868,81 @@
           "results": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/RuleOut"
+              "$ref": "#/components/schemas/RoleDefinition"
+            }
+          }
+        }
+      },
+      "PaginatedRoleTeamAssignmentList": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "integer",
+            "example": 123
+          },
+          "next": {
+            "type": "string",
+            "nullable": true,
+            "format": "uri",
+            "example": "/eda/api/v1/example/?page=51&page_size=100"
+          },
+          "previous": {
+            "type": "string",
+            "nullable": true,
+            "format": "uri",
+            "example": "/eda/api/v1/example/?page=49&page_size=100"
+          },
+          "page_size": {
+            "type": "integer",
+            "nullable": true,
+            "example": 100
+          },
+          "page": {
+            "type": "integer",
+            "nullable": true,
+            "example": 50
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RoleTeamAssignment"
+            }
+          }
+        }
+      },
+      "PaginatedRoleUserAssignmentList": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "integer",
+            "example": 123
+          },
+          "next": {
+            "type": "string",
+            "nullable": true,
+            "format": "uri",
+            "example": "/eda/api/v1/example/?page=51&page_size=100"
+          },
+          "previous": {
+            "type": "string",
+            "nullable": true,
+            "format": "uri",
+            "example": "/eda/api/v1/example/?page=49&page_size=100"
+          },
+          "page_size": {
+            "type": "integer",
+            "nullable": true,
+            "example": 100
+          },
+          "page": {
+            "type": "integer",
+            "nullable": true,
+            "example": 50
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RoleUserAssignment"
             }
           }
         }
@@ -4208,7 +6984,7 @@
           }
         }
       },
-      "PaginatedRulesetOutList": {
+      "PaginatedTeamList": {
         "type": "object",
         "properties": {
           "count": {
@@ -4240,7 +7016,7 @@
           "results": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/RulesetOut"
+              "$ref": "#/components/schemas/Team"
             }
           }
         }
@@ -4282,7 +7058,7 @@
           }
         }
       },
-      "PatchedCredentialCreate": {
+      "PatchedCredentialTypeCreate": {
         "type": "object",
         "properties": {
           "name": {
@@ -4291,15 +7067,17 @@
           "description": {
             "type": "string"
           },
-          "credential_type": {
-            "$ref": "#/components/schemas/CredentialTypeEnum"
+          "inputs": {
+            "type": "object",
+            "additionalProperties": {},
+            "description": "Name of the credential type"
           },
-          "username": {
-            "type": "string",
-            "nullable": true
+          "injectors": {
+            "type": "object",
+            "additionalProperties": {}
           },
-          "secret": {
-            "type": "string",
+          "organization_id": {
+            "type": "integer",
             "nullable": true
           }
         }
@@ -4340,9 +7118,50 @@
           "image_url": {
             "type": "string"
           },
-          "credential_id": {
+          "organization_id": {
             "type": "integer",
             "nullable": true
+          },
+          "eda_credential_id": {
+            "type": "integer",
+            "nullable": true
+          }
+        }
+      },
+      "PatchedEdaCredentialCreate": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "inputs": {
+            "type": "object",
+            "additionalProperties": {}
+          },
+          "credential_type_id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "organization_id": {
+            "type": "integer",
+            "nullable": true
+          }
+        }
+      },
+      "PatchedOrganizationCreate": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of this resource",
+            "maxLength": 512
+          },
+          "description": {
+            "type": "string",
+            "description": "The organization description."
           }
         }
       },
@@ -4358,14 +7177,165 @@
             "nullable": true,
             "description": "Description of the project"
           },
-          "credential_id": {
+          "eda_credential_id": {
             "type": "integer",
             "nullable": true,
-            "description": "Credential id of the project"
+            "description": "EdaCredential id of the project"
+          },
+          "signature_validation_credential_id": {
+            "type": "integer",
+            "nullable": true,
+            "description": "ID of an optional credential used for validating files in the project against unexpected changes"
+          },
+          "scm_branch": {
+            "type": "string",
+            "nullable": true,
+            "description": "Specific branch, tag or commit to checkout."
+          },
+          "scm_refspec": {
+            "type": "string",
+            "nullable": true,
+            "description": "For git projects, an additional refspec to fetch."
           },
           "verify_ssl": {
             "type": "boolean",
             "description": "Indicates if SSL verification is enabled"
+          },
+          "proxy": {
+            "type": "string",
+            "nullable": true,
+            "description": "Proxy server for http or https connection"
+          }
+        }
+      },
+      "PatchedResource": {
+        "type": "object",
+        "properties": {
+          "object_id": {
+            "type": "string",
+            "readOnly": true
+          },
+          "name": {
+            "type": "string",
+            "readOnly": true,
+            "nullable": true
+          },
+          "ansible_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "service_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "resource_type": {
+            "type": "string"
+          },
+          "has_serializer": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "resource_data": {
+            "type": "object",
+            "additionalProperties": {}
+          },
+          "url": {
+            "type": "string",
+            "readOnly": true
+          }
+        }
+      },
+      "PatchedRoleDefinition": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "url": {
+            "type": "string",
+            "readOnly": true
+          },
+          "related": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "readOnly": true
+          },
+          "summary_fields": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "additionalProperties": {}
+            },
+            "readOnly": true
+          },
+          "permissions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PermissionsEnum"
+            }
+          },
+          "content_type": {
+            "nullable": true,
+            "description": "The type of resource this applies to\n\n* `eda.activation` - Activation\n* `eda.auditrule` - Audit Rule\n* `eda.credentialtype` - Credential Type\n* `eda.decisionenvironment` - Decision Environment\n* `eda.edacredential` - Eda Credential\n* `eda.extravar` - Extra Var\n* `eda.project` - Project\n* `eda.rulebook` - Rulebook\n* `eda.rulebookprocess` - Rulebook Process\n* `shared.organization` - Organization\n* `shared.team` - Team",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ContentTypeEnum"
+              },
+              {
+                "$ref": "#/components/schemas/NullEnum"
+              }
+            ]
+          },
+          "modified": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true,
+            "description": "The date/time this resource was created"
+          },
+          "created": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true,
+            "description": "The date/time this resource was created"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "managed": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "modified_by": {
+            "type": "integer",
+            "readOnly": true,
+            "nullable": true,
+            "description": "The user who last modified this resource"
+          },
+          "created_by": {
+            "type": "integer",
+            "readOnly": true,
+            "nullable": true,
+            "description": "The user who created this resource"
+          }
+        }
+      },
+      "PatchedTeamUpdate": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of this resource",
+            "maxLength": 512
+          },
+          "description": {
+            "type": "string",
+            "description": "The team description."
           }
         }
       },
@@ -4394,36 +7364,54 @@
             "type": "string",
             "writeOnly": true
           },
-          "roles": {
-            "type": "array",
-            "items": {
-              "type": "string",
-              "format": "uuid"
-            }
+          "is_superuser": {
+            "type": "boolean",
+            "title": "Superuser status",
+            "description": "Designates that this user has all permissions without explicitly assigning them."
           }
         }
       },
-      "PermissionRef": {
-        "type": "object",
-        "properties": {
-          "resource_type": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/ResourceTypeEnum"
-              }
-            ],
-            "readOnly": true
-          },
-          "action": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/ActionEnum"
-              }
-            ],
-            "readOnly": true
-          }
-        },
-        "required": ["action", "resource_type"]
+      "PermissionsEnum": {
+        "enum": [
+          "eda.add_activation",
+          "eda.add_credentialtype",
+          "eda.add_decisionenvironment",
+          "eda.add_edacredential",
+          "eda.add_extravar",
+          "eda.add_project",
+          "eda.add_team",
+          "eda.change_credentialtype",
+          "eda.change_decisionenvironment",
+          "eda.change_edacredential",
+          "eda.change_organization",
+          "eda.change_project",
+          "eda.change_team",
+          "eda.delete_activation",
+          "eda.delete_credentialtype",
+          "eda.delete_decisionenvironment",
+          "eda.delete_edacredential",
+          "eda.delete_organization",
+          "eda.delete_project",
+          "eda.delete_team",
+          "eda.disable_activation",
+          "eda.enable_activation",
+          "eda.member_organization",
+          "eda.member_team",
+          "eda.restart_activation",
+          "eda.view_activation",
+          "eda.view_auditrule",
+          "eda.view_credentialtype",
+          "eda.view_decisionenvironment",
+          "eda.view_edacredential",
+          "eda.view_extravar",
+          "eda.view_organization",
+          "eda.view_project",
+          "eda.view_rulebook",
+          "eda.view_rulebookprocess",
+          "eda.view_team"
+        ],
+        "type": "string",
+        "description": "* `eda.add_activation` - eda.add_activation\n* `eda.add_credentialtype` - eda.add_credentialtype\n* `eda.add_decisionenvironment` - eda.add_decisionenvironment\n* `eda.add_edacredential` - eda.add_edacredential\n* `eda.add_extravar` - eda.add_extravar\n* `eda.add_project` - eda.add_project\n* `eda.add_team` - eda.add_team\n* `eda.change_credentialtype` - eda.change_credentialtype\n* `eda.change_decisionenvironment` - eda.change_decisionenvironment\n* `eda.change_edacredential` - eda.change_edacredential\n* `eda.change_organization` - eda.change_organization\n* `eda.change_project` - eda.change_project\n* `eda.change_team` - eda.change_team\n* `eda.delete_activation` - eda.delete_activation\n* `eda.delete_credentialtype` - eda.delete_credentialtype\n* `eda.delete_decisionenvironment` - eda.delete_decisionenvironment\n* `eda.delete_edacredential` - eda.delete_edacredential\n* `eda.delete_organization` - eda.delete_organization\n* `eda.delete_project` - eda.delete_project\n* `eda.delete_team` - eda.delete_team\n* `eda.disable_activation` - eda.disable_activation\n* `eda.enable_activation` - eda.enable_activation\n* `eda.member_organization` - eda.member_organization\n* `eda.member_team` - eda.member_team\n* `eda.restart_activation` - eda.restart_activation\n* `eda.view_activation` - eda.view_activation\n* `eda.view_auditrule` - eda.view_auditrule\n* `eda.view_credentialtype` - eda.view_credentialtype\n* `eda.view_decisionenvironment` - eda.view_decisionenvironment\n* `eda.view_edacredential` - eda.view_edacredential\n* `eda.view_extravar` - eda.view_extravar\n* `eda.view_organization` - eda.view_organization\n* `eda.view_project` - eda.view_project\n* `eda.view_rulebook` - eda.view_rulebook\n* `eda.view_rulebookprocess` - eda.view_rulebookprocess\n* `eda.view_team` - eda.view_team"
       },
       "Project": {
         "type": "object",
@@ -4434,12 +7422,32 @@
           "description": {
             "type": "string"
           },
-          "credential_id": {
+          "organization_id": {
+            "type": "integer",
+            "nullable": true,
+            "readOnly": true
+          },
+          "eda_credential_id": {
             "type": "integer",
             "nullable": true
           },
+          "signature_validation_credential_id": {
+            "type": "integer",
+            "nullable": true,
+            "readOnly": true
+          },
+          "scm_branch": {
+            "type": "string"
+          },
+          "scm_refspec": {
+            "type": "string"
+          },
           "verify_ssl": {
             "type": "boolean"
+          },
+          "proxy": {
+            "type": "string",
+            "readOnly": true
           },
           "id": {
             "type": "integer",
@@ -4447,6 +7455,14 @@
           },
           "url": {
             "type": "string",
+            "readOnly": true
+          },
+          "scm_type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ScmTypeEnum"
+              }
+            ],
             "readOnly": true
           },
           "git_hash": {
@@ -4463,12 +7479,6 @@
           },
           "import_error": {
             "type": "string",
-            "readOnly": true,
-            "nullable": true
-          },
-          "import_task_id": {
-            "type": "string",
-            "format": "uuid",
             "readOnly": true,
             "nullable": true
           },
@@ -4489,9 +7499,12 @@
           "id",
           "import_error",
           "import_state",
-          "import_task_id",
           "modified_at",
           "name",
+          "organization_id",
+          "proxy",
+          "scm_type",
+          "signature_validation_credential_id",
           "url"
         ]
       },
@@ -4501,18 +7514,38 @@
           "url": {
             "type": "string"
           },
+          "proxy": {
+            "type": "string"
+          },
           "name": {
             "type": "string"
           },
           "description": {
             "type": "string"
           },
-          "credential_id": {
+          "organization_id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "eda_credential_id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "signature_validation_credential_id": {
             "type": "integer",
             "nullable": true
           },
           "verify_ssl": {
             "type": "boolean"
+          },
+          "scm_type": {
+            "$ref": "#/components/schemas/ScmTypeEnum"
+          },
+          "scm_branch": {
+            "type": "string"
+          },
+          "scm_refspec": {
+            "type": "string"
           }
         },
         "required": ["name", "url"]
@@ -4527,10 +7560,21 @@
           "description": {
             "type": "string"
           },
-          "credential": {
+          "organization": {
+            "$ref": "#/components/schemas/OrganizationRef"
+          },
+          "eda_credential": {
             "allOf": [
               {
-                "$ref": "#/components/schemas/CredentialRef"
+                "$ref": "#/components/schemas/EdaCredentialRef"
+              }
+            ],
+            "nullable": true
+          },
+          "signature_validation_credential": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/EdaCredentialRef"
               }
             ],
             "nullable": true
@@ -4538,12 +7582,30 @@
           "verify_ssl": {
             "type": "boolean"
           },
+          "scm_branch": {
+            "type": "string"
+          },
+          "scm_refspec": {
+            "type": "string"
+          },
+          "proxy": {
+            "type": "string",
+            "readOnly": true
+          },
           "id": {
             "type": "integer",
             "readOnly": true
           },
           "url": {
             "type": "string",
+            "readOnly": true
+          },
+          "scm_type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ScmTypeEnum"
+              }
+            ],
             "readOnly": true
           },
           "git_hash": {
@@ -4560,12 +7622,6 @@
           },
           "import_error": {
             "type": "string",
-            "readOnly": true,
-            "nullable": true
-          },
-          "import_task_id": {
-            "type": "string",
-            "format": "uuid",
             "readOnly": true,
             "nullable": true
           },
@@ -4586,9 +7642,11 @@
           "id",
           "import_error",
           "import_state",
-          "import_task_id",
           "modified_at",
           "name",
+          "organization",
+          "proxy",
+          "scm_type",
           "url"
         ]
       },
@@ -4605,179 +7663,562 @@
           "url": {
             "type": "string"
           },
+          "scm_type": {
+            "$ref": "#/components/schemas/ScmTypeEnum"
+          },
           "name": {
             "type": "string"
           },
           "description": {
             "type": "string"
+          },
+          "organization_id": {
+            "type": "integer",
+            "nullable": true,
+            "readOnly": true
           }
         },
-        "required": ["git_hash", "id", "name", "url"]
+        "required": ["git_hash", "id", "name", "organization_id", "url"]
       },
-      "ResourceTypeEnum": {
-        "enum": [
-          "activation",
-          "activation_instance",
-          "audit_rule",
-          "audit_event",
-          "task",
-          "user",
-          "project",
-          "inventory",
-          "extra_var",
-          "rulebook",
-          "role",
-          "decision_environment",
-          "credential"
-        ],
-        "type": "string",
-        "description": "* `activation` - activation\n* `activation_instance` - activation_instance\n* `audit_rule` - audit_rule\n* `audit_event` - audit_event\n* `task` - task\n* `user` - user\n* `project` - project\n* `inventory` - inventory\n* `extra_var` - extra_var\n* `rulebook` - rulebook\n* `role` - role\n* `decision_environment` - decision_environment\n* `credential` - credential"
+      "Resource": {
+        "type": "object",
+        "properties": {
+          "object_id": {
+            "type": "string",
+            "readOnly": true
+          },
+          "name": {
+            "type": "string",
+            "readOnly": true,
+            "nullable": true
+          },
+          "ansible_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "service_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "resource_type": {
+            "type": "string"
+          },
+          "has_serializer": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "resource_data": {
+            "type": "object",
+            "additionalProperties": {}
+          },
+          "url": {
+            "type": "string",
+            "readOnly": true
+          }
+        },
+        "required": ["has_serializer", "name", "object_id", "resource_data", "url"]
+      },
+      "ResourceList": {
+        "type": "object",
+        "properties": {
+          "object_id": {
+            "type": "string",
+            "readOnly": true
+          },
+          "name": {
+            "type": "string",
+            "readOnly": true,
+            "nullable": true
+          },
+          "ansible_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "service_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "resource_type": {
+            "type": "string"
+          },
+          "has_serializer": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "resource_data": {
+            "type": "object",
+            "additionalProperties": {},
+            "writeOnly": true
+          },
+          "url": {
+            "type": "string",
+            "readOnly": true
+          }
+        },
+        "required": ["has_serializer", "name", "object_id", "resource_data", "url"]
+      },
+      "ResourceType": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "name": {
+            "type": "string",
+            "readOnly": true
+          },
+          "externally_managed": {
+            "type": "boolean"
+          },
+          "shared_resource_type": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "url": {
+            "type": "string",
+            "readOnly": true
+          }
+        },
+        "required": ["externally_managed", "id", "name", "shared_resource_type", "url"]
       },
       "RestartPolicyEnum": {
         "enum": ["always", "on-failure", "never"],
         "type": "string",
         "description": "* `always` - always\n* `on-failure` - on-failure\n* `never` - never"
       },
-      "RoleDetail": {
+      "RoleDefinition": {
         "type": "object",
         "properties": {
           "id": {
-            "type": "string",
-            "format": "uuid",
-            "description": "Unique UUID of the role"
+            "type": "integer",
+            "readOnly": true
           },
-          "name": {
+          "url": {
             "type": "string",
-            "description": "Name of the rulebook"
+            "readOnly": true
           },
-          "description": {
-            "type": "string",
-            "nullable": true,
-            "default": "",
-            "description": "Description of the rulebook"
+          "related": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "readOnly": true
+          },
+          "summary_fields": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "additionalProperties": {}
+            },
+            "readOnly": true
           },
           "permissions": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/PermissionRef"
+              "$ref": "#/components/schemas/PermissionsEnum"
+            }
+          },
+          "content_type": {
+            "nullable": true,
+            "description": "The type of resource this applies to\n\n* `eda.activation` - Activation\n* `eda.auditrule` - Audit Rule\n* `eda.credentialtype` - Credential Type\n* `eda.decisionenvironment` - Decision Environment\n* `eda.edacredential` - Eda Credential\n* `eda.extravar` - Extra Var\n* `eda.project` - Project\n* `eda.rulebook` - Rulebook\n* `eda.rulebookprocess` - Rulebook Process\n* `shared.organization` - Organization\n* `shared.team` - Team",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ContentTypeEnum"
+              },
+              {
+                "$ref": "#/components/schemas/NullEnum"
+              }
+            ]
+          },
+          "modified": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true,
+            "description": "The date/time this resource was created"
+          },
+          "created": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true,
+            "description": "The date/time this resource was created"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "managed": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "modified_by": {
+            "type": "integer",
+            "readOnly": true,
+            "nullable": true,
+            "description": "The user who last modified this resource"
+          },
+          "created_by": {
+            "type": "integer",
+            "readOnly": true,
+            "nullable": true,
+            "description": "The user who created this resource"
+          }
+        },
+        "required": [
+          "created",
+          "created_by",
+          "id",
+          "managed",
+          "modified",
+          "modified_by",
+          "name",
+          "permissions",
+          "related",
+          "summary_fields",
+          "url"
+        ]
+      },
+      "RoleDefinitionCreate": {
+        "type": "object",
+        "properties": {
+          "permissions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PermissionsEnum"
+            }
+          },
+          "content_type": {
+            "nullable": true,
+            "description": "The type of resource this applies to\n\n* `eda.activation` - Activation\n* `eda.auditrule` - Audit Rule\n* `eda.credentialtype` - Credential Type\n* `eda.decisionenvironment` - Decision Environment\n* `eda.edacredential` - Eda Credential\n* `eda.extravar` - Extra Var\n* `eda.project` - Project\n* `eda.rulebook` - Rulebook\n* `eda.rulebookprocess` - Rulebook Process\n* `shared.organization` - Organization\n* `shared.team` - Team",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ContentTypeEnum"
+              },
+              {
+                "$ref": "#/components/schemas/NullEnum"
+              }
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        },
+        "required": ["name", "permissions"]
+      },
+      "RoleDefinitionDetail": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "url": {
+            "type": "string",
+            "readOnly": true
+          },
+          "related": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
             },
             "readOnly": true
           },
-          "created_at": {
-            "type": "string",
-            "format": "date-time",
-            "description": "The created_at timestamp of the ruleset"
-          },
-          "modified_at": {
-            "type": "string",
-            "format": "date-time",
-            "description": "The modified_at timestamp of the ruleset"
-          }
-        },
-        "required": ["created_at", "id", "modified_at", "name", "permissions"]
-      },
-      "RoleList": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid",
-            "description": "Unique UUID of the role"
-          },
-          "name": {
-            "type": "string",
-            "description": "Name of the rulebook"
-          },
-          "description": {
-            "type": "string",
-            "nullable": true,
-            "default": "",
-            "description": "Description of the rulebook"
-          }
-        },
-        "required": ["id", "name"]
-      },
-      "RoleRef": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid",
-            "readOnly": true
-          },
-          "name": {
-            "type": "string",
-            "readOnly": true
-          }
-        },
-        "required": ["id", "name"]
-      },
-      "Rule": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "readOnly": true
-          },
-          "name": {
-            "type": "string",
-            "description": "Name of the rule"
-          },
-          "action": {
+          "summary_fields": {
             "type": "object",
-            "additionalProperties": {},
-            "description": "The action in the rule"
-          },
-          "ruleset_id": {
-            "type": "integer",
-            "nullable": true,
-            "readOnly": true
-          }
-        },
-        "required": ["action", "id", "name", "ruleset_id"]
-      },
-      "RuleOut": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "description": "ID of the ruleset"
-          },
-          "name": {
-            "type": "string",
-            "description": "Name of the rule"
-          },
-          "action": {
-            "type": "object",
-            "additionalProperties": {},
-            "nullable": true,
-            "description": "The action in the rule"
-          },
-          "fired_stats": {
-            "type": "array",
-            "items": {
+            "additionalProperties": {
               "type": "object",
               "additionalProperties": {}
             },
-            "description": "List of stats"
+            "readOnly": true
           },
-          "rulebook_id": {
-            "type": "integer",
-            "nullable": true,
-            "description": "ID of the rulebook"
+          "permissions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PermissionsEnum"
+            }
           },
-          "ruleset_id": {
-            "type": "integer",
-            "nullable": true,
-            "description": "ID of the ruleset"
+          "content_type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ContentTypeEnum"
+              }
+            ],
+            "readOnly": true,
+            "description": "The type of resource this applies to\n\n* `eda.activation` - Activation\n* `eda.auditrule` - Audit Rule\n* `eda.credentialtype` - Credential Type\n* `eda.decisionenvironment` - Decision Environment\n* `eda.edacredential` - Eda Credential\n* `eda.extravar` - Extra Var\n* `eda.project` - Project\n* `eda.rulebook` - Rulebook\n* `eda.rulebookprocess` - Rulebook Process\n* `shared.organization` - Organization\n* `shared.team` - Team"
           },
-          "project_id": {
+          "modified": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true,
+            "description": "The date/time this resource was created"
+          },
+          "created": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true,
+            "description": "The date/time this resource was created"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "managed": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "modified_by": {
             "type": "integer",
+            "readOnly": true,
             "nullable": true,
-            "description": "ID of the project"
+            "description": "The user who last modified this resource"
+          },
+          "created_by": {
+            "type": "integer",
+            "readOnly": true,
+            "nullable": true,
+            "description": "The user who created this resource"
           }
         },
-        "required": ["fired_stats", "id", "name"]
+        "required": [
+          "content_type",
+          "created",
+          "created_by",
+          "id",
+          "managed",
+          "modified",
+          "modified_by",
+          "name",
+          "permissions",
+          "related",
+          "summary_fields",
+          "url"
+        ]
+      },
+      "RoleTeamAssignment": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "url": {
+            "type": "string",
+            "readOnly": true
+          },
+          "related": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "readOnly": true
+          },
+          "summary_fields": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "additionalProperties": {}
+            },
+            "readOnly": true
+          },
+          "created": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true,
+            "description": "The date/time this resource was created"
+          },
+          "created_by": {
+            "type": "integer",
+            "readOnly": true,
+            "nullable": true,
+            "description": "The user who created this resource"
+          },
+          "content_type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ContentTypeEnum"
+              }
+            ],
+            "readOnly": true,
+            "description": "The type of resource this applies to\n\n* `eda.activation` - Activation\n* `eda.auditrule` - Audit Rule\n* `eda.credentialtype` - Credential Type\n* `eda.decisionenvironment` - Decision Environment\n* `eda.edacredential` - Eda Credential\n* `eda.extravar` - Extra Var\n* `eda.project` - Project\n* `eda.rulebook` - Rulebook\n* `eda.rulebookprocess` - Rulebook Process\n* `shared.organization` - Organization\n* `shared.team` - Team"
+          },
+          "object_id": {
+            "type": "string",
+            "nullable": true,
+            "description": "Primary key of the object this assignment applies to, null value indicates system-wide assignment"
+          },
+          "object_ansible_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Resource id of the object this role applies to. Alternative to the object_id field."
+          },
+          "role_definition": {
+            "type": "integer",
+            "description": "The role definition which defines permissions conveyed by this assignment"
+          },
+          "team": {
+            "type": "integer"
+          },
+          "team_ansible_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Resource id of the team who will receive permissions from this assignment. Alternative to team field."
+          }
+        },
+        "required": [
+          "content_type",
+          "created",
+          "created_by",
+          "id",
+          "related",
+          "role_definition",
+          "summary_fields",
+          "url"
+        ]
+      },
+      "RoleTeamAssignmentCreate": {
+        "type": "object",
+        "properties": {
+          "object_id": {
+            "type": "string",
+            "nullable": true,
+            "description": "Primary key of the object this assignment applies to, null value indicates system-wide assignment"
+          },
+          "object_ansible_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Resource id of the object this role applies to. Alternative to the object_id field."
+          },
+          "role_definition": {
+            "type": "integer",
+            "description": "The role definition which defines permissions conveyed by this assignment"
+          },
+          "team": {
+            "type": "integer"
+          },
+          "team_ansible_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Resource id of the team who will receive permissions from this assignment. Alternative to team field."
+          }
+        },
+        "required": ["role_definition"]
+      },
+      "RoleUserAssignment": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "url": {
+            "type": "string",
+            "readOnly": true
+          },
+          "related": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "readOnly": true
+          },
+          "summary_fields": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "additionalProperties": {}
+            },
+            "readOnly": true
+          },
+          "created": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true,
+            "description": "The date/time this resource was created"
+          },
+          "created_by": {
+            "type": "integer",
+            "readOnly": true,
+            "nullable": true,
+            "description": "The user who created this resource"
+          },
+          "content_type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ContentTypeEnum"
+              }
+            ],
+            "readOnly": true,
+            "description": "The type of resource this applies to\n\n* `eda.activation` - Activation\n* `eda.auditrule` - Audit Rule\n* `eda.credentialtype` - Credential Type\n* `eda.decisionenvironment` - Decision Environment\n* `eda.edacredential` - Eda Credential\n* `eda.extravar` - Extra Var\n* `eda.project` - Project\n* `eda.rulebook` - Rulebook\n* `eda.rulebookprocess` - Rulebook Process\n* `shared.organization` - Organization\n* `shared.team` - Team"
+          },
+          "object_id": {
+            "type": "string",
+            "nullable": true,
+            "description": "Primary key of the object this assignment applies to, null value indicates system-wide assignment"
+          },
+          "object_ansible_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Resource id of the object this role applies to. Alternative to the object_id field."
+          },
+          "role_definition": {
+            "type": "integer",
+            "description": "The role definition which defines permissions conveyed by this assignment"
+          },
+          "user": {
+            "type": "integer"
+          },
+          "user_ansible_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Resource id of the user who will receive permissions from this assignment. Alternative to user field."
+          }
+        },
+        "required": [
+          "content_type",
+          "created",
+          "created_by",
+          "id",
+          "related",
+          "role_definition",
+          "summary_fields",
+          "url"
+        ]
+      },
+      "RoleUserAssignmentCreate": {
+        "type": "object",
+        "properties": {
+          "object_id": {
+            "type": "string",
+            "nullable": true,
+            "description": "Primary key of the object this assignment applies to, null value indicates system-wide assignment"
+          },
+          "object_ansible_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Resource id of the object this role applies to. Alternative to the object_id field."
+          },
+          "role_definition": {
+            "type": "integer",
+            "description": "The role definition which defines permissions conveyed by this assignment"
+          },
+          "user": {
+            "type": "integer"
+          },
+          "user_ansible_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Resource id of the user who will receive permissions from this assignment. Alternative to user field."
+          }
+        },
+        "required": ["role_definition"]
       },
       "Rulebook": {
         "type": "object",
@@ -4801,6 +8242,10 @@
             "nullable": true,
             "description": "ID of the project"
           },
+          "organization_id": {
+            "type": "integer",
+            "description": "ID of the organization"
+          },
           "created_at": {
             "type": "string",
             "format": "date-time",
@@ -4812,7 +8257,7 @@
             "readOnly": true
           }
         },
-        "required": ["created_at", "id", "modified_at", "name"]
+        "required": ["created_at", "id", "modified_at", "name", "organization_id"]
       },
       "RulebookRef": {
         "type": "object",
@@ -4828,62 +8273,21 @@
           "description": {
             "type": "string",
             "nullable": true
+          },
+          "organization_id": {
+            "type": "integer",
+            "nullable": true,
+            "readOnly": true
           }
         },
-        "required": ["id", "name"]
+        "required": ["id", "name", "organization_id"]
       },
-      "RulesetOut": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "description": "ID of the ruleset"
-          },
-          "name": {
-            "type": "string",
-            "description": "Name of the ruleset"
-          },
-          "rule_count": {
-            "type": "integer",
-            "description": "Number of rules the ruleset contains"
-          },
-          "source_types": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "List of source types"
-          },
-          "fired_stats": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "additionalProperties": {}
-            },
-            "description": "List of stats"
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time",
-            "description": "The created_at timestamp of the ruleset"
-          },
-          "modified_at": {
-            "type": "string",
-            "format": "date-time",
-            "description": "The modified_at timestamp of the ruleset"
-          }
-        },
-        "required": [
-          "created_at",
-          "fired_stats",
-          "id",
-          "modified_at",
-          "name",
-          "rule_count",
-          "source_types"
-        ]
+      "ScmTypeEnum": {
+        "enum": ["git"],
+        "type": "string",
+        "description": "* `git` - Git"
       },
-      "Status906Enum": {
+      "StatusEnum": {
         "enum": [
           "starting",
           "running",
@@ -4894,74 +8298,165 @@
           "deleting",
           "completed",
           "unresponsive",
-          "error"
+          "error",
+          "workers offline"
         ],
         "type": "string",
-        "description": "* `starting` - starting\n* `running` - running\n* `pending` - pending\n* `failed` - failed\n* `stopping` - stopping\n* `stopped` - stopped\n* `deleting` - deleting\n* `completed` - completed\n* `unresponsive` - unresponsive\n* `error` - error"
+        "description": "* `starting` - starting\n* `running` - running\n* `pending` - pending\n* `failed` - failed\n* `stopping` - stopping\n* `stopped` - stopped\n* `deleting` - deleting\n* `completed` - completed\n* `unresponsive` - unresponsive\n* `error` - error\n* `workers offline` - workers offline"
       },
-      "Task": {
+      "Team": {
         "type": "object",
         "properties": {
           "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "status": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/TaskStatusEnum"
-              }
-            ],
+            "type": "integer",
             "readOnly": true
           },
-          "created_at": {
+          "name": {
             "type": "string",
-            "format": "date-time",
-            "nullable": true
+            "description": "The name of this resource",
+            "maxLength": 512
           },
-          "enqueued_at": {
+          "description": {
             "type": "string",
-            "format": "date-time",
-            "nullable": true
+            "description": "The team description."
           },
-          "started_at": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
+          "organization_id": {
+            "type": "integer",
+            "description": "The organization of this team.",
+            "readOnly": true
           },
-          "finished_at": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "result": {
+          "resource": {
             "type": "object",
-            "additionalProperties": {}
+            "additionalProperties": {},
+            "readOnly": true
+          },
+          "created": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true,
+            "description": "The date/time this resource was created"
+          },
+          "created_by": {
+            "type": "integer",
+            "readOnly": true,
+            "nullable": true,
+            "description": "The user who created this resource"
+          },
+          "modified": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true,
+            "description": "The date/time this resource was created"
+          },
+          "modified_by": {
+            "type": "integer",
+            "readOnly": true,
+            "nullable": true,
+            "description": "The user who last modified this resource"
           }
         },
         "required": [
-          "created_at",
-          "enqueued_at",
-          "finished_at",
+          "created",
+          "created_by",
           "id",
-          "result",
-          "started_at",
-          "status"
+          "modified",
+          "modified_by",
+          "name",
+          "organization_id",
+          "resource"
         ]
       },
-      "TaskStatusEnum": {
-        "enum": [
-          "queued",
-          "finished",
-          "failed",
-          "started",
-          "deferred",
-          "scheduled",
-          "stopped",
-          "canceled"
-        ],
-        "type": "string",
-        "description": "* `queued` - queued\n* `finished` - finished\n* `failed` - failed\n* `started` - started\n* `deferred` - deferred\n* `scheduled` - scheduled\n* `stopped` - stopped\n* `canceled` - canceled"
+      "TeamCreate": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of this resource",
+            "maxLength": 512
+          },
+          "description": {
+            "type": "string",
+            "description": "The team description."
+          },
+          "organization_id": {
+            "type": "integer"
+          }
+        },
+        "required": ["name", "organization_id"]
+      },
+      "TeamDetail": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of this resource",
+            "maxLength": 512
+          },
+          "description": {
+            "type": "string",
+            "description": "The team description."
+          },
+          "organization": {
+            "$ref": "#/components/schemas/OrganizationRef"
+          },
+          "resource": {
+            "type": "object",
+            "additionalProperties": {},
+            "readOnly": true
+          },
+          "created": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true,
+            "description": "The date/time this resource was created"
+          },
+          "created_by": {
+            "type": "integer",
+            "readOnly": true,
+            "nullable": true,
+            "description": "The user who created this resource"
+          },
+          "modified": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true,
+            "description": "The date/time this resource was created"
+          },
+          "modified_by": {
+            "type": "integer",
+            "readOnly": true,
+            "nullable": true,
+            "description": "The user who last modified this resource"
+          }
+        },
+        "required": [
+          "created",
+          "created_by",
+          "id",
+          "modified",
+          "modified_by",
+          "name",
+          "organization",
+          "resource"
+        ]
+      },
+      "TokenRefresh": {
+        "type": "object",
+        "properties": {
+          "access": {
+            "type": "string",
+            "readOnly": true
+          },
+          "refresh": {
+            "type": "string",
+            "writeOnly": true
+          }
+        },
+        "required": ["access", "refresh"]
       },
       "UserCreateUpdate": {
         "type": "object",
@@ -4988,15 +8483,13 @@
             "type": "string",
             "writeOnly": true
           },
-          "roles": {
-            "type": "array",
-            "items": {
-              "type": "string",
-              "format": "uuid"
-            }
+          "is_superuser": {
+            "type": "boolean",
+            "title": "Superuser status",
+            "description": "Designates that this user has all permissions without explicitly assigning them."
           }
         },
-        "required": ["password", "roles", "username"]
+        "required": ["password", "username"]
       },
       "UserDetail": {
         "type": "object",
@@ -5028,11 +8521,9 @@
             "title": "Superuser status",
             "description": "Designates that this user has all permissions without explicitly assigning them."
           },
-          "roles": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/RoleRef"
-            },
+          "resource": {
+            "type": "object",
+            "additionalProperties": {},
             "readOnly": true
           },
           "created_at": {
@@ -5045,7 +8536,7 @@
             "readOnly": true
           }
         },
-        "required": ["created_at", "id", "modified_at", "roles", "username"]
+        "required": ["created_at", "id", "modified_at", "resource", "username"]
       },
       "UserList": {
         "type": "object",
@@ -5070,18 +8561,21 @@
             "type": "boolean",
             "description": "The user is a superuser."
           },
-          "roles": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/RoleRef"
-            },
+          "resource": {
+            "type": "object",
+            "additionalProperties": {},
             "readOnly": true
           }
         },
-        "required": ["first_name", "id", "is_superuser", "last_name", "roles", "username"]
+        "required": ["first_name", "id", "is_superuser", "last_name", "resource", "username"]
       }
     },
     "securitySchemes": {
+      "EDAJWTAuthentication": {
+        "type": "apiKey",
+        "name": "X-DAB-JW-TOKEN",
+        "in": "header"
+      },
       "basicAuth": {
         "type": "http",
         "scheme": "basic"
@@ -5090,6 +8584,11 @@
         "type": "apiKey",
         "in": "cookie",
         "name": "sessionid"
+      },
+      "jwtAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
       }
     }
   },

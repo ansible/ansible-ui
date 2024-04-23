@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { ColumnTableOption, ITableColumn, TextCell, useGetPageUrl } from '../../../../framework';
 import { StatusCell } from '../../../common/Status';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
-import { Status906Enum } from '../../interfaces/generated/eda-api';
+import { StatusEnum } from '../../interfaces/generated/eda-api';
 import { EdaRoute } from '../../main/EdaRoutes';
 
 export function useRulebookActivationColumns() {
@@ -23,7 +23,7 @@ export function useRulebookActivationColumns() {
       {
         header: t('Name'),
         cell: (rulebookActivation) =>
-          rulebookActivation?.status !== Status906Enum.Deleting ? (
+          rulebookActivation?.status !== StatusEnum.Deleting ? (
             <TextCell
               text={rulebookActivation.name}
               to={getPageUrl(EdaRoute.RulebookActivationPage, {
@@ -49,7 +49,7 @@ export function useRulebookActivationColumns() {
       {
         header: t('Status'),
         cell: (activation) =>
-          activation?.status === Status906Enum.Deleting ? (
+          activation?.status === StatusEnum.Deleting ? (
             <Label color="red" icon={<InfoCircleIcon />}>
               {t('Pending delete')}
             </Label>

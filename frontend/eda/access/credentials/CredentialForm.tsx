@@ -18,7 +18,7 @@ import { edaAPI } from '../../common/eda-utils';
 import { EdaCredential, EdaCredentialCreate } from '../../interfaces/EdaCredential';
 import { EdaRoute } from '../../main/EdaRoutes';
 import { EdaResult } from '../../interfaces/EdaResult';
-import { EdaCredentialType } from '../../interfaces/EdaCredentialType';
+import { EdaCredentialType, EdaCredentialTypeField } from '../../interfaces/EdaCredentialType';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { CredentialFormInputs } from './CredentialFormTypes';
 import { useCallback, useEffect } from 'react';
@@ -46,7 +46,7 @@ function CredentialInputs(props: { editMode: boolean }) {
       : undefined;
 
   const setDefaultValuesForType = useCallback(() => {
-    const fields = credentialType?.inputs?.fields;
+    const fields = credentialType?.inputs?.fields as EdaCredentialTypeField[];
     if (!credentialType) return;
 
     fields?.map((field) => {

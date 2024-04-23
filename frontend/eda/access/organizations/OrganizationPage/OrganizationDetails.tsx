@@ -21,9 +21,9 @@ export function OrganizationDetails() {
       <PageDetail label={t('Name')}>{organization.name}</PageDetail>
       <PageDetail label={t('Description')}>{organization.description}</PageDetail>
       <PageDetail label={t('Created')}>
-        <DateTimeCell value={organization.created_at} />
+        <DateTimeCell value={organization.created} />
       </PageDetail>
-      <LastModifiedPageDetail value={organization.modified_at} />
+      <LastModifiedPageDetail value={organization.modified} />
     </PageDetails>
   );
 }

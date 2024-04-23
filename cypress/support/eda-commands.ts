@@ -8,7 +8,7 @@ import { EdaCredential, EdaCredentialCreate } from '../../frontend/eda/interface
 import { EdaDecisionEnvironment } from '../../frontend/eda/interfaces/EdaDecisionEnvironment';
 import { EdaProject } from '../../frontend/eda/interfaces/EdaProject';
 import { EdaResult } from '../../frontend/eda/interfaces/EdaResult';
-import { EdaRole } from '../../frontend/eda/interfaces/EdaRole';
+import { EdaRole, RoleDetail } from '../../frontend/eda/interfaces/EdaRole';
 import { EdaRulebook } from '../../frontend/eda/interfaces/EdaRulebook';
 import {
   EdaRulebookActivation,
@@ -18,8 +18,7 @@ import { EdaUser, EdaUserCreateUpdate } from '../../frontend/eda/interfaces/EdaU
 import {
   ImportStateEnum,
   RestartPolicyEnum,
-  RoleDetail,
-  Status906Enum,
+  StatusEnum,
 } from '../../frontend/eda/interfaces/generated/eda-api';
 import { edaAPI } from './formatApiPathForEDA';
 
@@ -127,8 +126,8 @@ Cypress.Commands.add(
       edaAPI`/activations/${edaRulebookActivation.id.toString()}`
     ).then((rba) => {
       switch (rba.status) {
-        case Status906Enum.Failed:
-        case Status906Enum.Completed:
+        case StatusEnum.Failed:
+        case StatusEnum.Completed:
           cy.wrap(rba);
           break;
         default:
@@ -246,9 +245,7 @@ Cypress.Commands.add('createEdaCredential', () => {
   cy.requestPost<EdaCredentialCreate>(edaAPI`/credentials/`, {
     name: 'E2E Credential ' + randomString(4),
     credential_type_id: 1,
-    secret: 'test token',
     description: 'This is a container registry credential',
-    username: 'admin',
   }).then((edaCredential) => {
     Cypress.log({
       displayName: 'EDA CREDENTIAL CREATION :',
@@ -355,8 +352,8 @@ Cypress.Commands.add('getEdaActiveUser', () => {
   cy.requestGet<EdaResult<EdaUser>>(edaAPI`/users/me/`).then((response) => {
     if (Array.isArray(response?.results) && response?.results.length > 1) {
       Cypress.log({
-        displayName: 'EDA USER ROLE:',
-        message: [response?.results[0].roles[0].name],
+        displayName: 'Username:',
+        message: [response?.results[0].username],
       });
       return response?.results[0];
     } else {

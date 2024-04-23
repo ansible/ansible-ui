@@ -20,7 +20,7 @@ import { postRequest } from '../../../common/crud/Data';
 import { useGet } from '../../../common/crud/useGet';
 import { edaAPI } from '../../common/eda-utils';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
-import { Status906Enum } from '../../interfaces/generated/eda-api';
+import { StatusEnum } from '../../interfaces/generated/eda-api';
 import { EdaRoute } from '../../main/EdaRoutes';
 import {
   useDisableRulebookActivations,
@@ -99,7 +99,7 @@ export function RulebookActivationPage() {
             },
             isSwitchOn: (activation: EdaRulebookActivation) => activation.is_enabled ?? false,
             isDisabled: (activation: EdaRulebookActivation) =>
-              activation.status === Status906Enum.Stopping
+              activation?.status === StatusEnum.Stopping
                 ? t('Cannot change activation status while stopping')
                 : undefined,
           },
