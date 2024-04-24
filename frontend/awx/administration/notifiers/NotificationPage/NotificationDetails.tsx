@@ -92,17 +92,35 @@ function RenderMessages(props: { notificationTemplate: NotificationTemplate }) {
           <PageDetail label={t('Start message')}>{messages?.started?.message}</PageDetail>
         )}
 
+        {messages?.started?.body && (
+          <PageDetail label={t('Start message body')}>{messages?.started?.body}</PageDetail>
+        )}
+
         {messages?.success?.message && (
           <PageDetail label={t('Success message')}>{messages?.success?.message}</PageDetail>
+        )}
+
+        {messages?.success?.body && (
+          <PageDetail label={t('Success message body')}>{messages?.success?.body}</PageDetail>
         )}
 
         {messages?.error?.message && (
           <PageDetail label={t('Error message')}>{messages?.error?.message}</PageDetail>
         )}
 
+        {messages?.error?.body && (
+          <PageDetail label={t('Error message body')}>{messages?.error?.body}</PageDetail>
+        )}
+
         {messages?.workflow_approval?.approved?.message && (
           <PageDetail label={t('Workflow approved message')}>
             {messages?.workflow_approval?.approved?.message}
+          </PageDetail>
+        )}
+
+        {messages?.workflow_approval?.approved?.body && (
+          <PageDetail label={t('Workflow approved message body')}>
+            {messages?.workflow_approval?.approved?.body}
           </PageDetail>
         )}
 
@@ -112,15 +130,33 @@ function RenderMessages(props: { notificationTemplate: NotificationTemplate }) {
           </PageDetail>
         )}
 
+        {messages?.workflow_approval?.denied?.body && (
+          <PageDetail label={t('Workflow denied message body')}>
+            {messages?.workflow_approval?.denied?.body}
+          </PageDetail>
+        )}
+
         {messages?.workflow_approval?.running?.message && (
           <PageDetail label={t('Workflow pending message')}>
             {messages?.workflow_approval?.running?.message}
           </PageDetail>
         )}
 
+        {messages?.workflow_approval?.running?.body && (
+          <PageDetail label={t('Workflow pending message body')}>
+            {messages?.workflow_approval?.running?.body}
+          </PageDetail>
+        )}
+
         {messages?.workflow_approval?.timed_out?.message && (
           <PageDetail label={t('Workflow timed out message')}>
             {messages?.workflow_approval?.timed_out?.message}
+          </PageDetail>
+        )}
+
+        {messages?.workflow_approval?.timed_out?.body && (
+          <PageDetail label={t('Workflow timed out message body')}>
+            {messages?.workflow_approval?.timed_out?.body}
           </PageDetail>
         )}
       </PageDetails>
