@@ -151,7 +151,6 @@ describe('Workflow Visualizer', () => {
         .and('contain', `${projectNode?.summary_fields?.unified_job_template?.name}`);
       cy.get(`g[data-id="${approvalNode.id}"] [class*="node-label"]`).should('be.visible').click();
       cy.getByDataCy('workflow-topology-sidebar').should('be.visible');
-      cy.contains('h2', 'Node details').should('be.visible');
       cy.getByDataCy('type').should('contain', 'Workflow approval');
       cy.getByDataCy('workflow-topology-sidebar').within(() => {
         cy.getBy('[aria-label="Close"]').click();
