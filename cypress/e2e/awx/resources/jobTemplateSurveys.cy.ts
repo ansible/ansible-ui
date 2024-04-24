@@ -340,10 +340,12 @@ describe('Job Templates Surveys', function () {
 
         if (['multiplechoice', 'multiselect'].includes(survey.type)) {
           if (survey.type === 'multiplechoice') {
-            cy.get('@selectorType').contains(survey.default);
-            cy.get('@selectorType').get('div[data-ouia-component-id="menu-select"]').click();
-            survey?.choices?.forEach((choice) => {
-              cy.get('@selectorType').getByDataCy('survey-multiplechoice-answer').contains(choice);
+            cy.get('@selectorType').within(() => {
+              cy.contains(survey.default);
+              cy.get('div[data-ouia-component-id="menu-select"]').click();
+              survey?.choices?.forEach((choice) => {
+                cy.getByDataCy('survey-multiplechoice-answer').contains(choice);
+              });
             });
           } else {
             const defaults = survey.default.split('\n');
