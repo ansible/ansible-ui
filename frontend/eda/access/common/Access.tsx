@@ -17,21 +17,25 @@ import { useEdaBulkConfirmation } from '../../common/useEdaBulkConfirmation';
 import { idKeyFn } from '../../../common/utils/nameKeyFn';
 import { requestDelete } from '../../../common/crud/Data';
 import { Assignment } from '../interfaces/Assignment';
+import { useMapContentTypeToDisplayName } from '../../../common/access/hooks/useMapContentTypeToDisplayName';
 
 type AccessProps<T extends Assignment> = {
   tableColumnFunctions: { name: { sort?: string; function: (item: T) => string; label: string } };
   additionalTableColumns?: ITableColumn<T>[];
-  toolbarFiltersValues: { label: string; query: string };
+  toolbarNameColumnFiltersValues?: { label: string; query: string };
+  additionalTableFilters?: IToolbarFilter[];
   url: string;
   id: string;
   content_type_model?: string;
   addRolesRoute?: string;
-  type: 'user' | 'team' | 'user-roles' | 'team-roles';
+  accessListType: 'user' | 'team' | 'user-roles' | 'team-roles';
 };
 
 export function Access<T extends Assignment>(props: AccessProps<T>) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
+  const getDisplayName = useMapContentTypeToDisplayName();
+
   const tableColumns = useMemo<ITableColumn<T>[]>(
     () => [
       {
@@ -91,26 +95,32 @@ export function Access<T extends Assignment>(props: AccessProps<T>) {
   }
   const toolbarFilters = useMemo<IToolbarFilter[]>(
     () => [
-      {
-        key: 'name',
-        label: props.toolbarFiltersValues.label,
-        type: ToolbarFilterType.SingleText,
-        query: props.toolbarFiltersValues.query,
-        comparison: 'equals',
-      },
+      // The name filter is not supported on object resource names in the role assignment endpoints
+      ...(['user', 'team'].includes(props.accessListType) && props.toolbarNameColumnFiltersValues
+        ? ([
+            {
+              key: 'name',
+              label: props.toolbarNameColumnFiltersValues.label,
+              type: ToolbarFilterType.SingleText,
+              query: props.toolbarNameColumnFiltersValues.query,
+              comparison: 'contains',
+            },
+          ] as IToolbarFilter[])
+        : []),
       {
         key: 'role_definition__name',
         label: t('Role name'),
         type: ToolbarFilterType.SingleText,
-        query: 'role_definition__name',
-        comparison: 'equals',
+        query: 'role_definition__name__contains',
+        comparison: 'contains',
       },
+      ...(props.additionalTableFilters ? props.additionalTableFilters : []),
     ],
-    [t, props.toolbarFiltersValues.label, props.toolbarFiltersValues.query]
+    [props.accessListType, props.toolbarNameColumnFiltersValues, props.additionalTableFilters, t]
   );
   const queryParams = useMemo<QueryParams>(() => {
     let params = {};
-    switch (props.type) {
+    switch (props.accessListType) {
       case 'user':
       case 'team':
         params = { object_id: props.id, content_type__model: props.content_type_model };
@@ -125,7 +135,7 @@ export function Access<T extends Assignment>(props: AccessProps<T>) {
         params = {};
     }
     return params;
-  }, [props.content_type_model, props.id, props.type]);
+  }, [props.content_type_model, props.id, props.accessListType]);
   const view = useEdaView<T>({
     url: props.url,
     tableColumns,
@@ -170,19 +180,47 @@ export function Access<T extends Assignment>(props: AccessProps<T>) {
     ],
     [t, getPageUrl, props.addRolesRoute, props.id, removeRoles]
   );
+  const emptyStateTitle = useMemo(() => {
+    let title: string;
+    switch (props.accessListType) {
+      case 'user':
+        title = props.content_type_model
+          ? t('There are currently no users assigned to this {{resourceType}}.', {
+              resourceType: getDisplayName(props.content_type_model),
+            })
+          : t('There are currently no users assigned to this resource.');
+        break;
+      case 'team':
+        title = props.content_type_model
+          ? t('There are currently no teams assigned to this {{resourceType}}.', {
+              resourceType: getDisplayName(props.content_type_model),
+            })
+          : t('There are currently no teams assigned to this resource.');
+        break;
+      case 'user-roles':
+        title = t('There are currently no roles assigned to this user.');
+        break;
+      case 'team-roles':
+        title = t('There are currently no roles assigned to this team.');
+        break;
+      default:
+        title = t('There are currently no roles assigned to this resource.');
+    }
+    return title;
+  }, [getDisplayName, props.accessListType, props.content_type_model, t]);
   return (
     <PageTable
       id={
         props.content_type_model
           ? `eda-${props.content_type_model}-access-table`
-          : `eda-${props.type}-table`
+          : `eda-${props.accessListType}-table`
       }
       tableColumns={tableColumns}
       toolbarActions={toolbarActions}
       toolbarFilters={toolbarFilters}
       rowActions={rowActions}
       errorStateTitle={t('Error loading access data.')}
-      emptyStateTitle={t('There are currently no roles assigned to this resource.')}
+      emptyStateTitle={emptyStateTitle}
       emptyStateDescription={t('Add a role by clicking the button below.')}
       emptyStateButtonIcon={<PlusCircleIcon />}
       emptyStateButtonText={t('Add roles')}
