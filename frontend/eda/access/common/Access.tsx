@@ -12,21 +12,24 @@ import {
 import { useCallback, useMemo } from 'react';
 import { ButtonVariant } from '@patternfly/react-core';
 import { MinusCircleIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
-import { useEdaView } from '../../common/useEventDrivenView';
+import { QueryParams, useEdaView } from '../../common/useEventDrivenView';
 import { useEdaBulkConfirmation } from '../../common/useEdaBulkConfirmation';
 import { idKeyFn } from '../../../common/utils/nameKeyFn';
 import { requestDelete } from '../../../common/crud/Data';
 import { Assignment } from '../interfaces/Assignment';
 
-export function Access<T extends Assignment>(props: {
-  tableColumnFunctions: { name: { sort: string; function: (item: T) => string; label: string } };
+type AccessProps<T extends Assignment> = {
+  tableColumnFunctions: { name: { sort?: string; function: (item: T) => string; label: string } };
+  additionalTableColumns?: ITableColumn<T>[];
   toolbarFiltersValues: { label: string; query: string };
   url: string;
   id: string;
-  content_type_model: string;
+  content_type_model?: string;
   addRolesRoute?: string;
-  type: 'user' | 'team';
-}) {
+  type: 'user' | 'team' | 'user-roles' | 'team-roles';
+};
+
+export function Access<T extends Assignment>(props: AccessProps<T>) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const tableColumns = useMemo<ITableColumn<T>[]>(
@@ -50,12 +53,14 @@ export function Access<T extends Assignment>(props: {
         type: 'description',
         value: (item: T) => item.summary_fields.role_definition.description,
       },
+      ...(props.additionalTableColumns ? props.additionalTableColumns : []),
     ],
     [
-      t,
       props.tableColumnFunctions.name.label,
       props.tableColumnFunctions.name.sort,
       props.tableColumnFunctions.name.function,
+      props.additionalTableColumns,
+      t,
     ]
   );
   function useRemoveRoles(onComplete: (roles: T[]) => void) {
@@ -66,17 +71,11 @@ export function Access<T extends Assignment>(props: {
     return useCallback(
       (items: T[]) => {
         bulkAction({
-          title: props.type === 'team' ? t('Remove team assignment') : t('Remove user assignment'),
-          confirmText:
-            props.type === 'team'
-              ? t('Yes, I confirm that I want to remove these {{count}} team assignments.', {
-                  count: items.length,
-                })
-              : t('Yes, I confirm that I want to remove these {{count}} user assignments.', {
-                  count: items.length,
-                }),
-          actionButtonText:
-            props.type === 'team' ? t('Remove team assignment') : t('Remove user assignment'),
+          title: t('Remove role'),
+          confirmText: t('Yes, I confirm that I want to remove these {{count}} roles.', {
+            count: items.length,
+          }),
+          actionButtonText: t('Remove role'),
           items: items,
           keyFn: idKeyFn,
           isDanger: true,
@@ -109,11 +108,29 @@ export function Access<T extends Assignment>(props: {
     ],
     [t, props.toolbarFiltersValues.label, props.toolbarFiltersValues.query]
   );
+  const queryParams = useMemo<QueryParams>(() => {
+    let params = {};
+    switch (props.type) {
+      case 'user':
+      case 'team':
+        params = { object_id: props.id, content_type__model: props.content_type_model };
+        break;
+      case 'user-roles':
+        params = { user_id: props.id };
+        break;
+      case 'team-roles':
+        params = { team_id: props.id };
+        break;
+      default:
+        params = {};
+    }
+    return params;
+  }, [props.content_type_model, props.id, props.type]);
   const view = useEdaView<T>({
     url: props.url,
     tableColumns,
     toolbarFilters,
-    queryParams: { object_id: props.id, content_type__model: props.content_type_model },
+    queryParams: queryParams,
   });
   const removeRoles = useRemoveRoles(view.unselectItemsAndRefresh);
 
@@ -125,11 +142,11 @@ export function Access<T extends Assignment>(props: {
         variant: ButtonVariant.primary,
         icon: MinusCircleIcon,
         isPinned: true,
-        label: props.type === 'team' ? t('Remove team') : t('Remove user'),
+        label: t('Remove role'),
         onClick: (item: T) => removeRoles([item]),
       },
     ],
-    [t, removeRoles, props.type]
+    [t, removeRoles]
   );
   const toolbarActions = useMemo<IPageAction<T>[]>(
     () => [
@@ -139,40 +156,36 @@ export function Access<T extends Assignment>(props: {
         variant: ButtonVariant.primary,
         isPinned: true,
         icon: PlusCircleIcon,
-        label: props.type === 'team' ? t('Add team') : t('Add user'),
+        label: t('Add roles'),
         href: getPageUrl(props.addRolesRoute ?? '', { params: { id: props.id } }),
       },
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
-        label: props.type === 'team' ? t('Delete selected team') : t('Delete selected user'),
+        label: t('Remove selected roles'),
         onClick: (items: T[]) => removeRoles(items),
         isDanger: true,
       },
     ],
-    [t, getPageUrl, props.addRolesRoute, props.id, removeRoles, props.type]
+    [t, getPageUrl, props.addRolesRoute, props.id, removeRoles]
   );
   return (
     <PageTable
-      id={`eda-${props.content_type_model}-access-table`}
+      id={
+        props.content_type_model
+          ? `eda-${props.content_type_model}-access-table`
+          : `eda-${props.type}-table`
+      }
       tableColumns={tableColumns}
       toolbarActions={toolbarActions}
       toolbarFilters={toolbarFilters}
       rowActions={rowActions}
       errorStateTitle={t('Error loading access data.')}
-      emptyStateTitle={
-        props.type === 'team'
-          ? t('There are currently no teams assigned to this object.')
-          : t('There are currently no users assigned to this object.')
-      }
-      emptyStateDescription={
-        props.type === 'team'
-          ? t('Please add a team by using the button below.')
-          : t('Please add an user by using the button below.')
-      }
+      emptyStateTitle={t('There are currently no roles assigned to this resource.')}
+      emptyStateDescription={t('Add a role by clicking the button below.')}
       emptyStateButtonIcon={<PlusCircleIcon />}
-      emptyStateButtonText={props.type === 'team' ? t('Add team') : t('Add user')}
+      emptyStateButtonText={t('Add roles')}
       emptyStateActions={toolbarActions.slice(0, 1)}
       {...view}
     />

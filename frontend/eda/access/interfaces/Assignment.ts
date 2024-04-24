@@ -11,4 +11,6 @@ export type Assignment = {
       managed: boolean;
     };
   };
+  object_id: string;
+  content_type: string;
 };
