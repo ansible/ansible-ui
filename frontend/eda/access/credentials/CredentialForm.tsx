@@ -25,6 +25,7 @@ import { useCallback, useEffect } from 'react';
 import { PageFormSelectOrganization } from '../organizations/components/PageFormOrganizationSelect';
 import { EdaOrganization } from '../../interfaces/EdaOrganization';
 import { requestGet, swrOptions } from '../../../common/crud/Data';
+import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
 
 // eslint-disable-next-line react/prop-types
 function CredentialInputs(props: { editMode: boolean }) {
@@ -100,7 +101,11 @@ function CredentialInputs(props: { editMode: boolean }) {
         }
         labelHelpTitle={t('Credential type')}
       />
-      {credentialType !== undefined && <CredentialFormInputs credentialType={credentialType} />}
+      {credentialType !== undefined && (
+        <PageFormSection title={t('Type Details')}>
+          <CredentialFormInputs credentialType={credentialType} />
+        </PageFormSection>
+      )}
     </>
   );
 }
