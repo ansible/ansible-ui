@@ -30,7 +30,11 @@ const useToolbarFilters = () => {
   return toolbarFilters;
 };
 
-export function useMultiSelectCredential(isLookup: boolean, credentialType?: number) {
+export function useMultiSelectCredential(
+  isLookup: boolean,
+  credentialType?: number,
+  acceptableCredentialKinds?: string[]
+) {
   const { t } = useTranslation();
   const tableColumns = useCredentialsColumns({ disableLinks: true });
   const toolbarFilters = useToolbarFilters();
@@ -51,7 +55,17 @@ export function useMultiSelectCredential(isLookup: boolean, credentialType?: num
         credential_type: credentialType.toString(),
       },
     }),
+    ...(acceptableCredentialKinds &&
+      acceptableCredentialKinds?.length > 0 && {
+        queryParams: {
+          credential_type__kind__in:
+            acceptableCredentialKinds.length === 1
+              ? acceptableCredentialKinds[0]
+              : acceptableCredentialKinds.join(','),
+        },
+      }),
   });
+
   return useSelectDialog<Credential, true>({
     toolbarFilters,
     tableColumns: columns,
@@ -74,7 +88,7 @@ export function useSingleSelectCredential(
     (onSelect: (credential: Credential) => void) => {
       setDialog(
         <SelectCredential
-          title={t(title ? title : 'Select credential')}
+          title={title ? title : t('Select credential')}
           onSelect={onSelect}
           credentialType={credentialType}
           sourceType={sourceType}

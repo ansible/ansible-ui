@@ -14,22 +14,27 @@ export function PageFormCredentialSelect<
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >(props: {
   name: TFieldName;
-  credentialPath?: string;
-  credentialIdPath?: string;
+  acceptableCredentialKinds?: string[];
   additionalControls?: ReactElement;
+  credentialIdPath?: string;
+  credentialPath?: string;
+  credentialType?: number;
+  isDisabled?: boolean;
+  isMultiple?: boolean;
   isRequired?: boolean;
   label?: string;
-  labelHelpTitle?: string;
   labelHelp?: string | string[] | ReactNode;
+  labelHelpTitle?: string;
   placeholder?: string;
   selectTitle?: string;
-  isMultiple?: boolean;
-  credentialType?: number;
   sourceType?: string;
-  isDisabled?: boolean;
 }) {
   const { t } = useTranslation();
-  const multiSelectCredential = useMultiSelectCredential(true, props.credentialType);
+  const multiSelectCredential = useMultiSelectCredential(
+    true,
+    props.credentialType,
+    props?.acceptableCredentialKinds
+  );
   const singleSelectCredential = useSingleSelectCredential(
     props.credentialType,
     props.selectTitle,
