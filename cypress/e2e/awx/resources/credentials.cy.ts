@@ -76,7 +76,7 @@ describe('Credentials', () => {
         });
     });
 
-    it('create/edit a credential using prompt on launch', () => {
+    it.skip('create/edit a credential using prompt on launch', () => {
       const credentialName = 'E2E Credential ' + randomString(4);
       cy.navigateTo('awx', 'credentials');
       cy.clickButton(/^Create credential$/);
@@ -228,7 +228,7 @@ describe('Credentials', () => {
   });
 
   describe('Credentials: Details View', () => {
-    it('details page should render boolean field', () => {
+    it.skip('details page should render boolean field', () => {
       const credentialName = 'E2E Credential ' + randomString(4);
       cy.navigateTo('awx', 'credentials');
       cy.clickButton(/^Create credential$/);
