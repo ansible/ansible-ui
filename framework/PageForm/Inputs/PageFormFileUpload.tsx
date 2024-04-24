@@ -83,12 +83,12 @@ export function PageFormFileUpload<
               filenamePlaceholder={props.placeholder}
               onFileInputChange={handleFileInputChange}
               onDataChange={(_event, value: string) => handleTextOrDataChange(value)}
-              // onTextChange={handleTextOrDataChange}
+              onTextChange={(_event, value: string) => handleTextOrDataChange(value)}
               onReadStarted={(_event, _fileHandle: File) => handleFileReadStarted(_fileHandle)}
               onReadFinished={(_event, _fileHandle: File) => handleFileReadFinished(_fileHandle)}
               onClearClick={handleClear}
               // isLoading={isLoading}
-              allowEditingUploadedText={false}
+              allowEditingUploadedText={props.allowEditingUploadedText || false}
               // browseButtonText={t('Upload')}
               isReadOnly={props.isReadOnly || isSubmitting}
               validated={error ? 'error' : undefined}
