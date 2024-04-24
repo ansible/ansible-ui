@@ -145,7 +145,7 @@ export function useRemoveInstanceItemAction(instance: Instance | undefined) {
 export function cannotRemoveInstances(
   instances: Instance[],
   t: TFunction<'translation', undefined>,
-  activeAwxUser: AwxUser | undefined,
+  activeAwxUser: AwxUser | undefined | null,
   isK8s: boolean
 ) {
   const addEditPrivileges = activeAwxUser?.is_superuser || activeAwxUser?.is_system_auditor;

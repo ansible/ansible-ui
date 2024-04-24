@@ -8,6 +8,6 @@ export function useIGInstanceToolbarActions(view: IAwxView<Instance>) {
   const healthCheckAction = useRunHealthCheckToolbarAction(view, true);
 
   return useMemo<IPageAction<Instance>[]>(() => {
-    return healthCheckAction;
+    return [healthCheckAction];
   }, [healthCheckAction]);
 }
