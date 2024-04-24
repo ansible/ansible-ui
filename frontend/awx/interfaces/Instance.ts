@@ -20,6 +20,7 @@ export interface Instance {
   summary_fields: {
     user_capabilities: {
       edit: boolean;
+      delete: boolean;
     };
   };
   uuid: string;
