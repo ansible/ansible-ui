@@ -1,11 +1,7 @@
-import {
-  PageFormCheckbox,
-  PageFormSelect,
-  PageFormTextArea,
-  PageFormTextInput,
-} from '../../../../framework';
+import { PageFormCheckbox, PageFormSelect, PageFormTextInput } from '../../../../framework';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
 import { EdaCredentialType, EdaCredentialTypeField } from '../../interfaces/EdaCredentialType';
+import { PageFormFileUpload } from '../../../../framework/PageForm/Inputs/PageFormFileUpload';
 
 export interface OptionsResponse {
   actions: {
@@ -54,28 +50,17 @@ export function CredentialFormInput(props: { field: FieldType | undefined; requi
   if (props.field.type === 'string') {
     if (props.field.multiline) {
       return (
-        <PageFormTextArea
+        <PageFormFileUpload
+          type="text"
           label={props.field.label}
           name={`inputs.${props.field.id}`}
-          type={props.field.secret ? 'password' : undefined}
           labelHelpTitle={props.field.label}
           labelHelp={props.field.help_text}
           isRequired={!!props?.required && props.required.includes(props.field.id)}
+          isReadOnly={false}
+          allowEditingUploadedText={true}
         />
       );
-      /*<PageFormSection singleColumn>
-        <PageFormDataEditor
-          format="object"
-          label={props.field.label}
-          name={`inputs.${props.field.id}`}
-          labelHelpTitle={props.field.label}
-          labelHelp={props.field.help_text}
-          disableUpload={false}
-          disableDownload={true}
-          disableCopy={true}
-          isRequired={props.required.includes(props.field.id)}
-        />
-      </PageFormSection>*/
     } else {
       if (props.field.choices && props.field.choices.length > 0) {
         return (
