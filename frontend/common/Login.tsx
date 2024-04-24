@@ -6,6 +6,7 @@ import {
   Flex,
   FlexItem,
   Page,
+  PageSection,
   Stack,
   Text,
   TextContent,
@@ -28,53 +29,49 @@ export function Login(props: {
   brand?: string;
   product?: string;
   productDescription?: string;
-  background?: ReactNode;
 }) {
   const { t } = useTranslation();
   const [translations] = useFrameworkTranslations();
   return (
     <ErrorBoundary message={translations.errorText}>
       <Page style={{ overflow: 'auto' }}>
-        <LoginPageLayout>
-          <LoginPageBody>
-            <Card isLarge isRounded>
-              <CardHeader>
-                <TextContent>
-                  <CardTitle component="h1">{t('Log in to your account')}</CardTitle>
-                  {props.loginDescription && <Text component="p">{props.loginDescription}</Text>}
-                </TextContent>
-              </CardHeader>
-              <CardBody>
-                <LoginForm
-                  apiUrl={props.apiUrl}
-                  authOptions={props.authOptions}
-                  onSuccess={props.onSuccess}
-                  hideInputs={props.hideInputs}
-                />
-              </CardBody>
-            </Card>
-            <Flex direction={{ default: 'column' }} spaceItems={{ default: 'spaceItemsXl' }}>
-              <FlexItem>
-                <Flex
-                  spaceItems={{ default: 'spaceItemsMd' }}
-                  alignItems={{ default: 'alignItemsCenter' }}
-                >
-                  {props.icon}
-                  <Stack>
-                    {props.brand && <Brand>{props.brand}</Brand>}
-                    <Product>{props.product}</Product>
-                  </Stack>
-                </Flex>
-              </FlexItem>
-              {props.productDescription && <FlexItem>{props.productDescription}</FlexItem>}
-            </Flex>
-          </LoginPageBody>
-          {props.background && (
-            <LoginPageFooter>
-              <LoginPageDecoration>{props.background}</LoginPageDecoration>
-            </LoginPageFooter>
-          )}
-        </LoginPageLayout>
+        <PageSection isFilled hasOverflowScroll isCenterAligned isWidthLimited>
+          <LoginPageLayout>
+            <LoginPageBody>
+              <Card isLarge isRounded>
+                <CardHeader>
+                  <TextContent>
+                    <CardTitle component="h1">{t('Log in to your account')}</CardTitle>
+                    {props.loginDescription && <Text component="p">{props.loginDescription}</Text>}
+                  </TextContent>
+                </CardHeader>
+                <CardBody>
+                  <LoginForm
+                    apiUrl={props.apiUrl}
+                    authOptions={props.authOptions}
+                    onSuccess={props.onSuccess}
+                    hideInputs={props.hideInputs}
+                  />
+                </CardBody>
+              </Card>
+              <Flex direction={{ default: 'column' }} spaceItems={{ default: 'spaceItemsXl' }}>
+                <FlexItem>
+                  <Flex
+                    spaceItems={{ default: 'spaceItemsMd' }}
+                    alignItems={{ default: 'alignItemsCenter' }}
+                  >
+                    {props.icon}
+                    <Stack>
+                      {props.brand && <Brand>{props.brand}</Brand>}
+                      <Product>{props.product}</Product>
+                    </Stack>
+                  </Flex>
+                </FlexItem>
+                {props.productDescription && <FlexItem>{props.productDescription}</FlexItem>}
+              </Flex>
+            </LoginPageBody>
+          </LoginPageLayout>
+        </PageSection>
       </Page>
     </ErrorBoundary>
   );
@@ -95,27 +92,17 @@ const Product = styled.h1`
 
 const LoginPageLayout = styled.div`
   display: flex;
-  flex-direction: column;
   height: 100%;
   justify-content: center;
-  align-items: stretch;
+  align-items: center;
+  gap: 48px;
 `;
 
 const LoginPageBody = styled.div`
   display: flex;
   flex-grow: 1;
-  flex-wrap: wrap;
+  flex-wrap: wrap-reverse;
   gap: 48px;
   align-items: center;
   justify-content: center;
-`;
-
-const LoginPageFooter = styled.div`
-  display: flex;
-  justify-content: end;
-`;
-
-const LoginPageDecoration = styled.div`
-  display: flex;
-  width: 400px;
 `;
