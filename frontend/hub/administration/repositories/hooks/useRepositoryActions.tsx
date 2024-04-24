@@ -1,5 +1,5 @@
 import { AlertProps, ButtonVariant } from '@patternfly/react-core';
-import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
+import { CopyIcon, PencilAltIcon, SyncAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -46,6 +46,7 @@ export function useRepositoryActions(options: {
         type: PageActionType.Seperator,
       },
       {
+        icon: SyncAltIcon,
         label: t('Sync repository'),
         onClick: (repo) => {
           syncRepositories(repo);
@@ -59,6 +60,7 @@ export function useRepositoryActions(options: {
         },
       },
       {
+        icon: CopyIcon,
         label: t('Copy CLI configuration'),
         onClick: (repo) => {
           const alertNoDistro: AlertProps = {
