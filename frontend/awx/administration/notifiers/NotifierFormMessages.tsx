@@ -71,117 +71,118 @@ export function NotifierFormMessages(props: {
           setValue('messages.error.body', data.messages.error.body);
         }
       }
+    }
 
-      if (hasMessages) {
-        // For started.message
-        if (!data?.messages?.started?.message) {
-          setValue('messages.started.message', defaultMessages.started.message);
-        } else {
-          if (!getValues('messages.started.message')) {
-            setValue('messages.started.message', data.messages.started.message);
-          }
+    if (hasMessages) {
+      // For started.message
+      if (!data?.messages?.started?.message) {
+        setValue('messages.started.message', defaultMessages.started.message);
+      } else {
+        if (!getValues('messages.started.message')) {
+          setValue('messages.started.message', data.messages.started.message);
         }
       }
+    }
 
-      if (hasBody) {
-        // For started.body
-        if (!data?.messages?.started?.body) {
-          setValue('messages.started.body', defaultMessages.started.body);
-        } else {
-          if (!getValues('messages.started.body')) {
-            setValue('messages.started.body', data.messages.started.body);
-          }
+    if (hasBody) {
+      // For started.body
+      if (!data?.messages?.started?.body) {
+        setValue('messages.started.body', defaultMessages.started.body);
+      } else {
+        if (!getValues('messages.started.body')) {
+          setValue('messages.started.body', data.messages.started.body);
         }
       }
+    }
 
-      if (hasMessages) {
-        // For success.message
-        if (!data?.messages?.success?.message) {
-          setValue('messages.success.message', defaultMessages.success.message);
-        } else {
-          if (!getValues('messages.success.message')) {
-            setValue('messages.success.message', data.messages.success.message);
-          }
+    if (hasMessages) {
+      // For success.message
+      if (!data?.messages?.success?.message) {
+        setValue('messages.success.message', defaultMessages.success.message);
+      } else {
+        if (!getValues('messages.success.message')) {
+          setValue('messages.success.message', data.messages.success.message);
         }
       }
+    }
 
-      if (hasBody) {
-        // For success.body
-        if (!data?.messages?.success?.body) {
-          setValue('messages.success.body', defaultMessages.success.body);
-        } else {
-          if (!getValues('messages.success.body')) {
-            setValue('messages.success.body', data.messages.success.body);
-          }
+    if (hasBody) {
+      // For success.body
+      if (!data?.messages?.success?.body) {
+        setValue('messages.success.body', defaultMessages.success.body);
+      } else {
+        if (!getValues('messages.success.body')) {
+          setValue('messages.success.body', data.messages.success.body);
         }
       }
+    }
 
-      if (hasMessages) {
-        // For workflow_approval.approved.message
-        if (!data?.messages?.workflow_approval?.approved?.message) {
+    if (hasMessages) {
+      // For workflow_approval.approved.message
+      if (!data?.messages?.workflow_approval?.approved?.message) {
+        setValue(
+          'messages.workflow_approval.approved.message',
+          defaultMessages.workflow_approval.approved.message
+        );
+      } else {
+        if (!getValues('messages.workflow_approval.approved.message')) {
           setValue(
             'messages.workflow_approval.approved.message',
-            defaultMessages.workflow_approval.approved.message
+            data.messages.workflow_approval.approved.message
           );
-        } else {
-          if (!getValues('messages.workflow_approval.approved.message')) {
-            setValue(
-              'messages.workflow_approval.approved.message',
-              data.messages.workflow_approval.approved.message
-            );
-          }
         }
       }
+    }
 
-      if (hasBody) {
-        // For workflow_approval.approved.body
-        if (!data?.messages?.workflow_approval?.approved?.body) {
+    if (hasBody) {
+      // For workflow_approval.approved.body
+      if (!data?.messages?.workflow_approval?.approved?.body) {
+        setValue(
+          'messages.workflow_approval.approved.body',
+          defaultMessages.workflow_approval.approved.body
+        );
+      } else {
+        if (!getValues('messages.workflow_approval.approved.body')) {
           setValue(
             'messages.workflow_approval.approved.body',
-            defaultMessages.workflow_approval.approved.body
+            data.messages.workflow_approval.approved.body
           );
-        } else {
-          if (!getValues('messages.workflow_approval.approved.body')) {
-            setValue(
-              'messages.workflow_approval.approved.body',
-              data.messages.workflow_approval.approved.body
-            );
-          }
         }
       }
+    }
 
-      if (hasMessages) {
-        // For workflow_approval.denied.message
-        if (!data?.messages?.workflow_approval?.denied?.message) {
+    if (hasMessages) {
+      // For workflow_approval.denied.message
+      if (!data?.messages?.workflow_approval?.denied?.message) {
+        setValue(
+          'messages.workflow_approval.denied.message',
+          defaultMessages.workflow_approval.denied.message
+        );
+      } else {
+        if (!getValues('messages.workflow_approval.denied.message')) {
           setValue(
             'messages.workflow_approval.denied.message',
-            defaultMessages.workflow_approval.denied.message
+            data.messages.workflow_approval.denied.message
           );
-        } else {
-          if (!getValues('messages.workflow_approval.denied.message')) {
-            setValue(
-              'messages.workflow_approval.denied.message',
-              data.messages.workflow_approval.denied.message
-            );
-          }
         }
       }
+    }
 
-      if (hasBody)
-        if (!data?.messages?.workflow_approval?.denied?.body) {
-          // For workflow_approval.denied.body
+    if (hasBody) {
+      if (!data?.messages?.workflow_approval?.denied?.body) {
+        // For workflow_approval.denied.body
+        setValue(
+          'messages.workflow_approval.denied.body',
+          defaultMessages.workflow_approval.denied.body
+        );
+      } else {
+        if (!getValues('messages.workflow_approval.denied.body')) {
           setValue(
             'messages.workflow_approval.denied.body',
-            defaultMessages.workflow_approval.denied.body
+            data.messages.workflow_approval.denied.body
           );
-        } else {
-          if (!getValues('messages.workflow_approval.denied.body')) {
-            setValue(
-              'messages.workflow_approval.denied.body',
-              data.messages.workflow_approval.denied.body
-            );
-          }
         }
+      }
     }
 
     if (hasMessages) {
