@@ -1,11 +1,10 @@
-
 # Ansible Automation Platform UI Roadmap
 
 ```mermaid
 timeline
   title Ansible UI Roadmap
   section 2024
-    2nd Quarter 
+    2nd Quarter
       : AAP 2.5 GA
       : AWX Feature Parity
       : EDA GA
