@@ -20,6 +20,7 @@ timeline
       : Comsumption Based Billing
       : Ansible Security Policies
       : Ansible Metrics
+      : HUB Builder Wizard
   section 2025
     1st Quarter
       : AAP 2.6 Features
