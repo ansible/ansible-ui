@@ -1,53 +1,50 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
-  ITableColumn,
   PageLayout,
   PageHeader,
   PageTable,
   usePageNavigate,
-  TextCell,
+  LoadingPage,
 } from '../../../../../framework';
 import { AwxRoute } from '../../../main/AwxRoutes';
-import { AwxToken } from '../../../interfaces/AwxToken';
 import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
 import { useAwxView } from '../../../common/useAwxView';
 import { awxAPI } from '../../../common/api/awx-utils';
+import { AwxUser } from '../../../interfaces/User';
+import { Token } from '../../../interfaces/Token';
+import { useUserTokensColumns } from '../hooks/useUserTokensColumns';
 
 export function UserTokens() {
   const params = useParams<{ id: string }>();
-  const { t } = useTranslation();
-  const [showTokens, setShowTokens] = useState(true);
   const { activeAwxUser } = useAwxActiveUser();
   const pageNavigate = usePageNavigate();
-  const view = useAwxView<AwxToken>({ url: awxAPI`/tokens/` });
-  const tableColumns = useMemo<ITableColumn<AwxToken>[]>(
-    () => [
-      {
-        header: 'Application name',
-        cell: () => <TextCell text={'app name'} />,
-        card: 'name',
-        list: 'name',
-      },
-    ],
-    []
-  );
 
   useEffect(() => {
-    if (activeAwxUser?.id === undefined || activeAwxUser?.id.toString() !== params.id) {
-      setShowTokens(false);
+    if (activeAwxUser === undefined || activeAwxUser?.id.toString() !== params.id) {
       // redirect to user details for the active/logged-in user
       pageNavigate(AwxRoute.UserDetails, { params: { id: activeAwxUser?.id } });
     }
-  }, [activeAwxUser?.id, params.id, setShowTokens, pageNavigate]);
+  }, [activeAwxUser, params.id, pageNavigate]);
 
-  // not showing anything when user does not match. this helps to test the component.
+  if (!activeAwxUser) return <LoadingPage breadcrumbs tabs />;
+
+  return <UserTokensInternal user={activeAwxUser} />;
+}
+
+function UserTokensInternal(props: { user: AwxUser }) {
+  const { user } = props;
+  const { t } = useTranslation();
+
+  const view = useAwxView<Token>({ url: awxAPI`/users/${user.id.toString()}/tokens/` });
+  const tableColumns = useUserTokensColumns(user.id);
+
   return (
     <PageLayout>
       <PageHeader title={t('User Tokens')}></PageHeader>
-      <PageTable<AwxToken>
+      <PageTable<Token>
         id="awx-user-tokens"
         errorStateTitle={t('Error loading tokens')}
         emptyStateTitle={t('There are currently no tokens added.')}

@@ -9,6 +9,7 @@ import { UserPage } from '../../access/users/UserPage/UserPage';
 import { UserRoles } from '../../access/users/UserPage/UserRoles';
 import { UserTeams } from '../../access/users/UserPage/UserTeams';
 import { UserTokens } from '../../access/users/UserPage/UserTokens';
+import { UserTokenDetails } from '../../access/users/UserPage/UserTokenDetails';
 import { Users } from '../../access/users/Users';
 import { AddRolesToUser } from '../../access/users/components/AddRolesToUser';
 import { AwxRoute } from '../AwxRoutes';
@@ -59,7 +60,17 @@ export function useAwxUsersRoutes() {
             {
               id: AwxRoute.UserTokens,
               path: 'tokens',
-              element: <UserTokens />,
+              children: [
+                {
+                  id: AwxRoute.UserTokenDetails,
+                  path: ':tokenid/details',
+                  element: <UserTokenDetails />,
+                },
+                {
+                  path: '',
+                  element: <UserTokens />,
+                },
+              ],
             },
             {
               path: '',

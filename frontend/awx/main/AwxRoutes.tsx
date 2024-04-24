@@ -163,6 +163,7 @@ export enum AwxRoute {
   UserTeams = 'awx-user-teams',
   UserRoles = 'awx-user-roles',
   UserTokens = 'awx-user-tokens',
+  UserTokenDetails = 'awx-user-token-detail',
   AddRolesToUser = 'awx-add-roles-to-user',
 
   Roles = 'awx-roles',
