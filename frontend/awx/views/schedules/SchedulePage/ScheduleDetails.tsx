@@ -105,12 +105,14 @@ export function ScheduleDetails() {
         <PageDetail label={t('Skip tags')} isEmpty={!schedule.skip_tags}>
           <LabelGroup>{skipTags?.map(({ name }) => <Label key={name}>{name}</Label>)}</LabelGroup>
         </PageDetail>
-        <PageDetail fullWidth>
-          <PageDetailCodeEditor
-            label={t('Variables')}
-            value={JSON.stringify(schedule.extra_data)}
-          />
-        </PageDetail>
+        {!hasDaysToKeep && (
+          <PageDetail fullWidth>
+            <PageDetailCodeEditor
+              label={t('Variables')}
+              value={JSON.stringify(schedule.extra_data)}
+            />
+          </PageDetail>
+        )}
         {hasDaysToKeep && (
           <PageDetail fullWidth label={t('Days of data to keep')}>
             {typeof extraData === 'string'
