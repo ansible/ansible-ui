@@ -19,11 +19,13 @@ export function NotifierFormMessages(props: {
 
   let type_changed = false;
 
-  if (notification_type !== oldType) {
-    if (oldType !== '') {
-      type_changed = true;
+  if (oldType) {
+    if (notification_type !== oldType) {
+      if (oldType !== '') {
+        type_changed = true;
+      }
+      setOldType(notification_type || '');
     }
-    setOldType(notification_type || '');
   }
 
   let hasMessages = true;
