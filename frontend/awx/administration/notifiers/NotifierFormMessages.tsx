@@ -52,32 +52,42 @@ export function NotifierFormMessages(props: {
 
   if (customize_messages === true && type_changed === false) {
     // For error.message
-    if (!data?.messages?.error?.message) {
-      setValue('messages.error.message', defaultMessages.error.message);
-    } else {
-      if (!getValues('messages.error.message')) {
-        setValue('messages.error.message', data.messages.error.message);
-      }
+    if (hasMessages)
+    {
+        if (!data?.messages?.error?.message) {
+        setValue('messages.error.message', defaultMessages.error.message);
+        } else {
+            if (!getValues('messages.error.message')) {
+                setValue('messages.error.message', data.messages.error.message);
+            }
+        }
     }
 
-    // For error.body
-    if (!data?.messages?.error?.body) {
-      setValue('messages.error.body', defaultMessages.error.body);
-    } else {
-      if (!getValues('messages.error.body')) {
-        setValue('messages.error.body', data.messages.error.body);
-      }
+    if (hasBody)
+    {
+        // For error.body
+        if (!data?.messages?.error?.body) {
+        setValue('messages.error.body', defaultMessages.error.body);
+        } else {
+        if (!getValues('messages.error.body')) {
+            setValue('messages.error.body', data.messages.error.body);
+        }
     }
 
-    // For started.message
-    if (!data?.messages?.started?.message) {
-      setValue('messages.started.message', defaultMessages.started.message);
-    } else {
-      if (!getValues('messages.started.message')) {
-        setValue('messages.started.message', data.messages.started.message);
-      }
+    if (hasMessages)
+    {
+        // For started.message
+        if (!data?.messages?.started?.message) {
+        setValue('messages.started.message', defaultMessages.started.message);
+        } else {
+        if (!getValues('messages.started.message')) {
+            setValue('messages.started.message', data.messages.started.message);
+        }
+        }
     }
 
+    if (hasBody)
+    {
     // For started.body
     if (!data?.messages?.started?.body) {
       setValue('messages.started.body', defaultMessages.started.body);
@@ -86,7 +96,9 @@ export function NotifierFormMessages(props: {
         setValue('messages.started.body', data.messages.started.body);
       }
     }
+}
 
+if (hasMessages) {
     // For success.message
     if (!data?.messages?.success?.message) {
       setValue('messages.success.message', defaultMessages.success.message);
@@ -95,6 +107,9 @@ export function NotifierFormMessages(props: {
         setValue('messages.success.message', data.messages.success.message);
       }
     }
+}
+
+if (hasBody) {
 
     // For success.body
     if (!data?.messages?.success?.body) {
@@ -103,9 +118,10 @@ export function NotifierFormMessages(props: {
       if (!getValues('messages.success.body')) {
         setValue('messages.success.body', data.messages.success.body);
       }
-    }
+    }}
 
-    // For workflow_approval.approved.message
+    if (hasMessages) {
+            // For workflow_approval.approved.message
     if (!data?.messages?.workflow_approval?.approved?.message) {
       setValue(
         'messages.workflow_approval.approved.message',
@@ -118,8 +134,9 @@ export function NotifierFormMessages(props: {
           data.messages.workflow_approval.approved.message
         );
       }
-    }
+    }}
 
+    if (hasBody) {
     // For workflow_approval.approved.body
     if (!data?.messages?.workflow_approval?.approved?.body) {
       setValue(
@@ -133,8 +150,9 @@ export function NotifierFormMessages(props: {
           data.messages.workflow_approval.approved.body
         );
       }
-    }
+    }}
 
+    if (hasMessages) {
     // For workflow_approval.denied.message
     if (!data?.messages?.workflow_approval?.denied?.message) {
       setValue(
@@ -148,8 +166,9 @@ export function NotifierFormMessages(props: {
           data.messages.workflow_approval.denied.message
         );
       }
-    }
+    }}
 
+    if (hasBody)
     // For workflow_approval.denied.body
     if (!data?.messages?.workflow_approval?.denied?.body) {
       setValue(
@@ -163,8 +182,9 @@ export function NotifierFormMessages(props: {
           data.messages.workflow_approval.denied.body
         );
       }
-    }
+    }}
 
+    if (hasMessages) {
     // For workflow_approval.running.message
     if (!data?.messages?.workflow_approval?.running?.message) {
       setValue(
@@ -178,8 +198,9 @@ export function NotifierFormMessages(props: {
           data.messages.workflow_approval.running.message
         );
       }
-    }
+    }}
 
+    if (hasBody){
     // For workflow_approval.running.body
     if (!data?.messages?.workflow_approval?.running?.body) {
       setValue(
@@ -193,8 +214,9 @@ export function NotifierFormMessages(props: {
           data.messages.workflow_approval.running.body
         );
       }
-    }
+    }}
 
+    if (hasMessages) {
     // For workflow_approval.timed_out.message
     if (!data?.messages?.workflow_approval?.timed_out?.message) {
       setValue(
@@ -208,8 +230,9 @@ export function NotifierFormMessages(props: {
           data.messages.workflow_approval.timed_out.message
         );
       }
-    }
+    }}
 
+    if (hasBody){
     // For workflow_approval.timed_out.body
     if (!data?.messages?.workflow_approval?.timed_out?.body) {
       setValue(
@@ -224,7 +247,7 @@ export function NotifierFormMessages(props: {
         );
       }
     }
-  }
+  }}
 
   if (customize_messages !== true) {
     return <></>;
@@ -353,32 +376,41 @@ type MessagesType = {
 };
 
 export function getDefaultMessages(notification_type: string | null) {
-  const obj: MessagesType = {
-    started: {
-      message: `{{ job_friendly_name }} #{{ job.id }} '{{ job.name }}' {{ job.status }}: {{ url }}`,
-    },
-    success: {
-      message: `{{ job_friendly_name }} #{{ job.id }} '{{ job.name }}' {{ job.status }}: {{ url }}`,
-    },
-    error: {
-      message: `{{ job_friendly_name }} #{{ job.id }} '{{ job.name }}' {{ job.status }}: {{ url }}`,
-    },
+    let obj : MessagesType = {
+        started : {},
+        success : {},
+        error : {},
+        workflow_approval : { denied : {}, running : {}, approved : {}, timed_out : {}}
+    };
 
-    workflow_approval: {
-      denied: {
-        message: `The approval node "{{ approval_node_name }}" was denied. {{ workflow_url }}`,
-      },
-      running: {
-        message: `The approval node "{{ approval_node_name }}" needs review. This node can be viewed at: {{ workflow_url }}`,
-      },
-      approved: {
-        message: `The approval node "{{ approval_node_name }}" was approved. {{ workflow_url }}`,
-      },
-      timed_out: {
-        message: `The approval node "{{ approval_node_name }}" has timed out. {{ workflow_url }}`,
-      },
-    },
-  };
+    if (notification_type !== 'webhook')
+    {
+        obj = {
+            started: {
+            message: `{{ job_friendly_name }} #{{ job.id }} '{{ job.name }}' {{ job.status }}: {{ url }}`,
+            },
+            success: {
+            message: `{{ job_friendly_name }} #{{ job.id }} '{{ job.name }}' {{ job.status }}: {{ url }}`,
+            },
+            error: {
+            message: `{{ job_friendly_name }} #{{ job.id }} '{{ job.name }}' {{ job.status }}: {{ url }}`,
+            },
+            workflow_approval: {
+                denied: {
+                    message: `The approval node "{{ approval_node_name }}" was denied. {{ workflow_url }}`,
+                },
+                running: {
+                    message: `The approval node "{{ approval_node_name }}" needs review. This node can be viewed at: {{ workflow_url }}`,
+                },
+                approved: {
+                    message: `The approval node "{{ approval_node_name }}" was approved. {{ workflow_url }}`,
+                },
+                timed_out: {
+                    message: `The approval node "{{ approval_node_name }}" has timed out. {{ workflow_url }}`,
+                },
+            },
+        };
+    }
 
   if (notification_type === 'email') {
     obj.error.body =
