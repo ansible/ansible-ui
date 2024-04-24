@@ -9,6 +9,7 @@ import {
   PageFormTextInput,
   PageHeader,
   PageLayout,
+  getPatternflyColor,
   useGetPageUrl,
 } from '../../../../framework';
 import { AwxPageForm } from '../../common/AwxPageForm';
@@ -33,6 +34,7 @@ import { InnerForm } from './NotifierFormInner';
 import { Trans } from 'react-i18next';
 import { NotifierFormMessages } from './NotifierFormMessages';
 import { areMessagesEmpty } from './NotifierFormMessages';
+import { useState } from 'react';
 
 export function EditNotifier() {
   return <NotifierForm mode={'edit'} />;
@@ -68,6 +70,7 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
   const notifierRequest = useGet<NotificationTemplate>(getUrl);
   const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
+  const [messagesError, setMessagesError] = useState<string>('');
 
   const patchRequest = usePatchRequest();
   const postRequest = usePostRequest();
@@ -113,6 +116,8 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
   }
 
   const onSubmit: PageFormSubmitHandler<NotificationTemplate> = async (formData) => {
+
+    try{
     const data: NotificationTemplate | NotificationTemplateEdit =
       mode === 'add'
         ? formData
@@ -174,8 +179,20 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
     }
 
     const id = mode === 'add' ? result?.id : formData.id;
-
     pageNavigate(AwxRoute.NotificationTemplateDetails, { params: { id } });
+    }
+    catch(e : unknown)
+    {
+      const ex = e as { body? : { messages? : string }};
+      if (ex?.body?.messages)
+      {
+        const mess = JSON.stringify(ex.body.messages, null, 4);
+        setMessagesError(mess)
+      }
+      throw ex;
+    }
+
+    
   };
 
   const job_friendly_name = '{{job_friendly_name}}';
@@ -265,6 +282,7 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
             {(customize_messages: boolean) => {
               return (
                 <>
+                <div style={{color: 'red'}}>{messagesError}</div>
                   {
                     <NotifierFormMessages
                       customize_messages={customize_messages}

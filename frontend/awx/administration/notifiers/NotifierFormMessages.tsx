@@ -259,7 +259,6 @@ export function NotifierFormMessages(props: {
 
   return (
     <>
-      {notification_type}
       {hasMessages && (
         <PageFormTextInput<NotificationTemplate>
           name="messages.started.message"
