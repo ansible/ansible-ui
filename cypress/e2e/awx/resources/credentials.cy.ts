@@ -228,6 +228,28 @@ describe('Credentials', () => {
   });
 
   describe('Credentials: Details View', () => {
+    it('details page should render boolean field', () => {
+      const credentialName = 'E2E Credential ' + randomString(4);
+      cy.navigateTo('awx', 'credentials');
+      cy.clickButton(/^Create credential$/);
+      cy.get('[data-cy="name"]').type(credentialName);
+      cy.selectDropdownOptionByResourceName('credential-type', 'Container Registry');
+      cy.get('[data-cy="host"]').clear().type('https://host.com');
+      cy.get('[data-cy="verify_ssl"]').check();
+      cy.clickButton(/^Create credential$/);
+      cy.verifyPageTitle(credentialName);
+      cy.get('[data-cy="name"]').contains(credentialName);
+      cy.contains('Authentication URL').should('be.visible');
+      cy.get('[data-cy="authentication-url"]').contains('https://host.com');
+      cy.contains('Verify SSL').should('be.visible');
+      cy.get('[data-cy="verify-ssl"]').contains('Yes');
+      //delete created credential
+      cy.clickPageAction('delete-credential');
+      cy.get('#confirm').click();
+      cy.clickButton(/^Delete credential/);
+      cy.verifyPageTitle('Credentials');
+    });
+
     it('can edit machine credential from the details page', () => {
       cy.navigateTo('awx', 'credentials');
       cy.filterTableByMultiSelect('name', [credential.name]);
