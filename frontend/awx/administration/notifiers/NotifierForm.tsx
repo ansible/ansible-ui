@@ -116,83 +116,77 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
   }
 
   const onSubmit: PageFormSubmitHandler<NotificationTemplate> = async (formData) => {
+    try {
+      const data: NotificationTemplate | NotificationTemplateEdit =
+        mode === 'add'
+          ? formData
+          : ({
+              description: formData.description,
+              messages: formData.messages,
+              name: formData.name,
+              notification_configuration: formData.notification_configuration,
+              notification_type: formData.notification_type,
+              organization: formData.organization,
+              customize_messages: (formData as CustomizeMessageType).customize_messages,
+            } as NotificationTemplateEdit);
 
-    try{
-    const data: NotificationTemplate | NotificationTemplateEdit =
-      mode === 'add'
-        ? formData
-        : ({
-            description: formData.description,
-            messages: formData.messages,
-            name: formData.name,
-            notification_configuration: formData.notification_configuration,
-            notification_type: formData.notification_type,
-            organization: formData.organization,
-            customize_messages: (formData as CustomizeMessageType).customize_messages,
-          } as NotificationTemplateEdit);
+      stringToArrays(data);
 
-    stringToArrays(data);
+      if ((data as CustomizeMessageType).customize_messages === false) {
+        data.messages = null;
+      }
+      delete (data as CustomizeMessageType).customize_messages;
 
-    if ((data as CustomizeMessageType).customize_messages === false) {
-      data.messages = null;
-    }
-    delete (data as CustomizeMessageType).customize_messages;
+      let fieldValue;
+      // fix notification data types
+      const fields =
+        optionsRequest.data?.actions.GET.notification_configuration[data.notification_type || ''];
+      if (fields) {
+        const notification_configuration = data.notification_configuration;
+        for (const field in fields) {
+          if (!notification_configuration[field]) {
+            fieldValue = fields[field];
+            notification_configuration[field] = '';
+          }
 
-    let fieldValue;
-    // fix notification data types
-    const fields =
-      optionsRequest.data?.actions.GET.notification_configuration[data.notification_type || ''];
-    if (fields) {
-      const notification_configuration = data.notification_configuration;
-      for (const field in fields) {
-        if (!notification_configuration[field]) {
+          // convert them
           fieldValue = fields[field];
-          notification_configuration[field] = '';
-        }
+          if (fieldValue.type === 'int' && typeof notification_configuration[field] === 'string') {
+            notification_configuration[field] = Number.parseInt(
+              notification_configuration[field] as string,
+              10
+            );
+          }
 
-        // convert them
-        fieldValue = fields[field];
-        if (fieldValue.type === 'int' && typeof notification_configuration[field] === 'string') {
-          notification_configuration[field] = Number.parseInt(
-            notification_configuration[field] as string,
-            10
-          );
-        }
-
-        if (fieldValue.type === 'bool' && notification_configuration[field] === '') {
-          notification_configuration[field] = false;
+          if (fieldValue.type === 'bool' && notification_configuration[field] === '') {
+            notification_configuration[field] = false;
+          }
         }
       }
-    }
 
-    if (data.notification_type === 'webhook') {
-      if (!data.notification_configuration.headers) {
-        data.notification_configuration.headers = {};
+      if (data.notification_type === 'webhook') {
+        if (!data.notification_configuration.headers) {
+          data.notification_configuration.headers = {};
+        }
       }
-    }
 
-    let result: { id?: number } = {};
-    if (mode === 'add') {
-      result = (await postRequest(awxAPI`/notification_templates/`, data)) as { id: number };
-    } else {
-      await patchRequest(awxAPI`/notification_templates/${formData.id?.toString() || ''}/`, data);
-    }
+      let result: { id?: number } = {};
+      if (mode === 'add') {
+        result = (await postRequest(awxAPI`/notification_templates/`, data)) as { id: number };
+      } else {
+        await patchRequest(awxAPI`/notification_templates/${formData.id?.toString() || ''}/`, data);
+      }
 
-    const id = mode === 'add' ? result?.id : formData.id;
-    pageNavigate(AwxRoute.NotificationTemplateDetails, { params: { id } });
-    }
-    catch(e : unknown)
-    {
-      const ex = e as { body? : { messages? : string }};
-      if (ex?.body?.messages)
-      {
+      const id = mode === 'add' ? result?.id : formData.id;
+      pageNavigate(AwxRoute.NotificationTemplateDetails, { params: { id } });
+    } catch (e: unknown) {
+      const ex = e as { body?: { messages?: string } };
+      if (ex?.body?.messages) {
         const mess = JSON.stringify(ex.body.messages, null, 4);
-        setMessagesError(mess)
+        setMessagesError(mess);
       }
       throw ex;
     }
-
-    
   };
 
   const job_friendly_name = '{{job_friendly_name}}';
@@ -282,7 +276,7 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
             {(customize_messages: boolean) => {
               return (
                 <>
-                <div style={{color: 'red'}}>{messagesError}</div>
+                  <div style={{ color: getPatternflyColor('red') }}>{messagesError}</div>
                   {
                     <NotifierFormMessages
                       customize_messages={customize_messages}
