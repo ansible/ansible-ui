@@ -33,7 +33,13 @@ export function CredentialTypeDetail(props: {
   }
 
   if (type === 'boolean') {
-    return null;
+    return (
+      <>
+        <PageDetail key={id} label={label} helpText={help_text}>
+          {inputs[id] ? t('Yes') : t('No')}
+        </PageDetail>
+      </>
+    );
   }
 
   if (inputs[id] === '$encrypted$') {
