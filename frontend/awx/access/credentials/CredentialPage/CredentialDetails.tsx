@@ -28,13 +28,13 @@ const PluginFieldText = styled.p`
 
 export function CredentialDetails() {
   const params = useParams<{ id: string }>();
-  const { data: credential } = useGetItem<Credential>(awxAPI`/credentials`, params.id);
+  const { data: credential, isLoading } = useGetItem<Credential>(awxAPI`/credentials`, params.id);
 
-  if (!credential) {
-    return null;
+  if (isLoading && !credential) {
+    return <LoadingPage />;
   }
 
-  return <CredentialDetailsInner credential={credential} />;
+  return credential ? <CredentialDetailsInner credential={credential} /> : null;
 }
 
 export function CredentialDetailsInner(props: { credential: Credential }) {
@@ -53,25 +53,6 @@ export function CredentialDetailsInner(props: { credential: Credential }) {
     awxAPI`/credential_types`,
     summary_fields.credential_type.id.toString()
   );
-  const inputLabelsAndValues: {
-    id: string;
-    label: string;
-    help_text: string;
-    type: string;
-    value: string | number;
-  }[] = [];
-
-  if (credentialInputs && credentialType?.inputs?.fields?.length) {
-    const { fields } = credentialType.inputs;
-    fields.forEach((field) =>
-      Object.entries(credentialInputs).forEach(([key, value]) => {
-        if (key === field.id) {
-          inputLabelsAndValues.push({ ...field, value: value });
-        }
-      })
-    );
-  }
-
   const {
     results: inputSources,
     error: inputSourcesError,
