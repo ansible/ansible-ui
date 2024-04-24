@@ -37,7 +37,11 @@ export function UserTokens() {
 
   if (!activeAwxUser) return <LoadingPage breadcrumbs tabs />;
 
-  return <UserTokensInternal user={activeAwxUser} />;
+  return activeAwxUser?.id.toString() === params.id ? (
+    <UserTokensInternal user={activeAwxUser} />
+  ) : (
+    <></>
+  );
 }
 
 function UserTokensInternal(props: { user: AwxUser }) {
