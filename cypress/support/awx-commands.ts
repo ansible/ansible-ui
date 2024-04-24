@@ -603,14 +603,9 @@ Cypress.Commands.add('createAwxOrganization', (orgName?: string, failOnStatusCod
 
 Cypress.Commands.add(
   'createAWXCredential',
-  (
-    credential: SetRequired<
-      Partial<Omit<Credential, 'id'>>,
-      'organization' | 'kind' | 'credential_type'
-    >
-  ) => {
+  (credential: SetRequired<Partial<Credential>, 'organization' | 'kind' | 'credential_type'>) => {
     cy.awxRequestPost<
-      SetRequired<Partial<Omit<Credential, 'id'>>, 'organization' | 'kind' | 'credential_type'>,
+      SetRequired<Partial<Credential>, 'organization' | 'kind' | 'credential_type'>,
       Credential
     >(awxAPI`/credentials/`, {
       name: 'E2E Credential ' + randomString(4),
