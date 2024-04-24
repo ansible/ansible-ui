@@ -6,9 +6,8 @@ import { PlatformItemsResponse } from '../interfaces/PlatformItemsResponse';
 import { PlatformUser } from '../interfaces/PlatformUser';
 
 interface ActiveUserState {
-  activePlatformUser?: PlatformUser;
+  activePlatformUser?: PlatformUser | null | undefined;
   refreshActivePlatformUser?: () => void;
-  activePlatformUserIsLoading?: boolean;
 }
 
 export const PlatformActiveUserContext = createContext<ActiveUserState>({});
@@ -23,35 +22,32 @@ export function PlatformActiveUserProvider(props: { children: ReactNode }) {
     refreshInterval: 10 * 1000,
   });
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const { error, isLoading, data, mutate } = response;
-
-  const [activePlatformUser, setActivePlatformUser] = useState<PlatformUser | undefined>(undefined);
-
-  useEffect(() => {
-    if (error) {
-      setActivePlatformUser(undefined);
-    }
-  }, [error]);
-
-  useEffect(() => {
-    if (data?.results && data.results.length > 0) {
-      setActivePlatformUser(data.results[0]);
-    }
-  }, [data]);
-
-  const activePlatformUserIsLoading = useMemo<boolean>(
-    () => (!activePlatformUser && !error) || isLoading,
-    [activePlatformUser, isLoading, error]
+  const [activePlatformUser, setActivePlatformUser] = useState<PlatformUser | undefined | null>(
+    undefined
   );
 
+  useEffect(() => {
+    setActivePlatformUser((activeUser) => {
+      if (response.error) {
+        return null;
+      }
+
+      if (response.data && response.data.results.length > 0) {
+        return response.data.results[0];
+      }
+
+      if (response.isLoading && activeUser === undefined) {
+        return undefined;
+      }
+
+      return null;
+    });
+  }, [response]);
+
+  const mutate = response.mutate;
   const state = useMemo<ActiveUserState>(() => {
-    return {
-      activePlatformUser,
-      refreshActivePlatformUser: () => void mutate(undefined),
-      activePlatformUserIsLoading,
-    };
-  }, [activePlatformUser, activePlatformUserIsLoading, mutate]);
+    return { activePlatformUser, refreshActivePlatformUser: () => void mutate(undefined) };
+  }, [activePlatformUser, mutate]);
 
   return (
     <PlatformActiveUserContext.Provider value={state}>
