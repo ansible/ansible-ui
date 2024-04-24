@@ -9,6 +9,7 @@ import { ControllerState, EdgeStatus, PromptFormValues, type WizardFormValues } 
 import { NodePromptsStep } from './NodePromptsStep';
 import { NodeReviewStep } from './NodeReviewStep';
 import { NodeTypeStep } from './NodeTypeStep';
+import { SurveyStep } from '../../../../common/SurveyStep';
 import { getValueBasedOnJobType, hasDaysToKeep, shouldHideOtherStep } from './helpers';
 import { greyBadgeLabel } from '../../../../views/jobs/WorkflowOutput/WorkflowOutput';
 
@@ -87,6 +88,9 @@ export function NodeAddWizard() {
       inputs: <NodePromptsStep />,
       hidden: (wizardData: Partial<WizardFormValues>) => {
         const { launch_config, resource, node_type } = wizardData;
+        if (Object.keys(wizardData).length === 0) {
+          return true;
+        }
         if (
           (node_type === RESOURCE_TYPE.workflow_job || node_type === RESOURCE_TYPE.job) &&
           resource &&
@@ -95,6 +99,21 @@ export function NodeAddWizard() {
           return shouldHideOtherStep(launch_config);
         }
         return true;
+      },
+    },
+    {
+      id: 'nodeSurveyStep',
+      label: t('Survey'),
+      inputs: <SurveyStep singleColumn />,
+      hidden: (wizardData: Partial<WizardFormValues>) => {
+        const { launch_config, node_type } = wizardData;
+        if (Object.keys(wizardData).length === 0) {
+          return true;
+        }
+        if (node_type && ![RESOURCE_TYPE.workflow_job, RESOURCE_TYPE.job].includes(node_type)) {
+          return true;
+        }
+        return !launch_config?.survey_enabled;
       },
     },
     { id: 'review', label: t('Review'), element: <NodeReviewStep /> },
