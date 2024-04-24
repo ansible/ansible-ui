@@ -745,7 +745,10 @@ declare global {
 
       createTemplateSurvey(
         template: JobTemplate | WorkflowJobTemplate,
-        survey: SetOptional<SurveySpec, 'required' | 'min' | 'max' | 'new_question' | 'choices'>
+        survey: SetOptional<
+          SurveySpec & { label: string },
+          'required' | 'min' | 'max' | 'new_question' | 'choices'
+        >
       ): Chainable<void>;
 
       /**

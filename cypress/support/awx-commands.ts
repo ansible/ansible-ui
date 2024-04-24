@@ -1727,7 +1727,10 @@ Cypress.Commands.add(
   'createTemplateSurvey',
   (
     template: JobTemplate | WorkflowJobTemplate,
-    spec: SetOptional<Spec, 'required' | 'min' | 'max' | 'new_question' | 'choices'>
+    spec: SetOptional<
+      Spec & { label: string },
+      'required' | 'min' | 'max' | 'new_question' | 'choices'
+    >
   ) => {
     cy.visit(`/templates/${template.type}/${template.id}/survey/add`);
 
@@ -1736,21 +1739,18 @@ Cypress.Commands.add(
     cy.getByDataCy('question-variable').type(spec?.variable ?? '');
 
     spec?.required === false && cy.getByDataCy('question-required').uncheck();
-    spec?.min && cy.getByDataCy('question-min').clear().type(spec.min.toString());
-    spec?.max && cy.getByDataCy('question-max').clear().type(spec.max.toString());
 
-    spec.type !== 'text' && cy.selectDropdownOptionByResourceName('type', spec.type);
+    spec.type !== 'text' && cy.selectDropdownOptionByResourceName('type', spec.label);
 
-    if (['text', 'textarea', 'password', 'integer', 'float'].includes(spec.type))
+    if (['text', 'textarea', 'password', 'integer', 'float'].includes(spec.type)) {
+      spec?.min && cy.getByDataCy('question-min').clear().type(spec.min.toString());
+      spec?.max && cy.getByDataCy('question-max').clear().type(spec.max.toString());
       cy.getByDataCy('question-default').type(spec.default.toString());
-    else if (
-      ['Multiple Choice (single select)', 'Multiple Choice (multiple select)'].includes(
-        spec.type
-      ) &&
+    } else if (
+      // ['Multiple Choice (single select)', 'Multiple Choice (multiple select)'].includes(
+      ['multiplechoice', 'multiselect'].includes(spec.type) &&
       Array.isArray(spec.choices)
     ) {
-      const specType =
-        spec.type === 'Multiple Choice (single select)' ? 'multiplechoice' : 'multiselect';
       spec.choices.forEach((choice) => {
         cy.getByDataCy('add-choice-input').type(`${choice}{enter}`);
       });
@@ -1762,7 +1762,7 @@ Cypress.Commands.add(
       cy.log('defaults', defaults);
       cy.log('spec choices', spec.choices);
 
-      const choiceBtn = specType === 'multiplechoice' ? 'radio' : 'checkbox';
+      const choiceBtn = spec.type === 'multiplechoice' ? 'radio' : 'checkbox';
       spec.choices.forEach((choice, index) => {
         cy.log('loop', defaults, choice);
         if (defaults.includes(choice)) {
