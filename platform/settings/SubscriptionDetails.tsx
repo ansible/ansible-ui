@@ -19,12 +19,16 @@ import { useAwxConfig } from '../../frontend/awx/common/useAwxConfig';
 import { CredentialType } from '../../frontend/awx/interfaces/CredentialType';
 import { usePlatformActiveUser } from '../main/PlatformActiveUserProvider';
 import { PlatformRoute } from '../main/PlatformRoutes';
+import { SystemSettings } from '../../frontend/awx/interfaces/SystemSettings';
+import { awxAPI } from '../../frontend/awx/common/api/awx-utils';
+import { useGet } from '../../frontend/common/crud/useGet';
 
 export function SubscriptionDetails() {
   const { t } = useTranslation();
   const awxConfig = useAwxConfig();
   const pageNavigate = usePageNavigate();
   const { activePlatformUser } = usePlatformActiveUser();
+  const systemConfig = useGet<SystemSettings>(awxAPI`/settings/system/`);
 
   const actions = useMemo<IPageAction<object>[]>(
     () => [
@@ -78,6 +82,7 @@ export function SubscriptionDetails() {
               ? t`The number of hosts you have automated against is below your subscription count.`
               : t`You have automated against more hosts than your subscription allows.`
           }
+          isEmpty={systemConfig.data?.SUBSCRIPTION_USAGE_MODEL !== 'unique_managed_hosts'}
         >
           {license_info.compliant ? (
             <Label color="green" icon={<CheckIcon />}>
@@ -91,9 +96,22 @@ export function SubscriptionDetails() {
         </PageDetail>
         <PageDetail label={t('Hosts automated')}>{license_info.automated_instances}</PageDetail>
         <PageDetail label={t('Hosts imported')}>{license_info.current_instances}</PageDetail>
-        <PageDetail label={t('Hosts remaining')}>{license_info.free_instances}</PageDetail>
-        <PageDetail label={t('Hosts deleted')}>{license_info.deleted_instances}</PageDetail>
-        <PageDetail label={t('Active hosts previously deleted')}>
+        <PageDetail
+          label={t('Hosts remaining')}
+          isEmpty={systemConfig.data?.SUBSCRIPTION_USAGE_MODEL !== 'unique_managed_hosts'}
+        >
+          {license_info.free_instances}
+        </PageDetail>
+        <PageDetail
+          label={t('Hosts deleted')}
+          isEmpty={systemConfig.data?.SUBSCRIPTION_USAGE_MODEL !== 'unique_managed_hosts'}
+        >
+          {license_info.deleted_instances}
+        </PageDetail>
+        <PageDetail
+          label={t('Active hosts previously deleted')}
+          isEmpty={systemConfig.data?.SUBSCRIPTION_USAGE_MODEL !== 'unique_managed_hosts'}
+        >
           {license_info.reactivated_instances}
         </PageDetail>
         <PageDetail label={t('Subscription type')}>{license_type}</PageDetail>
