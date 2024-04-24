@@ -53,7 +53,9 @@ export type NotificationTemplateOptions = {
   };
 };
 
-export type NotificationTemplateEdit = Omit<NotificationTemplate, 'id'> & { customize_messages?: boolean };
+export type NotificationTemplateEdit = Omit<NotificationTemplate, 'id'> & {
+  customize_messages?: boolean;
+};
 export type CustomizeMessageType = NotificationTemplate & { customize_messages?: boolean };
 
 // TODO - finish rest of the form in the next PR
