@@ -54,37 +54,25 @@ describe('Credential Types', () => {
         expect(currentUrl.includes('details')).to.be.true;
         cy.verifyPageTitle(credType1.name).should('be.visible');
       });
+      cy.intercept(
+        'GET',
+        awxAPI`/credential_types/${credType1.id.toString()}/credentials/?order_by=name&page=1&page_size=10`
+      ).as('credentialsList');
+      cy.intercept('GET', awxAPI`/credential_types/?page=1&page_size=200`).as('credTypeList');
       cy.getBy(`a[href*="/access/credential-types/${credType1.id}/credentials?"]`).click();
-      cy.getByDataCy('create-credential').click();
-      cy.getByDataCy('name').type(credentialName);
-      cy.selectDropdownOptionByResourceName('credential-type', credType1.name);
-      cy.singleSelectByDataCy('organization', (this.globalOrganization as Organization).name);
-      cy.getByDataCy('description').type('description for new credential');
-      cy.intercept('POST', awxAPI`/credentials/`).as('newCred');
-      cy.getByDataCy('Submit').click();
-      cy.wait('@newCred')
-        .its('response.body')
-        .then((newCred: Credential) => {
-          cy.verifyPageTitle(newCred.name);
-          cy.url().should('contain', '/details');
-          cy.navigateTo('awx', 'credential-types');
-          cy.verifyPageTitle('Credential Types');
-          cy.filterTableByMultiSelect('name', [credType1.name]);
-          cy.clickTableRowLink('name', credType1.name, { disableFilter: true });
-          cy.intercept(
-            'GET',
-            awxAPI`/credential_types/${credType1.id.toString()}/credentials/?order_by=name&page=1&page_size=10`
-          ).as('credentialsList');
-          cy.getBy(`a[href*="/access/credential-types/${credType1.id}/credentials?"]`).click();
-          cy.wait('@credentialsList');
-          cy.getBy('tr').should('have.length', 2);
-        });
+      cy.wait('@credTypeList');
+      cy.wait('@credentialsList');
+      cy.getBy('tr').should('have.length', 2);
+      cy.getByDataCy(`row-id-${credential.id}`).should('contain', credential.name);
+      cy.contains(credential.name).click();
+      cy.verifyPageTitle(credential.name);
+      cy.getByDataCy('credential-type').should('be.visible').and('contain', credType1.name);
     });
 
     it('can filter credential types by name', () => {
       cy.navigateTo('awx', 'credential-types');
       cy.filterTableByMultiSelect('name', [credType1.name]);
-      cy.get('tr').should('have.length', 1);
+      cy.get('tr').should('have.length', 2);
       cy.contains(credType1.name).should('be.visible');
       cy.clearAllFilters();
     });
