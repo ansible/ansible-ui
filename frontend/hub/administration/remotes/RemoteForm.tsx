@@ -309,7 +309,7 @@ export function EditRemote() {
         ]}
       />
       <HubPageForm<RemoteFormProps>
-        submitText={t('Edit remote')}
+        submitText={t('Save remote')}
         onSubmit={onSubmit}
         onCancel={() => navigate(-1)}
         defaultValue={remoteDefaultValues}
