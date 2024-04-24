@@ -46,7 +46,7 @@ export function SubscriptionDetails() {
     [activePlatformUser?.is_superuser, pageNavigate, t]
   );
 
-  if (!awxConfig) {
+  if (!awxConfig || systemConfig.isLoading) {
     return <LoadingPage />;
   }
 
