@@ -32,7 +32,15 @@ describe('EDA Overview', () => {
             .scrollIntoView()
             .within(() => {
               cy.contains('h3', 'Rulebook Activations');
+            });
+          cy.get('#rulebook-activations')
+            .scrollIntoView()
+            .within(() => {
               cy.get('tbody tr').should('have.lengthOf.lessThan', 8);
+            });
+          cy.get('#rulebook-activations')
+            .scrollIntoView()
+            .within(() => {
               cy.get('[data-label="Name"] div > a').first().click();
               cy.url().should('match', new RegExp(`\\/rulebook-activations\\/[0-9]*\\/details`));
             });
