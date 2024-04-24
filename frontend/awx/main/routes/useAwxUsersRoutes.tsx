@@ -60,17 +60,7 @@ export function useAwxUsersRoutes() {
             {
               id: AwxRoute.UserTokens,
               path: 'tokens',
-              children: [
-                {
-                  id: AwxRoute.UserTokenDetails,
-                  path: ':tokenid/details',
-                  element: <UserTokenDetails />,
-                },
-                {
-                  path: '',
-                  element: <UserTokens />,
-                },
-              ],
+              element: <UserTokens />,
             },
             {
               path: '',
@@ -82,6 +72,12 @@ export function useAwxUsersRoutes() {
           id: AwxRoute.AddRolesToUser,
           path: ':id/roles/add-roles',
           element: <AddRolesToUser />,
+        },
+        {
+          //TODO This can be split into a UserTokenPage with UserTokenDetails being its child
+          id: AwxRoute.UserTokenDetails,
+          path: ':id/tokens/:tokenid/details',
+          element: <UserTokenDetails />,
         },
         {
           path: '',

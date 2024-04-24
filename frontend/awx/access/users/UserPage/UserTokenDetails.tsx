@@ -1,26 +1,26 @@
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { PageHeader, PageLayout, useGetPageUrl } from '../../../../../framework';
+import { PageHeader, PageLayout, PageNotImplemented } from '../../../../../framework';
 import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
 import { AwxRoute } from '../../../main/AwxRoutes';
 
 export function UserTokenDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string; tokenid: string }>();
-  const getPageUrl = useGetPageUrl();
 
   return (
     <PageLayout>
-      <PageHeader title="User token"></PageHeader>
+      <PageHeader title={t('Details')}></PageHeader>
       <PageRoutedTabs
         backTab={{
           label: t('Back to User Tokens list'),
-          page: getPageUrl(AwxRoute.UserTokenDetails, { params: { id: params.id } }),
+          page: AwxRoute.UserTokens,
           persistentFilterKey: 'user tokens',
         }}
         tabs={[]}
-        params={{ id: params.tokenid }}
+        params={{ id: params.id }}
       />
+      <PageNotImplemented></PageNotImplemented>
     </PageLayout>
   );
 }
