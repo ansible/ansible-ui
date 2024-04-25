@@ -84,6 +84,19 @@ describe('Inventory Sources', () => {
       //Add assertion lines to verify the info on the details page
     });
 
+    it.skip('can sync a Source from its table view action on the list view and and confirm completed sync action', () => {
+      //Use the source and inventory created in the beforeEach block
+      //assert the UI behavior after clicking the Sync button in the Source line item in the table
+      //follow the link to the job output screen and assert info there
+    });
+
+    it.skip('can sync all Sources on the list view and and confirm completed sync action', () => {
+      //Use the source and inventory created in the beforeEach block
+      //create one additional source in this test so the Sync All button has at least 2 sources to sync
+      //assert the UI behavior after clicking the Sync All button
+      //follow the link to the job output screens and assert info there
+    });
+
     it.skip('can access the Edit form of an existing Source from the list view, update info, and verify the presence of edited info on the details page', () => {
       //Use the source and inventory created in the beforeEach block; access the edit form from the Source list view
       //Make sure to assert the original information as well as the edited information of the Source
