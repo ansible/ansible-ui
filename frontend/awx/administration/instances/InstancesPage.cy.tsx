@@ -7,28 +7,28 @@ describe('Instances Page', () => {
     );
   });
 
-  // it('Component renders, displays instance in breadcrumb and buttons enabled', () => {
-  //   cy.intercept('GET', '/api/v2/settings/system*', {
-  //     IS_K8S: true,
-  //   }).as('isK8s');
-  //   cy.mount(<InstancePage />);
-  //   cy.getByDataCy('page-title').should('have.text', 'receptor-1');
-  //   cy.contains('nav[aria-label="Breadcrumb"]', 'receptor-1').should('exist');
-  //   cy.getByDataCy('back-to instances').should('be.visible');
-  //   cy.getByDataCy('back-to instances').should('be.enabled');
-  //   cy.getByDataCy('instances-details-tab').should('be.visible');
-  //   cy.getByDataCy('instances-details-tab').should('be.enabled');
-  //   cy.getByDataCy('instances-peers-tab').should('be.visible');
-  //   cy.getByDataCy('instances-peers-tab').should('be.enabled');
-  //   cy.getByDataCy('edit-instance').should('be.visible');
-  //   cy.getByDataCy('edit-instance').should('be.enabled');
-  //   cy.getByDataCy('actions-dropdown').click();
-  //   cy.getByDataCy('remove-instance').should('be.visible');
-  //   cy.getByDataCy('remove-instance').should('have.attr', 'aria-disabled', 'false');
-  //   cy.getByDataCy('run-health-check').should('be.visible');
-  //   cy.getByDataCy('run-health-check').should('have.attr', 'aria-disabled', 'false');
-  //   cy.getByDataCy('toggle-switch').should('be.visible');
-  // });
+  it('Component renders, displays instance in breadcrumb and buttons enabled', () => {
+    cy.intercept('GET', '/api/v2/settings/system*', {
+      IS_K8S: true,
+    }).as('isK8s');
+    cy.mount(<InstancePage />);
+    cy.getByDataCy('page-title').should('have.text', 'receptor-1');
+    cy.contains('nav[aria-label="Breadcrumb"]', 'receptor-1').should('exist');
+    cy.getByDataCy('back-to instances').should('be.visible');
+    cy.getByDataCy('back-to instances').should('be.enabled');
+    cy.getByDataCy('instances-details-tab').should('be.visible');
+    cy.getByDataCy('instances-details-tab').should('be.enabled');
+    cy.getByDataCy('instances-peers-tab').should('be.visible');
+    cy.getByDataCy('instances-peers-tab').should('be.enabled');
+    cy.getByDataCy('edit-instance').should('be.visible');
+    cy.getByDataCy('edit-instance').should('be.enabled');
+    cy.getByDataCy('actions-dropdown').click();
+    cy.getByDataCy('remove-instance').should('be.visible');
+    cy.getByDataCy('remove-instance').should('have.attr', 'aria-disabled', 'false');
+    cy.getByDataCy('run-health-check').should('be.visible');
+    cy.getByDataCy('run-health-check').should('have.attr', 'aria-disabled', 'false');
+    cy.getByDataCy('toggle-switch').should('be.visible');
+  });
 
   it('edit instance button should be hidden for non-k8s system', () => {
     cy.intercept('GET', '/api/v2/settings/system*', {
