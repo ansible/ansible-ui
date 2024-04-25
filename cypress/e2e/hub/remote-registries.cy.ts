@@ -25,7 +25,7 @@ describe('Remote Registry', () => {
         for (const remoteRegistry of response.data) {
           if (remoteRegistry.name.includes(testSignature)) {
             cy.log(`Deleting remote registry ${remoteRegistry.name}`);
-            cy.deleteRemoteRegistry(remoteRegistry.id);
+            cy.deleteHubRemoteRegistry({ id: remoteRegistry.id, failOnStatusCode: false });
           }
         }
       }
