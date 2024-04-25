@@ -6,6 +6,7 @@ import {
   PageFormSelect,
   PageFormSubmitHandler,
   PageHeader,
+  PageLayout,
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../framework';
@@ -19,32 +20,14 @@ import { awxAPI } from '../../common/api/awx-utils';
 import { Instance } from '../../interfaces/Instance';
 import { AwxRoute } from '../../main/AwxRoutes';
 
-const InstanceType = {
-  Execution: 'execution',
-  Hop: 'hop',
-};
-
-export interface IInstanceInput {
-  hostname: string;
-  listener_port: number;
-  id?: string;
-  managed_by_policy: boolean;
-  peers_from_control_nodes: boolean;
-  enabled: boolean;
-  node_state: string;
-  node_type: string;
-}
-
 export function AddInstance() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
   const postRequest = usePostRequest<Instance>();
 
-  const onSubmit: PageFormSubmitHandler<Instance> = async (instanceInput: Instance) => {
-    instanceInput.node_state = 'installed';
-    instanceInput.listener_port = Number(instanceInput.listener_port);
-    const newInstance = await postRequest(awxAPI`/instances/`, instanceInput);
+  const onSubmit: PageFormSubmitHandler<Instance> = async (instance: Instance) => {
+    const newInstance = await postRequest(awxAPI`/instances/`, instance);
     pageNavigate(AwxRoute.InstanceDetails, { params: { id: newInstance.id } });
   };
 
@@ -52,7 +35,7 @@ export function AddInstance() {
   const getPageUrl = useGetPageUrl();
 
   return (
-    <>
+    <PageLayout>
       <PageHeader
         title={t('Add instance')}
         breadcrumbs={[
@@ -65,15 +48,11 @@ export function AddInstance() {
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
         onCancel={onCancel}
-        defaultValue={{
-          node_type: InstanceType.Execution,
-          node_state: 'installed',
-          listener_port: 27199,
-        }}
+        defaultValue={{ node_type: 'execution', node_state: 'installed' }}
       >
         <InstanceInputs mode="create" />
       </AwxPageForm>
-    </>
+    </PageLayout>
   );
 }
 
@@ -99,7 +78,7 @@ export function EditInstance() {
 
   if (instance) {
     return (
-      <>
+      <PageLayout>
         <PageHeader
           title={t('Edit instance')}
           breadcrumbs={[
@@ -112,11 +91,11 @@ export function EditInstance() {
           onSubmit={onSubmit}
           cancelText={t('Cancel')}
           onCancel={onCancel}
-          defaultValue={getInitialFormValues(instance)}
+          defaultValue={instance}
         >
           <InstanceInputs mode="edit" />
         </AwxPageForm>
-      </>
+      </PageLayout>
     );
   }
 }
@@ -127,7 +106,7 @@ function InstanceInputs(props: { mode: 'create' | 'edit' }) {
 
   return (
     <>
-      <PageFormTextInput<IInstanceInput>
+      <PageFormTextInput<Instance>
         name="hostname"
         label={t('Host name')}
         placeholder={t('Enter a host name')}
@@ -135,14 +114,14 @@ function InstanceInputs(props: { mode: 'create' | 'edit' }) {
         maxLength={150}
         isDisabled={mode === 'edit'}
       />
-      <PageFormTextInput<IInstanceInput>
+      <PageFormTextInput<Instance>
         name="node_state"
         label={t('Instance state')}
         placeholder={t('installed')}
         isDisabled={true}
         labelHelp={t('Sets the current life cycle stage of this instance. Default is "installed."')}
       />
-      <PageFormTextInput<IInstanceInput>
+      <PageFormTextInput<Instance>
         name="listener_port"
         type="number"
         label={t('Listener port')}
@@ -152,41 +131,40 @@ function InstanceInputs(props: { mode: 'create' | 'edit' }) {
         labelHelp={t(
           'Select the port that Receptor will listen on for incoming connections, e.g. 27199.'
         )}
-        isRequired
       />
-      <PageFormSelect<IInstanceInput>
+      <PageFormSelect<Instance>
         name="node_type"
         label={t('Instance type')}
         placeholderText={t('Select a client type')}
         options={[
           {
             label: t('Execution'),
-            value: InstanceType.Execution,
+            value: 'execution',
           },
           {
             label: t('Hop'),
-            value: InstanceType.Hop,
+            value: 'hop',
           },
         ]}
         isRequired
         isDisabled={mode === 'edit'}
       />
       <PageFormSection title={t('Options')} singleColumn>
-        <PageFormCheckbox<IInstanceInput>
+        <PageFormCheckbox<Instance>
           name="enabled"
           label={t('Enable instance')}
           labelHelp={t(
             'Set the instance enabled or disabled. If disabled, jobs will not be assigned to this instance.'
           )}
         />
-        <PageFormCheckbox<IInstanceInput>
+        <PageFormCheckbox<Instance>
           name="managed_by_policy"
           label={t('Managed by policy')}
           labelHelp={t(
             'Controls whether or not this instance is managed by policy. If enabled, the instance will be available for automatic assignment to and unassignment from instance groups based on policy rules.'
           )}
         />
-        <PageFormCheckbox<IInstanceInput>
+        <PageFormCheckbox<Instance>
           name="peers_from_control_nodes"
           label={t('Peers from control nodes')}
           labelHelp={t(
@@ -196,17 +174,4 @@ function InstanceInputs(props: { mode: 'create' | 'edit' }) {
       </PageFormSection>
     </>
   );
-}
-
-function getInitialFormValues(instance: Instance | undefined) {
-  return {
-    hostname: instance?.hostname,
-    listener_port: instance?.listener_port,
-    node_state: instance?.node_state,
-    node_type: instance?.node_type,
-    peers_from_control_nodes: instance?.peers_from_control_nodes,
-    managed_by_policy: instance?.managed_by_policy,
-    enabled: instance?.enabled,
-    peers: [],
-  };
 }

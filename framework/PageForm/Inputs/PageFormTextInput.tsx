@@ -253,6 +253,12 @@ export function PageFormTextInput<
               break;
             }
             case 'number': {
+              if (value === '') {
+                setValue(name, null as PathValue<TFieldValues, TFieldName>);
+                onChange(null);
+                return;
+              }
+
               if (max !== undefined && Number(value) > Number(max)) {
                 value = String(max);
               }
