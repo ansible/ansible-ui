@@ -2,7 +2,6 @@ import { useTranslation } from 'react-i18next';
 import { edaAPI } from '../../common/eda-utils';
 import { UserAssignment } from '../interfaces/UserAssignment';
 import { Access } from './Access';
-import { ColumnPriority } from '../../../../framework';
 
 export function UserAccess(props: { id: string; type: string; addRolesRoute?: string }) {
   const { id, type, addRolesRoute } = props;
