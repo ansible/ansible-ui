@@ -74,6 +74,10 @@ import { PageNotImplemented } from '../../../framework';
 import { CredentialTypeCredentials } from '../access/credential-types/CredentialTypePage/CredentialTypeCredentials';
 import { EdaRulebookActivationAddTeams } from '../rulebook-activations/components/EdaRulebookActivationAddTeams';
 import { EdaRulebookActivationAddUsers } from '../rulebook-activations/components/EdaRulebookActivationAddUsers';
+import { EdaCredentialTypeAddUsers } from '../access/credential-types/components/EdaCredentialTypeAddUsers';
+import { EdaCredentialTypeAddTeams } from '../access/credential-types/components/EdaCredentialTypeAddTeams';
+import { CredentialTypeTeamAccess } from '../access/credential-types/CredentialTypePage/CredentialTypeTeamAccess';
+import { CredentialTypeUserAccess } from '../access/credential-types/CredentialTypePage/CredentialTypeUserAccess';
 
 export function useEdaNavigation() {
   const { t } = useTranslation();
@@ -571,10 +575,30 @@ export function useEdaNavigation() {
                   element: <CredentialTypeCredentials />,
                 },
                 {
+                  id: EdaRoute.CredentialTypeTeamAccess,
+                  path: 'team-access',
+                  element: <CredentialTypeTeamAccess />,
+                },
+                {
+                  id: EdaRoute.CredentialTypeUserAccess,
+                  path: 'user-access',
+                  element: <CredentialTypeUserAccess />,
+                },
+                {
                   path: '',
                   element: <Navigate to="details" />,
                 },
               ],
+            },
+            {
+              id: EdaRoute.CredentialTypeAddUsers,
+              path: ':id/users/add-users',
+              element: <EdaCredentialTypeAddUsers />,
+            },
+            {
+              id: EdaRoute.CredentialTypeAddTeams,
+              path: ':id/team-access/add-teams',
+              element: <EdaCredentialTypeAddTeams />,
             },
             {
               path: '',
