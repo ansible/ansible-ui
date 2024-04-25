@@ -226,7 +226,7 @@ export function UploadCollectionByFile() {
   return (
     <>
       <HubPageForm<UploadData>
-        submitText={t('Confirm')}
+        submitText={t('Upload collection')}
         cancelText={t('Cancel')}
         onCancel={onCancel}
         onSubmit={(data) => {

@@ -32,4 +32,7 @@ export interface Schedule
     modified_by: SummaryFieldsByUser;
     inventory?: SummaryFieldInventory;
   };
+  extra_data: {
+    days?: number;
+  };
 }

@@ -28,9 +28,12 @@ export function PageApp(props: {
   const navigationItems = useMemo(
     () => [
       {
-        path: `/`,
+        path: props.basename ?? '/',
         element: (
-          <Page header={masthead} sidebar={<PageNavigation navigation={navigation} />}>
+          <Page
+            header={masthead}
+            sidebar={<PageNavigation navigation={navigation} basename={props.basename} />}
+          >
             <PageNotificationsDrawer>
               <Outlet />
             </PageNotificationsDrawer>
@@ -40,12 +43,10 @@ export function PageApp(props: {
       },
       { path: '*', element: <PageNotFound /> },
     ],
-    [masthead, navigation]
+    [masthead, navigation, props.basename]
   );
   const [_, setNavigation] = usePageNavigationRoutesContext();
-  useEffect(() => {
-    setNavigation(navigation);
-  }, [navigation, setNavigation]);
+  useEffect(() => setNavigation(navigationItems), [navigationItems, setNavigation]);
 
   return <Routes>{navigationItems.map(NavigationRoute)}</Routes>;
 }

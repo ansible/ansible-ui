@@ -5,9 +5,11 @@ import {
   ICatalogBreadcrumb,
   LoadingPage,
   PageFormSubmitHandler,
+  PageFormSwitch,
   PageFormTextInput,
   PageHeader,
   PageLayout,
+  getPatternflyColor,
   useGetPageUrl,
 } from '../../../../framework';
 import { AwxPageForm } from '../../common/AwxPageForm';
@@ -29,6 +31,10 @@ import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 import { usePageNavigate } from '../../../../framework';
 
 import { InnerForm } from './NotifierFormInner';
+import { Trans } from 'react-i18next';
+import { NotifierFormMessages } from './NotifierFormMessages';
+import { areMessagesEmpty } from './NotifierFormMessages';
+import { useState } from 'react';
 
 export function EditNotifier() {
   return <NotifierForm mode={'edit'} />;
@@ -49,7 +55,10 @@ export type NotificationTemplateOptions = {
   };
 };
 
-type NotificationTemplateEdit = Omit<NotificationTemplate, 'id'>;
+export type NotificationTemplateEdit = Omit<NotificationTemplate, 'id'> & {
+  customize_messages?: boolean;
+};
+export type CustomizeMessageType = NotificationTemplate & { customize_messages?: boolean };
 
 // TODO - finish rest of the form in the next PR
 function NotifierForm(props: { mode: 'add' | 'edit' }) {
@@ -61,6 +70,7 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
   const notifierRequest = useGet<NotificationTemplate>(getUrl);
   const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
+  const [messagesError, setMessagesError] = useState<string>('');
 
   const patchRequest = usePatchRequest();
   const postRequest = usePostRequest();
@@ -94,63 +104,94 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
     arraysToString(defaultValue as NotificationTemplate);
   }
 
+  const defaultValueMessages = defaultValue as NotificationTemplate;
+  const messagesEmpty = areMessagesEmpty(defaultValueMessages);
+
+  if (defaultValue && messagesEmpty) {
+    (defaultValue as CustomizeMessageType).customize_messages = false;
+  }
+
+  if (defaultValue && !messagesEmpty) {
+    (defaultValue as CustomizeMessageType).customize_messages = true;
+  }
+
   const onSubmit: PageFormSubmitHandler<NotificationTemplate> = async (formData) => {
-    const data: NotificationTemplate | NotificationTemplateEdit =
-      mode === 'add'
-        ? formData
-        : ({
-            description: formData.description,
-            messages: formData.messages,
-            name: formData.name,
-            notification_configuration: formData.notification_configuration,
-            notification_type: formData.notification_type,
-            organization: formData.organization,
-          } as NotificationTemplateEdit);
+    try {
+      const data: NotificationTemplate | NotificationTemplateEdit =
+        mode === 'add'
+          ? formData
+          : ({
+              description: formData.description,
+              messages: formData.messages,
+              name: formData.name,
+              notification_configuration: formData.notification_configuration,
+              notification_type: formData.notification_type,
+              organization: formData.organization,
+              customize_messages: (formData as CustomizeMessageType).customize_messages,
+            } as NotificationTemplateEdit);
 
-    stringToArrays(data);
-    clearPasswords(data);
+      stringToArrays(data);
 
-    let fieldValue;
-    // fix notification data types
-    const fields =
-      optionsRequest.data?.actions.GET.notification_configuration[data.notification_type || ''];
-    if (fields) {
-      const notification_configuration = data.notification_configuration;
-      for (const field in fields) {
-        if (!notification_configuration[field]) {
+      if ((data as CustomizeMessageType).customize_messages === false) {
+        data.messages = null;
+      }
+      delete (data as CustomizeMessageType).customize_messages;
+
+      let fieldValue;
+      // fix notification data types
+      const fields =
+        optionsRequest.data?.actions.GET.notification_configuration[data.notification_type || ''];
+      if (fields) {
+        const notification_configuration = data.notification_configuration;
+        for (const field in fields) {
+          if (!notification_configuration[field]) {
+            fieldValue = fields[field];
+            notification_configuration[field] = '';
+          }
+
+          // convert them
           fieldValue = fields[field];
-          notification_configuration[field] = '';
-        }
+          if (fieldValue.type === 'int' && typeof notification_configuration[field] === 'string') {
+            notification_configuration[field] = Number.parseInt(
+              notification_configuration[field] as string,
+              10
+            );
+          }
 
-        // convert them
-        fieldValue = fields[field];
-        if (fieldValue.type === 'int' && typeof notification_configuration[field] === 'string') {
-          notification_configuration[field] = Number.parseInt(
-            notification_configuration[field] as string,
-            10
-          );
-        }
-
-        if (fieldValue.type === 'bool' && notification_configuration[field] === '') {
-          notification_configuration[field] = false;
+          if (fieldValue.type === 'bool' && notification_configuration[field] === '') {
+            notification_configuration[field] = false;
+          }
         }
       }
-    }
 
-    if (data.notification_type === 'webhook') {
-      if (!data.notification_configuration.headers) {
-        data.notification_configuration.headers = {};
+      if (data.notification_type === 'webhook') {
+        if (!data.notification_configuration.headers) {
+          data.notification_configuration.headers = {};
+        }
       }
-    }
 
-    if (mode === 'add') {
-      await postRequest(awxAPI`/notification_templates/`, data);
-    } else {
-      await patchRequest(awxAPI`/notification_templates/${formData.id?.toString() || ''}/`, data);
-    }
+      let result: { id?: number } = {};
+      if (mode === 'add') {
+        result = (await postRequest(awxAPI`/notification_templates/`, data)) as { id: number };
+      } else {
+        await patchRequest(awxAPI`/notification_templates/${formData.id?.toString() || ''}/`, data);
+      }
 
-    pageNavigate(AwxRoute.NotificationTemplates);
+      const id = mode === 'add' ? result?.id : formData.id;
+      pageNavigate(AwxRoute.NotificationTemplateDetails, { params: { id } });
+    } catch (e: unknown) {
+      const ex = e as { body?: { messages?: string } };
+      if (ex?.body?.messages) {
+        const mess = JSON.stringify(ex.body.messages, null, 4);
+        setMessagesError(mess);
+      }
+      throw ex;
+    }
   };
+
+  const job_friendly_name = '{{job_friendly_name}}';
+  const url = '{{url}}';
+  const status = '{{status}}';
 
   return (
     <PageLayout>
@@ -207,6 +248,44 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
                 </PageFormGroup>
               </>
             )}
+          </PageFormWatch>
+        </PageFormSection>
+        <PageFormSection>
+          <PageFormSwitch
+            labelHelp={
+              <Trans>
+                Use custom messages to change the content of notifications sent when a job starts,
+                succeeds, or fails. Use curly braces to access information about the job: <br />
+                <br />
+                {{ job_friendly_name }}, {{ url }}, {{ status }}.<br />
+                <br />
+                You may apply a number of possible variables in the message. For more information,
+                refer to the
+                <a href="https://docs.ansible.com/automation-controller/latest/html/userguide/notifications.html#create-custom-notifications">
+                  Ansible Controller Documentation.
+                </a>
+              </Trans>
+            }
+            name={'customize_messages'}
+            label={t('Customize messages...')}
+          />
+        </PageFormSection>
+
+        <PageFormSection singleColumn>
+          <PageFormWatch watch="customize_messages">
+            {(customize_messages: boolean) => {
+              return (
+                <>
+                  <div style={{ color: getPatternflyColor('red') }}>{messagesError}</div>
+                  {
+                    <NotifierFormMessages
+                      customize_messages={customize_messages}
+                      data={notifierRequest.data}
+                    />
+                  }
+                </>
+              );
+            }}
           </PageFormWatch>
         </PageFormSection>
       </AwxPageForm>
@@ -268,64 +347,6 @@ function isList(key: string, notification_type: string) {
   }
 
   if (key === 'targets' && notification_type === 'irc') {
-    return true;
-  }
-
-  return false;
-}
-
-function clearPasswords(data: NotificationTemplate | NotificationTemplateEdit) {
-  if (data.notification_configuration) {
-    Object.keys(data.notification_configuration).forEach((key) => {
-      if (isPassword(key, data.notification_type || '')) {
-        if (data.notification_configuration[key] === '$encrypted$') {
-          // set it to undefined, so it does not change the backend password
-          delete data.notification_configuration[key];
-        }
-      }
-    });
-  }
-}
-
-function isPassword(
-  key: string,
-  notification_type:
-    | 'email'
-    | 'grafana'
-    | 'irc'
-    | 'mattermost'
-    | 'pagerduty'
-    | 'rocketchat'
-    | 'slack'
-    | 'twilio'
-    | 'webhook'
-    | ''
-) {
-  if (notification_type === 'email' && key === 'password') {
-    return true;
-  }
-
-  if (notification_type === 'slack' && key === 'token') {
-    return true;
-  }
-
-  if (notification_type === 'twilio' && key === 'account_token') {
-    return true;
-  }
-
-  if (notification_type === 'pagerduty' && key === 'token') {
-    return true;
-  }
-
-  if (notification_type === 'grafana' && key === 'grafana_key') {
-    return true;
-  }
-
-  if (notification_type === 'webhook' && key === 'password') {
-    return true;
-  }
-
-  if (notification_type === 'irc' && key === 'password') {
     return true;
   }
 
