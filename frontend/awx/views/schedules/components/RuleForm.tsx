@@ -272,7 +272,9 @@ export function RuleForm(props: {
           data-cy={ruleId ? 'update-rule-button' : 'add-rule-button'}
           onClick={handleAddItem}
         >
-          {ruleId ? t('Update') : t('Add')}
+          {ruleId
+            ? t(isRulesStep ? 'Update rule' : 'Update exception')
+            : t(isRulesStep ? 'Save rule' : 'Save exception')}
         </Button>
         <Button
           data-cy="discard-rule-button"
