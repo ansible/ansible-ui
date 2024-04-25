@@ -23,7 +23,7 @@ export function NotificationPage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
 
-  const {runningNotifications, setRunningNotifications, onNotifierStartTest } = useNotificationsWatch();
+  const {runningNotifications, setRunningNotifications, onNotifierStartTest, checkNotifiers } = useNotificationsWatch('detail');
 
   // set refresh interval to be faster when test is running
   const {
@@ -55,22 +55,8 @@ export function NotificationPage() {
   // search for notification id
   const notificationId = runningNotifications[notificationTemplate.id.toString()];
 
-  const notifications = notificationTemplate.summary_fields?.recent_notifications;
-  const notification = notifications.find(
-    (notification) => notification.id.toString() === notificationId
-  );
- 
-  if (notification && notification.status !== 'pending') {
-    alertToaster.addAlert({
-      variant: 'info',
-      title: t('Notifier (id {{id}}) test result', { id: notificationId }),
-      children: <StatusLabel status={notification.status} />,
-    });
-    const obj = { ...runningNotifications };
-    delete obj[notificationTemplate.id];
-    setRunningNotifications(obj);
-  }
-
+  checkNotifiers(notificationTemplate);
+  
   return (
     <PageLayout>
       <PageHeader

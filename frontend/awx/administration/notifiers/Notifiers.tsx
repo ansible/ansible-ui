@@ -14,6 +14,7 @@ import { useOptions } from '../../../common/crud/useOptions';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { AwxRoute } from '../../main/AwxRoutes';
 import { PlusCircleIcon } from '@patternfly/react-icons';
+import { useNotificationsWatch } from './hooks/useNotificationsWatch';
 
 export function Notifiers() {
   const { t } = useTranslation();
@@ -26,9 +27,10 @@ export function Notifiers() {
   });
   const config = useAwxConfig();
   const pageNavigate = usePageNavigate();
+  const {runningNotifications, setRunningNotifications, onNotifierStartTest } = useNotificationsWatch('list');
 
   const toolbarActions = useNotifiersToolbarActions(view.unselectItemsAndRefresh);
-  const rowActions = useNotifiersRowActions(view.unselectItemsAndRefresh);
+  const rowActions = useNotifiersRowActions(view.unselectItemsAndRefresh, undefined, onNotifierStartTest, 'list', runningNotifications );
 
   const notificationsOptions = useOptions<OptionsResponse<ActionsResponse>>(
     awxAPI`/notification_templates/`
@@ -47,6 +49,7 @@ export function Notifiers() {
         titleDocLink={`${getDocsBaseUrl(config)}/html/userguide/notifications.html`}
         headerActions={<ActivityStreamIcon type={'notification_template'} />}
       />
+      {JSON.stringify(runningNotifications, null, 4)}
       <PageTable
         id="awx-host-metrics-table"
         toolbarFilters={toolbarFilters}
