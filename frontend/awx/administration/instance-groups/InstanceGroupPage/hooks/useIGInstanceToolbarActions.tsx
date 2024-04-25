@@ -51,7 +51,7 @@ function useIGInstanceAssociateToolbarAction(view: IAwxView<Instance>) {
           instanceGroupId: id ?? '',
         }),
     }),
-    [associateInstanceToIG, id, openAssociateInstanceModal]
+    [associateInstanceToIG, id, openAssociateInstanceModal, canAssociateInstance]
   );
 }
 
