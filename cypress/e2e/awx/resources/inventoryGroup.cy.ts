@@ -88,7 +88,7 @@ describe('Inventory Groups', () => {
       });
     });
 
-    it.skip('can run an ad-hoc command against a group', () => {
+    it('can run an ad-hoc command against a group', () => {
       cy.createInventoryHostGroup(organization).then((result) => {
         const { inventory, group } = result;
         //1) Use the inventory created in beforeEach block, access the groups tab of that inventory
