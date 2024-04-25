@@ -38,7 +38,7 @@ export function Login(props: {
         <PageSection isFilled hasOverflowScroll isCenterAligned isWidthLimited>
           <LoginPageLayout>
             <LoginPageBody>
-              <Card isLarge isRounded>
+              <CardStyled isLarge isRounded>
                 <CardHeader>
                   <TextContent>
                     <CardTitle component="h1">{t('Log in to your account')}</CardTitle>
@@ -53,7 +53,7 @@ export function Login(props: {
                     hideInputs={props.hideInputs}
                   />
                 </CardBody>
-              </Card>
+              </CardStyled>
               <Flex direction={{ default: 'column' }} spaceItems={{ default: 'spaceItemsXl' }}>
                 <FlexItem>
                   <Flex
@@ -105,4 +105,9 @@ const LoginPageBody = styled.div`
   gap: 48px;
   align-items: center;
   justify-content: center;
+`;
+
+const CardStyled = styled(Card)`
+  width: 400px;
+  max-width: min(400px, 100dvw);
 `;
