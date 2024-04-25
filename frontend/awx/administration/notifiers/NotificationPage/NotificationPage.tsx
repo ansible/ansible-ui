@@ -16,13 +16,14 @@ import { usePageNavigate } from '../../../../../framework';
 import { useState } from 'react';
 import { usePageAlertToaster } from '../../../../../framework';
 import { StatusLabel } from '../../../../common/Status';
-import { RunningNotificationsType } from '../hooks/useNotifiersRowActions';
+import { useNotificationsWatch } from '../hooks/useNotificationsWatch';
+
 
 export function NotificationPage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  // key:value = notification_template_id:notification_id
-  const [runningNotifications, setRunningNotifications] = useState<RunningNotificationsType>({});
+
+  const {runningNotifications, setRunningNotifications } = useNotificationsWatch();
 
   // set refresh interval to be faster when test is running
   const {
