@@ -15,8 +15,8 @@ export function SurveyStep({ templateId, jobType }: { templateId?: string; jobTy
   const { t } = useTranslation();
   const { wizardData, setStepData } = usePageWizard();
   const { reset } = useFormContext();
-  const { node_resource } = wizardData as WizardFormValues;
-  const id = node_resource ? node_resource.id.toString() : templateId ? templateId : '';
+  const { resource } = wizardData as WizardFormValues;
+  const id = resource ? resource?.id.toString() : templateId ? templateId : '';
   const { data: survey_spec } = useGet<Survey>(
     awxAPI`/${jobType ?? 'job_templates'}/${id}/survey_spec/`
   );
