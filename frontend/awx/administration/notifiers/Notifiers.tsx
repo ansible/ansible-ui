@@ -18,8 +18,9 @@ import { useNotificationsWatch } from './hooks/useNotificationsWatch';
 
 export function Notifiers() {
   const { t } = useTranslation();
+  const {runningNotifications, onNotifierStartTest, checkNotifiers } = useNotificationsWatch('list');
   const toolbarFilters = useNotifiersFilters();
-  const tableColumns = useNotifiersColumns();
+  const tableColumns = useNotifiersColumns({runningNotifications});
   const view = useAwxView<NotificationTemplate>({
     url: awxAPI`/notification_templates/`,
     toolbarFilters,
@@ -27,8 +28,7 @@ export function Notifiers() {
   });
   const config = useAwxConfig();
   const pageNavigate = usePageNavigate();
-  const {runningNotifications, setRunningNotifications, onNotifierStartTest, checkNotifiers } = useNotificationsWatch('list');
-
+ 
   const toolbarActions = useNotifiersToolbarActions(view.unselectItemsAndRefresh);
   const rowActions = useNotifiersRowActions(view.unselectItemsAndRefresh, undefined, onNotifierStartTest, 'list', runningNotifications );
 
