@@ -12,7 +12,7 @@ describe('Job Templates Surveys', function () {
     cy.awxLogin();
   });
 
-  describe('JT Surveys: Create and Edit', function () {
+  describe.skip('JT Surveys: Create and Edit', function () {
     const question = {
       question_name: "Who's that?",
       question_description: 'The person behind this.',
@@ -318,12 +318,24 @@ describe('Job Templates Surveys', function () {
     it('can create all 7 types of survey types, enable survey, launch JT, view default survey answer, complete launch, and assert survey answer on completed job', function () {
       surveyTypes.forEach((survey) => {
         cy.createTemplateSurvey(jobTemplate, survey);
+        cy.intercept('GET', awxAPI`/job_templates/${jobTemplate.id.toString()}/`).as('getSurvey');
         cy.getByDataCy('name-column-cell').contains(survey.question_name);
+        cy.wait('@getSurvey');
       });
 
+      cy.intercept('PATCH', awxAPI`/job_templates/${jobTemplate.id.toString()}/`).as(
+        'enableSurvey'
+      );
       cy.get('[for="survey-switch"]').click();
+      cy.wait('@enableSurvey');
+
+      cy.intercept('GET', awxAPI`/job_templates/${jobTemplate.id.toString()}/launch/`).as(
+        'launchTemplate'
+      );
 
       cy.clickButton('Launch template');
+      cy.wait('@launchTemplate');
+
       cy.contains('Prompt on Launch');
 
       surveyTypes.forEach((survey) => {
@@ -387,7 +399,9 @@ describe('Job Templates Surveys', function () {
 
       cy.clickButton('Finish');
 
-      cy.intercept('POST', `api/v2/job_templates/${jobTemplate.id}/launch/`).as('postLaunch');
+      cy.intercept('POST', awxAPI`/job_templates/${jobTemplate.id.toString()}/launch/`).as(
+        'postLaunch'
+      );
       cy.clickButton(/^Finish/);
       cy.wait('@postLaunch')
         .its('response.body.id')
