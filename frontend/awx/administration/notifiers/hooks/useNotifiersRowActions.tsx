@@ -22,17 +22,20 @@ import { awxAPI } from '../../../common/api/awx-utils';
 
 export type RunningNotificationsType = { [key: string]: string };
 
-export function useNotifiersRowActions(
-  onComplete: (notification: NotificationTemplate[]) => void,
-  onNotifierCopied = () => null,
-  onNotifierStartTest?: (template_id: string, notificationId: string) => void,
-  type?: 'detail' | 'list',
-  runningNotifications?: RunningNotificationsType
+export function useNotifiersRowActions(params:
+  {
+    onComplete?: (notification: NotificationTemplate[]) => void,
+    onNotifierCopied?: () => void,
+    onNotifierStartTest?: (template_id: string, notificationId: string) => void,
+    type?: 'detail' | 'list',
+    runningNotifications?: RunningNotificationsType
+  }
 ) {
+  const {onComplete, onNotifierCopied, onNotifierStartTest, type, runningNotifications} = params;
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
-  const deleteNotifiers = useDeleteNotifiers(onComplete);
-  const copyNotifier = useCopyNotifier(onNotifierCopied);
+  const deleteNotifiers = useDeleteNotifiers(onComplete || (() => {}));
+  const copyNotifier = useCopyNotifier(onNotifierCopied  || (() => {}));
   const alertToaster = usePageAlertToaster();
 
   return useMemo<IPageAction<NotificationTemplate>[]>(() => {

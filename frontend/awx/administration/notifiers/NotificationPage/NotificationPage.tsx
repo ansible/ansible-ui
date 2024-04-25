@@ -35,13 +35,14 @@ export function NotificationPage() {
 
   const getPageUrl = useGetPageUrl();
   const pageActions = useNotifiersRowActions(
-    () => {
+  {
+    onComplete : () => {
       pageNavigate(AwxRoute.NotificationTemplates);
     },
-    undefined,
     onNotifierStartTest,
-    'detail',
-    runningNotifications
+    type : 'detail',
+    runningNotifications,
+  }
   );
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
