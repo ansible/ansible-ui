@@ -35,6 +35,7 @@ interface IOptionActionBase {
   category_slug: string;
   required?: boolean;
   help_text?: string;
+  hidden?: boolean;
 }
 
 interface IOptionStringAction extends IOptionActionBase {
@@ -50,6 +51,9 @@ interface IOptionFieldAction extends IOptionActionBase {
 interface IOptionIntegerAction extends IOptionActionBase {
   type: 'integer';
   default?: number;
+  min_value?: number;
+  max_value?: number;
+  unit?: string;
 }
 
 interface IOptionBooleanAction extends IOptionActionBase {
@@ -185,6 +189,8 @@ export function OptionActionsFormInput(props: { name: string; option: AwxSetting
           labelHelp={option.help_text}
           type="number"
           isRequired={option.required}
+          min={option.min_value}
+          max={option.max_value}
         />
       );
     case 'boolean':

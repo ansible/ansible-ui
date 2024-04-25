@@ -1,5 +1,5 @@
+import { Instance } from '../../interfaces/Instance';
 import { AddInstance, EditInstance } from './InstanceForm';
-import type { IInstanceInput } from './InstanceForm';
 
 describe('Add instance Form', () => {
   it('should validate required fields on save', () => {
@@ -36,12 +36,11 @@ describe('Add instance Form', () => {
     cy.clickButton(/^Save$/);
     cy.wait('@addInstance')
       .its('request.body')
-      .then((instance: IInstanceInput) => {
+      .then((instance: Instance) => {
         expect(instance).to.deep.equal({
           node_type: 'execution',
           node_state: 'installed',
           hostname: 'AddInstanceMock',
-          listener_port: null,
         });
       });
   });
@@ -81,7 +80,7 @@ describe('Add instance Form', () => {
     cy.clickButton(/^Save$/);
     cy.wait('@addInstanceWithPeers')
       .its('request.body')
-      .then((instance: IInstanceInput) => {
+      .then((instance: Instance) => {
         expect(instance).to.deep.equal({
           node_type: 'hop',
           node_state: 'installed',
