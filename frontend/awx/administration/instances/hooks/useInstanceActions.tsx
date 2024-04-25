@@ -98,16 +98,27 @@ export function useInstanceDetailsActions() {
   const params = useParams<{ id: string }>();
   const { data: instance, refresh } = useGetItem<Instance>(awxAPI`/instances`, params.id);
   const { data } = useGet<Settings>(awxAPI`/settings/system/`);
+  const { activeAwxUser } = useAwxActiveUser();
 
-  const instancesType = instance?.node_type === 'execution' || instance?.node_type === 'hop';
   const isK8s = data?.IS_K8S;
+
+  const isManagedInstance = instance?.managed ?? false;
+
+  const isHidden =
+    isK8s === false ||
+    (!activeAwxUser?.is_superuser && !activeAwxUser?.is_system_auditor) ||
+    isManagedInstance;
 
   const toggleInstanceAction = useToggleInstanceRowAction(refresh);
   const editInstanceAction = useEditInstanceRowAction({
-    isHidden: isK8s === false || !instancesType,
+    isHidden: isHidden,
+    isPinned: false,
   });
-  const runHealthCheckAction = useRunHealthCheckRowAction(refresh);
-  const removeInstanceAction = useRemoveInstanceItemAction(instance);
+  const removeInstanceAction = useRemoveInstanceItemAction(isHidden);
+  const runHealthCheckAction = useRunHealthCheckRowAction(
+    refresh,
+    instance?.node_type !== 'execution'
+  );
 
   return useMemo<IPageAction<Instance>[]>(
     () => [toggleInstanceAction, editInstanceAction, removeInstanceAction, runHealthCheckAction],
@@ -115,22 +126,21 @@ export function useInstanceDetailsActions() {
   );
 }
 
-export function useRemoveInstanceItemAction(instance: Instance | undefined) {
+export function useRemoveInstanceItemAction(isHidden: boolean) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const removeInstances = useRemoveInstances((_instances: Instance[]) =>
     pageNavigate(AwxRoute.Instances)
   );
   const { data } = useGet<Settings>(awxAPI`/settings/system/`);
-
-  const instancesType = instance?.node_type === 'execution' || instance?.node_type === 'hop';
   const isK8s = data?.IS_K8S;
   const { activeAwxUser } = useAwxActiveUser();
 
   return useMemo<IPageAction<Instance>>(
     () => ({
       type: PageActionType.Button,
-      isHidden: () => isK8s === false || !instancesType,
+      isHidden: () => isHidden,
+      isPinned: false,
       selection: PageActionSelection.Single,
       icon: MinusCircleIcon,
       label: t('Remove instance'),
@@ -138,7 +148,7 @@ export function useRemoveInstanceItemAction(instance: Instance | undefined) {
       isDisabled: (instance) => cannotRemoveInstances([instance], t, activeAwxUser, isK8s ?? false),
       isDanger: true,
     }),
-    [t, removeInstances, instancesType, isK8s, activeAwxUser]
+    [t, removeInstances, isK8s, activeAwxUser, isHidden]
   );
 }
 
@@ -160,6 +170,43 @@ export function cannotRemoveInstances(
       'Cannot delete due to one or many instances being of type other than execution or hop.'
     );
   }
+  return '';
+}
+
+export function cannotRunHealthCheckDueToPending(
+  instance: Instance,
+  t: TFunction<'translation', undefined>
+) {
+  if (instance.health_check_pending)
+    return t(
+      `Instance has pending health checks. Wait for those to complete before attempting another health check.`
+    );
+  return '';
+}
+
+export function cannotRunHealthCheckDueToNodeType(
+  instance: Instance,
+  t: TFunction<'translation', undefined>
+) {
+  if (instance.node_type !== 'execution')
+    return t(`Health checks can only be run on execution instances.`);
+  return '';
+}
+
+export function cannotRunHealthCheckDueToManagedInstance(
+  instance: Instance,
+  t: TFunction<'translation', undefined>
+) {
+  if (instance?.managed) return t(`Health checks cannot be run on a managed instance.`);
+  return '';
+}
+
+export function cannotRunHealthCheckDueToPermissions(
+  activeAwxUser: AwxUser | null | undefined,
+  t: TFunction<'translation', undefined>
+) {
+  if (!activeAwxUser?.is_superuser && !activeAwxUser?.is_system_auditor)
+    return t(`Health checks cannot be run on instance do not have correct permissions.`);
   return '';
 }
 

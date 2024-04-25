@@ -16,10 +16,16 @@ import { useGet } from '../../../../common/crud/useGet';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
 import { AwxRoute } from '../../../main/AwxRoutes';
+import {
+  cannotRunHealthCheckDueToManagedInstance,
+  cannotRunHealthCheckDueToNodeType,
+  cannotRunHealthCheckDueToPending,
+  cannotRunHealthCheckDueToPermissions,
+} from './useInstanceActions';
 
 export function useInstanceRowActions(onComplete: (instances: Instance[]) => void) {
   const toggleInstanceRowAction: IPageAction<Instance> = useToggleInstanceRowAction(onComplete);
-  const healthCheckRowAction: IPageAction<Instance> = useRunHealthCheckRowAction(onComplete);
+  const healthCheckRowAction: IPageAction<Instance> = useRunHealthCheckRowAction(onComplete, false);
   const editInstanceRowAction: IPageAction<Instance> = useEditInstanceRowAction();
 
   return useMemo<IPageAction<Instance>[]>(
@@ -67,10 +73,14 @@ export function useToggleInstanceRowAction(onComplete: (instances: Instance[]) =
   );
 }
 
-export function useRunHealthCheckRowAction(onComplete: (instances: Instance[]) => void) {
+export function useRunHealthCheckRowAction(
+  onComplete: (instances: Instance[]) => void,
+  isHidden: boolean
+) {
   const { t } = useTranslation();
 
   const alertToaster = usePageAlertToaster();
+  const { activeAwxUser } = useAwxActiveUser();
 
   return useMemo<IPageAction<Instance>>(
     () => ({
@@ -79,11 +89,11 @@ export function useRunHealthCheckRowAction(onComplete: (instances: Instance[]) =
       variant: ButtonVariant.secondary,
       isPinned: true,
       isDisabled: (instance) =>
-        instance.node_type !== 'execution'
-          ? t('Cannot run health check on a {{ type }} instance', { type: instance.node_type })
-          : instance.health_check_pending
-            ? t('Health check pending')
-            : undefined,
+        cannotRunHealthCheckDueToNodeType(instance, t) ||
+        cannotRunHealthCheckDueToPermissions(activeAwxUser, t) ||
+        cannotRunHealthCheckDueToManagedInstance(instance, t) ||
+        cannotRunHealthCheckDueToPending(instance, t),
+      isHidden: () => isHidden,
       icon: HeartbeatIcon,
       label: t('Run health check'),
       onClick: (instance: Instance) => {
@@ -106,7 +116,7 @@ export function useRunHealthCheckRowAction(onComplete: (instances: Instance[]) =
           });
       },
     }),
-    [t, onComplete, alertToaster]
+    [t, onComplete, alertToaster, activeAwxUser, isHidden]
   );
 }
 

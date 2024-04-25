@@ -9,7 +9,6 @@ import { AwxError } from '../../common/AwxError';
 import { awxAPI } from '../../common/api/awx-utils';
 import { Instance } from '../../interfaces/Instance';
 import { AwxRoute } from '../../main/AwxRoutes';
-import { useViewActivityStream } from '../../access/common/useViewActivityStream';
 import { useInstanceDetailsActions } from './hooks/useInstanceActions';
 import { Settings } from '../../interfaces/Settings';
 
@@ -20,8 +19,7 @@ export function InstancePage() {
   const { data } = useGet<Settings>(awxAPI`/settings/system/`);
   const isK8s = !data?.IS_K8S;
   const itemActions = useInstanceDetailsActions();
-  const viewActivityStreamAction = useViewActivityStream('instance');
-  const pageActions = [...viewActivityStreamAction, ...itemActions];
+  const pageActions = [...itemActions];
   const getPageUrl = useGetPageUrl();
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;

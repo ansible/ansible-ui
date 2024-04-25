@@ -1,6 +1,6 @@
 import { ButtonVariant } from '@patternfly/react-core';
 import { HeartbeatIcon, MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   IPageAction,
@@ -15,11 +15,18 @@ import { IAwxView } from '../../../common/useAwxView';
 import { Instance } from '../../../interfaces/Instance';
 import { Settings } from '../../../interfaces/Settings';
 import { AwxRoute } from '../../../main/AwxRoutes';
-import { cannotRemoveInstances } from './useInstanceActions';
+import {
+  cannotRemoveInstances,
+  cannotRunHealthCheckDueToManagedInstance,
+  cannotRunHealthCheckDueToNodeType,
+  cannotRunHealthCheckDueToPending,
+  cannotRunHealthCheckDueToPermissions,
+} from './useInstanceActions';
 import { useRemoveInstances } from './useRemoveInstances';
 import { useRunHealthCheck } from './useRunHealthCheck';
 
 export function useInstanceToolbarActions(view: IAwxView<Instance>) {
+  const { activeAwxUser } = useAwxActiveUser();
   const { data } = useGet<Settings>(awxAPI`/settings/system/`);
   const isK8s = data?.IS_K8S;
 
@@ -29,10 +36,17 @@ export function useInstanceToolbarActions(view: IAwxView<Instance>) {
 
   return useMemo<IPageAction<Instance>[]>(
     () =>
-      isK8s
+      isK8s && (activeAwxUser?.is_superuser || activeAwxUser?.is_system_auditor)
         ? [addInstanceAction, removeInstanceAction, healthCheckAction]
-        : [addInstanceAction, healthCheckAction],
-    [addInstanceAction, removeInstanceAction, healthCheckAction, isK8s]
+        : [healthCheckAction],
+    [
+      addInstanceAction,
+      removeInstanceAction,
+      healthCheckAction,
+      isK8s,
+      activeAwxUser?.is_superuser,
+      activeAwxUser?.is_system_auditor,
+    ]
   );
 }
 
@@ -43,26 +57,7 @@ export function useRunHealthCheckToolbarAction(
 ) {
   const { t } = useTranslation();
   const runHealthCheck = useRunHealthCheck(view.unselectItemsAndRefresh);
-
-  const cannotRunHealthCheckDueToPending = useCallback(
-    (instance: Instance) => {
-      if (instance.health_check_pending)
-        return t(
-          `Instance has pending health checks. Wait for those to complete before attempting another health check.`
-        );
-      return '';
-    },
-    [t]
-  );
-
-  const cannotRunHealthCheckDueToNodeType = useCallback(
-    (instance: Instance) => {
-      if (instance.node_type !== 'execution')
-        return t(`Health checks can only be run on execution instances.`);
-      return '';
-    },
-    [t]
-  );
+  const { activeAwxUser } = useAwxActiveUser();
 
   return useMemo<IPageAction<Instance>>(
     () => ({
@@ -77,20 +72,15 @@ export function useRunHealthCheckToolbarAction(
       isDisabled: (instances) =>
         instances.some(
           (instance) =>
-            cannotRunHealthCheckDueToNodeType(instance) ||
-            cannotRunHealthCheckDueToPending(instance)
+            cannotRunHealthCheckDueToNodeType(instance, t) ||
+            cannotRunHealthCheckDueToPermissions(activeAwxUser, t) ||
+            cannotRunHealthCheckDueToManagedInstance(instance, t) ||
+            cannotRunHealthCheckDueToPending(instance, t)
         )
           ? 'Cannot run health checks on one or more of the selected instances'
           : '',
     }),
-    [
-      t,
-      runHealthCheck,
-      cannotRunHealthCheckDueToNodeType,
-      cannotRunHealthCheckDueToPending,
-      isPinned,
-      isHidden,
-    ]
+    [t, runHealthCheck, isPinned, isHidden, activeAwxUser]
   );
 }
 

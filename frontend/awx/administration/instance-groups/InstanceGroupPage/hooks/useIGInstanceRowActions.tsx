@@ -6,7 +6,7 @@ import { useToggleInstanceRowAction } from '../../../instances/hooks/useInstance
 
 export function useIGInstanceRowActions(onComplete: (instances: Instance[]) => void) {
   const toggleInstanceRowAction: IPageAction<Instance> = useToggleInstanceRowAction(onComplete);
-  const healthCheckRowAction: IPageAction<Instance> = useRunHealthCheckRowAction(onComplete);
+  const healthCheckRowAction: IPageAction<Instance> = useRunHealthCheckRowAction(onComplete, false);
 
   return useMemo<IPageAction<Instance>[]>(
     () => [toggleInstanceRowAction, healthCheckRowAction],
