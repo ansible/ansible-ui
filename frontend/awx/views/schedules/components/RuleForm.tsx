@@ -24,7 +24,12 @@ import { useGet24HourTime } from '../hooks/useGet24HourTime';
 import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
 import { PageFormSelect, PageFormTextInput } from '../../../../../framework';
 import { PageFormMultiSelect } from '../../../../../framework/PageForm/Inputs/PageFormMultiSelect';
-
+export function pad(num: number) {
+  if (typeof num === 'string') {
+    return num;
+  }
+  return num < 10 ? `0${num}` : num;
+}
 export function RuleForm(props: {
   title: string;
   isOpen: boolean | number;
@@ -69,24 +74,15 @@ export function RuleForm(props: {
     }
   }, [getValues, reset, props.isOpen, timezone, ruleId]);
   const handleAddItem = () => {
-    const {
-      id,
-      rules = [],
-      exceptions = [],
-      endingType,
-      until = null,
-      ...formData
-    } = getValues() as RuleFields;
-
+    const values = getValues() as RuleFields;
+    delete values.id;
+    const { rules = [], exceptions = [], until = null, ...rest } = values;
     const start = DateTime.fromISO(`${date}`).set(get24Hour(time));
     const { year, month, day, hour, minute } = start;
-    const rule = new RRule({
-      ...formData,
-      freq: formData.freq,
-      tzid: timezone,
-      dtstart: datetime(year, month, day, hour, minute),
-    });
-
+    const dateString = `${year}${pad(month)}${pad(day)}T${pad(hour)}${pad(minute)}00`;
+    const rrulestring = `DTSTART;TZID=${timezone}:${dateString}`;
+    const ruleStart = RRule.fromString(rrulestring);
+    const rule = new RRule({ ...ruleStart.options, ...rest });
     if (until !== null) {
       const { time: untilTime, date: untilDate } = until;
 
@@ -127,7 +123,6 @@ export function RuleForm(props: {
         ? rules.length + 1 || 1
         : exceptions.length + 1 || 1;
     const ruleObject = { rule, id: itemId };
-
     const index = isRulesStep
       ? rules.findIndex((r) => r.id === ruleId)
       : exceptions.findIndex((r) => r.id === ruleId);

@@ -6,8 +6,8 @@ import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardPro
 import { PromptReviewDetails } from '../../../resources/templates/WorkflowVisualizer/wizard/PromptReviewDetails';
 import { ScheduleFormWizard } from '../types';
 import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
-import { RulesPreview } from '../components/RulesPreview';
 import { RRule, RRuleSet } from 'rrule';
+import { RulesList } from '../components/RulesList';
 
 const ResourceLink: { [key: string]: string } = {
   inventory_update: AwxRoute.InventorySourceDetail,
@@ -97,7 +97,8 @@ export function ScheduleReviewStep() {
           <PageDetail label={t('Days of data to keep')}>{schedule_days_to_keep}</PageDetail>
           {hasPromptDetails ? <PromptReviewDetails /> : null}
         </PageDetails>
-        <RulesPreview ruleSet={ruleSet} />
+        <RulesList ruleType="rules" rules={rules} />
+        {exceptions.length ? <RulesList ruleType="exceptions" rules={exceptions} /> : null}
       </PageFormSection>
     </>
   );

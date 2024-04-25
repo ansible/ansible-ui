@@ -62,7 +62,7 @@ export function RulesStep() {
         <RuleForm title={t('Define rules')} isOpen={isOpen} setIsOpen={setIsOpen} />
       )}
 
-      {hasRules && <RulesList rules={rules} ruleType="rules" setIsOpen={setIsOpen} />}
+      {hasRules && <RulesList needsHeader rules={rules} ruleType="rules" setIsOpen={setIsOpen} />}
     </PageFormSection>
   );
 }

@@ -203,7 +203,7 @@ describe('Schedules - Create and Delete', function () {
       });
       cy.clickButton(/^Next$/);
       cy.clickButton(/^Next$/);
-      cy.get('dl[data-cy="rule-1"]').should('be.visible');
+      cy.get('tr[data-cy="row-id-1"]').should('be.visible');
       cy.clickButton(/^Finish$/);
       cy.verifyPageTitle(`${scheduleName}`);
       cy.get('button[data-cy="actions-dropdown"]').click();
@@ -242,7 +242,7 @@ describe('Schedules - Create and Delete', function () {
       });
       cy.clickButton(/^Next$/);
       cy.clickButton(/^Next$/);
-      cy.get('dl[data-cy="rule-1"]').should('be.visible');
+      cy.get('tr[data-cy="row-id-1"]').should('be.visible');
       cy.clickButton(/^Finish$/);
       cy.verifyPageTitle(`${scheduleName}`);
       cy.navigateTo('awx', 'schedules');
@@ -322,7 +322,7 @@ describe('Schedules - Create and Delete', function () {
         });
         cy.clickButton(/^Next$/);
         cy.clickButton(/^Next$/);
-        cy.get('dl[data-cy="rule-1"]').should('be.visible');
+        cy.get('tr[data-cy="row-id-1"]').should('be.visible');
         cy.clickButton(/^Finish$/);
         cy.verifyPageTitle(`${scheduleName}`);
         cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
@@ -357,7 +357,7 @@ describe('Schedules - Create and Delete', function () {
     });
     cy.clickButton(/^Next$/);
     cy.clickButton(/^Next$/);
-    cy.get('dl[data-cy="rule-1"]').should('be.visible');
+    cy.get('tr[data-cy="row-id-1"]').should('be.visible');
     cy.clickButton(/^Finish$/);
     cy.verifyPageTitle(`${scheduleName}`);
     cy.get('button[data-cy="actions-dropdown"]').click();
@@ -391,7 +391,7 @@ describe('Schedules - Create and Delete', function () {
     });
     cy.clickButton(/^Next$/);
     cy.clickButton(/^Next$/);
-    cy.get('dl[data-cy="rule-1"]').should('be.visible');
+    cy.get('tr[data-cy="row-id-1"]').should('be.visible');
     cy.clickButton(/^Finish$/);
     cy.verifyPageTitle(`${scheduleName}`);
     cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
@@ -502,8 +502,8 @@ describe('Schedules - Edit', () => {
     cy.clickButton(/^Next$/);
     cy.clickButton(/^Next$/);
     cy.getByDataCy('start-date/time').contains('5:00 AM');
-    cy.getByDataCy('rule-2').should('exist');
-    cy.getByDataCy('rule-2').contains('FREQ=YEARLY');
+    cy.getByDataCy('row-id-1').should('exist');
+    cy.getByDataCy('row-id-1').contains('FREQ=WEEKLY');
     cy.clickButton(/^Finish$/);
     cy.verifyPageTitle(schedule.name);
   });
@@ -529,7 +529,7 @@ describe('Schedules - Edit', () => {
     });
     cy.clickButton(/^Save exception$/);
     cy.clickButton(/^Next$/);
-    cy.getByDataCy('exrule-1').contains('FREQ=YEARLY');
+    cy.getByDataCy('row-id-1').contains('FREQ=YEARLY');
     cy.clickButton(/^Finish$/);
     cy.verifyPageTitle(schedule.name);
   });
@@ -554,7 +554,7 @@ describe('Schedules - Edit', () => {
     cy.clickButton(/^Save rule$/);
     cy.clickButton(/^Next$/);
     cy.clickButton(/^Next$/);
-    cy.getByDataCy('rule-1').should('not.contain', 'FREQ=DAILY');
+    cy.getByDataCy('row-id-1').should('not.contain', 'FREQ=DAILY');
     cy.clickButton(/^Finish$/);
     cy.verifyPageTitle(schedule.name);
   });
