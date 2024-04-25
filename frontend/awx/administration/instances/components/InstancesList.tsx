@@ -25,9 +25,9 @@ export function InstancesList(props: {
   const { useToolbarActions, useRowActions, tableColumns, instanceGroupId } = props;
 
   const defaultParams: {
-    not__node_type: string;
+    not__node_type: Array<string>;
   } = {
-    not__node_type: 'control,hybrid',
+    not__node_type: ['control', 'hybrid'],
   };
 
   const view = useAwxView<Instance>({

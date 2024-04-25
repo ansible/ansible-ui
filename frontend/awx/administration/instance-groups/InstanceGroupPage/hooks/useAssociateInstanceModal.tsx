@@ -20,7 +20,7 @@ function AssociateInstanceModal(props: AssociateInstanceModalProps) {
 
   const view = useAwxView<Instance>({
     url: awxAPI`/instances/`,
-    queryParams: { not__node_type: 'control', not__rampart_groups__id: instanceGroupId },
+    queryParams: { not__node_type: ['control', 'hop'], not__rampart_groups__id: instanceGroupId },
     toolbarFilters,
     tableColumns,
   });
