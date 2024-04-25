@@ -7,11 +7,19 @@ import { PageFormTextInput } from '../../../../../framework';
 import { ScheduleFormWizard } from '../types';
 import { PageFormDateTimePicker } from '../../../../../framework/PageForm/Inputs/PageFormDateTimePicker';
 import { PageFormSingleSelect } from '../../../../../framework/PageForm/Inputs/PageFormSingleSelect';
+import { SystemJobTemplate } from '../../../interfaces/SystemJobTemplate';
 
 export function ScheduleResourceInputs() {
   const { t } = useTranslation();
   const [timezoneMessage, setTimezoneMessage] = useState('');
   const timeZone = useWatch({ name: 'timezone' }) as string;
+  const resource = useWatch({
+    name: 'resource',
+  }) as SystemJobTemplate;
+  const hasDaysToKeepField =
+    resource &&
+    (resource.name.includes('Cleanup Activity Stream') ||
+      resource.name.includes('Cleanup Job Details'));
   const { timeZones, links } = useGetTimezones();
 
   useEffect(() => {
@@ -50,6 +58,15 @@ export function ScheduleResourceInputs() {
           helperText={timezoneMessage}
           isRequired
         />
+        {hasDaysToKeepField && (
+          <PageFormTextInput<ScheduleFormWizard>
+            name={'schedule_days_to_keep'}
+            isRequired
+            label={t('Days of data to keep')}
+            type="number"
+            min={1}
+          />
+        )}
       </PageFormSection>
     </>
   );
