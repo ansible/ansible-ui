@@ -1,23 +1,23 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useSWRConfig } from 'swr';
 import {
+  PageFormCheckbox,
   PageFormSelect,
   PageFormSubmitHandler,
   PageHeader,
   useGetPageUrl,
-  PageFormCheckbox,
   usePageNavigate,
 } from '../../../../framework';
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
-import { AwxPageForm } from '../../common/AwxPageForm';
-import { Instance } from '../../interfaces/Instance';
-import { AwxRoute } from '../../main/AwxRoutes';
-import { usePostRequest } from '../../../common/crud/usePostRequest';
-import { awxAPI } from '../../common/api/awx-utils';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
 import { requestPatch } from '../../../common/crud/Data';
-import { useSWRConfig } from 'swr';
 import { useGet } from '../../../common/crud/useGet';
+import { usePostRequest } from '../../../common/crud/usePostRequest';
+import { AwxPageForm } from '../../common/AwxPageForm';
+import { awxAPI } from '../../common/api/awx-utils';
+import { Instance } from '../../interfaces/Instance';
+import { AwxRoute } from '../../main/AwxRoutes';
 
 const InstanceType = {
   Execution: 'execution',
@@ -65,7 +65,11 @@ export function AddInstance() {
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
         onCancel={onCancel}
-        defaultValue={{ node_type: InstanceType.Execution, node_state: 'installed' }}
+        defaultValue={{
+          node_type: InstanceType.Execution,
+          node_state: 'installed',
+          listener_port: 27199,
+        }}
       >
         <InstanceInputs mode="create" />
       </AwxPageForm>
@@ -142,10 +146,13 @@ function InstanceInputs(props: { mode: 'create' | 'edit' }) {
         name="listener_port"
         type="number"
         label={t('Listener port')}
-        placeholder={t('27199')}
+        placeholder={t('Enter a listener port')}
+        min={0}
+        max={65353}
         labelHelp={t(
           'Select the port that Receptor will listen on for incoming connections, e.g. 27199.'
         )}
+        isRequired
       />
       <PageFormSelect<IInstanceInput>
         name="node_type"
