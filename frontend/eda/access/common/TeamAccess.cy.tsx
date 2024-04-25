@@ -57,11 +57,11 @@ describe('TeamAccess.cy.ts', () => {
     );
     cy.get('input[id="select-all"]').first().click();
     cy.get('[data-cy="actions-dropdown"]').first().click();
-    cy.get('[data-cy="delete-selected-team"]').click();
+    cy.get('[data-cy="remove-selected-roles"]').click();
     cy.get('div[role="dialog"]').within(() => {
       cy.contains('Team Assignment 1');
       cy.get('input[id="confirm"]').click();
-      cy.get('button').contains('Remove team assignment').click();
+      cy.get('button').contains('Remove role').click();
     });
     cy.get('[data-cy="status-column-cell"] > span').contains('Success');
     cy.clickButton(/^Close$/);
@@ -82,8 +82,8 @@ describe('Empty list', () => {
   });
   it('Empty state is displayed correctly', () => {
     cy.mount(<TeamAccess id={'1'} type={'activation'} addRolesRoute="xyz" />);
-    cy.contains(/^There are currently no teams assigned to this object.$/);
-    cy.contains(/^Please add a team by using the button below.$/);
-    //cy.contains('button', /^Add team/).should('be.visible');
+    cy.contains(/^There are currently no teams assigned to this rulebook activation.$/);
+    cy.contains(/^Add a role by clicking the button below.$/);
+    cy.contains('a[data-cy="add-roles"]', /^Add roles$/).should('be.visible');
   });
 });
