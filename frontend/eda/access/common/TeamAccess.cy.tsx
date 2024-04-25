@@ -41,10 +41,9 @@ describe('TeamAccess.cy.ts', () => {
 
   it('Renders the correct teamAccess columns', () => {
     cy.mount(<TeamAccess id={'1'} type={'activation'} addRolesRoute="xyz" />);
-    cy.get('.pf-v5-c-table__th').should('have.length', 5);
+    cy.get('.pf-v5-c-table__th').should('have.length', 4);
     cy.contains('Team');
     cy.contains('Role');
-    cy.contains('Role description');
   });
 
   it('can remove teamAccess', () => {

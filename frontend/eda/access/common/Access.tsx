@@ -8,6 +8,7 @@ import {
   IToolbarFilter,
   ToolbarFilterType,
   useGetPageUrl,
+  ColumnPriority,
 } from '../../../../framework';
 import { useCallback, useMemo } from 'react';
 import { ButtonVariant } from '@patternfly/react-core';
@@ -35,6 +36,14 @@ export function Access<T extends Assignment>(props: AccessProps<T>) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const getDisplayName = useMapContentTypeToDisplayName();
+  const firstColumns = useMemo(
+    () => props.additionalTableColumns?.filter((column) => column.priority !== ColumnPriority.last),
+    [props.additionalTableColumns]
+  );
+  const lastColumns = useMemo(
+    () => props.additionalTableColumns?.filter((column) => column.priority === ColumnPriority.last),
+    [props.additionalTableColumns]
+  );
 
   const tableColumns = useMemo<ITableColumn<T>[]>(
     () => [
@@ -46,25 +55,22 @@ export function Access<T extends Assignment>(props: AccessProps<T>) {
         card: 'description',
         list: 'description',
       },
+      ...(firstColumns ? firstColumns : []),
       {
         header: t('Role'),
         type: 'description',
         value: (item: T) => item.summary_fields.role_definition.name,
         sort: 'role_definition__name',
       },
-      {
-        header: t('Role description'),
-        type: 'description',
-        value: (item: T) => item.summary_fields.role_definition.description,
-      },
-      ...(props.additionalTableColumns ? props.additionalTableColumns : []),
+      ...(lastColumns ? lastColumns : []),
     ],
     [
       props.tableColumnFunctions.name.label,
       props.tableColumnFunctions.name.sort,
       props.tableColumnFunctions.name.function,
-      props.additionalTableColumns,
+      firstColumns,
       t,
+      lastColumns,
     ]
   );
   function useRemoveRoles(onComplete: (roles: T[]) => void) {

@@ -4,7 +4,7 @@ import { UserAssignment } from '../interfaces/UserAssignment';
 import { Access } from './Access';
 import { edaAPI } from '../../common/eda-utils';
 import { useMapContentTypeToDisplayName } from '../../../common/access/hooks/useMapContentTypeToDisplayName';
-import { LoadingPage, ToolbarFilterType } from '../../../../framework';
+import { ColumnPriority, LoadingPage, ToolbarFilterType } from '../../../../framework';
 import { useOptions } from '../../../common/crud/useOptions';
 import { useMemo } from 'react';
 
@@ -53,6 +53,7 @@ export function ResourceAccess(props: {
           type: 'description',
           sort: 'content_type',
           value: (item) => getDisplayName(item.content_type, { isTitleCase: true }),
+          priority: ColumnPriority.last,
         },
       ]}
       additionalTableFilters={[
