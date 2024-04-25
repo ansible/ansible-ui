@@ -100,7 +100,6 @@ function UserTokensInternal(props: { user: AwxUser }) {
         title={t(
           'Automation Execution tokens authenticate and connect to your Automation Execution Platform instance to run automation.'
         )}
-        isPlain={false}
       ></DetailInfo>
       <PageTable<Token>
         id="awx-user-tokens"
