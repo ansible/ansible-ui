@@ -34,16 +34,14 @@ export function NotificationPage() {
   const pageNavigate = usePageNavigate();
 
   const getPageUrl = useGetPageUrl();
-  const pageActions = useNotifiersRowActions(
-  {
-    onComplete : () => {
+  const pageActions = useNotifiersRowActions({
+    onComplete: () => {
       pageNavigate(AwxRoute.NotificationTemplates);
     },
     onNotifierStartTest,
-    type : 'detail',
+    type: 'detail',
     runningNotifications,
-  }
-  );
+  });
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!notificationTemplate) return <LoadingPage breadcrumbs tabs />;

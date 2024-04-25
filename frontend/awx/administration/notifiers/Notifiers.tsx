@@ -31,16 +31,17 @@ export function Notifiers() {
   const pageNavigate = usePageNavigate();
 
   const toolbarActions = useNotifiersToolbarActions(view.unselectItemsAndRefresh);
-  
-  const rowActions = useNotifiersRowActions(
-    {
-      onComplete: view.unselectItemsAndRefresh,
-      onNotifierCopied: () => view.refresh(),
-      onNotifierStartTest,
-      type : 'list',
-      runningNotifications
-    });
-  
+
+  const rowActions = useNotifiersRowActions({
+    onComplete: view.unselectItemsAndRefresh,
+    onNotifierCopied: () => {
+      void view.refresh();
+    },
+    onNotifierStartTest,
+    type: 'list',
+    runningNotifications,
+  });
+
   const notificationsOptions = useOptions<OptionsResponse<ActionsResponse>>(
     awxAPI`/notification_templates/`
   ).data;
