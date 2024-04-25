@@ -330,7 +330,9 @@ describe('Job Templates Surveys', function () {
         const specTypeSelector =
           survey.type === 'multiselect' ? 'survey.multiselect_' : `survey-${survey.type}-`;
 
-        cy.getByDataCy(`${specTypeSelector}answer-form-group`).as('selectorType');
+        cy.getByDataCy(`${specTypeSelector}answer-form-group`).as('selectorType', {
+          type: 'query',
+        });
         cy.get('@selectorType').within(() => {
           cy.contains(survey.question_name);
           cy.contains('*');
