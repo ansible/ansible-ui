@@ -63,6 +63,8 @@ export function CredentialTypePage() {
         tabs={[
           { label: t('Details'), page: EdaRoute.CredentialTypeDetails },
           { label: t('Credentials'), page: EdaRoute.CredentialTypeCredentials },
+          { label: t('Team Access'), page: EdaRoute.CredentialTypeTeamAccess },
+          { label: t('User Access'), page: EdaRoute.CredentialTypeUserAccess },
         ]}
         params={{ id: credentialType.id }}
       />
