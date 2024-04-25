@@ -250,6 +250,24 @@ describe('Schedules - Create and Delete', function () {
       cy.clickButton('Clear all filters');
       //figure out a way to search for something that doesn't exist and assert empty state
       // cy.filterTableBySingleSelect('name', schedule.name);
+      const dataCy = 'name';
+      cy.get('#filter').click();
+      cy.document().its('body').find('#filter-search').type(dataCy.replaceAll('-', ' '));
+      cy.document()
+        .its('body')
+        .find('#filter-select')
+        .within(() => {
+          cy.getByDataCy(dataCy).click();
+        });
+
+      cy.getBy('#filter-input').click();
+      cy.document()
+        .its('body')
+        .find('.pf-v5-c-menu__content')
+        .within(() => {
+          cy.getByDataCy('search-input').type(schedule.name);
+          cy.contains('.pf-v5-c-menu__item-text', 'No results found').should('be.visible');
+        });
       cy.deleteAwxWorkflowJobTemplate(wfjt, { failOnStatusCode: false });
     });
   });
