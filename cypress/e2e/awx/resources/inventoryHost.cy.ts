@@ -1,24 +1,73 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Credential } from '../../../../frontend/awx/interfaces/Credential';
 import { ExecutionEnvironment } from '../../../../frontend/awx/interfaces/ExecutionEnvironment';
+import { AwxUser } from '../../../../frontend/awx/interfaces/User';
+import { createAndEditAndDeleteHost } from './hosts.cy';
+import { checkHostGroup } from './hosts.cy';
 
 describe('Inventory Host Tab Tests', () => {
   let organization: Organization;
   let inventory: Inventory;
+  let user: AwxUser;
   let machineCredential: Credential;
   let executionEnvironment: ExecutionEnvironment;
   const kinds: Array<'' | 'smart' | 'constructed'> = ['', 'smart', 'constructed'];
 
   before(() => {
     cy.awxLogin();
+    cy.createAwxOrganization().then((org) => {
+      organization = org;
+      cy.createAwxInventory({ organization: organization.id }).then((inv) => {
+        inventory = inv;
+      });
+      cy.createAwxUser(organization).then((testUser) => {
+        user = testUser;
+      });
+    });
   });
 
   afterEach(() => {
     cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
+    cy.deleteAwxUser(user, { failOnStatusCode: false });
     cy.deleteAwxCredential(machineCredential, { failOnStatusCode: false });
     cy.deleteAwxExecutionEnvironment(executionEnvironment, { failOnStatusCode: false });
     cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
+  });
+
+  it('can create, edit and delete a inventory host', () => {
+    // use createAndEditAndDeleteHost function in order to test inventory hosts basic functions
+    // this test will send boolean value to verify inventory host will be tested
+    // after navigating to the right url
+    cy.visit(`/infrastructure/inventories/inventory/${inventory.id}/details`);
+    cy.clickTab(/^Hosts$/, true);
+    createAndEditAndDeleteHost(true, inventory);
+  });
+
+  it('can create, edit, assosiat and disassosiate groups at inventory -> hosts -> groups tab', () => {
+    // use checkHostGroup function in order to test inventory host group
+    // this test will send boolean value to indicate that this sould be under invntory tab
+    checkHostGroup(true, organization);
+  });
+
+  it.skip('can see, launch and cancel jobs from inventory -> hosts -> jobs tab', () => {
+    // create new host at inventory
+    // create job template with the current inventory
+    // job type must be run.
+    // TODO: check if there is a function for that
+    // launch job
+    // got to inventory hosts tab - make sure job is visible in jobs tab
+    // launch it for all hosts
+    // verify
+    // lanuch it for all failed hosts
+    // cancel launch
+  });
+
+  it.skip('can view host facts in inventory host tab', () => {
+    // create host at invenotry create facts for host
+    // TODO: check if there is some function that creating facts
+    // make sure facts are visibule to the user at inventory -> hosts -> facts tab
   });
 
   kinds.forEach((kind) => {
