@@ -353,10 +353,11 @@ describe('Job Templates Surveys', function () {
               cy.getByDataCy(groupType).contains(defaultValue);
             });
 
-            cy.getByDataCy(groupType).get('input').click();
-
-            survey?.choices?.forEach((choice) => {
-              cy.getByDataCy(groupType).getByDataCy(choice);
+            cy.getByDataCy(groupType).within(() => {
+              cy.get('input').click();
+              survey?.choices?.forEach((choice) => {
+                cy.getByDataCy(choice);
+              });
             });
           }
         } else if (survey.type === 'password') {
@@ -375,9 +376,12 @@ describe('Job Templates Surveys', function () {
       cy.getByDataCy('code-block-value').within(() => {
         surveyTypes.forEach((survey) => {
           cy.contains(survey.variable);
-          survey.default.split('\n').forEach((def) => {
-            cy.contains(def);
-          });
+          if (survey.type === 'password') cy.contains('$encrypted$');
+          else {
+            survey.default.split('\n').forEach((def) => {
+              cy.contains(def);
+            });
+          }
         });
       });
 
@@ -388,7 +392,6 @@ describe('Job Templates Surveys', function () {
       cy.wait('@postLaunch')
         .its('response.body.id')
         .then((jobId: string) => {
-          cy.log(jobId);
           cy.waitForTemplateStatus(jobId);
 
           cy.contains('Success');
@@ -396,9 +399,13 @@ describe('Job Templates Surveys', function () {
 
           surveyTypes.forEach((survey) => {
             cy.contains(survey.variable);
-            survey.default.split('\n').forEach((def) => {
-              cy.contains(def);
-            });
+            if (survey.type === 'password') {
+              cy.contains('$encrypted$');
+            } else {
+              survey.default.split('\n').forEach((def) => {
+                cy.contains(def);
+              });
+            }
           });
         });
     });
