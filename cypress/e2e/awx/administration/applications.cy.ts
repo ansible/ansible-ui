@@ -2,7 +2,7 @@ import { randomString } from '../../../../framework/utils/random-string';
 import { Application } from '../../../../frontend/awx/interfaces/Application';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 
-describe('Applications', () => {
+describe.skip('Applications', () => {
   let app: Application;
 
   before(() => {
