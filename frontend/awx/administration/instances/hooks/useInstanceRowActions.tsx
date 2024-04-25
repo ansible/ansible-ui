@@ -37,7 +37,6 @@ export function useInstanceRowActions(onComplete: (instances: Instance[]) => voi
 export function useToggleInstanceRowAction(onComplete: (instances: Instance[]) => void) {
   const { t } = useTranslation();
   const { activeAwxUser } = useAwxActiveUser();
-  const { data } = useGet<Settings>(awxAPI`/settings/system/`);
 
   const handleToggleInstance: (instance: Instance, enabled: boolean) => Promise<void> = useCallback(
     async (instance, enabled) => {
@@ -47,7 +46,6 @@ export function useToggleInstanceRowAction(onComplete: (instances: Instance[]) =
     [onComplete]
   );
   const userAccess = activeAwxUser?.is_superuser || activeAwxUser?.is_system_auditor;
-  const isK8s = data?.IS_K8S;
 
   return useMemo<IPageAction<Instance>>(
     () => ({
@@ -63,13 +61,13 @@ export function useToggleInstanceRowAction(onComplete: (instances: Instance[]) =
       showPinnedLabel: false,
       isHidden: (instance) => instance.node_type === 'hop',
       isDisabled: (_instance) =>
-        !userAccess || !isK8s
+        !userAccess
           ? t(
               'You do not have permission to edit instances. Please contact your organization administrator if there is an issue with your access.'
             )
           : undefined,
     }),
-    [t, handleToggleInstance, isK8s, userAccess]
+    [t, handleToggleInstance, userAccess]
   );
 }
 
