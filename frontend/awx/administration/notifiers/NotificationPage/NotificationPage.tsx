@@ -61,7 +61,8 @@ export function NotificationPage() {
   const notification = notifications.find(
     (notification) => notification.id.toString() === notificationId
   );
-  if (notification) {
+ 
+  if (notification && notification.status !== 'pending') {
     alertToaster.addAlert({
       variant: 'info',
       title: t('Notifier (id {{id}}) test result', { id: notificationId }),
