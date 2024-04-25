@@ -27,7 +27,7 @@ export function Notifiers() {
   });
   const config = useAwxConfig();
   const pageNavigate = usePageNavigate();
-  const {runningNotifications, setRunningNotifications, onNotifierStartTest } = useNotificationsWatch('list');
+  const {runningNotifications, setRunningNotifications, onNotifierStartTest, checkNotifiers } = useNotificationsWatch('list');
 
   const toolbarActions = useNotifiersToolbarActions(view.unselectItemsAndRefresh);
   const rowActions = useNotifiersRowActions(view.unselectItemsAndRefresh, undefined, onNotifierStartTest, 'list', runningNotifications );
@@ -38,6 +38,13 @@ export function Notifiers() {
   const canAddNotificationTemplate = Boolean(
     notificationsOptions && notificationsOptions.actions && notificationsOptions.actions['POST']
   );
+
+  if (view.pageItems)
+  {
+    view.pageItems.forEach( (item) => {
+      checkNotifiers(item);
+    })
+  }
 
   return (
     <PageLayout>
