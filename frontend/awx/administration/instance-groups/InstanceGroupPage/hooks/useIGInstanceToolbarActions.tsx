@@ -12,6 +12,8 @@ import { useDisassociateInstanceFromIG } from './useDisassociateInstanceFromIG';
 import { useGetItem } from '../../../../../common/crud/useGet';
 import { awxAPI } from '../../../../common/api/awx-utils';
 import { InstanceGroup } from '../../../../interfaces/InstanceGroup';
+import { useOptions } from '../../../../../common/crud/useOptions';
+import { OptionsResponse, ActionsResponse } from '../../../../interfaces/OptionsResponse';
 
 export function useIGInstanceToolbarActions(view: IAwxView<Instance>) {
   const healthCheckAction = useRunHealthCheckToolbarAction(view, true);
@@ -29,6 +31,11 @@ function useIGInstanceAssociateToolbarAction(view: IAwxView<Instance>) {
   const associateInstanceToIG = useAssociateInstanceToIG(view.unselectItemsAndRefresh, id ?? '');
   const openAssociateInstanceModal = useAssociateInstanceModal();
 
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(
+    awxAPI`/instance_groups/${id ?? ''}/instances/`
+  );
+  const canAssociateInstance = Boolean(data && data.actions && data.actions['POST']);
+
   return useMemo<IPageAction<Instance>>(
     () => ({
       type: PageActionType.Button,
@@ -36,6 +43,8 @@ function useIGInstanceAssociateToolbarAction(view: IAwxView<Instance>) {
       variant: ButtonVariant.primary,
       label: t('Associate'),
       isPinned: true,
+      isDisabled: () =>
+        canAssociateInstance ? '' : t('You do not have permission to associate an instance.'),
       onClick: () =>
         openAssociateInstanceModal({
           onAssociate: associateInstanceToIG,
