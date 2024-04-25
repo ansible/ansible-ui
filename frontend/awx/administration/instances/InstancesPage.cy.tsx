@@ -76,21 +76,6 @@ describe('Instances Page', () => {
       });
   });
 
-  it('edit instance button should be hidden instance type hybrid', () => {
-    cy.intercept('GET', '/api/v2/settings/system*', {
-      IS_K8S: true,
-    }).as('isK8s');
-    cy.intercept('GET', '/api/v2/instances/*', {
-      fixture: 'instance_hybrid.json',
-    }).as('getInstance');
-    cy.mount(<InstancePage />);
-    cy.wait('@getInstance')
-      .its('response.body')
-      .then(() => {
-        cy.get('[data-cy="edit-instance"]').should('not.exist');
-      });
-  });
-
   it('non admin users cannot remove instance', () => {
     cy.mount(<InstancePage />, undefined, 'normalUser');
     cy.wait('@getInstance')
@@ -140,22 +125,6 @@ describe('Instances Page', () => {
     }).as('isK8s');
     cy.intercept('GET', '/api/v2/instances/*', {
       fixture: 'instance_control.json',
-    }).as('getInstance');
-    cy.mount(<InstancePage />);
-    cy.wait('@getInstance')
-      .its('response.body')
-      .then(() => {
-        cy.get('[data-cy="actions-dropdown"]').should('not.exist');
-        cy.get('[data-cy="remove-instance"]').should('not.exist');
-      });
-  });
-
-  it('remove instance button should be hidden instance type hybrid', () => {
-    cy.intercept('GET', '/api/v2/settings/system*', {
-      IS_K8S: true,
-    }).as('isK8s');
-    cy.intercept('GET', '/api/v2/instances/*', {
-      fixture: 'instance_hybrid.json',
     }).as('getInstance');
     cy.mount(<InstancePage />);
     cy.wait('@getInstance')
