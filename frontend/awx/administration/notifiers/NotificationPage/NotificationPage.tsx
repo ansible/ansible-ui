@@ -23,7 +23,7 @@ export function NotificationPage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
 
-  const {runningNotifications, setRunningNotifications } = useNotificationsWatch();
+  const {runningNotifications, setRunningNotifications, onNotifierStartTest } = useNotificationsWatch();
 
   // set refresh interval to be faster when test is running
   const {
@@ -44,11 +44,7 @@ export function NotificationPage() {
       pageNavigate(AwxRoute.NotificationTemplates);
     },
     undefined,
-    (template_id: string, notificationId: string) => {
-      const obj = { ...runningNotifications };
-      obj[template_id] = notificationId;
-      setRunningNotifications(obj);
-    },
+    onNotifierStartTest,
     'detail',
     runningNotifications,
   );
@@ -77,7 +73,6 @@ export function NotificationPage() {
 
   return (
     <PageLayout>
-      {JSON.stringify(runningNotifications, null, 4)}
       <PageHeader
         title={notificationTemplate?.name}
         breadcrumbs={[

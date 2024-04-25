@@ -10,6 +10,10 @@ export function useNotificationsWatch()
   return {
     runningNotifications,
     setRunningNotifications,
-
+    onNotifierStartTest : (template_id: string, notificationId: string) => {
+        const obj = { ...runningNotifications };
+        obj[template_id] = notificationId;
+        setRunningNotifications(obj);
+      },
   }
 }
