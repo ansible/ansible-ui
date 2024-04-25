@@ -49,7 +49,8 @@ export function NotificationPage() {
       obj[template_id] = notificationId;
       setRunningNotifications(obj);
     },
-    'detail'
+    'detail',
+    runningNotifications,
   );
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
@@ -76,6 +77,7 @@ export function NotificationPage() {
 
   return (
     <PageLayout>
+      {JSON.stringify(runningNotifications, null, 4)}
       <PageHeader
         title={notificationTemplate?.name}
         breadcrumbs={[
