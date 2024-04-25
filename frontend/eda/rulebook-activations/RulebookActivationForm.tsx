@@ -24,7 +24,6 @@ import { EdaPageForm } from '../common/EdaPageForm';
 import { edaAPI } from '../common/eda-utils';
 import { EdaCredential } from '../interfaces/EdaCredential';
 import { EdaDecisionEnvironment } from '../interfaces/EdaDecisionEnvironment';
-import { EdaExtraVars } from '../interfaces/EdaExtraVars';
 import { EdaProject } from '../interfaces/EdaProject';
 import { EdaResult } from '../interfaces/EdaResult';
 import { EdaRulebook } from '../interfaces/EdaRulebook';
@@ -44,7 +43,6 @@ export function CreateRulebookActivation() {
   const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
 
-  const postEdaExtraVars = usePostRequest<Partial<EdaExtraVars>, { id: number }>();
   const postEdaRulebookActivation = usePostRequest<object, EdaRulebookActivation>();
   const { data: organizations } = useSWR<EdaResult<EdaOrganization>>(
     edaAPI`/organizations/?name=Default`,
@@ -58,18 +56,9 @@ export function CreateRulebookActivation() {
 
   const onSubmit: PageFormSubmitHandler<IEdaRulebookActivationInputs> = async ({
     rulebook,
-    extra_var,
     ...rulebookActivation
   }) => {
-    let extra_var_id: { id: number } | undefined;
-    if (extra_var && extra_var.trim().length > 0) {
-      extra_var_id = await postEdaExtraVars(edaAPI`/extra-vars/`, {
-        extra_var: extra_var,
-        organization_id: rulebookActivation?.organization_id,
-      });
-    }
-    rulebookActivation.extra_var_id = extra_var_id?.id;
-    rulebookActivation.rulebook_id = rulebook?.id;
+    rulebookActivation?.organization_id, (rulebookActivation.rulebook_id = rulebook?.id);
     rulebookActivation.eda_credentials = rulebookActivation.credential_refs
       ? rulebookActivation.credential_refs.map((credential) => credential?.id)
       : undefined;
@@ -307,7 +296,6 @@ type IEdaRulebookActivationInputs = Omit<EdaRulebookActivationCreate, 'event_str
   rulebook: EdaRulebook;
   event_streams?: string[];
   project_id: string;
-  extra_var: string;
   awx_token_id: number;
   credential_refs?: EdaCredential[] | null;
 };
