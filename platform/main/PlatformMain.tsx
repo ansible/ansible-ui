@@ -20,6 +20,7 @@ import { GatewayServicesCheck, GatewayServicesProvider } from './GatewayServices
 import { PlatformActiveUserProvider } from './PlatformActiveUserProvider';
 import { PlatformApp } from './PlatformApp';
 import { PlatformLogin } from './PlatformLogin';
+import { PlatformSubscription } from './PlatformSubscription';
 
 // eslint-disable-next-line no-restricted-exports
 export default function PlatformMain() {
@@ -37,9 +38,9 @@ export default function PlatformMain() {
                         <AwxConfigProvider>
                           <HubContextProvider>
                             <GatewayServicesCheck>
-                              {/* <PlatformSubscription> */}
-                              <PlatformApp />
-                              {/* </PlatformSubscription> */}
+                              <PlatformSubscription>
+                                <PlatformApp />
+                              </PlatformSubscription>
                             </GatewayServicesCheck>
                           </HubContextProvider>
                         </AwxConfigProvider>
