@@ -1,5 +1,5 @@
 import { ButtonVariant } from '@patternfly/react-core';
-import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
+import { CopyIcon, PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -8,15 +8,24 @@ import {
   PageActionType,
   usePageNavigate,
 } from '../../../../../framework';
-import { cannotDeleteResource, cannotEditResource } from '../../../../common/utils/RBAChelpers';
+import {
+  cannotDeleteResource,
+  cannotEditResource,
+  cannotCopyResource,
+} from '../../../../common/utils/RBAChelpers';
 import { Credential } from '../../../interfaces/Credential';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useDeleteCredentials } from './useDeleteCredentials';
+import { useCopyCredential } from './useCopyCredential';
 
-export function useCredentialActions(options?: { onDeleted: (credentials: Credential[]) => void }) {
+export function useCredentialActions(options?: {
+  onDeleted: (credentials: Credential[]) => void;
+  onCredentialCopied?: () => void;
+}) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const deleteCredentials = useDeleteCredentials(options?.onDeleted);
+  const copyCredential = useCopyCredential(options?.onCredentialCopied);
   const rowActions = useMemo<IPageAction<Credential>[]>(
     () => [
       {
@@ -30,6 +39,16 @@ export function useCredentialActions(options?: { onDeleted: (credentials: Creden
         onClick: (credential) =>
           pageNavigate(AwxRoute.EditCredential, { params: { id: credential.id } }),
       },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        icon: CopyIcon,
+        label: t(`Copy credential`),
+        onClick: (credential: Credential) => copyCredential(credential),
+        isDisabled: (credential) => cannotCopyResource(credential, t),
+        isDanger: false,
+        isPinned: true,
+      },
       { type: PageActionType.Seperator },
       {
         type: PageActionType.Button,
@@ -41,7 +60,7 @@ export function useCredentialActions(options?: { onDeleted: (credentials: Creden
         isDanger: true,
       },
     ],
-    [pageNavigate, deleteCredentials, t]
+    [pageNavigate, copyCredential, deleteCredentials, t]
   );
   return rowActions;
 }
