@@ -24,7 +24,10 @@ export function CredentialsList(props: { url: string }) {
     tableColumns,
   });
   const toolbarActions = useCredentialToolbarActions(view);
-  const rowActions = useCredentialActions({ onDeleted: () => void view.refresh() });
+  const rowActions = useCredentialActions({
+    onDeleted: () => void view.refresh(),
+    onCredentialCopied: () => void view.refresh(),
+  });
 
   return (
     <PageTable<Credential>
