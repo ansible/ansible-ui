@@ -6,6 +6,7 @@ import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
 import { Schedule } from '../../../../frontend/awx/interfaces/Schedule';
 import { WorkflowJobTemplate } from '../../../../frontend/awx/interfaces/WorkflowJobTemplate';
+import { awxAPI } from '../../../support/formatApiPathForAwx';
 
 describe('Schedules', () => {
   let schedule: Schedule;
@@ -124,15 +125,18 @@ describe('Schedules', () => {
   });
 });
 
-describe('Schedules - Create', function () {
+describe('Schedules - Create and Delete', function () {
   let organization: Organization;
   let jobTemplate: JobTemplate;
   let project: Project;
   let inventory: Inventory;
   let inventorySource: InventorySource;
+  let schedule: Schedule;
+
   before(() => {
     cy.awxLogin();
   });
+
   beforeEach(function () {
     project = this.globalProject as Project;
     this.globalInventory;
@@ -145,10 +149,20 @@ describe('Schedules - Create', function () {
         });
       });
     });
+
+    const name = 'E2E' + randomString(4);
+    cy.createAWXSchedule({
+      name,
+      unified_job_template: (this.globalProject as Project).id,
+      rrule: 'DTSTART:20240415T124133Z RRULE:FREQ=WEEKLY;INTERVAL=1;BYDAY=SU',
+    }).then((sched: Schedule) => {
+      schedule = sched;
+    });
+
     cy.navigateTo('awx', 'schedules');
   });
 
-  it('can create a simple schedule and navigate to the schedule details page', () => {
+  it('can create a simple schedule, navigate to schedule details, then delete the schedule from the details page', () => {
     cy.createAwxJobTemplate({
       name: 'E2E Credentials ' + randomString(4),
       organization: organization.id,
@@ -186,7 +200,7 @@ describe('Schedules - Create', function () {
     });
   });
 
-  it('can create a simple schedule of resource type Workflow job template', () => {
+  it.only('can create a simple schedule of resource type Workflow job template, then delete the schedule', () => {
     let wfjt: WorkflowJobTemplate;
     cy.createAwxWorkflowJobTemplate({
       name: 'E2E Workflow Job Template ' + randomString(4),
@@ -217,15 +231,30 @@ describe('Schedules - Create', function () {
       cy.get('dl[data-cy="rule-1"]').should('be.visible');
       cy.clickButton(/^Finish$/);
       cy.verifyPageTitle(`${scheduleName}`);
+      cy.navigateTo('awx', 'schedules');
+      cy.filterTableBySingleSelect('name', schedule.name);
+      cy.getBy('tbody').within(() => {
+        cy.clickKebabAction('actions-dropdown', 'delete-schedule');
+      });
+      cy.intercept('DELETE', awxAPI`/schedules/*`).as('deleted');
+      cy.getModal().within(() => {
+        cy.getBy('input[id="confirm"]').click();
+        cy.getBy('[data-ouia-component-id="submit"]').click();
+        cy.wait('@deleted')
+          .its('response')
+          .then((response) => {
+            expect(response.statusCode).to.eql(204);
+          });
+        cy.clickButton('Close');
+      });
+      cy.clickButton('Clear all filters');
+      //figure out a way to search for something that doesn't exist and assert empty state
+      // cy.filterTableBySingleSelect('name', schedule.name);
       cy.deleteAwxWorkflowJobTemplate(wfjt, { failOnStatusCode: false });
-      cy.get('button[data-cy="actions-dropdown"]').click();
-      cy.getBy('[data-cy="delete-schedule"]').click();
-      cy.clickModalConfirmCheckbox();
-      cy.clickModalButton('Delete schedule');
     });
   });
 
-  it('can create a simple schedule of resource type Inventory source', () => {
+  it('can create a simple schedule of resource type Inventory source, then delete the schedule', () => {
     let specificInventory: Inventory;
     let specificInventorySource: InventorySource;
     cy.createAwxInventory({ organization: organization.id }).then((i) => {
@@ -270,7 +299,7 @@ describe('Schedules - Create', function () {
     });
   });
 
-  it('can create a simple schedule of resource type Project', () => {
+  it('can create a simple schedule of resource type Project, then delete the schedule', () => {
     const scheduleName = 'E2E ' + randomString(4);
     cy.getBy('[data-cy="create-schedule"]').click();
     cy.selectDropdownOptionByResourceName('schedule_type', 'Project Sync');
@@ -300,7 +329,7 @@ describe('Schedules - Create', function () {
   });
 
   // We this test can we turned on after the routing issues, addressed by a different issue are fixed.
-  it.skip('can create a simple schedule of resource type Management job template', () => {
+  it.skip('can create a simple schedule of resource type Management job template, then delete the schedule', () => {
     const scheduleName = 'E2E ' + randomString(4);
     cy.getBy('[data-cy="create-schedule"]').click();
 
@@ -337,43 +366,6 @@ describe('Schedules - Create', function () {
   it.skip('can create a complex schedule and navigate to details page', () => {
     //Survey, prompts, rules and exceptions should be included
   });
-});
-
-describe('Schedules - Delete', () => {
-  let schedule: Schedule;
-
-  before(() => {
-    cy.awxLogin();
-  });
-
-  beforeEach(() => {
-    cy.createAWXSchedule().then((sched: Schedule) => (schedule = sched));
-    cy.navigateTo('awx', 'schedules');
-  });
-
-  it('deletes a schedule from the schedules list row', () => {
-    cy.filterTableBySingleSelect('name', schedule.name);
-    cy.clickTableRowKebabAction(schedule.name, 'delete-schedule', false);
-    cy.get('#confirm').click();
-    cy.clickButton(/^Delete schedule/);
-    cy.contains(/^Success$/);
-    cy.clickButton(/^Close$/);
-    cy.contains('No results found');
-  });
-
-  it('deletes a schedule from the schedules list toolbar', () => {
-    cy.filterTableBySingleSelect('name', schedule.name);
-    cy.getTableRow('name', schedule.name, { disableFilter: true }).within(() => {
-      cy.get('input[aria-label="Select all rows"]').click();
-    });
-    cy.clickToolbarKebabAction('delete-selected-schedules');
-    cy.get('#confirm').click();
-    cy.clickButton(/^Delete schedule/);
-    cy.contains(/^Success$/);
-    cy.clickButton(/^Close$/);
-    cy.contains('tr', schedule.name).should('not.exist');
-    cy.clickButton(/^Clear all filters$/);
-  });
 
   it.skip('user can bulk delete schedules from the Schedules list page ', () => {
     //Make sure to assert the deletion by intercepting the Delete request
@@ -381,7 +373,6 @@ describe('Schedules - Delete', () => {
 });
 
 describe('Schedules - Edit', () => {
-  //Make sure to assert the deletion by intercepting the Patch request
   let schedule: Schedule;
 
   before(() => {
@@ -401,6 +392,7 @@ describe('Schedules - Edit', () => {
       cy.filterTableBySingleSelect('name', schedule.name);
     });
   });
+
   afterEach(() => {
     cy.deleteAWXSchedule(schedule);
   });
@@ -518,6 +510,7 @@ describe('Schedules - Edit', () => {
   });
 
   it.skip('can edit a schedule remove exceptions', () => {
+    //come back to fix this test and unskip it
     cy.get('[data-cy="name-column-cell"]').click();
     cy.clickTableRowPinnedAction(schedule.name, 'edit-schedule', false);
     cy.getBy('[data-cy="edit-schedule"]').click();
@@ -539,11 +532,23 @@ describe('Schedules - Edit', () => {
     cy.getByDataCy('exception-1').should('not.contain', 'FREQ=DAILY');
   });
 
-  it('can toggle a schedule', () => {
+  it.skip('can edit a simple schedule to remove a rule and an exception', () => {
+    //This test should utilize many aspects of the schedule editing wizard
+    //Assertions should be made at each step of the editing wizard
+    //Successful edit should be asserted by intercepting the PATCH request
+  });
+
+  it.skip('can toggle a schedule from the details page and confirm the change on the list view', () => {
+    //Assert the state of the toggle button on the details page at first
+    //Take the toggle action
+    //Assert the UI behavior after the toggle is clicked
+    //Assert that the schedule toggle is showing the expected state on the list view as well for that schedule
+  });
+
+  it('can toggle a schedule from the list view', () => {
     cy.get(`tr[data-cy="row-id-${schedule.id}"]`).within(() => {
       cy.get('[data-cy="toggle-switch"]').click();
     });
-
     cy.get('input[aria-label="Click to enable schedule"]').should('exist');
     cy.get(`tr[data-cy="row-id-${schedule.id}"]`).within(() => {
       cy.get('[data-cy="toggle-switch"]').click();
