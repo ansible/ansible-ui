@@ -1,5 +1,5 @@
 import { useOutletContext } from 'react-router-dom';
-import { PageDetail, useGetPageUrl } from '../../../../../framework';
+import { PageDetail, Scrollable, useGetPageUrl } from '../../../../../framework';
 import { PageDetails } from '../../../../../framework';
 import { NotificationTemplate } from '../../../interfaces/NotificationTemplate';
 import { useTranslation } from 'react-i18next';
@@ -27,52 +27,138 @@ export function NotificationDetails() {
       : '';
   return (
     <>
-      <PageDetails>
-        <PageDetail label={t('Name')}>{notificationTemplate.name}</PageDetail>
-        <PageDetail label={t('Description')}>{notificationTemplate.description}</PageDetail>
-        {status && (
-          <PageDetail label={t('Status')}>
-            {runningTest === false && <StatusLabel status={status} />}
-            {runningTest === true && <StatusLabel status={'running'} />}
+      <Scrollable>
+        <PageDetails disableScroll={true}>
+          <PageDetail label={t('Name')}>{notificationTemplate.name}</PageDetail>
+          <PageDetail label={t('Description')}>{notificationTemplate.description}</PageDetail>
+          {status && (
+            <PageDetail label={t('Status')}>
+              {runningTest === false && <StatusLabel status={status} />}
+              {runningTest === true && <StatusLabel status={'running'} />}
+            </PageDetail>
+          )}
+          <PageDetail label={t('Created')}>
+            <DateTimeCell
+              value={notificationTemplate.created}
+              author={notificationTemplate.summary_fields?.created_by?.username}
+              onClick={() =>
+                pageNavigate(AwxRoute.UserDetails, {
+                  params: { id: notificationTemplate.summary_fields?.created_by?.id },
+                })
+              }
+            />
+          </PageDetail>
+          <PageDetail label={t('Last Modified')}>
+            <DateTimeCell
+              value={notificationTemplate.modified}
+              author={notificationTemplate.summary_fields?.modified_by?.username}
+              onClick={() =>
+                pageNavigate(AwxRoute.UserDetails, {
+                  params: { id: notificationTemplate.summary_fields?.modified_by?.id },
+                })
+              }
+            />
+          </PageDetail>
+
+          <PageDetail label={t('Organization')}>
+            <Link
+              to={getPageUrl(AwxRoute.OrganizationDetails, {
+                params: { id: notificationTemplate.summary_fields.organization.id },
+              })}
+            >
+              {notificationTemplate.summary_fields.organization.name}
+            </Link>
+          </PageDetail>
+          <PageDetail label={t('Notification Type')}>
+            {notificationTemplate.notification_type}
+          </PageDetail>
+
+          <RenderInnerDetail notificationTemplate={notificationTemplate} />
+        </PageDetails>
+        {notificationTemplate.messages && (
+          <RenderMessages notificationTemplate={notificationTemplate} />
+        )}
+      </Scrollable>
+    </>
+  );
+}
+
+function RenderMessages(props: { notificationTemplate: NotificationTemplate }) {
+  const messages = props.notificationTemplate.messages;
+  return (
+    <>
+      <PageDetails numberOfColumns="single" disableScroll={true}>
+        {messages?.started?.message && (
+          <PageDetail label={t('Start message')}>{messages?.started?.message}</PageDetail>
+        )}
+
+        {messages?.started?.body && (
+          <PageDetail label={t('Start message body')}>{messages?.started?.body}</PageDetail>
+        )}
+
+        {messages?.success?.message && (
+          <PageDetail label={t('Success message')}>{messages?.success?.message}</PageDetail>
+        )}
+
+        {messages?.success?.body && (
+          <PageDetail label={t('Success message body')}>{messages?.success?.body}</PageDetail>
+        )}
+
+        {messages?.error?.message && (
+          <PageDetail label={t('Error message')}>{messages?.error?.message}</PageDetail>
+        )}
+
+        {messages?.error?.body && (
+          <PageDetail label={t('Error message body')}>{messages?.error?.body}</PageDetail>
+        )}
+
+        {messages?.workflow_approval?.approved?.message && (
+          <PageDetail label={t('Workflow approved message')}>
+            {messages?.workflow_approval?.approved?.message}
           </PageDetail>
         )}
-        <PageDetail label={t('Created')}>
-          <DateTimeCell
-            value={notificationTemplate.created}
-            author={notificationTemplate.summary_fields?.created_by?.username}
-            onClick={() =>
-              pageNavigate(AwxRoute.UserDetails, {
-                params: { id: notificationTemplate.summary_fields?.created_by?.id },
-              })
-            }
-          />
-        </PageDetail>
-        <PageDetail label={t('Last Modified')}>
-          <DateTimeCell
-            value={notificationTemplate.modified}
-            author={notificationTemplate.summary_fields?.modified_by?.username}
-            onClick={() =>
-              pageNavigate(AwxRoute.UserDetails, {
-                params: { id: notificationTemplate.summary_fields?.modified_by?.id },
-              })
-            }
-          />
-        </PageDetail>
 
-        <PageDetail label={t('Organization')}>
-          <Link
-            to={getPageUrl(AwxRoute.OrganizationDetails, {
-              params: { id: notificationTemplate.summary_fields.organization.id },
-            })}
-          >
-            {notificationTemplate.summary_fields.organization.name}
-          </Link>
-        </PageDetail>
-        <PageDetail label={t('Notification Type')}>
-          {notificationTemplate.notification_type}
-        </PageDetail>
+        {messages?.workflow_approval?.approved?.body && (
+          <PageDetail label={t('Workflow approved message body')}>
+            {messages?.workflow_approval?.approved?.body}
+          </PageDetail>
+        )}
 
-        <RenderInnerDetail notificationTemplate={notificationTemplate} />
+        {messages?.workflow_approval?.denied?.message && (
+          <PageDetail label={t('Workflow denied message')}>
+            {messages?.workflow_approval?.denied?.message}
+          </PageDetail>
+        )}
+
+        {messages?.workflow_approval?.denied?.body && (
+          <PageDetail label={t('Workflow denied message body')}>
+            {messages?.workflow_approval?.denied?.body}
+          </PageDetail>
+        )}
+
+        {messages?.workflow_approval?.running?.message && (
+          <PageDetail label={t('Workflow pending message')}>
+            {messages?.workflow_approval?.running?.message}
+          </PageDetail>
+        )}
+
+        {messages?.workflow_approval?.running?.body && (
+          <PageDetail label={t('Workflow pending message body')}>
+            {messages?.workflow_approval?.running?.body}
+          </PageDetail>
+        )}
+
+        {messages?.workflow_approval?.timed_out?.message && (
+          <PageDetail label={t('Workflow timed out message')}>
+            {messages?.workflow_approval?.timed_out?.message}
+          </PageDetail>
+        )}
+
+        {messages?.workflow_approval?.timed_out?.body && (
+          <PageDetail label={t('Workflow timed out message body')}>
+            {messages?.workflow_approval?.timed_out?.body}
+          </PageDetail>
+        )}
       </PageDetails>
     </>
   );
