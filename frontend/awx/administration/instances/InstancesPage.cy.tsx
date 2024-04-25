@@ -20,9 +20,9 @@ describe('Instances Page', () => {
     cy.getByDataCy('instances-details-tab').should('be.enabled');
     cy.getByDataCy('instances-peers-tab').should('be.visible');
     cy.getByDataCy('instances-peers-tab').should('be.enabled');
-    cy.getByDataCy('edit-instance').should('be.visible');
-    cy.getByDataCy('edit-instance').should('be.enabled');
     cy.getByDataCy('actions-dropdown').click();
+    cy.getByDataCy('edit-instance').should('be.visible');
+    cy.getByDataCy('edit-instance').should('have.attr', 'aria-disabled', 'false');
     cy.getByDataCy('remove-instance').should('be.visible');
     cy.getByDataCy('remove-instance').should('have.attr', 'aria-disabled', 'false');
     cy.getByDataCy('run-health-check').should('be.visible');
