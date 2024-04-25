@@ -16,18 +16,21 @@ import { usePageNavigate } from '../../../../../framework';
 import { useState } from 'react';
 import { usePageAlertToaster } from '../../../../../framework';
 import { StatusLabel } from '../../../../common/Status';
+import { RunningNotificationsType } from '../hooks/useNotifiersRowActions';
 
 export function NotificationPage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const [testedNotificationId, setTestedNotificationId] = useState<number | undefined>(undefined);
+  // key:value = notification_template_id:notification_id
+  const [runningNotifications, setRunningNotifications] = useState<RunningNotificationsType>({});
+
   // set refresh interval to be faster when test is running
   const {
     error,
     data: notificationTemplate,
     refresh,
   } = useGetItem<NotificationTemplate>(awxAPI`/notification_templates`, params.id, {
-    refreshInterval: testedNotificationId === undefined ? 5000 : 2000,
+    refreshInterval: runningNotifications[params.id || ''] === undefined ? 5000 : 2000,
   });
 
   const pageNavigate = usePageNavigate();
@@ -40,39 +43,37 @@ export function NotificationPage() {
       pageNavigate(AwxRoute.NotificationTemplates);
     },
     undefined,
-    (notificationId: number) => {
-      setTestedNotificationId(notificationId);
+    (template_id: string, notificationId: string) => {
+      const obj = { ...runningNotifications };
+      obj[template_id] = notificationId;
+      setRunningNotifications(obj);
     },
-    'detail',
-    testedNotificationId === undefined
-      ? []
-      : notificationTemplate === undefined
-        ? []
-        : [{ id: notificationTemplate.id }]
+    'detail'
   );
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!notificationTemplate) return <LoadingPage breadcrumbs tabs />;
 
   // search for notification id
-  if (setTestedNotificationId !== undefined) {
-    const notifications = notificationTemplate.summary_fields?.recent_notifications;
-    const notification = notifications.find(
-      (notification) => notification.id === testedNotificationId
-    );
-    if (notification) {
-      alertToaster.addAlert({
-        variant: 'info',
-        title: t('Notifier test result'),
-        children: <StatusLabel status={notification.status} />,
-      });
-      setTestedNotificationId(undefined);
-    }
+  const notificationId = runningNotifications[notificationTemplate.id.toString()];
+
+  const notifications = notificationTemplate.summary_fields?.recent_notifications;
+  const notification = notifications.find(
+    (notification) => notification.id.toString() === notificationId
+  );
+  if (notification) {
+    alertToaster.addAlert({
+      variant: 'info',
+      title: t('Notifier (id {{id}}) test result', { id: notificationId }),
+      children: <StatusLabel status={notification.status} />,
+    });
+    const obj = { ...runningNotifications };
+    delete obj[notificationTemplate.id];
+    setRunningNotifications(obj);
   }
 
   return (
     <PageLayout>
-      {testedNotificationId}
       <PageHeader
         title={notificationTemplate?.name}
         breadcrumbs={[
@@ -97,7 +98,7 @@ export function NotificationPage() {
         params={params}
         componentParams={{
           notificationTemplate,
-          runningTest: testedNotificationId === undefined ? false : true,
+          runningTest: notificationId === undefined ? false : true,
         }}
       />
     </PageLayout>

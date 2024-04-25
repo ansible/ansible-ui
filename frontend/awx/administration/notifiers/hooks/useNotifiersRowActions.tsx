@@ -1,5 +1,4 @@
-
-import { BellIcon, CopyIcon, PencilAltIcon, RocketIcon, TrashIcon } from '@patternfly/react-icons';
+import { CopyIcon, PencilAltIcon, RocketIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -21,13 +20,14 @@ import {
 import { postRequest } from '../../../../common/crud/Data';
 import { awxAPI } from '../../../common/api/awx-utils';
 
+export type RunningNotificationsType = { [key: string]: string };
+
 export function useNotifiersRowActions(
   onComplete: (notification: NotificationTemplate[]) => void,
   onNotifierCopied = () => null,
-  onNotifierStartTest?: (notificationId: number) => void,
-  detail?: 'detail' | undefined,
-  // sets which notifiers are running, thus test action will be disabled
-  testDisabled?: { id: number }[]
+  onNotifierStartTest?: (template_id: string, notificationId: string) => void,
+  type?: 'detail' | 'list',
+  runningNotifications?: RunningNotificationsType
 ) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
@@ -37,16 +37,6 @@ export function useNotifiersRowActions(
 
   return useMemo<IPageAction<NotificationTemplate>[]>(() => {
     return [
-      {
-        type: PageActionType.Button,
-        selection: PageActionSelection.Single,
-        icon: BellIcon,
-        label: t(`Test notifier`),
-        onClick: (notification) => { postRequest(awxAPI`/notification_templates/${notification.id.toString()}/test/`, {})},
-        isDisabled: (notification) => isNotificationRunning(notification) ? t('Notification is running') : '' ,
-        isDanger: false,
-        isPinned: true,
-      },
       // Edit form not yet implemented
       {
         type: PageActionType.Button,
@@ -67,7 +57,7 @@ export function useNotifiersRowActions(
         icon: RocketIcon,
         label: t(`Test notifier`),
         isDisabled: (notification) => {
-          const found = testDisabled?.find((test) => test.id === notification.id);
+          const found = runningNotifications?.[notification.id];
           return found !== undefined ? t(`Disabled while test is running.`) : undefined;
         },
         onClick: (notification: NotificationTemplate) => {
@@ -77,7 +67,7 @@ export function useNotifiersRowActions(
                 awxAPI`/notification_templates/${notification.id.toString()}/test/`,
                 {}
               );
-              onNotifierStartTest?.(result?.id);
+              onNotifierStartTest?.(notification.id.toString(), result.id.toString());
             } catch (error) {
               alertToaster.addAlert({
                 variant: 'danger',
@@ -99,7 +89,7 @@ export function useNotifiersRowActions(
         isDisabled: (notification) => cannotCopyResource(notification, t),
         isDanger: false,
         isPinned: true,
-        isHidden: () => detail === 'detail',
+        isHidden: () => type === 'detail',
       },
       { type: PageActionType.Seperator },
       {
@@ -116,24 +106,10 @@ export function useNotifiersRowActions(
     pageNavigate,
     copyNotifier,
     deleteNotifiers,
-    detail,
+    type,
     t,
     onNotifierStartTest,
     alertToaster,
-    testDisabled,
+    runningNotifications,
   ]);
-}
-
-function isNotificationRunning(notification : NotificationTemplate)
-{
-  const status = notification.summary_fields.recent_notifications.length > 0
-                ? notification.summary_fields.recent_notifications[0].status
-                : undefined;
-
-  if (status === 'running')
-  {
-    return true;
-  }
-
-  return false;
 }
