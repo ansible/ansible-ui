@@ -13,17 +13,14 @@ import { useNotifiersRowActions } from '../hooks/useNotifiersRowActions';
 import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { PageActions } from '../../../../../framework';
 import { usePageNavigate } from '../../../../../framework';
-import { useState } from 'react';
-import { usePageAlertToaster } from '../../../../../framework';
-import { StatusLabel } from '../../../../common/Status';
 import { useNotificationsWatch } from '../hooks/useNotificationsWatch';
-
 
 export function NotificationPage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
 
-  const {runningNotifications, setRunningNotifications, onNotifierStartTest, checkNotifiers } = useNotificationsWatch('detail');
+  const { runningNotifications, onNotifierStartTest, checkNotifiers } =
+    useNotificationsWatch('detail');
 
   // set refresh interval to be faster when test is running
   const {
@@ -36,8 +33,6 @@ export function NotificationPage() {
 
   const pageNavigate = usePageNavigate();
 
-  const alertToaster = usePageAlertToaster();
-
   const getPageUrl = useGetPageUrl();
   const pageActions = useNotifiersRowActions(
     () => {
@@ -46,7 +41,7 @@ export function NotificationPage() {
     undefined,
     onNotifierStartTest,
     'detail',
-    runningNotifications,
+    runningNotifications
   );
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
@@ -56,7 +51,7 @@ export function NotificationPage() {
   const notificationId = runningNotifications[notificationTemplate.id.toString()];
 
   checkNotifiers(notificationTemplate);
-  
+
   return (
     <PageLayout>
       <PageHeader

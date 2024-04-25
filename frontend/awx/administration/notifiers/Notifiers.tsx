@@ -18,9 +18,10 @@ import { useNotificationsWatch } from './hooks/useNotificationsWatch';
 
 export function Notifiers() {
   const { t } = useTranslation();
-  const {runningNotifications, onNotifierStartTest, checkNotifiers } = useNotificationsWatch('list');
+  const { runningNotifications, onNotifierStartTest, checkNotifiers } =
+    useNotificationsWatch('list');
   const toolbarFilters = useNotifiersFilters();
-  const tableColumns = useNotifiersColumns({runningNotifications});
+  const tableColumns = useNotifiersColumns({ runningNotifications });
   const view = useAwxView<NotificationTemplate>({
     url: awxAPI`/notification_templates/`,
     toolbarFilters,
@@ -28,9 +29,15 @@ export function Notifiers() {
   });
   const config = useAwxConfig();
   const pageNavigate = usePageNavigate();
- 
+
   const toolbarActions = useNotifiersToolbarActions(view.unselectItemsAndRefresh);
-  const rowActions = useNotifiersRowActions(view.unselectItemsAndRefresh, undefined, onNotifierStartTest, 'list', runningNotifications );
+  const rowActions = useNotifiersRowActions(
+    view.unselectItemsAndRefresh,
+    undefined,
+    onNotifierStartTest,
+    'list',
+    runningNotifications
+  );
 
   const notificationsOptions = useOptions<OptionsResponse<ActionsResponse>>(
     awxAPI`/notification_templates/`
@@ -39,11 +46,10 @@ export function Notifiers() {
     notificationsOptions && notificationsOptions.actions && notificationsOptions.actions['POST']
   );
 
-  if (view.pageItems)
-  {
-    view.pageItems.forEach( (item) => {
+  if (view.pageItems) {
+    view.pageItems.forEach((item) => {
       checkNotifiers(item);
-    })
+    });
   }
 
   return (
@@ -56,7 +62,6 @@ export function Notifiers() {
         titleDocLink={`${getDocsBaseUrl(config)}/html/userguide/notifications.html`}
         headerActions={<ActivityStreamIcon type={'notification_template'} />}
       />
-      {JSON.stringify(runningNotifications, null, 4)}
       <PageTable
         id="awx-host-metrics-table"
         toolbarFilters={toolbarFilters}
