@@ -21,6 +21,18 @@ import { PageFormInventorySelect } from '../inventories/components/PageFormInven
 import { PageFormProjectSelect } from '../projects/components/PageFormProjectSelect';
 import { WebhookSubForm } from './components/WebhookSubForm';
 
+// This list below comes from the previous AWX code
+//https//github.com / ansible / awx / blob / c760577855bf2afacc58579e743111552dae38ef / awx / ui / src / api / models / CredentialTypes.js#L10
+const acceptableCredentialKinds = [
+  'machine',
+  'cloud',
+  'net',
+  'ssh',
+  'vault',
+  'kubernetes',
+  'cryptography',
+];
+
 export function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm }) {
   const { jobtemplate } = props;
   const { t } = useTranslation();
@@ -143,6 +155,7 @@ export function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm }) {
           'Select credentials for accessing the nodes this job will be ran against. You can only select one credential of each type. For machine credentials (SSH), checking "Prompt on launch" without selecting credentials will require you to select a machine credential at run time. If you select credentials and check "Prompt on launch", the selected credential(s) become the defaults that can be updated at run time.'
         )}
         isMultiple
+        acceptableCredentialKinds={acceptableCredentialKinds}
       />
       <PageFormLabelSelect
         labelHelpTitle={t('Labels')}

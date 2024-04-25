@@ -73,26 +73,54 @@ export function PageFormFileUpload<
             helperTextInvalid={helperTextInvalid}
             isRequired={isRequired}
           >
-            <FileUpload
-              id={id}
-              data-cy={id}
-              type={props.type || 'dataURL'}
-              value={value as string}
-              hideDefaultPreview={props.hideDefaultPreview}
-              filename={isLoading ? t('loading...') : filename}
-              filenamePlaceholder={props.placeholder}
-              onFileInputChange={handleFileInputChange}
-              onDataChange={(_event, value: string) => handleTextOrDataChange(value)}
-              // onTextChange={handleTextOrDataChange}
-              onReadStarted={(_event, _fileHandle: File) => handleFileReadStarted(_fileHandle)}
-              onReadFinished={(_event, _fileHandle: File) => handleFileReadFinished(_fileHandle)}
-              onClearClick={handleClear}
-              // isLoading={isLoading}
-              allowEditingUploadedText={false}
-              // browseButtonText={t('Upload')}
-              isReadOnly={props.isReadOnly || isSubmitting}
-              validated={error ? 'error' : undefined}
-            />
+            {props.icon && props.icon !== undefined ? (
+              <div style={{ display: 'grid', gridTemplateColumns: '10fr 1fr' }}>
+                <FileUpload
+                  id={id}
+                  data-cy={id}
+                  type={props.type || 'dataURL'}
+                  value={value as string}
+                  hideDefaultPreview={props.hideDefaultPreview}
+                  filename={isLoading ? t('loading...') : filename}
+                  filenamePlaceholder={props.placeholder}
+                  onFileInputChange={handleFileInputChange}
+                  onDataChange={(_event, value: string) => handleTextOrDataChange(value)}
+                  onTextChange={(_event, value: string) => handleTextOrDataChange(value)}
+                  onReadStarted={(_event, _fileHandle: File) => handleFileReadStarted(_fileHandle)}
+                  onReadFinished={(_event, _fileHandle: File) =>
+                    handleFileReadFinished(_fileHandle)
+                  }
+                  onClearClick={handleClear}
+                  // isLoading={isLoading}
+                  allowEditingUploadedText={props.allowEditingUploadedText || false}
+                  // browseButtonText={t('Upload')}
+                  isReadOnly={props.isReadOnly || isSubmitting}
+                  validated={error ? 'error' : undefined}
+                />
+                {props.icon}
+              </div>
+            ) : (
+              <FileUpload
+                id={id}
+                data-cy={id}
+                type={props.type || 'dataURL'}
+                value={value as string}
+                hideDefaultPreview={props.hideDefaultPreview}
+                filename={isLoading ? t('loading...') : filename}
+                filenamePlaceholder={props.placeholder}
+                onFileInputChange={handleFileInputChange}
+                onDataChange={(_event, value: string) => handleTextOrDataChange(value)}
+                onTextChange={(_event, value: string) => handleTextOrDataChange(value)}
+                onReadStarted={(_event, _fileHandle: File) => handleFileReadStarted(_fileHandle)}
+                onReadFinished={(_event, _fileHandle: File) => handleFileReadFinished(_fileHandle)}
+                onClearClick={handleClear}
+                // isLoading={isLoading}
+                allowEditingUploadedText={props.allowEditingUploadedText || false}
+                // browseButtonText={t('Upload')}
+                isReadOnly={props.isReadOnly || isSubmitting}
+                validated={error ? 'error' : undefined}
+              />
+            )}
           </PageFormGroup>
         );
       }}

@@ -15,7 +15,7 @@ import './PageNavigation.css';
 import { PageNavigationItem } from './PageNavigationItem';
 
 /** Renders a sidebar navigation menu from an arroy of navigation items. */
-export function PageNavigation(props: { navigation: PageNavigationItem[] }) {
+export function PageNavigation(props: { navigation: PageNavigationItem[]; basename?: string }) {
   const { navigation: navigationItems } = props;
   const navBar = usePageNavSideBar();
 
@@ -24,7 +24,7 @@ export function PageNavigation(props: { navigation: PageNavigationItem[] }) {
       <PageSidebarBody>
         <Nav data-cy="page-navigation" className="side-nav">
           <NavList>
-            <PageNavigationItems baseRoute={''} items={navigationItems} />
+            <PageNavigationItems baseRoute={props.basename ?? ''} items={navigationItems} />
           </NavList>
         </Nav>
       </PageSidebarBody>

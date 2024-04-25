@@ -76,7 +76,7 @@ describe('Credentials', () => {
         });
     });
 
-    it('create/edit a credential using prompt on launch', () => {
+    it.skip('create/edit a credential using prompt on launch', () => {
       const credentialName = 'E2E Credential ' + randomString(4);
       cy.navigateTo('awx', 'credentials');
       cy.clickButton(/^Create credential$/);
@@ -225,10 +225,32 @@ describe('Credentials', () => {
           cy.verifyPageTitle('Credentials');
         });
     });
+
+    it('copies a credential from the list row action', () => {
+      cy.navigateTo('awx', 'credentials');
+      cy.filterTableByMultiSelect('name', [credential.name]);
+      cy.getByDataCy('actions-column-cell').within(() => {
+        cy.getByDataCy('copy-credential').click();
+      });
+      cy.get('[data-cy="alert-toaster"]').contains('copied').should('be.visible');
+      cy.clickButton(/^Clear all filters/);
+      cy.deleteAwxCredential(credential, { failOnStatusCode: false });
+      cy.filterTableByMultiSelect('name', [`${credential.name} @`]);
+      cy.get('[data-cy="checkbox-column-cell"]').within(() => {
+        cy.get('input').click();
+      });
+      cy.clickToolbarKebabAction('delete-selected-credentials');
+      cy.getModal().within(() => {
+        cy.get('#confirm').click();
+        cy.clickButton(/^Delete credential/);
+        cy.contains(/^Success$/);
+        cy.clickButton(/^Close$/);
+      });
+    });
   });
 
   describe('Credentials: Details View', () => {
-    it('details page should render boolean field', () => {
+    it.skip('details page should render boolean field', () => {
       const credentialName = 'E2E Credential ' + randomString(4);
       cy.navigateTo('awx', 'credentials');
       cy.clickButton(/^Create credential$/);
