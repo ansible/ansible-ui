@@ -329,11 +329,9 @@ describe('Job Templates Surveys', function () {
       surveyTypes.forEach((survey) => {
         const specTypeSelector =
           survey.type === 'multiselect' ? 'survey.multiselect_' : `survey-${survey.type}-`;
+        const groupType = `${specTypeSelector}answer-form-group`;
 
-        cy.getByDataCy(`${specTypeSelector}answer-form-group`).as('selectorType', {
-          type: 'query',
-        });
-        cy.get('@selectorType').within(() => {
+        cy.getByDataCy(groupType).within(() => {
           cy.contains(survey.question_name);
           cy.contains('*');
           cy.get('.pf-v5-c-icon').click();
@@ -342,7 +340,7 @@ describe('Job Templates Surveys', function () {
 
         if (['multiplechoice', 'multiselect'].includes(survey.type)) {
           if (survey.type === 'multiplechoice') {
-            cy.get('@selectorType').within(() => {
+            cy.getByDataCy(groupType).within(() => {
               cy.contains(survey.default);
               cy.get('div[data-ouia-component-id="menu-select"]').click();
               survey?.choices?.forEach((choice) => {
@@ -352,21 +350,21 @@ describe('Job Templates Surveys', function () {
           } else {
             const defaults = survey.default.split('\n');
             defaults.forEach((defaultValue) => {
-              cy.get('@selectorType').contains(defaultValue);
+              cy.getByDataCy(groupType).contains(defaultValue);
             });
 
-            cy.get('@selectorType').get('input').click();
+            cy.getByDataCy(groupType).get('input').click();
 
             survey?.choices?.forEach((choice) => {
-              cy.get('@selectorType').getByDataCy(choice);
+              cy.getByDataCy(groupType).getByDataCy(choice);
             });
           }
         } else if (survey.type === 'password') {
-          cy.get('@selectorType')
+          cy.getByDataCy(groupType)
             .getByDataCy('survey-password-answer')
             .should('have.value', '$encrypted$');
         } else {
-          cy.get('@selectorType')
+          cy.getByDataCy(groupType)
             .getByDataCy(`survey-${survey.type.toLowerCase()}-answer`)
             .should('have.value', survey.default);
         }
