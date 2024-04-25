@@ -27,6 +27,7 @@ import { Credential } from '../../interfaces/Credential';
 import { CredentialInputField, CredentialType } from '../../interfaces/CredentialType';
 import { AwxRoute } from '../../main/AwxRoutes';
 import { PageFormSelectOrganization } from '../organizations/components/PageFormOrganizationSelect';
+import { CredentialMultilineInput } from './components/CredentialMultilineInput';
 
 interface CredentialForm extends Credential {
   user?: number;
@@ -308,13 +309,11 @@ function CredentialSubForm({ credentialType }: { credentialType: CredentialType 
         stringFields.map((field) => {
           if (field?.multiline) {
             return (
-              <PageFormTextArea<CredentialType>
+              <CredentialMultilineInput
+                kind={credentialType.kind}
                 key={field.id}
-                name={field.id as keyof CredentialType}
-                label={field.label}
-                placeholder={field?.default ? String(field?.default) : ''}
-                isRequired={requiredFields.includes(field.id)}
-                labelHelp={field.help_text}
+                field={field}
+                requiredFields={requiredFields}
               />
             );
           } else
