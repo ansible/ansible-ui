@@ -253,21 +253,22 @@ export function PageFormTextInput<
               break;
             }
             case 'number': {
-              if (value === '') {
+              let numberValue = Number(value);
+              if (value === '' || isNaN(numberValue)) {
                 setValue(name, null as PathValue<TFieldValues, TFieldName>);
                 onChange(null);
                 return;
               }
 
-              if (max !== undefined && Number(value) > Number(max)) {
-                value = String(max);
+              if (max !== undefined && numberValue > Number(max)) {
+                numberValue = Number(max);
               }
 
-              if (min !== undefined && Number(value) < Number(min)) {
-                value = String(min);
+              if (min !== undefined && numberValue < Number(min)) {
+                numberValue = Number(min);
               }
-              setValue(name, value as unknown as PathValue<TFieldValues, TFieldName>);
-              onChange(value);
+              setValue(name, numberValue as unknown as PathValue<TFieldValues, TFieldName>);
+              onChange(numberValue);
               break;
             }
             default:

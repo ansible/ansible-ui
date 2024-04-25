@@ -41,7 +41,6 @@ describe('Add instance Form', () => {
           node_type: 'execution',
           node_state: 'installed',
           hostname: 'AddInstanceMock',
-          listener_port: null,
         });
       });
   });
