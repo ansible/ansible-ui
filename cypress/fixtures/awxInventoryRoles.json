@@ -1,0 +1,101 @@
+{
+  "count": 4,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 39,
+      "url": "/api/v2/role_definitions/39/",
+      "related": {
+        "team_assignments": "/api/v2/role_definitions/39/team_assignments/",
+        "user_assignments": "/api/v2/role_definitions/39/user_assignments/"
+      },
+      "summary_fields": {},
+      "permissions": ["awx.adhoc_inventory", "awx.view_inventory"],
+      "content_type": "awx.inventory",
+      "modified": "2024-04-24T13:37:37.886709Z",
+      "created": "2024-04-24T13:37:37.886740Z",
+      "name": "Inventory adhoc",
+      "description": "Has adhoc permissions to a single inventory",
+      "managed": true,
+      "modified_by": null,
+      "created_by": null
+    },
+    {
+      "id": 16,
+      "url": "/api/v2/role_definitions/16/",
+      "related": {
+        "team_assignments": "/api/v2/role_definitions/16/team_assignments/",
+        "user_assignments": "/api/v2/role_definitions/16/user_assignments/"
+      },
+      "summary_fields": {},
+      "permissions": [
+        "awx.adhoc_inventory",
+        "awx.change_inventory",
+        "awx.delete_inventory",
+        "awx.update_inventory",
+        "awx.use_inventory",
+        "awx.view_inventory"
+      ],
+      "content_type": "awx.inventory",
+      "modified": "2024-04-24T13:37:33.827071Z",
+      "created": "2024-04-24T13:37:33.827051Z",
+      "name": "Inventory Admin",
+      "description": "Has all permissions to a single inventory",
+      "managed": true,
+      "modified_by": null,
+      "created_by": null
+    },
+    {
+      "id": 45,
+      "url": "/api/v2/role_definitions/45/",
+      "related": {
+        "created_by": "/api/v2/users/3/",
+        "modified_by": "/api/v2/users/3/",
+        "team_assignments": "/api/v2/role_definitions/45/team_assignments/",
+        "user_assignments": "/api/v2/role_definitions/45/user_assignments/"
+      },
+      "summary_fields": {
+        "modified_by": {
+          "id": 3,
+          "username": "dev",
+          "first_name": "",
+          "last_name": ""
+        },
+        "created_by": {
+          "id": 3,
+          "username": "dev",
+          "first_name": "",
+          "last_name": ""
+        }
+      },
+      "permissions": ["awx.view_inventory"],
+      "content_type": "awx.inventory",
+      "modified": "2024-04-26T17:47:27.397410Z",
+      "created": "2024-04-26T17:47:27.397448Z",
+      "name": "Inventory Read Compat",
+      "description": "",
+      "managed": false,
+      "modified_by": 3,
+      "created_by": 3
+    },
+    {
+      "id": 38,
+      "url": "/api/v2/role_definitions/38/",
+      "related": {
+        "team_assignments": "/api/v2/role_definitions/38/team_assignments/",
+        "user_assignments": "/api/v2/role_definitions/38/user_assignments/"
+      },
+      "summary_fields": {},
+      "permissions": ["awx.use_inventory", "awx.view_inventory"],
+      "content_type": "awx.inventory",
+      "modified": "2024-04-24T13:37:37.869783Z",
+      "created": "2024-04-24T13:37:37.869816Z",
+      "name": "Inventory use",
+      "description": "Has use permissions to a single inventory",
+      "managed": true,
+      "modified_by": null,
+      "created_by": null
+    }
+  ]
+}
