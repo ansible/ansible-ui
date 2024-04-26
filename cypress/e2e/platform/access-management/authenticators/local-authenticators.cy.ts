@@ -132,21 +132,17 @@ describe('Authenticators - Local CRUD UI', () => {
           (createdLocalAuthenticator2: Authenticator) => {
             cy.searchAndDisplayResourceByFilterOption(createdLocalAuthenticator1.name, 'name').then(
               () => {
-                cy.get('td[data-cy="name-column-cell"]')
-                  .contains(createdLocalAuthenticator1.name)
-                  .parents('tr')
-                  .find('td[data-cy="checkbox-column-cell"]')
-                  .click();
+                cy.selectTableRowByCheckbox('name', createdLocalAuthenticator1.name, {
+                  disableFilter: true,
+                });
               }
             );
             cy.clickButton(/^Clear all filters$/);
             cy.searchAndDisplayResourceByFilterOption(createdLocalAuthenticator2.name, 'name').then(
               () => {
-                cy.get('td[data-cy="name-column-cell"]')
-                  .should('have.text', createdLocalAuthenticator2.name)
-                  .parents('tr')
-                  .find('td[data-cy="checkbox-column-cell"]')
-                  .click();
+                cy.selectTableRowByCheckbox('name', createdLocalAuthenticator2.name, {
+                  disableFilter: true,
+                });
               }
             );
             cy.clickToolbarKebabAction('delete-selected-authentications');
