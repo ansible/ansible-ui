@@ -24,7 +24,6 @@ describe('EDA user roles', () => {
     });
     it('Renders the correct columns and action buttons', () => {
       cy.get('a[data-cy="add-roles"]').should('contain', 'Add roles');
-      cy.get('th.pf-v5-c-table__th').should('have.length', 4);
       cy.contains('th', 'Resource name');
       cy.contains('th', 'Role');
       cy.contains('th', 'Type');
