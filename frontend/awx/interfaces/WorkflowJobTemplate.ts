@@ -39,6 +39,7 @@ export interface WorkflowJobTemplate
   status: string;
   related: {
     schedules: string;
+    survey_spec: string;
     webhook_receiver: string;
     webhook_key: string;
   };
