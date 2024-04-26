@@ -136,11 +136,9 @@ describe('Inventory Groups', () => {
           }
         });
 
-        // those lines are for sync only, those modals are badly implemented and can occasionaly flick
-        // this is ugly fix, but since we dont want to use waits, until app is repaired, this is necessity
-        cy.contains('span', 'Select credential');
-        cy.get(`[aria-label="Simple table"]`);
-        cy.get(`[aria-label="Select credential"]`);
+        // this is for sync only, those modals are badly implemented and can occasionaly flick
+        // this is ugly fix, until app is repaired, this is necessity
+        cy.wait(2000);
 
         cy.selectTableRowByCheckbox('name', machineCredential.name);
         cy.clickButton(/^Confirm$/);
