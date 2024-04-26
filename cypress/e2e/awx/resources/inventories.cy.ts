@@ -172,8 +172,9 @@ describe('Inventories Tests', () => {
           //.......the delete call and asserting the expected statusCode from the API (probably a 204)
         });
       }
+
       if (kind === 'constructed') {
-        it.skip('can create a constructed inventory including all optional fields, assert info on details page, and delete inventory', () => {
+        it.skip('can create a constructed inventory using specific source_vars and limit and then delete that inventory', () => {
           //Assert that user is on the form view to create an inventory
           //Add an interception call for the newly created inventory, which will allow for the deletion at the end of the test
           //Add assertions for the information visible on the details screen of the new inventory
@@ -181,11 +182,28 @@ describe('Inventories Tests', () => {
           //filtering a list to show no results
         });
 
-        it.skip('can edit a constructed inventory from the details view and assert info on details page', () => {
+        it.skip('can edit and run a sync on the edited constructed inventory', () => {
           //Create a constructed inventory in the beforeEach hook
           //Assert the original details of the inventory
           //Assert the user navigating to the edit constructed inventory form
           //Assert the edited changes of the inventory
+          //Assert that the sync ran successfully
+        });
+
+        it.skip('can edit the input_inventories, verify the preservation of the order they were added in, and manually change the order', () => {
+          //Create a constructed inventory in the beforeEach hook
+          //Assert the original order of the input inventories
+          //Assert the UI change to the order of input inventories
+        });
+
+        it.skip('shows a failed sync on the constructed inventory if the user sets strict to true and enters bad variables', () => {
+          //Create a constructed inventory in the beforeEach hook
+          //Assert the original details of the inventory
+          //Assert the user navigating to the edit constructed inventory form
+          //Assert the change to the strict setting
+          //Add bad variables
+          //Assert the edited changes of the inventory
+          //Run a sync and assert failure of the job
         });
       }
 
