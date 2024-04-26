@@ -32,7 +32,7 @@ export function PlatformApp() {
         <Banner variant={session.expires_in_seconds < 2 * 60 ? 'red' : 'gold'}>
           <Flex spaceItems={{ default: 'spaceItemsMd' }}>
             <FlexItem>
-              {t(`Your session will expires in {{count}} minutes.`, {
+              {t(`Your session will expire in {{count}} minutes.`, {
                 count: Math.max(0, Math.round(session.expires_in_seconds / 60)),
               })}
             </FlexItem>
