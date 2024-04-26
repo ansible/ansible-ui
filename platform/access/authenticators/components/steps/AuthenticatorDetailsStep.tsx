@@ -131,7 +131,7 @@ export function AuthenticatorDetailsStep(props: {
               labelHelp={field.help_text}
               isRequired={field.required}
               format="json"
-              isArray={!!fieldType && ['LIST_FIELD', 'LDAPSearchField'].includes(fieldType)}
+              isArray={!!fieldType && ['ListField', 'LDAPSearchField'].includes(fieldType)}
             />
           );
         })}
