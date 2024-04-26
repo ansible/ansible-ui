@@ -7,7 +7,7 @@ export function UserAccess(props: { id: string; type: string; addRolesRoute?: st
   const { id, type, addRolesRoute } = props;
   const { t } = useTranslation();
   return (
-    <Access
+    <Access<UserAssignment>
       tableColumnFunctions={{
         name: {
           function: (userAccess: UserAssignment) => userAccess.summary_fields.user.username,
@@ -15,12 +15,26 @@ export function UserAccess(props: { id: string; type: string; addRolesRoute?: st
           label: t('Username'),
         },
       }}
-      toolbarFiltersValues={{ label: t('User name'), query: 'user__username' }}
+      additionalTableColumns={[
+        {
+          header: t('First name'),
+          type: 'text',
+          value: (item: UserAssignment) => item.summary_fields.user.first_name,
+          sort: 'first_name',
+        },
+        {
+          header: t('Last name'),
+          type: 'text',
+          value: (item: UserAssignment) => item.summary_fields.user.last_name,
+          sort: 'last_name',
+        },
+      ]}
+      toolbarNameColumnFiltersValues={{ label: t('User name'), query: 'user__username' }}
       url={edaAPI`/role_user_assignments/`}
       id={id}
       content_type_model={type}
       addRolesRoute={addRolesRoute}
-      type={'user'}
+      accessListType={'user'}
     />
   );
 }

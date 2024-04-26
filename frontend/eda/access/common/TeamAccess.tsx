@@ -7,7 +7,7 @@ export function TeamAccess(props: { id: string; type: string; addRolesRoute?: st
   const { id, type, addRolesRoute } = props;
   const { t } = useTranslation();
   return (
-    <Access
+    <Access<TeamAssignment>
       tableColumnFunctions={{
         name: {
           function: (teamAccess: TeamAssignment) => teamAccess.summary_fields.team.name,
@@ -15,12 +15,12 @@ export function TeamAccess(props: { id: string; type: string; addRolesRoute?: st
           label: t('Team name'),
         },
       }}
-      toolbarFiltersValues={{ label: t('Team name'), query: 'team__name' }}
+      toolbarNameColumnFiltersValues={{ label: t('Team name'), query: 'team__name' }}
       url={edaAPI`/role_team_assignments/`}
       id={id}
       content_type_model={type}
       addRolesRoute={addRolesRoute}
-      type={'team'}
+      accessListType={'team'}
     />
   );
 }

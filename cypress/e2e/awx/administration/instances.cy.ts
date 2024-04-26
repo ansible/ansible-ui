@@ -56,6 +56,7 @@ describe('Instances - Add/Edit', () => {
     cy.url().then((currentUrl) => {
       expect(currentUrl.includes('details')).to.be.true;
     });
+    cy.getByDataCy('actions-dropdown').click();
     cy.getByDataCy('edit-instance').click();
     cy.getByDataCy('listener-port').type('9999');
     cy.getByDataCy('enabled').check();
