@@ -37,8 +37,20 @@ export function PageApp(props: {
             sidebar={<PageNavigation navigation={navigation} basename={props.basename} />}
           >
             <PageNotificationsDrawer>
-              {props.banner}
-              <Outlet />
+              <div
+                style={{
+                  maxHeight: '100%',
+                  overflow: 'hidden',
+                  height: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                }}
+              >
+                {props.banner}
+                <div style={{ flexGrow: 1, overflow: 'hidden' }}>
+                  <Outlet />
+                </div>
+              </div>
             </PageNotificationsDrawer>
           </Page>
         ),
