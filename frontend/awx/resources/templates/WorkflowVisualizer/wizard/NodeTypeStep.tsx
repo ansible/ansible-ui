@@ -122,7 +122,7 @@ export function NodeTypeStep(props: { hasSourceNode?: boolean }) {
           awxAPI`/workflow_job_templates/${template.id.toString()}/launch/`
         );
       }
-      const { job_tags, skip_tags, inventory, ...defaults } = launchConfigResults.defaults;
+      const { job_tags, skip_tags, inventory, ...defaults } = launchConfigResults?.defaults || {};
 
       launchConfigValue = {
         ...defaults,

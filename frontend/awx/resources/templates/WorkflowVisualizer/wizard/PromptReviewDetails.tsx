@@ -5,6 +5,7 @@ import { AwxRoute } from '../../../../main/AwxRoutes';
 import { PageDetail, useGetPageUrl } from '../../../../../../framework';
 import { PageDetailCodeEditor } from '../../../../../../framework/PageDetails/PageDetailCodeEditor';
 import { usePageWizard } from '../../../../../../framework/PageWizard/PageWizardProvider';
+import { jsonToYaml } from '../../../../../../framework/utils/codeEditorUtils';
 import { useGet } from '../../../../../common/crud/useGet';
 import { CredentialLabel } from '../../../../common/CredentialLabel';
 import { awxAPI } from '../../../../common/api/awx-utils';
@@ -17,13 +18,14 @@ import { parseStringToTagArray } from '../../JobTemplateFormHelpers';
 
 interface PromptWizardFormValues extends Omit<WizardFormValues, 'resource'> {
   resource: JobTemplate | WorkflowJobTemplate;
+  survey: { [key: string]: string };
 }
 
 export function PromptReviewDetails() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const {
-    wizardData: { prompt, resource: template },
+    wizardData: { prompt, resource: template, survey },
   } = usePageWizard() as {
     wizardData: PromptWizardFormValues;
   };
@@ -55,6 +57,26 @@ export function PromptReviewDetails() {
     smart: 'smart_inventory',
     constructed: 'constructed_inventory',
   };
+
+  let extraVarDetails = extra_vars || '{}';
+  if (survey) {
+    const jsonObj: { [key: string]: string } = {};
+
+    if (extra_vars) {
+      const lines = extra_vars.split('\n');
+      lines.forEach((line) => {
+        const [key, value] = line.split(':').map((part) => part.trim());
+        jsonObj[key] = value;
+      });
+    }
+
+    const mergedData: { [key: string]: string } = {
+      ...jsonObj,
+      ...survey,
+    };
+
+    extraVarDetails = jsonToYaml(JSON.stringify(mergedData));
+  }
 
   if (!template) return null;
   const organization = template.summary_fields?.organization;
@@ -148,7 +170,7 @@ export function PromptReviewDetails() {
       <PageDetail label={t('Skip tags')} isEmpty={isEmpty(skipTags)}>
         <LabelGroup>{skipTags?.map(({ name }) => <Label key={name}>{name}</Label>)}</LabelGroup>
       </PageDetail>
-      <PageDetailCodeEditor label={t('Extra vars')} value={extra_vars || ''} />
+      <PageDetailCodeEditor label={t('Extra vars')} value={extraVarDetails} />
     </>
   );
 }

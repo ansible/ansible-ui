@@ -8,7 +8,9 @@ import type { Credential } from '../../../../interfaces/Credential';
 import type { InstanceGroup } from '../../../../interfaces/InstanceGroup';
 import type { Label } from '../../../../interfaces/Label';
 import type { LaunchConfiguration } from '../../../../interfaces/LaunchConfiguration';
-import { EdgeStatus, GraphNode, PromptFormValues, WizardFormValues } from '../types';
+import type { Survey } from '../../../../interfaces/Survey';
+import type { WorkflowNode } from '../../../../interfaces/WorkflowNode';
+import { EdgeStatus, GraphNode, NodeResource, PromptFormValues, WizardFormValues } from '../types';
 import { getConvergenceType, getValueBasedOnJobType, shouldHideOtherStep } from '../wizard/helpers';
 import { jsonToYaml } from '../../../../../../framework/utils/codeEditorUtils';
 import { RESOURCE_TYPE } from '../constants';
@@ -16,6 +18,7 @@ import { RESOURCE_TYPE } from '../constants';
 interface WizardStepState {
   nodeTypeStep?: Partial<WizardFormValues>;
   nodePromptsStep?: { prompt: Partial<PromptFormValues> };
+  nodeSurveyStep?: { survey: { [key: string]: string } };
 }
 
 export function useNodeTypeStepDefaults(): (node?: GraphNode) => CommonNodeValues {
@@ -109,12 +112,23 @@ export function useGetInitialValues(): (node: GraphNode) => Promise<WizardStepSt
         );
       }
 
+      const extraVarsWithoutSurvey = { ...(defaults?.extra_data || {}) };
+
+      if (launch?.ask_variables_on_launch && launch.survey_enabled) {
+        const surveySpec = await getSurveySpec(
+          nodeData?.resource?.summary_fields?.unified_job_template
+        );
+        if (surveySpec?.spec) {
+          removeSurveyQuestionsFromExtraVars(extraVarsWithoutSurvey, surveySpec);
+        }
+      }
+
       const nodePromptsValues = {
         credentials: aggregateCredentials ?? (nodeCredentials || []),
         diff_mode: prompt?.diff_mode ?? (defaults?.diff_mode || false),
         execution_environment:
           prompt?.execution_environment ?? (defaults?.execution_environment || null),
-        extra_vars: prompt?.extra_vars ?? jsonToYaml(JSON.stringify(defaults?.extra_data)),
+        extra_vars: prompt?.extra_vars ?? jsonToYaml(JSON.stringify(extraVarsWithoutSurvey)),
         forks: prompt?.forks ?? (defaults?.forks || 0),
         instance_groups: prompt?.instance_groups ?? (nodeInstanceGroups || []),
         inventory: prompt?.inventory ?? (nodeData?.resource?.summary_fields?.inventory || null),
@@ -135,6 +149,27 @@ export function useGetInitialValues(): (node: GraphNode) => Promise<WizardStepSt
     },
     [nodeTypeStepDefaults]
   );
+}
+
+function removeSurveyQuestionsFromExtraVars(extraVars: WorkflowNode['extra_data'], survey: Survey) {
+  survey.spec.forEach((question) => {
+    if (Object.prototype.hasOwnProperty.call(extraVars, question.variable)) {
+      delete extraVars[question.variable];
+    }
+  });
+}
+
+async function getSurveySpec(template?: NodeResource) {
+  if (!template) return;
+
+  if (template.unified_job_type === RESOURCE_TYPE.job) {
+    return await requestGet<Survey>(awxAPI`/job_templates/${template.id.toString()}/survey_spec/`);
+  }
+  if (template.unified_job_type === RESOURCE_TYPE.workflow_job) {
+    return await requestGet<Survey>(
+      awxAPI`/workflow_job_templates/${template.id.toString()}/survey_spec/`
+    );
+  }
 }
 
 export async function getLaunchData(node: GraphNode) {
