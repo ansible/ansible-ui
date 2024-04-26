@@ -171,14 +171,14 @@ describe('ScheduleEditWizard', () => {
       cy.get('tr[data-cy="row-id-1"]').within(() => {
         cy.get('button[data-cy="edit-rule"]').click();
       });
-      cy.get('[data-cy="interval"]').clear().type('100');
+      cy.get('[data-cy="interval"]').clear().type('1');
       cy.selectDropdownOptionByResourceName('freq', 'Hourly');
       cy.get('[data-cy="count-form-group"]').type('17');
       cy.get('[data-cy="update-rule-button"]').click();
       cy.get('tr[data-cy="row-id-1"]').within(() => {
         cy.get('td[data-cy="rrule-column-cell"]').should(
           'contains.text',
-          'RRULE:FREQ=HOURLY;INTERVAL=100;WKST=MO'
+          'RRULE:FREQ=HOURLY;INTERVAL=1;WKST=MO'
         );
       });
 
@@ -186,7 +186,7 @@ describe('ScheduleEditWizard', () => {
       cy.get('tr[data-cy="row-id-1"]').within(() => {
         cy.get('button[data-cy="edit-rule"]').click();
       });
-      cy.get('[data-cy="interval"]').should('have.value', '100');
+      cy.get('[data-cy="interval"]').should('have.value', '1');
       cy.get('[data-cy="interval"]').clear().type('44400');
       cy.get('[data-cy="update-rule-button"]').click();
       cy.get('tr[data-cy="row-id-1"]').should('contain.text', 'INTERVAL=44400');
