@@ -545,7 +545,10 @@ export interface Organization {
   name: string;
   /** The organization description. */
   description?: string;
-  resource: Record<string, any>;
+  resource: {
+    ansible_id: string;
+    resource_type: 'shared.organization';
+  };
   /**
    * The date/time this resource was created
    * @format date-time
@@ -1638,7 +1641,10 @@ export interface Team {
   description?: string;
   /** The organization of this team. */
   organization_id: number;
-  resource: Record<string, any>;
+  resource: {
+    ansible_id: string;
+    resource_type: 'shared.team';
+  };
   /**
    * The date/time this resource was created
    * @format date-time
@@ -1738,7 +1744,10 @@ export interface UserDetail {
    * Designates that this user has all permissions without explicitly assigning them.
    */
   is_superuser?: boolean;
-  resource: Record<string, any>;
+  resource: {
+    ansible_id: string;
+    resource_type: 'shared.user';
+  };
   /** @format date-time */
   created_at: string;
   /** @format date-time */
