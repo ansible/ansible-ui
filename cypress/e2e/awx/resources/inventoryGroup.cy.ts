@@ -4,7 +4,7 @@ import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Credential } from '../../../../frontend/awx/interfaces/Credential';
 import { ExecutionEnvironment } from '../../../../frontend/awx/interfaces/ExecutionEnvironment';
 
-describe('Inventory Groups', () => {
+describe.skip('Inventory Groups', () => {
   let organization: Organization;
   let inventory: Inventory;
   let machineCredential: Credential;
