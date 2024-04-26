@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { ReactNode, useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -27,6 +27,8 @@ import { AwxRoute } from '../../main/AwxRoutes';
 import { PageFormSelectOrganization } from '../organizations/components/PageFormOrganizationSelect';
 import { BecomeMethodField } from './components/BecomeMethodField';
 import { CredentialMultilineInput } from './components/CredentialMultilineInput';
+import { Button, Icon } from '@patternfly/react-core';
+import { KeyIcon } from '@patternfly/react-icons';
 import { PageFormSelectCredentialType } from './components/PageFormSelectCredentialType';
 
 interface CredentialForm extends Credential {
@@ -354,9 +356,11 @@ function CredentialSubForm({ credentialType }: { credentialType: CredentialType 
 function CredentialTextInput({
   field,
   isRequired = false,
+  credentialType,
 }: {
   field: CredentialInputField;
   isRequired?: boolean;
+  credentialType?: CredentialType | undefined;
 }) {
   const { t } = useTranslation();
   const { setValue, clearErrors } = useFormContext();
@@ -401,6 +405,20 @@ function CredentialTextInput({
         isRequired={handleIsRequired()}
         isDisabled={!!isPromptOnLaunchChecked}
         labelHelp={field.help_text}
+        button={
+          credentialType?.kind !== 'external' ? (
+            <Button
+              data-cy={'secret-management-input'}
+              variant="plain"
+              //onClick={props.emptyStateButtonClick}
+              icon={
+                <Icon>
+                  <KeyIcon />
+                </Icon>
+              }
+            ></Button>
+          ) : undefined
+        }
         additionalControls={
           field?.ask_at_runtime && (
             <PageFormCheckbox name={`ask_${field.id}`} label={t('Prompt on launch')} />
