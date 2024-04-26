@@ -1,5 +1,4 @@
 import { randomString } from '../../../../../framework/utils/random-string';
-import { Inventory } from '../../../../../frontend/awx/interfaces/Inventory';
 import { Organization } from '../../../../../frontend/awx/interfaces/Organization';
 import { Credential } from '../../../../../frontend/awx/interfaces/Credential';
 import { ExecutionEnvironment } from '../../../../../frontend/awx/interfaces/ExecutionEnvironment';

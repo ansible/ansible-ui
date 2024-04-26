@@ -5,7 +5,6 @@ import { ExecutionEnvironment } from '../../../../../frontend/awx/interfaces/Exe
 
 describe('Inventory Groups details', () => {
   let organization: Organization;
-  let inventory: Inventory;
   let machineCredential: Credential;
   let executionEnvironment: ExecutionEnvironment;
 
@@ -18,8 +17,6 @@ describe('Inventory Groups details', () => {
     cy.deleteAwxExecutionEnvironment(executionEnvironment, { failOnStatusCode: false });
     cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
   });
-
-  
 
   describe('Inventory Groups- Details View', () => {
     beforeEach(() => {
