@@ -16,6 +16,8 @@ export function PageDetailCodeEditor(props: {
   helpText?: string | ReactNode;
   showCopyToClipboard?: boolean;
   toggleLanguage?: boolean;
+  isEmpty?: boolean;
+  fullWidth?: boolean;
 }) {
   const { value, label, helpText } = props;
   const { id } = useParams();
@@ -47,7 +49,12 @@ export function PageDetailCodeEditor(props: {
     </React.Fragment>
   ) : null;
   return (
-    <PageDetail label={label ?? t('Variables')} helpText={helpText}>
+    <PageDetail
+      label={label ?? t('Variables')}
+      helpText={helpText}
+      isEmpty={props?.isEmpty}
+      fullWidth={props?.fullWidth}
+    >
       <CodeBlock id={id} actions={actions}>
         <CodeBlockCode data-cy={'code-block-value'}>{value}</CodeBlockCode>
       </CodeBlock>
