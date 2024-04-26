@@ -1,20 +1,17 @@
 import { useTranslation } from 'react-i18next';
 import { LoadingPage, PageFormSelect } from '../../../../../framework';
 import { useOptions } from '../../../../common/crud/useOptions';
-import { edaAPI } from '../../../common/eda-utils';
 import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
+import { awxAPI } from '../../../common/api/awx-utils';
 
-interface ContentTypeOption {
-  value: string;
-  display_name: string;
-}
+type ContentTypeOption = [string, string];
 
-export function EdaSelectResourceTypeStep() {
+export function AwxSelectResourceTypeStep() {
   const { t } = useTranslation();
   const { setWizardData } = usePageWizard();
   const { data, isLoading } = useOptions<{
     actions: { POST: { content_type: { choices: ContentTypeOption[] } } };
-  }>(edaAPI`/role_definitions/`);
+  }>(awxAPI`/role_definitions/`);
 
   if (isLoading || !data) {
     return <LoadingPage />;
@@ -27,14 +24,8 @@ export function EdaSelectResourceTypeStep() {
       label={t('Resource type')}
       name="resourceType"
       options={options
-        .filter(
-          (option) =>
-            option.value.startsWith('eda.') &&
-            !['extravar', 'auditrule', 'rulebookprocess', 'rulebook'].some(function (v) {
-              return option.value.endsWith(v);
-            })
-        )
-        .map(({ value, display_name }) => ({
+        .filter(([value, _]) => value?.startsWith('awx.'))
+        .map(([value, display_name]) => ({
           value,
           label: display_name,
         }))}

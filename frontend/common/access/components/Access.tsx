@@ -13,15 +13,29 @@ import {
 import { useCallback, useMemo } from 'react';
 import { ButtonVariant } from '@patternfly/react-core';
 import { MinusCircleIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
-import { QueryParams, useEdaView } from '../../common/useEventDrivenView';
-import { useEdaBulkConfirmation } from '../../common/useEdaBulkConfirmation';
 import { idKeyFn } from '../../../common/utils/nameKeyFn';
 import { requestDelete } from '../../../common/crud/Data';
 import { Assignment } from '../interfaces/Assignment';
 import { useMapContentTypeToDisplayName } from '../../../common/access/hooks/useMapContentTypeToDisplayName';
+import { useEdaView } from '../../../eda/common/useEventDrivenView';
+import { useEdaBulkConfirmation } from '../../../eda/common/useEdaBulkConfirmation';
+import { useAwxBulkConfirmation } from '../../../awx/common/useAwxBulkConfirmation';
+import { useHubBulkConfirmation } from '../../../hub/common/useHubBulkConfirmation';
+
+type QueryParams = {
+  [key: string]: string;
+};
 
 type AccessProps<T extends Assignment> = {
-  tableColumnFunctions: { name: { sort?: string; function: (item: T) => string; label: string } };
+  service: 'awx' | 'eda' | 'hub';
+  tableColumnFunctions: {
+    name: {
+      sort?: string;
+      function: (item: T) => string;
+      label: string;
+      to?: (item: T) => string | undefined;
+    };
+  };
   additionalTableColumns?: ITableColumn<T>[];
   toolbarNameColumnFiltersValues?: { label: string; query: string };
   additionalTableFilters?: IToolbarFilter[];
@@ -49,11 +63,10 @@ export function Access<T extends Assignment>(props: AccessProps<T>) {
     () => [
       {
         header: props.tableColumnFunctions.name.label,
-        type: 'description',
+        type: 'text',
         sort: props.tableColumnFunctions.name.sort,
         value: props.tableColumnFunctions.name.function,
-        card: 'description',
-        list: 'description',
+        to: props.tableColumnFunctions.name.to,
       },
       ...(firstColumns ? firstColumns : []),
       {
@@ -68,6 +81,7 @@ export function Access<T extends Assignment>(props: AccessProps<T>) {
       props.tableColumnFunctions.name.label,
       props.tableColumnFunctions.name.sort,
       props.tableColumnFunctions.name.function,
+      props.tableColumnFunctions.name.to,
       firstColumns,
       t,
       lastColumns,
@@ -77,7 +91,16 @@ export function Access<T extends Assignment>(props: AccessProps<T>) {
     const { t } = useTranslation();
     const confirmationColumns = tableColumns;
     const actionColumns = useMemo(() => [confirmationColumns[0]], [confirmationColumns]);
-    const bulkAction = useEdaBulkConfirmation<T>();
+    const bulkActionEda = useEdaBulkConfirmation<T>();
+    const bulkActionAwx = useAwxBulkConfirmation<T>();
+    const bulkActionHub = useHubBulkConfirmation<T>();
+    const bulkAction =
+      props.service === 'awx'
+        ? bulkActionAwx
+        : props.service === 'eda'
+          ? bulkActionEda
+          : bulkActionHub;
+
     return useCallback(
       (items: T[]) => {
         bulkAction({
@@ -218,8 +241,8 @@ export function Access<T extends Assignment>(props: AccessProps<T>) {
     <PageTable
       id={
         props.content_type_model
-          ? `eda-${props.content_type_model}-access-table`
-          : `eda-${props.accessListType}-table`
+          ? `${props.service}-${props.content_type_model}-access-table`
+          : `${props.service}-${props.accessListType}-table`
       }
       tableColumns={tableColumns}
       toolbarActions={toolbarActions}
