@@ -12,6 +12,7 @@ import {
 } from '../../../../../framework';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
+import { useMapContentTypeToDisplayName } from '../../hooks/useMapContentTypeToDisplayName';
 
 type ReviewData = {
   resourceType?: string;
@@ -40,6 +41,7 @@ export function RoleAssignmentsReviewStep() {
   const { wizardData } = usePageWizard();
   const { t } = useTranslation();
   const { resourceType, resources, users, teams, edaRoles } = wizardData as ReviewData;
+  const getDisplayName = useMapContentTypeToDisplayName();
 
   return (
     <>
@@ -52,7 +54,9 @@ export function RoleAssignmentsReviewStep() {
             }}
           >
             <PageDetails disablePadding>
-              <PageDetail label={t('Resource type')}>{resourceType}</PageDetail>
+              <PageDetail label={t('Resource type')}>
+                {getDisplayName(resourceType, { isTitleCase: true })}
+              </PageDetail>
             </PageDetails>
           </div>
           <StyledDivider className="pf-v5-u-mb-xl" />

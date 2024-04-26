@@ -49,6 +49,7 @@
   "mem_capacity": 0,
   "enabled": true,
   "managed_by_policy": true,
+  "managed": true,
   "node_type": "control",
   "node_state": "ready",
   "ip_address": "",

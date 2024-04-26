@@ -1,13 +1,7 @@
 import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import {
-  PageActions,
-  PageHeader,
-  PageLayout,
-  useGetPageUrl,
-  usePageNavigate,
-} from '../../../../framework';
+import { PageActions, PageHeader, PageLayout, useGetPageUrl } from '../../../../framework';
 import { PageRoutedTabs } from '../../../../framework/PageTabs/PageRoutedTabs';
 import { LoadingPage } from '../../../../framework';
 import { useGet, useGetItem } from '../../../common/crud/useGet';
@@ -15,7 +9,6 @@ import { AwxError } from '../../common/AwxError';
 import { awxAPI } from '../../common/api/awx-utils';
 import { Instance } from '../../interfaces/Instance';
 import { AwxRoute } from '../../main/AwxRoutes';
-import { useViewActivityStream } from '../../access/common/useViewActivityStream';
 import { useInstanceDetailsActions } from './hooks/useInstanceActions';
 import { Settings } from '../../interfaces/Settings';
 
@@ -23,17 +16,10 @@ export function InstancePage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const { error, data: instance, refresh } = useGetItem<Instance>(awxAPI`/instances`, params.id);
-  const pageNavigate = usePageNavigate();
   const { data } = useGet<Settings>(awxAPI`/settings/system/`);
   const isK8s = !data?.IS_K8S;
-  const itemActions = useInstanceDetailsActions({
-    onInstancesRemoved: () => pageNavigate(AwxRoute.Instances),
-    onInstanceToggled: refresh,
-    onHealthCheckComplete: refresh,
-    isDetailsPageAction: true,
-  });
-  const viewActivityStreamAction = useViewActivityStream('instance');
-  const pageActions = [...viewActivityStreamAction, ...itemActions];
+  const itemActions = useInstanceDetailsActions();
+  const pageActions = [...itemActions];
   const getPageUrl = useGetPageUrl();
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;

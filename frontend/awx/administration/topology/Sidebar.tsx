@@ -10,14 +10,13 @@ export function InstanceDetailInner(props: {
   instanceForks: number;
   handleInstanceForksSlider: (instance: Instance, value: number) => Promise<void>;
 }) {
-  const { instance, instanceGroups, instanceForks, handleInstanceForksSlider } = props;
+  const { instance, instanceGroups, instanceForks } = props;
   return (
     <InstanceDetailsTab
       numberOfColumns="single"
       instance={instance}
       instanceGroups={instanceGroups}
       instanceForks={instanceForks}
-      handleInstanceForksSlider={handleInstanceForksSlider}
     />
   );
 }
