@@ -81,6 +81,7 @@ export function Access<T extends Assignment>(props: AccessProps<T>) {
       props.tableColumnFunctions.name.label,
       props.tableColumnFunctions.name.sort,
       props.tableColumnFunctions.name.function,
+      props.tableColumnFunctions.name.to,
       firstColumns,
       t,
       lastColumns,
