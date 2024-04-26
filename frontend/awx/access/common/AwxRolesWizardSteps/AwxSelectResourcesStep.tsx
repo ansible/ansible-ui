@@ -4,37 +4,37 @@ import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardPro
 import { useMemo } from 'react';
 import { PageMultiSelectList } from '../../../../../framework/PageTable/PageMultiSelectList';
 import { Title } from '@patternfly/react-core';
-import { EdaActivationInstance } from '../../../interfaces/EdaActivationInstance';
-import { EdaCredential } from '../../../interfaces/EdaCredential';
-import { EdaDecisionEnvironment } from '../../../interfaces/EdaDecisionEnvironment';
-import { EdaRulebook } from '../../../interfaces/EdaRulebook';
-import { EdaRulebookActivation } from '../../../interfaces/EdaRulebookActivation';
-import { EdaRuleAudit } from '../../../interfaces/EdaRuleAudit';
-import { EdaProject } from '../../../interfaces/EdaProject';
-import { EdaCredentialType } from '../../../interfaces/EdaCredentialType';
-import { useEdaMultiSelectListView } from '../../../common/useEdaMultiSelectListView';
-import { edaAPI } from '../../../common/eda-utils';
 import styled from 'styled-components';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { useAwxMultiSelectListView } from '../../../common/useAwxMultiSelectListView';
+import { Credential } from '../../../interfaces/Credential';
+import { ExecutionEnvironment } from '../../../interfaces/ExecutionEnvironment';
+import { InstanceGroup } from '../../../interfaces/InstanceGroup';
+import { Inventory } from '../../../interfaces/Inventory';
+import { JobTemplate } from '../../../interfaces/JobTemplate';
+import { NotificationTemplate } from '../../../interfaces/NotificationTemplate';
+import { Project } from '../../../interfaces/Project';
+import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 
-export type EdaResourceType =
-  | EdaActivationInstance
-  | EdaCredential
-  | EdaDecisionEnvironment
-  | EdaRulebook
-  | EdaRulebookActivation
-  | EdaRuleAudit
-  | EdaProject
-  | EdaCredentialType;
+export type AwxResourceType =
+  | Credential
+  | ExecutionEnvironment
+  | InstanceGroup
+  | Inventory
+  | JobTemplate
+  | NotificationTemplate
+  | Project
+  | WorkflowJobTemplate;
 
 const resourceToEndpointMapping: { [key: string]: string } = {
-  'eda.edacredential': edaAPI`/eda-credentials/`,
-  'eda.project': edaAPI`/projects/`,
-  'eda.activation': edaAPI`/activations/`,
-  'eda.rulebook': edaAPI`/rulebooks/`,
-  'eda.rulebookprocess': edaAPI`/activation-instances/`,
-  'eda.credentialtype': edaAPI`/credential-types/`,
-  'eda.decisionenvironment': edaAPI`/decision-environments/`,
-  'eda.auditrule': edaAPI`/audit-rules/`,
+  'awx.credential': awxAPI`/credentials/`,
+  'awx.executionenvironment': awxAPI`/execution_environments/`,
+  'awx.instancegroup': awxAPI`/instance_groups/`,
+  'awx.inventory': awxAPI`/inventories/`,
+  'awx.jobtemplate': awxAPI`/job_templates/`,
+  'awx.notificationtemplate': awxAPI`/notification_templates/`,
+  'awx.project': awxAPI`/projects/`,
+  'awx.workflowjobtemplate': awxAPI`/workflow_job_templates/`,
 };
 
 const StyledTitle = styled(Title)`
@@ -42,29 +42,29 @@ const StyledTitle = styled(Title)`
 `;
 
 /** Roles wizard step for selecting resources based on the resourceType selected */
-export function EdaSelectResourcesStep() {
+export function AwxSelectResourcesStep() {
   const { wizardData } = usePageWizard();
   const { t } = useTranslation();
   const { resourceType } = wizardData as { [key: string]: unknown };
 
   const resourceToTitleMapping = useMemo<{ [key: string]: string }>(() => {
     return {
-      'eda.edacredential': t('Select credentials'),
-      'eda.project': t('Select projects'),
-      'eda.activation': t('Select rulebook activations'),
-      'eda.rulebook': t('Select rulebooks'),
-      'eda.rulebookprocess': t('Select rulebook processes'),
-      'eda.credentialtype': t('Select credential types'),
-      'eda.decisionenvironment': t('Select decision environments'),
-      'eda.auditrule': t('Select audit rules'),
+      'awx.credential': t('Select credentials'),
+      'awx.executionenvironment': t('Select execution environments'),
+      'awx.instancegroup': t('Select instance groups'),
+      'awx.inventory': t('Select inventories'),
+      'awx.jobtemplate': t('Select job templates'),
+      'awx.notificationtemplate': t('Select notification templates'),
+      'awx.project': t('Select projects'),
+      'awx.workflowjobtemplate': t('Select workflow job templates'),
     };
   }, [t]);
-  const tableColumns = useMemo<ITableColumn<EdaResourceType>[]>(
+  const tableColumns = useMemo<ITableColumn<AwxResourceType>[]>(
     () => [
       {
         header: t('Name'),
         type: 'text',
-        value: (item: EdaResourceType) => item.name,
+        value: (item: AwxResourceType) => item.name,
         sort: 'name',
       },
     ],
@@ -83,7 +83,7 @@ export function EdaSelectResourcesStep() {
     [t]
   );
 
-  const view = useEdaMultiSelectListView<EdaResourceType>(
+  const view = useAwxMultiSelectListView<AwxResourceType>(
     {
       url: resourceToEndpointMapping[resourceType as string],
       toolbarFilters,

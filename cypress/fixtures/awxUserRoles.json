@@ -1,0 +1,152 @@
+{
+  "count": 3,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 248,
+      "url": "/api/v2/role_user_assignments/248/",
+      "related": {
+        "created_by": "/api/v2/users/3/",
+        "role_definition": "/api/v2/role_definitions/24/",
+        "user": "/api/v2/users/87/",
+        "content_object": "/api/v2/execution_environments/2/"
+      },
+      "summary_fields": {
+        "created_by": {
+          "id": 3,
+          "username": "dev",
+          "first_name": "",
+          "last_name": ""
+        },
+        "object_role": {
+          "id": 248
+        },
+        "role_definition": {
+          "id": 24,
+          "name": "ExecutionEnvironment Admin",
+          "description": "Has all permissions to a single execution environment",
+          "managed": true
+        },
+        "user": {
+          "id": 87,
+          "username": "vn",
+          "first_name": "",
+          "last_name": ""
+        },
+        "content_object": {
+          "id": 2,
+          "name": "Control Plane Execution Environment",
+          "description": "",
+          "image": "quay.io/ansible/awx-ee:latest"
+        }
+      },
+      "created": "2024-04-26T18:26:30.707134Z",
+      "created_by": 3,
+      "content_type": "awx.executionenvironment",
+      "object_id": "2",
+      "role_definition": 24,
+      "user": 87
+    },
+    {
+      "id": 249,
+      "url": "/api/v2/role_user_assignments/249/",
+      "related": {
+        "created_by": "/api/v2/users/3/",
+        "role_definition": "/api/v2/role_definitions/38/",
+        "user": "/api/v2/users/87/",
+        "content_object": "/api/v2/inventories/1/"
+      },
+      "summary_fields": {
+        "created_by": {
+          "id": 3,
+          "username": "dev",
+          "first_name": "",
+          "last_name": ""
+        },
+        "object_role": {
+          "id": 249
+        },
+        "role_definition": {
+          "id": 38,
+          "name": "Inventory use",
+          "description": "Has use permissions to a single inventory",
+          "managed": true
+        },
+        "user": {
+          "id": 87,
+          "username": "vn",
+          "first_name": "",
+          "last_name": ""
+        },
+        "content_object": {
+          "id": 1,
+          "name": "Demo Inventory",
+          "description": "",
+          "has_active_failures": false,
+          "total_hosts": 1,
+          "hosts_with_active_failures": 0,
+          "total_groups": 0,
+          "has_inventory_sources": true,
+          "total_inventory_sources": 1,
+          "inventory_sources_with_failures": 1,
+          "organization_id": 1,
+          "kind": ""
+        }
+      },
+      "created": "2024-04-26T18:39:14.527394Z",
+      "created_by": 3,
+      "content_type": "awx.inventory",
+      "object_id": "1",
+      "role_definition": 38,
+      "user": 87
+    },
+    {
+      "id": 251,
+      "url": "/api/v2/role_user_assignments/251/",
+      "related": {
+        "created_by": "/api/v2/users/3/",
+        "role_definition": "/api/v2/role_definitions/8/",
+        "user": "/api/v2/users/87/",
+        "content_object": "/api/v2/projects/6/"
+      },
+      "summary_fields": {
+        "created_by": {
+          "id": 3,
+          "username": "dev",
+          "first_name": "",
+          "last_name": ""
+        },
+        "object_role": {
+          "id": 251
+        },
+        "role_definition": {
+          "id": 8,
+          "name": "Project Admin",
+          "description": "Has all permissions to a single project",
+          "managed": true
+        },
+        "user": {
+          "id": 87,
+          "username": "vn",
+          "first_name": "",
+          "last_name": ""
+        },
+        "content_object": {
+          "id": 6,
+          "name": "Demo Project",
+          "description": "",
+          "status": "successful",
+          "scm_type": "git",
+          "allow_override": false
+        }
+      },
+      "created": "2024-04-26T18:40:08.272506Z",
+      "created_by": 3,
+      "content_type": "awx.project",
+      "object_id": "6",
+      "role_definition": 8,
+      "user": 87
+    }
+  ]
+}

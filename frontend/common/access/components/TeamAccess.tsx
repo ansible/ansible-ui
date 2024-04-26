@@ -1,13 +1,22 @@
-import { edaAPI } from '../../common/eda-utils';
+import { awxAPI } from '../../../awx/common/api/awx-utils';
+import { edaAPI } from '../../../eda/common/eda-utils';
 import { TeamAssignment } from '../interfaces/TeamAssignment';
 import { Access } from './Access';
 import { useTranslation } from 'react-i18next';
 
-export function TeamAccess(props: { id: string; type: string; addRolesRoute?: string }) {
-  const { id, type, addRolesRoute } = props;
+export function TeamAccess(props: {
+  service: 'awx' | 'eda' | 'hub';
+  id: string;
+  type: string;
+  addRolesRoute?: string;
+}) {
+  const { id, type, addRolesRoute, service } = props;
   const { t } = useTranslation();
+  const roleTeamAssignmentsURL =
+    service === 'awx' ? awxAPI`/role_team_assignments/` : edaAPI`/role_team_assignments/`;
   return (
     <Access<TeamAssignment>
+      service={service}
       tableColumnFunctions={{
         name: {
           function: (teamAccess: TeamAssignment) => teamAccess.summary_fields.team.name,
@@ -16,7 +25,7 @@ export function TeamAccess(props: { id: string; type: string; addRolesRoute?: st
         },
       }}
       toolbarNameColumnFiltersValues={{ label: t('Team name'), query: 'team__name' }}
-      url={edaAPI`/role_team_assignments/`}
+      url={roleTeamAssignmentsURL}
       id={id}
       content_type_model={type}
       addRolesRoute={addRolesRoute}

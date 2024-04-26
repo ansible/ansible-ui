@@ -1,28 +1,28 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ITableColumn, TextCell } from '../../../../../framework';
-import { edaAPI } from '../../../common/eda-utils';
-import { useEdaMultiSelectListView } from '../../../common/useEdaMultiSelectListView';
+import { useAwxMultiSelectListView } from '../../../common/useAwxMultiSelectListView';
 import { PageMultiSelectList } from '../../../../../framework/PageTable/PageMultiSelectList';
-import { EdaTeam } from '../../../interfaces/EdaTeam';
+import { Team } from '../../../interfaces/Team';
 import { Title } from '@patternfly/react-core';
 import styled from 'styled-components';
-import { useEdaTeamFilters } from '../../teams/hooks/useEdaTeamFilters';
+import { useTeamsFilters } from '../../teams/hooks/useTeamsFilters';
+import { awxAPI } from '../../../common/api/awx-utils';
 
 const StyledTitle = styled(Title)`
   margin-bottom: 1rem;
 `;
 
-export function EdaSelectTeamsStep(props: { descriptionForTeamsSelection?: string }) {
-  const toolbarFilters = useEdaTeamFilters();
+export function AwxSelectTeamsStep(props: { descriptionForTeamsSelection?: string }) {
+  const toolbarFilters = useTeamsFilters();
   const { descriptionForTeamsSelection } = props;
   const { t } = useTranslation();
 
-  const tableColumns: ITableColumn<EdaTeam>[] = useMemo(() => {
+  const tableColumns: ITableColumn<Team>[] = useMemo(() => {
     return [
       {
         header: t('Name'),
-        cell: (team: EdaTeam) => <TextCell text={team.name} />,
+        cell: (team: Team) => <TextCell text={team.name} />,
         card: 'name',
         list: 'name',
         sort: 'name',
@@ -31,9 +31,9 @@ export function EdaSelectTeamsStep(props: { descriptionForTeamsSelection?: strin
     ];
   }, [t]);
 
-  const view = useEdaMultiSelectListView<EdaTeam>(
+  const view = useAwxMultiSelectListView<Team>(
     {
-      url: edaAPI`/teams/`,
+      url: awxAPI`/teams/`,
       toolbarFilters,
       tableColumns,
     },
