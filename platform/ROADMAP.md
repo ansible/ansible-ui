@@ -5,12 +5,12 @@ timeline
   title Ansible UI Roadmap
   section 2024
     2nd Quarter
-      : AAP 2.5 GA
+      : AAP 2.5 Early Adoption
       : AWX Feature Parity
       : EDA GA
       : Summit 2024
     3rd Quarter
-      : AAP 2.5 Next
+      : AAP 2.5 GA
       : HUB Feature Parity
       : Bug Fixes
     4th Quarter
