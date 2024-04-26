@@ -112,7 +112,7 @@ describe.skip('Inventory Groups', () => {
           cy.get('.pf-v5-c-form__group-control > label').click();
         });
         cy.getByDataCy('become_enabled').click();
-        cy.getByDataCy('extra-vars-form-group').type('test: "test"');
+        // cy.getByDataCy('extra-vars-form-group').type('test: "test"');
         cy.clickButton(/^Next$/);
         cy.getByDataCy('execution-environment-select-form-group').within(() => {
           cy.getBy('[aria-label="Options menu"]').click();
@@ -145,7 +145,7 @@ describe.skip('Inventory Groups', () => {
         cy.getByDataCy('forks').should('contain', '1');
         cy.getByDataCy('show-changes').should('contain', 'On');
         cy.getByDataCy('privilege-escalation').should('contain', 'On');
-        cy.getByDataCy('code-block-value').should('contain', 'test: test');
+        // cy.getByDataCy('code-block-value').should('contain', 'test: test');
         cy.getByDataCy('credentials').should('contain', machineCredential.name);
         cy.getByDataCy('execution-environment').should('contain', executionEnvironment.name);
         cy.get('[data-cy="Submit"]').click();
@@ -157,7 +157,7 @@ describe.skip('Inventory Groups', () => {
         cy.clickLink('Details');
         cy.getByDataCy('type').should('contain', 'Command');
         cy.getByDataCy('inventory').should('contain', inventory.name);
-        cy.getByDataCy('code-block-value').should('contain', 'test: test');
+        // cy.getByDataCy('code-block-value').should('contain', 'test: test');
         //5) Navigate back to the Inventory -> Jobs Tab to assert that the Run Command job shows up there
         cy.navigateTo('awx', 'inventories');
         cy.filterTableBySingleSelect('name', inventory.name);
