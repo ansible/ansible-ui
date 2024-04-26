@@ -1,19 +1,19 @@
 import { useMemo } from 'react';
 import { ITableColumn, TextCell } from '../../../../../framework';
 import { useTranslation } from 'react-i18next';
-import { useEdaRolesFilters } from '../../roles/hooks/useEdaRolesFilters';
-import { edaAPI } from '../../../common/eda-utils';
-import { useEdaMultiSelectListView } from '../../../common/useEdaMultiSelectListView';
-import { EdaRbacRole } from '../../../interfaces/EdaRbacRole';
+import { useAwxMultiSelectListView } from '../../../common/useAwxMultiSelectListView';
 import { SelectRolesStep } from '../../../../common/access/RolesWizard/steps/SelectRolesStep';
 import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
+import { useAwxRolesFilters } from '../../roles/useAwxRolesFilters';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { AwxRbacRole } from '../../../interfaces/AwxRbacRole';
 
-export function EdaSelectRolesStep(props: {
+export function AwxSelectRolesStep(props: {
   contentType?: string;
   fieldNameForPreviousStep?: string;
   descriptionForRoleSelection?: string;
 }) {
-  const toolbarFilters = useEdaRolesFilters();
+  const toolbarFilters = useAwxRolesFilters();
   const { t } = useTranslation();
   const { wizardData } = usePageWizard();
   const { resourceType } = wizardData as { [key: string]: unknown };
@@ -28,28 +28,28 @@ export function EdaSelectRolesStep(props: {
       return props.descriptionForRoleSelection;
     }
     switch (resourceType as string) {
-      case 'eda.edacredential':
+      case 'awx.credential':
         return t('Select roles to apply to all of your selected credentials.');
-      case 'eda.project':
+      case 'awx.instancegroup':
+        return t('Select roles to apply to all of your selected instance groups.');
+      case 'awx.inventory':
+        return t('Select roles to apply to all of your selected inventories.');
+      case 'awx.jobtemplate':
+        return t('Select roles to apply to all of your selected job templates.');
+      case 'awx.notificationtemplate':
+        return t('Select roles to apply to all of your selected notification templates.');
+      case 'awx.project':
         return t('Select roles to apply to all of your selected projects.');
-      case 'eda.activation':
-        return t('Select roles to apply to all of your selected rulebook activations.');
-      case 'eda.rulebook':
-        return t('Select roles to apply to all of your selected rulebooks.');
-      case 'eda.rulebookprocess':
-        return t('Select roles to apply to all of your selected rulebook processes.');
-      case 'eda.credentialtype':
-        return t('Select roles to apply to all of your selected credential types.');
-      case 'eda.decisionenvironment':
-        return t('Select roles to apply to all of your selected decision environments.');
-      case 'eda.auditrule':
-        return t('Select roles to apply to all of your selected audit rules.');
+      case 'awx.executionenvironment':
+        return t('Select roles to apply to all of your selected execution environments.');
+      case 'awx.workflowjobtemplate':
+        return t('Select roles to apply to all of your selected workflow job templates.');
       default:
         return t('Select roles to apply to all of your selected resources.');
     }
   }, [props.descriptionForRoleSelection, resourceType, t]);
 
-  const tableColumns: ITableColumn<EdaRbacRole>[] = useMemo(() => {
+  const tableColumns: ITableColumn<AwxRbacRole>[] = useMemo(() => {
     return [
       {
         header: t('Name'),
@@ -67,16 +67,16 @@ export function EdaSelectRolesStep(props: {
     ];
   }, [t]);
 
-  const view = useEdaMultiSelectListView<EdaRbacRole>(
+  const view = useAwxMultiSelectListView<AwxRbacRole>(
     {
-      url: edaAPI`/role_definitions/`,
+      url: awxAPI`/role_definitions/`,
       toolbarFilters,
       tableColumns,
       queryParams: {
         content_type__model: contentType,
       },
     },
-    'edaRoles'
+    'awxRoles'
   );
   return (
     <SelectRolesStep
