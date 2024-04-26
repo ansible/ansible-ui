@@ -416,6 +416,9 @@ function CredentialTextInput({
                   <KeyIcon />
                 </Icon>
               }
+              style={{
+                border: '1px solid var(--pf-v5-global--BorderColor--300)',
+              }}
             ></Button>
           ) : undefined
         }
