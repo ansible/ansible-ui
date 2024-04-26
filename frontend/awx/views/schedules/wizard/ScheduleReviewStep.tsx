@@ -6,8 +6,8 @@ import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardPro
 import { PromptReviewDetails } from '../../../resources/templates/WorkflowVisualizer/wizard/PromptReviewDetails';
 import { ScheduleFormWizard } from '../types';
 import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
-import { RulesPreview } from '../components/RulesPreview';
-import { ExceptionsPreview } from '../components/ExceptionsPreview';
+import { RRule, RRuleSet } from 'rrule';
+import { RulesList } from '../components/RulesList';
 
 const ResourceLink: { [key: string]: string } = {
   inventory_update: AwxRoute.InventorySourceDetail,
@@ -29,13 +29,13 @@ export function ScheduleReviewStep() {
   const {
     schedule_type,
     resource,
-    rules,
     schedule_days_to_keep,
     name,
     description,
     startDateTime,
     timezone,
     exceptions,
+    rules,
   } = wizardData;
 
   const hasPromptDetails = Boolean(visibleSteps.find((step) => step.id === 'nodePromptsStep'));
@@ -57,6 +57,26 @@ export function ScheduleReviewStep() {
       },
     });
   }
+  const ruleSet = new RRuleSet();
+  ruleSet.options.dtstart;
+  rules.forEach(({ rule }, i) => {
+    const {
+      options: { dtstart, tzid, ...rest },
+    } = rule;
+    if (i === 0) {
+      ruleSet.rrule(new RRule({ ...rest, dtstart, tzid }));
+      return;
+    }
+    ruleSet.rrule(new RRule({ ...rest }));
+  });
+  exceptions.length > 0 &&
+    exceptions.forEach(({ rule }) => {
+      const {
+        options: { dtstart, tzid, ...rest },
+      } = rule;
+      ruleSet.exrule(new RRule({ ...rest }));
+    });
+
   return (
     <>
       <PageFormSection title={t('Review')} singleColumn>
@@ -77,8 +97,8 @@ export function ScheduleReviewStep() {
           <PageDetail label={t('Days of data to keep')}>{schedule_days_to_keep}</PageDetail>
           {hasPromptDetails ? <PromptReviewDetails /> : null}
         </PageDetails>
-        {rules.length && <RulesPreview />}
-        {exceptions.length > 0 && <ExceptionsPreview />}
+        <RulesList ruleType="rules" rules={rules} />
+        {exceptions.length ? <RulesList ruleType="exceptions" rules={exceptions} /> : null}
       </PageFormSection>
     </>
   );
