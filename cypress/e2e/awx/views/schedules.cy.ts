@@ -257,7 +257,7 @@ describe('Schedules - Create and Delete', function () {
         cy.wait('@deleted')
           .its('response')
           .then((response) => {
-            expect(response.statusCode).to.eql(204);
+            expect(response?.statusCode).to.eql(204);
           });
         cy.clickButton('Close');
       });
