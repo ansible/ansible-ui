@@ -44,7 +44,7 @@ export interface Instance {
   mem_capacity: number;
   enabled: boolean;
   managed_by_policy: boolean;
-  node_type: 'execution' | 'hop';
+  node_type: 'execution' | 'hop' | 'hybrid' | 'control';
   node_state: string;
   ip_address: null;
   listener_port: number;
