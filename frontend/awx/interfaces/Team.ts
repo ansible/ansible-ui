@@ -9,6 +9,10 @@ export interface Team extends Omit<SwaggerTeam, 'id' | 'name' | 'summary_fields'
   id: number;
   name: string;
   summary_fields: {
+    resource: {
+      ansible_id: string;
+      resource_type: 'shared.team';
+    };
     organization: SummaryFieldsOrganization;
     created_by: SummaryFieldsByUser;
     modified_by: SummaryFieldsByUser;

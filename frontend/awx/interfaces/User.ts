@@ -39,6 +39,10 @@ export interface AwxUser
     personal_tokens: string;
   }>;
   summary_fields: {
+    resource: {
+      ansible_id: string;
+      resource_type: 'shared.user';
+    };
     organization: SummaryFieldsOrganization;
     user_capabilities: {
       edit: boolean;
