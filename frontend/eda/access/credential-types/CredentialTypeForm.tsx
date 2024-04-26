@@ -24,6 +24,7 @@ import { EdaPageForm } from '../../common/EdaPageForm';
 import { Button } from '@patternfly/react-core';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { useCallback } from 'react';
+import { EdaPageFormDataEditor } from '../../common/EdaPageFormDataEditor';
 
 export function CreateCredentialType() {
   const { t } = useTranslation();
@@ -110,11 +111,6 @@ function CredentialTypeInputs() {
     defaultValue: undefined,
   }) as EdaCredentialTypeInputs;
 
-  const credentialInjectors = useWatch<EdaCredentialTypeCreate>({
-    name: 'injectors',
-    defaultValue: undefined,
-  }) as EdaCredentialTypeCreate;
-
   const setInjectorsExtraVars = useCallback(() => {
     const fields = credentialInputs?.fields;
     let extraVarFields = '';
@@ -122,7 +118,7 @@ function CredentialTypeInputs() {
       if (idx > 0) {
         extraVarFields += ',';
       }
-      extraVarFields += `"${field.id}" : "{{${field.id}}}"`;
+      extraVarFields += `"${field.id}" : "{{ ${field.id} }}"`;
     });
     const extraVars = `{"extra_vars": { ${extraVarFields}}}`;
     setValue('injectors', JSON.parse(extraVars), { shouldValidate: true });
@@ -152,24 +148,22 @@ function CredentialTypeInputs() {
           format="object"
         />
       </PageFormSection>
-      {credentialInputs &&
-        Object.keys(credentialInputs).length !== 0 &&
-        (!credentialInjectors ||
-          (credentialInjectors && Object.keys(credentialInjectors).length === 0)) && (
-          <PageFormSection>
-            <Button
-              id={'generate-injector'}
-              variant={'primary'}
-              size={'sm'}
-              style={{ maxWidth: 150 }}
-              onClick={() => setInjectorsExtraVars()}
-            >
-              {t('Generate extra vars')}
-            </Button>
-          </PageFormSection>
-        )}
+      {credentialInputs && Object.keys(credentialInputs).length !== 0 && (
+        <PageFormSection>
+          <Button
+            id={'generate-injector'}
+            data-cy={'generate-injector'}
+            variant={'primary'}
+            size={'sm'}
+            style={{ maxWidth: 150 }}
+            onClick={() => setInjectorsExtraVars()}
+          >
+            {t('Generate extra vars')}
+          </Button>
+        </PageFormSection>
+      )}
       <PageFormSection singleColumn>
-        <PageFormDataEditor
+        <EdaPageFormDataEditor
           name="injectors"
           label={t('Injector configuration')}
           labelHelpTitle={t('Injector configuration')}
