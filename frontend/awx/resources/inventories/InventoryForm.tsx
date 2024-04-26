@@ -349,7 +349,7 @@ function InventoryInputs(props: { inventoryKind: string }) {
           name="host_filter"
           label={t('Smart host filter')}
           labelHelp={t(
-            `Populate the hosts for this inventory by using a search filter. Example: ansible_facts__ansible_distribution:"RedHat". Refer to the Ansible Controller documentation for further syntax and examples.`
+            `Populate the hosts for this inventory by using a search filter. Example: name___icontains=RedHat. Note Smart Inventories have been deprecated in favor of Constructed Inventories. Refer to the Ansible Controller documentation for further syntax and examples.`
           )}
           placeholder={t('Enter smart host filter')}
           isRequired
