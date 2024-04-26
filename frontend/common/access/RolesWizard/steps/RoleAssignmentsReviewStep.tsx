@@ -114,6 +114,7 @@ function ReviewExpandableList<
       case 'resources':
         return t('Resources');
       case 'edaRoles':
+      case 'awxRoles':
         return t('Roles');
       default:
         return '';
@@ -133,6 +134,7 @@ function ReviewExpandableList<
             maxWidth: 200,
           },
         ];
+      case 'awxRoles':
       case 'edaRoles':
         return [
           {

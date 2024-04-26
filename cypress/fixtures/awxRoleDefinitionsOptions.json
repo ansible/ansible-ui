@@ -1,0 +1,273 @@
+{
+  "name": "Role Definition List",
+  "description": "Role Definitions (roles) contain a list of permissions and can be used to\nassign those permissions to a user or team through the respective\nassignment endpoints.\n\nCustom roles can be created, modified, and deleted through this endpoint.\nSystem-managed roles are shown here, which cannot be edited or deleted,\nbut can be assigned to users.",
+  "renders": ["application/json", "text/html"],
+  "parses": ["application/json"],
+  "actions": {
+    "POST": {
+      "permissions": {
+        "type": "list",
+        "required": true,
+        "hidden": false,
+        "label": "Permissions",
+        "filterable": false,
+        "child": {
+          "type": "choice",
+          "required": true,
+          "hidden": false,
+          "read_only": false,
+          "choices": [
+            ["awx.add_credential", "awx.add_credential"],
+            ["awx.add_executionenvironment", "awx.add_executionenvironment"],
+            ["awx.add_inventory", "awx.add_inventory"],
+            ["awx.add_notificationtemplate", "awx.add_notificationtemplate"],
+            ["awx.add_project", "awx.add_project"],
+            ["awx.add_team", "awx.add_team"],
+            ["awx.add_workflowjobtemplate", "awx.add_workflowjobtemplate"],
+            ["awx.adhoc_inventory", "awx.adhoc_inventory"],
+            ["awx.approve_workflowjobtemplate", "awx.approve_workflowjobtemplate"],
+            ["awx.audit_organization", "awx.audit_organization"],
+            ["awx.change_credential", "awx.change_credential"],
+            ["awx.change_executionenvironment", "awx.change_executionenvironment"],
+            ["awx.change_instancegroup", "awx.change_instancegroup"],
+            ["awx.change_inventory", "awx.change_inventory"],
+            ["awx.change_jobtemplate", "awx.change_jobtemplate"],
+            ["awx.change_notificationtemplate", "awx.change_notificationtemplate"],
+            ["awx.change_organization", "awx.change_organization"],
+            ["awx.change_project", "awx.change_project"],
+            ["awx.change_team", "awx.change_team"],
+            ["awx.change_workflowjobtemplate", "awx.change_workflowjobtemplate"],
+            ["awx.delete_credential", "awx.delete_credential"],
+            ["awx.delete_executionenvironment", "awx.delete_executionenvironment"],
+            ["awx.delete_instancegroup", "awx.delete_instancegroup"],
+            ["awx.delete_inventory", "awx.delete_inventory"],
+            ["awx.delete_jobtemplate", "awx.delete_jobtemplate"],
+            ["awx.delete_notificationtemplate", "awx.delete_notificationtemplate"],
+            ["awx.delete_organization", "awx.delete_organization"],
+            ["awx.delete_project", "awx.delete_project"],
+            ["awx.delete_team", "awx.delete_team"],
+            ["awx.delete_workflowjobtemplate", "awx.delete_workflowjobtemplate"],
+            ["awx.execute_jobtemplate", "awx.execute_jobtemplate"],
+            ["awx.execute_workflowjobtemplate", "awx.execute_workflowjobtemplate"],
+            ["awx.member_organization", "awx.member_organization"],
+            ["awx.member_team", "awx.member_team"],
+            ["awx.update_inventory", "awx.update_inventory"],
+            ["awx.update_project", "awx.update_project"],
+            ["awx.use_credential", "awx.use_credential"],
+            ["awx.use_instancegroup", "awx.use_instancegroup"],
+            ["awx.use_inventory", "awx.use_inventory"],
+            ["awx.use_project", "awx.use_project"],
+            ["awx.view_credential", "awx.view_credential"],
+            ["awx.view_executionenvironment", "awx.view_executionenvironment"],
+            ["awx.view_instancegroup", "awx.view_instancegroup"],
+            ["awx.view_inventory", "awx.view_inventory"],
+            ["awx.view_jobtemplate", "awx.view_jobtemplate"],
+            ["awx.view_notificationtemplate", "awx.view_notificationtemplate"],
+            ["awx.view_organization", "awx.view_organization"],
+            ["awx.view_project", "awx.view_project"],
+            ["awx.view_team", "awx.view_team"],
+            ["awx.view_workflowjobtemplate", "awx.view_workflowjobtemplate"]
+          ]
+        }
+      },
+      "content_type": {
+        "type": "id",
+        "required": false,
+        "hidden": false,
+        "label": "Content type",
+        "help_text": "The type of resource this applies to",
+        "filterable": true,
+        "default": null,
+        "choices": [
+          [null, "---------"],
+          ["awx.credential", "Credential"],
+          ["awx.executionenvironment", "Execution Environment"],
+          ["awx.instancegroup", "Instance Group"],
+          ["awx.inventory", "Inventory"],
+          ["awx.jobtemplate", "Job Template"],
+          ["awx.notificationtemplate", "Notification Template"],
+          ["awx.project", "Project"],
+          ["awx.workflowjobtemplate", "Workflow Job Template"],
+          ["shared.organization", "Organization"],
+          ["shared.team", "Team"]
+        ]
+      },
+      "name": {
+        "type": "string",
+        "required": true,
+        "hidden": false,
+        "label": "Name",
+        "help_text": "Name of this role definition.",
+        "filterable": true
+      },
+      "description": {
+        "type": "string",
+        "required": false,
+        "hidden": false,
+        "label": "Description",
+        "help_text": "Optional description of this role definition.",
+        "filterable": true
+      }
+    },
+    "GET": {
+      "id": {
+        "type": "integer",
+        "hidden": false,
+        "label": "ID",
+        "help_text": "Database ID for this role definition.",
+        "filterable": true
+      },
+      "url": {
+        "type": "string",
+        "hidden": false,
+        "label": "Url",
+        "help_text": "URL for this role definition.",
+        "filterable": false
+      },
+      "related": {
+        "type": "object",
+        "hidden": false,
+        "label": "Related",
+        "help_text": "Data structure with URLs of related resources.",
+        "filterable": false
+      },
+      "summary_fields": {
+        "type": "object",
+        "hidden": false,
+        "label": "Summary fields",
+        "help_text": "Data structure with name/description for related resources.  The output for some objects may be limited for performance reasons.",
+        "filterable": false
+      },
+      "permissions": {
+        "type": "list",
+        "hidden": false,
+        "label": "Permissions",
+        "filterable": false,
+        "child": {
+          "type": "choice",
+          "hidden": false,
+          "choices": [
+            ["awx.add_credential", "awx.add_credential"],
+            ["awx.add_executionenvironment", "awx.add_executionenvironment"],
+            ["awx.add_inventory", "awx.add_inventory"],
+            ["awx.add_notificationtemplate", "awx.add_notificationtemplate"],
+            ["awx.add_project", "awx.add_project"],
+            ["awx.add_team", "awx.add_team"],
+            ["awx.add_workflowjobtemplate", "awx.add_workflowjobtemplate"],
+            ["awx.adhoc_inventory", "awx.adhoc_inventory"],
+            ["awx.approve_workflowjobtemplate", "awx.approve_workflowjobtemplate"],
+            ["awx.audit_organization", "awx.audit_organization"],
+            ["awx.change_credential", "awx.change_credential"],
+            ["awx.change_executionenvironment", "awx.change_executionenvironment"],
+            ["awx.change_instancegroup", "awx.change_instancegroup"],
+            ["awx.change_inventory", "awx.change_inventory"],
+            ["awx.change_jobtemplate", "awx.change_jobtemplate"],
+            ["awx.change_notificationtemplate", "awx.change_notificationtemplate"],
+            ["awx.change_organization", "awx.change_organization"],
+            ["awx.change_project", "awx.change_project"],
+            ["awx.change_team", "awx.change_team"],
+            ["awx.change_workflowjobtemplate", "awx.change_workflowjobtemplate"],
+            ["awx.delete_credential", "awx.delete_credential"],
+            ["awx.delete_executionenvironment", "awx.delete_executionenvironment"],
+            ["awx.delete_instancegroup", "awx.delete_instancegroup"],
+            ["awx.delete_inventory", "awx.delete_inventory"],
+            ["awx.delete_jobtemplate", "awx.delete_jobtemplate"],
+            ["awx.delete_notificationtemplate", "awx.delete_notificationtemplate"],
+            ["awx.delete_organization", "awx.delete_organization"],
+            ["awx.delete_project", "awx.delete_project"],
+            ["awx.delete_team", "awx.delete_team"],
+            ["awx.delete_workflowjobtemplate", "awx.delete_workflowjobtemplate"],
+            ["awx.execute_jobtemplate", "awx.execute_jobtemplate"],
+            ["awx.execute_workflowjobtemplate", "awx.execute_workflowjobtemplate"],
+            ["awx.member_organization", "awx.member_organization"],
+            ["awx.member_team", "awx.member_team"],
+            ["awx.update_inventory", "awx.update_inventory"],
+            ["awx.update_project", "awx.update_project"],
+            ["awx.use_credential", "awx.use_credential"],
+            ["awx.use_instancegroup", "awx.use_instancegroup"],
+            ["awx.use_inventory", "awx.use_inventory"],
+            ["awx.use_project", "awx.use_project"],
+            ["awx.view_credential", "awx.view_credential"],
+            ["awx.view_executionenvironment", "awx.view_executionenvironment"],
+            ["awx.view_instancegroup", "awx.view_instancegroup"],
+            ["awx.view_inventory", "awx.view_inventory"],
+            ["awx.view_jobtemplate", "awx.view_jobtemplate"],
+            ["awx.view_notificationtemplate", "awx.view_notificationtemplate"],
+            ["awx.view_organization", "awx.view_organization"],
+            ["awx.view_project", "awx.view_project"],
+            ["awx.view_team", "awx.view_team"],
+            ["awx.view_workflowjobtemplate", "awx.view_workflowjobtemplate"]
+          ]
+        }
+      },
+      "content_type": {
+        "type": "id",
+        "hidden": false,
+        "label": "Content type",
+        "help_text": "The type of resource this applies to",
+        "filterable": true,
+        "choices": [
+          [null, "---------"],
+          ["awx.credential", "Credential"],
+          ["awx.executionenvironment", "Execution Environment"],
+          ["awx.instancegroup", "Instance Group"],
+          ["awx.inventory", "Inventory"],
+          ["awx.jobtemplate", "Job Template"],
+          ["awx.notificationtemplate", "Notification Template"],
+          ["awx.project", "Project"],
+          ["awx.workflowjobtemplate", "Workflow Job Template"],
+          ["shared.organization", "Organization"],
+          ["shared.team", "Team"]
+        ]
+      },
+      "modified": {
+        "type": "datetime",
+        "hidden": false,
+        "label": "Modified",
+        "help_text": "Timestamp when this role definition was last modified.",
+        "filterable": true
+      },
+      "created": {
+        "type": "datetime",
+        "hidden": false,
+        "label": "Created",
+        "help_text": "Timestamp when this role definition was created.",
+        "filterable": true
+      },
+      "name": {
+        "type": "string",
+        "hidden": false,
+        "label": "Name",
+        "help_text": "Name of this role definition.",
+        "filterable": true
+      },
+      "description": {
+        "type": "string",
+        "hidden": false,
+        "label": "Description",
+        "help_text": "Optional description of this role definition.",
+        "filterable": true
+      },
+      "managed": {
+        "type": "boolean",
+        "hidden": false,
+        "label": "Managed",
+        "filterable": true
+      },
+      "modified_by": {
+        "type": "id",
+        "hidden": false,
+        "label": "Modified by",
+        "help_text": "The user who last modified this resource",
+        "filterable": true
+      },
+      "created_by": {
+        "type": "id",
+        "hidden": false,
+        "label": "Created by",
+        "help_text": "The user who created this resource",
+        "filterable": true
+      }
+    }
+  }
+}

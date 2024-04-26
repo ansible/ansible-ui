@@ -28,7 +28,14 @@ type QueryParams = {
 
 type AccessProps<T extends Assignment> = {
   service: 'awx' | 'eda' | 'hub';
-  tableColumnFunctions: { name: { sort?: string; function: (item: T) => string; label: string } };
+  tableColumnFunctions: {
+    name: {
+      sort?: string;
+      function: (item: T) => string;
+      label: string;
+      to?: (item: T) => string | undefined;
+    };
+  };
   additionalTableColumns?: ITableColumn<T>[];
   toolbarNameColumnFiltersValues?: { label: string; query: string };
   additionalTableFilters?: IToolbarFilter[];
@@ -56,11 +63,10 @@ export function Access<T extends Assignment>(props: AccessProps<T>) {
     () => [
       {
         header: props.tableColumnFunctions.name.label,
-        type: 'description',
+        type: 'text',
         sort: props.tableColumnFunctions.name.sort,
         value: props.tableColumnFunctions.name.function,
-        card: 'description',
-        list: 'description',
+        to: props.tableColumnFunctions.name.to,
       },
       ...(firstColumns ? firstColumns : []),
       {

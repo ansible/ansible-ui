@@ -8,6 +8,7 @@ import { useMemo } from 'react';
 import { edaAPI } from '../../../eda/common/eda-utils';
 import { awxAPI } from '../../../awx/common/api/awx-utils';
 import { Access } from './Access';
+import { useGetLinkToResourcePage } from '../hooks/useGetLinkToResourcePage';
 
 interface ContentTypeOption {
   value: string;
@@ -32,6 +33,7 @@ export function ResourceAccess(props: {
   const { data, isLoading } = useOptions<{
     actions: { POST: { content_type: { choices: ContentTypeOption[] } } };
   }>(roleDefinitionsURL);
+  const getLinkToResourcePage = useGetLinkToResourcePage();
 
   // This filter applies to a user/team's roles list to filter based on the resource types
   const contentTypeFilterOptions = useMemo(() => {
@@ -50,10 +52,14 @@ export function ResourceAccess(props: {
       service={service}
       tableColumnFunctions={{
         name: {
-          // TODO: content_object?.name not available in the API yet. It is being added.
           function: (assignment: TeamAssignment | UserAssignment) =>
             assignment.summary_fields.content_object?.name,
           label: t('Resource name'),
+          to: (assignment: TeamAssignment | UserAssignment) =>
+            getLinkToResourcePage({
+              contentType: assignment.content_type,
+              objectId: assignment.object_id,
+            }),
         },
       }}
       additionalTableColumns={[
