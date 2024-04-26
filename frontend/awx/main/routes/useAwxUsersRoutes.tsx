@@ -32,11 +32,6 @@ export function useAwxUsersRoutes() {
           element: <EditUser />,
         },
         {
-          id: AwxRoute.AddRolesToUser,
-          path: ':id/roles/add',
-          element: <AddRolesToUser />,
-        },
-        {
           id: AwxRoute.UserPage,
           path: ':id',
           element: <UserPage />,
@@ -71,6 +66,11 @@ export function useAwxUsersRoutes() {
               element: <Navigate to="details" />,
             },
           ],
+        },
+        {
+          id: AwxRoute.AddRolesToUser,
+          path: ':id/roles/add-roles',
+          element: <AddRolesToUser />,
         },
         {
           path: '',

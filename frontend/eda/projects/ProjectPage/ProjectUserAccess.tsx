@@ -1,10 +1,15 @@
 import { useParams } from 'react-router-dom';
-import { UserAccess } from '../../access/common/UserAccess';
 import { EdaRoute } from '../../main/EdaRoutes';
+import { UserAccess } from '../../../common/access/components/UserAccess';
 
 export function ProjectUserAccess() {
   const params = useParams<{ id: string }>();
   return (
-    <UserAccess id={params.id || ''} type={'project'} addRolesRoute={EdaRoute.ProjectAddUsers} />
+    <UserAccess
+      service="eda"
+      id={params.id || ''}
+      type={'project'}
+      addRolesRoute={EdaRoute.ProjectAddUsers}
+    />
   );
 }

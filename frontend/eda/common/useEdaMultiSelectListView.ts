@@ -11,7 +11,7 @@ import { useEdaView, QueryParams } from './useEventDrivenView';
  * @param fieldName Specific field in the wizard that represents the selected items from the list
  * @returns The view that can be used to pass to the PageMultiSelectList component within a wizard
  */
-export function useMultiSelectListView<T extends { id: string | number }>(
+export function useEdaMultiSelectListView<T extends { id: string | number }>(
   viewOptions: {
     url: string;
     viewPage?: number;
