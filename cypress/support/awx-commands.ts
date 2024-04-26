@@ -896,6 +896,7 @@ Cypress.Commands.add('createAwxInventory', (inventory?: Partial<Omit<Inventory, 
     });
   }
 });
+
 Cypress.Commands.add(
   'createAwxInventorySource',
   (inventory: Partial<Pick<Inventory, 'id'>>, project: Partial<Pick<Project, 'id'>>) => {
