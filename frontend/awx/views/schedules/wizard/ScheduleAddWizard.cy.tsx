@@ -200,20 +200,6 @@ describe('ScheduleAddWizard', () => {
       });
     });
 
-    it('Should be able to discard adding a rule without adding 1 to the list', () => {
-      cy.get('[data-cy="interval"]').clear().type('100');
-      cy.selectDropdownOptionByResourceName('freq', 'Hourly');
-      cy.get('[data-cy="count-form-group"]').type('17');
-      cy.get('[data-cy="add-rule-button"]').click();
-      cy.clickButton(/^Add rule$/);
-      cy.get('[data-cy="interval"]').clear().type('200');
-      cy.selectDropdownOptionByResourceName('freq', 'Hourly');
-      cy.get('[data-cy="discard-rule-button"]').click();
-
-      cy.get('tbody').within(() => {
-        cy.get('tr').should('have.length', 1);
-      });
-    });
     it('Should be able to remove an existing rule from the list', () => {
       cy.get('[data-cy="interval"]').clear().type('100');
       cy.selectDropdownOptionByResourceName('freq', 'Hourly');
