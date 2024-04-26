@@ -12,7 +12,7 @@ describe('Instances Page', () => {
       IS_K8S: true,
     }).as('isK8s');
     cy.mount(<InstancePage />);
-    cy.get('[data-cy="page-title"]').should('have.text', 'receptor-1');
+    cy.getByDataCy('page-title').should('have.text', 'receptor-1');
     cy.contains('nav[aria-label="Breadcrumb"]', 'receptor-1').should('exist');
     cy.getByDataCy('back-to instances').should('be.visible');
     cy.getByDataCy('back-to instances').should('be.enabled');
@@ -20,9 +20,9 @@ describe('Instances Page', () => {
     cy.getByDataCy('instances-details-tab').should('be.enabled');
     cy.getByDataCy('instances-peers-tab').should('be.visible');
     cy.getByDataCy('instances-peers-tab').should('be.enabled');
-    cy.getByDataCy('edit-instance').should('be.visible');
-    cy.getByDataCy('edit-instance').should('be.enabled');
     cy.getByDataCy('actions-dropdown').click();
+    cy.getByDataCy('edit-instance').should('be.visible');
+    cy.getByDataCy('edit-instance').should('have.attr', 'aria-disabled', 'false');
     cy.getByDataCy('remove-instance').should('be.visible');
     cy.getByDataCy('remove-instance').should('have.attr', 'aria-disabled', 'false');
     cy.getByDataCy('run-health-check').should('be.visible');
@@ -35,7 +35,7 @@ describe('Instances Page', () => {
       IS_K8S: false,
     }).as('isK8s');
     cy.mount(<InstancePage />);
-    cy.getByDataCy('edit-instance').should('not.exist');
+    cy.get('[data-cy="edit-instance"]').should('not.exist');
   });
 
   it('edit instance button should be shown for k8s system', () => {
@@ -43,8 +43,8 @@ describe('Instances Page', () => {
       IS_K8S: true,
     }).as('isK8s');
     cy.mount(<InstancePage />);
-    cy.getByDataCy('edit-instance').should('be.visible');
-    cy.getByDataCy('edit-instance').should('have.attr', 'aria-disabled', 'false');
+    cy.get('[data-cy="actions-dropdown"]').click();
+    cy.get('[data-cy="edit-instance"]').should('have.attr', 'aria-disabled', 'false');
   });
 
   it('only admin users can edit instance', () => {
@@ -55,12 +55,13 @@ describe('Instances Page', () => {
     cy.wait('@getInstance')
       .its('response.body')
       .then(() => {
+        cy.get('[data-cy="actions-dropdown"]').click();
         cy.getByDataCy('edit-instance').should('be.visible');
         cy.getByDataCy('edit-instance').should('have.attr', 'aria-disabled', 'false');
       });
   });
 
-  it('edit instance button should be hidden for instance type control', () => {
+  it('edit instance button should be hidden for managed instance', () => {
     cy.intercept('GET', '/api/v2/settings/system*', {
       IS_K8S: true,
     }).as('isK8s');
@@ -75,29 +76,13 @@ describe('Instances Page', () => {
       });
   });
 
-  it('edit instance button should be hidden instance type hybrid', () => {
-    cy.intercept('GET', '/api/v2/settings/system*', {
-      IS_K8S: true,
-    }).as('isK8s');
-    cy.intercept('GET', '/api/v2/instances/*', {
-      fixture: 'instance_hybrid.json',
-    }).as('getInstance');
-    cy.mount(<InstancePage />);
-    cy.wait('@getInstance')
-      .its('response.body')
-      .then(() => {
-        cy.get('[data-cy="edit-instance"]').should('not.exist');
-      });
-  });
-
   it('non admin users cannot remove instance', () => {
     cy.mount(<InstancePage />, undefined, 'normalUser');
     cy.wait('@getInstance')
       .its('response.body')
       .then(() => {
-        cy.getByDataCy('actions-dropdown').click();
-        cy.get('[data-cy="remove-instance"]').should('be.visible');
-        cy.get('[data-cy="remove-instance"]').should('have.attr', 'aria-disabled', 'true');
+        cy.get('[data-cy="actions-dropdown"]').should('not.exist');
+        cy.get('[data-cy="remove-instance"]').should('not.exist');
       });
   });
 
@@ -134,7 +119,7 @@ describe('Instances Page', () => {
       });
   });
 
-  it('remove instance button should be hidden for instance type control', () => {
+  it('remove instance button should be hidden for managed instance', () => {
     cy.intercept('GET', '/api/v2/settings/system*', {
       IS_K8S: true,
     }).as('isK8s');
@@ -145,23 +130,7 @@ describe('Instances Page', () => {
     cy.wait('@getInstance')
       .its('response.body')
       .then(() => {
-        cy.get('[data-cy="actions-dropdown"]').click();
-        cy.get('[data-cy="remove-instance"]').should('not.exist');
-      });
-  });
-
-  it('remove instance button should be hidden instance type hybrid', () => {
-    cy.intercept('GET', '/api/v2/settings/system*', {
-      IS_K8S: true,
-    }).as('isK8s');
-    cy.intercept('GET', '/api/v2/instances/*', {
-      fixture: 'instance_hybrid.json',
-    }).as('getInstance');
-    cy.mount(<InstancePage />);
-    cy.wait('@getInstance')
-      .its('response.body')
-      .then(() => {
-        cy.get('[data-cy="actions-dropdown"]').click();
+        cy.get('[data-cy="actions-dropdown"]').should('not.exist');
         cy.get('[data-cy="remove-instance"]').should('not.exist');
       });
   });
