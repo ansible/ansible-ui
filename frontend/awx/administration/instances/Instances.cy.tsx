@@ -12,6 +12,9 @@ describe('Instances list', () => {
         fixture: 'instances.json',
       }
     );
+    cy.intercept('GET', '/api/v2/settings/system*', {
+      IS_K8S: true,
+    }).as('isK8s');
   });
 
   it('Instances list renders with k8s system', () => {
@@ -49,8 +52,7 @@ describe('Instances list', () => {
     );
     cy.get('[data-cy="add-instance"]').should('not.exist');
     cy.get('[data-cy="actions-dropdown"]').click();
-    cy.get('[data-cy="remove-instance"]').should('be.visible');
-    cy.get('[data-cy="remove-instance"]').should('have.attr', 'aria-disabled', 'true');
+    cy.get('[data-cy="remove-instance"]').should('not.exist');
     cy.get('tbody').find('tr').should('have.length', 10);
   });
 

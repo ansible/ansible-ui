@@ -1,13 +1,4 @@
-import {
-  Button,
-  Label,
-  PageSection,
-  Progress,
-  Skeleton,
-  Slider,
-  SliderOnChangeEvent,
-  Tooltip,
-} from '@patternfly/react-core';
+import { Button, Label, PageSection, Progress, Skeleton, Tooltip } from '@patternfly/react-core';
 import { DownloadIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
@@ -29,19 +20,23 @@ import { useGetItem } from '../../../common/crud/useGet';
 import { AwxError } from '../../common/AwxError';
 import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 import { awxAPI } from '../../common/api/awx-utils';
-import { useAwxActiveUser } from '../../common/useAwxActiveUser';
 import { Instance } from '../../interfaces/Instance';
 import { InstanceGroup } from '../../interfaces/InstanceGroup';
 import { AwxRoute } from '../../main/AwxRoutes';
 import { useInstanceActions } from './hooks/useInstanceActions';
 import { useNodeTypeTooltip } from './hooks/useNodeTypeTooltip';
+import { InstanceForksSlider } from './components/InstanceForksSlider';
+import { PageDetailCodeEditor } from '../../../../framework/PageDetails/PageDetailCodeEditor';
 
 export function InstanceDetails() {
-  const params = useParams<{ id: string }>();
-  const { error, data: instance, refresh } = useGetItem<Instance>(awxAPI`/instances`, params.id);
-  const { instanceGroups, instanceForks, handleInstanceForksSlider } = useInstanceActions(
-    params.id as string
-  );
+  const params = useParams<{ id?: string; instance_id?: string }>();
+  const { id, instance_id } = params;
+  const {
+    error,
+    data: instance,
+    refresh,
+  } = useGetItem<Instance>(awxAPI`/instances`, instance_id ?? id);
+  const { instanceGroups, instanceForks } = useInstanceActions(instance_id ?? (id as string));
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!instance) return <LoadingPage breadcrumbs tabs />;
   return (
@@ -51,7 +46,6 @@ export function InstanceDetails() {
           instance={instance}
           instanceGroups={instanceGroups}
           instanceForks={instanceForks}
-          handleInstanceForksSlider={handleInstanceForksSlider}
         />
       ) : (
         <PageSection variant="light">
@@ -66,16 +60,13 @@ export function InstanceDetailsTab(props: {
   instance: Instance;
   instanceGroups: AwxItemsResponse<InstanceGroup> | undefined;
   instanceForks: number;
-  handleInstanceForksSlider: (instance: Instance, value: number) => Promise<void>;
   numberOfColumns?: 'multiple' | 'single' | undefined;
 }) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const getPageUrl = useGetPageUrl();
-  const { activeAwxUser } = useAwxActiveUser();
-  const { instance, instanceGroups, instanceForks, handleInstanceForksSlider } = props;
+  const { instance, instanceGroups, instanceForks } = props;
   const toolTipMap: { [item: string]: string } = useNodeTypeTooltip();
-  const capacityAvailable = instance.cpu_capacity !== 0 && instance.mem_capacity !== 0;
 
   return (
     <PageDetails numberOfColumns={props.numberOfColumns} disableScroll>
@@ -161,24 +152,15 @@ export function InstanceDetailsTab(props: {
       <LastModifiedPageDetail value={instance.modified} data-cy="modified" />
       {instance.node_type !== 'hop' ? (
         <PageDetail label={t('Forks')} data-cy="forks">
-          <div>
-            {t('Total forks: ')}
-            {instanceForks}
-          </div>
-          {instanceForks > 0 ? (
-            <Slider
-              areCustomStepsContinuous
-              max={instance.mem_capacity}
-              min={instance.cpu_capacity}
-              value={instanceForks}
-              onChange={(_event: SliderOnChangeEvent, value: number) =>
-                void handleInstanceForksSlider(instance, value)
-              }
-              isDisabled={!activeAwxUser?.is_superuser || !instance.enabled || !capacityAvailable}
-            />
-          ) : undefined}
+          {instanceForks > 0 ? <InstanceForksSlider instance={instance} /> : undefined}
         </PageDetail>
       ) : undefined}
+      <PageDetailCodeEditor
+        value={instance.errors}
+        label={t('Errors')}
+        isEmpty={instance.errors === ''}
+        fullWidth={true}
+      />
     </PageDetails>
   );
 }
