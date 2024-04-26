@@ -8,26 +8,25 @@ import {
   PageFormSelect,
   PageHeader,
   PageLayout,
-  compareStrings,
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../framework';
-import { PageFormTextArea } from '../../../../framework/PageForm/Inputs/PageFormTextArea';
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { PageFormSubmitHandler } from '../../../../framework/PageForm/PageForm';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
 import { useGet } from '../../../common/crud/useGet';
 import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
-import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 import { AwxPageForm } from '../../common/AwxPageForm';
 import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxActiveUser } from '../../common/useAwxActiveUser';
+import { useAwxGetAllPages } from '../../common/useAwxGetAllPages';
 import { Credential } from '../../interfaces/Credential';
 import { CredentialInputField, CredentialType } from '../../interfaces/CredentialType';
 import { AwxRoute } from '../../main/AwxRoutes';
 import { PageFormSelectOrganization } from '../organizations/components/PageFormOrganizationSelect';
 import { CredentialMultilineInput } from './components/CredentialMultilineInput';
+import { PageFormSelectCredentialType } from './components/PageFormSelectCredentialType';
 
 interface CredentialForm extends Credential {
   user?: number;
@@ -57,15 +56,15 @@ export function CreateCredential() {
   const postRequest = usePostRequest<Credential>();
   const getPageUrl = useGetPageUrl();
 
-  const { data: itemsResponse, isLoading } = useGet<AwxItemsResponse<CredentialType>>(
-    awxAPI`/credential_types/?page=1&page_size=200`
+  const { results: itemsResponse, isLoading } = useAwxGetAllPages<CredentialType>(
+    awxAPI`/credential_types/`
   );
 
   if (isLoading && !itemsResponse) {
     return <LoadingPage />;
   }
 
-  const credentialTypes: CredentialTypes | undefined = itemsResponse?.results?.reduce(
+  const credentialTypes: CredentialTypes | undefined = itemsResponse?.reduce(
     (credentialTypesMap, credentialType) => {
       credentialTypesMap[credentialType.id] = credentialType;
       return credentialTypesMap;
@@ -128,11 +127,11 @@ export function EditCredential() {
   const { data: credential, isLoading: isLoadingCredential } = useGet<Credential>(
     awxAPI`/credentials/${id.toString()}/`
   );
-  const { data: itemsResponse, isLoading: isLoadingCredentialType } = useGet<
-    AwxItemsResponse<CredentialType>
-  >(awxAPI`/credential_types/?page=1&page_size=200`);
 
-  const credentialTypes: CredentialTypes | undefined = itemsResponse?.results?.reduce(
+  const { results: itemsResponse, isLoading: isLoadingCredentialType } =
+    useAwxGetAllPages<CredentialType>(awxAPI`/credential_types/`);
+
+  const credentialTypes: CredentialTypes | undefined = itemsResponse?.reduce(
     (credentialTypesMap, credentialType) => {
       credentialTypesMap[credentialType.id] = credentialType;
       return credentialTypesMap;
@@ -211,7 +210,7 @@ export function EditCredential() {
         onCancel={() => navigate(-1)}
         defaultValue={initialValues}
       >
-        <CredentialInputs />
+        <CredentialInputs isEditMode />
       </AwxPageForm>
     </PageLayout>
   );
@@ -219,8 +218,9 @@ export function EditCredential() {
 
 function CredentialInputs({ isEditMode = false }: { isEditMode?: boolean }) {
   const { t } = useTranslation();
-  const { data: itemsResponse, isLoading } = useGet<AwxItemsResponse<CredentialType>>(
-    awxAPI`/credential_types/?page=1&page_size=200`
+
+  const { results: itemsResponse, isLoading } = useAwxGetAllPages<CredentialType>(
+    awxAPI`/credential_types/`
   );
 
   const selectedCredentialTypeId = useWatch<{ credential_type: number }>({
@@ -231,7 +231,7 @@ function CredentialInputs({ isEditMode = false }: { isEditMode?: boolean }) {
     return <LoadingPage />;
   }
 
-  const credentialTypes: CredentialTypes | undefined = itemsResponse?.results?.reduce(
+  const credentialTypes: CredentialTypes | undefined = itemsResponse?.reduce(
     (credentialTypesMap, credentialType) => {
       credentialTypesMap[credentialType.id] = credentialType;
       return credentialTypesMap;
@@ -250,31 +250,23 @@ function CredentialInputs({ isEditMode = false }: { isEditMode?: boolean }) {
         placeholder={t('Enter name')}
         isRequired
       />
-      <>
-        <PageFormSelect<Credential>
-          label={t('Credential type')}
-          isDisabled={isEditMode}
-          placeholderText={t('Select credential type')}
-          name="credential_type"
-          options={
-            itemsResponse?.results
-              .sort((l, r) => compareStrings(l.name, r.name))
-              .map((credentialType) => ({
-                label: credentialType.name,
-                value: credentialType.id,
-              })) ?? []
-          }
-          isRequired
-        />
-      </>
+      <PageFormTextInput<Credential>
+        name="description"
+        label={t('Description')}
+        placeholder={t('Enter description')}
+      />
       <PageFormSelectOrganization<Credential> isRequired={isGalaxyCredential} name="organization" />
-      <PageFormSection singleColumn>
-        <PageFormTextArea<Credential>
-          name="description"
-          label={t('Description')}
-          placeholder={t('Enter description')}
-        />
-      </PageFormSection>
+      <PageFormSelectCredentialType
+        name="credential_type"
+        isRequired
+        isDisabled={
+          isEditMode
+            ? t(
+                'You cannot change the credential type of a credential, as it may break the functionality of the resources using it.'
+              )
+            : undefined
+        }
+      />
       {selectedCredentialTypeId && credentialTypes && credentialTypes[selectedCredentialTypeId] ? (
         <CredentialSubForm credentialType={credentialTypes[selectedCredentialTypeId]} />
       ) : null}

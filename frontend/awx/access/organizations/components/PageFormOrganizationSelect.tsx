@@ -10,7 +10,7 @@ import { useOrganizationsColumns, useOrganizationsFilters } from '../Organizatio
  *
  * @example
  * ```tsx
- * <PageFormSelectOrganization<Credential> name="organization" />
+ * <PageFormSelectOrganization<Organization> name="organization" />
  * ```
  */
 export function PageFormSelectOrganization<
