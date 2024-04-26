@@ -4,7 +4,7 @@ import { createRequestError } from './RequestError';
 import { requestCommon } from './requestCommon';
 
 interface Options {
-  method: 'GET' | 'POST' | 'PATCH' | 'DELETE' | 'OPTIONS';
+  method: 'GET' | 'PUT' | 'POST' | 'PATCH' | 'DELETE' | 'OPTIONS';
   headers?: HeadersInit;
   json?: unknown;
   signal?: AbortSignal;
@@ -25,6 +25,19 @@ export async function postRequest<ResponseBody, RequestBody = unknown>(
 ): Promise<ResponseBody> {
   const options: Options = {
     method: 'POST',
+    json,
+    signal,
+  };
+  return requestFactory<ResponseBody>(url, options);
+}
+
+export async function requestPut<ResponseBody, RequestBody = unknown>(
+  url: string,
+  json: RequestBody,
+  signal?: AbortSignal
+): Promise<ResponseBody> {
+  const options: Options = {
+    method: 'PUT',
     json,
     signal,
   };
