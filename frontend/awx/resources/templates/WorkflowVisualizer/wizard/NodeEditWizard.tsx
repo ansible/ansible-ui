@@ -11,6 +11,7 @@ import type { GraphNode, GraphNodeData, PromptFormValues, WizardFormValues } fro
 import { NodePromptsStep } from './NodePromptsStep';
 import { NodeReviewStep } from './NodeReviewStep';
 import { NodeTypeStep } from './NodeTypeStep';
+import { SurveyStep } from '../../../../common/SurveyStep';
 import {
   getNodeLabel,
   getValueBasedOnJobType,
@@ -112,6 +113,21 @@ export function NodeEditWizard({ node }: { node: GraphNode }) {
           return false;
         }
         return true;
+      },
+    },
+    {
+      id: 'nodeSurveyStep',
+      label: t('Survey'),
+      inputs: <SurveyStep singleColumn />,
+      hidden: (wizardData: Partial<WizardFormValues>) => {
+        const { launch_config, node_type } = wizardData;
+        if (Object.keys(wizardData).length === 0) {
+          return true;
+        }
+        if (node_type && ![RESOURCE_TYPE.workflow_job, RESOURCE_TYPE.job].includes(node_type)) {
+          return true;
+        }
+        return !launch_config?.survey_enabled;
       },
     },
     { id: 'review', label: t('Review'), element: <NodeReviewStep /> },

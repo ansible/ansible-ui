@@ -176,7 +176,6 @@ export interface WizardFormValues {
   prompt: PromptFormValues;
   inventory?: Inventory;
   relatedJobTypeApiUrl?: string;
-  node_resource?: { id: string };
 }
 
 export type UnifiedJobType =
