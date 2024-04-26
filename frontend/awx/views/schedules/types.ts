@@ -39,7 +39,6 @@ export interface RuleFields {
   byhour: null;
   until: { date: string; time: string } | null;
   count: null;
-  endingType: string | null;
   rules: RuleListItemType[] | [];
   exceptions: RuleListItemType[] | [];
 }

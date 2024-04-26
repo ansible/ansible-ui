@@ -38,7 +38,7 @@ export function ExceptionsStep() {
       {isOpen && <RuleForm isOpen={isOpen} title={t('Define exceptions')} setIsOpen={setIsOpen} />}
 
       {(hasExceptions || (!isOpen && !hasExceptions)) && (
-        <RulesList rules={exceptions} ruleType="exception" setIsOpen={setIsOpen} />
+        <RulesList rules={exceptions} needsHeader ruleType="exception" setIsOpen={setIsOpen} />
       )}
     </PageFormSection>
   );
