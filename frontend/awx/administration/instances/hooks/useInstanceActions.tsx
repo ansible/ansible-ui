@@ -1,18 +1,15 @@
-import { AlertProps, ButtonVariant } from '@patternfly/react-core';
-import { HeartbeatIcon, MinusCircleIcon, PencilAltIcon } from '@patternfly/react-icons';
-import { TFunction } from 'i18next';
+import { MinusCircleIcon } from '@patternfly/react-icons';
 import pDebounce from 'p-debounce';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import {
   IPageAction,
   PageActionSelection,
   PageActionType,
-  usePageAlertToaster,
   usePageNavigate,
 } from '../../../../../framework';
-import { postRequest, requestGet, requestPatch } from '../../../../common/crud/Data';
+import { requestGet, requestPatch } from '../../../../common/crud/Data';
 import { useGet, useGetItem } from '../../../../common/crud/useGet';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { awxAPI } from '../../../common/api/awx-utils';
@@ -20,22 +17,20 @@ import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
 import { Instance } from '../../../interfaces/Instance';
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';
 import { Settings } from '../../../interfaces/Settings';
-import { AwxRoute } from '../../../main/AwxRoutes';
 import { useRemoveInstances } from './useRemoveInstances';
+import {
+  useEditInstanceRowAction,
+  useRunHealthCheckRowAction,
+  useToggleInstanceRowAction,
+} from './useInstanceRowActions';
+import { AwxRoute } from '../../../main/AwxRoutes';
+import { TFunction } from 'i18next';
+import { AwxUser } from '../../../interfaces/User';
 
 export function useInstanceActions(instanceId: string) {
   const [instance, setInstance] = useState<Instance>();
   const [instanceGroups, setInstanceGroups] = useState<AwxItemsResponse<InstanceGroup>>();
   const [instanceForks, setInstanceForks] = useState(0);
-  function computeForks(
-    memCapacity: number,
-    cpuCapacity: number,
-    selectedCapacityAdjustment: number
-  ) {
-    const minCapacity = Math.min(memCapacity, cpuCapacity);
-    const maxCapacity = Math.max(memCapacity, cpuCapacity);
-    return Math.floor(minCapacity + (maxCapacity - minCapacity) * selectedCapacityAdjustment);
-  }
 
   useEffect(() => {
     const fetchInstanceDetails = async () => {
@@ -99,150 +94,135 @@ export function useInstanceActions(instanceId: string) {
   };
 }
 
-export function useInstanceDetailsActions(options: {
-  onInstancesRemoved: (instance: Instance[]) => void;
-  onInstanceToggled: () => void;
-  onHealthCheckComplete: () => void;
-  isDetailsPageAction?: boolean;
-}) {
-  const { onInstancesRemoved, onInstanceToggled, onHealthCheckComplete } = options;
-  const { t } = useTranslation();
+export function useInstanceDetailsActions() {
   const params = useParams<{ id: string }>();
-  const pageNavigate = usePageNavigate();
-  const { data: instance } = useGetItem<Instance>(awxAPI`/instances`, params.id);
-
-  const removeInstances = useRemoveInstances(onInstancesRemoved);
-  const { activeAwxUser } = useAwxActiveUser();
+  const { data: instance, refresh } = useGetItem<Instance>(awxAPI`/instances`, params.id);
   const { data } = useGet<Settings>(awxAPI`/settings/system/`);
-  const instancesType = instance?.node_type === 'execution' || instance?.node_type === 'hop';
-  const userAccess = activeAwxUser?.is_superuser || activeAwxUser?.is_system_auditor;
-  const isK8s = data?.IS_K8S;
-  const canEditAndRemoveInstances = instancesType && isK8s && userAccess;
-  const alertToaster = usePageAlertToaster();
+  const { activeAwxUser } = useAwxActiveUser();
 
-  const handleToggleInstance: (instance: Instance, enabled: boolean) => Promise<void> = useCallback(
-    async (instance, enabled) => {
-      await requestPatch(awxAPI`/instances/${instance.id.toString()}/`, { enabled });
-      onInstanceToggled();
-    },
-    [onInstanceToggled]
+  const isK8s = data?.IS_K8S;
+
+  const isManagedInstance = instance?.managed ?? false;
+
+  const isHidden =
+    isK8s === false ||
+    (!activeAwxUser?.is_superuser && !activeAwxUser?.is_system_auditor) ||
+    isManagedInstance;
+
+  const toggleInstanceAction = useToggleInstanceRowAction(refresh);
+  const editInstanceAction = useEditInstanceRowAction({
+    isHidden: isHidden,
+    isPinned: false,
+  });
+  const removeInstanceAction = useRemoveInstanceItemAction(isHidden);
+  const runHealthCheckAction = useRunHealthCheckRowAction(
+    refresh,
+    instance?.node_type !== 'execution'
   );
 
   return useMemo<IPageAction<Instance>[]>(
-    () => [
-      {
-        type: PageActionType.Switch,
-        ariaLabel: (isEnabled) =>
-          isEnabled ? t('Click to disable instance') : t('Click to enable instance'),
-        selection: PageActionSelection.Single,
-        isPinned: true,
-        onToggle: (instance, enabled) => handleToggleInstance(instance, enabled),
-        isSwitchOn: (instance) => instance.enabled,
-        label: t('Enabled'),
-        labelOff: t('Disabled'),
-        showPinnedLabel: false,
-        isHidden: () => instance?.node_type === 'hop',
-        isDisabled: canEditAndRemoveInstances
-          ? undefined
-          : t(
-              'You do not have permission to edit instances. Please contact your organization administrator if there is an issue with your access.'
-            ),
-      },
-      {
-        type: PageActionType.Button,
-        isHidden: () => isK8s === false || !instancesType,
-        selection: PageActionSelection.None,
-        variant: ButtonVariant.primary,
-        isPinned: true,
-        icon: PencilAltIcon,
-        label: t('Edit instance'),
-        onClick: () => pageNavigate(AwxRoute.EditInstance, { params: { id: params.id } }),
-        isDisabled: canEditAndRemoveInstances
-          ? undefined
-          : t(
-              'You do not have permission to edit instances. Please contact your organization administrator if there is an issue with your access.'
-            ),
-      },
-      {
-        type: PageActionType.Button,
-        isHidden: () => isK8s === false || !instancesType,
-        selection: PageActionSelection.Single,
-        icon: MinusCircleIcon,
-        label: t('Remove instance'),
-        onClick: (instance: Instance) => removeInstances([instance]),
-        isDisabled: () =>
-          canEditAndRemoveInstances
-            ? undefined
-            : t(
-                'You do not have permission to remove instances. Please contact your organization administrator if there is an issue with your access.'
-              ),
-        isDanger: true,
-      },
-      {
-        type: PageActionType.Button,
-        isHidden: () => isK8s === false || !(instance?.node_type === 'execution'),
-        selection: PageActionSelection.Single,
-        icon: HeartbeatIcon,
-        variant: ButtonVariant.secondary,
-        label: t('Run health check'),
-        isDisabled: (instance) =>
-          instance.node_type !== 'execution'
-            ? t('Cannot run health check on a {{ type }} instance', { type: instance.node_type })
-            : instance.health_check_pending
-              ? t('Health check pending')
-              : undefined,
-        onClick: (instance: Instance) => {
-          const alert: AlertProps = {
-            variant: 'success',
-            title: t(`Running health check on ${instance.hostname}.`),
-            timeout: 4000,
-          };
-          postRequest(awxAPI`/instances/${instance.id.toString()}/health_check/`, {})
-            .then(() => {
-              alertToaster.addAlert(alert);
-              onHealthCheckComplete();
-            })
-            .catch((error) => {
-              alertToaster.addAlert({
-                variant: 'danger',
-                title: t('Failed to perform health check'),
-                children: error instanceof Error && error.message,
-              });
-            });
-        },
-      },
-    ],
-    [
-      t,
-      canEditAndRemoveInstances,
-      isK8s,
-      instancesType,
-      pageNavigate,
-      params.id,
-      removeInstances,
-      alertToaster,
-      handleToggleInstance,
-      instance?.node_type,
-      onHealthCheckComplete,
-    ]
+    () => [toggleInstanceAction, editInstanceAction, removeInstanceAction, runHealthCheckAction],
+    [toggleInstanceAction, editInstanceAction, removeInstanceAction, runHealthCheckAction]
   );
 }
 
-export function cannotRemoveInstance(instance: Instance, t: (string: string) => string) {
-  if (instance.node_type === 'execution' || instance.node_type === 'hop') {
-    return '';
-  }
-  return t(`This cannot be deleted due to insufficient permissions.`);
+export function useRemoveInstanceItemAction(isHidden: boolean) {
+  const { t } = useTranslation();
+  const pageNavigate = usePageNavigate();
+  const removeInstances = useRemoveInstances((_instances: Instance[]) =>
+    pageNavigate(AwxRoute.Instances)
+  );
+  const { data } = useGet<Settings>(awxAPI`/settings/system/`);
+  const isK8s = data?.IS_K8S;
+  const { activeAwxUser } = useAwxActiveUser();
+
+  return useMemo<IPageAction<Instance>>(
+    () => ({
+      type: PageActionType.Button,
+      isHidden: () => isHidden,
+      isPinned: false,
+      selection: PageActionSelection.Single,
+      icon: MinusCircleIcon,
+      label: t('Remove instance'),
+      onClick: (instance: Instance) => removeInstances([instance]),
+      isDisabled: (instance) => cannotRemoveInstances([instance], t, activeAwxUser, isK8s ?? false),
+      isDanger: true,
+    }),
+    [t, removeInstances, isK8s, activeAwxUser, isHidden]
+  );
 }
 
 export function cannotRemoveInstances(
   instances: Instance[],
-  t: TFunction<'translation', undefined>
+  t: TFunction<'translation', undefined>,
+  activeAwxUser: AwxUser | undefined | null,
+  isK8s: boolean
 ) {
+  const addEditPrivileges = activeAwxUser?.is_superuser || activeAwxUser?.is_system_auditor;
   if (instances.length === 0) {
     return t(`Select at least one item from the list.`);
-  } else if (instances.find((instance: Instance) => cannotRemoveInstance(instance, t))) {
-    return t(`Cannot delete due to insufficient permissions with one or many items.`);
+  } else if (!isK8s) {
+    return t('Cannot delete instances due to system environment');
+  } else if (!addEditPrivileges) {
+    return t('Cannot delete instances due to insufficient permissions');
+  } else if (instances.find((instance: Instance) => !removeableInstance(instance))) {
+    return t(
+      'Cannot delete due to one or many instances being of type other than execution or hop.'
+    );
   }
   return '';
+}
+
+export function cannotRunHealthCheckDueToPending(
+  instance: Instance,
+  t: TFunction<'translation', undefined>
+) {
+  if (instance.health_check_pending)
+    return t(
+      `Instance has pending health checks. Wait for those to complete before attempting another health check.`
+    );
+  return '';
+}
+
+export function cannotRunHealthCheckDueToNodeType(
+  instance: Instance,
+  t: TFunction<'translation', undefined>
+) {
+  if (instance.node_type !== 'execution')
+    return t(`Health checks can only be run on execution instances.`);
+  return '';
+}
+
+export function cannotRunHealthCheckDueToManagedInstance(
+  instance: Instance,
+  t: TFunction<'translation', undefined>
+) {
+  if (instance?.managed) return t(`Health checks cannot be run on a managed instance.`);
+  return '';
+}
+
+export function cannotRunHealthCheckDueToPermissions(
+  activeAwxUser: AwxUser | null | undefined,
+  t: TFunction<'translation', undefined>
+) {
+  if (!activeAwxUser?.is_superuser && !activeAwxUser?.is_system_auditor)
+    return t(`Health checks cannot be run on instance do not have correct permissions.`);
+  return '';
+}
+
+export function computeForks(
+  memCapacity: number,
+  cpuCapacity: number,
+  selectedCapacityAdjustment: number
+) {
+  const minCapacity = Math.min(memCapacity, cpuCapacity);
+  const maxCapacity = Math.max(memCapacity, cpuCapacity);
+  return Math.floor(minCapacity + (maxCapacity - minCapacity) * selectedCapacityAdjustment);
+}
+
+function removeableInstance(instance: Instance) {
+  if (instance.node_type === 'execution' || instance.node_type === 'hop') {
+    return true;
+  }
+  return false;
 }
