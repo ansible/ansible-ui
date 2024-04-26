@@ -18,7 +18,6 @@ export function AwxSelectResourceTypeStep() {
   }
 
   const options: ContentTypeOption[] = data?.actions?.POST?.content_type?.choices || [];
-  console.log('🚀 ~ AwxSelectResourceTypeStep ~ options:', options);
 
   return (
     <PageFormSelect
