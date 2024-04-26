@@ -361,7 +361,6 @@ function CredentialSubForm({
   setAccumulatedPluginValues?: (values: CredentialPluginsInputSource[]) => void;
 }) {
   const { t } = useTranslation();
-  const openCredentialPluginsModal = useCredentialPluginsModal();
   if (!credentialType || !credentialType?.inputs?.fields) {
     return null;
   }
@@ -428,6 +427,7 @@ function CredentialSubForm({
                     accumulatedPluginValues,
                   })
                 }
+                credentialType={credentialType}
               />
             );
           }
@@ -599,7 +599,7 @@ function CredentialTextInput({
                 </Button>
               ) : null}
             </>
-          ) : undefined
+          ) : null
         }
         additionalControls={
           field?.ask_at_runtime && (
