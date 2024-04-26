@@ -1,0 +1,148 @@
+{
+  "count": 3,
+  "next": null,
+  "previous": null,
+  "page_size": 10,
+  "page": 1,
+  "results": [
+    {
+      "id": 4,
+      "url": "/api/eda/v1/role_user_assignments/4/",
+      "related": {
+        "created_by": "/api/eda/v1/users/3/",
+        "role_definition": "/api/eda/v1/role_definitions/12/",
+        "user": "/api/eda/v1/users/5/"
+      },
+      "summary_fields": {
+        "created_by": {
+          "id": 3,
+          "username": "dev",
+          "email": "",
+          "first_name": "",
+          "last_name": "",
+          "is_superuser": true
+        },
+        "object_role": {
+          "id": 4
+        },
+        "role_definition": {
+          "id": 12,
+          "name": "Credential Type Admin",
+          "description": "Has all permissions to a single credential type",
+          "managed": true
+        },
+        "user": {
+          "id": 5,
+          "username": "test-vn",
+          "email": "",
+          "first_name": "",
+          "last_name": "",
+          "is_superuser": false
+        },
+        "content_object": {
+          "id": "2",
+          "name": "Container Registry"
+        }
+      },
+      "created": "2024-04-24T17:43:12.251824Z",
+      "created_by": 3,
+      "content_type": "eda.credentialtype",
+      "object_id": "2",
+      "role_definition": 12,
+      "user": 5
+    },
+    {
+      "id": 5,
+      "url": "/api/eda/v1/role_user_assignments/5/",
+      "related": {
+        "created_by": "/api/eda/v1/users/3/",
+        "role_definition": "/api/eda/v1/role_definitions/12/",
+        "user": "/api/eda/v1/users/5/"
+      },
+      "summary_fields": {
+        "created_by": {
+          "id": 3,
+          "username": "dev",
+          "email": "",
+          "first_name": "",
+          "last_name": "",
+          "is_superuser": true
+        },
+        "object_role": {
+          "id": 5
+        },
+        "role_definition": {
+          "id": 12,
+          "name": "Credential Type Admin",
+          "description": "Has all permissions to a single credential type",
+          "managed": true
+        },
+        "user": {
+          "id": 5,
+          "username": "test-vn",
+          "email": "",
+          "first_name": "",
+          "last_name": "",
+          "is_superuser": false
+        },
+        "content_object": {
+          "id": "3",
+          "name": "GPG Public Key"
+        }
+      },
+      "created": "2024-04-24T17:43:12.256177Z",
+      "created_by": 3,
+      "content_type": "eda.credentialtype",
+      "object_id": "3",
+      "role_definition": 12,
+      "user": 5
+    },
+    {
+      "id": 10,
+      "url": "/api/eda/v1/role_user_assignments/10/",
+      "related": {
+        "created_by": "/api/eda/v1/users/3/",
+        "role_definition": "/api/eda/v1/role_definitions/13/",
+        "user": "/api/eda/v1/users/5/",
+        "content_object": "/api/eda/v1/projects/1/"
+      },
+      "summary_fields": {
+        "created_by": {
+          "id": 3,
+          "username": "dev",
+          "email": "",
+          "first_name": "",
+          "last_name": "",
+          "is_superuser": true
+        },
+        "object_role": {
+          "id": 9
+        },
+        "role_definition": {
+          "id": 13,
+          "name": "Project Admin",
+          "description": "Has all permissions to a single project and its child resources - rulebook",
+          "managed": true
+        },
+        "user": {
+          "id": 5,
+          "username": "test-vn",
+          "email": "",
+          "first_name": "",
+          "last_name": "",
+          "is_superuser": false
+        },
+        "content_object": {
+          "id": "1",
+          "name": "Project VN"
+        }
+      },
+      "created": "2024-04-25T21:19:49.121059Z",
+      "created_by": 3,
+      "content_type": "eda.project",
+      "object_id": "1",
+      "role_definition": 13,
+      "user": 5
+    }
+  ]
+}
