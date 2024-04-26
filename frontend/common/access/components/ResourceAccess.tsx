@@ -1,12 +1,13 @@
 import { useTranslation } from 'react-i18next';
 import { TeamAssignment } from '../interfaces/TeamAssignment';
 import { UserAssignment } from '../interfaces/UserAssignment';
-import { Access } from './Access';
-import { edaAPI } from '../../common/eda-utils';
 import { useMapContentTypeToDisplayName } from '../../../common/access/hooks/useMapContentTypeToDisplayName';
 import { ColumnPriority, LoadingPage, ToolbarFilterType } from '../../../../framework';
 import { useOptions } from '../../../common/crud/useOptions';
 import { useMemo } from 'react';
+import { edaAPI } from '../../../eda/common/eda-utils';
+import { awxAPI } from '../../../awx/common/api/awx-utils';
+import { Access } from './Access';
 
 interface ContentTypeOption {
   value: string;
@@ -14,16 +15,23 @@ interface ContentTypeOption {
 }
 
 export function ResourceAccess(props: {
+  service: 'awx' | 'eda' | 'hub';
   id: string;
   type: 'user-roles' | 'team-roles';
   addRolesRoute?: string;
 }) {
-  const { id, type, addRolesRoute } = props;
+  const { id, type, addRolesRoute, service } = props;
   const { t } = useTranslation();
   const getDisplayName = useMapContentTypeToDisplayName();
+  const roleDefinitionsURL =
+    service === 'awx' ? awxAPI`/role_definitions/` : edaAPI`/role_definitions/`;
+  const roleUserAssignmentsURL =
+    service === 'awx' ? awxAPI`/role_user_assignments/` : edaAPI`/role_user_assignments/`;
+  const roleTeamAssignmentsURL =
+    service === 'awx' ? awxAPI`/role_team_assignments/` : edaAPI`/role_team_assignments/`;
   const { data, isLoading } = useOptions<{
     actions: { POST: { content_type: { choices: ContentTypeOption[] } } };
-  }>(edaAPI`/role_definitions/`);
+  }>(roleDefinitionsURL);
 
   // This filter applies to a user/team's roles list to filter based on the resource types
   const contentTypeFilterOptions = useMemo(() => {
@@ -39,6 +47,7 @@ export function ResourceAccess(props: {
 
   return (
     <Access
+      service={service}
       tableColumnFunctions={{
         name: {
           // TODO: content_object?.name not available in the API yet. It is being added.
@@ -67,9 +76,7 @@ export function ResourceAccess(props: {
           disableSortOptions: true,
         },
       ]}
-      url={
-        type === 'user-roles' ? edaAPI`/role_user_assignments/` : edaAPI`/role_team_assignments/`
-      }
+      url={type === 'user-roles' ? roleUserAssignmentsURL : roleTeamAssignmentsURL}
       id={id}
       addRolesRoute={addRolesRoute}
       accessListType={type}
