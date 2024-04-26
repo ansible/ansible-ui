@@ -140,7 +140,7 @@ describe('Inventory Groups', () => {
         // this is ugly fix, but since we dont want to use waits, until app is repaired, this is necessity
         cy.contains('span', 'Select credential');
         cy.get(`[aria-label="Simple table"]`);
-        cy.get(`[aria-label="Select credential]"`);
+        cy.get(`[aria-label="Select credential"]`);
 
         cy.selectTableRowByCheckbox('name', machineCredential.name);
         cy.clickButton(/^Confirm$/);
