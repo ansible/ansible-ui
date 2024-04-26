@@ -78,6 +78,7 @@ import { EdaCredentialTypeAddUsers } from '../access/credential-types/components
 import { EdaCredentialTypeAddTeams } from '../access/credential-types/components/EdaCredentialTypeAddTeams';
 import { CredentialTypeTeamAccess } from '../access/credential-types/CredentialTypePage/CredentialTypeTeamAccess';
 import { CredentialTypeUserAccess } from '../access/credential-types/CredentialTypePage/CredentialTypeUserAccess';
+import { EdaUserRoles } from '../access/users/UserPage/EdaUserRoles';
 
 export function useEdaNavigation() {
   const { t } = useTranslation();
@@ -415,7 +416,7 @@ export function useEdaNavigation() {
                 {
                   id: EdaRoute.UserRoles,
                   path: 'roles',
-                  element: <PageNotImplemented />,
+                  element: <EdaUserRoles />,
                 },
                 {
                   id: EdaRoute.UserTokens,
