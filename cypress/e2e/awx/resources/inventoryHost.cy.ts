@@ -47,6 +47,7 @@ describe('Inventory Host Tab Tests', () => {
           });
         });
       });
+
       if (kind === '') {
         it.skip('can create a host from the inventory hosts tab and verify that it is associated with that inventory', () => {
           //1) Use the inventory created in beforeEach block, access the host tab of that inventory
@@ -54,6 +55,7 @@ describe('Inventory Host Tab Tests', () => {
           //3) When redirected to the details page after creation, assert the info displayed there matches what was entered in the form
           //4) Specifically assert that the original inventory is displayed for the newly created host
         });
+
         it.skip('can edit a host in the hosts tab list of an inventory', () => {
           //1) Use the inventory created in beforeEach block, navigate to the host tab of that inventory
           //........................(use the host created in beforeEach block)
