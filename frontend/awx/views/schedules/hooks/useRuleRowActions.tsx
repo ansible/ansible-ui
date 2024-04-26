@@ -9,18 +9,21 @@ import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardPro
 
 export function useRuleRowActions(
   rules: RuleListItemType[],
-  setIsOpen: (isOpen: boolean | number) => void
+  setIsOpen?: (isOpen: boolean | number) => void
 ) {
   const { t } = useTranslation();
-  const { setValue, reset, getValues } = useFormContext();
-  const { setStepData, activeStep } = usePageWizard();
-  const isExceptionStep = activeStep && activeStep.id === 'exceptions';
-  const existingRules = getValues('rules') as RuleListItemType[];
+  const context = useFormContext();
+  const wizard = usePageWizard();
   return useMemo<IPageAction<RuleListItemType>[]>(() => {
+    if (!setIsOpen) return [];
+    const isExceptionStep = wizard.activeStep && wizard.activeStep.id === 'exceptions';
+    const existingRules = context.getValues('rules') as RuleListItemType[];
     const deleteRule = (rule: RuleListItemType) => {
       const filteredRules = rules.filter((item) => item.id !== rule.id);
-      isExceptionStep ? setValue('exceptions', filteredRules) : setValue('rules', filteredRules);
-      setStepData((prev) => ({
+      isExceptionStep
+        ? context.setValue('exceptions', filteredRules)
+        : context.setValue('rules', filteredRules);
+      wizard.setStepData((prev) => ({
         ...prev,
         rules: filteredRules,
       }));
@@ -38,10 +41,9 @@ export function useRuleRowActions(
           const rule = rules.find((item) => item.id === r.id);
           if (rule === undefined || !rule.rule) return;
 
-          reset({ ...rule.rule.options, id: rule.id, rules: existingRules || [] });
+          context.reset({ ...rule.rule.options, id: rule.id, rules: existingRules || [] });
         },
       },
-
       { type: PageActionType.Seperator },
       {
         type: PageActionType.Button,
@@ -55,5 +57,5 @@ export function useRuleRowActions(
         isDanger: true,
       },
     ];
-  }, [t, rules, isExceptionStep, setValue, setStepData, setIsOpen, reset, existingRules]);
+  }, [t, rules, context, wizard, setIsOpen]);
 }
