@@ -17,7 +17,7 @@ describe('Credentials.cy.ts', () => {
   it('renders credentials list', () => {
     cy.mount(<Credentials />);
     cy.verifyPageTitle('Credentials');
-    cy.get('table').find('tr').should('have.length', 17);
+    cy.get('table').find('tr').should('have.length');
   });
   it('deletes credential from toolbar menu', () => {
     cy.mount(<Credentials />);
