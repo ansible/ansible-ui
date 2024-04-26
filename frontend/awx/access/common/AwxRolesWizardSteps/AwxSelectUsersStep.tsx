@@ -1,28 +1,28 @@
 import { useTranslation } from 'react-i18next';
-import { useUserFilters } from '../../users/hooks/useUserFilters';
 import { useMemo } from 'react';
-import { EdaUser } from '../../../interfaces/EdaUser';
 import { ITableColumn, TextCell } from '../../../../../framework';
-import { edaAPI } from '../../../common/eda-utils';
-import { useEdaMultiSelectListView } from '../../../common/useEdaMultiSelectListView';
+import { useAwxMultiSelectListView } from '../../../common/useAwxMultiSelectListView';
 import { PageMultiSelectList } from '../../../../../framework/PageTable/PageMultiSelectList';
 import styled from 'styled-components';
 import { Title } from '@patternfly/react-core';
+import { useUsersFilters } from '../../users/hooks/useUsersFilters';
+import { AwxUser } from '../../../interfaces/User';
+import { awxAPI } from '../../../common/api/awx-utils';
 
 const StyledTitle = styled(Title)`
   margin-bottom: 1rem;
 `;
 
-export function EdaSelectUsersStep(props: { descriptionForUsersSelection?: string }) {
-  const toolbarFilters = useUserFilters();
+export function AwxSelectUsersStep(props: { descriptionForUsersSelection?: string }) {
+  const toolbarFilters = useUsersFilters();
   const { t } = useTranslation();
   const { descriptionForUsersSelection } = props;
 
-  const tableColumns: ITableColumn<EdaUser>[] = useMemo(() => {
+  const tableColumns: ITableColumn<AwxUser>[] = useMemo(() => {
     return [
       {
         header: t('Username'),
-        cell: (user: EdaUser) => <TextCell text={user.username} />,
+        cell: (user: AwxUser) => <TextCell text={user.username} />,
         card: 'name',
         list: 'name',
         sort: 'username',
@@ -31,21 +31,21 @@ export function EdaSelectUsersStep(props: { descriptionForUsersSelection?: strin
       {
         header: t('First name'),
         type: 'text',
-        value: (user: EdaUser) => user.first_name,
+        value: (user: AwxUser) => user.first_name,
         sort: 'first_name',
       },
       {
         header: t('Last name'),
         type: 'text',
-        value: (user: EdaUser) => user.last_name,
+        value: (user: AwxUser) => user.last_name,
         sort: 'last_name',
       },
     ];
   }, [t]);
 
-  const view = useEdaMultiSelectListView<EdaUser>(
+  const view = useAwxMultiSelectListView<AwxUser>(
     {
-      url: edaAPI`/users/`,
+      url: awxAPI`/users/`,
       toolbarFilters,
       tableColumns,
     },
