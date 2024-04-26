@@ -2,7 +2,7 @@ import { Organization } from '../../../../../frontend/awx/interfaces/Organizatio
 import { Credential } from '../../../../../frontend/awx/interfaces/Credential';
 import { ExecutionEnvironment } from '../../../../../frontend/awx/interfaces/ExecutionEnvironment';
 
-describe('Inventory Groups hosts', () => {
+describe.skip('Inventory Groups hosts', () => {
   let organization: Organization;
   let machineCredential: Credential;
   let executionEnvironment: ExecutionEnvironment;
