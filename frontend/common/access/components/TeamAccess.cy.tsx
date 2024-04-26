@@ -1,5 +1,5 @@
 import { TeamAccess } from './TeamAccess';
-import { edaAPI } from '../../common/eda-utils';
+import { edaAPI } from '../../../eda/common/eda-utils';
 
 describe('TeamAccess.cy.ts', () => {
   beforeEach(() => {
@@ -40,14 +40,14 @@ describe('TeamAccess.cy.ts', () => {
   });
 
   it('Renders the correct teamAccess columns', () => {
-    cy.mount(<TeamAccess id={'1'} type={'activation'} addRolesRoute="xyz" />);
+    cy.mount(<TeamAccess service="eda" id={'1'} type={'activation'} addRolesRoute="xyz" />);
     cy.get('.pf-v5-c-table__th').should('have.length', 4);
     cy.contains('Team');
     cy.contains('Role');
   });
 
   it('can remove teamAccess', () => {
-    cy.mount(<TeamAccess id={'1'} type={'activation'} addRolesRoute="xyz" />);
+    cy.mount(<TeamAccess service="eda" id={'1'} type={'activation'} addRolesRoute="xyz" />);
     cy.intercept(
       { method: 'DELETE', url: edaAPI`/role_team_assignments/1/` },
       {
@@ -80,7 +80,7 @@ describe('Empty list', () => {
     ).as('emptyList');
   });
   it('Empty state is displayed correctly', () => {
-    cy.mount(<TeamAccess id={'1'} type={'activation'} addRolesRoute="xyz" />);
+    cy.mount(<TeamAccess service="eda" id={'1'} type={'activation'} addRolesRoute="xyz" />);
     cy.contains(/^There are currently no teams assigned to this rulebook activation.$/);
     cy.contains(/^Add a role by clicking the button below.$/);
     cy.contains('a[data-cy="add-roles"]', /^Add roles$/).should('be.visible');

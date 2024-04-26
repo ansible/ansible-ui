@@ -1,13 +1,22 @@
 import { useTranslation } from 'react-i18next';
-import { edaAPI } from '../../common/eda-utils';
 import { UserAssignment } from '../interfaces/UserAssignment';
 import { Access } from './Access';
+import { edaAPI } from '../../../eda/common/eda-utils';
+import { awxAPI } from '../../../awx/common/api/awx-utils';
 
-export function UserAccess(props: { id: string; type: string; addRolesRoute?: string }) {
-  const { id, type, addRolesRoute } = props;
+export function UserAccess(props: {
+  service: 'awx' | 'eda' | 'hub';
+  id: string;
+  type: string;
+  addRolesRoute?: string;
+}) {
+  const { id, type, addRolesRoute, service } = props;
   const { t } = useTranslation();
+  const roleUserAssignmentsURL =
+    service === 'awx' ? awxAPI`/role_user_assignments/` : edaAPI`/role_user_assignments/`;
   return (
     <Access<UserAssignment>
+      service={service}
       tableColumnFunctions={{
         name: {
           function: (userAccess: UserAssignment) => userAccess.summary_fields.user.username,
@@ -30,7 +39,7 @@ export function UserAccess(props: { id: string; type: string; addRolesRoute?: st
         },
       ]}
       toolbarNameColumnFiltersValues={{ label: t('User name'), query: 'user__username' }}
-      url={edaAPI`/role_user_assignments/`}
+      url={roleUserAssignmentsURL}
       id={id}
       content_type_model={type}
       addRolesRoute={addRolesRoute}
