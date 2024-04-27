@@ -89,6 +89,7 @@ function useLabel(status: string | undefined, t: (str: string) => string) {
     unknown: t('Unknown'),
     unreachable: t('Unreachable'),
     waiting: t('Waiting'),
+    'workers offline': t('Workers offline'),
   };
 
   return labels[status] || status;
@@ -132,6 +133,7 @@ function getColor(status: string | undefined) {
     case 'provisioning':
     case 'starting':
     case 'waiting':
+    case 'workers offline':
     default:
       return 'grey';
   }
@@ -160,6 +162,7 @@ function getIcon(status: string | undefined) {
     case 'unavailable':
     case 'unreachable':
     case 'unresponsive':
+    case 'workers offline':
       return ExclamationCircleIcon;
     case 'installed':
     case 'pending':
