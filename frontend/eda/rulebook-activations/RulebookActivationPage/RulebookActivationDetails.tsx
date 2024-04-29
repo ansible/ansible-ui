@@ -164,14 +164,14 @@ export function RulebookActivationDetails() {
           value={rulebookActivation?.modified_at ? rulebookActivation?.modified_at : ''}
         />
       </PageDetails>
-      {rulebookActivation?.extra_var?.id && (
+      {rulebookActivation?.extra_var && (
         <PageDetails disableScroll={true} numberOfColumns={SelectVariant.single}>
           <EdaExtraVarsCell
             label={t('Variables')}
             helpText={t(
               `The variables for the rulebook are in a JSON or YAML format. The content would be equivalent to the file passed through the '--vars' flag of ansible-rulebook command.`
             )}
-            id={rulebookActivation.extra_var.id}
+            text={rulebookActivation.extra_var}
           />
         </PageDetails>
       )}
