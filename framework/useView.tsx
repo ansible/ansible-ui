@@ -84,7 +84,7 @@ export interface ViewOptions {
 }
 
 export type QueryParams = {
-  [key: string]: string;
+  [key: string]: string | string[];
 };
 
 export interface ViewExtendedOptions<T extends object> extends ViewOptions {

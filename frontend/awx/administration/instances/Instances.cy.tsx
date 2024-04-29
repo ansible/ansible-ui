@@ -1,4 +1,5 @@
 import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
+import * as useOptions from '../../../common/crud/useOptions';
 import { Instances } from './Instances';
 
 describe('Instances list', () => {
@@ -157,8 +158,40 @@ describe('Instance Empty list', () => {
     ).as('emptyList');
   });
 
-  it('Empty state is displayed correctly', () => {
+  it('Empty state is displayed correctly for instances with permission', () => {
+    cy.stub(useOptions, 'useOptions').callsFake(() => ({
+      data: {
+        actions: {
+          POST: {
+            name: {
+              type: 'string',
+              required: true,
+              label: 'Name',
+              max_length: 512,
+              help_text: 'Name of this instance.',
+              filterable: true,
+            },
+          },
+        },
+      },
+    }));
     cy.mount(<Instances />);
-    cy.get('[data-cy="empty-state-title"]').should('contain', 'No instances yet');
+    cy.contains(/^There are currently no instances added$/);
+    cy.contains(/^Please create an instance by using the button below.$/);
+    cy.contains('button', /^Create instance$/).should('be.visible');
+  });
+
+  it('Empty state is displayed correctly for user without permission to create instances', () => {
+    cy.stub(useOptions, 'useOptions').callsFake(() => ({
+      data: {
+        actions: {},
+      },
+    }));
+    cy.mount(<Instances />);
+    cy.contains(/^You do not have permission to create an instance.$/);
+    cy.contains(
+      /^Please contact your organization administrator if there is an issue with your access.$/
+    );
+    cy.contains('button', /^Create instance$/).should('not.exist');
   });
 });
