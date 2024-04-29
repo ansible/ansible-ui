@@ -72,7 +72,7 @@ function craftRequestUrl(
   optionsPath: string,
   labelKey: string,
   queryKey: string,
-  queryParams?: Record<string, string>
+  queryParams?: Record<string, string | string[]>
 ) {
   let url = awxAPI`/${optionsPath}/?page_size=20&order_by=${queryKey}`;
   if (queryOptions.next) {
@@ -83,7 +83,13 @@ function craftRequestUrl(
   }
   if (queryParams) {
     Object.entries(queryParams).forEach(([key, value]) => {
-      url += `&${key}=${value}`;
+      if (Array.isArray(value)) {
+        for (const subVal of value) {
+          url += `&${key}=${subVal}`;
+        }
+      } else {
+        url += `&${key}=${value}`;
+      }
     });
   }
   // decode the returned url
@@ -308,7 +314,7 @@ interface AsyncKeyOptions {
   /**
    * Additional query parameters to be used when fetching the options
    */
-  queryParams?: Record<string, string>;
+  queryParams?: Record<string, string | string[]>;
 }
 
 /** A list of known keys that require querying specific endpoints. We pre-fetch these values if available */
