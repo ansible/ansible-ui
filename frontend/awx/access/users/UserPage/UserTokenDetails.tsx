@@ -1,26 +1,41 @@
-import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { PageHeader, PageLayout, PageNotImplemented } from '../../../../../framework';
-import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
-import { AwxRoute } from '../../../main/AwxRoutes';
+import { LoadingPage, PageDetails, PageDetailsFromColumns } from '../../../../../framework';
+import { useGetItem } from '../../../../common/crud/useGet';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { AwxError } from '../../../common/AwxError';
+import { Token } from '../../../interfaces/Token';
+import { AwxUser } from '../../../interfaces/User';
+import { useUserTokensColumns } from '../hooks/useUserTokensColumns';
 
 export function UserTokenDetails() {
-  const { t } = useTranslation();
   const params = useParams<{ id: string; tokenid: string }>();
+  const {
+    error: userError,
+    data: user,
+    refresh: refreshUser,
+  } = useGetItem<AwxUser>(awxAPI`/users`, params.id);
+  const {
+    error: tokenError,
+    data: token,
+    refresh: refreshToken,
+  } = useGetItem<Token>(awxAPI`/tokens`, params.tokenid);
+
+  if (userError) return <AwxError error={userError} handleRefresh={refreshUser} />;
+  if (tokenError) return <AwxError error={tokenError} handleRefresh={refreshToken} />;
+
+  if (!user || !token) return <LoadingPage breadcrumbs tabs />;
+
+  return <UserTokenDetailsInternal token={token} user={user} />;
+}
+
+function UserTokenDetailsInternal(props: { token: Token; user: AwxUser }) {
+  const { token, user } = props;
+
+  const userTokensColumns = useUserTokensColumns(user, { disableLinks: true });
 
   return (
-    <PageLayout>
-      <PageHeader title={t('Details')}></PageHeader>
-      <PageRoutedTabs
-        backTab={{
-          label: t('Back to User Tokens list'),
-          page: AwxRoute.UserTokens,
-          persistentFilterKey: 'user tokens',
-        }}
-        tabs={[]}
-        params={{ id: params.id }}
-      />
-      <PageNotImplemented></PageNotImplemented>
-    </PageLayout>
+    <PageDetails>
+      <PageDetailsFromColumns columns={userTokensColumns} item={token}></PageDetailsFromColumns>
+    </PageDetails>
   );
 }

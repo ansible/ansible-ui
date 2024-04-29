@@ -13,6 +13,7 @@ import { UserTokenDetails } from '../../access/users/UserPage/UserTokenDetails';
 import { Users } from '../../access/users/Users';
 import { AddRolesToUser } from '../../access/users/components/AddRolesToUser';
 import { AwxRoute } from '../AwxRoutes';
+import { UserTokenPage } from '../../access/users/UserPage/UserTokenPage';
 
 export function useAwxUsersRoutes() {
   const { t } = useTranslation();
@@ -75,9 +76,16 @@ export function useAwxUsersRoutes() {
         },
         {
           //TODO This can be split into a UserTokenPage with UserTokenDetails being its child
-          id: AwxRoute.UserTokenDetails,
-          path: ':id/tokens/:tokenid/details',
-          element: <UserTokenDetails />,
+          id: AwxRoute.UserTokenPage,
+          path: ':id/tokens/:tokenid',
+          element: <UserTokenPage />,
+          children: [
+            {
+              id: AwxRoute.UserTokenDetails,
+              path: 'details',
+              element: <UserTokenDetails />,
+            },
+          ],
         },
         {
           path: '',
