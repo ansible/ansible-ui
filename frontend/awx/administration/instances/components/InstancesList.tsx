@@ -36,7 +36,7 @@ export function InstancesList(props: {
       : awxAPI`/instances/`,
     toolbarFilters,
     tableColumns,
-    queryParams: defaultParams,
+    queryParams: instanceGroupId ? defaultParams : {},
   });
 
   const rowActions = useRowActions(view.unselectItemsAndRefresh);
