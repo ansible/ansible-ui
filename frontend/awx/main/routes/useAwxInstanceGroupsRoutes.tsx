@@ -38,15 +38,14 @@ export function useAwxInstanceGroupsRoutes() {
         },
         {
           id: AwxRoute.CreateInstanceGroup,
-          path: 'create',
+          path: 'instance-group/create',
           element: <CreateInstanceGroup />,
         },
         {
           id: AwxRoute.EditInstanceGroup,
-          path: ':id/edit',
+          path: 'instance-group/:id/edit',
           element: <EditInstanceGroup />,
         },
-
         {
           id: AwxRoute.InstanceGroupPage,
           path: ':instanceType/:id/',

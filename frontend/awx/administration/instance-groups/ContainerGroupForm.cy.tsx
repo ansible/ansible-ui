@@ -4,9 +4,16 @@ import { CreateContainerGroup, EditContainerGroup } from './ContainerGroupForm';
 describe('Create Edit Container Group Form', () => {
   describe('Create container group', () => {
     beforeEach(() => {
+      cy.intercept(
+        { method: 'OPTIONS', url: '/api/v2/instance_groups' },
+        {
+          fixture: 'instanceGroupOptions.json',
+        }
+      ).as('options');
+      cy.intercept({ method: 'GET', url: '/api/v2/credentials' }, { fixture: 'credentials.json' });
       cy.intercept('POST', '/api/v2/instance_groups/', {
         statusCode: 201,
-        fixture: 'execution_environment.json',
+        fixture: 'container_group.json',
       }).as('createIG');
     });
     it('should validate required fields on save', () => {
@@ -20,7 +27,10 @@ describe('Create Edit Container Group Form', () => {
         { method: 'GET', url: '/api/v2/credentials/*' },
         { fixture: 'credentials.json' }
       );
-      cy.mount(<CreateContainerGroup />);
+      cy.mount(<CreateContainerGroup />, {
+        path: '/instance_groups/:instanceType/create',
+        initialEntries: [`/instance_groups/container-group/create`],
+      });
       cy.get('[data-cy="name"]').type('Test name');
       cy.get('[data-cy="credential-select"]').type('E2E Credential ARWM');
       cy.getByDataCy('override').click({ force: true });
@@ -45,16 +55,26 @@ describe('Create Edit Container Group Form', () => {
   });
   describe('Edit Container Group', () => {
     beforeEach(() => {
+      cy.intercept(
+        { method: 'OPTIONS', url: '/api/v2/instance_groups' },
+        {
+          fixture: 'instanceGroupOptions.json',
+        }
+      ).as('options');
       cy.intercept('GET', `api/v2/instance_groups/*`, {
         fixture: 'container_group.json',
       });
+      cy.intercept(
+        { method: 'GET', url: '/api/v2/credentials/*' },
+        { fixture: 'credentials.json' }
+      );
       cy.intercept('PATCH', '/api/v2/instance_groups/*', {}).as('editCg');
     });
 
     it('should preload the form with current values', () => {
       cy.mount(<EditContainerGroup />, {
-        path: '/instance-groups/:id/edit',
-        initialEntries: [`/instance-groups/1/edit`],
+        path: '/instance-groups/:instancetype/:id/edit',
+        initialEntries: [`/instance-groups/container-group/1/edit`],
       });
       cy.verifyPageTitle('Edit Container Group');
       cy.get('[data-cy="name"]').should('have.value', 'Test Container Group');
@@ -64,8 +84,8 @@ describe('Create Edit Container Group Form', () => {
 
     it('should pass correct request body after editing ee', () => {
       cy.mount(<EditContainerGroup />, {
-        path: '/instance_groups/:id/edit',
-        initialEntries: [`/instance_groups/1/edit`],
+        path: '/instance_groups/:instanceType/:id/edit',
+        initialEntries: [`/instance_groups/container-group/1/edit`],
       });
       cy.get('[data-cy="name"]').clear();
       cy.get('[data-cy="name"]').type('Test name- edited');

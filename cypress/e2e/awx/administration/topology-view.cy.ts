@@ -66,7 +66,7 @@ describe('Topology view', () => {
           .then((instanceGroups: InstanceGroup[]) => {
             cy.clickLink(`${instanceGroups[0].name}`);
             // TODO Instance groups detail page not yet implemented; check URL for now
-            cy.url().should('contain', `/instance_groups/${instanceGroups[0].id}`);
+            cy.url().should('contain', `/instance_groups/instance-group/${instanceGroups[0].id}`);
           });
       });
   });
@@ -127,13 +127,13 @@ describe('Topology view', () => {
 
   it('should render download icon for instance that has an install bundle', () => {
     /**
-     Only certain node types have install bundles, however creating an instance via the 
-     API requires that a user also manually download the respective install bundle and 
-     SSH into the machine in order to run a few scripts to register the new instance(s) 
-     and update the mesh. 
+     Only certain node types have install bundles, however creating an instance via the
+     API requires that a user also manually download the respective install bundle and
+     SSH into the machine in order to run a few scripts to register the new instance(s)
+     and update the mesh.
      See https://docs.ansible.com/automation-controller/4.4/html/administration/instances.html#add-an-instance.
-     In our current automated test environment this would be complicated to replicate so 
-     a fixture with the requisite field is provided instead. This also means we can skip 
+     In our current automated test environment this would be complicated to replicate so
+     a fixture with the requisite field is provided instead. This also means we can skip
      the resources clean up step.
     */
     cy.intercept({ method: 'GET', url: awxAPI`/instances/1/` }, { fixture: 'instance.json' }).as(

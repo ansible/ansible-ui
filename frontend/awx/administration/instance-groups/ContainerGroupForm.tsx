@@ -20,12 +20,13 @@ import { useParams } from 'react-router-dom';
 import { AwxError } from '../../common/AwxError';
 import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 import { PageFormCredentialSelect } from '../../access/credentials/components/PageFormCredentialSelect';
-import { useFormContext, useWatch } from 'react-hook-form';
+import { useWatch } from 'react-hook-form';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
 import { SummaryFieldCredential } from '../../interfaces/summary-fields/summary-fields';
-import { POD_SPEC_DEFAULT_VALUE } from './constants';
-import { useEffect } from 'react';
 import { PageFormHidden } from '../../../../framework/PageForm/Utils/PageFormHidden';
+import { useOptions } from '../../../common/crud/useOptions';
+import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
+import { jsonToYaml } from '../../../../framework/utils/codeEditorUtils';
 
 type ContainerGroupForm = {
   credential: SummaryFieldCredential | null;
@@ -44,7 +45,13 @@ export function CreateContainerGroup() {
   const getPageUrl = useGetPageUrl();
   const pageNavigate = usePageNavigate();
   const postRequest = usePostRequest<ContainerFormPayload, ContainerGroup>();
+  const { data, error, isLoading } = useOptions<OptionsResponse<ActionsResponse>>(
+    awxAPI`/instance_groups/`
+  );
 
+  const onCancel = () => {
+    pageNavigate(AwxRoute.InstanceGroups);
+  };
   const onSubmit: PageFormSubmitHandler<ContainerGroupForm> = async (data) => {
     const { override, pod_spec_override, credential, ...rest } = data;
     const podSpecForSubmit = override ? pod_spec_override : '';
@@ -54,11 +61,16 @@ export function CreateContainerGroup() {
       pod_spec_override: podSpecForSubmit,
       is_container_group: true,
     });
-    pageNavigate(AwxRoute.ContainerGroupDetails, { params: { id: containerGroup.id } });
+    pageNavigate(AwxRoute.InstanceGroupDetails, {
+      params: { instanceType: 'container-group', id: containerGroup.id },
+    });
   };
-  const onCancel = () => {
-    pageNavigate(AwxRoute.InstanceGroups);
-  };
+  if (isLoading) {
+    return <LoadingPage />;
+  }
+  if (error) {
+    return <AwxError error={error} />;
+  }
   return (
     <PageLayout>
       <PageHeader
@@ -77,7 +89,9 @@ export function CreateContainerGroup() {
           name: '',
           override: false,
           credential: null,
-          pod_spec_override: POD_SPEC_DEFAULT_VALUE,
+          pod_spec_override: jsonToYaml(
+            JSON.stringify(data?.actions?.POST?.pod_spec_override.default)
+          ),
           max_concurrent_jobs: 0,
           max_forks: 0,
         }}
@@ -97,16 +111,22 @@ export function EditContainerGroup() {
   const {
     data: containerGroup,
     isLoading,
-    error,
+    error: igError,
   } = useGetItem<ContainerGroup>(awxAPI`/instance_groups/`, params?.id?.toString());
 
+  const {
+    data,
+    error: optionsError,
+    isLoading: optionsLoading,
+  } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/instance_groups/`);
   const onCancel = () => {
     pageNavigate(AwxRoute.InstanceGroups);
   };
+  const error = igError || optionsError;
   if (error) {
     return <AwxError error={error} />;
   }
-  if (isLoading || !containerGroup) {
+  if (isLoading || !containerGroup || optionsLoading) {
     return <LoadingPage />;
   }
   const onSubmit: PageFormSubmitHandler<ContainerGroupForm> = async (data) => {
@@ -122,7 +142,9 @@ export function EditContainerGroup() {
         is_container_group: true,
       }
     );
-    pageNavigate(AwxRoute.ContainerGroupDetails, { params: { id: updateContainerGroup.id } });
+    pageNavigate(AwxRoute.InstanceGroupDetails, {
+      params: { instanceType: 'container-group', id: updateContainerGroup.id },
+    });
   };
   return (
     <PageLayout>
@@ -142,30 +164,23 @@ export function EditContainerGroup() {
           name: containerGroup.name,
           max_concurrent_jobs: containerGroup.max_concurrent_jobs || 0,
           max_forks: containerGroup.max_forks || 0,
-          pod_spec_override: containerGroup.pod_spec_override || POD_SPEC_DEFAULT_VALUE,
+          pod_spec_override: containerGroup?.pod_spec_override.length
+            ? containerGroup?.pod_spec_override
+            : jsonToYaml(JSON.stringify(data?.actions?.POST.pod_spec_override.default)),
           override: Boolean(containerGroup.pod_spec_override),
         }}
       >
-        <ContainerGroupInputs pod_spec_initialValue={containerGroup.pod_spec_override} />
+        <ContainerGroupInputs />
       </AwxPageForm>
     </PageLayout>
   );
 }
 
-export function ContainerGroupInputs(props: { pod_spec_initialValue?: string }) {
+export function ContainerGroupInputs() {
   const { t } = useTranslation();
-  const { pod_spec_initialValue } = props;
-  const hasOverride = useWatch({ name: 'override' }) as boolean;
-  const { setValue } = useFormContext();
 
-  useEffect(() => {
-    if (!hasOverride) {
-      setValue(
-        'pod_spec_override',
-        pod_spec_initialValue?.trim().length ? pod_spec_initialValue : POD_SPEC_DEFAULT_VALUE
-      );
-    }
-  }, [setValue, hasOverride, pod_spec_initialValue]);
+  const hasOverride = useWatch({ name: 'override' }) as boolean;
+
   return (
     <>
       <PageFormTextInput<ContainerGroupForm>
@@ -181,15 +196,22 @@ export function ContainerGroupInputs(props: { pod_spec_initialValue?: string }) 
         credentialType={17}
         label={t('Credential')}
       />
-
       <PageFormTextInput<ContainerGroupForm>
         name="max_concurrent_jobs"
+        helperText={t(
+          'Maximum number of jobs to run concurrently on this group. Zero means no limit will be enforced.'
+        )}
         type="number"
+        min={0}
         label={t('Max concurrent jobs')}
       />
       <PageFormTextInput<ContainerGroupForm>
         name="max_forks"
+        helperText={t(
+          'Maximum number of forks to allow across all jobs running concurrently on this group. Zero means no limit will be enforced.'
+        )}
         type="number"
+        min={0}
         label={t('Max forks')}
       />
       <PageFormCheckbox<{ override: boolean }> label={t('Cutomize pod spec')} name="override" />
@@ -198,6 +220,9 @@ export function ContainerGroupInputs(props: { pod_spec_initialValue?: string }) 
           <PageFormSection singleColumn>
             <PageFormDataEditor<ContainerGroupForm>
               format="yaml"
+              helperText={t(
+                'Field for passing a custom Kubernetes or OpenShift Pod specification.'
+              )}
               label={t('Pod spec override')}
               name="pod_spec_override"
             />

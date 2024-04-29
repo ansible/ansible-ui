@@ -1,2 +1,0 @@
-export const POD_SPEC_DEFAULT_VALUE =
-  "apiVersion: v1\nkind: Pod\nmetadata:\n  namespace: dev-ui\nspec:\n  serviceAccountName: default\n  automountServiceAccountToken: false\n  containers:\n    - image: quay.io/ansible/awx-ee:latest\n      name: worker\n      args:\n        - ansible-runner\n        - worker\n        - '--private-data-dir=/runner'\n      resources:\n        requests:\n          cpu: 250m\n          memory: 100Mi";
