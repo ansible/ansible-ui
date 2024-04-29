@@ -1,4 +1,4 @@
-import { CopyIcon, PencilAltIcon, RocketIcon, TrashIcon } from '@patternfly/react-icons';
+import { CopyIcon, PencilAltIcon, BellIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -55,7 +55,7 @@ export function useNotifiersRowActions(params: {
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
-        icon: RocketIcon,
+        icon: BellIcon,
         label: t(`Test notifier`),
         isDisabled: (notification) => {
           const found = runningNotifications?.[notification.id];

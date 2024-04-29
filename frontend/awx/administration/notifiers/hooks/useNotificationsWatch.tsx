@@ -5,7 +5,7 @@ import { usePageAlertToaster } from '../../../../../framework';
 import { StatusLabel } from '../../../../common/Status';
 import { useTranslation } from 'react-i18next';
 
-export function useNotificationsWatch(type: 'detail' | 'list') {
+export function useNotificationsWatch() {
   // key:value = notification_template_id:notification_id
   const [runningNotifications, setRunningNotifications] = useState<RunningNotificationsType>({});
   const alertToaster = usePageAlertToaster();
@@ -19,26 +19,31 @@ export function useNotificationsWatch(type: 'detail' | 'list') {
       obj[template_id] = notificationId;
       setRunningNotifications(obj);
     },
-    checkNotifiers: (notificationTemplate: NotificationTemplate) => {
-      // search for notification id
-      const notificationId = runningNotifications[notificationTemplate.id.toString()];
-      const notifications = notificationTemplate.summary_fields?.recent_notifications;
-      const notification = notifications.find(
-        (notification) => notification.id.toString() === notificationId
-      );
+    checkNotifiers: (notificationsTemplate: NotificationTemplate[]) => {
+      if (!notificationsTemplate) {
+        return;
+      }
 
-      if (notification && notification.status !== 'pending') {
-        if (type === 'detail') {
+      const obj = { ...runningNotifications };
+      notificationsTemplate.forEach((notificationTemplate) => {
+        // search for notification id
+        const notificationId = runningNotifications[notificationTemplate.id.toString()];
+        const notifications = notificationTemplate.summary_fields?.recent_notifications;
+        const notification = notifications.find(
+          (notification) => notification.id.toString() === notificationId
+        );
+
+        if (notification && notification.status !== 'pending') {
           alertToaster.addAlert({
             variant: 'info',
             title: t('Notifier (id {{id}}) test result', { id: notificationId }),
             children: <StatusLabel status={notification.status} />,
           });
+
+          delete obj[notificationTemplate.id];
         }
-        const obj = { ...runningNotifications };
-        delete obj[notificationTemplate.id];
-        setRunningNotifications(obj);
-      }
+      });
+      setRunningNotifications(obj);
     },
   };
 }

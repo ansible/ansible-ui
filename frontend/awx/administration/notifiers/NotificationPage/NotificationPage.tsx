@@ -20,8 +20,7 @@ export function NotificationPage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
 
-  const { runningNotifications, onNotifierStartTest, checkNotifiers } =
-    useNotificationsWatch('detail');
+  const { runningNotifications, onNotifierStartTest, checkNotifiers } = useNotificationsWatch();
 
   // set refresh interval to be faster when test is running
   const {
@@ -44,11 +43,11 @@ export function NotificationPage() {
     runningNotifications,
   });
 
-  useEffect( () => {
-    if (notificationTemplate)
-    {
-      checkNotifiers(notificationTemplate);
+  useEffect(() => {
+    if (notificationTemplate) {
+      checkNotifiers([notificationTemplate]);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [notificationTemplate]);
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;

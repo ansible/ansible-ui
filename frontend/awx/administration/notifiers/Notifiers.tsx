@@ -19,8 +19,7 @@ import { useEffect } from 'react';
 
 export function Notifiers() {
   const { t } = useTranslation();
-  const { runningNotifications, onNotifierStartTest, checkNotifiers } =
-    useNotificationsWatch('list');
+  const { runningNotifications, onNotifierStartTest, checkNotifiers } = useNotificationsWatch();
   const toolbarFilters = useNotifiersFilters();
   const tableColumns = useNotifiersColumns({ runningNotifications });
   const view = useAwxView<NotificationTemplate>({
@@ -50,16 +49,12 @@ export function Notifiers() {
     notificationsOptions && notificationsOptions.actions && notificationsOptions.actions['POST']
   );
 
-
-  useEffect( () => {
+  useEffect(() => {
     if (view.pageItems) {
-      view.pageItems.forEach((item) => {
-        checkNotifiers(item);
-      });
+      checkNotifiers(view.pageItems);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [view.pageItems]);
-
-  
 
   return (
     <PageLayout>
