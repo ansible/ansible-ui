@@ -9,14 +9,14 @@ import {
 } from '@patternfly/react-core';
 import {
   AddCircleOIcon,
-  AnsibeTowerIcon,
   CheckCircleIcon,
   ClockIcon,
-  EllipsisHIcon,
   ExclamationCircleIcon,
   MinusCircleIcon,
-  RegionsIcon,
-  ServerIcon,
+  DatabaseIcon,
+  BuilderImageIcon,
+  CubeIcon,
+  DataProcessorIcon,
 } from '@patternfly/react-icons';
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -56,16 +56,16 @@ export const Legend = () => {
             <DescriptionListGroup>
               <DescriptionListTerm>{t('Node types')}</DescriptionListTerm>
               <DescriptionListDescription>
-                <LegendDescription label={t('Control')} icon={<RegionsIcon />} />
+                <LegendDescription label={t('Control')} icon={<DatabaseIcon />} />
               </DescriptionListDescription>
               <DescriptionListDescription>
-                <LegendDescription label={t('Execution')} icon={<AnsibeTowerIcon />} />
+                <LegendDescription label={t('Execution')} icon={<CubeIcon />} />
               </DescriptionListDescription>
               <DescriptionListDescription>
-                <LegendDescription label={t('Hybrid')} icon={<ServerIcon />} />
+                <LegendDescription label={t('Hybrid')} icon={<BuilderImageIcon />} />
               </DescriptionListDescription>
               <DescriptionListDescription>
-                <LegendDescription label={t('Hop')} icon={<EllipsisHIcon />} />
+                <LegendDescription label={t('Hop')} icon={<DataProcessorIcon />} />
               </DescriptionListDescription>
             </DescriptionListGroup>
             <DescriptionListGroup>
