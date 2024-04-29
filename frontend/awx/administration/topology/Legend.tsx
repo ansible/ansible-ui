@@ -13,15 +13,12 @@ import {
   ClockIcon,
   ExclamationCircleIcon,
   MinusCircleIcon,
-  DatabaseIcon,
-  BuilderImageIcon,
-  CubeIcon,
-  DataProcessorIcon,
 } from '@patternfly/react-icons';
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { pfDanger, pfDisabled, pfInfo, pfSuccess } from '../../../../framework';
+import { getNodeIcon } from './components/MeshNode';
 
 const Panel = styled(PFPanel)`
   position: absolute;
@@ -37,6 +34,10 @@ const Panel = styled(PFPanel)`
 
 export const Legend = () => {
   const { t } = useTranslation();
+  const ControlNodeIcon = getNodeIcon('control');
+  const ExecutionNodeIcon = getNodeIcon('execution');
+  const HybridNodeIcon = getNodeIcon('hybrid');
+  const HopNodeIcon = getNodeIcon('hop');
 
   const LegendDescription = (props: { label: string; icon: ReactElement }) => {
     const { label, icon } = props;
@@ -56,16 +57,16 @@ export const Legend = () => {
             <DescriptionListGroup>
               <DescriptionListTerm>{t('Node types')}</DescriptionListTerm>
               <DescriptionListDescription>
-                <LegendDescription label={t('Control')} icon={<DatabaseIcon />} />
+                <LegendDescription label={t('Control')} icon={<ControlNodeIcon />} />
               </DescriptionListDescription>
               <DescriptionListDescription>
-                <LegendDescription label={t('Execution')} icon={<CubeIcon />} />
+                <LegendDescription label={t('Execution')} icon={<ExecutionNodeIcon />} />
               </DescriptionListDescription>
               <DescriptionListDescription>
-                <LegendDescription label={t('Hybrid')} icon={<BuilderImageIcon />} />
+                <LegendDescription label={t('Hybrid')} icon={<HybridNodeIcon />} />
               </DescriptionListDescription>
               <DescriptionListDescription>
-                <LegendDescription label={t('Hop')} icon={<DataProcessorIcon />} />
+                <LegendDescription label={t('Hop')} icon={<HopNodeIcon />} />
               </DescriptionListDescription>
             </DescriptionListGroup>
             <DescriptionListGroup>

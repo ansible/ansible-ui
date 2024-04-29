@@ -41,7 +41,7 @@ function getStatusIcon(nodeType: string) {
   }
 }
 
-function getNodeIcon(nodeType: string) {
+export function getNodeIcon(nodeType: string) {
   switch (nodeType) {
     case 'hybrid':
       return BuilderImageIcon;
