@@ -64,7 +64,7 @@ export function CreateCredential() {
     return <LoadingPage />;
   }
 
-  const credentialTypes: CredentialTypes | undefined = itemsResponse?.reduce(
+  const parsedCredentialTypes: CredentialTypes | undefined = itemsResponse?.reduce(
     (credentialTypesMap, credentialType) => {
       credentialTypesMap[credentialType.id] = credentialType;
       return credentialTypesMap;
@@ -73,7 +73,7 @@ export function CreateCredential() {
   );
 
   const onSubmit: PageFormSubmitHandler<CredentialForm> = async (credential) => {
-    const credentialTypeInputs = credentialTypes?.[credential?.credential_type]?.inputs;
+    const credentialTypeInputs = parsedCredentialTypes?.[credential?.credential_type]?.inputs;
     const pluginInputs: Record<string, string | number> = {};
     const possibleFields = credentialTypeInputs?.fields || [];
     possibleFields.forEach((field) => {
@@ -109,7 +109,7 @@ export function CreateCredential() {
         onSubmit={onSubmit}
         onCancel={() => navigate(-1)}
       >
-        <CredentialInputs />
+        <CredentialInputs isEditMode={false} credentialTypes={parsedCredentialTypes || {}} />
       </AwxPageForm>
     </PageLayout>
   );
@@ -131,7 +131,7 @@ export function EditCredential() {
   const { results: itemsResponse, isLoading: isLoadingCredentialType } =
     useAwxGetAllPages<CredentialType>(awxAPI`/credential_types/`);
 
-  const credentialTypes: CredentialTypes | undefined = itemsResponse?.reduce(
+  const parsedCredentialTypes: CredentialTypes | undefined = itemsResponse?.reduce(
     (credentialTypesMap, credentialType) => {
       credentialTypesMap[credentialType.id] = credentialType;
       return credentialTypesMap;
@@ -162,7 +162,7 @@ export function EditCredential() {
   }
 
   const onSubmit: PageFormSubmitHandler<CredentialForm> = async (editedCredential) => {
-    const credentialTypeInputs = credentialTypes?.[editedCredential?.credential_type]?.inputs;
+    const credentialTypeInputs = parsedCredentialTypes?.[editedCredential?.credential_type]?.inputs;
     // can send only one of org, user, team
     if (!editedCredential.organization) {
       editedCredential.user = activeAwxUser?.id;
@@ -210,37 +210,35 @@ export function EditCredential() {
         onCancel={() => navigate(-1)}
         defaultValue={initialValues}
       >
-        <CredentialInputs isEditMode />
+        <CredentialInputs
+          isEditMode
+          credentialTypes={parsedCredentialTypes || {}}
+          selectedCredentialTypeId={credential?.credential_type}
+        />
       </AwxPageForm>
     </PageLayout>
   );
 }
 
-function CredentialInputs({ isEditMode = false }: { isEditMode?: boolean }) {
+function CredentialInputs({
+  isEditMode = false,
+  selectedCredentialTypeId,
+  credentialTypes,
+}: {
+  isEditMode?: boolean;
+  selectedCredentialTypeId?: number;
+  credentialTypes: CredentialTypes;
+}) {
   const { t } = useTranslation();
 
-  const { results: itemsResponse, isLoading } = useAwxGetAllPages<CredentialType>(
-    awxAPI`/credential_types/`
-  );
-
-  const selectedCredentialTypeId = useWatch<{ credential_type: number }>({
+  const watchedCredentialTypeId = useWatch<{ credential_type: number }>({
     name: 'credential_type',
   });
 
-  if (isLoading && !itemsResponse) {
-    return <LoadingPage />;
-  }
-
-  const credentialTypes: CredentialTypes | undefined = itemsResponse?.reduce(
-    (credentialTypesMap, credentialType) => {
-      credentialTypesMap[credentialType.id] = credentialType;
-      return credentialTypesMap;
-    },
-    {} as CredentialTypes
-  );
+  const credentialTypeID = selectedCredentialTypeId || watchedCredentialTypeId;
 
   const isGalaxyCredential =
-    !!selectedCredentialTypeId && credentialTypes?.[selectedCredentialTypeId]?.kind === 'galaxy';
+    !!credentialTypes && credentialTypes?.[credentialTypeID]?.kind === 'galaxy';
 
   return (
     <>
@@ -267,8 +265,8 @@ function CredentialInputs({ isEditMode = false }: { isEditMode?: boolean }) {
             : undefined
         }
       />
-      {selectedCredentialTypeId && credentialTypes && credentialTypes[selectedCredentialTypeId] ? (
-        <CredentialSubForm credentialType={credentialTypes[selectedCredentialTypeId]} />
+      {credentialTypeID && credentialTypes && credentialTypes[credentialTypeID] ? (
+        <CredentialSubForm credentialType={credentialTypes[credentialTypeID]} />
       ) : null}
     </>
   );
