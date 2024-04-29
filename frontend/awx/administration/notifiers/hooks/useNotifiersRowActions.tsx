@@ -1,4 +1,4 @@
-import { CopyIcon, PencilAltIcon, RocketIcon, TrashIcon } from '@patternfly/react-icons';
+import { CopyIcon, PencilAltIcon, BellIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -19,24 +19,26 @@ import {
 } from '../../../../common/utils/RBAChelpers';
 import { postRequest } from '../../../../common/crud/Data';
 import { awxAPI } from '../../../common/api/awx-utils';
-usePageAlertToaster;
 
-export function useNotifiersRowActions(
-  onComplete: (notification: NotificationTemplate[]) => void,
-  onNotifierCopied = () => null,
-  onNotifierStartTest?: (notificationId: number) => void,
-  detail?: 'detail' | undefined,
-  // sets which notifiers are running, thus test action will be disabled
-  testDisabled?: { id: number }[]
-) {
+export type RunningNotificationsType = { [key: string]: string };
+
+export function useNotifiersRowActions(params: {
+  onComplete?: (notification: NotificationTemplate[]) => void;
+  onNotifierCopied?: () => void;
+  onNotifierStartTest?: (template_id: string, notificationId: string) => void;
+  type?: 'detail' | 'list';
+  runningNotifications?: RunningNotificationsType;
+}) {
+  const { onComplete, onNotifierCopied, onNotifierStartTest, type, runningNotifications } = params;
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
-  const deleteNotifiers = useDeleteNotifiers(onComplete);
-  const copyNotifier = useCopyNotifier(onNotifierCopied);
+  const deleteNotifiers = useDeleteNotifiers(onComplete || (() => {}));
+  const copyNotifier = useCopyNotifier(onNotifierCopied || (() => {}));
   const alertToaster = usePageAlertToaster();
 
   return useMemo<IPageAction<NotificationTemplate>[]>(() => {
     return [
+      // Edit form not yet implemented
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
@@ -53,10 +55,10 @@ export function useNotifiersRowActions(
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
-        icon: RocketIcon,
+        icon: BellIcon,
         label: t(`Test notifier`),
         isDisabled: (notification) => {
-          const found = testDisabled?.find((test) => test.id === notification.id);
+          const found = runningNotifications?.[notification.id];
           return found !== undefined ? t(`Disabled while test is running.`) : undefined;
         },
         onClick: (notification: NotificationTemplate) => {
@@ -66,7 +68,7 @@ export function useNotifiersRowActions(
                 awxAPI`/notification_templates/${notification.id.toString()}/test/`,
                 {}
               );
-              onNotifierStartTest?.(result?.id);
+              onNotifierStartTest?.(notification.id.toString(), result.id.toString());
             } catch (error) {
               alertToaster.addAlert({
                 variant: 'danger',
@@ -88,7 +90,7 @@ export function useNotifiersRowActions(
         isDisabled: (notification) => cannotCopyResource(notification, t),
         isDanger: false,
         isPinned: true,
-        isHidden: () => detail === 'detail',
+        isHidden: () => type === 'detail',
       },
       { type: PageActionType.Seperator },
       {
@@ -105,10 +107,10 @@ export function useNotifiersRowActions(
     pageNavigate,
     copyNotifier,
     deleteNotifiers,
-    detail,
+    type,
     t,
     onNotifierStartTest,
     alertToaster,
-    testDisabled,
+    runningNotifications,
   ]);
 }
