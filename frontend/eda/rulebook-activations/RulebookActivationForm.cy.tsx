@@ -68,6 +68,7 @@ describe('Create rulebook activation ', () => {
     cy.get('[data-cy="organization_id"]').click();
     cy.get('#organization-2 > .pf-v5-c-menu__item-main > .pf-v5-c-menu__item-text').click();
     cy.get('[data-cy="k8s_service_name"]').type('sample');
+    cy.get('.view-lines').type('i: 1');
     cy.clickButton('Create rulebook activation');
 
     cy.intercept('POST', edaAPI`/activations/`, (req) => {
@@ -76,6 +77,7 @@ describe('Create rulebook activation ', () => {
         restart_policy: 'on-failure',
         organization_id: 2,
         decision_environment_id: 3,
+        extra_vars: 'i: 1',
         k8s_service_name: 'sample',
         name: 'Test',
         rulebook_id: 'hello_echo.yml',
