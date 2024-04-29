@@ -14,11 +14,14 @@ import { useOptions } from '../../../common/crud/useOptions';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { AwxRoute } from '../../main/AwxRoutes';
 import { PlusCircleIcon } from '@patternfly/react-icons';
+import { useNotificationsWatch } from './hooks/useNotificationsWatch';
+import { useEffect } from 'react';
 
 export function Notifiers() {
   const { t } = useTranslation();
+  const { runningNotifications, onNotifierStartTest, checkNotifiers } = useNotificationsWatch();
   const toolbarFilters = useNotifiersFilters();
-  const tableColumns = useNotifiersColumns();
+  const tableColumns = useNotifiersColumns({ runningNotifications });
   const view = useAwxView<NotificationTemplate>({
     url: awxAPI`/notification_templates/`,
     toolbarFilters,
@@ -28,7 +31,16 @@ export function Notifiers() {
   const pageNavigate = usePageNavigate();
 
   const toolbarActions = useNotifiersToolbarActions(view.unselectItemsAndRefresh);
-  const rowActions = useNotifiersRowActions(view.unselectItemsAndRefresh);
+
+  const rowActions = useNotifiersRowActions({
+    onComplete: view.unselectItemsAndRefresh,
+    onNotifierCopied: () => {
+      void view.refresh();
+    },
+    onNotifierStartTest,
+    type: 'list',
+    runningNotifications,
+  });
 
   const notificationsOptions = useOptions<OptionsResponse<ActionsResponse>>(
     awxAPI`/notification_templates/`
@@ -36,6 +48,13 @@ export function Notifiers() {
   const canAddNotificationTemplate = Boolean(
     notificationsOptions && notificationsOptions.actions && notificationsOptions.actions['POST']
   );
+
+  useEffect(() => {
+    if (view.pageItems) {
+      checkNotifiers(view.pageItems);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [view.pageItems]);
 
   return (
     <PageLayout>

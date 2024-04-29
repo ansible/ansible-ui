@@ -6,12 +6,14 @@ import { StatusCell } from '../../../../common/Status';
 import { useOrganizationNameColumn } from '../../../../common/columns';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useGetPageUrl } from '../../../../../framework';
+import { RunningNotificationsType } from './useNotifiersRowActions';
 
-export function useNotifiersColumns() {
+export function useNotifiersColumns(params?: { runningNotifications?: RunningNotificationsType }) {
   const { t } = useTranslation();
 
   const organizationColumn = useOrganizationNameColumn(AwxRoute.OrganizationDetails);
   const getPageUrl = useGetPageUrl();
+  const runningNotifications = params?.runningNotifications;
 
   const tableColumns = useMemo<ITableColumn<NotificationTemplate>[]>(
     () => [
@@ -34,16 +36,21 @@ export function useNotifiersColumns() {
       },
       {
         header: t('Status'),
-        cell: (template: NotificationTemplate) => (
-          <StatusCell
-            status={
-              template.summary_fields?.recent_notifications &&
-              template.summary_fields.recent_notifications.length > 0
-                ? template.summary_fields?.recent_notifications[0].status
-                : undefined
-            }
-          />
-        ),
+        cell: (template: NotificationTemplate) => {
+          if (runningNotifications && runningNotifications[template.id]) {
+            return <StatusCell status={'running'}></StatusCell>;
+          }
+          return (
+            <StatusCell
+              status={
+                template.summary_fields?.recent_notifications &&
+                template.summary_fields.recent_notifications.length > 0
+                  ? template.summary_fields?.recent_notifications[0].status
+                  : undefined
+              }
+            />
+          );
+        },
       },
       {
         header: t('Type'),
@@ -52,7 +59,7 @@ export function useNotifiersColumns() {
       },
       organizationColumn,
     ],
-    [t, organizationColumn, getPageUrl]
+    [t, organizationColumn, getPageUrl, runningNotifications]
   );
   return tableColumns;
 }
