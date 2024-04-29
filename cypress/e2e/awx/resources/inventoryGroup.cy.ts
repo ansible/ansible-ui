@@ -93,6 +93,7 @@ describe('Inventory Groups', () => {
         //1) Use the inventory created in beforeEach block, access the groups tab of that inventory
         cy.navigateTo('awx', 'inventories');
         cy.filterTableBySingleSelect('name', inventory.name);
+        cy.wait(2000);
         cy.clickTableRowLink('name', inventory.name, { disableFilter: true });
         cy.verifyPageTitle(inventory.name);
         cy.clickLink(/^Groups$/);
