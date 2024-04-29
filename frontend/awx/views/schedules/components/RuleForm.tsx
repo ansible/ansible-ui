@@ -212,7 +212,7 @@ export function RuleForm(props: {
         />
         <PageFormMultiSelect<RuleFields>
           name={`bymonthday`}
-          placeholder={t('Select days of the month on which to run the schedule')}
+          placeholder={t('Select months of the year on which to run the schedule')}
           options={DAYS_OF_MONTH}
           label={t('Monthly day(s) number')}
           labelHelp={t(
