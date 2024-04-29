@@ -91,7 +91,6 @@ export function CreateRulebookActivation() {
           restart_policy: RestartPolicyEnum.OnFailure,
           log_level: LogLevelEnum.Error,
           is_enabled: true,
-          extra_var: '',
         }}
       >
         <RulebookActivationInputs />
