@@ -4,6 +4,7 @@ import { ITableColumn, TextCell, useGetPageUrl } from '../../../../../framework'
 import { AwxUser } from '../../../interfaces/User';
 import { Token } from '../../../interfaces/Token';
 import { AwxRoute } from '../../../main/AwxRoutes';
+import { useCreatedColumn, useModifiedColumn } from '../../../../common/columns';
 
 export function useUserTokensColumns(
   user: AwxUser,
@@ -13,6 +14,8 @@ export function useUserTokensColumns(
 ) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
+  const createdColumn = useCreatedColumn();
+  const modifiedColumn = useModifiedColumn();
 
   return useMemo<ITableColumn<Token>[]>(
     () => [
@@ -57,18 +60,8 @@ export function useUserTokensColumns(
         value: (token) => token.expires,
         sort: 'expires',
       },
-      {
-        header: t('Created'),
-        type: 'datetime',
-        value: (token) => token.created,
-        sort: 'created',
-      },
-      {
-        header: t('Modified'),
-        type: 'datetime',
-        value: (token) => token.modified,
-        sort: 'modified',
-      },
+      createdColumn,
+      modifiedColumn,
     ],
     [getPageUrl, options?.disableLinks, t, user.id]
   );
