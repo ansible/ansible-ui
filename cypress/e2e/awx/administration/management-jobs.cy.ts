@@ -1,7 +1,6 @@
 import { SystemJobTemplate } from '../../../../frontend/awx/interfaces/SystemJobTemplate';
 
 describe('Management Jobs', () => {
-  it.skip('', () => {});
   describe('Management Jobs: List View', () => {
     it('render the management jobs list page, assert the management jobs listed', () => {
       const managementJobsList = [
