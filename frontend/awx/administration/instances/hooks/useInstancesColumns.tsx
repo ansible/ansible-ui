@@ -68,6 +68,7 @@ export function useInstancesColumns(
           <StatusCell status={instance.health_check_pending ? 'running' : instance.node_state} />
         ),
         sort: 'errors',
+        modal: 'hidden',
       },
       {
         cell: makeReadable,
@@ -112,6 +113,7 @@ export function useInstancesColumns(
             <Unavailable>{t(`Unavailable`)}</Unavailable>
           ),
         list: 'secondary',
+        modal: 'hidden',
       },
       {
         header: t('Running jobs'),
