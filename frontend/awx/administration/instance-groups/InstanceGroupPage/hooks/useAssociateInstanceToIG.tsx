@@ -31,7 +31,7 @@ export function useAssociateInstanceToIG(
           signal
         );
       },
-      processingText: t('Adding host to group...', { count: instances.length }),
+      processingText: t('Adding host to group', { count: instances.length }),
     });
   };
   return associateInstanceToIG;
