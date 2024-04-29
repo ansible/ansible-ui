@@ -33,6 +33,7 @@ export interface Job
   id: number;
   type: string;
   summary_fields: JobSummaryFields;
+  module_args?: string;
   related: {
     created_by?: string;
     labels?: string;
