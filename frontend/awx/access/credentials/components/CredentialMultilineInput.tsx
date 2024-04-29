@@ -1,7 +1,7 @@
+import { Button } from '@patternfly/react-core';
 import { KeyIcon } from '@patternfly/react-icons';
 import { PageFormFileUpload } from '../../../../../framework/PageForm/Inputs/PageFormFileUpload';
 import { CredentialInputField, CredentialType } from '../../../interfaces/CredentialType';
-import { Button } from '@patternfly/react-core';
 
 export function CredentialMultilineInput({
   field,
@@ -19,7 +19,7 @@ export function CredentialMultilineInput({
         key={field.id}
         type="text"
         label={field.label}
-        name={`inputs.${field.id}`}
+        name={`${field.id}`}
         labelHelpTitle={field.label}
         labelHelp={field.help_text}
         isRequired={requiredFields.includes(field.id)}
