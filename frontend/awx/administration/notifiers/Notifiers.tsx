@@ -15,6 +15,7 @@ import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsRespon
 import { AwxRoute } from '../../main/AwxRoutes';
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import { useNotificationsWatch } from './hooks/useNotificationsWatch';
+import { useEffect } from 'react';
 
 export function Notifiers() {
   const { t } = useTranslation();
@@ -49,11 +50,16 @@ export function Notifiers() {
     notificationsOptions && notificationsOptions.actions && notificationsOptions.actions['POST']
   );
 
-  if (view.pageItems) {
-    view.pageItems.forEach((item) => {
-      checkNotifiers(item);
-    });
-  }
+
+  useEffect( () => {
+    if (view.pageItems) {
+      view.pageItems.forEach((item) => {
+        checkNotifiers(item);
+      });
+    }
+  }, [view.pageItems]);
+
+  
 
   return (
     <PageLayout>

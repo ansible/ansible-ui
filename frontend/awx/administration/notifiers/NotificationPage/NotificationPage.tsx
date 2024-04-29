@@ -14,6 +14,7 @@ import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { PageActions } from '../../../../../framework';
 import { usePageNavigate } from '../../../../../framework';
 import { useNotificationsWatch } from '../hooks/useNotificationsWatch';
+import { useEffect } from 'react';
 
 export function NotificationPage() {
   const { t } = useTranslation();
@@ -43,13 +44,18 @@ export function NotificationPage() {
     runningNotifications,
   });
 
+  useEffect( () => {
+    if (notificationTemplate)
+    {
+      checkNotifiers(notificationTemplate);
+    }
+  }, [notificationTemplate]);
+
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!notificationTemplate) return <LoadingPage breadcrumbs tabs />;
 
   // search for notification id
   const notificationId = runningNotifications[notificationTemplate.id.toString()];
-
-  checkNotifiers(notificationTemplate);
 
   return (
     <PageLayout>
