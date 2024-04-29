@@ -63,6 +63,6 @@ export function useUserTokensColumns(
       createdColumn,
       modifiedColumn,
     ],
-    [getPageUrl, options?.disableLinks, t, user.id]
+    [createdColumn, getPageUrl, modifiedColumn, options?.disableLinks, t, user.id]
   );
 }
