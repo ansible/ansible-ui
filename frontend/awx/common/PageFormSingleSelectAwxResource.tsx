@@ -47,7 +47,13 @@ export function PageFormSingleSelectAwxResource<
         urlSearchParams.set('order_by', 'name');
         if (props.queryParams) {
           for (const [key, value] of Object.entries(props.queryParams)) {
-            urlSearchParams.set(key, value);
+            if (Array.isArray(value)) {
+              for (const subVal of value) {
+                urlSearchParams.set(key, subVal);
+              }
+            } else {
+              urlSearchParams.set(key, value);
+            }
           }
         }
         if (options.next) urlSearchParams.set('name__gt', options.next.toString());
