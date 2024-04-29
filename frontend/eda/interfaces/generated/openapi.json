@@ -1798,154 +1798,6 @@
         }
       }
     },
-    "/extra-vars/": {
-      "get": {
-        "operationId": "extra_vars_list",
-        "description": "List all extra_vars",
-        "parameters": [
-          {
-            "name": "page",
-            "required": false,
-            "in": "query",
-            "description": "A page number within the paginated result set.",
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "name": "page_size",
-            "required": false,
-            "in": "query",
-            "description": "Number of results to return per page.",
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "tags": ["extra-vars"],
-        "security": [
-          {
-            "cookieAuth": []
-          },
-          {
-            "basicAuth": []
-          },
-          {
-            "jwtAuth": []
-          },
-          {
-            "EDAJWTAuthentication": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PaginatedExtraVarList"
-                }
-              }
-            },
-            "description": "Return a list of extra_vars."
-          }
-        }
-      },
-      "post": {
-        "operationId": "extra_vars_create",
-        "description": "Create an extra_var",
-        "tags": ["extra-vars"],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ExtraVarCreate"
-              }
-            },
-            "application/x-www-form-urlencoded": {
-              "schema": {
-                "$ref": "#/components/schemas/ExtraVarCreate"
-              }
-            },
-            "multipart/form-data": {
-              "schema": {
-                "$ref": "#/components/schemas/ExtraVarCreate"
-              }
-            }
-          },
-          "required": true
-        },
-        "security": [
-          {
-            "cookieAuth": []
-          },
-          {
-            "basicAuth": []
-          },
-          {
-            "jwtAuth": []
-          },
-          {
-            "EDAJWTAuthentication": []
-          }
-        ],
-        "responses": {
-          "201": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ExtraVar"
-                }
-              }
-            },
-            "description": "Return the created extra_var."
-          }
-        }
-      }
-    },
-    "/extra-vars/{id}/": {
-      "get": {
-        "operationId": "extra_vars_retrieve",
-        "description": "Get the extra_var by its id",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "id",
-            "schema": {
-              "type": "integer"
-            },
-            "description": "A unique integer value identifying this extra var.",
-            "required": true
-          }
-        ],
-        "tags": ["extra-vars"],
-        "security": [
-          {
-            "cookieAuth": []
-          },
-          {
-            "basicAuth": []
-          },
-          {
-            "jwtAuth": []
-          },
-          {
-            "EDAJWTAuthentication": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ExtraVar"
-                }
-              }
-            },
-            "description": "Return the extra_var by its id."
-          }
-        }
-      }
-    },
     "/organizations/": {
       "get": {
         "operationId": "organizations_list",
@@ -1984,6 +1836,14 @@
             "schema": {
               "type": "integer"
             }
+          },
+          {
+            "in": "query",
+            "name": "resource__ansible_id",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by resource ansible ID."
           }
         ],
         "tags": ["organizations"],
@@ -2255,6 +2115,14 @@
             "schema": {
               "type": "integer"
             }
+          },
+          {
+            "in": "query",
+            "name": "resource__ansible_id",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by resource ansible ID."
           }
         ],
         "tags": ["organizations"],
@@ -4320,6 +4188,14 @@
             "schema": {
               "type": "integer"
             }
+          },
+          {
+            "in": "query",
+            "name": "resource__ansible_id",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by resource ansible ID."
           }
         ],
         "tags": ["teams"],
@@ -4571,6 +4447,14 @@
             "schema": {
               "type": "integer"
             }
+          },
+          {
+            "in": "query",
+            "name": "resource__ansible_id",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by resource ansible ID."
           },
           {
             "in": "query",
@@ -5091,8 +4975,8 @@
           "rulebook_id": {
             "type": "integer"
           },
-          "extra_var_id": {
-            "type": "integer",
+          "extra_var": {
+            "type": "string",
             "nullable": true
           },
           "organization_id": {
@@ -5176,6 +5060,11 @@
             "format": "date-time",
             "readOnly": true,
             "nullable": true
+          },
+          "queue_name": {
+            "type": "string",
+            "readOnly": true,
+            "nullable": true
           }
         },
         "required": [
@@ -5184,6 +5073,7 @@
           "event_stream_id",
           "id",
           "organization_id",
+          "queue_name",
           "started_at"
         ]
       },
@@ -5235,6 +5125,10 @@
           "status": {
             "$ref": "#/components/schemas/StatusEnum"
           },
+          "extra_var": {
+            "type": "string",
+            "nullable": true
+          },
           "decision_environment_id": {
             "type": "integer",
             "nullable": true,
@@ -5246,11 +5140,6 @@
             "readOnly": true
           },
           "rulebook_id": {
-            "type": "integer",
-            "nullable": true,
-            "readOnly": true
-          },
-          "extra_var_id": {
             "type": "integer",
             "nullable": true,
             "readOnly": true
@@ -5328,7 +5217,6 @@
           "awx_token_id",
           "created_at",
           "decision_environment_id",
-          "extra_var_id",
           "id",
           "modified_at",
           "name",
@@ -5388,11 +5276,7 @@
             "nullable": true
           },
           "extra_var": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/ExtraVarRef"
-              }
-            ],
+            "type": "string",
             "nullable": true
           },
           "organization": {
@@ -5754,7 +5638,6 @@
           "eda.credentialtype",
           "eda.decisionenvironment",
           "eda.edacredential",
-          "eda.extravar",
           "eda.project",
           "eda.rulebook",
           "eda.rulebookprocess",
@@ -5762,7 +5645,7 @@
           "shared.team"
         ],
         "type": "string",
-        "description": "* `eda.activation` - Activation\n* `eda.auditrule` - Audit Rule\n* `eda.credentialtype` - Credential Type\n* `eda.decisionenvironment` - Decision Environment\n* `eda.edacredential` - Eda Credential\n* `eda.extravar` - Extra Var\n* `eda.project` - Project\n* `eda.rulebook` - Rulebook\n* `eda.rulebookprocess` - Rulebook Process\n* `shared.organization` - Organization\n* `shared.team` - Team"
+        "description": "* `eda.activation` - Activation\n* `eda.auditrule` - Audit Rule\n* `eda.credentialtype` - Credential Type\n* `eda.decisionenvironment` - Decision Environment\n* `eda.edacredential` - Eda Credential\n* `eda.project` - Project\n* `eda.rulebook` - Rulebook\n* `eda.rulebookprocess` - Rulebook Process\n* `shared.organization` - Organization\n* `shared.team` - Team"
       },
       "CredentialType": {
         "type": "object",
@@ -6149,50 +6032,6 @@
           }
         },
         "required": ["id", "name"]
-      },
-      "ExtraVar": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "readOnly": true
-          },
-          "extra_var": {
-            "type": "string",
-            "description": "Content of the extra_var"
-          },
-          "organization_id": {
-            "type": "integer",
-            "nullable": true,
-            "readOnly": true
-          }
-        },
-        "required": ["extra_var", "id", "organization_id"]
-      },
-      "ExtraVarCreate": {
-        "type": "object",
-        "properties": {
-          "extra_var": {
-            "type": "string",
-            "description": "Content of the extra_var"
-          },
-          "organization_id": {
-            "type": "integer",
-            "nullable": true
-          }
-        },
-        "required": ["extra_var"]
-      },
-      "ExtraVarRef": {
-        "type": "object",
-        "description": "Serializer for Extra Var reference.",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "readOnly": true
-          }
-        },
-        "required": ["id"]
       },
       "ImportStateEnum": {
         "enum": ["pending", "running", "failed", "completed"],
@@ -6671,43 +6510,6 @@
           }
         }
       },
-      "PaginatedExtraVarList": {
-        "type": "object",
-        "properties": {
-          "count": {
-            "type": "integer",
-            "example": 123
-          },
-          "next": {
-            "type": "string",
-            "nullable": true,
-            "format": "uri",
-            "example": "/eda/api/v1/example/?page=51&page_size=100"
-          },
-          "previous": {
-            "type": "string",
-            "nullable": true,
-            "format": "uri",
-            "example": "/eda/api/v1/example/?page=49&page_size=100"
-          },
-          "page_size": {
-            "type": "integer",
-            "nullable": true,
-            "example": 100
-          },
-          "page": {
-            "type": "integer",
-            "nullable": true,
-            "example": 50
-          },
-          "results": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ExtraVar"
-            }
-          }
-        }
-      },
       "PaginatedOrganizationList": {
         "type": "object",
         "properties": {
@@ -6784,6 +6586,7 @@
       },
       "PaginatedResourceListList": {
         "type": "object",
+        "required": ["count", "results"],
         "properties": {
           "count": {
             "type": "integer",
@@ -6811,6 +6614,7 @@
       },
       "PaginatedResourceTypeList": {
         "type": "object",
+        "required": ["count", "results"],
         "properties": {
           "count": {
             "type": "integer",
@@ -7279,7 +7083,7 @@
           },
           "content_type": {
             "nullable": true,
-            "description": "The type of resource this applies to\n\n* `eda.activation` - Activation\n* `eda.auditrule` - Audit Rule\n* `eda.credentialtype` - Credential Type\n* `eda.decisionenvironment` - Decision Environment\n* `eda.edacredential` - Eda Credential\n* `eda.extravar` - Extra Var\n* `eda.project` - Project\n* `eda.rulebook` - Rulebook\n* `eda.rulebookprocess` - Rulebook Process\n* `shared.organization` - Organization\n* `shared.team` - Team",
+            "description": "The type of resource this applies to\n\n* `eda.activation` - Activation\n* `eda.auditrule` - Audit Rule\n* `eda.credentialtype` - Credential Type\n* `eda.decisionenvironment` - Decision Environment\n* `eda.edacredential` - Eda Credential\n* `eda.project` - Project\n* `eda.rulebook` - Rulebook\n* `eda.rulebookprocess` - Rulebook Process\n* `shared.organization` - Organization\n* `shared.team` - Team",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/ContentTypeEnum"
@@ -7377,7 +7181,6 @@
           "eda.add_credentialtype",
           "eda.add_decisionenvironment",
           "eda.add_edacredential",
-          "eda.add_extravar",
           "eda.add_project",
           "eda.add_team",
           "eda.change_credentialtype",
@@ -7403,7 +7206,6 @@
           "eda.view_credentialtype",
           "eda.view_decisionenvironment",
           "eda.view_edacredential",
-          "eda.view_extravar",
           "eda.view_organization",
           "eda.view_project",
           "eda.view_rulebook",
@@ -7411,7 +7213,7 @@
           "eda.view_team"
         ],
         "type": "string",
-        "description": "* `eda.add_activation` - eda.add_activation\n* `eda.add_credentialtype` - eda.add_credentialtype\n* `eda.add_decisionenvironment` - eda.add_decisionenvironment\n* `eda.add_edacredential` - eda.add_edacredential\n* `eda.add_extravar` - eda.add_extravar\n* `eda.add_project` - eda.add_project\n* `eda.add_team` - eda.add_team\n* `eda.change_credentialtype` - eda.change_credentialtype\n* `eda.change_decisionenvironment` - eda.change_decisionenvironment\n* `eda.change_edacredential` - eda.change_edacredential\n* `eda.change_organization` - eda.change_organization\n* `eda.change_project` - eda.change_project\n* `eda.change_team` - eda.change_team\n* `eda.delete_activation` - eda.delete_activation\n* `eda.delete_credentialtype` - eda.delete_credentialtype\n* `eda.delete_decisionenvironment` - eda.delete_decisionenvironment\n* `eda.delete_edacredential` - eda.delete_edacredential\n* `eda.delete_organization` - eda.delete_organization\n* `eda.delete_project` - eda.delete_project\n* `eda.delete_team` - eda.delete_team\n* `eda.disable_activation` - eda.disable_activation\n* `eda.enable_activation` - eda.enable_activation\n* `eda.member_organization` - eda.member_organization\n* `eda.member_team` - eda.member_team\n* `eda.restart_activation` - eda.restart_activation\n* `eda.view_activation` - eda.view_activation\n* `eda.view_auditrule` - eda.view_auditrule\n* `eda.view_credentialtype` - eda.view_credentialtype\n* `eda.view_decisionenvironment` - eda.view_decisionenvironment\n* `eda.view_edacredential` - eda.view_edacredential\n* `eda.view_extravar` - eda.view_extravar\n* `eda.view_organization` - eda.view_organization\n* `eda.view_project` - eda.view_project\n* `eda.view_rulebook` - eda.view_rulebook\n* `eda.view_rulebookprocess` - eda.view_rulebookprocess\n* `eda.view_team` - eda.view_team"
+        "description": "* `eda.add_activation` - eda.add_activation\n* `eda.add_credentialtype` - eda.add_credentialtype\n* `eda.add_decisionenvironment` - eda.add_decisionenvironment\n* `eda.add_edacredential` - eda.add_edacredential\n* `eda.add_project` - eda.add_project\n* `eda.add_team` - eda.add_team\n* `eda.change_credentialtype` - eda.change_credentialtype\n* `eda.change_decisionenvironment` - eda.change_decisionenvironment\n* `eda.change_edacredential` - eda.change_edacredential\n* `eda.change_organization` - eda.change_organization\n* `eda.change_project` - eda.change_project\n* `eda.change_team` - eda.change_team\n* `eda.delete_activation` - eda.delete_activation\n* `eda.delete_credentialtype` - eda.delete_credentialtype\n* `eda.delete_decisionenvironment` - eda.delete_decisionenvironment\n* `eda.delete_edacredential` - eda.delete_edacredential\n* `eda.delete_organization` - eda.delete_organization\n* `eda.delete_project` - eda.delete_project\n* `eda.delete_team` - eda.delete_team\n* `eda.disable_activation` - eda.disable_activation\n* `eda.enable_activation` - eda.enable_activation\n* `eda.member_organization` - eda.member_organization\n* `eda.member_team` - eda.member_team\n* `eda.restart_activation` - eda.restart_activation\n* `eda.view_activation` - eda.view_activation\n* `eda.view_auditrule` - eda.view_auditrule\n* `eda.view_credentialtype` - eda.view_credentialtype\n* `eda.view_decisionenvironment` - eda.view_decisionenvironment\n* `eda.view_edacredential` - eda.view_edacredential\n* `eda.view_organization` - eda.view_organization\n* `eda.view_project` - eda.view_project\n* `eda.view_rulebook` - eda.view_rulebook\n* `eda.view_rulebookprocess` - eda.view_rulebookprocess\n* `eda.view_team` - eda.view_team"
       },
       "Project": {
         "type": "object",
@@ -7822,7 +7624,7 @@
           },
           "content_type": {
             "nullable": true,
-            "description": "The type of resource this applies to\n\n* `eda.activation` - Activation\n* `eda.auditrule` - Audit Rule\n* `eda.credentialtype` - Credential Type\n* `eda.decisionenvironment` - Decision Environment\n* `eda.edacredential` - Eda Credential\n* `eda.extravar` - Extra Var\n* `eda.project` - Project\n* `eda.rulebook` - Rulebook\n* `eda.rulebookprocess` - Rulebook Process\n* `shared.organization` - Organization\n* `shared.team` - Team",
+            "description": "The type of resource this applies to\n\n* `eda.activation` - Activation\n* `eda.auditrule` - Audit Rule\n* `eda.credentialtype` - Credential Type\n* `eda.decisionenvironment` - Decision Environment\n* `eda.edacredential` - Eda Credential\n* `eda.project` - Project\n* `eda.rulebook` - Rulebook\n* `eda.rulebookprocess` - Rulebook Process\n* `shared.organization` - Organization\n* `shared.team` - Team",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/ContentTypeEnum"
@@ -7892,7 +7694,7 @@
           },
           "content_type": {
             "nullable": true,
-            "description": "The type of resource this applies to\n\n* `eda.activation` - Activation\n* `eda.auditrule` - Audit Rule\n* `eda.credentialtype` - Credential Type\n* `eda.decisionenvironment` - Decision Environment\n* `eda.edacredential` - Eda Credential\n* `eda.extravar` - Extra Var\n* `eda.project` - Project\n* `eda.rulebook` - Rulebook\n* `eda.rulebookprocess` - Rulebook Process\n* `shared.organization` - Organization\n* `shared.team` - Team",
+            "description": "The type of resource this applies to\n\n* `eda.activation` - Activation\n* `eda.auditrule` - Audit Rule\n* `eda.credentialtype` - Credential Type\n* `eda.decisionenvironment` - Decision Environment\n* `eda.edacredential` - Eda Credential\n* `eda.project` - Project\n* `eda.rulebook` - Rulebook\n* `eda.rulebookprocess` - Rulebook Process\n* `shared.organization` - Organization\n* `shared.team` - Team",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/ContentTypeEnum"
@@ -7950,7 +7752,7 @@
               }
             ],
             "readOnly": true,
-            "description": "The type of resource this applies to\n\n* `eda.activation` - Activation\n* `eda.auditrule` - Audit Rule\n* `eda.credentialtype` - Credential Type\n* `eda.decisionenvironment` - Decision Environment\n* `eda.edacredential` - Eda Credential\n* `eda.extravar` - Extra Var\n* `eda.project` - Project\n* `eda.rulebook` - Rulebook\n* `eda.rulebookprocess` - Rulebook Process\n* `shared.organization` - Organization\n* `shared.team` - Team"
+            "description": "The type of resource this applies to\n\n* `eda.activation` - Activation\n* `eda.auditrule` - Audit Rule\n* `eda.credentialtype` - Credential Type\n* `eda.decisionenvironment` - Decision Environment\n* `eda.edacredential` - Eda Credential\n* `eda.project` - Project\n* `eda.rulebook` - Rulebook\n* `eda.rulebookprocess` - Rulebook Process\n* `shared.organization` - Organization\n* `shared.team` - Team"
           },
           "modified": {
             "type": "string",
@@ -8047,7 +7849,7 @@
               }
             ],
             "readOnly": true,
-            "description": "The type of resource this applies to\n\n* `eda.activation` - Activation\n* `eda.auditrule` - Audit Rule\n* `eda.credentialtype` - Credential Type\n* `eda.decisionenvironment` - Decision Environment\n* `eda.edacredential` - Eda Credential\n* `eda.extravar` - Extra Var\n* `eda.project` - Project\n* `eda.rulebook` - Rulebook\n* `eda.rulebookprocess` - Rulebook Process\n* `shared.organization` - Organization\n* `shared.team` - Team"
+            "description": "The type of resource this applies to\n\n* `eda.activation` - Activation\n* `eda.auditrule` - Audit Rule\n* `eda.credentialtype` - Credential Type\n* `eda.decisionenvironment` - Decision Environment\n* `eda.edacredential` - Eda Credential\n* `eda.project` - Project\n* `eda.rulebook` - Rulebook\n* `eda.rulebookprocess` - Rulebook Process\n* `shared.organization` - Organization\n* `shared.team` - Team"
           },
           "object_id": {
             "type": "string",
@@ -8156,7 +7958,7 @@
               }
             ],
             "readOnly": true,
-            "description": "The type of resource this applies to\n\n* `eda.activation` - Activation\n* `eda.auditrule` - Audit Rule\n* `eda.credentialtype` - Credential Type\n* `eda.decisionenvironment` - Decision Environment\n* `eda.edacredential` - Eda Credential\n* `eda.extravar` - Extra Var\n* `eda.project` - Project\n* `eda.rulebook` - Rulebook\n* `eda.rulebookprocess` - Rulebook Process\n* `shared.organization` - Organization\n* `shared.team` - Team"
+            "description": "The type of resource this applies to\n\n* `eda.activation` - Activation\n* `eda.auditrule` - Audit Rule\n* `eda.credentialtype` - Credential Type\n* `eda.decisionenvironment` - Decision Environment\n* `eda.edacredential` - Eda Credential\n* `eda.project` - Project\n* `eda.rulebook` - Rulebook\n* `eda.rulebookprocess` - Rulebook Process\n* `shared.organization` - Organization\n* `shared.team` - Team"
           },
           "object_id": {
             "type": "string",
@@ -8379,10 +8181,11 @@
             "description": "The team description."
           },
           "organization_id": {
-            "type": "integer"
+            "type": "integer",
+            "nullable": true
           }
         },
-        "required": ["name", "organization_id"]
+        "required": ["name"]
       },
       "TeamDetail": {
         "type": "object",

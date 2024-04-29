@@ -16,7 +16,7 @@ export interface ActivationCreate {
   is_enabled?: boolean;
   decision_environment_id: number;
   rulebook_id: number;
-  extra_var_id?: number | null;
+  extra_var?: string | null;
   organization_id?: number | null;
   /**
    * * `always` - always
@@ -63,6 +63,7 @@ export interface ActivationInstance {
   started_at: string;
   /** @format date-time */
   ended_at: string | null;
+  queue_name: string | null;
 }
 
 /** Serializer for the Activation Instance Log model. */
@@ -103,10 +104,10 @@ export interface ActivationList {
    * * `workers offline` - workers offline
    */
   status?: StatusEnum;
+  extra_var?: string | null;
   decision_environment_id: number | null;
   project_id: number | null;
   rulebook_id: number | null;
-  extra_var_id: number | null;
   organization_id: number | null;
   /**
    * * `always` - always
@@ -166,7 +167,7 @@ export interface ActivationRead {
   git_hash?: string;
   project?: ProjectRef | null;
   rulebook?: RulebookRef | null;
-  extra_var?: ExtraVarRef | null;
+  extra_var?: string | null;
   organization: OrganizationRef;
   instances: ActivationInstance[];
   /**
@@ -334,7 +335,6 @@ export interface AwxTokenCreate {
  * * `eda.credentialtype` - Credential Type
  * * `eda.decisionenvironment` - Decision Environment
  * * `eda.edacredential` - Eda Credential
- * * `eda.extravar` - Extra Var
  * * `eda.project` - Project
  * * `eda.rulebook` - Rulebook
  * * `eda.rulebookprocess` - Rulebook Process
@@ -347,7 +347,6 @@ export enum ContentTypeEnum {
   EdaCredentialtype = 'eda.credentialtype',
   EdaDecisionenvironment = 'eda.decisionenvironment',
   EdaEdacredential = 'eda.edacredential',
-  EdaExtravar = 'eda.extravar',
   EdaProject = 'eda.project',
   EdaRulebook = 'eda.rulebook',
   EdaRulebookprocess = 'eda.rulebookprocess',
@@ -487,24 +486,6 @@ export interface EventStreamOut {
   name: string;
 }
 
-export interface ExtraVar {
-  id: number;
-  /** Content of the extra_var */
-  extra_var: string;
-  organization_id: number | null;
-}
-
-export interface ExtraVarCreate {
-  /** Content of the extra_var */
-  extra_var: string;
-  organization_id?: number | null;
-}
-
-/** Serializer for Extra Var reference. */
-export interface ExtraVarRef {
-  id: number;
-}
-
 /**
  * * `pending` - Pending
  * * `running` - Running
@@ -545,10 +526,7 @@ export interface Organization {
   name: string;
   /** The organization description. */
   description?: string;
-  resource: {
-    ansible_id: string;
-    resource_type: 'shared.organization';
-  };
+  resource: Record<string, any>;
   /**
    * The date/time this resource was created
    * @format date-time
@@ -786,26 +764,6 @@ export interface PaginatedEdaCredentialList {
   results?: EdaCredential[];
 }
 
-export interface PaginatedExtraVarList {
-  /** @example 123 */
-  count?: number;
-  /**
-   * @format uri
-   * @example "/eda/api/v1/example/?page=51&page_size=100"
-   */
-  next?: string | null;
-  /**
-   * @format uri
-   * @example "/eda/api/v1/example/?page=49&page_size=100"
-   */
-  previous?: string | null;
-  /** @example 100 */
-  page_size?: number | null;
-  /** @example 50 */
-  page?: number | null;
-  results?: ExtraVar[];
-}
-
 export interface PaginatedOrganizationList {
   /** @example 123 */
   count?: number;
@@ -848,7 +806,7 @@ export interface PaginatedProjectList {
 
 export interface PaginatedResourceListList {
   /** @example 123 */
-  count?: number;
+  count: number;
   /**
    * @format uri
    * @example "http://api.example.org/accounts/?page=4"
@@ -859,12 +817,12 @@ export interface PaginatedResourceListList {
    * @example "http://api.example.org/accounts/?page=2"
    */
   previous?: string | null;
-  results?: ResourceList[];
+  results: ResourceList[];
 }
 
 export interface PaginatedResourceTypeList {
   /** @example 123 */
-  count?: number;
+  count: number;
   /**
    * @format uri
    * @example "http://api.example.org/accounts/?page=4"
@@ -875,7 +833,7 @@ export interface PaginatedResourceTypeList {
    * @example "http://api.example.org/accounts/?page=2"
    */
   previous?: string | null;
-  results?: ResourceType[];
+  results: ResourceType[];
 }
 
 export interface PaginatedRoleDefinitionList {
@@ -1094,7 +1052,6 @@ export interface PatchedRoleDefinition {
    * * `eda.credentialtype` - Credential Type
    * * `eda.decisionenvironment` - Decision Environment
    * * `eda.edacredential` - Eda Credential
-   * * `eda.extravar` - Extra Var
    * * `eda.project` - Project
    * * `eda.rulebook` - Rulebook
    * * `eda.rulebookprocess` - Rulebook Process
@@ -1157,7 +1114,6 @@ export interface PatchedUserCreateUpdate {
  * * `eda.add_credentialtype` - eda.add_credentialtype
  * * `eda.add_decisionenvironment` - eda.add_decisionenvironment
  * * `eda.add_edacredential` - eda.add_edacredential
- * * `eda.add_extravar` - eda.add_extravar
  * * `eda.add_project` - eda.add_project
  * * `eda.add_team` - eda.add_team
  * * `eda.change_credentialtype` - eda.change_credentialtype
@@ -1183,7 +1139,6 @@ export interface PatchedUserCreateUpdate {
  * * `eda.view_credentialtype` - eda.view_credentialtype
  * * `eda.view_decisionenvironment` - eda.view_decisionenvironment
  * * `eda.view_edacredential` - eda.view_edacredential
- * * `eda.view_extravar` - eda.view_extravar
  * * `eda.view_organization` - eda.view_organization
  * * `eda.view_project` - eda.view_project
  * * `eda.view_rulebook` - eda.view_rulebook
@@ -1195,7 +1150,6 @@ export enum PermissionsEnum {
   EdaAddCredentialtype = 'eda.add_credentialtype',
   EdaAddDecisionenvironment = 'eda.add_decisionenvironment',
   EdaAddEdacredential = 'eda.add_edacredential',
-  EdaAddExtravar = 'eda.add_extravar',
   EdaAddProject = 'eda.add_project',
   EdaAddTeam = 'eda.add_team',
   EdaChangeCredentialtype = 'eda.change_credentialtype',
@@ -1221,7 +1175,6 @@ export enum PermissionsEnum {
   EdaViewCredentialtype = 'eda.view_credentialtype',
   EdaViewDecisionenvironment = 'eda.view_decisionenvironment',
   EdaViewEdacredential = 'eda.view_edacredential',
-  EdaViewExtravar = 'eda.view_extravar',
   EdaViewOrganization = 'eda.view_organization',
   EdaViewProject = 'eda.view_project',
   EdaViewRulebook = 'eda.view_rulebook',
@@ -1359,7 +1312,6 @@ export interface RoleDefinition {
    * * `eda.credentialtype` - Credential Type
    * * `eda.decisionenvironment` - Decision Environment
    * * `eda.edacredential` - Eda Credential
-   * * `eda.extravar` - Extra Var
    * * `eda.project` - Project
    * * `eda.rulebook` - Rulebook
    * * `eda.rulebookprocess` - Rulebook Process
@@ -1396,7 +1348,6 @@ export interface RoleDefinitionCreate {
    * * `eda.credentialtype` - Credential Type
    * * `eda.decisionenvironment` - Decision Environment
    * * `eda.edacredential` - Eda Credential
-   * * `eda.extravar` - Extra Var
    * * `eda.project` - Project
    * * `eda.rulebook` - Rulebook
    * * `eda.rulebookprocess` - Rulebook Process
@@ -1422,7 +1373,6 @@ export interface RoleDefinitionDetail {
    * * `eda.credentialtype` - Credential Type
    * * `eda.decisionenvironment` - Decision Environment
    * * `eda.edacredential` - Eda Credential
-   * * `eda.extravar` - Extra Var
    * * `eda.project` - Project
    * * `eda.rulebook` - Rulebook
    * * `eda.rulebookprocess` - Rulebook Process
@@ -1469,7 +1419,6 @@ export interface RoleTeamAssignment {
    * * `eda.credentialtype` - Credential Type
    * * `eda.decisionenvironment` - Decision Environment
    * * `eda.edacredential` - Eda Credential
-   * * `eda.extravar` - Extra Var
    * * `eda.project` - Project
    * * `eda.rulebook` - Rulebook
    * * `eda.rulebookprocess` - Rulebook Process
@@ -1532,7 +1481,6 @@ export interface RoleUserAssignment {
    * * `eda.credentialtype` - Credential Type
    * * `eda.decisionenvironment` - Decision Environment
    * * `eda.edacredential` - Eda Credential
-   * * `eda.extravar` - Extra Var
    * * `eda.project` - Project
    * * `eda.rulebook` - Rulebook
    * * `eda.rulebookprocess` - Rulebook Process
@@ -1641,10 +1589,7 @@ export interface Team {
   description?: string;
   /** The organization of this team. */
   organization_id: number;
-  resource: {
-    ansible_id: string;
-    resource_type: 'shared.team';
-  };
+  resource: Record<string, any>;
   /**
    * The date/time this resource was created
    * @format date-time
@@ -1669,7 +1614,7 @@ export interface TeamCreate {
   name: string;
   /** The team description. */
   description?: string;
-  organization_id: number;
+  organization_id?: number | null;
 }
 
 export interface TeamDetail {
@@ -1744,10 +1689,7 @@ export interface UserDetail {
    * Designates that this user has all permissions without explicitly assigning them.
    */
   is_superuser?: boolean;
-  resource: {
-    ansible_id: string;
-    resource_type: 'shared.user';
-  };
+  resource: Record<string, any>;
   /** @format date-time */
   created_at: string;
   /** @format date-time */
@@ -2755,69 +2697,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         ...params,
       }),
   };
-  extraVars = {
-    /**
-     * @description List all extra_vars
-     *
-     * @tags extra-vars
-     * @name ExtraVarsList
-     * @request GET:/extra-vars/
-     * @secure
-     */
-    extraVarsList: (
-      query?: {
-        /** A page number within the paginated result set. */
-        page?: number;
-        /** Number of results to return per page. */
-        page_size?: number;
-      },
-      params: RequestParams = {}
-    ) =>
-      this.request<PaginatedExtraVarList, any>({
-        path: `/extra-vars/`,
-        method: 'GET',
-        query: query,
-        secure: true,
-        format: 'json',
-        ...params,
-      }),
-
-    /**
-     * @description Create an extra_var
-     *
-     * @tags extra-vars
-     * @name ExtraVarsCreate
-     * @request POST:/extra-vars/
-     * @secure
-     */
-    extraVarsCreate: (data: ExtraVarCreate, params: RequestParams = {}) =>
-      this.request<ExtraVar, any>({
-        path: `/extra-vars/`,
-        method: 'POST',
-        body: data,
-        secure: true,
-        type: ContentType.Json,
-        format: 'json',
-        ...params,
-      }),
-
-    /**
-     * @description Get the extra_var by its id
-     *
-     * @tags extra-vars
-     * @name ExtraVarsRetrieve
-     * @request GET:/extra-vars/{id}/
-     * @secure
-     */
-    extraVarsRetrieve: (id: number, params: RequestParams = {}) =>
-      this.request<ExtraVar, any>({
-        path: `/extra-vars/${id}/`,
-        method: 'GET',
-        secure: true,
-        format: 'json',
-        ...params,
-      }),
-  };
   organizations = {
     /**
      * @description List all organizations.
@@ -2837,6 +2716,8 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         page?: number;
         /** Number of results to return per page. */
         page_size?: number;
+        /** Filter by resource ansible ID. */
+        resource__ansible_id?: string;
       },
       params: RequestParams = {}
     ) =>
@@ -2943,6 +2824,8 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         page?: number;
         /** Number of results to return per page. */
         page_size?: number;
+        /** Filter by resource ansible ID. */
+        resource__ansible_id?: string;
       },
       params: RequestParams = {}
     ) =>
@@ -3808,6 +3691,8 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         page?: number;
         /** Number of results to return per page. */
         page_size?: number;
+        /** Filter by resource ansible ID. */
+        resource__ansible_id?: string;
       },
       params: RequestParams = {}
     ) =>
@@ -3908,6 +3793,8 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         page?: number;
         /** Number of results to return per page. */
         page_size?: number;
+        /** Filter by resource ansible ID. */
+        resource__ansible_id?: string;
         username?: string;
       },
       params: RequestParams = {}

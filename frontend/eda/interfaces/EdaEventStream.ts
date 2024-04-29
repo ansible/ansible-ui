@@ -1,7 +1,6 @@
 import {
   DecisionEnvironmentRef,
   EdaCredentialRef,
-  ExtraVarRef,
   LogLevelEnum,
   ProjectRef,
   RestartPolicyEnum,
@@ -64,7 +63,7 @@ export interface EventStreamRead {
   git_hash?: string;
   project?: ProjectRef | null;
   rulebook?: RulebookRef | null;
-  extra_var?: ExtraVarRef | null;
+  extra_var?: string | null;
   instances: EventStreamInstance[];
   /**
    * * `always` - always
