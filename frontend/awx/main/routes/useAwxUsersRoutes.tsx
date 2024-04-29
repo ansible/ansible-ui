@@ -75,7 +75,6 @@ export function useAwxUsersRoutes() {
           element: <AddRolesToUser />,
         },
         {
-          //TODO This can be split into a UserTokenPage with UserTokenDetails being its child
           id: AwxRoute.UserTokenPage,
           path: ':id/tokens/:tokenid',
           element: <UserTokenPage />,
@@ -84,6 +83,10 @@ export function useAwxUsersRoutes() {
               id: AwxRoute.UserTokenDetails,
               path: 'details',
               element: <UserTokenDetails />,
+            },
+            {
+              path: '',
+              element: <Navigate to="details" />,
             },
           ],
         },
