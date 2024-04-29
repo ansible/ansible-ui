@@ -28,20 +28,45 @@ describe('Management Jobs', () => {
         });
     });
 
-    it.skip('only allows an admin user to view the management job tab', () => {});
+    it.skip('only allows an admin user to view the management job tab', () => {
+      //Assert that admin is the currently logged in user
+      //Create a normal user in this test, or in the beforeEach block
+      //Log out and log back in as normal user, assert that it is the normal user
+      //Assert that the normal user cannot see management jobs
+    });
   });
 
   describe('Management Jobs: Cleanup Expired OAuth 2 Tokens', () => {
-    it.skip('can manually launch a job, verify redirect to output screen, and verify job details', () => {});
+    it.skip('can manually launch a job, verify redirect to output screen, and verify job details', () => {
+      //Assert that the user is looking at the expected job
+      //Assert the launch
+      //Assert the redirect to output screen
+      //Assert viewable job details
+    });
   });
   describe('Management Jobs: Cleanup Expired Sessions', () => {
-    it.skip('can manually launch a job, verify redirect to output screen, and verify job details', () => {});
+    it.skip('can manually launch a job, verify redirect to output screen, and verify job details', () => {
+      //Assert that the user is looking at the expected job
+      //Assert the launch
+      //Assert the redirect to output screen
+      //Assert viewable job details
+    });
   });
   describe('Management Jobs: Cleanup Activity Stream', () => {
-    it.skip('can manually launch a job, view a modal to set # of days, verify redirect to output screen, and verify job details', () => {});
+    it.skip('can manually launch a job, view a modal to set # of days, verify redirect to output screen, and verify job details', () => {
+      //Assert that the user is looking at the expected job
+      //Assert the launch
+      //Assert the redirect to output screen
+      //Assert viewable job details
+    });
   });
   describe('Management Jobs: Cleanup Job Details', () => {
-    it.skip('can manually launch a job, view a modal to set # of days, verify redirect to output screen, and verify job details', () => {});
+    it.skip('can manually launch a job, view a modal to set # of days, verify redirect to output screen, and verify job details', () => {
+      //Assert that the user is looking at the expected job
+      //Assert the launch
+      //Assert the redirect to output screen
+      //Assert viewable job details
+    });
   });
 
   describe('Management Jobs: Schedules Tab', () => {
@@ -51,34 +76,47 @@ describe('Management Jobs', () => {
     });
 
     it.skip('can make multiple edits to the Cleanup Activity Stream schedule, save, disable schedule, and reenable', () => {
-      //
+      //Assert the edit form showing
+      //Assert that the edits made were saved
+      //Assert the disabling of the schedule
+      //Assert the reenabling of the schedule
     });
 
     it.skip('can click the Cleanup Expired OAuth 2 Tokens link on the list view and verify the details of the automatically generated schedule', () => {
-      //
+      //Assert schedule presence on list view
+      //Assert info on the schedule details page, including the fact that it is automatically generated
     });
 
     it.skip('can make multiple edits to the Cleanup Expired OAuth 2 Tokens schedule, save, disable schedule, and reenable', () => {
-      //
+      //Assert the edit form showing
+      //Assert that the edits made were saved
+      //Assert the disabling of the schedule
+      //Assert the reenabling of the schedule
     });
 
     it.skip('can click the Cleanup Expired Sessions link on the list view and verify the details of the automatically generated schedule', () => {
-      //
+      //Assert schedule presence on list view
+      //Assert info on the schedule details page, including the fact that it is automatically generated
     });
 
     it.skip('can make multiple edits to the Cleanup Expired Sessions schedule, save, disable schedule, and reenable', () => {
-      //
+      //Assert the edit form showing
+      //Assert that the edits made were saved
+      //Assert the disabling of the schedule
+      //Assert the reenabling of the schedule
     });
 
     it.skip('can click the Cleanup Job Details link on the list view and verify the details of the automatically generated schedule', () => {
-      //
+      //Assert schedule presence on list view
+      //Assert info on the schedule details page, including the fact that it is automatically generated
     });
 
     it.skip('can make multiple edits to the Cleanup Job Details schedule, save, disable schedule, and reenable', () => {
-      //
+      //Assert the edit form showing
+      //Assert that the edits made were saved
+      //Assert the disabling of the schedule
+      //Assert the reenabling of the schedule
     });
-
-    it.skip('', () => {});
   });
 
   describe('Management Jobs: Notifications Tab', () => {
