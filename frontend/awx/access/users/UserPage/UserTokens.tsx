@@ -23,7 +23,7 @@ import { useUserTokensFilters } from '../hooks/useUserTokensFilters';
 import { ButtonVariant } from '@patternfly/react-core';
 import { PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 
-export function UserTokens() {
+export function UserTokens(props: { infoMessage?: string }) {
   const params = useParams<{ id: string }>();
   const { activeAwxUser } = useAwxActiveUser();
   const pageNavigate = usePageNavigate();
@@ -38,17 +38,17 @@ export function UserTokens() {
   if (!activeAwxUser) return <LoadingPage breadcrumbs tabs />;
 
   return activeAwxUser?.id.toString() === params.id ? (
-    <UserTokensInternal user={activeAwxUser} />
+    <UserTokensInternal user={activeAwxUser} infoMessage={props.infoMessage} />
   ) : (
     <></>
   );
 }
 
-function UserTokensInternal(props: { user: AwxUser }) {
+function UserTokensInternal(props: { infoMessage?: string; user: AwxUser }) {
   const { user } = props;
   const { t } = useTranslation();
 
-  const tableColumns = useUserTokensColumns(user.id);
+  const tableColumns = useUserTokensColumns(user);
   const toolbarFilters = useUserTokensFilters();
   const view = useAwxView<Token>({
     url: awxAPI`/users/${user.id.toString()}/tokens/`,
@@ -96,11 +96,7 @@ function UserTokensInternal(props: { user: AwxUser }) {
 
   return (
     <PageLayout>
-      <DetailInfo
-        title={t(
-          'Automation Execution tokens authenticate and connect to your Automation Execution Platform instance to run automation.'
-        )}
-      ></DetailInfo>
+      {props.infoMessage && <DetailInfo title={t(props.infoMessage)}></DetailInfo>}
       <PageTable<Token>
         id="awx-user-tokens"
         errorStateTitle={t('Error loading tokens')}

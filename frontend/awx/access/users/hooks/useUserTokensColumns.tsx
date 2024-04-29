@@ -1,10 +1,16 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ITableColumn, TextCell, useGetPageUrl } from '../../../../../framework';
+import { AwxUser } from '../../../interfaces/User';
 import { Token } from '../../../interfaces/Token';
 import { AwxRoute } from '../../../main/AwxRoutes';
 
-export function useUserTokensColumns(userId: number) {
+export function useUserTokensColumns(
+  user: AwxUser,
+  options?: {
+    disableLinks?: boolean;
+  }
+) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
 
@@ -19,9 +25,13 @@ export function useUserTokensColumns(userId: number) {
                 ? token.summary_fields.application.name
                 : t('Personal access token')
             }
-            to={getPageUrl(AwxRoute.UserTokenDetails, {
-              params: { id: userId, tokenid: token.id.toString() },
-            })}
+            to={
+              options?.disableLinks
+                ? undefined
+                : getPageUrl(AwxRoute.UserTokenDetails, {
+                    params: { id: user.id, tokenid: token.id.toString() },
+                  })
+            }
           />
         ),
         maxWidth: 120,
@@ -47,7 +57,19 @@ export function useUserTokensColumns(userId: number) {
         value: (token) => token.expires,
         sort: 'expires',
       },
+      {
+        header: t('Created'),
+        type: 'datetime',
+        value: (token) => token.created,
+        sort: 'created',
+      },
+      {
+        header: t('Modified'),
+        type: 'datetime',
+        value: (token) => token.modified,
+        sort: 'modified',
+      },
     ],
-    [getPageUrl, t, userId]
+    [getPageUrl, options?.disableLinks, t, user.id]
   );
 }

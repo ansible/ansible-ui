@@ -23,8 +23,17 @@ describe('UserTokens', () => {
     );
   });
 
-  it('renders user tokens when user id in URL matches active user', () => {
+  it('by default does not render any info message', () => {
     cy.mount(<UserTokens />, {
+      path: '/users/:id/tokens',
+      initialEntries: ['/users/20/tokens'],
+    });
+    //
+    cy.get('div.pf-v5-c-alert').should('not.exist');
+  });
+
+  it('renders user tokens and passed in message when user id in URL matches active user', () => {
+    cy.mount(<UserTokens infoMessage="Automation Execution tokens" />, {
       path: '/users/:id/tokens',
       initialEntries: ['/users/20/tokens'],
     });
