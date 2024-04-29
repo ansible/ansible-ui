@@ -3,6 +3,7 @@ import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Credential } from '../../../../frontend/awx/interfaces/Credential';
 import { ExecutionEnvironment } from '../../../../frontend/awx/interfaces/ExecutionEnvironment';
+import { awxAPI } from '../../../../frontend/awx/common/api/awx-utils';
 
 describe('Inventory Groups', () => {
   let organization: Organization;
@@ -92,8 +93,12 @@ describe('Inventory Groups', () => {
         const { inventory, group } = result;
         //1) Use the inventory created in beforeEach block, access the groups tab of that inventory
         cy.navigateTo('awx', 'inventories');
+
+        const intercept_url = awxAPI`/inventories/?page_size=20&order_by=name&name__icontains=${inventory.name}`;
+        cy.intercept('GET', intercept_url).as('filteredInventories');
         cy.filterTableBySingleSelect('name', inventory.name);
-        cy.wait(2000);
+        cy.wait('@filteredInventories');
+
         cy.clickTableRowLink('name', inventory.name, { disableFilter: true });
         cy.verifyPageTitle(inventory.name);
         cy.clickLink(/^Groups$/);
