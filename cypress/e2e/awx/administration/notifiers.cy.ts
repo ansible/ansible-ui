@@ -145,31 +145,7 @@ describe('Notifications', () => {
   });
 
   describe('Notifications Tab for Management Jobs', () => {
-    //This describe block should create a Management Job to use in these tests
-    //The Management Job needs to be deleted after the tests run
-
-    it.skip('can navigate to the Management Jobs -> Notifications list and then to the details page of the Notification', () => {
-      //Assert the navigation to the notifications tab of the Management Job
-      //Assert the navigation to the details page of the notification
-    });
-
-    it.skip('can toggle the Management Jobs -> Notification on and off for job start', () => {
-      //Assert the navigation to the notifications tab of the Management Job
-      //Assert the start toggling on
-      //Assert the start toggling off
-    });
-
-    it.skip('can toggle the Management Jobs -> Notification on and off for job success', () => {
-      //Assert the navigation to the notifications tab of the Management Job
-      //Assert the success toggling on
-      //Assert the success toggling off
-    });
-
-    it.skip('can toggle the Management Jobs -> Notification on and off for job failure', () => {
-      //Assert the navigation to the notifications tab of the Management Job
-      //Assert the failure toggling on
-      //Assert the failure toggling off
-    });
+    //These tests live in the management-jobs spec file
   });
 
   describe('Notifications Tab for Projects', () => {
