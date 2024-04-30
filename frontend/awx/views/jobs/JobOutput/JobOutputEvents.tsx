@@ -13,7 +13,7 @@ import {
 } from './useJobOutputChildrenSummary';
 import { useScrollControls } from './useScrollControls';
 import { useVirtualizedList } from './useVirtualized';
-import { isJobRunning } from './util';
+import { isHostEvent, isJobRunning } from './util';
 import { HostEventModal } from './HostEventModal';
 
 export interface ICollapsed {
@@ -45,7 +45,8 @@ export function JobOutputEvents(props: IJobOutputEventsProps) {
     isFollowModeEnabled,
     setIsFollowModeEnabled,
   } = props;
-  const [isHostModalOpen, setIsHostModalOpen] = useState<boolean | string>(false);
+
+  const [hostModalData, setHostModalData] = useState<IJobOutputRow | null>(null);
   const isFiltered = Object.keys(filterState).length > 0;
 
   const { childrenSummary, isFlatMode } = useJobOutputChildrenSummary(
@@ -112,6 +113,21 @@ export function JobOutputEvents(props: IJobOutputEventsProps) {
     isJobRunning(job.status)
   );
 
+  const visibleHostIndex = visibleItems.findIndex(
+    (el) => typeof el === 'object' && el.uuid === hostModalData?.uuid
+  );
+  const visibleHost = visibleItems[visibleHostIndex];
+  const visibleHostCounter = typeof visibleHost === 'object' && visibleHost.counter;
+
+  const selectedRowHostData = visibleHostCounter
+    ? getJobOutputEvent(visibleHostCounter - 1)
+    : undefined;
+
+  const isHostModalOpen =
+    hostModalData?.counter &&
+    isHostEvent(getJobOutputEvent(hostModalData.counter)) &&
+    hostModalData.uuid !== hostModalData.taskUuid;
+
   return (
     <>
       <PageControls
@@ -124,10 +140,7 @@ export function JobOutputEvents(props: IJobOutputEventsProps) {
         isTemplateJob={job.type === 'job'}
         isAllCollapsed={false}
       />
-      <ScrollContainer
-        ref={containerRef}
-        tabIndex={0} // eslint-disable-line jsx-a11y/no-noninteractive-tabindex
-      >
+      <ScrollContainer ref={containerRef} tabIndex={0}>
         <pre>
           <div
             className="output-grid"
@@ -137,6 +150,7 @@ export function JobOutputEvents(props: IJobOutputEventsProps) {
             {visibleItems.map((row, index) => {
               if (typeof row === 'number') {
                 const counter = row as unknown as number;
+
                 return (
                   <JobOutputLoadingRow
                     key={counter}
@@ -153,7 +167,7 @@ export function JobOutputEvents(props: IJobOutputEventsProps) {
                   collapsed={collapsed}
                   setCollapsed={setCollapsed}
                   setHeight={setRowHeight}
-                  onClick={setIsHostModalOpen}
+                  onClick={setHostModalData}
                   canCollapseEvents={canCollapseEvents}
                 />
               );
@@ -165,7 +179,7 @@ export function JobOutputEvents(props: IJobOutputEventsProps) {
       {isHostModalOpen && selectedRowHostData !== undefined && (
         <HostEventModal
           isOpen
-          onClose={() => setIsHostModalOpen(false)}
+          onClose={() => setHostModalData(null)}
           hostEvent={selectedRowHostData}
         />
       )}

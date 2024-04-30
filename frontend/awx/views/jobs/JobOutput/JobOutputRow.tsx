@@ -46,7 +46,7 @@ export function JobOutputRow(props: {
   setCollapsed: (uuid: string, counter: number, collapsed: boolean) => void;
   setHeight: (index: number, height: number) => void;
   canCollapseEvents?: boolean;
-  onClick: Dispatch<SetStateAction<string | boolean>>;
+  onClick: Dispatch<SetStateAction<IJobOutputRow | null>>;
 }) {
   const { index, row, collapsed, setCollapsed, canCollapseEvents } = props;
   const ref = useRef<HTMLTableRowElement>(null);
@@ -62,7 +62,7 @@ export function JobOutputRow(props: {
       role="button"
       tabIndex={0}
       onClick={() => {
-        props.onClick(row.uuid);
+        props.onClick(row);
       }}
     >
       <LineNumberGutter>
@@ -106,7 +106,6 @@ export interface IJobOutputRow {
 export function jobEventToRows(jobEvent: JobEvent): IJobOutputRow[] {
   const playUuid = (jobEvent.event_data as { play_uuid?: string }).play_uuid ?? '';
   const taskUuid = (jobEvent.event_data as { task_uuid?: string }).task_uuid ?? '';
-
   if (!jobEvent.counter) return [];
   if (!jobEvent.stdout) return [];
 
