@@ -11,6 +11,7 @@ import { useDeleteEdaRoles } from './useDeleteEdaRoles';
 import { EdaRbacRole } from '../../../interfaces/EdaRbacRole';
 import { EdaRoute } from '../../../main/EdaRoutes';
 import { useEdaActiveUser } from '../../../common/useEdaActiveUser';
+import { ButtonVariant } from '@patternfly/react-core';
 
 export function useEdaRoleToolbarActions(onComplete: (roles: EdaRbacRole[]) => void) {
   const { t } = useTranslation();
@@ -32,6 +33,7 @@ export function useEdaRoleToolbarActions(onComplete: (roles: EdaRbacRole[]) => v
               'You do not have permission to create a role. Please contact your system administrator if there is an issue with your access.'
             ),
         href: `${getPageUrl(EdaRoute.CreateRole)}`,
+        variant: ButtonVariant.primary,
       },
       { type: PageActionType.Seperator },
       {
