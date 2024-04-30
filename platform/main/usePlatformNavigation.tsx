@@ -26,6 +26,7 @@ import { useGetPlatformAuthenticatorsRoutes } from '../routes/useGetPlatformAuth
 import { useGetPlatformOrganizationsRoutes } from '../routes/useGetPlatformOrganizationsRoutes';
 import { useGetPlatformTeamsRoutes } from '../routes/useGetPlatformTeamsRoutes';
 import { useGetPlatformUsersRoutes } from '../routes/useGetPlatformUsersRoutes';
+import { useGetPlatformResourceRoutes } from '../routes/useGetPlatformResourceRoutes';
 import { SubscriptionDetails } from '../settings/SubscriptionDetails';
 import { SubscriptionWizard } from '../settings/SubscriptionWizard';
 import { useAwxService, useEdaService, useHubService } from './GatewayServices';
@@ -47,6 +48,7 @@ export function usePlatformNavigation() {
   const teams = useGetPlatformTeamsRoutes();
   const users = useGetPlatformUsersRoutes();
   const authenticators = useGetPlatformAuthenticatorsRoutes();
+  const resources = useGetPlatformResourceRoutes();
 
   const navigate = useNavigate();
 
@@ -70,6 +72,7 @@ export function usePlatformNavigation() {
       awxRolesRoute.label = undefined;
       awxRolesRoute.path = 'execution';
     }
+    // HERE
     removeNavigationItemById(awxNav, AwxRoute.Access);
 
     removeNavigationItemById(edaNav, EdaRoute.Overview);
@@ -292,6 +295,7 @@ export function usePlatformNavigation() {
         },
       ],
     });
+    navigationItems.push(resources);
     navigationItems.push({
       path: 'redirect',
       element: <Redirect />,
@@ -314,6 +318,7 @@ export function usePlatformNavigation() {
     organizations,
     teams,
     users,
+    resources,
     navigate,
   ]);
   return pageNavigationItems;
