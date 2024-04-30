@@ -852,7 +852,10 @@ Cypress.Commands.add(
     }
   ) => {
     if (execution_environment.id) {
-      cy.awxRequestDelete(awxAPI`/teams/${execution_environment.id.toString()}/`, options);
+      cy.awxRequestDelete(
+        awxAPI`/execution_environments/${execution_environment.id.toString()}/`,
+        options
+      );
     }
   }
 );
