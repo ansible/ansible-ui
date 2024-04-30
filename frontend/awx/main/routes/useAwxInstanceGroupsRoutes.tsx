@@ -12,6 +12,7 @@ import {
   CreateInstanceGroup,
   EditInstanceGroup,
 } from '../../administration/instance-groups/InstanceGroupForm';
+import { InstanceGroupDetails } from '../../administration/instance-groups/InstanceGroupPage/InstanceGroupDetails';
 
 export function useAwxInstanceGroupsRoutes() {
   const { t } = useTranslation();
@@ -19,7 +20,7 @@ export function useAwxInstanceGroupsRoutes() {
     () => ({
       id: AwxRoute.InstanceGroups,
       label: t('Instance Groups'),
-      path: 'instance-groups',
+      path: 'instance_groups',
       children: [
         {
           id: AwxRoute.CreateInstanceGroup,
@@ -39,7 +40,7 @@ export function useAwxInstanceGroupsRoutes() {
             {
               id: AwxRoute.InstanceGroupDetails,
               path: 'details',
-              element: <PageNotImplemented />,
+              element: <InstanceGroupDetails />,
             },
             {
               id: AwxRoute.InstanceGroupInstances,
