@@ -173,31 +173,7 @@ describe('Notifications', () => {
   });
 
   describe('Notifications Tab for Projects', () => {
-    //This describe block should create a Project to use in these tests
-    //The Project needs to be deleted after the tests run
-
-    it.skip('can navigate to the Projects -> Notifications list and then to the details page of the Notification', () => {
-      //Assert the navigation to the notifications tab of the Project
-      //Assert the navigation to the details page of the notification
-    });
-
-    it.skip('can toggle the Projects -> Notification on and off for job start', () => {
-      //Assert the navigation to the notifications tab of the Project
-      //Assert the start toggling on
-      //Assert the start toggling off
-    });
-
-    it.skip('can toggle the Projects -> Notification on and off for job success', () => {
-      //Assert the navigation to the notifications tab of the Project
-      //Assert the success toggling on
-      //Assert the success toggling off
-    });
-
-    it.skip('can toggle the Projects -> Notification on and off for job failure', () => {
-      //Assert the navigation to the notifications tab of the Project
-      //Assert the failure toggling on
-      //Assert the failure toggling off
-    });
+    //These tests live in projects.cy.ts
   });
 
   describe('Notifications Tab for Job Templates', () => {
