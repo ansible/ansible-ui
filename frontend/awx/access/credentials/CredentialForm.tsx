@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useFormContext, useWatch } from 'react-hook-form';
+import { useForm, useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
@@ -27,9 +27,15 @@ import { AwxRoute } from '../../main/AwxRoutes';
 import { PageFormSelectOrganization } from '../organizations/components/PageFormOrganizationSelect';
 import { BecomeMethodField } from './components/BecomeMethodField';
 import { CredentialMultilineInput } from './components/CredentialMultilineInput';
+import { PageFormSecret } from '../../../../framework/PageForm/Inputs/PageFormSecret';
 import { Button, Icon } from '@patternfly/react-core';
 import { KeyIcon } from '@patternfly/react-icons';
 import { PageFormSelectCredentialType } from './components/PageFormSelectCredentialType';
+
+interface SecretInput {
+  onClear?: (name: string) => void;
+  shouldHideField?: (name: string) => boolean;
+}
 import {
   CredentialPluginsInputSource,
   useCredentialPluginsModal,
@@ -347,27 +353,35 @@ function CredentialInputs({
     </>
   );
 }
-function CredentialSubForm({
-  credentialType,
-  setCredentialPluginValues,
-  isEditMode = false,
-  accumulatedPluginValues,
-  setAccumulatedPluginValues,
-}: {
-  credentialType: CredentialType | undefined;
-  setCredentialPluginValues: (values: CredentialPluginsInputSource[]) => void;
-  isEditMode?: boolean;
-  accumulatedPluginValues: CredentialPluginsInputSource[];
-  setAccumulatedPluginValues?: (values: CredentialPluginsInputSource[]) => void;
-}) {
+function CredentialSubForm(
+  {
+    credentialType,
+    setCredentialPluginValues,
+    isEditMode = false,
+    accumulatedPluginValues,
+    setAccumulatedPluginValues,
+  }: {
+    credentialType: CredentialType | undefined;
+    setCredentialPluginValues: (values: CredentialPluginsInputSource[]) => void;
+    isEditMode?: boolean;
+    accumulatedPluginValues: CredentialPluginsInputSource[];
+    setAccumulatedPluginValues?: (values: CredentialPluginsInputSource[]) => void;
+  },
+  { onClear, shouldHideField }: SecretInput
+) {
   const { t } = useTranslation();
   if (!credentialType || !credentialType?.inputs?.fields) {
     return null;
   }
 
+  const encryptedFields =
+    credentialType?.inputs?.fields?.filter(
+      (field) => field.secret === true && !field?.choices?.length
+    ) || [];
+
   const stringFields =
     credentialType?.inputs?.fields?.filter(
-      (field) => field.type === 'string' && !field?.choices?.length
+      (field) => field.type === 'string' && field.secret !== true && !field?.choices?.length
     ) || [];
 
   const choiceFields =
@@ -379,7 +393,6 @@ function CredentialSubForm({
   const requiredFields = credentialType?.inputs?.required || [];
 
   const hasFields = stringFields.length > 0 || choiceFields.length > 0 || booleanFields.length > 0;
-
   return hasFields ? (
     <PageFormSection title={t('Type Details')}>
       {stringFields.length > 0 &&
@@ -453,6 +466,23 @@ function CredentialSubForm({
             isRequired={requiredFields.includes(field.id)}
             labelHelp={field.help_text}
           />
+        ))}
+      {encryptedFields.length > 0 &&
+        encryptedFields.map((field) => (
+          <PageFormSecret
+            key={field.id}
+            onClear={() => {
+              onClear && onClear(field.id);
+            }}
+            shouldHideField={field.secret}
+            label={field.label}
+          >
+            <CredentialTextInput
+              key={field.id}
+              field={field}
+              isRequired={requiredFields.includes(field.id)}
+            />
+          </PageFormSecret>
         ))}
     </PageFormSection>
   ) : null;
