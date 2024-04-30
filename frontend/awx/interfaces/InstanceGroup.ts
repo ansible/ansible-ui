@@ -18,6 +18,8 @@ export interface InstanceGroup
   consumed_capacity: number;
   percent_capacity_remaining: number;
   is_container_group: boolean;
+  max_forks: number;
+  max_concurrent_jobs: number;
   capacity: number;
   results: InstanceGroup[];
   summary_fields: {
