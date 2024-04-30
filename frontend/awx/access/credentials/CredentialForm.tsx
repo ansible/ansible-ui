@@ -34,7 +34,7 @@ import { PageFormSelectCredentialType } from './components/PageFormSelectCredent
 
 interface SecretInput {
   onClear?: (name: string) => void;
-  shouldHideField?: (name: string) => boolean;
+  //shouldHideField?: (name: string) => boolean;
 }
 import {
   CredentialPluginsInputSource,
@@ -367,7 +367,7 @@ function CredentialSubForm(
     accumulatedPluginValues: CredentialPluginsInputSource[];
     setAccumulatedPluginValues?: (values: CredentialPluginsInputSource[]) => void;
   },
-  { onClear, shouldHideField }: SecretInput
+  { onClear /*shouldHideField*/ }: SecretInput
 ) {
   const { t } = useTranslation();
   if (!credentialType || !credentialType?.inputs?.fields) {
