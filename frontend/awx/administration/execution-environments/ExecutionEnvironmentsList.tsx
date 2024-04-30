@@ -21,21 +21,33 @@ import { useOptions } from '../../../common/crud/useOptions';
 import { OptionsResponse, ActionsResponse } from '../../interfaces/OptionsResponse';
 import { useDeleteExecutionEnvironments } from './hooks/useDeleteExecutionEnvironments';
 
-export function ExecutionEnvironmentsList(props: { url?: string }) {
+export function ExecutionEnvironmentsList({
+  url,
+  hideOrgColumn,
+}: {
+  url?: string;
+  hideOrgColumn: boolean;
+}) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const toolbarFilters = useExecutionEnvironmentsFilters();
   const tableColumns = useExecutionEnvironmentsColumns();
+  const filteredColumns = hideOrgColumn
+    ? tableColumns.filter((column) => column.header !== 'Organization')
+    : tableColumns;
   const view = useAwxView<ExecutionEnvironment>({
-    url: props.url ? props.url : awxAPI`/execution_environments/`,
+    url: url ? url : awxAPI`/execution_environments/`,
     toolbarFilters,
     tableColumns,
   });
   const deleteExecutionEnvironments = useDeleteExecutionEnvironments(view.unselectItemsAndRefresh);
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/execution_environments/`);
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(
+    url ? url : awxAPI`/execution_environments/`
+  );
   const rowActions = useExecutionEnvRowActions({
     onExecutionEnvironmentsDeleted: view.unselectItemsAndRefresh,
   });
+  console.log(data);
   const canCreateExecutionEnvironment = Boolean(data && data.actions && data.actions['POST']);
   const toolbarActions = useMemo<IPageAction<ExecutionEnvironment>[]>(
     () => [
@@ -72,7 +84,7 @@ export function ExecutionEnvironmentsList(props: { url?: string }) {
       id="awx-execution-environments-table"
       toolbarFilters={toolbarFilters}
       toolbarActions={toolbarActions}
-      tableColumns={tableColumns}
+      tableColumns={filteredColumns}
       rowActions={rowActions}
       errorStateTitle={t('Error loading execution environments')}
       emptyStateTitle={

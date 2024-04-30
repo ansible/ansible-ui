@@ -4,5 +4,10 @@ import { awxAPI } from '../../../common/api/awx-utils';
 
 export function OrganizationExecutionEnvironments() {
   const { id = '' } = useParams<{ id: string }>();
-  return <ExecutionEnvironmentsList url={awxAPI`/organizations/${id}/execution_environments/`} />;
+  return (
+    <ExecutionEnvironmentsList
+      url={awxAPI`/organizations/${id}/execution_environments/`}
+      hideOrgColumn={true}
+    />
+  );
 }

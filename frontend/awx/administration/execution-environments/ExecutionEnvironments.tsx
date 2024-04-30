@@ -23,7 +23,7 @@ export function ExecutionEnvironments() {
         titleDocLink={`${getDocsBaseUrl(config)}/html/userguide/execution_environments.html`}
         headerActions={<ActivityStreamIcon type={'execution_environment'} />}
       />
-      <ExecutionEnvironmentsList />
+      <ExecutionEnvironmentsList hideOrgColumn={false} />
     </PageLayout>
   );
 }
