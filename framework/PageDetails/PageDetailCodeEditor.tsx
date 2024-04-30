@@ -15,7 +15,6 @@ export function PageDetailCodeEditor(props: {
   value: string;
   helpText?: string | ReactNode;
   showCopyToClipboard?: boolean;
-  toggleLanguage?: boolean;
   isEmpty?: boolean;
   fullWidth?: boolean;
 }) {

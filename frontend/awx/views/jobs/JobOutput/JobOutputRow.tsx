@@ -1,8 +1,9 @@
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Label } from '@patternfly/react-core';
 import { AngleRightIcon } from '@patternfly/react-icons';
 import useResizeObserver from '@react-hook/resize-observer';
-import { useRef } from 'react';
+import { Dispatch, SetStateAction, useRef } from 'react';
 import styled from 'styled-components';
 import { Ansi } from '../../../../common/Ansi';
 import { JobEvent } from '../../../interfaces/JobEvent';
@@ -45,13 +46,25 @@ export function JobOutputRow(props: {
   setCollapsed: (uuid: string, counter: number, collapsed: boolean) => void;
   setHeight: (index: number, height: number) => void;
   canCollapseEvents?: boolean;
+  onClick: Dispatch<SetStateAction<string | boolean>>;
 }) {
   const { index, row, collapsed, setCollapsed, canCollapseEvents } = props;
   const ref = useRef<HTMLTableRowElement>(null);
   useResizeObserver(ref, () => props.setHeight(index, ref.current?.clientHeight ?? 0));
   const isCollapsed = collapsed[row.uuid ?? ''] === true;
+  const isClickableRow = !row.canCollapse && row.taskUuid !== '' && row.taskUuid !== row.uuid;
+
   return (
-    <div ref={ref} className="output-grid-row">
+    <div
+      style={{ cursor: isClickableRow ? 'pointer' : 'auto' }}
+      ref={ref}
+      className="output-grid-row"
+      role="button"
+      tabIndex={0}
+      onClick={() => {
+        props.onClick(row.uuid);
+      }}
+    >
       <LineNumberGutter>
         {canCollapseEvents && row.canCollapse && (
           <ExpandButton onClick={() => setCollapsed(row.uuid, row.counter, !isCollapsed)}>

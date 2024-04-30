@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
-import type { IFilterState, IToolbarFilter } from '../../../../../framework';
+import { type IFilterState, type IToolbarFilter } from '../../../../../framework';
 import { Job } from '../../../interfaces/Job';
 import './JobOutput.css';
 import { JobOutputLoadingRow } from './JobOutputLoadingRow';
@@ -14,6 +14,7 @@ import {
 import { useScrollControls } from './useScrollControls';
 import { useVirtualizedList } from './useVirtualized';
 import { isJobRunning } from './util';
+import { HostEventModal } from './HostEventModal';
 
 export interface ICollapsed {
   [uuid: string]: boolean;
@@ -44,6 +45,7 @@ export function JobOutputEvents(props: IJobOutputEventsProps) {
     isFollowModeEnabled,
     setIsFollowModeEnabled,
   } = props;
+  const [isHostModalOpen, setIsHostModalOpen] = useState<boolean | string>(false);
   const isFiltered = Object.keys(filterState).length > 0;
 
   const { childrenSummary, isFlatMode } = useJobOutputChildrenSummary(
@@ -151,6 +153,7 @@ export function JobOutputEvents(props: IJobOutputEventsProps) {
                   collapsed={collapsed}
                   setCollapsed={setCollapsed}
                   setHeight={setRowHeight}
+                  onClick={setIsHostModalOpen}
                   canCollapseEvents={canCollapseEvents}
                 />
               );
@@ -159,6 +162,13 @@ export function JobOutputEvents(props: IJobOutputEventsProps) {
           </div>
         </pre>
       </ScrollContainer>
+      {isHostModalOpen && selectedRowHostData !== undefined && (
+        <HostEventModal
+          isOpen
+          onClose={() => setIsHostModalOpen(false)}
+          hostEvent={selectedRowHostData}
+        />
+      )}
     </>
   );
 }
