@@ -47,7 +47,7 @@ export function ExecutionEnvironmentsList({
   const rowActions = useExecutionEnvRowActions({
     onExecutionEnvironmentsDeleted: view.unselectItemsAndRefresh,
   });
-  console.log(data);
+
   const canCreateExecutionEnvironment = Boolean(data && data.actions && data.actions['POST']);
   const toolbarActions = useMemo<IPageAction<ExecutionEnvironment>[]>(
     () => [
