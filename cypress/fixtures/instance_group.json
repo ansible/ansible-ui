@@ -1,0 +1,32 @@
+{
+  "id": 1,
+  "type": "instance_group",
+  "url": "/api/v2/instance_groups/1/",
+  "related": {
+    "jobs": "/api/v2/instance_groups/1/jobs/",
+    "instances": "/api/v2/instance_groups/1/instances/"
+  },
+  "name": "controlplane",
+  "created": "2022-12-09T15:26:58.492885Z",
+  "modified": "2022-12-09T15:26:58.503037Z",
+  "capacity": 611,
+  "consumed_capacity": 0,
+  "percent_capacity_remaining": 100.0,
+  "jobs_running": 0,
+  "max_concurrent_jobs": 23,
+  "max_forks": 12,
+  "jobs_total": 48,
+  "instances": 1,
+  "is_container_group": false,
+  "credential": null,
+  "policy_instance_percentage": 100,
+  "policy_instance_minimum": 0,
+  "policy_instance_list": [],
+  "pod_spec_override": "",
+  "summary_fields": {
+    "user_capabilities": {
+      "edit": true,
+      "delete": false
+    }
+  }
+}

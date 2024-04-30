@@ -1,3 +1,4 @@
+import { randomString } from '../../../../framework/utils/random-string';
 import { InstanceGroup } from '../../../../frontend/awx/interfaces/InstanceGroup';
 
 describe('Instance Groups', () => {
@@ -18,18 +19,49 @@ describe('Instance Groups', () => {
   });
 
   describe('Instance Groups: List View', () => {
-    it.skip('can create new Instance Group, enable the instance, assert info on details page, then delete the instance group', () => {
-      //Assert navigation to Instance Group list
-      //Assert redirect to details page after creations
-      //Assert info displayed on details page
-      //Assert deletion of the Instance Group
-      //Delete the IG created in this test
+    it('can create new Instance Group, enable the instance, assert info on details page, then delete the instance group', () => {
+      const name = 'E2E Instance Group' + randomString(4);
+      cy.navigateTo('awx', 'instance-groups');
+      cy.clickButton(/^Create group$/);
+      cy.clickLink(/^Create instance group$/);
+      cy.get('[data-cy="name"]').type(name);
+
+      cy.get('[data-cy="policy-instance-minimum"]').clear();
+      cy.get('[data-cy="policy-instance-minimum"]').type('1');
+
+      cy.get('[data-cy="policy-instance-percentage"]').clear();
+      cy.get('[data-cy="policy-instance-percentage"]').type('2');
+
+      cy.get('[data-cy="max-concurrent-jobs"]').clear();
+      cy.get('[data-cy="max-concurrent-jobs"]').type('3');
+
+      cy.get('[data-cy="max-forks"]').clear();
+      cy.get('[data-cy="max-forks"]').type('4');
+      cy.clickButton(/^Create Instance Group$/);
+      cy.verifyPageTitle(name);
     });
 
-    it.skip('can edit Instance Group and assert the edited info', () => {
-      //Utilize the IG created in the beforeEach block
-      //Assert original info of the IG
-      //After edit, assert the edited info of the IG
+    it('can edit Instance Group and assert the edited info', () => {
+      cy.navigateTo('awx', 'instance-groups');
+      cy.filterTableBySingleSelect('name', instanceGroup.name);
+      cy.clickTableRowKebabAction(instanceGroup.name, 'edit-instance-group', false);
+      cy.get('[data-cy="name"]').clear();
+      cy.get('[data-cy="name"]').type(`${instanceGroup.name}- edited`);
+
+      cy.get('[data-cy="policy-instance-minimum"]').clear();
+      cy.get('[data-cy="policy-instance-minimum"]').type('1');
+
+      cy.get('[data-cy="policy-instance-percentage"]').clear();
+      cy.get('[data-cy="policy-instance-percentage"]').type('2');
+
+      cy.get('[data-cy="max-concurrent-jobs"]').clear();
+      cy.get('[data-cy="max-concurrent-jobs"]').type('3');
+
+      cy.get('[data-cy="max-forks"]').clear();
+      cy.get('[data-cy="max-forks"]').type('4');
+
+      cy.clickButton(/^Save Instance Group$/);
+      cy.verifyPageTitle(`${instanceGroup.name}- edited`);
     });
 
     it('can delete Instance Group and assert the deletion', () => {
