@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -27,6 +27,7 @@ import { AwxRoute } from '../../main/AwxRoutes';
 import { PageFormSelectOrganization } from '../organizations/components/PageFormOrganizationSelect';
 import { CredentialMultilineInput } from './components/CredentialMultilineInput';
 import { PageFormSelectCredentialType } from './components/PageFormSelectCredentialType';
+import { use } from 'chai';
 
 interface CredentialForm extends Credential {
   user?: number;
@@ -55,6 +56,9 @@ export function CreateCredential() {
   const { activeAwxUser } = useAwxActiveUser();
   const postRequest = usePostRequest<Credential>();
   const getPageUrl = useGetPageUrl();
+  const [selectedCredentialTypeId, setSelectedCredentialTypeId] = useState<number | null>(null);
+
+  console.log(selectedCredentialTypeId, 'selectedCredentialTypeId');
 
   const { results: itemsResponse, isLoading } = useAwxGetAllPages<CredentialType>(
     awxAPI`/credential_types/`
@@ -109,7 +113,11 @@ export function CreateCredential() {
         onSubmit={onSubmit}
         onCancel={() => navigate(-1)}
       >
-        <CredentialInputs isEditMode={false} credentialTypes={parsedCredentialTypes || {}} />
+        <CredentialInputs
+          setSelectedCredentialTypeId={setSelectedCredentialTypeId}
+          isEditMode={false}
+          credentialTypes={parsedCredentialTypes || {}}
+        />
       </AwxPageForm>
     </PageLayout>
   );
@@ -224,16 +232,24 @@ function CredentialInputs({
   isEditMode = false,
   selectedCredentialTypeId,
   credentialTypes,
+  setSelectedCredentialTypeId,
 }: {
   isEditMode?: boolean;
   selectedCredentialTypeId?: number;
   credentialTypes: CredentialTypes;
+  setSelectedCredentialTypeId?: (id: number) => void;
 }) {
   const { t } = useTranslation();
 
   const watchedCredentialTypeId = useWatch<{ credential_type: number }>({
     name: 'credential_type',
   });
+
+  useEffect(() => {
+    if (setSelectedCredentialTypeId) {
+      setSelectedCredentialTypeId(watchedCredentialTypeId);
+    }
+  }, [watchedCredentialTypeId, setSelectedCredentialTypeId]);
 
   const credentialTypeID = selectedCredentialTypeId || watchedCredentialTypeId;
 
