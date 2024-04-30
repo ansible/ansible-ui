@@ -22,6 +22,8 @@ import { DetailInfo } from '../../../../../framework/components/DetailInfo';
 import { useUserTokensFilters } from '../hooks/useUserTokensFilters';
 import { ButtonVariant } from '@patternfly/react-core';
 import { PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
+//import { useDeleteTokens } from '../../../administration/applications/hooks/useDeleteTokens';
+import { useDeleteUserTokens } from '../hooks/useDeleteUserTokens';
 
 export function UserTokens(props: { infoMessage?: string }) {
   const params = useParams<{ id: string }>();
@@ -55,6 +57,8 @@ function UserTokensInternal(props: { infoMessage?: string; user: AwxUser }) {
     toolbarFilters,
     tableColumns,
   });
+  //const deleteTokens = useDeleteTokens(view.unselectItemsAndRefresh);
+  const deleteTokens = useDeleteUserTokens(user, view.unselectItemsAndRefresh);
 
   const toolbarActions = useMemo<IPageAction<Token>[]>(
     () => [
@@ -74,10 +78,10 @@ function UserTokensInternal(props: { infoMessage?: string; user: AwxUser }) {
         icon: TrashIcon,
         label: t('Delete selected tokens'),
         isDanger: true,
-        onClick: () => {},
+        onClick: deleteTokens,
       },
     ],
-    [t]
+    [deleteTokens, t]
   );
 
   const rowActions = useMemo<IPageAction<Token>[]>(
@@ -88,10 +92,12 @@ function UserTokensInternal(props: { infoMessage?: string; user: AwxUser }) {
         icon: TrashIcon,
         label: t('Delete token'),
         isDanger: true,
-        onClick: () => {},
+        onClick: (token) => {
+          deleteTokens([token]);
+        },
       },
     ],
-    [t]
+    [deleteTokens, t]
   );
 
   return (
