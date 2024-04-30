@@ -37,7 +37,7 @@ export function UserTokenPage() {
       ></PageHeader>
       <PageRoutedTabs
         backTab={{
-          label: t('Back to User Tokens list'),
+          label: t('Back to User Tokens'),
           page: AwxRoute.UserTokens,
           persistentFilterKey: 'user tokens',
         }}
