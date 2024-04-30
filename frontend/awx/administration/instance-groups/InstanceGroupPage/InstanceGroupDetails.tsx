@@ -1,13 +1,23 @@
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { PageDetails, PageDetail, DateTimeCell } from '../../../../../framework';
+import { PageDetails, PageDetail, DateTimeCell, LoadingPage } from '../../../../../framework';
 import { useGetItem } from '../../../../common/crud/useGet';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';
+import { AwxError } from '../../../common/AwxError';
 
 export function InstanceGroupDetails() {
   const params = useParams<{ id: string }>();
-  const { data: instanceGroup } = useGetItem<InstanceGroup>(awxAPI`/instance_groups/`, params.id);
+  const {
+    data: instanceGroup,
+    isLoading,
+    error,
+    refresh,
+  } = useGetItem<InstanceGroup>(awxAPI`/instance_groups/`, params.id);
+
+  if (error) return <AwxError error={error} handleRefresh={refresh} />;
+  if (isLoading && !instanceGroup) return <LoadingPage />;
+
   return instanceGroup ? <InstanceGroupDetailInner instanceGroup={instanceGroup} /> : null;
 }
 
