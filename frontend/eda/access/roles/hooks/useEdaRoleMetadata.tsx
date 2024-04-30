@@ -41,7 +41,6 @@ export function useEdaRoleMetadata(): EdaRoleMetadata {
             'eda.view_activation': t('View activation'),
             'eda.delete_activation': t('Delete activation'),
             'eda.view_rulebookprocess': t('View rulebook process'),
-            'eda.delete_rulebookprocess': t('Delete rulebook process'),
             'eda.view_auditrule': t('View audit rule'),
           },
         },
@@ -54,9 +53,10 @@ export function useEdaRoleMetadata(): EdaRoleMetadata {
         'eda.edacredential': {
           displayName: t('Credential'),
           permissions: {
-            'eda.change_credential': t('Change credential'),
-            'eda.delete_credential': t('Delete credential'),
-            'eda.view_credential': t('View credential'),
+            'eda.add_edacredential': t('Add credential'),
+            'eda.change_edacredential': t('Change credential'),
+            'eda.delete_edacredential': t('Delete credential'),
+            'eda.view_edacredential': t('View credential'),
           },
         },
         'eda.credentialtype': {
@@ -95,7 +95,6 @@ export function useEdaRoleMetadata(): EdaRoleMetadata {
             'eda.view_activation': t('View activation'),
             'eda.delete_activation': t('Delete activation'),
             'eda.view_rulebookprocess': t('View rulebook process'),
-            'eda.delete_rulebookprocess': t('Delete rulebook process'),
             'eda.view_auditrule': t('View audit rule'),
             'eda.add_credentialtype': t('Add credential type'),
             'eda.change_credentialtype': t('Change credential type'),
@@ -142,7 +141,6 @@ export function useEdaRoleMetadata(): EdaRoleMetadata {
           displayName: t('Rulebook Process'),
           permissions: {
             'eda.view_rulebookprocess': t('View rulebook process'),
-            'eda.delete_rulebookprocess': t('Delete rulebook process'),
             'eda.view_auditrule': t('View audit rule'),
           },
         },
