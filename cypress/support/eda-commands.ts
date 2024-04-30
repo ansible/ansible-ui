@@ -311,7 +311,7 @@ Cypress.Commands.add('checkResourceNameAndAction', (resourceTypes: string[], act
 });
 
 Cypress.Commands.add('getEdaRoleDetail', (roleID: string) => {
-  cy.requestGet<RoleDetail>(edaAPI`/roles/${roleID}`);
+  cy.requestGet<RoleDetail>(edaAPI`/role_definitions/${roleID}`);
 });
 
 Cypress.Commands.add(

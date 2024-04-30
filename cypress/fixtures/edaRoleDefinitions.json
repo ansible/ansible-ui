@@ -1,0 +1,414 @@
+{
+  "count": 17,
+  "next": null,
+  "previous": null,
+  "page_size": 20,
+  "page": 1,
+  "results": [
+    {
+      "id": 1,
+      "url": "/api/eda/v1/role_definitions/1/",
+      "related": {
+        "team_assignments": "/api/eda/v1/role_definitions/1/team_assignments/",
+        "user_assignments": "/api/eda/v1/role_definitions/1/user_assignments/"
+      },
+      "summary_fields": {},
+      "permissions": [
+        "eda.add_activation",
+        "eda.delete_activation",
+        "eda.disable_activation",
+        "eda.enable_activation",
+        "eda.restart_activation",
+        "eda.view_activation",
+        "eda.view_auditrule",
+        "eda.add_edacredential",
+        "eda.change_edacredential",
+        "eda.delete_edacredential",
+        "eda.view_edacredential",
+        "eda.add_decisionenvironment",
+        "eda.change_decisionenvironment",
+        "eda.delete_decisionenvironment",
+        "eda.view_decisionenvironment",
+        "eda.add_extravar",
+        "eda.view_extravar",
+        "eda.change_organization",
+        "eda.delete_organization",
+        "eda.view_organization",
+        "eda.add_project",
+        "eda.change_project",
+        "eda.delete_project",
+        "eda.view_project",
+        "eda.view_rulebook",
+        "eda.view_rulebookprocess",
+        "eda.add_team",
+        "eda.change_team",
+        "eda.delete_team",
+        "eda.member_team",
+        "eda.view_team"
+      ],
+      "content_type": "shared.organization",
+      "created": "2024-03-27T16:43:16.405358Z",
+      "modified": "2024-03-27T16:43:16.405399Z",
+      "name": "Admin",
+      "description": "Has all permissions",
+      "managed": true,
+      "created_by": null,
+      "modified_by": null
+    },
+    {
+      "id": 2,
+      "url": "/api/eda/v1/role_definitions/2/",
+      "related": {
+        "team_assignments": "/api/eda/v1/role_definitions/2/team_assignments/",
+        "user_assignments": "/api/eda/v1/role_definitions/2/user_assignments/"
+      },
+      "summary_fields": {},
+      "permissions": ["eda.member_organization", "eda.view_organization"],
+      "content_type": "shared.organization",
+      "created": "2024-03-27T16:43:16.486102Z",
+      "modified": "2024-03-27T16:43:16.486139Z",
+      "name": "Organization Member",
+      "description": "Users who are a part of the organization",
+      "managed": true,
+      "created_by": null,
+      "modified_by": null
+    },
+    {
+      "id": 3,
+      "url": "/api/eda/v1/role_definitions/3/",
+      "related": {
+        "team_assignments": "/api/eda/v1/role_definitions/3/team_assignments/",
+        "user_assignments": "/api/eda/v1/role_definitions/3/user_assignments/"
+      },
+      "summary_fields": {},
+      "permissions": [
+        "eda.add_activation",
+        "eda.delete_activation",
+        "eda.view_activation",
+        "eda.view_auditrule",
+        "eda.add_edacredential",
+        "eda.change_edacredential",
+        "eda.delete_edacredential",
+        "eda.view_edacredential",
+        "eda.add_decisionenvironment",
+        "eda.change_decisionenvironment",
+        "eda.delete_decisionenvironment",
+        "eda.view_decisionenvironment",
+        "eda.add_extravar",
+        "eda.view_extravar",
+        "eda.view_organization",
+        "eda.add_project",
+        "eda.change_project",
+        "eda.delete_project",
+        "eda.view_project",
+        "eda.view_rulebook",
+        "eda.view_rulebookprocess",
+        "eda.view_team"
+      ],
+      "content_type": "shared.organization",
+      "created": "2024-03-27T16:43:16.495946Z",
+      "modified": "2024-03-27T16:43:16.495982Z",
+      "name": "Editor",
+      "description": "Has create and edit permissions.",
+      "managed": true,
+      "created_by": null,
+      "modified_by": null
+    },
+    {
+      "id": 4,
+      "url": "/api/eda/v1/role_definitions/4/",
+      "related": {
+        "team_assignments": "/api/eda/v1/role_definitions/4/team_assignments/",
+        "user_assignments": "/api/eda/v1/role_definitions/4/user_assignments/"
+      },
+      "summary_fields": {},
+      "permissions": [
+        "eda.add_activation",
+        "eda.delete_activation",
+        "eda.disable_activation",
+        "eda.enable_activation",
+        "eda.restart_activation",
+        "eda.view_activation",
+        "eda.view_auditrule",
+        "eda.add_edacredential",
+        "eda.change_edacredential",
+        "eda.delete_edacredential",
+        "eda.view_edacredential",
+        "eda.add_decisionenvironment",
+        "eda.change_decisionenvironment",
+        "eda.delete_decisionenvironment",
+        "eda.view_decisionenvironment",
+        "eda.add_extravar",
+        "eda.view_extravar",
+        "eda.view_organization",
+        "eda.add_project",
+        "eda.change_project",
+        "eda.delete_project",
+        "eda.view_project",
+        "eda.view_rulebook",
+        "eda.view_rulebookprocess"
+      ],
+      "content_type": "shared.organization",
+      "created": "2024-03-27T16:43:16.519947Z",
+      "modified": "2024-03-27T16:43:16.519983Z",
+      "name": "Contributor",
+      "description": "Has create and update permissions with an exception of users and roles. Has enable and disable rulebook activation permissions.",
+      "managed": true,
+      "created_by": null,
+      "modified_by": null
+    },
+    {
+      "id": 5,
+      "url": "/api/eda/v1/role_definitions/5/",
+      "related": {
+        "team_assignments": "/api/eda/v1/role_definitions/5/team_assignments/",
+        "user_assignments": "/api/eda/v1/role_definitions/5/user_assignments/"
+      },
+      "summary_fields": {},
+      "permissions": [
+        "eda.disable_activation",
+        "eda.enable_activation",
+        "eda.restart_activation",
+        "eda.view_activation",
+        "eda.view_auditrule",
+        "eda.view_edacredential",
+        "eda.view_decisionenvironment",
+        "eda.view_extravar",
+        "eda.view_organization",
+        "eda.view_project",
+        "eda.view_rulebook",
+        "eda.view_rulebookprocess"
+      ],
+      "content_type": "shared.organization",
+      "created": "2024-03-27T16:43:16.538434Z",
+      "modified": "2024-03-27T16:43:16.538508Z",
+      "name": "Operator",
+      "description": "Has read permissions. Has permissions to enable and disable rulebook activations.",
+      "managed": true,
+      "created_by": null,
+      "modified_by": null
+    },
+    {
+      "id": 6,
+      "url": "/api/eda/v1/role_definitions/6/",
+      "related": {
+        "team_assignments": "/api/eda/v1/role_definitions/6/team_assignments/",
+        "user_assignments": "/api/eda/v1/role_definitions/6/user_assignments/"
+      },
+      "summary_fields": {},
+      "permissions": [
+        "eda.view_activation",
+        "eda.view_auditrule",
+        "eda.view_edacredential",
+        "eda.view_decisionenvironment",
+        "eda.view_extravar",
+        "eda.view_organization",
+        "eda.view_project",
+        "eda.view_rulebook",
+        "eda.view_rulebookprocess",
+        "eda.view_team"
+      ],
+      "content_type": "shared.organization",
+      "created": "2024-03-27T16:43:16.556813Z",
+      "modified": "2024-03-27T16:43:16.556848Z",
+      "name": "Auditor",
+      "description": "Has all read permissions.",
+      "managed": true,
+      "created_by": null,
+      "modified_by": null
+    },
+    {
+      "id": 7,
+      "url": "/api/eda/v1/role_definitions/7/",
+      "related": {
+        "team_assignments": "/api/eda/v1/role_definitions/7/team_assignments/",
+        "user_assignments": "/api/eda/v1/role_definitions/7/user_assignments/"
+      },
+      "summary_fields": {},
+      "permissions": [
+        "eda.view_activation",
+        "eda.view_auditrule",
+        "eda.view_decisionenvironment",
+        "eda.view_extravar",
+        "eda.view_organization",
+        "eda.view_project",
+        "eda.view_rulebook",
+        "eda.view_rulebookprocess",
+        "eda.view_team"
+      ],
+      "content_type": "shared.organization",
+      "created": "2024-03-27T16:43:16.575694Z",
+      "modified": "2024-03-27T16:43:16.575774Z",
+      "name": "Viewer",
+      "description": "Has read permissions, except users and roles.",
+      "managed": true,
+      "created_by": null,
+      "modified_by": null
+    },
+    {
+      "id": 8,
+      "url": "/api/eda/v1/role_definitions/8/",
+      "related": {
+        "team_assignments": "/api/eda/v1/role_definitions/8/team_assignments/",
+        "user_assignments": "/api/eda/v1/role_definitions/8/user_assignments/"
+      },
+      "summary_fields": {},
+      "permissions": [
+        "eda.change_decisionenvironment",
+        "eda.delete_decisionenvironment",
+        "eda.view_decisionenvironment"
+      ],
+      "content_type": "eda.decisionenvironment",
+      "created": "2024-03-27T16:43:16.595878Z",
+      "modified": "2024-03-27T16:43:16.595927Z",
+      "name": "Decision Environment Admin",
+      "description": "Has all permissions to a single decision environment",
+      "managed": true,
+      "created_by": null,
+      "modified_by": null
+    },
+    {
+      "id": 9,
+      "url": "/api/eda/v1/role_definitions/9/",
+      "related": {
+        "team_assignments": "/api/eda/v1/role_definitions/9/team_assignments/",
+        "user_assignments": "/api/eda/v1/role_definitions/9/user_assignments/"
+      },
+      "summary_fields": {},
+      "permissions": [
+        "eda.change_project",
+        "eda.delete_project",
+        "eda.view_project",
+        "eda.view_rulebook"
+      ],
+      "content_type": "eda.project",
+      "created": "2024-03-27T16:43:16.610612Z",
+      "modified": "2024-03-27T16:43:16.610642Z",
+      "name": "Project Admin",
+      "description": "Has all permissions to a single project and its child resources - rulebook",
+      "managed": true,
+      "created_by": null,
+      "modified_by": null
+    },
+    {
+      "id": 10,
+      "url": "/api/eda/v1/role_definitions/10/",
+      "related": {
+        "team_assignments": "/api/eda/v1/role_definitions/10/team_assignments/",
+        "user_assignments": "/api/eda/v1/role_definitions/10/user_assignments/"
+      },
+      "summary_fields": {},
+      "permissions": ["eda.change_team", "eda.delete_team", "eda.member_team", "eda.view_team"],
+      "content_type": "shared.team",
+      "created": "2024-03-27T16:43:16.620206Z",
+      "modified": "2024-03-27T16:43:16.620239Z",
+      "name": "Team Admin",
+      "description": "Has all permissions to a single team",
+      "managed": true,
+      "created_by": null,
+      "modified_by": null
+    },
+    {
+      "id": 11,
+      "url": "/api/eda/v1/role_definitions/11/",
+      "related": {
+        "team_assignments": "/api/eda/v1/role_definitions/11/team_assignments/",
+        "user_assignments": "/api/eda/v1/role_definitions/11/user_assignments/"
+      },
+      "summary_fields": {},
+      "permissions": ["eda.member_team", "eda.view_team"],
+      "content_type": "shared.team",
+      "created": "2024-03-27T16:43:16.627481Z",
+      "modified": "2024-03-27T16:43:16.627507Z",
+      "name": "Team Member",
+      "description": "Inherits permissions assigned to this team",
+      "managed": true,
+      "created_by": null,
+      "modified_by": null
+    },
+    {
+      "id": 12,
+      "url": "/api/eda/v1/role_definitions/12/",
+      "related": {
+        "team_assignments": "/api/eda/v1/role_definitions/12/team_assignments/",
+        "user_assignments": "/api/eda/v1/role_definitions/12/user_assignments/"
+      },
+      "summary_fields": {},
+      "permissions": [
+        "eda.change_edacredential",
+        "eda.delete_edacredential",
+        "eda.view_edacredential"
+      ],
+      "content_type": "eda.credential",
+      "created": "2024-03-27T16:43:16.636786Z",
+      "modified": "2024-03-27T16:43:16.636816Z",
+      "name": "Credential Admin",
+      "description": "Has all permissions to a single credential",
+      "managed": true,
+      "created_by": null,
+      "modified_by": null
+    },
+    {
+      "id": 13,
+      "url": "/api/eda/v1/role_definitions/13/",
+      "related": {
+        "team_assignments": "/api/eda/v1/role_definitions/13/team_assignments/",
+        "user_assignments": "/api/eda/v1/role_definitions/13/user_assignments/"
+      },
+      "summary_fields": {},
+      "permissions": [
+        "eda.delete_activation",
+        "eda.disable_activation",
+        "eda.enable_activation",
+        "eda.restart_activation",
+        "eda.view_activation",
+        "eda.view_auditrule",
+        "eda.view_rulebookprocess"
+      ],
+      "content_type": "eda.activation",
+      "created": "2024-03-27T16:43:16.648654Z",
+      "modified": "2024-03-27T16:43:16.648682Z",
+      "name": "Activation Admin",
+      "description": "Has all permissions to a single activation and its child resources - rulebook process, audit rule",
+      "managed": true,
+      "created_by": null,
+      "modified_by": null
+    },
+    {
+      "id": 14,
+      "url": "/api/eda/v1/role_definitions/14/",
+      "related": {
+        "team_assignments": "/api/eda/v1/role_definitions/14/team_assignments/",
+        "user_assignments": "/api/eda/v1/role_definitions/14/user_assignments/"
+      },
+      "summary_fields": {},
+      "permissions": ["eda.view_extravar"],
+      "content_type": "eda.extravar",
+      "created": "2024-03-27T16:43:16.658412Z",
+      "modified": "2024-03-27T16:43:16.658482Z",
+      "name": "Extra Var Admin",
+      "description": "Has all permissions to a single extra var",
+      "managed": true,
+      "created_by": null,
+      "modified_by": null
+    },
+    {
+      "id": 15,
+      "url": "/api/eda/v1/role_definitions/15/",
+      "related": {
+        "team_assignments": "/api/eda/v1/role_definitions/15/team_assignments/",
+        "user_assignments": "/api/eda/v1/role_definitions/15/user_assignments/"
+      },
+      "summary_fields": {},
+      "permissions": ["eda.view_project"],
+      "content_type": "eda.project",
+      "created": "2024-03-28T21:05:16.981637Z",
+      "modified": "2024-03-28T21:05:16.981656Z",
+      "name": "View projects",
+      "description": "Role for viewing projects",
+      "managed": false,
+      "created_by": null,
+      "modified_by": null
+    }
+  ]
+}
