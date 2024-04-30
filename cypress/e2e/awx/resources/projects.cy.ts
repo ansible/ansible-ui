@@ -316,7 +316,7 @@ describe('Projects', () => {
       });
       cy.clickButton(/^Next$/);
       cy.clickButton(/^Add rule$/);
-      cy.clickButton(/^Add$/);
+      cy.clickButton(/^Save rule$/);
       cy.clickButton(/^Next$/);
       cy.clickButton(/^Next$/);
       cy.getByDataCy('start-date/time').contains('5:00 AM');
@@ -344,7 +344,7 @@ describe('Projects', () => {
       cy.get('[data-cy="freq"]').within(() => {
         cy.clickButton('Yearly');
       });
-      cy.clickButton(/^Add$/);
+      cy.clickButton(/^Save rule$/);
       cy.clickButton(/^Next$/);
       cy.getByDataCy('exception-1').contains('FREQ=YEARLY');
       cy.clickButton(/^Finish$/);
@@ -367,7 +367,7 @@ describe('Projects', () => {
       cy.getBy('[data-cy="row-id-1"]').within(() => {
         cy.getBy('[data-cy="delete-rule"]').click();
       });
-      cy.clickButton(/^Add$/);
+      cy.clickButton(/^Save rule$/);
       cy.clickButton(/^Next$/);
       cy.clickButton(/^Next$/);
       cy.getByDataCy('rule-1').should('not.contain', 'FREQ=DAILY');
@@ -391,7 +391,7 @@ describe('Projects', () => {
       cy.clickButton(/^Next$/);
       cy.clickButton(/^Next$/);
       cy.clickButton(/^Create exception$/);
-      cy.clickButton(/^Add$/);
+      cy.clickButton(/^Save rule$/);
       cy.getBy('[data-cy="row-id-1"]').within(() => {
         cy.getBy('[data-cy="delete-exception"]').click();
       });
