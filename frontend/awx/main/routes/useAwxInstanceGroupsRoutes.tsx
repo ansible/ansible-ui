@@ -8,6 +8,10 @@ import { InstanceGroupPage } from '../../administration/instance-groups/Instance
 import { InstanceGroupInstances } from '../../administration/instance-groups/InstanceGroupPage/InstanceGroupInstances';
 import { InstanceDetails } from '../../administration/instances/InstanceDetails';
 import { InstanceGroupInstancesPage } from '../../administration/instance-groups/InstanceGroupPage/InstanceGroupInstancesPage/InstanceGroupInstancesPage';
+import {
+  CreateInstanceGroup,
+  EditInstanceGroup,
+} from '../../administration/instance-groups/InstanceGroupForm';
 
 export function useAwxInstanceGroupsRoutes() {
   const { t } = useTranslation();
@@ -20,12 +24,12 @@ export function useAwxInstanceGroupsRoutes() {
         {
           id: AwxRoute.CreateInstanceGroup,
           path: 'create',
-          element: <PageNotImplemented />,
+          element: <CreateInstanceGroup />,
         },
         {
           id: AwxRoute.EditInstanceGroup,
           path: ':id/edit',
-          element: <PageNotImplemented />,
+          element: <EditInstanceGroup />,
         },
         {
           id: AwxRoute.InstanceGroupPage,
