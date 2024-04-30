@@ -60,10 +60,10 @@ export function useAwxInventoryRoutes() {
             <SchedulePage
               initialBreadCrumbs={[
                 { label: t('Inventories'), to: AwxRoute.Inventories },
-                { label: 'inventory', to: AwxRoute.InventoryPage },
+                { id: 'inventory', to: AwxRoute.InventoryPage },
                 { label: t('Inventory Sources'), to: AwxRoute.InventorySources },
-                { label: 'data', to: AwxRoute.InventorySourcePage },
-                { label: t('Schedules'), to: AwxRoute.InventorySourceSchedules },
+                { id: 'data', to: AwxRoute.InventorySourcePage },
+                { label: t('Schedules'), id: 'schedules', to: AwxRoute.InventorySourceSchedules },
               ]}
               backTab={{
                 label: t('Back to Schedules'),
