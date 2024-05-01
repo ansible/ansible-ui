@@ -398,6 +398,7 @@ function CredentialSubForm(
                 onClear={() => {}}
                 shouldHideField={field.secret && isEditMode}
                 label={field.label}
+                placeholder={'ENCRYPTED'}
               >
                 <CredentialMultilineInput
                   accumulatedPluginValues={accumulatedPluginValues}
@@ -430,6 +431,7 @@ function CredentialSubForm(
                 onClear={() => {}}
                 shouldHideField={field.secret && isEditMode}
                 label={field.label}
+                placeholder={'ENCRYPTED'}
               >
                 <CredentialTextInput
                   accumulatedPluginValues={accumulatedPluginValues}

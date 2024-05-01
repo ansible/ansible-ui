@@ -33,6 +33,11 @@ interface IProps {
   children: ReactElement<ChildProps>;
 
   /**
+   * Optional text displayed in input field when the field value is hidden
+   */
+  placeholder?: string;
+
+  /**
    * Optional text that provides additional information or instructions
    * for the field, displayed alongside the label.
    */
@@ -45,7 +50,14 @@ interface IProps {
   label?: string;
 }
 
-export function PageFormSecret({ onClear, shouldHideField, label, labelHelp, children }: IProps) {
+export function PageFormSecret({
+  onClear,
+  shouldHideField,
+  label,
+  labelHelp,
+  children,
+  placeholder,
+}: IProps) {
   const { t } = useTranslation();
   const fieldLabel = label || children.props.label || '';
   const fieldLabelHelp = labelHelp || children.props.labelHelp || '';
@@ -55,7 +67,7 @@ export function PageFormSecret({ onClear, shouldHideField, label, labelHelp, chi
         <InputGroup>
           <TextInput
             aria-label={t('hidden value')}
-            placeholder="••••••••••••••••••••••"
+            placeholder={placeholder ? placeholder : '••••••••••••••••••••••'}
             type="password"
             autoComplete="off"
             isDisabled={true}
