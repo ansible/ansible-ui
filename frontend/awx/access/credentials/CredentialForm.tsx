@@ -312,7 +312,6 @@ function CredentialInputs({
 
   const isGalaxyCredential =
     !!credentialTypes && credentialTypes?.[credentialTypeID]?.kind === 'galaxy';
-  console.log('edit mode in credentialinputs: ', isEditMode);
   return (
     <>
       <PageFormTextInput<Credential>
@@ -373,8 +372,6 @@ function CredentialSubForm(
   if (!credentialType || !credentialType?.inputs?.fields) {
     return null;
   }
-
-  console.log(isEditMode);
 
   const stringFields =
     credentialType?.inputs?.fields?.filter(
