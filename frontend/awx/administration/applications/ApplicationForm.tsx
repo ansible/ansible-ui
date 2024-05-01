@@ -45,7 +45,7 @@ export function CreateApplication(props: { onSuccessfulCreate: (app: Application
   const getPageUrl = useGetPageUrl();
 
   return (
-    <>
+    <PageLayout>
       <PageHeader
         title={t('Create Application')}
         breadcrumbs={[
@@ -61,7 +61,7 @@ export function CreateApplication(props: { onSuccessfulCreate: (app: Application
       >
         <ApplicationInputs mode="create" />
       </AwxPageForm>
-    </>
+    </PageLayout>
   );
 }
 
