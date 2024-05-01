@@ -20,12 +20,11 @@ describe('Inventory Sources', () => {
     cy.awxLogin();
   });
 
-  beforeEach(() => {
-    cy.createAwxOrganization().then((org) => {
+  beforeEach(function () {
+    project = this.globalProject as Project;
+    cy.createAwxOrganization().then(function (org) {
       organization = org;
-      cy.createAwxProject({ organization: organization.id }).then((p) => {
-        project = p;
-      });
+
       cy.createAwxInventory({ organization: organization.id }).then((inv) => {
         inventory = inv;
         cy.createAwxInventorySource(inv, project).then((invSrc) => {
@@ -45,7 +44,7 @@ describe('Inventory Sources', () => {
   });
 
   afterEach(() => {
-    cy.deleteAwxProject(project, { failOnStatusCode: false });
+    // cy.deleteAwxProject(project, { failOnStatusCode: false });
     cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
     cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
     cy.deleteAwxCredential(credential, { failOnStatusCode: false });
