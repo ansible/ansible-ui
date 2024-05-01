@@ -100,8 +100,6 @@ export function useInstanceGroupJobsColumns(options?: {
   const executionEnvColumn = useJobExecutionEnvColumn();
   const scheduleColumn = useJobScheduleColumn();
 
-  console.log(scheduleColumn);
-
   const tableColumns = useMemo<ITableColumn<UnifiedJob>[]>(() => {
     const displayColumns = [
       nameColumn,
