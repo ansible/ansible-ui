@@ -226,3 +226,14 @@ Cypress.Commands.add(
     cy.getBy('[data-cy="apply-filter"]').click();
   }
 );
+
+Cypress.Commands.add(
+  'selectResourceFromSpecificDropDown',
+  (dropdownDataCy: string, resourceName: string) => {
+    cy.get(`[data-cy="${dropdownDataCy}"] [data-ouia-component-id="menu-select"]`)
+      .click()
+      .within(() => {
+        cy.get(`[data-cy="${resourceName}"]`).click();
+      });
+  }
+);
