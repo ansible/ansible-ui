@@ -15,13 +15,13 @@ import {
   PageLayout,
   usePageNavigate,
 } from '../../framework';
+import { awxAPI } from '../../frontend/awx/common/api/awx-utils';
 import { useAwxConfig } from '../../frontend/awx/common/useAwxConfig';
 import { CredentialType } from '../../frontend/awx/interfaces/CredentialType';
+import { SystemSettings } from '../../frontend/awx/interfaces/SystemSettings';
+import { useGet } from '../../frontend/common/crud/useGet';
 import { usePlatformActiveUser } from '../main/PlatformActiveUserProvider';
 import { PlatformRoute } from '../main/PlatformRoutes';
-import { SystemSettings } from '../../frontend/awx/interfaces/SystemSettings';
-import { awxAPI } from '../../frontend/awx/common/api/awx-utils';
-import { useGet } from '../../frontend/common/crud/useGet';
 
 export function SubscriptionDetails() {
   const { t } = useTranslation();
@@ -71,10 +71,7 @@ export function SubscriptionDetails() {
         }
       />
       <PageDetails>
-        <PageDetail label={t('Subscription')} fullWidth>
-          {license_info.subscription_name}
-        </PageDetail>
-
+        <PageDetail label={t('Subscription')}>{license_info.subscription_name}</PageDetail>
         <PageDetail
           label={t('Status')}
           helpText={

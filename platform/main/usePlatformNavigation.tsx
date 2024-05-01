@@ -24,9 +24,12 @@ import { PlatformOverview } from '../overview/PlatformOverview';
 import { QuickStartsPage } from '../overview/quickstarts/Quickstarts';
 import { useGetPlatformAuthenticatorsRoutes } from '../routes/useGetPlatformAuthenticatorsRoutes';
 import { useGetPlatformOrganizationsRoutes } from '../routes/useGetPlatformOrganizationsRoutes';
+import { useGetPlatformResourceRoutes } from '../routes/useGetPlatformResourceRoutes';
 import { useGetPlatformTeamsRoutes } from '../routes/useGetPlatformTeamsRoutes';
 import { useGetPlatformUsersRoutes } from '../routes/useGetPlatformUsersRoutes';
-import { useGetPlatformResourceRoutes } from '../routes/useGetPlatformResourceRoutes';
+import { GatewaySettings } from '../settings/GatewaySettings';
+import { GatewaySettingsDetails } from '../settings/GatewaySettingsDetails';
+import { GatewaySettingsEdit } from '../settings/GatewaySettingsEdit';
 import { SubscriptionDetails } from '../settings/SubscriptionDetails';
 import { SubscriptionWizard } from '../settings/SubscriptionWizard';
 import { useAwxService, useEdaService, useHubService } from './GatewayServices';
@@ -214,6 +217,21 @@ export function usePlatformNavigation() {
               id: PlatformRoute.SubscriptionDetails,
               path: '',
               element: <SubscriptionDetails />,
+            },
+          ],
+        },
+        {
+          label: t('Gateway'),
+          path: 'gateway',
+          element: <GatewaySettings />,
+          children: [
+            {
+              path: 'edit',
+              element: <GatewaySettingsEdit categoryId="gateway" />,
+            },
+            {
+              path: '',
+              element: <GatewaySettingsDetails categoryId="gateway" />,
             },
           ],
         },
