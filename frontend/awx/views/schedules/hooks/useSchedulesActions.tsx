@@ -18,17 +18,18 @@ import { useDeleteSchedules } from './useDeleteSchedules';
 import { schedulePageUrl } from '../types';
 
 export function useSchedulesActions(options: {
-  onScheduleToggleorDeleteCompleted: () => void;
+  onScheduleDeleteCompleted: () => void;
+  onScheduleToggleCompleted: () => void;
   sublistEndpoint?: string;
 }) {
   const { t } = useTranslation();
-  const deleteSchedule = useDeleteSchedules(options?.onScheduleToggleorDeleteCompleted);
+  const deleteSchedule = useDeleteSchedules(options?.onScheduleDeleteCompleted);
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/schedules/`);
   const canCreateSchedule = Boolean(data && data.actions && data.actions['POST']);
   const handleToggleSchedule: (schedule: Schedule, enabled: boolean) => Promise<void> = useCallback(
     async (schedule, enabled) => {
       await requestPatch<Schedule>(awxAPI`/schedules/${schedule.id.toString()}/`, { enabled });
-      options?.onScheduleToggleorDeleteCompleted();
+      options.onScheduleToggleCompleted();
     },
     [options]
   );
