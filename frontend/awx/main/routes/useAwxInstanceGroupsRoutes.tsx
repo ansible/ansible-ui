@@ -1,7 +1,6 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageNavigationItem } from '../../../../framework';
-import { PageNotImplemented } from '../../../../framework/PageEmptyStates/PageNotImplemented';
 import { InstanceGroups } from '../../administration/instance-groups/InstanceGroups';
 import { AwxRoute } from '../AwxRoutes';
 import { InstanceGroupPage } from '../../administration/instance-groups/InstanceGroupPage/InstanceGroupPage';
@@ -13,6 +12,7 @@ import {
   EditInstanceGroup,
 } from '../../administration/instance-groups/InstanceGroupForm';
 import { InstanceGroupDetails } from '../../administration/instance-groups/InstanceGroupPage/InstanceGroupDetails';
+import { InstanceGroupJobs } from '../../administration/instance-groups/InstanceGroupPage/InstanceGroupJobs';
 
 export function useAwxInstanceGroupsRoutes() {
   const { t } = useTranslation();
@@ -50,7 +50,7 @@ export function useAwxInstanceGroupsRoutes() {
             {
               id: AwxRoute.InstanceGroupJobs,
               path: 'jobs',
-              element: <PageNotImplemented />,
+              element: <InstanceGroupJobs />,
             },
           ],
         },
