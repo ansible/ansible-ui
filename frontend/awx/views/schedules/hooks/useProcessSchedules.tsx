@@ -50,7 +50,8 @@ export const useProcessSchedule = () => {
   const updateSchedule = usePatchRequest<CreateSchedulePayload, Schedule>();
   return useCallback(
     async (payloadData: StandardizedFormData) => {
-      const { resource, prompt, schedule_days_to_keep, ...rest } = payloadData;
+      const { resource, prompt, schedule_days_to_keep, survey, ...rest } = payloadData;
+
       const request = (endPoint: string, payload: CreateSchedulePayload) => {
         if (params.schedule_id && params.id) {
           return updateSchedule(awxAPI`/schedules/${params.schedule_id.toString()}/`, {
@@ -67,13 +68,18 @@ export const useProcessSchedule = () => {
         job_tags,
         skip_tags,
         inventory,
+
         ...restOfPrompt
       } = prompt || { execution_environment: null, job_tags: '', skip_tags: '' };
       const { type, id } = resource;
       let schedule: Schedule;
       const hasJobTags = job_tags && job_tags?.length > 0;
       const hasSkipTags = prompt && prompt?.skip_tags && prompt?.skip_tags?.length > 0;
-      const extraDataObject = schedule_days_to_keep ? { days: schedule_days_to_keep } : {};
+      let extraDataObject: { [key: string]: string | number | boolean } = {};
+      if (schedule_days_to_keep) extraDataObject.days = schedule_days_to_keep;
+
+      extraDataObject = { ...extraDataObject, ...survey };
+
       const payload = {
         ...rest,
         ...restOfPrompt,
@@ -82,7 +88,7 @@ export const useProcessSchedule = () => {
         skip_tags: hasSkipTags ? stringifyTags(prompt?.skip_tags) : undefined,
         job_tags: hasJobTags ? stringifyTags(job_tags) : undefined,
         enabled: true,
-        extra_data: extraDataObject,
+        extra_data: { ...extraDataObject },
       };
       switch (type) {
         case 'inventory_source':
