@@ -277,7 +277,7 @@ export function EditCredential() {
         defaultValue={initialValues}
       >
         <CredentialInputs
-          isEditMode
+          isEditMode={true}
           credentialTypes={parsedCredentialTypes || {}}
           selectedCredentialTypeId={credential?.credential_type}
           setCredentialPluginValues={setCredentialPluginValues}
@@ -312,7 +312,7 @@ function CredentialInputs({
 
   const isGalaxyCredential =
     !!credentialTypes && credentialTypes?.[credentialTypeID]?.kind === 'galaxy';
-
+  console.log('edit mode in credentialinputs: ', isEditMode);
   return (
     <>
       <PageFormTextInput<Credential>
@@ -374,14 +374,11 @@ function CredentialSubForm(
     return null;
   }
 
-  const encryptedFields =
-    credentialType?.inputs?.fields?.filter(
-      (field) => field.secret === true && !field?.choices?.length
-    ) || [];
+  console.log(isEditMode);
 
   const stringFields =
     credentialType?.inputs?.fields?.filter(
-      (field) => field.type === 'string' && field.secret !== true && !field?.choices?.length
+      (field) => field.type === 'string' && !field?.choices?.length
     ) || [];
 
   const choiceFields =
@@ -399,20 +396,27 @@ function CredentialSubForm(
         stringFields.map((field) => {
           if (field?.multiline) {
             return (
-              <CredentialMultilineInput
-                accumulatedPluginValues={accumulatedPluginValues}
-                kind={credentialType.kind}
+              <PageFormSecret
                 key={field.id}
-                field={field}
-                requiredFields={requiredFields}
-                handleModalToggle={() => {
-                  openCredentialPluginsModal({
-                    field,
-                    setCredentialPluginValues,
-                    accumulatedPluginValues,
-                  });
-                }}
-              />
+                onClear={() => {}}
+                shouldHideField={field.secret && isEditMode}
+                label={field.label}
+              >
+                <CredentialMultilineInput
+                  accumulatedPluginValues={accumulatedPluginValues}
+                  kind={credentialType.kind}
+                  key={field.id}
+                  field={field}
+                  requiredFields={requiredFields}
+                  handleModalToggle={() => {
+                    openCredentialPluginsModal({
+                      field,
+                      setCredentialPluginValues,
+                      accumulatedPluginValues,
+                    });
+                  }}
+                />
+              </PageFormSecret>
             );
           } else if (credentialType.kind === 'ssh' && field.id === 'become_method') {
             return (
@@ -424,24 +428,31 @@ function CredentialSubForm(
             );
           } else {
             return (
-              <CredentialTextInput
-                accumulatedPluginValues={accumulatedPluginValues}
-                setAccumulatedPluginValues={setAccumulatedPluginValues}
+              <PageFormSecret
                 key={field.id}
-                field={field}
-                isDisabled={
-                  field.id === 'vault_id' && credentialType.kind === 'vault' && isEditMode
-                }
-                isRequired={requiredFields.includes(field.id)}
-                handleModalToggle={() =>
-                  openCredentialPluginsModal({
-                    field,
-                    setCredentialPluginValues,
-                    accumulatedPluginValues,
-                  })
-                }
-                credentialType={credentialType}
-              />
+                onClear={() => {}}
+                shouldHideField={field.secret && isEditMode}
+                label={field.label}
+              >
+                <CredentialTextInput
+                  accumulatedPluginValues={accumulatedPluginValues}
+                  setAccumulatedPluginValues={setAccumulatedPluginValues}
+                  key={field.id}
+                  field={field}
+                  isDisabled={
+                    field.id === 'vault_id' && credentialType.kind === 'vault' && isEditMode
+                  }
+                  isRequired={requiredFields.includes(field.id)}
+                  handleModalToggle={() =>
+                    openCredentialPluginsModal({
+                      field,
+                      setCredentialPluginValues,
+                      accumulatedPluginValues,
+                    })
+                  }
+                  credentialType={credentialType}
+                />
+              </PageFormSecret>
             );
           }
         })}
@@ -466,23 +477,6 @@ function CredentialSubForm(
             isRequired={requiredFields.includes(field.id)}
             labelHelp={field.help_text}
           />
-        ))}
-      {encryptedFields.length > 0 &&
-        encryptedFields.map((field) => (
-          <PageFormSecret
-            key={field.id}
-            onClear={() => {
-              onClear && onClear(field.id);
-            }}
-            shouldHideField={field.secret}
-            label={field.label}
-          >
-            <CredentialTextInput
-              key={field.id}
-              field={field}
-              isRequired={requiredFields.includes(field.id)}
-            />
-          </PageFormSecret>
         ))}
     </PageFormSection>
   ) : null;
