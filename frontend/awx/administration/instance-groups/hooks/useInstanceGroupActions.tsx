@@ -52,7 +52,7 @@ export function useInstanceGroupToolbarActions(
             type: PageActionType.Button,
             selection: PageActionSelection.None,
             label: t('Create container group'),
-            onClick: () => pageNavigate(AwxRoute.CreateInstanceGroup),
+            onClick: () => pageNavigate(AwxRoute.CreateContainerGroup),
           },
           {
             type: PageActionType.Button,
@@ -113,7 +113,7 @@ export function useInstanceGroupRowActions(onComplete: (instanceGroups: Instance
               ),
         isHidden: (instanceGroup) => !instanceGroup.is_container_group,
         onClick: (instanceGroup) =>
-          pageNavigate(AwxRoute.EditInstanceGroup, { params: { id: instanceGroup.id } }),
+          pageNavigate(AwxRoute.EditContainerGroup, { params: { id: instanceGroup.id } }),
       },
       { type: PageActionType.Seperator },
       {
