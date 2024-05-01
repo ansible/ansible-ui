@@ -46,7 +46,8 @@ export function SchedulePage(props: {
     isInventorySource ? params.source_id : params.id
   );
   const itemActions = useSchedulesActions({
-    onScheduleToggleorDeleteCompleted: () => navigate(getPageUrl(AwxRoute.Schedules)),
+    onScheduleDeleteCompleted: () => navigate(getPageUrl(AwxRoute.Schedules)),
+    onScheduleToggleCompleted: () => refresh(),
   });
 
   useEffect(() => {
