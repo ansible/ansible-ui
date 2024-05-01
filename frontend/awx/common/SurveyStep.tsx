@@ -6,7 +6,7 @@ import { useGet } from '../../common/crud/useGet';
 import { awxAPI } from './api/awx-utils';
 import { Spec, Survey } from '../interfaces/Survey';
 import { PageSelectOption } from '../../../framework/PageInputs/PageSelectOption';
-import { PageFormCreatableSelect } from '../../../framework/PageForm/Inputs/PageFormCreatableSelect';
+import { PageFormMultiSelect } from '../../../framework/PageForm/Inputs/PageFormMultiSelect';
 import { WizardFormValues } from '../resources/templates/WorkflowVisualizer/types';
 import { useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
@@ -53,16 +53,14 @@ export function SurveyStep({
   );
 
   useEffect(() => {
-    const survey: { [key: string]: string | number | { name: string }[] } = {};
+    const survey: { [key: string]: string | string[] | number | { name: string }[] } = {};
     survey_spec?.spec?.forEach((obj: Spec) => {
       if (obj.default === '') {
         return;
       }
       if (obj.type === 'multiselect') {
         const specDefault = obj.default as string;
-        survey[obj.variable] = specDefault.split('\n').map((val: string) => ({
-          name: val,
-        }));
+        survey[obj.variable] = specDefault.split('\n');
         return;
       }
       survey[obj.variable] = obj.default;
@@ -155,6 +153,7 @@ export function SurveyStep({
           ></PageFormTextArea>
         ) : element.type === 'multiplechoice' ? (
           <PageFormSelect
+            key={index}
             name={`survey.${element.variable}`}
             placeholderText={t('Select option')}
             label={t(element.question_name)}
@@ -164,9 +163,10 @@ export function SurveyStep({
             isRequired={element.required}
           ></PageFormSelect>
         ) : element.type === 'multiselect' ? (
-          <PageFormCreatableSelect
+          <PageFormMultiSelect
+            key={index}
             name={`survey.${element.variable}`}
-            placeholderText={t('Select option(s)')}
+            placeholder={t('Select option(s)')}
             label={t(element.question_name)}
             labelHelp={element.question_description}
             labelHelpTitle=""
