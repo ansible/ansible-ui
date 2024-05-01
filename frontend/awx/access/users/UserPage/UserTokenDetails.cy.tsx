@@ -1,4 +1,5 @@
 import { UserTokenDetails } from './UserTokenDetails';
+import { formatDateString } from '../../../../../framework/utils/formatDateString';
 
 describe('UserTokenDetails', () => {
   beforeEach(() => {
@@ -13,7 +14,7 @@ describe('UserTokenDetails', () => {
       }
     );
   });
-  it('renders personal access token when application is not provided in token API response', () => {
+  it('renders personal access token when token does not reference application', () => {
     cy.intercept(
       {
         method: 'GET',
@@ -29,27 +30,24 @@ describe('UserTokenDetails', () => {
       initialEntries: ['/users/3/tokens/8/details'],
     });
     // check name of the application, in this case there is no app hence "Personal access token"
-    cy.get('[data-cy="application-name"]').within(() => {
-      cy.contains('Personal access token');
-    });
-    cy.get('[data-cy="description"]').within(() => {
-      cy.contains('test token 1');
-    });
-    cy.get('[data-cy="scope"]').within(() => {
-      cy.contains('write');
-    });
-    cy.get('[data-cy="expires"]').within(() => {
-      cy.contains('31/08/3023, 10:37:26');
-    });
-    cy.get('[data-cy="created"]').within(() => {
-      cy.contains('29/04/2024, 10:37:26');
-    });
-    cy.get('[data-cy="modified"]').within(() => {
-      cy.contains('29/04/2024, 10:37:26');
-    });
+    cy.get('[data-cy="application-name"]').should('have.text', 'Personal access token');
+    cy.get('[data-cy="description"]').should('have.text', 'test token 1');
+    cy.get('[data-cy="scope"]').should('have.text', 'write');
+    cy.get('[data-cy="expires"]').should(
+      'have.text',
+      formatDateString('3023-08-31T14:37:26.177400Z')
+    );
+    cy.get('[data-cy="created"]').should(
+      'have.text',
+      formatDateString('2024-04-29T14:37:26.186275Z')
+    );
+    cy.get('[data-cy="modified"]').should(
+      'have.text',
+      formatDateString('2024-04-29T14:37:26.199763Z')
+    );
   });
 
-  it('renders application access token when application is provided in token API response', () => {
+  it('renders application access token when token references an application', () => {
     cy.intercept(
       {
         method: 'GET',
@@ -64,24 +62,21 @@ describe('UserTokenDetails', () => {
       path: '/users/:id/tokens/:tokenid/details',
       initialEntries: ['/users/3/tokens/30/details'],
     });
-    cy.get('[data-cy="application-name"]').within(() => {
-      cy.contains('test app 1');
-    });
-    cy.get('[data-cy="description"]').within(() => {
-      cy.contains('desc');
-    });
-    cy.get('[data-cy="scope"]').within(() => {
-      cy.contains('read');
-    });
-    cy.get('[data-cy="expires"]').within(() => {
-      cy.contains('31/08/3023, 14:58:25');
-    });
-    cy.get('[data-cy="created"]').within(() => {
-      cy.contains('29/04/2024, 14:58:25');
-    });
-    cy.get('[data-cy="modified"]').within(() => {
-      cy.contains('29/04/2024, 14:58:25');
-    });
+    cy.get('[data-cy="application-name"]').should('have.text', 'test app 1');
+    cy.get('[data-cy="description"]').should('have.text', 'desc');
+    cy.get('[data-cy="scope"]').should('have.text', 'read');
+    cy.get('[data-cy="expires"]').should(
+      'have.text',
+      formatDateString('3023-08-31T18:58:25.191054Z')
+    );
+    cy.get('[data-cy="created"]').should(
+      'have.text',
+      formatDateString('2024-04-29T18:58:25.203965Z')
+    );
+    cy.get('[data-cy="modified"]').should(
+      'have.text',
+      formatDateString('2024-04-29T18:58:25.223488Z')
+    );
   });
   it('renders error page when requesting non existing user', () => {
     cy.intercept(
