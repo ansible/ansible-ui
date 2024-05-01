@@ -109,28 +109,23 @@ function SelectCredential(props: {
 }) {
   const tableColumns = useCredentialsColumns({ disableLinks: true });
   const toolbarFilters = useToolbarFilters();
+  const typeParams: { [key: string]: string } = {};
+
+  if (props.credentialType) {
+    typeParams.credential_type = props.credentialType.toString();
+  }
+  if (props.sourceType) {
+    if (props.sourceType === 'scm') typeParams.credential_type__kind = 'cloud';
+    else typeParams.credential_type__namespace = props.sourceType;
+  }
+
   const view = useAwxView<Credential>({
     url: awxAPI`/credentials/`,
     toolbarFilters,
     tableColumns: tableColumns,
     disableQueryString: true,
     defaultSelection: props.defaultCredential ? [props.defaultCredential] : undefined,
-    ...(props.credentialType && {
-      queryParams: {
-        credential_type: props.credentialType.toString(),
-      },
-    }),
-    ...(props.sourceType === 'scm'
-      ? {
-          queryParams: {
-            credential_type__kind: 'cloud',
-          },
-        }
-      : {
-          queryParams: {
-            credential_type__namespace: props.sourceType as string,
-          },
-        }),
+    queryParams: { ...typeParams },
   });
   return (
     <SingleSelectDialog<Credential>
