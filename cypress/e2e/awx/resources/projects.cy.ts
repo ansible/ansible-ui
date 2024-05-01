@@ -11,6 +11,7 @@ import { awxAPI } from '../../../support/formatApiPathForAwx';
 describe('Projects', () => {
   let schedule: Schedule;
   let project: Project;
+  let thisProject: Project;
   let organization: Organization;
   let user: AwxUser;
 
@@ -18,40 +19,26 @@ describe('Projects', () => {
     cy.awxLogin();
   });
 
-  beforeEach(function () {
-    cy.createAwxOrganization().then((org) => {
-      organization = org;
-      cy.createAwxUser(organization).then((testUser) => {
-        user = testUser;
-        cy.createAwxProject({ organization: organization.id }).then((proj) => {
-          project = proj;
-          cy.giveUserProjectAccess(project.name, user.id, 'Read');
-
-          const name = 'E2E' + randomString(4);
-          cy.createAWXSchedule({
-            name,
-            unified_job_template: project.id,
-            rrule: 'DTSTART:20240415T124133Z RRULE:FREQ=WEEKLY;INTERVAL=1;BYDAY=SU',
-          }).then((sched: Schedule) => {
-            schedule = sched;
-            cy.navigateTo('awx', 'projects');
-            cy.filterTableBySingleSelect('name', project.name);
-            cy.get('[data-cy="name-column-cell"]').click();
-            cy.clickTab('Schedules', true);
+  describe('Projects: List View', () => {
+    beforeEach(function () {
+      cy.createAwxOrganization().then((org) => {
+        organization = org;
+        cy.createAwxUser(organization).then((testUser) => {
+          user = testUser;
+          cy.createAwxProject({ organization: organization.id }).then((proj) => {
+            project = proj;
+            cy.giveUserProjectAccess(project.name, user.id, 'Read');
           });
         });
       });
     });
-  });
 
-  afterEach(() => {
-    cy.deleteAWXSchedule(schedule, { failOnStatusCode: false });
-    cy.deleteAwxProject(project, { failOnStatusCode: false });
-    cy.deleteAwxUser(user, { failOnStatusCode: false });
-    cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
-  });
+    afterEach(() => {
+      cy.deleteAwxProject(project, { failOnStatusCode: false });
+      cy.deleteAwxUser(user, { failOnStatusCode: false });
+      cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
+    });
 
-  describe('Projects: List View', () => {
     it('can create a project and then delete it from the project details page', function () {
       const projectName = 'E2E Project ' + randomString(4);
       cy.navigateTo('awx', 'projects');
@@ -162,6 +149,25 @@ describe('Projects', () => {
   });
 
   describe('Projects: Details View', () => {
+    beforeEach(function () {
+      cy.createAwxOrganization().then((org) => {
+        organization = org;
+        cy.createAwxUser(organization).then((testUser) => {
+          user = testUser;
+          cy.createAwxProject({ organization: organization.id }).then((proj) => {
+            project = proj;
+            cy.giveUserProjectAccess(project.name, user.id, 'Read');
+          });
+        });
+      });
+    });
+
+    afterEach(() => {
+      cy.deleteAwxProject(project, { failOnStatusCode: false });
+      cy.deleteAwxUser(user, { failOnStatusCode: false });
+      cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
+    });
+
     it('can edit a project from the project details page', () => {
       cy.navigateTo('awx', 'projects');
       cy.filterTableByMultiSelect('name', [project.name]);
@@ -249,15 +255,31 @@ describe('Projects', () => {
   });
 
   describe('Projects: Schedules Tab', () => {
-    it('can navigate to project schedules tab', function () {
-      //This test could be combined with one of the other tests in this describe block
-      cy.navigateTo('awx', 'projects');
-      cy.filterTableByMultiSelect('name', [(this.globalProject as Project).name]);
-      cy.clickTableRowLink('name', `${(this.globalProject as Project).name}`, {
-        disableFilter: true,
+    beforeEach(function () {
+      cy.createAwxOrganization().then((org) => {
+        organization = org;
+        cy.createAwxProject({ organization: organization.id }).then((proj) => {
+          thisProject = proj;
+          const name = 'E2E' + randomString(4);
+          cy.createAWXSchedule({
+            name,
+            unified_job_template: thisProject.id,
+            rrule: 'DTSTART:20240415T124133Z RRULE:FREQ=WEEKLY;INTERVAL=1;BYDAY=SU',
+          }).then((sched: Schedule) => {
+            schedule = sched;
+            cy.navigateTo('awx', 'projects');
+            cy.filterTableBySingleSelect('name', thisProject.name);
+            cy.get('[data-cy="name-column-cell"]').click();
+            cy.clickTab('Schedules', true);
+          });
+        });
       });
-      cy.verifyPageTitle(`${(this.globalProject as Project).name}`);
-      cy.clickTab(/^Schedules$/, true);
+    });
+
+    afterEach(() => {
+      cy.deleteAWXSchedule(schedule, { failOnStatusCode: false });
+      cy.deleteAwxProject(thisProject, { failOnStatusCode: false });
+      cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
     });
 
     it('can edit a simple schedule from details page', () => {
@@ -300,61 +322,20 @@ describe('Projects', () => {
       cy.verifyPageTitle(schedule.name);
     });
 
-    it('can edit a schedule to add rules', () => {
+    it('can edit a schedule to add a rule and then edit a schedule to remove a rule', () => {
       cy.filterTableBySingleSelect('name', schedule.name);
-      cy.clickTableRowPinnedAction(schedule.name, 'edit-schedule', false);
-      cy.get('[data-cy="wizard-nav"]').within(() => {
-        ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
-          cy.get('li')
-            .eq(index)
-            .should((el) => expect(el.text().trim()).to.equal(text));
-        });
+      cy.clickTableRowLink('name', `${schedule.name}`, {
+        disableFilter: true,
       });
-      cy.selectSingleSelectOption('[data-cy="timezone"]', 'Africa/Abidjan');
-      cy.getByDataCy('undefined-form-group').within(() => {
-        cy.getBy('[aria-label="Time picker"]').click().type('{selectall} 5:00 AM');
-      });
-      cy.clickButton(/^Next$/);
-      cy.clickButton(/^Add rule$/);
-      cy.clickButton(/^Save rule$/);
-      cy.clickButton(/^Next$/);
-      cy.clickButton(/^Next$/);
-      cy.getByDataCy('start-date/time').contains('5:00 AM');
-      cy.getByDataCy('rule-2').should('exist');
-      cy.getByDataCy('rule-2').contains('FREQ=YEARLY');
-      cy.clickButton(/^Finish$/);
-      //Add more robust assertions here
       cy.verifyPageTitle(schedule.name);
-    });
-
-    it('can edit a schedule to add exceptions', () => {
-      cy.filterTableBySingleSelect('name', schedule.name);
-      cy.clickTableRowPinnedAction(schedule.name, 'edit-schedule', false);
-      cy.get('[data-cy="wizard-nav"]').within(() => {
-        ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
-          cy.get('li')
-            .eq(index)
-            .should((el) => expect(el.text().trim()).to.equal(text));
+      cy.get('[data-ouia-component-id="simple-table"]')
+        .scrollIntoView()
+        .within(() => {
+          cy.getByDataCy('rules-column-header').should('be.visible').and('contain', 'Rules');
+          cy.getByDataCy('rules-column-cell').should('have.descendants', 'ul');
+          cy.get('tbody tr').should('have.length', 1); //First, 1 rule is showing
         });
-      });
-      cy.clickButton(/^Next$/);
-      cy.clickButton(/^Next$/);
-      cy.clickButton(/^Create exception$/);
-      cy.get('[data-cy="freq-form-group"]').click();
-      cy.get('[data-cy="freq"]').within(() => {
-        cy.clickButton('Yearly');
-      });
-      cy.clickButton(/^Save rule$/);
-      cy.clickButton(/^Next$/);
-      cy.getByDataCy('exception-1').contains('FREQ=YEARLY');
-      cy.clickButton(/^Finish$/);
-      //Add more robust assertions here
-      cy.verifyPageTitle(schedule.name);
-    });
-
-    it('can edit a schedule to remove rules', () => {
-      cy.filterTableBySingleSelect('name', schedule.name);
-      cy.clickTableRowPinnedAction(schedule.name, 'edit-schedule', false);
+      cy.getByDataCy('edit-schedule').click();
       cy.get('[data-cy="wizard-nav"]').within(() => {
         ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
           cy.get('li')
@@ -364,23 +345,46 @@ describe('Projects', () => {
       });
       cy.clickButton(/^Next$/);
       cy.clickButton(/^Add rule$/);
+      cy.clickButton(/^Save rule$/);
+      cy.clickButton(/^Next$/);
+      cy.clickButton(/^Next$/);
+      cy.clickButton(/^Finish$/);
+      cy.verifyPageTitle(schedule.name);
+      cy.get('[data-ouia-component-id="simple-table"]')
+        .scrollIntoView()
+        .within(() => {
+          cy.getByDataCy('rules-column-header').should('be.visible').and('contain', 'Rules');
+          cy.getByDataCy('rules-column-cell').should('have.descendants', 'ul');
+          cy.get('tbody tr').should('have.length', 2); //Now, 2 rules are showing
+        });
+      cy.getByDataCy('edit-schedule').click();
+      cy.get('[data-cy="wizard-nav"]').within(() => {
+        ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
+          cy.get('li')
+            .eq(index)
+            .should((el) => expect(el.text().trim()).to.equal(text));
+        });
+      });
+      cy.clickButton(/^Next$/);
       cy.getBy('[data-cy="row-id-1"]').within(() => {
         cy.getBy('[data-cy="delete-rule"]').click();
       });
-      cy.clickButton(/^Save rule$/);
       cy.clickButton(/^Next$/);
       cy.clickButton(/^Next$/);
-      cy.getByDataCy('rule-1').should('not.contain', 'FREQ=DAILY');
       cy.clickButton(/^Finish$/);
-      //Add more robust assertions here
-      cy.verifyPageTitle(schedule.name);
+      cy.get('[data-ouia-component-id="simple-table"]')
+        .scrollIntoView()
+        .within(() => {
+          cy.getByDataCy('rules-column-header').should('be.visible').and('contain', 'Rules');
+          cy.getByDataCy('rules-column-cell').should('have.descendants', 'ul');
+          cy.get('tbody tr').should('have.length', 1); //1 Rule is showing again
+        });
     });
 
-    it('can edit a schedule to remove exceptions', () => {
+    it('can edit a schedule to add and then remove exceptions', () => {
       cy.filterTableBySingleSelect('name', schedule.name);
       cy.clickTableRowLink('name', schedule.name, { disableFilter: true });
       cy.getBy('[data-cy="edit-schedule"]').click();
-      //Assert original values here
       cy.get('[data-cy="wizard-nav"]').within(() => {
         ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
           cy.get('li')
@@ -391,12 +395,33 @@ describe('Projects', () => {
       cy.clickButton(/^Next$/);
       cy.clickButton(/^Next$/);
       cy.clickButton(/^Create exception$/);
-      cy.clickButton(/^Save rule$/);
+      cy.clickButton(/^Save exception$/);
+      cy.clickButton(/^Next$/);
+      cy.getByDataCy('exclusions-column-header').should('be.visible');
+      cy.intercept('PATCH', awxAPI`/schedules/${schedule.id.toString()}/`).as('edited');
+      cy.getByDataCy('Submit').click();
+      cy.intercept('GET', awxAPI`/projects/${thisProject.id.toString()}/`).as('projectList');
+      cy.wait('@edited');
+      cy.wait('@projectList');
+      cy.getByDataCy('exclusions-column-header').should('be.visible');
+      cy.getBy('[data-cy="edit-schedule"]').click();
+      cy.get('[data-cy="wizard-nav"]').within(() => {
+        ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
+          cy.get('li')
+            .eq(index)
+            .should((el) => expect(el.text().trim()).to.equal(text));
+        });
+      });
+      cy.clickButton(/^Next$/);
+      cy.clickButton(/^Next$/);
       cy.getBy('[data-cy="row-id-1"]').within(() => {
         cy.getBy('[data-cy="delete-exception"]').click();
       });
       cy.clickButton(/^Next$/);
-      cy.getByDataCy('exception-1').should('not.contain', 'FREQ=DAILY');
+      cy.intercept('PATCH', awxAPI`/schedules/${schedule.id.toString()}/`).as('editedAgain');
+      cy.getByDataCy('Submit').click();
+      cy.wait('@editedAgain');
+      cy.get('[data-cy="exclusions-column-header"]').should('not.exist');
     });
 
     it('can toggle a schedule', () => {
