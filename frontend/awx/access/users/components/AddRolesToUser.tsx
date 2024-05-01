@@ -34,14 +34,14 @@ interface ResourceRolePair {
   role: AwxRbacRole;
 }
 
-export function AddRolesToUser() {
+export function AddRolesToUser(props: { id?: string; userRolesRoute?: string }) {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const getPageUrl = useGetPageUrl();
   const pageNavigate = usePageNavigate();
   const progressDialog = useAwxBulkActionDialog<ResourceRolePair>();
   // Use ansible_id to retrieve user
-  const { data: user, isLoading } = useGet<AwxUser>(awxAPI`/users/${params.id ?? ''}/`);
+  const { data: user, isLoading } = useGet<AwxUser>(awxAPI`/users/${props.id || params.id || ''}/`);
 
   if (isLoading || !user) return <LoadingPage />;
 
@@ -104,8 +104,8 @@ export function AddRolesToUser() {
           resolve();
         },
         onClose: () => {
-          pageNavigate(AwxRoute.UserRoles, {
-            params: { id: user.id.toString() },
+          pageNavigate(props.userRolesRoute || AwxRoute.UserRoles, {
+            params: { id: params.id },
           });
         },
       });
@@ -133,7 +133,7 @@ export function AddRolesToUser() {
         steps={steps}
         onSubmit={onSubmit}
         onCancel={() => {
-          pageNavigate(AwxRoute.UserRoles, { params: { id: user?.id } });
+          pageNavigate(props.userRolesRoute || AwxRoute.UserRoles, { params: { id: params.id } });
         }}
         disableGrid
       />

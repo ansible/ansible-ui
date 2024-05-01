@@ -21,6 +21,7 @@ import { useEdaView } from '../../../eda/common/useEventDrivenView';
 import { useEdaBulkConfirmation } from '../../../eda/common/useEdaBulkConfirmation';
 import { useAwxBulkConfirmation } from '../../../awx/common/useAwxBulkConfirmation';
 import { useHubBulkConfirmation } from '../../../hub/common/useHubBulkConfirmation';
+import { useParams } from 'react-router-dom';
 
 type QueryParams = {
   [key: string]: string;
@@ -50,6 +51,7 @@ export function Access<T extends Assignment>(props: AccessProps<T>) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const getDisplayName = useMapContentTypeToDisplayName();
+  const params = useParams<{ id: string }>();
   const firstColumns = useMemo(
     () => props.additionalTableColumns?.filter((column) => column.priority !== ColumnPriority.last),
     [props.additionalTableColumns]
@@ -196,7 +198,7 @@ export function Access<T extends Assignment>(props: AccessProps<T>) {
         isPinned: true,
         icon: PlusCircleIcon,
         label: t('Add roles'),
-        href: getPageUrl(props.addRolesRoute ?? '', { params: { id: props.id } }),
+        href: getPageUrl(props.addRolesRoute ?? '', { params: { id: params.id } }),
       },
       {
         type: PageActionType.Button,
@@ -207,7 +209,7 @@ export function Access<T extends Assignment>(props: AccessProps<T>) {
         isDanger: true,
       },
     ],
-    [t, getPageUrl, props.addRolesRoute, props.id, removeRoles]
+    [t, getPageUrl, props.addRolesRoute, params.id, removeRoles]
   );
   const emptyStateTitle = useMemo(() => {
     let title: string;
