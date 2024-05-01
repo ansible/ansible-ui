@@ -3,7 +3,7 @@ import { ITableColumn, TextCell } from '../../../../../framework';
 import { useTranslation } from 'react-i18next';
 import { useEdaRolesFilters } from '../../roles/hooks/useEdaRolesFilters';
 import { edaAPI } from '../../../common/eda-utils';
-import { useMultiSelectListView } from '../../../common/useMultiSelectListView';
+import { useEdaMultiSelectListView } from '../../../common/useEdaMultiSelectListView';
 import { EdaRbacRole } from '../../../interfaces/EdaRbacRole';
 import { SelectRolesStep } from '../../../../common/access/RolesWizard/steps/SelectRolesStep';
 import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
@@ -67,7 +67,7 @@ export function EdaSelectRolesStep(props: {
     ];
   }, [t]);
 
-  const view = useMultiSelectListView<EdaRbacRole>(
+  const view = useEdaMultiSelectListView<EdaRbacRole>(
     {
       url: edaAPI`/role_definitions/`,
       toolbarFilters,

@@ -1,4 +1,5 @@
 import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
+import * as useOptions from '../../../common/crud/useOptions';
 import { Instances } from './Instances';
 
 describe('Instances list', () => {
@@ -12,6 +13,9 @@ describe('Instances list', () => {
         fixture: 'instances.json',
       }
     );
+    cy.intercept('GET', '/api/v2/settings/system*', {
+      IS_K8S: true,
+    }).as('isK8s');
   });
 
   it('Instances list renders with k8s system', () => {
@@ -49,8 +53,7 @@ describe('Instances list', () => {
     );
     cy.get('[data-cy="add-instance"]').should('not.exist');
     cy.get('[data-cy="actions-dropdown"]').click();
-    cy.get('[data-cy="remove-instance"]').should('be.visible');
-    cy.get('[data-cy="remove-instance"]').should('have.attr', 'aria-disabled', 'true');
+    cy.get('[data-cy="remove-instance"]').should('not.exist');
     cy.get('tbody').find('tr').should('have.length', 10);
   });
 
@@ -155,8 +158,40 @@ describe('Instance Empty list', () => {
     ).as('emptyList');
   });
 
-  it('Empty state is displayed correctly', () => {
+  it('Empty state is displayed correctly for instances with permission', () => {
+    cy.stub(useOptions, 'useOptions').callsFake(() => ({
+      data: {
+        actions: {
+          POST: {
+            name: {
+              type: 'string',
+              required: true,
+              label: 'Name',
+              max_length: 512,
+              help_text: 'Name of this instance.',
+              filterable: true,
+            },
+          },
+        },
+      },
+    }));
     cy.mount(<Instances />);
-    cy.get('[data-cy="empty-state-title"]').should('contain', 'No instances yet');
+    cy.contains(/^There are currently no instances added$/);
+    cy.contains(/^Please create an instance by using the button below.$/);
+    cy.contains('button', /^Create instance$/).should('be.visible');
+  });
+
+  it('Empty state is displayed correctly for user without permission to create instances', () => {
+    cy.stub(useOptions, 'useOptions').callsFake(() => ({
+      data: {
+        actions: {},
+      },
+    }));
+    cy.mount(<Instances />);
+    cy.contains(/^You do not have permission to create an instance.$/);
+    cy.contains(
+      /^Please contact your organization administrator if there is an issue with your access.$/
+    );
+    cy.contains('button', /^Create instance$/).should('not.exist');
   });
 });

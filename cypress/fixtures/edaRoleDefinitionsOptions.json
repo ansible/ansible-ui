@@ -1,0 +1,290 @@
+{
+  "name": "Role Definition List",
+  "description": "Role Definitions (roles) contain a list of permissions and can be used to\nassign those permissions to a user or team through the respective\nassignment endpoints.\n\nCustom roles can be created, modified, and deleted through this endpoint.\nSystem-managed roles are shown here, which cannot be edited or deleted,\nbut can be assigned to users.",
+  "renders": ["application/json", "text/html"],
+  "parses": ["application/json", "application/x-www-form-urlencoded", "multipart/form-data"],
+  "actions": {
+    "POST": {
+      "id": {
+        "type": "integer",
+        "required": false,
+        "read_only": true,
+        "label": "ID"
+      },
+      "url": {
+        "type": "field",
+        "required": false,
+        "read_only": true,
+        "label": "Url"
+      },
+      "related": {
+        "type": "field",
+        "required": false,
+        "read_only": true,
+        "label": "Related"
+      },
+      "summary_fields": {
+        "type": "field",
+        "required": false,
+        "read_only": true,
+        "label": "Summary fields"
+      },
+      "permissions": {
+        "type": "list",
+        "required": true,
+        "read_only": false,
+        "label": "Permissions",
+        "child": {
+          "type": "choice",
+          "required": true,
+          "read_only": false,
+          "choices": [
+            {
+              "value": "eda.add_activation",
+              "display_name": "eda.add_activation"
+            },
+            {
+              "value": "eda.add_credentialtype",
+              "display_name": "eda.add_credentialtype"
+            },
+            {
+              "value": "eda.add_decisionenvironment",
+              "display_name": "eda.add_decisionenvironment"
+            },
+            {
+              "value": "eda.add_edacredential",
+              "display_name": "eda.add_edacredential"
+            },
+            {
+              "value": "eda.add_extravar",
+              "display_name": "eda.add_extravar"
+            },
+            {
+              "value": "eda.add_project",
+              "display_name": "eda.add_project"
+            },
+            {
+              "value": "eda.add_team",
+              "display_name": "eda.add_team"
+            },
+            {
+              "value": "eda.change_credentialtype",
+              "display_name": "eda.change_credentialtype"
+            },
+            {
+              "value": "eda.change_decisionenvironment",
+              "display_name": "eda.change_decisionenvironment"
+            },
+            {
+              "value": "eda.change_edacredential",
+              "display_name": "eda.change_edacredential"
+            },
+            {
+              "value": "eda.change_organization",
+              "display_name": "eda.change_organization"
+            },
+            {
+              "value": "eda.change_project",
+              "display_name": "eda.change_project"
+            },
+            {
+              "value": "eda.change_team",
+              "display_name": "eda.change_team"
+            },
+            {
+              "value": "eda.delete_activation",
+              "display_name": "eda.delete_activation"
+            },
+            {
+              "value": "eda.delete_credentialtype",
+              "display_name": "eda.delete_credentialtype"
+            },
+            {
+              "value": "eda.delete_decisionenvironment",
+              "display_name": "eda.delete_decisionenvironment"
+            },
+            {
+              "value": "eda.delete_edacredential",
+              "display_name": "eda.delete_edacredential"
+            },
+            {
+              "value": "eda.delete_organization",
+              "display_name": "eda.delete_organization"
+            },
+            {
+              "value": "eda.delete_project",
+              "display_name": "eda.delete_project"
+            },
+            {
+              "value": "eda.delete_team",
+              "display_name": "eda.delete_team"
+            },
+            {
+              "value": "eda.disable_activation",
+              "display_name": "eda.disable_activation"
+            },
+            {
+              "value": "eda.enable_activation",
+              "display_name": "eda.enable_activation"
+            },
+            {
+              "value": "eda.member_organization",
+              "display_name": "eda.member_organization"
+            },
+            {
+              "value": "eda.member_team",
+              "display_name": "eda.member_team"
+            },
+            {
+              "value": "eda.restart_activation",
+              "display_name": "eda.restart_activation"
+            },
+            {
+              "value": "eda.view_activation",
+              "display_name": "eda.view_activation"
+            },
+            {
+              "value": "eda.view_auditrule",
+              "display_name": "eda.view_auditrule"
+            },
+            {
+              "value": "eda.view_credentialtype",
+              "display_name": "eda.view_credentialtype"
+            },
+            {
+              "value": "eda.view_decisionenvironment",
+              "display_name": "eda.view_decisionenvironment"
+            },
+            {
+              "value": "eda.view_edacredential",
+              "display_name": "eda.view_edacredential"
+            },
+            {
+              "value": "eda.view_extravar",
+              "display_name": "eda.view_extravar"
+            },
+            {
+              "value": "eda.view_organization",
+              "display_name": "eda.view_organization"
+            },
+            {
+              "value": "eda.view_project",
+              "display_name": "eda.view_project"
+            },
+            {
+              "value": "eda.view_rulebook",
+              "display_name": "eda.view_rulebook"
+            },
+            {
+              "value": "eda.view_rulebookprocess",
+              "display_name": "eda.view_rulebookprocess"
+            },
+            {
+              "value": "eda.view_team",
+              "display_name": "eda.view_team"
+            }
+          ]
+        }
+      },
+      "content_type": {
+        "type": "choice",
+        "required": false,
+        "read_only": false,
+        "label": "Content type",
+        "help_text": "The type of resource this applies to",
+        "choices": [
+          {
+            "value": "eda.activation",
+            "display_name": "Activation"
+          },
+          {
+            "value": "eda.auditrule",
+            "display_name": "Audit Rule"
+          },
+          {
+            "value": "eda.credentialtype",
+            "display_name": "Credential Type"
+          },
+          {
+            "value": "eda.decisionenvironment",
+            "display_name": "Decision Environment"
+          },
+          {
+            "value": "eda.edacredential",
+            "display_name": "Eda Credential"
+          },
+          {
+            "value": "eda.extravar",
+            "display_name": "Extra Var"
+          },
+          {
+            "value": "eda.project",
+            "display_name": "Project"
+          },
+          {
+            "value": "eda.rulebook",
+            "display_name": "Rulebook"
+          },
+          {
+            "value": "eda.rulebookprocess",
+            "display_name": "Rulebook Process"
+          },
+          {
+            "value": "shared.organization",
+            "display_name": "Organization"
+          },
+          {
+            "value": "shared.team",
+            "display_name": "Team"
+          }
+        ]
+      },
+      "modified": {
+        "type": "datetime",
+        "required": false,
+        "read_only": true,
+        "label": "Modified",
+        "help_text": "The date/time this resource was created"
+      },
+      "created": {
+        "type": "datetime",
+        "required": false,
+        "read_only": true,
+        "label": "Created",
+        "help_text": "The date/time this resource was created"
+      },
+      "name": {
+        "type": "string",
+        "required": true,
+        "read_only": false,
+        "label": "Name"
+      },
+      "description": {
+        "type": "string",
+        "required": false,
+        "read_only": false,
+        "label": "Description"
+      },
+      "managed": {
+        "type": "boolean",
+        "required": false,
+        "read_only": true,
+        "label": "Managed"
+      },
+      "modified_by": {
+        "type": "field",
+        "required": false,
+        "read_only": true,
+        "label": "Modified by",
+        "help_text": "The user who last modified this resource"
+      },
+      "created_by": {
+        "type": "field",
+        "required": false,
+        "read_only": true,
+        "label": "Created by",
+        "help_text": "The user who created this resource"
+      }
+    }
+  }
+}

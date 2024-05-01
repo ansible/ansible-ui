@@ -9,9 +9,11 @@ import { UserPage } from '../../access/users/UserPage/UserPage';
 import { UserRoles } from '../../access/users/UserPage/UserRoles';
 import { UserTeams } from '../../access/users/UserPage/UserTeams';
 import { UserTokens } from '../../access/users/UserPage/UserTokens';
+import { UserTokenDetails } from '../../access/users/UserPage/UserTokenDetails';
 import { Users } from '../../access/users/Users';
 import { AddRolesToUser } from '../../access/users/components/AddRolesToUser';
 import { AwxRoute } from '../AwxRoutes';
+import { UserTokenPage } from '../../access/users/UserPage/UserTokenPage';
 
 export function useAwxUsersRoutes() {
   const { t } = useTranslation();
@@ -30,11 +32,6 @@ export function useAwxUsersRoutes() {
           id: AwxRoute.EditUser,
           path: ':id/edit',
           element: <EditUser />,
-        },
-        {
-          id: AwxRoute.AddRolesToUser,
-          path: ':id/roles/add',
-          element: <AddRolesToUser />,
         },
         {
           id: AwxRoute.UserPage,
@@ -65,6 +62,27 @@ export function useAwxUsersRoutes() {
               id: AwxRoute.UserTokens,
               path: 'tokens',
               element: <UserTokens />,
+            },
+            {
+              path: '',
+              element: <Navigate to="details" />,
+            },
+          ],
+        },
+        {
+          id: AwxRoute.AddRolesToUser,
+          path: ':id/roles/add-roles',
+          element: <AddRolesToUser />,
+        },
+        {
+          id: AwxRoute.UserTokenPage,
+          path: ':id/tokens/:tokenid',
+          element: <UserTokenPage />,
+          children: [
+            {
+              id: AwxRoute.UserTokenDetails,
+              path: 'details',
+              element: <UserTokenDetails />,
             },
             {
               path: '',

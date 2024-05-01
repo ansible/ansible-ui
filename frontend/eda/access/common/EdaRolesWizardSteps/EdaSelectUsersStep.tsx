@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { EdaUser } from '../../../interfaces/EdaUser';
 import { ITableColumn, TextCell } from '../../../../../framework';
 import { edaAPI } from '../../../common/eda-utils';
-import { useMultiSelectListView } from '../../../common/useMultiSelectListView';
+import { useEdaMultiSelectListView } from '../../../common/useEdaMultiSelectListView';
 import { PageMultiSelectList } from '../../../../../framework/PageTable/PageMultiSelectList';
 import styled from 'styled-components';
 import { Title } from '@patternfly/react-core';
@@ -43,7 +43,7 @@ export function EdaSelectUsersStep(props: { descriptionForUsersSelection?: strin
     ];
   }, [t]);
 
-  const view = useMultiSelectListView<EdaUser>(
+  const view = useEdaMultiSelectListView<EdaUser>(
     {
       url: edaAPI`/users/`,
       toolbarFilters,

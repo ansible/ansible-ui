@@ -11,12 +11,43 @@ import { WizardFormValues } from '../resources/templates/WorkflowVisualizer/type
 import { useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
 
-export function SurveyStep({ templateId, jobType }: { templateId?: string; jobType?: string }) {
+function getJobType(resource: WizardFormValues['resource']) {
+  if (!resource) return;
+
+  if ('type' in resource) {
+    if (resource?.type === 'job_template') {
+      return 'job_templates';
+    } else if (resource?.type === 'workflow_job_template') {
+      return 'workflow_job_templates';
+    }
+  }
+
+  if ('unified_job_type' in resource) {
+    if (resource?.unified_job_type === 'job') {
+      return 'job_templates';
+    } else if (resource?.unified_job_type === 'workflow_job') {
+      return 'workflow_job_templates';
+    }
+  }
+}
+
+export function SurveyStep({
+  templateId,
+  jobType,
+  singleColumn,
+}: {
+  templateId?: string;
+  jobType?: string;
+  singleColumn?: boolean;
+}) {
   const { t } = useTranslation();
   const { wizardData, setStepData } = usePageWizard();
   const { reset } = useFormContext();
-  const { node_resource } = wizardData as WizardFormValues;
-  const id = node_resource ? node_resource.id.toString() : templateId ? templateId : '';
+  const { resource } = wizardData as WizardFormValues;
+  const id = resource ? resource?.id?.toString() : templateId ? templateId : '';
+
+  jobType = jobType ?? getJobType(resource);
+
   const { data: survey_spec } = useGet<Survey>(
     awxAPI`/${jobType ?? 'job_templates'}/${id}/survey_spec/`
   );
@@ -61,7 +92,7 @@ export function SurveyStep({ templateId, jobType }: { templateId?: string; jobTy
   };
 
   return (
-    <PageFormSection>
+    <PageFormSection singleColumn={singleColumn}>
       {survey_spec?.spec.map((element, index) =>
         element.type === 'text' ? (
           <PageFormTextInput

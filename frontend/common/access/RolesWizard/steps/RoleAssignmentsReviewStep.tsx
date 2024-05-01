@@ -12,11 +12,13 @@ import {
 } from '../../../../../framework';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
+import { useMapContentTypeToDisplayName } from '../../hooks/useMapContentTypeToDisplayName';
 
 type ReviewData = {
   resourceType?: string;
   resources?: { id: number; name: string; username?: never }[];
   edaRoles?: { id: number; name: string; description?: string; username?: never }[];
+  awxRoles?: { id: number; name: string; description?: string; username?: never }[];
   teams?: { id: number; name: string; username?: never }[];
   users?: { id: number; name?: never; username: string }[];
 };
@@ -39,7 +41,8 @@ const StyledDivider = styled(Divider)`
 export function RoleAssignmentsReviewStep() {
   const { wizardData } = usePageWizard();
   const { t } = useTranslation();
-  const { resourceType, resources, users, teams, edaRoles } = wizardData as ReviewData;
+  const { resourceType, resources, users, teams, edaRoles, awxRoles } = wizardData as ReviewData;
+  const getDisplayName = useMapContentTypeToDisplayName();
 
   return (
     <>
@@ -52,7 +55,9 @@ export function RoleAssignmentsReviewStep() {
             }}
           >
             <PageDetails disablePadding>
-              <PageDetail label={t('Resource type')}>{resourceType}</PageDetail>
+              <PageDetail label={t('Resource type')}>
+                {getDisplayName(resourceType, { isTitleCase: true })}
+              </PageDetail>
             </PageDetails>
           </div>
           <StyledDivider className="pf-v5-u-mb-xl" />
@@ -78,6 +83,9 @@ export function RoleAssignmentsReviewStep() {
       ) : null}
       {edaRoles && edaRoles.length ? (
         <ReviewExpandableList selectedItems={edaRoles} fieldName="edaRoles" />
+      ) : null}
+      {awxRoles && awxRoles.length ? (
+        <ReviewExpandableList selectedItems={awxRoles} fieldName="awxRoles" />
       ) : null}
     </>
   );
@@ -106,6 +114,7 @@ function ReviewExpandableList<
       case 'resources':
         return t('Resources');
       case 'edaRoles':
+      case 'awxRoles':
         return t('Roles');
       default:
         return '';
@@ -125,6 +134,7 @@ function ReviewExpandableList<
             maxWidth: 200,
           },
         ];
+      case 'awxRoles':
       case 'edaRoles':
         return [
           {

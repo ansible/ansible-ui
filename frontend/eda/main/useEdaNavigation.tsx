@@ -9,7 +9,7 @@ import { CreateCredential, EditCredential } from '../access/credentials/Credenti
 import { EdaRoleDetails } from '../access/roles/EdaRoleDetails';
 import { EdaRolePage } from '../access/roles/EdaRolePage';
 import { EdaRoles } from '../access/roles/EdaRoles';
-import { EditRole } from '../access/roles/EditRole';
+import { CreateRole, EditRole } from '../access/roles/RoleForm';
 import { CreateControllerToken } from '../access/users/CreateControllerToken';
 import { CreateUser, EditCurrentUser, EditUser } from '../access/users/EditUser';
 import { ControllerTokens } from '../access/users/UserPage/ControllerTokens';
@@ -74,6 +74,11 @@ import { PageNotImplemented } from '../../../framework';
 import { CredentialTypeCredentials } from '../access/credential-types/CredentialTypePage/CredentialTypeCredentials';
 import { EdaRulebookActivationAddTeams } from '../rulebook-activations/components/EdaRulebookActivationAddTeams';
 import { EdaRulebookActivationAddUsers } from '../rulebook-activations/components/EdaRulebookActivationAddUsers';
+import { EdaCredentialTypeAddUsers } from '../access/credential-types/components/EdaCredentialTypeAddUsers';
+import { EdaCredentialTypeAddTeams } from '../access/credential-types/components/EdaCredentialTypeAddTeams';
+import { CredentialTypeTeamAccess } from '../access/credential-types/CredentialTypePage/CredentialTypeTeamAccess';
+import { CredentialTypeUserAccess } from '../access/credential-types/CredentialTypePage/CredentialTypeUserAccess';
+import { EdaUserRoles } from '../access/users/UserPage/EdaUserRoles';
 
 export function useEdaNavigation() {
   const { t } = useTranslation();
@@ -411,7 +416,7 @@ export function useEdaNavigation() {
                 {
                   id: EdaRoute.UserRoles,
                   path: 'roles',
-                  element: <PageNotImplemented />,
+                  element: <EdaUserRoles />,
                 },
                 {
                   id: EdaRoute.UserTokens,
@@ -454,7 +459,7 @@ export function useEdaNavigation() {
             {
               id: EdaRoute.CreateRole,
               path: 'create',
-              element: <EditRole />,
+              element: <CreateRole />,
             },
             {
               id: EdaRoute.EditRole,
@@ -571,10 +576,30 @@ export function useEdaNavigation() {
                   element: <CredentialTypeCredentials />,
                 },
                 {
+                  id: EdaRoute.CredentialTypeTeamAccess,
+                  path: 'team-access',
+                  element: <CredentialTypeTeamAccess />,
+                },
+                {
+                  id: EdaRoute.CredentialTypeUserAccess,
+                  path: 'user-access',
+                  element: <CredentialTypeUserAccess />,
+                },
+                {
                   path: '',
                   element: <Navigate to="details" />,
                 },
               ],
+            },
+            {
+              id: EdaRoute.CredentialTypeAddUsers,
+              path: ':id/users/add-users',
+              element: <EdaCredentialTypeAddUsers />,
+            },
+            {
+              id: EdaRoute.CredentialTypeAddTeams,
+              path: ':id/team-access/add-teams',
+              element: <EdaCredentialTypeAddTeams />,
             },
             {
               path: '',

@@ -1,0 +1,14 @@
+{
+  "id": 7,
+  "username": "user1",
+  "email": "",
+  "first_name": "",
+  "last_name": "",
+  "is_superuser": false,
+  "resource": {
+    "ansible_id": "19f8985e-8fe2-48d1-b88f-be4575103627",
+    "resource_type": "shared.user"
+  },
+  "created_at": "2024-04-25T20:42:07.972431Z",
+  "modified_at": "2024-04-25T20:42:07.972692Z"
+}

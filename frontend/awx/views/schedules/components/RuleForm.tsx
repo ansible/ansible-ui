@@ -24,7 +24,12 @@ import { useGet24HourTime } from '../hooks/useGet24HourTime';
 import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
 import { PageFormSelect, PageFormTextInput } from '../../../../../framework';
 import { PageFormMultiSelect } from '../../../../../framework/PageForm/Inputs/PageFormMultiSelect';
-
+export function pad(num: number) {
+  if (typeof num === 'string') {
+    return num;
+  }
+  return num < 10 ? `0${num}` : num;
+}
 export function RuleForm(props: {
   title: string;
   isOpen: boolean | number;
@@ -69,24 +74,15 @@ export function RuleForm(props: {
     }
   }, [getValues, reset, props.isOpen, timezone, ruleId]);
   const handleAddItem = () => {
-    const {
-      id,
-      rules = [],
-      exceptions = [],
-      endingType,
-      until = null,
-      ...formData
-    } = getValues() as RuleFields;
-
-    const start = DateTime.fromISO(`${date}`).set(get24Hour(time)).toUTC();
+    const values = getValues() as RuleFields;
+    delete values.id;
+    const { rules = [], exceptions = [], until = null, ...rest } = values;
+    const start = DateTime.fromISO(`${date}`).set(get24Hour(time));
     const { year, month, day, hour, minute } = start;
-    const rule = new RRule({
-      ...formData,
-      freq: formData.freq,
-      tzid: timezone,
-      dtstart: datetime(year, month, day, hour, minute),
-    });
-
+    const dateString = `${year}${pad(month)}${pad(day)}T${pad(hour)}${pad(minute)}00`;
+    const rrulestring = `DTSTART;TZID=${timezone}:${dateString}`;
+    const ruleStart = RRule.fromString(rrulestring);
+    const rule = new RRule({ ...ruleStart.options, ...rest });
     if (until !== null) {
       const { time: untilTime, date: untilDate } = until;
 
@@ -127,7 +123,6 @@ export function RuleForm(props: {
         ? rules.length + 1 || 1
         : exceptions.length + 1 || 1;
     const ruleObject = { rule, id: itemId };
-
     const index = isRulesStep
       ? rules.findIndex((r) => r.id === ruleId)
       : exceptions.findIndex((r) => r.id === ruleId);
@@ -179,7 +174,7 @@ export function RuleForm(props: {
           labelHelp={t(
             'This is the bymonth field. This field is used to declare which months of the year the schedule should run.'
           )}
-          placeholder={t('Select days of the week on which to run the schedule')}
+          placeholder={t('Select days of the month on which to run the schedule')}
           disableSortOptions
         />
         <PageFormMultiSelect<RuleFields>
@@ -217,7 +212,7 @@ export function RuleForm(props: {
         />
         <PageFormMultiSelect<RuleFields>
           name={`bymonthday`}
-          placeholder={t('Select days of the month on which to run the schedule')}
+          placeholder={t('Select months of the year on which to run the schedule')}
           options={DAYS_OF_MONTH}
           label={t('Monthly day(s) number')}
           labelHelp={t(
@@ -272,7 +267,9 @@ export function RuleForm(props: {
           data-cy={ruleId ? 'update-rule-button' : 'add-rule-button'}
           onClick={handleAddItem}
         >
-          {ruleId ? t('Update') : t('Add')}
+          {ruleId
+            ? t(isRulesStep ? 'Update rule' : 'Update exception')
+            : t(isRulesStep ? 'Save rule' : 'Save exception')}
         </Button>
         <Button
           data-cy="discard-rule-button"

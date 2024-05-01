@@ -30,7 +30,7 @@ export function EdaSelectResourceTypeStep() {
         .filter(
           (option) =>
             option.value.startsWith('eda.') &&
-            !['extravar', 'auditrule', 'rulebookprocess'].some(function (v) {
+            !['extravar', 'auditrule', 'rulebookprocess', 'rulebook'].some(function (v) {
               return option.value.endsWith(v);
             })
         )

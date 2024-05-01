@@ -23,16 +23,34 @@ export function PageApp(props: {
 
   /** The default refresh interval for the page in seconds. */
   defaultRefreshInterval: number;
+
+  banner?: ReactNode;
 }) {
   const { navigation, masthead } = props;
   const navigationItems = useMemo(
     () => [
       {
-        path: `/`,
+        path: props.basename ?? '/',
         element: (
-          <Page header={masthead} sidebar={<PageNavigation navigation={navigation} />}>
+          <Page
+            header={masthead}
+            sidebar={<PageNavigation navigation={navigation} basename={props.basename} />}
+          >
             <PageNotificationsDrawer>
-              <Outlet />
+              <div
+                style={{
+                  maxHeight: '100%',
+                  overflow: 'hidden',
+                  height: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                }}
+              >
+                {props.banner}
+                <div style={{ flexGrow: 1, overflow: 'hidden' }}>
+                  <Outlet />
+                </div>
+              </div>
             </PageNotificationsDrawer>
           </Page>
         ),
@@ -40,12 +58,10 @@ export function PageApp(props: {
       },
       { path: '*', element: <PageNotFound /> },
     ],
-    [masthead, navigation]
+    [masthead, navigation, props.banner, props.basename]
   );
   const [_, setNavigation] = usePageNavigationRoutesContext();
-  useEffect(() => {
-    setNavigation(navigation);
-  }, [navigation, setNavigation]);
+  useEffect(() => setNavigation(navigationItems), [navigationItems, setNavigation]);
 
   return <Routes>{navigationItems.map(NavigationRoute)}</Routes>;
 }

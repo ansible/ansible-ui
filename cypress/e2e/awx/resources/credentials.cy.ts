@@ -46,10 +46,11 @@ describe('Credentials', () => {
       cy.navigateTo('awx', 'credentials');
       cy.clickButton(/^Create credential$/);
       cy.get('[data-cy="name"]').type(credentialName);
-      cy.selectDropdownOptionByResourceName('credential-type', 'Amazon Web Services');
+      cy.singleSelectByDataCy('credential_type', 'Amazon Web Services');
+      cy.contains('Type Details').should('be.visible');
+      cy.singleSelectByDataCy('organization', organization.name);
       cy.get('[data-cy="username"]').type('username');
       cy.get('[data-cy="password"]').type('password');
-      cy.singleSelectByDataCy('organization', organization.name);
       cy.intercept('POST', awxAPI`/credentials/`).as('newCred');
       cy.clickButton(/^Create credential$/);
       cy.wait('@newCred')
@@ -76,12 +77,14 @@ describe('Credentials', () => {
         });
     });
 
-    it.skip('create/edit a credential using prompt on launch', () => {
+    it('create/edit a credential using prompt on launch', () => {
       const credentialName = 'E2E Credential ' + randomString(4);
       cy.navigateTo('awx', 'credentials');
       cy.clickButton(/^Create credential$/);
       cy.get('[data-cy="name"]').type(credentialName);
-      cy.selectDropdownOptionByResourceName('credential-type', 'Machine');
+      cy.singleSelectByDataCy('organization', organization.name);
+      cy.singleSelectBy('[data-cy="credential_type"]', 'Machine');
+      cy.contains('Type Details').should('be.visible');
       cy.get('[data-cy="ask_password"]').check();
       cy.get('[data-cy="ask_ssh_key_unlock"]').check();
       cy.clickButton(/^Create credential$/);
@@ -112,7 +115,8 @@ describe('Credentials', () => {
       cy.navigateTo('awx', 'credentials');
       cy.clickButton(/^Create credential$/);
       cy.get('[data-cy="name"]').type(credentialName);
-      cy.selectDropdownOptionByResourceName('credential-type', 'Amazon Web Services');
+      cy.singleSelectBy('[data-cy="credential_type"]', 'Amazon Web Services');
+      cy.contains('Type Details').should('be.visible');
       cy.get('[data-cy="username"]').type('username');
       cy.get('[data-cy="password"]').type('password');
       cy.get('[data-cy="security-token"]').type('security-token');
@@ -225,15 +229,38 @@ describe('Credentials', () => {
           cy.verifyPageTitle('Credentials');
         });
     });
+
+    it('copies a credential from the list row action', () => {
+      cy.navigateTo('awx', 'credentials');
+      cy.filterTableByMultiSelect('name', [credential.name]);
+      cy.getByDataCy('actions-column-cell').within(() => {
+        cy.getByDataCy('copy-credential').click();
+      });
+      cy.get('[data-cy="alert-toaster"]').contains('copied').should('be.visible');
+      cy.clickButton(/^Clear all filters/);
+      cy.deleteAwxCredential(credential, { failOnStatusCode: false });
+      cy.filterTableByMultiSelect('name', [`${credential.name} @`]);
+      cy.get('[data-cy="checkbox-column-cell"]').within(() => {
+        cy.get('input').click();
+      });
+      cy.clickToolbarKebabAction('delete-selected-credentials');
+      cy.getModal().within(() => {
+        cy.get('#confirm').click();
+        cy.clickButton(/^Delete credential/);
+        cy.contains(/^Success$/);
+        cy.clickButton(/^Close$/);
+      });
+    });
   });
 
   describe('Credentials: Details View', () => {
-    it.skip('details page should render boolean field', () => {
+    it('details page should render boolean field', () => {
       const credentialName = 'E2E Credential ' + randomString(4);
       cy.navigateTo('awx', 'credentials');
       cy.clickButton(/^Create credential$/);
       cy.get('[data-cy="name"]').type(credentialName);
-      cy.selectDropdownOptionByResourceName('credential-type', 'Container Registry');
+      cy.singleSelectBy('[data-cy="credential_type"]', 'Container Registry');
+      cy.contains('Type Details').should('be.visible');
       cy.get('[data-cy="host"]').clear().type('https://host.com');
       cy.get('[data-cy="verify_ssl"]').check();
       cy.clickButton(/^Create credential$/);

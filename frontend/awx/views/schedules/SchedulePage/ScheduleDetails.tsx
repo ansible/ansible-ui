@@ -7,7 +7,7 @@ import {
   PageDetails,
   usePageNavigate,
 } from '../../../../../framework';
-import { formatDateString } from '../../../../../framework/utils/formatDateString';
+import { formatDateString } from '../../../../../framework/utils/dateTimeHelpers';
 import { LastModifiedPageDetail } from '../../../../common/LastModifiedPageDetail';
 import { useGetItem } from '../../../../common/crud/useGet';
 import { AwxError } from '../../../common/AwxError';
@@ -29,11 +29,11 @@ import {
 } from '@patternfly/react-core';
 import { parseStringToTagArray } from '../../../resources/templates/JobTemplateFormHelpers';
 import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageDetailCodeEditor';
-import { RulesPreview } from '../components/RulesPreview';
-import { ExceptionsPreview } from '../components/ExceptionsPreview';
 import { useEffect, useState } from 'react';
 import { postRequest } from '../../../../common/crud/Data';
 import { DateTime } from 'luxon';
+import { RRuleSet, rrulestr } from 'rrule';
+import { RulesList } from '../components/RulesList';
 
 export function ScheduleDetails() {
   const { t } = useTranslation();
@@ -58,17 +58,33 @@ export function ScheduleDetails() {
   if (!schedule) return <LoadingPage breadcrumbs tabs />;
   const isSystemJobTemplateSchedule: boolean = pathname.includes('management-jobs');
 
+  const hasDaysToKeep: boolean = JSON.stringify(schedule?.extra_data).includes('days');
+  const extraData = schedule?.extra_data as string | object;
+
+  const ruleSet = rrulestr(schedule.rrule, { forceset: true }) as RRuleSet;
+  const rules = ruleSet.rrules().map((rule, i) => ({ rule, id: i }));
+  const exceptions = ruleSet.exrules().map((rule, i) => ({ rule, id: i }));
   return (
     <>
       <PageDetails numberOfColumns="multiple">
         <PageDetail label={t('Name')}>{schedule?.name}</PageDetail>
         <PageDetail label={t('Description')}>{schedule?.description}</PageDetail>
-        <PageDetail label={t('First run')}>{formatDateString(schedule?.dtstart)}</PageDetail>
-        <PageDetail label={t('Next run')}>{formatDateString(schedule?.next_run)}</PageDetail>
-        <PageDetail label={t('Last run')}>{formatDateString(schedule?.dtend)}</PageDetail>
+        <PageDetail label={t('First run')}>
+          {formatDateString(schedule?.dtstart, schedule.timezone)}
+        </PageDetail>
+        {schedule.next_run ? (
+          <PageDetail label={t('Next run')}>
+            {formatDateString(schedule?.next_run, schedule.timezone)}
+          </PageDetail>
+        ) : null}
+        {schedule.dtend ? (
+          <PageDetail label={t('Last run')}>
+            {formatDateString(schedule?.dtend, schedule.timezone)}
+          </PageDetail>
+        ) : null}
         <PageDetail label={t('Time zone')}>{schedule?.timezone}</PageDetail>
         <PageDetail label={t('RruleSet')} fullWidth>
-          <CopyCell text={schedule?.rrule ? schedule.rrule : ''} />
+          <CopyCell text={schedule?.rrule.toString()} />
         </PageDetail>
         {!isSystemJobTemplateSchedule && (
           <>
@@ -102,19 +118,26 @@ export function ScheduleDetails() {
         <PageDetail label={t('Skip tags')} isEmpty={!schedule.skip_tags}>
           <LabelGroup>{skipTags?.map(({ name }) => <Label key={name}>{name}</Label>)}</LabelGroup>
         </PageDetail>
-        <PageDetail fullWidth>
-          <PageDetailCodeEditor
-            label={t('Variables')}
-            value={JSON.stringify(schedule.extra_data)}
-          />
-        </PageDetail>
+        {!hasDaysToKeep && (
+          <PageDetail fullWidth>
+            <PageDetailCodeEditor
+              label={t('Variables')}
+              value={JSON.stringify(schedule.extra_data)}
+            />
+          </PageDetail>
+        )}
+        {hasDaysToKeep && (
+          <PageDetail fullWidth label={t('Days of data to keep')}>
+            {typeof extraData === 'string'
+              ? extraData.toString().replace('}', '').split(':')[1]
+              : schedule.extra_data.days?.toString()}
+          </PageDetail>
+        )}
         {schedule && <ScheduleSummary rrule={schedule.rrule} />}
+
         <PageDetail fullWidth>
-          <Divider />
-        </PageDetail>
-        <PageDetail fullWidth>
-          <RulesPreview rrule={schedule.rrule} />
-          {schedule.rrule.includes('EXRULE') && <ExceptionsPreview rrule={schedule.rrule} />}
+          <RulesList ruleType="rules" rules={rules} />
+          {exceptions.length ? <RulesList ruleType="exceptions" rules={exceptions} /> : null}
         </PageDetail>
       </PageDetails>
     </>

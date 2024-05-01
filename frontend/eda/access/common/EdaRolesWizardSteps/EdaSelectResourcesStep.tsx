@@ -12,7 +12,7 @@ import { EdaRulebookActivation } from '../../../interfaces/EdaRulebookActivation
 import { EdaRuleAudit } from '../../../interfaces/EdaRuleAudit';
 import { EdaProject } from '../../../interfaces/EdaProject';
 import { EdaCredentialType } from '../../../interfaces/EdaCredentialType';
-import { useMultiSelectListView } from '../../../common/useMultiSelectListView';
+import { useEdaMultiSelectListView } from '../../../common/useEdaMultiSelectListView';
 import { edaAPI } from '../../../common/eda-utils';
 import styled from 'styled-components';
 
@@ -24,7 +24,7 @@ export type EdaResourceType =
   | EdaRulebookActivation
   | EdaRuleAudit
   | EdaProject
-  | EdaCredentialType; // TODO: add extra vars if needed
+  | EdaCredentialType;
 
 const resourceToEndpointMapping: { [key: string]: string } = {
   'eda.edacredential': edaAPI`/eda-credentials/`,
@@ -83,7 +83,7 @@ export function EdaSelectResourcesStep() {
     [t]
   );
 
-  const view = useMultiSelectListView<EdaResourceType>(
+  const view = useEdaMultiSelectListView<EdaResourceType>(
     {
       url: resourceToEndpointMapping[resourceType as string],
       toolbarFilters,

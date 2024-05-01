@@ -17,8 +17,12 @@ import { useNodeTypeTooltip } from './useNodeTypeTooltip';
 import { InstanceForksSlider } from '../components/InstanceForksSlider';
 import { StatusCell } from '../../../../common/Status';
 import { Unavailable } from '../../../../../framework/components/Unavailable';
+import { computeForks } from './useInstanceActions';
 
-export function useInstancesColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
+export function useInstancesColumns(
+  options?: { disableSort?: boolean; disableLinks?: boolean },
+  onNameClick?: (instance: Instance) => void
+) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
 
@@ -27,7 +31,10 @@ export function useInstancesColumns(options?: { disableSort?: boolean; disableLi
   } = useNodeTypeTooltip();
 
   const nameClick = useCallback(
-    (instance: Instance) => pageNavigate(AwxRoute.InstanceDetails, { params: { id: instance.id } }),
+    (instance: Instance) =>
+      pageNavigate(AwxRoute.InstanceDetails, {
+        params: { id: instance.id },
+      }),
     [pageNavigate]
   );
 
@@ -44,7 +51,7 @@ export function useInstancesColumns(options?: { disableSort?: boolean; disableLi
 
   const nameColumn = useNameColumn<Instance>({
     ...options,
-    onClick: nameClick,
+    onClick: onNameClick ?? nameClick,
     header: t('Name'),
     sort: 'hostname',
   });
@@ -61,6 +68,7 @@ export function useInstancesColumns(options?: { disableSort?: boolean; disableLi
           <StatusCell status={instance.health_check_pending ? 'running' : instance.node_state} />
         ),
         sort: 'errors',
+        modal: 'hidden',
       },
       {
         cell: makeReadable,
@@ -71,18 +79,30 @@ export function useInstancesColumns(options?: { disableSort?: boolean; disableLi
       },
       {
         header: t('Capacity Adjustment'),
-        cell: (instance: Instance) => <InstanceForksSlider instance={instance} />,
+        cell: (instance: Instance) => {
+          const instanceForks = computeForks(
+            instance.mem_capacity,
+            instance.cpu_capacity,
+            parseFloat(instance.capacity_adjustment)
+          );
+          if (instanceForks > 0) {
+            return <InstanceForksSlider instance={instance} />;
+          } else {
+            return instance.node_type === 'hop' ? (
+              <Tooltip
+                isContentLeftAligned={true}
+                content={t('Cannot adjust capacity for hop nodes.')}
+              >
+                <Dotted>{t('Unavailable')}</Dotted>
+              </Tooltip>
+            ) : (
+              <Tooltip isContentLeftAligned={true} content={t('0 forks. Cannot adjust capacity.')}>
+                <Dotted>{t('Unavailable')}</Dotted>
+              </Tooltip>
+            );
+          }
+        },
         modal: ColumnModalOption.hidden,
-      },
-      {
-        header: t('Running jobs'),
-        cell: (instance) => instance.jobs_running,
-        table: ColumnTableOption.expanded,
-      },
-      {
-        header: t('Total jobs'),
-        cell: (instance) => instance.jobs_total,
-        table: ColumnTableOption.expanded,
       },
       {
         header: t('Used capacity'),
@@ -93,6 +113,17 @@ export function useInstancesColumns(options?: { disableSort?: boolean; disableLi
             <Unavailable>{t(`Unavailable`)}</Unavailable>
           ),
         list: 'secondary',
+        modal: 'hidden',
+      },
+      {
+        header: t('Running jobs'),
+        cell: (instance) => instance.jobs_running,
+        table: ColumnTableOption.expanded,
+      },
+      {
+        header: t('Total jobs'),
+        cell: (instance) => instance.jobs_total,
+        table: ColumnTableOption.expanded,
       },
       {
         header: t('Memory'),

@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ITableColumn, TextCell } from '../../../../../framework';
 import { edaAPI } from '../../../common/eda-utils';
-import { useMultiSelectListView } from '../../../common/useMultiSelectListView';
+import { useEdaMultiSelectListView } from '../../../common/useEdaMultiSelectListView';
 import { PageMultiSelectList } from '../../../../../framework/PageTable/PageMultiSelectList';
 import { EdaTeam } from '../../../interfaces/EdaTeam';
 import { Title } from '@patternfly/react-core';
@@ -31,7 +31,7 @@ export function EdaSelectTeamsStep(props: { descriptionForTeamsSelection?: strin
     ];
   }, [t]);
 
-  const view = useMultiSelectListView<EdaTeam>(
+  const view = useEdaMultiSelectListView<EdaTeam>(
     {
       url: edaAPI`/teams/`,
       toolbarFilters,

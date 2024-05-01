@@ -10,7 +10,7 @@ import {
 import { useGetPageUrl } from '../../../../../framework/PageNavigation/useGetPageUrl';
 import { dateToInputDateTime } from '../../../../../framework/utils/dateTimeHelpers';
 import { AwxRoute } from '../../../main/AwxRoutes';
-import { ScheduleFormWizard, schedulePageUrl } from '../types';
+import { RuleFields, ScheduleFormWizard, schedulePageUrl } from '../types';
 import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
 import { RulesStep } from './RulesStep';
 import { RRule, RRuleSet, rrulestr } from 'rrule';
@@ -29,6 +29,7 @@ import { ScheduleReviewStep } from './ScheduleReviewStep';
 import { StandardizedFormData } from './ScheduleAddWizard';
 import { useProcessSchedule } from '../hooks/useProcessSchedules';
 import { useGetScheduleUrl } from '../hooks/useGetScheduleUrl';
+import { RequestError } from '../../../../common/crud/RequestError';
 
 export function ScheduleEditWizard() {
   const { t } = useTranslation();
@@ -125,7 +126,20 @@ export function ScheduleEditWizard() {
         return true;
       },
     },
-    { id: 'rules', label: t('Rules'), inputs: <RulesStep /> },
+    {
+      id: 'rules',
+      label: t('Rules'),
+      inputs: <RulesStep />,
+      validate: (formData: Partial<RuleFields>) => {
+        if (!formData?.rules?.length) {
+          const errors = {
+            __all__: [t('Schedules must have at least one rule.')],
+          };
+
+          throw new RequestError('', '', 400, '', errors);
+        }
+      },
+    },
     {
       id: 'exceptions',
       label: t('Exceptions'),
@@ -147,6 +161,7 @@ export function ScheduleEditWizard() {
       resource: schedule?.summary_fields.unified_job_template,
       startDateTime: { date: startDate, time: time },
       timezone: schedule?.timezone,
+      schedule_days_to_keep: schedule.extra_data.days,
     },
     nodePromptsStep: {
       prompt: {},
