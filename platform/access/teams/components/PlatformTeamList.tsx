@@ -11,6 +11,7 @@ import {
   ActionsResponse,
   OptionsResponse,
 } from '../../../../frontend/awx/interfaces/OptionsResponse';
+import { usePersistentFilters } from '../../../../frontend/common/PersistentFilters';
 import { useOptions } from '../../../../frontend/common/crud/useOptions';
 import { gatewayV1API } from '../../../api/gateway-api-utils';
 import { usePlatformView } from '../../../hooks/usePlatformView';
@@ -26,6 +27,7 @@ export function PlatformTeamList() {
   const toolbarFilters = useTeamFilters();
   const tableColumns = useTeamColumns();
   const pageNavigate = usePageNavigate();
+  usePersistentFilters('teams');
 
   const view = usePlatformView<PlatformTeam>({
     url: gatewayV1API`/teams/`,

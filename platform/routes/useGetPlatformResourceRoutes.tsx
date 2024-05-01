@@ -14,7 +14,7 @@ import { PlatformResource } from '../resource/PlatformResource';
 */
 export function useGetPlatformResourceRoutes() {
   return {
-    id: PlatformRoute.Users,
+    id: PlatformRoute.PlatformResources,
     path: 'resources',
     children: [
       {

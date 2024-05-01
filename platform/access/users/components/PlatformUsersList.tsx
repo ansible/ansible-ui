@@ -11,6 +11,7 @@ import {
   ActionsResponse,
   OptionsResponse,
 } from '../../../../frontend/awx/interfaces/OptionsResponse';
+import { usePersistentFilters } from '../../../../frontend/common/PersistentFilters';
 import { useOptions } from '../../../../frontend/common/crud/useOptions';
 import { gatewayV1API } from '../../../api/gateway-api-utils';
 import { usePlatformView } from '../../../hooks/usePlatformView';
@@ -26,6 +27,7 @@ export function PlatformUsersList() {
   const toolbarFilters = useUsersFilters();
   const tableColumns = useUsersColumns();
   const pageNavigate = usePageNavigate();
+  usePersistentFilters('users');
 
   const view = usePlatformView<PlatformUser>({
     url: gatewayV1API`/users/`,
