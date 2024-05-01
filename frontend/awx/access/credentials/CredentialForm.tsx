@@ -38,6 +38,7 @@ import {
 import { CredentialInputSource } from '../../interfaces/CredentialInputSource';
 import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 import { useSWRConfig } from 'swr';
+import { useCredentialsTestModal } from './hooks/useCredentialsTestModal';
 
 interface CredentialForm extends Credential {
   user?: number;
@@ -70,6 +71,8 @@ export function CreateCredential() {
   const { activeAwxUser } = useAwxActiveUser();
   const postRequest = usePostRequest<Credential | CredentialInputSource>();
   const getPageUrl = useGetPageUrl();
+  const [selectedCredentialTypeId, setSelectedCredentialTypeId] = useState<number>(0);
+  const openCredentialsExternalTestModal = useCredentialsTestModal();
   const [credentialPluginValues, setCredentialPluginValues] = useState<
     CredentialPluginsInputSource[]
   >([]);
@@ -106,6 +109,10 @@ export function CreateCredential() {
     },
     {} as CredentialTypes
   );
+
+  const isExternalCredential =
+    !!parsedCredentialTypes &&
+    parsedCredentialTypes?.[selectedCredentialTypeId]?.kind === 'external';
 
   const onSubmit: PageFormSubmitHandler<CredentialForm> = async (credential) => {
     const credentialTypeInputs = parsedCredentialTypes?.[credential?.credential_type]?.inputs;
@@ -149,6 +156,7 @@ export function CreateCredential() {
     );
     pageNavigate(AwxRoute.CredentialDetails, { params: { id: newCredential.id } });
   };
+
   return (
     <PageLayout>
       <PageHeader
@@ -162,6 +170,16 @@ export function CreateCredential() {
         submitText={t('Create credential')}
         onSubmit={onSubmit}
         onCancel={() => navigate(-1)}
+        additionalActionText={isExternalCredential ? 'Test' : undefined}
+        onClickAdditionalAction={(e) => {
+          e.preventDefault();
+          openCredentialsExternalTestModal({
+            credentialType:
+              parsedCredentialTypes !== undefined
+                ? parsedCredentialTypes?.[selectedCredentialTypeId]
+                : ({} as CredentialType),
+          });
+        }}
       >
         <CredentialInputs
           isEditMode={false}
@@ -169,6 +187,7 @@ export function CreateCredential() {
           setCredentialPluginValues={setCredentialPluginValues}
           accumulatedPluginValues={accumulatedPluginValues}
           setAccumulatedPluginValues={setAccumulatedPluginValues}
+          setSelectedCredentialTypeId={setSelectedCredentialTypeId}
         />
       </AwxPageForm>
     </PageLayout>
@@ -214,6 +233,7 @@ export function EditCredential() {
       return updatedValues;
     });
   }, [credentialPluginValues]);
+  const openCredentialsExternalTestModal = useCredentialsTestModal();
 
   const { data: credential, isLoading: isLoadingCredential } = useGet<Credential>(
     awxAPI`/credentials/${id.toString()}/`
@@ -251,6 +271,11 @@ export function EditCredential() {
     },
     {} as CredentialTypes
   );
+
+  const isExternalCredential =
+    !!parsedCredentialTypes && credential !== undefined
+      ? parsedCredentialTypes?.[credential.credential_type]?.kind === 'external'
+      : null;
 
   const promptPassword: Prompts = {};
   if (credential?.inputs) {
@@ -366,6 +391,17 @@ export function EditCredential() {
         onSubmit={onSubmit}
         onCancel={() => navigate(-1)}
         defaultValue={initialValues}
+        additionalActionText={isExternalCredential ? 'Test' : undefined}
+        onClickAdditionalAction={(e) => {
+          e.preventDefault();
+          openCredentialsExternalTestModal({
+            credential: credential,
+            credentialType:
+              parsedCredentialTypes !== undefined
+                ? parsedCredentialTypes?.[credential?.credential_type]
+                : ({} as CredentialType),
+          });
+        }}
       >
         <CredentialInputs
           isEditMode
@@ -389,6 +425,7 @@ function CredentialInputs({
   accumulatedPluginValues,
   setAccumulatedPluginValues,
   setPluginsToDelete,
+  setSelectedCredentialTypeId,
 }: {
   isEditMode?: boolean;
   selectedCredentialTypeId?: number;
@@ -397,12 +434,19 @@ function CredentialInputs({
   accumulatedPluginValues?: CredentialPluginsInputSource[];
   setAccumulatedPluginValues?: (values: CredentialPluginsInputSource[]) => void;
   setPluginsToDelete?: React.Dispatch<React.SetStateAction<string[]>>;
+  setSelectedCredentialTypeId?: (id: number) => void;
 }) {
   const { t } = useTranslation();
 
   const watchedCredentialTypeId = useWatch<{ credential_type: number }>({
     name: 'credential_type',
   });
+
+  useEffect(() => {
+    if (setSelectedCredentialTypeId) {
+      setSelectedCredentialTypeId(watchedCredentialTypeId);
+    }
+  }, [watchedCredentialTypeId, setSelectedCredentialTypeId]);
 
   const credentialTypeID = selectedCredentialTypeId || watchedCredentialTypeId;
 
