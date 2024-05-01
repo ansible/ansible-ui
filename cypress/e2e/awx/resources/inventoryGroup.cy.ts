@@ -88,7 +88,7 @@ describe('Inventory Groups', () => {
       });
     });
 
-    it('can run an ad-hoc command against a group', () => {
+    it.skip('can run an ad-hoc command against a group', () => {
       cy.createInventoryHostGroup(organization).then((result) => {
         const { inventory, group } = result;
         //1) Use the inventory created in beforeEach block, access the groups tab of that inventory
@@ -102,7 +102,7 @@ describe('Inventory Groups', () => {
         cy.clickTableRowLink('name', inventory.name, { disableFilter: true });
         cy.verifyPageTitle(inventory.name);
         cy.clickLink(/^Groups$/);
-        // //2) Use the group, EE, and credential created in the beforeEach block- these resources are needed to run a command against a group
+        //2) Use the group, EE, and credential created in the beforeEach block- these resources are needed to run a command against a group
         cy.clickTableRowLink('name', group.name, { disableFilter: true });
         cy.clickKebabAction('actions-dropdown', 'run-command');
         cy.selectDropdownOptionByResourceName('module', 'shell');

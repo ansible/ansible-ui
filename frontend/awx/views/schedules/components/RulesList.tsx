@@ -110,6 +110,19 @@ export function RulesList(props: {
           titleHelp={t('Create as many schedule rules as you need.')}
           titleDocLink={`${getDocsBaseUrl(config)}/html/userguide/scheduling.html`}
           description={description}
+          headerActions={
+            <>
+              {t('iCalendar RFC ')}
+              <a
+                key="refDocLink"
+                target="_blank"
+                href="https://datatracker.ietf.org/doc/html/rfc5545"
+                rel="noreferrer"
+              >
+                {t('documentation')}
+              </a>
+            </>
+          }
         />
       ) : null}
       <PageTable<RuleListItemType>
