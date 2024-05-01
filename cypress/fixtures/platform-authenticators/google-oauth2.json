@@ -1,0 +1,14 @@
+{
+  "name": "Test Google OAuth2",
+  "oauth2Key": "testKey",
+  "oauth2Secret": "testSecret",
+  "callbackUrl": "http://localhost/callback",
+  "accessTokenUrl": "https://accounts.google.com/o/oauth2/token",
+  "accessTokenMethod": "POST",
+  "authorizationUrl": "https://accounts.google.com/o/oauth2/auth",
+  "revokeTokenMethod": "POST",
+  "revokeTokenUrl": "https://accounts.google.com/o/oauth2/revoke",
+  "redirectState": "state",
+  "additionalFields": "Additional data",
+  "scopes": ["email", "profile"]
+}
