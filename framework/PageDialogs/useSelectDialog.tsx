@@ -192,8 +192,8 @@ export function SelectDialog<
           <PageTable<T>
             tableColumns={tableColumns}
             toolbarFilters={toolbarFilters}
-            emptyStateTitle="No organizations found"
-            errorStateTitle="Error loading organizations"
+            emptyStateTitle={t('No items found')}
+            errorStateTitle={t('Error loading items')}
             {...view}
             isSelectMultiple={isMultiple}
             onSelect={() => null}
