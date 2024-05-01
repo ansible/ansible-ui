@@ -10,7 +10,24 @@ export interface PlatformUser {
   related: {
     [key: string]: string;
   };
-  summary_fields: object; // TODO: This will be updated as +the API is fleshed out further
+  summary_fields: {
+    modified_by: {
+      id: number;
+      username: string;
+      first_name: string;
+      last_name: string;
+    };
+    created_by: {
+      id: number;
+      username: string;
+      first_name: string;
+      last_name: string;
+    };
+    resource: {
+      ansible_id: string;
+      resource_type: string;
+    };
+  };
   username: string;
   email: string;
   first_name: string;

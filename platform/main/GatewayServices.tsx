@@ -27,7 +27,7 @@ const GatewayServicesContext = createContext<
   },
 ]);
 
-function useGatewayServices() {
+export function useGatewayServices() {
   return useContext(GatewayServicesContext);
 }
 
