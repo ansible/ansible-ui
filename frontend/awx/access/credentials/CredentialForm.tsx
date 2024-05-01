@@ -31,6 +31,7 @@ import { Button, Icon } from '@patternfly/react-core';
 import { KeyIcon } from '@patternfly/react-icons';
 import { PageFormSelectCredentialType } from './components/PageFormSelectCredentialType';
 import { useCredentialPluginsModal } from './CredentialPlugins/hooks/useCredentialPluginsDialog';
+import { CredentialPluginsForm } from './CredentialPlugins/CredentialPlugins';
 
 interface CredentialForm extends Credential {
   user?: number;
@@ -59,10 +60,9 @@ export function CreateCredential() {
   const { activeAwxUser } = useAwxActiveUser();
   const postRequest = usePostRequest<Credential>();
   const getPageUrl = useGetPageUrl();
-  const [credentialPluginValues, setCredentialPluginValues] = useState<
-    Record<string, Record<string, string>>
+  const [_credentialPluginValues, setCredentialPluginValues] = useState<
+    Record<string, CredentialPluginsForm>
   >({});
-  console.log('zzz', credentialPluginValues);
   const { results: itemsResponse, isLoading } = useAwxGetAllPages<CredentialType>(
     awxAPI`/credential_types/`
   );
@@ -240,7 +240,7 @@ function CredentialInputs({
   isEditMode?: boolean;
   selectedCredentialTypeId?: number;
   credentialTypes: CredentialTypes;
-  setCredentialPluginValues?: (values: Record<string, string>) => void;
+  setCredentialPluginValues?: (values: Record<string, CredentialPluginsForm>) => void;
 }) {
   const { t } = useTranslation();
 
@@ -295,7 +295,7 @@ function CredentialSubForm({
   setCredentialPluginValues,
 }: {
   credentialType: CredentialType | undefined;
-  setCredentialPluginValues: (values: Record<string, string>) => void;
+  setCredentialPluginValues: (values: Record<string, CredentialPluginsForm>) => void;
 }) {
   const { t } = useTranslation();
   const openCredentialPluginsModal = useCredentialPluginsModal();
