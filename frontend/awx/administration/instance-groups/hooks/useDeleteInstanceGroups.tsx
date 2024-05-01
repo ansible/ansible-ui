@@ -123,15 +123,23 @@ export function useDeleteInstanceGroups(onComplete: (instanceGroups: InstanceGro
   const deleteInstanceGroups = async (instanceGroups: InstanceGroup[]) => {
     const undeletableInstanceGroups = instanceGroups.filter(cannotDeleteInstanceGroup);
     const alertPrompts = await buildAlertPrompts(instanceGroups, undeletableInstanceGroups);
-
+    const isOnlyContainerGroups = instanceGroups.every((ig) => ig.is_container_group);
     bulkAction({
-      title: t('Permanently delete instance groups', { count: instanceGroups.length }),
-      confirmText: t('Yes, I confirm that I want to delete these {{count}} instance groups.', {
-        count: instanceGroups.length - undeletableInstanceGroups.length,
-      }),
-      actionButtonText: t('Delete instance group', {
-        count: instanceGroups.length - undeletableInstanceGroups.length,
-      }),
+      title: isOnlyContainerGroups
+        ? t('Permanently delete container groups', { count: instanceGroups.length })
+        : t('Permanently delete instance groups', { count: instanceGroups.length }),
+      confirmText: isOnlyContainerGroups
+        ? t('Yes, I confirm that I want to delete these {{count}} container groups.', {
+            count: instanceGroups.length - undeletableInstanceGroups.length,
+          })
+        : t('Yes, I confirm that I want to delete these {{count}} instance groups.', {
+            count: instanceGroups.length - undeletableInstanceGroups.length,
+          }),
+      actionButtonText: isOnlyContainerGroups
+        ? t('Delete container group')
+        : t('Delete instance group', {
+            count: instanceGroups.length - undeletableInstanceGroups.length,
+          }),
       items: instanceGroups.sort((l, r) => compareStrings(l.name, r.name)),
       keyFn: getItemKey,
       isDanger: true,
