@@ -35,14 +35,14 @@ interface ResourceRolePair {
   role: EdaRbacRole;
 }
 
-export function EdaAddUserRoles() {
+export function EdaAddUserRoles(props: { id?: string; userRolesRoute?: string }) {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const getPageUrl = useGetPageUrl();
   const pageNavigate = usePageNavigate();
   const progressDialog = useEdaBulkActionDialog<ResourceRolePair>();
   // Use ansible_id to retrieve user
-  const { data: user, isLoading } = useGet<EdaUser>(edaAPI`/users/${params.id ?? ''}/`);
+  const { data: user, isLoading } = useGet<EdaUser>(edaAPI`/users/${props.id || params.id || ''}/`);
 
   if (isLoading || !user) return <LoadingPage />;
 
@@ -105,8 +105,8 @@ export function EdaAddUserRoles() {
           resolve();
         },
         onClose: () => {
-          pageNavigate(EdaRoute.UserRoles, {
-            params: { id: user.id.toString() },
+          pageNavigate(props.userRolesRoute || EdaRoute.UserRoles, {
+            params: { id: params.id },
           });
         },
       });
@@ -134,7 +134,9 @@ export function EdaAddUserRoles() {
         steps={steps}
         onSubmit={onSubmit}
         onCancel={() => {
-          pageNavigate(EdaRoute.UserRoles, { params: { id: user?.id } });
+          pageNavigate(props.userRolesRoute || EdaRoute.UserRoles, {
+            params: { id: params.id },
+          });
         }}
         disableGrid
       />

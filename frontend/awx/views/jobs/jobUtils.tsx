@@ -122,11 +122,11 @@ export function getLaunchedByDetails(job: UnifiedJob) {
       link = getScheduleUrl(job);
       break;
     case 'manual':
-      link = createdBy?.id ? `/users/${createdBy.id.toString()}/details` : undefined;
+      link = createdBy?.id ? `/access/users/${createdBy.id.toString()}/details` : undefined;
       value = createdBy ? createdBy.username : undefined;
       break;
     default:
-      link = createdBy?.id ? `/users/${createdBy.id}/details` : undefined;
+      link = createdBy?.id ? `/access/users/${createdBy.id}/details` : undefined;
       value = createdBy ? createdBy.username : undefined;
       break;
   }
