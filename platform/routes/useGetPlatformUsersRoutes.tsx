@@ -4,8 +4,9 @@ import { Navigate } from 'react-router-dom';
 import { PageNavigationItem, PageNotImplemented } from '../../framework';
 import { PlatformUserDetails } from '../access/users/components/PlatformUserDetails';
 import { CreatePlatformUser, EditPlatformUser } from '../access/users/components/PlatformUserForm';
-import { PlatformUserPage } from '../access/users/components/PlatformUserPage';
 import { PlatformUsersList } from '../access/users/components/PlatformUsersList';
+import { PlatformUserPage } from '../access/users/components/PlatformUserPage';
+import { PlatformUserTeams } from '../access/users/components/PlatformUserTeams';
 import { PlatformRoute } from '../main/PlatformRoutes';
 import { PlatformUserRoles } from '../access/users/components/PlatformUserRoles';
 import { UserRoles } from '../../frontend/awx/access/users/UserPage/UserRoles';
@@ -46,7 +47,7 @@ export function useGetPlatformUsersRoutes() {
             {
               id: PlatformRoute.UserTeams,
               path: 'teams',
-              element: <PageNotImplemented />,
+              element: <PlatformUserTeams />,
             },
             {
               id: PlatformRoute.UserRoles,
