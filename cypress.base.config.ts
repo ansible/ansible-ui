@@ -4,7 +4,7 @@ const { DefinePlugin } = pkg;
 
 export const baseConfig: Cypress.ConfigOptions = {
   experimentalMemoryManagement: true,
-  numTestsKeptInMemory: 20,
+  numTestsKeptInMemory: 2,
   viewportWidth: 1600,
   viewportHeight: 1120,
   pageLoadTimeout: 120000,
