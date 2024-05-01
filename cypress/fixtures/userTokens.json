@@ -1,0 +1,220 @@
+{
+  "count": 8,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 6,
+      "type": "o_auth2_access_token",
+      "url": "/api/v2/tokens/6/",
+      "related": {
+        "user": "/api/v2/users/20/",
+        "application": "/api/v2/applications/1/",
+        "activity_stream": "/api/v2/tokens/6/activity_stream/"
+      },
+      "summary_fields": {
+        "user": {
+          "id": 3,
+          "username": "dev",
+          "first_name": "",
+          "last_name": ""
+        },
+        "application": {
+          "id": 1,
+          "name": "testapp1"
+        }
+      },
+      "created": "2024-04-24T14:49:16.434569Z",
+      "modified": "2024-04-24T14:49:16.447015Z",
+      "description": "token1",
+      "user": 3,
+      "token": "************",
+      "refresh_token": "************",
+      "application": 1,
+      "expires": "3023-08-26T14:49:16.427465Z",
+      "scope": "write"
+    },
+    {
+      "id": 16,
+      "type": "o_auth2_access_token",
+      "url": "/api/v2/tokens/16/",
+      "related": {
+        "user": "/api/v2/users/20/",
+        "activity_stream": "/api/v2/tokens/16/activity_stream/"
+      },
+      "summary_fields": {
+        "user": {
+          "id": 3,
+          "username": "dev",
+          "first_name": "",
+          "last_name": ""
+        }
+      },
+      "created": "2024-04-24T17:58:20.462376Z",
+      "modified": "2024-04-24T17:58:20.473639Z",
+      "description": "E2E-yLSL",
+      "user": 3,
+      "token": "************",
+      "refresh_token": null,
+      "application": null,
+      "expires": "3023-08-26T17:58:20.454427Z",
+      "scope": "write"
+    },
+    {
+      "id": 7,
+      "type": "o_auth2_access_token",
+      "url": "/api/v2/tokens/7/",
+      "related": {
+        "user": "/api/v2/users/20/",
+        "activity_stream": "/api/v2/tokens/7/activity_stream/"
+      },
+      "summary_fields": {
+        "user": {
+          "id": 3,
+          "username": "dev",
+          "first_name": "",
+          "last_name": ""
+        }
+      },
+      "created": "2024-04-24T14:49:42.914107Z",
+      "modified": "2024-04-24T14:49:42.923449Z",
+      "description": "another one",
+      "user": 3,
+      "token": "************",
+      "refresh_token": null,
+      "application": null,
+      "expires": "3023-08-26T14:49:42.907827Z",
+      "scope": "read"
+    },
+    {
+      "id": 17,
+      "type": "o_auth2_access_token",
+      "url": "/api/v2/tokens/17/",
+      "related": {
+        "user": "/api/v2/users/20/",
+        "activity_stream": "/api/v2/tokens/17/activity_stream/"
+      },
+      "summary_fields": {
+        "user": {
+          "id": 3,
+          "username": "dev",
+          "first_name": "",
+          "last_name": ""
+        }
+      },
+      "created": "2024-04-24T17:58:27.805539Z",
+      "modified": "2024-04-24T17:58:27.813936Z",
+      "description": "E2E-ZSbp",
+      "user": 3,
+      "token": "************",
+      "refresh_token": null,
+      "application": null,
+      "expires": "3023-08-26T17:58:27.799431Z",
+      "scope": "write"
+    },
+    {
+      "id": 14,
+      "type": "o_auth2_access_token",
+      "url": "/api/v2/tokens/14/",
+      "related": {
+        "user": "/api/v2/users/20/",
+        "activity_stream": "/api/v2/tokens/14/activity_stream/"
+      },
+      "summary_fields": {
+        "user": {
+          "id": 3,
+          "username": "dev",
+          "first_name": "",
+          "last_name": ""
+        }
+      },
+      "created": "2024-04-24T17:56:42.941509Z",
+      "modified": "2024-04-24T17:56:42.948446Z",
+      "description": "E2E-pKGb",
+      "user": 3,
+      "token": "************",
+      "refresh_token": null,
+      "application": null,
+      "expires": "3023-08-26T17:56:42.936341Z",
+      "scope": "write"
+    },
+    {
+      "id": 11,
+      "type": "o_auth2_access_token",
+      "url": "/api/v2/tokens/11/",
+      "related": {
+        "user": "/api/v2/users/20/",
+        "activity_stream": "/api/v2/tokens/11/activity_stream/"
+      },
+      "summary_fields": {
+        "user": {
+          "id": 3,
+          "username": "dev",
+          "first_name": "",
+          "last_name": ""
+        }
+      },
+      "created": "2024-04-24T17:54:18.863733Z",
+      "modified": "2024-04-24T17:54:18.870587Z",
+      "description": "E2E-yHMW",
+      "user": 3,
+      "token": "************",
+      "refresh_token": null,
+      "application": null,
+      "expires": "3023-08-26T17:54:18.858160Z",
+      "scope": "write"
+    },
+    {
+      "id": 13,
+      "type": "o_auth2_access_token",
+      "url": "/api/v2/tokens/13/",
+      "related": {
+        "user": "/api/v2/users/20/",
+        "activity_stream": "/api/v2/tokens/13/activity_stream/"
+      },
+      "summary_fields": {
+        "user": {
+          "id": 3,
+          "username": "dev",
+          "first_name": "",
+          "last_name": ""
+        }
+      },
+      "created": "2024-04-24T17:56:04.807429Z",
+      "modified": "2024-04-24T17:56:04.819005Z",
+      "description": "E2E-bkQQ",
+      "user": 3,
+      "token": "************",
+      "refresh_token": null,
+      "application": null,
+      "expires": "3023-08-26T17:56:04.799737Z",
+      "scope": "write"
+    },
+    {
+      "id": 12,
+      "type": "o_auth2_access_token",
+      "url": "/api/v2/tokens/12/",
+      "related": {
+        "user": "/api/v2/users/20/",
+        "activity_stream": "/api/v2/tokens/12/activity_stream/"
+      },
+      "summary_fields": {
+        "user": {
+          "id": 3,
+          "username": "dev",
+          "first_name": "",
+          "last_name": ""
+        }
+      },
+      "created": "2024-04-24T17:55:17.021508Z",
+      "modified": "2024-04-24T17:55:17.028543Z",
+      "description": "E2E-Vguf",
+      "user": 3,
+      "token": "************",
+      "refresh_token": null,
+      "application": null,
+      "expires": "3023-08-26T17:55:17.016393Z",
+      "scope": "write"
+    }
+  ]
+}
