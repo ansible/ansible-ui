@@ -8,6 +8,7 @@ describe('Overview - Quick Starts', () => {
   });
 
   it('checks the browse content titles user can see in the hands on quick starts on Automation Hub ', () => {
+    cy.verifyPageTitle('Welcome to the Ansible Automation Platform');
     cy.get('[data-cy="app-description"]').should(
       'have.text',
       'Empower, automate, connect: Unleash possibilities with the Ansible Automation Platform.'
@@ -19,15 +20,13 @@ describe('Overview - Quick Starts', () => {
         'have.text',
         'Learn Ansible automation with hands-on quick starts.'
       );
-      cy.contains('p', 'Finding content in Ansible Automation Platform');
+      cy.contains('h3 p', 'Finding content in Ansible Automation Platform');
       cy.get('.pfext-markdown-view.pfext-quick-start-tile-description').should(
         'have.text',
         'Browse automation hub collections to find the content that you need.'
       );
-      cy.get('.pfext-quick-start__base')
-        .within(() => {
-          cy.get('.pf-v5-c-radio__label').click();
-        })
+      cy.get('#finding-content-in-ansible-automation-platform-catalog-tile')
+        .click()
         .then(() => {
           cy.get('.pfext-quick-start__base')
             .parentsUntil('pf-v5-c-drawer__main')
@@ -86,10 +85,8 @@ describe('Overview - Quick Starts', () => {
       'Scroll through the filtered results and select the collection you want. ',
     ];
     cy.get('[data-cy="quick-starts"]').within(() => {
-      cy.get('.pfext-quick-start__base')
-        .within(() => {
-          cy.get('.pf-v5-c-radio__label').click();
-        })
+      cy.get('#finding-content-in-ansible-automation-platform-catalog-tile')
+        .click()
         .then(() => {
           cy.get('.pfext-quick-start__base')
             .parentsUntil('pf-v5-c-drawer__main')
@@ -140,10 +137,8 @@ describe('Overview - Quick Starts', () => {
       'Next to Tag, select the checkbox corresponding to the tag that you want to browse.',
     ];
     cy.get('[data-cy="quick-starts"]').within(() => {
-      cy.get('.pfext-quick-start__base')
-        .within(() => {
-          cy.get('.pf-v5-c-radio__label').click();
-        })
+      cy.get('#finding-content-in-ansible-automation-platform-catalog-tile')
+        .click()
         .then(() => {
           cy.get('.pfext-quick-start__base')
             .parentsUntil('pf-v5-c-drawer__main')
@@ -208,10 +203,8 @@ describe('Overview - Quick Starts', () => {
       'Enter the namespace you want to search for.',
     ];
     cy.get('[data-cy="quick-starts"]').within(() => {
-      cy.get('.pfext-quick-start__base')
-        .within(() => {
-          cy.get('.pf-v5-c-radio__label').click();
-        })
+      cy.get('#finding-content-in-ansible-automation-platform-catalog-tile')
+        .click()
         .then(() => {
           cy.get('.pfext-quick-start__base')
             .parentsUntil('pf-v5-c-drawer__main')
@@ -272,10 +265,8 @@ describe('Overview - Quick Starts', () => {
       'Enter your keyword in the search field and click the magnifying glass icon.',
     ];
     cy.get('[data-cy="quick-starts"]').within(() => {
-      cy.get('.pfext-quick-start__base')
-        .within(() => {
-          cy.get('.pf-v5-c-radio__label').click();
-        })
+      cy.get('#finding-content-in-ansible-automation-platform-catalog-tile')
+        .click()
         .then(() => {
           cy.get('.pfext-quick-start__base')
             .parentsUntil('pf-v5-c-drawer__main')
