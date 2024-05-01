@@ -4,6 +4,7 @@ export enum PlatformRoute {
   HUB = 'platform-hub',
   EDA = 'platform-eda',
   Root = 'platform-root',
+  PlatformResources = 'platform-resources',
   PlatformResource = 'platform-resource',
   PlatformResourceRoute = 'platform-resource-route',
   Users = 'platform-users',

@@ -11,6 +11,7 @@ import {
   ActionsResponse,
   OptionsResponse,
 } from '../../../../frontend/awx/interfaces/OptionsResponse';
+import { usePersistentFilters } from '../../../../frontend/common/PersistentFilters';
 import { useOptions } from '../../../../frontend/common/crud/useOptions';
 import { gatewayV1API } from '../../../api/gateway-api-utils';
 import { usePlatformView } from '../../../hooks/usePlatformView';
@@ -29,6 +30,7 @@ export function PlatformOrganizationList() {
   const toolbarFilters = useOrganizationFilters();
   const tableColumns = useOrganizationColumns();
   const pageNavigate = usePageNavigate();
+  usePersistentFilters('organizations');
 
   const view = usePlatformView<PlatformOrganization>({
     url: gatewayV1API`/organizations/`,
