@@ -358,6 +358,43 @@ export function useJobLaunchedByColumn<T extends UnifiedJob>(
   return column;
 }
 
+export function useJobScehduleColumn<T extends UnifiedJob>(
+  tableOption?: ColumnTableOption,
+  cardOption?: ColumnCardOption,
+  listOption?: ColumnListOption,
+  modalOption?: ColumnModalOption,
+  dashboardOption?: ColumnDashboardOption,
+  defaultSort?: 'asc' | 'desc'
+) {
+  const { t } = useTranslation();
+
+  const column = useMemo<ITableColumn<T>>(
+    () => ({
+      header: t('Schedule'),
+      cell: (job: UnifiedJob) => {
+        if (job.launch_type === 'scheduled') {
+          if (job.summary_fields.schedule) {
+            return <Link to={getScheduleUrl(job) ?? ''}>{job.summary_fields.schedule.name}</Link>;
+          } else {
+            return <TextCell text={t('Deleted')} color="red" />;
+          }
+        } else {
+          return `${t('Unavailable')}`;
+        }
+      },
+      table: tableOption ?? ColumnTableOption.expanded,
+      card: cardOption ?? ColumnCardOption.hidden,
+      list: listOption ?? ColumnListOption.hidden,
+      defaultSortDirection: defaultSort ?? 'desc',
+      modal: modalOption ?? ColumnModalOption.hidden,
+      dashboard: dashboardOption ?? ColumnDashboardOption.hidden,
+    }),
+    [cardOption, dashboardOption, defaultSort, listOption, modalOption, t, tableOption]
+  );
+
+  return column;
+}
+
 export function useJobTemplateColumn<T extends UnifiedJob>(
   tableOption?: ColumnTableOption,
   cardOption?: ColumnCardOption,
