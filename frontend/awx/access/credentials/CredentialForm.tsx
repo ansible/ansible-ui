@@ -25,6 +25,7 @@ import { Credential } from '../../interfaces/Credential';
 import { CredentialInputField, CredentialType } from '../../interfaces/CredentialType';
 import { AwxRoute } from '../../main/AwxRoutes';
 import { PageFormSelectOrganization } from '../organizations/components/PageFormOrganizationSelect';
+import { BecomeMethodField } from './components/BecomeMethodField';
 import { CredentialMultilineInput } from './components/CredentialMultilineInput';
 import { PageFormSelectCredentialType } from './components/PageFormSelectCredentialType';
 
@@ -306,7 +307,15 @@ function CredentialSubForm({ credentialType }: { credentialType: CredentialType 
                 requiredFields={requiredFields}
               />
             );
-          } else
+          } else if (credentialType.kind === 'ssh' && field.id === 'become_method') {
+            return (
+              <BecomeMethodField
+                key={field.id}
+                fieldOptions={field}
+                isRequired={requiredFields.includes(field.id)}
+              />
+            );
+          } else {
             return (
               <CredentialTextInput
                 key={field.id}
@@ -314,6 +323,7 @@ function CredentialSubForm({ credentialType }: { credentialType: CredentialType 
                 isRequired={requiredFields.includes(field.id)}
               />
             );
+          }
         })}
       {choiceFields.length > 0 &&
         choiceFields.map((field) => (
