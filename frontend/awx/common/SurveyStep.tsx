@@ -41,7 +41,7 @@ export function SurveyStep({
   singleColumn?: boolean;
 }) {
   const { t } = useTranslation();
-  const { wizardData, setStepData } = usePageWizard();
+  const { wizardData, stepData } = usePageWizard();
   const { reset } = useFormContext();
   const { resource } = wizardData as WizardFormValues;
   const id = resource ? resource?.id?.toString() : templateId ? templateId : '';
@@ -54,7 +54,23 @@ export function SurveyStep({
 
   useEffect(() => {
     const survey: { [key: string]: string | string[] | number } = {};
+    const surveyStep = stepData.survey as {
+      [key: string]: string | number | string[];
+    };
+
     survey_spec?.spec?.forEach((obj: Spec) => {
+      const surveyVariable = surveyStep?.[obj?.variable];
+      if (surveyVariable) {
+        if (obj.type === 'multiselect' && Array.isArray(surveyVariable)) {
+          survey[obj.variable] = surveyVariable.map((val: string | { name: string }) => ({
+            name: typeof val === 'string' ? val : val?.name,
+          }));
+          return;
+        }
+
+        survey[obj.variable] = surveyStep?.[obj.variable];
+        return;
+      }
       if (obj.default === '') {
         return;
       }
@@ -65,12 +81,9 @@ export function SurveyStep({
       }
       survey[obj.variable] = obj.default;
     });
-    setStepData((prev) => ({
-      ...prev,
-      survey,
-    }));
+
     reset({ survey });
-  }, [reset, setStepData, survey_spec, wizardData]);
+  }, [survey_spec, reset, stepData]);
 
   const getChoices = (name: string): PageSelectOption<string>[] => {
     const choices: PageSelectOption<string>[] = [];

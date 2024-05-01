@@ -56,7 +56,7 @@ export interface WorkflowNode {
   modified: string;
   extra_data: {
     days?: number;
-    [key: string]: string | number | boolean | undefined;
+    [key: string]: string | number | undefined;
   };
   inventory: null;
   scm_branch: null;

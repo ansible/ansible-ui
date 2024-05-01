@@ -26,6 +26,7 @@ export type GraphNode = Node<NodeModel, GraphNodeData>;
 export type GraphNodeData = {
   resource: WorkflowNode;
   launch_data: PromptFormValues;
+  survey_data: { [key: string]: string | string[] | { name: string }[] };
 };
 export interface CustomNodeProps extends WithSelectionProps {
   element: GraphElement<
@@ -178,6 +179,7 @@ export interface WizardFormValues {
   prompt: PromptFormValues;
   inventory?: Inventory;
   relatedJobTypeApiUrl?: string;
+  survey: { [key: string]: string | string[] | { name: string }[] };
 }
 
 export type UnifiedJobType =

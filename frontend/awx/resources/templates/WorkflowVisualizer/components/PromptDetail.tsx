@@ -29,7 +29,7 @@ export function PromptDetail(props: {
 
   let tooltip = null;
   if (isOverridden) {
-    const overriddenText = t(`This prompt value has been overriden. The default value was: `);
+    const overriddenText = t(`This prompt value has been overridden. The default value was: `);
     const tooltipContent = (
       <>
         {overriddenText} {overriddenValue}

@@ -116,7 +116,7 @@ export function NodeEditWizard({ node }: { node: GraphNode }) {
       },
     },
     {
-      id: 'nodeSurveyStep',
+      id: 'survey',
       label: t('Survey'),
       inputs: <SurveyStep singleColumn />,
       hidden: (wizardData: Partial<WizardFormValues>) => {
@@ -148,8 +148,11 @@ export function NodeEditWizard({ node }: { node: GraphNode }) {
       node_days_to_keep,
       launch_config,
       prompt,
+      survey,
     } = formValues;
+
     const promptValues = prompt;
+    const surveyData = survey;
 
     if (promptValues) {
       if (resource && 'organization' in resource) {
@@ -166,6 +169,17 @@ export function NodeEditWizard({ node }: { node: GraphNode }) {
           ...nodeOriginalResources,
         };
       }
+    }
+
+    if (survey) {
+      Object.keys(survey).forEach((key) => {
+        const surveyValue = survey[key];
+        if (Array.isArray(surveyValue)) {
+          surveyData[key] = surveyValue.map((item) =>
+            typeof item === 'string' ? item : item?.name
+          );
+        }
+      });
     }
 
     const nodeName = getValueBasedOnJobType(node_type, resource?.name || '', approval_name);
@@ -195,6 +209,7 @@ export function NodeEditWizard({ node }: { node: GraphNode }) {
         },
       },
       launch_data: promptValues,
+      survey_data: surveyData,
     };
 
     if (node_type !== RESOURCE_TYPE.workflow_approval) {

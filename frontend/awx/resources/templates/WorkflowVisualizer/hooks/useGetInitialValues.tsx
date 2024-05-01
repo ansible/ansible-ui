@@ -16,9 +16,8 @@ import { jsonToYaml } from '../../../../../../framework/utils/codeEditorUtils';
 import { RESOURCE_TYPE } from '../constants';
 
 interface WizardStepState {
-  nodeTypeStep?: Partial<WizardFormValues>;
+  nodeTypeStep: Partial<WizardFormValues>;
   nodePromptsStep?: { prompt: Partial<PromptFormValues> };
-  nodeSurveyStep?: { survey: { [key: string]: string } };
 }
 
 export function useNodeTypeStepDefaults(): (node?: GraphNode) => CommonNodeValues {
@@ -53,7 +52,7 @@ export function useNodeTypeStepDefaults(): (node?: GraphNode) => CommonNodeValue
   }, []);
 }
 
-type CommonNodeValues = Omit<WizardFormValues, 'prompt' | 'launch_config'>;
+type CommonNodeValues = Omit<WizardFormValues, 'prompt' | 'launch_config' | 'survey'>;
 const defaultMapper: CommonNodeValues = {
   approval_description: '',
   approval_name: '',
@@ -77,10 +76,7 @@ export function useGetInitialValues(): (node: GraphNode) => Promise<WizardStepSt
 
       const launch = await getLaunchData(node);
       const hidePromptStep = launch ? shouldHideOtherStep(launch) : true;
-
-      if (hidePromptStep) {
-        return { nodeTypeStep };
-      }
+      const hideSurveyStep = launch?.survey_enabled === false;
 
       const nodeCredentials =
         launch?.ask_credential_on_launch && !isNewNode ? await getCredentialData(nodeId) : [];
@@ -112,14 +108,20 @@ export function useGetInitialValues(): (node: GraphNode) => Promise<WizardStepSt
         );
       }
 
-      const extraVarsWithoutSurvey = { ...(defaults?.extra_data || {}) };
+      let extraVarsWithoutSurvey = { ...(defaults?.extra_data || {}) };
+      let surveyValues;
 
       if (launch?.ask_variables_on_launch && launch.survey_enabled) {
         const surveySpec = await getSurveySpec(
           nodeData?.resource?.summary_fields?.unified_job_template
         );
         if (surveySpec?.spec) {
-          removeSurveyQuestionsFromExtraVars(extraVarsWithoutSurvey, surveySpec);
+          const { extraVars, surveyData } = extractSurveyDataFromExtraVars(
+            extraVarsWithoutSurvey,
+            surveySpec
+          );
+          extraVarsWithoutSurvey = extraVars;
+          surveyValues = surveyData;
         }
       }
 
@@ -145,18 +147,29 @@ export function useGetInitialValues(): (node: GraphNode) => Promise<WizardStepSt
         original,
       };
 
-      return { nodeTypeStep, nodePromptsStep: { prompt: nodePromptsValues } };
+      return {
+        nodeTypeStep,
+        ...(hidePromptStep ? {} : { nodePromptsStep: { prompt: nodePromptsValues } }),
+        ...(hideSurveyStep ? {} : { survey: nodeData?.survey_data ?? surveyValues }),
+      };
     },
     [nodeTypeStepDefaults]
   );
 }
 
-function removeSurveyQuestionsFromExtraVars(extraVars: WorkflowNode['extra_data'], survey: Survey) {
+function extractSurveyDataFromExtraVars(extraData: WorkflowNode['extra_data'], survey: Survey) {
+  const extraVars: WorkflowNode['extra_data'] = { ...extraData };
+  const surveyData: { [key: string]: string | number | undefined } = {};
+
   survey.spec.forEach((question) => {
-    if (Object.prototype.hasOwnProperty.call(extraVars, question.variable)) {
-      delete extraVars[question.variable];
+    const { variable } = question;
+    if (variable in extraData) {
+      surveyData[variable] = extraData[variable];
+      delete extraVars[variable];
     }
   });
+
+  return { extraVars, surveyData };
 }
 
 async function getSurveySpec(template?: NodeResource) {

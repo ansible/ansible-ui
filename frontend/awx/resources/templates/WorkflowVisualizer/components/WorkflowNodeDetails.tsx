@@ -12,6 +12,7 @@ import {
 } from '@patternfly/react-icons';
 import { SVGIconProps } from '@patternfly/react-icons/dist/js/createIcon';
 import { DateTimeCell, PageDetail, PageDetails, Scrollable } from '../../../../../../framework';
+import { awxAPI } from '../../../../common/api/awx-utils';
 import { useGet } from '../../../../../common/crud/useGet';
 import { LastModifiedPageDetail } from '../../../../../common/LastModifiedPageDetail';
 import { PageDetailCodeEditor } from '../../../../../../framework/PageDetails/PageDetailCodeEditor';
@@ -22,6 +23,7 @@ import { WorkflowJobTemplate } from '../../../../interfaces/WorkflowJobTemplate'
 import { InventorySource } from '../../../../interfaces/InventorySource';
 import { SystemJobTemplate } from '../../../../interfaces/SystemJobTemplate';
 import { WorkflowApproval } from '../../../../interfaces/WorkflowApproval';
+import { SummaryFieldUnifiedJobTemplate } from '../../../../interfaces/summary-fields/summary-fields';
 import { ControllerState, GraphNode } from '../types';
 import { useViewOptions } from '../ViewOptionsProvider';
 import { useCloseSidebar, useGetNodeTypeDetail, useGetTimeoutString } from '../hooks';
@@ -40,11 +42,33 @@ type RelatedTemplate =
   | WorkflowApproval
   | Project;
 
+function getRelatedResourceUrl(unifiedJobTemplate?: SummaryFieldUnifiedJobTemplate) {
+  if (!unifiedJobTemplate) return '';
+  switch (unifiedJobTemplate?.unified_job_type) {
+    case 'inventory_update':
+      return awxAPI`/inventory_sources/${unifiedJobTemplate?.id.toString()}/`;
+    case 'job':
+      return awxAPI`/job_templates/${unifiedJobTemplate?.id.toString()}/`;
+    case 'project_update':
+      return awxAPI`/projects/${unifiedJobTemplate?.id.toString()}/`;
+    case 'workflow_job':
+      return awxAPI`/workflow_job_templates/${unifiedJobTemplate?.id.toString()}/`;
+    case 'system_job':
+      return awxAPI`/system_job_templates/${unifiedJobTemplate?.id.toString()}/`;
+    case 'workflow_approval':
+      return awxAPI`/workflow_approval_templates/${unifiedJobTemplate?.id.toString()}/`;
+    default:
+      return '';
+  }
+}
+
 export function WorkflowNodeDetails({ node }: { node: GraphNode }) {
   const { t } = useTranslation();
   const nodeData = node.getData();
-  const { data } = useGet<RelatedTemplate>(nodeData?.resource?.related?.unified_job_template);
   const unifiedJobTemplate = nodeData?.resource?.summary_fields?.unified_job_template;
+  const { data } = useGet<RelatedTemplate>(
+    getRelatedResourceUrl(nodeData?.resource?.summary_fields.unified_job_template)
+  );
   const timeoutString = useGetTimeoutString(unifiedJobTemplate?.timeout || 0);
   const nodeTypeDetail = useGetNodeTypeDetail(unifiedJobTemplate?.unified_job_type);
   const controller = useVisualizationController();
@@ -90,7 +114,6 @@ export function WorkflowNodeDetails({ node }: { node: GraphNode }) {
             {nodeData?.resource?.all_parents_must_converge ? t('All') : t('Any')}
           </PageDetail>
 
-          {/* timeout belongs here? */}
           <PageDetail
             label={t('Timeout')}
             isEmpty={unifiedJobTemplate?.timeout === undefined ? true : false}

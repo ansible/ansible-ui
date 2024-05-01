@@ -6,7 +6,7 @@ export function useGetNodeTypeDetail(type?: UnifiedJobType) {
   const typeMapping = {
     job: t('Job template'),
     workflow_job: t('Workflow job template'),
-    project_update: t('Project '),
+    project_update: t('Project'),
     inventory_update: t('Inventory source'),
     workflow_approval: t('Workflow approval'),
     system_job: t('Management job'),

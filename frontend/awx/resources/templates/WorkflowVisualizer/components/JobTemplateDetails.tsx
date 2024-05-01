@@ -33,7 +33,7 @@ function useAggregateJobTemplateDetails({
   template: JobTemplate;
   node: GraphNodeData;
 }) {
-  const { launch_data: promptValues, resource: nodeValues } = node;
+  const { launch_data: promptValues, survey_data: surveyValues, resource: nodeValues } = node;
   const { data: nodeLabels } = useGet<AwxItemsResponse<ILabel>>(nodeValues?.related?.labels);
   const { data: webhookKey } = useGet<{ webhook_key: string }>(template?.related?.webhook_key);
   const { data: nodeInstanceGroups } = useGet<AwxItemsResponse<InstanceGroup>>(
@@ -80,10 +80,29 @@ function useAggregateJobTemplateDetails({
   const verbosity = promptValues?.verbosity ?? nodeValues?.verbosity ?? template.verbosity;
   const verbosityString = useVerbosityString(verbosity);
   const templateVerbosityString = useVerbosityString(template.verbosity);
-  const variables =
+  let variables =
     promptValues?.extra_vars ??
     jsonToYaml(JSON.stringify(nodeValues.extra_data)) ??
     template.extra_vars;
+
+  if (surveyValues) {
+    const jsonObj: { [key: string]: string } = {};
+
+    if (variables) {
+      const lines = variables.split('\n');
+      lines.forEach((line) => {
+        const [key, value] = line.split(':').map((part) => part.trim());
+        jsonObj[key] = value;
+      });
+    }
+
+    const mergedData: { [key: string]: string | string[] | { name: string }[] } = {
+      ...jsonObj,
+      ...surveyValues,
+    };
+
+    variables = jsonToYaml(JSON.stringify(mergedData));
+  }
 
   return {
     credentials,

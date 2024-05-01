@@ -172,6 +172,7 @@ export function useSaveVisualizer(templateId: string) {
             const prompts = launch_data?.original?.launch_config;
             const promptMapper = {
               diff_mode: prompts?.ask_diff_mode_on_launch,
+              extra_data: prompts?.ask_variables_on_launch,
               execution_environment: prompts?.ask_execution_environment_on_launch,
               forks: prompts?.ask_forks_on_launch,
               inventory: prompts?.ask_inventory_on_launch,
@@ -197,7 +198,7 @@ export function useSaveVisualizer(templateId: string) {
           createNodePayload[key] = value;
         };
         const nodeData = node.getData() as GraphNodeData;
-        const { launch_data, resource } = nodeData;
+        const { launch_data, resource, survey_data } = nodeData;
         const { unified_job_template } = resource.summary_fields;
 
         if (!unified_job_template) return;
@@ -228,6 +229,12 @@ export function useSaveVisualizer(templateId: string) {
         } else if (launch_data?.extra_vars) {
           setValue('extra_data', parseVariableField(launch_data?.extra_vars), true);
         }
+        if (survey_data) {
+          setValue('extra_data', {
+            ...parseVariableField(launch_data?.extra_vars),
+            ...survey_data,
+          });
+        }
 
         const newNode = await postWorkflowNode(
           awxAPI`/workflow_job_templates/${state.workflowTemplate.id.toString()}/workflow_nodes/`,
@@ -251,7 +258,7 @@ export function useSaveVisualizer(templateId: string) {
           const updatedNodePayload: Partial<CreateWorkflowNodePayload> = {};
           const nodeData = node.getData() as GraphNodeData;
           const nodeId = node.getId();
-          const { launch_data, resource } = nodeData;
+          const { launch_data, survey_data, resource } = nodeData;
           const { unified_job_template } = resource.summary_fields;
 
           if (!unified_job_template) return;
@@ -315,6 +322,12 @@ export function useSaveVisualizer(templateId: string) {
             setValue('extra_data', { days: resource.extra_data.days });
           } else if (launch_data?.extra_vars) {
             setValue('extra_data', parseVariableField(launch_data?.extra_vars), true);
+          }
+          if (survey_data) {
+            setValue('extra_data', {
+              ...parseVariableField(launch_data?.extra_vars),
+              ...survey_data,
+            });
           }
 
           await processLabels(nodeId, launch_data);

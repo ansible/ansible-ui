@@ -35,6 +35,7 @@ interface NewGraphNode extends NodeModel {
       };
     };
     launch_data: PromptFormValues;
+    survey_data: { [key: string]: string | string[] | { name: string }[] };
   };
 }
 export function NodeAddWizard() {
@@ -102,7 +103,7 @@ export function NodeAddWizard() {
       },
     },
     {
-      id: 'nodeSurveyStep',
+      id: 'survey',
       label: t('Survey'),
       inputs: <SurveyStep singleColumn />,
       hidden: (wizardData: Partial<WizardFormValues>) => {
@@ -138,6 +139,7 @@ export function NodeAddWizard() {
       node_days_to_keep,
       node_status_type,
       prompt,
+      survey,
     } = formValues;
     const promptValues = prompt;
 
@@ -186,6 +188,7 @@ export function NodeAddWizard() {
           },
         },
         launch_data: promptValues,
+        survey_data: survey,
       },
     };
     if (node_convergence === 'all') {
