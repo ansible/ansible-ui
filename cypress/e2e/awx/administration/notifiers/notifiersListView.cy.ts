@@ -23,39 +23,39 @@ describe('Notifications: List View', () => {
     //Assert the deletion of the notification
 
   it('can create a new Email Notification, assert the info in the list view, and delete the notification', () => {
-      createNotification('Email', false);
+      createNotification('Email');
   });
 
   it('can create a new Grafana Notification, assert the info in the list view, and delete the notification', () => {
-      createNotification('Grafana', false);
+      createNotification('Grafana');
   });
 
   it('can create a new IRC Notification in the AAP UI, assert the info in the list view, and delete the notification', () => {
-      createNotification('IRC', false);
+      createNotification('IRC');
   });
 
   it('can create a new Mattermost Notification, assert the info in the list view, and delete the notification', () => {
-      createNotification('Mattermost', false);
+      createNotification('Mattermost');
   });
 
   it('can create a new Pagerduty Notification, assert the info in the list view, and delete the notification', () => {
-      createNotification('Pagerduty', false);
+      createNotification('Pagerduty');
   });
 
   it('can create a new Rocket.Chat Notification, assert the info in the list view, and delete the notification', () => {
-      createNotification('Rocket.Chat', false);
+      createNotification('Rocket.Chat');
   });
 
   it('can create a new Slack Notification, assert the info in the list view, and delete the notification', () => {
-      createNotification('Slack', false);
+      createNotification('Slack');
   });
 
   it('can create a new Twilio Notification, assert the info in the list view, and delete the notification', () => {
-      createNotification('Twilio', false);
+      createNotification('Twilio');
   });
 
   it.only('can create a new Webhook Notification, assert the info in the list view, and delete the notification', () => {
-      createNotification('Webhook', false);
+      createNotification('Webhook');
   });
 
   
@@ -116,16 +116,19 @@ describe('Notifications: List View', () => {
     });
   });
 
-  function createNotification(type : string, customizeMessages : boolean)
+  function createNotification(type : string)
   {
+    const notificationName = randomE2Ename();
     const orgName = randomE2Ename();
     cy.createAwxOrganization(orgName).then( () => {
         cy.navigateTo('awx', 'notification-templates');
         cy.get(`[data-cy="add-notifier"]`).click();
 
-        fillBasicData(type);
+        fillBasicData(notificationName, type);
         fillNotificationType(type);
         selectOrganization(orgName);
+
+        cy.get(`[data-cy="Submit"]`).click();
     });
   }
 
@@ -140,9 +143,8 @@ describe('Notifications: List View', () => {
     cy.contains('button', 'Confirm').click();
   }
 
-  function fillBasicData(type : string)
+  function fillBasicData(notificationName : string, type : string)
   {
-    const notificationName = randomE2Ename();
     cy.get(`[data-cy="name"]`).type(notificationName);
     cy.get(`[data-cy="description"]`).type('this is test description');
     
