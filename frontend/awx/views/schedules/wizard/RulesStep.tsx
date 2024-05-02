@@ -45,7 +45,7 @@ export function RulesStep() {
     setValue('rules', updatedRules);
   }, [rules, wizardData, setValue]);
   return (
-    <PageFormSection title={t('Rules')} singleColumn>
+    <PageFormSection singleColumn>
       {!isOpen && hasRules && (
         <Button
           data-cy="add-rule-toolbar-button"
