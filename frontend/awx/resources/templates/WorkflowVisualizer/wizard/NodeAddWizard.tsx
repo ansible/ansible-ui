@@ -11,7 +11,7 @@ import { NodeReviewStep } from './NodeReviewStep';
 import { NodeTypeStep } from './NodeTypeStep';
 import { SurveyStep } from '../../../../common/SurveyStep';
 import { getValueBasedOnJobType, hasDaysToKeep, shouldHideOtherStep } from './helpers';
-import { greyBadgeLabel } from '../../../../views/jobs/WorkflowOutput/WorkflowOutput';
+import { useThemedBadgeLabel } from '../../../../views/jobs/WorkflowOutput/WorkflowOutput';
 
 interface NewGraphNode extends NodeModel {
   data: {
@@ -44,6 +44,7 @@ export function NodeAddWizard() {
   const controller = useVisualizationController();
   const state = controller.getState<ControllerState>();
   const nodeTypeStepDefaults = useNodeTypeStepDefaults();
+  const themedBadgeLabel = useThemedBadgeLabel();
 
   const initialValues = {
     nodeTypeStep: nodeTypeStepDefaults(),
@@ -189,7 +190,7 @@ export function NodeAddWizard() {
       },
     };
     if (node_convergence === 'all') {
-      nodeToCreate = { ...nodeToCreate, data: { ...nodeToCreate.data, ...greyBadgeLabel } };
+      nodeToCreate = { ...nodeToCreate, data: { ...nodeToCreate.data, ...themedBadgeLabel } };
     }
     if (!state.sourceNode) {
       const rootEdge = createEdge(START_NODE_ID, nodeToCreate.id, EdgeStatus.info);

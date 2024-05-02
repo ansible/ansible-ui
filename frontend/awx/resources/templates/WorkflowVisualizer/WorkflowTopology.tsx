@@ -46,7 +46,7 @@ import { getNodeLabel } from './wizard/helpers';
 import { GRAPH_ID, NODE_DIAMETER, START_NODE_ID } from './constants';
 import { useCreateNodeComponent } from './hooks/useCreateNodeComponent';
 import { styled } from 'styled-components';
-import { greyBadgeLabel } from '../../../views/jobs/WorkflowOutput/WorkflowOutput';
+import { useThemedBadgeLabel } from '../../../views/jobs/WorkflowOutput/WorkflowOutput';
 
 const TopologyView = styled(PFTopologyView)`
   .pf-v5-c-divider {
@@ -76,6 +76,7 @@ export const WorkflowTopology = ({ data: { workflowNodes = [], template } }: Top
   const dedupeOldNodes = useDedupeOldNodes();
   const createEdge = useCreateEdge();
   const createNodeComponent = useCreateNodeComponent();
+  const themedBadgeLabel = useThemedBadgeLabel();
   const handleSelectedNode = useCallback(
     (clickedNodeIdentifier: string[]) => {
       const clickedNodeData = workflowNodes.find(
@@ -187,7 +188,7 @@ export const WorkflowTopology = ({ data: { workflowNodes = [], template } }: Top
       };
 
       if (n.all_parents_must_converge) {
-        return { ...node, data: { ...node.data, ...greyBadgeLabel } };
+        return { ...node, data: { ...node.data, ...themedBadgeLabel } };
       }
 
       return node;
@@ -216,7 +217,7 @@ export const WorkflowTopology = ({ data: { workflowNodes = [], template } }: Top
     visualization.fromModel(model, true);
     visualization.getGraph().reset();
     visualization.getGraph().layout();
-  }, [t, visualization, createEdge, workflowNodes, dedupeOldNodes]);
+  }, [t, visualization, createEdge, workflowNodes, dedupeOldNodes, themedBadgeLabel]);
 
   return (
     <VisualizationProvider controller={visualization}>

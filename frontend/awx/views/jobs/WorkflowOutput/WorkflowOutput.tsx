@@ -35,6 +35,7 @@ import { useAwxGetAllPages } from '../../../common/useAwxGetAllPages';
 import { secondsToHHMMSS } from '../../../../../framework/utils/dateTimeHelpers';
 import { Job } from '../../../interfaces/Job';
 import { WorkflowOutputNode } from './WorkflowOutputNode';
+import { usePageSettings } from '../../../../../framework';
 
 export const graphModel: Model = {
   nodes: [],
@@ -46,11 +47,16 @@ export const graphModel: Model = {
     visible: false,
   },
 };
-export const greyBadgeLabel = {
-  badge: 'ALL',
-  badgeColor: '#D2D2D2',
-  badgeTextColor: 'black',
-  badgeBorderColor: '#B8BBBE',
+export const useThemedBadgeLabel = () => {
+  const settings = usePageSettings();
+  const theme =
+    settings.theme === 'light' ? { badgeColor: '#D2D2D2' } : { badgeColor: '#26292d00' };
+
+  return {
+    badge: 'ALL',
+    badgeBorderColor: '#B8BBBE',
+    ...theme,
+  };
 };
 
 export const WorkflowOutput = (props: {
@@ -60,6 +66,7 @@ export const WorkflowOutput = (props: {
 }) => {
   const { t } = useTranslation();
   const createEdge = useCreateEdge();
+  const themedBadgeLabel = useThemedBadgeLabel();
 
   const { results: workflowNodes } = useAwxGetAllPages<WorkflowNode>(
     awxAPI`/workflow_jobs/${props.job.id.toString() || ''}/workflow_nodes/`
@@ -158,7 +165,7 @@ export const WorkflowOutput = (props: {
       };
 
       if (n.all_parents_must_converge) {
-        return { ...node, data: { ...node.data, ...greyBadgeLabel } };
+        return { ...node, data: { ...node.data, ...themedBadgeLabel } };
       }
 
       return node;
@@ -184,7 +191,7 @@ export const WorkflowOutput = (props: {
 
     visualization.fromModel(model, true);
     visualization.getGraph().reset();
-  }, [t, visualization, createEdge, workflowNodes]);
+  }, [t, visualization, createEdge, workflowNodes, themedBadgeLabel]);
 
   return (
     <VisualizationProvider controller={visualization}>
