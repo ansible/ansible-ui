@@ -2,17 +2,17 @@ import { NotificationTemplate } from '../../../../../frontend/awx/interfaces/Not
 import { randomE2Ename } from '../../../../support/utils';
 
 describe('Notifications', () => {
-  let notificationTemplate: NotificationTemplate;
+  //let notificationTemplate: NotificationTemplate;
 
   before(() => {
     cy.awxLogin();
   });
 
   beforeEach(() => {
-    const notificationName = randomE2Ename();
+    /*const notificationName = randomE2Ename();
     cy.createNotificationTemplate(notificationName).then((testNotification) => {
       notificationTemplate = testNotification;
-    });
+    });*/
   });
 
   describe('Notifications: Details View', () => {

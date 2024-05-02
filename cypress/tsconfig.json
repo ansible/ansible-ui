@@ -6,5 +6,9 @@
     "jsx": "react",
     "resolveJsonModule": true
   },
-  "include": ["**/*.ts", "support/component.ts", "e2e/awx/administration/notifiers/notifiersTabs.cy.ts"]
+  "include": [
+    "**/*.ts",
+    "support/component.ts",
+    "e2e/awx/administration/notifiers/notifiersTabs.cy.ts"
+  ]
 }
