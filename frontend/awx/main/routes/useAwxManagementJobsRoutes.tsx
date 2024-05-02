@@ -77,7 +77,7 @@ export function useAwxManagementJobsRoutes() {
             {
               id: AwxRoute.ManagementJobNotifications,
               path: 'notifications',
-              element: <ResourceNotifications resourceType="job_templates" />,
+              element: <ResourceNotifications resourceType="system_job_templates" />,
             },
             {
               path: '',
