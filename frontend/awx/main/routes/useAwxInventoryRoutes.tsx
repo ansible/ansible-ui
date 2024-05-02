@@ -44,6 +44,10 @@ import { SchedulesList } from '../../views/schedules/SchedulesList';
 import { InventoryJobs } from '../../resources/inventories/InventoryPage/InventoryJobs';
 import { InventoryRunCommand } from '../../resources/inventories/InventoryRunCommand';
 import { ScheduleEditWizard } from '../../views/schedules/wizard/ScheduleEditWizard';
+import { InventoryTeamAccess } from '../../resources/inventories/InventoryPage/InventoryTeamAccess';
+import { InventoryUserAccess } from '../../resources/inventories/InventoryPage/InventoryUserAccess';
+import { InventoryAddUsers } from '../../resources/inventories/components/InventoryAddUsers';
+import { InventoryAddTeams } from '../../resources/inventories/components/InventoryAddTeams';
 
 export function useAwxInventoryRoutes() {
   const { t } = useTranslation();
@@ -215,6 +219,16 @@ export function useAwxInventoryRoutes() {
               path: 'templates',
               element: <InventoryJobTemplates />,
             },
+            {
+              id: AwxRoute.InventoryTeamAccess,
+              path: 'team-access',
+              element: <InventoryTeamAccess />,
+            },
+            {
+              id: AwxRoute.InventoryUserAccess,
+              path: 'user-access',
+              element: <InventoryUserAccess />,
+            },
           ],
         },
         {
@@ -263,6 +277,16 @@ export function useAwxInventoryRoutes() {
           id: AwxRoute.CreateConstructedInventory,
           path: 'constructed_inventory/create',
           element: <CreateInventory inventoryKind="constructed" />,
+        },
+        {
+          id: AwxRoute.InventoryAddUsers,
+          path: ':id/users/add-users',
+          element: <InventoryAddUsers />,
+        },
+        {
+          id: AwxRoute.InventoryAddTeams,
+          path: ':id/team-access/add-teams',
+          element: <InventoryAddTeams />,
         },
         {
           path: '',
