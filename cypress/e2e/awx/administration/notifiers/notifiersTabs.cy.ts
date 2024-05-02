@@ -1,5 +1,5 @@
-import { NotificationTemplate } from '../../../../../frontend/awx/interfaces/NotificationTemplate';
-import { randomE2Ename } from '../../../../support/utils';
+//import { NotificationTemplate } from '../../../../../frontend/awx/interfaces/NotificationTemplate';
+//import { randomE2Ename } from '../../../../support/utils';
 
 describe('Notifications', () => {
   //let notificationTemplate: NotificationTemplate;
