@@ -9,9 +9,9 @@ export function useExecutionEnvironmentsFilters() {
   const modifiedByToolbarFilter = useModifiedByToolbarFilter();
   const toolbarFilters = useDynamicToolbarFilters({
     optionsPath: 'execution_environments',
-    preSortedKeys: ['name', 'image'],
+    preSortedKeys: ['name', 'id', 'image', 'created-by', 'modified-by'],
     preFilledValueKeys: {
-      image: {
+      id: {
         apiPath: 'execution_environments',
       },
       name: {
