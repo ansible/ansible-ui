@@ -10,6 +10,7 @@ import {
   IPageAction,
   PageActionType,
   PageActionSelection,
+  useGetPageUrl,
 } from '../../../../../framework';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
@@ -22,7 +23,6 @@ import { DetailInfo } from '../../../../../framework/components/DetailInfo';
 import { useUserTokensFilters } from '../hooks/useUserTokensFilters';
 import { ButtonVariant } from '@patternfly/react-core';
 import { PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
-//import { useDeleteTokens } from '../../../administration/applications/hooks/useDeleteTokens';
 import { useDeleteUserTokens } from '../hooks/useDeleteUserTokens';
 
 export function UserTokens(props: { infoMessage?: string }) {
@@ -49,6 +49,7 @@ export function UserTokens(props: { infoMessage?: string }) {
 function UserTokensInternal(props: { infoMessage?: string; user: AwxUser }) {
   const { user } = props;
   const { t } = useTranslation();
+  const getPageUrl = useGetPageUrl();
 
   const tableColumns = useUserTokensColumns(user);
   const toolbarFilters = useUserTokensFilters();
@@ -69,7 +70,7 @@ function UserTokensInternal(props: { infoMessage?: string; user: AwxUser }) {
         isPinned: true,
         icon: PlusCircleIcon,
         label: t('Create token'),
-        href: '',
+        href: getPageUrl(AwxRoute.CreateUserToken, { params: { id: user.id } }),
       },
       { type: PageActionType.Seperator },
       {
@@ -81,7 +82,7 @@ function UserTokensInternal(props: { infoMessage?: string; user: AwxUser }) {
         onClick: deleteTokens,
       },
     ],
-    [deleteTokens, t]
+    [deleteTokens, getPageUrl, t, user.id]
   );
 
   const rowActions = useMemo<IPageAction<Token>[]>(
