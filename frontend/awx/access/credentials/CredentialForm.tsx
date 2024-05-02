@@ -352,6 +352,62 @@ function CredentialInputs({
     </>
   );
 }
+
+function PageFormSecretInput({
+  field,
+  isEditMode,
+  credentialType,
+  requiredFields,
+}: {
+  field: CredentialInputField;
+  isEditMode: boolean;
+  credentialType: CredentialType;
+  requiredFields: string[];
+}) {
+  const [t] = useTranslation();
+  const [shouldHideField, setShouldHideField] = useState(field.secret && isEditMode);
+
+  const handleHideField = () => {
+    setShouldHideField(!shouldHideField);
+  };
+
+  if (field.multiline) {
+    return (
+      <PageFormSecret
+        key={field.id}
+        onClear={handleHideField}
+        shouldHideField={shouldHideField}
+        label={field.label}
+        placeholder={t('ENCRYPTED')}
+      >
+        <CredentialMultilineInput
+          kind={credentialType.kind}
+          key={field.id}
+          field={field}
+          requiredFields={requiredFields}
+        />
+      </PageFormSecret>
+    );
+  } else {
+    return (
+      <PageFormSecret
+        key={field.id}
+        onClear={handleHideField}
+        shouldHideField={shouldHideField}
+        label={field.label}
+        placeholder={t('ENCRYPTED')}
+      >
+        <CredentialTextInput
+          key={field.id}
+          field={field}
+          isRequired={requiredFields.includes(field.id)}
+          credentialType={credentialType}
+        />
+      </PageFormSecret>
+    );
+  }
+}
+
 function CredentialSubForm(
   {
     credentialType,
