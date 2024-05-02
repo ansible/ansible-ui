@@ -397,7 +397,7 @@ describe('Projects', () => {
       cy.clickButton(/^Create exception$/);
       cy.clickButton(/^Save exception$/);
       cy.clickButton(/^Next$/);
-      cy.getByDataCy('exclusions-column-header').should('be.visible');
+      cy.get('[data-cy="exclusions-column-header"]').should('be.visible');
       cy.intercept('PATCH', awxAPI`/schedules/${schedule.id.toString()}/`).as('edited');
       cy.getByDataCy('Submit').click();
       cy.intercept('GET', awxAPI`/projects/${thisProject.id.toString()}/`).as('projectList');
