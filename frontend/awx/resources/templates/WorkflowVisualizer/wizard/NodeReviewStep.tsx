@@ -42,8 +42,8 @@ export function NodeReviewStep() {
     node_alias,
     node_convergence,
     node_days_to_keep,
+    survey,
   } = wizardData;
-
   const hasPromptDetails = Boolean(visibleSteps.find((step) => step.id === 'nodePromptsStep'));
   const nodeTypeDetail = useGetNodeTypeDetail(node_type);
   const nameDetail = getValueBasedOnJobType(node_type, resource?.name || '', approval_name);
@@ -76,6 +76,21 @@ export function NodeReviewStep() {
       },
     });
   }
+
+  const surveyDetails: { [key: string]: string | string[] } = {};
+  if (survey) {
+    Object.keys(survey).forEach((key) => {
+      const surveyValue = survey[key];
+      if (Array.isArray(surveyValue)) {
+        surveyDetails[key] = surveyValue.map((item) =>
+          typeof item === 'string' ? item : item.name
+        );
+      } else {
+        surveyDetails[key] = surveyValue;
+      }
+    });
+  }
+
   return (
     <>
       <PageDetails numberOfColumns="single">
@@ -91,6 +106,12 @@ export function NodeReviewStep() {
           <PageDetailCodeEditor label={t('Extra vars')} value={extraVarsDetail} />
         ) : null}
         {hasPromptDetails ? <PromptReviewDetails /> : null}
+        {!hasPromptDetails && survey ? (
+          <PageDetailCodeEditor
+            label={t('Extra vars')}
+            value={jsonToYaml(JSON.stringify(surveyDetails))}
+          />
+        ) : null}
       </PageDetails>
     </>
   );

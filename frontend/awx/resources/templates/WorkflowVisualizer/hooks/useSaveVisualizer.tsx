@@ -231,7 +231,7 @@ export function useSaveVisualizer(templateId: string) {
         }
         if (survey_data) {
           setValue('extra_data', {
-            ...parseVariableField(launch_data?.extra_vars),
+            ...parseVariableField(launch_data?.extra_vars ?? '---'),
             ...survey_data,
           });
         }
@@ -325,7 +325,7 @@ export function useSaveVisualizer(templateId: string) {
           }
           if (survey_data) {
             setValue('extra_data', {
-              ...parseVariableField(launch_data?.extra_vars),
+              ...parseVariableField(launch_data?.extra_vars ?? '---'),
               ...survey_data,
             });
           }

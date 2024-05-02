@@ -109,7 +109,7 @@ export function useGetInitialValues(): (node: GraphNode) => Promise<WizardStepSt
       }
 
       let extraVarsWithoutSurvey = { ...(defaults?.extra_data || {}) };
-      let surveyValues;
+      let surveyValues = nodeData?.resource?.extra_data;
 
       if (launch?.ask_variables_on_launch && launch.survey_enabled) {
         const surveySpec = await getSurveySpec(
@@ -150,7 +150,7 @@ export function useGetInitialValues(): (node: GraphNode) => Promise<WizardStepSt
       return {
         nodeTypeStep,
         ...(hidePromptStep ? {} : { nodePromptsStep: { prompt: nodePromptsValues } }),
-        ...(hideSurveyStep ? {} : { survey: nodeData?.survey_data ?? surveyValues }),
+        ...(hideSurveyStep ? {} : { survey: { survey: nodeData?.survey_data ?? surveyValues } }),
       };
     },
     [nodeTypeStepDefaults]

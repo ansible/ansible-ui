@@ -55,11 +55,14 @@ export function SurveyStep({
   useEffect(() => {
     const survey: { [key: string]: string | string[] | number } = {};
     const surveyStep = stepData.survey as {
-      [key: string]: string | number | string[];
+      survey: {
+        [key: string]: string | number | string[];
+      };
     };
 
     survey_spec?.spec?.forEach((obj: Spec) => {
-      const surveyVariable = surveyStep?.[obj?.variable];
+      const surveyVariable = surveyStep?.survey?.[obj?.variable];
+
       if (surveyVariable) {
         if (obj.type === 'multiselect' && Array.isArray(surveyVariable)) {
           survey[obj.variable] = surveyVariable.map((val: string | { name: string }) => ({
@@ -68,7 +71,7 @@ export function SurveyStep({
           return;
         }
 
-        survey[obj.variable] = surveyStep?.[obj.variable];
+        survey[obj.variable] = surveyStep?.survey?.[obj.variable];
         return;
       }
       if (obj.default === '') {

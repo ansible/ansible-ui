@@ -152,7 +152,7 @@ export function NodeEditWizard({ node }: { node: GraphNode }) {
     } = formValues;
 
     const promptValues = prompt;
-    const surveyData = survey;
+    const surveyValues = survey;
 
     if (promptValues) {
       if (resource && 'organization' in resource) {
@@ -173,11 +173,9 @@ export function NodeEditWizard({ node }: { node: GraphNode }) {
 
     if (survey) {
       Object.keys(survey).forEach((key) => {
-        const surveyValue = survey[key];
-        if (Array.isArray(surveyValue)) {
-          surveyData[key] = surveyValue.map((item) =>
-            typeof item === 'string' ? item : item?.name
-          );
+        const value = survey[key];
+        if (Array.isArray(value)) {
+          surveyValues[key] = value.map((item) => (typeof item === 'string' ? item : item?.name));
         }
       });
     }
@@ -209,7 +207,7 @@ export function NodeEditWizard({ node }: { node: GraphNode }) {
         },
       },
       launch_data: promptValues,
-      survey_data: surveyData,
+      survey_data: surveyValues,
     };
 
     if (node_type !== RESOURCE_TYPE.workflow_approval) {
