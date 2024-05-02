@@ -50,11 +50,11 @@ describe('Notifications: List View', () => {
       createNotification('Slack', false);
   });
 
-  it.only('can create a new Twilio Notification, assert the info in the list view, and delete the notification', () => {
+  it('can create a new Twilio Notification, assert the info in the list view, and delete the notification', () => {
       createNotification('Twilio', false);
   });
 
-  it('can create a new Webhook Notification, assert the info in the list view, and delete the notification', () => {
+  it.only('can create a new Webhook Notification, assert the info in the list view, and delete the notification', () => {
       createNotification('Webhook', false);
   });
 
@@ -223,7 +223,8 @@ describe('Notifications: List View', () => {
     cy.get(`[data-cy="notification-configuration-password"]`).type('webhook_password');
     cy.get(`[data-cy="notification-configuration-url"]`).type('https://webhook-endpoint.com');
     cy.get(`[data-cy="notification_configuration-disable_ssl_verification"]`).click();
-    cy.get(`[data-cy="notification-configuration-http_method"]`).select('POST');
+    cy.get(`[data-cy="notification-configuration-http-method"]`).click();
+    cy.contains('POST').click();
   }
   
   function fillMattermostForm() {
