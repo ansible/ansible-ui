@@ -46,12 +46,14 @@ describe('Notifications: List View', () => {
       createNotification('Rocket.Chat', false);
   });
 
-  it.only('can create a new Slack Notification, assert the info in the list view, and delete the notification', () => {
+  it('can create a new Slack Notification, assert the info in the list view, and delete the notification', () => {
       createNotification('Slack', false);
   });
-  it('can create a new Twilio Notification, assert the info in the list view, and delete the notification', () => {
+
+  it.only('can create a new Twilio Notification, assert the info in the list view, and delete the notification', () => {
       createNotification('Twilio', false);
   });
+
   it('can create a new Webhook Notification, assert the info in the list view, and delete the notification', () => {
       createNotification('Webhook', false);
   });
@@ -194,10 +196,10 @@ describe('Notifications: List View', () => {
   }
   
   function fillTwilioForm() {
-    cy.get(`[data-cy="notification-configuration-account_sid"]`).type('twilio_sid');
-    cy.get(`[data-cy="notification-configuration-account_token"]`).type('twilio_token');
-    cy.get(`[data-cy="notification-configuration-from_number"]`).type('+1234567890');
-    cy.get(`[data-cy="notification-configuration-to_numbers"]`).type('+1987654321{enter}+1123456789');
+    cy.get(`[data-cy="notification-configuration-account-sid"]`).type('twilio_sid');
+    cy.get(`[data-cy="notification-configuration-account-token-form-group"]`).type('twilio_token');
+    cy.get(`[data-cy="notification-configuration-from-number-form-group"]`).type('+1234567890');
+    cy.get(`[data-cy="notification-configuration-to-numbers-form-group"]`).type('+1987654321{enter}+1123456789');
   }
   
   function fillPagerdutyForm() {
