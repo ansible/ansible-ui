@@ -136,6 +136,6 @@ describe('Notifications: List View', () => {
     cy.get(`[data-cy="notification-configuration-sender"]`).type('sender@email.com');
     cy.get(`[data-cy="notification-configuration-port"]`).type('80');
     cy.get(`[data-cy="notification-configuration-timeout"]`).type('100');
-    //cy.get(`[data-cy="notification-configuration-use_ssl"]`).click();
     cy.get(`[data-cy="notification_configuration-use_tls"]`).click();
+    cy.get(`[data-cy="notification_configuration-use_ssl"]`).click();
   }
