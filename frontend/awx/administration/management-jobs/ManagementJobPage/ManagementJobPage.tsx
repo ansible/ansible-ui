@@ -9,6 +9,10 @@ import { AwxError } from '../../../common/AwxError';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { SystemJobTemplate } from '../../../interfaces/SystemJobTemplate';
 import { AwxRoute } from '../../../main/AwxRoutes';
+import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
+import { useGet } from '../../../../common/crud/useGet';
+import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
+import { Organization } from '../../../interfaces/Organization';
 
 export function ManagementJobPage() {
   const { t } = useTranslation();
@@ -20,9 +24,27 @@ export function ManagementJobPage() {
   } = useGetItem<SystemJobTemplate>(awxAPI`/system_job_templates`, params.id);
 
   const getPageUrl = useGetPageUrl();
+  const { activeAwxUser } = useAwxActiveUser();
+
+  const {
+    data: isNotifAdmin,
+    error: isNotifAdminError,
+    refresh: refreshNotifAdmin,
+  } = useGet<AwxItemsResponse<Organization>>(
+    awxAPI`/organizations/?role_level=notification_admin_role`
+  );
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
-  if (!systemJobTemplate) return <LoadingPage breadcrumbs tabs />;
+  if (isNotifAdminError)
+    return <AwxError error={isNotifAdminError} handleRefresh={refreshNotifAdmin} />;
+
+  if (!(systemJobTemplate && isNotifAdmin)) return <LoadingPage breadcrumbs tabs />;
+
+  const tabs = [{ label: t('Schedules'), page: AwxRoute.ManagementJobSchedules }];
+
+  if (activeAwxUser?.is_system_auditor || (isNotifAdmin && isNotifAdmin.results.length > 0)) {
+    tabs.push({ label: t('Notifications'), page: AwxRoute.ManagementJobNotifications });
+  }
 
   return (
     <PageLayout>
@@ -40,10 +62,7 @@ export function ManagementJobPage() {
           page: AwxRoute.ManagementJobs,
           persistentFilterKey: 'management-jobs',
         }}
-        tabs={[
-          { label: t('Schedules'), page: AwxRoute.ManagementJobSchedules },
-          { label: t('Notifications'), page: AwxRoute.ManagementJobNotifications },
-        ]}
+        tabs={tabs}
         params={{ id: systemJobTemplate.id }}
       />
     </PageLayout>
