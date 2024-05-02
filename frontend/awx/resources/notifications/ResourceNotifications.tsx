@@ -95,7 +95,6 @@ export function ResourceNotifications({ resourceType }: { resourceType: string }
 
   return (
     <PageLayout>
-      {resourceType}
       <PageTable<NotificationTemplate>
         id="awx-inventory-sources-table"
         toolbarFilters={toolbarFilters}
