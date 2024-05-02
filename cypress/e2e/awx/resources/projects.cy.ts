@@ -403,7 +403,7 @@ describe('Projects', () => {
       cy.intercept('GET', awxAPI`/projects/${thisProject.id.toString()}/`).as('projectList');
       cy.wait('@edited');
       cy.wait('@projectList');
-      cy.getByDataCy('exclusions-column-header').should('be.visible');
+      cy.get('[data-cy="exclusions-column-header"]').should('be.visible');
       cy.getBy('[data-cy="edit-schedule"]').click();
       cy.get('[data-cy="wizard-nav"]').within(() => {
         ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
