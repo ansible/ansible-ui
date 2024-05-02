@@ -232,9 +232,9 @@ describe('Notifications: List View', () => {
   }
   
   function fillRocketChatForm() {
-    cy.get(`[data-cy="notification-configuration-rocketchat_url"]`).type('https://rocketchat.com');
-    cy.get(`[data-cy="notification-configuration-rocketchat_username"]`).type('rocketchat_user');
-    cy.get(`[data-cy="notification-configuration-rocketchat_icon_url"]`).type('https://icon_url.com');
+    cy.get(`[data-cy="notification-configuration-rocketchat-url"]`).type('https://rocketchat.com');
+    cy.get(`[data-cy="notification-configuration-rocketchat-username-form-group"]`).type('rocketchat_user');
+    cy.get(`[data-cy="notification-configuration-rocketchat-icon-url-form-group"]`).type('https://icon_url.com');
     cy.get(`[data-cy="notification_configuration-rocketchat_no_verify_ssl"]`).click();
   }
   
