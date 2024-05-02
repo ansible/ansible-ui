@@ -368,11 +368,10 @@ function PageFormSecretInput({
   const [shouldHideField, setShouldHideField] = useState(field.secret && isEditMode);
   const { resetField } = useForm();
   const [clear, setClear] = useState(false);
-  const { setValue, clearErrors } = useFormContext();
+  const { setValue } = useFormContext();
 
   const handleHideField = () => {
     setShouldHideField(!shouldHideField);
-    console.log(field.id);
     resetField(field.id);
     setClear(!clear);
     //hide field
@@ -400,7 +399,7 @@ function PageFormSecretInput({
       <PageFormSecret
         //key={field.id}
         onClear={() => {
-          console.log(field.id);
+          //console.log(field.id);
           setValue(field.id, '');
           //resetField('security-token');
           setShouldHideField(!shouldHideField);
