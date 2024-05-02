@@ -30,7 +30,7 @@ export function ExecutionEnvironmentsList({
 }) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
-  const toolbarFilters = useExecutionEnvironmentsFilters();
+  const toolbarFilters = useExecutionEnvironmentsFilters({ url: url });
   const tableColumns = useExecutionEnvironmentsColumns();
   const filteredColumns = hideOrgColumn
     ? tableColumns.filter((column) => column.header !== 'Organization')
