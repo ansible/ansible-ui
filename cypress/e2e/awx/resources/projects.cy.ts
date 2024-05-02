@@ -396,8 +396,14 @@ describe('Projects', () => {
       cy.clickButton(/^Next$/);
       cy.clickButton(/^Create exception$/);
       cy.clickButton(/^Save exception$/);
+      cy.intercept('POST', awxAPI`/schedules/preview/`).as('preview');
+      cy.intercept('GET', awxAPI`/schedules/${schedule.id.toString()}`).as('projectSchedules');
       cy.clickButton(/^Next$/);
-      cy.get('[data-cy="exclusions-column-header"]').should('be.visible');
+      cy.wait('@preview');
+      cy.getByDataCy('local-time-zone').should('contain', 'UTC');
+      cy.get('[data-cy="exclusions-column-header"]')
+        .should('be.visible')
+        .and('contain', 'Exclusions');
       cy.intercept('PATCH', awxAPI`/schedules/${schedule.id.toString()}/`).as('edited');
       cy.getByDataCy('Submit').click();
       cy.intercept('GET', awxAPI`/projects/${thisProject.id.toString()}/`).as('projectList');
