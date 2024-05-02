@@ -59,7 +59,9 @@ export function ResourceNotifications({ resourceType }: { resourceType: string }
   >(awxAPI`/${resourceType}/${resourceId ?? ''}/notification_templates_error/`);
 
   const approvalUrl =
-    resourceType === 'system_job_templates'
+    resourceType === 'system_job_templates' ||
+    resourceType === 'job_templates' ||
+    resourceType === 'projects'
       ? ''
       : awxAPI`/${resourceType}/${resourceId ?? ''}/notification_templates_approvals/`;
 
@@ -93,6 +95,7 @@ export function ResourceNotifications({ resourceType }: { resourceType: string }
 
   return (
     <PageLayout>
+      {resourceType}
       <PageTable<NotificationTemplate>
         id="awx-inventory-sources-table"
         toolbarFilters={toolbarFilters}
