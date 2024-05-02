@@ -98,6 +98,7 @@ describe('Notifications: List View', () => {
         cy.get(`[data-cy="add-notifier"]`).click();
 
         fillBasicData(orgName, type);
+        fillNotificationType(type);
     });
   }
 
@@ -108,11 +109,33 @@ describe('Notifications: List View', () => {
     cy.get(`[data-cy="description"]`).type('this is test description');
     cy.get(`[data-cy="organization"]`).click();
     cy.contains('button', 'Browse').click();
-    cy.selectTableRowByCheckbox('name', orgName);
-    cy.contains(`[data-cy="row-id-1"]`, orgName);
+    cy.filterTableByMultiSelect('name', [orgName]);
+
+    cy.contains(`[aria-label="Simple table"]`, orgName);
     cy.get(`[aria-label="Select row 0"]`).click();
     cy.contains('button', 'Confirm').click();
 
-    cy.contains(`[data-cy="notification_type"]`).click();
+    cy.get(`[data-cy="notification_type"]`).click();
     cy.contains('span', type).click();
+  }
+
+  function fillNotificationType(type : string)
+  {
+    if (type === 'Email')
+    {
+        fillEmail();
+    }
+  }
+
+  function fillEmail()
+  {
+    cy.get(`[data-cy="notification-configuration-username"]`).type('email user');
+    cy.get(`[data-cy="notification-configuration-password"]`).type('email password');
+    cy.get(`[data-cy="notification-configuration-host"]`).type('https://host.com');
+    cy.get(`[data-cy="notification-configuration-recipients"]`).type('receipient1{enter}receipient2');
+    cy.get(`[data-cy="notification-configuration-sender"]`).type('sender@email.com');
+    cy.get(`[data-cy="notification-configuration-port"]`).type('80');
+    cy.get(`[data-cy="notification-configuration-timeout"]`).type('100');
+    //cy.get(`[data-cy="notification-configuration-use_ssl"]`).click();
+    cy.get(`[data-cy="notification_configuration-use_tls"]`).click();
   }
