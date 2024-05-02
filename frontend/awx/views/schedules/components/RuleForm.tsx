@@ -63,14 +63,17 @@ export function RuleForm(props: {
 
       if (until === null) return;
       const [date, time] = dateToInputDateTime(until?.toISOString() || '');
-      reset({
-        ...ruleOptions,
-        until: {
-          date,
-          time,
+      reset(
+        {
+          ...ruleOptions,
+          until: {
+            date,
+            time,
+          },
+          rules,
         },
-        rules,
-      });
+        { keepDefaultValues: true }
+      );
     }
   }, [getValues, reset, props.isOpen, timezone, ruleId]);
   const handleAddItem = () => {
@@ -137,11 +140,14 @@ export function RuleForm(props: {
         : setValue('exceptions', exceptions.push(ruleObject));
     }
 
-    reset({
-      ...defaultValues,
-      rules,
-      exceptions,
-    });
+    reset(
+      {
+        ...defaultValues,
+        rules,
+        exceptions,
+      },
+      { keepDefaultValues: true }
+    );
     props.setIsOpen(false);
   };
   return (
@@ -157,12 +163,14 @@ export function RuleForm(props: {
         <PageFormSelect<RuleFields>
           name={`wkst`}
           label={t('Week Start')}
+          helperText={t('Select first day of the week.')}
           options={weekdayOptions}
         />
         <PageFormMultiSelect<RuleFields>
           label={t('Weekdays')}
           name={`byweekday`}
           options={weekdayOptions}
+          helperText={t('Select days of the week on which to run the schedule')}
           placeholder={t('Select days of the week on which to run the schedule')}
           disableSortOptions
         />
@@ -216,7 +224,7 @@ export function RuleForm(props: {
           options={DAYS_OF_MONTH}
           label={t('Monthly day(s) number')}
           labelHelp={t(
-            'This is the bymonthday field. This field is used to declare numbered days of the month the schedule should run.'
+            'This is the bymonthday field. This field is used to declare ordinal days number of the month the schedule should run.'
           )}
           labelHelpTitle={t('Monthly day(s) number')}
           disableSortOptions
@@ -227,7 +235,7 @@ export function RuleForm(props: {
           options={DAYS_OF_YEAR}
           label={t('Annual day(s) number')}
           labelHelp={t(
-            'This is the byyearday field. This field is used to declare numbered days of the year the schedule should run.'
+            'This is the byyearday field. This field is used to declare ordinal number days of the year the schedule should run.'
           )}
           labelHelpTitle={t('Annual day(s) number')}
           disableSortOptions
@@ -237,10 +245,10 @@ export function RuleForm(props: {
           options={DAYS_OF_YEAR}
           name={`bysetpos`}
           labelHelp={t(
-            'Use this field to filter down indexed occurances based on those declared using the form fields in the Define occurances section. See the iCalendar RFC for bysetpos field more information.'
+            'Use this field to filter down indexed rules based on those declared using the form fields in the Rule section. See the iCalendar RFC for bysetpos field more information.'
           )}
-          labelHelpTitle={t('Occurance position')}
-          label={t('Occurances')}
+          labelHelpTitle={t('Occurrence position')}
+          label={t('Occurrences')}
           disableSortOptions
         />
 
@@ -248,7 +256,7 @@ export function RuleForm(props: {
           labelHelpTitle={t('Count')}
           label={t('Count')}
           name={`count`}
-          labelHelp={t('The number of this rule should be used.')}
+          labelHelp={t('The number of time this rule should be used.')}
           min={0}
           type="number"
         />
@@ -280,7 +288,7 @@ export function RuleForm(props: {
             const ruleType: RuleType =
               props.title === t('Define rules') ? RuleType.Rules : RuleType.Exceptions;
             const ruleArray = ruleType === RuleType.Rules ? [...rules] : [...exceptions];
-            reset({ ...defaultValues, [`${ruleType}`]: ruleArray });
+            reset({ ...defaultValues, [`${ruleType}`]: ruleArray }, { keepDefaultValues: true });
             props.setIsOpen(false);
           }}
         >

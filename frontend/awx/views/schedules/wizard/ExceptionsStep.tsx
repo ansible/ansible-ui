@@ -23,7 +23,7 @@ export function ExceptionsStep() {
   }, [setStepData, setValue, rules]);
 
   return (
-    <PageFormSection title={t('Exceptions')} singleColumn>
+    <PageFormSection singleColumn>
       {!isOpen && hasExceptions && (
         <Button
           icon={<PlusCircleIcon />}

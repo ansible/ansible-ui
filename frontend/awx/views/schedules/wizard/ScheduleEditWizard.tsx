@@ -13,7 +13,7 @@ import { AwxRoute } from '../../../main/AwxRoutes';
 import { RuleFields, ScheduleFormWizard, schedulePageUrl } from '../types';
 import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
 import { RulesStep } from './RulesStep';
-import { RRule, RRuleSet, rrulestr } from 'rrule';
+import { RRuleSet, rrulestr } from 'rrule';
 import { ExceptionsStep } from './ExceptionsStep';
 import { SurveyStep } from '../../../common/SurveyStep';
 import { NodePromptsStep } from '../../../resources/templates/WorkflowVisualizer/wizard/NodePromptsStep';
@@ -30,6 +30,8 @@ import { StandardizedFormData } from './ScheduleAddWizard';
 import { useProcessSchedule } from '../hooks/useProcessSchedules';
 import { useGetScheduleUrl } from '../hooks/useGetScheduleUrl';
 import { RequestError } from '../../../../common/crud/RequestError';
+import { postRequest } from '../../../../common/crud/Data';
+import { useSetRRuleItemToRuleSet } from '../hooks/useSetRRuleItemToRuleSet';
 
 export function ScheduleEditWizard() {
   const { t } = useTranslation();
@@ -38,10 +40,11 @@ export function ScheduleEditWizard() {
   const pageNavigate = usePageNavigate();
   const processSchedules = useProcessSchedule();
   const getScheduleUrl = useGetScheduleUrl();
-
+  const getRuleSet = useSetRRuleItemToRuleSet();
   const params = useParams<{ id?: string; schedule_id?: string }>();
 
   const { data: schedule } = useGetItem<Schedule>(awxAPI`/schedules/`, params.schedule_id);
+
   const [startDate, time]: string[] = dateToInputDateTime(
     schedule?.dtstart as string,
     schedule?.timezone
@@ -49,30 +52,7 @@ export function ScheduleEditWizard() {
 
   const handleSubmit = async (formValues: ScheduleFormWizard) => {
     const { rules, exceptions, ...rest } = formValues;
-    const ruleset = new RRuleSet();
-
-    rules.forEach((r, i) => {
-      const {
-        rule: {
-          options: { dtstart, tzid, ...rest },
-        },
-      } = r;
-      if (i === 0) {
-        ruleset.rrule(new RRule({ ...rest, dtstart, tzid }));
-      } else {
-        ruleset.rrule(new RRule({ ...rest }));
-      }
-    });
-    if (exceptions.length) {
-      exceptions?.forEach((r) => {
-        const {
-          rule: {
-            options: { dtstart, tzid, ...rest },
-          },
-        } = r;
-        ruleset.exrule(new RRule({ ...rest }));
-      });
-    }
+    const ruleset = getRuleSet(rules, exceptions);
 
     const data: StandardizedFormData = {
       rrule: ruleset.toString(),
@@ -145,7 +125,40 @@ export function ScheduleEditWizard() {
       label: t('Exceptions'),
       inputs: <ExceptionsStep />,
     },
-    { id: 'review', label: t('Review'), inputs: <ScheduleReviewStep /> },
+    {
+      id: 'review',
+      label: t('Review'),
+      inputs: <ScheduleReviewStep />,
+      validate: async (formData: object, wizardData: Partial<ScheduleFormWizard>) => {
+        if (!wizardData?.rules?.length) {
+          const errors = {
+            __all__: [t('Schedules must have at least one rule.')],
+          };
+
+          throw new RequestError('', '', 400, '', errors);
+        }
+
+        const ruleset = getRuleSet(wizardData.rules, wizardData.exceptions ?? []);
+
+        const { utc, local } = await postRequest<{ utc: string[]; local: string[] }>(
+          awxAPI`/schedules/preview/`,
+          {
+            rrule: ruleset.toString(),
+          }
+        );
+        if (!local.length && !utc.length) {
+          const errors = {
+            __all__: [
+              t(
+                'This schedule will never run.  If you have defined exceptions it is likely that the exceptions cancel out all the rules defined in the rules step.'
+              ),
+            ],
+          };
+
+          throw new RequestError('', '', 400, '', errors);
+        }
+      },
+    },
   ];
 
   if (!schedule) return;

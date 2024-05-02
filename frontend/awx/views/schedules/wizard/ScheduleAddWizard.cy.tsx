@@ -151,7 +151,7 @@ describe('ScheduleAddWizard', () => {
       cy.get('[data-cy="add-rule-button"]').click();
 
       cy.get('tr[data-cy="row-id-1"]').should('be.visible');
-      cy.get('[data-cy="page-title"]').should('contain.text', 'Schedule Rules');
+      cy.get('[data-cy="page-title"]').should('contain.text', 'Rules');
     });
     it('Should be able to edit an existing rule without creating an additional rule', () => {
       cy.get('[data-cy="interval"]').clear().type('100');
@@ -165,7 +165,7 @@ describe('ScheduleAddWizard', () => {
         );
       });
 
-      cy.get('[data-cy="page-title"]').should('contain.text', 'Schedule Rules');
+      cy.get('[data-cy="page-title"]').should('contain.text', 'Rules');
       cy.get('tr[data-cy="row-id-1"]').within(() => {
         cy.get('button[data-cy="edit-rule"]').click();
       });
@@ -186,7 +186,7 @@ describe('ScheduleAddWizard', () => {
         );
       });
 
-      cy.get('[data-cy="page-title"]').should('contain.text', 'Schedule Rules');
+      cy.get('[data-cy="page-title"]').should('contain.text', 'Rules');
       cy.get('tr[data-cy="row-id-1"]').within(() => {
         cy.get('button[data-cy="edit-rule"]').click();
       });
