@@ -131,20 +131,14 @@ describe('Inventory Groups', () => {
           cy.clickButton(/^Confirm/);
         });
         cy.clickButton(/^Next$/);
+
+        // this is for sync only, those modals are badly implemented and can occasionaly flick
+        // but if there is wait between next and selector click, it does not flick
+        // this is ugly fix, until app is repaired, this is necessity
+        cy.wait(2000);
         cy.getByDataCy('credential-select-form-group').within(() => {
           cy.getBy('[aria-label="Options menu"]').click();
         });
-        cy.get('body').then(($body) => {
-          if ($body.find('[id="pf-modal-part-4"]').length === 0) {
-            cy.getByDataCy('credential-select-form-group').within(() => {
-              cy.getBy('[aria-label="Options menu"]').click();
-            });
-          }
-        });
-
-        // this is for sync only, those modals are badly implemented and can occasionaly flick
-        // this is ugly fix, until app is repaired, this is necessity
-        cy.wait(2000);
 
         cy.selectTableRowByCheckbox('name', machineCredential.name);
         cy.clickButton(/^Confirm$/);
