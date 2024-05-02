@@ -421,7 +421,7 @@ describe('Projects', () => {
       cy.intercept('PATCH', awxAPI`/schedules/${schedule.id.toString()}/`).as('editedAgain');
       cy.getByDataCy('Submit').click();
       cy.wait('@editedAgain');
-      cy.get('[data-cy="exclusions-column-header"]').should('not.exist');
+      cy.get('[data-cy="exceptions-column-header"]').should('not.exist');
     });
 
     it('can toggle a schedule', () => {
