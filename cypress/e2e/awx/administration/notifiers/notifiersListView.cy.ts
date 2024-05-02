@@ -42,10 +42,11 @@ describe('Notifications: List View', () => {
       createNotification('Pagerduty', false);
   });
 
-  it.only('can create a new Rocket.Chat Notification, assert the info in the list view, and delete the notification', () => {
+  it('can create a new Rocket.Chat Notification, assert the info in the list view, and delete the notification', () => {
       createNotification('Rocket.Chat', false);
   });
-  it('can create a new Slack Notification, assert the info in the list view, and delete the notification', () => {
+
+  it.only('can create a new Slack Notification, assert the info in the list view, and delete the notification', () => {
       createNotification('Slack', false);
   });
   it('can create a new Twilio Notification, assert the info in the list view, and delete the notification', () => {
@@ -189,7 +190,7 @@ describe('Notifications: List View', () => {
   function fillSlackForm() {
     cy.get(`[data-cy="notification-configuration-token"]`).type('slack_token');
     cy.get(`[data-cy="notification-configuration-channels"]`).type('channel1{enter}channel2');
-    cy.get(`[data-cy="notification-configuration-hex_color"]`).type('#ff5733');
+    cy.get(`[data-cy="notification-configuration-hex-color"]`).type('#ff5733');
   }
   
   function fillTwilioForm() {
