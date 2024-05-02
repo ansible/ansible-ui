@@ -6,8 +6,5 @@
     "jsx": "react",
     "resolveJsonModule": true
   },
-  "include": [
-    "**/*.ts",
-    "support/component.ts",
-  ]
+  "include": ["**/*.ts", "support/component.ts"]
 }
