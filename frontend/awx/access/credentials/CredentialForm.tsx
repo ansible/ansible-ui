@@ -366,15 +366,22 @@ function PageFormSecretInput({
 }) {
   const [t] = useTranslation();
   const [shouldHideField, setShouldHideField] = useState(field.secret && isEditMode);
+  const { resetField } = useForm();
+  const [clear, setClear] = useState(false);
+  const { setValue, clearErrors } = useFormContext();
 
   const handleHideField = () => {
     setShouldHideField(!shouldHideField);
+    console.log(field.id);
+    resetField(field.id);
+    setClear(!clear);
+    //hide field
   };
 
   if (field.multiline) {
     return (
       <PageFormSecret
-        key={field.id}
+        //key={field.id}
         onClear={handleHideField}
         shouldHideField={shouldHideField}
         label={field.label}
@@ -382,7 +389,7 @@ function PageFormSecretInput({
       >
         <CredentialMultilineInput
           kind={credentialType.kind}
-          key={field.id}
+          //key={field.id}
           field={field}
           requiredFields={requiredFields}
         />
@@ -391,14 +398,21 @@ function PageFormSecretInput({
   } else {
     return (
       <PageFormSecret
-        key={field.id}
-        onClear={handleHideField}
+        //key={field.id}
+        onClear={() => {
+          console.log(field.id);
+          setValue(field.id, '');
+          //resetField('security-token');
+          setShouldHideField(!shouldHideField);
+        }}
         shouldHideField={shouldHideField}
         label={field.label}
         placeholder={t('ENCRYPTED')}
       >
         <CredentialTextInput
-          key={field.id}
+          //key={field.id}
+          //placeholder={t('ENCRYPTED')}
+          //name={field.id}
           field={field}
           isRequired={requiredFields.includes(field.id)}
           credentialType={credentialType}
