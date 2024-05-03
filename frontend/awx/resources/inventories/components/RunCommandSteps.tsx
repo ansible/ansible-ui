@@ -24,7 +24,7 @@ import { useWatch } from 'react-hook-form';
 export function RunCommandDetailStep() {
   const { t } = useTranslation();
   const module = useWatch<RunCommandWizard>({
-    name: 'module',
+    name: 'module_name',
   });
   const moduleOptions = [
     { label: t('command'), value: 'command' },
@@ -60,7 +60,7 @@ export function RunCommandDetailStep() {
   return (
     <PageFormSection singleColumn>
       <PageFormSelect
-        name="module"
+        name="module_name"
         placeholderText={t('Select a module')}
         isRequired
         label={t('Module')}
@@ -202,7 +202,7 @@ export function RunCommandReviewStep() {
   };
   const getPageUrl = useGetPageUrl();
   const {
-    module,
+    module_name,
     module_args,
     verbosity,
     limit,
@@ -219,7 +219,7 @@ export function RunCommandReviewStep() {
     <>
       <PageFormSection title={t('Review')} singleColumn>
         <PageDetails disablePadding>
-          <PageDetail label={t('Module')}>{module}</PageDetail>
+          <PageDetail label={t('Module')}>{module_name}</PageDetail>
           <PageDetail label={t('Arguments')}>{module_args}</PageDetail>
           <PageDetail label={t('Verbosity')}>{verbosity}</PageDetail>
           <PageDetail label={t('Limit')}>{limit}</PageDetail>
