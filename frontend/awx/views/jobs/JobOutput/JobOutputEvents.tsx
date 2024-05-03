@@ -80,12 +80,18 @@ export function JobOutputEvents(props: IJobOutputEventsProps) {
   }, [getJobOutputEvent, jobEventCount, job.result_traceback]);
 
   const [collapsed, setCollapsedState] = useState<ICollapsed>({});
-  const setCollapsed = (uuid: string, counter: number, collapsed: boolean) => {
+  const setCollapsed = (uuid: string, counter: number, collapsed: boolean) => { 
     setCollapsedState((collapsedState) => ({
       ...collapsedState,
       [uuid]: collapsed,
       [counter]: collapsed,
     }));
+  };
+
+
+  const [expandedAll, setExpandedAll] = useState(false);
+  const toggleExpandCollapseAll = () => {
+    setExpandedAll( (last : boolean) =>  !last);
   };
 
   const nonCollapsedRows = useNonCollapsedRows(
@@ -130,15 +136,16 @@ export function JobOutputEvents(props: IJobOutputEventsProps) {
 
   return (
     <>
+    {expandedAll}
       <PageControls
         onScrollFirst={scrollToTop}
         onScrollLast={scrollToBottom}
         onScrollNext={scrollPageDown}
         onScrollPrevious={scrollPageUp}
-        toggleExpandCollapseAll={() => null}
+        toggleExpandCollapseAll={() => toggleExpandCollapseAll()}
         isFlatMode={isFlatMode}
         isTemplateJob={job.type === 'job'}
-        isAllCollapsed={false}
+        isAllCollapsed={!expandedAll}
       />
       <ScrollContainer ref={containerRef} tabIndex={0}>
         <pre>
@@ -159,6 +166,7 @@ export function JobOutputEvents(props: IJobOutputEventsProps) {
                   />
                 );
               }
+
               return (
                 <JobOutputRow
                   key={`${row.counter}-${row.eventLine}-${index}`}
