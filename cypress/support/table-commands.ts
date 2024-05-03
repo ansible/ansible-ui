@@ -34,7 +34,7 @@ Cypress.Commands.add('setTablePageSize', (text: string) => {
 });
 
 Cypress.Commands.add('selectTableFilter', (dataCy: string) => {
-  cy.get('#filter').click();
+  cy.getBy('#filter').click();
   // PF Selects open the menu at the body level
   // We need to use document() to get the body of the page
   // and then find the filter-select within that body
