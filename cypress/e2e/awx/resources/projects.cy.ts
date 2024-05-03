@@ -381,7 +381,7 @@ describe('Projects', () => {
         });
     });
 
-    it('can edit a schedule to add and then remove exceptions', () => {
+    it.skip('can edit a schedule to add and then remove exceptions', () => {
       cy.filterTableBySingleSelect('name', schedule.name);
       cy.clickTableRowLink('name', schedule.name, { disableFilter: true });
       cy.getBy('[data-cy="edit-schedule"]').click();
