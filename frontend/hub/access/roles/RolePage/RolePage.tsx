@@ -18,7 +18,10 @@ import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
 import { PulpItemsResponse } from '../../../common/useHubView';
 
-export function RolePage() {
+export function RolePage(props: {
+  breadcrumbLabelForPreviousPage?: string;
+  backTabLabel?: string;
+}) {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const { data, error, refresh } = useGet<PulpItemsResponse<Role>>(
@@ -36,7 +39,13 @@ export function RolePage() {
     <PageLayout>
       <PageHeader
         title={role?.name}
-        breadcrumbs={[{ label: t('Roles'), to: getPageUrl(HubRoute.Roles) }, { label: role?.name }]}
+        breadcrumbs={[
+          {
+            label: props.breadcrumbLabelForPreviousPage || t('Roles'),
+            to: getPageUrl(HubRoute.Roles),
+          },
+          { label: role?.name },
+        ]}
         headerActions={
           <PageActions<Role>
             actions={actions}
@@ -47,7 +56,7 @@ export function RolePage() {
       />
       <PageRoutedTabs
         backTab={{
-          label: t('Back to Roles'),
+          label: props.backTabLabel || t('Back to Roles'),
           page: HubRoute.Roles,
           persistentFilterKey: 'hub-roles',
         }}
