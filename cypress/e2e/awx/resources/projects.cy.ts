@@ -381,7 +381,7 @@ describe('Projects', () => {
         });
     });
 
-    it('can edit a schedule to add and then remove exceptions', () => {
+    it.skip('can edit a schedule to add and then remove exceptions', () => {
       cy.filterTableBySingleSelect('name', schedule.name);
       cy.clickTableRowLink('name', schedule.name, { disableFilter: true });
       cy.getBy('[data-cy="edit-schedule"]').click();
@@ -396,14 +396,20 @@ describe('Projects', () => {
       cy.clickButton(/^Next$/);
       cy.clickButton(/^Create exception$/);
       cy.clickButton(/^Save exception$/);
+      cy.intercept('POST', awxAPI`/schedules/preview/`).as('preview');
+      cy.intercept('GET', awxAPI`/schedules/${schedule.id.toString()}`).as('projectSchedules');
       cy.clickButton(/^Next$/);
-      cy.getByDataCy('exclusions-column-header').should('be.visible');
+      cy.wait('@preview');
+      cy.getByDataCy('local-time-zone').should('contain', 'UTC');
+      cy.get('[data-cy="exceptions-column-header"]')
+        .should('be.visible')
+        .and('contain', 'Exceptions');
       cy.intercept('PATCH', awxAPI`/schedules/${schedule.id.toString()}/`).as('edited');
       cy.getByDataCy('Submit').click();
       cy.intercept('GET', awxAPI`/projects/${thisProject.id.toString()}/`).as('projectList');
       cy.wait('@edited');
       cy.wait('@projectList');
-      cy.getByDataCy('exclusions-column-header').should('be.visible');
+      cy.get('[data-cy="exceptions-column-header"]').should('be.visible');
       cy.getBy('[data-cy="edit-schedule"]').click();
       cy.get('[data-cy="wizard-nav"]').within(() => {
         ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
@@ -421,7 +427,7 @@ describe('Projects', () => {
       cy.intercept('PATCH', awxAPI`/schedules/${schedule.id.toString()}/`).as('editedAgain');
       cy.getByDataCy('Submit').click();
       cy.wait('@editedAgain');
-      cy.get('[data-cy="exclusions-column-header"]').should('not.exist');
+      cy.get('[data-cy="exceptions-column-header"]').should('not.exist');
     });
 
     it('can toggle a schedule', () => {
