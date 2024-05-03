@@ -21,7 +21,10 @@ import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useDeleteEdaRoles } from './hooks/useDeleteEdaRoles';
 import { useEdaActiveUser } from '../../common/useEdaActiveUser';
 
-export function EdaRolePage() {
+export function EdaRolePage(props: {
+  breadcrumbLabelForPreviousPage?: string;
+  backTabLabel?: string;
+}) {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const { activeEdaUser } = useEdaActiveUser();
@@ -82,7 +85,13 @@ export function EdaRolePage() {
     <PageLayout>
       <PageHeader
         title={role?.name}
-        breadcrumbs={[{ label: t('Roles'), to: getPageUrl(EdaRoute.Roles) }, { label: role?.name }]}
+        breadcrumbs={[
+          {
+            label: props.breadcrumbLabelForPreviousPage || t('Roles'),
+            to: getPageUrl(EdaRoute.Roles),
+          },
+          { label: role?.name },
+        ]}
         headerActions={
           <PageActions<EdaRbacRole>
             actions={itemActions}
@@ -93,7 +102,7 @@ export function EdaRolePage() {
       />
       <PageRoutedTabs
         backTab={{
-          label: t('Back to Roles'),
+          label: props.backTabLabel || t('Back to Roles'),
           page: EdaRoute.Roles,
           persistentFilterKey: 'eda-roles',
         }}
