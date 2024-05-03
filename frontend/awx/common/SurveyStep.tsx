@@ -53,7 +53,7 @@ export function SurveyStep({
   );
 
   useEffect(() => {
-    const survey: { [key: string]: string | string[] | number | { name: string }[] } = {};
+    const survey: { [key: string]: string | string[] | number } = {};
     survey_spec?.spec?.forEach((obj: Spec) => {
       if (obj.default === '') {
         return;
