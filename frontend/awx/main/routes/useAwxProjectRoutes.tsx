@@ -16,6 +16,10 @@ import { AwxRoute } from '../AwxRoutes';
 import { ResourceNotifications } from '../../resources/notifications/ResourceNotifications';
 import { SchedulesList } from '../../views/schedules/SchedulesList';
 import { ScheduleEditWizard } from '../../views/schedules/wizard/ScheduleEditWizard';
+import { ProjectTeams } from '../../resources/projects/ProjectPage/ProjectTeams';
+import { ProjectUsers } from '../../resources/projects/ProjectPage/ProjectUsers';
+import { AwxProjectAddUsers } from '../../resources/projects/components/AwxProjectAddUsers';
+import { AwxProjectAddTeams } from '../../resources/projects/components/AwxProjectAddTeams';
 
 export function useAwxProjectRoutes() {
   const { t } = useTranslation();
@@ -104,10 +108,30 @@ export function useAwxProjectRoutes() {
               element: <SchedulesList sublistEndpoint={awxAPI`/projects`} />,
             },
             {
+              id: AwxRoute.ProjectUsers,
+              path: 'users',
+              element: <ProjectUsers />,
+            },
+            {
+              id: AwxRoute.ProjectTeams,
+              path: 'teams',
+              element: <ProjectTeams />,
+            },
+            {
               path: '',
               element: <Navigate to="details" />,
             },
           ],
+        },
+        {
+          id: AwxRoute.ProjectAddUsers,
+          path: ':id/users/add-users',
+          element: <AwxProjectAddUsers />,
+        },
+        {
+          id: AwxRoute.ProjectAddTeams,
+          path: ':id/users/add-teams',
+          element: <AwxProjectAddTeams />,
         },
         {
           path: '',
