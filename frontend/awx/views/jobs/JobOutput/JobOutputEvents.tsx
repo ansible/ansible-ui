@@ -80,7 +80,7 @@ export function JobOutputEvents(props: IJobOutputEventsProps) {
   }, [getJobOutputEvent, jobEventCount, job.result_traceback]);
 
   const [collapsed, setCollapsedState] = useState<ICollapsed>({});
-  const setCollapsed = (uuid: string, counter: number, collapsed: boolean) => { 
+  const setCollapsed = (uuid: string, counter: number, collapsed: boolean) => {
     setCollapsedState((collapsedState) => ({
       ...collapsedState,
       [uuid]: collapsed,
@@ -88,30 +88,24 @@ export function JobOutputEvents(props: IJobOutputEventsProps) {
     }));
   };
 
-
   const [collapsedAll, setCollapsedAll] = useState(false);
   const toggleExpandCollapseAll = () => {
     setCollapsedAll(!collapsedAll);
 
     // find play and expand/collapse it
     let found = false;
-    visibleItems.forEach( (item) => {
-      if (typeof item === 'number' || found === true)
-      {
+    visibleItems.forEach((visibleItem) => {
+      if (typeof visibleItem === 'number' || found === true) {
         return;
       }
 
-      const visibleItem = item as IJobOutputRow;
-      if (visibleItem.canCollapse && visibleItem.isHeaderLine)
-      {
-        if (visibleItem.stdout.startsWith('PLAY'))
-        {
+      if (visibleItem.canCollapse && visibleItem.isHeaderLine) {
+        if (visibleItem.stdout.startsWith('PLAY')) {
           found = true;
           setCollapsed(visibleItem.playUuid, visibleItem.counter, !collapsedAll);
         }
       }
     });
-    
   };
 
   const nonCollapsedRows = useNonCollapsedRows(
