@@ -93,12 +93,10 @@ describe('Inventory Groups', () => {
         const { inventory, group } = result;
         //1) Use the inventory created in beforeEach block, access the groups tab of that inventory
         cy.navigateTo('awx', 'inventories');
-
         const intercept_url = awxAPI`/inventories/?page_size=20&order_by=name&name__icontains=${inventory.name}`;
         cy.intercept('GET', intercept_url).as('filteredInventories');
         cy.filterTableBySingleSelect('name', inventory.name);
         cy.wait('@filteredInventories');
-
         cy.clickTableRowLink('name', inventory.name, { disableFilter: true });
         cy.verifyPageTitle(inventory.name);
         cy.clickLink(/^Groups$/);
@@ -118,7 +116,6 @@ describe('Inventory Groups', () => {
           cy.get('.pf-v5-c-form__group-control > label').click();
         });
         cy.getByDataCy('become_enabled').click();
-        // cy.getByDataCy('extra-vars-form-group').type('test: "test"');
         cy.clickButton(/^Next$/);
         cy.getByDataCy('execution-environment-select-form-group').within(() => {
           cy.getBy('[aria-label="Options menu"]').click();
@@ -131,17 +128,14 @@ describe('Inventory Groups', () => {
           cy.clickButton(/^Confirm/);
         });
         cy.clickButton(/^Next$/);
-
-        // this is for sync only, those modals are badly implemented and can occasionaly flick
-        // but if there is wait between next and selector click, it does not flick
-        // this is ugly fix, until app is repaired, this is necessity
-        cy.wait(2000);
         cy.getByDataCy('credential-select-form-group').within(() => {
           cy.getBy('[aria-label="Options menu"]').click();
         });
-
-        cy.selectTableRowByCheckbox('name', machineCredential.name);
-        cy.clickButton(/^Confirm$/);
+        cy.get('[data-ouia-component-id="lookup-credential.name-button"]').click();
+        cy.getModal().within(() => {
+          cy.selectTableRowByCheckbox('name', machineCredential.name);
+          cy.clickButton(/^Confirm$/);
+        });
         cy.clickButton(/^Next$/);
         cy.getByDataCy('module').should('contain', 'shell');
         cy.getByDataCy('arguments').should('contain', 'argument');
@@ -150,7 +144,6 @@ describe('Inventory Groups', () => {
         cy.getByDataCy('forks').should('contain', '1');
         cy.getByDataCy('show-changes').should('contain', 'On');
         cy.getByDataCy('privilege-escalation').should('contain', 'On');
-        // cy.getByDataCy('code-block-value').should('contain', 'test: test');
         cy.getByDataCy('credentials').should('contain', machineCredential.name);
         cy.getByDataCy('execution-environment').should('contain', executionEnvironment.name);
         cy.get('[data-cy="Submit"]').click();
@@ -162,7 +155,6 @@ describe('Inventory Groups', () => {
         cy.clickLink('Details');
         cy.getByDataCy('type').should('contain', 'Command');
         cy.getByDataCy('inventory').should('contain', inventory.name);
-        // cy.getByDataCy('code-block-value').should('contain', 'test: test');
         //5) Navigate back to the Inventory -> Jobs Tab to assert that the Run Command job shows up there
         cy.navigateTo('awx', 'inventories');
         cy.filterTableBySingleSelect('name', inventory.name);
