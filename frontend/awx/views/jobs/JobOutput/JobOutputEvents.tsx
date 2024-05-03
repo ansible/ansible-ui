@@ -89,9 +89,29 @@ export function JobOutputEvents(props: IJobOutputEventsProps) {
   };
 
 
-  const [expandedAll, setExpandedAll] = useState(false);
+  const [collapsedAll, setCollapsedAll] = useState(false);
   const toggleExpandCollapseAll = () => {
-    setExpandedAll( (last : boolean) =>  !last);
+    setCollapsedAll(!collapsedAll);
+
+    // find play and expand/collapse it
+    let found = false;
+    visibleItems.forEach( (item) => {
+      if (typeof item === 'number' || found === true)
+      {
+        return;
+      }
+
+      const visibleItem = item as IJobOutputRow;
+      if (visibleItem.canCollapse && visibleItem.isHeaderLine)
+      {
+        if (visibleItem.stdout.startsWith('PLAY'))
+        {
+          found = true;
+          setCollapsed(visibleItem.playUuid, visibleItem.counter, !collapsedAll);
+        }
+      }
+    });
+    
   };
 
   const nonCollapsedRows = useNonCollapsedRows(
@@ -136,7 +156,6 @@ export function JobOutputEvents(props: IJobOutputEventsProps) {
 
   return (
     <>
-    {expandedAll}
       <PageControls
         onScrollFirst={scrollToTop}
         onScrollLast={scrollToBottom}
@@ -145,7 +164,7 @@ export function JobOutputEvents(props: IJobOutputEventsProps) {
         toggleExpandCollapseAll={() => toggleExpandCollapseAll()}
         isFlatMode={isFlatMode}
         isTemplateJob={job.type === 'job'}
-        isAllCollapsed={!expandedAll}
+        isAllCollapsed={collapsedAll}
       />
       <ScrollContainer ref={containerRef} tabIndex={0}>
         <pre>
