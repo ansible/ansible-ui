@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { PageFormSubmitHandler, usePageDialog } from '../../../../../../framework';
+import { PageFormSubmitHandler, usePageDialogs } from '../../../../../../framework';
 import { Modal, ModalVariant } from '@patternfly/react-core';
 import { useEffect, useState } from 'react';
 import { CredentialType } from '../../../../interfaces/CredentialType';
@@ -12,10 +12,8 @@ export interface CredentialPluginsModalProps {
 }
 
 function CredentialPluginsModal(props: CredentialPluginsModalProps) {
-  const [_dialog, setDialog] = usePageDialog();
   const { t } = useTranslation();
   const onClose = () => {
-    setDialog(undefined);
     props.onClose?.();
   };
 
@@ -45,18 +43,14 @@ function CredentialPluginsModal(props: CredentialPluginsModalProps) {
 }
 
 export function useCredentialPluginsModal() {
-  const [_, setDialog] = usePageDialog();
+  const { pushDialog, popDialog } = usePageDialogs();
   const [props, setProps] = useState<CredentialPluginsModalProps>();
   useEffect(() => {
     if (props) {
-      const onCloseHandler = () => {
-        setProps(undefined);
-        props.onClose?.();
-      };
-      setDialog(<CredentialPluginsModal {...props} onClose={onCloseHandler} />);
+      pushDialog(<CredentialPluginsModal {...props} onClose={popDialog} />);
     } else {
-      setDialog(undefined);
+      popDialog();
     }
-  }, [props, setDialog]);
+  }, [props, pushDialog, popDialog]);
   return setProps;
 }
