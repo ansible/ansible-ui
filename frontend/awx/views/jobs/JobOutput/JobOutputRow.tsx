@@ -9,6 +9,7 @@ import { Ansi } from '../../../../common/Ansi';
 import { JobEvent } from '../../../interfaces/JobEvent';
 import './JobOutput.css';
 import { ICollapsed } from './JobOutputEvents';
+import {JobEventEllipsis} from './JobEventEllipsis';
 
 const LineNumberGutter = styled.div`
   position: sticky;
@@ -29,6 +30,7 @@ const ExpandButton = styled.button`
   background-color: unset;
   border: 0;
   line-height: 1;
+  align-self: start;
 `;
 const LineNumber = styled.div`
   flex: 1;
@@ -76,7 +78,14 @@ export function JobOutputRow(props: {
             />
           </ExpandButton>
         )}
-        <LineNumber>{row.line}</LineNumber>
+     
+            <LineNumber>
+              {row.line}
+              {row.canCollapse && isCollapsed && (
+                      <JobEventEllipsis />
+              )}
+            </LineNumber>
+            
       </LineNumberGutter>
       <StdOutColumn>
         <Ansi input={row.stdout} />
