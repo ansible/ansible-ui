@@ -33,8 +33,7 @@ export function WorkflowJobTemplateDetails({
   const { data: launchConfig } = useGet<LaunchConfiguration>(template?.related?.launch);
 
   const showOptionsField = template.allow_simultaneous || template.webhook_service;
-  const promptValues = node?.launch_data;
-  const nodeValues = node?.resource;
+  const { launch_data: promptValues, resource: nodeValues, survey_data: surveyValues } = node;
 
   const scmBranch = promptValues?.scm_branch ?? nodeValues?.scm_branch ?? template?.scm_branch;
   const limit = promptValues?.limit ?? nodeValues?.limit ?? template?.limit;
@@ -42,6 +41,29 @@ export function WorkflowJobTemplateDetails({
     promptValues?.inventory ??
     nodeValues.summary_fields.inventory ??
     template.summary_fields.inventory;
+  let variables =
+    promptValues?.extra_vars ??
+    (nodeValues?.extra_data ? jsonToYaml(JSON.stringify(nodeValues.extra_data)) : undefined) ??
+    template.extra_vars;
+
+  if (surveyValues) {
+    const jsonObj: { [key: string]: string } = {};
+
+    if (variables) {
+      const lines = variables.split('\n');
+      lines.forEach((line) => {
+        const [key, value] = line.split(':').map((part) => part.trim());
+        jsonObj[key] = value;
+      });
+    }
+
+    const mergedData: { [key: string]: string | string[] | { name: string }[] } = {
+      ...jsonObj,
+      ...surveyValues,
+    };
+
+    variables = jsonToYaml(JSON.stringify(mergedData));
+  }
 
   return (
     <>
@@ -130,11 +152,7 @@ export function WorkflowJobTemplateDetails({
       />
       <NodeCodeEditorDetail
         label={t('Variables')}
-        nodeExtraVars={
-          launchConfig?.ask_variables_on_launch
-            ? promptValues?.extra_vars ?? jsonToYaml(JSON.stringify(nodeValues.extra_data))
-            : template.extra_vars
-        }
+        nodeExtraVars={variables}
         templateExtraVars={template.extra_vars}
       />
     </>

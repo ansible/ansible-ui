@@ -81,9 +81,9 @@ function useAggregateJobTemplateDetails({
   const verbosityString = useVerbosityString(verbosity);
   const templateVerbosityString = useVerbosityString(template.verbosity);
   let variables =
-    promptValues?.extra_vars ?? nodeValues?.extra_data
-      ? jsonToYaml(JSON.stringify(nodeValues.extra_data))
-      : undefined ?? template.extra_vars;
+    promptValues?.extra_vars ??
+    (nodeValues?.extra_data ? jsonToYaml(JSON.stringify(nodeValues.extra_data)) : undefined) ??
+    template.extra_vars;
 
   if (surveyValues) {
     const jsonObj: { [key: string]: string } = {};
