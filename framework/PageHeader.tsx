@@ -114,8 +114,11 @@ export function PageHeader(props: PageHeaderProps) {
 
   const pageBreadcrumbs = useMemo(() => {
     const pageBreadcrumbs = [];
-    if (props.breadcrumbs) pageBreadcrumbs.push(...props.breadcrumbs);
-    if (tabBreadcrumb) pageBreadcrumbs.push(tabBreadcrumb);
+    if (props.breadcrumbs) {
+      pageBreadcrumbs.push(...props.breadcrumbs);
+      if (tabBreadcrumb) pageBreadcrumbs.push(tabBreadcrumb);
+    }
+
     return pageBreadcrumbs;
   }, [props.breadcrumbs, tabBreadcrumb]);
 
