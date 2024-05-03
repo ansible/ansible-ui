@@ -7,12 +7,13 @@ export function CredentialMultilineInput({
   field,
   requiredFields,
   kind,
+  handleModalToggle,
 }: {
   field: CredentialInputField;
   requiredFields: CredentialType['inputs']['required'];
   kind: CredentialType['kind'];
+  handleModalToggle: () => void;
 }) {
-  //TODO: Hook up Secret Management Wizard when user clicks the key icon
   return (
     <>
       <PageFormFileUpload
@@ -27,13 +28,7 @@ export function CredentialMultilineInput({
         allowEditingUploadedText={true}
         icon={
           kind !== 'external' ? (
-            <Button
-              icon={<KeyIcon />}
-              variant="plain"
-              style={{
-                border: '1px solid var(--pf-v5-global--BorderColor--300)',
-              }}
-            />
+            <Button icon={<KeyIcon />} variant="control" onClick={handleModalToggle} />
           ) : undefined
         }
       />

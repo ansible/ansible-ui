@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -30,6 +30,8 @@ import { CredentialMultilineInput } from './components/CredentialMultilineInput'
 import { Button, Icon } from '@patternfly/react-core';
 import { KeyIcon } from '@patternfly/react-icons';
 import { PageFormSelectCredentialType } from './components/PageFormSelectCredentialType';
+import { useCredentialPluginsModal } from './CredentialPlugins/hooks/useCredentialPluginsDialog';
+import { CredentialPluginsForm } from './CredentialPlugins/CredentialPlugins';
 
 interface CredentialForm extends Credential {
   user?: number;
@@ -58,7 +60,9 @@ export function CreateCredential() {
   const { activeAwxUser } = useAwxActiveUser();
   const postRequest = usePostRequest<Credential>();
   const getPageUrl = useGetPageUrl();
-
+  const [_credentialPluginValues, setCredentialPluginValues] = useState<
+    Record<string, CredentialPluginsForm>
+  >({});
   const { results: itemsResponse, isLoading } = useAwxGetAllPages<CredentialType>(
     awxAPI`/credential_types/`
   );
@@ -112,7 +116,11 @@ export function CreateCredential() {
         onSubmit={onSubmit}
         onCancel={() => navigate(-1)}
       >
-        <CredentialInputs isEditMode={false} credentialTypes={parsedCredentialTypes || {}} />
+        <CredentialInputs
+          isEditMode={false}
+          credentialTypes={parsedCredentialTypes || {}}
+          setCredentialPluginValues={setCredentialPluginValues}
+        />
       </AwxPageForm>
     </PageLayout>
   );
@@ -126,6 +134,9 @@ export function EditCredential() {
   const { activeAwxUser } = useAwxActiveUser();
   const getPageUrl = useGetPageUrl();
   const patch = usePatchRequest();
+  const [_credentialPluginValues, setCredentialPluginValues] = useState<
+    Record<string, CredentialPluginsForm>
+  >({});
 
   const { data: credential, isLoading: isLoadingCredential } = useGet<Credential>(
     awxAPI`/credentials/${id.toString()}/`
@@ -217,6 +228,7 @@ export function EditCredential() {
           isEditMode
           credentialTypes={parsedCredentialTypes || {}}
           selectedCredentialTypeId={credential?.credential_type}
+          setCredentialPluginValues={setCredentialPluginValues}
         />
       </AwxPageForm>
     </PageLayout>
@@ -227,10 +239,12 @@ function CredentialInputs({
   isEditMode = false,
   selectedCredentialTypeId,
   credentialTypes,
+  setCredentialPluginValues,
 }: {
   isEditMode?: boolean;
   selectedCredentialTypeId?: number;
   credentialTypes: CredentialTypes;
+  setCredentialPluginValues?: (values: Record<string, CredentialPluginsForm>) => void;
 }) {
   const { t } = useTranslation();
 
@@ -268,14 +282,27 @@ function CredentialInputs({
             : undefined
         }
       />
-      {credentialTypeID && credentialTypes && credentialTypes[credentialTypeID] ? (
-        <CredentialSubForm credentialType={credentialTypes[credentialTypeID]} />
+      {setCredentialPluginValues &&
+      credentialTypeID &&
+      credentialTypes &&
+      credentialTypes[credentialTypeID] ? (
+        <CredentialSubForm
+          credentialType={credentialTypes[credentialTypeID]}
+          setCredentialPluginValues={setCredentialPluginValues}
+        />
       ) : null}
     </>
   );
 }
-function CredentialSubForm({ credentialType }: { credentialType: CredentialType | undefined }) {
+function CredentialSubForm({
+  credentialType,
+  setCredentialPluginValues,
+}: {
+  credentialType: CredentialType | undefined;
+  setCredentialPluginValues: (values: Record<string, CredentialPluginsForm>) => void;
+}) {
   const { t } = useTranslation();
+  const openCredentialPluginsModal = useCredentialPluginsModal();
 
   if (!credentialType || !credentialType?.inputs?.fields) {
     return null;
@@ -307,6 +334,12 @@ function CredentialSubForm({ credentialType }: { credentialType: CredentialType 
                 key={field.id}
                 field={field}
                 requiredFields={requiredFields}
+                handleModalToggle={() => {
+                  openCredentialPluginsModal({
+                    field,
+                    setCredentialPluginValues,
+                  });
+                }}
               />
             );
           } else if (credentialType.kind === 'ssh' && field.id === 'become_method') {
@@ -323,6 +356,12 @@ function CredentialSubForm({ credentialType }: { credentialType: CredentialType 
                 key={field.id}
                 field={field}
                 isRequired={requiredFields.includes(field.id)}
+                handleModalToggle={() => {
+                  openCredentialPluginsModal({
+                    field,
+                    setCredentialPluginValues,
+                  });
+                }}
               />
             );
           }
@@ -357,10 +396,12 @@ function CredentialTextInput({
   field,
   isRequired = false,
   credentialType,
+  handleModalToggle,
 }: {
   field: CredentialInputField;
   isRequired?: boolean;
   credentialType?: CredentialType | undefined;
+  handleModalToggle: () => void;
 }) {
   const { t } = useTranslation();
   const { setValue, clearErrors } = useFormContext();
@@ -418,6 +459,7 @@ function CredentialTextInput({
               style={{
                 border: '1px solid var(--pf-v5-global--BorderColor--300)',
               }}
+              onClick={handleModalToggle}
             ></Button>
           ) : undefined
         }

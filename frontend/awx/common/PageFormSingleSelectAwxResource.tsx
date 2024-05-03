@@ -168,7 +168,7 @@ function SelectResource<
     tableColumns: props.tableColumns,
     disableQueryString: true,
     defaultSelection: props.defaultSelection as Resource[],
-    queryParams,
+    queryParams: props.queryParams ?? queryParams,
   });
   return (
     <SingleSelectDialog<Resource>
