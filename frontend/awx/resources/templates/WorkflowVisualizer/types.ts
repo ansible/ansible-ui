@@ -179,7 +179,7 @@ export interface WizardFormValues {
   prompt: PromptFormValues;
   inventory?: Inventory;
   relatedJobTypeApiUrl?: string;
-  survey: { [key: string]: string | string[] | { name: string }[] };
+  survey: { [key: string]: string | string[] };
 }
 
 export type UnifiedJobType =

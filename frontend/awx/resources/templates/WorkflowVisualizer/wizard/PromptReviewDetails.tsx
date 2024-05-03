@@ -18,7 +18,7 @@ import { parseStringToTagArray } from '../../JobTemplateFormHelpers';
 
 interface PromptWizardFormValues extends Omit<WizardFormValues, 'resource'> {
   resource: JobTemplate | WorkflowJobTemplate;
-  survey: { [key: string]: string | { name: string }[] };
+  survey: { [key: string]: string | string[] };
 }
 
 export function PromptReviewDetails() {
@@ -61,7 +61,6 @@ export function PromptReviewDetails() {
   let extraVarDetails = extra_vars || '{}';
   if (survey) {
     const jsonObj: { [key: string]: string } = {};
-    const surveyData: { [key: string]: string | string[] } = {};
 
     if (extra_vars) {
       const lines = extra_vars.split('\n');
@@ -72,19 +71,9 @@ export function PromptReviewDetails() {
       });
     }
 
-    Object.keys(survey).forEach((key) => {
-      const surveyValue = survey[key];
-
-      if (Array.isArray(surveyValue)) {
-        surveyData[key] = surveyValue.map((item) => item.name);
-      } else {
-        surveyData[key] = surveyValue;
-      }
-    });
-
     const mergedData: { [key: string]: string | string[] } = {
       ...jsonObj,
-      ...surveyData,
+      ...survey,
     };
 
     extraVarDetails = jsonToYaml(JSON.stringify(mergedData));

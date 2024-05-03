@@ -77,20 +77,6 @@ export function NodeReviewStep() {
     });
   }
 
-  const surveyDetails: { [key: string]: string | string[] } = {};
-  if (survey) {
-    Object.keys(survey).forEach((key) => {
-      const surveyValue = survey[key];
-      if (Array.isArray(surveyValue)) {
-        surveyDetails[key] = surveyValue.map((item) =>
-          typeof item === 'string' ? item : item.name
-        );
-      } else {
-        surveyDetails[key] = surveyValue;
-      }
-    });
-  }
-
   return (
     <>
       <PageDetails numberOfColumns="single">
@@ -109,7 +95,7 @@ export function NodeReviewStep() {
         {!hasPromptDetails && survey ? (
           <PageDetailCodeEditor
             label={t('Extra vars')}
-            value={jsonToYaml(JSON.stringify(surveyDetails))}
+            value={jsonToYaml(JSON.stringify(survey))}
           />
         ) : null}
       </PageDetails>

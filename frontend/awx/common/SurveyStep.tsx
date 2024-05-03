@@ -64,14 +64,7 @@ export function SurveyStep({
       const surveyVariable = surveyStep?.survey?.[obj?.variable];
 
       if (surveyVariable) {
-        if (obj.type === 'multiselect' && Array.isArray(surveyVariable)) {
-          survey[obj.variable] = surveyVariable.map((val: string | { name: string }) => ({
-            name: typeof val === 'string' ? val : val?.name,
-          }));
-          return;
-        }
-
-        survey[obj.variable] = surveyStep?.survey?.[obj.variable];
+        survey[obj.variable] = surveyVariable;
         return;
       }
       if (obj.default === '') {

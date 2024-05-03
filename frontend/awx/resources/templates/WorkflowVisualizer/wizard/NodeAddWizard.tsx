@@ -35,7 +35,7 @@ interface NewGraphNode extends NodeModel {
       };
     };
     launch_data: PromptFormValues;
-    survey_data: { [key: string]: string | string[] | { name: string }[] };
+    survey_data: { [key: string]: string | string[] };
   };
 }
 export function NodeAddWizard() {
@@ -142,7 +142,6 @@ export function NodeAddWizard() {
       survey,
     } = formValues;
     const promptValues = prompt;
-    const surveyValues = survey;
 
     if (promptValues) {
       if (resource && 'organization' in resource) {
@@ -153,15 +152,6 @@ export function NodeAddWizard() {
           launch_config,
         };
       }
-    }
-
-    if (survey) {
-      Object.keys(survey).forEach((key) => {
-        const value = survey[key];
-        if (Array.isArray(value)) {
-          surveyValues[key] = value.map((item) => (typeof item === 'string' ? item : item?.name));
-        }
-      });
     }
 
     const nodeName = getValueBasedOnJobType(node_type, resource?.name || '', approval_name);
@@ -198,7 +188,7 @@ export function NodeAddWizard() {
           },
         },
         launch_data: promptValues,
-        survey_data: surveyValues,
+        survey_data: survey,
       },
     };
     if (node_convergence === 'all') {
