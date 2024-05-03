@@ -4,6 +4,8 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 const Container = styled.div`
+  max-block-size: 330px;
+  overflow: auto;
   margin-block-start: 40px;
   padding-block-start: 20px;
   border-block-start: 1px solid var(--pf-v5-global--BorderColor--light-100);

@@ -9,19 +9,16 @@ import {
 } from '@patternfly/react-core';
 import {
   AddCircleOIcon,
-  AnsibeTowerIcon,
   CheckCircleIcon,
   ClockIcon,
-  EllipsisHIcon,
   ExclamationCircleIcon,
   MinusCircleIcon,
-  RegionsIcon,
-  ServerIcon,
 } from '@patternfly/react-icons';
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { pfDanger, pfDisabled, pfInfo, pfSuccess } from '../../../../framework';
+import { getNodeIcon } from './components/MeshNode';
 
 const Panel = styled(PFPanel)`
   position: absolute;
@@ -37,6 +34,10 @@ const Panel = styled(PFPanel)`
 
 export const Legend = () => {
   const { t } = useTranslation();
+  const ControlNodeIcon = getNodeIcon('control');
+  const ExecutionNodeIcon = getNodeIcon('execution');
+  const HybridNodeIcon = getNodeIcon('hybrid');
+  const HopNodeIcon = getNodeIcon('hop');
 
   const LegendDescription = (props: { label: string; icon: ReactElement }) => {
     const { label, icon } = props;
@@ -56,16 +57,16 @@ export const Legend = () => {
             <DescriptionListGroup>
               <DescriptionListTerm>{t('Node types')}</DescriptionListTerm>
               <DescriptionListDescription>
-                <LegendDescription label={t('Control')} icon={<RegionsIcon />} />
+                <LegendDescription label={t('Control')} icon={<ControlNodeIcon />} />
               </DescriptionListDescription>
               <DescriptionListDescription>
-                <LegendDescription label={t('Execution')} icon={<AnsibeTowerIcon />} />
+                <LegendDescription label={t('Execution')} icon={<ExecutionNodeIcon />} />
               </DescriptionListDescription>
               <DescriptionListDescription>
-                <LegendDescription label={t('Hybrid')} icon={<ServerIcon />} />
+                <LegendDescription label={t('Hybrid')} icon={<HybridNodeIcon />} />
               </DescriptionListDescription>
               <DescriptionListDescription>
-                <LegendDescription label={t('Hop')} icon={<EllipsisHIcon />} />
+                <LegendDescription label={t('Hop')} icon={<HopNodeIcon />} />
               </DescriptionListDescription>
             </DescriptionListGroup>
             <DescriptionListGroup>
