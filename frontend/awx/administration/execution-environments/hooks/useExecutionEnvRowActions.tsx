@@ -11,12 +11,19 @@ import { cannotEditResource, cannotDeleteResource } from '../../../../common/uti
 import { ExecutionEnvironment } from '../../../interfaces/ExecutionEnvironment';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useDeleteExecutionEnvironments } from './useDeleteExecutionEnvironments';
-import { IAwxView } from '../../../common/useAwxView';
 
-export function useExecutionEnvRowActions(view: IAwxView<ExecutionEnvironment>) {
+type ExecutionEnvironmentActionOptions = {
+  onExecutionEnvironmentsDeleted: (executionEnvironments: ExecutionEnvironment[]) => void;
+};
+
+export function useExecutionEnvRowActions({
+  onExecutionEnvironmentsDeleted,
+}: ExecutionEnvironmentActionOptions) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
-  const deleteExecutionEnvironments = useDeleteExecutionEnvironments(view.unselectItemsAndRefresh);
+  const deleteExecutionEnvironments = useDeleteExecutionEnvironments(
+    onExecutionEnvironmentsDeleted
+  );
 
   return useMemo<IPageAction<ExecutionEnvironment>[]>(
     () => [
