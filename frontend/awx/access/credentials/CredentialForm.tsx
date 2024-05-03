@@ -172,7 +172,7 @@ export function CreateCredential() {
         submitText={t('Create credential')}
         onSubmit={onSubmit}
         onCancel={() => navigate(-1)}
-        additionalActionText={isExternalCredential ? 'Test' : undefined}
+        additionalActionText={isExternalCredential ? t('Test') : undefined}
         onClickAdditionalAction={(e) => {
           e.preventDefault();
           openCredentialsExternalTestModal({
@@ -394,7 +394,7 @@ export function EditCredential() {
         onSubmit={onSubmit}
         onCancel={() => navigate(-1)}
         defaultValue={initialValues}
-        additionalActionText={isExternalCredential ? 'Test' : undefined}
+        additionalActionText={isExternalCredential ? t('Test') : undefined}
         onClickAdditionalAction={(e) => {
           e.preventDefault();
           openCredentialsExternalTestModal({

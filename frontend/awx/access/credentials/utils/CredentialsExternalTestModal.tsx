@@ -93,7 +93,7 @@ export function CredentialsExternalTestModal(
             if (field.choices) {
               return (
                 <PageFormSelect
-                  key={`credential-${field.id}`}
+                  key={field.id}
                   name={field.id}
                   label={field.label}
                   labelHelp={field.help_text}
@@ -110,7 +110,7 @@ export function CredentialsExternalTestModal(
             if (field.multiline) {
               return (
                 <PageFormTextArea
-                  key={`credential-${field.id}`}
+                  key={field.id}
                   name={field.id}
                   label={field.label}
                   labelHelp={field.help_text}
@@ -121,7 +121,7 @@ export function CredentialsExternalTestModal(
 
             return (
               <PageFormTextInput
-                key={`credential-${field.id}`}
+                key={field.id}
                 name={field.id}
                 label={field.label}
                 labelHelp={field.help_text}
