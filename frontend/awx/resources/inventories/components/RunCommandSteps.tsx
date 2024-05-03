@@ -168,6 +168,7 @@ export function RunCommandExecutionEnvionment(props: { orgId: string }) {
         name="execution_environment.name"
         executionEnvironmentIdPath="execution_environment.id"
         label={t('Execution Environment')}
+        placeholder={t('Select execution environment')}
         organizationId={props.orgId ?? ''}
       />
     </PageFormSection>
