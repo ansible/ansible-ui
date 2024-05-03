@@ -20,7 +20,7 @@ import { useAbortController } from '../../../../common/crud/useAbortController';
 export function SchedulePage(props: {
   tabs: { label: string; page: string }[];
   backTab: { label: string; page: string; persistentFilterKey: string };
-  initialBreadCrumbs: { label: string; to: string }[];
+  initialBreadCrumbs: { label?: string; id?: string; to: string }[];
 }) {
   const abortController = useAbortController();
   const [inventory, setInventory] = useState<Inventory | null>(null);
@@ -46,7 +46,8 @@ export function SchedulePage(props: {
     isInventorySource ? params.source_id : params.id
   );
   const itemActions = useSchedulesActions({
-    onScheduleToggleorDeleteCompleted: () => navigate(getPageUrl(AwxRoute.Schedules)),
+    onScheduleDeleteCompleted: () => navigate(getPageUrl(AwxRoute.Schedules)),
+    onScheduleToggleCompleted: () => refresh(),
   });
 
   useEffect(() => {
@@ -62,7 +63,7 @@ export function SchedulePage(props: {
   }, [isInventorySource, params.id, abortController.signal]);
   const breadCrumbs = useMemo(() => {
     const completedBreadcrumbs = props.initialBreadCrumbs.map((route) => {
-      if (route.label === 'data') {
+      if (route.id === 'data') {
         return {
           label: `${resource?.name}`,
           to: getPageUrl(route.to, { params: { id: resource?.id } }),
@@ -74,10 +75,10 @@ export function SchedulePage(props: {
           to: getPageUrl(route.to, { params: { id: inventory?.id } }),
         };
       }
-      if (route.label === 'Schedules') {
+      if (route.id === 'schedules') {
         return { label: route.label, to: getPageUrl(route.to, { params: { id: resource?.id } }) };
       }
-      return route;
+      return { label: route.label, to: getPageUrl(route.to) };
     });
 
     return [...completedBreadcrumbs, { label: schedule?.name }];

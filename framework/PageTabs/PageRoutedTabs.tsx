@@ -16,6 +16,7 @@ export function PageRoutedTabs(props: {
 
   // url query keys that are shared accross tabs, the rest query strings will dissappear when switching tabs
   sharedQueryKeys?: string[];
+  isBox?: boolean;
 }) {
   const pageNavigate = usePageNavigate();
   const navigate = useNavigate();
@@ -24,7 +25,10 @@ export function PageRoutedTabs(props: {
   const { setTabBreadcrumb } = usePageBreadcrumbs();
 
   const activeTab = props.tabs.find(
-    (tab) => tab && getPageUrl(tab.page, { params: props.params }) === location.pathname
+    (tab) =>
+      tab &&
+      (getPageUrl(tab.page, { params: props.params }) === location.pathname ||
+        location.pathname.includes(getPageUrl(tab.page, { params: props.params })))
   );
 
   // Set current active tab to tabBreadcrumb in the PageBreadcrumbContext
@@ -79,7 +83,7 @@ export function PageRoutedTabs(props: {
       <Tabs
         onSelect={onSelect}
         inset={{ default: 'insetSm' }}
-        isBox
+        isBox={props.isBox !== undefined ? props.isBox : true}
         activeKey={activeTab ? activeTab.page : undefined}
         style={{
           backgroundColor: 'var(--pf-v5-c-tabs__link--BackgroundColor)',

@@ -1,0 +1,23 @@
+{
+  "id": 9,
+  "url": "/api/eda/v1/role_definitions/9/",
+  "related": {
+    "team_assignments": "/api/eda/v1/role_definitions/9/team_assignments/",
+    "user_assignments": "/api/eda/v1/role_definitions/9/user_assignments/"
+  },
+  "summary_fields": {},
+  "permissions": [
+    "eda.change_project",
+    "eda.delete_project",
+    "eda.view_project",
+    "eda.view_rulebook"
+  ],
+  "content_type": "eda.project",
+  "created": "2024-03-27T16:43:16.610612Z",
+  "modified": "2024-03-27T16:43:16.610642Z",
+  "name": "Project Admin",
+  "description": "Has all permissions to a single project and its child resources - rulebook",
+  "managed": true,
+  "created_by": null,
+  "modified_by": null
+}

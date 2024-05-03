@@ -1,0 +1,18 @@
+{
+  "id": 15,
+  "url": "/api/eda/v1/role_definitions/15/",
+  "related": {
+    "team_assignments": "/api/eda/v1/role_definitions/15/team_assignments/",
+    "user_assignments": "/api/eda/v1/role_definitions/15/user_assignments/"
+  },
+  "summary_fields": {},
+  "permissions": ["eda.view_project"],
+  "content_type": "eda.project",
+  "created": "2024-03-28T21:05:16.981637Z",
+  "modified": "2024-03-28T21:05:16.981656Z",
+  "name": "View projects",
+  "description": "Role for viewing projects",
+  "managed": false,
+  "created_by": null,
+  "modified_by": null
+}

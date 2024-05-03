@@ -1,13 +1,22 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageNavigationItem } from '../../../../framework';
-import { PageNotImplemented } from '../../../../framework/PageEmptyStates/PageNotImplemented';
 import { InstanceGroups } from '../../administration/instance-groups/InstanceGroups';
 import { AwxRoute } from '../AwxRoutes';
-import { InstanceGroupPage } from '../../administration/instance-groups/InstanceGroupPage/InstanceGroupPage';
 import { InstanceGroupInstances } from '../../administration/instance-groups/InstanceGroupPage/InstanceGroupInstances';
 import { InstanceDetails } from '../../administration/instances/InstanceDetails';
 import { InstanceGroupInstancesPage } from '../../administration/instance-groups/InstanceGroupPage/InstanceGroupInstancesPage/InstanceGroupInstancesPage';
+import {
+  CreateInstanceGroup,
+  EditInstanceGroup,
+} from '../../administration/instance-groups/InstanceGroupForm';
+import { InstanceGroupDetails } from '../../administration/instance-groups/InstanceGroupPage/InstanceGroupDetails';
+import { InstanceGroupJobs } from '../../administration/instance-groups/InstanceGroupPage/InstanceGroupJobs';
+import {
+  CreateContainerGroup,
+  EditContainerGroup,
+} from '../../administration/instance-groups/ContainerGroupForm';
+import { InstanceGroupPage } from '../../administration/instance-groups/InstanceGroupPage/InstanceGroupPage';
 
 export function useAwxInstanceGroupsRoutes() {
   const { t } = useTranslation();
@@ -15,27 +24,37 @@ export function useAwxInstanceGroupsRoutes() {
     () => ({
       id: AwxRoute.InstanceGroups,
       label: t('Instance Groups'),
-      path: 'instance-groups',
+      path: 'instance_groups',
       children: [
         {
+          id: AwxRoute.CreateContainerGroup,
+          path: 'container-group/create',
+          element: <CreateContainerGroup />,
+        },
+        {
+          id: AwxRoute.EditContainerGroup,
+          path: 'container-group/:id/edit',
+          element: <EditContainerGroup />,
+        },
+        {
           id: AwxRoute.CreateInstanceGroup,
-          path: 'create',
-          element: <PageNotImplemented />,
+          path: 'instance-group/create',
+          element: <CreateInstanceGroup />,
         },
         {
           id: AwxRoute.EditInstanceGroup,
-          path: ':id/edit',
-          element: <PageNotImplemented />,
+          path: 'instance-group/:id/edit',
+          element: <EditInstanceGroup />,
         },
         {
           id: AwxRoute.InstanceGroupPage,
-          path: ':id/',
+          path: ':instanceType/:id/',
           element: <InstanceGroupPage />,
           children: [
             {
               id: AwxRoute.InstanceGroupDetails,
               path: 'details',
-              element: <PageNotImplemented />,
+              element: <InstanceGroupDetails />,
             },
             {
               id: AwxRoute.InstanceGroupInstances,
@@ -45,7 +64,7 @@ export function useAwxInstanceGroupsRoutes() {
             {
               id: AwxRoute.InstanceGroupJobs,
               path: 'jobs',
-              element: <PageNotImplemented />,
+              element: <InstanceGroupJobs />,
             },
           ],
         },

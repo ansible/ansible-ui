@@ -163,6 +163,8 @@ export enum AwxRoute {
   UserTeams = 'awx-user-teams',
   UserRoles = 'awx-user-roles',
   UserTokens = 'awx-user-tokens',
+  UserTokenPage = 'awx-user-token-page',
+  UserTokenDetails = 'awx-user-token-detail',
   AddRolesToUser = 'awx-add-roles-to-user',
 
   Roles = 'awx-roles',
@@ -208,6 +210,11 @@ export enum AwxRoute {
   InstanceGroupInstanceDetails = 'awx-instance-group-instance-details',
   InstanceGroupJobs = 'awx-instance-group-jobs',
   InstanceGroups = 'awx-instance-groups',
+
+  CreateContainerGroup = 'awx-create-container-group',
+  ContainerGroupDetails = 'awx-container-group-details',
+  ContainerGroupPage = 'awx-container-group-page',
+  EditContainerGroup = 'awx-container-group-edit',
 
   Instances = 'awx-instances',
   AddInstance = 'awx-add-instance',

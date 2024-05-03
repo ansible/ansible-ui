@@ -1,14 +1,14 @@
 import {
-  AnsibeTowerIcon,
+  BuilderImageIcon,
   CheckCircleIcon,
   ClockIcon,
-  EllipsisHIcon,
+  CubeIcon,
+  DataProcessorIcon,
+  DatabaseIcon,
   ExclamationCircleIcon,
   MinusCircleIcon,
   PlusCircleIcon,
   QuestionCircleIcon,
-  RegionsIcon,
-  ServerIcon,
 } from '@patternfly/react-icons';
 import {
   DEFAULT_DECORATOR_RADIUS,
@@ -41,18 +41,18 @@ function getStatusIcon(nodeType: string) {
   }
 }
 
-function getNodeIcon(nodeType: string) {
+export function getNodeIcon(nodeType: string) {
   switch (nodeType) {
     case 'hybrid':
-      return ServerIcon;
+      return BuilderImageIcon;
     case 'execution':
-      return AnsibeTowerIcon;
+      return CubeIcon;
     case 'control':
-      return RegionsIcon;
+      return DatabaseIcon;
     case 'hop':
-      return EllipsisHIcon;
+      return DataProcessorIcon;
     default:
-      return AnsibeTowerIcon;
+      return DatabaseIcon;
   }
 }
 

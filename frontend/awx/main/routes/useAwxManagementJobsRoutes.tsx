@@ -12,6 +12,7 @@ import { SchedulesList } from '../../views/schedules/SchedulesList';
 import { awxAPI } from '../../common/api/awx-utils';
 import { SchedulePage } from '../../views/schedules/SchedulePage/SchedulePage';
 import { ScheduleDetails } from '../../views/schedules/SchedulePage/ScheduleDetails';
+import { ResourceNotifications } from '../../resources/notifications/ResourceNotifications';
 
 export function useAwxManagementJobsRoutes() {
   const { t } = useTranslation();
@@ -28,8 +29,8 @@ export function useAwxManagementJobsRoutes() {
             <SchedulePage
               initialBreadCrumbs={[
                 { label: t('Management Jobs'), to: AwxRoute.ManagementJobs },
-                { label: 'data', to: AwxRoute.ManagementJobPage },
-                { label: t('Schedules'), to: AwxRoute.ManagementJobSchedules },
+                { id: 'data', to: AwxRoute.ManagementJobPage },
+                { label: t('Schedules'), id: 'schedules', to: AwxRoute.ManagementJobSchedules },
               ]}
               backTab={{
                 label: t('Back to Schedules'),
@@ -76,7 +77,7 @@ export function useAwxManagementJobsRoutes() {
             {
               id: AwxRoute.ManagementJobNotifications,
               path: 'notifications',
-              element: <PageNotImplemented />,
+              element: <ResourceNotifications resourceType="system_job_templates" />,
             },
             {
               path: '',
