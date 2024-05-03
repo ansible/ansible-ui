@@ -14,6 +14,7 @@ import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsRes
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useDeleteCredentialTypes } from './useDeleteCredentialTypes';
 import { CredentialType } from '../../../interfaces/CredentialType';
+import { ButtonVariant } from '@patternfly/react-core';
 
 export function useCredentialTypeToolbarActions(
   onCredentialTypesDeleted: (credentialType: CredentialType[]) => void
@@ -29,7 +30,7 @@ export function useCredentialTypeToolbarActions(
       {
         type: PageActionType.Link,
         selection: PageActionSelection.None,
-        // variant: ButtonVariant.primary,
+        variant: ButtonVariant.primary,
         isPinned: true,
         icon: PlusCircleIcon,
         label: t('Create credential type'),
