@@ -410,7 +410,6 @@ function CredentialTextInput({
             <Button
               data-cy={'secret-management-input'}
               variant="plain"
-              //onClick={props.emptyStateButtonClick}
               icon={
                 <Icon>
                   <KeyIcon />
