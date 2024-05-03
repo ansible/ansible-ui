@@ -381,7 +381,7 @@ export function PageFormTextInput<
                   label.toLocaleLowerCase()
                 )} cannot be greater than ${max}.`,
               }
-            : minLength,
+            : max,
 
         pattern,
       }}
