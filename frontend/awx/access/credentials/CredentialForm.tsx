@@ -356,6 +356,12 @@ function CredentialSubForm({
                 key={field.id}
                 field={field}
                 isRequired={requiredFields.includes(field.id)}
+                handleModalToggle={() => {
+                  openCredentialPluginsModal({
+                    field,
+                    setCredentialPluginValues,
+                  });
+                }}
               />
             );
           }
@@ -390,10 +396,12 @@ function CredentialTextInput({
   field,
   isRequired = false,
   credentialType,
+  handleModalToggle,
 }: {
   field: CredentialInputField;
   isRequired?: boolean;
   credentialType?: CredentialType | undefined;
+  handleModalToggle: () => void;
 }) {
   const { t } = useTranslation();
   const { setValue, clearErrors } = useFormContext();
@@ -451,6 +459,7 @@ function CredentialTextInput({
               style={{
                 border: '1px solid var(--pf-v5-global--BorderColor--300)',
               }}
+              onClick={handleModalToggle}
             ></Button>
           ) : undefined
         }
