@@ -3,11 +3,11 @@ import { useTranslation } from 'react-i18next';
 import { AwxPageForm } from '../../../common/AwxPageForm';
 import { CredentialInputField, CredentialType } from '../../../interfaces/CredentialType';
 import {
+  IPageAlertToaster,
   PageFormSelect,
   PageFormSubmitHandler,
   PageFormTextArea,
   PageFormTextInput,
-  usePageAlertToaster,
 } from '../../../../../framework';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { usePostRequest } from '../../../../common/crud/usePostRequest';
@@ -25,26 +25,29 @@ export interface CredentialsRetainInput {
 }
 
 export function CredentialsExternalTestModal(
-  props: CredentialsExternalTestModalProps & { popDialog: () => void }
+  props: CredentialsExternalTestModalProps & { popDialog: () => void } & {
+    alertToaster: IPageAlertToaster;
+  }
 ) {
   const { t } = useTranslation();
   const postRequest = usePostRequest<CredentialsRetainInput>();
-  const alertToaster = usePageAlertToaster();
-  const alert: AlertProps = {
-    variant: 'success',
-    title: t('Test passed.'),
-    timeout: 2000,
-  };
+  const alertToaster = props.alertToaster;
+
   const onSubmit: PageFormSubmitHandler<CredentialsRetainInput> = async (
     retainInput: CredentialsRetainInput
   ) => {
+    const alert: AlertProps = {
+      variant: 'success',
+      title: t('Test passed.'),
+      timeout: 2000,
+    };
     props.credential
       ? await postRequest(awxAPI`/credentials/${String(props.credential.id)}/test/`, retainInput)
           .then(() => {
             alertToaster.addAlert(alert);
           })
           .catch((error) => {
-            alertToaster.replaceAlert(alert, {
+            alertToaster.addAlert({
               variant: 'danger',
               title: t('Something went wrong with the request to test this credential.'),
               children: error instanceof Error && error.message,
@@ -58,7 +61,7 @@ export function CredentialsExternalTestModal(
             alertToaster.addAlert(alert);
           })
           .catch((error) => {
-            alertToaster.replaceAlert(alert, {
+            alertToaster.addAlert({
               variant: 'danger',
               title: t('Something went wrong with the request to test this credential.'),
               children: error instanceof Error && error.message,

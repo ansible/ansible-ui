@@ -9,6 +9,7 @@ import {
   PageHeader,
   PageLayout,
   useGetPageUrl,
+  usePageAlertToaster,
   usePageNavigate,
 } from '../../../../framework';
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
@@ -72,7 +73,8 @@ export function CreateCredential() {
   const postRequest = usePostRequest<Credential | CredentialInputSource>();
   const getPageUrl = useGetPageUrl();
   const [selectedCredentialTypeId, setSelectedCredentialTypeId] = useState<number>(0);
-  const openCredentialsExternalTestModal = useCredentialsTestModal();
+  const alertToaster = usePageAlertToaster();
+  const openCredentialsExternalTestModal = useCredentialsTestModal(alertToaster);
   const [credentialPluginValues, setCredentialPluginValues] = useState<
     CredentialPluginsInputSource[]
   >([]);
@@ -233,7 +235,8 @@ export function EditCredential() {
       return updatedValues;
     });
   }, [credentialPluginValues]);
-  const openCredentialsExternalTestModal = useCredentialsTestModal();
+  const alertToaster = usePageAlertToaster();
+  const openCredentialsExternalTestModal = useCredentialsTestModal(alertToaster);
 
   const { data: credential, isLoading: isLoadingCredential } = useGet<Credential>(
     awxAPI`/credentials/${id.toString()}/`
