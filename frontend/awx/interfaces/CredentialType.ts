@@ -14,7 +14,10 @@ export interface CredentialInputField {
 }
 
 export interface CredentialType
-  extends Omit<SwaggerCredentialType, 'id' | 'name' | 'managed' | 'related' | 'summary_fields'> {
+  extends Omit<
+    SwaggerCredentialType,
+    'id' | 'name' | 'managed' | 'related' | 'summary_fields' | 'inputs' | 'metadata' | 'required'
+  > {
   id: number;
   name: string;
   description: string;
@@ -37,7 +40,9 @@ export interface CredentialType
       label: string;
       type: string;
       help_text: string;
-    };
+      choices?: string[];
+      multiline?: boolean;
+    }[];
   };
   related: {
     credentials: string;
