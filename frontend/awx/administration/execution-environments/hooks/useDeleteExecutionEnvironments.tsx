@@ -37,7 +37,7 @@ export function useDeleteExecutionEnvironments(
       onComplete,
       actionFn: (executionEnvironment: ExecutionEnvironment, signal) =>
         requestDelete(
-          awxAPI`/executionEnvironments/${executionEnvironment.id.toString()}/`,
+          awxAPI`/execution_environments/${executionEnvironment.id.toString()}/`,
           signal
         ),
     });
