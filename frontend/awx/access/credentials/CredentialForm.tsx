@@ -134,6 +134,9 @@ export function EditCredential() {
   const { activeAwxUser } = useAwxActiveUser();
   const getPageUrl = useGetPageUrl();
   const patch = usePatchRequest();
+  const [_credentialPluginValues, setCredentialPluginValues] = useState<
+    Record<string, CredentialPluginsForm>
+  >({});
 
   const { data: credential, isLoading: isLoadingCredential } = useGet<Credential>(
     awxAPI`/credentials/${id.toString()}/`
@@ -225,6 +228,7 @@ export function EditCredential() {
           isEditMode
           credentialTypes={parsedCredentialTypes || {}}
           selectedCredentialTypeId={credential?.credential_type}
+          setCredentialPluginValues={setCredentialPluginValues}
         />
       </AwxPageForm>
     </PageLayout>
