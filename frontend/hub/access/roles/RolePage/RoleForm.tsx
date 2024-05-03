@@ -31,7 +31,7 @@ export interface RoleInput extends Omit<Role, 'pulp_href' | 'pulp_created' | 'lo
 
 export type RoleRequestBody = Omit<Role, 'pulp_href' | 'pulp_created' | 'locked'>;
 
-export function CreateRole() {
+export function CreateRole(props: { breadcrumbLabelForPreviousPage?: string }) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const navigate = useNavigate();
@@ -53,7 +53,10 @@ export function CreateRole() {
       <PageHeader
         title={t('Create Role')}
         breadcrumbs={[
-          { label: t('Roles'), to: getPageUrl(HubRoute.Roles) },
+          {
+            label: props.breadcrumbLabelForPreviousPage || t('Roles'),
+            to: getPageUrl(HubRoute.Roles),
+          },
           { label: t('Create Role') },
         ]}
       />
@@ -69,7 +72,7 @@ export function CreateRole() {
   );
 }
 
-export function EditRole() {
+export function EditRole(props: { breadcrumbLabelForPreviousPage?: string }) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const navigate = useNavigate();
@@ -100,9 +103,12 @@ export function EditRole() {
     return (
       <PageLayout>
         <PageHeader
-          title={t('Edit Role')}
+          title={props.breadcrumbLabelForPreviousPage || t('Edit Role')}
           breadcrumbs={[
-            { label: t('Roles'), to: getPageUrl(HubRoute.Roles) },
+            {
+              label: props.breadcrumbLabelForPreviousPage || t('Roles'),
+              to: getPageUrl(HubRoute.Roles),
+            },
             { label: t('Edit Role') },
           ]}
         />
@@ -115,7 +121,10 @@ export function EditRole() {
       <PageHeader
         title={t('Edit Role')}
         breadcrumbs={[
-          { label: t('Roles'), to: getPageUrl(HubRoute.Roles) },
+          {
+            label: props.breadcrumbLabelForPreviousPage || t('Roles'),
+            to: getPageUrl(HubRoute.Roles),
+          },
           { label: t('Edit Role') },
         ]}
       />

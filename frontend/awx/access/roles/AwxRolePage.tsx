@@ -7,7 +7,10 @@ import { AwxRoute } from '../../main/AwxRoutes';
 import { AwxRole } from './AwxRoles';
 import { useAwxRoles } from './useAwxRoles';
 
-export function AwxRolePage() {
+export function AwxRolePage(props: {
+  breadcrumbLabelForPreviousPage?: string;
+  backTabLabel?: string;
+}) {
   const params = useParams<{ id: string; resourceType: string }>();
   const awxRoles = useAwxRoles();
   const role: AwxRole = {
@@ -24,11 +27,17 @@ export function AwxRolePage() {
     <PageLayout>
       <PageHeader
         title={role?.name}
-        breadcrumbs={[{ label: t('Roles'), to: getPageUrl(AwxRoute.Roles) }, { label: role?.name }]}
+        breadcrumbs={[
+          {
+            label: props.breadcrumbLabelForPreviousPage || t('Roles'),
+            to: getPageUrl(AwxRoute.Roles),
+          },
+          { label: role?.name },
+        ]}
       />
       <PageRoutedTabs
         backTab={{
-          label: t('Back to Roles'),
+          label: props.backTabLabel || t('Back to Roles'),
           page: AwxRoute.Roles,
           persistentFilterKey: 'awx-roles',
         }}

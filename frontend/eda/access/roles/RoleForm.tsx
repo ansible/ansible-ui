@@ -22,7 +22,7 @@ import { PageFormMultiSelect } from '../../../../framework/PageForm/Inputs/PageF
 import { PageFormHidden } from '../../../../framework/PageForm/Utils/PageFormHidden';
 import { useWatch } from 'react-hook-form';
 
-export function CreateRole() {
+export function CreateRole(props: { breadcrumbLabelForPreviousPage?: string }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
@@ -43,7 +43,10 @@ export function CreateRole() {
       <PageHeader
         title={t('Create Role')}
         breadcrumbs={[
-          { label: t('Roles'), to: getPageUrl(EdaRoute.Roles) },
+          {
+            label: props.breadcrumbLabelForPreviousPage || t('Roles'),
+            to: getPageUrl(EdaRoute.Roles),
+          },
           { label: t('Create Role') },
         ]}
       />
@@ -59,7 +62,7 @@ export function CreateRole() {
   );
 }
 
-export function EditRole() {
+export function EditRole(props: { breadcrumbLabelForPreviousPage?: string }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
@@ -90,7 +93,10 @@ export function EditRole() {
         <PageLayout>
           <PageHeader
             breadcrumbs={[
-              { label: t('Roles'), to: getPageUrl(EdaRoute.Roles) },
+              {
+                label: props.breadcrumbLabelForPreviousPage || t('Roles'),
+                to: getPageUrl(EdaRoute.Roles),
+              },
               { label: t('Edit Role') },
             ]}
           />
@@ -102,7 +108,10 @@ export function EditRole() {
           <PageHeader
             title={t('Edit Role')}
             breadcrumbs={[
-              { label: t('Roles'), to: getPageUrl(EdaRoute.Roles) },
+              {
+                label: props.breadcrumbLabelForPreviousPage || t('Roles'),
+                to: getPageUrl(EdaRoute.Roles),
+              },
               { label: t('Edit Role') },
             ]}
           />
