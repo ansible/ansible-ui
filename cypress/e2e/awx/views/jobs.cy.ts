@@ -7,7 +7,7 @@ import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 
-describe('jobs', () => {
+describe('Jobs: List', () => {
   let inventory: Inventory;
   let jobTemplate: JobTemplate;
   let jobList: UnifiedJobList;
@@ -45,7 +45,7 @@ describe('jobs', () => {
     cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
   });
 
-  it('renders jobs list', () => {
+  it('can render the jobs list', () => {
     cy.navigateTo('awx', 'jobs');
     cy.verifyPageTitle('Jobs');
     const jobId = jobList.id ? jobList.id.toString() : '';
@@ -55,7 +55,7 @@ describe('jobs', () => {
     cy.clearAllFilters();
   });
 
-  it('relaunches job and navigates to job output', () => {
+  it('can relaunch the job and navigate to job output', () => {
     cy.navigateTo('awx', 'jobs');
     const jobId = jobList.id ? jobList.id.toString() : '';
     const jobName = jobList.name ? jobList.name : '';
@@ -65,7 +65,7 @@ describe('jobs', () => {
     cy.contains('.pf-v5-c-tabs a', 'Output').should('have.attr', 'aria-selected', 'true');
   });
 
-  it('renders the toolbar and row actions', () => {
+  it('can render the toolbar and row actions', () => {
     cy.navigateTo('awx', 'jobs');
     cy.get('.pf-v5-c-toolbar__group button.toggle-kebab').click();
     cy.get('.pf-v5-c-dropdown__menu').within(() => {
@@ -85,7 +85,7 @@ describe('jobs', () => {
     cy.clearAllFilters();
   });
 
-  it('renders additional details on expanding job row', () => {
+  it('can render additional details on expanding job row', () => {
     cy.navigateTo('awx', 'jobs');
     cy.filterTableByMultiSelect('id', [jobList.id ? jobList.id.toString() : '']);
     const jobName = jobList.name ? jobList.name : '';
@@ -97,7 +97,7 @@ describe('jobs', () => {
     cy.clearAllFilters();
   });
 
-  it('filters jobs by id', () => {
+  it('can filter jobs by id', () => {
     cy.navigateTo('awx', 'jobs');
     const jobId = jobList.id ? jobList.id.toString() : '';
     cy.filterTableByMultiSelect('id', [jobId]);
@@ -109,7 +109,7 @@ describe('jobs', () => {
   });
 });
 
-describe('job delete', () => {
+describe('Jobs: Delete', () => {
   let inventory: Inventory;
   let jobTemplate: JobTemplate;
   let jobList: UnifiedJobList;
@@ -147,7 +147,7 @@ describe('job delete', () => {
     cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
   });
 
-  it('deletes a job from the jobs list row', () => {
+  it('can delete a job from the jobs list row', () => {
     const jobTemplateId = jobTemplate.id ? jobTemplate.id.toString() : '';
     cy.requestPost<UnifiedJobList>(awxAPI`/job_templates/${jobTemplateId}/launch/`, {}).then(
       (testJob) => {
@@ -157,12 +157,7 @@ describe('job delete', () => {
         const jobName = testJob.name ? testJob.name : '';
         cy.waitForJobToProcessEvents(jobId);
         cy.get('[data-cy="refresh"]').click();
-
-        // Even though the job is finished from the API perspective, the UI still shows it as running
-        // Wait for the table job row to show with Success
-        // Sometimes the job runs for more than 30 seconds, so we need to increase the timeout
         cy.contains('tr', jobName, { timeout: 60 * 1000 }).should('contain', 'Success');
-
         cy.clickTableRowKebabAction(jobName, 'delete-job', false);
         cy.get('.pf-v5-c-modal-box__footer')
           .prev()
@@ -181,7 +176,7 @@ describe('job delete', () => {
     );
   });
 
-  it('deletes a job from the jobs list toolbar', () => {
+  it('can delete a job from the jobs list toolbar', () => {
     const jobTemplateId = jobTemplate.id ? jobTemplate.id.toString() : '';
     cy.requestPost<UnifiedJobList>(awxAPI`/job_templates/${jobTemplateId}/launch/`, {}).then(
       (testJob) => {
@@ -191,12 +186,7 @@ describe('job delete', () => {
         const jobName = jobList.name ? jobList.name : '';
         cy.waitForJobToProcessEvents(jobId);
         cy.get('[data-cy="refresh"]').click();
-
-        // Even though the job is finished from the API perspective, the UI still shows it as running
-        // Wait for the table job row to show with Success
-        // Sometimes the job runs for more than 30 seconds, so we need to increase the timeout
         cy.contains('tr', jobName, { timeout: 60 * 1000 }).should('contain', 'Success');
-
         cy.selectTableRow(jobName, false);
         cy.clickToolbarKebabAction('delete-selected-jobs');
         cy.get('.pf-v5-c-modal-box__footer')
