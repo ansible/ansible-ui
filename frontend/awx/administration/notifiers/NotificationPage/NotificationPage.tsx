@@ -74,7 +74,7 @@ export function NotificationPage() {
       />
       <PageRoutedTabs
         backTab={{
-          label: t('Back to Credential Types'),
+          label: t('Back to Notifiers'),
           page: AwxRoute.NotificationTemplates,
           persistentFilterKey: 'credential-types',
         }}

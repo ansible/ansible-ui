@@ -1,17 +1,31 @@
 import { useDynamicToolbarFilters } from '../../../common/useDynamicFilters';
+import {
+  useCreatedByToolbarFilter,
+  useModifiedByToolbarFilter,
+} from '../../../common/awx-toolbar-filters';
+import { awxApiPath } from '../../../common/api/awx-utils';
 
-export function useExecutionEnvironmentsFilters() {
+export function useExecutionEnvironmentsFilters({
+  url,
+}: {
+  url?: string;
+} = {}) {
+  const urlPath = url ? url.replace(awxApiPath, '') : '';
+  const optionsPath = urlPath || 'execution_environments';
+  const createdByToolbarFilter = useCreatedByToolbarFilter();
+  const modifiedByToolbarFilter = useModifiedByToolbarFilter();
   const toolbarFilters = useDynamicToolbarFilters({
-    optionsPath: 'execution_environments',
-    preSortedKeys: ['name', 'id'],
+    optionsPath: optionsPath,
+    preSortedKeys: ['name', 'id', 'image', 'created-by', 'modified-by'],
     preFilledValueKeys: {
-      name: {
-        apiPath: 'execution_environments',
-      },
       id: {
-        apiPath: 'execution_environments',
+        apiPath: optionsPath,
+      },
+      name: {
+        apiPath: optionsPath,
       },
     },
+    additionalFilters: [createdByToolbarFilter, modifiedByToolbarFilter],
   });
   return toolbarFilters;
 }
