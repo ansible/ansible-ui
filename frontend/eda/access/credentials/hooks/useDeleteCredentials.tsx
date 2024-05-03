@@ -21,7 +21,7 @@ export function useDeleteCredentials(onComplete?: (credentials: EdaCredential[])
       const inUseDes = await InUseResourceRefs(credentials, edaAPI`/eda-credentials`);
       const inUseMessage =
         inUseDes && inUseDes.length > 0
-          ? [t(`The following credentials are in use: ${inUseDes.join()}`)]
+          ? [t(`The following credentials are in use: ${inUseDes.join(', ')}`)]
           : [];
       const forceParameter = inUseMessage.length > 0 ? '?force=true' : '';
       bulkAction({
