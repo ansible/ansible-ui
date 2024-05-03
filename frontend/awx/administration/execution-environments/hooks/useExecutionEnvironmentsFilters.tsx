@@ -3,14 +3,15 @@ import {
   useCreatedByToolbarFilter,
   useModifiedByToolbarFilter,
 } from '../../../common/awx-toolbar-filters';
+import { awxApiPath } from '../../../common/api/awx-utils';
 
 export function useExecutionEnvironmentsFilters({
   url,
 }: {
   url?: string;
 } = {}) {
-  const splitUrl = url ? url.split('/') : [];
-  const optionsPath = splitUrl[splitUrl.length - 2] || 'execution_environments';
+  const urlPath = url ? url.replace(awxApiPath, '') : '';
+  const optionsPath = urlPath || 'execution_environments';
   const createdByToolbarFilter = useCreatedByToolbarFilter();
   const modifiedByToolbarFilter = useModifiedByToolbarFilter();
   const toolbarFilters = useDynamicToolbarFilters({
