@@ -28,6 +28,7 @@ import { WorkflowJobTemplate } from '../../frontend/awx/interfaces/WorkflowJobTe
 import { WorkflowNode } from '../../frontend/awx/interfaces/WorkflowNode';
 import { EdaControllerToken } from '../../frontend/eda/interfaces/EdaControllerToken';
 import { EdaCredential } from '../../frontend/eda/interfaces/EdaCredential';
+import { EdaCredentialType } from '../../frontend/eda/interfaces/EdaCredentialType';
 import { EdaDecisionEnvironment } from '../../frontend/eda/interfaces/EdaDecisionEnvironment';
 import { EdaProject } from '../../frontend/eda/interfaces/EdaProject';
 import { EdaResult } from '../../frontend/eda/interfaces/EdaResult';
@@ -1199,6 +1200,11 @@ declare global {
       /**Identify a particular EDA credential and make it available for use in testing. */
       getEdaCredentialByName(edaCredentialName: string): Chainable<EdaCredential | undefined>;
 
+      /**Identify a particular EDA credential type and make it available for use in testing. */
+      getEdaCredentialTypeByName(
+        edaCredentialTypeName: string
+      ): Chainable<EdaCredentialType | undefined>;
+
       /**
        * `createEdaRulebookActivation()` creates an EDA Rulebook Activation via API,
        *  with the name `E2E Rulebook Activation` and appends a random string at the end of the name
@@ -1280,6 +1286,20 @@ declare global {
        * @returns {Chainable<EdaCredential>}
        */
       deleteEdaCredential(credential: EdaCredential): Chainable<void>;
+
+      /**
+       * Creates an EDA credential and returns the same.
+       *
+       * @returns {Chainable<EdaCredentialType>}
+       */
+      createEdaCredentialType(): Chainable<EdaCredentialType>;
+
+      /**
+       * Deletes an EDA credential type which is provided.
+       *
+       * @returns {Chainable<EdaCredentialType>}
+       */
+      deleteEdaCredentialType(delete_cred_type: EdaCredentialType): Chainable<void>;
 
       getEdaRoles(content_type__model?: string): Chainable<EdaRole[]>;
       /**
