@@ -318,9 +318,7 @@ describe('Job Templates Surveys', function () {
     it('can create all 7 types of survey types, enable survey, launch JT, view default survey answer, complete launch, and assert survey answer on completed job', function () {
       surveyTypes.forEach((survey) => {
         cy.createTemplateSurvey(jobTemplate, survey);
-        cy.intercept('GET', awxAPI`/job_templates/${jobTemplate.id.toString()}/`).as('getSurvey');
         cy.getByDataCy('name-column-cell').contains(survey.question_name);
-        cy.wait('@getSurvey');
       });
 
       cy.intercept('PATCH', awxAPI`/job_templates/${jobTemplate.id.toString()}/`).as(
