@@ -138,6 +138,8 @@ export function InventoryPage() {
             !isConstructedInventory && { label: t('Sources'), page: AwxRoute.InventorySources },
           { label: t('Jobs'), page: AwxRoute.InventoryJobs },
           { label: t('Job templates'), page: AwxRoute.InventoryJobTemplates },
+          { label: t('Team Access'), page: AwxRoute.InventoryTeamAccess },
+          { label: t('User Access'), page: AwxRoute.InventoryUserAccess },
         ]}
         params={params}
         componentParams={{ inventory }}
