@@ -310,7 +310,6 @@ describe('Workflow Visualizer', () => {
           cy.clickModalButton('Close');
           cy.clickButton('Save');
           cy.get('[data-cy="alert-toaster"]').should('be.visible');
-          cy.getBy('button[id="fit-to-screen"]').click();
           cy.clickButton('Add step');
           cy.selectDropdownOptionByResourceName('node-type', 'Job Template');
           cy.selectDropdownOptionByResourceName('job-template-select', `${jobTemplate.name}`);
@@ -356,7 +355,6 @@ describe('Workflow Visualizer', () => {
                   .should('be.visible');
                 cy.removeAllNodesFromVisualizerToolbar();
                 cy.contains('button', 'Save').should('be.visible').click();
-                cy.getBy('button[id="fit-to-screen"]').click();
                 cy.clickButton('Add step');
                 cy.selectDropdownOptionByResourceName('node-type', 'Job Template');
                 cy.selectDropdownOptionByResourceName('job-template-select', `${jobTemplate.name}`);
