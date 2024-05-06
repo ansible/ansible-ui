@@ -138,12 +138,26 @@ export function TemplateSurveyForm(props: IProps) {
     new_question: !question,
   };
 
-  const onSubmit: PageFormSubmitHandler<FormSpec> = async (newQuestion, setError) => {
+  const onSubmit: PageFormSubmitHandler<FormSpec & { 'add-choice'?: string }> = async (
+    newQuestion,
+    setError,
+    setFieldError
+  ) => {
     const updatedSurvey = {
       name: survey?.name ?? '',
       description: survey?.description ?? '',
       spec: survey?.spec ?? [],
     };
+
+    if (
+      ['multiplechoice', 'multiselect'].includes(newQuestion.type) &&
+      !newQuestion.formattedChoices?.length
+    ) {
+      setFieldError('add-choice', {
+        message: t`Multiple choices require at least one answer.`,
+      });
+      return;
+    }
 
     const defaultValue =
       newQuestion.type === 'integer'
