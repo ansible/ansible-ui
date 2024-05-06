@@ -6,8 +6,12 @@ import { EdaRoute } from '../../../eda/main/EdaRoutes';
 export function useGetLinkToResourcePage() {
   const getPageUrl = useGetPageUrl();
   return useCallback(
-    (options: { contentType: string; objectId: string | number }) => {
+    (options: { contentType: string | null; objectId: string | number | null }) => {
       const { contentType, objectId } = options;
+      if (contentType === null || objectId === null) {
+        // Content type and object ID will be null for the System Auditor role
+        return undefined;
+      }
       const resourceToEndpointMapping: { [key: string]: string } = {
         'eda.edacredential': getPageUrl(EdaRoute.CredentialDetails, { params: { id: objectId } }),
         'eda.project': getPageUrl(EdaRoute.ProjectDetails, { params: { id: objectId } }),
