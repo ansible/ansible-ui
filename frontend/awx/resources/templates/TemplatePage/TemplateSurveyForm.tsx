@@ -154,7 +154,7 @@ export function TemplateSurveyForm(props: IProps) {
       !newQuestion.formattedChoices?.length
     ) {
       setFieldError('add-choice', {
-        message: 'Multiple choice options must contain at least one option.',
+        message: 'Multiple choices require at least one answer.',
       });
       return;
     }
