@@ -76,7 +76,7 @@ export function InventoryRunCommand() {
 
   const initialValues = {
     details: {
-      module: '',
+      module_name: '',
       module_args: '',
       verbosity: 0,
       limit: 'all',
