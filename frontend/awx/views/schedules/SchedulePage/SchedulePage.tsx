@@ -47,7 +47,7 @@ export function SchedulePage(props: {
   );
   const itemActions = useSchedulesActions({
     onScheduleDeleteCompleted: () => navigate(getPageUrl(AwxRoute.Schedules)),
-    onScheduleToggleCompleted: () => refresh(),
+    onScheduleToggleCompleted: refresh,
   });
 
   useEffect(() => {
