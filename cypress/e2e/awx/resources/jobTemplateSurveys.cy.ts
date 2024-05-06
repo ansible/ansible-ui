@@ -337,9 +337,7 @@ describe('Job Templates Surveys', function () {
       cy.contains('Prompt on Launch');
 
       surveyTypes.forEach((survey) => {
-        const specTypeSelector =
-          survey.type === 'multiselect' ? 'survey.multiselect_' : `survey-${survey.type}-`;
-        const groupType = `${specTypeSelector}answer-form-group`;
+        const groupType = `survey-${survey.type}-answer-form-group`;
 
         cy.getByDataCy(groupType).within(() => {
           cy.contains(survey.question_name);
@@ -358,13 +356,15 @@ describe('Job Templates Surveys', function () {
               });
             });
           } else {
-            const defaults = survey.default.split('\n');
-            defaults.forEach((defaultValue) => {
-              cy.getByDataCy(groupType).contains(defaultValue);
+            cy.getByDataCy(groupType).within(() => {
+              const defaults = survey.default.split('\n');
+              defaults.forEach((defaultValue) => {
+                cy.contains(defaultValue);
+              });
+              cy.get('#survey-multiselect-answer').click();
             });
 
-            cy.getByDataCy(groupType).within(() => {
-              cy.get('input').click();
+            cy.get('#survey-multiselect-answer-select').within(() => {
               survey?.choices?.forEach((choice) => {
                 cy.getByDataCy(choice);
               });
