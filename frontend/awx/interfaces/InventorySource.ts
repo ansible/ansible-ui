@@ -1,6 +1,7 @@
 import { InventorySource as SwaggerInventorySource } from './generated-from-swagger/api';
 import {
   SummaryFieldCredential,
+  SummaryFieldProject,
   SummaryFieldsByUser,
   SummaryFieldsExecutionEnvironment,
 } from './summary-fields/summary-fields';
@@ -67,13 +68,7 @@ export interface InventorySource
       status: string;
     };
     execution_environment: SummaryFieldsExecutionEnvironment;
-    source_project: {
-      name: string;
-      id: number;
-      description: string;
-      scm_type: string;
-      status: string;
-    } | null;
+    source_project: SummaryFieldProject;
     credential: SummaryFieldCredential;
   };
   related: { schedules: string };

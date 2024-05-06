@@ -9,7 +9,6 @@ import { Sidebar } from './Sidebar';
 import { SidebarHeader } from './SidebarHeader';
 import { SystemJobNodeDetails } from './SystemJobNodeDetails';
 import { ToolbarHeader } from './WorkflowVisualizerToolbar';
-import { WorkflowApprovalNodeDetails } from './WorkflowApprovalNodeDetails';
 import { WorkflowVisualizerToolbar } from './WorkflowVisualizerToolbar';
 
 export {
@@ -24,6 +23,5 @@ export {
   SidebarHeader,
   SystemJobNodeDetails,
   ToolbarHeader,
-  WorkflowApprovalNodeDetails,
   WorkflowVisualizerToolbar,
 };

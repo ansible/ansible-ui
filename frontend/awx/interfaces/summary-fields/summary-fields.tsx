@@ -109,6 +109,15 @@ export interface SummaryFieldInventory {
   kind: string;
 }
 
+export interface SummaryFieldProject {
+  id: number;
+  name: string;
+  description: string;
+  status: string;
+  scm_type: string;
+  allow_override: boolean;
+}
+
 export interface JobSummaryFields {
   organization?: SummaryFieldsOrganization;
   inventory?: {

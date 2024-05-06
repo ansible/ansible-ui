@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { TopologySideBar as PFTopologySideBar } from '@patternfly/react-topology';
 import { useViewOptions } from '../ViewOptionsProvider';
-import { WorkflowVisualizerNodeDetails } from '../WorkflowVisualizerNodeDetails';
+import { WorkflowNodeDetails } from './WorkflowNodeDetails';
 import { NodeAddWizard } from '../wizard/NodeAddWizard';
 import { NodeEditWizard } from '../wizard/NodeEditWizard';
 import { useSelectedNode } from '../hooks';
@@ -22,7 +22,7 @@ export function Sidebar() {
   const nodeSidebar = {
     add: <NodeAddWizard />,
     edit: selectedNode && <NodeEditWizard node={selectedNode} />,
-    view: selectedNode && <WorkflowVisualizerNodeDetails node={selectedNode} />,
+    view: selectedNode && <WorkflowNodeDetails node={selectedNode} />,
   };
 
   return (
