@@ -72,15 +72,16 @@ export function useInventoriesGroupsToolbarActions(view: IAwxView<InventoryGroup
       variant: ButtonVariant.secondary,
       isPinned: true,
       label: t('Run Command'),
-      onClick: () => pageNavigate(AwxRoute.Inventories),
+      onClick: () =>
+        pageNavigate(AwxRoute.InventoryRunCommand, {
+          params: { inventory_type: params.inventory_type, id: params.id },
+        }),
       isDisabled: () =>
-        view.selectedItems.length === 0
-          ? t('Select at least one item from the list')
-          : canRunAdHocCommand
-            ? undefined
-            : t(
-                'You do not have permission to run an ad hoc command. Please contact your organization administrator if there is an issue with your access.'
-              ),
+        canRunAdHocCommand
+          ? undefined
+          : t(
+              'You do not have permission to run an ad hoc command. Please contact your organization administrator if there is an issue with your access.'
+            ),
     });
 
     if (params.inventory_type === 'inventory') {

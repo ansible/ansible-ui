@@ -35,6 +35,8 @@ export const awxErrorAdapter = (error: unknown): ErrorOutput => {
           }
         });
       }
+    } else if ('module_args' in data) {
+      genericErrors.push({ message: data.module_args as string });
     }
 
     // handle API responses {error: 'Cannot assign a Credential of kind `galaxy`.'}

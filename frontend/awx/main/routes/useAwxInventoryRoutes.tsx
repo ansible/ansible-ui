@@ -135,7 +135,7 @@ export function useAwxInventoryRoutes() {
         },
         {
           id: AwxRoute.InventoryRunCommand,
-          path: ':inventory_type/:id/groups/:group_id/run_command',
+          path: ':inventory_type/:id/run_command',
           element: <InventoryRunCommand />,
         },
         {
