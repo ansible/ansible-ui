@@ -14,6 +14,7 @@ import { WizardFormValues, UnifiedJobType } from '../types';
 import { hasDaysToKeep, getValueBasedOnJobType } from './helpers';
 import { PromptReviewDetails } from './PromptReviewDetails';
 import { RESOURCE_TYPE } from '../constants';
+import { useGetNodeTypeDetail, useGetTimeoutString } from '../hooks';
 
 const ResourceLink: Record<UnifiedJobType, AwxRoute> = {
   inventory_update: AwxRoute.InventorySourceDetail,
@@ -41,8 +42,8 @@ export function NodeReviewStep() {
     node_alias,
     node_convergence,
     node_days_to_keep,
+    survey,
   } = wizardData;
-
   const hasPromptDetails = Boolean(visibleSteps.find((step) => step.id === 'nodePromptsStep'));
   const nodeTypeDetail = useGetNodeTypeDetail(node_type);
   const nameDetail = getValueBasedOnJobType(node_type, resource?.name || '', approval_name);
@@ -75,6 +76,7 @@ export function NodeReviewStep() {
       },
     });
   }
+
   return (
     <>
       <PageDetails numberOfColumns="single">
@@ -90,31 +92,13 @@ export function NodeReviewStep() {
           <PageDetailCodeEditor label={t('Extra vars')} value={extraVarsDetail} />
         ) : null}
         {hasPromptDetails ? <PromptReviewDetails /> : null}
+        {!hasPromptDetails && survey ? (
+          <PageDetailCodeEditor
+            label={t('Extra vars')}
+            value={jsonToYaml(JSON.stringify(survey))}
+          />
+        ) : null}
       </PageDetails>
     </>
   );
-}
-
-function useGetNodeTypeDetail(type: UnifiedJobType) {
-  const { t } = useTranslation();
-  const typeMapping = {
-    job: t('Job Template'),
-    workflow_job: t('Workflow Job Template'),
-    project_update: t('Project Update'),
-    inventory_update: t('Inventory Update'),
-    workflow_approval: t('Workflow Approval'),
-    system_job: t('Management Job'),
-  };
-  return typeMapping[type];
-}
-
-function useGetTimeoutString(value: number) {
-  const { t } = useTranslation();
-  const timeout = value || 0;
-  const minutes = Math.floor(timeout / 60);
-  const seconds = Math.floor(timeout % 60);
-  return t('{{minutes}} min {{seconds}} sec ', {
-    minutes: minutes.toString(),
-    seconds: seconds.toString(),
-  });
 }

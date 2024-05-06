@@ -42,11 +42,13 @@ export interface WorkflowJobTemplate
     survey_spec: string;
     webhook_receiver: string;
     webhook_key: string;
+    labels: string;
+    launch: string;
   };
   summary_fields: {
     webhook_credential?: SummaryFieldCredential;
     labels: { count: number; results: { id: number; name: string }[] };
-    inventory?: {
+    inventory: {
       name: string;
       id: number;
       description: string;
@@ -62,7 +64,7 @@ export interface WorkflowJobTemplate
     };
     project: Pick<Project, 'id' | 'name'>;
     execution_environment?: { id: number; name: string };
-    organization?: {
+    organization: {
       id: number;
       name: string;
       description: string;

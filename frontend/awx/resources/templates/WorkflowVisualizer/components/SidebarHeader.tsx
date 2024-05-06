@@ -1,3 +1,4 @@
+import { ReactNode } from 'react';
 import styled from 'styled-components';
 import { Button, Title } from '@patternfly/react-core';
 import { TimesIcon } from '@patternfly/react-icons';
@@ -7,7 +8,13 @@ const TopologySideBarHeader = styled.div`
   justify-content: space-between;
 `;
 
-export function SidebarHeader({ onClose, title }: { onClose: () => void; title: string }) {
+export function SidebarHeader({
+  onClose,
+  title,
+}: {
+  onClose: () => void;
+  title: string | ReactNode;
+}) {
   return (
     <TopologySideBarHeader>
       <Title headingLevel="h2" style={{ padding: '16px 24px' }}>
