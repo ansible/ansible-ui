@@ -1,0 +1,288 @@
+{
+  "name": "Instance Groups",
+  "actions": {
+    "POST": {
+      "name": {
+        "type": "string",
+        "required": true,
+        "hidden": false,
+        "label": "Name",
+        "max_length": 250,
+        "help_text": "Name of this instance group.",
+        "filterable": true
+      },
+      "max_concurrent_jobs": {
+        "type": "integer",
+        "required": false,
+        "hidden": false,
+        "label": "Max Concurrent Jobs",
+        "help_text": "Maximum number of concurrent jobs to run on a group. When set to zero, no maximum is enforced.",
+        "min_value": 0,
+        "filterable": true,
+        "default": 0
+      },
+      "max_forks": {
+        "type": "integer",
+        "required": false,
+        "hidden": false,
+        "label": "Max Forks",
+        "help_text": "Maximum number of forks to execute concurrently on a group. When set to zero, no maximum is enforced.",
+        "min_value": 0,
+        "filterable": true,
+        "default": 0
+      },
+      "is_container_group": {
+        "type": "boolean",
+        "required": false,
+        "hidden": false,
+        "label": "Is container group",
+        "help_text": "Indicates whether instances in this group are containerized.Containerized groups have a designated Openshift or Kubernetes cluster.",
+        "filterable": true
+      },
+      "credential": {
+        "type": "id",
+        "required": false,
+        "hidden": false,
+        "label": "Credential",
+        "filterable": true
+      },
+      "policy_instance_percentage": {
+        "type": "integer",
+        "required": false,
+        "hidden": false,
+        "label": "Policy Instance Percentage",
+        "help_text": "Minimum percentage of all instances that will be automatically assigned to this group when new instances come online.",
+        "min_value": 0,
+        "max_value": 100,
+        "filterable": true,
+        "default": 0
+      },
+      "policy_instance_minimum": {
+        "type": "integer",
+        "required": false,
+        "hidden": false,
+        "label": "Policy Instance Minimum",
+        "help_text": "Static minimum number of Instances that will be automatically assign to this group when new instances come online.",
+        "min_value": 0,
+        "filterable": true,
+        "default": 0
+      },
+      "policy_instance_list": {
+        "type": "json",
+        "required": false,
+        "hidden": false,
+        "label": "Policy Instance List",
+        "help_text": "List of exact-match Instances that will be assigned to this group",
+        "filterable": true,
+        "child": {
+          "type": "string",
+          "required": true,
+          "hidden": false,
+          "read_only": false
+        }
+      },
+      "pod_spec_override": {
+        "type": "string",
+        "required": false,
+        "hidden": false,
+        "label": "Pod spec override",
+        "filterable": true,
+        "default": {
+          "apiVersion": "v1",
+          "kind": "Pod",
+          "metadata": {
+            "namespace": "dev-ui"
+          },
+          "spec": {
+            "serviceAccountName": "default",
+            "automountServiceAccountToken": false,
+            "containers": [
+              {
+                "image": "quay.io/ansible/awx-ee:latest",
+                "name": "worker",
+                "args": ["ansible-runner", "worker", "--private-data-dir=/runner"],
+                "resources": {
+                  "requests": {
+                    "cpu": "250m",
+                    "memory": "100Mi"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "GET": {
+      "id": {
+        "type": "integer",
+        "hidden": false,
+        "label": "ID",
+        "help_text": "Database ID for this instance group.",
+        "filterable": true
+      },
+      "type": {
+        "type": "choice",
+        "hidden": false,
+        "label": "Type",
+        "help_text": "Data type for this instance group.",
+        "choices": [["instance_group", "Instance Group"]]
+      },
+      "url": {
+        "type": "string",
+        "hidden": false,
+        "label": "Url",
+        "help_text": "URL for this instance group.",
+        "filterable": false
+      },
+      "related": {
+        "type": "object",
+        "hidden": false,
+        "label": "Related",
+        "help_text": "Data structure with URLs of related resources.",
+        "filterable": false
+      },
+      "name": {
+        "type": "string",
+        "hidden": false,
+        "label": "Name",
+        "help_text": "Name of this instance group.",
+        "filterable": true
+      },
+      "created": {
+        "type": "datetime",
+        "hidden": false,
+        "label": "Created",
+        "help_text": "Timestamp when this instance group was created.",
+        "filterable": true
+      },
+      "modified": {
+        "type": "datetime",
+        "hidden": false,
+        "label": "Modified",
+        "help_text": "Timestamp when this instance group was last modified.",
+        "filterable": true
+      },
+      "capacity": {
+        "type": "field",
+        "hidden": false,
+        "label": "Capacity",
+        "filterable": false
+      },
+      "consumed_capacity": {
+        "type": "field",
+        "hidden": false,
+        "label": "Consumed capacity",
+        "filterable": false
+      },
+      "percent_capacity_remaining": {
+        "type": "field",
+        "hidden": false,
+        "label": "Percent capacity remaining",
+        "filterable": false
+      },
+      "jobs_running": {
+        "type": "field",
+        "hidden": false,
+        "label": "Jobs running",
+        "filterable": false
+      },
+      "max_concurrent_jobs": {
+        "type": "integer",
+        "hidden": false,
+        "label": "Max Concurrent Jobs",
+        "help_text": "Maximum number of concurrent jobs to run on a group. When set to zero, no maximum is enforced.",
+        "min_value": 0,
+        "filterable": true
+      },
+      "max_forks": {
+        "type": "integer",
+        "hidden": false,
+        "label": "Max Forks",
+        "help_text": "Maximum number of forks to execute concurrently on a group. When set to zero, no maximum is enforced.",
+        "min_value": 0,
+        "filterable": true
+      },
+      "jobs_total": {
+        "type": "integer",
+        "hidden": false,
+        "label": "Jobs total",
+        "help_text": "Count of all jobs that target this instance group",
+        "filterable": false
+      },
+      "instances": {
+        "type": "field",
+        "hidden": false,
+        "label": "Instances",
+        "filterable": false
+      },
+      "is_container_group": {
+        "type": "boolean",
+        "hidden": false,
+        "label": "Is container group",
+        "help_text": "Indicates whether instances in this group are containerized.Containerized groups have a designated Openshift or Kubernetes cluster.",
+        "filterable": true
+      },
+      "credential": {
+        "type": "id",
+        "hidden": false,
+        "label": "Credential",
+        "filterable": true
+      },
+      "policy_instance_percentage": {
+        "type": "integer",
+        "hidden": false,
+        "label": "Policy Instance Percentage",
+        "help_text": "Minimum percentage of all instances that will be automatically assigned to this group when new instances come online.",
+        "min_value": 0,
+        "max_value": 100,
+        "filterable": true
+      },
+      "policy_instance_minimum": {
+        "type": "integer",
+        "hidden": false,
+        "label": "Policy Instance Minimum",
+        "help_text": "Static minimum number of Instances that will be automatically assign to this group when new instances come online.",
+        "min_value": 0,
+        "filterable": true
+      },
+      "policy_instance_list": {
+        "type": "json",
+        "hidden": false,
+        "label": "Policy Instance List",
+        "help_text": "List of exact-match Instances that will be assigned to this group",
+        "filterable": true,
+        "child": {
+          "type": "string",
+          "hidden": false
+        }
+      },
+      "pod_spec_override": {
+        "type": "string",
+        "hidden": false,
+        "label": "Pod spec override",
+        "filterable": true
+      },
+      "summary_fields": {
+        "type": "object",
+        "hidden": false,
+        "label": "Summary fields",
+        "help_text": "Data structure with name/description for related resources.  The output for some objects may be limited for performance reasons.",
+        "filterable": false
+      }
+    }
+  },
+  "types": ["instance_group"],
+  "search_fields": ["name"],
+  "related_search_fields": [
+    "workflow_job_instance_groups__search",
+    "workflow_job_node_instance_groups__search",
+    "credential__search",
+    "workflow_job_template_node_instance_groups__search",
+    "instances__search",
+    "joblaunchconfigs__search",
+    "schedule_instance_groups__search"
+  ],
+  "object_roles": ["admin_role", "use_role", "read_role"],
+  "max_page_size": 200
+}

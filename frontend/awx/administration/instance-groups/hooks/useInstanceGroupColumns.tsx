@@ -25,7 +25,14 @@ export function useInstanceGroupsColumns(options?: {
             to={
               disableLinks
                 ? undefined
-                : getPageUrl(AwxRoute.InstanceGroupDetails, { params: { id: instanceGroup.id } })
+                : getPageUrl(AwxRoute.InstanceGroupDetails, {
+                    params: {
+                      instanceType: instanceGroup.is_container_group
+                        ? 'container-group'
+                        : 'instance-group',
+                      id: instanceGroup.id,
+                    },
+                  })
             }
             text={instanceGroup.name}
           />

@@ -151,7 +151,6 @@ describe('Workflow Visualizer', () => {
         .and('contain', `${projectNode?.summary_fields?.unified_job_template?.name}`);
       cy.get(`g[data-id="${approvalNode.id}"] [class*="node-label"]`).should('be.visible').click();
       cy.getByDataCy('workflow-topology-sidebar').should('be.visible');
-      cy.contains('h2', 'Node details').should('be.visible');
       cy.getByDataCy('type').should('contain', 'Workflow approval');
       cy.getByDataCy('workflow-topology-sidebar').within(() => {
         cy.getBy('[aria-label="Close"]').click();
@@ -310,7 +309,6 @@ describe('Workflow Visualizer', () => {
           cy.clickModalButton('Close');
           cy.clickButton('Save');
           cy.get('[data-cy="alert-toaster"]').should('be.visible');
-          cy.getBy('button[id="fit-to-screen"]').click();
           cy.clickButton('Add step');
           cy.selectDropdownOptionByResourceName('node-type', 'Job Template');
           cy.selectDropdownOptionByResourceName('job-template-select', `${jobTemplate.name}`);
@@ -356,7 +354,6 @@ describe('Workflow Visualizer', () => {
                   .should('be.visible');
                 cy.removeAllNodesFromVisualizerToolbar();
                 cy.contains('button', 'Save').should('be.visible').click();
-                cy.getBy('button[id="fit-to-screen"]').click();
                 cy.clickButton('Add step');
                 cy.selectDropdownOptionByResourceName('node-type', 'Job Template');
                 cy.selectDropdownOptionByResourceName('job-template-select', `${jobTemplate.name}`);

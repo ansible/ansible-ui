@@ -1,0 +1,26 @@
+{
+  "id": 8,
+  "type": "o_auth2_access_token",
+  "url": "/api/v2/tokens/8/",
+  "related": {
+    "user": "/api/v2/users/3/",
+    "activity_stream": "/api/v2/tokens/8/activity_stream/"
+  },
+  "summary_fields": {
+    "user": {
+      "id": 3,
+      "username": "dev",
+      "first_name": "",
+      "last_name": ""
+    }
+  },
+  "created": "2024-04-29T14:37:26.186275Z",
+  "modified": "2024-04-29T14:37:26.199763Z",
+  "description": "test token 1",
+  "user": 3,
+  "token": "************",
+  "refresh_token": null,
+  "application": null,
+  "expires": "3023-08-31T14:37:26.177400Z",
+  "scope": "write"
+}

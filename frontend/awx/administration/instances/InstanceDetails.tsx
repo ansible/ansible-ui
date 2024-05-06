@@ -95,8 +95,11 @@ export function InstanceDetailsTab(props: {
         <PageDetail label={t(`Instance groups`)} data-cy="instance-groups">
           {instanceGroups.results.map((instance) => (
             <Label color="blue" style={{ marginRight: '10px' }} key={instance.id}>
-              <Link to={getPageUrl(AwxRoute.InstanceGroupDetails, { params: { id: instance.id } })}>
-                {/* eslint-disable-next-line i18next/no-literal-string */}
+              <Link
+                to={getPageUrl(AwxRoute.InstanceGroupDetails, {
+                  params: { instanceType: 'instance-group', id: instance.id },
+                })}
+              >
                 {instance.name}
               </Link>
             </Label>

@@ -6,7 +6,7 @@ import { useGet } from '../../common/crud/useGet';
 import { awxAPI } from './api/awx-utils';
 import { Spec, Survey } from '../interfaces/Survey';
 import { PageSelectOption } from '../../../framework/PageInputs/PageSelectOption';
-import { PageFormCreatableSelect } from '../../../framework/PageForm/Inputs/PageFormCreatableSelect';
+import { PageFormMultiSelect } from '../../../framework/PageForm/Inputs/PageFormMultiSelect';
 import { WizardFormValues } from '../resources/templates/WorkflowVisualizer/types';
 import { useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
@@ -41,7 +41,7 @@ export function SurveyStep({
   singleColumn?: boolean;
 }) {
   const { t } = useTranslation();
-  const { wizardData, setStepData } = usePageWizard();
+  const { wizardData, stepData } = usePageWizard();
   const { reset } = useFormContext();
   const { resource } = wizardData as WizardFormValues;
   const id = resource ? resource?.id?.toString() : templateId ? templateId : '';
@@ -53,26 +53,33 @@ export function SurveyStep({
   );
 
   useEffect(() => {
-    const survey: { [key: string]: string | number | { name: string }[] } = {};
+    const survey: { [key: string]: string | string[] | number } = {};
+    const surveyStep = stepData.survey as {
+      survey: {
+        [key: string]: string | number | string[];
+      };
+    };
+
     survey_spec?.spec?.forEach((obj: Spec) => {
+      const surveyVariable = surveyStep?.survey?.[obj?.variable];
+
+      if (surveyVariable) {
+        survey[obj.variable] = surveyVariable;
+        return;
+      }
       if (obj.default === '') {
         return;
       }
       if (obj.type === 'multiselect') {
         const specDefault = obj.default as string;
-        survey[obj.variable] = specDefault.split('\n').map((val: string) => ({
-          name: val,
-        }));
+        survey[obj.variable] = specDefault.split('\n');
         return;
       }
       survey[obj.variable] = obj.default;
     });
-    setStepData((prev) => ({
-      ...prev,
-      survey,
-    }));
+
     reset({ survey });
-  }, [reset, setStepData, survey_spec, wizardData]);
+  }, [survey_spec, reset, stepData]);
 
   const getChoices = (name: string): PageSelectOption<string>[] => {
     const choices: PageSelectOption<string>[] = [];
@@ -155,6 +162,7 @@ export function SurveyStep({
           ></PageFormTextArea>
         ) : element.type === 'multiplechoice' ? (
           <PageFormSelect
+            key={index}
             name={`survey.${element.variable}`}
             placeholderText={t('Select option')}
             label={t(element.question_name)}
@@ -164,9 +172,10 @@ export function SurveyStep({
             isRequired={element.required}
           ></PageFormSelect>
         ) : element.type === 'multiselect' ? (
-          <PageFormCreatableSelect
+          <PageFormMultiSelect
+            key={index}
             name={`survey.${element.variable}`}
-            placeholderText={t('Select option(s)')}
+            placeholder={t('Select option(s)')}
             label={t(element.question_name)}
             labelHelp={element.question_description}
             labelHelpTitle=""
