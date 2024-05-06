@@ -48,9 +48,8 @@ export const graphModel: Model = {
 };
 export const greyBadgeLabel = {
   badge: 'ALL',
-  badgeColor: '#D2D2D2',
-  badgeTextColor: 'black',
-  badgeBorderColor: '#B8BBBE',
+  badgeColor: 'var(--pf-v5-global--BackgroundColor--200)',
+  badgeBorderColor: 'var(--pf-v5-global--palette--black-400)',
 };
 
 export const WorkflowOutput = (props: {
