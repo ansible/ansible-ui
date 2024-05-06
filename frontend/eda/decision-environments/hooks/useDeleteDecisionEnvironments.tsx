@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { compareStrings } from '../../../../framework';
 import { requestDelete } from '../../../common/crud/Data';
 import { idKeyFn } from '../../../common/utils/nameKeyFn';
-import { InUseResources } from '../../common/EdaResourcesComon';
+import { InUseResources } from '../../common/EdaResourcesCommon';
 import { edaAPI } from '../../common/eda-utils';
 import { useEdaBulkConfirmation } from '../../common/useEdaBulkConfirmation';
 import {
