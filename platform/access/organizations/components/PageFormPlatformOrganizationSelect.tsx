@@ -13,7 +13,7 @@ export function PageFormPlatformOrganizationSelect<
     TFieldValues,
     number
   >,
->(props: { name: TFieldName; isRequired?: boolean }) {
+>(props: { name: TFieldName; isRequired?: boolean; isDisabled?: string }) {
   const { t } = useTranslation();
   const queryOptions = useQueryPlatformOptions<PlatformOrganization, 'name', 'id'>({
     url: gatewayAPI`/organizations/`,
@@ -32,6 +32,7 @@ export function PageFormPlatformOrganizationSelect<
       queryErrorText={t('Error loading organizations')}
       queryLabel={(id: number) => <AsyncQueryLabel id={id} url={gatewayAPI`/organizations/`} />}
       isRequired={props.isRequired}
+      isDisabled={props.isDisabled}
     />
   );
 }
