@@ -15,10 +15,6 @@ import { EdaRoute } from '../../frontend/eda/main/EdaRoutes';
 import { useEdaNavigation } from '../../frontend/eda/main/useEdaNavigation';
 import { HubRoute } from '../../frontend/hub/main/HubRoutes';
 import { useHubNavigation } from '../../frontend/hub/main/useHubNavigation';
-import { PlatformAwxRoles } from '../access/roles/PlatformAwxRoles';
-import { PlatformEdaRoles } from '../access/roles/PlatformEdaRoles';
-import { PlatformHubRoles } from '../access/roles/PlatformHubRoles';
-import { PlatformRoles } from '../access/roles/PlatformRoles';
 import { Lightspeed } from '../lightspeed/Lightspeed';
 import { PlatformOverview } from '../overview/PlatformOverview';
 import { QuickStartsPage } from '../overview/quickstarts/Quickstarts';
@@ -27,6 +23,7 @@ import { useGetPlatformOrganizationsRoutes } from '../routes/useGetPlatformOrgan
 import { useGetPlatformResourceRoutes } from '../routes/useGetPlatformResourceRoutes';
 import { useGetPlatformTeamsRoutes } from '../routes/useGetPlatformTeamsRoutes';
 import { useGetPlatformUsersRoutes } from '../routes/useGetPlatformUsersRoutes';
+import { useGetPlatformRolesRoutes } from '../routes/useGetPlatformRolesRoutes';
 import { GatewaySettings } from '../settings/GatewaySettings';
 import { GatewaySettingsDetails } from '../settings/GatewaySettingsDetails';
 import { GatewaySettingsEdit } from '../settings/GatewaySettingsEdit';
@@ -50,6 +47,7 @@ export function usePlatformNavigation() {
   const organizations = useGetPlatformOrganizationsRoutes();
   const teams = useGetPlatformTeamsRoutes();
   const users = useGetPlatformUsersRoutes();
+  const roles = useGetPlatformRolesRoutes();
   const authenticators = useGetPlatformAuthenticatorsRoutes();
   const resources = useGetPlatformResourceRoutes();
 
@@ -66,29 +64,12 @@ export function usePlatformNavigation() {
       awxInfrastructure.children.push(awxCredentialTypes);
     }
 
-    const awxRolesRoute = removeNavigationItemById(awxNav, AwxRoute.Roles);
-    if (awxRolesRoute && 'children' in awxRolesRoute) {
-      const edaRoles = awxRolesRoute.children.find((r) => r.path === '');
-      if (edaRoles && 'element' in edaRoles) {
-        edaRoles.element = <PlatformAwxRoles />;
-      }
-      awxRolesRoute.label = undefined;
-      awxRolesRoute.path = 'execution';
-    }
     // HERE
     removeNavigationItemById(awxNav, AwxRoute.Access);
 
     removeNavigationItemById(edaNav, EdaRoute.Overview);
     removeNavigationItemById(edaNav, EdaRoute.Users);
-    const edaRolesRoute = removeNavigationItemById(edaNav, EdaRoute.Roles);
-    if (edaRolesRoute && 'children' in edaRolesRoute) {
-      const edaRoles = edaRolesRoute.children.find((r) => r.path === '');
-      if (edaRoles && 'element' in edaRoles) {
-        edaRoles.element = <PlatformEdaRoles />;
-      }
-      edaRolesRoute.label = undefined;
-      edaRolesRoute.path = 'decisions';
-    }
+
     const edaCredentials = removeNavigationItemById(edaNav, EdaRoute.Credentials)!;
     const edaCredentialTypes = removeNavigationItemById(edaNav, EdaRoute.CredentialTypes)!;
     removeNavigationItemById(edaNav, EdaRoute.Access);
@@ -105,15 +86,7 @@ export function usePlatformNavigation() {
     removeNavigationItemById(hubNav, HubRoute.Teams);
     removeNavigationItemById(hubNav, HubRoute.Users);
     removeNavigationItemById(hubNav, HubRoute.Settings);
-    const hubRouteRoles = removeNavigationItemById(hubNav, HubRoute.Roles);
-    if (hubRouteRoles && 'children' in hubRouteRoles) {
-      const hubRoles = hubRouteRoles.children.find((r) => r.path === '');
-      if (hubRoles && 'element' in hubRoles) {
-        hubRoles.element = <PlatformHubRoles />;
-      }
-      hubRouteRoles.label = undefined;
-      hubRouteRoles.path = 'content';
-    }
+
     // TODO - create token page for all 3 and put in access
     // hubAdministration!.childrenhubNav.push(removeNavigationItemById(hubNav, HubRoute.APIToken)!);
     // const hubApiTokenRoute = removeNavigationItemById(hubNav, HubRoute.APIToken)!;
@@ -167,21 +140,7 @@ export function usePlatformNavigation() {
         organizations,
         teams,
         users,
-        {
-          id: PlatformRoute.Roles,
-          label: t('Roles'),
-          path: 'roles',
-          element: <PlatformRoles />,
-          children: [
-            awxRolesRoute,
-            edaRolesRoute,
-            hubRouteRoles,
-            {
-              path: '',
-              element: <Navigate to="execution" />,
-            },
-          ].filter((r) => r !== undefined) as PageNavigationItem[],
-        },
+        ...roles,
         // awxCredentials,
         // awxCredentialTypes,
         // hubApiTokenRoute,
@@ -336,6 +295,7 @@ export function usePlatformNavigation() {
     organizations,
     teams,
     users,
+    roles,
     resources,
     navigate,
   ]);
