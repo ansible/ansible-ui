@@ -19,11 +19,18 @@ export function PageFormExecutionEnvironmentSelect<
   additionalControls?: ReactElement;
   isRequired?: boolean;
   label?: string;
+  placeholder?: string;
   isDisabled?: boolean;
   // tooltip?: string;
 }) {
-  const { name, organizationId, executionEnvironmentIdPath, executionEnvironmentPath, ...rest } =
-    props;
+  const {
+    name,
+    organizationId,
+    executionEnvironmentIdPath,
+    executionEnvironmentPath,
+    placeholder,
+    ...rest
+  } = props;
   const { t } = useTranslation();
   const selectExecutionEnvironment = useSelectExecutionEnvironments(organizationId ?? undefined);
   const { setValue } = useFormContext();
@@ -34,7 +41,7 @@ export function PageFormExecutionEnvironmentSelect<
       label={props.label ?? t('Execution environment')}
       name={name}
       id="execution-environment-select"
-      placeholder={t('Create execution environment')}
+      placeholder={placeholder ?? t('Create execution environment')}
       labelHelpTitle={t('Execution environment')}
       labelHelp={t('The container image to be used for execution.')}
       selectTitle={t('Select an execution environment')}
