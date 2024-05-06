@@ -50,7 +50,7 @@ export const useProcessSchedule = () => {
   const updateSchedule = usePatchRequest<CreateSchedulePayload, Schedule>();
   return useCallback(
     async (payloadData: StandardizedFormData) => {
-      const { resource, prompt, schedule_days_to_keep, ...rest } = payloadData;
+      const { resource, prompt, schedule_days_to_keep, survey, ...rest } = payloadData;
       const request = (endPoint: string, payload: CreateSchedulePayload) => {
         if (params.schedule_id && params.id) {
           return updateSchedule(awxAPI`/schedules/${params.schedule_id.toString()}/`, {
@@ -71,9 +71,14 @@ export const useProcessSchedule = () => {
       } = prompt || { execution_environment: null, job_tags: '', skip_tags: '' };
       const { type, id } = resource;
       let schedule: Schedule;
+      const extraDataObject: { [key: string]: string } = {};
       const hasJobTags = job_tags && job_tags?.length > 0;
       const hasSkipTags = prompt && prompt?.skip_tags && prompt?.skip_tags?.length > 0;
-      const extraDataObject = schedule_days_to_keep ? { days: schedule_days_to_keep } : {};
+      schedule_days_to_keep && Object.assign(extraDataObject, { days: schedule_days_to_keep });
+      survey &&
+        Object.keys(survey).forEach((k: string) => {
+          extraDataObject[k] = survey[k];
+        });
       const payload = {
         ...rest,
         ...restOfPrompt,
