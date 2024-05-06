@@ -51,8 +51,6 @@ export function CredentialPage() {
           { label: t('Details'), page: AwxRoute.CredentialDetails },
           { label: t('Access'), page: AwxRoute.CredentialAccess },
           { label: t('Job Templates'), page: AwxRoute.CredentialJobTemplates },
-          { label: t('Job Templates'), page: AwxRoute.CredentialJobTemplates },
-          { label: t('Job Templates'), page: AwxRoute.CredentialJobTemplates },
           { label: t('Team Access'), page: AwxRoute.CredentialTeamAccess },
           { label: t('User Access'), page: AwxRoute.CredentialUserAccess },
         ]}
