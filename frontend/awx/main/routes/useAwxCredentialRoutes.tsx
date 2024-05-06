@@ -8,6 +8,10 @@ import { CredentialPage } from '../../access/credentials/CredentialPage/Credenti
 import { Credentials } from '../../access/credentials/Credentials';
 import { AwxRoute } from '../AwxRoutes';
 import { CredentialJobTemplates } from '../../access/credentials/CredentialPage/CredentialJobTemplates';
+import { CredentialAddUsers } from '../../access/credentials/components/CredentialAddUsers';
+import { CredentialAddTeams } from '../../access/credentials/components/CredentialAddTeams';
+import { CredentialTeamAccess } from '../../access/credentials/CredentialPage/CredentialTeamAccess';
+import { CredentialUserAccess } from '../../access/credentials/CredentialPage/CredentialUserAccess';
 
 export function useAwxCredentialRoutes() {
   const { t } = useTranslation();
@@ -47,7 +51,27 @@ export function useAwxCredentialRoutes() {
               path: 'templates',
               element: <CredentialJobTemplates />,
             },
+            {
+              id: AwxRoute.CredentialTeamAccess,
+              path: 'team-access',
+              element: <CredentialTeamAccess />,
+            },
+            {
+              id: AwxRoute.CredentialUserAccess,
+              path: 'user-access',
+              element: <CredentialUserAccess />,
+            },
           ],
+        },
+        {
+          id: AwxRoute.CredentialAddUsers,
+          path: ':id/users/add-users',
+          element: <CredentialAddUsers />,
+        },
+        {
+          id: AwxRoute.CredentialAddTeams,
+          path: ':id/team-access/add-teams',
+          element: <CredentialAddTeams />,
         },
         {
           path: '',

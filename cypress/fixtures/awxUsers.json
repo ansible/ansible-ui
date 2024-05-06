@@ -1,0 +1,417 @@
+{
+  "count": 32,
+  "next": "/api/v2/users/?order_by=username&page=2&page_size=10",
+  "previous": null,
+  "results": [
+    {
+      "id": 1,
+      "type": "user",
+      "url": "/api/v2/users/1/",
+      "related": {
+        "teams": "/api/v2/users/1/teams/",
+        "organizations": "/api/v2/users/1/organizations/",
+        "admin_of_organizations": "/api/v2/users/1/admin_of_organizations/",
+        "projects": "/api/v2/users/1/projects/",
+        "credentials": "/api/v2/users/1/credentials/",
+        "roles": "/api/v2/users/1/roles/",
+        "activity_stream": "/api/v2/users/1/activity_stream/",
+        "access_list": "/api/v2/users/1/access_list/",
+        "tokens": "/api/v2/users/1/tokens/",
+        "authorized_tokens": "/api/v2/users/1/authorized_tokens/",
+        "personal_tokens": "/api/v2/users/1/personal_tokens/"
+      },
+      "summary_fields": {
+        "resource": {
+          "ansible_id": "810ca344-07e3-45e0-b42c-526a71eebc5c",
+          "resource_type": "shared.user"
+        },
+        "user_capabilities": {
+          "edit": true,
+          "delete": true
+        }
+      },
+      "created": "2024-04-30T15:52:46.872456Z",
+      "modified": null,
+      "username": "admin",
+      "first_name": "",
+      "last_name": "",
+      "email": "test@example.com",
+      "is_superuser": true,
+      "is_system_auditor": false,
+      "password": "$encrypted$",
+      "ldap_dn": "",
+      "last_login": null,
+      "external_account": null,
+      "auth": []
+    },
+    {
+      "id": 2,
+      "type": "user",
+      "url": "/api/v2/users/2/",
+      "related": {
+        "teams": "/api/v2/users/2/teams/",
+        "organizations": "/api/v2/users/2/organizations/",
+        "admin_of_organizations": "/api/v2/users/2/admin_of_organizations/",
+        "projects": "/api/v2/users/2/projects/",
+        "credentials": "/api/v2/users/2/credentials/",
+        "roles": "/api/v2/users/2/roles/",
+        "activity_stream": "/api/v2/users/2/activity_stream/",
+        "access_list": "/api/v2/users/2/access_list/",
+        "tokens": "/api/v2/users/2/tokens/",
+        "authorized_tokens": "/api/v2/users/2/authorized_tokens/",
+        "personal_tokens": "/api/v2/users/2/personal_tokens/"
+      },
+      "summary_fields": {
+        "resource": {
+          "ansible_id": "d1db7071-32bf-46a0-b0da-462f962fd650",
+          "resource_type": "shared.user"
+        },
+        "user_capabilities": {
+          "edit": true,
+          "delete": true
+        }
+      },
+      "created": "2024-04-30T15:55:09.698454Z",
+      "modified": null,
+      "username": "ci-sa-user",
+      "first_name": "CI",
+      "last_name": "User",
+      "email": "ci-sa-user@tesing.ansible.com",
+      "is_superuser": true,
+      "is_system_auditor": false,
+      "password": "$encrypted$",
+      "ldap_dn": "",
+      "last_login": null,
+      "external_account": null,
+      "auth": []
+    },
+    {
+      "id": 3,
+      "type": "user",
+      "url": "/api/v2/users/3/",
+      "related": {
+        "teams": "/api/v2/users/3/teams/",
+        "organizations": "/api/v2/users/3/organizations/",
+        "admin_of_organizations": "/api/v2/users/3/admin_of_organizations/",
+        "projects": "/api/v2/users/3/projects/",
+        "credentials": "/api/v2/users/3/credentials/",
+        "roles": "/api/v2/users/3/roles/",
+        "activity_stream": "/api/v2/users/3/activity_stream/",
+        "access_list": "/api/v2/users/3/access_list/",
+        "tokens": "/api/v2/users/3/tokens/",
+        "authorized_tokens": "/api/v2/users/3/authorized_tokens/",
+        "personal_tokens": "/api/v2/users/3/personal_tokens/"
+      },
+      "summary_fields": {
+        "resource": {
+          "ansible_id": "ea10b50b-4f0c-48e1-8764-c8a2f703fa0e",
+          "resource_type": "shared.user"
+        },
+        "user_capabilities": {
+          "edit": true,
+          "delete": false
+        }
+      },
+      "created": "2024-04-30T15:55:15.455548Z",
+      "modified": "2024-05-02T21:28:43.525329Z",
+      "username": "dev",
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "is_superuser": true,
+      "is_system_auditor": false,
+      "password": "$encrypted$",
+      "ldap_dn": "",
+      "last_login": "2024-05-02T21:28:43.525329Z",
+      "external_account": null,
+      "auth": []
+    },
+    {
+      "id": 4,
+      "type": "user",
+      "url": "/api/v2/users/4/",
+      "related": {
+        "teams": "/api/v2/users/4/teams/",
+        "organizations": "/api/v2/users/4/organizations/",
+        "admin_of_organizations": "/api/v2/users/4/admin_of_organizations/",
+        "projects": "/api/v2/users/4/projects/",
+        "credentials": "/api/v2/users/4/credentials/",
+        "roles": "/api/v2/users/4/roles/",
+        "activity_stream": "/api/v2/users/4/activity_stream/",
+        "access_list": "/api/v2/users/4/access_list/",
+        "tokens": "/api/v2/users/4/tokens/",
+        "authorized_tokens": "/api/v2/users/4/authorized_tokens/",
+        "personal_tokens": "/api/v2/users/4/personal_tokens/"
+      },
+      "summary_fields": {
+        "resource": {
+          "ansible_id": "9c8d205b-28af-40bd-b649-510c5de87f65",
+          "resource_type": "shared.user"
+        },
+        "user_capabilities": {
+          "edit": true,
+          "delete": true
+        }
+      },
+      "created": "2024-04-30T15:55:18.051094Z",
+      "modified": null,
+      "username": "e2e",
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "is_superuser": true,
+      "is_system_auditor": false,
+      "password": "$encrypted$",
+      "ldap_dn": "",
+      "last_login": null,
+      "external_account": null,
+      "auth": []
+    },
+    {
+      "id": 22,
+      "type": "user",
+      "url": "/api/v2/users/22/",
+      "related": {
+        "teams": "/api/v2/users/22/teams/",
+        "organizations": "/api/v2/users/22/organizations/",
+        "admin_of_organizations": "/api/v2/users/22/admin_of_organizations/",
+        "projects": "/api/v2/users/22/projects/",
+        "credentials": "/api/v2/users/22/credentials/",
+        "roles": "/api/v2/users/22/roles/",
+        "activity_stream": "/api/v2/users/22/activity_stream/",
+        "access_list": "/api/v2/users/22/access_list/",
+        "tokens": "/api/v2/users/22/tokens/",
+        "authorized_tokens": "/api/v2/users/22/authorized_tokens/",
+        "personal_tokens": "/api/v2/users/22/personal_tokens/"
+      },
+      "summary_fields": {
+        "resource": {
+          "ansible_id": "511656da-9bba-44d7-afd2-36e3843e24a8",
+          "resource_type": "shared.user"
+        },
+        "user_capabilities": {
+          "edit": true,
+          "delete": true
+        }
+      },
+      "created": "2024-04-30T21:15:01.585848Z",
+      "modified": null,
+      "username": "e2e-user-bCSj",
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "is_superuser": false,
+      "is_system_auditor": false,
+      "password": "$encrypted$",
+      "ldap_dn": "",
+      "last_login": null,
+      "external_account": null,
+      "auth": []
+    },
+    {
+      "id": 92,
+      "type": "user",
+      "url": "/api/v2/users/92/",
+      "related": {
+        "teams": "/api/v2/users/92/teams/",
+        "organizations": "/api/v2/users/92/organizations/",
+        "admin_of_organizations": "/api/v2/users/92/admin_of_organizations/",
+        "projects": "/api/v2/users/92/projects/",
+        "credentials": "/api/v2/users/92/credentials/",
+        "roles": "/api/v2/users/92/roles/",
+        "activity_stream": "/api/v2/users/92/activity_stream/",
+        "access_list": "/api/v2/users/92/access_list/",
+        "tokens": "/api/v2/users/92/tokens/",
+        "authorized_tokens": "/api/v2/users/92/authorized_tokens/",
+        "personal_tokens": "/api/v2/users/92/personal_tokens/"
+      },
+      "summary_fields": {
+        "resource": {
+          "ansible_id": "6fad849e-b1b2-4e78-b8d7-ad8408f1d1e2",
+          "resource_type": "shared.user"
+        },
+        "user_capabilities": {
+          "edit": true,
+          "delete": true
+        }
+      },
+      "created": "2024-05-02T18:39:07.123646Z",
+      "modified": null,
+      "username": "e2e-user-cNlR",
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "is_superuser": false,
+      "is_system_auditor": false,
+      "password": "$encrypted$",
+      "ldap_dn": "",
+      "last_login": null,
+      "external_account": null,
+      "auth": []
+    },
+    {
+      "id": 72,
+      "type": "user",
+      "url": "/api/v2/users/72/",
+      "related": {
+        "teams": "/api/v2/users/72/teams/",
+        "organizations": "/api/v2/users/72/organizations/",
+        "admin_of_organizations": "/api/v2/users/72/admin_of_organizations/",
+        "projects": "/api/v2/users/72/projects/",
+        "credentials": "/api/v2/users/72/credentials/",
+        "roles": "/api/v2/users/72/roles/",
+        "activity_stream": "/api/v2/users/72/activity_stream/",
+        "access_list": "/api/v2/users/72/access_list/",
+        "tokens": "/api/v2/users/72/tokens/",
+        "authorized_tokens": "/api/v2/users/72/authorized_tokens/",
+        "personal_tokens": "/api/v2/users/72/personal_tokens/"
+      },
+      "summary_fields": {
+        "resource": {
+          "ansible_id": "5a311daf-b6ac-4eff-94fa-dccfd59eedfe",
+          "resource_type": "shared.user"
+        },
+        "user_capabilities": {
+          "edit": true,
+          "delete": true
+        }
+      },
+      "created": "2024-05-01T18:06:33.116505Z",
+      "modified": null,
+      "username": "e2e-user-jGtx",
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "is_superuser": false,
+      "is_system_auditor": false,
+      "password": "$encrypted$",
+      "ldap_dn": "",
+      "last_login": null,
+      "external_account": null,
+      "auth": []
+    },
+    {
+      "id": 70,
+      "type": "user",
+      "url": "/api/v2/users/70/",
+      "related": {
+        "teams": "/api/v2/users/70/teams/",
+        "organizations": "/api/v2/users/70/organizations/",
+        "admin_of_organizations": "/api/v2/users/70/admin_of_organizations/",
+        "projects": "/api/v2/users/70/projects/",
+        "credentials": "/api/v2/users/70/credentials/",
+        "roles": "/api/v2/users/70/roles/",
+        "activity_stream": "/api/v2/users/70/activity_stream/",
+        "access_list": "/api/v2/users/70/access_list/",
+        "tokens": "/api/v2/users/70/tokens/",
+        "authorized_tokens": "/api/v2/users/70/authorized_tokens/",
+        "personal_tokens": "/api/v2/users/70/personal_tokens/"
+      },
+      "summary_fields": {
+        "resource": {
+          "ansible_id": "dcff9ad2-99d8-4aae-adb4-a8144d58d045",
+          "resource_type": "shared.user"
+        },
+        "user_capabilities": {
+          "edit": true,
+          "delete": true
+        }
+      },
+      "created": "2024-05-01T17:03:43.991052Z",
+      "modified": null,
+      "username": "e2e-user-laWo",
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "is_superuser": false,
+      "is_system_auditor": false,
+      "password": "$encrypted$",
+      "ldap_dn": "",
+      "last_login": null,
+      "external_account": null,
+      "auth": []
+    },
+    {
+      "id": 58,
+      "type": "user",
+      "url": "/api/v2/users/58/",
+      "related": {
+        "teams": "/api/v2/users/58/teams/",
+        "organizations": "/api/v2/users/58/organizations/",
+        "admin_of_organizations": "/api/v2/users/58/admin_of_organizations/",
+        "projects": "/api/v2/users/58/projects/",
+        "credentials": "/api/v2/users/58/credentials/",
+        "roles": "/api/v2/users/58/roles/",
+        "activity_stream": "/api/v2/users/58/activity_stream/",
+        "access_list": "/api/v2/users/58/access_list/",
+        "tokens": "/api/v2/users/58/tokens/",
+        "authorized_tokens": "/api/v2/users/58/authorized_tokens/",
+        "personal_tokens": "/api/v2/users/58/personal_tokens/"
+      },
+      "summary_fields": {
+        "resource": {
+          "ansible_id": "cceb79d2-2e39-4c5d-b0e7-a9a99c163fde",
+          "resource_type": "shared.user"
+        },
+        "user_capabilities": {
+          "edit": true,
+          "delete": true
+        }
+      },
+      "created": "2024-05-01T15:04:44.943349Z",
+      "modified": null,
+      "username": "e2e-user-LoXG",
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "is_superuser": false,
+      "is_system_auditor": false,
+      "password": "$encrypted$",
+      "ldap_dn": "",
+      "last_login": null,
+      "external_account": null,
+      "auth": []
+    },
+    {
+      "id": 27,
+      "type": "user",
+      "url": "/api/v2/users/27/",
+      "related": {
+        "teams": "/api/v2/users/27/teams/",
+        "organizations": "/api/v2/users/27/organizations/",
+        "admin_of_organizations": "/api/v2/users/27/admin_of_organizations/",
+        "projects": "/api/v2/users/27/projects/",
+        "credentials": "/api/v2/users/27/credentials/",
+        "roles": "/api/v2/users/27/roles/",
+        "activity_stream": "/api/v2/users/27/activity_stream/",
+        "access_list": "/api/v2/users/27/access_list/",
+        "tokens": "/api/v2/users/27/tokens/",
+        "authorized_tokens": "/api/v2/users/27/authorized_tokens/",
+        "personal_tokens": "/api/v2/users/27/personal_tokens/"
+      },
+      "summary_fields": {
+        "resource": {
+          "ansible_id": "89e0ed05-bf39-4002-8ffa-1b6768ada896",
+          "resource_type": "shared.user"
+        },
+        "user_capabilities": {
+          "edit": true,
+          "delete": true
+        }
+      },
+      "created": "2024-04-30T21:27:43.109793Z",
+      "modified": null,
+      "username": "e2e-user-marq",
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "is_superuser": false,
+      "is_system_auditor": false,
+      "password": "$encrypted$",
+      "ldap_dn": "",
+      "last_login": null,
+      "external_account": null,
+      "auth": []
+    }
+  ]
+}
