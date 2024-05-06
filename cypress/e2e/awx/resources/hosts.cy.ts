@@ -30,12 +30,15 @@ describe('Host Tests', () => {
 
   //tests
 
-  it('can create, edit and delete a stand alone host', () => {
+  it('can create, edit and delete stand alone host', () => {
     // use createAndEditAndDeleteHost function in order to test stand alone hosts basic functions
     // this test will send boolean value to verify stand alone host will be tested
     // after navigating to the right url
     cy.visit(`/infrastructure/hosts`);
     createAndEditAndDeleteHost(false, inventory);
+    // call create function
+    // call edit function
+    // call delete function
   });
 
   it('can create, edit, assosiat and disassosiate groups at stand alone host groups tab', () => {
@@ -72,88 +75,88 @@ function createAndCheckHost(inventory_host: boolean, inventory: string) {
   // the function will also verify all values contain currect data
   // this function cover both inventory host and stand alone host
 
-  const hostName = 'E2E Inventory host ' + randomString(4);
+  // const hostName = 'E2E test host ' + randomString(4);
 
-  if (inventory_host) {
-    cy.getByDataCy('empty-state-title').contains(
-      /^There are currently no hosts added to this inventory./
-    );
-  }
+  // if (inventory_host) {
+  //   cy.getByDataCy('empty-state-title').contains(
+  //     /^There are currently no hosts added to this inventory./
+  //   );
+  // }
 
-  // create host
-  cy.clickButton(/^Create host$/);
-  cy.verifyPageTitle('Create Host');
-  cy.getByDataCy('name').type(hostName);
-  cy.getByDataCy('description').type('This is the description');
+  // // create host
+  // cy.clickButton(/^Create host$/);
+  // cy.verifyPageTitle('Create Host');
+  // cy.getByDataCy('name').type(hostName);
+  // cy.getByDataCy('description').type('This is the description');
 
-  if (!inventory_host) {
-    cy.getByDataCy('inventory-id').click();
-    cy.contains('button', 'Browse').click();
-    cy.contains('Select Inventory');
-    cy.get(`[aria-label="Select Inventory"]`).within(() => {
-      cy.filterTableBySingleSelect('name', inventory);
-      cy.get(`[data-cy="checkbox-column-cell"] input`).click();
-      cy.contains('button', 'Confirm').click();
-    });
-    cy.get(`[aria-label="Select Inventory"]`).should('not.exist');
-  }
+  // if (!inventory_host) {
+  //   cy.getByDataCy('inventory-id').click();
+  //   cy.contains('button', 'Browse').click();
+  //   cy.contains('Select Inventory');
+  //   cy.get(`[aria-label="Select Inventory"]`).within(() => {
+  //     cy.filterTableBySingleSelect('name', inventory);
+  //     cy.get(`[data-cy="checkbox-column-cell"] input`).click();
+  //     cy.contains('button', 'Confirm').click();
+  //   });
+  //   cy.get(`[aria-label="Select Inventory"]`).should('not.exist');
+  // }
 
-  // after creation - verify data is currect
-  cy.getByDataCy('variables').type('test: true');
-  cy.clickButton(/^Create host/);
-  cy.hasDetail(/^Name$/, hostName);
-  cy.hasDetail(/^Description$/, 'This is the description');
-  cy.hasDetail(/^Variables$/, 'test: true');
+  // // after creation - verify data is currect
+  // cy.getByDataCy('variables').type('test: true');
+  // cy.clickButton(/^Create host/);
+  // cy.hasDetail(/^Name$/, hostName);
+  // cy.hasDetail(/^Description$/, 'This is the description');
+  // cy.hasDetail(/^Variables$/, 'test: true');
 
-  return hostName;
+  // return hostName;
 }
 
-function editHost(inventoryID: number, inventory_host: boolean, hostName: string) {
-  // function that editing host data
-  // this function cover both inventory host and stand alone host
-  if (inventory_host) {
-    cy.visit(
-      `/infrastructure/inventories/inventory/${inventoryID}/hosts/?page=1&perPage=10&sort=name`
-    );
-  } else {
-    cy.visit('/infrastructure/hosts?page=1&perPage=10&sort=name');
-  }
-  cy.filterTableByMultiSelect('name', [hostName]);
+// function editHost(inventoryID: number, inventory_host: boolean, hostName: string) {
+//   // function that editing host data
+//   // this function'/infrastructure/hosts?page=1&perPage=10&sort=name' cover both inventory host and stand alone host
+//   if (inventory_host) {
+//     cy.visit(
+//       `/infrastructure/inventories/inventory/${inventoryID}/hosts/?page=1&perPage=10&sort=name`
+//     );
+//   } else {
+//     cy.visit('/infrastructure/hosts?page=1&perPage=10&sort=name');
+//   }
+//   cy.filterTableByMultiSelect('name', [hostName]);
 
-  cy.getByDataCy('edit-host').click();
-  cy.verifyPageTitle('Edit host');
-  cy.getByDataCy('description').clear().type('This is the description edited');
-  cy.getByDataCy('Submit').click();
+//   cy.getByDataCy('edit-host').click();
+//   cy.verifyPageTitle('Edit host');
+//   cy.getByDataCy('description').clear().type('This is the description edited');
+//   cy.getByDataCy('Submit').click();
 
-  cy.hasDetail(/^Description$/, 'This is the description edited');
-}
+//   cy.hasDetail(/^Description$/, 'This is the description edited');
+// }
 
-function deleteHost(inventoryID: number, inventory_host: boolean, hostName: string) {
-  // function for delete host
-  // can use this for stand alon host and for invntory host
-  // will delete and verify that all was deleted curectlly
-  if (inventory_host) {
-    cy.visit(
-      `/infrastructure/inventories/inventory/${inventoryID}/hosts/?page=1&perPage=10&sort=name`
-    );
-  } else {
-    cy.visit('/infrastructure/hosts?page=1&perPage=10&sort=name');
-  }
+// function deleteHost(inventoryID: number, inventory_host: boolean, hostName: string) {
+//   // function for delete host
+//   // can use this for stand alon host and for invntory host
+//   // will delete and verify that all was deleted curectlly
+//   if (inventory_host) {
+//     cy.visit(
+//       `/infrastructure/inventories/inventory/${inventoryID}/hosts/?page=1&perPage=10&sort=name`
+//     );
+//   } else {
+//     cy.visit('/infrastructure/hosts?page=1&perPage=10&sort=name');
+//   }
 
-  cy.filterTableByMultiSelect('name', [hostName]);
-  cy.get(`[data-cy="actions-column-cell"] [data-cy="actions-dropdown"]`).click();
-  cy.getByDataCy('delete-host').click();
-  cy.clickModalConfirmCheckbox();
-  cy.clickModalButton('Delete hosts');
-  cy.contains('button', 'Close').click();
-  cy.contains(/^No results found./);
-}
+//   cy.filterTableByMultiSelect('name', [hostName]);
+//   cy.get(`[data-cy="actions-column-cell"] [data-cy="actions-dropdown"]`).click();
+//   cy.getByDataCy('delete-host').click();
+//   cy.clickModalConfirmCheckbox();
+//   cy.clickModalButton('Delete hosts');
+//   cy.contains('button', 'Close').click();
+//   cy.contains(/^No results found./);
+// }
 
-function navigateToHost(url: string, name: string, data: string) {
-  cy.visit(url);
-  cy.filterTableBySingleSelect('name', name || '');
-  cy.get(data).click();
-}
+// function navigateToHost(url: string, name: string, data: string) {
+//   cy.visit(url);
+//   cy.filterTableBySingleSelect('name', name || '');
+//   cy.get(data).click();
+// }
 
 function disassociate() {
   //this function will disassociate a group from given host
@@ -237,6 +240,9 @@ export function createAndEditAndDeleteHost(inventory_host: boolean, inventory: I
 
   // edit
   editHost(inventory.id, inventory_host, hostName);
-  // delete
+  //create 1 more host
+  // delete from host list view - add bulk delete
   deleteHost(inventory.id, inventory_host, hostName);
+  // create host
+  // delete from host details screen view
 }

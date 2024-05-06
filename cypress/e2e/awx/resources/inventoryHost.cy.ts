@@ -36,7 +36,7 @@ describe('Inventory Host Tab Tests', () => {
     cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
   });
 
-  it('can create, edit and delete a inventory host', () => {
+  it('can create, edit and delete inventory host', () => {
     // use createAndEditAndDeleteHost function in order to test inventory hosts basic functions
     // this test will send boolean value to verify inventory host will be tested
     // after navigating to the right url
