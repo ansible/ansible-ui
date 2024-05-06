@@ -21,6 +21,7 @@ import { PlatformTeam } from '../../../interfaces/PlatformTeam';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
 import { PageFormPlatformOrganizationSelect } from '../../organizations/components/PageFormPlatformOrganizationSelect';
 import { PageFormPlatformUsersSelect } from '../../users/components/PageFormPlatformUsersSelect';
+import { usePlatformActiveUser } from '../../../main/PlatformActiveUserProvider';
 
 export function CreatePlatformTeam() {
   const { t } = useTranslation();
@@ -87,14 +88,16 @@ export function EditPlatformTeam() {
         onCancel={() => navigate(-1)}
         defaultValue={team}
       >
-        <PlatformTeamInputs />
+        <PlatformTeamInputs isEditMode />
       </PageForm>
     </PageLayout>
   );
 }
 
-function PlatformTeamInputs() {
+function PlatformTeamInputs(props: { isEditMode?: boolean }) {
   const { t } = useTranslation();
+  const { activePlatformUser } = usePlatformActiveUser();
+  const { isEditMode } = props;
   return (
     <>
       <PageFormTextInput<PlatformTeam>
@@ -108,7 +111,17 @@ function PlatformTeamInputs() {
         name="description"
         placeholder={t('Enter description')}
       />
-      <PageFormPlatformOrganizationSelect name="organization" isRequired />
+      <PageFormPlatformOrganizationSelect
+        name="organization"
+        isRequired
+        isDisabled={
+          !isEditMode || activePlatformUser?.is_superuser
+            ? undefined
+            : t(
+                'You do not have permission to edit the organization. Please contact your system administrator if there is an issue with your access.'
+              )
+        }
+      />
       <PageFormSection singleColumn>
         <PageFormPlatformUsersSelect name="users" />
       </PageFormSection>

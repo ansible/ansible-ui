@@ -85,7 +85,6 @@ export function PlatformOrganizationList() {
         }
         {...view}
         defaultSubtitle={t('Organization')}
-        defaultTableView="cards"
       />
     </PageLayout>
   );
