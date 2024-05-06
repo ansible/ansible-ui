@@ -116,7 +116,7 @@ export function NodeEditWizard({ node }: { node: GraphNode }) {
       },
     },
     {
-      id: 'nodeSurveyStep',
+      id: 'survey',
       label: t('Survey'),
       inputs: <SurveyStep singleColumn />,
       hidden: (wizardData: Partial<WizardFormValues>) => {
@@ -148,7 +148,9 @@ export function NodeEditWizard({ node }: { node: GraphNode }) {
       node_days_to_keep,
       launch_config,
       prompt,
+      survey,
     } = formValues;
+
     const promptValues = prompt;
 
     if (promptValues) {
@@ -195,6 +197,7 @@ export function NodeEditWizard({ node }: { node: GraphNode }) {
         },
       },
       launch_data: promptValues,
+      survey_data: survey,
     };
 
     if (node_type !== RESOURCE_TYPE.workflow_approval) {
