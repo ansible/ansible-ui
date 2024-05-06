@@ -2,7 +2,6 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router-dom';
 import { PageNavigationItem } from '../../../../framework';
-import { PageNotImplemented } from '../../../../framework/PageEmptyStates/PageNotImplemented';
 import { CreateOrganization, EditOrganization } from '../../access/organizations/OrganizationForm';
 import { OrganizationAccess } from '../../access/organizations/OrganizationPage/OrganizationAccess';
 import { OrganizationDetails } from '../../access/organizations/OrganizationPage/OrganizationDetails';
@@ -11,6 +10,7 @@ import { OrganizationTeams } from '../../access/organizations/OrganizationPage/O
 import { Organizations } from '../../access/organizations/Organizations';
 import { AwxRoute } from '../AwxRoutes';
 import { ResourceNotifications } from '../../resources/notifications/ResourceNotifications';
+import { OrganizationExecutionEnvironments } from '../../access/organizations/OrganizationPage/OrganizationExecutionEnvironments';
 
 export function useAwxOrganizationRoutes() {
   const { t } = useTranslation();
@@ -53,7 +53,7 @@ export function useAwxOrganizationRoutes() {
             {
               id: AwxRoute.OrganizationExecutionEnvironments,
               path: 'execution-environments',
-              element: <PageNotImplemented />,
+              element: <OrganizationExecutionEnvironments />,
             },
             {
               id: AwxRoute.OrganizationNotifications,

@@ -109,3 +109,7 @@ tr.selected:hover {
 .pf-v5-c-dropdown__toggle-image {
   margin-inline-start: 8px;
 }
+
+:root:where(.pf-v5-theme-dark) .pf-topology-content {
+  background: var(--pf-topology-visualization-surface--BackgroundColor);
+}
