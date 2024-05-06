@@ -89,8 +89,31 @@ describe('Credentials.cy.ts', () => {
       }
     );
     cy.intercept(
-      { method: 'GET', url: edaAPI`/activations/?eda_credential_id=100` },
-      { count: 0, next: null, previous: null, page_size: 20, page: 1, results: [] }
+      { method: 'GET', url: edaAPI`/eda-credentials/100/?refs=true` },
+      {
+        id: 100,
+        name: 'Credential 100 ',
+        description: '',
+        managed: false,
+        inputs: {
+          username: '',
+        },
+        credential_type: {
+          id: 1,
+          name: 'Source Control',
+          namespace: 'scm',
+          kind: 'scm',
+          organization_id: 1,
+        },
+        organization: {
+          id: 1,
+          name: 'Default',
+          description: 'The default organization',
+        },
+        references: [],
+        created_at: '2024-04-30T13:19:12.199040Z',
+        modified_at: '2024-04-30T13:19:12.199050Z',
+      }
     );
     cy.get('[data-cy="checkbox-column-cell"]').first().click();
     cy.get('[data-cy="actions-dropdown"]').first().click();
@@ -117,35 +140,37 @@ describe('Credentials.cy.ts', () => {
       }
     );
     cy.intercept(
-      { method: 'GET', url: edaAPI`/activations/?eda_credential_id=100` },
+      { method: 'GET', url: edaAPI`/eda-credentials/100/?refs=true` },
       {
-        count: 1,
-        next: null,
-        previous: null,
-        page_size: 20,
-        page: 1,
-        results: [
+        id: 4,
+        name: 'Credential 100',
+        description: '',
+        managed: false,
+        inputs: {
+          username: '',
+        },
+        credential_type: {
+          id: 1,
+          name: 'Source Control',
+          namespace: 'scm',
+          kind: 'scm',
+          organization_id: 1,
+        },
+        organization: {
+          id: 1,
+          name: 'Default',
+          description: 'The default organization',
+        },
+        references: [
           {
-            id: 1,
-            name: 'Activation with credential',
-            description: '',
-            is_enabled: true,
-            status: 'failed',
-            decision_environment_id: 11,
-            project_id: 4,
-            rulebook_id: 28,
-            extra_var_id: null,
-            restart_policy: 'on-failure',
-            restart_count: 0,
-            rulebook_name: 'basic_short.yml',
-            current_job_id: null,
-            rules_count: 0,
-            rules_fired_count: 0,
-            created_at: '2023-11-16T20:22:48.755916Z',
-            modified_at: '2023-11-16T20:22:51.382540Z',
-            status_message: 'Activation has failed',
+            type: 'Project',
+            id: 5,
+            name: 'test 1',
+            url: 'api/eda/v1/projects/5/',
           },
         ],
+        created_at: '2024-04-30T05:48:03.511897Z',
+        modified_at: '2024-04-30T05:48:03.511906Z',
       }
     );
     cy.get('[data-cy="checkbox-column-cell"]').first().click();
