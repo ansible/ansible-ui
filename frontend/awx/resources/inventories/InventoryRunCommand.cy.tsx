@@ -34,7 +34,7 @@ describe('Run command wizard', () => {
   });
   it('reveiw step has correct values', () => {
     cy.mount(<InventoryRunCommand />);
-    cy.selectDropdownOptionByResourceName('module', 'shell');
+    cy.selectDropdownOptionByResourceName('module-name', 'shell');
     cy.getByDataCy('module-args-form-group').type('argument');
     cy.selectDropdownOptionByResourceName('verbosity', '1 (Verbose)');
     cy.getByDataCy('limit-form-group').within(() => {

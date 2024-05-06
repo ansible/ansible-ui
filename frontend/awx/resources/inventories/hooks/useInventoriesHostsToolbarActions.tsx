@@ -65,7 +65,10 @@ export function useInventoriesHostsToolbarActions(view: IAwxView<AwxHost>) {
       variant: ButtonVariant.secondary,
       isPinned: true,
       label: t('Run Command'),
-      onClick: () => pageNavigate(AwxRoute.Inventories),
+      onClick: () =>
+        pageNavigate(AwxRoute.InventoryRunCommand, {
+          params: { inventory_type: params.inventory_type, id: params.id },
+        }),
       isDisabled: () =>
         canRunAdHocCommand
           ? undefined
