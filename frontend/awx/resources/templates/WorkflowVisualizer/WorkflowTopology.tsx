@@ -230,26 +230,28 @@ export const WorkflowTopology = ({ data: { workflowNodes = [], template } }: Top
                 contextToolbar={isFullScreen ? null : <ToolbarHeader />}
                 viewToolbar={<WorkflowVisualizerToolbar />}
                 controlBar={
-                  <TopologyControlBar
-                    controlButtons={createTopologyControlButtons({
-                      ...defaultControlButtonsOptions,
-                      zoomInCallback: action(() => {
-                        visualization.getGraph().scaleBy(4 / 3);
-                      }),
-                      zoomOutCallback: action(() => {
-                        visualization.getGraph().scaleBy(0.75);
-                      }),
-                      fitToScreenCallback: action(() => {
-                        visualization.getGraph().fit(80);
-                      }),
-                      resetViewCallback: action(() => {
-                        visualization.getGraph().reset();
-                        visualization.getGraph().layout();
-                      }),
-                      legend: true,
-                      legendCallback: toggleLegend,
-                    })}
-                  />
+                  !isEmpty && (
+                    <TopologyControlBar
+                      controlButtons={createTopologyControlButtons({
+                        ...defaultControlButtonsOptions,
+                        zoomInCallback: action(() => {
+                          visualization.getGraph().scaleBy(4 / 3);
+                        }),
+                        zoomOutCallback: action(() => {
+                          visualization.getGraph().scaleBy(0.75);
+                        }),
+                        fitToScreenCallback: action(() => {
+                          visualization.getGraph().fit(80);
+                        }),
+                        resetViewCallback: action(() => {
+                          visualization.getGraph().reset();
+                          visualization.getGraph().layout();
+                        }),
+                        legend: true,
+                        legendCallback: toggleLegend,
+                      })}
+                    />
+                  )
                 }
                 sideBarOpen={sidebarMode !== undefined}
                 sideBarResizable
