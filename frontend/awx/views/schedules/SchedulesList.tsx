@@ -43,8 +43,8 @@ export function SchedulesList(props: { sublistEndpoint?: string }) {
   const createUrl = useGetSchedulCreateUrl(apiEndPoint);
   const toolbarActions = useScheduleToolbarActions(view.unselectItemsAndRefresh, apiEndPoint);
   const rowActions = useSchedulesActions({
-    onScheduleDeleteCompleted: () => void view.refresh(),
-    onScheduleToggleCompleted: () => void view.refresh(),
+    onScheduleDeleteCompleted: view.unselectItemsAndRefresh,
+    onScheduleToggleCompleted: view.updateItem,
     sublistEndpoint: apiEndPoint,
   });
   return (

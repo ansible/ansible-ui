@@ -18,8 +18,8 @@ import { useDeleteSchedules } from './useDeleteSchedules';
 import { schedulePageUrl } from '../types';
 
 export function useSchedulesActions(options: {
-  onScheduleDeleteCompleted: () => void;
-  onScheduleToggleCompleted: () => void;
+  onScheduleDeleteCompleted: (schedules: Schedule[]) => void;
+  onScheduleToggleCompleted: (schedule: Schedule) => void;
   sublistEndpoint?: string;
 }) {
   const { t } = useTranslation();
@@ -28,8 +28,11 @@ export function useSchedulesActions(options: {
   const canCreateSchedule = Boolean(data && data.actions && data.actions['POST']);
   const handleToggleSchedule: (schedule: Schedule, enabled: boolean) => Promise<void> = useCallback(
     async (schedule, enabled) => {
-      await requestPatch<Schedule>(awxAPI`/schedules/${schedule.id.toString()}/`, { enabled });
-      options.onScheduleToggleCompleted();
+      const patchedSchedule = await requestPatch<Schedule>(
+        awxAPI`/schedules/${schedule.id.toString()}/`,
+        { enabled }
+      );
+      options.onScheduleToggleCompleted(patchedSchedule);
     },
     [options]
   );
