@@ -1,5 +1,5 @@
 import { ExecutionEnvironment } from './ExecutionEnvironment';
-import { Inventory } from './Inventory';
+import { SummaryFieldInventory } from './summary-fields/summary-fields';
 
 export interface WorkflowNode {
   id: number;
@@ -49,14 +49,14 @@ export interface WorkflowNode {
         | 'system_job';
       timeout?: number;
     };
-    inventory: Inventory;
+    inventory: SummaryFieldInventory;
     execution_environment: ExecutionEnvironment;
   };
   created: string;
   modified: string;
   extra_data: {
     days?: number;
-    [key: string]: string | number | boolean | undefined;
+    [key: string]: string | number | undefined;
   };
   inventory: null;
   scm_branch: null;
