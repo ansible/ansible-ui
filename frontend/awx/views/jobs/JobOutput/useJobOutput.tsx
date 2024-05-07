@@ -159,7 +159,7 @@ export function useJobOutput(
     setJobEvents({});
   }, [filterState]);
 
-  return { jobEventCount, getJobOutputEvent, queryJobOutputEvent };
+  return { jobEventCount, getJobOutputEvent, queryJobOutputEvent, jobEvents };
 }
 
 function getFiltersQueryString(toolbarFilters: IToolbarFilter[], filterState: IFilterState) {
