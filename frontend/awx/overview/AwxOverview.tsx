@@ -30,7 +30,7 @@ export function AwxOverview() {
   function renderCustomizeControls() {
     return (
       <Button icon={<CogIcon />} variant="link" onClick={openManageDashboard}>
-        Manage view
+        {t('Manage view')}
       </Button>
     );
   }
