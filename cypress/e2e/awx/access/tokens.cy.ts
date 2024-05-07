@@ -63,4 +63,13 @@ describe('User Tokens Actions', () => {
     //Assert the presence of both tokens
     //After deletion, assert the deletion by intercepting the API response
   });
+
+  it.skip('can verify that a user is only able to view tokens tab on their own user details page', () => {
+    //Use a token created in beforeEach hook
+    //Use the user created in the beforeEach hook
+    //Assert the navigation to the user's details tab
+    //Assert the navigation to the tokens tab of the logged in user
+    //Navigate to the details page for the other user from the beforeEach hook
+    //Assert that the tokens tab for that user is not visible
+  });
 });
