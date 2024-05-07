@@ -15,6 +15,7 @@ import { InventorySource } from '../../frontend/awx/interfaces/InventorySource';
 import { Job } from '../../frontend/awx/interfaces/Job';
 import { JobEvent } from '../../frontend/awx/interfaces/JobEvent';
 import { JobTemplate } from '../../frontend/awx/interfaces/JobTemplate';
+import { Spec as SurveySpec } from '../../frontend/awx/interfaces/Survey';
 import { Label } from '../../frontend/awx/interfaces/Label';
 import { NotificationTemplate } from '../../frontend/awx/interfaces/NotificationTemplate';
 import { Organization } from '../../frontend/awx/interfaces/Organization';
@@ -741,6 +742,14 @@ declare global {
           'organization' | 'project' | 'inventory'
         >
       ): Chainable<JobTemplate>;
+
+      createTemplateSurvey(
+        template: JobTemplate | WorkflowJobTemplate,
+        survey: SetOptional<
+          SurveySpec & { label: string },
+          'required' | 'min' | 'max' | 'new_question' | 'choices'
+        >
+      ): Chainable<void>;
 
       /**
        * `createAwxApplication` creates an AWX Application via API,
