@@ -76,7 +76,7 @@ export function TemplateSurveyForm(props: IProps) {
       { params: { id } }
     );
 
-  if (!questionVariable) pageNavigateSurveyRoute();
+  if (!questionVariable && mode !== 'add') pageNavigateSurveyRoute();
 
   const {
     error,
@@ -159,12 +159,13 @@ export function TemplateSurveyForm(props: IProps) {
       return;
     }
 
-    const defaultValue =
-      newQuestion.type === 'integer'
+    const defaultValue = newQuestion.default
+      ? newQuestion.type === 'integer'
         ? Number(newQuestion.default)
         : newQuestion.type === 'float'
           ? parseFloat(newQuestion.default.toString())
-          : newQuestion?.default?.toString();
+          : newQuestion?.default?.toString()
+      : '';
 
     let question: Spec = {
       max: Number(newQuestion.max),
