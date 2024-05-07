@@ -5,6 +5,10 @@ import {
   EdaControllerTokenCreate,
 } from '../../frontend/eda/interfaces/EdaControllerToken';
 import { EdaCredential, EdaCredentialCreate } from '../../frontend/eda/interfaces/EdaCredential';
+import {
+  EdaCredentialType,
+  EdaCredentialTypeCreate,
+} from '../../frontend/eda/interfaces/EdaCredentialType';
 import { EdaDecisionEnvironment } from '../../frontend/eda/interfaces/EdaDecisionEnvironment';
 import { EdaProject } from '../../frontend/eda/interfaces/EdaProject';
 import { EdaResult } from '../../frontend/eda/interfaces/EdaResult';
@@ -242,10 +246,14 @@ Cypress.Commands.add('pollEdaResults', (url: string) => {
 });
 
 Cypress.Commands.add('createEdaCredential', () => {
-  cy.requestPost<EdaCredentialCreate>(edaAPI`/credentials/`, {
+  cy.requestPost<EdaCredentialCreate>(edaAPI`/eda-credentials/`, {
     name: 'E2E Credential ' + randomString(4),
     credential_type_id: 1,
     description: 'This is a container registry credential',
+    inputs: {
+      username: 'username',
+      password: 'password',
+    },
   }).then((edaCredential) => {
     Cypress.log({
       displayName: 'EDA CREDENTIAL CREATION :',
@@ -256,7 +264,7 @@ Cypress.Commands.add('createEdaCredential', () => {
 });
 
 Cypress.Commands.add('deleteEdaCredential', (credential: EdaCredential) => {
-  cy.requestDelete(edaAPI`/credentials/${credential.id.toString()}/?force=true`, {
+  cy.requestDelete(edaAPI`/eda-credentials/${credential.id.toString()}/?force=true`, {
     failOnStatusCode: false,
   }).then(() => {
     Cypress.log({
@@ -266,8 +274,41 @@ Cypress.Commands.add('deleteEdaCredential', (credential: EdaCredential) => {
   });
 });
 
+Cypress.Commands.add('createEdaCredentialType', () => {
+  cy.requestPost<EdaCredentialTypeCreate>(edaAPI`/credential-types/`, {
+    name: 'E2E Credential Type' + randomString(4),
+    inputs: {
+      fields: [
+        {
+          id: 'username', // Unique identifier for the field
+          label: 'Username', // User-friendly label
+          type: 'string', // Data type expected (string, password, etc.)
+        },
+      ],
+    },
+    description: 'This is a credential type',
+  }).then((edaCredentialType) => {
+    Cypress.log({
+      displayName: 'EDA CREDENTIAL CREATION :',
+      message: [`Created 👉  ${edaCredentialType.name}`],
+    });
+    return edaCredentialType;
+  });
+});
+
+Cypress.Commands.add('deleteEdaCredentialType', (delete_cred_type: EdaCredentialType) => {
+  cy.requestDelete(edaAPI`/credential-types/${delete_cred_type.id.toString()}/?force=true`, {
+    failOnStatusCode: false,
+  }).then(() => {
+    Cypress.log({
+      displayName: 'EDA CREDENTIAL DELETION :',
+      message: [`Deleted 👉  ${delete_cred_type.name}`],
+    });
+  });
+});
+
 Cypress.Commands.add('getEdaCredentialByName', (edaCredentialName: string) => {
-  cy.requestGet<EdaResult<EdaCredential>>(edaAPI`/credentials/?name=${edaCredentialName}`).then(
+  cy.requestGet<EdaResult<EdaCredential>>(edaAPI`/eda-credentials/?name=${edaCredentialName}`).then(
     (result) => {
       if (Array.isArray(result?.results) && result.results.length === 1) {
         return result.results[0];
@@ -276,6 +317,18 @@ Cypress.Commands.add('getEdaCredentialByName', (edaCredentialName: string) => {
       }
     }
   );
+});
+
+Cypress.Commands.add('getEdaCredentialTypeByName', (edaCredentialTypeName: string) => {
+  cy.requestGet<EdaResult<EdaCredentialType>>(
+    edaAPI`/credential-types/?name=${edaCredentialTypeName}`
+  ).then((result) => {
+    if (Array.isArray(result?.results) && result.results.length === 1) {
+      return result.results[0];
+    } else {
+      return undefined;
+    }
+  });
 });
 
 // Updated to use new /role_definitions endpoint for EDA RBAC
