@@ -12,7 +12,7 @@ describe('EDA Credentials List', () => {
     cy.verifyPageTitle('Credentials');
   });
 
-  it.skip('renders the Credentials details page and shows expected information', () => {
+  it('renders the Credentials details page and shows expected information', () => {
     cy.createEdaCredential().then((edaCredential) => {
       cy.navigateTo('eda', 'credentials');
       cy.clickTableRow(edaCredential.name);
@@ -23,7 +23,7 @@ describe('EDA Credentials List', () => {
     });
   });
 
-  it.skip('can filter the Credentials list based on Name', () => {
+  it('can filter the Credentials list based on Name', () => {
     cy.createEdaCredential().then((edaCredential) => {
       cy.navigateTo('eda', 'credentials');
       cy.filterTableByText(edaCredential.name);
@@ -32,7 +32,7 @@ describe('EDA Credentials List', () => {
     });
   });
 
-  it.skip('can bulk delete Credentials from the Credentials list', () => {
+  it('can bulk delete Credentials from the Credentials list', () => {
     cy.createEdaCredential().then((edaCredential) => {
       cy.createEdaCredential().then((testCredential) => {
         cy.navigateTo('eda', 'credentials');
@@ -40,10 +40,10 @@ describe('EDA Credentials List', () => {
         cy.clearAllFilters();
         cy.selectTableRow(testCredential.name);
         cy.clickToolbarKebabAction('delete-selected-credentials');
-        cy.intercept('DELETE', edaAPI`/credentials/${edaCredential.id.toString()}/`).as(
+        cy.intercept('DELETE', edaAPI`/eda-credentials/${edaCredential.id.toString()}/`).as(
           'edaCredential'
         );
-        cy.intercept('DELETE', edaAPI`/credentials/${testCredential.id.toString()}/`).as(
+        cy.intercept('DELETE', edaAPI`/eda-credentials/${testCredential.id.toString()}/`).as(
           'testCredential'
         );
         cy.clickModalConfirmCheckbox();
