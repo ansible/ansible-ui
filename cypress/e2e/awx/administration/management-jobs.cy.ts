@@ -1,6 +1,6 @@
 import { SystemJobTemplate } from '../../../../frontend/awx/interfaces/SystemJobTemplate';
 
-describe('Management Jobs - List, Launch ', () => {
+describe('Management Jobs Page - List and Launch Jobs', () => {
   beforeEach(() => {
     cy.awxLogin();
   });
@@ -88,7 +88,7 @@ describe('Management Jobs - List, Launch ', () => {
   const managementJobsWithModal = ['Cleanup Activity Stream', 'Cleanup Job Details'];
   const rententionDays = '4';
   managementJobsWithModal.forEach((jobName) => {
-    it(`admin can launch management job: ${jobName}`, () => {
+    it(`admin can launch management job: ${jobName} with retention days`, () => {
       cy.intercept('GET', 'api/v2/system_job_templates/?order_by=name&page=1&page_size=10').as(
         'getManagementJobsListPage'
       );
