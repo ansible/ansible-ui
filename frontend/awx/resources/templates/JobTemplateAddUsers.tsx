@@ -112,7 +112,7 @@ export function JobTemplateAddUsers() {
           postRequest(awxAPI`/role_user_assignments/`, {
             user: user.id,
             role_definition: role.id,
-            content_type: 'job_template',
+            content_type: 'jobtemplate',
             object_id: template.id,
           }),
         onComplete: () => {
