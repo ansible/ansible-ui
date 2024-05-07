@@ -13,12 +13,13 @@ export function AwxSelectRolesStep(props: {
   contentType?: string;
   fieldNameForPreviousStep?: string;
   descriptionForRoleSelection?: string;
+  title?: string;
 }) {
   const toolbarFilters = useAwxRolesFilters();
   const { t } = useTranslation();
   const { wizardData } = usePageWizard();
   const { resourceType } = wizardData as { [key: string]: unknown };
-  const { fieldNameForPreviousStep } = props;
+  const { fieldNameForPreviousStep, title } = props;
 
   const contentType = useMemo(() => {
     return props.contentType ? props.contentType : (resourceType as string)?.split('.').pop() ?? '';
@@ -92,6 +93,7 @@ export function AwxSelectRolesStep(props: {
       toolbarFilters={toolbarFilters}
       fieldNameForPreviousStep={fieldNameForPreviousStep}
       descriptionForRoleSelection={descriptionForRoleSelection}
+      title={title}
     />
   );
 }
