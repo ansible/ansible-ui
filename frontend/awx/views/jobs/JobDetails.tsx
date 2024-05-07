@@ -31,52 +31,64 @@ export function JobDetails() {
   return (
     <PageDetails>
       <PageDetailsFromColumns columns={columns} item={job} />
-      {job.playbook && <PageDetail label={t('Playbook')}>{job.playbook}</PageDetail>}
-      {job.summary_fields.project_update?.status && (
-        <PageDetail label={t('Project update status')}>
-          <StatusCell
-            status={job.summary_fields.project_update?.status}
-            to={`/jobs/project_update/${job.summary_fields.project_update?.id}`}
-          />
-        </PageDetail>
-      )}
-      {job.scm_revision && <PageDetail label={t('Revision')}>{job.scm_revision}</PageDetail>}
-      {job.controller_node && (
-        <PageDetail label={t('Controller node')}>{job.controller_node}</PageDetail>
-      )}
+      <PageDetail isEmpty={!job.playbook} label={t('Playbook')}>
+        {job.playbook}
+      </PageDetail>
+      <PageDetail
+        isEmpty={!job.summary_fields.project_update?.status}
+        label={t('Project update status')}
+      >
+        <StatusCell
+          status={job.summary_fields.project_update?.status}
+          to={`/jobs/project_update/${job.summary_fields.project_update?.id}`}
+        />
+      </PageDetail>
+      <PageDetail isEmpty={!job.scm_revision} label={t('Revision')}>
+        {job.scm_revision}
+      </PageDetail>
+      <PageDetail isEmpty={!job.controller_node} label={t('Controller node')}>
+        {job.controller_node}
+      </PageDetail>
       <ExecutionEnvironmentDetail
         executionEnvironment={job.summary_fields.execution_environment}
         verifyMissingVirtualEnv={false}
       />
-      {job.execution_node && (
-        <PageDetail label={t('Execution node')}>{job.execution_node}</PageDetail>
-      )}
-      {job.summary_fields.instance_group &&
-        !job.summary_fields.instance_group?.is_container_group && (
-          <PageDetail label={t('Instance group')}>
-            <Link
-              to={getPageUrl(AwxRoute.InstanceGroupDetails, {
-                params: { id: job.summary_fields?.instance_group?.id },
-              })}
-            >
-              {job.summary_fields?.instance_group?.name}
-            </Link>
-          </PageDetail>
-        )}
-      {job.summary_fields.instance_group?.is_container_group && (
-        <PageDetail label={t('Container group')}>
-          <Link
-            to={getPageUrl(AwxRoute.InstanceGroupDetails, {
-              params: { id: job.summary_fields?.instance_group?.id },
-            })}
-          >
-            {job.summary_fields?.instance_group?.name}
-          </Link>
-        </PageDetail>
-      )}
-      {job.forks ? <PageDetail label={t('Forks')}>{job.forks}</PageDetail> : null}
-      {job.timeout ? <PageDetail label={t('Timeout')}>{job.timeout}</PageDetail> : null}
-      {job.verbosity ? <PageDetail label={t('Verbosity')}>{job.verbosity}</PageDetail> : null}
+      <PageDetail isEmpty={!job.execution_node} label={t('Execution node')}>
+        {job.execution_node}
+      </PageDetail>
+      <PageDetail
+        isEmpty={!job.summary_fields.instance_group?.is_container_group}
+        label={t('Instance group')}
+      >
+        <Link
+          to={getPageUrl(AwxRoute.InstanceGroupDetails, {
+            params: { id: job.summary_fields?.instance_group?.id },
+          })}
+        >
+          {job.summary_fields?.instance_group?.name}
+        </Link>
+      </PageDetail>
+      <PageDetail
+        isEmpty={!job.summary_fields.instance_group?.is_container_group}
+        label={t('Container group')}
+      >
+        <Link
+          to={getPageUrl(AwxRoute.InstanceGroupDetails, {
+            params: { id: job.summary_fields?.instance_group?.id },
+          })}
+        >
+          {job.summary_fields?.instance_group?.name}
+        </Link>
+      </PageDetail>
+      <PageDetail isEmpty={!job.forks} label={t('Forks')}>
+        {job.forks}
+      </PageDetail>
+      <PageDetail isEmpty={!job.timeout} label={t('Timeout')}>
+        {job.timeout}
+      </PageDetail>
+      <PageDetail isEmpty={!job.verbosity} label={t('Verbosity')}>
+        {job.verbosity}
+      </PageDetail>
       <PageDetail label={t('Job tags')} isEmpty={!job.job_tags}>
         <LabelGroup>
           {job.job_tags?.split(',')?.map((tag) => <Label key={tag}>{tag}</Label>)}
@@ -90,30 +102,26 @@ export function JobDetails() {
       <PageDetail label={t('Module arguments')} isEmpty={!job.module_args}>
         {job.module_args}
       </PageDetail>
-      {job.summary_fields?.created_by?.username && (
-        <PageDetail label={t('Created by')}>
-          <DateTimeCell
-            value={job.created}
-            author={job.summary_fields.created_by?.username}
-            onClick={() =>
-              pageNavigate(AwxRoute.UserDetails, {
-                params: { id: job.summary_fields?.created_by?.id },
-              })
-            }
-          />
-        </PageDetail>
-      )}
-      {job.modified && (
-        <LastModifiedPageDetail
-          value={job.modified}
-          author={job.summary_fields?.modified_by?.username}
+      <PageDetail isEmpty={!job.summary_fields?.created_by?.username} label={t('Created by')}>
+        <DateTimeCell
+          value={job.created}
+          author={job.summary_fields.created_by?.username}
           onClick={() =>
             pageNavigate(AwxRoute.UserDetails, {
-              params: { id: job.summary_fields?.modified_by?.id },
+              params: { id: job.summary_fields?.created_by?.id },
             })
           }
         />
-      )}
+      </PageDetail>
+      <LastModifiedPageDetail
+        value={job.modified}
+        author={job.summary_fields?.modified_by?.username}
+        onClick={() =>
+          pageNavigate(AwxRoute.UserDetails, {
+            params: { id: job.summary_fields?.modified_by?.id },
+          })
+        }
+      />
       <PageDetailCodeEditor
         label={t`Extra Variables`}
         showCopyToClipboard
