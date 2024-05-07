@@ -76,7 +76,7 @@ export function TemplateSurveyForm(props: IProps) {
       { params: { id } }
     );
 
-  if (!questionVariable) pageNavigateSurveyRoute();
+  if (!questionVariable && mode !== 'add') pageNavigateSurveyRoute();
 
   const {
     error,
@@ -138,19 +138,34 @@ export function TemplateSurveyForm(props: IProps) {
     new_question: !question,
   };
 
-  const onSubmit: PageFormSubmitHandler<FormSpec> = async (newQuestion, setError) => {
+  const onSubmit: PageFormSubmitHandler<FormSpec & { 'add-choice'?: string }> = async (
+    newQuestion,
+    setError,
+    setFieldError
+  ) => {
     const updatedSurvey = {
       name: survey?.name ?? '',
       description: survey?.description ?? '',
       spec: survey?.spec ?? [],
     };
 
-    const defaultValue =
-      newQuestion.type === 'integer'
+    if (
+      ['multiplechoice', 'multiselect'].includes(newQuestion.type) &&
+      !newQuestion.formattedChoices?.length
+    ) {
+      setFieldError('add-choice', {
+        message: t`Multiple choices require at least one answer.`,
+      });
+      return;
+    }
+
+    const defaultValue = newQuestion.default
+      ? newQuestion.type === 'integer'
         ? Number(newQuestion.default)
         : newQuestion.type === 'float'
           ? parseFloat(newQuestion.default.toString())
-          : newQuestion?.default?.toString();
+          : newQuestion?.default?.toString()
+      : '';
 
     let question: Spec = {
       max: Number(newQuestion.max),

@@ -11,7 +11,14 @@ export const awxErrorAdapter = (error: unknown): ErrorOutput => {
 
   if (isRequestError(error) && typeof error.json === 'object' && error.json !== null) {
     const data = error.json;
-    if ('__all__' in data) {
+
+    if ('detail' in data) {
+      if (Array.isArray(data.detail)) {
+        genericErrors.push({ message: data.detail[0] as string });
+      } else {
+        genericErrors.push({ message: data.detail as string });
+      }
+    } else if ('__all__' in data) {
       if (Array.isArray(data['__all__'])) {
         genericErrors.push({ message: data['__all__'][0] as string });
       } else {
@@ -35,6 +42,8 @@ export const awxErrorAdapter = (error: unknown): ErrorOutput => {
           }
         });
       }
+    } else if ('module_args' in data) {
+      genericErrors.push({ message: data.module_args as string });
     }
 
     // handle API responses {error: 'Cannot assign a Credential of kind `galaxy`.'}
