@@ -25,7 +25,7 @@ export function useUserColumns() {
         header: t('User type'),
         type: 'text',
         value: (user) => {
-          if (user.is_superuser) return t('System adminsitrator');
+          if (user.is_superuser) return t('System administrator');
           return t('Normal user');
         },
         card: 'subtitle',
