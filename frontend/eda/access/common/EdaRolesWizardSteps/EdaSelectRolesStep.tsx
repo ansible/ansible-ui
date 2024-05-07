@@ -7,6 +7,7 @@ import { useEdaMultiSelectListView } from '../../../common/useEdaMultiSelectList
 import { EdaRbacRole } from '../../../interfaces/EdaRbacRole';
 import { SelectRolesStep } from '../../../../common/access/RolesWizard/steps/SelectRolesStep';
 import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
+import { QueryParams } from '../../../common/useEventDrivenView';
 
 export function EdaSelectRolesStep(props: {
   contentType?: string;
@@ -67,14 +68,20 @@ export function EdaSelectRolesStep(props: {
     ];
   }, [t]);
 
+  const queryParams = useMemo<QueryParams>(() => {
+    const params: QueryParams = { content_type__model: contentType };
+    if (contentType === 'organization') {
+      params['not__name'] = ['Organization Member', 'Admin'];
+    }
+    return params;
+  }, [contentType]);
+
   const view = useEdaMultiSelectListView<EdaRbacRole>(
     {
       url: edaAPI`/role_definitions/`,
       toolbarFilters,
       tableColumns,
-      queryParams: {
-        content_type__model: contentType,
-      },
+      queryParams,
     },
     'edaRoles'
   );
