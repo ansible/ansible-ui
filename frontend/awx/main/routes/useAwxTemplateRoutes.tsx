@@ -15,6 +15,10 @@ import {
 } from '../../resources/templates/WorkflowJobTemplateForm';
 import { WorkflowJobTemplateDetails } from '../../resources/templates/WorkflowJobTemplatePage/WorkflowJobTemplateDetails';
 import { WorkflowJobTemplatePage } from '../../resources/templates/WorkflowJobTemplatePage/WorkflowJobTemplatePage';
+import { WorkflowJobTemplateTeamAccess } from '../../resources/templates/WorkflowJobTemplatePage/WorkflowJobTemplateTeamAccess';
+import { WorkflowJobTemplateUserAccess } from '../../resources/templates/WorkflowJobTemplatePage/WorkflowJobTemplateUserAccess';
+import { WorkflowJobTemplateAddTeams } from '../../resources/templates/WorkflowJobTemplateAddTeams';
+import { WorkflowJobTemplateAddUsers } from '../../resources/templates/WorkflowJobTemplateAddUsers';
 import { WorkflowVisualizer } from '../../resources/templates/WorkflowVisualizer/WorkflowVisualizer';
 import { ScheduleAddWizard } from '../../views/schedules/wizard/ScheduleAddWizard';
 import { ScheduleDetails } from '../../views/schedules/SchedulePage/ScheduleDetails';
@@ -242,9 +246,14 @@ export function useAwxTemplateRoutes() {
                   element: <WorkflowJobTemplateDetails />,
                 },
                 {
-                  id: AwxRoute.WorkflowJobTemplateAccess,
-                  path: 'access',
-                  element: <PageNotImplemented />,
+                  id: AwxRoute.WorkflowJobTemplateTeamAccess,
+                  path: 'team-access',
+                  element: <WorkflowJobTemplateTeamAccess />,
+                },
+                {
+                  id: AwxRoute.WorkflowJobTemplateUserAccess,
+                  path: 'user-access',
+                  element: <WorkflowJobTemplateUserAccess />,
                 },
                 {
                   id: AwxRoute.WorkflowJobTemplateJobs,
@@ -281,6 +290,16 @@ export function useAwxTemplateRoutes() {
                   element: <Navigate to="details" />,
                 },
               ],
+            },
+            {
+              id: AwxRoute.WorkflowJobTemplateAddTeams,
+              path: ':id/teams/add-teams',
+              element: <WorkflowJobTemplateAddTeams />,
+            },
+            {
+              id: AwxRoute.WorkflowJobTemplateAddUsers,
+              path: ':id/users/add-users',
+              element: <WorkflowJobTemplateAddUsers />,
             },
             {
               id: AwxRoute.WorkflowJobTemplateLaunchWizard,

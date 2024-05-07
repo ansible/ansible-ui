@@ -47,7 +47,8 @@ export enum AwxRoute {
 
   WorkflowJobTemplatePage = 'awx-workflow-job-template-page',
   WorkflowJobTemplateDetails = 'awx-workflow-job-template-details',
-  WorkflowJobTemplateAccess = 'awx-workflow-job-template-access',
+  WorkflowJobTemplateTeamAccess = 'awx-workflow-job-template-team-access',
+  WorkflowJobTemplateUserAccess = 'awx-workflow-job-template-user-access',
   WorkflowJobTemplateSchedules = 'awx-workflow-job-template-schedules',
   WorkflowJobTemplateSchedulePage = 'awx-workflow-job-template-schedule-page',
   WorkflowJobTemplateScheduleDetails = 'awx-workflow-job-template-schedule-details',
@@ -62,6 +63,8 @@ export enum AwxRoute {
   EditWorkflowJobTemplate = 'awx-edit-workflow-job-template',
   WorkflowVisualizer = 'awx-workflow-visualizer',
   WorkflowJobTemplateLaunchWizard = 'awx-workflow-job-template-launch-wizard',
+  WorkflowJobTemplateAddTeams = 'awx-workflow-job-template-add-teams',
+  WorkflowJobTemplateAddUsers = 'awx-workflow-job-template-add-users',
 
   Credentials = 'awx-credentials',
   CreateCredential = 'awx-create-credential',
