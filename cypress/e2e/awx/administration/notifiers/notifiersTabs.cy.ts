@@ -72,39 +72,15 @@ describe('Notifications', () => {
   });
 
   describe('Notifications Tab for Management Jobs', () => {
-    //These tests live in the management-jobs spec file
+    //These tests live in the management-jobs.cy.ts spec file
   });
 
   describe('Notifications Tab for Projects', () => {
-    //These tests live in projects.cy.ts
+    //These tests live in the projects.cy.ts
   });
 
   describe('Notifications Tab for Job Templates', () => {
-    //This describe block should create a Job Template to use in these tests
-    //The Job Template needs to be deleted after the tests run
-
-    it.skip('can navigate to the Job Templates -> Notifications list and then to the details page of the Notification', () => {
-      //Assert the navigation to the notifications tab of the Job Template
-      //Assert the navigation to the details page of the notification
-    });
-
-    it.skip('can toggle the Job Templates -> Notification on and off for job start', () => {
-      //Assert the navigation to the notifications tab of the Job Template
-      //Assert the start toggling on
-      //Assert the start toggling off
-    });
-
-    it.skip('can toggle the Job Templates -> Notification on and off for job success', () => {
-      //Assert the navigation to the notifications tab of the Job Template
-      //Assert the success toggling on
-      //Assert the success toggling off
-    });
-
-    it.skip('can toggle the Job Templates -> Notification on and off for job failure', () => {
-      //Assert the navigation to the notifications tab of the Job Template
-      //Assert the failure toggling on
-      //Assert the failure toggling off
-    });
+    //These tests live in the jobTemplates.cy.ts spec file
   });
 
   describe('Notifications Tab for Workflow Job Templates', () => {
