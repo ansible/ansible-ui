@@ -25,11 +25,9 @@ import { Credential } from '../../interfaces/Credential';
 import { CredentialInputField, CredentialType } from '../../interfaces/CredentialType';
 import { AwxRoute } from '../../main/AwxRoutes';
 import { PageFormSelectOrganization } from '../organizations/components/PageFormOrganizationSelect';
-import { BecomeMethodField } from './components/BecomeMethodField';
 import { CredentialMultilineInput } from './components/CredentialMultilineInput';
-import { PageFormSecret } from '../../../../framework/PageForm/Inputs/PageFormSecret';
-import { Button, Icon } from '@patternfly/react-core';
-import { KeyIcon } from '@patternfly/react-icons';
+import { Button, Icon, InputGroup, InputGroupItem, Tooltip } from '@patternfly/react-core';
+import { KeyIcon, RedoIcon } from '@patternfly/react-icons';
 import { PageFormSelectCredentialType } from './components/PageFormSelectCredentialType';
 
 interface SecretInput {
@@ -41,6 +39,7 @@ import {
   useCredentialPluginsModal,
 } from './CredentialPlugins/hooks/useCredentialPluginsDialog';
 import { CredentialInputSource } from '../../interfaces/CredentialInputSource';
+import { SecretManagementInputField } from './components/SecretManagementInputField';
 
 interface CredentialForm extends Credential {
   user?: number;
@@ -374,50 +373,83 @@ function PageFormSecretInput({
     setShouldHideField(!shouldHideField);
     resetField(field.id);
     setClear(!clear);
-    //hide field
   };
 
   if (field.multiline) {
-    return (
-      <PageFormSecret
-        //key={field.id}
-        onClear={handleHideField}
-        shouldHideField={shouldHideField}
-        label={field.label}
-        placeholder={t('ENCRYPTED')}
-      >
+    if (field.secret && isEditMode) {
+      return (
+        <SecretManagementInputField
+          onClear={handleHideField}
+          shouldHideField={shouldHideField}
+          label={field.label}
+          placeholder={t('ENCRYPTED')}
+        >
+          <InputGroup>
+            <Tooltip content={t(`Reset`)}>
+              <Button
+                size="sm"
+                variant="control"
+                onClick={handleHideField}
+                icon={<RedoIcon />}
+              ></Button>
+            </Tooltip>
+            <CredentialMultilineInput
+              kind={credentialType.kind}
+              field={field}
+              requiredFields={requiredFields}
+            />
+          </InputGroup>
+        </SecretManagementInputField>
+      );
+    } else {
+      return (
         <CredentialMultilineInput
           kind={credentialType.kind}
-          //key={field.id}
           field={field}
           requiredFields={requiredFields}
         />
-      </PageFormSecret>
-    );
+      );
+    }
   } else {
-    return (
-      <PageFormSecret
-        //key={field.id}
-        onClear={() => {
-          //console.log(field.id);
-          setValue(field.id, '');
-          //resetField('security-token');
-          setShouldHideField(!shouldHideField);
-        }}
-        shouldHideField={shouldHideField}
-        label={field.label}
-        placeholder={t('ENCRYPTED')}
-      >
+    if (field.secret && isEditMode) {
+      return (
+        <SecretManagementInputField
+          onClear={() => {
+            setValue(field.id, '');
+            setShouldHideField(!shouldHideField);
+          }}
+          shouldHideField={shouldHideField}
+          label={field.label}
+          placeholder={t('ENCRYPTED')}
+        >
+          <InputGroup>
+            <InputGroupItem>
+              <Button
+                size="sm"
+                variant="control"
+                onClick={handleHideField}
+                icon={<RedoIcon />}
+              ></Button>
+            </InputGroupItem>
+            <InputGroupItem>
+              <CredentialTextInput
+                field={field}
+                isRequired={requiredFields.includes(field.id)}
+                credentialType={credentialType}
+              />
+            </InputGroupItem>
+          </InputGroup>
+        </SecretManagementInputField>
+      );
+    } else {
+      return (
         <CredentialTextInput
-          //key={field.id}
-          //placeholder={t('ENCRYPTED')}
-          //name={field.id}
           field={field}
           isRequired={requiredFields.includes(field.id)}
           credentialType={credentialType}
         />
-      </PageFormSecret>
-    );
+      );
+    }
   }
 }
 
