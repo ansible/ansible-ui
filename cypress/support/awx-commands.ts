@@ -1336,20 +1336,15 @@ Cypress.Commands.add('waitForManagementJobStatus', (jobID: string) => {
   cy.requestGet<SystemJobTemplate>(`api/v2/system_jobs/${jobID}/`).then(
     (response: SystemJobTemplate) => {
       const status = response.status;
-      if (!status) {
-        cy.log('Status is null or undefined, retrying...');
-        cy.wait(100).then(() => cy.waitForManagementJobStatus(jobID));
-      } else {
-        switch (status) {
-          case 'failed':
-          case 'successful':
-            cy.log('management job launch status: ' + status);
-            cy.wrap(status);
-            break;
-          default:
-            cy.wait(100).then(() => cy.waitForManagementJobStatus(jobID));
-            break;
-        }
+      switch (status) {
+        case 'failed':
+        case 'successful':
+          cy.log('management job launch status: ' + status);
+          cy.wrap(status);
+          break;
+        default:
+          cy.wait(100).then(() => cy.waitForManagementJobStatus(jobID));
+          break;
       }
     }
   );

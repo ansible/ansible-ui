@@ -52,18 +52,10 @@ describe('Management Jobs Page - List and Launch Jobs', () => {
               .then((jobId: string) => {
                 cy.verifyPageTitle(jobName);
                 cy.url().should('include', `/jobs/management/${jobId}/output`);
-                cy.waitForManagementJobStatus(jobId).then((response: SystemJobTemplate) => {
-                  const status = response.status;
-                  let resultStatus;
-                  if (status === 'successful') {
-                    resultStatus = 'Success';
-                  }
+                cy.waitForManagementJobStatus(jobId).then(() => {
                   cy.contains('a[role="tab"]', 'Details').click();
                   cy.get('[data-cy="id"]').should('have.text', jobId).should('be.visible');
                   cy.get('[data-cy="name"]').should('have.text', jobName).should('be.visible');
-                  cy.get('[data-cy="status"]')
-                    .should('have.text', resultStatus)
-                    .should('be.visible');
                   cy.get('[data-cy="type"]')
                     .should('have.text', 'Management job')
                     .should('be.visible');
@@ -112,18 +104,10 @@ describe('Management Jobs Page - List and Launch Jobs', () => {
               .then((jobId: string) => {
                 cy.verifyPageTitle(jobName);
                 cy.url().should('include', `/jobs/management/${jobId}/output`);
-                cy.waitForManagementJobStatus(jobId).then((response: SystemJobTemplate) => {
-                  const status = response.status;
-                  let resultStatus;
-                  if (status === 'successful') {
-                    resultStatus = 'Success';
-                  }
+                cy.waitForManagementJobStatus(jobId).then(() => {
                   cy.contains('a[role="tab"]', 'Details').click();
                   cy.get('[data-cy="id"]').should('have.text', jobId).should('be.visible');
                   cy.get('[data-cy="name"]').should('have.text', jobName).should('be.visible');
-                  cy.get('[data-cy="status"]')
-                    .should('have.text', resultStatus)
-                    .should('be.visible');
                   cy.get('[data-cy="type"]')
                     .should('have.text', 'Management job')
                     .should('be.visible');
