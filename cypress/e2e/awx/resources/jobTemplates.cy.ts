@@ -7,57 +7,37 @@ import { Project } from '../../../../frontend/awx/interfaces/Project';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 
 describe('Job Templates Tests', function () {
-  let inventory: Inventory;
-  let machineCredential: Credential;
-  let jobTemplate: JobTemplate;
-  let jobTemplate2: JobTemplate;
-  const instanceGroup = 'default';
-  const executionEnvironment = 'Control Plane Execution Environment';
-
   before(function () {
     cy.awxLogin();
   });
 
-  beforeEach(function () {
-    cy.createAwxInventory({ organization: (this.globalOrganization as Organization).id }).then(
-      (inv) => {
-        inventory = inv;
-
-        cy.createAWXCredential({
-          kind: 'machine',
-          organization: (this.globalOrganization as Organization).id,
-          credential_type: 1,
-        }).then((cred) => {
-          machineCredential = cred;
-
-          cy.createAwxJobTemplate({
-            organization: (this.globalOrganization as Organization).id,
-            project: (this.globalProject as Project).id,
-            inventory: inventory.id,
-          }).then((jt1) => {
-            jobTemplate = jt1;
-
-            cy.createAwxJobTemplate({
-              organization: (this.globalOrganization as Organization).id,
-              project: (this.globalProject as Project).id,
-              inventory: inventory.id,
-            }).then((jt2) => {
-              jobTemplate2 = jt2;
-            });
-          });
-        });
-      }
-    );
-  });
-
-  afterEach(function () {
-    cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
-    cy.deleteAwxCredential(machineCredential, { failOnStatusCode: false });
-    cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
-    cy.deleteAwxJobTemplate(jobTemplate2, { failOnStatusCode: false });
-  });
-
   describe('Job Templates Tests: Create', function () {
+    let inventory: Inventory;
+    let machineCredential: Credential;
+    const executionEnvironment = 'Control Plane Execution Environment';
+    const instanceGroup = 'default';
+
+    beforeEach(function () {
+      cy.createAwxInventory({ organization: (this.globalOrganization as Organization).id }).then(
+        (inv) => {
+          inventory = inv;
+
+          cy.createAWXCredential({
+            kind: 'machine',
+            organization: (this.globalOrganization as Organization).id,
+            credential_type: 1,
+          }).then((cred) => {
+            machineCredential = cred;
+          });
+        }
+      );
+    });
+
+    afterEach(function () {
+      cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
+      cy.deleteAwxCredential(machineCredential, { failOnStatusCode: false });
+    });
+
     it('can create a job template with all fields without prompt on launch option', function () {
       cy.intercept('POST', awxAPI`/job_templates`).as('createJT');
       const jtName = 'E2E-JT ' + randomString(4);
@@ -267,9 +247,43 @@ describe('Job Templates Tests', function () {
   });
 
   describe('Job Templates Tests: Edit', function () {
+    let inventory: Inventory;
+    let machineCredential: Credential;
+    let jobTemplate: JobTemplate;
+
+    beforeEach(function () {
+      cy.createAwxInventory({ organization: (this.globalOrganization as Organization).id }).then(
+        (inv) => {
+          inventory = inv;
+
+          cy.createAWXCredential({
+            kind: 'machine',
+            organization: (this.globalOrganization as Organization).id,
+            credential_type: 1,
+          }).then((cred) => {
+            machineCredential = cred;
+
+            cy.createAwxJobTemplate({
+              organization: (this.globalOrganization as Organization).id,
+              project: (this.globalProject as Project).id,
+              inventory: inventory.id,
+            }).then((jt1) => {
+              jobTemplate = jt1;
+            });
+          });
+        }
+      );
+    });
+
+    afterEach(function () {
+      cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
+      cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
+      cy.deleteAwxCredential(machineCredential, { failOnStatusCode: false });
+    });
+
     it('can edit a job template using the kebab menu of the template list page', function () {
-      cy.navigateTo('awx', 'templates');
       const newName = (jobTemplate.name ?? '') + ' edited';
+      cy.navigateTo('awx', 'templates');
       cy.filterTableByMultiSelect('name', [jobTemplate.name]);
       cy.getTableRow('name', jobTemplate.name, { disableFilter: true }).should('be.visible');
       cy.selectTableRow(jobTemplate.name, false);
@@ -313,7 +327,6 @@ describe('Job Templates Tests', function () {
     });
 
     it('can edit a job template using the edit template button on details page', function () {
-      cy.navigateTo('awx', 'templates');
       const newName = (jobTemplate.name ?? '') + ' edited';
       cy.navigateTo('awx', 'templates');
       cy.filterTableByMultiSelect('name', [jobTemplate.name]);
@@ -328,10 +341,9 @@ describe('Job Templates Tests', function () {
       cy.wait('@editJT')
         .its('response.body')
         .then((response: JobTemplate) => {
-          expect(newName).to.eql(response.name);
+          expect(response.name).to.eql(newName);
           cy.verifyPageTitle(response.name);
           cy.getByDataCy('name').should('contain', response.name);
-          cy.deleteAwxJobTemplate(response);
         });
     });
   });
@@ -347,6 +359,49 @@ describe('Job Templates Tests', function () {
   });
 
   describe('Job Templates Tests: Delete', function () {
+    let inventory: Inventory;
+    let machineCredential: Credential;
+    let jobTemplate: JobTemplate;
+    let jobTemplate2: JobTemplate;
+
+    beforeEach(function () {
+      cy.createAwxInventory({ organization: (this.globalOrganization as Organization).id }).then(
+        (inv) => {
+          inventory = inv;
+
+          cy.createAWXCredential({
+            kind: 'machine',
+            organization: (this.globalOrganization as Organization).id,
+            credential_type: 1,
+          }).then((cred) => {
+            machineCredential = cred;
+
+            cy.createAwxJobTemplate({
+              organization: (this.globalOrganization as Organization).id,
+              project: (this.globalProject as Project).id,
+              inventory: inventory.id,
+            }).then((jt1) => {
+              jobTemplate = jt1;
+            });
+            cy.createAwxJobTemplate({
+              organization: (this.globalOrganization as Organization).id,
+              project: (this.globalProject as Project).id,
+              inventory: inventory.id,
+            }).then((jt2) => {
+              jobTemplate2 = jt2;
+            });
+          });
+        }
+      );
+    });
+
+    afterEach(function () {
+      cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
+      cy.deleteAwxJobTemplate(jobTemplate2, { failOnStatusCode: false });
+      cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
+      cy.deleteAwxCredential(machineCredential, { failOnStatusCode: false });
+    });
+
     it.skip('can delete a job template from the list line item', function () {
       //Use a job template created in the beforeEach hook
       //Assert the presence of the job template
