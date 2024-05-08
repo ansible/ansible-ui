@@ -117,7 +117,7 @@ describe('Management Jobs Page - List and Launch Jobs', () => {
                   cy.clickButton(/^Delete job/);
                   cy.wait('@deleteMgtJob')
                     .its('response')
-                    .then((response) => {
+                    .should((response) => {
                       expect(response?.statusCode).to.eql(204);
                     });
                 });
