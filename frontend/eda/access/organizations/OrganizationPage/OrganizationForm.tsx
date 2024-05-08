@@ -1,4 +1,3 @@
-import { FieldValues } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import useSWR from 'swr';
@@ -14,14 +13,9 @@ import { requestGet, requestPatch, swrOptions } from '../../../../common/crud/Da
 import { usePostRequest } from '../../../../common/crud/usePostRequest';
 import { useInvalidateCacheOnUnmount } from '../../../../common/useInvalidateCache';
 import { EdaPageForm } from '../../../common/EdaPageForm';
-import { EdaOrganization } from '../../../interfaces/EdaOrganization';
+import { EdaOrganization, EdaOrganizationCreate } from '../../../interfaces/EdaOrganization';
 import { EdaRoute } from '../../../main/EdaRoutes';
 import { edaAPI } from '../../../common/eda-utils';
-
-interface OrganizationFields extends FieldValues {
-  organization: EdaOrganization;
-  id: number;
-}
 
 export function CreateOrganization() {
   const { t } = useTranslation();
@@ -30,11 +24,11 @@ export function CreateOrganization() {
 
   useInvalidateCacheOnUnmount();
 
-  const postRequest = usePostRequest<{ id: number }, EdaOrganization>();
+  const postRequest = usePostRequest<EdaOrganizationCreate, EdaOrganization>();
 
-  const onSubmit: PageFormSubmitHandler<OrganizationFields> = async (values) => {
-    const organization = await postRequest(edaAPI`/organizations/`, values.organization);
-    pageNavigate(EdaRoute.OrganizationDetails, { params: { id: organization.id } });
+  const onSubmit: PageFormSubmitHandler<EdaOrganizationCreate> = async (organization) => {
+    const newOrganization = await postRequest(edaAPI`/organizations/`, organization);
+    pageNavigate(EdaRoute.OrganizationDetails, { params: { id: newOrganization.id } });
   };
   const onCancel = () => navigate(-1);
   const getPageUrl = useGetPageUrl();
@@ -70,12 +64,12 @@ export function EditOrganization() {
 
   useInvalidateCacheOnUnmount();
 
-  const onSubmit: PageFormSubmitHandler<OrganizationFields> = async (values) => {
-    const organization = await requestPatch<EdaOrganization>(
+  const onSubmit: PageFormSubmitHandler<EdaOrganization> = async (organization) => {
+    const newOrganization = await requestPatch<EdaOrganization>(
       edaAPI`/organizations/${id.toString()}/`,
-      values.organization
+      organization
     );
-    pageNavigate(EdaRoute.OrganizationDetails, { params: { id: organization.id } });
+    pageNavigate(EdaRoute.OrganizationDetails, { params: { id: newOrganization.id } });
   };
   const onCancel = () => navigate(-1);
   const getPageUrl = useGetPageUrl();
@@ -93,7 +87,7 @@ export function EditOrganization() {
           submitText={t('Save organization')}
           onSubmit={onSubmit}
           onCancel={onCancel}
-          defaultValue={{ organization }}
+          defaultValue={organization}
         >
           <OrganizationInputs />
         </EdaPageForm>
@@ -107,15 +101,10 @@ function OrganizationInputs() {
 
   return (
     <>
-      <PageFormTextInput
-        label={t('Name')}
-        name="organization.name"
-        placeholder={t('Enter name')}
-        isRequired
-      />
+      <PageFormTextInput label={t('Name')} name="name" placeholder={t('Enter name')} isRequired />
       <PageFormTextInput
         label={t('Description')}
-        name="organization.description"
+        name="description"
         placeholder={t('Enter description')}
       />
     </>
