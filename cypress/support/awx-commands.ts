@@ -1127,6 +1127,22 @@ Cypress.Commands.add(
 );
 
 Cypress.Commands.add(
+  'deleteAwxJob',
+  (
+    job: Job,
+    options?: {
+      /** Whether to fail on response codes other than 2xx and 3xx */
+      failOnStatusCode?: boolean;
+    }
+  ) => {
+    if (job.id) {
+      const jobId = typeof job.id === 'number' ? job.id.toString() : '';
+      cy.awxRequestDelete(awxAPI`/jobs/${jobId}/`, options);
+    }
+  }
+);
+
+Cypress.Commands.add(
   'createInventoryHost',
   function createInventoryHost(organization: Organization, kind: '' | 'constructed' | 'smart') {
     cy.awxRequestPost<Partial<Inventory>>(awxAPI`/inventories/`, {

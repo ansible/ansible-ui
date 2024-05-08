@@ -2,6 +2,7 @@
 
 import { UnifiedJobList } from '../../../../frontend/awx/interfaces/generated-from-swagger/api';
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
+import { Job } from '../../../../frontend/awx/interfaces/Job';
 import { JobTemplate } from '../../../../frontend/awx/interfaces/JobTemplate';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
@@ -10,13 +11,13 @@ import { awxAPI } from '../../../support/formatApiPathForAwx';
 describe('Jobs: List', () => {
   let inventory: Inventory;
   let jobTemplate: JobTemplate;
-  let jobList: UnifiedJobList;
+  let job: Job;
 
   before(() => {
     cy.awxLogin();
   });
 
-  before(function () {
+  beforeEach(function () {
     const globalOrganization = this.globalOrganization as Organization;
     const globalProject = this.globalProject as Project;
     cy.createAwxInventory({ organization: globalOrganization.id }).then((inv) => {
@@ -29,18 +30,18 @@ describe('Jobs: List', () => {
         jobTemplate = jt;
 
         // Launch job to populate jobs list
-        cy.awxRequestPost(awxAPI`/job_templates/${jobTemplate.id.toString()}/launch/`, {}).then(
-          (jl) => {
-            jobList = jl;
-          }
-        );
+        cy.awxRequestPost<Partial<Omit<Job, 'id'>>, Job>(
+          awxAPI`/job_templates/${jobTemplate.id.toString()}/launch/`,
+          {}
+        ).then((jl: Job) => {
+          job = jl;
+        });
       });
     });
   });
 
-  after(() => {
-    const jobId = jobList?.id ? jobList?.id.toString() : '';
-    cy.awxRequestDelete(awxAPI`/jobs/${jobId}/`, { failOnStatusCode: false });
+  afterEach(() => {
+    cy.deleteAwxJob(job, { failOnStatusCode: false });
     cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
     cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
   });
@@ -48,8 +49,8 @@ describe('Jobs: List', () => {
   it('can render the jobs list', () => {
     cy.navigateTo('awx', 'jobs');
     cy.verifyPageTitle('Jobs');
-    const jobId = jobList.id ? jobList.id.toString() : '';
-    const jobName = jobList.name ? jobList.name : '';
+    const jobId = job.id ? job.id.toString() : '';
+    const jobName = job.name ? job.name : '';
     cy.filterTableByMultiSelect('id', [jobId]);
     cy.contains(jobName);
     cy.clearAllFilters();
@@ -57,8 +58,8 @@ describe('Jobs: List', () => {
 
   it('can relaunch the job and navigate to job output', () => {
     cy.navigateTo('awx', 'jobs');
-    const jobId = jobList.id ? jobList.id.toString() : '';
-    const jobName = jobList.name ? jobList.name : '';
+    const jobId = job.id ? job.id.toString() : '';
+    const jobName = job.name ? job.name : '';
     cy.filterTableByMultiSelect('id', [jobId]);
     cy.clickTableRowPinnedAction(jobName, 'relaunch-job', false);
     cy.verifyPageTitle(jobName);
@@ -72,8 +73,8 @@ describe('Jobs: List', () => {
       cy.contains(/^Delete selected jobs$/).should('exist');
       cy.contains(/^Cancel selected jobs$/).should('exist');
     });
-    cy.filterTableByMultiSelect('id', [jobList.id ? jobList.id.toString() : '']);
-    const jobName = jobList.name ? jobList.name : '';
+    cy.filterTableByMultiSelect('id', [job.id ? job.id.toString() : '']);
+    const jobName = job.name ? job.name : '';
     cy.contains('td', jobName)
       .parent()
       .within(() => {
@@ -87,8 +88,8 @@ describe('Jobs: List', () => {
 
   it('can render additional details on expanding job row', () => {
     cy.navigateTo('awx', 'jobs');
-    cy.filterTableByMultiSelect('id', [jobList.id ? jobList.id.toString() : '']);
-    const jobName = jobList.name ? jobList.name : '';
+    cy.filterTableByMultiSelect('id', [job.id ? job.id.toString() : '']);
+    const jobName = job.name ? job.name : '';
     cy.expandTableRow(jobName, false);
     cy.hasDetail('Inventory', 'E2E Inventory');
     cy.hasDetail('Project', 'Project');
@@ -99,11 +100,11 @@ describe('Jobs: List', () => {
 
   it('can filter jobs by id', () => {
     cy.navigateTo('awx', 'jobs');
-    const jobId = jobList.id ? jobList.id.toString() : '';
+    const jobId = job.id ? job.id.toString() : '';
     cy.filterTableByMultiSelect('id', [jobId]);
     cy.get('tr').should('have.length.greaterThan', 0);
-    if (jobList.name) {
-      cy.contains(jobList.name).should('be.visible');
+    if (job.name) {
+      cy.contains(job.name).should('be.visible');
     }
     cy.clearAllFilters();
   });
@@ -204,5 +205,67 @@ describe('Jobs: Delete', () => {
         cy.clickButton(/^Clear all filters$/);
       }
     );
+  });
+});
+
+describe('Jobs: Output Screen', () => {
+  it.skip('can launch a Playbook Run job, let it finish, and assert expected results on the output screen', () => {
+    //Create a job template with a functioning playbook
+    //Assert details and launch
+    //Navigate to the output screen of the job and assert details there
+  });
+
+  it.skip('can launch a Management job, let it finish, and assert expected results on the output screen', () => {
+    //Access an existing management job
+    //Assert details and launch
+    //Navigate to the output screen of the job and assert details there
+  });
+
+  it.skip('can launch a Source Control Update job, let it finish, and assert expected results on the output screen', () => {
+    //Create a project, sync will happen automatically
+    //Navigate to the output screen of the job and assert details there
+  });
+
+  it.skip('can launch a Workflow job, let it finish, and assert expected results on the output screen', () => {
+    //Create a workflow job template with at least one node
+    //Assert details and launch
+    //Navigate to the output screen of the job and assert details there
+  });
+
+  it.skip('can launch an Inventory Sync job, let it finish, and assert expected results on the output screen', () => {
+    //Create an inventory with one source
+    //Assert details, navigate to Source list and trigger Sync
+    //Navigate to the output screen of the job and assert details there
+  });
+});
+
+describe('Jobs: Details Screen', () => {
+  it.skip('can launch a Playbook Run job, let it finish, and assert expected results on the details screen', () => {
+    //Create a job template with a functioning playbook
+    //Assert details and launch
+    //Navigate to the details screen of the job and assert info there
+  });
+
+  it.skip('can launch a Management job, let it finish, and assert expected results on the details screen', () => {
+    //Access an existing management job
+    //Assert details and launch
+    //Navigate to the details screen of the job and assert info there
+  });
+
+  it.skip('can launch a Source Control Update job, let it finish, and assert expected results on the details screen', () => {
+    //Create a project, sync will happen automatically
+    //Navigate to the details screen of the job and assert info there
+  });
+
+  it.skip('can launch a Workflow job, let it finish, and assert expected results on the details screen', () => {
+    //Create a workflow job template with at least one node
+    //Assert details and launch
+    //Navigate to the details screen of the job and assert info there
+  });
+
+  it.skip('can launch an Inventory Sync job, let it finish, and assert expected results on the details screen', () => {
+    //Create an inventory with one source
+    //Assert details, navigate to Source list and trigger Sync
+    //Navigate to the details screen of the job and assert info there
   });
 });
