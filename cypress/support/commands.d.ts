@@ -936,6 +936,13 @@ declare global {
           failOnStatusCode?: boolean;
         }
       ): Chainable<void>;
+      deleteAwxJob(
+        job: Job,
+        options?: {
+          /** Whether to fail on response codes other than 2xx and 3xx */
+          failOnStatusCode?: boolean;
+        }
+      ): Chainable<void>;
       deleteAwxWorkflowJobTemplate(
         workflowJobTemplate: WorkflowJobTemplate,
         options?: {
