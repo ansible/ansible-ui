@@ -28,7 +28,8 @@ export enum AwxRoute {
   JobTemplatePage = 'awx-template-page',
   JobTemplateDetails = 'awx-template-details',
   JobTemplateScheduleDetails = 'awx-job-template-schedule-details',
-  JobTemplateAccess = 'awx-job-template-access',
+  JobTemplateTeamAccess = 'awx-job-template-team-access',
+  JobTemplateUserAccess = 'awx-job-template-user-access',
   JobTemplateJobs = 'awx-job-template-jobs',
   JobTemplateSurvey = 'awx-job-template-survey',
   AddJobTemplateSurvey = 'awx-add-job-template-survey',
@@ -41,6 +42,8 @@ export enum AwxRoute {
   JobTemplateScheduleRules = 'awx-template-schedule-rules',
   JobTemplateCreateScheduleRules = 'awx-job-template-create-schedule-rules',
   TemplateLaunchWizard = 'awx-template-launch-wizard',
+  JobTemplateAddTeams = 'awx-template-add-teams',
+  JobTemplateAddUsers = 'awx-template-add-users',
 
   WorkflowJobTemplatePage = 'awx-workflow-job-template-page',
   WorkflowJobTemplateDetails = 'awx-workflow-job-template-details',
