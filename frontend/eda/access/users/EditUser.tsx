@@ -57,7 +57,7 @@ export function CreateUser() {
   const getPageUrl = useGetPageUrl();
 
   return (
-    <>
+    <PageLayout>
       <PageHeader
         title={t('Create User')}
         breadcrumbs={[
@@ -74,7 +74,7 @@ export function CreateUser() {
       >
         <UserInputs mode="create" />
       </EdaPageForm>
-    </>
+    </PageLayout>
   );
 }
 
@@ -198,7 +198,7 @@ export function EditUser() {
 function CurrentUserInputs() {
   const { t } = useTranslation();
   return (
-    <Fragment>
+    <>
       <PageFormTextInput<CurrentUserInput>
         name="first_name"
         label={t('First name')}
@@ -228,7 +228,7 @@ function CurrentUserInputs() {
         placeholder={t('Enter password')}
         type="password"
       />
-    </Fragment>
+    </>
   );
 }
 
@@ -236,7 +236,7 @@ function UserInputs(props: { mode: 'create' | 'edit' }) {
   const { mode } = props;
   const { t } = useTranslation();
   return (
-    <Fragment>
+    <>
       <PageFormTextInput<UserInput>
         name="username"
         label={t('Username')}
@@ -304,6 +304,6 @@ function UserInputs(props: { mode: 'create' | 'edit' }) {
         type="password"
         isRequired={mode === 'create'}
       />
-    </Fragment>
+    </>
   );
 }

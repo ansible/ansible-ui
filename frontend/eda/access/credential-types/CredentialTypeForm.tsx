@@ -149,6 +149,7 @@ function CredentialTypeInputs() {
           labelHelp={t(
             `Enter inputs using either JSON or YAML syntax. Refer to the Ansible Controller documentation for example syntax.`
           )}
+          isRequired
           format="object"
         />
       </PageFormSection>
@@ -176,6 +177,7 @@ function CredentialTypeInputs() {
           labelHelp={t(
             `Enter injectors using either JSON or YAML syntax. Refer to the Ansible Controller documentation for example syntax.`
           )}
+          isRequired
           format="object"
         />
       </PageFormSection>
