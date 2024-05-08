@@ -39,7 +39,7 @@ import {
   EdaRulebookActivationCreate,
 } from '../../frontend/eda/interfaces/EdaRulebookActivation';
 import { EdaUser, EdaUserCreateUpdate } from '../../frontend/eda/interfaces/EdaUser';
-import { RoleDetail } from '../../frontend/eda/interfaces/EdaRole';
+import { EdaRbacRole } from '../../frontend/eda/interfaces/EdaRbacRole';
 import { Role as HubRole } from '../../frontend/hub/access/roles/Role';
 import { RemoteRegistry } from '../../frontend/hub/administration/remote-registries/RemoteRegistry';
 import { HubRemote } from '../../frontend/hub/administration/remotes/Remotes';
@@ -1287,7 +1287,7 @@ declare global {
        * getEdaRoleDetail returns the detail of a given role id of a role
        * @param roleID get
        */
-      getEdaRoleDetail(roleID: string): Chainable<RoleDetail>;
+      getEdaRoleDetail(roleID: string): Chainable<EdaRbacRole>;
 
       /**
        * Deletes an EDA credential which is provided.
@@ -1310,7 +1310,7 @@ declare global {
        */
       deleteEdaCredentialType(delete_cred_type: EdaCredentialType): Chainable<void>;
 
-      getEdaRoles(content_type__model?: string): Chainable<EdaRole[]>;
+      getEdaRoles(content_type__model?: string): Chainable<EdaRbacRole[]>;
       /**
        * Creates an EDA user and returns the same.
        *
