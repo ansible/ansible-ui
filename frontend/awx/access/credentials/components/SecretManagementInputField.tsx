@@ -75,7 +75,7 @@ export function SecretManagementInputField({
           </Tooltip>
           <TextInput
             aria-label={t('hidden value')}
-            placeholder={placeholder ? placeholder : 'ENCRYPTED'}
+            placeholder={placeholder ? placeholder : t('$ENCRYPTED')}
             type="password"
             autoComplete="off"
             isDisabled={true}

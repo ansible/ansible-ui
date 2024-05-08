@@ -40,6 +40,7 @@ import {
 } from './CredentialPlugins/hooks/useCredentialPluginsDialog';
 import { CredentialInputSource } from '../../interfaces/CredentialInputSource';
 import { SecretManagementInputField } from './components/SecretManagementInputField';
+import { BecomeMethodField } from './components/BecomeMethodField';
 
 interface CredentialForm extends Credential {
   user?: number;
@@ -365,13 +366,11 @@ function PageFormSecretInput({
 }) {
   const [t] = useTranslation();
   const [shouldHideField, setShouldHideField] = useState(field.secret && isEditMode);
-  const { resetField } = useForm();
   const [clear, setClear] = useState(false);
   const { setValue } = useFormContext();
 
   const handleHideField = () => {
     setShouldHideField(!shouldHideField);
-    resetField(field.id);
     setClear(!clear);
   };
 
@@ -382,7 +381,7 @@ function PageFormSecretInput({
           onClear={handleHideField}
           shouldHideField={shouldHideField}
           label={field.label}
-          placeholder={t('ENCRYPTED')}
+          placeholder={t('$ENCRYPTED')}
         >
           <InputGroup>
             <Tooltip content={t(`Reset`)}>
@@ -400,6 +399,14 @@ function PageFormSecretInput({
             />
           </InputGroup>
         </SecretManagementInputField>
+      );
+    } else if (credentialType.kind === 'ssh' && field.id === 'become_method') {
+      return (
+        <BecomeMethodField
+          key={field.id}
+          fieldOptions={field}
+          isRequired={requiredFields.includes(field.id)}
+        />
       );
     } else {
       return (
@@ -420,7 +427,7 @@ function PageFormSecretInput({
           }}
           shouldHideField={shouldHideField}
           label={field.label}
-          placeholder={t('ENCRYPTED')}
+          placeholder={t('$ENCRYPTED')}
         >
           <InputGroup>
             <InputGroupItem>
