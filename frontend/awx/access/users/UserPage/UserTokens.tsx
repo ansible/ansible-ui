@@ -51,15 +51,14 @@ function UserTokensInternal(props: { infoMessage?: string; user: AwxUser }) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
 
-  const tableColumns = useUserTokensColumns(user);
+  const tableColumns = useUserTokensColumns();
   const toolbarFilters = useUserTokensFilters();
   const view = useAwxView<Token>({
     url: awxAPI`/users/${user.id.toString()}/tokens/`,
     toolbarFilters,
     tableColumns,
   });
-  //const deleteTokens = useDeleteTokens(view.unselectItemsAndRefresh);
-  const deleteTokens = useDeleteUserTokens(user, view.unselectItemsAndRefresh);
+  const deleteTokens = useDeleteUserTokens(view.unselectItemsAndRefresh);
 
   const toolbarActions = useMemo<IPageAction<Token>[]>(
     () => [

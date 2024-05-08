@@ -5,11 +5,10 @@ import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxBulkConfirmation } from '../../../common/useAwxBulkConfirmation';
 import { Token } from '../../../interfaces/Token';
 import { useUserTokensColumns } from './useUserTokensColumns';
-import { AwxUser } from '../../../interfaces/User';
 
-export function useDeleteUserTokens(user: AwxUser, onComplete: (items: Token[]) => void) {
+export function useDeleteUserTokens(onComplete: (items: Token[]) => void) {
   const { t } = useTranslation();
-  const userTokensColumns = useUserTokensColumns(user, { disableLinks: true, disableSort: true });
+  const userTokensColumns = useUserTokensColumns({ disableLinks: true, disableSort: true });
   const bulkAction = useAwxBulkConfirmation<Token>();
   const deleteTokens = (tokens: Token[]) => {
     bulkAction({

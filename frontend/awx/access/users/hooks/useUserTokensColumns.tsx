@@ -1,18 +1,11 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ITableColumn, TextCell, useGetPageUrl } from '../../../../../framework';
-import { AwxUser } from '../../../interfaces/User';
 import { Token } from '../../../interfaces/Token';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useCreatedColumn, useModifiedColumn } from '../../../../common/columns';
 
-export function useUserTokensColumns(
-  user: AwxUser,
-  options?: {
-    disableLinks?: boolean;
-    disableSort?: boolean;
-  }
-) {
+export function useUserTokensColumns(options?: { disableLinks?: boolean; disableSort?: boolean }) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const createdColumn = useCreatedColumn(options);
@@ -33,7 +26,7 @@ export function useUserTokensColumns(
               options?.disableLinks
                 ? undefined
                 : getPageUrl(AwxRoute.UserTokenDetails, {
-                    params: { id: user.id, tokenid: token.id.toString() },
+                    params: { id: token.summary_fields.user.id, tokenid: token.id.toString() },
                   })
             }
           />
@@ -64,14 +57,6 @@ export function useUserTokensColumns(
       createdColumn,
       modifiedColumn,
     ],
-    [
-      createdColumn,
-      getPageUrl,
-      modifiedColumn,
-      options?.disableLinks,
-      options?.disableSort,
-      t,
-      user.id,
-    ]
+    [createdColumn, getPageUrl, modifiedColumn, options?.disableLinks, options?.disableSort, t]
   );
 }
