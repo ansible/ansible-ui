@@ -50,7 +50,8 @@ export function TemplatePage() {
   const tabs: { label: string; page: string }[] = useMemo(() => {
     const tabs = [
       { label: t('Details'), page: AwxRoute.JobTemplateDetails },
-      { label: t('Access'), page: AwxRoute.JobTemplateAccess },
+      { label: t('Team Access'), page: AwxRoute.JobTemplateTeamAccess },
+      { label: t('User Access'), page: AwxRoute.JobTemplateUserAccess },
       { label: t('Schedules'), page: AwxRoute.JobTemplateSchedules },
       { label: t('Jobs'), page: AwxRoute.JobTemplateJobs },
       { label: t('Survey'), page: AwxRoute.JobTemplateSurvey },
