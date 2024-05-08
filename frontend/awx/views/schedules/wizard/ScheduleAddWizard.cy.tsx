@@ -37,7 +37,9 @@ describe('ScheduleAddWizard', () => {
       name: 'Mock Job Template',
       description: 'Job Template Description',
       type: 'job_template',
-      _enabled: true,
+      _enabled: false,
+      ask_credential_on_launch: true,
+      credentials: [],
     };
     const mockTemplates = {
       count: 1,
@@ -73,7 +75,7 @@ describe('ScheduleAddWizard', () => {
       });
     });
 
-    it('Should render the correct steps on initial ', () => {
+    it('job template should render the correct steps initially', () => {
       cy.mount(<ScheduleAddWizard />, {
         initialEntries: ['/schedules/add'],
         path: '/schedules/add',
@@ -102,7 +104,202 @@ describe('ScheduleAddWizard', () => {
       });
     });
 
-    it('Should not go to next step due to failed validation', () => {
+    it('workflow job template should render the correct steps initially', () => {
+      cy.intercept({ method: 'GET', url: awxAPI`/workflow_job_templates/*` }, mockTemplates);
+      cy.intercept('/api/v2/workflow_job_templates/100/launch/', {
+        ask_credential_on_launch: true,
+        survey_enabled: true,
+        defaults: {
+          credentials: [
+            {
+              id: 200,
+              name: 'Mock Credential',
+              credential_type: 2,
+            },
+          ],
+          job_tags: '',
+          skip_tags: '',
+        },
+      });
+
+      cy.mount(<ScheduleAddWizard />, {
+        initialEntries: ['/schedules/add'],
+        path: '/schedules/add',
+      });
+
+      cy.get('[data-cy="wizard-nav"]').within(() => {
+        cy.get('li').should('have.length', 4);
+        ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
+          cy.get('li')
+            .eq(index)
+            .should((el) => expect(el.text().trim()).to.equal(text));
+        });
+      });
+
+      cy.selectDropdownOptionByResourceName('schedule_type', 'Workflow job template');
+      cy.selectDropdownOptionByResourceName('workflow-job-template-select', 'Mock Job Template');
+      cy.get('[data-cy="name"]').type('Test Schedule');
+      cy.clickButton(/^Next$/);
+
+      cy.get('[data-cy="wizard-nav"]').within(() => {
+        ['Details', 'Prompts', 'Survey', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
+          cy.get('li')
+            .eq(index)
+            .should((el) => expect(el.text().trim()).to.equal(text));
+        });
+      });
+    });
+
+    it('project does not render prompt and survey steps', () => {
+      cy.intercept(
+        { method: 'GET', url: awxAPI`/projects/*` },
+        {
+          count: 1,
+          results: [
+            {
+              id: 100,
+              name: 'Mock Project',
+              description: 'Project Description',
+              type: 'project',
+            },
+          ],
+        }
+      );
+
+      cy.mount(<ScheduleAddWizard />, {
+        initialEntries: ['/schedules/add'],
+        path: '/schedules/add',
+      });
+
+      cy.get('[data-cy="wizard-nav"]').within(() => {
+        cy.get('li').should('have.length', 4);
+        ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
+          cy.get('li')
+            .eq(index)
+            .should((el) => expect(el.text().trim()).to.equal(text));
+        });
+      });
+
+      cy.selectDropdownOptionByResourceName('schedule_type', 'Project Sync');
+      cy.selectDropdownOptionByResourceName('project', 'Mock Project');
+      cy.get('[data-cy="name"]').type('Test Schedule');
+      cy.clickButton(/^Next$/);
+
+      cy.get('[data-cy="wizard-nav"]').within(() => {
+        ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
+          cy.get('li')
+            .eq(index)
+            .should((el) => expect(el.text().trim()).to.equal(text));
+        });
+      });
+    });
+
+    it('management job does not render prompt and survey steps', () => {
+      cy.intercept(
+        { method: 'GET', url: awxAPI`/system_job_templates/` },
+        {
+          count: 1,
+          results: [
+            {
+              id: 1,
+              type: 'system_job_template',
+              name: 'Cleanup Job Details',
+            },
+          ],
+        }
+      );
+
+      cy.mount(<ScheduleAddWizard />, {
+        initialEntries: ['/schedules/add'],
+        path: '/schedules/add',
+      });
+
+      cy.get('[data-cy="wizard-nav"]').within(() => {
+        cy.get('li').should('have.length', 4);
+        ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
+          cy.get('li')
+            .eq(index)
+            .should((el) => expect(el.text().trim()).to.equal(text));
+        });
+      });
+
+      cy.selectDropdownOptionByResourceName('schedule_type', 'Management job template');
+      cy.selectDropdownOptionByResourceName(
+        'management-job-template-select',
+        'Cleanup Job Details'
+      );
+      cy.get('[data-cy="name"]').type('Test Schedule');
+      cy.get('[data-cy="schedule-days-to-keep"]').type('77');
+      cy.clickButton(/^Next$/);
+
+      cy.get('[data-cy="wizard-nav"]').within(() => {
+        ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
+          cy.get('li')
+            .eq(index)
+            .should((el) => expect(el.text().trim()).to.equal(text));
+        });
+      });
+    });
+
+    it('inventory source does not render prompt and survey steps', () => {
+      cy.intercept(
+        { method: 'GET', url: awxAPI`/inventories/*` },
+        {
+          count: 1,
+          results: [
+            {
+              id: 1,
+              type: 'inventory',
+              name: 'Mock Inventory',
+            },
+          ],
+        }
+      );
+      cy.intercept(
+        { method: 'GET', url: awxAPI`/inventories/1/inventory_sources/*` },
+        {
+          count: 1,
+          results: [
+            {
+              id: 2,
+              type: 'inventory_source',
+              name: 'Mock Inventory source',
+            },
+          ],
+        }
+      );
+
+      cy.mount(<ScheduleAddWizard />, {
+        initialEntries: ['/schedules/add'],
+        path: '/schedules/add',
+      });
+
+      cy.get('[data-cy="wizard-nav"]').within(() => {
+        cy.get('li').should('have.length', 4);
+        ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
+          cy.get('li')
+            .eq(index)
+            .should((el) => expect(el.text().trim()).to.equal(text));
+        });
+      });
+
+      cy.selectDropdownOptionByResourceName('schedule_type', 'Inventory source');
+      cy.selectDropdownOptionByResourceName('inventory', 'Mock Inventory');
+      cy.selectDropdownOptionByResourceName('inventory-source-select', 'Mock Inventory source');
+
+      cy.get('[data-cy="name"]').type('Test Schedule');
+      cy.clickButton(/^Next$/);
+
+      cy.get('[data-cy="wizard-nav"]').within(() => {
+        ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
+          cy.get('li')
+            .eq(index)
+            .should((el) => expect(el.text().trim()).to.equal(text));
+        });
+      });
+    });
+
+    it('job template should not go to next step due to name failed validation', () => {
       cy.mount(<ScheduleAddWizard />, {
         initialEntries: ['/schedules/add'],
         path: '/schedules/add',
@@ -113,6 +310,47 @@ describe('ScheduleAddWizard', () => {
         cy.get('span.pf-v5-c-helper-text__item-text').should(
           'have.text',
           'Schedule name is required.'
+        );
+      });
+      cy.get('[data-cy="wizard-nav-item-details"]').within(() => {
+        cy.get('button').should('have.attr', 'class').and('contain', 'pf-m-current');
+      });
+    });
+
+    it('management job template should not go to next step due to name and days field failed validation', () => {
+      cy.intercept(
+        { method: 'GET', url: awxAPI`/system_job_templates/` },
+        {
+          count: 1,
+          results: [
+            {
+              id: 1,
+              type: 'system_job_template',
+              name: 'Cleanup Job Details',
+            },
+          ],
+        }
+      );
+      cy.mount(<ScheduleAddWizard />, {
+        initialEntries: ['/schedules/add'],
+        path: '/schedules/add',
+      });
+      cy.selectDropdownOptionByResourceName('schedule_type', 'Management job template');
+      cy.selectDropdownOptionByResourceName(
+        'management-job-template-select',
+        'Cleanup Job Details'
+      );
+      cy.clickButton(/^Next$/);
+      cy.get('[data-cy="name-form-group"]').within(() => {
+        cy.get('span.pf-v5-c-helper-text__item-text').should(
+          'have.text',
+          'Schedule name is required.'
+        );
+      });
+      cy.get('[data-cy="schedule-days-to-keep-form-group"]').within(() => {
+        cy.get('span.pf-v5-c-helper-text__item-text').should(
+          'have.text',
+          'Days of data to keep is required.'
         );
       });
       cy.get('[data-cy="wizard-nav-item-details"]').within(() => {

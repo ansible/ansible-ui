@@ -110,6 +110,7 @@ export function ScheduleDetails() {
         <PageDetail label={t('Inventory')}>{schedule.summary_fields.inventory?.name}</PageDetail>
         <PageDetail label={t('Job type')}>{schedule.job_type}</PageDetail>
         <PageDetail label={t('Limit')}>{schedule.limit}</PageDetail>
+        <PageDetail label={t('Forks')}>{schedule.forks}</PageDetail>
         <PageDetail label={t('Verbosity')}>{schedule.verbosity}</PageDetail>
         <PageDetail label={t('Show changes')}>{schedule.diff_mode ? t`On` : t`Off`}</PageDetail>
         <PageDetail label={t('Job tags')} isEmpty={!schedule.job_tags}>
