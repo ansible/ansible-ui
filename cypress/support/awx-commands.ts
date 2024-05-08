@@ -31,6 +31,7 @@ import { WorkflowJobNode, WorkflowNode } from '../../frontend/awx/interfaces/Wor
 import { Spec } from '../../frontend/awx/interfaces/Survey';
 import { awxAPI } from './formatApiPathForAwx';
 import { SystemJobTemplate } from '../../frontend/awx/interfaces/SystemJobTemplate';
+import { Survey } from '../../frontend/awx/interfaces/Survey';
 
 //  AWX related custom command implementation
 
@@ -1033,6 +1034,15 @@ Cypress.Commands.add(
     cy.requestPost<WorkflowJobTemplate>(awxAPI`/workflow_job_templates/`, {
       name: 'E2E WorkflowJob Template ' + randomString(4),
       ...workflowJobTemplate,
+    });
+  }
+);
+
+Cypress.Commands.add(
+  'createAwxSurvey',
+  (surveySpec: Partial<Survey>, template: Partial<JobTemplate>) => {
+    cy.requestPost<Survey>(`${template.url}survey_spec/`, {
+      ...surveySpec,
     });
   }
 );

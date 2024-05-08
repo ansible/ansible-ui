@@ -22,6 +22,7 @@ import { Organization } from '../../frontend/awx/interfaces/Organization';
 import { Project } from '../../frontend/awx/interfaces/Project';
 import { Role } from '../../frontend/awx/interfaces/Role';
 import { Schedule } from '../../frontend/awx/interfaces/Schedule';
+import { Survey } from '../../frontend/awx/interfaces/Survey';
 import { Team } from '../../frontend/awx/interfaces/Team';
 import { AwxUser } from '../../frontend/awx/interfaces/User';
 import { WorkflowApproval } from '../../frontend/awx/interfaces/WorkflowApproval';
@@ -776,6 +777,11 @@ declare global {
        * @param inventory
        * @param jobTemplate
        */
+
+      createAwxSurvey(
+        surveySpec: Partial<Survey>,
+        template: Partial<JobTemplate>
+      ): Chainable<Survey>;
 
       getAwxWorkflowJobTemplateByName(
         awxWorkflowJobTemplateName: string
