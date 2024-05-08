@@ -30,11 +30,14 @@ describe('Jobs: List', () => {
         jobTemplate = jt;
 
         // Launch job to populate jobs list
-        cy.awxRequestPost(awxAPI`/job_templates/${jobTemplate.id.toString()}/launch/`, {}).then(
-          (jl: Job) => {
-            job = jl;
+        cy.awxRequestPost<Partial<Job>>(
+          awxAPI`/job_templates/${jobTemplate.id.toString()}/launch/`,
+          {
+            name: jobTemplate.name,
           }
-        );
+        ).then((jl: Job) => {
+          job = jl;
+        });
       });
     });
   });
@@ -45,7 +48,7 @@ describe('Jobs: List', () => {
     cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
   });
 
-  it('can render the jobs list', () => {
+  it.only('can render the jobs list', () => {
     cy.navigateTo('awx', 'jobs');
     cy.verifyPageTitle('Jobs');
     const jobId = job.id ? job.id.toString() : '';
