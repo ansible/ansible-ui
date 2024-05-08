@@ -777,6 +777,7 @@ function TableRow<T extends object>(props: {
         style={{
           boxShadow: 'unset',
           borderBottom: expanded || (props.isLastRow && disableLastRowBorder) ? 'unset' : undefined,
+          cursor: onSelect ? 'pointer' : 'default',
         }}
         data-cy={
           'id' in item && (typeof item.id === 'string' || typeof item.id === 'number')
@@ -784,6 +785,18 @@ function TableRow<T extends object>(props: {
             : `row-${rowIndex}`
         }
         className={isItemSelected ? 'selected' : undefined}
+        onClick={() => {
+          if (!onSelect) return;
+          if (!isSelectMultiple) {
+            unselectAll?.();
+          }
+          if (isSelectMultiple && isItemSelected) {
+            unselectItem?.(item);
+          } else {
+            selectItem?.(item);
+          }
+          onSelect(item);
+        }}
       >
         {expandedRow && (
           <Td
@@ -828,13 +841,6 @@ function TableRow<T extends object>(props: {
           <Td
             select={{
               rowIndex,
-              onSelect: () => {
-                if (!isSelectMultiple) {
-                  unselectAll?.();
-                }
-                selectItem?.(item);
-                onSelect?.(item);
-              },
               isSelected: isItemSelected ?? false,
               variant: isSelectMultiple ? 'checkbox' : 'radio',
               isDisabled: maxSelections && selectedItems ? disableRow(item) : false,
