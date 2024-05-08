@@ -95,7 +95,8 @@ describe('TemplatePage', () => {
     const tabNames: string[] = [
       'Back to Templates',
       'Details',
-      'Access',
+      'Team Access',
+      'User Access',
       'Schedules',
       'Jobs',
       'Survey',
@@ -104,7 +105,7 @@ describe('TemplatePage', () => {
     cy.mount(<TemplatePage />);
 
     cy.get('.pf-v5-c-tabs__list').within(() => {
-      cy.get('.pf-v5-c-tabs__item').should('have.length', 7);
+      cy.get('.pf-v5-c-tabs__item').should('have.length', tabNames.length);
       cy.get('.pf-v5-c-tabs__item').each((tab, index) => {
         cy.wrap(tab).should('contain', tabNames[index]);
       });
@@ -128,7 +129,8 @@ describe('TemplatePage', () => {
     const tabNames: string[] = [
       'Back to Templates',
       'Details',
-      'Access',
+      'Team Access',
+      'User Access',
       'Schedules',
       'Jobs',
       'Survey',
@@ -162,7 +164,8 @@ describe('TemplatePage', () => {
     const tabNames: string[] = [
       'Back to Templates',
       'Details',
-      'Access',
+      'Team Access',
+      'User Access',
       'Schedules',
       'Jobs',
       'Survey',
