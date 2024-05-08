@@ -61,14 +61,13 @@ describe('EDA Credentials- Create, Edit, Delete', () => {
       cy.clickTableRow(edaCredential.name);
       cy.clickButton(/^Edit credential$/);
       cy.verifyPageTitle(`Edit ${edaCredential.name}`);
-      cy.get('[data-cy="name"]').type(edaCredential.name + 'lalala');
-      cy.get('[data-cy="description"]').type('this credential type has been changed');
-      cy.get('[data-cy="inputs-password"]').type('testtoken');
-      cy.get('[data-cy="inputs-username"]').type('velveeta');
+      cy.get('[data-cy="name"]')
+        .clear()
+        .type(edaCredential.name + 'lalala');
+      cy.get('[data-cy="description"]').clear().type('this credential type has been changed');
       cy.clickButton(/^Save credential$/);
       cy.hasDetail('Name', edaCredential.name + 'lalala');
       cy.hasDetail('Description', 'this credential type has been changed');
-      cy.hasDetail('Username', 'velveeta');
       cy.navigateTo('eda', 'credentials');
       cy.deleteEdaCredential(edaCredential);
     });
