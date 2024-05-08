@@ -381,7 +381,7 @@ function PageFormSecretInput({
           onClear={handleHideField}
           shouldHideField={shouldHideField}
           label={field.label}
-          placeholder={t('$ENCRYPTED')}
+          placeholder={t('ENCRYPTED')}
         >
           <InputGroup>
             <Tooltip content={t(`Reset`)}>
@@ -427,7 +427,7 @@ function PageFormSecretInput({
           }}
           shouldHideField={shouldHideField}
           label={field.label}
-          placeholder={t('$ENCRYPTED')}
+          placeholder={t('ENCRYPTED')}
         >
           <InputGroup>
             <InputGroupItem>
