@@ -2,7 +2,6 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router-dom';
 import { PageNavigationItem } from '../../../../framework';
-import { PageNotImplemented } from '../../../../framework/PageEmptyStates/PageNotImplemented';
 import { awxAPI } from '../../common/api/awx-utils';
 import { CreateJobTemplate, EditJobTemplate } from '../../resources/templates/TemplateForm';
 import { TemplateDetails } from '../../resources/templates/TemplatePage/TemplateDetails';
