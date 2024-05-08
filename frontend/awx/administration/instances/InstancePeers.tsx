@@ -10,8 +10,9 @@ import { usePeersTabFilters } from './Instances';
 import { usePeersColumns } from './hooks/usePeersColumns';
 import { useAwxView } from '../../common/useAwxView';
 import { useMemo } from 'react';
-import { useSelectAssociatePeers } from './hooks/useSelectAssociatePeers';
+import { usePeerInstanceModal } from './hooks/useSelectAssociatePeers';
 import { useDisassociatePeer } from './hooks/useDisassociatePeer';
+import { useAssociatePeersToInstance } from './hooks/useAssociatePeersToInstance';
 
 export function InstancePeers() {
   const params = useParams<{ id: string }>();
@@ -43,8 +44,14 @@ export function ResourcePeersList(props: { url: string }) {
     tableColumns,
     disableQueryString: true,
   });
+  const { id } = useParams<{ id: string }>();
 
-  const multiSelectelectPeer = useSelectAssociatePeers(() => void view.refresh());
+  const associatePeerToInstance = useAssociatePeersToInstance(
+    view.unselectItemsAndRefresh,
+    id ?? ''
+  );
+  const openPeerInstanceModal = usePeerInstanceModal();
+
   const disassociatePeer = useDisassociatePeer(view.unselectItemsAndRefresh);
 
   const toolbarActions = useMemo<IPageAction<Peer>[]>(
@@ -56,7 +63,7 @@ export function ResourcePeersList(props: { url: string }) {
         isPinned: true,
         icon: PlusIcon,
         label: t('Associate'),
-        onClick: multiSelectelectPeer,
+        onClick: () => openPeerInstanceModal({ onPeer: associatePeerToInstance }),
       },
       { type: PageActionType.Seperator },
       {
@@ -65,11 +72,11 @@ export function ResourcePeersList(props: { url: string }) {
         variant: ButtonVariant.primary,
         icon: MinusCircleIcon,
         label: t('Disassociate'),
-        onClick: (peer: Peer[]) => disassociatePeer(peer),
+        onClick: (peer: Peer[]) => disassociatePeer,
         isDanger: true,
       },
     ],
-    [disassociatePeer, multiSelectelectPeer, t]
+    [openPeerInstanceModal, associatePeerToInstance, t]
   );
 
   return (
@@ -82,7 +89,7 @@ export function ResourcePeersList(props: { url: string }) {
       emptyStateDescription={t('Please add Peers to populate this list.')}
       emptyStateButtonIcon={<PlusCircleIcon />}
       emptyStateButtonText={t('Associate peer')}
-      emptyStateButtonClick={multiSelectelectPeer}
+      emptyStateButtonClick={() => openPeerInstanceModal({ onPeer: associatePeerToInstance })}
       {...view}
     />
   );
