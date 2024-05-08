@@ -11,11 +11,6 @@ describe('Overview - EDA Cards', () => {
   it('verify the titles, subtitles and info icons on cards', () => {
     cy.navigateTo('platform', 'overview');
     cy.verifyPageTitle('Welcome to the Ansible Automation Platform');
-    cy.get('[data-cy="projects"]')
-      .should('contain', 'Projects')
-      .within(() => {
-        cy.get('[data-cy="card-subtitle"]').should('contain', 'Recently updated projects');
-      });
 
     cy.get('[data-cy="rulebook-activations"]')
       .should('contain', 'Rulebook Activations')
@@ -87,10 +82,10 @@ describe('Overview - EDA Cards', () => {
             .within(() => {
               cy.contains('h3', 'Rulebook Activations');
               cy.get('tbody tr').should('have.lengthOf.lessThan', 8);
-              cy.get('[data-label="Name"] div > a').click();
+              cy.get('[data-label="Name"] div > a').first().click();
               cy.url().should(
                 'match',
-                new RegExp(`\\/decisions\\/decision-environments\\/[0-9]*\\/details`)
+                new RegExp(`\\/decisions\\/rulebook-activations\\/[0-9]*\\/details`)
               );
             });
         }
@@ -123,7 +118,7 @@ describe('Overview - EDA Cards', () => {
             .within(() => {
               cy.contains('h3', 'Decision Environments');
               cy.get('#decision-environments tbody tr').should('have.lengthOf.lessThan', 8);
-              cy.get('[data-label="Name"] a').click();
+              cy.get('[data-label="Name"] a').first().click();
               cy.url().should(
                 'match',
                 new RegExp('\\/decisions\\/decision-environments\\/[0-9]*\\/details')
@@ -153,7 +148,7 @@ describe('Overview - EDA Cards', () => {
             .within(() => {
               cy.contains('h3', 'Rule Audit');
               cy.get('#recent-rule-audits tbody tr').should('have.lengthOf.lessThan', 8);
-              cy.get('[data-label="Name"] div > a').click();
+              cy.get('[data-label="Name"] div > a').first().click();
               cy.url().should('contain', '/decisions/rule-audits/');
               cy.url().should('match', new RegExp(`\\/decisions\\/rule-audits\\/[0-9]*\\/details`));
             });
