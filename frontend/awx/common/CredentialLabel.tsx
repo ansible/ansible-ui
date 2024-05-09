@@ -7,12 +7,15 @@ import { SummaryFieldCredential } from '../interfaces/summary-fields/summary-fie
 import { AwxRoute } from '../main/AwxRoutes';
 import { toTitleCase } from './util/strings';
 
-function CredentialLabel(props: { credential: Credential | SummaryFieldCredential }) {
+function CredentialLabel(props: { credential: Credential | SummaryFieldCredential | undefined }) {
   const { t } = useTranslation();
   const { credential, ...rest } = props;
   const getPageUrl = useGetPageUrl();
 
   let type;
+  if (!credential) {
+    return null;
+  }
   if (credential.cloud) {
     type = t`Cloud`;
   } else if (credential.kind === 'gpg_public_key') {
