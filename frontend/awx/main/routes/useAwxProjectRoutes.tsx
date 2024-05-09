@@ -2,7 +2,6 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router-dom';
 import { PageNavigationItem } from '../../../../framework';
-import { PageNotImplemented } from '../../../../framework/PageEmptyStates/PageNotImplemented';
 import { awxAPI } from '../../common/api/awx-utils';
 import { ProjectDetails } from '../../resources/projects/ProjectPage/ProjectDetails';
 import { CreateProject, EditProject } from '../../resources/projects/ProjectPage/ProjectForm';
@@ -87,11 +86,6 @@ export function useAwxProjectRoutes() {
           element: <ProjectPage />,
           children: [
             { id: AwxRoute.ProjectDetails, path: 'details', element: <ProjectDetails /> },
-            {
-              id: AwxRoute.ProjectAccess,
-              path: 'access',
-              element: <PageNotImplemented />,
-            },
             {
               id: AwxRoute.ProjectJobTemplates,
               path: 'job-templates',

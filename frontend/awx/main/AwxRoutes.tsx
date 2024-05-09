@@ -82,7 +82,6 @@ export enum AwxRoute {
   ProjectPage = 'awx-project-page',
   EditProject = 'awx-edit-project',
   ProjectDetails = 'awx-project-details',
-  ProjectAccess = 'awx-project-access',
   ProjectJobTemplates = 'awx-project-job-templates',
   ProjectNotifications = 'awx-project-notifications',
   ProjectScheduleCreate = 'awx-project-schedule-create',
