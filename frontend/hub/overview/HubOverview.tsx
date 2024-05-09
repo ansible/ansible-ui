@@ -1,9 +1,9 @@
 /* eslint-disable i18next/no-literal-string */
-import { Bullseye, Button, ButtonVariant } from '@patternfly/react-core';
+import { Banner, Bullseye, Button, ButtonVariant, Flex, FlexItem } from '@patternfly/react-core';
 import { DropdownPosition } from '@patternfly/react-core/deprecated';
-import { CogIcon } from '@patternfly/react-icons';
+import { CogIcon, InfoCircleIcon } from '@patternfly/react-icons';
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import {
   PageActionSelection,
   PageActionType,
@@ -13,6 +13,7 @@ import {
   PageLayout,
 } from '../../../framework';
 import { EmptyStateNoData } from '../../../framework/components/EmptyStateNoData';
+import { ExternalLink } from '../common/ExternalLink';
 import { CollectionCategoryCarousel } from './CollectionCategories';
 import { CategorizedCollections } from './CollectionCategory';
 import { useCategorizeCollections } from './hooks/useCategorizeCollections';
@@ -31,6 +32,20 @@ export function HubOverview() {
 
   return (
     <PageLayout>
+      <Banner variant="blue">
+        <Flex spaceItems={{ default: 'spaceItemsSm' }}>
+          <FlexItem>
+            <InfoCircleIcon />
+          </FlexItem>
+          <FlexItem>
+            <Trans>
+              You are currently viewing a tech preview of the new Ansible Automation Platform user
+              interface. To return to the original interface, click{' '}
+              <ExternalLink href="/ui/">here</ExternalLink>.
+            </Trans>
+          </FlexItem>
+        </Flex>
+      </Banner>
       <PageHeader
         title={t('Welcome to Automation Hub')}
         description={t(
