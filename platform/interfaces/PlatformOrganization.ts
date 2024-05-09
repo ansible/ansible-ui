@@ -13,6 +13,10 @@ export interface PlatformOrganization {
     teams: string;
   };
   summary_fields: {
+    resource?: {
+      ansible_id: string;
+      resource_type: 'shared.organization';
+    };
     created_by: {
       id: number;
       username: string;

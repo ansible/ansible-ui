@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PageNavigationItem } from '../../framework';
+import { PageNavigationItem, PageNotImplemented } from '../../framework';
 import { PlatformOrganizationDetails } from '../access/organizations/components/PlatformOrganizationDetails';
 import {
   CreatePlatformOrganization,
@@ -13,6 +13,7 @@ import { PlatformOrganizationAdmins } from '../access/organizations/components/P
 import { PlatformOrganizationUsers } from '../access/organizations/components/PlatformOrganizationUsers';
 import { PlatformOrganizationManageAccess } from '../access/organizations/components/PlatformOrganizationManageAccess';
 import { PlatformOrganizationTeams } from '../access/organizations/components/PlatformOrganizationTeams';
+import { PlatformAwxOrganizationIdLookup } from '../access/organizations/components/PlatformAwxOrganizationIdLookup';
 
 export function useGetPlatformOrganizationsRoutes() {
   const { t } = useTranslation();
@@ -56,6 +57,15 @@ export function useGetPlatformOrganizationsRoutes() {
               id: PlatformRoute.OrganizationTeams,
               path: 'resource-access',
               element: <PlatformOrganizationTeams />,
+            },
+            {
+              id: PlatformRoute.OrganizationExecutionEnvironments,
+              path: 'resource-access',
+              element: (
+                <PlatformAwxOrganizationIdLookup>
+                  <PageNotImplemented />
+                </PlatformAwxOrganizationIdLookup>
+              ),
             },
           ],
         },
