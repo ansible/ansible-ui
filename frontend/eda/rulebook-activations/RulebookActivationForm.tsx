@@ -200,7 +200,7 @@ export function RulebookActivationInputs() {
       <PageFormCredentialSelect<{ credential_refs: string; id: string; credentialKind: string }>
         name="credential_refs"
         credentialKind={'vault, cloud'}
-        labelHelp={t(`Select the credentials for this rulebook activations.`)}
+        labelHelp={t(`Select the credentials for this rulebook activation.`)}
       />
       <PageFormSelect<IEdaRulebookActivationInputs>
         name="decision_environment_id"
@@ -259,7 +259,7 @@ export function RulebookActivationInputs() {
         placeholderText={t('Select log level')}
         isRequired
         options={LOG_LEVEL_OPTIONS}
-        labelHelp={t('Error | Info | Debug')}
+        labelHelp={t('The different log level options: Error, Info, and Debug.')}
         labelHelpTitle={t('Log level')}
       />
       <PageFormTextInput<IEdaRulebookActivationInputs>
