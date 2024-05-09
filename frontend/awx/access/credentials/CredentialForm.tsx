@@ -161,6 +161,7 @@ export function CreateCredential() {
           credentialTypes={parsedCredentialTypes || {}}
           setCredentialPluginValues={setCredentialPluginValues}
           accumulatedPluginValues={accumulatedPluginValues}
+          setAccumulatedPluginValues={setaccumulatedPluginValues}
         />
       </AwxPageForm>
     </PageLayout>
@@ -282,12 +283,14 @@ function CredentialInputs({
   credentialTypes,
   setCredentialPluginValues,
   accumulatedPluginValues,
+  setAccumulatedPluginValues,
 }: {
   isEditMode?: boolean;
   selectedCredentialTypeId?: number;
   credentialTypes: CredentialTypes;
   setCredentialPluginValues?: (values: CredentialPluginsInputSource[]) => void;
   accumulatedPluginValues?: CredentialPluginsInputSource[];
+  setAccumulatedPluginValues?: (values: CredentialPluginsInputSource[]) => void;
 }) {
   const { t } = useTranslation();
 
@@ -334,6 +337,7 @@ function CredentialInputs({
           setCredentialPluginValues={setCredentialPluginValues}
           isEditMode={isEditMode}
           accumulatedPluginValues={accumulatedPluginValues ? accumulatedPluginValues : []}
+          setAccumulatedPluginValues={setAccumulatedPluginValues}
         />
       ) : null}
     </>
@@ -344,11 +348,13 @@ function CredentialSubForm({
   setCredentialPluginValues,
   isEditMode = false,
   accumulatedPluginValues,
+  setAccumulatedPluginValues,
 }: {
   credentialType: CredentialType | undefined;
   setCredentialPluginValues: (values: CredentialPluginsInputSource[]) => void;
   isEditMode?: boolean;
   accumulatedPluginValues: CredentialPluginsInputSource[];
+  setAccumulatedPluginValues?: (values: CredentialPluginsInputSource[]) => void;
 }) {
   const { t } = useTranslation();
   const openCredentialPluginsModal = useCredentialPluginsModal();
@@ -404,6 +410,7 @@ function CredentialSubForm({
             return (
               <CredentialTextInput
                 accumulatedPluginValues={accumulatedPluginValues}
+                setAccumulatedPluginValues={setAccumulatedPluginValues}
                 key={field.id}
                 field={field}
                 isDisabled={
@@ -454,6 +461,7 @@ function CredentialTextInput({
   isDisabled = false,
   isRequired = false,
   accumulatedPluginValues,
+  setAccumulatedPluginValues,
 }: {
   credentialType?: CredentialType | undefined;
   field: CredentialInputField;
@@ -461,6 +469,7 @@ function CredentialTextInput({
   isDisabled?: boolean;
   isRequired?: boolean;
   accumulatedPluginValues: CredentialPluginsInputSource[];
+  setAccumulatedPluginValues?: (values: CredentialPluginsInputSource[]) => void;
 }) {
   const { t } = useTranslation();
   const { setValue, clearErrors } = useFormContext();
@@ -472,6 +481,13 @@ function CredentialTextInput({
   const sourceCredential = useGetSourceCredential(
     accumulatedPluginValues.filter((cp) => cp.input_field_name === field.id)[0]?.source_credential
   );
+  const onClear = () => {
+    setValue(field.id, '', { shouldDirty: false });
+    clearErrors(field.id);
+    setAccumulatedPluginValues?.(
+      accumulatedPluginValues.filter((cp) => cp.input_field_name !== field.id)
+    );
+  };
 
   useEffect(() => {
     if (field?.ask_at_runtime) {
@@ -557,17 +573,28 @@ function CredentialTextInput({
         helperText={handleHelperText(field)}
         button={
           credentialType?.kind !== 'external' ? (
-            <Button
-              isDisabled={isDisabled}
-              data-cy={'secret-management-input'}
-              variant="control"
-              icon={
-                <Icon>
-                  <KeyIcon />
-                </Icon>
-              }
-              onClick={handleModalToggle}
-            ></Button>
+            <>
+              <Button
+                isDisabled={isDisabled}
+                data-cy={'secret-management-input'}
+                variant="control"
+                icon={
+                  <Icon>
+                    <KeyIcon />
+                  </Icon>
+                }
+                onClick={handleModalToggle}
+              ></Button>
+              {accumulatedPluginValues.some((cp) => cp.input_field_name === field.id) ? (
+                <Button
+                  data-cy={'clear-secret-management-input'}
+                  variant="control"
+                  onClick={onClear}
+                >
+                  {t(`Clear`)}
+                </Button>
+              ) : null}
+            </>
           ) : undefined
         }
         additionalControls={
