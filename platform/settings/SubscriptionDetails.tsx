@@ -91,8 +91,18 @@ export function SubscriptionDetails() {
             </Label>
           )}
         </PageDetail>
-        <PageDetail label={t('Hosts automated')}>{license_info.automated_instances}</PageDetail>
-        <PageDetail label={t('Hosts imported')}>{license_info.current_instances}</PageDetail>
+        <PageDetail
+          label={t('Hosts automated')}
+          isEmpty={systemConfig.data?.SUBSCRIPTION_USAGE_MODEL !== 'unique_managed_hosts'}
+        >
+          {license_info.automated_instances}
+        </PageDetail>
+        <PageDetail
+          label={t('Hosts imported')}
+          isEmpty={systemConfig.data?.SUBSCRIPTION_USAGE_MODEL !== 'unique_managed_hosts'}
+        >
+          {license_info.current_instances}
+        </PageDetail>
         <PageDetail
           label={t('Hosts remaining')}
           isEmpty={systemConfig.data?.SUBSCRIPTION_USAGE_MODEL !== 'unique_managed_hosts'}
@@ -112,7 +122,7 @@ export function SubscriptionDetails() {
           {license_info.reactivated_instances}
         </PageDetail>
         <PageDetail label={t('Subscription type')}>{license_type}</PageDetail>
-        {/* <PageDetail label={t('Trial')}>{subscription.trial ? t('Yes') : t('No')}</PageDetail> */}
+        <PageDetail label={t('Trial')}>{license_info.trial ? t('Yes') : t('No')}</PageDetail>
         <PageDetail label={t('Days remaining')}>
           {Math.floor(license_info.time_remaining / (24 * 60 * 60))}
         </PageDetail>
