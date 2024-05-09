@@ -31,6 +31,7 @@ import { WorkflowJobNode, WorkflowNode } from '../../frontend/awx/interfaces/Wor
 import { Spec } from '../../frontend/awx/interfaces/Survey';
 import { awxAPI } from './formatApiPathForAwx';
 import { SystemJobTemplate } from '../../frontend/awx/interfaces/SystemJobTemplate';
+import { Survey } from '../../frontend/awx/interfaces/Survey';
 
 //  AWX related custom command implementation
 
@@ -1037,6 +1038,15 @@ Cypress.Commands.add(
   }
 );
 
+Cypress.Commands.add(
+  'createAwxSurvey',
+  (surveySpec: Partial<Survey>, template: Partial<JobTemplate>) => {
+    cy.requestPost<Survey>(`${template.url}survey_spec/`, {
+      ...surveySpec,
+    });
+  }
+);
+
 Cypress.Commands.add('getAwxWorkflowJobTemplateByName', (awxWorkflowJobTemplateName: string) => {
   cy.awxRequestGet<AwxItemsResponse<WorkflowJobTemplate>>(
     awxAPI`/workflow_job_templates/?name=${awxWorkflowJobTemplateName}`
@@ -1122,6 +1132,22 @@ Cypress.Commands.add(
     if (jobTemplate.id) {
       const templateId = typeof jobTemplate.id === 'number' ? jobTemplate.id.toString() : '';
       cy.awxRequestDelete(awxAPI`/job_templates/${templateId}/`, options);
+    }
+  }
+);
+
+Cypress.Commands.add(
+  'deleteAwxJob',
+  (
+    job: Job,
+    options?: {
+      /** Whether to fail on response codes other than 2xx and 3xx */
+      failOnStatusCode?: boolean;
+    }
+  ) => {
+    if (job.id) {
+      const jobId = typeof job.id === 'number' ? job.id.toString() : '';
+      cy.awxRequestDelete(awxAPI`/jobs/${jobId}/`, options);
     }
   }
 );
