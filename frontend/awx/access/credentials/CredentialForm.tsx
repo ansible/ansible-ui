@@ -289,6 +289,7 @@ function CredentialInputs({
         <CredentialSubForm
           credentialType={credentialTypes[credentialTypeID]}
           setCredentialPluginValues={setCredentialPluginValues}
+          isEditMode={isEditMode}
         />
       ) : null}
     </>
@@ -297,9 +298,11 @@ function CredentialInputs({
 function CredentialSubForm({
   credentialType,
   setCredentialPluginValues,
+  isEditMode = false,
 }: {
   credentialType: CredentialType | undefined;
   setCredentialPluginValues: (values: Record<string, CredentialPluginsForm>) => void;
+  isEditMode?: boolean;
 }) {
   const { t } = useTranslation();
   const openCredentialPluginsModal = useCredentialPluginsModal();
@@ -355,6 +358,9 @@ function CredentialSubForm({
               <CredentialTextInput
                 key={field.id}
                 field={field}
+                isDisabled={
+                  field.id === 'vault_id' && credentialType.kind === 'vault' && isEditMode
+                }
                 isRequired={requiredFields.includes(field.id)}
                 handleModalToggle={() => {
                   openCredentialPluginsModal({
@@ -393,15 +399,17 @@ function CredentialSubForm({
 }
 
 function CredentialTextInput({
-  field,
-  isRequired = false,
   credentialType,
+  field,
   handleModalToggle,
+  isDisabled = false,
+  isRequired = false,
 }: {
-  field: CredentialInputField;
-  isRequired?: boolean;
   credentialType?: CredentialType | undefined;
+  field: CredentialInputField;
   handleModalToggle: () => void;
+  isDisabled?: boolean;
+  isRequired?: boolean;
 }) {
   const { t } = useTranslation();
   const { setValue, clearErrors } = useFormContext();
@@ -444,11 +452,12 @@ function CredentialTextInput({
         placeholder={(field?.default || t('Enter value')).toString()}
         type={field.secret ? 'password' : 'text'}
         isRequired={handleIsRequired()}
-        isDisabled={!!isPromptOnLaunchChecked}
+        isDisabled={!!isPromptOnLaunchChecked || isDisabled}
         labelHelp={field.help_text}
         button={
           credentialType?.kind !== 'external' ? (
             <Button
+              isDisabled={isDisabled}
               data-cy={'secret-management-input'}
               variant="plain"
               icon={
