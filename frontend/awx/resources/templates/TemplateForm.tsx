@@ -54,7 +54,16 @@ export function EditJobTemplate() {
   );
   const { cache } = useSWRConfig();
   const onSubmit: PageFormSubmitHandler<JobTemplateForm> = async (values: JobTemplateForm) => {
-    const { credentials, labels, instance_groups, webhook_key, webhook_url, ...rest } = values;
+    const {
+      credentials,
+      labels,
+      instance_groups,
+      webhook_key,
+      webhook_url,
+      isProvisioningCallbackEnabled,
+      host_config_key,
+      ...rest
+    } = values;
     const formValues = {
       ...rest,
       project: values.project.id,
@@ -63,8 +72,8 @@ export function EditJobTemplate() {
       job_tags: stringifyTags(values.job_tags) ?? '',
       skip_tags: stringifyTags(values.skip_tags) ?? '',
       webhook_credential: values.webhook_credential?.id || null,
+      host_config_key: isProvisioningCallbackEnabled ? host_config_key : null,
     };
-
     await requestPatch<JobTemplateForm>(awxAPI`/job_templates/${id.toString()}/`, formValues);
     (cache as unknown as { clear: () => void }).clear?.();
     const promises = [];
