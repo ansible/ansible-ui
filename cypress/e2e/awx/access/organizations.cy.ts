@@ -4,12 +4,12 @@ import { AwxUser } from '../../../../frontend/awx/interfaces/User';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 import { randomE2Ename } from '../../../support/utils';
 
-describe('organizations', () => {
+describe('Organizations: Create', () => {
   before(() => {
     cy.awxLogin();
   });
 
-  it('creates a basic organization, asserts info on the details page, and deletes it', () => {
+  it('can create a basic organization, assert info on the details page, and delete it', () => {
     const organizationName = randomE2Ename();
     const orgDescription = 'orgDescription' + randomString(4);
     cy.navigateTo('awx', 'organizations');
@@ -43,7 +43,7 @@ describe('organizations', () => {
   });
 });
 
-describe('organizations edit and delete', function () {
+describe('Organizations: Edit and Delete', function () {
   let organization: Organization;
   let user: AwxUser;
 
@@ -67,7 +67,7 @@ describe('organizations edit and delete', function () {
     cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
   });
 
-  it('edits an organization from the list view', function () {
+  it('can edit an organization from the list view', function () {
     const stringRandom = randomString(4);
     cy.navigateTo('awx', 'organizations');
     cy.filterTableByMultiSelect('name', [organization.name]);
@@ -86,7 +86,7 @@ describe('organizations edit and delete', function () {
     cy.verifyPageTitle(`${organization.name}`);
   });
 
-  it('edits an organization from the details page', function () {
+  it('can edit an organization from the details page', function () {
     const stringRandom = randomString(4);
 
     cy.navigateTo('awx', 'organizations');
@@ -108,7 +108,7 @@ describe('organizations edit and delete', function () {
     cy.verifyPageTitle(`${organization.name}`);
   });
 
-  it('deletes an organization from the details page', function () {
+  it('can delete an organization from the details page', function () {
     cy.navigateTo('awx', 'organizations');
     cy.filterTableByMultiSelect('name', [organization.name]);
     cy.get('[data-cy="name-column-cell"]').within(() => {
@@ -127,7 +127,7 @@ describe('organizations edit and delete', function () {
       });
   });
 
-  it('deletes an organization from the organizations list row item', function () {
+  it('can delete an organization from the organizations list row item', function () {
     cy.navigateTo('awx', 'organizations');
     cy.filterTableByMultiSelect('name', [organization.name]);
     cy.getByDataCy('actions-column-cell').within(() => {
@@ -146,7 +146,7 @@ describe('organizations edit and delete', function () {
       });
   });
 
-  it('deletes an organization from the organizations list toolbar', function () {
+  it('can delete an organization from the organizations list toolbar', function () {
     cy.navigateTo('awx', 'organizations');
     cy.filterTableByMultiSelect('name', [organization.name]);
     cy.selectTableRow(organization.name, false);
@@ -165,4 +165,118 @@ describe('organizations edit and delete', function () {
     });
     cy.verifyPageTitle('Organizations');
   });
+});
+
+describe('Organizations: Users Tab', function () {
+  let organization: Organization;
+  let user: AwxUser;
+
+  before(function () {
+    cy.awxLogin();
+  });
+
+  beforeEach(function () {
+    const orgName = randomE2Ename();
+    cy.createAwxOrganization(orgName).then((testOrganization) => {
+      organization = testOrganization;
+      cy.createAwxUser(organization).then((testUser) => {
+        user = testUser;
+        cy.giveUserOrganizationAccess(organization.name, user.id, 'Read');
+      });
+    });
+  });
+
+  afterEach(function () {
+    cy.deleteAwxUser(user, { failOnStatusCode: false });
+    cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
+  });
+
+  it.skip('can add a brand new normal user to the Org', () => {});
+  it.skip('can add a brand new admin user to the Org', () => {});
+  it.skip('can add a brand new auditor user to the Org', () => {});
+  it.skip('can add an existing user to an Org and assign a specific type of role to that user', () => {});
+  it.skip('can remove a user from the users tab of an Org', () => {});
+  it.skip('can bulk remove users from the users tab of an Org', () => {});
+});
+
+describe('Organizations: Teams Tab', function () {
+  let organization: Organization;
+  let user: AwxUser;
+
+  before(function () {
+    cy.awxLogin();
+  });
+
+  beforeEach(function () {
+    const orgName = randomE2Ename();
+    cy.createAwxOrganization(orgName).then((testOrganization) => {
+      organization = testOrganization;
+      cy.createAwxUser(organization).then((testUser) => {
+        user = testUser;
+        cy.giveUserOrganizationAccess(organization.name, user.id, 'Read');
+      });
+    });
+  });
+
+  afterEach(function () {
+    cy.deleteAwxUser(user, { failOnStatusCode: false });
+    cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
+  });
+
+  it.skip('can associate a team to an org and visit the teams tab of an org to view associated team', () => {});
+  it.skip('can edit a team from the teams tab inside of an Org', () => {});
+});
+
+describe('Organizations: Execution Environments Tab', function () {
+  let organization: Organization;
+  let user: AwxUser;
+
+  before(function () {
+    cy.awxLogin();
+  });
+
+  beforeEach(function () {
+    const orgName = randomE2Ename();
+    cy.createAwxOrganization(orgName).then((testOrganization) => {
+      organization = testOrganization;
+      cy.createAwxUser(organization).then((testUser) => {
+        user = testUser;
+        cy.giveUserOrganizationAccess(organization.name, user.id, 'Read');
+      });
+    });
+  });
+
+  afterEach(function () {
+    cy.deleteAwxUser(user, { failOnStatusCode: false });
+    cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
+  });
+
+  it.skip('can create an EE with a specific Org and visit the EE tab of an org to view associated EE', () => {});
+});
+
+describe('Organizations: Notifications Tab', function () {
+  let organization: Organization;
+  let user: AwxUser;
+
+  before(function () {
+    cy.awxLogin();
+  });
+
+  beforeEach(function () {
+    const orgName = randomE2Ename();
+    cy.createAwxOrganization(orgName).then((testOrganization) => {
+      organization = testOrganization;
+      cy.createAwxUser(organization).then((testUser) => {
+        user = testUser;
+        cy.giveUserOrganizationAccess(organization.name, user.id, 'Read');
+      });
+    });
+  });
+
+  afterEach(function () {
+    cy.deleteAwxUser(user, { failOnStatusCode: false });
+    cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
+  });
+
+  it.skip('can create a Notification with a specific Org and toggle the Notification on and off on the Notifications tab of the Org', () => {});
 });
