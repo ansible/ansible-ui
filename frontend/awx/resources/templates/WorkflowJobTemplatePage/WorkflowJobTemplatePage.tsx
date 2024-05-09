@@ -51,7 +51,8 @@ export function WorkflowJobTemplatePage() {
   const tabs: ({ label: string; page: string } | false)[] = useMemo(
     () => [
       { label: t('Details'), page: AwxRoute.WorkflowJobTemplateDetails },
-      { label: t('Access'), page: AwxRoute.WorkflowJobTemplateAccess },
+      { label: t('Team Access'), page: AwxRoute.WorkflowJobTemplateTeamAccess },
+      { label: t('User Access'), page: AwxRoute.WorkflowJobTemplateUserAccess },
       { label: t('Schedules'), page: AwxRoute.WorkflowJobTemplateSchedules },
       { label: t('Jobs'), page: AwxRoute.WorkflowJobTemplateJobs },
       { label: t('Survey'), page: AwxRoute.WorkflowJobTemplateSurvey },
