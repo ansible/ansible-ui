@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { compareStrings } from '../../../../../framework';
 import { useAddressColumn } from '../../../../common/columns';
