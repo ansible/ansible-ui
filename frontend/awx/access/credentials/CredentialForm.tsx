@@ -26,7 +26,7 @@ import { CredentialInputField, CredentialType } from '../../interfaces/Credentia
 import { AwxRoute } from '../../main/AwxRoutes';
 import { PageFormSelectOrganization } from '../organizations/components/PageFormOrganizationSelect';
 import { CredentialMultilineInput } from './components/CredentialMultilineInput';
-import { Button, Icon, InputGroup, InputGroupItem, Tooltip } from '@patternfly/react-core';
+import { Button, Icon, InputGroup, Tooltip } from '@patternfly/react-core';
 import { KeyIcon, RedoIcon } from '@patternfly/react-icons';
 import { PageFormSelectCredentialType } from './components/PageFormSelectCredentialType';
 
