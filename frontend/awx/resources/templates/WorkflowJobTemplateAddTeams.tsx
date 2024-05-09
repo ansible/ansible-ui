@@ -19,6 +19,7 @@ import { postRequest } from '../../../common/crud/Data';
 import { RoleAssignmentsReviewStep } from '../../../common/access/RolesWizard/steps/RoleAssignmentsReviewStep';
 import { Role } from '../../interfaces/Role';
 import { AwxRoute } from '../../main/AwxRoutes';
+import { awxErrorAdapter } from '../../common/adapters/awxErrorAdapter';
 import { useAwxBulkActionDialog } from '../../common/useAwxBulkActionDialog';
 
 interface WizardFormValues {
@@ -152,6 +153,7 @@ export function WorkflowJobTemplateAddTeams() {
         onCancel={() => {
           pageNavigate(AwxRoute.WorkflowJobTemplateTeamAccess, { params: { id: template?.id } });
         }}
+        errorAdapter={awxErrorAdapter}
       />
     </PageLayout>
   );

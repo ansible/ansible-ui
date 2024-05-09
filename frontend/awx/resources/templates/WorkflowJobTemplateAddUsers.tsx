@@ -19,6 +19,7 @@ import { WorkflowJobTemplate } from '../../interfaces/WorkflowJobTemplate';
 import { AwxUser } from '../../interfaces/User';
 import { Role } from '../../interfaces/Role';
 import { RoleAssignmentsReviewStep } from '../../../common/access/RolesWizard/steps/RoleAssignmentsReviewStep';
+import { awxErrorAdapter } from '../../common/adapters/awxErrorAdapter';
 import { useAwxBulkActionDialog } from '../../common/useAwxBulkActionDialog';
 
 interface WizardFormValues {
@@ -153,6 +154,7 @@ export function WorkflowJobTemplateAddUsers() {
         onCancel={() => {
           pageNavigate(AwxRoute.WorkflowJobTemplateUserAccess, { params: { id: template?.id } });
         }}
+        errorAdapter={awxErrorAdapter}
       />
     </PageLayout>
   );
