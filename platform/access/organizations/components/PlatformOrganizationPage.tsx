@@ -58,6 +58,10 @@ export function PlatformOrganizationPage() {
           { label: t('Users'), page: PlatformRoute.OrganizationUsers },
           { label: t('Administrators'), page: PlatformRoute.OrganizationAdmins },
           { label: t('Teams'), page: PlatformRoute.OrganizationTeams },
+          {
+            label: t('Execution Environments'),
+            page: PlatformRoute.OrganizationExecutionEnvironments,
+          },
         ]}
         params={{ id: organization.id }}
       />
