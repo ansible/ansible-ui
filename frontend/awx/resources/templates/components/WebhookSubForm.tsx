@@ -15,13 +15,16 @@ import { CredentialType } from '../../../interfaces/CredentialType';
 import { JobTemplateForm } from '../../../interfaces/JobTemplateForm';
 import { WorkflowJobTemplateForm } from '../../../interfaces/WorkflowJobTemplate';
 
-export function WebhookSubForm() {
+export function WebhookSubForm(props: {
+  templateType: 'job_templates' | 'workflow_job_templates';
+}) {
   const { t } = useTranslation();
   const params = useParams<{ id?: string }>();
   const { setValue } = useFormContext<JobTemplateForm | WorkflowJobTemplateForm>();
   const webhookKey = useWatch({ name: 'webhook_key' }) as string;
   const webhookService = useWatch({ name: 'webhook_service' }) as string;
   const isWebhookEnabled = useWatch({ name: 'isWebhookEnabled' }) as boolean;
+  const { templateType } = props;
 
   const { pathname } = useLocation();
 
@@ -35,13 +38,13 @@ export function WebhookSubForm() {
   const handleGenerateWebhookKey = useCallback(async () => {
     if (isWebhookEnabled && params.id) {
       const { webhook_key: webhookKey } = await postRequest<{ webhook_key: string }>(
-        awxAPI`/job_templates/${params.id}/webhook_key/`,
+        awxAPI`/${templateType}/${params.id}/webhook_key/`,
         {}
       );
       setValue('webhook_key', webhookKey);
       return;
     }
-  }, [isWebhookEnabled, setValue, params]);
+  }, [isWebhookEnabled, setValue, params, templateType]);
 
   useGet<AwxItemsResponse<CredentialType>>(
     awxAPI`/credential_types/?namespace=${webhookService}_token`
@@ -53,7 +56,7 @@ export function WebhookSubForm() {
       'related.webhook_receiver',
       pathname.endsWith('/create')
         ? t`a new webhook url will be generated on save.`.toUpperCase()
-        : `${document.location.origin}${awxAPI`/job_template/`}${
+        : `${document.location.origin}${awxAPI`/${templateType}/`}${
             params.id as string
           }/${webhookService}/`
     );
@@ -63,7 +66,7 @@ export function WebhookSubForm() {
         'related.webhook_key',
         t`a new webhook key will be generated on save.`.toUpperCase()
       );
-  }, [webhookService, setValue, pathname, params.id, t]);
+  }, [webhookService, setValue, pathname, params.id, t, templateType]);
 
   const isUpdateKeyDisabled =
     pathname.endsWith('/create') || webhookKey === 'A NEW WEBHOOK KEY WILL BE GENERATED ON SAVE.';

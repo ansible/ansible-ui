@@ -319,7 +319,7 @@ export function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm }) {
           />
         </FormSection>
       ) : null}
-      {isWebhookEnabled ? <WebhookSubForm /> : null}
+      {isWebhookEnabled ? <WebhookSubForm templateType="job_templates" /> : null}
     </>
   );
 }
