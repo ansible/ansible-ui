@@ -16,7 +16,13 @@ import { Credential } from '../../../../interfaces/Credential';
 export function PageFormExternalCredentialSelect<
   TFieldValues extends FieldValues = FieldValues,
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
->(props: { name: TFieldName; isRequired?: boolean; isDisabled?: string; helperText?: string }) {
+>(props: {
+  name: TFieldName;
+  isRequired?: boolean;
+  isDisabled?: string;
+  helperText?: string;
+  defaultValue?: Credential;
+}) {
   const { t } = useTranslation();
   const credentialColumns = useCredentialsColumns({ disableLinks: true });
   const credentialFilters = useCredentialsFilters();
@@ -35,6 +41,7 @@ export function PageFormExternalCredentialSelect<
       queryParams={{ credential_type__kind: 'external' }}
       tableColumns={credentialColumns}
       toolbarFilters={credentialFilters}
+      defaultSelection={[]}
     />
   );
 }
