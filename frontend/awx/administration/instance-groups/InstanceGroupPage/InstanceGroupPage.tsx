@@ -33,6 +33,8 @@ export function InstanceGroupPage() {
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!instanceGroup) return <LoadingPage breadcrumbs tabs />;
 
+  const instanceType = instanceGroup.is_container_group ? 'container-group' : 'instance-group';
+
   return (
     <PageLayout>
       <PageHeader
@@ -76,7 +78,7 @@ export function InstanceGroupPage() {
                 { label: t('Jobs'), page: AwxRoute.InstanceGroupJobs },
               ]
         }
-        params={{ id: instanceGroup.id }}
+        params={{ id: instanceGroup.id, instanceType }}
       />
     </PageLayout>
   );
