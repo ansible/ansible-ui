@@ -16,12 +16,12 @@ import { Credential } from '../../../interfaces/Credential';
 export interface CredentialsExternalTestModalProps {
   credential?: Credential;
   credentialType: CredentialType;
+  watchedSubFormFields: unknown[];
 }
 
 export interface CredentialsRetainInput {
-  field: {
-    id: number;
-  };
+  inputs: object;
+  metadata: { [k: string]: string };
 }
 
 export function CredentialsExternalTestModal(
@@ -41,8 +41,26 @@ export function CredentialsExternalTestModal(
       title: t('Test passed.'),
       timeout: 2000,
     };
+
+    const populatedInput = Object.fromEntries(
+      Object.entries(retainInput).map(([key, value]) => [key, value || ''])
+    );
+
+    const payload = {
+      inputs: props.credentialType.inputs.fields.reduce(
+        (filteredInputs, field, idx) => {
+          filteredInputs[field.id] =
+            props.watchedSubFormFields[idx] ||
+            props.credentialType.inputs.fields[idx].default ||
+            '';
+          return filteredInputs;
+        },
+        {} as Record<string, unknown>
+      ),
+      metadata: populatedInput,
+    };
     props.credential
-      ? await postRequest(awxAPI`/credentials/${String(props.credential.id)}/test/`, retainInput)
+      ? await postRequest(awxAPI`/credentials/${String(props.credential.id)}/test/`, payload)
           .then(() => {
             alertToaster.addAlert(alert);
           })
@@ -55,7 +73,7 @@ export function CredentialsExternalTestModal(
           })
       : await postRequest(
           awxAPI`/credential_types/${String(props.credentialType.id)}/test/`,
-          retainInput
+          payload
         )
           .then(() => {
             alertToaster.addAlert(alert);
