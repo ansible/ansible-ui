@@ -52,7 +52,7 @@ export function ResourcePeersList(props: { url: string }) {
   );
   const openPeerInstanceModal = usePeerInstanceModal();
 
-  const disassociatePeer = useDisassociatePeer(view.unselectItemsAndRefresh);
+  const disassociatePeer = useDisassociatePeer(view.unselectItemsAndRefresh, id ?? '');
 
   const toolbarActions = useMemo<IPageAction<Peer>[]>(
     () => [
@@ -72,11 +72,11 @@ export function ResourcePeersList(props: { url: string }) {
         variant: ButtonVariant.primary,
         icon: MinusCircleIcon,
         label: t('Disassociate'),
-        onClick: (peer: Peer[]) => disassociatePeer,
+        onClick: (peers: Peer[]) => disassociatePeer(peers),
         isDanger: true,
       },
     ],
-    [openPeerInstanceModal, associatePeerToInstance, t]
+    [openPeerInstanceModal, associatePeerToInstance, disassociatePeer, t]
   );
 
   return (
