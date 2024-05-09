@@ -23,13 +23,14 @@ export function useSurveyToolbarActions(view: ISurveyView) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const { id } = useParams<{ id: string }>();
-  const { openManageQuestionOrder } = useManageSurveyQuestions();
   const deleteQuestions = useDeleteSurveyDialog(view.unselectItemsAndRefresh);
 
   const jobTemplateSurvey = useMatch('/templates/job_template/:id/survey')?.params?.id?.toString();
   const workflowTemplateSurvey = useMatch(
     '/templates/workflow_job_template/:id/survey'
   )?.params?.id?.toString();
+
+  const { openManageQuestionOrder } = useManageSurveyQuestions(jobTemplateSurvey);
 
   const { data: options } = useOptions<OptionsResponse<ActionsResponse>>(
     jobTemplateSurvey
