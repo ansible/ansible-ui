@@ -12,16 +12,6 @@ describe('CreateUserToken', () => {
         fixture: 'applications.json',
       }
     );
-    cy.intercept(
-      {
-        method: 'GET',
-        url: '/api/v2/users/*/tokens/*',
-        hostname: 'localhost',
-      },
-      {
-        fixture: 'userTokens.json',
-      }
-    );
   });
 
   it('renders form for creating user token', () => {
@@ -37,7 +27,7 @@ describe('CreateUserToken', () => {
     });
     cy.get('[data-cy="description-form-group"]').within(() => {
       cy.contains('Description');
-      // for some reason cypress can't find the placeholder directly so checking the attribute
+      // for some reason cypress can't find the placeholder text directly so checking the attribute
       cy.get('[data-cy="description"]')
         .should('have.attr', 'placeholder')
         .and('equal', 'Enter token description');
@@ -45,6 +35,12 @@ describe('CreateUserToken', () => {
     cy.get('[data-cy="scope-form-group"]').within(() => {
       cy.contains('Scope');
       cy.contains('Select a scope');
+      cy.get('button').click();
+      cy.contains('Read');
+      cy.contains('Write');
     });
+    // find the application dropdown button, click on it and check the expected app name shows up
+    cy.get('button[data-cy="application"]').click();
+    cy.get('div#application-select').contains('test');
   });
 });
