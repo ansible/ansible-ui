@@ -353,7 +353,7 @@ function CredentialInputs({
   );
 }
 
-function PageFormSecretInput({
+function HiddenInputField({
   field,
   isEditMode,
   credentialType,
@@ -375,88 +375,58 @@ function PageFormSecretInput({
   };
 
   if (field.multiline) {
-    if (field.secret && isEditMode) {
-      return (
-        <SecretManagementInputField
-          onClear={handleHideField}
-          shouldHideField={shouldHideField}
-          label={field.label}
-          placeholder={t('ENCRYPTED')}
-        >
-          <InputGroup>
-            <Tooltip content={t(`Reset`)}>
-              <Button
-                size="sm"
-                variant="control"
-                onClick={handleHideField}
-                icon={<RedoIcon />}
-              ></Button>
-            </Tooltip>
-            <CredentialMultilineInput
-              kind={credentialType.kind}
-              field={field}
-              requiredFields={requiredFields}
-            />
-          </InputGroup>
-        </SecretManagementInputField>
-      );
-    } else if (credentialType.kind === 'ssh' && field.id === 'become_method') {
-      return (
-        <BecomeMethodField
-          key={field.id}
-          fieldOptions={field}
-          isRequired={requiredFields.includes(field.id)}
-        />
-      );
-    } else {
-      return (
-        <CredentialMultilineInput
-          kind={credentialType.kind}
-          field={field}
-          requiredFields={requiredFields}
-        />
-      );
-    }
+    return (
+      <SecretManagementInputField
+        onClear={handleHideField}
+        shouldHideField={shouldHideField}
+        label={field.label}
+        placeholder={t('ENCRYPTED')}
+      >
+        <InputGroup>
+          <Tooltip content={t(`Reset`)}>
+            <Button
+              size="sm"
+              variant="control"
+              onClick={handleHideField}
+              icon={<RedoIcon />}
+            ></Button>
+          </Tooltip>
+          <CredentialMultilineInput
+            kind={credentialType.kind}
+            field={field}
+            requiredFields={requiredFields}
+          />
+        </InputGroup>
+      </SecretManagementInputField>
+    );
   } else {
-    if (field.secret && isEditMode) {
-      return (
-        <SecretManagementInputField
-          onClear={() => {
-            setValue(field.id, '');
-            setShouldHideField(!shouldHideField);
-          }}
-          shouldHideField={shouldHideField}
-          label={field.label}
-          placeholder={t('ENCRYPTED')}
-        >
-          <InputGroup>
-            <InputGroupItem>
-              <Button
-                size="sm"
-                variant="control"
-                onClick={handleHideField}
-                icon={<RedoIcon />}
-              ></Button>
-            </InputGroupItem>
-            <InputGroupItem>
-              <CredentialTextInput
-                field={field}
-                isRequired={requiredFields.includes(field.id)}
-                credentialType={credentialType}
-              />
-            </InputGroupItem>
-          </InputGroup>
-        </SecretManagementInputField>
-      );
-    } else {
-      return (
-        <CredentialTextInput
-          field={field}
-          isRequired={requiredFields.includes(field.id)}
-          credentialType={credentialType}
-        />
-      );
-    }
+    return (
+      <SecretManagementInputField
+        onClear={() => {
+          setValue(field.id, '');
+          setShouldHideField(!shouldHideField);
+        }}
+        shouldHideField={shouldHideField}
+        label={field.label}
+        placeholder={t('ENCRYPTED')}
+      >
+        <InputGroup>
+          <Tooltip content={t(`Reset`)}>
+            <Button
+              size="sm"
+              variant="control"
+              onClick={handleHideField}
+              icon={<RedoIcon />}
+            ></Button>
+          </Tooltip>
+          <CredentialTextInput
+            field={field}
+            isRequired={requiredFields.includes(field.id)}
+            credentialType={credentialType}
+          />
+        </InputGroup>
+      </SecretManagementInputField>
+    );
   }
 }
 
@@ -499,32 +469,7 @@ function CredentialSubForm(
     <PageFormSection title={t('Type Details')}>
       {stringFields.length > 0 &&
         stringFields.map((field) => {
-          if (field?.multiline) {
-            return (
-              <PageFormSecret
-                key={field.id}
-                onClear={() => {}}
-                shouldHideField={field.secret && isEditMode}
-                label={field.label}
-                placeholder={'ENCRYPTED'}
-              >
-                <CredentialMultilineInput
-                  accumulatedPluginValues={accumulatedPluginValues}
-                  kind={credentialType.kind}
-                  key={field.id}
-                  field={field}
-                  requiredFields={requiredFields}
-                  handleModalToggle={() => {
-                    openCredentialPluginsModal({
-                      field,
-                      setCredentialPluginValues,
-                      accumulatedPluginValues,
-                    });
-                  }}
-                />
-              </PageFormSecret>
-            );
-          } else if (credentialType.kind === 'ssh' && field.id === 'become_method') {
+          if (credentialType.kind === 'ssh' && field.id === 'become_method') {
             return (
               <BecomeMethodField
                 key={field.id}
@@ -532,35 +477,37 @@ function CredentialSubForm(
                 isRequired={requiredFields.includes(field.id)}
               />
             );
-          } else {
+          }
+          if (field.secret && isEditMode) {
             return (
-              <PageFormSecret
+              <HiddenInputField
                 key={field.id}
-                onClear={() => {}}
-                shouldHideField={field.secret && isEditMode}
-                label={field.label}
-                placeholder={'ENCRYPTED'}
-              >
+                field={field}
+                isEditMode={isEditMode}
+                credentialType={credentialType}
+                requiredFields={requiredFields}
+              ></HiddenInputField>
+            );
+          } else {
+            if (field.multiline) {
+              return (
+                <CredentialMultilineInput
+                  key={field.id}
+                  kind={credentialType.kind}
+                  field={field}
+                  requiredFields={requiredFields}
+                />
+              );
+            } else {
+              return (
                 <CredentialTextInput
-                  accumulatedPluginValues={accumulatedPluginValues}
-                  setAccumulatedPluginValues={setAccumulatedPluginValues}
                   key={field.id}
                   field={field}
-                  isDisabled={
-                    field.id === 'vault_id' && credentialType.kind === 'vault' && isEditMode
-                  }
                   isRequired={requiredFields.includes(field.id)}
-                  handleModalToggle={() =>
-                    openCredentialPluginsModal({
-                      field,
-                      setCredentialPluginValues,
-                      accumulatedPluginValues,
-                    })
-                  }
                   credentialType={credentialType}
                 />
-              </PageFormSecret>
-            );
+              );
+            }
           }
         })}
       {choiceFields.length > 0 &&
