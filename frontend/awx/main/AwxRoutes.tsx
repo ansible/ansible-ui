@@ -220,8 +220,12 @@ export enum AwxRoute {
   InstanceGroupInstances = 'awx-instance-group-instances',
   InstanceGroupInstancesPage = 'awx-instance-group-instances-page',
   InstanceGroupInstanceDetails = 'awx-instance-group-instance-details',
+  InstanceGroupTeamAccess = 'awx-instance-group-team-access',
+  InstanceGroupUserAccess = 'awx-instance-group-user-access',
   InstanceGroupJobs = 'awx-instance-group-jobs',
   InstanceGroups = 'awx-instance-groups',
+  InstanceGroupAddTeams = 'awx-instance-group-add-teams',
+  InstanceGroupAddUsers = 'awx-instance-group-add-users',
 
   CreateContainerGroup = 'awx-create-container-group',
   ContainerGroupDetails = 'awx-container-group-details',
