@@ -140,7 +140,10 @@ export function RulebookActivationDetails() {
               {rulebookActivation?.status_message}
             </PageDetail>
           )}
-        <PageDetail label={t('Log level')} helpText={t('Error | Info | Debug')}>
+        <PageDetail
+          label={t('Log level')}
+          helpText={t('The different log level options: Error, Info, and Debug.')}
+        >
           {logLevelName(rulebookActivation?.log_level || LogLevelEnum.Error, t)}
         </PageDetail>
         <PageDetail label={t('Service')}>{rulebookActivation?.k8s_service_name}</PageDetail>
