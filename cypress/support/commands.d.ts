@@ -41,6 +41,7 @@ import {
 } from '../../frontend/eda/interfaces/EdaRulebookActivation';
 import { EdaUser, EdaUserCreateUpdate } from '../../frontend/eda/interfaces/EdaUser';
 import { EdaTeam } from '../../frontend/eda/interfaces/EdaTeam';
+import { RoleDetail } from '../../frontend/eda/interfaces/EdaRole';
 import { EdaRbacRole } from '../../frontend/eda/interfaces/EdaRbacRole';
 import { Role as HubRole } from '../../frontend/hub/access/roles/Role';
 import { RemoteRegistry } from '../../frontend/hub/administration/remote-registries/RemoteRegistry';

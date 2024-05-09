@@ -11,21 +11,22 @@ import { edaAPI } from '../../../support/formatApiPathForEDA';
 import { EdaCredentialType } from '../../../../frontend/eda/interfaces/EdaCredentialType';
 import { user_team_access_tab_resources } from '../../../support/constants';
 
+type ResourceObject =
+  | EdaProject
+  | EdaDecisionEnvironment
+  | EdaRulebookActivation
+  | EdaCredential
+  | EdaCredentialType;
+
 user_team_access_tab_resources.forEach((resource) => {
   describe(`Team Access Tab for ${resource.name} - Add team`, () => {
     let edaTeam: EdaTeam;
-    let resource_object:
-      | EdaProject
-      | EdaDecisionEnvironment
-      | EdaRulebookActivation
-      | EdaCredential
-      | EdaCredentialType;
+    let resource_object: ResourceObject;
     before(() => {
       cy.edaLogin();
       // If the resource is a RBA, create all dependency resources, else just the one resource
-      if (resource.name == 'rulebook-activations') {
+      if (resource.name === 'rulebook-activations') {
         let edaProject: EdaProject;
-        let edaDecisionEnvironment: EdaDecisionEnvironment;
         let edaRuleBook: EdaRulebook;
         cy.createEdaProject().then((project) => {
           edaProject = project;
@@ -33,7 +34,6 @@ user_team_access_tab_resources.forEach((resource) => {
           cy.getEdaRulebooks(edaProject, 'hello_echo.yml').then((edaRuleBooks) => {
             edaRuleBook = edaRuleBooks[0];
             cy.createEdaDecisionEnvironment().then((decisionEnvironment) => {
-              edaDecisionEnvironment = decisionEnvironment;
               cy.createEdaRulebookActivation({
                 rulebook_id: edaRuleBook.id,
                 decision_environment_id: decisionEnvironment.id,
@@ -45,11 +45,11 @@ user_team_access_tab_resources.forEach((resource) => {
             });
           });
         });
-      } else {
-        resource.creation().then((resource_instance) => {
+      } else if (resource.creation !== null) {
+        resource.creation().then((resource_instance: ResourceObject) => {
           resource_object = resource_instance;
-          if (resource.name == 'projects') {
-            cy.waitEdaProjectSync(resource_instance);
+          if (resource.name === 'projects') {
+            cy.waitEdaProjectSync(resource_instance as EdaProject);
           }
         });
       }
@@ -67,7 +67,7 @@ user_team_access_tab_resources.forEach((resource) => {
       cy.navigateTo('eda', resource.name);
       // filter resource by name not available for decision environment
       // or credential type
-      if (resource.name == 'decision-environments' || resource.name == 'credential-types') {
+      if (resource.name === 'decision-environments' || resource.name === 'credential-types') {
         cy.get('[data-cy="table-view"]').click();
         cy.clickTableRow(resource_object.name, false);
       } else {
@@ -106,9 +106,8 @@ user_team_access_tab_resources.forEach((resource) => {
     before(() => {
       cy.edaLogin();
       // If the resource is a RBA, create all dependency resources, else just the one resource
-      if (resource.name == 'rulebook-activations') {
+      if (resource.name === 'rulebook-activations') {
         let edaProject: EdaProject;
-        let edaDecisionEnvironment: EdaDecisionEnvironment;
         let edaRuleBook: EdaRulebook;
         cy.createEdaProject().then((project) => {
           edaProject = project;
@@ -116,7 +115,6 @@ user_team_access_tab_resources.forEach((resource) => {
           cy.getEdaRulebooks(edaProject, 'hello_echo.yml').then((edaRuleBooks) => {
             edaRuleBook = edaRuleBooks[0];
             cy.createEdaDecisionEnvironment().then((decisionEnvironment) => {
-              edaDecisionEnvironment = decisionEnvironment;
               cy.createEdaRulebookActivation({
                 rulebook_id: edaRuleBook.id,
                 decision_environment_id: decisionEnvironment.id,
@@ -128,11 +126,11 @@ user_team_access_tab_resources.forEach((resource) => {
             });
           });
         });
-      } else {
+      } else if (resource.creation !== null) {
         resource.creation().then((resource_instance) => {
           resource_object = resource_instance;
-          if (resource.name == 'projects') {
-            cy.waitEdaProjectSync(resource_object);
+          if (resource.name === 'projects') {
+            cy.waitEdaProjectSync(resource_object as EdaProject);
           }
         });
       }
@@ -182,7 +180,7 @@ user_team_access_tab_resources.forEach((resource) => {
       cy.navigateTo('eda', resource.name);
       // filter resource by name not available for decision environment
       // or credential type
-      if (resource.name == 'decision-environments' || resource.name == 'credential-types') {
+      if (resource.name === 'decision-environments' || resource.name === 'credential-types') {
         cy.get('[data-cy="table-view"]').click();
         cy.clickTableRow(resource_object.name, false);
       } else {
@@ -203,7 +201,7 @@ user_team_access_tab_resources.forEach((resource) => {
       cy.navigateTo('eda', resource.name);
       // filter resource by name not available for decision environment
       // or credential type
-      if (resource.name == 'decision-environments' || resource.name == 'credential-types') {
+      if (resource.name === 'decision-environments' || resource.name === 'credential-types') {
         cy.get('[data-cy="table-view"]').click();
         cy.clickTableRow(resource_object.name, false);
       } else {
