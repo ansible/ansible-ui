@@ -55,6 +55,7 @@ export interface PageFormProps<T extends object> {
   errorAdapter?: ErrorAdapter;
   disableSubmitOnEnter?: boolean;
   isWizard?: boolean;
+  additionalActions?: ReactNode;
 }
 
 export function useFormErrors<T extends object>(
@@ -185,6 +186,7 @@ export function PageForm<T extends object>(props: PageFormProps<T>) {
                   {props.additionalActionText}
                 </Button>
               ) : null}
+              {props.additionalActions}
               {props.onCancel && (
                 <PageFormCancelButton onCancel={props.onCancel}>
                   {props.cancelText ?? frameworkTranslations.cancelText}
