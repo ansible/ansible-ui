@@ -30,7 +30,6 @@ import { WorkflowJobTemplate } from '../../frontend/awx/interfaces/WorkflowJobTe
 import { WorkflowJobNode, WorkflowNode } from '../../frontend/awx/interfaces/WorkflowNode';
 import { Spec } from '../../frontend/awx/interfaces/Survey';
 import { awxAPI } from './formatApiPathForAwx';
-import { SystemJobTemplate } from '../../frontend/awx/interfaces/SystemJobTemplate';
 import { Survey } from '../../frontend/awx/interfaces/Survey';
 
 //  AWX related custom command implementation
