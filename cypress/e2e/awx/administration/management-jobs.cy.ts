@@ -1,7 +1,6 @@
 import { SystemJobTemplate } from '../../../../frontend/awx/interfaces/SystemJobTemplate';
 
-// Skipping flaky test suite
-describe.skip('Management Jobs Page - List and Launch Jobs', () => {
+describe('Management Jobs Page - List and Launch Jobs', () => {
   beforeEach(() => {
     cy.awxLogin();
   });
@@ -54,13 +53,10 @@ describe.skip('Management Jobs Page - List and Launch Jobs', () => {
                 cy.verifyPageTitle(jobName);
                 cy.url().should('include', `/jobs/management/${jobId}/output`);
                 cy.waitForManagementJobToProcess(jobId).then(() => {
-                  cy.contains('a[role="tab"]', 'Details').click();
-                  cy.get('[data-cy="id"]').should('have.text', jobId).should('be.visible');
-                  cy.get('[data-cy="name"]').should('have.text', jobName).should('be.visible');
-                  cy.get('[data-cy="type"]')
-                    .should('have.text', 'Management job')
-                    .should('be.visible');
-                  cy.get('[data-cy="id"]').should('have.text', jobId).should('be.visible');
+                  cy.clickTab('Details', true);
+                  cy.getByDataCy('id').should('have.text', jobId);
+                  cy.getByDataCy('name').should('have.text', jobName);
+                  cy.getByDataCy('type').should('have.text', 'Management job');
                   cy.intercept('DELETE', `api/v2/system_jobs/${jobId}/`).as('deleteMgtJob');
                   cy.clickPageAction('delete-job');
                   cy.get('#confirm').click();
@@ -106,12 +102,10 @@ describe.skip('Management Jobs Page - List and Launch Jobs', () => {
                 cy.verifyPageTitle(jobName);
                 cy.url().should('include', `/jobs/management/${jobId}/output`);
                 cy.waitForManagementJobToProcess(jobId).then(() => {
-                  cy.contains('a[role="tab"]', 'Details').click();
-                  cy.get('[data-cy="id"]').should('have.text', jobId).should('be.visible');
-                  cy.get('[data-cy="name"]').should('have.text', jobName).should('be.visible');
-                  cy.get('[data-cy="type"]')
-                    .should('have.text', 'Management job')
-                    .should('be.visible');
+                  cy.clickTab('Details', true);
+                  cy.getByDataCy('id').should('have.text', jobId);
+                  cy.getByDataCy('name').should('have.text', jobName);
+                  cy.getByDataCy('type').should('have.text', 'Management job');
                   cy.intercept('DELETE', `api/v2/system_jobs/${jobId}/`).as('deleteMgtJob');
                   cy.clickPageAction('delete-job');
                   cy.get('#confirm').click();
