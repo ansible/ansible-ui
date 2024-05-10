@@ -38,11 +38,11 @@ describe('Notifications: List View', () => {
     testNotification('Mattermost');
   });
 
-  it.only('can create, edit a new Pagerduty Notification, assert the info in the list view, and delete the notification', () => {
+  it('can create, edit a new Pagerduty Notification, assert the info in the list view, and delete the notification', () => {
     testNotification('Pagerduty');
   });
 
-  it('can create, edit a new Rocket.Chat Notification, assert the info in the list view, and delete the notification', () => {
+  it.only('can create, edit a new Rocket.Chat Notification, assert the info in the list view, and delete the notification', () => {
     testNotification('Rocket.Chat');
   });
 
@@ -390,9 +390,10 @@ function testMattermostForm() {
 
 // RocketChat Form Test
 function testRocketChatForm() {
-  cy.contains(`[data-cy="rocketchat-url"]`, 'https://rocketchat.com');
-  cy.contains(`[data-cy="rocketchat-username"]`, 'rocketchat_user');
-  cy.contains(`[data-cy="rocketchat-icon-url"]`, 'https://icon_url.com');
+  cy.contains(`[data-cy="target-url"]`, 'https://rocketchat.com');
+  cy.contains(`[data-cy="username"]`, 'rocketchat_user');
+  cy.contains(`[data-cy="icon-url"]`, 'https://icon_url.com');
+  cy.contains(`[data-cy='disable-ssl-verification']`, 'true');
 }
 
 // IRC Form Test
