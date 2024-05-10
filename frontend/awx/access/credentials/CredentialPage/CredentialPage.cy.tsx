@@ -40,7 +40,6 @@ describe('CredentialPage', () => {
     const tabNames: string[] = [
       'Back to Credentials',
       'Details',
-      'Access',
       'Job Templates',
       'Team Access',
       'User Access',
@@ -48,7 +47,7 @@ describe('CredentialPage', () => {
     cy.mount(<CredentialPage />);
 
     cy.get('.pf-v5-c-tabs__list').within(() => {
-      cy.get('.pf-v5-c-tabs__item').should('have.length', 6);
+      cy.get('.pf-v5-c-tabs__item').should('have.length', 5);
       cy.get('.pf-v5-c-tabs__item').each((tab, index) => {
         cy.wrap(tab).should('contain', tabNames[index]);
       });
