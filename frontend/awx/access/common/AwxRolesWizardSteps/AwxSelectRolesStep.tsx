@@ -7,17 +7,19 @@ import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardPro
 import { useAwxRolesFilters } from '../../roles/useAwxRolesFilters';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { AwxRbacRole } from '../../../interfaces/AwxRbacRole';
+import { QueryParams } from '../../../common/useAwxView';
 
 export function AwxSelectRolesStep(props: {
   contentType?: string;
   fieldNameForPreviousStep?: string;
   descriptionForRoleSelection?: string;
+  title?: string;
 }) {
   const toolbarFilters = useAwxRolesFilters();
   const { t } = useTranslation();
   const { wizardData } = usePageWizard();
   const { resourceType } = wizardData as { [key: string]: unknown };
-  const { fieldNameForPreviousStep } = props;
+  const { fieldNameForPreviousStep, title } = props;
 
   const contentType = useMemo(() => {
     return props.contentType ? props.contentType : (resourceType as string)?.split('.').pop() ?? '';
@@ -67,14 +69,20 @@ export function AwxSelectRolesStep(props: {
     ];
   }, [t]);
 
+  const queryParams = useMemo<QueryParams>(() => {
+    const params: QueryParams = { content_type__model: contentType };
+    if (contentType === 'organization') {
+      params['not__name'] = ['Organization Member', 'Organization Admin'];
+    }
+    return params;
+  }, [contentType]);
+
   const view = useAwxMultiSelectListView<AwxRbacRole>(
     {
       url: awxAPI`/role_definitions/`,
       toolbarFilters,
       tableColumns,
-      queryParams: {
-        content_type__model: contentType,
-      },
+      queryParams,
     },
     'awxRoles'
   );
@@ -85,6 +93,7 @@ export function AwxSelectRolesStep(props: {
       toolbarFilters={toolbarFilters}
       fieldNameForPreviousStep={fieldNameForPreviousStep}
       descriptionForRoleSelection={descriptionForRoleSelection}
+      title={title}
     />
   );
 }

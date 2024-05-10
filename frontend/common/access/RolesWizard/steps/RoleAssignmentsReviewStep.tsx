@@ -29,6 +29,8 @@ interface ReviewExpandableListProps<
   selectedItems: K[];
   label?: string;
   fieldName: string;
+  edaRolesLabel?: string;
+  awxRolesLabel?: string;
 }
 
 const StyledBadge = styled(Badge)`
@@ -38,7 +40,10 @@ const StyledDivider = styled(Divider)`
   margin: var(--pf-v5-global--spacer--md) 0 var(--pf-v5-global--spacer--md) 0;
 `;
 
-export function RoleAssignmentsReviewStep() {
+export function RoleAssignmentsReviewStep(props: {
+  edaRolesLabel?: string;
+  awxRolesLabel?: string;
+}) {
   const { wizardData } = usePageWizard();
   const { t } = useTranslation();
   const { resourceType, resources, users, teams, edaRoles, awxRoles } = wizardData as ReviewData;
@@ -82,10 +87,10 @@ export function RoleAssignmentsReviewStep() {
         </>
       ) : null}
       {edaRoles && edaRoles.length ? (
-        <ReviewExpandableList selectedItems={edaRoles} fieldName="edaRoles" />
+        <ReviewExpandableList selectedItems={edaRoles} fieldName="edaRoles" {...props} />
       ) : null}
       {awxRoles && awxRoles.length ? (
-        <ReviewExpandableList selectedItems={awxRoles} fieldName="awxRoles" />
+        <ReviewExpandableList selectedItems={awxRoles} fieldName="awxRoles" {...props} />
       ) : null}
     </>
   );
@@ -96,7 +101,7 @@ function ReviewExpandableList<
     | { id: number; name: string; description?: string; username?: never }
     | { id: number; name?: never; username: string },
 >(props: ReviewExpandableListProps<K>) {
-  const { label, selectedItems, fieldName } = props;
+  const { label, selectedItems, fieldName, edaRolesLabel, awxRolesLabel } = props;
   const [isExpanded, setIsExpanded] = useState(true);
   const onToggle = (_event: React.MouseEvent, isExpanded: boolean) => {
     setIsExpanded(isExpanded);
@@ -114,12 +119,13 @@ function ReviewExpandableList<
       case 'resources':
         return t('Resources');
       case 'edaRoles':
+        return edaRolesLabel || t('Roles');
       case 'awxRoles':
-        return t('Roles');
+        return awxRolesLabel || t('Roles');
       default:
         return '';
     }
-  }, [fieldName, label, t]);
+  }, [awxRolesLabel, edaRolesLabel, fieldName, label, t]);
 
   const tableColumns: ITableColumn<K>[] = useMemo(() => {
     switch (fieldName) {
