@@ -1,21 +1,21 @@
-import { useCallback, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { MultiSelectDialog, usePageDialog } from '../../../../../framework';
+import { MultiSelectDialog, usePageDialogs } from '../../../../../framework';
 import { usePeersTabFilters } from '../Instances';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxView } from '../../../common/useAwxView';
-import { useAssociatePeersToInstance } from './useAssociatePeersToInstance';
 import { usePeersColumns } from './usePeersColumns';
 import { useGetItem } from '../../../../common/crud/useGet';
 import { useParams } from 'react-router-dom';
 import { Peer, Instance } from '../../../interfaces/Instance';
 
-function SelectAssociates(props: {
+export interface PeerInstanceModalProps {
   accessUrl?: string;
-  title: string;
-  onSelect: (peers: Peer[]) => void;
+  onPeer: (peers: Peer[]) => void;
   confirmText?: string;
-}) {
+}
+
+function PeerInstanceModal(props: PeerInstanceModalProps) {
   const { t } = useTranslation();
   const params = useParams<{ id?: string }>();
   const { data: instance } = useGetItem<Instance>(awxAPI`/instances/`, params.id);
@@ -30,6 +30,8 @@ function SelectAssociates(props: {
     [columns]
   );
 
+  const { onPeer } = props;
+
   const instanceName = instance?.hostname as string;
   const view = useAwxView<Peer>({
     url: awxAPI`/receptor_addresses/`,
@@ -43,8 +45,8 @@ function SelectAssociates(props: {
 
   return (
     <MultiSelectDialog
-      title={props.title}
-      onSelect={props.onSelect}
+      title={t('Select Peer Addresses')}
+      onSelect={onPeer}
       toolbarFilters={toolbarFilters}
       tableColumns={tableColumns}
       view={view}
@@ -53,38 +55,16 @@ function SelectAssociates(props: {
   );
 }
 
-export function useSelectAssociates() {
-  const [_, setDialog] = usePageDialog();
-  const openSelectUsers = useCallback(
-    (
-      title: string,
-      onSelect: (peers: Peer[]) => void,
-      confirmText?: string,
-      accessUrl?: string
-    ) => {
-      setDialog(
-        <SelectAssociates
-          accessUrl={accessUrl}
-          title={title}
-          onSelect={onSelect}
-          confirmText={confirmText}
-        />
-      );
-    },
-    [setDialog]
-  );
-  return openSelectUsers;
-}
+export function usePeerInstanceModal() {
+  const { pushDialog, popDialog } = usePageDialogs();
+  const [props, setProps] = useState<PeerInstanceModalProps>();
 
-export function useSelectAssociatePeers(onClose: () => void) {
-  const { t } = useTranslation();
-  const selectAssociates = useSelectAssociates();
-  const addPeersToInstance = useAssociatePeersToInstance();
-
-  const select = useCallback(() => {
-    selectAssociates(t('Select peer addresses'), (instances: Peer[]) => {
-      addPeersToInstance(instances, onClose);
-    });
-  }, [addPeersToInstance, onClose, selectAssociates, t]);
-  return select;
+  useEffect(() => {
+    if (props) {
+      pushDialog(<PeerInstanceModal {...props} />);
+    } else {
+      popDialog();
+    }
+  }, [props, pushDialog, popDialog]);
+  return setProps;
 }
