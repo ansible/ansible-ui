@@ -74,7 +74,7 @@ export function WorkflowJobTemplateDetails(props: {
       <PageDetail label={t('Inventory')} isEmpty={!summaryFields.inventory}>
         {summaryFields.inventory ? (
           <Link
-            to={getPageUrl(AwxRoute.InventoryPage, {
+            to={getPageUrl(AwxRoute.InventoryDetails, {
               params: {
                 id: summaryFields.inventory?.id,
                 inventory_type: inventoryUrlPaths[summaryFields.inventory.kind],

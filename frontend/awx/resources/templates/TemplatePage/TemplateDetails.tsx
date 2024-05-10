@@ -102,7 +102,7 @@ export function TemplateDetails(props: { templateId?: string; disableScroll?: bo
       <PageDetail label={t('Inventory')} isEmpty={!summaryFields.inventory && askInventoryOnLaunch}>
         {summaryFields.inventory ? (
           <Link
-            to={getPageUrl(AwxRoute.InventoryPage, {
+            to={getPageUrl(AwxRoute.InventoryDetails, {
               params: {
                 id: summaryFields.inventory?.id,
                 inventory_type: inventoryUrlPaths[summaryFields.inventory?.kind],
