@@ -30,11 +30,11 @@ describe('Notifications: List View', () => {
     testNotification('Grafana');
   });
 
-  it.only('can create, edit a new IRC Notification in the AAP UI, assert the info in the list view, and delete the notification', () => {
+  it('can create, edit a new IRC Notification in the AAP UI, assert the info in the list view, and delete the notification', () => {
     testNotification('IRC');
   });
 
-  it('can create, edit a new Mattermost Notification, assert the info in the list view, and delete the notification', () => {
+  it.only('can create, edit a new Mattermost Notification, assert the info in the list view, and delete the notification', () => {
     testNotification('Mattermost');
   });
 
@@ -382,10 +382,11 @@ function testWebhookForm() {
 
 // Mattermost Form Test
 function testMattermostForm() {
-  cy.contains(`[data-cy="mattermost-url"]`, 'https://mattermost.com');
-  cy.contains(`[data-cy="mattermost-username"]`, 'mattermost_user');
-  cy.contains(`[data-cy="mattermost-channel"]`, 'channel_name');
-  cy.contains(`[data-cy="mattermost-icon-url"]`, 'https://icon_url.com');
+  cy.contains(`[data-cy="target-url"]`, 'https://mattermost.com');
+  cy.contains(`[data-cy="username"]`, 'mattermost_user');
+  cy.contains(`[data-cy="channel"]`, 'channel_name');
+  cy.contains(`[data-cy="icon-url"]`, 'https://icon_url.com');
+  cy.contains(`[data-cy="verify-ssl"]`, 'true');
 }
 
 // RocketChat Form Test
@@ -400,8 +401,8 @@ function testIRCForm() {
   cy.contains(`[data-cy="irc-server-port"]`, '6667');
   cy.contains(`[data-cy="irc-server-address"]`, 'https://irc.server.com');
   cy.contains(`[data-cy="irc-nick"]`, 'irc_nick');
-  cy.contains(`[data-cy="nt-detail-channels-value"]`, 'channel1');
-  cy.contains(`[data-cy="nt-detail-channels-value"]`, 'user1');
-  cy.contains(`[data-cy="irc-use-ssl"]`, 'true');
+  cy.contains(`[data-cy="destination-channels-or-users"]`, 'channel1');
+  cy.contains(`[data-cy="destination-channels-or-users"]`, 'user1');
+  cy.contains(`[data-cy="disable-ssl-verification-"]`, 'true');
 }
 
