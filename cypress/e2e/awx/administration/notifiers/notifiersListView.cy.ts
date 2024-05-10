@@ -155,8 +155,7 @@ function fillBasicData(notificationName: string, type: string) {
   cy.contains('span', type).click();
 }
 
-function testBasicData(notificationName: string, type : string, organization : string)
-{
+function testBasicData(notificationName: string, type: string, organization: string) {
   cy.contains(`[data-cy="name"]`, notificationName);
   cy.contains(`[data-cy="description"]`, 'this is test description');
 
@@ -220,8 +219,7 @@ function testNotificationType(type: string) {
   }
 }
 
-function TransformTypeName(type : string)
-{
+function TransformTypeName(type: string) {
   if (type === 'Email') {
     return 'email';
   } else if (type === 'Slack') {
@@ -287,6 +285,7 @@ function fillGrafanaForm() {
   cy.get(`[data-cy="notification-configuration-panelid"]`).type('panel_id');
   cy.get(`[data-cy="notification-configuration-annotation-tags-form-group"]`).type('tag1');
   cy.get(`[data-cy="notification_configuration-grafana_no_verify_ssl"]`).click();
+  cy.get(`[data-cy='notification-configuration-grafana-key']`).type('key');
 }
 
 function fillWebhookForm() {
@@ -364,10 +363,10 @@ function testPagerDutyForm() {
 // Grafana Form Test
 function testGrafanaForm() {
   cy.contains(`[data-cy="grafana-url"]`, 'https://grafana.com');
-  cy.contains(`[data-cy="grafana-key"]`, 'grafana_api_key');
-  cy.contains(`[data-cy="grafana-dashboardid"]`, 'dashboard_id');
-  cy.contains(`[data-cy="grafana-panelid"]`, 'panel_id');
-  cy.contains(`[data-cy="grafana-annotation-tags"]`, 'tag1');
+  cy.contains(`[data-cy="id-of-the-dashboard-(optional)"]`, 'dashboard_id');
+  cy.contains(`[data-cy="id-of-the-panel-(optional)"]`, 'panel_id');
+  cy.contains(`[data-cy="tags-for-the-annotation-(optional)"]`, 'tag1');
+  cy.contains(`[data-cy='disable-ssl-verification']`, 'true');
 }
 
 // Webhook Form Test
@@ -404,4 +403,3 @@ function testIRCForm() {
   cy.contains(`[data-cy="destination-channels-or-users"]`, 'user1');
   cy.contains(`[data-cy="disable-ssl-verification-"]`, 'true');
 }
-
