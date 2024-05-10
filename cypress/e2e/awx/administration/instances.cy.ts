@@ -268,7 +268,7 @@ describe('Instances: Peers', () => {
     });
     cy.getByDataCy('associate-peer').click();
     cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
-      cy.get('header').contains('Select peer addresses');
+      cy.get('header').contains('Select Peer Addresses');
       cy.get('button').contains('Associate peer(s)').should('have.attr', 'aria-disabled', 'true');
       cy.filterTableBySingleText(instanceToAssociate.hostname, true);
       cy.intercept('GET', awxAPI`/instances/${instance.id.toString()}/`).as('instanceA');
