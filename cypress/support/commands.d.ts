@@ -1088,7 +1088,7 @@ declare global {
       ): Chainable<WorkflowApproval>;
 
       waitForTemplateStatus(jobID: string): Chainable<AwxItemsResponse<JobEvent>>;
-      waitForManagementJobStatus(jobID: string): Chainable<SystemJobTemplate>;
+      waitForManagementJobToProcess(jobID: string, retries?: number): Chainable<SystemJobTemplate>;
       waitForJobToProcessEvents(jobID: string, retries?: number): Chainable<Job>;
       waitForWorkflowJobStatus(jobID: string): Chainable<Job>;
 
