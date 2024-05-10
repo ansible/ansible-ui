@@ -50,7 +50,7 @@ describe('Notifications: List View', () => {
     testNotification('Slack');
   });
 
-  it.only('can create, edit a new Twilio Notification, assert the info in the list view, and delete the notification', () => {
+  it('can create, edit a new Twilio Notification, assert the info in the list view, and delete the notification', () => {
     testNotification('Twilio');
   });
 
@@ -372,9 +372,10 @@ function testGrafanaForm() {
 
 // Webhook Form Test
 function testWebhookForm() {
-  cy.contains(`[data-cy="webhook-username"]`, 'webhook_user');
-  cy.contains(`[data-cy="webhook-url"]`, 'https://webhook-endpoint.com');
-  cy.contains(`[data-cy="webhook-http-method"]`, 'POST');
+  cy.contains(`[data-cy="username"]`, 'webhook_user');
+  cy.contains(`[data-cy="target-url"]`, 'https://webhook-endpoint.com');
+  cy.contains(`[data-cy="http-method"]`, 'POST');
+  cy.contains(`[data-cy='disable-ssl-verification-']`, 'true');
 }
 
 // Mattermost Form Test
