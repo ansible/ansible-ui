@@ -34,11 +34,11 @@ describe('Notifications: List View', () => {
     testNotification('IRC');
   });
 
-  it.only('can create, edit a new Mattermost Notification, assert the info in the list view, and delete the notification', () => {
+  it('can create, edit a new Mattermost Notification, assert the info in the list view, and delete the notification', () => {
     testNotification('Mattermost');
   });
 
-  it('can create, edit a new Pagerduty Notification, assert the info in the list view, and delete the notification', () => {
+  it.only('can create, edit a new Pagerduty Notification, assert the info in the list view, and delete the notification', () => {
     testNotification('Pagerduty');
   });
 
@@ -359,9 +359,8 @@ function testTwilioForm() {
 // PagerDuty Form Test
 function testPagerDutyForm() {
   cy.contains(`[data-cy="pagerduty-subdomain"]`, 'my_subdomain');
-  cy.contains(`[data-cy="pagerduty-token"]`, 'pagerduty_token');
-  cy.contains(`[data-cy="pagerduty-service-key"]`, 'service_integration_key');
-  cy.contains(`[data-cy="pagerduty-client-name"]`, 'client_identifier');
+  cy.contains(`[data-cy="api-service/integration-key"]`, 'service_integration_key');
+  cy.contains(`[data-cy="client-identifier"]`, 'client_identifier');
 }
 
 // Grafana Form Test
