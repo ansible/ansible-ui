@@ -264,9 +264,11 @@ export function RulebookActivationInputs() {
       />
       <PageFormTextInput<IEdaRulebookActivationInputs>
         name="k8s_service_name"
-        label={t('Service')}
+        label={t('Service name')}
         id={'k8s_service_name'}
-        placeholder={t('Enter service')}
+        placeholder={t('Enter service name')}
+        labelHelp={t('Optional service name.')}
+        labelHelpTitle={t('Service name')}
       />
       <PageFormSwitch<IEdaRulebookActivationInputs>
         id="rulebook-activation"
