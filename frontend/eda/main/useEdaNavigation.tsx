@@ -79,6 +79,8 @@ import { EdaCredentialTypeAddTeams } from '../access/credential-types/components
 import { CredentialTypeTeamAccess } from '../access/credential-types/CredentialTypePage/CredentialTypeTeamAccess';
 import { CredentialTypeUserAccess } from '../access/credential-types/CredentialTypePage/CredentialTypeUserAccess';
 import { EdaUserRoles } from '../access/users/UserPage/EdaUserRoles';
+import { EdaAddTeamRoles } from '../access/teams/EdaAddTeamRoles';
+import { EdaTeamRoles } from '../access/teams/TeamPage/EdaTeamRoles';
 
 export function useEdaNavigation() {
   const { t } = useTranslation();
@@ -447,6 +449,30 @@ export function useEdaNavigation() {
             {
               path: '',
               element: <Users />,
+            },
+          ],
+        },
+        // EDA has no team management on upstream
+        {
+          id: EdaRoute.Teams,
+          label: t('Teams'),
+          path: 'teams',
+          children: [
+            {
+              id: EdaRoute.TeamPage,
+              path: ':id',
+              children: [
+                {
+                  id: EdaRoute.TeamRoles,
+                  path: 'roles',
+                  element: <EdaTeamRoles />,
+                },
+              ],
+            },
+            {
+              id: EdaRoute.TeamAddRoles,
+              path: ':id/roles/add-roles',
+              element: <EdaAddTeamRoles />,
             },
           ],
         },
