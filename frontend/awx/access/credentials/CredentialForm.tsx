@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useForm, useFormContext, useWatch } from 'react-hook-form';
+import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
@@ -30,10 +30,6 @@ import { Button, Icon, InputGroup, Tooltip } from '@patternfly/react-core';
 import { KeyIcon, RedoIcon } from '@patternfly/react-icons';
 import { PageFormSelectCredentialType } from './components/PageFormSelectCredentialType';
 
-interface SecretInput {
-  onClear?: (name: string) => void;
-  //shouldHideField?: (name: string) => boolean;
-}
 import {
   CredentialPluginsInputSource,
   useCredentialPluginsModal,
@@ -395,6 +391,10 @@ function HiddenInputField({
             kind={credentialType.kind}
             field={field}
             requiredFields={requiredFields}
+            handleModalToggle={function (): void {
+              throw new Error('Function not implemented.');
+            }}
+            accumulatedPluginValues={[]}
           />
         </InputGroup>
       </SecretManagementInputField>
@@ -423,6 +423,10 @@ function HiddenInputField({
             field={field}
             isRequired={requiredFields.includes(field.id)}
             credentialType={credentialType}
+            handleModalToggle={function (): void {
+              throw new Error('Function not implemented.');
+            }}
+            accumulatedPluginValues={[]}
           />
         </InputGroup>
       </SecretManagementInputField>
@@ -430,22 +434,19 @@ function HiddenInputField({
   }
 }
 
-function CredentialSubForm(
-  {
-    credentialType,
-    setCredentialPluginValues,
-    isEditMode = false,
-    accumulatedPluginValues,
-    setAccumulatedPluginValues,
-  }: {
-    credentialType: CredentialType | undefined;
-    setCredentialPluginValues: (values: CredentialPluginsInputSource[]) => void;
-    isEditMode?: boolean;
-    accumulatedPluginValues: CredentialPluginsInputSource[];
-    setAccumulatedPluginValues?: (values: CredentialPluginsInputSource[]) => void;
-  },
-  { onClear /*shouldHideField*/ }: SecretInput
-) {
+function CredentialSubForm({
+  credentialType,
+  setCredentialPluginValues,
+  isEditMode = false,
+  accumulatedPluginValues,
+  setAccumulatedPluginValues,
+}: {
+  credentialType: CredentialType | undefined;
+  setCredentialPluginValues: (values: CredentialPluginsInputSource[]) => void;
+  isEditMode?: boolean;
+  accumulatedPluginValues: CredentialPluginsInputSource[];
+  setAccumulatedPluginValues?: (values: CredentialPluginsInputSource[]) => void;
+}) {
   const { t } = useTranslation();
   if (!credentialType || !credentialType?.inputs?.fields) {
     return null;
@@ -496,6 +497,10 @@ function CredentialSubForm(
                   kind={credentialType.kind}
                   field={field}
                   requiredFields={requiredFields}
+                  handleModalToggle={function (): void {
+                    throw new Error('Function not implemented.');
+                  }}
+                  accumulatedPluginValues={[]}
                 />
               );
             } else {
@@ -505,6 +510,10 @@ function CredentialSubForm(
                   field={field}
                   isRequired={requiredFields.includes(field.id)}
                   credentialType={credentialType}
+                  handleModalToggle={function (): void {
+                    throw new Error('Function not implemented.');
+                  }}
+                  accumulatedPluginValues={[]}
                 />
               );
             }
