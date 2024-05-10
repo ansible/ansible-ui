@@ -131,7 +131,6 @@ export function InventoryPage() {
         }}
         tabs={[
           { label: t('Details'), page: AwxRoute.InventoryDetails },
-          { label: t('Access'), page: AwxRoute.InventoryAccess },
           !isSmartInventory && { label: t('Groups'), page: AwxRoute.InventoryGroups },
           { label: t('Hosts'), page: AwxRoute.InventoryHosts },
           !isSmartInventory &&
