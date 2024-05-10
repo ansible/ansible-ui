@@ -79,7 +79,6 @@ import {
   HubQueryRolesOptions,
   HubRequestOptions,
 } from './hub-commands';
-import { SystemJobTemplate } from '../../frontend/awx/interfaces/SystemJobTemplate';
 
 // Platform Imports
 import { PlatformOrganization } from '../../platform/interfaces/PlatformOrganization';
@@ -1094,7 +1093,7 @@ declare global {
       ): Chainable<WorkflowApproval>;
 
       waitForTemplateStatus(jobID: string): Chainable<AwxItemsResponse<JobEvent>>;
-      waitForManagementJobToProcess(jobID: string, retries?: number): Chainable<SystemJobTemplate>;
+      waitForManagementJobToProcess(jobID: string, retries?: number): Chainable<Job>;
       waitForJobToProcessEvents(jobID: string, retries?: number): Chainable<Job>;
       waitForWorkflowJobStatus(jobID: string): Chainable<Job>;
 
