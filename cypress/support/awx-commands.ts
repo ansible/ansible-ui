@@ -1358,19 +1358,33 @@ Cypress.Commands.add('waitForTemplateStatus', (jobID: string) => {
     });
 });
 
-Cypress.Commands.add('waitForManagementJobStatus', (jobID: string) => {
+Cypress.Commands.add('waitForManagementJobToProcess', (jobID: string, retries = 45) => {
   cy.requestGet<SystemJobTemplate>(`api/v2/system_jobs/${jobID}/`).then(
-    (response: SystemJobTemplate) => {
-      const status = response.status;
-      switch (status) {
-        case 'failed':
-        case 'successful':
-          cy.log('management job launch status: ' + status);
-          cy.wrap(status);
-          break;
-        default:
-          cy.wait(100).then(() => cy.waitForManagementJobStatus(jobID));
-          break;
+    (mgtJobResponse: SystemJobTemplate) => {
+      let stillProcessing = false;
+
+      if (mgtJobResponse) {
+        const status = mgtJobResponse.status;
+        // Check if job is still processing
+        switch (status) {
+          case 'failed':
+          case 'successful':
+            cy.log('management job launch status: ' + status);
+            cy.wrap(status);
+            break;
+          default:
+            stillProcessing = true;
+            break;
+        }
+      }
+      if (stillProcessing) {
+        if (retries > 0) {
+          cy.wait(1000).then(() => cy.waitForManagementJobToProcess(jobID, retries - 1));
+        } else {
+          cy.log('Wait for job to process events timed out.');
+        }
+      } else {
+        cy.log(`Wait for job to process events success.`);
       }
     }
   );
