@@ -54,7 +54,7 @@ export function CreateUser() {
   const getPageUrl = useGetPageUrl();
 
   return (
-    <>
+    <PageLayout>
       <PageHeader
         title={t('Create User')}
         breadcrumbs={[
@@ -71,7 +71,7 @@ export function CreateUser() {
       >
         <UserInputs mode="create" />
       </AwxPageForm>
-    </>
+    </PageLayout>
   );
 }
 
