@@ -86,6 +86,10 @@ export function JobOutputEvents(props: IJobOutputEventsProps) {
       [uuid]: collapsed,
       [counter]: collapsed,
     }));
+    if (collapsed === false)
+    {
+      setCollapsedAll(false);
+    }
   };
 
   const [collapsedAll, setCollapsedAll] = useState(false);
