@@ -46,11 +46,11 @@ describe('Notifications: List View', () => {
     testNotification('Rocket.Chat');
   });
 
-  it.only('can create, edit a new Slack Notification, assert the info in the list view, and delete the notification', () => {
+  it('can create, edit a new Slack Notification, assert the info in the list view, and delete the notification', () => {
     testNotification('Slack');
   });
 
-  it('can create, edit a new Twilio Notification, assert the info in the list view, and delete the notification', () => {
+  it.only('can create, edit a new Twilio Notification, assert the info in the list view, and delete the notification', () => {
     testNotification('Twilio');
   });
 
@@ -348,11 +348,10 @@ function testSlackForm() {
 
 // Twilio Form Test
 function testTwilioForm() {
-  cy.contains(`[data-cy="twilio-account-sid"]`, 'twilio_sid');
-  cy.contains(`[data-cy="twilio-account-token"]`, 'twilio_token');
-  cy.contains(`[data-cy="twilio-from-number"]`, '+1234567890');
-  cy.contains(`[data-cy="twilio-to-numbers"]`, '+1987654321');
-  cy.contains(`[data-cy="twilio-to-numbers"]`, '+1123456789');
+  cy.contains(`[data-cy="account-sid"]`, 'twilio_sid');
+  cy.contains(`[data-cy="source-phone-number"]`, '+1234567890');
+  cy.contains(`[data-cy="destination-sms-numbers"]`, '+1987654321');
+  cy.contains(`[data-cy="destination-sms-numbers"]`, '+1123456789');
 }
 
 // PagerDuty Form Test
