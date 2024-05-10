@@ -22,7 +22,7 @@ describe('Notifications: List View', () => {
   //Assert the info on the details screen of the notification
   //Assert the deletion of the notification
 
-  it.only('can create, edit a new Email Notification, assert the info in the list view, and delete the notification', () => {
+  it('can create, edit a new Email Notification, assert the info in the list view, and delete the notification', () => {
     testNotification('Email');
   });
 
@@ -30,7 +30,7 @@ describe('Notifications: List View', () => {
     testNotification('Grafana');
   });
 
-  it('can create, edit a new IRC Notification in the AAP UI, assert the info in the list view, and delete the notification', () => {
+  it.only('can create, edit a new IRC Notification in the AAP UI, assert the info in the list view, and delete the notification', () => {
     testNotification('IRC');
   });
 
@@ -132,6 +132,7 @@ function testNotification(type: string) {
 
     // test defail
     testBasicData(notificationName, type, orgName);
+    testNotificationType(type);
   });
 }
 
@@ -185,9 +186,42 @@ function fillNotificationType(type: string) {
   }
 }
 
+function testNotificationType(type: string) {
+  switch (type) {
+    case 'Email':
+      testEmailForm();
+      break;
+    case 'Slack':
+      testSlackForm();
+      break;
+    case 'Twilio':
+      testTwilioForm();
+      break;
+    case 'Pagerduty':
+      testPagerDutyForm();
+      break;
+    case 'Grafana':
+      testGrafanaForm();
+      break;
+    case 'Webhook':
+      testWebhookForm();
+      break;
+    case 'Mattermost':
+      testMattermostForm();
+      break;
+    case 'Rocket.Chat':
+      testRocketChatForm();
+      break;
+    case 'IRC':
+      testIRCForm();
+      break;
+    default:
+      throw new Error(`Unknown notification type: ${type}`);
+  }
+}
+
 function TransformTypeName(type : string)
 {
-  debugger;
   if (type === 'Email') {
     return 'email';
   } else if (type === 'Slack') {
@@ -249,7 +283,6 @@ function fillGrafanaForm() {
   cy.get(`[data-cy="notification-configuration-grafana-url-form-group"]`).type(
     'https://grafana.com'
   );
-  cy.get(`[data-cy="notification-configuration-grafana-key-form-group"]`).type('grafana_api_key');
   cy.get(`[data-cy="notification-configuration-dashboardid"]`).type('dashboard_id');
   cy.get(`[data-cy="notification-configuration-panelid"]`).type('panel_id');
   cy.get(`[data-cy="notification-configuration-annotation-tags-form-group"]`).type('tag1');
@@ -258,7 +291,6 @@ function fillGrafanaForm() {
 
 function fillWebhookForm() {
   cy.get(`[data-cy="notification-configuration-username"]`).type('webhook_user');
-  cy.get(`[data-cy="notification-configuration-password"]`).type('webhook_password');
   cy.get(`[data-cy="notification-configuration-url"]`).type('https://webhook-endpoint.com');
   cy.get(`[data-cy="notification_configuration-disable_ssl_verification"]`).click();
   cy.get(`[data-cy="notification-configuration-http-method"]`).click();
@@ -287,10 +319,89 @@ function fillRocketChatForm() {
 }
 
 function fillIrcForm() {
-  cy.get(`[data-cy="notification-configuration-password"]`).type('irc_password');
   cy.get(`[data-cy="notification-configuration-port"]`).type('6667');
-  cy.get(`[data-cy="notification-configuration-server"]`).type('irc.server.com');
+  cy.get(`[data-cy="notification-configuration-server"]`).type('https://irc.server.com');
   cy.get(`[data-cy="notification-configuration-nickname"]`).type('irc_nickname');
   cy.get(`[data-cy="notification-configuration-targets"]`).type('channel1{enter}user1');
   cy.get(`[data-cy="notification_configuration-use_ssl"]`).click();
 }
+
+// Email Form Test
+function testEmailForm() {
+  cy.contains(`[data-cy="username"]`, 'email user');
+  cy.contains(`[data-cy="use-tls"]`, 'true');
+  cy.contains(`[data-cy="use-ssl"]`, 'true');
+  cy.contains(`[data-cy="host"]`, 'https://host.com');
+  cy.contains(`[data-cy="recipient-list"]`, 'receipient1');
+  cy.contains(`[data-cy="recipient-list"]`, 'receipient2');
+  cy.contains(`[data-cy="sender-email"]`, 'sender@email.com');
+  cy.contains(`[data-cy="port"]`, '80');
+  cy.contains(`[data-cy="timeout"]`, '100');
+}
+
+// Slack Form Test
+function testSlackForm() {
+  cy.contains(`[data-cy="slack-token"]`, 'slack_token');
+  cy.contains(`[data-cy="slack-channels"]`, 'channel1');
+  cy.contains(`[data-cy="slack-channels"]`, 'channel2');
+  cy.contains(`[data-cy="slack-hex-color"]`, '#ff5733');
+}
+
+// Twilio Form Test
+function testTwilioForm() {
+  cy.contains(`[data-cy="twilio-account-sid"]`, 'twilio_sid');
+  cy.contains(`[data-cy="twilio-account-token"]`, 'twilio_token');
+  cy.contains(`[data-cy="twilio-from-number"]`, '+1234567890');
+  cy.contains(`[data-cy="twilio-to-numbers"]`, '+1987654321');
+  cy.contains(`[data-cy="twilio-to-numbers"]`, '+1123456789');
+}
+
+// PagerDuty Form Test
+function testPagerDutyForm() {
+  cy.contains(`[data-cy="pagerduty-subdomain"]`, 'my_subdomain');
+  cy.contains(`[data-cy="pagerduty-token"]`, 'pagerduty_token');
+  cy.contains(`[data-cy="pagerduty-service-key"]`, 'service_integration_key');
+  cy.contains(`[data-cy="pagerduty-client-name"]`, 'client_identifier');
+}
+
+// Grafana Form Test
+function testGrafanaForm() {
+  cy.contains(`[data-cy="grafana-url"]`, 'https://grafana.com');
+  cy.contains(`[data-cy="grafana-key"]`, 'grafana_api_key');
+  cy.contains(`[data-cy="grafana-dashboardid"]`, 'dashboard_id');
+  cy.contains(`[data-cy="grafana-panelid"]`, 'panel_id');
+  cy.contains(`[data-cy="grafana-annotation-tags"]`, 'tag1');
+}
+
+// Webhook Form Test
+function testWebhookForm() {
+  cy.contains(`[data-cy="webhook-username"]`, 'webhook_user');
+  cy.contains(`[data-cy="webhook-url"]`, 'https://webhook-endpoint.com');
+  cy.contains(`[data-cy="webhook-http-method"]`, 'POST');
+}
+
+// Mattermost Form Test
+function testMattermostForm() {
+  cy.contains(`[data-cy="mattermost-url"]`, 'https://mattermost.com');
+  cy.contains(`[data-cy="mattermost-username"]`, 'mattermost_user');
+  cy.contains(`[data-cy="mattermost-channel"]`, 'channel_name');
+  cy.contains(`[data-cy="mattermost-icon-url"]`, 'https://icon_url.com');
+}
+
+// RocketChat Form Test
+function testRocketChatForm() {
+  cy.contains(`[data-cy="rocketchat-url"]`, 'https://rocketchat.com');
+  cy.contains(`[data-cy="rocketchat-username"]`, 'rocketchat_user');
+  cy.contains(`[data-cy="rocketchat-icon-url"]`, 'https://icon_url.com');
+}
+
+// IRC Form Test
+function testIRCForm() {
+  cy.contains(`[data-cy="irc-server-port"]`, '6667');
+  cy.contains(`[data-cy="irc-server-address"]`, 'https://irc.server.com');
+  cy.contains(`[data-cy="irc-nick"]`, 'irc_nick');
+  cy.contains(`[data-cy="nt-detail-channels-value"]`, 'channel1');
+  cy.contains(`[data-cy="nt-detail-channels-value"]`, 'user1');
+  cy.contains(`[data-cy="irc-use-ssl"]`, 'true');
+}
+
