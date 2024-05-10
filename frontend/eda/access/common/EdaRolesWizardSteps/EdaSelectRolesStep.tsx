@@ -7,17 +7,19 @@ import { useEdaMultiSelectListView } from '../../../common/useEdaMultiSelectList
 import { EdaRbacRole } from '../../../interfaces/EdaRbacRole';
 import { SelectRolesStep } from '../../../../common/access/RolesWizard/steps/SelectRolesStep';
 import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
+import { QueryParams } from '../../../common/useEventDrivenView';
 
 export function EdaSelectRolesStep(props: {
   contentType?: string;
   fieldNameForPreviousStep?: string;
   descriptionForRoleSelection?: string;
+  title?: string;
 }) {
   const toolbarFilters = useEdaRolesFilters();
   const { t } = useTranslation();
   const { wizardData } = usePageWizard();
   const { resourceType } = wizardData as { [key: string]: unknown };
-  const { fieldNameForPreviousStep } = props;
+  const { fieldNameForPreviousStep, title } = props;
 
   const contentType = useMemo(() => {
     return props.contentType ? props.contentType : (resourceType as string)?.split('.').pop() ?? '';
@@ -67,14 +69,20 @@ export function EdaSelectRolesStep(props: {
     ];
   }, [t]);
 
+  const queryParams = useMemo<QueryParams>(() => {
+    const params: QueryParams = { content_type__model: contentType };
+    if (contentType === 'organization') {
+      params['not__name'] = ['Organization Member', 'Admin'];
+    }
+    return params;
+  }, [contentType]);
+
   const view = useEdaMultiSelectListView<EdaRbacRole>(
     {
       url: edaAPI`/role_definitions/`,
       toolbarFilters,
       tableColumns,
-      queryParams: {
-        content_type__model: contentType,
-      },
+      queryParams,
     },
     'edaRoles'
   );
@@ -85,6 +93,7 @@ export function EdaSelectRolesStep(props: {
       toolbarFilters={toolbarFilters}
       fieldNameForPreviousStep={fieldNameForPreviousStep}
       descriptionForRoleSelection={descriptionForRoleSelection}
+      title={title}
     />
   );
 }

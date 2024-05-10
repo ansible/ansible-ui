@@ -12,6 +12,7 @@ interface SelectRolesStepProps<T extends object> {
   toolbarFilters: IToolbarFilter[];
   fieldNameForPreviousStep?: string;
   descriptionForRoleSelection?: string;
+  title?: string;
 }
 
 interface SelectRolesStepHeaderProps<
@@ -20,6 +21,7 @@ interface SelectRolesStepHeaderProps<
   selectedItemsFromPreviousStep?: K[];
   labelForSelectedItemsFromPreviousStep?: string;
   descriptionForRoleSelection?: string;
+  title?: string;
 }
 
 const StyledTitle = styled(Title)`
@@ -34,6 +36,7 @@ export function SelectRolesStep<T extends object>(props: SelectRolesStepProps<T>
     toolbarFilters,
     fieldNameForPreviousStep,
     descriptionForRoleSelection,
+    title,
   } = props;
   const { wizardData } = usePageWizard();
   const { resourceType } = wizardData as { [key: string]: unknown };
@@ -83,6 +86,7 @@ export function SelectRolesStep<T extends object>(props: SelectRolesStepProps<T>
         selectedItemsFromPreviousStep={selectedItemsFromPreviousStep}
         labelForSelectedItemsFromPreviousStep={labelForSelectedItemsFromPreviousStep}
         descriptionForRoleSelection={descriptionForRoleSelection}
+        title={title}
       ></SelectRolesStepHeader>
       <PageMultiSelectList
         view={view}
@@ -104,11 +108,12 @@ function SelectRolesStepHeader<
     selectedItemsFromPreviousStep,
     labelForSelectedItemsFromPreviousStep,
     descriptionForRoleSelection,
+    title,
   } = props;
   const { t } = useTranslation();
   return (
     <>
-      <StyledTitle headingLevel="h1">{t('Select roles to apply')}</StyledTitle>
+      <StyledTitle headingLevel="h1">{title ?? t('Select roles to apply')}</StyledTitle>
       <Split hasGutter>
         <SplitItem style={{ fontWeight: 'bold', whiteSpace: 'nowrap' }}>
           {labelForSelectedItemsFromPreviousStep ?? t('Selected')}
