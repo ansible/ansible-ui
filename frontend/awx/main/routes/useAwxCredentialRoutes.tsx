@@ -65,12 +65,12 @@ export function useAwxCredentialRoutes() {
         },
         {
           id: AwxRoute.CredentialAddUsers,
-          path: ':id/users/add-users',
+          path: ':id/user-access/add',
           element: <CredentialAddUsers />,
         },
         {
           id: AwxRoute.CredentialAddTeams,
-          path: ':id/team-access/add-teams',
+          path: ':id/team-access/add',
           element: <CredentialAddTeams />,
         },
         {
