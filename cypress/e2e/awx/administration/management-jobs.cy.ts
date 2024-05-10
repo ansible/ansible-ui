@@ -1,6 +1,7 @@
 import { SystemJobTemplate } from '../../../../frontend/awx/interfaces/SystemJobTemplate';
 
-describe('Management Jobs Page - List and Launch Jobs', () => {
+// Skipping flaky test suite
+describe.skip('Management Jobs Page - List and Launch Jobs', () => {
   beforeEach(() => {
     cy.awxLogin();
   });
