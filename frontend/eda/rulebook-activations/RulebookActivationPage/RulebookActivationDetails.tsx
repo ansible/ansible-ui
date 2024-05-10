@@ -101,7 +101,10 @@ export function RulebookActivationDetails() {
           </PageDetail>
         )}
         {rulebookActivation.eda_credentials && rulebookActivation.eda_credentials.length > 0 && (
-          <PageDetail label={t('Credential(s)')}>
+          <PageDetail
+            label={t('Credential(s)')}
+            helpText={t(`Credentials for this rulebook activation.`)}
+          >
             <LabelGroup>
               {rulebookActivation.eda_credentials.map((credential) => (
                 <Label key={credential?.id}>{credential?.name}</Label>
@@ -146,7 +149,9 @@ export function RulebookActivationDetails() {
         >
           {logLevelName(rulebookActivation?.log_level || LogLevelEnum.Error, t)}
         </PageDetail>
-        <PageDetail label={t('Service')}>{rulebookActivation?.k8s_service_name}</PageDetail>
+        <PageDetail label={t('Service name')} helpText={t('Optional service name.')}>
+          {rulebookActivation?.k8s_service_name}
+        </PageDetail>
         <PageDetail label={t('Project git hash')}>
           <CopyCell text={rulebookActivation?.git_hash ?? ''} />
         </PageDetail>
