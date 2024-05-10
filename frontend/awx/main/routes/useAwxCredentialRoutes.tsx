@@ -1,7 +1,6 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageNavigationItem } from '../../../../framework';
-import { PageNotImplemented } from '../../../../framework/PageEmptyStates/PageNotImplemented';
 import { CreateCredential, EditCredential } from '../../access/credentials/CredentialForm';
 import { CredentialDetails } from '../../access/credentials/CredentialPage/CredentialDetails';
 import { CredentialPage } from '../../access/credentials/CredentialPage/CredentialPage';
@@ -40,11 +39,6 @@ export function useAwxCredentialRoutes() {
               id: AwxRoute.CredentialDetails,
               path: 'details',
               element: <CredentialDetails />,
-            },
-            {
-              id: AwxRoute.CredentialAccess,
-              path: 'access',
-              element: <PageNotImplemented />,
             },
             {
               id: AwxRoute.CredentialJobTemplates,
