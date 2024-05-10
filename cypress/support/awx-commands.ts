@@ -30,7 +30,7 @@ import { WorkflowJobTemplate } from '../../frontend/awx/interfaces/WorkflowJobTe
 import { WorkflowJobNode, WorkflowNode } from '../../frontend/awx/interfaces/WorkflowNode';
 import { Spec } from '../../frontend/awx/interfaces/Survey';
 import { awxAPI } from './formatApiPathForAwx';
-import { SystemJobTemplate } from '../../frontend/awx/interfaces/SystemJobTemplate';
+import { Survey } from '../../frontend/awx/interfaces/Survey';
 
 //  AWX related custom command implementation
 
@@ -1037,6 +1037,15 @@ Cypress.Commands.add(
   }
 );
 
+Cypress.Commands.add(
+  'createAwxSurvey',
+  (surveySpec: Partial<Survey>, template: Partial<JobTemplate>) => {
+    cy.requestPost<Survey>(`${template.url}survey_spec/`, {
+      ...surveySpec,
+    });
+  }
+);
+
 Cypress.Commands.add('getAwxWorkflowJobTemplateByName', (awxWorkflowJobTemplateName: string) => {
   cy.awxRequestGet<AwxItemsResponse<WorkflowJobTemplate>>(
     awxAPI`/workflow_job_templates/?name=${awxWorkflowJobTemplateName}`
@@ -1122,6 +1131,22 @@ Cypress.Commands.add(
     if (jobTemplate.id) {
       const templateId = typeof jobTemplate.id === 'number' ? jobTemplate.id.toString() : '';
       cy.awxRequestDelete(awxAPI`/job_templates/${templateId}/`, options);
+    }
+  }
+);
+
+Cypress.Commands.add(
+  'deleteAwxJob',
+  (
+    job: Job,
+    options?: {
+      /** Whether to fail on response codes other than 2xx and 3xx */
+      failOnStatusCode?: boolean;
+    }
+  ) => {
+    if (job.id) {
+      const jobId = typeof job.id === 'number' ? job.id.toString() : '';
+      cy.awxRequestDelete(awxAPI`/jobs/${jobId}/`, options);
     }
   }
 );
@@ -1332,10 +1357,13 @@ Cypress.Commands.add('waitForTemplateStatus', (jobID: string) => {
     });
 });
 
-Cypress.Commands.add('waitForManagementJobStatus', (jobID: string) => {
-  cy.requestGet<SystemJobTemplate>(`api/v2/system_jobs/${jobID}/`).then(
-    (response: SystemJobTemplate) => {
-      const status = response.status;
+Cypress.Commands.add('waitForManagementJobToProcess', (jobID: string, retries = 45) => {
+  cy.requestGet<Job>(`api/v2/system_jobs/${jobID}/`).then((mgtJobResponse: Job) => {
+    let stillProcessing = false;
+
+    if (mgtJobResponse) {
+      const status = mgtJobResponse.status;
+      // Check if job is still processing
       switch (status) {
         case 'failed':
         case 'successful':
@@ -1343,11 +1371,24 @@ Cypress.Commands.add('waitForManagementJobStatus', (jobID: string) => {
           cy.wrap(status);
           break;
         default:
-          cy.wait(100).then(() => cy.waitForManagementJobStatus(jobID));
+          stillProcessing = true;
           break;
       }
+      // Check if job is still processing events
+      if (!mgtJobResponse.event_processing_finished) {
+        stillProcessing = true;
+      }
     }
-  );
+    if (stillProcessing) {
+      if (retries > 0) {
+        cy.wait(1000).then(() => cy.waitForManagementJobToProcess(jobID, retries - 1));
+      } else {
+        cy.log('Wait for job to process events timed out.');
+      }
+    } else {
+      cy.log(`Wait for job to process events success.`);
+    }
+  });
 });
 
 Cypress.Commands.add('waitForJobToProcessEvents', (jobID: string, retries = 45) => {

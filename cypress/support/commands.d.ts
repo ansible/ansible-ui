@@ -22,6 +22,7 @@ import { Organization } from '../../frontend/awx/interfaces/Organization';
 import { Project } from '../../frontend/awx/interfaces/Project';
 import { Role } from '../../frontend/awx/interfaces/Role';
 import { Schedule } from '../../frontend/awx/interfaces/Schedule';
+import { Survey } from '../../frontend/awx/interfaces/Survey';
 import { Team } from '../../frontend/awx/interfaces/Team';
 import { AwxUser } from '../../frontend/awx/interfaces/User';
 import { WorkflowApproval } from '../../frontend/awx/interfaces/WorkflowApproval';
@@ -77,7 +78,6 @@ import {
   HubQueryRolesOptions,
   HubRequestOptions,
 } from './hub-commands';
-import { SystemJobTemplate } from '../../frontend/awx/interfaces/SystemJobTemplate';
 
 declare global {
   namespace Cypress {
@@ -771,6 +771,11 @@ declare global {
        * @param jobTemplate
        */
 
+      createAwxSurvey(
+        surveySpec: Partial<Survey>,
+        template: Partial<JobTemplate>
+      ): Chainable<Survey>;
+
       getAwxWorkflowJobTemplateByName(
         awxWorkflowJobTemplateName: string
       ): Chainable<WorkflowJobTemplate>;
@@ -937,6 +942,13 @@ declare global {
           failOnStatusCode?: boolean;
         }
       ): Chainable<void>;
+      deleteAwxJob(
+        job: Job,
+        options?: {
+          /** Whether to fail on response codes other than 2xx and 3xx */
+          failOnStatusCode?: boolean;
+        }
+      ): Chainable<void>;
       deleteAwxWorkflowJobTemplate(
         workflowJobTemplate: WorkflowJobTemplate,
         options?: {
@@ -1075,7 +1087,7 @@ declare global {
       ): Chainable<WorkflowApproval>;
 
       waitForTemplateStatus(jobID: string): Chainable<AwxItemsResponse<JobEvent>>;
-      waitForManagementJobStatus(jobID: string): Chainable<SystemJobTemplate>;
+      waitForManagementJobToProcess(jobID: string, retries?: number): Chainable<Job>;
       waitForJobToProcessEvents(jobID: string, retries?: number): Chainable<Job>;
       waitForWorkflowJobStatus(jobID: string): Chainable<Job>;
 
