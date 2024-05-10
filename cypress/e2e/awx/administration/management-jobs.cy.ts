@@ -53,7 +53,7 @@ describe.skip('Management Jobs Page - List and Launch Jobs', () => {
               .then((jobId: string) => {
                 cy.verifyPageTitle(jobName);
                 cy.url().should('include', `/jobs/management/${jobId}/output`);
-                cy.waitForManagementJobStatus(jobId).then(() => {
+                cy.waitForManagementJobToProcess(jobId).then(() => {
                   cy.contains('a[role="tab"]', 'Details').click();
                   cy.get('[data-cy="id"]').should('have.text', jobId).should('be.visible');
                   cy.get('[data-cy="name"]').should('have.text', jobName).should('be.visible');
@@ -81,7 +81,7 @@ describe.skip('Management Jobs Page - List and Launch Jobs', () => {
   const managementJobsWithModal = ['Cleanup Activity Stream', 'Cleanup Job Details'];
   const rententionDays = '4';
   managementJobsWithModal.forEach((jobName) => {
-    it.skip(`admin can launch management job: ${jobName} with the retention days set`, () => {
+    it(`admin can launch management job: ${jobName} with the retention days set`, () => {
       cy.intercept('GET', 'api/v2/system_job_templates/?order_by=name&page=1&page_size=10').as(
         'getManagementJobsListPage'
       );
@@ -105,7 +105,7 @@ describe.skip('Management Jobs Page - List and Launch Jobs', () => {
               .then((jobId: string) => {
                 cy.verifyPageTitle(jobName);
                 cy.url().should('include', `/jobs/management/${jobId}/output`);
-                cy.waitForManagementJobStatus(jobId).then(() => {
+                cy.waitForManagementJobToProcess(jobId).then(() => {
                   cy.contains('a[role="tab"]', 'Details').click();
                   cy.get('[data-cy="id"]').should('have.text', jobId).should('be.visible');
                   cy.get('[data-cy="name"]').should('have.text', jobName).should('be.visible');
