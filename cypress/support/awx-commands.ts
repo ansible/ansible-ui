@@ -30,7 +30,6 @@ import { WorkflowJobTemplate } from '../../frontend/awx/interfaces/WorkflowJobTe
 import { WorkflowJobNode, WorkflowNode } from '../../frontend/awx/interfaces/WorkflowNode';
 import { Spec } from '../../frontend/awx/interfaces/Survey';
 import { awxAPI } from './formatApiPathForAwx';
-import { SystemJobTemplate } from '../../frontend/awx/interfaces/SystemJobTemplate';
 import { Survey } from '../../frontend/awx/interfaces/Survey';
 
 //  AWX related custom command implementation
@@ -1359,35 +1358,37 @@ Cypress.Commands.add('waitForTemplateStatus', (jobID: string) => {
 });
 
 Cypress.Commands.add('waitForManagementJobToProcess', (jobID: string, retries = 45) => {
-  cy.requestGet<SystemJobTemplate>(`api/v2/system_jobs/${jobID}/`).then(
-    (mgtJobResponse: SystemJobTemplate) => {
-      let stillProcessing = false;
+  cy.requestGet<Job>(`api/v2/system_jobs/${jobID}/`).then((mgtJobResponse: Job) => {
+    let stillProcessing = false;
 
-      if (mgtJobResponse) {
-        const status = mgtJobResponse.status;
-        // Check if job is still processing
-        switch (status) {
-          case 'failed':
-          case 'successful':
-            cy.log('management job launch status: ' + status);
-            cy.wrap(status);
-            break;
-          default:
-            stillProcessing = true;
-            break;
-        }
+    if (mgtJobResponse) {
+      const status = mgtJobResponse.status;
+      // Check if job is still processing
+      switch (status) {
+        case 'failed':
+        case 'successful':
+          cy.log('management job launch status: ' + status);
+          cy.wrap(status);
+          break;
+        default:
+          stillProcessing = true;
+          break;
       }
-      if (stillProcessing) {
-        if (retries > 0) {
-          cy.wait(1000).then(() => cy.waitForManagementJobToProcess(jobID, retries - 1));
-        } else {
-          cy.log('Wait for job to process events timed out.');
-        }
-      } else {
-        cy.log(`Wait for job to process events success.`);
+      // Check if job is still processing events
+      if (!mgtJobResponse.event_processing_finished) {
+        stillProcessing = true;
       }
     }
-  );
+    if (stillProcessing) {
+      if (retries > 0) {
+        cy.wait(1000).then(() => cy.waitForManagementJobToProcess(jobID, retries - 1));
+      } else {
+        cy.log('Wait for job to process events timed out.');
+      }
+    } else {
+      cy.log(`Wait for job to process events success.`);
+    }
+  });
 });
 
 Cypress.Commands.add('waitForJobToProcessEvents', (jobID: string, retries = 45) => {
