@@ -93,6 +93,8 @@ export type PageFormSelectProps<
   validate?:
     | Validate<FieldPathValue<TFieldValues, TFieldName>, TFieldValues>
     | Record<string, Validate<FieldPathValue<TFieldValues, TFieldName>, TFieldValues>>;
+
+  defaultValue?: FieldPathValue<TFieldValues, TFieldName>;
 };
 
 export function PageFormSelect<
@@ -205,7 +207,7 @@ export function PageFormSelect<
                   <SelectOption
                     id={optionId}
                     key={option.label}
-                    value={option.label}
+                    value={option.label || props.defaultValue}
                     label={option.label}
                     description={option.description}
                     data-cy={optionId}

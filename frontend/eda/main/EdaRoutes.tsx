@@ -107,5 +107,11 @@ export enum EdaRoute {
   Settings = 'eda-settings',
   SettingsPreferences = 'eda-settings-preferences',
 
+  // those routes have no pages and will be replaced in downstream
+  TeamAddRoles = 'eda-team-add-roles',
+  TeamPage = 'eda-team-page',
+  TeamRoles = 'eda-team-roles',
+  Teams = 'eda-teams',
+
   Login = 'eda-login',
 }

@@ -2,7 +2,6 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router-dom';
 import { PageNavigationItem } from '../../../../framework';
-import { PageNotImplemented } from '../../../../framework/PageEmptyStates/PageNotImplemented';
 import { awxAPI } from '../../common/api/awx-utils';
 import { CreateJobTemplate, EditJobTemplate } from '../../resources/templates/TemplateForm';
 import { TemplateDetails } from '../../resources/templates/TemplatePage/TemplateDetails';
@@ -15,6 +14,10 @@ import {
 } from '../../resources/templates/WorkflowJobTemplateForm';
 import { WorkflowJobTemplateDetails } from '../../resources/templates/WorkflowJobTemplatePage/WorkflowJobTemplateDetails';
 import { WorkflowJobTemplatePage } from '../../resources/templates/WorkflowJobTemplatePage/WorkflowJobTemplatePage';
+import { WorkflowJobTemplateTeamAccess } from '../../resources/templates/WorkflowJobTemplatePage/WorkflowJobTemplateTeamAccess';
+import { WorkflowJobTemplateUserAccess } from '../../resources/templates/WorkflowJobTemplatePage/WorkflowJobTemplateUserAccess';
+import { WorkflowJobTemplateAddTeams } from '../../resources/templates/WorkflowJobTemplateAddTeams';
+import { WorkflowJobTemplateAddUsers } from '../../resources/templates/WorkflowJobTemplateAddUsers';
 import { WorkflowVisualizer } from '../../resources/templates/WorkflowVisualizer/WorkflowVisualizer';
 import { ScheduleAddWizard } from '../../views/schedules/wizard/ScheduleAddWizard';
 import { ScheduleDetails } from '../../views/schedules/SchedulePage/ScheduleDetails';
@@ -153,12 +156,12 @@ export function useAwxTemplateRoutes() {
             },
             {
               id: AwxRoute.JobTemplateAddTeams,
-              path: ':id/teams/add-teams',
+              path: ':id/team-access/add',
               element: <JobTemplateAddTeams />,
             },
             {
               id: AwxRoute.JobTemplateAddUsers,
-              path: ':id/users/add-users',
+              path: ':id/user-access/add',
               element: <JobTemplateAddUsers />,
             },
             {
@@ -242,9 +245,14 @@ export function useAwxTemplateRoutes() {
                   element: <WorkflowJobTemplateDetails />,
                 },
                 {
-                  id: AwxRoute.WorkflowJobTemplateAccess,
-                  path: 'access',
-                  element: <PageNotImplemented />,
+                  id: AwxRoute.WorkflowJobTemplateTeamAccess,
+                  path: 'team-access',
+                  element: <WorkflowJobTemplateTeamAccess />,
+                },
+                {
+                  id: AwxRoute.WorkflowJobTemplateUserAccess,
+                  path: 'user-access',
+                  element: <WorkflowJobTemplateUserAccess />,
                 },
                 {
                   id: AwxRoute.WorkflowJobTemplateJobs,
@@ -281,6 +289,16 @@ export function useAwxTemplateRoutes() {
                   element: <Navigate to="details" />,
                 },
               ],
+            },
+            {
+              id: AwxRoute.WorkflowJobTemplateAddTeams,
+              path: ':id/team-access/add',
+              element: <WorkflowJobTemplateAddTeams />,
+            },
+            {
+              id: AwxRoute.WorkflowJobTemplateAddUsers,
+              path: ':id/user-access/add',
+              element: <WorkflowJobTemplateAddUsers />,
             },
             {
               id: AwxRoute.WorkflowJobTemplateLaunchWizard,

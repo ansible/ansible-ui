@@ -89,7 +89,7 @@ export function TemplateDetails(props: { templateId?: string; disableScroll?: bo
       <PageDetail label={t('Organization')}>
         {summaryFields.organization ? (
           <Link
-            to={getPageUrl(AwxRoute.OrganizationPage, {
+            to={getPageUrl(AwxRoute.OrganizationDetails, {
               params: { id: template.summary_fields?.organization?.id },
             })}
           >
@@ -102,7 +102,7 @@ export function TemplateDetails(props: { templateId?: string; disableScroll?: bo
       <PageDetail label={t('Inventory')} isEmpty={!summaryFields.inventory && askInventoryOnLaunch}>
         {summaryFields.inventory ? (
           <Link
-            to={getPageUrl(AwxRoute.InventoryPage, {
+            to={getPageUrl(AwxRoute.InventoryDetails, {
               params: {
                 id: summaryFields.inventory?.id,
                 inventory_type: inventoryUrlPaths[summaryFields.inventory?.kind],
@@ -118,7 +118,7 @@ export function TemplateDetails(props: { templateId?: string; disableScroll?: bo
       <PageDetail label={t`Project`}>
         {summaryFields.project ? (
           <Link
-            to={getPageUrl(AwxRoute.ProjectPage, { params: { id: summaryFields.project?.id } })}
+            to={getPageUrl(AwxRoute.ProjectDetails, { params: { id: summaryFields.project?.id } })}
           >
             {summaryFields.project?.name}
           </Link>

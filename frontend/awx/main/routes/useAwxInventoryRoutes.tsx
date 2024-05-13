@@ -1,7 +1,6 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageNavigationItem } from '../../../../framework';
-import { PageNotImplemented } from '../../../../framework/PageEmptyStates/PageNotImplemented';
 import { awxAPI } from '../../common/api/awx-utils';
 import { Inventories } from '../../resources/inventories/Inventories';
 import { CreateInventory, EditInventory } from '../../resources/inventories/InventoryForm';
@@ -190,11 +189,6 @@ export function useAwxInventoryRoutes() {
               element: <InventoryDetails />,
             },
             {
-              id: AwxRoute.InventoryAccess,
-              path: 'access',
-              element: <PageNotImplemented />,
-            },
-            {
               id: AwxRoute.InventoryGroups,
               path: 'groups',
               element: <InventoryGroups />,
@@ -280,12 +274,12 @@ export function useAwxInventoryRoutes() {
         },
         {
           id: AwxRoute.InventoryAddUsers,
-          path: ':id/users/add-users',
+          path: ':id/user-access/add',
           element: <InventoryAddUsers />,
         },
         {
           id: AwxRoute.InventoryAddTeams,
-          path: ':id/team-access/add-teams',
+          path: ':id/team-access/add',
           element: <InventoryAddTeams />,
         },
         {

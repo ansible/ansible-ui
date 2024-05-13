@@ -79,6 +79,8 @@ import { EdaCredentialTypeAddTeams } from '../access/credential-types/components
 import { CredentialTypeTeamAccess } from '../access/credential-types/CredentialTypePage/CredentialTypeTeamAccess';
 import { CredentialTypeUserAccess } from '../access/credential-types/CredentialTypePage/CredentialTypeUserAccess';
 import { EdaUserRoles } from '../access/users/UserPage/EdaUserRoles';
+import { EdaAddTeamRoles } from '../access/teams/EdaAddTeamRoles';
+import { EdaTeamRoles } from '../access/teams/TeamPage/EdaTeamRoles';
 
 export function useEdaNavigation() {
   const { t } = useTranslation();
@@ -186,12 +188,12 @@ export function useEdaNavigation() {
         },
         {
           id: EdaRoute.RulebookActivationAddUsers,
-          path: ':id/user-access/add-users',
+          path: ':id/user-access/add',
           element: <EdaRulebookActivationAddUsers />,
         },
         {
           id: EdaRoute.RulebookActivationAddTeams,
-          path: ':id/team-access/add-teams',
+          path: ':id/team-access/add',
           element: <EdaRulebookActivationAddTeams />,
         },
         {
@@ -248,12 +250,12 @@ export function useEdaNavigation() {
         },
         {
           id: EdaRoute.ProjectAddUsers,
-          path: ':id/user-access/add-users',
+          path: ':id/user-access/add',
           element: <EdaProjectAddUsers />,
         },
         {
           id: EdaRoute.ProjectAddTeams,
-          path: ':id/team-access/add-teams',
+          path: ':id/team-access/add',
           element: <EdaProjectAddTeams />,
         },
         {
@@ -305,12 +307,12 @@ export function useEdaNavigation() {
         },
         {
           id: EdaRoute.DecisionEnvironmentAddUsers,
-          path: ':id/users/add-users',
+          path: ':id/user-access/add',
           element: <EdaDecisionEnvironmentAddUsers />,
         },
         {
           id: EdaRoute.DecisionEnvironmentAddTeams,
-          path: ':id/team-access/add-teams',
+          path: ':id/team-access/add',
           element: <EdaDecisionEnvironmentAddTeams />,
         },
         {
@@ -450,6 +452,30 @@ export function useEdaNavigation() {
             },
           ],
         },
+        // EDA has no team management on upstream
+        {
+          id: EdaRoute.Teams,
+          label: t('Teams'),
+          path: 'teams',
+          children: [
+            {
+              id: EdaRoute.TeamPage,
+              path: ':id',
+              children: [
+                {
+                  id: EdaRoute.TeamRoles,
+                  path: 'roles',
+                  element: <EdaTeamRoles />,
+                },
+              ],
+            },
+            {
+              id: EdaRoute.TeamAddRoles,
+              path: ':id/roles/add-roles',
+              element: <EdaAddTeamRoles />,
+            },
+          ],
+        },
         edaOrganizationRoutes,
         {
           id: EdaRoute.Roles,
@@ -531,12 +557,12 @@ export function useEdaNavigation() {
             },
             {
               id: EdaRoute.CredentialAddUsers,
-              path: ':id/users/add-users',
+              path: ':id/user-access/add',
               element: <EdaCredentialAddUsers />,
             },
             {
               id: EdaRoute.CredentialAddTeams,
-              path: ':id/team-access/add-teams',
+              path: ':id/team-access/add',
               element: <EdaCredentialAddTeams />,
             },
             {
@@ -593,12 +619,12 @@ export function useEdaNavigation() {
             },
             {
               id: EdaRoute.CredentialTypeAddUsers,
-              path: ':id/users/add-users',
+              path: ':id/user-access/add',
               element: <EdaCredentialTypeAddUsers />,
             },
             {
               id: EdaRoute.CredentialTypeAddTeams,
-              path: ':id/team-access/add-teams',
+              path: ':id/team-access/add',
               element: <EdaCredentialTypeAddTeams />,
             },
             {
