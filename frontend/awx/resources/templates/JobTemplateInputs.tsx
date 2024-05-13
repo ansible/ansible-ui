@@ -314,12 +314,12 @@ export function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm }) {
           <PageFormTextInput<JobTemplateForm>
             name="host_config_key"
             placeholder={t('Add a host config key')}
-            isRequired
+            isRequired={!!isProvisioningCallbackEnabled}
             label={t('Host config key')}
           />
         </FormSection>
       ) : null}
-      {isWebhookEnabled ? <WebhookSubForm /> : null}
+      {isWebhookEnabled ? <WebhookSubForm templateType="job_templates" /> : null}
     </>
   );
 }
