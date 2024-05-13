@@ -352,15 +352,22 @@ function CredentialInputs({
 function HiddenInputField({
   field,
   isEditMode,
+  setCredentialPluginValues,
   credentialType,
   requiredFields,
+  accumulatedPluginValues,
+  setAccumulatedPluginValues,
 }: {
   field: CredentialInputField;
   isEditMode: boolean;
+  setCredentialPluginValues: (values: CredentialPluginsInputSource[]) => void;
   credentialType: CredentialType;
   requiredFields: string[];
+  accumulatedPluginValues: CredentialPluginsInputSource[];
+  setAccumulatedPluginValues?: (values: CredentialPluginsInputSource[]) => void;
 }) {
   const [t] = useTranslation();
+  const openCredentialPluginsModal = useCredentialPluginsModal();
   const [shouldHideField, setShouldHideField] = useState(field.secret && isEditMode);
   const [clear, setClear] = useState(false);
   const { setValue } = useFormContext();
@@ -379,7 +386,7 @@ function HiddenInputField({
         placeholder={t('ENCRYPTED')}
       >
         <InputGroup>
-          <Tooltip content={t(`Reset`)}>
+          <Tooltip content={t(`Revert`)}>
             <Button
               size="sm"
               variant="control"
@@ -388,13 +395,18 @@ function HiddenInputField({
             ></Button>
           </Tooltip>
           <CredentialMultilineInput
+            accumulatedPluginValues={accumulatedPluginValues}
             kind={credentialType.kind}
+            key={field.id}
             field={field}
             requiredFields={requiredFields}
-            handleModalToggle={function (): void {
-              throw new Error('Function not implemented.');
+            handleModalToggle={() => {
+              openCredentialPluginsModal({
+                field,
+                setCredentialPluginValues,
+                accumulatedPluginValues,
+              });
             }}
-            accumulatedPluginValues={[]}
           />
         </InputGroup>
       </SecretManagementInputField>
@@ -411,22 +423,20 @@ function HiddenInputField({
         placeholder={t('ENCRYPTED')}
       >
         <InputGroup>
-          <Tooltip content={t(`Reset`)}>
-            <Button
-              size="sm"
-              variant="control"
-              onClick={handleHideField}
-              icon={<RedoIcon />}
-            ></Button>
-          </Tooltip>
           <CredentialTextInput
+            accumulatedPluginValues={accumulatedPluginValues}
+            setAccumulatedPluginValues={setAccumulatedPluginValues}
+            key={field.id}
             field={field}
+            isDisabled={field.id === 'vault_id' && credentialType.kind === 'vault' && isEditMode}
             isRequired={requiredFields.includes(field.id)}
-            credentialType={credentialType}
-            handleModalToggle={function (): void {
-              throw new Error('Function not implemented.');
-            }}
-            accumulatedPluginValues={[]}
+            handleModalToggle={() =>
+              openCredentialPluginsModal({
+                field,
+                setCredentialPluginValues,
+                accumulatedPluginValues,
+              })
+            }
           />
         </InputGroup>
       </SecretManagementInputField>
@@ -448,6 +458,7 @@ function CredentialSubForm({
   setAccumulatedPluginValues?: (values: CredentialPluginsInputSource[]) => void;
 }) {
   const { t } = useTranslation();
+  const openCredentialPluginsModal = useCredentialPluginsModal();
   if (!credentialType || !credentialType?.inputs?.fields) {
     return null;
   }
@@ -483,37 +494,50 @@ function CredentialSubForm({
             return (
               <HiddenInputField
                 key={field.id}
+                accumulatedPluginValues={accumulatedPluginValues}
                 field={field}
                 isEditMode={isEditMode}
                 credentialType={credentialType}
                 requiredFields={requiredFields}
+                setCredentialPluginValues={setCredentialPluginValues}
               ></HiddenInputField>
             );
           } else {
             if (field.multiline) {
               return (
                 <CredentialMultilineInput
-                  key={field.id}
+                  accumulatedPluginValues={accumulatedPluginValues}
                   kind={credentialType.kind}
+                  key={field.id}
                   field={field}
                   requiredFields={requiredFields}
-                  handleModalToggle={function (): void {
-                    throw new Error('Function not implemented.');
+                  handleModalToggle={() => {
+                    openCredentialPluginsModal({
+                      field,
+                      setCredentialPluginValues,
+                      accumulatedPluginValues,
+                    });
                   }}
-                  accumulatedPluginValues={[]}
                 />
               );
             } else {
               return (
                 <CredentialTextInput
+                  accumulatedPluginValues={accumulatedPluginValues}
+                  setAccumulatedPluginValues={setAccumulatedPluginValues}
                   key={field.id}
                   field={field}
+                  isDisabled={
+                    field.id === 'vault_id' && credentialType.kind === 'vault' && isEditMode
+                  }
                   isRequired={requiredFields.includes(field.id)}
-                  credentialType={credentialType}
-                  handleModalToggle={function (): void {
-                    throw new Error('Function not implemented.');
-                  }}
-                  accumulatedPluginValues={[]}
+                  handleModalToggle={() =>
+                    openCredentialPluginsModal({
+                      field,
+                      setCredentialPluginValues,
+                      accumulatedPluginValues,
+                    })
+                  }
                 />
               );
             }

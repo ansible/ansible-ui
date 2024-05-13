@@ -2,7 +2,8 @@ import { Button, Icon, InputGroup, TextInput, Tooltip } from '@patternfly/react-
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageFormGroup } from '../../../../../framework/PageForm/Inputs/PageFormGroup';
-import { EyeSlashIcon, RedoIcon } from '@patternfly/react-icons';
+import { EyeSlashIcon, KeyIcon, RedoIcon } from '@patternfly/react-icons';
+import { PageFormTextInput } from '../../../../../framework';
 
 interface ChildProps {
   labelHelp?: string;
@@ -66,21 +67,28 @@ export function SecretManagementInputField({
     return (
       <PageFormGroup label={fieldLabel} labelHelp={fieldLabelHelp}>
         <InputGroup>
-          <Tooltip content={t(`Replace`)}>
-            <Button variant="control" onClick={() => onClear()}>
-              <Icon>
-                <RedoIcon />
-              </Icon>
-            </Button>
-          </Tooltip>
-          <TextInput
+          <PageFormTextInput
             aria-label={t('hidden value')}
             placeholder={placeholder ? placeholder : t('ENCRYPTED')}
             type="password"
             autoComplete="off"
             isDisabled={true}
+            name={''}
+            button={
+              <>
+                <Button isDisabled={true} variant="control" onClick={() => onClear()}>
+                  <Icon>
+                    <KeyIcon />
+                  </Icon>
+                </Button>
+                <Button variant="control" onClick={() => onClear()}>
+                  <Icon>
+                    <RedoIcon />
+                  </Icon>
+                </Button>
+              </>
+            }
           />
-          <Button variant="control" isDisabled={true} icon={<EyeSlashIcon />}></Button>
         </InputGroup>
       </PageFormGroup>
     );
