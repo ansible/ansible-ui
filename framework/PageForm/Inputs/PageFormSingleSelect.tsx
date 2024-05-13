@@ -23,6 +23,7 @@ export type PageFormSingleSelectProps<
     | Validate<FieldPathValue<TFieldValues, TFieldName>, TFieldValues>
     | Record<string, Validate<FieldPathValue<TFieldValues, TFieldName>, TFieldValues>>;
   isReadOnly?: boolean;
+  defaultValue?: FieldPathValue<TFieldValues, TFieldName>;
 } & Pick<
   PageSingleSelectProps<ValueT>,
   'id' | 'placeholder' | 'options' | 'footer' | 'isDisabled' | 'isRequired' | 'disableSortOptions'
@@ -79,7 +80,7 @@ export function PageFormSingleSelect<
               placeholder={props.placeholder}
               options={props.options}
               aria-describedby={id ? `${id}-form-group` : undefined}
-              value={value}
+              value={value || props.defaultValue}
               onSelect={onChange}
               isDisabled={isDisabled}
               footer={props.footer}
