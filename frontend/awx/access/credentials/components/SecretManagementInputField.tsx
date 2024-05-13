@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { PageFormGroup } from '../../../../../framework/PageForm/Inputs/PageFormGroup';
 import { EyeSlashIcon, KeyIcon, RedoIcon } from '@patternfly/react-icons';
 import { PageFormTextInput } from '../../../../../framework';
+import { PageFormFileUpload } from '../../../../../framework/PageForm/Inputs/PageFormFileUpload';
 
 interface ChildProps {
   labelHelp?: string;
@@ -52,7 +53,7 @@ interface IProps {
   label?: string;
 }
 
-export function SecretManagementInputField({
+export function SingleLineEncryptedInput({
   onClear,
   shouldHideField,
   label,
@@ -91,6 +92,48 @@ export function SecretManagementInputField({
           />
         </InputGroup>
       </PageFormGroup>
+    );
+  }
+  return <>{children}</>;
+}
+
+export function MultiLineEncryptedInput({
+  onClear,
+  shouldHideField,
+  label,
+  labelHelp,
+  children,
+  placeholder,
+}: IProps) {
+  const { t } = useTranslation();
+  const fieldLabel = label || children.props.label || '';
+  const fieldLabelHelp = labelHelp || children.props.labelHelp || '';
+  if (shouldHideField) {
+    return (
+      <InputGroup>
+        <PageFormFileUpload
+          label={label}
+          name={''}
+          isDisabled={true}
+          textAreaPlaceholder={placeholder ? placeholder : t('ENCRYPTED')}
+          type="text"
+          autoComplete="off"
+          icon={
+            <>
+              <Button isDisabled={true} variant="control" onClick={() => onClear()}>
+                <Icon>
+                  <KeyIcon />
+                </Icon>
+              </Button>
+              <Button variant="control" onClick={() => onClear()}>
+                <Icon>
+                  <RedoIcon />
+                </Icon>
+              </Button>
+            </>
+          }
+        />
+      </InputGroup>
     );
   }
   return <>{children}</>;

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useState } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -35,7 +35,10 @@ import {
   useCredentialPluginsModal,
 } from './CredentialPlugins/hooks/useCredentialPluginsDialog';
 import { CredentialInputSource } from '../../interfaces/CredentialInputSource';
-import { SecretManagementInputField } from './components/SecretManagementInputField';
+import {
+  MultiLineEncryptedInput,
+  SingleLineEncryptedInput,
+} from './components/SecretManagementInputField';
 import { BecomeMethodField } from './components/BecomeMethodField';
 
 interface CredentialForm extends Credential {
@@ -379,41 +382,40 @@ function HiddenInputField({
 
   if (field.multiline) {
     return (
-      <SecretManagementInputField
+      <MultiLineEncryptedInput
         onClear={handleHideField}
         shouldHideField={shouldHideField}
         label={field.label}
         placeholder={t('ENCRYPTED')}
       >
-        <InputGroup>
-          <Tooltip content={t(`Revert`)}>
-            <Button
-              size="sm"
-              variant="control"
-              onClick={handleHideField}
-              icon={<RedoIcon />}
-            ></Button>
-          </Tooltip>
-          <CredentialMultilineInput
-            accumulatedPluginValues={accumulatedPluginValues}
-            kind={credentialType.kind}
-            key={field.id}
-            field={field}
-            requiredFields={requiredFields}
-            handleModalToggle={() => {
-              openCredentialPluginsModal({
-                field,
-                setCredentialPluginValues,
-                accumulatedPluginValues,
-              });
-            }}
-          />
-        </InputGroup>
-      </SecretManagementInputField>
+        <CredentialMultilineInput
+          accumulatedPluginValues={accumulatedPluginValues}
+          kind={credentialType.kind}
+          key={field.id}
+          field={field}
+          requiredFields={requiredFields}
+          handleModalToggle={() => {
+            openCredentialPluginsModal({
+              field,
+              setCredentialPluginValues,
+              accumulatedPluginValues,
+            });
+          }}
+          buttons={
+            <Tooltip content={t(`Revert`)}>
+              <Button variant="control" onClick={handleHideField}>
+                <Icon>
+                  <RedoIcon />
+                </Icon>
+              </Button>
+            </Tooltip>
+          }
+        />
+      </MultiLineEncryptedInput>
     );
   } else {
     return (
-      <SecretManagementInputField
+      <SingleLineEncryptedInput
         onClear={() => {
           setValue(field.id, '');
           setShouldHideField(!shouldHideField);
@@ -437,9 +439,16 @@ function HiddenInputField({
                 accumulatedPluginValues,
               })
             }
+            buttons={
+              <Button variant="control" onClick={handleHideField}>
+                <Icon>
+                  <RedoIcon />
+                </Icon>
+              </Button>
+            }
           />
         </InputGroup>
-      </SecretManagementInputField>
+      </SingleLineEncryptedInput>
     );
   }
 }
@@ -577,6 +586,7 @@ function CredentialTextInput({
   isRequired = false,
   accumulatedPluginValues,
   setAccumulatedPluginValues,
+  buttons,
 }: {
   credentialType?: CredentialType | undefined;
   field: CredentialInputField;
@@ -585,6 +595,7 @@ function CredentialTextInput({
   isRequired?: boolean;
   accumulatedPluginValues: CredentialPluginsInputSource[];
   setAccumulatedPluginValues?: (values: CredentialPluginsInputSource[]) => void;
+  buttons?: ReactNode;
 }) {
   const { t } = useTranslation();
   const { setValue, clearErrors } = useFormContext();
@@ -687,30 +698,33 @@ function CredentialTextInput({
         labelHelp={field.help_text}
         helperText={handleHelperText(field)}
         button={
-          credentialType?.kind !== 'external' ? (
-            <>
-              <Button
-                isDisabled={isDisabled}
-                data-cy={'secret-management-input'}
-                variant="control"
-                icon={
-                  <Icon>
-                    <KeyIcon />
-                  </Icon>
-                }
-                onClick={handleModalToggle}
-              ></Button>
-              {accumulatedPluginValues.some((cp) => cp.input_field_name === field.id) ? (
+          <>
+            {credentialType?.kind !== 'external' ? (
+              <>
                 <Button
-                  data-cy={'clear-secret-management-input'}
+                  isDisabled={isDisabled}
+                  data-cy={'secret-management-input'}
                   variant="control"
-                  onClick={onClear}
-                >
-                  {t(`Clear`)}
-                </Button>
-              ) : null}
-            </>
-          ) : null
+                  icon={
+                    <Icon>
+                      <KeyIcon />
+                    </Icon>
+                  }
+                  onClick={handleModalToggle}
+                ></Button>
+                {accumulatedPluginValues.some((cp) => cp.input_field_name === field.id) ? (
+                  <Button
+                    data-cy={'clear-secret-management-input'}
+                    variant="control"
+                    onClick={onClear}
+                  >
+                    {t(`Clear`)}
+                  </Button>
+                ) : null}
+              </>
+            ) : null}
+            {buttons}
+          </>
         }
         additionalControls={
           field?.ask_at_runtime && (

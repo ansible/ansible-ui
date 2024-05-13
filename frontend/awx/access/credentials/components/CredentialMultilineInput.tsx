@@ -7,7 +7,7 @@ import { Credential } from '../../../interfaces/Credential';
 import { useGetItem } from '../../../../common/crud/useGet';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { CredentialPluginsInputSource } from '../CredentialPlugins/hooks/useCredentialPluginsDialog';
-import { useCallback, useEffect } from 'react';
+import { ReactNode, useCallback, useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
 
 export function CredentialMultilineInput({
@@ -16,12 +16,14 @@ export function CredentialMultilineInput({
   kind,
   handleModalToggle,
   accumulatedPluginValues,
+  buttons,
 }: {
   field: CredentialInputField;
   requiredFields: CredentialType['inputs']['required'];
   kind: CredentialType['kind'];
   handleModalToggle: () => void;
   accumulatedPluginValues: CredentialPluginsInputSource[];
+  buttons?: ReactNode;
 }) {
   const { t } = useTranslation();
   const { setValue } = useFormContext();
@@ -89,9 +91,12 @@ export function CredentialMultilineInput({
         isReadOnly={handleIsDisabled(field)}
         allowEditingUploadedText={true}
         icon={
-          kind !== 'external' ? (
-            <Button icon={<KeyIcon />} variant="control" onClick={handleModalToggle} />
-          ) : undefined
+          <>
+            {kind !== 'external' ? (
+              <Button icon={<KeyIcon />} variant="control" onClick={handleModalToggle} />
+            ) : undefined}
+            {buttons}
+          </>
         }
       />
     </>

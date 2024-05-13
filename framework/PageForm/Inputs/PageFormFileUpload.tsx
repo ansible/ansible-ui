@@ -13,6 +13,7 @@ export type PageFormFileUploadProps<
   name: TFieldName;
   placeholder?: string;
   validate?: (value: File) => string | undefined;
+  isDisabled?: boolean;
 } & PageFormGroupProps &
   Omit<FileUploadProps, 'id'>;
 
@@ -30,7 +31,6 @@ export function PageFormFileUpload<
   } = useFormContext<TFieldValues>();
   const [filename, setFilename] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-
   const handleFileInputChange = useCallback((_: unknown, file: File) => setFilename(file.name), []);
   const handleFileReadStarted = (_fileHandle: File) => {
     setIsLoading(true);
@@ -96,6 +96,7 @@ export function PageFormFileUpload<
                   // browseButtonText={t('Upload')}
                   isReadOnly={props.isReadOnly || isSubmitting}
                   validated={error ? 'error' : undefined}
+                  isDisabled={props.isDisabled}
                 />
                 {props.icon}
               </div>
