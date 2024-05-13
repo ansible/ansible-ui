@@ -63,7 +63,8 @@ export function ResourcePeersList(props: { url: string }) {
         isPinned: true,
         icon: PlusIcon,
         label: t('Associate'),
-        onClick: () => openPeerInstanceModal({ onPeer: associatePeerToInstance }),
+        onClick: () =>
+          openPeerInstanceModal({ onPeer: associatePeerToInstance, instanceId: id ?? '' }),
       },
       { type: PageActionType.Seperator },
       {
@@ -89,7 +90,9 @@ export function ResourcePeersList(props: { url: string }) {
       emptyStateDescription={t('Please add Peers to populate this list.')}
       emptyStateButtonIcon={<PlusCircleIcon />}
       emptyStateButtonText={t('Associate peer')}
-      emptyStateButtonClick={() => openPeerInstanceModal({ onPeer: associatePeerToInstance })}
+      emptyStateButtonClick={() =>
+        openPeerInstanceModal({ onPeer: associatePeerToInstance, instanceId: id ?? '' })
+      }
       {...view}
     />
   );

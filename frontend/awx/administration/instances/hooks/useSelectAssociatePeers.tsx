@@ -1,24 +1,33 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { MultiSelectDialog, usePageDialogs } from '../../../../../framework';
+import { LoadingPage, MultiSelectDialog, usePageDialogs } from '../../../../../framework';
 import { usePeersTabFilters } from '../Instances';
 import { awxAPI } from '../../../common/api/awx-utils';
-import { useAwxView } from '../../../common/useAwxView';
+import { QueryParams, useAwxView } from '../../../common/useAwxView';
 import { usePeersColumns } from './usePeersColumns';
 import { useGetItem } from '../../../../common/crud/useGet';
-import { useParams } from 'react-router-dom';
 import { Peer, Instance } from '../../../interfaces/Instance';
+import { useAwxGetAllPages } from '../../../common/useAwxGetAllPages';
+import { AwxError } from '../../../common/AwxError';
 
 export interface PeerInstanceModalProps {
-  accessUrl?: string;
+  instanceId: string;
   onPeer: (peers: Peer[]) => void;
-  confirmText?: string;
 }
 
 function PeerInstanceModal(props: PeerInstanceModalProps) {
   const { t } = useTranslation();
-  const params = useParams<{ id?: string }>();
-  const { data: instance } = useGetItem<Instance>(awxAPI`/instances/`, params.id);
+  const { instanceId, onPeer } = props;
+  console.log(instanceId);
+  const {
+    data: instance,
+    error,
+    isLoading,
+    refresh,
+  } = useGetItem<Instance>(awxAPI`/instances/`, instanceId);
+
+  if (error) return <AwxError error={error} handleRefresh={refresh} />;
+  if (!instance || isLoading) return <LoadingPage />;
 
   const toolbarFilters = usePeersTabFilters();
   const columns = usePeersColumns();
@@ -30,17 +39,57 @@ function PeerInstanceModal(props: PeerInstanceModalProps) {
     [columns]
   );
 
-  const { onPeer } = props;
+  const { results: receptors } = useAwxGetAllPages<Peer>(awxAPI`/receptor_addresses/`);
+  const { results: instances } = useAwxGetAllPages<Instance>(awxAPI`/instances`, {
+    not__node_type: ['control', 'hybird'],
+  });
 
-  const instanceName = instance?.hostname as string;
+  // let peeredInstanceIds: string[] = [];
+
+  // for (const peerId of instance?.peers ?? []) {
+  //   if (receptors) {
+  //     const matchingReceptors = receptors.filter((receptor) => receptor.id === peerId);
+  //     matchingReceptors.forEach((receptor) => {
+  //       peeredInstanceIds.push(String(receptor.instance));
+  //     });
+  //   }
+  // }
+
+  const peeredInstanceIds = instance?.peers?.map((peer) => String(peer)) ?? [];
+
+  let peeredReceptorIds: string[] = [];
+
+  if (receptors && instance && !instance.managed && instances) {
+    const filteredReceptors = receptors.filter(
+      (receptor) =>
+        !peeredInstanceIds.includes(String(receptor.instance)) &&
+        !instance.peers?.includes(receptor.id) &&
+        !(instance.id === receptor.instance) &&
+        !receptor.is_internal &&
+        instances &&
+        instances.some((instance) => instance.id === receptor.instance)
+    );
+
+    peeredReceptorIds = filteredReceptors.map((receptor) => String(receptor.instance));
+  }
+
+  const queryParams: QueryParams = {
+    is_internal: 'false',
+    order_by: 'address',
+    not__instance: [String(instance.id)],
+  };
+
+  if (peeredInstanceIds.length > 0) queryParams['not__id__in'] = peeredInstanceIds;
+
+  if (peeredReceptorIds.length > 0)
+    queryParams['not__instance'] = [...queryParams.not__instance, ...peeredReceptorIds];
+
   const view = useAwxView<Peer>({
     url: awxAPI`/receptor_addresses/`,
     toolbarFilters,
     tableColumns,
     disableQueryString: true,
-    queryParams: {
-      not__address: instanceName,
-    },
+    queryParams: queryParams,
   });
 
   return (
