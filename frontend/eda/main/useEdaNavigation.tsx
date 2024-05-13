@@ -188,12 +188,12 @@ export function useEdaNavigation() {
         },
         {
           id: EdaRoute.RulebookActivationAddUsers,
-          path: ':id/user-access/add-users',
+          path: ':id/user-access/add',
           element: <EdaRulebookActivationAddUsers />,
         },
         {
           id: EdaRoute.RulebookActivationAddTeams,
-          path: ':id/team-access/add-teams',
+          path: ':id/team-access/add',
           element: <EdaRulebookActivationAddTeams />,
         },
         {
@@ -250,12 +250,12 @@ export function useEdaNavigation() {
         },
         {
           id: EdaRoute.ProjectAddUsers,
-          path: ':id/user-access/add-users',
+          path: ':id/user-access/add',
           element: <EdaProjectAddUsers />,
         },
         {
           id: EdaRoute.ProjectAddTeams,
-          path: ':id/team-access/add-teams',
+          path: ':id/team-access/add',
           element: <EdaProjectAddTeams />,
         },
         {
@@ -307,12 +307,12 @@ export function useEdaNavigation() {
         },
         {
           id: EdaRoute.DecisionEnvironmentAddUsers,
-          path: ':id/users/add-users',
+          path: ':id/user-access/add',
           element: <EdaDecisionEnvironmentAddUsers />,
         },
         {
           id: EdaRoute.DecisionEnvironmentAddTeams,
-          path: ':id/team-access/add-teams',
+          path: ':id/team-access/add',
           element: <EdaDecisionEnvironmentAddTeams />,
         },
         {
@@ -557,12 +557,12 @@ export function useEdaNavigation() {
             },
             {
               id: EdaRoute.CredentialAddUsers,
-              path: ':id/users/add-users',
+              path: ':id/user-access/add',
               element: <EdaCredentialAddUsers />,
             },
             {
               id: EdaRoute.CredentialAddTeams,
-              path: ':id/team-access/add-teams',
+              path: ':id/team-access/add',
               element: <EdaCredentialAddTeams />,
             },
             {
@@ -619,12 +619,12 @@ export function useEdaNavigation() {
             },
             {
               id: EdaRoute.CredentialTypeAddUsers,
-              path: ':id/users/add-users',
+              path: ':id/user-access/add',
               element: <EdaCredentialTypeAddUsers />,
             },
             {
               id: EdaRoute.CredentialTypeAddTeams,
-              path: ':id/team-access/add-teams',
+              path: ':id/team-access/add',
               element: <EdaCredentialTypeAddTeams />,
             },
             {

@@ -274,12 +274,12 @@ export function useAwxInventoryRoutes() {
         },
         {
           id: AwxRoute.InventoryAddUsers,
-          path: ':id/users/add-users',
+          path: ':id/user-access/add',
           element: <InventoryAddUsers />,
         },
         {
           id: AwxRoute.InventoryAddTeams,
-          path: ':id/team-access/add-teams',
+          path: ':id/team-access/add',
           element: <InventoryAddTeams />,
         },
         {
