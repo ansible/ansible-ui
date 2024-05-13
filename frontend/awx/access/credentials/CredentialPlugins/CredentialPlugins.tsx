@@ -53,6 +53,7 @@ export function CredentialPlugins({
           if ('choices' in input) {
             return (
               <PageFormSingleSelect
+                defaultValue={input?.default}
                 name={input.id}
                 key={input.id}
                 label={input.label}
