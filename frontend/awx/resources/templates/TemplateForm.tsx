@@ -47,14 +47,36 @@ export function EditJobTemplate() {
   } = useGet<AwxItemsResponse<InstanceGroup>>(
     awxAPI`/job_templates/${id.toString()}/instance_groups/`
   );
+  const {
+    data: whkData,
+    isLoading: isWhkDataLoading,
+    error: whkDataError,
+    refresh: whkDataRefresh,
+  } = useGet<{ webhook_key: string }>(awxAPI`/job_templates/${id.toString()}/webhook_key/`);
 
   const defaultValues = useMemo(
-    () => getJobTemplateDefaultValues(t, jobTemplate, instanceGroups?.results ?? []),
-    [t, jobTemplate, instanceGroups]
+    () =>
+      getJobTemplateDefaultValues(
+        t,
+        jobTemplate,
+        instanceGroups?.results ?? [],
+        whkData?.webhook_key
+      ),
+    [t, jobTemplate, instanceGroups, whkData]
   );
   const { cache } = useSWRConfig();
   const onSubmit: PageFormSubmitHandler<JobTemplateForm> = async (values: JobTemplateForm) => {
-    const { credentials, labels, instance_groups, webhook_key, webhook_url, ...rest } = values;
+    const {
+      credentials,
+      labels,
+      instance_groups,
+      webhook_key,
+      webhook_url,
+      isProvisioningCallbackEnabled,
+      isWebhookEnabled,
+      host_config_key,
+      ...rest
+    } = values;
     const formValues = {
       ...rest,
       project: values.project.id,
@@ -63,8 +85,9 @@ export function EditJobTemplate() {
       job_tags: stringifyTags(values.job_tags) ?? '',
       skip_tags: stringifyTags(values.skip_tags) ?? '',
       webhook_credential: values.webhook_credential?.id || null,
+      webhook_service: isWebhookEnabled ? values.webhook_service : null,
+      host_config_key: isProvisioningCallbackEnabled ? host_config_key : null,
     };
-
     await requestPatch<JobTemplateForm>(awxAPI`/job_templates/${id.toString()}/`, formValues);
     (cache as unknown as { clear: () => void }).clear?.();
     const promises = [];
@@ -78,16 +101,22 @@ export function EditJobTemplate() {
 
   const getPageUrl = useGetPageUrl();
 
-  const jobTemplateFormError = jobTemplateError || instanceGroupsError;
+  const jobTemplateFormError = jobTemplateError || instanceGroupsError || whkDataError;
   if (jobTemplateFormError instanceof Error) {
     return (
       <AwxError
         error={jobTemplateFormError}
-        handleRefresh={jobTemplateError ? jobTemplateRefresh : instanceGroupRefresh}
+        handleRefresh={
+          jobTemplateError
+            ? jobTemplateRefresh
+            : instanceGroupsError
+              ? instanceGroupRefresh
+              : whkDataRefresh
+        }
       />
     );
   }
-  if (isJobTemplateLoading || isInstanceGroupsLoading) return <LoadingPage />;
+  if (isJobTemplateLoading || isInstanceGroupsLoading || isWhkDataLoading) return <LoadingPage />;
   return (
     <PageLayout>
       <PageHeader
