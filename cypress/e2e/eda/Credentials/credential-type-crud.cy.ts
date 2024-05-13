@@ -22,6 +22,7 @@ describe('EDA Credentials Type - Create, Edit, Delete', () => {
     cy.get('[data-cy="inputs-form-group"]').type(
       `{selectAll}{del}	{{}	"fields": [{{}	"id": "username","type": "string","label": "Username"}]}`
     );
+    cy.clickButton(/^Generate extra vars$/);
     cy.clickButton(/^Create credential type$/);
     cy.hasDetail('Name', name);
     cy.hasDetail('Description', 'This is a custom Credential Type.');
@@ -41,6 +42,7 @@ describe('EDA Credentials Type - Create, Edit, Delete', () => {
     cy.get('[data-cy="name"]').type(name);
     cy.get('[data-cy="description"]').type('This is a custom Credential Type.');
     cy.get('[data-cy="inputs-form-group"]').type('random');
+    cy.clickButton(/^Generate extra vars$/);
     cy.clickButton(/^Create credential type$/);
     cy.contains('schema must be in dict format');
   });
@@ -188,6 +190,7 @@ describe('EDA Credentials Type - Input Configuration', () => {
     cy.get('[data-cy="name"]').type(name);
     cy.get('[data-cy="description"]').type('This is a custom Credential Type.');
     cy.get('[data-cy="inputs-form-group"]').type('random');
+    cy.clickButton(/^Generate extra vars$/);
     cy.clickButton(/^Create credential type$/);
     cy.contains('schema must be in dict format');
   });
@@ -205,6 +208,7 @@ describe('EDA Credentials Type - Input Configuration', () => {
     cy.get('[data-cy="inputs-form-group"]').type(
       `{selectAll}{del}	{{}	"fields": [{{}	"id": "checkbox","type": "boolean","label": "Checkbox"}]}`
     );
+    cy.clickButton(/^Generate extra vars$/);
     cy.clickButton(/^Create credential type$/);
     cy.hasDetail('Name', name);
     cy.contains('li', 'Credentials').click();
@@ -231,8 +235,9 @@ describe('EDA Credentials Type - Input Configuration', () => {
       cy.get('[data-cy="toggle-json"]').click();
     });
     cy.get('[data-cy="inputs-form-group"]').type(
-      `{selectAll}{del}	{{}	"fields": [{{}	"id": "username","default": "default_value","type": "string","label": "username",}]}`
+      `{selectAll}{del}	{{}	"fields": [{{}	"id": "username","default": "default_value","type": "string","label": "username"}]}`
     );
+    cy.clickButton(/^Generate extra vars$/);
     cy.clickButton(/^Create credential type$/);
     cy.hasDetail('Name', name);
     cy.contains('li', 'Credentials').click();
@@ -259,8 +264,9 @@ describe('EDA Credentials Type - Input Configuration', () => {
       cy.get('[data-cy="toggle-json"]').click();
     });
     cy.get('[data-cy="inputs-form-group"]').type(
-      `{selectAll}{del}	{{}	"fields": [{{}	"id": "username","type": "string","label": "username",}],"required":["username"]}`
+      `{selectAll}{del}	{{}	"fields": [{{}	"id": "username","type": "string","label": "username"}],"required":["username"]}`
     );
+    cy.clickButton(/^Generate extra vars$/);
     cy.clickButton(/^Create credential type$/);
     cy.hasDetail('Name', name);
     cy.contains('li', 'Credentials').click();
