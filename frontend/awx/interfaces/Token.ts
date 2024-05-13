@@ -21,4 +21,9 @@ export interface Token {
   application: number;
   expires: string;
   scope: string;
+  /** Token */
+  token?: string;
+  /** Refresh token */
+  refresh_token?: string;
+  /** Application */
 }
