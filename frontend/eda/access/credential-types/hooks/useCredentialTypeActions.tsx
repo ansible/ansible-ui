@@ -36,7 +36,6 @@ export function useCredentialTypeToolbarActions(
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
         label: t('Delete selected credential types'),
-        isDisabled: () => 'Not implemented',
         onClick: deleteCredentialTypes,
         isDanger: true,
       },
