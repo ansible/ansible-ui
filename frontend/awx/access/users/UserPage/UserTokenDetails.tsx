@@ -25,13 +25,13 @@ export function UserTokenDetails() {
 
   if (!user || !token) return <LoadingPage breadcrumbs tabs />;
 
-  return <UserTokenDetailsInternal token={token} user={user} />;
+  return <UserTokenDetailsInternal token={token} />;
 }
 
-function UserTokenDetailsInternal(props: { token: Token; user: AwxUser }) {
-  const { token, user } = props;
+function UserTokenDetailsInternal(props: { token: Token }) {
+  const { token } = props;
 
-  const userTokensColumns = useUserTokensColumns(user, { disableLinks: true });
+  const userTokensColumns = useUserTokensColumns({ disableLinks: true });
 
   return (
     <PageDetails>
