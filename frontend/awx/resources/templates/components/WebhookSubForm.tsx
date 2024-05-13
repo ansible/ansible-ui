@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useLocation, useParams } from 'react-router-dom';
 import { PageFormSelect, PageFormTextInput } from '../../../../../framework';
 import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
-import { requestGet } from '../../../../common/crud/Data';
+import { postRequest } from '../../../../common/crud/Data';
 import { useGet } from '../../../../common/crud/useGet';
 import { PageFormCredentialSelect } from '../../../access/credentials/components/PageFormCredentialSelect';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
@@ -15,13 +15,16 @@ import { CredentialType } from '../../../interfaces/CredentialType';
 import { JobTemplateForm } from '../../../interfaces/JobTemplateForm';
 import { WorkflowJobTemplateForm } from '../../../interfaces/WorkflowJobTemplate';
 
-export function WebhookSubForm() {
+export function WebhookSubForm(props: {
+  templateType: 'job_templates' | 'workflow_job_templates';
+}) {
   const { t } = useTranslation();
   const params = useParams<{ id?: string }>();
   const { setValue } = useFormContext<JobTemplateForm | WorkflowJobTemplateForm>();
   const webhookKey = useWatch({ name: 'webhook_key' }) as string;
   const webhookService = useWatch({ name: 'webhook_service' }) as string;
-  const isWebhookEnabled = useWatch({ name: 'enable_webhook' }) as boolean;
+  const isWebhookEnabled = useWatch({ name: 'isWebhookEnabled' }) as boolean;
+  const { templateType } = props;
 
   const { pathname } = useLocation();
 
@@ -32,13 +35,16 @@ export function WebhookSubForm() {
     }
   );
 
-  const handleFetchWebhookKey = useCallback(async () => {
+  const handleGenerateWebhookKey = useCallback(async () => {
     if (isWebhookEnabled && params.id) {
-      const webhookKey = await requestGet<string>(awxAPI`/job_template/${params.id}/webhook_key`);
+      const { webhook_key: webhookKey } = await postRequest<{ webhook_key: string }>(
+        awxAPI`/${templateType}/${params.id}/webhook_key/`,
+        {}
+      );
       setValue('webhook_key', webhookKey);
       return;
     }
-  }, [isWebhookEnabled, setValue, params]);
+  }, [isWebhookEnabled, setValue, params, templateType]);
 
   useGet<AwxItemsResponse<CredentialType>>(
     awxAPI`/credential_types/?namespace=${webhookService}_token`
@@ -48,13 +54,19 @@ export function WebhookSubForm() {
     if (!webhookService) return;
     setValue(
       'related.webhook_receiver',
-      pathname.endsWith('/creat')
+      pathname.endsWith('/create')
         ? t`a new webhook url will be generated on save.`.toUpperCase()
-        : `${document.location.origin}${awxAPI`/job_template/`}${
+        : `${document.location.origin}${awxAPI`/${templateType}/`}${
             params.id as string
           }/${webhookService}/`
     );
-  }, [webhookService, setValue, pathname, params.id, t]);
+
+    if (pathname.endsWith('/create'))
+      setValue(
+        'related.webhook_key',
+        t`a new webhook key will be generated on save.`.toUpperCase()
+      );
+  }, [webhookService, setValue, pathname, params.id, t, templateType]);
 
   const isUpdateKeyDisabled =
     pathname.endsWith('/create') || webhookKey === 'A NEW WEBHOOK KEY WILL BE GENERATED ON SAVE.';
@@ -74,11 +86,13 @@ export function WebhookSubForm() {
         name="related.webhook_receiver"
         isDisabled={!params.id || !webhookService}
         label={t('Webhook URL')}
+        isReadOnly
         placeholder={t('Select a webhook service')}
       />
       <PageFormTextInput<JobTemplateForm>
         name="webhook_key"
         label={t('Webhook key')}
+        isReadOnly
         button={
           <Button
             ouiaId="update-webhook-key-button"
@@ -86,7 +100,7 @@ export function WebhookSubForm() {
             variant="tertiary"
             aria-label={t`Update webhook key`}
             onClick={() => {
-              void handleFetchWebhookKey();
+              void handleGenerateWebhookKey();
             }}
           >
             <SyncAltIcon />

@@ -38,10 +38,18 @@ export function EditWorkflowJobTemplate() {
   const id = Number(params.id);
   const {
     data: workflowJobTemplate,
-    error,
-    refresh,
-    isLoading,
+    error: wfjtError,
+    refresh: wfjtRefresh,
+    isLoading: isWfjtLoading,
   } = useGet<WorkflowJobTemplate>(awxAPI`/workflow_job_templates/${id.toString()}/`);
+  const {
+    data: whkData,
+    isLoading: isWhkDataLoading,
+    error: whkDataError,
+    refresh: whkDataRefresh,
+  } = useGet<{ webhook_key: string }>(
+    awxAPI`/workflow_job_templates/${id.toString()}/webhook_key/`
+  );
 
   const onSubmit: PageFormSubmitHandler<WorkflowJobTemplateForm> = async (
     values: WorkflowJobTemplateForm
@@ -86,17 +94,28 @@ export function EditWorkflowJobTemplate() {
       scm_branch: workflowJobTemplate.scm_branch || '',
       skip_tags: parseStringToTagArray(workflowJobTemplate.job_tags || ''),
       webhook_credential: workflowJobTemplate.summary_fields.webhook_credential || null,
-      webhook_key: workflowJobTemplate.related.webhook_key || '',
+      webhook_key:
+        whkData?.webhook_key || t('a new webhook key will be generated on save.').toUpperCase(),
+      webhook_url: workflowJobTemplate.related?.webhook_receiver
+        ? `${document.location.origin}${workflowJobTemplate.related.webhook_receiver}`
+        : t('a new webhook url will be generated on save.').toUpperCase(),
       webhook_receiver: workflowJobTemplate.related.webhook_receiver,
       webhook_service: workflowJobTemplate.webhook_service || '',
     };
-  }, [workflowJobTemplate]);
+  }, [t, workflowJobTemplate, whkData]);
   const { cache } = useSWRConfig();
 
-  if (error instanceof Error) {
-    return <AwxError error={error} handleRefresh={refresh} />;
+  const wfjtFormError = wfjtError || whkDataError;
+
+  if (wfjtFormError instanceof Error) {
+    return (
+      <AwxError
+        error={wfjtFormError}
+        handleRefresh={wfjtFormError ? wfjtRefresh : whkDataRefresh}
+      />
+    );
   }
-  if (isLoading) return <LoadingPage />;
+  if (isWfjtLoading || isWhkDataLoading) return <LoadingPage />;
   return (
     <PageLayout>
       <PageHeader
@@ -147,8 +166,10 @@ export function CreateWorkflowJobTemplate() {
       job_tags: parseStringToTagArray('') || [],
       skip_tags: parseStringToTagArray('') || [],
       extra_vars: '---\n',
+      webhook_key: t('a new webhook key will be generated on save.').toUpperCase(),
+      webhook_url: t('a new webhook url will be generated on save.').toUpperCase(),
     }),
-    []
+    [t]
   );
 
   const getPageUrl = useGetPageUrl();
