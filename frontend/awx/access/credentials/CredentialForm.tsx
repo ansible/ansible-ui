@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -14,7 +14,7 @@ import {
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { PageFormSubmitHandler } from '../../../../framework/PageForm/PageForm';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
-import { useGet } from '../../../common/crud/useGet';
+import { useGet, useGetItem } from '../../../common/crud/useGet';
 import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { AwxPageForm } from '../../common/AwxPageForm';
@@ -30,8 +30,11 @@ import { CredentialMultilineInput } from './components/CredentialMultilineInput'
 import { Button, Icon } from '@patternfly/react-core';
 import { KeyIcon } from '@patternfly/react-icons';
 import { PageFormSelectCredentialType } from './components/PageFormSelectCredentialType';
-import { useCredentialPluginsModal } from './CredentialPlugins/hooks/useCredentialPluginsDialog';
-import { CredentialPluginsForm } from './CredentialPlugins/CredentialPlugins';
+import {
+  CredentialPluginsInputSource,
+  useCredentialPluginsModal,
+} from './CredentialPlugins/hooks/useCredentialPluginsDialog';
+import { CredentialInputSource } from '../../interfaces/CredentialInputSource';
 
 interface CredentialForm extends Credential {
   user?: number;
@@ -58,11 +61,29 @@ export function CreateCredential() {
   const pageNavigate = usePageNavigate();
   const navigate = useNavigate();
   const { activeAwxUser } = useAwxActiveUser();
-  const postRequest = usePostRequest<Credential>();
+  const postRequest = usePostRequest<Credential | CredentialInputSource>();
   const getPageUrl = useGetPageUrl();
-  const [_credentialPluginValues, setCredentialPluginValues] = useState<
-    Record<string, CredentialPluginsForm>
-  >({});
+  const [credentialPluginValues, setCredentialPluginValues] = useState<
+    CredentialPluginsInputSource[]
+  >([]);
+  const [accumulatedPluginValues, setaccumulatedPluginValues] = useState<
+    CredentialPluginsInputSource[]
+  >([]);
+  useEffect(() => {
+    setaccumulatedPluginValues((prev) => {
+      // Filter out any values from prev that have input field names matching new values
+      const filteredPrev = prev.filter(
+        (prevValue) =>
+          !credentialPluginValues.some(
+            (newValue) => newValue.input_field_name === prevValue.input_field_name
+          )
+      );
+      const updatedValues = [...filteredPrev, ...credentialPluginValues];
+
+      return updatedValues;
+    });
+  }, [credentialPluginValues]);
+
   const { results: itemsResponse, isLoading } = useAwxGetAllPages<CredentialType>(
     awxAPI`/credential_types/`
   );
@@ -82,9 +103,16 @@ export function CreateCredential() {
   const onSubmit: PageFormSubmitHandler<CredentialForm> = async (credential) => {
     const credentialTypeInputs = parsedCredentialTypes?.[credential?.credential_type]?.inputs;
     const pluginInputs: Record<string, string | number> = {};
+    const isHandledByCredentialPlugin = (field: string) =>
+      accumulatedPluginValues.some((cp) => cp.input_field_name === field);
     const possibleFields = credentialTypeInputs?.fields || [];
     possibleFields.forEach((field) => {
-      if (field.id && typeof field.id === 'string' && field.id in credential) {
+      if (
+        field.id &&
+        typeof field.id === 'string' &&
+        field.id in credential &&
+        !isHandledByCredentialPlugin(field.id)
+      ) {
         const id = field.id as keyof CredentialForm;
         if (credential[id] !== undefined) {
           pluginInputs[id] = credential[id] as string | number;
@@ -100,6 +128,18 @@ export function CreateCredential() {
       ...credential,
       inputs: { ...pluginInputs },
     });
+    const credentialInputSourcePayload = accumulatedPluginValues.map((credentialInputSource) => ({
+      ...credentialInputSource,
+      target_credential: newCredential.id,
+    }));
+    await Promise.all(
+      credentialInputSourcePayload.map(async (credentialInputSource) => {
+        await postRequest(
+          awxAPI`/credential_input_sources/`,
+          credentialInputSource as CredentialInputSource
+        );
+      })
+    );
     pageNavigate(AwxRoute.CredentialDetails, { params: { id: newCredential.id } });
   };
   return (
@@ -120,6 +160,8 @@ export function CreateCredential() {
           isEditMode={false}
           credentialTypes={parsedCredentialTypes || {}}
           setCredentialPluginValues={setCredentialPluginValues}
+          accumulatedPluginValues={accumulatedPluginValues}
+          setAccumulatedPluginValues={setaccumulatedPluginValues}
         />
       </AwxPageForm>
     </PageLayout>
@@ -135,8 +177,8 @@ export function EditCredential() {
   const getPageUrl = useGetPageUrl();
   const patch = usePatchRequest();
   const [_credentialPluginValues, setCredentialPluginValues] = useState<
-    Record<string, CredentialPluginsForm>
-  >({});
+    CredentialPluginsInputSource[]
+  >([]);
 
   const { data: credential, isLoading: isLoadingCredential } = useGet<Credential>(
     awxAPI`/credentials/${id.toString()}/`
@@ -240,11 +282,15 @@ function CredentialInputs({
   selectedCredentialTypeId,
   credentialTypes,
   setCredentialPluginValues,
+  accumulatedPluginValues,
+  setAccumulatedPluginValues,
 }: {
   isEditMode?: boolean;
   selectedCredentialTypeId?: number;
   credentialTypes: CredentialTypes;
-  setCredentialPluginValues?: (values: Record<string, CredentialPluginsForm>) => void;
+  setCredentialPluginValues?: (values: CredentialPluginsInputSource[]) => void;
+  accumulatedPluginValues?: CredentialPluginsInputSource[];
+  setAccumulatedPluginValues?: (values: CredentialPluginsInputSource[]) => void;
 }) {
   const { t } = useTranslation();
 
@@ -289,6 +335,9 @@ function CredentialInputs({
         <CredentialSubForm
           credentialType={credentialTypes[credentialTypeID]}
           setCredentialPluginValues={setCredentialPluginValues}
+          isEditMode={isEditMode}
+          accumulatedPluginValues={accumulatedPluginValues ? accumulatedPluginValues : []}
+          setAccumulatedPluginValues={setAccumulatedPluginValues}
         />
       ) : null}
     </>
@@ -297,13 +346,18 @@ function CredentialInputs({
 function CredentialSubForm({
   credentialType,
   setCredentialPluginValues,
+  isEditMode = false,
+  accumulatedPluginValues,
+  setAccumulatedPluginValues,
 }: {
   credentialType: CredentialType | undefined;
-  setCredentialPluginValues: (values: Record<string, CredentialPluginsForm>) => void;
+  setCredentialPluginValues: (values: CredentialPluginsInputSource[]) => void;
+  isEditMode?: boolean;
+  accumulatedPluginValues: CredentialPluginsInputSource[];
+  setAccumulatedPluginValues?: (values: CredentialPluginsInputSource[]) => void;
 }) {
   const { t } = useTranslation();
   const openCredentialPluginsModal = useCredentialPluginsModal();
-
   if (!credentialType || !credentialType?.inputs?.fields) {
     return null;
   }
@@ -330,6 +384,7 @@ function CredentialSubForm({
           if (field?.multiline) {
             return (
               <CredentialMultilineInput
+                accumulatedPluginValues={accumulatedPluginValues}
                 kind={credentialType.kind}
                 key={field.id}
                 field={field}
@@ -338,6 +393,7 @@ function CredentialSubForm({
                   openCredentialPluginsModal({
                     field,
                     setCredentialPluginValues,
+                    accumulatedPluginValues,
                   });
                 }}
               />
@@ -353,15 +409,21 @@ function CredentialSubForm({
           } else {
             return (
               <CredentialTextInput
+                accumulatedPluginValues={accumulatedPluginValues}
+                setAccumulatedPluginValues={setAccumulatedPluginValues}
                 key={field.id}
                 field={field}
+                isDisabled={
+                  field.id === 'vault_id' && credentialType.kind === 'vault' && isEditMode
+                }
                 isRequired={requiredFields.includes(field.id)}
-                handleModalToggle={() => {
+                handleModalToggle={() =>
                   openCredentialPluginsModal({
                     field,
                     setCredentialPluginValues,
-                  });
-                }}
+                    accumulatedPluginValues,
+                  })
+                }
               />
             );
           }
@@ -393,19 +455,39 @@ function CredentialSubForm({
 }
 
 function CredentialTextInput({
-  field,
-  isRequired = false,
   credentialType,
+  field,
   handleModalToggle,
+  isDisabled = false,
+  isRequired = false,
+  accumulatedPluginValues,
+  setAccumulatedPluginValues,
 }: {
-  field: CredentialInputField;
-  isRequired?: boolean;
   credentialType?: CredentialType | undefined;
+  field: CredentialInputField;
   handleModalToggle: () => void;
+  isDisabled?: boolean;
+  isRequired?: boolean;
+  accumulatedPluginValues: CredentialPluginsInputSource[];
+  setAccumulatedPluginValues?: (values: CredentialPluginsInputSource[]) => void;
 }) {
   const { t } = useTranslation();
   const { setValue, clearErrors } = useFormContext();
   const isPromptOnLaunchChecked = useWatch({ name: `ask_${field.id}` }) as boolean;
+  const useGetSourceCredential = (id: number) => {
+    const { data } = useGetItem<Credential>(awxAPI`/credentials/`, id);
+    return data;
+  };
+  const sourceCredential = useGetSourceCredential(
+    accumulatedPluginValues.filter((cp) => cp.input_field_name === field.id)[0]?.source_credential
+  );
+  const onClear = () => {
+    setValue(field.id, '', { shouldDirty: false });
+    clearErrors(field.id);
+    setAccumulatedPluginValues?.(
+      accumulatedPluginValues.filter((cp) => cp.input_field_name !== field.id)
+    );
+  };
 
   useEffect(() => {
     if (field?.ask_at_runtime) {
@@ -435,6 +517,47 @@ function CredentialTextInput({
     return false;
   };
 
+  const handleIsDisabled = (field: CredentialInputField): boolean => {
+    let isDisabled = false;
+    accumulatedPluginValues.forEach((cp) => {
+      if (cp.input_field_name === field.id) {
+        isDisabled = true;
+      }
+    });
+    return isDisabled;
+  };
+
+  const handleHelperText = (field: CredentialInputField): string => {
+    let helperText = '';
+    accumulatedPluginValues.forEach((cp) => {
+      if (cp.input_field_name === field.id) {
+        helperText = t(
+          'This field will be retrieved from an external secret management system using the specified credential.'
+        );
+      }
+    });
+    return helperText;
+  };
+
+  const renderFieldValue = useCallback(
+    (field: CredentialInputField): string => {
+      let placeholder = '';
+      accumulatedPluginValues.forEach((cp) => {
+        if (cp.input_field_name === field.id && sourceCredential) {
+          placeholder = t(`Value is managed by ${sourceCredential.kind}: ${sourceCredential.name}`);
+        }
+      });
+      return placeholder;
+    },
+    [accumulatedPluginValues, sourceCredential, t]
+  );
+
+  useEffect(() => {
+    // if field id matches accumulatedPluginValues input_field_name, set value to kind: credential name
+    if (accumulatedPluginValues.some((cp) => cp.input_field_name === field.id)) {
+      setValue(field.id, renderFieldValue(field), { shouldDirty: true });
+    }
+  }, [setValue, accumulatedPluginValues, renderFieldValue, field]);
   return (
     <>
       <PageFormTextInput
@@ -444,23 +567,34 @@ function CredentialTextInput({
         placeholder={(field?.default || t('Enter value')).toString()}
         type={field.secret ? 'password' : 'text'}
         isRequired={handleIsRequired()}
-        isDisabled={!!isPromptOnLaunchChecked}
+        isDisabled={!!isPromptOnLaunchChecked || isDisabled}
+        isReadOnly={handleIsDisabled(field)}
         labelHelp={field.help_text}
+        helperText={handleHelperText(field)}
         button={
           credentialType?.kind !== 'external' ? (
-            <Button
-              data-cy={'secret-management-input'}
-              variant="plain"
-              icon={
-                <Icon>
-                  <KeyIcon />
-                </Icon>
-              }
-              style={{
-                border: '1px solid var(--pf-v5-global--BorderColor--300)',
-              }}
-              onClick={handleModalToggle}
-            ></Button>
+            <>
+              <Button
+                isDisabled={isDisabled}
+                data-cy={'secret-management-input'}
+                variant="control"
+                icon={
+                  <Icon>
+                    <KeyIcon />
+                  </Icon>
+                }
+                onClick={handleModalToggle}
+              ></Button>
+              {accumulatedPluginValues.some((cp) => cp.input_field_name === field.id) ? (
+                <Button
+                  data-cy={'clear-secret-management-input'}
+                  variant="control"
+                  onClick={onClear}
+                >
+                  {t(`Clear`)}
+                </Button>
+              ) : null}
+            </>
           ) : undefined
         }
         additionalControls={

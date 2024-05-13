@@ -52,14 +52,11 @@ describe('Management Jobs Page - List and Launch Jobs', () => {
               .then((jobId: string) => {
                 cy.verifyPageTitle(jobName);
                 cy.url().should('include', `/jobs/management/${jobId}/output`);
-                cy.waitForManagementJobStatus(jobId).then(() => {
-                  cy.contains('a[role="tab"]', 'Details').click();
-                  cy.get('[data-cy="id"]').should('have.text', jobId).should('be.visible');
-                  cy.get('[data-cy="name"]').should('have.text', jobName).should('be.visible');
-                  cy.get('[data-cy="type"]')
-                    .should('have.text', 'Management job')
-                    .should('be.visible');
-                  cy.get('[data-cy="id"]').should('have.text', jobId).should('be.visible');
+                cy.waitForManagementJobToProcess(jobId).then(() => {
+                  cy.clickTab('Details', true);
+                  cy.getByDataCy('id').should('have.text', jobId);
+                  cy.getByDataCy('name').should('have.text', jobName);
+                  cy.getByDataCy('type').should('have.text', 'Management job');
                   cy.intercept('DELETE', `api/v2/system_jobs/${jobId}/`).as('deleteMgtJob');
                   cy.clickPageAction('delete-job');
                   cy.get('#confirm').click();
@@ -104,13 +101,11 @@ describe('Management Jobs Page - List and Launch Jobs', () => {
               .then((jobId: string) => {
                 cy.verifyPageTitle(jobName);
                 cy.url().should('include', `/jobs/management/${jobId}/output`);
-                cy.waitForManagementJobStatus(jobId).then(() => {
-                  cy.contains('a[role="tab"]', 'Details').click();
-                  cy.get('[data-cy="id"]').should('have.text', jobId).should('be.visible');
-                  cy.get('[data-cy="name"]').should('have.text', jobName).should('be.visible');
-                  cy.get('[data-cy="type"]')
-                    .should('have.text', 'Management job')
-                    .should('be.visible');
+                cy.waitForManagementJobToProcess(jobId).then(() => {
+                  cy.clickTab('Details', true);
+                  cy.getByDataCy('id').should('have.text', jobId);
+                  cy.getByDataCy('name').should('have.text', jobName);
+                  cy.getByDataCy('type').should('have.text', 'Management job');
                   cy.intercept('DELETE', `api/v2/system_jobs/${jobId}/`).as('deleteMgtJob');
                   cy.clickPageAction('delete-job');
                   cy.get('#confirm').click();

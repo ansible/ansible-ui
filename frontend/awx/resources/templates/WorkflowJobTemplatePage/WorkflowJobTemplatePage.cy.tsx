@@ -96,7 +96,8 @@ describe('WorflowJobTemplatePage', () => {
     const tabNames: string[] = [
       'Back to Templates',
       'Details',
-      'Access',
+      'Team Access',
+      'User Access',
       'Schedules',
       'Jobs',
       'Survey',
@@ -105,7 +106,7 @@ describe('WorflowJobTemplatePage', () => {
     cy.mount(<WorkflowJobTemplatePage />);
 
     cy.get('.pf-v5-c-tabs__list').within(() => {
-      cy.get('.pf-v5-c-tabs__item').should('have.length', 7);
+      cy.get('.pf-v5-c-tabs__item').should('have.length', tabNames.length);
       cy.get('.pf-v5-c-tabs__item').each((tab, index) => {
         cy.wrap(tab).should('contain', tabNames[index]);
       });
@@ -125,7 +126,8 @@ describe('WorflowJobTemplatePage', () => {
     const tabNames: string[] = [
       'Back to Templates',
       'Details',
-      'Access',
+      'Team Access',
+      'User Access',
       'Schedules',
       'Jobs',
       'Survey',
@@ -154,7 +156,8 @@ describe('WorflowJobTemplatePage', () => {
     const tabNames: string[] = [
       'Back to Templates',
       'Details',
-      'Access',
+      'Team Access',
+      'User Access',
       'Schedules',
       'Jobs',
       'Survey',
@@ -164,7 +167,7 @@ describe('WorflowJobTemplatePage', () => {
     cy.wait('@getOrganizations');
 
     cy.get('.pf-v5-c-tabs__list').within(() => {
-      cy.get('.pf-v5-c-tabs__item').should('have.length', 6);
+      cy.get('.pf-v5-c-tabs__item').should('have.length', tabNames.length);
       cy.get('.pf-v5-c-tabs__item').each((tab, index) => {
         cy.wrap(tab).should('contain', tabNames[index]);
       });

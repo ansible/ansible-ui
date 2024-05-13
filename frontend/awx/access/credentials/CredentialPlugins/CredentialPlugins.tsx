@@ -24,9 +24,11 @@ export interface CredentialPluginsForm {
 export function CredentialPlugins({
   onCancel,
   handleSubmit,
+  defaultValues,
 }: {
   onCancel: () => void;
   handleSubmit: PageFormSubmitHandler<CredentialPluginsForm>;
+  defaultValues?: CredentialPluginsForm;
 }) {
   const { t } = useTranslation();
   const CredentialSubForm = () => {
@@ -95,7 +97,12 @@ export function CredentialPlugins({
   return (
     <PageLayout>
       <PageHeader title={t('Secret Management System')} />
-      <AwxPageForm submitText={t('Finish')} onSubmit={handleSubmit} onCancel={onCancel}>
+      <AwxPageForm
+        submitText={t('Finish')}
+        onSubmit={handleSubmit}
+        onCancel={onCancel}
+        defaultValue={defaultValues}
+      >
         <PageFormSection title={t('Select external credential')}>
           <PageFormExternalCredentialSelect name="source_credential" isRequired />
         </PageFormSection>
