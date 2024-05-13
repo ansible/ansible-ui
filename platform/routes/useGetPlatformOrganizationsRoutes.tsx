@@ -14,6 +14,7 @@ import { PlatformOrganizationUsers } from '../access/organizations/components/Pl
 import { PlatformOrganizationManageAccess } from '../access/organizations/components/PlatformOrganizationManageAccess';
 import { PlatformOrganizationTeams } from '../access/organizations/components/PlatformOrganizationTeams';
 import { PlatformAwxOrganizationIdLookup } from '../access/organizations/components/PlatformAwxOrganizationIdLookup';
+import { PlatformOrganizationAddUsers } from '../access/organizations/components/PlatformOrganizationAddUsers';
 
 export function useGetPlatformOrganizationsRoutes() {
   const { t } = useTranslation();
@@ -72,7 +73,7 @@ export function useGetPlatformOrganizationsRoutes() {
         {
           id: PlatformRoute.OrganizationAddUsers,
           path: ':id/users/add-users',
-          element: <PlatformOrganizationManageAccess />,
+          element: <PlatformOrganizationAddUsers />,
         },
         {
           id: PlatformRoute.OrganizationAddTeams,
