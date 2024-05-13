@@ -286,6 +286,11 @@ Cypress.Commands.add('createEdaCredentialType', () => {
         },
       ],
     },
+    injectors: {
+      extra_vars: {
+        username: '{{username}}',
+      },
+    },
     description: 'This is a credential type',
   }).then((edaCredentialType) => {
     Cypress.log({
