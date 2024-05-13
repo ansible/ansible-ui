@@ -54,7 +54,7 @@ export function PageApp(props: {
             </PageNotificationsDrawer>
           </Page>
         ),
-        children: navigation,
+        children: navigation.filter(({ href }) => !href),
       },
       { path: '*', element: <PageNotFound /> },
     ],
