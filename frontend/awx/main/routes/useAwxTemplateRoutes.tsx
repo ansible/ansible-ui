@@ -156,12 +156,12 @@ export function useAwxTemplateRoutes() {
             },
             {
               id: AwxRoute.JobTemplateAddTeams,
-              path: ':id/teams/add-teams',
+              path: ':id/team-access/add',
               element: <JobTemplateAddTeams />,
             },
             {
               id: AwxRoute.JobTemplateAddUsers,
-              path: ':id/users/add-users',
+              path: ':id/user-access/add',
               element: <JobTemplateAddUsers />,
             },
             {
@@ -292,12 +292,12 @@ export function useAwxTemplateRoutes() {
             },
             {
               id: AwxRoute.WorkflowJobTemplateAddTeams,
-              path: ':id/teams/add-teams',
+              path: ':id/team-access/add',
               element: <WorkflowJobTemplateAddTeams />,
             },
             {
               id: AwxRoute.WorkflowJobTemplateAddUsers,
-              path: ':id/users/add-users',
+              path: ':id/user-access/add',
               element: <WorkflowJobTemplateAddUsers />,
             },
             {
