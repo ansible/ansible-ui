@@ -10,6 +10,7 @@ import {
   PageSidebarBody,
 } from '@patternfly/react-core';
 import { useState } from 'react';
+import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { usePageNavBarClick, usePageNavSideBar } from './PageNavSidebar';
 import './PageNavigation.css';
 import { PageNavigationItem } from './PageNavigationItem';
@@ -88,14 +89,15 @@ function PageNavigationItemComponent(props: { item: PageNavigationItem; baseRout
     let path = (process.env?.ROUTE_PREFIX ?? '') + route;
     path = path.replace('//', '/');
 
-    const isActive = location.pathname.startsWith(path);
+    const isActive = item.href ? false : location.pathname.startsWith(path);
     return (
       <NavItem
         id={id}
-        href={route}
+        href={item.href || route}
         isActive={isActive}
         className={isActive ? 'bg-lighten' : undefined}
-        onClick={() => onClickNavItem(route)}
+        onClick={() => (item.href ? window.open(item.href, '_blank') : onClickNavItem(route))}
+        target={item.href ? '_blank' : ''}
         data-cy={id}
         style={{ display: 'flex', alignItems: 'stretch', flexDirection: 'column' }}
       >
@@ -107,6 +109,13 @@ function PageNavigationItemComponent(props: { item: PageNavigationItem; baseRout
                 {item.badge}
               </Label>
             </FlexItem>
+          )}
+          {'href' in item && item.href && (
+            <span className="pf-v5-c-nav__toggle">
+              <span className="pf-v5-c-nav__toggle-icon">
+                <ExternalLinkAltIcon />
+              </span>
+            </span>
           )}
         </Flex>
         {item.subtitle && (
