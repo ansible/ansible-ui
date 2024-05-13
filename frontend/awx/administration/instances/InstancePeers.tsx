@@ -77,7 +77,7 @@ export function ResourcePeersList(props: { url: string }) {
         isDanger: true,
       },
     ],
-    [openPeerInstanceModal, associatePeerToInstance, disassociatePeer, t]
+    [openPeerInstanceModal, associatePeerToInstance, disassociatePeer, id, t]
   );
 
   return (
