@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router-dom';
 import { PageNavigationItem } from '../../../../framework';
@@ -14,9 +14,14 @@ import { Users } from '../../access/users/Users';
 import { AddRolesToUser } from '../../access/users/components/AddRolesToUser';
 import { AwxRoute } from '../AwxRoutes';
 import { UserTokenPage } from '../../access/users/UserPage/UserTokenPage';
+import { CreateUserToken } from '../../access/users/UserTokenForm';
+import { Token } from '../../interfaces/Token';
+import { UserTokenSecretsModal } from '../../access/users/UserPage/UserTokenSecretsModal';
 
 export function useAwxUsersRoutes() {
   const { t } = useTranslation();
+  const [newUserToken, setNewUserToken] = useState<Token>();
+
   const usersRoutes = useMemo<PageNavigationItem>(
     () => ({
       id: AwxRoute.Users,
@@ -75,9 +80,24 @@ export function useAwxUsersRoutes() {
           element: <AddRolesToUser />,
         },
         {
+          id: AwxRoute.CreateUserToken,
+          path: ':id/tokens/create',
+          element: <CreateUserToken onSuccessfulCreate={(t: Token) => setNewUserToken(t)} />,
+        },
+        {
           id: AwxRoute.UserTokenPage,
           path: ':id/tokens/:tokenid',
-          element: <UserTokenPage />,
+          element: (
+            <>
+              <UserTokenPage />
+              {newUserToken && (
+                <UserTokenSecretsModal
+                  onClose={setNewUserToken}
+                  newToken={newUserToken}
+                ></UserTokenSecretsModal>
+              )}
+            </>
+          ),
           children: [
             {
               id: AwxRoute.UserTokenDetails,
@@ -96,7 +116,7 @@ export function useAwxUsersRoutes() {
         },
       ],
     }),
-    [t]
+    [newUserToken, t]
   );
   return usersRoutes;
 }
