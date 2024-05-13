@@ -1,0 +1,248 @@
+{
+  "count": 11,
+  "next": "/api/controller/v2/role_definitions/?content_type__model=organization&not__name=Organization+Member&not__name=Organization+Admin&order_by=name&page=2&page_size=10",
+  "previous": null,
+  "results": [
+    {
+      "id": 17,
+      "url": "/api/controller/v2/role_definitions/17/",
+      "related": {
+        "team_assignments": "/api/controller/v2/role_definitions/17/team_assignments/",
+        "user_assignments": "/api/controller/v2/role_definitions/17/user_assignments/"
+      },
+      "summary_fields": {},
+      "permissions": ["awx.audit_organization", "awx.view_organization"],
+      "content_type": "shared.organization",
+      "modified": "2024-05-09T05:22:59.360123Z",
+      "created": "2024-05-09T05:22:59.360105Z",
+      "name": "Organization Audit",
+      "description": "Has audit permissions to a single organization",
+      "managed": true,
+      "modified_by": null,
+      "created_by": null
+    },
+    {
+      "id": 2,
+      "url": "/api/controller/v2/role_definitions/2/",
+      "related": {
+        "team_assignments": "/api/controller/v2/role_definitions/2/team_assignments/",
+        "user_assignments": "/api/controller/v2/role_definitions/2/user_assignments/"
+      },
+      "summary_fields": {},
+      "permissions": [
+        "awx.add_credential",
+        "awx.change_credential",
+        "awx.delete_credential",
+        "awx.use_credential",
+        "awx.view_credential",
+        "awx.view_organization"
+      ],
+      "content_type": "shared.organization",
+      "modified": "2024-05-09T05:22:59.256452Z",
+      "created": "2024-05-09T05:22:59.256434Z",
+      "name": "Organization Credential Admin",
+      "description": "Has all permissions to credentials within an organization",
+      "managed": true,
+      "modified_by": null,
+      "created_by": null
+    },
+    {
+      "id": 8,
+      "url": "/api/controller/v2/role_definitions/8/",
+      "related": {
+        "team_assignments": "/api/controller/v2/role_definitions/8/team_assignments/",
+        "user_assignments": "/api/controller/v2/role_definitions/8/user_assignments/"
+      },
+      "summary_fields": {},
+      "permissions": [
+        "awx.add_executionenvironment",
+        "awx.change_executionenvironment",
+        "awx.delete_executionenvironment",
+        "awx.view_executionenvironment",
+        "awx.view_organization"
+      ],
+      "content_type": "shared.organization",
+      "modified": "2024-05-09T05:22:59.301174Z",
+      "created": "2024-05-09T05:22:59.301157Z",
+      "name": "Organization ExecutionEnvironment Admin",
+      "description": "Has all permissions to execution environments within an organization",
+      "managed": true,
+      "modified_by": null,
+      "created_by": null
+    },
+    {
+      "id": 12,
+      "url": "/api/controller/v2/role_definitions/12/",
+      "related": {
+        "team_assignments": "/api/controller/v2/role_definitions/12/team_assignments/",
+        "user_assignments": "/api/controller/v2/role_definitions/12/user_assignments/"
+      },
+      "summary_fields": {},
+      "permissions": [
+        "awx.change_instancegroup",
+        "awx.delete_instancegroup",
+        "awx.use_instancegroup",
+        "awx.view_instancegroup",
+        "awx.view_organization"
+      ],
+      "content_type": "shared.organization",
+      "modified": "2024-05-09T05:22:59.328015Z",
+      "created": "2024-05-09T05:22:59.327998Z",
+      "name": "Organization InstanceGroup Admin",
+      "description": "Has all permissions to instance groups within an organization",
+      "managed": true,
+      "modified_by": null,
+      "created_by": null
+    },
+    {
+      "id": 29,
+      "url": "/api/controller/v2/role_definitions/29/",
+      "related": {
+        "team_assignments": "/api/controller/v2/role_definitions/29/team_assignments/",
+        "user_assignments": "/api/controller/v2/role_definitions/29/user_assignments/"
+      },
+      "summary_fields": {},
+      "permissions": [
+        "awx.add_inventory",
+        "awx.adhoc_inventory",
+        "awx.change_inventory",
+        "awx.delete_inventory",
+        "awx.update_inventory",
+        "awx.use_inventory",
+        "awx.view_inventory",
+        "awx.view_organization"
+      ],
+      "content_type": "shared.organization",
+      "modified": "2024-05-09T05:22:59.447854Z",
+      "created": "2024-05-09T05:22:59.447838Z",
+      "name": "Organization Inventory Admin",
+      "description": "Has all permissions to inventories within an organization",
+      "managed": true,
+      "modified_by": null,
+      "created_by": null
+    },
+    {
+      "id": 5,
+      "url": "/api/controller/v2/role_definitions/5/",
+      "related": {
+        "team_assignments": "/api/controller/v2/role_definitions/5/team_assignments/",
+        "user_assignments": "/api/controller/v2/role_definitions/5/user_assignments/"
+      },
+      "summary_fields": {},
+      "permissions": [
+        "awx.change_jobtemplate",
+        "awx.delete_jobtemplate",
+        "awx.execute_jobtemplate",
+        "awx.view_jobtemplate",
+        "awx.view_organization"
+      ],
+      "content_type": "shared.organization",
+      "modified": "2024-05-09T05:22:59.280061Z",
+      "created": "2024-05-09T05:22:59.280016Z",
+      "name": "Organization JobTemplate Admin",
+      "description": "Has all permissions to job templates within an organization",
+      "managed": true,
+      "modified_by": null,
+      "created_by": null
+    },
+    {
+      "id": 10,
+      "url": "/api/controller/v2/role_definitions/10/",
+      "related": {
+        "team_assignments": "/api/controller/v2/role_definitions/10/team_assignments/",
+        "user_assignments": "/api/controller/v2/role_definitions/10/user_assignments/"
+      },
+      "summary_fields": {},
+      "permissions": [
+        "awx.add_notificationtemplate",
+        "awx.change_notificationtemplate",
+        "awx.delete_notificationtemplate",
+        "awx.view_notificationtemplate",
+        "awx.view_organization"
+      ],
+      "content_type": "shared.organization",
+      "modified": "2024-05-09T05:22:59.314947Z",
+      "created": "2024-05-09T05:22:59.314932Z",
+      "name": "Organization NotificationTemplate Admin",
+      "description": "Has all permissions to notification templates within an organization",
+      "managed": true,
+      "modified_by": null,
+      "created_by": null
+    },
+    {
+      "id": 15,
+      "url": "/api/controller/v2/role_definitions/15/",
+      "related": {
+        "team_assignments": "/api/controller/v2/role_definitions/15/team_assignments/",
+        "user_assignments": "/api/controller/v2/role_definitions/15/user_assignments/"
+      },
+      "summary_fields": {},
+      "permissions": [
+        "awx.audit_organization",
+        "awx.change_organization",
+        "awx.delete_organization",
+        "awx.member_organization",
+        "awx.view_organization"
+      ],
+      "content_type": "shared.organization",
+      "modified": "2024-05-09T05:22:59.347596Z",
+      "created": "2024-05-09T05:22:59.347580Z",
+      "name": "Organization Organization Admin",
+      "description": "Has all permissions to organizations within an organization",
+      "managed": true,
+      "modified_by": null,
+      "created_by": null
+    },
+    {
+      "id": 26,
+      "url": "/api/controller/v2/role_definitions/26/",
+      "related": {
+        "team_assignments": "/api/controller/v2/role_definitions/26/team_assignments/",
+        "user_assignments": "/api/controller/v2/role_definitions/26/user_assignments/"
+      },
+      "summary_fields": {},
+      "permissions": [
+        "awx.view_organization",
+        "awx.add_project",
+        "awx.change_project",
+        "awx.delete_project",
+        "awx.update_project",
+        "awx.use_project",
+        "awx.view_project"
+      ],
+      "content_type": "shared.organization",
+      "modified": "2024-05-09T05:22:59.425712Z",
+      "created": "2024-05-09T05:22:59.425692Z",
+      "name": "Organization Project Admin",
+      "description": "Has all permissions to projects within an organization",
+      "managed": true,
+      "modified_by": null,
+      "created_by": null
+    },
+    {
+      "id": 19,
+      "url": "/api/controller/v2/role_definitions/19/",
+      "related": {
+        "team_assignments": "/api/controller/v2/role_definitions/19/team_assignments/",
+        "user_assignments": "/api/controller/v2/role_definitions/19/user_assignments/"
+      },
+      "summary_fields": {},
+      "permissions": [
+        "awx.view_organization",
+        "awx.add_team",
+        "awx.change_team",
+        "awx.delete_team",
+        "awx.member_team",
+        "awx.view_team"
+      ],
+      "content_type": "shared.organization",
+      "modified": "2024-05-09T05:22:59.375233Z",
+      "created": "2024-05-09T05:22:59.375216Z",
+      "name": "Organization Team Admin",
+      "description": "Has all permissions to teams within an organization",
+      "managed": true,
+      "modified_by": null,
+      "created_by": null
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "count": 1,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 3,
+      "url": "/api/gateway/v1/role_definitions/3/",
+      "related": {
+        "team_assignments": "/api/gateway/v1/role_definitions/3/team_assignments/",
+        "user_assignments": "/api/gateway/v1/role_definitions/3/user_assignments/"
+      },
+      "summary_fields": {},
+      "permissions": ["aap.member_organization", "aap.view_organization"],
+      "content_type": "shared.organization",
+      "modified": "2024-05-09T05:28:43.605536Z",
+      "created": "2024-05-09T05:28:43.605519Z",
+      "name": "Organization Member",
+      "description": "",
+      "managed": true,
+      "modified_by": null,
+      "created_by": null
+    }
+  ]
+}
