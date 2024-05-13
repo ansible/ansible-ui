@@ -19,7 +19,11 @@ import { AwxSelectTeamsStep } from '../../../access/common/AwxRolesWizardSteps/A
 import { awxAPI } from '../../../common/api/awx-utils';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { AwxSelectRolesStep } from '../../../access/common/AwxRolesWizardSteps/AwxSelectRolesStep';
-import { AwxRole } from '../../../access/roles/AwxRoles';
+
+interface AwxRole {
+  id: string;
+  name: string;
+}
 
 interface WizardFormValues {
   teams: Team[];

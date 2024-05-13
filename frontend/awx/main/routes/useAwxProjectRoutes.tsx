@@ -103,12 +103,12 @@ export function useAwxProjectRoutes() {
             },
             {
               id: AwxRoute.ProjectUsers,
-              path: 'users',
+              path: 'user-access',
               element: <ProjectUsers />,
             },
             {
               id: AwxRoute.ProjectTeams,
-              path: 'teams',
+              path: 'team-access',
               element: <ProjectTeams />,
             },
             {
@@ -119,12 +119,12 @@ export function useAwxProjectRoutes() {
         },
         {
           id: AwxRoute.ProjectAddUsers,
-          path: ':id/users/add-users',
+          path: ':id/user-access/add-users',
           element: <AwxProjectAddUsers />,
         },
         {
           id: AwxRoute.ProjectAddTeams,
-          path: ':id/users/add-teams',
+          path: ':id/team-access/add-teams',
           element: <AwxProjectAddTeams />,
         },
         {

@@ -19,8 +19,11 @@ import { RoleAssignmentsReviewStep } from '../../../../common/access/RolesWizard
 import { useAwxBulkActionDialog } from '../../../common/useAwxBulkActionDialog';
 import { AwxSelectUsersStep } from '../../../access/common/AwxRolesWizardSteps/AwxSelectUsersStep';
 import { AwxSelectRolesStep } from '../../../access/common/AwxRolesWizardSteps/AwxSelectRolesStep';
-import { AwxRole } from '../../../access/roles/AwxRoles';
 
+interface AwxRole {
+  id: string;
+  name: string;
+}
 interface WizardFormValues {
   users: AwxUser[];
   awxRoles: AwxRole[];
