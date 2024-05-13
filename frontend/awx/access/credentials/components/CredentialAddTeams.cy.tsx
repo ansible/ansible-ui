@@ -3,8 +3,8 @@ import { awxAPI } from '../../../common/api/awx-utils';
 
 describe('AwxCredentialAddTeams', () => {
   const component = <CredentialAddTeams />;
-  const path = '/credentials/:id/team-access/add-teams';
-  const initialEntries = [`/credentials/1/team-access/add-teams`];
+  const path = '/credentials/:id/team-access/add';
+  const initialEntries = [`/credentials/1/team-access/add`];
   const params = {
     path,
     initialEntries,

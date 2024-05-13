@@ -3,8 +3,8 @@ import { awxAPI } from '../../../common/api/awx-utils';
 
 describe('AwxInventoryAddTeams', () => {
   const component = <InventoryAddTeams />;
-  const path = '/inventories/:id/team-access/add-teams';
-  const initialEntries = [`/inventories/1/team-access/add-teams`];
+  const path = '/inventories/:id/team-access/add';
+  const initialEntries = [`/inventories/1/team-access/add`];
   const params = {
     path,
     initialEntries,

@@ -3,8 +3,8 @@ import { awxAPI } from '../../../common/api/awx-utils';
 
 describe('AwxAddUsers', () => {
   const component = <CredentialAddUsers />;
-  const path = '/credentials/:id/user-access/add-users';
-  const initialEntries = [`/credentials/1/user-access/add-users`];
+  const path = '/credentials/:id/user-access/add';
+  const initialEntries = [`/credentials/1/user-access/add`];
   const params = {
     path,
     initialEntries,
