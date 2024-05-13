@@ -53,6 +53,7 @@ export function CredentialDetailsInner(props: { credential: Credential }) {
     awxAPI`/credential_types`,
     summary_fields.credential_type.id.toString()
   );
+
   const {
     results: inputSources,
     error: inputSourcesError,
@@ -92,7 +93,16 @@ export function CredentialDetailsInner(props: { credential: Credential }) {
         )}
       </PageDetail>
       <PageDetail label={t('Credential type')}>
-        {credential.summary_fields?.credential_type?.name}
+        {credentialType?.managed ? (
+          <TextCell text={credential.summary_fields?.credential_type?.name} />
+        ) : (
+          <TextCell
+            text={credential.summary_fields?.credential_type?.name}
+            to={getPageUrl(AwxRoute.CredentialTypePage, {
+              params: { id: credential.summary_fields?.credential_type?.id },
+            })}
+          />
+        )}
       </PageDetail>
       {inputSourcesMap &&
         credentialInputs &&
