@@ -3,8 +3,8 @@ import { awxAPI } from '../../../common/api/awx-utils';
 
 describe('AwxAddUsers', () => {
   const component = <InventoryAddUsers />;
-  const path = '/inventories/:id/user-access/add-users';
-  const initialEntries = [`/inventories/1/user-access/add-users`];
+  const path = '/inventories/:id/user-access/add';
+  const initialEntries = [`/inventories/1/user-access/add`];
   const params = {
     path,
     initialEntries,
