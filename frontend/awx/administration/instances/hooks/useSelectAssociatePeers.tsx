@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { LoadingPage, MultiSelectDialog, usePageDialogs } from '../../../../../framework';
+import { MultiSelectDialog, usePageDialogs } from '../../../../../framework';
 import { usePeersTabFilters } from '../Instances';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { QueryParams, useAwxView } from '../../../common/useAwxView';
@@ -8,7 +8,6 @@ import { usePeersColumns } from './usePeersColumns';
 import { useGetItem } from '../../../../common/crud/useGet';
 import { Peer, Instance } from '../../../interfaces/Instance';
 import { useAwxGetAllPages } from '../../../common/useAwxGetAllPages';
-import { AwxError } from '../../../common/AwxError';
 
 export interface PeerInstanceModalProps {
   instanceId: string;
@@ -18,16 +17,6 @@ export interface PeerInstanceModalProps {
 function PeerInstanceModal(props: PeerInstanceModalProps) {
   const { t } = useTranslation();
   const { instanceId, onPeer } = props;
-  console.log(instanceId);
-  const {
-    data: instance,
-    error,
-    isLoading,
-    refresh,
-  } = useGetItem<Instance>(awxAPI`/instances/`, instanceId);
-
-  if (error) return <AwxError error={error} handleRefresh={refresh} />;
-  if (!instance || isLoading) return <LoadingPage />;
 
   const toolbarFilters = usePeersTabFilters();
   const columns = usePeersColumns();
@@ -44,16 +33,7 @@ function PeerInstanceModal(props: PeerInstanceModalProps) {
     not__node_type: ['control', 'hybird'],
   });
 
-  // let peeredInstanceIds: string[] = [];
-
-  // for (const peerId of instance?.peers ?? []) {
-  //   if (receptors) {
-  //     const matchingReceptors = receptors.filter((receptor) => receptor.id === peerId);
-  //     matchingReceptors.forEach((receptor) => {
-  //       peeredInstanceIds.push(String(receptor.instance));
-  //     });
-  //   }
-  // }
+  const { data: instance } = useGetItem<Instance>(awxAPI`/instances/`, instanceId);
 
   const peeredInstanceIds = instance?.peers?.map((peer) => String(peer)) ?? [];
 
@@ -76,7 +56,7 @@ function PeerInstanceModal(props: PeerInstanceModalProps) {
   const queryParams: QueryParams = {
     is_internal: 'false',
     order_by: 'address',
-    not__instance: [String(instance.id)],
+    not__instance: [String(instance?.id ?? '')],
   };
 
   if (peeredInstanceIds.length > 0) queryParams['not__id__in'] = peeredInstanceIds;
