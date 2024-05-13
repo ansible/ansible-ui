@@ -119,8 +119,11 @@ export function InstanceGroupAddUsers() {
           resolve();
         },
         onClose: () => {
+          const instanceType = instanceGroup.is_container_group
+            ? 'container-group'
+            : 'instance-group';
           pageNavigate(AwxRoute.InstanceGroupUserAccess, {
-            params: { id: instanceGroup.id.toString() },
+            params: { id: instanceGroup.id.toString(), instanceType },
           });
         },
       });

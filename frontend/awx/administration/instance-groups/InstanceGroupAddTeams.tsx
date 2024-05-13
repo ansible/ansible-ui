@@ -118,8 +118,11 @@ export function InstanceGroupAddTeams() {
           resolve();
         },
         onClose: () => {
+          const instanceType = instanceGroup.is_container_group
+            ? 'container-group'
+            : 'instance-group';
           pageNavigate(AwxRoute.InstanceGroupTeamAccess, {
-            params: { id: instanceGroup.id.toString() },
+            params: { id: instanceGroup.id.toString(), instanceType },
           });
         },
       });
