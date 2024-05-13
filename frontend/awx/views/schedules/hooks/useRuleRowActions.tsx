@@ -6,6 +6,7 @@ import { useMemo } from 'react';
 import { IPageAction } from '../../../../../framework';
 import { useFormContext } from 'react-hook-form';
 import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
+import { RULES_DEFAULT_VALUES } from '../wizard/constants';
 
 export function useRuleRowActions(
   rules: RuleListItemType[],
@@ -20,13 +21,18 @@ export function useRuleRowActions(
     const existingRules = context.getValues('rules') as RuleListItemType[];
     const deleteRule = (rule: RuleListItemType) => {
       const filteredRules = rules.filter((item) => item.id !== rule.id);
+
       isExceptionStep
         ? context.setValue('exceptions', filteredRules)
         : context.setValue('rules', filteredRules);
-      wizard.setStepData((prev) => ({
-        ...prev,
-        rules: filteredRules,
-      }));
+      wizard.setStepData((prev) => {
+        isExceptionStep
+          ? (prev.exceptions = { ...RULES_DEFAULT_VALUES, exceptions: filteredRules })
+          : (prev.rules = { ...RULES_DEFAULT_VALUES, rule: filteredRules });
+        return {
+          ...prev,
+        };
+      });
     };
 
     return [
