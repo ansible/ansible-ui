@@ -64,7 +64,7 @@ export function WorkflowJobTemplateDetails(props: {
       <PageDetail label={t('Description')}>{template.description}</PageDetail>
       <PageDetail label={t('Organization')} isEmpty={!summaryFields.organization}>
         <Link
-          to={getPageUrl(AwxRoute.OrganizationPage, {
+          to={getPageUrl(AwxRoute.OrganizationDetails, {
             params: { id: summaryFields.organization?.id },
           })}
         >
