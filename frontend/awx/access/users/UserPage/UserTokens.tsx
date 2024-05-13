@@ -10,6 +10,7 @@ import {
   IPageAction,
   PageActionType,
   PageActionSelection,
+  useGetPageUrl,
 } from '../../../../../framework';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
@@ -22,6 +23,7 @@ import { DetailInfo } from '../../../../../framework/components/DetailInfo';
 import { useUserTokensFilters } from '../hooks/useUserTokensFilters';
 import { ButtonVariant } from '@patternfly/react-core';
 import { PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
+import { useDeleteUserTokens } from '../hooks/useDeleteUserTokens';
 
 export function UserTokens(props: { infoMessage?: string }) {
   const params = useParams<{ id: string }>();
@@ -47,14 +49,16 @@ export function UserTokens(props: { infoMessage?: string }) {
 function UserTokensInternal(props: { infoMessage?: string; user: AwxUser }) {
   const { user } = props;
   const { t } = useTranslation();
+  const getPageUrl = useGetPageUrl();
 
-  const tableColumns = useUserTokensColumns(user);
+  const tableColumns = useUserTokensColumns();
   const toolbarFilters = useUserTokensFilters();
   const view = useAwxView<Token>({
     url: awxAPI`/users/${user.id.toString()}/tokens/`,
     toolbarFilters,
     tableColumns,
   });
+  const deleteTokens = useDeleteUserTokens(view.unselectItemsAndRefresh);
 
   const toolbarActions = useMemo<IPageAction<Token>[]>(
     () => [
@@ -65,7 +69,7 @@ function UserTokensInternal(props: { infoMessage?: string; user: AwxUser }) {
         isPinned: true,
         icon: PlusCircleIcon,
         label: t('Create token'),
-        href: '',
+        href: getPageUrl(AwxRoute.CreateUserToken, { params: { id: user.id } }),
       },
       { type: PageActionType.Seperator },
       {
@@ -74,10 +78,10 @@ function UserTokensInternal(props: { infoMessage?: string; user: AwxUser }) {
         icon: TrashIcon,
         label: t('Delete selected tokens'),
         isDanger: true,
-        onClick: () => {},
+        onClick: deleteTokens,
       },
     ],
-    [t]
+    [deleteTokens, getPageUrl, t, user.id]
   );
 
   const rowActions = useMemo<IPageAction<Token>[]>(
@@ -88,10 +92,12 @@ function UserTokensInternal(props: { infoMessage?: string; user: AwxUser }) {
         icon: TrashIcon,
         label: t('Delete token'),
         isDanger: true,
-        onClick: () => {},
+        onClick: (token) => {
+          deleteTokens([token]);
+        },
       },
     ],
-    [t]
+    [deleteTokens, t]
   );
 
   return (
