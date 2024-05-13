@@ -250,7 +250,8 @@ function ProjectInputs(props: { project?: Project }) {
         organizationId={organizationId ? organizationId.toString() : undefined}
         name="summary_fields.default_environment.name"
         label={t('Execution environment')}
-        executionEnvironmentIdPath="project.default_environment"
+        executionEnvironmentIdPath="default_environment"
+        executionEnvironmentPath="summary_fields.default_environment"
         isDisabled={organizationId === undefined}
         // tooltip={
         //   org ? '' : t(`Select an organization before editing the default execution environment.`)
