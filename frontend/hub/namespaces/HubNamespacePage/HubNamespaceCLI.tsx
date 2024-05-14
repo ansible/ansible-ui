@@ -13,11 +13,7 @@ export function HubNamespaceCLI() {
         <Trans>
           <b>Note:</b> Use this URL to configure ansible-galaxy to upload collections to this
           namespace. More information on ansible-galaxy configurations can be found{' '}
-          <ExternalLink
-            href="https://docs.ansible.com/ansible/latest/galaxy/user_guide.html#configuring-the-ansible-galaxy-client"
-            target="_blank"
-            rel="noreferrer"
-          >
+          <ExternalLink href="https://docs.ansible.com/ansible/latest/galaxy/user_guide.html#configuring-the-ansible-galaxy-client">
             here.
           </ExternalLink>
         </Trans>

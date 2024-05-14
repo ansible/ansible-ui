@@ -1,13 +1,11 @@
 import ExternalLinkAltIcon from '@patternfly/react-icons/dist/esm/icons/external-link-alt-icon';
-import { ReactNode, CSSProperties, useMemo } from 'react';
+import { type ReactNode, type CSSProperties, useMemo } from 'react';
 
 interface IProps {
   children: ReactNode;
   'data-cy'?: string;
   href: string;
   variant?: 'default' | 'download' | 'menu' | 'nav';
-  target?: string;
-  rel?: string;
 }
 
 const getIconStyle = (variant: string): CSSProperties => {
@@ -22,8 +20,8 @@ const getIconStyle = (variant: string): CSSProperties => {
 };
 
 const classNames = {
-  nav: 'pf-c-nav__link',
-  menu: 'pf-c-dropdown__menu-item',
+  nav: 'pf-v5-c-nav__link',
+  menu: 'pf-v5-c-dropdown__menu-item',
   default: undefined,
   download: undefined,
 };
@@ -50,7 +48,7 @@ export const ExternalLink = ({
       rel="nofollow noopener noreferrer"
       target="_blank"
     >
-      {children && <ExternalLinkAltIcon style={iconStyle} />}
+      {children} <ExternalLinkAltIcon style={iconStyle} />
     </a>
   );
 };
