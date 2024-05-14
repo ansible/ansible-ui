@@ -55,7 +55,7 @@ export function useAwxNotificationsRoutes() {
         },
         {
           id: AwxRoute.NotificationAddUsers,
-          path: ':id/user-access/add-users',
+          path: ':id/user-access/add',
           element: <NotifierAddUsers />,
         },
         {
