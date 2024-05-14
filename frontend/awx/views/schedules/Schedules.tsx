@@ -4,6 +4,7 @@ import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
 import { useAwxConfig } from '../../common/useAwxConfig';
 import { getDocsBaseUrl } from '../../common/util/getDocsBaseUrl';
 import { SchedulesList } from './SchedulesList';
+import { awxAPI } from '../../common/api/awx-utils';
 
 export function Schedules(props: { sublistEndpoint?: string }) {
   const { t } = useTranslation();
@@ -22,7 +23,7 @@ export function Schedules(props: { sublistEndpoint?: string }) {
         )}
         headerActions={<ActivityStreamIcon type={'schedule'} />}
       />
-      <SchedulesList sublistEndpoint={props.sublistEndpoint} />
+      <SchedulesList sublistEndpoint={props.sublistEndpoint} url={awxAPI`/schedules/`} />
     </PageLayout>
   );
 }
