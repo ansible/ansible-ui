@@ -127,7 +127,7 @@ export function WorkflowJobTemplateInputs(props: {
         />
       </PageFormSection>
 
-      {isWebhookEnabled ? <WebhookSubForm /> : null}
+      {isWebhookEnabled ? <WebhookSubForm templateType="workflow_job_templates" /> : null}
     </>
   );
 }
