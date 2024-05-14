@@ -60,7 +60,7 @@ export function useAwxNotificationsRoutes() {
         },
         {
           id: AwxRoute.NotificationAddTeams,
-          path: ':id/team-access/add-teams',
+          path: ':id/team-access/add',
           element: <NotifierAddTeams />,
         },
         {
