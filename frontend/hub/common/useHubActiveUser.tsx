@@ -27,15 +27,15 @@ export function HubActiveUserProvider(props: { children: ReactNode }) {
   useEffect(() => {
     setActiveHubUser((activeUser) => {
       if (response.error) {
-        return null;
+        return null; // return null to indicate that there is no active user.
       }
 
       if (response.data) {
         return response.data;
       }
 
-      if (response.isLoading && activeUser === undefined) {
-        return undefined;
+      if (response.isLoading) {
+        return activeUser; // keep the current active user.
       }
 
       return null;
