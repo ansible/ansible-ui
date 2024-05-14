@@ -1,4 +1,3 @@
-import { FieldValues } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import useSWR from 'swr';
@@ -13,7 +12,7 @@ import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFor
 import { requestGet, requestPatch, swrOptions } from '../../../common/crud/Data';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { useInvalidateCacheOnUnmount } from '../../../common/useInvalidateCache';
-import { PageFormExecutionEnvironmentSelect } from '../../administration/execution-environments/components/PageFormExecutionEnvironmentSelect';
+import { PageFormSelectExecutionEnvironment } from '../../administration/execution-environments/components/PageFormExecutionEnvironmentSelect';
 import { PageFormInstanceGroupSelect } from '../../administration/instance-groups/components/PageFormInstanceGroupSelect';
 import { AwxPageForm } from '../../common/AwxPageForm';
 import { awxAPI } from '../../common/api/awx-utils';
@@ -21,11 +20,9 @@ import { InstanceGroup } from '../../interfaces/InstanceGroup';
 import { Organization } from '../../interfaces/Organization';
 import { AwxRoute } from '../../main/AwxRoutes';
 
-interface OrganizationFields extends FieldValues {
-  organization: Organization;
+type IOrganizationData = Organization & {
   instanceGroups?: InstanceGroup[];
-  id: number;
-}
+};
 
 export function CreateOrganization() {
   const { t } = useTranslation();
@@ -35,18 +32,19 @@ export function CreateOrganization() {
 
   const postRequest = usePostRequest<{ id: number }, Organization>();
 
-  const onSubmit: PageFormSubmitHandler<OrganizationFields> = async (values) => {
-    const organization = await postRequest(awxAPI`/organizations/`, values.organization);
+  const onSubmit: PageFormSubmitHandler<IOrganizationData> = async (values) => {
+    const { instanceGroups, ...organization } = values;
+    const createdOrganization = await postRequest(awxAPI`/organizations/`, organization);
     const igRequests = [];
     for (const ig of values.instanceGroups || []) {
       igRequests.push(
-        postRequest(awxAPI`/organizations/${organization.id.toString()}/instance_groups/`, {
+        postRequest(awxAPI`/organizations/${createdOrganization.id.toString()}/instance_groups/`, {
           id: ig.id,
         })
       );
     }
     await Promise.all(igRequests);
-    pageNavigate(AwxRoute.OrganizationDetails, { params: { id: organization.id } });
+    pageNavigate(AwxRoute.OrganizationDetails, { params: { id: createdOrganization.id } });
   };
   const onCancel = () => navigate(-1);
   const getPageUrl = useGetPageUrl();
@@ -89,15 +87,16 @@ export function EditOrganization() {
 
   useInvalidateCacheOnUnmount();
 
-  const onSubmit: PageFormSubmitHandler<OrganizationFields> = async (values) => {
-    const organization = await requestPatch<Organization>(
+  const onSubmit: PageFormSubmitHandler<IOrganizationData> = async (values) => {
+    const { instanceGroups, ...organization } = values;
+    const editedOrganization = await requestPatch<Organization>(
       awxAPI`/organizations/${id.toString()}/`,
-      values.organization
+      organization
     );
     const disassociateRequests = [];
     for (const ig of instanceGroups || []) {
       disassociateRequests.push(
-        postRequest(awxAPI`/organizations/${organization.id.toString()}/instance_groups/`, {
+        postRequest(awxAPI`/organizations/${editedOrganization.id.toString()}/instance_groups/`, {
           id: ig.id,
           disassociate: true,
         })
@@ -107,13 +106,13 @@ export function EditOrganization() {
     const igRequests = [];
     for (const ig of values.instanceGroups || []) {
       igRequests.push(
-        postRequest(awxAPI`/organizations/${organization.id.toString()}/instance_groups/`, {
+        postRequest(awxAPI`/organizations/${editedOrganization.id.toString()}/instance_groups/`, {
           id: ig.id,
         })
       );
     }
     await Promise.all(igRequests);
-    pageNavigate(AwxRoute.OrganizationDetails, { params: { id: organization.id } });
+    pageNavigate(AwxRoute.OrganizationDetails, { params: { id: editedOrganization.id } });
   };
   const onCancel = () => navigate(-1);
   const getPageUrl = useGetPageUrl();
@@ -131,7 +130,7 @@ export function EditOrganization() {
           submitText={t('Save organization')}
           onSubmit={onSubmit}
           onCancel={onCancel}
-          defaultValue={{ organization, instanceGroups }}
+          defaultValue={{ ...organization, instanceGroups }}
         >
           <OrganizationInputs orgId={organization.id} />
         </AwxPageForm>
@@ -145,27 +144,25 @@ function OrganizationInputs(props: { orgId?: number }) {
   const { orgId } = props;
   return (
     <>
-      <PageFormTextInput
+      <PageFormTextInput<IOrganizationData>
         label={t('Name')}
-        name="organization.name"
+        name="name"
         placeholder={t('Enter name')}
         isRequired
       />
-      <PageFormTextInput
+      <PageFormTextInput<IOrganizationData>
         label={t('Description')}
-        name="organization.description"
+        name="description"
         placeholder={t('Enter description')}
       />
-      <PageFormInstanceGroupSelect<OrganizationFields>
+      <PageFormInstanceGroupSelect<IOrganizationData>
         name="instanceGroups"
         labelHelp={t(`Select the instance groups for this organization to run on.`)}
       />
-      <PageFormExecutionEnvironmentSelect<OrganizationFields>
-        organizationId={orgId ? orgId.toString() : undefined}
-        name="organization.summary_fields.default_environment.name"
+      <PageFormSelectExecutionEnvironment<IOrganizationData>
+        name="default_environment"
         label={t('Default execution environment')}
-        executionEnvironmentPath="organization.summary_fields.default_environment"
-        executionEnvironmentIdPath="organization.default_environment"
+        organizationId={orgId}
       />
       {/* TODO: galaxyCredentials */}
     </>
