@@ -3,8 +3,9 @@ import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageFormGroup } from '../../../../../framework/PageForm/Inputs/PageFormGroup';
 import { EyeSlashIcon, KeyIcon, RedoIcon } from '@patternfly/react-icons';
-import { PageFormTextInput } from '../../../../../framework';
+import { PageFormCheckbox, PageFormTextInput } from '../../../../../framework';
 import { PageFormFileUpload } from '../../../../../framework/PageForm/Inputs/PageFormFileUpload';
+import { CredentialInputField } from '../../../interfaces/CredentialType';
 
 interface ChildProps {
   labelHelp?: string;
@@ -35,6 +36,8 @@ interface IProps {
    */
   children: ReactElement<ChildProps>;
 
+  field: CredentialInputField;
+
   /**
    * Optional text displayed in input field when the field value is hidden
    */
@@ -55,6 +58,7 @@ interface IProps {
 
 export function SingleLineEncryptedInput({
   onClear,
+  field,
   shouldHideField,
   label,
   labelHelp,
@@ -66,32 +70,30 @@ export function SingleLineEncryptedInput({
   const fieldLabelHelp = labelHelp || children.props.labelHelp || '';
   if (shouldHideField) {
     return (
-      <PageFormGroup label={fieldLabel} labelHelp={fieldLabelHelp}>
-        <InputGroup>
-          <PageFormTextInput
-            aria-label={t('hidden value')}
-            placeholder={placeholder ? placeholder : t('ENCRYPTED')}
-            type="password"
-            autoComplete="off"
-            isDisabled={true}
-            name={''}
-            button={
-              <>
-                <Button isDisabled={true} variant="control" onClick={() => onClear()}>
-                  <Icon>
-                    <KeyIcon />
-                  </Icon>
-                </Button>
-                <Button variant="control" onClick={() => onClear()}>
-                  <Icon>
-                    <RedoIcon />
-                  </Icon>
-                </Button>
-              </>
-            }
-          />
-        </InputGroup>
-      </PageFormGroup>
+      <PageFormTextInput
+        aria-label={t('hidden value')}
+        label={fieldLabel}
+        labelHelp={fieldLabelHelp}
+        placeholder={placeholder ? placeholder : t('ENCRYPTED')}
+        type="password"
+        autoComplete="off"
+        isDisabled={true}
+        name={''}
+        button={
+          <>
+            <Button isDisabled={true} variant="control" onClick={() => onClear()}>
+              <Icon>
+                <KeyIcon />
+              </Icon>
+            </Button>
+            <Button variant="control" onClick={() => onClear()}>
+              <Icon>
+                <RedoIcon />
+              </Icon>
+            </Button>
+          </>
+        }
+      />
     );
   }
   return <>{children}</>;
