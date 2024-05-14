@@ -14,18 +14,21 @@ import { useSchedulesColumns } from './hooks/useSchedulesColumns';
 import { useSchedulesFilter } from './hooks/useSchedulesFilter';
 import { useScheduleToolbarActions } from './hooks/useSchedulesToolbarActions';
 
-export function SchedulesList(props: { sublistEndpoint?: string }) {
+export function SchedulesList(props: { sublistEndpoint?: string; url?: string }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const params = useParams<{ inventory_type?: string; id?: string; source_id?: string }>();
   const location = useLocation();
-  const toolbarFilters = useSchedulesFilter();
-  const tableColumns = useSchedulesColumns();
+  const params = useParams<{ inventory_type?: string; id?: string; source_id?: string }>();
   const resourceId = params.source_id ?? params.id;
+
   const apiEndPoint: string | undefined = props.sublistEndpoint
     ? `${props.sublistEndpoint}/${resourceId}/schedules/`
     : undefined;
 
+  const toolbarFilters = useSchedulesFilter({
+    url: props.url ? props.url : apiEndPoint,
+  });
+  const tableColumns = useSchedulesColumns();
   const view = useAwxView<Schedule>({
     url: apiEndPoint ?? awxAPI`/schedules/`,
     toolbarFilters,
