@@ -20,7 +20,7 @@ const ResourceLink: Record<UnifiedJobType, AwxRoute> = {
   inventory_update: AwxRoute.InventorySourceDetail,
   job: AwxRoute.JobTemplateDetails,
   project_update: AwxRoute.ProjectDetails,
-  system_job: AwxRoute.ManagementJobDetails,
+  system_job: AwxRoute.ManagementJobSchedules,
   workflow_approval: AwxRoute.WorkflowApprovalDetails,
   workflow_job: AwxRoute.WorkflowJobTemplateDetails,
 };
