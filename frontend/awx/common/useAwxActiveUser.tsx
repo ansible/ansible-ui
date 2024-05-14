@@ -28,15 +28,15 @@ export function AwxActiveUserProvider(props: { children: ReactNode }) {
   useEffect(() => {
     setActiveAwxUser((activeUser) => {
       if (response.error) {
-        return null;
+        return null; //return null to indicate that there is no active user.
       }
 
       if (response.data && response.data.results.length > 0) {
         return response.data.results[0];
       }
 
-      if (response.isLoading && activeUser === undefined) {
-        return undefined;
+      if (response.isLoading) {
+        return activeUser; // keep the current active user.
       }
 
       return null;
