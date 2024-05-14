@@ -8,11 +8,17 @@ import { awxAPI } from '../../common/api/awx-utils';
 import { Job } from '../../interfaces/Job';
 import { AwxRoute } from '../../main/AwxRoutes';
 import { JobHeader } from './JobHeader';
+import { AwxError } from '../../common/AwxError';
+import { LoadingPage } from '../../../../framework';
 
 export function JobPage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string; job_type: string }>();
-  // TODO handle 404/no job
+  const { job, isLoading, error, refreshJob } = useGetJob(params.id, params.job_type);
+
+  if (error) return <AwxError error={error} handleRefresh={refreshJob} />;
+  if (!job || isLoading) return <LoadingPage breadcrumbs tabs />;
+
   return (
     <PageLayout>
       <JobHeader />
@@ -27,6 +33,7 @@ export function JobPage() {
           { label: t('Details'), page: AwxRoute.JobDetails },
         ]}
         params={params}
+        componentParams={{ job }}
       />
     </PageLayout>
   );
@@ -42,6 +49,11 @@ export function useGetJob(id?: string, type?: string) {
     workflow: 'workflow_jobs',
   };
   const path = type ? apiPaths[type] : 'jobs';
-  const { data: job, refresh: refreshJob } = useGet<Job>(id ? awxAPI`/${path}/${id}/` : '');
-  return { job, refreshJob };
+  const {
+    data: job,
+    refresh: refreshJob,
+    isLoading,
+    error,
+  } = useGet<Job>(id ? awxAPI`/${path}/${id}/` : '');
+  return { job, refreshJob, isLoading, error };
 }
