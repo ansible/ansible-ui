@@ -44,14 +44,14 @@ export function WebhookSubForm(props: {
       const whkData = await requestGet<WebhookKey>(
         awxAPI`/${templateType}/${params.id ?? ''}/webhook_key/`
       );
-      setValue('webhook_key', whkData.webhook_key || webhookKey);
+      reset({
+        ...getValues(),
+        webhook_key: whkData.webhook_key || webhookKey || (getValues('webhook_key') as string),
+      });
     }
     if (!pathname.endsWith('/create')) void handleFetchWebhookKey();
-  }, [params.id, setValue, pathname, templateType, webhookKey]);
-
-  useEffect(() => {
-    reset(getValues());
-  }, [reset, getValues]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (webhookService)
