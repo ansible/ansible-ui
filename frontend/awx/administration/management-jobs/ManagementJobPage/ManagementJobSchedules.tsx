@@ -22,6 +22,7 @@ export function ManagementJobSchedules() {
     tableColumns,
     disableQueryString: true,
   });
+
   return (
     <PageTable<SystemJobTemplate>
       id="awx-schedules-table"
