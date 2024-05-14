@@ -41,7 +41,6 @@ import {
 } from '../../frontend/eda/interfaces/EdaRulebookActivation';
 import { EdaUser, EdaUserCreateUpdate } from '../../frontend/eda/interfaces/EdaUser';
 import { EdaTeam } from '../../frontend/eda/interfaces/EdaTeam';
-import { RoleDetail } from '../../frontend/eda/interfaces/EdaRole';
 import { EdaRbacRole } from '../../frontend/eda/interfaces/EdaRbacRole';
 import { Role as HubRole } from '../../frontend/hub/access/roles/Role';
 import { RemoteRegistry } from '../../frontend/hub/administration/remote-registries/RemoteRegistry';
@@ -1282,13 +1281,6 @@ declare global {
        * @returns {Chainable<EdaCredential>}
        */
       createEdaCredential(): Chainable<EdaCredential>;
-
-      /**
-       * Creates an EDA credential and returns the same.
-       *
-       * @returns {Chainable<EdaCredentialType>}
-       */
-      createEdaCredentialType(): Chainable<EdaCredentialType>;
 
       /**
        * Some of the Eda roles (Admin, Contributor etc) have resources

@@ -12,7 +12,7 @@ import {
 import { EdaDecisionEnvironment } from '../../frontend/eda/interfaces/EdaDecisionEnvironment';
 import { EdaProject } from '../../frontend/eda/interfaces/EdaProject';
 import { EdaResult } from '../../frontend/eda/interfaces/EdaResult';
-import { EdaRole, RoleDetail } from '../../frontend/eda/interfaces/EdaRole';
+import { EdaRbacRole } from '../../frontend/eda/interfaces/EdaRbacRole';
 import { EdaRulebook } from '../../frontend/eda/interfaces/EdaRulebook';
 import {
   EdaRulebookActivation,
@@ -246,41 +246,6 @@ Cypress.Commands.add('pollEdaResults', (url: string) => {
     } else {
       cy.wait(100).then(() => cy.pollEdaResults(url));
     }
-  });
-});
-
-Cypress.Commands.add('createEdaCredentialType', () => {
-  cy.requestPost<EdaCredentialTypeCreate>(edaAPI`/credential-types/`, {
-    name: 'E2E Credential Type' + randomString(4),
-    // inputs: ["abc", "amxmx"],
-    // inputs: [: "dhdn"],
-    inputs: {
-      fields: [
-        {
-          id: 'username', // Unique identifier for the field
-          label: 'Username', // User-friendly label
-          type: 'string', // Data type expected (string, password, etc.)
-        },
-      ],
-    },
-    description: 'This is a credential type',
-  }).then((edaCredentialType) => {
-    Cypress.log({
-      displayName: 'EDA CREDENTIAL CREATION :',
-      message: [`Created 👉  ${edaCredentialType.name}`],
-    });
-    return edaCredentialType;
-  });
-});
-
-Cypress.Commands.add('deleteEdaCredentialType', (credential_type: EdaCredentialType) => {
-  cy.requestDelete(edaAPI`/credential-types/${credential_type.id.toString()}/?force=true`, {
-    failOnStatusCode: false,
-  }).then(() => {
-    Cypress.log({
-      displayName: 'EDA CREDENTIAL DELETION :',
-      message: [`Deleted 👉  ${credential_type.name}`],
-    });
   });
 });
 
