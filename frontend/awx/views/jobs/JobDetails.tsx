@@ -1,5 +1,5 @@
-import { Label, LabelGroup, Skeleton } from '@patternfly/react-core';
-import { Link, useParams } from 'react-router-dom';
+import { Label, LabelGroup } from '@patternfly/react-core';
+import { Link, useOutletContext } from 'react-router-dom';
 import {
   DateTimeCell,
   PageDetail,
@@ -9,25 +9,21 @@ import {
   usePageNavigate,
 } from '../../../../framework';
 import { useJobsColumns } from './hooks/useJobsColumns';
-import { useGetJob } from './JobPage';
 import { PageDetailCodeEditor } from '../../../../framework/PageDetails/PageDetailCodeEditor';
 import { useTranslation } from 'react-i18next';
-import { EmptyStateNoData } from '../../../../framework/components/EmptyStateNoData';
 import { StatusCell } from '../../../common/Status';
 import { AwxRoute } from '../../main/AwxRoutes';
 import { LastModifiedPageDetail } from '../../../common/LastModifiedPageDetail';
 import { ExecutionEnvironmentDetail } from '../../../common/ExecutionEnvironmentPageDetail';
+import { Job } from '../../interfaces/Job';
 
 export function JobDetails() {
   const { t } = useTranslation();
-  const params = useParams<{ id: string; job_type: string; job_id: string }>();
-  const { job } = useGetJob(params.job_id ? params.job_id : params.id, params.job_type);
   const columns = useJobsColumns();
   const getPageUrl = useGetPageUrl();
   const pageNavigate = usePageNavigate();
-  if (params.job_id && !job)
-    return <EmptyStateNoData title="" description={t('Workflow job deleted')} />;
-  if (!job) return <Skeleton />;
+  const { job } = useOutletContext<{ job: Job }>();
+
   return (
     <PageDetails>
       <PageDetailsFromColumns columns={columns} item={job} />
