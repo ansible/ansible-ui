@@ -175,6 +175,7 @@ export enum AwxRoute {
   UserTeams = 'awx-user-teams',
   UserRoles = 'awx-user-roles',
   UserTokens = 'awx-user-tokens',
+  CreateUserToken = 'awx-user-token-create',
   UserTokenPage = 'awx-user-token-page',
   UserTokenDetails = 'awx-user-token-detail',
   AddRolesToUser = 'awx-add-roles-to-user',
@@ -202,7 +203,6 @@ export enum AwxRoute {
 
   ManagementJobs = 'awx-management-jobs',
   ManagementJobPage = 'awx-management-job-page',
-  ManagementJobDetails = 'awx-management-job-details',
   ManagementJobSchedules = 'awx-management-job-schedules',
   ManagementJobSchedulesDetails = 'awx-management-job-schedules-details',
   ManagementJobNotifications = 'awx-management-job-notifications',
@@ -220,8 +220,12 @@ export enum AwxRoute {
   InstanceGroupInstances = 'awx-instance-group-instances',
   InstanceGroupInstancesPage = 'awx-instance-group-instances-page',
   InstanceGroupInstanceDetails = 'awx-instance-group-instance-details',
+  InstanceGroupTeamAccess = 'awx-instance-group-team-access',
+  InstanceGroupUserAccess = 'awx-instance-group-user-access',
   InstanceGroupJobs = 'awx-instance-group-jobs',
   InstanceGroups = 'awx-instance-groups',
+  InstanceGroupAddTeams = 'awx-instance-group-add-teams',
+  InstanceGroupAddUsers = 'awx-instance-group-add-users',
 
   CreateContainerGroup = 'awx-create-container-group',
   ContainerGroupDetails = 'awx-container-group-details',

@@ -16,6 +16,7 @@ import { AwxError } from '../../../common/AwxError';
 import { useInstanceGroupRowActions } from '../hooks/useInstanceGroupActions';
 import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';
+
 export function InstanceGroupPage() {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
@@ -31,6 +32,8 @@ export function InstanceGroupPage() {
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!instanceGroup) return <LoadingPage breadcrumbs tabs />;
+
+  const instanceType = instanceGroup.is_container_group ? 'container-group' : 'instance-group';
 
   return (
     <PageLayout>
@@ -63,15 +66,19 @@ export function InstanceGroupPage() {
           instanceGroup?.is_container_group
             ? [
                 { label: t('Details'), page: AwxRoute.InstanceGroupDetails },
+                { label: t('Team access'), page: AwxRoute.InstanceGroupTeamAccess },
+                { label: t('User access'), page: AwxRoute.InstanceGroupUserAccess },
                 { label: t('Jobs'), page: AwxRoute.InstanceGroupJobs },
               ]
             : [
                 { label: t('Details'), page: AwxRoute.InstanceGroupDetails },
                 { label: t('Instances'), page: AwxRoute.InstanceGroupInstances },
+                { label: t('Team access'), page: AwxRoute.InstanceGroupTeamAccess },
+                { label: t('User access'), page: AwxRoute.InstanceGroupUserAccess },
                 { label: t('Jobs'), page: AwxRoute.InstanceGroupJobs },
               ]
         }
-        params={{ id: instanceGroup.id }}
+        params={{ id: instanceGroup.id, instanceType }}
       />
     </PageLayout>
   );

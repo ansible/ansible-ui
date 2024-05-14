@@ -12,7 +12,7 @@ import {
 import { EdaDecisionEnvironment } from '../../frontend/eda/interfaces/EdaDecisionEnvironment';
 import { EdaProject } from '../../frontend/eda/interfaces/EdaProject';
 import { EdaResult } from '../../frontend/eda/interfaces/EdaResult';
-import { EdaRole, RoleDetail } from '../../frontend/eda/interfaces/EdaRole';
+import { EdaRbacRole } from '../../frontend/eda/interfaces/EdaRbacRole';
 import { EdaRulebook } from '../../frontend/eda/interfaces/EdaRulebook';
 import {
   EdaRulebookActivation,
@@ -286,6 +286,11 @@ Cypress.Commands.add('createEdaCredentialType', () => {
         },
       ],
     },
+    injectors: {
+      extra_vars: {
+        username: '{{username}}',
+      },
+    },
     description: 'This is a credential type',
   }).then((edaCredentialType) => {
     Cypress.log({
@@ -336,7 +341,7 @@ Cypress.Commands.add('getEdaRoles', (content_type__model?: string) => {
   const roleDefinitionsUrl = content_type__model
     ? edaAPI`/role_definitions?content_type__model=${content_type__model}`
     : edaAPI`/role_definitions/`;
-  cy.requestGet<EdaResult<EdaRole>>(roleDefinitionsUrl).then((response) => {
+  cy.requestGet<EdaResult<EdaRbacRole>>(roleDefinitionsUrl).then((response) => {
     const edaRoles = response.results;
     return edaRoles;
   });
@@ -364,7 +369,7 @@ Cypress.Commands.add('checkResourceNameAndAction', (resourceTypes: string[], act
 });
 
 Cypress.Commands.add('getEdaRoleDetail', (roleID: string) => {
-  cy.requestGet<RoleDetail>(edaAPI`/role_definitions/${roleID}`);
+  cy.requestGet<EdaRbacRole>(edaAPI`/role_definitions/${roleID}`);
 });
 
 Cypress.Commands.add(

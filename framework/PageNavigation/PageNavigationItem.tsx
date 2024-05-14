@@ -5,6 +5,7 @@ interface PageNavigationGroup {
   path: string;
   children: PageNavigationItem[];
   hidden?: boolean;
+  href?: string;
 }
 
 interface PageNavigationComponent {
@@ -16,6 +17,7 @@ interface PageNavigationComponent {
   hidden?: boolean;
   badge?: string;
   badgeColor?: 'blue' | 'cyan' | 'green' | 'orange' | 'purple' | 'red' | 'grey' | 'gold';
+  href?: string;
 }
 
 /**

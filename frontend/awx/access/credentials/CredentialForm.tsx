@@ -40,6 +40,10 @@ interface CredentialForm extends Credential {
   user?: number;
 }
 
+interface CredentialSelectProps extends CredentialInputField {
+  name: string;
+}
+
 interface initialValues {
   name: string;
   description: string;
@@ -430,10 +434,10 @@ function CredentialSubForm({
         })}
       {choiceFields.length > 0 &&
         choiceFields.map((field) => (
-          <PageFormSelect<CredentialType>
+          <PageFormSelect<CredentialSelectProps>
             key={field.id}
-            placeholderText={String(field?.default)}
-            name={field.id as keyof CredentialType}
+            defaultValue={field?.default}
+            name={field?.id as keyof CredentialSelectProps}
             label={field.label}
             options={field?.choices?.map((choice) => ({ value: choice, label: choice })) ?? []}
             isRequired={requiredFields.includes(field.id)}
