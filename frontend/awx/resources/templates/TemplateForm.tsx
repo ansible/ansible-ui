@@ -47,22 +47,10 @@ export function EditJobTemplate() {
   } = useGet<AwxItemsResponse<InstanceGroup>>(
     awxAPI`/job_templates/${id.toString()}/instance_groups/`
   );
-  const {
-    data: whkData,
-    isLoading: isWhkDataLoading,
-    error: whkDataError,
-    refresh: whkDataRefresh,
-  } = useGet<{ webhook_key: string }>(awxAPI`/job_templates/${id.toString()}/webhook_key/`);
 
   const defaultValues = useMemo(
-    () =>
-      getJobTemplateDefaultValues(
-        t,
-        jobTemplate,
-        instanceGroups?.results ?? [],
-        whkData?.webhook_key
-      ),
-    [t, jobTemplate, instanceGroups, whkData]
+    () => getJobTemplateDefaultValues(t, jobTemplate, instanceGroups?.results ?? []),
+    [t, jobTemplate, instanceGroups]
   );
   const { cache } = useSWRConfig();
   const onSubmit: PageFormSubmitHandler<JobTemplateForm> = async (values: JobTemplateForm) => {
@@ -101,22 +89,16 @@ export function EditJobTemplate() {
 
   const getPageUrl = useGetPageUrl();
 
-  const jobTemplateFormError = jobTemplateError || instanceGroupsError || whkDataError;
+  const jobTemplateFormError = jobTemplateError || instanceGroupsError;
   if (jobTemplateFormError instanceof Error) {
     return (
       <AwxError
         error={jobTemplateFormError}
-        handleRefresh={
-          jobTemplateError
-            ? jobTemplateRefresh
-            : instanceGroupsError
-              ? instanceGroupRefresh
-              : whkDataRefresh
-        }
+        handleRefresh={jobTemplateError ? jobTemplateRefresh : instanceGroupRefresh}
       />
     );
   }
-  if (isJobTemplateLoading || isInstanceGroupsLoading || isWhkDataLoading) return <LoadingPage />;
+  if (isJobTemplateLoading || isInstanceGroupsLoading) return <LoadingPage />;
   return (
     <PageLayout>
       <PageHeader
