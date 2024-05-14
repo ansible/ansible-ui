@@ -117,9 +117,18 @@ export function usePlatformNavigation() {
       hidden: !edaService,
     });
     navigationItems.push({
-      id: PlatformRoute.HUB,
+      id: '/ui/',
       label: t('Automation Content'),
       subtitle: t('Automation Hub'),
+      hidden: !hubService,
+      href: '/ui/',
+      path: '',
+      children: [],
+    });
+    navigationItems.push({
+      id: PlatformRoute.HUB,
+      label: t('Automation Content'),
+      subtitle: t('Tech preview'), // Automation Hub tech preview
       path: 'content',
       children: hubNav,
       hidden: !hubService,
