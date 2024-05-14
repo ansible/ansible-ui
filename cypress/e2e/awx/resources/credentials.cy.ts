@@ -110,6 +110,32 @@ describe('Credentials', () => {
       cy.verifyPageTitle('Credentials');
     });
 
+    it('machine credential type should render privilege escalation', () => {
+      // This is a test for the custom component that renders the privilege
+      // escalation method using a custom component
+      const credentialName = 'E2E Credential ' + randomString(4);
+      cy.navigateTo('awx', 'credentials');
+      cy.clickButton(/^Create credential$/);
+      cy.get('[data-cy="name"]').type(credentialName);
+      cy.singleSelectByDataCy('organization', organization.name);
+      cy.singleSelectBy('[data-cy="credential_type"]', 'Machine');
+      cy.contains('Type Details').should('be.visible');
+      // Use custom component to render the privilege escalation method is sudo
+      cy.contains('Privilege Escalation Method ').should('be.visible');
+      cy.get('button[aria-label="Options menu"]').click();
+      cy.get('[data-cy="select-option-sudo"]').click();
+      cy.clickButton(/^Create credential$/);
+      cy.verifyPageTitle(credentialName);
+      cy.get('[data-cy="name"]').contains(credentialName);
+      cy.contains('Privilege Escalation Method').should('be.visible');
+      cy.get('[data-cy="privilege-escalation-method"]').contains('sudo');
+      //delete created credential
+      cy.clickPageAction('delete-credential');
+      cy.get('#confirm').click();
+      cy.clickButton(/^Delete credential/);
+      cy.verifyPageTitle('Credentials');
+    });
+
     it('edit credential type that renders a sub form', () => {
       const credentialName = 'E2E Credential ' + randomString(4);
       cy.navigateTo('awx', 'credentials');

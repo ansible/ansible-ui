@@ -79,9 +79,16 @@ export function BecomeMethodField({ fieldOptions, isRequired }: BecomeMethodFiel
         }}
         noResultsFoundText={t('No results found')}
         createText={t('Create')}
+        clearSelectionsAriaLabel={t('Clear all')}
+        placeholderText={t('Select a become method')}
+        toggleAriaLabel={t('Options menu')}
       >
         {options.map((option) => (
-          <SelectOption key={option.value} value={option.value} />
+          <SelectOption
+            data-cy={`select-option-${option.value}`}
+            key={option.value}
+            value={option.value}
+          />
         ))}
       </Select>
     </PageFormGroup>
