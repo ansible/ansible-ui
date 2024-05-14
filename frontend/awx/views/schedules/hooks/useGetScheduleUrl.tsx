@@ -65,7 +65,7 @@ export function useGetScheduleUrl() {
           details: { pageId: AwxRoute.ManagementJobScheduleDetails, params },
           create: { pageId: AwxRoute.ManagementJobScheduleCreate, params },
           edit: { pageId: AwxRoute.ManagementJobScheduleEdit, params },
-          resource: { pageId: AwxRoute.ManagementJobDetails, params },
+          resource: { pageId: AwxRoute.ManagementJobSchedules, params },
         }[route] as string | schedulePageUrl;
       }
       if (unified_job_type === 'workflow_job') {

@@ -2,7 +2,6 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router-dom';
 import { PageNavigationItem } from '../../../../framework';
-import { PageNotImplemented } from '../../../../framework/PageEmptyStates/PageNotImplemented';
 import { ManagementJobPage } from '../../administration/management-jobs/ManagementJobPage/ManagementJobPage';
 import { ManagementJobs } from '../../administration/management-jobs/ManagementJobsList';
 import { AwxRoute } from '../AwxRoutes';
@@ -68,7 +67,6 @@ export function useAwxManagementJobsRoutes() {
           path: ':id',
           element: <ManagementJobPage />,
           children: [
-            { id: AwxRoute.ManagementJobDetails, path: 'details', element: <PageNotImplemented /> },
             {
               id: AwxRoute.ManagementJobSchedules,
               path: 'schedules',
