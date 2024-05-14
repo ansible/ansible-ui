@@ -29,14 +29,21 @@ export function PlatformApp() {
     if (!session) return null;
     if (session.expires_in_seconds < 5 * 60) {
       return (
-        <Banner variant={session.expires_in_seconds < 2 * 60 ? 'red' : 'gold'}>
+        <Banner
+          data-cy="session-banner"
+          variant={session.expires_in_seconds < 2 * 60 ? 'red' : 'gold'}
+        >
           <Flex spaceItems={{ default: 'spaceItemsMd' }}>
             <FlexItem>
               {t(`Your session will expire in {{count}} minutes.`, {
                 count: Math.max(0, Math.round(session.expires_in_seconds / 60)),
               })}
             </FlexItem>
-            <Button size="sm" onClick={() => void refreshSession()}>{t`Refresh session`}</Button>
+            <Button
+              data-cy="refresh-session-btn"
+              size="sm"
+              onClick={() => void refreshSession()}
+            >{t`Refresh session`}</Button>
           </Flex>
         </Banner>
       );
@@ -50,7 +57,7 @@ export function PlatformApp() {
     if (!awxConfig.license_info.compliant) {
       if (awxConfig.license_info.grace_period_remaining) {
         return (
-          <Banner variant="red">
+          <Banner data-cy="subscription-grace-period-banner" variant="red">
             {t(`Your subscription is out of compliance. {{count}} days grace period remaining.`, {
               count: Math.max(
                 Math.round(awxConfig.license_info.grace_period_remaining / 60 / 60 / 24),
@@ -60,11 +67,16 @@ export function PlatformApp() {
           </Banner>
         );
       }
-      return <Banner variant="red">{t`Your subscription is out of compliance. `}</Banner>;
+      return (
+        <Banner
+          data-cy="subscription-out-of-compliance-banner"
+          variant="red"
+        >{t`Your subscription is out of compliance. `}</Banner>
+      );
     }
     if (awxConfig.license_info.time_remaining < 15 * 24 * 60 * 60) {
       return (
-        <Banner variant="gold">
+        <Banner data-cy="subscription-time-remaining-banner" variant="gold">
           {t(`Your subscription will expire in {{count}} days.`, {
             count: Math.max(Math.round(awxConfig.license_info.time_remaining / 60 / 60 / 24), 0),
           })}
