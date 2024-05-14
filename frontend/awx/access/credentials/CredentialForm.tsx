@@ -423,6 +423,8 @@ function HiddenInputField({
         shouldHideField={shouldHideField}
         label={field.label}
         placeholder={t('ENCRYPTED')}
+        requiredFields={requiredFields}
+        field={field}
       >
         <InputGroup>
           <CredentialTextInput
@@ -578,7 +580,7 @@ function CredentialSubForm({
   ) : null;
 }
 
-function CredentialTextInput({
+export function CredentialTextInput({
   credentialType,
   field,
   handleModalToggle,
@@ -587,6 +589,7 @@ function CredentialTextInput({
   accumulatedPluginValues,
   setAccumulatedPluginValues,
   buttons,
+  placeholder,
 }: {
   credentialType?: CredentialType | undefined;
   field: CredentialInputField;
@@ -596,6 +599,7 @@ function CredentialTextInput({
   accumulatedPluginValues: CredentialPluginsInputSource[];
   setAccumulatedPluginValues?: (values: CredentialPluginsInputSource[]) => void;
   buttons?: ReactNode;
+  placeholder?: string;
 }) {
   const { t } = useTranslation();
   const { setValue, clearErrors } = useFormContext();
@@ -690,7 +694,7 @@ function CredentialTextInput({
         key={field.id}
         name={field.id}
         label={field.label}
-        placeholder={(field?.default || t('Enter value')).toString()}
+        placeholder={(placeholder ? placeholder : t('Enter value')).toString()}
         type={field.secret ? 'password' : 'text'}
         isRequired={handleIsRequired()}
         isDisabled={!!isPromptOnLaunchChecked || isDisabled}

@@ -6,6 +6,7 @@ import { EyeSlashIcon, KeyIcon, RedoIcon } from '@patternfly/react-icons';
 import { PageFormCheckbox, PageFormTextInput } from '../../../../../framework';
 import { PageFormFileUpload } from '../../../../../framework/PageForm/Inputs/PageFormFileUpload';
 import { CredentialInputField } from '../../../interfaces/CredentialType';
+import { CredentialTextInput } from '../CredentialForm';
 
 interface ChildProps {
   labelHelp?: string;
@@ -38,6 +39,8 @@ interface IProps {
 
   field: CredentialInputField;
 
+  requiredFields: string[];
+
   /**
    * Optional text displayed in input field when the field value is hidden
    */
@@ -60,40 +63,32 @@ export function SingleLineEncryptedInput({
   onClear,
   field,
   shouldHideField,
-  label,
-  labelHelp,
   children,
+  requiredFields,
   placeholder,
 }: IProps) {
-  const { t } = useTranslation();
-  const fieldLabel = label || children.props.label || '';
-  const fieldLabelHelp = labelHelp || children.props.labelHelp || '';
   if (shouldHideField) {
     return (
-      <PageFormTextInput
-        aria-label={t('hidden value')}
-        label={fieldLabel}
-        labelHelp={fieldLabelHelp}
-        placeholder={placeholder ? placeholder : t('ENCRYPTED')}
-        type="password"
-        autoComplete="off"
-        isDisabled={true}
-        name={''}
-        button={
-          <>
-            <Button isDisabled={true} variant="control" onClick={() => onClear()}>
-              <Icon>
-                <KeyIcon />
-              </Icon>
-            </Button>
+      <InputGroup>
+        <CredentialTextInput
+          key={field.id}
+          field={field}
+          isDisabled={true}
+          isRequired={requiredFields.includes(field.id)}
+          placeholder={placeholder ? placeholder : t('ENCRYPTED')}
+          buttons={
             <Button variant="control" onClick={() => onClear()}>
               <Icon>
                 <RedoIcon />
               </Icon>
             </Button>
-          </>
-        }
-      />
+          }
+          handleModalToggle={function (): void {
+            throw new Error('Function not implemented.');
+          }}
+          accumulatedPluginValues={[]}
+        />
+      </InputGroup>
     );
   }
   return <>{children}</>;
