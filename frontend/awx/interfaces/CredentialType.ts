@@ -42,6 +42,7 @@ export interface CredentialType
       help_text: string;
       choices?: string[];
       multiline?: boolean;
+      default?: boolean | string;
     }[];
   };
   related: {
