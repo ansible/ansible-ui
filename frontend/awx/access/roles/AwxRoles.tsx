@@ -7,24 +7,11 @@ import {
   PageLayout,
   PageTable,
   ToolbarFilterType,
-  useInMemoryView,
 } from '../../../../framework';
-import { PageSelectOption } from '../../../../framework/PageInputs/PageSelectOption';
+import { useAwxView } from '../../common/useAwxView';
+import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxRoleColumns } from './useAwxRoleColumns';
-import { useAwxRoles } from './useAwxRoles';
-
-export interface AwxRole {
-  id: string;
-  resourceId: string;
-  resource: string;
-  roleId: string;
-  name: string;
-  description: string;
-}
-
-function roleKeyFn(role: AwxRole) {
-  return role.id;
-}
+import { AwxRbacRole } from '../../interfaces/AwxRbacRole';
 
 export function AwxRoles() {
   const { t } = useTranslation();
@@ -49,71 +36,41 @@ export function AwxRoles() {
 
 export function AwxRolesTable() {
   const { t } = useTranslation();
-  const awxRoles = useAwxRoles();
-  const roles = useMemo(() => {
-    const roles: AwxRole[] = [];
-    for (const resourceTypeId of Object.keys(awxRoles)) {
-      const resourceType = awxRoles[resourceTypeId];
-      for (const roleId of Object.keys(resourceType.roles)) {
-        const role = resourceType.roles[roleId];
-        roles.push({
-          id: roleId + '-' + resourceTypeId,
-          roleId: roleId,
-          name: role.label,
-          resourceId: resourceTypeId,
-          resource: resourceType.name,
-          description: role.description,
-        });
-      }
-    }
-    return roles;
-  }, [awxRoles]);
 
   const tableColumns = useAwxRoleColumns();
 
   const toolbarFilters = useMemo(() => {
     const filters: IToolbarFilter[] = [
       {
-        type: ToolbarFilterType.MultiSelect,
-        label: t('Role'),
         key: 'name',
-        query: 'name',
-        options: roles.reduce<PageSelectOption<string>[]>((options, role) => {
-          if (!options.find((option) => option.label === role.name)) {
-            options.push({ label: role.name, value: role.name });
-          }
-          return options;
-        }, []),
-        placeholder: t('Filter by role'),
-        isPinned: true,
+        label: t('Name'),
+        type: ToolbarFilterType.MultiText,
+        query: 'name__startswith',
+        comparison: 'startsWith',
       },
       {
-        type: ToolbarFilterType.MultiSelect,
-        label: t('Resource'),
-        key: 'resource',
-        query: 'resource',
-        options: roles.reduce<PageSelectOption<string>[]>((options, role) => {
-          if (!options.find((option) => option.label === role.resource)) {
-            options.push({ label: role.resource, value: role.resource });
-          }
-          return options;
-        }, []),
-        placeholder: t('Filter by resource'),
-        isPinned: true,
+        key: 'editable',
+        label: t('Editable'),
+        type: ToolbarFilterType.SingleSelect,
+        query: 'managed',
+        options: [
+          { label: t('Editable'), value: 'false' },
+          { label: t('Built-in'), value: 'true' },
+        ],
+        placeholder: t('Filter by editability'),
       },
     ];
     return filters;
-  }, [roles, t]);
+  }, [t]);
 
-  const view = useInMemoryView<AwxRole>({
-    keyFn: roleKeyFn,
-    items: roles,
-    tableColumns,
+  const view = useAwxView<AwxRbacRole>({
+    url: awxAPI`/role_definitions/`,
     toolbarFilters,
+    tableColumns,
   });
 
   return (
-    <PageTable<AwxRole>
+    <PageTable<AwxRbacRole>
       {...view}
       tableColumns={tableColumns}
       toolbarFilters={toolbarFilters}
