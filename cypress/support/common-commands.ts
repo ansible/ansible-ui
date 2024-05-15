@@ -169,7 +169,7 @@ Cypress.Commands.add('getWizard', () => {
 });
 
 Cypress.Commands.add(
-  'verifyWizardDetails',
+  'verifyReviewStepWizardDetails',
   (section: string, badgeText: string[], badge: string) => {
     cy.get(`[data-cy="expandable-section-${section}"]`).within(() => {
       cy.get('tbody td')
