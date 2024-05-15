@@ -130,7 +130,7 @@ function testNotification(type: string) {
 
     cy.get(`[data-cy="Submit"]`).click();
 
-    // test defail
+    // test detail
     testBasicData(notificationName, type, orgName);
     testNotificationType(type);
   });
