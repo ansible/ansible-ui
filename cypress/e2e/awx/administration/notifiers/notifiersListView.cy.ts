@@ -133,6 +133,12 @@ function testNotification(type: string) {
     // test detail
     testBasicData(notificationName, type, orgName);
     testNotificationType(type);
+
+    // test edit
+    cy.get(`[data-cy="edit-notifier"]`).click();
+    editBasicData();
+    cy.get(`[data-cy="Submit"]`).click();
+    testBasicDataEdited();
   });
 }
 
@@ -153,6 +159,15 @@ function fillBasicData(notificationName: string, type: string) {
   cy.get(`[data-cy="notification_type"]`).click();
 
   cy.contains('span', type).click();
+}
+
+function editBasicData() {
+  cy.get(`[data-cy="description"]`).clear().type('this is test description edited');
+}
+
+function testBasicDataEdited() {
+
+  cy.contains(`[data-cy="description"]`, 'this is test description edited');
 }
 
 function testBasicData(notificationName: string, type: string, organization: string) {
