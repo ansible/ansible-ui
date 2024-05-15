@@ -170,7 +170,7 @@ Cypress.Commands.add('getWizard', () => {
 
 Cypress.Commands.add(
   'verifyReviewStepWizardDetails',
-  (section: string, itemsList: string[], badge: string) => {
+  (section: string, itemsList: string[], itemCount: string) => {
     cy.get(`[data-cy="expandable-section-${section}"]`).within(() => {
       cy.get('tbody td')
         .should('be.visible')
@@ -181,10 +181,10 @@ Cypress.Commands.add(
           cy.wrap(el)
             .invoke('text')
             .then((text) => {
-              expect(badgeText).to.include(text.trim());
+              expect(itemsList).to.include(text.trim());
             });
         });
-      cy.get('.pf-v5-c-badge').should('have.text', badge);
+      cy.get('.pf-v5-c-badge').should('have.text', itemCount);
     });
   }
 );
