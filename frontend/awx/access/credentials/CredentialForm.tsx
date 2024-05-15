@@ -178,7 +178,6 @@ export function CreateCredential() {
 export function EditCredential() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const pageNavigate = usePageNavigate();
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
   const { activeAwxUser } = useAwxActiveUser();
@@ -338,7 +337,8 @@ export function EditCredential() {
       );
     }
     (cache as unknown as { clear: () => void }).clear?.();
-    pageNavigate(AwxRoute.CredentialDetails, { params: { id: credential?.id.toString() } });
+    // return to Credential List page
+    navigate(-1);
   };
   if (!credential) {
     return (
