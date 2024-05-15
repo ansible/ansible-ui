@@ -75,7 +75,10 @@ export function OrganizationDetails() {
               <Label color="blue" key={ig.id}>
                 <Link
                   to={getPageUrl(AwxRoute.InstanceGroupDetails, {
-                    params: { id: ig.id },
+                    params: {
+                      id: ig.id,
+                      instanceType: ig.is_container_group ? 'container-group' : 'instance-group',
+                    },
                   })}
                 >
                   {ig.name}

@@ -147,7 +147,17 @@ export function PromptReviewDetails() {
         <LabelGroup>
           {instance_groups?.map((ig) => (
             <Label color="blue" key={ig.id}>
-              <Link to={getPageUrl(AwxRoute.InstanceGroupDetails, { params: { id: ig.id } })}>
+              <Link
+                to={getPageUrl(AwxRoute.InstanceGroupDetails, {
+                  params: {
+                    id: ig.id,
+                    instanceType:
+                      'is_container_group' in ig && ig.is_container_group
+                        ? 'container-group'
+                        : 'instance-group',
+                  },
+                })}
+              >
                 {ig.name}
               </Link>
             </Label>
