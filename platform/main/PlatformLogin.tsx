@@ -36,7 +36,7 @@ export function PlatformLogin(props: { children: ReactNode }) {
         }}
         hideInputs={hideInputs}
         authOptions={options?.ssos}
-        loginDescription={t('Enter your single sign-on credentials.')}
+        loginDescription={t('Enter your credentials.')}
         icon={<RedHatIcon style={{ maxHeight: 64, maxWidth: 64 }} />}
         brand={t('Red Hat')}
         product={t('Ansible Automation Platform')}
