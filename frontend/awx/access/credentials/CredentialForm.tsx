@@ -370,7 +370,7 @@ function HiddenInputField({
   setAccumulatedPluginValues?: (values: CredentialPluginsInputSource[]) => void;
 }) {
   const [t] = useTranslation();
-  const { getValues } = useFormContext();
+  const { getValues } = useFormContext<{ [key: string]: string }>();
   const openCredentialPluginsModal = useCredentialPluginsModal();
   const fieldValue = getValues(field.id);
   const isFieldValueEmpty = fieldValue === undefined || fieldValue === '';
