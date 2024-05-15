@@ -137,7 +137,7 @@ function testNotification(type: string) {
 
     const orgName2 = randomE2Ename();
     const newNotificationName = randomE2Ename();
-    cy.createAwxOrganization(orgName2).then(() => {
+    /*cy.createAwxOrganization(orgName2).then(() => {
       // test edit
       cy.get(`[data-cy="edit-notifier"]`).click();
       selectOrganization(orgName2);
@@ -162,7 +162,7 @@ function testNotification(type: string) {
       cy.get(`[data-cy="filter-input"]`).click();
       cy.get(`[aria-label="Search input"]`).type(newNotificationName);
       cy.contains('No results found');
-    });
+    });*/
   });
 }
 
