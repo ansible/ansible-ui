@@ -8,41 +8,41 @@ import {
   PageWizardStep,
   useGetPageUrl,
   usePageNavigate,
-} from '../../../../framework';
-import { AwxSelectUsersStep } from '../../access/common/AwxRolesWizardSteps/AwxSelectUsersStep';
-import { AwxSelectRolesStep } from '../../access/common/AwxRolesWizardSteps/AwxSelectRolesStep';
-import { AwxRoute } from '../../main/AwxRoutes';
-import { useGet } from '../../../common/crud/useGet';
-import { awxAPI } from '../../common/api/awx-utils';
-import { postRequest } from '../../../common/crud/Data';
-import { InstanceGroup } from '../../interfaces/InstanceGroup';
-import { AwxUser } from '../../interfaces/User';
-import { Role } from '../../interfaces/Role';
-import { RoleAssignmentsReviewStep } from '../../../common/access/RolesWizard/steps/RoleAssignmentsReviewStep';
-import { useAwxBulkActionDialog } from '../../common/useAwxBulkActionDialog';
+} from '../../../../../framework';
+import { AwxSelectUsersStep } from '../../../access/common/AwxRolesWizardSteps/AwxSelectUsersStep';
+import { AwxSelectRolesStep } from '../../../access/common/AwxRolesWizardSteps/AwxSelectRolesStep';
+import { AwxRoute } from '../../../main/AwxRoutes';
+import { useGet } from '../../../../common/crud/useGet';
+import { postRequest } from '../../../../common/crud/Data';
+import { AwxUser } from '../../../interfaces/User';
+import { RoleAssignmentsReviewStep } from '../../../../common/access/RolesWizard/steps/RoleAssignmentsReviewStep';
+import { AwxRbacRole } from '../../../interfaces/AwxRbacRole';
+import { useAwxBulkActionDialog } from '../../../common/useAwxBulkActionDialog';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { NotificationTemplate } from '../../../interfaces/NotificationTemplate';
 
 interface WizardFormValues {
   users: AwxUser[];
-  awxRoles: Role[];
+  awxRoles: AwxRbacRole[];
 }
 
 interface UserRolePair {
   user: AwxUser;
-  role: Role;
+  role: AwxRbacRole;
 }
 
-export function InstanceGroupAddUsers() {
+export function NotifierAddUsers() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const params = useParams<{ id: string }>();
 
-  const { data: instanceGroup, isLoading } = useGet<InstanceGroup>(
-    awxAPI`/instance_groups/${params.id ?? ''}/`
+  const { data: credential, isLoading } = useGet<NotificationTemplate>(
+    awxAPI`/notification_templates/${params.id ?? ''}/`
   );
   const userProgressDialog = useAwxBulkActionDialog<UserRolePair>();
   const pageNavigate = usePageNavigate();
 
-  if (isLoading || !instanceGroup) return <LoadingPage />;
+  if (isLoading || !credential) return <LoadingPage />;
 
   const steps: PageWizardStep[] = [
     {
@@ -51,34 +51,34 @@ export function InstanceGroupAddUsers() {
       inputs: (
         <AwxSelectUsersStep
           descriptionForUsersSelection={t(
-            'Select the user(s) that you want to give access to {{instanceGroupName}}.',
+            'Select the user(s) that you want to give access to {{credentialName}}.',
             {
-              instanceGroupName: instanceGroup?.name,
+              credentialName: credential?.name,
             }
           )}
         />
       ),
       validate: (formData, _) => {
-        const { users } = formData as WizardFormValues;
+        const { users } = formData as { users: AwxUser[] };
         if (!users?.length) {
           throw new Error(t('Select at least one user.'));
         }
       },
     },
     {
-      id: 'roles',
+      id: 'awxRoles',
       label: t('Select roles to apply'),
       inputs: (
         <AwxSelectRolesStep
-          contentType="instancegroup"
+          contentType="notificationtemplate"
           fieldNameForPreviousStep="users"
-          descriptionForRoleSelection={t('Choose roles to apply to {{instanceGroupName}}.', {
-            instanceGroupName: instanceGroup?.name,
+          descriptionForRoleSelection={t('Choose roles to apply to {{credentialName}}.', {
+            credentialName: credential?.name,
           })}
         />
       ),
       validate: (formData, _) => {
-        const { awxRoles } = formData as WizardFormValues;
+        const { awxRoles } = formData as { awxRoles: AwxRbacRole[] };
         if (!awxRoles?.length) {
           throw new Error(t('Select at least one role.'));
         }
@@ -112,18 +112,15 @@ export function InstanceGroupAddUsers() {
           postRequest(awxAPI`/role_user_assignments/`, {
             user: user.id,
             role_definition: role.id,
-            content_type: 'instancegroup',
-            object_id: instanceGroup.id,
+            content_type: 'awx.notificationtemplate',
+            object_id: credential.id,
           }),
         onComplete: () => {
           resolve();
         },
         onClose: () => {
-          const instanceType = instanceGroup.is_container_group
-            ? 'container-group'
-            : 'instance-group';
-          pageNavigate(AwxRoute.InstanceGroupUserAccess, {
-            params: { id: instanceGroup.id.toString(), instanceType },
+          pageNavigate(AwxRoute.NotificationTemplateUserAccess, {
+            params: { id: credential.id.toString() },
           });
         },
       });
@@ -135,27 +132,17 @@ export function InstanceGroupAddUsers() {
       <PageHeader
         title={t('Add roles')}
         breadcrumbs={[
-          { label: t('Instance groups'), to: getPageUrl(AwxRoute.InstanceGroups) },
+          { label: t('Notifiers'), to: getPageUrl(AwxRoute.NotificationTemplates) },
           {
-            label: instanceGroup?.name,
-            to: getPageUrl(AwxRoute.InstanceGroupDetails, {
-              params: {
-                id: instanceGroup?.id,
-                instanceType: instanceGroup?.is_container_group
-                  ? 'container-group'
-                  : 'instance-group',
-              },
+            label: credential?.name,
+            to: getPageUrl(AwxRoute.NotificationTemplateDetails, {
+              params: { id: credential?.id },
             }),
           },
           {
-            label: t('User access'),
-            to: getPageUrl(AwxRoute.InstanceGroupUserAccess, {
-              params: {
-                id: instanceGroup?.id,
-                instanceType: instanceGroup?.is_container_group
-                  ? 'container-group'
-                  : 'instance-group',
-              },
+            label: t('User Access'),
+            to: getPageUrl(AwxRoute.NotificationTemplateUserAccess, {
+              params: { id: credential?.id },
             }),
           },
           { label: t('Add roles') },
@@ -166,7 +153,7 @@ export function InstanceGroupAddUsers() {
         onSubmit={onSubmit}
         disableGrid
         onCancel={() => {
-          pageNavigate(AwxRoute.InstanceGroupUserAccess, { params: { id: instanceGroup?.id } });
+          pageNavigate(AwxRoute.NotificationTemplateUserAccess, { params: { id: credential?.id } });
         }}
       />
     </PageLayout>
