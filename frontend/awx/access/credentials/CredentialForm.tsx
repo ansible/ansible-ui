@@ -370,8 +370,13 @@ function HiddenInputField({
   setAccumulatedPluginValues?: (values: CredentialPluginsInputSource[]) => void;
 }) {
   const [t] = useTranslation();
+  const { getValues } = useFormContext();
   const openCredentialPluginsModal = useCredentialPluginsModal();
-  const [shouldHideField, setShouldHideField] = useState(field.secret && isEditMode);
+  const fieldValue = getValues(field.id);
+  const isFieldValueEmpty = fieldValue === undefined || fieldValue === '';
+  const [shouldHideField, setShouldHideField] = useState(
+    field.secret && isEditMode && !isFieldValueEmpty
+  );
   const [clear, setClear] = useState(false);
   const { setValue } = useFormContext();
 
@@ -475,7 +480,6 @@ function CredentialSubForm({
   if (!credentialType || !credentialType?.inputs?.fields) {
     return null;
   }
-
   const stringFields =
     credentialType?.inputs?.fields?.filter(
       (field) => field.type === 'string' && !field?.choices?.length
@@ -488,7 +492,6 @@ function CredentialSubForm({
     credentialType?.inputs?.fields?.filter((field) => field.type === 'boolean') || [];
 
   const requiredFields = credentialType?.inputs?.required || [];
-
   const hasFields = stringFields.length > 0 || choiceFields.length > 0 || booleanFields.length > 0;
   return hasFields ? (
     <PageFormSection title={t('Type Details')}>

@@ -11,6 +11,11 @@ interface ChildProps {
   label?: string;
 }
 
+interface EncryptedInputButtonsProps {
+  onClear: () => void;
+  isDisabled?: boolean;
+}
+
 /**
  * Props for the SecretManagementInputField component.
  * @interface IProps
@@ -57,6 +62,23 @@ interface IProps {
   label?: string;
 }
 
+export const EncryptedInputButtons = ({
+  onClear,
+  isDisabled = true,
+}: EncryptedInputButtonsProps) => (
+  <div style={{ display: 'flex', gap: '0.0rem' }}>
+    <Button isDisabled={isDisabled} variant={'control'} onClick={() => onClear()}>
+      <Icon>
+        <KeyIcon />
+      </Icon>
+    </Button>
+    <Button variant={'control'} onClick={() => onClear()}>
+      <Icon>
+        <RedoIcon />
+      </Icon>
+    </Button>
+  </div>
+);
 export function SingleLineEncryptedInput({
   onClear,
   field,
@@ -73,7 +95,7 @@ export function SingleLineEncryptedInput({
         <CredentialTextInput
           key={field.id}
           field={field}
-          isDisabled={true}
+          isDisabled={shouldHideField}
           isRequired={requiredFields.includes(field.id)}
           placeholder={placeholder ? placeholder : t('ENCRYPTED')}
           buttons={
@@ -108,24 +130,11 @@ export function MultiLineEncryptedInput({
         <PageFormFileUpload
           label={label}
           name={''}
-          isDisabled={true}
+          isDisabled={shouldHideField}
           textAreaPlaceholder={placeholder ? placeholder : t('ENCRYPTED')}
           type="text"
           autoComplete="off"
-          icon={
-            <>
-              <Button isDisabled={true} variant="control" onClick={() => onClear()}>
-                <Icon>
-                  <KeyIcon />
-                </Icon>
-              </Button>
-              <Button variant="control" onClick={() => onClear()}>
-                <Icon>
-                  <RedoIcon />
-                </Icon>
-              </Button>
-            </>
-          }
+          icon={<EncryptedInputButtons onClear={onClear} isDisabled={true} />}
         />
       </InputGroup>
     );
