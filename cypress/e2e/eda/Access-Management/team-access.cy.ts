@@ -67,12 +67,20 @@ user_team_access_tab_resources.forEach((resource) => {
       cy.navigateTo('eda', resource.name);
       // filter resource by name not available for decision environment
       // or credential type
-      if (resource.name === 'decision-environments' || resource.name === 'credential-types') {
+      if (resource.name === 'decision-environments') {
         cy.get('[data-cy="table-view"]').click();
-        cy.clickTableRow(resource_object.name, false);
+        cy.filterTableByTextFilter('name', resource_object.name, { disableFilterSelection: true });
+        cy.contains('td', resource_object.name).within(() => {
+          cy.get('a').click();
+        });
       } else {
-        cy.clickTableRow(resource_object.name, true);
+        if (resource.name === 'credential-types') {
+          cy.clickTableRow(resource_object.name, false);
+        } else {
+          cy.clickTableRow(resource_object.name, true);
+        }
       }
+
       cy.contains('h1', resource_object.name).should('be.visible');
       cy.contains('li', 'Team Access').click();
       cy.get('a[data-cy="add-roles"]').click();
@@ -180,11 +188,21 @@ user_team_access_tab_resources.forEach((resource) => {
       cy.navigateTo('eda', resource.name);
       // filter resource by name not available for decision environment
       // or credential type
-      if (resource.name === 'decision-environments' || resource.name === 'credential-types') {
+      if (resource.name === 'decision-environments') {
+        cy.log('in DE');
         cy.get('[data-cy="table-view"]').click();
-        cy.clickTableRow(resource_object.name, false);
+        cy.filterTableByTextFilter('name', resource_object.name, { disableFilterSelection: true });
+        cy.contains('td', resource_object.name).within(() => {
+          cy.get('a').click();
+        });
       } else {
-        cy.clickTableRow(resource_object.name, true);
+        if (resource.name === 'credential-types') {
+          cy.log('in Credential Type');
+          cy.clickTableRow(resource_object.name, false);
+        } else {
+          cy.log('in Else');
+          cy.clickTableRow(resource_object.name, true);
+        }
       }
       cy.contains('h1', resource_object.name).should('be.visible');
       cy.contains('li', 'Team Access').click();
@@ -201,11 +219,18 @@ user_team_access_tab_resources.forEach((resource) => {
       cy.navigateTo('eda', resource.name);
       // filter resource by name not available for decision environment
       // or credential type
-      if (resource.name === 'decision-environments' || resource.name === 'credential-types') {
+      if (resource.name === 'decision-environments') {
         cy.get('[data-cy="table-view"]').click();
-        cy.clickTableRow(resource_object.name, false);
+        cy.filterTableByTextFilter('name', resource_object.name, { disableFilterSelection: true });
+        cy.contains('td', resource_object.name).within(() => {
+          cy.get('a').click();
+        });
       } else {
-        cy.clickTableRow(resource_object.name, true);
+        if (resource.name === 'credential-types') {
+          cy.clickTableRow(resource_object.name, false);
+        } else {
+          cy.clickTableRow(resource_object.name, true);
+        }
       }
       cy.contains('h1', resource_object.name).should('be.visible');
       cy.contains('li', 'Team Access').click();

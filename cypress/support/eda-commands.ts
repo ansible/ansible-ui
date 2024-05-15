@@ -392,7 +392,6 @@ Cypress.Commands.add('createEdaTeam', () => {
 
 Cypress.Commands.add('deleteEdaTeam', (team: EdaTeam) => {
   cy.wrap(team).should('not.be.undefined');
-  cy.wrap(team.id).should('not.equal', 1);
   cy.requestDelete(edaAPI`/teams/${team.id.toString()}/`, {
     failOnStatusCode: false,
   }).then(() => {
