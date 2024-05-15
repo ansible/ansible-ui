@@ -122,7 +122,7 @@ function testNotification(type: string) {
   const orgName = randomE2Ename();
   cy.createAwxOrganization(orgName).then(() => {
     //cy.navigateTo('awx', 'notification-templates');
-    cy.get(`[data-cy="awx-notification-templates"]`).click({force : true});
+    cy.get(`[data-cy="awx-notification-templates"]`).click({ force: true });
     cy.get(`[data-cy="add-notifier"]`).click();
 
     fillBasicData(notificationName, type);
