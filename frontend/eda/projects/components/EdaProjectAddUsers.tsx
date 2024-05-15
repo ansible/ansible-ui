@@ -9,17 +9,18 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../framework';
+import { RoleAssignmentsReviewStep } from '../../../common/access/RolesWizard/steps/RoleAssignmentsReviewStep';
+import { postRequest } from '../../../common/crud/Data';
+import { useGet } from '../../../common/crud/useGet';
 import { EdaSelectRolesStep } from '../../access/common/EdaRolesWizardSteps/EdaSelectRolesStep';
 import { EdaSelectUsersStep } from '../../access/common/EdaRolesWizardSteps/EdaSelectUsersStep';
-import { EdaRoute } from '../../main/EdaRoutes';
-import { EdaProject } from '../../interfaces/EdaProject';
-import { useGet } from '../../../common/crud/useGet';
 import { edaAPI } from '../../common/eda-utils';
-import { postRequest } from '../../../common/crud/Data';
-import { EdaUser } from '../../interfaces/EdaUser';
-import { RoleAssignmentsReviewStep } from '../../../common/access/RolesWizard/steps/RoleAssignmentsReviewStep';
-import { EdaRbacRole } from '../../interfaces/EdaRbacRole';
+import { edaErrorAdapter } from '../../common/edaErrorAdapter';
 import { useEdaBulkActionDialog } from '../../common/useEdaBulkActionDialog';
+import { EdaProject } from '../../interfaces/EdaProject';
+import { EdaRbacRole } from '../../interfaces/EdaRbacRole';
+import { EdaUser } from '../../interfaces/EdaUser';
+import { EdaRoute } from '../../main/EdaRoutes';
 
 interface WizardFormValues {
   users: EdaUser[];
@@ -143,6 +144,7 @@ export function EdaProjectAddUsers() {
         ]}
       />
       <PageWizard<WizardFormValues>
+        errorAdapter={edaErrorAdapter}
         steps={steps}
         onSubmit={onSubmit}
         disableGrid
