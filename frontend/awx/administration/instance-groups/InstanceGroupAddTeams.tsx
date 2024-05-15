@@ -137,7 +137,14 @@ export function InstanceGroupAddTeams() {
           { label: t('Instance groups'), to: getPageUrl(AwxRoute.InstanceGroups) },
           {
             label: instanceGroup?.name,
-            to: getPageUrl(AwxRoute.InstanceGroupDetails, { params: { id: instanceGroup?.id } }),
+            to: getPageUrl(AwxRoute.InstanceGroupDetails, {
+              params: {
+                id: instanceGroup?.id,
+                instanceType: instanceGroup?.is_container_group
+                  ? 'container-group'
+                  : 'instance-group',
+              },
+            }),
           },
           {
             label: t('Team access'),

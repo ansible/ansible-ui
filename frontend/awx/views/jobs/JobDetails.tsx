@@ -58,7 +58,12 @@ export function JobDetails() {
       >
         <Link
           to={getPageUrl(AwxRoute.InstanceGroupDetails, {
-            params: { id: job.summary_fields?.instance_group?.id },
+            params: {
+              id: job.summary_fields?.instance_group?.id,
+              instanceType: job.summary_fields?.instance_group?.is_container_group
+                ? 'container-group'
+                : 'instance-group',
+            },
           })}
         >
           {job.summary_fields?.instance_group?.name}
@@ -70,7 +75,12 @@ export function JobDetails() {
       >
         <Link
           to={getPageUrl(AwxRoute.InstanceGroupDetails, {
-            params: { id: job.summary_fields?.instance_group?.id },
+            params: {
+              id: job.summary_fields?.instance_group?.id,
+              instanceType: job.summary_fields?.instance_group?.is_container_group
+                ? 'container-group'
+                : 'instance-group',
+            },
           })}
         >
           {job.summary_fields?.instance_group?.name}

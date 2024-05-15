@@ -36,7 +36,12 @@ export function CreateInstanceGroup() {
 
   const onSubmit: PageFormSubmitHandler<InstanceGroupPayload> = async (data) => {
     const instanceGroup = await postRequest(awxAPI`/instance_groups/`, data);
-    pageNavigate(AwxRoute.InstanceGroupDetails, { params: { id: instanceGroup.id } });
+    pageNavigate(AwxRoute.InstanceGroupDetails, {
+      params: {
+        id: instanceGroup.id,
+        instanceType: instanceGroup?.is_container_group ? 'container-group' : 'instance-group',
+      },
+    });
   };
   const onCancel = () => {
     pageNavigate(AwxRoute.InstanceGroups);
@@ -95,7 +100,12 @@ export function EditInstanceGroup() {
       awxAPI`/instance_groups/${params?.id as string}/`,
       data
     );
-    pageNavigate(AwxRoute.InstanceGroupDetails, { params: { id: updateInstanceGroup.id } });
+    pageNavigate(AwxRoute.InstanceGroupDetails, {
+      params: {
+        id: updateInstanceGroup.id,
+        instanceType: instanceGroup?.is_container_group ? 'container-group' : 'instance-group',
+      },
+    });
   };
   return (
     <PageLayout>
