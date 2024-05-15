@@ -37,6 +37,8 @@ import { EdaProjectCell } from '../projects/components/EdaProjectCell';
 import { PageFormSelectOrganization } from '../access/organizations/components/PageFormOrganizationSelect';
 import useSWR from 'swr';
 import { EdaOrganization } from '../interfaces/EdaOrganization';
+import { EdaWebhook } from '../interfaces/EdaWebhook';
+import { PageFormMultiSelect } from '../../../framework/PageForm/Inputs/PageFormMultiSelect';
 
 export function CreateRulebookActivation() {
   const { t } = useTranslation();
@@ -120,6 +122,7 @@ export function RulebookActivationInputs() {
   const { data: tokens } = useGet<EdaResult<AwxToken>>(
     edaAPI`/users/me/awx-tokens/?page=1&page_size=200`
   );
+  const { data: webhooks } = useGet<EdaResult<EdaWebhook>>(edaAPI`/webhooks/?page=1&page_size=200`);
 
   const RESTART_OPTIONS = [
     { label: t('On failure'), value: 'on-failure' },
@@ -197,7 +200,22 @@ export function RulebookActivationInputs() {
         labelHelp={t('Rulebooks will be shown according to the project selected.')}
         labelHelpTitle={t('Rulebook')}
       />
-      <PageFormCredentialSelect<{ credential_refs: string; id: string; credentialKind: string }>
+      <PageFormMultiSelect<IEdaRulebookActivationInputs>
+        name="webhooks"
+        label={t('Webhook(s)')}
+        options={
+          webhooks?.results
+            ? webhooks.results.map((item) => ({
+                label: item?.name || '',
+                value: `${item.id}`,
+              }))
+            : []
+        }
+        placeholder={t('Select webhook(s)')}
+        footer={<Link to={getPageUrl(EdaRoute.CreateWebhook)}>Create webhook</Link>}
+      />
+
+      <PageFormCredentialSelect<{ credential_refs: string; id: string }>
         name="credential_refs"
         credentialKind={'vault, cloud'}
         labelHelp={t(`Select the credentials for this rulebook activation.`)}
@@ -296,6 +314,7 @@ export function RulebookActivationInputs() {
 type IEdaRulebookActivationInputs = Omit<EdaRulebookActivationCreate, 'event_streams'> & {
   rulebook: EdaRulebook;
   event_streams?: string[];
+  webhooks?: string[];
   project_id: string;
   awx_token_id: number;
   credential_refs?: EdaCredential[] | null;
