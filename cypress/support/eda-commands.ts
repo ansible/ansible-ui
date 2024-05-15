@@ -19,6 +19,10 @@ import {
   EdaRulebookActivationCreate,
 } from '../../frontend/eda/interfaces/EdaRulebookActivation';
 import { EdaUser, EdaUserCreateUpdate } from '../../frontend/eda/interfaces/EdaUser';
+import { EdaTeam } from '../../frontend/eda/interfaces/EdaTeam';
+import { TeamAssignment } from '../../frontend/eda/access/interfaces/TeamAssignment';
+import { UserAssignment } from '../../frontend/eda/access/interfaces/UserAssignment';
+
 import {
   ImportStateEnum,
   RestartPolicyEnum,
@@ -372,6 +376,32 @@ Cypress.Commands.add('getEdaRoleDetail', (roleID: string) => {
   cy.requestGet<EdaRbacRole>(edaAPI`/role_definitions/${roleID}`);
 });
 
+Cypress.Commands.add('createEdaTeam', () => {
+  cy.requestPost<EdaTeam>(edaAPI`/teams/`, {
+    name: 'E2E Team ' + randomString(4),
+    organization_id: 1,
+    description: 'This is a team',
+  }).then((edaTeam) => {
+    Cypress.log({
+      displayName: 'EDA Team CREATION :',
+      message: [`Created 👉  ${edaTeam.name}`],
+    });
+    return edaTeam;
+  });
+});
+
+Cypress.Commands.add('deleteEdaTeam', (team: EdaTeam) => {
+  cy.wrap(team).should('not.be.undefined');
+  cy.requestDelete(edaAPI`/teams/${team.id.toString()}/`, {
+    failOnStatusCode: false,
+  }).then(() => {
+    Cypress.log({
+      displayName: 'EDA TEAM DELETION :',
+      message: [`Deleted 👉  ${team.name}`],
+    });
+  });
+});
+
 Cypress.Commands.add(
   'createEdaUser',
   (user?: SetOptional<EdaUserCreateUpdate, 'username' | 'password'>) => {
@@ -419,6 +449,38 @@ Cypress.Commands.add('getEdaActiveUser', () => {
     }
   });
 });
+
+Cypress.Commands.add(
+  'createRoleTeamAssignments',
+  (object_id, role_definition, team, content_type) => {
+    cy.requestPost<TeamAssignment>(edaAPI`/role_team_assignments/`, {
+      object_id: object_id,
+      content_type: content_type,
+      role_definition: role_definition,
+      team: team,
+    }).then(() => {
+      Cypress.log({
+        displayName: 'Role Team Assignment completed',
+      });
+    });
+  }
+);
+
+Cypress.Commands.add(
+  'createRoleUserAssignments',
+  (object_id, role_definition, user, content_type) => {
+    cy.requestPost<UserAssignment>(edaAPI`/role_user_assignments/`, {
+      object_id: object_id,
+      content_type: content_type,
+      role_definition: role_definition,
+      user: user,
+    }).then(() => {
+      Cypress.log({
+        displayName: 'Role User Assignment :',
+      });
+    });
+  }
+);
 
 Cypress.Commands.add('getEdaCurrentUserAwxTokens', () => {
   cy.requestGet<EdaResult<EdaControllerToken>>(edaAPI`/users/me/awx-tokens/`);
