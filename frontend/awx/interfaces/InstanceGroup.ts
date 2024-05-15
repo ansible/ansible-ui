@@ -21,6 +21,7 @@ export interface InstanceGroup
   pod_spec_override: string;
   percent_capacity_remaining: number;
   is_container_group: boolean;
+  policy_instance_list: string[];
   capacity: number | null;
   results: InstanceGroup[];
   summary_fields: {
