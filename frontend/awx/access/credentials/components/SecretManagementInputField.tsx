@@ -1,9 +1,7 @@
-import { Button, Icon, InputGroup, TextInput, Tooltip } from '@patternfly/react-core';
+import { Button, Icon, InputGroup } from '@patternfly/react-core';
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PageFormGroup } from '../../../../../framework/PageForm/Inputs/PageFormGroup';
-import { EyeSlashIcon, KeyIcon, RedoIcon } from '@patternfly/react-icons';
-import { PageFormCheckbox, PageFormTextInput } from '../../../../../framework';
+import { KeyIcon, RedoIcon } from '@patternfly/react-icons';
 import { PageFormFileUpload } from '../../../../../framework/PageForm/Inputs/PageFormFileUpload';
 import { CredentialInputField } from '../../../interfaces/CredentialType';
 import { CredentialTextInput } from '../CredentialForm';
@@ -67,6 +65,8 @@ export function SingleLineEncryptedInput({
   requiredFields,
   placeholder,
 }: IProps) {
+  const { t } = useTranslation();
+
   if (shouldHideField) {
     return (
       <InputGroup>
@@ -98,7 +98,6 @@ export function MultiLineEncryptedInput({
   onClear,
   shouldHideField,
   label,
-  labelHelp,
   children,
   placeholder,
 }: IProps) {
