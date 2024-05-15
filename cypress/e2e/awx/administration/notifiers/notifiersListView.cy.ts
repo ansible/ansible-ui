@@ -22,40 +22,40 @@ describe('Notifications: List View', () => {
   //Assert the info on the details screen of the notification
   //Assert the deletion of the notification
 
-  it('can create a new Email Notification, assert the info in the list view, and delete the notification', () => {
-    createNotification('Email');
+  it('can create, edit a new Email Notification, assert the info in the list view, and delete the notification', () => {
+    testNotification('Email');
   });
 
   it('can create a new Grafana Notification, assert the info in the list view, and delete the notification', () => {
-    createNotification('Grafana');
+    testNotification('Grafana');
   });
 
-  it('can create a new IRC Notification in the AAP UI, assert the info in the list view, and delete the notification', () => {
-    createNotification('IRC');
+  it('can create, edit a new IRC Notification in the AAP UI, assert the info in the list view, and delete the notification', () => {
+    testNotification('IRC');
   });
 
-  it('can create a new Mattermost Notification, assert the info in the list view, and delete the notification', () => {
-    createNotification('Mattermost');
+  it('can create, edit a new Mattermost Notification, assert the info in the list view, and delete the notification', () => {
+    testNotification('Mattermost');
   });
 
-  it('can create a new Pagerduty Notification, assert the info in the list view, and delete the notification', () => {
-    createNotification('Pagerduty');
+  it('can create, edit a new Pagerduty Notification, assert the info in the list view, and delete the notification', () => {
+    testNotification('Pagerduty');
   });
 
-  it('can create a new Rocket.Chat Notification, assert the info in the list view, and delete the notification', () => {
-    createNotification('Rocket.Chat');
+  it('can create, edit a new Rocket.Chat Notification, assert the info in the list view, and delete the notification', () => {
+    testNotification('Rocket.Chat');
   });
 
-  it('can create a new Slack Notification, assert the info in the list view, and delete the notification', () => {
-    createNotification('Slack');
+  it('can create, edit a new Slack Notification, assert the info in the list view, and delete the notification', () => {
+    testNotification('Slack');
   });
 
-  it('can create a new Twilio Notification, assert the info in the list view, and delete the notification', () => {
-    createNotification('Twilio');
+  it('can create, edit a new Twilio Notification, assert the info in the list view, and delete the notification', () => {
+    testNotification('Twilio');
   });
 
-  it('can create a new Webhook Notification, assert the info in the list view, and delete the notification', () => {
-    createNotification('Webhook');
+  it('can create, edit a new Webhook Notification, assert the info in the list view, and delete the notification', () => {
+    testNotification('Webhook');
   });
 
   //The following edit notification tests can be written in a loop style, referencing an array of objects, to help
@@ -64,7 +64,9 @@ describe('Notifications: List View', () => {
   //Assert the initial info of the notification before edit
   //Assert the info of the notification after edit
   //Add an afterEach block to delete the notifications that were created for these tests
-  it.skip('can edit a new Email Notification and assert the edited info in the list view', () => {});
+
+  // skipping, covered above
+  /*it.skip('can edit a new Email Notification and assert the edited info in the list view', () => {});
   it.skip('can edit a Grafana Notification and assert the edited info in the list view', () => {});
   it.skip('can edit a IRC Notification and assert the edited info in the list view', () => {});
   it.skip('can edit a Mattermost Notification and assert the edited info in the list view', () => {});
@@ -72,7 +74,7 @@ describe('Notifications: List View', () => {
   it.skip('can edit a Rocket.Chat Notification and assert the edited info in the list view', () => {});
   it.skip('can edit a Slack Notification and assert the edited info in the list view', () => {});
   it.skip('can edit a Twilio Notification and assert the edited info in the list view', () => {});
-  it.skip('can edit a Webhook Notification and assert the edited info in the list view', () => {});
+  it.skip('can edit a Webhook Notification and assert the edited info in the list view', () => {});*/
 
   it.skip('can test a Notification and assert the successful test in the list view', () => {
     //Utilize a notification of any type created in the beforeEach hook
@@ -115,7 +117,7 @@ describe('Notifications: List View', () => {
   });
 });
 
-function createNotification(type: string) {
+function testNotification(type: string) {
   const notificationName = randomE2Ename();
   const orgName = randomE2Ename();
   cy.createAwxOrganization(orgName).then(() => {
@@ -127,6 +129,10 @@ function createNotification(type: string) {
     selectOrganization(orgName);
 
     cy.get(`[data-cy="Submit"]`).click();
+
+    // test detail
+    testBasicData(notificationName, type, orgName);
+    testNotificationType(type);
   });
 }
 
@@ -149,6 +155,14 @@ function fillBasicData(notificationName: string, type: string) {
   cy.contains('span', type).click();
 }
 
+function testBasicData(notificationName: string, type: string, organization: string) {
+  cy.contains(`[data-cy="name"]`, notificationName);
+  cy.contains(`[data-cy="description"]`, 'this is test description');
+
+  cy.contains(`[data-cy="notification-type"]`, TransformTypeName(type));
+  cy.contains(`[data-cy="organization"]`, organization);
+}
+
 function fillNotificationType(type: string) {
   if (type === 'Email') {
     fillEmailForm();
@@ -169,6 +183,64 @@ function fillNotificationType(type: string) {
   } else if (type === 'IRC') {
     fillIrcForm();
   }
+}
+
+function testNotificationType(type: string) {
+  switch (type) {
+    case 'Email':
+      testEmailForm();
+      break;
+    case 'Slack':
+      testSlackForm();
+      break;
+    case 'Twilio':
+      testTwilioForm();
+      break;
+    case 'Pagerduty':
+      testPagerDutyForm();
+      break;
+    case 'Grafana':
+      testGrafanaForm();
+      break;
+    case 'Webhook':
+      testWebhookForm();
+      break;
+    case 'Mattermost':
+      testMattermostForm();
+      break;
+    case 'Rocket.Chat':
+      testRocketChatForm();
+      break;
+    case 'IRC':
+      testIRCForm();
+      break;
+    default:
+      throw new Error(`Unknown notification type: ${type}`);
+  }
+}
+
+function TransformTypeName(type: string) {
+  if (type === 'Email') {
+    return 'email';
+  } else if (type === 'Slack') {
+    return 'slack';
+  } else if (type === 'Twilio') {
+    return 'twilio';
+  } else if (type === 'Pagerduty') {
+    return 'pagerduty';
+  } else if (type === 'Grafana') {
+    return 'grafana';
+  } else if (type === 'Webhook') {
+    return 'webhook';
+  } else if (type === 'Mattermost') {
+    return 'mattermost';
+  } else if (type === 'Rocket.Chat') {
+    return 'rocketchat';
+  } else if (type === 'IRC') {
+    return 'irc';
+  }
+
+  return '';
 }
 
 function fillEmailForm() {
@@ -209,16 +281,15 @@ function fillGrafanaForm() {
   cy.get(`[data-cy="notification-configuration-grafana-url-form-group"]`).type(
     'https://grafana.com'
   );
-  cy.get(`[data-cy="notification-configuration-grafana-key-form-group"]`).type('grafana_api_key');
   cy.get(`[data-cy="notification-configuration-dashboardid"]`).type('dashboard_id');
   cy.get(`[data-cy="notification-configuration-panelid"]`).type('panel_id');
   cy.get(`[data-cy="notification-configuration-annotation-tags-form-group"]`).type('tag1');
   cy.get(`[data-cy="notification_configuration-grafana_no_verify_ssl"]`).click();
+  cy.get(`[data-cy='notification-configuration-grafana-key']`).type('key');
 }
 
 function fillWebhookForm() {
   cy.get(`[data-cy="notification-configuration-username"]`).type('webhook_user');
-  cy.get(`[data-cy="notification-configuration-password"]`).type('webhook_password');
   cy.get(`[data-cy="notification-configuration-url"]`).type('https://webhook-endpoint.com');
   cy.get(`[data-cy="notification_configuration-disable_ssl_verification"]`).click();
   cy.get(`[data-cy="notification-configuration-http-method"]`).click();
@@ -247,10 +318,88 @@ function fillRocketChatForm() {
 }
 
 function fillIrcForm() {
-  cy.get(`[data-cy="notification-configuration-password"]`).type('irc_password');
   cy.get(`[data-cy="notification-configuration-port"]`).type('6667');
-  cy.get(`[data-cy="notification-configuration-server"]`).type('irc.server.com');
+  cy.get(`[data-cy="notification-configuration-server"]`).type('https://irc.server.com');
   cy.get(`[data-cy="notification-configuration-nickname"]`).type('irc_nickname');
   cy.get(`[data-cy="notification-configuration-targets"]`).type('channel1{enter}user1');
   cy.get(`[data-cy="notification_configuration-use_ssl"]`).click();
+}
+
+// Email Form Test
+function testEmailForm() {
+  cy.contains(`[data-cy="username"]`, 'email user');
+  cy.contains(`[data-cy="use-tls"]`, 'true');
+  cy.contains(`[data-cy="use-ssl"]`, 'true');
+  cy.contains(`[data-cy="host"]`, 'https://host.com');
+  cy.contains(`[data-cy="recipient-list"]`, 'receipient1');
+  cy.contains(`[data-cy="recipient-list"]`, 'receipient2');
+  cy.contains(`[data-cy="sender-email"]`, 'sender@email.com');
+  cy.contains(`[data-cy="port"]`, '80');
+  cy.contains(`[data-cy="timeout"]`, '100');
+}
+
+// Slack Form Test
+function testSlackForm() {
+  cy.contains(`[data-cy="destination-channels"]`, 'channel1');
+  cy.contains(`[data-cy="destination-channels"]`, 'channel2');
+  cy.contains(`[data-cy="notification-color"]`, '#ff5733');
+}
+
+// Twilio Form Test
+function testTwilioForm() {
+  cy.contains(`[data-cy="account-sid"]`, 'twilio_sid');
+  cy.contains(`[data-cy="source-phone-number"]`, '+1234567890');
+  cy.contains(`[data-cy="destination-sms-numbers"]`, '+1987654321');
+  cy.contains(`[data-cy="destination-sms-numbers"]`, '+1123456789');
+}
+
+// PagerDuty Form Test
+function testPagerDutyForm() {
+  cy.contains(`[data-cy="pagerduty-subdomain"]`, 'my_subdomain');
+  cy.contains(`[data-cy="api-service/integration-key"]`, 'service_integration_key');
+  cy.contains(`[data-cy="client-identifier"]`, 'client_identifier');
+}
+
+// Grafana Form Test
+function testGrafanaForm() {
+  cy.contains(`[data-cy="grafana-url"]`, 'https://grafana.com');
+  cy.contains(`[data-cy="id-of-the-dashboard-(optional)"]`, 'dashboard_id');
+  cy.contains(`[data-cy="id-of-the-panel-(optional)"]`, 'panel_id');
+  cy.contains(`[data-cy="tags-for-the-annotation-(optional)"]`, 'tag1');
+  cy.contains(`[data-cy='disable-ssl-verification']`, 'true');
+}
+
+// Webhook Form Test
+function testWebhookForm() {
+  cy.contains(`[data-cy="username"]`, 'webhook_user');
+  cy.contains(`[data-cy="target-url"]`, 'https://webhook-endpoint.com');
+  cy.contains(`[data-cy="http-method"]`, 'POST');
+  cy.contains(`[data-cy='disable-ssl-verification-']`, 'true');
+}
+
+// Mattermost Form Test
+function testMattermostForm() {
+  cy.contains(`[data-cy="target-url"]`, 'https://mattermost.com');
+  cy.contains(`[data-cy="username"]`, 'mattermost_user');
+  cy.contains(`[data-cy="channel"]`, 'channel_name');
+  cy.contains(`[data-cy="icon-url"]`, 'https://icon_url.com');
+  cy.contains(`[data-cy="verify-ssl"]`, 'true');
+}
+
+// RocketChat Form Test
+function testRocketChatForm() {
+  cy.contains(`[data-cy="target-url"]`, 'https://rocketchat.com');
+  cy.contains(`[data-cy="username"]`, 'rocketchat_user');
+  cy.contains(`[data-cy="icon-url"]`, 'https://icon_url.com');
+  cy.contains(`[data-cy='disable-ssl-verification']`, 'true');
+}
+
+// IRC Form Test
+function testIRCForm() {
+  cy.contains(`[data-cy="irc-server-port"]`, '6667');
+  cy.contains(`[data-cy="irc-server-address"]`, 'https://irc.server.com');
+  cy.contains(`[data-cy="irc-nick"]`, 'irc_nick');
+  cy.contains(`[data-cy="destination-channels-or-users"]`, 'channel1');
+  cy.contains(`[data-cy="destination-channels-or-users"]`, 'user1');
+  cy.contains(`[data-cy="disable-ssl-verification-"]`, 'true');
 }

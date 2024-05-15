@@ -78,7 +78,11 @@ export function NotificationPage() {
           page: AwxRoute.NotificationTemplates,
           persistentFilterKey: 'credential-types',
         }}
-        tabs={[{ label: t('Details'), page: AwxRoute.NotificationTemplateDetails }]}
+        tabs={[
+          { label: t('Details'), page: AwxRoute.NotificationTemplateDetails },
+          { label: t('Team Access'), page: AwxRoute.NotificationTemplateTeamAccess },
+          { label: t('User Access'), page: AwxRoute.NotificationTemplateUserAccess },
+        ]}
         params={params}
         componentParams={{
           notificationTemplate,
