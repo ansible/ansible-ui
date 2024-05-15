@@ -134,13 +134,18 @@ function testNotification(type: string) {
     testBasicData(notificationName, type, orgName);
     testNotificationType(type);
 
-    // test edit
-    cy.get(`[data-cy="edit-notifier"]`).click();
-    editBasicData();
-    editNotificationType(type);
-    cy.get(`[data-cy="Submit"]`).click();
-    testBasicDataEdited();
-    testNotificationTypeEdited(type);
+    const orgName2 = randomE2Ename();
+    const notificationName2 = randomE2Ename();
+    cy.createAwxOrganization(orgName2).then(() => {
+      // test edit
+      cy.get(`[data-cy="edit-notifier"]`).click();
+      selectOrganization(orgName2);
+      editBasicData(notificationName2);
+      editNotificationType(type);
+      cy.get(`[data-cy="Submit"]`).click();
+      testBasicDataEdited(notificationName2, orgName2);
+      testNotificationTypeEdited(type);
+    });
   });
 }
 
@@ -163,12 +168,15 @@ function fillBasicData(notificationName: string, type: string) {
   cy.contains('span', type).click();
 }
 
-function editBasicData() {
+function editBasicData(notificationName: string) {
+  cy.get(`[data-cy="name"]`).clear().type(notificationName);
   cy.get(`[data-cy="description"]`).clear().type('this is test description edited');
 }
 
-function testBasicDataEdited() {
+function testBasicDataEdited(notificationName: string, organization: string) {
   cy.contains(`[data-cy="description"]`, 'this is test description edited');
+  cy.contains(`[data-cy="name"]`, notificationName);
+  cy.contains(`[data-cy="organization"]`, organization);
 }
 
 function testBasicData(notificationName: string, type: string, organization: string) {
