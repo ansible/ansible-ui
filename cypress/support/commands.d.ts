@@ -571,6 +571,16 @@ declare global {
 
       getModal(): Chainable<JQuery<HTMLElement>>;
 
+      /**
+       * This command is used to get the wizard component and do associated actions.
+       */
+      getWizard(): Chainable<JQuery<HTMLElement>>;
+
+      /**
+       * This command is used to verify the details on the review step of a wizard component.
+       */
+      verifyWizardDetails(section: string, badgeText: string[], badge: string): Chainable<void>;
+
       /** Clicks a button in the active modal dialog. */
       clickModalButton(label: string | RegExp): Chainable<void>;
 

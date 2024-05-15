@@ -164,6 +164,31 @@ Cypress.Commands.add('getModal', () => {
   cy.get('[data-ouia-component-type="PF5/ModalContent"]');
 });
 
+Cypress.Commands.add('getWizard', () => {
+  cy.get('[data-cy="wizard"]');
+});
+
+Cypress.Commands.add(
+  'verifyWizardDetails',
+  (section: string, badgeText: string[], badge: string) => {
+    cy.get(`[data-cy="expandable-section-${section}"]`).within(() => {
+      cy.get('tbody td')
+        .should('be.visible')
+        .and(($td) => {
+          expect($td).to.have.length(badgeText.length);
+        })
+        .each((el) => {
+          cy.wrap(el)
+            .invoke('text')
+            .then((text) => {
+              expect(badgeText).to.include(text.trim());
+            });
+        });
+      cy.get('.pf-v5-c-badge').should('have.text', badge);
+    });
+  }
+);
+
 Cypress.Commands.add('poll', function requestPoll<
   ResponseT,
 >(fn: () => Cypress.Chainable<ResponseT | undefined>, check: (response: ResponseT) => boolean) {
