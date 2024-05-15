@@ -250,8 +250,10 @@ describe('Job Templates Tests', function () {
     let inventory: Inventory;
     let machineCredential: Credential;
     let jobTemplate: JobTemplate;
+    let globalOrg: Organization;
 
     beforeEach(function () {
+      globalOrg = this.globalOrganization as Organization;
       cy.createAwxInventory({ organization: (this.globalOrganization as Organization).id }).then(
         (inv) => {
           inventory = inv;
@@ -309,21 +311,205 @@ describe('Job Templates Tests', function () {
       cy.verifyPageTitle('Templates');
     });
 
-    it.skip('can assign a new inventory to a job template if the originally assigned inventory was deleted', function () {
-      //Write this test once https://issues.redhat.com/browse/AAP-23752 is fixed
+    it('can assign a new inventory to a job template if the originally assigned inventory was deleted', function () {
       //Access the job template created in the beforeEach block
       //This test should create a new inventory to assign to the JT once the original inventory is deleted
       //Assert the original inventory on the job template
       //Assert the deletion of the original inventory
       //Assert the new inventory being successfully assigned
+      cy.createAwxInventory({ organization: (this.globalOrganization as Organization).id }).then(
+        (inv) => {
+          const newInventory = inv;
+
+          cy.visit(`templates/job_template/${jobTemplate.id}/details`);
+          cy.contains(jobTemplate.name);
+          cy.getByDataCy('inventory').contains(jobTemplate.summary_fields.inventory.name).click();
+
+          cy.clickKebabAction('actions-dropdown', 'delete-inventory');
+          cy.clickModalConfirmCheckbox();
+          cy.intercept('DELETE', awxAPI`/inventories/${inventory.id.toString()}/`).as(
+            'deleteInventory'
+          );
+          cy.clickModalButton('Delete inventory');
+          cy.wait('@deleteInventory');
+
+          cy.visit(`templates/job_template/${jobTemplate.id}/details`);
+          cy.contains(jobTemplate.name);
+          cy.getByDataCy('inventory').contains('Deleted');
+          cy.clickLink('Edit template');
+
+          cy.selectDropdownOptionByResourceName('inventory', newInventory.name);
+          cy.intercept('PATCH', awxAPI`/job_templates/${jobTemplate.id.toString()}/`).as('saveJT');
+          cy.clickButton('Save job template');
+          cy.wait('@saveJT');
+
+          cy.contains(newInventory.name);
+        }
+      );
     });
 
-    it.skip('can edit a job template to enable provisioning callback and and enable webhook, then edit again to disable those options', function () {
-      //This test cannot be written until https://issues.redhat.com/browse/AAP-23770 is fixed
+    it('can edit a job template to enable provisioning callback and and enable webhook, then edit again to disable those options', function () {
       //Use a job template created in the beforeEach hook
       //Assert initial details, then edit the JT to enable provisioning callback and enable webhook
       //Assert that those two options are enabled on details page
       //Edit the JT to disable those, assert the change on the details page
+      const jtURL = document.location.origin + awxAPI`/job_templates/${jobTemplate.id.toString()}`;
+
+      cy.visit(`templates/job_template/${jobTemplate.id}/details`);
+      cy.get('[data-cy="enabled-options"]').should('not.exist');
+      cy.clickLink('Edit template');
+
+      cy.getByDataCy('isWebhookEnabled').should('not.be.checked');
+      cy.getByDataCy('isProvisioningCallbackEnabled').should('not.be.checked');
+
+      // Enable webhook
+      cy.getByDataCy('isWebhookEnabled').click();
+      cy.getByDataCy('isWebhookEnabled').should('be.checked');
+
+      cy.get('[data-cy="related-webhook-receiver"]').should('have.value', '');
+
+      cy.selectDropdownOptionByResourceName('webhook-service', 'GitLab');
+      cy.getByDataCy('related-webhook-receiver').should('have.attr', 'readonly');
+
+      cy.getByDataCy('related-webhook-receiver').should('have.value', `${jtURL}/gitlab/`);
+
+      cy.selectDropdownOptionByResourceName('webhook-service', 'GitHub');
+
+      cy.getByDataCy('related-webhook-receiver').should('have.value', `${jtURL}/github/`);
+
+      cy.getByDataCy('related-webhook-receiver').should('have.attr', 'readonly');
+      cy.getByDataCy('webhook-key').should(
+        'have.value',
+        'A NEW WEBHOOK KEY WILL BE GENERATED ON SAVE.'
+      );
+
+      cy.intercept('PATCH', `api/v2/job_templates/${jobTemplate.id}/`).as('editJT');
+      cy.clickButton('Save job template');
+      cy.wait('@editJT');
+
+      cy.getByDataCy('enabled-options').contains('Webhooks');
+
+      cy.clickLink('Edit template');
+      cy.getByDataCy('isWebhookEnabled').should('be.checked');
+
+      cy.getByDataCy('webhook-service-form-group').contains('GitHub');
+      cy.getByDataCy('related-webhook-receiver').should('have.value', `${jtURL}/github/`);
+      cy.getByDataCy('webhook-key').should(
+        'not.have.value',
+        'A NEW WEBHOOK KEY WILL BE GENERATED ON SAVE.'
+      );
+
+      cy.getByDataCy('isWebhookEnabled').click();
+      cy.getByDataCy('isWebhookEnabled').should('not.be.checked');
+      cy.contains('Webhook details').should('not.exist');
+
+      cy.getByDataCy('isWebhookEnabled').click();
+      cy.getByDataCy('isWebhookEnabled').should('be.checked');
+      cy.getByDataCy('webhook-service-form-group').contains('GitHub');
+      cy.getByDataCy('related-webhook-receiver').should('have.value', `${jtURL}/github/`);
+
+      // Enable provisioning callback
+      cy.getByDataCy('isProvisioningCallbackEnabled').click();
+      cy.contains('Provisioning callback details');
+      cy.getByDataCy('host-config-key').type('foobar');
+      cy.clickButton('Save job template');
+      cy.getByDataCy('enabled-options').contains('Provisioning Callbacks');
+
+      cy.clickLink('Edit template');
+      cy.getByDataCy('isProvisioningCallbackEnabled').should('be.checked');
+      cy.get('[data-cy="host-config-key"]').should('have.value', 'foobar');
+
+      cy.get('[data-cy="related-callback"]').should('have.attr', 'disabled');
+      cy.get('[data-cy="related-callback"]').should('have.value', `${jtURL}/callback/`);
+
+      cy.getByDataCy('isProvisioningCallbackEnabled').click();
+      cy.getByDataCy('isProvisioningCallbackEnabled').should('not.be.checked');
+      cy.clickButton('Save job template');
+
+      cy.getByDataCy('enabled-options').contains('Provisioning Callbacks').should('not.exist');
+    });
+
+    it.skip('can edit a job template to enable webhook, regenerate webhook key and set webhook credentials', function () {
+      cy.createAWXCredential({
+        kind: 'github_token',
+        organization: globalOrg.id,
+        credential_type: 11,
+      }).then((ghCred) => {
+        let webhookKey: string;
+        cy.intercept('GET', awxAPI`/credential_types/*`).as('getCredTypes');
+
+        cy.visit(`templates/job_template/${jobTemplate.id}/edit`);
+
+        cy.getByDataCy('isWebhookEnabled').click();
+        cy.selectDropdownOptionByResourceName('webhook-service', 'GitHub');
+        cy.wait('@getCredTypes');
+
+        // modal is closed instanly, possible cause: https://issues.redhat.com/browse/AAP-23766
+        cy.get('[data-ouia-component-id="lookup-webhook_credential.name-button"]').click();
+        cy.get('[data-ouia-component-id="lookup-webhook_credential.name-button"]').click();
+
+        cy.intercept('GET', awxAPI`/credentials/?credential_type*`).as('getCredType');
+        cy.getModal().within(() => {
+          cy.wait('@getCredType');
+
+          cy.selectTableRowByCheckbox('name', ghCred.name);
+          cy.clickButton('Confirm');
+        });
+        cy.contains('Webhook details')
+          .parent()
+          .parent()
+          .within(() => {
+            cy.getByDataCy('credential-select').should('have.value', ghCred.name);
+          });
+
+        cy.clickButton('Save job template');
+
+        cy.contains('Webhook credential');
+        cy.getByDataCy('webhook-credential').contains(ghCred.name);
+
+        cy.intercept('GET', awxAPI`/job_templates/${jobTemplate.id.toString()}/webhook_key/`).as(
+          'getWebhookKey'
+        );
+        cy.clickLink('Edit template');
+
+        cy.wait('@getWebhookKey')
+          .its('response.body.webhook_key')
+          .then((webhook_key: string) => {
+            webhookKey = webhook_key;
+
+            cy.contains('Webhook details')
+              .parent()
+              .parent()
+              .within(() => {
+                cy.getByDataCy('credential-select').should('have.value', ghCred.name);
+              });
+
+            cy.getByDataCy('webhook-service-form-group').contains('GitHub');
+            cy.getByDataCy('webhook-key').should('have.value', webhookKey);
+
+            cy.intercept(
+              'POST',
+              awxAPI`/job_templates/${jobTemplate.id.toString()}/webhook_key/`
+            ).as('generateWebhookKey');
+            cy.getByDataCy('webhook-key-form-group').within(() => {
+              cy.get('button').click();
+            });
+            cy.wait('@generateWebhookKey')
+              .its('response.body.webhook_key')
+              .then((webhook_key: string) => {
+                webhookKey = webhook_key;
+
+                cy.intercept('PATCH', awxAPI`/job_templates/${jobTemplate.id.toString()}/`).as(
+                  'saveJT'
+                );
+                cy.clickButton('Save job template');
+                cy.wait('@saveJT');
+                cy.getByDataCy('webhook-service').contains('GitHub');
+                cy.clickLink('Edit template');
+                cy.getByDataCy('webhook-key').should('have.value', webhookKey);
+              });
+          });
+      });
     });
 
     it('can edit a job template using the edit template button on details page', function () {
