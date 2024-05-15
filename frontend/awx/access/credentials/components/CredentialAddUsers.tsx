@@ -9,17 +9,18 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../../framework';
-import { AwxSelectUsersStep } from '../../../access/common/AwxRolesWizardSteps/AwxSelectUsersStep';
-import { AwxSelectRolesStep } from '../../../access/common/AwxRolesWizardSteps/AwxSelectRolesStep';
-import { AwxRoute } from '../../../main/AwxRoutes';
-import { Credential } from '../../../interfaces/Credential';
-import { useGet } from '../../../../common/crud/useGet';
-import { postRequest } from '../../../../common/crud/Data';
-import { AwxUser } from '../../../interfaces/User';
 import { RoleAssignmentsReviewStep } from '../../../../common/access/RolesWizard/steps/RoleAssignmentsReviewStep';
-import { AwxRbacRole } from '../../../interfaces/AwxRbacRole';
-import { useAwxBulkActionDialog } from '../../../common/useAwxBulkActionDialog';
+import { postRequest } from '../../../../common/crud/Data';
+import { useGet } from '../../../../common/crud/useGet';
+import { AwxSelectRolesStep } from '../../../access/common/AwxRolesWizardSteps/AwxSelectRolesStep';
+import { AwxSelectUsersStep } from '../../../access/common/AwxRolesWizardSteps/AwxSelectUsersStep';
+import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
 import { awxAPI } from '../../../common/api/awx-utils';
+import { useAwxBulkActionDialog } from '../../../common/useAwxBulkActionDialog';
+import { AwxRbacRole } from '../../../interfaces/AwxRbacRole';
+import { Credential } from '../../../interfaces/Credential';
+import { AwxUser } from '../../../interfaces/User';
+import { AwxRoute } from '../../../main/AwxRoutes';
 
 interface WizardFormValues {
   users: AwxUser[];
@@ -145,6 +146,7 @@ export function CredentialAddUsers() {
         ]}
       />
       <PageWizard<WizardFormValues>
+        errorAdapter={awxErrorAdapter}
         steps={steps}
         onSubmit={onSubmit}
         disableGrid
