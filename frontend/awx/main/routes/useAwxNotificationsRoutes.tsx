@@ -9,6 +9,10 @@ import { AddNotifier, EditNotifier } from '../../administration/notifiers/Notifi
 
 import { NotificationDetails } from '../../administration/notifiers/NotificationPage/NotificationDetails';
 import { NotificationPage } from '../../administration/notifiers/NotificationPage/NotificationPage';
+import { NotificationTeamAccess } from '../../administration/notifiers/NotificationPage/NotificationTeamAccess';
+import { NotificationUserAccess } from '../../administration/notifiers/NotificationPage/NotificationUserAccess';
+import { NotifierAddUsers } from '../../administration/notifiers/components/NotifierAddUsers';
+import { NotifierAddTeams } from '../../administration/notifiers/components/NotifierAddTeams';
 
 export function useAwxNotificationsRoutes() {
   const { t } = useTranslation();
@@ -29,6 +33,16 @@ export function useAwxNotificationsRoutes() {
               element: <NotificationDetails />,
             },
             {
+              id: AwxRoute.NotificationTemplateTeamAccess,
+              path: 'team-access',
+              element: <NotificationTeamAccess />,
+            },
+            {
+              id: AwxRoute.NotificationTemplateUserAccess,
+              path: 'user-access',
+              element: <NotificationUserAccess />,
+            },
+            {
               path: '',
               element: <Navigate to="details" />,
             },
@@ -38,6 +52,16 @@ export function useAwxNotificationsRoutes() {
           id: AwxRoute.EditNotificationTemplate,
           path: ':id/edit',
           element: <EditNotifier />,
+        },
+        {
+          id: AwxRoute.NotificationAddUsers,
+          path: ':id/user-access/add',
+          element: <NotifierAddUsers />,
+        },
+        {
+          id: AwxRoute.NotificationAddTeams,
+          path: ':id/team-access/add',
+          element: <NotifierAddTeams />,
         },
         {
           id: AwxRoute.AddNotificationTemplate,
