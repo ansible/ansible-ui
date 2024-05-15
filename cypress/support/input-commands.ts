@@ -1,4 +1,4 @@
-Cypress.Commands.add('singleSelectBy', (selector: string, value: string) => {
+Cypress.Commands.add('singleSelectBy', (selector: string, value: string, exactMatch = false) => {
   cy.getBy(selector).click();
   // PF Selects open the menu at the body level
   // We need to use document() to get the body of the page
@@ -8,15 +8,20 @@ Cypress.Commands.add('singleSelectBy', (selector: string, value: string) => {
     .its('body')
     .find('.pf-v5-c-menu__content')
     .within(() => {
-      // cy.selectLoadAll();
       cy.getByDataCy('search-input').type(value);
-      cy.contains('.pf-v5-c-menu__item-text', value).parent().click();
+      const regExp = new RegExp('^' + value + '$');
+      cy.contains('.pf-v5-c-menu__item-text', exactMatch ? regExp : value)
+        .parent()
+        .click();
     });
 });
 
-Cypress.Commands.add('singleSelectByDataCy', (dataCy: string, value: string) => {
-  cy.singleSelectBy(`[data-cy="${dataCy}"]`, value);
-});
+Cypress.Commands.add(
+  'singleSelectByDataCy',
+  (dataCy: string, value: string, exactMatch = false) => {
+    cy.singleSelectBy(`[data-cy="${dataCy}"]`, value, exactMatch);
+  }
+);
 
 Cypress.Commands.add('multiSelectBy', (selector: string, values: string[]) => {
   cy.getBy(selector).click();
