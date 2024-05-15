@@ -198,6 +198,10 @@ export enum AwxRoute {
   NotificationTemplates = 'awx-notification-templates',
   NotificationTemplatePage = 'awx-notification-template-page',
   NotificationTemplateDetails = 'awx-notification-template-details',
+  NotificationTemplateTeamAccess = 'awx-notification-template-team-access',
+  NotificationTemplateUserAccess = 'awx-notification-template-user-access',
+  NotificationAddUsers = 'awx-notification-add-users',
+  NotificationAddTeams = 'awx-notification-add-teams',
   EditNotificationTemplate = 'awx-edit-notification-template',
   AddNotificationTemplate = 'awx-add-notification-template',
 
