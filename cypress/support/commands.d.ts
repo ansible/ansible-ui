@@ -169,7 +169,7 @@ declare global {
        * @param selector - The selector of the single select input
        * @param value - The value to select
        */
-      singleSelectBy(selector: string, value: string): Chainable<void>;
+      singleSelectBy(selector: string, value: string, exactMatch?: boolean): Chainable<void>;
 
       /**
        * Select a value from a single select input by data-cy attribute, making sure it is not disabled or hidden.
@@ -188,7 +188,7 @@ declare global {
        * @param dataCy - The data-cy attribute of the single select input
        * @param value - The value to select
        */
-      singleSelectByDataCy(dataCy: string, value: string): Chainable<void>;
+      singleSelectByDataCy(dataCy: string, value: string, exactMatch?: boolean): Chainable<void>;
 
       /**
        * Select a value from a multi select input by selector, making sure it is not disabled or hidden.
