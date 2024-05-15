@@ -749,7 +749,8 @@ declare global {
         jobTemplate: SetRequired<
           Partial<Omit<JobTemplate, 'id'>>,
           'organization' | 'project' | 'inventory'
-        >
+        >,
+        instanceGroup?: InstanceGroup
       ): Chainable<JobTemplate>;
 
       createTemplateSurvey(
@@ -786,6 +787,8 @@ declare global {
       getAwxWorkflowJobTemplateByName(
         awxWorkflowJobTemplateName: string
       ): Chainable<WorkflowJobTemplate>;
+
+      getAwxInstanceGroupByName(instanceGroupName: string): Chainable<InstanceGroup>;
 
       renderWorkflowVisualizerNodesFromFixtureFile(
         workflowJobTemplateName: string,
@@ -875,9 +878,7 @@ declare global {
       getAwxJobTemplateByName(awxJobTemplateName: string): Chainable<JobTemplate>;
       createAwxTeam(organization: Organization): Chainable<Team>;
       createAwxUser(organization: Organization): Chainable<AwxUser>;
-      createAwxInstanceGroup(
-        instanceGroup?: Partial<Omit<InstanceGroup, 'id'>>
-      ): Chainable<InstanceGroup>;
+      createAwxInstanceGroup(instanceGroup?: Partial<InstanceGroup>): Chainable<InstanceGroup>;
       createAwxInstance(hostname: string, listener_port?: number): Chainable<Instance>;
       createAwxLabel(label: Partial<Omit<Label, 'id'>>): Chainable<Label>;
       createGlobalOrganization(): Chainable<void>;
