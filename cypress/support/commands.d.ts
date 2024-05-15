@@ -581,8 +581,8 @@ declare global {
        */
       verifyReviewStepWizardDetails(
         section: string,
-        badgeText: string[],
-        badge: string
+        itemsList: string[],
+        itemCount: string
       ): Chainable<void>;
 
       /** Clicks a button in the active modal dialog. */

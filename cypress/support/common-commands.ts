@@ -170,12 +170,12 @@ Cypress.Commands.add('getWizard', () => {
 
 Cypress.Commands.add(
   'verifyReviewStepWizardDetails',
-  (section: string, badgeText: string[], badge: string) => {
+  (section: string, itemsList: string[], badge: string) => {
     cy.get(`[data-cy="expandable-section-${section}"]`).within(() => {
       cy.get('tbody td')
         .should('be.visible')
         .and(($td) => {
-          expect($td).to.have.length(badgeText.length);
+          expect($td).to.have.length(itemsList.length);
         })
         .each((el) => {
           cy.wrap(el)
