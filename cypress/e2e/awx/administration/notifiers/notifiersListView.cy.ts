@@ -137,6 +137,7 @@ function testNotification(type: string) {
     // test edit
     cy.get(`[data-cy="edit-notifier"]`).click();
     editBasicData();
+    editNotificationType(type);
     cy.get(`[data-cy="Submit"]`).click();
     testBasicDataEdited();
   });
@@ -166,7 +167,6 @@ function editBasicData() {
 }
 
 function testBasicDataEdited() {
-
   cy.contains(`[data-cy="description"]`, 'this is test description edited');
 }
 
@@ -197,6 +197,28 @@ function fillNotificationType(type: string) {
     fillRocketChatForm();
   } else if (type === 'IRC') {
     fillIrcForm();
+  }
+}
+
+function editNotificationType(type: string) {
+  if (type === 'Email') {
+    editEmailForm();
+  } else if (type === 'Slack') {
+    editSlackForm();
+  } else if (type === 'Twilio') {
+    editTwilioForm();
+  } else if (type === 'Pagerduty') {
+    editPagerdutyForm();
+  } else if (type === 'Grafana') {
+    editGrafanaForm();
+  } else if (type === 'Webhook') {
+    editWebhookForm();
+  } else if (type === 'Mattermost') {
+    editMattermostForm();
+  } else if (type === 'Rocket.Chat') {
+    editRocketChatForm();
+  } else if (type === 'IRC') {
+    editIrcForm();
   }
 }
 
@@ -338,6 +360,107 @@ function fillIrcForm() {
   cy.get(`[data-cy="notification-configuration-nickname"]`).type('irc_nickname');
   cy.get(`[data-cy="notification-configuration-targets"]`).type('channel1{enter}user1');
   cy.get(`[data-cy="notification_configuration-use_ssl"]`).click();
+}
+
+function editEmailForm() {
+  cy.get(`[data-cy="notification-configuration-username"]`).clear().type('email user edited');
+  cy.get(`[data-cy="notification-configuration-host"]`).clear().type('https://host_edited.com');
+  cy.get(`[data-cy="notification-configuration-recipients"]`)
+    .clear()
+    .type('receipient1{enter}receipient2{enter}receipient3');
+  cy.get(`[data-cy="notification-configuration-sender"]`).clear().type('sender@email_edited.com');
+  cy.get(`[data-cy="notification-configuration-port"]`).clear().type('100');
+  cy.get(`[data-cy="notification-configuration-timeout"]`).clear().type('120');
+  cy.get(`[data-cy="notification_configuration-use_tls"]`).click();
+  cy.get(`[data-cy="notification_configuration-use_ssl"]`).click();
+}
+
+function editSlackForm() {
+  cy.get(`[data-cy="notification-configuration-token"]`).clear().type('new_slack_token');
+  cy.get(`[data-cy="notification-configuration-channels"]`)
+    .clear()
+    .type('new_channel1{enter}new_channel2');
+  cy.get(`[data-cy="notification-configuration-hex-color"]`).clear().type('#123abc');
+}
+
+function editTwilioForm() {
+  cy.get(`[data-cy="notification-configuration-account-sid"]`).clear().type('new_twilio_sid');
+  cy.get(`[data-cy="notification-configuration-account-token-form-group"]`)
+    .clear()
+    .type('new_twilio_token');
+  cy.get(`[data-cy="notification-configuration-from-number-form-group"]`)
+    .clear()
+    .type('+10987654321');
+}
+
+function editPagerdutyForm() {
+  cy.get(`[data-cy="notification-configuration-subdomain"]`).clear().type('new_subdomain');
+  cy.get(`[data-cy="notification-configuration-token"]`).clear().type('new_pagerduty_token');
+  cy.get(`[data-cy="notification-configuration-service-key"]`)
+    .clear()
+    .type('new_service_integration_key');
+  cy.get(`[data-cy="notification-configuration-client-name"]`)
+    .clear()
+    .type('new_client_identifier');
+}
+
+function editGrafanaForm() {
+  cy.get(`[data-cy="notification-configuration-grafana-url-form-group"]`)
+    .clear()
+    .type('https://new.grafana.com');
+  cy.get(`[data-cy="notification-configuration-dashboardid"]`).clear().type('new_dashboard_id');
+  cy.get(`[data-cy="notification-configuration-panelid"]`).clear().type('new_panel_id');
+  cy.get(`[data-cy="notification-configuration-annotation-tags-form-group"]`)
+    .clear()
+    .type('new_tag1');
+  cy.get(`[data-cy="notification-configuration-grafana-key"]`).clear().type('new_key');
+}
+
+function editWebhookForm() {
+  cy.get(`[data-cy="notification-configuration-username"]`).clear().type('new_webhook_user');
+  cy.get(`[data-cy="notification-configuration-url"]`)
+    .clear()
+    .type('https://new_webhook_endpoint.com');
+  cy.get(`[data-cy="notification-configuration-http-method"]`).click();
+  cy.contains('PUT').click();
+}
+
+function editMattermostForm() {
+  cy.get(`[data-cy="notification-configuration-mattermost-url"]`)
+    .clear()
+    .type('https://new_mattermost.com');
+  cy.get(`[data-cy="notification-configuration-mattermost-username"]`)
+    .clear()
+    .type('new_mattermost_user');
+  cy.get(`[data-cy="notification-configuration-mattermost-channel-form-group"]`)
+    .clear()
+    .type('new_channel_name');
+  cy.get(`[data-cy="notification-configuration-mattermost-icon-url"]`)
+    .clear()
+    .type('https://new_icon_url.com');
+}
+
+function editRocketChatForm() {
+  cy.get(`[data-cy="notification-configuration-rocketchat-url"]`)
+    .clear()
+    .type('https://new_rocketchat.com');
+  cy.get(`[data-cy="notification-configuration-rocketchat-username-form-group"]`)
+    .clear()
+    .type('new_rocketchat_user');
+  cy.get(`[data-cy="notification-configuration-rocketchat-icon-url-form-group"]`)
+    .clear()
+    .type('https://new_icon_url.com');
+}
+
+function editIrcForm() {
+  cy.get(`[data-cy="notification-configuration-port"]`).clear().type('6670');
+  cy.get(`[data-cy="notification-configuration-server"]`)
+    .clear()
+    .type('https://new_irc.server.com');
+  cy.get(`[data-cy="notification-configuration-nickname"]`).clear().type('new_irc_nickname');
+  cy.get(`[data-cy="notification-configuration-targets"]`)
+    .clear()
+    .type('new_channel1{enter}new_user1');
 }
 
 // Email Form Test
