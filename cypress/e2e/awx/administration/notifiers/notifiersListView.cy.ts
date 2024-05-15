@@ -135,16 +135,32 @@ function testNotification(type: string) {
     testNotificationType(type);
 
     const orgName2 = randomE2Ename();
-    const notificationName2 = randomE2Ename();
+    const newNotificationName = randomE2Ename();
     cy.createAwxOrganization(orgName2).then(() => {
       // test edit
       cy.get(`[data-cy="edit-notifier"]`).click();
       selectOrganization(orgName2);
-      editBasicData(notificationName2);
+      editBasicData(newNotificationName);
       editNotificationType(type);
       cy.get(`[data-cy="Submit"]`).click();
-      testBasicDataEdited(notificationName2, orgName2);
+      testBasicDataEdited(newNotificationName, orgName2);
       testNotificationTypeEdited(type);
+
+      // validate its here and delete it
+      cy.contains('span', 'Back to Notifiers').click();
+      cy.filterTableByMultiSelect('name', [newNotificationName]);
+      cy.contains(newNotificationName);
+      cy.get(`[aria-label="Simple table"] [data-cy="actions-dropdown"]`).click();
+      cy.get(`[data-cy="delete-notifier"]`).click();
+      cy.get(`[role="dialog"] input`).click();
+      cy.contains(`[role="dialog"] button`, `Delete notifiers`).click();
+      cy.contains(`[role="dialog"] button`, `Close`).click();
+
+      cy.get(`[data-cy="filter"]`).click();
+      cy.get(`[data-cy="name"] button`).click();
+      cy.get(`[data-cy="filter-input"]`).click();
+      cy.get(`[aria-label="Search input"]`).type(newNotificationName);
+      cy.contains('No results found');
     });
   });
 }
