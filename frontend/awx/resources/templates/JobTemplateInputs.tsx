@@ -36,7 +36,7 @@ const acceptableCredentialKinds = [
 export function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm }) {
   const { jobtemplate } = props;
   const { t } = useTranslation();
-  const { setValue } = useFormContext<JobTemplateForm>();
+  const { setValue, getValues, reset } = useFormContext<JobTemplateForm>();
   const [playbookOptions, setPlaybookOptions] = useState<string[]>();
   const projectPath = useWatch({
     name: 'project',
@@ -55,6 +55,10 @@ export function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm }) {
   const organization = useWatch<JobTemplateForm>({ name: 'organization' });
   const organizationId: string | undefined =
     organization?.toString() ?? projectPath?.organization?.toString();
+
+  useEffect(() => {
+    reset(getValues());
+  }, [isProvisioningCallbackEnabled, reset, getValues]);
 
   useEffect(() => {
     async function handleFetchPlaybooks() {
