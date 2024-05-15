@@ -103,8 +103,6 @@ export function MultiLineEncryptedInput({
   placeholder,
 }: IProps) {
   const { t } = useTranslation();
-  const fieldLabel = label || children.props.label || '';
-  const fieldLabelHelp = labelHelp || children.props.labelHelp || '';
   if (shouldHideField) {
     return (
       <InputGroup>

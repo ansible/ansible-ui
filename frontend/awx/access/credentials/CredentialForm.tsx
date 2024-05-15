@@ -387,6 +387,8 @@ function HiddenInputField({
         shouldHideField={shouldHideField}
         label={field.label}
         placeholder={t('ENCRYPTED')}
+        field={field}
+        requiredFields={[]}
       >
         <CredentialMultilineInput
           accumulatedPluginValues={accumulatedPluginValues}
