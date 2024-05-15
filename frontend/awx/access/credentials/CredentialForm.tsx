@@ -36,7 +36,6 @@ import {
   useCredentialPluginsModal,
 } from './CredentialPlugins/hooks/useCredentialPluginsDialog';
 import { CredentialInputSource } from '../../interfaces/CredentialInputSource';
-import { postRequest } from '../../../common/crud/Data';
 import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 import { useSWRConfig } from 'swr';
 
@@ -186,6 +185,7 @@ export function EditCredential() {
   const getPageUrl = useGetPageUrl();
   const patch = usePatchRequest();
   const deleteRequest = useDeleteRequest();
+  const postRequest = usePostRequest<Credential | CredentialInputSource>();
   const [credentialPluginValues, setCredentialPluginValues] = useState<
     CredentialPluginsInputSource[]
   >([]);
