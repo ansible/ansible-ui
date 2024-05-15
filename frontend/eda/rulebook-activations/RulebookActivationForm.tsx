@@ -37,6 +37,7 @@ import { EdaProjectCell } from '../projects/components/EdaProjectCell';
 import { PageFormSelectOrganization } from '../access/organizations/components/PageFormOrganizationSelect';
 import useSWR from 'swr';
 import { EdaOrganization } from '../interfaces/EdaOrganization';
+import { Alert, Text } from '@patternfly/react-core';
 
 export function CreateRulebookActivation() {
   const { t } = useTranslation();
@@ -69,6 +70,10 @@ export function CreateRulebookActivation() {
     );
     pageNavigate(EdaRoute.RulebookActivationPage, { params: { id: newRulebookActivation.id } });
   };
+  const { data: tokens } = useGet<EdaResult<AwxToken>>(
+    edaAPI`/users/me/awx-tokens/?page=1&page_size=1`
+  );
+
   const onCancel = () => navigate(-1);
   const getPageUrl = useGetPageUrl();
 
@@ -81,6 +86,19 @@ export function CreateRulebookActivation() {
           { label: t('Create Rulebook Activation') },
         ]}
       />
+      {(!tokens?.results || tokens?.results.length < 1) && (
+        <Alert variant="danger" isInline title={t('No controller token found.')}>
+          <Text>
+            {t(
+              'Rulebook activations require a controller token to authenticate with an Automation Controller'
+            )}
+          </Text>
+          <br />
+          <Link to={getPageUrl(EdaRoute.CreateControllerToken)}>
+            {t('Create a controller token')}
+          </Link>
+        </Alert>
+      )}
       <EdaPageForm<IEdaRulebookActivationInputs>
         submitText={t('Create rulebook activation')}
         onSubmit={onSubmit}
