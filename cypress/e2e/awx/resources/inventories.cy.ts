@@ -11,6 +11,7 @@ import { awxAPI } from '../../../support/formatApiPathForAwx';
 describe('Inventories Tests', () => {
   let organization: Organization;
   let inventory: Inventory;
+  const arrayOfInventories = <Inventory[]>[];
   let instanceGroup: InstanceGroup;
   let label: Label;
   let user: AwxUser;
@@ -20,38 +21,39 @@ describe('Inventories Tests', () => {
     cy.awxLogin();
   });
 
-  beforeEach(() => {
-    cy.createAwxOrganization().then((org) => {
-      organization = org;
-      cy.createAwxLabel({ organization: organization.id }).then((lbl) => {
-        label = lbl;
-      });
-      cy.createAwxInventory({ organization: organization.id }).then((inv) => {
-        //the cy.createAwxInventory() custom command needs to be updated to accept the
-        //'kind' parameter, in order to work with the conditional in this spec file
-        inventory = inv;
-      });
-      cy.createAwxInstanceGroup().then((ig) => {
-        instanceGroup = ig;
-      });
-      cy.createAwxUser(organization).then((testUser) => {
-        user = testUser;
-        cy.giveUserInventoryAccess(inventory.name, user.id, 'Read');
-      });
-    });
-  });
-
-  afterEach(() => {
-    cy.deleteAwxLabel(label, { failOnStatusCode: false });
-    cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
-    cy.deleteAwxInstanceGroup(instanceGroup, { failOnStatusCode: false });
-    cy.deleteAwxUser(user, { failOnStatusCode: false });
-    cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
-  });
-
   kinds.forEach((kind) => {
     describe(`Inventories CRUD Tests (${kind === '' ? 'regular' : kind})`, () => {
       if (kind === '') {
+        beforeEach(() => {
+          const orgName = 'E2E Organization Inv tests' + randomString(4);
+          cy.createAwxOrganization(orgName).then((org) => {
+            organization = org;
+            cy.createAwxLabel({ organization: organization.id }).then((lbl) => {
+              label = lbl;
+            });
+            cy.createAwxInventory({ organization: organization.id }).then((inv) => {
+              //the cy.createAwxInventory() custom command needs to be updated to accept the
+              //'kind' parameter, in order to work with the conditional in this spec file
+              inventory = inv;
+            });
+            cy.createAwxInstanceGroup().then((ig) => {
+              instanceGroup = ig;
+            });
+            cy.createAwxUser(organization).then((testUser) => {
+              user = testUser;
+              cy.giveUserInventoryAccess(inventory.name, user.id, 'Read');
+            });
+          });
+        });
+
+        afterEach(() => {
+          cy.deleteAwxLabel(label, { failOnStatusCode: false });
+          cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
+          cy.deleteAwxInstanceGroup(instanceGroup, { failOnStatusCode: false });
+          cy.deleteAwxUser(user, { failOnStatusCode: false });
+          cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
+        });
+
         it('can create an inventory, assert info on details page, and delete inventory', () => {
           //Refactor this test to match the updated test case and improve the assertions
           const inventoryName = 'E2E Inventory ' + randomString(4);
@@ -207,7 +209,118 @@ describe('Inventories Tests', () => {
       }
 
       if (kind === 'constructed') {
-        it.skip('can create a constructed inventory using specific source_vars and limit and then delete that inventory', () => {
+        beforeEach(() => {
+          const orgName = 'E2E Organization ' + kind + ' inventory tests' + randomString(4);
+          cy.createAwxOrganization(orgName).then((org) => {
+            organization = org;
+            cy.createAwxLabel({ organization: organization.id }).then((lbl) => {
+              label = lbl;
+            });
+            cy.createAwxInstanceGroup().then((ig) => {
+              instanceGroup = ig;
+            });
+            // creates 3 inventories
+            for (let i = 0; i < 3; i++) {
+              cy.createAwxInventory({ organization: organization.id }).then((inv) => {
+                arrayOfInventories.push(inv);
+                // cy.giveUserInventoryAccess(inv.name, user.id, 'Read');
+              });
+            }
+          });
+        });
+
+        it('can create a constructed inventory using specific source_vars and limit and then delete that inventory', () => {
+          cy.log('Org', organization);
+          cy.log('Label', label);
+          cy.log('Instance group', instanceGroup);
+          cy.log('INV INV INV INV INV', arrayOfInventories);
+
+          const constInvName = 'E2E ' + kind + ' inventory' + randomString(4);
+
+          cy.navigateTo('awx', 'inventories');
+          cy.getByDataCy('create-inventory').click();
+          cy.get('.pf-v5-c-dropdown__menu').within(() => {
+            cy.get('[data-cy="create-constructed-inventory"]').click();
+          });
+          cy.getByDataCy('name').type(constInvName);
+          // cy.getByDataCy('description').type(`Description of "${constInvName}" typed by Cypress`);
+          // cy.singleSelectBy('[data-cy="organization"]', organization.name);
+          cy.getByDataCy('instance-group-select-form-group')
+            .find('[aria-label="Options menu"]')
+            .click();
+          // FIXME: include data-cy to the search button
+
+          // escrevi tudo isso a toa
+          // cy.getModal().within(() => {
+          //   cy.selectTableFilter('name');
+          //   cy.get('#filters').within(() => {
+          //     cy.get('#filter-input').click();
+          //   });
+          // });
+
+          // /* FIXME: the option menu should be inside the modal, and not detached
+          //  *  with this fix we can use
+          //  * `cy.filterTableByTextFilter('name', instanceGroup.name);`
+          //  */
+          // cy.get('#filter-input-select').within(() => {
+          //   cy.getByDataCy('search-input').within(() => {
+          //     cy.get('input').clear().type(instanceGroup.name, { delay: 0 });
+          //   });
+          //   cy.get('li').first().click();
+          // });
+          // /* end of FIXME */
+
+          cy.filterTableByMultiSelect('name', [instanceGroup.name]);
+          // cy.getModal().within(() => {
+          //   // cy.getTableRow('name', instanceGroup.name, { disableFilter: true }).click();
+          //   /* FIXME
+          //    * this is a workaround to close the search box
+          //    */
+          //   cy.getTableRow('name', instanceGroup.name).click();
+          //   // cy.click('bottomRight');
+          // });
+          // cy.selectTableRowByCheckbox('name', instanceGroup.name);
+          cy.getByDataCy('checkbox-column-cell').click();
+          // cy.clickTableRowLink('name', instanceGroup.name);
+          cy.clickModalButton('Confirm');
+
+          // cy.getByDataCy('inventories').click();
+          // cy.getByDataCy('verbosity')
+          //   .click()
+          //   .within(() => {
+          //     //search input
+          //     // search-input
+          //     // type
+          //     // click el
+          //     // 0-(normal)
+          //     // 1-(verbose)
+          //     // 2-(more-verbose)
+          //     // 3-(debug)
+          //     // 4-(connection-debug)
+          //     // 5-(winrm-debug)
+          //   });
+          // cy.getByDataCy('name').type('limit');
+          // // dataEditorSetFormat (json or yaml)
+          // cy.getBy('.view-lines .monaco-mouse-cursor-text').type('foo: bar');
+          // cy.getByDataCy('submit');
+
+          // // searchAndDisplayResource
+          // cy.get('[data-cy="text-input"]')
+          //   .find('input')
+          //   .type('resourceName')
+          //   .then(() => {
+          //     cy.get('[data-cy="apply-filter"]:not(:disabled):not(:hidden)').click();
+          //   });
+
+          // multiSelectBy
+
+          // dropdown button organization // id datacy
+          // button inventories
+          // input: update_cache_timeout
+          // button verbosity
+
+          // input limit
+          // variables (monaco editor) - copiar de outro teste
           //Assert that user is on the form view to create an inventory
           //Add an interception call for the newly created inventory, which will allow for the deletion at the end of the test
           //Add assertions for the information visible on the details screen of the new inventory
@@ -215,7 +328,7 @@ describe('Inventories Tests', () => {
           //filtering a list to show no results
         });
 
-        it.skip('can edit and run a sync on the edited constructed inventory', () => {
+        it('can edit and run a sync on the edited constructed inventory', () => {
           //Create a constructed inventory in the beforeEach hook
           //Assert the original details of the inventory
           //Assert the user navigating to the edit constructed inventory form
@@ -223,13 +336,13 @@ describe('Inventories Tests', () => {
           //Assert that the sync ran successfully
         });
 
-        it.skip('can edit the input_inventories, verify the preservation of the order they were added in, and manually change the order', () => {
+        it('can edit the input_inventories, verify the preservation of the order they were added in, and manually change the order', () => {
           //Create a constructed inventory in the beforeEach hook
           //Assert the original order of the input inventories
           //Assert the UI change to the order of input inventories
         });
 
-        it.skip('shows a failed sync on the constructed inventory if the user sets strict to true and enters bad variables', () => {
+        it('shows a failed sync on the constructed inventory if the user sets strict to true and enters bad variables', () => {
           //Create a constructed inventory in the beforeEach hook
           //Assert the original details of the inventory
           //Assert the user navigating to the edit constructed inventory form
@@ -241,7 +354,7 @@ describe('Inventories Tests', () => {
       }
 
       if (kind === 'smart') {
-        it.skip('can create a smart inventory, assert info on details page, and delete inventory', () => {
+        it('can create a smart inventory, assert info on details page, and delete inventory', () => {
           //Assert that user is on the form view to create an inventory
           //Add an interception call for the newly created inventory, which will allow for the deletion at the end of the test
           //Add assertions for the information visible on the details screen of the new inventory
@@ -249,7 +362,7 @@ describe('Inventories Tests', () => {
           //filtering a list to show no results
         });
 
-        it.skip('can edit the smart host filter on a smart inventory from the details view and assert info on details page', () => {
+        it('can edit the smart host filter on a smart inventory from the details view and assert info on details page', () => {
           //Create a smart inventory in the beforeEach hook
           //Assert the original details of the inventory
           //Assert the user navigating to the edit smart inventory form
