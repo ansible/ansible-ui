@@ -494,6 +494,8 @@ function CredentialSubForm({
             return (
               <CredentialMultilineInput
                 accumulatedPluginValues={accumulatedPluginValues}
+                setAccumulatedPluginValues={setAccumulatedPluginValues}
+                setPluginsToDelete={setPluginsToDelete}
                 kind={credentialType.kind}
                 key={field.id}
                 field={field}
