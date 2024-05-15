@@ -20,6 +20,7 @@ import { EdaRbacRole } from '../../../interfaces/EdaRbacRole';
 import { EdaCredentialType } from '../../../interfaces/EdaCredentialType';
 import { EdaUser } from '../../../interfaces/EdaUser';
 import { EdaRoute } from '../../../main/EdaRoutes';
+import { edaErrorAdapter } from '../../../common/edaErrorAdapter';
 
 interface WizardFormValues {
   users: EdaUser[];
@@ -147,6 +148,7 @@ export function EdaCredentialTypeAddUsers() {
         ]}
       />
       <PageWizard<WizardFormValues>
+        errorAdapter={edaErrorAdapter}
         steps={steps}
         onSubmit={onSubmit}
         disableGrid

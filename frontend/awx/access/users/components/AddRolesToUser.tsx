@@ -9,20 +9,21 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../../framework';
-import { useAwxBulkActionDialog } from '../../../common/useAwxBulkActionDialog';
-import { AwxUser } from '../../../interfaces/User';
+import { RoleAssignmentsReviewStep } from '../../../../common/access/RolesWizard/steps/RoleAssignmentsReviewStep';
+import { postRequest } from '../../../../common/crud/Data';
 import { useGet } from '../../../../common/crud/useGet';
+import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
 import { awxAPI } from '../../../common/api/awx-utils';
+import { useAwxBulkActionDialog } from '../../../common/useAwxBulkActionDialog';
+import { AwxRbacRole } from '../../../interfaces/AwxRbacRole';
+import { AwxUser } from '../../../interfaces/User';
+import { AwxRoute } from '../../../main/AwxRoutes';
 import { AwxSelectResourceTypeStep } from '../../common/AwxRolesWizardSteps/AwxSelectResourceTypeStep';
 import {
   AwxResourceType,
   AwxSelectResourcesStep,
 } from '../../common/AwxRolesWizardSteps/AwxSelectResourcesStep';
 import { AwxSelectRolesStep } from '../../common/AwxRolesWizardSteps/AwxSelectRolesStep';
-import { AwxRbacRole } from '../../../interfaces/AwxRbacRole';
-import { RoleAssignmentsReviewStep } from '../../../../common/access/RolesWizard/steps/RoleAssignmentsReviewStep';
-import { postRequest } from '../../../../common/crud/Data';
-import { AwxRoute } from '../../../main/AwxRoutes';
 interface WizardFormValues {
   resourceType: string;
   resources: AwxResourceType[];
@@ -130,6 +131,7 @@ export function AddRolesToUser(props: { id?: string; userRolesRoute?: string }) 
         ]}
       />
       <PageWizard<WizardFormValues>
+        errorAdapter={awxErrorAdapter}
         steps={steps}
         onSubmit={onSubmit}
         onCancel={() => {

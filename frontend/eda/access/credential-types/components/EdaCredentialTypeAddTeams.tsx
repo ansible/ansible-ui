@@ -15,9 +15,10 @@ import { useGet } from '../../../../common/crud/useGet';
 import { EdaSelectRolesStep } from '../../../access/common/EdaRolesWizardSteps/EdaSelectRolesStep';
 import { EdaSelectTeamsStep } from '../../../access/common/EdaRolesWizardSteps/EdaSelectTeamsStep';
 import { edaAPI } from '../../../common/eda-utils';
+import { edaErrorAdapter } from '../../../common/edaErrorAdapter';
 import { useEdaBulkActionDialog } from '../../../common/useEdaBulkActionDialog';
-import { EdaRbacRole } from '../../../interfaces/EdaRbacRole';
 import { EdaCredentialType } from '../../../interfaces/EdaCredentialType';
+import { EdaRbacRole } from '../../../interfaces/EdaRbacRole';
 import { EdaTeam } from '../../../interfaces/EdaTeam';
 import { EdaRoute } from '../../../main/EdaRoutes';
 
@@ -146,6 +147,7 @@ export function EdaCredentialTypeAddTeams() {
         ]}
       />
       <PageWizard<WizardFormValues>
+        errorAdapter={edaErrorAdapter}
         steps={steps}
         onSubmit={onSubmit}
         disableGrid

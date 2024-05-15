@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import {
   LoadingPage,
   PageHeader,
@@ -8,18 +9,18 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../../framework';
-import { AwxSelectTeamsStep } from '../../../access/common/AwxRolesWizardSteps/AwxSelectTeamsStep';
-import { Team } from '../../../interfaces/Team';
-import { AwxSelectRolesStep } from '../../../access/common/AwxRolesWizardSteps/AwxSelectRolesStep';
-import { useParams } from 'react-router-dom';
-import { useGet } from '../../../../common/crud/useGet';
-import { Credential } from '../../../interfaces/Credential';
-import { postRequest } from '../../../../common/crud/Data';
 import { RoleAssignmentsReviewStep } from '../../../../common/access/RolesWizard/steps/RoleAssignmentsReviewStep';
-import { AwxRbacRole } from '../../../interfaces/AwxRbacRole';
-import { AwxRoute } from '../../../main/AwxRoutes';
-import { useAwxBulkActionDialog } from '../../../common/useAwxBulkActionDialog';
+import { postRequest } from '../../../../common/crud/Data';
+import { useGet } from '../../../../common/crud/useGet';
+import { AwxSelectRolesStep } from '../../../access/common/AwxRolesWizardSteps/AwxSelectRolesStep';
+import { AwxSelectTeamsStep } from '../../../access/common/AwxRolesWizardSteps/AwxSelectTeamsStep';
+import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
 import { awxAPI } from '../../../common/api/awx-utils';
+import { useAwxBulkActionDialog } from '../../../common/useAwxBulkActionDialog';
+import { AwxRbacRole } from '../../../interfaces/AwxRbacRole';
+import { Credential } from '../../../interfaces/Credential';
+import { Team } from '../../../interfaces/Team';
+import { AwxRoute } from '../../../main/AwxRoutes';
 
 interface WizardFormValues {
   teams: Team[];
@@ -144,6 +145,7 @@ export function CredentialAddTeams() {
         ]}
       />
       <PageWizard<WizardFormValues>
+        errorAdapter={awxErrorAdapter}
         steps={steps}
         onSubmit={onSubmit}
         disableGrid

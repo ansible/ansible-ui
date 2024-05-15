@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import {
   LoadingPage,
   PageHeader,
@@ -8,18 +9,18 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../framework';
-import { EdaSelectTeamsStep } from '../../access/common/EdaRolesWizardSteps/EdaSelectTeamsStep';
-import { EdaTeam } from '../../interfaces/EdaTeam';
-import { EdaSelectRolesStep } from '../../access/common/EdaRolesWizardSteps/EdaSelectRolesStep';
-import { useParams } from 'react-router-dom';
-import { useGet } from '../../../common/crud/useGet';
-import { EdaProject } from '../../interfaces/EdaProject';
-import { edaAPI } from '../../common/eda-utils';
-import { postRequest } from '../../../common/crud/Data';
 import { RoleAssignmentsReviewStep } from '../../../common/access/RolesWizard/steps/RoleAssignmentsReviewStep';
-import { EdaRbacRole } from '../../interfaces/EdaRbacRole';
-import { EdaRoute } from '../../main/EdaRoutes';
+import { postRequest } from '../../../common/crud/Data';
+import { useGet } from '../../../common/crud/useGet';
+import { EdaSelectRolesStep } from '../../access/common/EdaRolesWizardSteps/EdaSelectRolesStep';
+import { EdaSelectTeamsStep } from '../../access/common/EdaRolesWizardSteps/EdaSelectTeamsStep';
+import { edaAPI } from '../../common/eda-utils';
+import { edaErrorAdapter } from '../../common/edaErrorAdapter';
 import { useEdaBulkActionDialog } from '../../common/useEdaBulkActionDialog';
+import { EdaProject } from '../../interfaces/EdaProject';
+import { EdaRbacRole } from '../../interfaces/EdaRbacRole';
+import { EdaTeam } from '../../interfaces/EdaTeam';
+import { EdaRoute } from '../../main/EdaRoutes';
 
 interface WizardFormValues {
   teams: EdaTeam[];
@@ -142,6 +143,7 @@ export function EdaProjectAddTeams() {
         ]}
       />
       <PageWizard<WizardFormValues>
+        errorAdapter={edaErrorAdapter}
         steps={steps}
         onSubmit={onSubmit}
         disableGrid
