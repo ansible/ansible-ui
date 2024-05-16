@@ -248,7 +248,9 @@ describe('Job Templates Tests', function () {
 
   describe('Job Templates Tests: Edit', function () {
     let inventory: Inventory;
+    let inventory2: Inventory;
     let machineCredential: Credential;
+    let githubCredential: Credential;
     let jobTemplate: JobTemplate;
 
     beforeEach(function () {
@@ -278,7 +280,9 @@ describe('Job Templates Tests', function () {
     afterEach(function () {
       cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
       cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
+      cy.deleteAwxInventory(inventory2, { failOnStatusCode: false });
       cy.deleteAwxCredential(machineCredential, { failOnStatusCode: false });
+      cy.deleteAwxCredential(githubCredential, { failOnStatusCode: false });
     });
 
     it('can edit a job template using the kebab menu of the template list page', function () {
@@ -317,7 +321,7 @@ describe('Job Templates Tests', function () {
       //Assert the new inventory being successfully assigned
       cy.createAwxInventory({ organization: (this.globalOrganization as Organization).id }).then(
         (inv) => {
-          const newInventory = inv;
+          inventory2 = inv;
 
           cy.visit(`templates/job_template/${jobTemplate.id}/details`);
           cy.contains(jobTemplate.name);
@@ -336,14 +340,12 @@ describe('Job Templates Tests', function () {
           cy.getByDataCy('inventory').contains('Deleted');
           cy.clickLink('Edit template');
 
-          cy.selectDropdownOptionByResourceName('inventory', newInventory.name);
+          cy.selectDropdownOptionByResourceName('inventory', inv.name);
           cy.intercept('PATCH', awxAPI`/job_templates/${jobTemplate.id.toString()}/`).as('saveJT');
           cy.clickButton('Save job template');
           cy.wait('@saveJT');
 
-          cy.contains(newInventory.name);
-
-          cy.deleteAwxInventory(inventory);
+          cy.contains(inv.name);
         }
       );
     });
@@ -435,6 +437,7 @@ describe('Job Templates Tests', function () {
         organization: (this.globalOrganization as Organization).id,
         credential_type: 11,
       }).then((ghCred) => {
+        githubCredential = ghCred;
         let webhookKey: string;
         cy.intercept('GET', awxAPI`/credential_types/*`).as('getCredTypes');
 
@@ -509,8 +512,6 @@ describe('Job Templates Tests', function () {
                 cy.getByDataCy('webhook-key').should('have.value', webhookKey);
               });
           });
-
-        cy.deleteAwxCredential(ghCred);
       });
     });
 
