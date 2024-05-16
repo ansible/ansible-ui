@@ -125,7 +125,7 @@ describe('Organizations - create, edit and delete', () => {
   });
 });
 
-describe('Platform Teams - Users, Admins and Teams tabs', function () {
+describe('Platform Teams - Users, Admins, Teams and EE tabs', function () {
   let organization: PlatformOrganization;
 
   beforeEach(() => {
@@ -143,16 +143,76 @@ describe('Platform Teams - Users, Admins and Teams tabs', function () {
     cy.deletePlatformOrganization(organization, { failOnStatusCode: false });
   });
 
-  // tests for tabs Roles, Users, Administrators, and Resource Access
-
-  // Users tab
-  it.skip('can add and remove users to the team via the organization users tab', function () {
-    // 1. creates a team with global organization and the users createdUser1 and createdUser2
-    // 2. add user createdUser3 to the team from the users tab
-    // 3. remove user createdUser1 from the team users tab list row items
+  // Organizations Users tab
+  it('can add a user and apply the roles to the users of an organization via the users tab', function () {
+    cy.createPlatformUser().then((createdUser1) => {
+      cy.createPlatformUser().then((createdUser2) => {
+        cy.filterTableByTextFilter('name', organization.name, { disableFilterSelection: true });
+        cy.clickTableRowLink('name', organization.name, { disableFilter: true });
+        cy.clickTab('Users', true);
+        cy.getByDataCy('add-users').click();
+        cy.verifyPageTitle('Add roles');
+        cy.getWizard().within(() => {
+          cy.selectTableRowByCheckbox('username', createdUser1.username);
+          cy.selectTableRowByCheckbox('username', createdUser2.username);
+          cy.clickButton(/^Next/);
+          cy.contains('h1', 'Select Automation Execution roles').should('be.visible');
+          cy.filterTableByTextFilter('name', 'Organization Organization Admin', {
+            disableFilterSelection: true,
+          });
+          cy.selectTableRowByCheckbox('name', 'Organization Organization Admin', {
+            disableFilter: true,
+          });
+          cy.clickButton(/^Next/);
+          cy.contains('h1', 'Select Automation Decisions roles').should('be.visible');
+          cy.filterTableByTextFilter('name', 'Editor', {
+            disableFilterSelection: true,
+          });
+          cy.selectTableRowByCheckbox('name', 'Editor', {
+            disableFilter: true,
+          });
+          cy.clickButton(/^Next/);
+          cy.contains('h1', 'Review').should('be.visible');
+          cy.verifyReviewStepWizardDetails(
+            'edaRoles',
+            ['Editor', 'Has create and edit permissions.'],
+            '1'
+          );
+          cy.verifyReviewStepWizardDetails(
+            'awxRoles',
+            [
+              'Organization Organization Admin',
+              'Has all permissions to organizations within an organization',
+            ],
+            '1'
+          );
+          cy.verifyReviewStepWizardDetails(
+            'users',
+            [createdUser1.username, createdUser2.username],
+            '2'
+          );
+          cy.clickButton(/^Finish/);
+        });
+        cy.getModal().within(() => {
+          cy.clickButton(/^Close$/);
+        });
+        cy.getModal().should('not.exist');
+        cy.verifyPageTitle(organization.name);
+        cy.selectTableRowByCheckbox('username', createdUser1.username);
+        cy.selectTableRowByCheckbox('username', createdUser2.username);
+        cy.clickToolbarKebabAction('remove-selected-users');
+        cy.getModal().within(() => {
+          cy.get('#confirm').click();
+          cy.get('#submit').click();
+          cy.contains(/^Success$/).should('be.visible');
+          cy.containsBy('button', /^Close$/).click();
+        });
+        cy.clickButton(/^Clear all filters$/);
+      });
+    });
   });
 
-  // Administrators tab
+  // Organizations Administrators tab
   it('can add and remove users as administrators to the organization from the administrators tab', function () {
     cy.createPlatformUser().then((user) => {
       // Organization Page
