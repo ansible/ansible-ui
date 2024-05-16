@@ -1,5 +1,6 @@
 import { randomString } from '../../../../framework/utils/random-string';
 import { Credential } from '../../../../frontend/awx/interfaces/Credential';
+import { ExecutionEnvironment } from '../../../../frontend/awx/interfaces/ExecutionEnvironment';
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 import { JobTemplate } from '../../../../frontend/awx/interfaces/JobTemplate';
 import { NotificationTemplate } from '../../../../frontend/awx/interfaces/NotificationTemplate';
@@ -16,7 +17,9 @@ describe('Job Templates Tests', function () {
   describe('Job Templates Tests: Create', function () {
     let inventory: Inventory;
     let machineCredential: Credential;
-    const executionEnvironment = 'Control Plane Execution Environment';
+    let project: Project;
+    let executionEnvironment: ExecutionEnvironment;
+    const executionEnvironmentName = 'Control Plane Execution Environment';
     const instanceGroup = 'default';
 
     beforeEach(function () {
@@ -38,6 +41,8 @@ describe('Job Templates Tests', function () {
     afterEach(function () {
       cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
       cy.deleteAwxCredential(machineCredential, { failOnStatusCode: false });
+      cy.deleteAwxExecutionEnvironment(executionEnvironment, { failOnStatusCode: false });
+      cy.deleteAwxProject(project, { failOnStatusCode: false });
     });
 
     it('can create a job template with all fields without prompt on launch option', function () {
@@ -85,12 +90,37 @@ describe('Job Templates Tests', function () {
         });
     });
 
-    it.skip('can create a job template that inherits the execution environment from the project', function () {
-      //This test cannot be written until https://issues.redhat.com/browse/AAP-23776 is fixed
+    it('can create a job template that inherits the execution environment from the project', function () {
       //Create an EE in the beforeEach hook
       //Create a project in the beforeEach hook, assign the EE to the project
       //Create a JT within this test and assign the project to the JT
       //Assert that the project's EE shows on the job template details page as the EE of the JT
+      cy.createAwxExecutionEnvironment({
+        organization: (this.globalOrganization as Organization).id,
+      }).then((ee: ExecutionEnvironment) => {
+        executionEnvironment = ee;
+        cy.createAwxProject({
+          organization: (this.globalOrganization as Organization).id,
+          default_environment: ee.id,
+        }).then((proj: Project) => {
+          project = proj;
+          cy.intercept('POST', awxAPI`/job_templates`).as('createJT');
+          const jtName = 'E2E-JT ' + randomString(4);
+          cy.navigateTo('awx', 'templates');
+          cy.getBy('[data-cy="create-template"]').click();
+          cy.clickLink(/^Create job template$/);
+          cy.getBy('[data-cy="name"]').type(jtName);
+          cy.getBy('[data-cy="description"]').type('This is a JT description');
+          cy.selectDropdownOptionByResourceName('inventory', inventory.name);
+          cy.selectDropdownOptionByResourceName('project', proj.name);
+          cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
+          cy.getBy('[data-cy="Submit"]').click();
+          cy.wait('@createJT');
+
+          cy.getByDataCy('execution-environment').contains(ee.name);
+          cy.getByDataCy('project').contains(proj.name);
+        });
+      });
     });
 
     it('can create a job template using the prompt on launch wizard', function () {
@@ -124,7 +154,7 @@ describe('Job Templates Tests', function () {
             cy.get('button').eq(1).click();
           });
           cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
-            cy.filterTableBySingleSelect('name', executionEnvironment);
+            cy.filterTableBySingleSelect('name', executionEnvironmentName);
             cy.get('[data-ouia-component-id="simple-table"] tbody').within(() => {
               cy.get('[data-cy="checkbox-column-cell"] input').click();
             });
@@ -196,7 +226,7 @@ describe('Job Templates Tests', function () {
             cy.get('button').eq(1).click();
           });
           cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
-            cy.filterTableBySingleSelect('name', executionEnvironment);
+            cy.filterTableBySingleSelect('name', executionEnvironmentName);
             cy.get('[data-ouia-component-id="simple-table"] tbody').within(() => {
               cy.get('[data-cy="checkbox-column-cell"] input').click();
             });
