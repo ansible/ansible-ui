@@ -8,7 +8,7 @@ import { Schedule } from '../../../../frontend/awx/interfaces/Schedule';
 import { WorkflowJobTemplate } from '../../../../frontend/awx/interfaces/WorkflowJobTemplate';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 
-describe.skip('Schedules - Create and Delete', function () {
+describe('Schedules - Create and Delete', function () {
   let organization: Organization;
   let jobTemplate: JobTemplate;
   let project: Project;
