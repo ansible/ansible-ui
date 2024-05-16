@@ -135,33 +135,31 @@ function testNotification(type: string) {
     testBasicData(notificationName, type, orgName);
     testNotificationType(type);
 
-   
-      // test edit
-      cy.get(`[data-cy="edit-notifier"]`).click();
-      editBasicData();
+    // test edit
+    cy.get(`[data-cy="edit-notifier"]`).click();
+    editBasicData();
 
-      editNotificationType(type);
-      cy.get(`[data-cy="Submit"]`).click();
-      
-      testBasicDataEdited(notificationName, orgName);
-      testNotificationTypeEdited(type);
+    editNotificationType(type);
+    cy.get(`[data-cy="Submit"]`).click();
 
-      
-      // validate its here and delete it
-      cy.contains('span', 'Back to Notifiers').click();
-      cy.filterTableByMultiSelect('name', [notificationName]);
-      cy.contains(notificationName);
-      cy.get(`[aria-label="Simple table"] [data-cy="actions-dropdown"]`).click();
-      cy.get(`[data-cy="delete-notifier"]`).click();
-      cy.get(`[role="dialog"] input`).click();
-      cy.contains(`[role="dialog"] button`, `Delete notifiers`).click();
-      cy.contains(`[role="dialog"] button`, `Close`).click();
+    testBasicDataEdited(notificationName, orgName);
+    testNotificationTypeEdited(type);
 
-      cy.get(`[data-cy="filter"]`).click();
-      cy.get(`[data-cy="name"] button`).click();
-      cy.get(`[data-cy="filter-input"]`).click();
-      cy.get(`[aria-label="Search input"]`).type(notificationName);
-      cy.contains('No results found');
+    // validate its here and delete it
+    cy.contains('span', 'Back to Notifiers').click();
+    cy.filterTableByMultiSelect('name', [notificationName]);
+    cy.contains(notificationName);
+    cy.get(`[aria-label="Simple table"] [data-cy="actions-dropdown"]`).click();
+    cy.get(`[data-cy="delete-notifier"]`).click();
+    cy.get(`[role="dialog"] input`).click();
+    cy.contains(`[role="dialog"] button`, `Delete notifiers`).click();
+    cy.contains(`[role="dialog"] button`, `Close`).click();
+
+    cy.get(`[data-cy="filter"]`).click();
+    cy.get(`[data-cy="name"] button`).click();
+    cy.get(`[data-cy="filter-input"]`).click();
+    cy.get(`[aria-label="Search input"]`).type(notificationName);
+    cy.contains('No results found');
   });
 }
 
