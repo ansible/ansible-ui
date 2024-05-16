@@ -41,8 +41,9 @@ describe('Job Templates Tests', function () {
     afterEach(function () {
       cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
       cy.deleteAwxCredential(machineCredential, { failOnStatusCode: false });
-      cy.deleteAwxExecutionEnvironment(executionEnvironment, { failOnStatusCode: false });
-      cy.deleteAwxProject(project, { failOnStatusCode: false });
+      executionEnvironment?.id &&
+        cy.deleteAwxExecutionEnvironment(executionEnvironment, { failOnStatusCode: false });
+      project?.id && cy.deleteAwxProject(project, { failOnStatusCode: false });
     });
 
     it('can create a job template with all fields without prompt on launch option', function () {
