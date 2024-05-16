@@ -40,6 +40,7 @@ import {
   EdaRulebookActivationCreate,
 } from '../../frontend/eda/interfaces/EdaRulebookActivation';
 import { EdaUser, EdaUserCreateUpdate } from '../../frontend/eda/interfaces/EdaUser';
+import { EdaTeam } from '../../frontend/eda/interfaces/EdaTeam';
 import { EdaRbacRole } from '../../frontend/eda/interfaces/EdaRbacRole';
 import { Role as HubRole } from '../../frontend/hub/access/roles/Role';
 import { RemoteRegistry } from '../../frontend/hub/administration/remote-registries/RemoteRegistry';
@@ -168,7 +169,7 @@ declare global {
        * @param selector - The selector of the single select input
        * @param value - The value to select
        */
-      singleSelectBy(selector: string, value: string): Chainable<void>;
+      singleSelectBy(selector: string, value: string, exactMatch?: boolean): Chainable<void>;
 
       /**
        * Select a value from a single select input by data-cy attribute, making sure it is not disabled or hidden.
@@ -187,7 +188,7 @@ declare global {
        * @param dataCy - The data-cy attribute of the single select input
        * @param value - The value to select
        */
-      singleSelectByDataCy(dataCy: string, value: string): Chainable<void>;
+      singleSelectByDataCy(dataCy: string, value: string, exactMatch?: boolean): Chainable<void>;
 
       /**
        * Select a value from a multi select input by selector, making sure it is not disabled or hidden.
@@ -570,6 +571,20 @@ declare global {
 
       getModal(): Chainable<JQuery<HTMLElement>>;
 
+      /**
+       * This command is used to get the wizard component and do associated actions.
+       */
+      getWizard(): Chainable<JQuery<HTMLElement>>;
+
+      /**
+       * This command is used to verify the details on the review step of a wizard component.
+       */
+      verifyReviewStepWizardDetails(
+        section: string,
+        itemsList: string[],
+        itemCount: string
+      ): Chainable<void>;
+
       /** Clicks a button in the active modal dialog. */
       clickModalButton(label: string | RegExp): Chainable<void>;
 
@@ -742,7 +757,8 @@ declare global {
         jobTemplate: SetRequired<
           Partial<Omit<JobTemplate, 'id'>>,
           'organization' | 'project' | 'inventory'
-        >
+        >,
+        instanceGroup?: InstanceGroup
       ): Chainable<JobTemplate>;
 
       createTemplateSurvey(
@@ -779,6 +795,8 @@ declare global {
       getAwxWorkflowJobTemplateByName(
         awxWorkflowJobTemplateName: string
       ): Chainable<WorkflowJobTemplate>;
+
+      getAwxInstanceGroupByName(instanceGroupName: string): Chainable<InstanceGroup>;
 
       renderWorkflowVisualizerNodesFromFixtureFile(
         workflowJobTemplateName: string,
@@ -868,9 +886,7 @@ declare global {
       getAwxJobTemplateByName(awxJobTemplateName: string): Chainable<JobTemplate>;
       createAwxTeam(organization: Organization): Chainable<Team>;
       createAwxUser(organization: Organization): Chainable<AwxUser>;
-      createAwxInstanceGroup(
-        instanceGroup?: Partial<Omit<InstanceGroup, 'id'>>
-      ): Chainable<InstanceGroup>;
+      createAwxInstanceGroup(instanceGroup?: Partial<InstanceGroup>): Chainable<InstanceGroup>;
       createAwxInstance(hostname: string, listener_port?: number): Chainable<Instance>;
       createAwxLabel(label: Partial<Omit<Label, 'id'>>): Chainable<Label>;
       createGlobalOrganization(): Chainable<void>;
@@ -1340,6 +1356,44 @@ declare global {
        * @returns {Chainable<EdaUser>}
        */
       deleteEdaUser(edaUserName: EdaUser): Chainable<void>;
+
+      /**
+       * Creates an EDA team and returns the same.
+       *
+       * @returns {Chainable<EdaTeam>}
+       */
+      createEdaTeam(team?: SetOptional<EdaTeam, 'name' | 'organization_id'>): Chainable<EdaTeam>;
+
+      /**
+       * Deletes an EDA team which is provided.
+       *
+       * @returns {Chainable<EdaTeam>}
+       */
+      deleteEdaTeam(edaTeamName: EdaTeam): Chainable<void>;
+
+      /**
+       * Creates an object to team role assignment.
+       *
+       * @returns {Chainable<TeamAssignment>}
+       */
+      createRoleTeamAssignments(
+        object_id: string,
+        role_definition: number,
+        team: number,
+        content_type: string
+      ): Chainable<void>;
+
+      /**
+       * Creates an object to user role assignment.
+       *
+       * @returns {Chainable<UserAssignment>}
+       */
+      createRoleUserAssignments(
+        object_id: string,
+        role_definition: number,
+        user: number,
+        content_type: string
+      ): Chainable<void>;
 
       /**
        * Retrieves an EDA active user which is admin.

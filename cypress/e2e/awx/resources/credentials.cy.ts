@@ -41,6 +41,36 @@ describe('Credentials', () => {
   });
 
   describe('Credentials: List View', () => {
+    it('vault id field can not be edited for Vault credential type', () => {
+      const credentialName = 'E2E Credential ' + randomString(4);
+      cy.navigateTo('awx', 'credentials');
+      cy.clickButton(/^Create credential$/);
+      cy.get('[data-cy="name"]').type(credentialName);
+      cy.singleSelectBy('[data-cy="credential_type"]', 'Vault', true);
+      cy.contains('Type Details').should('be.visible');
+      cy.get('[data-cy="vault-password"]').type('password');
+      cy.get('[data-cy="vault-id"]').type('id');
+      cy.singleSelectByDataCy('organization', organization.name);
+      cy.clickButton(/^Create credential$/);
+      cy.verifyPageTitle(credentialName);
+      cy.get('[data-cy="name"]').contains(credentialName);
+      cy.contains('Vault Identifier').should('be.visible');
+      cy.get('[data-cy="vault-identifier"]').contains('id');
+      cy.contains('Vault Password').should('be.visible');
+      cy.get('[data-cy="vault-password"]').contains('Encrypted');
+      cy.get('[data-cy="edit-credential"]').click();
+      cy.verifyPageTitle('Edit Credential');
+      cy.get('[data-cy="vault-id"]').should('have.attr', 'disabled');
+      cy.get('[data-cy="vault-password"]').should('be.visible');
+      cy.get('[data-cy="vault-password"]').type('new password');
+      cy.clickButton(/^Save credential$/);
+      //delete created credential
+      cy.clickPageAction('delete-credential');
+      cy.get('#confirm').click();
+      cy.clickButton(/^Delete credential/);
+      cy.verifyPageTitle('Credentials');
+    });
+
     it('can create and delete a credential that renders a sub form', () => {
       const credentialName = 'E2E Credential ' + randomString(4);
       cy.navigateTo('awx', 'credentials');
@@ -103,6 +133,32 @@ describe('Credentials', () => {
       cy.get('[data-cy="password"]').contains('Encrypted');
       cy.contains('Private Key Passphrase').should('be.visible');
       cy.get('[data-cy="private-key-passphrase"]').contains('Prompt on launch');
+      //delete created credential
+      cy.clickPageAction('delete-credential');
+      cy.get('#confirm').click();
+      cy.clickButton(/^Delete credential/);
+      cy.verifyPageTitle('Credentials');
+    });
+
+    it('machine credential type should render privilege escalation', () => {
+      // This is a test for the custom component that renders the privilege
+      // escalation method using a custom component
+      const credentialName = 'E2E Credential ' + randomString(4);
+      cy.navigateTo('awx', 'credentials');
+      cy.clickButton(/^Create credential$/);
+      cy.get('[data-cy="name"]').type(credentialName);
+      cy.singleSelectByDataCy('organization', organization.name);
+      cy.singleSelectBy('[data-cy="credential_type"]', 'Machine');
+      cy.contains('Type Details').should('be.visible');
+      // Use custom component to render the privilege escalation method is sudo
+      cy.contains('Privilege Escalation Method ').should('be.visible');
+      cy.get('button[aria-label="Options menu"]').click();
+      cy.get('[data-cy="select-option-sudo"]').click();
+      cy.clickButton(/^Create credential$/);
+      cy.verifyPageTitle(credentialName);
+      cy.get('[data-cy="name"]').contains(credentialName);
+      cy.contains('Privilege Escalation Method').should('be.visible');
+      cy.get('[data-cy="privilege-escalation-method"]').contains('sudo');
       //delete created credential
       cy.clickPageAction('delete-credential');
       cy.get('#confirm').click();

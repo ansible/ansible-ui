@@ -1,5 +1,4 @@
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
 import {
   LoadingPage,
   PageHeader,
@@ -9,38 +8,38 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../../framework';
-import { RoleAssignmentsReviewStep } from '../../../../common/access/RolesWizard/steps/RoleAssignmentsReviewStep';
-import { postRequest } from '../../../../common/crud/Data';
+import { AwxSelectTeamsStep } from '../../../access/common/AwxRolesWizardSteps/AwxSelectTeamsStep';
+import { Team } from '../../../interfaces/Team';
+import { AwxSelectRolesStep } from '../../../access/common/AwxRolesWizardSteps/AwxSelectRolesStep';
+import { useParams } from 'react-router-dom';
 import { useGet } from '../../../../common/crud/useGet';
-import { EdaSelectRolesStep } from '../../../access/common/EdaRolesWizardSteps/EdaSelectRolesStep';
-import { EdaSelectTeamsStep } from '../../../access/common/EdaRolesWizardSteps/EdaSelectTeamsStep';
-import { edaAPI } from '../../../common/eda-utils';
-import { edaErrorAdapter } from '../../../common/edaErrorAdapter';
-import { useEdaBulkActionDialog } from '../../../common/useEdaBulkActionDialog';
-import { EdaCredential } from '../../../interfaces/EdaCredential';
-import { EdaRbacRole } from '../../../interfaces/EdaRbacRole';
-import { EdaTeam } from '../../../interfaces/EdaTeam';
-import { EdaRoute } from '../../../main/EdaRoutes';
+import { postRequest } from '../../../../common/crud/Data';
+import { RoleAssignmentsReviewStep } from '../../../../common/access/RolesWizard/steps/RoleAssignmentsReviewStep';
+import { AwxRbacRole } from '../../../interfaces/AwxRbacRole';
+import { AwxRoute } from '../../../main/AwxRoutes';
+import { useAwxBulkActionDialog } from '../../../common/useAwxBulkActionDialog';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { NotificationTemplate } from '../../../interfaces/NotificationTemplate';
 
 interface WizardFormValues {
-  teams: EdaTeam[];
-  edaRoles: EdaRbacRole[];
+  teams: Team[];
+  awxRoles: AwxRbacRole[];
 }
 
 interface TeamRolePair {
-  team: EdaTeam;
-  role: EdaRbacRole;
+  team: Team;
+  role: AwxRbacRole;
 }
 
-export function EdaCredentialAddTeams() {
+export function NotifierAddTeams() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const params = useParams<{ id: string }>();
   const pageNavigate = usePageNavigate();
-  const { data: credential, isLoading } = useGet<EdaCredential>(
-    edaAPI`/eda-credentials/${params.id ?? ''}/`
+  const { data: credential, isLoading } = useGet<NotificationTemplate>(
+    awxAPI`/notification_templates/${params.id ?? ''}/`
   );
-  const userProgressDialog = useEdaBulkActionDialog<TeamRolePair>();
+  const userProgressDialog = useAwxBulkActionDialog<TeamRolePair>();
 
   if (isLoading || !credential) return <LoadingPage />;
 
@@ -49,7 +48,7 @@ export function EdaCredentialAddTeams() {
       id: 'teams',
       label: t('Select team(s)'),
       inputs: (
-        <EdaSelectTeamsStep
+        <AwxSelectTeamsStep
           descriptionForTeamsSelection={t(
             'Select the team(s) that you want to give access to {{credentialName}}.',
             {
@@ -59,7 +58,7 @@ export function EdaCredentialAddTeams() {
         />
       ),
       validate: (formData, _) => {
-        const { teams } = formData as { teams: EdaTeam[] };
+        const { teams } = formData as { teams: Team[] };
         if (!teams?.length) {
           throw new Error(t('Select at least one team.'));
         }
@@ -69,8 +68,8 @@ export function EdaCredentialAddTeams() {
       id: 'roles',
       label: t('Select roles to apply'),
       inputs: (
-        <EdaSelectRolesStep
-          contentType="edacredential"
+        <AwxSelectRolesStep
+          contentType="notificationtemplate"
           fieldNameForPreviousStep="teams"
           descriptionForRoleSelection={t('Choose roles to apply to {{credentialName}}.', {
             credentialName: credential?.name,
@@ -78,8 +77,8 @@ export function EdaCredentialAddTeams() {
         />
       ),
       validate: (formData, _) => {
-        const { edaRoles } = formData as { edaRoles: EdaRbacRole[] };
-        if (!edaRoles?.length) {
+        const { awxRoles } = formData as { awxRoles: AwxRbacRole[] };
+        if (!awxRoles?.length) {
           throw new Error(t('Select at least one role.'));
         }
       },
@@ -92,10 +91,10 @@ export function EdaCredentialAddTeams() {
   ];
 
   const onSubmit = async (data: WizardFormValues) => {
-    const { teams, edaRoles } = data;
+    const { teams, awxRoles } = data;
     const items: TeamRolePair[] = [];
     for (const team of teams) {
-      for (const role of edaRoles) {
+      for (const role of awxRoles) {
         items.push({ team, role });
       }
     }
@@ -109,17 +108,17 @@ export function EdaCredentialAddTeams() {
           { header: t('Role'), cell: ({ role }) => role.name },
         ],
         actionFn: ({ team, role }) =>
-          postRequest(edaAPI`/role_team_assignments/`, {
+          postRequest(awxAPI`/role_team_assignments/`, {
             team: team.id,
             role_definition: role.id,
-            content_type: 'eda.edacredential',
+            content_type: 'awx.notificationtemplate',
             object_id: credential.id,
           }),
         onComplete: () => {
           resolve();
         },
         onClose: () => {
-          pageNavigate(EdaRoute.CredentialTeamAccess, {
+          pageNavigate(AwxRoute.NotificationTemplateTeamAccess, {
             params: { id: credential.id.toString() },
           });
         },
@@ -132,25 +131,28 @@ export function EdaCredentialAddTeams() {
       <PageHeader
         title={t('Add roles')}
         breadcrumbs={[
-          { label: t('Credentials'), to: getPageUrl(EdaRoute.Credentials) },
+          { label: t('Notifiers'), to: getPageUrl(AwxRoute.NotificationTemplates) },
           {
             label: credential?.name,
-            to: getPageUrl(EdaRoute.CredentialDetails, { params: { id: credential?.id } }),
+            to: getPageUrl(AwxRoute.NotificationTemplateDetails, {
+              params: { id: credential?.id },
+            }),
           },
           {
             label: t('Team Access'),
-            to: getPageUrl(EdaRoute.CredentialTeamAccess, { params: { id: credential?.id } }),
+            to: getPageUrl(AwxRoute.NotificationTemplateTeamAccess, {
+              params: { id: credential?.id },
+            }),
           },
           { label: t('Add roles') },
         ]}
       />
       <PageWizard<WizardFormValues>
-        errorAdapter={edaErrorAdapter}
         steps={steps}
         onSubmit={onSubmit}
         disableGrid
         onCancel={() => {
-          pageNavigate(EdaRoute.CredentialTeamAccess, { params: { id: credential?.id } });
+          pageNavigate(AwxRoute.NotificationTemplateTeamAccess, { params: { id: credential?.id } });
         }}
       />
     </PageLayout>

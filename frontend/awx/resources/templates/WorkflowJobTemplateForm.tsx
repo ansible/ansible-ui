@@ -42,14 +42,6 @@ export function EditWorkflowJobTemplate() {
     refresh: wfjtRefresh,
     isLoading: isWfjtLoading,
   } = useGet<WorkflowJobTemplate>(awxAPI`/workflow_job_templates/${id.toString()}/`);
-  const {
-    data: whkData,
-    isLoading: isWhkDataLoading,
-    error: whkDataError,
-    refresh: whkDataRefresh,
-  } = useGet<{ webhook_key: string }>(
-    awxAPI`/workflow_job_templates/${id.toString()}/webhook_key/`
-  );
 
   const onSubmit: PageFormSubmitHandler<WorkflowJobTemplateForm> = async (
     values: WorkflowJobTemplateForm
@@ -94,28 +86,20 @@ export function EditWorkflowJobTemplate() {
       scm_branch: workflowJobTemplate.scm_branch || '',
       skip_tags: parseStringToTagArray(workflowJobTemplate.job_tags || ''),
       webhook_credential: workflowJobTemplate.summary_fields.webhook_credential || null,
-      webhook_key:
-        whkData?.webhook_key || t('a new webhook key will be generated on save.').toUpperCase(),
+      webhook_key: t('a new webhook key will be generated on save.').toUpperCase(),
       webhook_url: workflowJobTemplate.related?.webhook_receiver
         ? `${document.location.origin}${workflowJobTemplate.related.webhook_receiver}`
         : t('a new webhook url will be generated on save.').toUpperCase(),
       webhook_receiver: workflowJobTemplate.related.webhook_receiver,
       webhook_service: workflowJobTemplate.webhook_service || '',
     };
-  }, [t, workflowJobTemplate, whkData]);
+  }, [t, workflowJobTemplate]);
   const { cache } = useSWRConfig();
 
-  const wfjtFormError = wfjtError || whkDataError;
-
-  if (wfjtFormError instanceof Error) {
-    return (
-      <AwxError
-        error={wfjtFormError}
-        handleRefresh={wfjtFormError ? wfjtRefresh : whkDataRefresh}
-      />
-    );
+  if (wfjtError instanceof Error) {
+    return <AwxError error={wfjtError} handleRefresh={wfjtRefresh} />;
   }
-  if (isWfjtLoading || isWhkDataLoading) return <LoadingPage />;
+  if (isWfjtLoading) return <LoadingPage />;
   return (
     <PageLayout>
       <PageHeader

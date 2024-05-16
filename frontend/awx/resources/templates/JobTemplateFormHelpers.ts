@@ -5,8 +5,7 @@ import { InstanceGroup } from '../../interfaces/InstanceGroup';
 export function getJobTemplateDefaultValues(
   t: (string: string) => string,
   template?: JobTemplate,
-  instanceGroups?: InstanceGroup[],
-  webhookKey?: string
+  instanceGroups?: InstanceGroup[]
 ): JobTemplateForm | undefined {
   if (!template) return undefined;
   return {
@@ -57,10 +56,7 @@ export function getJobTemplateDefaultValues(
     webhook_url: template.related?.webhook_receiver
       ? `${document.location.origin}${template.related.webhook_receiver}`
       : t('a new webhook url will be generated on save.').toUpperCase(),
-    webhook_key:
-      template.webhook_key ||
-      webhookKey ||
-      t('a new webhook key will be generated on save.').toUpperCase(),
+    webhook_key: t('a new webhook key will be generated on save.').toUpperCase(),
     webhook_credential: template.summary_fields?.webhook_credential,
 
     isProvisioningCallbackEnabled: Boolean(template.related?.callback),
