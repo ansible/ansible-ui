@@ -135,18 +135,15 @@ function testNotification(type: string) {
     testBasicData(notificationName, type, orgName);
     testNotificationType(type);
 
-    const orgName2 = randomE2Ename();
-    cy.createAwxOrganization(orgName2).then(() => {
+   
       // test edit
       cy.get(`[data-cy="edit-notifier"]`).click();
-      //selectOrganization(orgName2);
       editBasicData();
 
-      
       editNotificationType(type);
       cy.get(`[data-cy="Submit"]`).click();
       
-      testBasicDataEdited(notificationName, orgName2);
+      testBasicDataEdited(notificationName, orgName);
       testNotificationTypeEdited(type);
 
       /*
@@ -165,7 +162,6 @@ function testNotification(type: string) {
       cy.get(`[data-cy="filter-input"]`).click();
       cy.get(`[aria-label="Search input"]`).type(newNotificationName);
       cy.contains('No results found');*/
-    });
   });
 }
 
