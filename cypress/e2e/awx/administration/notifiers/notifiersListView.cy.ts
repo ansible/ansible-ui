@@ -146,7 +146,7 @@ function testNotification(type: string) {
       testBasicDataEdited(notificationName, orgName);
       testNotificationTypeEdited(type);
 
-      /*
+      
       // validate its here and delete it
       cy.contains('span', 'Back to Notifiers').click();
       cy.filterTableByMultiSelect('name', [notificationName]);
@@ -160,8 +160,8 @@ function testNotification(type: string) {
       cy.get(`[data-cy="filter"]`).click();
       cy.get(`[data-cy="name"] button`).click();
       cy.get(`[data-cy="filter-input"]`).click();
-      cy.get(`[aria-label="Search input"]`).type(newNotificationName);
-      cy.contains('No results found');*/
+      cy.get(`[aria-label="Search input"]`).type(notificationName);
+      cy.contains('No results found');
   });
 }
 
