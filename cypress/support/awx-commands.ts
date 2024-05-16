@@ -1014,7 +1014,8 @@ Cypress.Commands.add(
     jobTemplate: SetRequired<
       Partial<Omit<JobTemplate, 'id'>>,
       'organization' | 'project' | 'inventory'
-    >
+    >,
+    instanceGroup?: InstanceGroup
   ) => {
     cy.requestPost<
       SetRequired<Partial<Omit<JobTemplate, 'id'>>, 'organization' | 'project' | 'inventory'>,
@@ -1023,6 +1024,15 @@ Cypress.Commands.add(
       name: 'E2E Job Template ' + randomString(4),
       playbook: 'playbooks/hello_world.yml',
       ...jobTemplate,
+    }).then((jt: Partial<JobTemplate>) => {
+      if (instanceGroup) {
+        if (jt.id) {
+          cy.awxRequestPost(awxAPI`/job_templates/${jt.id.toString()}/instance_groups/`, {
+            id: instanceGroup.id,
+          });
+        }
+      }
+      return new Promise((resolve, _reject) => resolve(jt));
     });
   }
 );
@@ -1260,20 +1270,22 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add(
-  'createAwxInstanceGroup',
-  (instanceGroup?: Partial<Omit<InstanceGroup, 'id'>>) => {
-    cy.awxRequestPost<Partial<Omit<InstanceGroup, 'id'>>, InstanceGroup>(
-      awxAPI`/instance_groups/`,
-      {
-        name: 'E2E Instance Group ' + randomString(4),
-        percent_capacity_remaining: 100,
-        policy_instance_minimum: 100,
-        ...instanceGroup,
-      }
-    );
-  }
-);
+Cypress.Commands.add('createAwxInstanceGroup', (instanceGroup?: Partial<InstanceGroup>) => {
+  cy.requestPost<InstanceGroup>(
+    awxAPI`/instance_groups/`,
+    instanceGroup ?? {
+      name: 'E2E Instance Group ' + randomString(4),
+      percent_capacity_remaining: 100,
+      policy_instance_minimum: 0,
+    }
+  ).then((instanceGroup) => instanceGroup);
+});
+
+Cypress.Commands.add('getAwxInstanceGroupByName', (instanceGroupName: string) => {
+  cy.awxRequestGet<AwxItemsResponse<InstanceGroup>>(
+    awxAPI`/instance_groups/?name=${instanceGroupName}`
+  );
+});
 
 Cypress.Commands.add(
   'deleteAwxInstanceGroup',
