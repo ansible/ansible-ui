@@ -143,7 +143,7 @@ function testNotification(type: string) {
       editBasicData();
 
       
-      //editNotificationType(type);
+      editNotificationType(type);
       cy.get(`[data-cy="Submit"]`).click();
       
       /*testBasicDataEdited(newNotificationName, orgName2);
