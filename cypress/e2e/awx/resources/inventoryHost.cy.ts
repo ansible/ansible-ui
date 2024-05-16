@@ -38,8 +38,14 @@ describe('Inventory Host Tab Tests', () => {
     // cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
     // cy.deleteAwxUser(user, { failOnStatusCode: false });
     // cy.deleteAwxCredential(machineCredential, { failOnStatusCode: false });
-    cy.deleteAwxExecutionEnvironment(executionEnvironment, { failOnStatusCode: false });
+    //cy.deleteAwxExecutionEnvironment(executionEnvironment, { failOnStatusCode: false });
     // cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
+  });
+
+  it('can create, edit, assosiat and disassosiate groups at inventory -> hosts -> groups tab', () => {
+    // use checkHostGroup function in order to test inventory host group
+    // this test will send boolean value to indicate that this sould be under invntory tab
+    checkHostGroup('inventory_host', organization);
   });
 
   it('can create, edit and delete inventory host', () => {
@@ -48,13 +54,7 @@ describe('Inventory Host Tab Tests', () => {
     // after navigating to the right url
     cy.visit(`/infrastructure/inventories/inventory/${inventory.id}/details`);
     cy.clickTab(/^Hosts$/, true);
-    createAndEditAndDeleteHost(true, inventory);
-  });
-
-  it('can create, edit, assosiat and disassosiate groups at inventory -> hosts -> groups tab', () => {
-    // use checkHostGroup function in order to test inventory host group
-    // this test will send boolean value to indicate that this sould be under invntory tab
-    checkHostGroup(true, organization);
+    createAndEditAndDeleteHost('inventory_host', inventory);
   });
 
   it.skip('can see, launch and cancel jobs from inventory -> hosts -> jobs tab', () => {
@@ -326,14 +326,14 @@ describe('Inventory Host Tab Tests', () => {
 // this functions are THE SAME as the assisting functions at inventory host
 // TODO: move both assisting functions sections to external file
 
-function createAndCheckHost(inventory_host: boolean, inventory: string) {
+function createAndCheckHost(host_type: string, inventory: string) {
   // assisting functions that will create host using UI to verify UI elements are working
   // the function will also verify all values contain currect data
   // this function cover both inventory host and stand alone host
 
   const hostName = 'E2E Inventory host ' + randomString(4);
 
-  if (inventory_host) {
+  if (host_type === 'inventory_host') {
     cy.getByDataCy('empty-state-title').contains(
       /^There are currently no hosts added to this inventory./
     );
@@ -345,7 +345,7 @@ function createAndCheckHost(inventory_host: boolean, inventory: string) {
   cy.getByDataCy('name').type(hostName);
   cy.getByDataCy('description').type('This is the description');
 
-  if (!inventory_host) {
+  if (host_type === 'stand_alone_host') {
     cy.getByDataCy('inventory-id').click();
     cy.contains('button', 'Browse').click();
     cy.contains('Select Inventory');
@@ -367,10 +367,10 @@ function createAndCheckHost(inventory_host: boolean, inventory: string) {
   return hostName;
 }
 
-function editHost(inventoryID: number, inventory_host: boolean, hostName: string) {
+function editHost(inventoryID: number, host_type: string, hostName: string) {
   // function that editing host data
   // this function cover both inventory host and stand alone host
-  if (inventory_host) {
+  if (host_type === 'inventory_host') {
     cy.visit(
       `/infrastructure/inventories/inventory/${inventoryID}/hosts/?page=1&perPage=10&sort=name`
     );
@@ -387,11 +387,11 @@ function editHost(inventoryID: number, inventory_host: boolean, hostName: string
   cy.hasDetail(/^Description$/, 'This is the description edited');
 }
 
-function deleteHost(inventoryID: number, inventory_host: boolean, hostName: string) {
+function deleteHost(inventoryID: number, host_type: string, hostName: string) {
   // function for delete host
   // can use this for stand alon host and for invntory host
   // will delete and verify that all was deleted curectlly
-  if (inventory_host) {
+  if (host_type === 'inventory_host') {
     cy.visit(
       `/infrastructure/inventories/inventory/${inventoryID}/hosts/?page=1&perPage=10&sort=name`
     );
@@ -423,14 +423,13 @@ function disassociate() {
   cy.clickModalButton('Close');
 }
 
-function checkHostGroup(inventory_host: boolean, organization: Organization) {
-  // this function will get boolean value and test host group option
-  // boolean value will be true for inventory hosts tests
-  // boolean value will be false for stand alone host tests
+function checkHostGroup(host_type: string, organization: Organization) {
+  // this function will get string and organization value and test host group option
+  // both for inventory host and stand alone hosts
   cy.createInventoryHostGroup(organization).then((result) => {
     const { inventory, host, group } = result;
     let url = '';
-    if (inventory_host) {
+    if (host_type === 'inventory_host') {
       url = `/infrastructure/inventories/inventory/${inventory.id}/hosts/?page=1&perPage=10&sort=name`;
     } else {
       url = '/infrastructure/hosts?page=1&perPage=10&sort=name';
@@ -485,17 +484,17 @@ function checkHostGroup(inventory_host: boolean, organization: Organization) {
       cy.clickModalButton('Confirm');
       cy.contains('button', 'Close').click();
       cy.contains(group.name);
-      deleteHost(inventory.id, inventory_host, host.name);
+      deleteHost(inventory.id, host_type, host.name);
     });
   });
 }
 
-function createAndEditAndDeleteHost(inventory_host: boolean, inventory: Inventory) {
+function createAndEditAndDeleteHost(host_type: string, inventory: Inventory) {
   //create
-  const hostName = createAndCheckHost(inventory_host, inventory.name);
+  const hostName = createAndCheckHost(host_type, inventory.name);
 
   // edit
-  editHost(inventory.id, inventory_host, hostName);
+  editHost(inventory.id, host_type, hostName);
   // delete
-  deleteHost(inventory.id, inventory_host, hostName);
+  deleteHost(inventory.id, host_type, hostName);
 }
