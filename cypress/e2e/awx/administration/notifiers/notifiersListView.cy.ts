@@ -141,7 +141,7 @@ function testNotification(type: string) {
       // test edit
       cy.get(`[data-cy="edit-notifier"]`).click();
       //selectOrganization(orgName2);
-      editBasicData(newNotificationName);
+      editBasicData();
 
       
       //editNotificationType(type);
@@ -188,8 +188,8 @@ function fillBasicData(notificationName: string, type: string) {
   cy.contains('span', type).click();
 }
 
-function editBasicData(notificationName: string) {
-  cy.get(`[data-cy="name"]`).clear().type(notificationName);
+function editBasicData() {
+  //cy.get(`[data-cy="name"]`).clear().type(notificationName);
   cy.get(`[data-cy="description"]`).clear().type('this is test description edited');
 }
 
