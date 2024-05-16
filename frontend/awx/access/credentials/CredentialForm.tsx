@@ -578,7 +578,8 @@ function CredentialSubForm({
   setWatchedSubFormFields: (fields: unknown[]) => void;
 }) {
   const { t } = useTranslation();
-  const openCredentialPluginsModal = useCredentialPluginsModal();
+  const alertToaster = usePageAlertToaster();
+  const openCredentialPluginsModal = useCredentialPluginsModal(alertToaster);
   const requiredFields = credentialType?.inputs?.required || [];
   const requiredFieldsInSubForm = credentialType.inputs.fields.filter((field) =>
     requiredFields.includes(field.id)

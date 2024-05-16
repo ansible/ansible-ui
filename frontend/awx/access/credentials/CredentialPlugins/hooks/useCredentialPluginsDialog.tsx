@@ -1,10 +1,16 @@
 import { useTranslation } from 'react-i18next';
-import { PageFormSubmitHandler, usePageDialogs } from '../../../../../../framework';
-import { Modal, ModalVariant } from '@patternfly/react-core';
+import {
+  IPageAlertToaster,
+  PageFormSubmitHandler,
+  usePageDialogs,
+} from '../../../../../../framework';
+import { AlertProps, Modal, ModalVariant } from '@patternfly/react-core';
 import { useEffect, useState } from 'react';
 import { CredentialType } from '../../../../interfaces/CredentialType';
 import { CredentialPluginsForm, CredentialPlugins } from '../CredentialPlugins';
 import { CredentialInputSource } from '../../../../interfaces/CredentialInputSource';
+import { postRequest } from '../../../../../common/crud/Data';
+import { awxAPI } from '../../../../common/api/awx-utils';
 
 export interface CredentialPluginsInputSource
   extends Omit<CredentialInputSource, 'target_credential' | 'summary_fields'> {}
@@ -16,7 +22,9 @@ export interface CredentialPluginsModalProps {
   accumulatedPluginValues?: CredentialPluginsInputSource[];
 }
 
-function CredentialPluginsModal(props: CredentialPluginsModalProps) {
+function CredentialPluginsModal(
+  props: CredentialPluginsModalProps & { alertToaster: IPageAlertToaster }
+) {
   const { t } = useTranslation();
   const onClose = () => {
     props.onClose?.();
@@ -57,6 +65,39 @@ function CredentialPluginsModal(props: CredentialPluginsModalProps) {
       }
     });
   };
+
+  const handleTest = (data: CredentialPluginsForm) => {
+    return new Promise<void>((resolve, reject) => {
+      const { source_credential, ...rest } = data;
+      const alert: AlertProps = {
+        variant: 'success',
+        title: t('Test passed.'),
+        timeout: 2000,
+      };
+
+      const payload = {
+        metadata: rest,
+      };
+
+      postRequest(awxAPI`/credentials/${String(source_credential)}/test/`, payload)
+        .then(() => {
+          props.alertToaster.addAlert(alert);
+        })
+        .catch((error) => {
+          props.alertToaster.addAlert({
+            variant: 'danger',
+            title: t('Something went wrong with the request to test this credential.'),
+            children: error instanceof Error && error.message,
+          });
+        });
+      try {
+        resolve();
+      } catch (error) {
+        reject(error);
+      }
+    });
+  };
+
   return (
     <Modal
       aria-label={t('Credential Plugins')}
@@ -67,21 +108,24 @@ function CredentialPluginsModal(props: CredentialPluginsModalProps) {
       <CredentialPlugins
         onCancel={onClose}
         handleSubmit={handleSubmit}
+        handleTest={handleTest}
         defaultValues={getDefaultValues()}
       />
     </Modal>
   );
 }
 
-export function useCredentialPluginsModal() {
+export function useCredentialPluginsModal(alertToaster: IPageAlertToaster) {
   const { pushDialog, popDialog } = usePageDialogs();
   const [props, setProps] = useState<CredentialPluginsModalProps>();
   useEffect(() => {
     if (props) {
-      pushDialog(<CredentialPluginsModal {...props} onClose={popDialog} />);
+      pushDialog(
+        <CredentialPluginsModal {...props} onClose={popDialog} alertToaster={alertToaster} />
+      );
     } else {
       popDialog();
     }
-  }, [props, pushDialog, popDialog]);
+  }, [props, pushDialog, popDialog, alertToaster]);
   return setProps;
 }
