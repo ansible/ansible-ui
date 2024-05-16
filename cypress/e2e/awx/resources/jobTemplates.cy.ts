@@ -280,9 +280,9 @@ describe('Job Templates Tests', function () {
     afterEach(function () {
       cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
       cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
-      cy.deleteAwxInventory(inventory2, { failOnStatusCode: false });
+      inventory2?.id && cy.deleteAwxInventory(inventory2, { failOnStatusCode: false });
       cy.deleteAwxCredential(machineCredential, { failOnStatusCode: false });
-      cy.deleteAwxCredential(githubCredential, { failOnStatusCode: false });
+      githubCredential?.id && cy.deleteAwxCredential(githubCredential, { failOnStatusCode: false });
     });
 
     it('can edit a job template using the kebab menu of the template list page', function () {
@@ -447,14 +447,14 @@ describe('Job Templates Tests', function () {
         cy.selectDropdownOptionByResourceName('webhook-service', 'GitHub');
         cy.wait('@getCredTypes');
 
+        cy.intercept('GET', awxAPI`/credentials/?credential_type*`).as('getCredType');
         // modal is closed instanly, possible cause: https://issues.redhat.com/browse/AAP-23766
         cy.get('[data-ouia-component-id="lookup-webhook_credential.name-button"]').click();
         cy.get('[data-ouia-component-id="lookup-webhook_credential.name-button"]').click();
 
-        cy.intercept('GET', awxAPI`/credentials/?credential_type*`).as('getCredType');
-        cy.getModal().within(() => {
-          cy.wait('@getCredType');
+        cy.wait('@getCredType');
 
+        cy.getModal().within(() => {
           cy.selectTableRowByCheckbox('name', ghCred.name);
           cy.clickButton('Confirm');
         });
