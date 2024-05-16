@@ -146,13 +146,14 @@ function testNotification(type: string) {
       editNotificationType(type);
       cy.get(`[data-cy="Submit"]`).click();
       
-      /*testBasicDataEdited(newNotificationName, orgName2);
+      testBasicDataEdited(notificationName, orgName2);
       testNotificationTypeEdited(type);
 
+      /*
       // validate its here and delete it
       cy.contains('span', 'Back to Notifiers').click();
-      cy.filterTableByMultiSelect('name', [newNotificationName]);
-      cy.contains(newNotificationName);
+      cy.filterTableByMultiSelect('name', [notificationName]);
+      cy.contains(notificationName);
       cy.get(`[aria-label="Simple table"] [data-cy="actions-dropdown"]`).click();
       cy.get(`[data-cy="delete-notifier"]`).click();
       cy.get(`[role="dialog"] input`).click();
