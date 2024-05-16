@@ -93,7 +93,7 @@ export function TemplatesList(props: {
     wfJobTemplateActions && wfJobTemplateActions.actions && wfJobTemplateActions.actions['POST']
   );
 
-  usePersistentFilters('templatesList');
+  usePersistentFilters('templates');
   const deleteTemplates = useDeleteTemplates(view.unselectItemsAndRefresh);
 
   const toolbarActions = useMemo<IPageAction<JobTemplate | WorkflowJobTemplate>[]>(
