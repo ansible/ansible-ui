@@ -4,7 +4,6 @@ import { DateTimeCell, PageDetail, PageDetails, useGetPageUrl } from '../../../.
 import { LastModifiedPageDetail } from '../../../common/LastModifiedPageDetail';
 import { useGet } from '../../../common/crud/useGet';
 import { edaAPI } from '../../common/eda-utils';
-import { EdaCredential } from '../../interfaces/EdaCredential';
 import { EdaDecisionEnvironmentRead } from '../../interfaces/EdaDecisionEnvironment';
 import { EdaRoute } from '../../main/EdaRoutes';
 
@@ -28,10 +27,6 @@ export function DecisionEnvironmentDetails() {
   );
   const { data: decisionEnvironment } = useGet<EdaDecisionEnvironmentRead>(
     edaAPI`/decision-environments/${params.id ?? ''}/`
-  );
-
-  const { data: credential } = useGet<EdaCredential>(
-    edaAPI`/eda-credentials/` + `${decisionEnvironment?.eda_credential?.id.toString() ?? ''}/`
   );
 
   const getPageUrl = useGetPageUrl();
@@ -67,10 +62,10 @@ export function DecisionEnvironmentDetails() {
               params: { id: decisionEnvironment?.eda_credential?.id },
             })}
           >
-            {credential?.name}
+            {decisionEnvironment?.eda_credential?.name}
           </Link>
         ) : (
-          credential?.name || ''
+          decisionEnvironment?.eda_credential?.name || ''
         )}
       </PageDetail>
       <PageDetail label={t('Created')}>
