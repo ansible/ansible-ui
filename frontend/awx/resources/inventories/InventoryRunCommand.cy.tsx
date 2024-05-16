@@ -32,7 +32,7 @@ describe('Run command wizard', () => {
       }
     );
   });
-  it('reveiw step has correct values', () => {
+  it('review step has correct values', () => {
     cy.mount(<InventoryRunCommand />);
     cy.selectDropdownOptionByResourceName('module-name', 'shell');
     cy.getByDataCy('module-args-form-group').type('argument');
@@ -59,11 +59,8 @@ describe('Run command wizard', () => {
       cy.clickButton(/^Confirm/);
     });
     cy.clickButton(/^Next$/);
-    cy.getByDataCy('credential-select-form-group').within(() => {
-      cy.getBy('[aria-label="Options menu"]').click();
-    });
-    cy.selectTableRowByCheckbox('name', 'Demo Credential');
-    cy.clickButton(/^Confirm$/);
+    cy.get('#credential-select').type('Demo Credential');
+
     cy.clickButton(/^Next$/);
     cy.getByDataCy('module').should('contain', 'shell');
     cy.getByDataCy('arguments').should('contain', 'argument');
