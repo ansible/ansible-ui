@@ -250,10 +250,8 @@ describe('Job Templates Tests', function () {
     let inventory: Inventory;
     let machineCredential: Credential;
     let jobTemplate: JobTemplate;
-    let globalOrg: Organization;
 
     beforeEach(function () {
-      globalOrg = this.globalOrganization as Organization;
       cy.createAwxInventory({ organization: (this.globalOrganization as Organization).id }).then(
         (inv) => {
           inventory = inv;
@@ -344,6 +342,8 @@ describe('Job Templates Tests', function () {
           cy.wait('@saveJT');
 
           cy.contains(newInventory.name);
+
+          cy.deleteAwxInventory(inventory);
         }
       );
     });
@@ -429,10 +429,10 @@ describe('Job Templates Tests', function () {
       cy.getByDataCy('enabled-options').contains('Provisioning Callbacks').should('not.exist');
     });
 
-    it.skip('can edit a job template to enable webhook, regenerate webhook key and set webhook credentials', function () {
+    it('can edit a job template to enable webhook, regenerate webhook key and set webhook credentials', function () {
       cy.createAWXCredential({
         kind: 'github_token',
-        organization: globalOrg.id,
+        organization: (this.globalOrganization as Organization).id,
         credential_type: 11,
       }).then((ghCred) => {
         let webhookKey: string;
@@ -509,6 +509,8 @@ describe('Job Templates Tests', function () {
                 cy.getByDataCy('webhook-key').should('have.value', webhookKey);
               });
           });
+
+        cy.deleteAwxCredential(ghCred);
       });
     });
 
