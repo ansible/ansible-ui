@@ -139,7 +139,7 @@ function testNotification(type: string) {
     cy.createAwxOrganization(orgName2).then(() => {
       // test edit
       cy.get(`[data-cy="edit-notifier"]`).click();
-      selectOrganization(orgName2);
+      //selectOrganization(orgName2);
       editBasicData();
 
       
