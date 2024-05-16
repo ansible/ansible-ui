@@ -50,16 +50,18 @@ export function CredentialFormInput(props: { field: FieldType | undefined; requi
   if (props.field.type === 'string') {
     if (props.field.multiline) {
       return (
-        <PageFormFileUpload
-          type="text"
-          label={props.field.label}
-          name={`inputs.${props.field.id}`}
-          labelHelpTitle={props.field.label}
-          labelHelp={props.field.help_text}
-          isRequired={!!props?.required && props.required.includes(props.field.id)}
-          isReadOnly={false}
-          allowEditingUploadedText={true}
-        />
+        <PageFormSection singleColumn>
+          <PageFormFileUpload
+            type="text"
+            label={props.field.label}
+            name={`inputs.${props.field.id}`}
+            labelHelpTitle={props.field.label}
+            labelHelp={props.field.help_text}
+            isRequired={!!props?.required && props.required.includes(props.field.id)}
+            isReadOnly={false}
+            allowEditingUploadedText={true}
+          />
+        </PageFormSection>
       );
     } else {
       if (props.field.choices && props.field.choices.length > 0) {
