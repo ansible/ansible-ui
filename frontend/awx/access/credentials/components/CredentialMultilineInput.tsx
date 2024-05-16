@@ -16,15 +16,27 @@ export function CredentialMultilineInput({
   kind,
   handleModalToggle,
   accumulatedPluginValues,
+  setAccumulatedPluginValues,
+  setPluginsToDelete,
 }: {
   field: CredentialInputField;
   requiredFields: CredentialType['inputs']['required'];
   kind: CredentialType['kind'];
   handleModalToggle: () => void;
   accumulatedPluginValues: CredentialPluginsInputSource[];
+  setAccumulatedPluginValues?: (values: CredentialPluginsInputSource[]) => void;
+  setPluginsToDelete?: React.Dispatch<React.SetStateAction<string[]>>;
 }) {
   const { t } = useTranslation();
-  const { setValue } = useFormContext();
+  const { setValue, clearErrors } = useFormContext();
+  const onClear = () => {
+    setValue(field.id, '', { shouldDirty: false });
+    clearErrors(field.id);
+    setAccumulatedPluginValues?.(
+      accumulatedPluginValues.filter((cp) => cp.input_field_name !== field.id)
+    );
+    setPluginsToDelete?.((prev: string[]) => [...prev, field.id]);
+  };
   const useGetSourceCredential = (id: number) => {
     const { data } = useGetItem<Credential>(awxAPI`/credentials/`, id);
     return data;
@@ -78,6 +90,7 @@ export function CredentialMultilineInput({
   return (
     <>
       <PageFormFileUpload
+        onClearClick={onClear}
         key={field.id}
         type="text"
         label={field.label}
