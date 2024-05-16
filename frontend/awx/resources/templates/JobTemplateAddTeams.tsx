@@ -9,17 +9,18 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../framework';
-import { AwxSelectTeamsStep } from '../../access/common/AwxRolesWizardSteps/AwxSelectTeamsStep';
-import { Team } from '../../interfaces/Team';
-import { AwxSelectRolesStep } from '../../access/common/AwxRolesWizardSteps/AwxSelectRolesStep';
-import { useGet } from '../../../common/crud/useGet';
-import { JobTemplate } from '../../interfaces/JobTemplate';
-import { awxAPI } from '../../common/api/awx-utils';
-import { postRequest } from '../../../common/crud/Data';
 import { RoleAssignmentsReviewStep } from '../../../common/access/RolesWizard/steps/RoleAssignmentsReviewStep';
-import { Role } from '../../interfaces/Role';
-import { AwxRoute } from '../../main/AwxRoutes';
+import { postRequest } from '../../../common/crud/Data';
+import { useGet } from '../../../common/crud/useGet';
+import { AwxSelectRolesStep } from '../../access/common/AwxRolesWizardSteps/AwxSelectRolesStep';
+import { AwxSelectTeamsStep } from '../../access/common/AwxRolesWizardSteps/AwxSelectTeamsStep';
+import { awxErrorAdapter } from '../../common/adapters/awxErrorAdapter';
+import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxBulkActionDialog } from '../../common/useAwxBulkActionDialog';
+import { JobTemplate } from '../../interfaces/JobTemplate';
+import { Role } from '../../interfaces/Role';
+import { Team } from '../../interfaces/Team';
+import { AwxRoute } from '../../main/AwxRoutes';
 
 interface WizardFormValues {
   teams: Team[];
@@ -144,6 +145,7 @@ export function JobTemplateAddTeams() {
         ]}
       />
       <PageWizard<WizardFormValues>
+        errorAdapter={awxErrorAdapter}
         steps={steps}
         onSubmit={onSubmit}
         disableGrid
