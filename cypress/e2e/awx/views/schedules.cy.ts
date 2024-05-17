@@ -13,7 +13,6 @@ describe('Schedules - Create and Delete', function () {
   let jobTemplate: JobTemplate;
   let project: Project;
   let inventory: Inventory;
-  let inventorySource: InventorySource;
   let schedule: Schedule;
   const testSignature: string = randomString(5, undefined, { isLowercase: true });
   function generateScheduleName(): string {
@@ -31,9 +30,6 @@ describe('Schedules - Create and Delete', function () {
       organization = o;
       cy.createAwxInventory({ organization: organization.id }).then((i) => {
         inventory = i;
-        cy.createAwxInventorySource(i, project).then((invSrc) => {
-          inventorySource = invSrc;
-        });
       });
     });
     const schedName = 'E2E Schedule' + randomString(4);
@@ -50,7 +46,6 @@ describe('Schedules - Create and Delete', function () {
     cy.deleteAWXSchedule(schedule, { failOnStatusCode: false });
     cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
     cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
-    cy.deleteAwxInventorySource(inventorySource, { failOnStatusCode: false });
   });
 
   it('can create a simple schedule, navigate to schedule details, then delete the schedule from the details page', () => {
