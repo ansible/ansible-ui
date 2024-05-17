@@ -270,12 +270,55 @@ describe('Job Templates Tests', function () {
         });
     });
 
-    it.skip('can create a job template, select concurrent jobs, and verify that two jobs will run concurrently', function () {
+    it('can create a job template, select concurrent jobs, and verify that two jobs will run concurrently', function () {
       //Utilize the job template created in the beforeEach hook
       //choose a playbook that will be long running in order to allow the test to assert the two jobs running concurrently
       //Assert that the details page reflects concurrent jobs as an enabled option
       //Have the test click the launch button twice in succession
       //Assert two jobs running at the same time
+      const jtName = 'E2E Concurrent JT ' + randomString(4);
+      cy.createAwxProject({
+        organization: (this.globalOrganization as Organization).id,
+        scm_type: 'git',
+        scm_url: 'https://github.com/jerabekjiri/ansible_playbooks',
+      }).then((gitProject: Project) => {
+        cy.visit('/templates/job_template/create');
+        cy.getByDataCy('name').type(jtName);
+        cy.selectDropdownOptionByResourceName('inventory', inventory.name);
+        cy.selectDropdownOptionByResourceName('project', gitProject.name);
+        cy.getByDataCy('allow_simultaneous').click();
+        cy.clickButton('Create job template');
+
+        cy.intercept('POST', awxAPI`/job_templates/*/launch/`).as('launchTemplate');
+        cy.clickButton('Launch template');
+
+        cy.wait('@launchTemplate')
+          .its('response.body.id')
+          .then((jobId: number) => {
+            cy.url().should('contain', `/jobs/playbook/${jobId}/output`);
+            cy.contains('Running');
+            cy.contains(jtName);
+
+            cy.intercept('POST', awxAPI`/jobs/${jobId.toString()}/relaunch/`).as('relaunchJob');
+            cy.getByDataCy('relaunch-job').click();
+            cy.wait('@relaunchJob')
+              .its('response.body.id')
+              .then((jobId2: number) => {
+                cy.url().should('contain', `/jobs/playbook/${jobId2}/output`);
+                cy.contains('Running');
+                cy.contains(jtName);
+
+                cy.visit('/jobs');
+                cy.getByDataCy(`row-id-${jobId}`).within(() => {
+                  cy.contains('Running');
+                });
+
+                cy.getByDataCy(`row-id-${jobId2}`).within(() => {
+                  cy.contains('Running');
+                });
+              });
+          });
+      });
     });
   });
 
