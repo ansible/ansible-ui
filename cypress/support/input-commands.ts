@@ -48,7 +48,7 @@ Cypress.Commands.add('multiSelectBy', (selector: string, values: string[]) => {
 });
 
 Cypress.Commands.add('multiSelectByDataCy', (dataCy: string, values: string[]) => {
-  cy.multiSelectBy(`[data-cy="${dataCy}"]`, values);
+  cy.multiSelectBy(`[data-cy*="${dataCy}"]`, values);
 });
 
 Cypress.Commands.add('selectLoadAll', () => {

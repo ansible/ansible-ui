@@ -42,109 +42,149 @@ describe('Projects', () => {
     it('can create a project and then delete it from the project details page', function () {
       const projectName = 'E2E Project ' + randomString(4);
       cy.navigateTo('awx', 'projects');
+      cy.verifyPageTitle('Projects');
       cy.clickLink(/^Create project$/);
       cy.get('[data-cy="name"]').type(projectName);
       cy.singleSelectByDataCy('organization', `${(this.globalOrganization as Organization).name}`);
       cy.selectDropdownOptionByResourceName('source_control_type', 'Git');
       cy.get('[data-cy="scm-url"]').type('https://github.com/ansible/ansible-ui');
       cy.get('[data-cy="option-allow-override"]').click();
+      cy.intercept('POST', awxAPI`/projects/`).as('newProject');
       cy.clickButton(/^Create project$/);
-      cy.verifyPageTitle(projectName);
-      cy.hasDetail(/^Organization$/, `${(this.globalOrganization as Organization).name}`);
-      cy.hasDetail(/^Source control type$/, 'Git');
-      cy.hasDetail(/^Enabled options$/, 'Allow branch override');
-      //Add more assertions on details page
-      cy.clickPageAction('delete-project');
-      cy.get('#confirm').click();
-      cy.clickButton(/^Delete project/);
-      //Add more robust assertions here
-      cy.verifyPageTitle('Projects');
+      cy.wait('@newProject')
+        .its('response.body')
+        .then((newProject: Project) => {
+          cy.verifyPageTitle(newProject.name);
+          cy.hasDetail(/^Organization$/, `${(this.globalOrganization as Organization).name}`);
+          cy.hasDetail(/^Source control type$/, 'Git');
+          cy.hasDetail(/^Enabled options$/, 'Allow branch override');
+          cy.waitForProjectToFinishSyncing(newProject.id);
+          cy.intercept('DELETE', awxAPI`/projects/${newProject.id.toString()}/`).as('deleted');
+          cy.clickPageAction('delete-project');
+          cy.get('#confirm').click();
+          cy.clickButton(/^Delete project/);
+          cy.wait('@deleted').then((deleted) => {
+            expect(deleted?.response?.statusCode).to.eql(204);
+            cy.getModal().within(() => {
+              cy.contains('Permanently delete projects');
+            });
+          });
+        });
     });
 
     it('can edit a project from the project list row', () => {
       cy.navigateTo('awx', 'projects');
+      cy.verifyPageTitle('Projects');
       cy.filterTableByMultiSelect('name', [project.name]);
       cy.get(`[data-cy="row-id-${project.id}"]`).within(() => {
         cy.get('[data-cy="edit-project"]').click();
       });
       cy.verifyPageTitle('Edit Project');
+      cy.get('[data-cy="name"]').should('have.value', `${project.name}`);
       cy.get('[data-cy="name"]').clear().type(`${project.name} - edited`);
+      cy.intercept('PATCH', awxAPI`/projects/${project.id.toString()}/`).as('edited');
       cy.clickButton(/^Save project$/);
-      cy.verifyPageTitle(`${project.name} - edited`);
-      cy.clickButton(/^Edit project$/);
-      cy.get('[data-cy="name"]').clear().type(`${project.name}`);
-      cy.clickButton(/^Save project$/);
-      //Add more robust assertions here
-      cy.verifyPageTitle(project.name);
+      cy.wait('@edited')
+        .its('response.body')
+        .then((edited: Project) => {
+          expect(edited.name).to.eql(`${project.name} - edited`);
+          cy.verifyPageTitle(`${edited.name}`);
+          cy.clickButton(/^Edit project$/);
+          cy.get('[data-cy="name"]').clear().type(`${project.name}`);
+          cy.clickButton(/^Save project$/);
+          cy.verifyPageTitle(project.name);
+        });
     });
 
     it('can copy a project from the projects list row', function () {
       const endOfProject = project.name.split(' ').slice(-1).toString();
       cy.navigateTo('awx', 'projects');
+      cy.verifyPageTitle('Projects');
       cy.filterTableByMultiSelect('name', [endOfProject]);
       cy.intercept('POST', awxAPI`/projects/${project.id.toString()}/copy/`).as('copiedProject');
-      cy.get(`[data-cy="row-id-${project.id}"]`).within(() => {
-        cy.get('[data-cy="actions-dropdown"]')
-          .click()
-          .then(() => {
-            cy.get('[data-cy="copy-project"]').click();
-          });
+      cy.clickTableRowAction('name', `${endOfProject}`, 'copy-project', {
+        inKebab: true,
+        disableFilter: true,
       });
       cy.wait('@copiedProject')
-        .its('response')
-        .then((response) => {
-          expect(response?.statusCode).to.eq(201);
-          //Add more robust assertions here
-          cy.filterTableByMultiSelect('name', [endOfProject]);
-          cy.clearAllFilters();
+        .its('response.body')
+        .then((response: Project) => {
+          cy.waitForProjectToFinishSyncing(response.id);
+          cy.filterTableByMultiSelect('name', [project.name, project.name, response.name]).then(
+            () => {
+              cy.get('#filter-input').click();
+              cy.getTableRow('name', project.name, { disableFilter: true }).should('be.visible');
+              cy.getTableRow('name', response.name, { disableFilter: true }).should('be.visible');
+              cy.clickTableRowAction('name', `${response.name}`, 'delete-project', {
+                inKebab: true,
+                disableFilter: true,
+              });
+              cy.getModal().within(() => {
+                cy.get('#confirm').click();
+                cy.get('[data-ouia-component-id="submit"]').click();
+                cy.clickButton('Close');
+              });
+            }
+          );
         });
     });
 
     it('can sync a project from the projects list row', function () {
       cy.navigateTo('awx', 'projects');
+      cy.verifyPageTitle('Projects');
       cy.filterTableByMultiSelect('name', [project.name]);
       cy.intercept(`api/v2/projects/${project.id}/update/`).as('projectUpdateRequest');
-      cy.contains('td', `${project.name}`)
-        .parent()
-        .within(() => {
-          cy.get('#sync-project').click();
-        });
+      cy.clickTableRowAction('name', `${project.name}`, 'sync-project', {
+        disableFilter: true,
+      });
       cy.hasAlert(`Syncing ${project.name}`).should('be.visible');
-      //Add more robust assertions here
-      cy.wait('@projectUpdateRequest');
+      cy.waitForProjectToFinishSyncing(project.id);
+      cy.wait('@projectUpdateRequest')
+        .its('response')
+        .then((response) => {
+          expect(response.statusCode).to.eql(202);
+        });
     });
 
     it('can delete a project from the projects list row', function () {
       cy.navigateTo('awx', 'projects');
+      cy.verifyPageTitle('Projects');
       cy.filterTableByMultiSelect('name', [project.name]);
       cy.clickTableRowAction('name', `${project.name}`, 'delete-project', {
         inKebab: true,
         disableFilter: true,
       });
       cy.get('#confirm').click();
+      cy.intercept('DELETE', awxAPI`/projects/${project.id.toString()}/`).as('deleted');
       cy.clickButton(/^Delete project/);
-      //Add more robust assertions here
-      cy.contains(/^Success$/);
-      cy.clickButton(/^Close$/);
-      cy.clearAllFilters();
-      cy.contains('tr', project.name).should('not.exist');
-      cy.clearAllFilters();
+      cy.wait('@deleted')
+        .its('response')
+        .then((deleted) => {
+          expect(deleted.statusCode).to.eql(204);
+          cy.contains(/^Success$/);
+          cy.clickButton(/^Close$/);
+          cy.clearAllFilters();
+        });
     });
 
     it('can delete a project from projects list toolbar', function () {
       const endOfProject = project.name.split(' ').slice(-1).toString();
       cy.navigateTo('awx', 'projects');
+      cy.verifyPageTitle('Projects');
       cy.filterTableByMultiSelect('name', [endOfProject]);
       cy.selectTableRowByCheckbox('name', `${project.name}`, { disableFilter: true });
+      cy.intercept('DELETE', awxAPI`/projects/${project.id.toString()}/`).as('deleted');
       cy.clickToolbarKebabAction('delete-selected-projects');
       cy.get('#confirm').click();
       cy.get('button[data-ouia-component-id="submit"]').click();
-      //Add more robust assertions here
-      cy.contains(/^Success$/);
-      cy.clickButton(/^Close$/);
-      cy.clickButton(/^Clear all filters$/);
-      cy.contains('tr', project.name).should('not.exist');
-      cy.clearAllFilters();
+      cy.wait('@deleted')
+        .its('response')
+        .then((deleted) => {
+          expect(deleted.statusCode).to.eql(204);
+          cy.contains(/^Success$/);
+          cy.clickButton(/^Close$/);
+          cy.clearAllFilters();
+        });
     });
   });
 
@@ -178,20 +218,25 @@ describe('Projects', () => {
       cy.clickButton(/^Edit project$/);
       cy.verifyPageTitle('Edit Project');
       cy.get('[data-cy="name"]').clear().type(`${project.name} - edited`);
+      cy.intercept('PATCH', awxAPI`/projects/${project.id.toString()}/`).as('edited');
       cy.clickButton(/^Save project$/);
-      cy.verifyPageTitle(`${project.name} - edited`);
-      cy.clickButton(/^Edit project$/);
-      cy.get('[data-cy="name"]').clear().type(`${project.name}`);
-      cy.clickButton(/^Save project$/);
-      //Add more robust assertions here
-      cy.verifyPageTitle(project.name);
+      cy.wait('@edited')
+        .its('response.body')
+        .then((edited: Project) => {
+          expect(edited.name).of.eql(`${project.name} - edited`);
+          cy.verifyPageTitle(`${project.name} - edited`);
+          cy.clickButton(/^Edit project$/);
+          cy.get('[data-cy="name"]').clear().type(`${project.name}`);
+          cy.clickButton(/^Save project$/);
+          cy.verifyPageTitle(project.name);
+        });
     });
 
     it('can copy a project from the project details page', function () {
       const endOfProject = project.name.split(' ').slice(-1).toString();
       cy.navigateTo('awx', 'projects');
+      cy.verifyPageTitle('Projects');
       cy.filterTableByMultiSelect('name', [endOfProject]);
-      cy.get('[data-cy="page-title"]').should('contain', 'Projects');
       cy.get(`[data-cy="row-id-${project.id}"]`).within(() => {
         cy.get('[data-cy="name-column-cell"]').click();
       });
@@ -202,17 +247,30 @@ describe('Projects', () => {
           cy.get('[data-cy="copy-project"]').click();
         });
       cy.wait('@copiedProject')
-        .its('response')
-        .then((response) => {
-          expect(response?.statusCode).to.eq(201);
+        .its('response.body')
+        .then((response: Project) => {
+          cy.waitForProjectToFinishSyncing(response.id);
           cy.get('[data-cy="Projects"]').eq(1).click();
-          cy.filterTableByMultiSelect('name', [endOfProject]);
-          cy.clearAllFilters();
+          cy.verifyPageTitle('Projects');
+          cy.filterTableByMultiSelect('name', [response.name]).then(() => {
+            cy.get('#filter-input').click();
+            cy.getTableRow('name', response.name, { disableFilter: true }).should('be.visible');
+            cy.clickTableRowAction('name', `${response.name}`, 'delete-project', {
+              inKebab: true,
+              disableFilter: true,
+            });
+            cy.getModal().within(() => {
+              cy.get('#confirm').click();
+              cy.get('[data-ouia-component-id="submit"]').click();
+              cy.clickButton('Close');
+            });
+          });
         });
     });
 
     it('can sync a project from the project details page', function () {
       cy.navigateTo('awx', 'projects');
+      cy.verifyPageTitle('Projects');
       cy.filterTableByMultiSelect('name', [project.name]);
       cy.clickTableRowLink('name', project.name, {
         disableFilter: true,
@@ -220,23 +278,32 @@ describe('Projects', () => {
       cy.verifyPageTitle(`${project.name}`);
       cy.intercept(`api/v2/projects/${project.id}/update/`).as('projectUpdateRequest');
       cy.clickButton(/^Sync project$/);
-      cy.wait('@projectUpdateRequest');
-      //Add more robust assertions here
+      cy.get('[data-cy="last-job-status"]').should('contain', 'Running');
+      cy.waitForProjectToFinishSyncing(project.id);
+      cy.wait('@projectUpdateRequest')
+        .its('response')
+        .then((update) => {
+          expect(update.statusCode).to.eql(202);
+        });
     });
 
     it('can delete a project from project details page', function () {
       cy.navigateTo('awx', 'projects');
+      cy.verifyPageTitle('Projects');
       cy.filterTableByMultiSelect('name', [project.name]);
       cy.clickTableRowLink('name', project.name, { disableFilter: true });
       cy.get('[data-cy="page-title"]').should('contain', `${project.name}`);
+      cy.intercept('DELETE', awxAPI`/projects/${project.id.toString()}/`).as('deleted');
       cy.clickPageAction('delete-project');
-      cy.get('.pf-v5-c-modal-box').within(() => {
-        cy.intercept('DELETE', awxAPI`/projects/${project.id.toString()}/`).as('deleted');
+      cy.getModal().within(() => {
         cy.get('#confirm').click();
         cy.clickButton(/^Delete project/);
-        cy.wait('@deleted');
+        cy.wait('@deleted')
+          .its('response')
+          .then((deleted) => {
+            expect(deleted.statusCode).to.eql(204);
+          });
       });
-      cy.contains('tr', project.name).should('not.exist');
       cy.verifyPageTitle('Projects');
     });
   });
@@ -381,7 +448,7 @@ describe('Projects', () => {
         });
     });
 
-    it.skip('can edit a schedule to add and then remove exceptions', () => {
+    it('can edit a schedule to add and then remove exceptions', () => {
       cy.filterTableBySingleSelect('name', schedule.name);
       cy.clickTableRowLink('name', schedule.name, { disableFilter: true });
       cy.getBy('[data-cy="edit-schedule"]').click();
@@ -445,12 +512,20 @@ describe('Projects', () => {
     it('can delete a schedule from the schedules list row', () => {
       cy.filterTableBySingleSelect('name', schedule.name);
       cy.clickTableRowKebabAction(schedule.name, 'delete-schedule', false);
-      cy.get('#confirm').click();
-      cy.clickButton(/^Delete schedule/);
-      //Add more robust assertions here
-      cy.contains(/^Success$/);
-      cy.clickButton(/^Close$/);
+      cy.getModal().then(() => {
+        cy.get('#confirm').click();
+        cy.intercept('DELETE', awxAPI`/schedules/${schedule.id.toString()}/`).as('deleted');
+        cy.clickButton(/^Delete schedule/);
+        cy.wait('@deleted')
+          .its('response')
+          .then((deleted) => {
+            expect(deleted.statusCode).to.eql(204);
+            cy.contains(/^Success$/);
+            cy.clickButton(/^Close$/);
+          });
+      });
       cy.contains('No results found');
+      cy.clickButton(/^Clear all filters$/);
     });
 
     it('can delete a schedule from the schedules list toolbar', () => {
@@ -459,12 +534,19 @@ describe('Projects', () => {
         cy.get('input[aria-label="Select all rows"]').click();
       });
       cy.clickToolbarKebabAction('delete-selected-schedules');
-      cy.get('#confirm').click();
-      cy.clickButton(/^Delete schedule/);
-      //Add more robust assertions here
-      cy.contains(/^Success$/);
-      cy.clickButton(/^Close$/);
-      cy.contains('tr', schedule.name).should('not.exist');
+      cy.intercept('DELETE', awxAPI`/schedules/${schedule.id.toString()}/`).as('deleted');
+      cy.getModal().then(() => {
+        cy.get('#confirm').click();
+        cy.clickButton(/^Delete schedule/);
+        cy.wait('@deleted')
+          .its('response')
+          .then((deleted) => {
+            expect(deleted.statusCode).to.eql(204);
+            cy.contains(/^Success$/);
+            cy.clickButton(/^Close$/);
+          });
+      });
+      cy.contains('No results found');
       cy.clickButton(/^Clear all filters$/);
     });
   });
