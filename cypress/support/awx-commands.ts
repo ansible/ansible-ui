@@ -31,6 +31,7 @@ import { WorkflowJobNode, WorkflowNode } from '../../frontend/awx/interfaces/Wor
 import { Spec } from '../../frontend/awx/interfaces/Survey';
 import { awxAPI } from './formatApiPathForAwx';
 import { Survey } from '../../frontend/awx/interfaces/Survey';
+import { RoleSerializerWithParentAccess } from '../../frontend/awx/interfaces/generated-from-swagger/api';
 
 //  AWX related custom command implementation
 
@@ -776,6 +777,15 @@ Cypress.Commands.add(
     }
   }
 );
+
+Cypress.Commands.add('getAwxRoles', () => {
+  cy.requestGet<AwxItemsResponse<RoleSerializerWithParentAccess>>(awxAPI`/role_definitions/`).then(
+    (response) => {
+      const awxRoles = response.results;
+      return awxRoles;
+    }
+  );
+});
 
 Cypress.Commands.add(
   'createAwxProject',
