@@ -37,7 +37,7 @@ import { EdaProjectCell } from '../projects/components/EdaProjectCell';
 import { PageFormSelectOrganization } from '../access/organizations/components/PageFormOrganizationSelect';
 import useSWR from 'swr';
 import { EdaOrganization } from '../interfaces/EdaOrganization';
-import { Alert, Text } from '@patternfly/react-core';
+import { Alert } from '@patternfly/react-core';
 
 export function CreateRulebookActivation() {
   const { t } = useTranslation();
@@ -87,13 +87,15 @@ export function CreateRulebookActivation() {
         ]}
       />
       {(!tokens?.results || tokens?.results.length < 1) && (
-        <Alert variant="danger" isInline title={t('No controller token found.')}>
-          <Text>
-            {t(
-              'Rulebook activations require a controller token to authenticate with an Automation Controller'
-            )}
-          </Text>
-          <br />
+        <Alert
+          variant={'info'}
+          isInline
+          isPlain
+          style={{ paddingLeft: '24px', paddingTop: '16px' }}
+          title={t(
+            'Most rulebook activations require a controller token to authenticate with an Automation Controller.'
+          )}
+        >
           <Link to={getPageUrl(EdaRoute.CreateControllerToken)}>
             {t('Create a controller token')}
           </Link>
