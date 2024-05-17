@@ -140,12 +140,16 @@ export function PageForm<T extends object>(props: PageFormProps<T>) {
                 event.nativeEvent.submitter?.innerHTML === props.additionalActionText;
             }
             try {
-              await props.onSubmit(
-                data,
-                (error) => setError(error),
-                setFieldError,
-                isSecondaryButton ? form : undefined
-              );
+              if (isSecondaryButton && props.onClickAdditionalAction) {
+                await props.onClickAdditionalAction(
+                  data,
+                  (error) => setError(error),
+                  setFieldError,
+                  form
+                );
+              } else {
+                await props.onSubmit(data, (error) => setError(error), setFieldError, form);
+              }
             } catch (err) {
               handleSubmitError(err);
             }
