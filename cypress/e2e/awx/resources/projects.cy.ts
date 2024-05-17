@@ -142,7 +142,7 @@ describe('Projects', () => {
       cy.wait('@projectUpdateRequest')
         .its('response')
         .then((response) => {
-          expect(response.statusCode).to.eql(202);
+          expect(response?.statusCode).to.eql(202);
         });
     });
 
@@ -283,7 +283,7 @@ describe('Projects', () => {
       cy.wait('@projectUpdateRequest')
         .its('response')
         .then((update) => {
-          expect(update.statusCode).to.eql(202);
+          expect(update?.statusCode).to.eql(202);
         });
     });
 
