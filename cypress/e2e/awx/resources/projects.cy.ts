@@ -160,7 +160,7 @@ describe('Projects', () => {
       cy.wait('@deleted')
         .its('response')
         .then((deleted) => {
-          expect(deleted.statusCode).to.eql(204);
+          expect(deleted?.statusCode).to.eql(204);
           cy.contains(/^Success$/);
           cy.clickButton(/^Close$/);
           cy.clearAllFilters();
@@ -180,7 +180,7 @@ describe('Projects', () => {
       cy.wait('@deleted')
         .its('response')
         .then((deleted) => {
-          expect(deleted.statusCode).to.eql(204);
+          expect(deleted?.statusCode).to.eql(204);
           cy.contains(/^Success$/);
           cy.clickButton(/^Close$/);
           cy.clearAllFilters();
@@ -301,7 +301,7 @@ describe('Projects', () => {
         cy.wait('@deleted')
           .its('response')
           .then((deleted) => {
-            expect(deleted.statusCode).to.eql(204);
+            expect(deleted?.statusCode).to.eql(204);
           });
       });
       cy.verifyPageTitle('Projects');
@@ -365,7 +365,6 @@ describe('Projects', () => {
       cy.clickButton(/^Next$/);
       cy.get('[data-cy="description"]').contains('-edited');
       cy.clickButton(/^Finish$/);
-      //Add more robust assertions here
       cy.verifyPageTitle(schedule.name);
     });
 
@@ -385,7 +384,6 @@ describe('Projects', () => {
       cy.clickButton(/^Next$/);
       cy.get('[data-cy="description"]').contains('-edited');
       cy.clickButton(/^Finish$/);
-      //Add more robust assertions here
       cy.verifyPageTitle(schedule.name);
     });
 
@@ -519,7 +517,7 @@ describe('Projects', () => {
         cy.wait('@deleted')
           .its('response')
           .then((deleted) => {
-            expect(deleted.statusCode).to.eql(204);
+            expect(deleted?.statusCode).to.eql(204);
             cy.contains(/^Success$/);
             cy.clickButton(/^Close$/);
           });
@@ -541,7 +539,7 @@ describe('Projects', () => {
         cy.wait('@deleted')
           .its('response')
           .then((deleted) => {
-            expect(deleted.statusCode).to.eql(204);
+            expect(deleted?.statusCode).to.eql(204);
             cy.contains(/^Success$/);
             cy.clickButton(/^Close$/);
           });
