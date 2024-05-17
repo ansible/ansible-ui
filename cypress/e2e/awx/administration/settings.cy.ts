@@ -16,7 +16,9 @@ describe('AWX Settings', () => {
     cy.getByDataCy('Submit').click();
   });
 
-  it('should be able to change system settings', () => {
+  it.skip('should be able to change system settings', () => {
+    // This test should be unskipped when https://issues.redhat.com/browse/AAP-24243 is resolved
+
     cy.requestPatch(awxAPI`/settings/all/`, {
       ACTIVITY_STREAM_ENABLED_FOR_INVENTORY_SYNC: false,
     });
