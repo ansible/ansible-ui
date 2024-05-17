@@ -93,6 +93,8 @@ export function ExecutionEnvironmentPage() {
         tabs={[
           { label: t('Details'), page: AwxRoute.ExecutionEnvironmentDetails },
           { label: t('Templates'), page: AwxRoute.ExecutionEnvironmentTemplates },
+          { label: t('Team Access'), page: AwxRoute.ExecutionEnvironmentTeamAccess },
+          { label: t('User Access'), page: AwxRoute.ExecutionEnvironmentUserAccess },
         ]}
         params={{ id: executionEnvironment?.id ?? '' }}
       />

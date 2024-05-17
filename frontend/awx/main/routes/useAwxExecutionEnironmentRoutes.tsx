@@ -10,6 +10,10 @@ import {
   EditExecutionEnvironment,
 } from '../../administration/execution-environments/ExecutionEnvironmentForm';
 import { ExecutionEnvironmentTemplates } from '../../administration/execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentTemplates';
+import { ExecutionEnvironmentAddTeams } from '../../administration/execution-environments/components/ExecutionEnvironmentAddTeams';
+import { ExecutionEnvironmentAddUsers } from '../../administration/execution-environments/components/ExecutionEnvironmentAddUsers';
+import { ExecutionEnvironmentTeamAccess } from '../../administration/execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentTeamAccess';
+import { ExecutionEnvironmentUserAccess } from '../../administration/execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentUserAccess';
 
 export function useAwxExecutionEnvironmentRoutes() {
   const { t } = useTranslation();
@@ -34,6 +38,16 @@ export function useAwxExecutionEnvironmentRoutes() {
               path: 'templates',
               element: <ExecutionEnvironmentTemplates />,
             },
+            {
+              id: AwxRoute.ExecutionEnvironmentTeamAccess,
+              path: 'team-access',
+              element: <ExecutionEnvironmentTeamAccess />,
+            },
+            {
+              id: AwxRoute.ExecutionEnvironmentUserAccess,
+              path: 'user-access',
+              element: <ExecutionEnvironmentUserAccess />,
+            },
           ],
         },
         {
@@ -49,6 +63,16 @@ export function useAwxExecutionEnvironmentRoutes() {
           id: AwxRoute.EditExecutionEnvironment,
           path: ':id/edit',
           element: <EditExecutionEnvironment />,
+        },
+        {
+          id: AwxRoute.ExecutionEnvironmentAddUsers,
+          path: ':id/user-access/add',
+          element: <ExecutionEnvironmentAddUsers />,
+        },
+        {
+          id: AwxRoute.ExecutionEnvironmentAddTeams,
+          path: ':id/team-access/add',
+          element: <ExecutionEnvironmentAddTeams />,
         },
       ],
     }),
