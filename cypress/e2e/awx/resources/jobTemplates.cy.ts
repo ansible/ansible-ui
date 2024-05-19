@@ -596,9 +596,11 @@ describe('Job Templates Tests', function () {
 
   describe('Job Templates Tests: Delete', function () {
     let inventory: Inventory;
+    let deletedInventory: Inventory;
     let machineCredential: Credential;
     let jobTemplate: JobTemplate;
     let jobTemplate2: JobTemplate;
+    let jobTemplateWithDeletedInventory: JobTemplate;
 
     beforeEach(function () {
       cy.createAwxInventory({ organization: (this.globalOrganization as Organization).id }).then(
@@ -636,12 +638,34 @@ describe('Job Templates Tests', function () {
       cy.deleteAwxJobTemplate(jobTemplate2, { failOnStatusCode: false });
       cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
       cy.deleteAwxCredential(machineCredential, { failOnStatusCode: false });
+
+      jobTemplateWithDeletedInventory?.id &&
+        cy.deleteAwxJobTemplate(jobTemplateWithDeletedInventory, { failOnStatusCode: false });
     });
 
-    it.skip('can delete a job template from the list line item', function () {
+    it('can delete a job template from the list line item', function () {
       //Use a job template created in the beforeEach hook
       //Assert the presence of the job template
       //Assert the deletion by intercepting the API call
+      cy.visit('/templates');
+      cy.filterTableBySingleSelect('name', jobTemplate.name);
+      cy.getByDataCy('actions-column-cell').within(() => {
+        cy.getByDataCy('actions-dropdown').click();
+        cy.getByDataCy('delete-template').click();
+      });
+      cy.clickModalConfirmCheckbox();
+      cy.intercept('DELETE', awxAPI`/job_templates/${jobTemplate.id.toString()}/`).as('deleteJT');
+      cy.clickModalButton('Delete template');
+      cy.wait('@deleteJT')
+        .its('response')
+        .then((response) => {
+          expect(response?.statusCode).to.eql(204);
+        });
+      cy.getModal().within(() => {
+        cy.contains(jobTemplate.name);
+        cy.contains('Success');
+        cy.clickButton('Close');
+      });
     });
 
     it('can delete a job template from the details page', function () {
@@ -661,10 +685,39 @@ describe('Job Templates Tests', function () {
       cy.verifyPageTitle('Templates');
     });
 
-    it.skip('can delete a resource related to a JT and view warning on the JT', function () {
+    it('can delete a resource related to a JT and view warning on the JT', function () {
       //create a job template with a specific inventory in the beforeEach hook
       //Delete the inventory
       //Assert that the job template details page shows the inventory as having been deleted
+      cy.createAwxInventory({ organization: (this.globalOrganization as Organization).id }).then(
+        (inv) => {
+          deletedInventory = inv;
+
+          cy.createAwxJobTemplate({
+            organization: (this.globalOrganization as Organization).id,
+            project: (this.globalProject as Project).id,
+            inventory: deletedInventory.id,
+          }).then((jt) => {
+            jobTemplateWithDeletedInventory = jt;
+
+            cy.visit(`templates/job_template/${jobTemplateWithDeletedInventory.id}/details`);
+            cy.getByDataCy('inventory').contains(deletedInventory.name).click();
+            cy.clickKebabAction('actions-dropdown', 'delete-inventory');
+            cy.clickModalConfirmCheckbox();
+            cy.intercept('DELETE', awxAPI`/inventories/${deletedInventory.id.toString()}/`).as(
+              'deleteInventory'
+            );
+            cy.clickModalButton('Delete inventory');
+            cy.wait('@deleteInventory')
+              .its('response')
+              .then((response) => {
+                expect(response?.statusCode).to.eql(202);
+              });
+            cy.visit(`templates/job_template/${jobTemplateWithDeletedInventory.id}/details`);
+            cy.getByDataCy('inventory').contains('Deleted');
+          });
+        }
+      );
     });
 
     it('can bulk delete job templates from the list page', function () {
