@@ -81,6 +81,10 @@ import { CredentialTypeUserAccess } from '../access/credential-types/CredentialT
 import { EdaUserRoles } from '../access/users/UserPage/EdaUserRoles';
 import { EdaAddTeamRoles } from '../access/teams/EdaAddTeamRoles';
 import { EdaTeamRoles } from '../access/teams/TeamPage/EdaTeamRoles';
+import { TeamPage } from '../access/teams/TeamPage/TeamPage';
+import { TeamDetails } from '../access/teams/TeamPage/TeamDetails';
+import { CreateTeam, EditTeam } from '../access/teams/TeamPage/TeamForm';
+import { Teams } from '../access/teams/Teams';
 
 export function useEdaNavigation() {
   const { t } = useTranslation();
@@ -452,20 +456,39 @@ export function useEdaNavigation() {
             },
           ],
         },
-        // EDA has no team management on upstream
         {
           id: EdaRoute.Teams,
           label: t('Teams'),
           path: 'teams',
           children: [
             {
+              id: EdaRoute.CreateTeam,
+              path: 'create',
+              element: <CreateTeam />,
+            },
+            {
+              id: EdaRoute.EditTeam,
+              path: ':id/edit',
+              element: <EditTeam />,
+            },
+            {
               id: EdaRoute.TeamPage,
               path: ':id',
+              element: <TeamPage />,
               children: [
                 {
                   id: EdaRoute.TeamRoles,
                   path: 'roles',
                   element: <EdaTeamRoles />,
+                },
+                {
+                  id: EdaRoute.TeamDetails,
+                  path: 'details',
+                  element: <TeamDetails />,
+                },
+                {
+                  path: '',
+                  element: <Navigate to="details" />,
                 },
               ],
             },
@@ -473,6 +496,10 @@ export function useEdaNavigation() {
               id: EdaRoute.TeamAddRoles,
               path: ':id/roles/add-roles',
               element: <EdaAddTeamRoles />,
+            },
+            {
+              path: '',
+              element: <Teams />,
             },
           ],
         },
