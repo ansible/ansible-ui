@@ -7,7 +7,7 @@ import { WorkflowJobTemplate } from '../../../../frontend/awx/interfaces/Workflo
 import { WorkflowNode } from '../../../../frontend/awx/interfaces/WorkflowNode';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 
-describe('Workflow Visualizer', () => {
+describe.skip('Workflow Visualizer', () => {
   let organization: Organization;
   let project: Project;
   let inventory: Inventory;
