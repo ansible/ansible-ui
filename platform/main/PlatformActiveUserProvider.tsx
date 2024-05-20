@@ -29,15 +29,15 @@ export function PlatformActiveUserProvider(props: { children: ReactNode }) {
   useEffect(() => {
     setActivePlatformUser((activeUser) => {
       if (response.error) {
-        return null;
+        return null; // clear the active user on error
       }
 
       if (response.data && response.data.results.length > 0) {
         return response.data.results[0];
       }
 
-      if (response.isLoading && activeUser === undefined) {
-        return undefined;
+      if (response.isLoading) {
+        return activeUser; // keep the active user while loading
       }
 
       return null;
