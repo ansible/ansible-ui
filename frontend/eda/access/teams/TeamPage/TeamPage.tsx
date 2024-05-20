@@ -98,7 +98,7 @@ export function TeamPageTabs(props: { team: EdaTeam }) {
       }}
       tabs={[
         { label: t('Details'), page: EdaRoute.TeamDetails },
-        { label: t('Team Roles'), page: EdaRoute.TeamRoles },
+        { label: t('Roles'), page: EdaRoute.TeamRoles },
       ]}
       params={{ id: team.id }}
     />
