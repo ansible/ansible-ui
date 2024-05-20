@@ -39,7 +39,7 @@ export function UserPage() {
 
   const { activeEdaUser } = useEdaActiveUser();
   const isViewingSelf = Number(user?.id) === Number(activeEdaUser?.id);
-  const canViewOrEditUsers = activeEdaUser?.is_superuser;
+  const canViewOrEditUsers = true;
 
   const isActionTab =
     location.pathname === getPageUrl(EdaRoute.UserDetails, { params: { id: user?.id } });
