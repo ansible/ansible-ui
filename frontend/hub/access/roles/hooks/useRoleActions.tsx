@@ -11,6 +11,7 @@ import { useHubContext } from '../../../common/useHubContext';
 import { HubRoute } from '../../../main/HubRoutes';
 import { Role } from '../Role';
 import { useDeleteRoles } from './useDeleteRoles';
+import { ButtonVariant } from '@patternfly/react-core';
 
 export function useRoleToolbarActions(onComplete: (roles: Role[]) => void) {
   const { t } = useTranslation();
@@ -32,6 +33,7 @@ export function useRoleToolbarActions(onComplete: (roles: Role[]) => void) {
               'You do not have permission to create a role. Please contact your system administrator if there is an issue with your access.'
             ),
         href: `${getPageUrl(HubRoute.CreateRole)}`,
+        variant: ButtonVariant.primary,
       },
       { type: PageActionType.Seperator },
       {
