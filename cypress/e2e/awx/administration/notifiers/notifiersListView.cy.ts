@@ -136,18 +136,19 @@ function testNotification(type: string) {
 
     // test edit
     cy.get(`[data-cy="edit-notifier"]`).click();
-    editBasicData();
 
+    const name2 = randomE2Ename();
+    editBasicData(name2);
     editNotificationType(type);
     cy.get(`[data-cy="Submit"]`).click();
 
-    testBasicDataEdited(notificationName, orgName);
+    testBasicDataEdited(name2, orgName);
     testNotificationTypeEdited(type);
 
     // validate its here and delete it
     cy.contains('span', 'Back to Notifiers').click();
-    cy.filterTableByMultiSelect('name', [notificationName]);
-    cy.contains(notificationName);
+    cy.filterTableByMultiSelect('name', [name2]);
+    cy.contains(name2);
     cy.get(`[aria-label="Simple table"] [data-cy="actions-dropdown"]`).click();
     cy.get(`[data-cy="delete-notifier"]`).click();
     cy.get(`[role="dialog"] input`).click();
@@ -157,7 +158,7 @@ function testNotification(type: string) {
     cy.get(`[data-cy="filter"]`).click();
     cy.get(`[data-cy="name"] button`).click();
     cy.get(`[data-cy="filter-input"]`).click();
-    cy.get(`[aria-label="Search input"]`).type(notificationName);
+    cy.get(`[aria-label="Search input"]`).type(name2);
     cy.contains('No results found');
   });
 }
@@ -181,8 +182,8 @@ function fillBasicData(notificationName: string, type: string) {
   cy.contains('span', type).click();
 }
 
-function editBasicData() {
-  //cy.get(`[data-cy="name"]`).clear().type(notificationName);
+function editBasicData(notificationName: string) {
+  cy.get(`[data-cy="name"]`).clear().type(notificationName);
   cy.get(`[data-cy="description"]`).clear().type('this is test description edited');
 }
 
