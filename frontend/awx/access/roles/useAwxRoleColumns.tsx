@@ -24,7 +24,7 @@ export function useAwxRoleColumns(options?: { disableSort?: boolean; disableLink
               options?.disableLinks
                 ? undefined
                 : getPageUrl(AwxRoute.RoleDetails, {
-                    params: { id: role.id, resourceType: role.content_type as string },
+                    params: { id: role.id, resourceType: role.content_type || 'null' },
                   })
             }
             text={role.name}
