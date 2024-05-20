@@ -11,6 +11,7 @@ import {
 import { useAwxView } from '../../common/useAwxView';
 import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxRoleColumns } from './useAwxRoleColumns';
+import { AwxRoleExpandedRow } from './components/AwxRoleExpandedRow';
 import { AwxRbacRole } from '../../interfaces/AwxRbacRole';
 
 export function AwxRoles() {
@@ -74,6 +75,7 @@ export function AwxRolesTable() {
       {...view}
       tableColumns={tableColumns}
       toolbarFilters={toolbarFilters}
+      expandedRow={(role) => <AwxRoleExpandedRow role={role} />}
       errorStateTitle={t('Error loading roles')}
       emptyStateTitle={t('No roles found')}
       defaultSubtitle={t('Role')}
