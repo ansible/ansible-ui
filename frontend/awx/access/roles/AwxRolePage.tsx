@@ -2,7 +2,7 @@
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { PageHeader, PageLayout, useGetPageUrl } from '../../../../framework';
-import { PageRoutedTabs } from '../../../../framework/PageTabs/PageRoutedTabs';
+import { PageRoutedTabs } from '../../../common/PageRoutedTabs';
 import { AwxRoute } from '../../main/AwxRoutes';
 import { AwxRole } from './AwxRoles';
 import { useAwxRoles } from './useAwxRoles';

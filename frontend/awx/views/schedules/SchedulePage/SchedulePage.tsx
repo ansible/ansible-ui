@@ -1,21 +1,21 @@
 import { DropdownPosition } from '@patternfly/react-core/deprecated';
+import { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { PageActions, PageHeader, PageLayout } from '../../../../../framework';
 import { useGetPageUrl } from '../../../../../framework/PageNavigation/useGetPageUrl';
-import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
+import { PageRoutedTabs } from '../../../../common/PageRoutedTabs';
+import { requestGet } from '../../../../common/crud/Data';
+import { useAbortController } from '../../../../common/crud/useAbortController';
 import { useGetItem } from '../../../../common/crud/useGet';
 import { AwxError } from '../../../common/AwxError';
 import { awxAPI } from '../../../common/api/awx-utils';
+import { Inventory } from '../../../interfaces/Inventory';
 import { Schedule } from '../../../interfaces/Schedule';
 import { AwxRoute } from '../../../main/AwxRoutes';
-import { useSchedulesActions } from '../hooks/useSchedulesActions';
 import { resourceEndPoints } from '../hooks/scheduleHelpers';
-import { requestGet } from '../../../../common/crud/Data';
+import { useSchedulesActions } from '../hooks/useSchedulesActions';
 import { ScheduleResources } from '../types';
-import { Inventory } from '../../../interfaces/Inventory';
-import { useEffect, useMemo, useState } from 'react';
-import { useAbortController } from '../../../../common/crud/useAbortController';
 
 export function SchedulePage(props: {
   tabs: { label: string; page: string }[];

@@ -1,3 +1,5 @@
+import { DropdownPosition } from '@patternfly/react-core/deprecated';
+import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import {
   LoadingPage,
@@ -7,15 +9,13 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../../framework';
-import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
-import { awxAPI } from '../../../common/api/awx-utils';
-import { AwxRoute } from '../../../main/AwxRoutes';
-import { useTranslation } from 'react-i18next';
+import { PageRoutedTabs } from '../../../../common/PageRoutedTabs';
 import { useGetItem } from '../../../../common/crud/useGet';
 import { AwxError } from '../../../common/AwxError';
-import { useInstanceGroupRowActions } from '../hooks/useInstanceGroupActions';
-import { DropdownPosition } from '@patternfly/react-core/deprecated';
+import { awxAPI } from '../../../common/api/awx-utils';
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';
+import { AwxRoute } from '../../../main/AwxRoutes';
+import { useInstanceGroupRowActions } from '../hooks/useInstanceGroupActions';
 
 export function InstanceGroupPage() {
   const { t } = useTranslation();

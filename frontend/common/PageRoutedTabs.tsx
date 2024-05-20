@@ -2,10 +2,10 @@ import { Tab, TabProps, TabTitleText, Tabs } from '@patternfly/react-core';
 import { CaretLeftIcon } from '@patternfly/react-icons';
 import { useEffect } from 'react';
 import { Outlet, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
-import { PageLayout, useGetPageUrl, usePageNavigate } from '..';
-import { getPersistentFilters } from '../../frontend/common/PersistentFilters';
-import { usePageBreadcrumbs } from './PageBreadcrumbs';
+import { PageLayout, useGetPageUrl, usePageNavigate } from '../../framework';
+import { usePageBreadcrumbs } from '../../framework/PageTabs/PageBreadcrumbs';
 import './PageTabs.css';
+import { getPersistentFilters } from './PersistentFilters';
 
 export function PageRoutedTabs(props: {
   backTab?: { label: string; page: string; persistentFilterKey: string };

@@ -6,20 +6,20 @@ import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import {
   IPageAction,
-  PageActions,
   PageActionSelection,
   PageActionType,
+  PageActions,
   PageHeader,
   PageLayout,
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../../framework';
-import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
+import { PageRoutedTabs } from '../../../../common/PageRoutedTabs';
 import { useGetItem } from '../../../../common/crud/useGet';
 import { cannotDeleteResource, cannotEditResource } from '../../../../common/utils/RBAChelpers';
 import { awxAPI } from '../../../common/api/awx-utils';
-import { AwxRoute } from '../../../main/AwxRoutes';
 import { ExecutionEnvironment } from '../../../interfaces/ExecutionEnvironment';
+import { AwxRoute } from '../../../main/AwxRoutes';
 import { useDeleteExecutionEnvironments } from '../hooks/useDeleteExecutionEnvironments';
 
 export function ExecutionEnvironmentPage() {

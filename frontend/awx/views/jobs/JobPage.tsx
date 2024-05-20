@@ -1,15 +1,14 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { PageLayout } from '../../../../framework';
-import { PageRoutedTabs } from '../../../../framework/PageTabs/PageRoutedTabs';
+import { LoadingPage, PageLayout } from '../../../../framework';
+import { PageRoutedTabs } from '../../../common/PageRoutedTabs';
 import { useGet } from '../../../common/crud/useGet';
+import { AwxError } from '../../common/AwxError';
 import { awxAPI } from '../../common/api/awx-utils';
 import { Job } from '../../interfaces/Job';
 import { AwxRoute } from '../../main/AwxRoutes';
 import { JobHeader } from './JobHeader';
-import { AwxError } from '../../common/AwxError';
-import { LoadingPage } from '../../../../framework';
 
 export function JobPage() {
   const { t } = useTranslation();

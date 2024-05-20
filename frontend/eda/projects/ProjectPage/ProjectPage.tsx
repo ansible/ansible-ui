@@ -16,7 +16,7 @@ import {
   usePageAlertToaster,
   usePageNavigate,
 } from '../../../../framework';
-import { PageRoutedTabs } from '../../../../framework/PageTabs/PageRoutedTabs';
+import { PageRoutedTabs } from '../../../common/PageRoutedTabs';
 import { postRequest } from '../../../common/crud/Data';
 import { useGet } from '../../../common/crud/useGet';
 import { edaAPI } from '../../common/eda-utils';

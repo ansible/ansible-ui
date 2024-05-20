@@ -3,19 +3,19 @@ import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import {
+  LoadingPage,
   PageActions,
   PageHeader,
   PageLayout,
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../../framework';
-import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
-import { LoadingPage } from '../../../../../framework';
+import { PageRoutedTabs } from '../../../../common/PageRoutedTabs';
 import { useGetItem } from '../../../../common/crud/useGet';
+import { edaAPI } from '../../../common/eda-utils';
+import { EdaCredentialType } from '../../../interfaces/EdaCredentialType';
 import { EdaRoute } from '../../../main/EdaRoutes';
 import { useCredentialTypeRowActions } from '../hooks/useCredentialTypeActions';
-import { EdaCredentialType } from '../../../interfaces/EdaCredentialType';
-import { edaAPI } from '../../../common/eda-utils';
 
 export function CredentialTypePage() {
   const { t } = useTranslation();
