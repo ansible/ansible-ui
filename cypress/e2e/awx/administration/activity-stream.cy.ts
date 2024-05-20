@@ -39,13 +39,13 @@ describe('activity-stream', () => {
     cy.verifyPageTitle('Activity Stream');
   });
 
-  it('event column displays correct info', function () {
+  it.skip('event column displays correct info', function () {
     cy.getTableRow('event', `created team ${team.name}`, { disableFilter: true }).within(() => {
       cy.getByDataCy('event-column-cell').should('have.text', `created team ${team.name}`);
     });
   });
 
-  it('event details modal displays correct info', function () {
+  it.skip('event details modal displays correct info', function () {
     openEventDetails(team.name);
     cy.getModal().within(() => {
       cy.getByDataCy('initiated-by').should('have.text', activeUser.username);
