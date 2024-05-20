@@ -24,6 +24,8 @@ import { EdaProject } from '../../interfaces/EdaProject';
 import { ImportStateEnum } from '../../interfaces/generated/eda-api';
 import { EdaRoute } from '../../main/EdaRoutes';
 import { useDeleteProjects } from '../hooks/useDeleteProjects';
+import { useOptions } from '../../../common/crud/useOptions';
+import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 
 export function ProjectPage() {
   const { t } = useTranslation();
@@ -31,6 +33,10 @@ export function ProjectPage() {
   const pageNavigate = usePageNavigate();
   const getPageUrl = useGetPageUrl();
   const alertToaster = usePageAlertToaster();
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(
+    edaAPI`/projects/${params.id ?? ''}/`
+  );
+  const canEditProject = Boolean(data && data.actions && data.actions['PATCH']);
 
   const { data: project, refresh } = useGet<EdaProject>(edaAPI`/projects/${params.id ?? ''}/`);
   const syncProject = useCallback(
@@ -62,6 +68,8 @@ export function ProjectPage() {
         icon: SyncAltIcon,
         isPinned: true,
         label: t('Sync project'),
+        isDisabled: () =>
+          canEditProject ? '' : t(`The project cannot be synced due to insufficient permission`),
         isHidden: (project: EdaProject) => {
           return (
             project?.import_state === ImportStateEnum.Pending ||
@@ -76,6 +84,8 @@ export function ProjectPage() {
         icon: PencilAltIcon,
         isPinned: true,
         label: t('Edit project'),
+        isDisabled: () =>
+          canEditProject ? '' : t(`The project cannot be edited due to insufficient permission`),
         onClick: (project: EdaProject) =>
           pageNavigate(EdaRoute.EditProject, { params: { id: project.id } }),
       },
@@ -88,10 +98,12 @@ export function ProjectPage() {
         icon: TrashIcon,
         label: t('Delete project'),
         onClick: (project: EdaProject) => deleteProjects([project]),
+        isDisabled: () =>
+          canEditProject ? '' : t(`The project cannot be deleted due to insufficient permission`),
         isDanger: true,
       },
     ],
-    [deleteProjects, pageNavigate, syncProject, t]
+    [canEditProject, deleteProjects, pageNavigate, syncProject, t]
   );
 
   return (

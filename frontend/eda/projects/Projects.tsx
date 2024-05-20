@@ -8,7 +8,9 @@ import { useProjectActions } from './hooks/useProjectActions';
 import { useProjectColumns } from './hooks/useProjectColumns';
 import { useProjectFilters } from './hooks/useProjectFilters';
 import { useProjectsActions } from './hooks/useProjectsActions';
-import { PlusCircleIcon } from '@patternfly/react-icons';
+import { CubesIcon, PlusCircleIcon } from '@patternfly/react-icons';
+import { useOptions } from '../../common/crud/useOptions';
+import { ActionsResponse, OptionsResponse } from '../interfaces/OptionsResponse';
 
 export function Projects() {
   const { t } = useTranslation();
@@ -21,6 +23,8 @@ export function Projects() {
     tableColumns,
   });
   const toolbarActions = useProjectsActions(view);
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(edaAPI`/projects/`);
+  const canCreateProject = Boolean(data && data.actions && data.actions['POST']);
   const rowActions = useProjectActions(view);
   return (
     <PageLayout>
@@ -35,11 +39,24 @@ export function Projects() {
         toolbarFilters={toolbarFilters}
         rowActions={rowActions}
         errorStateTitle={t('Error loading projects')}
-        emptyStateTitle={t('There are currently no projects created for your organization.')}
-        emptyStateDescription={t('Please create a project by using the button below.')}
+        emptyStateTitle={
+          canCreateProject
+            ? t('There are currently no projects created for your organization.')
+            : t('You do not have permission to create a project')
+        }
+        emptyStateDescription={
+          canCreateProject
+            ? t('Please create a project by using the button below.')
+            : t(
+                'Please contact your organization administrator if there is an issue with your access.'
+              )
+        }
+        emptyStateIcon={canCreateProject ? undefined : CubesIcon}
         emptyStateButtonIcon={<PlusCircleIcon />}
-        emptyStateButtonText={t('Create project')}
-        emptyStateButtonClick={() => pageNavigate(EdaRoute.CreateProject)}
+        emptyStateButtonText={canCreateProject ? t('Create project') : undefined}
+        emptyStateButtonClick={
+          canCreateProject ? () => pageNavigate(EdaRoute.CreateProject) : undefined
+        }
         {...view}
         defaultSubtitle={t('Project')}
       />
