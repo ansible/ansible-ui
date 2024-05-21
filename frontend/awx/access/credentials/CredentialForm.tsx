@@ -9,6 +9,7 @@ import {
   PageHeader,
   PageLayout,
   useGetPageUrl,
+  usePageAlertToaster,
   usePageNavigate,
 } from '../../../../framework';
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
@@ -38,6 +39,7 @@ import {
 import { CredentialInputSource } from '../../interfaces/CredentialInputSource';
 import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 import { useSWRConfig } from 'swr';
+import { useCredentialsTestModal } from './hooks/useCredentialsTestModal';
 
 interface CredentialForm extends Credential {
   user?: number;
@@ -70,6 +72,10 @@ export function CreateCredential() {
   const { activeAwxUser } = useAwxActiveUser();
   const postRequest = usePostRequest<Credential | CredentialInputSource>();
   const getPageUrl = useGetPageUrl();
+  const [selectedCredentialTypeId, setSelectedCredentialTypeId] = useState<number>(0);
+  const [watchedSubFormFields, setWatchedSubFormFields] = useState<unknown[]>([]);
+  const alertToaster = usePageAlertToaster();
+  const openCredentialsExternalTestModal = useCredentialsTestModal(alertToaster);
   const [credentialPluginValues, setCredentialPluginValues] = useState<
     CredentialPluginsInputSource[]
   >([]);
@@ -90,6 +96,8 @@ export function CreateCredential() {
       return updatedValues;
     });
   }, [credentialPluginValues]);
+  const [isTestButtonEnabled, setIsTestButtonEnabled] = useState(false);
+  const [isTestButtonEnabledSubForm, setIsTestButtonEnabledSubForm] = useState(false);
 
   const { results: itemsResponse, isLoading } = useAwxGetAllPages<CredentialType>(
     awxAPI`/credential_types/`
@@ -106,6 +114,10 @@ export function CreateCredential() {
     },
     {} as CredentialTypes
   );
+
+  const isExternalCredential =
+    !!parsedCredentialTypes &&
+    parsedCredentialTypes?.[selectedCredentialTypeId]?.kind === 'external';
 
   const onSubmit: PageFormSubmitHandler<CredentialForm> = async (credential) => {
     const credentialTypeInputs = parsedCredentialTypes?.[credential?.credential_type]?.inputs;
@@ -149,6 +161,7 @@ export function CreateCredential() {
     );
     pageNavigate(AwxRoute.CredentialDetails, { params: { id: newCredential.id } });
   };
+
   return (
     <PageLayout>
       <PageHeader
@@ -162,6 +175,27 @@ export function CreateCredential() {
         submitText={t('Create credential')}
         onSubmit={onSubmit}
         onCancel={() => navigate(-1)}
+        additionalActions={
+          isExternalCredential ? (
+            <Button
+              aria-label={t('Test')}
+              variant="secondary"
+              onClick={(e) => {
+                e.preventDefault();
+                openCredentialsExternalTestModal({
+                  credentialType:
+                    parsedCredentialTypes !== undefined
+                      ? parsedCredentialTypes?.[selectedCredentialTypeId]
+                      : ({} as CredentialType),
+                  watchedSubFormFields: watchedSubFormFields,
+                });
+              }}
+              isDisabled={!isTestButtonEnabled || !isTestButtonEnabledSubForm}
+            >
+              {t('Test')}
+            </Button>
+          ) : undefined
+        }
       >
         <CredentialInputs
           isEditMode={false}
@@ -169,6 +203,10 @@ export function CreateCredential() {
           setCredentialPluginValues={setCredentialPluginValues}
           accumulatedPluginValues={accumulatedPluginValues}
           setAccumulatedPluginValues={setAccumulatedPluginValues}
+          setSelectedCredentialTypeId={setSelectedCredentialTypeId}
+          setIsTestButtonEnabled={setIsTestButtonEnabled}
+          setIsTestButtonEnabledSubForm={setIsTestButtonEnabledSubForm}
+          setWatchedSubFormFields={setWatchedSubFormFields}
         />
       </AwxPageForm>
     </PageLayout>
@@ -214,6 +252,11 @@ export function EditCredential() {
       return updatedValues;
     });
   }, [credentialPluginValues]);
+  const alertToaster = usePageAlertToaster();
+  const openCredentialsExternalTestModal = useCredentialsTestModal(alertToaster);
+  const [isTestButtonEnabled, setIsTestButtonEnabled] = useState(false);
+  const [isTestButtonEnabledSubForm, setIsTestButtonEnabledSubForm] = useState(false);
+  const [watchedSubFormFields, setWatchedSubFormFields] = useState<unknown[]>([]);
 
   const { data: credential, isLoading: isLoadingCredential } = useGet<Credential>(
     awxAPI`/credentials/${id.toString()}/`
@@ -251,6 +294,11 @@ export function EditCredential() {
     },
     {} as CredentialTypes
   );
+
+  const isExternalCredential =
+    !!parsedCredentialTypes && credential !== undefined
+      ? parsedCredentialTypes?.[credential.credential_type]?.kind === 'external'
+      : null;
 
   const promptPassword: Prompts = {};
   if (credential?.inputs) {
@@ -366,6 +414,28 @@ export function EditCredential() {
         onSubmit={onSubmit}
         onCancel={() => navigate(-1)}
         defaultValue={initialValues}
+        additionalActions={
+          isExternalCredential ? (
+            <Button
+              aria-label={t('Test')}
+              variant="secondary"
+              onClick={(e) => {
+                e.preventDefault();
+                openCredentialsExternalTestModal({
+                  credential: credential,
+                  credentialType:
+                    parsedCredentialTypes !== undefined
+                      ? parsedCredentialTypes?.[credential?.credential_type]
+                      : ({} as CredentialType),
+                  watchedSubFormFields: watchedSubFormFields,
+                });
+              }}
+              isDisabled={!isTestButtonEnabled || !isTestButtonEnabledSubForm}
+            >
+              {t('Test')}
+            </Button>
+          ) : undefined
+        }
       >
         <CredentialInputs
           isEditMode
@@ -375,6 +445,9 @@ export function EditCredential() {
           accumulatedPluginValues={accumulatedPluginValues}
           setAccumulatedPluginValues={setAccumulatedPluginValues}
           setPluginsToDelete={setPluginsToDelete}
+          setIsTestButtonEnabled={setIsTestButtonEnabled}
+          setIsTestButtonEnabledSubForm={setIsTestButtonEnabledSubForm}
+          setWatchedSubFormFields={setWatchedSubFormFields}
         />
       </AwxPageForm>
     </PageLayout>
@@ -389,6 +462,10 @@ function CredentialInputs({
   accumulatedPluginValues,
   setAccumulatedPluginValues,
   setPluginsToDelete,
+  setSelectedCredentialTypeId,
+  setIsTestButtonEnabled,
+  setIsTestButtonEnabledSubForm,
+  setWatchedSubFormFields,
 }: {
   isEditMode?: boolean;
   selectedCredentialTypeId?: number;
@@ -397,6 +474,10 @@ function CredentialInputs({
   accumulatedPluginValues?: CredentialPluginsInputSource[];
   setAccumulatedPluginValues?: (values: CredentialPluginsInputSource[]) => void;
   setPluginsToDelete?: React.Dispatch<React.SetStateAction<string[]>>;
+  setSelectedCredentialTypeId?: (id: number) => void;
+  setIsTestButtonEnabled: (enabled: boolean) => void;
+  setIsTestButtonEnabledSubForm: (enabled: boolean) => void;
+  setWatchedSubFormFields: (fields: unknown[]) => void;
 }) {
   const { t } = useTranslation();
 
@@ -404,10 +485,35 @@ function CredentialInputs({
     name: 'credential_type',
   });
 
+  useEffect(() => {
+    if (setSelectedCredentialTypeId) {
+      setSelectedCredentialTypeId(watchedCredentialTypeId);
+    }
+  }, [watchedCredentialTypeId, setSelectedCredentialTypeId]);
+
   const credentialTypeID = selectedCredentialTypeId || watchedCredentialTypeId;
 
   const isGalaxyCredential =
     !!credentialTypes && credentialTypes?.[credentialTypeID]?.kind === 'galaxy';
+
+  const watchedRequiredFields = useWatch<{
+    name: string;
+    credential_type: number;
+  }>({
+    name: ['name', 'credential_type'],
+  });
+
+  useEffect(() => {
+    const requiredFields = ['name', 'credential_type'];
+    const verify: string[] = [];
+    Object.values(watchedRequiredFields).forEach((value) => {
+      if (value !== null && value !== undefined && value !== '') {
+        verify.push(value as string);
+      }
+    });
+
+    setIsTestButtonEnabled(verify.length >= requiredFields.length ? true : false);
+  }, [watchedRequiredFields, setIsTestButtonEnabled]);
 
   return (
     <>
@@ -445,6 +551,8 @@ function CredentialInputs({
           accumulatedPluginValues={accumulatedPluginValues ? accumulatedPluginValues : []}
           setAccumulatedPluginValues={setAccumulatedPluginValues}
           setPluginsToDelete={setPluginsToDelete}
+          setIsTestButtonEnabledSubForm={setIsTestButtonEnabledSubForm}
+          setWatchedSubFormFields={setWatchedSubFormFields}
         />
       ) : null}
     </>
@@ -457,16 +565,44 @@ function CredentialSubForm({
   accumulatedPluginValues,
   setAccumulatedPluginValues,
   setPluginsToDelete,
+  setIsTestButtonEnabledSubForm,
+  setWatchedSubFormFields,
 }: {
-  credentialType: CredentialType | undefined;
+  credentialType: CredentialType;
   setCredentialPluginValues: (values: CredentialPluginsInputSource[]) => void;
   isEditMode?: boolean;
   accumulatedPluginValues: CredentialPluginsInputSource[];
   setAccumulatedPluginValues?: (values: CredentialPluginsInputSource[]) => void;
   setPluginsToDelete?: React.Dispatch<React.SetStateAction<string[]>>;
+  setIsTestButtonEnabledSubForm: (enabled: boolean) => void;
+  setWatchedSubFormFields: (fields: unknown[]) => void;
 }) {
   const { t } = useTranslation();
   const openCredentialPluginsModal = useCredentialPluginsModal();
+  const requiredFields = credentialType?.inputs?.required || [];
+  const requiredFieldsInSubForm = credentialType.inputs.fields.filter((field) =>
+    requiredFields.includes(field.id)
+  );
+  const subFormFields = credentialType.inputs.fields.map((field) => field.id);
+
+  const watchedRequiredFields = useWatch({
+    name: requiredFields,
+  });
+
+  const watchedAllFields = useWatch({ name: subFormFields });
+  setWatchedSubFormFields(watchedAllFields);
+
+  useEffect(() => {
+    const verify: string[] = [];
+    Object.values(watchedRequiredFields).forEach((value) => {
+      if (value !== null && value !== undefined && value !== '') {
+        verify.push(value as string);
+      }
+    });
+
+    setIsTestButtonEnabledSubForm(verify.length >= requiredFieldsInSubForm?.length ? true : false);
+  }, [watchedRequiredFields, setIsTestButtonEnabledSubForm, requiredFieldsInSubForm]);
+
   if (!credentialType || !credentialType?.inputs?.fields) {
     return null;
   }
@@ -481,8 +617,6 @@ function CredentialSubForm({
 
   const booleanFields =
     credentialType?.inputs?.fields?.filter((field) => field.type === 'boolean') || [];
-
-  const requiredFields = credentialType?.inputs?.required || [];
 
   const hasFields = stringFields.length > 0 || choiceFields.length > 0 || booleanFields.length > 0;
 
