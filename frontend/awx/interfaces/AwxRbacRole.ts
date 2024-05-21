@@ -1,3 +1,5 @@
+import { ContentTypeEnum } from './ContentType';
+
 export interface AwxRbacRole {
   id: number;
   url: string;
@@ -9,7 +11,7 @@ export interface AwxRbacRole {
     [key: string]: Record<string, string>[] | undefined;
   };
   permissions: string[];
-  content_type: string;
+  content_type: ContentTypeEnum | null;
   created: string;
   modified: string;
   name: string;
