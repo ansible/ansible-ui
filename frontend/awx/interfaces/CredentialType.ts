@@ -35,15 +35,7 @@ export interface CredentialType
   inputs: {
     fields: CredentialInputField[];
     required: string[];
-    metadata: {
-      id: string;
-      label: string;
-      type: string;
-      help_text: string;
-      choices?: string[];
-      multiline?: boolean;
-      default?: boolean | string;
-    }[];
+    metadata: CredentialInputField[];
   };
   related: {
     credentials: string;
