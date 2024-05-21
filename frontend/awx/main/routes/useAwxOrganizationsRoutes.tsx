@@ -3,14 +3,16 @@ import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router-dom';
 import { PageNavigationItem } from '../../../../framework';
 import { CreateOrganization, EditOrganization } from '../../access/organizations/OrganizationForm';
-import { OrganizationAccess } from '../../access/organizations/OrganizationPage/OrganizationAccess';
+import { OrganizationUserAccess } from '../../access/organizations/OrganizationPage/OrganizationUserAccess';
 import { OrganizationDetails } from '../../access/organizations/OrganizationPage/OrganizationDetails';
 import { OrganizationPage } from '../../access/organizations/OrganizationPage/OrganizationPage';
-import { OrganizationTeams } from '../../access/organizations/OrganizationPage/OrganizationTeams';
+import { OrganizationTeamsAccess } from '../../access/organizations/OrganizationPage/OrganizationTeamsAccess';
 import { Organizations } from '../../access/organizations/Organizations';
 import { AwxRoute } from '../AwxRoutes';
 import { ResourceNotifications } from '../../resources/notifications/ResourceNotifications';
 import { OrganizationExecutionEnvironments } from '../../access/organizations/OrganizationPage/OrganizationExecutionEnvironments';
+import { OrganizationAddUsers } from '../../access/organizations/components/OrganizationAddUsers';
+import { OrganizationAddTeams } from '../../access/organizations/components/OrganizationAddTeams';
 
 export function useAwxOrganizationRoutes() {
   const { t } = useTranslation();
@@ -41,14 +43,14 @@ export function useAwxOrganizationRoutes() {
               element: <OrganizationDetails />,
             },
             {
-              id: AwxRoute.OrganizationUsers,
+              id: AwxRoute.OrganizationUsersAccess,
               path: 'users',
-              element: <OrganizationAccess />,
+              element: <OrganizationUserAccess />,
             },
             {
-              id: AwxRoute.OrganizationTeams,
+              id: AwxRoute.OrganizationTeamsAccess,
               path: 'teams',
-              element: <OrganizationTeams />,
+              element: <OrganizationTeamsAccess />,
             },
             {
               id: AwxRoute.OrganizationExecutionEnvironments,
@@ -65,6 +67,16 @@ export function useAwxOrganizationRoutes() {
               element: <Navigate to="details" />,
             },
           ],
+        },
+        {
+          id: AwxRoute.OrganizationAddUsers,
+          path: ':id/user-access/add',
+          element: <OrganizationAddUsers />,
+        },
+        {
+          id: AwxRoute.OrganizationAddTeams,
+          path: ':id/team-access/add',
+          element: <OrganizationAddTeams />,
         },
         {
           path: '',

@@ -9,14 +9,28 @@ export function UserAccess(props: {
   id: string;
   type: string;
   addRolesRoute?: string;
+  addRoleButtonText?: string;
+  removeRoleText?: string;
+  removeConfirmationText?: string;
 }) {
-  const { id, type, addRolesRoute, service } = props;
+  const {
+    id,
+    type,
+    addRolesRoute,
+    service,
+    addRoleButtonText,
+    removeRoleText,
+    removeConfirmationText,
+  } = props;
   const { t } = useTranslation();
   const roleUserAssignmentsURL =
     service === 'awx' ? awxAPI`/role_user_assignments/` : edaAPI`/role_user_assignments/`;
   return (
     <Access<UserAssignment>
       service={service}
+      addRoleButtonText={addRoleButtonText}
+      removeConfirmationText={removeConfirmationText}
+      removeRoleText={removeRoleText}
       tableColumnFunctions={{
         name: {
           function: (userAccess: UserAssignment) => userAccess.summary_fields.user.username,

@@ -1,6 +1,6 @@
 import { Team } from '../../../interfaces/Team';
 
-import { TeamAccessInner as TeamAccess } from './TeamAccess';
+import { TeamAccess } from './TeamAccess';
 
 describe('TeamAccess', () => {
   beforeEach(() => {
@@ -19,7 +19,7 @@ describe('TeamAccess', () => {
     cy.fixture('team').then((team: Team) => {
       team.summary_fields.user_capabilities.edit = false;
       cy.mount(
-        <TeamAccess team={team} />,
+        <TeamAccess />,
         {} as { path: string; initialEntries: string[] },
         'activeUserSysAuditor.json'
       );
@@ -34,7 +34,7 @@ describe('TeamAccess', () => {
     cy.fixture('team').then((team: Team) => {
       team.summary_fields.user_capabilities.edit = false;
       cy.mount(
-        <TeamAccess team={team} />,
+        <TeamAccess />,
         {} as { path: string; initialEntries: string[] },
         'activeUserSysAuditor.json'
       );
@@ -51,7 +51,7 @@ describe('TeamAccess', () => {
   it('Attempting to delete member access brings up confirmation modal', () => {
     cy.fixture('team').then((team: Team) => {
       team.summary_fields.user_capabilities.edit = false;
-      cy.mount(<TeamAccess team={team} />);
+      cy.mount(<TeamAccess />);
       const role = team.summary_fields.object_roles.read_role;
       cy.contains('tr', 'user-2')
         .get(`button[data-ouia-component-id="${role.name}-${role.id}"]`)
@@ -65,7 +65,7 @@ describe('TeamAccess', () => {
   it('Attempting to delete a team role brings up confirmation modal with a warning', () => {
     cy.fixture('team').then((team: Team) => {
       team.summary_fields.user_capabilities.edit = false;
-      cy.mount(<TeamAccess team={team} />);
+      cy.mount(<TeamAccess />);
       const role = team.summary_fields.object_roles.read_role;
       cy.contains('tr', 'user-2')
         .get(`button[data-ouia-component-id="team-role-${role.name}-${role.id}"]`)
@@ -79,8 +79,8 @@ describe('TeamAccess', () => {
   it('If one/more selected users cannot be deleted, bulk confirmation dialog highlights this with a warning', () => {
     cy.intercept('POST', '/api/v2/users/**/roles/', cy.spy().as('removeUser'));
 
-    cy.fixture('team').then((team: Team) => {
-      cy.mount(<TeamAccess team={team} />);
+    cy.fixture('team').then(() => {
+      cy.mount(<TeamAccess />);
       // Remove users
       cy.selectTableRow('admin', false); //  User cannot be removed as they are a system administrator
       cy.selectTableRow('user-2', false);

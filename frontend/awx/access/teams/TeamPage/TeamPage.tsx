@@ -55,7 +55,7 @@ export function TeamPage() {
         }}
         tabs={[
           { label: t('Details'), page: AwxRoute.TeamDetails },
-          { label: t('Access'), page: AwxRoute.TeamAccess },
+          { label: t('Users'), page: AwxRoute.TeamMembers },
           { label: t('Roles'), page: AwxRoute.TeamRoles },
         ]}
         params={{ id: team.id }}
