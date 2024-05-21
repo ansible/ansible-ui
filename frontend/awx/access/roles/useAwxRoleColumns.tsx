@@ -1,50 +1,65 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ITableColumn, TextCell, useGetPageUrl } from '../../../../framework';
+import {
+  ITableColumn,
+  TextCell,
+  useGetPageUrl,
+  ColumnModalOption,
+  DateTimeCell,
+} from '../../../../framework';
 import { AwxRoute } from '../../main/AwxRoutes';
-import { AwxRole } from './AwxRoles';
+import { AwxRbacRole } from '../../interfaces/AwxRbacRole';
 
-export function useAwxRoleColumns() {
+export function useAwxRoleColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
-  const columns = useMemo(() => {
-    const columns: ITableColumn<AwxRole>[] = [
+
+  return useMemo<ITableColumn<AwxRbacRole>[]>(
+    () => [
       {
-        id: 'name',
-        header: t('Role'),
-        cell: (role: AwxRole) => (
+        header: t('Name'),
+        cell: (role) => (
           <TextCell
+            to={
+              options?.disableLinks
+                ? undefined
+                : getPageUrl(AwxRoute.RoleDetails, {
+                    params: { id: role.id, resourceType: role.content_type || 'null' },
+                  })
+            }
             text={role.name}
-            to={getPageUrl(AwxRoute.Role, {
-              params: {
-                resourceType: role.resourceId,
-                id: role.roleId,
-              },
-            })}
           />
         ),
-        sort: 'name',
+        sort: options?.disableSort ? undefined : 'name',
         card: 'name',
         list: 'name',
       },
       {
-        id: 'resource',
-        type: 'text',
-        header: t('Resource'),
-        value: (role: AwxRole) => role.resource,
-        sort: 'resource',
-        defaultSort: true,
-        card: 'subtitle',
-        list: 'subtitle',
+        header: t('Description'),
+        type: 'description',
+        value: (role) => role.description,
+        sort: options?.disableSort ? undefined : 'description',
+        card: 'description',
+        list: 'description',
       },
       {
-        id: 'description',
-        type: 'description',
-        header: t('Description'),
-        value: (role: AwxRole) => role.description,
+        header: t('Created'),
+        cell: (role) => <DateTimeCell value={role.created} />,
+        sort: options?.disableSort ? undefined : 'created',
+        defaultSortDirection: 'desc',
+        modal: ColumnModalOption.hidden,
       },
-    ];
-    return columns;
-  }, [getPageUrl, t]);
-  return columns;
+      {
+        header: t('Editable'),
+        type: 'text',
+        value: (role) => (role.managed ? t('Built-in') : t('Editable')),
+        sort: options?.disableSort ? undefined : 'managed',
+        defaultSortDirection: 'asc',
+        card: 'subtitle',
+        list: 'subtitle',
+        modal: ColumnModalOption.hidden,
+      },
+    ],
+    [t, options?.disableSort, options?.disableLinks, getPageUrl]
+  );
 }
