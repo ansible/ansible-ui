@@ -482,13 +482,8 @@ function SingleLineEncryptedInput({
   setAccumulatedPluginValues?: (values: CredentialPluginsInputSource[]) => void;
 }) {
   const [t] = useTranslation();
-  const { getValues } = useFormContext<{ [key: string]: string }>();
   const openCredentialPluginsModal = useCredentialPluginsModal();
-  const fieldValue = getValues(field.id);
-  const isFieldValueEmpty = fieldValue === undefined || fieldValue === '';
-  const [shouldHideField, setShouldHideField] = useState(
-    field.secret && isEditMode && !isFieldValueEmpty
-  );
+  const [shouldHideField, setShouldHideField] = useState(field.secret && isEditMode);
   const [clear, setClear] = useState(false);
   const { setValue } = useFormContext();
 
@@ -496,11 +491,10 @@ function SingleLineEncryptedInput({
     setShouldHideField(!shouldHideField);
     setClear(!clear);
   };
-
+  console.log(field.id, 'shouldHideField: ', shouldHideField);
   return (
     <EncryptedTextFormInput
       onClear={() => {
-        setValue(field.id, '');
         setShouldHideField(!shouldHideField);
       }}
       shouldHideField={shouldHideField}
@@ -517,6 +511,7 @@ function SingleLineEncryptedInput({
           field={field}
           isDisabled={field.id === 'vault_id' && credentialType.kind === 'vault' && isEditMode}
           isRequired={requiredFields.includes(field.id)}
+          placeholder={t('Enter value')}
           handleModalToggle={() =>
             openCredentialPluginsModal({
               field,
@@ -609,6 +604,7 @@ function CredentialSubForm({
           } else {
             if (isEncryptedValues) {
               if (field.secret && isEditMode && isEncryptedValues[field.id] === true) {
+                console.log(field.id, 'is encrypted');
                 return (
                   <SingleLineEncryptedInput
                     key={field.id}
@@ -787,7 +783,7 @@ export function CredentialTextInput({
         key={field.id}
         name={field.id}
         label={field.label}
-        placeholder={(placeholder ? placeholder : t('Enter value')).toString()}
+        placeholder={(placeholder || t('Enter value')).toString()}
         type={field.secret ? 'password' : 'text'}
         isRequired={handleIsRequired()}
         isDisabled={!!isPromptOnLaunchChecked || isDisabled}
