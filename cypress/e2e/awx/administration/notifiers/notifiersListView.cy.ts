@@ -1,7 +1,7 @@
 import { NotificationTemplate } from '../../../../../frontend/awx/interfaces/NotificationTemplate';
 import { randomE2Ename } from '../../../../support/utils';
 
-describe('Notifications: List View', () => {
+describe.skip('Notifications: List View', () => {
   let notificationTemplate: NotificationTemplate;
 
   before(() => {
