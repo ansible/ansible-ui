@@ -2,7 +2,7 @@ import { useParams } from 'react-router-dom';
 import { PageDetails, PageDetailsFromColumns, LoadingPage } from '../../../../framework';
 import { useGetItem } from '../../../common/crud/useGet';
 import { AwxRbacRole } from '../../interfaces/AwxRbacRole';
-import { useAwxRoleColumns } from './useAwxRoleColumns';
+import { useAwxRoleColumns } from './hooks/useAwxRoleColumns';
 import { AwxError } from '../../common/AwxError';
 import { awxAPI } from '../../common/api/awx-utils';
 
