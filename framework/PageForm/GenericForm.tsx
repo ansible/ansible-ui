@@ -34,7 +34,7 @@ export function GenericForm<T extends object>(props: GenericFormProps<T>) {
         onSubmit={handleSubmit(async (data) => {
           setError(null);
           try {
-            await props.onSubmit(data, (error) => setError(error), setFieldError, undefined);
+            await props.onSubmit(data, (error) => setError(error), setFieldError);
           } catch (err) {
             handleSubmitError(err);
           }

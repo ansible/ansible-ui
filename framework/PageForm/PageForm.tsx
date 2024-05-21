@@ -1,12 +1,11 @@
 import {
   ActionGroup,
-  Button,
   Form,
   Grid,
   gridItemSpanValueShape,
   PageSection,
 } from '@patternfly/react-core';
-import { BaseSyntheticEvent, ReactNode, useContext, useState } from 'react';
+import { ReactNode, useContext, useState } from 'react';
 import {
   DefaultValues,
   ErrorOption,
@@ -15,7 +14,6 @@ import {
   FormProvider,
   Path,
   useForm,
-  UseFormReturn,
 } from 'react-hook-form';
 import styled from 'styled-components';
 import { Scrollable } from '../components/Scrollable';
@@ -40,8 +38,6 @@ const FormActionGroup = styled(ActionGroup)`
 export interface PageFormProps<T extends object> {
   children?: ReactNode;
   submitText?: string;
-  additionalActionText?: string;
-  onClickAdditionalAction?: PageFormSubmitHandler<T>;
   onSubmit: PageFormSubmitHandler<T>;
   cancelText?: string;
   onCancel?: () => void;
@@ -127,30 +123,14 @@ export function PageForm<T extends object>(props: PageFormProps<T>) {
           }
         }}
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
-        onSubmit={handleSubmit(
-          async (
-            data,
-            event?: BaseSyntheticEvent & { nativeEvent: { submitter?: { innerHTML: string } } }
-          ) => {
-            setError(null);
-            let isSecondaryButton = false;
-
-            if (event !== undefined && event?.nativeEvent?.submitter) {
-              isSecondaryButton =
-                event.nativeEvent.submitter?.innerHTML === props.additionalActionText;
-            }
-            try {
-              await props.onSubmit(
-                data,
-                (error) => setError(error),
-                setFieldError,
-                isSecondaryButton ? form : undefined
-              );
-            } catch (err) {
-              handleSubmitError(err);
-            }
+        onSubmit={handleSubmit(async (data) => {
+          setError(null);
+          try {
+            await props.onSubmit(data, (error) => setError(error), setFieldError);
+          } catch (err) {
+            handleSubmitError(err);
           }
-        )}
+        })}
         isHorizontal={isHorizontal}
         autoComplete={props.autoComplete}
         style={{
@@ -181,11 +161,6 @@ export function PageForm<T extends object>(props: PageFormProps<T>) {
           <PageSection variant="light" isFilled={false} className="bg-lighten border-top">
             <FormActionGroup>
               <PageFormSubmitButton>{props.submitText}</PageFormSubmitButton>
-              {props.additionalActionText ? (
-                <Button aria-label={props.additionalActionText} type="submit" variant="secondary">
-                  {props.additionalActionText}
-                </Button>
-              ) : null}
               {props.additionalActions}
               {props.onCancel && (
                 <PageFormCancelButton onCancel={props.onCancel}>
@@ -203,8 +178,7 @@ export function PageForm<T extends object>(props: PageFormProps<T>) {
 export type PageFormSubmitHandler<T extends FieldValues> = (
   data: T,
   setError: (error: string) => void,
-  setFieldError: (fieldName: FieldPath<T>, error: ErrorOption) => void,
-  form: UseFormReturn<T> | undefined
+  setFieldError: (fieldName: FieldPath<T>, error: ErrorOption) => void
 ) => Promise<unknown>;
 
 export function PageFormGrid(props: {
