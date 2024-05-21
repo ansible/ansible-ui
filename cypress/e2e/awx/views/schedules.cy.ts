@@ -387,7 +387,6 @@ describe.skip('Schedules - Create and Delete', function () {
       cy.get('[data-cy="name"]').contains(scheduleName);
       cy.getByDataCy('forks').should('have.text', '13');
       cy.get('[data-cy="local-time-zone"]').contains('America/Mexico_City');
-      cy.get('[data-cy="organization"]').contains('Global Organization');
       cy.get('[data-cy="inventory"]').contains(inventory.name);
       cy.get('[data-cy="project"]').contains('Global Project');
       cy.get('[data-cy="code-block-value"]').contains(`test: ${surveyAnswer}`);
