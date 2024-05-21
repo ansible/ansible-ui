@@ -63,9 +63,9 @@ describe('Projects', () => {
           cy.clickPageAction('delete-project');
           cy.get('#confirm').click();
           cy.clickButton(/^Delete project/);
-          cy.wait('@deleted').then((deleted) => {
-            expect(deleted?.response?.statusCode).to.eql(204);
-            cy.getModal().within(() => {
+          cy.getModal().within(() => {
+            cy.wait('@deleted').then((deleted) => {
+              expect(deleted?.response?.statusCode).to.eql(204);
               cy.contains('Permanently delete projects');
             });
           });
