@@ -718,21 +718,9 @@ describe.skip('Schedules - Edit', () => {
       });
       cy.intercept('PATCH', awxAPI`/schedules/*`).as('editedSchedule');
       cy.clickButton(/^Finish$/);
-
-      cy.wait('@editedSchedule')
-        .its('response.statusCode')
-        .then((statusCode) => {
-          expect(statusCode).to.eql(200);
-        });
-
-      cy.intercept('GET', awxAPI`/schedules/*/`).as('getEditedSchedule');
-      cy.wait('@getEditedSchedule')
-        .its('response.body.rrule')
-        .then((rrule: string) => {
-          expect(rrule).not.contains('EXRULE');
-          expect(rrule).not.contains('RRULE:FREQ=WEEKLY');
-          expect(rrule).contains('RRULE:FREQ=MONTHLY');
-        });
+      cy.getByDataCy('rruleset').should('not.contain', 'EXRULE');
+      cy.getByDataCy('rruleset').should('not.contain', 'RRULE:FREQ=WEEKLY');
+      cy.getByDataCy('rruleset').should('contain', 'RRULE:FREQ=MONTHLY;');
       cy.deleteAWXSchedule(schedToEdit, { failOnStatusCode: false });
     });
   });

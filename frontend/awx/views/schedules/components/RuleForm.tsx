@@ -258,6 +258,7 @@ export function RuleForm(props: {
           name={`count`}
           labelHelp={t('The number of time this rule should be used.')}
           min={0}
+          max={999}
           type="number"
         />
         <PageFormDateTimePicker<RuleFields>
