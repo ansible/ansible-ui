@@ -485,13 +485,11 @@ function SingleLineEncryptedInput({
   const openCredentialPluginsModal = useCredentialPluginsModal();
   const [shouldHideField, setShouldHideField] = useState(field.secret && isEditMode);
   const [clear, setClear] = useState(false);
-  const { setValue } = useFormContext();
 
   const handleHideField = () => {
     setShouldHideField(!shouldHideField);
     setClear(!clear);
   };
-  console.log(field.id, 'shouldHideField: ', shouldHideField);
   return (
     <EncryptedTextFormInput
       onClear={() => {
@@ -604,7 +602,6 @@ function CredentialSubForm({
           } else {
             if (isEncryptedValues) {
               if (field.secret && isEditMode && isEncryptedValues[field.id] === true) {
-                console.log(field.id, 'is encrypted');
                 return (
                   <SingleLineEncryptedInput
                     key={field.id}
