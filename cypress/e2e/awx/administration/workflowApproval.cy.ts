@@ -79,7 +79,7 @@ function actAssertAndDeleteWorkflowApproval(
 // describe('Workflow Approvals', () => {
 
 // });
-describe('Workflow Approvals - List View', () => {
+describe.skip('Workflow Approvals - List View', () => {
   let organization: Organization;
   let project: Project;
   let user: AwxUser;

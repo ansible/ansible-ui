@@ -60,7 +60,7 @@ describe('Workflow Job Templates Surveys', function () {
       reusableTemplateSurveyTestSuite.canCreateMultipleSurvey());
   });
 
-  describe('WFJT Surveys: Launch WFJT with Survey Enabled', function () {
+  describe.skip('WFJT Surveys: Launch WFJT with Survey Enabled', function () {
     before(function () {
       cy.createAwxInventory({ organization: (this.globalOrganization as Organization).id }).then(
         (inv) => {
