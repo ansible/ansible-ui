@@ -383,4 +383,113 @@ describe('Credentials', () => {
       //delete the JT at the end of this test
     });
   });
+
+  describe('Credentials: External test modal', () => {
+    beforeEach(() => {
+      cy.createAWXCredential({
+        name: 'E2E Credential ' + randomString(4),
+        kind: 'Centrify Vault Credential Provider Lookup',
+        organization: organization.id,
+        credential_type: 25,
+        inputs: { url: 'http://foo.com', client_id: 'foo', client_password: 'foo' },
+      }).then((cred) => {
+        credential = cred;
+        cy.giveUserCredentialsAccess(credential.name, user.id, 'Use');
+      });
+    });
+
+    afterEach(() => {
+      cy.deleteAwxCredential(credential, { failOnStatusCode: false });
+    });
+
+    it('can display error toast message when running a test from the create credential form', () => {
+      cy.navigateTo('awx', 'credentials');
+      cy.clickButton(/^Create credential/);
+      cy.getByDataCy('name').type('foo');
+      cy.getByDataCy('credential_type').click();
+      cy.getByDataCy('centrify-vault-credential-provider-lookup').click();
+      cy.getByDataCy('url').type('http://foo.com');
+      cy.getByDataCy('client-id').type('foo');
+      cy.getByDataCy('client-password').type('foo');
+      cy.get('button').contains('Test').should('have.attr', 'aria-disabled', 'false').click();
+      cy.contains('Test external credential').should('be.visible');
+      cy.getByDataCy('account-name').type('foo');
+      cy.getByDataCy('system-name').type('foo');
+      cy.get('button').contains('Run').should('have.attr', 'aria-disabled', 'false').click();
+      cy.getByDataCy('alert-toaster')
+        .should('be.visible')
+        .and('contain', 'Something went wrong with the request to test this credential.')
+        .within(() => {
+          cy.get('button').click();
+        });
+      cy.clickModalButton('Cancel');
+      cy.clickButton(/^Cancel/);
+    });
+
+    it('can display error toast message when running a test from the edit credential form', () => {
+      cy.navigateTo('awx', 'credentials');
+      cy.filterTableByMultiSelect('name', [credential.name]);
+      cy.clickTableRowAction('name', credential.name, 'edit-credential', { disableFilter: true });
+      cy.get('button').contains('Test').should('have.attr', 'aria-disabled', 'false').click();
+      cy.contains('Test external credential').should('be.visible');
+      cy.getByDataCy('account-name').type('foo');
+      cy.getByDataCy('system-name').type('foo');
+      cy.get('button').contains('Run').should('have.attr', 'aria-disabled', 'false').click();
+      cy.getByDataCy('alert-toaster')
+        .should('be.visible')
+        .and('contain', 'Something went wrong with the request to test this credential.')
+        .within(() => {
+          cy.get('button').click();
+        });
+      cy.clickModalButton('Cancel');
+      cy.clickButton(/^Cancel/);
+    });
+
+    it('can display success toast message when running a test from the create credential form', () => {
+      cy.intercept('POST', '/api/v2/credential_types/25/test', {}).as('runTest');
+      cy.navigateTo('awx', 'credentials');
+      cy.clickButton(/^Create credential/);
+      cy.getByDataCy('name').type('foo');
+      cy.getByDataCy('credential_type').click();
+      cy.getByDataCy('centrify-vault-credential-provider-lookup').click();
+      cy.getByDataCy('url').type('http://foo.com');
+      cy.getByDataCy('client-id').type('foo');
+      cy.getByDataCy('client-password').type('foo');
+      cy.get('button').contains('Test').should('have.attr', 'aria-disabled', 'false').click();
+      cy.contains('Test external credential').should('be.visible');
+      cy.getByDataCy('account-name').type('foo');
+      cy.getByDataCy('system-name').type('foo');
+      cy.get('button').contains('Run').should('have.attr', 'aria-disabled', 'false').click();
+      cy.wait('@runTest');
+      cy.getByDataCy('alert-toaster')
+        .should('be.visible')
+        .and('contain', 'Test passed.')
+        .within(() => {
+          cy.get('button').click();
+        });
+      cy.clickModalButton('Cancel');
+      cy.clickButton(/^Cancel/);
+    });
+
+    it('can display success toast message when running a test from the edit credential form', () => {
+      cy.intercept('POST', `/api/v2/credentials/${credential.id}/test`, {}).as('runTest');
+      cy.navigateTo('awx', 'credentials');
+      cy.filterTableByMultiSelect('name', [credential.name]);
+      cy.clickTableRowAction('name', credential.name, 'edit-credential', { disableFilter: true });
+      cy.get('button').contains('Test').should('have.attr', 'aria-disabled', 'false').click();
+      cy.contains('Test external credential').should('be.visible');
+      cy.getByDataCy('account-name').type('foo');
+      cy.getByDataCy('system-name').type('foo');
+      cy.get('button').contains('Run').should('have.attr', 'aria-disabled', 'false').click();
+      cy.wait('@runTest');
+      cy.getByDataCy('alert-toaster')
+        .should('be.visible')
+        .and('contain', 'Test passed.')
+        .within(() => {
+          cy.get('button').click();
+        });
+      cy.clickModalButton('Cancel');
+      cy.clickButton(/^Cancel/);
+    });
+  });
 });
