@@ -20,11 +20,18 @@ import { edaAPI } from '../../common/eda-utils';
 import { EdaDecisionEnvironmentRead } from '../../interfaces/EdaDecisionEnvironment';
 import { EdaRoute } from '../../main/EdaRoutes';
 import { useDeleteDecisionEnvironment } from '../hooks/useDeleteDecisionEnvironments';
+import { useOptions } from '../../../common/crud/useOptions';
+import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 
 export function DecisionEnvironmentPage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const pageNavigate = usePageNavigate();
+
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(
+    edaAPI`/decision-environments/${params.id ?? ''}/`
+  );
+  const canPatchDE = Boolean(data && data.actions && data.actions['PATCH']);
 
   const { data: decisionEnvironment } = useGet<EdaDecisionEnvironmentRead>(
     edaAPI`/decision-environments/${params.id ?? ''}/`
@@ -45,6 +52,10 @@ export function DecisionEnvironmentPage() {
         icon: PencilAltIcon,
         isPinned: true,
         label: t('Edit decision environment'),
+        isDisabled: () =>
+          canPatchDE
+            ? ''
+            : t(`The decision environment cannot be edited due to insufficient permission`),
         onClick: (decisionEnvironment: EdaDecisionEnvironmentRead) =>
           pageNavigate(EdaRoute.EditDecisionEnvironment, {
             params: { id: decisionEnvironment.id },
@@ -58,12 +69,16 @@ export function DecisionEnvironmentPage() {
         selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Delete decision environment'),
+        isDisabled: () =>
+          canPatchDE
+            ? ''
+            : t(`The decision environment cannot be deleted due to insufficient permission`),
         onClick: (decisionEnvironment: EdaDecisionEnvironmentRead) =>
           deleteDecisionEnvironment([decisionEnvironment]),
         isDanger: true,
       },
     ],
-    [deleteDecisionEnvironment, pageNavigate, t]
+    [canPatchDE, deleteDecisionEnvironment, pageNavigate, t]
   );
 
   const getPageUrl = useGetPageUrl();
