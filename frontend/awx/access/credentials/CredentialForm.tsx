@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useState } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -28,8 +28,8 @@ import { AwxRoute } from '../../main/AwxRoutes';
 import { PageFormSelectOrganization } from '../organizations/components/PageFormOrganizationSelect';
 import { BecomeMethodField } from './components/BecomeMethodField';
 import { CredentialMultilineInput } from './components/CredentialMultilineInput';
-import { Button, Icon } from '@patternfly/react-core';
-import { KeyIcon } from '@patternfly/react-icons';
+import { Button, Icon, InputGroup } from '@patternfly/react-core';
+import { KeyIcon, RedoIcon } from '@patternfly/react-icons';
 import { PageFormSelectCredentialType } from './components/PageFormSelectCredentialType';
 import {
   CredentialPluginsInputSource,
@@ -38,6 +38,7 @@ import {
 import { CredentialInputSource } from '../../interfaces/CredentialInputSource';
 import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 import { useSWRConfig } from 'swr';
+import { EncryptedTextFormInput } from './components/EncryptedTextFormInput';
 
 interface CredentialForm extends Credential {
   user?: number;
@@ -260,6 +261,14 @@ export function EditCredential() {
       }
     });
   }
+  const isEncryptedValue: { [key: string]: boolean } = {};
+  if (credential?.inputs) {
+    Object.entries(credential.inputs).forEach(([key, value]) => {
+      if (value === '$encrypted$') {
+        isEncryptedValue[key] = true;
+      } else isEncryptedValue[key] = false;
+    });
+  }
 
   const initialValues: initialValues = {
     name: credential?.name ?? '',
@@ -369,6 +378,7 @@ export function EditCredential() {
       >
         <CredentialInputs
           isEditMode
+          isEncryptedValue={isEncryptedValue}
           credentialTypes={parsedCredentialTypes || {}}
           selectedCredentialTypeId={credential?.credential_type}
           setCredentialPluginValues={setCredentialPluginValues}
@@ -383,6 +393,7 @@ export function EditCredential() {
 
 function CredentialInputs({
   isEditMode = false,
+  isEncryptedValue,
   selectedCredentialTypeId,
   credentialTypes,
   setCredentialPluginValues,
@@ -391,6 +402,7 @@ function CredentialInputs({
   setPluginsToDelete,
 }: {
   isEditMode?: boolean;
+  isEncryptedValue?: { [key: string]: boolean };
   selectedCredentialTypeId?: number;
   credentialTypes: CredentialTypes;
   setCredentialPluginValues?: (values: CredentialPluginsInputSource[]) => void;
@@ -442,6 +454,7 @@ function CredentialInputs({
           credentialType={credentialTypes[credentialTypeID]}
           setCredentialPluginValues={setCredentialPluginValues}
           isEditMode={isEditMode}
+          isEncryptedValue={isEncryptedValue}
           accumulatedPluginValues={accumulatedPluginValues ? accumulatedPluginValues : []}
           setAccumulatedPluginValues={setAccumulatedPluginValues}
           setPluginsToDelete={setPluginsToDelete}
@@ -450,10 +463,85 @@ function CredentialInputs({
     </>
   );
 }
+
+function SingleLineEncryptedInput({
+  field,
+  isEditMode,
+  setCredentialPluginValues,
+  credentialType,
+  requiredFields,
+  accumulatedPluginValues,
+  setAccumulatedPluginValues,
+}: {
+  field: CredentialInputField;
+  isEditMode: boolean;
+  setCredentialPluginValues: (values: CredentialPluginsInputSource[]) => void;
+  credentialType: CredentialType;
+  requiredFields: string[];
+  accumulatedPluginValues: CredentialPluginsInputSource[];
+  setAccumulatedPluginValues?: (values: CredentialPluginsInputSource[]) => void;
+}) {
+  const [t] = useTranslation();
+  const { getValues } = useFormContext<{ [key: string]: string }>();
+  const openCredentialPluginsModal = useCredentialPluginsModal();
+  const fieldValue = getValues(field.id);
+  const isFieldValueEmpty = fieldValue === undefined || fieldValue === '';
+  const [shouldHideField, setShouldHideField] = useState(
+    field.secret && isEditMode && !isFieldValueEmpty
+  );
+  const [clear, setClear] = useState(false);
+  const { setValue } = useFormContext();
+
+  const handleHideField = () => {
+    setShouldHideField(!shouldHideField);
+    setClear(!clear);
+  };
+
+  return (
+    <EncryptedTextFormInput
+      onClear={() => {
+        setValue(field.id, '');
+        setShouldHideField(!shouldHideField);
+      }}
+      shouldHideField={shouldHideField}
+      label={field.label}
+      placeholder={t('ENCRYPTED')}
+      requiredFields={requiredFields}
+      field={field}
+    >
+      <InputGroup>
+        <CredentialTextInput
+          accumulatedPluginValues={accumulatedPluginValues}
+          setAccumulatedPluginValues={setAccumulatedPluginValues}
+          key={field.id}
+          field={field}
+          isDisabled={field.id === 'vault_id' && credentialType.kind === 'vault' && isEditMode}
+          isRequired={requiredFields.includes(field.id)}
+          handleModalToggle={() =>
+            openCredentialPluginsModal({
+              field,
+              setCredentialPluginValues,
+              accumulatedPluginValues,
+            })
+          }
+          buttons={
+            <Button variant="control" onClick={handleHideField}>
+              <Icon>
+                <RedoIcon />
+              </Icon>
+            </Button>
+          }
+        />
+      </InputGroup>
+    </EncryptedTextFormInput>
+  );
+}
+
 function CredentialSubForm({
   credentialType,
   setCredentialPluginValues,
   isEditMode = false,
+  isEncryptedValue: isEncryptedValues,
   accumulatedPluginValues,
   setAccumulatedPluginValues,
   setPluginsToDelete,
@@ -461,6 +549,7 @@ function CredentialSubForm({
   credentialType: CredentialType | undefined;
   setCredentialPluginValues: (values: CredentialPluginsInputSource[]) => void;
   isEditMode?: boolean;
+  isEncryptedValue?: { [key: string]: boolean };
   accumulatedPluginValues: CredentialPluginsInputSource[];
   setAccumulatedPluginValues?: (values: CredentialPluginsInputSource[]) => void;
   setPluginsToDelete?: React.Dispatch<React.SetStateAction<string[]>>;
@@ -518,6 +607,21 @@ function CredentialSubForm({
               />
             );
           } else {
+            if (isEncryptedValues) {
+              if (field.secret && isEditMode && isEncryptedValues[field.id] === true) {
+                return (
+                  <SingleLineEncryptedInput
+                    key={field.id}
+                    field={field}
+                    isEditMode={isEditMode}
+                    setCredentialPluginValues={setCredentialPluginValues}
+                    credentialType={credentialType}
+                    requiredFields={requiredFields}
+                    accumulatedPluginValues={accumulatedPluginValues}
+                  ></SingleLineEncryptedInput>
+                );
+              }
+            }
             return (
               <CredentialTextInput
                 accumulatedPluginValues={accumulatedPluginValues}
@@ -566,7 +670,7 @@ function CredentialSubForm({
   ) : null;
 }
 
-function CredentialTextInput({
+export function CredentialTextInput({
   credentialType,
   field,
   handleModalToggle,
@@ -575,6 +679,8 @@ function CredentialTextInput({
   accumulatedPluginValues,
   setAccumulatedPluginValues,
   setPluginsToDelete,
+  placeholder,
+  buttons,
 }: {
   credentialType?: CredentialType | undefined;
   field: CredentialInputField;
@@ -584,6 +690,8 @@ function CredentialTextInput({
   accumulatedPluginValues: CredentialPluginsInputSource[];
   setAccumulatedPluginValues?: (values: CredentialPluginsInputSource[]) => void;
   setPluginsToDelete?: React.Dispatch<React.SetStateAction<string[]>>;
+  placeholder?: string;
+  buttons?: ReactNode;
 }) {
   const { t } = useTranslation();
   const { setValue, clearErrors } = useFormContext();
@@ -679,7 +787,7 @@ function CredentialTextInput({
         key={field.id}
         name={field.id}
         label={field.label}
-        placeholder={(field?.default || t('Enter value')).toString()}
+        placeholder={(placeholder ? placeholder : t('Enter value')).toString()}
         type={field.secret ? 'password' : 'text'}
         isRequired={handleIsRequired()}
         isDisabled={!!isPromptOnLaunchChecked || isDisabled}
@@ -709,8 +817,11 @@ function CredentialTextInput({
                   {t(`Clear`)}
                 </Button>
               ) : null}
+              {buttons}
             </>
-          ) : undefined
+          ) : (
+            buttons
+          )
         }
         additionalControls={
           field?.ask_at_runtime && (
