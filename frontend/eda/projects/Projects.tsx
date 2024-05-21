@@ -42,7 +42,7 @@ export function Projects() {
         emptyStateTitle={
           canCreateProject
             ? t('There are currently no projects created for your organization.')
-            : t('You do not have permission to create a project')
+            : t('You do not have permission to create a project.')
         }
         emptyStateDescription={
           canCreateProject
