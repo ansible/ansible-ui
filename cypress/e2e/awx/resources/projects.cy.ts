@@ -61,12 +61,12 @@ describe('Projects', () => {
           cy.waitForProjectToFinishSyncing(newProject.id);
           cy.intercept('DELETE', awxAPI`/projects/${newProject.id.toString()}/`).as('deleted');
           cy.clickPageAction('delete-project');
-          cy.get('#confirm').click();
-          cy.clickButton(/^Delete project/);
           cy.getModal().within(() => {
+            cy.get('#confirm').click();
+            cy.clickButton(/^Delete project/);
+            cy.contains('Permanently delete projects');
             cy.wait('@deleted').then((deleted) => {
               expect(deleted?.response?.statusCode).to.eql(204);
-              cy.contains('Permanently delete projects');
             });
           });
         });
