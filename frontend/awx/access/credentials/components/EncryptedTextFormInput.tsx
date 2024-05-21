@@ -32,6 +32,7 @@ export function EncryptedTextFormInput({
   const { t } = useTranslation();
 
   if (shouldHideField) {
+    //console.log('shouldHideField for', field.id, 'is true');
     return (
       <InputGroup>
         <CredentialTextInput

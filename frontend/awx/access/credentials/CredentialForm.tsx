@@ -490,14 +490,15 @@ function SingleLineEncryptedInput({
     setShouldHideField(!shouldHideField);
     setClear(!clear);
   };
+
   return (
     <EncryptedTextFormInput
       onClear={() => {
         setShouldHideField(!shouldHideField);
+        setClear(!clear);
       }}
       shouldHideField={shouldHideField}
       label={field.label}
-      placeholder={t('ENCRYPTED')}
       requiredFields={requiredFields}
       field={field}
     >
@@ -602,6 +603,7 @@ function CredentialSubForm({
           } else {
             if (isEncryptedValues) {
               if (field.secret && isEditMode && isEncryptedValues[field.id] === true) {
+                //console.log(field.id, 'is an encrypted field');
                 return (
                   <SingleLineEncryptedInput
                     key={field.id}
@@ -704,7 +706,7 @@ export function CredentialTextInput({
     );
     setPluginsToDelete?.((prev: string[]) => [...prev, field.id]);
   };
-
+  //console.log('placeholder: ', placeholder);
   useEffect(() => {
     if (field?.ask_at_runtime) {
       setValue(field?.id, isPromptOnLaunchChecked ? 'ASK' : field?.default || '', {
@@ -774,6 +776,7 @@ export function CredentialTextInput({
       setValue(field.id, renderFieldValue(field), { shouldDirty: true });
     }
   }, [setValue, accumulatedPluginValues, renderFieldValue, field]);
+  //console.log('placeholder', placeholder);
   return (
     <>
       <PageFormTextInput
@@ -781,6 +784,8 @@ export function CredentialTextInput({
         name={field.id}
         label={field.label}
         placeholder={(placeholder || t('Enter value')).toString()}
+        //placeholder={placeholder ? placeholder : t('Enter value')}
+        //placeholder={'ENCRYPTED'}
         type={field.secret ? 'password' : 'text'}
         isRequired={handleIsRequired()}
         isDisabled={!!isPromptOnLaunchChecked || isDisabled}
