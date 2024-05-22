@@ -85,23 +85,19 @@ export function GatewayServicesProvider(props: { children: ReactNode }) {
     }
   }, [result.data, setGatewayServices]);
 
-  return (
-    <GatewayServicesContext.Provider value={[gatewayServices, setGatewayServices]}>
-      {props.children}
-    </GatewayServicesContext.Provider>
-  );
-}
-
-export function GatewayServicesCheck(props: { children: ReactNode }) {
-  const [services] = useGatewayServices();
-  if (!services.length) {
+  if (!gatewayServices.length) {
     return (
       <Page>
         <LoadingState />
       </Page>
     );
   }
-  return <>{props.children}</>;
+
+  return (
+    <GatewayServicesContext.Provider value={[gatewayServices, setGatewayServices]}>
+      {props.children}
+    </GatewayServicesContext.Provider>
+  );
 }
 
 export function useGatewayService(serviceType?: 'controller' | 'eda' | 'hub') {

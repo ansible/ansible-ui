@@ -16,7 +16,7 @@ import { EdaActiveUserProvider } from '../../frontend/eda/common/useEdaActiveUse
 import { HubActiveUserProvider } from '../../frontend/hub/common/useHubActiveUser';
 import { HubContextProvider } from '../../frontend/hub/common/useHubContext';
 import { QuickStartProvider } from '../overview/quickstarts/QuickStartProvider';
-import { GatewayServicesCheck, GatewayServicesProvider } from './GatewayServices';
+import { GatewayServicesProvider } from './GatewayServices';
 import { PlatformActiveUserProvider } from './PlatformActiveUserProvider';
 import { PlatformApp } from './PlatformApp';
 import { PlatformLogin } from './PlatformLogin';
@@ -37,11 +37,9 @@ export default function PlatformMain() {
                       <WebSocketProvider>
                         <AwxConfigProvider>
                           <HubContextProvider>
-                            <GatewayServicesCheck>
-                              <PlatformSubscription>
-                                <PlatformApp />
-                              </PlatformSubscription>
-                            </GatewayServicesCheck>
+                            <PlatformSubscription>
+                              <PlatformApp />
+                            </PlatformSubscription>
                           </HubContextProvider>
                         </AwxConfigProvider>
                       </WebSocketProvider>
