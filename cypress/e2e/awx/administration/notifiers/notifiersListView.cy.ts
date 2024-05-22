@@ -110,11 +110,41 @@ describe('Notifications: List View', () => {
     });
   });
 
-  it.skip('can bulk delete a Notification and assert deletion', () => {
+  it('can bulk delete a Notification and assert deletion', () => {
     //Utilize notification created in the beforeEach block
     //create an additional notification in this test for the purposes of bulk delete
     //Assert the presence of the items before deletion
     //Assert the deletion
+
+    cy.getByDataCy(`awx-notification-templates`).click({ force: true });
+    const name1 = randomE2Ename();
+    const name2 = randomE2Ename();
+
+    cy.createNotificationTemplate(name1).then(() => {
+      cy.createNotificationTemplate(name2).then(() => {
+        cy.filterTableByMultiSelect('name', [name1, name2]);
+        cy.get('[data-cy="checkbox-column-cell"]')
+          .eq(0)
+          .within(() => {
+            cy.get('input').click();
+          });
+        cy.get('[data-cy="checkbox-column-cell"]')
+          .eq(1)
+          .within(() => {
+            cy.get('input').click();
+          });
+        cy.clickToolbarKebabAction('delete-selected-notifiers');
+        cy.getModal().within(() => {
+          cy.get('#confirm').click();
+          cy.clickButton(/^Delete notifiers/);
+          cy.contains(/^Success$/);
+          cy.clickButton(/^Close$/);
+        });
+        cy.contains('No results found');
+        cy.contains(name1).should('not.exist');
+        cy.contains(name2).should('not.exist');
+      });
+    });
   });
 });
 
