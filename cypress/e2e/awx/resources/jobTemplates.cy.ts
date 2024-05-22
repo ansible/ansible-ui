@@ -349,12 +349,61 @@ describe('Job Templates Tests', function () {
   });
 
   describe('Job Templates Tests: Copy', function () {
-    it.skip('can copy an existing job template from the list', function () {
-      //Use a job template created in the beforeEach hook
+    let inventory: Inventory;
+    let jobTemplate: JobTemplate;
+
+    beforeEach(function () {
+      cy.createAwxInventory({ organization: (this.globalOrganization as Organization).id }).then(
+        (inv) => {
+          inventory = inv;
+
+          cy.createAwxJobTemplate({
+            organization: (this.globalOrganization as Organization).id,
+            project: (this.globalProject as Project).id,
+            inventory: inventory.id,
+          }).then((jt) => {
+            jobTemplate = jt;
+          });
+        }
+      );
     });
 
-    it.skip('can copy an existing job template from the details page', function () {
-      //Use a job template created in the beforeEach hook
+    afterEach(function () {
+      cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
+      cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
+    });
+
+    it('can copy an existing job template from the list', function () {
+      cy.visit('/templates');
+      cy.filterTableBySingleSelect('name', jobTemplate.name);
+      cy.intercept('POST', awxAPI`/job_templates/${jobTemplate.id.toString()}/copy/`).as(
+        'copyTemplate'
+      );
+      cy.getByDataCy('actions-column-cell').within(() => {
+        cy.getByDataCy('actions-dropdown').click();
+        cy.getByDataCy('copy-template').click();
+      });
+      cy.wait('@copyTemplate')
+        .its('response.body.name')
+        .then((copiedName: string) => {
+          cy.clearAllFilters();
+          cy.filterTableBySingleSelect('name', copiedName);
+        });
+    });
+
+    it('can copy an existing job template from the details page', function () {
+      cy.visit(`/templates/job_template/${jobTemplate.id.toString()}/details`);
+      cy.intercept('POST', awxAPI`/job_templates/${jobTemplate.id.toString()}/copy/`).as(
+        'copyTemplate'
+      );
+      cy.clickKebabAction('actions-dropdown', 'copy-template');
+      cy.getByDataCy('alert-toaster').contains(`${jobTemplate.name} copied.`);
+      cy.wait('@copyTemplate')
+        .its('response.body')
+        .then(({ id, name }: { id: number; name: string }) => {
+          cy.visit(`/templates/job_template/${id}/details`);
+          cy.contains(name);
+        });
     });
   });
 
