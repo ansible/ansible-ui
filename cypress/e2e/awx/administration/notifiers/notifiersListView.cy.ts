@@ -226,23 +226,40 @@ function fillNotificationType(type: string) {
   }
 }
 
-function convertType(type : string)
-{
-  if (type === 'Email') { return 'email'; }
-  if (type === 'Grafana') { return 'grafana';} 
-  if (type === 'IRC') { return 'irc';}
-  if (type === 'Mattermost') { return 'mattermost';}
-  if (type === 'Pagerduty') { return 'pagerduty';}
-  if (type === 'Rocket.Chat') { return 'rocketchat';}
-  if (type === 'Slack') { return 'slack';}
-  if (type === 'Twilio') { return 'twilio';}
-  if (type === 'Webhook') { return 'webhook';}
+function convertType(type: string) {
+  if (type === 'Email') {
+    return 'email';
+  }
+  if (type === 'Grafana') {
+    return 'grafana';
+  }
+  if (type === 'IRC') {
+    return 'irc';
+  }
+  if (type === 'Mattermost') {
+    return 'mattermost';
+  }
+  if (type === 'Pagerduty') {
+    return 'pagerduty';
+  }
+  if (type === 'Rocket.Chat') {
+    return 'rocketchat';
+  }
+  if (type === 'Slack') {
+    return 'slack';
+  }
+  if (type === 'Twilio') {
+    return 'twilio';
+  }
+  if (type === 'Webhook') {
+    return 'webhook';
+  }
   return type;
 }
 
 function verifyDefaultsMessages(type: string) {
   const defaults = getDefaultMessages(convertType(type));
-  
+
   cy.get('[data-cy="customize-messages-toggle"]').parent().find('span').click();
 
   if (defaults.started.message) {
