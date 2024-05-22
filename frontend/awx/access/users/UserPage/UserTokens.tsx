@@ -90,7 +90,7 @@ function UserTokensInternal(props: { infoMessage?: string; user: AwxUser; create
         onClick: deleteTokens,
       },
     ],
-    [deleteTokens, getPageUrl, t, user.id]
+    [deleteTokens, getPageUrl, t, user.id, props.createRoute]
   );
 
   const rowActions = useMemo<IPageAction<Token>[]>(
