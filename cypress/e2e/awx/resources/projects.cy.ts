@@ -2,6 +2,7 @@
 /// <reference types="cypress" />
 
 import { randomString } from '../../../../framework/utils/random-string';
+import { randomE2Ename } from '../../../support/utils';
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 import { Job } from '../../../../frontend/awx/interfaces/Job';
 import { JobTemplate } from '../../../../frontend/awx/interfaces/JobTemplate';
@@ -10,6 +11,7 @@ import { Project } from '../../../../frontend/awx/interfaces/Project';
 import { Schedule } from '../../../../frontend/awx/interfaces/Schedule';
 import { AwxUser } from '../../../../frontend/awx/interfaces/User';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
+import { NotificationTemplate } from '../../../../frontend/awx/interfaces/NotificationTemplate';
 
 describe('Projects', () => {
   let schedule: Schedule;
@@ -312,7 +314,6 @@ describe('Projects', () => {
   });
 
   describe('Projects: Access Tab', () => {
-    //More testing will be needed here- add later
     it('can navigate to project access tab', function () {
       cy.navigateTo('awx', 'projects');
       cy.filterTableByMultiSelect('name', [(this.globalProject as Project).name]);
@@ -646,88 +647,55 @@ describe('Projects', () => {
   });
 
   describe('Projects: Notifications Tab', () => {
-    //This describe block should create a Project to use in these tests
-    //The Project needs to be deleted after the tests run
+    let notification: NotificationTemplate;
+    beforeEach(function () {
+      cy.createAwxProject({ organization: (this.globalOrganization as Organization).id }).then(
+        (proj) => {
+          thisProject = proj;
 
-    it('can navigate to project notifications tab', function () {
-      //This test should be combined with the test directly below, when that other test gets written
+          const notificationName = `${randomE2Ename()}`;
+          cy.createNotificationTemplate(notificationName).then((notifier) => {
+            notification = notifier;
+          });
+        }
+      );
+    });
+
+    it('can navigate to the Projects Notifications list, toggle a Notification on Start, and navigate to its details page', function () {
       cy.navigateTo('awx', 'projects');
-      cy.filterTableByMultiSelect('name', [(this.globalProject as Project).name]);
-      cy.clickTableRowLink('name', `${(this.globalProject as Project).name}`, {
+      cy.filterTableByMultiSelect('name', [thisProject.name]);
+      cy.clickTableRowLink('name', `${thisProject.name}`, {
         disableFilter: true,
       });
-      cy.verifyPageTitle(`${(this.globalProject as Project).name}`);
+      cy.verifyPageTitle(`${thisProject.name}`);
       cy.clickTab(/^Notifications$/, true);
-    });
-
-    it.skip('can navigate to the Projects -> Notifications list and then to the details page of the Notification', () => {
-      //Assert the navigation to the notifications tab of the Project
-      //Assert the navigation to the details page of the notification
-    });
-
-    it.skip('can toggle the Projects -> Notification on and off for job start', () => {
-      //Assert the navigation to the notifications tab of the Project
-      //Assert the start toggling on
-      //Assert the start toggling off
-    });
-
-    it.skip('can toggle the Projects -> Notification on and off for job success', () => {
-      //Assert the navigation to the notifications tab of the Project
-      //Assert the success toggling on
-      //Assert the success toggling off
-    });
-
-    it.skip('can toggle the Projects -> Notification on and off for job failure', () => {
-      //Assert the navigation to the notifications tab of the Project
-      //Assert the failure toggling on
-      //Assert the failure toggling off
+      cy.getBy('#filter-input').type(`${notification.name}`);
+      cy.getByDataCy('apply-filter').click();
+      cy.intercept(
+        'POST',
+        awxAPI`/projects/${thisProject.id.toString()}/notification_templates_started/`
+      ).as('started');
+      cy.intercept(
+        'GET',
+        awxAPI`/projects/${thisProject.id.toString()}/notification_templates_started/`
+      ).as('getStarted');
+      cy.getTableRow('name', notification.name, { disableFilter: true }).within(() => {
+        cy.contains('[data-cy="toggle-switch"]', 'Start').find('span').eq(0).click();
+        cy.wait(500); //this is necessary to get Cypress to show the toggle switch being clicked
+        cy.wait('@started')
+          .its('response')
+          .then((started) => {
+            expect(started.statusCode).to.eql(204);
+          });
+      });
+      cy.wait('@getStarted');
+      cy.getTableRow('name', notification.name, { disableFilter: true })
+        .should('be.visible')
+        .within(() => {
+          cy.get('a').click();
+        });
+      cy.verifyPageTitle(notification.name);
+      cy.url().should('contain', `/administration/notifiers/${notification.id}/details`);
     });
   });
-
-  // TODO - Move this to a unit test as on an e2e server the project might sync too fast and cancel will not be avail/enabled
-  // it('can cancel project sync from projects list table row kebab menu', () => {
-  //   cy.requestPost<Project>(awxAPI`/projects/`, {
-  //     name: 'E2E Project ' + randomString(4),
-  //     organization: organization.id,
-  //     scm_type: 'git', // Only projects with scm_type and scm_url can be synced
-  //     scm_url: 'https://github.com/ansible/ansible-ui',
-  //   }).then((testProject) => {
-  //     cy.navigateTo('awx', 'projects');
-  //     cy.filterTableByText(testProject.name);
-  //     cy.contains('td', testProject.name)
-  //       .parent()
-  //       .within(() => {
-  //         cy.get('#cancel-sync').click();
-  //       });
-  //     cy.get('#confirm').click();
-  //     cy.clickButton(/^Cancel project sync/);
-  //     cy.contains(/^Success$/);
-  //     cy.clickButton(/^Close$/);
-  //     cy.filterTableByText(testProject.name);
-  //     cy.get('td[data-label="Status"]').should('contain', 'Canceled');
-  //     cy.clickButton(/^Clear all filters$/);
-  //     cy.deleteAwxProject(testProject);
-  //   });
-  // });
-
-  // TODO - Move this to a unit test as on an e2e server the project might sync too fast and cancel will not be avail/enabled
-  // it('can cancel project sync from projects list toolbar ', () => {
-  //   cy.requestPost<Project>(awxAPI`/projects/`, {
-  //     name: 'E2E Project ' + randomString(4),
-  //     organization: organization.id,
-  //     scm_type: 'git', // Only projects with scm_type and scm_url can be synced
-  //     scm_url: 'https://github.com/ansible/ansible-ui',
-  //   }).then((testProject) => {
-  //     cy.navigateTo('awx', 'projects');
-  //     cy.selectTableRow(testProject.name);
-  //     cy.clickToolbarKebabAction('cancel-selected-projects');
-  //     cy.get('#confirm').click();
-  //     cy.clickButton(/^Cancel project sync/);
-  //     cy.contains(/^Success$/);
-  //     cy.clickButton(/^Close$/);
-  //     cy.filterTableByText(testProject.name);
-  //     cy.get('td[data-label="Status"]').should('contain', 'Canceled');
-  //     cy.clickButton(/^Clear all filters$/);
-  //   });
-  // });
 });
