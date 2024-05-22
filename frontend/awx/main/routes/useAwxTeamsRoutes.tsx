@@ -6,10 +6,10 @@ import { CreateTeam, EditTeam } from '../../access/teams/TeamForm';
 import { AwxTeamDetails } from '../../access/teams/TeamPage/AwxTeamDetails';
 import { TeamAccess } from '../../access/teams/TeamPage/TeamAccess';
 import { TeamPage } from '../../access/teams/TeamPage/TeamPage';
-import { TeamRoles } from '../../access/teams/TeamPage/TeamRoles';
 import { Teams } from '../../access/teams/Teams';
-import { AddRolesToTeam } from '../../access/teams/components/AddRolesToTeam';
 import { AwxRoute } from '../AwxRoutes';
+import { AwxAddTeamRoles } from '../../access/teams/AwxAddTeamRoles';
+import { AwxTeamRoles } from '../../access/teams/TeamPage/AwxTeamRoles';
 
 export function useAwxTeamsRoutes() {
   const { t } = useTranslation();
@@ -32,7 +32,7 @@ export function useAwxTeamsRoutes() {
         {
           id: AwxRoute.AddRolesToTeam,
           path: ':id/roles/add',
-          element: <AddRolesToTeam />,
+          element: <AwxAddTeamRoles />,
         },
         {
           id: AwxRoute.TeamPage,
@@ -52,7 +52,7 @@ export function useAwxTeamsRoutes() {
             {
               id: AwxRoute.TeamRoles,
               path: 'roles',
-              element: <TeamRoles />,
+              element: <AwxTeamRoles />,
             },
             {
               path: '',
