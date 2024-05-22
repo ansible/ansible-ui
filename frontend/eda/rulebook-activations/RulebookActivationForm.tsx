@@ -133,7 +133,7 @@ export function RulebookActivationInputs() {
       <p>{t('Policies:')}</p>
       <p>
         {t(
-          '<strong>Always</strong>: This will always restart the rulebook activation regardless of if it ends successfully or not.'
+          'Always: This will always restart the rulebook activation regardless of if it ends successfully or not.'
         )}
       </p>
       <p>
