@@ -142,6 +142,7 @@ function testNotification(type: string) {
     const name2 = randomE2Ename();
     editBasicData(name2);
     editNotificationType(type);
+    editCustomMessages(type);
     cy.get(`[data-cy="Submit"]`).click();
 
     testBasicDataEdited(name2, orgName);
@@ -297,6 +298,54 @@ function verifyDefaultsMessages(type: string) {
       defaults.workflow_approval.timed_out.body
     );
   }
+}
+
+function editCustomMessages(type : string)
+{
+  const defaults = getDefaultMessages(type);
+  
+    if (defaults.started.message) {
+      cy.get('[data-cy="messages-started-message"]').clear().type('started message edited');
+    }
+    if (defaults.success.message) {
+      cy.get('[data-cy="messages-success-message"]').clear().type('success message edited');
+    }
+    if (defaults.error.message) {
+      cy.get('[data-cy="messages-error-message"]').clear().type('error message edited');
+    }
+    if (defaults.workflow_approval.approved.message) {
+      cy.get('[data-cy="messages-workflow-approval-approved-message"]').clear().type('workflow approval approved message edited');
+    }
+    if (defaults.workflow_approval.running.message) {
+      cy.get('[data-cy="messages-workflow-approval-running-message"]').clear().type('workflow approval running message edited');
+    }
+    if (defaults.workflow_approval.denied.message) {
+      cy.get('[data-cy="messages-workflow-approval-denied-message"]').clear().type('workflow approval denied message edited');
+    }
+    if (defaults.workflow_approval.timed_out.message) {
+      cy.get('[data-cy="messages-workflow-approval-timed-out-message"]').clear().type('workflow approval timed out message edited');
+    }
+    if (defaults.started.body) {
+      cy.get('[data-cy="messages-started-body"]').clear().type('started body edited');
+    }
+    if (defaults.success.body) {
+      cy.get('[data-cy="messages-success-body"]').clear().type('success body edited');
+    }
+    if (defaults.error.body) {
+      cy.get('[data-cy="messages-error-body"]').clear().type('error body edited');
+    }
+    if (defaults.workflow_approval.approved.body) {
+      cy.get('[data-cy="messages-workflow-approval-approved-body"]').clear().type('workflow approval approved body edited');
+    }
+    if (defaults.workflow_approval.running.body) {
+      cy.get('[data-cy="messages-workflow-approval-running-body"]').clear().type('workflow approval running body edited');
+    }
+    if (defaults.workflow_approval.denied.body) {
+      cy.get('[data-cy="messages-workflow-approval-denied-body"]').clear().type('workflow approval denied body edited');
+    }
+    if (defaults.workflow_approval.timed_out.body) {
+      cy.get('[data-cy="messages-workflow-approval-timed-out-body"]').clear().type('workflow approval timed out body edited');
+    }
 }
 
 function editNotificationType(type: string) {
