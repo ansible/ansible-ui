@@ -53,7 +53,7 @@ export function useAwxInstanceGroupsRoutes() {
         },
         {
           id: AwxRoute.InstanceGroupPage,
-          path: ':instanceType/:id/',
+          path: ':id',
           element: <InstanceGroupPage />,
           children: [
             {
