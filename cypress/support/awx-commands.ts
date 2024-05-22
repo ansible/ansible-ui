@@ -1088,7 +1088,7 @@ Cypress.Commands.add(
         )
           .as('newVisualizerView')
           .then(() => {
-            cy.visit(`/templates/workflow_job_template/${results.id}/visualizer`);
+            cy.visit(`/templates/workflow-job-template/${results.id}/visualizer`);
           });
       });
   }
@@ -1814,7 +1814,9 @@ Cypress.Commands.add(
       'required' | 'min' | 'max' | 'new_question' | 'choices'
     >
   ) => {
-    cy.visit(`/templates/${template.type}/${template.id}/survey/add`);
+    cy.visit(
+      `/templates/${template.type === 'job_template' ? 'job-template' : 'workflow-job-template'}/${template.id}/survey/add`
+    );
 
     cy.getByDataCy('question-name').type(spec.question_name ?? '');
     cy.getByDataCy('question-description').type(spec?.question_description ?? '');
