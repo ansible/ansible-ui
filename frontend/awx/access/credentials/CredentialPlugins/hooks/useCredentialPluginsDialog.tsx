@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import {
   IPageAlertToaster,
   PageFormSubmitHandler,
+  usePageAlertToaster,
   usePageDialogs,
 } from '../../../../../../framework';
 import { AlertProps, Modal, ModalVariant } from '@patternfly/react-core';
@@ -115,17 +116,17 @@ function CredentialPluginsModal(
   );
 }
 
-export function useCredentialPluginsModal(alertToaster: IPageAlertToaster) {
+export function useCredentialPluginsModal() {
   const { pushDialog, popDialog } = usePageDialogs();
   const [props, setProps] = useState<CredentialPluginsModalProps>();
+  const toaster = usePageAlertToaster();
+
   useEffect(() => {
     if (props) {
-      pushDialog(
-        <CredentialPluginsModal {...props} onClose={popDialog} alertToaster={alertToaster} />
-      );
+      pushDialog(<CredentialPluginsModal {...props} onClose={popDialog} alertToaster={toaster} />);
     } else {
       popDialog();
     }
-  }, [props, pushDialog, popDialog, alertToaster]);
+  }, [props, pushDialog, popDialog, toaster]);
   return setProps;
 }
