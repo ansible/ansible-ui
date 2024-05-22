@@ -314,11 +314,6 @@ describe('Job Templates Tests', function () {
     });
 
     it('can assign a new inventory to a job template if the originally assigned inventory was deleted', function () {
-      //Access the job template created in the beforeEach block
-      //This test should create a new inventory to assign to the JT once the original inventory is deleted
-      //Assert the original inventory on the job template
-      //Assert the deletion of the original inventory
-      //Assert the new inventory being successfully assigned
       cy.createAwxInventory({ organization: (this.globalOrganization as Organization).id }).then(
         (inv) => {
           inventory2 = inv;
@@ -351,10 +346,6 @@ describe('Job Templates Tests', function () {
     });
 
     it('can edit a job template to enable provisioning callback and and enable webhook, then edit again to disable those options', function () {
-      //Use a job template created in the beforeEach hook
-      //Assert initial details, then edit the JT to enable provisioning callback and enable webhook
-      //Assert that those two options are enabled on details page
-      //Edit the JT to disable those, assert the change on the details page
       const jtURL = document.location.origin + awxAPI`/job_templates/${jobTemplate.id.toString()}`;
 
       cy.visit(`templates/job_template/${jobTemplate.id}/details`);
