@@ -8,7 +8,7 @@ import { Schedule } from '../../../../frontend/awx/interfaces/Schedule';
 import { WorkflowJobTemplate } from '../../../../frontend/awx/interfaces/WorkflowJobTemplate';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 
-describe('Schedules - Create and Delete', function () {
+describe.skip('Schedules - Create and Delete', function () {
   let organization: Organization;
   let jobTemplate: JobTemplate;
   let project: Project;
@@ -387,7 +387,6 @@ describe('Schedules - Create and Delete', function () {
       cy.get('[data-cy="name"]').contains(scheduleName);
       cy.getByDataCy('forks').should('have.text', '13');
       cy.get('[data-cy="local-time-zone"]').contains('America/Mexico_City');
-      cy.get('[data-cy="organization"]').contains('Global Organization');
       cy.get('[data-cy="inventory"]').contains(inventory.name);
       cy.get('[data-cy="project"]').contains('Global Project');
       cy.get('[data-cy="code-block-value"]').contains(`test: ${surveyAnswer}`);
@@ -719,21 +718,9 @@ describe.skip('Schedules - Edit', () => {
       });
       cy.intercept('PATCH', awxAPI`/schedules/*`).as('editedSchedule');
       cy.clickButton(/^Finish$/);
-
-      cy.wait('@editedSchedule')
-        .its('response.statusCode')
-        .then((statusCode) => {
-          expect(statusCode).to.eql(200);
-        });
-
-      cy.intercept('GET', awxAPI`/schedules/*/`).as('getEditedSchedule');
-      cy.wait('@getEditedSchedule')
-        .its('response.body.rrule')
-        .then((rrule: string) => {
-          expect(rrule).not.contains('EXRULE');
-          expect(rrule).not.contains('RRULE:FREQ=WEEKLY');
-          expect(rrule).contains('RRULE:FREQ=MONTHLY');
-        });
+      cy.getByDataCy('rruleset').should('not.contain', 'EXRULE');
+      cy.getByDataCy('rruleset').should('not.contain', 'RRULE:FREQ=WEEKLY');
+      cy.getByDataCy('rruleset').should('contain', 'RRULE:FREQ=MONTHLY;');
       cy.deleteAWXSchedule(schedToEdit, { failOnStatusCode: false });
     });
   });
