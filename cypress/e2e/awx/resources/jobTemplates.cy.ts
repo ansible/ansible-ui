@@ -699,8 +699,6 @@ describe('Job Templates Tests', function () {
   });
 
   describe('Notifications Tab for Job Templates', () => {
-    //This describe block should create a Job Template to use in these tests
-    //The Job Template needs to be deleted after the tests run
     let inventory: Inventory;
     let jobTemplate: JobTemplate;
     let notification: NotificationTemplate;
@@ -774,8 +772,6 @@ describe('Job Templates Tests', function () {
     });
 
     it('can navigate to the Job Templates -> Notifications list and then to the details page of the Notification', () => {
-      //Assert the navigation to the notifications tab of the Job Template
-      //Assert the navigation to the details page of the notification
       cy.visit(`/templates/job_template/${jobTemplate.id}/details`);
       cy.clickTab('Notifications', true);
       cy.filterTableByTextFilter('name', notification.name);
@@ -785,25 +781,16 @@ describe('Job Templates Tests', function () {
     });
 
     it('can toggle the Job Templates -> Notification on and off for job start', () => {
-      //Assert the navigation to the notifications tab of the Job Template
-      //Assert the start toggling on
-      //Assert the start toggling off
       cy.visit(`/templates/job_template/${jobTemplate.id}/notifications`);
       toggleNotificationType('start');
     });
 
     it('can toggle the Job Templates -> Notification on and off for job success', () => {
-      //Assert the navigation to the notifications tab of the Job Template
-      //Assert the success toggling on
-      //Assert the success toggling off
       cy.visit(`/templates/job_template/${jobTemplate.id}/notifications`);
       toggleNotificationType('success');
     });
 
     it('can toggle the Job Templates -> Notification on and off for job failure', () => {
-      //Assert the navigation to the notifications tab of the Job Template
-      //Assert the failure toggling on
-      //Assert the failure toggling off
       cy.visit(`/templates/job_template/${jobTemplate.id}/notifications`);
       toggleNotificationType('failure');
     });
