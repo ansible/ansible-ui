@@ -15,14 +15,13 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../../framework';
-import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { useGetItem } from '../../../../common/crud/useGet';
+import { EdaError } from '../../../common/EdaError';
+import { edaAPI } from '../../../common/eda-utils';
 import { EdaTeam } from '../../../interfaces/EdaTeam';
 import { EdaRoute } from '../../../main/EdaRoutes';
 import { useDeleteTeams } from '../hooks/useDeleteTeams';
-import { edaAPI } from '../../../common/eda-utils';
-import { EdaError } from '../../../common/EdaError';
 
 export function TeamPage() {
   const { t } = useTranslation();
