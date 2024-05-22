@@ -3,6 +3,7 @@
 
 import { randomString } from '../../../../framework/utils/random-string';
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
+import { Job } from '../../../../frontend/awx/interfaces/Job';
 import { JobTemplate } from '../../../../frontend/awx/interfaces/JobTemplate';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
@@ -605,10 +606,14 @@ describe('Projects', () => {
               );
               cy.getByDataCy('launch-template').click();
               cy.wait('@clickLaunch');
-              cy.wait('@launched');
-              cy.verifyPageTitle(editedJt.name);
-              cy.url().should('include', '/output');
-              cy.get('[data-cy="relaunch-job"]').should('be.visible');
+              cy.wait('@launched')
+                .its('response.body')
+                .then((launched: Job) => {
+                  cy.verifyPageTitle(editedJt.name);
+                  cy.url().should('include', '/output');
+                  cy.get('[data-cy="relaunch-job"]').should('be.visible');
+                  cy.waitForJobToProcessEvents(launched.id.toString());
+                });
             });
           cy.navigateTo('awx', 'projects');
           cy.verifyPageTitle('Projects');
