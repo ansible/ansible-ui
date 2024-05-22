@@ -225,20 +225,12 @@ function fillNotificationType(type: string) {
   }
 }
 
-function verifyDefaultsMessages(type : string)
-{
+function verifyDefaultsMessages(type: string) {
   const defaults = getDefaultMessages(type);
 
-  //cy.get(`[data-cy='customize-messages-toggle']`).click();
-  cy.get('[data-cy="customize-messages-toggle"]')
-  // Traverse to the parent element
-  .parent()
-  // Then find the span within that parent
-  .find('span')
-  // Click the span element
-  .click();
+  cy.get('[data-cy="customize-messages-toggle"]').parent().find('span').click();
 
-  if (defaults.started.message){
+  if (defaults.started.message) {
     cy.get('[data-cy="messages-started-message"]').should('have.value', defaults.started.message);
   }
   if (defaults.success.message) {
@@ -248,19 +240,31 @@ function verifyDefaultsMessages(type : string)
     cy.get('[data-cy="messages-error-message"]').should('have.value', defaults.error.message);
   }
   if (defaults.workflow_approval.approved.message) {
-    cy.get('[data-cy="messages-workflow-approval-approved-message"]').should('have.value', defaults.workflow_approval.approved.message);
+    cy.get('[data-cy="messages-workflow-approval-approved-message"]').should(
+      'have.value',
+      defaults.workflow_approval.approved.message
+    );
   }
   if (defaults.workflow_approval.running.message) {
-    cy.get('[data-cy="messages-workflow-approval-running-message"]').should('have.value', defaults.workflow_approval.running.message);
+    cy.get('[data-cy="messages-workflow-approval-running-message"]').should(
+      'have.value',
+      defaults.workflow_approval.running.message
+    );
   }
   if (defaults.workflow_approval.denied.message) {
-    cy.get('[data-cy="messages-workflow-approval-denied-message"]').should('have.value', defaults.workflow_approval.denied.message);
+    cy.get('[data-cy="messages-workflow-approval-denied-message"]').should(
+      'have.value',
+      defaults.workflow_approval.denied.message
+    );
   }
   if (defaults.workflow_approval.timed_out.message) {
-    cy.get('[data-cy="messages-workflow-approval-timed-out-message"]').should('have.value', defaults.workflow_approval.timed_out.message);
+    cy.get('[data-cy="messages-workflow-approval-timed-out-message"]').should(
+      'have.value',
+      defaults.workflow_approval.timed_out.message
+    );
   }
-  
-  if (defaults.started.body){
+
+  if (defaults.started.body) {
     cy.get('[data-cy="messages-started-body"]').should('have.value', defaults.started.body);
   }
   if (defaults.success.body) {
@@ -270,16 +274,28 @@ function verifyDefaultsMessages(type : string)
     cy.get('[data-cy="messages-error-body"]').should('have.value', defaults.error.body);
   }
   if (defaults.workflow_approval.approved.body) {
-    cy.get('[data-cy="messages-workflow-approval-approved-body"]').should('have.value', defaults.workflow_approval.approved.body);
+    cy.get('[data-cy="messages-workflow-approval-approved-body"]').should(
+      'have.value',
+      defaults.workflow_approval.approved.body
+    );
   }
   if (defaults.workflow_approval.running.body) {
-    cy.get('[data-cy="messages-workflow-approval-running-body"]').should('have.value', defaults.workflow_approval.running.body);
+    cy.get('[data-cy="messages-workflow-approval-running-body"]').should(
+      'have.value',
+      defaults.workflow_approval.running.body
+    );
   }
   if (defaults.workflow_approval.denied.body) {
-    cy.get('[data-cy="messages-workflow-approval-denied-body"]').should('have.value', defaults.workflow_approval.denied.body);
+    cy.get('[data-cy="messages-workflow-approval-denied-body"]').should(
+      'have.value',
+      defaults.workflow_approval.denied.body
+    );
   }
   if (defaults.workflow_approval.timed_out.body) {
-    cy.get('[data-cy="messages-workflow-approval-timed-out-body"]').should('have.value', defaults.workflow_approval.timed_out.body);
+    cy.get('[data-cy="messages-workflow-approval-timed-out-body"]').should(
+      'have.value',
+      defaults.workflow_approval.timed_out.body
+    );
   }
 }
 
