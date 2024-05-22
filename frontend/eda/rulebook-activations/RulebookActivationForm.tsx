@@ -124,12 +124,26 @@ export function RulebookActivationInputs() {
   const getPageUrl = useGetPageUrl();
   const restartPolicyHelpBlock = (
     <>
-      <p>{t('A policy to decide when to restart a rulebook.')}</p>
+      <p>
+        {t(
+          ' The policy that determines how an activation should restart after the container process running the source plugin ends.'
+        )}
+      </p>
       <br />
       <p>{t('Policies:')}</p>
-      <p>{t('Always: restarts when a rulebook finishes.')}</p>
-      <p>{t('Never: never restarts a rulebook when it finishes.')}</p>
-      <p>{t('On failure: only restarts when it fails.')}</p>
+      <p>
+        {t(
+          'Always: This will always restart the rulebook activation regardless of if it ends successfully or not.'
+        )}
+      </p>
+      <p>
+        {t('Never: This will never restart a rulebook activation when the container process ends.')}
+      </p>
+      <p>
+        {t(
+          'On failure: This will restart the rulebook activation only when the container process fails.'
+        )}
+      </p>
     </>
   );
   const { data: projects } = useGet<EdaResult<EdaProject>>(edaAPI`/projects/?page=1&page_size=200`);
