@@ -1,9 +1,6 @@
-import { NotificationTemplate } from '../../../../../frontend/awx/interfaces/NotificationTemplate';
 import { randomE2Ename } from '../../../../support/utils';
 
 describe('Notifications: List View', () => {
-  let notificationTemplate: NotificationTemplate;
-
   before(() => {
     cy.awxLogin();
   });
@@ -83,29 +80,33 @@ describe('Notifications: List View', () => {
     //Assert the behavior in the UI following the test action
   });
 
-  it.skip('can copy a Notification and assert that the copy action completed successfully', () => {
+  it('can copy a Notification and assert that the copy action completed successfully', () => {
     //Utilize a notification of any type created in the beforeEach hook
     //Assert the existence of the notification before copy
     //Assert the copy action
     //Assert the existence of the copied notification as well as the original
-    cy.navigateTo('awx', 'notification-templates');
-    cy.filterTableByMultiSelect('name', [notificationTemplate.name]);
-    cy.getByDataCy('actions-column-cell').within(() => {
-      cy.getByDataCy('copy-notifier').click();
-    });
-    cy.get('[data-cy="alert-toaster"]').contains('copied').should('be.visible');
-    cy.clickButton(/^Clear all filters/);
-    cy.deleteNotificationTemplate(notificationTemplate, { failOnStatusCode: false });
-    cy.filterTableByMultiSelect('name', [`${notificationTemplate.name} @`]);
-    cy.get('[data-cy="checkbox-column-cell"]').within(() => {
-      cy.get('input').click();
-    });
-    cy.clickToolbarKebabAction('delete-selected-notifiers');
-    cy.getModal().within(() => {
-      cy.get('#confirm').click();
-      cy.clickButton(/^Delete notifiers/);
-      cy.contains(/^Success$/);
-      cy.clickButton(/^Close$/);
+    cy.getByDataCy(`awx-notification-templates`).click({ force: true });
+    const name = randomE2Ename();
+    cy.createNotificationTemplate(name).then((notificationTemplate) => {
+      cy.filterTableByMultiSelect('name', [name]);
+
+      cy.getByDataCy('actions-column-cell').within(() => {
+        cy.getByDataCy('copy-notifier').click();
+      });
+      cy.get('[data-cy="alert-toaster"]').contains('copied').should('be.visible');
+      cy.clickButton(/^Clear all filters/);
+      cy.deleteNotificationTemplate(notificationTemplate, { failOnStatusCode: false });
+      cy.filterTableByMultiSelect('name', [`${notificationTemplate.name} @`]);
+      cy.get('[data-cy="checkbox-column-cell"]').within(() => {
+        cy.get('input').click();
+      });
+      cy.clickToolbarKebabAction('delete-selected-notifiers');
+      cy.getModal().within(() => {
+        cy.get('#confirm').click();
+        cy.clickButton(/^Delete notifiers/);
+        cy.contains(/^Success$/);
+        cy.clickButton(/^Close$/);
+      });
     });
   });
 
