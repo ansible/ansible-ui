@@ -399,75 +399,49 @@ function verifyEditedMessages(type: string) {
   const defaults = getDefaultMessages(convertType(type));
 
   if (defaults.started.message) {
-    cy.get('[data-cy="messages-started-message"]').should('have.value', 'started message edited');
-
-    if (defaults.started.message) {
-      cy.get('[data-cy="messages-started-message"]').should('have.value', 'started message edited');
-    }
-    if (defaults.success.message) {
-      cy.get('[data-cy="messages-success-message"]').should('have.value', 'success message edited');
-    }
-    if (defaults.error.message) {
-      cy.get('[data-cy="messages-error-message"]').should('have.value', 'error message edited');
-    }
-    if (defaults.workflow_approval.approved.message) {
-      cy.get('[data-cy="messages-workflow-approval-approved-message"]').should(
-        'have.value',
-        'workflow approval approved message edited'
-      );
-    }
-    if (defaults.workflow_approval.running.message) {
-      cy.get('[data-cy="messages-workflow-approval-running-message"]').should(
-        'have.value',
-        'workflow approval running message edited'
-      );
-    }
-    if (defaults.workflow_approval.denied.message) {
-      cy.get('[data-cy="messages-workflow-approval-denied-message"]').should(
-        'have.value',
-        'workflow approval denied message edited'
-      );
-    }
-    if (defaults.workflow_approval.timed_out.message) {
-      cy.get('[data-cy="messages-workflow-approval-timed-out-message"]').should(
-        'have.value',
-        'workflow approval timed out message edited'
-      );
-    }
-    if (defaults.started.body) {
-      cy.get('[data-cy="messages-started-body"]').should('have.value', 'started body edited');
-    }
-    if (defaults.success.body) {
-      cy.get('[data-cy="messages-success-body"]').should('have.value', 'success body edited');
-    }
-    if (defaults.error.body) {
-      cy.get('[data-cy="messages-error-body"]').should('have.value', 'error body edited');
-    }
-    if (defaults.workflow_approval.approved.body) {
-      cy.get('[data-cy="messages-workflow-approval-approved-body"]').should(
-        'have.value',
-        'workflow approval approved body edited'
-      );
-    }
-    if (defaults.workflow_approval.running.body) {
-      cy.get('[data-cy="messages-workflow-approval-running-body"]').should(
-        'have.value',
-        'workflow approval running body edited'
-      );
-    }
-    if (defaults.workflow_approval.denied.body) {
-      cy.get('[data-cy="messages-workflow-approval-denied-body"]').should(
-        'have.value',
-        'workflow approval denied body edited'
-      );
-    }
-    if (defaults.workflow_approval.timed_out.body) {
-      cy.get('[data-cy="messages-workflow-approval-timed-out-body"]').should(
-        'have.value',
-        'workflow approval timed out body edited'
-      );
-    }
+    cy.contains('[data-cy="start-message"]', 'started message edited');
   }
+
+  if (defaults.success.message) {
+    cy.contains('[data-cy="success-message"]', 'success message edited');
+  }
+  if (defaults.error.message) {
+    cy.contains('[data-cy="error-message"]', 'error message edited');
+  }
+  if (defaults.workflow_approval.approved.message) {
+    cy.contains('[data-cy="workflow-approved-message"]', 'workflow approval approved message edited');
+  }
+  if (defaults.workflow_approval.running.message) {
+    cy.contains('[data-cy="workflow-pending-message"]', 'workflow approval running message edited');
+  }
+  if (defaults.workflow_approval.denied.message) {
+    cy.contains('[data-cy="workflow-denied-message"]', 'workflow approval denied message edited');
+  }
+  if (defaults.workflow_approval.timed_out.message) {
+    cy.contains('[data-cy="workflow-timed-out-message"]', 'workflow approval timed out message edited');
+  }
+  if (defaults.started.body) {
+    cy.contains('[data-cy="start-message-body"]', 'started body edited');
+  }
+  if (defaults.success.body) {
+    cy.contains('[data-cy="success-message-body"]', 'success body edited');
+  }
+  if (defaults.error.body) {
+    cy.contains('[data-cy="error-message-body"]', 'error body edited');
+  }
+  if (defaults.workflow_approval.approved.body) {
+    cy.contains('[data-cy="workflow-approved-message-body"]', 'workflow approval approved body edited');
+  }
+  if (defaults.workflow_approval.running.body) {
+    cy.contains('[data-cy="workflow-pending-message-body"]', 'workflow approval running body edited');
+  }
+  if (defaults.workflow_approval.denied.body) {
+    cy.contains('[data-cy="workflow-denied-message-body"]', 'workflow approval denied body edited');
+  }
+  if (defaults.workflow_approval.timed_out.body) {
+    cy.contains('[data-cy="workflow-timed-out-message-body"]', 'workflow approval timed out body edited');
+  }
+  
 }
 
 function editNotificationType(type: string) {
