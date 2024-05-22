@@ -2,6 +2,8 @@
 /// <reference types="cypress" />
 
 import { randomString } from '../../../../framework/utils/random-string';
+import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
+import { JobTemplate } from '../../../../frontend/awx/interfaces/JobTemplate';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
 import { Schedule } from '../../../../frontend/awx/interfaces/Schedule';
@@ -550,6 +552,25 @@ describe('Projects', () => {
   });
 
   describe('Projects: Job Templates Tab', () => {
+    let inventory: Inventory;
+    let jobTemplate: JobTemplate;
+
+    before(function () {
+      cy.createAwxInventory({ organization: (this.globalOrganization as Organization).id }).then(
+        (inv) => {
+          inventory = inv;
+
+          cy.createAwxJobTemplate({
+            organization: (this.globalOrganization as Organization).id,
+            project: (this.globalProject as Project).id,
+            inventory: inventory.id,
+          }).then((jt1) => {
+            jobTemplate = jt1;
+          });
+        }
+      );
+    });
+
     it('can navigate to project job templates tab', function () {
       cy.navigateTo('awx', 'projects');
       cy.filterTableByMultiSelect('name', [(this.globalProject as Project).name]);
@@ -560,11 +581,62 @@ describe('Projects', () => {
       cy.clickTab(/^Job templates$/, true);
     });
 
-    it.skip('can associate a project with a newly created job template and view that JT on the templates tab of the project', () => {
-      //use the project created in the beforeEach block
-      //create a JT in this test and specifically associate the project to it
-      //visit the templates tab of the project and assert the JT showing there
-      //delete the JT at the end of this test
+    it('can associate a project with a newly created job template and view that JT on the templates tab of the project', function () {
+      cy.createAwxProject({ organization: (this.globalOrganization as Organization).id }).then(
+        (thisProject) => {
+          cy.navigateTo('awx', 'templates');
+          cy.filterTableByMultiSelect('name', [jobTemplate.name]);
+          cy.getTableRow('name', jobTemplate.name, { disableFilter: true }).should('be.visible');
+          cy.selectTableRow(jobTemplate.name, false);
+          cy.getBy('[data-cy="edit-template"]').click();
+          cy.verifyPageTitle('Edit Job Template');
+          cy.selectDropdownOptionByResourceName('project', thisProject.name);
+          cy.intercept('PATCH', awxAPI`/job_templates/${jobTemplate.id.toString()}/`).as('edited');
+          cy.getByDataCy('Submit').click();
+          cy.wait('@edited')
+            .its('response.body')
+            .then((editedJt: JobTemplate) => {
+              expect(editedJt.project).to.eql(thisProject.id);
+              cy.intercept('GET', awxAPI`/job_templates/${editedJt.id.toString()}/launch/`).as(
+                'clickLaunch'
+              );
+              cy.intercept('POST', awxAPI`/job_templates/${editedJt.id.toString()}/launch/`).as(
+                'launched'
+              );
+              cy.getByDataCy('launch-template').click();
+              cy.wait('@clickLaunch');
+              cy.wait('@launched');
+              cy.verifyPageTitle(editedJt.name);
+              cy.url().should('include', '/output');
+              cy.get('[data-cy="relaunch-job"]').should('be.visible');
+            });
+          cy.navigateTo('awx', 'projects');
+          cy.verifyPageTitle('Projects');
+          cy.filterTableByMultiSelect('name', [thisProject.name]);
+          cy.get(`[data-cy="row-id-${thisProject.id}"]`).within(() => {
+            cy.get('[data-cy="name-column-cell"]').click();
+          });
+          cy.get(`a[href*="/projects/${thisProject.id}/job_templates?"]`).click();
+          cy.url().should(
+            'contain',
+            `/projects/${thisProject.id}/job_templates?page=1&perPage=10&sort=name`
+          );
+          cy.filterTableByMultiSelect('name', [jobTemplate.name]);
+          cy.getTableRow('name', jobTemplate.name, { disableFilter: true }).should('be.visible');
+          cy.selectTableRow(jobTemplate.name, false);
+          cy.clickTableRowAction('name', jobTemplate.name, 'delete-template', {
+            inKebab: true,
+            disableFilter: true,
+          });
+          cy.getModal().then(() => {
+            cy.get('h1').should('contain', 'Permanently delete job template');
+            cy.get('#confirm').click();
+            cy.get('[data-ouia-component-id="submit"]').click();
+            cy.clickButton('Close');
+          });
+          cy.get('h2').should('contain', 'No results found');
+        }
+      );
     });
   });
 
