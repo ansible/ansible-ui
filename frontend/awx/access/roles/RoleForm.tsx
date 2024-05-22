@@ -138,14 +138,7 @@ function AwxRoleInputs(props: { disableContentType?: boolean }) {
         label={t('Content Type')}
         placeholderText={t('Select a content type')}
         options={Object.entries(awxRoleMetadata.content_types)
-          // TODO: do certain resources need to be filtered out?
-          // .filter(
-          //   ([option]) =>
-          //     option.startsWith('awx.') &&
-          //     !['extravar', 'auditrule', 'rulebookprocess', 'rulebook'].some(function (v) {
-          //       return option.endsWith(v);
-          //     })
-          // )
+          .filter(([option]) => option !== 'shared.team')
           .map(([key, value]) => ({
             label: value?.displayName,
             value: key,
