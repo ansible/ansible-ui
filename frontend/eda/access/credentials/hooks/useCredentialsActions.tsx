@@ -47,6 +47,6 @@ export function useCredentialsActions(view: IEdaView<EdaCredential>) {
         isDanger: true,
       },
     ],
-    [deleteCredentials, pageNavigate, t]
+    [canCreateCredentials, deleteCredentials, pageNavigate, t]
   );
 }

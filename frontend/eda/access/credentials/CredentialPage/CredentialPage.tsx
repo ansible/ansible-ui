@@ -72,7 +72,7 @@ export function CredentialPage() {
         isDanger: true,
       },
     ],
-    [deleteCredentials, pageNavigate, t]
+    [canPatchCredential, deleteCredentials, pageNavigate, t]
   );
 
   const getPageUrl = useGetPageUrl();
