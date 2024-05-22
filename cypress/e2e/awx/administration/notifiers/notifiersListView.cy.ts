@@ -1,7 +1,7 @@
 import { NotificationTemplate } from '../../../../../frontend/awx/interfaces/NotificationTemplate';
 import { randomE2Ename } from '../../../../support/utils';
 
-describe.skip('Notifications: List View', () => {
+describe('Notifications: List View', () => {
   let notificationTemplate: NotificationTemplate;
 
   before(() => {
@@ -121,7 +121,7 @@ function testNotification(type: string) {
   const notificationName = randomE2Ename();
   const orgName = randomE2Ename();
   cy.createAwxOrganization(orgName).then(() => {
-    cy.navigateTo('awx', 'notification-templates');
+    cy.getByDataCy(`awx-notification-templates`).click({force : true});
     cy.get(`[data-cy="add-notifier"]`).click();
 
     fillBasicData(notificationName, type);
