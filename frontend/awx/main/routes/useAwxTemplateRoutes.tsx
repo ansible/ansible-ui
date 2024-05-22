@@ -45,7 +45,7 @@ export function useAwxTemplateRoutes() {
       path: 'templates',
       children: [
         {
-          path: 'job_template',
+          path: 'job-template',
           children: [
             {
               id: AwxRoute.CreateJobTemplate,
@@ -172,7 +172,7 @@ export function useAwxTemplateRoutes() {
           ],
         },
         {
-          path: 'workflow_job_template',
+          path: 'workflow-job-template',
           children: [
             {
               id: AwxRoute.CreateWorkflowJobTemplate,
@@ -256,7 +256,7 @@ export function useAwxTemplateRoutes() {
                 },
                 {
                   id: AwxRoute.WorkflowJobTemplateJobs,
-                  path: 'workflow_jobs',
+                  path: 'workflow-jobs',
                   element: <TemplateJobs resourceType="workflow_job_templates" />,
                 },
                 {

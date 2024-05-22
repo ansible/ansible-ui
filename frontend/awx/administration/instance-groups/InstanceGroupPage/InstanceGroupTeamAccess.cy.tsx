@@ -46,8 +46,8 @@ describe('InstanceGroupTeamAccess', () => {
   });
 
   it('should render team assignments', () => {
-    const path = '/instance_groups/instance_group/:id/team-access';
-    const initialEntries = ['/instance_groups/instance_group/1/team-access'];
+    const path = '/instance-groups/instance_group/:id/team-access';
+    const initialEntries = ['/instance-groups/instance_group/1/team-access'];
     const params = {
       path,
       initialEntries,

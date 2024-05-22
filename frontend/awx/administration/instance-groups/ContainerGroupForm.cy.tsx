@@ -28,8 +28,8 @@ describe('Create Edit Container Group Form', () => {
         { fixture: 'credentials.json' }
       );
       cy.mount(<CreateContainerGroup />, {
-        path: '/instance_groups/container-group/create',
-        initialEntries: [`/instance_groups/container-group/create`],
+        path: '/instance-groups/container-group/create',
+        initialEntries: [`/instance-groups/container-group/create`],
       });
       cy.get('[data-cy="name"]').type('Test name');
       cy.get('[data-cy="credential-select"]').type('E2E Credential ARWM');
