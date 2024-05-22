@@ -104,7 +104,7 @@ export function useSelected<T extends object>(
   const [selectedMap, setSelectedMap] = useState<Record<string | number, T>>(() => {
     if (defaultSelection) {
       return defaultSelection.reduce<Record<string | number, T>>((selectedMap, item) => {
-        selectedMap[keyFn(item)] = item;
+        selectedMap[`item-${keyFn(item)}`] = item;
         return selectedMap;
       }, {});
     } else {
@@ -116,7 +116,7 @@ export function useSelected<T extends object>(
     setSelectedMap((selectedMap) => {
       let changed = false;
       items.forEach((item) => {
-        const key = keyFn(item);
+        const key = `item-${keyFn(item)}`;
         if (selectedMap[key] && selectedMap[key] !== item) {
           changed = true;
           selectedMap[key] = item;
@@ -129,7 +129,7 @@ export function useSelected<T extends object>(
   const selectItem = useCallback(
     (item: T) => {
       setSelectedMap((selectedMap) => {
-        const itemKey = keyFn(item);
+        const itemKey = `item-${keyFn(item)}`;
         const existing = selectedMap[itemKey];
         if (existing !== item) {
           selectedMap = { ...selectedMap };
@@ -144,7 +144,7 @@ export function useSelected<T extends object>(
   const unselectItem = useCallback(
     (item: T) => {
       setSelectedMap((selectedMap) => {
-        const itemKey = keyFn(item);
+        const itemKey = `item-${keyFn(item)}`;
         const existing = selectedMap[itemKey];
         if (existing) {
           selectedMap = { ...selectedMap };
@@ -158,7 +158,7 @@ export function useSelected<T extends object>(
 
   const isSelected = useCallback(
     (item: T) => {
-      const itemKey = keyFn(item);
+      const itemKey = `item-${keyFn(item)}`;
       return selectedMap[itemKey] !== undefined;
     },
     [keyFn, selectedMap]
@@ -169,7 +169,7 @@ export function useSelected<T extends object>(
       setSelectedMap((selectedMap) => {
         selectedMap = { ...selectedMap };
         for (const item of items) {
-          const itemKey = keyFn(item);
+          const itemKey = `item-${keyFn(item)}`;
           selectedMap[itemKey] = item;
         }
         return selectedMap;
