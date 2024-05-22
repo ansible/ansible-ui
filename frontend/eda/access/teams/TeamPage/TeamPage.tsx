@@ -16,6 +16,7 @@ import {
   usePageNavigate,
 } from '../../../../../framework';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
+import { PageRoutedTabs } from '../../../../common/PageRoutedTabs';
 import { useGetItem } from '../../../../common/crud/useGet';
 import { EdaError } from '../../../common/EdaError';
 import { edaAPI } from '../../../common/eda-utils';
