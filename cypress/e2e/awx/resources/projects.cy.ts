@@ -685,7 +685,7 @@ describe('Projects', () => {
         cy.wait('@started')
           .its('response')
           .then((started) => {
-            expect(started.statusCode).to.eql(204);
+            expect(started?.statusCode).to.eql(204);
           });
       });
       cy.wait('@getStarted');
