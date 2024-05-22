@@ -1,7 +1,8 @@
 import { NotificationTemplate } from '../../../../../frontend/awx/interfaces/NotificationTemplate';
 import { randomE2Ename } from '../../../../support/utils';
+import { getDefaultMessages } from '../../../../../frontend/awx/administration/notifiers/notifierFormMessagesHelpers';
 
-describe.skip('Notifications: List View', () => {
+describe('Notifications: List View', () => {
   let notificationTemplate: NotificationTemplate;
 
   before(() => {
@@ -127,6 +128,7 @@ function testNotification(type: string) {
     fillBasicData(notificationName, type);
     fillNotificationType(type);
     selectOrganization(orgName);
+    verifyDefaultsMessages(type);
 
     cy.get(`[data-cy="Submit"]`).click();
 
@@ -221,6 +223,29 @@ function fillNotificationType(type: string) {
   } else if (type === 'IRC') {
     fillIrcForm();
   }
+}
+
+function verifyDefaultsMessages(type : string)
+{
+  const defaults = getDefaultMessages(type);
+  //cy.get(`[data-cy='customize-messages-toggle']`).click();
+  cy.get('[data-cy="customize-messages-toggle"]')
+  // Traverse to the parent element
+  .parent()
+  // Then find the span within that parent
+  .find('span')
+  // Click the span element
+  .click();
+
+  cy.get('[data-cy="messages-started-message"]').should('have.value', defaults.started.message);
+  cy.get('[data-cy="messages-success-message"]');
+  cy.get('[data-cy="messages-success-message"]').should('have.value', defaults.success.message);
+  cy.get('[data-cy="messages-error-message"]').should('have.value', defaults.error.message);
+  cy.get('[data-cy="messages-workflow-approval-approved-message"]').should('have.value', defaults.workflow_approval.approved.message);
+  cy.get('[data-cy="messages-workflow-approval-running-message"]').should('have.value', defaults.workflow_approval.running.message);
+  cy.get('[data-cy="messages-workflow-approval-denied-message"]').should('have.value', defaults.workflow_approval.denied.message);
+  cy.get('[data-cy="messages-workflow-approval-timed-out-message"]').should('have.value', defaults.workflow_approval.timed_out.message);
+
 }
 
 function editNotificationType(type: string) {
