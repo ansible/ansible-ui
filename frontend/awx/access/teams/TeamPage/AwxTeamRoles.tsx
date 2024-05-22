@@ -2,7 +2,7 @@ import { useParams } from 'react-router-dom';
 import { ResourceAccess } from '../../../../common/access/components/ResourceAccess';
 import { AwxRoute } from '../../../main/AwxRoutes';
 
-export function TeamRoles() {
+export function AwxTeamRoles() {
   const params = useParams<{ id: string }>();
   return (
     <ResourceAccess
