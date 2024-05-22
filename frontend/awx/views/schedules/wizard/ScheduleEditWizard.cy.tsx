@@ -225,5 +225,24 @@ describe('ScheduleEditWizard', () => {
         cy.get('tr[data-cy="row-id-2"]').should('not.exist');
       });
     });
+    it('Should be able to add rules while editing a schedule.', () => {
+      cy.mount(<ScheduleEditWizard />, {
+        initialEntries: ['/templates/job_template/7/schedules/1/edit'],
+        path: '/templates/job_template/:id/schedules/:schedule_id/edit',
+      });
+
+      cy.clickButton(/^Next$/);
+      cy.clickButton(/^Add rule$/);
+      cy.clickButton(/^Save rule$/);
+      cy.getByDataCy('row-id-2').within(() => {
+        cy.get('button[data-cy="delete-rule"]').click();
+        cy.get('tr[data-cy="row-id-2"]').should('not.exist');
+      });
+      cy.clickButton(/^Add rule$/);
+      cy.clickButton(/^Save rule$/);
+      cy.get('tbody[role="rowgroup"]').within(() => {
+        cy.get('tr').should('have.length', 3);
+      });
+    });
   });
 });

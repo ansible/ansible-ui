@@ -9,6 +9,7 @@ import {
   PageHeader,
   PageLayout,
   useGetPageUrl,
+  usePageAlertToaster,
   usePageNavigate,
 } from '../../../../framework';
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
@@ -16,6 +17,7 @@ import { PageFormSubmitHandler } from '../../../../framework/PageForm/PageForm';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
 import { useGet, useGetItem } from '../../../common/crud/useGet';
 import { usePatchRequest } from '../../../common/crud/usePatchRequest';
+import { useDeleteRequest } from '../../../common/crud/useDeleteRequest';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { AwxPageForm } from '../../common/AwxPageForm';
 import { awxAPI } from '../../common/api/awx-utils';
@@ -35,6 +37,9 @@ import {
   useCredentialPluginsModal,
 } from './CredentialPlugins/hooks/useCredentialPluginsDialog';
 import { CredentialInputSource } from '../../interfaces/CredentialInputSource';
+import { AwxItemsResponse } from '../../common/AwxItemsResponse';
+import { useSWRConfig } from 'swr';
+import { useCredentialsTestModal } from './hooks/useCredentialsTestModal';
 
 interface CredentialForm extends Credential {
   user?: number;
@@ -67,15 +72,19 @@ export function CreateCredential() {
   const { activeAwxUser } = useAwxActiveUser();
   const postRequest = usePostRequest<Credential | CredentialInputSource>();
   const getPageUrl = useGetPageUrl();
+  const [selectedCredentialTypeId, setSelectedCredentialTypeId] = useState<number>(0);
+  const [watchedSubFormFields, setWatchedSubFormFields] = useState<unknown[]>([]);
+  const alertToaster = usePageAlertToaster();
+  const openCredentialsExternalTestModal = useCredentialsTestModal(alertToaster);
   const [credentialPluginValues, setCredentialPluginValues] = useState<
     CredentialPluginsInputSource[]
   >([]);
-  const [accumulatedPluginValues, setaccumulatedPluginValues] = useState<
+  const [accumulatedPluginValues, setAccumulatedPluginValues] = useState<
     CredentialPluginsInputSource[]
   >([]);
   useEffect(() => {
-    setaccumulatedPluginValues((prev) => {
-      // Filter out any values from prev that have input field names matching new values
+    setAccumulatedPluginValues((prev) => {
+      // Filter out any previous plugins that have been updated
       const filteredPrev = prev.filter(
         (prevValue) =>
           !credentialPluginValues.some(
@@ -87,6 +96,8 @@ export function CreateCredential() {
       return updatedValues;
     });
   }, [credentialPluginValues]);
+  const [isTestButtonEnabled, setIsTestButtonEnabled] = useState(false);
+  const [isTestButtonEnabledSubForm, setIsTestButtonEnabledSubForm] = useState(false);
 
   const { results: itemsResponse, isLoading } = useAwxGetAllPages<CredentialType>(
     awxAPI`/credential_types/`
@@ -103,6 +114,10 @@ export function CreateCredential() {
     },
     {} as CredentialTypes
   );
+
+  const isExternalCredential =
+    !!parsedCredentialTypes &&
+    parsedCredentialTypes?.[selectedCredentialTypeId]?.kind === 'external';
 
   const onSubmit: PageFormSubmitHandler<CredentialForm> = async (credential) => {
     const credentialTypeInputs = parsedCredentialTypes?.[credential?.credential_type]?.inputs;
@@ -146,6 +161,7 @@ export function CreateCredential() {
     );
     pageNavigate(AwxRoute.CredentialDetails, { params: { id: newCredential.id } });
   };
+
   return (
     <PageLayout>
       <PageHeader
@@ -159,13 +175,38 @@ export function CreateCredential() {
         submitText={t('Create credential')}
         onSubmit={onSubmit}
         onCancel={() => navigate(-1)}
+        additionalActions={
+          isExternalCredential ? (
+            <Button
+              aria-label={t('Test')}
+              variant="secondary"
+              onClick={(e) => {
+                e.preventDefault();
+                openCredentialsExternalTestModal({
+                  credentialType:
+                    parsedCredentialTypes !== undefined
+                      ? parsedCredentialTypes?.[selectedCredentialTypeId]
+                      : ({} as CredentialType),
+                  watchedSubFormFields: watchedSubFormFields,
+                });
+              }}
+              isDisabled={!isTestButtonEnabled || !isTestButtonEnabledSubForm}
+            >
+              {t('Test')}
+            </Button>
+          ) : undefined
+        }
       >
         <CredentialInputs
           isEditMode={false}
           credentialTypes={parsedCredentialTypes || {}}
           setCredentialPluginValues={setCredentialPluginValues}
           accumulatedPluginValues={accumulatedPluginValues}
-          setAccumulatedPluginValues={setaccumulatedPluginValues}
+          setAccumulatedPluginValues={setAccumulatedPluginValues}
+          setSelectedCredentialTypeId={setSelectedCredentialTypeId}
+          setIsTestButtonEnabled={setIsTestButtonEnabled}
+          setIsTestButtonEnabledSubForm={setIsTestButtonEnabledSubForm}
+          setWatchedSubFormFields={setWatchedSubFormFields}
         />
       </AwxPageForm>
     </PageLayout>
@@ -180,13 +221,68 @@ export function EditCredential() {
   const { activeAwxUser } = useAwxActiveUser();
   const getPageUrl = useGetPageUrl();
   const patch = usePatchRequest();
-  const [_credentialPluginValues, setCredentialPluginValues] = useState<
+  const deleteRequest = useDeleteRequest();
+  const postRequest = usePostRequest<Credential | CredentialInputSource>();
+  const [credentialPluginValues, setCredentialPluginValues] = useState<
     CredentialPluginsInputSource[]
   >([]);
+  const [accumulatedPluginValues, setAccumulatedPluginValues] = useState<
+    CredentialPluginsInputSource[]
+  >([]);
+  const [pluginsToDelete, setPluginsToDelete] = useState<string[]>([]);
+  const { cache } = useSWRConfig();
+
+  useEffect(() => {
+    setAccumulatedPluginValues((prev) => {
+      // Filter out any values from prev that have input field names matching new values
+      const filteredPrev = prev.filter(
+        (prevValue) =>
+          !credentialPluginValues.some(
+            (newValue) => newValue.input_field_name === prevValue.input_field_name
+          )
+      );
+      const updatedValues = [...filteredPrev, ...credentialPluginValues];
+      // mark any fields previously handled by a plugin that have been updated to use a different plugin for deletion
+      updatedValues.forEach((cp) => {
+        if (prev.some((prevValue) => prevValue.input_field_name === cp.input_field_name)) {
+          setPluginsToDelete((prev) => [...prev, cp.input_field_name]);
+        }
+      });
+
+      return updatedValues;
+    });
+  }, [credentialPluginValues]);
+  const alertToaster = usePageAlertToaster();
+  const openCredentialsExternalTestModal = useCredentialsTestModal(alertToaster);
+  const [isTestButtonEnabled, setIsTestButtonEnabled] = useState(false);
+  const [isTestButtonEnabledSubForm, setIsTestButtonEnabledSubForm] = useState(false);
+  const [watchedSubFormFields, setWatchedSubFormFields] = useState<unknown[]>([]);
 
   const { data: credential, isLoading: isLoadingCredential } = useGet<Credential>(
     awxAPI`/credentials/${id.toString()}/`
   );
+
+  const { data: inputSources, isLoading: isLoadingInputSources } = useGet<
+    AwxItemsResponse<CredentialInputSource>
+  >(awxAPI`/credentials/${id.toString()}/input_sources/`);
+
+  useEffect(() => {
+    if (inputSources) {
+      const updatedPluginValues = inputSources.results.map(
+        (inputSource: CredentialInputSource) => ({
+          input_field_name: inputSource.input_field_name,
+          source_credential: inputSource.source_credential,
+          target_credential: inputSource.target_credential,
+          metadata: inputSource.metadata,
+        })
+      );
+      setAccumulatedPluginValues(updatedPluginValues);
+    }
+  }, [inputSources]);
+
+  const pluginsToDeletePayload = inputSources?.results
+    .filter((cp) => pluginsToDelete.includes(cp.input_field_name))
+    .map((cp) => cp.id?.toString() ?? '');
 
   const { results: itemsResponse, isLoading: isLoadingCredentialType } =
     useAwxGetAllPages<CredentialType>(awxAPI`/credential_types/`);
@@ -198,6 +294,11 @@ export function EditCredential() {
     },
     {} as CredentialTypes
   );
+
+  const isExternalCredential =
+    !!parsedCredentialTypes && credential !== undefined
+      ? parsedCredentialTypes?.[credential.credential_type]?.kind === 'external'
+      : null;
 
   const promptPassword: Prompts = {};
   if (credential?.inputs) {
@@ -217,7 +318,11 @@ export function EditCredential() {
     ...(promptPassword ?? {}),
   };
 
-  if ((isLoadingCredential && !credential) || (isLoadingCredentialType && !itemsResponse)) {
+  if (
+    (isLoadingCredential && !credential) ||
+    (isLoadingCredentialType && !itemsResponse) ||
+    (isLoadingInputSources && !inputSources)
+  ) {
     return <LoadingPage />;
   }
 
@@ -227,11 +332,18 @@ export function EditCredential() {
     if (!editedCredential.organization) {
       editedCredential.user = activeAwxUser?.id;
     }
-
     const pluginInputs: Record<string, string | number> = {};
+    const isHandledByCredentialPlugin = (field: string) =>
+      accumulatedPluginValues.some((cp) => cp.input_field_name === field);
+
     const possibleFields = credentialTypeInputs?.fields || [];
     possibleFields.forEach((field) => {
-      if (field.id && typeof field.id === 'string' && field.id in editedCredential) {
+      if (
+        field.id &&
+        typeof field.id === 'string' &&
+        field.id in editedCredential &&
+        !isHandledByCredentialPlugin(field.id)
+      ) {
         const id = field.id as keyof CredentialForm;
         if (editedCredential[id] !== undefined) {
           pluginInputs[id] = editedCredential[id] as string | number;
@@ -240,7 +352,40 @@ export function EditCredential() {
       }
     });
     const modifiedCredential = { ...editedCredential, inputs: pluginInputs };
-    await patch(awxAPI`/credentials/${id.toString()}/`, modifiedCredential);
+    const credentialInputSourcePayload = accumulatedPluginValues.map((credentialInputSource) => ({
+      ...credentialInputSource,
+      target_credential: credential?.id,
+    }));
+
+    if (pluginsToDeletePayload && pluginsToDeletePayload.length > 0) {
+      await Promise.all(
+        pluginsToDeletePayload.map(async (id) => {
+          await deleteRequest(awxAPI`/credential_input_sources/${id.toString()}/`);
+        })
+      ).then(async () => {
+        await patch(awxAPI`/credentials/${id.toString()}/`, modifiedCredential);
+        await Promise.all(
+          credentialInputSourcePayload.map(async (credentialInputSource) => {
+            await postRequest(
+              awxAPI`/credential_input_sources/`,
+              credentialInputSource as CredentialInputSource
+            );
+          })
+        );
+      });
+    } else {
+      await patch(awxAPI`/credentials/${id.toString()}/`, modifiedCredential);
+      await Promise.all(
+        credentialInputSourcePayload.map(async (credentialInputSource) => {
+          await postRequest(
+            awxAPI`/credential_input_sources/`,
+            credentialInputSource as CredentialInputSource
+          );
+        })
+      );
+    }
+    (cache as unknown as { clear: () => void }).clear?.();
+    // return to Credential List page
     navigate(-1);
   };
   if (!credential) {
@@ -269,12 +414,40 @@ export function EditCredential() {
         onSubmit={onSubmit}
         onCancel={() => navigate(-1)}
         defaultValue={initialValues}
+        additionalActions={
+          isExternalCredential ? (
+            <Button
+              aria-label={t('Test')}
+              variant="secondary"
+              onClick={(e) => {
+                e.preventDefault();
+                openCredentialsExternalTestModal({
+                  credential: credential,
+                  credentialType:
+                    parsedCredentialTypes !== undefined
+                      ? parsedCredentialTypes?.[credential?.credential_type]
+                      : ({} as CredentialType),
+                  watchedSubFormFields: watchedSubFormFields,
+                });
+              }}
+              isDisabled={!isTestButtonEnabled || !isTestButtonEnabledSubForm}
+            >
+              {t('Test')}
+            </Button>
+          ) : undefined
+        }
       >
         <CredentialInputs
           isEditMode
           credentialTypes={parsedCredentialTypes || {}}
           selectedCredentialTypeId={credential?.credential_type}
           setCredentialPluginValues={setCredentialPluginValues}
+          accumulatedPluginValues={accumulatedPluginValues}
+          setAccumulatedPluginValues={setAccumulatedPluginValues}
+          setPluginsToDelete={setPluginsToDelete}
+          setIsTestButtonEnabled={setIsTestButtonEnabled}
+          setIsTestButtonEnabledSubForm={setIsTestButtonEnabledSubForm}
+          setWatchedSubFormFields={setWatchedSubFormFields}
         />
       </AwxPageForm>
     </PageLayout>
@@ -288,6 +461,11 @@ function CredentialInputs({
   setCredentialPluginValues,
   accumulatedPluginValues,
   setAccumulatedPluginValues,
+  setPluginsToDelete,
+  setSelectedCredentialTypeId,
+  setIsTestButtonEnabled,
+  setIsTestButtonEnabledSubForm,
+  setWatchedSubFormFields,
 }: {
   isEditMode?: boolean;
   selectedCredentialTypeId?: number;
@@ -295,6 +473,11 @@ function CredentialInputs({
   setCredentialPluginValues?: (values: CredentialPluginsInputSource[]) => void;
   accumulatedPluginValues?: CredentialPluginsInputSource[];
   setAccumulatedPluginValues?: (values: CredentialPluginsInputSource[]) => void;
+  setPluginsToDelete?: React.Dispatch<React.SetStateAction<string[]>>;
+  setSelectedCredentialTypeId?: (id: number) => void;
+  setIsTestButtonEnabled: (enabled: boolean) => void;
+  setIsTestButtonEnabledSubForm: (enabled: boolean) => void;
+  setWatchedSubFormFields: (fields: unknown[]) => void;
 }) {
   const { t } = useTranslation();
 
@@ -302,10 +485,35 @@ function CredentialInputs({
     name: 'credential_type',
   });
 
+  useEffect(() => {
+    if (setSelectedCredentialTypeId) {
+      setSelectedCredentialTypeId(watchedCredentialTypeId);
+    }
+  }, [watchedCredentialTypeId, setSelectedCredentialTypeId]);
+
   const credentialTypeID = selectedCredentialTypeId || watchedCredentialTypeId;
 
   const isGalaxyCredential =
     !!credentialTypes && credentialTypes?.[credentialTypeID]?.kind === 'galaxy';
+
+  const watchedRequiredFields = useWatch<{
+    name: string;
+    credential_type: number;
+  }>({
+    name: ['name', 'credential_type'],
+  });
+
+  useEffect(() => {
+    const requiredFields = ['name', 'credential_type'];
+    const verify: string[] = [];
+    Object.values(watchedRequiredFields).forEach((value) => {
+      if (value !== null && value !== undefined && value !== '') {
+        verify.push(value as string);
+      }
+    });
+
+    setIsTestButtonEnabled(verify.length >= requiredFields.length ? true : false);
+  }, [watchedRequiredFields, setIsTestButtonEnabled]);
 
   return (
     <>
@@ -342,6 +550,9 @@ function CredentialInputs({
           isEditMode={isEditMode}
           accumulatedPluginValues={accumulatedPluginValues ? accumulatedPluginValues : []}
           setAccumulatedPluginValues={setAccumulatedPluginValues}
+          setPluginsToDelete={setPluginsToDelete}
+          setIsTestButtonEnabledSubForm={setIsTestButtonEnabledSubForm}
+          setWatchedSubFormFields={setWatchedSubFormFields}
         />
       ) : null}
     </>
@@ -353,15 +564,45 @@ function CredentialSubForm({
   isEditMode = false,
   accumulatedPluginValues,
   setAccumulatedPluginValues,
+  setPluginsToDelete,
+  setIsTestButtonEnabledSubForm,
+  setWatchedSubFormFields,
 }: {
-  credentialType: CredentialType | undefined;
+  credentialType: CredentialType;
   setCredentialPluginValues: (values: CredentialPluginsInputSource[]) => void;
   isEditMode?: boolean;
   accumulatedPluginValues: CredentialPluginsInputSource[];
   setAccumulatedPluginValues?: (values: CredentialPluginsInputSource[]) => void;
+  setPluginsToDelete?: React.Dispatch<React.SetStateAction<string[]>>;
+  setIsTestButtonEnabledSubForm: (enabled: boolean) => void;
+  setWatchedSubFormFields: (fields: unknown[]) => void;
 }) {
   const { t } = useTranslation();
   const openCredentialPluginsModal = useCredentialPluginsModal();
+  const requiredFields = credentialType?.inputs?.required || [];
+  const requiredFieldsInSubForm = credentialType.inputs.fields.filter((field) =>
+    requiredFields.includes(field.id)
+  );
+  const subFormFields = credentialType.inputs.fields.map((field) => field.id);
+
+  const watchedRequiredFields = useWatch({
+    name: requiredFields,
+  });
+
+  const watchedAllFields = useWatch({ name: subFormFields });
+  setWatchedSubFormFields(watchedAllFields);
+
+  useEffect(() => {
+    const verify: string[] = [];
+    Object.values(watchedRequiredFields).forEach((value) => {
+      if (value !== null && value !== undefined && value !== '') {
+        verify.push(value as string);
+      }
+    });
+
+    setIsTestButtonEnabledSubForm(verify.length >= requiredFieldsInSubForm?.length ? true : false);
+  }, [watchedRequiredFields, setIsTestButtonEnabledSubForm, requiredFieldsInSubForm]);
+
   if (!credentialType || !credentialType?.inputs?.fields) {
     return null;
   }
@@ -377,8 +618,6 @@ function CredentialSubForm({
   const booleanFields =
     credentialType?.inputs?.fields?.filter((field) => field.type === 'boolean') || [];
 
-  const requiredFields = credentialType?.inputs?.required || [];
-
   const hasFields = stringFields.length > 0 || choiceFields.length > 0 || booleanFields.length > 0;
 
   return hasFields ? (
@@ -389,6 +628,8 @@ function CredentialSubForm({
             return (
               <CredentialMultilineInput
                 accumulatedPluginValues={accumulatedPluginValues}
+                setAccumulatedPluginValues={setAccumulatedPluginValues}
+                setPluginsToDelete={setPluginsToDelete}
                 kind={credentialType.kind}
                 key={field.id}
                 field={field}
@@ -415,6 +656,7 @@ function CredentialSubForm({
               <CredentialTextInput
                 accumulatedPluginValues={accumulatedPluginValues}
                 setAccumulatedPluginValues={setAccumulatedPluginValues}
+                setPluginsToDelete={setPluginsToDelete}
                 key={field.id}
                 field={field}
                 isDisabled={
@@ -466,6 +708,7 @@ function CredentialTextInput({
   isRequired = false,
   accumulatedPluginValues,
   setAccumulatedPluginValues,
+  setPluginsToDelete,
 }: {
   credentialType?: CredentialType | undefined;
   field: CredentialInputField;
@@ -474,6 +717,7 @@ function CredentialTextInput({
   isRequired?: boolean;
   accumulatedPluginValues: CredentialPluginsInputSource[];
   setAccumulatedPluginValues?: (values: CredentialPluginsInputSource[]) => void;
+  setPluginsToDelete?: React.Dispatch<React.SetStateAction<string[]>>;
 }) {
   const { t } = useTranslation();
   const { setValue, clearErrors } = useFormContext();
@@ -491,6 +735,7 @@ function CredentialTextInput({
     setAccumulatedPluginValues?.(
       accumulatedPluginValues.filter((cp) => cp.input_field_name !== field.id)
     );
+    setPluginsToDelete?.((prev: string[]) => [...prev, field.id]);
   };
 
   useEffect(() => {
@@ -557,7 +802,7 @@ function CredentialTextInput({
   );
 
   useEffect(() => {
-    // if field id matches accumulatedPluginValues input_field_name, set value to kind: credential name
+    // mark field as managed by a credential plugin
     if (accumulatedPluginValues.some((cp) => cp.input_field_name === field.id)) {
       setValue(field.id, renderFieldValue(field), { shouldDirty: true });
     }

@@ -135,7 +135,7 @@ describe('WorflowJobTemplatePage', () => {
     ];
     cy.mount(<WorkflowJobTemplatePage />, undefined, 'activeUserSysAuditor');
     cy.get('.pf-v5-c-tabs__list').within(() => {
-      // cy.get('.pf-v5-c-tabs__item').should('have.length', 7); TODO: Fix flaky test
+      cy.get('.pf-v5-c-tabs__item').should('have.length', 8);
       cy.get('.pf-v5-c-tabs__item').each((tab, index) => {
         cy.wrap(tab).should('contain', tabNames[index]);
       });

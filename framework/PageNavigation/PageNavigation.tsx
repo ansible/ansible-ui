@@ -9,8 +9,8 @@ import {
   PageSidebar,
   PageSidebarBody,
 } from '@patternfly/react-core';
-import { useState } from 'react';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
+import { useState } from 'react';
 import { usePageNavBarClick, usePageNavSideBar } from './PageNavSidebar';
 import './PageNavigation.css';
 import { PageNavigationItem } from './PageNavigationItem';
@@ -86,7 +86,7 @@ function PageNavigationItemComponent(props: { item: PageNavigationItem; baseRout
   const hasChildNavItems = 'children' in item && item.children?.find((child) => child.label);
 
   if (!hasChildNavItems && 'label' in item) {
-    let path = (process.env?.ROUTE_PREFIX ?? '') + route;
+    let path = (process.env.ROUTE_PREFIX ?? '') + route;
     path = path.replace('//', '/');
 
     const isActive = item.href ? false : location.pathname.startsWith(path);
