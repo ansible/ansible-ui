@@ -1,23 +1,26 @@
 import { useState, useEffect } from 'react';
-import { IPageAlertToaster, usePageDialogs } from '../../../../../framework';
+import { usePageAlertToaster, usePageDialogs } from '../../../../../framework';
 import {
   CredentialsExternalTestModalProps,
   CredentialsExternalTestModal,
 } from '../utils/CredentialsExternalTestModal';
 
-export function useCredentialsTestModal(alertToaster: IPageAlertToaster) {
+export function useCredentialsTestModal() {
   const { pushDialog, popDialog } = usePageDialogs();
   const [props, setProps] = useState<CredentialsExternalTestModalProps>();
+  const toaster = usePageAlertToaster();
 
   useEffect(() => {
     if (props) {
       pushDialog(
-        <CredentialsExternalTestModal {...{ ...props, popDialog: popDialog, alertToaster }} />
+        <CredentialsExternalTestModal
+          {...{ ...props, popDialog: popDialog, alertToaster: toaster }}
+        />
       );
     } else {
       popDialog();
     }
-  }, [props, pushDialog, popDialog, alertToaster]);
+  }, [props, pushDialog, popDialog, toaster]);
 
   return setProps;
 }
