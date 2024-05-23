@@ -123,6 +123,7 @@ function testNotification(type: string) {
   cy.createAwxOrganization(orgName).then(() => {
     cy.getByDataCy(`awx-notification-templates`).click({ force: true });
     cy.get(`[data-cy="add-notifier"]`).click();
+    cy.verifyPageTitle('Add notifier');
 
     fillBasicData(notificationName, type);
     fillNotificationType(type);
