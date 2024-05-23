@@ -15,22 +15,30 @@ import { useGetItem } from '../../../../common/crud/useGet';
 import { CredentialType } from '../../../interfaces/CredentialType';
 import { PageFormSingleSelect } from '../../../../../framework/PageForm/Inputs/PageFormSingleSelect';
 import { Credential } from '../../../interfaces/Credential';
+import { CredentialsTestButton } from '../utils/CredentialsTestButton';
 
 export interface CredentialPluginsForm {
   source_credential: number;
   [key: string]: string | number;
 }
 
+export interface CredentialsRetainInput {
+  metadata: Record<string, unknown>;
+}
+
 export function CredentialPlugins({
   onCancel,
   handleSubmit,
+  handleTest,
   defaultValues,
 }: {
   onCancel: () => void;
   handleSubmit: PageFormSubmitHandler<CredentialPluginsForm>;
+  handleTest: (data: CredentialPluginsForm) => Promise<void>;
   defaultValues?: CredentialPluginsForm;
 }) {
   const { t } = useTranslation();
+
   const CredentialSubForm = () => {
     const watchedCredentialTypeId = useWatch<{ source_credential: number }>({
       name: 'source_credential',
@@ -43,7 +51,9 @@ export function CredentialPlugins({
       );
       return credentialType as CredentialType;
     };
+
     const credentialType = useCredentialFields(watchedCredentialTypeId);
+
     if (!credentialType) {
       return null;
     }
@@ -103,6 +113,7 @@ export function CredentialPlugins({
         onSubmit={handleSubmit}
         onCancel={onCancel}
         defaultValue={defaultValues}
+        additionalActions={<CredentialsTestButton handleTest={handleTest} />}
       >
         <PageFormSection title={t('Select external credential')}>
           <PageFormExternalCredentialSelect name="source_credential" isRequired />
