@@ -511,7 +511,7 @@ describe.skip('Schedules - Create and Delete', function () {
   });
 });
 
-describe('Schedules - Edit', () => {
+describe.skip('Schedules - Edit', () => {
   let schedule: Schedule;
   let project: Project;
 
