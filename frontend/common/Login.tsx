@@ -101,7 +101,6 @@ const LoginPageLayout = styled.div`
 const LoginPageBody = styled.div`
   display: flex;
   flex-grow: 1;
-  flex-wrap: wrap-reverse;
   gap: 48px;
   align-items: center;
   justify-content: center;
@@ -109,5 +108,6 @@ const LoginPageBody = styled.div`
 
 const CardStyled = styled(Card)`
   width: 400px;
+  min-width: 360px;
   max-width: min(400px, 100dvw);
 `;
