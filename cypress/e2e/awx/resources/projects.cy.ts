@@ -622,7 +622,7 @@ describe('Projects', () => {
           cy.get(`[data-cy="row-id-${thisProject.id}"]`).within(() => {
             cy.get('[data-cy="name-column-cell"]').click();
           });
-          cy.get(`a[href*="/projects/${thisProject.id}/job_templates?"]`).click();
+          cy.clickTab('Job templates', true);
           cy.url().should(
             'contain',
             `/projects/${thisProject.id}/job_templates?page=1&perPage=10&sort=name`
@@ -681,7 +681,12 @@ describe('Projects', () => {
       ).as('getStarted');
       cy.getTableRow('name', notification.name, { disableFilter: true }).within(() => {
         cy.contains('[data-cy="toggle-switch"]', 'Start').find('span').eq(0).click();
-        cy.wait(500); //this is necessary to get Cypress to show the toggle switch being clicked
+        cy.contains('[data-cy="toggle-switch"]', 'Start')
+          .find('input[aria-label="Click to disable start"]')
+          .invoke('val')
+          .then((val) => {
+            expect(val).to.eql('on');
+          });
         cy.wait('@started')
           .its('response')
           .then((started) => {
