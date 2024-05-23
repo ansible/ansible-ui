@@ -13,7 +13,6 @@ describe.skip('Schedules - Create and Delete', function () {
   let jobTemplate: JobTemplate;
   let project: Project;
   let inventory: Inventory;
-  let schedule: Schedule;
   const testSignature: string = randomString(5, undefined, { isLowercase: true });
   function generateScheduleName(): string {
     return `test-${testSignature}-schedule-${randomString(5, undefined, { isLowercase: true })}`;
@@ -23,27 +22,17 @@ describe.skip('Schedules - Create and Delete', function () {
     cy.awxLogin();
   });
 
-  beforeEach(function () {
+  before(function () {
     project = this.globalProject as Project;
-    this.globalInventory;
     cy.createAwxOrganization().then((o) => {
       organization = o;
       cy.createAwxInventory({ organization: organization.id }).then((i) => {
         inventory = i;
       });
     });
-    const schedName = 'E2E Schedule' + randomString(4);
-    cy.createAWXSchedule({
-      name: schedName,
-      unified_job_template: (this.globalProject as Project).id,
-      rrule: 'DTSTART:20240415T124133Z RRULE:FREQ=WEEKLY;INTERVAL=1;BYDAY=SU',
-    }).then((sched: Schedule) => {
-      schedule = sched;
-    });
   });
 
-  afterEach(() => {
-    cy.deleteAWXSchedule(schedule, { failOnStatusCode: false });
+  after(() => {
     cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
     cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
   });
@@ -282,53 +271,133 @@ describe.skip('Schedules - Create and Delete', function () {
     cy.clickModalButton('Delete schedule');
   });
 
-  it('can create a complex schedule and navigate to details page', () => {
-    cy.createAwxJobTemplate({
-      name: 'E2E Complex Job template ' + randomString(4),
-      organization: organization.id,
-      project: project.id,
-      inventory: inventory.id,
-      survey_enabled: true,
-      ask_skip_tags_on_launch: true,
-      ask_forks_on_launch: true,
-    }).then((jt) => {
-      const surveySpec = {
-        name: '',
-        description: '',
-        spec: [
-          {
-            max: 1024,
-            min: 0,
-            new_question: true,
-            type: 'text',
-            default: '',
-            required: true,
-            variable: 'test',
-            question_name: 'var1',
-            question_description: '',
-            choices: [],
-          },
-        ],
-      };
+  it('user can bulk delete schedules from the Schedules list page ', () => {
+    cy.intercept('DELETE', awxAPI`/schedules/*`).as('deletedSchedule');
 
-      const scheduleName = 'E2E Complex Schedule' + randomString(4);
-      const surveyAnswer = 'E2E survey answer' + randomString(4);
+    const arrayOfElementText = [];
+    for (let i = 0; i < 5; i++) {
+      const scheduleName = generateScheduleName();
+      cy.createAWXSchedule({
+        name: scheduleName,
+        unified_job_template: project.id,
+        rrule: 'DTSTART:20240415T124133Z RRULE:FREQ=WEEKLY;INTERVAL=1;BYDAY=SU',
+      });
+      arrayOfElementText.push(scheduleName);
+    }
+    cy.navigateTo('awx', 'schedules');
+    cy.verifyPageTitle('Schedules');
+    cy.filterTableByMultiSelect('name', arrayOfElementText);
+    cy.get('tbody tr').should('have.length', 5);
+    cy.getByDataCy('select-all').click();
+    cy.clickToolbarKebabAction('delete-selected-schedules');
+    cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+      cy.get('header').contains('Permanently delete schedule');
+      cy.get('button').contains('Delete schedule').should('have.attr', 'aria-disabled', 'true');
+      cy.get('input[id="confirm"]').click();
+      cy.get('button').contains('Delete schedule').click();
+    });
+    cy.wait('@deletedSchedule')
+      .its('response')
+      .then((response) => {
+        expect(response?.statusCode).to.eql(204);
+      });
+  });
 
-      jobTemplate = jt;
-      cy.createAwxSurvey(surveySpec, jobTemplate);
+  describe('Create Schedule with Prompts, Surveys and Exceptions', function () {
+    const scheduleName = 'E2E Complex Schedule' + randomString(4);
+    const surveyAnswer = 'E2E survey answer' + randomString(4);
+    let organization: Organization;
+    let jobTemplate: JobTemplate;
+    let project: Project;
+    let inventory: Inventory;
+
+    before(() => {
+      cy.awxLogin();
+    });
+
+    beforeEach(function () {
+      project = this.globalProject as Project;
+      cy.createAwxOrganization().then((o) => {
+        organization = o;
+        cy.createAwxInventory({ organization: organization.id }).then((i) => {
+          inventory = i;
+          cy.createAwxJobTemplate({
+            name: 'E2E Complex Job template ' + randomString(4),
+            organization: organization.id,
+            project: project.id,
+            inventory: inventory.id,
+            survey_enabled: true,
+            ask_skip_tags_on_launch: true,
+            ask_tags_on_launch: true,
+          }).then((jt) => {
+            const surveySpec = {
+              name: '',
+              description: '',
+              spec: [
+                {
+                  max: 1024,
+                  min: 0,
+                  new_question: true,
+                  type: 'text',
+                  default: '',
+                  required: true,
+                  variable: 'test',
+                  question_name: 'var1',
+                  question_description: '',
+                  choices: [],
+                },
+              ],
+            };
+
+            jobTemplate = jt;
+            cy.createAwxSurvey(surveySpec, jobTemplate);
+          });
+        });
+      });
+
       cy.navigateTo('awx', 'schedules');
       cy.verifyPageTitle('Schedules');
+    });
+
+    afterEach(() => {
+      cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
+      cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
+      cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
+    });
+
+    it('can create a complex schedule and navigate to details page', () => {
       cy.getByDataCy('create-schedule').click();
       cy.selectDropdownOptionByResourceName('schedule_type', 'Job template');
       cy.selectDropdownOptionByResourceName('job-template-select', `${jobTemplate.name}`);
       cy.getByDataCy('name').type(`${scheduleName}`);
       cy.selectSingleSelectOption('[data-cy="timezone"]', 'America/Mexico_City');
       cy.clickButton(/^Next$/);
+      cy.get('[data-cy="wizard-nav"] li').contains('Prompts');
+
+      cy.get('[data-cy="wizard-nav"]').then(($el) => {
+        if ($el.length === 6) {
+          ['Details', 'Prompts', 'Survey', 'Rules', 'Exceptions', 'Review'].forEach(
+            (text, index) => {
+              cy.get('li')
+                .eq(index)
+                .should((step) => expect(step.text().trim()).to.equal(text));
+            }
+          );
+        } else {
+          cy.get('[data-cy="wizard-nav"] li').first().should('contain.text', 'Details').click();
+          cy.clickButton(/^Next$/);
+        }
+      });
 
       //Prompts step
       cy.get('[data-cy="wizard-nav"] li').eq(1).should('contain.text', 'Prompts');
-      cy.get('[data-cy="forks"]').type('{selectAll}13', { force: true, delay: 1000 });
-      cy.get('input[placeholder="Select or create skip tags"]').type('test_skip_tag');
+      cy.get('input[placeholder="Select or create job tags"]').type('test_job_tag', {
+        delay: 500,
+      });
+      cy.get('[id="prompt.job_tags"]').find('button').click();
+      cy.get('input[placeholder="Select or create skip tags"]').type('test_skip_tag', {
+        delay: 500,
+      });
       cy.get('[id="prompt.skip_tags"]').find('button').click();
       cy.clickButton(/^Next$/);
 
@@ -385,7 +454,6 @@ describe.skip('Schedules - Create and Delete', function () {
       cy.get('[data-cy="wizard-nav"] li').eq(5).should('contain.text', 'Review');
       cy.get('[data-cy="resource-type"]').contains('Job Template');
       cy.get('[data-cy="name"]').contains(scheduleName);
-      cy.getByDataCy('forks').should('have.text', '13');
       cy.get('[data-cy="local-time-zone"]').contains('America/Mexico_City');
       cy.get('[data-cy="inventory"]').contains(inventory.name);
       cy.get('[data-cy="project"]').contains('Global Project');
@@ -414,7 +482,7 @@ describe.skip('Schedules - Create and Delete', function () {
       });
       cy.getByDataCy('name').should('have.text', scheduleName);
       cy.getByDataCy('time-zone').should('have.text', 'America/Mexico_City');
-      cy.getByDataCy('forks').should('have.text', '13');
+      cy.getByDataCy('job-tags').should('have.text', 'test_job_tag');
       cy.getByDataCy('skip-tags').should('have.text', 'test_skip_tag');
       cy.getByDataCy('rruleset').contains('DTSTART;TZID=America/Mexico_City');
       cy.getByDataCy('rruleset').contains('RRULE:FREQ=HOURLY;INTERVAL=100;WKST=SU;COUNT=17');
@@ -439,40 +507,7 @@ describe.skip('Schedules - Create and Delete', function () {
           cy.getByDataCy('exceptions-column-cell').should('have.descendants', 'ul');
           cy.get('tbody tr').should('have.length', 1);
         });
-      cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
     });
-  });
-
-  it('user can bulk delete schedules from the Schedules list page ', () => {
-    cy.intercept('DELETE', awxAPI`/schedules/*`).as('deletedSchedule');
-
-    const arrayOfElementText = [];
-    for (let i = 0; i < 5; i++) {
-      const scheduleName = generateScheduleName();
-      cy.createAWXSchedule({
-        name: scheduleName,
-        unified_job_template: project.id,
-        rrule: 'DTSTART:20240415T124133Z RRULE:FREQ=WEEKLY;INTERVAL=1;BYDAY=SU',
-      });
-      arrayOfElementText.push(scheduleName);
-    }
-    cy.navigateTo('awx', 'schedules');
-    cy.verifyPageTitle('Schedules');
-    cy.filterTableByMultiSelect('name', arrayOfElementText);
-    cy.get('tbody tr').should('have.length', 5);
-    cy.getByDataCy('select-all').click();
-    cy.clickToolbarKebabAction('delete-selected-schedules');
-    cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
-      cy.get('header').contains('Permanently delete schedule');
-      cy.get('button').contains('Delete schedule').should('have.attr', 'aria-disabled', 'true');
-      cy.get('input[id="confirm"]').click();
-      cy.get('button').contains('Delete schedule').click();
-    });
-    cy.wait('@deletedSchedule')
-      .its('response')
-      .then((response) => {
-        expect(response?.statusCode).to.eql(204);
-      });
   });
 });
 
