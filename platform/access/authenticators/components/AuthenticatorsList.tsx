@@ -42,7 +42,7 @@ export function AuthenticatorsList() {
         title={t('Authentication Methods')}
         titleHelpTitle={t('Authentication Method')}
         titleHelp={t(
-          `Set up and manage your organization's authentication methods, which are used to simplify the login experience.`,
+          `Set up and manage your organization's authentication methods, which are used to simplify the login experience.`
         )}
         description={t(
           "Set up and manage your organization's authentication methods, which are used to simplify the login experience."
