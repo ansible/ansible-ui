@@ -37,7 +37,7 @@ export function RulebookActivationPage() {
   const getPageUrl = useGetPageUrl();
   const alertToaster = usePageAlertToaster();
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(
-    edaAPI`/eda-credentials/${params.id ?? ''}/`
+    edaAPI`/activations/${params.id ?? ''}/`
   );
   const canPatchActivation = Boolean(data && data.actions && data.actions['PATCH']);
   const { data: rulebookActivation, refresh } = useGet<EdaRulebookActivation>(
