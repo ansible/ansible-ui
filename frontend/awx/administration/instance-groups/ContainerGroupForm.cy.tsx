@@ -28,8 +28,8 @@ describe('Create Edit Container Group Form', () => {
         { fixture: 'credentials.json' }
       );
       cy.mount(<CreateContainerGroup />, {
-        path: '/instance_groups/:instanceType/create',
-        initialEntries: [`/instance_groups/container-group/create`],
+        path: '/instance-groups/container-group/create',
+        initialEntries: [`/instance-groups/container-group/create`],
       });
       cy.get('[data-cy="name"]').type('Test name');
       cy.get('[data-cy="credential-select"]').type('E2E Credential ARWM');
@@ -73,7 +73,7 @@ describe('Create Edit Container Group Form', () => {
 
     it('should preload the form with current values', () => {
       cy.mount(<EditContainerGroup />, {
-        path: '/instance-groups/:instancetype/:id/edit',
+        path: '/instance-groups/container-group/:id/edit',
         initialEntries: [`/instance-groups/container-group/1/edit`],
       });
       cy.verifyPageTitle('Edit Container Group');
@@ -84,7 +84,7 @@ describe('Create Edit Container Group Form', () => {
 
     it('should pass correct request body after editing ee', () => {
       cy.mount(<EditContainerGroup />, {
-        path: '/instance_groups/:instanceType/:id/edit',
+        path: '/instance_groups/container-group/:id/edit',
         initialEntries: [`/instance_groups/container-group/1/edit`],
       });
       cy.get('[data-cy="name"]').clear();

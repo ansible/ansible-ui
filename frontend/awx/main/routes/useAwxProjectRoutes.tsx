@@ -90,7 +90,7 @@ export function useAwxProjectRoutes() {
             },
             {
               id: AwxRoute.ProjectJobTemplates,
-              path: 'job_templates',
+              path: 'job-templates',
               element: <ProjectJobTemplates />,
             },
             {

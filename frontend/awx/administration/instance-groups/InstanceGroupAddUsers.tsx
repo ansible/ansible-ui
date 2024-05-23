@@ -119,11 +119,8 @@ export function InstanceGroupAddUsers() {
           resolve();
         },
         onClose: () => {
-          const instanceType = instanceGroup.is_container_group
-            ? 'container-group'
-            : 'instance-group';
           pageNavigate(AwxRoute.InstanceGroupUserAccess, {
-            params: { id: instanceGroup.id.toString(), instanceType },
+            params: { id: instanceGroup.id.toString() },
           });
         },
       });
@@ -141,9 +138,6 @@ export function InstanceGroupAddUsers() {
             to: getPageUrl(AwxRoute.InstanceGroupDetails, {
               params: {
                 id: instanceGroup?.id,
-                instanceType: instanceGroup?.is_container_group
-                  ? 'container-group'
-                  : 'instance-group',
               },
             }),
           },
@@ -152,9 +146,6 @@ export function InstanceGroupAddUsers() {
             to: getPageUrl(AwxRoute.InstanceGroupUserAccess, {
               params: {
                 id: instanceGroup?.id,
-                instanceType: instanceGroup?.is_container_group
-                  ? 'container-group'
-                  : 'instance-group',
               },
             }),
           },
