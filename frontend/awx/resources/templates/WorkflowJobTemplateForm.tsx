@@ -79,7 +79,7 @@ export function EditWorkflowJobTemplate() {
       inventory: workflowJobTemplate.summary_fields.inventory || null,
       isWebhookEnabled: Boolean(workflowJobTemplate.related?.webhook_receiver),
       job_tags: parseStringToTagArray(workflowJobTemplate.skip_tags || ''),
-      organization: workflowJobTemplate?.summary_fields?.organization?.name || null,
+      organization: workflowJobTemplate?.organization || null,
       labels: workflowJobTemplate.summary_fields?.labels?.results || [],
       limit: workflowJobTemplate.limit || '',
       name: workflowJobTemplate.name || '',

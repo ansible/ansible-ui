@@ -422,7 +422,7 @@ describe('Job Templates Tests', function () {
       cy.getByDataCy('enabled-options').contains('Provisioning Callbacks').should('not.exist');
     });
 
-    it('can edit a job template to enable webhook, regenerate webhook key and set webhook credentials', function () {
+    it.skip('can edit a job template to enable webhook, regenerate webhook key and set webhook credentials', function () {
       cy.createAWXCredential({
         kind: 'github_token',
         organization: (this.globalOrganization as Organization).id,

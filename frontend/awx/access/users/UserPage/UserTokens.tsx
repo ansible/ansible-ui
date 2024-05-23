@@ -25,28 +25,37 @@ import { ButtonVariant } from '@patternfly/react-core';
 import { PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import { useDeleteUserTokens } from '../hooks/useDeleteUserTokens';
 
-export function UserTokens(props: { infoMessage?: string }) {
+export function UserTokens(props: {
+  id?: string;
+  infoMessage?: string;
+  createTokenRoute?: string;
+}) {
   const params = useParams<{ id: string }>();
+  const userId = props.id || params.id;
   const { activeAwxUser } = useAwxActiveUser();
   const pageNavigate = usePageNavigate();
 
   useEffect(() => {
-    if (activeAwxUser === undefined || activeAwxUser?.id.toString() !== params.id) {
+    if (activeAwxUser === undefined || activeAwxUser?.id.toString() !== userId) {
       // redirect to user details for the active/logged-in user
       pageNavigate(AwxRoute.UserDetails, { params: { id: activeAwxUser?.id } });
     }
-  }, [activeAwxUser, params.id, pageNavigate]);
+  }, [activeAwxUser, userId, pageNavigate]);
 
   if (!activeAwxUser) return <LoadingPage breadcrumbs tabs />;
 
-  return activeAwxUser?.id.toString() === params.id ? (
-    <UserTokensInternal user={activeAwxUser} infoMessage={props.infoMessage} />
+  return activeAwxUser?.id.toString() === userId ? (
+    <UserTokensInternal
+      user={activeAwxUser}
+      infoMessage={props.infoMessage}
+      createRoute={props.createTokenRoute || AwxRoute.CreateUserToken}
+    />
   ) : (
     <></>
   );
 }
 
-function UserTokensInternal(props: { infoMessage?: string; user: AwxUser }) {
+function UserTokensInternal(props: { infoMessage?: string; user: AwxUser; createRoute: string }) {
   const { user } = props;
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
@@ -69,7 +78,7 @@ function UserTokensInternal(props: { infoMessage?: string; user: AwxUser }) {
         isPinned: true,
         icon: PlusCircleIcon,
         label: t('Create token'),
-        href: getPageUrl(AwxRoute.CreateUserToken, { params: { id: user.id } }),
+        href: getPageUrl(props.createRoute, { params: { id: user.id } }),
       },
       { type: PageActionType.Seperator },
       {
@@ -81,7 +90,7 @@ function UserTokensInternal(props: { infoMessage?: string; user: AwxUser }) {
         onClick: deleteTokens,
       },
     ],
-    [deleteTokens, getPageUrl, t, user.id]
+    [deleteTokens, getPageUrl, t, user.id, props.createRoute]
   );
 
   const rowActions = useMemo<IPageAction<Token>[]>(
@@ -106,7 +115,10 @@ function UserTokensInternal(props: { infoMessage?: string; user: AwxUser }) {
       <PageTable<Token>
         id="awx-user-tokens"
         errorStateTitle={t('Error loading tokens')}
-        emptyStateTitle={t('There are currently no tokens added.')}
+        emptyStateTitle={t('There are currently no tokens.')}
+        emptyStateDescription={t('Create tokens by clicking the button below.')}
+        emptyStateButtonIcon={<PlusCircleIcon />}
+        emptyStateActions={toolbarActions.slice(0, 1)}
         tableColumns={tableColumns}
         toolbarFilters={toolbarFilters}
         toolbarActions={toolbarActions}
