@@ -8,13 +8,17 @@ import { useRulebookActivationActions } from './hooks/useRulebookActivationActio
 import { useRulebookActivationColumns } from './hooks/useRulebookActivationColumns';
 import { useRulebookActivationFilters } from './hooks/useRulebookActivationFilters';
 import { useRulebookActivationsActions } from './hooks/useRulebookActivationsActions';
-import { PlusCircleIcon } from '@patternfly/react-icons';
+import { CubesIcon, PlusCircleIcon } from '@patternfly/react-icons';
+import { useOptions } from '../../common/crud/useOptions';
+import { ActionsResponse, OptionsResponse } from '../interfaces/OptionsResponse';
 
 export function RulebookActivations() {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const toolbarFilters = useRulebookActivationFilters();
   const tableColumns = useRulebookActivationColumns();
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(edaAPI`/activations/`);
+  const canCreateActivations = Boolean(data && data.actions && data.actions['POST']);
   const view = useEdaView<EdaRulebookActivation>({
     url: edaAPI`/activations/`,
     toolbarFilters,
@@ -35,13 +39,24 @@ export function RulebookActivations() {
         toolbarFilters={toolbarFilters}
         rowActions={rowActions}
         errorStateTitle={t('Error loading rulebook activations')}
-        emptyStateTitle={t(
-          'There are currently no rulebook activations created for your organization.'
-        )}
-        emptyStateDescription={t('Please create a rulebook activation by using the button below.')}
+        emptyStateTitle={
+          canCreateActivations
+            ? t('There are currently no rulebook activations created for your organization.')
+            : t('You do not have permission to create a rulebook activation.')
+        }
+        emptyStateDescription={
+          canCreateActivations
+            ? t('Please create a rulebook activation by using the button below.')
+            : t(
+                'Please contact your organization administrator if there is an issue with your access.'
+              )
+        }
+        emptyStateIcon={canCreateActivations ? undefined : CubesIcon}
         emptyStateButtonIcon={<PlusCircleIcon />}
-        emptyStateButtonText={t('Create rulebook activation')}
-        emptyStateButtonClick={() => pageNavigate(EdaRoute.CreateRulebookActivation)}
+        emptyStateButtonText={canCreateActivations ? t('Create rulebook activation') : undefined}
+        emptyStateButtonClick={
+          canCreateActivations ? () => pageNavigate(EdaRoute.CreateRulebookActivation) : undefined
+        }
         {...view}
         defaultSubtitle={t('Rulebook Activation')}
       />

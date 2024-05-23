@@ -8,7 +8,9 @@ import { useCredentialActions } from './hooks/useCredentialActions';
 import { useCredentialColumns } from './hooks/useCredentialColumns';
 import { useCredentialFilters } from './hooks/useCredentialFilters';
 import { useCredentialsActions } from './hooks/useCredentialsActions';
-import { PlusCircleIcon } from '@patternfly/react-icons';
+import { CubesIcon, PlusCircleIcon } from '@patternfly/react-icons';
+import { useOptions } from '../../../common/crud/useOptions';
+import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 
 export function Credentials() {
   const { t } = useTranslation();
@@ -21,6 +23,8 @@ export function Credentials() {
     tableColumns,
   });
   const toolbarActions = useCredentialsActions(view);
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(edaAPI`/eda-credentials/`);
+  const canCreateCredential = Boolean(data && data.actions && data.actions['POST']);
   const rowActions = useCredentialActions(view);
   return (
     <PageLayout>
@@ -37,11 +41,24 @@ export function Credentials() {
         toolbarFilters={toolbarFilters}
         rowActions={rowActions}
         errorStateTitle={t('Error loading credentials')}
-        emptyStateTitle={t('There are currently no credentials created for your organization.')}
-        emptyStateDescription={t('Please create a credential by using the button below.')}
+        emptyStateTitle={
+          canCreateCredential
+            ? t('There are currently no credentials created for your organization.')
+            : t('You do not have permission to create a credential.')
+        }
+        emptyStateDescription={
+          canCreateCredential
+            ? t('Please create a credential by using the button below.')
+            : t(
+                'Please contact your organization administrator if there is an issue with your access.'
+              )
+        }
+        emptyStateIcon={canCreateCredential ? undefined : CubesIcon}
         emptyStateButtonIcon={<PlusCircleIcon />}
-        emptyStateButtonText={t('Create credential')}
-        emptyStateButtonClick={() => pageNavigate(EdaRoute.CreateCredential)}
+        emptyStateButtonText={canCreateCredential ? t('Create credential') : undefined}
+        emptyStateButtonClick={
+          canCreateCredential ? () => pageNavigate(EdaRoute.CreateCredential) : undefined
+        }
         {...view}
         defaultSubtitle={t('Credential')}
       />

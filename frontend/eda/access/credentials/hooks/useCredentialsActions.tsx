@@ -12,11 +12,16 @@ import { IEdaView } from '../../../common/useEventDrivenView';
 import { EdaCredential } from '../../../interfaces/EdaCredential';
 import { EdaRoute } from '../../../main/EdaRoutes';
 import { useDeleteCredentials } from './useDeleteCredentials';
+import { useOptions } from '../../../../common/crud/useOptions';
+import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
+import { edaAPI } from '../../../common/eda-utils';
 
 export function useCredentialsActions(view: IEdaView<EdaCredential>) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const deleteCredentials = useDeleteCredentials(view.unselectItemsAndRefresh);
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(edaAPI`/eda-credentials/`);
+  const canCreateCredentials = Boolean(data && data.actions && data.actions['POST']);
   return useMemo<IPageAction<EdaCredential>[]>(
     () => [
       {
@@ -26,6 +31,11 @@ export function useCredentialsActions(view: IEdaView<EdaCredential>) {
         isPinned: true,
         icon: PlusCircleIcon,
         label: t('Create credential'),
+        isDisabled: canCreateCredentials
+          ? undefined
+          : t(
+              'You do not have permission to create a credential. Please contact your organization administrator if there is an issue with your access.'
+            ),
         onClick: () => pageNavigate(EdaRoute.CreateCredential),
       },
       {
@@ -37,6 +47,6 @@ export function useCredentialsActions(view: IEdaView<EdaCredential>) {
         isDanger: true,
       },
     ],
-    [deleteCredentials, pageNavigate, t]
+    [canCreateCredentials, deleteCredentials, pageNavigate, t]
   );
 }

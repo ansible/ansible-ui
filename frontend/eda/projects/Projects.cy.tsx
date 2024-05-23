@@ -4,6 +4,15 @@ import { Projects } from './Projects';
 describe('Projects.cy.ts', () => {
   beforeEach(() => {
     cy.intercept(
+      {
+        method: 'OPTIONS',
+        url: '/api/v2/projects/',
+      },
+      {
+        fixture: 'edaProjectsOptions.json',
+      }
+    ).as('getOptions');
+    cy.intercept(
       { method: 'GET', url: edaAPI`/projects/?page=1&page_size=10` },
       {
         fixture: 'edaProjects.json',
@@ -60,8 +69,38 @@ describe('Projects.cy.ts', () => {
   });
 });
 
-describe('Empty list', () => {
+describe('Empty list without POST permission', () => {
   beforeEach(() => {
+    cy.intercept(
+      {
+        method: 'GET',
+        url: edaAPI`/projects/*`,
+      },
+      {
+        fixture: 'emptyList.json',
+      }
+    ).as('emptyList');
+  });
+  it('Empty state is displayed correctly', () => {
+    cy.mount(<Projects />);
+    cy.contains(/^You do not have permission to create a project.$/);
+    cy.contains(
+      /^Please contact your organization administrator if there is an issue with your access.$/
+    );
+  });
+});
+
+describe('Empty list with POST permission', () => {
+  beforeEach(() => {
+    cy.intercept(
+      {
+        method: 'OPTIONS',
+        url: edaAPI`/projects/`,
+      },
+      {
+        fixture: 'edaProjectsOptions.json',
+      }
+    ).as('getOptions');
     cy.intercept(
       {
         method: 'GET',

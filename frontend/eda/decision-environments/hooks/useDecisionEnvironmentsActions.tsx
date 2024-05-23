@@ -12,11 +12,17 @@ import { IEdaView } from '../../common/useEventDrivenView';
 import { EdaDecisionEnvironment } from '../../interfaces/EdaDecisionEnvironment';
 import { EdaRoute } from '../../main/EdaRoutes';
 import { useDeleteDecisionEnvironments } from './useDeleteDecisionEnvironments';
+import { useOptions } from '../../../common/crud/useOptions';
+import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
+import { edaAPI } from '../../common/eda-utils';
 
 export function useDecisionEnvironmentsActions(view: IEdaView<EdaDecisionEnvironment>) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const deleteDecisionEnvironments = useDeleteDecisionEnvironments(view.unselectItemsAndRefresh);
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(edaAPI`/decision-environments/`);
+  const canCreateDE = Boolean(data && data.actions && data.actions['POST']);
+
   return useMemo<IPageAction<EdaDecisionEnvironment>[]>(
     () => [
       {
@@ -26,6 +32,11 @@ export function useDecisionEnvironmentsActions(view: IEdaView<EdaDecisionEnviron
         isPinned: true,
         icon: PlusCircleIcon,
         label: t('Create decision environment'),
+        isDisabled: canCreateDE
+          ? undefined
+          : t(
+              'You do not have permission to create a decision environment. Please contact your organization administrator if there is an issue with your access.'
+            ),
         onClick: () => pageNavigate(EdaRoute.CreateDecisionEnvironment),
       },
       {
@@ -38,6 +49,6 @@ export function useDecisionEnvironmentsActions(view: IEdaView<EdaDecisionEnviron
         isDanger: true,
       },
     ],
-    [deleteDecisionEnvironments, pageNavigate, t]
+    [canCreateDE, deleteDecisionEnvironments, pageNavigate, t]
   );
 }
