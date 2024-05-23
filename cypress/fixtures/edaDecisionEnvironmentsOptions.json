@@ -1,0 +1,58 @@
+{
+  "name": "Decision Environment List",
+  "description": "",
+  "renders": ["application/json", "text/html"],
+  "parses": ["application/json", "application/x-www-form-urlencoded", "multipart/form-data"],
+  "actions": {
+    "POST": {
+      "name": {
+        "type": "string",
+        "required": true,
+        "read_only": false,
+        "label": "Name"
+      },
+      "description": {
+        "type": "string",
+        "required": false,
+        "read_only": false,
+        "label": "Description"
+      },
+      "image_url": {
+        "type": "string",
+        "required": true,
+        "read_only": false,
+        "label": "Image url"
+      },
+      "organization_id": {
+        "type": "field",
+        "required": false,
+        "read_only": true,
+        "label": "Organization id"
+      },
+      "eda_credential_id": {
+        "type": "field",
+        "required": false,
+        "read_only": true,
+        "label": "Eda credential id"
+      },
+      "id": {
+        "type": "integer",
+        "required": false,
+        "read_only": true,
+        "label": "ID"
+      },
+      "created_at": {
+        "type": "datetime",
+        "required": false,
+        "read_only": true,
+        "label": "Created at"
+      },
+      "modified_at": {
+        "type": "datetime",
+        "required": false,
+        "read_only": true,
+        "label": "Modified at"
+      }
+    }
+  }
+}
