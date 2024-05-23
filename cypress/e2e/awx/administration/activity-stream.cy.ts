@@ -29,68 +29,70 @@ describe('activity-stream', () => {
     cy.verifyPageTitle('Activity Stream');
   });
 
+  function openEventDetails(teamName: string) {
+    cy.getTableRow('event', `created team ${teamName}`, { disableFilter: true }).within(() => {
+      cy.getByDataCy('view-event-details').click();
+    });
+  }
+
   it('can render the activity stream list page', function () {
-    cy.navigateTo('awx', 'activity-stream');
     cy.verifyPageTitle('Activity Stream');
   });
 
   it('event column displays correct info', function () {
-    cy.getTableRowBySingleText(team.name).should('be.visible');
-    cy.get('[data-cy="event-column-cell"]').should('have.text', `created team ${team.name}`);
+    cy.getTableRow('event', `created team ${team.name}`, { disableFilter: true }).within(() => {
+      cy.getByDataCy('event-column-cell').should('have.text', `created team ${team.name}`);
+    });
   });
 
-  it.skip('event details modal displays correct info', function () {
-    //this test is being skipped due to flakiness. will come back to it during hardening.
-    cy.getTableRowBySingleText(team.name)
-      .should('be.visible')
-      .then(() => {
-        cy.get('button[data-cy="view-event-details"]')
-          .first() // This assumes the first event is the one we just created, which is not always the case
-          .click()
-          .then(() => {
-            cy.get('dd[data-cy="initiated-by"]').should('have.text', activeUser.username);
-            cy.get('dd[data-cy="action"]').should('have.text', `created team ${team.name}`);
-            cy.get('dd[data-cy="timestamp"]').should('not.be.empty');
-            cy.clickModalButton('Close');
-          });
-      });
+  it('event details modal displays correct info', function () {
+    openEventDetails(team.name);
+    cy.getModal().within(() => {
+      cy.getByDataCy('initiated-by').should('have.text', activeUser.username);
+      cy.getByDataCy('action').should('have.text', `created team ${team.name}`);
+      cy.getByDataCy('time').should('not.be.empty');
+    });
+    cy.clickModalButton('Close');
   });
 
   it('can navigate to event resource detail page from activity stream list page', function () {
-    cy.getTableRowBySingleText(team.name).should('be.visible');
-    cy.clickLink(team.name);
+    cy.filterTableByTextFilter('keyword', team.name);
+    cy.getTableRow('event', `created team ${team.name}`, { disableFilter: true }).within(() => {
+      cy.getByDataCy('source-resource-detail').click();
+    });
     cy.verifyPageTitle(team.name);
   });
 
-  it.skip('can navigate to event resource detail page from activity stream event details modal', function () {
-    //this test is being skipped due to flakiness. will come back to it during hardening.
-    cy.getTableRowBySingleText(team.name)
-      .should('be.visible')
-      .then(() => {
-        cy.get('button[data-cy="view-event-details"]').first().click();
-        cy.get('[role="dialog"] a[data-cy="source-resource-detail"]').click();
-        cy.verifyPageTitle(team.name);
-      });
+  it('can navigate to event resource detail page from activity stream event details modal', function () {
+    cy.filterTableByTextFilter('keyword', team.name);
+    openEventDetails(team.name);
+    cy.getModal().within(() => {
+      cy.getByDataCy('source-resource-detail').click();
+    });
+    cy.verifyPageTitle(team.name);
   });
 
-  it.skip('can navigate to initiator detail page from activity stream list page', function () {
-    //this test is being skipped due to flakiness. will come back to it during hardening.
-    cy.getTableRowBySingleText(team.name).should('be.visible');
-    cy.get('[data-cy="initiated-by-column-cell"] a').first().click();
+  it('can navigate to initiator detail page from activity stream list page', function () {
+    cy.filterTableByTextFilter('keyword', team.name);
+    cy.getTableRow('event', `created team ${team.name}`, { disableFilter: true }).within(() => {
+      cy.getBy('[data-cy="initiated-by-column-cell"] a').click();
+    });
     cy.verifyPageTitle(activeUser.username);
   });
 
-  it.skip('can navigate to initiator detail page from activity stream event details modal', function () {
-    //this test is being skipped due to flakiness. will come back to it during hardening.
-    cy.getTableRowBySingleText(team.name).should('be.visible');
-    cy.get('button[data-cy="view-event-details"]').first().click();
-    cy.get('dd[data-cy="initiated-by"] a').click();
+  it('can navigate to initiator detail page from activity stream event details modal', function () {
+    cy.filterTableByTextFilter('keyword', team.name);
+    openEventDetails(team.name);
+    cy.getModal().within(() => {
+      cy.getBy('dd[data-cy="initiated-by"] a').click();
+    });
     cy.verifyPageTitle(activeUser.username);
   });
 
   it('can filter by keyword from activity stream list', function () {
     cy.filterTableByTextFilter('keyword', team.name);
     cy.get('tbody').find('tr').should('have.length', 1);
+    cy.getByDataCy('event-column-cell').should('have.text', `created team ${team.name}`);
   });
 
   it('can filter by initiated by from activity stream list', function () {
@@ -103,5 +105,6 @@ describe('activity-stream', () => {
       .then((response) => {
         expect(response?.statusCode).to.eql(200);
       });
+    cy.get('[data-cy="initiated-by-column-cell"]').first().should('have.text', activeUser.username);
   });
 });
