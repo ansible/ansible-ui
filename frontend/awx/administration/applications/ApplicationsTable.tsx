@@ -1,5 +1,4 @@
 import { useTranslation } from 'react-i18next';
-import { useAwxConfig } from '../../common/useAwxConfig';
 import { ButtonVariant } from '@patternfly/react-core';
 import { EditIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
@@ -27,7 +26,6 @@ import { useDeleteApplications } from './hooks/useDeleteApplications';
 
 export function ApplicationsTable() {
   const { t } = useTranslation();
-  const config = useAwxConfig();
   const toolbarFilters = useApplicationsFilters();
   const tableColumns = useApplicationsColumns();
   const view = useAwxView<Application>({
