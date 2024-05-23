@@ -117,21 +117,26 @@ export function usePlatformNavigation() {
       hidden: !edaService,
     });
     navigationItems.push({
-      id: '/ui/',
+      id: PlatformRoute.HUB,
       label: t('Automation Content'),
       subtitle: t('Automation Hub'),
       hidden: !hubService,
-      href: '/ui/',
-      path: '',
-      children: [],
-    });
-    navigationItems.push({
-      id: PlatformRoute.HUB,
-      label: t('Automation Content'),
-      subtitle: t('Tech preview'), // Automation Hub tech preview
       path: 'content',
-      children: hubNav,
-      hidden: !hubService,
+      children: [
+        {
+          id: '/ui/',
+          label: t('Full experience'),
+          href: '/ui/',
+          path: '',
+          children: [],
+        },
+        {
+          id: '/content/',
+          label: t('Tech Preview'),
+          path: '',
+          children: hubNav,
+        },
+      ],
     });
 
     const analytics = removeNavigationItemById(awxNav, AwxRoute.Analytics);
