@@ -506,6 +506,7 @@ function SingleLineEncryptedInput({
         <CredentialTextInput
           accumulatedPluginValues={accumulatedPluginValues}
           setAccumulatedPluginValues={setAccumulatedPluginValues}
+          credentialType={credentialType}
           key={field.id}
           field={field}
           isDisabled={field.id === 'vault_id' && credentialType.kind === 'vault' && isEditMode}
@@ -621,6 +622,7 @@ function CredentialSubForm({
               <CredentialTextInput
                 accumulatedPluginValues={accumulatedPluginValues}
                 setAccumulatedPluginValues={setAccumulatedPluginValues}
+                credentialType={credentialType}
                 setPluginsToDelete={setPluginsToDelete}
                 key={field.id}
                 field={field}

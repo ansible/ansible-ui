@@ -2,7 +2,7 @@ import { Button, Icon, InputGroup } from '@patternfly/react-core';
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import { RedoIcon } from '@patternfly/react-icons';
-import { CredentialInputField } from '../../../interfaces/CredentialType';
+import { CredentialInputField, CredentialType } from '../../../interfaces/CredentialType';
 import { CredentialTextInput } from '../CredentialForm';
 
 interface ChildProps {
@@ -14,6 +14,7 @@ interface IProps {
   shouldHideField: boolean | undefined;
   onClear: () => void;
   children: ReactElement<ChildProps>;
+  credentialType?: CredentialType | undefined;
   field: CredentialInputField;
   requiredFields: string[];
   placeholder?: string;
@@ -27,6 +28,7 @@ export function EncryptedTextFormInput({
   shouldHideField,
   children,
   requiredFields,
+  credentialType,
   //placeholder,
 }: IProps) {
   const { t } = useTranslation();
@@ -38,6 +40,7 @@ export function EncryptedTextFormInput({
         <CredentialTextInput
           key={field.id}
           field={field}
+          credentialType={credentialType}
           isDisabled={shouldHideField}
           isRequired={requiredFields.includes(field.id)}
           placeholder={t('ENCRYPTED')}
