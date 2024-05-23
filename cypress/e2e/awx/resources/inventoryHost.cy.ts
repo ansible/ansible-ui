@@ -1,51 +1,107 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Credential } from '../../../../frontend/awx/interfaces/Credential';
-import { ExecutionEnvironment } from '../../../../frontend/awx/interfaces/ExecutionEnvironment';
+//import { ExecutionEnvironment } from '../../../../frontend/awx/interfaces/ExecutionEnvironment';
+import { AwxUser } from '../../../../frontend/awx/interfaces/User';
+import { createAndEditAndDeleteHost, checkHostGroup } from '../../../support/hostsfunctions';
 
 describe('Inventory Host Tab Tests', () => {
   let organization: Organization;
   let inventory: Inventory;
+  let user: AwxUser;
   let machineCredential: Credential;
-  let executionEnvironment: ExecutionEnvironment;
+  //let executionEnvironment: ExecutionEnvironment;
   const kinds: Array<'' | 'smart' | 'constructed'> = ['', 'smart', 'constructed'];
 
   before(() => {
     cy.awxLogin();
+    cy.createAwxOrganization().then((org) => {
+      organization = org;
+      cy.createAwxInventory({ organization: organization.id }).then((inv) => {
+        inventory = inv;
+      });
+      cy.createAwxUser(organization).then((testUser) => {
+        user = testUser;
+      });
+    });
+  });
+
+  after(() => {
+    cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
+    cy.deleteAwxUser(user, { failOnStatusCode: false });
+    cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
   });
 
   afterEach(() => {
-    cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
-    cy.deleteAwxCredential(machineCredential, { failOnStatusCode: false });
-    cy.deleteAwxExecutionEnvironment(executionEnvironment, { failOnStatusCode: false });
-    cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
+    // cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
+    // cy.deleteAwxUser(user, { failOnStatusCode: false });
+    // cy.deleteAwxCredential(machineCredential, { failOnStatusCode: false });
+    //cy.deleteAwxExecutionEnvironment(executionEnvironment, { failOnStatusCode: false });
+    // cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
+  });
+
+  it('can create, edit, assosiat and disassosiate groups at inventory -> hosts -> groups tab', () => {
+    // use checkHostGroup function in order to test inventory host group
+    // this kind === ''
+    // the test is checking: create, verify, multi assosiate and disassosiate of groups (using bluk)
+    // and single assosiate and disassosiate of group, edit and delete
+    checkHostGroup('inventory_host', organization);
+  });
+
+  it('can create, edit and delete inventory host', () => {
+    // use createAndEditAndDeleteHost function in order to test inventory hosts basic functions
+    // after navigating to the right url
+    // the test covers create, verify, edit and delete of hosts form inventory
+    cy.visit(`/infrastructure/inventories/inventory/${inventory.id}/details`);
+    cy.clickTab(/^Hosts$/, true);
+    createAndEditAndDeleteHost('inventory_host', inventory);
+  });
+
+  it.skip('can see, launch and cancel jobs from inventory -> hosts -> jobs tab', () => {
+    // create new host at inventory
+    // create job template with the current inventory
+    // job type must be run.
+    // TODO: check if there is a function for that
+    // launch job
+    // got to inventory hosts tab - make sure job is visible in jobs tab
+    // launch it for all hosts
+    // verify
+    // lanuch it for all failed hosts
+    // cancel launch
+  });
+
+  it.skip('can view host facts in inventory host tab', () => {
+    // create host at invenotry create facts for host
+    // TODO: check if there is some function that creating facts
+    // make sure facts are visibule to the user at inventory -> hosts -> facts tab
   });
 
   kinds.forEach((kind) => {
     describe(`Inventory Host List Tests (${kind === '' ? 'regular' : kind})`, () => {
       beforeEach(() => {
-        cy.createAwxOrganization().then((org) => {
-          organization = org;
-          cy.createAWXCredential({
-            kind: 'machine',
-            organization: organization.id,
-            credential_type: 1,
-          }).then((cred) => {
-            machineCredential = cred;
-          });
-          cy.createAwxExecutionEnvironment({ organization: organization.id }).then((ee) => {
-            executionEnvironment = ee;
-            cy.createInventoryHost(organization, kind).then((result) => {
-              const { inventory: inv, host } = result;
-              inventory = inv;
-              cy.log(kind);
-              cy.log('Inventory', inventory); //remove this once it is written into the tests below
-              cy.log('Host', host); //remove this once it is written into the tests below
-              cy.log('EE', ee); //remove this once it is written into the tests below
-              cy.log('Machine Cred', machineCredential); //remove this once it is written into the tests below
-            });
+        // cy.createAwxOrganization().then((org) => {
+        //   organization = org;
+        cy.createAWXCredential({
+          kind: 'machine',
+          organization: organization.id,
+          credential_type: 1,
+        }).then((cred) => {
+          machineCredential = cred;
+        });
+        cy.createAwxExecutionEnvironment({ organization: organization.id }).then((ee) => {
+          //executionEnvironment = ee;
+          cy.createInventoryHost(organization, kind).then((result) => {
+            const { inventory: inv, host } = result;
+            inventory = inv;
+            cy.log(kind);
+            cy.log('Inventory', inventory); //remove this once it is written into the tests below
+            cy.log('Host', host); //remove this once it is written into the tests below
+            cy.log('EE', ee); //remove this once it is written into the tests below
+            cy.log('Machine Cred', machineCredential); //remove this once it is written into the tests below
           });
         });
+        // });
       });
 
       if (kind === '') {
@@ -104,7 +160,7 @@ describe('Inventory Host Tab Tests', () => {
             machineCredential = cred;
           });
           cy.createAwxExecutionEnvironment({ organization: organization.id }).then((ee) => {
-            executionEnvironment = ee;
+            //executionEnvironment = ee;
             cy.createInventoryHost(organization, kind).then((result) => {
               const { inventory: inv, host } = result;
               inventory = inv;
@@ -176,7 +232,7 @@ describe('Inventory Host Tab Tests', () => {
           machineCredential = cred;
         });
         cy.createAwxExecutionEnvironment({ organization: organization.id }).then((ee) => {
-          executionEnvironment = ee;
+          //executionEnvironment = ee;
           cy.createInventoryHostGroup(organization).then((result) => {
             const { inventory, host, group } = result;
             cy.log('Inventory', inventory); //remove this once it is written into the tests below
@@ -239,7 +295,7 @@ describe('Inventory Host Tab Tests', () => {
           machineCredential = cred;
         });
         cy.createAwxExecutionEnvironment({ organization: organization.id }).then((ee) => {
-          executionEnvironment = ee;
+          //executionEnvironment = ee;
           cy.createInventoryHostGroup(organization).then((result) => {
             const { inventory, host, group } = result;
             cy.log('Inventory', inventory); //remove this once it is written into the tests below
