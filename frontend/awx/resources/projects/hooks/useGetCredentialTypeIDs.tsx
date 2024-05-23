@@ -20,6 +20,9 @@ export function useGetCredentialTypeIDs() {
   const registryCredentialTypeResponse = useGet<AwxItemsResponse<CredentialType>>(
     awxAPI`/credential_types/?kind=registry`
   );
+  const galaxyCredentialTypeResponse = useGet<AwxItemsResponse<CredentialType>>(
+    awxAPI`/credential_types/?kind=galaxy`
+  );
   const credentialTypeIDs: { [key: string]: number } = useMemo(() => {
     const credentialTypeIds: { [key: string]: number } = {};
     if (scmCredentialTypeResponse?.data?.results) {
@@ -34,12 +37,16 @@ export function useGetCredentialTypeIDs() {
     if (registryCredentialTypeResponse?.data?.results) {
       credentialTypeIds['registry'] = registryCredentialTypeResponse?.data?.results[0]?.id;
     }
+    if (galaxyCredentialTypeResponse?.data?.results) {
+      credentialTypeIds['galaxy'] = galaxyCredentialTypeResponse?.data?.results[0]?.id;
+    }
     return credentialTypeIds;
   }, [
     cryptoCredentialTypeResponse?.data?.results,
     insightsCredentialTypeResponse?.data?.results,
     scmCredentialTypeResponse?.data?.results,
     registryCredentialTypeResponse?.data?.results,
+    galaxyCredentialTypeResponse?.data?.results,
   ]);
   return credentialTypeIDs;
 }
