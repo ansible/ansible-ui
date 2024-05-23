@@ -68,8 +68,6 @@ export function ProjectPage() {
         icon: SyncAltIcon,
         isPinned: true,
         label: t('Sync project'),
-        isDisabled: () =>
-          canEditProject ? '' : t(`The project cannot be synced due to insufficient permission`),
         isHidden: (project: EdaProject) => {
           return (
             project?.import_state === ImportStateEnum.Pending ||
