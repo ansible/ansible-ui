@@ -44,7 +44,7 @@ export function DecisionEnvironments() {
         emptyStateTitle={
           canCreateDE
             ? t('There are currently no decision environments created for your organization.')
-            : t('You do not have permission to create a decision environment')
+            : t('You do not have permission to create a decision environment.')
         }
         emptyStateDescription={
           canCreateDE

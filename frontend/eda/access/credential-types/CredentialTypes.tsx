@@ -59,7 +59,7 @@ export function CredentialTypes() {
         }
         emptyStateIcon={canCreateCredentialTypes ? undefined : CubesIcon}
         emptyStateButtonIcon={<PlusCircleIcon />}
-        emptyStateButtonText={canCreateCredentialTypes ? t('Create credential') : undefined}
+        emptyStateButtonText={canCreateCredentialTypes ? t('Create credential type') : undefined}
         emptyStateButtonClick={
           canCreateCredentialTypes ? () => pageNavigate(EdaRoute.CreateCredential) : undefined
         }
