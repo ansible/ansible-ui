@@ -1,0 +1,154 @@
+{
+  "count": 3,
+  "next": null,
+  "previous": null,
+  "page_size": 10,
+  "page": 1,
+  "results": [
+    {
+      "id": 4,
+      "url": "/api/awx/v1/role_team_assignments/4/",
+      "related": {
+        "created_by": "/api/awx/v1/teams/3/",
+        "role_definition": "/api/awx/v1/role_definitions/12/",
+        "team": "/api/awx/v1/teams/81/"
+      },
+      "summary_fields": {
+        "created_by": {
+          "id": 3,
+          "teamname": "dev",
+          "email": "",
+          "first_name": "",
+          "last_name": "",
+          "is_superteam": true
+        },
+        "object_role": {
+          "id": 4
+        },
+        "role_definition": {
+          "id": 12,
+          "name": "Credential Type Admin",
+          "description": "Has all permissions to a single credential type",
+          "managed": true
+        },
+        "team": {
+          "id": 81,
+          "type": "team",
+          "url": "/api/v2/teams/81/",
+          "created": "2023-02-10T15:08:32.547728Z",
+          "modified": "2023-02-10T15:08:32.547752Z",
+          "name": "Team 2 Org 0",
+          "description": "This is a description",
+          "organization": 2
+        },
+        "content_object": {
+          "id": "2",
+          "name": "Container Registry"
+        }
+      },
+      "created": "2024-04-24T17:43:12.251824Z",
+      "created_by": 3,
+      "content_type": "awx.credentialtype",
+      "object_id": "2",
+      "role_definition": 12,
+      "team": 81
+    },
+    {
+      "id": 81,
+      "url": "/api/awx/v1/role_team_assignments/5/",
+      "related": {
+        "created_by": "/api/awx/v1/teams/3/",
+        "role_definition": "/api/awx/v1/role_definitions/12/",
+        "team": "/api/awx/v1/teams/81/"
+      },
+      "summary_fields": {
+        "created_by": {
+          "id": 3,
+          "teamname": "dev",
+          "email": "",
+          "first_name": "",
+          "last_name": "",
+          "is_superteam": true
+        },
+        "object_role": {
+          "id": 5
+        },
+        "role_definition": {
+          "id": 12,
+          "name": "Credential Type Admin",
+          "description": "Has all permissions to a single credential type",
+          "managed": true
+        },
+        "team": {
+          "id": 81,
+          "type": "team",
+          "url": "/api/v2/teams/81/",
+          "created": "2023-02-10T15:08:32.547728Z",
+          "modified": "2023-02-10T15:08:32.547752Z",
+          "name": "Team 2 Org 0",
+          "description": "This is a description",
+          "organization": 2
+        },
+        "content_object": {
+          "id": "3",
+          "name": "GPG Public Key"
+        }
+      },
+      "created": "2024-04-24T17:43:12.256177Z",
+      "created_by": 3,
+      "content_type": "awx.credentialtype",
+      "object_id": "3",
+      "role_definition": 12,
+      "team": 81
+    },
+    {
+      "id": 10,
+      "url": "/api/awx/v1/role_team_assignments/10/",
+      "related": {
+        "created_by": "/api/awx/v1/teams/3/",
+        "role_definition": "/api/awx/v1/role_definitions/13/",
+        "team": "/api/awx/v1/teams/81/",
+        "content_object": "/api/awx/v1/projects/1/"
+      },
+      "summary_fields": {
+        "created_by": {
+          "id": 3,
+          "teamname": "dev",
+          "email": "",
+          "first_name": "",
+          "last_name": "",
+          "is_superteam": true
+        },
+        "object_role": {
+          "id": 9
+        },
+        "role_definition": {
+          "id": 13,
+          "name": "Project Admin",
+          "description": "Has all permissions to a single project and its child resources - rulebook",
+          "managed": true
+        },
+        "team": {
+          "id": 81,
+          "type": "team",
+          "url": "/api/v2/teams/81/",
+          "created": "2023-02-10T15:08:32.547728Z",
+          "modified": "2023-02-10T15:08:32.547752Z",
+          "name": "Team 2 Org 0",
+          "description": "This is a description",
+          "organization": 2
+        },
+        "content_object": {
+          "id": "1",
+          "name": "Demo Inventory"
+        }
+      },
+      "created": "2024-04-25T21:19:49.121059Z",
+      "created_by": 3,
+      "content_type": "awx.project",
+      "object_id": "1",
+      "role_definition": 13,
+      "team": 81
+    }
+  ]
+}
