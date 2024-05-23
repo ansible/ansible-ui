@@ -184,7 +184,7 @@ export function NodeEditWizard({ node }: { node: GraphNode }) {
         summary_fields: {
           ...nodeData.resource.summary_fields,
           unified_job_template: {
-            id: Number(resource?.id || 0),
+            id: Number(resource?.id || -1),
             name: nodeName,
             description: getValueBasedOnJobType(
               node_type,
@@ -210,7 +210,6 @@ export function NodeEditWizard({ node }: { node: GraphNode }) {
     node.setLabel(getNodeLabel(nodeName, node_alias));
     node.setData(nodeToEdit);
     node.setState({ modified: true });
-
     controller.setState({ ...controller.getState(), modified: true });
     closeSidebar();
     controller.getGraph().layout();
