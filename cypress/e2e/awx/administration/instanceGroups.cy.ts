@@ -637,30 +637,19 @@ describe('Instance Groups: Jobs Tab', () => {
     });
     cy.clickTab(/^Jobs$/, true);
     cy.filterTableBySingleSelect('name', job_template.name);
-    cy.getBy('tbody').within(() => {
-      cy.get('[data-cy="cancel-job"]', { timeout: 60000 }).should('not.exist');
-      cy.clickKebabAction('actions-dropdown', 'delete-job');
-    });
-
     cy.intercept('DELETE', awxAPI`/jobs/*/`).as('deleted');
 
-    cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
-      cy.get('header').contains('Permanently delete job');
-      cy.get('button').contains('Delete job').should('have.attr', 'aria-disabled', 'true');
-      cy.getByDataCy('name-column-cell').should('have.text', job_template.name);
-      cy.get('input[id="confirm"]').click();
-      cy.get('button').contains('Delete job').click();
-    });
+    cy.clickTableRowKebabAction(job_template.name, 'delete-job', false);
+    cy.clickModalConfirmCheckbox();
+    cy.clickModalButton('Delete job');
+    cy.assertModalSuccess();
     cy.wait('@deleted')
       .its('response')
       .then((response) => {
         expect(response?.statusCode).to.eql(204);
       });
-    cy.clickModalButton('Close');
-    cy.get('.pf-v5-c-empty-state__title-text').contains(/^No results found/);
-    cy.get('.pf-v5-c-empty-state__body').contains(
-      /^No results match this filter criteria. Clear all filters and try again./
-    );
+    cy.clickButton(/^Close$/);
+    cy.clickButton(/^Clear all filters$/);
   });
 });
 

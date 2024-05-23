@@ -48,6 +48,7 @@ export interface JobTemplate
     | 'host_config_key'
     | 'webhook_credential'
     | 'type'
+    | 'webhook_service'
   > {
   id: number;
   host_config_key: string;
@@ -214,6 +215,6 @@ export interface JobTemplate
   webhook_credential: number;
   webhook_url: string;
   webhook_key: string;
-  webhook_service: 'github' | 'gitlab';
+  webhook_service: 'github' | 'gitlab' | 'bitbucket_dc';
   project: number | null;
 }
