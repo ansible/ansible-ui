@@ -1,3 +1,6 @@
+
+import { NotificationTemplate } from '../../../../../frontend/awx/interfaces/NotificationTemplate';
+import { awxAPI } from '../../../../support/formatApiPathForAwx';
 import { randomE2Ename } from '../../../../support/utils';
 
 describe('Notifications: List View', () => {
@@ -90,6 +93,29 @@ describe('Notifications: List View', () => {
 
       cy.contains(`[data-cy="status-column-cell"]`, 'Running');
       cy.contains(`[data-cy="status-column-cell"]`, 'Failed', { timeout: 50000 });
+
+      // test success message
+      cy.intercept('GET', `${awxAPI}/notification_templates/?name={notificationName}&order_by=name&page=1&page_size=10`, (req) => {
+        debugger;
+        req.reply((res) => {
+         res.body.summary_fields.recent_notifications.forEach((notification) => {
+          if (notification.status === 'failed')
+            {
+              debugger;
+              notification.status = 'successful';
+            }
+         });
+          debugger;
+          return res;
+        });
+      }).as('getItems');
+
+      cy.getByDataCy('actions-column-cell').within(() => {
+        cy.getByDataCy('test-notifier').click();
+      });
+
+      cy.contains(`[data-cy="status-column-cell"]`, 'Running');
+      cy.contains(`[data-cy="status-column-cell"]`, 'Successful', { timeout: 50000 });  
     });
   });
 
