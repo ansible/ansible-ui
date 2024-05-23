@@ -6,6 +6,7 @@ import {
   PageFormSelect,
   PageFormSubmitHandler,
   PageHeader,
+  PageLayout,
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../framework';
@@ -56,7 +57,7 @@ function CreateUserTokenInternal(props: { user: AwxUser; onCreate: (newToken: To
   };
 
   return (
-    <>
+    <PageLayout>
       <PageHeader
         title={t('Create Token')}
         breadcrumbs={[
@@ -79,7 +80,7 @@ function CreateUserTokenInternal(props: { user: AwxUser; onCreate: (newToken: To
       >
         <UserTokenFormInputs />
       </AwxPageForm>
-    </>
+    </PageLayout>
   );
 }
 

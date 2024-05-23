@@ -9,7 +9,6 @@ import {
   PageHeader,
   PageLayout,
   useGetPageUrl,
-  usePageAlertToaster,
   usePageNavigate,
 } from '../../../../framework';
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
@@ -74,8 +73,7 @@ export function CreateCredential() {
   const getPageUrl = useGetPageUrl();
   const [selectedCredentialTypeId, setSelectedCredentialTypeId] = useState<number>(0);
   const [watchedSubFormFields, setWatchedSubFormFields] = useState<unknown[]>([]);
-  const alertToaster = usePageAlertToaster();
-  const openCredentialsExternalTestModal = useCredentialsTestModal(alertToaster);
+  const openCredentialsExternalTestModal = useCredentialsTestModal();
   const [credentialPluginValues, setCredentialPluginValues] = useState<
     CredentialPluginsInputSource[]
   >([]);
@@ -252,8 +250,7 @@ export function EditCredential() {
       return updatedValues;
     });
   }, [credentialPluginValues]);
-  const alertToaster = usePageAlertToaster();
-  const openCredentialsExternalTestModal = useCredentialsTestModal(alertToaster);
+  const openCredentialsExternalTestModal = useCredentialsTestModal();
   const [isTestButtonEnabled, setIsTestButtonEnabled] = useState(false);
   const [isTestButtonEnabledSubForm, setIsTestButtonEnabledSubForm] = useState(false);
   const [watchedSubFormFields, setWatchedSubFormFields] = useState<unknown[]>([]);
