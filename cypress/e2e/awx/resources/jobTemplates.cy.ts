@@ -422,7 +422,7 @@ describe('Job Templates Tests', function () {
       cy.getByDataCy('enabled-options').contains('Provisioning Callbacks').should('not.exist');
     });
 
-    it.skip('can edit a job template to enable webhook, regenerate webhook key and set webhook credentials', function () {
+    it('can edit a job template to enable webhook, regenerate webhook key and set webhook credentials', function () {
       cy.createAWXCredential({
         kind: 'github_token',
         organization: (this.globalOrganization as Organization).id,
@@ -432,7 +432,13 @@ describe('Job Templates Tests', function () {
         let webhookKey: string;
         cy.intercept('GET', awxAPI`/credential_types/*`).as('getCredTypes');
 
-        cy.visit(`templates/job_template/${jobTemplate.id}/edit`);
+        cy.navigateTo('awx', 'templates');
+        cy.verifyPageTitle('Templates');
+        cy.filterTableByMultiSelect('name', [jobTemplate.name]);
+        cy.clickTableRowAction('name', jobTemplate.name, 'edit-template', {
+          inKebab: false,
+          disableFilter: true,
+        });
 
         cy.getByDataCy('isWebhookEnabled').click();
         cy.selectDropdownOptionByResourceName('webhook-service', 'GitHub');
@@ -442,7 +448,6 @@ describe('Job Templates Tests', function () {
         // modal is closed instanly, possible cause: https://issues.redhat.com/browse/AAP-23766
         cy.get('[data-ouia-component-id="lookup-webhook_credential.name-button"]').click();
         cy.get('[data-ouia-component-id="lookup-webhook_credential.name-button"]').click();
-
         cy.wait('@getCredType');
 
         cy.getModal().within(() => {
