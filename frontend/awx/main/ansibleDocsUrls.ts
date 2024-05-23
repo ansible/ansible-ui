@@ -16,5 +16,5 @@ export const ansibleDocUrls: { [key: string]: string } = {
   constructed:
     'https://docs.ansible.com/ansible/latest/collections/ansible/builtin/constructed_inventory.html',
   terraform:
-    'https://github.com/ansible-collections/cloud.terraform/blob/main/plugins/inventory/terraform_state.py',
+    'https://console.redhat.com/ansible/automation-hub/repo/published/cloud/terraform/content/inventory/terraform_state/',
 };
