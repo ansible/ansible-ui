@@ -73,11 +73,24 @@ describe('Notifications: List View', () => {
   it.skip('can edit a Twilio Notification and assert the edited info in the list view', () => {});
   it.skip('can edit a Webhook Notification and assert the edited info in the list view', () => {});*/
 
-  it.skip('can test a Notification and assert the successful test in the list view', () => {
+  it.only('can test a Notification and assert the successful test in the list view', () => {
     //Utilize a notification of any type created in the beforeEach hook
     //Assert the existence of the notification before test
     //Assert the test action and the fact that it is happening from the list view
     //Assert the behavior in the UI following the test action
+    const notificationName = randomE2Ename();
+    cy.createNotificationTemplate(notificationName).then((notificationTemplate) => {
+      cy.getByDataCy(`awx-notification-templates`).click({ force: true });
+      cy.filterTableByMultiSelect('name', [notificationTemplate.name]);
+
+      // test fail message
+      cy.getByDataCy('actions-column-cell').within(() => {
+        cy.getByDataCy('test-notifier').click();
+      });
+
+      cy.contains(`[data-cy="status-column-cell"]`, 'Running');
+      cy.contains(`[data-cy="status-column-cell"]`, 'Failed', { timeout: 50000 });
+    });
   });
 
   it('can copy a Notification and assert that the copy action completed successfully', () => {
