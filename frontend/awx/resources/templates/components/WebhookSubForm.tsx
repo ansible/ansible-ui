@@ -14,6 +14,7 @@ import { awxAPI } from '../../../common/api/awx-utils';
 import { CredentialType } from '../../../interfaces/CredentialType';
 import { JobTemplateForm } from '../../../interfaces/JobTemplateForm';
 import { WorkflowJobTemplateForm } from '../../../interfaces/WorkflowJobTemplate';
+import { useWebhookServiceOptions } from './WebhookService';
 
 interface WebhookKey {
   webhook_key: string;
@@ -31,6 +32,7 @@ export function WebhookSubForm(props: {
   const { templateType } = props;
 
   const { pathname } = useLocation();
+  const webhookServices = useWebhookServiceOptions();
 
   const { data: webhookCredentialType } = useGet<AwxItemsResponse<CredentialType>>(
     awxAPI`/credential_types/`,
@@ -86,10 +88,7 @@ export function WebhookSubForm(props: {
       <PageFormSelect<JobTemplateForm>
         name="webhook_service"
         label={t('Webhook service')}
-        options={[
-          { label: 'GitHub', value: 'github' },
-          { label: 'GitLab', value: 'gitlab' },
-        ]}
+        options={webhookServices}
         isRequired={isWebhookEnabled}
         placeholderText={t('Select a webhook service')}
       />
