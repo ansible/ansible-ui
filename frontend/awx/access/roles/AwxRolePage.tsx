@@ -44,7 +44,7 @@ export function AwxRolePage(props: {
           persistentFilterKey: 'awx-roles',
         }}
         tabs={[{ label: t('Details'), page: AwxRoute.RoleDetails }]}
-        params={{ id: params.id ?? '', resourceType: params.resourceType ?? '' }}
+        params={{ id: params.id ?? '' }}
       />
     </PageLayout>
   );

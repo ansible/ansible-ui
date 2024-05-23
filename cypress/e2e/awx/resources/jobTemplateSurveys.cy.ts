@@ -36,7 +36,7 @@ describe('Job Templates Surveys', function () {
             jobTemplate = jT;
             reusableTemplateSurveyTestSuite = new ReusableTemplateSurveyTestSuite(jobTemplate);
 
-            cy.visit(`/templates/job_template/${jobTemplate.id}/survey`);
+            cy.visit(`/templates/job-template/${jobTemplate.id}/survey`);
           });
         }
       );
@@ -74,7 +74,7 @@ describe('Job Templates Surveys', function () {
             jobTemplate = jT;
             reusableTemplateSurveyTestSuite = new ReusableTemplateSurveyTestSuite(jobTemplate);
 
-            cy.visit(`/templates/job_template/${jobTemplate.id}/survey`);
+            cy.visit(`/templates/job-template/${jobTemplate.id}/survey`);
           });
         }
       );

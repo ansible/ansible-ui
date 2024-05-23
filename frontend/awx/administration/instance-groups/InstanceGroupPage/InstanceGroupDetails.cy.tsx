@@ -9,8 +9,8 @@ describe('Instance Group Details', () => {
       { fixture: 'instance_group.json' }
     );
     cy.mount(<InstanceGroupDetails />, {
-      path: 'instance_groups/:id/details',
-      initialEntries: ['/instance_groups/1/details'],
+      path: 'instance-groups/:id/details',
+      initialEntries: ['/instance-groups/1/details'],
     });
     cy.fixture('instance_group').then((instance_group: InstanceGroup) => {
       cy.get('[data-cy="name"]').should('have.text', instance_group.name);
@@ -42,8 +42,8 @@ describe('Instance Group Details', () => {
       { fixture: 'container_group.json' }
     );
     cy.mount(<InstanceGroupDetails />, {
-      path: 'instance_groups/:id/details',
-      initialEntries: ['/instance_groups/2/details'],
+      path: 'instance-groups/:id/details',
+      initialEntries: ['/instance-groups/2/details'],
     });
     cy.fixture('container_group').then((container_group: InstanceGroup) => {
       cy.get('[data-cy="name"]').should('have.text', container_group.name);

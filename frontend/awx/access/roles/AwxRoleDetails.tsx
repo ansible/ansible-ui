@@ -8,7 +8,7 @@ import { awxAPI } from '../../common/api/awx-utils';
 
 export function AwxRoleDetails() {
   const columns = useAwxRoleColumns();
-  const params = useParams<{ id: string; resourceType: string }>();
+  const params = useParams<{ id: string }>();
   const {
     data: role,
     error,

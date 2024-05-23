@@ -68,7 +68,7 @@ export function getScheduleUrl(job: UnifiedJob) {
           : '';
         break;
       case 'job':
-        scheduleUrl = `/templates/job_template/${templateId}/schedules/${scheduleId}/details`;
+        scheduleUrl = `/templates/job-template/${templateId}/schedules/${scheduleId}/details`;
         break;
       case 'project_update':
         scheduleUrl = `/projects/${templateId}/schedules/${scheduleId}/details`;
@@ -77,7 +77,7 @@ export function getScheduleUrl(job: UnifiedJob) {
         scheduleUrl = `/management_jobs/${templateId}/schedules/${scheduleId}/details`;
         break;
       case 'workflow_job':
-        scheduleUrl = `/templates/workflow_job_template/${templateId}/schedules/${scheduleId}/details`;
+        scheduleUrl = `/templates/workflow-job-template/${templateId}/schedules/${scheduleId}/details`;
         break;
       default:
         break;
@@ -112,9 +112,9 @@ export function getLaunchedByDetails(job: UnifiedJob) {
     case 'webhook':
       value = 'Webhook';
       link = jobTemplate
-        ? `/templates/job_template/${jobTemplate.id}/details`
+        ? `/templates/job-template/${jobTemplate.id}/details`
         : workflowJT
-          ? `/templates/workflow_job_template/${workflowJT.id}/details`
+          ? `/templates/workflow-job-template/${workflowJT.id}/details`
           : undefined;
       break;
     case 'scheduled':

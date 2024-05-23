@@ -16,10 +16,10 @@ export function useDeleteSurvey(props: {
   const deleteRequest = useDeleteRequest();
 
   const jobTemplateSurveyId = useMatch(
-    '/templates/job_template/:id/survey'
+    '/templates/job-template/:id/survey'
   )?.params?.id?.toString();
   const workflowTemplateSurveyId = useMatch(
-    '/templates/workflow_job_template/:id/survey'
+    '/templates/workflow-job-template/:id/survey'
   )?.params?.id?.toString();
 
   const surveySpecEndpoint = jobTemplateSurveyId

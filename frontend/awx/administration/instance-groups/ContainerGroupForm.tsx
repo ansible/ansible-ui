@@ -62,7 +62,7 @@ export function CreateContainerGroup() {
       is_container_group: true,
     });
     pageNavigate(AwxRoute.InstanceGroupDetails, {
-      params: { instanceType: 'container-group', id: containerGroup.id },
+      params: { id: containerGroup.id },
     });
   };
   if (isLoading) {
@@ -143,7 +143,7 @@ export function EditContainerGroup() {
       }
     );
     pageNavigate(AwxRoute.InstanceGroupDetails, {
-      params: { instanceType: 'container-group', id: updateContainerGroup.id },
+      params: { id: updateContainerGroup.id },
     });
   };
   return (

@@ -133,7 +133,7 @@ export function useAwxInventoryRoutes() {
         },
         {
           id: AwxRoute.InventoryGroupRelatedGroupsCreate,
-          path: ':inventory_type/:id/groups/:group_id/nested_groups/add',
+          path: ':inventory_type/:id/groups/:group_id/nested-groups/add',
           element: <CreateRelatedGroup />,
         },
         {
@@ -153,19 +153,19 @@ export function useAwxInventoryRoutes() {
             },
             {
               id: AwxRoute.InventoryGroupRelatedGroups,
-              path: 'nested_groups',
+              path: 'nested-groups',
               element: <GroupRelatedGroups />,
             },
             {
               id: AwxRoute.InventoryGroupHost,
-              path: 'nested_hosts',
+              path: 'nested-hosts',
               element: <GroupHosts />,
             },
           ],
         },
         {
           id: AwxRoute.InventoryGroupHostAdd,
-          path: ':inventory_type/:id/group/:group_id/nested_hosts/add',
+          path: ':inventory_type/:id/group/:group_id/nested-hosts/add',
           element: <CreateHost />,
         },
         {
@@ -264,12 +264,12 @@ export function useAwxInventoryRoutes() {
         },
         {
           id: AwxRoute.CreateSmartInventory,
-          path: 'smart_inventory/create',
+          path: 'smart-inventory/create',
           element: <CreateInventory inventoryKind="smart" />,
         },
         {
           id: AwxRoute.CreateConstructedInventory,
-          path: 'constructed_inventory/create',
+          path: 'constructed-inventory/create',
           element: <CreateInventory inventoryKind="constructed" />,
         },
         {
