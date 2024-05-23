@@ -19,6 +19,8 @@ import {
   useRestartRulebookActivations,
 } from './useControlRulebookActivations';
 import { useDeleteRulebookActivations } from './useDeleteRulebookActivations';
+import { useOptions } from '../../../common/crud/useOptions';
+import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 
 export function useRulebookActivationsActions(view: IEdaView<EdaRulebookActivation>) {
   const { t } = useTranslation();
@@ -26,6 +28,8 @@ export function useRulebookActivationsActions(view: IEdaView<EdaRulebookActivati
   const deleteRulebookActivations = useDeleteRulebookActivations(view.unselectItemsAndRefresh);
   const disableRulebookActivations = useDisableRulebookActivations(view.unselectItemsAndRefresh);
   const restartRulebookActivations = useRestartRulebookActivations(view.unselectItemsAndRefresh);
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(edaAPI`/activations/`);
+  const canCreateActivations = Boolean(data && data.actions && data.actions['POST']);
   const alertToaster = usePageAlertToaster();
 
   const enableRulebookActivation: (activation: EdaRulebookActivation) => Promise<void> =
@@ -66,6 +70,11 @@ export function useRulebookActivationsActions(view: IEdaView<EdaRulebookActivati
         isPinned: true,
         icon: PlusCircleIcon,
         label: t('Create rulebook activation'),
+        isDisabled: canCreateActivations
+          ? undefined
+          : t(
+              'You do not have permission to create a rulebook activation. Please contact your organization administrator if there is an issue with your access.'
+            ),
         onClick: () => pageNavigate(EdaRoute.CreateRulebookActivation),
       },
       {
@@ -107,11 +116,12 @@ export function useRulebookActivationsActions(view: IEdaView<EdaRulebookActivati
     ];
     return actions;
   }, [
-    deleteRulebookActivations,
+    t,
+    canCreateActivations,
+    pageNavigate,
     enableRulebookActivations,
     disableRulebookActivations,
     restartRulebookActivations,
-    pageNavigate,
-    t,
+    deleteRulebookActivations,
   ]);
 }

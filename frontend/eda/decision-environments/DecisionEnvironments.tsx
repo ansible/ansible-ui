@@ -9,7 +9,9 @@ import { useDecisionEnvironmentActions } from './hooks/useDecisionEnvironmentAct
 import { useDecisionEnvironmentsColumns } from './hooks/useDecisionEnvironmentColumns';
 import { useDecisionEnvironmentFilters } from './hooks/useDecisionEnvironmentFilters';
 import { useDecisionEnvironmentsActions } from './hooks/useDecisionEnvironmentsActions';
-import { PlusCircleIcon } from '@patternfly/react-icons';
+import { CubesIcon, PlusCircleIcon } from '@patternfly/react-icons';
+import { useOptions } from '../../common/crud/useOptions';
+import { ActionsResponse, OptionsResponse } from '../interfaces/OptionsResponse';
 
 export function DecisionEnvironments() {
   const { t } = useTranslation();
@@ -22,6 +24,8 @@ export function DecisionEnvironments() {
     tableColumns,
   });
   const toolbarActions = useDecisionEnvironmentsActions(view);
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(edaAPI`/decision-environments/`);
+  const canCreateDE = Boolean(data && data.actions && data.actions['POST']);
   const rowActions = useDecisionEnvironmentActions(view);
   return (
     <PageLayout>
@@ -37,13 +41,24 @@ export function DecisionEnvironments() {
         defaultTableView={PageTableViewTypeE.Cards}
         rowActions={rowActions}
         errorStateTitle={t('Error loading decision environments')}
-        emptyStateTitle={t(
-          'There are currently no decision environments created for your organization.'
-        )}
-        emptyStateDescription={t('Please create a decision environment by using the button below.')}
+        emptyStateTitle={
+          canCreateDE
+            ? t('There are currently no decision environments created for your organization.')
+            : t('You do not have permission to create a decision environment.')
+        }
+        emptyStateDescription={
+          canCreateDE
+            ? t('Please create a decision environment by using the button below.')
+            : t(
+                'Please contact your organization administrator if there is an issue with your access.'
+              )
+        }
+        emptyStateIcon={canCreateDE ? undefined : CubesIcon}
         emptyStateButtonIcon={<PlusCircleIcon />}
-        emptyStateButtonText={t('Create decision environment')}
-        emptyStateButtonClick={() => pageNavigate(EdaRoute.CreateDecisionEnvironment)}
+        emptyStateButtonText={canCreateDE ? t('Create decision environment') : undefined}
+        emptyStateButtonClick={
+          canCreateDE ? () => pageNavigate(EdaRoute.CreateDecisionEnvironment) : undefined
+        }
         {...view}
         defaultSubtitle={t('Decision Environment')}
       />
