@@ -37,6 +37,8 @@ export interface NotificationTemplate
       {
         id: number;
         status: string;
+        error: string;
+        created: string;
       },
     ];
     user_capabilities: {
