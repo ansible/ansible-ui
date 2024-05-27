@@ -20,6 +20,7 @@ import { ButtonVariant } from '@patternfly/react-core';
 import { useDisassociateGroups } from './useDisassociateGroups';
 import { GroupSelectDialog } from './useGroupSelectDialog';
 import { usePostRequest } from '../../../../common/crud/usePostRequest';
+import { useRunCommandAction } from '../../inventories/hooks/useInventoriesGroupsToolbarActions';
 
 export function useRelatedGroupsToolbarActions(view: IAwxView<InventoryGroup>) {
   const [_, setDialog] = usePageDialog();
@@ -32,12 +33,7 @@ export function useRelatedGroupsToolbarActions(view: IAwxView<InventoryGroup>) {
 
   const isConstructed = params.inventory_type === 'constructed_inventory';
 
-  const adhocOptions = useOptions<OptionsResponse<ActionsResponse>>(
-    awxAPI`/inventories/${params.id ?? ''}/ad_hoc_commands/`
-  ).data;
-  const canRunAdHocCommand = Boolean(
-    adhocOptions && adhocOptions.actions && adhocOptions.actions['POST']
-  );
+  const runCommandAction = useRunCommandAction<InventoryGroup>(params);
 
   const groupOptions = useOptions<OptionsResponse<ActionsResponse>>(
     awxAPI`/inventories/${params.id ?? ''}/groups/`
@@ -114,20 +110,7 @@ export function useRelatedGroupsToolbarActions(view: IAwxView<InventoryGroup>) {
       });
     }
 
-    items.push({
-      type: PageActionType.Button,
-      selection: PageActionSelection.None,
-      variant: ButtonVariant.secondary,
-      isPinned: true,
-      label: t('Run Command useRelatedGroupsToolbarActions'),
-      onClick: () => pageNavigate(AwxRoute.Inventories),
-      isDisabled: () =>
-        canRunAdHocCommand
-          ? undefined
-          : t(
-              'You do not have permission to run an ad hoc command. Please contact your organization administrator if there is an issue with your access.'
-            ),
-    });
+    items.push(runCommandAction);
 
     if (isConstructed === false) {
       items.push({ type: PageActionType.Seperator });
@@ -150,7 +133,7 @@ export function useRelatedGroupsToolbarActions(view: IAwxView<InventoryGroup>) {
     params.inventory_type,
     params.id,
     canCreateGroup,
-    canRunAdHocCommand,
+    runCommandAction,
     view.selectedItems.length,
     params.group_id,
     onSelectedGroups,
