@@ -72,7 +72,7 @@ export function useHostsGroupsToolbarActions(
         variant: ButtonVariant.secondary,
         isHidden: () => hostPage,
         isPinned: true,
-        label: t('Run Command'),
+        label: t('Run Command useHostsGroupsToolbarActions'),
         onClick: () => pageNavigate(AwxRoute.Inventories),
         isDisabled: () =>
           canRunAdHocCommand

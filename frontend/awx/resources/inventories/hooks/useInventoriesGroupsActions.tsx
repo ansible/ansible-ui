@@ -54,7 +54,7 @@ export function useInventoriesGroupsActions() {
         type: PageActionType.Button,
         selection: PageActionSelection.None,
         variant: ButtonVariant.secondary,
-        label: t('Run Command'),
+        label: t('Run Command useInventoriesGroupsActions'),
         onClick: () => pageNavigate(AwxRoute.Inventories),
         isDisabled: () =>
           canRunAdHocCommand

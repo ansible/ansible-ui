@@ -119,7 +119,7 @@ export function useRelatedGroupsToolbarActions(view: IAwxView<InventoryGroup>) {
       selection: PageActionSelection.None,
       variant: ButtonVariant.secondary,
       isPinned: true,
-      label: t('Run Command'),
+      label: t('Run Command useRelatedGroupsToolbarActions'),
       onClick: () => pageNavigate(AwxRoute.Inventories),
       isDisabled: () =>
         canRunAdHocCommand

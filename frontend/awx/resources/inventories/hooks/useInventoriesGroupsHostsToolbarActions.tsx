@@ -109,7 +109,7 @@ export function useInventoriesGroupsHostsToolbarActions(view: IAwxView<AwxHost>)
         selection: PageActionSelection.None,
         variant: ButtonVariant.secondary,
         isPinned: true,
-        label: t('Run Command'),
+        label: t('Run Command useInventoriesGroupsHostsToolbarActions'),
         onClick: () => pageNavigate(AwxRoute.Inventories),
         isDisabled: () =>
           canRunAdHocCommand
