@@ -10,23 +10,15 @@ import { useMemo } from 'react';
 import { PencilAltIcon } from '@patternfly/react-icons';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { cannotEditResource } from '../../../../common/utils/RBAChelpers';
-import { ButtonVariant } from '@patternfly/react-core';
-import { useOptions } from '../../../../common/crud/useOptions';
-import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
-import { awxAPI } from '../../../common/api/awx-utils';
 import { useParams } from 'react-router-dom';
+import { useRunCommandAction } from './useInventoriesGroupsToolbarActions';
 
 export function useInventoriesGroupsActions() {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const params = useParams<{ id: string; inventory_type: string }>();
 
-  const adHocOptions = useOptions<OptionsResponse<ActionsResponse>>(
-    awxAPI`/inventories/${params.id ?? ''}/ad_hoc_commands/`
-  ).data;
-  const canRunAdHocCommand = Boolean(
-    adHocOptions && adHocOptions.actions && adHocOptions.actions['POST']
-  );
+  const runCommandAction = useRunCommandAction<InventoryGroup>(params);
 
   return useMemo<IPageAction<InventoryGroup>[]>(() => {
     if (params.inventory_type === 'constructed_inventory') {
@@ -50,19 +42,7 @@ export function useInventoriesGroupsActions() {
           }),
         isDisabled: (group) => cannotEditResource(group, t),
       },
-      {
-        type: PageActionType.Button,
-        selection: PageActionSelection.None,
-        variant: ButtonVariant.secondary,
-        label: t('Run Command useInventoriesGroupsActions'),
-        onClick: () => pageNavigate(AwxRoute.Inventories),
-        isDisabled: () =>
-          canRunAdHocCommand
-            ? undefined
-            : t(
-                'You do not have permission to run an ad hoc command. Please contact your organization administrator if there is an issue with your access.'
-              ),
-      },
+      runCommandAction,
     ];
-  }, [t, pageNavigate, canRunAdHocCommand, params.inventory_type]);
+  }, [t, pageNavigate, runCommandAction, params.inventory_type]);
 }
