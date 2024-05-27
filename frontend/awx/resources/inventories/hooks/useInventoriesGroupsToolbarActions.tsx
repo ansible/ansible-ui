@@ -28,19 +28,15 @@ export function useInventoriesGroupsToolbarActions(view: IAwxView<InventoryGroup
   const deleteGroups = useDeleteGroups(onDelete);
   const params = useParams<{ id: string; inventory_type: string }>();
 
-  const adhocOptions = useOptions<OptionsResponse<ActionsResponse>>(
-    awxAPI`/inventories/${params.id ?? ''}/ad_hoc_commands/`
-  ).data;
-  const canRunAdHocCommand = Boolean(
-    adhocOptions && adhocOptions.actions && adhocOptions.actions['POST']
-  );
-
   const groupOptions = useOptions<OptionsResponse<ActionsResponse>>(
     awxAPI`/inventories/${params.id ?? ''}/groups/`
   ).data;
+
   const canCreateGroup = Boolean(
     groupOptions && groupOptions.actions && groupOptions.actions['POST']
   );
+
+  const adHocCommand = useRunCommandAction(params);
 
   return useMemo<IPageAction<InventoryGroup>[]>(() => {
     const actions: IPageAction<InventoryGroup>[] = [];
@@ -66,23 +62,7 @@ export function useInventoriesGroupsToolbarActions(view: IAwxView<InventoryGroup
       });
     }
 
-    actions.push({
-      type: PageActionType.Button,
-      selection: PageActionSelection.None,
-      variant: ButtonVariant.secondary,
-      isPinned: true,
-      label: t('Run Command'),
-      onClick: () =>
-        pageNavigate(AwxRoute.InventoryRunCommand, {
-          params: { inventory_type: params.inventory_type, id: params.id },
-        }),
-      isDisabled: () =>
-        canRunAdHocCommand
-          ? undefined
-          : t(
-              'You do not have permission to run an ad hoc command. Please contact your organization administrator if there is an issue with your access.'
-            ),
-    });
+    actions.push(adHocCommand);
 
     if (params.inventory_type === 'inventory') {
       actions.push({ type: PageActionType.Seperator });
@@ -108,7 +88,42 @@ export function useInventoriesGroupsToolbarActions(view: IAwxView<InventoryGroup
     params.inventory_type,
     params.id,
     canCreateGroup,
-    canRunAdHocCommand,
+    adHocCommand,
     view.selectedItems.length,
   ]);
+}
+
+export function useRunCommandAction(params: {
+  inventory_type?: string;
+  id?: string;
+}): IPageAction<InventoryGroup> {
+  const pageNavigate = usePageNavigate();
+  const { t } = useTranslation();
+
+  const adhocOptions = useOptions<OptionsResponse<ActionsResponse>>(
+    awxAPI`/inventories/${params.id ?? ''}/ad_hoc_commands/`
+  ).data;
+  const canRunAdHocCommand = Boolean(
+    adhocOptions && adhocOptions.actions && adhocOptions.actions['POST']
+  );
+
+  return useMemo<IPageAction<InventoryGroup>>(() => {
+    return {
+      type: PageActionType.Button,
+      selection: PageActionSelection.None,
+      variant: ButtonVariant.secondary,
+      isPinned: true,
+      label: t('Run Command'),
+      onClick: () =>
+        pageNavigate(AwxRoute.InventoryRunCommand, {
+          params: { inventory_type: params.inventory_type, id: params.id },
+        }),
+      isDisabled: () =>
+        canRunAdHocCommand
+          ? undefined
+          : t(
+              'You do not have permission to run an ad hoc command. Please contact your organization administrator if there is an issue with your access.'
+            ),
+    };
+  }, [t, pageNavigate, params.inventory_type, params.id, canRunAdHocCommand]);
 }
