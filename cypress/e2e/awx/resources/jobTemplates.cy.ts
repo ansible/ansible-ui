@@ -6,6 +6,7 @@ import { NotificationTemplate } from '../../../../frontend/awx/interfaces/Notifi
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
+import { randomE2Ename } from '../../../support/utils';
 
 describe('Job Templates Tests', function () {
   before(function () {
@@ -754,10 +755,7 @@ describe('Job Templates Tests', function () {
           }).then((jt) => {
             jobTemplate = jt;
 
-            cy.createNotificationTemplate({
-              organization: (this.globalOrganization as Organization).id,
-              notification_type: 'email',
-            }).then((n) => {
+            cy.createNotificationTemplate(randomE2Ename()).then((n) => {
               notification = n;
             });
           });
@@ -772,7 +770,7 @@ describe('Job Templates Tests', function () {
     });
 
     it('can navigate to the Job Templates -> Notifications list and then to the details page of the Notification', () => {
-      cy.visit(`/templates/job_template/${jobTemplate.id}/details`);
+      cy.visit(`/templates/job-template/${jobTemplate.id}/details`);
       cy.clickTab('Notifications', true);
       cy.filterTableByTextFilter('name', notification.name);
       cy.getByDataCy('name-column-cell').contains(notification.name).click();
@@ -781,17 +779,17 @@ describe('Job Templates Tests', function () {
     });
 
     it('can toggle the Job Templates -> Notification on and off for job start', () => {
-      cy.visit(`/templates/job_template/${jobTemplate.id}/notifications`);
+      cy.visit(`/templates/job-template/${jobTemplate.id}/notifications`);
       toggleNotificationType('start');
     });
 
     it('can toggle the Job Templates -> Notification on and off for job success', () => {
-      cy.visit(`/templates/job_template/${jobTemplate.id}/notifications`);
+      cy.visit(`/templates/job-template/${jobTemplate.id}/notifications`);
       toggleNotificationType('success');
     });
 
     it('can toggle the Job Templates -> Notification on and off for job failure', () => {
-      cy.visit(`/templates/job_template/${jobTemplate.id}/notifications`);
+      cy.visit(`/templates/job-template/${jobTemplate.id}/notifications`);
       toggleNotificationType('failure');
     });
   });
