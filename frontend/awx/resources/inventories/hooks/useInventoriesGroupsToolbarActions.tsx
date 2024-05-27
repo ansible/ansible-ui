@@ -113,7 +113,7 @@ export function useRunCommandAction<T extends object>(params: {
       selection: PageActionSelection.None,
       variant: ButtonVariant.secondary,
       isPinned: options?.isPinned !== undefined ? options?.isPinned : true,
-      label: t('Run Command hook'),
+      label: t('Run Command'),
       onClick: () =>
         pageNavigate(AwxRoute.InventoryRunCommand, {
           params: { inventory_type: params.inventory_type, id: params.id },
