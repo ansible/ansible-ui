@@ -17,6 +17,7 @@ import { AwxHost } from '../../../interfaces/AwxHost';
 import { OptionsResponse, ActionsResponse } from '../../../interfaces/OptionsResponse';
 import { IAwxView } from '../../../common/useAwxView';
 import { useDeleteHosts } from '../../hosts/hooks/useDeleteHosts';
+import { useRunCommandAction } from './useInventoriesGroupsToolbarActions';
 
 export function useInventoriesHostsToolbarActions(view: IAwxView<AwxHost>) {
   const { t } = useTranslation();
@@ -25,12 +26,7 @@ export function useInventoriesHostsToolbarActions(view: IAwxView<AwxHost>) {
   const params = useParams<{ id: string; inventory_type: string }>();
   const inventory_type = params.inventory_type;
 
-  const adhocOptions = useOptions<OptionsResponse<ActionsResponse>>(
-    awxAPI`/inventories/${params.id ?? ''}/ad_hoc_commands/`
-  ).data;
-  const canRunAdHocCommand = Boolean(
-    adhocOptions && adhocOptions.actions && adhocOptions.actions['POST']
-  );
+  const runCommandAction = useRunCommandAction<AwxHost>(params);
 
   const hostOptions = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/hosts/`).data;
   const canCreateHost = Boolean(hostOptions && hostOptions.actions && hostOptions.actions['POST']);
@@ -59,23 +55,7 @@ export function useInventoriesHostsToolbarActions(view: IAwxView<AwxHost>) {
       });
     }
 
-    actions.push({
-      type: PageActionType.Button,
-      selection: PageActionSelection.None,
-      variant: ButtonVariant.secondary,
-      isPinned: true,
-      label: t('Run Command useInventoriesHostsToolbarActions'),
-      onClick: () =>
-        pageNavigate(AwxRoute.InventoryRunCommand, {
-          params: { inventory_type: params.inventory_type, id: params.id },
-        }),
-      isDisabled: () =>
-        canRunAdHocCommand
-          ? undefined
-          : t(
-              'You do not have permission to run an ad hoc command. Please contact your organization administrator if there is an issue with your access.'
-            ),
-    });
+    actions.push(runCommandAction);
 
     if (inventory_type === 'inventory') {
       actions.push({ type: PageActionType.Seperator });
@@ -97,7 +77,7 @@ export function useInventoriesHostsToolbarActions(view: IAwxView<AwxHost>) {
     params.inventory_type,
     params.id,
     canCreateHost,
-    canRunAdHocCommand,
+    runCommandAction,
     inventory_type,
   ]);
 }

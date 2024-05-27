@@ -36,7 +36,7 @@ export function useInventoriesGroupsToolbarActions(view: IAwxView<InventoryGroup
     groupOptions && groupOptions.actions && groupOptions.actions['POST']
   );
 
-  const adHocCommand = useRunCommandAction(params);
+  const adHocCommand = useRunCommandAction<InventoryGroup>(params);
 
   return useMemo<IPageAction<InventoryGroup>[]>(() => {
     const actions: IPageAction<InventoryGroup>[] = [];
@@ -93,10 +93,10 @@ export function useInventoriesGroupsToolbarActions(view: IAwxView<InventoryGroup
   ]);
 }
 
-export function useRunCommandAction(params: {
+export function useRunCommandAction<T extends object>(params: {
   inventory_type?: string;
   id?: string;
-}): IPageAction<InventoryGroup> {
+}): IPageAction<T> {
   const pageNavigate = usePageNavigate();
   const { t } = useTranslation();
 
@@ -107,7 +107,7 @@ export function useRunCommandAction(params: {
     adhocOptions && adhocOptions.actions && adhocOptions.actions['POST']
   );
 
-  return useMemo<IPageAction<InventoryGroup>>(() => {
+  return useMemo<IPageAction<T>>(() => {
     return {
       type: PageActionType.Button,
       selection: PageActionSelection.None,
