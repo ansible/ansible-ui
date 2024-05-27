@@ -18,11 +18,10 @@ import { useGetHost } from '../../hosts/hooks/useGetHost';
 
 export function InventoryHostGroups(props: { page: string }) {
   const { t } = useTranslation();
-  const tableColumns = useHostsGroupsColumns();
+  const tableColumns = useHostsGroupsColumns({ useGroupInventory: true });
   const isHostPage: boolean = props.page === 'host';
   const params = useParams<{ id: string; inventory_type: string; host_id: string }>();
   const { host } = useGetHost(isHostPage ? params.id ?? '' : params.host_id ?? '');
-
   const inventoryId = String(host?.inventory) ?? '';
   const hostId = isHostPage ? params.id ?? '' : params.host_id ?? '';
 
