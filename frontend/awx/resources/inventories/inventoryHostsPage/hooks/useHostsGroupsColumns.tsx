@@ -8,7 +8,7 @@ import { AwxRoute } from '../../../../main/AwxRoutes';
 export function useHostsGroupsColumns(options?: {
   disableSort?: boolean;
   disableLinks?: boolean;
-  useGroupInventory? : boolean;
+  useGroupInventory?: boolean;
 }) {
   const pageNavigate = usePageNavigate();
   const params = useParams<{ id: string; inventory_type: string }>();
@@ -19,10 +19,14 @@ export function useHostsGroupsColumns(options?: {
         params: {
           id: options?.useGroupInventory === true ? group.summary_fields.inventory.id : params.id,
           group_id: group.id,
-          inventory_type : options?.useGroupInventory === true ? kindToInventoryType(group.summary_fields.inventory.kind) : params.inventory_type,
+          inventory_type:
+            options?.useGroupInventory === true
+              ? kindToInventoryType(group.summary_fields.inventory.kind)
+              : params.inventory_type,
         },
-      })},
-    [pageNavigate, params.id, params.inventory_type]
+      });
+    },
+    [pageNavigate, params.id, params.inventory_type, options?.useGroupInventory]
   );
   const nameColumn = useNameColumn({
     ...options,
@@ -34,8 +38,7 @@ export function useHostsGroupsColumns(options?: {
   return tableColumns;
 }
 
-function kindToInventoryType(kind : string)
-{
+function kindToInventoryType(kind: string) {
   let inventory_type = '';
 
   if (kind === '') {
@@ -50,5 +53,5 @@ function kindToInventoryType(kind : string)
     inventory_type = 'constructed_inventory';
   }
 
-  return inventory_type
+  return inventory_type;
 }
