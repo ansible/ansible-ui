@@ -96,7 +96,7 @@ export function useInventoriesGroupsToolbarActions(view: IAwxView<InventoryGroup
 export function useRunCommandAction<T extends object>(params: {
   inventory_type?: string;
   id?: string;
-}): IPageAction<T> {
+}, options? : { isPinned? : boolean}): IPageAction<T> {
   const pageNavigate = usePageNavigate();
   const { t } = useTranslation();
 
@@ -112,7 +112,7 @@ export function useRunCommandAction<T extends object>(params: {
       type: PageActionType.Button,
       selection: PageActionSelection.None,
       variant: ButtonVariant.secondary,
-      isPinned: true,
+      isPinned: options?.isPinned !== undefined ? options?.isPinned : true,
       label: t('Run Command hook'),
       onClick: () =>
         pageNavigate(AwxRoute.InventoryRunCommand, {
