@@ -18,10 +18,26 @@ import { useGetHost } from '../../hosts/hooks/useGetHost';
 
 export function InventoryHostGroups(props: { page: string }) {
   const { t } = useTranslation();
-  const tableColumns = useHostsGroupsColumns();
+
   const isHostPage: boolean = props.page === 'host';
   const params = useParams<{ id: string; inventory_type: string; host_id: string }>();
   const { host } = useGetHost(isHostPage ? params.id ?? '' : params.host_id ?? '');
+
+  let inventory_type = '';
+  
+  if (host?.summary_fields.inventory?.kind === '') {
+    inventory_type = 'inventory';
+  };
+
+  if (host?.summary_fields.inventory?.kind === 'smart') {
+    inventory_type = 'smart_inventory';
+  }
+
+  if (host?.summary_fields.inventory?.kind === 'constructed') {
+    inventory_type = 'constructed_inventory';
+  }
+
+  const tableColumns = useHostsGroupsColumns({ inventory_type });
 
   const inventoryId = String(host?.inventory) ?? '';
   const hostId = isHostPage ? params.id ?? '' : params.host_id ?? '';

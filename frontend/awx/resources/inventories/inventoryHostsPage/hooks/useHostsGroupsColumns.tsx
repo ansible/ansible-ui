@@ -5,19 +5,21 @@ import { useNameColumn } from '../../../../../common/columns';
 import { InventoryGroup } from '../../../../interfaces/InventoryGroup';
 import { AwxRoute } from '../../../../main/AwxRoutes';
 
-export function useHostsGroupsColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
+export function useHostsGroupsColumns(options?: { disableSort?: boolean; disableLinks?: boolean, inventory_type?: string}) {
   const pageNavigate = usePageNavigate();
   const params = useParams<{ id: string; inventory_type: string }>();
+  const inventory_type = options?.inventory_type || params.inventory_type;
+
   const nameClick = useCallback(
     (group: InventoryGroup) =>
       pageNavigate(AwxRoute.InventoryGroupDetails, {
         params: {
           id: params.id,
           group_id: group.id,
-          inventory_type: params.inventory_type,
+          inventory_type,
         },
       }),
-    [pageNavigate, params.id, params.inventory_type]
+    [pageNavigate, params.id, inventory_type]
   );
   const nameColumn = useNameColumn({
     ...options,
