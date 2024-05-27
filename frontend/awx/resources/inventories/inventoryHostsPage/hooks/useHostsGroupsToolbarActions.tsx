@@ -2,12 +2,7 @@ import { ButtonVariant } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  IPageAction,
-  PageActionType,
-  PageActionSelection,
-  usePageNavigate,
-} from '../../../../../../framework';
+import { IPageAction, PageActionType, PageActionSelection } from '../../../../../../framework';
 import { useOptions } from '../../../../../common/crud/useOptions';
 import { awxAPI } from '../../../../common/api/awx-utils';
 import { OptionsResponse, ActionsResponse } from '../../../../interfaces/OptionsResponse';
@@ -20,11 +15,9 @@ import { useAssociateGroupsToHost } from './useAssociateGroupsToHost';
 export function useHostsGroupsToolbarActions(
   view: IAwxView<InventoryGroup>,
   inventoryId: string,
-  hostId: string,
-  hostPage: boolean
+  hostId: string
 ) {
   const { t } = useTranslation();
-  const pageNavigate = usePageNavigate();
 
   const disassociateGroups = useDisassociateGroups(view.unselectItemsAndRefresh, hostId);
 
@@ -76,9 +69,7 @@ export function useHostsGroupsToolbarActions(
       openInventoryHostsGroupsAddModal,
       associateGroups,
       canCreateGroup,
-      pageNavigate,
       hostId,
-      hostPage,
       inventoryId,
     ]
   );

@@ -93,10 +93,13 @@ export function useInventoriesGroupsToolbarActions(view: IAwxView<InventoryGroup
   ]);
 }
 
-export function useRunCommandAction<T extends object>(params: {
-  inventory_type?: string;
-  id?: string;
-}, options? : { isPinned? : boolean}): IPageAction<T> {
+export function useRunCommandAction<T extends object>(
+  params: {
+    inventory_type?: string;
+    id?: string;
+  },
+  options?: { isPinned?: boolean }
+): IPageAction<T> {
   const pageNavigate = usePageNavigate();
   const { t } = useTranslation();
 
@@ -125,5 +128,5 @@ export function useRunCommandAction<T extends object>(params: {
               'You do not have permission to run an ad hoc command. Please contact your organization administrator if there is an issue with your access.'
             ),
     };
-  }, [t, pageNavigate, params.inventory_type, params.id, canRunAdHocCommand]);
+  }, [t, pageNavigate, params.inventory_type, params.id, canRunAdHocCommand, options?.isPinned]);
 }
