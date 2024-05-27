@@ -1,8 +1,9 @@
-//import { NotificationTemplate } from '../../../../../frontend/awx/interfaces/NotificationTemplate';
 import { randomE2Ename } from '../../../../support/utils';
 import { awxAPI } from '../../../../../frontend/awx/common/api/awx-utils';
 
 /* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call */
+import { testNotification } from './notifiersListView.cy';
+
 
 describe('Notifications', () => {
   //let notificationTemplate: NotificationTemplate;
@@ -19,11 +20,15 @@ describe('Notifications', () => {
   });
 
   describe('Notifications: Details View', () => {
-    it.skip('can edit a Notification on its details page and assert the edited info', () => {
+    it.only('can edit a Notification on its details page and assert the edited info', () => {
       //Utilize the creation of notification in a beforeEach block
       //Assert the initial info of the notification before edit
       //Assert the info of the notification after edit
       //Add an afterEach block to delete the notification that was created for this test
+      cy.navigateTo('awx', 'notification-templates');
+        
+      // test for only one type should be enough, other types covered in notifiers list view
+      testNotification('Email', { details : true});
     });
 
     it('can test the Notification on its details page and assert that the test completed', () => {

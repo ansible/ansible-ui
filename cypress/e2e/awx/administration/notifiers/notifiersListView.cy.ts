@@ -183,7 +183,8 @@ describe('Notifications: List View', () => {
   });
 });
 
-function testNotification(type: string) {
+// details options - in details : true, we are editing and deleting in detail 
+export function testNotification(type: string, options? : { details? : boolean }) {
   const notificationName = randomE2Ename();
   const orgName = randomE2Ename();
   cy.createAwxOrganization(orgName).then(() => {
@@ -203,9 +204,18 @@ function testNotification(type: string) {
     testBasicData(notificationName, type, orgName);
     testNotificationType(type);
 
-    // test edit
-    cy.get(`[data-cy="edit-notifier"]`).click();
+    if (options?.details === true) {
+      cy.getByDataCy(`edit-notifier`).click();
+    }else {
+      // if not in detail, we go back to list and click edit there
+      cy.getByDataCy('back-to notifiers').click();
+      cy.filterTableByMultiSelect('name', [notificationName]);
+      cy.contains(notificationName);
+      cy.get(`[aria-label="Simple table"] [data-cy="actions-dropdown"]`).click();
+      cy.getByDataCy(`edit-notifier`).click();
+    }
 
+    // test edit
     const name2 = randomE2Ename();
     editBasicData(name2);
     editNotificationType(type);
@@ -217,14 +227,26 @@ function testNotification(type: string) {
     verifyEditedMessages(type);
 
     // validate its here and delete it
-    cy.contains('span', 'Back to Notifiers').click();
-    cy.filterTableByMultiSelect('name', [name2]);
-    cy.contains(name2);
-    cy.get(`[aria-label="Simple table"] [data-cy="actions-dropdown"]`).click();
-    cy.get(`[data-cy="delete-notifier"]`).click();
+    if (options?.details === true) {
+      cy.get(`[data-cy="actions-dropdown"]`).click();
+      cy.get(`[data-cy="delete-notifier"]`).click();
+    }else
+    {
+      // if not in detail, we go back to list and click delete there
+      cy.getByDataCy('back-to notifiers').click();
+      cy.filterTableByMultiSelect('name', [name2]);
+      cy.contains(name2);
+
+      cy.get(`[aria-label="Simple table"] [data-cy="actions-dropdown"]`).click();
+      cy.get(`[data-cy="delete-notifier"]`).click();
+    }
+  
     cy.get(`[role="dialog"] input`).click();
     cy.contains(`[role="dialog"] button`, `Delete notifiers`).click();
-    cy.contains(`[role="dialog"] button`, `Close`).click();
+
+    if (options?.details !== true) {
+      cy.contains(`[role="dialog"] button`, `Close`).click();
+    }
 
     cy.get(`[data-cy="filter"]`).click();
     cy.get(`[data-cy="name"] button`).click();
