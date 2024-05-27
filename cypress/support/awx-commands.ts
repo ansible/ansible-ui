@@ -1767,7 +1767,7 @@ Cypress.Commands.add('removeAwxInstance', (id: string) => {
   }
 });
 
-Cypress.Commands.add('createNotificationTemplate', (notificationName: string) => {
+Cypress.Commands.add('createNotificationTemplate', function (notificationName: string) {
   cy.awxRequestPost<
     Pick<
       NotificationTemplate,
@@ -1776,7 +1776,7 @@ Cypress.Commands.add('createNotificationTemplate', (notificationName: string) =>
     NotificationTemplate
   >(awxAPI`/notification_templates/`, {
     name: notificationName ? notificationName : 'E2E Notification ' + randomString(4),
-    organization: 1,
+    organization: (this.globalOrganization as Organization).id,
     notification_type: 'email',
     notification_configuration: {
       host: '127.0.0.1',
