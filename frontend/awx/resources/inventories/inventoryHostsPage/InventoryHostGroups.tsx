@@ -24,10 +24,10 @@ export function InventoryHostGroups(props: { page: string }) {
   const { host } = useGetHost(isHostPage ? params.id ?? '' : params.host_id ?? '');
 
   let inventory_type = '';
-  
+
   if (host?.summary_fields.inventory?.kind === '') {
     inventory_type = 'inventory';
-  };
+  }
 
   if (host?.summary_fields.inventory?.kind === 'smart') {
     inventory_type = 'smart_inventory';

@@ -5,7 +5,11 @@ import { useNameColumn } from '../../../../../common/columns';
 import { InventoryGroup } from '../../../../interfaces/InventoryGroup';
 import { AwxRoute } from '../../../../main/AwxRoutes';
 
-export function useHostsGroupsColumns(options?: { disableSort?: boolean; disableLinks?: boolean, inventory_type?: string}) {
+export function useHostsGroupsColumns(options?: {
+  disableSort?: boolean;
+  disableLinks?: boolean;
+  inventory_type?: string;
+}) {
   const pageNavigate = usePageNavigate();
   const params = useParams<{ id: string; inventory_type: string }>();
   const inventory_type = options?.inventory_type || params.inventory_type;
