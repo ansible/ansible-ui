@@ -1163,9 +1163,7 @@ declare global {
 
       selectPromptOnLaunch(resourceName: string): Chainable<void>;
 
-      createNotificationTemplate(
-        notification: SetRequired<Partial<NotificationTemplate>, 'organization'>
-      ): Chainable<NotificationTemplate>;
+      createNotificationTemplate(notificationName: string): Chainable<NotificationTemplate>;
 
       deleteNotificationTemplate(
         notification: NotificationTemplate,
