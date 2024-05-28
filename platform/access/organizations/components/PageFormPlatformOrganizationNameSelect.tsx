@@ -2,7 +2,7 @@ import { FieldPathByValue, FieldValues, PathValue } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { PageFormAsyncSingleSelect } from '../../../../framework/PageForm/Inputs/PageFormAsyncSingleSelect';
 import { PageAsyncSelectOptionsFn } from '../../../../framework/PageInputs/PageAsyncSelectOptions';
-import { AsyncQueryLabel } from '../../../../framework/components/AsyncQueryLabel';
+import { AsyncQueryLabel } from '../../../../frontend/common/AsyncQueryLabel';
 import { gatewayAPI } from '../../../api/gateway-api-utils';
 import { useQueryPlatformOptions } from '../../../common/useQueryPlatformOptions';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
