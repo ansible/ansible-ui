@@ -1,8 +1,8 @@
 import { randomE2Ename } from '../../../../support/utils';
 import { awxAPI } from '../../../../../frontend/awx/common/api/awx-utils';
-
+import { testNotification } from './notifiersSharedFunctions';
 /* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call */
-import { testNotification } from './notifiersListView.cy';
+
 
 describe('Notifications', () => {
   //let notificationTemplate: NotificationTemplate;
