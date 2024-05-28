@@ -1,0 +1,11 @@
+{
+  "id": 1,
+  "username": "normaluser",
+  "email": "test@example.com",
+  "first_name": "",
+  "last_name": "",
+  "is_superuser": false,
+  "roles": [],
+  "created_at": "2024-03-27T16:44:10.574405Z",
+  "modified_at": "2024-03-27T16:44:10.764472Z"
+}

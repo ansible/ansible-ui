@@ -6,9 +6,9 @@ import {
   useGetPageUrl,
   ColumnModalOption,
   DateTimeCell,
-} from '../../../../framework';
-import { AwxRoute } from '../../main/AwxRoutes';
-import { AwxRbacRole } from '../../interfaces/AwxRbacRole';
+} from '../../../../../framework';
+import { AwxRoute } from '../../../main/AwxRoutes';
+import { AwxRbacRole } from '../../../interfaces/AwxRbacRole';
 
 export function useAwxRoleColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const { t } = useTranslation();
