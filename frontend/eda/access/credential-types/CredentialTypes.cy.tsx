@@ -289,3 +289,53 @@ describe('CredentialTypes.cy.ts', () => {
     cy.contains('th', 'Name');
   });
 });
+
+describe('Empty list without POST permission', () => {
+  beforeEach(() => {
+    cy.intercept(
+      {
+        method: 'GET',
+        url: edaAPI`/credential-types/*`,
+      },
+      {
+        fixture: 'emptyList.json',
+      }
+    ).as('emptyList');
+  });
+  it('Empty state is displayed correctly', () => {
+    cy.mount(<CredentialTypes />);
+    cy.contains(/^You do not have permission to create a credential type.$/);
+    cy.contains(
+      /^Please contact your organization administrator if there is an issue with your access.$/
+    );
+  });
+});
+
+describe('Empty list with POST permission', () => {
+  beforeEach(() => {
+    cy.intercept(
+      {
+        method: 'OPTIONS',
+        url: edaAPI`/credential-types/`,
+      },
+      {
+        fixture: 'edaCredentialTypesOptions.json',
+      }
+    ).as('getOptions');
+    cy.intercept(
+      {
+        method: 'GET',
+        url: edaAPI`/credential-types/*`,
+      },
+      {
+        fixture: 'emptyList.json',
+      }
+    ).as('emptyList');
+  });
+  it('Empty state is displayed correctly', () => {
+    cy.mount(<CredentialTypes />);
+    cy.contains(/^There are currently no credential types created for your organization.$/);
+    cy.contains(/^Please create a credential type by using the button below.$/);
+    cy.contains('button', /^Create credential type$/).should('be.visible');
+  });
+});

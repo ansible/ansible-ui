@@ -1,5 +1,8 @@
 //import { NotificationTemplate } from '../../../../../frontend/awx/interfaces/NotificationTemplate';
-//import { randomE2Ename } from '../../../../support/utils';
+import { randomE2Ename } from '../../../../support/utils';
+import { awxAPI } from '../../../../../frontend/awx/common/api/awx-utils';
+
+/* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call */
 
 describe('Notifications', () => {
   //let notificationTemplate: NotificationTemplate;
@@ -23,11 +26,41 @@ describe('Notifications', () => {
       //Add an afterEach block to delete the notification that was created for this test
     });
 
-    it.skip('can test the Notification on its details page and assert that the test completed', () => {
+    it('can test the Notification on its details page and assert that the test completed', () => {
       //Utilize a notification of any type created in the beforeEach hook
       //Assert the existence of the notification before test
       //Assert the test action and the fact that it is happening from the details view
       //Assert the behavior in the UI following the test action
+
+      const notificationName = randomE2Ename();
+      cy.createNotificationTemplate(notificationName).then(() => {
+        cy.navigateTo('awx', 'notification-templates');
+        cy.filterTableByMultiSelect('name', [notificationName]);
+        cy.get('[data-cy="name-column-cell"] a').click();
+
+        // test fail message
+        cy.getByDataCy('test-notifier').click();
+
+        cy.contains(`[data-cy="status"]`, 'Failed', { timeout: 100000 });
+
+        // test success message
+        cy.intercept(awxAPI`/notification_templates/*`, (req) => {
+          req.reply((res) => {
+            res?.body?.summary_fields?.recent_notifications?.forEach(
+              (notification: { status: string }) => {
+                if (notification.status === 'failed') {
+                  notification.status = 'successful';
+                }
+              }
+            );
+            return res;
+          });
+        }).as('getTemplates');
+
+        cy.getByDataCy('test-notifier').click({ force: true });
+
+        cy.contains(`[data-cy="status"]`, 'Success', { timeout: 100000 });
+      });
     });
 
     it.skip('can delete the Notification on its details page and assert deletion', () => {

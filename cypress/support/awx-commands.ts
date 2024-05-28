@@ -1088,7 +1088,7 @@ Cypress.Commands.add(
         )
           .as('newVisualizerView')
           .then(() => {
-            cy.visit(`/templates/workflow_job_template/${results.id}/visualizer`);
+            cy.visit(`/templates/workflow-job-template/${results.id}/visualizer`);
           });
       });
   }
@@ -1767,7 +1767,7 @@ Cypress.Commands.add('removeAwxInstance', (id: string) => {
   }
 });
 
-Cypress.Commands.add('createNotificationTemplate', (notificationName: string) => {
+Cypress.Commands.add('createNotificationTemplate', function (notificationName: string) {
   cy.awxRequestPost<
     Pick<
       NotificationTemplate,
@@ -1776,7 +1776,7 @@ Cypress.Commands.add('createNotificationTemplate', (notificationName: string) =>
     NotificationTemplate
   >(awxAPI`/notification_templates/`, {
     name: notificationName ? notificationName : 'E2E Notification ' + randomString(4),
-    organization: 1,
+    organization: (this.globalOrganization as Organization).id,
     notification_type: 'email',
     notification_configuration: {
       host: '127.0.0.1',
@@ -1814,7 +1814,9 @@ Cypress.Commands.add(
       'required' | 'min' | 'max' | 'new_question' | 'choices'
     >
   ) => {
-    cy.visit(`/templates/${template.type}/${template.id}/survey/add`);
+    cy.visit(
+      `/templates/${template.type === 'job_template' ? 'job-template' : 'workflow-job-template'}/${template.id}/survey/add`
+    );
 
     cy.getByDataCy('question-name').type(spec.question_name ?? '');
     cy.getByDataCy('question-description').type(spec?.question_description ?? '');

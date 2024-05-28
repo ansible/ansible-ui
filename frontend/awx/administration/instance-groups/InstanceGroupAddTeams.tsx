@@ -118,11 +118,8 @@ export function InstanceGroupAddTeams() {
           resolve();
         },
         onClose: () => {
-          const instanceType = instanceGroup.is_container_group
-            ? 'container-group'
-            : 'instance-group';
           pageNavigate(AwxRoute.InstanceGroupTeamAccess, {
-            params: { id: instanceGroup.id.toString(), instanceType },
+            params: { id: instanceGroup.id.toString() },
           });
         },
       });
@@ -140,9 +137,6 @@ export function InstanceGroupAddTeams() {
             to: getPageUrl(AwxRoute.InstanceGroupDetails, {
               params: {
                 id: instanceGroup?.id,
-                instanceType: instanceGroup?.is_container_group
-                  ? 'container-group'
-                  : 'instance-group',
               },
             }),
           },

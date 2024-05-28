@@ -63,10 +63,13 @@ describe('Inventory Sources', () => {
       cy.selectDropdownOptionByResourceName('source_control_type', 'Sourced from a Project');
       cy.selectDropdownOptionByResourceName('project', project.name);
       cy.selectDropdownOptionByResourceName('inventory', 'Dockerfile');
-      cy.getBy('.pf-v5-c-input-group > .pf-v5-c-button').click();
-      cy.getBy('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
-        cy.searchAndDisplayResource(credentialName);
-        cy.getBy('[data-cy="checkbox-column-cell"] > label').click();
+      cy.get('[data-cy="credential-select-form-group"]')
+        .click()
+        .within(() => {
+          cy.get('button[aria-label="Options menu"]').click();
+        });
+      cy.getModal().within(() => {
+        cy.selectTableRowByCheckbox('name', credentialName);
         cy.getBy('#submit').click();
       });
       cy.getBy('[data-cy="host-filter"]').type('/^test$/');

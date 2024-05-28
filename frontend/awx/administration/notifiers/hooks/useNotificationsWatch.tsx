@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { RunningNotificationsType } from './useNotifiersRowActions';
 import { NotificationTemplate } from '../../../interfaces/NotificationTemplate';
 import { usePageAlertToaster } from '../../../../../framework';
-import { StatusLabel } from '../../../../common/Status';
 import { useTranslation } from 'react-i18next';
 
 export function useNotificationsWatch() {
@@ -35,9 +34,12 @@ export function useNotificationsWatch() {
 
         if (notification && notification.status !== 'pending') {
           alertToaster.addAlert({
-            variant: 'info',
-            title: t('Notifier (id {{id}}) test result', { id: notificationId }),
-            children: <StatusLabel status={notification.status} />,
+            variant: notification.status === 'failed' ? 'danger' : 'success',
+            title: t('{{name}} (id {{id}})', {
+              name: notificationTemplate.name,
+              id: notificationId,
+            }),
+            children: <div>{notification.error}</div>,
           });
 
           delete obj[notificationTemplate.id];
