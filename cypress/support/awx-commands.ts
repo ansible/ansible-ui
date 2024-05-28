@@ -32,6 +32,7 @@ import { Spec } from '../../frontend/awx/interfaces/Survey';
 import { awxAPI } from './formatApiPathForAwx';
 import { Survey } from '../../frontend/awx/interfaces/Survey';
 import { RoleSerializerWithParentAccess } from '../../frontend/awx/interfaces/generated-from-swagger/api';
+import { InventoryGroup } from '../../frontend/awx/interfaces/InventoryGroup';
 
 //  AWX related custom command implementation
 
@@ -1256,6 +1257,13 @@ Cypress.Commands.add(
     });
   }
 );
+
+Cypress.Commands.add('createInventoryGroup', (inventory: Inventory, groupName: string) => {
+  cy.awxRequestPost<Partial<InventoryGroup>, InventoryGroup>(awxAPI`/groups/`, {
+    name: groupName,
+    inventory: inventory.id,
+  });
+});
 
 Cypress.Commands.add('createAwxLabel', (label: Partial<Omit<Label, 'id'>>) => {
   cy.awxRequestPost<Partial<Omit<Label, 'id'>>, Label>(awxAPI`/labels/`, {
