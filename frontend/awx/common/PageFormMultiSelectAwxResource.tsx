@@ -3,8 +3,8 @@ import { FieldPath, FieldValues, PathValue, useFormContext, useWatch } from 'rea
 import { ITableColumn, IToolbarFilter, MultiSelectDialog, usePageDialog } from '../../../framework';
 import { PageFormAsyncMultiSelect } from '../../../framework/PageForm/Inputs/PageFormAsyncMultiSelect';
 import { PageAsyncSelectOptionsFn } from '../../../framework/PageInputs/PageAsyncSelectOptions';
-import { AsyncQueryLabel } from '../../../framework/components/AsyncQueryLabel';
 import { useID } from '../../../framework/hooks/useID';
+import { AsyncQueryLabel } from '../../common/AsyncQueryLabel';
 import { requestGet } from '../../common/crud/Data';
 import { AwxItemsResponse } from './AwxItemsResponse';
 import { QueryParams, useAwxView } from './useAwxView';

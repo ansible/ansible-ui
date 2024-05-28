@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import useSWR, { SWRConfiguration } from 'swr';
-import { useAbortController } from '../../../common/crud/useAbortController';
+import { useAbortController } from '../../../../framework/hooks/useAbortController';
 
 export function useGetFn<T>(
   key: string,
