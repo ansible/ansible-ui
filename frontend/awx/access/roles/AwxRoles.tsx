@@ -10,7 +10,9 @@ import {
 } from '../../../../framework';
 import { useAwxView } from '../../common/useAwxView';
 import { awxAPI } from '../../common/api/awx-utils';
-import { useAwxRoleColumns } from './useAwxRoleColumns';
+import { useAwxRoleColumns } from './hooks/useAwxRoleColumns';
+import { useAwxRoleToolbarActions } from './hooks/useAwxRoleToolbarActions';
+import { useAwxRoleRowActions } from './hooks/useAwxRoleRowActions';
 import { AwxRoleExpandedRow } from './components/AwxRoleExpandedRow';
 import { AwxRbacRole } from '../../interfaces/AwxRbacRole';
 
@@ -70,10 +72,15 @@ export function AwxRolesTable() {
     tableColumns,
   });
 
+  const toolbarActions = useAwxRoleToolbarActions(view.unselectItemsAndRefresh);
+  const rowActions = useAwxRoleRowActions(view.unselectItemsAndRefresh);
+
   return (
     <PageTable<AwxRbacRole>
       {...view}
       tableColumns={tableColumns}
+      toolbarActions={toolbarActions}
+      rowActions={rowActions}
       toolbarFilters={toolbarFilters}
       expandedRow={(role) => <AwxRoleExpandedRow role={role} />}
       errorStateTitle={t('Error loading roles')}

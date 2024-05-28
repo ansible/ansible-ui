@@ -17,7 +17,7 @@ import { PageFormJobTemplateSelect } from '../../resources/templates/components/
 import { PageFormWorkflowJobTemplateSelect } from '../../resources/templates/components/PageFormWorkflowJobTemplateSelect';
 import { PageFormCredentialSelect } from '../credentials/components/PageFormCredentialSelect';
 import { PageFormSelectOrganization } from '../organizations/components/PageFormOrganizationSelect';
-import { AwxResourceTypeRoles, useAwxRoles } from './useAwxRoles';
+import { AwxResourceTypeRoles, useAwxRoles } from './hooks/useAwxRoles';
 
 interface UserRole {
   index: number;

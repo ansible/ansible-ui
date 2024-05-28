@@ -36,6 +36,7 @@ import { useAwxSchedulesRoutes } from './routes/useAwxSchedulesRoutes';
 import { useAwxTeamsRoutes } from './routes/useAwxTeamsRoutes';
 import { useAwxTemplateRoutes } from './routes/useAwxTemplateRoutes';
 import { useAwxUsersRoutes } from './routes/useAwxUsersRoutes';
+import { CreateRole, EditRole } from '../access/roles/RoleForm';
 import { useAwxWorkflowApprovalRoutes } from './routes/useAwxWorkflowApprovalRoutes';
 
 export function useAwxNavigation() {
@@ -170,7 +171,17 @@ export function useAwxNavigation() {
           path: 'roles',
           children: [
             {
-              id: AwxRoute.Role,
+              id: AwxRoute.CreateRole,
+              path: 'create',
+              element: <CreateRole />,
+            },
+            {
+              id: AwxRoute.EditRole,
+              path: ':id/edit',
+              element: <EditRole />,
+            },
+            {
+              id: AwxRoute.RolePage,
               path: ':id',
               element: <AwxRolePage />,
               children: [
