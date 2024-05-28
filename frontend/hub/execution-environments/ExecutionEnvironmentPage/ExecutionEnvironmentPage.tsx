@@ -10,7 +10,7 @@ import {
   PageLayout,
   useGetPageUrl,
 } from '../../../../framework';
-import { PageRoutedTabs } from '../../../../framework/PageTabs/PageRoutedTabs';
+import { PageRoutedTabs } from '../../../common/PageRoutedTabs';
 import { StatusLabel } from '../../../common/Status';
 import { useGet } from '../../../common/crud/useGet';
 import { HelperText } from '../../common/HelperText';

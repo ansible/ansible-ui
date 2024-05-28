@@ -2,17 +2,16 @@
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { PageHeader, PageLayout, useGetPageUrl } from '../../../../../framework';
-import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
-import { useGetItem } from '../../../../common/crud/useGet';
+import { PageRoutedTabs } from '../../../../common/PageRoutedTabs';
+import { useGet, useGetItem } from '../../../../common/crud/useGet';
 import { AwxError } from '../../../common/AwxError';
+import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { awxAPI } from '../../../common/api/awx-utils';
+import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
+import { Organization } from '../../../interfaces/Organization';
 import { SystemJobTemplate } from '../../../interfaces/SystemJobTemplate';
 import { AwxRoute } from '../../../main/AwxRoutes';
-import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
-import { useGet } from '../../../../common/crud/useGet';
-import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
-import { Organization } from '../../../interfaces/Organization';
 
 export function ManagementJobPage() {
   const { t } = useTranslation();

@@ -18,8 +18,8 @@ import {
 } from '../../../../framework/PageInputs/PageAsyncSelectOptions';
 import { PageAsyncSingleSelect } from '../../../../framework/PageInputs/PageAsyncSingleSelect';
 import { PageSingleSelectContext } from '../../../../framework/PageInputs/PageSingleSelect';
-import { PageRoutedTabs } from '../../../../framework/PageTabs/PageRoutedTabs';
 import { singleSelectBrowseAdapter } from '../../../../framework/PageToolbar/PageToolbarFilters/ToolbarAsyncSingleSelectFilter';
+import { PageRoutedTabs } from '../../../common/PageRoutedTabs';
 import { requestGet } from '../../../common/crud/Data';
 import { useGet } from '../../../common/crud/useGet';
 import { HubError } from '../../common/HubError';

@@ -1,8 +1,6 @@
+import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { useGetItem } from '../../../common/crud/useGet';
-import { InventoryGroup } from '../../interfaces/InventoryGroup';
-import { awxAPI } from '../../common/api/awx-utils';
 import {
   LoadingPage,
   PageActions,
@@ -10,10 +8,12 @@ import {
   PageLayout,
   useGetPageUrl,
 } from '../../../../framework';
+import { PageRoutedTabs } from '../../../common/PageRoutedTabs';
+import { useGetItem } from '../../../common/crud/useGet';
 import { AwxError } from '../../common/AwxError';
+import { awxAPI } from '../../common/api/awx-utils';
+import { InventoryGroup } from '../../interfaces/InventoryGroup';
 import { AwxRoute } from '../../main/AwxRoutes';
-import { PageRoutedTabs } from '../../../../framework/PageTabs/PageRoutedTabs';
-import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { useInventoriesGroupActions } from '../inventories/hooks/useInventoriesGroupActions';
 
 export function GroupPage() {
