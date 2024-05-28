@@ -10,4 +10,5 @@ export type UserAssignment = Assignment & {
       last_name: string;
     };
   };
+  user: number;
 };

@@ -30,7 +30,6 @@ export function EdaRolePage(props: {
   const { activeEdaUser } = useEdaActiveUser();
   const pageNavigate = usePageNavigate();
   const { data: role } = useGet<EdaRbacRole>(edaAPI`/role_definitions/${params.id ?? ''}/`);
-
   const getPageUrl = useGetPageUrl();
 
   const deleteRoles = useDeleteEdaRoles((deleted) => {
