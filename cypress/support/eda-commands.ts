@@ -27,6 +27,9 @@ import {
   ImportStateEnum,
   RestartPolicyEnum,
   StatusEnum,
+  RoleDefinitionCreate,
+  ContentTypeEnum,
+  PermissionsEnum,
 } from '../../frontend/eda/interfaces/generated/eda-api';
 import { edaAPI } from './formatApiPathForEDA';
 
@@ -481,6 +484,19 @@ Cypress.Commands.add(
     });
   }
 );
+
+Cypress.Commands.add('createEdaRoleDefinition', (roleName: string, content_type, permissions) => {
+  cy.requestPost<RoleDefinitionCreate>(edaAPI`/role_definitions/`, {
+    name: roleName,
+    description: 'this is a description',
+    content_type: content_type as ContentTypeEnum,
+    permissions: permissions as PermissionsEnum[],
+  }).then(() => {
+    Cypress.log({
+      displayName: 'EDA Role Definition :',
+    });
+  });
+});
 
 Cypress.Commands.add('getEdaCurrentUserAwxTokens', () => {
   cy.requestGet<EdaResult<EdaControllerToken>>(edaAPI`/users/me/awx-tokens/`);
