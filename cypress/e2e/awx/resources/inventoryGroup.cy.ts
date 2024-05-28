@@ -218,6 +218,8 @@ describe('Inventory Groups', () => {
           .then((response) => {
             expect(response?.statusCode).to.eql(204);
           });
+        cy.getModal().should('not.exist');
+        cy.verifyPageTitle(inventory.name);
         cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
       });
     });
