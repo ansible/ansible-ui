@@ -497,7 +497,7 @@ describe('Create Credentials of different types', () => {
     fields?: Array<{ id: string; value: string; dataCy: string }>;
   };
 
-  it('can create credentials', function () {
+  it('credential creation of 30 different credential types', function () {
     cy.awxLogin();
     cy.fixture<MockCredentialData[]>('credentialsTestData').as('createCredentials');
     cy.get('@createCredentials').then((fixture) => {
