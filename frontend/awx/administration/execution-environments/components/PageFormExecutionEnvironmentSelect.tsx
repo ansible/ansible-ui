@@ -4,9 +4,60 @@ import { useTranslation } from 'react-i18next';
 import { PageFormTextInput } from '../../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { requestGet } from '../../../../common/crud/Data';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
+import { PageFormSingleSelectAwxResource } from '../../../common/PageFormSingleSelectAwxResource';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { ExecutionEnvironment } from '../../../interfaces/ExecutionEnvironment';
+import { useExecutionEnvironmentsColumns } from '../hooks/useExecutionEnvironmentsColumns';
+import { useExecutionEnvironmentsFilters } from '../hooks/useExecutionEnvironmentsFilters';
 import { useSelectExecutionEnvironments } from '../hooks/useSelectExecutionEnvironments';
+
+/**
+ * A form input for selecting an executionEnvironment.
+ *
+ * @example
+ * ```tsx
+ * <PageFormSelectExecutionEnvironment<ExecutionEnvironment> name="executionEnvironment" />
+ * ```
+ */
+export function PageFormSelectExecutionEnvironment<
+  TFieldValues extends FieldValues = FieldValues,
+  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
+>(props: {
+  name: TFieldName;
+  isRequired?: boolean;
+  isDisabled?: string;
+  helperText?: string;
+  organizationId?: number | null;
+  label?: string;
+}) {
+  const { t } = useTranslation();
+  const executionEnvironmentColumns = useExecutionEnvironmentsColumns({ disableLinks: true });
+  const executionEnvironmentFilters = useExecutionEnvironmentsFilters();
+  return (
+    <PageFormSingleSelectAwxResource<ExecutionEnvironment, TFieldValues, TFieldName>
+      name={props.name}
+      id="executionEnvironment"
+      label={props.label ?? t('ExecutionEnvironment')}
+      placeholder={t('Select executionEnvironment')}
+      queryPlaceholder={t('Loading executionEnvironments...')}
+      queryErrorText={t('Error loading executionEnvironments')}
+      isRequired={props.isRequired}
+      isDisabled={props.isDisabled}
+      helperText={props.helperText}
+      url={awxAPI`/execution_environments/`}
+      queryParams={
+        props.organizationId
+          ? {
+              or__organization__id: props.organizationId.toString(),
+              or__organization__isnull: 'True',
+            }
+          : undefined
+      }
+      tableColumns={executionEnvironmentColumns}
+      toolbarFilters={executionEnvironmentFilters}
+    />
+  );
+}
 
 export function PageFormExecutionEnvironmentSelect<
   TFieldValues extends FieldValues = FieldValues,
