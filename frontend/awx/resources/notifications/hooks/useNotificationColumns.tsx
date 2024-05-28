@@ -14,7 +14,7 @@ export function useNotificationsColumns(options?: {
   const pageNavigate = usePageNavigate();
   const nameClick = useCallback(
     (notificationTemplate: NotificationTemplate) => {
-      return pageNavigate(AwxRoute.NotificationTemplatePage, {
+      return pageNavigate(AwxRoute.NotificationTemplateDetails, {
         params: {
           id: notificationTemplate.id,
         },

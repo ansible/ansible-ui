@@ -1058,6 +1058,8 @@ declare global {
         organization: Organization
       ): Chainable<{ inventory: Inventory; host: AwxHost; group: InventoryGroup }>;
 
+      createInventoryGroup(inventory: Inventory, groupName: string): Chainable<InventoryGroup>;
+
       createAwxWorkflowVisualizerJobTemplateNode(
         workflowJT: WorkflowJobTemplate,
         jobTemplateNode: JobTemplate

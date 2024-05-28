@@ -5,8 +5,8 @@ const inventories = ['inventory', 'constructed_inventory'];
 
 inventories.forEach((inventory) => {
   describe(`GroupRelatedGroups (${inventory})`, () => {
-    const path = '/inventories/:inventory_type/:id/groups/:group_id/nested_groups';
-    const initialEntries = [`/inventories/${inventory}/1/groups/176/nested_groups`];
+    const path = '/inventories/:inventory_type/:id/groups/:group_id/nested-groups';
+    const initialEntries = [`/inventories/${inventory}/1/groups/176/nested-groups`];
 
     beforeEach(() => {
       cy.intercept(

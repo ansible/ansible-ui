@@ -1,11 +1,10 @@
 import { createContext, ReactNode, useContext, useMemo } from 'react';
-import useSWR from 'swr';
-import { requestGet } from '../../common/crud/Data';
+import { usePolledState } from '../../common/usePolledState';
 import { Config } from '../interfaces/Config';
 import { awxAPI } from './api/awx-utils';
 
 const AwxConfigContext = createContext<{
-  awxConfig?: Config;
+  awxConfig?: Config | null | undefined;
   awxConfigIsLoading?: boolean;
   awxConfigError?: Error;
   refreshAwxConfig?: () => void;
@@ -20,21 +19,14 @@ export function useAwxConfigState() {
 }
 
 export function AwxConfigProvider(props: { children?: ReactNode }) {
-  const configResponse = useSWR<Config>(awxAPI`/config/`, requestGet);
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const { isLoading, error, data, mutate } = configResponse;
+  const { data, error, refresh } = usePolledState<Config>(awxAPI`/config/`);
   const value = useMemo(
     () => ({
       awxConfig: data,
-      awxConfigIsLoading: isLoading || (!data && !error),
-      awxConfigError: error
-        ? error instanceof Error
-          ? error
-          : new Error('Failed to load AWX config')
-        : undefined,
-      refreshAwxConfig: () => void mutate(undefined),
+      awxConfigError: error,
+      refreshAwxConfig: refresh,
     }),
-    [data, error, isLoading, mutate]
+    [data, error, refresh]
   );
   return <AwxConfigContext.Provider value={value}>{props.children}</AwxConfigContext.Provider>;
 }

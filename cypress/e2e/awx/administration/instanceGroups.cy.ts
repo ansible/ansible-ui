@@ -74,8 +74,7 @@ instanceGroupTypes.forEach((igType) => {
       cy.verifyPageTitle(name);
       cy.url().then((currentUrl) => {
         expect(currentUrl.includes('details')).to.be.true;
-        expect(currentUrl.includes(`infrastructure/instance_groups/${igType.toLowerCase()}-group`))
-          .to.be.true;
+        expect(currentUrl.includes(`infrastructure/instance-groups`)).to.be.true;
       });
       if (igType === 'Instance') {
         cy.getByDataCy('policy-instance-minimum').should('have.text', '1');
@@ -270,8 +269,7 @@ instanceGroupTypes.forEach((igType) => {
       cy.get('[data-cy="name-column-cell"]').click();
       cy.url().then((currentUrl) => {
         expect(currentUrl.includes('details')).to.be.true;
-        expect(currentUrl.includes(`infrastructure/instance_groups/${igType.toLowerCase()}-group`))
-          .to.be.true;
+        expect(currentUrl.includes(`infrastructure/instance-groups`)).to.be.true;
       });
       cy.getByDataCy(`edit-${igType.toLowerCase()}-group`).click();
       cy.get('[data-cy="name"]').clear();
@@ -323,8 +321,7 @@ instanceGroupTypes.forEach((igType) => {
       cy.get('[data-cy="name-column-cell"]').click();
       cy.url().then((currentUrl) => {
         expect(currentUrl.includes('details')).to.be.true;
-        expect(currentUrl.includes(`infrastructure/instance_groups/${igType.toLowerCase()}-group`))
-          .to.be.true;
+        expect(currentUrl.includes(`infrastructure/instance-groups`)).to.be.true;
       });
       cy.clickPageAction(`delete-${igType.toLowerCase()}-group`);
       cy.intercept('DELETE', awxAPI`/instance_groups/*/`).as('deleteInstanceGroup');
@@ -390,8 +387,7 @@ instanceGroupTypes.forEach((igType) => {
       });
       cy.url().then((currentUrl) => {
         expect(currentUrl.includes('details')).to.be.true;
-        expect(currentUrl.includes(`infrastructure/instance_groups/${igType.toLowerCase()}-group`))
-          .to.be.true;
+        expect(currentUrl.includes(`infrastructure/instance-groups`)).to.be.true;
       });
       cy.clickTab(/^Team access$/, true);
       cy.get('.pf-v5-c-empty-state__title-text').contains(
@@ -400,7 +396,7 @@ instanceGroupTypes.forEach((igType) => {
       cy.get('.pf-v5-c-empty-state__body').contains(/^Add a role by clicking the button below./);
       cy.getByDataCy('add-roles').click();
       cy.url().then((currentUrl) => {
-        expect(currentUrl.includes('infrastructure/instance_groups/')).to.be.true;
+        expect(currentUrl.includes('infrastructure/instance-groups/')).to.be.true;
         expect(currentUrl.includes('instance-groups/teams/add-teams')).to.be.true;
       });
       cy.get('[data-cy="wizard-nav"] li').eq(0).should('contain.text', 'Select team(s)');
@@ -438,9 +434,7 @@ instanceGroupTypes.forEach((igType) => {
         .then((response) => {
           expect(response?.statusCode).to.eql(201);
         });
-      cy.visit(
-        `/infrastructure/instance_groups/${igType.toLowerCase()}-groups/${instanceGroup.id}/team-access`
-      );
+      cy.visit(`/infrastructure/instance-groups/${instanceGroup.id}/team-access`);
       cy.verifyPageTitle(instanceGroup.name);
       cy.get('[data-cy="text-input"]').find('input').type(team.name);
       cy.get('[data-ouia-component-id="simple-table"]').within(() => {
@@ -508,8 +502,7 @@ instanceGroupTypes.forEach((igType) => {
       });
       cy.url().then((currentUrl) => {
         expect(currentUrl.includes('details')).to.be.true;
-        expect(currentUrl.includes(`infrastructure/instance_groups/${igType.toLowerCase()}-group`))
-          .to.be.true;
+        expect(currentUrl.includes(`infrastructure/instance-groups`)).to.be.true;
       });
       cy.clickTab(/^User access$/, true);
       cy.get('.pf-v5-c-empty-state__title-text').contains(
@@ -518,7 +511,7 @@ instanceGroupTypes.forEach((igType) => {
       cy.get('.pf-v5-c-empty-state__body').contains(/^Add a role by clicking the button below./);
       cy.getByDataCy('add-roles').click();
       cy.url().then((currentUrl) => {
-        expect(currentUrl.includes('infrastructure/instance_groups/')).to.be.true;
+        expect(currentUrl.includes('infrastructure/instance-groups/')).to.be.true;
         expect(currentUrl.includes('instance-groups/users/add-users')).to.be.true;
       });
       cy.get('[data-cy="wizard-nav"] li').eq(0).should('contain.text', 'Select user(s)');
@@ -555,9 +548,7 @@ instanceGroupTypes.forEach((igType) => {
         .then((response) => {
           expect(response?.statusCode).to.eql(201);
         });
-      cy.visit(
-        `/infrastructure/instance_groups/${igType.toLowerCase()}-groups/${instanceGroup.id}/user-access`
-      );
+      cy.visit(`/infrastructure/instance-groups/${instanceGroup.id}/user-access`);
       cy.verifyPageTitle(instanceGroup.name);
       cy.get('[data-cy="text-input"]').find('input').type(user.username);
       cy.get('[data-ouia-component-id="simple-table"]').within(() => {
@@ -633,34 +624,23 @@ describe('Instance Groups: Jobs Tab', () => {
     });
     cy.url().then((currentUrl) => {
       expect(currentUrl.includes('details')).to.be.true;
-      expect(currentUrl.includes('infrastructure/instance_groups/container-group')).to.be.true;
+      expect(currentUrl.includes('infrastructure/instance-groups')).to.be.true;
     });
     cy.clickTab(/^Jobs$/, true);
     cy.filterTableBySingleSelect('name', job_template.name);
-    cy.getBy('tbody').within(() => {
-      cy.get('[data-cy="cancel-job"]', { timeout: 60000 }).should('not.exist');
-      cy.clickKebabAction('actions-dropdown', 'delete-job');
-    });
-
     cy.intercept('DELETE', awxAPI`/jobs/*/`).as('deleted');
 
-    cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
-      cy.get('header').contains('Permanently delete job');
-      cy.get('button').contains('Delete job').should('have.attr', 'aria-disabled', 'true');
-      cy.getByDataCy('name-column-cell').should('have.text', job_template.name);
-      cy.get('input[id="confirm"]').click();
-      cy.get('button').contains('Delete job').click();
-    });
+    cy.clickTableRowKebabAction(job_template.name, 'delete-job', false);
+    cy.clickModalConfirmCheckbox();
+    cy.clickModalButton('Delete job');
+    cy.assertModalSuccess();
     cy.wait('@deleted')
       .its('response')
       .then((response) => {
         expect(response?.statusCode).to.eql(204);
       });
-    cy.clickModalButton('Close');
-    cy.get('.pf-v5-c-empty-state__title-text').contains(/^No results found/);
-    cy.get('.pf-v5-c-empty-state__body').contains(
-      /^No results match this filter criteria. Clear all filters and try again./
-    );
+    cy.clickButton(/^Close$/);
+    cy.clickButton(/^Clear all filters$/);
   });
 });
 
@@ -700,7 +680,7 @@ describe('Instance Groups: Instances Tab', () => {
     cy.get('[data-cy="name-column-cell"]').click();
     cy.url().then((currentUrl) => {
       expect(currentUrl.includes('details')).to.be.true;
-      expect(currentUrl.includes('infrastructure/instance_groups')).to.be.true;
+      expect(currentUrl.includes('infrastructure/instance-groups')).to.be.true;
     });
 
     cy.clickTab(/^Instances$/, true);
@@ -764,7 +744,7 @@ describe('Instance Groups: Instances Tab', () => {
       cy.get('[data-cy="name-column-cell"]').click();
       cy.url().then((currentUrl) => {
         expect(currentUrl.includes('details')).to.be.true;
-        expect(currentUrl.includes('infrastructure/instance_groups')).to.be.true;
+        expect(currentUrl.includes('infrastructure/instance-groups')).to.be.true;
       });
       cy.clickTab(/^Instances$/, true);
       cy.get('[data-ouia-component-id="simple-table"]').within(() => {
@@ -812,7 +792,7 @@ describe('Instance Groups: Instances Tab', () => {
     cy.get('[data-cy="name-column-cell"]').click();
     cy.url().then((currentUrl) => {
       expect(currentUrl.includes('details')).to.be.true;
-      expect(currentUrl.includes('infrastructure/instance_groups')).to.be.true;
+      expect(currentUrl.includes('infrastructure/instance-groups')).to.be.true;
     });
     cy.clickTab(/^Instances$/, true);
     cy.get('button').contains('Run health check').should('have.attr', 'aria-disabled', 'true');
@@ -849,7 +829,7 @@ describe('Instance Groups: Instances Tab', () => {
     cy.get('[data-cy="name-column-cell"]').click();
     cy.url().then((currentUrl) => {
       expect(currentUrl.includes('details')).to.be.true;
-      expect(currentUrl.includes('infrastructure/instance_groups')).to.be.true;
+      expect(currentUrl.includes('infrastructure/instance-groups')).to.be.true;
     });
     cy.clickTab(/^Instances$/, true);
     cy.get('[data-ouia-component-id="simple-table"]').within(() => {
@@ -873,7 +853,7 @@ describe('Instance Groups: Instances Tab', () => {
     cy.get('[data-cy="name-column-cell"]').click();
     cy.url().then((currentUrl) => {
       expect(currentUrl.includes('details')).to.be.true;
-      expect(currentUrl.includes('infrastructure/instance_groups')).to.be.true;
+      expect(currentUrl.includes('infrastructure/instance-groups')).to.be.true;
     });
     cy.clickTab(/^Instances$/, true);
     cy.get('[data-ouia-component-id="simple-table"]').within(() => {
@@ -883,7 +863,7 @@ describe('Instance Groups: Instances Tab', () => {
     cy.get('[data-cy="name-column-cell"]').click();
     cy.url().then((currentUrl) => {
       expect(currentUrl.includes('details')).to.be.true;
-      expect(currentUrl.includes('infrastructure/instance_groups')).to.be.true;
+      expect(currentUrl.includes('infrastructure/instance-groups')).to.be.true;
     });
     cy.verifyPageTitle(instance.hostname);
     cy.contains('nav[aria-label="Breadcrumb"]', 'Instance groups').should('exist');

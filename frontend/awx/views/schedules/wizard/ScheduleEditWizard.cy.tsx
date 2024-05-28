@@ -104,8 +104,8 @@ describe('ScheduleEditWizard', () => {
 
     it('Should render the correct steps on initial ', () => {
       cy.mount(<ScheduleEditWizard />, {
-        initialEntries: ['/templates/job_template/7/schedules/1/edit'],
-        path: '/templates/job_template/:id/schedules/:schedule_id/edit',
+        initialEntries: ['/templates/job-template/7/schedules/1/edit'],
+        path: '/templates/job-template/:id/schedules/:schedule_id/edit',
       });
 
       cy.get('[data-cy="wizard-nav"]').within(() => {
@@ -120,8 +120,8 @@ describe('ScheduleEditWizard', () => {
 
     it('Should not go to next step due to failed validation', () => {
       cy.mount(<ScheduleEditWizard />, {
-        initialEntries: ['/templates/job_template/7/schedules/1/edit'],
-        path: '/templates/job_template/:id/schedules/:schedule_id/edit',
+        initialEntries: ['/templates/job-template/7/schedules/1/edit'],
+        path: '/templates/job-template/:id/schedules/:schedule_id/edit',
       });
 
       cy.get('[data-cy="name"]').clear();
@@ -139,8 +139,8 @@ describe('ScheduleEditWizard', () => {
       cy.intercept('/api/v2/job_templates/100/', { id: 100, name: 'Mock Job Template' });
       cy.intercept('/api/v2/job_templates/100/launch/', {});
       cy.mount(<ScheduleEditWizard />, {
-        initialEntries: ['/templates/job_template/7/schedules/1/edit'],
-        path: '/templates/job_template/:id/schedules/:schedule_id/edit',
+        initialEntries: ['/templates/job-template/7/schedules/1/edit'],
+        path: '/templates/job-template/:id/schedules/:schedule_id/edit',
       });
 
       cy.get('[data-cy="wizard-nav"]').within(() => {
@@ -223,6 +223,25 @@ describe('ScheduleEditWizard', () => {
       cy.getByDataCy('row-id-2').within(() => {
         cy.get('button[data-cy="delete-rule"]').click();
         cy.get('tr[data-cy="row-id-2"]').should('not.exist');
+      });
+    });
+    it('Should be able to add rules while editing a schedule.', () => {
+      cy.mount(<ScheduleEditWizard />, {
+        initialEntries: ['/templates/job-template/7/schedules/1/edit'],
+        path: '/templates/job-template/:id/schedules/:schedule_id/edit',
+      });
+
+      cy.clickButton(/^Next$/);
+      cy.clickButton(/^Add rule$/);
+      cy.clickButton(/^Save rule$/);
+      cy.getByDataCy('row-id-2').within(() => {
+        cy.get('button[data-cy="delete-rule"]').click();
+        cy.get('tr[data-cy="row-id-2"]').should('not.exist');
+      });
+      cy.clickButton(/^Add rule$/);
+      cy.clickButton(/^Save rule$/);
+      cy.get('tbody[role="rowgroup"]').within(() => {
+        cy.get('tr').should('have.length', 3);
       });
     });
   });

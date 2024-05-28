@@ -12,7 +12,7 @@ export const cannotEditResource = (
     : t(`This cannot be edited due to insufficient permissions.`);
 
 export function cannotDeleteResource(resource: ResourceRBAC, t: (string: string) => string) {
-  if (resource.summary_fields.user_capabilities.delete) {
+  if (resource.summary_fields?.user_capabilities?.delete) {
     return '';
   }
   return t(`This cannot be deleted due to insufficient permissions.`);
