@@ -97,18 +97,13 @@ describe('Notifications: List View', () => {
 
       cy.intercept(awxAPI`/notification_templates/?name=${notificationName}*`, (req) => {
         req.reply((res) => {
-          if (
-            res.body?.results?.length > 0 &&
-            res.body.results[0].summary_fields?.recent_notifications?.length > 0
-          ) {
-            res.body?.results?.[0]?.summary_fields?.recent_notifications?.forEach(
-              (notification: { status: string }) => {
-                if (notification.status === 'failed') {
-                  notification.status = 'successful';
-                }
+          res.body?.results?.[0]?.summary_fields?.recent_notifications?.forEach(
+            (notification: { status: string }) => {
+              if (notification.status === 'failed') {
+                notification.status = 'successful';
               }
-            );
-          }
+            }
+          );
           return res;
         });
       }).as('getTemplates');

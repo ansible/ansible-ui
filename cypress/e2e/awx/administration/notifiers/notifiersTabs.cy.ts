@@ -46,15 +46,13 @@ describe('Notifications', () => {
         // test success message
         cy.intercept(awxAPI`/notification_templates/*`, (req) => {
           req.reply((res) => {
-            if (res.body?.results?.summary_fields?.recent_notifications?.length > 0) {
-              res?.body?.summary_fields?.recent_notifications?.forEach(
-                (notification: { status: string }) => {
-                  if (notification.status === 'failed') {
-                    notification.status = 'successful';
-                  }
+            res?.body?.summary_fields?.recent_notifications?.forEach(
+              (notification: { status: string }) => {
+                if (notification.status === 'failed') {
+                  notification.status = 'successful';
                 }
-              );
-            }
+              }
+            );
             return res;
           });
         }).as('getTemplates');
