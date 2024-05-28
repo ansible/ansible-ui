@@ -26,7 +26,7 @@ describe('TeamPage', () => {
     cy.get('.pf-v5-c-tabs__item').should('have.length', 4);
     cy.get('.pf-v5-c-tabs__item').eq(0).should('have.text', 'Back to Teams');
     cy.get('.pf-v5-c-tabs__item').eq(1).should('have.text', 'Details');
-    cy.get('.pf-v5-c-tabs__item').eq(2).should('have.text', 'Access');
+    cy.get('.pf-v5-c-tabs__item').eq(2).should('have.text', 'Users');
     cy.get('.pf-v5-c-tabs__item').eq(3).should('have.text', 'Roles');
   });
 });
