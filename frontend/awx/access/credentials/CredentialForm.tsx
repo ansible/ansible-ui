@@ -848,13 +848,23 @@ function CredentialTextInput({
       setValue(field.id, renderFieldValue(field), { shouldDirty: true });
     }
   }, [setValue, accumulatedPluginValues, renderFieldValue, field]);
+
+  useEffect(() => {
+    if (shouldHideField && initialValues?.[field.id] === '$encrypted$') {
+      setValue(field.id, initialValues?.[field.id], { shouldDirty: true });
+    }
+    if (!shouldHideField && initialValues?.[field.id] === '$encrypted$') {
+      setValue(field.id, '', { shouldDirty: false });
+    }
+  }, [shouldHideField, initialValues, field.id, setValue]);
+
   const clearField = () => {
-    setValue(field.id, '', { shouldDirty: false });
-    setShouldHideField(!shouldHideField);
+    //setValue(field.id, 'foo', { shouldDirty: false });
+    setShouldHideField(false);
   };
   const hideField = () => {
-    setValue(field.id, t('$encrypted$'), { shouldDirty: true });
-    setShouldHideField(!shouldHideField);
+    //setValue(field.id, 'bar', { shouldDirty: true });
+    setShouldHideField(true);
     setAccumulatedPluginValues?.(
       accumulatedPluginValues.filter((cp) => cp.input_field_name !== field.id)
     );
