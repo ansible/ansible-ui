@@ -13,11 +13,11 @@ import { useGet } from '../../../common/crud/useGet';
 import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { useInvalidateCacheOnUnmount } from '../../../common/useInvalidateCache';
-import { EdaPageForm } from '../../common/EdaPageForm';
-import { edaAPI } from '../../common/eda-utils';
-import { EdaRbacRole } from '../../interfaces/EdaRbacRole';
-import { EdaRoute } from '../../main/EdaRoutes';
-import { EdaContentTypes, useEdaRoleMetadata } from './hooks/useEdaRoleMetadata';
+import { AwxPageForm } from '../../common/AwxPageForm';
+import { awxAPI } from '../../common/api/awx-utils';
+import { AwxRbacRole } from '../../interfaces/AwxRbacRole';
+import { AwxRoute } from '../../main/AwxRoutes';
+import { AwxContentTypes, useAwxRoleMetadata } from './hooks/useAwxRoleMetadata';
 import { PageFormMultiSelect } from '../../../../framework/PageForm/Inputs/PageFormMultiSelect';
 import { PageFormHidden } from '../../../../framework/PageForm/Utils/PageFormHidden';
 import { useWatch } from 'react-hook-form';
@@ -29,11 +29,11 @@ export function CreateRole(props: { breadcrumbLabelForPreviousPage?: string }) {
 
   useInvalidateCacheOnUnmount();
 
-  const postRequest = usePostRequest<Partial<EdaRbacRole>, EdaRbacRole>();
+  const postRequest = usePostRequest<Partial<AwxRbacRole>, AwxRbacRole>();
 
-  const onSubmit: PageFormSubmitHandler<EdaRbacRole> = async (Role) => {
-    const newRole = await postRequest(edaAPI`/role_definitions/`, Role);
-    pageNavigate(EdaRoute.RolePage, { params: { id: newRole.id } });
+  const onSubmit: PageFormSubmitHandler<AwxRbacRole> = async (Role) => {
+    const newRole = await postRequest(awxAPI`/role_definitions/`, Role);
+    pageNavigate(AwxRoute.RolePage, { params: { id: newRole.id } });
   };
   const onCancel = () => navigate(-1);
   const getPageUrl = useGetPageUrl();
@@ -45,19 +45,19 @@ export function CreateRole(props: { breadcrumbLabelForPreviousPage?: string }) {
         breadcrumbs={[
           {
             label: props.breadcrumbLabelForPreviousPage || t('Roles'),
-            to: getPageUrl(EdaRoute.Roles),
+            to: getPageUrl(AwxRoute.Roles),
           },
           { label: t('Create Role') },
         ]}
       />
-      <EdaPageForm<EdaRbacRole>
+      <AwxPageForm<AwxRbacRole>
         submitText={t('Create role')}
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
         onCancel={onCancel}
       >
-        <EdaRoleInputs />
-      </EdaPageForm>
+        <AwxRoleInputs />
+      </AwxPageForm>
     </PageLayout>
   );
 }
@@ -68,34 +68,28 @@ export function EditRole(props: { breadcrumbLabelForPreviousPage?: string }) {
   const pageNavigate = usePageNavigate();
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
-  const { data: Role } = useGet<EdaRbacRole>(edaAPI`/role_definitions/${id.toString()}/`);
+  const { data: role } = useGet<AwxRbacRole>(awxAPI`/role_definitions/${id.toString()}/`);
 
   useInvalidateCacheOnUnmount();
 
-  const postRequest = usePostRequest<Partial<EdaRbacRole>, EdaRbacRole>();
-  const patchRequest = usePatchRequest<Partial<EdaRbacRole>, EdaRbacRole>();
+  const patchRequest = usePatchRequest<Partial<AwxRbacRole>, AwxRbacRole>();
 
-  const onSubmit: PageFormSubmitHandler<EdaRbacRole> = async (Role) => {
-    if (Number.isInteger(id)) {
-      Role = await patchRequest(edaAPI`/role_definitions/${id.toString()}/`, Role);
-      navigate(-1);
-    } else {
-      const newRole = await postRequest(edaAPI`/role_definitions/`, Role);
-      pageNavigate(EdaRoute.RolePage, { params: { id: newRole.id } });
-    }
+  const onSubmit: PageFormSubmitHandler<AwxRbacRole> = async (data) => {
+    await patchRequest(awxAPI`/role_definitions/${id.toString()}/`, data);
+    pageNavigate(AwxRoute.RolePage, { params: { id } });
   };
   const onCancel = () => navigate(-1);
   const getPageUrl = useGetPageUrl();
 
   if (Number.isInteger(id)) {
-    if (!Role) {
+    if (!role) {
       return (
         <PageLayout>
           <PageHeader
             breadcrumbs={[
               {
                 label: props.breadcrumbLabelForPreviousPage || t('Roles'),
-                to: getPageUrl(EdaRoute.Roles),
+                to: getPageUrl(AwxRoute.Roles),
               },
               { label: t('Edit Role') },
             ]}
@@ -110,50 +104,41 @@ export function EditRole(props: { breadcrumbLabelForPreviousPage?: string }) {
             breadcrumbs={[
               {
                 label: props.breadcrumbLabelForPreviousPage || t('Roles'),
-                to: getPageUrl(EdaRoute.Roles),
+                to: getPageUrl(AwxRoute.Roles),
               },
               { label: t('Edit Role') },
             ]}
           />
-          <EdaPageForm<EdaRbacRole>
+          <AwxPageForm<AwxRbacRole>
             submitText={t('Save role')}
             onSubmit={onSubmit}
             cancelText={t('Cancel')}
             onCancel={onCancel}
-            defaultValue={Role}
+            defaultValue={role}
           >
-            <EdaRoleInputs disableContentType />
-          </EdaPageForm>
+            <AwxRoleInputs disableContentType />
+          </AwxPageForm>
         </PageLayout>
       );
     }
   }
 }
 
-function EdaRoleInputs(props: { disableContentType?: boolean }) {
+function AwxRoleInputs(props: { disableContentType?: boolean }) {
   const { t } = useTranslation();
   const { disableContentType } = props;
-  const edaRoleMetadata = useEdaRoleMetadata();
-  const content_type = useWatch<EdaRbacRole>({ name: 'content_type' });
+  const awxRoleMetadata = useAwxRoleMetadata();
+  const content_type = useWatch<AwxRbacRole>({ name: 'content_type' });
   return (
     <>
-      <PageFormTextInput<EdaRbacRole> name="name" label={t('Name')} isRequired />
-      <PageFormTextInput<EdaRbacRole> name="description" label={t('Description')} />
+      <PageFormTextInput<AwxRbacRole> name="name" label={t('Name')} isRequired />
+      <PageFormTextInput<AwxRbacRole> name="description" label={t('Description')} />
       <PageFormSelect
         name={'content_type'}
         label={t('Content Type')}
         placeholderText={t('Select a content type')}
-        options={Object.entries(edaRoleMetadata.content_types)
-          .filter(
-            ([option]) =>
-              ![
-                'shared.team',
-                'eda.extravar',
-                'eda.auditrule',
-                'eda.rulebookprocess',
-                'eda.rulebook',
-              ].includes(option)
-          )
+        options={Object.entries(awxRoleMetadata.content_types)
+          .filter(([option]) => option !== 'shared.team')
           .map(([key, value]) => ({
             label: value?.displayName,
             value: key,
@@ -166,7 +151,7 @@ function EdaRoleInputs(props: { disableContentType?: boolean }) {
           name="permissions"
           label={t('Permissions')}
           options={Object.entries(
-            edaRoleMetadata.content_types[content_type as EdaContentTypes]?.permissions || {}
+            awxRoleMetadata.content_types[content_type as AwxContentTypes]?.permissions || {}
           ).map(([key, value]) => ({
             label: value,
             value: key,

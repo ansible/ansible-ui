@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useAwxMultiSelectListView } from '../../../common/useAwxMultiSelectListView';
 import { SelectRolesStep } from '../../../../common/access/RolesWizard/steps/SelectRolesStep';
 import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
-import { useAwxRolesFilters } from '../../roles/useAwxRolesFilters';
+import { useAwxRolesFilters } from '../../roles/hooks/useAwxRolesFilters';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { AwxRbacRole } from '../../../interfaces/AwxRbacRole';
 import { QueryParams } from '../../../common/useAwxView';
