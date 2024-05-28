@@ -17,6 +17,10 @@
     "personal_tokens": "/api/v2/users/17923/personal_tokens/"
   },
   "summary_fields": {
+    "resource": {
+      "ansible_id": "66c5390a-0d41-4e30-9f5e-f5abbb7df01e",
+      "resource_type": "shared.user"
+    },
     "user_capabilities": {
       "edit": true,
       "delete": true
