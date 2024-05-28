@@ -1,27 +1,27 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { DropdownPosition } from '@patternfly/react-core/deprecated';
+import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import {
   IPageAction,
-  PageActions,
+  LoadingPage,
   PageActionSelection,
   PageActionType,
+  PageActions,
   PageHeader,
   PageLayout,
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../../framework';
-import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
-import { LoadingPage } from '../../../../../framework';
+import { PageRoutedTabs } from '../../../../common/PageRoutedTabs';
 import { useGetItem } from '../../../../common/crud/useGet';
-import { EdaRoute } from '../../../main/EdaRoutes';
-import { EdaCredentialType } from '../../../interfaces/EdaCredentialType';
-import { edaAPI } from '../../../common/eda-utils';
 import { useOptions } from '../../../../common/crud/useOptions';
+import { edaAPI } from '../../../common/eda-utils';
+import { EdaCredentialType } from '../../../interfaces/EdaCredentialType';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
-import { useMemo } from 'react';
-import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
+import { EdaRoute } from '../../../main/EdaRoutes';
 import { useDeleteCredentialTypes } from '../hooks/useDeleteCredentialTypes';
 
 export function CredentialTypePage() {

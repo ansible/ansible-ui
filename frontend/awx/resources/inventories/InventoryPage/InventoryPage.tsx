@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { DropdownPosition } from '@patternfly/react-core/deprecated';
+import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useParams } from 'react-router-dom';
 import {
@@ -10,19 +11,17 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../../framework';
-import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
+import { PageRoutedTabs } from '../../../../common/PageRoutedTabs';
 import { useGet } from '../../../../common/crud/useGet';
+import { AwxError } from '../../../common/AwxError';
+import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { awxAPI } from '../../../common/api/awx-utils';
+import { useAwxWebSocketSubscription } from '../../../common/useAwxWebSocket';
 import { Inventory } from '../../../interfaces/Inventory';
+import { InventorySource } from '../../../interfaces/InventorySource';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useInventoryActions } from '../hooks/useInventoryActions';
-import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
-import { InventorySource } from '../../../interfaces/InventorySource';
-import { AwxError } from '../../../common/AwxError';
 import { InventoryWithSource } from './InventoryDetails';
-import { useCallback } from 'react';
-import { useAwxWebSocketSubscription } from '../../../common/useAwxWebSocket';
-import { useMemo } from 'react';
 
 export function InventoryPage() {
   const { t } = useTranslation();

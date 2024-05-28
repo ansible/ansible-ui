@@ -1,27 +1,27 @@
+import { DropdownPosition } from '@patternfly/react-core/deprecated';
+import { TrashIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { TrashIcon } from '@patternfly/react-icons';
 import {
   IPageAction,
-  PageActionType,
+  LoadingPage,
   PageActionSelection,
+  PageActionType,
+  PageActions,
   PageHeader,
   PageLayout,
+  useGetPageUrl,
   usePageNavigate,
-  PageActions,
-  LoadingPage,
 } from '../../../../../framework';
-import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
-import { AwxRoute } from '../../../main/AwxRoutes';
-import { useGetPageUrl } from '../../../../../framework';
+import { PageRoutedTabs } from '../../../../common/PageRoutedTabs';
 import { useGetItem } from '../../../../common/crud/useGet';
-import { AwxUser } from '../../../interfaces/User';
-import { Token } from '../../../interfaces/Token';
-import { awxAPI } from '../../../common/api/awx-utils';
 import { AwxError } from '../../../common/AwxError';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { Token } from '../../../interfaces/Token';
+import { AwxUser } from '../../../interfaces/User';
+import { AwxRoute } from '../../../main/AwxRoutes';
 import { useDeleteUserTokens } from '../hooks/useDeleteUserTokens';
-import { useMemo } from 'react';
-import { DropdownPosition } from '@patternfly/react-core/deprecated';
 
 export function UserTokenPage() {
   const { t } = useTranslation();

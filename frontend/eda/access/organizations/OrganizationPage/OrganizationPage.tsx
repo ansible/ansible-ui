@@ -15,14 +15,14 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../../framework';
-import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
+import { PageRoutedTabs } from '../../../../common/PageRoutedTabs';
 import { useGetItem } from '../../../../common/crud/useGet';
+import { EdaError } from '../../../common/EdaError';
+import { edaAPI } from '../../../common/eda-utils';
 import { EdaOrganization } from '../../../interfaces/EdaOrganization';
 import { EdaRoute } from '../../../main/EdaRoutes';
 import { useDeleteOrganizations } from '../hooks/useDeleteOrganizations';
-import { edaAPI } from '../../../common/eda-utils';
-import { EdaError } from '../../../common/EdaError';
 
 export function OrganizationPage() {
   const { t } = useTranslation();
