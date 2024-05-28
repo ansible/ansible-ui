@@ -27,6 +27,8 @@ import {
   useRestartRulebookActivations,
 } from '../hooks/useControlRulebookActivations';
 import { useDeleteRulebookActivations } from '../hooks/useDeleteRulebookActivations';
+import { useOptions } from '../../../common/crud/useOptions';
+import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 
 export function RulebookActivationPage() {
   const { t } = useTranslation();
@@ -34,6 +36,10 @@ export function RulebookActivationPage() {
   const pageNavigate = usePageNavigate();
   const getPageUrl = useGetPageUrl();
   const alertToaster = usePageAlertToaster();
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(
+    edaAPI`/activations/${params.id ?? ''}/`
+  );
+  const canPatchActivation = Boolean(data && data.actions && data.actions['PATCH']);
   const { data: rulebookActivation, refresh } = useGet<EdaRulebookActivation>(
     edaAPI`/activations/${params.id ?? ''}/`
   );
@@ -120,6 +126,10 @@ export function RulebookActivationPage() {
             selection: PageActionSelection.Single,
             icon: TrashIcon,
             label: t('Delete rulebook activation'),
+            isDisabled: () =>
+              canPatchActivation
+                ? ''
+                : t(`The rulebook activation cannot be deleted due to insufficient permission.`),
             onClick: (rulebookActivation: EdaRulebookActivation) =>
               deleteRulebookActivations([rulebookActivation]),
             isDanger: true,
@@ -129,11 +139,12 @@ export function RulebookActivationPage() {
     return actions;
   }, [
     isActionTab,
+    t,
     enableRulebookActivation,
     disableRulebookActivation,
     restartRulebookActivation,
+    canPatchActivation,
     deleteRulebookActivations,
-    t,
   ]);
 
   return (

@@ -193,8 +193,38 @@ describe('Credentials.cy.ts', () => {
   });
 });
 
-describe('Empty list', () => {
+describe('Empty list without POST permission', () => {
   beforeEach(() => {
+    cy.intercept(
+      {
+        method: 'GET',
+        url: edaAPI`/eda-credentials/*`,
+      },
+      {
+        fixture: 'emptyList.json',
+      }
+    ).as('emptyList');
+  });
+  it('Empty state is displayed correctly', () => {
+    cy.mount(<Credentials />);
+    cy.contains(/^You do not have permission to create a credential.$/);
+    cy.contains(
+      /^Please contact your organization administrator if there is an issue with your access.$/
+    );
+  });
+});
+
+describe('Empty list with POST permission', () => {
+  beforeEach(() => {
+    cy.intercept(
+      {
+        method: 'OPTIONS',
+        url: edaAPI`/eda-credentials/`,
+      },
+      {
+        fixture: 'edaCredentialsOptions.json',
+      }
+    ).as('getOptions');
     cy.intercept(
       {
         method: 'GET',
