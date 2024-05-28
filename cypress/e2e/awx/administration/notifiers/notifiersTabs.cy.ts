@@ -20,16 +20,17 @@ describe('Notifications', () => {
   });
 
   describe('Notifications: Details View', () => {
-    it.only('can edit a Notification on its details page and assert the edited info', () => {
+    it('can edit a Notification on its details page and assert the edited info', () => {
       //Utilize the creation of notification in a beforeEach block
       //Assert the initial info of the notification before edit
       //Assert the info of the notification after edit
       //Add an afterEach block to delete the notification that was created for this test
       cy.navigateTo('awx', 'notification-templates');
-        
+
       // test for only one type should be enough, other types covered in notifiers list view
-      testNotification('Email', { details : true});
+      testNotification('Email', { details: true });
     });
+
 
     it('can test the Notification on its details page and assert that the test completed', () => {
       //Utilize a notification of any type created in the beforeEach hook

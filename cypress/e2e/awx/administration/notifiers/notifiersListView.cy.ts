@@ -183,8 +183,8 @@ describe('Notifications: List View', () => {
   });
 });
 
-// details options - in details : true, we are editing and deleting in detail 
-export function testNotification(type: string, options? : { details? : boolean }) {
+// details options - in details : true, we are editing and deleting in detail
+export function testNotification(type: string, options?: { details?: boolean }) {
   const notificationName = randomE2Ename();
   const orgName = randomE2Ename();
   cy.createAwxOrganization(orgName).then(() => {
@@ -206,7 +206,7 @@ export function testNotification(type: string, options? : { details? : boolean }
 
     if (options?.details === true) {
       cy.getByDataCy(`edit-notifier`).click();
-    }else {
+    } else {
       // if not in detail, we go back to list and click edit there
       cy.getByDataCy('back-to notifiers').click();
       cy.filterTableByMultiSelect('name', [notificationName]);
@@ -230,8 +230,7 @@ export function testNotification(type: string, options? : { details? : boolean }
     if (options?.details === true) {
       cy.get(`[data-cy="actions-dropdown"]`).click();
       cy.get(`[data-cy="delete-notifier"]`).click();
-    }else
-    {
+    } else {
       // if not in detail, we go back to list and click delete there
       cy.getByDataCy('back-to notifiers').click();
       cy.filterTableByMultiSelect('name', [name2]);
@@ -240,7 +239,7 @@ export function testNotification(type: string, options? : { details? : boolean }
       cy.get(`[aria-label="Simple table"] [data-cy="actions-dropdown"]`).click();
       cy.get(`[data-cy="delete-notifier"]`).click();
     }
-  
+
     cy.get(`[role="dialog"] input`).click();
     cy.contains(`[role="dialog"] button`, `Delete notifiers`).click();
 
