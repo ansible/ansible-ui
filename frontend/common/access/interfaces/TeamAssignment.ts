@@ -7,4 +7,5 @@ export type TeamAssignment = Assignment & {
       name: string;
     };
   };
+  team: number;
 };
