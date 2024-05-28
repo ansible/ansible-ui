@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useMemo } from 'react';
-import { IToolbarFilter, ToolbarFilterType } from '../../../../framework';
+import { IToolbarFilter, ToolbarFilterType } from '../../../../../framework';
 
 export function useAwxRolesFilters() {
   const { t } = useTranslation();

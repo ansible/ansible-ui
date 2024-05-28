@@ -25,7 +25,7 @@ const ExclamationTrianglePopover = styled(PFExclamationTriangleIcon)`
 ExclamationTrianglePopover.displayName = 'ExclamationTrianglePopover';
 
 function ExecutionEnvironmentDetail(props: {
-  executionEnvironment: ExecutionEnvironment | SummaryFieldsExecutionEnvironment;
+  executionEnvironment: ExecutionEnvironment | SummaryFieldsExecutionEnvironment | undefined;
   isDefaultEnvironment: boolean;
   virtualEnvironment?: string;
   verifyMissingVirtualEnv?: boolean;
