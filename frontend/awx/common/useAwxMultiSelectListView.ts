@@ -26,11 +26,13 @@ export function useAwxMultiSelectListView<T extends { id: number }>(
   fieldName: string
 ) {
   const { setValue } = useFormContext();
-  const { wizardData } = usePageWizard();
+  const { wizardData, stepData } = usePageWizard();
 
   const view = useAwxView<T>({
     ...viewOptions,
-    defaultSelection: ((wizardData as { [key: string]: [] })[fieldName] || []) as T[],
+    defaultSelection: ((wizardData as { [key: string]: [] })[fieldName] ||
+      stepData[fieldName] ||
+      []) as T[],
   });
 
   useEffect(() => {

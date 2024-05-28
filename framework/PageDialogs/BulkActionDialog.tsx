@@ -9,7 +9,7 @@ import {
 } from '@patternfly/react-core';
 import { CheckCircleIcon, ExclamationCircleIcon, PendingIcon } from '@patternfly/react-icons';
 import pLimit from 'p-limit';
-import { useCallback, useEffect, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { genericErrorAdapter } from '../PageForm/genericErrorAdapter';
 import { ErrorAdapter } from '../PageForm/typesErrorAdapter';
@@ -26,6 +26,9 @@ export interface BulkActionDialogProps<T extends object> {
    * @link https://www.patternfly.org/v4/components/modal/design-guidelines#confirmation-dialogs
    */
   title: string;
+
+  /** Optional description that appears below the title. */
+  description?: ReactNode | string;
 
   /** The items to confirm for the bulk action. */
   items: T[];
@@ -86,6 +89,7 @@ export function BulkActionDialog<T extends object>(props: BulkActionDialogProps<
     processingText,
     isDanger,
     errorAdapter = genericErrorAdapter,
+    description,
   } = props;
   const { t } = useTranslation();
   const [translations] = useFrameworkTranslations();
@@ -190,6 +194,7 @@ export function BulkActionDialog<T extends object>(props: BulkActionDialogProps<
       title={title}
       ouiaId={title}
       aria-label={title}
+      description={description}
       variant={ModalVariant.medium}
       isOpen
       onClose={() => {

@@ -43,6 +43,8 @@ const StyledDivider = styled(Divider)`
 export function RoleAssignmentsReviewStep(props: {
   edaRolesLabel?: string;
   awxRolesLabel?: string;
+  selectedUser?: { id: number; name?: never; username: string };
+  selectedTeam?: { id: number; name: string; username?: never };
 }) {
   const { wizardData } = usePageWizard();
   const { t } = useTranslation();
@@ -63,6 +65,34 @@ export function RoleAssignmentsReviewStep(props: {
               <PageDetail label={t('Resource type')}>
                 {getDisplayName(resourceType, { isTitleCase: true })}
               </PageDetail>
+            </PageDetails>
+          </div>
+          <StyledDivider className="pf-v5-u-mb-xl" />
+        </>
+      ) : null}
+      {props.selectedUser ? (
+        <>
+          <div
+            style={{
+              marginTop: 'var(--pf-v5-global--spacer--lg)',
+            }}
+          >
+            <PageDetails disablePadding>
+              <PageDetail label={t('User')}>{props.selectedUser.username}</PageDetail>
+            </PageDetails>
+          </div>
+          <StyledDivider className="pf-v5-u-mb-xl" />
+        </>
+      ) : null}
+      {props.selectedTeam ? (
+        <>
+          <div
+            style={{
+              marginTop: 'var(--pf-v5-global--spacer--lg)',
+            }}
+          >
+            <PageDetails disablePadding>
+              <PageDetail label={t('Team')}>{props.selectedTeam.name}</PageDetail>
             </PageDetails>
           </div>
           <StyledDivider className="pf-v5-u-mb-xl" />

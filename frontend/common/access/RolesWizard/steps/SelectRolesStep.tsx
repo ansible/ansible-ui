@@ -7,7 +7,7 @@ import styled from 'styled-components';
 import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
 
 interface SelectRolesStepProps<T extends object> {
-  view: IView & ISelected<T> & { itemCount?: number; pageItems: T[] | undefined };
+  view: IView & ISelected<T> & { itemCount?: number; pageItems: T[] | undefined; error?: Error };
   tableColumns: ITableColumn<T>[];
   toolbarFilters: IToolbarFilter[];
   fieldNameForPreviousStep?: string;
@@ -93,6 +93,7 @@ export function SelectRolesStep<T extends object>(props: SelectRolesStepProps<T>
         tableColumns={tableColumns}
         toolbarFilters={toolbarFilters}
         labelForSelectedItems={t('Selected roles')}
+        errorStateTitle={t('Error loading roles')}
       />
     </>
   );

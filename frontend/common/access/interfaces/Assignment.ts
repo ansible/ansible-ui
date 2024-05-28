@@ -17,4 +17,5 @@ export type Assignment = {
   };
   object_id: string;
   content_type: string;
+  role_definition: number;
 };
