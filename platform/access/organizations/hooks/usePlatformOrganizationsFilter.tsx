@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { ToolbarFilterType } from '../../../../framework';
 import { IToolbarAsyncMultiSelectFilter } from '../../../../framework/PageToolbar/PageToolbarFilters/ToolbarAsyncMultiSelectFilter';
-import { AsyncQueryLabel } from '../../../../framework/components/AsyncQueryLabel';
+import { AsyncQueryLabel } from '../../../../frontend/common/AsyncQueryLabel';
 import { gatewayAPI } from '../../../api/gateway-api-utils';
 import { useQueryPlatformOptions } from '../../../common/useQueryPlatformOptions';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
