@@ -15,8 +15,8 @@ describe('Organizations: Create', () => {
     cy.navigateTo('awx', 'organizations');
     cy.verifyPageTitle('Organizations');
     cy.clickLink(/^Create organization$/);
-    cy.getByDataCy('organization-name').type(organizationName);
-    cy.getByDataCy('organization-description').type(orgDescription);
+    cy.getByDataCy('name').type(organizationName);
+    cy.getByDataCy('description').type(orgDescription);
     cy.intercept('POST', awxAPI`/organizations/`).as('newOrg');
     cy.clickButton(/^Create organization$/);
     cy.wait('@newOrg')
@@ -75,13 +75,13 @@ describe('Organizations: Edit and Delete', function () {
       cy.getByDataCy('edit-organization').click();
     });
     cy.verifyPageTitle('Edit Organization');
-    cy.getByDataCy('organization-name')
+    cy.getByDataCy('name')
       .clear()
       .type('now-edited ' + `${stringRandom}`);
     cy.clickButton(/^Save organization$/);
     cy.verifyPageTitle('now-edited ' + `${stringRandom}`);
     cy.getByDataCy('edit-organization').click();
-    cy.getByDataCy('organization-name').clear().type(`${organization.name}`);
+    cy.getByDataCy('name').clear().type(`${organization.name}`);
     cy.clickButton(/^Save organization$/);
     cy.verifyPageTitle(`${organization.name}`);
   });
@@ -97,13 +97,13 @@ describe('Organizations: Edit and Delete', function () {
     cy.verifyPageTitle(`${organization.name}`);
     cy.containsBy('button', /^Edit organization/).click();
     cy.verifyPageTitle('Edit Organization');
-    cy.getByDataCy('organization-name')
+    cy.getByDataCy('name')
       .clear()
       .type('now-edited ' + `${stringRandom}`);
     cy.containsBy('button', /^Save organization/).click();
     cy.verifyPageTitle('now-edited ' + `${stringRandom}`);
     cy.getByDataCy('edit-organization').click();
-    cy.getByDataCy('organization-name').clear().type(`${organization.name}`);
+    cy.getByDataCy('name').clear().type(`${organization.name}`);
     cy.containsBy('button', /^Save organization/).click();
     cy.verifyPageTitle(`${organization.name}`);
   });
