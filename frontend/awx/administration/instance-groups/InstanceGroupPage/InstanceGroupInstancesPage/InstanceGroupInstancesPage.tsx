@@ -1,20 +1,20 @@
+import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import {
   LoadingPage,
-  PageLayout,
-  PageHeader,
   PageActions,
+  PageHeader,
+  PageLayout,
   useGetPageUrl,
 } from '../../../../../../framework';
-import { PageRoutedTabs } from '../../../../../../framework/PageTabs/PageRoutedTabs';
+import { PageRoutedTabs } from '../../../../../common/PageRoutedTabs';
 import { useGetItem } from '../../../../../common/crud/useGet';
 import { AwxError } from '../../../../common/AwxError';
 import { awxAPI } from '../../../../common/api/awx-utils';
 import { Instance } from '../../../../interfaces/Instance';
 import { AwxRoute } from '../../../../main/AwxRoutes';
 import { useIGInstanceRowActions } from '../hooks/useIGInstanceRowActions';
-import { DropdownPosition } from '@patternfly/react-core/deprecated';
 
 export function InstanceGroupInstancesPage() {
   const { t } = useTranslation();

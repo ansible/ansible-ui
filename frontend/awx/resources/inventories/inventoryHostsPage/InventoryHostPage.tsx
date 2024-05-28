@@ -9,12 +9,12 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../../framework';
-import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
+import { PageRoutedTabs } from '../../../../common/PageRoutedTabs';
 import { AwxHost } from '../../../interfaces/AwxHost';
 import { AwxRoute } from '../../../main/AwxRoutes';
+import { useGetHost } from '../../hosts/hooks/useGetHost';
 import { useHostsActions } from '../../hosts/hooks/useHostsActions';
 import { useGetInventory } from '../InventoryPage/InventoryPage';
-import { useGetHost } from '../../hosts/hooks/useGetHost';
 
 export function InventoryHostPage() {
   const { t } = useTranslation();

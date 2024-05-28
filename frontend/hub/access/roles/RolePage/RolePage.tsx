@@ -1,9 +1,6 @@
+import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { pulpAPI } from '../../../common/api/formatPath';
-import { Role } from '../Role';
-import { useGet } from '../../../../common/crud/useGet';
-import { useRoleRowActions } from '../hooks/useRoleActions';
 import {
   LoadingPage,
   PageActions,
@@ -12,11 +9,14 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../../framework';
+import { PageRoutedTabs } from '../../../../common/PageRoutedTabs';
+import { useGet } from '../../../../common/crud/useGet';
 import { HubError } from '../../../common/HubError';
-import { HubRoute } from '../../../main/HubRoutes';
-import { DropdownPosition } from '@patternfly/react-core/deprecated';
-import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
+import { pulpAPI } from '../../../common/api/formatPath';
 import { PulpItemsResponse } from '../../../common/useHubView';
+import { HubRoute } from '../../../main/HubRoutes';
+import { Role } from '../Role';
+import { useRoleRowActions } from '../hooks/useRoleActions';
 
 export function RolePage(props: {
   breadcrumbLabelForPreviousPage?: string;

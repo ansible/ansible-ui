@@ -1,21 +1,21 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
+import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import {
+  LoadingPage,
+  PageActions,
   PageHeader,
   PageLayout,
-  PageActions,
   useGetPageUrl,
-  LoadingPage,
   usePageNavigate,
 } from '../../../../framework';
-import { PageRoutedTabs } from '../../../../framework/PageTabs/PageRoutedTabs';
-import { AwxRoute } from '../../main/AwxRoutes';
+import { PageRoutedTabs } from '../../../common/PageRoutedTabs';
 import { useGetItem } from '../../../common/crud/useGet';
 import { AwxError } from '../../common/AwxError';
-import { AwxRbacRole } from '../../interfaces/AwxRbacRole';
 import { awxAPI } from '../../common/api/awx-utils';
+import { AwxRbacRole } from '../../interfaces/AwxRbacRole';
+import { AwxRoute } from '../../main/AwxRoutes';
 import { useAwxRoleRowActions } from './hooks/useAwxRoleRowActions';
 
 export function AwxRolePage(props: {

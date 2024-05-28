@@ -1,3 +1,6 @@
+import { DropdownPosition } from '@patternfly/react-core/deprecated';
+import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import {
@@ -10,16 +13,13 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../framework';
-import { PageRoutedTabs } from '../../../../framework/PageTabs/PageRoutedTabs';
 import { useGet } from '../../../common/crud/useGet';
+import { PageRoutedTabs } from '../../../common/PageRoutedTabs';
 import { edaAPI } from '../../common/eda-utils';
+import { useEdaActiveUser } from '../../common/useEdaActiveUser';
 import { EdaRbacRole } from '../../interfaces/EdaRbacRole';
 import { EdaRoute } from '../../main/EdaRoutes';
-import { DropdownPosition } from '@patternfly/react-core/deprecated';
-import { useMemo } from 'react';
-import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useDeleteEdaRoles } from './hooks/useDeleteEdaRoles';
-import { useEdaActiveUser } from '../../common/useEdaActiveUser';
 
 export function EdaRolePage(props: {
   breadcrumbLabelForPreviousPage?: string;

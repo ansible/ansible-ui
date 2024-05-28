@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
+import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import {
@@ -8,14 +9,13 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../../framework';
-import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
+import { PageRoutedTabs } from '../../../../common/PageRoutedTabs';
 import { AwxError } from '../../../common/AwxError';
 import { AwxHost } from '../../../interfaces/AwxHost';
 import { AwxRoute } from '../../../main/AwxRoutes';
-import { useHostsActions } from '../hooks/useHostsActions';
-import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { useGetHost } from '../hooks/useGetHost';
+import { useHostsActions } from '../hooks/useHostsActions';
 
 export function HostPage() {
   const { t } = useTranslation();
