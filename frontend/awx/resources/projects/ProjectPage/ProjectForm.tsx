@@ -17,7 +17,7 @@ import { useOptions } from '../../../../common/crud/useOptions';
 import { usePostRequest } from '../../../../common/crud/usePostRequest';
 import { PageFormCredentialSelect } from '../../../access/credentials/components/PageFormCredentialSelect';
 import { PageFormSelectOrganization } from '../../../access/organizations/components/PageFormOrganizationSelect';
-import { PageFormExecutionEnvironmentSelect } from '../../../administration/execution-environments/components/PageFormExecutionEnvironmentSelect';
+import { PageFormSelectExecutionEnvironment } from '../../../administration/execution-environments/components/PageFormExecutionEnvironmentSelect';
 import { AwxPageForm } from '../../../common/AwxPageForm';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
@@ -69,9 +69,6 @@ export function CreateProject() {
       !project.summary_fields.signature_validation_credential.name
     ) {
       project.signature_validation_credential = null;
-    }
-    if (!project.summary_fields.default_environment.name) {
-      project.default_environment = null;
     }
 
     // Create new project
@@ -132,9 +129,6 @@ export function EditProject() {
       !project.summary_fields.signature_validation_credential.name
     ) {
       project.signature_validation_credential = null;
-    }
-    if (!project.summary_fields.default_environment.name) {
-      project.default_environment = null;
     }
 
     // Update project
@@ -246,16 +240,15 @@ function ProjectInputs(props: { project?: Project }) {
         placeholder={t('Enter description')}
       />
       <PageFormSelectOrganization<Project> name="organization" isRequired />
-      <PageFormExecutionEnvironmentSelect<Project>
-        organizationId={organizationId ? organizationId.toString() : undefined}
-        name="summary_fields.default_environment.name"
+      <PageFormSelectExecutionEnvironment<Project>
+        name="default_environment"
+        organizationId={organizationId}
         label={t('Execution environment')}
-        executionEnvironmentIdPath="default_environment"
-        executionEnvironmentPath="summary_fields.default_environment"
-        isDisabled={organizationId === undefined}
-        // tooltip={
-        //   org ? '' : t(`Select an organization before editing the default execution environment.`)
-        // }
+        isDisabled={
+          organizationId === undefined
+            ? t('Select an organization before editing the default execution environment.')
+            : undefined
+        }
       />
       <PageFormSelect<Project>
         isRequired
