@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
-import { IToolbarFilter, ToolbarFilterType } from '../../../../framework';
-import { useDynamicToolbarFilters } from '../../common/useDynamicFilters';
+import { IToolbarFilter, ToolbarFilterType } from '../../../../../framework';
+import { useDynamicToolbarFilters } from '../../../common/useDynamicFilters';
 import { useMemo } from 'react';
 
 export function useRolesFilters() {

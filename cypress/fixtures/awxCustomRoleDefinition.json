@@ -1,0 +1,18 @@
+{
+  "id": 33,
+  "url": "/api/v2/role_definitions/33/",
+  "related": {
+    "team_assignments": "/api/v2/role_definitions/33/team_assignments/",
+    "user_assignments": "/api/v2/role_definitions/33/user_assignments/"
+  },
+  "summary_fields": {},
+  "permissions": ["awx.view_inventory"],
+  "content_type": "awx.inventory",
+  "modified": "2024-05-27T14:58:40.652901Z",
+  "created": "2024-05-27T14:58:40.652942Z",
+  "name": "Inventory Read Compat",
+  "description": "Has Read permission to Inventory for backwards API compatibility",
+  "managed": false,
+  "modified_by": null,
+  "created_by": null
+}

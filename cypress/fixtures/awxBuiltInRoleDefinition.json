@@ -1,0 +1,23 @@
+{
+  "id": 1,
+  "url": "/api/v2/role_definitions/1/",
+  "related": {
+    "team_assignments": "/api/v2/role_definitions/1/team_assignments/",
+    "user_assignments": "/api/v2/role_definitions/1/user_assignments/"
+  },
+  "summary_fields": {},
+  "permissions": [
+    "awx.change_credential",
+    "awx.delete_credential",
+    "awx.use_credential",
+    "awx.view_credential"
+  ],
+  "content_type": "awx.credential",
+  "modified": "2024-05-26T07:19:20.200581Z",
+  "created": "2024-05-26T07:19:20.200562Z",
+  "name": "Credential Admin",
+  "description": "Has all permissions to a single credential",
+  "managed": true,
+  "modified_by": null,
+  "created_by": null
+}
