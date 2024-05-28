@@ -185,6 +185,10 @@ function ReviewExpandableList<
     tableColumns,
   });
 
+  if (view?.itemCount === 0) {
+    return null;
+  }
+
   return (
     <ExpandableSection
       data-cy={`expandable-section-${fieldName}`}
