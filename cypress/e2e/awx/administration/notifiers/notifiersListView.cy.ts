@@ -85,7 +85,7 @@ describe('Notifications: List View', () => {
     //Assert the existence of the notification before copy
     //Assert the copy action
     //Assert the existence of the copied notification as well as the original
-    cy.getByDataCy(`awx-notification-templates`).click({ force: true });
+    cy.navigateTo('awx', 'notification-templates');
     const name = randomE2Ename();
     cy.createNotificationTemplate(name).then((notificationTemplate) => {
       cy.filterTableByMultiSelect('name', [name]);
@@ -116,7 +116,7 @@ describe('Notifications: List View', () => {
     //Assert the presence of the items before deletion
     //Assert the deletion
 
-    cy.getByDataCy(`awx-notification-templates`).click({ force: true });
+    cy.navigateTo('awx', 'notification-templates');
     const name1 = randomE2Ename();
     const name2 = randomE2Ename();
 
@@ -152,7 +152,7 @@ function testNotification(type: string) {
   const notificationName = randomE2Ename();
   const orgName = randomE2Ename();
   cy.createAwxOrganization(orgName).then(() => {
-    cy.getByDataCy(`awx-notification-templates`).click({ force: true });
+    cy.navigateTo('awx', 'notification-templates');
     cy.get(`[data-cy="add-notifier"]`).click();
     cy.verifyPageTitle('Add notifier');
 
