@@ -10,7 +10,7 @@ import {
   PageSidebarBody,
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
-import { useState } from 'react';
+import { useState, type CSSProperties } from 'react';
 import { usePageNavBarClick, usePageNavSideBar } from './PageNavSidebar';
 import './PageNavigation.css';
 import { PageNavigationItem } from './PageNavigationItem';
@@ -84,6 +84,7 @@ function PageNavigationItemComponent(props: { item: PageNavigationItem; baseRout
   }
 
   const hasChildNavItems = 'children' in item && item.children?.find((child) => child.label);
+  const subtitleStyle: CSSProperties = { fontSize: 'small', opacity: 0.5, textAlign: 'left' };
 
   if (!hasChildNavItems && 'label' in item) {
     let path = (process.env.ROUTE_PREFIX ?? '') + route;
@@ -118,11 +119,7 @@ function PageNavigationItemComponent(props: { item: PageNavigationItem; baseRout
             </span>
           )}
         </Flex>
-        {item.subtitle && (
-          <div style={{ fontSize: 'x-small', opacity: 0.5, textAlign: 'left' }}>
-            {item.subtitle}
-          </div>
-        )}
+        {item.subtitle && <div style={subtitleStyle}>{item.subtitle}</div>}
       </NavItem>
     );
   }
@@ -141,11 +138,7 @@ function PageNavigationItemComponent(props: { item: PageNavigationItem; baseRout
         (
           <div>
             <div style={{ textAlign: 'left' }}>{item.label}</div>
-            {item.subtitle && (
-              <div style={{ fontSize: 'small', opacity: 0.5, textAlign: 'left' }}>
-                {item.subtitle}
-              </div>
-            )}
+            {item.subtitle && <div style={subtitleStyle}>{item.subtitle}</div>}
           </div>
         ) as unknown as string
       }

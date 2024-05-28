@@ -6,7 +6,7 @@ import {
   PageAsyncSelectQueryResult,
 } from '../../../framework/PageInputs/PageAsyncSelectOptions';
 import { DateRangeFilterPresets } from '../../../framework/PageToolbar/PageToolbarFilters/ToolbarDateRangeFilter';
-import { AsyncQueryLabel } from '../../../framework/components/AsyncQueryLabel';
+import { AsyncQueryLabel } from '../../common/AsyncQueryLabel';
 import { requestGet } from '../../common/crud/Data';
 import { useOptions } from '../../common/crud/useOptions';
 import { AwxItemsResponse } from '../common/AwxItemsResponse';

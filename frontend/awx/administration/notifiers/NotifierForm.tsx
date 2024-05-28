@@ -200,7 +200,7 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
         title={mode === 'edit' ? t('Edit notifier') : t('Add notifier')}
       />
       <AwxPageForm<NotificationTemplate>
-        submitText={t('Save host')}
+        submitText={t('Save notifier')}
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
         onCancel={() => navigate(-1)}

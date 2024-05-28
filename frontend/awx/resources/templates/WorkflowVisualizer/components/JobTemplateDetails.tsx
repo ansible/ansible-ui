@@ -25,6 +25,7 @@ import { useGetTimeoutString } from '../hooks';
 import { NodeCodeEditorDetail } from './NodeCodeEditorDetail';
 import { NodeTagDetail } from './NodeTagDetail';
 import { PromptDetail } from './PromptDetail';
+import { WebhookService } from '../../components/WebhookService';
 
 function useAggregateJobTemplateDetails({
   template,
@@ -288,7 +289,7 @@ export function JobTemplateDetails({
         {timeoutString}
       </PromptDetail>
       <PageDetail label={t('Webhook service')} isEmpty={!template.webhook_service}>
-        {template.webhook_service === 'github' ? t('GitHub') : t('GitLab')}
+        <WebhookService service={template.webhook_service} />
       </PageDetail>
       <PageDetail label={t('Webhook key')} isEmpty={!webhookKey?.webhook_key}>
         {webhookKey?.webhook_key}
@@ -384,10 +385,6 @@ function InstanceGroupsDetail({
               to={getPageUrl(AwxRoute.InstanceGroupDetails, {
                 params: {
                   id: ig.id,
-                  instanceType:
-                    'is_container_group' in ig && ig.is_container_group
-                      ? 'container-group'
-                      : 'instance-group',
                 },
               })}
             >

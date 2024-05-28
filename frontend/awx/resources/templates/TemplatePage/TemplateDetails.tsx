@@ -26,6 +26,8 @@ import { useVerbosityString } from '../../../common/useVerbosityString';
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
 import { AwxRoute } from '../../../main/AwxRoutes';
+// import { WebhookService } from '../../../common/WebhookService';
+import { WebhookService } from '../components/WebhookService';
 import styled from 'styled-components';
 
 const DangerText = styled.span`
@@ -157,7 +159,6 @@ export function TemplateDetails(props: { templateId?: string; disableScroll?: bo
                 to={getPageUrl(AwxRoute.InstanceGroupDetails, {
                   params: {
                     id: ig.id,
-                    instanceType: ig.is_container_group ? 'container-group' : 'instance-group',
                   },
                 })}
               >
@@ -178,7 +179,7 @@ export function TemplateDetails(props: { templateId?: string; disableScroll?: bo
         {`${window.location.origin} ${template.url}callback/`}
       </PageDetail>
       <PageDetail label={t('Webhook service')} isEmpty={!template.webhook_service}>
-        {template.webhook_service === 'github' ? t('GitHub') : t('GitLab')}
+        <WebhookService service={template.webhook_service} />
       </PageDetail>
       {summaryFields.webhook_credential && (
         <PageDetail label={t('Webhook credential')} isEmpty={!summaryFields.webhook_credential}>
