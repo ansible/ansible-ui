@@ -8,8 +8,6 @@ import { useGet } from '../../frontend/common/crud/useGet';
 import { gatewayAPI } from '../api/gateway-api-utils';
 import RedHatIcon from '../icons/redhat-icon.svg';
 import { UIAuth } from '../interfaces/UIAuth';
-// import LoginBackgroundDark from './LoginBackgroundDark.svg';
-// import LoginBackgroundLight from './LoginBackgroundLight.svg';
 import { usePlatformActiveUser } from './PlatformActiveUserProvider';
 
 export function PlatformLogin(props: { children: ReactNode }) {
@@ -37,10 +35,20 @@ export function PlatformLogin(props: { children: ReactNode }) {
         hideInputs={hideInputs}
         authOptions={options?.ssos}
         loginDescription={t('Enter your credentials.')}
-        icon={<RedHatIcon style={{ maxHeight: 64, maxWidth: 64 }} />}
+        icon={
+          options?.custom_logo ? (
+            <img
+              src={options.custom_logo}
+              alt="Custom logo"
+              style={{ maxHeight: 64, maxWidth: 64 }}
+            />
+          ) : (
+            <RedHatIcon style={{ maxHeight: 64, maxWidth: 64 }} />
+          )
+        }
         brand={t('Red Hat')}
         product={t('Ansible Automation Platform')}
-        // background={activeTheme === 'light' ? <LoginBackgroundLight /> : <LoginBackgroundDark />}
+        productDescription={options?.custom_login_info}
       />
     );
   }

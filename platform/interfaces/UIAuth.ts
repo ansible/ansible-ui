@@ -11,4 +11,8 @@ export interface UIAuth {
     type: string;
   }[];
   ssos: AuthOption[];
+  login_redirect_override: string;
+  custom_login_info: string;
+  custom_logo: string;
+  managed_cloud_install: boolean;
 }

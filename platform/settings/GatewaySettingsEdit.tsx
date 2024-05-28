@@ -28,6 +28,24 @@ export function GatewaySettingsEdit(props: { categoryId?: string }) {
       <PageForm
         submitText={t('Save changes')}
         onSubmit={async (values) => {
+          if ('custom_logo' in values && values.custom_logo instanceof File) {
+            // get the extension of the file
+            const ext = values.custom_logo.name.split('.').pop()?.toLowerCase();
+            switch (ext) {
+              case 'gif':
+              case 'jpg':
+              case 'jpeg':
+              case 'png':
+                {
+                  values.custom_logo = await new Promise<string>((resolve) => {
+                    const reader = new FileReader();
+                    reader.onload = () => resolve(reader.result as string);
+                    reader.readAsDataURL(values.custom_logo as Blob);
+                  });
+                }
+                break;
+            }
+          }
           await requestPut(gatewayAPI`/settings/all/`, values);
           await refresh();
           navigate('..');
