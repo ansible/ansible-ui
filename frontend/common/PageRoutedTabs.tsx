@@ -4,7 +4,6 @@ import { useEffect } from 'react';
 import { Outlet, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { PageLayout, useGetPageUrl, usePageNavigate } from '../../framework';
 import { usePageBreadcrumbs } from '../../framework/PageTabs/PageBreadcrumbs';
-import './PageTabs.css';
 import { getPersistentFilters } from './PersistentFilters';
 
 export function PageRoutedTabs(props: {
