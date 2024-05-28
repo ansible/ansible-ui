@@ -9,13 +9,17 @@ export function UserAccess(props: {
   id: string;
   type: string;
   addRolesRoute?: string;
+  addRoleButtonText?: string;
+  removeRoleText?: string;
+  removeConfirmationText?: (count: number) => string;
 }) {
-  const { id, type, addRolesRoute, service } = props;
+  const { type, service, ...rest } = props;
   const { t } = useTranslation();
   const roleUserAssignmentsURL =
     service === 'awx' ? awxAPI`/role_user_assignments/` : edaAPI`/role_user_assignments/`;
   return (
     <Access<UserAssignment>
+      {...rest}
       service={service}
       tableColumnFunctions={{
         name: {
@@ -38,11 +42,9 @@ export function UserAccess(props: {
           sort: 'last_name',
         },
       ]}
-      toolbarNameColumnFiltersValues={{ label: t('User name'), query: 'user__username' }}
+      toolbarNameColumnFiltersValues={{ label: t('Username'), query: 'user__username' }}
       url={roleUserAssignmentsURL}
-      id={id}
       content_type_model={type}
-      addRolesRoute={addRolesRoute}
       accessListType={'user'}
     />
   );

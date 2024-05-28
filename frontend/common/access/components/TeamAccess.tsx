@@ -9,13 +9,22 @@ export function TeamAccess(props: {
   id: string;
   type: string;
   addRolesRoute?: string;
+  addRoleButtonText?: string;
+  removeRoleText?: string;
+  removeConfirmationText?: (count: number) => string;
 }) {
-  const { id, type, addRolesRoute, service } = props;
+  const {
+    type,
+    service,
+
+    ...rest
+  } = props;
   const { t } = useTranslation();
   const roleTeamAssignmentsURL =
     service === 'awx' ? awxAPI`/role_team_assignments/` : edaAPI`/role_team_assignments/`;
   return (
     <Access<TeamAssignment>
+      {...rest}
       service={service}
       tableColumnFunctions={{
         name: {
@@ -26,9 +35,7 @@ export function TeamAccess(props: {
       }}
       toolbarNameColumnFiltersValues={{ label: t('Team name'), query: 'team__name' }}
       url={roleTeamAssignmentsURL}
-      id={id}
       content_type_model={type}
-      addRolesRoute={addRolesRoute}
       accessListType={'team'}
     />
   );
