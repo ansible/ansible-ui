@@ -5,9 +5,13 @@ import {
   SummaryFieldsExecutionEnvironment,
 } from './summary-fields/summary-fields';
 
-export interface Organization extends Omit<SwaggerOrganization, 'id' | 'summary_fields'> {
+export interface Organization
+  extends Omit<SwaggerOrganization, 'id' | 'related' | 'summary_fields'> {
   id: number;
   name: string;
+  related: {
+    [key: string]: string;
+  };
   summary_fields: {
     resource: {
       ansible_id: string;
@@ -41,10 +45,10 @@ export interface Organization extends Omit<SwaggerOrganization, 'id' | 'summary_
       job_templates: number;
       admins: number;
       projects: number;
-      hosts: number;
+      hosts?: number;
     };
-    default_environment: SummaryFieldsExecutionEnvironment;
+    default_environment?: SummaryFieldsExecutionEnvironment;
   };
 }
 
-export type AwxOrganizationCreate = Omit<Organization, 'id' | 'summary_fields'>;
+export type AwxOrganizationCreate = Omit<Organization, 'id' | 'related' | 'summary_fields'>;

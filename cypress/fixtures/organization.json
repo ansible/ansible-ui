@@ -119,6 +119,10 @@
       "job_templates": 3,
       "admins": 0,
       "projects": 1
+    },
+    "resource": {
+      "ansible_id": "12345678-1234-1234-1234-123456789012",
+      "resource_type": "shared.organization"
     }
   },
   "created": "2023-05-11T15:14:40.438725Z",
