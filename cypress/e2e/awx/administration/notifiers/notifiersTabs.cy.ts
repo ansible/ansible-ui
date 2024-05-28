@@ -2,6 +2,8 @@
 import { randomE2Ename } from '../../../../support/utils';
 import { awxAPI } from '../../../../../frontend/awx/common/api/awx-utils';
 
+/* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call */
+
 describe('Notifications', () => {
   //let notificationTemplate: NotificationTemplate;
 
@@ -38,26 +40,28 @@ describe('Notifications', () => {
 
         // test fail message
         cy.getByDataCy('test-notifier').click();
-        
+
         cy.contains(`[data-cy="status"]`, 'Failed', { timeout: 100000 });
-        
 
         // test success message
         cy.intercept(awxAPI`/notification_templates/*`, (req) => {
           req.reply((res) => {
-            res.body.summary_fields.recent_notifications.forEach((notification) => {
-             if (notification.status === 'failed')
-               {
-                 notification.status = 'successful';
-               }
-            });
-             return res;
-           });
+            if (res.body?.results?.summary_fields?.recent_notifications?.length > 0) {
+              res?.body?.summary_fields?.recent_notifications?.forEach(
+                (notification: { status: string }) => {
+                  if (notification.status === 'failed') {
+                    notification.status = 'successful';
+                  }
+                }
+              );
+            }
+            return res;
+          });
         }).as('getTemplates');
-  
-        cy.getByDataCy('test-notifier').click({ force : true });
-        
-        cy.contains(`[data-cy="status"]`, 'Success', { timeout: 100000 });  
+
+        cy.getByDataCy('test-notifier').click({ force: true });
+
+        cy.contains(`[data-cy="status"]`, 'Success', { timeout: 100000 });
       });
     });
 

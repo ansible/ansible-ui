@@ -76,6 +76,8 @@ describe('Notifications: List View', () => {
   it.skip('can edit a Twilio Notification and assert the edited info in the list view', () => {});
   it.skip('can edit a Webhook Notification and assert the edited info in the list view', () => {});*/
 
+  /* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call */
+
   it('can test a Notification and assert the successful test in the list view', () => {
     //Utilize a notification of any type created in the beforeEach hook
     //Assert the existence of the notification before test
@@ -92,24 +94,30 @@ describe('Notifications: List View', () => {
       });
 
       cy.contains(`[data-cy="status-column-cell"]`, 'Failed', { timeout: 100000 });
-      
+
       cy.intercept(awxAPI`/notification_templates/?name=${notificationName}*`, (req) => {
         req.reply((res) => {
-          res.body.results[0].summary_fields.recent_notifications.forEach((notification) => {
-           if (notification.status === 'failed')
-             {
-               notification.status = 'successful';
-             }
-          });
-           return res;
-         });
+          if (
+            res.body?.results?.length > 0 &&
+            res.body.results[0].summary_fields?.recent_notifications?.length > 0
+          ) {
+            res.body?.results?.[0]?.summary_fields?.recent_notifications?.forEach(
+              (notification: { status: string }) => {
+                if (notification.status === 'failed') {
+                  notification.status = 'successful';
+                }
+              }
+            );
+          }
+          return res;
+        });
       }).as('getTemplates');
 
       cy.getByDataCy('actions-column-cell').within(() => {
         cy.getByDataCy('test-notifier').click();
       });
 
-      cy.contains(`[data-cy="status-column-cell"]`, 'Success', { timeout: 100000 });  
+      cy.contains(`[data-cy="status-column-cell"]`, 'Success', { timeout: 100000 });
     });
   });
 
