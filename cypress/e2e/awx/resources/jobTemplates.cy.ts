@@ -318,7 +318,7 @@ describe('Job Templates Tests', function () {
         (inv) => {
           inventory2 = inv;
 
-          cy.visit(`templates/job_template/${jobTemplate.id}/details`);
+          cy.visit(`templates/job-template/${jobTemplate.id}/details`);
           cy.contains(jobTemplate.name);
           cy.getByDataCy('inventory').contains(jobTemplate.summary_fields.inventory.name).click();
 
@@ -330,7 +330,7 @@ describe('Job Templates Tests', function () {
           cy.clickModalButton('Delete inventory');
           cy.wait('@deleteInventory');
 
-          cy.visit(`templates/job_template/${jobTemplate.id}/details`);
+          cy.visit(`templates/job-template/${jobTemplate.id}/details`);
           cy.contains(jobTemplate.name);
           cy.getByDataCy('inventory').contains('Deleted');
           cy.clickLink('Edit template');
@@ -345,10 +345,10 @@ describe('Job Templates Tests', function () {
       );
     });
 
-    it('can edit a job template to enable provisioning callback and and enable webhook, then edit again to disable those options', function () {
+    it('can edit a job template to enable provisioning callback and enable webhook, then edit again to disable those options', function () {
       const jtURL = document.location.origin + awxAPI`/job_templates/${jobTemplate.id.toString()}`;
 
-      cy.visit(`templates/job_template/${jobTemplate.id}/details`);
+      cy.visit(`templates/job-template/${jobTemplate.id}/details`);
       cy.get('[data-cy="enabled-options"]').should('not.exist');
       cy.clickLink('Edit template');
 
@@ -577,7 +577,7 @@ describe('Job Templates Tests', function () {
     });
 
     it('can copy an existing job template from the details page', function () {
-      cy.visit(`/templates/job_template/${jobTemplate.id.toString()}/details`);
+      cy.visit(`/templates/job-template/${jobTemplate.id.toString()}/details`);
       cy.intercept('POST', awxAPI`/job_templates/${jobTemplate.id.toString()}/copy/`).as(
         'copyTemplate'
       );
@@ -586,7 +586,7 @@ describe('Job Templates Tests', function () {
       cy.wait('@copyTemplate')
         .its('response.body')
         .then(({ id, name }: { id: number; name: string }) => {
-          cy.visit(`/templates/job_template/${id}/details`);
+          cy.visit(`/templates/job-template/${id}/details`);
           cy.contains(name);
         });
     });

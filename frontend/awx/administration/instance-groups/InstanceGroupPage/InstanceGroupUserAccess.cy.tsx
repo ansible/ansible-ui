@@ -46,8 +46,8 @@ describe('InstanceGroupUserAccess', () => {
   });
 
   it('should render user assignments', () => {
-    const path = '/instance_groups/instance_group/:id/user-access';
-    const initialEntries = ['/instance_groups/instance_group/1/user-access'];
+    const path = '/instance-groups/:id/user-access';
+    const initialEntries = ['/instance-groups/1/user-access'];
     const params = {
       path,
       initialEntries,

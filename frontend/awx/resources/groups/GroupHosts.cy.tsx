@@ -38,11 +38,11 @@ describe('GroupHosts', () => {
   const kinds = ['', 'constructed'];
 
   kinds.forEach((kind) => {
-    const path = '/inventories/:inventory_type/:id/groups/:group_id/nested_hosts';
+    const path = '/inventories/:inventory_type/:id/groups/:group_id/nested-hosts';
     const initialEntries =
       kind === ''
-        ? ['/inventories/inventory/1/groups/176/nested_hosts']
-        : ['/inventories/constructed_inventory/1/groups/176/nested_hosts'];
+        ? ['/inventories/inventory/1/groups/176/nested-hosts']
+        : ['/inventories/constructed_inventory/1/groups/176/nested-hosts'];
 
     it(`renders group hosts (${kind === '' ? 'inventory' : kind})`, () => {
       cy.mount(<GroupHosts />, {
