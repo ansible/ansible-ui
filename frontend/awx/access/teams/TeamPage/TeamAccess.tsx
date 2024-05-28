@@ -11,7 +11,9 @@ export function TeamAccess() {
       service="awx"
       addRoleButtonText={t('Add users')}
       removeRoleText={t('Remove users')}
-      removeConfirmationText={t('Yes, I confirm that I want to remove these {{count}} users.')}
+      removeConfirmationText={(count: number) =>
+        t('Yes, I confirm that I want to remove these {{count}} users.', { count })
+      }
       id={params.id || ''}
       type={'team'}
       addRolesRoute={AwxRoute.TeamAddMembers}

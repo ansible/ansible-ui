@@ -47,7 +47,7 @@ type AccessProps<T extends Assignment> = {
   accessListType: 'user' | 'team' | 'user-roles' | 'team-roles';
   addRoleButtonText?: string;
   removeRoleText?: string;
-  removeConfirmationText?: string;
+  removeConfirmationText?: (count: number) => string;
 };
 
 export function Access<T extends Assignment>(props: AccessProps<T>) {
@@ -108,7 +108,7 @@ export function Access<T extends Assignment>(props: AccessProps<T>) {
 
     return useCallback(
       (items: T[]) => {
-        const confirmText =
+        let confirmText =
           props.content_type_model === 'team'
             ? t('Yes, I confirm that I want to remove these {{count}} users.', {
                 count: items.length,
@@ -116,6 +116,7 @@ export function Access<T extends Assignment>(props: AccessProps<T>) {
             : t('Yes, I confirm that I want to remove these {{count}} roles.', {
                 count: items.length,
               });
+        if (props.removeConfirmationText) confirmText = props.removeConfirmationText(items.length);
         bulkAction({
           title: props.removeRoleText ?? t('Remove role'),
           confirmText,

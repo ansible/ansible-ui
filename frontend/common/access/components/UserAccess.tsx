@@ -11,26 +11,16 @@ export function UserAccess(props: {
   addRolesRoute?: string;
   addRoleButtonText?: string;
   removeRoleText?: string;
-  removeConfirmationText?: string;
+  removeConfirmationText?: (count: number) => string;
 }) {
-  const {
-    id,
-    type,
-    addRolesRoute,
-    service,
-    addRoleButtonText,
-    removeRoleText,
-    removeConfirmationText,
-  } = props;
+  const { type, service, ...rest } = props;
   const { t } = useTranslation();
   const roleUserAssignmentsURL =
     service === 'awx' ? awxAPI`/role_user_assignments/` : edaAPI`/role_user_assignments/`;
   return (
     <Access<UserAssignment>
+      {...rest}
       service={service}
-      addRoleButtonText={addRoleButtonText}
-      removeConfirmationText={removeConfirmationText}
-      removeRoleText={removeRoleText}
       tableColumnFunctions={{
         name: {
           function: (userAccess: UserAssignment) => userAccess.summary_fields.user.username,
@@ -52,11 +42,9 @@ export function UserAccess(props: {
           sort: 'last_name',
         },
       ]}
-      toolbarNameColumnFiltersValues={{ label: t('User name'), query: 'user__username' }}
+      toolbarNameColumnFiltersValues={{ label: t('Username'), query: 'user__username' }}
       url={roleUserAssignmentsURL}
-      id={id}
       content_type_model={type}
-      addRolesRoute={addRolesRoute}
       accessListType={'user'}
     />
   );

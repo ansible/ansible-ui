@@ -44,12 +44,12 @@ export function useAwxOrganizationRoutes() {
             },
             {
               id: AwxRoute.OrganizationUsersAccess,
-              path: 'users',
+              path: 'user-access',
               element: <OrganizationUserAccess />,
             },
             {
               id: AwxRoute.OrganizationTeamsAccess,
-              path: 'teams',
+              path: 'team-access',
               element: <OrganizationTeamsAccess />,
             },
             {
