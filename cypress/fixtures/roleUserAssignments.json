@@ -1,0 +1,294 @@
+{
+  "count": 7,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 173,
+      "url": "/api/v2/role_user_assignments/173/",
+      "related": {
+        "created_by": "/api/v2/users/3/",
+        "role_definition": "/api/v2/role_definitions/2/",
+        "user": "/api/v2/users/4/",
+        "content_object": "/api/v2/organizations/105/"
+      },
+      "summary_fields": {
+        "created_by": {
+          "id": 3,
+          "username": "dev",
+          "first_name": "",
+          "last_name": ""
+        },
+        "role_definition": {
+          "id": 2,
+          "name": "Organization Credential Admin",
+          "description": "Has all permissions to credentials within an organization",
+          "managed": true
+        },
+        "user": {
+          "id": 4,
+          "username": "e2e",
+          "first_name": "",
+          "last_name": ""
+        },
+        "content_object": {
+          "id": 105,
+          "name": "alex org",
+          "description": ""
+        }
+      },
+      "created": "2024-05-28T14:16:02.738498Z",
+      "created_by": 3,
+      "content_type": "shared.organization",
+      "object_id": "105",
+      "role_definition": 2,
+      "user": 4
+    },
+    {
+      "id": 174,
+      "url": "/api/v2/role_user_assignments/174/",
+      "related": {
+        "created_by": "/api/v2/users/3/",
+        "role_definition": "/api/v2/role_definitions/28/",
+        "user": "/api/v2/users/2/",
+        "content_object": "/api/v2/organizations/105/"
+      },
+      "summary_fields": {
+        "created_by": {
+          "id": 3,
+          "username": "dev",
+          "first_name": "",
+          "last_name": ""
+        },
+        "role_definition": {
+          "id": 28,
+          "name": "Organization Audit",
+          "description": "Has audit permissions to a single organization",
+          "managed": true
+        },
+        "user": {
+          "id": 2,
+          "username": "ci-sa-user",
+          "first_name": "CI",
+          "last_name": "User"
+        },
+        "content_object": {
+          "id": 105,
+          "name": "alex org",
+          "description": ""
+        }
+      },
+      "created": "2024-05-28T14:16:02.750307Z",
+      "created_by": 3,
+      "content_type": "shared.organization",
+      "object_id": "105",
+      "role_definition": 28,
+      "user": 2
+    },
+    {
+      "id": 175,
+      "url": "/api/v2/role_user_assignments/175/",
+      "related": {
+        "created_by": "/api/v2/users/3/",
+        "role_definition": "/api/v2/role_definitions/2/",
+        "user": "/api/v2/users/2/",
+        "content_object": "/api/v2/organizations/105/"
+      },
+      "summary_fields": {
+        "created_by": {
+          "id": 3,
+          "username": "dev",
+          "first_name": "",
+          "last_name": ""
+        },
+        "role_definition": {
+          "id": 2,
+          "name": "Organization Credential Admin",
+          "description": "Has all permissions to credentials within an organization",
+          "managed": true
+        },
+        "user": {
+          "id": 2,
+          "username": "ci-sa-user",
+          "first_name": "CI",
+          "last_name": "User"
+        },
+        "content_object": {
+          "id": 105,
+          "name": "alex org",
+          "description": ""
+        }
+      },
+      "created": "2024-05-28T14:16:02.808823Z",
+      "created_by": 3,
+      "content_type": "shared.organization",
+      "object_id": "105",
+      "role_definition": 2,
+      "user": 2
+    },
+    {
+      "id": 176,
+      "url": "/api/v2/role_user_assignments/176/",
+      "related": {
+        "created_by": "/api/v2/users/3/",
+        "role_definition": "/api/v2/role_definitions/28/",
+        "user": "/api/v2/users/4/",
+        "content_object": "/api/v2/organizations/105/"
+      },
+      "summary_fields": {
+        "created_by": {
+          "id": 3,
+          "username": "dev",
+          "first_name": "",
+          "last_name": ""
+        },
+        "role_definition": {
+          "id": 28,
+          "name": "Organization Audit",
+          "description": "Has audit permissions to a single organization",
+          "managed": true
+        },
+        "user": {
+          "id": 4,
+          "username": "e2e",
+          "first_name": "",
+          "last_name": ""
+        },
+        "content_object": {
+          "id": 105,
+          "name": "alex org",
+          "description": ""
+        }
+      },
+      "created": "2024-05-28T14:16:02.814050Z",
+      "created_by": 3,
+      "content_type": "shared.organization",
+      "object_id": "105",
+      "role_definition": 28,
+      "user": 4
+    },
+    {
+      "id": 177,
+      "url": "/api/v2/role_user_assignments/177/",
+      "related": {
+        "created_by": "/api/v2/users/3/",
+        "role_definition": "/api/v2/role_definitions/13/",
+        "user": "/api/v2/users/4/",
+        "content_object": "/api/v2/organizations/105/"
+      },
+      "summary_fields": {
+        "created_by": {
+          "id": 3,
+          "username": "dev",
+          "first_name": "",
+          "last_name": ""
+        },
+        "role_definition": {
+          "id": 13,
+          "name": "Organization ExecutionEnvironment Admin",
+          "description": "Has all permissions to execution environments within an organization",
+          "managed": true
+        },
+        "user": {
+          "id": 4,
+          "username": "e2e",
+          "first_name": "",
+          "last_name": ""
+        },
+        "content_object": {
+          "id": 105,
+          "name": "alex org",
+          "description": ""
+        }
+      },
+      "created": "2024-05-28T14:17:25.437777Z",
+      "created_by": 3,
+      "content_type": "shared.organization",
+      "object_id": "105",
+      "role_definition": 13,
+      "user": 4
+    },
+    {
+      "id": 202,
+      "url": "/api/v2/role_user_assignments/202/",
+      "related": {
+        "created_by": "/api/v2/users/3/",
+        "role_definition": "/api/v2/role_definitions/13/",
+        "user": "/api/v2/users/3/",
+        "content_object": "/api/v2/organizations/105/"
+      },
+      "summary_fields": {
+        "created_by": {
+          "id": 3,
+          "username": "dev",
+          "first_name": "",
+          "last_name": ""
+        },
+        "role_definition": {
+          "id": 13,
+          "name": "Organization ExecutionEnvironment Admin",
+          "description": "Has all permissions to execution environments within an organization",
+          "managed": true
+        },
+        "user": {
+          "id": 3,
+          "username": "dev",
+          "first_name": "",
+          "last_name": ""
+        },
+        "content_object": {
+          "id": 105,
+          "name": "alex org",
+          "description": ""
+        }
+      },
+      "created": "2024-05-28T14:50:59.135295Z",
+      "created_by": 3,
+      "content_type": "shared.organization",
+      "object_id": "105",
+      "role_definition": 13,
+      "user": 3
+    },
+    {
+      "id": 307,
+      "url": "/api/v2/role_user_assignments/307/",
+      "related": {
+        "created_by": "/api/v2/users/3/",
+        "role_definition": "/api/v2/role_definitions/13/",
+        "user": "/api/v2/users/2/",
+        "content_object": "/api/v2/organizations/105/"
+      },
+      "summary_fields": {
+        "created_by": {
+          "id": 3,
+          "username": "dev",
+          "first_name": "",
+          "last_name": ""
+        },
+        "role_definition": {
+          "id": 13,
+          "name": "Organization ExecutionEnvironment Admin",
+          "description": "Has all permissions to execution environments within an organization",
+          "managed": true
+        },
+        "user": {
+          "id": 2,
+          "username": "ci-sa-user",
+          "first_name": "CI",
+          "last_name": "User"
+        },
+        "content_object": {
+          "id": 105,
+          "name": "alex org",
+          "description": ""
+        }
+      },
+      "created": "2024-05-28T15:25:06.893854Z",
+      "created_by": 3,
+      "content_type": "shared.organization",
+      "object_id": "105",
+      "role_definition": 13,
+      "user": 2
+    }
+  ]
+}
