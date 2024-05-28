@@ -37,7 +37,6 @@ describe('Notifications', () => {
       //Assert the existence of the notification before test
       //Assert the test action and the fact that it is happening from the details view
       //Assert the behavior in the UI following the test action
-
       const notificationName = randomE2Ename();
       cy.createNotificationTemplate(notificationName).then(() => {
         cy.navigateTo('awx', 'notification-templates');
