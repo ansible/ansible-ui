@@ -4,7 +4,6 @@ import { awxAPI } from '../../../../../frontend/awx/common/api/awx-utils';
 /* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call */
 import { testNotification } from './notifiersListView.cy';
 
-
 describe('Notifications', () => {
   //let notificationTemplate: NotificationTemplate;
 
@@ -30,7 +29,6 @@ describe('Notifications', () => {
       // test for only one type should be enough, other types covered in notifiers list view
       testNotification('Email', { details: true });
     });
-
 
     it('can test the Notification on its details page and assert that the test completed', () => {
       //Utilize a notification of any type created in the beforeEach hook
