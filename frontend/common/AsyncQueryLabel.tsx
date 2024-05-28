@@ -1,7 +1,7 @@
 import { Spinner } from '@patternfly/react-core';
 import { ReactNode } from 'react';
-import { RequestError } from '../../frontend/common/crud/RequestError';
-import { useGetItem } from '../../frontend/common/crud/useGet';
+import { RequestError } from './crud/RequestError';
+import { useGetItem } from './crud/useGet';
 
 /** Asychronously queries a label from a URL */
 export function AsyncQueryLabel(props: {
