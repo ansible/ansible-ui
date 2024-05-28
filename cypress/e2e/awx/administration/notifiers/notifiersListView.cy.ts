@@ -1,3 +1,4 @@
+import { awxAPI } from '../../../../support/formatApiPathForAwx';
 import { randomE2Ename } from '../../../../support/utils';
 import { getDefaultMessages } from '../../../../../frontend/awx/administration/notifiers/notifierFormMessagesHelpers';
 
@@ -74,11 +75,44 @@ describe('Notifications: List View', () => {
   it.skip('can edit a Twilio Notification and assert the edited info in the list view', () => {});
   it.skip('can edit a Webhook Notification and assert the edited info in the list view', () => {});*/
 
-  it.skip('can test a Notification and assert the successful test in the list view', () => {
+  /* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call */
+
+  it('can test a Notification and assert the successful test in the list view', () => {
     //Utilize a notification of any type created in the beforeEach hook
     //Assert the existence of the notification before test
     //Assert the test action and the fact that it is happening from the list view
     //Assert the behavior in the UI following the test action
+    const notificationName = randomE2Ename();
+    cy.createNotificationTemplate(notificationName).then((notificationTemplate) => {
+      cy.navigateTo('awx', 'notification-templates');
+      cy.filterTableByMultiSelect('name', [notificationTemplate.name]);
+
+      // test fail message
+      cy.getByDataCy('actions-column-cell').within(() => {
+        cy.getByDataCy('test-notifier').click();
+      });
+
+      cy.contains(`[data-cy="status-column-cell"]`, 'Failed', { timeout: 100000 });
+
+      cy.intercept(awxAPI`/notification_templates/?name=${notificationName}*`, (req) => {
+        req.reply((res) => {
+          res.body?.results?.[0]?.summary_fields?.recent_notifications?.forEach(
+            (notification: { status: string }) => {
+              if (notification.status === 'failed') {
+                notification.status = 'successful';
+              }
+            }
+          );
+          return res;
+        });
+      }).as('getTemplates');
+
+      cy.getByDataCy('actions-column-cell').within(() => {
+        cy.getByDataCy('test-notifier').click();
+      });
+
+      cy.contains(`[data-cy="status-column-cell"]`, 'Success', { timeout: 100000 });
+    });
   });
 
   it('can copy a Notification and assert that the copy action completed successfully', () => {
