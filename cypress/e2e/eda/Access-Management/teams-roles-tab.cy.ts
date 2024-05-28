@@ -1,9 +1,9 @@
-//Tests a user's ability to give permissions to a user from the roles tab.
+//Tests a user's ability to give permissions to a team from the roles tab.
 import { EdaProject } from '../../../../frontend/eda/interfaces/EdaProject';
 import { EdaDecisionEnvironment } from '../../../../frontend/eda/interfaces/EdaDecisionEnvironment';
 import { EdaRulebookActivation } from '../../../../frontend/eda/interfaces/EdaRulebookActivation';
 import { EdaCredential } from '../../../../frontend/eda/interfaces/EdaCredential';
-import { EdaUser } from '../../../../frontend/eda/interfaces/EdaUser';
+import { EdaTeam } from '../../../../frontend/eda/interfaces/EdaTeam';
 import { EdaRulebook } from '../../../../frontend/eda/interfaces/EdaRulebook';
 import { LogLevelEnum } from '../../../../frontend/eda/interfaces/generated/eda-api';
 import { edaAPI } from '../../../support/formatApiPathForEDA';
@@ -11,8 +11,8 @@ import { EdaCredentialType } from '../../../../frontend/eda/interfaces/EdaCreden
 import { user_team_access_tab_resources } from '../../../support/constants';
 
 user_team_access_tab_resources.forEach((resource) => {
-  describe(`Assign Role to a User `, () => {
-    let user: EdaUser;
+  describe(`Assign Role to a Team `, () => {
+    let team: EdaTeam;
     let resource_object:
       | EdaProject
       | EdaDecisionEnvironment
@@ -50,20 +50,20 @@ user_team_access_tab_resources.forEach((resource) => {
           }
         });
       }
-      cy.createEdaUser().then((EdaUser) => {
-        user = EdaUser;
+      cy.createEdaTeam().then((EdaTeam) => {
+        team = EdaTeam;
       });
     });
 
     after(() => {
       resource.deletion(resource_object);
-      cy.deleteEdaUser(user);
+      cy.deleteEdaTeam(team);
     });
 
     it(`for ${resource.name} role type`, () => {
-      cy.navigateTo('eda', 'users');
-      cy.clickTableRow(user.username, true);
-      cy.verifyPageTitle(user.username);
+      cy.navigateTo('eda', 'teams');
+      cy.clickTableRow(team.name, true);
+      cy.verifyPageTitle(team.name);
       cy.clickTab('Roles', true);
       cy.getByDataCy('add-roles').click();
       cy.getWizard().within(() => {
@@ -76,30 +76,30 @@ user_team_access_tab_resources.forEach((resource) => {
         cy.selectTableRow(resource.role, false);
         cy.clickButton(/^Next$/);
         cy.verifyReviewStepWizardDetails('resources', [resource_object.name], '1');
-        cy.intercept('POST', edaAPI`/role_user_assignments/`).as('assignment');
+        cy.intercept('POST', edaAPI`/role_team_assignments/`).as('assignment');
         cy.clickButton(/^Finish$/);
       });
       cy.assertModalSuccess();
       cy.clickButton(/^Close$/);
       cy.wait('@assignment').then((assignment) => {
         expect(assignment?.response?.statusCode).to.eql(201);
-        cy.verifyPageTitle(user.username);
+        cy.verifyPageTitle(team.name);
       });
     });
   });
 });
 
-describe(`Roles Tab for Users - actions`, () => {
+describe(`Roles Tab for Teams - actions`, () => {
   let roleIDs: { [key: string]: number };
   let RoleID: number;
-  let user: EdaUser;
+  let team: EdaTeam;
   let cred1: EdaCredential;
   let cred2: EdaCredential;
   let cred3: EdaCredential;
   before(() => {
     cy.edaLogin();
-    cy.createEdaUser().then((EdaUser) => {
-      user = EdaUser;
+    cy.createEdaTeam().then((EdaTeam) => {
+      team = EdaTeam;
     });
     cy.createEdaCredential().then((edaCred1) => {
       cred1 = edaCred1;
@@ -113,9 +113,9 @@ describe(`Roles Tab for Users - actions`, () => {
               return { ...acc, [name]: id };
             }, {});
             RoleID = roleIDs['Eda Credential Admin'];
-            cy.createRoleUserAssignments(cred1.id.toString(), RoleID, user.id, 'eda.edacredential');
-            cy.createRoleUserAssignments(cred2.id.toString(), RoleID, user.id, 'eda.edacredential');
-            cy.createRoleUserAssignments(cred3.id.toString(), RoleID, user.id, 'eda.edacredential');
+            cy.createRoleTeamAssignments(cred1.id.toString(), RoleID, team.id, 'eda.edacredential');
+            cy.createRoleTeamAssignments(cred2.id.toString(), RoleID, team.id, 'eda.edacredential');
+            cy.createRoleTeamAssignments(cred3.id.toString(), RoleID, team.id, 'eda.edacredential');
           });
         });
       });
@@ -123,16 +123,16 @@ describe(`Roles Tab for Users - actions`, () => {
   });
 
   after(() => {
-    cy.deleteEdaUser(user);
+    cy.deleteEdaTeam(team);
     cy.deleteEdaCredential(cred1);
     cy.deleteEdaCredential(cred2);
     cy.deleteEdaCredential(cred3);
   });
 
   it('can remove role from row', () => {
-    cy.navigateTo('eda', 'users');
-    cy.clickTableRow(user.username, true);
-    cy.verifyPageTitle(user.username);
+    cy.navigateTo('eda', 'teams');
+    cy.clickTableRow(team.name, true);
+    cy.verifyPageTitle(team.name);
     cy.clickTab('Roles', true);
     cy.getTableRowByText(`${cred1.name}`, false).within(() => {
       cy.get('[data-cy="remove-role"]').click();
@@ -144,9 +144,9 @@ describe(`Roles Tab for Users - actions`, () => {
   });
 
   it('can bulk remove roles', () => {
-    cy.navigateTo('eda', 'users');
-    cy.clickTableRow(user.username, true);
-    cy.verifyPageTitle(user.username);
+    cy.navigateTo('eda', 'teams');
+    cy.clickTableRow(team.name, true);
+    cy.verifyPageTitle(team.name);
     cy.clickTab('Roles', true);
     cy.selectTableRow(`${cred2.name}`, false);
     cy.selectTableRow(`${cred3.name}`, false);
