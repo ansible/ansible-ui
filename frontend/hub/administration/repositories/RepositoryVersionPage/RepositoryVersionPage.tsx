@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { LoadingPage, PageHeader, PageLayout, useGetPageUrl } from '../../../../../framework';
-import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
+import { PageRoutedTabs } from '../../../../common/PageRoutedTabs';
 import { useGet } from '../../../../common/crud/useGet';
 import { HubError } from '../../../common/HubError';
 import { pulpAPI } from '../../../common/api/formatPath';

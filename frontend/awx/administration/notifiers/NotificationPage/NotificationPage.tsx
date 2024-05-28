@@ -1,20 +1,24 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
+import { DropdownPosition } from '@patternfly/react-core/deprecated';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { PageHeader, PageLayout, useGetPageUrl } from '../../../../../framework';
-import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
+import {
+  PageActions,
+  PageHeader,
+  PageLayout,
+  useGetPageUrl,
+  usePageNavigate,
+} from '../../../../../framework';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
+import { PageRoutedTabs } from '../../../../common/PageRoutedTabs';
 import { useGetItem } from '../../../../common/crud/useGet';
 import { AwxError } from '../../../common/AwxError';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { NotificationTemplate } from '../../../interfaces/NotificationTemplate';
 import { AwxRoute } from '../../../main/AwxRoutes';
-import { useNotifiersRowActions } from '../hooks/useNotifiersRowActions';
-import { DropdownPosition } from '@patternfly/react-core/deprecated';
-import { PageActions } from '../../../../../framework';
-import { usePageNavigate } from '../../../../../framework';
 import { useNotificationsWatch } from '../hooks/useNotificationsWatch';
-import { useEffect } from 'react';
+import { useNotifiersRowActions } from '../hooks/useNotifiersRowActions';
 
 export function NotificationPage() {
   const { t } = useTranslation();
