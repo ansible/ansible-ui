@@ -4,8 +4,8 @@ import { ITableColumn, IToolbarFilter, usePageDialog } from '../../../framework'
 import { SingleSelectDialog } from '../../../framework/PageDialogs/SingleSelectDialog';
 import { PageFormAsyncSingleSelect } from '../../../framework/PageForm/Inputs/PageFormAsyncSingleSelect';
 import { PageAsyncSelectOptionsFn } from '../../../framework/PageInputs/PageAsyncSelectOptions';
-import { AsyncQueryLabel } from '../../../framework/components/AsyncQueryLabel';
 import { useID } from '../../../framework/hooks/useID';
+import { AsyncQueryLabel } from '../../common/AsyncQueryLabel';
 import { requestGet } from '../../common/crud/Data';
 import { AwxItemsResponse } from './AwxItemsResponse';
 import { QueryParams, useAwxView } from './useAwxView';
