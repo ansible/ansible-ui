@@ -1,0 +1,47 @@
+{
+  "count": 1,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 38,
+      "url": "/api/v2/role_team_assignments/38/",
+      "related": {
+        "created_by": "/api/v2/users/3/",
+        "role_definition": "/api/v2/role_definitions/13/",
+        "team": "/api/v2/teams/8/",
+        "content_object": "/api/v2/organizations/105/"
+      },
+      "summary_fields": {
+        "created_by": {
+          "id": 3,
+          "username": "dev",
+          "first_name": "",
+          "last_name": ""
+        },
+        "role_definition": {
+          "id": 13,
+          "name": "Organization ExecutionEnvironment Admin",
+          "description": "Has all permissions to execution environments within an organization",
+          "managed": true
+        },
+        "team": {
+          "id": 8,
+          "name": "E2E Team mFaK",
+          "description": ""
+        },
+        "content_object": {
+          "id": 105,
+          "name": "alex org",
+          "description": ""
+        }
+      },
+      "created": "2024-05-28T15:25:23.830707Z",
+      "created_by": 3,
+      "content_type": "shared.organization",
+      "object_id": "105",
+      "role_definition": 13,
+      "team": 8
+    }
+  ]
+}

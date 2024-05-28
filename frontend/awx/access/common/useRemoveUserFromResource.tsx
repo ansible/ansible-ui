@@ -7,7 +7,7 @@ import { useAwxActiveUser } from '../../common/useAwxActiveUser';
 import { useAwxBulkConfirmation } from '../../common/useAwxBulkConfirmation';
 import { AwxUser } from '../../interfaces/User';
 import { useUsersColumns } from '../users/hooks/useUsersColumns';
-import { ResourceType } from './ResourceAccessList';
+import { type ResourceType } from './types';
 
 export function useRemoveUsersFromResource() {
   const { t } = useTranslation();

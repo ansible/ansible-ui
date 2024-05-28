@@ -124,22 +124,26 @@ describe('teams', function () {
     cy.filterTableByMultiSelect('name', [team.name]);
     cy.clickTableRowLink('name', team.name, { disableFilter: true });
     cy.verifyPageTitle(team.name);
-    cy.clickTab(/^Access$/, true);
-    // Add users to team -> TODO: Replace with Wizard when it is ready
-    cy.clickButton(/^Add users$/);
-    cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
-      cy.filterTableByText(user1.username);
-      cy.get(`[data-cy="row-id-${user1.id}"]`).find('input').click();
-      cy.filterTableByText(user2.username);
-      cy.get(`[data-cy="row-id-${user2.id}"]`).find('input').click();
+    cy.clickTab(/^Users$/, true);
+    cy.get('[data-cy="add-users"]').click();
+    cy.getTableRow('username', `${user2.username}`).within(() => {
+      cy.get('input[type="checkbox"]').click({ force: true });
     });
-    cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
-      cy.clickButton(/^Add/);
-      cy.contains(/^Success$/);
-      cy.clickButton(/^Close$/);
+    cy.clickButton(/^Next$/);
+    cy.getTableRow('name', 'Team Admin', {
+      disableFilter: true,
+      disableFilterSelection: true,
+    }).within(() => {
+      cy.get('input[type="checkbox"]').click({ force: true });
     });
-    cy.getTableRowByText(user1.username).should('be.visible');
-    cy.getTableRowByText(user2.username).should('be.visible');
+    cy.clickButton(/^Next$/);
+    cy.clickButton(/^Finish$/);
+    cy.clickModalButton('Close');
+    cy.getTableRow('username', user2.username, {
+      disableFilter: true,
+      disableFilterSelection: true,
+    }).should('be.visible');
+
     cy.requestPost<AwxUser>(awxAPI`/users/${user1.id.toString()}/roles/`, {
       id: team.summary_fields.object_roles.member_role.id,
       disassociate: true,
@@ -148,7 +152,6 @@ describe('teams', function () {
       id: team.summary_fields.object_roles.member_role.id,
       disassociate: true,
     });
-    cy.clickButton(/^Clear all filters$/);
   });
 
   it('can remove users from the team via the team access tab toolbar', function () {
@@ -162,68 +165,34 @@ describe('teams', function () {
     cy.filterTableByMultiSelect('name', [team.name]);
     cy.clickTableRowLink('name', team.name, { disableFilter: true });
     cy.verifyPageTitle(team.name);
-    cy.clickTab(/^Access$/, true);
+    cy.clickTab(/^Users$/, true);
     // Remove users
-    cy.selectTableRow(user1.username);
-    cy.selectTableRow(user2.username);
-    cy.clickToolbarKebabAction('remove-users');
-    cy.get('#confirm').click();
-    cy.clickButton(/^Remove user/);
-    cy.contains(/^Success$/);
-    cy.clickButton(/^Close$/);
-    cy.getTableRowByText(user1.username).should('not.exist');
-    cy.getTableRowByText(user2.username).should('not.exist');
-    cy.clickButton(/^Clear all filters$/);
-  });
-
-  it('can remove a single user from the team via the team access tab row action', function () {
-    cy.requestPost<AwxUser>(awxAPI`/users/${user1.id.toString()}/roles/`, {
-      id: team.summary_fields.object_roles.member_role.id,
+    cy.getTableRow('username', `${user1.username}`).within(() => {
+      cy.get('input[type="checkbox"]').click({ force: true });
     });
-    cy.navigateTo('awx', 'teams');
-    cy.filterTableByMultiSelect('name', [team.name]);
-    cy.clickTableRowLink('name', team.name, { disableFilter: true });
-    cy.verifyPageTitle(team.name);
-    cy.clickTab(/^Access$/, true);
-    cy.clickTableRowKebabAction(user1.username, 'remove-user');
+    cy.clickToolbarKebabAction('remove-selected-roles');
     cy.get('#confirm').click();
     cy.clickButton(/^Remove user/);
     cy.contains(/^Success$/);
     cy.clickButton(/^Close$/);
-    cy.clickButton(/^Clear all filters$/);
-    cy.getTableRowByText(user1.username).should('not.exist');
-    cy.clickButton(/^Clear all filters$/);
+    cy.get(`tr[data-cy=row-id-${user1.id}]`).should('not.exist');
   });
 
   it('can remove a role from a user via the team access tab row action', function () {
-    cy.requestPost<AwxUser>(awxAPI`/users/${user1.id.toString()}/roles/`, {
-      id: team.summary_fields.object_roles.member_role.id,
-    });
-    cy.requestPost<AwxUser>(awxAPI`/users/${user1.id.toString()}/roles/`, {
-      id: team.summary_fields.object_roles.read_role.id,
-    });
     cy.navigateTo('awx', 'teams');
     cy.filterTableByMultiSelect('name', [team.name]);
     cy.clickTableRowLink('name', team.name, { disableFilter: true });
     cy.verifyPageTitle(team.name);
-    cy.clickTab(/^Access$/, true);
-    cy.filterTableByText(user1.username);
-    cy.getTableRowByText(user1.username).within(() => {
-      cy.get(
-        `div[data-ouia-component-id="Read-${team.summary_fields.object_roles.read_role.id}"] button`
-      ).click();
+    cy.clickTab(/^Users$/, true);
+    cy.getTableRow('username', user1.username).within(() => {
+      cy.get(`button[data-cy="remove-role"]`).click();
     });
-    cy.contains('Remove user access');
-    cy.clickButton('Delete');
-    cy.filterTableByText(user1.username);
-    cy.getTableRowByText(user1.username).within(() => {
-      cy.get(
-        `div[data-ouia-component-id="Read-${team.summary_fields.object_roles.read_role.id}"]`
-      ).should('not.exist');
-    });
-    cy.requestPost<AwxUser>(awxAPI`/users/${user1.id.toString()}/roles/`, {
-      id: team.summary_fields.object_roles.member_role.id,
-      disassociate: true,
+    cy.contains('Remove users');
+    cy.clickModalConfirmCheckbox();
+    cy.clickButton('Remove users');
+    cy.clickModalButton('Close');
+    cy.get('tbody').within(() => {
+      cy.get('tr').should('not.have.length');
     });
   });
 

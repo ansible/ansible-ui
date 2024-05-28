@@ -45,6 +45,9 @@ type AccessProps<T extends Assignment> = {
   content_type_model?: string;
   addRolesRoute?: string;
   accessListType: 'user' | 'team' | 'user-roles' | 'team-roles';
+  addRoleButtonText?: string;
+  removeRoleText?: string;
+  removeConfirmationText?: (count: number) => string;
 };
 
 export function Access<T extends Assignment>(props: AccessProps<T>) {
@@ -105,12 +108,19 @@ export function Access<T extends Assignment>(props: AccessProps<T>) {
 
     return useCallback(
       (items: T[]) => {
+        let confirmText =
+          props.content_type_model === 'team'
+            ? t('Yes, I confirm that I want to remove these {{count}} users.', {
+                count: items.length,
+              })
+            : t('Yes, I confirm that I want to remove these {{count}} roles.', {
+                count: items.length,
+              });
+        if (props.removeConfirmationText) confirmText = props.removeConfirmationText(items.length);
         bulkAction({
-          title: t('Remove role'),
-          confirmText: t('Yes, I confirm that I want to remove these {{count}} roles.', {
-            count: items.length,
-          }),
-          actionButtonText: t('Remove role'),
+          title: props.removeRoleText ?? t('Remove role'),
+          confirmText,
+          actionButtonText: props.removeRoleText ?? t('Remove role'),
           items: items,
           keyFn: idKeyFn,
           isDanger: true,
@@ -197,7 +207,7 @@ export function Access<T extends Assignment>(props: AccessProps<T>) {
         variant: ButtonVariant.primary,
         isPinned: true,
         icon: PlusCircleIcon,
-        label: t('Add roles'),
+        label: props.addRoleButtonText ?? t('Add roles'),
         href: getPageUrl(props.addRolesRoute ?? '', { params: { id: params.id } }),
       },
       {
@@ -209,7 +219,7 @@ export function Access<T extends Assignment>(props: AccessProps<T>) {
         isDanger: true,
       },
     ],
-    [t, getPageUrl, props.addRolesRoute, params.id, removeRoles]
+    [t, getPageUrl, props.addRolesRoute, props.addRoleButtonText, params.id, removeRoles]
   );
   const emptyStateTitle = useMemo(() => {
     let title: string;
@@ -254,7 +264,7 @@ export function Access<T extends Assignment>(props: AccessProps<T>) {
       emptyStateTitle={emptyStateTitle}
       emptyStateDescription={t('Add a role by clicking the button below.')}
       emptyStateButtonIcon={<PlusCircleIcon />}
-      emptyStateButtonText={t('Add roles')}
+      emptyStateButtonText={props.addRoleButtonText ?? t('Add roles')}
       emptyStateActions={toolbarActions.slice(0, 1)}
       {...view}
     />
