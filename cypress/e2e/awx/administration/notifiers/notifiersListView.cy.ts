@@ -1,5 +1,4 @@
 
-import { NotificationTemplate } from '../../../../../frontend/awx/interfaces/NotificationTemplate';
 import { awxAPI } from '../../../../support/formatApiPathForAwx';
 import { randomE2Ename } from '../../../../support/utils';
 
