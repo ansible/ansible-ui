@@ -1409,6 +1409,7 @@ declare global {
        */
       createEdaRoleDefinition(
         roleName: string,
+        description: string,
         content_type,
         permissions
       ): Chainable<RoleDefinitionCreate>;
