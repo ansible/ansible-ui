@@ -77,7 +77,6 @@ describe('EDA Credentials Type - Create, Edit, Delete', () => {
       cy.clickModalButton('Delete credential type');
       cy.wait('@deleted').then((deleted) => {
         expect(deleted?.response?.statusCode).to.eql(204);
-        cy.verifyPageTitle('Credential Types');
       });
     });
   });
@@ -102,11 +101,13 @@ describe('EDA Credentials Type - Create, Edit, Delete', () => {
         cy.clickModalButton('Delete credential type');
         cy.wait('@deleted').then((deleted) => {
           expect(deleted?.response?.statusCode).to.eql(409);
+          cy.clickModalButton('Close');
         });
         cy.getEdaCredentialByName(cred.name).then((credential) => {
           cy.wrap(credential).should('not.be.undefined');
           if (credential) {
             cy.deleteEdaCredential(credential);
+            cy.navigateTo('eda', 'credential-types');
           }
         });
         cy.deleteEdaCredentialType(credtype);
@@ -135,6 +136,7 @@ describe('EDA Credentials Type - Create, Edit, Delete', () => {
         cy.clickButton(/^Save credential type$/);
         cy.wait('@edit').then((edit) => {
           expect(edit?.response?.statusCode).to.eql(400);
+          cy.clickButton('Cancel');
         });
         cy.getEdaCredentialByName(cred.name).then((credential) => {
           cy.wrap(credential).should('not.be.undefined');

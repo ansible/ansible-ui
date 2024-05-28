@@ -385,10 +385,6 @@ function InstanceGroupsDetail({
               to={getPageUrl(AwxRoute.InstanceGroupDetails, {
                 params: {
                   id: ig.id,
-                  instanceType:
-                    'is_container_group' in ig && ig.is_container_group
-                      ? 'container-group'
-                      : 'instance-group',
                 },
               })}
             >

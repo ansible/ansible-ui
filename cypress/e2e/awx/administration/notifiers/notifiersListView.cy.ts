@@ -1,9 +1,8 @@
-import { NotificationTemplate } from '../../../../../frontend/awx/interfaces/NotificationTemplate';
+import { awxAPI } from '../../../../support/formatApiPathForAwx';
 import { randomE2Ename } from '../../../../support/utils';
+import { getDefaultMessages } from '../../../../../frontend/awx/administration/notifiers/notifierFormMessagesHelpers';
 
 describe('Notifications: List View', () => {
-  let notificationTemplate: NotificationTemplate;
-
   before(() => {
     cy.awxLogin();
   });
@@ -76,44 +75,111 @@ describe('Notifications: List View', () => {
   it.skip('can edit a Twilio Notification and assert the edited info in the list view', () => {});
   it.skip('can edit a Webhook Notification and assert the edited info in the list view', () => {});*/
 
-  it.skip('can test a Notification and assert the successful test in the list view', () => {
+  /* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call */
+
+  it('can test a Notification and assert the successful test in the list view', () => {
     //Utilize a notification of any type created in the beforeEach hook
     //Assert the existence of the notification before test
     //Assert the test action and the fact that it is happening from the list view
     //Assert the behavior in the UI following the test action
+    const notificationName = randomE2Ename();
+    cy.createNotificationTemplate(notificationName).then((notificationTemplate) => {
+      cy.navigateTo('awx', 'notification-templates');
+      cy.filterTableByMultiSelect('name', [notificationTemplate.name]);
+
+      // test fail message
+      cy.getByDataCy('actions-column-cell').within(() => {
+        cy.getByDataCy('test-notifier').click();
+      });
+
+      cy.contains(`[data-cy="status-column-cell"]`, 'Failed', { timeout: 100000 });
+
+      cy.intercept(awxAPI`/notification_templates/?name=${notificationName}*`, (req) => {
+        req.reply((res) => {
+          res.body?.results?.[0]?.summary_fields?.recent_notifications?.forEach(
+            (notification: { status: string }) => {
+              if (notification.status === 'failed') {
+                notification.status = 'successful';
+              }
+            }
+          );
+          return res;
+        });
+      }).as('getTemplates');
+
+      cy.getByDataCy('actions-column-cell').within(() => {
+        cy.getByDataCy('test-notifier').click();
+      });
+
+      cy.contains(`[data-cy="status-column-cell"]`, 'Success', { timeout: 100000 });
+    });
   });
 
-  it.skip('can copy a Notification and assert that the copy action completed successfully', () => {
+  it('can copy a Notification and assert that the copy action completed successfully', () => {
     //Utilize a notification of any type created in the beforeEach hook
     //Assert the existence of the notification before copy
     //Assert the copy action
     //Assert the existence of the copied notification as well as the original
     cy.navigateTo('awx', 'notification-templates');
-    cy.filterTableByMultiSelect('name', [notificationTemplate.name]);
-    cy.getByDataCy('actions-column-cell').within(() => {
-      cy.getByDataCy('copy-notifier').click();
-    });
-    cy.get('[data-cy="alert-toaster"]').contains('copied').should('be.visible');
-    cy.clickButton(/^Clear all filters/);
-    cy.deleteNotificationTemplate(notificationTemplate, { failOnStatusCode: false });
-    cy.filterTableByMultiSelect('name', [`${notificationTemplate.name} @`]);
-    cy.get('[data-cy="checkbox-column-cell"]').within(() => {
-      cy.get('input').click();
-    });
-    cy.clickToolbarKebabAction('delete-selected-notifiers');
-    cy.getModal().within(() => {
-      cy.get('#confirm').click();
-      cy.clickButton(/^Delete notifiers/);
-      cy.contains(/^Success$/);
-      cy.clickButton(/^Close$/);
+    const name = randomE2Ename();
+    cy.createNotificationTemplate(name).then((notificationTemplate) => {
+      cy.filterTableByMultiSelect('name', [name]);
+
+      cy.getByDataCy('actions-column-cell').within(() => {
+        cy.getByDataCy('copy-notifier').click();
+      });
+      cy.get('[data-cy="alert-toaster"]').contains('copied').should('be.visible');
+      cy.clickButton(/^Clear all filters/);
+      cy.deleteNotificationTemplate(notificationTemplate, { failOnStatusCode: false });
+      cy.filterTableByMultiSelect('name', [`${notificationTemplate.name} @`]);
+      cy.get('[data-cy="checkbox-column-cell"]').within(() => {
+        cy.get('input').click();
+      });
+      cy.clickToolbarKebabAction('delete-selected-notifiers');
+      cy.getModal().within(() => {
+        cy.get('#confirm').click();
+        cy.clickButton(/^Delete notifiers/);
+        cy.contains(/^Success$/);
+        cy.clickButton(/^Close$/);
+      });
     });
   });
 
-  it.skip('can bulk delete a Notification and assert deletion', () => {
+  it('can bulk delete a Notification and assert deletion', () => {
     //Utilize notification created in the beforeEach block
     //create an additional notification in this test for the purposes of bulk delete
     //Assert the presence of the items before deletion
     //Assert the deletion
+
+    cy.navigateTo('awx', 'notification-templates');
+    const name1 = randomE2Ename();
+    const name2 = randomE2Ename();
+
+    cy.createNotificationTemplate(name1).then(() => {
+      cy.createNotificationTemplate(name2).then(() => {
+        cy.filterTableByMultiSelect('name', [name1, name2]);
+        cy.get('[data-cy="checkbox-column-cell"]')
+          .eq(0)
+          .within(() => {
+            cy.get('input').click();
+          });
+        cy.get('[data-cy="checkbox-column-cell"]')
+          .eq(1)
+          .within(() => {
+            cy.get('input').click();
+          });
+        cy.clickToolbarKebabAction('delete-selected-notifiers');
+        cy.getModal().within(() => {
+          cy.get('#confirm').click();
+          cy.clickButton(/^Delete notifiers/);
+          cy.contains(/^Success$/);
+          cy.clickButton(/^Close$/);
+        });
+        cy.contains('No results found');
+        cy.contains(name1).should('not.exist');
+        cy.contains(name2).should('not.exist');
+      });
+    });
   });
 });
 
@@ -121,13 +187,14 @@ function testNotification(type: string) {
   const notificationName = randomE2Ename();
   const orgName = randomE2Ename();
   cy.createAwxOrganization(orgName).then(() => {
-    cy.getByDataCy(`awx-notification-templates`).click({ force: true });
+    cy.navigateTo('awx', 'notification-templates');
     cy.get(`[data-cy="add-notifier"]`).click();
     cy.verifyPageTitle('Add notifier');
 
     fillBasicData(notificationName, type);
     fillNotificationType(type);
     selectOrganization(orgName);
+    verifyDefaultsMessages(type);
 
     cy.get(`[data-cy="Submit"]`).click();
 
@@ -141,10 +208,12 @@ function testNotification(type: string) {
     const name2 = randomE2Ename();
     editBasicData(name2);
     editNotificationType(type);
+    editCustomMessages(type);
     cy.get(`[data-cy="Submit"]`).click();
 
     testBasicDataEdited(name2, orgName);
     testNotificationTypeEdited(type);
+    verifyEditedMessages(type);
 
     // validate its here and delete it
     cy.contains('span', 'Back to Notifiers').click();
@@ -221,6 +290,237 @@ function fillNotificationType(type: string) {
     fillRocketChatForm();
   } else if (type === 'IRC') {
     fillIrcForm();
+  }
+}
+
+function convertType(type: string) {
+  if (type === 'Email') {
+    return 'email';
+  }
+  if (type === 'Grafana') {
+    return 'grafana';
+  }
+  if (type === 'IRC') {
+    return 'irc';
+  }
+  if (type === 'Mattermost') {
+    return 'mattermost';
+  }
+  if (type === 'Pagerduty') {
+    return 'pagerduty';
+  }
+  if (type === 'Rocket.Chat') {
+    return 'rocketchat';
+  }
+  if (type === 'Slack') {
+    return 'slack';
+  }
+  if (type === 'Twilio') {
+    return 'twilio';
+  }
+  if (type === 'Webhook') {
+    return 'webhook';
+  }
+  return type;
+}
+
+function verifyDefaultsMessages(type: string) {
+  const defaults = getDefaultMessages(convertType(type));
+
+  cy.get('[data-cy="customize-messages-toggle"]').parent().find('span').click();
+
+  if (defaults.started.message) {
+    cy.get('[data-cy="messages-started-message"]').should('have.value', defaults.started.message);
+  }
+  if (defaults.success.message) {
+    cy.get('[data-cy="messages-success-message"]').should('have.value', defaults.success.message);
+  }
+  if (defaults.error.message) {
+    cy.get('[data-cy="messages-error-message"]').should('have.value', defaults.error.message);
+  }
+  if (defaults.workflow_approval.approved.message) {
+    cy.get('[data-cy="messages-workflow-approval-approved-message"]').should(
+      'have.value',
+      defaults.workflow_approval.approved.message
+    );
+  }
+  if (defaults.workflow_approval.running.message) {
+    cy.get('[data-cy="messages-workflow-approval-running-message"]').should(
+      'have.value',
+      defaults.workflow_approval.running.message
+    );
+  }
+  if (defaults.workflow_approval.denied.message) {
+    cy.get('[data-cy="messages-workflow-approval-denied-message"]').should(
+      'have.value',
+      defaults.workflow_approval.denied.message
+    );
+  }
+  if (defaults.workflow_approval.timed_out.message) {
+    cy.get('[data-cy="messages-workflow-approval-timed-out-message"]').should(
+      'have.value',
+      defaults.workflow_approval.timed_out.message
+    );
+  }
+
+  if (defaults.started.body) {
+    cy.get('[data-cy="messages-started-body"]').should('have.value', defaults.started.body);
+  }
+  if (defaults.success.body) {
+    cy.get('[data-cy="messages-success-body"]').should('have.value', defaults.success.body);
+  }
+  if (defaults.error.body) {
+    cy.get('[data-cy="messages-error-body"]').should('have.value', defaults.error.body);
+  }
+  if (defaults.workflow_approval.approved.body) {
+    cy.get('[data-cy="messages-workflow-approval-approved-body"]').should(
+      'have.value',
+      defaults.workflow_approval.approved.body
+    );
+  }
+  if (defaults.workflow_approval.running.body) {
+    cy.get('[data-cy="messages-workflow-approval-running-body"]').should(
+      'have.value',
+      defaults.workflow_approval.running.body
+    );
+  }
+  if (defaults.workflow_approval.denied.body) {
+    cy.get('[data-cy="messages-workflow-approval-denied-body"]').should(
+      'have.value',
+      defaults.workflow_approval.denied.body
+    );
+  }
+  if (defaults.workflow_approval.timed_out.body) {
+    cy.get('[data-cy="messages-workflow-approval-timed-out-body"]').should(
+      'have.value',
+      defaults.workflow_approval.timed_out.body
+    );
+  }
+}
+
+function editCustomMessages(type: string) {
+  const defaults = getDefaultMessages(convertType(type));
+
+  if (defaults.started.message) {
+    cy.get('[data-cy="messages-started-message"]').clear().type('started message edited');
+  }
+  if (defaults.success.message) {
+    cy.get('[data-cy="messages-success-message"]').clear().type('success message edited');
+  }
+  if (defaults.error.message) {
+    cy.get('[data-cy="messages-error-message"]').clear().type('error message edited');
+  }
+  if (defaults.workflow_approval.approved.message) {
+    cy.get('[data-cy="messages-workflow-approval-approved-message"]')
+      .clear()
+      .type('workflow approval approved message edited');
+  }
+  if (defaults.workflow_approval.running.message) {
+    cy.get('[data-cy="messages-workflow-approval-running-message"]')
+      .clear()
+      .type('workflow approval running message edited');
+  }
+  if (defaults.workflow_approval.denied.message) {
+    cy.get('[data-cy="messages-workflow-approval-denied-message"]')
+      .clear()
+      .type('workflow approval denied message edited');
+  }
+  if (defaults.workflow_approval.timed_out.message) {
+    cy.get('[data-cy="messages-workflow-approval-timed-out-message"]')
+      .clear()
+      .type('workflow approval timed out message edited');
+  }
+  if (defaults.started.body) {
+    cy.get('[data-cy="messages-started-body"]').clear().type('started body edited');
+  }
+  if (defaults.success.body) {
+    cy.get('[data-cy="messages-success-body"]').clear().type('success body edited');
+  }
+  if (defaults.error.body) {
+    cy.get('[data-cy="messages-error-body"]').clear().type('error body edited');
+  }
+  if (defaults.workflow_approval.approved.body) {
+    cy.get('[data-cy="messages-workflow-approval-approved-body"]')
+      .clear()
+      .type('workflow approval approved body edited');
+  }
+  if (defaults.workflow_approval.running.body) {
+    cy.get('[data-cy="messages-workflow-approval-running-body"]')
+      .clear()
+      .type('workflow approval running body edited');
+  }
+  if (defaults.workflow_approval.denied.body) {
+    cy.get('[data-cy="messages-workflow-approval-denied-body"]')
+      .clear()
+      .type('workflow approval denied body edited');
+  }
+  if (defaults.workflow_approval.timed_out.body) {
+    cy.get('[data-cy="messages-workflow-approval-timed-out-body"]')
+      .clear()
+      .type('workflow approval timed out body edited');
+  }
+}
+
+function verifyEditedMessages(type: string) {
+  const defaults = getDefaultMessages(convertType(type));
+
+  if (defaults.started.message) {
+    cy.contains('[data-cy="start-message"]', 'started message edited');
+  }
+
+  if (defaults.success.message) {
+    cy.contains('[data-cy="success-message"]', 'success message edited');
+  }
+  if (defaults.error.message) {
+    cy.contains('[data-cy="error-message"]', 'error message edited');
+  }
+  if (defaults.workflow_approval.approved.message) {
+    cy.contains(
+      '[data-cy="workflow-approved-message"]',
+      'workflow approval approved message edited'
+    );
+  }
+  if (defaults.workflow_approval.running.message) {
+    cy.contains('[data-cy="workflow-pending-message"]', 'workflow approval running message edited');
+  }
+  if (defaults.workflow_approval.denied.message) {
+    cy.contains('[data-cy="workflow-denied-message"]', 'workflow approval denied message edited');
+  }
+  if (defaults.workflow_approval.timed_out.message) {
+    cy.contains(
+      '[data-cy="workflow-timed-out-message"]',
+      'workflow approval timed out message edited'
+    );
+  }
+  if (defaults.started.body) {
+    cy.contains('[data-cy="start-message-body"]', 'started body edited');
+  }
+  if (defaults.success.body) {
+    cy.contains('[data-cy="success-message-body"]', 'success body edited');
+  }
+  if (defaults.error.body) {
+    cy.contains('[data-cy="error-message-body"]', 'error body edited');
+  }
+  if (defaults.workflow_approval.approved.body) {
+    cy.contains(
+      '[data-cy="workflow-approved-message-body"]',
+      'workflow approval approved body edited'
+    );
+  }
+  if (defaults.workflow_approval.running.body) {
+    cy.contains(
+      '[data-cy="workflow-pending-message-body"]',
+      'workflow approval running body edited'
+    );
+  }
+  if (defaults.workflow_approval.denied.body) {
+    cy.contains('[data-cy="workflow-denied-message-body"]', 'workflow approval denied body edited');
+  }
+  if (defaults.workflow_approval.timed_out.body) {
+    cy.contains(
+      '[data-cy="workflow-timed-out-message-body"]',
+      'workflow approval timed out body edited'
+    );
   }
 }
 

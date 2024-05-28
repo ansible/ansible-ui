@@ -95,7 +95,8 @@ export function useAwxView<T extends { id: number }>(options: {
     for (const key in filterState) {
       const toolbarFilter = toolbarFilters?.find((filter) => filter.key === key);
       if (toolbarFilter) {
-        const values = filterState[key];
+        let values = filterState[key];
+        if (values) values = values.filter((value) => value !== null);
         if (values && values.length > 0) {
           queryString ? (queryString += '&') : (queryString += '?');
 

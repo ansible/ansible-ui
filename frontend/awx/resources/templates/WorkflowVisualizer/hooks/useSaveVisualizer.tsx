@@ -1,13 +1,13 @@
 import { action, useVisualizationController } from '@patternfly/react-topology';
 import { useCallback } from 'react';
+import { useAbortController } from '../../../../../../framework/hooks/useAbortController';
 import { parseVariableField } from '../../../../../../framework/utils/codeEditorUtils';
 import { requestGet } from '../../../../../common/crud/Data';
-import { useAbortController } from '../../../../../common/crud/useAbortController';
 import { useDeleteRequest } from '../../../../../common/crud/useDeleteRequest';
 import { usePatchRequest } from '../../../../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../../../../common/crud/usePostRequest';
-import { awxAPI } from '../../../../common/api/awx-utils';
 import { AwxItemsResponse } from '../../../../common/AwxItemsResponse';
+import { awxAPI } from '../../../../common/api/awx-utils';
 import { useAwxGetAllPages } from '../../../../common/useAwxGetAllPages';
 import { getAddedAndRemoved } from '../../../../common/util/getAddedAndRemoved';
 import { InstanceGroup } from '../../../../interfaces/InstanceGroup';
@@ -146,15 +146,29 @@ export function useSaveVisualizer(templateId: string) {
         );
 
         if (workflowNode && workflowNode.id) {
-          await patchWorkflowNodeApproval(
-            awxAPI`/workflow_approval_templates/${nodeTemplate.id.toString()}/`,
-            {
-              name: nodeTemplate.name,
-              description: nodeTemplate.description || '',
-              timeout: nodeTemplate.timeout || 0,
-            },
-            abortController.signal
-          );
+          // wf approval node doesn't exist, create it
+          if (nodeTemplate.id === -1) {
+            await postWorkflowNodeApproval(
+              awxAPI`/workflow_job_template_nodes/${workflowNode.id.toString()}/create_approval_template/`,
+              {
+                name: nodeTemplate.name,
+                description: nodeTemplate.description || '',
+                timeout: nodeTemplate.timeout || 0,
+              },
+              abortController.signal
+            );
+            setCreatedNodeId(node, workflowNode.id.toString());
+          } else {
+            await patchWorkflowNodeApproval(
+              awxAPI`/workflow_approval_templates/${nodeTemplate.id.toString()}/`,
+              {
+                name: nodeTemplate.name,
+                description: nodeTemplate.description || '',
+                timeout: nodeTemplate.timeout || 0,
+              },
+              abortController.signal
+            );
+          }
         }
       });
       await Promise.all(promises);

@@ -12,11 +12,16 @@ import { IEdaView } from '../../common/useEventDrivenView';
 import { EdaProject } from '../../interfaces/EdaProject';
 import { EdaRoute } from '../../main/EdaRoutes';
 import { useDeleteProjects } from './useDeleteProjects';
+import { useOptions } from '../../../common/crud/useOptions';
+import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
+import { edaAPI } from '../../common/eda-utils';
 
 export function useProjectsActions(view: IEdaView<EdaProject>) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const deleteProjects = useDeleteProjects(view.unselectItemsAndRefresh);
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(edaAPI`/projects/`);
+  const canCreateProject = Boolean(data && data.actions && data.actions['POST']);
   return useMemo<IPageAction<EdaProject>[]>(
     () => [
       {
@@ -26,6 +31,11 @@ export function useProjectsActions(view: IEdaView<EdaProject>) {
         isPinned: true,
         icon: PlusCircleIcon,
         label: t('Create project'),
+        isDisabled: canCreateProject
+          ? undefined
+          : t(
+              'You do not have permission to create a project. Please contact your organization administrator if there is an issue with your access.'
+            ),
         onClick: () => pageNavigate(EdaRoute.CreateProject),
       },
       {
@@ -37,6 +47,6 @@ export function useProjectsActions(view: IEdaView<EdaProject>) {
         isDanger: true,
       },
     ],
-    [deleteProjects, pageNavigate, t]
+    [canCreateProject, deleteProjects, pageNavigate, t]
   );
 }

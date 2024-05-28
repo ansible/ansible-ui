@@ -168,12 +168,42 @@ describe('DecisionEnvironments.cy.ts', () => {
   });
 });
 
-describe('Empty list', () => {
+describe('Empty list without POST permission', () => {
   beforeEach(() => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/eda/v1/decision-environments/*',
+        url: edaAPI`/decision-environments/*`,
+      },
+      {
+        fixture: 'emptyList.json',
+      }
+    ).as('emptyList');
+  });
+  it('Empty state is displayed correctly', () => {
+    cy.mount(<DecisionEnvironments />);
+    cy.contains(/^You do not have permission to create a decision environment.$/);
+    cy.contains(
+      /^Please contact your organization administrator if there is an issue with your access.$/
+    );
+  });
+});
+
+describe('Empty list with POST permission', () => {
+  beforeEach(() => {
+    cy.intercept(
+      {
+        method: 'OPTIONS',
+        url: edaAPI`/decision-environments/`,
+      },
+      {
+        fixture: 'edaDecisionEnvironmentsOptions.json',
+      }
+    ).as('getOptions');
+    cy.intercept(
+      {
+        method: 'GET',
+        url: edaAPI`/decision-environments/*`,
       },
       {
         fixture: 'emptyList.json',

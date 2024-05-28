@@ -248,8 +248,8 @@ describe('Empty state', () => {
       { fixture: 'workflowJobTemplate.json' }
     );
     cy.mount(<WorkflowVisualizer />, {
-      path: '/templates/workflow_job_template/:id/visualizer',
-      initialEntries: ['/templates/workflow_job_template/123/visualizer'],
+      path: '/templates/workflow-job-template/:id/visualizer',
+      initialEntries: ['/templates/workflow-job-template/123/visualizer'],
     });
     cy.get('h4.pf-v5-c-empty-state__title-text').should(
       'have.text',
@@ -281,8 +281,8 @@ describe('Empty state', () => {
       { fixture: 'jobTemplates.json' }
     );
     cy.mount(<WorkflowVisualizer />, {
-      path: '/templates/workflow_job_template/:id/visualizer',
-      initialEntries: ['/templates/workflow_job_template/123/visualizer'],
+      path: '/templates/workflow-job-template/:id/visualizer',
+      initialEntries: ['/templates/workflow-job-template/123/visualizer'],
     });
     cy.get('div.pf-v5-c-empty-state__actions').within(() => {
       cy.get('[data-cy="add-node-button"]').click();

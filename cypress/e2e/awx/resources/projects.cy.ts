@@ -625,7 +625,7 @@ describe('Projects', () => {
           cy.clickTab('Job templates', true);
           cy.url().should(
             'contain',
-            `/projects/${thisProject.id}/job_templates?page=1&perPage=10&sort=name`
+            `/projects/${thisProject.id}/job-templates?page=1&perPage=10&sort=name`
           );
           cy.filterTableByMultiSelect('name', [jobTemplate.name]);
           cy.getTableRow('name', jobTemplate.name, { disableFilter: true }).should('be.visible');

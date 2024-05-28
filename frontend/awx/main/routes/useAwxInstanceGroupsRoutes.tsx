@@ -29,7 +29,7 @@ export function useAwxInstanceGroupsRoutes() {
     () => ({
       id: AwxRoute.InstanceGroups,
       label: t('Instance Groups'),
-      path: 'instance_groups',
+      path: 'instance-groups',
       children: [
         {
           id: AwxRoute.CreateContainerGroup,
@@ -53,7 +53,7 @@ export function useAwxInstanceGroupsRoutes() {
         },
         {
           id: AwxRoute.InstanceGroupPage,
-          path: ':instanceType/:id/',
+          path: ':id',
           element: <InstanceGroupPage />,
           children: [
             {

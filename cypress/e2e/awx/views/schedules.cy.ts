@@ -478,7 +478,7 @@ describe.skip('Schedules - Create and Delete', function () {
       cy.verifyPageTitle(`${scheduleName}`);
       cy.url().then((currentUrl) => {
         expect(currentUrl.includes('details')).to.be.true;
-        expect(currentUrl.includes('/templates/job_template/')).to.be.true;
+        expect(currentUrl.includes('/templates/job-template/')).to.be.true;
       });
       cy.getByDataCy('name').should('have.text', scheduleName);
       cy.getByDataCy('time-zone').should('have.text', 'America/Mexico_City');

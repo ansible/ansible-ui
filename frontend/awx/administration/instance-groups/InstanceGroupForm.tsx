@@ -39,7 +39,6 @@ export function CreateInstanceGroup() {
     pageNavigate(AwxRoute.InstanceGroupDetails, {
       params: {
         id: instanceGroup.id,
-        instanceType: instanceGroup?.is_container_group ? 'container-group' : 'instance-group',
       },
     });
   };
@@ -103,7 +102,6 @@ export function EditInstanceGroup() {
     pageNavigate(AwxRoute.InstanceGroupDetails, {
       params: {
         id: updateInstanceGroup.id,
-        instanceType: instanceGroup?.is_container_group ? 'container-group' : 'instance-group',
       },
     });
   };

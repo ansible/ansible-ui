@@ -97,7 +97,7 @@ export function InstanceDetailsTab(props: {
             <Label color="blue" style={{ marginRight: '10px' }} key={instance.id}>
               <Link
                 to={getPageUrl(AwxRoute.InstanceGroupDetails, {
-                  params: { instanceType: 'instance-group', id: instance.id },
+                  params: { id: instance.id },
                 })}
               >
                 {instance.name}

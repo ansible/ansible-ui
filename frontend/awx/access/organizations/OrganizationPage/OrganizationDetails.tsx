@@ -77,7 +77,6 @@ export function OrganizationDetails() {
                   to={getPageUrl(AwxRoute.InstanceGroupDetails, {
                     params: {
                       id: ig.id,
-                      instanceType: ig.is_container_group ? 'container-group' : 'instance-group',
                     },
                   })}
                 >

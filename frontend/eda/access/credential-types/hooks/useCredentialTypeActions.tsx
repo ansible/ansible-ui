@@ -11,11 +11,16 @@ import { useDeleteCredentialTypes } from './useDeleteCredentialTypes';
 import { EdaCredentialType } from '../../../interfaces/EdaCredentialType';
 import { EdaRoute } from '../../../main/EdaRoutes';
 import { ButtonVariant } from '@patternfly/react-core';
+import { useOptions } from '../../../../common/crud/useOptions';
+import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
+import { edaAPI } from '../../../common/eda-utils';
 
 export function useCredentialTypeToolbarActions(
   onCredentialTypesDeleted: (credentialType: EdaCredentialType[]) => void
 ) {
   const { t } = useTranslation();
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(edaAPI`/credential-types/`);
+  const canCreateCredentialTypes = Boolean(data && data.actions && data.actions['POST']);
   const deleteCredentialTypes = useDeleteCredentialTypes(onCredentialTypesDeleted);
   const pageNavigate = usePageNavigate();
 
@@ -28,6 +33,11 @@ export function useCredentialTypeToolbarActions(
         isPinned: true,
         icon: PlusCircleIcon,
         label: t('Create credential type'),
+        isDisabled: canCreateCredentialTypes
+          ? undefined
+          : t(
+              'You do not have permission to create a credential type. Please contact your organization administrator if there is an issue with your access.'
+            ),
         onClick: () => pageNavigate(EdaRoute.CreateCredentialType),
       },
       { type: PageActionType.Seperator },
@@ -40,7 +50,7 @@ export function useCredentialTypeToolbarActions(
         isDanger: true,
       },
     ],
-    [t, deleteCredentialTypes, pageNavigate]
+    [t, canCreateCredentialTypes, deleteCredentialTypes, pageNavigate]
   );
 }
 

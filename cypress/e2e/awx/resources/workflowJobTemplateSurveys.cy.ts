@@ -36,7 +36,7 @@ describe('Workflow Job Templates Surveys', function () {
               workflowJobTemplate
             );
 
-            cy.visit(`/templates/workflow_job_template/${workflowJobTemplate.id}/survey`);
+            cy.visit(`/templates/workflow-job-template/${workflowJobTemplate.id}/survey`);
           });
         }
       );
@@ -75,7 +75,7 @@ describe('Workflow Job Templates Surveys', function () {
               workflowJobTemplate
             );
 
-            cy.visit(`/templates/workflow_job_template/${workflowJobTemplate.id}/survey`);
+            cy.visit(`/templates/workflow-job-template/${workflowJobTemplate.id}/survey`);
           });
         }
       );

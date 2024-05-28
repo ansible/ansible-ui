@@ -7,9 +7,14 @@ import { useSelectCredentials } from '../hooks/useSelectCredentials';
 export function PageFormCredentialSelect<
   TFieldValues extends FieldValues = FieldValues,
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
->(props: { name: TFieldName; labelHelp: string; isRequired?: boolean; credentialKind?: string }) {
+>(props: {
+  name: TFieldName;
+  labelHelp: string;
+  isRequired?: boolean;
+  credentialKinds?: string[];
+}) {
   const { t } = useTranslation();
-  const selectCredential = useSelectCredentials(props.credentialKind);
+  const selectCredential = useSelectCredentials(props.credentialKinds);
 
   return (
     <PageFormMultiInput<EdaCredential>

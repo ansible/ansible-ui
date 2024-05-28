@@ -112,7 +112,7 @@ describe('Workflow Visualizer', () => {
     });
 
     it('Adds a new node linked to an existing node with always status, and save the visualizer.', function () {
-      cy.visit(`/templates/workflow_job_template/${workflowJobTemplate?.id}/visualizer`);
+      cy.visit(`/templates/workflow-job-template/${workflowJobTemplate?.id}/visualizer`);
       cy.contains('Workflow Visualizer').should('be.visible');
       cy.get(`g[data-id=${approvalNode.id}] .pf-topology__node__action-icon`).click({
         force: true,
@@ -144,7 +144,7 @@ describe('Workflow Visualizer', () => {
     });
 
     it('Adds a new node specifically linked to an already existing node.', function () {
-      cy.visit(`/templates/workflow_job_template/${workflowJobTemplate?.id}/visualizer`);
+      cy.visit(`/templates/workflow-job-template/${workflowJobTemplate?.id}/visualizer`);
       cy.contains('Workflow Visualizer').should('be.visible');
       cy.get(`g[data-id="${projectNode.id}"]`)
         .should('be.visible')
@@ -192,7 +192,7 @@ describe('Workflow Visualizer', () => {
                 cy.createWorkflowJTAlwaysNodeLink(inventorySourceNode, managementNode);
               })
               .then(() => {
-                cy.visit(`/templates/workflow_job_template/${workflowJobTemplate?.id}/visualizer`);
+                cy.visit(`/templates/workflow-job-template/${workflowJobTemplate?.id}/visualizer`);
                 cy.get(`g[data-id=${projectNode.id}] .pf-topology__node__action-icon`).click({
                   force: true,
                 });
@@ -234,7 +234,7 @@ describe('Workflow Visualizer', () => {
           });
         })
         .then(() => {
-          cy.visit(`/templates/workflow_job_template/${workflowJobTemplate?.id}/visualizer`);
+          cy.visit(`/templates/workflow-job-template/${workflowJobTemplate?.id}/visualizer`);
           cy.contains('Workflow Visualizer').should('be.visible');
           cy.get(`g[data-id="${projectNode.id}-${approvalNode.id}"]`).should(
             'have.text',
@@ -252,7 +252,7 @@ describe('Workflow Visualizer', () => {
     });
 
     it('Create a job template node using a JT with multiple dependencies and then edit the node to use a different resource', function () {
-      cy.visit(`/templates/workflow_job_template/${workflowJobTemplate?.id}/visualizer`);
+      cy.visit(`/templates/workflow-job-template/${workflowJobTemplate?.id}/visualizer`);
       cy.contains('Workflow Visualizer').should('be.visible');
       cy.clickButton('Add step');
       cy.selectDropdownOptionByResourceName('node-type', 'Job Template');
@@ -291,7 +291,7 @@ describe('Workflow Visualizer', () => {
           });
         })
         .then(() => {
-          cy.visit(`/templates/workflow_job_template/${workflowJobTemplate?.id}/visualizer`);
+          cy.visit(`/templates/workflow-job-template/${workflowJobTemplate?.id}/visualizer`);
           cy.contains('Workflow Visualizer').should('be.visible');
           cy.get(`g[data-id=${projectNode.id}] .pf-topology__node__action-icon`).click({
             force: true,
@@ -348,7 +348,7 @@ describe('Workflow Visualizer', () => {
                 cy.createWorkflowJTAlwaysNodeLink(inventorySourceNode, managementNode);
               })
               .then(() => {
-                cy.visit(`/templates/workflow_job_template/${workflowJobTemplate?.id}/visualizer`);
+                cy.visit(`/templates/workflow-job-template/${workflowJobTemplate?.id}/visualizer`);
                 cy.get('[data-cy="wf-vzr-name"]')
                   .should('contain', `${workflowJobTemplate.name}`)
                   .should('be.visible');
@@ -396,7 +396,7 @@ describe('Workflow Visualizer', () => {
               }
             );
           });
-          cy.visit(`/templates/workflow_job_template/${workflowJobTemplate?.id}/visualizer`);
+          cy.visit(`/templates/workflow-job-template/${workflowJobTemplate?.id}/visualizer`);
           cy.get('[data-cy="wf-vzr-name"]')
             .should('contain', `${workflowJobTemplate.name}`)
             .should('be.visible');
@@ -411,7 +411,7 @@ describe('Workflow Visualizer', () => {
       cy.createAwxWorkflowVisualizerProjectNode(workflowJobTemplate, project).then((projNode) => {
         projectNode = projNode;
         cy.createAwxWorkflowVisualizerApprovalNode(workflowJobTemplate).then(() => {
-          cy.visit(`/templates/workflow_job_template/${workflowJobTemplate?.id}/visualizer`);
+          cy.visit(`/templates/workflow-job-template/${workflowJobTemplate?.id}/visualizer`);
           cy.contains('Workflow Visualizer').should('be.visible');
           cy.get('[data-kind="node"]').should('have.length', 3);
           cy.get(`g[data-id=${projectNode.id}] .pf-topology__node__action-icon`).click({
@@ -455,7 +455,7 @@ describe('Workflow Visualizer', () => {
           });
         })
         .then(() => {
-          cy.visit(`/templates/workflow_job_template/${workflowJobTemplate?.id}/visualizer`);
+          cy.visit(`/templates/workflow-job-template/${workflowJobTemplate?.id}/visualizer`);
           cy.contains('Workflow Visualizer').should('be.visible');
           cy.contains('Run on fail').should('be.visible');
           cy.get(`g[data-id="${projectNode.id}-${workflowJtNode.id}"]`).within(() => {

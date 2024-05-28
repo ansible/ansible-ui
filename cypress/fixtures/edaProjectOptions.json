@@ -1,0 +1,112 @@
+{
+  "name": "Project Instance",
+  "description": "",
+  "renders": ["application/json", "text/html"],
+  "parses": ["application/json", "application/x-www-form-urlencoded", "multipart/form-data"],
+  "actions": {
+    "PATCH": {
+      "name": {
+        "type": "string",
+        "required": true,
+        "read_only": false,
+        "label": "Name"
+      },
+      "description": {
+        "type": "string",
+        "required": false,
+        "read_only": false,
+        "label": "Description"
+      },
+      "organization_id": {
+        "type": "field",
+        "required": false,
+        "read_only": true,
+        "label": "Organization id"
+      },
+      "eda_credential_id": {
+        "type": "integer",
+        "required": false,
+        "read_only": false,
+        "label": "Eda credential id"
+      },
+      "signature_validation_credential_id": {
+        "type": "field",
+        "required": false,
+        "read_only": true,
+        "label": "Signature validation credential id"
+      },
+      "scm_branch": {
+        "type": "string",
+        "required": false,
+        "read_only": false,
+        "label": "Scm branch"
+      },
+      "scm_refspec": {
+        "type": "string",
+        "required": false,
+        "read_only": false,
+        "label": "Scm refspec"
+      },
+      "verify_ssl": {
+        "type": "boolean",
+        "required": false,
+        "read_only": false,
+        "label": "Verify ssl"
+      },
+      "proxy": {
+        "type": "field",
+        "required": false,
+        "read_only": true,
+        "label": "Proxy"
+      },
+      "id": {
+        "type": "integer",
+        "required": false,
+        "read_only": true,
+        "label": "ID"
+      },
+      "url": {
+        "type": "string",
+        "required": false,
+        "read_only": true,
+        "label": "Url"
+      },
+      "scm_type": {
+        "type": "choice",
+        "required": false,
+        "read_only": true,
+        "label": "Scm type"
+      },
+      "git_hash": {
+        "type": "string",
+        "required": false,
+        "read_only": true,
+        "label": "Git hash"
+      },
+      "import_state": {
+        "type": "choice",
+        "required": false,
+        "read_only": true,
+        "label": "Import state"
+      },
+      "import_error": {
+        "type": "string",
+        "required": false,
+        "read_only": true,
+        "label": "Import error"
+      },
+      "created_at": {
+        "type": "datetime",
+        "required": false,
+        "read_only": true,
+        "label": "Created at"
+      },
+      "modified_at": {
+        "type": "datetime",
+        "required": false,
+        "read_only": true,
+        "label": "Modified at"
+      }
+    }
+  }
+}

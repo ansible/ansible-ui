@@ -67,8 +67,8 @@ describe('Create Edit Instance Group Form', () => {
 
     it('should pass correct request body after editing ee', () => {
       cy.mount(<EditInstanceGroup />, {
-        path: '/instance_groups/:id/edit',
-        initialEntries: [`/instance_groups/1/edit`],
+        path: '/instance-groups/:id/edit',
+        initialEntries: [`/instance-groups/1/edit`],
       });
       cy.get('[data-cy="name"]').clear();
       cy.get('[data-cy="name"]').type('Test name- edited');
@@ -99,8 +99,8 @@ describe('Create Edit Instance Group Form', () => {
 
     it('should validate required fields on save', () => {
       cy.mount(<EditInstanceGroup />, {
-        path: '/instance_groups/:id/edit',
-        initialEntries: [`/instance_groups/1/edit`],
+        path: '/instance-groups/:id/edit',
+        initialEntries: [`/instance-groups/1/edit`],
       });
       cy.get('[data-cy="name"]').clear();
       cy.clickButton(/^Save Instance Group$/);

@@ -27,9 +27,6 @@ export function useInstanceGroupsColumns(options?: {
                 ? undefined
                 : getPageUrl(AwxRoute.InstanceGroupDetails, {
                     params: {
-                      instanceType: instanceGroup.is_container_group
-                        ? 'container-group'
-                        : 'instance-group',
                       id: instanceGroup.id,
                     },
                   })

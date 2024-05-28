@@ -66,7 +66,7 @@ describe('Topology view', () => {
           .then((instanceGroups: InstanceGroup[]) => {
             cy.clickLink(`${instanceGroups[0].name}`);
             // TODO Instance groups detail page not yet implemented; check URL for now
-            cy.url().should('contain', `/instance_groups/instance-group/${instanceGroups[0].id}`);
+            cy.url().should('contain', `/instance-groups/${instanceGroups[0].id}`);
           });
       });
   });

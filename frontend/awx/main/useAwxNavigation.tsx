@@ -171,7 +171,7 @@ export function useAwxNavigation() {
           children: [
             {
               id: AwxRoute.Role,
-              path: ':resourceType/:id',
+              path: ':id',
               element: <AwxRolePage />,
               children: [
                 {

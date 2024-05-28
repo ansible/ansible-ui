@@ -175,8 +175,38 @@ describe('RulebookActivations.cy.ts', () => {
   });
 });
 
-describe('Empty list', () => {
+describe('Empty list without POST permission', () => {
   beforeEach(() => {
+    cy.intercept(
+      {
+        method: 'GET',
+        url: edaAPI`/activations/*`,
+      },
+      {
+        fixture: 'emptyList.json',
+      }
+    ).as('emptyList');
+  });
+  it('Empty state is displayed correctly', () => {
+    cy.mount(<RulebookActivations />);
+    cy.contains(/^You do not have permission to create a rulebook activation.$/);
+    cy.contains(
+      /^Please contact your organization administrator if there is an issue with your access.$/
+    );
+  });
+});
+
+describe('Empty list with POST permission', () => {
+  beforeEach(() => {
+    cy.intercept(
+      {
+        method: 'OPTIONS',
+        url: edaAPI`/activations/`,
+      },
+      {
+        fixture: 'edaActivationsOptions.json',
+      }
+    ).as('getOptions');
     cy.intercept(
       {
         method: 'GET',
