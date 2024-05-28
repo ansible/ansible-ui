@@ -11,13 +11,13 @@ import { CheckCircleIcon, ExclamationCircleIcon, PendingIcon } from '@patternfly
 import pLimit from 'p-limit';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useAbortController } from '../../frontend/common/crud/useAbortController';
 import { genericErrorAdapter } from '../PageForm/genericErrorAdapter';
 import { ErrorAdapter } from '../PageForm/typesErrorAdapter';
 import { PageTable } from '../PageTable/PageTable';
 import { ITableColumn, useVisibleModalColumns } from '../PageTable/PageTableColumn';
 import { usePaged } from '../PageTable/useTableItems';
 import { pfDanger, pfInfo, pfSuccess } from '../components/pfcolors';
+import { useAbortController } from '../hooks/useAbortController';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
 import { usePageDialog } from './PageDialog';
 

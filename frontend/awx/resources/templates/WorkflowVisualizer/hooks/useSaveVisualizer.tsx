@@ -1,13 +1,13 @@
 import { action, useVisualizationController } from '@patternfly/react-topology';
 import { useCallback } from 'react';
+import { useAbortController } from '../../../../../../framework/hooks/useAbortController';
 import { parseVariableField } from '../../../../../../framework/utils/codeEditorUtils';
 import { requestGet } from '../../../../../common/crud/Data';
-import { useAbortController } from '../../../../../common/crud/useAbortController';
 import { useDeleteRequest } from '../../../../../common/crud/useDeleteRequest';
 import { usePatchRequest } from '../../../../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../../../../common/crud/usePostRequest';
-import { awxAPI } from '../../../../common/api/awx-utils';
 import { AwxItemsResponse } from '../../../../common/AwxItemsResponse';
+import { awxAPI } from '../../../../common/api/awx-utils';
 import { useAwxGetAllPages } from '../../../../common/useAwxGetAllPages';
 import { getAddedAndRemoved } from '../../../../common/util/getAddedAndRemoved';
 import { InstanceGroup } from '../../../../interfaces/InstanceGroup';
