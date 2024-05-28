@@ -1,0 +1,53 @@
+{
+  "count": 1,
+  "next": null,
+  "previous": null,
+  "page_size": 20,
+  "page": 1,
+  "results": [
+    {
+      "id": 1,
+      "url": "/api/eda/v1/role_user_assignments/1/",
+      "related": {
+        "created_by": "/api/eda/v1/users/5/",
+        "role_definition": "/api/eda/v1/role_definitions/4/",
+        "user": "/api/eda/v1/users/5/",
+        "content_object": "/api/eda/v1/organizations/4/"
+      },
+      "summary_fields": {
+        "created_by": {
+          "id": 5,
+          "username": "dev",
+          "email": "",
+          "first_name": "",
+          "last_name": "",
+          "is_superuser": true
+        },
+        "role_definition": {
+          "id": 4,
+          "name": "Contributor",
+          "description": "Has create and update permissions with an exception of users and roles. Has enable and disable rulebook activation permissions.",
+          "managed": true
+        },
+        "user": {
+          "id": 5,
+          "username": "dev",
+          "email": "",
+          "first_name": "",
+          "last_name": "",
+          "is_superuser": true
+        },
+        "content_object": {
+          "id": 4,
+          "name": "vn-org"
+        }
+      },
+      "created": "2024-05-28T18:21:00.366268Z",
+      "created_by": 5,
+      "content_type": "shared.organization",
+      "object_id": "4",
+      "role_definition": 4,
+      "user": 5
+    }
+  ]
+}

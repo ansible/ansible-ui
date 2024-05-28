@@ -67,7 +67,7 @@
           "id": 182
         },
         "role_definition": {
-          "id": 27,
+          "id": 26,
           "name": "Organization Project Admin",
           "description": "Has all permissions to projects within an organization",
           "managed": true
@@ -88,7 +88,7 @@
       "created_by": 3,
       "content_type": "shared.organization",
       "object_id": "245",
-      "role_definition": 27,
+      "role_definition": 26,
       "user": 93
     }
   ]
