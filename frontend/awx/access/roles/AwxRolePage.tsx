@@ -1,13 +1,22 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
+import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { PageHeader, PageLayout, useGetPageUrl, LoadingPage } from '../../../../framework';
-import { PageRoutedTabs } from '../../../../framework/PageTabs/PageRoutedTabs';
-import { AwxRoute } from '../../main/AwxRoutes';
+import {
+  LoadingPage,
+  PageActions,
+  PageHeader,
+  PageLayout,
+  useGetPageUrl,
+  usePageNavigate,
+} from '../../../../framework';
+import { PageRoutedTabs } from '../../../common/PageRoutedTabs';
 import { useGetItem } from '../../../common/crud/useGet';
 import { AwxError } from '../../common/AwxError';
-import { AwxRbacRole } from '../../interfaces/AwxRbacRole';
 import { awxAPI } from '../../common/api/awx-utils';
+import { AwxRbacRole } from '../../interfaces/AwxRbacRole';
+import { AwxRoute } from '../../main/AwxRoutes';
+import { useAwxRoleRowActions } from './hooks/useAwxRoleRowActions';
 
 export function AwxRolePage(props: {
   breadcrumbLabelForPreviousPage?: string;
@@ -16,11 +25,16 @@ export function AwxRolePage(props: {
   const getPageUrl = useGetPageUrl();
   const { t } = useTranslation();
   const params = useParams<{ id: string; resourceType: string }>();
+  const pageNavigate = usePageNavigate();
   const {
     data: role,
     error,
     refresh,
   } = useGetItem<AwxRbacRole>(awxAPI`/role_definitions/`, params.id);
+
+  const itemActions = useAwxRoleRowActions(() => {
+    pageNavigate(AwxRoute.Roles);
+  });
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!role) return <LoadingPage breadcrumbs tabs />;
@@ -36,6 +50,13 @@ export function AwxRolePage(props: {
           },
           { label: role?.name },
         ]}
+        headerActions={
+          <PageActions<AwxRbacRole>
+            actions={itemActions}
+            position={DropdownPosition.right}
+            selectedItem={role}
+          />
+        }
       />
       <PageRoutedTabs
         backTab={{

@@ -8,7 +8,7 @@ import { PageTable } from './PageTable';
 
 export type PageMultiSelectListProps<T extends object> = {
   labelForSelectedItems?: string;
-  view: IView & ISelected<T> & { itemCount?: number; pageItems: T[] | undefined };
+  view: IView & ISelected<T> & { itemCount?: number; pageItems: T[] | undefined; error?: Error };
   tableColumns: ITableColumn<T>[];
   toolbarFilters: IToolbarFilter[];
   // onSelect: (items: T[]) => void;
@@ -24,7 +24,7 @@ export function PageMultiSelectList<T extends object>(props: PageMultiSelectList
     props;
   const [translations] = useFrameworkTranslations();
 
-  if (view.itemCount === undefined) {
+  if (view.itemCount === undefined && view.error === undefined) {
     return <Skeleton height="80px" />;
   }
 

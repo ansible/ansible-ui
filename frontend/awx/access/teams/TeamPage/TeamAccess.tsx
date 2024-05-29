@@ -1,20 +1,22 @@
 import { useParams } from 'react-router-dom';
-import { useGetItem } from '../../../../common/crud/useGet';
-import { awxAPI } from '../../../common/api/awx-utils';
-import { Team } from '../../../interfaces/Team';
-import { ResourceAccessList } from '../../common/ResourceAccessList';
+import { UserAccess } from '../../../../common/access/components/UserAccess';
+import { AwxRoute } from '../../../main/AwxRoutes';
+import { useTranslation } from 'react-i18next';
 
 export function TeamAccess() {
   const params = useParams<{ id: string }>();
-  const { data: team } = useGetItem<Team>(awxAPI`/teams`, params.id);
-
-  return team ? <TeamAccessInner team={team} /> : null;
-}
-
-export function TeamAccessInner(props: { team: Team }) {
-  const { team } = props;
-
+  const { t } = useTranslation();
   return (
-    <ResourceAccessList url={awxAPI`/teams/${team.id.toString()}/access_list/`} resource={team} />
+    <UserAccess
+      service="awx"
+      addRoleButtonText={t('Add users')}
+      removeRoleText={t('Remove users')}
+      removeConfirmationText={(count: number) =>
+        t('Yes, I confirm that I want to remove these {{count}} users.', { count })
+      }
+      id={params.id || ''}
+      type={'team'}
+      addRolesRoute={AwxRoute.TeamAddMembers}
+    />
   );
 }

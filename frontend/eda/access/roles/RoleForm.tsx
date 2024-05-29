@@ -146,10 +146,13 @@ function EdaRoleInputs(props: { disableContentType?: boolean }) {
         options={Object.entries(edaRoleMetadata.content_types)
           .filter(
             ([option]) =>
-              option.startsWith('eda.') &&
-              !['extravar', 'auditrule', 'rulebookprocess', 'rulebook'].some(function (v) {
-                return option.endsWith(v);
-              })
+              ![
+                'shared.team',
+                'eda.extravar',
+                'eda.auditrule',
+                'eda.rulebookprocess',
+                'eda.rulebook',
+              ].includes(option)
           )
           .map(([key, value]) => ({
             label: value?.displayName,

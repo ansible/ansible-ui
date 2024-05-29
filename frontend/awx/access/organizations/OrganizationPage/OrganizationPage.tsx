@@ -15,8 +15,8 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../../framework';
-import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
+import { PageRoutedTabs } from '../../../../common/PageRoutedTabs';
 import { useGetItem } from '../../../../common/crud/useGet';
 import { AwxError } from '../../../common/AwxError';
 import { awxAPI } from '../../../common/api/awx-utils';
@@ -106,8 +106,8 @@ export function OrganizationPageTabs(props: { organization: Organization }) {
       }}
       tabs={[
         { label: t('Details'), page: AwxRoute.OrganizationDetails },
-        { label: t('Users'), page: AwxRoute.OrganizationUsers },
-        { label: t('Teams'), page: AwxRoute.OrganizationTeams },
+        { label: t('Users Access'), page: AwxRoute.OrganizationUsersAccess },
+        { label: t('Teams Access'), page: AwxRoute.OrganizationTeamsAccess },
         { label: t('Execution environments'), page: AwxRoute.OrganizationExecutionEnvironments },
         { label: t('Notifications'), page: AwxRoute.OrganizationNotifications },
       ]}
