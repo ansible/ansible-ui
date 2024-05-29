@@ -71,7 +71,7 @@ describe('EDA Credentials Use in Resources', () => {
     cy.get('[data-cy="name"]').type(name);
     cy.get('[data-cy="url"]').type('https://github.com/ansible/aap-ui');
     cy.clickButton(/^Create project$/);
-    cy.getEdaProjectByName(name).then((thisProject) => {
+    cy.getEdaProjectByName(name).then((thisProject: EdaProject) => {
       cy.waitEdaProjectSync(thisProject).then((result) => {
         cy.hasDetail('Status', 'Failed');
         cy.hasDetail('Import error', 'Credentials not provided or incorrect');
