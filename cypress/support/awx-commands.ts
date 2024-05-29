@@ -513,16 +513,6 @@ Cypress.Commands.add(
     });
   }
 );
-
-Cypress.Commands.add(
-  'clickTableRowRoleAction',
-  (name: string | RegExp, dataCyLabel: string, filter?: boolean) => {
-    cy.getTableRowByText(name, filter).within(() => {
-      cy.get('[data-cy*="actions-column-cell"]').click();
-    });
-  }
-);
-
 Cypress.Commands.add(
   'clickListCardKebabAction',
   (id: number, name: string | RegExp, dataCyLabel: string | RegExp) => {

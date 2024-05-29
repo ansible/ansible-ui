@@ -524,12 +524,6 @@ declare global {
         filter?: boolean
       ): Chainable<void>;
 
-      /** Finds a table row containing text and clicks remove action for roles. */
-      clickTableRowRoleAction(
-        name: string | RegExp,
-        dataCyLabel: string,
-        filter?: boolean
-      ): Chainable<void>;
       /**
        * Finds a list card containing text and clicks action specified by label.
        * @param name

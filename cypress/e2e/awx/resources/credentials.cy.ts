@@ -663,7 +663,7 @@ describe('Credentials Tabbed View - Team and User Access', function () {
 
   function removeRoleFromListRow(credential: string, role: string) {
     cy.intercept('DELETE', awxAPI`/role_${role}_assignments/*`).as('deleteRole');
-    cy.clickTableRowRoleAction(credential, 'remove-role', false);
+    cy.clickTableRowPinnedAction(credential, 'remove-role', false);
     cy.getModal().within(() => {
       cy.get('#confirm').click();
       cy.clickButton(/^Remove role/);
