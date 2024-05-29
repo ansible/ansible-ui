@@ -43,6 +43,7 @@ import {
 import { EdaUser, EdaUserCreateUpdate } from '../../frontend/eda/interfaces/EdaUser';
 import { EdaTeam } from '../../frontend/eda/interfaces/EdaTeam';
 import { EdaRbacRole } from '../../frontend/eda/interfaces/EdaRbacRole';
+import { RoleDefinitionCreate } from '../../frontend/eda/interfaces/generated/eda-api';
 import { Role as HubRole } from '../../frontend/hub/access/roles/Role';
 import { RemoteRegistry } from '../../frontend/hub/administration/remote-registries/RemoteRegistry';
 import { HubRemote } from '../../frontend/hub/administration/remotes/Remotes';
@@ -1242,7 +1243,7 @@ declare global {
       getEdaUser(id: number): Chainable<EdaUser>;
 
       /**Identify a particular EDA project and make it available for use in testing. */
-      getEdaProjectByName(edaProjectName: string): Chainable<EdaProject | undefined>;
+      getEdaProjectByName(edaProjectName: string): Chainable<EdaProject>;
 
       waitForRulebookActionStatus(
         edaRulebookActivation: EdaRulebookActivation
@@ -1406,6 +1407,18 @@ declare global {
         user: number,
         content_type: string
       ): Chainable<void>;
+
+      /**
+       * Creates an object to EDA role definition.
+       *
+       * @returns {Chainable<RoleDefinitionCreate>}
+       */
+      createEdaRoleDefinition(
+        roleName: string,
+        description: string,
+        content_type,
+        permissions
+      ): Chainable<RoleDefinitionCreate>;
 
       /**
        * Retrieves an EDA active user which is admin.
