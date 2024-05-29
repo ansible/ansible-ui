@@ -2,9 +2,11 @@ import { randomString } from '../../../../framework/utils/random-string';
 import { Credential } from '../../../../frontend/awx/interfaces/Credential';
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 import { JobTemplate } from '../../../../frontend/awx/interfaces/JobTemplate';
+import { NotificationTemplate } from '../../../../frontend/awx/interfaces/NotificationTemplate';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
+import { randomE2Ename } from '../../../support/utils';
 
 describe('Job Templates Tests', function () {
   before(function () {
@@ -698,30 +700,97 @@ describe('Job Templates Tests', function () {
   });
 
   describe('Notifications Tab for Job Templates', () => {
-    //This describe block should create a Workflow Job Template to use in these tests
-    //The Workflow Job Template needs to be deleted after the tests run
+    let inventory: Inventory;
+    let jobTemplate: JobTemplate;
+    let notification: NotificationTemplate;
 
-    it.skip('can navigate to the Job Templates -> Notifications list and then to the details page of the Notification', () => {
-      //Assert the navigation to the notifications tab of the Job Template
-      //Assert the navigation to the details page of the notification
+    function toggleNotificationType(type: 'start' | 'success' | 'failure') {
+      const switchType = type === 'start' ? 'Start' : type === 'success' ? 'Success' : 'Failure';
+      const apiSuffix = type === 'start' ? 'started' : type === 'success' ? 'success' : 'error';
+
+      cy.filterTableByTextFilter('name', notification.name);
+      cy.getByDataCy(`row-id-${notification.id}`).within(() => {
+        cy.getByDataCy('name-column-cell').contains(notification.name);
+        cy.getByDataCy('type-column-cell').contains('Email');
+        cy.getByDataCy('toggle-switch').contains('Start');
+        cy.getByDataCy('toggle-switch').contains('Success');
+        cy.getByDataCy('toggle-switch').contains('Failure');
+        cy.intercept(
+          'POST',
+          awxAPI`/job_templates/${jobTemplate.id.toString()}/notification_templates_${apiSuffix}/`
+        ).as('toggleStart');
+        cy.getByDataCy('toggle-switch').contains(switchType).click();
+        cy.wait('@toggleStart');
+
+        cy.getByDataCy('toggle-switch')
+          .contains(switchType)
+          .within(() => {
+            cy.get(`[aria-label="Click to disable ${type}"]`);
+          });
+
+        cy.intercept(
+          'POST',
+          awxAPI`/job_templates/${jobTemplate.id.toString()}/notification_templates_${apiSuffix}/`
+        ).as('toggleStart');
+        cy.getByDataCy('toggle-switch').contains(switchType).click();
+        cy.wait('@toggleStart');
+
+        cy.getByDataCy('toggle-switch')
+          .contains(switchType)
+          .within(() => {
+            cy.get(`[aria-label="Click to enable ${type}"]`);
+          });
+      });
+    }
+
+    beforeEach(function () {
+      cy.createAwxInventory({ organization: (this.globalOrganization as Organization).id }).then(
+        (inv) => {
+          inventory = inv;
+
+          cy.createAwxJobTemplate({
+            organization: (this.globalOrganization as Organization).id,
+            project: (this.globalProject as Project).id,
+            inventory: inventory.id,
+          }).then((jt) => {
+            jobTemplate = jt;
+
+            cy.createNotificationTemplate(randomE2Ename()).then((n) => {
+              notification = n;
+            });
+          });
+        }
+      );
     });
 
-    it.skip('can toggle the Job Templates -> Notification on and off for job start', () => {
-      //Assert the navigation to the notifications tab of the Job Template
-      //Assert the start toggling on
-      //Assert the start toggling off
+    afterEach(function () {
+      cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
+      cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
+      cy.deleteNotificationTemplate(notification, { failOnStatusCode: false });
     });
 
-    it.skip('can toggle the Job Templates -> Notification on and off for job success', () => {
-      //Assert the navigation to the notifications tab of the Job Template
-      //Assert the success toggling on
-      //Assert the success toggling off
+    it('can navigate to the Job Templates -> Notifications list and then to the details page of the Notification', () => {
+      cy.visit(`/templates/job-template/${jobTemplate.id}/details`);
+      cy.clickTab('Notifications', true);
+      cy.filterTableByTextFilter('name', notification.name);
+      cy.getByDataCy('name-column-cell').contains(notification.name).click();
+      cy.url().should('contain', `/administration/notifiers/${notification.id}/details`);
+      cy.getByDataCy('name').contains(notification.name);
     });
 
-    it.skip('can toggle the Job Templates -> Notification on and off for job failure', () => {
-      //Assert the navigation to the notifications tab of the Job Template
-      //Assert the failure toggling on
-      //Assert the failure toggling off
+    it('can toggle the Job Templates -> Notification on and off for job start', () => {
+      cy.visit(`/templates/job-template/${jobTemplate.id}/notifications`);
+      toggleNotificationType('start');
+    });
+
+    it('can toggle the Job Templates -> Notification on and off for job success', () => {
+      cy.visit(`/templates/job-template/${jobTemplate.id}/notifications`);
+      toggleNotificationType('success');
+    });
+
+    it('can toggle the Job Templates -> Notification on and off for job failure', () => {
+      cy.visit(`/templates/job-template/${jobTemplate.id}/notifications`);
+      toggleNotificationType('failure');
     });
   });
 });
