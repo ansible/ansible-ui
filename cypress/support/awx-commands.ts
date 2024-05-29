@@ -514,7 +514,6 @@ Cypress.Commands.add(
     });
   }
 );
-
 Cypress.Commands.add(
   'clickListCardKebabAction',
   (id: number, name: string | RegExp, dataCyLabel: string | RegExp) => {
