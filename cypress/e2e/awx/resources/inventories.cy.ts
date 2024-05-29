@@ -210,7 +210,7 @@ describe('Inventories Tests', () => {
 
       if (kind === 'constructed') {
         beforeEach(() => {
-          const orgName = 'E2E Organization ' + kind + ' inventory tests' + randomString(4);
+          const orgName = 'E2E Organization ' + kind + ' Inventory tests ' + randomString(4);
           cy.createAwxOrganization(orgName).then((org) => {
             organization = org;
             cy.createAwxLabel({ organization: organization.id }).then((lbl) => {
@@ -230,12 +230,16 @@ describe('Inventories Tests', () => {
         });
 
         it('can create a constructed inventory using specific source_vars and limit and then delete that inventory', () => {
-          cy.log('Org', organization);
-          cy.log('Label', label);
-          cy.log('Instance group', instanceGroup);
-          cy.log('INV INV INV INV INV', arrayOfInventories);
-
-          const constInvName = 'E2E ' + kind + ' inventory' + randomString(4);
+          const constInvName = 'E2E ' + kind + ' Inventory ' + randomString(4);
+          // generates random values to be used during the test.
+          const cacheTimeoutValue = generateRandom(0, 15);
+          // which combination should be used to test verbosity from 1 to 5 - UI forces to use only 0-2
+          const verbosityValue = generateRandom(0, 2);
+          const invNames = <string[]>[];
+          arrayOfInventories.forEach((inv) => {
+            invNames.push(inv.name);
+          });
+          cy.intercept('POST', awxAPI`/constructed_inventories/`).as('createInv');
 
           cy.navigateTo('awx', 'inventories');
           cy.getByDataCy('create-inventory').click();
@@ -243,89 +247,48 @@ describe('Inventories Tests', () => {
             cy.get('[data-cy="create-constructed-inventory"]').click();
           });
           cy.getByDataCy('name').type(constInvName);
-          // cy.getByDataCy('description').type(`Description of "${constInvName}" typed by Cypress`);
-          // cy.singleSelectBy('[data-cy="organization"]', organization.name);
+          cy.getByDataCy('description').type(`Description of "${constInvName}" typed by Cypress`);
+          cy.singleSelectBy('[data-cy="organization"]', organization.name);
           cy.getByDataCy('instance-group-select-form-group')
             .find('[aria-label="Options menu"]')
-            .click();
-          // FIXME: include data-cy to the search button
-
-          // escrevi tudo isso a toa
-          // cy.getModal().within(() => {
-          //   cy.selectTableFilter('name');
-          //   cy.get('#filters').within(() => {
-          //     cy.get('#filter-input').click();
-          //   });
-          // });
-
-          // /* FIXME: the option menu should be inside the modal, and not detached
-          //  *  with this fix we can use
-          //  * `cy.filterTableByTextFilter('name', instanceGroup.name);`
-          //  */
-          // cy.get('#filter-input-select').within(() => {
-          //   cy.getByDataCy('search-input').within(() => {
-          //     cy.get('input').clear().type(instanceGroup.name, { delay: 0 });
-          //   });
-          //   cy.get('li').first().click();
-          // });
-          // /* end of FIXME */
+            .click(); // this can be simplified if we include data-cy to the search button
 
           cy.filterTableByMultiSelect('name', [instanceGroup.name]);
-          // cy.getModal().within(() => {
-          //   // cy.getTableRow('name', instanceGroup.name, { disableFilter: true }).click();
-          //   /* FIXME
-          //    * this is a workaround to close the search box
-          //    */
-          //   cy.getTableRow('name', instanceGroup.name).click();
-          //   // cy.click('bottomRight');
-          // });
-          // cy.selectTableRowByCheckbox('name', instanceGroup.name);
           cy.getByDataCy('checkbox-column-cell').click();
-          // cy.clickTableRowLink('name', instanceGroup.name);
           cy.clickModalButton('Confirm');
+          cy.singleSelectBy('[data-cy="organization"]', organization.name);
 
-          // cy.getByDataCy('inventories').click();
-          // cy.getByDataCy('verbosity')
-          //   .click()
-          //   .within(() => {
-          //     //search input
-          //     // search-input
-          //     // type
-          //     // click el
-          //     // 0-(normal)
-          //     // 1-(verbose)
-          //     // 2-(more-verbose)
-          //     // 3-(debug)
-          //     // 4-(connection-debug)
-          //     // 5-(winrm-debug)
-          //   });
-          // cy.getByDataCy('name').type('limit');
-          // // dataEditorSetFormat (json or yaml)
-          // cy.getBy('.view-lines .monaco-mouse-cursor-text').type('foo: bar');
-          // cy.getByDataCy('submit');
+          cy.multiSelectBy('[data-cy="inventories"]', invNames);
+          cy.getByDataCy('update_cache_timeout').clear().type(String(cacheTimeoutValue));
+          cy.singleSelectByDataCy('verbosity', String(verbosityValue));
+          // FIXME: when verbosity is 0 the filed remains empty
+          cy.getByDataCy('limit').type('5');
+          // cy.dataEditorTypeByDataCy(
+          //   'source-vars',
+          //   'plugin: constructed\nstrict: true\nuse_vars_plugins: true'
+          // ); // scape is not working
+          cy.dataEditorTypeByDataCy('source-vars', 'plugin: constructed');
+          // dataEditorSetFormat (json or yaml)
+          cy.clickButton(/^Create inventory$/);
+          cy.wait('@createInv')
+            .its('response.statusCode')
+            .then((statusCode) => {
+              expect(statusCode).to.be.equal(201);
+              cy.verifyPageTitle(constInvName);
+            });
+          cy.clickKebabAction('actions-dropdown', 'delete-inventory');
 
-          // // searchAndDisplayResource
-          // cy.get('[data-cy="text-input"]')
-          //   .find('input')
-          //   .type('resourceName')
-          //   .then(() => {
-          //     cy.get('[data-cy="apply-filter"]:not(:disabled):not(:hidden)').click();
-          //   });
+          cy.getModal().within(() => {
+            cy.get('header').contains('Permanently delete inventory');
+            cy.get('button')
+              .contains('Delete inventory')
+              .should('have.attr', 'aria-disabled', 'true');
+            cy.get('[data-cy="name-column-cell"]').should('have.text', constInvName);
+            cy.get('input[id="confirm"]').click();
+            cy.clickButton(/^Delete inventory/);
+          });
 
-          // multiSelectBy
-
-          // dropdown button organization // id datacy
-          // button inventories
-          // input: update_cache_timeout
-          // button verbosity
-
-          // input limit
-          // variables (monaco editor) - copiar de outro teste
-          //Assert that user is on the form view to create an inventory
-          //Add an interception call for the newly created inventory, which will allow for the deletion at the end of the test
-          //Add assertions for the information visible on the details screen of the new inventory
-          //Add assertion verifying that the inventory has now been deleted- including verifying the 204 statusCode and
-          //filtering a list to show no results
+          cy.filterTableBySingleSelect('name', constInvName, true);
         });
 
         it('can edit and run a sync on the edited constructed inventory', () => {
@@ -372,3 +335,19 @@ describe('Inventories Tests', () => {
     });
   });
 });
+
+// const randomInt = (min, max) =>
+// Math.floor(Math.random() * (max - min + 1)) + min;
+
+function generateRandom(min = 0, max = 5) {
+  // find diff
+  const difference = max - min;
+  // generate random number
+  let rand = Math.random();
+  // multiply with difference
+  rand = Math.floor(rand * difference);
+  // add with min value
+  rand = rand + min;
+
+  return rand;
+}
