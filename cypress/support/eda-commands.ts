@@ -158,21 +158,39 @@ Cypress.Commands.add('waitEdaProjectSync', (edaProject) => {
     (result) => {
       if (Array.isArray(result?.results) && result.results.length === 1) {
         const project = result.results[0];
-        if (project.import_state !== ImportStateEnum.Completed) {
-          Cypress.log({
-            displayName: 'PROJECT SYNC STATUS IS NOW : 👉 ',
-            message: [`${project.import_state}`],
-          });
-          cy.wait(100).then(() => cy.waitEdaProjectSync(edaProject));
-        } else {
+        if (project.import_state === ImportStateEnum.Completed) {
           Cypress.log({
             displayName: 'PROJECT SYNC STATUS IS NOW : 👉 ',
             message: [`${project.import_state}`],
           });
           cy.wrap(project);
+          return;
+        } else if (project.import_state === ImportStateEnum.Running) {
+          Cypress.log({
+            displayName: 'PROJECT SYNC STATUS IS NOW : 👉 ',
+            message: [`${project.import_state}`],
+          });
+          cy.wait(100).then(() => cy.waitEdaProjectSync(edaProject));
+        } else if (project.import_state === ImportStateEnum.Failed) {
+          Cypress.log({
+            displayName: 'PROJECT SYNC STATUS IS NOW : 👉 ',
+            message: [`${project.import_state}`],
+          });
+          cy.wrap(project);
+          return;
+        } else if (project.import_state === ImportStateEnum.Pending) {
+          Cypress.log({
+            displayName: 'PROJECT SYNC STATUS IS NOW : 👉 ',
+            message: [`${project.import_state}`],
+          });
+          cy.wait(100).then(() => cy.waitEdaProjectSync(edaProject));
         }
       } else {
-        cy.wait(100).then(() => cy.waitEdaProjectSync(edaProject));
+        Cypress.log({
+          displayName: 'Multiple projects are being returned by this query.',
+          message: [`Adjust query and try again.`],
+        });
+        return;
       }
     }
   );
