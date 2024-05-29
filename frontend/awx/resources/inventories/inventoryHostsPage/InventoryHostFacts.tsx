@@ -10,7 +10,7 @@ export function InventoryHostFacts(props: { page: string }) {
   const params = useParams<{ id: string; inventory_type: string; host_id: string }>();
 
   const { data: facts } = useGet<object>(
-    awxAPI`/hosts/${props.page === 'host' ? params.id ?? '' : params.host_id ?? ''}/ansible_facts`
+    awxAPI`/hosts/${props.page === 'host' ? params.id ?? '' : params.host_id ?? ''}/ansible_facts/`
   );
 
   return (
