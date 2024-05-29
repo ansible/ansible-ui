@@ -14,7 +14,7 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../framework';
-import { PageRoutedTabs } from '../../../../framework/PageTabs/PageRoutedTabs';
+import { PageRoutedTabs } from '../../../common/PageRoutedTabs';
 import { useGet } from '../../../common/crud/useGet';
 import { edaAPI } from '../../common/eda-utils';
 import { EdaWebhook } from '../../interfaces/EdaWebhook';

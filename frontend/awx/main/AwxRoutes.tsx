@@ -152,17 +152,20 @@ export enum AwxRoute {
   EditOrganization = 'awx-edit-organization',
   OrganizationPage = 'awx-organization-page',
   OrganizationDetails = 'awx-organization-details',
-  OrganizationUsers = 'awx-organization-users',
-  OrganizationTeams = 'awx-organization-teams',
+  OrganizationUsersAccess = 'awx-organization-users',
+  OrganizationTeamsAccess = 'awx-organization-teams',
   OrganizationExecutionEnvironments = 'awx-organization-execution-environments',
   OrganizationNotifications = 'awx-organization-notifications',
+  OrganizationAddUsers = 'awx-organization-add-users',
+  OrganizationAddTeams = 'awx-organization-add-teams',
 
   Teams = 'awx-teams',
   CreateTeam = 'awx-create-team',
   EditTeam = 'awx-edit-team',
   TeamPage = 'awx-team-page',
   TeamDetails = 'awx-team-details',
-  TeamAccess = 'awx-team-access',
+  TeamMembers = 'awx-team-access',
+  TeamAddMembers = 'awx-team-member-add',
   TeamRoles = 'awx-team-roles',
   AddRolesToTeam = 'awx-add-roles-to-team',
 
@@ -181,7 +184,9 @@ export enum AwxRoute {
   AddRolesToUser = 'awx-add-roles-to-user',
 
   Roles = 'awx-roles',
-  Role = 'awx-role',
+  CreateRole = 'awx-create-role',
+  EditRole = 'awx-edit-role',
+  RolePage = 'awx-role-page',
   RoleDetails = 'awx-role-details',
 
   // Administration
