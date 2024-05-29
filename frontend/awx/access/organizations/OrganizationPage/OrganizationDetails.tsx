@@ -57,6 +57,7 @@ export function OrganizationDetails() {
     <PageDetails>
       <PageDetailsFromColumns columns={detailColumns} item={organization}>
         <ExecutionEnvironmentDetail
+          verifyMissingVirtualEnv
           virtualEnvironment={organization.custom_virtualenv || undefined}
           executionEnvironment={organization.summary_fields?.default_environment}
           isDefaultEnvironment
