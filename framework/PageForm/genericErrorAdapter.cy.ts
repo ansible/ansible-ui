@@ -20,7 +20,7 @@ describe('genericErrorAdapter', () => {
     });
   });
 
-  it('should return empty errors when RequestError json is not an object or null', () => {
+  it('should return error message when RequestError json is not an object or null', () => {
     const error = new RequestError(
       'Error Message',
       undefined,
@@ -30,7 +30,7 @@ describe('genericErrorAdapter', () => {
     );
     const result = genericErrorAdapter(error);
     expect(result).to.deep.equal({
-      genericErrors: [],
+      genericErrors: [{ message: 'Error Message' }],
       fieldErrors: [],
     });
   });
