@@ -644,9 +644,6 @@ describe('Job Templates Tests', function () {
     });
 
     it('can delete a job template from the list line item', function () {
-      //Use a job template created in the beforeEach hook
-      //Assert the presence of the job template
-      //Assert the deletion by intercepting the API call
       cy.visit('/templates');
       cy.filterTableBySingleSelect('name', jobTemplate.name);
       cy.getByDataCy('actions-column-cell').within(() => {
@@ -686,9 +683,6 @@ describe('Job Templates Tests', function () {
     });
 
     it('can delete a resource related to a JT and view warning on the JT', function () {
-      //create a job template with a specific inventory in the beforeEach hook
-      //Delete the inventory
-      //Assert that the job template details page shows the inventory as having been deleted
       cy.createAwxInventory({ organization: (this.globalOrganization as Organization).id }).then(
         (inv) => {
           deletedInventory = inv;
