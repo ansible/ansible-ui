@@ -1237,7 +1237,7 @@ declare global {
       getEdaUser(id: number): Chainable<EdaUser>;
 
       /**Identify a particular EDA project and make it available for use in testing. */
-      getEdaProjectByName(edaProjectName: string): Chainable<EdaProject | undefined>;
+      getEdaProjectByName(edaProjectName: string): Chainable<EdaProject>;
 
       waitForRulebookActionStatus(
         edaRulebookActivation: EdaRulebookActivation
