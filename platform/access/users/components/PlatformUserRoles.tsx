@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
-import { PageRoutedTabs } from '../../../../framework/PageTabs/PageRoutedTabs';
 import { useGatewayService } from '../../../main/GatewayServices';
 import { useTranslation } from 'react-i18next';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
 import { useParams } from 'react-router-dom';
+import { PageRoutedTabs } from '../../../../frontend/common/PageRoutedTabs';
 
 export function PlatformUserRoles() {
   const params = useParams<{ id: string }>();

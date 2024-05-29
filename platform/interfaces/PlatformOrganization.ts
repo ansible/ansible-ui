@@ -15,7 +15,7 @@ export interface PlatformOrganization {
   summary_fields: {
     resource?: {
       ansible_id: string;
-      resource_type: 'shared.organization';
+      resource_type: string;
     };
     created_by: {
       id: number;

@@ -11,8 +11,8 @@ const mockPlatformOrganization = mockPlatformOrganizations.results[1];
 
 describe('PlatformOrganizationAddUsers', () => {
   const component = <PlatformOrganizationAddUsers />;
-  const path = '/organization/:id/users/add-users';
-  const initialEntries = [`/organization/1/users/add-users`];
+  const path = '/organizations/:id/users/add-users';
+  const initialEntries = [`/organizations/1/users/add-users`];
   const params = {
     path,
     initialEntries,

@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { PageRoutedTabs } from '../../framework/PageTabs/PageRoutedTabs';
+import { PageRoutedTabs } from '../../frontend/common/PageRoutedTabs';
 
 export function PlatformServiceNavigation(props: { awx?: string; eda?: string; hub?: string }) {
   const { t } = useTranslation();

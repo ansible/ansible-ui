@@ -38,12 +38,12 @@ export function useGetPlatformResourceRoutes() {
         element: <PlatformAwxOrganization />,
       },
       {
-        id: AwxRoute.OrganizationUsers,
+        id: AwxRoute.OrganizationUsersAccess,
         path: 'controller/organization/:id/users',
         element: <PlatformAwxOrganization route={PlatformRoute.OrganizationUsers} />,
       },
       {
-        id: AwxRoute.OrganizationTeams,
+        id: AwxRoute.OrganizationTeamsAccess,
         path: 'controller/organization/:id/teams',
         element: <PlatformAwxOrganization route={PlatformRoute.OrganizationTeams} />,
       },
@@ -98,7 +98,7 @@ export function useGetPlatformResourceRoutes() {
         element: <PlatformAwxTeam />,
       },
       {
-        id: AwxRoute.TeamAccess,
+        id: AwxRoute.TeamMembers,
         path: 'controller/team/:id/teams',
         element: <PlatformAwxTeam route={PlatformRoute.TeamUsers} />,
       },

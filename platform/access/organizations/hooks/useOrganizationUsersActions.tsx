@@ -7,7 +7,7 @@ import {
   OptionsResponse,
 } from '../../../../frontend/awx/interfaces/OptionsResponse';
 import { gatewayV1API } from '../../../api/gateway-api-utils';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import {
   IPageAction,
   PageActionSelection,
@@ -21,6 +21,16 @@ import { useParams } from 'react-router-dom';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
 import { useRemoveOrganizationUsers } from './useRemoveOrganizationUsers';
+import { useGatewayServices } from '../../../main/GatewayServices';
+import { awxAPI } from '../../../../frontend/awx/common/api/awx-utils';
+import { edaAPI } from '../../../../frontend/eda/common/eda-utils';
+import { Organization } from '../../../../frontend/awx/interfaces/Organization';
+import { AwxUser } from '../../../../frontend/awx/interfaces/User';
+import { getAwxResource, useAwxResource } from '../../../hooks/useAwxResource';
+import { getEdaResource, useEdaResource } from '../../../hooks/useEdaResource';
+import { useManageOrgRoles } from '../../../../frontend/common/access/hooks/useManageOrgRolesDialog';
+import { EdaOrganization } from '../../../../frontend/eda/interfaces/EdaOrganization';
+import { EdaUser } from '../../../../frontend/eda/interfaces/EdaUser';
 
 export function useOrganizationUsersToolbarActions(view: IPlatformView<PlatformUser>) {
   const { t } = useTranslation();
@@ -91,16 +101,82 @@ export function useOrganizationUsersToolbarActions(view: IPlatformView<PlatformU
 export function useOrganizationUsersRowActions(view: IPlatformView<PlatformUser>) {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
+  const [gatewayServices, _] = useGatewayServices();
+  const pageNavigate = usePageNavigate();
   const { data: organization } = useGetItem<PlatformOrganization>(
     gatewayV1API`/organizations`,
     params.id
   );
+  const { resource: awxOrganization, error: errorRetrievingAwxOrg } = useAwxResource<Organization>(
+    '/organizations/',
+    organization
+  );
+  const { resource: edaOrganization, error: errorRetrievingEdaOrg } =
+    useEdaResource<EdaOrganization>('organizations/', organization);
+
   const removeUsers = useRemoveOrganizationUsers(view.unselectItemsAndRefresh);
   const { data: disassociateOptions } = useOptions<OptionsResponse<ActionsResponse>>(
     gatewayV1API`/organizations/${organization?.id?.toString() ?? ''}/users/disassociate/`
   );
   const canRemoveUser = Boolean(
     disassociateOptions?.actions && disassociateOptions.actions['POST']
+  );
+  const manageOrgRoles = useManageOrgRoles();
+  const awxService = gatewayServices.find(
+    (service) => service.summary_fields?.service_cluster?.service_type === 'controller'
+  );
+  const edaService = gatewayServices.find(
+    (service) => service.summary_fields?.service_cluster?.service_type === 'eda'
+  );
+  const manageRolesHandleClick = useCallback(
+    async (user: PlatformUser) => {
+      const awxUser = await getAwxResource<AwxUser>('/users/', user);
+      const edaUser = await getEdaResource<EdaUser>('users/', user);
+      const orgListOptions = [
+        ...(awxService && !errorRetrievingAwxOrg && awxOrganization?.id && (awxUser as AwxUser)?.id
+          ? [
+              {
+                title: t('Automation Execution roles'),
+                isExpandable: true,
+                apiPrefixFunction: awxAPI,
+                orgId: awxOrganization?.id?.toString() ?? '',
+                userId: (awxUser as AwxUser)?.id?.toString(),
+              },
+            ]
+          : []),
+        ...(edaService && !errorRetrievingEdaOrg && edaOrganization?.id && (edaUser as EdaUser)?.id
+          ? [
+              {
+                title: t('Automation Decisions roles'),
+                isExpandable: true,
+                apiPrefixFunction: edaAPI,
+                orgId: edaOrganization?.id?.toString() ?? '',
+                userId: (edaUser as EdaUser)?.id?.toString() ?? '',
+              },
+            ]
+          : []),
+      ];
+      manageOrgRoles({
+        orgListsOptions: orgListOptions,
+        onManageRolesClick: () =>
+          pageNavigate(PlatformRoute.OrganizationManageUserRoles, {
+            params: { id: params.id, userId: user.id },
+          }),
+        userOrTeamName: user.username,
+      });
+    },
+    [
+      awxOrganization?.id,
+      awxService,
+      edaOrganization?.id,
+      edaService,
+      errorRetrievingAwxOrg,
+      errorRetrievingEdaOrg,
+      manageOrgRoles,
+      pageNavigate,
+      params.id,
+      t,
+    ]
   );
 
   const rowActions = useMemo<IPageAction<PlatformUser>[]>(() => {
@@ -112,11 +188,7 @@ export function useOrganizationUsersRowActions(view: IPlatformView<PlatformUser>
         isPinned: true,
         icon: CogIcon,
         label: t(`Manage roles`),
-        // isDisabled: // TODO
-        onClick: () =>
-          alert(
-            'TODO: Modal to view role assignments for the user and optionally trigger navigation to the Manage Roles wizard'
-          ), // Modal to view roles and optionally navigate to PlatformRoute.OrganizationManageUserRoles to edit roles
+        onClick: manageRolesHandleClick,
       },
       {
         type: PageActionType.Button,
@@ -130,7 +202,7 @@ export function useOrganizationUsersRowActions(view: IPlatformView<PlatformUser>
         isDanger: true,
       },
     ];
-  }, [canRemoveUser, removeUsers, t]);
+  }, [canRemoveUser, manageRolesHandleClick, removeUsers, t]);
 
   return rowActions;
 }
