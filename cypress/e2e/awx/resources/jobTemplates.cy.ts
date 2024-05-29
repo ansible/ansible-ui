@@ -700,7 +700,7 @@ describe('Job Templates Tests', function () {
           }).then((jt) => {
             jobTemplateWithDeletedInventory = jt;
 
-            cy.visit(`templates/job_template/${jobTemplateWithDeletedInventory.id}/details`);
+            cy.visit(`templates/job-template/${jobTemplateWithDeletedInventory.id}/details`);
             cy.getByDataCy('inventory').contains(deletedInventory.name).click();
             cy.clickKebabAction('actions-dropdown', 'delete-inventory');
             cy.clickModalConfirmCheckbox();
@@ -713,7 +713,7 @@ describe('Job Templates Tests', function () {
               .then((response) => {
                 expect(response?.statusCode).to.eql(202);
               });
-            cy.visit(`templates/job_template/${jobTemplateWithDeletedInventory.id}/details`);
+            cy.visit(`templates/job-template/${jobTemplateWithDeletedInventory.id}/details`);
             cy.getByDataCy('inventory').contains('Deleted');
           });
         }
