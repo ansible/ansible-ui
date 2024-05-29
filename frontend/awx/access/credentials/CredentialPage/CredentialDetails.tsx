@@ -136,7 +136,9 @@ export function CredentialDetailsInner(props: { credential: Credential }) {
       />
       {credentialInputs && inputSources && Object.keys(inputSources).length > 0 && (
         <PluginFieldText>
-          {t`* This field will be retrieved from an external secret management system using the specified credential.`}
+          {t(
+            `* This field will be retrieved from an external secret management system using the specified credential.`
+          )}
         </PluginFieldText>
       )}
     </PageDetails>
