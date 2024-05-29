@@ -11,6 +11,10 @@ import { PlatformAwxRoles } from '../access/roles/PlatformAwxRoles';
 import { EdaRoute } from '../../frontend/eda/main/EdaRoutes';
 import { CreateRole, EditRole } from '../../frontend/eda/access/roles/RoleForm';
 import {
+  CreateRole as CreateAwxRole,
+  EditRole as EditAwxRole,
+} from '../../frontend/awx/access/roles/RoleForm';
+import {
   CreateRole as CreateRoleHub,
   EditRole as EditRoleHub,
 } from '../../frontend/hub/access/roles/RolePage/RoleForm';
@@ -54,8 +58,8 @@ export function useGetPlatformRolesRoutes() {
         ],
       },
       {
-        id: AwxRoute.Role,
-        path: 'controller/:resourceType/:id',
+        id: AwxRoute.RolePage,
+        path: 'controller/:id',
         element: (
           <AwxRolePage
             breadcrumbLabelForPreviousPage={t('Automation Execution Roles')}
@@ -73,6 +77,16 @@ export function useGetPlatformRolesRoutes() {
             element: <Navigate to="details" />,
           },
         ],
+      },
+      {
+        id: AwxRoute.CreateRole,
+        path: 'eda/create',
+        element: <CreateAwxRole breadcrumbLabelForPreviousPage={t('Automation Execution Roles')} />,
+      },
+      {
+        id: AwxRoute.EditRole,
+        path: 'eda/edit/:id',
+        element: <EditAwxRole breadcrumbLabelForPreviousPage={t('Automation Execution Roles')} />,
       },
       {
         id: EdaRoute.CreateRole,

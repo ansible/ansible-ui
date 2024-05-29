@@ -9,13 +9,13 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../framework';
-import { PageRoutedTabs } from '../../../../framework/PageTabs/PageRoutedTabs';
 import { AwxError } from '../../../../frontend/awx/common/AwxError';
 import { useGetItem } from '../../../../frontend/common/crud/useGet';
 import { gatewayV1API } from '../../../api/gateway-api-utils';
 import { PlatformUser } from '../../../interfaces/PlatformUser';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
 import { useUserRowActions } from '../hooks/useUserActions';
+import { PageRoutedTabs } from '../../../../frontend/common/PageRoutedTabs';
 
 export function PlatformUserPage() {
   const { t } = useTranslation();
