@@ -48,10 +48,14 @@ export function CredentialPage() {
           persistentFilterKey: 'credentials',
         }}
         tabs={[
-          { label: t('Details'), page: AwxRoute.CredentialDetails },
-          { label: t('Job Templates'), page: AwxRoute.CredentialJobTemplates },
-          { label: t('Team Access'), page: AwxRoute.CredentialTeamAccess },
-          { label: t('User Access'), page: AwxRoute.CredentialUserAccess },
+          { label: t('Details'), page: AwxRoute.CredentialDetails, dataCy: 'credential-details' },
+          {
+            label: t('Job Templates'),
+            page: AwxRoute.CredentialJobTemplates,
+            dataCy: 'job-templates',
+          },
+          { label: t('Team Access'), page: AwxRoute.CredentialTeamAccess, dataCy: 'team-access' },
+          { label: t('User Access'), page: AwxRoute.CredentialUserAccess, dataCy: 'user-access' },
         ]}
         params={{ id: params.id || 0 }}
       />
