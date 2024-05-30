@@ -25,7 +25,7 @@ function createAndCheckHost(host_type: string, inventory: string) {
   cy.getByDataCy('description').type('This is the description');
 
   if (host_type === 'stand_alone_host') {
-    cy.getByDataCy('inventory-id').click();
+    cy.getByDataCy('inventory').click();
     cy.contains('button', 'Browse').click();
     cy.contains('Select Inventory');
     cy.get(`[aria-label="Select Inventory"]`).within(() => {
