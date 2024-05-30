@@ -18,6 +18,12 @@ describe('Notifications', () => {
   });
 
   describe('Notifications: Details View', () => {
+
+    beforeEach(() => {
+      // reloading page so the notifications dissapears
+      cy.reload();
+    });
+
     it('can edit a Notification on its details page and assert the edited info', () => {
       //Utilize the creation of notification in a beforeEach block
       //Assert the initial info of the notification before edit
@@ -112,6 +118,8 @@ describe('Notifications', () => {
       //Assert the navigation to the notifications tab of the organization
       //Assert the approval toggling on
       //Assert the approval toggling off
+
+      //testToggle()
     });
 
     it.skip('can toggle the Organizations -> Notification on and off for job start', () => {
@@ -179,3 +187,8 @@ describe('Notifications', () => {
     });
   });
 });
+
+function testToggle(notificationName : string, type : string)
+{
+
+}
