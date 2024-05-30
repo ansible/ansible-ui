@@ -50,32 +50,38 @@ export function testNotification(
     if (!options?.skipMessages) {
       verifyEditedMessages(type);
     }
-    // validate its here and delete it
-    if (options?.details === true) {
-      cy.get(`[data-cy="actions-dropdown"]`).click();
-      cy.get(`[data-cy="delete-notifier"]`).click();
-    } else {
-      // if not in detail, we go back to list and click delete there
-      cy.getByDataCy('back-to notifiers').click();
-      cy.filterTableByMultiSelect('name', [name2]);
-      cy.contains(name2);
-
-      cy.get(`[aria-label="Simple table"] [data-cy="actions-dropdown"]`).click();
-      cy.get(`[data-cy="delete-notifier"]`).click();
-    }
-
-    cy.get(`[role="dialog"] input`).click();
-    cy.contains(`[role="dialog"] button`, `Delete notifiers`).click();
-    if (options?.details !== true) {
-      cy.contains(`[role="dialog"] button`, `Close`).click();
-    }
-
-    cy.get(`[data-cy="filter"]`).click();
-    cy.get(`[data-cy="name"] button`).click();
-    cy.get(`[data-cy="filter-input"]`).click();
-    cy.get(`[aria-label="Search input"]`).type(name2);
-    cy.contains('No results found');
+   
+    testDelete(name2, options);
   });
+}
+
+export function testDelete(name : string, options? : { details? : boolean})
+{
+     // validate its here and delete it
+     if (options?.details === true) {
+        cy.get(`[data-cy="actions-dropdown"]`).click();
+        cy.get(`[data-cy="delete-notifier"]`).click();
+      } else {
+        // if not in detail, we go back to list and click delete there
+        cy.getByDataCy('back-to notifiers').click();
+        cy.filterTableByMultiSelect('name', [name]);
+        cy.contains(name);
+  
+        cy.get(`[aria-label="Simple table"] [data-cy="actions-dropdown"]`).click();
+        cy.get(`[data-cy="delete-notifier"]`).click();
+      }
+  
+      cy.get(`[role="dialog"] input`).click();
+      cy.contains(`[role="dialog"] button`, `Delete notifiers`).click();
+      if (options?.details !== true) {
+        cy.contains(`[role="dialog"] button`, `Close`).click();
+      }
+  
+      cy.get(`[data-cy="filter"]`).click();
+      cy.get(`[data-cy="name"] button`).click();
+      cy.get(`[data-cy="filter-input"]`).click();
+      cy.get(`[aria-label="Search input"]`).type(name);
+      cy.contains('No results found');
 }
 
 function selectOrganization(orgName: string) {

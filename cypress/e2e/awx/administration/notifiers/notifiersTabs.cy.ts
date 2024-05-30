@@ -1,6 +1,6 @@
 import { randomE2Ename } from '../../../../support/utils';
 import { awxAPI } from '../../../../../frontend/awx/common/api/awx-utils';
-import { testNotification } from './notifiersSharedFunctions';
+import { testNotification, testDelete } from './notifiersSharedFunctions';
 /* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call */
 
 describe('Notifications', () => {
@@ -65,10 +65,20 @@ describe('Notifications', () => {
       });
     });
 
-    it.skip('can delete the Notification on its details page and assert deletion', () => {
+    it('can delete the Notification on its details page and assert deletion', () => {
       //Utilize notification created in the beforeEach block
       //Assert the presence of the item before deletion
       //Assert the deletion
+
+      const notificationName = randomE2Ename();
+      cy.createNotificationTemplate(notificationName).then(() => {
+      
+        cy.navigateTo('awx', 'notification-templates');
+        cy.filterTableByMultiSelect('name', [notificationName]);
+        cy.get('[data-cy="name-column-cell"] a').click();
+
+        testDelete(notificationName, { details: true });
+      });
     });
   });
 
