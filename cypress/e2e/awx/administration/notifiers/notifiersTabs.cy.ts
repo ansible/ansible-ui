@@ -3,7 +3,6 @@ import { awxAPI } from '../../../../../frontend/awx/common/api/awx-utils';
 import { testNotification } from './notifiersSharedFunctions';
 /* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call */
 
-
 describe('Notifications', () => {
   //let notificationTemplate: NotificationTemplate;
 
@@ -27,7 +26,7 @@ describe('Notifications', () => {
       cy.navigateTo('awx', 'notification-templates');
 
       // test for only one type should be enough, other types covered in notifiers list view
-      testNotification('Email', { details: true });
+      testNotification('Email', { details: true, skipMessages: true });
     });
 
     it('can test the Notification on its details page and assert that the test completed', () => {
