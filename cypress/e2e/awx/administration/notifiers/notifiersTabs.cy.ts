@@ -72,7 +72,6 @@ describe('Notifications', () => {
 
       const notificationName = randomE2Ename();
       cy.createNotificationTemplate(notificationName).then(() => {
-      
         cy.navigateTo('awx', 'notification-templates');
         cy.filterTableByMultiSelect('name', [notificationName]);
         cy.get('[data-cy="name-column-cell"] a').click();
@@ -86,16 +85,14 @@ describe('Notifications', () => {
     //This describe block should create an Organization to use in these tests
     //The Organization needs to be deleted after the tests run
 
-    it.only('can navigate to the Organizations -> Notifications list and then to the details page of the Notification', () => {
+    it('can navigate to the Organizations -> Notifications list and then to the details page of the Notification', () => {
       //Assert the navigation to the notifications tab of the organization
       //Assert the navigation to the details page of the notification
 
-      
       const orgName = randomE2Ename();
       cy.createAwxOrganization(orgName).then(() => {
         const notificationName = randomE2Ename();
         cy.createNotificationTemplate(notificationName).then(() => {
-
           cy.navigateTo('awx', 'organizations');
           cy.filterTableByMultiSelect('name', [orgName]);
           cy.get('[data-cy="name-column-cell"] a').click();
@@ -106,8 +103,7 @@ describe('Notifications', () => {
           cy.get(`[aria-label="Type to filter"]`).type(notificationName);
           cy.getByDataCy(`apply-filter`).click();
           cy.get('[data-cy="name-column-cell"] a').click();
-          cy.contains(notificationName)
-
+          cy.contains(notificationName);
         });
       });
     });
