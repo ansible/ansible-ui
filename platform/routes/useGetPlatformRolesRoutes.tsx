@@ -58,95 +58,117 @@ export function useGetPlatformRolesRoutes() {
         ],
       },
       {
-        id: AwxRoute.RolePage,
-        path: 'controller/:id',
-        element: (
-          <AwxRolePage
-            breadcrumbLabelForPreviousPage={t('Automation Execution Roles')}
-            backTabLabel={t('Back to Automation Execution Roles')}
-          />
-        ),
+        id: AwxRoute.Roles,
+        path: 'roles/controller',
         children: [
           {
-            id: AwxRoute.RoleDetails,
-            path: 'details',
-            element: <AwxRoleDetails />,
+            id: AwxRoute.CreateRole,
+            path: 'create',
+            element: (
+              <CreateAwxRole breadcrumbLabelForPreviousPage={t('Automation Execution Roles')} />
+            ),
           },
           {
-            path: '',
-            element: <Navigate to="details" />,
+            id: AwxRoute.EditRole,
+            path: ':id/edit',
+            element: (
+              <EditAwxRole breadcrumbLabelForPreviousPage={t('Automation Execution Roles')} />
+            ),
+          },
+          {
+            id: AwxRoute.RolePage,
+            path: ':id',
+            element: (
+              <AwxRolePage
+                breadcrumbLabelForPreviousPage={t('Automation Execution Roles')}
+                backTabLabel={t('Back to Automation Execution Roles')}
+              />
+            ),
+            children: [
+              {
+                id: AwxRoute.RoleDetails,
+                path: 'details',
+                element: <AwxRoleDetails />,
+              },
+              {
+                path: '',
+                element: <Navigate to="details" />,
+              },
+            ],
           },
         ],
       },
       {
-        id: AwxRoute.CreateRole,
-        path: 'eda/create',
-        element: <CreateAwxRole breadcrumbLabelForPreviousPage={t('Automation Execution Roles')} />,
-      },
-      {
-        id: AwxRoute.EditRole,
-        path: 'eda/edit/:id',
-        element: <EditAwxRole breadcrumbLabelForPreviousPage={t('Automation Execution Roles')} />,
-      },
-      {
-        id: EdaRoute.CreateRole,
-        path: 'eda/create',
-        element: <CreateRole breadcrumbLabelForPreviousPage={t('Automation Decisions Roles')} />,
-      },
-      {
-        id: EdaRoute.EditRole,
-        path: 'eda/edit/:id',
-        element: <EditRole breadcrumbLabelForPreviousPage={t('Automation Decisions Roles')} />,
-      },
-      {
-        id: EdaRoute.RolePage,
-        path: 'eda/:id/',
-        element: (
-          <EdaRolePage
-            breadcrumbLabelForPreviousPage={t('Automation Decisions Roles')}
-            backTabLabel={t('Back to Automation Decisions Roles')}
-          />
-        ),
+        id: EdaRoute.Roles,
+        path: 'roles/eda',
         children: [
           {
-            id: EdaRoute.RoleDetails,
-            path: 'details',
-            element: <EdaRoleDetails />,
+            id: EdaRoute.CreateRole,
+            path: 'create',
+            element: (
+              <CreateRole breadcrumbLabelForPreviousPage={t('Automation Decisions Roles')} />
+            ),
           },
           {
-            path: '',
-            element: <Navigate to="details" />,
+            id: EdaRoute.EditRole,
+            path: ':id/edit',
+            element: <EditRole breadcrumbLabelForPreviousPage={t('Automation Decisions Roles')} />,
+          },
+          {
+            id: EdaRoute.RolePage,
+            path: ':id',
+            element: (
+              <EdaRolePage
+                breadcrumbLabelForPreviousPage={t('Automation Decisions Roles')}
+                backTabLabel={t('Back to Automation Decisions Roles')}
+              />
+            ),
+            children: [
+              {
+                id: EdaRoute.RoleDetails,
+                path: 'details',
+                element: <EdaRoleDetails />,
+              },
+            ],
           },
         ],
       },
       {
-        id: HubRoute.CreateRole,
-        path: 'hub/create',
-        element: <CreateRoleHub breadcrumbLabelForPreviousPage={t('Automation Content Roles')} />,
-      },
-      {
-        id: HubRoute.EditRole,
-        path: 'hub/:id/edit',
-        element: <EditRoleHub breadcrumbLabelForPreviousPage={t('Automation Content Roles')} />,
-      },
-      {
-        id: HubRoute.RolePage,
-        path: 'hub/:id/',
-        element: (
-          <RolePage
-            breadcrumbLabelForPreviousPage={t('Automation Content Roles')}
-            backTabLabel={t('Back to Automation Content Roles')}
-          />
-        ),
+        id: HubRoute.Roles,
+        path: 'roles/hub',
         children: [
           {
-            id: HubRoute.RoleDetails,
-            path: 'details',
-            element: <RoleDetails />,
+            id: HubRoute.CreateRole,
+            path: 'create',
+            element: (
+              <CreateRoleHub breadcrumbLabelForPreviousPage={t('Automation Content Roles')} />
+            ),
           },
           {
-            path: '',
-            element: <Navigate to="details" />,
+            id: HubRoute.EditRole,
+            path: ':id/edit',
+            element: <EditRoleHub breadcrumbLabelForPreviousPage={t('Automation Content Roles')} />,
+          },
+          {
+            id: HubRoute.RolePage,
+            path: ':id',
+            element: (
+              <RolePage
+                breadcrumbLabelForPreviousPage={t('Automation Content Roles')}
+                backTabLabel={t('Back to Automation Content Roles')}
+              />
+            ),
+            children: [
+              {
+                id: HubRoute.RoleDetails,
+                path: 'details',
+                element: <RoleDetails />,
+              },
+              {
+                path: '',
+                element: <Navigate to="details" />,
+              },
+            ],
           },
         ],
       },
