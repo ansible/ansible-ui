@@ -18,7 +18,6 @@ describe('Notifications', () => {
   });
 
   describe('Notifications: Details View', () => {
-
     beforeEach(() => {
       // reloading page so the notifications dissapears
       cy.reload();
@@ -100,42 +99,42 @@ describe('Notifications', () => {
       //Assert the navigation to the notifications tab of the organization
       //Assert the navigation to the details page of the notification
 
-        const notificationName = randomE2Ename();
-        cy.createNotificationTemplate(notificationName).then(() => {
-          moveToNotification('organizations', orgName, notificationName);
-        });
+      const notificationName = randomE2Ename();
+      cy.createNotificationTemplate(notificationName).then(() => {
+        moveToNotification('organizations', orgName, notificationName);
+      });
     });
 
     it('can toggle the Organizations -> Notification on and off for job approval', () => {
       //Assert the navigation to the notifications tab of the organization
       //Assert the approval toggling on
       //Assert the approval toggling off
-  
-       testToggle('organizations', orgName, 'Click to enable approval', 'Click to disable approval');
+
+      testToggle('organizations', orgName, 'Click to enable approval', 'Click to disable approval');
     });
 
     it('can toggle the Organizations -> Notification on and off for job start', () => {
       //Assert the navigation to the notifications tab of the organization
       //Assert the start toggling on
       //Assert the start toggling off
-    
-       testToggle('organizations', orgName, 'Click to enable start', 'Click to disable start');
+
+      testToggle('organizations', orgName, 'Click to enable start', 'Click to disable start');
     });
 
     it('can toggle the Organizations -> Notification on and off for job success', () => {
       //Assert the navigation to the notifications tab of the organization
       //Assert the success toggling on
       //Assert the success toggling off
-    
-       testToggle('organizations', orgName, 'Click to enable success', 'Click to disable success');
+
+      testToggle('organizations', orgName, 'Click to enable success', 'Click to disable success');
     });
 
     it('can toggle the Organizations -> Notification on and off for job failure', () => {
       //Assert the navigation to the notifications tab of the organization
       //Assert the failure toggling on
       //Assert the failure toggling off
-    
-       testToggle('organizations', orgName, 'Click to enable failure', 'Click to disable failure');
+
+      testToggle('organizations', orgName, 'Click to enable failure', 'Click to disable failure');
     });
   });
 
@@ -161,13 +160,15 @@ describe('Notifications', () => {
 
     before(() => {
       cy.createAwxOrganization(orgName).then((organization) => {
-        cy.createAwxInventory({ organization: organization.id, name : inventoryName }).then((inventory) => {
-          cy.createAwxWorkflowJobTemplate({
-            organization: organization.id,
-            inventory: inventory.id,
-            name : jobTemplateName,
-          });
-        });
+        cy.createAwxInventory({ organization: organization.id, name: inventoryName }).then(
+          (inventory) => {
+            cy.createAwxWorkflowJobTemplate({
+              organization: organization.id,
+              inventory: inventory.id,
+              name: jobTemplateName,
+            });
+          }
+        );
       });
     });
 
@@ -200,14 +201,24 @@ describe('Notifications', () => {
       //Assert the navigation to the notifications tab of the Workflow Job Template
       //Assert the success toggling on
       //Assert the success toggling off
-      testToggle('templates', jobTemplateName, 'Click to enable success', 'Click to disable success');
+      testToggle(
+        'templates',
+        jobTemplateName,
+        'Click to enable success',
+        'Click to disable success'
+      );
     });
 
     it('can toggle the Workflow Job Templates -> Notification on and off for job failure', () => {
       //Assert the navigation to the notifications tab of the Workflow Job Template
       //Assert the failure toggling on
       //Assert the failure toggling off
-      testToggle('templates', jobTemplateName, 'Click to enable failure', 'Click to disable failure');
+      testToggle(
+        'templates',
+        jobTemplateName,
+        'Click to enable failure',
+        'Click to disable failure'
+      );
     });
   });
 });
@@ -217,22 +228,25 @@ describe('Notifications', () => {
 // typeEntityName - name of the organization, or other type
 // type_enable - aria label selector for enable
 // type_disable - aria label selector for disable
-function testToggle(type : string, typeEntityName : string, type_enable : string, type_disable : string)
-{
+function testToggle(
+  type: string,
+  typeEntityName: string,
+  type_enable: string,
+  type_disable: string
+) {
   const notificationName = randomE2Ename();
   cy.createNotificationTemplate(notificationName).then(() => {
-
     moveToNotificationList(type, typeEntityName);
     filterNotification(notificationName);
     cy.get(`[aria-label="${type_enable}"]`).click();
 
     // reload page to check if the toggle is working and try to disable it
     cy.reload();
-    cy.get(`[aria-label="${type_disable}"]`, { timeout : 15000}).click();
+    cy.get(`[aria-label="${type_disable}"]`, { timeout: 15000 }).click();
 
     // check if it is disabled again
     cy.reload();
-    cy.get(`[aria-label="${type_enable}"]`, { timeout : 15000});
+    cy.get(`[aria-label="${type_enable}"]`, { timeout: 15000 });
   });
 }
 
@@ -240,8 +254,7 @@ function testToggle(type : string, typeEntityName : string, type_enable : string
 // type - organization, workflow job templates or such
 // typeEntityName - name of the organization, or other type
 // notificationName - name of the notification
-function moveToNotification(type : string, typeEntityName : string, notificationName : string)
-{
+function moveToNotification(type: string, typeEntityName: string, notificationName: string) {
   moveToNotificationList(type, typeEntityName);
   // this may need to change in UIX, now UIX has obsolete filter
   //cy.filterTableByMultiSelect('name', [notificationName]);
@@ -250,8 +263,7 @@ function moveToNotification(type : string, typeEntityName : string, notification
   cy.contains(notificationName);
 }
 
-function filterNotification(notificationName : string)
-{
+function filterNotification(notificationName: string) {
   cy.get(`[aria-label="Type to filter"]`).type(notificationName);
   cy.getByDataCy(`apply-filter`).click();
 }
@@ -259,8 +271,7 @@ function filterNotification(notificationName : string)
 // move to notification list page
 // type - organization, workflow job templates or such
 // typeEntityName - name of the organization, or other type
-function moveToNotificationList(type : string, typeEntityName : string)
-{
+function moveToNotificationList(type: string, typeEntityName: string) {
   cy.navigateTo('awx', type);
   cy.filterTableByMultiSelect('name', [typeEntityName]);
   cy.get('[data-cy="name-column-cell"] a').click();
