@@ -4,50 +4,6 @@
   "previous": null,
   "results": [
     {
-      "id": 183,
-      "url": "/api/v2/role_user_assignments/183/",
-      "related": {
-        "created_by": "/api/v2/users/3/",
-        "role_definition": "/api/v2/role_definitions/22/",
-        "user": "/api/v2/users/93/",
-        "content_object": "/api/v2/organizations/245/"
-      },
-      "summary_fields": {
-        "created_by": {
-          "id": 3,
-          "username": "dev",
-          "first_name": "",
-          "last_name": ""
-        },
-        "object_role": {
-          "id": 181
-        },
-        "role_definition": {
-          "id": 22,
-          "name": "Organization Admin",
-          "description": "Has all permissions to a single organization",
-          "managed": true
-        },
-        "user": {
-          "id": 93,
-          "username": "user-vn",
-          "first_name": "",
-          "last_name": ""
-        },
-        "content_object": {
-          "id": 245,
-          "name": "vn org",
-          "description": ""
-        }
-      },
-      "created": "2024-05-02T19:37:18.366768Z",
-      "created_by": 3,
-      "content_type": "shared.organization",
-      "object_id": "245",
-      "role_definition": 22,
-      "user": 93
-    },
-    {
       "id": 184,
       "url": "/api/v2/role_user_assignments/184/",
       "related": {
