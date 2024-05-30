@@ -313,7 +313,7 @@ describe('Projects', () => {
     });
   });
 
-  describe('Projects: Access Tab', () => {
+  describe('Projects: User Access Tab', () => {
     it('can navigate to project access tab', function () {
       cy.navigateTo('awx', 'projects');
       cy.filterTableByMultiSelect('name', [(this.globalProject as Project).name]);
@@ -321,7 +321,18 @@ describe('Projects', () => {
         disableFilter: true,
       });
       cy.verifyPageTitle(`${(this.globalProject as Project).name}`);
-      cy.clickTab(/^Access$/, true);
+      cy.clickTab(/^User Access$/, true);
+    });
+  });
+  describe('Projects: Team Access Tab', () => {
+    it('can navigate to project access tab', function () {
+      cy.navigateTo('awx', 'projects');
+      cy.filterTableByMultiSelect('name', [(this.globalProject as Project).name]);
+      cy.clickTableRowLink('name', `${(this.globalProject as Project).name}`, {
+        disableFilter: true,
+      });
+      cy.verifyPageTitle(`${(this.globalProject as Project).name}`);
+      cy.clickTab(/^Team Access$/, true);
     });
   });
 
