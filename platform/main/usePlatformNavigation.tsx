@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { Trans, useTranslation } from 'react-i18next';
+import { Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { Banner } from '@patternfly/react-core';
 import {
   PageNavigationItem,
   findNavigationItemById,
@@ -15,6 +16,7 @@ import { EdaRoute } from '../../frontend/eda/main/EdaRoutes';
 import { useEdaNavigation } from '../../frontend/eda/main/useEdaNavigation';
 import { HubRoute } from '../../frontend/hub/main/HubRoutes';
 import { useHubNavigation } from '../../frontend/hub/main/useHubNavigation';
+import { ExternalLink } from '../../frontend/hub/common/ExternalLink';
 import { Lightspeed } from '../lightspeed/Lightspeed';
 import { PlatformOverview } from '../overview/PlatformOverview';
 import { QuickStartsPage } from '../overview/quickstarts/Quickstarts';
@@ -32,6 +34,48 @@ import { SubscriptionWizard } from '../settings/SubscriptionWizard';
 import { useAwxService, useEdaService, useHubService } from './GatewayServices';
 import { PlatformRoute } from './PlatformRoutes';
 import { Redirect } from './Redirect';
+
+const mapHubRoute = (url: string) => {
+  const matches: Record<string, string> = {
+    '/content/namespaces': '/ui/namespaces/',
+    '/content/collections': '/ui/collections/',
+    '/content/execution-environments': '/ui/containers/',
+    '/content/administration/signature-keys': '/ui/signature-keys/',
+    '/content/administration/repositories': '/ui/ansible/repositories/',
+    '/content/administration/remote-registries': '/ui/registries/',
+    '/content/administration/tasks': '/ui/tasks/',
+    '/content/administration/approvals': '/ui/approval-dashboard/',
+    '/content/administration/remotes': '/ui/ansible/remotes/',
+  };
+
+  if (matches[url]) {
+    return matches[url];
+  }
+
+  const candidate = Object.keys(matches).find((prefix) => url.startsWith(prefix));
+  if (candidate && matches[candidate]) {
+    return matches[candidate];
+  }
+
+  return '/ui/';
+};
+
+const HubBanner = (_props: unknown) => {
+  const { pathname } = useLocation();
+  return (
+    <>
+      <Banner variant="blue" style={{ textAlign: 'center' }}>
+        <Trans>
+          This is the tech preview of Automation Hub. For the full experience of Automation Hub,
+          click <ExternalLink href={mapHubRoute(pathname)}>here.</ExternalLink>
+        </Trans>
+      </Banner>
+      <div style={{ height: 'calc(100% - 29px)' }}>
+        <Outlet />
+      </div>
+    </>
+  );
+};
 
 export function usePlatformNavigation() {
   const { t } = useTranslation();
@@ -93,6 +137,18 @@ export function usePlatformNavigation() {
     // hubApiTokenRoute.label = t('Content API Token');
     removeNavigationItemById(hubNav, HubRoute.Access);
 
+    // inline hub admin menu, preserving paths
+    const hubAdminIndex = hubNav.findIndex(({ path }) => path === 'administration');
+    if (hubAdminIndex !== -1) {
+      // as PageNavigationGroup really, but not exported
+      const admin = hubNav[hubAdminIndex] as { children: PageNavigationItem[] };
+      const children = admin.children.map((o) => ({
+        ...o,
+        path: `administration/${o.path}`,
+      }));
+      hubNav.splice(hubAdminIndex, 1, ...children);
+    }
+
     const navigationItems: PageNavigationItem[] = [];
     navigationItems.push({
       id: PlatformRoute.Overview,
@@ -135,6 +191,7 @@ export function usePlatformNavigation() {
           label: t('Tech Preview'),
           path: '',
           children: hubNav,
+          element: <HubBanner />,
         },
       ],
     });
