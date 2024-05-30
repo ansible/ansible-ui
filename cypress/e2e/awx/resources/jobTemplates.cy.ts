@@ -23,19 +23,23 @@ describe('Job Templates Tests', function () {
     const instanceGroup = 'default';
 
     beforeEach(function () {
-      cy.createAwxInventory({ organization: (this.globalOrganization as Organization).id }).then(
-        (inv) => {
-          inventory = inv;
-
-          cy.createAWXCredential({
-            kind: 'machine',
+      cy.createGlobalOrganization().then(() => {
+        cy.createGlobalProject().then(() => {
+          cy.createAwxInventory({
             organization: (this.globalOrganization as Organization).id,
-            credential_type: 1,
-          }).then((cred) => {
-            machineCredential = cred;
+          }).then((inv) => {
+            inventory = inv;
+
+            cy.createAWXCredential({
+              kind: 'machine',
+              organization: (this.globalOrganization as Organization).id,
+              credential_type: 1,
+            }).then((cred) => {
+              machineCredential = cred;
+            });
           });
-        }
-      );
+        });
+      });
     });
 
     afterEach(function () {
@@ -92,10 +96,6 @@ describe('Job Templates Tests', function () {
     });
 
     it('can create a job template that inherits the execution environment from the project', function () {
-      //Create an EE in the beforeEach hook
-      //Create a project in the beforeEach hook, assign the EE to the project
-      //Create a JT within this test and assign the project to the JT
-      //Assert that the project's EE shows on the job template details page as the EE of the JT
       cy.createAwxExecutionEnvironment({
         organization: (this.globalOrganization as Organization).id,
       }).then((ee: ExecutionEnvironment) => {
@@ -245,7 +245,7 @@ describe('Job Templates Tests', function () {
             cy.clickButton(/^Confirm/);
           });
           cy.clickButton(/^Next/);
-          cy.intercept('POST', `api/v2/job_templates/${id}/launch/`).as('postLaunch');
+          cy.intercept('POST', awxAPI`/job_templates/${id}/launch/`).as('postLaunch');
           cy.clickButton(/^Finish/);
           cy.wait('@postLaunch')
             .its('response.body.id')
@@ -271,18 +271,13 @@ describe('Job Templates Tests', function () {
     });
 
     it('can create a job template, select concurrent jobs, and verify that two jobs will run concurrently', function () {
-      //Utilize the job template created in the beforeEach hook
-      //choose a playbook that will be long running in order to allow the test to assert the two jobs running concurrently
-      //Assert that the details page reflects concurrent jobs as an enabled option
-      //Have the test click the launch button twice in succession
-      //Assert two jobs running at the same time
       const jtName = 'E2E Concurrent JT ' + randomString(4);
       cy.createAwxProject({
         organization: (this.globalOrganization as Organization).id,
         scm_type: 'git',
         scm_url: 'https://github.com/jerabekjiri/ansible_playbooks',
       }).then((gitProject: Project) => {
-        cy.visit('/templates/job_template/create');
+        cy.visit('/templates/job-template/create');
         cy.getByDataCy('name').type(jtName);
         cy.selectDropdownOptionByResourceName('inventory', inventory.name);
         cy.selectDropdownOptionByResourceName('project', gitProject.name);
