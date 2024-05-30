@@ -14,6 +14,11 @@ describe('Job Templates Tests', function () {
     cy.awxLogin();
   });
 
+  beforeEach(() => {
+    cy.createGlobalOrganization();
+    cy.createGlobalProject();
+  });
+
   describe('Job Templates Tests: Create', function () {
     let inventory: Inventory;
     let machineCredential: Credential;
@@ -23,21 +28,17 @@ describe('Job Templates Tests', function () {
     const instanceGroup = 'default';
 
     beforeEach(function () {
-      cy.createGlobalOrganization().then(() => {
-        cy.createGlobalProject().then(() => {
-          cy.createAwxInventory({
-            organization: (this.globalOrganization as Organization).id,
-          }).then((inv) => {
-            inventory = inv;
+      cy.createAwxInventory({
+        organization: (this.globalOrganization as Organization).id,
+      }).then((inv) => {
+        inventory = inv;
 
-            cy.createAWXCredential({
-              kind: 'machine',
-              organization: (this.globalOrganization as Organization).id,
-              credential_type: 1,
-            }).then((cred) => {
-              machineCredential = cred;
-            });
-          });
+        cy.createAWXCredential({
+          kind: 'machine',
+          organization: (this.globalOrganization as Organization).id,
+          credential_type: 1,
+        }).then((cred) => {
+          machineCredential = cred;
         });
       });
     });
@@ -325,27 +326,27 @@ describe('Job Templates Tests', function () {
     let jobTemplate: JobTemplate;
 
     beforeEach(function () {
-      cy.createAwxInventory({ organization: (this.globalOrganization as Organization).id }).then(
-        (inv) => {
-          inventory = inv;
+      cy.createAwxInventory({
+        organization: (this.globalOrganization as Organization).id,
+      }).then((inv) => {
+        inventory = inv;
 
-          cy.createAWXCredential({
-            kind: 'machine',
+        cy.createAWXCredential({
+          kind: 'machine',
+          organization: (this.globalOrganization as Organization).id,
+          credential_type: 1,
+        }).then((cred) => {
+          machineCredential = cred;
+
+          cy.createAwxJobTemplate({
             organization: (this.globalOrganization as Organization).id,
-            credential_type: 1,
-          }).then((cred) => {
-            machineCredential = cred;
-
-            cy.createAwxJobTemplate({
-              organization: (this.globalOrganization as Organization).id,
-              project: (this.globalProject as Project).id,
-              inventory: inventory.id,
-            }).then((jt1) => {
-              jobTemplate = jt1;
-            });
+            project: (this.globalProject as Project).id,
+            inventory: inventory.id,
+          }).then((jt1) => {
+            jobTemplate = jt1;
           });
-        }
-      );
+        });
+      });
     });
 
     afterEach(function () {
