@@ -1,6 +1,7 @@
 import { randomE2Ename } from '../../../../support/utils';
 import { awxAPI } from '../../../../../frontend/awx/common/api/awx-utils';
 import { testNotification, testDelete } from './notifiersSharedFunctions';
+import { filter } from 'cypress/types/bluebird';
 /* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call */
 
 describe('Notifications', () => {
@@ -90,36 +91,30 @@ describe('Notifications', () => {
   describe('Notifications Tab for Organizations', () => {
     //This describe block should create an Organization to use in these tests
     //The Organization needs to be deleted after the tests run
+    const orgName = randomE2Ename();
+
+    before(() => {
+      cy.createAwxOrganization(orgName).then(() => {});
+    });
 
     it('can navigate to the Organizations -> Notifications list and then to the details page of the Notification', () => {
       //Assert the navigation to the notifications tab of the organization
       //Assert the navigation to the details page of the notification
 
-      const orgName = randomE2Ename();
-      cy.createAwxOrganization(orgName).then(() => {
         const notificationName = randomE2Ename();
         cy.createNotificationTemplate(notificationName).then(() => {
-          cy.navigateTo('awx', 'organizations');
-          cy.filterTableByMultiSelect('name', [orgName]);
-          cy.get('[data-cy="name-column-cell"] a').click();
-          cy.contains(orgName);
-          cy.contains(`a[role="tab"]`, 'Notifications').click();
-          // this may need to change in UIX, now UIX has obsolete filter
-          //cy.filterTableByMultiSelect('name', [notificationName]);
-          cy.get(`[aria-label="Type to filter"]`).type(notificationName);
-          cy.getByDataCy(`apply-filter`).click();
-          cy.get('[data-cy="name-column-cell"] a').click();
-          cy.contains(notificationName);
+          moveToNotification(orgName, notificationName);
         });
-      });
     });
 
-    it.skip('can toggle the Organizations -> Notification on and off for job approval', () => {
+    it.only('can toggle the Organizations -> Notification on and off for job approval', () => {
       //Assert the navigation to the notifications tab of the organization
       //Assert the approval toggling on
       //Assert the approval toggling off
-
-      //testToggle()
+      const notificationName = randomE2Ename();
+      cy.createNotificationTemplate(notificationName).then(() => {
+       testToggle(orgName, notificationName, 'Click to enable approval');
+      });
     });
 
     it.skip('can toggle the Organizations -> Notification on and off for job start', () => {
@@ -188,7 +183,35 @@ describe('Notifications', () => {
   });
 });
 
-function testToggle(notificationName : string, type : string)
+function testToggle(orgName : string, notificationName : string, type : string)
 {
+  moveToOrganizationNotificationList(orgName);
+  filterNotification(notificationName);
 
+  cy.get(`[aria-label="${type}"]`).click();
+}
+
+function moveToNotification(orgName : string, notificationName : string)
+{
+  moveToOrganizationNotificationList(orgName);
+  // this may need to change in UIX, now UIX has obsolete filter
+  //cy.filterTableByMultiSelect('name', [notificationName]);
+  filterNotification(notificationName);
+  cy.get('[data-cy="name-column-cell"] a').click();
+  cy.contains(notificationName);
+}
+
+function filterNotification(notificationName : string)
+{
+  cy.get(`[aria-label="Type to filter"]`).type(notificationName);
+  cy.getByDataCy(`apply-filter`).click();
+}
+
+function moveToOrganizationNotificationList(orgName : string)
+{
+  cy.navigateTo('awx', 'organizations');
+  cy.filterTableByMultiSelect('name', [orgName]);
+  cy.get('[data-cy="name-column-cell"] a').click();
+  cy.contains(orgName);
+  cy.contains(`a[role="tab"]`, 'Notifications').click();
 }
