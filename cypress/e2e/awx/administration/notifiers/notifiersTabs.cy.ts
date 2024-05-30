@@ -113,7 +113,7 @@ describe('Notifications', () => {
       //Assert the approval toggling off
       const notificationName = randomE2Ename();
       cy.createNotificationTemplate(notificationName).then(() => {
-       testToggle(orgName, notificationName, 'Click to enable approval');
+       testToggle(orgName, notificationName, 'Click to enable approval', 'Click to disable approval');
       });
     });
 
@@ -183,12 +183,19 @@ describe('Notifications', () => {
   });
 });
 
-function testToggle(orgName : string, notificationName : string, type : string)
+function testToggle(orgName : string, notificationName : string, type_enable : string, type_disable : string)
 {
   moveToOrganizationNotificationList(orgName);
   filterNotification(notificationName);
+  cy.get(`[aria-label="${type_enable}"]`).click();
 
-  cy.get(`[aria-label="${type}"]`).click();
+  // reload page to check if the toggle is working and try to disable it
+  cy.reload();
+  cy.get(`[aria-label="${type_disable}"]`, { timeout : 10000}).click();
+
+  // check if it is disabled again
+  cy.reload();
+  cy.get(`[aria-label="${type_enable}"]`, { timeout : 10000});
 }
 
 function moveToNotification(orgName : string, notificationName : string)
