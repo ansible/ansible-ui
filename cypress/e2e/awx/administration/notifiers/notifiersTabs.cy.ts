@@ -1,7 +1,6 @@
 import { randomE2Ename } from '../../../../support/utils';
 import { awxAPI } from '../../../../../frontend/awx/common/api/awx-utils';
 import { testNotification, testDelete } from './notifiersSharedFunctions';
-import { filter } from 'cypress/types/bluebird';
 /* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call */
 
 describe('Notifications', () => {
@@ -88,7 +87,7 @@ describe('Notifications', () => {
     });
   });
 
-  describe.only('Notifications Tab for Organizations', () => {
+  describe('Notifications Tab for Organizations', () => {
     //This describe block should create an Organization to use in these tests
     //The Organization needs to be deleted after the tests run
     const orgName = randomE2Ename();
@@ -156,33 +155,59 @@ describe('Notifications', () => {
     //This describe block should create a Workflow Job Template to use in these tests
     //The Workflow Job Template needs to be deleted after the tests run
 
-    it.skip('can navigate to the Workflow Job Templates -> Notifications list and then to the details page of the Notification', () => {
-      //Assert the navigation to the notifications tab of the Workflow Job Template
-      //Assert the navigation to the details page of the notification
+    const jobTemplateName = randomE2Ename();
+    const orgName = randomE2Ename();
+    const inventoryName = randomE2Ename();
+
+    before(() => {
+      cy.createAwxOrganization(orgName).then((organization) => {
+        cy.createAwxInventory({ organization: organization.id, name : inventoryName }).then((inventory) => {
+          cy.createAwxWorkflowJobTemplate({
+            organization: organization.id,
+            inventory: inventory.id,
+            name : jobTemplateName,
+          });
+        });
+      });
     });
 
+    it('can navigate to the Workflow Job Templates -> Notifications list and then to the details page of the Notification', () => {
+      //Assert the navigation to the notifications tab of the Workflow Job Template
+      //Assert the navigation to the details page of the notification
+      const notificationName = randomE2Ename();
+      cy.createNotificationTemplate(notificationName).then(() => {
+        moveToNotification('templates', jobTemplateName, notificationName);
+      });
+    });
+
+    /*
     it.skip('can toggle the Workflow Job Templates -> Notification on and off for job approval', () => {
       //Assert the navigation to the notifications tab of the Workflow Job Template
       //Assert the approval toggling on
       //Assert the approval toggling off
-    });
 
-    it.skip('can toggle the Workflow Job Templates -> Notification on and off for job start', () => {
+      // the approval notification is not part of the Workflow Job Template
+    });*/
+
+    it('can toggle the Workflow Job Templates -> Notification on and off for job start', () => {
       //Assert the navigation to the notifications tab of the Workflow Job Template
       //Assert the start toggling on
       //Assert the start toggling off
+      testToggle('templates', jobTemplateName, 'Click to enable start', 'Click to disable start');
     });
 
-    it.skip('can toggle the Workflow Job Templates -> Notification on and off for job success', () => {
+    it('can toggle the Workflow Job Templates -> Notification on and off for job success', () => {
       //Assert the navigation to the notifications tab of the Workflow Job Template
       //Assert the success toggling on
       //Assert the success toggling off
+      testToggle('templates', jobTemplateName, 'Click to enable success', 'Click to disable success');
     });
 
-    it.skip('can toggle the Workflow Job Templates -> Notification on and off for job failure', () => {
+    it('can toggle the Workflow Job Templates -> Notification on and off for job failure', () => {
       //Assert the navigation to the notifications tab of the Workflow Job Template
       //Assert the failure toggling on
       //Assert the failure toggling off
+      testToggle('templates', jobTemplateName, 'Click to enable failure', 'Click to disable failure');
     });
   });
 });
