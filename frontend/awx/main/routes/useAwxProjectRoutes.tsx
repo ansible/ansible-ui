@@ -2,7 +2,6 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router-dom';
 import { PageNavigationItem } from '../../../../framework';
-import { PageNotImplemented } from '../../../../framework/PageEmptyStates/PageNotImplemented';
 import { awxAPI } from '../../common/api/awx-utils';
 import { ProjectDetails } from '../../resources/projects/ProjectPage/ProjectDetails';
 import { CreateProject, EditProject } from '../../resources/projects/ProjectPage/ProjectForm';
@@ -16,6 +15,10 @@ import { AwxRoute } from '../AwxRoutes';
 import { ResourceNotifications } from '../../resources/notifications/ResourceNotifications';
 import { SchedulesList } from '../../views/schedules/SchedulesList';
 import { ScheduleEditWizard } from '../../views/schedules/wizard/ScheduleEditWizard';
+import { ProjectTeams } from '../../resources/projects/ProjectPage/ProjectTeams';
+import { ProjectUsers } from '../../resources/projects/ProjectPage/ProjectUsers';
+import { AwxProjectAddUsers } from '../../resources/projects/components/AwxProjectAddUsers';
+import { AwxProjectAddTeams } from '../../resources/projects/components/AwxProjectAddTeams';
 
 export function useAwxProjectRoutes() {
   const { t } = useTranslation();
@@ -84,11 +87,6 @@ export function useAwxProjectRoutes() {
           children: [
             { id: AwxRoute.ProjectDetails, path: 'details', element: <ProjectDetails /> },
             {
-              id: AwxRoute.ProjectAccess,
-              path: 'access',
-              element: <PageNotImplemented />,
-            },
-            {
               id: AwxRoute.ProjectJobTemplates,
               path: 'job-templates',
               element: <ProjectJobTemplates />,
@@ -104,10 +102,30 @@ export function useAwxProjectRoutes() {
               element: <SchedulesList sublistEndpoint={awxAPI`/projects`} />,
             },
             {
+              id: AwxRoute.ProjectUsers,
+              path: 'user-access',
+              element: <ProjectUsers />,
+            },
+            {
+              id: AwxRoute.ProjectTeams,
+              path: 'team-access',
+              element: <ProjectTeams />,
+            },
+            {
               path: '',
               element: <Navigate to="details" />,
             },
           ],
+        },
+        {
+          id: AwxRoute.ProjectAddUsers,
+          path: ':id/user-access/add-users',
+          element: <AwxProjectAddUsers />,
+        },
+        {
+          id: AwxRoute.ProjectAddTeams,
+          path: ':id/team-access/add-teams',
+          element: <AwxProjectAddTeams />,
         },
         {
           path: '',
