@@ -47,9 +47,10 @@ export function ProjectPage() {
   const tabs: { label: string; page: string }[] = useMemo(() => {
     const tabs = [
       { label: t('Details'), page: AwxRoute.ProjectDetails },
-      { label: t('Access'), page: AwxRoute.ProjectAccess },
       { label: t('Schedules'), page: AwxRoute.ProjectSchedules },
       { label: t('Job templates'), page: AwxRoute.ProjectJobTemplates },
+      { label: t('User Access'), page: AwxRoute.ProjectUsers },
+      { label: t('Team Access'), page: AwxRoute.ProjectTeams },
     ];
     if (activeAwxUser?.is_system_auditor || (isNotifAdmin && isNotifAdmin.results.length > 0)) {
       tabs.push({ label: t('Notifications'), page: AwxRoute.ProjectNotifications });
