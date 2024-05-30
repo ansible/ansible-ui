@@ -1,0 +1,49 @@
+{
+  "count": 1,
+  "next": null,
+  "previous": null,
+  "page_size": 20,
+  "page": 1,
+  "results": [
+    {
+      "id": 2,
+      "url": "/api/eda/v1/role_team_assignments/2/",
+      "related": {
+        "created_by": "/api/eda/v1/users/5/",
+        "role_definition": "/api/eda/v1/role_definitions/7/",
+        "team": "/api/eda/v1/teams/3/",
+        "content_object": "/api/eda/v1/organizations/3/"
+      },
+      "summary_fields": {
+        "created_by": {
+          "id": 5,
+          "username": "dev",
+          "email": "",
+          "first_name": "",
+          "last_name": "",
+          "is_superuser": true
+        },
+        "role_definition": {
+          "id": 7,
+          "name": "Viewer",
+          "description": "Has read permissions, except users and roles.",
+          "managed": true
+        },
+        "team": {
+          "id": 3,
+          "name": "Team 2"
+        },
+        "content_object": {
+          "id": 3,
+          "name": "Test Org"
+        }
+      },
+      "created": "2024-05-30T13:58:53.136298Z",
+      "created_by": 5,
+      "content_type": "shared.organization",
+      "object_id": "3",
+      "role_definition": 7,
+      "team": 3
+    }
+  ]
+}
