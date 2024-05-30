@@ -21,6 +21,7 @@ describe('Job Templates Tests', function () {
 
   describe('Job Templates Tests: Create', function () {
     let inventory: Inventory;
+    let inventoryWithHost: Inventory;
     let machineCredential: Credential;
     let project: Project;
     let executionEnvironment: ExecutionEnvironment;
@@ -49,6 +50,8 @@ describe('Job Templates Tests', function () {
       executionEnvironment?.id &&
         cy.deleteAwxExecutionEnvironment(executionEnvironment, { failOnStatusCode: false });
       project?.id && cy.deleteAwxProject(project, { failOnStatusCode: false });
+      inventoryWithHost?.id &&
+        cy.deleteAwxInventory(inventoryWithHost, { failOnStatusCode: false });
     });
 
     it('can create a job template with all fields without prompt on launch option', function () {
@@ -276,44 +279,52 @@ describe('Job Templates Tests', function () {
       cy.createAwxProject({
         organization: (this.globalOrganization as Organization).id,
         scm_type: 'git',
-        scm_url: 'https://github.com/jerabekjiri/ansible_playbooks',
+        scm_url: 'https://github.com/ansible/test-playbooks',
       }).then((gitProject: Project) => {
-        cy.visit('/templates/job-template/create');
-        cy.getByDataCy('name').type(jtName);
-        cy.selectDropdownOptionByResourceName('inventory', inventory.name);
-        cy.selectDropdownOptionByResourceName('project', gitProject.name);
-        cy.getByDataCy('allow_simultaneous').click();
-        cy.clickButton('Create job template');
+        cy.createInventoryHost(this.globalOrganization as Organization, '').then(
+          (inventoryHost) => {
+            const { inventory } = inventoryHost;
+            inventoryWithHost = inventory;
 
-        cy.intercept('POST', awxAPI`/job_templates/*/launch/`).as('launchTemplate');
-        cy.clickButton('Launch template');
+            cy.visit('/templates/job-template/create');
+            cy.getByDataCy('name').type(jtName);
+            cy.selectDropdownOptionByResourceName('inventory', inventory.name);
+            cy.selectDropdownOptionByResourceName('project', gitProject.name);
+            cy.selectDropdownOptionByResourceName('playbook', 'debug-loop.yml');
+            cy.getByDataCy('allow_simultaneous').click();
+            cy.clickButton('Create job template');
 
-        cy.wait('@launchTemplate')
-          .its('response.body.id')
-          .then((jobId: number) => {
-            cy.url().should('contain', `/jobs/playbook/${jobId}/output`);
-            cy.contains('Running');
-            cy.contains(jtName);
+            cy.intercept('POST', awxAPI`/job_templates/*/launch/`).as('launchTemplate');
+            cy.clickButton('Launch template');
 
-            cy.intercept('POST', awxAPI`/jobs/${jobId.toString()}/relaunch/`).as('relaunchJob');
-            cy.getByDataCy('relaunch-job').click();
-            cy.wait('@relaunchJob')
+            cy.wait('@launchTemplate')
               .its('response.body.id')
-              .then((jobId2: number) => {
-                cy.url().should('contain', `/jobs/playbook/${jobId2}/output`);
+              .then((jobId: number) => {
+                cy.url().should('contain', `/jobs/playbook/${jobId}/output`);
                 cy.contains('Running');
                 cy.contains(jtName);
 
-                cy.visit('/jobs');
-                cy.getByDataCy(`row-id-${jobId}`).within(() => {
-                  cy.contains('Running');
-                });
+                cy.intercept('POST', awxAPI`/jobs/${jobId.toString()}/relaunch/`).as('relaunchJob');
+                cy.getByDataCy('relaunch-job').click();
+                cy.wait('@relaunchJob')
+                  .its('response.body.id')
+                  .then((jobId2: number) => {
+                    cy.url().should('contain', `/jobs/playbook/${jobId2}/output`);
+                    cy.contains('Running');
+                    cy.contains(jtName);
 
-                cy.getByDataCy(`row-id-${jobId2}`).within(() => {
-                  cy.contains('Running');
-                });
+                    cy.visit('/jobs');
+                    cy.getByDataCy(`row-id-${jobId}`).within(() => {
+                      cy.contains('Running');
+                    });
+
+                    cy.getByDataCy(`row-id-${jobId2}`).within(() => {
+                      cy.contains('Running');
+                    });
+                  });
               });
-          });
+          }
+        );
       });
     });
   });
