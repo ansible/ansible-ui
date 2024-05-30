@@ -20,6 +20,7 @@ import { IAwxView } from '../../../common/useAwxView';
 import { useDisassociateHosts } from '../../hosts/hooks/useDisassociateHosts';
 import { postRequest } from '../../../../common/crud/Data';
 import { HostSelectDialog } from '../../hosts/hooks/useHostSelectDialog';
+import { useRunCommandAction } from './useInventoriesGroupsToolbarActions';
 
 export function useInventoriesGroupsHostsToolbarActions(view: IAwxView<AwxHost>) {
   const [_, setDialog] = usePageDialog();
@@ -29,12 +30,7 @@ export function useInventoriesGroupsHostsToolbarActions(view: IAwxView<AwxHost>)
   const params = useParams<{ id: string; group_id: string; inventory_type: string }>();
   const alertToaster = usePageAlertToaster();
 
-  const adhocOptions = useOptions<OptionsResponse<ActionsResponse>>(
-    awxAPI`/inventories/${params.id ?? ''}/ad_hoc_commands/`
-  ).data;
-  const canRunAdHocCommand = Boolean(
-    adhocOptions && adhocOptions.actions && adhocOptions.actions['POST']
-  );
+  const runCommandAction = useRunCommandAction<AwxHost>(params);
 
   const hostOptions = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/hosts/`).data;
   const canCreateHost = Boolean(hostOptions && hostOptions.actions && hostOptions.actions['POST']);
@@ -104,20 +100,7 @@ export function useInventoriesGroupsHostsToolbarActions(view: IAwxView<AwxHost>)
           },
         ],
       },
-      {
-        type: PageActionType.Button,
-        selection: PageActionSelection.None,
-        variant: ButtonVariant.secondary,
-        isPinned: true,
-        label: t('Run Command'),
-        onClick: () => pageNavigate(AwxRoute.Inventories),
-        isDisabled: () =>
-          canRunAdHocCommand
-            ? undefined
-            : t(
-                'You do not have permission to run an ad hoc command. Please contact your organization administrator if there is an issue with your access.'
-              ),
-      },
+      runCommandAction,
     ];
 
     const disassociateAction: IPageAction<AwxHost> = {
@@ -145,6 +128,6 @@ export function useInventoriesGroupsHostsToolbarActions(view: IAwxView<AwxHost>)
     onSelectedHosts,
     pageNavigate,
     canCreateHost,
-    canRunAdHocCommand,
+    runCommandAction,
   ]);
 }
