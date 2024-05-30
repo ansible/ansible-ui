@@ -27,13 +27,11 @@ function createAndCheckHost(host_type: string, inventory: string) {
   if (host_type === 'stand_alone_host') {
     cy.getByDataCy('inventory').click();
     cy.contains('button', 'Browse').click();
-    cy.contains('Select Inventory');
-    cy.get(`[aria-label="Select Inventory"]`).within(() => {
+    cy.getModal().within(() => {
       cy.filterTableBySingleSelect('name', inventory);
       cy.get(`[data-cy="checkbox-column-cell"] input`).click();
       cy.contains('button', 'Confirm').click();
     });
-    cy.get(`[aria-label="Select Inventory"]`).should('not.exist');
   }
 
   // after creation - verify data is currect
