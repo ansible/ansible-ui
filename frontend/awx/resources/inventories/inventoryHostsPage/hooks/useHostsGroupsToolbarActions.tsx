@@ -17,7 +17,8 @@ import { useParams } from 'react-router-dom';
 export function useHostsGroupsToolbarActions(
   view: IAwxView<InventoryGroup>,
   inventoryId: string,
-  hostId: string
+  hostId: string,
+  type : 'standaloneHost' | 'inventoryHost',
 ) {
   const { t } = useTranslation();
 
@@ -35,8 +36,11 @@ export function useHostsGroupsToolbarActions(
   const runCommandAction = useRunCommandAction<InventoryGroup>(params);
 
   return useMemo<IPageAction<InventoryGroup>[]>(
-    () => [
-      {
+    () => {
+      
+      let arr : IPageAction<InventoryGroup>[] = [];
+
+      arr.push({
         type: PageActionType.Button,
         selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
@@ -55,11 +59,18 @@ export function useHostsGroupsToolbarActions(
             : t(
                 'You do not have permission to create a host. Please contact your organization administrator if there is an issue with your access.'
               ),
-      },
-      { type: PageActionType.Seperator },
-      runCommandAction,
-      { type: PageActionType.Seperator },
+      });
+
+      arr.push({ type: PageActionType.Seperator });
+    
+      if (type === 'inventoryHost')
       {
+        arr.push(runCommandAction);
+      }
+
+      arr.push({ type: PageActionType.Seperator });
+
+      arr.push({
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         label: t('Disassociate'),
@@ -67,8 +78,10 @@ export function useHostsGroupsToolbarActions(
           view.selectedItems.length === 0 ? t('Select at least one item from the list') : undefined,
         onClick: disassociateGroups,
         isPinned: true,
-      },
-    ],
+      });
+
+      return arr;
+    },
     [
       t,
       view.selectedItems.length,
@@ -78,6 +91,8 @@ export function useHostsGroupsToolbarActions(
       canCreateGroup,
       hostId,
       inventoryId,
+      runCommandAction,
+      type
     ]
   );
 }

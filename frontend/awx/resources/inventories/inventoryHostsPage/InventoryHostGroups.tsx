@@ -32,7 +32,7 @@ export function InventoryHostGroups(props: { page: string }) {
     tableColumns,
   });
 
-  const toolbarActions = useHostsGroupsToolbarActions(view, inventoryId, hostId);
+  const toolbarActions = useHostsGroupsToolbarActions(view, inventoryId, hostId, isHostPage ? 'standaloneHost' : 'inventoryHost');
   const rowActions = useHostsGroupsActions(inventoryId);
 
   const openInventoryHostsGroupsAddModal = useInventoryHostGroupsAddModal();
