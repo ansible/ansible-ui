@@ -86,9 +86,30 @@ describe('Notifications', () => {
     //This describe block should create an Organization to use in these tests
     //The Organization needs to be deleted after the tests run
 
-    it.skip('can navigate to the Organizations -> Notifications list and then to the details page of the Notification', () => {
+    it.only('can navigate to the Organizations -> Notifications list and then to the details page of the Notification', () => {
       //Assert the navigation to the notifications tab of the organization
       //Assert the navigation to the details page of the notification
+
+      
+      const orgName = randomE2Ename();
+      cy.createAwxOrganization(orgName).then(() => {
+        const notificationName = randomE2Ename();
+        cy.createNotificationTemplate(notificationName).then(() => {
+
+          cy.navigateTo('awx', 'organizations');
+          cy.filterTableByMultiSelect('name', [orgName]);
+          cy.get('[data-cy="name-column-cell"] a').click();
+          cy.contains(orgName);
+          cy.contains(`a[role="tab"]`, 'Notifications').click();
+          // this may need to change in UIX, now UIX has obsolete filter
+          //cy.filterTableByMultiSelect('name', [notificationName]);
+          cy.get(`[aria-label="Type to filter"]`).type(notificationName);
+          cy.getByDataCy(`apply-filter`).click();
+          cy.get('[data-cy="name-column-cell"] a').click();
+          cy.contains(notificationName)
+
+        });
+      });
     });
 
     it.skip('can toggle the Organizations -> Notification on and off for job approval', () => {
