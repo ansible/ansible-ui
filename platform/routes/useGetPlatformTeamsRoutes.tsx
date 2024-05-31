@@ -52,11 +52,6 @@ export function useGetPlatformTeamsRoutes() {
               path: 'admins',
               element: <PlatformTeamAdmins />,
             },
-            {
-              id: PlatformRoute.TeamResourceAccess,
-              path: 'resource-access',
-              element: <PageNotImplemented />,
-            },
           ],
         },
         {
