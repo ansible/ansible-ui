@@ -24,8 +24,7 @@ describe('OrgRolesList', () => {
   });
   it('Renders list of organization roles for a user', () => {
     cy.mount(<OrgRolesList {...orgListProps} />);
-    cy.get('table tbody').find('tr').should('have.length', 2);
-    cy.contains('Organization Admin');
+    cy.get('table tbody').find('tr').should('have.length', 1);
     cy.contains('Organization Project Admin');
   });
   it('Renders the correct columns', () => {
@@ -37,13 +36,13 @@ describe('OrgRolesList', () => {
   it('Renders expandable list', () => {
     cy.mount(<OrgRolesList {...orgListProps} />);
     cy.get('button.pf-v5-c-expandable-section__toggle').should('be.visible');
-    cy.contains('Organization Admin').should('be.visible');
+    cy.contains('Organization Project Admin').should('be.visible');
     cy.get('button.pf-v5-c-expandable-section__toggle').click();
-    cy.contains('Organization Admin').should('not.be.visible');
+    cy.contains('Organization Project Admin').should('not.be.visible');
   });
   it('Renders non-expandable list', () => {
     cy.mount(<OrgRolesList {...{ ...orgListProps, isExpandable: false }} />);
     cy.get('button.pf-v5-c-expandable-section__toggle').should('not.exist');
-    cy.contains('Organization Admin').should('be.visible');
+    cy.contains('Organization Project Admin').should('be.visible');
   });
 });
