@@ -48,6 +48,7 @@ export function InventorySourceSubForm() {
             isRequired={sourceTypes.slice(1).includes(source as string)}
             credentialIdPath="credentialIdPath"
             sourceType={source as string}
+            acceptableCredentialKinds={['kubernetes', 'cloud']}
           />
           <PageFormHidden watch="source" hidden={(type: string) => type !== 'scm'}>
             <PageFormProjectSelect<InventorySourceForm> name="source_project" isRequired />
