@@ -28,7 +28,7 @@ export function InventorySources() {
     tableColumns,
   });
 
-  const toolbarActions = useInventoriesSourcesToolbarActions(view);
+  const toolbarActions = useInventoriesSourcesToolbarActions(view, params.id || '');
   const rowActions = useInventorySourceActions({
     onInventorySourcesDeleted: view.unselectItemsAndRefresh,
   });

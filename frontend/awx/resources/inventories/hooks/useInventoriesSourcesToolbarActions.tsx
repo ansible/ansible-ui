@@ -18,8 +18,10 @@ import { OptionsResponse, ActionsResponse } from '../../../interfaces/OptionsRes
 import { IAwxView } from '../../../common/useAwxView';
 import { useDeleteSources } from '../../sources/hooks/useDeleteSources';
 import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
+import { usePostRequest } from '../../../../common/crud/usePostRequest';
+import { usePageAlertToaster } from '../../../../../framework';
 
-export function useInventoriesSourcesToolbarActions(view: IAwxView<InventorySource>) {
+export function useInventoriesSourcesToolbarActions(view: IAwxView<InventorySource>, inventory_id : string) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const deleteSources = useDeleteSources(view.unselectItemsAndRefresh);
@@ -46,6 +48,7 @@ export function useInventoriesSourcesToolbarActions(view: IAwxView<InventorySour
       cannotLaunchInventorySourcesUpdate = t(`The inventory source cannot be updated due to insufficient permission`);
     }
 
+  const syncAll = useSyncAll(inventory_id);
 
   return useMemo<IPageAction<InventorySource>[]>(
     () => [
@@ -82,10 +85,28 @@ export function useInventoriesSourcesToolbarActions(view: IAwxView<InventorySour
         selection: PageActionSelection.None,
         isPinned: true,
         label: t('Sync all'),
-        onClick: () => {},
+        onClick: () => { syncAll() },
         isDisabled: () => cannotLaunchInventorySourcesUpdate,
       },
     ],
     [t, deleteSources, pageNavigate, params.inventory_type, params.id, canCreateSource, cannotLaunchInventorySourcesUpdate]
   );
+}
+
+function useSyncAll(inventory_id : string) {
+  const url = awxAPI`/inventories/${inventory_id}/update_inventory_sources/`;
+  const postRequest = usePostRequest();
+  const alertToaster = usePageAlertToaster();
+
+  return () => {
+    (async () => {
+    
+      try
+      {
+        await postRequest(url, {});
+      }catch(err)
+      {
+        alertToaster.addAlert({ title : (err as Object)?.toString(), variant : 'danger' });      }
+    })();
+  };
 }
