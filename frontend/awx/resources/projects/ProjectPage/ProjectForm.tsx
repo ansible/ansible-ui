@@ -17,7 +17,7 @@ import { useOptions } from '../../../../common/crud/useOptions';
 import { usePostRequest } from '../../../../common/crud/usePostRequest';
 import { PageFormCredentialSelect } from '../../../access/credentials/components/PageFormCredentialSelect';
 import { PageFormSelectOrganization } from '../../../access/organizations/components/PageFormOrganizationSelect';
-import { PageFormSelectExecutionEnvironment } from '../../../administration/execution-environments/components/PageFormExecutionEnvironmentSelect';
+import { PageFormSelectExecutionEnvironment } from '../../../administration/execution-environments/components/PageFormSelectExecutionEnvironment';
 import { AwxPageForm } from '../../../common/AwxPageForm';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
