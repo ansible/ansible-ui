@@ -121,14 +121,11 @@ export function useRunCommandAction<T extends { name: string }>(
       label: t('Run Command'),
       onClick: () => {
         const limit = params.selectedItems.map((item) => item.name).join(', ');
-        const query : { limit? : string, key? : string}= { };
+        const query: { limit?: string; key?: string } = {};
 
-        if (limit.length < 20)
-        {
+        if (limit.length < 20) {
           query.limit = limit;
-        }
-        else
-        {
+        } else {
           query.key = generateRandomID();
           localStorage.setItem(query.key, limit);
         }
@@ -159,4 +156,3 @@ export function useRunCommandAction<T extends { name: string }>(
 function generateRandomID() {
   return 'id_' + Math.random().toString(36).substr(2, 9);
 }
-

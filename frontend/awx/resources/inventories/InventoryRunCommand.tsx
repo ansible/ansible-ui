@@ -30,8 +30,7 @@ export function InventoryRunCommand() {
   let limit = searchParams.get('limit') || 'all';
   const key = searchParams.get('key');
 
-  if (key)
-  {
+  if (key) {
     limit = localStorage.getItem(key) || limit;
   }
 
