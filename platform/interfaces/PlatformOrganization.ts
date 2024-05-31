@@ -4,9 +4,9 @@ export interface PlatformOrganization {
   id: number;
   url: string;
   created_on: string;
-  created_by: string;
+  created_by: number;
   modified_on: string;
-  modified_by: string;
+  modified_by: number;
   related: {
     created_by: string;
     modified_by: string;
@@ -34,5 +34,4 @@ export interface PlatformOrganization {
       users?: number;
     };
   };
-  environment: number;
 }

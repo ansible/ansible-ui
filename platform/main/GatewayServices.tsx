@@ -18,7 +18,7 @@ import { setHubApiPath } from '../../frontend/hub/common/api/formatPath';
 import { gatewayAPI } from '../api/gateway-api-utils';
 import { GatewayService } from './GatewayService';
 
-const GatewayServicesContext = createContext<
+export const GatewayServicesContext = createContext<
   [GatewayService[], Dispatch<SetStateAction<GatewayService[]>>]
 >([
   [],

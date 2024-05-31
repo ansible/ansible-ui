@@ -1,110 +1,125 @@
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
 import {
-  LoadingPage,
-  PageForm,
-  PageFormSubmitHandler,
-  PageFormTextInput,
   PageHeader,
   PageLayout,
-  PageNotFound,
+  PageWizard,
+  PageWizardStep,
   useGetPageUrl,
-  usePageNavigate,
 } from '../../../../framework';
-import { AwxError } from '../../../../frontend/awx/common/AwxError';
-import { useGet } from '../../../../frontend/common/crud/useGet';
-import { usePatchRequest } from '../../../../frontend/common/crud/usePatchRequest';
-import { usePostRequest } from '../../../../frontend/common/crud/usePostRequest';
-import { gatewayV1API } from '../../../api/gateway-api-utils';
-import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
+import { OrganizationReviewStep } from './steps/OrganizationReviewStep';
+import { OrganizationGalaxyCredentialsOrderStep } from './steps/OrganizationGalaxyCredentialsOrderStep';
+import { OrganizationInstanceGroupsOrderStep } from './steps/OrganizationInstanceGroupsOrderStep';
+import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
+import { Organization as ControllerOrganization } from '../../../../frontend/awx/interfaces/Organization';
+import { InstanceGroup as ControllerInstanceGroup } from '../../../../frontend/awx/interfaces/InstanceGroup';
+import { Credential as ControllerCredential } from '../../../../frontend/awx/interfaces/Credential';
+import { SummaryFieldsExecutionEnvironment } from '../../../../frontend/awx/interfaces/summary-fields/summary-fields';
+import { useAwxService } from '../../../main/GatewayServices';
+import { OrganizationDetailsStep } from './steps/OrganizationDetailsStep';
 
-export function CreatePlatformOrganization() {
+export interface OrganizationWizardFormValues {
+  organization: PlatformOrganization;
+  instanceGroups?: ControllerInstanceGroup[];
+  galaxyCredentials?: ControllerCredential[];
+  executionEnvironment?: SummaryFieldsExecutionEnvironment;
+}
+
+interface OrganizationFormProps {
+  handleSubmit: (values: OrganizationWizardFormValues) => Promise<void>;
+  instanceGroups?: ControllerInstanceGroup[];
+  galaxyCredentials?: ControllerCredential[];
+  organization?: PlatformOrganization;
+  controllerOrganization?: ControllerOrganization;
+}
+
+export function PlatformOrganizationForm(props: OrganizationFormProps) {
+  const { organization, controllerOrganization, instanceGroups, galaxyCredentials } = props;
   const { t } = useTranslation();
-  const pageNavigate = usePageNavigate();
-  const navigate = useNavigate();
-  const postRequest = usePostRequest<PlatformOrganization>();
-  const onSubmit: PageFormSubmitHandler<PlatformOrganization> = async (organization) => {
-    const createdOrganization = await postRequest(gatewayV1API`/organizations/`, organization);
-    pageNavigate(PlatformRoute.OrganizationDetails, { params: { id: createdOrganization.id } });
-  };
   const getPageUrl = useGetPageUrl();
+  const awxService = useAwxService();
+
+  const steps: PageWizardStep[] = [
+    {
+      id: 'details',
+      label: t('Organization details'),
+      inputs: <OrganizationDetailsStep controllerOrganization={controllerOrganization} />,
+    },
+    {
+      id: 'instance_groups_order',
+      label: t('Instance groups order'),
+      inputs: <OrganizationInstanceGroupsOrderStep />,
+      hidden: (wizardData) => {
+        if (awxService) {
+          // wizardData isn't updated until the next button is clicked
+          if (!wizardData || Object.keys(wizardData).length === 0) {
+            if (!instanceGroups || instanceGroups.length < 2) {
+              return true;
+            } else {
+              return false;
+            }
+          }
+          if (((wizardData as { instanceGroups?: object[] }).instanceGroups ?? []).length > 1) {
+            return false;
+          }
+        }
+        return true;
+      },
+    },
+    {
+      id: 'galaxy_credentials_order',
+      label: t('Galaxy credentials order'),
+      inputs: <OrganizationGalaxyCredentialsOrderStep />,
+      hidden: (wizardData) => {
+        if (awxService) {
+          // wizardData isn't updated until the next button is clicked
+          if (!wizardData || Object.keys(wizardData).length === 0) {
+            if (!galaxyCredentials || galaxyCredentials.length < 2) {
+              return true;
+            } else {
+              return false;
+            }
+          }
+          if (
+            ((wizardData as { galaxyCredentials?: object[] }).galaxyCredentials ?? []).length > 1
+          ) {
+            return false;
+          }
+        }
+        return true;
+      },
+    },
+    {
+      id: 'review',
+      label: t('Review'),
+      element: <OrganizationReviewStep controllerOrganization={controllerOrganization} />,
+    },
+  ];
+
+  const defaultValues = {
+    details: {
+      organization: organization || {},
+      galaxyCredentials: galaxyCredentials || [],
+      instanceGroups: instanceGroups || [],
+      executionEnvironment: controllerOrganization?.summary_fields?.default_environment || {},
+    },
+  };
+
   return (
     <PageLayout>
       <PageHeader
-        title={t('Create organization')}
+        title={organization ? t('Edit Organization') : t('Create Organization')}
         breadcrumbs={[
-          { label: t('Organizations'), to: getPageUrl(PlatformRoute.Organizations) },
-          { label: t('Create organization') },
+          { label: t('Organization'), to: getPageUrl(PlatformRoute.Organizations) },
+          { label: organization ? t('Edit Organization') : t('Create Organization') },
         ]}
       />
-      <PageForm
-        submitText={t('Create organization')}
-        onSubmit={onSubmit}
-        cancelText={t('Cancel')}
-        onCancel={() => navigate(-1)}
-      >
-        <PlatformOrganizationInputs />
-      </PageForm>
+      <PageWizard<OrganizationWizardFormValues>
+        steps={steps}
+        defaultValue={defaultValues}
+        onSubmit={props.handleSubmit}
+        disableGrid
+      />
     </PageLayout>
-  );
-}
-
-export function EditPlatformOrganization() {
-  const { t } = useTranslation();
-  const navigate = useNavigate();
-  const params = useParams<{ id?: string }>();
-  const id = Number(params.id);
-  const {
-    data: organization,
-    isLoading,
-    error,
-  } = useGet<PlatformOrganization>(gatewayV1API`/organizations/${id.toString()}/`);
-  const patchRequest = usePatchRequest<PlatformOrganization, PlatformOrganization>();
-  const onSubmit: PageFormSubmitHandler<PlatformOrganization> = async (organization) => {
-    await patchRequest(gatewayV1API`/organizations/${id.toString()}/`, organization);
-    navigate(-1);
-  };
-  const getPageUrl = useGetPageUrl();
-  if (isLoading) return <LoadingPage breadcrumbs />;
-  if (error) return <AwxError error={error} />;
-  if (!organization) return <PageNotFound />;
-  return (
-    <PageLayout>
-      <PageHeader
-        title={t('Edit organization')}
-        breadcrumbs={[
-          { label: t('Organizations'), to: getPageUrl(PlatformRoute.Organizations) },
-          { label: t('Edit organization') },
-        ]}
-      />
-      <PageForm
-        submitText={t('Save organization')}
-        onSubmit={onSubmit}
-        onCancel={() => navigate(-1)}
-        defaultValue={organization}
-      >
-        <PlatformOrganizationInputs />
-      </PageForm>
-    </PageLayout>
-  );
-}
-
-function PlatformOrganizationInputs() {
-  const { t } = useTranslation();
-  return (
-    <>
-      <PageFormTextInput<PlatformOrganization>
-        name="name"
-        label={t('Name')}
-        placeholder={t('Enter name')}
-        isRequired
-      />
-      <PageFormTextInput<PlatformOrganization>
-        label={t('Description')}
-        name="description"
-        placeholder={t('Enter description')}
-      />
-    </>
   );
 }

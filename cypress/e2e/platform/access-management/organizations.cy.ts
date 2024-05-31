@@ -26,8 +26,9 @@ describe('Organizations - create, edit and delete', () => {
 
   it('creates a basic organization and deletes it from the details page', () => {
     cy.get('[data-cy="create-organization"]').click();
-    cy.get('[data-cy="name"]').type(organizationName);
-    cy.clickButton(/^Create organization$/);
+    cy.get('[data-cy="organization-name"]').type(organizationName);
+    cy.clickButton('Next');
+    cy.clickButton('Finish');
     cy.verifyPageTitle(organizationName);
     cy.clickPageAction('delete-organization');
     cy.get('#confirm').click();
@@ -47,18 +48,18 @@ describe('Organizations - create, edit and delete', () => {
   it('edits an organization from the list view', () => {
     cy.filterTableByTextFilter('name', organization.name, { disableFilterSelection: true });
     cy.getByDataCy('edit-organization').click();
-    cy.verifyPageTitle('Edit organization');
-    cy.get('[data-cy="name"]').clear().type(`${listEditedOrganizationName} from list page`);
+    cy.verifyPageTitle('Edit Organization');
+    cy.get('[data-cy="organization-name"]')
+      .clear()
+      .type(`${listEditedOrganizationName} from list page`);
     const orgId = `${organization.id}`.toString();
     cy.intercept('PATCH', gatewayV1API`/organizations/${orgId}`).as('edited');
-    cy.clickButton(/^Save organization$/);
+    cy.clickButton('Next');
+    cy.clickButton('Finish');
     cy.wait('@edited')
       .its('response.body.name')
       .then((editedName) => {
-        cy.verifyPageTitle('Organizations');
-        cy.clickButton(/^Clear all filters$/);
-        cy.filterTableByTextFilter('name', `${editedName}`, { disableFilterSelection: true });
-        cy.getByDataCy('name-column-cell').should('contain', `${editedName}`);
+        cy.verifyPageTitle(`${editedName}`);
       });
   });
 
@@ -80,11 +81,14 @@ describe('Organizations - create, edit and delete', () => {
     cy.getByDataCy('name-column-cell').contains(organization.name).click();
     cy.verifyPageTitle(organization.name);
     cy.get('[data-cy="edit-organization"]').click();
-    cy.verifyPageTitle('Edit organization');
-    cy.get('[data-cy="name"]').clear().type(`${detailsEditedOrganizationName} from details page`);
+    cy.verifyPageTitle('Edit Organization');
+    cy.get('[data-cy="organization-name"]')
+      .clear()
+      .type(`${detailsEditedOrganizationName} from details page`);
     const orgId = `${organization.id}`.toString();
     cy.intercept('PATCH', gatewayV1API`/organizations/${orgId}`).as('edited');
-    cy.clickButton(/^Save organization$/);
+    cy.clickButton('Next');
+    cy.clickButton('Finish');
     cy.wait('@edited')
       .its('response.body.name')
       .then((editedName) => {

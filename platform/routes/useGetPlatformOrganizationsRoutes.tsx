@@ -2,10 +2,6 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageNavigationItem, PageNotImplemented } from '../../framework';
 import { PlatformOrganizationDetails } from '../access/organizations/components/PlatformOrganizationDetails';
-import {
-  CreatePlatformOrganization,
-  EditPlatformOrganization,
-} from '../access/organizations/components/PlatformOrganizationForm';
 import { PlatformOrganizationList } from '../access/organizations/components/PlatformOrganizationList';
 import { PlatformOrganizationPage } from '../access/organizations/components/PlatformOrganizationPage';
 import { PlatformRoute } from '../main/PlatformRoutes';
@@ -16,6 +12,8 @@ import { PlatformOrganizationTeams } from '../access/organizations/components/Pl
 import { PlatformAwxOrganizationIdLookup } from '../access/organizations/components/PlatformAwxOrganizationIdLookup';
 import { PlatformOrganizationAddUsers } from '../access/organizations/components/PlatformOrganizationAddUsers';
 import { PlatformOrganizationManageUserRoles } from '../access/organizations/components/PlatformOrganizationManageUserRoles';
+import { CreatePlatformOrganization } from '../access/organizations/components/CreatePlatformOrganization';
+import { EditPlatformOrganization } from '../access/organizations/components/EditPlatformOrganization';
 
 export function useGetPlatformOrganizationsRoutes() {
   const { t } = useTranslation();
@@ -62,7 +60,7 @@ export function useGetPlatformOrganizationsRoutes() {
             },
             {
               id: PlatformRoute.OrganizationExecutionEnvironments,
-              path: 'resource-access',
+              path: 'execution-environments',
               element: (
                 <PlatformAwxOrganizationIdLookup>
                   <PageNotImplemented />
