@@ -27,6 +27,8 @@ export function useInventoriesSourcesToolbarActions(view: IAwxView<InventorySour
   const sourceOptions = useOptions<OptionsResponse<ActionsResponse>>(
     awxAPI`/inventory_sources/`
   ).data;
+
+  debugger;
   const canCreateSource = Boolean(
     sourceOptions && sourceOptions.actions && sourceOptions.actions['POST']
   );
@@ -60,6 +62,14 @@ export function useInventoriesSourcesToolbarActions(view: IAwxView<InventorySour
         onClick: deleteSources,
         isDanger: true,
         isDisabled: (sources: InventorySource[]) => cannotDeleteResources(sources, t),
+      },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.None,
+        isPinned: true,
+        label: t('Sync all'),
+        onClick: () => {},
+        isDisabled: () => '',
       },
     ],
     [t, deleteSources, pageNavigate, params.inventory_type, params.id, canCreateSource]
