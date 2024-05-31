@@ -8,7 +8,7 @@ type ContentTypeOption = [string, string];
 
 export function AwxSelectResourceTypeStep() {
   const { t } = useTranslation();
-  const { setWizardData } = usePageWizard();
+  const { wizardData, setStepData, setWizardData } = usePageWizard();
   const { data, isLoading } = useOptions<{
     actions: { POST: { content_type: { choices: ContentTypeOption[] } } };
   }>(awxAPI`/role_definitions/`);
@@ -29,7 +29,13 @@ export function AwxSelectResourceTypeStep() {
           value,
           label: display_name,
         }))}
-      onChange={() => setWizardData({})}
+      onChange={(option?: string) => {
+        // Reset wizard/step data if the resource type selection was changed
+        if ((wizardData as { [key: string]: unknown })['resourceType'] !== option) {
+          setWizardData({});
+          setStepData({});
+        }
+      }}
       placeholderText={t('Select a resource type')}
       isRequired
     />
