@@ -8,9 +8,6 @@ import { requestGet } from '../../../../common/crud/Data';
 import { InventorySource } from '../../../interfaces/InventorySource';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { PromptFormValues } from '../../../resources/templates/WorkflowVisualizer/types';
-import { Project } from '../../../interfaces/Project';
-import { JobTemplate } from '../../../interfaces/JobTemplate';
-import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 import { resourceEndPoints } from '../hooks/scheduleHelpers';
 import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
 import { PageWizardStep } from '../../../../../framework';
@@ -18,7 +15,6 @@ import { shouldHideOtherStep } from '../../../resources/templates/WorkflowVisual
 import { parseStringToTagArray } from '../../../resources/templates/JobTemplateFormHelpers';
 import { LaunchConfiguration } from '../../../interfaces/LaunchConfiguration';
 import { RESOURCE_TYPE } from './constants';
-import { SystemJobTemplate } from '../../../interfaces/SystemJobTemplate';
 
 export function ScheduleSelectStep() {
   const { pathname } = useLocation();
@@ -68,9 +64,9 @@ export function ScheduleSelectStep() {
           awxAPI`/inventory_sources/${params.source_id}/`
         );
       } else {
-        scheduleResource = await requestGet<
-          Project | JobTemplate | WorkflowJobTemplate | SystemJobTemplate
-        >(`${resourceEndPoints[resourceType]}${params?.id}/`);
+        scheduleResource = await requestGet<ScheduleResources>(
+          `${resourceEndPoints[resourceType]}${params?.id}/`
+        );
       }
       reset(
         {

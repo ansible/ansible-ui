@@ -19,7 +19,7 @@ export function useViewActivityStream<T extends object>(type: string) {
         selection: PageActionSelection.Single,
         icon: HistoryIcon,
         label: t('View activity stream'),
-        onClick: () => pageNavigate(AwxRoute.ActivityStream, { params: { type } }),
+        onClick: () => pageNavigate(AwxRoute.ActivityStream, { query: { type } }),
       },
     ],
     [type, pageNavigate, t]
