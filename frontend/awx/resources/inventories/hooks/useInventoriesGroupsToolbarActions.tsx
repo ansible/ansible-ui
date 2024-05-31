@@ -121,9 +121,21 @@ export function useRunCommandAction<T extends { name: string }>(
       label: t('Run Command'),
       onClick: () => {
         const limit = params.selectedItems.map((item) => item.name).join(', ');
+        const query : { limit? : string, key? : string}= { };
+
+        if (limit.length < 20)
+        {
+          query.limit = limit;
+        }
+        else
+        {
+          query.key = generateRandomID();
+          localStorage.setItem(query.key, limit);
+        }
+
         pageNavigate(AwxRoute.InventoryRunCommand, {
           params: { inventory_type: params.inventory_type, id: params.id },
-          query: { limit },
+          query,
         });
       },
       isDisabled: () =>
@@ -143,3 +155,8 @@ export function useRunCommandAction<T extends { name: string }>(
     params.selectedItems,
   ]);
 }
+
+function generateRandomID() {
+  return 'id_' + Math.random().toString(36).substr(2, 9);
+}
+

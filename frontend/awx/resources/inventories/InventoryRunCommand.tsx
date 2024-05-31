@@ -27,7 +27,13 @@ export function InventoryRunCommand() {
   const getPageUrl = useGetPageUrl();
   const { id } = useParams();
   const [searchParams] = useURLSearchParams();
-  const limit = searchParams.get('limit') || 'all';
+  let limit = searchParams.get('limit') || 'all';
+  const key = searchParams.get('key');
+
+  if (key)
+  {
+    limit = localStorage.getItem(key) || limit;
+  }
 
   const pageNavigate = usePageNavigate();
   const { data: inventory } = useGet<Inventory>(awxAPI`/inventories/${id as string}/`);
