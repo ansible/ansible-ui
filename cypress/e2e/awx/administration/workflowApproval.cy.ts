@@ -92,48 +92,56 @@ describe('Workflow Approvals Tests', () => {
 
   before(function () {
     organization = this.globalOrganization as Organization;
-    project = this.globalProject as Project;
-    cy.awxLogin();
+    cy.createAwxProject(
+      { organization: (this.globalOrganization as Organization).id },
+      'https://github.com/ansible/test-playbooks'
+    ).then((proj) => {
+      project = proj;
+      cy.awxLogin();
 
-    cy.createAwxUser(organization).then((u) => {
-      user = u;
-    });
-    cy.createAwxUser(organization).then((u) => {
-      userWFApprove = u;
-    });
-    cy.createAwxUser(organization).then((u) => {
-      userWFDeny = u;
-    });
-    cy.createAwxUser(organization).then((u) => {
-      userWFCancel = u;
-    });
-    cy.createAwxInventory({ organization: organization.id })
-      .then((i) => {
-        inventory = i;
-      })
-      .then(() => {
-        cy.createAwxInventorySource(inventory, project).then((invSrc) => {
-          inventorySource = invSrc;
-        });
-        cy.createAwxJobTemplate({
-          organization: organization.id,
-          project: project.id,
-          inventory: inventory.id,
-        }).then((jt) => (jobTemplate = jt));
-        cy.createAwxWorkflowJobTemplate({
-          organization: organization.id,
-          inventory: inventory.id,
-        }).then((wfjt) => {
-          workflowJobTemplate = wfjt;
-          cy.createAwxWorkflowVisualizerWJTNode(workflowJobTemplate).then((wfjtNode) => {
-            wfjobTemplateNode = wfjtNode;
-          });
-          cy.createAwxWorkflowVisualizerApprovalNode(workflowJobTemplate).then((appNode) => {
-            approvalWFNode = appNode;
-            cy.createWorkflowJTAlwaysNodeLink(approvalWFNode, wfjobTemplateNode);
-          });
-        });
+      cy.createAwxUser(organization).then((u) => {
+        user = u;
       });
+      cy.createAwxUser(organization).then((u) => {
+        userWFApprove = u;
+      });
+      cy.createAwxUser(organization).then((u) => {
+        userWFDeny = u;
+      });
+      cy.createAwxUser(organization).then((u) => {
+        userWFCancel = u;
+      });
+      cy.createAwxInventory({ organization: organization.id })
+        .then((i) => {
+          inventory = i;
+        })
+        .then(() => {
+          cy.createAwxInventorySource(inventory, project).then((invSrc) => {
+            inventorySource = invSrc;
+          });
+          cy.createAwxJobTemplate(
+            {
+              organization: organization.id,
+              project: project.id,
+              inventory: inventory.id,
+            },
+            'hello world.yml'
+          ).then((jt) => (jobTemplate = jt));
+          cy.createAwxWorkflowJobTemplate({
+            organization: organization.id,
+            inventory: inventory.id,
+          }).then((wfjt) => {
+            workflowJobTemplate = wfjt;
+            cy.createAwxWorkflowVisualizerWJTNode(workflowJobTemplate).then((wfjtNode) => {
+              wfjobTemplateNode = wfjtNode;
+            });
+            cy.createAwxWorkflowVisualizerApprovalNode(workflowJobTemplate).then((appNode) => {
+              approvalWFNode = appNode;
+              cy.createWorkflowJTAlwaysNodeLink(approvalWFNode, wfjobTemplateNode);
+            });
+          });
+        });
+    });
   });
 
   after(() => {
@@ -147,7 +155,7 @@ describe('Workflow Approvals Tests', () => {
     cy.deleteAwxUser(userWFDeny, { failOnStatusCode: false });
   });
 
-  describe('Workflow Approvals - List View', () => {
+  describe('Workflow Approvals - Approve, Deny, Delete', () => {
     it('admin can approve and then delete a workflow approval from the list row item', () => {
       cy.intercept(
         'POST',
@@ -201,37 +209,50 @@ describe('Workflow Approvals Tests', () => {
           });
         });
     });
+  });
 
-    it.only('admin can enable concurrent jobs in a WFJT with a WF approval node, launch the job multiple times, bulk approve, and then bulk delete from the list toolbar', () => {
-      cy.visit(`/templates/workflow-job-template/${workflowJobTemplate.id.toString()}/edit`);
-      cy.verifyPageTitle('Edit Workflow Job Template');
-      cy.getByDataCy('allow_simultaneous').click();
-      cy.intercept(
-        'PATCH',
-        awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/`
-      ).as('edited');
-      cy.getByDataCy('Submit').click();
-      cy.wait('@edited')
-        .its('response.body')
-        .then((response: WorkflowJobTemplate) => {
-          expect(response.allow_simultaneous).to.eql(true);
-          cy.getByDataCy('enabled-options').should('contain', 'Concurrent jobs');
-          cy.intercept(
-            'POST',
-            awxAPI`/workflow_job_templates/${response.id.toString()}/launch/`
-          ).as('launched');
-          cy.getByDataCy('launch-template').click();
-          cy.wait('@launched')
+  /* 
+  Used in the Workflow Approvals - Bulk Approve, Bulk Deny, Bulk Delete tests (below)
+  **/
+  function editJobTemplate() {
+    cy.visit(`/templates/workflow-job-template/${workflowJobTemplate.id.toString()}/edit`);
+    cy.verifyPageTitle('Edit Workflow Job Template');
+    cy.getByDataCy('allow_simultaneous').click();
+    cy.intercept('PATCH', awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/`).as(
+      'edited'
+    );
+    cy.getByDataCy('Submit').click();
+    cy.wait('@edited')
+      .its('response.body')
+      .then((response: WorkflowJobTemplate) => {
+        expect(response.allow_simultaneous).to.eql(true);
+        cy.getByDataCy('enabled-options').should('contain', 'Concurrent jobs');
+      });
+  }
+
+  /* 
+  Used in the Workflow Approvals - Bulk Approve, Bulk Deny, Bulk Delete tests (below)
+  **/
+  function workflowApprovalBulkAction(selectorDataCy: 'approve' | 'deny') {
+    cy.intercept(
+      'POST',
+      awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/launch/`
+    ).as('launched');
+    cy.getByDataCy('launch-template').click();
+    cy.wait('@launched')
+      .its('response.body')
+      .then((launched: WorkflowJob) => {
+        cy.pollFirstPendingWorkflowApprovalsForWorkflowJobID(launched.id).then((wfApprovalA) => {
+          cy.url().should('contain', '/output');
+          cy.intercept('POST', awxAPI`/workflow_jobs/${launched.id.toString()}/relaunch/`).as(
+            'relaunched'
+          );
+          cy.getByDataCy('relaunch-job').click();
+          cy.wait('@relaunched')
             .its('response.body')
-            .then((launched: WorkflowJob) => {
-              cy.url().should('contain', '/output');
-              cy.intercept('POST', awxAPI`/workflow_jobs/${launched.id.toString()}/relaunch/`).as(
-                'relaunched'
-              );
-              cy.getByDataCy('relaunch-job').click();
-              cy.wait('@relaunched')
-                .its('response.body')
-                .then((relaunched: WorkflowJob) => {
+            .then((relaunched: WorkflowJob) => {
+              cy.pollFirstPendingWorkflowApprovalsForWorkflowJobID(relaunched.id).then(
+                (wfApprovalB) => {
                   cy.url().should('contain', '/output');
                   cy.intercept(
                     'POST',
@@ -241,15 +262,62 @@ describe('Workflow Approvals Tests', () => {
                   cy.wait('@relaunchedAgain')
                     .its('response.body')
                     .then((relaunchedAgain: WorkflowJob) => {
-                      cy.url().should('contain', '/output');
+                      cy.pollFirstPendingWorkflowApprovalsForWorkflowJobID(relaunchedAgain.id).then(
+                        (wfApprovalC) => {
+                          expect(wfApprovalA.name).to.eql(wfApprovalB.name);
+                          expect(wfApprovalB.name).to.eql(wfApprovalC.name);
+                          cy.url().should('contain', '/output');
+                          cy.get('[data-cy="relaunch-job"]').should('be.visible');
+                          cy.intercept('OPTIONS', awxAPI`/workflow_approvals/`).as('options');
+                          cy.navigateTo('awx', 'workflow-approvals');
+                          cy.wait('@options');
+                          const jobName = wfApprovalC.name.split(' ').slice(-1).toString();
+                          cy.filterTableBySingleSelect('name', jobName);
+                          cy.get('tbody').find('tr').should('have.length', 3);
+                          cy.getByDataCy('select-all').click();
+                          cy.getBy('[data-ouia-component-id="page-toolbar"]').within(() => {
+                            cy.getByDataCy(`${selectorDataCy}`).click();
+                          });
+                          cy.getModal().within(() => {
+                            cy.get('[data-ouia-component-id="confirm"]').click();
+                            cy.get('[data-ouia-component-id="submit"]').click();
+                            cy.clickButton('Close');
+                          });
+                          cy.get('tbody').find('tr').should('have.length', 3);
+                          cy.getByDataCy('select-all').click();
+                          cy.getBy('[data-ouia-component-id="page-toolbar"]').within(() => {
+                            cy.getByDataCy('actions-dropdown')
+                              .click()
+                              .then(() => {
+                                cy.getByDataCy('delete').click();
+                              });
+                          });
+                          cy.getModal().within(() => {
+                            cy.get('[data-ouia-component-id="confirm"]').click();
+                            cy.get('[data-ouia-component-id="submit"]').click();
+                            cy.clickButton('Close');
+                          });
+                          cy.get('h2').should('contain', 'No results found');
+                        }
+                      );
                     });
-                });
+                }
+              );
             });
         });
+      });
+  }
+
+  describe('Workflow Approvals - Bulk Approve, Bulk Deny, Bulk Delete', () => {
+    it(`admin can enable concurrent jobs in a WFJT with a WF approval node, launch the job multiple times, bulk approve, and then bulk delete from the list toolbar`, () => {
+      editJobTemplate();
+      workflowApprovalBulkAction('approve');
     });
 
-    it.skip('admin can enable concurrent jobs in a WFJT with a WF approval node, launch the job multiple times, bulk deny, and then bulk delete from the list toolbar', () => {
-      //
+    it('admin can enable concurrent jobs in a WFJT with a WF approval node, launch the job multiple times, bulk deny, and then bulk delete from the list toolbar', () => {
+      cy.visit(`/templates/workflow-job-template/${workflowJobTemplate.id.toString()}/details`);
+      cy.verifyPageTitle(`${workflowJobTemplate.name}`);
+      workflowApprovalBulkAction('deny');
     });
   });
 
