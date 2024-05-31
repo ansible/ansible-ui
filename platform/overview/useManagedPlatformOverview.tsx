@@ -35,7 +35,7 @@ export function useManagedPlatformOverview() {
   const { openManageItems: openManageDashboard, managedItems: managedResources } =
     useManageItems<Resource>({
       id: 'platform-dashboard',
-      title: 'Manage Dashboard',
+      title: 'Manage view',
       description: t(
         'Hide or show the panels you want to see on the overview page by selecting or unselecting, respectively. The panels are ordered from top to bottom on the list. Use the draggable icon :: to re-order your view.'
       ),
