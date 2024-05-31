@@ -27,6 +27,9 @@ export function useAwxMultiSelectListView<T extends { id: number }>(
 ) {
   const { setValue } = useFormContext();
   const { wizardData, stepData } = usePageWizard();
+  // console.log('onChange ResourcesStep: fieldName', fieldName);
+  // console.log('onChange ResourcesStep: wizardData', wizardData);
+  // console.log('onChange ResourcesStep: stepData', stepData);
 
   const view = useAwxView<T>({
     ...viewOptions,
