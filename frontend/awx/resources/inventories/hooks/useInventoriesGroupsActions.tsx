@@ -12,7 +12,6 @@ import { AwxRoute } from '../../../main/AwxRoutes';
 import { cannotEditResource } from '../../../../common/utils/RBAChelpers';
 import { useParams } from 'react-router-dom';
 import { useRunCommandAction } from './useInventoriesGroupsToolbarActions';
-import { IAwxView } from '../../../common/useAwxView';
 
 export function useInventoriesGroupsActions() {
   const { t } = useTranslation();
@@ -20,7 +19,7 @@ export function useInventoriesGroupsActions() {
   const params = useParams<{ id: string; inventory_type: string }>();
 
   const runCommandAction = useRunCommandAction<InventoryGroup>(
-    { ...params, actionType: 'row'},
+    { ...params, actionType: 'row' },
     { isPinned: false }
   );
 

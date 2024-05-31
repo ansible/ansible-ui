@@ -25,7 +25,7 @@ export function InventoryGroups() {
     tableColumns,
   });
   const toolbarActions = useInventoriesGroupsToolbarActions(view);
-  const rowActions = useInventoriesGroupsActions(view);
+  const rowActions = useInventoriesGroupsActions();
 
   const constructed_inventory = params.inventory_type === 'constructed_inventory' ? true : false;
   const groupOptions = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/groups/`).data;

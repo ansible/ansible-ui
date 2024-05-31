@@ -17,6 +17,7 @@ import { awxAPI } from '../../../common/api/awx-utils';
 import { InventoryGroup } from '../../../interfaces/InventoryGroup';
 import { ButtonVariant } from '@patternfly/react-core';
 import { cannotDeleteResources } from '../../../../common/utils/RBAChelpers';
+import { useCallback } from 'react';
 
 export function useInventoriesGroupsToolbarActions(view: IAwxView<InventoryGroup>) {
   const { t } = useTranslation();
@@ -37,7 +38,11 @@ export function useInventoriesGroupsToolbarActions(view: IAwxView<InventoryGroup
   );
 
   const selectedItems = view.selectedItems || [];
-  const runCommandAction = useRunCommandAction<InventoryGroup>({ ...params, selectedItems, actionType : 'toolbar'});
+  const runCommandAction = useRunCommandAction<InventoryGroup>({
+    ...params,
+    selectedItems,
+    actionType: 'toolbar',
+  });
 
   return useMemo<IPageAction<InventoryGroup>[]>(() => {
     const actions: IPageAction<InventoryGroup>[] = [];
@@ -99,7 +104,7 @@ export function useRunCommandAction<T extends { name: string }>(
     inventory_type?: string;
     id?: string;
     selectedItems?: T[];
-    actionType : 'row' | 'toolbar';
+    actionType: 'row' | 'toolbar';
   },
   options?: { isPinned?: boolean }
 ): IPageAction<T> {
@@ -113,72 +118,67 @@ export function useRunCommandAction<T extends { name: string }>(
     adhocOptions && adhocOptions.actions && adhocOptions.actions['POST']
   );
 
-  function onClick(selectedItems: T[])
-  {
-    const limit = selectedItems.map((item) => item.name).join(', ');
-    const query: { limit?: string; key?: string } = {};
+  const onClick = useCallback(
+    (selectedItems: T[]) => {
+      const limit = selectedItems.map((item) => item.name).join(', ');
+      const query: { limit?: string; key?: string } = {};
 
-    if (limit.length < 20) {
-      query.limit = limit;
-    } else {
-      query.key = generateRandomID();
-      localStorage.setItem(query.key, limit);
-    }
+      if (limit.length < 20) {
+        query.limit = limit;
+      } else {
+        query.key = generateRandomID();
+        localStorage.setItem(query.key, limit);
+      }
 
-    pageNavigate(AwxRoute.InventoryRunCommand, {
-      params: { inventory_type: params.inventory_type, id: params.id },
-      query,
-    });
-  }
+      pageNavigate(AwxRoute.InventoryRunCommand, {
+        params: { inventory_type: params.inventory_type, id: params.id },
+        query,
+      });
+    },
+    [pageNavigate, params.inventory_type, params.id]
+  );
 
-  function isDisabled()
-  {
+  const isDisabled = useCallback(() => {
     return canRunAdHocCommand
-          ? undefined
-          : t(
-              'You do not have permission to run an ad hoc command. Please contact your organization administrator if there is an issue with your access.'
-            );
-  }
+      ? undefined
+      : t(
+          'You do not have permission to run an ad hoc command. Please contact your organization administrator if there is an issue with your access.'
+        );
+  }, [canRunAdHocCommand, t]);
+
+  const toolbarAction = useMemo<IPageAction<T>>(() => {
+    return {
+      type: PageActionType.Button,
+      selection: PageActionSelection.None,
+      variant: ButtonVariant.secondary,
+      isPinned: options?.isPinned !== undefined ? options?.isPinned : true,
+      label: t('Run Command'),
+      onClick: () => {
+        onClick(params.selectedItems || []);
+      },
+      isDisabled: () => isDisabled(),
+    };
+  }, [t, options?.isPinned, onClick, isDisabled, params.selectedItems]);
+
+  const rowAction = useMemo<IPageAction<T>>(() => {
+    return {
+      type: PageActionType.Button,
+      selection: PageActionSelection.Single,
+      isPinned: options?.isPinned,
+      label: t('Run Command'),
+      onClick: (item) => {
+        onClick([item]);
+      },
+      isDisabled: () => isDisabled(),
+    };
+  }, [t, onClick, isDisabled, options?.isPinned]);
 
   if (params.actionType === 'toolbar') {
-    return useMemo<IPageAction<T>>(() => {
-      return {
-        type: PageActionType.Button,
-        selection: PageActionSelection.None,
-        variant: ButtonVariant.secondary,
-        isPinned: options?.isPinned !== undefined ? options?.isPinned : true,
-        label: t('Run Command'),
-        onClick: () => {
-        onClick(params.selectedItems || []);
-        },
-        isDisabled: () =>
-          isDisabled(),
-      };
-    }, [
-      t,
-      pageNavigate,
-      params.inventory_type,
-      params.id,
-      canRunAdHocCommand,
-      options?.isPinned,
-      onClick,
-    ]);
+    return toolbarAction;
   }
 
   if (params.actionType === 'row') {
-    return useMemo<IPageAction<T>>(() => {
-      return {
-        type: PageActionType.Button,
-        selection: PageActionSelection.Single,
-        isPinned: false,
-        label: t('Run Command'),
-        onClick: (item) => {
-          onClick([item]);
-        },
-        isDisabled: () =>
-          isDisabled(),
-      };
-    }, [t, pageNavigate, params.inventory_type, params.id, canRunAdHocCommand, onClick]);
+    return rowAction;
   }
 
   return {} as IPageAction<T>;
