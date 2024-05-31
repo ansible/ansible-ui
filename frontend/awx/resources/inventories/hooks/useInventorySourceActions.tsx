@@ -21,9 +21,7 @@ type InventorySourceActionOptions = {
   unselectAndRefresh: (inventorySources: InventorySource[]) => void;
 };
 
-export function useInventorySourceActions({
-  unselectAndRefresh,
-}: InventorySourceActionOptions) {
+export function useInventorySourceActions({ unselectAndRefresh }: InventorySourceActionOptions) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const deleteInventorySources = useDeleteInventorySources(unselectAndRefresh);
@@ -47,7 +45,7 @@ export function useInventorySourceActions({
         });
       }
     },
-    [alertToaster, postRequest, t]
+    [alertToaster, postRequest, t, unselectAndRefresh]
   );
 
   return useMemo<IPageAction<InventorySource>[]>(() => {

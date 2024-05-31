@@ -21,7 +21,10 @@ import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
 import { usePostRequest } from '../../../../common/crud/usePostRequest';
 import { usePageAlertToaster } from '../../../../../framework';
 
-export function useInventoriesSourcesToolbarActions(view: IAwxView<InventorySource>, inventory_id : string) {
+export function useInventoriesSourcesToolbarActions(
+  view: IAwxView<InventorySource>,
+  inventory_id: string
+) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const deleteSources = useDeleteSources(view.unselectItemsAndRefresh);
@@ -37,16 +40,21 @@ export function useInventoriesSourcesToolbarActions(view: IAwxView<InventorySour
 
   const { activeAwxUser } = useAwxActiveUser();
 
-  let cannotLaunchInventorySourcesUpdate : string = '';
-  
-    if (view.pageItems === undefined || view.pageItems.length === 0) {
-      cannotLaunchInventorySourcesUpdate = t('There are no inventory sources to update');
-    }
+  let cannotLaunchInventorySourcesUpdate: string = '';
 
-    if (view.pageItems && !view.pageItems.every( (item) => item.summary_fields.user_capabilities.start) || activeAwxUser?.is_system_auditor)
-    {
-      cannotLaunchInventorySourcesUpdate = t(`The inventory source cannot be updated due to insufficient permission`);
-    }
+  if (view.pageItems === undefined || view.pageItems.length === 0) {
+    cannotLaunchInventorySourcesUpdate = t('There are no inventory sources to update');
+  }
+
+  if (
+    (view.pageItems &&
+      !view.pageItems.every((item) => item.summary_fields.user_capabilities.start)) ||
+    activeAwxUser?.is_system_auditor
+  ) {
+    cannotLaunchInventorySourcesUpdate = t(
+      `The inventory source cannot be updated due to insufficient permission`
+    );
+  }
 
   const syncAll = useSyncAll(inventory_id, view.refresh);
 
@@ -85,35 +93,41 @@ export function useInventoriesSourcesToolbarActions(view: IAwxView<InventorySour
         selection: PageActionSelection.None,
         isPinned: true,
         label: t('Sync all'),
-        onClick: () => { syncAll() },
+        onClick: syncAll,
         isDisabled: () => cannotLaunchInventorySourcesUpdate,
       },
     ],
-    [t, deleteSources, pageNavigate, params.inventory_type, params.id, canCreateSource, cannotLaunchInventorySourcesUpdate]
+    [
+      t,
+      deleteSources,
+      pageNavigate,
+      params.inventory_type,
+      params.id,
+      canCreateSource,
+      cannotLaunchInventorySourcesUpdate,
+      syncAll,
+    ]
   );
 }
 
-function useSyncAll(inventory_id : string, refresh : () => void ) {
+function useSyncAll(inventory_id: string, refresh: () => Promise<void>): () => void {
   const url = awxAPI`/inventories/${inventory_id}/update_inventory_sources/`;
   const postRequest = usePostRequest();
   const alertToaster = usePageAlertToaster();
-  const {t} = useTranslation();
+  const { t } = useTranslation();
 
   return () => {
-    (async () => {
-    
-      try
-      {
+    void (async () => {
+      try {
         await postRequest(url, {});
-        refresh();
-      }catch(error)
-      {
+        void refresh();
+      } catch (error) {
         alertToaster.addAlert({
           variant: 'danger',
           title: t('Failed to sync all inventory sources'),
-          children: error instanceof Error && error.message,
+          children: error instanceof Error ? error.message : String(error),
           timeout: 5000,
-        });     
+        });
       }
     })();
   };
