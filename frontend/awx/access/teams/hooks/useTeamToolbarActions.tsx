@@ -50,19 +50,6 @@ export function useTeamToolbarActions(view: IAwxView<Team>) {
         label: t('Add users to selected teams'),
         onClick: () => selectUsersAddTeams(view.selectedItems),
       },
-      /**
-       * TODO: This feature is being hidden for the time being as it is not implemented accurately
-       * at the moment. It is also not a feature in the awx UI.
-       * With each team having its own access_list of users, we will need to design an experience
-       * and implementation to handle removal of users from multiple teams.
-       */
-      // {
-      //   type: PageActionType.Button,
-      // selection: PageActionSelection.Multiple,
-      //   icon: MinusCircleIcon,
-      //   label: t('Remove users from selected teams'),
-      //   onClick: () => selectUsersRemoveTeams(view.selectedItems), // This hook has been repurposed as useSelectAndRemoveUsersFromTeam to handle removing users from a single team
-      // },
       {
         type: PageActionType.Button,
         selection: PageActionSelection.None,
