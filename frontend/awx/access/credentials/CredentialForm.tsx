@@ -577,10 +577,10 @@ function CredentialSubForm({
   const { t } = useTranslation();
   const openCredentialPluginsModal = useCredentialPluginsModal();
   const requiredFields = credentialType?.inputs?.required || [];
-  const requiredFieldsInSubForm = credentialType.inputs.fields.filter((field) =>
+  const requiredFieldsInSubForm = credentialType?.inputs?.fields?.filter((field) =>
     requiredFields.includes(field.id)
   );
-  const subFormFields = credentialType.inputs.fields.map((field) => field.id);
+  const subFormFields = credentialType?.inputs?.fields?.map((field) => field.id);
 
   const watchedRequiredFields = useWatch({
     name: requiredFields,
