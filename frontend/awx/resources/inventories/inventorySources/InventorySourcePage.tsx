@@ -28,10 +28,11 @@ export function InventorySourcePage() {
   const pageNavigate = usePageNavigate();
   const getPageUrl = useGetPageUrl();
   const itemActions = useInventorySourceActions({
-    unselectAndRefresh: () =>
+    onDelete: () =>
       pageNavigate(AwxRoute.InventorySources, {
         params: { id: params.id, inventory_type: params.inventory_type },
       }),
+    onSync: refresh,
   });
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!inventorySource) return <LoadingPage breadcrumbs tabs />;

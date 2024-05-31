@@ -18,13 +18,14 @@ import { AwxRoute } from '../../../main/AwxRoutes';
 import { useDeleteInventorySources } from './useDeleteInventorySources';
 
 type InventorySourceActionOptions = {
-  unselectAndRefresh: (inventorySources: InventorySource[]) => void;
+  onDelete: (inventorySources: InventorySource[]) => void;
+  onSync: () => void;
 };
 
-export function useInventorySourceActions({ unselectAndRefresh }: InventorySourceActionOptions) {
+export function useInventorySourceActions({ onDelete, onSync }: InventorySourceActionOptions) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
-  const deleteInventorySources = useDeleteInventorySources(unselectAndRefresh);
+  const deleteInventorySources = useDeleteInventorySources(onDelete);
   const params = useParams<{ inventory_type: string }>();
 
   const { activeAwxUser } = useAwxActiveUser();
@@ -35,7 +36,7 @@ export function useInventorySourceActions({ unselectAndRefresh }: InventorySourc
     async (invSrc: InventorySource) => {
       try {
         await postRequest(awxAPI`/inventory_sources/${invSrc.id.toString()}/update/`, {});
-        unselectAndRefresh([]);
+        onSync();
       } catch (error) {
         alertToaster.addAlert({
           variant: 'danger',
@@ -45,7 +46,7 @@ export function useInventorySourceActions({ unselectAndRefresh }: InventorySourc
         });
       }
     },
-    [alertToaster, postRequest, t, unselectAndRefresh]
+    [alertToaster, postRequest, t, onSync]
   );
 
   return useMemo<IPageAction<InventorySource>[]>(() => {

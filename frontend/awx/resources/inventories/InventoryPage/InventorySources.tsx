@@ -30,7 +30,8 @@ export function InventorySources() {
 
   const toolbarActions = useInventoriesSourcesToolbarActions(view, params.id || '');
   const rowActions = useInventorySourceActions({
-    unselectAndRefresh: view.unselectItemsAndRefresh,
+    onDelete: view.unselectItemsAndRefresh,
+    onSync: () => void view.refresh(),
   });
 
   const sourceOptions = useOptions<OptionsResponse<ActionsResponse>>(
