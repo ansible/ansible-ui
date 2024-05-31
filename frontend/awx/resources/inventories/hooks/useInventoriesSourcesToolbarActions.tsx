@@ -97,6 +97,7 @@ function useSyncAll(inventory_id : string, refresh : () => void ) {
   const url = awxAPI`/inventories/${inventory_id}/update_inventory_sources/`;
   const postRequest = usePostRequest();
   const alertToaster = usePageAlertToaster();
+  const {t} = useTranslation();
 
   return () => {
     (async () => {
@@ -105,9 +106,15 @@ function useSyncAll(inventory_id : string, refresh : () => void ) {
       {
         await postRequest(url, {});
         refresh();
-      }catch(err)
+      }catch(error)
       {
-        alertToaster.addAlert({ title : (err as Object)?.toString(), variant : 'danger' });      }
+        alertToaster.addAlert({
+          variant: 'danger',
+          title: t('Failed to sync all inventory sources'),
+          children: error instanceof Error && error.message,
+          timeout: 5000,
+        });     
+      }
     })();
   };
 }
