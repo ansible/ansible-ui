@@ -36,6 +36,7 @@ export function useHostsGroupsToolbarActions(
   const runCommandAction = useRunCommandAction<InventoryGroup>({
     ...params,
     selectedItems: view.selectedItems || [],
+    actionType: 'toolbar',
   });
 
   return useMemo<IPageAction<InventoryGroup>[]>(() => {

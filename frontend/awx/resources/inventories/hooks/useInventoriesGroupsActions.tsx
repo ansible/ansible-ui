@@ -14,13 +14,13 @@ import { useParams } from 'react-router-dom';
 import { useRunCommandAction } from './useInventoriesGroupsToolbarActions';
 import { IAwxView } from '../../../common/useAwxView';
 
-export function useInventoriesGroupsActions(view: IAwxView<InventoryGroup>) {
+export function useInventoriesGroupsActions() {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const params = useParams<{ id: string; inventory_type: string }>();
 
   const runCommandAction = useRunCommandAction<InventoryGroup>(
-    { ...params, selectedItems: view.selectedItems || [] },
+    { ...params, actionType: 'row'},
     { isPinned: false }
   );
 

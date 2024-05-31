@@ -37,7 +37,7 @@ export function useInventoriesGroupsToolbarActions(view: IAwxView<InventoryGroup
   );
 
   const selectedItems = view.selectedItems || [];
-  const runCommandAction = useRunCommandAction<InventoryGroup>({ ...params, selectedItems });
+  const runCommandAction = useRunCommandAction<InventoryGroup>({ ...params, selectedItems, actionType : 'toolbar'});
 
   return useMemo<IPageAction<InventoryGroup>[]>(() => {
     const actions: IPageAction<InventoryGroup>[] = [];
@@ -98,7 +98,8 @@ export function useRunCommandAction<T extends { name: string }>(
   params: {
     inventory_type?: string;
     id?: string;
-    selectedItems: T[];
+    selectedItems?: T[];
+    actionType : 'row' | 'toolbar';
   },
   options?: { isPinned?: boolean }
 ): IPageAction<T> {
@@ -112,45 +113,75 @@ export function useRunCommandAction<T extends { name: string }>(
     adhocOptions && adhocOptions.actions && adhocOptions.actions['POST']
   );
 
-  return useMemo<IPageAction<T>>(() => {
-    return {
-      type: PageActionType.Button,
-      selection: PageActionSelection.None,
-      variant: ButtonVariant.secondary,
-      isPinned: options?.isPinned !== undefined ? options?.isPinned : true,
-      label: t('Run Command'),
-      onClick: () => {
-        const limit = params.selectedItems.map((item) => item.name).join(', ');
-        const query: { limit?: string; key?: string } = {};
+  function onClick(selectedItems: T[])
+  {
+    const limit = selectedItems.map((item) => item.name).join(', ');
+    const query: { limit?: string; key?: string } = {};
 
-        if (limit.length < 20) {
-          query.limit = limit;
-        } else {
-          query.key = generateRandomID();
-          localStorage.setItem(query.key, limit);
-        }
+    if (limit.length < 20) {
+      query.limit = limit;
+    } else {
+      query.key = generateRandomID();
+      localStorage.setItem(query.key, limit);
+    }
 
-        pageNavigate(AwxRoute.InventoryRunCommand, {
-          params: { inventory_type: params.inventory_type, id: params.id },
-          query,
-        });
-      },
-      isDisabled: () =>
-        canRunAdHocCommand
+    pageNavigate(AwxRoute.InventoryRunCommand, {
+      params: { inventory_type: params.inventory_type, id: params.id },
+      query,
+    });
+  }
+
+  function isDisabled()
+  {
+    return canRunAdHocCommand
           ? undefined
           : t(
               'You do not have permission to run an ad hoc command. Please contact your organization administrator if there is an issue with your access.'
-            ),
-    };
-  }, [
-    t,
-    pageNavigate,
-    params.inventory_type,
-    params.id,
-    canRunAdHocCommand,
-    options?.isPinned,
-    params.selectedItems,
-  ]);
+            );
+  }
+
+  if (params.actionType === 'toolbar') {
+    return useMemo<IPageAction<T>>(() => {
+      return {
+        type: PageActionType.Button,
+        selection: PageActionSelection.None,
+        variant: ButtonVariant.secondary,
+        isPinned: options?.isPinned !== undefined ? options?.isPinned : true,
+        label: t('Run Command'),
+        onClick: () => {
+        onClick(params.selectedItems || []);
+        },
+        isDisabled: () =>
+          isDisabled(),
+      };
+    }, [
+      t,
+      pageNavigate,
+      params.inventory_type,
+      params.id,
+      canRunAdHocCommand,
+      options?.isPinned,
+      onClick,
+    ]);
+  }
+
+  if (params.actionType === 'row') {
+    return useMemo<IPageAction<T>>(() => {
+      return {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        isPinned: false,
+        label: t('Run Command'),
+        onClick: (item) => {
+          onClick([item]);
+        },
+        isDisabled: () =>
+          isDisabled(),
+      };
+    }, [t, pageNavigate, params.inventory_type, params.id, canRunAdHocCommand, onClick]);
+  }
+
+  return {} as IPageAction<T>;
 }
 
 function generateRandomID() {

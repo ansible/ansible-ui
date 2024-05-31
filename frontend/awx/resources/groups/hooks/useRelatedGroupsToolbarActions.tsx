@@ -36,6 +36,7 @@ export function useRelatedGroupsToolbarActions(view: IAwxView<InventoryGroup>) {
   const runCommandAction = useRunCommandAction<InventoryGroup>({
     ...params,
     selectedItems: view.selectedItems || [],
+    actionType: 'toolbar',
   });
 
   const groupOptions = useOptions<OptionsResponse<ActionsResponse>>(

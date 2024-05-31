@@ -33,6 +33,7 @@ export function useInventoriesGroupsHostsToolbarActions(view: IAwxView<AwxHost>)
   const runCommandAction = useRunCommandAction<AwxHost>({
     ...params,
     selectedItems: view.selectedItems || [],
+    actionType: 'toolbar',
   });
 
   const hostOptions = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/hosts/`).data;
