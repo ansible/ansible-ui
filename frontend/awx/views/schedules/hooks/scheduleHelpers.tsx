@@ -6,13 +6,13 @@ import { AwxRoute } from '../../../main/AwxRoutes';
 export const resourceEndPoints: { [key: string]: string } = {
   sources: awxAPI`/inventory_sources/`,
   projects: awxAPI`/projects/`,
-  job_template: awxAPI`/job_templates/`,
-  workflow_job_template: awxAPI`/workflow_job_templates/`,
+  'job-template': awxAPI`/job_templates/`,
+  'workflow-job-template': awxAPI`/workflow_job_templates/`,
   'management-jobs': awxAPI`/system_job_templates/`,
 };
 export const scheduleResourceTypeOptions: string[] = [
-  'job_template',
-  'workflow_job_template',
+  'job-template',
+  'workflow-job-template',
   'inventory',
   'projects',
   'management-jobs',
