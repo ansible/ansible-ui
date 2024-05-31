@@ -48,7 +48,7 @@ export function useInventoriesSourcesToolbarActions(view: IAwxView<InventorySour
       cannotLaunchInventorySourcesUpdate = t(`The inventory source cannot be updated due to insufficient permission`);
     }
 
-  const syncAll = useSyncAll(inventory_id);
+  const syncAll = useSyncAll(inventory_id, view.refresh);
 
   return useMemo<IPageAction<InventorySource>[]>(
     () => [
@@ -93,7 +93,7 @@ export function useInventoriesSourcesToolbarActions(view: IAwxView<InventorySour
   );
 }
 
-function useSyncAll(inventory_id : string) {
+function useSyncAll(inventory_id : string, refresh : () => void ) {
   const url = awxAPI`/inventories/${inventory_id}/update_inventory_sources/`;
   const postRequest = usePostRequest();
   const alertToaster = usePageAlertToaster();
@@ -104,6 +104,7 @@ function useSyncAll(inventory_id : string) {
       try
       {
         await postRequest(url, {});
+        refresh();
       }catch(err)
       {
         alertToaster.addAlert({ title : (err as Object)?.toString(), variant : 'danger' });      }
