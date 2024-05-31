@@ -97,6 +97,7 @@ export function useRunCommandAction<T extends object>(
   params: {
     inventory_type?: string;
     id?: string;
+    selectedItems: T[];
   },
   options?: { isPinned?: boolean }
 ): IPageAction<T> {
@@ -118,9 +119,12 @@ export function useRunCommandAction<T extends object>(
       isPinned: options?.isPinned !== undefined ? options?.isPinned : true,
       label: t('Run Command'),
       onClick: () =>
-        pageNavigate(AwxRoute.InventoryRunCommand, {
-          params: { inventory_type: params.inventory_type, id: params.id },
-        }),
+        {
+          debugger;
+          pageNavigate(AwxRoute.InventoryRunCommand, {
+            params: { inventory_type: params.inventory_type, id: params.id },
+          })
+        },
       isDisabled: () =>
         canRunAdHocCommand
           ? undefined
@@ -128,5 +132,5 @@ export function useRunCommandAction<T extends object>(
               'You do not have permission to run an ad hoc command. Please contact your organization administrator if there is an issue with your access.'
             ),
     };
-  }, [t, pageNavigate, params.inventory_type, params.id, canRunAdHocCommand, options?.isPinned]);
+  }, [t, pageNavigate, params.inventory_type, params.id, canRunAdHocCommand, options?.isPinned, params.selectedItems]);
 }

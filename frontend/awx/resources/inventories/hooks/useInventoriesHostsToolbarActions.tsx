@@ -26,7 +26,8 @@ export function useInventoriesHostsToolbarActions(view: IAwxView<AwxHost>) {
   const params = useParams<{ id: string; inventory_type: string }>();
   const inventory_type = params.inventory_type;
 
-  const runCommandAction = useRunCommandAction<AwxHost>(params);
+  const selectedItems = view.selectedItems || [];
+  const runCommandAction = useRunCommandAction<AwxHost>({...params, selectedItems});
 
   const hostOptions = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/hosts/`).data;
   const canCreateHost = Boolean(hostOptions && hostOptions.actions && hostOptions.actions['POST']);
