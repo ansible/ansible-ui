@@ -24,7 +24,7 @@ export function GroupRelatedGroups() {
     tableColumns,
   });
   const toolbarActions = useRelatedGroupsToolbarActions(view);
-  const rowActions = useInventoriesGroupsActions();
+  const rowActions = useInventoriesGroupsActions(view);
   const emptyStateActions = useRelatedGroupsEmptyStateActions(view);
 
   const groupsOptions = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/groups/`).data;

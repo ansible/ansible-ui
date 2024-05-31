@@ -12,13 +12,17 @@ import { AwxRoute } from '../../../main/AwxRoutes';
 import { cannotEditResource } from '../../../../common/utils/RBAChelpers';
 import { useParams } from 'react-router-dom';
 import { useRunCommandAction } from './useInventoriesGroupsToolbarActions';
+import { IAwxView } from '../../../common/useAwxView';
 
-export function useInventoriesGroupsActions() {
+export function useInventoriesGroupsActions(view: IAwxView<InventoryGroup>) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const params = useParams<{ id: string; inventory_type: string }>();
 
-  const runCommandAction = useRunCommandAction<InventoryGroup>(params, { isPinned: false });
+  const runCommandAction = useRunCommandAction<InventoryGroup>(
+    { ...params, selectedItems: view.selectedItems || [] },
+    { isPinned: false }
+  );
 
   return useMemo<IPageAction<InventoryGroup>[]>(() => {
     if (params.inventory_type === 'constructed_inventory') {

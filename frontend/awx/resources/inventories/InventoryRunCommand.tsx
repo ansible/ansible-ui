@@ -31,7 +31,6 @@ export function InventoryRunCommand() {
 
   const pageNavigate = usePageNavigate();
   const { data: inventory } = useGet<Inventory>(awxAPI`/inventories/${id as string}/`);
-  
 
   const navigate = useNavigate();
 

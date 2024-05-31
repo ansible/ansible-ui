@@ -33,7 +33,10 @@ export function useRelatedGroupsToolbarActions(view: IAwxView<InventoryGroup>) {
 
   const isConstructed = params.inventory_type === 'constructed_inventory';
 
-  const runCommandAction = useRunCommandAction<InventoryGroup>(params);
+  const runCommandAction = useRunCommandAction<InventoryGroup>({
+    ...params,
+    selectedItems: view.selectedItems || [],
+  });
 
   const groupOptions = useOptions<OptionsResponse<ActionsResponse>>(
     awxAPI`/inventories/${params.id ?? ''}/groups/`

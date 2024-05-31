@@ -37,7 +37,7 @@ export function useInventoriesGroupsToolbarActions(view: IAwxView<InventoryGroup
   );
 
   const selectedItems = view.selectedItems || [];
-  const adHocCommand = useRunCommandAction<InventoryGroup>({...params, selectedItems});
+  const runCommandAction = useRunCommandAction<InventoryGroup>({ ...params, selectedItems });
 
   return useMemo<IPageAction<InventoryGroup>[]>(() => {
     const actions: IPageAction<InventoryGroup>[] = [];
@@ -63,7 +63,7 @@ export function useInventoriesGroupsToolbarActions(view: IAwxView<InventoryGroup
       });
     }
 
-    actions.push(adHocCommand);
+    actions.push(runCommandAction);
 
     if (params.inventory_type === 'inventory') {
       actions.push({ type: PageActionType.Seperator });
@@ -89,12 +89,12 @@ export function useInventoriesGroupsToolbarActions(view: IAwxView<InventoryGroup
     params.inventory_type,
     params.id,
     canCreateGroup,
-    adHocCommand,
+    runCommandAction,
     view.selectedItems.length,
   ]);
 }
 
-export function useRunCommandAction<T extends { name : string }>(
+export function useRunCommandAction<T extends { name: string }>(
   params: {
     inventory_type?: string;
     id?: string;
@@ -119,14 +119,13 @@ export function useRunCommandAction<T extends { name : string }>(
       variant: ButtonVariant.secondary,
       isPinned: options?.isPinned !== undefined ? options?.isPinned : true,
       label: t('Run Command'),
-      onClick: () =>
-        {
-          const limit = params.selectedItems.map((item) => item.name).join(', ');
-          pageNavigate(AwxRoute.InventoryRunCommand, {
-            params: { inventory_type: params.inventory_type, id: params.id },
-            query: { limit },
-          });
-        },
+      onClick: () => {
+        const limit = params.selectedItems.map((item) => item.name).join(', ');
+        pageNavigate(AwxRoute.InventoryRunCommand, {
+          params: { inventory_type: params.inventory_type, id: params.id },
+          query: { limit },
+        });
+      },
       isDisabled: () =>
         canRunAdHocCommand
           ? undefined
@@ -134,5 +133,13 @@ export function useRunCommandAction<T extends { name : string }>(
               'You do not have permission to run an ad hoc command. Please contact your organization administrator if there is an issue with your access.'
             ),
     };
-  }, [t, pageNavigate, params.inventory_type, params.id, canRunAdHocCommand, options?.isPinned, params.selectedItems]);
+  }, [
+    t,
+    pageNavigate,
+    params.inventory_type,
+    params.id,
+    canRunAdHocCommand,
+    options?.isPinned,
+    params.selectedItems,
+  ]);
 }

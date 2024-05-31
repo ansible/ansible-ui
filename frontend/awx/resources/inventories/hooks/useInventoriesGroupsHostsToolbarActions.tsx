@@ -30,7 +30,10 @@ export function useInventoriesGroupsHostsToolbarActions(view: IAwxView<AwxHost>)
   const params = useParams<{ id: string; group_id: string; inventory_type: string }>();
   const alertToaster = usePageAlertToaster();
 
-  const runCommandAction = useRunCommandAction<AwxHost>(params);
+  const runCommandAction = useRunCommandAction<AwxHost>({
+    ...params,
+    selectedItems: view.selectedItems || [],
+  });
 
   const hostOptions = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/hosts/`).data;
   const canCreateHost = Boolean(hostOptions && hostOptions.actions && hostOptions.actions['POST']);

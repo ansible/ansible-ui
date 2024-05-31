@@ -33,7 +33,10 @@ export function useHostsGroupsToolbarActions(
   const associateGroups = useAssociateGroupsToHost(view.unselectItemsAndRefresh, hostId);
 
   const params = useParams<{ id: string; inventory_type: string }>();
-  const runCommandAction = useRunCommandAction<InventoryGroup>(params);
+  const runCommandAction = useRunCommandAction<InventoryGroup>({
+    ...params,
+    selectedItems: view.selectedItems || [],
+  });
 
   return useMemo<IPageAction<InventoryGroup>[]>(() => {
     const arr: IPageAction<InventoryGroup>[] = [];
