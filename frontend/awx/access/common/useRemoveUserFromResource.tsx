@@ -37,7 +37,6 @@ export function useRemoveUsersFromResource() {
       const titleMap: { [key: string]: string } = {
         organization: 'Remove user from organization',
         team: 'Remove user from team',
-        // TODO: Expand map for other resource types
       };
       const title = resource.type ? titleMap[resource.type] : 'Remove user';
 
