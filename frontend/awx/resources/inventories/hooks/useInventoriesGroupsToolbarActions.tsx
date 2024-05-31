@@ -36,7 +36,8 @@ export function useInventoriesGroupsToolbarActions(view: IAwxView<InventoryGroup
     groupOptions && groupOptions.actions && groupOptions.actions['POST']
   );
 
-  const adHocCommand = useRunCommandAction<InventoryGroup>(params);
+  const selectedItems = view.selectedItems || [];
+  const adHocCommand = useRunCommandAction<InventoryGroup>({...params, selectedItems});
 
   return useMemo<IPageAction<InventoryGroup>[]>(() => {
     const actions: IPageAction<InventoryGroup>[] = [];
@@ -93,7 +94,7 @@ export function useInventoriesGroupsToolbarActions(view: IAwxView<InventoryGroup
   ]);
 }
 
-export function useRunCommandAction<T extends object>(
+export function useRunCommandAction<T extends { name : string }>(
   params: {
     inventory_type?: string;
     id?: string;
@@ -120,10 +121,11 @@ export function useRunCommandAction<T extends object>(
       label: t('Run Command'),
       onClick: () =>
         {
-          debugger;
+          const limit = params.selectedItems.map((item) => item.name).join(', ');
           pageNavigate(AwxRoute.InventoryRunCommand, {
             params: { inventory_type: params.inventory_type, id: params.id },
-          })
+            query: { limit },
+          });
         },
       isDisabled: () =>
         canRunAdHocCommand
