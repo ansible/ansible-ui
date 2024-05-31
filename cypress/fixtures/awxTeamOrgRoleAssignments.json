@@ -1,0 +1,47 @@
+{
+  "count": 1,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 6,
+      "url": "/api/controller/v2/role_team_assignments/6/",
+      "related": {
+        "created_by": "/api/controller/v2/users/5/",
+        "role_definition": "/api/controller/v2/role_definitions/24/",
+        "team": "/api/controller/v2/teams/3/",
+        "content_object": "/api/controller/v2/organizations/3/"
+      },
+      "summary_fields": {
+        "created_by": {
+          "id": 5,
+          "username": "dev",
+          "first_name": "",
+          "last_name": ""
+        },
+        "role_definition": {
+          "id": 24,
+          "name": "Organization Credential Admin",
+          "description": "Has all permissions to credentials within an organization",
+          "managed": true
+        },
+        "team": {
+          "id": 3,
+          "name": "Team 2",
+          "description": ""
+        },
+        "content_object": {
+          "id": 3,
+          "name": "Test Org",
+          "description": ""
+        }
+      },
+      "created": "2024-05-30T16:55:20.381726Z",
+      "created_by": 5,
+      "content_type": "shared.organization",
+      "object_id": "3",
+      "role_definition": 24,
+      "team": 3
+    }
+  ]
+}
