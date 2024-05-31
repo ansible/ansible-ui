@@ -17,6 +17,7 @@ import { InventorySource } from '../../../interfaces/InventorySource';
 import { OptionsResponse, ActionsResponse } from '../../../interfaces/OptionsResponse';
 import { IAwxView } from '../../../common/useAwxView';
 import { useDeleteSources } from '../../sources/hooks/useDeleteSources';
+import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
 
 export function useInventoriesSourcesToolbarActions(view: IAwxView<InventorySource>) {
   const { t } = useTranslation();
@@ -28,10 +29,23 @@ export function useInventoriesSourcesToolbarActions(view: IAwxView<InventorySour
     awxAPI`/inventory_sources/`
   ).data;
 
-  debugger;
   const canCreateSource = Boolean(
     sourceOptions && sourceOptions.actions && sourceOptions.actions['POST']
   );
+
+  const { activeAwxUser } = useAwxActiveUser();
+
+  let cannotLaunchInventorySourcesUpdate : string = '';
+  
+    if (view.pageItems === undefined || view.pageItems.length === 0) {
+      cannotLaunchInventorySourcesUpdate = t('There are no inventory sources to update');
+    }
+
+    if (view.pageItems && !view.pageItems.every( (item) => item.summary_fields.user_capabilities.start) || activeAwxUser?.is_system_auditor)
+    {
+      cannotLaunchInventorySourcesUpdate = t(`The inventory source cannot be updated due to insufficient permission`);
+    }
+
 
   return useMemo<IPageAction<InventorySource>[]>(
     () => [
@@ -69,9 +83,9 @@ export function useInventoriesSourcesToolbarActions(view: IAwxView<InventorySour
         isPinned: true,
         label: t('Sync all'),
         onClick: () => {},
-        isDisabled: () => '',
+        isDisabled: () => cannotLaunchInventorySourcesUpdate,
       },
     ],
-    [t, deleteSources, pageNavigate, params.inventory_type, params.id, canCreateSource]
+    [t, deleteSources, pageNavigate, params.inventory_type, params.id, canCreateSource, cannotLaunchInventorySourcesUpdate]
   );
 }
