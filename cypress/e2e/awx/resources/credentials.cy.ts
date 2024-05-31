@@ -86,8 +86,16 @@ describe('Credentials', () => {
       cy.verifyPageTitle('Edit Credential');
       cy.get('[data-cy="vault-id"]').should('have.attr', 'disabled');
       cy.get('[data-cy="vault-password"]').should('be.visible');
-      cy.get('[data-cy="vault-password"]').clear().type('new password');
+      cy.get('[data-cy="vault-password"]').then(($input) => {
+        expect($input.val()).to.eq('ENCRYPTED');
+      });
+      cy.get('[data-cy="ask_vault_password"]').check();
       cy.clickButton(/^Save credential$/);
+      cy.get('[data-cy="name"]').contains(credentialName);
+      cy.contains('Vault Identifier').should('be.visible');
+      cy.get('[data-cy="vault-identifier"]').contains('id');
+      cy.contains('Vault Password').should('be.visible');
+      cy.get('[data-cy="vault-password"]').contains('Prompt on launch');
       //delete created credential
       cy.clickPageAction('delete-credential');
       cy.get('#confirm').click();
@@ -221,11 +229,11 @@ describe('Credentials', () => {
       });
       cy.get('[data-cy="password"]').should('be.visible');
       cy.get('[data-cy="password"]').then(($input) => {
-        expect($input.val()).to.eq('$encrypted$');
+        expect($input.val()).to.eq('ENCRYPTED');
       });
       cy.get('[data-cy="security-token"]').should('be.visible');
       cy.get('[data-cy="security-token"]').then(($input) => {
-        expect($input.val()).to.eq('$encrypted$');
+        expect($input.val()).to.eq('ENCRYPTED');
       });
       const newDescription = 'new description';
       cy.get('[data-cy="description"]').clear().type(newDescription);
