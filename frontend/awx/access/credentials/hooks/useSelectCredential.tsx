@@ -3,15 +3,15 @@ import { useTranslation } from 'react-i18next';
 import { IToolbarFilter, usePageDialog, useSelectDialog } from '../../../../../framework';
 import { SingleSelectDialog } from '../../../../../framework/PageDialogs/SingleSelectDialog';
 import { awxAPI } from '../../../common/api/awx-utils';
-import { useAwxView } from '../../../common/useAwxView';
-import { Credential } from '../../../interfaces/Credential';
-import { useCredentialsColumns } from './useCredentialsColumns';
 import {
   useCreatedByToolbarFilter,
   useDescriptionToolbarFilter,
   useModifiedByToolbarFilter,
   useNameToolbarFilter,
 } from '../../../common/awx-toolbar-filters';
+import { useAwxView } from '../../../common/useAwxView';
+import { Credential } from '../../../interfaces/Credential';
+import { useCredentialsColumns } from './useCredentialsColumns';
 
 const useToolbarFilters = () => {
   const nameToolbarFilter = useNameToolbarFilter();
@@ -30,6 +30,7 @@ const useToolbarFilters = () => {
   return toolbarFilters;
 };
 
+/** @deprecated */
 export function useMultiSelectCredential(
   isLookup: boolean,
   credentialType?: number,
