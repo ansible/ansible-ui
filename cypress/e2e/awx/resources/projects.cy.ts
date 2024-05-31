@@ -64,6 +64,7 @@ describe('Projects', () => {
           cy.hasDetail(/^Source control type$/, 'Git');
           cy.hasDetail(/^Enabled options$/, 'Allow branch override');
           cy.waitForProjectToFinishSyncing(newProject.id);
+          cy.contains('[data-cy="last-job-status"]', 'Success');
           cy.intercept('DELETE', awxAPI`/projects/${newProject.id.toString()}/`).as('deleted');
           cy.clickPageAction('delete-project');
           cy.getModal().within(() => {
@@ -313,7 +314,7 @@ describe('Projects', () => {
     });
   });
 
-  describe('Projects: Access Tab', () => {
+  describe('Projects: User Access Tab', () => {
     it('can navigate to project access tab', function () {
       cy.navigateTo('awx', 'projects');
       cy.filterTableByMultiSelect('name', [(this.globalProject as Project).name]);
@@ -321,7 +322,18 @@ describe('Projects', () => {
         disableFilter: true,
       });
       cy.verifyPageTitle(`${(this.globalProject as Project).name}`);
-      cy.clickTab(/^Access$/, true);
+      cy.clickTab(/^User Access$/, true);
+    });
+  });
+  describe('Projects: Team Access Tab', () => {
+    it('can navigate to project access tab', function () {
+      cy.navigateTo('awx', 'projects');
+      cy.filterTableByMultiSelect('name', [(this.globalProject as Project).name]);
+      cy.clickTableRowLink('name', `${(this.globalProject as Project).name}`, {
+        disableFilter: true,
+      });
+      cy.verifyPageTitle(`${(this.globalProject as Project).name}`);
+      cy.clickTab(/^Team Access$/, true);
     });
   });
 
@@ -478,7 +490,10 @@ describe('Projects', () => {
       cy.intercept('GET', awxAPI`/projects/${thisProject.id.toString()}/`).as('projectList');
       cy.wait('@edited');
       cy.wait('@projectList');
-      cy.get('[data-cy="exceptions-column-header"]').should('be.visible');
+      cy.get('[data-ouia-component-id="simple-table"]')
+        .first()
+        .scrollIntoView()
+        .should('be.visible');
       cy.getBy('[data-cy="edit-schedule"]').click();
       cy.get('[data-cy="wizard-nav"]').within(() => {
         ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
