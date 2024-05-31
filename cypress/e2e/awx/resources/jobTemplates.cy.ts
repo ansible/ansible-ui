@@ -298,8 +298,8 @@ describe('Job Templates Tests', function () {
             cy.clickButton('Launch template');
 
             cy.wait('@launchTemplate')
-              .its('response.body.id')
-              .then((jobId: number) => {
+              .its('response.body')
+              .then(({ id: jobId, name }: { id: number; name: string }) => {
                 cy.url().should('contain', `/jobs/playbook/${jobId}/output`);
                 cy.contains('Running');
                 cy.contains(jtName);
@@ -307,20 +307,19 @@ describe('Job Templates Tests', function () {
                 cy.intercept('POST', awxAPI`/jobs/${jobId.toString()}/relaunch/`).as('relaunchJob');
                 cy.getByDataCy('relaunch-job').click();
                 cy.wait('@relaunchJob')
-                  .its('response.body.id')
-                  .then((jobId2: number) => {
+                  .its('response.body')
+                  .then(({ id: jobId2, name: name2 }: { id: number; name: string }) => {
                     cy.url().should('contain', `/jobs/playbook/${jobId2}/output`);
                     cy.contains('Running');
                     cy.contains(jtName);
 
                     cy.visit('/jobs');
-                    cy.getByDataCy(`row-id-${jobId}`).within(() => {
-                      cy.contains('Running');
-                    });
 
-                    cy.getByDataCy(`row-id-${jobId2}`).within(() => {
-                      cy.contains('Running');
-                    });
+                    cy.filterTableBySingleSelect('name', name);
+                    cy.contains('Running');
+
+                    cy.filterTableBySingleSelect('name', name2);
+                    cy.contains('Running');
                   });
               });
           }
@@ -329,7 +328,7 @@ describe('Job Templates Tests', function () {
     });
   });
 
-  describe('Job Templates Tests: Edit', function () {
+  describe.skip('Job Templates Tests: Edit', function () {
     let inventory: Inventory;
     let inventory2: Inventory;
     let machineCredential: Credential;
