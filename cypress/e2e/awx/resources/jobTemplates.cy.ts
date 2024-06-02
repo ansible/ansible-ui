@@ -328,7 +328,7 @@ describe('Job Templates Tests', function () {
     });
   });
 
-  // rerun CI 2
+  // rerun CI 3
   describe('Job Templates Tests: Edit', function () {
     let inventory: Inventory;
     let inventory2: Inventory;
