@@ -131,7 +131,7 @@ export function checkHostGroup(host_type: string, organization: Organization) {
         name: 'E2E Group ' + randomString(5),
         inventory: host.inventory,
       }
-    ).then((group: { name: string; id: number }) => {
+    ).then((group2: { name: string; id: number }) => {
       /// check multiple associate and disassociate
       // disassociate
       navigateToHost(url, host.name, '[data-cy="name-column-cell"] a');
@@ -147,6 +147,7 @@ export function checkHostGroup(host_type: string, organization: Organization) {
       cy.clickModalButton('Confirm');
       cy.contains('button', 'Close').click();
       cy.contains(group.name);
+      cy.contains(group2.name);
       /// single disassociate
       // TODO: need to change this when
       // https://issues.redhat.com/browse/AAP-22914 change will applyed
