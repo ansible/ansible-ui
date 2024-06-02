@@ -596,6 +596,7 @@ describe('Job Templates Tests', function () {
     });
 
     it('can edit a job template using the edit template button on details page', function () {
+      // rerun CI 8
       const newName = (jobTemplate.name ?? '') + ' edited';
       cy.navigateTo('awx', 'templates');
       cy.filterTableByMultiSelect('name', [jobTemplate.name]);
