@@ -429,6 +429,7 @@ describe('Job Templates Tests', function () {
     });
 
     it('can edit a job template to enable provisioning callback and enable webhook, then edit again to disable those options', function () {
+      // rerun CI 6
       const jtURL = document.location.origin + awxAPI`/job_templates/${jobTemplate.id.toString()}`;
 
       cy.visit(`templates/job-template/${jobTemplate.id}/details`);
