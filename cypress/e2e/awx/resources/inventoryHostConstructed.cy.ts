@@ -14,7 +14,7 @@ describe('Inventory Host Tab Tests for contructed inventory', () => {
     cy.createAwxOrganization().then((org) => {
       organization = org;
       cy.createInventoryHost(organization, 'constructed').then((result) => {
-        const { inventory: inv, host } = result;
+        const { inventory: inv } = result;
         inventory = inv;
       });
       cy.createAwxUser(organization).then((testUser) => {

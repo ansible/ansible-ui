@@ -125,6 +125,7 @@ export function checkHostGroup(host_type: string, organization: Organization) {
     cy.getByDataCy('name-form-group').type('-changed');
     cy.getByDataCy('Submit').click();
     cy.verifyPageTitle(group.name + '-changed');
+    //create 2nd group
     cy.requestPost<{ name: string; inventory: number; id: number }>(
       awxAPI`/hosts/${hostid}/groups/`,
       {

@@ -13,8 +13,8 @@ describe('Inventory Host Tab Tests for smart inventory', () => {
     cy.awxLogin();
     cy.createAwxOrganization().then((org) => {
       organization = org;
-      cy.createInventoryHost(organization, 'constructed').then((result) => {
-        const { inventory: inv, host } = result;
+      cy.createInventoryHost(organization, 'smart').then((result) => {
+        const { inventory: inv } = result;
         inventory = inv;
       });
       cy.createAwxUser(organization).then((testUser) => {
