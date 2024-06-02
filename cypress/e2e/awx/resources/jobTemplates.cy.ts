@@ -507,6 +507,7 @@ describe('Job Templates Tests', function () {
     });
 
     it('can edit a job template to enable webhook, regenerate webhook key and set webhook credentials', function () {
+      // rerun CI 9
       cy.createAWXCredential({
         kind: 'github_token',
         organization: (this.globalOrganization as Organization).id,
