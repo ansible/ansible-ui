@@ -279,6 +279,11 @@ describe('Workflow Approvals Tests', () => {
                           cy.getBy('[data-ouia-component-id="page-toolbar"]').within(() => {
                             cy.getByDataCy(`${selectorDataCy}`).click();
                           });
+                          cy.getModal().within(() => {
+                            cy.get('[data-ouia-component-id="confirm"]').click();
+                            cy.get('[data-ouia-component-id="submit"]').click();
+                            cy.clickButton('Close');
+                          });
                         }
                       );
                     });
@@ -293,11 +298,6 @@ describe('Workflow Approvals Tests', () => {
   Used in the Workflow Approvals - Bulk Approve, Bulk Deny, Bulk Delete tests (below)
   **/
   function deleteApprovalFromListToolbar() {
-    cy.getModal().within(() => {
-      cy.get('[data-ouia-component-id="confirm"]').click();
-      cy.get('[data-ouia-component-id="submit"]').click();
-      cy.clickButton('Close');
-    });
     cy.get('tbody').find('tr').should('have.length', 3);
     cy.getByDataCy('select-all').click();
     cy.getBy('[data-ouia-component-id="page-toolbar"]').within(() => {
@@ -333,16 +333,20 @@ describe('Workflow Approvals Tests', () => {
   describe('Workflow Approvals - User Access', () => {
     before('', () => {});
 
-    it.skip('admin can create a WF approval and assign user with access to approve and then delete the WF from the list toolbar', () => {
-      //
+    it.skip('can assign normal user the access to approve a workflow approval from the list toolbar', () => {
+      //as admin: assign normal user as wfjt admin
+      //log out
+      //log in as normal user
+      //acccess workflow approvals list, find specific workflow approval
+      //confirm that user can approve the workflow approval
     });
 
-    it.skip('admin can create a WF approval and assign user with access to deny and then delete the WF from the list toolbar', () => {
-      //
-    });
-
-    it.skip('admin can create a WF approval and assign user with access to cancel and then delete the WF from the list toolbar', () => {
-      //
+    it.skip('can assign a normal user admin access to a workflow approval', () => {
+      //as admin: assign normal user as wfjt admin
+      //log out
+      //log in as normal user
+      //acccess workflow approvals list, find specific workflow approval
+      //have normal user deny and then delete workflow approval to show admin rights
     });
   });
 
