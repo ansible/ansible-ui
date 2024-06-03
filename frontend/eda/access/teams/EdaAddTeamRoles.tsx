@@ -13,13 +13,13 @@ import { EdaRoute } from '../../main/EdaRoutes';
 
 import { EdaAddRoles } from '../common/EdaAddRoles';
 
-export function EdaAddTeamRoles() {
+export function EdaAddTeamRoles(props: { id?: string; teamRolesRoute?: string }) {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const getPageUrl = useGetPageUrl();
   const pageNavigate = usePageNavigate();
   const { data: team, isLoading } = useGet<{ id: string; name: string }>(
-    edaAPI`/teams/${params.id ?? ''}/`
+    edaAPI`/teams/${props.id || params.id || ''}/`
   );
 
   if (isLoading || !team) return <LoadingPage />;
@@ -45,7 +45,7 @@ export function EdaAddTeamRoles() {
         id={team.id.toString()}
         type={'team'}
         onClose={() => {
-          pageNavigate(EdaRoute.TeamRoles, {
+          pageNavigate(props.teamRolesRoute || EdaRoute.TeamRoles, {
             params: { id: team.id },
           });
         }}
