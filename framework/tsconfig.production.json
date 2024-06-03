@@ -1,4 +1,11 @@
 {
+  "compilerOptions": {
+    "noEmit": false,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "rootDir": ".",
+    "outDir": "./publish"
+  },
   "extends": "./tsconfig.json",
   "include": ["./**/*"],
   "exclude": ["./**/*.cy.tsx"]
