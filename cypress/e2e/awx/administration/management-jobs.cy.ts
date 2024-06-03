@@ -172,7 +172,7 @@ describe('Management Jobs - Schedules Tab', () => {
   });
 
   managementJobsList.forEach((jobName) => {
-    it.only(`admin can perform crud actions and toggle the schedule of management job: ${jobName} from the details tab`, () => {
+    it(`admin can perform crud actions and toggle the schedule of management job: ${jobName} from the details tab`, () => {
       const scheduleName = `${jobName} ${randomE2Ename()}`;
       cy.intercept('GET', awxAPI`/system_job_templates/?order_by=name&page=1&page_size=10`).as(
         'getManagementJobsListPage'
