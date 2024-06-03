@@ -328,7 +328,7 @@ describe('Job Templates Tests', function () {
     });
   });
 
-  describe.skip('Job Templates Tests: Edit', function () {
+  describe('Job Templates Tests: Edit', function () {
     let inventory: Inventory;
     let inventory2: Inventory;
     let machineCredential: Credential;
