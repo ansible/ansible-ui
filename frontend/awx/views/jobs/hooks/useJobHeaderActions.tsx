@@ -1,5 +1,5 @@
 import { ButtonVariant } from '@patternfly/react-core';
-import { MinusCircleIcon, RocketIcon, TrashIcon } from '@patternfly/react-icons';
+import { DownloadIcon, MinusCircleIcon, RocketIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
@@ -9,6 +9,7 @@ import { useCancelJobs } from './useCancelJobs';
 import { useDeleteJobs } from './useDeleteJobs';
 import { useRelaunchJob } from './useRelaunchJob';
 import { TFunction } from 'i18next';
+import { useDownloadJobOutput } from './useDownloadJobOutput';
 
 export const cannotCancelJob = (job: UnifiedJob, t: TFunction<'translation', undefined>) => {
   if (!isJobRunning(job.status)) return t(`The job cannot be canceled because it is not running`);
@@ -21,6 +22,7 @@ export function useJobHeaderActions(onComplete: (jobs: UnifiedJob[]) => void) {
   const { t } = useTranslation();
   const cancelJobs = useCancelJobs(onComplete);
   const deleteJobs = useDeleteJobs(onComplete);
+  const downloadJobOutput = useDownloadJobOutput();
   const relaunchJob = useRelaunchJob();
 
   return useMemo<IPageAction<UnifiedJob>[]>(() => {
@@ -70,7 +72,16 @@ export function useJobHeaderActions(onComplete: (jobs: UnifiedJob[]) => void) {
         ouiaId: 'job-detail-delete-button',
         isDanger: true,
       },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        icon: DownloadIcon,
+        label: t(`Download Output`),
+        onClick: (job: UnifiedJob) => downloadJobOutput(job),
+        ouiaId: 'job-detail-download-button',
+        isHidden: (job: UnifiedJob) => !job.related.stdout,
+      },
     ];
     return actions;
-  }, [cancelJobs, deleteJobs, relaunchJob, t]);
+  }, [cancelJobs, deleteJobs, relaunchJob, downloadJobOutput, t]);
 }
