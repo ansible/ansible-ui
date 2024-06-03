@@ -14,7 +14,6 @@ import { useTranslation } from 'react-i18next';
 import { StatusCell } from '../../../common/Status';
 import { AwxRoute } from '../../main/AwxRoutes';
 import { LastModifiedPageDetail } from '../../../common/LastModifiedPageDetail';
-import { ExecutionEnvironmentDetail } from '../../../common/ExecutionEnvironmentPageDetail';
 import { Job } from '../../interfaces/Job';
 
 export function JobDetails() {
@@ -45,10 +44,6 @@ export function JobDetails() {
       <PageDetail isEmpty={!job.controller_node} label={t('Controller node')}>
         {job.controller_node}
       </PageDetail>
-      <ExecutionEnvironmentDetail
-        executionEnvironment={job.summary_fields.execution_environment}
-        verifyMissingVirtualEnv={false}
-      />
       <PageDetail isEmpty={!job.execution_node} label={t('Execution node')}>
         {job.execution_node}
       </PageDetail>
