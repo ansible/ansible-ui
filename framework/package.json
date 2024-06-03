@@ -4,6 +4,6 @@
   "main": "./index.ts",
   "scripts": {
     "clean": "rm -rf coverage dist node_modules .eslintcache",
-    "build": "npm run clean && vite build && tsc --project tsconfig.production.json"
+    "build": "npm run clean && vite build && NODE_OPTIONS=--max-old-space-size=8192 tsc --project tsconfig.production.json"
   }
 }

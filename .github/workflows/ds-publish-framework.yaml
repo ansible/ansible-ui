@@ -31,6 +31,7 @@ jobs:
         working-directory: ./framework
         run: |
           npm run build
+          sed -i -e 's/"\/assets\//".\/assets\//g' ./publish/index.js
           cp -f ../LICENSE.md ./publish/LICENSE.md
           cp -f ./README.md ./publish/README.md
           VERSION=`cat ../package.json | jq -r '.version'` && cat ./publish/package.json | jq --arg version $VERSION '. +{version: $version}' > ./publish/package.json
