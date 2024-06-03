@@ -127,7 +127,7 @@ describe('Management Jobs Page - List and Launch Jobs', () => {
   });
 });
 
-// Skipping the test due to test failures with typing issue in the Schedule name field in the UI
+//TODO: Skipping the test due to test failures with typing issue in the Schedule name field in the UI
 describe.skip('Management Jobs - Schedules Tab', () => {
   beforeEach(() => {
     cy.awxLogin();
