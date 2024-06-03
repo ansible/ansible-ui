@@ -121,13 +121,15 @@ export function useRunCommandAction<T extends { name: string }>(
   const onClick = useCallback(
     (selectedItems: T[]) => {
       const limit = selectedItems.map((item) => item.name).join(', ');
-      const query: { limit?: string; key?: string } = {};
+      const query: { limit?: string; useStorage?: string } = {};
 
-      if (limit.length < 20) {
-        query.limit = limit;
+      if (limit.length < 1800) {
+        if (limit) {
+          query.limit = limit;
+        }
       } else {
-        query.key = generateRandomID();
-        localStorage.setItem(query.key, limit);
+        query.useStorage = 'true';
+        localStorage.setItem('runCommandActionSelectedItems', limit);
       }
 
       pageNavigate(AwxRoute.InventoryRunCommand, {
@@ -182,8 +184,4 @@ export function useRunCommandAction<T extends { name: string }>(
   }
 
   return {} as IPageAction<T>;
-}
-
-function generateRandomID() {
-  return 'id_' + Math.random().toString(36).substr(2, 9);
 }
