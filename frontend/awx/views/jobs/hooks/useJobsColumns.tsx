@@ -265,7 +265,7 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
         header: t('Execution environment'),
         cell: (job: UnifiedJob) => (
           <Link
-            to={getPageUrl(AwxRoute.ExecutionEnvironmentPage, {
+            to={getPageUrl(AwxRoute.ExecutionEnvironmentDetails, {
               params: { id: job.summary_fields.execution_environment?.id },
             })}
           >
