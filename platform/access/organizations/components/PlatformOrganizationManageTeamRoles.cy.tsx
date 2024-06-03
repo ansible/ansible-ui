@@ -1,25 +1,26 @@
 import mockPlatformOrganizations from '../../../../cypress/fixtures/platformOrganizations.json';
 import mockGatewayServices from '../../../../cypress/fixtures/platformGatewayServices.json';
 import * as GatewayServices from '../../../main/GatewayServices';
-import { PlatformOrganizationManageUserRoles } from './PlatformOrganizationManageUserRoles';
 import { gatewayV1API } from '../../../api/gateway-api-utils';
 import { edaAPI } from '../../../../frontend/eda/common/eda-utils';
 import { awxAPI } from '../../../../frontend/awx/common/api/awx-utils';
 import { GatewayService } from '../../../main/GatewayService';
-import mockPlatformUsers from '../../../../cypress/fixtures/platformUsers.json';
-import mockAwxUser from '../../../../cypress/fixtures/awxUser.json';
-import mockEdaUser from '../../../../cypress/fixtures/edaUser.json';
+import mockPlatformTeams from '../../../../cypress/fixtures/platformTeams.json';
+import mockAwxTeam from '../../../../cypress/fixtures/team.json';
+import mockEdaTeams from '../../../../cypress/fixtures/edaTeams.json';
 import mockAwxOrg from '../../../../cypress/fixtures/organization.json';
 import mockEdaOrganizations from '../../../../cypress/fixtures/edaOrganizations.json';
+import { PlatformOrganizationManageTeamRoles } from './PlatformOrganizationManageTeamRoles';
 
 const mockPlatformOrganization = mockPlatformOrganizations.results[1];
-const mockPlatformUser = mockPlatformUsers.results[0];
+const mockPlatformTeam = mockPlatformTeams.results[0];
 const mockEdaOrg = mockEdaOrganizations.results[0];
+const mockEdaTeam = mockEdaTeams.results[0];
 
-describe('PlatformOrganizationManageUserRoles', () => {
-  const component = <PlatformOrganizationManageUserRoles />;
-  const path = '/organizations/:id/users/:userId/manage-users';
-  const initialEntries = [`/organizations/1/users/2/manage-users`];
+describe('PlatformOrganizationManageTeamRoles', () => {
+  const component = <PlatformOrganizationManageTeamRoles />;
+  const path = '/organizations/:id/teams/:teamId/manage-roles';
+  const initialEntries = [`/organizations/1/teams/2/manage-roles`];
   const params = {
     path,
     initialEntries,
@@ -34,17 +35,17 @@ describe('PlatformOrganizationManageUserRoles', () => {
       mockPlatformOrganization
     ).as('organization');
 
-    cy.intercept('GET', gatewayV1API`/users/2/`, mockPlatformUser);
+    cy.intercept('GET', gatewayV1API`/teams/2/`, mockPlatformTeam);
 
     // AWX
     cy.intercept('GET', awxAPI`/role_definitions/?content_type__model=organization*`, {
       fixture: 'platformAwxOrganizationRoles.json',
     });
-    cy.intercept('GET', awxAPI`/%2Fusers%2F?resource__ansible_id*`, {
+    cy.intercept('GET', awxAPI`/%2Fteams%2F?resource__ansible_id*`, {
       count: 1,
       next: null,
       previous: null,
-      results: [mockAwxUser],
+      results: [mockAwxTeam],
     });
     cy.intercept('GET', awxAPI`/%2Forganizations%2F?resource__ansible_id*`, {
       count: 1,
@@ -52,19 +53,19 @@ describe('PlatformOrganizationManageUserRoles', () => {
       previous: null,
       results: [mockAwxOrg],
     });
-    cy.intercept('GET', awxAPI`/role_user_assignments/*`, {
-      fixture: 'awxUserOrgRoleAssignments.json',
+    cy.intercept('GET', awxAPI`/role_team_assignments/*`, {
+      fixture: 'awxTeamOrgRoleAssignments.json',
     });
 
     // EDA
     cy.intercept('GET', edaAPI`/role_definitions/?content_type__model=organization*`, {
       fixture: 'platformEdaOrganizationRoles.json',
     });
-    cy.intercept('GET', edaAPI`/users%2F*`, {
+    cy.intercept('GET', edaAPI`/teams%2F*`, {
       count: 1,
       next: null,
       previous: null,
-      results: [mockEdaUser],
+      results: [mockEdaTeam],
     });
     cy.intercept('GET', edaAPI`/organizations%2F*`, {
       count: 1,
@@ -72,8 +73,8 @@ describe('PlatformOrganizationManageUserRoles', () => {
       previous: null,
       results: [mockEdaOrg],
     });
-    cy.intercept('GET', edaAPI`/role_user_assignments/*`, {
-      fixture: 'edaUserOrgRoleAssignments.json',
+    cy.intercept('GET', edaAPI`/role_team_assignments/*`, {
+      fixture: 'edaTeamOrgRoleAssignments.json',
     });
   });
   it('renders with correct steps when controller and EDA services are enabled', () => {
@@ -86,7 +87,7 @@ describe('PlatformOrganizationManageUserRoles', () => {
       return undefined;
     });
     cy.mount(component, params);
-    cy.verifyPageTitle('Manage roles for test');
+    cy.verifyPageTitle('Manage roles for Team2');
     cy.get('[data-cy="wizard-nav"] li').eq(0).should('contain.text', 'Select roles');
     cy.get('[data-cy="wizard-nav"] li').eq(1).should('contain.text', 'Automation Execution');
     cy.get('[data-cy="wizard-nav"] li').eq(2).should('contain.text', 'Automation Decisions');
@@ -107,7 +108,7 @@ describe('PlatformOrganizationManageUserRoles', () => {
     cy.get('[data-cy="wizard-nav"] li').eq(1).should('contain.text', 'Review');
     cy.get('[data-cy="wizard-nav-item-roles"] button').should('have.class', 'pf-m-current');
   });
-  it('indicates selected controller and EDA roles for the user ', () => {
+  it('indicates selected controller and EDA roles for the team ', () => {
     cy.stub(GatewayServices, 'useGatewayService').callsFake((serviceType) => {
       if (serviceType === 'controller') {
         return (mockGatewayServices as GatewayService[])[1];
@@ -117,7 +118,7 @@ describe('PlatformOrganizationManageUserRoles', () => {
       return undefined;
     });
     cy.mount(component, params);
-    cy.getTableRow('name', 'Organization Project Admin', {
+    cy.getTableRow('name', 'Organization Credential Admin', {
       disableFilter: true,
     }).within(() => {
       cy.get('input').should('have.attr', 'checked');
@@ -125,13 +126,13 @@ describe('PlatformOrganizationManageUserRoles', () => {
     cy.get('[data-cy="wizard-nav-item-awxRoles"] button').should('have.class', 'pf-m-current');
     cy.clickButton(/^Next$/);
     cy.get('[data-cy="wizard-nav-item-edaRoles"] button').should('have.class', 'pf-m-current');
-    cy.getTableRow('name', 'Contributor', {
+    cy.getTableRow('name', 'Viewer', {
       disableFilter: true,
     }).within(() => {
       cy.get('input').should('have.attr', 'checked');
     });
   });
-  it('displays user and selected roles in the Review step', () => {
+  it('displays team and selected roles in the Review step', () => {
     cy.stub(GatewayServices, 'useGatewayService').callsFake((serviceType) => {
       if (serviceType === 'controller') {
         return (mockGatewayServices as GatewayService[])[1];
@@ -144,7 +145,7 @@ describe('PlatformOrganizationManageUserRoles', () => {
 
     cy.contains('Select Automation Execution roles');
     // Uncheck existing selection of AWX roles
-    cy.selectTableRowByCheckbox('name', 'Organization Project Admin', { disableFilter: true });
+    cy.selectTableRowByCheckbox('name', 'Organization Credential Admin', { disableFilter: true });
     // Make new selection of AWX role
     cy.selectTableRowByCheckbox('name', 'Organization Inventory Admin', { disableFilter: true });
 
@@ -156,18 +157,18 @@ describe('PlatformOrganizationManageUserRoles', () => {
     cy.selectTableRowByCheckbox('name', 'Operator', { disableFilter: true });
     cy.clickButton(/^Next$/);
     cy.get('[data-cy="wizard-nav-item-review"] button').should('have.class', 'pf-m-current');
-    // User
-    cy.hasDetail(/^User$/, `${mockPlatformUser.username}`);
+    // Team
+    cy.hasDetail(/^Team$/, `${mockPlatformTeam.name}`);
     // EDA roles
     cy.get('[data-cy="expandable-section-edaRoles"]').should(
       'contain.text',
       'Automation Decisions roles'
     );
     cy.get('[data-cy="expandable-section-edaRoles"]').should('contain.text', '2');
-    cy.get('[data-cy="expandable-section-edaRoles"]').should('contain.text', 'Contributor');
+    cy.get('[data-cy="expandable-section-edaRoles"]').should('contain.text', 'Viewer');
     cy.get('[data-cy="expandable-section-edaRoles"]').should(
       'contain.text',
-      'Has create and update permissions with an exception of users and roles. Has enable and disable rulebook activation permissions.'
+      'Has read permissions, except users and roles.'
     );
     cy.get('[data-cy="expandable-section-edaRoles"]').should('contain.text', 'Operator');
     cy.get('[data-cy="expandable-section-edaRoles"]').should(

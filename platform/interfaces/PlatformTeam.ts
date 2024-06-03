@@ -29,6 +29,10 @@ export interface PlatformTeam {
       id: number;
       name: string;
     };
+    resource: {
+      ansible_id: string;
+      resource_type: string;
+    };
   };
   organization: number;
   users: number[];

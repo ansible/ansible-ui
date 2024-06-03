@@ -161,10 +161,10 @@ describe('Platform Teams - Users, Admins, Teams and EE tabs', function () {
           cy.selectTableRowByCheckbox('username', createdUser2.username);
           cy.clickButton(/^Next/);
           cy.contains('h1', 'Select Automation Execution roles').should('be.visible');
-          cy.filterTableByTextFilter('name', 'Organization Project Admin', {
+          cy.filterTableByTextFilter('name', 'Organization Credential Admin', {
             disableFilterSelection: true,
           });
-          cy.selectTableRowByCheckbox('name', 'Organization Project Admin', {
+          cy.selectTableRowByCheckbox('name', 'Organization Credential Admin', {
             disableFilter: true,
           });
           cy.clickButton(/^Next/);
@@ -185,8 +185,8 @@ describe('Platform Teams - Users, Admins, Teams and EE tabs', function () {
           cy.verifyReviewStepWizardDetails(
             'awxRoles',
             [
-              'Organization Project Admin',
-              'Has all permissions to projects within an organization',
+              'Organization Credential Admin',
+              'Has all permissions to credentials within an organization',
             ],
             '1'
           );

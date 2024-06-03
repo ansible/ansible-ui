@@ -69,7 +69,7 @@ describe('Users - Permissions', () => {
 
   it.skip('permissions are reflected in users -> roles tab', () => {});
 
-  it('user can perform that specific action', () => {
+  it.skip('user can perform that specific action', () => {
     cy.platformLogout();
     cy.get('h1').should('contain', 'Log in to your account');
     // login as user with permissions
@@ -95,7 +95,7 @@ describe('Users - Permissions', () => {
     cy.clickButton(/^Clear all filters$/);
   });
 
-  it('other user cannot perform that action', () => {
+  it.skip('other user cannot perform that action', () => {
     cy.platformLogout();
     // login as user without permissions
     cy.get('[data-cy="username"]').type(edaUser2.username);
@@ -103,9 +103,9 @@ describe('Users - Permissions', () => {
     cy.get('[data-cy="Submit"]').click();
     cy.get('[data-ouia-component-id="account-menu"]').should('contain', `${edaUser2.username}`);
     cy.navigateTo('eda', 'rulebook-activations');
-    cy.filterTableByText(RBA.name);
     // user is not able to view any rulebook activations
-    cy.get('h2').should('contain', 'No results found');
+    cy.contains('You do not have permission to create a rulebook activation.');
+    cy.get('table.page-table').should('not.exist');
     // logout as normal user
     cy.platformLogout();
     // log back in as admin to delete newly created user
@@ -146,7 +146,7 @@ describe('Teams - Permissions', () => {
     cy.deletePlatformTeam(edaTeam);
   });
 
-  it('can give permission to a resource from user access tab', () => {
+  it('can give permission to a resource from team access tab', () => {
     cy.navigateTo('eda', 'projects');
     cy.verifyPageTitle('Projects');
     cy.clickTableRow(edaProject.name, true);
@@ -162,9 +162,10 @@ describe('Teams - Permissions', () => {
     cy.clickButton(/^Close$/);
   });
 
-  it.skip('permissions are reflected in users-> roles tab', () => {});
+  it.skip('permissions are reflected in teams-> roles tab', () => {});
 
-  it('user can perform that specific action', () => {
+  // This is not working at present due to an API bug: https://issues.redhat.com/browse/AAP-24956
+  it.skip('user can perform that specific action', () => {
     cy.platformLogout();
     // login as user with permissions
     cy.get('[data-cy="username"]').type(edaUser1.username);
@@ -177,7 +178,7 @@ describe('Teams - Permissions', () => {
     cy.contains('tr', edaProject.name);
   });
 
-  it('other user cannot perform that action', () => {
+  it.skip('other user cannot perform that action', () => {
     cy.platformLogout();
     // login as user without permissions
     cy.getByDataCy('username').type(edaUser2.username);

@@ -23,12 +23,22 @@ export type IPlatformView<T extends { id: number }> = IView &
   };
 
 export type QueryParams = {
-  [key: string]: string;
+  [key: string]: string | Array<string>;
 };
 
-function getQueryString(queryParams: QueryParams) {
+export function getQueryString(queryParams: QueryParams) {
   return Object.entries(queryParams)
-    .map(([key, value = '']) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
+    .map(([key, value = '']) => {
+      if (Array.isArray(value)) {
+        const listKeyVals = value.map(
+          (subval) => `${encodeURIComponent(key)}=${encodeURIComponent(subval)}`
+        );
+        const queryString = listKeyVals.join('&');
+        return queryString;
+      } else {
+        return `${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
+      }
+    })
     .join('&');
 }
 
