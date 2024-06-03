@@ -10,7 +10,7 @@ import {
   AsyncSelectFilterBuilderProps,
   useAsyncMultiSelectFilterBuilder,
   useAsyncSingleSelectFilterBuilder,
-} from '../../../../../framework/PageToolbar/PageToolbarFilters/ToolbarAsyncSelectFilterBuilder';
+} from '../../../common/ToolbarAsyncSelectFilterBuilder';
 import { pulpAPI } from '../../../common/api/formatPath';
 import { useHubView } from '../../../common/useHubView';
 import { AnsibleAnsibleRepositoryResponse as Repository } from '../../../interfaces/generated/AnsibleAnsibleRepositoryResponse';

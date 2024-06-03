@@ -9,7 +9,7 @@ import {
 import {
   AsyncSelectFilterBuilderProps,
   useAsyncSingleSelectFilterBuilder,
-} from '../../../../../framework/PageToolbar/PageToolbarFilters/ToolbarAsyncSelectFilterBuilder';
+} from '../../../common/ToolbarAsyncSelectFilterBuilder';
 import { pulpAPI } from '../../../common/api/formatPath';
 import { useHubView } from '../../../common/useHubView';
 import { HubRemote } from './../../remotes/Remotes';
