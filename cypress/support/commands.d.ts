@@ -1164,6 +1164,15 @@ declare global {
 
       inputCustomCredTypeConfig(configType: string, config: string): Chainable<void>;
 
+      /**
+       * This command will toggle single or multiple switches and assert its
+       * state after toggling.
+       *
+       * @param {string[]} types
+       * @returns {Chainable<void>}
+       */
+      toggleAndAssert(types: string[]): Chainable<void>;
+
       selectPromptOnLaunch(resourceName: string): Chainable<void>;
 
       createNotificationTemplate(notificationName: string): Chainable<NotificationTemplate>;
