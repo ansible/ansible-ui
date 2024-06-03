@@ -1,9 +1,9 @@
 import { useCallback } from 'react';
-import { ITableColumn, IToolbarFilter, usePageDialog, ISelected } from '../../../framework';
+import { ISelected, ITableColumn, IToolbarFilter, usePageDialog } from '../../../framework';
 import { MultiSelectDialog } from '../../../framework/PageDialogs/MultiSelectDialog';
-import { SingleSelectDialog } from '../../PageDialogs/SingleSelectDialog';
-import { IView, ViewExtendedOptions } from '../../useView';
-import { MultiDialogs } from '../../../frontend/hub/administration/repositories/hooks/useAddCollections';
+import { SingleSelectDialog } from '../../../framework/PageDialogs/SingleSelectDialog';
+import { IView, ViewExtendedOptions } from '../../../framework/useView';
+import { MultiDialogs } from '../administration/repositories/hooks/useAddCollections';
 
 type BaseView<T extends object> = IView &
   ISelected<T> & {

@@ -5,7 +5,7 @@ import {
   AsyncSelectFilterBuilderProps,
   useAsyncMultiSelectFilterBuilder,
   useAsyncSingleSelectFilterBuilder,
-} from '../../../../framework/PageToolbar/PageToolbarFilters/ToolbarAsyncSelectFilterBuilder';
+} from '../../common/ToolbarAsyncSelectFilterBuilder';
 import { hubAPI } from '../../common/api/formatPath';
 import { useHubView } from '../../common/useHubView';
 

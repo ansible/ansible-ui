@@ -2,12 +2,12 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ITableColumn, IToolbarFilter, TextCell, ToolbarFilterType } from '../../../../framework';
 import {
-  useAsyncSingleSelectFilterBuilder,
   AsyncSelectFilterBuilderProps,
-} from '../../../../framework/PageToolbar/PageToolbarFilters/ToolbarAsyncSelectFilterBuilder';
-import { hubAPI } from './../../common/api/formatPath';
+  useAsyncSingleSelectFilterBuilder,
+} from '../../common/ToolbarAsyncSelectFilterBuilder';
 import { useHubView } from '../../common/useHubView';
 import { HubNamespace } from '../../namespaces/HubNamespace';
+import { hubAPI } from './../../common/api/formatPath';
 
 function useParameters(): AsyncSelectFilterBuilderProps<HubNamespace> {
   const tableColumns = useNamespaceColumns();
