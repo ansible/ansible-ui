@@ -1870,3 +1870,12 @@ Cypress.Commands.add(
     cy.wait('@createSurveySpec');
   }
 );
+
+Cypress.Commands.add('toggleAndAssert', (types: string[]) => {
+  cy.get('[data-cy="actions-column-cell"]').within(() => {
+    cy.get('[data-cy="toggle-switch"]').click({ multiple: true });
+    types.forEach((type) => {
+      cy.get(`input[aria-label="Click to disable ${type}"]`).should('exist');
+    });
+  });
+});
