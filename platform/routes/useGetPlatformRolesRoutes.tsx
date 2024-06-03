@@ -2,29 +2,29 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router-dom';
 import { PageNavigationItem } from '../../framework';
-import { PlatformRoute } from '../main/PlatformRoutes';
-import { PlatformRoles } from '../access/roles/PlatformRoles';
-import { AwxRoute } from '../../frontend/awx/main/AwxRoutes';
-import { AwxRolePage } from '../../frontend/awx/access/roles/AwxRolePage';
 import { AwxRoleDetails } from '../../frontend/awx/access/roles/AwxRoleDetails';
-import { PlatformAwxRoles } from '../access/roles/PlatformAwxRoles';
-import { EdaRoute } from '../../frontend/eda/main/EdaRoutes';
-import { CreateRole, EditRole } from '../../frontend/eda/access/roles/RoleForm';
+import { AwxRolePage } from '../../frontend/awx/access/roles/AwxRolePage';
 import {
   CreateRole as CreateAwxRole,
   EditRole as EditAwxRole,
 } from '../../frontend/awx/access/roles/RoleForm';
+import { AwxRoute } from '../../frontend/awx/main/AwxRoutes';
+import { EdaRoleDetails } from '../../frontend/eda/access/roles/EdaRoleDetails';
+import { EdaRolePage } from '../../frontend/eda/access/roles/EdaRolePage';
+import { CreateRole, EditRole } from '../../frontend/eda/access/roles/RoleForm';
+import { EdaRoute } from '../../frontend/eda/main/EdaRoutes';
+import { RoleDetails } from '../../frontend/hub/access/roles/RolePage/RoleDetails';
 import {
   CreateRole as CreateRoleHub,
   EditRole as EditRoleHub,
 } from '../../frontend/hub/access/roles/RolePage/RoleForm';
-import { EdaRolePage } from '../../frontend/eda/access/roles/EdaRolePage';
-import { EdaRoleDetails } from '../../frontend/eda/access/roles/EdaRoleDetails';
-import { PlatformEdaRoles } from '../access/roles/PlatformEdaRoles';
-import { HubRoute } from '../../frontend/hub/main/HubRoutes';
 import { RolePage } from '../../frontend/hub/access/roles/RolePage/RolePage';
-import { RoleDetails } from '../../frontend/hub/access/roles/RolePage/RoleDetails';
+import { HubRoute } from '../../frontend/hub/main/HubRoutes';
+import { PlatformAwxRoles } from '../access/roles/PlatformAwxRoles';
+import { PlatformEdaRoles } from '../access/roles/PlatformEdaRoles';
 import { PlatformHubRoles } from '../access/roles/PlatformHubRoles';
+import { PlatformRoles } from '../access/roles/PlatformRoles';
+import { PlatformRoute } from '../main/PlatformRoutes';
 
 export function useGetPlatformRolesRoutes() {
   const { t } = useTranslation();

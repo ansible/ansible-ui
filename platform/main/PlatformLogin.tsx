@@ -11,7 +11,7 @@ import { UIAuth } from '../interfaces/UIAuth';
 import { usePlatformActiveUser } from './PlatformActiveUserProvider';
 
 export function PlatformLogin(props: { children: ReactNode }) {
-  const { activePlatformUser, refreshActivePlatformUser } = usePlatformActiveUser();
+  const { activePlatformUser } = usePlatformActiveUser();
   const { data: options } = useGet<UIAuth>(gatewayAPI`/ui_auth/`);
   const hideInputs = options ? !options.show_login_form : false;
   // const { activeTheme } = usePageSettings();
@@ -28,10 +28,7 @@ export function PlatformLogin(props: { children: ReactNode }) {
     return (
       <Login
         apiUrl={gatewayAPI`/login/`}
-        onSuccess={() => {
-          refreshActivePlatformUser?.();
-          void mutate(() => true);
-        }}
+        onSuccess={() => void mutate(() => true, undefined)}
         hideInputs={hideInputs}
         authOptions={options?.ssos}
         loginDescription={t('Enter your credentials.')}
