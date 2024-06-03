@@ -328,7 +328,6 @@ describe('Job Templates Tests', function () {
     });
   });
 
-  // rerun CI 5
   describe('Job Templates Tests: Edit', function () {
     let inventory: Inventory;
     let inventory2: Inventory;
@@ -429,7 +428,6 @@ describe('Job Templates Tests', function () {
     });
 
     it('can edit a job template to enable provisioning callback and enable webhook, then edit again to disable those options', function () {
-      // rerun CI 7
       const jtURL = document.location.origin + awxAPI`/job_templates/${jobTemplate.id.toString()}`;
 
       cy.visit(`templates/job-template/${jobTemplate.id}/details`);
@@ -507,7 +505,6 @@ describe('Job Templates Tests', function () {
     });
 
     it('can edit a job template to enable webhook, regenerate webhook key and set webhook credentials', function () {
-      // rerun CI 9
       cy.createAWXCredential({
         kind: 'github_token',
         organization: (this.globalOrganization as Organization).id,
@@ -597,7 +594,6 @@ describe('Job Templates Tests', function () {
     });
 
     it('can edit a job template using the edit template button on details page', function () {
-      // rerun CI 8
       const newName = (jobTemplate.name ?? '') + ' edited';
       cy.navigateTo('awx', 'templates');
       cy.filterTableByMultiSelect('name', [jobTemplate.name]);
