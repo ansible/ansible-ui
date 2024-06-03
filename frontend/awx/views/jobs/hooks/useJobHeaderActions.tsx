@@ -58,7 +58,16 @@ export function useJobHeaderActions(onComplete: (jobs: UnifiedJob[]) => void) {
         onClick: (job: UnifiedJob) => cancelJobs([job]),
       },
       { type: PageActionType.Seperator },
-
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        icon: DownloadIcon,
+        label: t(`Download Output`),
+        onClick: (job: UnifiedJob) => downloadJobOutput(job),
+        ouiaId: 'job-detail-download-button',
+        isHidden: (job: UnifiedJob) => !job.related.stdout,
+      },
+      { type: PageActionType.Seperator },
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
@@ -71,15 +80,6 @@ export function useJobHeaderActions(onComplete: (jobs: UnifiedJob[]) => void) {
         },
         ouiaId: 'job-detail-delete-button',
         isDanger: true,
-      },
-      {
-        type: PageActionType.Button,
-        selection: PageActionSelection.Single,
-        icon: DownloadIcon,
-        label: t(`Download Output`),
-        onClick: (job: UnifiedJob) => downloadJobOutput(job),
-        ouiaId: 'job-detail-download-button',
-        isHidden: (job: UnifiedJob) => !job.related.stdout,
       },
     ];
     return actions;
