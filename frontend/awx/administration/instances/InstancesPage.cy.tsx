@@ -27,7 +27,6 @@ describe('Instances Page', () => {
     cy.getByDataCy('remove-instance').should('have.attr', 'aria-disabled', 'false');
     cy.getByDataCy('run-health-check').should('be.visible');
     cy.getByDataCy('run-health-check').should('have.attr', 'aria-disabled', 'false');
-    cy.getByDataCy('toggle-switch').should('be.visible');
   });
 
   it('edit instance button should be hidden for non-k8s system', () => {
@@ -167,14 +166,5 @@ describe('Instances Page', () => {
     cy.mount(<InstancePage />);
     cy.getByDataCy('instances-listener-addresses-tab').should('be.visible');
     cy.getByDataCy('instances-listener-addresses-tab').should('be.enabled');
-  });
-
-  it('Enabled/Disabled switch is disabled if user does not have the right permissions', () => {
-    cy.mount(<InstancePage />, undefined, 'normalUser');
-    cy.wait('@getInstance')
-      .its('response.body')
-      .then(() => {
-        cy.get('.pf-v5-c-switch__input').should('be.disabled');
-      });
   });
 });

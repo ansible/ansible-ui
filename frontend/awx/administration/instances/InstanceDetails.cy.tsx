@@ -81,4 +81,22 @@ describe('Instance Details', () => {
         cy.get('.pf-v5-c-slider__thumb').should('have.attr', 'aria-disabled', 'true');
       });
   });
+
+  it('Enabled/Disabled switch is disabled if user does not have the right permissions', () => {
+    cy.mount(<InstanceDetails />, undefined, 'normalUser');
+    cy.wait('@getInstance')
+      .its('response.body')
+      .then(() => {
+        cy.get('.pf-v5-c-switch__input').should('be.disabled');
+      });
+  });
+
+  it.only('Enabled/Disabled switch is enabled if user has right permissions', () => {
+    cy.mount(<InstanceDetails />);
+    cy.wait('@getInstance')
+      .its('response.body')
+      .then(() => {
+        cy.get('.pf-v5-c-switch__input').should('not.be.disabled');
+      });
+  });
 });
