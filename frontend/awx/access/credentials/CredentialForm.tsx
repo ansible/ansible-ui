@@ -118,6 +118,15 @@ export function CreateCredential() {
     parsedCredentialTypes?.[selectedCredentialTypeId]?.kind === 'external';
 
   const onSubmit: PageFormSubmitHandler<CredentialForm> = async (credential) => {
+    const promptOnLaunchFields = Object.entries(credential).reduce(
+      (acc, [key, value]) => {
+        if (key.startsWith('ask_') && value === true) {
+          acc[key.replace('ask_', '')] = 'ASK';
+        }
+        return acc;
+      },
+      {} as Record<string, string>
+    );
     const credentialTypeInputs = parsedCredentialTypes?.[credential?.credential_type]?.inputs;
     const pluginInputs: Record<string, string | number> = {};
     const isHandledByCredentialPlugin = (field: string) =>
@@ -131,7 +140,7 @@ export function CreateCredential() {
         !isHandledByCredentialPlugin(field.id)
       ) {
         const id = field.id as keyof CredentialForm;
-        if (credential[id] !== undefined) {
+        if (credential[id] !== undefined || credential[id] !== '') {
           pluginInputs[id] = credential[id] as string | number;
           delete credential[id];
         }
@@ -141,10 +150,17 @@ export function CreateCredential() {
     if (!credential.organization) {
       credential.user = activeAwxUser?.id;
     }
-    const newCredential = await postRequest(awxAPI`/credentials/`, {
-      ...credential,
-      inputs: { ...pluginInputs },
+    // filter out fields with `ask_` prefix in payload
+    Object.keys(credential).forEach((key) => {
+      if (key.startsWith('ask_')) {
+        delete credential[key as keyof CredentialForm];
+      }
     });
+    const createdCredential = {
+      ...credential,
+      inputs: { ...pluginInputs, ...promptOnLaunchFields },
+    };
+    const newCredential = await postRequest(awxAPI`/credentials/`, createdCredential);
     const credentialInputSourcePayload = accumulatedPluginValues.map((credentialInputSource) => ({
       ...credentialInputSource,
       target_credential: newCredential.id,
@@ -298,13 +314,19 @@ export function EditCredential() {
       : null;
 
   const promptPassword: Prompts = {};
-  if (credential?.inputs) {
-    Object.entries(credential.inputs).forEach(([key, value]) => {
-      if (typeof value === 'string' && value === 'ASK') {
-        promptPassword[`ask_${key}`] = true;
+  // create object with key value pairs for each field that is prompted on launch from itemsResponse, e.g. ask_password: true
+  itemsResponse?.forEach((item) => {
+    item.inputs?.fields?.forEach((field) => {
+      if (field.ask_at_runtime) {
+        // check credential input values for field id and if it is set to ASK, set the promptPassword object
+        if (credential?.inputs && credential.inputs[field.id] === 'ASK') {
+          promptPassword[`ask_${field.id}`] = true;
+        } else {
+          promptPassword[`ask_${field.id}`] = false;
+        }
       }
     });
-  }
+  });
 
   const initialValues: initialValues = {
     name: credential?.name ?? '',
@@ -324,6 +346,17 @@ export function EditCredential() {
   }
 
   const onSubmit: PageFormSubmitHandler<CredentialForm> = async (editedCredential) => {
+    // if prompt on launch is checked, set the field value to 'ASK'
+    const promptOnLaunchFields = Object.entries(editedCredential).reduce(
+      (acc, [key, value]) => {
+        if (key.startsWith('ask_') && value === true) {
+          acc[key.replace('ask_', '')] = 'ASK';
+        }
+        return acc;
+      },
+      {} as Record<string, string>
+    );
+
     const credentialTypeInputs = parsedCredentialTypes?.[editedCredential?.credential_type]?.inputs;
     // can send only one of org, user, team
     if (!editedCredential.organization) {
@@ -342,13 +375,22 @@ export function EditCredential() {
         !isHandledByCredentialPlugin(field.id)
       ) {
         const id = field.id as keyof CredentialForm;
-        if (editedCredential[id] !== undefined) {
+        if (editedCredential[id] !== undefined || editedCredential[id] !== '') {
           pluginInputs[id] = editedCredential[id] as string | number;
           delete editedCredential[id];
         }
       }
     });
-    const modifiedCredential = { ...editedCredential, inputs: pluginInputs };
+    // filter out fields with `ask_` prefix in payload
+    Object.keys(editedCredential).forEach((key) => {
+      if (key.startsWith('ask_')) {
+        delete editedCredential[key as keyof CredentialForm];
+      }
+    });
+    const modifiedCredential = {
+      ...editedCredential,
+      inputs: { ...pluginInputs, ...promptOnLaunchFields },
+    };
     const credentialInputSourcePayload = accumulatedPluginValues.map((credentialInputSource) => ({
       ...credentialInputSource,
       target_credential: credential?.id,
@@ -724,8 +766,36 @@ function CredentialTextInput({
   setPluginsToDelete?: React.Dispatch<React.SetStateAction<string[]>>;
 }) {
   const { t } = useTranslation();
-  const { setValue, clearErrors } = useFormContext();
+  const { setValue, clearErrors, getValues } = useFormContext();
+  const [isPromptableField, setIsPromptableField] = useState(false);
   const isPromptOnLaunchChecked = useWatch({ name: `ask_${field.id}` }) as boolean;
+  useEffect(() => {
+    if (isPromptOnLaunchChecked) {
+      setIsPromptableField(true);
+      // mark any credential plugins previously set for deletion
+      if (accumulatedPluginValues.some((cp) => cp.input_field_name === field.id)) {
+        setPluginsToDelete?.((prev: string[]) => [...prev, field.id]);
+        setAccumulatedPluginValues?.(
+          accumulatedPluginValues.filter((cp) => cp.input_field_name !== field.id)
+        );
+      }
+      setValue(field.id, 'ASK', { shouldDirty: true });
+      clearErrors(field.id);
+    } else if (!isPromptOnLaunchChecked && getValues(field.id) === 'ASK') {
+      setValue(field.id, field.default || '', { shouldDirty: true });
+      setIsPromptableField(false);
+    }
+  }, [
+    getValues,
+    isPromptOnLaunchChecked,
+    field,
+    setValue,
+    setPluginsToDelete,
+    accumulatedPluginValues,
+    setAccumulatedPluginValues,
+    clearErrors,
+  ]);
+
   const useGetSourceCredential = (id: number) => {
     const { data } = useGetItem<Credential>(awxAPI`/credentials/`, id);
     return data;
@@ -742,26 +812,8 @@ function CredentialTextInput({
     setPluginsToDelete?.((prev: string[]) => [...prev, field.id]);
   };
 
-  useEffect(() => {
-    if (field?.ask_at_runtime) {
-      setValue(field?.id, isPromptOnLaunchChecked ? 'ASK' : field?.default || '', {
-        shouldDirty: true,
-      });
-      if (isPromptOnLaunchChecked) {
-        clearErrors(field?.id);
-      }
-    }
-  }, [
-    isPromptOnLaunchChecked,
-    field?.ask_at_runtime,
-    field.id,
-    field.default,
-    setValue,
-    clearErrors,
-  ]);
-
   const handleIsRequired = (): boolean => {
-    if (isPromptOnLaunchChecked) {
+    if (isPromptableField) {
       return false;
     }
     if (isRequired) {
@@ -820,7 +872,7 @@ function CredentialTextInput({
         placeholder={(field?.default || t('Enter value')).toString()}
         type={field.secret ? 'password' : 'text'}
         isRequired={handleIsRequired()}
-        isDisabled={!!isPromptOnLaunchChecked || isDisabled}
+        isDisabled={isPromptableField || isDisabled}
         isReadOnly={handleIsDisabled(field)}
         labelHelp={field.help_text}
         helperText={handleHelperText(field)}
@@ -828,7 +880,7 @@ function CredentialTextInput({
           credentialType?.kind !== 'external' ? (
             <>
               <Button
-                isDisabled={isDisabled}
+                isDisabled={isPromptableField || isDisabled}
                 data-cy={'secret-management-input'}
                 variant="control"
                 icon={
