@@ -89,6 +89,7 @@ describe('Workflow Approvals Tests', () => {
   let workflowJobTemplate: WorkflowJobTemplate;
   let wfjobTemplateNode: WorkflowNode;
   let approvalWFNode: WorkflowNode;
+  let jobName = '';
 
   before(function () {
     organization = this.globalOrganization as Organization;
@@ -271,33 +272,13 @@ describe('Workflow Approvals Tests', () => {
                           cy.intercept('OPTIONS', awxAPI`/workflow_approvals/`).as('options');
                           cy.navigateTo('awx', 'workflow-approvals');
                           cy.wait('@options');
-                          const jobName = wfApprovalC.name.split(' ').slice(-1).toString();
+                          jobName = wfApprovalC.name.split(' ').slice(-1).toString();
                           cy.filterTableBySingleSelect('name', jobName);
                           cy.get('tbody').find('tr').should('have.length', 3);
                           cy.getByDataCy('select-all').click();
                           cy.getBy('[data-ouia-component-id="page-toolbar"]').within(() => {
                             cy.getByDataCy(`${selectorDataCy}`).click();
                           });
-                          cy.getModal().within(() => {
-                            cy.get('[data-ouia-component-id="confirm"]').click();
-                            cy.get('[data-ouia-component-id="submit"]').click();
-                            cy.clickButton('Close');
-                          });
-                          cy.get('tbody').find('tr').should('have.length', 3);
-                          cy.getByDataCy('select-all').click();
-                          cy.getBy('[data-ouia-component-id="page-toolbar"]').within(() => {
-                            cy.getByDataCy('actions-dropdown')
-                              .click()
-                              .then(() => {
-                                cy.getByDataCy('delete').click();
-                              });
-                          });
-                          cy.getModal().within(() => {
-                            cy.get('[data-ouia-component-id="confirm"]').click();
-                            cy.get('[data-ouia-component-id="submit"]').click();
-                            cy.clickButton('Close');
-                          });
-                          cy.get('h2').should('contain', 'No results found');
                         }
                       );
                     });
@@ -308,16 +289,44 @@ describe('Workflow Approvals Tests', () => {
       });
   }
 
+  /* 
+  Used in the Workflow Approvals - Bulk Approve, Bulk Deny, Bulk Delete tests (below)
+  **/
+  function deleteApprovalFromListToolbar() {
+    cy.getModal().within(() => {
+      cy.get('[data-ouia-component-id="confirm"]').click();
+      cy.get('[data-ouia-component-id="submit"]').click();
+      cy.clickButton('Close');
+    });
+    cy.get('tbody').find('tr').should('have.length', 3);
+    cy.getByDataCy('select-all').click();
+    cy.getBy('[data-ouia-component-id="page-toolbar"]').within(() => {
+      cy.getByDataCy('actions-dropdown')
+        .click()
+        .then(() => {
+          cy.getByDataCy('delete').click();
+        });
+    });
+    cy.getModal().within(() => {
+      cy.get('[data-ouia-component-id="confirm"]').click();
+      cy.get('[data-ouia-component-id="submit"]').click();
+      cy.clickButton('Close');
+    });
+    cy.get('h2').should('contain', 'No results found');
+  }
+
   describe('Workflow Approvals - Bulk Approve, Bulk Deny, Bulk Delete', () => {
     it(`admin can enable concurrent jobs in a WFJT with a WF approval node, launch the job multiple times, bulk approve, and then bulk delete from the list toolbar`, () => {
       editJobTemplate();
       workflowApprovalBulkAction('approve');
+      deleteApprovalFromListToolbar();
     });
 
     it('admin can enable concurrent jobs in a WFJT with a WF approval node, launch the job multiple times, bulk deny, and then bulk delete from the list toolbar', () => {
       cy.visit(`/templates/workflow-job-template/${workflowJobTemplate.id.toString()}/details`);
       cy.verifyPageTitle(`${workflowJobTemplate.name}`);
       workflowApprovalBulkAction('deny');
+      deleteApprovalFromListToolbar();
     });
   });
 
