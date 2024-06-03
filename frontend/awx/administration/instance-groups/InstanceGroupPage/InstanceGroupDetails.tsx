@@ -5,6 +5,7 @@ import { useGetItem } from '../../../../common/crud/useGet';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';
 import { AwxError } from '../../../common/AwxError';
+import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageDetailCodeEditor';
 
 export function InstanceGroupDetails() {
   const params = useParams<{ id: string }>();
@@ -74,6 +75,14 @@ export function InstanceGroupDetailInner(props: { instanceGroup: InstanceGroup }
       <PageDetail label={t('Last modified')}>
         <DateTimeCell value={instanceGroup.modified} />
       </PageDetail>
+      <PageDetailCodeEditor
+        fullWidth
+        isEmpty={!instanceGroup.pod_spec_override.length}
+        helpText={t('Custom Kubernetes or OpenShift Pod specification.')}
+        label={t('Pod spec override')}
+        showCopyToClipboard
+        value={instanceGroup.pod_spec_override}
+      />
     </PageDetails>
   );
 }
