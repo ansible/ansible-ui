@@ -1,7 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useUsersFilters } from '../../users/hooks/useUsersFilters';
-import { Title } from '@patternfly/react-core';
-import styled from 'styled-components';
+import { Text, TextContent, TextVariants } from '@patternfly/react-core';
 import { PlatformUser } from '../../../interfaces/PlatformUser';
 import { ITableColumn, LoadingPage, TextCell } from '../../../../framework';
 import { useMemo } from 'react';
@@ -11,10 +10,6 @@ import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import { useParams } from 'react-router-dom';
 import { useGet } from '../../../../frontend/common/crud/useGet';
 import { PageMultiSelectList } from '../../../../framework/PageTable/PageMultiSelectList';
-
-const StyledTitle = styled(Title)`
-  margin-bottom: 1rem;
-`;
 
 export function PlatformSelectUsersStep() {
   const toolbarFilters = useUsersFilters();
@@ -66,10 +61,12 @@ export function PlatformSelectUsersStep() {
 
   return (
     <>
-      <StyledTitle headingLevel="h1">{t('Select user(s)')}</StyledTitle>
-      <h2 style={{ marginTop: '1rem', marginBottom: '1rem' }}>
-        {t('Select the users that you want to apply new roles to.')}
-      </h2>
+      <TextContent>
+        <Text component={TextVariants.h1}>{t('Select user(s)')}</Text>
+        <Text component={TextVariants.p} style={{ marginTop: '1rem', marginBottom: '1rem' }}>
+          {t('Select the users that you want to apply new roles to.')}
+        </Text>
+      </TextContent>
       <PageMultiSelectList
         view={view}
         tableColumns={tableColumns}
