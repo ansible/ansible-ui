@@ -1,9 +1,9 @@
-import { PlatformRoute } from '../main/PlatformRoutes';
 import { AwxRoute } from '../../frontend/awx/main/AwxRoutes';
 import { EdaRoute } from '../../frontend/eda/main/EdaRoutes';
+import { PlatformRoute } from '../main/PlatformRoutes';
 import { PlatformAwxOrganization } from '../resource/PlatformAwxOrganization';
-import { PlatformAwxUser } from '../resource/PlatformAwxUser';
 import { PlatformAwxTeam } from '../resource/PlatformAwxTeam';
+import { PlatformAwxUser } from '../resource/PlatformAwxUser';
 import { PlatformEdaOrganization } from '../resource/PlatformEdaOrganization';
 import { PlatformEdaUser } from '../resource/PlatformEdaUser';
 import { PlatformResource } from '../resource/PlatformResource';
