@@ -1,5 +1,6 @@
 import { randomString } from '../../../../framework/utils/random-string';
 import { Credential } from '../../../../frontend/awx/interfaces/Credential';
+import { ExecutionEnvironment } from '../../../../frontend/awx/interfaces/ExecutionEnvironment';
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 import { JobTemplate } from '../../../../frontend/awx/interfaces/JobTemplate';
 import { NotificationTemplate } from '../../../../frontend/awx/interfaces/NotificationTemplate';
@@ -13,31 +14,44 @@ describe('Job Templates Tests', function () {
     cy.awxLogin();
   });
 
+  beforeEach(() => {
+    cy.createGlobalOrganization();
+    cy.createGlobalProject();
+  });
+
   describe('Job Templates Tests: Create', function () {
     let inventory: Inventory;
+    let inventoryWithHost: Inventory;
     let machineCredential: Credential;
-    const executionEnvironment = 'Control Plane Execution Environment';
+    let project: Project;
+    let executionEnvironment: ExecutionEnvironment;
+    const executionEnvironmentName = 'Control Plane Execution Environment';
     const instanceGroup = 'default';
 
     beforeEach(function () {
-      cy.createAwxInventory({ organization: (this.globalOrganization as Organization).id }).then(
-        (inv) => {
-          inventory = inv;
+      cy.createAwxInventory({
+        organization: (this.globalOrganization as Organization).id,
+      }).then((inv) => {
+        inventory = inv;
 
-          cy.createAWXCredential({
-            kind: 'machine',
-            organization: (this.globalOrganization as Organization).id,
-            credential_type: 1,
-          }).then((cred) => {
-            machineCredential = cred;
-          });
-        }
-      );
+        cy.createAWXCredential({
+          kind: 'machine',
+          organization: (this.globalOrganization as Organization).id,
+          credential_type: 1,
+        }).then((cred) => {
+          machineCredential = cred;
+        });
+      });
     });
 
     afterEach(function () {
       cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
       cy.deleteAwxCredential(machineCredential, { failOnStatusCode: false });
+      executionEnvironment?.id &&
+        cy.deleteAwxExecutionEnvironment(executionEnvironment, { failOnStatusCode: false });
+      project?.id && cy.deleteAwxProject(project, { failOnStatusCode: false });
+      inventoryWithHost?.id &&
+        cy.deleteAwxInventory(inventoryWithHost, { failOnStatusCode: false });
     });
 
     it('can create a job template with all fields without prompt on launch option', function () {
@@ -85,12 +99,33 @@ describe('Job Templates Tests', function () {
         });
     });
 
-    it.skip('can create a job template that inherits the execution environment from the project', function () {
-      //This test cannot be written until https://issues.redhat.com/browse/AAP-23776 is fixed
-      //Create an EE in the beforeEach hook
-      //Create a project in the beforeEach hook, assign the EE to the project
-      //Create a JT within this test and assign the project to the JT
-      //Assert that the project's EE shows on the job template details page as the EE of the JT
+    it('can create a job template that inherits the execution environment from the project', function () {
+      cy.createAwxExecutionEnvironment({
+        organization: (this.globalOrganization as Organization).id,
+      }).then((ee: ExecutionEnvironment) => {
+        executionEnvironment = ee;
+        cy.createAwxProject({
+          organization: (this.globalOrganization as Organization).id,
+          default_environment: ee.id,
+        }).then((proj: Project) => {
+          project = proj;
+          cy.intercept('POST', awxAPI`/job_templates`).as('createJT');
+          const jtName = 'E2E-JT ' + randomString(4);
+          cy.navigateTo('awx', 'templates');
+          cy.getBy('[data-cy="create-template"]').click();
+          cy.clickLink(/^Create job template$/);
+          cy.getBy('[data-cy="name"]').type(jtName);
+          cy.getBy('[data-cy="description"]').type('This is a JT description');
+          cy.selectDropdownOptionByResourceName('inventory', inventory.name);
+          cy.selectDropdownOptionByResourceName('project', proj.name);
+          cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
+          cy.getBy('[data-cy="Submit"]').click();
+          cy.wait('@createJT');
+
+          cy.getByDataCy('execution-environment').contains(ee.name);
+          cy.getByDataCy('project').contains(proj.name);
+        });
+      });
     });
 
     it('can create a job template using the prompt on launch wizard', function () {
@@ -124,7 +159,7 @@ describe('Job Templates Tests', function () {
             cy.get('button').eq(1).click();
           });
           cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
-            cy.filterTableBySingleSelect('name', executionEnvironment);
+            cy.filterTableBySingleSelect('name', executionEnvironmentName);
             cy.get('[data-ouia-component-id="simple-table"] tbody').within(() => {
               cy.get('[data-cy="checkbox-column-cell"] input').click();
             });
@@ -196,7 +231,7 @@ describe('Job Templates Tests', function () {
             cy.get('button').eq(1).click();
           });
           cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
-            cy.filterTableBySingleSelect('name', executionEnvironment);
+            cy.filterTableBySingleSelect('name', executionEnvironmentName);
             cy.get('[data-ouia-component-id="simple-table"] tbody').within(() => {
               cy.get('[data-cy="checkbox-column-cell"] input').click();
             });
@@ -214,7 +249,7 @@ describe('Job Templates Tests', function () {
             cy.clickButton(/^Confirm/);
           });
           cy.clickButton(/^Next/);
-          cy.intercept('POST', `api/v2/job_templates/${id}/launch/`).as('postLaunch');
+          cy.intercept('POST', awxAPI`/job_templates/${id}/launch/`).as('postLaunch');
           cy.clickButton(/^Finish/);
           cy.wait('@postLaunch')
             .its('response.body.id')
@@ -239,12 +274,57 @@ describe('Job Templates Tests', function () {
         });
     });
 
-    it.skip('can create a job template, select concurrent jobs, and verify that two jobs will run concurrently', function () {
-      //Utilize the job template created in the beforeEach hook
-      //choose a playbook that will be long running in order to allow the test to assert the two jobs running concurrently
-      //Assert that the details page reflects concurrent jobs as an enabled option
-      //Have the test click the launch button twice in succession
-      //Assert two jobs running at the same time
+    it('can create a job template, select concurrent jobs, and verify that two jobs will run concurrently', function () {
+      const jtName = 'E2E Concurrent JT ' + randomString(4);
+      cy.createAwxProject({
+        organization: (this.globalOrganization as Organization).id,
+        scm_type: 'git',
+        scm_url: 'https://github.com/ansible/test-playbooks',
+      }).then((gitProject: Project) => {
+        cy.createInventoryHost(this.globalOrganization as Organization, '').then(
+          (inventoryHost) => {
+            const { inventory } = inventoryHost;
+            inventoryWithHost = inventory;
+
+            cy.visit('/templates/job-template/create');
+            cy.getByDataCy('name').type(jtName);
+            cy.selectDropdownOptionByResourceName('inventory', inventory.name);
+            cy.selectDropdownOptionByResourceName('project', gitProject.name);
+            cy.selectDropdownOptionByResourceName('playbook', 'debug-loop.yml');
+            cy.getByDataCy('allow_simultaneous').click();
+            cy.clickButton('Create job template');
+
+            cy.intercept('POST', awxAPI`/job_templates/*/launch/`).as('launchTemplate');
+            cy.clickButton('Launch template');
+
+            cy.wait('@launchTemplate')
+              .its('response.body')
+              .then(({ id: jobId, name }: { id: number; name: string }) => {
+                cy.url().should('contain', `/jobs/playbook/${jobId}/output`);
+                cy.contains('Running');
+                cy.contains(jtName);
+
+                cy.intercept('POST', awxAPI`/jobs/${jobId.toString()}/relaunch/`).as('relaunchJob');
+                cy.getByDataCy('relaunch-job').click();
+                cy.wait('@relaunchJob')
+                  .its('response.body')
+                  .then(({ id: jobId2, name: name2 }: { id: number; name: string }) => {
+                    cy.url().should('contain', `/jobs/playbook/${jobId2}/output`);
+                    cy.contains('Running');
+                    cy.contains(jtName);
+
+                    cy.visit('/jobs');
+
+                    cy.filterTableBySingleSelect('name', name);
+                    cy.contains('Running');
+
+                    cy.filterTableBySingleSelect('name', name2);
+                    cy.contains('Running');
+                  });
+              });
+          }
+        );
+      });
     });
   });
 
@@ -256,27 +336,27 @@ describe('Job Templates Tests', function () {
     let jobTemplate: JobTemplate;
 
     beforeEach(function () {
-      cy.createAwxInventory({ organization: (this.globalOrganization as Organization).id }).then(
-        (inv) => {
-          inventory = inv;
+      cy.createAwxInventory({
+        organization: (this.globalOrganization as Organization).id,
+      }).then((inv) => {
+        inventory = inv;
 
-          cy.createAWXCredential({
-            kind: 'machine',
+        cy.createAWXCredential({
+          kind: 'machine',
+          organization: (this.globalOrganization as Organization).id,
+          credential_type: 1,
+        }).then((cred) => {
+          machineCredential = cred;
+
+          cy.createAwxJobTemplate({
             organization: (this.globalOrganization as Organization).id,
-            credential_type: 1,
-          }).then((cred) => {
-            machineCredential = cred;
-
-            cy.createAwxJobTemplate({
-              organization: (this.globalOrganization as Organization).id,
-              project: (this.globalProject as Project).id,
-              inventory: inventory.id,
-            }).then((jt1) => {
-              jobTemplate = jt1;
-            });
+            project: (this.globalProject as Project).id,
+            inventory: inventory.id,
+          }).then((jt1) => {
+            jobTemplate = jt1;
           });
-        }
-      );
+        });
+      });
     });
 
     afterEach(function () {
