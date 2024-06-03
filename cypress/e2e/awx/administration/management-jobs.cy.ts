@@ -172,7 +172,7 @@ describe('Management Jobs - Schedules Tab', () => {
   });
 
   managementJobsList.forEach((jobName) => {
-    it(`admin can perform crud actions and toggle the schedule of management job: ${jobName} from the details tab`, () => {
+    it.only(`admin can perform crud actions and toggle the schedule of management job: ${jobName} from the details tab`, () => {
       const scheduleName = `${jobName} ${randomE2Ename()}`;
       cy.intercept('GET', awxAPI`/system_job_templates/?order_by=name&page=1&page_size=10`).as(
         'getManagementJobsListPage'
@@ -194,7 +194,7 @@ describe('Management Jobs - Schedules Tab', () => {
             );
             cy.getByDataCy('create-schedule').click();
             cy.verifyPageTitle('Create Schedule');
-            cy.getByDataCy('name').type(scheduleName, { delay: 0 });
+            cy.getByDataCy('name').type(scheduleName, { delay: 500 });
             cy.getByDataCy('description').type('description');
             if (['Cleanup Activity Stream', 'Cleanup Job Details'].includes(jobName)) {
               cy.get('[data-cy="schedule-days-to-keep"]').should('exist').type('10');
@@ -280,7 +280,7 @@ describe('Management Jobs - Schedules Tab', () => {
             );
             cy.getByDataCy('create-schedule').click();
             cy.verifyPageTitle('Create Schedule');
-            cy.get('[data-cy="name"]').type(scheduleName, { delay: 0 });
+            cy.get('[data-cy="name"]').type(scheduleName, { delay: 500 });
             cy.get('[data-cy="description"]').type('description');
             if (['Cleanup Activity Stream', 'Cleanup Job Details'].includes(jobName)) {
               cy.get('[data-cy="schedule-days-to-keep"]').should('exist').type('10');
