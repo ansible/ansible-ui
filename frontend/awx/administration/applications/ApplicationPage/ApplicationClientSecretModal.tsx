@@ -8,6 +8,7 @@ export function ApplicationClientSecretModal(props: {
   onClose: (value: SetStateAction<Application | undefined>) => void;
   applicationModalSource: Application;
 }) {
+  const { applicationModalSource } = props;
   return (
     <Modal
       aria-label={t`Application information`}
@@ -22,15 +23,18 @@ export function ApplicationClientSecretModal(props: {
         alertPrompts={[t`This is the only time the client secret will be shown.`]}
         numberOfColumns="single"
       >
-        <PageDetail label={t`Name`}>{props.applicationModalSource.name}</PageDetail>
+        <PageDetail label={t`Name`}>{applicationModalSource.name}</PageDetail>
         <PageDetail label={t`Client ID`}>
           <ClipboardCopy isReadOnly variant={ClipboardCopyVariant.expansion}>
-            {props.applicationModalSource.client_id}
+            {applicationModalSource.client_id}
           </ClipboardCopy>
         </PageDetail>
-        <PageDetail label={t`Client Secret`}>
+        <PageDetail
+          label={t`Client Secret`}
+          isEmpty={applicationModalSource.client_type === 'public'}
+        >
           <ClipboardCopy isReadOnly variant={ClipboardCopyVariant.expansion}>
-            {props.applicationModalSource.client_secret}
+            {applicationModalSource.client_secret}
           </ClipboardCopy>
         </PageDetail>
       </PageDetails>
