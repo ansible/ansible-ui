@@ -122,6 +122,7 @@ export function CreateInventory(props: { inventoryKind: '' | 'constructed' | 'sm
             verbosity: 0,
             update_cache_timeout: 0,
             limit: '',
+            source_vars: '',
           }
         : {
             kind: inventoryKind,
@@ -270,7 +271,7 @@ export function EditInventory() {
       : inventory.kind === 'constructed'
         ? {
             ...inventory,
-            instanceGrous: originalInstanceGroups,
+            instanceGroups: originalInstanceGroups,
             inventories: inputInventoriesResponse?.results?.map((item) => item.id),
           }
         : {
@@ -409,7 +410,7 @@ function InventoryInputs(props: { inventoryKind: string }) {
       )}
       <PageFormSection singleColumn>
         <PageFormDataEditor<InventoryCreate>
-          name="variables"
+          name={inventoryKind === 'constructed' ? 'source_vars' : 'variables'}
           label={inventoryKind === 'constructed' ? t('Source vars') : t('Variables')}
           format="yaml"
           isRequired={inventoryKind === 'constructed' ? true : false}
