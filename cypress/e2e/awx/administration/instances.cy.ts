@@ -112,7 +112,7 @@ describe('Instances: Add/Edit', () => {
     });
   });
 
-  it.only('can uncheck the Enable Instance checkbox on the edit form, save form, and see the toggle is off', () => {
+  it('can uncheck the Enable Instance checkbox on the edit form, save form, and see the toggle is off', () => {
     cy.filterTableBySingleSelect('hostname', instance.hostname);
     cy.clickTableRowLink('name', instance.hostname, { disableFilter: true });
     cy.url().then((currentUrl) => {

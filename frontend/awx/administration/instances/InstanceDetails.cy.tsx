@@ -91,7 +91,7 @@ describe('Instance Details', () => {
       });
   });
 
-  it.only('Enabled/Disabled switch is enabled if user has right permissions', () => {
+  it('Enabled/Disabled switch is enabled if user has right permissions', () => {
     cy.mount(<InstanceDetails />);
     cy.wait('@getInstance')
       .its('response.body')
