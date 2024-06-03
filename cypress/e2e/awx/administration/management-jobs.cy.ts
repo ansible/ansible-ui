@@ -207,7 +207,8 @@ describe('Management Jobs - Schedules Tab', () => {
             cy.clickButton('Finish');
             cy.wait('@createSchedule')
               .its('response.body.id')
-              .then((scheduleId) => {
+              .then((scheduleId: number) => {
+                cy.log(`Schedule ID: ${typeof scheduleId}`);
                 cy.verifyPageTitle(scheduleName);
                 cy.clickTab('Back to Schedules', true);
                 cy.filterTableByMultiSelect('name', [scheduleName]);
@@ -235,7 +236,7 @@ describe('Management Jobs - Schedules Tab', () => {
                   .should('have.text', 'Schedule disabled')
                   .should('be.visible');
 
-                cy.intercept('DELETE', awxAPI`/schedules/${scheduleId}/`).as(
+                cy.intercept('DELETE', awxAPI`/schedules/${scheduleId.toString()}/`).as(
                   'deleteMgtJobSchedule'
                 );
                 cy.clickPageAction('delete-schedule');
@@ -291,7 +292,7 @@ describe('Management Jobs - Schedules Tab', () => {
             cy.clickButton('Finish');
             cy.wait('@createSchedule')
               .its('response.body.id')
-              .then((scheduleId) => {
+              .then((scheduleId: number) => {
                 cy.verifyPageTitle(scheduleName);
                 cy.clickTab('Back to Schedules', true);
                 cy.filterTableBySingleSelect('name', scheduleName);
@@ -321,7 +322,7 @@ describe('Management Jobs - Schedules Tab', () => {
                 }
                 cy.clickTab('Schedules', true);
 
-                cy.intercept('DELETE', awxAPI`/schedules/${scheduleId}/`).as(
+                cy.intercept('DELETE', awxAPI`/schedules/${scheduleId.toString()}/`).as(
                   'deleteMgtJobSchedule'
                 );
                 cy.filterTableByMultiSelect('name', [scheduleName]);
