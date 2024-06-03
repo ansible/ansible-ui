@@ -2,18 +2,17 @@ import { useTranslation } from 'react-i18next';
 import {
   AsyncSelectFilterBuilderProps,
   useAsyncSingleSelectFilterBuilder,
-} from '../../../../../../framework/PageToolbar/PageToolbarFilters/ToolbarAsyncSelectFilterBuilder';
+} from '../../../../../hub/common/ToolbarAsyncSelectFilterBuilder';
 
 import { QueryParams, useAwxView } from '../../../../common/useAwxView';
 
+import { Inventory } from '../../../../interfaces/Inventory';
 import { useInventoriesColumns } from '../../hooks/useInventoriesColumns';
 import { useInventoriesFilters } from '../../hooks/useInventoriesFilters';
-import { Inventory } from '../../../../interfaces/Inventory';
 
-import { awxAPI } from '../../../../common/api/awx-utils';
 import { useMemo } from 'react';
-import { ITableColumn } from '../../../../../../framework';
-import { TextCell } from '../../../../../../framework';
+import { ITableColumn, TextCell } from '../../../../../../framework';
+import { awxAPI } from '../../../../common/api/awx-utils';
 
 function useParameters(queryParams: QueryParams): AsyncSelectFilterBuilderProps<Inventory> {
   const tableColumns = useInventoriesColumns();
