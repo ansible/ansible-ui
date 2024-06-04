@@ -13,9 +13,13 @@ import { EdaControllerToken } from '../../../interfaces/EdaControllerToken';
 import { EdaRoute } from '../../../main/EdaRoutes';
 import { useDeleteControllerTokens } from './useDeleteControllerTokens';
 
-export function useControllerTokensActions(view: IEdaView<EdaControllerToken>) {
+export function useControllerTokensActions(
+  view: IEdaView<EdaControllerToken>,
+  createTokenRoute?: string
+) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
+  const createRoute = createTokenRoute || EdaRoute.CreateControllerToken;
   const deleteControllerTokens = useDeleteControllerTokens(view.unselectItemsAndRefresh);
   return useMemo<IPageAction<EdaControllerToken>[]>(
     () => [
@@ -26,7 +30,7 @@ export function useControllerTokensActions(view: IEdaView<EdaControllerToken>) {
         isPinned: true,
         icon: PlusCircleIcon,
         label: t('Create controller token'),
-        onClick: () => pageNavigate(EdaRoute.CreateControllerToken),
+        onClick: () => pageNavigate(createRoute),
       },
       {
         type: PageActionType.Button,
@@ -38,6 +42,6 @@ export function useControllerTokensActions(view: IEdaView<EdaControllerToken>) {
         isDanger: true,
       },
     ],
-    [deleteControllerTokens, pageNavigate, t]
+    [deleteControllerTokens, pageNavigate, t, createRoute]
   );
 }

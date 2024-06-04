@@ -8,20 +8,23 @@ import { useControllerTokenActions } from '../hooks/useControllerTokenActions';
 import { useControllerTokensActions } from '../hooks/useControllerTokensActions';
 import { useControllerTokensColumns } from '../hooks/useControllerTokensColumns';
 import { PlusCircleIcon } from '@patternfly/react-icons';
+import { DetailInfo } from '../../../../../framework/components/DetailInfo';
 
-export function ControllerTokens() {
+export function ControllerTokens(props: { createTokenRoute?: string; infoMessage?: string }) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const tableColumns = useControllerTokensColumns();
+  const createRoute = props.createTokenRoute || EdaRoute.CreateControllerToken;
 
   const view = useEdaView<EdaControllerToken>({
     url: edaAPI`/users/me/awx-tokens/`,
     tableColumns,
   });
-  const toolbarActions = useControllerTokensActions(view);
+  const toolbarActions = useControllerTokensActions(view, createRoute);
   const rowActions = useControllerTokenActions(view);
   return (
     <PageLayout>
+      {props.infoMessage && <DetailInfo title={t(props.infoMessage)}></DetailInfo>}
       <PageTable
         id="eda-controller-tokens-table"
         tableColumns={tableColumns}
@@ -34,7 +37,7 @@ export function ControllerTokens() {
         )}
         emptyStateButtonIcon={<PlusCircleIcon />}
         emptyStateButtonText={t('Create controller token')}
-        emptyStateButtonClick={() => pageNavigate(EdaRoute.CreateControllerToken)}
+        emptyStateButtonClick={() => pageNavigate(createRoute)}
         {...view}
         defaultSubtitle={t('Controller tokens')}
       />

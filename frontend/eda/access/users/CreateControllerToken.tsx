@@ -52,7 +52,7 @@ export function CreateControllerToken() {
 
   const onSubmit: PageFormSubmitHandler<EdaControllerTokenCreate> = async (token) => {
     await postRequest(edaAPI`/users/me/awx-tokens/`, token);
-    pageNavigate(EdaRoute.MyTokens);
+    pageNavigate(EdaRoute.MyTokens, { params: { id: activeEdaUser?.id } });
   };
   const onCancel = () => navigate(-1);
 
@@ -65,13 +65,13 @@ export function CreateControllerToken() {
       label: activeEdaUser?.username ?? '',
       to: canViewUsers
         ? getPageUrl(EdaRoute.UserPage, { params: { id: activeEdaUser?.id } })
-        : getPageUrl(EdaRoute.MyPage),
+        : getPageUrl(EdaRoute.MyPage, { params: { id: activeEdaUser?.id } }),
     },
     {
       label: t('Controller tokens'),
       to: canViewUsers
         ? getPageUrl(EdaRoute.UserTokens, { params: { id: activeEdaUser?.id } })
-        : getPageUrl(EdaRoute.MyTokens),
+        : getPageUrl(EdaRoute.MyTokens, { params: { id: activeEdaUser?.id } }),
     },
     { label: activeEdaUser?.username ?? '' },
   ];
