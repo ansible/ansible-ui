@@ -7,7 +7,7 @@ import { CogIcon } from '@patternfly/react-icons';
 
 type ViewOrgRolesProps = {
   orgListsOptions: OrgRolesListProps[];
-  onManageRolesClick: () => void;
+  onManageRolesClick?: () => void;
   userOrTeamName: string;
 };
 
@@ -27,19 +27,23 @@ export function ManageOrgRoles(props: ViewOrgRolesProps) {
       isOpen
       onClose={onClose}
       actions={[
-        <Button
-          ouiaId="manage-roles-modal-manage-roles-button"
-          key="manage-roles"
-          variant={ButtonVariant.primary}
-          icon={<CogIcon />}
-          onClick={() => {
-            onManageRolesClick();
-            onClose();
-          }}
-          aria-label={t`Close`}
-        >
-          {t(`Manage roles`)}
-        </Button>,
+        ...(onManageRolesClick
+          ? [
+              <Button
+                ouiaId="manage-roles-modal-manage-roles-button"
+                key="manage-roles"
+                variant={ButtonVariant.primary}
+                icon={<CogIcon />}
+                onClick={() => {
+                  onManageRolesClick();
+                  onClose();
+                }}
+                aria-label={t`Close`}
+              >
+                {t(`Manage roles`)}
+              </Button>,
+            ]
+          : []),
         <Button
           ouiaId="manage-roles-modal-close-button"
           key="close"
@@ -62,12 +66,17 @@ export function ManageOrgRoles(props: ViewOrgRolesProps) {
           listId={index}
         />
       ))}
-      {orgListIsEmpty.every((isEmpty) => isEmpty === true) && (
-        <Trans>
-          <b>{userOrTeamName}</b> has no organization roles. To add roles to <b>{userOrTeamName}</b>{' '}
-          click on the button below.
-        </Trans>
-      )}
+      {orgListIsEmpty.every((isEmpty) => isEmpty === true) &&
+        (onManageRolesClick ? (
+          <Trans>
+            <b>{userOrTeamName}</b> has no organization roles. To add roles to{' '}
+            <b>{userOrTeamName}</b> click on the button below.
+          </Trans>
+        ) : (
+          <Trans>
+            <b>{userOrTeamName}</b> has no organization roles.
+          </Trans>
+        ))}
     </Modal>
   );
 }
@@ -77,8 +86,8 @@ export function useManageOrgRoles() {
   const openManageOrgRoles = useCallback(
     (manageOrgRolesOptions: {
       orgListsOptions: OrgRolesListProps[];
-      onManageRolesClick: () => void;
       userOrTeamName: string;
+      onManageRolesClick?: () => void;
     }) => {
       setDialog(
         <ManageOrgRoles
