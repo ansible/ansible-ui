@@ -1,5 +1,7 @@
+import { LabelGroup } from '@patternfly/react-core';
+import { useWatch } from 'react-hook-form';
 import { Trans, useTranslation } from 'react-i18next';
-import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
+import { Link } from 'react-router-dom';
 import {
   PageDetail,
   PageDetails,
@@ -10,16 +12,14 @@ import {
   PageFormTextInput,
   useGetPageUrl,
 } from '../../../../../framework';
-import { PageFormCredentialSelect } from '../../../access/credentials/components/PageFormCredentialSelect';
-import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
 import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageDetailCodeEditor';
-import { RunCommandWizard } from '../../../interfaces/Inventory';
-import { LabelGroup } from '@patternfly/react-core';
+import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
+import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
+import { PageFormCredentialSelect } from '../../../access/credentials/components/PageFormCredentialSelect';
+import { PageFormExecutionEnvironmentSelect } from '../../../administration/execution-environments/components/PageFormSelectExecutionEnvironment';
 import { CredentialLabel } from '../../../common/CredentialLabel';
-import { Link } from 'react-router-dom';
-import { PageFormExecutionEnvironmentSelect } from '../../../administration/execution-environments/components/PageFormExecutionEnvironmentSelect';
+import { RunCommandWizard } from '../../../interfaces/Inventory';
 import { AwxRoute } from '../../../main/AwxRoutes';
-import { useWatch } from 'react-hook-form';
 
 export function RunCommandDetailStep() {
   const { t } = useTranslation();
