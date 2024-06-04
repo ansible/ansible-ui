@@ -15,7 +15,6 @@ import { AwxError } from '../../../common/AwxError';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { Team } from '../../../interfaces/Team';
 import { AwxRoute } from '../../../main/AwxRoutes';
-import { useViewActivityStream } from '../../common/useViewActivityStream';
 import { useTeamActions } from '../hooks/useTeamActions';
 
 export function TeamPage() {
@@ -27,8 +26,6 @@ export function TeamPage() {
     onTeamsDeleted: () => pageNavigate(AwxRoute.Teams),
     isDetailsPageAction: true,
   });
-  const viewActivityStreamAction = useViewActivityStream('team');
-  const pageActions = [...viewActivityStreamAction, ...itemActions];
   const getPageUrl = useGetPageUrl();
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
@@ -41,7 +38,7 @@ export function TeamPage() {
         breadcrumbs={[{ label: t('Teams'), to: getPageUrl(AwxRoute.Teams) }, { label: team?.name }]}
         headerActions={
           <PageActions<Team>
-            actions={pageActions}
+            actions={itemActions}
             position={DropdownPosition.right}
             selectedItem={team}
           />

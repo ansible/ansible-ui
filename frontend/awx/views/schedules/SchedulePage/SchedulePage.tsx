@@ -16,15 +16,12 @@ import { AwxRoute } from '../../../main/AwxRoutes';
 import { resourceEndPoints } from '../hooks/scheduleHelpers';
 import { useSchedulesActions } from '../hooks/useSchedulesActions';
 import { ScheduleResources } from '../types';
-import { useViewActivityStream } from '../../../access/common/useViewActivityStream';
 
 export function SchedulePage(props: {
   tabs: { label: string; page: string }[];
   backTab: { label: string; page: string; persistentFilterKey: string };
   initialBreadCrumbs: { label?: string; id?: string; to: string }[];
 }) {
-  const viewActivityStreamAction = useViewActivityStream('schedule');
-
   const abortController = useAbortController();
   const [inventory, setInventory] = useState<Inventory | null>(null);
   const { pathname } = useLocation();
@@ -117,7 +114,7 @@ export function SchedulePage(props: {
         breadcrumbs={breadCrumbs}
         headerActions={
           <PageActions<Schedule>
-            actions={[...viewActivityStreamAction, ...itemActions]}
+            actions={itemActions}
             position={DropdownPosition.right}
             selectedItem={schedule}
           />
