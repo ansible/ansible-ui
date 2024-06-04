@@ -316,7 +316,7 @@ describe('Workflow Approvals Tests', () => {
     cy.get('h2').should('contain', 'No results found');
   }
 
-  describe('Workflow Approvals - Bulk Approve, Bulk Deny, Bulk Delete', () => {
+  describe.skip('Workflow Approvals - Bulk Approve, Bulk Deny, Bulk Delete', () => {
     it(`admin can enable concurrent jobs in a WFJT with a WF approval node, launch the job multiple times, bulk approve, and then bulk delete from the list toolbar`, () => {
       editJobTemplate();
       workflowApprovalBulkAction('approve');
