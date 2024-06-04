@@ -15,13 +15,7 @@ export function InventoryHostFacts(props: { page: string }) {
 
   return (
     <PageDetails>
-      <PageDetailCodeEditor
-        label={t('Facts')}
-        value={JSON.stringify(facts) || '{}'}
-        fullWidth
-        toggleLanguage
-        showCopyToClipboard
-      />
+      <PageDetailCodeEditor label={t('Facts')} value={JSON.stringify(facts) || '{}'} />
     </PageDetails>
   );
 }

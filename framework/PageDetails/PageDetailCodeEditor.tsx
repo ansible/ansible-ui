@@ -24,7 +24,15 @@ export function PageDetailCodeEditor(props: {
   isEmpty?: boolean;
   fullWidth?: boolean;
 }) {
-  const { value, label, helpText } = props;
+  const {
+    value,
+    label,
+    helpText,
+    fullWidth = true,
+    showCopyToClipboard = true,
+    toggleLanguage = true,
+  } = props;
+
   const { id } = useParams();
   const { t } = useTranslation();
   const [copied, setCopied] = useState(false);
@@ -45,9 +53,9 @@ export function PageDetailCodeEditor(props: {
   }, [language, value]);
 
   const actions =
-    props?.showCopyToClipboard || props?.toggleLanguage ? (
+    showCopyToClipboard || toggleLanguage ? (
       <React.Fragment>
-        {props?.showCopyToClipboard && (
+        {showCopyToClipboard && (
           <CodeBlockAction>
             <ClipboardCopyButton
               id="basic-copy-button"
@@ -63,7 +71,7 @@ export function PageDetailCodeEditor(props: {
             </ClipboardCopyButton>
           </CodeBlockAction>
         )}
-        {props?.toggleLanguage && (
+        {toggleLanguage && (
           <CodeBlockAction>
             <ToggleGroup isCompact>
               <ToggleGroupItem
@@ -94,7 +102,7 @@ export function PageDetailCodeEditor(props: {
       label={label ?? t('Variables')}
       helpText={helpText}
       isEmpty={props?.isEmpty}
-      fullWidth={props?.fullWidth}
+      fullWidth={fullWidth}
     >
       <CodeBlock id={id} actions={actions}>
         <CodeBlockCode data-cy={'code-block-value'}>{codeEditorValue}</CodeBlockCode>
