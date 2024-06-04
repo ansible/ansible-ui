@@ -13,6 +13,7 @@ import { IPageAction } from './PageAction';
 import { PageActionDropdown } from './PageActionDropdown';
 import { isPageActionHidden } from './PageActionUtils';
 import { PageActionsPinned } from './PageActionsPinned';
+import { useViewActivityStream } from '../../frontend/awx/access/common/useViewActivityStream';
 
 interface PageActionProps<T extends object> {
   /** The array of PageActions */
@@ -48,7 +49,7 @@ interface PageActionProps<T extends object> {
  */
 export function PageActions<T extends object>(props: PageActionProps<T>) {
   const { actions, selectedItem, iconOnly, onOpen } = props;
-
+  const activityStream = useViewActivityStream();
   const collapseBreakpoint = useBreakpoint(
     props.collapse !== 'never' && props.collapse !== 'always' ? props.collapse ?? 'lg' : 'lg'
   );
@@ -103,7 +104,11 @@ export function PageActions<T extends object>(props: PageActionProps<T>) {
       )}
       {dropdownActions.length > 0 && (
         <FlexItem>
-          <PageActionDropdown {...props} actions={dropdownActions} onOpen={handleOnOpen} />
+          <PageActionDropdown
+            {...props}
+            actions={[...activityStream, ...dropdownActions]}
+            onOpen={handleOnOpen}
+          />
         </FlexItem>
       )}
     </Flex>
