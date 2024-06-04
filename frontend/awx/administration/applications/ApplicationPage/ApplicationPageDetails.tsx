@@ -1,9 +1,17 @@
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { CopyCell, DateTimeCell, PageDetail, PageDetails } from '../../../../../framework';
+import {
+  CopyCell,
+  DateTimeCell,
+  PageDetail,
+  PageDetails,
+  TextCell,
+  useGetPageUrl,
+} from '../../../../../framework';
 import { useGetItem } from '../../../../common/crud/useGet';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { Application } from '../../../interfaces/Application';
+import { AwxRoute } from '../../../main/AwxRoutes';
 
 export function ApplicationPageDetails() {
   const params = useParams<{ id: string }>();
@@ -13,13 +21,20 @@ export function ApplicationPageDetails() {
 
 export function ApplicationDetailInner(props: { application: Application }) {
   const { t } = useTranslation();
-
+  const getPageUrl = useGetPageUrl();
   return (
     <PageDetails>
       <PageDetail label={t('Name')}>{props.application.name}</PageDetail>
       <PageDetail label={t('Description')}>{props.application.description}</PageDetail>
       <PageDetail label={t('Organization')}>
-        {props.application.summary_fields.organization.name}
+        {props.application.summary_fields.organization.name && (
+          <TextCell
+            text={props.application.summary_fields?.organization?.name}
+            to={getPageUrl(AwxRoute.OrganizationPage, {
+              params: { id: props.application.summary_fields?.organization?.id },
+            })}
+          />
+        )}
       </PageDetail>
       <PageDetail label={t('Authorization Grant Type')}>
         {props.application.authorization_grant_type}
