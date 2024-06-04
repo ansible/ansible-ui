@@ -20,6 +20,7 @@ type ResourceObject =
 
 export interface AccessTabResource {
   name: string;
+  roles_tab_name: string;
   content_type: string;
   creation: (() => Cypress.Chainable<ResourceObject>) | null;
   deletion: (resourceObject: ResourceObject) => Cypress.Chainable<void>;
@@ -28,6 +29,7 @@ export interface AccessTabResource {
 export const user_team_access_tab_resources: AccessTabResource[] = [
   {
     name: 'projects',
+    roles_tab_name: 'Project',
     content_type: 'eda.project',
     creation: () => cy.createEdaProject() as Cypress.Chainable<ResourceObject>,
     deletion: (resourceObject) => cy.deleteEdaProject(resourceObject as EdaProject),
@@ -35,7 +37,8 @@ export const user_team_access_tab_resources: AccessTabResource[] = [
   },
   {
     name: 'decision-environments',
-    content_type: 'eda.project',
+    roles_tab_name: 'Decision Environment',
+    content_type: 'eda.decision-environment',
     creation: () => cy.createEdaDecisionEnvironment() as Cypress.Chainable<ResourceObject>,
     deletion: (resourceObject) =>
       cy.deleteEdaDecisionEnvironment(resourceObject as EdaDecisionEnvironment),
@@ -43,6 +46,7 @@ export const user_team_access_tab_resources: AccessTabResource[] = [
   },
   {
     name: 'rulebook-activations',
+    roles_tab_name: 'Activation',
     content_type: 'eda.activation',
     creation: null,
     deletion: (resourceObject) =>
@@ -51,6 +55,7 @@ export const user_team_access_tab_resources: AccessTabResource[] = [
   },
   {
     name: 'credentials',
+    roles_tab_name: 'Eda Credential',
     content_type: 'eda.edacredential',
     creation: () => cy.createEdaCredential() as Cypress.Chainable<ResourceObject>,
     deletion: (resourceObject) => cy.deleteEdaCredential(resourceObject as EdaCredential),
@@ -58,6 +63,7 @@ export const user_team_access_tab_resources: AccessTabResource[] = [
   },
   {
     name: 'credential-types',
+    roles_tab_name: 'Credential Type',
     content_type: 'eda.credentialtype',
     creation: () => cy.createEdaCredentialType() as Cypress.Chainable<ResourceObject>,
     deletion: (resourceObject) => cy.deleteEdaCredentialType(resourceObject as EdaCredentialType),
