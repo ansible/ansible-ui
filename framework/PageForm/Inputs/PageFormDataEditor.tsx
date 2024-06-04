@@ -345,7 +345,7 @@ export function valueToObject(
   }
 }
 
-function objectToString(obj: object, language: DataEditorLanguages): string {
+export function objectToString(obj: object, language: DataEditorLanguages): string {
   if (obj === null || obj === undefined) {
     return '';
   }
