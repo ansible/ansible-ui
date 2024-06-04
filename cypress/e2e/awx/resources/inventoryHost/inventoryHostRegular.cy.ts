@@ -1,7 +1,7 @@
-import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
-import { Organization } from '../../../../frontend/awx/interfaces/Organization';
-import { AwxUser } from '../../../../frontend/awx/interfaces/User';
-import { createAndEditAndDeleteHost, checkHostGroup } from '../../../support/hostsfunctions';
+import { Inventory } from '../../../../../frontend/awx/interfaces/Inventory';
+import { Organization } from '../../../../../frontend/awx/interfaces/Organization';
+import { AwxUser } from '../../../../../frontend/awx/interfaces/User';
+import { createAndEditAndDeleteHost, checkHostGroup } from '../../../../support/hostsfunctions';
 
 describe('Inventory Host Tab Tests for regular inventory', () => {
   let organization: Organization;
@@ -43,7 +43,7 @@ describe('Inventory Host Tab Tests for regular inventory', () => {
     createAndEditAndDeleteHost('inventory_host', inventory);
   });
 
-  it('can edit and delete inventory host action from details view', () => {
+  it.skip('can edit and delete inventory host action from details view', () => {
     //can and delete host from details view
   });
 
