@@ -106,7 +106,7 @@ export function InventoryDetailsInner(props: { inventory: InventoryWithSource })
       <PageDetail label={t('Organization')}>
         <TextCell
           text={inventory.summary_fields?.organization?.name}
-          to={getPageUrl(AwxRoute.OrganizationPage, {
+          to={getPageUrl(AwxRoute.OrganizationDetails, {
             params: { id: inventory.summary_fields?.organization?.id },
           })}
         />

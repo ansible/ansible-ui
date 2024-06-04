@@ -98,7 +98,7 @@ export function CredentialDetailsInner(props: { credential: Credential }) {
         ) : (
           <TextCell
             text={credential.summary_fields?.credential_type?.name}
-            to={getPageUrl(AwxRoute.CredentialTypePage, {
+            to={getPageUrl(AwxRoute.CredentialTypeDetails, {
               params: { id: credential.summary_fields?.credential_type?.id },
             })}
           />
