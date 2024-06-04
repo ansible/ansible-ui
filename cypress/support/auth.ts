@@ -60,13 +60,14 @@ Cypress.Commands.add('awxLoginTestUser', (username: string, password: string) =>
       window.localStorage.setItem('theme', 'light');
       window.localStorage.setItem('disclaimer', 'true');
       window.localStorage.setItem('hide-welcome-message', 'true');
-      cy.visit(`/login`, {
+      cy.visit(`/`, {
         retryOnStatusCodeFailure: true,
         retryOnNetworkFailure: true,
       });
-      cy.wait(1); // Seems like sometimes when the page first comes up that the login form is not ready
-      cy.get('[data-cy="username"]').type(username, { force: true, delay: 0 });
-      cy.get('[data-cy="password"]').type(password, { force: true, delay: 0 });
+      cy.contains('Log in');
+      cy.wait(1000);
+      cy.get('[data-cy="username"]').type(username, { force: true, delay: 100 });
+      cy.get('[data-cy="password"]').type(password, { force: true, delay: 100 });
       cy.get('[data-cy="Submit"]').click();
       cy.get('[data-cy="nav-toggle"]').should('exist');
     },
