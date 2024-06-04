@@ -6,25 +6,31 @@ import {
   IPageAction,
   PageActionType,
   PageActionSelection,
+  usePageAlertToaster,
 } from '../../../../../framework';
-import { cannotEditResource, cannotDeleteResource } from '../../../../common/utils/RBAChelpers';
+import {
+  cannotEditResource,
+  cannotDeleteResource,
+  cannotCopyResource,
+} from '../../../../common/utils/RBAChelpers';
 import { ExecutionEnvironment } from '../../../interfaces/ExecutionEnvironment';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useDeleteExecutionEnvironments } from './useDeleteExecutionEnvironments';
+import { usePostRequest } from '../../../../common/crud/usePostRequest';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { AlertProps } from '@patternfly/react-core';
 
 type ExecutionEnvironmentActionOptions = {
-  onExecutionEnvironmentsDeleted: (executionEnvironments: ExecutionEnvironment[]) => void;
+  onDelete: (executionEnvironments: ExecutionEnvironment[]) => void;
+  onCopy: (() => Promise<void>) | ((ee: ExecutionEnvironment) => void);
 };
 
-export function useExecutionEnvRowActions({
-  onExecutionEnvironmentsDeleted,
-}: ExecutionEnvironmentActionOptions) {
+export function useExecutionEnvRowActions({ onDelete, onCopy }: ExecutionEnvironmentActionOptions) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
-  const deleteExecutionEnvironments = useDeleteExecutionEnvironments(
-    onExecutionEnvironmentsDeleted
-  );
-
+  const deleteExecutionEnvironments = useDeleteExecutionEnvironments(onDelete);
+  const alertToaster = usePageAlertToaster();
+  const postRequest = usePostRequest();
   return useMemo<IPageAction<ExecutionEnvironment>[]>(
     () => [
       {
@@ -39,6 +45,35 @@ export function useExecutionEnvRowActions({
             params: { id: executionEnvironment.id },
           }),
       },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        icon: PencilAltIcon,
+        isPinned: false,
+        label: t('Copy execution environment'),
+        isDisabled: (executionEnvironment) => cannotCopyResource(executionEnvironment, t),
+        onClick: (ee) => {
+          const alert: AlertProps = {
+            variant: 'success',
+            title: t(`${ee.name} copied.`),
+            timeout: 2000,
+          };
+          postRequest(awxAPI`/execution_environments/${ee?.id.toString() ?? ''}/copy/`, {
+            name: `${ee.name} @ ${new Date().toTimeString()}`,
+          })
+            .then(async (res) => {
+              alertToaster.addAlert(alert);
+              await onCopy(res as ExecutionEnvironment);
+            })
+            .catch((error) => {
+              alertToaster.replaceAlert(alert, {
+                variant: 'danger',
+                title: t('Failed to copy execution envirionment'),
+                children: error instanceof Error && error.message,
+              });
+            });
+        },
+      },
       { type: PageActionType.Seperator },
       {
         type: PageActionType.Button,
@@ -51,6 +86,6 @@ export function useExecutionEnvRowActions({
         isDanger: true,
       },
     ],
-    [pageNavigate, deleteExecutionEnvironments, t]
+    [pageNavigate, deleteExecutionEnvironments, alertToaster, postRequest, onCopy, t]
   );
 }

@@ -1,25 +1,16 @@
-import { ButtonVariant } from '@patternfly/react-core';
-import { PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
+import { PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import {
-  PageTable,
-  usePageNavigate,
-  IPageAction,
-  PageActionType,
-  PageActionSelection,
-} from '../../../../framework';
+import { PageTable, usePageNavigate } from '../../../../framework';
 import { useAwxView } from '../../common/useAwxView';
 import { ExecutionEnvironment } from '../../interfaces/ExecutionEnvironment';
-import { useMemo } from 'react';
 import { awxAPI } from '../../common/api/awx-utils';
 import { AwxRoute } from '../../main/AwxRoutes';
 import { useExecutionEnvRowActions } from './hooks/useExecutionEnvRowActions';
-import { cannotDeleteResources } from '../../../common/utils/RBAChelpers';
 import { useExecutionEnvironmentsColumns } from './hooks/useExecutionEnvironmentsColumns';
 import { useExecutionEnvironmentsFilters } from './hooks/useExecutionEnvironmentsFilters';
 import { useOptions } from '../../../common/crud/useOptions';
 import { OptionsResponse, ActionsResponse } from '../../interfaces/OptionsResponse';
-import { useDeleteExecutionEnvironments } from './hooks/useDeleteExecutionEnvironments';
+import { useExecutionEnvToolbarActions } from './hooks/useExecutionEnvToolbarActions';
 
 export function ExecutionEnvironmentsList({
   url,
@@ -40,44 +31,15 @@ export function ExecutionEnvironmentsList({
     toolbarFilters,
     tableColumns,
   });
-  const deleteExecutionEnvironments = useDeleteExecutionEnvironments(view.unselectItemsAndRefresh);
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(
     url ? url : awxAPI`/execution_environments/`
   );
   const rowActions = useExecutionEnvRowActions({
-    onExecutionEnvironmentsDeleted: view.unselectItemsAndRefresh,
+    onDelete: view.unselectItemsAndRefresh,
+    onCopy: view.refresh,
   });
-
   const canCreateExecutionEnvironment = Boolean(data && data.actions && data.actions['POST']);
-  const toolbarActions = useMemo<IPageAction<ExecutionEnvironment>[]>(
-    () => [
-      {
-        type: PageActionType.Button,
-        selection: PageActionSelection.None,
-        variant: ButtonVariant.primary,
-        isPinned: true,
-        icon: PlusCircleIcon,
-        label: t('Create execution environment'),
-        isDisabled: canCreateExecutionEnvironment
-          ? undefined
-          : t(
-              'You do not have permission to create an execution environment. Please contact your organization administrator if there is an issue with your access.'
-            ),
-        onClick: () => pageNavigate(AwxRoute.CreateExecutionEnvironment),
-      },
-      { type: PageActionType.Seperator },
-      {
-        type: PageActionType.Button,
-        selection: PageActionSelection.Multiple,
-        icon: TrashIcon,
-        label: t('Delete selected execution environments'),
-        isDisabled: (executionEnvironments) => cannotDeleteResources(executionEnvironments, t),
-        onClick: deleteExecutionEnvironments,
-        isDanger: true,
-      },
-    ],
-    [t, canCreateExecutionEnvironment, deleteExecutionEnvironments, pageNavigate]
-  );
+  const toolbarActions = useExecutionEnvToolbarActions(view);
 
   return (
     <PageTable<ExecutionEnvironment>
