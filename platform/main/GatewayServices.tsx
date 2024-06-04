@@ -1,91 +1,63 @@
 import { Page } from '@patternfly/react-core';
-import {
-  Dispatch,
-  ReactNode,
-  SetStateAction,
-  createContext,
-  useContext,
-  useLayoutEffect,
-  useMemo,
-  useState,
-} from 'react';
+import { ReactNode, createContext, useContext, useLayoutEffect, useState } from 'react';
 import useSWR from 'swr';
 import { LoadingState } from '../../framework/components/LoadingState';
 import { setAwxApiPath } from '../../frontend/awx/common/api/awx-utils';
 import { requestGet } from '../../frontend/common/crud/Data';
 import { setEdaApiPath } from '../../frontend/eda/common/eda-utils';
 import { setHubApiPath } from '../../frontend/hub/common/api/formatPath';
-import { gatewayAPI } from '../api/gateway-api-utils';
-import { GatewayService } from './GatewayService';
 
-export const GatewayServicesContext = createContext<
-  [GatewayService[], Dispatch<SetStateAction<GatewayService[]>>]
->([
-  [],
-  () => {
-    throw new Error('GatewayServicesProvider not found');
-  },
-]);
+interface GatewayServices {
+  gateway?: string;
+  controller?: string;
+  eda?: string;
+  galaxy?: string;
+}
+
+export const GatewayServicesContext = createContext<GatewayServices>({});
 
 export function useGatewayServices() {
   return useContext(GatewayServicesContext);
 }
 
 export function GatewayServicesProvider(props: { children: ReactNode }) {
-  const [gatewayServices, setGatewayServices] = useState<GatewayService[]>([]);
-  const result = useSWR<{ results: GatewayService[] }>(gatewayAPI`/services/`, requestGet);
+  const [gatewayServices, setGatewayServices] = useState<GatewayServices>();
+  const result = useSWR<{
+    apis: {
+      gateway?: string;
+      controller?: string;
+      eda?: string;
+      galaxy?: string;
+    };
+  }>(`/api/`, requestGet);
   useLayoutEffect(() => {
     if (!result.data) {
-      setGatewayServices([]);
+      setGatewayServices({});
     } else {
-      const awxService = result.data.results.find(
-        (service) => service.summary_fields?.service_cluster?.service_type === 'controller'
-      );
-      if (awxService) {
-        let awxApiPath = awxService.gateway_path;
+      if (result.data.apis.controller) {
+        let awxApiPath = result.data.apis.controller;
         if (awxApiPath.endsWith('/')) awxApiPath = awxApiPath.slice(0, -1);
         awxApiPath = awxApiPath + '/v2';
         setAwxApiPath(awxApiPath);
       }
 
-      const edaService = result.data.results.find(
-        (service) => service.summary_fields?.service_cluster?.service_type === 'eda'
-      );
-      if (edaService) {
-        let edaApiPath = edaService.gateway_path;
+      if (result.data.apis.eda) {
+        let edaApiPath = result.data.apis.eda;
         if (edaApiPath.endsWith('/')) edaApiPath = edaApiPath.slice(0, -1);
         edaApiPath = edaApiPath + '/v1';
         setEdaApiPath(edaApiPath);
       }
 
-      const hubService = result.data.results.find(
-        (service) => service.summary_fields?.service_cluster?.service_type === 'hub'
-      );
-      if (hubService) {
-        let hubApiPath = hubService.gateway_path;
+      if (result.data.apis.galaxy) {
+        let hubApiPath = result.data.apis.galaxy;
         if (hubApiPath.endsWith('/')) hubApiPath = hubApiPath.slice(0, -1);
         setHubApiPath(hubApiPath);
       }
-
-      const services = result.data.results;
-      // Debug code to test different service being available/unavailable
-      // services = services.filter((service) => {
-      //   switch (service.summary_fields?.service_cluster?.service_type) {
-      //     case 'controller':
-      //       return true;
-      //     case 'eda':
-      //       return true;
-      //     case 'hub':
-      //       return true;
-      //     default:
-      //       return true;
-      //   }
-      // });
-      setGatewayServices(services);
+      setGatewayServices(result.data.apis);
     }
   }, [result.data, setGatewayServices]);
 
-  if (!gatewayServices.length) {
+  if (!gatewayServices) {
     return (
       <Page>
         <LoadingState />
@@ -94,29 +66,34 @@ export function GatewayServicesProvider(props: { children: ReactNode }) {
   }
 
   return (
-    <GatewayServicesContext.Provider value={[gatewayServices, setGatewayServices]}>
+    <GatewayServicesContext.Provider value={gatewayServices}>
       {props.children}
     </GatewayServicesContext.Provider>
   );
 }
 
 export function useGatewayService(serviceType?: 'controller' | 'eda' | 'hub') {
-  const [services] = useGatewayServices();
-  return useMemo(() => {
-    return services?.find(
-      (service) => service.summary_fields?.service_cluster?.service_type === serviceType
-    );
-  }, [serviceType, services]);
+  const services = useGatewayServices();
+  switch (serviceType) {
+    case 'controller':
+      return services.controller;
+    case 'eda':
+      return services.eda;
+    case 'hub':
+      return services.galaxy;
+    default:
+      return services.gateway;
+  }
 }
 
-export function useAwxService() {
-  return useGatewayService('controller');
+export function useHasAwxService() {
+  return useGatewayService('controller') !== undefined;
 }
 
-export function useEdaService() {
-  return useGatewayService('eda');
+export function useHasEdaService() {
+  return useGatewayService('eda') !== undefined;
 }
 
-export function useHubService() {
-  return useGatewayService('hub');
+export function useHasHubService() {
+  return useGatewayService('hub') !== undefined;
 }

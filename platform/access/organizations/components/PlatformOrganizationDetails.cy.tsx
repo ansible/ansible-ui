@@ -2,7 +2,6 @@
 
 import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 import { gatewayV1API } from '../../../api/gateway-api-utils';
-import { GatewayService } from '../../../main/GatewayService';
 import { GatewayServicesContext } from '../../../main/GatewayServices';
 import { PlatformOrganizationDetails } from './PlatformOrganizationDetails';
 
@@ -112,17 +111,7 @@ describe('PlatformOrganizationDetails', () => {
 
   it('should display organization details when a Controller service is registered', () => {
     cy.mount(
-      <GatewayServicesContext.Provider
-        value={[
-          [
-            { summary_fields: { service_cluster: { service_type: 'gateway' } } } as GatewayService,
-            {
-              summary_fields: { service_cluster: { service_type: 'controller' } },
-            } as GatewayService,
-          ],
-          () => null,
-        ]}
-      >
+      <GatewayServicesContext.Provider value={{ controller: '' }}>
         <PlatformOrganizationDetails />
       </GatewayServicesContext.Provider>
     );

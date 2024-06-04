@@ -5,13 +5,13 @@ import { LoadingState } from '../../framework/components/LoadingState';
 import { AwxError } from '../../frontend/awx/common/AwxError';
 import { useAwxConfigState } from '../../frontend/awx/common/useAwxConfig';
 import { SubscriptionWizard } from '../settings/SubscriptionWizard';
-import { useAwxService } from './GatewayServices';
+import { useHasAwxService } from './GatewayServices';
 
 export function PlatformSubscription(props: { children: ReactNode }) {
   const { t } = useTranslation();
   const { awxConfig, awxConfigIsLoading, awxConfigError, refreshAwxConfig } = useAwxConfigState();
 
-  const awxService = useAwxService();
+  const awxService = useHasAwxService();
 
   if (awxService) {
     if (awxConfigIsLoading) {

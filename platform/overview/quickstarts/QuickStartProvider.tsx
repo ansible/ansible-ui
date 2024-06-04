@@ -1,12 +1,12 @@
 import { AllQuickStartStates, QuickStart, QuickStartContainer } from '@patternfly/quickstarts';
 import { ReactNode, useMemo, useState } from 'react';
-import { useHubService } from '../../main/GatewayServices';
+import { useHasHubService } from '../../main/GatewayServices';
 import { useFindingContentQuickStart } from './useFindingContentQuickStart';
 
 export function QuickStartProvider(props: { children: ReactNode }) {
   // const awxService = useAwxService();
   // const edaService = useEdaService();
-  const hubService = useHubService();
+  const hubService = useHasHubService();
 
   const [activeQuickStartID, setActiveQuickStartID] = useState('');
   const [allQuickStartStates, setAllQuickStartStates] = useState<AllQuickStartStates>({});

@@ -22,7 +22,7 @@ import { AwxRecentProjectsCard } from '../../frontend/awx/overview/cards/AwxRece
 import { EdaDecisionEnvironmentsCard } from '../../frontend/eda/overview/cards/EdaDecisionEnvironmentsCard';
 import { EdaRuleAuditCard } from '../../frontend/eda/overview/cards/EdaRuleAuditCard';
 import { EdaRulebookActivationsCard } from '../../frontend/eda/overview/cards/EdaRulebookActivationsCard';
-import { useAwxService, useEdaService, useHubService } from '../main/GatewayServices';
+import { useHasAwxService, useHasEdaService, useHasHubService } from '../main/GatewayServices';
 import { PlatformCountsCard } from './cards/PlatformCountsCard';
 import { useManagedPlatformOverview } from './useManagedPlatformOverview';
 
@@ -30,9 +30,9 @@ export function PlatformOverview() {
   const { t } = useTranslation();
   const { openManageDashboard, managedResources } = useManagedPlatformOverview();
   const awxConfig = useAwxConfig();
-  const awxService = useAwxService();
-  const edaService = useEdaService();
-  const hubService = useHubService();
+  const awxService = useHasAwxService();
+  const edaService = useHasEdaService();
+  const hubService = useHasHubService();
   return (
     <PageLayout>
       {awxConfig && (!awxConfig.license_info || !awxConfig.license_info.compliant) && (

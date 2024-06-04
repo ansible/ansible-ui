@@ -1,16 +1,16 @@
 import { useTranslation } from 'react-i18next';
+import { usePageAlertToaster, usePageNavigate } from '../../../../framework';
+import { awxErrorAdapter } from '../../../../frontend/awx/common/adapters/awxErrorAdapter';
+import { awxAPI } from '../../../../frontend/awx/common/api/awx-utils';
+import { pollAwxItemsResponseItem } from '../../../../frontend/awx/common/pollAwxItemsResponseItem';
+import { Organization as ControllerOrganization } from '../../../../frontend/awx/interfaces/Organization';
 import { usePatchRequest } from '../../../../frontend/common/crud/usePatchRequest';
 import { usePostRequest } from '../../../../frontend/common/crud/usePostRequest';
-import { OrganizationWizardFormValues, PlatformOrganizationForm } from './PlatformOrganizationForm';
-import { usePageAlertToaster, usePageNavigate } from '../../../../framework';
-import { Organization as ControllerOrganization } from '../../../../frontend/awx/interfaces/Organization';
-import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import { gatewayV1API } from '../../../api/gateway-api-utils';
-import { useAwxService } from '../../../main/GatewayServices';
-import { pollAwxItemsResponseItem } from '../../../../frontend/awx/common/pollAwxItemsResponseItem';
-import { awxAPI } from '../../../../frontend/awx/common/api/awx-utils';
+import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
+import { useHasAwxService } from '../../../main/GatewayServices';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
-import { awxErrorAdapter } from '../../../../frontend/awx/common/adapters/awxErrorAdapter';
+import { OrganizationWizardFormValues, PlatformOrganizationForm } from './PlatformOrganizationForm';
 
 interface AssociateControllerInstanceGroup {
   id: number;
@@ -23,7 +23,7 @@ interface AssociateControllerCredential {
 export function CreatePlatformOrganization() {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
-  const awxService = useAwxService();
+  const awxService = useHasAwxService();
   const alertToaster = usePageAlertToaster();
   const createOrganizationRequest = usePostRequest<PlatformOrganization>();
   const updateControllerOrganizationRequest = usePatchRequest();

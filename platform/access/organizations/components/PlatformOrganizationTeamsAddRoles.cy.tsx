@@ -1,10 +1,8 @@
+import mockPlatformOrganizations from '../../../../cypress/fixtures/platformOrganizations.json';
 import { edaAPI } from '../../../../cypress/support/formatApiPathForEDA';
 import { awxAPI } from '../../../../frontend/awx/common/api/awx-utils';
 import { gatewayV1API } from '../../../api/gateway-api-utils';
-import mockPlatformOrganizations from '../../../../cypress/fixtures/platformOrganizations.json';
-import mockGatewayServices from '../../../../cypress/fixtures/platformGatewayServices.json';
 import * as GatewayServices from '../../../main/GatewayServices';
-import { GatewayService } from '../../../main/GatewayService';
 import { PlatformOrganizationTeamsAddRoles } from './PlatformOrganizationTeamsAddRoles';
 
 const mockPlatformOrganization = mockPlatformOrganizations.results[1];
@@ -46,9 +44,9 @@ describe('PlatformOrganizationTeamsAddRoles', () => {
   it('should render with correct steps when controller and EDA services are enabled', () => {
     cy.stub(GatewayServices, 'useGatewayService').callsFake((serviceType) => {
       if (serviceType === 'controller') {
-        return (mockGatewayServices as GatewayService[])[1];
+        return '/api/controller/';
       } else if (serviceType === 'eda') {
-        return (mockGatewayServices as GatewayService[])[2];
+        return '/api/eda/';
       }
       return undefined;
     });
@@ -63,7 +61,7 @@ describe('PlatformOrganizationTeamsAddRoles', () => {
   it('should render with correct steps when only one service is enabled', () => {
     cy.stub(GatewayServices, 'useGatewayService').callsFake((serviceType) => {
       if (serviceType === 'controller') {
-        return (mockGatewayServices as GatewayService[])[1];
+        return '/api/controller/';
       }
       return undefined;
     });
@@ -78,9 +76,9 @@ describe('PlatformOrganizationTeamsAddRoles', () => {
   it('should validate that a team is selected for moving to the next step', () => {
     cy.stub(GatewayServices, 'useGatewayService').callsFake((serviceType) => {
       if (serviceType === 'controller') {
-        return (mockGatewayServices as GatewayService[])[1];
+        return '/api/controller/';
       } else if (serviceType === 'eda') {
-        return (mockGatewayServices as GatewayService[])[2];
+        return '/api/eda/';
       }
       return undefined;
     });
@@ -96,9 +94,9 @@ describe('PlatformOrganizationTeamsAddRoles', () => {
   it('selection of service-specific roles is optional', () => {
     cy.stub(GatewayServices, 'useGatewayService').callsFake((serviceType) => {
       if (serviceType === 'controller') {
-        return (mockGatewayServices as GatewayService[])[1];
+        return '/api/controller/';
       } else if (serviceType === 'eda') {
-        return (mockGatewayServices as GatewayService[])[2];
+        return '/api/eda/';
       }
       return undefined;
     });
@@ -115,9 +113,9 @@ describe('PlatformOrganizationTeamsAddRoles', () => {
   it('should display selected teams and roles in the Review step', () => {
     cy.stub(GatewayServices, 'useGatewayService').callsFake((serviceType) => {
       if (serviceType === 'controller') {
-        return (mockGatewayServices as GatewayService[])[1];
+        return '/api/controller/';
       } else if (serviceType === 'eda') {
-        return (mockGatewayServices as GatewayService[])[2];
+        return '/api/eda/';
       }
       return undefined;
     });

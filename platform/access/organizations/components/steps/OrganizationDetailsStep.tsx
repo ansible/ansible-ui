@@ -7,13 +7,13 @@ import { PageFormExecutionEnvironmentSelect } from '../../../../../frontend/awx/
 import { PageFormInstanceGroupSelect } from '../../../../../frontend/awx/administration/instance-groups/components/PageFormInstanceGroupSelect';
 import { Organization as ControllerOrganization } from '../../../../../frontend/awx/interfaces/Organization';
 import { useGetCredentialTypeIDs } from '../../../../../frontend/awx/resources/projects/hooks/useGetCredentialTypeIDs';
-import { useAwxService } from '../../../../main/GatewayServices';
+import { useHasAwxService } from '../../../../main/GatewayServices';
 
 export function OrganizationDetailsStep(props: {
   controllerOrganization?: ControllerOrganization;
 }) {
   const { t } = useTranslation();
-  const awxService = useAwxService();
+  const awxService = useHasAwxService();
   const controllerOrganization = props.controllerOrganization;
 
   return (
