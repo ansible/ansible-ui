@@ -60,7 +60,7 @@ Cypress.Commands.add('awxLoginTestUser', (username: string, password: string) =>
       window.localStorage.setItem('theme', 'light');
       window.localStorage.setItem('disclaimer', 'true');
       window.localStorage.setItem('hide-welcome-message', 'true');
-      cy.visit(`/login`, {
+      cy.visit(`/`, {
         retryOnStatusCodeFailure: true,
         retryOnNetworkFailure: true,
       });
