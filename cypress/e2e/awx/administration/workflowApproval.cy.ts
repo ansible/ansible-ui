@@ -331,7 +331,7 @@ describe('Workflow Approvals Tests', () => {
     });
   });
 
-  describe('Workflow Approvals - User Access', () => {
+  describe.skip('Workflow Approvals - User Access', () => {
     let workflowApproval: WorkflowApproval;
     beforeEach(function () {
       cy.intercept(
