@@ -188,29 +188,22 @@ describe('Execution Environments List', () => {
     });
 
     it('Delete execution environment row action is hidden if execution environment is managed', () => {
-      cy.fixture('execution_environments')
-        .then((eeResponse: AwxItemsResponse<ExecutionEnvironment>) => {
-          for (let i = 0; i < eeResponse.results.length; i++) {
-            eeResponse.results[i].summary_fields.user_capabilities.delete = true;
-            eeResponse.results[i].managed = true;
-          }
-          return eeResponse;
-        })
-        .then((eeBodyNoDeletePerms) => {
-          cy.intercept(
-            {
-              method: 'GET',
-              url: '/api/v2/execution_environments/*',
-            },
-            { body: eeBodyNoDeletePerms }
-          );
-        })
+      cy.intercept(
+        {
+          method: 'GET',
+          url: '/api/v2/execution_environments/*',
+        },
+        {
+          fixture: 'execution_environments.json',
+        }
+      )
         .then(() => {
           cy.mount(<ExecutionEnvironments />);
         })
         .then(() => {
-          cy.contains('tr', 'test').within(() => {
-            cy.get('button.toggle-kebab').should('not.exist');
+          cy.contains('tr', 'Control Plane Execution Environment').within(() => {
+            cy.get('[data-cy="actions-dropdown"]').click();
+            cy.get('li#delete-execution-environment').should('not.exist');
           });
         });
     });

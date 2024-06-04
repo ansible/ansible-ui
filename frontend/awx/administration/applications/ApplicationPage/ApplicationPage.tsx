@@ -54,7 +54,7 @@ export function ApplicationPage() {
       />
       <PageRoutedTabs
         backTab={{
-          label: t('Back to Applications'),
+          label: t('Back to OAuth Applications'),
           page: AwxRoute.Applications,
           persistentFilterKey: 'applications',
         }}

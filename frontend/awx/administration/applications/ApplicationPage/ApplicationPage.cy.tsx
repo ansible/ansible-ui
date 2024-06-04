@@ -11,7 +11,7 @@ describe('ApplicationPage', () => {
   });
   it('Displays breadcrumbs back to Applications list page', () => {
     cy.mount(<ApplicationPage />);
-    cy.get('.pf-v5-c-tabs__item').eq(0).should('have.text', 'Back to Applications');
+    cy.get('.pf-v5-c-tabs__item').eq(0).should('have.text', 'Back to OAuth Applications');
   });
   it('Should show enabled edit button', () => {
     cy.mount(<ApplicationPage />);
