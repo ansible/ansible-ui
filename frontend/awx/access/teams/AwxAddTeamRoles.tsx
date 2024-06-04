@@ -12,13 +12,13 @@ import { awxAPI } from '../../common/api/awx-utils';
 import { AwxRoute } from '../../main/AwxRoutes';
 import { AwxAddRoles } from '../common/AwxAddRoles';
 
-export function AwxAddTeamRoles() {
+export function AwxAddTeamRoles(props: { id?: string; teamRolesRoute?: string }) {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const getPageUrl = useGetPageUrl();
   const pageNavigate = usePageNavigate();
   const { data: team, isLoading } = useGet<{ id: string; name: string }>(
-    awxAPI`/teams/${params.id ?? ''}/`
+    awxAPI`/teams/${props.id || params.id || ''}/`
   );
 
   if (isLoading || !team) return <LoadingPage />;
@@ -44,7 +44,7 @@ export function AwxAddTeamRoles() {
         id={team.id.toString()}
         type={'team'}
         onClose={() => {
-          pageNavigate(AwxRoute.TeamRoles, {
+          pageNavigate(props.teamRolesRoute || AwxRoute.TeamRoles, {
             params: { id: team.id },
           });
         }}
