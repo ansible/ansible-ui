@@ -2,12 +2,12 @@ import { Text, TextContent, TextVariants } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { PageFormTextInput } from '../../../../../framework';
 import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
-import { useAwxService } from '../../../../main/GatewayServices';
-import { PageFormInstanceGroupSelect } from '../../../../../frontend/awx/administration/instance-groups/components/PageFormInstanceGroupSelect';
-import { PageFormExecutionEnvironmentSelect } from '../../../../../frontend/awx/administration/execution-environments/components/PageFormExecutionEnvironmentSelect';
 import { PageFormCredentialSelect } from '../../../../../frontend/awx/access/credentials/components/PageFormCredentialSelect';
-import { useGetCredentialTypeIDs } from '../../../../../frontend/awx/resources/projects/hooks/useGetCredentialTypeIDs';
+import { PageFormExecutionEnvironmentSelect } from '../../../../../frontend/awx/administration/execution-environments/components/PageFormSelectExecutionEnvironment';
+import { PageFormInstanceGroupSelect } from '../../../../../frontend/awx/administration/instance-groups/components/PageFormInstanceGroupSelect';
 import { Organization as ControllerOrganization } from '../../../../../frontend/awx/interfaces/Organization';
+import { useGetCredentialTypeIDs } from '../../../../../frontend/awx/resources/projects/hooks/useGetCredentialTypeIDs';
+import { useAwxService } from '../../../../main/GatewayServices';
 
 export function OrganizationDetailsStep(props: {
   controllerOrganization?: ControllerOrganization;
