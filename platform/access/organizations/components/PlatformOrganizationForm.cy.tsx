@@ -1,11 +1,9 @@
-import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
-import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
-import { GatewayService } from '../../../main/GatewayService';
-import { GatewayServicesContext } from '../../../main/GatewayServices';
-import { PlatformOrganizationForm } from './PlatformOrganizationForm';
-import { OrganizationWizardFormValues } from './PlatformOrganizationForm';
 import controllerOrganization from '../../../../cypress/fixtures/organization.json';
+import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
+import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
+import { GatewayServicesContext } from '../../../main/GatewayServices';
+import { OrganizationWizardFormValues, PlatformOrganizationForm } from './PlatformOrganizationForm';
 
 const mockExecutionEnvironment = {
   id: 1,
@@ -118,17 +116,7 @@ describe('PlatformOrganizationForm', () => {
   it('should submit a basic gateway organization when a Controller service is registered', () => {
     const handleSubmit = cy.spy();
     cy.mount(
-      <GatewayServicesContext.Provider
-        value={[
-          [
-            { summary_fields: { service_cluster: { service_type: 'gateway' } } } as GatewayService,
-            {
-              summary_fields: { service_cluster: { service_type: 'controller' } },
-            } as GatewayService,
-          ],
-          () => null,
-        ]}
-      >
+      <GatewayServicesContext.Provider value={{ controller: '' }}>
         <PlatformOrganizationForm handleSubmit={handleSubmit} />
       </GatewayServicesContext.Provider>
     );
@@ -152,17 +140,7 @@ describe('PlatformOrganizationForm', () => {
   it('should submit a full organization when a Controller service is registered', () => {
     const handleSubmit = cy.spy();
     cy.mount(
-      <GatewayServicesContext.Provider
-        value={[
-          [
-            { summary_fields: { service_cluster: { service_type: 'gateway' } } } as GatewayService,
-            {
-              summary_fields: { service_cluster: { service_type: 'controller' } },
-            } as GatewayService,
-          ],
-          () => null,
-        ]}
-      >
+      <GatewayServicesContext.Provider value={{ controller: '' }}>
         <PlatformOrganizationForm handleSubmit={handleSubmit} />
       </GatewayServicesContext.Provider>
     );
@@ -262,17 +240,7 @@ describe('PlatformOrganizationForm', () => {
     } as PlatformOrganization;
 
     cy.mount(
-      <GatewayServicesContext.Provider
-        value={[
-          [
-            { summary_fields: { service_cluster: { service_type: 'gateway' } } } as GatewayService,
-            {
-              summary_fields: { service_cluster: { service_type: 'controller' } },
-            } as GatewayService,
-          ],
-          () => null,
-        ]}
-      >
+      <GatewayServicesContext.Provider value={{ controller: '' }}>
         <PlatformOrganizationForm
           handleSubmit={handleSubmit}
           organization={platformOrganization}

@@ -1,31 +1,31 @@
-import { Link, useParams } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
 import { Label, LabelGroup } from '@patternfly/react-core';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Link, useParams } from 'react-router-dom';
 import {
-  PageDetails,
   PageDetail,
+  PageDetails,
   PageDetailsFromColumns,
   useGetPageUrl,
 } from '../../../../framework';
 import { CredentialLabel } from '../../../../frontend/awx/common/CredentialLabel';
+import { ExecutionEnvironmentDetail } from '../../../../frontend/awx/common/ExecutionEnvironmentDetail';
+import { awxAPI } from '../../../../frontend/awx/common/api/awx-utils';
+import { Credential } from '../../../../frontend/awx/interfaces/Credential';
+import { InstanceGroup } from '../../../../frontend/awx/interfaces/InstanceGroup';
+import { Organization as AwxOrganization } from '../../../../frontend/awx/interfaces/Organization';
+import { AwxRoute } from '../../../../frontend/awx/main/AwxRoutes';
 import { useGet } from '../../../../frontend/common/crud/useGet';
 import { gatewayV1API } from '../../../api/gateway-api-utils';
-import { awxAPI } from '../../../../frontend/awx/common/api/awx-utils';
-import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
-import { Credential } from '../../../../frontend/awx/interfaces/Credential';
-import { Organization as AwxOrganization } from '../../../../frontend/awx/interfaces/Organization';
-import { ExecutionEnvironmentDetail } from '../../../../frontend/awx/common/ExecutionEnvironmentDetail';
 import { useAwxResource } from '../../../hooks/useAwxResource';
-import { InstanceGroup } from '../../../../frontend/awx/interfaces/InstanceGroup';
-import { AwxRoute } from '../../../../frontend/awx/main/AwxRoutes';
+import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
+import { useHasAwxService } from '../../../main/GatewayServices';
 import { useOrganizationColumns } from '../hooks/useOrganizationColumns';
-import { useMemo } from 'react';
-import { useAwxService } from '../../../main/GatewayServices';
 
 export function PlatformOrganizationDetails() {
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
-  const awxService = useAwxService();
+  const awxService = useHasAwxService();
   const columns = useOrganizationColumns();
 
   const { data: platformOrganization } = useGet<PlatformOrganization>(

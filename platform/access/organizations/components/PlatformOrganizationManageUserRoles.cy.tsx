@@ -1,16 +1,14 @@
-import mockPlatformOrganizations from '../../../../cypress/fixtures/platformOrganizations.json';
-import mockGatewayServices from '../../../../cypress/fixtures/platformGatewayServices.json';
-import * as GatewayServices from '../../../main/GatewayServices';
-import { PlatformOrganizationManageUserRoles } from './PlatformOrganizationManageUserRoles';
-import { gatewayV1API } from '../../../api/gateway-api-utils';
-import { edaAPI } from '../../../../frontend/eda/common/eda-utils';
-import { awxAPI } from '../../../../frontend/awx/common/api/awx-utils';
-import { GatewayService } from '../../../main/GatewayService';
-import mockPlatformUsers from '../../../../cypress/fixtures/platformUsers.json';
 import mockAwxUser from '../../../../cypress/fixtures/awxUser.json';
+import mockEdaOrganizations from '../../../../cypress/fixtures/edaOrganizations.json';
 import mockEdaUser from '../../../../cypress/fixtures/edaUser.json';
 import mockAwxOrg from '../../../../cypress/fixtures/organization.json';
-import mockEdaOrganizations from '../../../../cypress/fixtures/edaOrganizations.json';
+import mockPlatformOrganizations from '../../../../cypress/fixtures/platformOrganizations.json';
+import mockPlatformUsers from '../../../../cypress/fixtures/platformUsers.json';
+import { awxAPI } from '../../../../frontend/awx/common/api/awx-utils';
+import { edaAPI } from '../../../../frontend/eda/common/eda-utils';
+import { gatewayV1API } from '../../../api/gateway-api-utils';
+import * as GatewayServices from '../../../main/GatewayServices';
+import { PlatformOrganizationManageUserRoles } from './PlatformOrganizationManageUserRoles';
 
 const mockPlatformOrganization = mockPlatformOrganizations.results[1];
 const mockPlatformUser = mockPlatformUsers.results[0];
@@ -79,9 +77,9 @@ describe('PlatformOrganizationManageUserRoles', () => {
   it('renders with correct steps when controller and EDA services are enabled', () => {
     cy.stub(GatewayServices, 'useGatewayService').callsFake((serviceType) => {
       if (serviceType === 'controller') {
-        return (mockGatewayServices as GatewayService[])[1];
+        return '/api/controller/';
       } else if (serviceType === 'eda') {
-        return (mockGatewayServices as GatewayService[])[2];
+        return '/api/eda/';
       }
       return undefined;
     });
@@ -96,7 +94,7 @@ describe('PlatformOrganizationManageUserRoles', () => {
   it('renders with correct steps when only one service is enabled', () => {
     cy.stub(GatewayServices, 'useGatewayService').callsFake((serviceType) => {
       if (serviceType === 'controller') {
-        return (mockGatewayServices as GatewayService[])[1];
+        return '/api/controller/';
       }
       return undefined;
     });
@@ -110,9 +108,9 @@ describe('PlatformOrganizationManageUserRoles', () => {
   it('indicates selected controller and EDA roles for the user ', () => {
     cy.stub(GatewayServices, 'useGatewayService').callsFake((serviceType) => {
       if (serviceType === 'controller') {
-        return (mockGatewayServices as GatewayService[])[1];
+        return '/api/controller/';
       } else if (serviceType === 'eda') {
-        return (mockGatewayServices as GatewayService[])[2];
+        return '/api/eda/';
       }
       return undefined;
     });
@@ -134,9 +132,9 @@ describe('PlatformOrganizationManageUserRoles', () => {
   it('displays user and selected roles in the Review step', () => {
     cy.stub(GatewayServices, 'useGatewayService').callsFake((serviceType) => {
       if (serviceType === 'controller') {
-        return (mockGatewayServices as GatewayService[])[1];
+        return '/api/controller/';
       } else if (serviceType === 'eda') {
-        return (mockGatewayServices as GatewayService[])[2];
+        return '/api/eda/';
       }
       return undefined;
     });

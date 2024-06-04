@@ -1,22 +1,22 @@
+import { t } from 'i18next';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import useSWR from 'swr';
 import { LoadingPage, usePageAlertToaster, usePageNavigate } from '../../../../framework';
+import { AwxItemsResponse } from '../../../../frontend/awx/common/AwxItemsResponse';
+import { awxErrorAdapter } from '../../../../frontend/awx/common/adapters/awxErrorAdapter';
+import { awxAPI } from '../../../../frontend/awx/common/api/awx-utils';
+import { Credential } from '../../../../frontend/awx/interfaces/Credential';
+import { InstanceGroup as ControllerInstanceGroup } from '../../../../frontend/awx/interfaces/InstanceGroup';
+import { Organization as ControllerOrganization } from '../../../../frontend/awx/interfaces/Organization';
+import { requestGet, swrOptions } from '../../../../frontend/common/crud/Data';
 import { usePatchRequest } from '../../../../frontend/common/crud/usePatchRequest';
 import { usePostRequest } from '../../../../frontend/common/crud/usePostRequest';
 import { gatewayAPI, gatewayV1API } from '../../../api/gateway-api-utils';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
+import { useHasAwxService } from '../../../main/GatewayServices';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
-import { InstanceGroup as ControllerInstanceGroup } from '../../../../frontend/awx/interfaces/InstanceGroup';
-import { useAwxService } from '../../../main/GatewayServices';
-import { awxAPI } from '../../../../frontend/awx/common/api/awx-utils';
-import { Organization as ControllerOrganization } from '../../../../frontend/awx/interfaces/Organization';
-import { Credential } from '../../../../frontend/awx/interfaces/Credential';
-import { useEffect, useState } from 'react';
-import { requestGet, swrOptions } from '../../../../frontend/common/crud/Data';
-import { AwxItemsResponse } from '../../../../frontend/awx/common/AwxItemsResponse';
 import { OrganizationWizardFormValues, PlatformOrganizationForm } from './PlatformOrganizationForm';
-import useSWR from 'swr';
-import { awxErrorAdapter } from '../../../../frontend/awx/common/adapters/awxErrorAdapter';
-import { t } from 'i18next';
 
 interface AssociateControllerInstanceGroup {
   id: number;
@@ -41,7 +41,7 @@ export function EditPlatformOrganization() {
   const alertToaster = usePageAlertToaster();
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
-  const awxService = useAwxService();
+  const awxService = useHasAwxService();
 
   const { data: platformOrganization } = useSWR<PlatformOrganization>(
     gatewayAPI`/organizations/${id.toString()}/`,

@@ -1,7 +1,7 @@
+import { Banner } from '@patternfly/react-core';
 import { useMemo } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { Banner } from '@patternfly/react-core';
 import {
   PageNavigationItem,
   findNavigationItemById,
@@ -14,24 +14,24 @@ import { AwxRoute } from '../../frontend/awx/main/AwxRoutes';
 import { useAwxNavigation } from '../../frontend/awx/main/useAwxNavigation';
 import { EdaRoute } from '../../frontend/eda/main/EdaRoutes';
 import { useEdaNavigation } from '../../frontend/eda/main/useEdaNavigation';
+import { ExternalLink } from '../../frontend/hub/common/ExternalLink';
 import { HubRoute } from '../../frontend/hub/main/HubRoutes';
 import { useHubNavigation } from '../../frontend/hub/main/useHubNavigation';
-import { ExternalLink } from '../../frontend/hub/common/ExternalLink';
 import { Lightspeed } from '../lightspeed/Lightspeed';
 import { PlatformOverview } from '../overview/PlatformOverview';
 import { QuickStartsPage } from '../overview/quickstarts/Quickstarts';
 import { useGetPlatformAuthenticatorsRoutes } from '../routes/useGetPlatformAuthenticatorsRoutes';
 import { useGetPlatformOrganizationsRoutes } from '../routes/useGetPlatformOrganizationsRoutes';
 import { useGetPlatformResourceRoutes } from '../routes/useGetPlatformResourceRoutes';
+import { useGetPlatformRolesRoutes } from '../routes/useGetPlatformRolesRoutes';
 import { useGetPlatformTeamsRoutes } from '../routes/useGetPlatformTeamsRoutes';
 import { useGetPlatformUsersRoutes } from '../routes/useGetPlatformUsersRoutes';
-import { useGetPlatformRolesRoutes } from '../routes/useGetPlatformRolesRoutes';
 import { GatewaySettings } from '../settings/GatewaySettings';
 import { GatewaySettingsDetails } from '../settings/GatewaySettingsDetails';
 import { GatewaySettingsEdit } from '../settings/GatewaySettingsEdit';
 import { SubscriptionDetails } from '../settings/SubscriptionDetails';
 import { SubscriptionWizard } from '../settings/SubscriptionWizard';
-import { useAwxService, useEdaService, useHubService } from './GatewayServices';
+import { useHasAwxService, useHasEdaService, useHasHubService } from './GatewayServices';
 import { PlatformRoute } from './PlatformRoutes';
 import { Redirect } from './Redirect';
 import { useGetPlatformApplicationsRoutes } from '../routes/useGetPlatformApplicationsRoutes';
@@ -81,9 +81,9 @@ const HubBanner = (_props: unknown) => {
 export function usePlatformNavigation() {
   const { t } = useTranslation();
 
-  const awxService = useAwxService();
-  const edaService = useEdaService();
-  const hubService = useHubService();
+  const awxService = useHasAwxService();
+  const edaService = useHasEdaService();
+  const hubService = useHasHubService();
 
   const awxNav = useAwxNavigation();
   const edaNav = useEdaNavigation();

@@ -1,36 +1,36 @@
-import { useTranslation } from 'react-i18next';
-import { useOptions } from '../../../../frontend/common/crud/useOptions';
-import { IPlatformView } from '../../../hooks/usePlatformView';
-import { PlatformUser } from '../../../interfaces/PlatformUser';
-import {
-  ActionsResponse,
-  OptionsResponse,
-} from '../../../../frontend/awx/interfaces/OptionsResponse';
-import { gatewayV1API } from '../../../api/gateway-api-utils';
+import { ButtonVariant } from '@patternfly/react-core';
+import { CogIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import {
   IPageAction,
   PageActionSelection,
   PageActionType,
   usePageNavigate,
 } from '../../../../framework';
-import { ButtonVariant } from '@patternfly/react-core';
-import { CogIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
-import { useGetItem } from '../../../../frontend/common/crud/useGet';
-import { useParams } from 'react-router-dom';
-import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
-import { PlatformRoute } from '../../../main/PlatformRoutes';
-import { useRemoveOrganizationUsers } from './useRemoveOrganizationUsers';
-import { useGatewayServices } from '../../../main/GatewayServices';
 import { awxAPI } from '../../../../frontend/awx/common/api/awx-utils';
-import { edaAPI } from '../../../../frontend/eda/common/eda-utils';
+import {
+  ActionsResponse,
+  OptionsResponse,
+} from '../../../../frontend/awx/interfaces/OptionsResponse';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { AwxUser } from '../../../../frontend/awx/interfaces/User';
-import { getAwxResource, useAwxResource } from '../../../hooks/useAwxResource';
-import { getEdaResource, useEdaResource } from '../../../hooks/useEdaResource';
 import { useManageOrgRoles } from '../../../../frontend/common/access/hooks/useManageOrgRolesDialog';
+import { useGetItem } from '../../../../frontend/common/crud/useGet';
+import { useOptions } from '../../../../frontend/common/crud/useOptions';
+import { edaAPI } from '../../../../frontend/eda/common/eda-utils';
 import { EdaOrganization } from '../../../../frontend/eda/interfaces/EdaOrganization';
 import { EdaUser } from '../../../../frontend/eda/interfaces/EdaUser';
+import { gatewayV1API } from '../../../api/gateway-api-utils';
+import { getAwxResource, useAwxResource } from '../../../hooks/useAwxResource';
+import { getEdaResource, useEdaResource } from '../../../hooks/useEdaResource';
+import { IPlatformView } from '../../../hooks/usePlatformView';
+import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
+import { PlatformUser } from '../../../interfaces/PlatformUser';
+import { useHasAwxService, useHasEdaService } from '../../../main/GatewayServices';
+import { PlatformRoute } from '../../../main/PlatformRoutes';
+import { useRemoveOrganizationUsers } from './useRemoveOrganizationUsers';
 
 export function useOrganizationUsersToolbarActions(view: IPlatformView<PlatformUser>) {
   const { t } = useTranslation();
@@ -101,7 +101,6 @@ export function useOrganizationUsersToolbarActions(view: IPlatformView<PlatformU
 export function useOrganizationUsersRowActions(view: IPlatformView<PlatformUser>) {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const [gatewayServices, _] = useGatewayServices();
   const pageNavigate = usePageNavigate();
   const { data: organization } = useGetItem<PlatformOrganization>(
     gatewayV1API`/organizations`,
@@ -122,12 +121,8 @@ export function useOrganizationUsersRowActions(view: IPlatformView<PlatformUser>
     disassociateOptions?.actions && disassociateOptions.actions['POST']
   );
   const manageOrgRoles = useManageOrgRoles();
-  const awxService = gatewayServices.find(
-    (service) => service.summary_fields?.service_cluster?.service_type === 'controller'
-  );
-  const edaService = gatewayServices.find(
-    (service) => service.summary_fields?.service_cluster?.service_type === 'eda'
-  );
+  const awxService = useHasAwxService();
+  const edaService = useHasEdaService();
   const manageRolesHandleClick = useCallback(
     async (user: PlatformUser) => {
       const awxUser = await getAwxResource<AwxUser>('/users/', user);

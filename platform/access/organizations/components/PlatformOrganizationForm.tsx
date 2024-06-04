@@ -6,17 +6,17 @@ import {
   PageWizardStep,
   useGetPageUrl,
 } from '../../../../framework';
+import { Credential as ControllerCredential } from '../../../../frontend/awx/interfaces/Credential';
+import { InstanceGroup as ControllerInstanceGroup } from '../../../../frontend/awx/interfaces/InstanceGroup';
+import { Organization as ControllerOrganization } from '../../../../frontend/awx/interfaces/Organization';
+import { SummaryFieldsExecutionEnvironment } from '../../../../frontend/awx/interfaces/summary-fields/summary-fields';
+import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
+import { useHasAwxService } from '../../../main/GatewayServices';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
-import { OrganizationReviewStep } from './steps/OrganizationReviewStep';
+import { OrganizationDetailsStep } from './steps/OrganizationDetailsStep';
 import { OrganizationGalaxyCredentialsOrderStep } from './steps/OrganizationGalaxyCredentialsOrderStep';
 import { OrganizationInstanceGroupsOrderStep } from './steps/OrganizationInstanceGroupsOrderStep';
-import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
-import { Organization as ControllerOrganization } from '../../../../frontend/awx/interfaces/Organization';
-import { InstanceGroup as ControllerInstanceGroup } from '../../../../frontend/awx/interfaces/InstanceGroup';
-import { Credential as ControllerCredential } from '../../../../frontend/awx/interfaces/Credential';
-import { SummaryFieldsExecutionEnvironment } from '../../../../frontend/awx/interfaces/summary-fields/summary-fields';
-import { useAwxService } from '../../../main/GatewayServices';
-import { OrganizationDetailsStep } from './steps/OrganizationDetailsStep';
+import { OrganizationReviewStep } from './steps/OrganizationReviewStep';
 
 export interface OrganizationWizardFormValues {
   organization: PlatformOrganization;
@@ -37,7 +37,7 @@ export function PlatformOrganizationForm(props: OrganizationFormProps) {
   const { organization, controllerOrganization, instanceGroups, galaxyCredentials } = props;
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
-  const awxService = useAwxService();
+  const awxService = useHasAwxService();
 
   const steps: PageWizardStep[] = [
     {
