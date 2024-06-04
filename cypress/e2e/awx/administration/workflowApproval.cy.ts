@@ -10,73 +10,6 @@ import { WorkflowJobTemplate } from '../../../../frontend/awx/interfaces/Workflo
 import { WorkflowNode } from '../../../../frontend/awx/interfaces/WorkflowNode';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 
-/* Shared functions across test cases */
-const wfaURL = '/administration/workflow-approvals/';
-function actAssertAndDeleteWorkflowApproval(
-  selectorDataCy: 'approve' | 'deny' | 'cancel',
-  wfaID: number
-) {
-  let actionStatusCode: number;
-  let statusText: string;
-  let actionURL: string;
-
-  cy.visit(wfaURL);
-
-  switch (selectorDataCy) {
-    case 'approve':
-      actionURL = '**/approve';
-      actionStatusCode = 204;
-      statusText = 'Approved';
-      break;
-    case 'deny':
-      actionURL = '**/deny';
-      actionStatusCode = 204;
-      statusText = 'Denied';
-      break;
-    case 'cancel':
-      actionURL = '**/cancel';
-      actionStatusCode = 202;
-      statusText = 'Canceled';
-      break;
-  }
-  cy.intercept({
-    method: 'POST',
-    url: `${actionURL}`,
-  }).as('WFaction');
-  cy.filterTableByMultiSelect('id', [wfaID.toString()]);
-  cy.getTableRow('id', wfaID.toString(), { disableFilter: true })
-    .within(() => {
-      cy.getByDataCy('actions-column-cell').within(() => {
-        cy.getByDataCy(selectorDataCy).click();
-      });
-    })
-    .then(() => {
-      if (selectorDataCy !== 'cancel') {
-        cy.actionsWFApprovalConfirmModal(selectorDataCy);
-      }
-    });
-  cy.wait('@WFaction')
-    .its('response')
-    .then((response) => {
-      expect(response?.statusCode).to.eql(actionStatusCode);
-    });
-  cy.reload();
-  cy.getByDataCy('status-column-cell').should('have.text', statusText);
-  cy.intercept({
-    method: 'DELETE',
-    url: 'api/v2/workflow_approvals/*',
-  }).as('deleteWFA');
-  cy.getByDataCy('actions-column-cell').within(() => {
-    cy.clickKebabAction('actions-dropdown', 'delete-workflow-approval');
-  });
-  cy.actionsWFApprovalConfirmModal('delete');
-  cy.wait('@deleteWFA')
-    .its('response')
-    .then((response) => {
-      expect(response?.statusCode).to.eql(204);
-    });
-}
-
 describe('Workflow Approvals Tests', () => {
   let organization: Organization;
   let project: Project;
@@ -211,6 +144,72 @@ describe('Workflow Approvals Tests', () => {
           });
         });
     });
+
+    const wfaURL = '/administration/workflow-approvals/';
+    function actAssertAndDeleteWorkflowApproval(
+      selectorDataCy: 'approve' | 'deny' | 'cancel',
+      wfaID: number
+    ) {
+      let actionStatusCode: number;
+      let statusText: string;
+      let actionURL: string;
+
+      cy.visit(wfaURL);
+
+      switch (selectorDataCy) {
+        case 'approve':
+          actionURL = '**/approve';
+          actionStatusCode = 204;
+          statusText = 'Approved';
+          break;
+        case 'deny':
+          actionURL = '**/deny';
+          actionStatusCode = 204;
+          statusText = 'Denied';
+          break;
+        case 'cancel':
+          actionURL = '**/cancel';
+          actionStatusCode = 202;
+          statusText = 'Canceled';
+          break;
+      }
+      cy.intercept({
+        method: 'POST',
+        url: `${actionURL}`,
+      }).as('WFaction');
+      cy.filterTableByMultiSelect('id', [wfaID.toString()]);
+      cy.getTableRow('id', wfaID.toString(), { disableFilter: true })
+        .within(() => {
+          cy.getByDataCy('actions-column-cell').within(() => {
+            cy.getByDataCy(selectorDataCy).click();
+          });
+        })
+        .then(() => {
+          if (selectorDataCy !== 'cancel') {
+            cy.actionsWFApprovalConfirmModal(selectorDataCy);
+          }
+        });
+      cy.wait('@WFaction')
+        .its('response')
+        .then((response) => {
+          expect(response?.statusCode).to.eql(actionStatusCode);
+        });
+      cy.reload();
+      cy.getByDataCy('status-column-cell').should('have.text', statusText);
+      cy.intercept({
+        method: 'DELETE',
+        url: 'api/v2/workflow_approvals/*',
+      }).as('deleteWFA');
+      cy.getByDataCy('actions-column-cell').within(() => {
+        cy.clickKebabAction('actions-dropdown', 'delete-workflow-approval');
+      });
+      cy.actionsWFApprovalConfirmModal('delete');
+      cy.wait('@deleteWFA')
+        .its('response')
+        .then((response) => {
+          expect(response?.statusCode).to.eql(204);
+        });
+    }
   });
 
   /* 
@@ -316,7 +315,7 @@ describe('Workflow Approvals Tests', () => {
     cy.get('h2').should('contain', 'No results found');
   }
 
-  describe.skip('Workflow Approvals - Bulk Approve, Bulk Deny, Bulk Delete', () => {
+  describe('Workflow Approvals - Bulk Approve, Bulk Deny, Bulk Delete', () => {
     it(`admin can enable concurrent jobs in a WFJT with a WF approval node, launch the job multiple times, bulk approve, and then bulk delete from the list toolbar`, () => {
       editJobTemplate();
       workflowApprovalBulkAction('approve');
@@ -331,7 +330,7 @@ describe('Workflow Approvals Tests', () => {
     });
   });
 
-  describe.skip('Workflow Approvals - User Access', () => {
+  describe('Workflow Approvals - User Access', () => {
     let workflowApproval: WorkflowApproval;
     beforeEach(function () {
       cy.intercept(
