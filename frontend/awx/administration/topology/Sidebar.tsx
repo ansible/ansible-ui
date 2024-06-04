@@ -5,6 +5,8 @@ import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 import { useInstanceActions } from '../instances/hooks/useInstanceActions';
 import { useGetItem } from '../../../common/crud/useGet';
 import { awxAPI } from '../../common/api/awx-utils';
+import { SidebarHeader } from '../../resources/templates/WorkflowVisualizer/components';
+import { Scrollable } from '../../../../framework';
 
 export function InstanceDetailInner(props: {
   instance: Instance;
@@ -22,16 +24,21 @@ export function InstanceDetailInner(props: {
   );
 }
 
-export function InstanceDetailSidebar(props: { selectedId: string }) {
-  const { selectedId } = props;
+export function InstanceDetailSidebar(props: { selectedId: string; onClose: () => void }) {
+  const { selectedId, onClose } = props;
   const { data: instance } = useGetItem<Instance>(awxAPI`/instances/`, selectedId);
   const { instanceGroups, instanceForks } = useInstanceActions(selectedId);
 
   return instance ? (
-    <InstanceDetailInner
-      instance={instance}
-      instanceGroups={instanceGroups ? instanceGroups : undefined}
-      instanceForks={instanceForks}
-    />
+    <>
+      <SidebarHeader onClose={onClose} title={instance.hostname} />
+      <Scrollable borderTop>
+        <InstanceDetailInner
+          instance={instance}
+          instanceGroups={instanceGroups ? instanceGroups : undefined}
+          instanceForks={instanceForks}
+        />
+      </Scrollable>
+    </>
   ) : null;
 }
