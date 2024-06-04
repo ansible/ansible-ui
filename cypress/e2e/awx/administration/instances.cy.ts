@@ -118,7 +118,7 @@ describe('Instances: Add/Edit', () => {
     cy.url().then((currentUrl) => {
       expect(currentUrl.includes(`/infrastructure/instances/${instance.id}/details`)).to.be.true;
     });
-    cy.get('input[aria-label="Click to disable instance"]').should('exist');
+    cy.get('input[aria-label="Enabled"]').should('exist');
     cy.getByDataCy('actions-dropdown').click();
     cy.getByDataCy('edit-instance').click();
     cy.getByDataCy('enabled').uncheck();
@@ -132,7 +132,7 @@ describe('Instances: Add/Edit', () => {
       .then((response: Instance) => {
         expect(response.enabled).to.be.false;
       });
-    cy.get('input[aria-label="Click to enable instance"]').should('exist');
+    cy.get('input[aria-label="Disabled"]').should('exist');
   });
 });
 
