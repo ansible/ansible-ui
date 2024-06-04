@@ -98,6 +98,8 @@ export function PageFormFileUpload<
                   // browseButtonText={t('Upload')}
                   isReadOnly={props.isReadOnly || isSubmitting}
                   validated={error ? 'error' : undefined}
+                  isDisabled={props.isDisabled}
+                  isClearButtonDisabled={props.isClearButtonDisabled}
                 />
                 {props.icon}
               </div>
