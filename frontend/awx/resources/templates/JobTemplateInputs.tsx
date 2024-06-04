@@ -11,12 +11,11 @@ import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFor
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
 import { requestGet } from '../../../common/crud/Data';
 import { PageFormCredentialSelect } from '../../access/credentials/components/PageFormCredentialSelect';
-import { PageFormExecutionEnvironmentSelect } from '../../administration/execution-environments/components/PageFormExecutionEnvironmentSelect';
+import { PageFormSelectExecutionEnvironment } from '../../administration/execution-environments/components/PageFormSelectExecutionEnvironment';
 import { PageFormInstanceGroupSelect } from '../../administration/instance-groups/components/PageFormInstanceGroupSelect';
 import { PageFormLabelSelect } from '../../common/PageFormLabelSelect';
 import { awxAPI } from '../../common/api/awx-utils';
 import { JobTemplateForm } from '../../interfaces/JobTemplateForm';
-import { Project } from '../../interfaces/Project';
 import { PageFormInventorySelect } from '../inventories/components/PageFormInventorySelect';
 import { PageFormProjectSelect } from '../projects/components/PageFormProjectSelect';
 import { WebhookSubForm } from './components/WebhookSubForm';
@@ -38,24 +37,21 @@ export function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm }) {
   const { t } = useTranslation();
   const { setValue, getValues, reset } = useFormContext<JobTemplateForm>();
   const [playbookOptions, setPlaybookOptions] = useState<string[]>();
-  const projectPath = useWatch({
-    name: 'project',
-  }) as Project;
-  const isProvisioningCallbackEnabled = useWatch<JobTemplateForm>({
+  const projectPath = useWatch<JobTemplateForm, 'project'>({ name: 'project' });
+  const isProvisioningCallbackEnabled = useWatch<JobTemplateForm, 'isProvisioningCallbackEnabled'>({
     name: 'isProvisioningCallbackEnabled',
   });
-  const isWebhookEnabled = useWatch<JobTemplateForm>({ name: 'isWebhookEnabled' });
-  const isInventoryPrompted = useWatch<JobTemplateForm>({
+  const isWebhookEnabled = useWatch<JobTemplateForm, 'isWebhookEnabled'>({
+    name: 'isWebhookEnabled',
+  });
+  const isInventoryPrompted = useWatch<JobTemplateForm, 'ask_inventory_on_launch'>({
     name: 'ask_inventory_on_launch',
   });
-  const askJobTypeOnLaunch = useWatch<JobTemplateForm>({
+  const askJobTypeOnLaunch = useWatch<JobTemplateForm, 'ask_job_type_on_launch'>({
     name: 'ask_job_type_on_launch',
   });
-
-  const organization = useWatch<JobTemplateForm>({ name: 'organization' });
-  const organizationId: string | undefined =
-    organization?.toString() ?? projectPath?.organization?.toString();
-
+  const organization = useWatch<JobTemplateForm, 'organization'>({ name: 'organization' });
+  const organizationId = organization ?? projectPath?.organization;
   useEffect(() => {
     reset(getValues());
   }, [isProvisioningCallbackEnabled, reset, getValues]);
@@ -136,16 +132,15 @@ export function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm }) {
           label={t('Source control branch')}
         />
       ) : null}
-      <PageFormExecutionEnvironmentSelect<JobTemplateForm>
+      <PageFormSelectExecutionEnvironment<JobTemplateForm>
+        name="execution_environment.id"
+        organizationId={organizationId}
         additionalControls={
           <PageFormCheckbox
             label={t('Prompt on launch')}
             name="ask_execution_environment_on_launch"
           />
         }
-        name="execution_environment.name"
-        executionEnvironmentIdPath="execution_environment.id"
-        organizationId={organizationId ?? ''}
       />
       <PageFormCredentialSelect<JobTemplateForm>
         name="credentials"

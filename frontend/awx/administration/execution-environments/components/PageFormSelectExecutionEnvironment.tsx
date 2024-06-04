@@ -1,4 +1,4 @@
-import { ReactElement } from 'react';
+import { ReactElement, ReactNode } from 'react';
 import { FieldPath, FieldValues, useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { PageFormTextInput } from '../../../../../framework/PageForm/Inputs/PageFormTextInput';
@@ -29,6 +29,7 @@ export function PageFormSelectExecutionEnvironment<
   helperText?: string;
   organizationId?: number | null;
   label?: string;
+  additionalControls?: ReactNode;
 }) {
   const { t } = useTranslation();
   const executionEnvironmentColumns = useExecutionEnvironmentsColumns({ disableLinks: true });
@@ -55,10 +56,12 @@ export function PageFormSelectExecutionEnvironment<
       }
       tableColumns={executionEnvironmentColumns}
       toolbarFilters={executionEnvironmentFilters}
+      additionalControls={props.additionalControls}
     />
   );
 }
 
+/** @deprecated use PageFormSelectExecutionEnvironment instead */
 export function PageFormExecutionEnvironmentSelect<
   TFieldValues extends FieldValues = FieldValues,
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,

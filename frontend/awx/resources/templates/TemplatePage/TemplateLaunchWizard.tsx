@@ -9,12 +9,14 @@ import {
   useGetPageUrl,
   usePageAlertToaster,
 } from '../../../../../framework';
+import { yamlToJson } from '../../../../../framework/utils/codeEditorUtils';
 import { useGet } from '../../../../common/crud/useGet';
 import { usePostRequest } from '../../../../common/crud/usePostRequest';
 import { PageFormCredentialSelect } from '../../../access/credentials/components/PageFormCredentialSelect';
-import { PageFormExecutionEnvironmentSelect } from '../../../administration/execution-environments/components/PageFormExecutionEnvironmentSelect';
+import { PageFormExecutionEnvironmentSelect } from '../../../administration/execution-environments/components/PageFormSelectExecutionEnvironment';
 import { PageFormInstanceGroupSelect } from '../../../administration/instance-groups/components/PageFormInstanceGroupSelect';
 import { AwxError } from '../../../common/AwxError';
+import { SurveyStep } from '../../../common/SurveyStep';
 import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
 import { awxAPI } from '../../../common/api/awx-utils';
 import type { Credential } from '../../../interfaces/Credential';
@@ -29,8 +31,6 @@ import { PageFormInventorySelect } from '../../inventories/components/PageFormIn
 import { parseStringToTagArray } from '../JobTemplateFormHelpers';
 import { useLabelPayload } from '../hooks/useLabelPayload';
 import { CredentialPasswordsStep, OtherPromptsStep, TemplateLaunchReviewStep } from './steps';
-import { SurveyStep } from '../../../common/SurveyStep';
-import { yamlToJson } from '../../../../../framework/utils/codeEditorUtils';
 
 const addSurveyQuestionsToExtraVars = (
   config: LaunchConfiguration,
