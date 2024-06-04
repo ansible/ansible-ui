@@ -27,6 +27,8 @@ import { useInstanceActions } from './hooks/useInstanceActions';
 import { useNodeTypeTooltip } from './hooks/useNodeTypeTooltip';
 import { InstanceForksSlider } from './components/InstanceForksSlider';
 import { PageDetailCodeEditor } from '../../../../framework/PageDetails/PageDetailCodeEditor';
+import { InstanceSwitch } from './components/InstanceSwitch';
+import { Unavailable } from '../../../../framework/components/Unavailable';
 
 export function InstanceDetails() {
   const params = useParams<{ id?: string; instance_id?: string }>();
@@ -131,7 +133,7 @@ export function InstanceDetailsTab(props: {
         {instance.enabled ? (
           <Progress value={Math.round(100 - instance.percent_capacity_remaining)} />
         ) : (
-          t('Unavailable')
+          <Unavailable>{t('Unavailable')}</Unavailable>
         )}
       </PageDetail>
       <PageDetail label={t('Running jobs')} data-cy="running-jobs">
@@ -153,11 +155,16 @@ export function InstanceDetailsTab(props: {
         {formatDateString(instance.created)}
       </PageDetail>
       <LastModifiedPageDetail value={instance.modified} data-cy="modified" />
-      {instance.node_type !== 'hop' ? (
-        <PageDetail label={t('Forks')} data-cy="forks">
-          {instanceForks > 0 ? <InstanceForksSlider instance={instance} /> : undefined}
-        </PageDetail>
-      ) : undefined}
+      <PageDetail
+        label={t('Forks')}
+        data-cy="forks"
+        isEmpty={instance.node_type === 'hop' || instanceForks <= 0}
+      >
+        <InstanceForksSlider instance={instance} />
+      </PageDetail>
+      <PageDetail label={t('Enabled')} data-cy="enabled">
+        <InstanceSwitch instance={instance} />
+      </PageDetail>
       <PageDetailCodeEditor
         value={instance.errors}
         label={t('Errors')}

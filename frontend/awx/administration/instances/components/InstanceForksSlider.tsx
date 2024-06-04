@@ -19,7 +19,7 @@ export function InstanceForksSlider(props: { instance: Instance }) {
         min={instance.cpu_capacity}
         value={instanceForks}
         onChange={(_event: SliderOnChangeEvent, value: number) =>
-          void handleInstanceForksSlider(instance, value)
+          void handleInstanceForksSlider(value)
         }
         isDisabled={
           !(

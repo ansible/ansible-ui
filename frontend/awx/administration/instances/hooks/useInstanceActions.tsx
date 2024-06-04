@@ -18,17 +18,15 @@ import { Instance } from '../../../interfaces/Instance';
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';
 import { Settings } from '../../../interfaces/Settings';
 import { useRemoveInstances } from './useRemoveInstances';
-import {
-  useEditInstanceRowAction,
-  useRunHealthCheckRowAction,
-  useToggleInstanceRowAction,
-} from './useInstanceRowActions';
+import { useEditInstanceRowAction, useRunHealthCheckRowAction } from './useInstanceRowActions';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { TFunction } from 'i18next';
 import { AwxUser } from '../../../interfaces/User';
 
 export function useInstanceActions(instanceId: string) {
-  const [instance, setInstance] = useState<Instance>();
+  const { refresh, data: instanceRes } = useGetItem<Instance>(awxAPI`/instances/`, instanceId);
+
+  const [instance, setInstance] = useState<Instance>(instanceRes as Instance);
   const [instanceGroups, setInstanceGroups] = useState<AwxItemsResponse<InstanceGroup>>();
   const [instanceForks, setInstanceForks] = useState(0);
 
@@ -52,11 +50,11 @@ export function useInstanceActions(instanceId: string) {
     void fetchInstanceDetails();
   }, [instanceId]);
 
-  const handleToggleInstance = async (instance: Instance, enabled: boolean) => {
-    const response = await requestPatch<Instance>(awxAPI`/instances/${instance.id.toString()}/`, {
+  const handleToggleInstance = async (enabled: boolean) => {
+    await requestPatch<Instance>(awxAPI`/instances/${instance.id.toString()}/`, {
       enabled,
     });
-    setInstance(response);
+    refresh();
   };
 
   function mapBetween(
@@ -68,14 +66,13 @@ export function useInstanceActions(instanceId: string) {
   ) {
     return ((maxAllowed - minAllowed) * (currentVal - min)) / (max - min) + minAllowed;
   }
-  const handleInstanceForksSlider = pDebounce(async (instance: Instance, value: number) => {
+  const handleInstanceForksSlider = pDebounce(async (value: number) => {
     const adjustedMin = Math.min(instance.mem_capacity, instance.cpu_capacity);
     const adjustedMax = Math.max(instance.mem_capacity, instance.cpu_capacity);
     const computedVal = mapBetween(value, 0, 1, adjustedMin, adjustedMax);
     const response = await requestPatch<Instance>(awxAPI`/instances/${instance.id.toString()}/`, {
       capacity_adjustment: computedVal.toFixed(2),
     });
-    setInstance(response);
     setInstanceForks(
       computeForks(
         response.mem_capacity,
@@ -83,10 +80,10 @@ export function useInstanceActions(instanceId: string) {
         parseFloat(response.capacity_adjustment)
       )
     );
+    refresh();
   }, 200);
 
   return {
-    instance,
     instanceGroups,
     instanceForks,
     handleToggleInstance,
@@ -109,7 +106,6 @@ export function useInstanceDetailsActions() {
     (!activeAwxUser?.is_superuser && !activeAwxUser?.is_system_auditor) ||
     isManagedInstance;
 
-  const toggleInstanceAction = useToggleInstanceRowAction(refresh);
   const editInstanceAction = useEditInstanceRowAction({
     isHidden: isHidden,
     isPinned: false,
@@ -121,8 +117,8 @@ export function useInstanceDetailsActions() {
   );
 
   return useMemo<IPageAction<Instance>[]>(
-    () => [toggleInstanceAction, editInstanceAction, removeInstanceAction, runHealthCheckAction],
-    [toggleInstanceAction, editInstanceAction, removeInstanceAction, runHealthCheckAction]
+    () => [editInstanceAction, removeInstanceAction, runHealthCheckAction],
+    [editInstanceAction, removeInstanceAction, runHealthCheckAction]
   );
 }
 
