@@ -34,6 +34,7 @@ import { SubscriptionWizard } from '../settings/SubscriptionWizard';
 import { useAwxService, useEdaService, useHubService } from './GatewayServices';
 import { PlatformRoute } from './PlatformRoutes';
 import { Redirect } from './Redirect';
+import { useGetPlatformApplicationsRoutes } from '../routes/useGetPlatformApplicationsRoutes';
 
 const mapHubRoute = (url: string) => {
   const matches: Record<string, string> = {
@@ -92,6 +93,7 @@ export function usePlatformNavigation() {
   const teams = useGetPlatformTeamsRoutes();
   const users = useGetPlatformUsersRoutes();
   const roles = useGetPlatformRolesRoutes();
+  const applications = useGetPlatformApplicationsRoutes();
   const authenticators = useGetPlatformAuthenticatorsRoutes();
   const resources = useGetPlatformResourceRoutes();
 
@@ -110,6 +112,7 @@ export function usePlatformNavigation() {
 
     // HERE
     removeNavigationItemById(awxNav, AwxRoute.Access);
+    removeNavigationItemById(awxNav, AwxRoute.Applications);
 
     removeNavigationItemById(edaNav, EdaRoute.Overview);
     removeNavigationItemById(edaNav, EdaRoute.Users);
@@ -212,6 +215,7 @@ export function usePlatformNavigation() {
         teams,
         users,
         ...roles,
+        ...applications,
         // awxCredentials,
         // awxCredentialTypes,
         // hubApiTokenRoute,
@@ -368,6 +372,7 @@ export function usePlatformNavigation() {
     users,
     roles,
     resources,
+    applications,
     navigate,
   ]);
   return pageNavigationItems;
