@@ -92,7 +92,7 @@ export function useInventoriesSourcesToolbarActions(
         type: PageActionType.Button,
         selection: PageActionSelection.None,
         isPinned: false,
-        label: t('Sync All'),
+        label: t('Launch inventory update'),
         onClick: syncAll,
         isDisabled: () => cannotLaunchInventorySourcesUpdate,
       },
