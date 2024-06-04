@@ -4,6 +4,7 @@ import { JobTemplate } from '../../../../frontend/awx/interfaces/JobTemplate';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
 import { AwxUser } from '../../../../frontend/awx/interfaces/User';
+import { WorkflowApproval } from '../../../../frontend/awx/interfaces/WorkflowApproval';
 import { WorkflowJob } from '../../../../frontend/awx/interfaces/WorkflowJob';
 import { WorkflowJobTemplate } from '../../../../frontend/awx/interfaces/WorkflowJobTemplate';
 import { WorkflowNode } from '../../../../frontend/awx/interfaces/WorkflowNode';
@@ -331,14 +332,90 @@ describe('Workflow Approvals Tests', () => {
   });
 
   describe('Workflow Approvals - User Access', () => {
-    before('', () => {});
+    let workflowApproval: WorkflowApproval;
+    beforeEach(function () {
+      cy.intercept(
+        'POST',
+        awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/launch/`
+      ).as('launched');
+      cy.visit(`/templates/workflow-job-template/${workflowJobTemplate.id.toString()}/details`);
+      cy.verifyPageTitle(`${workflowJobTemplate.name}`);
+      cy.getByDataCy('launch-template').click();
+      cy.wait('@launched')
+        .its('response.body')
+        .then((launched: WorkflowJob) => {
+          cy.pollFirstPendingWorkflowApprovalsForWorkflowJobID(launched.id).then((wfApprovalA) => {
+            workflowApproval = wfApprovalA;
+            cy.url().should('contain', '/output');
+          });
+        });
+    });
 
-    it.skip('can assign normal user the access to approve a workflow approval from the list toolbar', () => {
-      //as admin: assign normal user as wfjt admin
-      //log out
-      //log in as normal user
-      //acccess workflow approvals list, find specific workflow approval
-      //confirm that user can approve the workflow approval
+    it('can assign normal user the access to approve a workflow approval from the list toolbar', () => {
+      cy.visit(
+        `/templates/workflow-job-template/${workflowJobTemplate.id}/user-access?page=1&perPage=100&sort=user__username`
+      );
+      cy.verifyPageTitle(workflowJobTemplate.name);
+      cy.get('tbody tr').should('have.length', 0);
+      cy.getByDataCy('add-roles').click();
+      cy.verifyPageTitle('Add roles');
+      cy.filterTableByTextFilter('username', userWFApprove.username, {
+        disableFilterSelection: true,
+      }).click();
+      cy.get('tbody tr')
+        .should('have.length', 1)
+        .within(() => {
+          cy.getByDataCy('checkbox-column-cell').click();
+        });
+      cy.getByDataCy('Submit').click();
+      cy.selectTableRowByCheckbox('name', 'WorkflowJobTemplate Approve', { disableFilter: true });
+      cy.getByDataCy('Submit').click();
+      cy.getByDataCy('expandable-section-users').within(() => {
+        cy.get('tbody tr').should('have.length', 1);
+      });
+      cy.getByDataCy('expandable-section-awxRoles').within(() => {
+        cy.get('tbody tr').should('have.length', 1);
+      });
+      cy.getByDataCy('Submit').click();
+      cy.getModal().within(() => {
+        cy.clickButton('Close');
+      });
+      cy.get('tbody tr').should('have.length', 1);
+      cy.awxLoginTestUser(`${userWFApprove.username}`, `pw`);
+      cy.navigateTo('awx', 'workflow-approvals');
+      cy.verifyPageTitle('Workflow Approvals');
+      cy.filterTableBySingleSelect('name', workflowApproval.name);
+      cy.get('tbody tr').should('have.length', 1);
+      cy.get('[data-ouia-component-id="simple-table"]').within(() => {
+        cy.getByDataCy('checkbox-column-cell').click();
+      });
+      cy.get('[data-ouia-component-id="page-toolbar"]').within(() => {
+        cy.getByDataCy('approve').click();
+      });
+      cy.getModal().within(() => {
+        cy.get('#confirm').click();
+        cy.get('[data-ouia-component-id="submit"]').click();
+        cy.clickButton('Close');
+      });
+      cy.get('[data-ouia-component-id="simple-table"]').within(() => {
+        cy.getByDataCy('status-column-cell').should('contain', 'Approve');
+        cy.getByDataCy('checkbox-column-cell').click();
+      });
+      cy.get('[data-ouia-component-id="page-toolbar"]').within(() => {
+        cy.getByDataCy('actions-dropdown')
+          .click()
+          .then(() => {
+            cy.get('[data-cy="delete"]').click();
+          });
+      });
+      cy.getModal().within(() => {
+        cy.get('[data-cy="alert-toaster"]').should(
+          'contain',
+          '1 of the selected workflow approvals cannot be deleted due to insufficient permissions.'
+        );
+        cy.clickButton('Cancel');
+      });
+      cy.verifyPageTitle('Workflow Approvals');
     });
 
     it.skip('can assign a normal user admin access to a workflow approval', () => {
