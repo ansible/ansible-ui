@@ -4,7 +4,6 @@ import { useCallback, useEffect } from 'react';
 import { useFormState } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { RequestError } from '../../frontend/common/crud/RequestError';
 import { PageForm } from '../PageForm/PageForm';
 import { PageLayout } from '../PageLayout';
 import { PageWizardFooter } from './PageWizardFooter';
@@ -93,14 +92,17 @@ function RequestErrorAlert(props: { error?: unknown }) {
     }
     return <Alert variant="danger" title={t('An error occurred.')} />;
   }
-  if (!(props.error instanceof RequestError)) {
+  if ('message' in props.error) {
     return <Alert variant="danger" title={props.error.message} />;
   }
-  return (
-    <Alert variant="danger" title={props.error.message} isInline>
-      {Object.values(props.error.json ?? {}).map((value, index) => (
-        <div key={index}>{value}</div>
-      ))}
-    </Alert>
-  );
+  const error = props.error as Error & { json?: Record<string, string> };
+  if (error.json) {
+    return (
+      <Alert variant="danger" title={error.message} isInline>
+        {Object.values(error.json).map((value: string, index) => (
+          <div key={index}>{value}</div>
+        ))}
+      </Alert>
+    );
+  }
 }
