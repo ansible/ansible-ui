@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access */
 //Tests a user's ability to perform certain actions on the Resources toolbar in the EDA UI.
 import { EdaProject } from '../../../../frontend/eda/interfaces/EdaProject';
 import { EdaDecisionEnvironment } from '../../../../frontend/eda/interfaces/EdaDecisionEnvironment';
