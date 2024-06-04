@@ -1,3 +1,4 @@
+import { useEffect, useMemo, useState } from 'react';
 import { FieldValues, useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -10,22 +11,21 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../framework';
+import { useGet } from '../../../common/crud/useGet';
 import { useOptions } from '../../../common/crud/useOptions';
+import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { AwxPageForm } from '../../common/AwxPageForm';
 import { awxAPI } from '../../common/api/awx-utils';
-import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
-import { AwxRoute } from '../../main/AwxRoutes';
-import { InventorySourceSubForm } from './InventorySourceSubForm';
+import { Inventory } from '../../interfaces/Inventory';
 import {
   InventorySource,
   InventorySourceCreate,
   InventorySourceForm,
 } from '../../interfaces/InventorySource';
-import { useGet } from '../../../common/crud/useGet';
-import { Inventory } from '../../interfaces/Inventory';
-import { useEffect, useMemo, useState } from 'react';
-import { usePatchRequest } from '../../../common/crud/usePatchRequest';
+import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
+import { AwxRoute } from '../../main/AwxRoutes';
+import { InventorySourceSubForm } from './InventorySourceSubForm';
 
 export interface SourceFields extends FieldValues {
   project: Omit<InventorySource, 'source'> & {
