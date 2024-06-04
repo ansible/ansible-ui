@@ -60,22 +60,20 @@ export function InstanceGroupPage() {
           page: AwxRoute.InstanceGroups,
           persistentFilterKey: 'instance_groups',
         }}
-        tabs={
-          instanceGroup?.is_container_group
+        tabs={[
+          { label: t('Details'), page: AwxRoute.InstanceGroupDetails },
+          ...(!instanceGroup?.is_container_group
             ? [
-                { label: t('Details'), page: AwxRoute.InstanceGroupDetails },
-                { label: t('Team access'), page: AwxRoute.InstanceGroupTeamAccess },
-                { label: t('User access'), page: AwxRoute.InstanceGroupUserAccess },
-                { label: t('Jobs'), page: AwxRoute.InstanceGroupJobs },
+                {
+                  label: t('Instances'),
+                  page: AwxRoute.InstanceGroupInstances,
+                },
               ]
-            : [
-                { label: t('Details'), page: AwxRoute.InstanceGroupDetails },
-                { label: t('Instances'), page: AwxRoute.InstanceGroupInstances },
-                { label: t('Team access'), page: AwxRoute.InstanceGroupTeamAccess },
-                { label: t('User access'), page: AwxRoute.InstanceGroupUserAccess },
-                { label: t('Jobs'), page: AwxRoute.InstanceGroupJobs },
-              ]
-        }
+            : []),
+          { label: t('Team access'), page: AwxRoute.InstanceGroupTeamAccess },
+          { label: t('User access'), page: AwxRoute.InstanceGroupUserAccess },
+          { label: t('Jobs'), page: AwxRoute.InstanceGroupJobs },
+        ]}
         params={{ id: instanceGroup.id }}
       />
     </PageLayout>
