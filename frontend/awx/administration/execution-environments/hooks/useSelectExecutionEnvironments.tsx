@@ -6,6 +6,7 @@ import { ExecutionEnvironment } from '../../../interfaces/ExecutionEnvironment';
 import { useExecutionEnvironmentsColumns } from './useExecutionEnvironmentsColumns';
 import { useExecutionEnvironmentsFilters } from './useExecutionEnvironmentsFilters';
 
+/** @deprecated use PageFormSelectExecutionEnvironment instead */
 export function useSelectExecutionEnvironments(organizationId?: string) {
   const { t } = useTranslation();
   const toolbarFilters = useExecutionEnvironmentsFilters();

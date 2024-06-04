@@ -5,6 +5,7 @@ import { PageFormMultiInput } from '../../../../../framework/PageForm/Inputs/Pag
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';
 import { useSelectInstanceGroups } from '../hooks/useSelectInstanceGroups';
 
+/** @deprecated */
 export function PageFormInstanceGroupSelect<
   TFieldValues extends FieldValues = FieldValues,
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,

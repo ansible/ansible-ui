@@ -9,6 +9,7 @@ import { awxAPI } from '../../../common/api/awx-utils';
 import { Credential } from '../../../interfaces/Credential';
 import { useMultiSelectCredential, useSingleSelectCredential } from '../hooks/useSelectCredential';
 
+/** @deprecated */
 export function PageFormCredentialSelect<
   TFieldValues extends FieldValues = FieldValues,
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,

@@ -7,6 +7,7 @@ import { InstanceGroup } from '../../../interfaces/InstanceGroup';
 import { useInstanceGroupsFilters } from '../InstanceGroups';
 import { useInstanceGroupsColumns } from './useInstanceGroupColumns';
 
+/** @deprecated */
 export function useSelectInstanceGroups(isLookup: boolean) {
   const { t } = useTranslation();
   const toolbarFilters = useInstanceGroupsFilters();
