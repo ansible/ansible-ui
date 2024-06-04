@@ -48,7 +48,7 @@ interface CredentialSelectProps extends CredentialInputField {
   name: string;
 }
 
-interface initialValues {
+export interface initialValues {
   name: string;
   description: string;
   credential_type: number;
@@ -445,6 +445,7 @@ export function EditCredential() {
           setIsTestButtonEnabled={setIsTestButtonEnabled}
           setIsTestButtonEnabledSubForm={setIsTestButtonEnabledSubForm}
           setWatchedSubFormFields={setWatchedSubFormFields}
+          initialValues={initialValues}
         />
       </AwxPageForm>
     </PageLayout>
@@ -463,6 +464,7 @@ function CredentialInputs({
   setIsTestButtonEnabled,
   setIsTestButtonEnabledSubForm,
   setWatchedSubFormFields,
+  initialValues,
 }: {
   isEditMode?: boolean;
   selectedCredentialTypeId?: number;
@@ -475,6 +477,7 @@ function CredentialInputs({
   setIsTestButtonEnabled: (enabled: boolean) => void;
   setIsTestButtonEnabledSubForm: (enabled: boolean) => void;
   setWatchedSubFormFields: (fields: unknown[]) => void;
+  initialValues?: initialValues;
 }) {
   const { t } = useTranslation();
 
@@ -550,6 +553,7 @@ function CredentialInputs({
           setPluginsToDelete={setPluginsToDelete}
           setIsTestButtonEnabledSubForm={setIsTestButtonEnabledSubForm}
           setWatchedSubFormFields={setWatchedSubFormFields}
+          initialValues={initialValues}
         />
       ) : null}
     </>
@@ -564,6 +568,7 @@ function CredentialSubForm({
   setPluginsToDelete,
   setIsTestButtonEnabledSubForm,
   setWatchedSubFormFields,
+  initialValues,
 }: {
   credentialType: CredentialType;
   setCredentialPluginValues: (values: CredentialPluginsInputSource[]) => void;
@@ -573,6 +578,7 @@ function CredentialSubForm({
   setPluginsToDelete?: React.Dispatch<React.SetStateAction<string[]>>;
   setIsTestButtonEnabledSubForm: (enabled: boolean) => void;
   setWatchedSubFormFields: (fields: unknown[]) => void;
+  initialValues?: initialValues;
 }) {
   const { t } = useTranslation();
   const openCredentialPluginsModal = useCredentialPluginsModal();
@@ -638,6 +644,7 @@ function CredentialSubForm({
                     accumulatedPluginValues,
                   });
                 }}
+                initialValues={initialValues}
               />
             );
           } else if (credentialType.kind === 'ssh' && field.id === 'become_method') {
