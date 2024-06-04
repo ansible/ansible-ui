@@ -3,12 +3,13 @@ import { Instance } from '../../interfaces/Instance';
 import { InstanceGroup } from '../../interfaces/InstanceGroup';
 import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 import { useInstanceActions } from '../instances/hooks/useInstanceActions';
+import { useGetItem } from '../../../common/crud/useGet';
+import { awxAPI } from '../../common/api/awx-utils';
 
 export function InstanceDetailInner(props: {
   instance: Instance;
   instanceGroups: AwxItemsResponse<InstanceGroup> | undefined;
   instanceForks: number;
-  handleInstanceForksSlider: (instance: Instance, value: number) => Promise<void>;
 }) {
   const { instance, instanceGroups, instanceForks } = props;
   return (
@@ -23,14 +24,13 @@ export function InstanceDetailInner(props: {
 
 export function InstanceDetailSidebar(props: { selectedId: string }) {
   const { selectedId } = props;
-  const { instance, instanceGroups, handleInstanceForksSlider, instanceForks } =
-    useInstanceActions(selectedId);
+  const { data: instance } = useGetItem<Instance>(awxAPI`/instances/`, selectedId);
+  const { instanceGroups, instanceForks } = useInstanceActions(selectedId);
 
   return instance ? (
     <InstanceDetailInner
       instance={instance}
       instanceGroups={instanceGroups ? instanceGroups : undefined}
-      handleInstanceForksSlider={handleInstanceForksSlider}
       instanceForks={instanceForks}
     />
   ) : null;
