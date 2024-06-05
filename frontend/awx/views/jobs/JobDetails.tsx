@@ -22,6 +22,22 @@ export function JobDetails() {
   const getPageUrl = useGetPageUrl();
   const pageNavigate = usePageNavigate();
   const { job } = useOutletContext<{ job: Job }>();
+  const verbosity = [
+    '0 (Normal)',
+    '1 (Verbose)',
+    '2 (More Verbose)',
+    '3 (Debug)',
+    '4 (Connection Debug)',
+    '5 (WinRM Debug)',
+  ];
+
+  const verbosityHelpText = t`Control the level of output ansible will produce as the playbook executes.`;
+  const forksHelpText = t`The number of parallel or simultaneous processes to use while executing the playbook. 
+  An empty value, or a value less than 1 will use the Ansible default which is usually 5. The default number of 
+  forks can be overwritten with a change to ansible.cfg. Refer to the Ansible documentation for details about the 
+  configuration file.`;
+  const timeoutHelpText = t`The amount of time (in seconds) to run before the job is canceled. Defaults to 0 for no job timeout.`;
+  const timeoutDefaultText = t`No timeout specified`;
 
   return (
     <PageDetails>
@@ -82,20 +98,18 @@ export function JobDetails() {
           {job.summary_fields?.instance_group?.name}
         </Link>
       </PageDetail>
-      <PageDetail isEmpty={!job.forks} label={t('Forks')}>
+      <PageDetail label={t('Forks')} helpText={forksHelpText}>
         {job.forks}
       </PageDetail>
       <PageDetail
-        isEmpty={!job.timeout}
         label={t('Timeout')}
         helpText={t(
           'The amount of time (in seconds) to run before the job is canceled. Defaults to 0 for no job timeout.'
         )}
       >
-        {job.timeout}
+        {job.timeout === 0 ? timeoutDefaultText : job.timeout}
       </PageDetail>
       <PageDetail
-        isEmpty={!job.verbosity}
         label={t('Verbosity')}
         helpText={t('Control the level of output ansible will produce as the playbook executes.')}
       >
