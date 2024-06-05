@@ -267,9 +267,9 @@ Cypress.Commands.add(
           .filter((node) => node.summary_fields.job?.type === 'workflow_approval')
           .filter((node) => node.summary_fields.job?.status === 'pending')
           .map((node) => node.summary_fields.job?.id);
-      
+
         if (workflowApprovalIds.length === 0) return cy.then(() => undefined);
-        
+
         const workflowApprovalId = workflowApprovalIds[0];
         return cy.awxRequestGet<WorkflowApproval>(
           awxAPI`/workflow_approvals/${workflowApprovalId!.toString()}`
@@ -283,7 +283,10 @@ Cypress.Commands.add(
   (workflowJobID: number) => {
     cy.poll<WorkflowApproval>(
       () => cy.getFirstPendingWorkflowApprovalsForWorkflowJobID(workflowJobID),
-      (approval: WorkflowApproval) => {debugger; return !!approval;}
+      (approval: WorkflowApproval) => {
+        debugger;
+        return !!approval;
+      }
     );
   }
 );
