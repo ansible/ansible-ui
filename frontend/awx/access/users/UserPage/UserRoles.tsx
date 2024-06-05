@@ -5,16 +5,23 @@ import { useOptions } from '../../../../common/crud/useOptions';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useTranslation } from 'react-i18next';
+import { LoadingPage } from '../../../../../framework';
 
 export function UserRoles(props: { id?: string; addRolesRoute?: string }) {
   const params = useParams<{ id: string }>();
   const { t } = useTranslation();
 
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/users/${params.id ?? ''}/`);
+  const { data, isLoading: isLoadingOptions } = useOptions<OptionsResponse<ActionsResponse>>(
+    awxAPI`/users/${params.id ?? ''}/`
+  );
 
   const canEditUser = Boolean(
     data && data.actions && (data.actions['PUT'] || data.actions['PATCH'])
   );
+
+  if (isLoadingOptions) {
+    return <LoadingPage />;
+  }
 
   return (
     <ResourceAccess
