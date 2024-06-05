@@ -97,8 +97,7 @@ describe('Workflow Approvals Tests', () => {
     cy.deleteAwxUser(userWFDeny, { failOnStatusCode: false });
   });
 
-  it('Empty test', () => {
-  });
+  it('Empty test', () => {});
 
   it.skip('admin can approve and then delete a workflow approval from the list row item', () => {
     cy.visit(`/templates/workflow-job-template/${workflowJobTemplate.id.toString()}/details`);
