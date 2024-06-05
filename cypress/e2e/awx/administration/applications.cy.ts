@@ -1,8 +1,9 @@
 import { randomString } from '../../../../framework/utils/random-string';
 import { Application } from '../../../../frontend/awx/interfaces/Application';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
+import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 
-describe.skip('Applications', () => {
+describe('Applications', () => {
   let app: Application;
 
   before(() => {
@@ -23,38 +24,46 @@ describe.skip('Applications', () => {
     it(`can create a single application with grant type Authorization Code and client type Confidential, then delete from the list view`, function () {
       const appName = 'E2E Application name ' + randomString(4);
       const appDescription = 'E2E Application description ' + randomString(4);
+      // Create application
       cy.navigateTo('awx', 'applications');
       cy.clickButton('Create application');
       cy.verifyPageTitle('Create Application');
-      cy.get('[data-cy="name"]').type(appName);
-      cy.get('[data-cy="description"]').type(appDescription);
-      cy.selectSingleSelectOption('[data-cy="organization"]', 'Default');
+      cy.getByDataCy('name').type(appName);
+      cy.getByDataCy('description').type(appDescription);
+      cy.singleSelectByDataCy('organization', (this.globalOrganization as Organization).name);
       cy.selectDropdownOptionByResourceName('authorization-grant-type', 'Authorization code');
       cy.selectDropdownOptionByResourceName('client-type', 'Confidential');
-      cy.get('[data-cy="redirect-uris"]').type('https://create_from_api.com');
+      cy.getByDataCy('redirect-uris').type('https://create_from_api.com');
       cy.intercept('POST', `api/v2/applications/`).as('createApp');
       cy.clickButton('Create application');
       cy.wait('@createApp')
         .its('response.body')
-        .then((response: Application) => {
-          cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+        .then((newApplication: Application) => {
+          cy.getModal().within(() => {
             cy.get('header').contains('Application information');
+            cy.getByDataCy('name').should('have.text', newApplication.name);
+            cy.get('button[aria-label="Close"]').click();
           });
-          cy.get('button[aria-label="Close"]').click();
-          cy.getByDataCy('name').should('contain', appName);
-          cy.getByDataCy('description').should('contain', appDescription);
-          cy.getByDataCy('authorization-grant-type').should('contain', 'authorization-code');
-          cy.getByDataCy('client-type').should('contain', 'confidential');
-          cy.getByDataCy('OAuth Applications').eq(1).click();
-          //Delete from the list view
-          cy.filterTableByMultiSelect('name', [response.name]);
-          cy.clickTableRowAction('name', response.name, 'delete-application', {
+          // Assert application details
+          cy.getByDataCy('name').should('have.text', appName);
+          cy.getByDataCy('description').should('have.text', appDescription);
+          cy.getByDataCy('organization').should(
+            'have.text',
+            (this.globalOrganization as Organization).name
+          );
+          cy.getByDataCy('authorization-grant-type').should('have.text', 'authorization-code');
+          cy.getByDataCy('client-type').should('have.text', 'confidential');
+          // Delete application from the list view
+          cy.getByDataCy('back-to applications').click();
+          cy.filterTableBySingleSelect('name', appName);
+          cy.clickTableRowAction('name', appName, 'delete-application', {
             inKebab: true,
             disableFilter: true,
           });
-          cy.get('[data-ouia-component-id="confirm"]').click();
-          cy.get('[data-ouia-component-id="submit"]').click();
-          cy.clickButton('Close');
+          cy.clickModalConfirmCheckbox();
+          cy.clickModalButton('Delete application');
+          cy.assertModalSuccess();
+          cy.clickModalButton('Close');
           cy.clickButton('Clear all filters');
         });
     });
@@ -62,82 +71,97 @@ describe.skip('Applications', () => {
     it(`can create a single application with grant type Password and client type Confidential`, function () {
       const appName = 'E2E Application name ' + randomString(4);
       const appDescription = 'E2E Application description ' + randomString(4);
+      // Create application
       cy.navigateTo('awx', 'applications');
       cy.clickButton('Create application');
       cy.verifyPageTitle('Create Application');
-      cy.get('[data-cy="name"]').type(appName);
-      cy.get('[data-cy="description"]').type(appDescription);
-      cy.selectSingleSelectOption('[data-cy="organization"]', 'Default');
+      cy.getByDataCy('name').type(appName);
+      cy.getByDataCy('description').type(appDescription);
+      cy.singleSelectByDataCy('organization', (this.globalOrganization as Organization).name);
       cy.selectDropdownOptionByResourceName('authorization-grant-type', 'Password');
       cy.selectDropdownOptionByResourceName('client-type', 'Confidential');
-      cy.get('[data-cy="redirect-uris"]').type('https://create_from_api.com');
+      cy.getByDataCy('redirect-uris').type('https://create_from_api.com');
       cy.intercept('POST', `api/v2/applications/`).as('createApp');
       cy.clickButton('Create application');
       cy.wait('@createApp')
         .its('response.body')
-        .then((response: Application) => {
-          cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+        .then((newApplication: Application) => {
+          cy.getModal().within(() => {
             cy.get('header').contains('Application information');
+            cy.getByDataCy('name').should('have.text', newApplication.name);
+            cy.get('button[aria-label="Close"]').click();
           });
-          cy.get('button[aria-label="Close"]').click();
-          cy.getByDataCy('name').should('contain', appName);
-          cy.getByDataCy('description').should('contain', appDescription);
-          cy.getByDataCy('authorization-grant-type').should('contain', 'password');
-          cy.getByDataCy('client-type').should('contain', 'confidential');
-          cy.deleteAwxApplication(response.id.toString(), { failOnStatusCode: false });
+          // Assert application details
+          cy.getByDataCy('name').should('have.text', appName);
+          cy.getByDataCy('description').should('have.text', appDescription);
+          cy.getByDataCy('organization').should(
+            'have.text',
+            (this.globalOrganization as Organization).name
+          );
+          cy.getByDataCy('authorization-grant-type').should('have.text', 'password');
+          cy.getByDataCy('client-type').should('have.text', 'confidential');
+          cy.deleteAwxApplication(newApplication.id.toString(), { failOnStatusCode: false });
         });
     });
 
     it(`can create a single application with grant type Password and client type Public`, function () {
       const appName = 'E2E Application name ' + randomString(4);
       const appDescription = 'E2E Application description ' + randomString(4);
+      // Create application
       cy.navigateTo('awx', 'applications');
       cy.clickButton('Create application');
       cy.verifyPageTitle('Create Application');
-      cy.get('[data-cy="name"]').type(appName);
-      cy.get('[data-cy="description"]').type(appDescription);
-      cy.selectSingleSelectOption('[data-cy="organization"]', 'Default');
+      cy.getByDataCy('name').type(appName);
+      cy.getByDataCy('description').type(appDescription);
+      cy.singleSelectByDataCy('organization', (this.globalOrganization as Organization).name);
       cy.selectDropdownOptionByResourceName('authorization-grant-type', 'Password');
       cy.selectDropdownOptionByResourceName('client-type', 'Public');
-      cy.get('[data-cy="redirect-uris"]').type('https://create_from_api.com');
+      cy.getByDataCy('redirect-uris').type('https://create_from_api.com');
       cy.intercept('POST', `api/v2/applications/`).as('createApp');
       cy.clickButton('Create application');
       cy.wait('@createApp')
         .its('response.body')
-        .then((response: Application) => {
-          cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+        .then((newApplication: Application) => {
+          cy.getModal().within(() => {
             cy.get('header').contains('Application information');
+            cy.getByDataCy('name').should('have.text', newApplication.name);
+            cy.get('button[aria-label="Close"]').click();
           });
-          cy.get('button[aria-label="Close"]').click();
-          cy.getByDataCy('name').should('contain', appName);
-          cy.getByDataCy('description').should('contain', appDescription);
-          cy.getByDataCy('authorization-grant-type').should('contain', 'password');
-          cy.getByDataCy('client-type').should('contain', 'public');
-          cy.deleteAwxApplication(response.id.toString(), { failOnStatusCode: false });
+          // Assert application details
+          cy.getByDataCy('name').should('have.text', appName);
+          cy.getByDataCy('description').should('have.text', appDescription);
+          cy.getByDataCy('organization').should(
+            'have.text',
+            (this.globalOrganization as Organization).name
+          );
+          cy.getByDataCy('authorization-grant-type').should('have.text', 'password');
+          cy.getByDataCy('client-type').should('have.text', 'public');
+          cy.deleteAwxApplication(newApplication.id.toString(), { failOnStatusCode: false });
         });
     });
 
     it('can edit an application with grant type password from client type confidential to public from the List View', function () {
       cy.navigateTo('awx', 'applications');
       cy.verifyPageTitle('OAuth Applications');
-      cy.filterTableByMultiSelect('name', [app.name]);
-      cy.getTableRow('name', app.name, { disableFilter: true });
-      cy.getByDataCy('name-column-cell').should('contain', app.name);
-      //Edit the Application from the List View
-      cy.get(`[data-cy="edit-application"]`).click();
+      cy.filterTableBySingleSelect('name', app.name);
+      cy.clickTableRowAction('name', app.name, 'edit-application', {
+        inKebab: true,
+        disableFilter: true,
+      });
       cy.intercept('PATCH', `api/v2/applications/*/`).as('editApp');
+      // Edit application
       cy.selectDropdownOptionByResourceName('client-type', 'Public');
       cy.clickButton('Save application');
       cy.wait('@editApp')
-        .its('response.body.client_type')
-        .then((client_type: string) => {
-          expect(client_type).to.eql('public');
+        .its('response.body')
+        .then((newApplication: Application) => {
+          // Assert the edited details
+          cy.getByDataCy('name').should('have.text', app.name);
+          cy.getByDataCy('description').should('have.text', newApplication.description);
+          cy.getByDataCy('organization').should('have.text', 'Default');
+          cy.getByDataCy('authorization-grant-type').should('have.text', 'password');
+          cy.getByDataCy('client-type').should('have.text', 'public');
         });
-      //Assert the edited information
-      cy.get('[data-cy="name"]').should('contain', app.name);
-      cy.get('[data-cy="organization"]').should('contain', 'Default');
-      cy.get('[data-cy="authorization-grant-type"]').should('contain', 'password');
-      cy.get('[data-cy="client-type"]').should('contain', 'public');
     });
   });
 
@@ -146,58 +170,60 @@ describe.skip('Applications', () => {
       const appName = 'E2E Application name ' + randomString(4);
       const appDescription = 'E2E Application description ' + randomString(4);
       cy.navigateTo('awx', 'applications');
+      // Create Application
       cy.clickButton('Create application');
-      //Create Application
       cy.verifyPageTitle('Create Application');
-      cy.get('[data-cy="name"]').type(appName);
-      cy.get('[data-cy="description"]').type(appDescription);
-      cy.selectSingleSelectOption('[data-cy="organization"]', 'Default');
+      cy.getByDataCy('name').type(appName);
+      cy.getByDataCy('description').type(appDescription);
+      cy.singleSelectByDataCy('organization', (this.globalOrganization as Organization).name);
       cy.selectDropdownOptionByResourceName('authorization-grant-type', 'Authorization code');
       cy.selectDropdownOptionByResourceName('client-type', 'Public');
-      cy.get('[data-cy="redirect-uris"]').type('https://create_from_api.com');
+      cy.getByDataCy('redirect-uris').type('https://create_from_api.com');
       cy.intercept('POST', `api/v2/applications/`).as('createApp');
       cy.clickButton('Create application');
       cy.wait('@createApp')
         .its('response.body')
-        .then((response: Application) => {
-          cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+        .then((newApplication: Application) => {
+          cy.getModal().within(() => {
             cy.get('header').contains('Application information');
+            cy.getByDataCy('name').should('have.text', newApplication.name);
+            cy.get('button[aria-label="Close"]').click();
           });
-          cy.get('button[aria-label="Close"]').click();
-          //Details View
-          cy.getByDataCy('name').should('contain', appName);
-          cy.getByDataCy('description').should('contain', appDescription);
-          cy.getByDataCy('authorization-grant-type').should('contain', 'authorization-code');
-          cy.getByDataCy('client-type').should('contain', 'public');
-          //Delete from Details View
-          cy.getByDataCy('delete-application')
-            .click()
-            .then(() => {
-              cy.get('[data-ouia-component-id="confirm"]').click();
-              cy.intercept('DELETE', awxAPI`/applications/${response.id.toString()}/`).as(
-                'deletedApp'
-              );
-              cy.get('[data-ouia-component-id="submit"]').click();
-              cy.wait('@deletedApp').then((deletedApp) => {
-                expect(deletedApp?.response?.statusCode).to.eql(204);
-              });
-            });
+          // Assert application details
+          cy.getByDataCy('name').should('have.text', appName);
+          cy.getByDataCy('description').should('have.text', appDescription);
+          cy.getByDataCy('organization').should(
+            'have.text',
+            (this.globalOrganization as Organization).name
+          );
+          cy.getByDataCy('authorization-grant-type').should('have.text', 'authorization-code');
+          cy.getByDataCy('client-type').should('have.text', 'public');
+          // Delete from Details View
+          cy.clickButton('Delete application');
+          cy.clickModalConfirmCheckbox();
+          cy.intercept('DELETE', awxAPI`/applications/${newApplication.id.toString()}/`).as(
+            'deletedApp'
+          );
+          cy.clickModalButton('Delete application');
+          cy.wait('@deletedApp').then((deletedApp) => {
+            expect(deletedApp?.response?.statusCode).to.eql(204);
+          });
         });
     });
 
     it('can edit an application with grant type Password from client type Confidential to Public from the Details View', function () {
       cy.navigateTo('awx', 'applications');
-      cy.filterTableByMultiSelect('name', [app.name]);
-      cy.getTableRow('name', app.name, { disableFilter: true });
-      //Navigate to Details View
-      cy.getByDataCy('name-column-cell').contains(app.name).click();
+      cy.filterTableBySingleSelect('name', app.name);
+      // Navigate to Details View
+      cy.clickTableRowLink('name', app.name, { disableFilter: true });
       cy.verifyPageTitle(app.name);
-      //Assert info on Details View
-      cy.get('[data-cy="name"]').should('contain', app.name);
-      cy.get('[data-cy="organization"]').should('contain', 'Default');
-      cy.get('[data-cy="authorization-grant-type"]').should('contain', 'password');
-      cy.get('[data-cy="client-type"]').should('contain', 'confidential');
-      //Edit the Application
+      // Assert application details
+      cy.getByDataCy('name').should('have.text', app.name);
+      cy.getByDataCy('description').should('have.text', app.description);
+      cy.getByDataCy('organization').should('have.text', 'Default');
+      cy.getByDataCy('authorization-grant-type').should('have.text', 'password');
+      cy.getByDataCy('client-type').should('have.text', 'confidential');
+      // Edit application
       cy.clickButton('Edit application');
       cy.intercept('PATCH', `api/v2/applications/*/`).as('editApp');
       cy.selectDropdownOptionByResourceName('client-type', 'Public');
@@ -205,9 +231,9 @@ describe.skip('Applications', () => {
       cy.wait('@editApp')
         .its('response.body.client_type')
         .then((client_type: string) => {
-          //Assert the edited information
+          // Assert edited details
           expect(client_type).to.eql('public');
-          cy.get('[data-cy="client-type"]').should('contain', 'public');
+          cy.getByDataCy('client-type').should('have.text', 'public');
         });
     });
   });
