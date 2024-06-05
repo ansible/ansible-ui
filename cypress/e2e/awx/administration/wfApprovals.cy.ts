@@ -110,7 +110,7 @@ describe('Workflow Approvals Tests', () => {
       .then((response: WorkflowJob) => {
         expect(response.id).to.exist;
         cy.pollFirstPendingWorkflowApprovalsForWorkflowJobID(response.id).then((approval) => {
-          /*cy.navigateTo('awx', 'workflow-approvals');
+          cy.navigateTo('awx', 'workflow-approvals');
           cy.intercept('POST', awxAPI`/workflow_approvals/${approval.id.toString()}/approve/`).as(
             'WFaction'
           );
@@ -143,7 +143,6 @@ describe('Workflow Approvals Tests', () => {
             .then((response) => {
               expect(response?.statusCode).to.eql(204);
             });
-            */
         });
       });
   });
