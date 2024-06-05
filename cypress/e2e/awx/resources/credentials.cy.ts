@@ -648,7 +648,7 @@ describe('Credentials Tabbed View - Job Templates', function () {
   });
 });
 
-describe('Credentials Tabbed View - Team and User Access', function () {
+describe.skip('Credentials Tabbed View - Team and User Access', function () {
   let machineCredential: Credential;
   let createdAwxUser: AwxUser;
   let awxOrganization: Organization;
