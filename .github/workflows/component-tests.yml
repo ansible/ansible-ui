@@ -15,16 +15,16 @@ jobs:
       fail-fast: true
       matrix:
         task: [
-          "component:awx:access",
-          "component:awx:administration",
-          "component:awx:common",
-          "component:awx:overview",
-          "component:awx:resources",
-          "component:awx:views",
-          "component:eda",
-          "component:hub",
-          "component:common",
-          "component:framework"
+          "awx:access",
+          "awx:administration",
+          "awx:common",
+          "awx:overview",
+          "awx:resources",
+          "awx:views",
+          "eda",
+          "hub",
+          "common",
+          "framework"
         ]
     steps:
       - name: Checkout
@@ -49,4 +49,4 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
       - name: Run Cypress component tests ${{ matrix.task }}
-        run: npm run ${{ matrix.task }}
+        run: npm run component:${{ matrix.task }}
