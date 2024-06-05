@@ -26,13 +26,14 @@ describe('Workflow Approvals Tests', () => {
   //   let jobName = '';
 
   before(function () {
+    cy.awxLogin();
+
     organization = this.globalOrganization as Organization;
     cy.createAwxProject(
       { organization: (this.globalOrganization as Organization).id },
       'https://github.com/ansible/test-playbooks'
     ).then((proj) => {
       project = proj;
-      cy.awxLogin();
 
       cy.createAwxUser(organization).then((u) => {
         user = u;
