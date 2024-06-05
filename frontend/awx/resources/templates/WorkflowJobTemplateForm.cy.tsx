@@ -24,14 +24,14 @@ describe('Create job template ', () => {
       }
     );
   });
-  it('Create Workflow Job Template - Displays error message on internal server error', () => {
+  it('Create workflow job template - Displays error message on internal server error', () => {
     cy.mount(<CreateWorkflowJobTemplate />);
     cy.get('[data-cy="name"]').type('Test');
   });
 
   it('Component renders', () => {
     cy.mount(<CreateWorkflowJobTemplate />);
-    cy.verifyPageTitle('Create Workflow Job Template');
+    cy.verifyPageTitle('Create workflow job template');
   });
   it('Validates properly', () => {
     cy.mount(<CreateWorkflowJobTemplate />);

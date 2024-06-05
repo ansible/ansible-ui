@@ -103,10 +103,10 @@ export function EditWorkflowJobTemplate() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Edit Workflow Job Template')}
+        title={`${t('Edit')} ${workflowJobTemplate?.name || t('Workflow Job Template')}`}
         breadcrumbs={[
           { label: t('Templates'), to: getPageUrl(AwxRoute.Templates) },
-          { label: t('Edit Workflow Job Template') },
+          { label: `${t('Edit')} ${workflowJobTemplate?.name || t('Workflow Job Template')}` }
         ]}
       />
       <AwxPageForm<WorkflowJobTemplateForm>
@@ -161,10 +161,10 @@ export function CreateWorkflowJobTemplate() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Create Workflow Job Template')}
+        title={t('Create workflow job template')}
         breadcrumbs={[
           { label: t('Templates'), to: getPageUrl(AwxRoute.Templates) },
-          { label: t('Create Workflow Job Template') },
+          { label: t('Create workflow job template') },
         ]}
       />
       <AwxPageForm<WorkflowJobTemplateForm>
