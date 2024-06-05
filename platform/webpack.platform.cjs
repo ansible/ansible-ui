@@ -31,7 +31,7 @@ module.exports = function (env, argv) {
         req.referrer = getRawHeader(req.rawHeaders, 'Referer') || proxyUrl.href;
       },
     },
-    '/api/controller/websocket': {
+    '/api/controller/v2/websocket': {
       target: PLATFORM_SERVER,
       secure: false,
       ws: true,
