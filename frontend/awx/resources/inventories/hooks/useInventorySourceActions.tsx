@@ -18,15 +18,14 @@ import { AwxRoute } from '../../../main/AwxRoutes';
 import { useDeleteInventorySources } from './useDeleteInventorySources';
 
 type InventorySourceActionOptions = {
-  onInventorySourcesDeleted: (inventorySources: InventorySource[]) => void;
+  onDelete: (inventorySources: InventorySource[]) => void;
+  onSync: () => void;
 };
 
-export function useInventorySourceActions({
-  onInventorySourcesDeleted,
-}: InventorySourceActionOptions) {
+export function useInventorySourceActions({ onDelete, onSync }: InventorySourceActionOptions) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
-  const deleteInventorySources = useDeleteInventorySources(onInventorySourcesDeleted);
+  const deleteInventorySources = useDeleteInventorySources(onDelete);
   const params = useParams<{ inventory_type: string }>();
 
   const { activeAwxUser } = useAwxActiveUser();
@@ -37,6 +36,7 @@ export function useInventorySourceActions({
     async (invSrc: InventorySource) => {
       try {
         await postRequest(awxAPI`/inventory_sources/${invSrc.id.toString()}/update/`, {});
+        onSync();
       } catch (error) {
         alertToaster.addAlert({
           variant: 'danger',
@@ -46,7 +46,7 @@ export function useInventorySourceActions({
         });
       }
     },
-    [alertToaster, postRequest, t]
+    [alertToaster, postRequest, t, onSync]
   );
 
   return useMemo<IPageAction<InventorySource>[]>(() => {
