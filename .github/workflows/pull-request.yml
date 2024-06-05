@@ -88,14 +88,6 @@ jobs:
         run: npm ci
       - run: npm run checks
 
-  component:
-    name: Component
-    needs: packages
-    uses: ./.github/workflows/component.yml
-    secrets:
-      COMPONENT_PROJECT_ID: ${{ secrets.COMPONENT_PROJECT_ID }}
-      COMPONENT_RECORD_KEY: ${{ secrets.COMPONENT_RECORD_KEY }}
-
   awx-e2e:
     name: AWX E2E
     needs: packages
@@ -131,7 +123,15 @@ jobs:
       HUB_PASSWORD: ${{ secrets.HUB_PASSWORD }}
       HUB_PROJECT_ID: ${{ secrets.HUB_PROJECT_ID }}
       HUB_RECORD_KEY: ${{ secrets.HUB_RECORD_KEY }}
-      
+
+  component:
+    name: Component
+    needs: packages
+    uses: ./.github/workflows/component.yml
+    secrets:
+      COMPONENT_PROJECT_ID: ${{ secrets.COMPONENT_PROJECT_ID }}
+      COMPONENT_RECORD_KEY: ${{ secrets.COMPONENT_RECORD_KEY }}
+            
   success:
     name: Success
     runs-on: ubuntu-latest
