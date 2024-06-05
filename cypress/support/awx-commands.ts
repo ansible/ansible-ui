@@ -945,7 +945,7 @@ Cypress.Commands.add('createAwxConstructedInventory', (organization: Organizatio
         awxAPI`/inventories/${String(constructedInv.id)}/update_inventory_sources/`,
         {}
       ).then((_res) => {
-        return constructedInv;
+        return { constructedInv, arrayOfInventories };
       });
     });
   });
@@ -975,6 +975,23 @@ Cypress.Commands.add(
     }
   ) => {
     cy.awxRequestDelete(awxAPI`/inventories/${inventory.id.toString()}/`, options);
+  }
+);
+
+Cypress.Commands.add(
+  'deleteAwxConstructedInventory',
+  (
+    constructedInv: Inventory,
+    arrayOfInputInvID: number[],
+    options?: {
+      /** Whether to fail on response codes other than 2xx and 3xx */
+      failOnStatusCode?: boolean;
+    }
+  ) => {
+    cy.awxRequestDelete(awxAPI`/inventories/${constructedInv.id.toString()}/`, options);
+    arrayOfInputInvID.forEach((invID) => {
+      cy.awxRequestDelete(awxAPI`/inventories/${invID.toString()}/`, options);
+    });
   }
 );
 
