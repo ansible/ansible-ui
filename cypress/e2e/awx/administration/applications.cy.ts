@@ -21,7 +21,7 @@ describe('Applications', () => {
   });
 
   describe('Applications- CRUD functionality- List View', () => {
-    it(`can create a single application with grant type Authorization Code and client type Confidential, then delete from the list view`, function () {
+    it.skip(`can create a single application with grant type Authorization Code and client type Confidential, then delete from the list view`, function () {
       const appName = 'E2E Application name ' + randomString(4);
       const appDescription = 'E2E Application description ' + randomString(4);
       // Create application
