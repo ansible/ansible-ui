@@ -130,14 +130,14 @@ export function InventoryPage() {
         }}
         tabs={[
           { label: t('Details'), page: AwxRoute.InventoryDetails },
+          { label: t('User Access'), page: AwxRoute.InventoryUserAccess },
+          { label: t('Team Access'), page: AwxRoute.InventoryTeamAccess },
           !isSmartInventory && { label: t('Groups'), page: AwxRoute.InventoryGroups },
           { label: t('Hosts'), page: AwxRoute.InventoryHosts },
           !isSmartInventory &&
             !isConstructedInventory && { label: t('Sources'), page: AwxRoute.InventorySources },
           { label: t('Jobs'), page: AwxRoute.InventoryJobs },
           { label: t('Job templates'), page: AwxRoute.InventoryJobTemplates },
-          { label: t('Team Access'), page: AwxRoute.InventoryTeamAccess },
-          { label: t('User Access'), page: AwxRoute.InventoryUserAccess },
         ]}
         params={params}
         componentParams={{ inventory }}
