@@ -98,10 +98,10 @@ export function CreateInventory(props: { inventoryKind: '' | 'constructed' | 'sm
   const getPageUrl = useGetPageUrl();
   const title =
     inventoryKind === ''
-      ? t('Create Inventory')
+      ? t('Create inventory')
       : inventoryKind === 'smart'
-        ? t('Create Smart Inventory')
-        : t('Create Constructed Inventory');
+        ? t('Create smart inventory')
+        : t('Create constructed inventory');
 
   const defaultValue =
     inventoryKind === 'smart'
@@ -260,10 +260,10 @@ export function EditInventory() {
 
   const title =
     inventory.kind === ''
-      ? t('Edit Inventory')
+      ? t('Edit inventory')
       : inventory.kind === 'smart'
-        ? t('Edit Smart Inventory')
-        : t('Edit Constructed Inventory');
+        ? t('Edit smart inventory')
+        : t('Edit constructed inventory');
 
   const defaultValue =
     inventory.kind === 'smart'

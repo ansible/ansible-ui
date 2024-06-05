@@ -134,7 +134,7 @@ describe('AWX Overview', () => {
             'Create a job by clicking the button below.'
           );
           cy.clickButton(/^Create project$/);
-          cy.verifyPageTitle('Create Project');
+          cy.verifyPageTitle('Create project');
         } else if (results.count >= 1) {
           cy.log('non empty state check');
           cy.contains('small', 'Recently updated projects')
