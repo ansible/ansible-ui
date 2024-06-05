@@ -918,12 +918,47 @@ Cypress.Commands.add('createAwxInventory', (inventory?: Partial<Omit<Inventory, 
   }
 });
 
+Cypress.Commands.add('createAwxConstructedInventory', (organization: Organization) => {
+  const arrayOfInventories: number[] = [];
+  // creates 3 inventories
+  for (let i = 0; i < 3; i++) {
+    cy.createAwxInventory({ organization: organization.id }).then((inv) => {
+      arrayOfInventories.push(inv.id);
+    });
+  }
+
+  cy.awxRequestPost<Partial<Inventory & { inventories: Array<number | undefined> }>>(
+    awxAPI`/constructed_inventories/`,
+    {
+      name: `E2E Constructed Inventory ${randomString(4)}`,
+      organization: organization.id,
+      kind: 'constructed',
+      inventories: arrayOfInventories,
+      variables: 'plugin: test',
+    }
+  ).then((constructedInv: Partial<Inventory>) => {
+    const inputInvPromises = arrayOfInventories.map((invID) => {
+      cy.awxRequestPost(awxAPI`/inventories/${String(constructedInv.id)}/input_inventories/`, {
+        id: invID,
+      });
+    });
+    void Promise.all(inputInvPromises).then((_res) => {
+      cy.awxRequestPost(
+        awxAPI`/inventories/${String(constructedInv.id)}/update_inventory_sources/`,
+        {}
+      ).then((_res) => {
+        return constructedInv;
+      });
+    });
+  });
+});
+
 Cypress.Commands.add(
   'createAwxInventorySource',
   (inventory: Partial<Pick<Inventory, 'id'>>, project: Partial<Pick<Project, 'id'>>) => {
     cy.requestPost(awxAPI`/inventory_sources/`, {
       name: 'E2E Inventory Source ' + randomString(4),
-      descriptiom: 'This is a description',
+      description: 'This is a description',
       source: 'scm',
       source_project: project.id,
       source_path: '',

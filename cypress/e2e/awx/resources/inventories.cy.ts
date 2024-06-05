@@ -12,6 +12,7 @@ describe('Inventories Tests', () => {
   let organization: Organization;
   let inventory: Inventory;
   const arrayOfInventories = <Inventory[]>[];
+  let constructedInv: Inventory;
   let instanceGroup: InstanceGroup;
   let label: Label;
   let user: AwxUser;
@@ -223,9 +224,11 @@ describe('Inventories Tests', () => {
             for (let i = 0; i < 3; i++) {
               cy.createAwxInventory({ organization: organization.id }).then((inv) => {
                 arrayOfInventories.push(inv);
-                // cy.giveUserInventoryAccess(inv.name, user.id, 'Read');
               });
             }
+            cy.createAwxConstructedInventory(org).then((constInv) => {
+              constructedInv = constInv;
+            });
           });
         });
 
@@ -292,9 +295,17 @@ describe('Inventories Tests', () => {
         });
 
         it('can edit and run a sync on the edited constructed inventory', () => {
+          cy.log('oi', constructedInv.id);
+          cy.log('oi', constructedInv.name);
           //Create a constructed inventory in the beforeEach hook
           //Assert the original details of the inventory
+
           //Assert the user navigating to the edit constructed inventory form
+          cy.visit(
+            `/infrastructure/inventories/constructed_inventory/${String(constructedInv.id)}/details`
+          );
+          cy.verifyPageTitle(constructedInv.name);
+          cy.getByDataCy('edit-inventory').click();
           //Assert the edited changes of the inventory
           //Assert that the sync ran successfully
         });

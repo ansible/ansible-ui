@@ -751,6 +751,8 @@ declare global {
 
       createAwxInventory(inventory?: Partial<Omit<Inventory, 'id'>>): Chainable<Inventory>;
 
+      createAwxConstructedInventory(organization: Organization): Chainable<Inventory>;
+
       createAwxInventorySource(
         inventory: Partial<Pick<Inventory, 'id'>>,
         project: Partial<Pick<Project, 'id'>>
