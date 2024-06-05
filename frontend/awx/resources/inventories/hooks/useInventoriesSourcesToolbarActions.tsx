@@ -1,5 +1,5 @@
 import { ButtonVariant } from '@patternfly/react-core';
-import { PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
+import { PlusCircleIcon, RocketIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
@@ -91,7 +91,7 @@ export function useInventoriesSourcesToolbarActions(
       {
         type: PageActionType.Button,
         selection: PageActionSelection.None,
-        isPinned: false,
+        icon: RocketIcon,
         label: t('Launch inventory update'),
         onClick: syncAll,
         isDisabled: () => cannotLaunchInventorySourcesUpdate,
