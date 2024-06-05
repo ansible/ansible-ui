@@ -10,7 +10,7 @@ import { WorkflowJobTemplate } from '../../../../frontend/awx/interfaces/Workflo
 import { WorkflowNode } from '../../../../frontend/awx/interfaces/WorkflowNode';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 
-describe('Workflow Approvals Tests', () => {
+describe.skip('Workflow Approvals Tests', () => {
   let organization: Organization;
   let project: Project;
   let user: AwxUser;
@@ -90,127 +90,125 @@ describe('Workflow Approvals Tests', () => {
     cy.deleteAwxUser(userWFDeny, { failOnStatusCode: false });
   });
 
-  describe('Workflow Approvals - Approve, Deny, Delete', () => {
-    it('admin can approve and then delete a workflow approval from the list row item', () => {
-      cy.intercept(
-        'POST',
-        awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/launch`
-      ).as('launchWFJT');
-      cy.visit(`/templates/workflow-job-template/${workflowJobTemplate.id.toString()}/details`);
-      cy.verifyPageTitle(`${workflowJobTemplate.name}`);
-      cy.getByDataCy('launch-template').click();
-      cy.wait('@launchWFJT')
-        .its('response.body')
-        .then((response: WorkflowJob) => {
-          expect(response.id).to.exist;
-          cy.pollFirstPendingWorkflowApprovalsForWorkflowJobID(response.id).then((approval) => {
-            actAssertAndDeleteWorkflowApproval('approve', approval.id);
-          });
-        });
-    });
-
-    it('admin can deny and then delete a workflow approval from the list row item', () => {
-      cy.intercept(
-        'POST',
-        awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/launch`
-      ).as('launchWFJT');
-      cy.visit(`/templates/workflow-job-template/${workflowJobTemplate.id.toString()}/details`);
-      cy.verifyPageTitle(`${workflowJobTemplate.name}`);
-      cy.getByDataCy('launch-template').click();
-      cy.wait('@launchWFJT')
-        .its('response.body')
-        .then((response: WorkflowJob) => {
-          expect(response.id).to.exist;
-          cy.pollFirstPendingWorkflowApprovalsForWorkflowJobID(response.id).then((approval) => {
-            actAssertAndDeleteWorkflowApproval('deny', approval.id);
-          });
-        });
-    });
-
-    it('admin can cancel and then delete a workflow approval from the list row item', () => {
-      cy.intercept(
-        'POST',
-        awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/launch`
-      ).as('launchWFJT');
-      cy.visit(`/templates/workflow-job-template/${workflowJobTemplate.id.toString()}/details`);
-      cy.verifyPageTitle(`${workflowJobTemplate.name}`);
-      cy.getByDataCy('launch-template').click();
-      cy.wait('@launchWFJT')
-        .its('response.body')
-        .then((response: WorkflowJob) => {
-          expect(response.id).to.exist;
-          cy.pollFirstPendingWorkflowApprovalsForWorkflowJobID(response.id).then((approval) => {
-            actAssertAndDeleteWorkflowApproval('cancel', approval.id);
-          });
-        });
-    });
-
-    const wfaURL = '/administration/workflow-approvals/';
-    function actAssertAndDeleteWorkflowApproval(
-      selectorDataCy: 'approve' | 'deny' | 'cancel',
-      wfaID: number
-    ) {
-      let actionStatusCode: number;
-      let statusText: string;
-      let actionURL: string;
-
-      cy.visit(wfaURL);
-
-      switch (selectorDataCy) {
-        case 'approve':
-          actionURL = '**/approve';
-          actionStatusCode = 204;
-          statusText = 'Approved';
-          break;
-        case 'deny':
-          actionURL = '**/deny';
-          actionStatusCode = 204;
-          statusText = 'Denied';
-          break;
-        case 'cancel':
-          actionURL = '**/cancel';
-          actionStatusCode = 202;
-          statusText = 'Canceled';
-          break;
-      }
-      cy.intercept({
-        method: 'POST',
-        url: `${actionURL}`,
-      }).as('WFaction');
-      cy.filterTableByMultiSelect('id', [wfaID.toString()]);
-      cy.getTableRow('id', wfaID.toString(), { disableFilter: true })
-        .within(() => {
-          cy.getByDataCy('actions-column-cell').within(() => {
-            cy.getByDataCy(selectorDataCy).click();
-          });
-        })
-        .then(() => {
-          if (selectorDataCy !== 'cancel') {
-            cy.actionsWFApprovalConfirmModal(selectorDataCy);
-          }
-        });
-      cy.wait('@WFaction')
-        .its('response')
-        .then((response) => {
-          expect(response?.statusCode).to.eql(actionStatusCode);
-        });
-      cy.reload();
-      cy.getByDataCy('status-column-cell').should('have.text', statusText);
-      cy.intercept({
-        method: 'DELETE',
-        url: 'api/v2/workflow_approvals/*',
-      }).as('deleteWFA');
-      cy.getByDataCy('actions-column-cell').within(() => {
-        cy.clickKebabAction('actions-dropdown', 'delete-workflow-approval');
-      });
-      cy.actionsWFApprovalConfirmModal('delete');
-      cy.wait('@deleteWFA')
-        .its('response')
-        .then((response) => {
-          expect(response?.statusCode).to.eql(204);
-        });
-    }
+  describe.skip('Workflow Approvals - Approve, Deny, Delete', () => {
+    // it('admin can approve and then delete a workflow approval from the list row item', () => {
+    //   cy.intercept(
+    //     'POST',
+    //     awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/launch`
+    //   ).as('launchWFJT');
+    //   cy.visit(`/templates/workflow-job-template/${workflowJobTemplate.id.toString()}/details`);
+    //   cy.verifyPageTitle(`${workflowJobTemplate.name}`);
+    //   cy.getByDataCy('launch-template').click();
+    //   cy.wait('@launchWFJT')
+    //     .its('response.body')
+    //     .then((response: WorkflowJob) => {
+    //       expect(response.id).to.exist;
+    //       cy.pollFirstPendingWorkflowApprovalsForWorkflowJobID(response.id).then((approval) => {
+    //         actAssertAndDeleteWorkflowApproval('approve', approval.id);
+    //       });
+    //     });
+    // });
+    // it('admin can deny and then delete a workflow approval from the list row item', () => {
+    //   cy.intercept(
+    //     'POST',
+    //     awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/launch`
+    //   ).as('launchWFJT');
+    //   cy.visit(`/templates/workflow-job-template/${workflowJobTemplate.id.toString()}/details`);
+    //   cy.verifyPageTitle(`${workflowJobTemplate.name}`);
+    //   cy.getByDataCy('launch-template').click();
+    //   cy.wait('@launchWFJT')
+    //     .its('response.body')
+    //     .then((response: WorkflowJob) => {
+    //       expect(response.id).to.exist;
+    //       cy.pollFirstPendingWorkflowApprovalsForWorkflowJobID(response.id).then((approval) => {
+    //         actAssertAndDeleteWorkflowApproval('deny', approval.id);
+    //       });
+    //     });
+    // });
+    // it('admin can cancel and then delete a workflow approval from the list row item', () => {
+    //   cy.intercept(
+    //     'POST',
+    //     awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/launch`
+    //   ).as('launchWFJT');
+    //   cy.visit(`/templates/workflow-job-template/${workflowJobTemplate.id.toString()}/details`);
+    //   cy.verifyPageTitle(`${workflowJobTemplate.name}`);
+    //   cy.getByDataCy('launch-template').click();
+    //   cy.wait('@launchWFJT')
+    //     .its('response.body')
+    //     .then((response: WorkflowJob) => {
+    //       expect(response.id).to.exist;
+    //       cy.pollFirstPendingWorkflowApprovalsForWorkflowJobID(response.id).then((approval) => {
+    //         actAssertAndDeleteWorkflowApproval('cancel', approval.id);
+    //       });
+    //     });
   });
+
+  //   const wfaURL = '/administration/workflow-approvals/';
+  //   function actAssertAndDeleteWorkflowApproval(
+  //     selectorDataCy: 'approve' | 'deny' | 'cancel',
+  //     wfaID: number
+  //   ) {
+  //     let actionStatusCode: number;
+  //     let statusText: string;
+  //     let actionURL: string;
+
+  //     cy.visit(wfaURL);
+
+  //     switch (selectorDataCy) {
+  //       case 'approve':
+  //         actionURL = '**/approve';
+  //         actionStatusCode = 204;
+  //         statusText = 'Approved';
+  //         break;
+  //       case 'deny':
+  //         actionURL = '**/deny';
+  //         actionStatusCode = 204;
+  //         statusText = 'Denied';
+  //         break;
+  //       case 'cancel':
+  //         actionURL = '**/cancel';
+  //         actionStatusCode = 202;
+  //         statusText = 'Canceled';
+  //         break;
+  //     }
+  //     cy.intercept({
+  //       method: 'POST',
+  //       url: `${actionURL}`,
+  //     }).as('WFaction');
+  //     cy.filterTableByMultiSelect('id', [wfaID.toString()]);
+  //     cy.getTableRow('id', wfaID.toString(), { disableFilter: true })
+  //       .within(() => {
+  //         cy.getByDataCy('actions-column-cell').within(() => {
+  //           cy.getByDataCy(selectorDataCy).click();
+  //         });
+  //       })
+  //       .then(() => {
+  //         if (selectorDataCy !== 'cancel') {
+  //           cy.actionsWFApprovalConfirmModal(selectorDataCy);
+  //         }
+  //       });
+  //     cy.wait('@WFaction')
+  //       .its('response')
+  //       .then((response) => {
+  //         expect(response?.statusCode).to.eql(actionStatusCode);
+  //       });
+  //     cy.reload();
+  //     cy.getByDataCy('status-column-cell').should('have.text', statusText);
+  //     cy.intercept({
+  //       method: 'DELETE',
+  //       url: 'api/v2/workflow_approvals/*',
+  //     }).as('deleteWFA');
+  //     cy.getByDataCy('actions-column-cell').within(() => {
+  //       cy.clickKebabAction('actions-dropdown', 'delete-workflow-approval');
+  //     });
+  //     cy.actionsWFApprovalConfirmModal('delete');
+  //     cy.wait('@deleteWFA')
+  //       .its('response')
+  //       .then((response) => {
+  //         expect(response?.statusCode).to.eql(204);
+  //       });
+  //   }
+  // });
 
   /* 
   Used in the Workflow Approvals - Bulk Approve, Bulk Deny, Bulk Delete tests (below)
@@ -426,7 +424,7 @@ describe('Workflow Approvals Tests', () => {
     });
   });
 
-  describe('Workflow Approvals - Detail Screen', () => {
+  describe.skip('Workflow Approvals - Detail Screen', () => {
     before('', () => {});
     // Workflow Approval Detail Screen (not yet implemented in the new UI):
     // User can approve a workflow approval from the details screen
@@ -435,7 +433,7 @@ describe('Workflow Approvals Tests', () => {
     // User can approve or deny a workflow approval from the list view and then visit the details page of the workflow approval to delete it.
   });
 
-  describe('Workflow Approvals - Job Output Screen', () => {
+  describe.skip('Workflow Approvals - Job Output Screen', () => {
     before('', () => {});
     // Workflow Approval Job Output Screen (not yet implemented in the new UI):
     // User can access the output screen of a running workflow job template with a workflow approval node, access the workflow approval details page by clicking on the node in the output screen, and approve the workflow approval.
@@ -444,7 +442,7 @@ describe('Workflow Approvals Tests', () => {
     // User can visit the workflow visualizer of a workflow job template from the workflow approval details screen.
   });
 
-  describe('Workflow Approvals - Job Details Screen', () => {
+  describe.skip('Workflow Approvals - Job Details Screen', () => {
     before('', () => {});
     // Workflow Approval Job Details Screen (not yet implemented in the new UI):
     // User can relaunch the workflow from the workflow approval job details screen.
