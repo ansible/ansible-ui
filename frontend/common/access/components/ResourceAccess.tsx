@@ -20,8 +20,9 @@ export function ResourceAccess(props: {
   id: string;
   type: 'user-roles' | 'team-roles';
   addRolesRoute?: string;
+  disableAddRoles?: string;
 }) {
-  const { id, type, addRolesRoute, service } = props;
+  const { id, type, addRolesRoute, disableAddRoles, service } = props;
   const { t } = useTranslation();
   const getDisplayName = useMapContentTypeToDisplayName();
   const roleDefinitionsURL =
@@ -85,6 +86,7 @@ export function ResourceAccess(props: {
       url={type === 'user-roles' ? roleUserAssignmentsURL : roleTeamAssignmentsURL}
       id={id}
       addRolesRoute={addRolesRoute}
+      disableAddRoles={disableAddRoles}
       accessListType={type}
     />
   );

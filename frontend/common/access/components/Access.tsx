@@ -12,7 +12,7 @@ import {
 } from '../../../../framework';
 import { useCallback, useMemo } from 'react';
 import { ButtonVariant } from '@patternfly/react-core';
-import { MinusCircleIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
+import { CubesIcon, MinusCircleIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import { idKeyFn } from '../../../common/utils/nameKeyFn';
 import { requestDelete } from '../../../common/crud/Data';
 import { Assignment } from '../interfaces/Assignment';
@@ -48,6 +48,7 @@ type AccessProps<T extends Assignment> = {
   addRoleButtonText?: string;
   removeRoleText?: string;
   removeConfirmationText?: (count: number) => string;
+  disableAddRoles?: string;
 };
 
 export function Access<T extends Assignment>(props: AccessProps<T>) {
@@ -208,6 +209,7 @@ export function Access<T extends Assignment>(props: AccessProps<T>) {
         isPinned: true,
         icon: PlusCircleIcon,
         label: props.addRoleButtonText ?? t('Add roles'),
+        isDisabled: props.disableAddRoles,
         href: getPageUrl(props.addRolesRoute ?? '', { params: { id: params.id } }),
       },
       {
@@ -219,7 +221,15 @@ export function Access<T extends Assignment>(props: AccessProps<T>) {
         isDanger: true,
       },
     ],
-    [t, getPageUrl, props.addRolesRoute, props.addRoleButtonText, params.id, removeRoles]
+    [
+      props.addRoleButtonText,
+      props.disableAddRoles,
+      props.addRolesRoute,
+      t,
+      getPageUrl,
+      params.id,
+      removeRoles,
+    ]
   );
   const emptyStateTitle = useMemo(() => {
     let title: string;
@@ -261,11 +271,13 @@ export function Access<T extends Assignment>(props: AccessProps<T>) {
       toolbarFilters={toolbarFilters}
       rowActions={rowActions}
       errorStateTitle={t('Error loading access data.')}
-      emptyStateTitle={emptyStateTitle}
-      emptyStateDescription={t('Add a role by clicking the button below.')}
-      emptyStateButtonIcon={<PlusCircleIcon />}
+      emptyStateTitle={props.disableAddRoles ?? emptyStateTitle}
+      emptyStateDescription={
+        props.disableAddRoles ? undefined : t('Add a role by clicking the button below.')
+      }
+      emptyStateIcon={props.disableAddRoles ? CubesIcon : undefined}
       emptyStateButtonText={props.addRoleButtonText ?? t('Add roles')}
-      emptyStateActions={toolbarActions.slice(0, 1)}
+      emptyStateActions={props.disableAddRoles ? undefined : toolbarActions.slice(0, 1)}
       {...view}
     />
   );
