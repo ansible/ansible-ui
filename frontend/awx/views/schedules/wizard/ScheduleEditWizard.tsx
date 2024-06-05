@@ -186,10 +186,10 @@ export function ScheduleEditWizard() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Edit Schedule')}
+        title={`${t('Edit')} ${schedule?.name || t('schedule')}`}
         breadcrumbs={[
           { label: t('Schedules'), to: getPageUrl(AwxRoute.Schedules) },
-          { label: t('Edit Schedule') },
+          { label: `${t('Edit')} ${schedule?.name || t('schedule')}` },
         ]}
       />
       <PageWizard<ScheduleFormWizard>

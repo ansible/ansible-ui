@@ -44,7 +44,7 @@ describe('ProjectForm.cy.ts', () => {
       cy.contains('Name is required.').should('be.visible');
       cy.contains('Organization is required.').should('be.visible');
       cy.contains('Source control type is required.').should('be.visible');
-      cy.verifyPageTitle('Create Project');
+      cy.verifyPageTitle('Create project');
     });
 
     it('validates required field for source control types', () => {

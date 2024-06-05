@@ -48,10 +48,10 @@ export function CreateInstanceGroup() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Create Instance Group')}
+        title={t('Create instance group')}
         breadcrumbs={[
           { label: t('Instance Groups'), to: getPageUrl(AwxRoute.InstanceGroups) },
-          { label: t('Create Instance Group') },
+          { label: t('Create instance group') },
         ]}
       />
       <AwxPageForm
@@ -108,10 +108,10 @@ export function EditInstanceGroup() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Edit Instance Group')}
+        title={`${t('Edit')} ${instanceGroup?.name || t('Instance Group')}`}
         breadcrumbs={[
           { label: t('Instance Groups'), to: getPageUrl(AwxRoute.InstanceGroups) },
-          { label: t('Edit Instance Group') },
+          { label: `${t('Edit')} ${instanceGroup?.name || t('Instance Group')}` },
         ]}
       />
       <AwxPageForm

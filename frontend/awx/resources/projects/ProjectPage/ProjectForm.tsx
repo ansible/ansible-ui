@@ -82,10 +82,10 @@ export function CreateProject() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Create Project')}
+        title={t('Create project')}
         breadcrumbs={[
           { label: t('Projects'), to: getPageUrl(AwxRoute.Projects) },
-          { label: t('Create Project') },
+          { label: t('Create project') },
         ]}
       />
       <AwxPageForm
@@ -158,10 +158,10 @@ export function EditProject() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Edit Project')}
+        title={`${t('Edit')} ${project?.name || t('Project')}`}
         breadcrumbs={[
           { label: t('Projects'), to: getPageUrl(AwxRoute.Projects) },
-          { label: t('Edit Project') },
+          { label: `${t('Edit')} ${project?.name || t('Project')}` },
         ]}
       />
       <AwxPageForm<Project>
