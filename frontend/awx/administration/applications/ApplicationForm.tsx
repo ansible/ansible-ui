@@ -194,7 +194,7 @@ function ApplicationInputs(props: { mode: 'create' | 'edit' }) {
       <PageFormTextInput<Application>
         name="redirect_uris"
         label={t('Redirect URIs')}
-        placeholder={t('Enter a redriect URI')}
+        placeholder={t('Enter a redirect URI')}
         isRequired={Boolean(authorizationGrantType === 'authorization-code')}
       />
     </>
