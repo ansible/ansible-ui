@@ -191,12 +191,19 @@ Cypress.Commands.add(
 
 Cypress.Commands.add('poll', function requestPoll<
   ResponseT,
->(fn: () => Cypress.Chainable<ResponseT | undefined>, check: (response: ResponseT) => boolean) {
+>(fn: () => Cypress.Chainable<ResponseT | undefined>, check: (response: ResponseT) => boolean, calledTimes?: number) {
   fn().then((response) => {
     if (response !== undefined && check(response)) {
       cy.wrap(response);
     } else {
-      cy.wait(1000).then(() => cy.poll<ResponseT>(fn, check));
+      // call only 10 times, then fail
+      let watchDog = calledTimes || 0;
+      if (watchDog < 10) {
+        cy.log('Calling cy.poll again for the ' + watchDog + ' time');
+        cy.wait(1000).then(() => cy.poll<ResponseT>(fn, check, watchDog++));
+      } else {
+        throw new Error('Explicitly failing this test due to cy.poll not found what it expected.');
+      }
     }
   });
 });
