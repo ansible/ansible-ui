@@ -23,7 +23,7 @@ export function SchedulePage(props: {
   backTab: { label: string; page: string; persistentFilterKey: string };
   initialBreadCrumbs: { label?: string; id?: string; to: string }[];
 }) {
-  const viewActivityStreamAction = useViewActivityStream('schedule');
+  const viewActivityStreamAction = useViewActivityStream();
 
   const abortController = useAbortController();
   const [inventory, setInventory] = useState<Inventory | null>(null);

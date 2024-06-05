@@ -12,6 +12,7 @@ import { WorkflowApproval } from '../../../interfaces/WorkflowApproval';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useWorkflowApprovalsRowActions } from '../hooks/useWorkflowApprovalsRowActions';
 import { Job } from '../../../interfaces/Job';
+import { useViewActivityStream } from '../../../access/common/useViewActivityStream';
 
 export function WorkflowApprovalPage() {
   const { t } = useTranslation();
@@ -28,7 +29,7 @@ export function WorkflowApprovalPage() {
   );
 
   const getPageUrl = useGetPageUrl();
-
+  const activityStream = useViewActivityStream();
   const actions = useWorkflowApprovalsRowActions(refresh);
 
   const error = workflowApprovalError || workflowJobError;
@@ -45,7 +46,7 @@ export function WorkflowApprovalPage() {
         ]}
         headerActions={
           <PageActions
-            actions={actions}
+            actions={[...activityStream, ...actions]}
             position={DropdownPosition.right}
             selectedItem={workflowApproval}
           />
