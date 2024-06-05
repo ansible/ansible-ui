@@ -202,7 +202,9 @@ Cypress.Commands.add('poll', function requestPoll<
         cy.log('Calling cy.poll again for the ' + watchDog + ' time');
         cy.wait(1000).then(() => cy.poll<ResponseT>(fn, check, watchDog));
       } else {
-        throw new Error('Explicitly failing this test due to cy.poll not found what it expected.');
+        throw new Error(
+          'Explicitly failing this test due to cy.poll() not finding a pending workflow approval node.'
+        );
       }
     }
   });

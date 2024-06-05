@@ -250,13 +250,13 @@ describe('Workflow Approvals Tests', () => {
 
   describe('Workflow Approvals - Bulk Approve, Bulk Deny, Bulk Delete', () => {
     it(`can enable concurrent jobs in a WFJT with a WF approval node, launch multiple jobs, bulk approve, then bulk delete from list toolbar`, () => {
-      editJobTemplate();
+      editWorkflowJobTemplate();
       workflowApprovalBulkAction('approve');
       deleteApprovalFromListToolbar();
     });
 
     it('can enable concurrent jobs in a WFJT with a WF approval node, launch multiple jobs, bulk deny, then bulk delete from list toolbar', () => {
-      editJobTemplate();
+      editWorkflowJobTemplate();
       workflowApprovalBulkAction('deny');
       deleteApprovalFromListToolbar();
     });
@@ -265,7 +265,7 @@ describe('Workflow Approvals Tests', () => {
   /* 
   Used in the Workflow Approvals - Bulk Approve, Bulk Deny, Bulk Delete tests (below)
   **/
-  function editJobTemplate() {
+  function editWorkflowJobTemplate() {
     cy.visit(`/templates/workflow-job-template/${workflowJobTemplate.id.toString()}/edit`);
     cy.verifyPageTitle('Edit Workflow Job Template');
     cy.getByDataCy('allow_simultaneous').click();
