@@ -284,7 +284,6 @@ Cypress.Commands.add(
     cy.poll<WorkflowApproval>(
       () => cy.getFirstPendingWorkflowApprovalsForWorkflowJobID(workflowJobID),
       (approval: WorkflowApproval) => {
-        debugger;
         return !!approval;
       }
     );
