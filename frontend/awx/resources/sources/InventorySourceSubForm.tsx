@@ -17,7 +17,7 @@ export function InventorySourceSubForm() {
   });
   const source = useWatch<InventorySourceForm>({
     name: 'source',
-  });
+  }) as string;
   const sourceTypes = [
     'ec2',
     'gce',
@@ -41,15 +41,23 @@ export function InventorySourceSubForm() {
           <PageFormCredentialSelect<InventorySourceForm>
             name="credential"
             label={t('Credential')}
-            placeholder={t('Add credential')}
-            labelHelpTitle={t('Credential')}
             labelHelp={t(
               'Select credentials for accessing the nodes this job will be ran against. You can only select one credential of each type. For machine credentials (SSH), checking "Prompt on launch" without selecting credentials will require you to select a machine credential at run time. If you select credentials and check "Prompt on launch", the selected credential(s) become the defaults that can be updated at run time.'
             )}
-            isRequired={sourceTypes.slice(1).includes(source as string)}
-            credentialIdPath="credentialIdPath"
-            sourceType={source as string}
-            acceptableCredentialKinds={['kubernetes', 'cloud']}
+            isRequired={sourceTypes.slice(1).includes(source)}
+            queryParams={
+              source === 'scm'
+                ? {
+                    credential_type__kind: 'cloud',
+                  }
+                : source === 'ec2'
+                  ? {
+                      credential_type__namespace: 'aws',
+                    }
+                  : {
+                      credential_type__namespace: source,
+                    }
+            }
           />
           <PageFormHidden watch="source" hidden={(type: string) => type !== 'scm'}>
             <PageFormProjectSelect<InventorySourceForm> name="source_project" isRequired />

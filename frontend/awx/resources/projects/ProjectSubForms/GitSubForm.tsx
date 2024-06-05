@@ -6,12 +6,10 @@ import { PageFormCredentialSelect } from '../../../access/credentials/components
 import { useAwxConfig } from '../../../common/useAwxConfig';
 import { getDocsBaseUrl } from '../../../common/util/getDocsBaseUrl';
 import { Project } from '../../../interfaces/Project';
-import { useGetCredentialTypeIDs } from '../hooks/useGetCredentialTypeIDs';
 import { ScmTypeOptions } from './ScmTypeOptions';
 
 export function GitSubForm() {
   const { t } = useTranslation();
-  const credentialTypeIDs = useGetCredentialTypeIDs();
   const config = useAwxConfig();
 
   const gitSourceControlUrlHelp = (
@@ -98,11 +96,11 @@ export function GitSubForm() {
           labelHelp={sourceControlRefspecHelp}
         />
         <PageFormCredentialSelect<Project>
-          name="summary_fields.credential.name"
-          credentialIdPath="project.credential"
+          name="credential"
           label={t('Source Control Credential')}
-          selectTitle={t('Select Source Control Credential')}
-          credentialType={credentialTypeIDs.scm}
+          queryParams={{
+            credential_type__namespace: 'scm',
+          }}
         />
         <ScmTypeOptions />
       </PageFormSection>

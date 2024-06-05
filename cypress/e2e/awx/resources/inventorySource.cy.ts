@@ -86,6 +86,7 @@ describe('Inventory Sources', () => {
         cy.selectTableRowByCheckbox('name', credentialName);
         cy.getBy('#submit').click();
       });
+      cy.selectSingleSelectOption('[data-cy="credential"]', credentialName);
       cy.getBy('[data-cy="host-filter"]').type('/^test$/');
       cy.getBy('[data-cy="verbosity"]').type('1');
       cy.getBy('[data-cy="enabled-var"]').type('foo.bar');

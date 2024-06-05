@@ -62,7 +62,6 @@ export function CreateInventorySource() {
     const formValues: InventorySourceCreate = {
       ...values,
       execution_environment: values?.execution_environment ? values.execution_environment : null,
-      credential: values?.credentialIdPath,
       source_path: values?.source_path?.name,
       inventory: parseInt(params.id ?? ''),
       source_project: values?.source_project?.id,
@@ -136,7 +135,7 @@ export function EditInventorySource() {
       description: inventorySource?.description ?? '',
       execution_environment: inventorySource?.summary_fields?.execution_environment.id,
       source: inventorySource?.source,
-      credential: inventorySource?.summary_fields?.credential?.name,
+      credential: inventorySource?.credential ?? null,
       source_project: inventorySource?.summary_fields?.source_project,
       source_path: {
         name: inventorySource?.source_path,
@@ -158,7 +157,6 @@ export function EditInventorySource() {
     const formValues: InventorySourceCreate = {
       ...values,
       execution_environment: values?.execution_environment ? values.execution_environment : null,
-      credential: values?.credentialIdPath,
       source_path: values?.source_path?.name ?? '',
       inventory: parseInt(params.id ?? ''),
       source_project: values?.source_project?.id,
