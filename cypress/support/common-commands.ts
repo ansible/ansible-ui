@@ -197,8 +197,8 @@ Cypress.Commands.add('poll', function requestPoll<
       cy.wrap(response);
     } else {
       // call only 10 times, then fail
-      let watchDog = calledTimes || 0 + 1;
-      if (watchDog < 10) {
+      let watchDog = (calledTimes || 0) + 1;
+      if (watchDog <= 10) {
         cy.log('Calling cy.poll again for the ' + watchDog + ' time');
         cy.wait(1000).then(() => cy.poll<ResponseT>(fn, check, watchDog));
       } else {
