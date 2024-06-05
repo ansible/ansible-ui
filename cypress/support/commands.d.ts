@@ -751,7 +751,9 @@ declare global {
 
       createAwxInventory(inventory?: Partial<Omit<Inventory, 'id'>>): Chainable<Inventory>;
 
-      createAwxConstructedInventory(organization: Organization): Chainable<Inventory>;
+      createAwxConstructedInventory(
+        organization: Organization
+      ): Chainable<{ constInv: Inventory; inputInvList: number[] }>;
 
       createAwxInventorySource(
         inventory: Partial<Pick<Inventory, 'id'>>,
@@ -962,6 +964,15 @@ declare global {
 
       deleteAwxInventory(
         inventory: Inventory,
+        options?: {
+          /** Whether to fail on response codes other than 2xx and 3xx */
+          failOnStatusCode?: boolean;
+        }
+      ): Chainable<void>;
+
+      deleteAwxConstructedInventory(
+        constructedInv: Inventory,
+        arrayOfInputInvID: number[],
         options?: {
           /** Whether to fail on response codes other than 2xx and 3xx */
           failOnStatusCode?: boolean;
