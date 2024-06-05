@@ -48,7 +48,7 @@ export function InventorySourceSubForm() {
             queryParams={
               source === 'scm'
                 ? {
-                    credential_type__kind: 'cloud',
+                    credential_type__kind__in: 'cloud,kubernetes',
                   }
                 : source === 'ec2'
                   ? {
