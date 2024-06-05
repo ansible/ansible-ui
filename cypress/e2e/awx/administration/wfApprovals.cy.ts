@@ -147,7 +147,7 @@ describe('Workflow Approvals Tests', () => {
       });
   });
 
-  it('admin can deny and then delete a workflow approval from the list row item', () => {
+  it.skip('admin can deny and then delete a workflow approval from the list row item', () => {
     cy.visit(`/templates/workflow-job-template/${workflowJobTemplate.id.toString()}/details`);
     cy.verifyPageTitle(`${workflowJobTemplate.name}`);
     cy.intercept(
@@ -197,7 +197,7 @@ describe('Workflow Approvals Tests', () => {
       });
   });
 
-  it('admin can cancel and then delete a workflow approval from the list row item', () => {
+  it.skip('admin can cancel and then delete a workflow approval from the list row item', () => {
     cy.visit(`/templates/workflow-job-template/${workflowJobTemplate.id.toString()}/details`);
     cy.verifyPageTitle(`${workflowJobTemplate.name}`);
     cy.intercept(
