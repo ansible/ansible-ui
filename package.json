@@ -31,6 +31,7 @@
     "prettier:changed:fix": "prettier --write $(git diff --name-only --diff-filter=M origin/main | xargs)",
     "checks": "concurrently --kill-others-on-fail npm:tsc npm:eslint npm:prettier --prefix-colors cyan,green,blue,magenta,gray",
     "upgrade": "npx npm-check-updates --upgrade --target minor --doctor && npm audit fix || true && npm dedup || true ",
+    "cypress": "cypress open",
     "e2e:awx": "cypress open --browser chrome --e2e --config-file=cypress.awx.config.ts",
     "e2e:hub": "cypress open --browser chrome --e2e --config-file=cypress.hub.config.ts",
     "e2e:eda": "cypress open --browser chrome --e2e --config-file=cypress.eda.config.ts",
