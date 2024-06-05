@@ -86,7 +86,7 @@ describe('Workflow Approvals Tests', () => {
   });
 
   afterEach(() => {
-    cy.deleteAwxWorkflowJobTemplate(workflowJobTemplate, { failOnStatusCode: false });
+    /*cy.deleteAwxWorkflowJobTemplate(workflowJobTemplate, { failOnStatusCode: false });
     cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
     cy.deleteAwxInventorySource(inventorySource, { failOnStatusCode: false });
     cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
@@ -94,7 +94,7 @@ describe('Workflow Approvals Tests', () => {
     cy.deleteAwxUser(user, { failOnStatusCode: false });
     cy.deleteAwxUser(userWFApprove, { failOnStatusCode: false });
     cy.deleteAwxUser(userWFCancel, { failOnStatusCode: false });
-    cy.deleteAwxUser(userWFDeny, { failOnStatusCode: false });
+    cy.deleteAwxUser(userWFDeny, { failOnStatusCode: false });*/
   });
 
   it('admin can approve and then delete a workflow approval from the list row item', () => {
