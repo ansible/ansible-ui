@@ -62,25 +62,31 @@ describe.skip('Workflow Approvals Tests', () => {
             },
             'hello world.yml'
           ).then((jt) => (jobTemplate = jt));
-          cy.createAwxWorkflowJobTemplate({
-            organization: organization.id,
-            inventory: inventory.id,
-          }).then((wfjt) => {
-            workflowJobTemplate = wfjt;
-            cy.createAwxWorkflowVisualizerWJTNode(workflowJobTemplate).then((wfjtNode) => {
-              wfjobTemplateNode = wfjtNode;
-            });
-            cy.createAwxWorkflowVisualizerApprovalNode(workflowJobTemplate).then((appNode) => {
-              approvalWFNode = appNode;
-              cy.createWorkflowJTAlwaysNodeLink(approvalWFNode, wfjobTemplateNode);
-            });
-          });
         });
     });
   });
 
-  after(() => {
+  beforeEach(() => {
+    cy.createAwxWorkflowJobTemplate({
+      organization: organization.id,
+      inventory: inventory.id,
+    }).then((wfjt) => {
+      workflowJobTemplate = wfjt;
+      cy.createAwxWorkflowVisualizerWJTNode(workflowJobTemplate).then((wfjtNode) => {
+        wfjobTemplateNode = wfjtNode;
+      });
+      cy.createAwxWorkflowVisualizerApprovalNode(workflowJobTemplate).then((appNode) => {
+        approvalWFNode = appNode;
+        cy.createWorkflowJTAlwaysNodeLink(approvalWFNode, wfjobTemplateNode);
+      });
+    });
+  });
+
+  afterEach(() => {
     cy.deleteAwxWorkflowJobTemplate(workflowJobTemplate, { failOnStatusCode: false });
+  });
+
+  after(() => {
     cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
     cy.deleteAwxInventorySource(inventorySource, { failOnStatusCode: false });
     cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
