@@ -74,10 +74,10 @@ describe('Workflow Approvals Tests', () => {
               workflowJobTemplate = wfjt;
               cy.createAwxWorkflowVisualizerWJTNode(workflowJobTemplate).then((wfjtNode) => {
                 wfjobTemplateNode = wfjtNode;
-              });
-              cy.createAwxWorkflowVisualizerApprovalNode(workflowJobTemplate).then((appNode) => {
-                approvalWFNode = appNode;
-                cy.createWorkflowJTAlwaysNodeLink(approvalWFNode, wfjobTemplateNode);
+                cy.createAwxWorkflowVisualizerApprovalNode(workflowJobTemplate).then((appNode) => {
+                  approvalWFNode = appNode;
+                  cy.createWorkflowJTAlwaysNodeLink(approvalWFNode, wfjobTemplateNode);
+                });
               });
             });
           });
