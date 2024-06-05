@@ -947,7 +947,7 @@ Cypress.Commands.add('createAwxConstructedInventory', (organization: Organizatio
         awxAPI`/inventories/${String(constructedInv.id)}/update_inventory_sources/`,
         {}
       ).then((_res) => {
-        return { constructedInv, arrayOfInventories };
+        return constructedInv;
       });
     });
   });
@@ -984,16 +984,23 @@ Cypress.Commands.add(
   'deleteAwxConstructedInventory',
   (
     constructedInv: Inventory,
-    arrayOfInputInvID: number[],
     options?: {
       /** Whether to fail on response codes other than 2xx and 3xx */
       failOnStatusCode?: boolean;
     }
   ) => {
-    cy.awxRequestDelete(awxAPI`/inventories/${constructedInv.id.toString()}/`, options);
-    arrayOfInputInvID.forEach((invID) => {
-      cy.awxRequestDelete(awxAPI`/inventories/${invID.toString()}/`, options);
-    });
+    cy.awxRequestGet<AwxItemsResponse<Inventory>>(
+      awxAPI`/inventories/${constructedInv.id.toString()}/input_inventories/`
+    )
+      .its('results')
+      .then((inputInv: Inventory[]) => {
+        const inputInvPromises = inputInv.map((inv) => {
+          cy.awxRequestDelete(awxAPI`/inventories/${inv.id.toString()}/`, options);
+        });
+        void Promise.all(inputInvPromises).then((_res) => {
+          cy.awxRequestDelete(awxAPI`/inventories/${constructedInv.id.toString()}/`, options);
+        });
+      });
   }
 );
 
