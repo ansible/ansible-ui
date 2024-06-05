@@ -588,6 +588,11 @@ describe('Projects', () => {
       );
     });
 
+    after(function () {
+      cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
+      cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
+    });
+
     it('can navigate to project job templates tab', function () {
       cy.navigateTo('awx', 'projects');
       cy.filterTableByMultiSelect('name', [(this.globalProject as Project).name]);
