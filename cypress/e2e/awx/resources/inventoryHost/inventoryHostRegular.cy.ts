@@ -1,11 +1,7 @@
 import { Inventory } from '../../../../../frontend/awx/interfaces/Inventory';
 import { Organization } from '../../../../../frontend/awx/interfaces/Organization';
 import { AwxUser } from '../../../../../frontend/awx/interfaces/User';
-import {
-  createAndEditAndDeleteHost,
-  checkHostGroup,
-  createAndCheckHost,
-} from '../../../../support/hostsfunctions';
+import { createAndEditAndDeleteHost, checkHostGroup } from '../../../../support/hostsfunctions';
 
 describe('Inventory Host Tab Tests for regular inventory', () => {
   let organization: Organization;
