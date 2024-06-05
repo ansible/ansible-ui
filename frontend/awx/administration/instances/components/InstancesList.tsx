@@ -24,19 +24,12 @@ export function InstancesList(props: {
 
   const { useToolbarActions, useRowActions, tableColumns, instanceGroupId } = props;
 
-  const defaultParams: {
-    not__node_type: Array<string>;
-  } = {
-    not__node_type: ['control', 'hybrid'],
-  };
-
   const view = useAwxView<Instance>({
     url: instanceGroupId
       ? awxAPI`/instance_groups/${instanceGroupId}/instances/`
       : awxAPI`/instances/`,
     toolbarFilters,
     tableColumns,
-    queryParams: instanceGroupId ? defaultParams : {},
   });
 
   const rowActions = useRowActions(view.unselectItemsAndRefresh);

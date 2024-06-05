@@ -2,6 +2,7 @@
 //Do we want to add create tests for all credential types now or wait until next release cycle?
 import { randomString } from '../../../../framework/utils/random-string';
 import { edaAPI } from '../../../support/formatApiPathForEDA';
+import { EdaProject } from '../../../../frontend/eda/interfaces/EdaProject';
 
 describe('EDA Credentials- Create, Edit, Delete', () => {
   before(() => {
@@ -88,6 +89,36 @@ describe('EDA Credentials- Create, Edit, Delete', () => {
       cy.wait('@deleted').then((deleted) => {
         expect(deleted?.response?.statusCode).to.eql(204);
         cy.verifyPageTitle('Credentials');
+      });
+    });
+  });
+
+  it('get warning while deleting a credential already in use', () => {
+    cy.createEdaCredential().then((edaCredential) => {
+      cy.requestPost<EdaProject>(edaAPI`/projects/`, {
+        name: 'E2E Project ' + randomString(4),
+        url: 'https://github.com/ansible/ansible-ui',
+        eda_credential_id: edaCredential.id,
+      }).then((project) => {
+        cy.navigateTo('eda', 'credentials');
+        cy.get('h1').should('contain', 'Credentials');
+        cy.clickTableRow(edaCredential.name);
+        cy.intercept(
+          'DELETE',
+          edaAPI`/eda-credentials/${edaCredential.id.toString()}/?force=true`
+        ).as('deleted');
+        cy.verifyPageTitle(edaCredential.name);
+        cy.clickPageAction('delete-credential');
+        cy.clickModalConfirmCheckbox();
+        cy.get('.pf-v5-c-alert__title').contains(
+          `The following credentials are in use: ${edaCredential.name}`
+        );
+        cy.clickModalButton('Delete credential');
+        cy.wait('@deleted').then((deleted) => {
+          expect(deleted?.response?.statusCode).to.eql(204);
+          cy.verifyPageTitle('Credentials');
+        });
+        cy.deleteEdaProject(project);
       });
     });
   });
