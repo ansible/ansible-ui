@@ -81,6 +81,7 @@ interface IOptionChoiceAction extends IOptionActionBase {
 
 interface IOptionDateTimeAction extends IOptionActionBase {
   type: 'datetime';
+  default?: string;
 }
 
 export function AwxSettingsForm(props: {
@@ -178,6 +179,9 @@ export function OptionActionsFormInput(props: { name: string; option: AwxSetting
           labelHelpTitle={option.label}
           labelHelp={option.help_text}
           isRequired={option.required}
+          defaultValue={option.default}
+          enableUndo
+          enableReset
         />
       );
     case 'integer':
@@ -191,6 +195,9 @@ export function OptionActionsFormInput(props: { name: string; option: AwxSetting
           isRequired={option.required}
           min={option.min_value}
           max={option.max_value}
+          defaultValue={option.default}
+          enableUndo
+          enableReset
         />
       );
     case 'boolean':
@@ -264,6 +271,9 @@ export function OptionActionsFormInput(props: { name: string; option: AwxSetting
           labelHelp={option.help_text}
           type="datetime-local"
           isRequired={option.required}
+          defaultValue={option.default}
+          enableUndo
+          enableReset
         />
       );
 

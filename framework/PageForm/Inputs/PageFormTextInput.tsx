@@ -1,5 +1,12 @@
-import { Button, InputGroup, InputGroupItem, TextInput } from '@patternfly/react-core';
+import {
+  Button,
+  ButtonVariant,
+  InputGroup,
+  InputGroupItem,
+  TextInput,
+} from '@patternfly/react-core';
 import { EyeIcon, EyeSlashIcon, SearchIcon } from '@patternfly/react-icons';
+import getValue from 'get-value';
 import { ReactNode, useState } from 'react';
 import {
   Controller,
@@ -11,6 +18,8 @@ import {
   ValidationRule,
   useFormContext,
 } from 'react-hook-form';
+import { PageActionSelection, PageActionType } from '../../PageActions/PageAction';
+import { PageActions } from '../../PageActions/PageActions';
 import { useID } from '../../hooks/useID';
 import { useFrameworkTranslations } from '../../useFrameworkTranslations';
 import { capitalizeFirstLetter } from '../../utils/strings';
@@ -172,6 +181,11 @@ export type PageFormTextInputProps<
    * Note: The autocomplete attribute works with the following input types: text, search, url, tel, email, password, datepickers, range, and color.
    */
   autoComplete?: string;
+
+  defaultValue?: FieldPathValue<TFieldValues, TFieldName>;
+
+  enableUndo?: boolean;
+  enableReset?: boolean;
 };
 
 /**
@@ -208,6 +222,7 @@ export function PageFormTextInput<
     selectValue,
     autoFocus,
     autoComplete,
+    defaultValue,
   } = props;
 
   const id = useID(props);
@@ -215,7 +230,7 @@ export function PageFormTextInput<
   const {
     control,
     setValue,
-    formState: { isSubmitting, isValidating },
+    formState: { isSubmitting, isValidating, defaultValues },
   } = useFormContext<TFieldValues>();
 
   const [showSecret, setShowSecret] = useState(false);
@@ -223,11 +238,17 @@ export function PageFormTextInput<
   const [translations] = useFrameworkTranslations();
   const required = useRequiredValidationRule(props.label, props.isRequired);
 
+  const undoValue = getValue(defaultValues as object, props.name) as PathValue<
+    TFieldValues,
+    TFieldName
+  >;
+
   return (
     <Controller<TFieldValues, TFieldName>
       name={name}
       control={control}
       shouldUnregister
+      defaultValue={props.defaultValue}
       render={({ field: { onChange, value, name }, fieldState: { error } }) => {
         const helperTextInvalid = error?.message
           ? validate && isValidating
@@ -333,14 +354,46 @@ export function PageFormTextInput<
                   <SearchIcon data-cy="lookup-button" />
                 </Button>
               )}
-              {button && button}
+              {button}
+              <PageActions
+                actions={[
+                  {
+                    label: 'Undo changes',
+                    tooltip: 'Undo changes',
+                    type: PageActionType.Button,
+                    selection: PageActionSelection.None,
+                    onClick: () => {
+                      setValue(
+                        props.name,
+                        undoValue as unknown as PathValue<TFieldValues, TFieldName>
+                      );
+                    },
+                    isHidden: () => !props.enableUndo || value === undoValue,
+                  },
+                  {
+                    label: 'Reset to default',
+                    type: PageActionType.Button,
+                    selection: PageActionSelection.None,
+                    onClick: () => {
+                      setValue(
+                        props.name as FieldPath<TFieldValues>,
+                        props.defaultValue as unknown as PathValue<
+                          TFieldValues,
+                          FieldPath<TFieldValues>
+                        >
+                      );
+                    },
+                    isHidden: () => !props.enableReset || value === defaultValue,
+                  },
+                ]}
+                variant={ButtonVariant.control}
+              />
             </InputGroup>
           </PageFormGroup>
         );
       }}
       rules={{
         required,
-
         validate,
 
         minLength:
