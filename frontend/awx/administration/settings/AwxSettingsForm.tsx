@@ -12,7 +12,6 @@ import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 import { AwxPageForm } from '../../common/AwxPageForm';
 import { awxAPI } from '../../common/api/awx-utils';
 import { PageFormFileUpload } from '../../../../framework/PageForm/Inputs/PageFormFileUpload';
-import { useTranslation } from 'react-i18next';
 
 export interface AwxSettingsOptionsResponse {
   actions: {
