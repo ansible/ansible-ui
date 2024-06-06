@@ -104,9 +104,7 @@ describe('Create Edit Instance Group Form', () => {
       });
       cy.get('[data-cy="name"]').clear();
       cy.getByDataCy('Submit').click();
-      cy.get(
-        '[data-cy="name-form-group"] > .pf-v5-c-form__group-control > .pf-v5-c-form__helper-text > .pf-v5-c-helper-text > .pf-v5-c-helper-text__item'
-      ).should('have.text', 'Name is required.');
+      cy.contains('.pf-v5-c-helper-text', 'Name is required.');
     });
   });
 });
