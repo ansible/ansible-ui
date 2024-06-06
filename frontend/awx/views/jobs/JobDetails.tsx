@@ -15,6 +15,7 @@ import { StatusCell } from '../../../common/Status';
 import { AwxRoute } from '../../main/AwxRoutes';
 import { LastModifiedPageDetail } from '../../../common/LastModifiedPageDetail';
 import { Job } from '../../interfaces/Job';
+import { useVerbosityString } from '../../common/useVerbosityString';
 
 export function JobDetails() {
   const { t } = useTranslation();
@@ -22,14 +23,6 @@ export function JobDetails() {
   const getPageUrl = useGetPageUrl();
   const pageNavigate = usePageNavigate();
   const { job } = useOutletContext<{ job: Job }>();
-  const verbosity = [
-    '0 (Normal)',
-    '1 (Verbose)',
-    '2 (More Verbose)',
-    '3 (Debug)',
-    '4 (Connection Debug)',
-    '5 (WinRM Debug)',
-  ];
 
   const verbosityHelpText = t`Control the level of output ansible will produce as the playbook executes.`;
   const forksHelpText = t`The number of parallel or simultaneous processes to use while executing the playbook. 
