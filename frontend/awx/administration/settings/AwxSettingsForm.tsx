@@ -64,14 +64,17 @@ interface IOptionBooleanAction extends IOptionActionBase {
 
 interface IOptionListAction extends IOptionActionBase {
   type: 'list';
+  default?: string;
 }
 
 interface IOptionObjectAction extends IOptionActionBase {
   type: 'nested object';
+  default?: string;
 }
 
 interface IOptionCertificateAction extends IOptionActionBase {
   type: 'certificate';
+  default?: string;
 }
 
 interface IOptionChoiceAction extends IOptionActionBase {
@@ -247,6 +250,9 @@ export function OptionActionsFormInput(props: { name: string; option: AwxSetting
             format="object"
             isRequired={option.required}
             isArray
+            defaultValue={option.default}
+            enableUndo
+            enableReset
           />
         </PageFormSection>
       );
@@ -260,6 +266,9 @@ export function OptionActionsFormInput(props: { name: string; option: AwxSetting
             labelHelp={option.help_text}
             format="object"
             isRequired={option.required}
+            defaultValue={option.default}
+            enableUndo
+            enableReset
           />
         </PageFormSection>
       );
@@ -273,6 +282,9 @@ export function OptionActionsFormInput(props: { name: string; option: AwxSetting
             labelHelp={option.help_text}
             format="object"
             isRequired={option.required}
+            defaultValue={option.default}
+            enableUndo
+            enableReset
           />
         </PageFormSection>
       );
