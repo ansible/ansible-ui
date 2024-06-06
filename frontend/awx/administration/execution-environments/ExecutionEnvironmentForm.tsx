@@ -60,10 +60,10 @@ export function CreateExecutionEnvironment() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Create Execution Environment')}
+        title={t('Create execution environment')}
         breadcrumbs={[
           { label: t('Execution Environments'), to: getPageUrl(AwxRoute.ExecutionEnvironments) },
-          { label: t('Create Execution Environment') },
+          { label: t('Create execution environment') },
         ]}
       />
       <AwxPageForm<ExecutionEnvironment>

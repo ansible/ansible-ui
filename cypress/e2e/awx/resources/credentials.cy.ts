@@ -519,7 +519,7 @@ describe('Create Credentials of different types', () => {
       credentialTypes.forEach((item) => {
         const credentialName = `E2E Credential ${randomE2Ename()}`;
         cy.getByDataCy('create-credential').click();
-        cy.verifyPageTitle('Create Credential');
+        cy.verifyPageTitle('Create credential');
         cy.getByDataCy('name').type(credentialName);
         cy.wait('@getCredentialTypes').then(() => {
           cy.singleSelectByDataCy('credential_type', `${item.name}`, true);
