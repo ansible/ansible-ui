@@ -1540,8 +1540,8 @@ Cypress.Commands.add(
     customClientType: string,
     customRedirectURIS: string
   ) => {
-    cy.clickButton('Create application');
-    cy.verifyPageTitle('Create Application');
+    cy.clickButton('Create OAuth application');
+    cy.verifyPageTitle('Create OAuth Application');
     cy.get('[data-cy="name"]').type(customAppName);
     cy.get('[data-cy="description"]').type(customAppDescription);
     cy.selectSingleSelectOption('[data-cy="organization"]', 'Default');
@@ -1551,7 +1551,7 @@ Cypress.Commands.add(
 
     cy.intercept('POST', `api/v2/applications/`).as('createApp');
 
-    cy.clickButton('Create application');
+    cy.clickButton('Create OAuth application');
 
     //Verify API call
     cy.wait('@createApp')

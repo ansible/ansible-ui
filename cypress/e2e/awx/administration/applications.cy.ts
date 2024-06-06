@@ -24,10 +24,10 @@ describe('Applications', () => {
     it(`can create a single application with grant type Authorization Code and client type Confidential, then delete from the list view`, function () {
       const appName = 'E2E Application name ' + randomString(4);
       const appDescription = 'E2E Application description ' + randomString(4);
-      // Create application
+      // Create OAuth application
       cy.navigateTo('awx', 'applications');
-      cy.clickButton('Create application');
-      cy.verifyPageTitle('Create Application');
+      cy.clickButton('Create OAuth application');
+      cy.verifyPageTitle('Create OAuth Application');
       cy.getByDataCy('name').type(appName);
       cy.getByDataCy('description').type(appDescription);
       cy.singleSelectByDataCy('organization', (this.globalOrganization as Organization).name);
@@ -35,7 +35,7 @@ describe('Applications', () => {
       cy.selectDropdownOptionByResourceName('client-type', 'Confidential');
       cy.getByDataCy('redirect-uris').type('https://create_from_api.com');
       cy.intercept('POST', `api/v2/applications/`).as('createApp');
-      cy.clickButton('Create application');
+      cy.clickButton('Create OAuth application');
       cy.wait('@createApp')
         .its('response.body')
         .then((newApplication: Application) => {
@@ -71,10 +71,10 @@ describe('Applications', () => {
     it(`can create a single application with grant type Password and client type Confidential`, function () {
       const appName = 'E2E Application name ' + randomString(4);
       const appDescription = 'E2E Application description ' + randomString(4);
-      // Create application
+      // Create OAuth application
       cy.navigateTo('awx', 'applications');
-      cy.clickButton('Create application');
-      cy.verifyPageTitle('Create Application');
+      cy.clickButton('Create OAuth application');
+      cy.verifyPageTitle('Create OAuth Application');
       cy.getByDataCy('name').type(appName);
       cy.getByDataCy('description').type(appDescription);
       cy.singleSelectByDataCy('organization', (this.globalOrganization as Organization).name);
@@ -82,7 +82,7 @@ describe('Applications', () => {
       cy.selectDropdownOptionByResourceName('client-type', 'Confidential');
       cy.getByDataCy('redirect-uris').type('https://create_from_api.com');
       cy.intercept('POST', `api/v2/applications/`).as('createApp');
-      cy.clickButton('Create application');
+      cy.clickButton('Create OAuth application');
       cy.wait('@createApp')
         .its('response.body')
         .then((newApplication: Application) => {
@@ -107,10 +107,10 @@ describe('Applications', () => {
     it(`can create a single application with grant type Password and client type Public`, function () {
       const appName = 'E2E Application name ' + randomString(4);
       const appDescription = 'E2E Application description ' + randomString(4);
-      // Create application
+      // Create OAuth application
       cy.navigateTo('awx', 'applications');
-      cy.clickButton('Create application');
-      cy.verifyPageTitle('Create Application');
+      cy.clickButton('Create OAuth application');
+      cy.verifyPageTitle('Create OAuth Application');
       cy.getByDataCy('name').type(appName);
       cy.getByDataCy('description').type(appDescription);
       cy.singleSelectByDataCy('organization', (this.globalOrganization as Organization).name);
@@ -118,7 +118,7 @@ describe('Applications', () => {
       cy.selectDropdownOptionByResourceName('client-type', 'Public');
       cy.getByDataCy('redirect-uris').type('https://create_from_api.com');
       cy.intercept('POST', `api/v2/applications/`).as('createApp');
-      cy.clickButton('Create application');
+      cy.clickButton('Create OAuth application');
       cy.wait('@createApp')
         .its('response.body')
         .then((newApplication: Application) => {
@@ -170,9 +170,9 @@ describe('Applications', () => {
       const appName = 'E2E Application name ' + randomString(4);
       const appDescription = 'E2E Application description ' + randomString(4);
       cy.navigateTo('awx', 'applications');
-      // Create Application
-      cy.clickButton('Create application');
-      cy.verifyPageTitle('Create Application');
+      // Create OAuth Application
+      cy.clickButton('Create OAuth application');
+      cy.verifyPageTitle('Create OAuth Application');
       cy.getByDataCy('name').type(appName);
       cy.getByDataCy('description').type(appDescription);
       cy.singleSelectByDataCy('organization', (this.globalOrganization as Organization).name);
@@ -180,7 +180,7 @@ describe('Applications', () => {
       cy.selectDropdownOptionByResourceName('client-type', 'Public');
       cy.getByDataCy('redirect-uris').type('https://create_from_api.com');
       cy.intercept('POST', `api/v2/applications/`).as('createApp');
-      cy.clickButton('Create application');
+      cy.clickButton('Create OAuth application');
       cy.wait('@createApp')
         .its('response.body')
         .then((newApplication: Application) => {

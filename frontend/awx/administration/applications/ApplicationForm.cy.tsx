@@ -3,18 +3,18 @@ import { Application } from '../../interfaces/Application';
 import { Organization } from '../../interfaces/Organization';
 import { CreateApplication, EditApplication } from './ApplicationForm';
 
-describe('Create Edit Application Form', () => {
-  describe('Create Application', () => {
+describe('Create Edit OAuth Application Form', () => {
+  describe('Create OAuth Application', () => {
     it('should validate required fields on save', () => {
       cy.mount(<CreateApplication onSuccessfulCreate={(app: Application) => app} />);
-      cy.clickButton(/^Create application$/);
+      cy.clickButton(/^Create OAuth application$/);
       cy.contains('Name is required.').should('be.visible');
       cy.contains('Organization is required.').should('be.visible');
       cy.contains('Authorization grant type is required.').should('be.visible');
       cy.contains('Client type is required.').should('be.visible');
     });
 
-    it('should create application without redirect URI', () => {
+    it('should create OAuth application without redirect URI', () => {
       cy.intercept(
         { method: 'GET', url: '/api/v2/organizations/*' },
         { fixture: 'organizations.json' }
@@ -24,17 +24,17 @@ describe('Create Edit Application Form', () => {
         fixture: 'application.json',
       }).as('createApplication');
       cy.mount(<CreateApplication onSuccessfulCreate={(app: Application) => app} />);
-      cy.get('[data-cy="name"]').type('Create Application');
+      cy.get('[data-cy="name"]').type('Create OAuth Application');
       cy.get('[data-cy="description"]').type('mock application description');
       cy.selectSingleSelectOption('[data-cy="organization"]', 'Default');
       cy.selectDropdownOptionByResourceName('authorization-grant-type', 'Password');
       cy.selectDropdownOptionByResourceName('client-type', 'Confidential');
-      cy.clickButton(/^Create application$/);
+      cy.clickButton(/^Create OAuth application$/);
       cy.wait('@createApplication')
         .its('request.body')
         .then((createdApplication: Application) => {
           expect(createdApplication).to.deep.equal({
-            name: 'Create Application',
+            name: 'Create OAuth Application',
             description: 'mock application description',
             organization: 1,
             authorization_grant_type: 'password',
@@ -43,7 +43,7 @@ describe('Create Edit Application Form', () => {
         });
     });
 
-    it('should create application with redirect URI', () => {
+    it('should create OAuth application with redirect URI', () => {
       cy.intercept(
         { method: 'GET', url: '/api/v2/organizations/*' },
         { fixture: 'organizations.json' }
@@ -53,18 +53,18 @@ describe('Create Edit Application Form', () => {
         fixture: 'application.json',
       }).as('createApplication');
       cy.mount(<CreateApplication onSuccessfulCreate={(app: Application) => app} />);
-      cy.get('[data-cy="name"]').type('Create Application');
+      cy.get('[data-cy="name"]').type('Create OAuth Application');
       cy.get('[data-cy="description"]').type('mock application description');
       cy.selectSingleSelectOption('[data-cy="organization"]', 'Default');
       cy.selectDropdownOptionByResourceName('authorization-grant-type', 'Authorization code');
       cy.selectDropdownOptionByResourceName('client-type', 'Confidential');
       cy.get('[data-cy="redirect-uris"]').type('https://www.google.com');
-      cy.clickButton(/^Create application$/);
+      cy.clickButton(/^Create OAuth application$/);
       cy.wait('@createApplication')
         .its('request.body')
         .then((createdApplication: Application) => {
           expect(createdApplication).to.deep.equal({
-            name: 'Create Application',
+            name: 'Create OAuth Application',
             description: 'mock application description',
             organization: 1,
             authorization_grant_type: 'authorization-code',
@@ -74,7 +74,7 @@ describe('Create Edit Application Form', () => {
         });
     });
 
-    it('create application should show field error if URIs is empty and grant type is auth code', () => {
+    it('create OAuth application should show field error if URIs is empty and grant type is auth code', () => {
       cy.intercept(
         { method: 'GET', url: '/api/v2/organizations/*' },
         { fixture: 'organizations.json' }
@@ -84,13 +84,13 @@ describe('Create Edit Application Form', () => {
         fixture: 'application.json',
       }).as('createApplication');
       cy.mount(<CreateApplication onSuccessfulCreate={(app: Application) => app} />);
-      cy.get('[data-cy="name"]').type('Create Application');
+      cy.get('[data-cy="name"]').type('Create OAuth Application');
       cy.get('[data-cy="description"]').type('mock application description');
       cy.selectSingleSelectOption('[data-cy="organization"]', 'Default');
       cy.selectDropdownOptionByResourceName('authorization-grant-type', 'Authorization code');
       cy.selectDropdownOptionByResourceName('client-type', 'Confidential');
       cy.get('[data-cy="redirect-uris"]').clear();
-      cy.clickButton(/^Create application$/);
+      cy.clickButton(/^Create OAuth application$/);
       cy.get('.pf-v5-c-helper-text__item-text').contains('Redirect uris is required.');
     });
   });

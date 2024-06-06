@@ -16,7 +16,7 @@ export function Applications() {
         description={t(
           'Create and configure token-based authentication for external applications.'
         )}
-        titleHelpTitle={t('Applications')}
+        titleHelpTitle={t('OAuth Applications')}
         titleHelp={t('Create and configure token-based authentication for external applications.')}
         titleDocLink={`${getDocsBaseUrl(config)}/html/userguide/applications_auth.html`}
         headerActions={<ActivityStreamIcon type={'o_auth2_application'} />}

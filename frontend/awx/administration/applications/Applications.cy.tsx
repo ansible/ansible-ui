@@ -44,9 +44,9 @@ describe('Applications List', () => {
       cy.clickButton(/^Clear all filters$/);
     });
 
-    it('Create application button is disabled if the user does not have permission to create application', () => {
+    it('Create OAuth application button is disabled if the user does not have permission to create OAuth application', () => {
       cy.mount(<Applications />);
-      cy.contains('button', /^Create application$/).should('have.attr', 'aria-disabled', 'true');
+      cy.contains('button', /^Create OAuth application$/).should('have.attr', 'aria-disabled', 'true');
     });
 
     it('Delete application row action is disabled if the user does not have permission to delete application', () => {
@@ -110,7 +110,7 @@ describe('Applications List', () => {
         });
     });
 
-    it('Create application button is enabled if the user has permission to create applications', () => {
+    it('Create OAuth application button is enabled if the user has permission to create OAuth applications', () => {
       cy.stub(useOptions, 'useOptions').callsFake(() => ({
         data: {
           actions: {
@@ -128,7 +128,7 @@ describe('Applications List', () => {
         },
       }));
       cy.mount(<Applications />);
-      cy.contains('button', /^Create application$/).should('have.attr', 'aria-disabled', 'false');
+      cy.contains('button', /^Create OAuth application$/).should('have.attr', 'aria-disabled', 'false');
     });
 
     it('Delete application row action is enabled if the user has permission to delete application', () => {
@@ -181,7 +181,7 @@ describe('Applications List', () => {
         }
       ).as('emptyList');
     });
-    it('Empty state is displayed correctly for user with permission to create applications', () => {
+    it('Empty state is displayed correctly for user with permission to create OAuth applications', () => {
       cy.stub(useOptions, 'useOptions').callsFake(() => ({
         data: {
           actions: {
@@ -201,9 +201,9 @@ describe('Applications List', () => {
       cy.mount(<Applications />);
       cy.contains(/^There are currently no applications added$/);
       cy.contains(/^Please create an application by using the button below.$/);
-      cy.contains('button', /^Create application$/).should('be.visible');
+      cy.contains('button', /^Create OAuth application$/).should('be.visible');
     });
-    it('Empty state is displayed correctly for user without permission to create applications', () => {
+    it('Empty state is displayed correctly for user without permission to create OAuth applications', () => {
       cy.stub(useOptions, 'useOptions').callsFake(() => ({
         data: {
           actions: {},
@@ -214,7 +214,7 @@ describe('Applications List', () => {
       cy.contains(
         /^Please contact your organization administrator if there is an issue with your access.$/
       );
-      cy.contains('button', /^Create application$/).should('not.exist');
+      cy.contains('button', /^Create OAuth application$/).should('not.exist');
     });
   });
 });
