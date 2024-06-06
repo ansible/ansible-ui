@@ -107,7 +107,11 @@ export function CreateInventorySource() {
         submitText={t('Save')}
         onSubmit={onSubmit}
         onCancel={() => navigate(-1)}
-        defaultValue={{}}
+        defaultValue={{
+          name: '',
+          description: '',
+          credential: null,
+        }}
       >
         <InventorySourceInputs />
       </AwxPageForm>
@@ -240,7 +244,7 @@ function InventorySourceInputs() {
   useEffect(() => {
     formContext.clearErrors();
     if (sourceType !== source) {
-      formContext.resetField('credential', { defaultValue: '' });
+      formContext.resetField('credential', { defaultValue: null });
       formContext.resetField('source_project', { defaultValue: {} });
       formContext.resetField('source_path', { defaultValue: '' });
       setSourceType(source);

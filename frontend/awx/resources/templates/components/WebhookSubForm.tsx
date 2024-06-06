@@ -109,6 +109,7 @@ export function WebhookSubForm(props: {
       />
       {webhookService ? (
         <PageFormCredentialSelect<JobTemplateForm | WorkflowJobTemplateForm>
+          id="webhook_credential"
           name="webhook_credential"
           label={t('Webhook credential')}
           placeholder={t('Select webhook credential')}
