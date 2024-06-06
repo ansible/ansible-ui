@@ -21,6 +21,19 @@ export function useHostsJobsColumns(options?: { disableSort?: boolean; disableLi
   const pageNavigate = usePageNavigate();
   const { t } = useTranslation();
 
+  const IDColumns = useMemo<ITableColumn<UnifiedJob>>(
+    () => ({
+      header: t('ID'),
+      cell: (job: UnifiedJob) => job.id,
+      sort: 'id',
+      card: 'hidden',
+      list: 'hidden',
+      dashboard: 'hidden',
+      minWidth: 0,
+    }),
+    [t]
+  );
+
   const jobPaths = useMemo<{ [key: string]: string }>(
     () => ({
       project_update: 'project',
@@ -95,6 +108,7 @@ export function useHostsJobsColumns(options?: { disableSort?: boolean; disableLi
 
   const tableColumns = useMemo<ITableColumn<UnifiedJob>[]>(() => {
     const displayColumns = [
+      IDColumns,
       nameColumn,
       statusColumn,
       startTimeColumn,
@@ -109,6 +123,7 @@ export function useHostsJobsColumns(options?: { disableSort?: boolean; disableLi
     ];
     return displayColumns;
   }, [
+    IDColumns,
     nameColumn,
     statusColumn,
     startTimeColumn,
