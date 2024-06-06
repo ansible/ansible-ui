@@ -123,12 +123,12 @@ export function useAddInstanceToolbarAction() {
       variant: ButtonVariant.primary,
       isPinned: true,
       icon: PlusCircleIcon,
-      label: t('Add instance'),
+      label: t('Create instance'),
       onClick: () => pageNavigate(AwxRoute.AddInstance),
       isDisabled: canAddAndEditInstances
         ? undefined
         : t(
-            'You do not have permission to add instances. Please contact your organization administrator if there is an issue with your access.'
+            'You do not have permission to create instances. Please contact your organization administrator if there is an issue with your access.'
           ),
     }),
     [t, canAddAndEditInstances, pageNavigate, isK8s]

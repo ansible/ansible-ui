@@ -23,7 +23,7 @@ export function PageFormInstanceGroupSelect<
       {...props}
       name={props.name}
       id="instance-group-select"
-      placeholder={t('Add instance groups')}
+      placeholder={t('Create instance groups')}
       labelHelpTitle={t('Instance groups')}
       labelHelp={props.labelHelp}
       label={t('Instance Groups')}
