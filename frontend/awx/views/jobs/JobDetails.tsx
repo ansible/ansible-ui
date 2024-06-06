@@ -44,10 +44,17 @@ export function JobDetails() {
       <PageDetail isEmpty={!job.controller_node} label={t('Controller node')}>
         {job.controller_node}
       </PageDetail>
-      <PageDetail isEmpty={!job.execution_node} label={t('Execution node')}>
+      <PageDetail
+        isEmpty={!job.execution_node}
+        label={t('Execution node')}
+        helpText={t(
+          'The execution environment that will be used when launching this job template. The resolved execution environment can be overridden by explicitly assigning a different one to this job template.'
+        )}
+      >
         {job.execution_node}
       </PageDetail>
       <PageDetail
+        helpText={t('Instance group used on this job run.')}
         isEmpty={!job.summary_fields.instance_group?.is_container_group}
         label={t('Instance group')}
       >
@@ -78,18 +85,36 @@ export function JobDetails() {
       <PageDetail isEmpty={!job.forks} label={t('Forks')}>
         {job.forks}
       </PageDetail>
-      <PageDetail isEmpty={!job.timeout} label={t('Timeout')}>
+      <PageDetail
+        isEmpty={!job.timeout}
+        label={t('Timeout')}
+        helpText={t(
+          'The amount of time (in seconds) to run before the job is canceled. Defaults to 0 for no job timeout.'
+        )}
+      >
         {job.timeout}
       </PageDetail>
-      <PageDetail isEmpty={!job.verbosity} label={t('Verbosity')}>
+      <PageDetail
+        isEmpty={!job.verbosity}
+        label={t('Verbosity')}
+        helpText={t('Control the level of output ansible will produce as the playbook executes.')}
+      >
         {job.verbosity}
       </PageDetail>
-      <PageDetail label={t('Job tags')} isEmpty={!job.job_tags}>
+      <PageDetail
+        label={t('Job tags')}
+        helpText={t('Job tags used during this job.')}
+        isEmpty={!job.job_tags}
+      >
         <LabelGroup>
           {job.job_tags?.split(',')?.map((tag) => <Label key={tag}>{tag}</Label>)}
         </LabelGroup>
       </PageDetail>
-      <PageDetail label={t('Skip tags')} isEmpty={!job.skip_tags}>
+      <PageDetail
+        helpText={t('Skip tags used during this job.')}
+        label={t('Skip tags')}
+        isEmpty={!job.skip_tags}
+      >
         <LabelGroup>
           {job.skip_tags?.split(',')?.map((tag) => <Label key={tag}>{tag}</Label>)}
         </LabelGroup>
@@ -119,6 +144,9 @@ export function JobDetails() {
       />
       <PageDetailCodeEditor
         label={t`Extra Variables`}
+        helpText={t(
+          'Extra Variables used on this job.  This is the -e or --extra-vars command line parameter for ansible-playbook. Provide key/value pairs using either YAML or JSON. Refer to the documentation for example syntax.'
+        )}
         showCopyToClipboard
         data-cy="inventory-source-detail-variables"
         value={job.extra_vars ?? ''}
