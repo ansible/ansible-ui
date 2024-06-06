@@ -480,7 +480,7 @@ describe('Inventory Groups', () => {
 
       cy.intercept('POST', awxAPI`/hosts/`).as('createHost');
       cy.clickButton(/^Create host$/);
-      cy.verifyPageTitle('Create Host');
+      cy.verifyPageTitle('Create host');
       cy.getByDataCy('name').type(newHostName);
       cy.getByDataCy('description').type('This is the description');
       cy.clickButton(/^Create host$/);

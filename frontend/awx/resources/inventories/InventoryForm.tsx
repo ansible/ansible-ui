@@ -245,9 +245,10 @@ export function EditInventory() {
     return (
       <PageLayout>
         <PageHeader
+          title={`${t('Edit')} ${inventory?.name || t('Inventory')}`}
           breadcrumbs={[
             { label: t('Inventories'), to: getPageUrl(AwxRoute.Inventories) },
-            { label: t('Edit Inventory') },
+            { label: `${t('Edit')} ${inventory?.name || t('Inventory')}` },
           ]}
         />
         {!isLoaded && !isError && <LoadingPage></LoadingPage>}
@@ -283,10 +284,10 @@ export function EditInventory() {
   return (
     <PageLayout>
       <PageHeader
-        title={title}
+        title={`${t('Edit')} ${inventory?.name || t('Inventory')}`}
         breadcrumbs={[
           { label: t('Inventories'), to: getPageUrl(AwxRoute.Inventories) },
-          { label: title },
+          { label: `${t('Edit')} ${inventory?.name || t('Inventory')}` },
         ]}
       />
       <AwxPageForm<InventoryCreate>
