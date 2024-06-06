@@ -40,10 +40,10 @@ export function CreateCredentialType() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Create Credential Type')}
+        title={t('Create credential type')}
         breadcrumbs={[
           { label: t('Credential Types'), to: getPageUrl(EdaRoute.CredentialTypes) },
-          { label: t('Create Credential Type') },
+          { label: t('Create credential type') },
         ]}
       />
       <EdaPageForm<EdaCredentialType>
@@ -81,10 +81,10 @@ export function EditCredentialType() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Edit Credential Type')}
+        title={`${t('Edit')} ${credentialType?.name || t('Credential Type')}`}
         breadcrumbs={[
           { label: t('Credential Types'), to: getPageUrl(EdaRoute.CredentialTypes) },
-          { label: t('Edit Credential Type') },
+          { label: `${t('Edit')} ${credentialType?.name || t('Credential Type')}` },
         ]}
       />
       {hasCredentialType && (
