@@ -92,7 +92,7 @@ export function useInventoriesSourcesToolbarActions(
         type: PageActionType.Button,
         selection: PageActionSelection.None,
         icon: RocketIcon,
-        label: t('Launch inventory update'),
+        label: t('Launch Inventory Updates'),
         onClick: syncAll,
         isDisabled: () => cannotLaunchInventorySourcesUpdate,
       },
