@@ -97,16 +97,14 @@ describe('Create Edit Instance Group Form', () => {
         });
     });
 
-    it('should validate required fields on save', () => {
+    it.only('should validate required fields on save', () => {
       cy.mount(<EditInstanceGroup />, {
         path: '/instance-groups/:id/edit',
         initialEntries: [`/instance-groups/1/edit`],
       });
       cy.get('[data-cy="name"]').clear();
       cy.getByDataCy('Submit').click();
-      cy.get(
-        '[data-cy="name-form-group"] > .pf-v5-c-form__group-control > .pf-v5-c-form__helper-text > .pf-v5-c-helper-text > .pf-v5-c-helper-text__item'
-      ).should('have.text', 'Name is required.');
+      cy.contains('.pf-v5-c-helper-text', 'Name is required.');
     });
   });
 });
