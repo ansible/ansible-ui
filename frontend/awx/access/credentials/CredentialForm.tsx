@@ -131,7 +131,7 @@ export function CreateCredential() {
         !isHandledByCredentialPlugin(field.id)
       ) {
         const id = field.id as keyof CredentialForm;
-        if (credential[id] !== undefined) {
+        if (credential[id] !== undefined || credential[id] !== '') {
           pluginInputs[id] = credential[id] as string | number;
           delete credential[id];
         }
@@ -141,6 +141,12 @@ export function CreateCredential() {
     if (!credential.organization) {
       credential.user = activeAwxUser?.id;
     }
+    // filter out fields that a prefixed with 'ask_'
+    Object.keys(credential).forEach((key) => {
+      if (key.startsWith('ask_')) {
+        delete credential[key as keyof CredentialForm];
+      }
+    });
     const newCredential = await postRequest(awxAPI`/credentials/`, {
       ...credential,
       inputs: { ...pluginInputs },
@@ -302,6 +308,8 @@ export function EditCredential() {
     Object.entries(credential.inputs).forEach(([key, value]) => {
       if (typeof value === 'string' && value === 'ASK') {
         promptPassword[`ask_${key}`] = true;
+      } else {
+        promptPassword[`ask_${key}`] = false;
       }
     });
   }
@@ -342,10 +350,16 @@ export function EditCredential() {
         !isHandledByCredentialPlugin(field.id)
       ) {
         const id = field.id as keyof CredentialForm;
-        if (editedCredential[id] !== undefined) {
+        if (editedCredential[id] !== undefined || editedCredential[id] !== '') {
           pluginInputs[id] = editedCredential[id] as string | number;
           delete editedCredential[id];
         }
+      }
+    });
+    // filter out fields that a prefixed with 'ask_'
+    Object.keys(editedCredential).forEach((key) => {
+      if (key.startsWith('ask_')) {
+        delete editedCredential[key as keyof CredentialForm];
       }
     });
     const modifiedCredential = { ...editedCredential, inputs: pluginInputs };
@@ -382,7 +396,6 @@ export function EditCredential() {
       );
     }
     (cache as unknown as { clear: () => void }).clear?.();
-    // return to Credential List page
     navigate(-1);
   };
   if (!credential) {
@@ -724,7 +737,7 @@ function CredentialTextInput({
   setPluginsToDelete?: React.Dispatch<React.SetStateAction<string[]>>;
 }) {
   const { t } = useTranslation();
-  const { setValue, clearErrors } = useFormContext();
+  const { setValue, clearErrors, getValues } = useFormContext();
   const isPromptOnLaunchChecked = useWatch({ name: `ask_${field.id}` }) as boolean;
   const useGetSourceCredential = (id: number) => {
     const { data } = useGetItem<Credential>(awxAPI`/credentials/`, id);
@@ -743,20 +756,27 @@ function CredentialTextInput({
   };
 
   useEffect(() => {
-    if (field?.ask_at_runtime) {
-      setValue(field?.id, isPromptOnLaunchChecked ? 'ASK' : field?.default || '', {
-        shouldDirty: true,
-      });
-      if (isPromptOnLaunchChecked) {
-        clearErrors(field?.id);
+    if (isPromptOnLaunchChecked) {
+      // mark any credential plugins previously set for deletion
+      if (accumulatedPluginValues.some((cp) => cp.input_field_name === field.id)) {
+        setPluginsToDelete?.((prev: string[]) => [...prev, field.id]);
+        setAccumulatedPluginValues?.(
+          accumulatedPluginValues.filter((cp) => cp.input_field_name !== field.id)
+        );
       }
+      setValue(field.id, 'ASK', { shouldDirty: true });
+      clearErrors(field.id);
+    } else if (!isPromptOnLaunchChecked && getValues(field.id) === 'ASK') {
+      setValue(field.id, field.default || '', { shouldDirty: true });
     }
   }, [
+    getValues,
     isPromptOnLaunchChecked,
-    field?.ask_at_runtime,
-    field.id,
-    field.default,
+    field,
     setValue,
+    setPluginsToDelete,
+    accumulatedPluginValues,
+    setAccumulatedPluginValues,
     clearErrors,
   ]);
 

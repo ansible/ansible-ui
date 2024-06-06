@@ -86,7 +86,7 @@ describe('Credentials', () => {
       cy.verifyPageTitle('Edit Credential');
       cy.get('[data-cy="vault-id"]').should('have.attr', 'disabled');
       cy.get('[data-cy="vault-password"]').should('be.visible');
-      cy.get('[data-cy="vault-password"]').type('new password');
+      cy.get('[data-cy="vault-password"]').clear().type('new password');
       cy.clickButton(/^Save credential$/);
       //delete created credential
       cy.clickPageAction('delete-credential');
