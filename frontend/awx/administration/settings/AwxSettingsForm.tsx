@@ -190,16 +190,18 @@ export function OptionActionsFormInput(props: { name: string; option: AwxSetting
     option.label.includes('SAML Service Provider Private Key')
   ) {
     return (
-      <PageFormFileUpload
-        label={option.label}
-        name={props.name}
-        type="text"
-        labelHelpTitle={option.label}
-        labelHelp={option.help_text}
-        isRequired={option.required}
-        allowEditingUploadedText={true}
-        isReadOnly={false}
-      />
+      <PageFormSection singleColumn>
+        <PageFormFileUpload
+          label={option.label}
+          name={props.name}
+          type="text"
+          labelHelpTitle={option.label}
+          labelHelp={option.help_text}
+          isRequired={option.required}
+          allowEditingUploadedText={true}
+          isReadOnly={false}
+        />
+      </PageFormSection>
     );
   }
 
