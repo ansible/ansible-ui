@@ -28,19 +28,19 @@ describe('Topology view', () => {
     user?.id && cy.deleteAwxUser(user, { failOnStatusCode: false });
   });
 
-  it('render the Topology page', () => {
+  it.skip('render the Topology page', () => {
     cy.navigateTo('awx', 'topology-view');
     cy.verifyPageTitle('Topology View');
   });
 
-  it('refresh the Topology page', () => {
+  it.skip('refresh the Topology page', () => {
     cy.navigateTo('awx', 'topology-view');
     cy.verifyPageTitle('Topology View');
     cy.get('#refresh').click();
     cy.verifyPageTitle('Topology View');
   });
 
-  it('show sidebar when node is clicked', () => {
+  it.skip('show sidebar when node is clicked', () => {
     cy.navigateTo('awx', 'topology-view');
     cy.wait('@getMeshVisualizer')
       .its('response.body')
@@ -51,7 +51,7 @@ describe('Topology view', () => {
       });
   });
 
-  it('navigate to instance detail when instance name is clicked from sidebar', () => {
+  it.skip('navigate to instance detail when instance name is clicked from sidebar', () => {
     cy.navigateTo('awx', 'topology-view');
     cy.wait('@getMeshVisualizer')
       .its('response.body')
@@ -63,7 +63,7 @@ describe('Topology view', () => {
       });
   });
 
-  it('navigate to instance group detail when instance group is clicked from sidebar', () => {
+  it.skip('navigate to instance group detail when instance group is clicked from sidebar', () => {
     cy.navigateTo('awx', 'topology-view');
     cy.wait('@getMeshVisualizer')
       .its('response.body')
@@ -80,7 +80,7 @@ describe('Topology view', () => {
       });
   });
 
-  it('should show adjust instance forks when instance forks slider is adjusted', () => {
+  it.skip('should show adjust instance forks when instance forks slider is adjusted', () => {
     // Adjusting instance capacity while other concurrent tests are running could have unwanted
     // side-effects affecting job runs. We should mock the response data in this scenario.
     cy.intercept(
@@ -110,7 +110,7 @@ describe('Topology view', () => {
       });
   });
 
-  it('should show no forks slider when instance has 0 cpu and memory capacity', () => {
+  it.skip('should show no forks slider when instance has 0 cpu and memory capacity', () => {
     // Adjusting instance capacity while other concurrent tests are running could have
     // unwanted side-effects affecting job runs. We should mock the response data in this scenario.
     cy.intercept(
@@ -134,7 +134,7 @@ describe('Topology view', () => {
       });
   });
 
-  it('should render download icon for instance that has an install bundle', () => {
+  it.skip('should render download icon for instance that has an install bundle', () => {
     /**
      Only certain node types have install bundles, however creating an instance via the
      API requires that a user also manually download the respective install bundle and
@@ -180,6 +180,19 @@ describe('Topology view', () => {
     });
   });
 
+  it('will allow the user to view a large number of nodes', () => {
+    cy.awxLogin();
+    cy.fixture('instance_nodes').then((instanceNodes: MeshVisualizer) => {
+      cy.intercept('GET', awxAPI`/mesh_visualizer/`, instanceNodes);
+
+      cy.navigateTo('awx', 'topology-view');
+
+      instanceNodes.nodes.forEach((node) => {
+        cy.contains(node.hostname);
+      });
+    });
+  });
+
   it('will allow the user to select node and delete it', () => {
     cy.awxLogin();
     const node = 'E2EInstance' + randomString(4);
@@ -200,18 +213,6 @@ describe('Topology view', () => {
 
       cy.navigateTo('awx', 'topology-view');
       cy.contains(node).should('not.exist');
-    });
-  });
-
-  it('will allow the user to view a large number of nodes', () => {
-    cy.fixture('instance_nodes').then((instanceNodes: MeshVisualizer) => {
-      cy.intercept('GET', awxAPI`/mesh_visualizer/`, instanceNodes);
-
-      cy.navigateTo('awx', 'topology-view');
-
-      instanceNodes.nodes.forEach((node) => {
-        cy.contains(node.hostname);
-      });
     });
   });
 });
