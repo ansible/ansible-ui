@@ -58,7 +58,7 @@ describe('Inventory Sources', () => {
   });
 
   describe('Inventory Source List', () => {
-    it('can navigate to the Create Source form, create new Source, and verify all expected info shows on the details page', () => {
+    it('inventory source tab - user can create an inventory and create a source from a project', () => {
       cy.navigateTo('awx', 'inventories');
       cy.filterTableBySingleSelect('name', inventory.name);
       cy.clickTableRowLink('name', inventory.name, { disableFilter: true });
@@ -80,15 +80,7 @@ describe('Inventory Sources', () => {
         });
         cy.contains('button', 'Confirm').click();
       });
-      cy.get('[data-cy="credential-select-form-group"]')
-        .click()
-        .within(() => {
-          cy.get('button[aria-label="Options menu"]').click();
-        });
-      cy.getModal().within(() => {
-        cy.selectTableRowByCheckbox('name', credentialName);
-        cy.getBy('#submit').click();
-      });
+      cy.selectItemFromLookupModal('credential-select', credentialName);
       cy.getBy('[data-cy="host-filter"]').type('/^test$/');
       cy.getBy('[data-cy="verbosity"]').type('1');
       cy.getBy('[data-cy="enabled-var"]').type('foo.bar');
