@@ -2,8 +2,13 @@ import { InstanceGroup } from '../../../../frontend/awx/interfaces/InstanceGroup
 import { MeshVisualizer } from '../../../../frontend/awx/interfaces/MeshVisualizer';
 import { Instance } from '../../../../frontend/awx/interfaces/generated-from-swagger/api';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
+import { AwxUser } from '../../../../frontend/awx/interfaces/User';
+import { Organization } from '../../../../frontend/awx/interfaces/Organization';
+import { randomString } from '../../../../framework/utils/random-string';
 
 describe('Topology view', () => {
+  let user: AwxUser;
+
   before(() => {
     cy.awxLogin();
   });
@@ -17,6 +22,10 @@ describe('Topology view', () => {
       { method: 'PATCH', url: `api/v2/instances/1/` },
       { fixture: 'instance_without_install_bundle.json' }
     ).as('editInstance');
+  });
+
+  after(() => {
+    user?.id && cy.deleteAwxUser(user, { failOnStatusCode: false });
   });
 
   it('render the Topology page', () => {
@@ -155,11 +164,54 @@ describe('Topology view', () => {
       });
   });
 
-  it.skip('does not show Topology View in sidebar for non admins', () => {
-    // TODO: add this test case once RBAC to routes and sidebar have been implemented
+  it('does not show Topology View in sidebar for non admins', function () {
+    cy.createAwxUser(this.globalOrganization as Organization).then((awxUser) => {
+      user = awxUser;
+
+      cy.awxLoginTestUser(user.username, 'pw');
+      cy.getByDataCy('page-navigation').then((nav) => {
+        if (!nav.is(':visible')) cy.getByDataCy('nav-toggle').click();
+      });
+      cy.get('[data-cy="awx-topology-view"]').should('not.exist');
+
+      cy.visit('/infrastructure/topology');
+      cy.contains('Page not found');
+      cy.contains('We could not find that page.');
+    });
   });
 
-  it.skip('will allow the user to view and then delete a large number of nodes', () => {
-    // Implement this using a fixture file to quickly populate a high number of nodes
+  it('will allow the user to select node and delete it', () => {
+    cy.awxLogin();
+    const node = 'E2EInstance' + randomString(4);
+
+    cy.createAwxInstance(node).then(() => {
+      cy.navigateTo('awx', 'topology-view');
+      cy.contains(node).click({ force: true });
+      cy.getByDataCy('mesh-viz-sidebar').within(() => {
+        cy.getByDataCy('name').contains(node).click();
+      });
+
+      cy.url().should('include', '/infrastructure/instances/');
+      cy.getByDataCy('page-title').contains(node);
+
+      cy.clickKebabAction('actions-dropdown', 'remove-instance');
+      cy.clickModalConfirmCheckbox();
+      cy.clickButton('Remove instance');
+
+      cy.navigateTo('awx', 'topology-view');
+      cy.contains(node).should('not.exist');
+    });
+  });
+
+  it('will allow the user to view a large number of nodes', () => {
+    cy.fixture('instance_nodes').then((instanceNodes: MeshVisualizer) => {
+      cy.intercept('GET', awxAPI`/mesh_visualizer/`, instanceNodes);
+
+      cy.navigateTo('awx', 'topology-view');
+
+      instanceNodes.nodes.forEach((node) => {
+        cy.contains(node.hostname);
+      });
+    });
   });
 });
