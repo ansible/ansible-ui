@@ -224,7 +224,6 @@ export function PageFormTextInput<
     selectValue,
     autoFocus,
     autoComplete,
-    defaultValue,
   } = props;
 
   const id = useID(props);

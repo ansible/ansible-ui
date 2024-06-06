@@ -188,8 +188,6 @@ export function PageFormSelect<
 
         const selected = options.find((option) => option.value === value);
 
-        console.log(value, props.defaultValue);
-
         return (
           <PageFormGroup
             fieldId={id}
