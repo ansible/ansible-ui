@@ -13,6 +13,15 @@ import { useInventorySourceFilters } from '../hooks/useInventorySourceFilters';
 import { useInventoriesSourcesToolbarActions } from '../hooks/useInventoriesSourcesToolbarActions';
 import { useInventorySourceActions } from '../hooks/useInventorySourceActions';
 import { useInventorySourceColumns } from '../hooks/useInventorySourceColumns';
+import { useCallback } from 'react';
+import { useAwxWebSocketSubscription } from '../../../common/useAwxWebSocket';
+
+type WebSocketMessage = {
+  group_name?: string;
+  type?: string;
+  status?: string;
+  inventory_id?: number;
+};
 
 export function InventorySources() {
   const { t } = useTranslation();
@@ -30,8 +39,8 @@ export function InventorySources() {
 
   const toolbarActions = useInventoriesSourcesToolbarActions(view, params.id || '');
   const rowActions = useInventorySourceActions({
-    onDelete: view.unselectItemsAndRefresh,
-    onSync: () => void view.refresh(),
+    onInventorySourcesDeleted: view.unselectItemsAndRefresh,
+    onInvUpdateCanceled: view.unselectItemsAndRefresh,
   });
 
   const sourceOptions = useOptions<OptionsResponse<ActionsResponse>>(
@@ -42,6 +51,34 @@ export function InventorySources() {
   );
 
   usePersistentFilters('inventories');
+
+  const handleWebSocketMessage = useCallback(
+    (message?: WebSocketMessage) => {
+      if (!message?.inventory_id) return;
+      switch (message?.group_name) {
+        case 'inventories':
+          switch (message?.status) {
+            case 'deleted':
+              void view.refresh();
+              break;
+          }
+          break;
+        case 'jobs':
+          switch (message?.type) {
+            case 'inventory_update':
+              void view.refresh();
+              break;
+          }
+          break;
+      }
+    },
+    [view]
+  );
+
+  useAwxWebSocketSubscription(
+    { control: ['limit_reached_1'], jobs: ['status_changed'], inventories: ['status_changed'] },
+    handleWebSocketMessage as (data: unknown) => void
+  );
 
   return (
     <PageLayout>
