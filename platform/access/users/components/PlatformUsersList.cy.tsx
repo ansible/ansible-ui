@@ -39,6 +39,57 @@ describe('Users list', () => {
           .contains('Delete selected users')
           .should('be.visible');
       });
+      // Row actions are visible
+      cy.get('tbody')
+        .find('tr')
+        .first()
+        .within(() => {
+          cy.get(`[data-cy="edit-user"]`)
+            .should('be.visible')
+            .should('have.attr', 'aria-disabled', 'false');
+          cy.get('.toggle-kebab')
+            .click()
+            .get('.pf-v5-c-dropdown__menu-item')
+            .contains('Delete user')
+            .should('be.visible')
+            .should('have.attr', 'aria-disabled', 'false');
+        });
+    });
+    it('Edit and delete buttons are disabled if managed = true', () => {
+      cy.intercept(
+        {
+          method: 'GET',
+          url: gatewayV1API`/users/*`,
+        },
+        {
+          results: [
+            {
+              id: '1',
+              username: 'managedUser',
+              managed: true,
+            },
+          ],
+        }
+      );
+      cy.mount(<PlatformUsersList />);
+      cy.verifyPageTitle('Users');
+      cy.setTableView('table');
+      cy.get('tbody').find('tr').should('have.length', 1);
+      // Row actions are visible but disabled
+      cy.get('tbody')
+        .find('tr')
+        .first()
+        .within(() => {
+          cy.get(`[data-cy="edit-user"]`)
+            .should('be.visible')
+            .should('have.attr', 'aria-disabled', 'true');
+          cy.get('.toggle-kebab')
+            .click()
+            .get('.pf-v5-c-dropdown__menu-item')
+            .contains('Delete user')
+            .should('be.visible')
+            .should('have.attr', 'aria-disabled', 'true');
+        });
     });
     it('Create User button is disabled if the user does not have permission to create users', () => {
       cy.mount(<PlatformUsersList />);

@@ -38,4 +38,5 @@ export interface PlatformUser {
   last_login_map_results: [];
   last_login: string;
   organizations: number[];
+  managed: boolean;
 }
