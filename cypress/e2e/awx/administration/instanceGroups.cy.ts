@@ -291,8 +291,7 @@ instanceGroupTypes.forEach((igType) => {
       cy.intercept('PATCH', awxAPI`/instance_groups/${instanceGroup.id.toString()}/`).as(
         'editInstanceGroup'
       );
-
-      cy.clickButton(`Save ${igType} Group`);
+      cy.getByDataCy('Submit').click();
       cy.wait('@editInstanceGroup')
         .then((response) => {
           expect(response?.response?.statusCode).to.eql(200);
