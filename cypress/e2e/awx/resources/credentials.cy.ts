@@ -696,6 +696,7 @@ describe('Credentials Tabbed View - Team and User Access', function () {
     });
   }
   it('create a new credential, assign a team and apply role(s) to test', () => {
+    cy.intercept('POST', awxAPI`/role_team_assignments/`).as('teamRoleAssignment');
     cy.navigateTo('awx', 'credentials');
     cy.filterTableByMultiSelect('name', [machineCredential.name]);
     cy.clickTableRowLink('name', machineCredential.name, { disableFilter: true });
@@ -735,6 +736,7 @@ describe('Credentials Tabbed View - Team and User Access', function () {
         '2'
       );
       cy.clickButton(/^Finish/);
+      cy.wait('@teamRoleAssignment');
     });
     cy.getModal().within(() => {
       cy.clickButton(/^Close$/);
@@ -751,6 +753,7 @@ describe('Credentials Tabbed View - Team and User Access', function () {
   });
 
   it('create a new credential, assign a user and apply role(s) to test', function () {
+    cy.intercept('POST', awxAPI`/role_user_assignments/`).as('userRoleAssignment');
     cy.navigateTo('awx', 'credentials');
     cy.filterTableByMultiSelect('name', [machineCredential.name]);
     cy.clickTableRowLink('name', machineCredential.name, { disableFilter: true });
@@ -790,6 +793,7 @@ describe('Credentials Tabbed View - Team and User Access', function () {
         '2'
       );
       cy.clickButton(/^Finish/);
+      cy.wait('@userRoleAssignment');
     });
     cy.getModal().within(() => {
       cy.clickButton(/^Close$/);
