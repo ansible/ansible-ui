@@ -234,6 +234,7 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
             {job.summary_fields?.inventory?.name}
           </Link>
         ),
+        helpText: t('Inventory used on this job'),
         value: (job: UnifiedJob) => job.summary_fields?.inventory?.name,
         table: ColumnTableOption.expanded,
         card: 'hidden',
@@ -244,6 +245,7 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
       },
       {
         header: t('Project'),
+        helpText: t('The project containing the playbook this job will execute.'),
         cell: (job: UnifiedJob) => (
           <Link
             to={getPageUrl(AwxRoute.ProjectDetails, {
@@ -263,6 +265,7 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
       },
       {
         header: t('Execution environment'),
+        helpText: t('The execution environment that was be used when launching this job template.'),
         cell: (job: UnifiedJob) => (
           <Link
             to={getPageUrl(AwxRoute.ExecutionEnvironmentDetails, {
@@ -285,6 +288,7 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
       },
       {
         header: t('Credentials'),
+        helpText: t('Credential(s) used to access the nodes this job will be ran against.'),
         cell: (job: UnifiedJob) => (
           <LabelGroup
             numLabels={5}
@@ -310,6 +314,7 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
       },
       {
         header: t('Labels'),
+        helpText: t('Labels used to describe job.'),
         cell: (job: UnifiedJob) => (
           <ChipGroup
             numChips={5}
@@ -349,6 +354,9 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
       },
       {
         header: t('Job slice'),
+        helpText: t(
+          'Divide the work done by this job template into the specified number of job slices, each running the same tasks against a portion of the inventory.'
+        ),
         cell: (job: UnifiedJob) => (
           <span>{`${job.job_slice_number ?? 0}/${(job.job_slice_count ?? 0).toString()}`}</span>
         ),
