@@ -208,6 +208,8 @@ export function OptionActionsFormInput(props: { name: string; option: AwxSetting
             name={props.name}
             labelHelpTitle={option.label}
             labelHelp={option.help_text}
+            defaultValue={option.default}
+            enableReset
           />
         </PageFormSection>
       );
@@ -260,6 +262,9 @@ export function OptionActionsFormInput(props: { name: string; option: AwxSetting
           labelHelp={option.help_text}
           options={option.choices.map((choice) => ({ value: choice[0], label: choice[1] }))}
           isRequired={option.required}
+          defaultValue={option.default}
+          enableUndo
+          enableReset
         />
       );
     case 'datetime':

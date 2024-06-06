@@ -1,13 +1,24 @@
-import { Select, SelectOption, SelectOptionObject } from '@patternfly/react-core/deprecated';
+import { ButtonVariant } from '@patternfly/react-core';
+import {
+  DropdownPosition,
+  Select,
+  SelectOption,
+  SelectOptionObject,
+} from '@patternfly/react-core/deprecated';
+import getValue from 'get-value';
 import { ChangeEvent, ReactNode, useCallback, useState } from 'react';
 import {
   Controller,
   FieldPath,
   FieldPathValue,
   FieldValues,
+  PathValue,
   Validate,
   useFormContext,
 } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
+import { PageActionSelection, PageActionType } from '../../PageActions/PageAction';
+import { PageActions } from '../../PageActions/PageActions';
 import { PageSelectOption } from '../../PageInputs/PageSelectOption';
 import { getID, useID } from '../../hooks/useID';
 import { useFrameworkTranslations } from '../../useFrameworkTranslations';
@@ -95,6 +106,9 @@ export type PageFormSelectProps<
     | Record<string, Validate<FieldPathValue<TFieldValues, TFieldName>, TFieldValues>>;
 
   defaultValue?: FieldPathValue<TFieldValues, TFieldName>;
+
+  enableReset?: boolean;
+  enableUndo?: boolean;
 };
 
 export function PageFormSelect<
@@ -121,9 +135,12 @@ export function PageFormSelect<
 
   const id = useID(props);
 
+  const { t } = useTranslation();
+
   const {
     control,
-    formState: { isSubmitting, isValidating },
+    setValue,
+    formState: { isSubmitting, isValidating, defaultValues },
     resetField,
   } = useFormContext<TFieldValues>();
 
@@ -133,10 +150,16 @@ export function PageFormSelect<
   const [translations] = useFrameworkTranslations();
   const required = useRequiredValidationRule(props.label, props.isRequired);
 
+  const undoValue = getValue(defaultValues as object, props.name) as PathValue<
+    TFieldValues,
+    TFieldName
+  >;
+
   return (
     <Controller<TFieldValues, TFieldName>
       name={name}
       control={control}
+      defaultValue={props.defaultValue}
       shouldUnregister
       render={({ field: { onChange, value }, fieldState: { error } }) => {
         if (value === '') {
@@ -165,6 +188,8 @@ export function PageFormSelect<
 
         const selected = options.find((option) => option.value === value);
 
+        console.log(value, props.defaultValue);
+
         return (
           <PageFormGroup
             fieldId={id}
@@ -176,47 +201,82 @@ export function PageFormSelect<
             helperTextInvalid={helperTextInvalid}
             isRequired={isRequired}
           >
-            <Select
-              id={id}
-              placeholderText={placeholderText}
-              variant="single"
-              aria-describedby={`${id}-form-group`}
-              selections={selected?.label}
-              onSelect={onSelectHandler}
-              isOpen={open}
-              onToggle={onToggle}
-              onClear={
-                isRequired
-                  ? undefined
-                  : () => {
-                      onChange(null);
-                      setOpen(false);
-                    }
-              }
-              maxHeight={280}
-              validated={helperTextInvalid ? 'error' : undefined}
-              isDisabled={isDisabled || isReadOnly || isSubmitting}
-              hasPlaceholderStyle
-              footer={footer}
-              ouiaId="menu-select"
-              data-cy={id}
-            >
-              {options.map((option) => {
-                const optionId = getID(option);
-                return (
-                  <SelectOption
-                    id={optionId}
-                    key={option.label}
-                    value={option.label || props.defaultValue}
-                    label={option.label}
-                    description={option.description}
-                    data-cy={optionId}
-                  >
-                    {option.label}
-                  </SelectOption>
-                );
-              })}
-            </Select>
+            <div style={{ display: 'flex' }}>
+              <Select
+                id={id}
+                placeholderText={placeholderText}
+                variant="single"
+                aria-describedby={`${id}-form-group`}
+                selections={selected?.label}
+                onSelect={onSelectHandler}
+                isOpen={open}
+                onToggle={onToggle}
+                onClear={
+                  isRequired
+                    ? undefined
+                    : () => {
+                        onChange(null);
+                        setOpen(false);
+                      }
+                }
+                maxHeight={280}
+                validated={helperTextInvalid ? 'error' : undefined}
+                isDisabled={isDisabled || isReadOnly || isSubmitting}
+                hasPlaceholderStyle
+                footer={footer}
+                ouiaId="menu-select"
+                data-cy={id}
+              >
+                {options.map((option) => {
+                  const optionId = getID(option);
+                  return (
+                    <SelectOption
+                      id={optionId}
+                      key={option.label}
+                      value={option.label}
+                      label={option.label}
+                      description={option.description}
+                      data-cy={optionId}
+                    >
+                      {option.label}
+                    </SelectOption>
+                  );
+                })}
+              </Select>
+              <PageActions
+                actions={[
+                  {
+                    label: t('Undo changes'),
+                    type: PageActionType.Button,
+                    selection: PageActionSelection.None,
+                    onClick: () => {
+                      setValue(
+                        props.name,
+                        undoValue as unknown as PathValue<TFieldValues, TFieldName>
+                      );
+                    },
+                    isHidden: () => !props.enableUndo || value === undoValue,
+                  },
+                  {
+                    label: t('Reset to default'),
+                    type: PageActionType.Button,
+                    selection: PageActionSelection.None,
+                    onClick: () => {
+                      setValue(
+                        props.name as FieldPath<TFieldValues>,
+                        props.defaultValue as unknown as PathValue<
+                          TFieldValues,
+                          FieldPath<TFieldValues>
+                        >
+                      );
+                    },
+                    isHidden: () => !props.enableReset || value === props.defaultValue,
+                  },
+                ]}
+                variant={ButtonVariant.control}
+                position={DropdownPosition.right}
+              />
+            </div>
           </PageFormGroup>
         );
       }}

@@ -5,6 +5,7 @@ import {
   InputGroupItem,
   TextInput,
 } from '@patternfly/react-core';
+import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { EyeIcon, EyeSlashIcon, SearchIcon } from '@patternfly/react-icons';
 import getValue from 'get-value';
 import { ReactNode, useState } from 'react';
@@ -18,6 +19,7 @@ import {
   ValidationRule,
   useFormContext,
 } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { PageActionSelection, PageActionType } from '../../PageActions/PageAction';
 import { PageActions } from '../../PageActions/PageActions';
 import { useID } from '../../hooks/useID';
@@ -226,6 +228,7 @@ export function PageFormTextInput<
   } = props;
 
   const id = useID(props);
+  const { t } = useTranslation();
 
   const {
     control,
@@ -358,8 +361,7 @@ export function PageFormTextInput<
               <PageActions
                 actions={[
                   {
-                    label: 'Undo changes',
-                    tooltip: 'Undo changes',
+                    label: t('Undo changes'),
                     type: PageActionType.Button,
                     selection: PageActionSelection.None,
                     onClick: () => {
@@ -371,7 +373,7 @@ export function PageFormTextInput<
                     isHidden: () => !props.enableUndo || value === undoValue,
                   },
                   {
-                    label: 'Reset to default',
+                    label: t('Reset to default'),
                     type: PageActionType.Button,
                     selection: PageActionSelection.None,
                     onClick: () => {
@@ -383,10 +385,11 @@ export function PageFormTextInput<
                         >
                       );
                     },
-                    isHidden: () => !props.enableReset || value === defaultValue,
+                    isHidden: () => !props.enableReset || value === props.defaultValue,
                   },
                 ]}
                 variant={ButtonVariant.control}
+                position={DropdownPosition.right}
               />
             </InputGroup>
           </PageFormGroup>
