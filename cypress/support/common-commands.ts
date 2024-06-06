@@ -196,9 +196,9 @@ Cypress.Commands.add('poll', function requestPoll<
     if (response !== undefined && check(response)) {
       cy.wrap(response);
     } else {
-      // call only 100 times, then fail
+      // call only 20 times, then fail
       const watchDog = (calledTimes || 0) + 1;
-      if (watchDog <= 100) {
+      if (watchDog <= 20) {
         cy.log('Calling cy.poll again for the ' + watchDog + ' time');
         cy.wait(1000).then(() => cy.poll<ResponseT>(fn, check, watchDog));
       } else {
