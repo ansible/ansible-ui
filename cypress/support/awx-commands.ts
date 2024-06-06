@@ -1474,7 +1474,7 @@ Cypress.Commands.add('waitForWorkflowJobStatus', (jobID: string) => {
     cy.requestGet<Job>(awxAPI`/workflow_jobs/${jobID}/`)
       .its('status')
       .then((status) => {
-        if (status !== 'successful') {
+        if (status === 'running' || status === 'pending') {
           cy.log(`WORKFLOW JOB STATUS = ${status}`);
           cy.log(`MAX LOOPS RAN = ${maxLoops}`);
           waitForWFJobStatus(maxLoops - 1);
