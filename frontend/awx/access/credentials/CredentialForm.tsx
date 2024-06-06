@@ -169,10 +169,10 @@ export function CreateCredential() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Create Credential')}
+        title={t('Create credential')}
         breadcrumbs={[
           { label: t('Credentials'), to: getPageUrl(AwxRoute.Credentials) },
-          { label: t('Create Credential') },
+          { label: t('Create credential') },
         ]}
       />
       <AwxPageForm
@@ -419,10 +419,10 @@ export function EditCredential() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Edit Credential')}
+        title={`${t('Edit')} ${credential?.name || t('credential')}`}
         breadcrumbs={[
           { label: t('Credentials'), to: getPageUrl(AwxRoute.Credentials) },
-          { label: t('Edit Credential') },
+          { label: `${t('Edit')} ${credential?.name || t('credential')}` },
         ]}
       />
       <AwxPageForm
