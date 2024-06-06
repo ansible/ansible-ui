@@ -11,6 +11,7 @@ import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSe
 import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 import { AwxPageForm } from '../../common/AwxPageForm';
 import { awxAPI } from '../../common/api/awx-utils';
+import { PageFormFileUpload } from '../../../../framework/PageForm/Inputs/PageFormFileUpload';
 
 export interface AwxSettingsOptionsResponse {
   actions: {
@@ -168,6 +169,38 @@ export function AwxSettingsForm(props: {
 
 export function OptionActionsFormInput(props: { name: string; option: AwxSettingsOptionsAction }) {
   const option = props.option;
+
+  if (option.label.endsWith('Secret')) {
+    return (
+      <PageFormTextInput
+        label={option.label}
+        name={props.name}
+        labelHelpTitle={option.label}
+        labelHelp={option.help_text}
+        isRequired={option.required}
+        type="password"
+      />
+    );
+  }
+
+  if (
+    option.label.includes('SAML Service Provider Public Certificate') ||
+    option.label.includes('SAML Service Provider Private Key')
+  ) {
+    return (
+      <PageFormFileUpload
+        label={option.label}
+        name={props.name}
+        type="text"
+        labelHelpTitle={option.label}
+        labelHelp={option.help_text}
+        isRequired={option.required}
+        allowEditingUploadedText={true}
+        isReadOnly={false}
+      />
+    );
+  }
+
   switch (option.type) {
     case 'string':
     case 'field':
