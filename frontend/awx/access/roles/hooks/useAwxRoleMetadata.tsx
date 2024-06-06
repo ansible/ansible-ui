@@ -126,7 +126,7 @@ export function useAwxRoleMetadata(): AwxRoleMetadata {
             'awx.change_credential': t('Change credential'),
             'awx.delete_credential': t('Delete credential'),
             'awx.view_credential': t('View credential'),
-            'awx.add_notificationtemplate': t('Add notification template'),
+            'awx.add_notificationtemplate': t('Create notification template'),
             'awx.change_notificationtemplate': t('Change notification template'),
             'awx.delete_notificationtemplate': t('Delete notification template'),
             'awx.view_notificationtemplate': t('View notification template'),

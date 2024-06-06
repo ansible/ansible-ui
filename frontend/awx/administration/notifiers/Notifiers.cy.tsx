@@ -81,7 +81,7 @@ describe('Notifiers.cy.tsx', () => {
       cy.contains('Delete notifiers').should('be.visible');
     });
 
-    it('Add notifier button is disabled if the user does not have the correct permissions', () => {
+    it('Create notifier button is disabled if the user does not have the correct permissions', () => {
       cy.intercept(
         { method: 'GET', url: '/api/v2/notification_templates/*' },
         { fixture: 'notification_templates.json' }
@@ -90,7 +90,7 @@ describe('Notifiers.cy.tsx', () => {
       cy.get('[data-cy="add-notifier"]').should('have.attr', 'aria-disabled', 'true');
     });
 
-    it('Add notifier button is enabled if the user has the correct permissions', () => {
+    it('Create notifier button is enabled if the user has the correct permissions', () => {
       cy.stub(useOptions, 'useOptions').callsFake(() => ({
         data: {
           actions: {
@@ -135,7 +135,7 @@ describe('Notifiers.cy.tsx', () => {
   });
 
   describe('Empty list', () => {
-    it('Empty state is displayed correctly for user with permission to add notifier', () => {
+    it('Empty state is displayed correctly for user with permission to create notifier', () => {
       cy.stub(useOptions, 'useOptions').callsFake(() => ({
         data: {
           actions: {
@@ -158,22 +158,22 @@ describe('Notifiers.cy.tsx', () => {
       );
       cy.mount(<Notifiers />);
       cy.contains(/^No notifiers found.$/);
-      cy.contains(/^Please add notifiers to populate this list.$/);
-      cy.contains('button', /^Add notifier$/).should('be.visible');
+      cy.contains(/^Please create notifiers to populate this list.$/);
+      cy.contains('button', /^Create notifier$/).should('be.visible');
     });
 
-    it('Empty state is displayed correctly for user without permission to add notifier', () => {
+    it('Empty state is displayed correctly for user without permission to create notifier', () => {
       cy.stub(useOptions, 'useOptions').callsFake(() => ({ data: { actions: {} } }));
       cy.intercept(
         { method: 'GET', url: '/api/v2/notification_templates/*' },
         { fixture: 'emptyList.json' }
       );
       cy.mount(<Notifiers />);
-      cy.contains(/^You do not have permission to add notifiers.$/);
+      cy.contains(/^You do not have permission to create notifiers.$/);
       cy.contains(
         /^Please contact your organization administrator if there is an issue with your access.$/
       );
-      cy.contains('button', /^Add notifier$/).should('not.exist');
+      cy.contains('button', /^Create notifier$/).should('not.exist');
     });
   });
 });
