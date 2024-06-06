@@ -26,6 +26,19 @@ export function useInstanceGroupJobsColumns(options?: {
   const pageNavigate = usePageNavigate();
   const { t } = useTranslation();
 
+  const IDColumns = useMemo<ITableColumn<UnifiedJob>>(
+    () => ({
+      header: t('ID'),
+      cell: (job: UnifiedJob) => job.id,
+      sort: 'id',
+      card: 'hidden',
+      list: 'hidden',
+      dashboard: 'hidden',
+      minWidth: 0,
+    }),
+    [t]
+  );
+
   const jobPaths = useMemo<{ [key: string]: string }>(
     () => ({
       project_update: 'project',
@@ -102,6 +115,7 @@ export function useInstanceGroupJobsColumns(options?: {
 
   const tableColumns = useMemo<ITableColumn<UnifiedJob>[]>(() => {
     const displayColumns = [
+      IDColumns,
       nameColumn,
       statusColumn,
       typeColumn,
@@ -118,6 +132,7 @@ export function useInstanceGroupJobsColumns(options?: {
     ];
     return displayColumns;
   }, [
+    IDColumns,
     nameColumn,
     statusColumn,
     typeColumn,
