@@ -48,7 +48,11 @@ export function PageDetailsFromColumns<T extends object>(props: {
     <>
       {firstColumns.map((column) => {
         return (
-          <PageDetail key={column.id ?? column.header} label={column.header}>
+          <PageDetail
+            key={column.id ?? column.header}
+            helpText={column.helpText}
+            label={column.header}
+          >
             <TableColumnCell column={column} item={item} />
           </PageDetail>
         );
