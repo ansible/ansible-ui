@@ -68,14 +68,18 @@ export function useUserRowActions(onUsersDeleted: (users: PlatformUser[]) => voi
   const rowActions = useMemo<IPageAction<PlatformUser>[]>(() => {
     // TODO: Update based on RBAC information from Users API
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const cannotDeleteUser = (user: PlatformUser) =>
-      // eslint-disable-next-line no-constant-condition
-      true ? '' : t(`The user cannot be deleted due to insufficient permissions.`);
-    // TODO: Update based on RBAC information from Users API
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const cannotEditUser = (user: PlatformUser) =>
-      // eslint-disable-next-line no-constant-condition
-      true ? '' : t(`The user cannot be edited due to insufficient permissions.`);
+    const cannotDeleteUser = (user: PlatformUser) => {
+      if (user.managed) {
+        return t(`System managed users cannot be deleted`);
+      }
+      return '';
+    };
+    const cannotEditUser = (user: PlatformUser) => {
+      if (user.managed) {
+        return t(`System managed users cannot be edited`);
+      }
+      return '';
+    };
 
     return [
       {

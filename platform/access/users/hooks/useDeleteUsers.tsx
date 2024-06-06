@@ -20,12 +20,11 @@ export function useDeleteUsers(onComplete: (users: PlatformUser[]) => void) {
   );
   const actionColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn]);
   // TODO: Update based on RBAC information from Users API
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const cannotDeleteUser = (user: PlatformUser) => {
-    // eslint-disable-next-line no-constant-condition
-    return true //user?.summary_fields?.user_capabilities?.delete
-      ? undefined
-      : t('The user cannot be deleted due to insufficient permissions.');
+    if (user.managed) {
+      return t(`System managed users cannot be deleted`);
+    }
+    return '';
   };
   const bulkAction = useBulkConfirmation<PlatformUser>();
   const deleteUsers = (users: PlatformUser[]) => {
