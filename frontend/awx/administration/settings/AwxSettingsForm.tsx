@@ -1,3 +1,4 @@
+import { FormGroup } from '@patternfly/react-core';
 import { t } from 'i18next';
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -139,6 +140,20 @@ export function AwxSettingsForm(props: {
     return { options, groups };
   }, [props.options]);
 
+  const booleanOptions = Object.entries(options)
+    .filter(([, option]) => option.type === 'boolean')
+    .reduce<Record<string, AwxSettingsOptionsAction>>((acc, [key, option]) => {
+      acc[key] = option;
+      return acc;
+    }, {});
+
+  const otherOptions = Object.entries(options)
+    .filter(([, option]) => option.type !== 'boolean')
+    .reduce<Record<string, AwxSettingsOptionsAction>>((acc, [key, option]) => {
+      acc[key] = option;
+      return acc;
+    }, {});
+
   return (
     <AwxPageForm
       defaultValue={props.data}
@@ -146,9 +161,17 @@ export function AwxSettingsForm(props: {
       onCancel={() => navigate('..')}
       onSubmit={onSubmit}
     >
-      {Object.entries(options).map(([key, option]) => {
+      {Object.entries(otherOptions).map(([key, option]) => {
         return <OptionActionsFormInput key={key} name={key} option={option} />;
       })}
+      {Object.keys(booleanOptions).length > 0 && (
+        <FormGroup label={t('Options')} isStack role="group">
+          {Object.entries(booleanOptions).map(([key, option]) => {
+            return <OptionActionsFormInput key={key} name={key} option={option} />;
+          })}
+        </FormGroup>
+      )}
+
       {groups.map((group) => {
         return (
           <PageFormSection
