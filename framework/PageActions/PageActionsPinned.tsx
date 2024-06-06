@@ -1,5 +1,4 @@
 import { Split } from '@patternfly/react-core';
-import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { ComponentClass, FunctionComponent } from 'react';
 import { IPageAction, PageActionType } from './PageAction';
 import { PageActionButton } from './PageActionButton';
@@ -116,7 +115,6 @@ export function PageActionPinned<T extends object>(props: PageActionPinnedProps<
           selectedItem={selectedItem}
           selectedItems={selectedItems}
           iconOnly={props.iconOnly}
-          position={DropdownPosition.right}
           tooltip={tooltip}
           isDisabled={isDisabled}
           variant={action.variant}

@@ -1,14 +1,15 @@
-import { ButtonVariant, Tooltip } from '@patternfly/react-core';
 import {
+  ButtonVariant,
+  Divider,
   Dropdown,
   DropdownItem,
-  DropdownPosition,
-  DropdownSeparator,
-  DropdownToggle,
-  KebabToggle,
-} from '@patternfly/react-core/deprecated';
-import { CircleIcon } from '@patternfly/react-icons';
-import { ComponentClass, FunctionComponent, useEffect, useMemo, useState } from 'react';
+  DropdownList,
+  MenuToggle,
+  MenuToggleElement,
+  Tooltip,
+} from '@patternfly/react-core';
+import { CircleIcon, EllipsisVIcon } from '@patternfly/react-icons';
+import { ComponentClass, FunctionComponent, Ref, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
@@ -40,7 +41,6 @@ interface PageActionDropdownProps<T extends object> {
   isDisabled?: string | undefined;
   label?: string;
   onOpen?: (label: string, open: boolean) => void;
-  position?: DropdownPosition;
   selectedItem?: T;
   selectedItems?: T[];
   tooltip?: string;
@@ -54,7 +54,6 @@ export function PageActionDropdown<T extends object>(props: PageActionDropdownPr
     isDisabled,
     label,
     onOpen,
-    position,
     selectedItem,
     selectedItems,
     tooltip,
@@ -98,60 +97,73 @@ export function PageActionDropdown<T extends object>(props: PageActionDropdownPr
 
   if (actions.length === 0) return <></>;
   const Icon = icon;
-  const toggleIcon = Icon ? <Icon /> : label;
   const isPrimary =
     variant === ButtonVariant.primary || (hasBulkActions && !!selectedItems?.length);
   /** Turn primary button to secondary if there are items selected */
   const isSecondary =
     variant === ButtonVariant.primary && !hasBulkActions && !!selectedItems?.length;
-  const Toggle =
+  const toggle = (toggleRef: Ref<MenuToggleElement>) =>
     label || Icon ? (
-      <DropdownToggle
+      <MenuToggle
         id="toggle-dropdown"
+        ref={toggleRef}
         isDisabled={!!isDisabled}
-        onToggle={() => setDropdownOpen(!dropdownOpen)}
-        toggleVariant={isSecondary ? 'secondary' : isPrimary ? 'primary' : undefined}
-        toggleIndicator={Icon && iconOnly ? null : undefined}
-        style={isPrimary && !label ? { color: 'var(--pf-v5-global--Color--light-100)' } : {}}
+        onClick={() => setDropdownOpen(!dropdownOpen)}
+        // toggleVariant={isSecondary ? 'secondary' : isPrimary ? 'primary' : undefined}
+        // toggleIndicator={Icon && iconOnly ? null : undefined}
+        // style={isPrimary && !label ? { color: 'var(--pf-v5-global--Color--light-100)' } : {}}
+        variant={isSecondary ? 'secondary' : isPrimary ? 'primary' : undefined}
         icon={Icon ? <Icon /> : undefined}
         data-cy={id}
       >
         {iconOnly ? undefined : label}
-      </DropdownToggle>
+      </MenuToggle>
     ) : (
-      <KebabToggle
-        className="toggle-kebab"
-        isDisabled={!!isDisabled}
-        onToggle={() => setDropdownOpen(!dropdownOpen)}
-        toggleVariant={isPrimary ? 'primary' : undefined}
-        style={isPrimary && !label ? { color: 'var(--pf-v5-global--Color--light-100)' } : {}}
+      <MenuToggle
+        id={id}
         data-cy={id}
+        ref={toggleRef}
+        onClick={() => setDropdownOpen(!dropdownOpen)}
+        // icon={<EllipsisVIcon />}
+        // toggleVariant={isPrimary ? 'primary' : undefined}
+        // style={isPrimary && !label ? { color: 'var(--pf-v5-global--Color--light-100)' } : {}}
+        isDisabled={!!isDisabled}
+        variant={ButtonVariant.plain}
+        style={{ padding: 0 }}
       >
-        {toggleIcon}
-      </KebabToggle>
+        <div
+          className={
+            variant === ButtonVariant.control ? 'pf-v5-c-button pf-m-control' : 'pf-v5-c-button'
+          }
+        >
+          <EllipsisVIcon />
+        </div>
+      </MenuToggle>
     );
   const dropdown = (
     <Dropdown
       onSelect={() => setDropdownOpen(false)}
-      toggle={Toggle}
+      toggle={toggle}
       isOpen={dropdownOpen}
-      isPlain={!label || iconOnly}
-      dropdownItems={actions.map((action, index) => (
-        <PageDropdownActionItem
-          key={'label' in action ? action.label : `action-${index}`}
-          action={action}
-          selectedItems={selectedItems ?? []}
-          selectedItem={selectedItem}
-          hasIcons={hasIcons}
-          hasSwitches={hasSwitches}
-          index={index}
-          data-cy={id}
-        />
-      ))}
-      position={position}
-      // ZIndex 400 is needed for PF table stick headers
+      onOpenChange={(isOpen: boolean) => setDropdownOpen(isOpen)}
       style={{ zIndex: dropdownOpen ? 400 : undefined }}
-    />
+      popperProps={{ preventOverflow: true }}
+      shouldFocusToggleOnSelect
+    >
+      <DropdownList>
+        {actions.map((action, index) => (
+          <PageDropdownActionItem
+            key={'label' in action ? action.label : `action-${index}`}
+            action={action}
+            selectedItems={selectedItems ?? []}
+            selectedItem={selectedItem}
+            hasIcons={hasIcons}
+            hasSwitches={hasSwitches}
+            index={index}
+          />
+        ))}
+      </DropdownList>
+    </Dropdown>
   );
   let tooltipContent;
 
@@ -260,7 +272,7 @@ function PageDropdownActionItem<T extends object>(props: {
           <DropdownItem
             isAriaDisabled={Boolean(isDisabled)}
             icon={Icon ? <Icon /> : undefined}
-            component={<Link to={to}>{action.label}</Link>}
+            component={() => <Link to={to}>{action.label}</Link>}
             style={{
               color:
                 action.isDanger && !isDisabled ? getPatternflyColor(PFColorE.Danger) : undefined,
@@ -295,7 +307,7 @@ function PageDropdownActionItem<T extends object>(props: {
     }
 
     case PageActionType.Seperator:
-      return <DropdownSeparator key={`separator-${index}`} />;
+      return <Divider component="li" key={`separator-${index}`} />;
   }
 }
 
