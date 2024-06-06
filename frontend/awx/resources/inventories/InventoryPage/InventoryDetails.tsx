@@ -33,6 +33,8 @@ import { StatusLabel } from '../../../../common/Status';
 import { useInventoryFormDetailLabels } from '../InventoryForm';
 import { LabelHelp } from '../components/LabelHelp';
 import { useOutletContext } from 'react-router-dom';
+import { useInventoryTypes } from '../hooks/useInventoryTypes';
+import { INVENTORYURLPATHS } from '../constants';
 
 function useInstanceGroups(inventoryId: string) {
   const { data } = useGet<{ results: InstanceGroup[] }>(
@@ -55,7 +57,7 @@ export type InventoryWithSource = Inventory & { source?: InventorySource };
 
 export function InventoryDetailsInner(props: { inventory: InventoryWithSource }) {
   const { t } = useTranslation();
-
+  const inventoryTypes = useInventoryTypes();
   const inventory = props.inventory;
   const pageNavigate = usePageNavigate();
   const params = useParams<{ id: string; inventory_type: string }>();
@@ -70,18 +72,6 @@ export function InventoryDetailsInner(props: { inventory: InventoryWithSource })
   );
 
   const inventorySourceData = inventory.source;
-
-  const inventoryTypes: { [key: string]: string } = {
-    '': t('Inventory'),
-    smart: t('Smart inventory'),
-    constructed: t('Constructed inventory'),
-  };
-
-  const inventoryUrlPaths: { [key: string]: string } = {
-    '': 'inventory',
-    smart: 'smart_inventory',
-    constructed: 'constructed_inventory',
-  };
 
   const inventoryFormDetailLables = useInventoryFormDetailLabels();
 
@@ -207,7 +197,7 @@ export function InventoryDetailsInner(props: { inventory: InventoryWithSource })
                 <Link
                   to={getPageUrl(AwxRoute.InventoryDetails, {
                     params: {
-                      inventory_type: inventoryUrlPaths[inventory.kind],
+                      inventory_type: INVENTORYURLPATHS[inventory.kind],
                       id: inventory.id,
                     },
                   })}

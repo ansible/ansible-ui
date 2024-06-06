@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { ActivityStream } from '../../../interfaces/ActivityStream';
 import { useGetPageUrl } from '../../../../../framework';
 import { useGetActivityStreamRoute } from '../hooks/useGetActivityStreamRoute';
+import { INVENTORYURLPATHS } from '../../../resources/inventories/constants';
 
 interface ActivityStreamDescriptionProps {
   activity: ActivityStream;
@@ -105,6 +106,24 @@ export const ActivityDescription: React.FC<ActivityStreamDescriptionProps> = ({
                   <Link
                     to={getPageUrl(sourceResourceRoute, {
                       params: { id: sourceResourceObj.id, job_type: 'workflow' },
+                    })}
+                    data-cy="source-resource-detail"
+                  >
+                    {sourceResourceName}
+                  </Link>
+                </span>
+              );
+            case 'inventory':
+              return (
+                <span>
+                  {' '}
+                  {`${operationText} ${object1} `}
+                  <Link
+                    to={getPageUrl(sourceResourceRoute, {
+                      params: {
+                        id: sourceResourceObj.id,
+                        inventory_type: INVENTORYURLPATHS[sourceResourceObj.kind],
+                      },
                     })}
                     data-cy="source-resource-detail"
                   >
