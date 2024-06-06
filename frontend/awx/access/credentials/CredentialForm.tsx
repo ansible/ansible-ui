@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -303,25 +303,31 @@ export function EditCredential() {
       ? parsedCredentialTypes?.[credential.credential_type]?.kind === 'external'
       : null;
 
-  const promptPassword: Prompts = {};
-  if (credential?.inputs) {
-    Object.entries(credential.inputs).forEach(([key, value]) => {
-      if (typeof value === 'string' && value === 'ASK') {
-        promptPassword[`ask_${key}`] = true;
-      } else {
-        promptPassword[`ask_${key}`] = false;
-      }
-    });
-  }
+  const promptPassword: Prompts = useMemo(() => {
+    const promptPasswordObj: Prompts = {};
+    if (credential?.inputs) {
+      Object.entries(credential.inputs).forEach(([key, value]) => {
+        if (typeof value === 'string' && value === 'ASK') {
+          promptPasswordObj[`ask_${key}`] = true;
+        } else {
+          promptPasswordObj[`ask_${key}`] = false;
+        }
+      });
+    }
+    return promptPasswordObj;
+  }, [credential]);
 
-  const initialValues: initialValues = {
-    name: credential?.name ?? '',
-    description: credential?.description ?? '',
-    credential_type: credential?.credential_type ?? 0,
-    organization: credential?.organization ?? null,
-    ...(credential?.inputs ?? {}),
-    ...(promptPassword ?? {}),
-  };
+  const initialValues: initialValues = useMemo(
+    () => ({
+      name: credential?.name ?? '',
+      description: credential?.description ?? '',
+      credential_type: credential?.credential_type ?? 0,
+      organization: credential?.organization ?? null,
+      ...(credential?.inputs ?? {}),
+      ...(promptPassword ?? {}),
+    }),
+    [credential, promptPassword]
+  );
 
   if (
     (isLoadingCredential && !credential) ||
@@ -657,7 +663,7 @@ function CredentialSubForm({
                     accumulatedPluginValues,
                   });
                 }}
-                initialValues={initialValues}
+                fieldInitialValue={initialValues && initialValues[field?.id]}
               />
             );
           } else if (credentialType.kind === 'ssh' && field.id === 'become_method') {
