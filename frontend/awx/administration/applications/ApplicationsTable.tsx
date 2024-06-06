@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { ButtonVariant } from '@patternfly/react-core';
-import { EditIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
+import { EditIcon, PencilAltIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import {
   IPageAction,
@@ -47,7 +47,7 @@ export function ApplicationsTable() {
         variant: ButtonVariant.primary,
         isPinned: true,
         icon: PlusCircleIcon,
-        label: t('Create application'),
+        label: t('Create OAuth application'),
         isDisabled: canCreateApplication
           ? undefined
           : t(
@@ -60,7 +60,7 @@ export function ApplicationsTable() {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
-        label: t('Delete selected applications'),
+        label: t('Delete selected OAuth applications'),
         isDisabled: (applications: Application[]) => cannotDeleteResources(applications, t),
         onClick: deleteApplications,
         isDanger: true,
@@ -74,9 +74,9 @@ export function ApplicationsTable() {
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
-        icon: EditIcon,
+        icon: PencilAltIcon,
         isPinned: true,
-        label: t('Edit application'),
+        label: t('Edit OAuth application'),
         isDisabled: (application) => cannotEditResource(application, t),
         onClick: (application) =>
           pageNavigate(AwxRoute.EditApplication, { params: { id: application.id } }),
@@ -86,7 +86,7 @@ export function ApplicationsTable() {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: TrashIcon,
-        label: t('Delete application'),
+        label: t('Delete OAuth application'),
         isDisabled: (application) => cannotDeleteResource(application, t),
         onClick: (application) => deleteApplications([application]),
         isDanger: true,
@@ -116,7 +116,7 @@ export function ApplicationsTable() {
             )
       }
       emptyStateButtonIcon={<PlusCircleIcon />}
-      emptyStateButtonText={canCreateApplication ? t('Create application') : undefined}
+      emptyStateButtonText={canCreateApplication ? t('Create OAuth application') : undefined}
       emptyStateButtonClick={
         canCreateApplication ? () => pageNavigate(AwxRoute.CreateApplication) : undefined
       }
