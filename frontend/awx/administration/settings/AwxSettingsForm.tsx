@@ -170,9 +170,8 @@ export function AwxSettingsForm(props: {
 
 export function OptionActionsFormInput(props: { name: string; option: AwxSettingsOptionsAction }) {
   const option = props.option;
-  const { t } = useTranslation();
 
-  if (option.label.includes(t('Secret'))) {
+  if (props.name.endsWith('SECRET')) {
     return (
       <PageFormTextInput
         label={option.label}
@@ -186,8 +185,8 @@ export function OptionActionsFormInput(props: { name: string; option: AwxSetting
   }
 
   if (
-    option.label.includes('SAML Service Provider Public Certificate') ||
-    option.label.includes('SAML Service Provider Private Key')
+    props.name.includes('SOCIAL_AUTH_SAML_SP_PUBLIC_CERT') ||
+    props.name.includes('SOCIAL_AUTH_SAML_SP_PRIVATE_KEY')
   ) {
     return (
       <PageFormSection singleColumn>
