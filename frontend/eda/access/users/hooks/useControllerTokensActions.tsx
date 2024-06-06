@@ -15,7 +15,8 @@ import { useDeleteControllerTokens } from './useDeleteControllerTokens';
 
 export function useControllerTokensActions(
   view: IEdaView<EdaControllerToken>,
-  createTokenRoute?: string
+  createTokenRoute?: string,
+  createTokenButtonLabel?: string
 ) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
@@ -29,7 +30,7 @@ export function useControllerTokensActions(
         variant: ButtonVariant.primary,
         isPinned: true,
         icon: PlusCircleIcon,
-        label: t('Create controller token'),
+        label: t(createTokenButtonLabel || 'Create controller token'),
         onClick: () => pageNavigate(createRoute),
       },
       {
@@ -42,6 +43,6 @@ export function useControllerTokensActions(
         isDanger: true,
       },
     ],
-    [deleteControllerTokens, pageNavigate, t, createRoute]
+    [deleteControllerTokens, pageNavigate, t, createRoute, createTokenButtonLabel]
   );
 }
