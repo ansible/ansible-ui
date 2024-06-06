@@ -21,6 +21,7 @@ import { awxAPI } from '../../common/api/awx-utils';
 import { ExecutionEnvironment } from '../../interfaces/ExecutionEnvironment';
 import { AwxRoute } from '../../main/AwxRoutes';
 import { useGetCredentialTypeIDs } from '../../resources/projects/hooks/useGetCredentialTypeIDs';
+import { ExecutionEnvironments } from './ExecutionEnvironments';
 
 const PullOption = {
   Always: 'Always pull container before running.',
@@ -126,10 +127,10 @@ export function EditExecutionEnvironment() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Edit Execution Environment')}
+        title={`${t('Edit')} ${execution_env?.name || t('Execution Environment')}`}
         breadcrumbs={[
           { label: t('Execution Environments'), to: getPageUrl(AwxRoute.ExecutionEnvironments) },
-          { label: t('Edit Execution Environment') },
+          { label: `${t('Edit')} ${execution_env?.name || t('Execution Environment')}` },
         ]}
       />
       <AwxPageForm<ExecutionEnvironment>
