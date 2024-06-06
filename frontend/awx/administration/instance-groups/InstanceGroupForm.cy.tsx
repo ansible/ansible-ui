@@ -97,7 +97,7 @@ describe('Create Edit Instance Group Form', () => {
         });
     });
 
-    it.only('should validate required fields on save', () => {
+    it('should validate required fields on save', () => {
       cy.mount(<EditInstanceGroup />, {
         path: '/instance-groups/:id/edit',
         initialEntries: [`/instance-groups/1/edit`],
