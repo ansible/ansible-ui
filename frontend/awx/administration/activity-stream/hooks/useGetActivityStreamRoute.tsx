@@ -15,7 +15,6 @@ export function useGetActivityStreamRoute(resource?: string | null): AwxRoute | 
     case 'project':
       return AwxRoute.ProjectDetails;
     case 'inventory':
-      // TODO add smart and constructed inventory routes
       return AwxRoute.InventoryDetails;
     case 'inventory_source':
       return AwxRoute.InventorySourceDetail;
