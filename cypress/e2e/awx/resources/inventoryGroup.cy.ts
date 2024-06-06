@@ -110,7 +110,7 @@ describe('Inventory Groups', () => {
       });
     });
 
-    it.only('can run an ad-hoc command against a group', () => {
+    it('can run an ad-hoc command against a group', () => {
       cy.createInventoryHostGroup(organization).then((result) => {
         const { inventory } = result;
         cy.navigateTo('awx', 'inventories');
