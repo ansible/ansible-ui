@@ -124,7 +124,7 @@ instanceGroupTypes.forEach((igType) => {
         'editInstanceGroup'
       );
 
-      cy.clickButton(`Save ${igType} Group`);
+      cy.getByDataCy('Submit').click();
       cy.wait('@editInstanceGroup')
         .then((response) => {
           expect(response?.response?.statusCode).to.eql(200);
