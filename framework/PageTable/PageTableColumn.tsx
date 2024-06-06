@@ -79,6 +79,9 @@ interface ITableColumnCommon<T extends object> {
   /** Header for the column in the table. */
   header: string;
 
+  /** This is the help text that will appear on the details view when that details view uses <PageDetailsFromColumns> */
+  helpText?: string;
+
   /** MinWidth for the column. */
   minWidth?: number;
 
