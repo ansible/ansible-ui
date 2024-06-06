@@ -125,14 +125,7 @@ export function PageActionDropdown<T extends object>(props: PageActionDropdownPr
         toggleVariant={isPrimary ? 'primary' : undefined}
         style={isPrimary && !label ? { color: 'var(--pf-v5-global--Color--light-100)' } : {}}
         data-cy={id}
-      >
-        {/* {props.variant === ButtonVariant.control ? (
-          <div className="pf-v5-c-button pf-m-control">{toggleIcon}</div>
-        ) : (
-          toggleIcon
-        )} */}
-        {JSON.stringify(props)}
-      </KebabToggle>
+      />
     );
   const dropdown = (
     <Dropdown
