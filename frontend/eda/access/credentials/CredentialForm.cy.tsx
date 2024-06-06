@@ -17,14 +17,14 @@ describe('Create credential ', () => {
     );
   });
 
-  it('Create Credential - Displays error message on internal server error', () => {
+  it('Create credential - Displays error message on internal server error', () => {
     cy.mount(<CreateCredential />);
     cy.get('[data-cy="name"]').type('Test');
   });
 
   it('Component renders', () => {
     cy.mount(<CreateCredential />);
-    cy.verifyPageTitle('Create Credential');
+    cy.verifyPageTitle('Create credential');
   });
 
   it('Validates properly', () => {
