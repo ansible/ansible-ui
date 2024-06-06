@@ -196,8 +196,11 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
   return (
     <PageLayout>
       <PageHeader
-        breadcrumbs={breadcrumbs}
-        title={mode === 'edit' ? t('Edit notifier') : t('Add notifier')}
+        title={t('Create notifier')}
+        breadcrumbs={[
+          { label: t('Notifiers'), to: getPageUrl(AwxRoute.NotificationTemplates) },
+          { label: t('Create notifier') },
+        ]}
       />
       <AwxPageForm<NotificationTemplate>
         submitText={t('Save notifier')}

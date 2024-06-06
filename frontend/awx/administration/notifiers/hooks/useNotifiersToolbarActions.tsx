@@ -1,4 +1,4 @@
-import { PlusIcon, TrashIcon } from '@patternfly/react-icons';
+import { PlusCircleIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -38,14 +38,14 @@ export function useNotifiersToolbarActions(
         selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
         isPinned: true,
-        icon: PlusIcon,
-        label: t('Add notifier'),
+        icon: PlusCircleIcon,
+        label: t('Create notifier'),
         onClick: () => pageNavigate(AwxRoute.AddNotificationTemplate),
         isDisabled: () =>
           canAddNotificationTemplate
             ? undefined
             : t(
-                `You do not have permission to add notifiers. Please contact your organization administrator if there is an issue with your access.`
+                `You do not have permission to create notifiers. Please contact your organization administrator if there is an issue with your access.`
               ),
       },
       {
