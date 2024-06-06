@@ -10,7 +10,13 @@ import { useControllerTokensColumns } from '../hooks/useControllerTokensColumns'
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import { DetailInfo } from '../../../../../framework/components/DetailInfo';
 
-export function ControllerTokens(props: { createTokenRoute?: string; infoMessage?: string }) {
+export function ControllerTokens(props: {
+  createTokenRoute?: string;
+  infoMessage?: string;
+  createTokenButtonLabel?: string;
+  emptyStateTitle?: string;
+  emptyStateDescription?: string;
+}) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const tableColumns = useControllerTokensColumns();
@@ -20,7 +26,11 @@ export function ControllerTokens(props: { createTokenRoute?: string; infoMessage
     url: edaAPI`/users/me/awx-tokens/`,
     tableColumns,
   });
-  const toolbarActions = useControllerTokensActions(view, createRoute);
+  const toolbarActions = useControllerTokensActions(
+    view,
+    createRoute,
+    props.createTokenButtonLabel
+  );
   const rowActions = useControllerTokenActions(view);
   return (
     <PageLayout>
@@ -31,12 +41,16 @@ export function ControllerTokens(props: { createTokenRoute?: string; infoMessage
         toolbarActions={toolbarActions}
         rowActions={rowActions}
         errorStateTitle={t('Error loading controller tokens')}
-        emptyStateTitle={t('You currently do not have any tokens from Automation Controller.')}
+        emptyStateTitle={t(
+          props.emptyStateTitle ||
+            'You currently do not have any tokens from Automation Controller.'
+        )}
         emptyStateDescription={t(
-          'Please create a token from Automation Controller by using the button below.'
+          props.emptyStateDescription ||
+            'Please create a token from Automation Controller by using the button below.'
         )}
         emptyStateButtonIcon={<PlusCircleIcon />}
-        emptyStateButtonText={t('Create controller token')}
+        emptyStateButtonText={t(props.createTokenButtonLabel || 'Create controller token')}
         emptyStateButtonClick={() => pageNavigate(createRoute)}
         {...view}
         defaultSubtitle={t('Controller tokens')}
