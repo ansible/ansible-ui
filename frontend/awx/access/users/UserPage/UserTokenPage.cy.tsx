@@ -5,16 +5,6 @@ describe('UserTokenPage', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/v2/users/*',
-        hostname: 'localhost',
-      },
-      {
-        fixture: 'awxUser.json',
-      }
-    );
-    cy.intercept(
-      {
-        method: 'GET',
         url: '/api/v2/tokens/*',
         hostname: 'localhost',
       },
@@ -30,9 +20,8 @@ describe('UserTokenPage', () => {
     });
     cy.get('[data-cy="page-title"]').contains('Token');
     cy.get('nav[aria-label="Breadcrumb"]').within(() => {
-      cy.contains('Users');
-      cy.contains('org-admin');
       cy.contains('Tokens');
+      cy.contains('Personal access token');
       cy.contains('Details');
     });
     cy.get('[data-cy="manage-view"]').get('[data-cy="delete-token"]').contains('Delete token');

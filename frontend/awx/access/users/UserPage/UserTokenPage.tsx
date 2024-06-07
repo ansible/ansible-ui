@@ -19,16 +19,17 @@ import { useGetItem } from '../../../../common/crud/useGet';
 import { AwxError } from '../../../common/AwxError';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { Token } from '../../../interfaces/Token';
-import { AwxUser } from '../../../interfaces/User';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useDeleteUserTokens } from '../hooks/useDeleteUserTokens';
 
-export function UserTokenPage() {
+export function UserTokenPage(props: {
+  breadcrumbLabelForPreviousPage?: string;
+  backTabLabel?: string;
+}) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const pageNavigate = usePageNavigate();
   const params = useParams<{ id: string; tokenid: string }>();
-  const { error: userError, data: user, refresh } = useGetItem<AwxUser>(awxAPI`/users`, params.id);
   const {
     error: tokenError,
     data: token,
@@ -55,7 +56,6 @@ export function UserTokenPage() {
     ];
   }, [deleteTokens, t]);
 
-  if (userError) return <AwxError error={userError} handleRefresh={refresh} />;
   if (tokenError) return <AwxError error={tokenError} handleRefresh={refreshToken} />;
   if (!token) return <LoadingPage breadcrumbs tabs />;
 
@@ -64,16 +64,14 @@ export function UserTokenPage() {
       <PageHeader
         title={t('Token')}
         breadcrumbs={[
-          { label: t('Users'), to: getPageUrl(AwxRoute.Users) },
           {
-            label: user?.username,
-            to: getPageUrl(AwxRoute.UserDetails, { params: { id: params.id } }),
-          },
-          {
-            label: t('Tokens'),
+            label: props.breadcrumbLabelForPreviousPage || t('Tokens'),
             to: getPageUrl(AwxRoute.UserTokens, {
               params: { id: params.id, tokenid: params.tokenid },
             }),
+          },
+          {
+            label: token.summary_fields?.application?.name || t('Personal access token'),
           },
         ]}
         headerActions={
@@ -86,7 +84,7 @@ export function UserTokenPage() {
       ></PageHeader>
       <PageRoutedTabs
         backTab={{
-          label: t('Back to User Tokens'),
+          label: props.backTabLabel || t('Back to User Tokens'),
           page: AwxRoute.UserTokens,
           persistentFilterKey: 'user tokens',
         }}
