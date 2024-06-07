@@ -121,14 +121,14 @@ export function useRunCommandAction<T extends { name: string }>(
   const onClick = useCallback(
     (selectedItems: T[]) => {
       const limit = selectedItems.map((item) => item.name).join(', ');
-      const query: { limit?: string; useStorage?: string } = {};
+      const query: { limit?: string; storage?: string } = {};
 
       if (limit.length < 1800) {
         if (limit) {
           query.limit = limit;
         }
       } else {
-        query.useStorage = 'true';
+        query.storage = 'true';
         localStorage.setItem('runCommandActionSelectedItems', limit);
       }
 

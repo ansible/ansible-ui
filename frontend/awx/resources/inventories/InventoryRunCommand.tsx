@@ -28,9 +28,9 @@ export function InventoryRunCommand() {
   const { id } = useParams();
   const [searchParams] = useURLSearchParams();
   let limit = searchParams.get('limit') || 'all';
-  const useStorage = searchParams.get('useStorage');
+  const storage = searchParams.get('storage');
 
-  if (useStorage) {
+  if (storage) {
     limit = localStorage.getItem('runCommandActionSelectedItems') || limit;
   }
 
