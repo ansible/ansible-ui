@@ -86,7 +86,7 @@ export function CredentialDetailsInner(props: { credential: Credential }) {
         {credential.summary_fields.organization && (
           <TextCell
             text={credential.summary_fields?.organization?.name}
-            to={getPageUrl(AwxRoute.OrganizationPage, {
+            to={getPageUrl(AwxRoute.OrganizationDetails, {
               params: { id: credential.summary_fields?.organization?.id },
             })}
           />
@@ -98,7 +98,7 @@ export function CredentialDetailsInner(props: { credential: Credential }) {
         ) : (
           <TextCell
             text={credential.summary_fields?.credential_type?.name}
-            to={getPageUrl(AwxRoute.CredentialTypePage, {
+            to={getPageUrl(AwxRoute.CredentialTypeDetails, {
               params: { id: credential.summary_fields?.credential_type?.id },
             })}
           />
