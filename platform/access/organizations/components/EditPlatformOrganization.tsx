@@ -99,6 +99,7 @@ export function EditPlatformOrganization() {
               default_environment: values?.executionEnvironment?.name
                 ? values?.executionEnvironment?.id
                 : null,
+              max_hosts: values?.maxHosts ? values?.maxHosts : 0,
             }
           )
         );

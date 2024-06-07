@@ -67,6 +67,7 @@ export function CreatePlatformOrganization() {
               awxAPI`/organizations/${controllerOrganization.id.toString()}/`,
               {
                 default_environment: values.executionEnvironment.id,
+                max_hosts: values?.maxHosts ?? 0,
               }
             );
           }

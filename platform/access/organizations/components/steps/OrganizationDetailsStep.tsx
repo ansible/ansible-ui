@@ -5,6 +5,7 @@ import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFor
 import { PageFormCredentialSelect } from '../../../../../frontend/awx/access/credentials/components/PageFormCredentialSelect';
 import { PageFormExecutionEnvironmentSelect } from '../../../../../frontend/awx/administration/execution-environments/components/PageFormSelectExecutionEnvironment';
 import { PageFormInstanceGroupSelect } from '../../../../../frontend/awx/administration/instance-groups/components/PageFormInstanceGroupSelect';
+import { useAwxConfig } from '../../../../../frontend/awx/common/useAwxConfig';
 import { Organization as ControllerOrganization } from '../../../../../frontend/awx/interfaces/Organization';
 import { useGetCredentialTypeIDs } from '../../../../../frontend/awx/resources/projects/hooks/useGetCredentialTypeIDs';
 import { useHasAwxService } from '../../../../main/GatewayServices';
@@ -45,6 +46,7 @@ function ControllerOrganizationDetails(props: { controllerOrganization?: Control
   const { t } = useTranslation();
   const controllerOrganization = props.controllerOrganization;
   const credentialTypeIDs = useGetCredentialTypeIDs();
+  const config = useAwxConfig();
 
   return (
     <>
@@ -68,6 +70,15 @@ function ControllerOrganizationDetails(props: { controllerOrganization?: Control
         placeholder={t('Add galaxy credentials')}
         isMultiple
       />
+      {config && config?.license_info.license_type !== 'open' && (
+        <PageFormTextInput
+          name="maxHosts"
+          label={t('Max hosts')}
+          labelHelpTitle={t('Max hosts')}
+          type="number"
+          min={0}
+        />
+      )}
     </>
   );
 }

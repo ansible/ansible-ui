@@ -21,6 +21,7 @@ import { useAwxResource } from '../../../hooks/useAwxResource';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import { useHasAwxService } from '../../../main/GatewayServices';
 import { useOrganizationColumns } from '../hooks/useOrganizationColumns';
+import { useAwxConfig } from '../../../../frontend/awx/common/useAwxConfig';
 
 export function PlatformOrganizationDetails() {
   const params = useParams<{ id?: string }>();
@@ -52,6 +53,7 @@ function ControllerOrganizationDetails(props: { platformOrganization: PlatformOr
   const { t } = useTranslation();
   const { platformOrganization } = props;
   const getPageUrl = useGetPageUrl();
+  const config = useAwxConfig();
 
   const { resource: controllerOrganization } = useAwxResource<AwxOrganization>(
     'organizations/',
@@ -105,6 +107,14 @@ function ControllerOrganizationDetails(props: { platformOrganization: PlatformOr
               <CredentialLabel credential={credential} key={credential.id} />
             ))}
           </LabelGroup>
+        </PageDetail>
+      )}
+      {config && config?.license_info.license_type !== 'open' && (
+        <PageDetail
+          label={t('Max hosts')}
+          isEmpty={controllerOrganization?.max_hosts === undefined}
+        >
+          {controllerOrganization?.max_hosts}
         </PageDetail>
       )}
     </>
