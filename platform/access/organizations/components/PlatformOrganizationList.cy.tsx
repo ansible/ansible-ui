@@ -64,6 +64,14 @@ describe('Organizations list', () => {
       cy.mount(<PlatformOrganizationList />);
       cy.get('a[data-cy="create-organization"]').should('have.attr', 'aria-disabled', 'false');
     });
+    it('Edit/Delete button is disabled for the default organization', () => {
+      cy.mount(<PlatformOrganizationList />);
+      cy.contains('tr', 'Default').within(() => {
+        cy.get('[data-cy="edit-organization"]').should('have.attr', 'aria-disabled', 'true');
+        cy.get('[data-cy="actions-dropdown"]').click();
+        cy.get('[data-cy="delete-organization"]').should('have.attr', 'aria-disabled', 'true');
+      });
+    });
   });
   describe('Empty list', () => {
     beforeEach(() => {
