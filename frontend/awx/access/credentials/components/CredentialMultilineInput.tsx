@@ -1,15 +1,14 @@
 import { Button, Tooltip } from '@patternfly/react-core';
 import { KeyIcon, UndoIcon } from '@patternfly/react-icons';
-import { PageFormFileUpload } from '../../../../../framework/PageForm/Inputs/PageFormFileUpload';
-import { CredentialInputField, CredentialType } from '../../../interfaces/CredentialType';
-import { useTranslation } from 'react-i18next';
-import { Credential } from '../../../interfaces/Credential';
-import { useGetItem } from '../../../../common/crud/useGet';
-import { awxAPI } from '../../../common/api/awx-utils';
-import { CredentialPluginsInputSource } from '../CredentialPlugins/hooks/useCredentialPluginsDialog';
 import { useCallback, useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { initialValues } from '../CredentialForm';
+import { useTranslation } from 'react-i18next';
+import { PageFormFileUpload } from '../../../../../framework/PageForm/Inputs/PageFormFileUpload';
+import { useGetItem } from '../../../../common/crud/useGet';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { Credential } from '../../../interfaces/Credential';
+import { CredentialInputField, CredentialType } from '../../../interfaces/CredentialType';
+import { CredentialPluginsInputSource } from '../CredentialPlugins/hooks/useCredentialPluginsDialog';
 
 export function CredentialMultilineInput({
   field,
@@ -19,7 +18,7 @@ export function CredentialMultilineInput({
   accumulatedPluginValues,
   setAccumulatedPluginValues,
   setPluginsToDelete,
-  initialValues,
+  fieldInitialValue,
 }: {
   field: CredentialInputField;
   requiredFields: CredentialType['inputs']['required'];
@@ -28,7 +27,7 @@ export function CredentialMultilineInput({
   accumulatedPluginValues: CredentialPluginsInputSource[];
   setAccumulatedPluginValues?: (values: CredentialPluginsInputSource[]) => void;
   setPluginsToDelete?: React.Dispatch<React.SetStateAction<string[]>>;
-  initialValues?: initialValues;
+  fieldInitialValue?: string | boolean | number | null | undefined;
 }) {
   const { t } = useTranslation();
   const [shouldHideField, setShouldHideField] = useState(field.secret);
@@ -99,7 +98,7 @@ export function CredentialMultilineInput({
     setShouldHideField(!shouldHideField);
   };
   const hideField = () => {
-    setValue(field.id, initialValues?.[field.id], { shouldDirty: true });
+    setValue(field.id, fieldInitialValue, { shouldDirty: true });
     setShouldHideField(!shouldHideField);
     setAccumulatedPluginValues?.(
       accumulatedPluginValues.filter((cp) => cp.input_field_name !== field.id)
@@ -139,8 +138,8 @@ export function CredentialMultilineInput({
                 </Tooltip>
               </div>
             ) : field.secret &&
-              initialValues?.[field.id] &&
-              initialValues?.[field.id] === '$encrypted$' &&
+              fieldInitialValue &&
+              fieldInitialValue === '$encrypted$' &&
               watchedFieldValue?.[field.id] !== '$encrypted$' ? (
               <div style={{ display: 'grid' }}>
                 <Button icon={<KeyIcon />} variant="control" onClick={handleModalToggle} />
