@@ -26,7 +26,6 @@ import { useVerbosityString } from '../../../common/useVerbosityString';
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
 import { AwxRoute } from '../../../main/AwxRoutes';
-// import { WebhookService } from '../../../common/WebhookService';
 import { WebhookService } from '../components/WebhookService';
 import styled from 'styled-components';
 
@@ -87,7 +86,14 @@ export function TemplateDetails(props: { templateId?: string; disableScroll?: bo
         )}
       </PageDetail>
       <PageDetail label={t('Description')}>{template.description}</PageDetail>
-      <PageDetail label={t('Job type')}>{template.job_type}</PageDetail>
+      <PageDetail
+        label={t('Job type')}
+        helpText={t(
+          'For job templates, select run to execute the playbook. Select check to only check playbook syntax, test environment setup, and report problems without executing the playbook.'
+        )}
+      >
+        {template.job_type}
+      </PageDetail>
       <PageDetail label={t('Organization')}>
         {summaryFields.organization ? (
           <Link
@@ -101,7 +107,11 @@ export function TemplateDetails(props: { templateId?: string; disableScroll?: bo
           <DeletedDetail />
         )}
       </PageDetail>
-      <PageDetail label={t('Inventory')} isEmpty={!summaryFields.inventory && askInventoryOnLaunch}>
+      <PageDetail
+        label={t('Inventory')}
+        isEmpty={!summaryFields.inventory && askInventoryOnLaunch}
+        helpText={t('Select the inventory containing the hosts you want this job to manage.')}
+      >
         {summaryFields.inventory ? (
           <Link
             to={getPageUrl(AwxRoute.InventoryDetails, {
@@ -117,7 +127,10 @@ export function TemplateDetails(props: { templateId?: string; disableScroll?: bo
           <DeletedDetail />
         )}
       </PageDetail>
-      <PageDetail label={t`Project`}>
+      <PageDetail
+        label={t`Project`}
+        helpText={t('Select the project containing the playbook you want this job to execute.')}
+      >
         {summaryFields.project ? (
           <Link
             to={getPageUrl(AwxRoute.ProjectDetails, { params: { id: summaryFields.project?.id } })}
@@ -128,8 +141,13 @@ export function TemplateDetails(props: { templateId?: string; disableScroll?: bo
           <DeletedDetail />
         )}
       </PageDetail>
-      {/* TODO: more flushed out ExecutionEnvironmentDetail ? */}
-      <PageDetail label={t`Execution environment`} isEmpty={!summaryFields.resolved_environment}>
+      <PageDetail
+        label={t`Execution environment`}
+        isEmpty={!summaryFields.resolved_environment}
+        helpText={t(
+          'The execution environment that will be used when launching this job template. The resolved execution environment can be overridden by explicitly assigning a different one to this job template.'
+        )}
+      >
         <Link
           to={getPageUrl(AwxRoute.ExecutionEnvironmentDetails, {
             params: { id: summaryFields.resolved_environment?.id },
@@ -139,7 +157,12 @@ export function TemplateDetails(props: { templateId?: string; disableScroll?: bo
         </Link>
       </PageDetail>
       <PageDetail label={t('Source control branch')}>{template.scm_branch}</PageDetail>
-      <PageDetail label={t('Playbook')}>{template.playbook}</PageDetail>
+      <PageDetail
+        label={t('Playbook')}
+        helpText={t('Select the playbook to be executed by this job.')}
+      >
+        {template.playbook}
+      </PageDetail>
       <PageDetail label={t('Credentials')} isEmpty={!summaryFields.credentials?.length}>
         <LabelGroup>
           {summaryFields.credentials?.map((credential) => (
@@ -168,12 +191,51 @@ export function TemplateDetails(props: { templateId?: string; disableScroll?: bo
           ))}
         </LabelGroup>
       </PageDetail>
-      <PageDetail label={t('Forks')}>{template.forks || 0}</PageDetail>
+      <PageDetail
+        label={t('Forks')}
+        helpText={
+          <span>
+            {t(
+              `The number of parallel or simultaneous processes to use while executing the playbook. An empty value, or a value less than 1 will use the Ansible default which is usually 5. The default number of forks can be overwritten with a change to`
+            )}{' '}
+            <code>ansible.cfg</code>.{' '}
+            {t(`Refer to the Ansible documentation for details about the configuration file.`)}
+          </span>
+        }
+      >
+        {template.forks || 0}
+      </PageDetail>
       <PageDetail label={t('Limit')}>{template.limit}</PageDetail>
-      <PageDetail label={t('Verbosity')}>{verbosity}</PageDetail>
-      <PageDetail label={t('Timeout')}>{template.timeout || 0}</PageDetail>
-      <PageDetail label={t('Show changes')}>{template.diff_mode ? t`On` : t`Off`}</PageDetail>
-      <PageDetail label={t('Job slicing')}>{template.job_slice_count}</PageDetail>
+      <PageDetail
+        label={t('Verbosity')}
+        helpText={t('Control the level of output ansible will produce as the playbook executes.')}
+      >
+        {verbosity}
+      </PageDetail>
+      <PageDetail
+        label={t('Timeout')}
+        helpText={t(
+          'The amount of time (in seconds) to run before the job is canceled. Defaults to 0 for no job timeout.'
+        )}
+      >
+        {template.timeout || 0}
+      </PageDetail>
+      <PageDetail
+        label={t('Show changes')}
+        helpText={t(
+          `If enabled, show the changes made by Ansible tasks, where supported. This is equivalent to Ansible's --diff mode.`
+        )}
+      >
+        {template.diff_mode ? t`On` : t`Off`}
+      </PageDetail>
+      <PageDetail
+        label={t('Job slicing')}
+        helpText={t(
+          'Divide the work done by this job template into the specified number of job slices, each running the same tasks against a portion of the inventory.'
+        )}
+      >
+        {template.job_slice_count}
+      </PageDetail>
       <PageDetail label={t('Host config key')}>{template.host_config_key}</PageDetail>
       <PageDetail label={t('Provisioning callback URL')} isEmpty={!template.host_config_key}>
         {`${window.location.origin} ${template.url}callback/`}
@@ -219,8 +281,27 @@ export function TemplateDetails(props: { templateId?: string; disableScroll?: bo
           {template.skip_tags.split(',')?.map((tag) => <Label key={tag}>{tag}</Label>)}
         </LabelGroup>
       </PageDetail>
-      <PageDetailCodeEditor label={t('Extra vars')} value={template.extra_vars} />
-      <PageDetail label={t('Enabled options')} isEmpty={!showOptionsField}>
+      <PageDetailCodeEditor
+        label={t('Extra vars')}
+        value={template.extra_vars}
+        helpText={t(
+          'Pass extra command line variables to the playbook. This is the -e or --extra-vars command line parameter for ansible-playbook. Provide key/value pairs using either YAML or JSON. Refer to the documentation for example syntax.'
+        )}
+      />
+      <PageDetail
+        label={t('Enabled options')}
+        isEmpty={!showOptionsField}
+        helpText={
+          <>
+            <p>{t`Concurrent jobs: If enabled, simultaneous runs of this job template will be allowed.`}</p>
+            <p>{t`Fact storage: If enabled, this will store gathered facts so they can be viewed at the host level. Facts are persisted and injected into the fact cache at runtime.`}</p>
+            <p>{t`Privilege escalation: If enabled, run this playbook as an administrator.`}</p>
+            <p>{t`Provisioning callbacks: Enables creation of a provisioning callback URL. Using the URL a host can contact Ansible AWX and request a configuration update using this job template.`}</p>
+            <p>{t`Webhooks: Enable webhook for this template.`}</p>
+            <p>{t`Prevent Instance Group Fallback: If enabled, the job template will prevent adding any inventory or organization instance groups to the list of preferred instances groups to run on.`}</p>
+          </>
+        }
+      >
         <TextList component={TextListVariants.ul}>
           {template.become_enabled && (
             <TextListItem component={TextListItemVariants.li}>
