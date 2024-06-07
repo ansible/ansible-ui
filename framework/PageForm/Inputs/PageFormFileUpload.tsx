@@ -13,6 +13,7 @@ export type PageFormFileUploadProps<
   name: TFieldName;
   placeholder?: string;
   validate?: (value: File) => string | undefined;
+  onInputChange?: (file: File) => Promise<void>;
 } & PageFormGroupProps &
   Omit<FileUploadProps, 'id'>;
 
@@ -21,8 +22,16 @@ export function PageFormFileUpload<
   TFieldValues extends FieldValues = FieldValues,
   TFieldName extends FieldPathByValue<TFieldValues, File> = FieldPathByValue<TFieldValues, File>,
 >(props: PageFormFileUploadProps<TFieldValues, TFieldName>) {
-  const { label, labelHelpTitle, labelHelp, additionalControls, helperText, isRequired, validate } =
-    props;
+  const {
+    label,
+    labelHelpTitle,
+    labelHelp,
+    additionalControls,
+    helperText,
+    isRequired,
+    validate,
+    onInputChange,
+  } = props;
   const { t } = useTranslation();
   const {
     control,
@@ -30,8 +39,20 @@ export function PageFormFileUpload<
   } = useFormContext<TFieldValues>();
   const [filename, setFilename] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [inputError, setInputError] = useState<Error | undefined>(undefined);
 
-  const handleFileInputChange = useCallback((_: unknown, file: File) => setFilename(file.name), []);
+  const handleFileInputChange = useCallback(
+    (_: unknown, file: File) => {
+      setFilename(file.name);
+      if (onInputChange) {
+        onInputChange(file).catch((error: Error) => {
+          setInputError(error);
+        });
+      }
+    },
+    [onInputChange]
+  );
+
   const handleFileReadStarted = (_fileHandle: File) => {
     setIsLoading(true);
   };
@@ -97,7 +118,7 @@ export function PageFormFileUpload<
                   allowEditingUploadedText={props.allowEditingUploadedText || false}
                   // browseButtonText={t('Upload')}
                   isReadOnly={props.isReadOnly || isSubmitting}
-                  validated={error ? 'error' : undefined}
+                  validated={error || inputError ? 'error' : undefined}
                   isDisabled={props.isDisabled}
                   isClearButtonDisabled={props.isClearButtonDisabled}
                 />

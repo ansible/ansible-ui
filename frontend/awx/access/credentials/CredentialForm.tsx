@@ -39,6 +39,7 @@ import { CredentialInputSource } from '../../interfaces/CredentialInputSource';
 import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 import { useSWRConfig } from 'swr';
 import { useCredentialsTestModal } from './hooks/useCredentialsTestModal';
+import { GCEUploadField } from './components/GCEUploadField';
 
 interface CredentialForm extends Credential {
   user?: number;
@@ -719,6 +720,7 @@ function CredentialSubForm({
             labelHelp={field.help_text}
           />
         ))}
+      {credentialType?.namespace === 'gce' && <GCEUploadField />}
     </PageFormSection>
   ) : null;
 }
