@@ -1487,9 +1487,12 @@ Cypress.Commands.add('waitForManagementJobToProcess', (jobID: string, retries = 
   });
 });
 
-Cypress.Commands.add('waitForJobToProcessEvents', (jobID: string, retries = 45) => {
+Cypress.Commands.add('waitForJobToProcessEvents', (jobID: string, type, retries = 45) => {
   /* default retries = 1s * 30s for processing events  * 1.5 for good measure */
-  cy.requestGet<Job>(awxAPI`/jobs/${jobID}/`).then((job) => {
+  if (!type) {
+    type = 'jobs';
+  }
+  cy.requestGet<Job>(awxAPI`/${type.toString()}/${jobID}/`).then((job) => {
     let stillProcessing = false;
 
     if (job) {
@@ -1512,7 +1515,7 @@ Cypress.Commands.add('waitForJobToProcessEvents', (jobID: string, retries = 45) 
 
     if (stillProcessing) {
       if (retries > 0) {
-        cy.wait(1000).then(() => cy.waitForJobToProcessEvents(jobID, retries - 1));
+        cy.wait(1000).then(() => cy.waitForJobToProcessEvents(jobID, type, retries - 1));
       } else {
         cy.log('Wait for job to process events timed out.');
       }

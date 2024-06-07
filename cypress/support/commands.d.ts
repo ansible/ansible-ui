@@ -991,6 +991,7 @@ declare global {
           failOnStatusCode?: boolean;
         }
       ): Chainable<void>;
+
       deleteAwxWorkflowJobTemplate(
         workflowJobTemplate: WorkflowJobTemplate,
         options?: {
@@ -1132,7 +1133,11 @@ declare global {
 
       waitForTemplateStatus(jobID: string): Chainable<AwxItemsResponse<JobEvent>>;
       waitForManagementJobToProcess(jobID: string, retries?: number): Chainable<Job>;
-      waitForJobToProcessEvents(jobID: string, retries?: number): Chainable<Job>;
+      waitForJobToProcessEvents(
+        jobID: string,
+        type: 'jobs' | 'inventory_updates',
+        retries?: number
+      ): Chainable<Job>;
       waitForWorkflowJobStatus(jobID: string): Chainable<Job>;
 
       createAndDeleteCustomAWXCredentialTypeUI(
