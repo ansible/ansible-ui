@@ -12,6 +12,7 @@ import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSe
 import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 import { AwxPageForm } from '../../common/AwxPageForm';
 import { awxAPI } from '../../common/api/awx-utils';
+import { PageFormFileUpload } from '../../../../framework/PageForm/Inputs/PageFormFileUpload';
 
 export interface AwxSettingsOptionsResponse {
   actions: {
@@ -195,6 +196,40 @@ export function AwxSettingsForm(props: {
 
 export function OptionActionsFormInput(props: { name: string; option: AwxSettingsOptionsAction }) {
   const option = props.option;
+
+  if (props.name.endsWith('SECRET')) {
+    return (
+      <PageFormTextInput
+        label={option.label}
+        name={props.name}
+        labelHelpTitle={option.label}
+        labelHelp={option.help_text}
+        isRequired={option.required}
+        type="password"
+      />
+    );
+  }
+
+  if (
+    props.name.includes('SOCIAL_AUTH_SAML_SP_PUBLIC_CERT') ||
+    props.name.includes('SOCIAL_AUTH_SAML_SP_PRIVATE_KEY')
+  ) {
+    return (
+      <PageFormSection singleColumn>
+        <PageFormFileUpload
+          label={option.label}
+          name={props.name}
+          type="text"
+          labelHelpTitle={option.label}
+          labelHelp={option.help_text}
+          isRequired={option.required}
+          allowEditingUploadedText={true}
+          isReadOnly={false}
+        />
+      </PageFormSection>
+    );
+  }
+
   switch (option.type) {
     case 'string':
     case 'field':
