@@ -677,7 +677,7 @@ export function useEdaNavigation() {
     },
     {
       path: '',
-      element: <Navigate to={'./overview'} />,
+      element: <Navigate to={'./overview'} replace />,
     },
   ];
   return navigationItems;

@@ -76,7 +76,7 @@ export function TemplateLaunchReviewStep(props: { template: JobTemplate }) {
       <PageDetail label={t('Job type')}>{job_type}</PageDetail>
       <PageDetail label={t('Organization')} isEmpty={!template.summary_fields.organization}>
         <Link
-          to={getPageUrl(AwxRoute.OrganizationPage, {
+          to={getPageUrl(AwxRoute.OrganizationDetails, {
             params: { id: template.summary_fields?.organization?.id },
           })}
         >
@@ -85,7 +85,7 @@ export function TemplateLaunchReviewStep(props: { template: JobTemplate }) {
       </PageDetail>
       <PageDetail label={t`Inventory`} isEmpty={!inventory?.id}>
         <Link
-          to={getPageUrl(AwxRoute.InventoryPage, {
+          to={getPageUrl(AwxRoute.InventoryDetails, {
             params: { id: inventory?.id, inventory_type: inventoryUrlPaths[inventory?.kind] },
           })}
         >
@@ -95,7 +95,7 @@ export function TemplateLaunchReviewStep(props: { template: JobTemplate }) {
       {template.type === 'job_template' && (
         <PageDetail label={t`Project`} isEmpty={!template.summary_fields.project}>
           <Link
-            to={getPageUrl(AwxRoute.ProjectPage, {
+            to={getPageUrl(AwxRoute.ProjectDetails, {
               params: { id: template.summary_fields?.project?.id },
             })}
           >

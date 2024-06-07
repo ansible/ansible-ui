@@ -79,7 +79,7 @@ export function useAwxManagementJobsRoutes() {
             },
             {
               path: '',
-              element: <Navigate to="schedules" />,
+              element: <Navigate to="schedules" replace />,
             },
           ],
         },
