@@ -15,10 +15,14 @@ import { awxAPI } from '../../../../frontend/awx/common/api/awx-utils';
 export function PlatformAwxOrganizationIdLookup(props: { children: ReactNode }) {
   const params = useParams<{ id: string }>();
   const { t } = useTranslation();
-  const { data: user } = useGetItem<PlatformOrganization>(gatewayV1API`/organizations/`, params.id);
-  const awxResourceResponse = useGet<AwxItemsResponse<AwxOrganization>>(
-    awxAPI`/users/?resource__ansible_id=${user?.summary_fields?.resource?.ansible_id ?? ''}`
+  const { data: organization } = useGetItem<PlatformOrganization>(
+    gatewayV1API`/organizations/`,
+    params.id
   );
+  const awxResourceResponse = useGet<AwxItemsResponse<AwxOrganization>>(
+    awxAPI`/organizations/?resource__ansible_id=${organization?.summary_fields?.resource?.ansible_id ?? ''}`
+  );
+
   if (awxResourceResponse.isLoading) {
     return <LoadingPage />;
   }

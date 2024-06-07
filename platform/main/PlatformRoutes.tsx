@@ -50,6 +50,7 @@ export enum PlatformRoute {
   OrganizationTeamsAddRoles = 'platform-organization-teams-add-roles',
   OrganizationManageTeamRoles = 'platform-organization-manage-team-roles',
   OrganizationExecutionEnvironments = 'platform-organization-execution-environments',
+  OrganizationNotifications = 'platform-organization-notifications',
   CreateOrganization = 'platform-create-organization',
   EditOrganization = 'platform-edit-organization',
   Access = 'platform-access',
