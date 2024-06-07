@@ -153,7 +153,8 @@ declare global {
 
       poll<ResponseT>(
         fn: () => Chainable<ResponseT | undefined>,
-        check: (response: ResponseT) => boolean
+        check: (response: ResponseT) => boolean,
+        calledTimes?: number
       ): Chainable<ResponseT>;
 
       // ==============================================================================================================
