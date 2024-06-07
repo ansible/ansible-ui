@@ -4,6 +4,7 @@ import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 import { gatewayV1API } from '../../../api/gateway-api-utils';
 import { GatewayServicesContext } from '../../../main/GatewayServices';
 import { PlatformOrganizationDetails } from './PlatformOrganizationDetails';
+import * as useAwxConfig from '../../../../frontend/awx/common/useAwxConfig';
 
 describe('PlatformOrganizationDetails', () => {
   beforeEach(() => {
@@ -54,6 +55,7 @@ describe('PlatformOrganizationDetails', () => {
               },
             },
             default_environment: 2,
+            max_hosts: 1,
           },
         ],
       }
@@ -109,7 +111,12 @@ describe('PlatformOrganizationDetails', () => {
     cy.get('[data-cy="description"]').should('have.text', 'organization 1 description');
   });
 
-  it('should display organization details when a Controller service is registered', () => {
+  it('should display organization details when a Controller service is registered closed license', () => {
+    cy.stub(useAwxConfig, 'useAwxConfig').callsFake(() => ({
+      license_info: {
+        license_type: 'enterprise',
+      },
+    }));
     cy.mount(
       <GatewayServicesContext.Provider value={{ controller: '' }}>
         <PlatformOrganizationDetails />
@@ -126,6 +133,36 @@ describe('PlatformOrganizationDetails', () => {
     cy.get('[data-cy="users').should('have.text', '11');
     cy.get('[data-cy="teams').should('have.text', '4');
     cy.get('[data-cy="default-execution-environment').contains('Example execution environment');
+    cy.get('[data-cy="max-hosts').should('have.text', '1');
+    cy.get('[data-cy="instance-groups').contains('instance group 1');
+    cy.get('[data-cy="instance-groups').contains('instance group 2');
+    cy.get('[data-cy="galaxy-credentials').contains('galaxy credential 1');
+    cy.get('[data-cy="galaxy-credentials').contains('galaxy credential 2');
+  });
+
+  it('should display organization details when a Controller service is registered open license', () => {
+    cy.stub(useAwxConfig, 'useAwxConfig').callsFake(() => ({
+      license_info: {
+        license_type: 'open',
+      },
+    }));
+    cy.mount(
+      <GatewayServicesContext.Provider value={{ controller: '' }}>
+        <PlatformOrganizationDetails />
+      </GatewayServicesContext.Provider>
+    );
+    cy.wait([
+      '@getOrganization',
+      '@getAwxOrganization',
+      '@getGalaxyCredentials',
+      '@getInstanceGroups',
+    ]);
+    cy.get('[data-cy="name"]').should('have.text', 'organization 1');
+    cy.get('[data-cy="description"]').should('have.text', 'organization 1 description');
+    cy.get('[data-cy="users').should('have.text', '11');
+    cy.get('[data-cy="teams').should('have.text', '4');
+    cy.get('[data-cy="default-execution-environment').contains('Example execution environment');
+    cy.get('body').should('not.have.descendants', '[data-cy="max-hosts"]');
     cy.get('[data-cy="instance-groups').contains('instance group 1');
     cy.get('[data-cy="instance-groups').contains('instance group 2');
     cy.get('[data-cy="galaxy-credentials').contains('galaxy credential 1');

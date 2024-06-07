@@ -23,6 +23,7 @@ export interface OrganizationWizardFormValues {
   instanceGroups?: ControllerInstanceGroup[];
   galaxyCredentials?: ControllerCredential[];
   executionEnvironment?: SummaryFieldsExecutionEnvironment;
+  maxHosts?: number;
 }
 
 interface OrganizationFormProps {
@@ -102,6 +103,7 @@ export function PlatformOrganizationForm(props: OrganizationFormProps) {
       galaxyCredentials: galaxyCredentials || [],
       instanceGroups: instanceGroups || [],
       executionEnvironment: controllerOrganization?.summary_fields?.default_environment || {},
+      maxHosts: controllerOrganization?.max_hosts || 0,
     },
   };
 

@@ -8,14 +8,16 @@ import { AwxRoute } from '../../../../../frontend/awx/main/AwxRoutes';
 import { CredentialLabel } from '../../../../../frontend/awx/common/CredentialLabel';
 import { ExecutionEnvironmentDetail } from '../../../../../frontend/awx/common/ExecutionEnvironmentDetail';
 import { Organization as ControllerOrganization } from '../../../../../frontend/awx/interfaces/Organization';
+import { useAwxConfig } from '../../../../../frontend/awx/common/useAwxConfig';
 
 export function OrganizationReviewStep(props: { controllerOrganization?: ControllerOrganization }) {
   const { t } = useTranslation();
   const controllerOrganization = props.controllerOrganization;
   const { wizardData } = usePageWizard();
   const getPageUrl = useGetPageUrl();
+  const config = useAwxConfig();
 
-  const { organization, instanceGroups, galaxyCredentials, executionEnvironment } =
+  const { organization, instanceGroups, galaxyCredentials, maxHosts, executionEnvironment } =
     wizardData as OrganizationWizardFormValues;
 
   return (
@@ -66,6 +68,11 @@ export function OrganizationReviewStep(props: { controllerOrganization?: Control
                 <CredentialLabel credential={credential} key={credential.id} />
               ))}
             </LabelGroup>
+          </PageDetail>
+        )}
+        {maxHosts && config && config?.license_info.license_type !== 'open' && (
+          <PageDetail label={t('Max Hosts')} isEmpty={maxHosts === 0}>
+            {maxHosts}
           </PageDetail>
         )}
       </PageDetails>
