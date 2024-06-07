@@ -49,8 +49,11 @@ export function CreateAuthenticator() {
           order: index + 1,
           authenticator: (authenticator as Authenticator).id,
           triggers: buildTriggers(map),
-          organization: ['organization', 'team'].includes(map.map_type) ? map.organization : null,
-          team: ['team'].includes(map.map_type) ? map.team : null,
+          organization: ['organization', 'team', 'role'].includes(map.map_type)
+            ? map.organization
+            : null,
+          team: ['team', 'role'].includes(map.map_type) ? map.team : null,
+          role: ['organization', 'team', 'role'].includes(map.map_type) ? map.role : null,
         };
         return postRequest(gatewayAPI`/authenticator_maps/`, data);
       });

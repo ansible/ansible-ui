@@ -109,6 +109,12 @@ function AddMappingDropdown(props: { onSelect: (value: AuthenticatorMapType) => 
         <DropdownItem value="team" ouiaId="add-map-team">
           {t('Team')}
         </DropdownItem>
+        <DropdownItem value="role" ouiaId="add-map-role">
+          {t('Role')}
+        </DropdownItem>
+        <DropdownItem value="is_superuser" ouiaId="add-map-superuser">
+          {t('Superuser')}
+        </DropdownItem>
       </DropdownList>
     </Dropdown>
   );
