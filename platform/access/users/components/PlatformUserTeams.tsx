@@ -2,7 +2,7 @@ import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { ButtonVariant } from '@patternfly/react-core';
-import { CubesIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
+import { PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import {
   IPageAction,
   MultiSelectDialog,
@@ -12,6 +12,7 @@ import {
   TextCell,
   compareStrings,
   useBulkConfirmation,
+  usePageAlertToaster,
   usePageDialog,
 } from '../../../../framework';
 import { usePostRequest } from '../../../../frontend/common/crud/usePostRequest';
@@ -34,27 +35,15 @@ export function PlatformUserTeams() {
     tableColumns,
   });
 
-  const { canAssociateTeam } = useUserTeamsPermissions(userId);
   const toolbarActions = useUserTeamsToolbarActions(userId, view);
   const rowActions = useUserTeamsRowActions(userId, view);
 
   return (
     <PageTable
-      emptyStateActions={canAssociateTeam ? toolbarActions.slice(0, 1) : undefined}
-      emptyStateButtonText={canAssociateTeam ? t('Add teams') : undefined}
-      emptyStateDescription={
-        canAssociateTeam
-          ? t('Add teams by clicking the button below.')
-          : t(
-              'Please contact your organization administrator if there is an issue with your access.'
-            )
-      }
-      emptyStateIcon={canAssociateTeam ? undefined : CubesIcon}
-      emptyStateTitle={
-        canAssociateTeam
-          ? t('There are currently no teams added to this user.')
-          : t('You do not have permission to add a team to this user.')
-      }
+      emptyStateActions={toolbarActions.slice(0, 1)}
+      emptyStateButtonText={t('Add teams')}
+      emptyStateDescription={t('Add teams by clicking the button below.')}
+      emptyStateTitle={t('There are currently no teams added to this user.')}
       errorStateTitle={t('Error loading teams')}
       rowActions={rowActions}
       tableColumns={tableColumns}
@@ -117,6 +106,7 @@ function useAssociateUserTeams(userId: string, onComplete: () => Promise<void>) 
   const { t } = useTranslation();
   const selectTeams = useSelectTeams();
   const postRequest = usePostRequest();
+  const alertToaster = usePageAlertToaster();
 
   const associateTeams = useCallback(() => {
     selectTeams(
@@ -125,18 +115,25 @@ function useAssociateUserTeams(userId: string, onComplete: () => Promise<void>) 
       t('Save'),
       async (teams: PlatformTeam[]) => {
         if (!userId) return;
-        await Promise.all(
-          teams.map((team) =>
-            // FIXME: users/*/teams
-            postRequest(gatewayV1API`/teams/${team.id.toString()}/users/associate/`, {
-              instances: [userId],
-            })
-          )
-        );
+        try {
+          await Promise.all(
+            teams.map((team) =>
+              postRequest(gatewayV1API`/teams/${team.id.toString()}/users/associate/`, {
+                instances: [userId],
+              })
+            )
+          );
+        } catch (error) {
+          alertToaster.addAlert({
+            variant: 'danger',
+            title: t(`Failed to add team(s) to user.`),
+            children: error instanceof Error && error.message,
+          });
+        }
         await onComplete();
       }
     );
-  }, [onComplete, postRequest, selectTeams, t, userId]);
+  }, [alertToaster, onComplete, postRequest, selectTeams, t, userId]);
   return associateTeams;
 }
 
@@ -170,7 +167,6 @@ function useRemoveUserTeams(userId: string, onComplete: (teams: PlatformTeam[]) 
       onComplete,
       actionFn: (team: PlatformTeam, signal) =>
         postRequest(
-          // FIXME: users/*/teams
           userId && team?.id ? gatewayV1API`/teams/${team.id.toString()}/users/disassociate/` : '',
           { instances: [userId] },
           signal
@@ -180,14 +176,8 @@ function useRemoveUserTeams(userId: string, onComplete: (teams: PlatformTeam[]) 
   return removeTeams;
 }
 
-function useUserTeamsPermissions(_userId: string) {
-  // FIXME: waiting for APIs...
-  return { canAssociateTeam: true, canRemoveTeam: true };
-}
-
 function useUserTeamsToolbarActions(userId: string, view: IPlatformView<PlatformTeam>) {
   const { t } = useTranslation();
-  const { canAssociateTeam, canRemoveTeam } = useUserTeamsPermissions(userId);
 
   const associateTeams = useAssociateUserTeams(userId, view.refresh);
   const removeTeams = useRemoveUserTeams(userId, view.unselectItemsAndRefresh);
@@ -201,11 +191,6 @@ function useUserTeamsToolbarActions(userId: string, view: IPlatformView<Platform
         isPinned: true,
         icon: PlusCircleIcon,
         label: t('Add team(s)'),
-        isDisabled: canAssociateTeam
-          ? undefined
-          : t(
-              'You do not have permission to add teams to this user. Please contact your system administrator if there is an issue with your access.'
-            ),
         onClick: associateTeams,
       },
       { type: PageActionType.Seperator },
@@ -214,16 +199,11 @@ function useUserTeamsToolbarActions(userId: string, view: IPlatformView<Platform
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
         label: t('Remove selected teams'),
-        isDisabled: canRemoveTeam
-          ? undefined
-          : t(
-              'You do not have permission to remove teams from this user. Please contact your system administrator if there is an issue with your access.'
-            ),
         onClick: removeTeams,
         isDanger: true,
       },
     ],
-    [t, canAssociateTeam, canRemoveTeam, removeTeams, associateTeams]
+    [t, associateTeams, removeTeams]
   );
 
   return toolbarActions;
@@ -231,7 +211,6 @@ function useUserTeamsToolbarActions(userId: string, view: IPlatformView<Platform
 
 function useUserTeamsRowActions(userId: string, view: IPlatformView<PlatformTeam>) {
   const { t } = useTranslation();
-  const { canRemoveTeam } = useUserTeamsPermissions(userId);
 
   const removeTeams = useRemoveUserTeams(userId, view.unselectItemsAndRefresh);
 
@@ -242,14 +221,11 @@ function useUserTeamsRowActions(userId: string, view: IPlatformView<PlatformTeam
         selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Remove team'),
-        isDisabled: canRemoveTeam
-          ? ''
-          : t(`The team cannot be removed due to insufficient permissions.`),
         onClick: (team) => removeTeams([team]),
         isDanger: true,
       },
     ];
-  }, [canRemoveTeam, removeTeams, t]);
+  }, [removeTeams, t]);
 
   return rowActions;
 }

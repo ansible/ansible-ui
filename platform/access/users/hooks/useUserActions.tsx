@@ -19,6 +19,7 @@ import { IPlatformView } from '../../../hooks/usePlatformView';
 import { PlatformUser } from '../../../interfaces/PlatformUser';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
 import { useDeleteUsers } from './useDeleteUsers';
+import { useParams } from 'react-router-dom';
 
 export function useUserToolbarActions(view: IPlatformView<PlatformUser>) {
   const { t } = useTranslation();
@@ -66,8 +67,6 @@ export function useUserRowActions(onUsersDeleted: (users: PlatformUser[]) => voi
   const deleteUsers = useDeleteUsers(onUsersDeleted);
 
   const rowActions = useMemo<IPageAction<PlatformUser>[]>(() => {
-    // TODO: Update based on RBAC information from Users API
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const cannotDeleteUser = (user: PlatformUser) => {
       if (user.managed) {
         return t(`System managed users cannot be deleted`);
@@ -85,11 +84,10 @@ export function useUserRowActions(onUsersDeleted: (users: PlatformUser[]) => voi
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
-        // variant: ButtonVariant.primary,
         isPinned: true,
         icon: PencilAltIcon,
         label: t('Edit user'),
-        isDisabled: (user: PlatformUser) => cannotEditUser(user),
+        isDisabled: cannotEditUser,
         onClick: (user) => pageNavigate(PlatformRoute.EditUser, { params: { id: user.id } }),
       },
       { type: PageActionType.Seperator },
@@ -98,7 +96,7 @@ export function useUserRowActions(onUsersDeleted: (users: PlatformUser[]) => voi
         selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Delete user'),
-        isDisabled: (user: PlatformUser) => cannotDeleteUser(user),
+        isDisabled: cannotDeleteUser,
         onClick: (user) => deleteUsers([user]),
         isDanger: true,
       },
@@ -106,4 +104,49 @@ export function useUserRowActions(onUsersDeleted: (users: PlatformUser[]) => voi
   }, [deleteUsers, pageNavigate, t]);
 
   return rowActions;
+}
+
+export function useUserPageActions(onUsersDeleted: (users: PlatformUser[]) => void) {
+  const { t } = useTranslation();
+  const pageNavigate = usePageNavigate();
+  const deleteUsers = useDeleteUsers(onUsersDeleted);
+  const params = useParams<{ id: string }>();
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(
+    gatewayV1API`/users/${params.id ?? ''}/`
+  );
+
+  const canEditUser = Boolean(
+    data && data.actions && (data.actions['PUT'] || data.actions['PATCH'])
+  );
+
+  const pageActions = useMemo<IPageAction<PlatformUser>[]>(() => {
+    const cannotDeleteUser = () =>
+      canEditUser ? '' : t(`The user cannot be deleted due to insufficient permissions.`);
+    const cannotEditUser = () =>
+      canEditUser ? '' : t(`The user cannot be edited due to insufficient permissions.`);
+
+    return [
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        isPinned: true,
+        icon: PencilAltIcon,
+        label: t('Edit user'),
+        isDisabled: cannotEditUser,
+        onClick: (user) => pageNavigate(PlatformRoute.EditUser, { params: { id: user.id } }),
+      },
+      { type: PageActionType.Seperator },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        icon: TrashIcon,
+        label: t('Delete user'),
+        isDisabled: cannotDeleteUser,
+        onClick: (user) => deleteUsers([user]),
+        isDanger: true,
+      },
+    ];
+  }, [deleteUsers, pageNavigate, t]);
+
+  return pageActions;
 }

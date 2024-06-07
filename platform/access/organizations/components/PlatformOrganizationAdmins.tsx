@@ -38,11 +38,13 @@ export function PlatformOrganizationAdmins() {
     tableColumns,
   });
 
-  const { data: associateOptions, isLoading: isLoadingOptions } = useOptions<
+  const { data: organizationOptions, isLoading: isLoadingOptions } = useOptions<
     OptionsResponse<ActionsResponse>
-  >(gatewayV1API`/organizations/${organization?.id?.toString() ?? ''}/admins/associate/`);
-  const canAssociateAdministrator = Boolean(
-    associateOptions && associateOptions.actions && associateOptions.actions['POST']
+  >(gatewayV1API`/organizations/${organization?.id?.toString() ?? ''}/`);
+  const canEditOrganization = Boolean(
+    organizationOptions &&
+      organizationOptions.actions &&
+      (organizationOptions.actions['PUT'] || organizationOptions.actions['PATCH'])
   );
   const toolbarActions = useOrganizationAdminsToolbarActions(view);
   const rowActions = useOrganizationAdminsRowActions(view);
@@ -59,20 +61,20 @@ export function PlatformOrganizationAdmins() {
       rowActions={rowActions}
       errorStateTitle={t('Error loading administrators')}
       emptyStateTitle={
-        canAssociateAdministrator
+        canEditOrganization
           ? t('There are currently no administrators added to this organization.')
           : t('You do not have permission to add an administrator to this organization.')
       }
       emptyStateDescription={
-        canAssociateAdministrator
+        canEditOrganization
           ? t('Add administrators by clicking the button below.')
           : t(
               'Please contact your organization administrator if there is an issue with your access.'
             )
       }
-      emptyStateIcon={canAssociateAdministrator ? undefined : CubesIcon}
-      emptyStateButtonText={canAssociateAdministrator ? t('Add administrators') : undefined}
-      emptyStateActions={canAssociateAdministrator ? toolbarActions.slice(0, 1) : undefined}
+      emptyStateIcon={canEditOrganization ? undefined : CubesIcon}
+      emptyStateButtonText={canEditOrganization ? t('Add administrators') : undefined}
+      emptyStateActions={canEditOrganization ? toolbarActions.slice(0, 1) : undefined}
       {...view}
     />
   );

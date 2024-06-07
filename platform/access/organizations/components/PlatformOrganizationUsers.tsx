@@ -38,11 +38,13 @@ export function PlatformOrganizationUsers() {
     tableColumns,
   });
 
-  const { data: associateOptions, isLoading: isLoadingOptions } = useOptions<
+  const { data: organizationOptions, isLoading: isLoadingOptions } = useOptions<
     OptionsResponse<ActionsResponse>
-  >(gatewayV1API`/organizations/${organization?.id?.toString() ?? ''}/users/associate/`);
-  const canAssociateUser = Boolean(
-    associateOptions && associateOptions.actions && associateOptions.actions['POST']
+  >(gatewayV1API`/organizations/${organization?.id?.toString() ?? ''}/`);
+  const canEditOrganization = Boolean(
+    organizationOptions &&
+      organizationOptions.actions &&
+      (organizationOptions.actions['PUT'] || organizationOptions.actions['PATCH'])
   );
   const toolbarActions = useOrganizationUsersToolbarActions(view);
   const rowActions = useOrganizationUsersRowActions(view);
@@ -59,20 +61,20 @@ export function PlatformOrganizationUsers() {
       rowActions={rowActions}
       errorStateTitle={t('Error loading users')}
       emptyStateTitle={
-        canAssociateUser
+        canEditOrganization
           ? t('There are currently no users added to this organization.')
           : t('You do not have permission to add a user to this organization.')
       }
       emptyStateDescription={
-        canAssociateUser
+        canEditOrganization
           ? t('Add users by clicking the button below.')
           : t(
               'Please contact your organization administrator if there is an issue with your access.'
             )
       }
-      emptyStateIcon={canAssociateUser ? undefined : CubesIcon}
-      emptyStateButtonText={canAssociateUser ? t('Add user(s)') : undefined}
-      emptyStateActions={canAssociateUser ? toolbarActions.slice(0, 1) : undefined}
+      emptyStateIcon={canEditOrganization ? undefined : CubesIcon}
+      emptyStateButtonText={canEditOrganization ? t('Add user(s)') : undefined}
+      emptyStateActions={canEditOrganization ? toolbarActions.slice(0, 1) : undefined}
       {...view}
     />
   );

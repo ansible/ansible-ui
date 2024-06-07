@@ -19,6 +19,7 @@ import { IPlatformView } from '../../../hooks/usePlatformView';
 import { PlatformTeam } from '../../../interfaces/PlatformTeam';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
 import { useDeleteTeams } from './useDeleteTeams';
+import { useParams } from 'react-router-dom';
 
 export function useTeamToolbarActions(view: IPlatformView<PlatformTeam>) {
   const { t } = useTranslation();
@@ -66,26 +67,13 @@ export function useTeamRowActions(onTeamsDeleted: (teams: PlatformTeam[]) => voi
   const deleteTeams = useDeleteTeams(onTeamsDeleted);
 
   const rowActions = useMemo<IPageAction<PlatformTeam>[]>(() => {
-    // TODO: Update based on RBAC information from Teams API
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const cannotDeleteTeam = (team: PlatformTeam) =>
-      // eslint-disable-next-line no-constant-condition
-      true ? '' : t(`The team cannot be deleted due to insufficient permissions.`);
-    // TODO: Update based on RBAC information from Teams API
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const cannotEditTeam = (team: PlatformTeam) =>
-      // eslint-disable-next-line no-constant-condition
-      true ? '' : t(`The team cannot be edited due to insufficient permissions.`);
-
     return [
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
-        // variant: ButtonVariant.primary,
         isPinned: true,
         icon: PencilAltIcon,
         label: t('Edit team'),
-        isDisabled: (team: PlatformTeam) => cannotEditTeam(team),
         onClick: (team) => pageNavigate(PlatformRoute.EditTeam, { params: { id: team.id } }),
       },
       { type: PageActionType.Seperator },
@@ -94,7 +82,6 @@ export function useTeamRowActions(onTeamsDeleted: (teams: PlatformTeam[]) => voi
         selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Delete team'),
-        isDisabled: (team: PlatformTeam) => cannotDeleteTeam(team),
         onClick: (team) => deleteTeams([team]),
         isDanger: true,
       },
@@ -102,4 +89,49 @@ export function useTeamRowActions(onTeamsDeleted: (teams: PlatformTeam[]) => voi
   }, [deleteTeams, pageNavigate, t]);
 
   return rowActions;
+}
+
+export function useTeamPageActions(onTeamsDeleted: (teams: PlatformTeam[]) => void) {
+  const { t } = useTranslation();
+  const pageNavigate = usePageNavigate();
+  const deleteTeams = useDeleteTeams(onTeamsDeleted);
+  const params = useParams<{ id: string }>();
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(
+    gatewayV1API`/teams/${params.id ?? ''}/`
+  );
+
+  const canEditTeam = Boolean(
+    data && data.actions && (data.actions['PUT'] || data.actions['PATCH'])
+  );
+
+  const pageActions = useMemo<IPageAction<PlatformTeam>[]>(() => {
+    const cannotDeleteTeam = () =>
+      canEditTeam ? '' : t(`The team cannot be deleted due to insufficient permissions.`);
+    const cannotEditTeam = () =>
+      canEditTeam ? '' : t(`The team cannot be edited due to insufficient permissions.`);
+
+    return [
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        isPinned: true,
+        icon: PencilAltIcon,
+        label: t('Edit team'),
+        isDisabled: cannotEditTeam,
+        onClick: (team) => pageNavigate(PlatformRoute.EditTeam, { params: { id: team.id } }),
+      },
+      { type: PageActionType.Seperator },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        icon: TrashIcon,
+        label: t('Delete team'),
+        isDisabled: cannotDeleteTeam,
+        onClick: (team) => deleteTeams([team]),
+        isDanger: true,
+      },
+    ];
+  }, [canEditTeam, deleteTeams, pageNavigate, t]);
+
+  return pageActions;
 }

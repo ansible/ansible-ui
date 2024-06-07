@@ -24,21 +24,16 @@ export function useOrganizationAdminsToolbarActions(view: IPlatformView<Platform
     gatewayV1API`/organizations`,
     params.id
   );
-  const { data: associateOptions } = useOptions<OptionsResponse<ActionsResponse>>(
-    gatewayV1API`/organizations/${organization?.id?.toString() ?? ''}/admins/associate/`
+
+  const { data: organizationOptions } = useOptions<OptionsResponse<ActionsResponse>>(
+    gatewayV1API`/organizations/${organization?.id?.toString() ?? ''}/`
   );
-  const { data: disassociateOptions } = useOptions<OptionsResponse<ActionsResponse>>(
-    gatewayV1API`/organizations/${organization?.id?.toString() ?? ''}/admins/disassociate/`
+  const canEditOrganization = Boolean(
+    organizationOptions &&
+      organizationOptions.actions &&
+      (organizationOptions.actions['PUT'] || organizationOptions.actions['PATCH'])
   );
 
-  const canAssociateAdmin = useMemo(
-    () => Boolean(associateOptions?.actions && associateOptions.actions['POST']),
-    [associateOptions?.actions]
-  );
-
-  const canRemoveAdmin = Boolean(
-    disassociateOptions?.actions && disassociateOptions.actions['POST']
-  );
   const associateAdmins = useAssociateOrganizationAdmins(view.refresh);
   const removeAdmins = useRemoveOrganizationAdmins(view.unselectItemsAndRefresh);
 
@@ -51,7 +46,7 @@ export function useOrganizationAdminsToolbarActions(view: IPlatformView<Platform
         isPinned: true,
         icon: PlusCircleIcon,
         label: t('Add administrators'),
-        isDisabled: canAssociateAdmin
+        isDisabled: canEditOrganization
           ? undefined
           : t(
               'You do not have permission to add administrators to this organization. Please contact your system administrator if there is an issue with your access.'
@@ -64,7 +59,7 @@ export function useOrganizationAdminsToolbarActions(view: IPlatformView<Platform
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
         label: t('Remove selected administrators'),
-        isDisabled: canRemoveAdmin
+        isDisabled: canEditOrganization
           ? undefined
           : t(
               'You do not have permission to remove administrators from this organization. Please contact your system administrator if there is an issue with your access.'
@@ -73,7 +68,7 @@ export function useOrganizationAdminsToolbarActions(view: IPlatformView<Platform
         isDanger: true,
       },
     ],
-    [t, canAssociateAdmin, associateAdmins, canRemoveAdmin, removeAdmins]
+    [t, canEditOrganization, associateAdmins, removeAdmins]
   );
 
   return toolbarActions;
@@ -87,11 +82,13 @@ export function useOrganizationAdminsRowActions(view: IPlatformView<PlatformUser
     params.id
   );
   const removeAdmins = useRemoveOrganizationAdmins(view.unselectItemsAndRefresh);
-  const { data: disassociateOptions } = useOptions<OptionsResponse<ActionsResponse>>(
-    gatewayV1API`/organizations/${organization?.id?.toString() ?? ''}/admins/disassociate/`
+  const { data: organizationOptions } = useOptions<OptionsResponse<ActionsResponse>>(
+    gatewayV1API`/organizations/${organization?.id?.toString() ?? ''}/`
   );
-  const canRemoveAdmin = Boolean(
-    disassociateOptions?.actions && disassociateOptions.actions['POST']
+  const canEditOrganization = Boolean(
+    organizationOptions &&
+      organizationOptions.actions &&
+      (organizationOptions.actions['PUT'] || organizationOptions.actions['PATCH'])
   );
 
   const rowActions = useMemo<IPageAction<PlatformUser>[]>(() => {
@@ -101,14 +98,14 @@ export function useOrganizationAdminsRowActions(view: IPlatformView<PlatformUser
         selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Remove administrator'),
-        isDisabled: canRemoveAdmin
+        isDisabled: canEditOrganization
           ? ''
           : t(`The administrator cannot be removed due to insufficient permissions.`),
         onClick: (admin) => removeAdmins([admin]),
         isDanger: true,
       },
     ];
-  }, [canRemoveAdmin, removeAdmins, t]);
+  }, [canEditOrganization, removeAdmins, t]);
 
   return rowActions;
 }

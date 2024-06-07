@@ -40,21 +40,19 @@ export function useOrganizationUsersToolbarActions(view: IPlatformView<PlatformU
     gatewayV1API`/organizations`,
     params.id
   );
-  const { data: associateOptions } = useOptions<OptionsResponse<ActionsResponse>>(
-    gatewayV1API`/organizations/${organization?.id?.toString() ?? ''}/users/associate/`
-  );
-  const { data: disassociateOptions } = useOptions<OptionsResponse<ActionsResponse>>(
-    gatewayV1API`/organizations/${organization?.id?.toString() ?? ''}/users/disassociate/`
+  const { data: organizationOptions } = useOptions<OptionsResponse<ActionsResponse>>(
+    gatewayV1API`/organizations/${organization?.id?.toString() ?? ''}/`
   );
 
-  const canAssociateUser = useMemo(
-    () => Boolean(associateOptions?.actions && associateOptions.actions['POST']),
-    [associateOptions?.actions]
+  const canEditOrganization = useMemo(
+    () =>
+      Boolean(
+        organizationOptions?.actions &&
+          (organizationOptions.actions['PUT'] || organizationOptions.actions['PATCH'])
+      ),
+    [organizationOptions?.actions]
   );
 
-  const canRemoveUser = Boolean(
-    disassociateOptions?.actions && disassociateOptions.actions['POST']
-  );
   const removeUsers = useRemoveOrganizationUsers(view.unselectItemsAndRefresh);
 
   const toolbarActions = useMemo<IPageAction<PlatformUser>[]>(
@@ -66,7 +64,7 @@ export function useOrganizationUsersToolbarActions(view: IPlatformView<PlatformU
         isPinned: true,
         icon: PlusCircleIcon,
         label: t('Add users'),
-        isDisabled: canAssociateUser
+        isDisabled: canEditOrganization
           ? undefined
           : t(
               'You do not have permission to add users to this organization. Please contact your system administrator if there is an issue with your access.'
@@ -83,7 +81,7 @@ export function useOrganizationUsersToolbarActions(view: IPlatformView<PlatformU
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
         label: t('Remove selected users'),
-        isDisabled: canRemoveUser
+        isDisabled: canEditOrganization
           ? undefined
           : t(
               'You do not have permission to remove users from this organization. Please contact your system administrator if there is an issue with your access.'
@@ -92,7 +90,7 @@ export function useOrganizationUsersToolbarActions(view: IPlatformView<PlatformU
         isDanger: true,
       },
     ],
-    [t, canAssociateUser, canRemoveUser, removeUsers, pageNavigate, params.id]
+    [t, canEditOrganization, removeUsers, pageNavigate, params.id]
   );
 
   return toolbarActions;
@@ -114,11 +112,12 @@ export function useOrganizationUsersRowActions(view: IPlatformView<PlatformUser>
     useEdaResource<EdaOrganization>('organizations/', organization);
 
   const removeUsers = useRemoveOrganizationUsers(view.unselectItemsAndRefresh);
-  const { data: disassociateOptions } = useOptions<OptionsResponse<ActionsResponse>>(
-    gatewayV1API`/organizations/${organization?.id?.toString() ?? ''}/users/disassociate/`
+  const { data: organizationOptions } = useOptions<OptionsResponse<ActionsResponse>>(
+    gatewayV1API`/organizations/${organization?.id?.toString() ?? ''}/`
   );
-  const canRemoveUser = Boolean(
-    disassociateOptions?.actions && disassociateOptions.actions['POST']
+  const canEditOrganization = Boolean(
+    organizationOptions?.actions &&
+      (organizationOptions.actions['PUT'] || organizationOptions.actions['PATCH'])
   );
   const manageOrgRoles = useManageOrgRoles();
   const awxService = useHasAwxService();
@@ -190,14 +189,14 @@ export function useOrganizationUsersRowActions(view: IPlatformView<PlatformUser>
         selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Remove user'),
-        isDisabled: canRemoveUser
+        isDisabled: canEditOrganization
           ? ''
           : t(`The user cannot be removed due to insufficient permissions.`),
         onClick: (user) => removeUsers([user]),
         isDanger: true,
       },
     ];
-  }, [canRemoveUser, manageRolesHandleClick, removeUsers, t]);
+  }, [canEditOrganization, manageRolesHandleClick, removeUsers, t]);
 
   return rowActions;
 }
