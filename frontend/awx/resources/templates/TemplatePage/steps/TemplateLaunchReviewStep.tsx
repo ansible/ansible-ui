@@ -12,14 +12,64 @@ import type { Credential } from '../../../../interfaces/Credential';
 import type { JobTemplate } from '../../../../interfaces/JobTemplate';
 import { AwxRoute } from '../../../../main/AwxRoutes';
 import type { TemplateLaunch } from '../TemplateLaunchWizard';
-import { jsonToYaml } from '../../../../../../framework/utils/codeEditorUtils';
+import { jsonToYaml, yamlToJson } from '../../../../../../framework/utils/codeEditorUtils';
+import { WorkflowJobTemplate } from '../../../../interfaces/WorkflowJobTemplate';
+import { Survey } from '../../../../interfaces/Survey';
+
+function getRelatedResourceUrl(template: JobTemplate | WorkflowJobTemplate) {
+  if (!template) return '';
+  switch (template?.type) {
+    case 'job_template':
+      return awxAPI`/job_templates/${template?.id.toString()}/survey_spec/`;
+    case 'workflow_job_template':
+      return awxAPI`/workflow_job_templates/${template?.id.toString()}/survey_spec/`;
+    default:
+      return '';
+  }
+}
+
+function maskPasswords(vars: { [key: string]: string | string[] }, passwordKeys: string[]) {
+  const updated = { ...vars };
+  passwordKeys.forEach((key) => {
+    if (typeof updated[key] !== 'undefined') {
+      updated[key] = '$encrypted$';
+    }
+  });
+  return updated;
+}
+
+function processSurvey(
+  extra_vars: string | null,
+  survey: { [key: string]: string | string[] },
+  surveyConfig: Survey | null
+): string {
+  const extraVarsObj = extra_vars ? (JSON.parse(yamlToJson(extra_vars)) as object) : {};
+  const updatedSurvey: { [key: string]: string | string[] } = { ...survey };
+
+  if (surveyConfig?.spec) {
+    const passwordFields = surveyConfig.spec
+      .filter((q) => q.type === 'password')
+      .map((q) => q.variable);
+
+    const maskedSurveyPasswords = maskPasswords(survey, passwordFields);
+    Object.keys(maskedSurveyPasswords).forEach((passwordKey) => {
+      updatedSurvey[passwordKey] = maskedSurveyPasswords[passwordKey];
+    });
+  }
+
+  const mergedData: { [key: string]: string | string[] | { name: string }[] } = {
+    ...extraVarsObj,
+    ...updatedSurvey,
+  };
+
+  return jsonToYaml(JSON.stringify(mergedData));
+}
 
 export function TemplateLaunchReviewStep(props: { template: JobTemplate }) {
   const { template } = props;
   const { t } = useTranslation();
   const { wizardData } = usePageWizard();
   const getPageUrl = useGetPageUrl();
-
   const {
     inventory,
     credentials,
@@ -39,25 +89,11 @@ export function TemplateLaunchReviewStep(props: { template: JobTemplate }) {
     verbosity,
     survey,
   } = wizardData as TemplateLaunch;
+  const { data: surveyConfig } = useGet<Survey>(getRelatedResourceUrl(template));
 
   let extraVarDetails = extra_vars || '{}';
   if (survey) {
-    const jsonObj: { [key: string]: string } = {};
-
-    if (extra_vars) {
-      const lines = extra_vars.split('\n');
-      lines.forEach((line) => {
-        const [key, value] = line.split(':').map((part) => part.trim());
-        jsonObj[key] = value;
-      });
-    }
-
-    const mergedData: { [key: string]: string | string[] | { name: string }[] } = {
-      ...jsonObj,
-      ...survey,
-    };
-
-    extraVarDetails = jsonToYaml(JSON.stringify(mergedData));
+    extraVarDetails = processSurvey(extra_vars, survey, surveyConfig ?? null);
   }
 
   <PageDetailCodeEditor label={t('Extra vars')} value={extraVarDetails} />;
