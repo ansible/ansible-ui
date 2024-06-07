@@ -78,7 +78,9 @@ export function AwxMasthead() {
             <DropdownItem
               id="user-details"
               label={t('User details')}
-              onClick={() => pageNavigate(AwxRoute.UserPage, { params: { id: activeAwxUser?.id } })}
+              onClick={() =>
+                pageNavigate(AwxRoute.UserDetails, { params: { id: activeAwxUser?.id } })
+              }
             >
               {t('User details')}
             </DropdownItem>
