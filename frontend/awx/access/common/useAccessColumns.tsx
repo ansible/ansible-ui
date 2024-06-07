@@ -25,7 +25,7 @@ export function useAccessColumns(
         cell: (user) => (
           <TextCell
             text={user.username}
-            to={getPageUrl(AwxRoute.UserPage, { params: { id: user.id } })}
+            to={getPageUrl(AwxRoute.UserDetails, { params: { id: user.id } })}
           />
         ),
         card: 'name',
