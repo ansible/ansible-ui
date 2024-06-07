@@ -13,6 +13,7 @@ import { useAwxBulkActionDialog } from '../../../../frontend/awx/common/useAwxBu
 import { gatewayV1API } from '../../../api/gateway-api-utils';
 import { useGet } from '../../../../frontend/common/crud/useGet';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
+import { PlatformTeam } from '../../../interfaces/PlatformTeam';
 import { AwxSelectRolesStep } from '../../../../frontend/awx/access/common/AwxRolesWizardSteps/AwxSelectRolesStep';
 import { AwxRbacRole } from '../../../../frontend/awx/interfaces/AwxRbacRole';
 import { EdaSelectRolesStep } from '../../../../frontend/eda/access/common/EdaRolesWizardSteps/EdaSelectRolesStep';
@@ -25,7 +26,6 @@ import { PlatformRoute } from '../../../main/PlatformRoutes';
 import { useGatewayService } from '../../../main/GatewayServices';
 import { useCallback, useMemo } from 'react';
 import { getAddedAndRemovedRoles } from '../utils/getAddedAndRemovedRoles';
-import { PlatformTeam } from '../../../interfaces/PlatformTeam';
 import { useGetAwxOrganizationRolesForTeam } from '../hooks/useGetAwxOrganizationRolesForTeam';
 import { useGetEdaOrganizationRolesForTeam } from '../hooks/useGetEdaOrganizationRolesForTeam';
 
