@@ -3,7 +3,7 @@ import { usePolledState } from '../../common/usePolledState';
 import { Config } from '../interfaces/Config';
 import { awxAPI } from './api/awx-utils';
 
-const AwxConfigContext = createContext<{
+export const AwxConfigContext = createContext<{
   awxConfig?: Config | null | undefined;
   awxConfigIsLoading?: boolean;
   awxConfigError?: Error;
