@@ -21,7 +21,7 @@ interface ResourceTypeMapper {
   system_job_templates?: string;
 }
 
-export function ResourceNotifications({ resourceType }: { resourceType: string }) {
+export function ResourceNotifications({ resourceType, id }: { resourceType: string; id?: string }) {
   const { t } = useTranslation();
 
   // modify to the specific resource id when adding a new resource that requires the notifications view
@@ -44,7 +44,9 @@ export function ResourceNotifications({ resourceType }: { resourceType: string }
   };
 
   const params = useParams();
-  const resourceId = params[resourceToParamMap[resourceType as keyof ResourceTypeMapper] ?? ''];
+  // The id in the URL may not be the id of the AWX resource so we support explicitly passing the id and then falling back to the URL id
+  const resourceId =
+    id ?? params[resourceToParamMap[resourceType as keyof ResourceTypeMapper] ?? ''];
 
   const { data: notificationStarted, refresh: notificationStartedRefresh } = useGet<
     AwxItemsResponse<NotificationTemplate>
