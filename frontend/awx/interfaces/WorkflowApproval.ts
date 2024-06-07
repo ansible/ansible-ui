@@ -27,7 +27,7 @@ export interface WorkflowApproval
       delete: boolean;
       start: boolean;
     };
-    source_workflow_job: SummaryFieldJob | object;
+    source_workflow_job: SummaryFieldJob;
   };
   status:
     | 'new'

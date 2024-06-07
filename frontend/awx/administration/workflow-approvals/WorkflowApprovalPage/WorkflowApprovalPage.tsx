@@ -5,27 +5,35 @@ import { useParams } from 'react-router-dom';
 import { PageActions, PageHeader, PageLayout, useGetPageUrl } from '../../../../../framework';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { PageRoutedTabs } from '../../../../common/PageRoutedTabs';
-import { useGetItem } from '../../../../common/crud/useGet';
+import { useGetItem, useGet } from '../../../../common/crud/useGet';
 import { AwxError } from '../../../common/AwxError';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { WorkflowApproval } from '../../../interfaces/WorkflowApproval';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useWorkflowApprovalsRowActions } from '../hooks/useWorkflowApprovalsRowActions';
+import { Job } from '../../../interfaces/Job';
 
 export function WorkflowApprovalPage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const {
-    error,
+    error: workflowApprovalError,
     data: workflowApproval,
     refresh,
   } = useGetItem<WorkflowApproval>(awxAPI`/workflow_approvals`, params.id);
+
+  const workflowJobId = workflowApproval?.summary_fields?.source_workflow_job?.id;
+  const { data: workflowJob, error: workflowJobError } = useGet<Job>(
+    workflowJobId ? awxAPI`/workflow_jobs/${workflowJobId.toString()}/` : ''
+  );
+
   const getPageUrl = useGetPageUrl();
 
   const actions = useWorkflowApprovalsRowActions(refresh);
 
+  const error = workflowApprovalError || workflowJobError;
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
-  if (!workflowApproval) return <LoadingPage breadcrumbs tabs />;
+  if (!workflowApproval || !workflowJob) return <LoadingPage breadcrumbs tabs />;
 
   return (
     <PageLayout>
@@ -58,6 +66,7 @@ export function WorkflowApprovalPage() {
           job_id: workflowApproval?.summary_fields?.workflow_job?.id,
           job_type: 'workflow',
         }}
+        componentParams={{ job: workflowJob }}
       />
     </PageLayout>
   );
