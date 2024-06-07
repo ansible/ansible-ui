@@ -205,21 +205,19 @@ export function usePlatformNavigation() {
       analytics.hidden = !awxService;
       navigationItems.push(analytics);
     }
+
+    const platformAccessRouteChildren = [authenticators, organizations, teams, users];
+    if (awxService || edaService || hubService) {
+      platformAccessRouteChildren.push(...roles);
+    }
+
+    platformAccessRouteChildren.push(...applications);
+
     navigationItems.push({
       id: PlatformRoute.Access,
       label: t('Access Management'),
       path: 'access',
-      children: [
-        authenticators,
-        organizations,
-        teams,
-        users,
-        ...roles,
-        ...applications,
-        // awxCredentials,
-        // awxCredentialTypes,
-        // hubApiTokenRoute,
-      ],
+      children: platformAccessRouteChildren,
     });
     navigationItems.push({
       id: PlatformRoute.Lightspeed,
