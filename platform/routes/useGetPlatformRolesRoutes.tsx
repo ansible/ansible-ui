@@ -25,58 +25,45 @@ import { PlatformEdaRoles } from '../access/roles/PlatformEdaRoles';
 import { PlatformHubRoles } from '../access/roles/PlatformHubRoles';
 import { PlatformRoles } from '../access/roles/PlatformRoles';
 import { PlatformRoute } from '../main/PlatformRoutes';
+import { useGatewayService } from '../main/GatewayServices';
 
 export function useGetPlatformRolesRoutes() {
   const { t } = useTranslation();
-  const rolesRoutes = useMemo<PageNavigationItem[]>(
-    () => [
-      {
-        id: PlatformRoute.Roles,
-        label: t('Roles'),
-        path: 'roles',
-        element: <PlatformRoles />,
-        children: [
-          {
-            id: AwxRoute.Roles,
-            path: 'controller',
-            element: <PlatformAwxRoles />,
-          },
-          {
-            id: EdaRoute.Roles,
-            path: 'eda',
-            element: <PlatformEdaRoles />,
-          },
-          {
-            id: HubRoute.Roles,
-            path: 'hub',
-            element: <PlatformHubRoles />,
-          },
-          {
-            path: '',
-            element: <Navigate to="controller" />,
-          },
-        ],
-      },
-      {
+  const awxService = useGatewayService('controller');
+  const edaService = useGatewayService('eda');
+  const hubService = useGatewayService('hub');
+
+  const rolesRoutes = useMemo<PageNavigationItem[]>(() => {
+    const parentRoutes = [] as PageNavigationItem[];
+    const childRoutes = [] as PageNavigationItem[];
+    let defaultRoleRoute = null;
+
+    if (awxService) {
+      childRoutes.push({
+        id: AwxRoute.Roles,
+        path: 'controller',
+        element: <PlatformAwxRoles />,
+      });
+      parentRoutes.push({
         id: AwxRoute.Roles,
         path: 'roles/controller',
         children: [
           {
-            id: AwxRoute.CreateRole,
+            id: AwxRoute.CreateRole as string,
             path: 'create',
             element: (
               <CreateAwxRole breadcrumbLabelForPreviousPage={t('Automation Execution Roles')} />
             ),
           },
           {
-            id: AwxRoute.EditRole,
+            id: AwxRoute.EditRole as string,
             path: ':id/edit',
             element: (
               <EditAwxRole breadcrumbLabelForPreviousPage={t('Automation Execution Roles')} />
             ),
           },
           {
-            id: AwxRoute.RolePage,
+            id: AwxRoute.RolePage as string,
             path: ':id',
             element: (
               <AwxRolePage
@@ -97,8 +84,16 @@ export function useGetPlatformRolesRoutes() {
             ],
           },
         ],
-      },
-      {
+      });
+      defaultRoleRoute = 'controller';
+    }
+    if (edaService) {
+      childRoutes.push({
+        id: EdaRoute.Roles,
+        path: 'eda',
+        element: <PlatformEdaRoles />,
+      });
+      parentRoutes.push({
         id: EdaRoute.Roles,
         path: 'roles/eda',
         children: [
@@ -132,8 +127,16 @@ export function useGetPlatformRolesRoutes() {
             ],
           },
         ],
-      },
-      {
+      });
+      defaultRoleRoute ??= 'eda';
+    }
+    if (hubService) {
+      childRoutes.push({
+        id: HubRoute.Roles,
+        path: 'hub',
+        element: <PlatformHubRoles />,
+      });
+      parentRoutes.push({
         id: HubRoute.Roles,
         path: 'roles/hub',
         children: [
@@ -171,9 +174,24 @@ export function useGetPlatformRolesRoutes() {
             ],
           },
         ],
-      },
-    ],
-    [t]
-  );
+      });
+      defaultRoleRoute ??= 'hub';
+    }
+
+    childRoutes.push({
+      path: '',
+      element: <Navigate to={defaultRoleRoute as string} />,
+    });
+
+    parentRoutes.unshift({
+      id: PlatformRoute.Roles,
+      label: t('Roles'),
+      path: 'roles',
+      element: <PlatformRoles />,
+      children: childRoutes,
+    });
+
+    return parentRoutes;
+  }, [awxService, edaService, hubService, t]);
   return rolesRoutes;
 }
