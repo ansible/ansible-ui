@@ -15,6 +15,14 @@ export function GCEUploadField() {
   const [GCEFileContents, setGCEFileContents] = useState<GCEFileContents>({});
   const [uploadError, setUploadError] = useState<Error | undefined>(undefined);
 
+  const handleClear = () => {
+    setGCEFileContents({});
+    setUploadError(undefined);
+    setValue('project', '');
+    setValue('username', '');
+    setValue('ssh_key_data', '');
+  };
+
   useEffect(() => {
     // Loop through JSON object and set the relevant fields
     if (GCEFileContents.project_id) {
@@ -51,6 +59,7 @@ export function GCEUploadField() {
             setUploadError(error as Error);
           }
         }}
+        onClearClick={handleClear}
       />
     </>
   );

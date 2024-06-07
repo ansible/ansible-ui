@@ -69,7 +69,9 @@ export function PageFormFileUpload<
           ? validate && isValidating
             ? t('Validating...')
             : error?.message
-          : undefined;
+          : inputError?.message
+            ? inputError.message
+            : undefined;
         const handleClear = props.onClearClick
           ? props.onClearClick
           : (_event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
