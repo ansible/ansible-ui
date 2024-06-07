@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PageNavigationItem, PageNotImplemented } from '../../framework';
+import { PageNavigationItem } from '../../framework';
 import { PlatformOrganizationDetails } from '../access/organizations/components/PlatformOrganizationDetails';
 import { PlatformOrganizationList } from '../access/organizations/components/PlatformOrganizationList';
 import { PlatformOrganizationPage } from '../access/organizations/components/PlatformOrganizationPage';
@@ -15,6 +15,8 @@ import { CreatePlatformOrganization } from '../access/organizations/components/C
 import { EditPlatformOrganization } from '../access/organizations/components/EditPlatformOrganization';
 import { PlatformOrganizationTeamsAddRoles } from '../access/organizations/components/PlatformOrganizationTeamsAddRoles';
 import { PlatformOrganizationManageTeamRoles } from '../access/organizations/components/PlatformOrganizationManageTeamRoles';
+import { ResourceNotifications } from '../../frontend/awx/resources/notifications/ResourceNotifications';
+import { PlatformAwxOrganizationExecutionEnvironments } from '../access/organizations/components/PlatformAwxOrganizationExecutionEnvironments';
 
 export function useGetPlatformOrganizationsRoutes() {
   const { t } = useTranslation();
@@ -64,7 +66,16 @@ export function useGetPlatformOrganizationsRoutes() {
               path: 'execution-environments',
               element: (
                 <PlatformAwxOrganizationIdLookup>
-                  <PageNotImplemented />
+                  <PlatformAwxOrganizationExecutionEnvironments />
+                </PlatformAwxOrganizationIdLookup>
+              ),
+            },
+            {
+              id: PlatformRoute.OrganizationNotifications,
+              path: 'notifications',
+              element: (
+                <PlatformAwxOrganizationIdLookup>
+                  <ResourceNotifications resourceType="organizations" />
                 </PlatformAwxOrganizationIdLookup>
               ),
             },
