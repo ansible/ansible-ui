@@ -14,7 +14,7 @@ import { useGetItem } from '../../../../frontend/common/crud/useGet';
 import { gatewayV1API } from '../../../api/gateway-api-utils';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
-import { useOrganizationRowActions } from '../hooks/useOrganizationActions';
+import { useOrganizationPageActions } from '../hooks/useOrganizationActions';
 import { PageRoutedTabs } from '../../../../frontend/common/PageRoutedTabs';
 
 export function PlatformOrganizationPage() {
@@ -27,7 +27,7 @@ export function PlatformOrganizationPage() {
   } = useGetItem<PlatformOrganization>(gatewayV1API`/organizations/`, params.id);
   const getPageUrl = useGetPageUrl();
   const pageNavigate = usePageNavigate();
-  const actions = useOrganizationRowActions(() => pageNavigate(PlatformRoute.Organizations));
+  const actions = useOrganizationPageActions(() => pageNavigate(PlatformRoute.Organizations));
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!organization) return <LoadingPage breadcrumbs tabs />;

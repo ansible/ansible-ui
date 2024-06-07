@@ -21,16 +21,13 @@ export function useTeamUsersToolbarActions(view: IPlatformView<PlatformUser>) {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const { data: team } = useGetItem<PlatformTeam>(gatewayV1API`/teams`, params.id);
-  const { data: associateOptions } = useOptions<OptionsResponse<ActionsResponse>>(
-    gatewayV1API`/teams/${team?.id?.toString() ?? ''}/users/associate/`
+  const { data: teamOptions } = useOptions<OptionsResponse<ActionsResponse>>(
+    gatewayV1API`/teams/${team?.id?.toString() ?? ''}/`
   );
-  const { data: disassociateOptions } = useOptions<OptionsResponse<ActionsResponse>>(
-    gatewayV1API`/teams/${team?.id?.toString() ?? ''}/users/disassociate/`
-  );
-
-  const canAssociateUser = Boolean(associateOptions?.actions && associateOptions.actions['POST']);
-  const canRemoveUser = Boolean(
-    disassociateOptions?.actions && disassociateOptions.actions['POST']
+  const canEditTeam = Boolean(
+    teamOptions &&
+      teamOptions.actions &&
+      (teamOptions.actions['PUT'] || teamOptions.actions['PATCH'])
   );
   const associateUsers = useAssociateTeamUsers(view.refresh);
   const removeUsers = useRemoveTeamUsers(view.unselectItemsAndRefresh);
@@ -44,7 +41,7 @@ export function useTeamUsersToolbarActions(view: IPlatformView<PlatformUser>) {
         isPinned: true,
         icon: PlusCircleIcon,
         label: t('Add user(s)'),
-        isDisabled: canAssociateUser
+        isDisabled: canEditTeam
           ? undefined
           : t(
               'You do not have permission to add users to this team. Please contact your system administrator if there is an issue with your access.'
@@ -57,7 +54,7 @@ export function useTeamUsersToolbarActions(view: IPlatformView<PlatformUser>) {
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
         label: t('Remove selected users'),
-        isDisabled: canRemoveUser
+        isDisabled: canEditTeam
           ? undefined
           : t(
               'You do not have permission to remove users from this team. Please contact your system administrator if there is an issue with your access.'
@@ -66,7 +63,7 @@ export function useTeamUsersToolbarActions(view: IPlatformView<PlatformUser>) {
         isDanger: true,
       },
     ],
-    [t, canAssociateUser, canRemoveUser, removeUsers, associateUsers]
+    [t, canEditTeam, associateUsers, removeUsers]
   );
 
   return toolbarActions;
@@ -77,11 +74,13 @@ export function useTeamUsersRowActions(view: IPlatformView<PlatformUser>) {
   const params = useParams<{ id: string }>();
   const { data: team } = useGetItem<PlatformTeam>(gatewayV1API`/teams`, params.id);
   const removeUsers = useRemoveTeamUsers(view.unselectItemsAndRefresh);
-  const { data: disassociateOptions } = useOptions<OptionsResponse<ActionsResponse>>(
-    gatewayV1API`/teams/${team?.id?.toString() ?? ''}/users/disassociate/`
+  const { data: teamOptions } = useOptions<OptionsResponse<ActionsResponse>>(
+    gatewayV1API`/teams/${team?.id?.toString() ?? ''}/`
   );
-  const canRemoveUser = Boolean(
-    disassociateOptions?.actions && disassociateOptions.actions['POST']
+  const canEditTeam = Boolean(
+    teamOptions &&
+      teamOptions.actions &&
+      (teamOptions.actions['PUT'] || teamOptions.actions['PATCH'])
   );
 
   const rowActions = useMemo<IPageAction<PlatformUser>[]>(() => {
@@ -91,14 +90,14 @@ export function useTeamUsersRowActions(view: IPlatformView<PlatformUser>) {
         selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Remove user'),
-        isDisabled: canRemoveUser
+        isDisabled: canEditTeam
           ? ''
           : t(`The user cannot be removed due to insufficient permissions.`),
         onClick: (user) => removeUsers([user]),
         isDanger: true,
       },
     ];
-  }, [canRemoveUser, removeUsers, t]);
+  }, [canEditTeam, removeUsers, t]);
 
   return rowActions;
 }

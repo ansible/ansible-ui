@@ -51,7 +51,7 @@ describe('Team users list', () => {
       cy.stub(useOptions, 'useOptions').callsFake(() => ({
         data: {
           actions: {
-            POST: {
+            PUT: {
               name: {
                 type: 'string',
                 required: true,
@@ -94,7 +94,7 @@ describe('Team users list', () => {
       cy.stub(useOptions, 'useOptions').callsFake(() => ({
         data: {
           actions: {
-            POST: {
+            PUT: {
               name: {
                 type: 'string',
                 required: true,

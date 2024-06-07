@@ -39,7 +39,6 @@ export function useOrganizationTeamsToolbarActions() {
         isPinned: true,
         icon: PlusCircleIcon,
         label: t('Add roles'),
-        // isDisabled: TODO RBAC
         onClick: () => {
           pageNavigate(PlatformRoute.OrganizationTeamsAddRoles, {
             params: { id: params.id },

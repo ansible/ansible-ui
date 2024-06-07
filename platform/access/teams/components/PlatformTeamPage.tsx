@@ -14,7 +14,7 @@ import { useGetItem } from '../../../../frontend/common/crud/useGet';
 import { gatewayV1API } from '../../../api/gateway-api-utils';
 import { PlatformTeam } from '../../../interfaces/PlatformTeam';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
-import { useTeamRowActions } from '../hooks/useTeamActions';
+import { useTeamPageActions } from '../hooks/useTeamActions';
 import { PageRoutedTabs } from '../../../../frontend/common/PageRoutedTabs';
 
 export function PlatformTeamPage() {
@@ -23,7 +23,7 @@ export function PlatformTeamPage() {
   const { error, data: team, refresh } = useGetItem<PlatformTeam>(gatewayV1API`/teams/`, params.id);
   const getPageUrl = useGetPageUrl();
   const pageNavigate = usePageNavigate();
-  const actions = useTeamRowActions(() => pageNavigate(PlatformRoute.Teams));
+  const actions = useTeamPageActions(() => pageNavigate(PlatformRoute.Teams));
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!team) return <LoadingPage breadcrumbs tabs />;

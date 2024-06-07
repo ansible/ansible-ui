@@ -21,20 +21,13 @@ export function useTeamAdminsToolbarActions(view: IPlatformView<PlatformUser>) {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const { data: team } = useGetItem<PlatformTeam>(gatewayV1API`/teams`, params.id);
-  const { data: associateOptions } = useOptions<OptionsResponse<ActionsResponse>>(
-    gatewayV1API`/teams/${team?.id?.toString() ?? ''}/admins/associate/`
+  const { data: teamOptions } = useOptions<OptionsResponse<ActionsResponse>>(
+    gatewayV1API`/teams/${team?.id?.toString() ?? ''}/`
   );
-  const { data: disassociateOptions } = useOptions<OptionsResponse<ActionsResponse>>(
-    gatewayV1API`/teams/${team?.id?.toString() ?? ''}/admins/disassociate/`
-  );
-
-  const canAssociateAdmin = useMemo(
-    () => Boolean(associateOptions?.actions && associateOptions.actions['POST']),
-    [associateOptions?.actions]
-  );
-
-  const canRemoveAdmin = Boolean(
-    disassociateOptions?.actions && disassociateOptions.actions['POST']
+  const canEditTeam = Boolean(
+    teamOptions &&
+      teamOptions.actions &&
+      (teamOptions.actions['PUT'] || teamOptions.actions['PATCH'])
   );
   const associateAdmins = useAssociateTeamAdmins(view.refresh);
   const removeAdmins = useRemoveTeamAdmins(view.unselectItemsAndRefresh);
@@ -48,7 +41,7 @@ export function useTeamAdminsToolbarActions(view: IPlatformView<PlatformUser>) {
         isPinned: true,
         icon: PlusCircleIcon,
         label: t('Add administrator(s)'),
-        isDisabled: canAssociateAdmin
+        isDisabled: canEditTeam
           ? undefined
           : t(
               'You do not have permission to add administrators to this team. Please contact your system administrator if there is an issue with your access.'
@@ -61,7 +54,7 @@ export function useTeamAdminsToolbarActions(view: IPlatformView<PlatformUser>) {
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
         label: t('Remove selected administrators'),
-        isDisabled: canRemoveAdmin
+        isDisabled: canEditTeam
           ? undefined
           : t(
               'You do not have permission to remove administrators from this team. Please contact your system administrator if there is an issue with your access.'
@@ -70,7 +63,7 @@ export function useTeamAdminsToolbarActions(view: IPlatformView<PlatformUser>) {
         isDanger: true,
       },
     ],
-    [t, canAssociateAdmin, associateAdmins, canRemoveAdmin, removeAdmins]
+    [t, canEditTeam, associateAdmins, removeAdmins]
   );
 
   return toolbarActions;
@@ -81,13 +74,14 @@ export function useTeamAdminsRowActions(view: IPlatformView<PlatformUser>) {
   const params = useParams<{ id: string }>();
   const { data: team } = useGetItem<PlatformTeam>(gatewayV1API`/teams`, params.id);
   const removeAdmins = useRemoveTeamAdmins(view.unselectItemsAndRefresh);
-  const { data: disassociateOptions } = useOptions<OptionsResponse<ActionsResponse>>(
-    gatewayV1API`/teams/${team?.id?.toString() ?? ''}/admins/disassociate/`
+  const { data: teamOptions } = useOptions<OptionsResponse<ActionsResponse>>(
+    gatewayV1API`/teams/${team?.id?.toString() ?? ''}/`
   );
-  const canRemoveAdmin = Boolean(
-    disassociateOptions?.actions && disassociateOptions.actions['POST']
+  const canEditTeam = Boolean(
+    teamOptions &&
+      teamOptions.actions &&
+      (teamOptions.actions['PUT'] || teamOptions.actions['PATCH'])
   );
-
   const rowActions = useMemo<IPageAction<PlatformUser>[]>(() => {
     return [
       {
@@ -95,14 +89,14 @@ export function useTeamAdminsRowActions(view: IPlatformView<PlatformUser>) {
         selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Remove administrator'),
-        isDisabled: canRemoveAdmin
+        isDisabled: canEditTeam
           ? ''
           : t(`The administrator cannot be removed due to insufficient permissions.`),
         onClick: (admin) => removeAdmins([admin]),
         isDanger: true,
       },
     ];
-  }, [canRemoveAdmin, removeAdmins, t]);
+  }, [canEditTeam, removeAdmins, t]);
 
   return rowActions;
 }

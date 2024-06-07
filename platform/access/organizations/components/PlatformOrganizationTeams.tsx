@@ -75,7 +75,9 @@ export function PlatformOrganizationTeams() {
       }
       emptyStateIcon={canCreateTeam ? undefined : CubesIcon}
       emptyStateButtonText={canCreateTeam ? t('Create team') : undefined}
-      emptyStateButtonClick={() => pageNavigate(PlatformRoute.CreateTeam)}
+      emptyStateButtonClick={
+        canCreateTeam ? () => pageNavigate(PlatformRoute.CreateTeam) : undefined
+      }
       {...view}
     />
   );
