@@ -1647,6 +1647,10 @@ declare global {
           failOnStatusCode?: boolean;
         }
       ): Cypress.Chainable<PlatformTeam>;
+      associateUsersWithPlatformTeam(
+        platformTeam: PlatformTeam,
+        users: PlatformUser[]
+      ): Cypress.Chainable<void>;
       createPlatformOrganization(): Cypress.Chainable<PlatformOrganization>;
       deletePlatformOrganization(
         organization: PlatformOrganization,

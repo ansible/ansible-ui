@@ -39,19 +39,8 @@ export function useTeamColumns(options?: { disableLinks?: boolean; disableSort?:
   });
 
   const tableColumns = useMemo<ITableColumn<PlatformTeam>[]>(
-    () => [
-      nameColumn,
-      descriptionColumn,
-      organizationNameColumn,
-      {
-        header: t('Users'),
-        type: 'count',
-        value: (team) => team.users.length,
-      },
-      createdColumn,
-      modifiedColumn,
-    ],
-    [createdColumn, descriptionColumn, modifiedColumn, nameColumn, organizationNameColumn, t]
+    () => [nameColumn, descriptionColumn, organizationNameColumn, createdColumn, modifiedColumn],
+    [createdColumn, descriptionColumn, modifiedColumn, nameColumn, organizationNameColumn]
   );
   return tableColumns;
 }

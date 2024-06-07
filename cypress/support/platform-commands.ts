@@ -164,6 +164,15 @@ Cypress.Commands.add(
   }
 );
 
+Cypress.Commands.add(
+  'associateUsersWithPlatformTeam',
+  (platformTeam: PlatformTeam, users: PlatformUser[]) => {
+    cy.requestPost(gatewayV1API`/teams/${platformTeam.id.toString()}/users/associate/`, {
+      instances: users.map((user) => user.id),
+    });
+  }
+);
+
 /* The `Cypress.Commands.add('createGlobalPlatformOrganization', function () { ... })` function is a
 custom Cypress command that is responsible for creating a global platform organization if it doesn't
 already exist. Here's a breakdown of what it does: */

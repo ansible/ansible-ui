@@ -172,7 +172,6 @@ describe('Users - Teams and Roles tab tests', () => {
     cy.platformLogin();
     cy.createPlatformTeam({
       organization: (this.globalPlatformOrganization as PlatformOrganization).id,
-      users: [],
     }).then((testPlatformTeam: PlatformTeam) => {
       platformTeam = testPlatformTeam;
     });

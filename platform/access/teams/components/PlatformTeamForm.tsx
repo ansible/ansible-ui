@@ -11,7 +11,6 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../framework';
-import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
 import { AwxError } from '../../../../frontend/awx/common/AwxError';
 import { useGet } from '../../../../frontend/common/crud/useGet';
 import { usePatchRequest } from '../../../../frontend/common/crud/usePatchRequest';
@@ -20,7 +19,6 @@ import { gatewayV1API } from '../../../api/gateway-api-utils';
 import { PlatformTeam } from '../../../interfaces/PlatformTeam';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
 import { PageFormPlatformOrganizationSelect } from '../../organizations/components/PageFormPlatformOrganizationSelect';
-import { PageFormPlatformUsersSelect } from '../../users/components/PageFormPlatformUsersSelect';
 import { usePlatformActiveUser } from '../../../main/PlatformActiveUserProvider';
 
 export function CreatePlatformTeam() {
@@ -122,9 +120,6 @@ function PlatformTeamInputs(props: { isEditMode?: boolean }) {
               )
         }
       />
-      <PageFormSection singleColumn>
-        <PageFormPlatformUsersSelect name="users" />
-      </PageFormSection>
     </>
   );
 }

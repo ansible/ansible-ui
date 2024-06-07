@@ -129,9 +129,10 @@ describe('Teams - Permissions', () => {
       cy.createPlatformTeam({
         name: `E2E Platform Team ${randomString(5)}`,
         organization: 1,
-        users: [edaUser1.id],
       }).then((createdPlatformTeam: PlatformTeam) => {
-        edaTeam = createdPlatformTeam;
+        cy.associateUsersWithPlatformTeam(createdPlatformTeam, [edaUser1]).then(() => {
+          edaTeam = createdPlatformTeam;
+        });
       });
     });
     cy.createPlatformUser({ password: 'pass' }).then((user) => {

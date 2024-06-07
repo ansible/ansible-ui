@@ -25,7 +25,6 @@ import { PlatformTeam } from '../../../interfaces/PlatformTeam';
 import { PlatformUser } from '../../../interfaces/PlatformUser';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
 import { PageFormPlatformOrganizationsSelect } from '../../organizations/components/PageFormPlatformOrganizationsSelect';
-import { PageFormPlatformTeamsSelect } from '../../teams/components/PageFormPlatformTeamsSelect';
 
 const UserType = {
   SystemAdministrator: 'System administrator',
@@ -106,7 +105,6 @@ export function EditPlatformUser() {
     error: teamError,
   } = useGetAll<PlatformTeam>(gatewayV1API`/teams/`);
   const patchUser = usePatchRequest<PlatformUser, PlatformUser>();
-  const patchTeam = usePatchRequest<Partial<PlatformTeam>, PlatformTeam>();
   const onSubmit: PageFormSubmitHandler<IUserInput> = useCallback(
     async (userInput: IUserInput, setError, setFieldError) => {
       const { userType, confirmPassword, ...user } = userInput;
@@ -118,25 +116,9 @@ export function EditPlatformUser() {
         }
       }
       await patchUser(gatewayV1API`/users/${id.toString()}/`, user);
-      const teamIds = (user as unknown as { teams: number[] }).teams;
-      if (teamIds && teams) {
-        for (const team of teams) {
-          if (teamIds.includes(team.id)) {
-            if (team.users.find((id) => id === user.id) === undefined) {
-              team.users.push(user.id);
-              await patchTeam(gatewayV1API`/teams/${team.id.toString()}/`, { users: team.users });
-            }
-          } else {
-            if (team.users.find((id) => id === user.id) !== undefined) {
-              team.users = team.users.filter((id) => id !== user.id);
-              await patchTeam(gatewayV1API`/teams/${team.id.toString()}/`, { users: team.users });
-            }
-          }
-        }
-      }
       navigate(-1);
     },
-    [id, navigate, patchTeam, patchUser, t, teams]
+    [id, navigate, patchUser, t]
   );
   const getPageUrl = useGetPageUrl();
 
@@ -247,10 +229,6 @@ function PlatformUserInputs(props: { isCreate?: boolean }) {
 
       <PageFormSection singleColumn>
         <PageFormPlatformOrganizationsSelect name="organizations" />
-      </PageFormSection>
-
-      <PageFormSection singleColumn>
-        <PageFormPlatformTeamsSelect name="teams" />
       </PageFormSection>
     </>
   );
