@@ -18,7 +18,10 @@ export function useInventoriesGroupsActions() {
   const pageNavigate = usePageNavigate();
   const params = useParams<{ id: string; inventory_type: string }>();
 
-  const runCommandAction = useRunCommandAction<InventoryGroup>(params, { isPinned: false });
+  const runCommandAction = useRunCommandAction<InventoryGroup>(
+    { ...params, actionType: 'row' },
+    { isPinned: false }
+  );
 
   return useMemo<IPageAction<InventoryGroup>[]>(() => {
     if (params.inventory_type === 'constructed_inventory') {

@@ -20,11 +20,20 @@ import { Inventory, RunCommandWizard } from '../../interfaces/Inventory';
 import { postRequest } from '../../../common/crud/Data';
 import { awxAPI } from '../../common/api/awx-utils';
 import { useGet } from '../../../common/crud/useGet';
+import { useURLSearchParams } from '../../../../framework/components/useURLSearchParams';
 
 export function InventoryRunCommand() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const { id } = useParams();
+  const [searchParams] = useURLSearchParams();
+  let limit = searchParams.get('limit') || 'all';
+  const storage = searchParams.get('storage');
+
+  if (storage) {
+    limit = localStorage.getItem('runCommandActionSelectedItems') || limit;
+  }
+
   const pageNavigate = usePageNavigate();
   const { data: inventory } = useGet<Inventory>(awxAPI`/inventories/${id as string}/`);
 
@@ -79,7 +88,7 @@ export function InventoryRunCommand() {
       module_name: '',
       module_args: '',
       verbosity: 0,
-      limit: 'all',
+      limit,
       forks: 0,
       diff_mode: false,
       become_enabled: false,
