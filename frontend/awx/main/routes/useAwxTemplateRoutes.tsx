@@ -150,7 +150,7 @@ export function useAwxTemplateRoutes() {
                 },
                 {
                   path: '',
-                  element: <Navigate to="details" />,
+                  element: <Navigate to="details" replace />,
                 },
               ],
             },
@@ -286,7 +286,7 @@ export function useAwxTemplateRoutes() {
                 },
                 {
                   path: '',
-                  element: <Navigate to="details" />,
+                  element: <Navigate to="details" replace />,
                 },
               ],
             },

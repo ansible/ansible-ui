@@ -77,7 +77,7 @@ export function ExecutionEnvironmentDetailInner(props: { execution_env: Executio
         {execution_env.summary_fields?.organization ? (
           <TextCell
             text={execution_env.summary_fields?.organization?.name}
-            to={getPageUrl(AwxRoute.OrganizationPage, {
+            to={getPageUrl(AwxRoute.OrganizationDetails, {
               params: { id: execution_env.summary_fields?.organization?.id },
             })}
           />

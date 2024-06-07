@@ -31,7 +31,7 @@ export function AwxAddTeamRoles(props: { id?: string; teamRolesRoute?: string })
           { label: t('Teams'), to: getPageUrl(AwxRoute.Teams) },
           {
             label: team.name,
-            to: getPageUrl(AwxRoute.TeamPage, { params: { id: 1 } }),
+            to: getPageUrl(AwxRoute.TeamDetails, { params: { id: 1 } }),
           },
           {
             label: t('Roles'),
