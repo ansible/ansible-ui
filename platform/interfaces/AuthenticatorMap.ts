@@ -5,6 +5,8 @@ export enum AuthenticatorMapType {
   'allow' = 'allow',
   'organization' = 'organization',
   'team' = 'team',
+  'role' = 'role',
+  'is_superuser' = 'is_superuser',
 }
 
 export interface AlwaysTriggers {

@@ -32,6 +32,7 @@ interface MapBase {
   order?: number;
   organization?: string;
   team?: PlatformTeam;
+  role?: string;
 }
 interface MapAlways extends MapBase {
   trigger: 'always';

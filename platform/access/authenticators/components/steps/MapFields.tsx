@@ -8,7 +8,9 @@ import { PageFormHidden } from '../../../../../framework/PageForm/Utils/PageForm
 import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
 import { PageFormPlatformOrganizationNameSelect } from '../../../organizations/components/PageFormPlatformOrganizationNameSelect';
 import { PageFormPlatformTeamNameSelect } from '../../../organizations/components/PageFormPlatformTeamNameSelect';
+import { PageFormPlatformRoleNameSelect } from '../../../roles/components/PageFormPlatformRoleNameSelect';
 import type { AuthenticatorFormValues, AuthenticatorMapValues } from '../AuthenticatorForm';
+import { AuthenticatorMapType } from '../../../../interfaces/AuthenticatorMap';
 
 export function MapFields(props: {
   index: number;
@@ -18,6 +20,7 @@ export function MapFields(props: {
   const { index, map, onDelete } = props;
   const { register, getValues } = useFormContext();
   const { t } = useTranslation();
+  const mapType = map.map_type;
 
   const options = new Set<string>();
   const { mappings = [] } = getValues() as AuthenticatorFormValues;
@@ -38,7 +41,17 @@ export function MapFields(props: {
     allow: t('Allow'),
     organization: t('Organization'),
     team: t('Team'),
+    role: t('Role'),
+    is_superuser: t('Superuser'),
   }[map.map_type];
+
+  let roleContentType = null;
+  if (map.map_type === AuthenticatorMapType.team) {
+    roleContentType = 'shared.team';
+  }
+  if (map.map_type === AuthenticatorMapType.organization) {
+    roleContentType = 'shared.organization';
+  }
 
   return (
     <FormFieldGroup
@@ -167,15 +180,26 @@ export function MapFields(props: {
         </PageFormHidden>
       </PageFormSection>
       <PageFormSection>
-        <PageFormHidden watch={`mappings.${index}.map_type`} hidden={(value) => value !== 'team'}>
-          <PageFormPlatformTeamNameSelect name={`mappings.${index}.team`} isRequired />
+        <PageFormHidden
+          watch={`mappings.${index}.map_type`}
+          hidden={(value: string) => !['team', 'role'].includes(value)}
+        >
+          <PageFormPlatformTeamNameSelect
+            name={`mappings.${index}.team`}
+            isRequired={['team'].includes(mapType)}
+          />
         </PageFormHidden>
         <PageFormHidden
           watch={`mappings.${index}.map_type`}
-          hidden={(value: string) => !['team', 'organization'].includes(value)}
+          hidden={(value: string) => !['team', 'organization', 'role'].includes(value)}
         >
           <PageFormPlatformOrganizationNameSelect
             name={`mappings.${index}.organization`}
+            isRequired={['team', 'organization'].includes(mapType)}
+          />
+          <PageFormPlatformRoleNameSelect
+            name={`mappings.${index}.role`}
+            contentType={roleContentType}
             isRequired
           />
         </PageFormHidden>
