@@ -45,9 +45,9 @@ describe('Constructed Inventories CRUD Tests', () => {
   });
 
   after(() => {
-    constrInvToDelete.map((constrInventory) => cy.deleteAwxConstructedInventory(constrInventory));
-    invToDelete.map((inventory) => cy.deleteAwxInventory(inventory, { failOnStatusCode: false }));
     cy.deleteAwxInstanceGroup(instanceGroup);
+    invToDelete.map((inventory) => cy.deleteAwxInventory(inventory, { failOnStatusCode: false }));
+    constrInvToDelete.map((constrInventory) => cy.deleteAwxConstructedInventory(constrInventory));
     cy.deleteAwxOrganization(organization);
   });
 
@@ -125,14 +125,15 @@ describe('Constructed Inventories CRUD Tests', () => {
     cy.clickButton(/^Sync inventory$/);
     // let jobID: number;
     cy.wait('@syncInv')
-      .its('response.statusCode')
-      .then((statusCode) => {
-        expect(statusCode).to.be.equal(202);
-        // jobID = response.body ? response.body.id : 1;
+      .then((response) => {
+        expect(response.response?.statusCode).to.be.equal(202);
+      })
+      .its('response.body.id')
+      .then((jobID: number) => {
         cy.verifyPageTitle(constructedInv.name);
         cy.getByDataCy('last-job-status').contains('Success');
+        cy.waitForJobToProcessEvents(jobID.toString(), 'inventory_updates');
       });
-    // cy.waitForJobToProcessEvents(jobID.toString());
   });
 
   it.skip('can edit the input_inventories, verify the preservation of the order they were added in, and manually change the order', () => {
