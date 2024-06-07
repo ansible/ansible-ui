@@ -8,10 +8,13 @@ import { edaAPI } from '../../frontend/eda/common/eda-utils';
 import { EdaUser } from '../../frontend/eda/interfaces/EdaUser';
 import { useGetItem } from '../../frontend/common/crud/useGet';
 import { PlatformRoute } from '../main/PlatformRoutes';
+import { usePlatformActiveUser } from '../main/PlatformActiveUserProvider';
 
 export function PlatformEdaUser(props: { route?: string }) {
   const { t } = useTranslation();
-  const { id } = useParams<{ id: string }>();
+  const { id:idFromParam } = useParams<{ id: string }>();
+  const { activePlatformUser:activeUser } = usePlatformActiveUser();
+  const id = idFromParam || activeUser?.id;
   const platformResponse = useGetItem<EdaUser>(edaAPI`/users/`, id);
   const getPageUrl = useGetPageUrl();
 
@@ -35,7 +38,7 @@ export function PlatformEdaUser(props: { route?: string }) {
   if (!platformResponse.data?.resource.resource_type) {
     return (
       <Page>
-        <EmptyStateCustom title={t('Resource Not Found')} description="" />;
+        <EmptyStateCustom title={t('Resource Not Found')} description={`id: ${id}`} />;
       </Page>
     );
   }

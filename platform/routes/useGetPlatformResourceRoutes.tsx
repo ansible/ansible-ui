@@ -7,6 +7,7 @@ import { PlatformAwxUser } from '../resource/PlatformAwxUser';
 import { PlatformEdaOrganization } from '../resource/PlatformEdaOrganization';
 import { PlatformEdaUser } from '../resource/PlatformEdaUser';
 import { PlatformResource } from '../resource/PlatformResource';
+import { PlatformUsersList } from '../access/users/components/PlatformUsersList';
 
 /*
   Routes to handle links from various service pages org/user/teams pages,
@@ -58,6 +59,11 @@ export function useGetPlatformResourceRoutes() {
         element: <PlatformAwxOrganization />,
       },
       {
+        id: AwxRoute.Users,
+        path: 'users',
+        element: <PlatformUsersList />,
+      },
+      {
         id: AwxRoute.UserPage,
         path: 'controller/user/:id',
         element: <PlatformAwxUser />,
@@ -85,7 +91,7 @@ export function useGetPlatformResourceRoutes() {
       {
         id: AwxRoute.UserTokens,
         path: 'controller/user/:id/tokens',
-        element: <PlatformAwxUser />,
+        element: <PlatformAwxUser route={PlatformRoute.AwxUserTokens}/>,
       },
       {
         id: AwxRoute.TeamPage,
@@ -118,6 +124,11 @@ export function useGetPlatformResourceRoutes() {
         element: <PlatformEdaOrganization />,
       },
       {
+        id: EdaRoute.Users,
+        path: 'eda/users',
+        element: <PlatformUsersList />,
+      },
+      {
         id: EdaRoute.UserPage,
         path: 'eda/user/:id',
         element: <PlatformEdaUser />,
@@ -128,9 +139,14 @@ export function useGetPlatformResourceRoutes() {
         element: <PlatformEdaUser />,
       },
       {
+        id: EdaRoute.MyTokens,
+        path: 'eda/users/:id/tokens/eda',
+        element: <PlatformEdaUser route={PlatformRoute.EdaUserTokens} />,
+      },
+      {
         id: EdaRoute.UserTokens,
-        path: 'eda/user/:id',
-        element: <PlatformEdaUser />,
+        path: 'eda/users/:id/tokens/eda',
+        element: <PlatformEdaUser route={PlatformRoute.EdaUserTokens} />,
       },
       {
         id: EdaRoute.UserRoles,

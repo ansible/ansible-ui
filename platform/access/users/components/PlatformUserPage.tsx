@@ -16,6 +16,7 @@ import { PlatformUser } from '../../../interfaces/PlatformUser';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
 import { useUserRowActions } from '../hooks/useUserActions';
 import { PageRoutedTabs } from '../../../../frontend/common/PageRoutedTabs';
+import { usePlatformActiveUser } from '../../../main/PlatformActiveUserProvider';
 
 export function PlatformUserPage() {
   const { t } = useTranslation();
@@ -23,9 +24,23 @@ export function PlatformUserPage() {
   const { error, data: user, refresh } = useGetItem<PlatformUser>(gatewayV1API`/users/`, params.id);
   const getPageUrl = useGetPageUrl();
   const pageNavigate = usePageNavigate();
+  const { activePlatformUser:activeUser } = usePlatformActiveUser();
   const actions = useUserRowActions(() => pageNavigate(PlatformRoute.Users));
+
+  const pageTabs = [
+    { label: t('Details'), page: PlatformRoute.UserDetails },
+    { label: t('Teams'), page: PlatformRoute.UserTeams },
+    { label: t('Roles'), page: PlatformRoute.UserRoles },
+  ];
+
+  // add tokens tab if the user from params(URL path) matches active user
+  if (activeUser?.id !== undefined && activeUser?.id.toString() === params.id) {
+    pageTabs.push({ label: t('Tokens'), page: PlatformRoute.UserTokens });
+  }
+
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
-  if (!user) return <LoadingPage breadcrumbs tabs />;
+  if (!user || !activeUser) return <LoadingPage breadcrumbs tabs />;
+
   return (
     <PageLayout>
       <PageHeader
@@ -48,11 +63,7 @@ export function PlatformUserPage() {
           page: PlatformRoute.Users,
           persistentFilterKey: 'users',
         }}
-        tabs={[
-          { label: t('Details'), page: PlatformRoute.UserDetails },
-          { label: t('Teams'), page: PlatformRoute.UserTeams },
-          { label: t('Roles'), page: PlatformRoute.UserRoles },
-        ]}
+        tabs={pageTabs}
         params={{ id: user.id }}
       />
     </PageLayout>
