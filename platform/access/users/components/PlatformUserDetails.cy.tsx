@@ -38,7 +38,7 @@ describe('Platform user details', () => {
     cy.get('[data-cy="modified"]').should('have.text', formatDateString(mockUser.modified_on));
     cy.get('[data-cy="organization"]')
       .should('contain', 'Demo')
-      .and('contain', 'New Org')
+      .and('contain', 'Default')
       .and('contain', 'Test Org');
     cy.get('[data-cy="authentication-method"]').should('contain', 'Local');
   });

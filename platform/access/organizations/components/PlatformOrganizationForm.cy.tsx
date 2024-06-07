@@ -67,6 +67,7 @@ const platformOrganization = {
       resource_type: 'shared.organization',
     },
   },
+  managed: false,
 } as PlatformOrganization;
 
 describe('PlatformOrganizationForm', () => {

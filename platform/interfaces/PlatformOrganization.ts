@@ -34,4 +34,5 @@ export interface PlatformOrganization {
       users?: number;
     };
   };
+  managed: boolean;
 }
