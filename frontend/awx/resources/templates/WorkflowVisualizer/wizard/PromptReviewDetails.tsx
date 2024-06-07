@@ -87,7 +87,7 @@ export function PromptReviewDetails() {
       <PageDetail label={t('Job type')}>{job_type}</PageDetail>
       <PageDetail label={t('Organization')} isEmpty={!organization}>
         <Link
-          to={getPageUrl(AwxRoute.OrganizationPage, {
+          to={getPageUrl(AwxRoute.OrganizationDetails, {
             params: { id: organization?.id },
           })}
         >
@@ -96,7 +96,7 @@ export function PromptReviewDetails() {
       </PageDetail>
       <PageDetail label={t`Inventory`} isEmpty={!inventory?.id}>
         <Link
-          to={getPageUrl(AwxRoute.InventoryPage, {
+          to={getPageUrl(AwxRoute.InventoryDetails, {
             params: {
               id: inventory?.id?.toString(),
               inventory_type: inventoryUrlPaths[inventory?.kind ?? ''],
@@ -109,7 +109,7 @@ export function PromptReviewDetails() {
       {template.type === 'job_template' && (
         <PageDetail label={t`Project`} isEmpty={!template.summary_fields.project}>
           <Link
-            to={getPageUrl(AwxRoute.ProjectPage, {
+            to={getPageUrl(AwxRoute.ProjectDetails, {
               params: { id: template.summary_fields?.project?.id },
             })}
           >

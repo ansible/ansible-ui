@@ -47,7 +47,7 @@ export function useAwxCredentialTypesRoutes() {
             },
             {
               path: '',
-              element: <Navigate to="details" />,
+              element: <Navigate to="details" replace />,
             },
           ],
         },
