@@ -70,7 +70,7 @@ export function OrganizationReviewStep(props: { controllerOrganization?: Control
             </LabelGroup>
           </PageDetail>
         )}
-        {maxHosts && config && config?.license_info.license_type !== 'open' && (
+        {Boolean(maxHosts) && config && config?.license_info.license_type !== 'open' && (
           <PageDetail label={t('Max Hosts')} isEmpty={maxHosts === 0}>
             {maxHosts}
           </PageDetail>
