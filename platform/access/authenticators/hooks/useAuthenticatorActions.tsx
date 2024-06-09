@@ -22,6 +22,7 @@ import { Authenticator } from '../../../interfaces/Authenticator';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
 import { useDeleteAuthenticators } from './useDeleteAuthenticators';
 import { useManageAuthenticators } from './useManageAuthenticators';
+import { useParams } from 'react-router-dom';
 
 export function useAuthenticatorToolbarActions(view: IPlatformView<Authenticator>) {
   const { t } = useTranslation();
@@ -161,4 +162,89 @@ export function useAuthenticatorRowActions(view: IPlatformView<Authenticator>) {
   }, [pageNavigate, deleteAuthenticator, handleToggleAuthenticator, t]);
 
   return rowActions;
+}
+
+export function useAuthenticatorPageActions(
+  onAuthenticatorsDeleted: (authenticators: Authenticator[]) => void,
+  onToggle: (authenticator: Authenticator) => void
+) {
+  const { t } = useTranslation();
+  const pageNavigate = usePageNavigate();
+  const deleteAuthenticators = useDeleteAuthenticators(onAuthenticatorsDeleted);
+  const params = useParams<{ id: string }>();
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(
+    gatewayV1API`/authenticators/${params.id ?? ''}/`
+  );
+
+  const canEditAuthenticator = Boolean(
+    data && data.actions && (data.actions['PUT'] || data.actions['PATCH'])
+  );
+
+  const handleToggleAuthenticator: (
+    authenticator: Authenticator,
+    enabled: boolean
+  ) => Promise<void> = useCallback(
+    async (authenticator, enabled) => {
+      const patchedAuthenticator = await requestPatch<Authenticator>(
+        gatewayV1API`/authenticators/${authenticator.id.toString()}/`,
+        {
+          enabled,
+        }
+      );
+      onToggle(patchedAuthenticator);
+    },
+    [onToggle]
+  );
+
+  const pageActions = useMemo<IPageAction<Authenticator>[]>(() => {
+    const cannotDeleteAuthenticator = () =>
+      canEditAuthenticator
+        ? ''
+        : t(`The authenticator cannot be deleted due to insufficient permissions.`);
+    const cannotEditAuthenticator = () =>
+      canEditAuthenticator
+        ? ''
+        : t(`The authenticator cannot be edited due to insufficient permissions.`);
+
+    return [
+      {
+        type: PageActionType.Switch,
+        ariaLabel: (isEnabled) =>
+          isEnabled ? t('Click to disable authenticator') : t('Click to enable authenticator'),
+        selection: PageActionSelection.Single,
+        onToggle: (authenticator, enabled) => handleToggleAuthenticator(authenticator, enabled),
+        isSwitchOn: (authenticator: Authenticator) => (authenticator.enabled ? true : false),
+        label: t('Authenticator enabled'),
+        labelOff: t('Authenticator disabled'),
+        showPinnedLabel: false,
+        isPinned: true,
+        isDisabled: cannotEditAuthenticator,
+        tooltip: t(
+          'Indicates if an authenticator is enabled and will be included in the hierarchy of authentication mechanisms.'
+        ),
+      },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        isPinned: true,
+        icon: PencilAltIcon,
+        label: t('Edit authenticator'),
+        isDisabled: cannotEditAuthenticator,
+        onClick: (authenticator) =>
+          pageNavigate(PlatformRoute.EditAuthenticator, { params: { id: authenticator.id } }),
+      },
+      { type: PageActionType.Seperator },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        icon: TrashIcon,
+        label: t('Delete authenticator'),
+        isDisabled: cannotDeleteAuthenticator,
+        onClick: (authenticator) => deleteAuthenticators([authenticator]),
+        isDanger: true,
+      },
+    ];
+  }, [canEditAuthenticator, deleteAuthenticators, handleToggleAuthenticator, pageNavigate, t]);
+
+  return pageActions;
 }
