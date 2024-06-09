@@ -1,16 +1,12 @@
 import { DropdownPosition } from '@patternfly/react-core/deprecated';
-import { EditIcon } from '@patternfly/react-icons';
-import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import {
-  IPageAction,
-  PageActionSelection,
-  PageActionType,
   PageActions,
   PageHeader,
   PageLayout,
   useGetPageUrl,
+  usePageNavigate,
 } from '../../../../framework';
 import { LoadingPage } from '../../../../framework/components/LoadingPage';
 import { AwxError } from '../../../../frontend/awx/common/AwxError';
@@ -18,6 +14,7 @@ import { useGetItem } from '../../../../frontend/common/crud/useGet';
 import { Authenticator } from '../../../interfaces/Authenticator';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
 import { PlatformAuthenticatorDetails } from './PlatformAuthenticatorDetails';
+import { useAuthenticatorPageActions } from '../hooks/useAuthenticatorActions';
 
 export function AuthenticatorPage() {
   const { t } = useTranslation();
@@ -27,23 +24,12 @@ export function AuthenticatorPage() {
     data: authenticator,
     refresh,
   } = useGetItem<Authenticator>(`/api/gateway/v1/authenticators`, params.id);
-
   const getPageUrl = useGetPageUrl();
-
-  const itemActions: IPageAction<Authenticator>[] = useMemo(() => {
-    const itemActions: IPageAction<Authenticator>[] = [
-      {
-        type: PageActionType.Link,
-        selection: PageActionSelection.Single,
-        // variant: ButtonVariant.primary,
-        isPinned: true,
-        icon: EditIcon,
-        label: t('Edit authenticator'),
-        href: () => getPageUrl(PlatformRoute.EditAuthenticator, { params: { id: params.id } }),
-      },
-    ];
-    return itemActions;
-  }, [t, getPageUrl, params.id]);
+  const pageNavigate = usePageNavigate();
+  const actions = useAuthenticatorPageActions(
+    () => pageNavigate(PlatformRoute.Authenticators),
+    refresh
+  );
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!authenticator) return <LoadingPage breadcrumbs tabs />;
@@ -58,7 +44,7 @@ export function AuthenticatorPage() {
         ]}
         headerActions={
           <PageActions<Authenticator>
-            actions={itemActions}
+            actions={actions}
             position={DropdownPosition.right}
             selectedItem={authenticator}
           />
