@@ -109,10 +109,10 @@ export function CreateRemote() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Create Remote')}
+        title={t('Create remote')}
         breadcrumbs={[
           { label: t('Remotes'), to: getPageUrl(HubRoute.Remotes) },
-          { label: t('Create Remote') },
+          { label: t('Create remote') },
         ]}
       />
       <HubPageForm<HubRemote>
@@ -302,10 +302,10 @@ export function EditRemote() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Edit Remote')}
+        title={`${t('Edit')} ${remote?.name || t('Remote')}`}
         breadcrumbs={[
           { label: t('Remotes'), to: getPageUrl(HubRoute.Remotes) },
-          { label: t('Remote') },
+          { label: `${t('Edit')} ${remote?.name || t('Remote')}` },
         ]}
       />
       <HubPageForm<RemoteFormProps>
