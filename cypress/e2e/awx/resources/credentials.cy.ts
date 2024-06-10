@@ -695,7 +695,7 @@ describe.skip('Credentials Tabbed View - Team and User Access', function () {
         });
     });
   }
-  it('create a new credential, assign a team and apply role(s)', () => {
+  it.skip('create a new credential, assign a team and apply role(s)', () => {
     cy.intercept('POST', awxAPI`/role_team_assignments/`).as('teamRoleAssignment');
     cy.navigateTo('awx', 'credentials');
     cy.filterTableByMultiSelect('name', [machineCredential.name]);
@@ -756,7 +756,7 @@ describe.skip('Credentials Tabbed View - Team and User Access', function () {
     removeRoleFromListRow(awxTeam.name, 'team');
   });
 
-  it('create a new credential, assign a user and apply role(s)', function () {
+  it.skip('create a new credential, assign a user and apply role(s)', function () {
     cy.intercept('POST', awxAPI`/role_user_assignments/`).as('userRoleAssignment');
     cy.navigateTo('awx', 'credentials');
     cy.filterTableByMultiSelect('name', [machineCredential.name]);

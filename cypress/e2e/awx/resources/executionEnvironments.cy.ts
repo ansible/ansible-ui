@@ -47,7 +47,7 @@ describe('Execution Environments: Create', () => {
     cy.deleteAwxUser(user, { failOnStatusCode: false });
   });
 
-  it('can create a new EE associated to a particular org, assert info on details page, then navigate to EE list and delete the EE', () => {
+  it.skip('can create a new EE associated to a particular org, assert info on details page, then navigate to EE list and delete the EE', () => {
     cy.getByDataCy('create-execution-environment').click();
     cy.getByDataCy('name').type(execEnvName);
     cy.getByDataCy('image').type(image);

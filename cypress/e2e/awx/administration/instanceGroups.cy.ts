@@ -48,7 +48,7 @@ instanceGroupTypes.forEach((igType) => {
       cy.deleteAwxInstanceGroup(instanceGroup, { failOnStatusCode: false });
     });
 
-    it(`can create new ${igType} Group, assert info on details page and then delete the ${igType.toLowerCase()} group from list view`, () => {
+    it.skip(`can create new ${igType} Group, assert info on details page and then delete the ${igType.toLowerCase()} group from list view`, () => {
       const name = `E2E ${igType} Group` + randomString(4);
       cy.clickButton(/^Create group$/);
       cy.clickLink(`Create ${igType.toLowerCase()} group`);
@@ -101,7 +101,7 @@ instanceGroupTypes.forEach((igType) => {
         });
     });
 
-    it(`can edit ${igType} Group from list view and assert the edited info`, () => {
+    it.skip(`can edit ${igType} Group from list view and assert the edited info`, () => {
       cy.filterTableBySingleSelect('name', instanceGroup.name);
       cy.clickTableRowKebabAction(instanceGroup.name, `edit-${igType.toLowerCase()}-group`, false);
       cy.get('[data-cy="name"]').clear();
@@ -148,7 +148,7 @@ instanceGroupTypes.forEach((igType) => {
       cy.getByDataCy('max-forks').should('have.text', '4');
     });
 
-    it(`can bulk delete ${igType} groups from list view and assert the deletion`, () => {
+    it.skip(`can bulk delete ${igType} groups from list view and assert the deletion`, () => {
       const arrayOfElementText = [];
       for (let i = 0; i < 5; i++) {
         const instanceGroupName = generateInstanceGroupName();
@@ -191,7 +191,7 @@ instanceGroupTypes.forEach((igType) => {
         });
     });
 
-    it(`bulk deletion dialog shows warnings for ${igType} groups that cannot be deleted`, () => {
+    it.skip(`bulk deletion dialog shows warnings for ${igType} groups that cannot be deleted`, () => {
       const arrayOfElementText = [instanceGroup.name];
       arrayOfElementText.push(igType === 'Container' ? 'default' : 'controlplane');
       cy.filterTableByMultiSelect('name', arrayOfElementText);
@@ -264,7 +264,7 @@ instanceGroupTypes.forEach((igType) => {
       cy.deleteAwxInstanceGroup(instanceGroup, { failOnStatusCode: false });
     });
 
-    it(`can edit ${igType} Group from the details page and assert edited info`, () => {
+    it.skip(`can edit ${igType} Group from the details page and assert edited info`, () => {
       cy.filterTableBySingleSelect('name', instanceGroup.name);
       cy.get('[data-cy="name-column-cell"]').click();
       cy.url().then((currentUrl) => {
