@@ -8,6 +8,7 @@ import {
   PageActionType,
   useGetPageUrl,
   usePageAlertToaster,
+  usePageDialog,
   usePageNavigate,
 } from '../../../../framework';
 import {
@@ -21,14 +22,14 @@ import { IPlatformView } from '../../../hooks/usePlatformView';
 import { Authenticator } from '../../../interfaces/Authenticator';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
 import { useDeleteAuthenticators } from './useDeleteAuthenticators';
-import { useManageAuthenticators } from './useManageAuthenticators';
 import { useParams } from 'react-router-dom';
+import { ReorderAuthenticatorsModal } from './useReorderAuthenticators';
 
 export function useAuthenticatorToolbarActions(view: IPlatformView<Authenticator>) {
   const { t } = useTranslation();
+  const [_, setDialog] = usePageDialog();
   const getPageUrl = useGetPageUrl();
   const deleteAuthenticators = useDeleteAuthenticators(view.unselectItemsAndRefresh);
-  const manageAuthenticators = useManageAuthenticators(view.unselectItemsAndRefresh);
 
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(gatewayV1API`/authenticators/`);
   const canCreateAuthenticator = Boolean(data && data.actions && data.actions['POST']);
@@ -60,7 +61,8 @@ export function useAuthenticatorToolbarActions(view: IPlatformView<Authenticator
           : t(
               'You do not have permission to manage authentications. Please contact your system administrator if there is an issue with your access.'
             ),
-        onClick: manageAuthenticators.openReorderModal,
+        onClick: () =>
+          setDialog(<ReorderAuthenticatorsModal onComplete={view.unselectItemsAndRefresh} />),
       },
       { type: PageActionType.Seperator },
       {
@@ -72,7 +74,14 @@ export function useAuthenticatorToolbarActions(view: IPlatformView<Authenticator
         isDanger: true,
       },
     ],
-    [t, canCreateAuthenticator, deleteAuthenticators, manageAuthenticators, getPageUrl]
+    [
+      t,
+      canCreateAuthenticator,
+      getPageUrl,
+      deleteAuthenticators,
+      setDialog,
+      view.unselectItemsAndRefresh,
+    ]
   );
 
   return toolbarActions;

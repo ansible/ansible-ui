@@ -1,77 +1,95 @@
 import { Button, Divider, Modal, ModalBoxBody, ModalVariant } from '@patternfly/react-core';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { usePageDialog } from '../../../../framework';
 import { ReorderItems } from '../../../../framework/components/ReorderItems';
 import { requestPatch } from '../../../../frontend/common/crud/Data';
 import { gatewayV1API } from '../../../api/gateway-api-utils';
 import { Authenticator } from '../../../interfaces/Authenticator';
+import { PlatformItemsResponse } from '../../../interfaces/PlatformItemsResponse';
+import { useGet } from '../../../../frontend/common/crud/useGet';
 
 export interface ReorderItemsProps {
-  title: string;
-  description?: string;
-  /** The items to manage */
-  items: Authenticator[];
-  /** Variant controls the size of the modal */
-  variant?: ModalVariant;
   onComplete?: (items: Authenticator[]) => void;
 }
 
 /**
  * This hook is used to reorder items.
  */
-export function useReorderAuthenticators(options: ReorderItemsProps) {
-  const [_, setDialog] = usePageDialog();
-  const onApplyChanges = useCallback((orderedItems: Authenticator[]) => {
-    void Promise.all(
-      orderedItems.map(async (item, index) => {
-        await requestPatch(gatewayV1API`/authenticators/`.concat(`${item.id}/`), {
-          order: index + 1,
-        });
-      })
-    )
-      .then(() => {
-        options?.onComplete ? options.onComplete(orderedItems) : '';
-      })
-      .catch();
-  }, []);
+export function ReorderAuthenticatorsModal(options: ReorderItemsProps) {
+  const { data: authInfo } = useGet<PlatformItemsResponse<Authenticator>>(
+    gatewayV1API`/authenticators/?order_by=order&page=1&page_size=1`
+  );
+  const { data } = useGet<PlatformItemsResponse<Authenticator>>(
+    gatewayV1API`/authenticators/?order_by=order&page=1&page_size=${authInfo?.count.toString() || '10'}`
+  );
 
-  const openReorderModal = () =>
-    setDialog(
-      <ReorderItemsModal
-        {...options}
-        items={options.items}
-        onComplete={options.onComplete}
-        onApplyChanges={onApplyChanges}
-      />
-    );
+  const onApplyChanges = useCallback(
+    (orderedItems: Authenticator[]) => {
+      void Promise.all(
+        orderedItems.map(async (item, index) => {
+          await requestPatch(gatewayV1API`/authenticators/`.concat(`${item.id}/`), {
+            order: index + 1,
+          });
+        })
+      )
+        .then(() => {
+          options?.onComplete ? options.onComplete(orderedItems) : '';
+        })
+        .catch();
+    },
+    [options]
+  );
 
-  return { openReorderModal };
+  return (
+    <ReorderItemsModal
+      items={data?.results || []}
+      onComplete={options.onComplete}
+      onApplyChanges={onApplyChanges}
+    />
+  );
 }
 
 export function ReorderItemsModal(
   props: ReorderItemsProps & {
+    items: Authenticator[];
     onApplyChanges: (items: Authenticator[]) => void;
   }
 ) {
   const { t } = useTranslation();
-  const { title, description, onApplyChanges } = props;
   const [_, setDialog] = usePageDialog();
+  const { onApplyChanges } = props;
+
   const onClose = () => setDialog(undefined);
-  const [items, setItems] = useState<Authenticator[]>(() => props.items);
+  const [managedItems, setManagedItems] = useState<Authenticator[]>(() => props.items);
+  const [items, setItems] = useState<Authenticator[]>(() => managedItems);
+
+  useEffect(() => {
+    if (props.items !== managedItems) {
+      setItems(props.items);
+      setManagedItems(props.items);
+    }
+  }, [managedItems, props.items]);
 
   const onApply = () => {
     onApplyChanges(items);
+    setItems(props.items);
     setDialog(undefined);
   };
 
   return (
     <Modal
-      title={title}
-      aria-label={title}
-      ouiaId={title}
-      description={<div style={{ marginBottom: 16 }}>{description}</div>}
-      variant={props.variant ?? ModalVariant.medium}
+      title={t('Manage authentication order')}
+      aria-label={t('Manage authentication order')}
+      ouiaId={t('Manage authentication order')}
+      description={
+        <div style={{ marginBottom: 16 }}>
+          {t(
+            'The panels are ordered from top to bottom on the list. Use the draggable icon :: to re-order your authentication.'
+          )}
+        </div>
+      }
+      variant={ModalVariant.medium}
       isOpen
       onClose={onClose}
       actions={[
