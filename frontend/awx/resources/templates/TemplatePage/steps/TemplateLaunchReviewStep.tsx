@@ -16,7 +16,7 @@ import { jsonToYaml, yamlToJson } from '../../../../../../framework/utils/codeEd
 import { WorkflowJobTemplate } from '../../../../interfaces/WorkflowJobTemplate';
 import { Survey } from '../../../../interfaces/Survey';
 
-function getRelatedResourceUrl(template: JobTemplate | WorkflowJobTemplate) {
+function getSurveySpecUrl(template: JobTemplate | WorkflowJobTemplate) {
   if (!template) return '';
   switch (template?.type) {
     case 'job_template':
@@ -89,7 +89,7 @@ export function TemplateLaunchReviewStep(props: { template: JobTemplate }) {
     verbosity,
     survey,
   } = wizardData as TemplateLaunch;
-  const { data: surveyConfig } = useGet<Survey>(getRelatedResourceUrl(template));
+  const { data: surveyConfig } = useGet<Survey>(getSurveySpecUrl(template));
 
   let extraVarDetails = extra_vars || '{}';
   if (survey) {
