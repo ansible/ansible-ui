@@ -3,6 +3,7 @@ import { awxAPI } from '../../../../../frontend/awx/common/api/awx-utils';
 import { testNotification, testDelete } from './notifiersSharedFunctions';
 /* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call */
 
+// test failures
 describe('Notifications', () => {
   //let notificationTemplate: NotificationTemplate;
 
