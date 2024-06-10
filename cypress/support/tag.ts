@@ -6,6 +6,7 @@
  * @example
  *   TAGS=smoke npm run e2e:run:awx
  *   TAGS='!flaky' npm run e2e:run:awx
+ *   Tag to exclude tests for an AAAS (Ansible as a Service) test run: 'aaas-unsupported'
  */
 export function tag(definedTags: string[], runTest: () => unknown) {
   if (Cypress.env('TAGS')) {
