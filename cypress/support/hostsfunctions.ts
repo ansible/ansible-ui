@@ -39,7 +39,7 @@ function createAndCheckHost(host_type: string, inventory: string) {
   cy.clickButton(/^Create host/);
   cy.hasDetail(/^Name$/, hostName);
   cy.hasDetail(/^Description$/, 'This is the description');
-  cy.hasDetail(/^Variables$/, 'test: true');
+  cy.get('[data-cy="code-block-value"]').should('contains.text', "test: true")
 
   return hostName;
 }
