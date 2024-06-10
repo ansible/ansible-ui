@@ -3,7 +3,7 @@
   "type": "module",
   "main": "./index.ts",
   "scripts": {
-    "clean": "rm -rf coverage dist node_modules .eslintcache",
+    "clean": "rm -rf publish",
     "build": "npm run clean && vite build && NODE_OPTIONS=--max-old-space-size=8192 tsc --project tsconfig.production.json"
   }
 }
