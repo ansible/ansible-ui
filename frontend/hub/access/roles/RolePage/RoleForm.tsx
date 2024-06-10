@@ -119,13 +119,10 @@ export function EditRole(props: { breadcrumbLabelForPreviousPage?: string }) {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Edit Role')}
+        title={`${t('Edit')} ${role?.name || t('Role')}`}
         breadcrumbs={[
-          {
-            label: props.breadcrumbLabelForPreviousPage || t('Roles'),
-            to: getPageUrl(HubRoute.Roles),
-          },
-          { label: t('Edit Role') },
+          { label: t('Roles'), to: getPageUrl(HubRoute.Roles) },
+          { label: `${t('Edit')} ${role?.name || t('Role')}` },
         ]}
       />
       <HubPageForm<RoleInput>

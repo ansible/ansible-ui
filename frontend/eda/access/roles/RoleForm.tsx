@@ -106,13 +106,10 @@ export function EditRole(props: { breadcrumbLabelForPreviousPage?: string }) {
       return (
         <PageLayout>
           <PageHeader
-            title={t('Edit Role')}
+            title={`${t('Edit')} ${Role?.name || t('Role')}`}
             breadcrumbs={[
-              {
-                label: props.breadcrumbLabelForPreviousPage || t('Roles'),
-                to: getPageUrl(EdaRoute.Roles),
-              },
-              { label: t('Edit Role') },
+              { label: t('Roles'), to: getPageUrl(EdaRoute.Roles) },
+              { label: `${t('Edit')} ${Role?.name || t('Role')}` },
             ]}
           />
           <EdaPageForm<EdaRbacRole>
