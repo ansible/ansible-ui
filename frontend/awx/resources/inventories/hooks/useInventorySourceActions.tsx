@@ -1,5 +1,5 @@
 import { ButtonVariant } from '@patternfly/react-core';
-import { PencilAltIcon, RocketIcon, TrashIcon } from '@patternfly/react-icons';
+import { MinusCircleIcon, PencilAltIcon, RocketIcon, TrashIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
@@ -15,17 +15,21 @@ import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
 import { InventorySource } from '../../../interfaces/InventorySource';
 import { AwxRoute } from '../../../main/AwxRoutes';
+import { useCancelIventoryUpdate } from './useCancelInventoryUpdate';
 import { useDeleteInventorySources } from './useDeleteInventorySources';
 
 type InventorySourceActionOptions = {
-  onDelete: (inventorySources: InventorySource[]) => void;
-  onSync: () => void;
+  onInventorySourcesDeleted: (inventorySources: InventorySource[]) => void;
+  onInvUpdateCanceled: (inventorySources: InventorySource[]) => void;
 };
 
-export function useInventorySourceActions({ onDelete, onSync }: InventorySourceActionOptions) {
+export function useInventorySourceActions({
+  onInventorySourcesDeleted,
+  onInvUpdateCanceled,
+}: InventorySourceActionOptions) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
-  const deleteInventorySources = useDeleteInventorySources(onDelete);
+  const deleteInventorySources = useDeleteInventorySources(onInventorySourcesDeleted);
   const params = useParams<{ inventory_type: string }>();
 
   const { activeAwxUser } = useAwxActiveUser();
@@ -36,7 +40,6 @@ export function useInventorySourceActions({ onDelete, onSync }: InventorySourceA
     async (invSrc: InventorySource) => {
       try {
         await postRequest(awxAPI`/inventory_sources/${invSrc.id.toString()}/update/`, {});
-        onSync();
       } catch (error) {
         alertToaster.addAlert({
           variant: 'danger',
@@ -46,8 +49,10 @@ export function useInventorySourceActions({ onDelete, onSync }: InventorySourceA
         });
       }
     },
-    [alertToaster, postRequest, t, onSync]
+    [alertToaster, postRequest, t]
   );
+
+  const cancelInventoryUpdate = useCancelIventoryUpdate(onInvUpdateCanceled);
 
   return useMemo<IPageAction<InventorySource>[]>(() => {
     const cannotDeleteInventorySource = (inventorySource: InventorySource): string => {
@@ -65,12 +70,11 @@ export function useInventorySourceActions({ onDelete, onSync }: InventorySourceA
       return '';
     };
     const cannotEditInventorySource = (inventorySource: InventorySource): string =>
-      inventorySource?.summary_fields?.user_capabilities?.edit && !activeAwxUser?.is_system_auditor
+      inventorySource?.summary_fields?.user_capabilities?.edit && activeAwxUser?.is_superuser
         ? ''
         : t(`The inventory source cannot be edited due to insufficient permission`);
     const cannotLaunchInventorySourceUpdate = (inventorySource: InventorySource): string => {
-      return inventorySource.summary_fields.user_capabilities.start &&
-        !activeAwxUser?.is_system_auditor
+      return inventorySource.summary_fields.user_capabilities.start && activeAwxUser?.is_superuser
         ? ''
         : t(`The inventory source cannot be updated due to insufficient permission`);
     };
@@ -101,11 +105,49 @@ export function useInventorySourceActions({ onDelete, onSync }: InventorySourceA
         icon: RocketIcon,
         label: t('Launch inventory update'),
         isPinned: true,
-        isHidden: (inventorySource: InventorySource) =>
-          !inventorySource?.summary_fields.user_capabilities.start,
+        isHidden: (inventorySource: InventorySource) => {
+          const startPerms = inventorySource?.summary_fields.user_capabilities.start;
+          let job;
+          let unlaunchableStatus;
+          if (inventorySource.summary_fields?.current_job) {
+            job = inventorySource.summary_fields.current_job;
+          } else if (inventorySource.summary_fields?.last_job) {
+            job = inventorySource.summary_fields.last_job;
+          }
+          if (job) {
+            unlaunchableStatus = ['new', 'running', 'pending', 'waiting'].includes(job?.status);
+          }
+
+          return !startPerms || unlaunchableStatus ? true : false;
+        },
         isDisabled: (inventorySource: InventorySource) =>
           cannotLaunchInventorySourceUpdate(inventorySource),
         onClick: (inventorySource) => handleUpdate(inventorySource),
+      },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        icon: MinusCircleIcon,
+        label: t('Cancel inventory update'),
+        isPinned: true,
+        isHidden: (inventorySource: InventorySource) => {
+          const startPerms = inventorySource?.summary_fields.user_capabilities.start;
+          let job;
+          let unlaunchableStatus;
+          if (inventorySource.summary_fields?.current_job) {
+            job = inventorySource.summary_fields.current_job;
+          } else if (inventorySource.summary_fields?.last_job) {
+            job = inventorySource.summary_fields.last_job;
+          }
+          if (job) {
+            unlaunchableStatus = ['new', 'running', 'pending', 'waiting'].includes(job?.status);
+          }
+
+          return !startPerms || !unlaunchableStatus ? true : false;
+        },
+        isDisabled: (inventorySource: InventorySource) =>
+          cannotLaunchInventorySourceUpdate(inventorySource),
+        onClick: (inventorySource) => cancelInventoryUpdate([inventorySource]),
       },
       {
         type: PageActionType.Button,
@@ -119,5 +161,13 @@ export function useInventorySourceActions({ onDelete, onSync }: InventorySourceA
       },
     ];
     return itemActions;
-  }, [deleteInventorySources, pageNavigate, handleUpdate, activeAwxUser, t, params.inventory_type]);
+  }, [
+    deleteInventorySources,
+    pageNavigate,
+    handleUpdate,
+    cancelInventoryUpdate,
+    activeAwxUser,
+    t,
+    params.inventory_type,
+  ]);
 }

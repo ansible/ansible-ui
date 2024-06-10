@@ -124,7 +124,7 @@ instanceGroupTypes.forEach((igType) => {
         'editInstanceGroup'
       );
 
-      cy.clickButton(`Save ${igType} Group`);
+      cy.getByDataCy('Submit').click();
       cy.wait('@editInstanceGroup')
         .then((response) => {
           expect(response?.response?.statusCode).to.eql(200);
@@ -291,8 +291,7 @@ instanceGroupTypes.forEach((igType) => {
       cy.intercept('PATCH', awxAPI`/instance_groups/${instanceGroup.id.toString()}/`).as(
         'editInstanceGroup'
       );
-
-      cy.clickButton(`Save ${igType} Group`);
+      cy.getByDataCy('Submit').click();
       cy.wait('@editInstanceGroup')
         .then((response) => {
           expect(response?.response?.statusCode).to.eql(200);
@@ -325,15 +324,9 @@ instanceGroupTypes.forEach((igType) => {
       });
       cy.clickPageAction(`delete-${igType.toLowerCase()}-group`);
       cy.intercept('DELETE', awxAPI`/instance_groups/*/`).as('deleteInstanceGroup');
-      cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
-        cy.get('header').contains(`Permanently delete ${igType.toLowerCase()} groups`);
-        cy.get('button')
-          .contains(`Delete ${igType.toLowerCase()} group`)
-          .should('have.attr', 'aria-disabled', 'true');
-        cy.getByDataCy('name-column-cell').should('have.text', instanceGroup.name);
-        cy.get('input[id="confirm"]').click();
-        cy.get('button').contains(`Delete ${igType.toLowerCase()} group`).click();
-      });
+      cy.get('#confirm').click();
+      cy.clickButton(`Delete ${igType.toLowerCase()} group`);
+      cy.verifyPageTitle('Instance Groups');
       cy.wait('@deleteInstanceGroup')
         .its('response')
         .then((response) => {

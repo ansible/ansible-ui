@@ -115,7 +115,7 @@ export function EditInstanceGroup() {
         ]}
       />
       <AwxPageForm
-        submitText={t('Save Instance Group')}
+        submitText={t('Save instance group')}
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
         onCancel={onCancel}
