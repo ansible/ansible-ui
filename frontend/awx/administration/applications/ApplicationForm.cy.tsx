@@ -3,11 +3,11 @@ import { Application } from '../../interfaces/Application';
 import { Organization } from '../../interfaces/Organization';
 import { CreateApplication, EditApplication } from './ApplicationForm';
 
-describe('Create Edit OAuth Application Form', () => {
-  describe('Create OAuth application', () => {
+describe('Create Edit OAuth OAuth Application Form', () => {
+  describe('Create OAuth OAuth application', () => {
     it('should validate required fields on save', () => {
       cy.mount(<CreateApplication onSuccessfulCreate={(app: Application) => app} />);
-      cy.clickButton(/^Create OAuth application$/);
+      cy.clickButton(/^Create OAuth OAuth application$/);
       cy.contains('Name is required.').should('be.visible');
       cy.contains('Organization is required.').should('be.visible');
       cy.contains('Authorization grant type is required.').should('be.visible');
@@ -29,7 +29,7 @@ describe('Create Edit OAuth Application Form', () => {
       cy.selectSingleSelectOption('[data-cy="organization"]', 'Default');
       cy.selectDropdownOptionByResourceName('authorization-grant-type', 'Password');
       cy.selectDropdownOptionByResourceName('client-type', 'Confidential');
-      cy.clickButton(/^Create OAuth application$/);
+      cy.clickButton(/^Create OAuth OAuth application$/);
       cy.wait('@createApplication')
         .its('request.body')
         .then((createdApplication: Application) => {
@@ -43,7 +43,7 @@ describe('Create Edit OAuth Application Form', () => {
         });
     });
 
-    it('should create OAuth application with redirect URI', () => {
+    it('should create OAuth OAuth application with redirect URI', () => {
       cy.intercept(
         { method: 'GET', url: '/api/v2/organizations/*' },
         { fixture: 'organizations.json' }
@@ -59,7 +59,7 @@ describe('Create Edit OAuth Application Form', () => {
       cy.selectDropdownOptionByResourceName('authorization-grant-type', 'Authorization code');
       cy.selectDropdownOptionByResourceName('client-type', 'Confidential');
       cy.get('[data-cy="redirect-uris"]').type('https://www.google.com');
-      cy.clickButton(/^Create OAuth application$/);
+      cy.clickButton(/^Create OAuth OAuth application$/);
       cy.wait('@createApplication')
         .its('request.body')
         .then((createdApplication: Application) => {
@@ -74,7 +74,7 @@ describe('Create Edit OAuth Application Form', () => {
         });
     });
 
-    it('create OAuth application should show field error if URIs is empty and grant type is auth code', () => {
+    it('create OAuth OAuth application should show field error if URIs is empty and grant type is auth code', () => {
       cy.intercept(
         { method: 'GET', url: '/api/v2/organizations/*' },
         { fixture: 'organizations.json' }
