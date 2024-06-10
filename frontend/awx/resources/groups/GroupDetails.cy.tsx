@@ -29,7 +29,10 @@ describe('GroupDetails', () => {
         'includes.text',
         formatDateString(group.modified)
       );
-      cy.hasDetail(/^Variables$/, group.variables ?? '');
+      cy.get('[data-cy="code-block-value"]').should(
+        'contains.text',
+        group.variables?.replace('---\n', '')
+      );
     });
   });
 });

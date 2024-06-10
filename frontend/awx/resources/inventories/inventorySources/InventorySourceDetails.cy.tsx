@@ -27,7 +27,7 @@ describe('InventorySourceDetails', () => {
     cy.get('#verbosity').should('have.text', '1 (Verbose)');
 
     cy.get('#cache-timeout').should('have.text', '0 seconds');
-    cy.get('#source-variables').should('have.text', '---');
+    cy.get('[data-cy="code-block-value"]').should('have.text', '');
     cy.get('#created > .pf-v5-c-description-list__text > .date-time > .pf-v5-c-button').should(
       'have.text',
       'dev'
