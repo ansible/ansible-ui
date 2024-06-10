@@ -1,7 +1,11 @@
 import { Inventory } from '../../../../../frontend/awx/interfaces/Inventory';
 import { Organization } from '../../../../../frontend/awx/interfaces/Organization';
 import { AwxUser } from '../../../../../frontend/awx/interfaces/User';
-import { createAndEditAndDeleteHost, checkHostGroup } from '../../../../support/hostsfunctions';
+import {
+  createAndEditAndDeleteHost,
+  checkHostGroup,
+  testHostBulkDelete,
+} from '../../../../support/hostsfunctions';
 
 describe('Inventory Host Tab Tests for regular inventory', () => {
   let organization: Organization;
@@ -47,12 +51,13 @@ describe('Inventory Host Tab Tests for regular inventory', () => {
     //can and delete host from details view
   });
 
-  it.skip('can bulk delete multiple hosts from the hosts tab of an inventory', () => {
+  it('can bulk delete multiple hosts from the hosts tab of an inventory', () => {
     //1) Use the inventory , access the host tab of that inventory
     //2) Create 2 hosts in this test for the purpose of delete
     //3) Assert the existence of the hosts
     //4) Delete the hosts, intercept the Delete call
     //5) Assert that the hosts are not found in a search; assert the statusCode of the Delete call
+    testHostBulkDelete('inventory_host', inventory);
   });
 
   it.skip("can view a host's facts on the facts tab of a host inside an inventory", () => {

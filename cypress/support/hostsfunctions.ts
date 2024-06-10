@@ -44,16 +44,40 @@ function createAndCheckHost(host_type: string, inventory: string) {
   return hostName;
 }
 
+function create2ndHost(host_type: string, inventory: string) {
+  const hostName = 'E2E Inventory host ' + randomString(4);
+
+  // create host
+  cy.clickButton(/^Create host$/);
+  cy.verifyPageTitle('Create Host');
+  cy.getByDataCy('name').type(hostName);
+  cy.getByDataCy('description').type('This is the description');
+
+  if (host_type === 'stand_alone_host') {
+    cy.getByDataCy('inventory').click();
+    cy.contains('button', 'Browse').click();
+    cy.getModal().within(() => {
+      cy.filterTableBySingleSelect('name', inventory);
+      cy.get(`[data-cy="checkbox-column-cell"] input`).click();
+      cy.contains('button', 'Confirm').click();
+    });
+  }
+
+  // after creation - verify data is currect
+  cy.getByDataCy('variables').type('test: true');
+  cy.clickButton(/^Create host/);
+  cy.hasDetail(/^Name$/, hostName);
+  cy.hasDetail(/^Description$/, 'This is the description');
+  cy.hasDetail(/^Variables$/, 'test: true');
+
+  return hostName;
+}
+
 function editHost(inventoryID: number, host_type: string, hostName: string) {
   // function that editing host data
   // this function cover both inventory host and stand alone host
-  if (host_type === 'inventory_host') {
-    cy.visit(
-      `/infrastructure/inventories/inventory/${inventoryID}/hosts/?page=1&perPage=10&sort=name`
-    );
-  } else {
-    cy.visit('/infrastructure/hosts?page=1&perPage=10&sort=name');
-  }
+  cy.visit(getURL(host_type, inventoryID));
+
   cy.filterTableByMultiSelect('name', [hostName]);
 
   cy.getByDataCy('edit-host').click();
@@ -68,13 +92,7 @@ function deleteHost(inventoryID: number, host_type: string, hostName: string) {
   // function for delete host
   // can use this for stand alon host and for invntory host
   // will delete and verify that all was deleted curectlly
-  if (host_type === 'inventory_host') {
-    cy.visit(
-      `/infrastructure/inventories/inventory/${inventoryID}/hosts/?page=1&perPage=10&sort=name`
-    );
-  } else {
-    cy.visit('/infrastructure/hosts?page=1&perPage=10&sort=name');
-  }
+  cy.visit(getURL(host_type, inventoryID));
 
   cy.filterTableByMultiSelect('name', [hostName]);
   cy.get(`[data-cy="actions-column-cell"] [data-cy="actions-dropdown"]`).click();
@@ -92,6 +110,15 @@ function navigateToHost(url: string, name: string, data: string) {
   cy.get(data).click();
 }
 
+function navigateToBase(host_type: string, invenotry: Inventory) {
+  if (host_type === 'inventory_host') {
+    cy.visit(`/infrastructure/inventories/inventory/${invenotry.id}/details`);
+    cy.clickTab(/^Hosts$/, true);
+  } else {
+    cy.visit(`/infrastructure/hosts`);
+  }
+}
+
 function disassociate() {
   //this function will disassociate a group from given host
   // this is for stand alone or invntory host
@@ -102,17 +129,22 @@ function disassociate() {
   cy.clickModalButton('Close');
 }
 
+function getURL(host_type: string, inventoryID: number) {
+  let url = '';
+  if (host_type === 'inventory_host') {
+    url = `/infrastructure/inventories/inventory/${inventoryID}/hosts/?page=1&perPage=10&sort=name`;
+  } else {
+    url = '/infrastructure/hosts?page=1&perPage=10&sort=name';
+  }
+  return url;
+}
+
 export function checkHostGroup(host_type: string, organization: Organization) {
   // this function will get string and organization value and test host group option
   // both for inventory host and stand alone hosts
   cy.createInventoryHostGroup(organization).then((result) => {
     const { inventory, host, group } = result;
-    let url = '';
-    if (host_type === 'inventory_host') {
-      url = `/infrastructure/inventories/inventory/${inventory.id}/hosts/?page=1&perPage=10&sort=name`;
-    } else {
-      url = '/infrastructure/hosts?page=1&perPage=10&sort=name';
-    }
+    const url = getURL(host_type, inventory.id);
     // TODO: unsafe assignment, find a better way to retrieve host id it doesn't return always
     const hostid = host.id ? host.id.toString() : '';
     navigateToHost(url, host.name, '[data-cy="name-column-cell"] a');
@@ -178,4 +210,31 @@ export function createAndEditAndDeleteHost(host_type: string, inventory: Invento
   editHost(inventory.id, host_type, hostName);
   // delete
   deleteHost(inventory.id, host_type, hostName);
+}
+
+export function testHostBulkDelete(host_type: string, inventory: Inventory) {
+  //navigate to base screen
+  navigateToBase(host_type, inventory);
+  //create
+  const hostName1 = createAndCheckHost(host_type, inventory.name);
+  navigateToBase(host_type, inventory);
+  const hostName2 = create2ndHost(host_type, inventory.name);
+  navigateToBase(host_type, inventory);
+  cy.filterTableBySingleSelect('name', hostName1);
+  cy.contains(hostName1);
+  navigateToBase(host_type, inventory);
+  cy.filterTableBySingleSelect('name', hostName2);
+  navigateToBase(host_type, inventory);
+  cy.contains(hostName2);
+  cy.getByDataCy('select-all').click();
+  cy.clickToolbarKebabAction('delete-selected-hosts');
+  cy.contains('Permanently delete hosts');
+  cy.clickModalConfirmCheckbox();
+  cy.contains('button', 'Delete hosts').click();
+  cy.contains('button', 'Close').click();
+  if (host_type === 'inventory_host') {
+    cy.getByDataCy('empty-state-title').contains(
+      /^There are currently no hosts added to this inventory./
+    );
+  }
 }
