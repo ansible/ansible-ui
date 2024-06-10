@@ -1,3 +1,5 @@
+import { useCallback, useEffect } from 'react';
+import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import useSWR, { useSWRConfig } from 'swr';
@@ -10,22 +12,20 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../framework';
+import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
+import { requestGet, swrOptions } from '../../../common/crud/Data';
 import { useGet } from '../../../common/crud/useGet';
 import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { EdaPageForm } from '../../common/EdaPageForm';
 import { edaAPI } from '../../common/eda-utils';
 import { EdaCredential, EdaCredentialCreate } from '../../interfaces/EdaCredential';
-import { EdaRoute } from '../../main/EdaRoutes';
-import { EdaResult } from '../../interfaces/EdaResult';
 import { EdaCredentialType, EdaCredentialTypeField } from '../../interfaces/EdaCredentialType';
-import { useFormContext, useWatch } from 'react-hook-form';
-import { CredentialFormInputs } from './CredentialFormTypes';
-import { useCallback, useEffect } from 'react';
-import { PageFormSelectOrganization } from '../organizations/components/PageFormOrganizationSelect';
 import { EdaOrganization } from '../../interfaces/EdaOrganization';
-import { requestGet, swrOptions } from '../../../common/crud/Data';
-import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
+import { EdaResult } from '../../interfaces/EdaResult';
+import { EdaRoute } from '../../main/EdaRoutes';
+import { PageFormSelectOrganization } from '../organizations/components/PageFormOrganizationSelect';
+import { CredentialFormInputs } from './CredentialFormTypes';
 
 // eslint-disable-next-line react/prop-types
 function CredentialInputs(props: { editMode: boolean }) {
@@ -61,10 +61,11 @@ function CredentialInputs(props: { editMode: boolean }) {
     });
   }, [credentialType, setValue]);
 
+  const { editMode } = props;
   useEffect(() => {
-    if (props.editMode || !credentialTypeId) return;
+    if (editMode || !credentialTypeId) return;
     setDefaultValuesForType();
-  }, [setValue, props, credentialTypeId, setDefaultValuesForType]);
+  }, [setValue, editMode, credentialTypeId, setDefaultValuesForType]);
 
   return (
     <>
