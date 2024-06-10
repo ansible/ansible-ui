@@ -4,7 +4,7 @@ import { Organization } from '../../interfaces/Organization';
 import { CreateApplication, EditApplication } from './ApplicationForm';
 
 describe('Create Edit OAuth Application Form', () => {
-  describe('Create OAuth Application', () => {
+  describe('Create OAuth application', () => {
     it('should validate required fields on save', () => {
       cy.mount(<CreateApplication onSuccessfulCreate={(app: Application) => app} />);
       cy.clickButton(/^Create OAuth application$/);
@@ -24,7 +24,7 @@ describe('Create Edit OAuth Application Form', () => {
         fixture: 'application.json',
       }).as('createApplication');
       cy.mount(<CreateApplication onSuccessfulCreate={(app: Application) => app} />);
-      cy.get('[data-cy="name"]').type('Create OAuth Application');
+      cy.get('[data-cy="name"]').type('Create OAuth application');
       cy.get('[data-cy="description"]').type('mock application description');
       cy.selectSingleSelectOption('[data-cy="organization"]', 'Default');
       cy.selectDropdownOptionByResourceName('authorization-grant-type', 'Password');
@@ -34,7 +34,7 @@ describe('Create Edit OAuth Application Form', () => {
         .its('request.body')
         .then((createdApplication: Application) => {
           expect(createdApplication).to.deep.equal({
-            name: 'Create OAuth Application',
+            name: 'Create OAuth application',
             description: 'mock application description',
             organization: 1,
             authorization_grant_type: 'password',
@@ -53,7 +53,7 @@ describe('Create Edit OAuth Application Form', () => {
         fixture: 'application.json',
       }).as('createApplication');
       cy.mount(<CreateApplication onSuccessfulCreate={(app: Application) => app} />);
-      cy.get('[data-cy="name"]').type('Create OAuth Application');
+      cy.get('[data-cy="name"]').type('Create OAuth application');
       cy.get('[data-cy="description"]').type('mock application description');
       cy.selectSingleSelectOption('[data-cy="organization"]', 'Default');
       cy.selectDropdownOptionByResourceName('authorization-grant-type', 'Authorization code');
@@ -64,7 +64,7 @@ describe('Create Edit OAuth Application Form', () => {
         .its('request.body')
         .then((createdApplication: Application) => {
           expect(createdApplication).to.deep.equal({
-            name: 'Create OAuth Application',
+            name: 'Create OAuth application',
             description: 'mock application description',
             organization: 1,
             authorization_grant_type: 'authorization-code',
@@ -84,7 +84,7 @@ describe('Create Edit OAuth Application Form', () => {
         fixture: 'application.json',
       }).as('createApplication');
       cy.mount(<CreateApplication onSuccessfulCreate={(app: Application) => app} />);
-      cy.get('[data-cy="name"]').type('Create OAuth Application');
+      cy.get('[data-cy="name"]').type('Create OAuth application');
       cy.get('[data-cy="description"]').type('mock application description');
       cy.selectSingleSelectOption('[data-cy="organization"]', 'Default');
       cy.selectDropdownOptionByResourceName('authorization-grant-type', 'Authorization code');

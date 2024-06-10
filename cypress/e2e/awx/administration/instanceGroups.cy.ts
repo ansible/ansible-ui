@@ -335,7 +335,7 @@ instanceGroupTypes.forEach((igType) => {
     });
   });
 
-  describe(`${igType} Groups: Team access Tab`, () => {
+  describe(`${igType} Groups: Team Access Tab`, () => {
     let team: Team;
     let instanceGroup: InstanceGroup;
 
@@ -382,7 +382,7 @@ instanceGroupTypes.forEach((igType) => {
         expect(currentUrl.includes('details')).to.be.true;
         expect(currentUrl.includes(`infrastructure/instance-groups`)).to.be.true;
       });
-      cy.clickTab(/^Team access$/, true);
+      cy.clickTab(/^Team Access$/, true);
       cy.get('.pf-v5-c-empty-state__title-text').contains(
         /^There are currently no teams assigned to this instance group./
       );
@@ -450,7 +450,7 @@ instanceGroupTypes.forEach((igType) => {
     });
   });
 
-  describe(`${igType} Groups: User access Tab`, () => {
+  describe(`${igType} Groups: User Access Tab`, () => {
     let user: AwxUser;
     let instanceGroup: InstanceGroup;
 
@@ -497,7 +497,7 @@ instanceGroupTypes.forEach((igType) => {
         expect(currentUrl.includes('details')).to.be.true;
         expect(currentUrl.includes(`infrastructure/instance-groups`)).to.be.true;
       });
-      cy.clickTab(/^User access$/, true);
+      cy.clickTab(/^User Access$/, true);
       cy.get('.pf-v5-c-empty-state__title-text').contains(
         /^There are currently no users assigned to this instance group./
       );
