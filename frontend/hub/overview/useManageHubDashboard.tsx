@@ -20,7 +20,7 @@ export function useManageHubDashboard() {
   const { openManageItems: openManageDashboard, managedItems: managedCategories } =
     useManageItems<CollectionCategory>({
       id: 'hub-dashboard',
-      title: t('Manage Dashboard'),
+      title: t('Manage view'),
       description: t(
         'Hide or show the panels you want to see on the overview page by selecting or unselecting, respectively. The panels are ordered from top to bottom on the list. Use the draggable icon :: to re-order your view.'
       ),
