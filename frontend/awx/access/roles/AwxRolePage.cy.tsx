@@ -30,7 +30,7 @@ describe('AwxRoles', () => {
 
   it('should filter roles by name', () => {
     cy.mount(<AwxRoles />);
-    cy.intercept('api/v2/role_definitions/?name__startswith=admin*').as('nameFilterRequest');
+    cy.intercept('api/v2/role_definitions/?name__icontains=admin*').as('nameFilterRequest');
     cy.filterTableByTypeAndText(/^Name$/, 'admin');
     cy.wait('@nameFilterRequest');
     cy.clickButton(/^Clear all filters$/);

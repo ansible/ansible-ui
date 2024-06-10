@@ -48,8 +48,8 @@ export function AwxRolesTable() {
         key: 'name',
         label: t('Name'),
         type: ToolbarFilterType.MultiText,
-        query: 'name__startswith',
-        comparison: 'startsWith',
+        query: 'name__icontains',
+        comparison: 'contains',
       },
       {
         key: 'editable',
