@@ -1541,7 +1541,7 @@ Cypress.Commands.add(
     customRedirectURIS: string
   ) => {
     cy.clickButton('Create OAuth application');
-    cy.verifyPageTitle('Create OAuth Application');
+    cy.verifyPageTitle('Create OAuth application');
     cy.get('[data-cy="name"]').type(customAppName);
     cy.get('[data-cy="description"]').type(customAppDescription);
     cy.selectSingleSelectOption('[data-cy="organization"]', 'Default');
