@@ -41,13 +41,13 @@ export function CreateRole(props: { breadcrumbLabelForPreviousPage?: string }) {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Create Role')}
+        title={t('Create role')}
         breadcrumbs={[
           {
             label: props.breadcrumbLabelForPreviousPage || t('Roles'),
             to: getPageUrl(AwxRoute.Roles),
           },
-          { label: t('Create Role') },
+          { label: t('Create role') },
         ]}
       />
       <AwxPageForm<AwxRbacRole>
@@ -100,13 +100,10 @@ export function EditRole(props: { breadcrumbLabelForPreviousPage?: string }) {
       return (
         <PageLayout>
           <PageHeader
-            title={t('Edit Role')}
+            title={`${t('Edit')} ${role?.name || t('Role')}`}
             breadcrumbs={[
-              {
-                label: props.breadcrumbLabelForPreviousPage || t('Roles'),
-                to: getPageUrl(AwxRoute.Roles),
-              },
-              { label: t('Edit Role') },
+              { label: t('Roles'), to: getPageUrl(AwxRoute.Roles) },
+              { label: `${t('Edit')} ${role?.name || t('Role')}` },
             ]}
           />
           <AwxPageForm<AwxRbacRole>

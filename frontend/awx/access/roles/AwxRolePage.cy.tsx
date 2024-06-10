@@ -83,12 +83,12 @@ describe('AwxRoles', () => {
       });
   });
 
-  it('should enable Create Role button if the user has permission to create roles', () => {
+  it('should enable Create role button if the user has permission to create roles', () => {
     cy.mount(<AwxRoles />);
     cy.contains('a', /^Create role$/).should('have.attr', 'aria-disabled', 'false');
   });
 
-  it('should disable Create Role button if the user does not have permission to create roles', () => {
+  it('should disable Create role button if the user does not have permission to create roles', () => {
     cy.mount(<AwxRoles />, undefined, 'awxNormalUser.json');
     cy.contains('a', /^Create role$/).should('have.attr', 'aria-disabled', 'true');
   });

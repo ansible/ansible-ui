@@ -1,7 +1,7 @@
 import { CreateTeam } from './TeamForm';
 
 describe('TeamForm.cy.ts', () => {
-  it('Create Team - Submit error message on internal server error', () => {
+  it('Create team - Submit error message on internal server error', () => {
     cy.intercept(
       { method: 'GET', url: '/api/v2/organizations/*' },
       { count: 1, results: [{ id: 0, name: 'Default' }] }
@@ -17,7 +17,7 @@ describe('TeamForm.cy.ts', () => {
     cy.contains('Internal Server Error').should('be.visible');
   });
 
-  it('Create Team - Validation on name and organization', () => {
+  it('Create team - Validation on name and organization', () => {
     cy.intercept(
       { method: 'GET', url: '/api/v2/organizations/*' },
       {

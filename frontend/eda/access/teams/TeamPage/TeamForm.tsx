@@ -46,10 +46,10 @@ export function CreateTeam() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Create Team')}
+        title={t('Create team')}
         breadcrumbs={[
           { label: t('Teams'), to: getPageUrl(EdaRoute.Teams) },
-          { label: t('Create Team') },
+          { label: t('Create team') },
         ]}
       />
       <EdaPageForm
@@ -89,10 +89,10 @@ export function EditTeam() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Edit Team')}
+        title={`${t('Edit')} ${team?.name || t('Team')}`}
         breadcrumbs={[
           { label: t('Teams'), to: getPageUrl(EdaRoute.Teams) },
-          { label: t('Edit Team') },
+          { label: `${t('Edit')} ${team?.name || t('Team')}` },
         ]}
       />
       {team ? (

@@ -93,12 +93,12 @@ describe('EdaRoles.cy.ts', () => {
       });
   });
 
-  it('Create Role button is enabled if the user has permission to create roles', () => {
+  it('Create role button is enabled if the user has permission to create roles', () => {
     cy.mountEda(<EdaRoles />);
     cy.contains('a', /^Create role$/).should('have.attr', 'aria-disabled', 'false');
   });
 
-  it('Create Role button is disabled if the user does not have permission to create roles', () => {
+  it('Create role button is disabled if the user does not have permission to create roles', () => {
     cy.mountEda(<EdaRoles />, undefined, 'edaNormalUser.json');
     cy.contains('a', /^Create role$/).should('have.attr', 'aria-disabled', 'true');
   });

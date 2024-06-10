@@ -51,13 +51,13 @@ export function CreateRole(props: { breadcrumbLabelForPreviousPage?: string }) {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Create Role')}
+        title={t('Create role')}
         breadcrumbs={[
           {
             label: props.breadcrumbLabelForPreviousPage || t('Roles'),
             to: getPageUrl(HubRoute.Roles),
           },
-          { label: t('Create Role') },
+          { label: t('Create role') },
         ]}
       />
       <HubPageForm<RoleInput>

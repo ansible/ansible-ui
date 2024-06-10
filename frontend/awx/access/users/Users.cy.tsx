@@ -31,13 +31,13 @@ describe('Users.cy.ts', () => {
     cy.get('table').find('tr').should('have.length', 10);
   });
 
-  it('Create User button is disabled if the user does not have permission to create users', () => {
+  it('Create user button is disabled if the user does not have permission to create users', () => {
     cy.intercept({ method: 'GET', url: '/api/v2/users/*' }, { fixture: 'users.json' });
     cy.mount(<Users />);
     cy.contains('a', /^Create user$/).should('have.attr', 'aria-disabled', 'true');
   });
 
-  it('create User button is enabled if user has permissions', () => {
+  it('create user button is enabled if user has permissions', () => {
     cy.stub(useOptions, 'useOptions').callsFake(() => ({
       data: {
         actions: {

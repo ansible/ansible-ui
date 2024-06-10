@@ -126,7 +126,7 @@ describe('Roles List', () => {
       );
     });
   });
-  it('Create Role button is enabled if the user has permission to create roles', () => {
+  it('Create role button is enabled if the user has permission to create roles', () => {
     cy.stub(useHubContext, 'useHubContext').callsFake(() => ({
       user: mockUser,
     }));

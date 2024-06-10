@@ -19,6 +19,7 @@ import { awxAPI } from '../../common/api/awx-utils';
 import { AwxUser } from '../../interfaces/User';
 import { AwxRoute } from '../../main/AwxRoutes';
 import { PageFormSelectOrganization } from '../organizations/components/PageFormOrganizationSelect';
+import { Users } from './Users';
 
 const UserType = {
   SystemAdministrator: 'System administrator',
@@ -56,10 +57,10 @@ export function CreateUser() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Create User')}
+        title={t('Create user')}
         breadcrumbs={[
           { label: t('Users'), to: getPageUrl(AwxRoute.Users) },
-          { label: t('Create User') },
+          { label: t('Create user') },
         ]}
       />
       <AwxPageForm
@@ -130,10 +131,10 @@ export function EditUser() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Edit User')}
+        title={`${t('Edit')} ${Users?.name || t('User')}`}
         breadcrumbs={[
           { label: t('Users'), to: getPageUrl(AwxRoute.Users) },
-          { label: t('Edit User') },
+          { label: `${t('Edit')} ${Users?.name || t('User')}` },
         ]}
       />
       <AwxPageForm<IUserInput>

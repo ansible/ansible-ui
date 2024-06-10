@@ -64,13 +64,13 @@ describe('Teams.cy.ts', () => {
       ).should('be.visible');
     });
 
-    it('Create Team button is disabled if the user does not have permission to create teams', () => {
+    it('Create team button is disabled if the user does not have permission to create teams', () => {
       cy.intercept({ method: 'GET', url: '/api/v2/teams/*' }, { fixture: 'teams.json' });
       cy.mount(<Teams />);
       cy.contains('a', /^Create team$/).should('have.attr', 'aria-disabled', 'true');
     });
 
-    it('Create Team button is enabled if the user has permission to create teams', () => {
+    it('Create team button is enabled if the user has permission to create teams', () => {
       cy.stub(useOptions, 'useOptions').callsFake(() => ({
         data: {
           actions: {

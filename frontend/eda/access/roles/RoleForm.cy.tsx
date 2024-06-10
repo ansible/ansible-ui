@@ -3,7 +3,7 @@ import mockEdaCustomRole from '../../../../cypress/fixtures/edaCustomRoleDefinit
 import { EdaRbacRole } from '../../interfaces/EdaRbacRole';
 
 describe('RoleForm', () => {
-  describe('Create Role', () => {
+  describe('Create role', () => {
     it('Validates required fields', () => {
       cy.mountEda(<CreateRole />);
       cy.clickButton(/^Create role$/);
