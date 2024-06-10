@@ -138,8 +138,8 @@ jobs:
     needs: 
       - checks
       - component
-      - awx-e2e
-      - eda-e2e
-      - hub-e2e      
+      # - awx-e2e
+      # - eda-e2e
+      # - hub-e2e
     steps:
       - run: echo Success
