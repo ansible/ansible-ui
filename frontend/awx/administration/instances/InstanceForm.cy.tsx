@@ -29,6 +29,7 @@ describe('Add instance Form', () => {
         node_type: 'execution',
         node_state: 'installed',
         hostname: 'AddInstanceMock',
+
         listener_port: null,
       },
     }).as('addInstance');
@@ -41,6 +42,9 @@ describe('Add instance Form', () => {
           node_type: 'execution',
           node_state: 'installed',
           hostname: 'AddInstanceMock',
+          enabled: true,
+          peers_from_control_nodes: false,
+          managed_by_policy: true,
         });
       });
   });
@@ -82,11 +86,12 @@ describe('Add instance Form', () => {
       .its('request.body')
       .then((instance: Instance) => {
         expect(instance).to.deep.equal({
-          node_type: 'hop',
-          node_state: 'installed',
+          enabled: true,
           hostname: 'AddInstanceMockWithPeers',
           listener_port: 9999,
-          managed_by_policy: true,
+          managed_by_policy: false,
+          node_state: 'installed',
+          node_type: 'hop',
           peers_from_control_nodes: true,
         });
       });
