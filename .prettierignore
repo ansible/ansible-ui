@@ -10,3 +10,4 @@ Dockerfile
 *.sh
 .prettierignore
 .*.sw[po]
+/framework/publish
