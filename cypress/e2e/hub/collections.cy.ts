@@ -130,7 +130,7 @@ describe.skip('Collections', () => {
           action: 'drag-drop',
         });
         // Upload page
-        cy.verifyPageTitle('Upload Collection');
+        cy.verifyPageTitle('Upload collection');
         cy.get('#radio-non-pipeline').click();
         cy.filterTableBySingleText(repository.name, true);
         cy.getTableRowByText(repository.name, false).within(() => {
@@ -401,7 +401,7 @@ describe.skip('Collections', () => {
           cy.get('input[id="file-filename"]').selectFile(result.filename, {
             action: 'drag-drop',
           });
-          cy.verifyPageTitle('Upload Collection');
+          cy.verifyPageTitle('Upload collection');
           cy.get('#radio-non-pipeline').click();
           cy.filterTableBySingleText(repository.name, true);
           cy.getTableRowByText(repository.name, false).within(() => {
