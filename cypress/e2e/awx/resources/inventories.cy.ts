@@ -5,6 +5,8 @@ import { Label } from '../../../../frontend/awx/interfaces/Label';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { AwxUser } from '../../../../frontend/awx/interfaces/User';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
+import { randomE2Ename } from '../../../support/utils';
+import { selectOrganization } from '../administration/notifiers/notifiersSharedFunctions';
 
 //This spec file needs to have tests added for constructed and smart inventories. See below.
 
@@ -250,19 +252,93 @@ describe('Inventories Tests', () => {
       }
 
       if (kind === 'smart') {
-        it.skip('can create a smart inventory, assert info on details page, and delete inventory', () => {
+        it('can create and edit a smart inventory, assert info on details page, and delete inventory', () => {
           //Assert that user is on the form view to create an inventory
           //Add an interception call for the newly created inventory, which will allow for the deletion at the end of the test
           //Add assertions for the information visible on the details screen of the new inventory
           //Add assertion verifying that the inventory has now been deleted- including verifying the 204 statusCode and
           //filtering a list to show no results
-        });
+          let organization: Organization = undefined;
+          cy.createAwxOrganization().then((org) => {
+            organization = org;
 
-        it.skip('can edit the smart host filter on a smart inventory from the details view and assert info on details page', () => {
-          //Create a smart inventory in the beforeEach hook
-          //Assert the original details of the inventory
-          //Assert the user navigating to the edit smart inventory form
-          //Assert the edited changes of the inventory
+            cy.createAwxInstanceGroup().then((ig) => {
+              cy.createAwxInventory({ organization: org.id }).then((inv1) => {
+                cy.createAwxInventory({ organization: org.id }).then((inv2) => {
+                  cy.navigateTo('awx', 'inventories');
+                  cy.getByDataCy('create-inventory').click();
+                  cy.getByDataCy('create-constructed-inventory').click();
+
+                  const constructed_name = randomE2Ename();
+                  cy.getByDataCy('name').type(constructed_name);
+                  cy.getByDataCy('description').type('test description');
+
+                  selectOrganization(organization.name);
+
+                  cy.get(
+                    `[data-cy='instance-group-select-form-group'] [aria-label="Options menu"]`
+                  ).click();
+                  cy.get('[role="dialog"]').within(() => {
+                    cy.filterTableByMultiSelect('name', [ig.name]);
+                    cy.get('[aria-label="Simple table"] tr').should('have.length', 2);
+                    // select all missing, so we have to click on checkbox
+                    cy.get('[aria-label="Simple table"] tr input').click();
+                    cy.contains('button', 'Confirm').click();
+                  });
+
+                  cy.getByDataCy('inventories').click();
+                  cy.contains('button', 'Browse').click();
+                  cy.get('[role="dialog"]').within(() => {
+                    cy.filterTableByMultiSelect('name', [inv1.name, inv2.name]);
+                    cy.get('[aria-label="Simple table"] tr').should('have.length', 3);
+                    cy.getByDataCy('select-all').click();
+                    cy.contains('button', 'Confirm').click();
+                  });
+
+                  cy.getByDataCy('update_cache_timeout').type('100');
+                  cy.getByDataCy('verbosity').click();
+                  cy.contains('button', '1 (Verbose)').click();
+
+                  cy.getByDataCy('limit').type('100');
+
+                  cy.get(`[data-cy="source-vars"] textarea`).type('plugin : test', { force: true });
+
+                  cy.getByDataCy('Submit').click();
+
+                  // assert the view in detail
+                  cy.getByDataCy('name').should('have.text', constructed_name);
+                  cy.getByDataCy('description').should('have.text', 'test description');
+                  cy.getByDataCy('organization').should('have.text', organization.name);
+                  cy.getByDataCy('instance-groups').should('have.text', ig.name);
+                  cy.getByDataCy('input-inventories').contains(inv1.name);
+                  cy.getByDataCy('input-inventories').contains(inv2.name);
+                  cy.getByDataCy('update-cache-timeout').contains('100');
+                  cy.getByDataCy('verbosity').should('have.text', '1 (Verbose)');
+                  cy.getByDataCy('limit').should('have.text', '100');
+                  cy.getByDataCy('type').contains('Constructed inventory');
+
+                  // edit the destription
+                  cy.getByDataCy('edit-inventory').click();
+                  cy.getByDataCy('description').type(' edited');
+                  cy.getByDataCy('Submit').click();
+                  cy.getByDataCy('description').should('have.text', 'test description edited');
+
+                  // delete the inventory
+                  cy.getByDataCy('actions-dropdown').click();
+                  cy.getByDataCy('delete-inventory').click();
+                  cy.get('#confirm').click();
+
+                  cy.clickButton(/^Delete inventory/);
+                  cy.contains(/^Success$/);
+
+                  cy.getByDataCy('filter-input').click();
+                  cy.get(`[aria-label="Search input"]`).type(constructed_name);
+                  //cy.filterTableByMultiSelect('name', [constructed_name]);
+                  cy.contains('No results found');
+                });
+              });
+            });
+          });
         });
       }
     });
