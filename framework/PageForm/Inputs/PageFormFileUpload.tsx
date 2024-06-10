@@ -72,12 +72,13 @@ export function PageFormFileUpload<
           : inputError?.message
             ? inputError.message
             : undefined;
-        const handleClear = props.onClearClick
-          ? props.onClearClick
-          : (_event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-              setFilename('');
-              onChange(undefined);
-            };
+        const handleClear = (_event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+          setFilename('');
+          onChange(undefined);
+          if (props.onClearClick) {
+            props.onClearClick(_event);
+          }
+        };
         const handleFileReadFinished = (_fileHandle: File) => {
           setIsLoading(false);
           onChange(_fileHandle);

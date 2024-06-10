@@ -14,8 +14,7 @@ export function GCEUploadField() {
   const { setValue, clearErrors } = useFormContext();
   const [GCEFileContents, setGCEFileContents] = useState<GCEFileContents>({});
   const [uploadError, setUploadError] = useState<Error | undefined>(undefined);
-
-  const handleClear = () => {
+  const onClear = () => {
     setGCEFileContents({});
     setUploadError(undefined);
     setValue('project', '');
@@ -42,6 +41,8 @@ export function GCEUploadField() {
   return (
     <>
       <PageFormFileUpload
+        onClearClick={onClear}
+        key="credential-gce-file"
         name="credential-gce-file"
         fieldId="credential-gce-file"
         label={t('Service account JSON file')}
@@ -59,7 +60,6 @@ export function GCEUploadField() {
             setUploadError(error as Error);
           }
         }}
-        onClearClick={handleClear}
       />
     </>
   );

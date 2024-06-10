@@ -645,6 +645,7 @@ function CredentialSubForm({
 
   return hasFields ? (
     <PageFormSection title={t('Type Details')}>
+      {credentialType?.namespace === 'gce' && <GCEUploadField />}
       {stringFields.length > 0 &&
         stringFields.map((field) => {
           if (field?.multiline) {
@@ -720,7 +721,6 @@ function CredentialSubForm({
             labelHelp={field.help_text}
           />
         ))}
-      {credentialType?.namespace === 'gce' && <GCEUploadField />}
     </PageFormSection>
   ) : null;
 }
