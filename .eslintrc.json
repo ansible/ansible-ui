@@ -6,7 +6,7 @@
     "sourceType": "module",
     "project": ["./tsconfig.json"]
   },
-  "ignorePatterns": "*.cjs",
+  "ignorePatterns": ["*.cjs", "framework/publish/"],
   "extends": [
     "eslint:recommended",
     "plugin:jsx-a11y/recommended",
