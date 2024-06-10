@@ -19,6 +19,7 @@ import { AwxPageForm } from '../../common/AwxPageForm';
 import { awxAPI } from '../../common/api/awx-utils';
 import { Instance } from '../../interfaces/Instance';
 import { AwxRoute } from '../../main/AwxRoutes';
+import { useWatch } from 'react-hook-form';
 
 export function AddInstance() {
   const { t } = useTranslation();
@@ -48,7 +49,13 @@ export function AddInstance() {
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
         onCancel={onCancel}
-        defaultValue={{ node_type: 'execution', node_state: 'installed' }}
+        defaultValue={{
+          node_type: 'execution',
+          node_state: 'installed',
+          enabled: true,
+          peers_from_control_nodes: false,
+          managed_by_policy: true,
+        }}
       >
         <InstanceInputs mode="create" />
       </AwxPageForm>
@@ -61,6 +68,7 @@ export function EditInstance() {
   const id = Number(params.id);
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const { data: instance } = useGet<Instance>(awxAPI`/instances/${id?.toString()}/`);
 
   const { cache } = useSWRConfig();
@@ -70,7 +78,7 @@ export function EditInstance() {
       instanceInput.listener_port && Number(instanceInput?.listener_port);
     await requestPatch<Instance>(awxAPI`/instances/${id.toString()}/`, instanceInput);
     (cache as unknown as { clear: () => void }).clear?.();
-    navigate(-1);
+    pageNavigate(AwxRoute.InstanceDetails, { params: { id } });
   };
 
   const onCancel = () => navigate(-1);
@@ -103,7 +111,7 @@ export function EditInstance() {
 function InstanceInputs(props: { mode: 'create' | 'edit' }) {
   const { mode } = props;
   const { t } = useTranslation();
-
+  const peersFromControlNodes = useWatch({ name: 'peers_from_control_nodes' }) as boolean;
   return (
     <>
       <PageFormTextInput<Instance>
@@ -126,6 +134,7 @@ function InstanceInputs(props: { mode: 'create' | 'edit' }) {
         type="number"
         label={t('Listener port')}
         placeholder={t('Enter a listener port')}
+        isRequired={peersFromControlNodes}
         min={0}
         max={65353}
         labelHelp={t(
