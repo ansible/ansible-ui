@@ -173,27 +173,18 @@ describe('Inventories Tests', () => {
           //(1) The presence of a certain number of inventories, utilize search to ensure the list only displays those inventories
           //(2) The absence of those inventories after the bulk deletion has been performed, by doing a search and by intercepting
           //.......the delete call and asserting the expected statusCode from the API (probably a 204)
-          let organization: Organization = undefined;
+
           cy.createAwxOrganization().then((org) => {
-            organization = org;
-            let inv1: Inventory = undefined;
-            let inv2: Inventory = undefined;
-            let inv3: Inventory = undefined;
-
-            cy.createAwxInventory({ organization: org.id }).then((inv) => {
-              inv1 = inv;
-              cy.createAwxInventory({ organization: org.id }).then((inv) => {
-                inv2 = inv;
-                cy.createAwxInventory({ organization: org.id }).then((inv) => {
-                  inv3 = inv;
-
+            cy.createAwxInventory({ organization: org.id }).then((inv1) => {
+              cy.createAwxInventory({ organization: org.id }).then((inv2) => {
+                cy.createAwxInventory({ organization: org.id }).then((inv3) => {
                   cy.navigateTo('awx', 'inventories');
 
                   cy.intercept(
                     'GET',
-                    awxAPI`/inventories/?organization=${organization.id.toString()}&order_by=name&page=1&page_size=10`
+                    awxAPI`/inventories/?organization=${org?.id.toString()}&order_by=name&page=1&page_size=10`
                   ).as('getInventories');
-                  cy.filterTableByMultiSelect('organization', [organization.name]);
+                  cy.filterTableByMultiSelect('organization', [org?.name]);
                   cy.wait('@getInventories');
 
                   cy.get('[aria-label="Simple table"] tr').should('have.length', 4);
@@ -258,10 +249,8 @@ describe('Inventories Tests', () => {
           //Add assertions for the information visible on the details screen of the new inventory
           //Add assertion verifying that the inventory has now been deleted- including verifying the 204 statusCode and
           //filtering a list to show no results
-          let organization: Organization = undefined;
-          cy.createAwxOrganization().then((org) => {
-            organization = org;
 
+          cy.createAwxOrganization().then((org) => {
             cy.createAwxInstanceGroup().then((ig) => {
               cy.createAwxInventory({ organization: org.id }).then((inv1) => {
                 cy.createAwxInventory({ organization: org.id }).then((inv2) => {
@@ -273,7 +262,7 @@ describe('Inventories Tests', () => {
                   cy.getByDataCy('name').type(constructed_name);
                   cy.getByDataCy('description').type('test description');
 
-                  selectOrganization(organization.name);
+                  selectOrganization(org.name);
 
                   cy.get(
                     `[data-cy='instance-group-select-form-group'] [aria-label="Options menu"]`
