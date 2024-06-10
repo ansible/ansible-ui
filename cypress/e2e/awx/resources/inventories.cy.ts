@@ -4,6 +4,7 @@ import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 import { Label } from '../../../../frontend/awx/interfaces/Label';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { AwxUser } from '../../../../frontend/awx/interfaces/User';
+import { awxAPI } from '../../../support/formatApiPathForAwx';
 
 //This spec file needs to have tests added for constructed and smart inventories. See below.
 
@@ -165,11 +166,56 @@ describe('Inventories Tests', () => {
           //Add an assertion that the inventory does not appear upon a list search
         });
 
-        it.skip('can bulk delete inventories from the list view and verify deletion', () => {
+        it('can bulk delete inventories from the list view and verify deletion', () => {
           //Assert:
           //(1) The presence of a certain number of inventories, utilize search to ensure the list only displays those inventories
           //(2) The absence of those inventories after the bulk deletion has been performed, by doing a search and by intercepting
           //.......the delete call and asserting the expected statusCode from the API (probably a 204)
+          let organization: Organization = undefined;
+          cy.createAwxOrganization().then((org) => {
+            organization = org;
+            let inv1: Inventory = undefined;
+            let inv2: Inventory = undefined;
+            let inv3: Inventory = undefined;
+
+            cy.createAwxInventory({ organization: org.id }).then((inv) => {
+              inv1 = inv;
+              cy.createAwxInventory({ organization: org.id }).then((inv) => {
+                inv2 = inv;
+                cy.createAwxInventory({ organization: org.id }).then((inv) => {
+                  inv3 = inv;
+
+                  cy.navigateTo('awx', 'inventories');
+
+                  cy.intercept(
+                    'GET',
+                    awxAPI`/inventories/?organization=${organization.id.toString()}&order_by=name&page=1&page_size=10`
+                  ).as('getInventories');
+                  cy.filterTableByMultiSelect('organization', [organization.name]);
+                  cy.wait('@getInventories');
+
+                  cy.get('[aria-label="Simple table"] tr').should('have.length', 4);
+                  cy.contains(inv1.name);
+                  cy.contains(inv2.name);
+                  cy.contains(inv3.name);
+
+                  cy.getByDataCy('select-all').click();
+
+                  cy.clickToolbarKebabAction('delete-selected-inventories');
+
+                  /*cy.getByDataCy("actions-dropdown").first().click();
+                  cy.getByDataCy("delete-selected-inventories").click();
+                  cy.contains('Delete selected inventories').click();
+                  */
+                  cy.get('#confirm').click();
+                  cy.clickButton(/^Delete inventories/);
+                  cy.contains(/^Success$/);
+                  cy.clickButton(/^Close$/);
+                  cy.contains('No results found');
+                });
+              });
+            });
+          });
         });
       }
 
