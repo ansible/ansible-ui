@@ -29,14 +29,13 @@ describe('InventoryHostDetails', () => {
         initialEntries,
       });
       cy.get('[data-cy="name"]').should('have.text', 'test');
-      cy.get('[data-cy="code-block-value"]').should('have.text', '---\ntest: test');
+      cy.get('[data-cy="code-block-value"]').should('have.text', 'test: test');
       cy.get('[data-cy="activity"] > .pf-v5-c-description-list__text').find(
         'a[href="/jobs/command/1/output"]'
       );
       cy.get('[data-cy="activity"] > .pf-v5-c-description-list__text').find(
         'a[href="/jobs/playbook/2/output"]'
       );
-      cy.get('[data-cy="code-block-value"]');
       cy.get('[data-cy="created"]').should('contain.text', formatDateString(mockAwxHost.created));
       cy.get('[data-cy="last-modified"]').should(
         'contain.text',
