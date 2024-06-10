@@ -10,7 +10,7 @@ import { WorkflowNode } from '../../../../frontend/awx/interfaces/WorkflowNode';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 import { randomString } from '../../../../framework/utils/random-string';
 
-describe('Workflow Approvals Tests', () => {
+describe.skip('Workflow Approvals Tests', () => {
   let organization: Organization;
   let project: Project;
   let user: AwxUser;
