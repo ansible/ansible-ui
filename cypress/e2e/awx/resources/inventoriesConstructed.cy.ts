@@ -16,7 +16,7 @@ describe('Constructed Inventories CRUD Tests', () => {
   before(() => {
     cy.awxLogin();
 
-    const orgName = 'E2E Organization Constructed Inventory tests ' + randomString(4);
+    const orgName = 'E2E Org Constructed Inventory tests ' + randomString(4);
     cy.createAwxOrganization(orgName).then((org) => {
       organization = org;
       cy.createAwxInstanceGroup().then((ig) => {
@@ -103,9 +103,9 @@ describe('Constructed Inventories CRUD Tests', () => {
   it('can edit and run a sync on the edited constructed inventory', () => {
     cy.intercept('PATCH', awxAPI`/constructed_inventories/*`).as('saveInv');
     cy.intercept('POST', awxAPI`/inventory_sources/*/update`).as('syncInv');
-    cy.visit(
-      `/infrastructure/inventories/constructed_inventory/${String(constructedInv.id)}/details`
-    );
+    cy.navigateTo('awx', 'inventories');
+    cy.filterTableBySingleSelect('name', constructedInv.name);
+    cy.clickTableRowLink('name', constructedInv.name, { disableFilter: true });
     cy.verifyPageTitle(constructedInv.name);
 
     const description = 'Edit action: New description typed by cypress';
