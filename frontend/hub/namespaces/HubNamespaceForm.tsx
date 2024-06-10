@@ -42,10 +42,10 @@ export function CreateHubNamespace() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Create Namespace')}
+        title={t('Create namespace')}
         breadcrumbs={[
           { label: t('Namespaces'), to: getPageUrl(HubRoute.Namespaces) },
-          { label: t('Create Namespace') },
+          { label: t('Create namespace') },
         ]}
       />
       <HubPageForm<HubNamespace>
@@ -98,11 +98,11 @@ export function EditHubNamespace() {
     return (
       <PageLayout>
         <PageHeader
-          title={t('Edit Namespace')}
+          title={`${t('Edit')} ${namespace?.name || t('Namespace')}`}
           breadcrumbs={[
             { label: t('Namespaces'), to: getPageUrl(HubRoute.Namespaces) },
             { label: name, to: getPageUrl(HubRoute.NamespacePage, { params: { id: name } }) },
-            { label: t('Edit Namespace') },
+            { label: `${t('Edit')} ${namespace?.name || t('Namespace')}` },
           ]}
         />
       </PageLayout>
