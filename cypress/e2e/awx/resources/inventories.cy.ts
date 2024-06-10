@@ -203,10 +203,6 @@ describe('Inventories Tests', () => {
 
                   cy.clickToolbarKebabAction('delete-selected-inventories');
 
-                  /*cy.getByDataCy("actions-dropdown").first().click();
-                  cy.getByDataCy("delete-selected-inventories").click();
-                  cy.contains('Delete selected inventories').click();
-                  */
                   cy.get('#confirm').click();
                   cy.clickButton(/^Delete inventories/);
                   cy.contains(/^Success$/);
