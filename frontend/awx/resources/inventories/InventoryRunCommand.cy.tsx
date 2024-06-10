@@ -47,7 +47,7 @@ describe('Run command wizard', () => {
       cy.get('.pf-v5-c-form__group-control > label').click();
     });
     cy.getByDataCy('become_enabled').click();
-    cy.getByDataCy('extra-vars-form-group').type('test: "test"');
+    cy.get('.view-line').type('test: "test"');
     cy.clickButton(/^Next$/);
     cy.getByDataCy('execution-environment-select-form-group').within(() => {
       cy.getBy('[aria-label="Options menu"]').click();
