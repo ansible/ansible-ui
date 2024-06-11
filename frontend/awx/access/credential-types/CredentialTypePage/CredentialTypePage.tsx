@@ -17,9 +17,11 @@ import { awxAPI } from '../../../common/api/awx-utils';
 import { CredentialType } from '../../../interfaces/CredentialType';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useCredentialTypeRowActions } from '../hooks/useCredentialTypeActions';
+import { useViewActivityStream } from '../../common/useViewActivityStream';
 
 export function CredentialTypePage() {
   const { t } = useTranslation();
+  const activityStream = useViewActivityStream();
   const params = useParams<{ id: string }>();
   const {
     error,
@@ -43,7 +45,7 @@ export function CredentialTypePage() {
         ]}
         headerActions={
           <PageActions<CredentialType>
-            actions={actions}
+            actions={[...activityStream, ...actions]}
             position={DropdownPosition.right}
             selectedItem={credentialType}
           />

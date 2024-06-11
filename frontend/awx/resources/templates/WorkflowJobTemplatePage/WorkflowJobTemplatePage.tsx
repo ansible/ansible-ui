@@ -21,9 +21,11 @@ import { Organization } from '../../../interfaces/Organization';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useTemplateActions } from '../hooks/useTemplateActions';
+import { useViewActivityStream } from '../../../access/common/useViewActivityStream';
 
 export function WorkflowJobTemplatePage() {
   const { t } = useTranslation();
+  const activityStream = useViewActivityStream();
   const params = useParams<{ id: string }>();
   const { activeAwxUser } = useAwxActiveUser();
   const {
@@ -78,7 +80,7 @@ export function WorkflowJobTemplatePage() {
         ]}
         headerActions={
           <PageActions<WorkflowJobTemplate>
-            actions={itemActions}
+            actions={[...activityStream, ...itemActions]}
             position={DropdownPosition.right}
             selectedItem={template}
           />
