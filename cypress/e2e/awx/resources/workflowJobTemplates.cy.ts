@@ -577,7 +577,7 @@ describe('Workflow Job Templates Tests', () => {
       cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
     });
 
-    it.only('can save and launch a workflow job template from list view', function () {
+    it('can save and launch a workflow job template from list view', function () {
       cy.navigateTo('awx', 'templates');
       cy.intercept('POST', `api/v2/workflow_job_templates/${workflowJobTemplate.id}/launch/`).as(
         'launchWJT-WithNodes'
