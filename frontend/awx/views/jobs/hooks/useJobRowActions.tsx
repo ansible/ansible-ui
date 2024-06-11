@@ -1,5 +1,5 @@
 import { ButtonVariant } from '@patternfly/react-core';
-import { MinusCircleIcon, RocketIcon, TrashIcon } from '@patternfly/react-icons';
+import { MinusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
@@ -7,17 +7,14 @@ import { UnifiedJob } from '../../../interfaces/UnifiedJob';
 import { isJobRunning } from '../jobUtils';
 import { useCancelJobs } from './useCancelJobs';
 import { useDeleteJobs } from './useDeleteJobs';
-import { useRelaunchJob } from './useRelaunchJob';
 import { cannotCancelJob } from './useJobHeaderActions';
+import { useRelaunchOptions } from './useRelaunchOptions';
 
 export function useJobRowActions(onComplete: (jobs: UnifiedJob[]) => void) {
   const { t } = useTranslation();
   const deleteJobs = useDeleteJobs(onComplete);
   const cancelJobs = useCancelJobs(onComplete);
-  const relaunchJob = useRelaunchJob();
-  const relaunchAllHosts = useRelaunchJob({ hosts: 'all' });
-  const relaunchFailedHosts = useRelaunchJob({ hosts: 'failed' });
-
+  const relaunchOptions = useRelaunchOptions();
   return useMemo<IPageAction<UnifiedJob>[]>(() => {
     const cannotDeleteJob = (job: UnifiedJob) => {
       if (!job.summary_fields.user_capabilities.delete)
@@ -38,44 +35,7 @@ export function useJobRowActions(onComplete: (jobs: UnifiedJob[]) => void) {
         isHidden: (job: UnifiedJob) => Boolean(cannotCancelJob(job, t)),
         onClick: (job: UnifiedJob) => cancelJobs([job]),
       },
-      {
-        type: PageActionType.Button,
-        selection: PageActionSelection.Single,
-        variant: ButtonVariant.secondary,
-        isPinned: true,
-        icon: RocketIcon,
-        label: t(`Relaunch job`),
-        isHidden: (job: UnifiedJob) =>
-          !(job.type !== 'system_job' && job.summary_fields?.user_capabilities?.start) ||
-          (job.status === 'failed' && job.type === 'job'),
-        onClick: (job: UnifiedJob) => void relaunchJob(job),
-      },
-      {
-        type: PageActionType.Dropdown,
-        // variant: ButtonVariant.secondary,
-        selection: PageActionSelection.Single,
-        isPinned: true,
-        icon: RocketIcon,
-        // iconOnly: true,
-        label: t(`Relaunch using host parameters`),
-        isHidden: (job: UnifiedJob) =>
-          !(job.type !== 'system_job' && job.summary_fields?.user_capabilities?.start) ||
-          !(job.status === 'failed' && job.type === 'job'),
-        actions: [
-          {
-            type: PageActionType.Button,
-            selection: PageActionSelection.Single,
-            label: t(`Relaunch on all hosts`),
-            onClick: (job: UnifiedJob) => void relaunchAllHosts(job),
-          },
-          {
-            type: PageActionType.Button,
-            selection: PageActionSelection.Single,
-            label: t(`Relaunch on failed hosts`),
-            onClick: (job: UnifiedJob) => void relaunchFailedHosts(job),
-          },
-        ],
-      },
+      ...relaunchOptions,
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
@@ -97,5 +57,5 @@ export function useJobRowActions(onComplete: (jobs: UnifiedJob[]) => void) {
       },
     ];
     return actions;
-  }, [deleteJobs, cancelJobs, relaunchJob, relaunchAllHosts, relaunchFailedHosts, t]);
+  }, [deleteJobs, cancelJobs, relaunchOptions, t]);
 }

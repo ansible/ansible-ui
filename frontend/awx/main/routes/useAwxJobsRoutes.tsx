@@ -6,6 +6,7 @@ import { JobOutput } from '../../views/jobs/JobOutput/JobOutput';
 import { JobPage } from '../../views/jobs/JobPage';
 import { Jobs } from '../../views/jobs/Jobs';
 import { AwxRoute } from '../AwxRoutes';
+import { RelaunchTemplate } from '../../resources/templates/TemplatePage/RelaunchTemplateWithPasswords';
 
 export function useAwxJobsRoutes() {
   const { t } = useTranslation();
@@ -15,6 +16,11 @@ export function useAwxJobsRoutes() {
       label: t('Jobs'),
       path: 'jobs',
       children: [
+        {
+          id: AwxRoute.TemplateLaunchWithPasswordsWizard,
+          path: ':job_type/:id/relaunch-with-passwords',
+          element: <RelaunchTemplate />,
+        },
         {
           id: AwxRoute.JobPage,
           path: ':job_type/:id',
@@ -32,6 +38,7 @@ export function useAwxJobsRoutes() {
             },
           ],
         },
+
         {
           path: '',
           element: <Jobs />,
