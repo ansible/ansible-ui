@@ -22,6 +22,7 @@ import { awxAPI } from '../../common/api/awx-utils';
 import { useGet } from '../../../common/crud/useGet';
 import { useURLSearchParams } from '../../../../framework/components/useURLSearchParams';
 
+// test
 export function InventoryRunCommand() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
