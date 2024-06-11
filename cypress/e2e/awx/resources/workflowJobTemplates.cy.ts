@@ -596,9 +596,6 @@ describe('Workflow Job Templates Tests', () => {
     });
 
     it('can save and launch a workflow job template from details view', function () {
-      //Utilize the resources created in the beforeEach block
-      //Navigate to the details page of the WFJT, assert values there
-      //After launch, assert the redirect to the job output screen
       cy.navigateTo('awx', 'templates');
       cy.filterTableByMultiSelect('name', [workflowJobTemplate?.name]);
       cy.clickTableRowLink('name', workflowJobTemplate?.name, { disableFilter: true });
