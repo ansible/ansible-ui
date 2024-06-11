@@ -75,7 +75,7 @@ export interface InventorySource
 }
 
 export interface InventorySourceCreate {
-  credential: number | undefined;
+  credential: number | null;
   inventory: number;
   source_path: string | undefined | null;
   source_script?: string | undefined;
@@ -97,8 +97,7 @@ export interface InventorySourceCreate {
 }
 
 export interface InventorySourceForm {
-  credential: string | undefined;
-  credentialIdPath?: number;
+  credential: number | null;
   inventory?: number;
   source_path: { name: string | undefined | null };
   source_script?: string;
