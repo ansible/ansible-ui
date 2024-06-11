@@ -708,6 +708,7 @@ declare global {
        */
       createAwxProject(
         project?: SetRequired<Partial<Omit<Project, 'id'>>, 'organization'>,
+        scm_url?: string,
         skipSync?: boolean
       ): Chainable<Project>;
 
@@ -761,6 +762,7 @@ declare global {
           Partial<Omit<JobTemplate, 'id'>>,
           'organization' | 'project' | 'inventory'
         >,
+        playbook?: string,
         instanceGroup?: InstanceGroup
       ): Chainable<JobTemplate>;
 

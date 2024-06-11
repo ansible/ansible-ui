@@ -51,8 +51,8 @@ describe.skip('Workflow Visualizer', () => {
 
   afterEach(() => {
     cy.deleteAwxWorkflowJobTemplate(workflowJobTemplate, { failOnStatusCode: false });
-    cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
     cy.deleteAwxInventorySource(inventorySource, { failOnStatusCode: false });
+    cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
     cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
   });
 
