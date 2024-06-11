@@ -78,8 +78,8 @@ describe('Workflow Job Templates Tests', () => {
             .its('response.body')
             .then((editedWFJT: WorkflowJobTemplate) => {
               expect(editedWFJT.description).contains('this is a new description');
-              expect(editedWFJT.organization.toString()).contains(organization.id.toString());
-              expect(editedWFJT.inventory.toString()).contains(inventory.id.toString());
+              expect(editedWFJT.organization?.toString()).contains(organization.id.toString());
+              expect(editedWFJT.inventory?.toString()).contains(inventory.id.toString());
               expect(editedWFJT.limit).contains('mock-limit');
               expect(editedWFJT.scm_branch).contains('mock-scm-branch');
             });
