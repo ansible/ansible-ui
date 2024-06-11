@@ -19,8 +19,9 @@ import {
 import { Inventory, RunCommandWizard } from '../../interfaces/Inventory';
 import { postRequest } from '../../../common/crud/Data';
 import { awxAPI } from '../../common/api/awx-utils';
-import { useGet } from '../../../common/crud/useGet';
+import { useGet, useGetRequest } from '../../../common/crud/useGet';
 import { useURLSearchParams } from '../../../../framework/components/useURLSearchParams';
+import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 
 export function InventoryRunCommand() {
   const { t } = useTranslation();
@@ -29,6 +30,7 @@ export function InventoryRunCommand() {
   const [searchParams] = useURLSearchParams();
   let limit = searchParams.get('limit') || 'all';
   const storage = searchParams.get('storage');
+  const getRequest = useGetRequest<AwxItemsResponse<{ id: string }>>();
 
   if (storage) {
     limit = localStorage.getItem('runCommandActionSelectedItems') || limit;
@@ -42,11 +44,19 @@ export function InventoryRunCommand() {
   const onCancel = () => navigate(-1);
 
   const handleSubmit = async (data: RunCommandWizard) => {
+    let eeId = data.execution_environment.id;
+    if (!eeId) {
+      const result2 = await getRequest(awxAPI`/execution_environments/`, {
+        name: data.execution_environment.name,
+      });
+      eeId = result2.results[0].id;
+    }
     const runCommandObj = {
       ...data,
       verbosity: data.verbosity,
       forks: data.forks,
-      execution_environment: data.execution_environment.id,
+      credential: data.credentialIdPath,
+      execution_environment: eeId,
     };
     const result: { id: string } = await postRequest(
       awxAPI`/inventories/${id ?? ''}/ad_hoc_commands/`,

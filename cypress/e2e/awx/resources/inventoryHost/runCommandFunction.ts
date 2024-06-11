@@ -90,8 +90,7 @@ export function runCommand(params: {
         cy.getByDataCy('module-arguments').contains('echo "Hello World"');
         cy.getByDataCy('forks').contains(params.forks.toString());
 
-        // this should be uncommented once the ee selection problem is fixed
-        //cy.getByDataCy('execution-environment').contains(executionEnvironment.name);
+        cy.getByDataCy('execution-environment').contains(executionEnvironment.name);
       });
     }
   );
