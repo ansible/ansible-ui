@@ -9,8 +9,11 @@ import {
 } from '../../../../../../framework';
 import { PageDetailCodeEditor } from '../../../../../../framework/PageDetails/PageDetailCodeEditor';
 import { usePageWizard } from '../../../../../../framework/PageWizard/PageWizardProvider';
+import { useGet } from '../../../../../common/crud/useGet';
 import { jsonToYaml } from '../../../../../../framework/utils/codeEditorUtils';
-import { WizardFormValues, UnifiedJobType } from '../types';
+import { awxAPI } from '../../../../common/api/awx-utils';
+import { WizardFormValues, UnifiedJobType, AllResources, NodeResource } from '../types';
+import { Survey } from '../../../../interfaces/Survey';
 import { hasDaysToKeep, getValueBasedOnJobType } from './helpers';
 import { PromptReviewDetails } from './PromptReviewDetails';
 import { RESOURCE_TYPE } from '../constants';
@@ -24,6 +27,52 @@ const ResourceLink: Record<UnifiedJobType, AwxRoute> = {
   workflow_approval: AwxRoute.WorkflowApprovalDetails,
   workflow_job: AwxRoute.WorkflowJobTemplateDetails,
 };
+
+function getSurveySpecUrl(template: AllResources | NodeResource | null) {
+  if (!template) return '';
+
+  const type = template?.type ?? template?.unified_job_type;
+  switch (type) {
+    case 'job_template':
+    case 'job':
+      return awxAPI`/job_templates/${template?.id.toString()}/survey_spec/`;
+    case 'workflow_job_template':
+    case 'workflow_job':
+      return awxAPI`/workflow_job_templates/${template?.id.toString()}/survey_spec/`;
+    default:
+      return '';
+  }
+}
+
+function maskPasswords(vars: { [key: string]: string | string[] }, passwordKeys: string[]) {
+  const updated = { ...vars };
+  passwordKeys.forEach((key) => {
+    if (typeof updated[key] !== 'undefined') {
+      updated[key] = '$encrypted$';
+    }
+  });
+  return updated;
+}
+
+function processSurvey(
+  survey: { [key: string]: string | string[] },
+  surveyConfig: Survey | null
+): string {
+  const updatedSurvey: { [key: string]: string | string[] } = { ...survey };
+
+  if (surveyConfig?.spec) {
+    const passwordFields = surveyConfig.spec
+      .filter((q) => q.type === 'password')
+      .map((q) => q.variable);
+
+    const maskedSurveyPasswords = maskPasswords(survey, passwordFields);
+    Object.keys(maskedSurveyPasswords).forEach((passwordKey) => {
+      updatedSurvey[passwordKey] = maskedSurveyPasswords[passwordKey];
+    });
+  }
+
+  return jsonToYaml(JSON.stringify(updatedSurvey));
+}
 
 export function NodeReviewStep() {
   const { t } = useTranslation();
@@ -44,6 +93,8 @@ export function NodeReviewStep() {
     node_days_to_keep,
     survey,
   } = wizardData;
+
+  const { data: surveyConfig } = useGet<Survey>(getSurveySpecUrl(resource ?? null));
   const hasPromptDetails = Boolean(visibleSteps.find((step) => step.id === 'nodePromptsStep'));
   const nodeTypeDetail = useGetNodeTypeDetail(node_type);
   const nameDetail = getValueBasedOnJobType(node_type, resource?.name || '', approval_name);
@@ -63,6 +114,11 @@ export function NodeReviewStep() {
   let resourceDetailsLink = getPageUrl(ResourceLink[node_type], {
     params: { id: resource?.id },
   });
+
+  let surveyDetails = '{}';
+  if (survey && surveyConfig) {
+    surveyDetails = processSurvey(survey, surveyConfig ?? null);
+  }
 
   if (resource && 'type' in resource && resource.type === 'inventory_source') {
     resourceDetailsLink = getPageUrl(AwxRoute.InventorySourceDetail, {
@@ -93,10 +149,7 @@ export function NodeReviewStep() {
         ) : null}
         {hasPromptDetails ? <PromptReviewDetails /> : null}
         {!hasPromptDetails && survey ? (
-          <PageDetailCodeEditor
-            label={t('Extra vars')}
-            value={jsonToYaml(JSON.stringify(survey))}
-          />
+          <PageDetailCodeEditor label={t('Extra vars')} value={surveyDetails} />
         ) : null}
       </PageDetails>
     </>
