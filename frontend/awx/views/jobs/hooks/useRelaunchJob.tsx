@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { usePageAlertToaster } from '../../../../../framework';
+import { usePageAlertToaster, usePageNavigate } from '../../../../../framework';
 import { requestGet } from '../../../../common/crud/Data';
 import { usePostRequest } from '../../../../common/crud/usePostRequest';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
@@ -14,6 +14,7 @@ import {
 import { UnifiedJob } from '../../../interfaces/UnifiedJob';
 import { getRelaunchEndpoint } from '../jobUtils';
 import { useGetJobOutputUrl } from '../useGetJobOutputUrl';
+import { AwxRoute } from '../../../main/AwxRoutes';
 
 export function useRelaunchJob(jobRelaunchParams?: JobRelaunch) {
   const alertToaster = usePageAlertToaster();
@@ -21,6 +22,7 @@ export function useRelaunchJob(jobRelaunchParams?: JobRelaunch) {
   const navigate = useNavigate();
   const postRequest = usePostRequest();
   const getJobOutputUrl = useGetJobOutputUrl();
+  const pageNavigate = usePageNavigate();
 
   return async (job: UnifiedJob) => {
     const relaunchEndpoint = getRelaunchEndpoint(job);
@@ -28,8 +30,6 @@ export function useRelaunchJob(jobRelaunchParams?: JobRelaunch) {
     if (!relaunchEndpoint) {
       return Promise.reject(new Error('Unable to retrieve launch configuration'));
     }
-
-    // Get relaunch configuration
     try {
       let relaunchConfig;
       switch (job.type) {
@@ -56,11 +56,15 @@ export function useRelaunchJob(jobRelaunchParams?: JobRelaunch) {
       }
 
       // Relaunch job
+
       if (
         (relaunchConfig as JobRelaunch).passwords_needed_to_start &&
         (relaunchConfig as JobRelaunch).passwords_needed_to_start?.length
       ) {
-        // TODO: If password is needed for relaunch, handle with dialog
+        pageNavigate(AwxRoute.TemplateLaunchWithPasswordsWizard, {
+          params: { id: job.id, job_type: 'playbook' },
+        });
+        return;
       } else {
         let relaunchJob;
         switch (job.type) {
