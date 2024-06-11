@@ -124,7 +124,7 @@ function CredentialTypeInputs() {
   }) as EdaCredentialTypeInputs;
 
   const setInjectorsExtraVars = useCallback(() => {
-    const fields = credentialInputs?.fields;
+    const fields = Array.isArray(credentialInputs?.fields) ? credentialInputs?.fields : [];
     let extraVarFields = '';
     fields?.map((field, idx) => {
       if (idx > 0) {
