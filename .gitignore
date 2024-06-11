@@ -4,9 +4,10 @@
 /coverage
 /dist
 /node_modules
-/publish
+/framework/publish
 .DS_Store
 /storybook-static
 .vscode
 /cypress/.nyc_output
 /cypress/coverage
+.eslintcache

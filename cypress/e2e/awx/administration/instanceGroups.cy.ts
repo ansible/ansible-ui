@@ -587,6 +587,7 @@ describe('Instance Groups: Jobs Tab', () => {
               project: (this.globalProject as Project).id,
               inventory: inventory.id,
             },
+            'playbooks/hello_world.yml',
             ig
           ).then((result) => {
             job_template = result;
