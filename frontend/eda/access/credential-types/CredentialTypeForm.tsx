@@ -133,7 +133,6 @@ function CredentialTypeInputs() {
       extraVarFields += `"${field.id}" : "{{${field.id}}}"`;
     });
     const extraVars = `{"extra_vars": { ${extraVarFields}}}`;
-    //setValue('injectors', JSON.parse(extraVars), { shouldValidate: true });
     setValue('injectors_g', extraVars);
     setValue('injectors', undefined);
     setInjectorGenerated(true);
