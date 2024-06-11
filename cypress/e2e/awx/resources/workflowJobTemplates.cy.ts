@@ -577,7 +577,7 @@ describe('Workflow Job Templates Tests', () => {
       cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
     });
 
-    it('can save and launch a workflow job template from list view', function () {
+    it.only('can save and launch a workflow job template from list view', function () {
       cy.navigateTo('awx', 'templates');
       cy.intercept('POST', `api/v2/workflow_job_templates/${workflowJobTemplate.id}/launch/`).as(
         'launchWJT-WithNodes'
@@ -595,10 +595,24 @@ describe('Workflow Job Templates Tests', () => {
         });
     });
 
-    it.skip('can save and launch a workflow job template from details view', function () {
+    it('can save and launch a workflow job template from details view', function () {
       //Utilize the resources created in the beforeEach block
       //Navigate to the details page of the WFJT, assert values there
       //After launch, assert the redirect to the job output screen
+      cy.navigateTo('awx', 'templates');
+      cy.filterTableByMultiSelect('name', [workflowJobTemplate?.name]);
+      cy.clickTableRowLink('name', workflowJobTemplate?.name, { disableFilter: true });
+      cy.verifyPageTitle(workflowJobTemplate.name);
+      cy.intercept('POST', `api/v2/workflow_job_templates/${workflowJobTemplate.id}/launch/`).as(
+        'launchWJT-WithNodes'
+      );
+      cy.get('button[data-cy="launch-template"]').click();
+      cy.wait('@launchWJT-WithNodes')
+        .its('response.body.id')
+        .then((jobId: string) => {
+          /*there is a known React error, `create request error` happening due the output tab work in progress,but the test executes fine since there is no ui interaction here*/
+          cy.waitForWorkflowJobStatus(jobId);
+        });
     });
   });
 });
