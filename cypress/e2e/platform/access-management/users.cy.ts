@@ -69,7 +69,7 @@ describe('Users - create, edit and delete', () => {
   });
 });
 
-describe('User Types - creates users of type normal and system admin', () => {
+describe('User Types - creates users of type normal, platform auditor and system admin', () => {
   beforeEach(() => {
     cy.platformLogin();
     cy.intercept('GET', gatewayV1API`/users/?order_by=username&page=1&page_size=10`).as('getUsers');
@@ -99,6 +99,39 @@ describe('User Types - creates users of type normal and system admin', () => {
       .its('response.body')
       .then((createdUser: PlatformUser) => {
         cy.verifyPageTitle(createdUser.username);
+        cy.navigateTo('platform', 'users');
+        cy.verifyPageTitle('Users');
+        cy.selectTableRowByCheckbox('username', `${createdUser.username}`);
+        cy.clickToolbarKebabAction('delete-selected-users');
+        cy.get('#confirm').click();
+        cy.clickButton(/^Delete user/);
+        cy.clickButton('Close');
+      });
+    cy.clickButton(/^Clear all filters$/);
+  });
+
+  it('create a user of type platform auditor in the ui and delete it', () => {
+    const userName = `platform-e2e-auditor-user-${randomString(3).toLowerCase()}`;
+    const firstName = `FirstName${randomString(2)}`;
+    const lastName = `LastName ${randomString(2)}`;
+    const userEmail = `user${randomString(3)}@email.com`;
+    const password = 'password';
+
+    cy.get('[data-cy="create-user"]').click();
+    cy.get('[data-cy="username"]').type(userName);
+    cy.get('[data-cy="password"]').type(password);
+    cy.get('[data-cy="confirmpassword"]').type(password);
+    cy.singleSelectByDataCy('usertype', 'Platform auditor');
+    cy.get('[data-cy="first-name"]').type(firstName);
+    cy.get('[data-cy="last-name"]').type(lastName);
+    cy.get('[data-cy="email"]').type(userEmail);
+    cy.intercept('POST', gatewayV1API`/users/`).as('createdUser');
+    cy.get('[data-cy="Submit"]').click();
+    cy.wait('@createdUser')
+      .its('response.body')
+      .then((createdUser: PlatformUser) => {
+        cy.verifyPageTitle(createdUser.username);
+        cy.get('[data-cy="user-type"]').should('contain', 'Platform auditor');
         cy.navigateTo('platform', 'users');
         cy.verifyPageTitle('Users');
         cy.selectTableRowByCheckbox('username', `${createdUser.username}`);
