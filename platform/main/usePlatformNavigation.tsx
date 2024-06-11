@@ -35,6 +35,7 @@ import { useHasAwxService, useHasEdaService, useHasHubService } from './GatewayS
 import { PlatformRoute } from './PlatformRoutes';
 import { Redirect } from './Redirect';
 import { useGetPlatformApplicationsRoutes } from '../routes/useGetPlatformApplicationsRoutes';
+import { usePlatformActiveUser } from './PlatformActiveUserProvider';
 
 const mapHubRoute = (url: string) => {
   const matches: Record<string, string> = {
@@ -98,6 +99,7 @@ export function usePlatformNavigation() {
   const resources = useGetPlatformResourceRoutes();
 
   const navigate = useNavigate();
+  const { activePlatformUser } = usePlatformActiveUser();
 
   const pageNavigationItems = useMemo<PageNavigationItem[]>(() => {
     removeNavigationItemById(awxNav, AwxRoute.Overview);
@@ -211,7 +213,9 @@ export function usePlatformNavigation() {
       platformAccessRouteChildren.push(...roles);
     }
 
-    platformAccessRouteChildren.push(...applications);
+    if (activePlatformUser?.is_superuser || activePlatformUser?.is_system_auditor) {
+      platformAccessRouteChildren.push(...applications);
+    }
 
     navigationItems.push({
       id: PlatformRoute.Access,
