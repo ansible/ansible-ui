@@ -24,6 +24,16 @@ describe('Run command wizard', () => {
     cy.intercept(
       {
         method: 'GET',
+        url: '/api/v2/credentials/1/',
+      },
+      {
+        id: 1,
+        name: 'Demo Credential',
+      }
+    ).as('getCredential');
+    cy.intercept(
+      {
+        method: 'GET',
         url: '/api/v2/execution_environments/*',
         hostname: 'localhost',
       },
@@ -59,9 +69,10 @@ describe('Run command wizard', () => {
       cy.clickButton(/^Confirm/);
     });
     cy.clickButton(/^Next$/);
-    cy.get('#credential-select').type('Demo Credential');
+    cy.selectSingleSelectOption('[data-cy="credential"]', 'Demo Credential');
 
     cy.clickButton(/^Next$/);
+    cy.wait('@getCredential');
     cy.getByDataCy('module').should('contain', 'shell');
     cy.getByDataCy('arguments').should('contain', 'argument');
     cy.getByDataCy('verbosity').should('contain', '1');
