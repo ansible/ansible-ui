@@ -147,8 +147,8 @@ describe('Platform Teams - Users, Admins, Teams and EE tabs', function () {
     cy.deletePlatformOrganization(organization, { failOnStatusCode: false });
   });
 
-  // Organizations Users tab
-  it('can add a user and apply the roles to the users of an organization via the users tab', function () {
+  // Organizations Users tab -  add roles to Users
+  it('Organization user - can add a user, apply the roles to the users of an organization via the users tab', function () {
     cy.createPlatformUser().then((createdUser1) => {
       cy.createPlatformUser().then((createdUser2) => {
         cy.filterTableByTextFilter('name', organization.name, { disableFilterSelection: true });
@@ -212,7 +212,42 @@ describe('Platform Teams - Users, Admins, Teams and EE tabs', function () {
           cy.containsBy('button', /^Close$/).click();
         });
         cy.clickButton(/^Clear all filters$/);
+        cy.deletePlatformUser(createdUser1, { failOnStatusCode: false });
+        cy.deletePlatformUser(createdUser2, { failOnStatusCode: false });
       });
+    });
+  });
+
+  //Organizations Users tab - users row item modal check
+  it('verify when no organization roles are added to a user, row item action modal displays a message', function () {
+    cy.createPlatformUser().then((createdUser1) => {
+      cy.filterTableByTextFilter('name', organization.name, { disableFilterSelection: true });
+      cy.clickTableRowLink('name', organization.name, { disableFilter: true });
+      cy.clickTab('Users', true);
+      cy.getByDataCy('add-users').click();
+      cy.verifyPageTitle('Add roles');
+      cy.getWizard().within(() => {
+        cy.selectTableRowByCheckbox('username', createdUser1.username);
+        cy.clickButton(/^Next/);
+        cy.clickButton(/^Next/);
+        cy.clickButton(/^Next/);
+        cy.clickButton(/^Finish/);
+      });
+      cy.getModal().within(() => {
+        cy.clickButton(/^Close$/);
+      });
+      cy.getModal().should('not.exist');
+      cy.verifyPageTitle(organization.name);
+      cy.clickTableRowPinnedAction(createdUser1.username, 'manage-roles', false);
+      cy.getModal().within(() => {
+        cy.contains(
+          `${createdUser1.username} has no organization roles. To add roles to ${createdUser1.username} click on the button below.`
+        ).should('be.visible');
+      });
+      cy.getModal().within(() => {
+        cy.clickButton(/^Close$/);
+      });
+      cy.deletePlatformUser(createdUser1, { failOnStatusCode: false });
     });
   });
 
@@ -243,6 +278,7 @@ describe('Platform Teams - Users, Admins, Teams and EE tabs', function () {
         cy.getBy('#submit').click();
         cy.clickButton(/^Close$/);
       });
+      cy.clickButton(/^Clear all filters$/);
       cy.getModal().should('not.exist');
 
       // Clean up
@@ -250,8 +286,131 @@ describe('Platform Teams - Users, Admins, Teams and EE tabs', function () {
     });
   });
 
+  //Organizations teams tab - add roles to team
+  it('Organization team - can add a team, apply and remove the roles from a team of an organization via the teams tab', function () {
+    const globalOrg = this.globalPlatformOrganization as PlatformOrganization;
+    cy.createPlatformTeam({ organization: globalOrg.id }).then((team) => {
+      const createdPlatformTeam = team.name;
+      cy.filterTableByTextFilter('name', globalOrg.name, { disableFilterSelection: true });
+      cy.clickTableRowLink('name', globalOrg.name, { disableFilter: true });
+      cy.clickTab('Teams', true);
+      // Adds roles to the team
+      cy.getByDataCy('add-roles').click();
+      cy.verifyPageTitle('Add roles');
+      cy.getWizard().within(() => {
+        cy.filterTableByTextFilter('name', createdPlatformTeam, {
+          disableFilterSelection: true,
+        });
+        cy.selectTableRowByCheckbox('name', createdPlatformTeam, {
+          disableFilter: true,
+        });
+        cy.clickButton(/^Next/);
+        cy.contains('h1', 'Select Automation Execution roles').should('be.visible');
+        cy.filterTableByTextFilter('name', 'Organization Audit', {
+          disableFilterSelection: true,
+        });
+        cy.selectTableRowByCheckbox('name', 'Organization Audit', {
+          disableFilter: true,
+        });
+        cy.clickButton(/^Next/);
+        cy.contains('h1', 'Select Automation Decisions roles').should('be.visible');
+        cy.filterTableByTextFilter('name', 'Operator', {
+          disableFilterSelection: true,
+        });
+        cy.selectTableRowByCheckbox('name', 'Operator', {
+          disableFilter: true,
+        });
+        cy.clickButton(/^Next/);
+        cy.contains('h1', 'Review').should('be.visible');
+        cy.verifyReviewStepWizardDetails(
+          'edaRoles',
+          [
+            'Operator',
+            'Has read permissions. Has permissions to enable and disable rulebook activations.',
+          ],
+          '1'
+        );
+        cy.verifyReviewStepWizardDetails(
+          'awxRoles',
+          ['Organization Audit', 'Has audit permissions to a single organization'],
+          '1'
+        );
+        cy.verifyReviewStepWizardDetails('teams', [createdPlatformTeam], '1');
+        cy.clickButton(/^Finish/);
+      });
+      cy.getModal().within(() => {
+        cy.clickButton(/^Close$/);
+      });
+      cy.getModal().should('not.exist');
+      cy.verifyPageTitle(globalOrg.name);
+      cy.getTableRow('name', createdPlatformTeam, { disableFilter: true }).within(() => {
+        cy.get('[data-cy="manage-roles"]').click();
+      });
+      // Removes roles from the team
+      cy.getModal().should('exist');
+      cy.getModal().within(() => {
+        cy.get('[data-ouia-component-id="manage-roles-modal-manage-roles-button"]').click();
+      });
+      cy.getWizard().within(() => {
+        cy.contains('h1', 'Select Automation Execution roles').should('be.visible');
+        cy.filterTableByTextFilter('name', 'Organization Audit', {
+          disableFilterSelection: true,
+        });
+
+        cy.selectTableRowByCheckbox('name', 'Organization Audit', {
+          disableFilter: true,
+        });
+
+        cy.clickButton(/^Next/);
+        cy.contains('h1', 'Select Automation Decisions roles').should('be.visible');
+        cy.filterTableByTextFilter('name', 'Operator', {
+          disableFilterSelection: true,
+        });
+        cy.selectTableRowByCheckbox('name', 'Operator', {
+          disableFilter: true,
+        });
+        cy.clickButton(/^Next/);
+        cy.contains('h1', 'Review').should('be.visible');
+        cy.contains('.pf-v5-c-description-list__text', createdPlatformTeam).should('be.visible');
+        cy.clickButton(/^Finish/);
+      });
+      cy.clickButton(/^Close/);
+      cy.verifyPageTitle(globalOrg.name);
+      cy.clickTableRowLink('name', createdPlatformTeam);
+      cy.verifyPageTitle(createdPlatformTeam);
+      cy.clickTab('Roles', true);
+      // Verify the roles are removed from the team
+      cy.contains('h4', 'There are currently no roles assigned to this team.').should('be.visible');
+      cy.get('li.pf-v5-c-tabs__item').contains('Automation Decisions').click();
+      cy.contains('h4', 'There are currently no roles assigned to this team.').should('be.visible');
+      cy.deletePlatformTeam(team, { failOnStatusCode: false });
+    });
+  });
+
+  //Organizations teams tab - teams row item modal check
+  it('verify when no organization roles are added to the team  the modal displays a message', function () {
+    const globalOrg = this.globalPlatformOrganization as PlatformOrganization;
+    cy.createPlatformTeam({ organization: globalOrg.id }).then((team) => {
+      const createdPlatformTeam = team.name;
+      cy.filterTableByTextFilter('name', globalOrg.name, { disableFilterSelection: true });
+      cy.clickTableRowLink('name', globalOrg.name, { disableFilter: true });
+      cy.clickTab('Teams', true);
+      cy.getByDataCy('add-roles').click();
+      cy.verifyPageTitle('Add roles');
+      cy.getWizard().within(() => {
+        cy.selectTableRowByCheckbox('name', createdPlatformTeam, { disableFilter: true });
+        cy.clickButton(/^Next/);
+        cy.clickButton(/^Next/);
+        cy.clickButton(/^Next/);
+        cy.clickButton(/^Finish/);
+        // TODO: Update after no items modal is removed AAP-25090
+      });
+      cy.deletePlatformTeam(team, { failOnStatusCode: false });
+    });
+  });
+
   // Create team from teams tab
-  it('can create a team from the teams tab, add an organization and assert it is added', function () {
+  it('can create a team from the teams tab, add an organization and assert it is added, delete from details page of team', function () {
     // Organization Page
     cy.filterTableByTextFilter('name', organization.name, { disableFilterSelection: true });
     cy.clickTableRowLink('name', organization.name, { disableFilter: true });
