@@ -69,7 +69,7 @@ export function ResourceNotifications({ resourceType, id }: { resourceType: stri
 
   const approval = useGet<AwxItemsResponse<NotificationTemplate>>(approvalUrl);
   const { data: notificationApproval, refresh: notificationApprovalRefresh } =
-    resourceType === 'organizations'
+    resourceType === 'organizations' || resourceType === 'workflow_job_templates'
       ? approval
       : { data: { results: [] }, refresh: () => undefined };
 
