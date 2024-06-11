@@ -28,7 +28,6 @@ import { GitSubForm } from '../ProjectSubForms/GitSubForm';
 import { InsightsSubForm } from '../ProjectSubForms/InsightsSubForm';
 import { ManualSubForm } from '../ProjectSubForms/ManualSubForm';
 import { SvnSubForm } from '../ProjectSubForms/SvnSubForm';
-import { useGetCredentialTypeIDs } from '../hooks/useGetCredentialTypeIDs';
 
 const defaultValues: Partial<Project> = {
   base_dir: '',
@@ -56,21 +55,6 @@ export function CreateProject() {
     if (project.scm_type === 'manual') {
       project.scm_type = '';
     }
-
-    // Depending on the permissions of the user submitting the form,
-    // the API might throw an unexpected error if our creation request
-    // has a zero-length string as its credential field. As a work-around,
-    // normalize falsey credential fields by deleting them.
-    if (!project.credential || !project.summary_fields.credential.name) {
-      project.credential = null;
-    }
-    if (
-      !project.signature_validation_credential ||
-      !project.summary_fields.signature_validation_credential.name
-    ) {
-      project.signature_validation_credential = null;
-    }
-
     // Create new project
     const newProject = await postRequest(awxAPI`/projects/`, project);
 
@@ -115,20 +99,6 @@ export function EditProject() {
   const onSubmit: PageFormSubmitHandler<Project> = async (project: Project) => {
     if (project.scm_type === 'manual') {
       project.scm_type = '';
-    }
-
-    // Depending on the permissions of the user submitting the form,
-    // the API might throw an unexpected error if our creation request
-    // has a zero-length string as its credential field. As a work-around,
-    // normalize falsey credential fields by deleting them.
-    if (!project.credential || !project.summary_fields.credential.name) {
-      project.credential = null;
-    }
-    if (
-      !project.signature_validation_credential ||
-      !project.summary_fields.signature_validation_credential.name
-    ) {
-      project.signature_validation_credential = null;
     }
 
     // Update project
@@ -196,7 +166,6 @@ function ProjectInputs(props: { project?: Project }) {
   const organizationId = useWatch<Project, 'organization'>({ name: 'organization' });
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/projects/`);
   const scmTypeOptions = data?.actions?.GET?.scm_type?.choices;
-  const credentialTypeIDs = useGetCredentialTypeIDs();
   const scmType = useWatch<Project, 'scm_type'>({ name: 'scm_type' });
   const { project } = props;
   const { setValue } = useFormContext();
@@ -208,19 +177,10 @@ function ProjectInputs(props: { project?: Project }) {
         Object.keys(scmFormFieldDefaults).forEach((field) => {
           setValue(`${field}`, project[field as keyof Project]);
         });
-        // Reset contents of credential fields
-        setValue('summary_fields.credential.name', project.summary_fields.credential?.name ?? '');
-        setValue(
-          'summary_fields.signature_validation_credential.name',
-          project.summary_fields.signature_validation_credential?.name ?? ''
-        );
       } else {
         Object.keys(scmFormFieldDefaults).forEach((field) => {
           setValue(`${field}`, scmFormFieldDefaults[field]);
         });
-        // Reset contents of credential fields
-        setValue('summary_fields.credential.name', '');
-        setValue('summary_fields.signature_validation_credential.name', '');
       }
     };
     resetSCMTypeFields();
@@ -266,15 +226,15 @@ function ProjectInputs(props: { project?: Project }) {
         placeholderText={t('Choose a Source Control Type')}
       />
       <PageFormCredentialSelect<Project>
-        name="summary_fields.signature_validation_credential.name"
-        credentialIdPath="project.signature_validation_credential"
+        id="signature_validation_credential"
+        name="signature_validation_credential"
         label={t('Content Signature Validation Credential')}
-        labelHelpTitle={t('Content Signature Validation Credential')}
         labelHelp={t(
           'Enable content signing to verify that the content has remained secure when a project is synced. If the content has been tampered with, the job will not run.'
         )}
-        selectTitle={t('Select Signature Validation Credential')}
-        credentialType={credentialTypeIDs.cryptography}
+        queryParams={{
+          credential_type__namespace: 'gpg_public_key',
+        }}
       />
       <ManualSubForm
         localPath={props.project?.local_path ? props.project?.local_path : undefined}

@@ -57,7 +57,7 @@ export function getJobTemplateDefaultValues(
       ? `${document.location.origin}${template.related.webhook_receiver}`
       : t('a new webhook url will be generated on save.').toUpperCase(),
     webhook_key: t('a new webhook key will be generated on save.').toUpperCase(),
-    webhook_credential: template.summary_fields?.webhook_credential,
+    webhook_credential: template.webhook_credential,
 
     isProvisioningCallbackEnabled: Boolean(template.related?.callback),
     isWebhookEnabled: Boolean(template.related?.webhook_receiver),

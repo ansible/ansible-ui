@@ -72,7 +72,7 @@ export function EditJobTemplate() {
       inventory: values.inventory?.id || null,
       job_tags: stringifyTags(values.job_tags) ?? '',
       skip_tags: stringifyTags(values.skip_tags) ?? '',
-      webhook_credential: values.webhook_credential?.id || null,
+      webhook_credential: values.webhook_credential || null,
       webhook_service: isWebhookEnabled ? values.webhook_service : null,
       host_config_key: isProvisioningCallbackEnabled ? host_config_key : null,
     };
@@ -137,7 +137,7 @@ export function CreateJobTemplate() {
       inventory: values.inventory?.id || null,
       job_tags: stringifyTags(values.job_tags) ?? '',
       skip_tags: stringifyTags(values.skip_tags) ?? '',
-      webhook_credential: values.webhook_credential?.id || null,
+      webhook_credential: values.webhook_credential || null,
     };
 
     const template = await postRequest(awxAPI`/job_templates/`, formValues);

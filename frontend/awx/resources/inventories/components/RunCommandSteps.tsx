@@ -15,9 +15,12 @@ import {
 import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageDetailCodeEditor';
 import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
 import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
+import { useGet } from '../../../../common/crud/useGet';
 import { PageFormCredentialSelect } from '../../../access/credentials/components/PageFormCredentialSelect';
 import { PageFormExecutionEnvironmentSelect } from '../../../administration/execution-environments/components/PageFormSelectExecutionEnvironment';
+import { awxAPI } from '../../../common/api/awx-utils';
 import { CredentialLabel } from '../../../common/CredentialLabel';
+import { Credential } from '../../../interfaces/Credential';
 import { RunCommandWizard } from '../../../interfaces/Inventory';
 import { AwxRoute } from '../../../main/AwxRoutes';
 
@@ -177,20 +180,18 @@ export function RunCommandExecutionEnvionment(props: { orgId: string }) {
 
 export function RunCommandCredentialStep() {
   const { t } = useTranslation();
-
   return (
     <PageFormSection>
       <PageFormCredentialSelect
-        name="credential.name"
+        name="credential"
         label={t('Credential')}
-        placeholder={t('Add credential')}
-        labelHelpTitle={t('Credential')}
         labelHelp={t(
           'Select the credential you want to use when accessing the remote hosts to run the command. Choose the credential containing the username and SSH key or password that Ansible will need to log into the remote hosts.'
         )}
+        queryParams={{
+          credential_type__namespace: 'ssh',
+        }}
         isRequired
-        credentialIdPath="credentialIdPath"
-        sourceType="ssh"
       />
     </PageFormSection>
   );
@@ -212,9 +213,9 @@ export function RunCommandReviewStep() {
     become_enabled,
     extra_vars,
     execution_environment,
-    credential,
-    credentialIdPath,
+    credential: credentialId,
   } = wizardData;
+  const { data: credential } = useGet<Credential>(awxAPI`/credentials/${credentialId.toString()}/`);
 
   return (
     <>
@@ -230,20 +231,22 @@ export function RunCommandReviewStep() {
             {become_enabled ? t('On') : t('Off')}
           </PageDetail>
           <PageDetailCodeEditor label={t('Extra vars')} value={extra_vars} />
-          <PageDetail label={t('Credentials')} isEmpty={!credential}>
-            <LabelGroup>
-              <CredentialLabel
-                credential={{
-                  name: credential.name,
-                  id: parseInt(credentialIdPath),
-                  kind: 'ssh',
-                  cloud: false,
-                  description: credential.name,
-                }}
-                key={credentialIdPath}
-              />
-            </LabelGroup>
-          </PageDetail>
+          {credential ? (
+            <PageDetail label={t('Credentials')} isEmpty={!credential}>
+              <LabelGroup>
+                <CredentialLabel
+                  credential={{
+                    name: credential.name,
+                    id: parseInt(credential.id.toString()),
+                    kind: 'ssh',
+                    cloud: false,
+                    description: credential.name,
+                  }}
+                  key={credential.id}
+                />
+              </LabelGroup>
+            </PageDetail>
+          ) : null}
           <PageDetail label={t('Execution environment')}>
             <Link
               to={getPageUrl(AwxRoute.ExecutionEnvironmentDetails, {

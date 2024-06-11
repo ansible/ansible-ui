@@ -73,7 +73,6 @@ export interface RunCommandWizard {
   diff_mode: boolean;
   become_enabled: boolean;
   extra_vars: string;
-  credential: { name: string };
-  credentialIdPath: string;
+  credential: number;
   execution_environment: { name: string; id: string };
 }

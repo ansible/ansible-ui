@@ -147,10 +147,7 @@ describe('Inventory Groups', () => {
           cy.clickButton(/^Confirm/);
         });
         cy.clickButton(/^Next$/);
-        cy.getByDataCy('credential-select-form-group').within(() => {
-          cy.getBy('[aria-label="Options menu"]').click();
-        });
-        cy.selectItemFromLookupModal('credential-select', machineCredential.name);
+        cy.selectSingleSelectOption('[data-cy="credential"]', machineCredential.name);
         cy.clickButton(/^Next$/);
         cy.getByDataCy('module').should('contain', 'shell');
         cy.getByDataCy('arguments').should('contain', 'argument');

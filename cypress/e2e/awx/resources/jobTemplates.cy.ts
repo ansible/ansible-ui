@@ -512,7 +512,6 @@ describe('Job Templates Tests', function () {
       }).then((ghCred) => {
         githubCredential = ghCred;
         let webhookKey: string;
-        cy.intercept('GET', awxAPI`/credential_types/*`).as('getCredTypes');
 
         cy.navigateTo('awx', 'templates');
         cy.verifyPageTitle('Templates');
@@ -524,24 +523,7 @@ describe('Job Templates Tests', function () {
 
         cy.getByDataCy('isWebhookEnabled').click();
         cy.selectDropdownOptionByResourceName('webhook-service', 'GitHub');
-        cy.wait('@getCredTypes');
-
-        cy.intercept('GET', awxAPI`/credentials/?credential_type*`).as('getCredType');
-        // modal is closed instanly, possible cause: https://issues.redhat.com/browse/AAP-23766
-        cy.get('[data-ouia-component-id="lookup-webhook_credential.name-button"]').click();
-        cy.get('[data-ouia-component-id="lookup-webhook_credential.name-button"]').click();
-        cy.wait('@getCredType');
-
-        cy.getModal().within(() => {
-          cy.selectTableRowByCheckbox('name', ghCred.name);
-          cy.clickButton('Confirm');
-        });
-        cy.contains('Webhook details')
-          .parent()
-          .parent()
-          .within(() => {
-            cy.getByDataCy('credential-select').should('have.value', ghCred.name);
-          });
+        cy.selectSingleSelectOption('[data-cy="webhook_credential"]', ghCred.name);
 
         cy.clickButton('Save job template');
 
@@ -557,13 +539,7 @@ describe('Job Templates Tests', function () {
           .its('response.body.webhook_key')
           .then((webhook_key: string) => {
             webhookKey = webhook_key;
-
-            cy.contains('Webhook details')
-              .parent()
-              .parent()
-              .within(() => {
-                cy.getByDataCy('credential-select').should('have.value', ghCred.name);
-              });
+            cy.getByDataCy('webhook_credential').should('have.text', ghCred.name);
 
             cy.getByDataCy('webhook-service-form-group').contains('GitHub');
             cy.getByDataCy('webhook-key').should('have.value', webhookKey);

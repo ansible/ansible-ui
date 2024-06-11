@@ -32,7 +32,7 @@ describe('Create Edit Container Group Form', () => {
         initialEntries: [`/instance-groups/container-group/create`],
       });
       cy.get('[data-cy="name"]').type('Test name');
-      cy.get('[data-cy="credential-select"]').type('E2E Credential ARWM');
+      cy.selectSingleSelectOption('[data-cy="credential"]', 'E2E Credential ARWM');
       cy.getByDataCy('override').click({ force: true });
       cy.get('[data-cy="max-concurrent-jobs"]').clear();
       cy.get('[data-cy="max-concurrent-jobs"]').type('3');
@@ -44,6 +44,7 @@ describe('Create Edit Container Group Form', () => {
         .then((createdIG) => {
           expect(createdIG).to.deep.equal({
             name: 'Test name',
+            credential: 187,
             is_container_group: true,
             max_concurrent_jobs: 3,
             max_forks: 4,
