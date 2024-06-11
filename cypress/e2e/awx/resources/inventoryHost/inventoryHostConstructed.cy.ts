@@ -5,11 +5,16 @@ import { AwxUser } from '../../../../../frontend/awx/interfaces/User';
 //import { createAndEditAndDeleteHost} from '../../../support/hostsfunctions';
 import { runCommand } from './runCommandFunction';
 import { awxAPI } from '../../../../../frontend/awx/common/api/awx-utils';
+import { InventoryGroup } from '../../../../../frontend/awx/interfaces/InventoryGroup';
+import { randomE2Ename } from '../../../../support/utils';
+import { postRequest } from '../../../../../frontend/common/crud/Data';
+
 
 describe('Inventory Host Tab Tests for contructed inventory', () => {
   let organization: Organization;
   let inventory: Inventory;
   let user: AwxUser;
+  let group: InventoryGroup;
 
   before(() => {
     cy.awxLogin();
@@ -18,17 +23,28 @@ describe('Inventory Host Tab Tests for contructed inventory', () => {
       cy.createInventoryHost(organization, 'constructed').then((result) => {
         const { inventory: inv } = result;
         inventory = inv;
+
+        
+          cy.createInventoryHostGroup(organization).then((result2) => {
+            const normalInventory = result2.inventory;
+            group = result2.group;
+            
+            // connect them
+            postRequest(awxAPI`/inventories/${inventory.id.toString()}/input_inventories/`, { id : normalInventory.id });
+          
+        });
       });
       cy.createAwxUser(organization).then((testUser) => {
         user = testUser;
       });
+     
     });
   });
 
   after(() => {
-    cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
+    /*cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
     cy.deleteAwxUser(user, { failOnStatusCode: false });
-    cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
+    cy.deleteAwxOrganization(organization, { failOnStatusCode: false });*/
   });
 
   //tests
@@ -63,12 +79,42 @@ describe('Inventory Host Tab Tests for contructed inventory', () => {
     });
   });
 
-  it.skip('can run an ad-hoc command against the host on the groups tab of a host-inventory from the host details page', () => {
+  it.only('can run an ad-hoc command against the host on the groups tab of a host-inventory from the host details page', () => {
     //1) Use the inventory created in before, access the host tab of that inventory, visit the host details page
     //2) Use a host, EE, and credential - these resources are needed to run a command against a host
     //3) Assert redirect to the job output screen
     //4) Navigate to the details page of the job and assert the values there match what was entered in the Run Command Wizard
     //5) Navigate back to the Inventory -> Jobs Tab to assert that the Run Command job shows up there
+
+     //5) Navigate back to the Inventory -> Jobs Tab to assert that the Run Command job shows up there
+     cy.navigateTo('awx', 'inventories');
+     
+     cy.intercept('get', awxAPI`/inventories/?name=${inventory.name}*`).as('getInventories');
+     cy.filterTableByMultiSelect('name', [inventory.name]);
+     cy.wait('@getInventories');
+ 
+     cy.contains('a', inventory.name).click();
+
+    cy.getByDataCy('sync-inventory').click();
+    cy.contains(`[data-cy="last-job-status"]`, 'Success');
+
+    cy.contains(`a[role="tab"]`, 'Groups').click();
+    cy.reload();
+    cy.contains('a', group.name).click();
+
+     cy.contains(`a[role="tab"]`, 'Hosts').click(); 
+
+     cy.getByDataCy('run-command').click();
+ 
+     runCommand({
+       selections: 'all',
+       module: 'shell',
+       verbosity: '0-(normal)',
+       forks: 2,
+       show_changes: true,
+       become_enabled: true,
+       organization,
+     });
   });
 
   it.skip('can launch a job template that uses an inventory with a particular host and view the job on the host jobs tab inside the inventory', () => {
