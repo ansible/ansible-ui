@@ -16,8 +16,10 @@ import { AwxHost } from '../../../interfaces/AwxHost';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useGetHost } from '../hooks/useGetHost';
 import { useHostsActions } from '../hooks/useHostsActions';
+import { useViewActivityStream } from '../../../access/common/useViewActivityStream';
 
 export function HostPage() {
+  const activityStream = useViewActivityStream();
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const params = useParams<{ id: string }>();
@@ -41,7 +43,7 @@ export function HostPage() {
         breadcrumbs={[{ label: t('Hosts'), to: getPageUrl(AwxRoute.Hosts) }, { label: host?.name }]}
         headerActions={
           <PageActions<AwxHost>
-            actions={itemActions}
+            actions={[...activityStream, ...itemActions]}
             position={DropdownPosition.right}
             selectedItem={host}
           />

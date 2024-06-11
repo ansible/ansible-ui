@@ -21,10 +21,12 @@ import { Organization } from '../../../interfaces/Organization';
 import { Project } from '../../../interfaces/Project';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useProjectActions } from '../hooks/useProjectActions';
+import { useViewActivityStream } from '../../../access/common/useViewActivityStream';
 
 export function ProjectPage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
+  const activityStream = useViewActivityStream();
   const {
     error: projectError,
     data: project,
@@ -70,7 +72,7 @@ export function ProjectPage() {
         ]}
         headerActions={
           <PageActions<Project>
-            actions={itemActions}
+            actions={[...activityStream, ...itemActions]}
             position={DropdownPosition.right}
             selectedItem={project}
           />
