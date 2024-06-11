@@ -4,12 +4,10 @@ import { PageFormHidden } from '../../../../../framework/PageForm/Utils/PageForm
 import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
 import { PageFormCredentialSelect } from '../../../access/credentials/components/PageFormCredentialSelect';
 import { Project } from '../../../interfaces/Project';
-import { useGetCredentialTypeIDs } from '../hooks/useGetCredentialTypeIDs';
 import { ScmTypeOptions } from './ScmTypeOptions';
 
 export function ArchiveSubForm() {
   const { t } = useTranslation();
-  const credentialTypeIDs = useGetCredentialTypeIDs();
   const archiveSourceControlUrlHelp = (
     <Trans i18nKey="archiveSourceControlUrlHelp">
       <span>
@@ -37,11 +35,11 @@ export function ArchiveSubForm() {
           isRequired
         />
         <PageFormCredentialSelect<Project>
-          name="summary_fields.credential.name"
-          credentialIdPath="credential"
+          name="credential"
           label={t('Source Control Credential')}
-          selectTitle={t('Select Source Control Credential')}
-          credentialType={credentialTypeIDs.scm}
+          queryParams={{
+            credential_type__namespace: 'scm',
+          }}
         />
         <ScmTypeOptions />
       </PageFormSection>

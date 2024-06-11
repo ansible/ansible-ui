@@ -3,7 +3,7 @@ import { InstanceGroup } from './InstanceGroup';
 import { JobTemplate } from './JobTemplate';
 import { Label } from './Label';
 import { Project } from './Project';
-import { SummaryFieldCredential } from './summary-fields/summary-fields';
+
 export interface JobTemplateRelatedFields
   extends Pick<JobTemplate['related'], 'webhook_receiver' | 'callback' | 'webhook_key'> {
   webhook_receiver: string;
@@ -48,7 +48,7 @@ export interface JobTemplateForm
   project: Pick<Project, 'id' | 'name' | 'organization' | 'allow_override'>;
   related: JobTemplateRelatedFields;
   skip_tags: { name: string; value: string; label: string }[];
-  webhook_credential: SummaryFieldCredential;
+  webhook_credential: number;
 }
 
 export interface JobTemplateCreate {

@@ -37,9 +37,6 @@ describe('Create Edit Execution Environment Form', () => {
           expect(createdEE).to.deep.equal({
             name: 'Test name',
             image: 'test/image',
-            summary_fields: {
-              credential: {},
-            },
           });
         });
     });
@@ -51,7 +48,7 @@ describe('Create Edit Execution Environment Form', () => {
       cy.selectDropdownOptionByResourceName('pull', 'Always pull container before running');
       cy.get('[data-cy="description"]').type('test');
       cy.selectSingleSelectOption('[data-cy="organization"]', 'Default');
-      cy.get('[data-cy="credential-select"]').type('Test Reg Cred');
+      cy.selectSingleSelectOption('[data-cy="credential"]', 'Test Reg Cred');
       cy.clickButton(/^Create execution environment$/);
       cy.wait('@createEE')
         .its('request.body')
@@ -62,12 +59,7 @@ describe('Create Edit Execution Environment Form', () => {
             pull: 'always',
             description: 'test',
             organization: 1,
-            credential: 23,
-            summary_fields: {
-              credential: {
-                name: 'Test Reg Cred',
-              },
-            },
+            credential: 3,
           });
         });
     });
@@ -81,6 +73,7 @@ describe('Create Edit Execution Environment Form', () => {
           ee.image = 'test/image';
           ee.pull = 'always';
           ee.description = 'test';
+          ee.credential = 3;
           if (ee.summary_fields.organization?.name) ee.summary_fields.organization.name = 'Default';
           if (ee.summary_fields.credential?.name)
             ee.summary_fields.credential.name = 'Test Reg Cred';
@@ -135,7 +128,7 @@ describe('Create Edit Execution Environment Form', () => {
       cy.selectDropdownOptionByResourceName('pull', 'Never pull container before running.');
       cy.get('[data-cy="description"]').clear();
       cy.get('[data-cy="description"]').type('Edited desc');
-      cy.get('[data-cy="credential-select"]').clear();
+      cy.get('[data-cy="credential-form-group"] [data-cy="reset"]').click();
       cy.clickButton(/^Save execution environment$/);
       cy.wait('@editEE')
         .its('request.body')
